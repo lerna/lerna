@@ -3,12 +3,12 @@
 </p>
 
 <p align="center">
-  Tool for managing JavaScript projects with multiple packages.
+  A tool for managing JavaScript projects with multiple packages.
 </p>
 
 ## About
 
-While developing [Babel](github.com/babel/babel) I followed a
+While developing [Babel](https://github.com/babel/babel) I followed a
 [monorepo](https://github.com/babel/babel/blob/master/doc/design/monorepo.md) approach
 where the entire project was split into individual packages but everything lived in the same
 repo. This was great. It allowed super easy modularisation which meant the core was easier
