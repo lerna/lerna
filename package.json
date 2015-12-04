@@ -1,0 +1,29 @@
+{
+  "name": "lerna",
+  "version": "1.0.0",
+  "description": "Tool for managing JavaScript projects with multiple packages",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sebmck/lerna.git"
+  },
+  "author": "Sebastian McKenzie <sebmck@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sebmck/lerna/issues"
+  },
+  "homepage": "https://github.com/sebmck/lerna#readme",
+  "dependencies": {
+    "async": "^1.5.0",
+    "chalk": "^1.1.1",
+    "mkdirp": "^0.5.1",
+    "pad": "^1.0.0",
+    "progress": "^1.1.8",
+    "readline-sync": "^1.2.21",
+    "rimraf": "^2.4.4",
+    "semver": "^5.1.0"
+  },
+  "bin": {
+    "lerna": "./bin/lerna.js"
+  }
+}
