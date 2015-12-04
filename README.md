@@ -22,15 +22,20 @@ large Lerna project.
 ## Usage
 
 ```sh
-$ npm install lerna --save
+$ npm install -g lerna
 $ lerna bootstrap
 ```
+
+This will create a dummy `VERSION` file as well as a `packages` folder.
 
 ### Bootstrap
 
 ```sh
 $ lerna bootstrap
 ```
+
+1. Link together all packages that depend on each other.
+2. `npm install` all other dependencies of each package.
 
 ### Publishing
 
