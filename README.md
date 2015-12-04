@@ -3,5 +3,5 @@
 </p>
 
 <p align="center">
-  Management tool for JavaScript projects with multiple packages.
+  Tool for managing JavaScript projects with multiple packages.
 </p>
