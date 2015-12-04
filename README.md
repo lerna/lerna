@@ -8,13 +8,13 @@
 
 ## About
 
-While developing [Babel](github.com/babel/babel) I developed a
+While developing [Babel](github.com/babel/babel) I followed a
 [monorepo](https://github.com/babel/babel/blob/master/doc/design/monorepo.md) approach
-where the entire project was split into individual packages but lived in the same repo.
-This was great. It allowed super easy modularisation which meant the core was easier to
-approach and meant others could use the useful parts of Babel in their applications.
+where the entire project was split into individual packages but everything lived in the same
+repo. This was great. It allowed super easy modularisation which meant the core was easier
+to approach and meant others could use the useful parts of Babel in their own projects.
 
-This tool was abstracted out of that and deals with bootstrapping these modules by linking
+This tool was abstracted out of that and deals with bootstrapping packages by linking
 them together as well as publishing them to npm. You can see the
 [Babel repo](https://github.com/babel/babel/tree/master/packages) for an example of a
 large Lerna project.
