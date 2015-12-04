@@ -15,10 +15,9 @@ This was great. It allowed super easy modularisation which meant the core was ea
 approach and meant others could use the useful parts of Babel in their applications.
 
 This tool was abstracted out of that and deals with bootstrapping these modules by linking
-them together as well as publishing them to npm.
-
-You can see the [Babel repo](https://github.com/babel/babel/tree/master/packages) for an
-example of a large Lerna project.
+them together as well as publishing them to npm. You can see th
+[Babel repo](https://github.com/babel/babel/tree/master/packages) for an example of a
+large Lerna project.
 
 ## Usage
 
