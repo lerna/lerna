@@ -8,7 +8,7 @@
 
 ## About
 
-While developing [Babel](github.com/babel/babel) I developed a
+While developing [Babel](https://github.com/babel/babel) I developed a
 [monorepo](https://github.com/babel/babel/blob/master/doc/design/monorepo.md) approach
 where the entire project was split into individual packages but lived in the same repo.
 This was great. It allowed super easy modularisation which meant the core was easier to
