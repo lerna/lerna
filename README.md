@@ -5,3 +5,24 @@
 <p align="center">
   Tool for managing JavaScript projects with multiple packages.
 </p>
+
+## About
+
+## Usage
+
+```sh
+$ npm install lerna --save
+$ lerna init
+```
+
+### Bootstrap
+
+```sh
+$ lerna bootstrap
+```
+
+### Publishing
+
+```sh
+$ lerna publish
+```
