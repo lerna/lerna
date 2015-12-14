@@ -1,11 +1,6 @@
 #!/usr/bin/env node
 
 var args = process.argv.slice(2);
-if (args.length > 1) {
-  console.error("Too many arguments.");
-  process.exit(1);
-}
-
 var arg = args[0];
 
 if (arg === "-v" || arg === "-V" || arg === "--version" || arg === "-version") {
