@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 var args = process.argv.slice(2);
-if (args.length > 1) {
+if (args.length > 1 && args[0] !== "run") {
   console.error("Too many arguments.");
   process.exit(1);
 }
