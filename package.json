@@ -4,7 +4,8 @@
   "description": "Tool for managing JavaScript projects with multiple packages",
   "main": "index.js",
   "scripts": {
-    "lint": "./node_modules/.bin/eslint lib"
+    "lint": "./node_modules/.bin/eslint lib",
+    "ci": "npm run lint"
   },
   "repository": {
     "type": "git",
