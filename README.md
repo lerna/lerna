@@ -37,6 +37,14 @@ $ lerna bootstrap
 1. Link together all packages that depend on each other.
 2. `npm install` all other dependencies of each package.
 
+### Updated
+
+```sh
+$ lerna updated
+```
+
+1. Checks which `packages` have changed since the last release" and logs it.
+
 ### Publishing
 
 ```sh
