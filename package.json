@@ -3,6 +3,9 @@
   "version": "1.0.5",
   "description": "Tool for managing JavaScript projects with multiple packages",
   "main": "index.js",
+  "scripts": {
+    "lint": "./node_modules/.bin/eslint lib"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sebmck/lerna.git"
@@ -25,5 +28,8 @@
   },
   "bin": {
     "lerna": "./bin/lerna.js"
+  },
+  "devDependencies": {
+    "eslint": "^1.10.3"
   }
 }
