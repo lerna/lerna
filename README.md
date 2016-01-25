@@ -54,6 +54,9 @@ $ lerna publish
 1. Publishes each module in `packages` that has been updated since the last version to npm with the tag `prerelease`.
 2. Once all packages have been published. Remove the `prerelease` tags and add the tags `latest` and `stable`.
 
+> If you need to publish prerelease versions, set an env variable. `NPM_DIST_TAG=next lerna publish`.
+> This will add the tag you specify instead of `latest` and `stable`.
+
 ## How it works
 
 Lerna projects operate on a single version line. The version is kept in the file `VERSION`
