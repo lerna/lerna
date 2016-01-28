@@ -1,41 +1,30 @@
 #!/usr/bin/env node
 
-var args = process.argv.slice(2);
-if (args.length > 1) {
-  console.error("Too many arguments.");
-  process.exit(1);
-}
-
-var arg = args[0];
-
-if (arg === "-v" || arg === "-V" || arg === "--version" || arg === "-version") {
-  console.log(require("../package.json").version);
-  process.exit(0);
-}
-
 var commands = require("../lib/commands");
+var chalk    = require("chalk");
+var meow     = require("meow");
 var init     = require("../lib/init");
 
-if (!arg || arg === "--help" || arg === "-h" || arg === "-H" || arg === "-help") {
-  console.log();
-  console.log("  lerna [command]");
-  console.log();
-  console.log("  Commands:");
-  console.log();
+var cli = meow([
+  "Usage",
+  "  $ lerna [command]",
+  "",
+  "Commands:",
+  "  bootstrap  Link together local packages and npm install remaining package dependencies",
+  "  publish    Publish updated packages to npm",
+  "  updated    Check which packages have changed since the last release",
+  ""
+]);
 
-  for (var key in commands) {
-    var desc = commands[key].description;
-    console.log("    " + key + " - " + desc);
-  }
+var commandName = cli.input[0];
+var command = commands[commandName];
 
+if (!command) {
   console.log();
-  process.exit(0);
+  console.log(chalk.red("  Invalid command: " + chalk.bold(commandName)));
+  cli.showHelp();
 }
 
-if (!(arg in commands)) {
-  console.error("Unknown command " + JSON.stringify(arg));
-  process.exit(1);
-}
+var config = init(commandName, process.cwd());
 
-var command = commands[arg];
-command.execute(init(arg, process.cwd()));
+command(config);
