@@ -43,7 +43,7 @@ $ lerna bootstrap
 $ lerna updated
 ```
 
-1. Checks which `packages` have changed since the last release" and logs it.
+1. Checks which `packages` have changed since the last release and logs it.
 
 ### Publishing
 
