@@ -26,7 +26,8 @@
     "progress": "^1.1.8",
     "readline-sync": "^1.2.21",
     "rimraf": "^2.4.4",
-    "semver": "^5.1.0"
+    "semver": "^5.1.0",
+    "signal-exit": "^2.1.2"
   },
   "bin": {
     "lerna": "./bin/lerna.js"
