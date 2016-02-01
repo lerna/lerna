@@ -16,6 +16,8 @@ var cli = meow([
   ""
 ]);
 
+require("signal-exit").unload();
+
 var commandName = cli.input[0];
 var command = commands[commandName];
 
