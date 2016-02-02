@@ -15,8 +15,14 @@ var cli = meow([
   "  updated    Check which packages have changed since the last release",
   "  run        Run npm script in each package",
   "  ls         List all public packages",
-  ""
-]);
+  "",
+  "Options:",
+  "  --independent, -i  Version packages independently"
+], {
+  alias: {
+    independent: "i"
+  }
+});
 
 require("signal-exit").unload();
 
@@ -29,6 +35,6 @@ if (!command) {
   cli.showHelp();
 }
 
-var config = init(commandName, process.cwd());
+var config = init(commandName, process.cwd(), cli.flags.independent);
 
 command(config);
