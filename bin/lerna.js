@@ -31,4 +31,4 @@ if (!command) {
 
 var config = init(commandName, process.cwd());
 
-command(config);
+command(config, cli);
