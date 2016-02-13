@@ -6,6 +6,10 @@
   A tool for managing JavaScript projects with multiple packages.
 </p>
 
+<p align="center">
+  <a href="https://travis-ci.org/kittens/lerna"><img alt="Travis Status" src="https://img.shields.io/travis/kittens/lerna/master.svg?style=flat&label=travis"></a>
+</p>
+
 ## About
 
 While developing [Babel](https://github.com/babel/babel) I followed a
