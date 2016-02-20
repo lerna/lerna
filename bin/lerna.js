@@ -13,6 +13,7 @@ var cli = meow([
   "  bootstrap  Link together local packages and npm install remaining package dependencies",
   "  publish    Publish updated packages to npm",
   "  updated    Check which packages have changed since the last release",
+  "  diff       Diff all packages or a single package since the last release",
   "  run        Run npm script in each package",
   "  ls         List all public packages",
   ""
