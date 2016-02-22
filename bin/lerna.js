@@ -35,6 +35,8 @@ if (!command) {
   cli.showHelp();
 }
 
-var config = init(commandName, process.cwd(), cli.flags.independent);
+var config = init(commandName, process.cwd(), {
+  independent: cli.flags.independent
+};
 
 command(config, cli);
