@@ -18,10 +18,12 @@ var cli = meow([
   "  ls         List all public packages",
   "",
   "Options:",
-  "  --independent, -i  Version packages independently"
+  "  --independent, -i  Version packages independently",
+  "  --canary, -c       Publish packages after every succesful merge using the sha as part of the tag"
 ], {
   alias: {
-    independent: "i"
+    independent: "i",
+    canary: "c"
   }
 });
 
@@ -36,7 +38,8 @@ if (!command) {
 }
 
 var config = init(commandName, process.cwd(), {
-  independent: cli.flags.independent
-};
+  independent: cli.flags.independent,
+  canary: cli.flags.canary
+});
 
 command(config, cli);
