@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 var commands = require("../lib/commands");
-var chalk    = require("chalk");
+var logger   = require("../lib/utils/logger");
 var meow     = require("meow");
 var init     = require("../lib/init");
 
@@ -31,8 +31,7 @@ var commandName = cli.input[0];
 var command = commands[commandName];
 
 if (!command) {
-  console.log();
-  console.log(chalk.red("  Invalid command: " + chalk.bold(commandName)));
+  logger.log("red", "Invalid command: " + commandName);
   cli.showHelp();
 }
 
