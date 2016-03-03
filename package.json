@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "lint": "./node_modules/.bin/eslint lib",
-    "ci": "npm run lint"
+    "test": "mocha",
+    "ci": "npm run lint && npm run test"
   },
   "repository": {
     "type": "git",
@@ -34,6 +35,7 @@
     "lerna": "./bin/lerna.js"
   },
   "devDependencies": {
-    "eslint": "^1.10.3"
+    "eslint": "^1.10.3",
+    "mocha": "^2.4.5"
   }
 }
