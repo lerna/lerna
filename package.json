@@ -35,7 +35,7 @@
     "lerna": "./bin/lerna.js"
   },
   "devDependencies": {
-    "eslint": "^1.10.3",
+    "eslint": "^2.3.0",
     "mocha": "^2.4.5"
   }
 }

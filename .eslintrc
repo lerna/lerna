@@ -7,7 +7,7 @@
       "avoid-escape"
     ],
     "no-var": 0,
-    "space-after-keywords": 2,
+    "keyword-spacing": 2,
     "strict": 0,
     "no-underscore-dangle": 0,
     "curly": 0,
