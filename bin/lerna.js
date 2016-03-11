@@ -38,6 +38,6 @@ if (!command) {
   cli.showHelp();
 }
 
-var config = init(commandName, process.cwd(), cli.input.slice(1), cli.flags);
+var config = init(commandName, cli.input.slice(1), cli.flags);
 
 command(config);
