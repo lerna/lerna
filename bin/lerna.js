@@ -14,6 +14,7 @@ var cli = meow([
   "  publish    Publish updated packages to npm",
   "  updated    Check which packages have changed since the last release",
   "  diff       Diff all packages or a single package since the last release",
+  "  init       Initialize a lerna repo",
   "  run        Run npm script in each package",
   "  ls         List all public packages",
   "",
@@ -37,9 +38,6 @@ if (!command) {
   cli.showHelp();
 }
 
-var config = init(commandName, process.cwd(), {
-  independent: cli.flags.independent,
-  canary: cli.flags.canary
-});
+var config = init(commandName, process.cwd(), cli.input.slice(1), cli.flags);
 
-command(config, cli);
+command(config);
