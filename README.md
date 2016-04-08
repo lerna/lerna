@@ -13,6 +13,70 @@
 
 ## About
 
+Splitting up large codebases into separate independently versioned packages is
+extremely useful for code sharing. However, splitting up a codebase across many
+separate repositories can be difficult and interruptive to your workflow.
+Making changes across repositories is messy and difficult to track, and testing
+changes across many different repositories gets complicated really fast.
+
+To solve these (and other) problems, some project use a thing called a
+**monorepo**. Projects like Babel, React, Ember, Meteor, Jest, and many others
+take all the individual packages and put them inside a single repository.
+
+Lerna is a tool for managing these types of repositories using npm and git.
+
+### What does a Lerna repo look like?
+
+There's actually very little to it. You have a file system that looks like this:
+
+```
+my-repo/
+  package.json
+  packages/
+    package-1/
+      package.json
+    package-2/
+      package.json
+```
+
+### Do what can Lerna do?
+
+The two primary commands in Lerna are `lerna bootstrap` and `lerna publish`.
+
+Bootstrap will
+
+## Usage
+
+To start, let's install Lerna from [npm](https://www.npmjs.com/).
+
+```sh
+$ npm install --global lerna
+```
+
+Now create a new repository:
+
+```sh
+$ git init my-cool-project
+$ cd my-cool-project
+```
+
+And then to turn it into a lerna repo run the following:
+
+```sh
+$ lerna init
+```
+
+> **Note:** Depending on the project you might want to run this in
+> `--independent` mode.
+
+
+
+
+
+
+
+## About
+
 While developing [Babel](https://github.com/babel/babel) I followed a
 [monorepo](https://github.com/babel/babel/blob/master/doc/design/monorepo.md) approach where the entire project was split into individual packages but everything lived in the same repo. This was great. It allowed super easy modularisation which meant the core was easier to approach and meant others could use the useful parts of Babel in their own projects.
 
