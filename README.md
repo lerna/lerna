@@ -67,3 +67,7 @@ Lerna projects operate on a single version line. The version is kept in the file
 at the root of your project. When you run `lerna publish`, if a module has been updated
 since the last time a release was made, it will be updated to the new version you're
 releasing. This means that you only publish a new version of a package when you need to.
+
+## FAQ
+
+Check out our [FAQ](docs/FAQ.md) for more.
