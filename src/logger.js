@@ -29,7 +29,9 @@ class Logger {
     }
 
     progressBar.clear();
-    console.log(message);
+    if (process.env.NODE_ENV !== "test") {
+      console.log(message);
+    }
     progressBar.restore();
   }
 

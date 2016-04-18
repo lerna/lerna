@@ -7,7 +7,7 @@
     "build": "babel src -d lib",
     "dev": "babel -w src -d lib",
     "lint": "eslint src test",
-    "test": "mocha --compilers js:babel-register",
+    "test": "mocha",
     "ci": "npm run lint && npm run test"
   },
   "repository": {

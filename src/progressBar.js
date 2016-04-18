@@ -17,6 +17,11 @@ class ProgressBarController {
       return;
     }
 
+    // Don't do any of this while testing
+    if (process.env.NODE_ENV === "test") {
+      return;
+    }
+
     this.bar = new ProgressBar(":packagename ╢:bar╟", {
       total: total,
       complete: "█",

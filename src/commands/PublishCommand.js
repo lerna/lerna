@@ -1,5 +1,6 @@
 import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
 import FileSystemUtilities from "../FileSystemUtilities";
+import PromptUtilities from "../PromptUtilities";
 import GitUtilities from "../GitUtilities";
 import NpmUtilities from "../NpmUtilities";
 import inquirer from "inquirer";
@@ -174,26 +175,25 @@ export default class PublishCommand extends Command {
     if (packageName) message += ` for ${packageName}`;
     message += ` (currently ${currentVersion})`;
 
-    inquirer.prompt([{
-      type: "list",
-      name: "version",
-      message: message,
-      default: false,
+    PromptUtilities.select(message, {
       choices: [
         { value: patch, name: `Patch (${patch})` },
         { value: minor, name: `Minor (${minor})` },
         { value: major, name: `Major (${major})` },
         { value: false, name: "Custom" }
       ]
-    }, {
-      type: "input",
-      name: "custom",
-      message: "Enter a custom version",
-      filter: semver.valid,
-      validate: version => semver.valid(version) ? true : "Must be a valid semver version",
-      when: answers => !answers.version // Only when "Custom"
-    }], answers => {
-      callback(null, answers.version || answers.custom);
+    }, choice => {
+      if (choice) {
+        callback(null, choice);
+        return;
+      }
+
+      PromptUtilities.input("Enter a custom version", {
+        filter: semver.valid,
+        validate: v => semver.valid(v) ? true : "Must be a valid semver version",
+      }, input => {
+        callback(null, input);
+      });
     });
   }
 
@@ -205,17 +205,8 @@ export default class PublishCommand extends Command {
     }).join("\n"));
     this.logger.newLine();
 
-    inquirer.prompt([{
-      type: "expand",
-      name: "confirm",
-      message: "Are you sure you want to publish the above changes?",
-      default: 2, // default to help in order to avoid clicking straight through
-      choices: [
-        { key: "y", name: "Yes", value: true },
-        { key: "n", name: "No",  value: false }
-      ]
-    }], (answers) => {
-      callback(null, answers.confirm);
+    PromptUtilities.confirm("Are you sure you want to publish the above changes?", confirm => {
+      callback(null, confirm);
     });
   }
 

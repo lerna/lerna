@@ -34,17 +34,20 @@ export default class Command {
 
     if (!FileSystemUtilities.existsSync(this.repository.packagesLocation)) {
       this.logger.error("`packages/` directory does not exist, have you run `lerna init`?");
-      this.exit(1);
+      this._complete(1);
+      return;
     }
 
     if (!FileSystemUtilities.existsSync(this.repository.packageJsonLocation)) {
       this.logger.error("`package.json` does not exist, have you run `lerna init`?");
-      this.exit(1);
+      this._complete(1);
+      return;
     }
 
     if (!this.flags.independent && !FileSystemUtilities.existsSync(this.repository.versionLocation)) {
       this.logger.error("`VERSION` does not exist, have you run `lerna init`? Or maybe you meant to run this with `--independent` or `-i`?");
-      this.exit(1);
+      this._complete(1);
+      return;
     }
 
     this.packages = PackageUtilities.getPackages(this.repository.packagesLocation);
@@ -89,7 +92,7 @@ export default class Command {
       exitHandler.writeLogs();
     }
 
-    if (!process.env.NODE_ENV !== "test") {
+    if (process.env.NODE_ENV !== "test") {
       process.exit(code);
     }
   }
