@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 
-var commands = require("../lib/commands");
-var logger   = require("../lib/utils/logger");
-var meow     = require("meow");
-var init     = require("../lib/init");
+var lerna = require("../lib/index");
+var chalk = require("chalk");
+var meow = require("meow");
 
 var cli = meow([
   "Usage",
@@ -31,13 +30,12 @@ var cli = meow([
 require("signal-exit").unload();
 
 var commandName = cli.input[0];
-var command = commands[commandName];
+var Command = lerna.__commands__[commandName];
 
-if (!command) {
-  logger.log("red", "Invalid command: " + commandName);
+if (!Command) {
+  console.log(chalk.red("Invalid lerna command: " + commandName));
   cli.showHelp();
+} else {
+  var command = new Command(cli.input.slice(1), cli.flags);
+  command.run();
 }
-
-var config = init(commandName, cli.input.slice(1), cli.flags);
-
-command(config);
