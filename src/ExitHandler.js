@@ -3,7 +3,7 @@ import logger from "./logger";
 import path from "path";
 import pad from "pad";
 
-class ExitHandler {
+export default class ExitHandler {
   constructor() {
     this.errorsSeen = {};
   }
@@ -40,24 +40,12 @@ class ExitHandler {
 
     this.errorsSeen[error.toString()] = true;
 
-    if (error.message) message.push(error.message);
-    if (error.stack) message.push(error.stack);
-    if (!message.length) message.push(error);
+    if (error) {
+      message += (error.stack || error);
+    }
 
-    message = message.join("\n").split("\n").map(function(line) {
-      return "  " + line;
-    }).join("\n");
+    message = message.split("\n").map(line => "    " + line).join("\n");
 
     return "\n" + message;
   }
-}
-
-export default function exit(code) {
-  if (!code || code === 0) {
-    process.exit(0);
-  }
-
-  const exitHandler = new ExitHandler();
-  exitHandler.writeLogs();
-  process.exit(code);
 }

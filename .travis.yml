@@ -9,6 +9,7 @@ cache:
 
 node_js:
  - "0.12"
+ - "4"
  - stable
 
 script: npm run ci

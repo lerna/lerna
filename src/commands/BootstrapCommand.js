@@ -8,22 +8,21 @@ import path from "path";
 export default class BootstrapCommand extends Command {
   initialize(callback) {
     // Nothing to do...
-    callback();
+    callback(null, true);
   }
 
-  execute() {
-    this.linkDependencies(this.flags, (err, packages) => {
+  execute(callback) {
+    this.linkDependencies(err => {
       if (err) {
-        this.logger.error("Errored while bootstrapping packages.", err);
-        this.exit(1);
+        callback(err);
       } else {
-        this.logger.success("Successfully bootstrapped " + packages.length + " packages.");
-        this.exit(0);
+        this.logger.success("Successfully bootstrapped " + this.packages.length + " packages.");
+        callback(null, true);
       }
     });
   }
 
-  linkDependencies(flags, callback) {
+  linkDependencies(callback) {
     this.progressBar.init(this.packages.length);
     this.logger.info("Linking all dependencies");
 
@@ -31,24 +30,19 @@ export default class BootstrapCommand extends Command {
       async.series([
         cb => FileSystemUtilities.mkdirp(pkg.nodeModulesLocation, cb),
         cb => this.installExternalPackages(pkg, cb),
-        cb => this.linkDependenciesForPackage(pkg, flags, cb)
+        cb => this.linkDependenciesForPackage(pkg, cb)
       ], err => {
-        this.progressBar.tick(pkg.name)
+        this.progressBar.tick(pkg.name);
         done(err);
       });
     }), 4, err => {
       this.progressBar.terminate();
-      if (err) {
-        this.logger.error("Errored while linking all dependencies", err);
-      } else {
-        this.logger.success("Successfully linked all dependencies");
-      }
       callback(err);
     });
   }
 
   linkDependenciesForPackage(pkg, callback) {
-    async.each(this.pkgs, (dependency, done) => {
+    async.each(this.packages, (dependency, done) => {
       if (!this.hasMatchingDependency(pkg, dependency)) return done();
 
       const linkSrc = dependency.location;
@@ -96,9 +90,9 @@ export default class BootstrapCommand extends Command {
   }
 
   installExternalPackages(pkg, callback) {
-    const dependencies = pkg.dependencies;
+    const allDependencies = pkg.allDependencies;
 
-    const externalPackages = Object.keys(dependencies)
+    const externalPackages = Object.keys(allDependencies)
       .filter(dependency => {
         const match = find(this.packages, pkg => {
           return pkg.name === dependency;
@@ -107,7 +101,7 @@ export default class BootstrapCommand extends Command {
         return !(match && this.hasMatchingDependency(pkg, match));
       })
       .map(dependency => {
-        return dependency + "@" + dependencies[dependency];
+        return dependency + "@" + allDependencies[dependency];
       });
 
     if (externalPackages.length) {
@@ -118,7 +112,7 @@ export default class BootstrapCommand extends Command {
   }
 
   hasMatchingDependency(pkg, dependency) {
-    const version = pkg.dependencies[dependency.name];
+    const version = pkg.allDependencies[dependency.name];
 
     if (!version) {
       return false;

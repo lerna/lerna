@@ -13,8 +13,8 @@ export default class DiffCommand extends Command {
       });
 
       if (!this.package) {
-        this.logger.error("Package '" + this.packageName + "' does not exist.");
-        this.exit(1);
+        callback(new Error("Package '" + this.packageName + "' does not exist."));
+        return;
       }
     }
 
@@ -26,10 +26,16 @@ export default class DiffCommand extends Command {
       ? GitUtilities.getLastTaggedCommit()
       : GitUtilities.getFirstCommit();
 
-    callback();
+    callback(null, true);
   }
 
-  execute() {
-    ChildProcessUtilities.spawn("git", ["diff", this.lastCommit, "--color=auto", this.filePath]);
+  execute(callback) {
+    ChildProcessUtilities.spawn("git", ["diff", this.lastCommit, "--color=auto", this.filePath], code => {
+      if (code !== 0) {
+        callback(new Error("Errored while spawning `git diff`."));
+      } else {
+        callback(null, true);
+      }
+    });
   }
 }

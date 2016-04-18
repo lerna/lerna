@@ -20,6 +20,10 @@ class Logger {
       return;
     }
 
+    if (error) {
+      message += "\n" + (error.stack || error);
+    }
+
     if (style) {
       message = style(message);
     }

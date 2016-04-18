@@ -8,8 +8,7 @@ export default class RunCommand extends Command {
     this.args = this.input.slice(1);
 
     if (!this.script) {
-      this.logger.error("You must specify which npm script to run.");
-      this.exit(1);
+      callback(new Error("You must specify which npm script to run."));
       return;
     }
 
@@ -17,22 +16,21 @@ export default class RunCommand extends Command {
       .filter(pkg => pkg.scripts && pkg.scripts[this.script]);
 
     if (!this.packagesWithScript.length) {
-      this.logger.warning(`No packages found with the npm script '${this.script}'`);
-      this.exit(1);
+      callback(new Error(`No packages found with the npm script '${this.script}'`));
       return;
     }
 
-    callback();
+    callback(null, true);
   }
 
-  execute() {
+  execute(callback) {
     this.runScriptInPackages(err => {
       if (err) {
-        this.exit(1);
+        callback(err);
       } else {
         this.logger.success(`Successfully ran npm script '${this.script}' in packages:`);
         this.logger.success(this.packagesWithScript.map(pkg => `- ${pkg.name}`).join("\n"));
-        this.exit(0);
+        callback(null, true);
       }
     });
   }

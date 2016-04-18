@@ -11,10 +11,10 @@ export default class UpdatedCommand extends Command {
     );
 
     this.updates = updatedPackagesCollector.getUpdates();
-    callback();
+    callback(null, true);
   }
 
-  execute() {
+  execute(callback) {
     const formattedUpdates = this.updates
       .map(update => `- ${update.package.name}`)
       .join("\n");
@@ -22,5 +22,6 @@ export default class UpdatedCommand extends Command {
     this.logger.newLine();
     this.logger.info(formattedUpdates);
     this.logger.newLine();
+    callback(null, true);
   }
 }

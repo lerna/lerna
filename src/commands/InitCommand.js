@@ -4,15 +4,15 @@ import Command from "../Command";
 export default class InitCommand extends Command {
   initialize(callback) {
     // Nothing to do...
-    callback();
+    callback(null, true);
   }
 
-  execute() {
+  execute(callback) {
     this.ensurePackagesDirectory();
     this.ensurePackageJSON();
-    if (!this.flags.independent) {
-      this.ensureVersion();
-    }
+    this.ensureVersion();
+    this.logger.success("Successfully created Lerna files");
+    callback(null, true);
   }
 
   ensurePackagesDirectory() {
@@ -38,10 +38,12 @@ export default class InitCommand extends Command {
   }
 
   ensureVersion() {
-    const versionLocation = this.repository.versionLocation;
-    if (!FileSystemUtilities.existsSync(versionLocation)) {
-      this.logger.info("Creating VERSION file.");
-      FileSystemUtilities.writeFileSync(versionLocation, "0.0.0");
+    if (!this.flags.independent) {
+      const versionLocation = this.repository.versionLocation;
+      if (!FileSystemUtilities.existsSync(versionLocation)) {
+        this.logger.info("Creating VERSION file.");
+        FileSystemUtilities.writeFileSync(versionLocation, "0.0.0");
+      }
     }
   }
 }

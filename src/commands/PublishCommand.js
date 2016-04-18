@@ -25,15 +25,13 @@ export default class PublishCommand extends Command {
     this.updates = updatedPackagesCollector.getUpdates();
 
     if (!this.updates.length) {
-      this.logger.warning("No updated packages to publish.");
-      this.exit(1);
+      callback(new Error("No updated packages to publish."));
       return;
     }
 
     this.getVersionsForUpdates((err, results) => {
       if (err) {
-        this.logger.error("Errored while getting versions", err);
-        this.exit(1);
+        callback(err);
         return;
       }
 
@@ -51,23 +49,22 @@ export default class PublishCommand extends Command {
 
       this.confirmVersions((err, confirmed) => {
         if (err) {
-          this.logger.error("Errored while confirming versions", err);
-          this.exit(1);
+          callback(err);
           return;
         }
 
         if (!confirmed) {
           this.logger.info("Okay bye!");
-          this.exit(1);
+          callback(null, false);
           return;
         }
 
-        callback();
+        callback(null, true);
       });
     });
   }
 
-  execute() {
+  execute(callback) {
     try {
       if (!this.flags.independent && !this.flags.canary) {
         this.updateMasterVersionFile();
@@ -76,8 +73,7 @@ export default class PublishCommand extends Command {
       this.updateUpdatedPackages();
       this.commitAndtagUpdates();
     } catch (err) {
-      this.logger.error("Errored while updating repo", err);
-      this.exit(1);
+      callback(err);
       return;
     }
 
@@ -86,8 +82,7 @@ export default class PublishCommand extends Command {
 
     this.npmPublishAsPrerelease(err => {
       if (err) {
-        this.logger.error("Errored while publishing updates as prerelease", err);
-        this.exit(1);
+        callback(err);
         return;
       }
 
@@ -99,8 +94,7 @@ export default class PublishCommand extends Command {
 
       this.npmUpdateAsLatest(err => {
         if (err) {
-          this.logger.error("Errored while publishing updates as latest", err);
-          this.exit(1);
+          callback(err);
           return;
         }
 
@@ -117,7 +111,7 @@ export default class PublishCommand extends Command {
         });
 
         this.logger.success(message);
-        this.exit(0);
+        callback(null, true);
       });
     });
   }

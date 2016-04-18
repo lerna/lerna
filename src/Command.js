@@ -1,9 +1,9 @@
 import FileSystemUtilities from "./FileSystemUtilities";
 import PackageUtilities from "./PackageUtilities";
+import ExitHandler from "./ExitHandler";
 import progressBar from "./progressBar";
 import Repository from "./Repository";
 import logger from "./logger";
-import exit from "./exit";
 
 export default class Command {
   constructor(input, flags) {
@@ -14,7 +14,6 @@ export default class Command {
     this.repository = new Repository();
     this.progressBar = progressBar;
     this.logger = logger;
-    this.exit = exit;
   }
 
   run() {
@@ -53,9 +52,46 @@ export default class Command {
   }
 
   runCommand() {
-    this.initialize(() => {
-      this.execute();
+    this._attempt("initialize", () => {
+      this._attempt("execute", () => {
+        this._complete(0);
+      });
     });
+  }
+
+  _attempt(method, callback) {
+    const methodName = `${this.constructor.name}.${method}`;
+
+    try {
+      this.logger.debug(`Attempting running ${methodName}`);
+
+      this[method]((err, completed) => {
+        if (err) {
+          this.logger.error(`Errored while running ${methodName}`, err);
+          this._complete(1);
+        } else if (!completed) {
+          this.logger.debug(`Exited early while running ${methodName}`);
+          this._complete(1);
+        } else {
+          this.logger.debug(`Successfully ran ${methodName}`);
+          callback();
+        }
+      });
+    } catch (err) {
+      this.logger.error(`Errored while running ${methodName}`, err);
+      this._complete(1);
+    }
+  }
+
+  _complete(code) {
+    if (code !== 0) {
+      const exitHandler = new ExitHandler();
+      exitHandler.writeLogs();
+    }
+
+    if (!process.env.NODE_ENV !== "test") {
+      process.exit(code);
+    }
   }
 
   initialize() {

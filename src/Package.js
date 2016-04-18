@@ -1,4 +1,5 @@
 import objectAssign from "object-assign";
+import path from "path";
 
 export default class Package {
   constructor(pkg, location) {
@@ -12,6 +13,10 @@ export default class Package {
 
   get location() {
     return this._location;
+  }
+
+  get nodeModulesLocation() {
+    return path.join(this._location, "node_modules");
   }
 
   get version() {

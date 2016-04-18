@@ -3,7 +3,6 @@ import assert from "assert";
 import progressBar from "../src/progressBar";
 import Command from "../src/Command";
 import logger from "../src/logger";
-import exit from "../src/exit";
 
 describe("Command", () => {
   describe(".input", () => {
@@ -38,13 +37,6 @@ describe("Command", () => {
     it("should be added to the instance", () => {
       const command = new Command();
       assert.equal(command.logger, logger);
-    });
-  });
-
-  describe(".exit", () => {
-    it("should be added to the instance", () => {
-      const command = new Command();
-      assert.equal(command.exit, exit);
     });
   });
 

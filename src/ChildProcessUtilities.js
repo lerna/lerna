@@ -3,7 +3,11 @@ import child from "child_process";
 export default class ChildProcessUtilities {
   static exec(command, opts, callback) {
     return child.exec(command, opts, (err, stdout, stderr) => {
-      callback(err || stderr, stdout);
+      if (err != null) {
+        callback(err || stderr);
+      } else {
+        callback(null, stdout);
+      }
     });
   }
 
@@ -13,9 +17,9 @@ export default class ChildProcessUtilities {
     }).trim();
   }
 
-  static spawn(command, args) {
+  static spawn(command, args, callback) {
     child.spawn(command, args, {
       stdio: "inherit"
-    });
+    }).on("close", callback);
   }
 }

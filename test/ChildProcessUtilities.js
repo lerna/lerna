@@ -19,8 +19,8 @@ describe("ChildProcessUtilities", () => {
   });
 
   describe(".spawn()", () => {
-    it("should spawn a command in a child process", () => {
-      ChildProcessUtilities.spawn("echo", ["foo"]);
+    it("should spawn a command in a child process", done => {
+      ChildProcessUtilities.spawn("echo", ["foo"], done);
     });
   });
 });
