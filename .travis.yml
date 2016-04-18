@@ -12,4 +12,7 @@ node_js:
  - "4"
  - stable
 
+before_script:
+  - git config user.email test@example.com
+  - git config user.name "Tester McPerson"
 script: npm run ci

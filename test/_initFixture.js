@@ -3,8 +3,6 @@ import child from "child_process";
 import path from "path";
 import cpr from "cpr";
 
-import "./_ensureGitUser";
-
 const tmpDir = path.resolve(__dirname, "../tmp");
 const originalCwd = process.cwd();
 
