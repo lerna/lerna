@@ -3,7 +3,6 @@ import FileSystemUtilities from "../FileSystemUtilities";
 import PromptUtilities from "../PromptUtilities";
 import GitUtilities from "../GitUtilities";
 import NpmUtilities from "../NpmUtilities";
-import inquirer from "inquirer";
 import Command from "../Command";
 import semver from "semver";
 import async from "async";
