@@ -50,8 +50,13 @@ export default class Command {
       return;
     }
 
-    this.packages = PackageUtilities.getPackages(this.repository.packagesLocation);
-    this.packageGraph = PackageUtilities.getPackageGraph(this.packages);
+    try {
+      this.packages = PackageUtilities.getPackages(this.repository.packagesLocation);
+      this.packageGraph = PackageUtilities.getPackageGraph(this.packages);
+    } catch (err) {
+      this.logger.error("Errored while collecting packages and package graph", err);
+      this._complete(1);
+    }
   }
 
   runCommand() {
