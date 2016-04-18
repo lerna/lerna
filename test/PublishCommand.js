@@ -88,10 +88,16 @@ describe("PublishCommand", () => {
     function complete() {
       assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
       assert.equal(fs.readFileSync(path.join(testDir, "VERSION")), "1.0.1");
+
       assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
       assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
       assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
       assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
+
+      assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
+      assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
+      assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+
       done();
     }
 

@@ -15,7 +15,7 @@ afterEach(() => {
 });
 
 after(() => {
-  // createdDirectories.map(dir => rimraf.sync(dir));
+  createdDirectories.map(dir => rimraf.sync(dir));
 });
 
 export default function initFixture(fixturePath, callback) {

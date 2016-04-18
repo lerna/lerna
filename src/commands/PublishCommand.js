@@ -254,7 +254,7 @@ export default class PublishCommand extends Command {
       const version = this.updatesVersions[depName];
 
       if (deps[depName] && version) {
-        deps[depName] = version;
+        deps[depName] = "^" + version;
       }
     });
   }
