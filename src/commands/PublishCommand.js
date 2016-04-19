@@ -214,7 +214,7 @@ export default class PublishCommand extends Command {
   }
 
   updateMasterVersionFile() {
-    FileSystemUtilities.writeFileSync(this.repository.versionLocation, this.masterVersion);
+    FileSystemUtilities.writeFileSync(this.repository.versionLocation, this.masterVersion + "\n");
     GitUtilities.addFile(this.repository.versionLocation);
   }
 
@@ -263,10 +263,12 @@ export default class PublishCommand extends Command {
   }
 
   commitAndtagUpdates() {
-    if (this.flags.independent) {
-      this.tags = this.gitCommitAndTagVersionForUpdates();
-    } else if (!this.flags.canary) {
-      this.tags = [this.gitCommitAndTagVersion(this.masterVersion)];
+    if (!this.flags.canary) {
+      if (this.flags.independent) {
+        this.tags = this.gitCommitAndTagVersionForUpdates();
+      } else {
+        this.tags = [this.gitCommitAndTagVersion(this.masterVersion)];
+      }
     }
   }
 
