@@ -2,6 +2,7 @@ import assert from "assert";
 import path from "path";
 
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
+import exitWithCode from "./_exitWithCode";
 import DiffCommand from "../src/commands/DiffCommand";
 import initFixture from "./_initFixture";
 import stub from "./_stub";
@@ -18,16 +19,16 @@ describe("DiffCommand", () => {
 
     diffCommand.runPreparations();
 
-    stub(ChildProcessUtilities, "spawn", (command, args) => {
+    stub(ChildProcessUtilities, "spawn", (command, args, callback) => {
       assert.equal(command, "git");
       assert.equal(args[0], "diff");
       assert.equal(args[1].length, 40); // commit
       assert.equal(args[2], "--color=auto");
       assert.equal(args[3], path.join(testDir, "packages"));
-      done();
+      callback(0);
     });
 
-    diffCommand.runCommand();
+    diffCommand.runCommand(exitWithCode(0, done));
   });
 
   it("should diff a specific package", done => {
@@ -35,15 +36,15 @@ describe("DiffCommand", () => {
 
     diffCommand.runPreparations();
 
-    stub(ChildProcessUtilities, "spawn", (command, args) => {
+    stub(ChildProcessUtilities, "spawn", (command, args, callback) => {
       assert.equal(command, "git");
       assert.equal(args[0], "diff");
       assert.equal(args[1].length, 40); // commit
       assert.equal(args[2], "--color=auto");
       assert.equal(args[3], path.join(testDir, "packages/package-1"));
-      done();
+      callback(0);
     });
 
-    diffCommand.runCommand();
+    diffCommand.runCommand(exitWithCode(0, done));
   });
 });

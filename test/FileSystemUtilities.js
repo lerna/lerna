@@ -17,8 +17,8 @@ describe("FileSystemUtilities", () => {
     mkdirp.sync(testDir);
   });
 
-  after(() => {
-    rimraf.sync(tmpDir)
+  afterEach(() => {
+    rimraf.sync(testDir);
   });
 
   describe(".mkdirSync()", () => {

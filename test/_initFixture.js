@@ -16,9 +16,11 @@ after(() => {
   createdDirectories.map(dir => rimraf.sync(dir));
 });
 
+let uniqueId = 0;
+
 export default function initFixture(fixturePath, callback) {
   const fixtureDir = path.resolve(__dirname, "./fixtures/" + fixturePath);
-  const testDir = path.resolve(tmpDir, "test-" + Date.now());
+  const testDir = path.resolve(tmpDir, "test-" + Date.now() + "-" + (uniqueId++));
 
   cpr(fixtureDir, testDir, {}, err => {
     if (err) return callback(err);

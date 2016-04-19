@@ -56,18 +56,19 @@ export default class Command {
     } catch (err) {
       this.logger.error("Errored while collecting packages and package graph", err);
       this._complete(1);
+      throw err;
     }
   }
 
-  runCommand() {
+  runCommand(callback) {
     this._attempt("initialize", () => {
       this._attempt("execute", () => {
-        this._complete(0);
-      });
-    });
+        this._complete(null, 0, callback);
+      }, callback);
+    }, callback);
   }
 
-  _attempt(method, callback) {
+  _attempt(method, next, callback) {
     const methodName = `${this.constructor.name}.${method}`;
 
     try {
@@ -76,25 +77,29 @@ export default class Command {
       this[method]((err, completed) => {
         if (err) {
           this.logger.error(`Errored while running ${methodName}`, err);
-          this._complete(1);
+          this._complete(err, 1, callback);
         } else if (!completed) {
           this.logger.debug(`Exited early while running ${methodName}`);
-          this._complete(1);
+          this._complete(null, 1, callback);
         } else {
           this.logger.debug(`Successfully ran ${methodName}`);
-          callback();
+          next();
         }
       });
     } catch (err) {
       this.logger.error(`Errored while running ${methodName}`, err);
-      this._complete(1);
+      this._complete(err, 1, callback);
     }
   }
 
-  _complete(code) {
+  _complete(err, code, callback) {
     if (code !== 0) {
       const exitHandler = new ExitHandler();
       exitHandler.writeLogs();
+    }
+
+    if (callback) {
+      callback(err, code);
     }
 
     if (process.env.NODE_ENV !== "test") {

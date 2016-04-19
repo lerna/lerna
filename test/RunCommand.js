@@ -1,9 +1,10 @@
 import assert from "assert";
 import path from "path";
 
+import ChildProcessUtilities from "../src/ChildProcessUtilities";
+import exitWithCode from "./_exitWithCode";
 import initFixture from "./_initFixture";
 import RunCommand from "../src/commands/RunCommand";
-import ChildProcessUtilities from "../src/ChildProcessUtilities";
 import stub from "./_stub";
 
 describe("RunCommand", () => {
@@ -24,12 +25,11 @@ describe("RunCommand", () => {
 
       if (calls === 0) assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-1") });
       if (calls === 1) assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-3") });
-      if (calls >= 1) done();
 
       calls++;
       callback();
     });
 
-    runCommand.runCommand();
+    runCommand.runCommand(exitWithCode(0, done));
   });
 });

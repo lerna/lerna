@@ -2,8 +2,9 @@ import assert from "assert";
 import path from "path";
 import child from "child_process";
 
-import initFixture from "./_initFixture";
 import UpdatedCommand from "../src/commands/UpdatedCommand";
+import exitWithCode from "./_exitWithCode";
+import initFixture from "./_initFixture";
 import logger from "../src/logger";
 import stub from "./_stub";
 
@@ -30,10 +31,9 @@ describe("UpdatedCommand", () => {
       if (calls === 1) assert.equal(message, "");
       if (calls === 2) assert.equal(message, "- package-2\n- package-3");
       if (calls === 3) assert.equal(message, "");
-      if (calls >= 3) done();
       calls++;
     });
 
-    updatedCommand.runCommand();
+    updatedCommand.runCommand(exitWithCode(0, done));
   });
 });

@@ -22,7 +22,11 @@ export default class PublishCommand extends Command {
       this.flags
     );
 
-    this.updates = updatedPackagesCollector.getUpdates();
+    try {
+      this.updates = updatedPackagesCollector.getUpdates();
+    } catch (err) {
+      throw err;
+    }
 
     if (!this.updates.length) {
       callback(new Error("No updated packages to publish."));
