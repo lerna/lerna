@@ -22,6 +22,8 @@ export default function initFixture(fixturePath, callback) {
   const fixtureDir = path.resolve(__dirname, "./fixtures/" + fixturePath);
   const testDir = path.resolve(tmpDir, "test-" + Date.now() + "-" + (uniqueId++));
 
+  createdDirectories.push(testDir);
+
   cpr(fixtureDir, testDir, {}, err => {
     if (err) return callback(err);
     process.chdir(testDir);

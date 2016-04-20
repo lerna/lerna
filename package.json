@@ -8,7 +8,7 @@
     "dev": "babel -w src -d lib",
     "lint": "eslint src test",
     "test": "mocha",
-    "ci": "npm run lint && npm run test"
+    "ci": "npm run lint && DEBUG_CALLS=true npm run test"
   },
   "repository": {
     "type": "git",
