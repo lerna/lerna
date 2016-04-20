@@ -71,7 +71,8 @@ describe("PublishCommand", () => {
           { args: ["npm dist-tag rm package-4 lerna-temp"] },
           { args: ["npm dist-tag add package-4@1.0.1 latest"] },
 
-          { args: ["git push"] },
+          { args: ["git symbolic-ref --short HEAD"], returns: "master" },
+          { args: ["git push origin master"] },
           { args: ["git push origin v1.0.1"] }
         ]],
       ]);
@@ -165,7 +166,8 @@ describe("PublishCommand", () => {
           { args: ["npm dist-tag rm package-4 lerna-temp"] },
           { args: ["npm dist-tag add package-4@1.1.0 latest"] },
 
-          { args: ["git push"] },
+          { args: ["git symbolic-ref --short HEAD"], returns: "master" },
+          { args: ["git push origin master"] },
           { args: ["git push origin package-1@1.0.1 package-2@1.1.0 package-3@2.0.0 package-4@1.1.0"] },
         ]]
       ]);
@@ -245,7 +247,8 @@ describe("PublishCommand", () => {
           { args: ["npm dist-tag rm package-4 lerna-temp"] },
           { args: ["npm dist-tag add package-4@1.0.0-canary.81e3b443 canary"] },
 
-          { args: ["git push"] },
+          { args: ["git symbolic-ref --short HEAD"], returns: "master" },
+          { args: ["git push origin master"] },
           { args: ["git push origin v1.0.1"] }
         ]]
       ]);
@@ -332,7 +335,8 @@ describe("PublishCommand", () => {
           { args: ["npm dist-tag rm package-4 lerna-temp"] },
           { args: ["npm dist-tag add package-4@4.0.0-canary.81e3b443 canary"] },
 
-          { args: ["git push"] },
+          { args: ["git symbolic-ref --short HEAD"], returns: "master" },
+          { args: ["git push origin master"] },
           { args: ["git push origin v1.0.1"] }
         ]]
       ]);
