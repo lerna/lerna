@@ -1,6 +1,7 @@
 import FileSystemUtilities from "../FileSystemUtilities";
 import NpmUtilities from "../NpmUtilities";
 import Command from "../Command";
+import semver from "semver";
 import async from "async";
 import find from "lodash.find";
 import path from "path";
@@ -43,7 +44,7 @@ export default class BootstrapCommand extends Command {
 
   linkDependenciesForPackage(pkg, callback) {
     async.each(this.packages, (dependency, done) => {
-      if (!this.hasMatchingDependency(pkg, dependency)) return done();
+      if (!this.hasMatchingDependency(pkg, dependency, true)) return done();
 
       const linkSrc = dependency.location;
       const linkDest = path.join(pkg.nodeModulesLocation, dependency.name);
@@ -111,17 +112,30 @@ export default class BootstrapCommand extends Command {
     }
   }
 
-  hasMatchingDependency(pkg, dependency) {
-    const version = pkg.allDependencies[dependency.name];
+  hasMatchingDependency(pkg, dependency, showWarning = false) {
+    const expectedVersion = pkg.allDependencies[dependency.name];
+    const actualVersion = dependency.version;
 
-    if (!version) {
+    if (!expectedVersion) {
       return false;
     }
 
-    if (version[0] !== "^" || version[1] !== dependency.version[0]) {
-      return false;
+    if (this.isCompatableVersion(actualVersion, expectedVersion)) {
+      return true;
     }
 
-    return true;
+    if (showWarning) {
+      this.logger.warning(
+        `Version mismatch inside "${pkg.name}". ` +
+        `Depends on "${dependency.name}@${actualVersion}" ` +
+        `instead of "${dependency.name}@${expectedVersion}".`
+      );
+    }
+
+    return false;
+  }
+
+  isCompatableVersion(actual, expected) {
+    return semver.satisfies(actual, expected);
   }
 }
