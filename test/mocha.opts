@@ -1,0 +1,1 @@
+--compilers js:babel-register --require=./test/_env.js
