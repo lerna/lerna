@@ -40,7 +40,7 @@ export default class GitUtilities {
 
   @logger.logifySync
   static pushWithTags(tags) {
-    ChildProcessUtilities.execSync("git push");
+    ChildProcessUtilities.execSync("git push origin " + GitUtilities.getCurrentBranch());
     ChildProcessUtilities.execSync("git push origin " + tags.join(" "));
   }
 
@@ -67,5 +67,10 @@ export default class GitUtilities {
   @logger.logifySync
   static checkoutChanges(changes) {
     ChildProcessUtilities.execSync("git checkout -- " + changes);
+  }
+
+  @logger.logifySync
+  static getCurrentBranch() {
+    return ChildProcessUtilities.execSync("git symbolic-ref --short HEAD");
   }
 }
