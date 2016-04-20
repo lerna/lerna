@@ -75,7 +75,9 @@ export default class PublishCommand extends Command {
       }
 
       this.updateUpdatedPackages();
-      this.commitAndtagUpdates();
+      if (!this.flags.skipGit) {
+        this.commitAndTagUpdates();
+      }
     } catch (err) {
       callback(err);
       return;
@@ -102,7 +104,7 @@ export default class PublishCommand extends Command {
           return;
         }
 
-        if (!this.flags.canary) {
+        if (!(this.flags.canary || this.flags.skipGit)) {
           this.logger.info("Pushing tags to git...");
           this.logger.newLine();
           GitUtilities.pushWithTags(this.tags);
@@ -215,7 +217,9 @@ export default class PublishCommand extends Command {
 
   updateMasterVersionFile() {
     FileSystemUtilities.writeFileSync(this.repository.versionLocation, this.masterVersion + "\n");
-    GitUtilities.addFile(this.repository.versionLocation);
+    if (!this.flags.skipGit) {
+      GitUtilities.addFile(this.repository.versionLocation);
+    }
   }
 
   updateUpdatedPackages() {
@@ -241,7 +245,7 @@ export default class PublishCommand extends Command {
       changedFiles.push(packageJsonLocation);
     });
 
-    if (!this.flags.canary) {
+    if (!(this.flags.canary || this.flags.skipGit)) {
       changedFiles.forEach(GitUtilities.addFile);
     }
   }
@@ -262,7 +266,7 @@ export default class PublishCommand extends Command {
     });
   }
 
-  commitAndtagUpdates() {
+  commitAndTagUpdates() {
     if (!this.flags.canary) {
       if (this.flags.independent) {
         this.tags = this.gitCommitAndTagVersionForUpdates();

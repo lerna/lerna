@@ -19,7 +19,8 @@ var cli = meow([
   "",
   "Options:",
   "  --independent, -i  Version packages independently",
-  "  --canary, -c       Publish packages after every successful merge using the sha as part of the tag"
+  "  --canary, -c       Publish packages after every successful merge using the sha as part of the tag",
+  "  --skip-git         Skip commiting, tagging, and pushing git changes (only affects publish)"
 ], {
   alias: {
     independent: "i",
