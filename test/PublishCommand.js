@@ -166,7 +166,7 @@ describe("PublishCommand", () => {
           { args: ["npm dist-tag rm package-4 lerna-temp"] },
           { args: ["npm dist-tag add package-4@1.1.0 latest"] },
 
-          { args: ["git symbolic-ref --short HEAD"], returns: "master", returns: "master" },
+          { args: ["git symbolic-ref --short HEAD"], returns: "master" },
           { args: ["git push origin master"] },
           { args: ["git push origin package-1@1.0.1 package-2@1.1.0 package-3@2.0.0 package-4@1.1.0"] },
         ]]
