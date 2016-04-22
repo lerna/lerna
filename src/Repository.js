@@ -8,6 +8,9 @@ export default class Repository {
 
     this.lernaJsonLocation = path.join(this.rootPath, "lerna.json");
     this.packageJsonLocation = path.join(this.rootPath, "package.json");
+    this.packagesLocation = path.join(this.rootPath, "packages");
+
+    // Legacy
     this.versionLocation = path.join(this.rootPath, "VERSION");
 
     if (FileSystemUtilities.existsSync(this.lernaJsonLocation)) {
@@ -17,11 +20,17 @@ export default class Repository {
     if (FileSystemUtilities.existsSync(this.packageJsonLocation)) {
       this.packageJson = JSON.parse(FileSystemUtilities.readFileSync(this.packageJsonLocation));
     }
-
-    this.packagesLocation = path.join(this.rootPath, "packages");
   }
 
-  getVersion() {
-    return FileSystemUtilities.readFileSync(this.versionLocation).toString().trim();
+  get lernaVersion() {
+    return this.lernaJson.lerna;
+  }
+
+  get version() {
+    return this.lernaJson.version;
+  }
+
+  isIndependent() {
+    return this.version === "independent";
   }
 }

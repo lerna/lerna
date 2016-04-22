@@ -24,7 +24,9 @@ export default function initFixture(fixturePath, callback) {
 
   createdDirectories.push(testDir);
 
-  cpr(fixtureDir, testDir, {}, err => {
+  cpr(fixtureDir, testDir, {
+    confirm: true
+  }, err => {
     if (err) return callback(err);
     process.chdir(testDir);
     child.execSync("git init . && git add -A && git commit -m 'Init commit'");

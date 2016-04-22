@@ -27,6 +27,7 @@ describe("PublishCommand", () => {
     it("should publish the changed packages", done => {
       const publishCommand = new PublishCommand([], {});
 
+      publishCommand.runValidations();
       publishCommand.runPreparations();
 
       assertStubbedCalls([
@@ -40,7 +41,7 @@ describe("PublishCommand", () => {
           { args: ["Are you sure you want to publish the above changes?"], returns: true }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git add " + path.join(testDir, "VERSION")] },
+          { args: ["git add " + path.join(testDir, "lerna.json")] },
           { args: ["git add " + path.join(testDir, "packages/package-1/package.json")] },
           { args: ["git add " + path.join(testDir, "packages/package-2/package.json")] },
           { args: ["git add " + path.join(testDir, "packages/package-3/package.json")] },
@@ -82,7 +83,7 @@ describe("PublishCommand", () => {
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(fs.readFileSync(path.join(testDir, "VERSION")).toString(), "1.0.1\n");
+          assert.equal(fs.readFileSync(path.join(testDir, "lerna.json")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
 
           assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
           assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
@@ -109,7 +110,7 @@ describe("PublishCommand", () => {
     let testDir;
 
     beforeEach(done => {
-      testDir = initFixture("PublishCommand/normal", done);
+      testDir = initFixture("PublishCommand/independent", done);
     });
 
     it("should publish the changed packages in independent mode", done => {
@@ -117,6 +118,7 @@ describe("PublishCommand", () => {
         independent: true
       });
 
+      publishCommand.runValidations();
       publishCommand.runPreparations();
 
       assertStubbedCalls([
@@ -125,9 +127,9 @@ describe("PublishCommand", () => {
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
           { args: ["Select a new version for package-1 (currently 1.0.0)"], returns: "1.0.1" },
-          { args: ["Select a new version for package-2 (currently 1.0.0)"], returns: "1.1.0" },
-          { args: ["Select a new version for package-3 (currently 1.0.0)"], returns: "2.0.0" },
-          { args: ["Select a new version for package-4 (currently 1.0.0)"], returns: "1.1.0" }
+          { args: ["Select a new version for package-2 (currently 2.0.0)"], returns: "1.1.0" },
+          { args: ["Select a new version for package-3 (currently 3.0.0)"], returns: "2.0.0" },
+          { args: ["Select a new version for package-4 (currently 4.0.0)"], returns: "1.1.0" }
         ]],
         [PromptUtilities, "confirm", { valueCallback: true }, [
           { args: ["Are you sure you want to publish the above changes?"], returns: true }
@@ -211,6 +213,7 @@ describe("PublishCommand", () => {
         canary: true
       });
 
+      publishCommand.runValidations();
       publishCommand.runPreparations();
 
       assertStubbedCalls([
@@ -258,7 +261,7 @@ describe("PublishCommand", () => {
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(fs.readFileSync(path.join(testDir, "VERSION")).toString(), "1.0.0\n");
+          assert.equal(fs.readFileSync(path.join(testDir, "lerna.json")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.0\"\n}\n");
 
           // The following wouldn't be the actual results of a canary release
           // because `git checkout --` would have removed the file changes.
@@ -299,6 +302,7 @@ describe("PublishCommand", () => {
         canary: true
       });
 
+      publishCommand.runValidations();
       publishCommand.runPreparations();
 
       assertStubbedCalls([
@@ -384,6 +388,7 @@ describe("PublishCommand", () => {
         skipGit: true
       });
 
+      publishCommand.runValidations();
       publishCommand.runPreparations();
 
       assertStubbedCalls([
@@ -426,7 +431,7 @@ describe("PublishCommand", () => {
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(fs.readFileSync(path.join(testDir, "VERSION")).toString(), "1.0.1\n");
+          assert.equal(fs.readFileSync(path.join(testDir, "lerna.json")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
 
           assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
           assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");

@@ -42,8 +42,8 @@ export default function assertStubbedCalls(definitions) {
         }
       } catch (err) {
         throw new Error(
-          `Call ${currentCount} was expected to be: ${stringifyCall(current.object, current.method, actualArgs)}, ` +
-          `but was actually: ${stringifyCall(object, method, args)}.`
+          `Call ${currentCount} was expected to be: ${stringifyCall(current.object, current.method, args)}, ` +
+          `but was actually: ${stringifyCall(object, method, actualArgs)}.`
         );
       }
 

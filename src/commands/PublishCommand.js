@@ -10,8 +10,8 @@ import path from "path";
 
 export default class PublishCommand extends Command {
   initialize(callback) {
-    if (!this.flags.independent) {
-      this.globalVersion = this.repository.getVersion();
+    if (!this.repository.isIndependent()) {
+      this.globalVersion = this.repository.version;
       this.logger.info("Current version: " + this.globalVersion);
     }
 
@@ -70,8 +70,8 @@ export default class PublishCommand extends Command {
 
   execute(callback) {
     try {
-      if (!this.flags.independent && !this.flags.canary) {
-        this.updateMasterVersionFile();
+      if (!this.repository.isIndependent() && !this.flags.canary) {
+        this.updateVersionInLernaJson();
       }
 
       this.updateUpdatedPackages();
@@ -124,12 +124,12 @@ export default class PublishCommand extends Command {
 
   getVersionsForUpdates(callback) {
     // Non-Independent Canary Mode
-    if (!this.flags.independent && this.flags.canary) {
+    if (!this.repository.isIndependent() && this.flags.canary) {
       const version = this.globalVersion + this.getCanaryVersionSuffix();
       callback(null, { version });
 
     // Non-Independent Non-Canary Mode
-    } else if (!this.flags.independent) {
+    } else if (!this.repository.isIndependent()) {
       this.promptVersion(null, this.globalVersion, (err, version) => {
         if (err) {
           callback(err);
@@ -215,10 +215,11 @@ export default class PublishCommand extends Command {
     });
   }
 
-  updateMasterVersionFile() {
-    FileSystemUtilities.writeFileSync(this.repository.versionLocation, this.masterVersion + "\n");
+  updateVersionInLernaJson() {
+    this.repository.lernaJson.version = this.masterVersion;
+    FileSystemUtilities.writeFileSync(this.repository.lernaJsonLocation, JSON.stringify(this.repository.lernaJson, null, "  "));
     if (!this.flags.skipGit) {
-      GitUtilities.addFile(this.repository.versionLocation);
+      GitUtilities.addFile(this.repository.lernaJsonLocation);
     }
   }
 
@@ -268,7 +269,7 @@ export default class PublishCommand extends Command {
 
   commitAndTagUpdates() {
     if (!this.flags.canary) {
-      if (this.flags.independent) {
+      if (this.repository.isIndependent()) {
         this.tags = this.gitCommitAndTagVersionForUpdates();
       } else {
         this.tags = [this.gitCommitAndTagVersion(this.masterVersion)];

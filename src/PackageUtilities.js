@@ -6,7 +6,7 @@ import path from "path";
 export default class PackageUtilities {
   static getGlobalVersion(versionPath) {
     if (FileSystemUtilities.existsSync(versionPath)) {
-      return FileSystemUtilities.readFileSync(versionPath, "utf8").trim();
+      return FileSystemUtilities.readFileSync(versionPath);
     }
   }
 

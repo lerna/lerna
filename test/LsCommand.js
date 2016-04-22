@@ -14,6 +14,7 @@ describe("LsCommand", () => {
   it("should list changes", done => {
     const lsCommand = new LsCommand([], {});
 
+    lsCommand.runValidations();
     lsCommand.runPreparations();
 
     stub(logger, "info", message => {
