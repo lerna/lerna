@@ -240,7 +240,7 @@ export default class PublishCommand extends Command {
       this.updatePackageDepsObject(pkg, "peerDependencies");
 
       // write new package
-      FileSystemUtilities.writeFileSync(packageJsonLocation, pkg.toString());
+      FileSystemUtilities.writeFileSync(packageJsonLocation, pkg.toJsonString());
 
       // push to be git committed
       changedFiles.push(packageJsonLocation);
