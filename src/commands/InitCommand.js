@@ -3,9 +3,9 @@ import Command from "../Command";
 import objectAssignSorted from "object-assign-sorted";
 
 export default class InitCommand extends Command {
-  runPreparations() {
-    // don't do any of this.
-  }
+  // don't do any of this.
+  runValidations() {}
+  runPreparations() {}
 
   initialize(callback) {
     // Nothing to do...

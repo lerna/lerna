@@ -23,11 +23,11 @@ export default class Repository {
   }
 
   get lernaVersion() {
-    return this.lernaJson.lerna;
+    return this.lernaJson && this.lernaJson.lerna;
   }
 
   get version() {
-    return this.lernaJson.version;
+    return this.lernaJson && this.lernaJson.version;
   }
 
   isIndependent() {

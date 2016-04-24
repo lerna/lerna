@@ -10,6 +10,10 @@ import path from "path";
 
 export default class PublishCommand extends Command {
   initialize(callback) {
+    if (this.flags.canary) {
+      this.logger.info("Publishing canary build");
+    }
+
     if (!this.repository.isIndependent()) {
       this.globalVersion = this.repository.version;
       this.logger.info("Current version: " + this.globalVersion);

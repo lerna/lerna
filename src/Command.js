@@ -19,16 +19,11 @@ export default class Command {
   run() {
     this.logger.info("Lerna v" + this.lernaVersion);
 
-    this.runValidations();
-
     if (this.repository.isIndependent()) {
       this.logger.info("Independent Versioning Mode");
     }
 
-    if (this.flags.canary) {
-      this.logger.info("Publishing canary build");
-    }
-
+    this.runValidations();
     this.runPreparations();
     this.runCommand();
   }
