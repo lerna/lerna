@@ -27,21 +27,26 @@ export default class FileSystemUtilities {
 
   @logger.logifyAsync
   static writeFile(filePath, fileContents, callback) {
-    fs.writeFile(filePath, fileContents, callback);
+    fs.writeFile(filePath, fileContents + "\n", callback);
   }
 
   @logger.logifySync
   static writeFileSync(filePath, fileContents) {
-    fs.writeFileSync(filePath, fileContents);
+    fs.writeFileSync(filePath, fileContents + "\n");
   }
 
   @logger.logifySync
   static readFileSync(filePath) {
-    return fs.readFileSync(filePath);
+    return fs.readFileSync(filePath).toString().trim();
   }
 
   @logger.logifyAsync
   static rimraf(filePath, callback) {
     rimraf(filePath, callback);
+  }
+
+  @logger.logifySync
+  static unlinkSync(filePath) {
+    fs.unlink(filePath);
   }
 }

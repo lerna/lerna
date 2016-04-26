@@ -20,6 +20,7 @@ describe("BootstrapCommand", () => {
   it("should bootstrap files", done => {
     const bootstrapCommand = new BootstrapCommand([], {});
 
+    bootstrapCommand.runValidations();
     bootstrapCommand.runPreparations();
 
     assertStubbedCalls([
@@ -32,7 +33,7 @@ describe("BootstrapCommand", () => {
       if (err) return done(err);
 
       try {
-        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
 
         assert.ok(pathExists.sync(path.join(testDir, "packages/package-1/node_modules")));
         assert.ok(pathExists.sync(path.join(testDir, "packages/package-2/node_modules")));
@@ -50,11 +51,11 @@ describe("BootstrapCommand", () => {
         // Should not exist because mis-matched version
         assert.ok(!pathExists.sync(path.join(testDir, "packages/package-4/node_modules/package-1")));
 
-        assert.equal(fs.readFileSync(path.join(testDir, "packages/package-2/node_modules/package-1/index.js")).toString(), "module.exports = require(\"" + path.join(testDir, "packages/package-1") + "\");");
-        assert.equal(fs.readFileSync(path.join(testDir, "packages/package-2/node_modules/package-1/package.json")).toString(), "{\n  \"name\": \"package-1\",\n  \"version\": \"1.0.0\"\n}");
+        assert.equal(fs.readFileSync(path.join(testDir, "packages/package-2/node_modules/package-1/index.js")).toString(), "module.exports = require(\"" + path.join(testDir, "packages/package-1") + "\");\n");
+        assert.equal(fs.readFileSync(path.join(testDir, "packages/package-2/node_modules/package-1/package.json")).toString(), "{\n  \"name\": \"package-1\",\n  \"version\": \"1.0.0\"\n}\n");
 
-        assert.equal(fs.readFileSync(path.join(testDir, "packages/package-3/node_modules/package-2/index.js")).toString(), "module.exports = require(\"" + path.join(testDir, "packages/package-2") + "\");");
-        assert.equal(fs.readFileSync(path.join(testDir, "packages/package-3/node_modules/package-2/package.json")).toString(), "{\n  \"name\": \"package-2\",\n  \"version\": \"1.0.0\"\n}");
+        assert.equal(fs.readFileSync(path.join(testDir, "packages/package-3/node_modules/package-2/index.js")).toString(), "module.exports = require(\"" + path.join(testDir, "packages/package-2") + "\");\n");
+        assert.equal(fs.readFileSync(path.join(testDir, "packages/package-3/node_modules/package-2/package.json")).toString(), "{\n  \"name\": \"package-2\",\n  \"version\": \"1.0.0\"\n}\n");
 
         done();
       } catch (err) {

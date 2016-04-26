@@ -17,6 +17,7 @@ describe("RunCommand", () => {
   it("should run a command", done => {
     const runCommand = new RunCommand(["my-script"], {});
 
+    runCommand.runValidations();
     runCommand.runPreparations();
 
     let calls = 0;

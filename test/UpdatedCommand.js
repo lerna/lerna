@@ -23,6 +23,7 @@ describe("UpdatedCommand", () => {
     child.execSync("git add -A");
     child.execSync("git commit -m 'Commit'");
 
+    updatedCommand.runValidations();
     updatedCommand.runPreparations();
 
     let calls = 0;

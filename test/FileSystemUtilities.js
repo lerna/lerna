@@ -61,7 +61,7 @@ describe("FileSystemUtilities", () => {
       const filePath = path.join(testDir, "writeFile-test");
       FileSystemUtilities.writeFile(filePath, "contents", err => {
         assert.ok(pathExists.sync(filePath));
-        assert.equal(fs.readFileSync(filePath), "contents");
+        assert.equal(fs.readFileSync(filePath).toString(), "contents\n");
         done(err);
       });
     });
@@ -71,14 +71,14 @@ describe("FileSystemUtilities", () => {
     it("should write a file synchronously", () => {
       const filePath = path.join(testDir, "writeFileSync-test");
       FileSystemUtilities.writeFileSync(filePath, "contents");
-      assert.equal(fs.readFileSync(filePath), "contents");
+      assert.equal(fs.readFileSync(filePath).toString(), "contents\n");
     });
   });
 
   describe(".readFileSync()", () => {
     it("should read a file synchronously", () => {
       const filePath = path.join(testDir, "readFileSync-test");
-      fs.writeFileSync(filePath, "contents");
+      fs.writeFileSync(filePath, "contents\n");
       assert.equal(FileSystemUtilities.readFileSync(filePath), "contents");
     });
   });

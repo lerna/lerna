@@ -17,6 +17,7 @@ describe("DiffCommand", () => {
   it("should diff everything", done => {
     const diffCommand = new DiffCommand([], {});
 
+    diffCommand.runValidations();
     diffCommand.runPreparations();
 
     stub(ChildProcessUtilities, "spawn", (command, args, callback) => {
@@ -34,6 +35,7 @@ describe("DiffCommand", () => {
   it("should diff a specific package", done => {
     const diffCommand = new DiffCommand(["package-1"], {});
 
+    diffCommand.runValidations();
     diffCommand.runPreparations();
 
     stub(ChildProcessUtilities, "spawn", (command, args, callback) => {
