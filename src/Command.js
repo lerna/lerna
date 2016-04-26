@@ -48,7 +48,11 @@ export default class Command {
     }
 
     if (this.flags.independent && !this.repository.isIndependent()) {
-      this.logger.warning("You ran lerna with `--independent` or `-i`, but the repository is not set to independent mode");
+      this.logger.warning(
+        "You ran lerna with `--independent` or `-i`, but the repository is not set to independent mode. " +
+        "To use independent mode you need to set your `lerna.json` \"version\" to \"independent\". " +
+        "Then you won't need to pass the `--independent` or `-i` flags."
+      );
       this._complete(null, 1);
       return;
     }
