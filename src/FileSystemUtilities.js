@@ -4,6 +4,12 @@ import mkdirp from "mkdirp";
 import rimraf from "rimraf";
 import fs from "fs";
 
+var ENDS_WITH_NEW_LINE = /\n$/;
+
+function ensureEndsWithNewLine(string) {
+  return ENDS_WITH_NEW_LINE.test(string) ? string : string + "\n";
+}
+
 export default class FileSystemUtilities {
   @logger.logifySync
   static mkdirSync(filePath) {
@@ -27,12 +33,12 @@ export default class FileSystemUtilities {
 
   @logger.logifyAsync
   static writeFile(filePath, fileContents, callback) {
-    fs.writeFile(filePath, fileContents + "\n", callback);
+    fs.writeFile(filePath, ensureEndsWithNewLine(fileContents), callback);
   }
 
   @logger.logifySync
   static writeFileSync(filePath, fileContents) {
-    fs.writeFileSync(filePath, fileContents + "\n");
+    fs.writeFileSync(filePath, ensureEndsWithNewLine(fileContents));
   }
 
   @logger.logifySync
