@@ -10,10 +10,9 @@ class Update {
 }
 
 export default class UpdatedPackagesCollector {
-  constructor(packages, packageGraph, forceVersion, flags) {
+  constructor(packages, packageGraph, flags) {
     this.packages = packages;
     this.packageGraph = packageGraph;
-    this.forceVersion = (forceVersion || "").split(",");
     this.flags = flags;
   }
 
@@ -57,9 +56,11 @@ export default class UpdatedPackagesCollector {
         return true;
       }
 
-      if (this.forceVersion.indexOf("*") > -1) {
+      var forceVersion = (this.flags.forceVersion || "").split(",");
+
+      if (forceVersion.indexOf("*") > -1) {
         return true;
-      } else if (this.forceVersion.indexOf(pkg.name) > -1) {
+      } else if (forceVersion.indexOf(pkg.name) > -1) {
         return true;
       } else {
         return !!GitUtilities.diffSinceIn(commits, pkg.location);
