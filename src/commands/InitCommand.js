@@ -33,7 +33,7 @@ export default class InitCommand extends Command {
     let {packageJsonLocation, packageJson} = this.repository;
 
     if (!packageJson) packageJson = {};
-    if (!packageJson.private) packageJson.private = true;
+    // if (!packageJson.private) packageJson.private = true;
     if (!packageJson.dependencies) packageJson.dependencies = {};
 
     objectAssignSorted(packageJson.dependencies, {
