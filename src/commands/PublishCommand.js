@@ -375,8 +375,8 @@ export default class PublishCommand extends Command {
             NpmUtilities.removeDistTag(pkg.name, "lerna-temp");
           }
 
-          if (process.env.NPM_DIST_TAG) {
-            NpmUtilities.addDistTag(pkg.name, this.updatesVersions[pkg.name], process.env.NPM_DIST_TAG);
+          if (this.flags.npmTag) {
+            NpmUtilities.addDistTag(pkg.name, this.updatesVersions[pkg.name], this.flags.npmTag);
           } else if (this.flags.canary) {
             NpmUtilities.addDistTag(pkg.name, pkg.version, "canary");
           } else {

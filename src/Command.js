@@ -75,6 +75,12 @@ export default class Command {
       this._complete(null, 1);
       return;
     }
+
+    if (process.env.NPM_DIST_TAG !== undefined) {
+      this.logger.warning("`NPM_DIST_TAG=[tagname] lerna publish` is deprecated, please use `lerna publish --tag [tagname]` instead.");
+      this._complete(null, 1);
+      return;
+    }
   }
 
   runPreparations() {
