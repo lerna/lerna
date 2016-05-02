@@ -83,7 +83,7 @@ export default class Command {
     }
 
     if (process.env.FORCE_VERSION !== undefined) {
-      this.logger.warning("`FORCE_VERSION=[package/*] lerna updated/publish` is deprecated, please use `lerna updated/publish --force-version [package/*]` instead.");
+      this.logger.warning("`FORCE_VERSION=[package/*] lerna updated/publish` is deprecated, please use `lerna updated/publish --force-publish [package/*]` instead.");
       this._complete(null, 1);
       return;
     }
