@@ -1,7 +1,10 @@
+import PackageUtilities from "./PackageUtilities";
 import GitUtilities from "./GitUtilities";
 import progressBar from "./progressBar";
+import minimatch from "minimatch";
 import logger from "./logger";
 import find from "lodash.find";
+import path from "path";
 
 class Update {
   constructor(pkg) {
@@ -10,10 +13,11 @@ class Update {
 }
 
 export default class UpdatedPackagesCollector {
-  constructor(packages, packageGraph, flags) {
+  constructor(packages, packageGraph, flags, publishConfig) {
     this.packages = packages;
     this.packageGraph = packageGraph;
     this.flags = flags;
+    this.publishConfig = publishConfig;
   }
 
   getUpdates() {
@@ -63,7 +67,7 @@ export default class UpdatedPackagesCollector {
       } else if (forceVersion.indexOf(pkg.name) > -1) {
         return true;
       } else {
-        return !!GitUtilities.diffSinceIn(commits, pkg.location);
+        return this.hasDiffSinceThatIsntIgnored(pkg, commits);
       }
     }).forEach(pkg => {
       updatedPackages[pkg.name] = pkg;
@@ -112,5 +116,28 @@ export default class UpdatedPackagesCollector {
     // if it's a merge commit, it will return all the commits that were part of the merge
     // ex: If `ab7533e` had 2 commits, ab7533e^..ab7533e would contain 2 commits + the merge commit
     return sha.slice(0, 8) + "^.." + sha.slice(0, 8);
+  }
+
+  hasDiffSinceThatIsntIgnored(pkg, commits) {
+    var folder = PackageUtilities.getPackagePath(PackageUtilities.getPackagesPath(""), pkg.name);
+    var diff = GitUtilities.diffSinceIn(commits, pkg.location);
+
+    if (diff === "") {
+      return false;
+    }
+
+    var changedFiles = diff.split("\n").map(file => {
+      return file.replace(folder + path.sep, "");
+    });
+
+    if (this.publishConfig.ignore) {
+      changedFiles = changedFiles.filter(file => {
+        return !find(this.publishConfig.ignore, pattern => {
+          return minimatch(file, pattern);
+        });
+      });
+    }
+
+    return !!changedFiles.length;
   }
 }

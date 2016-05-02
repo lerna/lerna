@@ -30,6 +30,10 @@ export default class Repository {
     return this.lernaJson && this.lernaJson.version;
   }
 
+  get publishConfig() {
+    return this.lernaJson && this.lernaJson.publishConfig || {};
+  }
+
   isIndependent() {
     return this.version === "independent";
   }
