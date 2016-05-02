@@ -1,6 +1,7 @@
 import assert from "assert";
-import path from "path";
 import child from "child_process";
+import path from "path";
+import fs from "fs";
 
 import UpdatedCommand from "../src/commands/UpdatedCommand";
 import exitWithCode from "./_exitWithCode";
@@ -81,6 +82,37 @@ describe("UpdatedCommand", () => {
       if (calls === 0) assert.equal(message, "Checking for updated packages...");
       if (calls === 1) assert.equal(message, "");
       if (calls === 2) assert.equal(message, "- package-2\n- package-3\n- package-4");
+      if (calls === 3) assert.equal(message, "");
+      calls++;
+    });
+
+    updatedCommand.runCommand(exitWithCode(0, done));
+  });
+
+  it("should list changes without ignored files", done => {
+    const lernaJsonLocation = path.join(testDir, "lerna.json");
+    const lernaJson = JSON.parse(fs.readFileSync(lernaJsonLocation));
+    lernaJson.publishConfig = {
+      ignore: ["ignored-file"]
+    };
+    fs.writeFileSync(lernaJsonLocation, JSON.stringify(lernaJson, null, 2));
+
+    const updatedCommand = new UpdatedCommand([], {});
+
+    child.execSync("git tag v1.0.0");
+    child.execSync("touch " + path.join(testDir, "packages/package-2/ignored-file"));
+    child.execSync("touch " + path.join(testDir, "packages/package-3/random-file"));
+    child.execSync("git add -A");
+    child.execSync("git commit -m 'Commit'");
+
+    updatedCommand.runValidations();
+    updatedCommand.runPreparations();
+
+    let calls = 0;
+    stub(logger, "info", message => {
+      if (calls === 0) assert.equal(message, "Checking for updated packages...");
+      if (calls === 1) assert.equal(message, "");
+      if (calls === 2) assert.equal(message, "- package-3");
       if (calls === 3) assert.equal(message, "");
       calls++;
     });
