@@ -17,12 +17,12 @@ describe("UpdatedCommand", () => {
   });
 
   it("should list changes", done => {
-    const updatedCommand = new UpdatedCommand([], {});
-
     child.execSync("git tag v1.0.0");
     child.execSync("touch " + path.join(testDir, "packages/package-2/random-file"));
     child.execSync("git add -A");
     child.execSync("git commit -m 'Commit'");
+
+    const updatedCommand = new UpdatedCommand([], {});
 
     updatedCommand.runValidations();
     updatedCommand.runPreparations();
@@ -40,14 +40,14 @@ describe("UpdatedCommand", () => {
   });
 
   it("should list changes with --force-version *", done => {
-    const updatedCommand = new UpdatedCommand([], {
-      forceVersion: "*"
-    });
-
     child.execSync("git tag v1.0.0");
     child.execSync("touch " + path.join(testDir, "packages/package-2/random-file"));
     child.execSync("git add -A");
     child.execSync("git commit -m 'Commit'");
+
+    const updatedCommand = new UpdatedCommand([], {
+      forceVersion: "*"
+    });
 
     updatedCommand.runValidations();
     updatedCommand.runPreparations();
@@ -65,14 +65,14 @@ describe("UpdatedCommand", () => {
   });
 
   it("should list changes with --force-version [package,package]", done => {
-    const updatedCommand = new UpdatedCommand([], {
-      forceVersion: "package-2,package-4"
-    });
-
     child.execSync("git tag v1.0.0");
     child.execSync("touch " + path.join(testDir, "packages/package-3/random-file"));
     child.execSync("git add -A");
     child.execSync("git commit -m 'Commit'");
+
+    const updatedCommand = new UpdatedCommand([], {
+      forceVersion: "package-2,package-4"
+    });
 
     updatedCommand.runValidations();
     updatedCommand.runPreparations();
@@ -97,13 +97,13 @@ describe("UpdatedCommand", () => {
     };
     fs.writeFileSync(lernaJsonLocation, JSON.stringify(lernaJson, null, 2));
 
-    const updatedCommand = new UpdatedCommand([], {});
-
     child.execSync("git tag v1.0.0");
     child.execSync("touch " + path.join(testDir, "packages/package-2/ignored-file"));
     child.execSync("touch " + path.join(testDir, "packages/package-3/random-file"));
     child.execSync("git add -A");
     child.execSync("git commit -m 'Commit'");
+
+    const updatedCommand = new UpdatedCommand([], {});
 
     updatedCommand.runValidations();
     updatedCommand.runPreparations();
