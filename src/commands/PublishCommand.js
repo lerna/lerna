@@ -22,7 +22,6 @@ export default class PublishCommand extends Command {
     const updatedPackagesCollector = new UpdatedPackagesCollector(
       this.packages,
       this.packageGraph,
-      process.env.FORCE_VERSION,
       this.flags
     );
 

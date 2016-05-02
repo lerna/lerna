@@ -21,11 +21,13 @@ var cli = meow([
   "  --independent, -i    Version packages independently",
   "  --canary, -c         Publish packages after every successful merge using the sha as part of the tag",
   "  --skip-git           Skip commiting, tagging, and pushing git changes (only affects publish)",
-  "  --npm-tag [tagname]  Publish packages with the specified npm dist-tag"
+  "  --npm-tag [tagname]  Publish packages with the specified npm dist-tag",
+  "  --force-publish      Force publish for the specified packages (comma-seperated) or all packages using * (skips the git diff check for changed packages)"
 ], {
   alias: {
     independent: "i",
-    canary: "c"
+    canary: "c",
+    forcePublish: "force-version"
   }
 });
 
