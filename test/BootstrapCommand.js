@@ -57,7 +57,7 @@ describe("BootstrapCommand", () => {
 
         // package 2 exposes a jsnext:main, package 1 does not
         assert.equal(fs.readFileSync(path.join(testDir, "packages/package-3/node_modules/package-2/index.js")).toString(), "module.exports = require(\"" + path.join(testDir, "packages/package-2") + "\");\n");
-        assert.equal(fs.readFileSync(path.join(testDir, "packages/package-3/node_modules/package-2/module.js")).toString(), "import _ from \"" + path.join(testDir, "packages/package-2") + "\";\nexport default _;\n");
+        assert.equal(fs.readFileSync(path.join(testDir, "packages/package-3/node_modules/package-2/module.js")).toString(), "export * from \"" + path.join(testDir, "packages/package-2") + "\";\n");
         assert.equal(fs.readFileSync(path.join(testDir, "packages/package-3/node_modules/package-2/package.json")).toString(), "{\n  \"name\": \"package-2\",\n  \"version\": \"1.0.0\",\n  \"main\": \"index.js\",\n  \"jsnext:main\": \"module.js\"\n}\n");
 
         done();
