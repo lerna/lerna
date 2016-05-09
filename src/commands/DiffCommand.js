@@ -38,4 +38,15 @@ export default class DiffCommand extends Command {
       }
     });
   }
+
+  runValidations() {
+    super.runValidations();
+    try {
+      GitUtilities.hasCommit();
+    } catch (err) {
+      this.logger.warning("Can't diff. There are no commits in this repository, yet.");
+      this._complete(err, 1);
+      return;
+    }
+  }
 }

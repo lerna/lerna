@@ -85,4 +85,10 @@ describe("GitUtilities", () => {
       assert.ok(GitUtilities.checkoutChanges);
     });
   });
+
+  describe(".hasCommit()", () => {
+    it("should exist", () => {
+      assert.ok(GitUtilities.hasCommit);
+    });
+  });
 });
