@@ -58,7 +58,7 @@ export default class InitCommand extends Command {
       version = "independent";
     } else if (FileSystemUtilities.existsSync(versionLocation)) {
       version = FileSystemUtilities.readFileSync(versionLocation);
-    } else if (lernaJson.version) {
+    } else if (lernaJson && lernaJson.version) {
       version = lernaJson.version;
     } else {
       version = "0.0.0";
