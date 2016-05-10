@@ -76,6 +76,11 @@ export default class GitUtilities {
 
   @logger.logifySync
   static hasCommit() {
-    return ChildProcessUtilities.execSync("git log");
+    try {
+      ChildProcessUtilities.execSync("git log");
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 }

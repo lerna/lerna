@@ -18,6 +18,11 @@ export default class DiffCommand extends Command {
       }
     }
 
+    if (!GitUtilities.hasCommit()) {
+      callback(new Error("Can't diff. There are no commits in this repository, yet."));
+      return;
+    }
+
     this.filePath = this.package
       ? this.package.location
       : this.repository.packagesLocation;
@@ -37,16 +42,5 @@ export default class DiffCommand extends Command {
         callback(null, true);
       }
     });
-  }
-
-  runValidations() {
-    super.runValidations();
-    try {
-      GitUtilities.hasCommit();
-    } catch (err) {
-      this.logger.warning("Can't diff. There are no commits in this repository, yet.");
-      this._complete(err, 1);
-      return;
-    }
   }
 }

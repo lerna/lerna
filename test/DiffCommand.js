@@ -51,20 +51,19 @@ describe("DiffCommand", () => {
   });
 
   it("should error when running in a repository without commits", (done) => {
-    const noCommitsError = new Error("fatal: your current branch 'master' does not have any commits yet");
     const diffCommand = new DiffCommand(["package-1"], {});
+
+    diffCommand.runValidations();
+    diffCommand.runPreparations();
 
     stub(ChildProcessUtilities, "execSync", (command) => {
       assert.equal(command, "git log");
-      throw noCommitsError;
+      throw new Error("fatal: your current branch 'master' does not have any commits yet");
     });
 
-    stub(diffCommand, "_complete", (err, code) => {
-      assert.equal(err, noCommitsError);
-      assert.equal(code, 1);
+    diffCommand.initialize((err) => {
+      assert.equal(err.message, "Can't diff. There are no commits in this repository, yet.");
       done();
     });
-
-    diffCommand.runValidations();
   });
 });
