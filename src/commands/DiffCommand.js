@@ -18,6 +18,11 @@ export default class DiffCommand extends Command {
       }
     }
 
+    if (!GitUtilities.hasCommit()) {
+      callback(new Error("Can't diff. There are no commits in this repository, yet."));
+      return;
+    }
+
     this.filePath = this.package
       ? this.package.location
       : this.repository.packagesLocation;

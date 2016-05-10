@@ -73,4 +73,14 @@ export default class GitUtilities {
   static getCurrentBranch() {
     return ChildProcessUtilities.execSync("git symbolic-ref --short HEAD");
   }
+
+  @logger.logifySync
+  static hasCommit() {
+    try {
+      ChildProcessUtilities.execSync("git log");
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 }
