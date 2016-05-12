@@ -51,7 +51,7 @@ export default class GitUtilities {
 
   @logger.logifySync
   static diffSinceIn(since, location) {
-    return ChildProcessUtilities.execSync("git diff " + since + " -- " + location);
+    return ChildProcessUtilities.execSync("git diff --name-only " + since + " -- " + location);
   }
 
   @logger.logifySync
