@@ -17,7 +17,7 @@ describe("BootstrapCommand", () => {
     testDir = initFixture("BootstrapCommand/basic", done);
   });
 
-  it("should bootstrap files", done => {
+  it("should bootstrap all packages", done => {
     const bootstrapCommand = new BootstrapCommand([], {});
 
     bootstrapCommand.runValidations();
@@ -57,6 +57,54 @@ describe("BootstrapCommand", () => {
         assert.equal(fs.readFileSync(path.join(testDir, "packages/package-3/node_modules/package-2/index.js")).toString(), "module.exports = require(\"" + path.join(testDir, "packages/package-2") + "\");\n");
         assert.equal(fs.readFileSync(path.join(testDir, "packages/package-3/node_modules/package-2/package.json")).toString(), "{\n  \"name\": \"package-2\",\n  \"version\": \"1.0.0\"\n}\n");
 
+        done();
+      } catch (err) {
+        done(err);
+      }
+    }));
+  });
+
+  it("should not bootstrap an ignored package", done => {
+    const bootstrapCommand = new BootstrapCommand([], {
+      bootstrapIgnore: "package-2"
+    });
+
+    bootstrapCommand.runValidations();
+    bootstrapCommand.runPreparations();
+
+    assertStubbedCalls([
+      [ChildProcessUtilities, "exec", { nodeCallback: true }, [
+        { args: ["npm install package-1@^0.0.0", { cwd: path.join(testDir, "packages/package-4") }] }
+      ]]
+    ]);
+
+    bootstrapCommand.runCommand(exitWithCode(0, err => {
+      if (err) return done(err);
+
+      try {
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
+        assert.ok(!pathExists.sync(path.join(testDir, "packages/package-2/node_modules/package-1")));
+        done();
+      } catch (err) {
+        done(err);
+      }
+    }));
+  });
+
+  it("should not bootstrap ignored packages", done => {
+    const bootstrapCommand = new BootstrapCommand([], {
+      bootstrapIgnore: "package-3,package-4"
+    });
+
+    bootstrapCommand.runValidations();
+    bootstrapCommand.runPreparations();
+
+    bootstrapCommand.runCommand(exitWithCode(0, err => {
+      if (err) return done(err);
+
+      try {
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
+        assert.ok(!pathExists.sync(path.join(testDir, "packages/package-3/node_modules/package-2")));
         done();
       } catch (err) {
         done(err);

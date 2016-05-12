@@ -18,11 +18,12 @@ var cli = meow([
   "  ls         List all public packages",
   "",
   "Options:",
-  "  --independent, -i    Version packages independently",
-  "  --canary, -c         Publish packages after every successful merge using the sha as part of the tag",
-  "  --skip-git           Skip commiting, tagging, and pushing git changes (only affects publish)",
-  "  --npm-tag [tagname]  Publish packages with the specified npm dist-tag",
-  "  --force-publish      Force publish for the specified packages (comma-separated) or all packages using * (skips the git diff check for changed packages)"
+  "  --independent, -i              Version packages independently",
+  "  --canary, -c                   Publish packages after every successful merge using the sha as part of the tag",
+  "  --skip-git                     Skip commiting, tagging, and pushing git changes (only affects publish)",
+  "  --npm-tag [tagname]            Publish packages with the specified npm dist-tag",
+  "  --force-publish                Force publish for the specified packages (comma-separated) or all packages using * (skips the git diff check for changed packages)",
+  "  --bootstrap-ignore [package]   Ignore the specified package(s) when bootstrapping"
 ], {
   alias: {
     independent: "i",
