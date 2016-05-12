@@ -88,6 +88,17 @@ describe("PackageUtilities", () => {
         ["package-a-1", "package-a-2"]
       );
     });
+
+    it("should properly filter packages by negating the glob", () => {
+      assert.deepEqual(
+        PackageUtilities.filterPackages(packages, "package-3", true).map(pkg => pkg.name),
+        ["package-4", "package-a-1", "package-a-2"]
+      );
+      assert.deepEqual(
+        PackageUtilities.filterPackages(packages, "package-a-?", true).map(pkg => pkg.name),
+        ["package-3", "package-4"]
+      );
+    });
   });
 
 });

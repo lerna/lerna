@@ -60,12 +60,13 @@ export default class PackageUtilities {
   *
   * @param {!Array.<Package>} packages The packages to filter
   * @param {String} glob The glob to match the package name against
+  * @param {Boolean} negate Negate glob pattern matches
   * @return {Array.<Package>} The packages with a name matching the glob
   * @throws in case a given glob would produce an empty list of packages
   */
-  static filterPackages(packages, glob) {
+  static filterPackages(packages, glob, negate = false) {
     if (typeof glob !== "undefined") {
-      packages = packages.filter(pkg => minimatch(pkg.name, glob));
+      packages = packages.filter(pkg => negate ^ minimatch(pkg.name, glob));
 
       if (!packages.length) {
         throw new Error(`No packages found that match '${glob}'`);

@@ -43,6 +43,10 @@ export default class Repository {
     return this.lernaJson && this.lernaJson.linkedFiles || {};
   }
 
+  get bootstrapConfig() {
+    return this.lernaJson && this.lernaJson.bootstrapConfig || {};
+  }
+
   isIndependent() {
     return this.version === "independent";
   }

@@ -26,6 +26,7 @@ var cli = meow([
   "  --skip-npm           Stop before actually publishing change to npm (only affects publish)",
   "  --npm-tag [tagname]  Publish packages with the specified npm dist-tag",
   "  --scope [glob]       Restricts the scope to package names matching the given glob (Works only in combination with the 'run' and the 'exec' command).",
+  "  --ignore [glob]      Ignores packages with names matching the given glob (Works only in combination with the 'bootstrap' command).",
   "  --force-publish      Force publish for the specified packages (comma-separated) or all packages using * (skips the git diff check for changed packages)",
   "  --yes                Skip all confirmation prompts",
   "  --repo-version       Specify repo version to publish",
