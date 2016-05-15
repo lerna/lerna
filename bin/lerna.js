@@ -15,7 +15,7 @@ var cli = meow([
   "  diff       Diff all packages or a single package since the last release",
   "  init       Initialize a lerna repo",
   "  run        Run npm script in each package",
-  "  exec       Run npm command in each package",
+  "  exec       Run a command in each package",
   "  ls         List all public packages",
   "",
   "Options:",
