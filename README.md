@@ -14,16 +14,17 @@
 ## About
 
 Splitting up large codebases into separate independently versioned packages is
-extremely useful for code sharing. However, splitting up a codebase across many
-separate repositories can be difficult and interruptive to your workflow.
-Making changes across repositories is messy and difficult to track, and testing
-changes across many different repositories gets complicated really fast.
+extremely useful for code sharing. However, making changes across many
+repositories is messy and difficult to track, and testing across repostories
+gets complicated really fast.
 
-To solve these (and other) problems, some project use a thing called a
-**monorepo**. Projects like Babel, React, Ember, Meteor, Jest, and many others
-take all the individual packages and put them inside a single repository.
+To solve these (and many other) problems, some projects will organize their
+codebases into multi-package repostories. Projects like Babel, React, Angular,
+Ember, Meteor, Jest, and many others develop all of their packages within a
+single repository.
 
-Lerna is a tool for managing these types of repositories using npm and git.
+Lerna is a tool that optimizes the workflow around managing multi-package
+repositories with git and npm.
 
 ### What does a Lerna repo look like?
 
