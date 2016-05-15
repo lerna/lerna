@@ -1,4 +1,4 @@
-import NpmUtilities from "../NpmUtilities";
+import ChildProcessUtilities from "../ChildProcessUtilities";
 import Command from "../Command";
 import async from "async";
 
@@ -8,7 +8,7 @@ export default class ExecCommand extends Command {
     this.args = this.input.slice(1);
 
     if (!this.command) {
-      callback(new Error("You must specify which npm command to run."));
+      callback(new Error("You must specify which command to run."));
       return;
     }
 
@@ -22,9 +22,9 @@ export default class ExecCommand extends Command {
   }
 
   runCommandInPackage(pkg, callback) {
-    NpmUtilities.execInDir(this.command, this.args, pkg.location, (err, stdout) => {
+    ChildProcessUtilities.exec(this.command, { cwd: pkg.location }, (err, stdout) => {
       if (err) {
-        this.logger.error(`Errored while running npm command '${this.command}' in '${pkg.name}'`, err);
+        this.logger.error(`Errored while running command '${this.command}' in '${pkg.name}'`, err);
       } else {
         this.logger.info(stdout);
       }
