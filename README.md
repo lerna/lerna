@@ -43,7 +43,7 @@ my-repo/
 
 The two primary commands in Lerna are `lerna bootstrap` and `lerna publish`.
 
-Bootstrap will
+Bootstrap will link dependencies in the monorepo together.
 
 ## Usage
 
@@ -66,6 +66,8 @@ And then to turn it into a lerna repo run the following:
 $ lerna init
 ```
 
+This will create a `lerna.json` file as well as a `packages` folder.
+
 > **Note:** Depending on the project you might want to run this in
 > `--independent` mode.
 
@@ -82,17 +84,6 @@ While developing [Babel](https://github.com/babel/babel) I followed a
 
 This tool was abstracted out of that and deals with bootstrapping packages by linking them together as well as publishing them to npm. You can see the
 [Babel repo](https://github.com/babel/babel/tree/master/packages) for an example of a large Lerna project.
-
-> We are in the process of updating the docs to 2.x right now. Although the commands are the same, the docs below are mainly for 1.x (which is the version you get with a default `npm install`).
-
-## Usage
-
-```sh
-$ npm install -g lerna
-$ lerna init
-```
-
-This will create a `lerna.json` file as well as a `packages` folder.
 
 > Lerna will log to a `lerna-debug.log` file (same as `npm-debug.log`) when lerna encounters an error running a command.
 
