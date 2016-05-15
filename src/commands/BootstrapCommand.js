@@ -73,21 +73,32 @@ export default class BootstrapCommand extends Command {
     const srcPackageJsonLocation = path.join(src, "package.json");
     const destPackageJsonLocation = path.join(dest, "package.json");
     const destIndexJsLocation = path.join(dest, "index.js");
+    const destModuleJsLocation = path.join(dest, "module.js");
+    const pkg = require(srcPackageJsonLocation);
 
-    const packageJsonFileContents = JSON.stringify({
+    const newPkgJson = {
       name: name,
-      version: require(srcPackageJsonLocation).version
-    }, null, "  ");
+      version: pkg.version,
+      main: "index.js"
+    };
 
+    if (pkg["jsnext:main"]) { // support jsnext:main convention for ES modules
+      newPkgJson["jsnext:main"] = "module.js";
+    }
+
+    const packageJsonFileContents = JSON.stringify(newPkgJson, null, "  ");
     const indexJsFileContents = "module.exports = require(" + JSON.stringify(src) + ");";
+    const moduleJsFileContents = "export * from " + JSON.stringify(src) + ";";
 
-    FileSystemUtilities.writeFile(destPackageJsonLocation, packageJsonFileContents, err => {
-      if (err) {
-        return callback(err);
-      }
-
-      FileSystemUtilities.writeFile(destIndexJsLocation, indexJsFileContents, callback);
-    });
+    async.parallel([
+      callback => {
+        FileSystemUtilities.writeFile(destPackageJsonLocation, packageJsonFileContents, callback);
+      }, callback => {
+        FileSystemUtilities.writeFile(destModuleJsLocation, moduleJsFileContents, callback);
+      }, callback => {
+        FileSystemUtilities.writeFile(destIndexJsLocation, indexJsFileContents, callback);
+      }],
+    callback);
   }
 
   installExternalPackages(pkg, callback) {
