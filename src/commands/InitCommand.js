@@ -1,6 +1,7 @@
 import FileSystemUtilities from "../FileSystemUtilities";
 import Command from "../Command";
 import objectAssignSorted from "object-assign-sorted";
+import objectAssign from "object-assign";
 
 export default class InitCommand extends Command {
   // don't do any of this.
@@ -70,7 +71,7 @@ export default class InitCommand extends Command {
       this.logger.info("Updating lerna.json.");
     }
 
-    objectAssignSorted(lernaJson, {
+    objectAssign(lernaJson, {
       lerna: this.lernaVersion,
       version: version
     });
