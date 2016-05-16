@@ -214,9 +214,14 @@ export default class PublishCommand extends Command {
     }).join("\n"));
     this.logger.newLine();
 
-    PromptUtilities.confirm("Are you sure you want to publish the above changes?", confirm => {
-      callback(null, confirm);
-    });
+    if (!this.flags.confirm) {
+      PromptUtilities.confirm("Are you sure you want to publish the above changes?", confirm => {
+        callback(null, confirm);
+      });
+    } else {
+      this.logger.info("Assuming confirmation.");
+      callback(null, true);
+    }
   }
 
   updateVersionInLernaJson() {
