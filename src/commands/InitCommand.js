@@ -70,10 +70,12 @@ export default class InitCommand extends Command {
       this.logger.info("Updating lerna.json.");
     }
 
-    FileSystemUtilities.writeFileSync(lernaJsonLocation, JSON.stringify({
+    objectAssignSorted(lernaJson, {
       lerna: this.lernaVersion,
       version: version
-    }, null, "  "));
+    });
+
+    FileSystemUtilities.writeFileSync(lernaJsonLocation, JSON.stringify(lernaJson, null, "  "));
   }
 
   ensureNoVersionFile() {
