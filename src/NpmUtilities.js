@@ -3,8 +3,8 @@ import logger from "./logger";
 
 export default class NpmUtilities {
   @logger.logifyAsync
-  static installInDir(directory, dependencies, callback) {
-    let command = "npm install";
+  static installInDir(directory, dependencies, callback, cacheFolder) {
+    let command = "npm install --cache=/" + cacheFolder;
 
     if (dependencies) {
       command += " " + dependencies.join(" ");
