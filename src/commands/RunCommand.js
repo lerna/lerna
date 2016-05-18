@@ -16,9 +16,9 @@ export default class RunCommand extends Command {
     let packagesToRunCommandIn = this.packages;
 
     if (this.flags.restrictTo) {
-        this.logger.info(`Restricting to packages that match '${this.flags.restrictTo}'`);
-        packagesToRunCommandIn = packagesToRunCommandIn
-            .filter(pkg => minimatch(pkg.name, this.flags.restrictTo));
+      this.logger.info(`Restricting to packages that match '${this.flags.restrictTo}'`);
+      packagesToRunCommandIn = packagesToRunCommandIn
+        .filter(pkg => minimatch(pkg.name, this.flags.restrictTo));
     }
 
     if (!packagesToRunCommandIn.length) {
