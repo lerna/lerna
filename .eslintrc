@@ -31,7 +31,8 @@
     "camelcase": 0,
     "no-console": 0,
     "no-constant-condition": 0,
-    "no-inner-declarations": 0
+    "no-inner-declarations": 0,
+    "indent": ["error", 2]
   },
   "env": {
     "node": true
