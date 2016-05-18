@@ -33,4 +33,43 @@ describe("RunCommand", () => {
 
     runCommand.runCommand(exitWithCode(0, done));
   });
+
+  it("should run a command for a single package when specified via --restrict-to", done => {
+    const runCommand = new RunCommand(["my-script"], {restrictTo: "package-1"});
+
+    runCommand.runValidations();
+    runCommand.runPreparations();
+
+    const ranInPackages = [];
+    stub(ChildProcessUtilities, "exec", (command, options, callback) => {
+        ranInPackages.push(options.cwd.substr(path.join(testDir, "packages/").length));
+        callback();
+    });
+
+    runCommand.runCommand(exitWithCode(0, () => {
+        assert.deepEqual(ranInPackages, ["package-1"]);
+        done();
+    }));
+  });
+
+  it("should run a command for packages matched by a glob when using --restrict-to", done => {
+    const runCommand = new RunCommand(["my-script"], {restrictTo: "package-*"});
+
+    runCommand.runValidations();
+    runCommand.runPreparations();
+
+    const ranInPackages = [];
+    stub(ChildProcessUtilities, "exec", (command, options, callback) => {
+        ranInPackages.push(options.cwd.substr(path.join(testDir, "packages/").length));
+        callback();
+    });
+
+    runCommand.runCommand(exitWithCode(0, () => {
+        assert.deepEqual(ranInPackages, [
+            "package-1",
+            "package-3"
+        ]);
+        done();
+    }));
+  });
 });
