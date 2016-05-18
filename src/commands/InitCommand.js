@@ -35,7 +35,7 @@ export default class InitCommand extends Command {
 
     if (!packageJson) packageJson = {};
     // if (!packageJson.private) packageJson.private = true;
-    if (!packageJson.dependencies) packageJson.dependencies = {};
+    if (!packageJson.devDependencies) packageJson.devDependencies = {};
 
     objectAssignSorted(packageJson.devDependencies, {
       lerna: this.lernaVersion
