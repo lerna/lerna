@@ -73,7 +73,7 @@ describe("RunCommand", () => {
     }));
   });
 
-  it("should run for all packages when --restrict-to is empty", done => {
+  it("should run for no packages when --restrict-to is given but empty", done => {
     const runCommand = new RunCommand(["my-script"], {restrictTo: ""});
 
     runCommand.runValidations();
@@ -86,10 +86,7 @@ describe("RunCommand", () => {
     });
 
     runCommand.runCommand(exitWithCode(0, () => {
-      assert.deepEqual(ranInPackages, [
-        "package-1",
-        "package-3"
-      ]);
+      assert.deepEqual(ranInPackages, []);
       done();
     }));
   });
