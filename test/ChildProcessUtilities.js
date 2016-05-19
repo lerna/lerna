@@ -20,7 +20,7 @@ describe("ChildProcessUtilities", () => {
 
   describe(".spawn()", () => {
     it("should spawn a command in a child process", done => {
-      ChildProcessUtilities.spawn("echo", ["foo"], done);
+      ChildProcessUtilities.spawn("echo", ["foo"], {}, done);
     });
   });
 });
