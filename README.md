@@ -24,6 +24,8 @@ them together as well as publishing them to npm. You can see the
 [Babel repo](https://github.com/babel/babel/tree/master/packages) for an example of a
 large Lerna project.
 
+> We are in the process of updating the docs to 2.x right now. Although the commands are the same, the docs below are mainly for 1.x (which is the version you get with a default `npm install`).
+
 ## Usage
 
 ```sh
