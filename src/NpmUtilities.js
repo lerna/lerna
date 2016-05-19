@@ -28,9 +28,14 @@ export default class NpmUtilities {
     return ChildProcessUtilities.execSync(`npm dist-tag ls ${packageName}`).indexOf(tag) >= 0;
   }
 
+  @logger.logifySync
+  static execInDir(command, args, directory, callback) {
+    ChildProcessUtilities.exec(`npm ${command} ${args.join(" ")}`, { cwd: directory }, callback);
+  }
+
   @logger.logifyAsync
   static runScriptInDir(script, args, directory, callback) {
-    ChildProcessUtilities.exec(`npm run ${script} ${args.join(" ")}`, { cwd: directory }, callback);
+    NpmUtilities.execInDir(`run ${script}`, args, directory, callback);
   }
 
   @logger.logifyAsync
