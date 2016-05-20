@@ -1,5 +1,5 @@
 import ChildProcessUtilities from "../ChildProcessUtilities";
-import ScopedCommand from "./ScopedCommand";
+import ScopedCommand from "../ScopedCommand";
 import async from "async";
 
 export default class ExecCommand extends ScopedCommand {

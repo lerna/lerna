@@ -1,5 +1,5 @@
 import NpmUtilities from "../NpmUtilities";
-import ScopedCommand from "./ScopedCommand";
+import ScopedCommand from "../ScopedCommand";
 import async from "async";
 
 export default class RunCommand extends ScopedCommand {

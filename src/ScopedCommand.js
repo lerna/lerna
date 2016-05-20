@@ -1,4 +1,4 @@
-import Command from "../Command";
+import Command from "./Command";
 import minimatch from "minimatch";
 
 export default class ScopedCommand extends Command {

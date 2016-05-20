@@ -1,6 +1,6 @@
 import assert from "assert";
 import initFixture from "./_initFixture";
-import ScopedCommand from "../src/commands/ScopedCommand";
+import ScopedCommand from "../src/ScopedCommand";
 
 describe("ScopedCommand", () => {
 
