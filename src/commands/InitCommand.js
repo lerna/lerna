@@ -67,6 +67,7 @@ export default class InitCommand extends Command {
 
     if (!lernaJson) {
       this.logger.info("Creating lerna.json.");
+      lernaJson = {};
     } else {
       this.logger.info("Updating lerna.json.");
     }
