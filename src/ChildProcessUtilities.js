@@ -1,4 +1,5 @@
 import child from "child_process";
+import objectAssign from "object-assign";
 
 export default class ChildProcessUtilities {
   static exec(command, opts, callback) {
@@ -17,9 +18,9 @@ export default class ChildProcessUtilities {
     }).trim();
   }
 
-  static spawn(command, args, callback) {
-    child.spawn(command, args, {
+  static spawn(command, args, opts, callback) {
+    child.spawn(command, args, objectAssign({
       stdio: "inherit"
-    }).on("close", callback);
+    }, opts)).on("close", callback);
   }
 }
