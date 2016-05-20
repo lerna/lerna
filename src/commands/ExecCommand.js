@@ -1,8 +1,8 @@
 import ChildProcessUtilities from "../ChildProcessUtilities";
-import Command from "../Command";
+import ScopedCommand from "./ScopedCommand";
 import async from "async";
 
-export default class ExecCommand extends Command {
+export default class ExecCommand extends ScopedCommand {
   initialize(callback) {
     this.command = this.input[0];
     this.args = this.input.slice(1);

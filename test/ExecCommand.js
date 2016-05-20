@@ -76,4 +76,22 @@ describe("ExecCommand", () => {
       done();
     }));
   });
+
+  it("should run a command for a given scope", done => {
+    const execCommand = new ExecCommand(["ls"], {scope: "package-1"});
+
+    execCommand.runValidations();
+    execCommand.runPreparations();
+
+    const ranInPackages = [];
+    stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
+      ranInPackages.push(options.cwd.substr(path.join(testDir, "packages/").length));
+      callback();
+    });
+
+    execCommand.runCommand(exitWithCode(0, () => {
+      assert.deepEqual(ranInPackages, ["package-1"]);
+      done();
+    }));
+  });
 });

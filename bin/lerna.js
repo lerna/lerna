@@ -23,7 +23,7 @@ var cli = meow([
   "  --canary, -c         Publish packages after every successful merge using the sha as part of the tag",
   "  --skip-git           Skip commiting, tagging, and pushing git changes (only affects publish)",
   "  --npm-tag [tagname]  Publish packages with the specified npm dist-tag",
-  "  --restrict-to [package glob] Restricts a command to run only packages matching the given glob (Works only in combination with the 'run' command).",
+  "  --scope [glob]       Restricts the scope to package names matching the given glob (Works only in combination with the 'run' and the 'exec' command).",
   "  --force-publish      Force publish for the specified packages (comma-separated) or all packages using * (skips the git diff check for changed packages)"
 ], {
   alias: {

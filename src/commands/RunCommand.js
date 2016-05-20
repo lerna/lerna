@@ -1,9 +1,8 @@
 import NpmUtilities from "../NpmUtilities";
-import Command from "../Command";
+import ScopedCommand from "./ScopedCommand";
 import async from "async";
-import minimatch from "minimatch";
 
-export default class RunCommand extends Command {
+export default class RunCommand extends ScopedCommand {
   initialize(callback) {
     this.script = this.input[0];
     this.args = this.input.slice(1);
@@ -13,20 +12,7 @@ export default class RunCommand extends Command {
       return;
     }
 
-    let packagesToRunCommandIn = this.packages;
-
-    if (typeof this.flags.restrictTo !== "undefined") {
-      this.logger.info(`Restricting to packages that match '${this.flags.restrictTo}'`);
-      packagesToRunCommandIn = packagesToRunCommandIn
-        .filter(pkg => minimatch(pkg.name, this.flags.restrictTo));
-
-      if (!packagesToRunCommandIn.length) {
-        callback(new Error(`No packages found that match '${this.flags.restrictTo}'`));
-        return;
-      }
-    }
-
-    this.packagesWithScript = packagesToRunCommandIn
+    this.packagesWithScript = this.packages
       .filter(pkg => pkg.scripts && pkg.scripts[this.script]);
 
     if (!this.packagesWithScript.length) {
