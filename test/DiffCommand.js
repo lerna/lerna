@@ -20,7 +20,7 @@ describe("DiffCommand", () => {
     diffCommand.runValidations();
     diffCommand.runPreparations();
 
-    stub(ChildProcessUtilities, "spawn", (command, args, callback) => {
+    stub(ChildProcessUtilities, "spawn", (command, args, opts, callback) => {
       assert.equal(command, "git");
       assert.equal(args[0], "diff");
       assert.equal(args[1].length, 40); // commit
@@ -38,7 +38,7 @@ describe("DiffCommand", () => {
     diffCommand.runValidations();
     diffCommand.runPreparations();
 
-    stub(ChildProcessUtilities, "spawn", (command, args, callback) => {
+    stub(ChildProcessUtilities, "spawn", (command, args, opts, callback) => {
       assert.equal(command, "git");
       assert.equal(args[0], "diff");
       assert.equal(args[1].length, 40); // commit
