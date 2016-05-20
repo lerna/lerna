@@ -1,6 +1,7 @@
 import NpmUtilities from "../NpmUtilities";
 import Command from "../Command";
 import async from "async";
+import minimatch from "minimatch";
 
 export default class RunCommand extends Command {
   initialize(callback) {
@@ -12,7 +13,20 @@ export default class RunCommand extends Command {
       return;
     }
 
-    this.packagesWithScript = this.packages
+    let packagesToRunCommandIn = this.packages;
+
+    if (typeof this.flags.restrictTo !== "undefined") {
+      this.logger.info(`Restricting to packages that match '${this.flags.restrictTo}'`);
+      packagesToRunCommandIn = packagesToRunCommandIn
+        .filter(pkg => minimatch(pkg.name, this.flags.restrictTo));
+
+      if (!packagesToRunCommandIn.length) {
+        callback(new Error(`No packages found that match '${this.flags.restrictTo}'`));
+        return;
+      }
+    }
+
+    this.packagesWithScript = packagesToRunCommandIn
       .filter(pkg => pkg.scripts && pkg.scripts[this.script]);
 
     if (!this.packagesWithScript.length) {
