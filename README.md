@@ -123,7 +123,7 @@ $ Successfully created Lerna files
 ```
 
 **Options**
-- --independent/-i – Use independent versioning mode.
+- `--independent`/`-i` – Use independent versioning mode.
 
 ### Bootstrap
 
