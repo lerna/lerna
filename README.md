@@ -66,7 +66,7 @@ Let's start by installing Lerna globally with [npm](https://www.npmjs.com/).
 ```sh
 $ npm install --global lerna
 # install the latest 2.x version
-$ npm install --global lerna#@2.0.0-beta.13
+$ npm install --global lerna@2.0.0-beta.13
 ```
 
 Next we'll create a new [git](https://git-scm.com/) repository:
