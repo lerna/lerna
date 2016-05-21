@@ -8,7 +8,7 @@ import path from "path";
 
 class Update {
   constructor(pkg) {
-    this.package = pkg;
+    this.package  = pkg;
   }
 }
 
