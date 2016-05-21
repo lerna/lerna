@@ -49,7 +49,7 @@ my-repo/
       package.json
 ```
 
-### Do what can Lerna do?
+### What can Lerna do?
 
 The two primary commands in Lerna are `lerna bootstrap` and `lerna publish`.
 
