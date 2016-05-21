@@ -51,7 +51,7 @@ export default class InitCommand extends Command {
   }
 
   ensureLernaJson() {
-    const {versionLocation, lernaJsonLocation, lernaJson} = this.repository;
+    let {versionLocation, lernaJsonLocation, lernaJson} = this.repository;
 
     let version;
 
