@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <a href="https://travis-ci.org/kittens/lerna"><img alt="Travis Status" src="https://img.shields.io/travis/kittens/lerna/master.svg?style=flat&label=travis"></a>
+  <a href="https://travis-ci.org/lerna/lerna"><img alt="Travis Status" src="https://img.shields.io/travis/lerna/lerna/master.svg?style=flat&label=travis"></a>
   <a href="https://slack.lernajs.io/"><img alt="Slack Status" src="https://slack.lernajs.io/badge.svg"></a>
 </p>
 
