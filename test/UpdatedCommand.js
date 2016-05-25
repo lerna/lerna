@@ -45,14 +45,14 @@ describe("UpdatedCommand", () => {
       updatedCommand.runCommand(exitWithCode(0, done));
     });
 
-    it("should list changes with --force-version *", done => {
+    it("should list changes with --force-publish *", done => {
       child.execSync("git tag v1.0.0");
       child.execSync("touch " + path.join(testDir, "packages/package-2/random-file"));
       child.execSync("git add -A");
       child.execSync("git commit -m 'Commit'");
 
       const updatedCommand = new UpdatedCommand([], {
-        forceVersion: "*"
+        forcePublish: "*"
       });
 
       updatedCommand.runValidations();
@@ -70,14 +70,14 @@ describe("UpdatedCommand", () => {
       updatedCommand.runCommand(exitWithCode(0, done));
     });
 
-    it("should list changes with --force-version [package,package]", done => {
+    it("should list changes with --force-publish [package,package]", done => {
       child.execSync("git tag v1.0.0");
       child.execSync("touch " + path.join(testDir, "packages/package-3/random-file"));
       child.execSync("git add -A");
       child.execSync("git commit -m 'Commit'");
 
       const updatedCommand = new UpdatedCommand([], {
-        forceVersion: "package-2,package-4"
+        forcePublish: "package-2,package-4"
       });
 
       updatedCommand.runValidations();
@@ -161,14 +161,14 @@ describe("UpdatedCommand", () => {
       updatedCommand.runCommand(exitWithCode(0, done));
     });
 
-    it("should list changes with --force-version *", done => {
+    it("should list changes with --force-publish *", done => {
       child.execSync("git tag v1.0.0");
       child.execSync("touch " + path.join(testDir, "packages/package-2/random-file"));
       child.execSync("git add -A");
       child.execSync("git commit -m 'Commit'");
 
       const updatedCommand = new UpdatedCommand([], {
-        forceVersion: "*"
+        forcePublish: "*"
       });
 
       updatedCommand.runValidations();
@@ -186,14 +186,14 @@ describe("UpdatedCommand", () => {
       updatedCommand.runCommand(exitWithCode(0, done));
     });
 
-    it("should list changes with --force-version [package,package]", done => {
+    it("should list changes with --force-publish [package,package]", done => {
       child.execSync("git tag v1.0.0");
       child.execSync("touch " + path.join(testDir, "packages/package-4/random-file"));
       child.execSync("git add -A");
       child.execSync("git commit -m 'Commit'");
 
       const updatedCommand = new UpdatedCommand([], {
-        forceVersion: "package-2"
+        forcePublish: "package-2"
       });
 
       updatedCommand.runValidations();
