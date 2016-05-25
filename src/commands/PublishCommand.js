@@ -214,7 +214,7 @@ export default class PublishCommand extends Command {
     }).join("\n"));
     this.logger.newLine();
 
-    if (!this.flags.confirm) {
+    if (!this.flags.yes) {
       PromptUtilities.confirm("Are you sure you want to publish the above changes?", confirm => {
         callback(null, confirm);
       });
