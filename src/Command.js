@@ -14,6 +14,7 @@ export default class Command {
     this.repository = new Repository();
     this.progressBar = progressBar;
     this.logger = logger;
+    this.concurrency = flags.concurrency === undefined ? 4 : flags.concurrency;
   }
 
   run() {
@@ -29,6 +30,12 @@ export default class Command {
   }
 
   runValidations() {
+    if (this.concurrency < 1) {
+      this.logger.warning("command must be run with at least one thread.");
+      this._complete(null, 1);
+      return;
+    }
+
     if (!FileSystemUtilities.existsSync(this.repository.packagesLocation)) {
       this.logger.warning("`packages/` directory does not exist, have you run `lerna init`?");
       this._complete(null, 1);
