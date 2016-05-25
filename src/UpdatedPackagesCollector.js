@@ -60,11 +60,11 @@ export default class UpdatedPackagesCollector {
         return true;
       }
 
-      var forceVersion = (this.flags.forceVersion || "").split(",");
+      var forcePublish = (this.flags.forcePublish || "").split(",");
 
-      if (forceVersion.indexOf("*") > -1) {
+      if (forcePublish.indexOf("*") > -1) {
         return true;
-      } else if (forceVersion.indexOf(pkg.name) > -1) {
+      } else if (forcePublish.indexOf(pkg.name) > -1) {
         return true;
       } else {
         return this.hasDiffSinceThatIsntIgnored(pkg, commits);
