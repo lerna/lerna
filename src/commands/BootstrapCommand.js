@@ -36,7 +36,7 @@ export default class BootstrapCommand extends Command {
         this.progressBar.tick(pkg.name);
         done(err);
       });
-    }), 4, err => {
+    }), this.concurrency, err => {
       this.progressBar.terminate();
       callback(err);
     });
