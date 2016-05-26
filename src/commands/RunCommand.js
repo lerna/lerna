@@ -1,8 +1,9 @@
 import NpmUtilities from "../NpmUtilities";
-import ScopedCommand from "../ScopedCommand";
+import Command from "../Command";
+import PackageUtilities from "../PackageUtilities";
 import async from "async";
 
-export default class RunCommand extends ScopedCommand {
+export default class RunCommand extends Command {
   initialize(callback) {
     this.script = this.input[0];
     this.args = this.input.slice(1);
@@ -18,6 +19,16 @@ export default class RunCommand extends ScopedCommand {
     if (!this.packagesWithScript.length) {
       callback(new Error(`No packages found with the npm script '${this.script}'`));
       return;
+    }
+
+    if (this.flags.scope) {
+      this.logger.info(`Scoping to packages that match '${this.flags.scope}'`);
+      try {
+        this.packagesWithScript = PackageUtilities.filterPackages(this.packagesWithScript, this.flags.scope);
+      } catch (err) {
+        callback(err);
+        return;
+      }
     }
 
     callback(null, true);
