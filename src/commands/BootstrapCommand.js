@@ -5,6 +5,7 @@ import semver from "semver";
 import async from "async";
 import find from "lodash.find";
 import path from "path";
+import minimatch from "minimatch";
 
 export default class BootstrapCommand extends Command {
   initialize(callback) {
@@ -27,7 +28,23 @@ export default class BootstrapCommand extends Command {
     this.progressBar.init(this.packages.length);
     this.logger.info("Linking all dependencies");
 
-    async.parallelLimit(this.packages.map(pkg => done => {
+    const ignorePackages = this.flags.bootstrapIgnore || this.repository.bootstrapConfig.ignore;
+    let packagesToIgnore = [];
+
+    // validate flag/config value
+    if (typeof ignorePackages === "string" ||
+      (Array.isArray(ignorePackages)) && ignorePackages.every(pkg => typeof pkg === "string")) {
+      packagesToIgnore = Array.isArray(ignorePackages) ?
+        ignorePackages.reduce((packages, value) => {
+          return packages.concat(value.split(","));
+        }, []) :
+        ignorePackages.split(",");
+    }
+
+    // filter ignored packages
+    const filterPackages = (pkg) => !packagesToIgnore.some(ipkg => minimatch(pkg.name, ipkg));
+
+    async.parallelLimit(this.packages.filter(filterPackages).map(pkg => done => {
       async.series([
         cb => FileSystemUtilities.mkdirp(pkg.nodeModulesLocation, cb),
         cb => this.installExternalPackages(pkg, cb),
