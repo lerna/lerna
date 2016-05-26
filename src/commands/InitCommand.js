@@ -51,7 +51,7 @@ export default class InitCommand extends Command {
   }
 
   ensureLernaJson() {
-    const {versionLocation, lernaJsonLocation, lernaJson} = this.repository;
+    let {versionLocation, lernaJsonLocation, lernaJson} = this.repository;
 
     let version;
 
@@ -67,6 +67,7 @@ export default class InitCommand extends Command {
 
     if (!lernaJson) {
       this.logger.info("Creating lerna.json.");
+      lernaJson = {};
     } else {
       this.logger.info("Updating lerna.json.");
     }

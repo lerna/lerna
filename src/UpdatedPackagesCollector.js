@@ -60,11 +60,11 @@ export default class UpdatedPackagesCollector {
         return true;
       }
 
-      var forceVersion = (this.flags.forceVersion || "").split(",");
+      var forcePublish = (this.flags.forcePublish || "").split(",");
 
-      if (forceVersion.indexOf("*") > -1) {
+      if (forcePublish.indexOf("*") > -1) {
         return true;
-      } else if (forceVersion.indexOf(pkg.name) > -1) {
+      } else if (forcePublish.indexOf(pkg.name) > -1) {
         return true;
       } else {
         return this.hasDiffSinceThatIsntIgnored(pkg, commits);
@@ -79,19 +79,40 @@ export default class UpdatedPackagesCollector {
   }
 
   isPackageDependentOf(packageName, dependency) {
-    var dependencies = this.packageGraph.get(packageName).dependencies;
+    if (!this.cache[packageName]) {
+      this.cache[packageName] = {};
+    }
+
+    if (this.cache[packageName][dependency] === "dependent") {
+      return true;
+    } else if (this.cache[packageName][dependency] === "visited") {
+      return false;
+    }
+
+    let dependencies = this.packageGraph.get(packageName).dependencies;
 
     if (dependencies.indexOf(dependency) > -1) {
+      this.cache[packageName][dependency] = "dependent";
       return true;
     }
 
-    return !!find(dependencies, dep => {
-      return this.isPackageDependentOf(dep, dependency);
+    this.cache[packageName][dependency] = "visited";
+
+    let hasSubDependents = false;
+
+    dependencies.forEach(dep => {
+      if (this.isPackageDependentOf(dep, dependency)) {
+        this.cache[packageName][dependency] = "dependent";
+        hasSubDependents = true;
+      }
     });
+
+    return hasSubDependents;
   }
 
   collectDependents() {
     const dependents = {};
+    this.cache = {};
 
     this.packages.forEach(pkg => {
       Object.keys(this.updatedPackages).forEach(dependency => {
