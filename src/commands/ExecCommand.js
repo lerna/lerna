@@ -33,14 +33,12 @@ export default class ExecCommand extends Command {
   }
 
   runCommandInPackage(pkg, callback) {
-    ChildProcessUtilities.spawn(this.command, this.args, { cwd: pkg.location }, (err, stdout) => {
-      if (err) {
+    ChildProcessUtilities.spawn(this.command, this.args, { cwd: pkg.location }, (code) => {
+      if (code) {
         this.logger.error(`Errored while running command '${this.command}' ` +
-                          `with arguments '${this.args.join(" ")}' in '${pkg.name}'`, err);
-      } else {
-        this.logger.info(stdout);
+                          `with arguments '${this.args.join(" ")}' in '${pkg.name}'`);
       }
-      callback(err);
+      callback(code);
     });
   }
 }
