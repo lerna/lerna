@@ -7,6 +7,7 @@ import Command from "../Command";
 import semver from "semver";
 import async from "async";
 import path from "path";
+import { EOL } from "os";
 
 export default class PublishCommand extends Command {
   initialize(callback) {
@@ -126,7 +127,7 @@ export default class PublishCommand extends Command {
         let message = "Successfully published:";
 
         this.updates.forEach(update => {
-          message += `\n - ${update.package.name}@${update.package.version}`;
+          message += `${EOL} - ${update.package.name}@${update.package.version}`;
         });
 
         this.logger.success(message);
@@ -226,7 +227,7 @@ export default class PublishCommand extends Command {
     this.logger.info("Changes:");
     this.logger.info(this.updates.map((update) => {
       return `- ${update.package.name}: ${update.package.version} => ${this.updatesVersions[update.package.name]}`;
-    }).join("\n"));
+    }).join(EOL));
     this.logger.newLine();
 
     if (!this.flags.yes) {
@@ -302,11 +303,11 @@ export default class PublishCommand extends Command {
   }
 
   gitCommitAndTagVersionForUpdates() {
-    let message = "Publish\n";
+    let message = "Publish" + EOL;
 
     const tags = this.updates.map(update => {
       const tag = `${update.package.name}@${this.updatesVersions[update.package.name]}`;
-      message += `\n - ${tag}`;
+      message += `${EOL} - ${tag}`;
       return tag;
     });
 
