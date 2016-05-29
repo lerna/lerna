@@ -12,14 +12,6 @@
   <a href="https://slack.lernajs.io/"><img alt="Slack Status" src="https://slack.lernajs.io/badge.svg"></a>
 </p>
 
-## Background
-
-While developing [Babel](https://github.com/babel/babel) I followed a
-[monorepo](https://github.com/babel/babel/blob/master/doc/design/monorepo.md) approach where the entire project was split into individual packages but everything lived in the same repo. This was great. It allowed super easy modularisation which meant the core was easier to approach and meant others could use the useful parts of Babel in their own projects.
-
-This tool was abstracted out of that and deals with bootstrapping packages by linking them together as well as publishing them to npm. You can see the
-[Babel repo](https://github.com/babel/babel/tree/master/packages) for an example of a large Lerna project.
-
 ## About
 
 Splitting up large codebases into separate independently versioned packages
@@ -237,6 +229,15 @@ $ lerna publish --force-publish=*
 ```
 
 Force publish for the specified packages (comma-separated) or all packages using `*` (skips the git diff check for changed packages).
+
+#### --yes
+
+```sh
+$ lerna publish --canary --yes
+# skips `Are you sure you want to publish the above changes?`
+```
+
+Skip all confirmation prompts. Would be useful in CI to automatically answer the publish confirmation prompt.
 
 ### Updated
 
