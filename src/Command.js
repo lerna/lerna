@@ -5,6 +5,8 @@ import progressBar from "./progressBar";
 import Repository from "./Repository";
 import logger from "./logger";
 
+const DEFAULT_CONCURRENCY = 4;
+
 export default class Command {
   constructor(input, flags) {
     this.input = input;
@@ -14,7 +16,7 @@ export default class Command {
     this.repository = new Repository();
     this.progressBar = progressBar;
     this.logger = logger;
-    this.concurrency = (!flags || flags.concurrency === undefined) ? 4 : flags.concurrency;
+    this.concurrency = (!flags || flags.concurrency === undefined) ? DEFAULT_CONCURRENCY : Math.max(1, +flags.concurrency || DEFAULT_CONCURRENCY);
   }
 
   run() {
