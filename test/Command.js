@@ -45,6 +45,19 @@ describe("Command", () => {
       const command = new Command(null, {concurrency: 6});
       assert.equal(command.concurrency, 6);
     });
+
+    it("should fall back to default if concurrency given is NaN", () => {
+      const command = new Command(null, {concurrency: "bla"});
+      assert.equal(command.concurrency, 4);
+    });
+
+    it("should fall back to default if concurrency given is 0", () => {
+      assert.equal(new Command(null, {concurrency: 0}).concurrency, 4);
+    });
+
+    it("should fall back to 1 if concurrency given is smaller than 1", () => {
+      assert.equal(new Command(null, {concurrency: -1}).concurrency, 1);
+    });
   });
 
   describe(".run()", () => {
