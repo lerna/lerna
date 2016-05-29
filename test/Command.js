@@ -40,6 +40,13 @@ describe("Command", () => {
     });
   });
 
+  describe(".concurrency", () => {
+    it("should be added to the instance", () => {
+      const command = new Command(null, {concurrency: 6});
+      assert.equal(command.concurrency, 6);
+    });
+  });
+
   describe(".run()", () => {
     it.skip("should exist", done => {
       class TestCommand extends Command {
