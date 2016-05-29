@@ -1,4 +1,5 @@
 import assert from "assert";
+import { EOL } from "os";
 
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
 
@@ -12,7 +13,7 @@ describe("ChildProcessUtilities", () => {
   describe(".exec()", () => {
     it("should execute a command in a child process and call the callback with the result", done => {
       ChildProcessUtilities.exec("echo foo", null, (stderr, stdout) => {
-        assert.equal(stdout, "foo\n");
+        assert.equal(stdout, "foo" + EOL);
         done(stderr);
       });
     });

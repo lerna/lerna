@@ -29,7 +29,7 @@ export default function initFixture(fixturePath, callback) {
   }, err => {
     if (err) return callback(err);
     process.chdir(testDir);
-    child.execSync("git init . && git add -A && git commit -m 'Init commit'");
+    child.execSync("git init . && git add -A && git commit -m \"Init commit\"");
     callback();
   });
 
