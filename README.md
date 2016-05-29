@@ -230,6 +230,15 @@ $ lerna publish --force-publish=*
 
 Force publish for the specified packages (comma-separated) or all packages using `*` (skips the git diff check for changed packages).
 
+#### --yes
+
+```sh
+$ lerna publish --canary --yes
+# skips `Are you sure you want to publish the above changes?`
+```
+
+Skip all confirmation prompts. Would be useful in CI to automatically answer the publish confirmation prompt.
+
 ### Updated
 
 ```sh
