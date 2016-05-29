@@ -358,7 +358,7 @@ export default class PublishCommand extends Command {
       };
 
       return run;
-    }), 4, err => {
+    }), this.concurrency, err => {
       this.progressBar.terminate();
       callback(err);
     });
