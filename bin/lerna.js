@@ -24,7 +24,7 @@ var cli = meow([
   "  --npm-tag [tagname]  Publish packages with the specified npm dist-tag",
   "  --force-publish      Force publish for the specified packages (comma-separated) or all packages using * (skips the git diff check for changed packages)",
   "  --yes                Skip all confirmation prompts",
-  "  --repo-version      Specify repo version to publish"
+  "  --repo-version       Specify repo version to publish"
 ], {
   alias: {
     independent: "i",
