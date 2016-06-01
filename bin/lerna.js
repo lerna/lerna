@@ -23,7 +23,8 @@ var cli = meow([
   "  --skip-git           Skip commiting, tagging, and pushing git changes (only affects publish)",
   "  --npm-tag [tagname]  Publish packages with the specified npm dist-tag",
   "  --force-publish      Force publish for the specified packages (comma-separated) or all packages using * (skips the git diff check for changed packages)",
-  "  --yes                Skip all confirmation prompts"
+  "  --yes                Skip all confirmation prompts",
+  "  --repo-version       Specify repo version to publish"
 ], {
   alias: {
     independent: "i",

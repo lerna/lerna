@@ -164,7 +164,7 @@ We'll use `babel` as an example.
   - A `package.json` with keys `name` and `version`
   - A `index.js` with the contents `module.exports = require("relative-path-to-babel-generator-in-the-lerna-repo")`
 - This links the `babel-generator` in `node_modules` with the actual `babel-generator` files.
- 
+
 ### Publishing
 
 ```sh
@@ -238,6 +238,15 @@ $ lerna publish --canary --yes
 ```
 
 Skip all confirmation prompts. Would be useful in CI to automatically answer the publish confirmation prompt.
+
+#### --repo-version
+
+```sh
+$ lerna publish --repo-version 1.0.1
+# Applies version and skips `Select a new version for...` prompt
+```
+
+Specify the repo version when publishing. Useful for bypassing the user input prompt if you already know which version to publish.
 
 ### Updated
 

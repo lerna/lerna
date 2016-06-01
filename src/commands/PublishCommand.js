@@ -127,6 +127,12 @@ export default class PublishCommand extends Command {
   }
 
   getVersionsForUpdates(callback) {
+    if (this.flags.repoVersion) {
+      return callback(null, {
+        version: this.flags.repoVersion
+      });
+    }
+
     // Non-Independent Canary Mode
     if (!this.repository.isIndependent() && this.flags.canary) {
       const version = this.globalVersion + this.getCanaryVersionSuffix();
