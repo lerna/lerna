@@ -204,7 +204,7 @@ $ lerna publish --canary
 
 The `canary` flag will publish packages after every successful merge using the sha as part of the tag.
 
-It will take the current `version` and append the sha as the new `version`. ex: `1.0.0-canary.81e3b443`.
+It will take the current `version` and append the sha as the new `version`. ex: `1.0.0-alpha.81e3b443`.
 
 More specifically, `canary` flag will append the current git sha to the current `version` and publish it.
 

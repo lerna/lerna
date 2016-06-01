@@ -178,7 +178,7 @@ export default class PublishCommand extends Command {
   }
 
   getCanaryVersionSuffix() {
-    return "-canary." + GitUtilities.getCurrentSHA().slice(0, 8);
+    return "-alpha." + GitUtilities.getCurrentSHA().slice(0, 8);
   }
 
   promptVersion(packageName, currentVersion, callback) {

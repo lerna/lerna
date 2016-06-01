@@ -234,21 +234,21 @@ describe("PublishCommand", () => {
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["git checkout -- packages/*/package.json"] },
 
-          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.0-canary.81e3b443\nstable: 1.0.0" },
+          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.0-alpha.81e3b443\nstable: 1.0.0" },
           { args: ["npm dist-tag rm package-1 lerna-temp"] },
-          { args: ["npm dist-tag add package-1@1.0.0-canary.81e3b443 canary"] },
+          { args: ["npm dist-tag add package-1@1.0.0-alpha.81e3b443 canary"] },
 
-          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.0-canary.81e3b443\nstable: 1.0.0" },
+          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.0-alpha.81e3b443\nstable: 1.0.0" },
           { args: ["npm dist-tag rm package-2 lerna-temp"] },
-          { args: ["npm dist-tag add package-2@1.0.0-canary.81e3b443 canary"] },
+          { args: ["npm dist-tag add package-2@1.0.0-alpha.81e3b443 canary"] },
 
-          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.0-canary.81e3b443\nstable: 1.0.0" },
+          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.0-alpha.81e3b443\nstable: 1.0.0" },
           { args: ["npm dist-tag rm package-3 lerna-temp"] },
-          { args: ["npm dist-tag add package-3@1.0.0-canary.81e3b443 canary"] },
+          { args: ["npm dist-tag add package-3@1.0.0-alpha.81e3b443 canary"] },
 
-          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.0-canary.81e3b443\nstable: 1.0.0" },
+          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.0-alpha.81e3b443\nstable: 1.0.0" },
           { args: ["npm dist-tag rm package-4 lerna-temp"] },
-          { args: ["npm dist-tag add package-4@1.0.0-canary.81e3b443 canary"] },
+          { args: ["npm dist-tag add package-4@1.0.0-alpha.81e3b443 canary"] },
 
           { args: ["git symbolic-ref --short HEAD"], returns: "master" },
           { args: ["git push origin master"] },
@@ -267,13 +267,13 @@ describe("PublishCommand", () => {
           // because `git checkout --` would have removed the file changes.
           // However, this is what would've been published to npm so it's
           // useful to test.
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.0-canary.81e3b443");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.0-canary.81e3b443");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.0-canary.81e3b443");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.0-canary.81e3b443");
+          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.0-alpha.81e3b443");
+          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.0-alpha.81e3b443");
+          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.0-alpha.81e3b443");
+          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.0-alpha.81e3b443");
 
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.0-canary.81e3b443");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.0-canary.81e3b443");
+          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.0-alpha.81e3b443");
+          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.0-alpha.81e3b443");
           assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
 
           done();
@@ -323,21 +323,21 @@ describe("PublishCommand", () => {
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["git checkout -- packages/*/package.json"] },
 
-          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.0-canary.81e3b443\nstable: 1.0.0" },
+          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.0-alpha.81e3b443\nstable: 1.0.0" },
           { args: ["npm dist-tag rm package-1 lerna-temp"] },
-          { args: ["npm dist-tag add package-1@1.0.0-canary.81e3b443 canary"] },
+          { args: ["npm dist-tag add package-1@1.0.0-alpha.81e3b443 canary"] },
 
-          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 2.0.0-canary.81e3b443\nstable: 1.0.0" },
+          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 2.0.0-alpha.81e3b443\nstable: 1.0.0" },
           { args: ["npm dist-tag rm package-2 lerna-temp"] },
-          { args: ["npm dist-tag add package-2@2.0.0-canary.81e3b443 canary"] },
+          { args: ["npm dist-tag add package-2@2.0.0-alpha.81e3b443 canary"] },
 
-          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 3.0.0-canary.81e3b443\nstable: 1.0.0" },
+          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 3.0.0-alpha.81e3b443\nstable: 1.0.0" },
           { args: ["npm dist-tag rm package-3 lerna-temp"] },
-          { args: ["npm dist-tag add package-3@3.0.0-canary.81e3b443 canary"] },
+          { args: ["npm dist-tag add package-3@3.0.0-alpha.81e3b443 canary"] },
 
-          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 4.0.0-canary.81e3b443\nstable: 1.0.0" },
+          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 4.0.0-alpha.81e3b443\nstable: 1.0.0" },
           { args: ["npm dist-tag rm package-4 lerna-temp"] },
-          { args: ["npm dist-tag add package-4@4.0.0-canary.81e3b443 canary"] },
+          { args: ["npm dist-tag add package-4@4.0.0-alpha.81e3b443 canary"] },
 
           { args: ["git symbolic-ref --short HEAD"], returns: "master" },
           { args: ["git push origin master"] },
@@ -355,13 +355,13 @@ describe("PublishCommand", () => {
           // because `git checkout --` would have removed the file changes.
           // However, this is what would've been published to npm so it's
           // useful to test.
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.0-canary.81e3b443");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "2.0.0-canary.81e3b443");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "3.0.0-canary.81e3b443");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "4.0.0-canary.81e3b443");
+          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.0-alpha.81e3b443");
+          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "2.0.0-alpha.81e3b443");
+          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "3.0.0-alpha.81e3b443");
+          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "4.0.0-alpha.81e3b443");
 
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.0-canary.81e3b443");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^2.0.0-canary.81e3b443");
+          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.0-alpha.81e3b443");
+          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^2.0.0-alpha.81e3b443");
           assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
 
           done();
