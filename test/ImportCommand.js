@@ -9,7 +9,6 @@ import exitWithCode from "./_exitWithCode";
 import initFixture from "./_initFixture";
 import initForeignFixture from "./_initForeignFixture";
 import assertStubbedCalls from "./_assertStubbedCalls";
-import stub from "./_stub";
 
 describe("ImportCommand", () => {
 
@@ -40,7 +39,7 @@ describe("ImportCommand", () => {
         if (err) return done(err);
 
         try {
-          const lastCommit = child.execSync(`git log --format="%s"`, {encoding:"utf8"}).split("\n")[0];
+          const lastCommit = child.execSync("git log --format=\"%s\"", {encoding:"utf8"}).split("\n")[0];
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
           assert.ok(pathExists.sync(path.join(testDir, "packages/foreign/package.json")));
           assert.equal(lastCommit, "Init foreign commit");

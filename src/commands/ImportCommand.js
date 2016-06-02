@@ -35,7 +35,7 @@ export default class ImportCommand extends Command {
       cwd: foreignRepoPath
     };
 
-    this.commits = this.foreignExecSync(`git log --format="%h"`).split("\n").reverse();
+    this.commits = this.foreignExecSync("git log --format=\"%h\"").split("\n").reverse();
 
     if (!this.commits.length) {
       callback(new Error(`No git commits to import at "${inputPath}"`));
@@ -43,12 +43,12 @@ export default class ImportCommand extends Command {
 
     this.logger.info(`About to import ${this.commits.length} commits into from ${inputPath} into ${this.targetDir}`);
     PromptUtilities.confirm("Are you sure you want to import these commits onto the current branch?", confirmed => {
-        if (confirmed) {
-          callback(null, true);
-        } else {
-          this.logger.info("Okay bye!");
-          callback(null, false);
-        }
+      if (confirmed) {
+        callback(null, true);
+      } else {
+        this.logger.info("Okay bye!");
+        callback(null, false);
+      }
     });
   }
 
