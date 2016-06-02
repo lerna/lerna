@@ -384,6 +384,14 @@ $ lerna exec --scope my-component -- ls -la
 $ lerna exec --concurrency 1 -- ls -la
 ```
 
+### Import
+
+```sh
+$ lerna import <path-to-foreign-repository>
+```
+
+Import the package at `<path-to-foreign-repository>`, with commit history.
+
 ## Misc
 
 Lerna will log to a `lerna-debug.log` file (same as `npm-debug.log`) when it encounters an error running a command.
