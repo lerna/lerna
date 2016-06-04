@@ -20,7 +20,7 @@ repositories is *messy* and difficult to track, and testing across repositories
 gets complicated really fast.
 
 To solve these (and many other) problems, some projects will organize their
-codebases into multi-package repostories (sometimes called monorepos). Projects like [Babel](https://github.com/babel/babel/tree/master/packages), [React](https://github.com/facebook/react/tree/master/packages), [Angular](https://github.com/angular/angular/tree/master/modules),
+codebases into multi-package repostories (sometimes called [monorepos](https://github.com/babel/babel/blob/master/doc/design/monorepo.md)). Projects like [Babel](https://github.com/babel/babel/tree/master/packages), [React](https://github.com/facebook/react/tree/master/packages), [Angular](https://github.com/angular/angular/tree/master/modules),
 [Ember](https://github.com/emberjs/ember.js/tree/master/packages), [Meteor](https://github.com/meteor/meteor/tree/devel/packages), [Jest](https://github.com/facebook/jest/tree/master/packages), and many others develop all of their packages within a
 single repository.
 
@@ -32,7 +32,7 @@ repositories with git and npm.**
 There's actually very little to it. You have a file system that looks like this:
 
 ```
-my-repo/
+my-lerna-repo/
   package.json
   packages/
     package-1/
@@ -45,12 +45,12 @@ my-repo/
 
 The two primary commands in Lerna are `lerna bootstrap` and `lerna publish`.
 
-`bootstrap` will link dependencies in the monorepo together.
-`publish` will help publish updated packages.
+`bootstrap` will link dependencies in the repo together.
+`publish` will help publish any updated packages.
 
 ## Getting Started
 
-> The instructions below are for Lerna 2.x which is currently in beta and actively being worked on.
+> The instructions below are for Lerna 2.x which is currently in beta (actively being worked on).
 > We recommend using it instead of 1.x for a new lerna project. Check the [wiki](https://github.com/lerna/lerna/wiki/1.x-Docs) if you need to see the 1.x README.
 
 Let's start by installing Lerna globally with [npm](https://www.npmjs.com/).
@@ -85,12 +85,12 @@ lerna-repo/
 
 This will create a `lerna.json` configuration file as well as a `packages` folder.
 
-> **Note:** Depending on the project you might want to run this in
-> `--independent` mode (each package is separately versioned), also described in more detail below.
-
 ## How it works
 
 Lerna projects operate on a single version line. The version is kept in the `lerna.json` file at the root of your project under the `version` key. When you run `lerna publish`, if a module has been updated since the last time a release was made, it will be updated to the new version you're releasing. This means that you only publish a new version of a package when you need to.
+
+> **Note:** Depending on the project you might want to run this in
+> `--independent` mode (where each package is separately versioned), also described in more detail [below](https://github.com/lerna/lerna/blob/master/README.md#--independent--i).
 
 ## Commands
 
@@ -102,7 +102,7 @@ $ lerna init
 
 Create a new lerna repo or upgrade an existing repo to the current version of Lerna.
 
-> Lerna assumes you have already created a git repo with `git init`.
+> Lerna assumes the repo is already been initialized with `git init`.
 
 1. Add lerna as a [`devDependency`](https://docs.npmjs.com/files/package.json#devdependencies) in `package.json` if it isn't already there.
 2. Create a `lerna.json` config file to store the `version` number.
@@ -112,15 +112,20 @@ Example output on a new git repo:
 
 ```sh
 > lerna init
-$ Lerna v2.0.0-beta.9
+$ Lerna v2.0.0-beta.15
 $ Creating packages folder.
 $ Updating package.json.
 $ Creating lerna.json.
 $ Successfully created Lerna files
 ```
 
-**Options**
-- `--independent`/`-i` – Use independent versioning mode.
+#### --independent, -i
+
+```sh
+$ lerna publish --independent
+```
+
+Use independent versioning mode.
 
 ### Bootstrap
 
@@ -130,18 +135,19 @@ $ lerna bootstrap
 Bootstrap (setup) the packages in the current Lerna repo.
 Installs all their dependencies and links any cross-dependencies.
 
-1. Link together all `packages` that depend on each other (This doesn't use npm link).
-2. `npm install` all outside dependencies of each package.
+1. Link together all lerna `packages` that have dependencies on each other.
+  2. This doesn't currently use [npm link](https://docs.npmjs.com/cli/link), and rather a proxy to the actual package in the monorepo.
+2. `npm install` all **outside** dependencies of each package.
 
 Currently, what lerna does to link internal dependencies is replace the
-`node_modules/package1` with a link to the actual file in the repo.
+`node_modules/package-x` with a link to the actual file in the repo.
 
 #### How `bootstrap` works
 
-We'll use `babel` as an example.
+Lets use `babel` as an example.
 
-- `babel-core` has a dependency on `babel-generator` and say `source-map` (among others).
-- Thus in `babel-core`'s [`package.json`](https://github.com/babel/babel/blob/13c961d29d76ccd38b1fc61333a874072e9a8d6a/packages/babel-core/package.json#L28-L47), it has them as keys in `dependencies`.
+- `babel-core` has a dependency on `babel-generator` and `source-map` (among others).
+-  In `babel-core`'s [`package.json`](https://github.com/babel/babel/blob/13c961d29d76ccd38b1fc61333a874072e9a8d6a/packages/babel-core/package.json#L28-L47), it has both of them as keys in `dependencies` like shown below.
 
 ```js
 // babel-core package.json
@@ -157,10 +163,10 @@ We'll use `babel` as an example.
 }
 ```
 
-- Lerna check's if each dependency is also part of the lerna repo.
-- `babel-generator` is while `sourcemap` is not.
-- Thus `sourcemap` is `npm install`ed like normal
-- But `babel-core/node_modules/babel-generator` is replaced with 2 files
+- Lerna checks if each dependency is also part of the lerna repo.
+  - `babel-generator` is while `sourcemap` is not.
+  - `sourcemap` is `npm install`ed like normal.
+- `babel-core/node_modules/babel-generator` is replaced with 2 files
   - A `package.json` with keys `name` and `version`
   - A `index.js` with the contents `module.exports = require("relative-path-to-babel-generator-in-the-lerna-repo")`
 - This links the `babel-generator` in `node_modules` with the actual `babel-generator` files.
@@ -171,7 +177,9 @@ We'll use `babel` as an example.
 $ lerna publish
 ```
 
-Create a new release of the packages that have been updated. Prompts for a new version and updates all the packages on git and npm.
+Create a new release of the packages that have been updated.
+Prompt for a new version.
+Create a new git commit/tag in the process of publishing to npm.
 
 1. Publish each module in `packages` that has been updated since the last version to npm with the [dist-tag](https://docs.npmjs.com/cli/dist-tag) `lerna-temp`.
   1. Run the equivalent of `lerna updated` to determine which packages need to be published.
@@ -179,10 +187,10 @@ Create a new release of the packages that have been updated. Prompts for a new v
   3. Update the `package.json` of all updated packages to their new versions.
   4. Update all dependencies of the updated packages with the new versions.
   5. Create a new git commit and tag for the new version.
-  6. Publish update packages to npm.
+  6. Publish updated packages to npm.
 2. Once all packages have been published, remove the `lerna-temp` tags and add the tags to `latest`.
 
-> A temporary dist-tag is initally used to prevent the case where only some of the packages are published due to an error.
+> A temporary dist-tag is used at the start to prevent the case where only some of the packages are published; this can cause issues for users installing a package that only has some updated packages.
 
 #### --npm-tag [tagname]
 
@@ -190,11 +198,12 @@ Create a new release of the packages that have been updated. Prompts for a new v
 $ lerna publish --npm-tag=next
 ```
 
-Publish to npm with the given npm [dist-tag](https://docs.npmjs.com/cli/dist-tag) (Defaults to `latest`).
+Publish to npm with the given npm [dist-tag](https://docs.npmjs.com/cli/dist-tag) (defaults to `latest`).
 
-This option could be used to publish a prerelease or beta version.
+This option could be used to publish a [`prerelease`](http://carrot.is/coding/npm_prerelease) or `beta` version.
 
-> The `latest` tag is the one that is used when a user does `npm install package`.
+> Note: the `latest` tag is the one that is used when a user runs `npm install my-package`.
+> To install a different tag, a user can run `npm install my-package@prerelease`.
 
 #### --canary, -c
 
@@ -202,7 +211,7 @@ This option could be used to publish a prerelease or beta version.
 $ lerna publish --canary
 ```
 
-The `canary` flag will publish packages after every successful merge using the sha as part of the tag.
+The `canary` flag will publish packages in a more granular way (per commit).
 
 It will take the current `version` and append the sha as the new `version`. ex: `1.0.0-alpha.81e3b443`.
 
@@ -216,7 +225,7 @@ More specifically, `canary` flag will append the current git sha to the current 
 $ lerna publish --skip-git
 ```
 
-Don't run any git commands.
+Don't run any of the git commands.
 
 > Only publish to npm; skip commiting, tagging, and pushing git changes (this only affects publish).
 
@@ -228,7 +237,9 @@ $ lerna publish --force-publish=package-2,package-4
 $ lerna publish --force-publish=*
 ```
 
-Force publish for the specified packages (comma-separated) or all packages using `*` (skips the git diff check for changed packages).
+Force publish for the specified packages (comma-separated) or all packages using `*`.
+
+> This basically skips the `lerna updated` check for changed packages and forces a package that didn't have a `git diff` change to be updated.
 
 #### --yes
 
@@ -237,7 +248,8 @@ $ lerna publish --canary --yes
 # skips `Are you sure you want to publish the above changes?`
 ```
 
-Skip all confirmation prompts. Would be useful in CI to automatically answer the publish confirmation prompt.
+Skip all confirmation prompts.
+Useful in [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous_integration) to automatically answer the publish confirmation prompt.
 
 #### --repo-version
 
@@ -246,7 +258,8 @@ $ lerna publish --repo-version 1.0.1
 # Applies version and skips `Select a new version for...` prompt
 ```
 
-Specify the repo version when publishing. Useful for bypassing the user input prompt if you already know which version to publish.
+Specify the repo version check when publishing.
+Useful for bypassing the user input prompt if you already know which version to publish.
 
 ### Updated
 
@@ -256,7 +269,7 @@ $ lerna updated
 
 Check which `packages` have changed since the last release (the last git tag).
 
-Lerna determines the last git tag created and runs something like `git diff --name-only v6.8.1` to get all files changed since that tag.
+Lerna determines the last git tag created and runs `git diff --name-only v6.8.1` to get all files changed since that tag. It essentially returns an array of packages that have an updated file.
 
 ### Diff
 
