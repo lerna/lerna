@@ -8,6 +8,7 @@ export default class Repository {
 
     this.lernaJsonLocation = path.join(this.rootPath, "lerna.json");
     this.packageJsonLocation = path.join(this.rootPath, "package.json");
+    this.nodeModulesLocation = path.join(this.rootPath, "node_modules");
     this.packagesLocation = path.join(this.rootPath, "packages");
 
     // Legacy
