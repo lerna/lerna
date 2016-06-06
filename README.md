@@ -384,13 +384,20 @@ $ lerna exec --scope my-component -- ls -la
 $ lerna exec --concurrency 1 -- ls -la
 ```
 
-### Import
+### import
 
 ```sh
 $ lerna import <path-to-external-repository>
 ```
 
-Import the package at `<path-to-external-repository>`, with commit history.
+Import the package at `<path-to-external-repository>`, with commit history,
+into `packages/<package-name>`.  Original commit authors, dates and messages
+are preserved.  Commits are applied to the current branch.
+
+This is useful for gathering pre-exising standalone packages into a Lerna
+repo.  Each commit is modified to make changes relative to the package
+directory.  So, for example, the commit that added `package.json` will
+instead add `packages/<package-name>/package.json`.
 
 ## Misc
 
