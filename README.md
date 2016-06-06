@@ -87,7 +87,7 @@ This will create a `lerna.json` configuration file as well as a `packages` folde
 
 ## How it works
 
-Lerna allows you to manage your project using one of two modes: Fixed or Indepedent.
+Lerna allows you to manage your project using one of two modes: Fixed or Independent.
 
 ### Fixed/Locked mode (default)
 
@@ -341,6 +341,15 @@ Running `lerna` without arguments will show all commands/options.
 }
 ```
 
-- `lerna`: the current version of `lerna` being used.
+- `lerna`: the current version of Lerna being used.
 - `version`: the current version of the repository.
 - `publishConfig.ignore`: an array of globs that won't be included in `lerna updated/publish`. Use this to prevent publishing a new version unnecessarily for changes, such as fixing a `README.md` typo.
+
+#### --concurrency
+
+
+```sh
+$ lerna publish --concurrency 1
+```
+
+How many threads to use when Lerna parallelizes the tasks (defaults to `4`)
