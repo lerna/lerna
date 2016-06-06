@@ -13,9 +13,9 @@ after(() => {
 
 let uniqueId = 0;
 
-export default function initForeignFixture(fixturePath, callback) {
+export default function initExternalFixture(fixturePath, callback) {
   const fixtureDir = path.resolve(__dirname, "./fixtures/" + fixturePath);
-  const testDir = path.resolve(tmpDir, "test-foreign-" + Date.now() + "-" + (uniqueId++));
+  const testDir = path.resolve(tmpDir, "test-external-" + Date.now() + "-" + (uniqueId++));
 
   createdDirectories.push(testDir);
 
@@ -23,7 +23,7 @@ export default function initForeignFixture(fixturePath, callback) {
     confirm: true
   }, err => {
     if (err) return callback(err);
-    child.execSync("git init . && git add -A && git commit -m 'Init foreign commit'", {
+    child.execSync("git init . && git add -A && git commit -m 'Init external commit'", {
       cwd: testDir
     });
     callback();

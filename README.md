@@ -387,10 +387,10 @@ $ lerna exec --concurrency 1 -- ls -la
 ### Import
 
 ```sh
-$ lerna import <path-to-foreign-repository>
+$ lerna import <path-to-external-repository>
 ```
 
-Import the package at `<path-to-foreign-repository>`, with commit history.
+Import the package at `<path-to-external-repository>`, with commit history.
 
 ## Misc
 

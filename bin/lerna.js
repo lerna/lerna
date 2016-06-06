@@ -12,7 +12,7 @@ var cli = meow([
   "  bootstrap  Link together local packages and npm install remaining package dependencies",
   "  publish    Publish updated packages to npm",
   "  updated    Check which packages have changed since the last release",
-  "  import     Import a package with git history from a foreign repository",
+  "  import     Import a package with git history from an external repository",
   "  clean      Remove the node_modules directory from all packages",
   "  diff       Diff all packages or a single package since the last release",
   "  init       Initialize a lerna repo",

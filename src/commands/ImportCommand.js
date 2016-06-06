@@ -10,17 +10,17 @@ export default class ImportCommand extends Command {
     const inputPath = this.input[0];
 
     if (!inputPath) {
-      callback(new Error("Missing argument: Path to foreign repository"));
+      callback(new Error("Missing argument: Path to external repository"));
     }
 
-    const foreignRepoPath = path.resolve(inputPath);
+    const externalRepoPath = path.resolve(inputPath);
 
     try {
-      const stats = fs.statSync(foreignRepoPath);
+      const stats = fs.statSync(externalRepoPath);
       if (!stats.isDirectory()) {
         throw new Error(`Input path "${inputPath}" is not a directory`);
       }
-      const packageJson = path.join(foreignRepoPath, "package.json");
+      const packageJson = path.join(externalRepoPath, "package.json");
       const packageName = require(packageJson).name;
       if (!packageName) {
         throw new Error(`No package name specified in "${packageJson}"`);
@@ -30,12 +30,12 @@ export default class ImportCommand extends Command {
       callback(e);
     }
 
-    this.foreignExecOpts = {
+    this.externalExecOpts = {
       encoding: "utf8",
-      cwd: foreignRepoPath
+      cwd: externalRepoPath
     };
 
-    this.commits = this.foreignExecSync("git log --format=\"%h\"").split("\n").reverse();
+    this.commits = this.externalExecSync("git log --format=\"%h\"").split("\n").reverse();
 
     if (!this.commits.length) {
       callback(new Error(`No git commits to import at "${inputPath}"`));
@@ -52,8 +52,8 @@ export default class ImportCommand extends Command {
     });
   }
 
-  foreignExecSync(command) {
-    return child.execSync(command, this.foreignExecOpts).trim();
+  externalExecSync(command) {
+    return child.execSync(command, this.externalExecOpts).trim();
   }
 
   execute(callback) {
@@ -63,7 +63,7 @@ export default class ImportCommand extends Command {
 
     this.commits.forEach(sha => {
       progressBar.tick(sha);
-      const patch = this.foreignExecSync(`git format-patch -1 ${sha} --stdout`)
+      const patch = this.externalExecSync(`git format-patch -1 ${sha} --stdout`)
         .replace(/^([-+]{3} [ab])/mg,     replacement)
         .replace(/^(diff --git a)/mg,     replacement)
         .replace(/^(diff --git \S+ b)/mg, replacement);
