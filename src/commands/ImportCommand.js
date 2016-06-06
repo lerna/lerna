@@ -63,10 +63,17 @@ export default class ImportCommand extends Command {
 
     this.commits.forEach(sha => {
       progressBar.tick(sha);
+
+      // Create a patch file for this commit and prepend the target directory
+      // to all affected files.  This moves the git history for the entire
+      // external repository into the package subdirectory, commit by commit.
       const patch = this.externalExecSync(`git format-patch -1 ${sha} --stdout`)
         .replace(/^([-+]{3} [ab])/mg,     replacement)
         .replace(/^(diff --git a)/mg,     replacement)
         .replace(/^(diff --git \S+ b)/mg, replacement);
+
+      // Apply the modified patch to the current lerna repository, preserving
+      // original commit date, author and message.
       child.execSync("git am", {input: patch});
     });
     progressBar.terminate();
