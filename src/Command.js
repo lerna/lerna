@@ -13,9 +13,9 @@ export default class Command {
     this.flags = flags;
 
     this.lernaVersion = require("../package.json").version;
-    this.repository = new Repository();
-    this.progressBar = progressBar;
     this.logger = logger;
+    this.repository = new Repository(this.logger);
+    this.progressBar = progressBar;
     this.concurrency = (!flags || flags.concurrency === undefined) ? DEFAULT_CONCURRENCY : Math.max(1, +flags.concurrency || DEFAULT_CONCURRENCY);
   }
 
