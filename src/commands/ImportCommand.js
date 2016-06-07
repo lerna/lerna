@@ -25,7 +25,7 @@ export default class ImportCommand extends Command {
       if (!packageName) {
         throw new Error(`No package name specified in "${packageJson}"`);
       }
-      this.targetDir = "packages/"+packageName;
+      this.targetDir = "packages/" + packageName;
     } catch (e) {
       callback(e);
     }
