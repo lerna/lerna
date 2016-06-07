@@ -49,7 +49,7 @@ export default class RunCommand extends Command {
   runScriptInPackages(callback) {
     async.parallelLimit(this.packagesWithScript.map(pkg => cb => {
       this.runScriptInPackage(pkg, cb);
-    }), 4, callback);
+    }), this.concurrency, callback);
   }
 
   runScriptInPackage(pkg, callback) {
