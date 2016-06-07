@@ -21,6 +21,6 @@ export default class ChildProcessUtilities {
   static spawn(command, args, opts, callback) {
     child.spawn(command, args, objectAssign({
       stdio: "inherit"
-    }, opts)).on("close", callback);
+    }, opts)).on("close", callback).on("error", () => null);
   }
 }
