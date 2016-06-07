@@ -3,9 +3,16 @@ import FileSystemUtilities from "./FileSystemUtilities";
 import path from "path";
 
 export default class Repository {
-  constructor() {
-    this.rootPath = GitUtilities.getTopLevelDirectory();
+  constructor(logger) {
+    try {
+      GitUtilities.checkIfInitialized();
+    }
+    catch (e) {
+      logger.info("Initializing Git repository.");
+      GitUtilities.init();
+    }
 
+    this.rootPath = GitUtilities.getTopLevelDirectory();
     this.lernaJsonLocation = path.join(this.rootPath, "lerna.json");
     this.packageJsonLocation = path.join(this.rootPath, "package.json");
     this.packagesLocation = path.join(this.rootPath, "packages");
