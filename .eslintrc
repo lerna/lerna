@@ -7,6 +7,7 @@
       "double",
       "avoid-escape"
     ],
+    "space-infix-ops": 2,
     "no-var": 0,
     "keyword-spacing": 2,
     "strict": 0,
