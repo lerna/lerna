@@ -57,7 +57,7 @@ export default class ImportCommand extends Command {
   }
 
   execute(callback) {
-    const replacement = "$1/"+this.targetDir;
+    const replacement = "$1/" + this.targetDir;
 
     progressBar.init(this.commits.length);
 
