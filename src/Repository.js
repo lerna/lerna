@@ -1,13 +1,11 @@
 import GitUtilities from "./GitUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
 import path from "path";
+import logger from "./logger";
 
 export default class Repository {
-  constructor(logger) {
-    try {
-      GitUtilities.checkIfInitialized();
-    }
-    catch (e) {
+  constructor() {
+    if (!GitUtilities.isInitialized()) {
       logger.info("Initializing Git repository.");
       GitUtilities.init();
     }

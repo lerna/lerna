@@ -8,9 +8,9 @@ import GitUtilities from "../src/GitUtilities";
  */
 
 describe("GitUtilities", () => {
-  describe(".checkIfInitialized()", () => {
+  describe(".isInitialized()", () => {
     it("should exist", () => {
-      assert.ok(GitUtilities.checkIfInitialized);
+      assert.ok(GitUtilities.isInitialized);
     });
   });
 

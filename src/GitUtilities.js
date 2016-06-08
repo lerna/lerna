@@ -3,8 +3,13 @@ import logger from "./logger";
 
 export default class GitUtilities {
   @logger.logifySync
-  static checkIfInitialized() {
-    return ChildProcessUtilities.execSync("git rev-parse >> /dev/null 2>&1");
+  static isInitialized() {
+    try {
+      ChildProcessUtilities.execSync("git rev-parse");
+      return true;
+    } catch (err) {
+      return false;
+    }
   }
 
   @logger.logifySync
