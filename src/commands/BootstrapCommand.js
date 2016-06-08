@@ -6,6 +6,7 @@ import semver from "semver";
 import async from "async";
 import find from "lodash.find";
 import path from "path";
+import fs from "fs";
 
 export default class BootstrapCommand extends Command {
   initialize(callback) {
@@ -95,24 +96,24 @@ export default class BootstrapCommand extends Command {
       const linkSrc = dependency.location;
       const linkDest = path.join(pkg.nodeModulesLocation, dependency.name);
 
-      this.createLinkedDependency(linkSrc, linkDest, dependency.name, done);
+      this.createLinkedDependency(linkSrc, linkDest, dependency.name, (err) => {
+        if (!err && dependency._package.bin) {
+          const srcBinLocation = path.join(linkSrc, dependency._package.bin);
+          const destBinLocation = path.join(pkg.nodeModulesLocation, ".bin");
+          this.createBinaryLink(srcBinLocation, destBinLocation, dependency.name, done);
+        } else {
+          done(err);
+        }
+      });
     }, callback);
   }
 
   createLinkedDependency(src, dest, name, callback) {
-    FileSystemUtilities.rimraf(dest, err => {
-      if (err) {
-        return callback(err);
-      }
-
-      FileSystemUtilities.mkdirp(dest, err => {
-        if (err) {
-          return callback(err);
-        }
-
-        this.createLinkedDependencyFiles(src, dest, name, callback);
-      });
-    });
+    async.series([
+      cb => FileSystemUtilities.rimraf(dest, cb),
+      cb => FileSystemUtilities.mkdirp(dest, cb),
+      cb => this.createLinkedDependencyFiles(src, dest, name, cb)
+    ], callback);
   }
 
   createLinkedDependencyFiles(src, dest, name, callback) {
@@ -128,13 +129,29 @@ export default class BootstrapCommand extends Command {
     const prefix = this.repository.linkedFiles.prefix || "";
     const indexJsFileContents = prefix + "module.exports = require(" + JSON.stringify(src) + ");";
 
-    FileSystemUtilities.writeFile(destPackageJsonLocation, packageJsonFileContents, err => {
-      if (err) {
-        return callback(err);
-      }
+    async.series([
+      cb => FileSystemUtilities.writeFile(destPackageJsonLocation, packageJsonFileContents, cb),
+      cb => FileSystemUtilities.writeFile(destIndexJsLocation, indexJsFileContents, cb)
+    ], callback);
+  }
 
-      FileSystemUtilities.writeFile(destIndexJsLocation, indexJsFileContents, callback);
-    });
+  createBinaryLink(src, dest, name, callback) {
+    const destBinLinkLocation = path.join(dest, name);
+
+    const createLink = (done) => {
+      fs.lstat(dest, (err) => {
+        if (!err) {
+          fs.unlink(destBinLinkLocation, () => fs.symlink(src, destBinLinkLocation, done));
+        } else {
+          fs.symlink(src, destBinLinkLocation, done);
+        }
+      });
+    }
+
+    async.series([
+      cb => FileSystemUtilities.mkdirp(dest, cb),
+      cb => createLink(cb)
+    ], callback);
   }
 
   installExternalPackages(pkg, callback) {

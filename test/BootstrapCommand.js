@@ -56,6 +56,14 @@ describe("BootstrapCommand", () => {
           assert.ok(pathExists.sync(path.join(testDir, "packages/package-3/node_modules/package-2/index.js")));
           assert.ok(pathExists.sync(path.join(testDir, "packages/package-3/node_modules/package-2/package.json")));
 
+          // look for binary symlink
+          assert.ok(pathExists.sync(path.join(testDir, "packages/package-3/node_modules/.bin/package-2")));
+          const binLink = fs.readlinkSync(path.join(testDir, "packages/package-3/node_modules/.bin/package-2"));
+          assert.equal(binLink, path.join(testDir, "packages/package-2/cli.js"))
+
+          // Should not exist because mis-matched version
+          assert.ok(!pathExists.sync(path.join(testDir, "packages/package-4/node_modules/package-1")));
+
           // Should not exist because mis-matched version
           assert.ok(!pathExists.sync(path.join(testDir, "packages/package-4/node_modules/package-1")));
 
