@@ -286,6 +286,14 @@ Check which `packages` have changed since the last release (the last git tag).
 
 Lerna determines the last git tag created and runs `git diff --name-only v6.8.1` to get all files changed since that tag. It then returns an array of packages that have an updated file.
 
+### clean
+
+```sh
+$ lerna clean
+```
+
+Remove the `node_modules` directory from all packages.
+
 ### diff
 
 ```sh
