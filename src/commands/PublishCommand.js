@@ -252,6 +252,7 @@ export default class PublishCommand extends Command {
       // update pkg dependencies
       this.updatePackageDepsObject(pkg, "dependencies");
       this.updatePackageDepsObject(pkg, "devDependencies");
+      this.updatePackageDepsObject(pkg, "optionalDependencies");
       this.updatePackageDepsObject(pkg, "peerDependencies");
 
       // write new package

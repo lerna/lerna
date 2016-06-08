@@ -35,6 +35,10 @@ export default class Package {
     return this._package.devDependencies;
   }
 
+  get optionalDependencies() {
+    return this._package.optionalDependencies;
+  }
+
   get peerDependencies() {
     return this._package.peerDependencies;
   }
@@ -42,6 +46,7 @@ export default class Package {
   get allDependencies() {
     return objectAssign(
       {},
+      this.optionalDependencies,
       this.peerDependencies,
       this.devDependencies,
       this.dependencies
