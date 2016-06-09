@@ -42,14 +42,19 @@ export default class ImportCommand extends Command {
     }
 
     this.logger.info(`About to import ${this.commits.length} commits into from ${inputPath} into ${this.targetDir}`);
-    PromptUtilities.confirm("Are you sure you want to import these commits onto the current branch?", confirmed => {
-      if (confirmed) {
-        callback(null, true);
-      } else {
-        this.logger.info("Okay bye!");
-        callback(null, false);
-      }
-    });
+
+    if (this.flags.yes) {
+      callback(null, true);
+    } else {
+      PromptUtilities.confirm("Are you sure you want to import these commits onto the current branch?", confirmed => {
+        if (confirmed) {
+          callback(null, true);
+        } else {
+          this.logger.info("Okay bye!");
+          callback(null, false);
+        }
+      });
+    }
   }
 
   externalExecSync(command) {

@@ -49,5 +49,17 @@ describe("ImportCommand", () => {
         }
       }));
     });
+
+    it("should be possible to skip asking for confirmation", done => {
+
+      const importCommand = new ImportCommand([externalDir], {
+        yes: true
+      });
+
+      importCommand.runValidations();
+      importCommand.runPreparations();
+
+      importCommand.initialize(done);
+    });
   });
 });
