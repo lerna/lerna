@@ -21,6 +21,7 @@ composer.lock
 
 # Project Specific
 node_modules
+!test/**/node_modules
 *.log
 lib
 tmp

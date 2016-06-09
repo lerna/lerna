@@ -1,5 +1,6 @@
 import FileSystemUtilities from "../FileSystemUtilities";
 import NpmUtilities from "../NpmUtilities";
+import PackageUtilities from "../PackageUtilities";
 import Command from "../Command";
 import semver from "semver";
 import async from "async";
@@ -8,7 +9,7 @@ import path from "path";
 
 export default class BootstrapCommand extends Command {
   initialize(callback) {
-    // Nothing to do...
+    this.rootPackages = PackageUtilities.getPackages(this.repository.nodeModulesLocation);
     callback(null, true);
   }
 
@@ -31,7 +32,8 @@ export default class BootstrapCommand extends Command {
       async.series([
         cb => FileSystemUtilities.mkdirp(pkg.nodeModulesLocation, cb),
         cb => this.installExternalPackages(pkg, cb),
-        cb => this.linkDependenciesForPackage(pkg, cb)
+        cb => this.linkExternalDependenciesForPackage(pkg, cb),
+        cb => this.linkInternalDependenciesForPackage(pkg, cb)
       ], err => {
         this.progressBar.tick(pkg.name);
         done(err);
@@ -42,9 +44,19 @@ export default class BootstrapCommand extends Command {
     });
   }
 
-  linkDependenciesForPackage(pkg, callback) {
-    async.each(this.packages, (dependency, done) => {
-      if (!this.hasMatchingDependency(pkg, dependency, true)) return done();
+  linkInternalDependenciesForPackage(pkg, callback) {
+    this.linkDependenciesForPackage(pkg, this.packages, true, callback);
+  }
+
+  linkExternalDependenciesForPackage(pkg, callback) {
+    this.linkDependenciesForPackage(pkg, this.rootPackages, false, callback);
+  }
+
+  linkDependenciesForPackage(pkg, dependencies, showWarning, callback) {
+    async.each(dependencies, (dependency, done) => {
+      if (!this.hasMatchingDependency(pkg, dependency, showWarning)) {
+        return done();
+      }
 
       const linkSrc = dependency.location;
       const linkDest = path.join(pkg.nodeModulesLocation, dependency.name);
@@ -95,11 +107,17 @@ export default class BootstrapCommand extends Command {
 
     const externalPackages = Object.keys(allDependencies)
       .filter(dependency => {
-        const match = find(this.packages, pkg => {
+        const internalMatch = find(this.packages, pkg => {
+          return pkg.name === dependency;
+        });
+        const externalMatch = find(this.rootPackages, pkg => {
           return pkg.name === dependency;
         });
 
-        return !(match && this.hasMatchingDependency(pkg, match));
+        return !(
+          (internalMatch && this.hasMatchingDependency(pkg, internalMatch)) ||
+          (externalMatch && this.hasMatchingDependency(pkg, externalMatch))
+        );
       })
       .map(dependency => {
         return dependency + "@" + allDependencies[dependency];
