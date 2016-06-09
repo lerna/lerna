@@ -244,6 +244,21 @@ When run with this flag, `publish` will publish to npm without running any of th
 
 > Only publish to npm; skip committing, tagging, and pushing git changes (this only affects publish).
 
+#### --skip-npm
+
+```sh
+$ lerna publish --skip-npm
+```
+
+When run with this flag, `publish` will update all `package.json` package
+versions and dependency versions, but it will not actually publish the
+packages to npm.
+
+This flag can be combined with `--skip-git` to _just_ update versions and
+dependencies, without comitting, tagging, pushing or publishing.
+
+> Only update versions and dependencies; don't actually publish (this only affects publish).
+
 #### --force-publish [packages]
 
 ```sh
