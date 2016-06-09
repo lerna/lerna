@@ -1,7 +1,7 @@
 import assert from "assert";
 import path from "path";
 
-import ChildProcessUtilities from "../src/ChildProcessUtilities";
+import FileSystemUtilities from "../src/FileSystemUtilities";
 import exitWithCode from "./_exitWithCode";
 import initFixture from "./_initFixture";
 import CleanCommand from "../src/commands/CleanCommand";
@@ -29,10 +29,12 @@ describe("CleanCommand", () => {
     cleanCommand.runPreparations();
 
     let curPkg = 1;
-    stub(ChildProcessUtilities, "exec", (command, options, callback) => {
-      const rmDir = path.join(testDir, "packages/package-" + curPkg, "node_modules");
+    stub(FileSystemUtilities, "rimraf", (actualDir, callback) => {
+      const expectedDir = path.join(
+        testDir, "packages/package-" + curPkg, "node_modules"
+      );
 
-      assert.equal(command, "rm -rf " + rmDir)
+      assert.equal(actualDir, expectedDir)
 
       curPkg++;
       callback();

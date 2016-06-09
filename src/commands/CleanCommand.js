@@ -1,5 +1,6 @@
+import async from "async";
 import Command from "../Command";
-import ChildProcessUtilities from "../ChildProcessUtilities";
+import FileSystemUtilities from "../FileSystemUtilities";
 import PromptUtilities from "../PromptUtilities";
 import progressBar from "../progressBar";
 
@@ -24,13 +25,23 @@ export default class CleanCommand extends Command {
 
   execute(callback) {
     progressBar.init(this.packages.length);
-    this.packages.forEach(pkg => {
-      progressBar.tick(pkg.name);
-
-      ChildProcessUtilities.execSync("rm -rf " + pkg.nodeModulesLocation);
+    this.rimrafNodeModulesInPackages(err => {
+      progressBar.terminate();
+      if (err) {
+        callback(err);
+      } else {
+        this.logger.info("All clean!");
+        callback(null, true);
+      }
     });
-    progressBar.terminate();
-    this.logger.info("All clean!");
-    callback(null, true);
+  }
+
+  rimrafNodeModulesInPackages(callback) {
+    async.parallelLimit(this.packages.map(pkg => cb => {
+      FileSystemUtilities.rimraf(pkg.nodeModulesLocation, err => {
+        progressBar.tick(pkg.name);
+        cb(err);
+      });
+    }), this.concurrency, callback);
   }
 }
