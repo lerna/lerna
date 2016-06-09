@@ -101,6 +101,9 @@ export default class BootstrapCommand extends Command {
 
         return !(match && this.hasMatchingDependency(pkg, match));
       })
+      .filter(dependency => {
+        return !this.hasDependencyInstalled(pkg, dependency);
+      })
       .map(dependency => {
         return dependency + "@" + allDependencies[dependency];
       });
@@ -133,6 +136,18 @@ export default class BootstrapCommand extends Command {
     }
 
     return false;
+  }
+
+  hasDependencyInstalled(pkg, dependency) {
+    const packageJson = path.join(pkg.nodeModulesLocation, dependency, "package.json");
+    try {
+      return this.isCompatableVersion(
+        require(packageJson).version,
+        pkg.allDependencies[dependency]
+      );
+    } catch (e) {
+      return false;
+    }
   }
 
   isCompatableVersion(actual, expected) {
