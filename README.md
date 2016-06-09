@@ -379,7 +379,9 @@ Running `lerna` without arguments will show all commands/options.
 - `version`: the current version of the repository.
 - `publishConfig.ignore`: an array of globs that won't be included in `lerna updated/publish`. Use this to prevent publishing a new version unnecessarily for changes, such as fixing a `README.md` typo.
 
-### --concurrency
+### Flags
+
+#### --concurrency
 
 How many threads to use when Lerna parallelizes the tasks (defaults to `4`)
 
@@ -387,7 +389,7 @@ How many threads to use when Lerna parallelizes the tasks (defaults to `4`)
 $ lerna publish --concurrency 1
 ```
 
-### --scope [glob]
+#### --scope [glob]
 
 Allows to scope an command only affect a subset of packages.
 
