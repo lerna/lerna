@@ -33,4 +33,22 @@ describe("RunCommand", () => {
 
     runCommand.runCommand(exitWithCode(0, done));
   });
+
+  it("should run a command for a given scope", done => {
+    const runCommand = new RunCommand(["my-script"], {scope: "package-1"});
+
+    runCommand.runValidations();
+    runCommand.runPreparations();
+
+    const ranInPackages = [];
+    stub(ChildProcessUtilities, "exec", (command, options, callback) => {
+      ranInPackages.push(options.cwd.substr(path.join(testDir, "packages/").length));
+      callback();
+    });
+
+    runCommand.runCommand(exitWithCode(0, () => {
+      assert.deepEqual(ranInPackages, ["package-1"]);
+      done();
+    }));
+  });
 });

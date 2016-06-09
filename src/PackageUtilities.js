@@ -2,6 +2,7 @@ import FileSystemUtilities from "./FileSystemUtilities";
 import PackageGraph from "./PackageGraph";
 import Package from "./Package";
 import path from "path";
+import minimatch from "minimatch";
 
 export default class PackageUtilities {
   static getGlobalVersion(versionPath) {
@@ -52,5 +53,24 @@ export default class PackageUtilities {
 
   static getPackageGraph(packages) {
     return new PackageGraph(packages);
+  }
+
+  /**
+  * Filters a given set of packages and returns the one matching the given glob
+  *
+  * @param {!Array.<Package>} packages The packages to filter
+  * @param {String} glob The glob to match the package name against
+  * @return {Array.<Package>} The packages with a name matching the glob
+  * @throws in case a given glob would produce an empty list of packages
+  */
+  static filterPackages(packages, glob) {
+    if (typeof glob !== "undefined") {
+      packages = packages.filter(pkg => minimatch(pkg.name, glob));
+
+      if (!packages.length) {
+        throw new Error(`No packages found that match '${glob}'`);
+      }
+    }
+    return packages;
   }
 }

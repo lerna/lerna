@@ -4,6 +4,7 @@ import UpdatedCommand from "./commands/UpdatedCommand";
 import DiffCommand from "./commands/DiffCommand";
 import InitCommand from "./commands/InitCommand";
 import RunCommand from "./commands/RunCommand";
+import ExecCommand from "./commands/ExecCommand";
 import LsCommand from "./commands/LsCommand";
 
 export const __commands__ = {
@@ -13,6 +14,7 @@ export const __commands__ = {
   diff: DiffCommand,
   init: InitCommand,
   run: RunCommand,
+  exec: ExecCommand,
   ls: LsCommand
 };
 
