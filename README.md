@@ -311,7 +311,7 @@ List all of the public packages in the current Lerna repo.
 ### run
 
 ```sh
-$ lerna run [script] // runs npm run my-script in all packages that have it
+$ lerna run [script] # runs npm run my-script in all packages that have it
 $ lerna run test
 $ lerna run build
 ```
@@ -329,7 +329,7 @@ $ lerna run --scope my-component test
 ### exec
 
 ```sh
-$ lerna exec -- [command] // runs the command in all packages
+$ lerna exec -- [command] # runs the command in all packages
 $ lerna exec -- rm -rf ./node_modules
 $ lerna exec -- protractor conf.js
 ```
