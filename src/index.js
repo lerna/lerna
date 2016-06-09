@@ -1,6 +1,7 @@
 import BootstrapCommand from "./commands/BootstrapCommand";
 import PublishCommand from "./commands/PublishCommand";
 import UpdatedCommand from "./commands/UpdatedCommand";
+import CleanCommand from "./commands/CleanCommand";
 import DiffCommand from "./commands/DiffCommand";
 import InitCommand from "./commands/InitCommand";
 import RunCommand from "./commands/RunCommand";
@@ -11,6 +12,7 @@ export const __commands__ = {
   bootstrap: BootstrapCommand,
   publish: PublishCommand,
   updated: UpdatedCommand,
+  clean: CleanCommand,
   diff: DiffCommand,
   init: InitCommand,
   run: RunCommand,
