@@ -63,4 +63,20 @@ describe("BootstrapCommand", () => {
       }
     }));
   });
+
+  describe("version compatibility", () => {
+
+    const checkPair = (actual, expected) => {
+      return new BootstrapCommand([], {}).isCompatableVersion(actual, expected);
+    };
+
+    it("should consider relative dependencies compatible", () => {
+      assert.ok(checkPair("1.0.1", "../peer-package"));
+    });
+
+    it("should otherwise adhere to semver compatibility", () => {
+      assert.ok( checkPair("1.0.1", "^1.0.0"));
+      assert.ok(!checkPair("1.0.1", "^1.0.2"));
+    });
+  });
 });
