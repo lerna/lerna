@@ -254,6 +254,12 @@ When run with this flag, `publish` will update all `package.json` package
 versions and dependency versions, but it will not actually publish the
 packages to npm.
 
+This is useful as a workaround for an [npm
+issue](https://github.com/npm/newww/issues/389) which prevents README updates
+from appearing on npmjs.com when published via Lerna.  When publishing with
+README changes, use `--skip-npm` and do the final `npm publish` by hand for
+each package.
+
 This flag can be combined with `--skip-git` to _just_ update versions and
 dependencies, without comitting, tagging, pushing or publishing.
 
