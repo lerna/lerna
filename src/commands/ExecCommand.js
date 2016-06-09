@@ -29,7 +29,7 @@ export default class ExecCommand extends Command {
   execute(callback) {
     async.parallelLimit(this.packages.map(pkg => cb => {
       this.runCommandInPackage(pkg, cb);
-    }), 4, callback);
+    }), this.concurrency, callback);
   }
 
   runCommandInPackage(pkg, callback) {

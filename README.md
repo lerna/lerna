@@ -311,12 +311,46 @@ List all of the public packages in the current Lerna repo.
 ### run
 
 ```sh
-$ lerna run [script] // runs npm run my-script in all packages that have it
+$ lerna run [script] # runs npm run my-script in all packages that have it
 $ lerna run test
 $ lerna run build
 ```
 
 Run an [npm script](https://docs.npmjs.com/misc/scripts) in each package that contains that script.
+
+`lerna run` respects the `--concurrency` flag (see below).
+
+`lerna run` respects the `--scope` flag (see below).
+
+```sh
+$ lerna run --scope my-component test
+```
+
+### exec
+
+```sh
+$ lerna exec -- [command] # runs the command in all packages
+$ lerna exec -- rm -rf ./node_modules
+$ lerna exec -- protractor conf.js
+```
+
+Run an arbitrary command in each package.
+
+`lerna exec` respects the `--concurrency` flag (see below).
+
+`lerna exec` respects the `--scope` flag (see below).
+
+```sh
+$ lerna exec --scope my-component -- ls -la
+```
+
+> Hint: The commands are spawned in parallel, using the concurrency given.
+> The output is piped through, so not deterministic.
+> If you want to run the command in one package after another, use it like this:
+
+```sh
+$ lerna exec --concurrency 1 -- ls -la
+```
 
 ## Misc
 
@@ -345,11 +379,27 @@ Running `lerna` without arguments will show all commands/options.
 - `version`: the current version of the repository.
 - `publishConfig.ignore`: an array of globs that won't be included in `lerna updated/publish`. Use this to prevent publishing a new version unnecessarily for changes, such as fixing a `README.md` typo.
 
+### Flags
+
 #### --concurrency
 
+How many threads to use when Lerna parallelizes the tasks (defaults to `4`)
 
 ```sh
 $ lerna publish --concurrency 1
 ```
 
-How many threads to use when Lerna parallelizes the tasks (defaults to `4`)
+#### --scope [glob]
+
+Allows to scope an command only affect a subset of packages.
+
+```sh
+$ lerna exec --scope my-component -- ls -la
+```
+
+```sh
+$ lerna run --scope toolbar-* -- ls -la
+```
+
+> Hint: The glob is matched against the package name defined in `package.json`,
+> not the directory name the package lives in.
