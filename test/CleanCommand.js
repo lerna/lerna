@@ -40,4 +40,16 @@ describe("CleanCommand", () => {
 
     cleanCommand.runCommand(exitWithCode(0, done));
   });
+
+  it("should be possible to skip asking for confirmation", done => {
+    const cleanCommand = new CleanCommand([], {
+      yes: true
+    });
+
+    cleanCommand.runValidations();
+    cleanCommand.runPreparations();
+
+    cleanCommand.initialize(done);
+  });
+
 });

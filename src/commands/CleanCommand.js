@@ -5,17 +5,21 @@ import progressBar from "../progressBar";
 
 export default class CleanCommand extends Command {
   initialize(callback) {
-    this.logger.info(`About remove the following directories:\n${
-      this.packages.map(pkg => "- " + pkg.nodeModulesLocation).join("\n")
-    }`);
-    PromptUtilities.confirm("Proceed?", confirmed => {
-      if (confirmed) {
-        callback(null, true);
-      } else {
-        this.logger.info("Okay bye!");
-        callback(null, false);
-      }
-    });
+    if (this.flags.yes) {
+      callback(null, true);
+    } else {
+      this.logger.info(`About remove the following directories:\n${
+        this.packages.map(pkg => "- " + pkg.nodeModulesLocation).join("\n")
+      }`);
+      PromptUtilities.confirm("Proceed?", confirmed => {
+        if (confirmed) {
+          callback(null, true);
+        } else {
+          this.logger.info("Okay bye!");
+          callback(null, false);
+        }
+      });
+    }
   }
 
   execute(callback) {
