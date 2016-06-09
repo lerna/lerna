@@ -87,6 +87,15 @@ export default class PublishCommand extends Command {
       return;
     }
 
+    if (this.flags.skipNpm) {
+      callback(null, true);
+    } else {
+      this.publishPackagesToNpm(callback);
+    }
+  }
+
+  publishPackagesToNpm(callback) {
+
     this.logger.newLine();
     this.logger.info("Publishing packages to npm...");
 

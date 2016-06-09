@@ -451,6 +451,126 @@ describe("PublishCommand", () => {
   });
 
   /** =========================================================================
+   * NORMAL - SKIP NPM
+   * ======================================================================= */
+
+  describe("normal mode with --skip-npm", () => {
+    let testDir;
+
+    beforeEach(done => {
+      testDir = initFixture("PublishCommand/normal", done);
+    });
+
+    it("should update versions and push changes but not publish", done => {
+      const publishCommand = new PublishCommand([], {
+        skipNpm: true
+      });
+
+      publishCommand.runValidations();
+      publishCommand.runPreparations();
+
+      assertStubbedCalls([
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git tag"] }
+        ]],
+        [PromptUtilities, "select", { valueCallback: true }, [
+          { args: ["Select a new version (currently 1.0.0)"], returns: "1.0.1" }
+        ]],
+        [PromptUtilities, "confirm", { valueCallback: true }, [
+          { args: ["Are you sure you want to publish the above changes?"], returns: true }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git add " + path.join(testDir, "lerna.json")] },
+          { args: ["git add " + path.join(testDir, "packages/package-1/package.json")] },
+          { args: ["git add " + path.join(testDir, "packages/package-2/package.json")] },
+          { args: ["git add " + path.join(testDir, "packages/package-3/package.json")] },
+          { args: ["git add " + path.join(testDir, "packages/package-4/package.json")] },
+          { args: ["git commit -m \"$(echo \"v1.0.1\")\""] },
+          { args: ["git tag v1.0.1"] }
+        ]],
+      ]);
+
+      publishCommand.runCommand(exitWithCode(0, err => {
+        if (err) return done(err);
+
+        try {
+          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
+          assert.equal(fs.readFileSync(path.join(testDir, "lerna.json")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
+
+          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
+          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
+          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
+          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
+
+          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
+          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
+          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+
+          done();
+        } catch (err) {
+          done(err);
+        }
+      }));
+    });
+  });
+
+  /** =========================================================================
+   * NORMAL - SKIP GIT AND SKIP NPM
+   * ======================================================================= */
+
+  describe("normal mode with --skip-git and --skip-npm", () => {
+    let testDir;
+
+    beforeEach(done => {
+      testDir = initFixture("PublishCommand/normal", done);
+    });
+
+    it("should update versions but not push changes or publish", done => {
+      const publishCommand = new PublishCommand([], {
+        skipGit: true,
+        skipNpm: true
+      });
+
+      publishCommand.runValidations();
+      publishCommand.runPreparations();
+
+      assertStubbedCalls([
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git tag"] }
+        ]],
+        [PromptUtilities, "select", { valueCallback: true }, [
+          { args: ["Select a new version (currently 1.0.0)"], returns: "1.0.1" }
+        ]],
+        [PromptUtilities, "confirm", { valueCallback: true }, [
+          { args: ["Are you sure you want to publish the above changes?"], returns: true }
+        ]],
+      ]);
+
+      publishCommand.runCommand(exitWithCode(0, err => {
+        if (err) return done(err);
+
+        try {
+          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
+          assert.equal(fs.readFileSync(path.join(testDir, "lerna.json")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
+
+          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
+          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
+          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
+          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
+
+          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
+          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
+          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+
+          done();
+        } catch (err) {
+          done(err);
+        }
+      }));
+    });
+  });
+
+  /** =========================================================================
    * NORMAL - NPM TAG
    * ======================================================================= */
 
