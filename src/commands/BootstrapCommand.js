@@ -138,6 +138,6 @@ export default class BootstrapCommand extends Command {
   isCompatableVersion(actual, expected) {
     // If it's a relative dependency, then it is satisfied from within the
     // repository, regardless of what the actual version of the module is.
-    return expected.startsWith("../") || semver.satisfies(actual, expected);
+    return expected.match(/^..\//) || semver.satisfies(actual, expected);
   }
 }
