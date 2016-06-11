@@ -58,7 +58,7 @@ Let's start by installing Lerna globally with [npm](https://www.npmjs.com/).
 ```sh
 $ npm install --global lerna
 # install the latest 2.x version
-$ npm install --global lerna@2.0.0-beta.13
+$ npm install --global lerna@2.0.0-beta
 ```
 
 Next we'll create a new [git](https://git-scm.com/) repository:
@@ -179,8 +179,8 @@ Let's use `babel` as an example.
 ```
 
 - Lerna checks if each dependency is also part of the Lerna repo.
-  - In this example, `babel-generator` is a dependency, while `sourcemap` is not.
-  - `sourcemap` is `npm install`ed like normal.
+  - In this example, `babel-generator` is a dependency, while `source-map` is not.
+  - `source-map` is `npm install`ed like normal.
 - `babel-core/node_modules/babel-generator` is replaced with two files:
   - A `package.json` with keys `name` and `version`
   - An `index.js` file with the contents `module.exports = require("relative-path-to-babel-generator-in-the-lerna-repo")`
