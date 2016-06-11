@@ -130,8 +130,8 @@ export default class BootstrapCommand extends Command {
     if (showWarning) {
       this.logger.warning(
         `Version mismatch inside "${pkg.name}". ` +
-        `Depends on "${dependency.name}@${actualVersion}" ` +
-        `instead of "${dependency.name}@${expectedVersion}".`
+        `Depends on "${dependency.name}@${expectedVersion}" ` +
+        `instead of "${dependency.name}@${actualVersion}".`
       );
     }
 
