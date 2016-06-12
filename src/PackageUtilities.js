@@ -66,7 +66,13 @@ export default class PackageUtilities {
   */
   static filterPackages(packages, glob, negate = false) {
     if (typeof glob !== "undefined") {
-      packages = packages.filter(pkg => negate ^ minimatch(pkg.name, glob));
+      packages = packages.filter(pkg => {
+        if (negate) {
+          return !minimatch(pkg.name, glob)
+        } else {
+          return minimatch(pkg.name, glob);
+        }
+      });
 
       if (!packages.length) {
         throw new Error(`No packages found that match '${glob}'`);
