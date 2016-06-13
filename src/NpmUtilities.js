@@ -4,13 +4,18 @@ import logger from "./logger";
 export default class NpmUtilities {
   @logger.logifyAsync
   static installInDir(directory, dependencies, callback) {
-    let command = "npm install";
+    let args = ["install"];
 
     if (dependencies) {
-      command += " " + dependencies.join(" ");
+      args = args.concat(dependencies);
     }
 
-    ChildProcessUtilities.exec(command, { cwd: directory }, callback);
+    const opts = {
+      cwd: directory,
+      stdio: "ignore"
+    }
+
+    ChildProcessUtilities.spawn("npm", args, opts, callback);
   }
 
   @logger.logifySync
