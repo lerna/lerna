@@ -8,7 +8,6 @@
 
 <p align="center">
   <a href="https://www.npmjs.com/package/lerna"><img alt="NPM Status" src="https://img.shields.io/npm/v/lerna.svg?style=flat"></a>
-  <a href="https://circleci.com/gh/lerna/lerna"><img alt="CircleCI Status" src="https://img.shields.io/circleci/project/lerna/lerna/master.svg?style=flat&label=circle"></a>
   <a href="https://travis-ci.org/lerna/lerna"><img alt="Travis Status" src="https://img.shields.io/travis/lerna/lerna/master.svg?style=flat&label=travis"></a>
   <a href="https://slack.lernajs.io/"><img alt="Slack Status" src="https://slack.lernajs.io/badge.svg"></a>
 </p>
