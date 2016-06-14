@@ -1,5 +1,6 @@
 import FileSystemUtilities from "../FileSystemUtilities";
 import NpmUtilities from "../NpmUtilities";
+import PackageUtilities from "../PackageUtilities";
 import Command from "../Command";
 import semver from "semver";
 import async from "async";
@@ -27,7 +28,9 @@ export default class BootstrapCommand extends Command {
     this.progressBar.init(this.packages.length);
     this.logger.info("Linking all dependencies");
 
-    async.parallelLimit(this.packages.map(pkg => done => {
+    const ignore = this.flags.ignore || this.repository.bootstrapConfig.ignore;
+
+    async.parallelLimit(PackageUtilities.filterPackages(this.packages, ignore, true).map(pkg => done => {
       async.series([
         cb => FileSystemUtilities.mkdirp(pkg.nodeModulesLocation, cb),
         cb => this.installExternalPackages(pkg, cb),

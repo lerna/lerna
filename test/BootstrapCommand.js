@@ -66,6 +66,54 @@ describe("BootstrapCommand", () => {
         }
       }));
     });
+
+    it("should not bootstrap an ignored package", done => {
+      const bootstrapCommand = new BootstrapCommand([], {
+        ignore: "package-2"
+      });
+
+      bootstrapCommand.runValidations();
+      bootstrapCommand.runPreparations();
+
+      assertStubbedCalls([
+        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
+          { args: ["npm", ["install", "package-1@^0.0.0"], { cwd: path.join(testDir, "packages/package-4"), stdio: "ignore" }] }
+        ]]
+      ]);
+
+      bootstrapCommand.runCommand(exitWithCode(0, err => {
+        if (err) return done(err);
+
+        try {
+          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
+          assert.ok(!pathExists.sync(path.join(testDir, "packages/package-2/node_modules/package-1")));
+          done();
+        } catch (err) {
+          done(err);
+        }
+      }));
+    });
+
+    it("should not bootstrap ignored packages", done => {
+      const bootstrapCommand = new BootstrapCommand([], {
+        ignore: "package-@(3|4)"
+      });
+
+      bootstrapCommand.runValidations();
+      bootstrapCommand.runPreparations();
+
+      bootstrapCommand.runCommand(exitWithCode(0, err => {
+        if (err) return done(err);
+
+        try {
+          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
+          assert.ok(!pathExists.sync(path.join(testDir, "packages/package-3/node_modules/package-2")));
+          done();
+        } catch (err) {
+          done(err);
+        }
+      }));
+    });
   });
 
   describe("external dependencies that haven't been installed", () => {

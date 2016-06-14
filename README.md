@@ -158,6 +158,8 @@ When run, this command will:
 Currently, what Lerna does to link internal dependencies is replace the
 `node_modules/package-x` with a link to the actual file in the repo.
 
+`lerna bootstrap` respects the `--ignore` flag (see below).
+
 #### How `bootstrap` works
 
 Let's use `babel` as an example.
@@ -425,7 +427,7 @@ $ lerna publish --concurrency 1
 
 #### --scope [glob]
 
-Allows to scope an command only affect a subset of packages.
+Scopes a command to a subset of packages.
 
 ```sh
 $ lerna exec --scope my-component -- ls -la
@@ -433,6 +435,28 @@ $ lerna exec --scope my-component -- ls -la
 
 ```sh
 $ lerna run --scope toolbar-* -- ls -la
+```
+
+#### --ignore [glob]
+
+Excludes a subset of packages when running a command.
+
+```sh
+$ lerna bootstrap --ignore component-*
+```
+
+The `ignore` flag, when used with the `bootstrap` command, can also be set in `lerna.json` under the `bootstrapConfig` key. The command-line flag will take precendence over this option.
+
+**Example**
+
+```javascript
+{
+  "lerna": "2.0.0-beta.16",
+  "version": "0.0.0",
+  "bootstrapConfig": {
+    "ignore": "component-*"
+  }
+}
 ```
 
 > Hint: The glob is matched against the package name defined in `package.json`,
