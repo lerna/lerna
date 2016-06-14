@@ -27,8 +27,8 @@ describe("BootstrapCommand", () => {
       bootstrapCommand.runPreparations();
 
       assertStubbedCalls([
-        [ChildProcessUtilities, "exec", { nodeCallback: true }, [
-          { args: ["npm install package-1@^0.0.0", { cwd: path.join(testDir, "packages/package-4") }] }
+        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
+          { args: ["npm", ["install", "package-1@^0.0.0"], { cwd: path.join(testDir, "packages/package-4"), stdio: "ignore" }] }
         ]]
       ]);
 
@@ -82,9 +82,9 @@ describe("BootstrapCommand", () => {
       bootstrapCommand.runPreparations();
 
       let installed = false;
-      stub(ChildProcessUtilities, "exec", (command, options, callback) => {
-        assert.equal(command, "npm install external@^1.0.0")
-        assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-1") })
+      stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
+        assert.deepEqual(args, ["install", "external@^1.0.0"])
+        assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-1"), stdio: "ignore" })
         installed = true;
         callback();
       });
@@ -118,7 +118,7 @@ describe("BootstrapCommand", () => {
       bootstrapCommand.runPreparations();
 
       let installed = false;
-      stub(ChildProcessUtilities, "exec", (command, options, callback) => {
+      stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
         installed = true;
         callback();
       });
