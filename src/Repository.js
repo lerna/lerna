@@ -39,6 +39,10 @@ export default class Repository {
     return this.lernaJson && this.lernaJson.publishConfig || {};
   }
 
+  get linkedFiles() {
+    return this.lernaJson && this.lernaJson.linkedFiles || {};
+  }
+
   isIndependent() {
     return this.version === "independent";
   }
