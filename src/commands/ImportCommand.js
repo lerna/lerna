@@ -35,6 +35,12 @@ export default class ImportCommand extends Command {
 
     this.targetDir = "packages/" + externalRepoBase;
 
+    try {
+      if (fs.statSync(this.targetDir)) {
+        return callback(new Error(`Target directory already exists "${this.targetDir}"`));
+      }
+    } catch (e) { /* Pass */ }
+
     this.externalExecOpts = {
       encoding: "utf8",
       cwd: externalRepoPath

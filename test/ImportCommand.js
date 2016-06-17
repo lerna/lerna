@@ -124,5 +124,25 @@ describe("ImportCommand", () => {
         done();
       }));
     });
+
+    it("should fail if target directory exists", done => {
+      const importCommand = new ImportCommand([externalDir], {});
+
+      const targetDir = path.relative(
+        process.cwd(),
+        path.join(testDir, "packages", path.basename(externalDir))
+      );
+
+      fs.mkdirSync(targetDir);
+
+      importCommand.runValidations();
+      importCommand.runPreparations();
+
+      importCommand.runCommand(exitWithCode(1, err => {
+        const expect = `Target directory already exists "${targetDir}"`;
+        assert.equal((err || {}).message, expect);
+        done();
+      }));
+    });
   });
 });
