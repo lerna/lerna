@@ -2,6 +2,7 @@ import child from "child_process";
 import pathExists from "path-exists";
 import assert from "assert";
 import path from "path";
+import fs from "fs";
 
 import PromptUtilities from "../src/PromptUtilities";
 import ImportCommand from "../src/commands/ImportCommand";
@@ -61,6 +62,67 @@ describe("ImportCommand", () => {
       importCommand.runPreparations();
 
       importCommand.initialize(done);
+    });
+
+    it("should fail without an argument", done => {
+      const importCommand = new ImportCommand([], {});
+
+      importCommand.runValidations();
+      importCommand.runPreparations();
+
+      importCommand.runCommand(exitWithCode(1, err => {
+        const expect = "Missing argument: Path to external repository";
+        assert.equal((err || {}).message, expect);
+        done();
+      }));
+    });
+
+    it("should fail with a missing external directory", done => {
+      const missing = externalDir + "_invalidSuffix";
+      const importCommand = new ImportCommand([missing], {});
+
+      importCommand.runValidations();
+      importCommand.runPreparations();
+
+      importCommand.runCommand(exitWithCode(1, err => {
+        const expect = `No repository found at "${missing}"`;
+        assert.equal((err || {}).message, expect);
+        done();
+      }));
+    });
+
+    it("should fail with a missing package.json", done => {
+      const importCommand = new ImportCommand([externalDir], {});
+
+      const packageJson = path.join(externalDir, "package.json");
+
+      fs.unlinkSync(packageJson);
+
+      importCommand.runValidations();
+      importCommand.runPreparations();
+
+      importCommand.runCommand(exitWithCode(1, err => {
+        const expect = `Cannot find module '${packageJson}'`;
+        assert.equal((err || {}).message, expect);
+        done();
+      }));
+    });
+
+    it("should fail with no name in package.json", done => {
+      const importCommand = new ImportCommand([externalDir], {});
+
+      const packageJson = path.join(externalDir, "package.json");
+
+      fs.writeFileSync(packageJson, "{}");
+
+      importCommand.runValidations();
+      importCommand.runPreparations();
+
+      importCommand.runCommand(exitWithCode(1, err => {
+        const expect = `No package name specified in "${packageJson}"`;
+        assert.equal((err || {}).message, expect);
+        done();
+      }));
     });
   });
 });

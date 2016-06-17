@@ -27,6 +27,9 @@ export default class ImportCommand extends Command {
         throw new Error(`No package name specified in "${packageJson}"`);
       }
     } catch (e) {
+      if (e.code === "ENOENT") {
+        return callback(new Error(`No repository found at "${inputPath}"`));
+      }
       return callback(e);
     }
 
