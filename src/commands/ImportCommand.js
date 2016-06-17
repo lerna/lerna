@@ -10,10 +10,11 @@ export default class ImportCommand extends Command {
     const inputPath = this.input[0];
 
     if (!inputPath) {
-      callback(new Error("Missing argument: Path to external repository"));
+      return callback(new Error("Missing argument: Path to external repository"));
     }
 
     const externalRepoPath = path.resolve(inputPath);
+    const externalRepoBase = path.basename(externalRepoPath);
 
     try {
       const stats = fs.statSync(externalRepoPath);
@@ -25,10 +26,11 @@ export default class ImportCommand extends Command {
       if (!packageName) {
         throw new Error(`No package name specified in "${packageJson}"`);
       }
-      this.targetDir = "packages/" + packageName;
     } catch (e) {
-      callback(e);
+      return callback(e);
     }
+
+    this.targetDir = "packages/" + externalRepoBase;
 
     this.externalExecOpts = {
       encoding: "utf8",

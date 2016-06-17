@@ -1,3 +1,4 @@
 {
-  "name": "external"
+  "//": "Import should use _directory_ name, not package name",
+  "name": "external-name"
 }
