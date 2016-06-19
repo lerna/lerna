@@ -1,0 +1,23 @@
+version: "{build}"
+
+environment:
+  matrix:
+  # node.js
+  - nodejs_version: "0.10"
+  - nodejs_version: "0.12"
+  - nodejs_version: "4"
+  - nodejs_version: "6"
+
+install:
+  - ps: Install-Product node $env:nodejs_version
+  - node --version
+  - npm --version
+  - npm install
+
+test_script:
+  - npm test
+
+build: off
+
+matrix:
+  fast_finish: true    # set this flag to immediately finish build once one of the jobs fails.
