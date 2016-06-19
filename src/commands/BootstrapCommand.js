@@ -83,7 +83,8 @@ export default class BootstrapCommand extends Command {
     }, null, "  ");
 
     const prefix = this.repository.linkedFiles.prefix || "";
-    const indexJsFileContents = prefix + "module.exports = require(" + JSON.stringify(src) + ");";
+    const relativeSrc = path.join("..", "..", src.replace(this.repository.packagesLocation, ""));
+    const indexJsFileContents = prefix + "module.exports = require(" + JSON.stringify(relativeSrc) + ");";
 
     FileSystemUtilities.writeFile(destPackageJsonLocation, packageJsonFileContents, err => {
       if (err) {
