@@ -109,7 +109,7 @@ export default class BootstrapCommand extends Command {
         return !this.hasDependencyInstalled(pkg, dependency);
       })
       .map(dependency => {
-        return dependency + "@" + allDependencies[dependency];
+        return dependency + "@\"" + allDependencies[dependency] + "\"";
       });
 
     if (externalPackages.length) {
