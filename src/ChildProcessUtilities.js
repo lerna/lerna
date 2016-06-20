@@ -1,4 +1,5 @@
 import child from "child_process";
+import spawn from "cross-spawn-async";
 import objectAssign from "object-assign";
 import syncExec from "sync-exec";
 
@@ -35,7 +36,7 @@ export default class ChildProcessUtilities {
   static spawn(command, args, opts, callback) {
     let stderr = "";
 
-    const childProcess = child.spawn(command, args, objectAssign({
+    const childProcess = spawn(command, args, objectAssign({
       stdio: "inherit"
     }, opts))
       .on("error", () => {})
