@@ -1,5 +1,5 @@
 import child from "child_process";
-import spawn from "cross-spawn-async";
+import spawn from "cross-spawn";
 import objectAssign from "object-assign";
 import syncExec from "sync-exec";
 
