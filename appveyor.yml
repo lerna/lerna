@@ -21,3 +21,9 @@ build: off
 
 matrix:
   fast_finish: true    # set this flag to immediately finish build once one of the jobs fails.
+
+notifications:
+  - provider: Slack
+    auth_token:
+      secure: 4YwLDL73nQmKvBgFRmHaQv1zergqShjwz69D/ArJOwyx5BDS3/tB4m2mMcDIK6HD7QtjbvrmvjB0IzhnHlVPOw==
+    channel: '#activity'
