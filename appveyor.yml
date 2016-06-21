@@ -1,10 +1,9 @@
 # Test against this version of Node.js
 environment:
   matrix:
-  # node.js
-  - nodejs_version: "0.10"
-  - nodejs_version: "0.12"
-  - nodejs_version: "4"
+    # - nodejs_version: "0.10"
+    # - nodejs_version: "0.12"
+    - nodejs_version: "4"
 
 init:
   - git config --global user.email test@example.com
