@@ -24,8 +24,8 @@ describe("RunCommand", () => {
     stub(ChildProcessUtilities, "exec", (command, options, callback) => {
       assert.equal(command, "npm run my-script ")
 
-      if (calls === 0) assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-1") });
-      if (calls === 1) assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-3") });
+      if (calls === 0) assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-1"), env: process.env });
+      if (calls === 1) assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-3"), env: process.env });
 
       calls++;
       callback();
