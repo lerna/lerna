@@ -1,6 +1,5 @@
 import child from "child_process";
 import objectAssign from "object-assign";
-import syncExec from "sync-exec";
 
 export default class ChildProcessUtilities {
   static exec(command, opts, callback) {
@@ -22,15 +21,9 @@ export default class ChildProcessUtilities {
   }
 
   static execSync(command) {
-    if (child.execSync) {
-      return child.execSync(command, {
-        encoding: "utf8"
-      }).trim();
-    } else {
-      return syncExec(command, {
-        encoding: "utf8"
-      }).stdout.trim();
-    }
+    return child.execSync(command, {
+      encoding: "utf8"
+    }).trim();
   }
 
   static spawn(command, args, opts, callback) {

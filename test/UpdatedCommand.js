@@ -2,15 +2,12 @@ import assert from "assert";
 import child from "child_process";
 import path from "path";
 import fs from "fs";
-import syncExec from "sync-exec";
 
 import UpdatedCommand from "../src/commands/UpdatedCommand";
 import exitWithCode from "./_exitWithCode";
 import initFixture from "./_initFixture";
 import logger from "../src/logger";
 import stub from "./_stub";
-
-const execSync = (child.execSync || syncExec);
 
 describe("UpdatedCommand", () => {
 
@@ -26,10 +23,10 @@ describe("UpdatedCommand", () => {
     });
 
     it("should list changes", done => {
-      execSync("git tag v1.0.0");
-      execSync("touch " + path.join(testDir, "packages/package-2/random-file"));
-      execSync("git add -A");
-      execSync("git commit -m 'Commit'");
+      child.execSync("git tag v1.0.0");
+      child.execSync("touch " + path.join(testDir, "packages/package-2/random-file"));
+      child.execSync("git add -A");
+      child.execSync("git commit -m 'Commit'");
 
       const updatedCommand = new UpdatedCommand([], {});
 
@@ -49,10 +46,10 @@ describe("UpdatedCommand", () => {
     });
 
     it("should list changes with --force-publish *", done => {
-      execSync("git tag v1.0.0");
-      execSync("touch " + path.join(testDir, "packages/package-2/random-file"));
-      execSync("git add -A");
-      execSync("git commit -m 'Commit'");
+      child.execSync("git tag v1.0.0");
+      child.execSync("touch " + path.join(testDir, "packages/package-2/random-file"));
+      child.execSync("git add -A");
+      child.execSync("git commit -m 'Commit'");
 
       const updatedCommand = new UpdatedCommand([], {
         forcePublish: "*"
@@ -74,10 +71,10 @@ describe("UpdatedCommand", () => {
     });
 
     it("should list changes with --force-publish [package,package]", done => {
-      execSync("git tag v1.0.0");
-      execSync("touch " + path.join(testDir, "packages/package-3/random-file"));
-      execSync("git add -A");
-      execSync("git commit -m 'Commit'");
+      child.execSync("git tag v1.0.0");
+      child.execSync("touch " + path.join(testDir, "packages/package-3/random-file"));
+      child.execSync("git add -A");
+      child.execSync("git commit -m 'Commit'");
 
       const updatedCommand = new UpdatedCommand([], {
         forcePublish: "package-2,package-4"
@@ -106,11 +103,11 @@ describe("UpdatedCommand", () => {
       };
       fs.writeFileSync(lernaJsonLocation, JSON.stringify(lernaJson, null, 2));
 
-      execSync("git tag v1.0.0");
-      execSync("touch " + path.join(testDir, "packages/package-2/ignored-file"));
-      execSync("touch " + path.join(testDir, "packages/package-3/random-file"));
-      execSync("git add -A");
-      execSync("git commit -m 'Commit'");
+      child.execSync("git tag v1.0.0");
+      child.execSync("touch " + path.join(testDir, "packages/package-2/ignored-file"));
+      child.execSync("touch " + path.join(testDir, "packages/package-3/random-file"));
+      child.execSync("git add -A");
+      child.execSync("git commit -m 'Commit'");
 
       const updatedCommand = new UpdatedCommand([], {});
 
@@ -142,10 +139,10 @@ describe("UpdatedCommand", () => {
     });
 
     it("should list changes", done => {
-      execSync("git tag v1.0.0");
-      execSync("touch " + path.join(testDir, "packages/package-3/random-file"));
-      execSync("git add -A");
-      execSync("git commit -m 'Commit'");
+      child.execSync("git tag v1.0.0");
+      child.execSync("touch " + path.join(testDir, "packages/package-3/random-file"));
+      child.execSync("git add -A");
+      child.execSync("git commit -m 'Commit'");
 
       const updatedCommand = new UpdatedCommand([], {});
 
@@ -165,10 +162,10 @@ describe("UpdatedCommand", () => {
     });
 
     it("should list changes with --force-publish *", done => {
-      execSync("git tag v1.0.0");
-      execSync("touch " + path.join(testDir, "packages/package-2/random-file"));
-      execSync("git add -A");
-      execSync("git commit -m 'Commit'");
+      child.execSync("git tag v1.0.0");
+      child.execSync("touch " + path.join(testDir, "packages/package-2/random-file"));
+      child.execSync("git add -A");
+      child.execSync("git commit -m 'Commit'");
 
       const updatedCommand = new UpdatedCommand([], {
         forcePublish: "*"
@@ -190,10 +187,10 @@ describe("UpdatedCommand", () => {
     });
 
     it("should list changes with --force-publish [package,package]", done => {
-      execSync("git tag v1.0.0");
-      execSync("touch " + path.join(testDir, "packages/package-4/random-file"));
-      execSync("git add -A");
-      execSync("git commit -m 'Commit'");
+      child.execSync("git tag v1.0.0");
+      child.execSync("touch " + path.join(testDir, "packages/package-4/random-file"));
+      child.execSync("git add -A");
+      child.execSync("git commit -m 'Commit'");
 
       const updatedCommand = new UpdatedCommand([], {
         forcePublish: "package-2"
@@ -222,11 +219,11 @@ describe("UpdatedCommand", () => {
       };
       fs.writeFileSync(lernaJsonLocation, JSON.stringify(lernaJson, null, 2));
 
-      execSync("git tag v1.0.0");
-      execSync("touch " + path.join(testDir, "packages/package-2/ignored-file"));
-      execSync("touch " + path.join(testDir, "packages/package-3/random-file"));
-      execSync("git add -A");
-      execSync("git commit -m 'Commit'");
+      child.execSync("git tag v1.0.0");
+      child.execSync("touch " + path.join(testDir, "packages/package-2/ignored-file"));
+      child.execSync("touch " + path.join(testDir, "packages/package-3/random-file"));
+      child.execSync("git add -A");
+      child.execSync("git commit -m 'Commit'");
 
       const updatedCommand = new UpdatedCommand([], {});
 
