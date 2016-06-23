@@ -397,7 +397,7 @@ are preserved.  Commits are applied to the current branch.
 This is useful for gathering pre-existing standalone packages into a Lerna
 repo.  Each commit is modified to make changes relative to the package
 directory.  So, for example, the commit that added `package.json` will
-instead add `packages/<package-name>/package.json`.
+instead add `packages/<directory-name>/package.json`.
 
 ## Misc
 
