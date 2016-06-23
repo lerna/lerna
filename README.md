@@ -391,7 +391,7 @@ $ lerna import <path-to-external-repository>
 ```
 
 Import the package at `<path-to-external-repository>`, with commit history,
-into `packages/<package-name>`.  Original commit authors, dates and messages
+into `packages/<directory-name>`.  Original commit authors, dates and messages
 are preserved.  Commits are applied to the current branch.
 
 This is useful for gathering pre-existing standalone packages into a Lerna
