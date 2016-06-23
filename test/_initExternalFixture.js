@@ -19,7 +19,7 @@ export default function initExternalFixture(fixturePath, callback) {
 
   createdDirectories.push(testDir);
 
-fse.copy(fixtureDir, testDir, err => {
+  fse.copy(fixtureDir, testDir, err => {
     if (err) return callback(err);
     child.execSync("git init . && git add -A && git commit -m \"Init external commit\"", {
       cwd: testDir
