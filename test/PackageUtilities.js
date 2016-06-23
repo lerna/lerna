@@ -9,7 +9,7 @@ describe("PackageUtilities", () => {
     it("should append the packages path to the repo path given", () => {
       assert.equal(
         PackageUtilities.getPackagesPath("/path/to/repo"),
-        "/path/to/repo/packages"
+        path.join("/path/to/repo/packages")
       );
     });
   });
@@ -18,7 +18,7 @@ describe("PackageUtilities", () => {
     it("should append the package path to the packages path given", () => {
       assert.equal(
         PackageUtilities.getPackagePath("/path/to/repo/packages", "my-package"),
-        "/path/to/repo/packages/my-package"
+        path.join("/path/to/repo/packages/my-package")
       );
     });
   });
@@ -27,7 +27,7 @@ describe("PackageUtilities", () => {
     it("should append the package config path to the packages path given", () => {
       assert.equal(
         PackageUtilities.getPackageConfigPath("/path/to/repo/packages", "my-package"),
-        "/path/to/repo/packages/my-package/package.json"
+        path.join("/path/to/repo/packages/my-package/package.json")
       );
     });
   });
