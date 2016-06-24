@@ -127,7 +127,7 @@ export default class UpdatedPackagesCollector {
 
   collectUpdates() {
     return this.packages.filter(pkg => {
-      return this.updatedPackages[pkg.name] || this.dependents[pkg.name] || this.flags.canary;
+      return this.updatedPackages[pkg.name] || (this.flags.onlyExplicitUpdates ? false : this.dependents[pkg.name]) || this.flags.canary;
     }).map(pkg => {
       return new Update(pkg);
     });

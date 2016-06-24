@@ -476,3 +476,16 @@ The `ignore` flag, when used with the `bootstrap` command, can also be set in `l
 
 > Hint: The glob is matched against the package name defined in `package.json`,
 > not the directory name the package lives in.
+
+#### --only-explicit-updates
+
+Only will bump versions for packages that have been updated explicitly rather than cross-dependencies.
+
+> This may not make sense for a major version bump since other packages that depend on the updated packages wouldn't be updated.
+
+```sh
+$ lerna updated --only-explicit-updates
+$ lerna publish --only-explicit-updates
+```
+
+Ex: in Babel, `babel-types` is depended upon by all packages in the monorepo (over 100). However, Babel uses `^` for most of it's dependencies so it isn't necessary to bump the versions of all packages if only `babel-types` is updated. This option allows only the packages that have been explicitly updated to make a new version.
