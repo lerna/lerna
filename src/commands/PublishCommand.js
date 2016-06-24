@@ -142,6 +142,18 @@ export default class PublishCommand extends Command {
       });
     }
 
+    // Declare that each package has an updated and correct version
+    if (this.flags.packageVersion) {
+      const versions = {};
+      const version = this.globalVersion;
+
+      this.updates.forEach(update => {
+        versions[update.package.name] = update.package.version;
+      });
+
+      return callback(null, { version, versions });
+    }
+
     // Non-Independent Canary Mode
     if (!this.repository.isIndependent() && this.flags.canary) {
       const version = this.globalVersion + this.getCanaryVersionSuffix();
