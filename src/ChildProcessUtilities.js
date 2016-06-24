@@ -33,8 +33,21 @@ export default class ChildProcessUtilities {
   }
 
   static spawn(command, args, opts, callback) {
-    child.spawn(command, args, objectAssign({
+    let stderr = "";
+
+    const childProcess = child.spawn(command, args, objectAssign({
       stdio: "inherit"
-    }, opts)).on("close", callback).on("error", () => null);
+    }, opts))
+      .on("error", () => {})
+      .on("exit", code => {
+        callback(code && (stderr || `Command failed: ${command} ${args.join(" ")}`))
+      });
+
+    // By default stderr is inherited from us (just sent to _our_ output).
+    // If the caller overrode that to "pipe", then we'll gather that up and
+    // call back with it in case of failure.
+    if (childProcess.stderr) {
+      childProcess.stderr.setEncoding("utf8").on("data", chunk => stderr += chunk);
+    }
   }
 }
