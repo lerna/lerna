@@ -47,6 +47,9 @@ describe("BootstrapCommand", () => {
           assert.ok(pathExists.sync(path.join(testDir, "packages/package-2/node_modules/package-1/index.js")));
           assert.ok(pathExists.sync(path.join(testDir, "packages/package-2/node_modules/package-1/package.json")));
 
+          // Make sure the `prepublish` script got run (index.js got created).
+          assert.equal(require(path.join(testDir, "packages/package-2/node_modules/package-1")), "OK");
+
           assert.ok(pathExists.sync(path.join(testDir, "packages/package-3/node_modules/package-2")));
           assert.ok(pathExists.sync(path.join(testDir, "packages/package-3/node_modules/package-2/index.js")));
           assert.ok(pathExists.sync(path.join(testDir, "packages/package-3/node_modules/package-2/package.json")));

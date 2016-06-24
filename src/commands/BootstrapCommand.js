@@ -30,19 +30,62 @@ export default class BootstrapCommand extends Command {
 
     const ignore = this.flags.ignore || this.repository.bootstrapConfig.ignore;
 
-    async.parallelLimit(PackageUtilities.filterPackages(this.packages, ignore, true).map(pkg => done => {
-      async.series([
-        cb => FileSystemUtilities.mkdirp(pkg.nodeModulesLocation, cb),
-        cb => this.installExternalPackages(pkg, cb),
-        cb => this.linkDependenciesForPackage(pkg, cb)
-      ], err => {
-        this.progressBar.tick(pkg.name);
-        done(err);
+    // Get a filtered list of packages that will be bootstrapped.
+    const todoPackages = PackageUtilities.filterPackages(this.packages, ignore, true);
+
+    // Get a trimmed down graph that includes only those packages.
+    const filteredGraph = PackageUtilities.getPackageGraph(todoPackages);
+
+    // As packages are completed their names will go into this object.
+    const donePackages = {};
+
+    // Bootstrap runs the "prepublish" script in each package.  This script
+    // may _use_ another package from the repo.  Therefore if a package in the
+    // repo depends on another we need to bootstrap the dependency before the
+    // dependent.  So the bootstrap proceeds in batches of packages where each
+    // batch includes all packages that have no remaining un-bootstrapped
+    // dependencies within the repo.
+    const bootstrapBatch = () => {
+
+      // Get all packages that have no remaining dependencies within the repo
+      // that haven't yet been bootstrapped.
+      const batch = todoPackages.filter(pkg => {
+        const node = filteredGraph.get(pkg.name);
+        return !node.dependencies.filter(dep => !donePackages[dep]).length;
       });
-    }), this.concurrency, err => {
-      this.progressBar.terminate();
-      callback(err);
-    });
+
+      async.parallelLimit(batch.map(pkg => done => {
+        async.series([
+          cb => FileSystemUtilities.mkdirp(pkg.nodeModulesLocation, cb),
+          cb => this.installExternalPackages(pkg, cb),
+          cb => this.linkDependenciesForPackage(pkg, cb),
+          cb => this.runPrepublishForPackage(pkg, cb),
+        ], err => {
+          this.progressBar.tick(pkg.name);
+          donePackages[pkg.name] = true;
+          todoPackages.splice(todoPackages.indexOf(pkg), 1);
+          done(err);
+        });
+      }), this.concurrency, err => {
+        if (todoPackages.length && !err) {
+          bootstrapBatch();
+        } else {
+          this.progressBar.terminate();
+          callback(err);
+        }
+      });
+    }
+
+    // Kick off the first batch.
+    bootstrapBatch();
+  }
+
+  runPrepublishForPackage(pkg, callback) {
+    if ((pkg.scripts || {}).prepublish) {
+      NpmUtilities.runScriptInDir("prepublish", [], pkg.location, callback);
+    } else {
+      callback();
+    }
   }
 
   linkDependenciesForPackage(pkg, callback) {

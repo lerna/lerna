@@ -77,6 +77,9 @@ export default class PackageUtilities {
       if (!packages.length) {
         throw new Error(`No packages found that match '${glob}'`);
       }
+    } else {
+      // Always return a copy.
+      packages = packages.slice();
     }
     return packages;
   }
