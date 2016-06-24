@@ -130,10 +130,10 @@ describe("UpdatedCommand", () => {
     });
 
     it("should list changes for explicitly changed packages", done => {
-      child.execSync("git tag v1.0.0");
-      child.execSync("touch " + path.join(testDir, "packages/package-2/random-file"));
-      child.execSync("git add -A");
-      child.execSync("git commit -m 'Commit'");
+      execSync("git tag v1.0.0");
+      execSync("touch " + path.join(testDir, "packages/package-2/random-file"));
+      execSync("git add -A");
+      execSync("git commit -m 'Commit'");
 
       const updatedCommand = new UpdatedCommand([], {
         onlyExplicitUpdates: true
