@@ -1,9 +1,10 @@
 import fs from "fs";
 import path from "path";
-import child from "child_process";
+import async from "async";
 import Command from "../Command";
 import progressBar from "../progressBar";
 import PromptUtilities from "../PromptUtilities";
+import ChildProcessUtilities from "../ChildProcessUtilities";
 
 export default class ImportCommand extends Command {
   initialize(callback) {
@@ -69,7 +70,7 @@ export default class ImportCommand extends Command {
   }
 
   externalExecSync(command) {
-    return child.execSync(command, this.externalExecOpts).trim();
+    return ChildProcessUtilities.execSync(command, this.externalExecOpts).trim();
   }
 
   execute(callback) {
@@ -77,7 +78,7 @@ export default class ImportCommand extends Command {
 
     progressBar.init(this.commits.length);
 
-    this.commits.forEach(sha => {
+    async.series(this.commits.map(sha => done => {
       progressBar.tick(sha);
 
       // Create a patch file for this commit and prepend the target directory
@@ -90,10 +91,11 @@ export default class ImportCommand extends Command {
 
       // Apply the modified patch to the current lerna repository, preserving
       // original commit date, author and message.
-      child.execSync("git am", {input: patch});
+      ChildProcessUtilities.exec("git am", {}, done).stdin.end(patch);
+    }), err => {
+      progressBar.terminate();
+      this.logger.info("Import complete!");
+      callback(err, !err);
     });
-    progressBar.terminate();
-    this.logger.info("Import complete!");
-    callback(null, true);
   }
 }

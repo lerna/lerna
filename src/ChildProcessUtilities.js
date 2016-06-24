@@ -21,15 +21,14 @@ export default class ChildProcessUtilities {
     });
   }
 
-  static execSync(command) {
+  static execSync(command, opts) {
+    const mergedOpts = objectAssign({
+      encoding: "utf8"
+    }, opts);
     if (child.execSync) {
-      return child.execSync(command, {
-        encoding: "utf8"
-      }).trim();
+      return child.execSync(command, mergedOpts).trim();
     } else {
-      return syncExec(command, {
-        encoding: "utf8"
-      }).stdout.trim();
+      return syncExec(command, mergedOpts).stdout.trim();
     }
   }
 

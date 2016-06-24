@@ -1,10 +1,10 @@
-import child from "child_process";
 import pathExists from "path-exists";
 import assert from "assert";
 import path from "path";
 import fs from "fs";
 
 import PromptUtilities from "../src/PromptUtilities";
+import ChildProcessUtilities from "../src/ChildProcessUtilities";
 import ImportCommand from "../src/commands/ImportCommand";
 import exitWithCode from "./_exitWithCode";
 import initFixture from "./_initFixture";
@@ -40,7 +40,7 @@ describe("ImportCommand", () => {
         if (err) return done(err);
 
         try {
-          const lastCommit = child.execSync("git log --format=\"%s\"", {encoding:"utf8"}).split("\n")[0];
+          const lastCommit = ChildProcessUtilities.execSync("git log --format=\"%s\"", {encoding:"utf8"}).split("\n")[0];
           const packageJson = path.join(testDir, "packages", path.basename(externalDir), "package.json");
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
           assert.ok(pathExists.sync(packageJson));
