@@ -8,6 +8,7 @@ import InitCommand from "./commands/InitCommand";
 import RunCommand from "./commands/RunCommand";
 import ExecCommand from "./commands/ExecCommand";
 import LsCommand from "./commands/LsCommand";
+import WatchCommand from "./commands/WatchCommand";
 
 export const __commands__ = {
   bootstrap: BootstrapCommand,
@@ -19,7 +20,8 @@ export const __commands__ = {
   init: InitCommand,
   run: RunCommand,
   exec: ExecCommand,
-  ls: LsCommand
+  ls: LsCommand,
+  watch: WatchCommand
 };
 
 import PackageUtilities from "./PackageUtilities";
