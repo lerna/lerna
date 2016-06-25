@@ -142,14 +142,14 @@ export default class PublishCommand extends Command {
       });
     }
 
-    // Declare that each package has an updated and correct version
+    // Declare that each package already has an updated and correct version
     if (this.flags.packageVersion) {
-      const versions = {};
       const version = this.globalVersion;
 
-      this.updates.forEach(update => {
-        versions[update.package.name] = update.package.version;
-      });
+      const versions = this.updates.reduce((vers, update) => {
+        vers[update.package.name] = update.package.version;
+        return vers;
+      }, {});
 
       return callback(null, { version, versions });
     }
@@ -233,12 +233,24 @@ export default class PublishCommand extends Command {
     });
   }
 
+  printChangedVersions() {
+    return this.logger.info(this.updates.map((update) => {
+      const packageVersionString = `- ${update.package.name}: ${update.package.version}`;
+      const appendNewVersionString = ` => ${this.updatesVersions[update.package.name]}`;
+
+      // --package-version implies each package has the latest version
+      if (this.flags.packageVersion) {
+        return packageVersionString;
+      }
+
+      return packageVersionString + appendNewVersionString;
+    }).join("\n"));
+  }
+
   confirmVersions(callback) {
     this.logger.newLine();
     this.logger.info("Changes:");
-    this.logger.info(this.updates.map((update) => {
-      return `- ${update.package.name}: ${update.package.version} => ${this.updatesVersions[update.package.name]}`;
-    }).join("\n"));
+    this.printChangedVersions();
     this.logger.newLine();
 
     if (!this.flags.yes) {
