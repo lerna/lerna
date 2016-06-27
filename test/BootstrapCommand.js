@@ -56,10 +56,16 @@ describe("BootstrapCommand", () => {
           assert.ok(pathExists.sync(path.join(testDir, "packages/package-3/node_modules/package-2/index.js")));
           assert.ok(pathExists.sync(path.join(testDir, "packages/package-3/node_modules/package-2/package.json")));
 
-          // look for binary symlink
+          // look for binary symlinks
           assert.ok(pathExists.sync(path.join(testDir, "packages/package-3/node_modules/.bin/package-2")));
-          const binLink = fs.readlinkSync(path.join(testDir, "packages/package-3/node_modules/.bin/package-2"));
-          assert.equal(binLink, path.join(testDir, "packages/package-2/cli.js"))
+          const package2BinLink = fs.readlinkSync(path.join(testDir, "packages/package-3/node_modules/.bin/package-2"));
+          assert.equal(package2BinLink, path.join(testDir, "packages/package-2/cli.js"))
+          assert.ok(pathExists.sync(path.join(testDir, "packages/package-4/node_modules/.bin/package3cli1")));
+          assert.ok(pathExists.sync(path.join(testDir, "packages/package-4/node_modules/.bin/package3cli2")));
+          const package3BinLink1 = fs.readlinkSync(path.join(testDir, "packages/package-4/node_modules/.bin/package3cli1"));
+          assert.equal(package3BinLink1, path.join(testDir, "packages/package-3/cli1.js"))
+          const package3BinLink2 = fs.readlinkSync(path.join(testDir, "packages/package-4/node_modules/.bin/package3cli2"));
+          assert.equal(package3BinLink2, path.join(testDir, "packages/package-3/cli2.js"))
 
           // Should not exist because mis-matched version
           assert.ok(!pathExists.sync(path.join(testDir, "packages/package-4/node_modules/package-1")));
@@ -114,6 +120,15 @@ describe("BootstrapCommand", () => {
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
+
+      assertStubbedCalls([
+        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
+          { args: ["npm", ["install", "package-2@^1.0.0"], { cwd: path.join(testDir, "packages/package-3"), stdio: "ignore" }] }
+        ]],
+        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
+          { args: ["npm", ["install", "package-1@^0.0.0"], { cwd: path.join(testDir, "packages/package-4"), stdio: "ignore" }] }
+        ]]
+      ]);
 
       bootstrapCommand.runCommand(exitWithCode(0, err => {
         if (err) return done(err);

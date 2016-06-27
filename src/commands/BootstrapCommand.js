@@ -6,7 +6,6 @@ import semver from "semver";
 import async from "async";
 import find from "lodash.find";
 import path from "path";
-import fs from "fs";
 
 export default class BootstrapCommand extends Command {
   initialize(callback) {
@@ -56,12 +55,29 @@ export default class BootstrapCommand extends Command {
       });
 
       async.parallelLimit(batch.map(pkg => done => {
-        async.series([
+        // async actions to bootstrap each package
+        const actions = [
           cb => FileSystemUtilities.mkdirp(pkg.nodeModulesLocation, cb),
           cb => this.installExternalPackages(pkg, cb),
           cb => this.linkDependenciesForPackage(pkg, cb),
-          cb => this.runPrepublishForPackage(pkg, cb),
-        ], err => {
+        ];
+        // array of dependencies with binaries
+        const depsWithBin = [];
+        // find matching dependencies with binaries
+        this.packages.forEach(dependency => {
+          // for each matched dependency with binaries
+          if (this.hasMatchingDependency(pkg, dependency) && dependency.bin) {
+            depsWithBin.push(dependency);
+          }
+        });
+        // if package has dependencies with binaries
+        if (depsWithBin.length) {
+          // symlink binaries
+          actions.push(cb => this.symlinkDependencyBinaries(pkg, depsWithBin, cb));
+        }
+        // add prepublish action
+        actions.push(cb => this.runPrepublishForPackage(pkg, cb));
+        async.series(actions, err => {
           this.progressBar.tick(pkg.name);
           donePackages[pkg.name] = true;
           todoPackages.splice(todoPackages.indexOf(pkg), 1);
@@ -96,15 +112,7 @@ export default class BootstrapCommand extends Command {
       const linkSrc = dependency.location;
       const linkDest = path.join(pkg.nodeModulesLocation, dependency.name);
 
-      this.createLinkedDependency(linkSrc, linkDest, dependency.name, (err) => {
-        if (!err && dependency._package.bin) {
-          const srcBinLocation = path.join(linkSrc, dependency._package.bin);
-          const destBinLocation = path.join(pkg.nodeModulesLocation, ".bin");
-          this.createBinaryLink(srcBinLocation, destBinLocation, dependency.name, done);
-        } else {
-          done(err);
-        }
-      });
+      this.createLinkedDependency(linkSrc, linkDest, dependency.name, done);
     }, callback);
   }
 
@@ -135,23 +143,42 @@ export default class BootstrapCommand extends Command {
     ], callback);
   }
 
-  createBinaryLink(src, dest, name, callback) {
-    const destBinLinkLocation = path.join(dest, name);
+  /**
+   * Symlink package dependency binaries to the package's node_modules/.bin folder
+   * @param {Package} pkg
+   * @param {Array.<Package>} dependencies
+   * @param {Function} callback
+   */
+  symlinkDependencyBinaries(pkg, dependencies, callback) {
+    const actions = [];
+    dependencies.forEach(dependency => {
+      const { location, name, bin } = dependency;
+      actions.push(cb => this.createBinaryLink(location, pkg.nodeModulesLocation, name, bin, cb));
+    });
+    async.parallelLimit(actions, this.concurrency, callback);
+  }
 
-    const createLink = (done) => {
-      fs.lstat(dest, (err) => {
-        if (!err) {
-          fs.unlink(destBinLinkLocation, () => fs.symlink(src, destBinLinkLocation, done));
-        } else {
-          fs.symlink(src, destBinLinkLocation, done);
-        }
-      });
-    }
-
-    async.series([
-      cb => FileSystemUtilities.mkdirp(dest, cb),
-      cb => createLink(cb)
-    ], callback);
+  /**
+   * Create a symlink to a dependency's binary in the node_modules/.bin folder
+   * @param {String} src Source location of package to link
+   * @param {String} dest Destination node_modules folder
+   * @param {String} name Name of source package
+   * @param {String|Object} bin Source package.json "bin" value
+   * @param {Function} callback
+   */
+  createBinaryLink(src, dest, name, bin, callback) {
+    // destination folder of binaries
+    const destBinFolder = path.join(dest, ".bin");
+    const bins = typeof bin === "string" ? { [name]: bin } : bin;
+    const srcBinFiles = Object.keys(bins).map(name => path.join(src, bins[name]));
+    const destBinFiles = Object.keys(bins).map(name => path.join(destBinFolder, name));
+    // ensure destination folder
+    const actions = [cb => FileSystemUtilities.mkdirp(destBinFolder, cb)];
+    // create symlinks for binaries
+    srcBinFiles.forEach((binFile, idx) => {
+      actions.push(cb => FileSystemUtilities.symlink(binFile, destBinFiles[idx], "file", cb));
+    });
+    async.series(actions, callback);
   }
 
   installExternalPackages(pkg, callback) {

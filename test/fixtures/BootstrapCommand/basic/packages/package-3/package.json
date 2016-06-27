@@ -3,5 +3,9 @@
   "version": "1.0.0",
   "devDependencies": {
     "package-2": "^1.0.0"
+  },
+  "bin": {
+    "package3cli1": "cli1.js",
+    "package3cli2": "cli2.js"
   }
 }

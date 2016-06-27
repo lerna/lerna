@@ -51,6 +51,17 @@ export default class FileSystemUtilities {
     rimraf(filePath, callback);
   }
 
+  @logger.logifyAsync
+  static symlink(src, dest, type = "file", callback) {
+    fs.lstat(dest, (err) => {
+      if (!err) {
+        fs.unlink(dest, () => fs.symlink(src, dest, type, callback));
+      } else {
+        fs.symlink(src, dest, type, callback);
+      }
+    });
+  }
+
   @logger.logifySync
   static unlinkSync(filePath) {
     fs.unlink(filePath);
