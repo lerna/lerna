@@ -144,5 +144,24 @@ describe("ImportCommand", () => {
         done();
       }));
     });
+
+    it("should fail if repo has uncommitted changes", done => {
+      const importCommand = new ImportCommand([externalDir], {});
+
+      const uncommittedFile = path.join(testDir, "ucommittedFile");
+
+      fs.writeFileSync(uncommittedFile, "");
+
+      ChildProcessUtilities.execSync("git add " + uncommittedFile);
+
+      importCommand.runValidations();
+      importCommand.runPreparations();
+
+      importCommand.runCommand(exitWithCode(1, err => {
+        const expect = "Local repository has un-committed changes";
+        assert.equal((err || {}).message, expect);
+        done();
+      }));
+    });
   });
 });

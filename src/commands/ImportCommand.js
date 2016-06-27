@@ -4,7 +4,7 @@ import async from "async";
 import Command from "../Command";
 import progressBar from "../progressBar";
 import PromptUtilities from "../PromptUtilities";
-import ChildProcessUtilities from "../ChildProcessUtilities";
+import {execSync, exec} from "../ChildProcessUtilities";
 
 export default class ImportCommand extends Command {
   initialize(callback) {
@@ -50,7 +50,14 @@ export default class ImportCommand extends Command {
     this.commits = this.externalExecSync("git log --format=\"%h\"").split("\n").reverse();
 
     if (!this.commits.length) {
-      callback(new Error(`No git commits to import at "${inputPath}"`));
+      return callback(new Error(`No git commits to import at "${inputPath}"`));
+    }
+
+    // Stash the repo's pre-import head away in case something goes wrong.
+    this.preImportHead = execSync("git log --format=\"%h\" -1").split("\n")[0];
+
+    if (execSync("git diff " + this.preImportHead)) {
+      return callback(new Error("Local repository has un-committed changes"));
     }
 
     this.logger.info(`About to import ${this.commits.length} commits into from ${inputPath} into ${this.targetDir}`);
@@ -70,7 +77,7 @@ export default class ImportCommand extends Command {
   }
 
   externalExecSync(command) {
-    return ChildProcessUtilities.execSync(command, this.externalExecOpts).trim();
+    return execSync(command, this.externalExecOpts).trim();
   }
 
   execute(callback) {
@@ -94,10 +101,25 @@ export default class ImportCommand extends Command {
       //
       // Fall back to three-way merge, which can help with duplicate commits
       // due to merge history.
-      ChildProcessUtilities.exec("git am -3", {}, done).stdin.end(patch);
+      exec("git am -3", {}, err => {
+        if (err) {
+
+          // Give some context for the error message.
+          err = `Failed to apply commit ${sha}.\n${err}\n` +
+                `Rolling back to previous HEAD (commit ${this.preImportHead}).`;
+
+          // Abort the failed `git am` and roll back to previous HEAD.
+          execSync("git am --abort");
+          execSync("git reset --hard " + this.preImportHead);
+        }
+        done(err);
+      }).stdin.end(patch);
     }), err => {
       progressBar.terminate();
-      this.logger.info("Import complete!");
+
+      if (!err) {
+        this.logger.info("Import complete!");
+      }
       callback(err, !err);
     });
   }
