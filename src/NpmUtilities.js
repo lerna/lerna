@@ -35,7 +35,7 @@ export default class NpmUtilities {
 
   @logger.logifySync
   static execInDir(command, args, directory, callback) {
-    ChildProcessUtilities.exec(`npm ${command} ${args.join(" ")}`, { cwd: directory }, callback);
+    ChildProcessUtilities.exec(`npm ${command} ${args.join(" ")}`, { cwd: directory, env: process.env }, callback);
   }
 
   @logger.logifyAsync
