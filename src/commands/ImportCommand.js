@@ -91,7 +91,10 @@ export default class ImportCommand extends Command {
 
       // Apply the modified patch to the current lerna repository, preserving
       // original commit date, author and message.
-      ChildProcessUtilities.exec("git am", {}, done).stdin.end(patch);
+      //
+      // Fall back to three-way merge, which can help with duplicate commits
+      // due to merge history.
+      ChildProcessUtilities.exec("git am -3", {}, done).stdin.end(patch);
     }), err => {
       progressBar.terminate();
       this.logger.info("Import complete!");
