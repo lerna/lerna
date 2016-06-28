@@ -11,6 +11,8 @@ import stub from "./_stub";
 
 import assertStubbedCalls from "./_assertStubbedCalls";
 
+const STDIO_OPT = ["ignore", "ignore", "pipe"];
+
 describe("BootstrapCommand", () => {
 
   describe("dependencies between packages in the repo", () => {
@@ -28,7 +30,7 @@ describe("BootstrapCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install", "package-1@^0.0.0"], { cwd: path.join(testDir, "packages/package-4"), stdio: "ignore" }] }
+          { args: ["npm", ["install", "package-1@^0.0.0"], { cwd: path.join(testDir, "packages/package-4"), stdio: STDIO_OPT }] }
         ]]
       ]);
 
@@ -77,7 +79,7 @@ describe("BootstrapCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install", "package-1@^0.0.0"], { cwd: path.join(testDir, "packages/package-4"), stdio: "ignore" }] }
+          { args: ["npm", ["install", "package-1@^0.0.0"], { cwd: path.join(testDir, "packages/package-4"), stdio: STDIO_OPT }] }
         ]]
       ]);
 
@@ -132,7 +134,7 @@ describe("BootstrapCommand", () => {
       let installed = false;
       stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
         assert.deepEqual(args, ["install", "external@^1.0.0"])
-        assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-1"), stdio: "ignore" })
+        assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-1"), stdio: STDIO_OPT })
         installed = true;
         callback();
       });
