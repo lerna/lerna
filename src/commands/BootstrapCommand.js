@@ -76,12 +76,10 @@ export default class BootstrapCommand extends Command {
     const srcPackageJsonLocation = path.join(src, "package.json");
     const destPackageJsonLocation = path.join(dest, "package.json");
     const destIndexJsLocation = path.join(dest, "index.js");
-    const pkg = require(srcPackageJsonLocation);
 
     const packageJsonFileContents = JSON.stringify({
       name: name,
-      version: pkg.version,
-      main: pkg.main
+      version: require(srcPackageJsonLocation).version
     }, null, "  ");
 
     const prefix = this.repository.linkedFiles.prefix || "";
