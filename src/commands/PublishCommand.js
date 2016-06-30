@@ -135,11 +135,67 @@ export default class PublishCommand extends Command {
     });
   }
 
-  getVersionsForUpdates(callback) {
-    if (this.flags.repoVersion) {
-      return callback(null, {
-        version: this.flags.repoVersion
+  reduceUpdates(isCanary = false) {
+    const canaryVersionSuffix = this.getCanaryVersionSuffix();
+
+    return this.updates.reduce((vers, update) => {
+      const currentPackageName = update.package.name;
+
+      vers[currentPackageName] = update.package.version;
+
+      if (isCanary) {
+        vers[currentPackageName] = vers[currentPackageName] + canaryVersionSuffix;
+      }
+
+      return vers;
+    }, {});
+  }
+
+  handleVersionCommand(callback) {
+    const flagParts = this.flags.updateVersion.split(" ");
+    const flag = flagParts[0];
+    const flagArg = flagParts[1];
+
+    switch (flag) {
+
+    // Uses the version passed
+    case "repo": {
+      let err = null;
+
+      if (!semver.valid(flagArg)) {
+        err = "Must provide --update-version with a valid semver version";
+      }
+
+      return callback(err, {
+        version: flagArg,
       });
+    }
+
+    // Uses the package's version number
+    case "package": {
+      const version = this.globalVersion;
+
+      const versions = this.reduceUpdates();
+
+      return callback(null, { version, versions });
+
+    }
+
+    // Independent canary
+    case "canary": {
+      const versions = this.reduceUpdates(true);
+
+      return callback(null, { versions });
+    }
+
+    default:
+      return callback(`"${flag}" is not a valid flag for --update-version`)
+    }
+  }
+
+  getVersionsForUpdates(callback) {
+    if (this.flags.updateVersion) {
+      return this.handleVersionCommand(callback);
     }
 
     // Non-Independent Canary Mode
@@ -156,17 +212,6 @@ export default class PublishCommand extends Command {
           callback(null, { version });
         }
       });
-
-    // Independent Canary Mode
-    } else if (this.flags.canary) {
-      const versions = {};
-      const canaryVersionSuffix = this.getCanaryVersionSuffix();
-
-      this.updates.forEach(update => {
-        versions[update.package.name] = update.package.version + canaryVersionSuffix;
-      });
-
-      callback(null, { versions });
 
     // Independent Non-Canary Mode
     } else {
@@ -221,12 +266,24 @@ export default class PublishCommand extends Command {
     });
   }
 
+  printChangedVersions() {
+    return this.logger.info(this.updates.map((update) => {
+      const packageVersionString = `- ${update.package.name}: ${update.package.version}`;
+      const appendNewVersionString = ` => ${this.updatesVersions[update.package.name]}`;
+
+      // `--version package` implies each package has the latest version
+      if (this.flags.version === "package") {
+        return packageVersionString;
+      }
+
+      return packageVersionString + appendNewVersionString;
+    }).join("\n"));
+  }
+
   confirmVersions(callback) {
     this.logger.newLine();
     this.logger.info("Changes:");
-    this.logger.info(this.updates.map((update) => {
-      return `- ${update.package.name}: ${update.package.version} => ${this.updatesVersions[update.package.name]}`;
-    }).join("\n"));
+    this.printChangedVersions();
     this.logger.newLine();
 
     if (!this.flags.yes) {
