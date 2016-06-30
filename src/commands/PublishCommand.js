@@ -189,7 +189,7 @@ export default class PublishCommand extends Command {
     }
 
     default:
-      return callback(`"${flag}" is not a valid flag for --update-version`)
+      return callback(`"${flag}" is not a valid flag for --update-version`);
     }
   }
 

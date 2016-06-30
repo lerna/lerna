@@ -290,11 +290,17 @@ $ lerna publish --canary --yes
 When run with this flag, `publish` will skip all confirmation prompts.
 Useful in [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous_integration) to automatically answer the publish confirmation prompt.
 
-#### --repo-version
+#### --update-version [repo, package, canary], -u
 
 ```sh
-$ lerna publish --repo-version 1.0.1
-# applies version and skips `Select a new version for...` prompt
+$ lerna publish --update-version "repo x.x.x"
+# applies specified version x.x.x and skips `Select a new version for...` prompt
+
+$ lerna publish --update-version package
+# applies version found in each package.json and skips `Select a new version for...` prompt
+
+$ lerna publish --update-version canary
+# applies version found in each package.json and applies a canary version suffix and skips `Select a new version for...` prompt
 ```
 
 When run with this flag, `publish` will skip the version selection prompt and use the specified version.
