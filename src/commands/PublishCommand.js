@@ -272,8 +272,8 @@ export default class PublishCommand extends Command {
       const packageVersionString = `- ${update.package.name}: ${update.package.version}`;
       const appendNewVersionString = ` => ${this.updatesVersions[update.package.name]}`;
 
-      // `--version package` implies each package has the latest version
-      if (this.flags.version === "package") {
+      // `--update-version package` implies each package has the latest version
+      if (this.flags.updateVersion === "package") {
         return packageVersionString;
       }
 
