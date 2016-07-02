@@ -2,6 +2,6 @@
   "name": "package-1",
   "version": "1.0.0",
   "scripts": {
-    "prepublish": "mv index.src.js index.js"
+    "prepublish": "cp index.src.js index.js"
   }
 }

@@ -1,7 +1,7 @@
-import FileSystemUtilities from "../FileSystemUtilities";
 import NpmUtilities from "../NpmUtilities";
 import PackageUtilities from "../PackageUtilities";
 import Command from "../Command";
+import ChildProcessUtilities from "../ChildProcessUtilities";
 import semver from "semver";
 import async from "async";
 import find from "lodash.find";
@@ -56,10 +56,8 @@ export default class BootstrapCommand extends Command {
 
       async.parallelLimit(batch.map(pkg => done => {
         async.series([
-          cb => FileSystemUtilities.mkdirp(pkg.nodeModulesLocation, cb),
-          cb => this.installExternalPackages(pkg, cb),
           cb => this.linkDependenciesForPackage(pkg, cb),
-          cb => this.runPrepublishForPackage(pkg, cb),
+          cb => this.installExternalPackages(pkg, cb),
         ], err => {
           this.progressBar.tick(pkg.name);
           donePackages[pkg.name] = true;
@@ -80,61 +78,13 @@ export default class BootstrapCommand extends Command {
     bootstrapBatch();
   }
 
-  runPrepublishForPackage(pkg, callback) {
-    if ((pkg.scripts || {}).prepublish) {
-      NpmUtilities.runScriptInDir("prepublish", [], pkg.location, callback);
-    } else {
-      callback();
-    }
-  }
-
   linkDependenciesForPackage(pkg, callback) {
     async.each(this.packages, (dependency, done) => {
       if (!this.hasMatchingDependency(pkg, dependency, true)) return done();
 
-      const linkSrc = dependency.location;
-      const linkDest = path.join(pkg.nodeModulesLocation, dependency.name);
-
-      this.createLinkedDependency(linkSrc, linkDest, dependency.name, done);
+      ChildProcessUtilities.execSync(`npm link ${dependency.location}`, {cwd: pkg.location});
+      done();
     }, callback);
-  }
-
-  createLinkedDependency(src, dest, name, callback) {
-    FileSystemUtilities.rimraf(dest, err => {
-      if (err) {
-        return callback(err);
-      }
-
-      FileSystemUtilities.mkdirp(dest, err => {
-        if (err) {
-          return callback(err);
-        }
-
-        this.createLinkedDependencyFiles(src, dest, name, callback);
-      });
-    });
-  }
-
-  createLinkedDependencyFiles(src, dest, name, callback) {
-    const srcPackageJsonLocation = path.join(src, "package.json");
-    const destPackageJsonLocation = path.join(dest, "package.json");
-    const destIndexJsLocation = path.join(dest, "index.js");
-
-    const packageJsonFileContents = JSON.stringify({
-      name: name,
-      version: require(srcPackageJsonLocation).version
-    }, null, "  ");
-
-    const prefix = this.repository.linkedFiles.prefix || "";
-    const indexJsFileContents = prefix + "module.exports = require(" + JSON.stringify(src) + ");";
-
-    FileSystemUtilities.writeFile(destPackageJsonLocation, packageJsonFileContents, err => {
-      if (err) {
-        return callback(err);
-      }
-
-      FileSystemUtilities.writeFile(destIndexJsLocation, indexJsFileContents, callback);
-    });
   }
 
   installExternalPackages(pkg, callback) {
