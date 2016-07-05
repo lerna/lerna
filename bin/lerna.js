@@ -46,7 +46,12 @@ var commandName = cli.input[0];
 var Command = lerna.__commands__[commandName];
 
 if (!Command) {
-  console.log(chalk.red("Invalid lerna command: " + commandName));
+
+  // Don't emit "Invalid lerna command: undefined" when run with no command.
+  if (commandName) {
+    console.log(chalk.red("Invalid lerna command: " + commandName));
+  }
+
   cli.showHelp();
 } else {
   var command = new Command(cli.input.slice(1), cli.flags);
