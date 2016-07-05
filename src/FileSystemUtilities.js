@@ -21,7 +21,7 @@ export default class FileSystemUtilities {
     mkdirp(filePath, callback);
   }
 
-  @logger.logifyAsync
+  @logger.logifySync
   static readdirSync(filePath) {
     return fs.readdirSync(filePath);
   }
