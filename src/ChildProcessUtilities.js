@@ -14,7 +14,7 @@ export default class ChildProcessUtilities {
           err = `Error: ${err.message}.  Partial output follows:\n\n${stderr}`;
         }
 
-        callback(err || stderr);
+        callback(err || stderr, stdout);
       } else {
         callback(null, stdout);
       }
