@@ -1,22 +1,36 @@
+// @flow
+
 import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
 import FileSystemUtilities from "../FileSystemUtilities";
+import type {Update} from "../UpdatedPackagesCollector";
 import PromptUtilities from "../PromptUtilities";
 import GitUtilities from "../GitUtilities";
 import NpmUtilities from "../NpmUtilities";
+import type Package from "../Package";
 import Command from "../Command";
 import semver from "semver";
 import async from "async";
 import path from "path";
 import { EOL } from "os";
 
+const unsafeRequire = require;
+
 export default class PublishCommand extends Command {
-  initialize(callback) {
+  globalVersion: string;
+  updates: Array<Update>;
+  packagesToPublish: Array<Package>;
+  tags: Array<string>;
+
+  masterVersion: ?string;
+  updatesVersions: { [pkg: string]: string };
+
+  initialize(callback: Function) {
     if (this.flags.canary) {
       this.logger.info("Publishing canary build");
     }
 
     if (!this.repository.isIndependent()) {
-      this.globalVersion = this.repository.version;
+      this.globalVersion = this.repository.version || "";
       this.logger.info("Current version: " + this.globalVersion);
     }
 
@@ -78,7 +92,7 @@ export default class PublishCommand extends Command {
     });
   }
 
-  execute(callback) {
+  execute(callback: Function) {
     try {
       if (!this.repository.isIndependent() && !this.flags.canary) {
         this.updateVersionInLernaJson();
@@ -100,7 +114,7 @@ export default class PublishCommand extends Command {
     }
   }
 
-  publishPackagesToNpm(callback) {
+  publishPackagesToNpm(callback: Function) {
 
     this.logger.newLine();
     this.logger.info("Publishing packages to npm...");
@@ -141,7 +155,7 @@ export default class PublishCommand extends Command {
     });
   }
 
-  getVersionsForUpdates(callback) {
+  getVersionsForUpdates(callback: Function) {
     if (this.flags.repoVersion) {
       return callback(null, {
         version: this.flags.repoVersion
@@ -196,10 +210,10 @@ export default class PublishCommand extends Command {
     return "-alpha." + GitUtilities.getCurrentSHA().slice(0, 8);
   }
 
-  promptVersion(packageName, currentVersion, callback) {
-    const patch = semver.inc(currentVersion, "patch");
-    const minor = semver.inc(currentVersion, "minor");
-    const major = semver.inc(currentVersion, "major");
+  promptVersion(packageName: ?string, currentVersion: string, callback: Function) {
+    const patch = semver.inc(currentVersion, "patch") || "";
+    const minor = semver.inc(currentVersion, "minor") || "";
+    const major = semver.inc(currentVersion, "major") || "";
 
     let message = "Select a new version";
     if (packageName) message += ` for ${packageName}`;
@@ -227,7 +241,7 @@ export default class PublishCommand extends Command {
     });
   }
 
-  confirmVersions(callback) {
+  confirmVersions(callback: Function) {
     this.logger.newLine();
     this.logger.info("Changes:");
     this.logger.info(this.updates.map((update) => {
@@ -281,8 +295,8 @@ export default class PublishCommand extends Command {
     }
   }
 
-  updatePackageDepsObject(pkg, depsKey) {
-    const deps = pkg[depsKey];
+  updatePackageDepsObject(pkg: Package, depsKey: string) {
+    const deps = (pkg: any)[depsKey];
 
     if (!deps) {
       return;
@@ -302,7 +316,7 @@ export default class PublishCommand extends Command {
       if (this.repository.isIndependent()) {
         this.tags = this.gitCommitAndTagVersionForUpdates();
       } else {
-        this.tags = [this.gitCommitAndTagVersion(this.masterVersion)];
+        this.tags = [this.gitCommitAndTagVersion((this.masterVersion: any))];
       }
     }
   }
@@ -321,24 +335,24 @@ export default class PublishCommand extends Command {
     return tags;
   }
 
-  gitCommitAndTagVersion(version) {
+  gitCommitAndTagVersion(version: string) {
     const tag = "v" + version;
     GitUtilities.commit(tag);
     GitUtilities.addTag(tag);
     return tag;
   }
 
-  execScript(pkg, script) {
+  execScript(pkg: Package, script: string) {
     const scriptLocation = path.join(pkg.location, "scripts", script + ".js");
 
     if (FileSystemUtilities.existsSync(scriptLocation)) {
-      require(scriptLocation);
+      unsafeRequire(scriptLocation);
     } else {
       this.logger.verbose(`No ${script} script found at ${scriptLocation}`);
     }
   }
 
-  npmPublishAsPrerelease(callback) {
+  npmPublishAsPrerelease(callback: Function) {
     this.updates.forEach((update) => {
       this.execScript(update.package, "prepublish");
     });
@@ -383,7 +397,7 @@ export default class PublishCommand extends Command {
     });
   }
 
-  npmUpdateAsLatest(callback) {
+  npmUpdateAsLatest(callback: Function) {
     this.progressBar.init(this.packagesToPublish.length);
 
     async.parallelLimit(this.packagesToPublish.map((pkg) => (cb) => {

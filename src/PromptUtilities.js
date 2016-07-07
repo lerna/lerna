@@ -1,7 +1,9 @@
+// @flow
+
 import inquirer from "inquirer";
 
 export default class PromptUtilities {
-  static confirm(message, callback) {
+  static confirm(message: string, callback: (confirmed: boolean) => mixed) {
     inquirer.prompt([{
       type: "expand",
       name: "confirm",
@@ -11,12 +13,12 @@ export default class PromptUtilities {
         { key: "y", name: "Yes", value: true },
         { key: "n", name: "No",  value: false }
       ]
-    }], (answers) => {
-      callback(answers.confirm);
+    }], (answers: { confirm: any }) => {
+      callback((answers.confirm: boolean));
     });
   }
 
-  static select(message, {choices, filter, validate} = {}, callback) {
+  static select(message: string, {choices, filter, validate} = {}, callback: (choice: any) => mixed) {
     inquirer.prompt([{
       type: "list",
       name: "prompt",
@@ -29,15 +31,15 @@ export default class PromptUtilities {
     });
   }
 
-  static input(message, {filter, validate} = {}, callback) {
+  static input(message: string, {filter, validate} = {}, callback: (input: string) => mixed) {
     inquirer.prompt([{
       type: "input",
       name: "input",
-      message: "Enter a custom version",
+      message: message,
       filter: filter,
       validate: validate
-    }], (answers) => {
-      callback(answers.input);
+    }], (answers: { input: any }) => {
+      callback((answers.input: string));
     });
   }
 }

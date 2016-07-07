@@ -1,52 +1,59 @@
+// @flow
+
 import objectAssign from "object-assign";
 import path from "path";
 import semver from "semver";
 import NpmUtilities from "./NpmUtilities";
 import logger from "./logger";
 
+const unsafeRequire = require;
+
 export default class Package {
-  constructor(pkg, location) {
+  _package: Object;
+  _location: string;
+
+  constructor(pkg: Object, location: string) {
     this._package = pkg;
     this._location = location;
   }
 
-  get name() {
+  get name(): string {
     return this._package.name;
   }
 
-  get location() {
+  get location(): string {
     return this._location;
   }
 
-  get nodeModulesLocation() {
+  get nodeModulesLocation(): string {
     return path.join(this._location, "node_modules");
   }
 
-  get version() {
+  get version(): string {
     return this._package.version;
   }
 
-  set version(version) {
+  set version(version: string) {
     this._package.version = version;
   }
 
-  get bin() {
+  get bin(): ?string {
     return this._package.bin;
   }
 
-  get dependencies() {
+  get dependencies(): ?Object {
     return this._package.dependencies;
   }
 
-  get devDependencies() {
+  get devDependencies(): ?Object {
     return this._package.devDependencies;
   }
 
-  get peerDependencies() {
+  get peerDependencies(): ?Object {
     return this._package.peerDependencies;
   }
 
-  get allDependencies() {
+  get allDependencies(): Object {
     return objectAssign(
       {},
       this.devDependencies,
@@ -54,15 +61,15 @@ export default class Package {
     );
   }
 
-  get scripts() {
+  get scripts(): Object {
     return this._package.scripts || {};
   }
 
-  isPrivate() {
+  isPrivate(): boolean {
     return !!this._package.private;
   }
 
-  toJsonString() {
+  toJsonString(): string {
     return JSON.stringify(this._package, null, 2) + "\n";
   }
 
@@ -71,7 +78,7 @@ export default class Package {
    * @param {String} script NPM script to run
    * @param {Function} callback
    */
-  runScript(script, callback) {
+  runScript(script: string, callback: Function) {
     if (this.scripts[script]) {
       NpmUtilities.runScriptInDir(script, [], this.location, callback);
     } else {
@@ -85,7 +92,7 @@ export default class Package {
    * @param {Boolean} showWarning
    * @returns {Boolean}
    */
-  hasMatchingDependency(dependency, showWarning = false) {
+  hasMatchingDependency(dependency: Package, showWarning: boolean = false) {
     const expectedVersion = this.allDependencies[dependency.name];
     const actualVersion = dependency.version;
 
@@ -99,7 +106,7 @@ export default class Package {
     }
 
     if (showWarning) {
-      logger.warning(
+      logger.warn(
         `Version mismatch inside "${this.name}". ` +
         `Depends on "${dependency.name}@${expectedVersion}" ` +
         `instead of "${dependency.name}@${actualVersion}".`
@@ -114,11 +121,11 @@ export default class Package {
    * @param {String} dependency Name of the dependency
    * @returns {Boolean}
    */
-  hasDependencyInstalled(dependency) {
+  hasDependencyInstalled(dependency: string) {
     const packageJson = path.join(this.nodeModulesLocation, dependency, "package.json");
     try {
       return semver.satisfies(
-        require(packageJson).version,
+        unsafeRequire(packageJson).version,
         this.allDependencies[dependency]
       );
     } catch (e) {

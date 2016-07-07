@@ -1,10 +1,11 @@
 import ChildProcessUtilities from "../ChildProcessUtilities";
-import Command from "../Command";
 import PackageUtilities from "../PackageUtilities";
+import type Package from "../Package";
+import Command from "../Command";
 import async from "async";
 
 export default class ExecCommand extends Command {
-  initialize(callback) {
+  initialize(callback: Function) {
     this.command = this.input[0];
     this.args = this.input.slice(1);
 
@@ -34,13 +35,13 @@ export default class ExecCommand extends Command {
     callback(null, true);
   }
 
-  execute(callback) {
+  execute(callback: Function) {
     async.parallelLimit(this.packages.map((pkg) => (cb) => {
       this.runCommandInPackage(pkg, cb);
     }), this.concurrency, callback);
   }
 
-  runCommandInPackage(pkg, callback) {
+  runCommandInPackage(pkg: Package, callback: Function) {
     ChildProcessUtilities.spawn(this.command, this.args, {
       cwd: pkg.location,
       env: process.env

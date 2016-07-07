@@ -1,14 +1,23 @@
+// @flow
+
+import type Package from './Package';
 import semver from "semver";
 
 export class PackageGraphNode {
-  constructor(pkg) {
+  package: Package;
+  dependencies: Array<string>;
+
+  constructor(pkg: Package) {
     this.package = pkg;
     this.dependencies = [];
   }
 }
 
 export default class PackageGraph {
-  constructor(packages) {
+  nodes: Array<PackageGraphNode>;
+  nodesByName: { [node: string]: PackageGraphNode };
+
+  constructor(packages: Array<Package>) {
     this.nodes = [];
     this.nodesByName = {};
 
@@ -36,7 +45,7 @@ export default class PackageGraph {
     }
   }
 
-  get(packageName) {
+  get(packageName: string) {
     return this.nodesByName[packageName];
   }
 }

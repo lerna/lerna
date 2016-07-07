@@ -1,12 +1,14 @@
+// @flow
+
 import Command from "../Command";
 
 export default class LsCommand extends Command {
-  initialize(callback) {
+  initialize(callback: Function) {
     // Nothing to do...
     callback(null, true);
   }
 
-  execute(callback) {
+  execute(callback: Function) {
     const formattedPackages = this.packages
       .filter((pkg) => !pkg.isPrivate())
       .map((pkg) => `- ${pkg.name}`)

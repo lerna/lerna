@@ -1,18 +1,27 @@
+// @flow
+
 import FileSystemUtilities from "../FileSystemUtilities";
-import NpmUtilities from "../NpmUtilities";
 import PackageUtilities from "../PackageUtilities";
+import type PackageGraph from "../PackageGraph";
+import NpmUtilities from "../NpmUtilities";
+import type Package from "../Package";
 import Command from "../Command";
 import async from "async";
 import find from "lodash.find";
 import path from "path";
 
+const unsafeRequire = require;
+
 export default class BootstrapCommand extends Command {
-  initialize(callback) {
+  filteredPackages: Array<Package>;
+  filteredGraph: PackageGraph;
+
+  initialize(callback: Function) {
     // Nothing to do...
     callback(null, true);
   }
 
-  execute(callback) {
+  execute(callback: Function) {
     this.bootstrapPackages((err) => {
       if (err) {
         callback(err);
@@ -27,7 +36,7 @@ export default class BootstrapCommand extends Command {
    * Bootstrap packages
    * @param {Function} callback
    */
-  bootstrapPackages(callback) {
+  bootstrapPackages(callback: Function) {
     this.filteredPackages = this.getPackages();
     this.filteredGraph = PackageUtilities.getPackageGraph(this.filteredPackages);
     this.logger.info(`Bootstrapping ${this.filteredPackages.length} packages`);
@@ -57,7 +66,7 @@ export default class BootstrapCommand extends Command {
     return PackageUtilities.filterPackages(this.packages, ignore, true);
   }
 
-  runScriptInPackages(scriptName, callback) {
+  runScriptInPackages(scriptName: string, callback: Function) {
     const packages = this.filteredPackages.slice();
     const batches = PackageUtilities.topologicallyBatchPackages(packages, this.logger);
 
@@ -89,7 +98,7 @@ export default class BootstrapCommand extends Command {
    * Run the "preinstall" NPM script in all bootstrapped packages
    * @param callback
    */
-  preinstallPackages(callback) {
+  preinstallPackages(callback: Function) {
     this.logger.info("Preinstalling packages");
     this.runScriptInPackages("preinstall", callback);
   }
@@ -98,7 +107,7 @@ export default class BootstrapCommand extends Command {
    * Run the "postinstall" NPM script in all bootstrapped packages
    * @param callback
    */
-  postinstallPackages(callback) {
+  postinstallPackages(callback: Function) {
     this.logger.info("Postinstalling packages");
     this.runScriptInPackages("postinstall", callback);
   }
@@ -107,7 +116,7 @@ export default class BootstrapCommand extends Command {
    * Run the "prepublish" NPM script in all bootstrapped packages
    * @param callback
    */
-  prepublishPackages(callback) {
+  prepublishPackages(callback: Function) {
     this.logger.info("Prepublishing packages");
     this.runScriptInPackages("prepublish", callback);
   }
@@ -120,7 +129,7 @@ export default class BootstrapCommand extends Command {
    * @param {String|Object} bin
    * @param {Function} callback
    */
-  createBinaryLink(src, dest, name, bin, callback) {
+  createBinaryLink(src: string, dest: string, name: string, bin: string | { [bin: string]: string }, callback: Function) {
     const destBinFolder = path.join(dest, ".bin");
     // The `bin` in a package.json may be either a string or an object.
     // Normalize to an object.
@@ -146,7 +155,7 @@ export default class BootstrapCommand extends Command {
    * Install external dependencies for all packages
    * @param {Function} callback
    */
-  installExternalDependencies(callback) {
+  installExternalDependencies(callback: Function) {
     this.logger.info("Installing external dependencies");
     this.progressBar.init(this.filteredPackages.length);
     const actions = [];
@@ -179,7 +188,7 @@ export default class BootstrapCommand extends Command {
    * Symlink package binaries to dependent packages' node_modules/.bin directory
    * @param {Function} callback
    */
-  symlinkPackages(callback) {
+  symlinkPackages(callback: Function) {
     this.logger.info("Symlinking packages and binaries");
     this.progressBar.init(this.filteredPackages.length);
     const actions = [];
@@ -212,13 +221,13 @@ export default class BootstrapCommand extends Command {
               const isDepSymlink = FileSystemUtilities.isSymlink(pkgDependencyLocation);
               // installed dependency is a symlink pointing to a different location
               if (isDepSymlink !== false && isDepSymlink !== dependencyLocation) {
-                this.logger.warning(
+                this.logger.warn(
                   `Symlink already exists for ${dependency} dependency of ${filteredPackage.name}, ` +
                   "but links to different location. Replacing with updated symlink..."
                 );
               // installed dependency is not a symlink
               } else if (isDepSymlink === false) {
-                this.logger.warning(
+                this.logger.warn(
                   `${dependency} is already installed for ${filteredPackage.name}. ` +
                   "Replacing with symlink..."
                 );
@@ -234,7 +243,7 @@ export default class BootstrapCommand extends Command {
             packageActions.push((cb) => FileSystemUtilities.symlink(
               dependencyLocation, pkgDependencyLocation, "junction", cb
             ));
-            const dependencyPackageJson = require(dependencyPackageJsonLocation);
+            const dependencyPackageJson = unsafeRequire(dependencyPackageJsonLocation);
             if (dependencyPackageJson.bin) {
               const destFolder = filteredPackage.nodeModulesLocation;
               packageActions.push((cb) => {

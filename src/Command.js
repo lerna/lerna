@@ -1,3 +1,5 @@
+// @flow
+
 import ChildProcessUtilities from "./ChildProcessUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
 import PackageUtilities from "./PackageUtilities";
@@ -6,10 +8,24 @@ import progressBar from "./progressBar";
 import Repository from "./Repository";
 import logger from "./logger";
 
+import type Package from "./Package";
+import type PackageGraph from "./PackageGraph";
+
 const DEFAULT_CONCURRENCY = 4;
 
 export default class Command {
-  constructor(input, flags) {
+  input: Array<string>;
+  flags: Object;
+  lernaVersion: string;
+  logger: typeof logger;
+  repository: Repository;
+  progressBar: typeof progressBar;
+  concurrency: number;
+
+  packages: Array<Package>;
+  packageGraph: PackageGraph;
+
+  constructor(input: Array<string>, flags: Object) {
     this.input = input;
     this.flags = flags;
 
@@ -69,6 +85,7 @@ export default class Command {
 
     if (
       process.env.NODE_ENV !== "test" &&
+      this.repository.lernaVersion &&
       this.lernaVersion !== this.repository.lernaVersion
     ) {
       this.logger.warn(
@@ -110,21 +127,21 @@ export default class Command {
     }
   }
 
-  runCommand(callback) {
-    this._attempt("initialize", () => {
-      this._attempt("execute", () => {
+  runCommand(callback: ?Function) {
+    this._attempt(this.initialize, () => {
+      this._attempt(this.execute, () => {
         this._complete(null, 0, callback);
       }, callback);
     }, callback);
   }
 
-  _attempt(method, next, callback) {
-    const methodName = `${this.constructor.name}.${method}`;
+  _attempt(method: Function, next: Function, callback: ?Function) {
+    const methodName = `${this.constructor.name}.${method.name}`;
 
     try {
       this.logger.verbose(`Attempting running ${methodName}`);
 
-      this[method]((err, completed) => {
+      method.call(this, (err, completed) => {
         if (err) {
           this.logger.error(`Errored while running ${methodName}`, err);
           this._complete(err, 1, callback);
@@ -142,7 +159,7 @@ export default class Command {
     }
   }
 
-  _complete(err, code, callback) {
+  _complete(err: ?Error, code: number, callback: ?Function) {
     if (code !== 0) {
       const exitHandler = new ExitHandler();
       exitHandler.writeLogs();
@@ -171,11 +188,11 @@ export default class Command {
     }
   }
 
-  initialize() {
+  initialize(callback: Function) {
     throw new Error("command.initialize() needs to be implemented.");
   }
 
-  execute() {
+  execute(callback: Function) {
     throw new Error("command.execute() needs to be implemented.");
   }
 }

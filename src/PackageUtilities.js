@@ -1,33 +1,39 @@
+// @flow
+
 import FileSystemUtilities from "./FileSystemUtilities";
 import PackageGraph from "./PackageGraph";
-import Package from "./Package";
-import path from "path";
 import minimatch from "minimatch";
+import Package from "./Package";
+import typeof logger from "./logger";
+import path from "path";
+
+
+const unsafeRequire = require;
 
 export default class PackageUtilities {
-  static getGlobalVersion(versionPath) {
+  static getGlobalVersion(versionPath: string): ?string {
     if (FileSystemUtilities.existsSync(versionPath)) {
       return FileSystemUtilities.readFileSync(versionPath);
     }
   }
 
-  static getPackagesPath(rootPath) {
+  static getPackagesPath(rootPath: string): string {
     return path.join(rootPath, "packages");
   }
 
-  static getPackagePath(packagesPath, name) {
+  static getPackagePath(packagesPath: string, name: string): string {
     return path.join(packagesPath, name);
   }
 
-  static getPackageConfigPath(packagesPath, name) {
+  static getPackageConfigPath(packagesPath: string, name: string): string {
     return path.join(PackageUtilities.getPackagePath(packagesPath, name), "package.json");
   }
 
-  static getPackageConfig(packagesPath, name) {
-    return require(PackageUtilities.getPackageConfigPath(packagesPath, name));
+  static getPackageConfig(packagesPath: string, name: string): Object {
+    return unsafeRequire(PackageUtilities.getPackageConfigPath(packagesPath, name));
   }
 
-  static getPackages(packagesPath) {
+  static getPackages(packagesPath: string): Array<Package> {
     const packages = [];
 
     FileSystemUtilities.readdirSync(packagesPath).forEach((packageDirectory) => {
@@ -51,7 +57,7 @@ export default class PackageUtilities {
     return packages;
   }
 
-  static getPackageGraph(packages) {
+  static getPackageGraph(packages: Array<Package>): PackageGraph {
     return new PackageGraph(packages);
   }
 
@@ -64,7 +70,7 @@ export default class PackageUtilities {
   * @return {Array.<Package>} The packages with a name matching the glob
   * @throws in case a given glob would produce an empty list of packages
   */
-  static filterPackages(packages, glob, negate = false) {
+  static filterPackages(packages: Array<Package>, glob: string | void, negate: boolean = false): Array<Package> {
     if (typeof glob !== "undefined") {
       packages = packages.filter((pkg) => {
         if (negate) {
@@ -84,7 +90,7 @@ export default class PackageUtilities {
     return packages;
   }
 
-  static topologicallyBatchPackages(packagesToBatch, logger = null) {
+  static topologicallyBatchPackages(packagesToBatch: Array<Package>, logger: ?logger = null) {
     // We're going to be chopping stuff out of this array, so copy it.
     const packages = packagesToBatch.slice();
     const packageGraph = PackageUtilities.getPackageGraph(packages);

@@ -1,3 +1,5 @@
+// @flow
+
 import FileSystemUtilities from "../FileSystemUtilities";
 import Command from "../Command";
 import objectAssignSorted from "object-assign-sorted";
@@ -8,12 +10,12 @@ export default class InitCommand extends Command {
   runValidations() {}
   runPreparations() {}
 
-  initialize(callback) {
+  initialize(callback: Function) {
     // Nothing to do...
     callback(null, true);
   }
 
-  execute(callback) {
+  execute(callback: Function) {
     this.ensurePackagesDirectory();
     this.ensurePackageJSON();
     this.ensureLernaJson();

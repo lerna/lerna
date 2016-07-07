@@ -1,12 +1,16 @@
+// @flow
+
 import ProgressBar from "progress";
 import pad from "pad";
 
 class ProgressBarController {
+  bar: ProgressBar;
+
   constructor() {
     this.bar = null;
   }
 
-  init(total) {
+  init(total: number) {
     if (this.bar) {
       this.terminate();
     }
@@ -29,11 +33,12 @@ class ProgressBarController {
       clear: true,
 
       // terminal columns - package name length - additional characters length
+      // $FlowFixMe
       width: (process.stdout.columns || 100) - 50 - 3
     });
   }
 
-  tick(name) {
+  tick(name: string) {
     if (this.bar) {
       this.bar.tick({
         packagename: pad(name.slice(0, 50), 50)
