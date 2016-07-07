@@ -51,21 +51,20 @@ export default class WatchCommand extends Command {
     callback(null, true);
   }
 
-  execute(callback) {
+  execute() {
     this.logger.info(`Watching for changes in package files that match '${this.glob}'`);
     const globPath = (pkg) => path.join(this.repository.packagesLocation, pkg.name, this.glob);
     // watch all package files matching passed glob
-    const watcher = chokidar.watch(this.packagesToWatch.map(globPath)).on("change", (src) => {
+    chokidar.watch(this.packagesToWatch.map(globPath)).on("change", (src) => {
       const [pkg] = path.relative(this.repository.packagesLocation, src).split(path.sep);
       const packageLocation = path.join(this.repository.packagesLocation, pkg);
       const srcFile = path.relative(packageLocation, src);
       console.log(`${chalk.cyan(`${pkg}/${srcFile}`)} changed, running ${chalk.yellow(this.script)} script`);
       NpmUtilities.runScriptInDir(this.script, [srcFile].concat(this.args), packageLocation, (err, stdout) => {
         if (err) {
-          watcher.close();
-          callback(err);
+          this.logger.error(err);
         } else {
-          console.log(stdout);
+          this.logger.info(stdout);
         }
       });
     });
