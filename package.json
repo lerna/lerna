@@ -31,6 +31,7 @@
     "meow": "^3.7.0",
     "minimatch": "^3.0.0",
     "mkdirp": "^0.5.1",
+    "normalize-path": "^2.0.1",
     "object-assign": "^4.0.1",
     "object-assign-sorted": "^1.0.0",
     "pad": "^1.0.0",

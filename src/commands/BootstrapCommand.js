@@ -6,6 +6,7 @@ import semver from "semver";
 import async from "async";
 import find from "lodash.find";
 import path from "path";
+import normalize from "normalize-path";
 
 export default class BootstrapCommand extends Command {
   initialize(callback) {
@@ -145,7 +146,7 @@ export default class BootstrapCommand extends Command {
     }, null, "  ");
 
     const prefix = this.repository.linkedFiles.prefix || "";
-    const indexJsFileContents = prefix + "module.exports = require(" +  path.join(JSON.stringify(src)) + ");";
+    const indexJsFileContents = prefix + "module.exports = require(" +  JSON.stringify(normalize(src)) + ");";
 
     FileSystemUtilities.writeFile(destPackageJsonLocation, packageJsonFileContents, err => {
       if (err) {
