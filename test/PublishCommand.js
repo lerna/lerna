@@ -262,7 +262,7 @@ describe("PublishCommand", () => {
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8"), "{" + EOL + "  \"lerna\": \"__TEST_VERSION__\"," + EOL + "  \"version\": \"1.0.0\"" + EOL + "}" + EOL + "");
+          assert.equal(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8"), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.0\"\n}\n");
 
           // The following wouldn't be the actual results of a canary release
           // because `git checkout --` would have removed the file changes.
