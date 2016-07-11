@@ -97,7 +97,7 @@ export default class PublishCommand extends Command {
       }
 
       if (this.flags.canary) {
-        this.logger.info("Reseting git state");
+        this.logger.info("Resetting git state");
         // reset since the package.json files are changed
         GitUtilities.checkoutChanges("packages/*/package.json");
       }

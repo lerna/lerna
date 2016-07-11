@@ -1,6 +1,7 @@
 import FileSystemUtilities from "../FileSystemUtilities";
 import Command from "../Command";
 import objectAssignSorted from "object-assign-sorted";
+import objectAssign from "object-assign";
 
 export default class InitCommand extends Command {
   // don't do any of this.
@@ -34,9 +35,9 @@ export default class InitCommand extends Command {
 
     if (!packageJson) packageJson = {};
     // if (!packageJson.private) packageJson.private = true;
-    if (!packageJson.dependencies) packageJson.dependencies = {};
+    if (!packageJson.devDependencies) packageJson.devDependencies = {};
 
-    objectAssignSorted(packageJson.dependencies, {
+    objectAssignSorted(packageJson.devDependencies, {
       lerna: this.lernaVersion
     });
 
@@ -50,7 +51,7 @@ export default class InitCommand extends Command {
   }
 
   ensureLernaJson() {
-    const {versionLocation, lernaJsonLocation, lernaJson} = this.repository;
+    let {versionLocation, lernaJsonLocation, lernaJson} = this.repository;
 
     let version;
 
@@ -66,14 +67,17 @@ export default class InitCommand extends Command {
 
     if (!lernaJson) {
       this.logger.info("Creating lerna.json.");
+      lernaJson = {};
     } else {
       this.logger.info("Updating lerna.json.");
     }
 
-    FileSystemUtilities.writeFileSync(lernaJsonLocation, JSON.stringify({
+    objectAssign(lernaJson, {
       lerna: this.lernaVersion,
       version: version
-    }, null, "  "));
+    });
+
+    FileSystemUtilities.writeFileSync(lernaJsonLocation, JSON.stringify(lernaJson, null, "  "));
   }
 
   ensureNoVersionFile() {
