@@ -2,6 +2,7 @@ import pathExists from "path-exists";
 import assert from "assert";
 import path from "path";
 import fs from "fs";
+import normalize from "normalize-path";
 
 import PromptUtilities from "../src/PromptUtilities";
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
@@ -139,9 +140,13 @@ describe("ImportCommand", () => {
       importCommand.runPreparations();
 
       importCommand.runCommand(exitWithCode(1, err => {
-        const expect = `Target directory already exists "${targetDir}"`;
-        assert.equal((err || {}).message, expect);
-        done();
+        const expect = `Target directory already exists "${normalize(targetDir)}"`;
+        try {
+          assert.equal((err || {}).message, expect);
+          done();
+        } catch (err) {
+          done(err);
+        }
       }));
     });
 
