@@ -7,7 +7,7 @@
     "build": "babel src -d lib",
     "dev": "babel -w src -d lib",
     "lint": "eslint src test",
-    "test": "mocha",
+    "test": "mocha -t 5000",
     "ci": "npm run lint && cross-env DEBUG_CALLS=true npm run test",
     "prepublish": "npm run build"
   },
