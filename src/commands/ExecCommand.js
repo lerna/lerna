@@ -28,7 +28,7 @@ export default class ExecCommand extends Command {
   runCommandInPackage(pkg, callback) {
     ChildProcessUtilities.spawn(this.command, this.args, {
       cwd: pkg.location,
-      env: process.env
+      env: Object.assign(process.env, {PACKAGE_NAME: pkg.name})
     }, (code) => {
       if (code) {
         this.logger.error(`Errored while running command '${this.command}' ` +

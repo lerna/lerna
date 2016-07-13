@@ -54,8 +54,8 @@ describe("ExecCommand", () => {
       stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
         assert.equal(command, "ls");
 
-        if (calls === 0) assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-1"), env: process.env });
-        if (calls === 1) assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-2"), env: process.env });
+        if (calls === 0) assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-1"), env: Object.assign(process.env, { PACKAGE_NAME: "package-1" }) });
+        if (calls === 1) assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-2"), env: Object.assign(process.env, { PACKAGE_NAME: "package-2" }) });
 
         calls++;
         callback();
@@ -78,11 +78,11 @@ describe("ExecCommand", () => {
         assert.equal(command, "ls");
 
         if (calls === 0) {
-          assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-1"), env: process.env });
+          assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-1"), env: Object.assign(process.env, { PACKAGE_NAME: "package-1" }) });
           assert.deepEqual(args, ["-la"]);
         }
         if (calls === 1) {
-          assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-2"), env: process.env });
+          assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-2"), env: Object.assign(process.env, { PACKAGE_NAME: "package-2" }) });
           assert.deepEqual(args, ["-la"]);
         }
 
