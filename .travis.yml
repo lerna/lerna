@@ -1,4 +1,3 @@
----
 git:
   depth: 1
 sudo: false
@@ -8,11 +7,16 @@ cache:
   - node_modules
 
 node_js:
- - "0.12"
- - "4"
- - stable
+ - '0.10'
+ - '0.12'
+ - '4'
+ - '5'
+ - '6'
 
 before_script:
   - git config --global user.email test@example.com
   - git config --global user.name "Tester McPerson"
 script: npm run ci
+
+notifications:
+  slack: lernajs:qHyrojRoqBBu7OhDyX1OMiHQ

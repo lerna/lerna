@@ -87,6 +87,15 @@ export default class PublishCommand extends Command {
       return;
     }
 
+    if (this.flags.skipNpm) {
+      callback(null, true);
+    } else {
+      this.publishPackagesToNpm(callback);
+    }
+  }
+
+  publishPackagesToNpm(callback) {
+
     this.logger.newLine();
     this.logger.info("Publishing packages to npm...");
 
@@ -127,6 +136,12 @@ export default class PublishCommand extends Command {
   }
 
   getVersionsForUpdates(callback) {
+    if (this.flags.repoVersion) {
+      return callback(null, {
+        version: this.flags.repoVersion
+      });
+    }
+
     // Non-Independent Canary Mode
     if (!this.repository.isIndependent() && this.flags.canary) {
       const version = this.globalVersion + this.getCanaryVersionSuffix();
@@ -172,7 +187,7 @@ export default class PublishCommand extends Command {
   }
 
   getCanaryVersionSuffix() {
-    return "-canary." + GitUtilities.getCurrentSHA().slice(0, 8);
+    return "-alpha." + GitUtilities.getCurrentSHA().slice(0, 8);
   }
 
   promptVersion(packageName, currentVersion, callback) {
@@ -358,7 +373,7 @@ export default class PublishCommand extends Command {
       };
 
       return run;
-    }), 4, err => {
+    }), this.concurrency, err => {
       this.progressBar.terminate();
       callback(err);
     });

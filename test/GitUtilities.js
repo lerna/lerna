@@ -8,6 +8,12 @@ import GitUtilities from "../src/GitUtilities";
  */
 
 describe("GitUtilities", () => {
+  describe(".isInitialized()", () => {
+    it("should exist", () => {
+      assert.ok(GitUtilities.isInitialized);
+    });
+  });
+
   describe(".addFile()", () => {
     it("should exist", () => {
       assert.ok(GitUtilities.addFile);
@@ -83,6 +89,12 @@ describe("GitUtilities", () => {
   describe(".checkoutChanges()", () => {
     it("should exist", () => {
       assert.ok(GitUtilities.checkoutChanges);
+    });
+  });
+
+  describe(".init()", () => {
+    it("should exist", () => {
+      assert.ok(GitUtilities.init);
     });
   });
 

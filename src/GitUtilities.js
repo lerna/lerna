@@ -3,6 +3,16 @@ import logger from "./logger";
 
 export default class GitUtilities {
   @logger.logifySync
+  static isInitialized() {
+    try {
+      ChildProcessUtilities.execSync("git rev-parse");
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }
+
+  @logger.logifySync
   static addFile(file) {
     ChildProcessUtilities.execSync("git add " + file);
   }
@@ -72,6 +82,11 @@ export default class GitUtilities {
   @logger.logifySync
   static getCurrentBranch() {
     return ChildProcessUtilities.execSync("git symbolic-ref --short HEAD");
+  }
+
+  @logger.logifySync
+  static init() {
+    return ChildProcessUtilities.execSync("git init");
   }
 
   @logger.logifySync

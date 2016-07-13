@@ -1,11 +1,16 @@
 import GitUtilities from "./GitUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
 import path from "path";
+import logger from "./logger";
 
 export default class Repository {
   constructor() {
-    this.rootPath = GitUtilities.getTopLevelDirectory();
+    if (!GitUtilities.isInitialized()) {
+      logger.info("Initializing Git repository.");
+      GitUtilities.init();
+    }
 
+    this.rootPath = GitUtilities.getTopLevelDirectory();
     this.lernaJsonLocation = path.join(this.rootPath, "lerna.json");
     this.packageJsonLocation = path.join(this.rootPath, "package.json");
     this.packagesLocation = path.join(this.rootPath, "packages");
@@ -32,6 +37,14 @@ export default class Repository {
 
   get publishConfig() {
     return this.lernaJson && this.lernaJson.publishConfig || {};
+  }
+
+  get linkedFiles() {
+    return this.lernaJson && this.lernaJson.linkedFiles || {};
+  }
+
+  get bootstrapConfig() {
+    return this.lernaJson && this.lernaJson.bootstrapConfig || {};
   }
 
   isIndependent() {

@@ -1,5 +1,6 @@
 import FileSystemUtilities from "../FileSystemUtilities";
 import NpmUtilities from "../NpmUtilities";
+import PackageUtilities from "../PackageUtilities";
 import Command from "../Command";
 import semver from "semver";
 import async from "async";
@@ -27,19 +28,64 @@ export default class BootstrapCommand extends Command {
     this.progressBar.init(this.packages.length);
     this.logger.info("Linking all dependencies");
 
-    async.parallelLimit(this.packages.map(pkg => done => {
-      async.series([
-        cb => FileSystemUtilities.mkdirp(pkg.nodeModulesLocation, cb),
-        cb => this.installExternalPackages(pkg, cb),
-        cb => this.linkDependenciesForPackage(pkg, cb)
-      ], err => {
-        this.progressBar.tick(pkg.name);
-        done(err);
+    const ignore = this.flags.ignore || this.repository.bootstrapConfig.ignore;
+
+    // Get a filtered list of packages that will be bootstrapped.
+    const todoPackages = PackageUtilities.filterPackages(this.packages, ignore, true);
+
+    // Get a trimmed down graph that includes only those packages.
+    const filteredGraph = PackageUtilities.getPackageGraph(todoPackages);
+
+    // As packages are completed their names will go into this object.
+    const donePackages = {};
+
+    // Bootstrap runs the "prepublish" script in each package.  This script
+    // may _use_ another package from the repo.  Therefore if a package in the
+    // repo depends on another we need to bootstrap the dependency before the
+    // dependent.  So the bootstrap proceeds in batches of packages where each
+    // batch includes all packages that have no remaining un-bootstrapped
+    // dependencies within the repo.
+    const bootstrapBatch = () => {
+
+      // Get all packages that have no remaining dependencies within the repo
+      // that haven't yet been bootstrapped.
+      const batch = todoPackages.filter(pkg => {
+        const node = filteredGraph.get(pkg.name);
+        return !node.dependencies.filter(dep => !donePackages[dep]).length;
       });
-    }), 4, err => {
-      this.progressBar.terminate();
-      callback(err);
-    });
+
+      async.parallelLimit(batch.map(pkg => done => {
+        async.series([
+          cb => FileSystemUtilities.mkdirp(pkg.nodeModulesLocation, cb),
+          cb => this.installExternalPackages(pkg, cb),
+          cb => this.linkDependenciesForPackage(pkg, cb),
+          cb => this.runPrepublishForPackage(pkg, cb),
+        ], err => {
+          this.progressBar.tick(pkg.name);
+          donePackages[pkg.name] = true;
+          todoPackages.splice(todoPackages.indexOf(pkg), 1);
+          done(err);
+        });
+      }), this.concurrency, err => {
+        if (todoPackages.length && !err) {
+          bootstrapBatch();
+        } else {
+          this.progressBar.terminate();
+          callback(err);
+        }
+      });
+    }
+
+    // Kick off the first batch.
+    bootstrapBatch();
+  }
+
+  runPrepublishForPackage(pkg, callback) {
+    if ((pkg.scripts || {}).prepublish) {
+      NpmUtilities.runScriptInDir("prepublish", [], pkg.location, callback);
+    } else {
+      callback();
+    }
   }
 
   linkDependenciesForPackage(pkg, callback) {
@@ -79,7 +125,8 @@ export default class BootstrapCommand extends Command {
       version: require(srcPackageJsonLocation).version
     }, null, "  ");
 
-    const indexJsFileContents = "module.exports = require(" + JSON.stringify(src) + ");";
+    const prefix = this.repository.linkedFiles.prefix || "";
+    const indexJsFileContents = prefix + "module.exports = require(" + JSON.stringify(src) + ");";
 
     FileSystemUtilities.writeFile(destPackageJsonLocation, packageJsonFileContents, err => {
       if (err) {
@@ -100,6 +147,9 @@ export default class BootstrapCommand extends Command {
         });
 
         return !(match && this.hasMatchingDependency(pkg, match));
+      })
+      .filter(dependency => {
+        return !this.hasDependencyInstalled(pkg, dependency);
       })
       .map(dependency => {
         return dependency + "@" + allDependencies[dependency];
@@ -127,12 +177,24 @@ export default class BootstrapCommand extends Command {
     if (showWarning) {
       this.logger.warning(
         `Version mismatch inside "${pkg.name}". ` +
-        `Depends on "${dependency.name}@${actualVersion}" ` +
-        `instead of "${dependency.name}@${expectedVersion}".`
+        `Depends on "${dependency.name}@${expectedVersion}" ` +
+        `instead of "${dependency.name}@${actualVersion}".`
       );
     }
 
     return false;
+  }
+
+  hasDependencyInstalled(pkg, dependency) {
+    const packageJson = path.join(pkg.nodeModulesLocation, dependency, "package.json");
+    try {
+      return this.isCompatableVersion(
+        require(packageJson).version,
+        pkg.allDependencies[dependency]
+      );
+    } catch (e) {
+      return false;
+    }
   }
 
   isCompatableVersion(actual, expected) {

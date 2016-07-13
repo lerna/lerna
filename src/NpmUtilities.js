@@ -4,13 +4,18 @@ import logger from "./logger";
 export default class NpmUtilities {
   @logger.logifyAsync
   static installInDir(directory, dependencies, callback) {
-    let command = "npm install";
+    let args = ["install"];
 
     if (dependencies) {
-      command += " " + dependencies.join(" ");
+      args = args.concat(dependencies);
     }
 
-    ChildProcessUtilities.exec(command, { cwd: directory }, callback);
+    const opts = {
+      cwd: directory,
+      stdio: ["ignore", "ignore", "pipe"],
+    }
+
+    ChildProcessUtilities.spawn("npm", args, opts, callback);
   }
 
   @logger.logifySync
@@ -28,9 +33,14 @@ export default class NpmUtilities {
     return ChildProcessUtilities.execSync(`npm dist-tag ls ${packageName}`).indexOf(tag) >= 0;
   }
 
+  @logger.logifySync
+  static execInDir(command, args, directory, callback) {
+    ChildProcessUtilities.exec(`npm ${command} ${args.join(" ")}`, { cwd: directory, env: process.env }, callback);
+  }
+
   @logger.logifyAsync
   static runScriptInDir(script, args, directory, callback) {
-    ChildProcessUtilities.exec(`npm run ${script} ${args.join(" ")}`, { cwd: directory }, callback);
+    NpmUtilities.execInDir(`run ${script}`, args, directory, callback);
   }
 
   @logger.logifyAsync

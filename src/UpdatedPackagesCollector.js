@@ -60,11 +60,11 @@ export default class UpdatedPackagesCollector {
         return true;
       }
 
-      var forceVersion = (this.flags.forceVersion || "").split(",");
+      var forcePublish = (this.flags.forcePublish || "").split(",");
 
-      if (forceVersion.indexOf("*") > -1) {
+      if (forcePublish.indexOf("*") > -1) {
         return true;
-      } else if (forceVersion.indexOf(pkg.name) > -1) {
+      } else if (forcePublish.indexOf(pkg.name) > -1) {
         return true;
       } else {
         return this.hasDiffSinceThatIsntIgnored(pkg, commits);
@@ -127,7 +127,7 @@ export default class UpdatedPackagesCollector {
 
   collectUpdates() {
     return this.packages.filter(pkg => {
-      return this.updatedPackages[pkg.name] || this.dependents[pkg.name] || this.flags.canary;
+      return this.updatedPackages[pkg.name] || (this.flags.onlyExplicitUpdates ? false : this.dependents[pkg.name]) || this.flags.canary;
     }).map(pkg => {
       return new Update(pkg);
     });

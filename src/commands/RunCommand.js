@@ -1,5 +1,6 @@
 import NpmUtilities from "../NpmUtilities";
 import Command from "../Command";
+import PackageUtilities from "../PackageUtilities";
 import async from "async";
 
 export default class RunCommand extends Command {
@@ -20,6 +21,16 @@ export default class RunCommand extends Command {
       return;
     }
 
+    if (this.flags.scope) {
+      this.logger.info(`Scoping to packages that match '${this.flags.scope}'`);
+      try {
+        this.packagesWithScript = PackageUtilities.filterPackages(this.packagesWithScript, this.flags.scope);
+      } catch (err) {
+        callback(err);
+        return;
+      }
+    }
+
     callback(null, true);
   }
 
@@ -38,7 +49,7 @@ export default class RunCommand extends Command {
   runScriptInPackages(callback) {
     async.parallelLimit(this.packagesWithScript.map(pkg => cb => {
       this.runScriptInPackage(pkg, cb);
-    }), 4, callback);
+    }), this.concurrency, callback);
   }
 
   runScriptInPackage(pkg, callback) {

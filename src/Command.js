@@ -5,15 +5,18 @@ import progressBar from "./progressBar";
 import Repository from "./Repository";
 import logger from "./logger";
 
+const DEFAULT_CONCURRENCY = 4;
+
 export default class Command {
   constructor(input, flags) {
     this.input = input;
     this.flags = flags;
 
     this.lernaVersion = require("../package.json").version;
+    this.logger = logger;
     this.repository = new Repository();
     this.progressBar = progressBar;
-    this.logger = logger;
+    this.concurrency = (!flags || flags.concurrency === undefined) ? DEFAULT_CONCURRENCY : Math.max(1, +flags.concurrency || DEFAULT_CONCURRENCY);
   }
 
   run() {
@@ -29,6 +32,12 @@ export default class Command {
   }
 
   runValidations() {
+    if (this.concurrency < 1) {
+      this.logger.warning("command must be run with at least one thread.");
+      this._complete(null, 1);
+      return;
+    }
+
     if (!FileSystemUtilities.existsSync(this.repository.packagesLocation)) {
       this.logger.warning("`packages/` directory does not exist, have you run `lerna init`?");
       this._complete(null, 1);
