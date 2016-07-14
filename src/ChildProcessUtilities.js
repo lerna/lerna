@@ -4,8 +4,8 @@ import objectAssign from "object-assign";
 import syncExec from "sync-exec";
 import {EventEmitter} from "events";
 
-// This will hold ChildProcess objects until they exit.
-const children = [];
+// Keep track of how many live children we have.
+let children = 0;
 
 // This is used to alert listeners when all children have exited.
 const emitter = new EventEmitter;
@@ -64,10 +64,10 @@ export default class ChildProcessUtilities {
   }
 
   static registerChild(child) {
-    children.push(child);
+    children++;
     child.on("exit", () => {
-      children.splice(children.indexOf(child), 1);
-      if (children.length === 0) {
+      children--;
+      if (children === 0) {
         emitter.emit("empty");
       }
     });
@@ -75,7 +75,7 @@ export default class ChildProcessUtilities {
   }
 
   static getChildProcessCount() {
-    return children.length;
+    return children;
   }
 
   static onAllExited(callback) {
