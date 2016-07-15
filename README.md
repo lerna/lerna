@@ -449,7 +449,7 @@ $ lerna exec --scope my-component -- ls -la
 ```
 
 ```sh
-$ lerna run --scope toolbar-* -- ls -la
+$ lerna run --scope toolbar-* test
 ```
 
 #### --ignore [glob]
