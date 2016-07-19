@@ -433,6 +433,7 @@ You may also get the name of the current package through the environment variabl
 
 ```sh
 $ lerna exec -- npm view $LERNA_PACKAGE_NAME
+```
 
 > Hint: The commands are spawned in parallel, using the concurrency given.
 > The output is piped through, so not deterministic.
