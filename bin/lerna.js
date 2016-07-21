@@ -30,7 +30,7 @@ var cli = meow([
   "  --ignore [glob]      Ignores packages with names matching the given glob (Works only in combination with the 'bootstrap' command).",
   "  --force-publish      Force publish for the specified packages (comma-separated) or all packages using * (skips the git diff check for changed packages)",
   "  --yes                Skip all confirmation prompts",
-  "  --update-version [repo, package, canary]  Specify the type of version update",
+  "  --update-version [type]  Specify the type of version update: repo, package",
   "  --concurrency        How many threads to use if lerna parallelises the tasks (defaults to 4)"
 ], {
   alias: {

@@ -135,10 +135,9 @@ export default class PublishCommand extends Command {
     });
   }
 
-  handleVersionCommand(callback) {
+  handleUpdateVersionCommand(callback) {
     const flagParts = this.flags.updateVersion.split(" ");
-    const flag = flagParts[0];
-    const flagArg = flagParts[1];
+    const [flag, flagArg] = flagParts;
 
     switch (flag) {
 
@@ -159,9 +158,7 @@ export default class PublishCommand extends Command {
       const version = this.globalVersion;
 
       const versions = this.updates.reduce((vers, update) => {
-        const currentPackageName = update.package.name;
-
-        vers[currentPackageName] = update.package.version;
+        vers[update.package.name] = update.package.version;
 
         return vers;
       }, {});
@@ -177,15 +174,7 @@ export default class PublishCommand extends Command {
   getVersionsForUpdates(callback) {
     // Handle --update-version
     if (this.flags.updateVersion) {
-
-      // If canary is passed, continue on with canary flag set
-      if (this.flags.updateVersion === "canary") {
-        this.flags.canary = true;
-
-        // Move into handleVersionCommand if not canary
-      } else {
-        return this.handleVersionCommand(callback);
-      }
+      return this.handleUpdateVersionCommand(callback);
     }
 
     // Non-Independent Canary Mode
