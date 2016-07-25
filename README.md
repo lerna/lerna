@@ -429,7 +429,7 @@ Run an arbitrary command in each package.
 $ lerna exec --scope my-component -- ls -la
 ```
 
-You may also get the name of the current package through the environment variable `PACKAGE_NAME`:
+You may also get the name of the current package through the environment variable `LERNA_PACKAGE_NAME`:
 
 ```sh
 $ lerna exec -- npm view $LERNA_PACKAGE_NAME
