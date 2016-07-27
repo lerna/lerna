@@ -293,7 +293,7 @@ Useful in [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous
 #### --update-version [repo, package], -u
 
 ```sh
-$ lerna publish --update-version "repo x.x.x"
+$ lerna publish --update-version "x.x.x"
 # applies specified version x.x.x and skips `Select a new version for...` prompt
 
 $ lerna publish --update-version package

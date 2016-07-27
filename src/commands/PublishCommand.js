@@ -136,25 +136,10 @@ export default class PublishCommand extends Command {
   }
 
   handleUpdateVersionCommand(callback) {
-    const flagParts = this.flags.updateVersion.split(" ");
-    const [flag, flagArg] = flagParts;
+    const version = this.flags.updateVersion;
 
-    switch (flag) {
-
-    // Uses the version passed
-    case "repo": {
-
-      if (!semver.valid(flagArg)) {
-        return callback("Must provide --update-version with a valid semver version");
-      }
-
-      return callback(null, {
-        version: flagArg,
-      });
-    }
-
-    // Uses the package's version number
-    case "package": {
+    // Uses the packages' version number
+    if (version === "package") {
       const version = this.globalVersion;
 
       const versions = this.updates.reduce((vers, update) => {
@@ -166,9 +151,11 @@ export default class PublishCommand extends Command {
       return callback(null, { version, versions });
     }
 
-    default:
-      return callback(`"${flag}" is not a valid flag for --update-version`);
+    if (!semver.valid(version)) {
+      return callback("Must provide --update-version with a valid semver version");
     }
+
+    return callback(null, { version });
   }
 
   getVersionsForUpdates(callback) {

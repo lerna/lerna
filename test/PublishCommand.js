@@ -685,7 +685,7 @@ describe("PublishCommand", () => {
 
     it("should publish the changed packages", done => {
       const publishCommand = new PublishCommand([], {
-        updateVersion: "repo 1.0.1"
+        updateVersion: "1.0.1"
       });
 
       publishCommand.runValidations();
