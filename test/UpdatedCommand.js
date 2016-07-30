@@ -21,11 +21,11 @@ describe("UpdatedCommand", () => {
   describe("Basic", () => {
     let testDir;
 
-    beforeEach(done => {
+    beforeEach((done) => {
       testDir = initFixture("UpdatedCommand/basic", done);
     });
 
-    it("should list changes", done => {
+    it("should list changes", (done) => {
       execSync("git tag v1.0.0");
       execSync("touch " + path.join(testDir, "packages/package-2/random-file"));
       execSync("git add -A");
@@ -37,7 +37,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runPreparations();
 
       let calls = 0;
-      stub(logger, "info", message => {
+      stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
         if (calls === 1) assert.equal(message, "");
         if (calls === 2) assert.equal(message, "- package-2\n- package-3");
@@ -48,7 +48,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runCommand(exitWithCode(0, done));
     });
 
-    it("should list changes with --force-publish *", done => {
+    it("should list changes with --force-publish *", (done) => {
       execSync("git tag v1.0.0");
       execSync("touch " + path.join(testDir, "packages/package-2/random-file"));
       execSync("git add -A");
@@ -62,7 +62,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runPreparations();
 
       let calls = 0;
-      stub(logger, "info", message => {
+      stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
         if (calls === 1) assert.equal(message, "");
         if (calls === 2) assert.equal(message, "- package-1\n- package-2\n- package-3\n- package-4");
@@ -73,7 +73,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runCommand(exitWithCode(0, done));
     });
 
-    it("should list changes with --force-publish [package,package]", done => {
+    it("should list changes with --force-publish [package,package]", (done) => {
       execSync("git tag v1.0.0");
       execSync("touch " + path.join(testDir, "packages/package-3/random-file"));
       execSync("git add -A");
@@ -87,7 +87,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runPreparations();
 
       let calls = 0;
-      stub(logger, "info", message => {
+      stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
         if (calls === 1) assert.equal(message, "");
         if (calls === 2) assert.equal(message, "- package-2\n- package-3\n- package-4");
@@ -98,7 +98,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runCommand(exitWithCode(0, done));
     });
 
-    it("should list changes without ignored files", done => {
+    it("should list changes without ignored files", (done) => {
       const lernaJsonLocation = path.join(testDir, "lerna.json");
       const lernaJson = JSON.parse(fs.readFileSync(lernaJsonLocation));
       lernaJson.publishConfig = {
@@ -118,7 +118,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runPreparations();
 
       let calls = 0;
-      stub(logger, "info", message => {
+      stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
         if (calls === 1) assert.equal(message, "");
         if (calls === 2) assert.equal(message, "- package-3");
@@ -129,7 +129,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runCommand(exitWithCode(0, done));
     });
 
-    it("should list changes for explicitly changed packages", done => {
+    it("should list changes for explicitly changed packages", (done) => {
       execSync("git tag v1.0.0");
       execSync("touch " + path.join(testDir, "packages/package-2/random-file"));
       execSync("git add -A");
@@ -143,7 +143,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runPreparations();
 
       let calls = 0;
-      stub(logger, "info", message => {
+      stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
         if (calls === 1) assert.equal(message, "");
         if (calls === 2) assert.equal(message, "- package-2");
@@ -162,11 +162,11 @@ describe("UpdatedCommand", () => {
   describe("Circular Dependencies", () => {
     let testDir;
 
-    beforeEach(done => {
+    beforeEach((done) => {
       testDir = initFixture("UpdatedCommand/circular", done);
     });
 
-    it("should list changes", done => {
+    it("should list changes", (done) => {
       execSync("git tag v1.0.0");
       execSync("touch " + path.join(testDir, "packages/package-3/random-file"));
       execSync("git add -A");
@@ -178,7 +178,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runPreparations();
 
       let calls = 0;
-      stub(logger, "info", message => {
+      stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
         if (calls === 1) assert.equal(message, "");
         if (calls === 2) assert.equal(message, "- package-3\n- package-4");
@@ -189,7 +189,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runCommand(exitWithCode(0, done));
     });
 
-    it("should list changes with --force-publish *", done => {
+    it("should list changes with --force-publish *", (done) => {
       execSync("git tag v1.0.0");
       execSync("touch " + path.join(testDir, "packages/package-2/random-file"));
       execSync("git add -A");
@@ -203,7 +203,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runPreparations();
 
       let calls = 0;
-      stub(logger, "info", message => {
+      stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
         if (calls === 1) assert.equal(message, "");
         if (calls === 2) assert.equal(message, "- package-1\n- package-2\n- package-3\n- package-4");
@@ -214,7 +214,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runCommand(exitWithCode(0, done));
     });
 
-    it("should list changes with --force-publish [package,package]", done => {
+    it("should list changes with --force-publish [package,package]", (done) => {
       execSync("git tag v1.0.0");
       execSync("touch " + path.join(testDir, "packages/package-4/random-file"));
       execSync("git add -A");
@@ -228,7 +228,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runPreparations();
 
       let calls = 0;
-      stub(logger, "info", message => {
+      stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
         if (calls === 1) assert.equal(message, "");
         if (calls === 2) assert.equal(message, "- package-2\n- package-3\n- package-4");
@@ -239,7 +239,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runCommand(exitWithCode(0, done));
     });
 
-    it("should list changes without ignored files", done => {
+    it("should list changes without ignored files", (done) => {
       const lernaJsonLocation = path.join(testDir, "lerna.json");
       const lernaJson = JSON.parse(fs.readFileSync(lernaJsonLocation));
       lernaJson.publishConfig = {
@@ -259,7 +259,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runPreparations();
 
       let calls = 0;
-      stub(logger, "info", message => {
+      stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
         if (calls === 1) assert.equal(message, "");
         if (calls === 2) assert.equal(message, "- package-3\n- package-4");

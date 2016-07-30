@@ -9,7 +9,7 @@ const tmpDir = path.resolve(__dirname, "../tmp");
 const createdDirectories = [];
 
 after(() => {
-  createdDirectories.map(dir => rimraf.sync(dir));
+  createdDirectories.map((dir) => rimraf.sync(dir));
 });
 
 let uniqueId = 0;
@@ -20,7 +20,7 @@ export default function initExternalFixture(fixturePath, callback) {
 
   createdDirectories.push(testDir);
 
-  fse.copy(fixtureDir, testDir, err => {
+  fse.copy(fixtureDir, testDir, (err) => {
     if (err) return callback(err);
     (child.execSync || syncExec)("git init . && git add -A && git commit -m \"Init external commit\"", {
       cwd: testDir

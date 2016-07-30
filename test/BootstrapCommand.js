@@ -19,11 +19,11 @@ describe("BootstrapCommand", () => {
   describe("dependencies between packages in the repo", () => {
     let testDir;
 
-    beforeEach(done => {
+    beforeEach((done) => {
       testDir = initFixture("BootstrapCommand/basic", done);
     });
 
-    it("should bootstrap files", done => {
+    it("should bootstrap files", (done) => {
       const bootstrapCommand = new BootstrapCommand([], {});
 
       bootstrapCommand.runValidations();
@@ -35,7 +35,7 @@ describe("BootstrapCommand", () => {
         ]]
       ]);
 
-      bootstrapCommand.runCommand(exitWithCode(0, err => {
+      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done(err);
 
         try {
@@ -60,13 +60,13 @@ describe("BootstrapCommand", () => {
           // look for binary symlinks
           assert.ok(pathExists.sync(path.join(testDir, "packages/package-3/node_modules/.bin/package-2")));
           const package2BinLink = fs.readlinkSync(path.join(testDir, "packages/package-3/node_modules/.bin/package-2"));
-          assert.equal(package2BinLink, path.join(testDir, "packages/package-2/cli.js"))
+          assert.equal(package2BinLink, path.join(testDir, "packages/package-2/cli.js"));
           assert.ok(pathExists.sync(path.join(testDir, "packages/package-4/node_modules/.bin/package3cli1")));
           assert.ok(pathExists.sync(path.join(testDir, "packages/package-4/node_modules/.bin/package3cli2")));
           const package3BinLink1 = fs.readlinkSync(path.join(testDir, "packages/package-4/node_modules/.bin/package3cli1"));
-          assert.equal(package3BinLink1, path.join(testDir, "packages/package-3/cli1.js"))
+          assert.equal(package3BinLink1, path.join(testDir, "packages/package-3/cli1.js"));
           const package3BinLink2 = fs.readlinkSync(path.join(testDir, "packages/package-4/node_modules/.bin/package3cli2"));
-          assert.equal(package3BinLink2, path.join(testDir, "packages/package-3/cli2.js"))
+          assert.equal(package3BinLink2, path.join(testDir, "packages/package-3/cli2.js"));
 
           // Should not exist because mis-matched version
           assert.ok(!pathExists.sync(path.join(testDir, "packages/package-4/node_modules/package-1")));
@@ -87,7 +87,7 @@ describe("BootstrapCommand", () => {
       }));
     });
 
-    it("should not bootstrap an ignored package", done => {
+    it("should not bootstrap an ignored package", (done) => {
       const bootstrapCommand = new BootstrapCommand([], {
         ignore: "package-2"
       });
@@ -101,7 +101,7 @@ describe("BootstrapCommand", () => {
         ]]
       ]);
 
-      bootstrapCommand.runCommand(exitWithCode(0, err => {
+      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done(err);
 
         try {
@@ -114,7 +114,7 @@ describe("BootstrapCommand", () => {
       }));
     });
 
-    it("should not bootstrap ignored packages", done => {
+    it("should not bootstrap ignored packages", (done) => {
       const bootstrapCommand = new BootstrapCommand([], {
         ignore: "package-@(3|4)"
       });
@@ -131,7 +131,7 @@ describe("BootstrapCommand", () => {
         ]]
       ]);
 
-      bootstrapCommand.runCommand(exitWithCode(0, err => {
+      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done(err);
 
         try {
@@ -148,11 +148,11 @@ describe("BootstrapCommand", () => {
   describe("external dependencies that haven't been installed", () => {
     let testDir;
 
-    beforeEach(done => {
+    beforeEach((done) => {
       testDir = initFixture("BootstrapCommand/cold", done);
     });
 
-    it("should get installed", done => {
+    it("should get installed", (done) => {
       const bootstrapCommand = new BootstrapCommand([], {});
 
       bootstrapCommand.runValidations();
@@ -160,13 +160,13 @@ describe("BootstrapCommand", () => {
 
       let installed = false;
       stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
-        assert.deepEqual(args, ["install", "external@^1.0.0"])
-        assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-1"), stdio: STDIO_OPT })
+        assert.deepEqual(args, ["install", "external@^1.0.0"]);
+        assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-1"), stdio: STDIO_OPT });
         installed = true;
         callback();
       });
 
-      bootstrapCommand.runCommand(exitWithCode(0, err => {
+      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done(err);
 
         try {
@@ -184,11 +184,11 @@ describe("BootstrapCommand", () => {
   describe("external dependencies that have already been installed", () => {
     let testDir;
 
-    beforeEach(done => {
+    beforeEach((done) => {
       testDir = initFixture("BootstrapCommand/warm", done);
     });
 
-    it("should not get re-installed", done => {
+    it("should not get re-installed", (done) => {
       const bootstrapCommand = new BootstrapCommand([], {});
 
       bootstrapCommand.runValidations();
@@ -200,7 +200,7 @@ describe("BootstrapCommand", () => {
         callback();
       });
 
-      bootstrapCommand.runCommand(exitWithCode(0, err => {
+      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done(err);
 
         try {

@@ -10,9 +10,9 @@ export default class CleanCommand extends Command {
       callback(null, true);
     } else {
       this.logger.info(`About remove the following directories:\n${
-        this.packages.map(pkg => "- " + pkg.nodeModulesLocation).join("\n")
+        this.packages.map((pkg) => "- " + pkg.nodeModulesLocation).join("\n")
       }`);
-      PromptUtilities.confirm("Proceed?", confirmed => {
+      PromptUtilities.confirm("Proceed?", (confirmed) => {
         if (confirmed) {
           callback(null, true);
         } else {
@@ -25,7 +25,7 @@ export default class CleanCommand extends Command {
 
   execute(callback) {
     progressBar.init(this.packages.length);
-    this.rimrafNodeModulesInPackages(err => {
+    this.rimrafNodeModulesInPackages((err) => {
       progressBar.terminate();
       if (err) {
         callback(err);
@@ -37,8 +37,8 @@ export default class CleanCommand extends Command {
   }
 
   rimrafNodeModulesInPackages(callback) {
-    async.parallelLimit(this.packages.map(pkg => cb => {
-      FileSystemUtilities.rimraf(pkg.nodeModulesLocation, err => {
+    async.parallelLimit(this.packages.map((pkg) => (cb) => {
+      FileSystemUtilities.rimraf(pkg.nodeModulesLocation, (err) => {
         progressBar.tick(pkg.name);
         cb(err);
       });

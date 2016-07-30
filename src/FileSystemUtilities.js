@@ -4,7 +4,7 @@ import mkdirp from "mkdirp";
 import rimraf from "rimraf";
 import fs from "fs";
 
-var ENDS_WITH_NEW_LINE = /\n$/;
+const ENDS_WITH_NEW_LINE = /\n$/;
 
 function ensureEndsWithNewLine(string) {
   return ENDS_WITH_NEW_LINE.test(string) ? string : string + "\n";

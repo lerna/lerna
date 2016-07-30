@@ -30,7 +30,7 @@ export default class PackageUtilities {
   static getPackages(packagesPath) {
     const packages = [];
 
-    FileSystemUtilities.readdirSync(packagesPath).forEach(packageDirectory => {
+    FileSystemUtilities.readdirSync(packagesPath).forEach((packageDirectory) => {
       if (packageDirectory[0] === ".") {
         return;
       }
@@ -66,9 +66,9 @@ export default class PackageUtilities {
   */
   static filterPackages(packages, glob, negate = false) {
     if (typeof glob !== "undefined") {
-      packages = packages.filter(pkg => {
+      packages = packages.filter((pkg) => {
         if (negate) {
-          return !minimatch(pkg.name, glob)
+          return !minimatch(pkg.name, glob);
         } else {
           return minimatch(pkg.name, glob);
         }
