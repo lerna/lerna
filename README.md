@@ -430,6 +430,36 @@ Running `lerna` without arguments will show all commands/options.
 - `publishConfig.ignore`: an array of globs that won't be included in `lerna updated/publish`. Use this to prevent publishing a new version unnecessarily for changes, such as fixing a `README.md` typo.
 - `linkedFiles.prefix`: a prefix added to linked dependency files.
 
+### Common `devDependencies`
+
+Most `devDependencies` can be pulled up to the root of a Lerna repo.
+
+This has a few benefits:
+
+- All packages use the same version of a given dependency
+- Can keep dependencies at the root up-to-date with an automated tool such as [GreenKeeper](https://greenkeeper.io/)
+- Dependency installation time is reduced
+- Less storage is needed
+
+Note that `devDependencies` providing "binary" executables that are used by
+npm scripts still need to be installed directly in each package where they're
+used.
+
+For example the `nsp` dependency is necessary in this case for `lerna run nsp`
+(and `npm run nsp` within the package's directory) to work correctly:
+
+```json
+
+{
+  "scripts": {
+    "nsp": "nsp"
+  },
+  "devDependencies": {
+    "nsp": "^2.3.3"
+  }
+}
+```
+
 ### Flags
 
 #### --concurrency
