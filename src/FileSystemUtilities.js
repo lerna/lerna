@@ -52,12 +52,13 @@ export default class FileSystemUtilities {
   }
 
   @logger.logifyAsync
-  static symlink(src, dest, type = "file", callback) {
+  static symlink(src, dest, callback) {
     fs.lstat(dest, (err) => {
       if (!err) {
-        fs.unlink(dest, () => fs.symlink(src, dest, type, callback));
+        // Something exists at `dest`.  Need to remove it first.
+        fs.unlink(dest, () => fs.symlink(src, dest, callback));
       } else {
-        fs.symlink(src, dest, type, callback);
+        fs.symlink(src, dest, callback);
       }
     });
   }
