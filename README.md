@@ -152,7 +152,6 @@ Installs all of their dependencies and links any cross-dependencies.
 When run, this command will:
 
 1. Link together all Lerna `packages` that are dependencies of each other.
-  2. This doesn't currently use [npm link](https://docs.npmjs.com/cli/link) and instead uses a proxy to the actual package in the monorepo.
 2. `npm install` all external dependencies of each package.
 
 Currently, what Lerna does to link internal dependencies is replace the
@@ -418,9 +417,6 @@ Running `lerna` without arguments will show all commands/options.
       "ignored-file",
       "*.md"
     ]
-  },
-  "linkedFiles": {
-    "prefix": "/**\n * @flow\n */"
   }
 }
 ```
@@ -428,7 +424,6 @@ Running `lerna` without arguments will show all commands/options.
 - `lerna`: the current version of Lerna being used.
 - `version`: the current version of the repository.
 - `publishConfig.ignore`: an array of globs that won't be included in `lerna updated/publish`. Use this to prevent publishing a new version unnecessarily for changes, such as fixing a `README.md` typo.
-- `linkedFiles.prefix`: a prefix added to linked dependency files.
 
 ### Common `devDependencies`
 
