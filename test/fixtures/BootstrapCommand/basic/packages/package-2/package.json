@@ -1,8 +1,8 @@
 {
   "name": "package-2",
   "version": "1.0.0",
+  "bin": "cli.js",
   "dependencies": {
     "package-1": "^1.0.0"
-  },
-  "bin": "cli.js"
+  }
 }
