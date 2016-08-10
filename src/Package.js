@@ -27,6 +27,10 @@ export default class Package {
     this._package.version = version;
   }
 
+  get bin() {
+    return this._package.bin;
+  }
+
   get dependencies() {
     return this._package.dependencies;
   }
