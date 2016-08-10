@@ -135,11 +135,33 @@ export default class PublishCommand extends Command {
     });
   }
 
+  handleUpdateVersionCommand(callback) {
+    const version = this.flags.updateVersion;
+
+    // Uses the packages' version number
+    if (version === "package") {
+      const version = this.globalVersion;
+
+      const versions = this.updates.reduce((vers, update) => {
+        vers[update.package.name] = update.package.version;
+
+        return vers;
+      }, {});
+
+      return callback(null, { version, versions });
+    }
+
+    if (!semver.valid(version)) {
+      return callback("Must provide --update-version with a valid semver version");
+    }
+
+    return callback(null, { version });
+  }
+
   getVersionsForUpdates(callback) {
-    if (this.flags.repoVersion) {
-      return callback(null, {
-        version: this.flags.repoVersion
-      });
+    // Handle --update-version
+    if (this.flags.updateVersion) {
+      return this.handleUpdateVersionCommand(callback);
     }
 
     // Non-Independent Canary Mode
@@ -221,12 +243,24 @@ export default class PublishCommand extends Command {
     });
   }
 
+  printChangedVersions() {
+    return this.logger.info(this.updates.map((update) => {
+      const packageVersionString = `- ${update.package.name}: ${update.package.version}`;
+      const appendNewVersionString = ` => ${this.updatesVersions[update.package.name]}`;
+
+      // `--update-version package` implies each package has the latest version
+      if (this.flags.updateVersion === "package") {
+        return packageVersionString;
+      }
+
+      return packageVersionString + appendNewVersionString;
+    }).join("\n"));
+  }
+
   confirmVersions(callback) {
     this.logger.newLine();
     this.logger.info("Changes:");
-    this.logger.info(this.updates.map((update) => {
-      return `- ${update.package.name}: ${update.package.version} => ${this.updatesVersions[update.package.name]}`;
-    }).join("\n"));
+    this.printChangedVersions();
     this.logger.newLine();
 
     if (!this.flags.yes) {
