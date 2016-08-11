@@ -36,8 +36,13 @@ export default class BootstrapCommand extends Command {
     // Get a trimmed down graph that includes only those packages.
     const filteredGraph = PackageUtilities.getPackageGraph(todoPackages);
 
-    // As packages are completed their names will go into this object.
-    const donePackages = {};
+    // This maps package names to the number of packages that depend on them.
+    // As packages are completed their names will be removed from this object.
+    const pendingDeps = {};
+    todoPackages.forEach(pkg => filteredGraph.get(pkg.name).dependencies.forEach(dep => {
+      if (!pendingDeps[dep]) pendingDeps[dep] = 0;
+      pendingDeps[dep]++;
+    }));
 
     // Bootstrap runs the "prepublish" script in each package.  This script
     // may _use_ another package from the repo.  Therefore if a package in the
@@ -51,8 +56,21 @@ export default class BootstrapCommand extends Command {
       // that haven't yet been bootstrapped.
       const batch = todoPackages.filter(pkg => {
         const node = filteredGraph.get(pkg.name);
-        return !node.dependencies.filter(dep => !donePackages[dep]).length;
+        return !node.dependencies.filter(dep => pendingDeps[dep]).length;
       });
+
+      // If we weren't able to find a package with no remaining dependencies,
+      // then we've encountered a cycle in the dependency graph.  Run a
+      // single-package batch with the package that has the most dependents.
+      if (todoPackages.length && !batch.length) {
+        this.logger.warning(
+          "Encountered a cycle in the dependency graph.  " +
+          "This may cause instability if dependencies are used during `prepublish`."
+        );
+        batch.push(todoPackages.reduce((a, b) => (
+          (pendingDeps[a.name] || 0) > (pendingDeps[b.name] || 0) ? a : b
+        )));
+      }
 
       async.parallelLimit(batch.map(pkg => done => {
         async.series([
@@ -63,7 +81,7 @@ export default class BootstrapCommand extends Command {
           cb => this.runPrepublishForPackage(pkg, cb),
         ], err => {
           this.progressBar.tick(pkg.name);
-          donePackages[pkg.name] = true;
+          delete pendingDeps[pkg.name];
           todoPackages.splice(todoPackages.indexOf(pkg), 1);
           done(err);
         });
