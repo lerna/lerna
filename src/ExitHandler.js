@@ -9,14 +9,14 @@ export default class ExitHandler {
   }
 
   writeLogs() {
-    var filePath = path.join(process.cwd(), "lerna-debug.log");
-    var fileContent = this._formatLogs(logger.logs);
+    const filePath = path.join(process.cwd(), "lerna-debug.log");
+    const fileContent = this._formatLogs(logger.logs);
 
     FileSystemUtilities.writeFileSync(filePath, fileContent);
   }
 
   _formatLogs(logs) {
-    return logs.map(log => this._formatLog(log)).join("\n");
+    return logs.map((log) => this._formatLog(log)).join("\n");
   }
 
   _formatLog(log) {
@@ -44,7 +44,7 @@ export default class ExitHandler {
       message += (error.stack || error);
     }
 
-    message = message.split("\n").map(line => "    " + line).join("\n");
+    message = message.split("\n").map((line) => "    " + line).join("\n");
 
     return "\n" + message;
   }

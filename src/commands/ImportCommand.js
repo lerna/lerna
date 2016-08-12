@@ -65,7 +65,7 @@ export default class ImportCommand extends Command {
     if (this.flags.yes) {
       callback(null, true);
     } else {
-      PromptUtilities.confirm("Are you sure you want to import these commits onto the current branch?", confirmed => {
+      PromptUtilities.confirm("Are you sure you want to import these commits onto the current branch?", (confirmed) => {
         if (confirmed) {
           callback(null, true);
         } else {
@@ -85,7 +85,7 @@ export default class ImportCommand extends Command {
 
     progressBar.init(this.commits.length);
 
-    async.series(this.commits.map(sha => done => {
+    async.series(this.commits.map((sha) => (done) => {
       progressBar.tick(sha);
 
       // Create a patch file for this commit and prepend the target directory
@@ -101,7 +101,7 @@ export default class ImportCommand extends Command {
       //
       // Fall back to three-way merge, which can help with duplicate commits
       // due to merge history.
-      exec("git am -3", {}, err => {
+      exec("git am -3", {}, (err) => {
         if (err) {
 
           // Give some context for the error message.
@@ -114,7 +114,7 @@ export default class ImportCommand extends Command {
         }
         done(err);
       }).stdin.end(patch);
-    }), err => {
+    }), (err) => {
       progressBar.terminate();
 
       if (!err) {

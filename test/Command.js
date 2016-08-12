@@ -61,7 +61,7 @@ describe("Command", () => {
   });
 
   describe(".run()", () => {
-    it.skip("should exist", done => {
+    it.skip("should exist", (done) => {
       class TestCommand extends Command {
         initialize(callback) { callback(); }
         execute() {

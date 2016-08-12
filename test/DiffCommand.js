@@ -10,11 +10,11 @@ import stub from "./_stub";
 describe("DiffCommand", () => {
   let testDir;
 
-  beforeEach(done => {
+  beforeEach((done) => {
     testDir = initFixture("DiffCommand/basic", done);
   });
 
-  it("should diff everything", done => {
+  it("should diff everything", (done) => {
     const diffCommand = new DiffCommand([], {});
 
     diffCommand.runValidations();
@@ -32,7 +32,7 @@ describe("DiffCommand", () => {
     diffCommand.runCommand(exitWithCode(0, done));
   });
 
-  it("should diff a specific package", done => {
+  it("should diff a specific package", (done) => {
     const diffCommand = new DiffCommand(["package-1"], {});
 
     diffCommand.runValidations();

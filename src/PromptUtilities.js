@@ -24,7 +24,7 @@ export default class PromptUtilities {
       choices: choices,
       filter: filter,
       validate: validate
-    }], answers => {
+    }], (answers) => {
       callback(answers.prompt);
     });
   }
@@ -36,7 +36,7 @@ export default class PromptUtilities {
       message: "Enter a custom version",
       filter: filter,
       validate: validate
-    }], answers => {
+    }], (answers) => {
       callback(answers.input);
     });
   }

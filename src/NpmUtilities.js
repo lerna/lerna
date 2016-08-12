@@ -13,7 +13,7 @@ export default class NpmUtilities {
     const opts = {
       cwd: directory,
       stdio: ["ignore", "ignore", "pipe"],
-    }
+    };
 
     ChildProcessUtilities.spawn("npm", args, opts, callback);
   }

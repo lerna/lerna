@@ -12,11 +12,11 @@ import assertStubbedCalls from "./_assertStubbedCalls";
 describe("CleanCommand", () => {
   let testDir;
 
-  beforeEach(done => {
+  beforeEach((done) => {
     testDir = initFixture("CleanCommand/basic", done);
   });
 
-  it("should rm -rf the node_modules", done => {
+  it("should rm -rf the node_modules", (done) => {
     const cleanCommand = new CleanCommand([], {});
 
     assertStubbedCalls([
@@ -34,7 +34,7 @@ describe("CleanCommand", () => {
         testDir, "packages/package-" + curPkg, "node_modules"
       );
 
-      assert.equal(actualDir, expectedDir)
+      assert.equal(actualDir, expectedDir);
 
       curPkg++;
       callback();
@@ -43,7 +43,7 @@ describe("CleanCommand", () => {
     cleanCommand.runCommand(exitWithCode(0, done));
   });
 
-  it("should be possible to skip asking for confirmation", done => {
+  it("should be possible to skip asking for confirmation", (done) => {
     const cleanCommand = new CleanCommand([], {
       yes: true
     });

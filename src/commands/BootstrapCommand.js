@@ -15,7 +15,7 @@ export default class BootstrapCommand extends Command {
   }
 
   execute(callback) {
-    this.linkDependencies(err => {
+    this.linkDependencies((err) => {
       if (err) {
         callback(err);
       } else {
@@ -40,7 +40,7 @@ export default class BootstrapCommand extends Command {
     // This maps package names to the number of packages that depend on them.
     // As packages are completed their names will be removed from this object.
     const pendingDeps = {};
-    todoPackages.forEach(pkg => filteredGraph.get(pkg.name).dependencies.forEach(dep => {
+    todoPackages.forEach((pkg) => filteredGraph.get(pkg.name).dependencies.forEach((dep) => {
       if (!pendingDeps[dep]) pendingDeps[dep] = 0;
       pendingDeps[dep]++;
     }));
@@ -55,9 +55,9 @@ export default class BootstrapCommand extends Command {
 
       // Get all packages that have no remaining dependencies within the repo
       // that haven't yet been bootstrapped.
-      const batch = todoPackages.filter(pkg => {
+      const batch = todoPackages.filter((pkg) => {
         const node = filteredGraph.get(pkg.name);
-        return !node.dependencies.filter(dep => pendingDeps[dep]).length;
+        return !node.dependencies.filter((dep) => pendingDeps[dep]).length;
       });
 
       // If we weren't able to find a package with no remaining dependencies,
@@ -73,20 +73,20 @@ export default class BootstrapCommand extends Command {
         )));
       }
 
-      async.parallelLimit(batch.map(pkg => done => {
+      async.parallelLimit(batch.map((pkg) => (done) => {
         async.series([
-          cb => FileSystemUtilities.mkdirp(pkg.nodeModulesLocation, cb),
-          cb => this.installExternalPackages(pkg, cb),
-          cb => this.linkDependenciesForPackage(pkg, cb),
-          cb => this.linkBinariesForPackage(pkg, cb),
-          cb => this.runPrepublishForPackage(pkg, cb),
-        ], err => {
+          (cb) => FileSystemUtilities.mkdirp(pkg.nodeModulesLocation, cb),
+          (cb) => this.installExternalPackages(pkg, cb),
+          (cb) => this.linkDependenciesForPackage(pkg, cb),
+          (cb) => this.linkBinariesForPackage(pkg, cb),
+          (cb) => this.runPrepublishForPackage(pkg, cb),
+        ], (err) => {
           this.progressBar.tick(pkg.name);
           delete pendingDeps[pkg.name];
           todoPackages.splice(todoPackages.indexOf(pkg), 1);
           done(err);
         });
-      }), this.concurrency, err => {
+      }), this.concurrency, (err) => {
         if (todoPackages.length && !err) {
           bootstrapBatch();
         } else {
@@ -94,7 +94,7 @@ export default class BootstrapCommand extends Command {
           callback(err);
         }
       });
-    }
+    };
 
     // Kick off the first batch.
     bootstrapBatch();
@@ -120,12 +120,12 @@ export default class BootstrapCommand extends Command {
   }
 
   createLinkedDependency(src, dest, name, callback) {
-    FileSystemUtilities.rimraf(dest, err => {
+    FileSystemUtilities.rimraf(dest, (err) => {
       if (err) {
         return callback(err);
       }
 
-      FileSystemUtilities.mkdirp(dest, err => {
+      FileSystemUtilities.mkdirp(dest, (err) => {
         if (err) {
           return callback(err);
         }
@@ -148,7 +148,7 @@ export default class BootstrapCommand extends Command {
     const prefix = this.repository.linkedFiles.prefix || "";
     const indexJsFileContents = prefix + "module.exports = require(" +  JSON.stringify(normalize(src)) + ");";
 
-    FileSystemUtilities.writeFile(destPackageJsonLocation, packageJsonFileContents, err => {
+    FileSystemUtilities.writeFile(destPackageJsonLocation, packageJsonFileContents, (err) => {
       if (err) {
         return callback(err);
       }
@@ -159,8 +159,8 @@ export default class BootstrapCommand extends Command {
 
   linkBinariesForPackage(pkg, callback) {
     const actions = this.packages
-      .filter(dep => this.hasMatchingDependency(pkg, dep) && dep.bin)
-      .map(dep => cb => this.createBinaryLink(pkg, dep, cb))
+      .filter((dep) => this.hasMatchingDependency(pkg, dep) && dep.bin)
+      .map((dep) => (cb) => this.createBinaryLink(pkg, dep, cb));
 
     async.parallelLimit(actions, this.concurrency, callback);
   }
@@ -174,8 +174,8 @@ export default class BootstrapCommand extends Command {
       ? { [dep.name]: dep.bin }
       : dep.bin;
 
-    async.series([cb => FileSystemUtilities.mkdirp(dest, cb)].concat(
-      Object.keys(bins).map(name => cb => FileSystemUtilities.symlink(
+    async.series([(cb) => FileSystemUtilities.mkdirp(dest, cb)].concat(
+      Object.keys(bins).map((name) => (cb) => FileSystemUtilities.symlink(
         path.join(dep.location, bins[name]),
         path.join(dest, name),
         cb
@@ -187,17 +187,17 @@ export default class BootstrapCommand extends Command {
     const allDependencies = pkg.allDependencies;
 
     const externalPackages = Object.keys(allDependencies)
-      .filter(dependency => {
-        const match = find(this.packages, pkg => {
+      .filter((dependency) => {
+        const match = find(this.packages, (pkg) => {
           return pkg.name === dependency;
         });
 
         return !(match && this.hasMatchingDependency(pkg, match));
       })
-      .filter(dependency => {
+      .filter((dependency) => {
         return !this.hasDependencyInstalled(pkg, dependency);
       })
-      .map(dependency => {
+      .map((dependency) => {
         return dependency + "@" + allDependencies[dependency];
       });
 

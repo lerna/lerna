@@ -3,7 +3,7 @@ import assert from "assert";
 import Package from "../src/Package";
 
 describe("Package", () => {
-  let pkg
+  let pkg;
 
   beforeEach(() => {
     pkg = new Package(

@@ -14,7 +14,7 @@ afterEach(() => {
 });
 
 after(() => {
-  createdDirectories.map(dir => rimraf.sync(dir));
+  createdDirectories.map((dir) => rimraf.sync(dir));
 });
 
 let uniqueId = 0;
@@ -25,7 +25,7 @@ export default function initFixture(fixturePath, callback) {
 
   createdDirectories.push(testDir);
 
-  fse.copy(fixtureDir, testDir,  err => {
+  fse.copy(fixtureDir, testDir, (err) => {
     if (err) return callback(err);
     process.chdir(testDir);
     (child.execSync || syncExec)("git init . && git add -A && git commit -m \"Init commit\"");

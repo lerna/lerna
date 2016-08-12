@@ -9,11 +9,11 @@ import stub from "./_stub";
 
 describe("ExecCommand", () => {
   let testDir;
-  beforeEach(done => {
+  beforeEach((done) => {
     testDir = initFixture("ExecCommand/basic", done);
   });
 
-  it("should complain if invoked without command", done => {
+  it("should complain if invoked without command", (done) => {
     const execCommand = new ExecCommand([], {});
 
     execCommand.runValidations();
@@ -25,7 +25,7 @@ describe("ExecCommand", () => {
     }));
   });
 
-  it("should run a command", done => {
+  it("should run a command", (done) => {
     const execCommand = new ExecCommand(["ls"], {});
 
     execCommand.runValidations();
@@ -48,7 +48,7 @@ describe("ExecCommand", () => {
     }));
   });
 
-  it("should run a command with parameters", done => {
+  it("should run a command with parameters", (done) => {
     const execCommand = new ExecCommand(["ls", "-la"], {});
 
     execCommand.runValidations();
@@ -77,7 +77,7 @@ describe("ExecCommand", () => {
     }));
   });
 
-  it("should run a command for a given scope", done => {
+  it("should run a command for a given scope", (done) => {
     const execCommand = new ExecCommand(["ls"], {scope: "package-1"});
 
     execCommand.runValidations();

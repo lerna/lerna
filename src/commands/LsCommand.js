@@ -8,8 +8,8 @@ export default class LsCommand extends Command {
 
   execute(callback) {
     const formattedPackages = this.packages
-      .filter(pkg => !pkg.isPrivate())
-      .map(pkg => `- ${pkg.name}`)
+      .filter((pkg) => !pkg.isPrivate())
+      .map((pkg) => `- ${pkg.name}`)
       .join("\n");
 
     this.logger.info(formattedPackages);

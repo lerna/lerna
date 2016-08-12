@@ -14,7 +14,7 @@ export default class RunCommand extends Command {
     }
 
     this.packagesWithScript = this.packages
-      .filter(pkg => pkg.scripts && pkg.scripts[this.script]);
+      .filter((pkg) => pkg.scripts && pkg.scripts[this.script]);
 
     if (!this.packagesWithScript.length) {
       callback(new Error(`No packages found with the npm script '${this.script}'`));
@@ -35,19 +35,19 @@ export default class RunCommand extends Command {
   }
 
   execute(callback) {
-    this.runScriptInPackages(err => {
+    this.runScriptInPackages((err) => {
       if (err) {
         callback(err);
       } else {
         this.logger.success(`Successfully ran npm script '${this.script}' in packages:`);
-        this.logger.success(this.packagesWithScript.map(pkg => `- ${pkg.name}`).join("\n"));
+        this.logger.success(this.packagesWithScript.map((pkg) => `- ${pkg.name}`).join("\n"));
         callback(null, true);
       }
     });
   }
 
   runScriptInPackages(callback) {
-    async.parallelLimit(this.packagesWithScript.map(pkg => cb => {
+    async.parallelLimit(this.packagesWithScript.map((pkg) => (cb) => {
       this.runScriptInPackage(pkg, cb);
     }), this.concurrency, callback);
   }

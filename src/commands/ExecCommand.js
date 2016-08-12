@@ -27,7 +27,7 @@ export default class ExecCommand extends Command {
   }
 
   execute(callback) {
-    async.parallelLimit(this.packages.map(pkg => cb => {
+    async.parallelLimit(this.packages.map((pkg) => (cb) => {
       this.runCommandInPackage(pkg, cb);
     }), this.concurrency, callback);
   }
