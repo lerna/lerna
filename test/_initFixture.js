@@ -1,7 +1,7 @@
 import rimraf from "rimraf";
 import child from "child_process";
 import path from "path";
-import cpr from "cpr";
+import fse from "fs-extra";
 import syncExec from "sync-exec";
 
 const tmpDir = path.resolve(__dirname, "../tmp");
@@ -25,12 +25,10 @@ export default function initFixture(fixturePath, callback) {
 
   createdDirectories.push(testDir);
 
-  cpr(fixtureDir, testDir, {
-    confirm: true
-  }, err => {
+  fse.copy(fixtureDir, testDir,  err => {
     if (err) return callback(err);
     process.chdir(testDir);
-    (child.execSync || syncExec)("git init . && git add -A && git commit -m 'Init commit'");
+    (child.execSync || syncExec)("git init . && git add -A && git commit -m \"Init commit\"");
     callback();
   });
 

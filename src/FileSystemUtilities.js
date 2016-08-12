@@ -43,7 +43,7 @@ export default class FileSystemUtilities {
 
   @logger.logifySync
   static readFileSync(filePath) {
-    return fs.readFileSync(filePath).toString().trim();
+    return fs.readFileSync(filePath, "utf-8").toString().trim();
   }
 
   @logger.logifyAsync

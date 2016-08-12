@@ -154,7 +154,7 @@ export default class UpdatedPackagesCollector {
     if (this.publishConfig.ignore) {
       changedFiles = changedFiles.filter(file => {
         return !find(this.publishConfig.ignore, pattern => {
-          return minimatch(file, pattern);
+          return minimatch(file, pattern, {matchBase: true});
         });
       });
     }
