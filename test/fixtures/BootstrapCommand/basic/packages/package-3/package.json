@@ -6,6 +6,8 @@
     "package3cli2": "cli2.js"
   },
   "devDependencies": {
-    "package-2": "^1.0.0"
+    "package-1": "^1.0.0",
+    "package-2": "^1.0.0",
+    "foo": "0.1.12"
   }
 }
