@@ -140,6 +140,8 @@ export default class BootstrapCommand extends Command {
     const destPackageJsonLocation = path.join(dest, "package.json");
     const destIndexJsLocation = path.join(dest, "index.js");
 
+    const packageJsonObj = require(srcPackageJsonLocation);
+
     const packageJsonFileContents = JSON.stringify({
       name: name,
       version: require(srcPackageJsonLocation).version
@@ -153,7 +155,28 @@ export default class BootstrapCommand extends Command {
         return callback(err);
       }
 
-      FileSystemUtilities.writeFile(destIndexJsLocation, indexJsFileContents, callback);
+      FileSystemUtilities.writeFile(destIndexJsLocation, indexJsFileContents, (err) => {
+        if (err) {
+          return callback(err);
+        }
+
+        if (packageJsonObj.styles && Array.isArray(packageJsonObj.styles)) {
+          packageJsonObj.styles.forEach((styleName) => {
+            const srcStylesPath = path.join(src, styleName);
+            const destStylesPath = path.join(dest, styleName);
+
+            try {
+              const stylesContent = FileSystemUtilities.readFileSync(srcStylesPath);
+              FileSystemUtilities.writeFile(destStylesPath, stylesContent, callback);
+            } catch (e) {
+              return callback(e);
+            }
+          });
+        }
+        else {
+          return callback(null);
+        }
+      });
     });
   }
 
