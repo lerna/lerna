@@ -3,5 +3,6 @@
   "version": "1.0.0",
   "scripts": {
     "prepublish": "mv index.src.js index.js"
-  }
+  },
+  "styles": ["styles.css"]
 }
