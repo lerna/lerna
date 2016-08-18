@@ -28,23 +28,18 @@ describe("BootstrapCommand", () => {
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
 
-      const depsToInstall = bootstrapCommand.getDependenciesToInstall(bootstrapCommand.getPackages());
-
-      assert.deepEqual(depsToInstall, {
-        __ROOT__: ["foo@^1.0.0"],
-        "package-3": ["foo@0.1.12"],
-        "package-4": ["package-1@^0.0.0"]
-      });
-
       assertStubbedCalls([
         [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install", "foo@^1.0.0"], { cwd: testDir, stdio: STDIO_OPT }] }
+          { args: ["npm", ["install", "foo@^1.0.0"], { cwd: path.join(testDir, "packages/package-1"), stdio: STDIO_OPT }] }
         ]],
         [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install", "foo@0.1.12"], { cwd: path.join(testDir, "packages", "package-3"), stdio: STDIO_OPT }] }
+          { args: ["npm", ["install", "foo@^1.0.0"], { cwd: path.join(testDir, "packages/package-2"), stdio: STDIO_OPT }] }
         ]],
         [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install", "package-1@^0.0.0"], { cwd: path.join(testDir, "packages", "package-4"), stdio: STDIO_OPT }] }
+          { args: ["npm", ["install", "foo@0.1.12"], { cwd: path.join(testDir, "packages/package-3"), stdio: STDIO_OPT }] }
+        ]],
+        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
+          { args: ["npm", ["install", "package-1@^0.0.0"], { cwd: path.join(testDir, "packages/package-4"), stdio: STDIO_OPT }] }
         ]]
       ]);
 
@@ -55,27 +50,24 @@ describe("BootstrapCommand", () => {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
           // Make sure the `prepublish` script got run (index.js got created).
           assert.ok(pathExists.sync(path.join(testDir, "packages/package-1/index.js")));
-          // packages are symlinked to root node_modules
+          // packages are symlinked to packages/node_modules
           assert.equal(
-            fs.readlinkSync(path.join(testDir, "node_modules", "package-1")),
+            fs.readlinkSync(path.join(testDir, "packages", "node_modules", "package-1")),
             path.join(testDir, "packages", "package-1"),
             "package-1 should be symlinked"
           );
           assert.equal(
-            fs.readlinkSync(path.join(testDir, "node_modules", "package-2")),
+            fs.readlinkSync(path.join(testDir, "packages", "node_modules", "package-2")),
             path.join(testDir, "packages", "package-2"),
             "package-2 should be symlinked"
           );
           assert.equal(
-            fs.readlinkSync(path.join(testDir, "node_modules", "package-3")),
+            fs.readlinkSync(path.join(testDir, "packages", "node_modules", "package-3")),
             path.join(testDir, "packages", "package-3"),
             "package-3 should be symlinked"
           );
-          assert.equal(
-            fs.readlinkSync(path.join(testDir, "node_modules", "package-4")),
-            path.join(testDir, "packages", "package-4"),
-            "package-4 should be symlinked"
-          );
+          // package-4 has no dependencies and should not be symlinked
+          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "node_modules", "package-4")));
           // package binaries are symlinked
           assert.equal(
             fs.readlinkSync(path.join(testDir, "packages", "package-3", "node_modules", ".bin", "package-2")),
@@ -109,7 +101,10 @@ describe("BootstrapCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install", "foo@^1.0.0"], { cwd: testDir, stdio: STDIO_OPT }] }
+          { args: ["npm", ["install", "foo@^1.0.0"], { cwd: path.join(testDir, "packages/package-1"), stdio: STDIO_OPT }] }
+        ]],
+        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
+          { args: ["npm", ["install", "foo@^1.0.0"], { cwd: path.join(testDir, "packages/package-2"), stdio: STDIO_OPT }] }
         ]]
       ]);
 
@@ -118,16 +113,14 @@ describe("BootstrapCommand", () => {
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
+          // only package-1 should be symlinked
           assert.equal(
-            fs.readlinkSync(path.join(testDir, "node_modules", "package-1")),
+            fs.readlinkSync(path.join(testDir, "packages", "node_modules", "package-1")),
             path.join(testDir, "packages/package-1"),
             "package-1 should be symlinked"
           );
-          assert.equal(
-            fs.readlinkSync(path.join(testDir, "node_modules", "package-2")),
-            path.join(testDir, "packages/package-2"),
-            "package-2 should be symlinked"
-          );
+          // all other packages should not be symlinked
+          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "node_modules", "package-2")));
           assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "node_modules", "package-3")));
           assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "node_modules", "package-4")));
           done();
@@ -151,13 +144,6 @@ describe("BootstrapCommand", () => {
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
 
-      const depsToInstall = bootstrapCommand.getDependenciesToInstall(bootstrapCommand.getPackages());
-
-      assert.deepEqual(depsToInstall, {
-        __ROOT__: ["external@^2.0.0"],
-        "package-1": ["external@^1.0.0"],
-      });
-
       let installed = 0;
       let spawnArgs = [];
       let spawnOptions = [];
@@ -175,12 +161,12 @@ describe("BootstrapCommand", () => {
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
           assert.deepEqual(spawnArgs, [
-            ["install", "external@^2.0.0"],
-            ["install", "external@^1.0.0"]
+            ["install", "external@^1.0.0"],
+            ["install", "external@^2.0.0"]
           ]);
           assert.deepEqual(spawnOptions, [
-            { cwd: testDir, stdio: STDIO_OPT },
-            { cwd: path.join(testDir, "packages", "package-1"), stdio: STDIO_OPT }
+            { cwd: path.join(testDir, "packages", "package-1"), stdio: STDIO_OPT },
+            { cwd: path.join(testDir, "packages", "package-2"), stdio: STDIO_OPT }
           ]);
           assert.equal(installed, 2, "The external dependencies were installed");
 
