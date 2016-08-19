@@ -191,22 +191,13 @@ export default class BootstrapCommand extends Command {
   symlinkPackages(callback) {
     this.logger.info("Symlinking packages and binaries");
     const actions = [];
-    // packages to symlink
-    const symlinkPackages = [];
-    const packagesNodeModulesLocation = path.join(this.repository.packagesLocation, "node_modules");
-    actions.push((cb) => FileSystemUtilities.rimraf(packagesNodeModulesLocation, cb));
-    actions.push((cb) => FileSystemUtilities.mkdirp(packagesNodeModulesLocation, cb));
-    this.filteredPackages.forEach((pkg) => {
-      Object.keys(pkg.allDependencies)
-        // filter out external packages and version mismatched local packages
-        .filter((dependency) => {
-          const match = find(this.packages, (pkg) => {
-            return pkg.name === dependency;
-          });
-          return match && pkg.hasMatchingDependency(match);
-        })
+    this.filteredPackages.forEach((filteredPackage) => {
+      const packageLocation = path.join(this.repository.packagesLocation, filteredPackage.name);
+      this.packages.map((pkg) => pkg.name)
+        // filter out self
+        .filter((pkg) => pkg !== filteredPackage.name)
         // filter out already install dependencies
-        .filter((dependency) => !pkg.hasDependencyInstalled(dependency))
+        .filter((pkg) => !filteredPackage.hasDependencyInstalled(pkg))
         .forEach((dependency) => {
           // get path to dependency
           const dependencyLocation = path.join(this.repository.packagesLocation, dependency);
@@ -216,25 +207,19 @@ export default class BootstrapCommand extends Command {
           if (!FileSystemUtilities.existsSync(dependencyPackageJsonLocation)) {
             this.logger.error(`Unable to find package.json for ${dependency} dependency. Skipping...`);
           } else {
-            // add package to packages being symlinked
-            if (symlinkPackages.indexOf(dependency) === -1) {
-              symlinkPackages.push(dependency);
-            }
+            const dependencyLocation = path.join(this.repository.packagesLocation, dependency);
+            const dependencyLinkLocation = path.join(packageLocation, "node_modules", dependency);
+            actions.push((cb) => FileSystemUtilities.mkdirp(path.join(packageLocation, "node_modules"), cb));
+            actions.push((cb) => FileSystemUtilities.symlink(dependencyLocation, dependencyLinkLocation, "dir", cb));
             const dependencyPackageJson = require(dependencyPackageJsonLocation);
             if (dependencyPackageJson.bin) {
-              const destFolder = path.join(this.repository.packagesLocation, pkg.name, "node_modules");
+              const destFolder = path.join(this.repository.packagesLocation, filteredPackage.name, "node_modules");
               actions.push((cb) => {
                 this.createBinaryLink(dependencyLocation, destFolder, dependency, dependencyPackageJson.bin, cb);
               });
             }
           }
         });
-    });
-    // symlink packages depended on by other packages being bootstrapped
-    symlinkPackages.forEach((packageName) => {
-      const packageLocation = path.join(this.repository.packagesLocation, packageName);
-      const packageLinkLocation = path.join(packagesNodeModulesLocation, packageName);
-      actions.push((cb) => FileSystemUtilities.symlink(packageLocation, packageLinkLocation, "dir", cb));
     });
     async.series(actions, callback);
   }
