@@ -193,9 +193,7 @@ export default class BootstrapCommand extends Command {
     const actions = [];
     this.filteredPackages.forEach((filteredPackage) => {
       const packageLocation = path.join(this.repository.packagesLocation, filteredPackage.name);
-      this.packages.map((pkg) => pkg.name)
-        // filter out self
-        .filter((pkg) => pkg !== filteredPackage.name)
+      Object.keys(filteredPackage.allDependencies)
         // filter out already install dependencies
         .filter((pkg) => !filteredPackage.hasDependencyInstalled(pkg))
         .forEach((dependency) => {

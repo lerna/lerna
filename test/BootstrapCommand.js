@@ -50,42 +50,19 @@ describe("BootstrapCommand", () => {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
           // Make sure the `prepublish` script got run (index.js got created).
           assert.ok(pathExists.sync(path.join(testDir, "packages/package-1/index.js")));
-          // package-1 package dependencies are symlinked
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-1", "node_modules", "package-1")));
-          assert.equal(
-            fs.readlinkSync(path.join(testDir, "packages", "package-1", "node_modules", "package-2")),
-            path.join(testDir, "packages", "package-2"),
-            "package-2 should be symlinked to package-1"
-          );
-          assert.equal(
-            fs.readlinkSync(path.join(testDir, "packages", "package-1", "node_modules", "package-3")),
-            path.join(testDir, "packages", "package-3"),
-            "package-3 should be symlinked to package-1"
-          );
-          assert.equal(
-            fs.readlinkSync(path.join(testDir, "packages", "package-1", "node_modules", "package-4")),
-            path.join(testDir, "packages", "package-4"),
-            "package-4 should be symlinked to package-1"
-          );
+          // package-1 should not have any packages symlinked
+          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-1", "node_modules", "package-2")));
+          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-1", "node_modules", "package-3")));
+          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-1", "node_modules", "package-4")));
           // package-2 package dependencies are symlinked
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-2", "node_modules", "package-2")));
           assert.equal(
             fs.readlinkSync(path.join(testDir, "packages", "package-2", "node_modules", "package-1")),
             path.join(testDir, "packages", "package-1"),
             "package-1 should be symlinked to package-2"
           );
-          assert.equal(
-            fs.readlinkSync(path.join(testDir, "packages", "package-2", "node_modules", "package-3")),
-            path.join(testDir, "packages", "package-3"),
-            "package-3 should be symlinked to package-2"
-          );
-          assert.equal(
-            fs.readlinkSync(path.join(testDir, "packages", "package-2", "node_modules", "package-4")),
-            path.join(testDir, "packages", "package-4"),
-            "package-4 should be symlinked to package-2"
-          );
+          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-2", "node_modules", "package-3")));
+          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-2", "node_modules", "package-4")));
           // package-3 package dependencies are symlinked
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-3", "node_modules", "package-3")));
           assert.equal(
             fs.readlinkSync(path.join(testDir, "packages", "package-3", "node_modules", "package-1")),
             path.join(testDir, "packages", "package-1"),
@@ -96,23 +73,14 @@ describe("BootstrapCommand", () => {
             path.join(testDir, "packages", "package-2"),
             "package-2 should be symlinked to package-3"
           );
-          assert.equal(
-            fs.readlinkSync(path.join(testDir, "packages", "package-3", "node_modules", "package-4")),
-            path.join(testDir, "packages", "package-4"),
-            "package-4 should be symlinked to package-3"
-          );
+          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-3", "node_modules", "package-4")));
           // package-4 package dependencies are symlinked
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", "package-4")));
           assert.equal(
             fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", "package-1")),
             path.join(testDir, "packages", "package-1"),
             "package-1 should be symlinked to package-4"
           );
-          assert.equal(
-            fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", "package-2")),
-            path.join(testDir, "packages", "package-2"),
-            "package-2 should be symlinked to package-4"
-          );
+          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", "package-2")));
           assert.equal(
             fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", "package-3")),
             path.join(testDir, "packages", "package-3"),
