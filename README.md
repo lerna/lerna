@@ -265,7 +265,7 @@ README changes, use `--skip-npm` and do the final `npm publish` by hand for
 each package.
 
 This flag can be combined with `--skip-git` to _just_ update versions and
-dependencies, without comitting, tagging, pushing or publishing.
+dependencies, without committing, tagging, pushing or publishing.
 
 > Only update versions and dependencies; don't actually publish (this only affects publish).
 
