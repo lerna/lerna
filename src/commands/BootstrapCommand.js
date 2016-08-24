@@ -166,7 +166,7 @@ export default class BootstrapCommand extends Command {
 
         if (hasStylesheet) {
           const destStyleCssLocation = path.join(dest, "style.css");
-          const styleCssFileContents = "@import \"" + path.relative(normalize(dest), normalize(path.join(src, srcPackageJson.style))) + "\";";
+          const styleCssFileContents = "@import \"" + normalize(path.relative(dest, path.join(src, srcPackageJson.style))) + "\";";
 
           FileSystemUtilities.writeFile(destStyleCssLocation, styleCssFileContents, callback);
         } else {
