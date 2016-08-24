@@ -153,7 +153,8 @@ Installs all of their dependencies and links any cross-dependencies.
 When run, this command will:
 
 1. Link together all Lerna `packages` that are dependencies of each other.
-  2. This doesn't currently use [npm link](https://docs.npmjs.com/cli/link) and instead uses a proxy to the actual package in the monorepo.
+  - This doesn't currently use [npm link](https://docs.npmjs.com/cli/link) and instead uses a proxy to the actual package in the monorepo.
+  - Lerna respects a filename specified as the `"style"` key in `package.json` and will link the named CSS file.
 2. `npm install` all external dependencies of each package.
 
 Currently, what Lerna does to link internal dependencies is replace the
