@@ -147,17 +147,15 @@ This flag tells Lerna to use independent versioning mode.
 $ lerna bootstrap
 ```
 
-Bootstrap - or setup - the packages in the current Lerna repo.
+Bootstrap the packages in the current Lerna repo.
 Installs all of their dependencies and links any cross-dependencies.
 
 When run, this command will:
 
-1. Link together all Lerna `packages` that are dependencies of each other.
-  2. This doesn't currently use [npm link](https://docs.npmjs.com/cli/link) and instead uses a proxy to the actual package in the monorepo.
-2. `npm install` all external dependencies of each package.
-
-Currently, what Lerna does to link internal dependencies is replace the
-`node_modules/package-x` with a link to the actual file in the repo.
+1. `npm install` all external dependencies of each package.
+2. Symlink together all Lerna `packages` that are dependencies of each other.
+    * This requires Administrator privileges on Windows
+2. `npm prepublish` all bootstrapped packages.
 
 `lerna bootstrap` respects the `--ignore` flag (see below).
 
@@ -185,10 +183,12 @@ Let's use `babel` as an example.
 - Lerna checks if each dependency is also part of the Lerna repo.
   - In this example, `babel-generator` is a dependency, while `source-map` is not.
   - `source-map` is `npm install`ed like normal.
-- `babel-core/node_modules/babel-generator` is replaced with two files:
-  - A `package.json` with keys `name` and `version`
-  - An `index.js` file with the contents `module.exports = require("relative-path-to-babel-generator-in-the-lerna-repo")`
-- This links the `babel-generator` package in `node_modules` with the actual `babel-generator` files.
+- `packages/babel-core/node_modules/babel-generator` symlinks to `packages/babel-generator`
+- This allows nested directory imports
+
+**Note:** Circular dependencies result in circular symlinks which *may* impact your editor/IDE.
+
+[Webstorm](https://www.jetbrains.com/webstorm/) locks up when circular symlinks are present. To prevent this, add `node_modules` to the list of ignored files and folders in `Preferences | Editor | File Types | Ignored files and folders`.  
 
 ### publish
 
@@ -485,7 +485,7 @@ $ lerna run --scope toolbar-* test
 
 #### --ignore [glob]
 
-Excludes a subset of packages when running a command.
+Excludes a subset of packages when running the `bootstrap` command.
 
 ```sh
 $ lerna bootstrap --ignore component-*
