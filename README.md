@@ -401,6 +401,31 @@ repo.  Each commit is modified to make changes relative to the package
 directory.  So, for example, the commit that added `package.json` will
 instead add `packages/<directory-name>/package.json`.
 
+### watch
+
+```sh
+$ lerna watch <glob> <script>
+```
+
+Watch for updates in package files and run an NPM script when something
+changes.
+
+This can be useful for rebuilding packages when source files change.
+
+```sh
+$ lerna watch 'src/**/*' prepublish
+```
+
+In the above example, when any file changes in the `/src` directory of a
+package, the `prepublish` command will run for that package.
+
+`lerna watch` respects the `--scope` flag (see below).
+
+`lerna watch` respects the `--ignore` flag (see below).
+
+> Note: the `scope` flag is processed before the `ignore` flag. If for some
+reason both are present, the `ignore` flag will be ignored.
+
 ## Misc
 
 Lerna will log to a `lerna-debug.log` file (same as `npm-debug.log`) when it encounters an error running a command.
@@ -496,8 +521,6 @@ $ lerna bootstrap --ignore component-*
 ```
 
 The `ignore` flag, when used with the `bootstrap` command, can also be set in `lerna.json` under the `bootstrapConfig` key. The command-line flag will take precendence over this option.
-
-**Example**
 
 ```javascript
 {
