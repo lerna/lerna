@@ -195,6 +195,8 @@ export default class BootstrapCommand extends Command {
     this.filteredPackages.forEach((filteredPackage) => {
       const packageLocation = path.join(this.repository.packagesLocation, filteredPackage.name);
       Object.keys(filteredPackage.allDependencies)
+        // filter out external dependencies
+        .filter((dependency) => find(this.packages, { name: dependency}))
         .forEach((dependency) => {
           // skip this dependency?
           let skip = false;
@@ -215,24 +217,27 @@ export default class BootstrapCommand extends Command {
                   `Symlink already exists for ${dependency} dependency of ${filteredPackage.name},` +
                   "but links to different location. Replacing with updated symlink..."
                 );
-              } else if (semver.satisfies(
-                  require(dependencyPackageJsonLocation).version,
-                  filteredPackage.allDependencies[dependency]
-              )) {
-                // dependency is compatible with package, remove folder and replace with symlink
-                this.logger.warning(
-                  `${dependency} is already installed for ${filteredPackage.name}.` +
-                  "Replacing with symlink..."
-                );
-                // remove installed dependency
-                actions.push((cb) => FileSystemUtilities.rimraf(installedDepLocation, cb));
-              } else {
-                // dependency is not compatible with package, do nothing
-                this.logger.warning(
-                  `${dependency} is already installed for ${filteredPackage.name}.` +
-                  "No compatible package found. Skipping..."
-                );
-                skip = true;
+              // installed dependency is not a symlink
+              } else if (!isDepSymlink) {
+                // dependency is compatible with existing package, remove folder and replace with symlink
+                if (semver.satisfies(
+                    require(dependencyPackageJsonLocation).version,
+                    filteredPackage.allDependencies[dependency]
+                  )) {
+                  this.logger.warning(
+                    `${dependency} is already installed for ${filteredPackage.name}. ` +
+                    "Replacing with symlink..."
+                  );
+                  // remove installed dependency
+                  actions.push((cb) => FileSystemUtilities.rimraf(installedDepLocation, cb));
+                } else {
+                  // dependency is not compatible with existing package, do nothing
+                  this.logger.warning(
+                    `${dependency} is already installed for ${filteredPackage.name}. ` +
+                    "No compatible package found. Skipping..."
+                  );
+                  skip = true;
+                }
               }
             }
             if (!skip) {
