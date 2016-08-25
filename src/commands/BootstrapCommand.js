@@ -140,11 +140,17 @@ export default class BootstrapCommand extends Command {
     const destPackageJsonLocation = path.join(dest, "package.json");
     const destIndexJsLocation = path.join(dest, "index.js");
 
-    const packageJsonFileContents = JSON.stringify({
+    const srcPackageJson = require(srcPackageJsonLocation);
+    const destPackageJson = {
       name: name,
-      version: require(srcPackageJsonLocation).version
-    }, null, "  ");
+      version: srcPackageJson.version
+    };
+    const hasStylesheet = !!srcPackageJson.style;
+    if (hasStylesheet) {
+      destPackageJson.style = "style.css";
+    }
 
+    const packageJsonFileContents = JSON.stringify(destPackageJson, null, "  ");
     const prefix = this.repository.linkedFiles.prefix || "";
     const indexJsFileContents = prefix + "module.exports = require(" +  JSON.stringify(normalize(src)) + ");";
 
@@ -153,7 +159,20 @@ export default class BootstrapCommand extends Command {
         return callback(err);
       }
 
-      FileSystemUtilities.writeFile(destIndexJsLocation, indexJsFileContents, callback);
+      FileSystemUtilities.writeFile(destIndexJsLocation, indexJsFileContents, (err) => {
+        if (err) {
+          return callback(err);
+        }
+
+        if (hasStylesheet) {
+          const destStyleCssLocation = path.join(dest, "style.css");
+          const styleCssFileContents = "@import \"" + normalize(path.relative(dest, path.join(src, srcPackageJson.style))) + "\";";
+
+          FileSystemUtilities.writeFile(destStyleCssLocation, styleCssFileContents, callback);
+        } else {
+          callback();
+        }
+      });
     });
   }
 

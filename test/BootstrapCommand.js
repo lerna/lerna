@@ -49,6 +49,7 @@ describe("BootstrapCommand", () => {
           assert.ok(pathExists.sync(path.join(testDir, "packages/package-2/node_modules/package-1")));
           assert.ok(pathExists.sync(path.join(testDir, "packages/package-2/node_modules/package-1/index.js")));
           assert.ok(pathExists.sync(path.join(testDir, "packages/package-2/node_modules/package-1/package.json")));
+          assert.ok(pathExists.sync(path.join(testDir, "packages/package-2/node_modules/package-1/style.css")));
 
           // Make sure the `prepublish` script got run (index.js got created).
           assert.equal(require(path.join(testDir, "packages/package-2/node_modules/package-1")), "OK");
@@ -75,7 +76,8 @@ describe("BootstrapCommand", () => {
           assert.ok(!pathExists.sync(path.join(testDir, "packages/package-4/node_modules/package-1")));
 
           assert.equal(fs.readFileSync(path.join(testDir, "packages/package-2/node_modules/package-1/index.js")).toString(), "/**\n * @prefix\n */\nmodule.exports = require(\"" + normalize(path.join(testDir, "packages/package-1")) + "\");\n");
-          assert.equal(fs.readFileSync(path.join(testDir, "packages/package-2/node_modules/package-1/package.json")).toString(), "{\n  \"name\": \"package-1\",\n  \"version\": \"1.0.0\"\n}\n");
+          assert.equal(fs.readFileSync(path.join(testDir, "packages/package-2/node_modules/package-1/package.json")).toString(), "{\n  \"name\": \"package-1\",\n  \"version\": \"1.0.0\",\n  \"style\": \"style.css\"\n}\n");
+          assert.equal(fs.readFileSync(path.join(testDir, "packages/package-2/node_modules/package-1/style.css")).toString(), "@import \"" + normalize("../../../package-1/some-style-file.css") + "\";\n");
 
           assert.equal(fs.readFileSync(path.join(testDir, "packages/package-3/node_modules/package-2/index.js")).toString(), "/**\n * @prefix\n */\nmodule.exports = require(\"" + normalize(path.join(testDir, "packages/package-2")) + "\");\n");
           assert.equal(fs.readFileSync(path.join(testDir, "packages/package-3/node_modules/package-2/package.json")).toString(), "{\n  \"name\": \"package-2\",\n  \"version\": \"1.0.0\"\n}\n");
