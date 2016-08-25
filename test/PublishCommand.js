@@ -47,6 +47,7 @@ describe("PublishCommand", () => {
           { args: ["git add " + path.join(testDir, "packages/package-2/package.json")] },
           { args: ["git add " + path.join(testDir, "packages/package-3/package.json")] },
           { args: ["git add " + path.join(testDir, "packages/package-4/package.json")] },
+          { args: ["git add " + path.join(testDir, "packages/package-5/package.json")] },
           { args: ["git commit -m \"$(echo \"v1.0.1\")\""] },
           { args: ["git tag v1.0.1"] }
         ]],
@@ -55,6 +56,7 @@ describe("PublishCommand", () => {
           { args: ["cd " + path.join(testDir, "packages/package-2") + " && npm publish --tag lerna-temp"] },
           { args: ["cd " + path.join(testDir, "packages/package-3") + " && npm publish --tag lerna-temp"] },
           { args: ["cd " + path.join(testDir, "packages/package-4") + " && npm publish --tag lerna-temp"] }
+          // No package-5.  It's private.
         ], true],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
@@ -73,6 +75,8 @@ describe("PublishCommand", () => {
           { args: ["npm dist-tag rm package-4 lerna-temp"] },
           { args: ["npm dist-tag add package-4@1.0.1 latest"] },
 
+          // No package-5.  It's private.
+
           { args: ["git symbolic-ref --short HEAD"], returns: "master" },
           { args: ["git push origin master"] },
           { args: ["git push origin v1.0.1"] }
@@ -90,10 +94,12 @@ describe("PublishCommand", () => {
           assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
           assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
           assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
+          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).version, "1.0.1");
 
           assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
           assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
           assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).dependencies["package-1"], "^1.0.1");
 
           done();
         } catch (err) {
@@ -486,6 +492,7 @@ describe("PublishCommand", () => {
           { args: ["git add " + path.join(testDir, "packages/package-2/package.json")] },
           { args: ["git add " + path.join(testDir, "packages/package-3/package.json")] },
           { args: ["git add " + path.join(testDir, "packages/package-4/package.json")] },
+          { args: ["git add " + path.join(testDir, "packages/package-5/package.json")] },
           { args: ["git commit -m \"$(echo \"v1.0.1\")\""] },
           { args: ["git tag v1.0.1"] }
         ]],
@@ -502,10 +509,12 @@ describe("PublishCommand", () => {
           assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
           assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
           assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
+          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).version, "1.0.1");
 
           assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
           assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
           assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).dependencies["package-1"], "^1.0.1");
 
           done();
         } catch (err) {
@@ -606,6 +615,7 @@ describe("PublishCommand", () => {
           { args: ["git add " + path.join(testDir, "packages/package-2/package.json")] },
           { args: ["git add " + path.join(testDir, "packages/package-3/package.json")] },
           { args: ["git add " + path.join(testDir, "packages/package-4/package.json")] },
+          { args: ["git add " + path.join(testDir, "packages/package-5/package.json")] },
           { args: ["git commit -m \"$(echo \"v1.0.1\")\""] },
           { args: ["git tag v1.0.1"] }
         ]],
@@ -614,6 +624,7 @@ describe("PublishCommand", () => {
           { args: ["cd " + path.join(testDir, "packages/package-2") + " && npm publish --tag lerna-temp"] },
           { args: ["cd " + path.join(testDir, "packages/package-3") + " && npm publish --tag lerna-temp"] },
           { args: ["cd " + path.join(testDir, "packages/package-4") + " && npm publish --tag lerna-temp"] }
+          // No package-5.  It's private.
         ], true],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
@@ -632,6 +643,8 @@ describe("PublishCommand", () => {
           { args: ["npm dist-tag rm package-4 lerna-temp"] },
           { args: ["npm dist-tag add package-4@1.0.1 prerelease"] },
 
+          // No package-5.  It's private.
+
           { args: ["git symbolic-ref --short HEAD"], returns: "master" },
           { args: ["git push origin master"] },
           { args: ["git push origin v1.0.1"] }
@@ -649,10 +662,12 @@ describe("PublishCommand", () => {
           assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
           assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
           assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
+          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).version, "1.0.1");
 
           assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
           assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
           assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).dependencies["package-1"], "^1.0.1");
 
           done();
         } catch (err) {
@@ -705,6 +720,7 @@ describe("PublishCommand", () => {
          { args: ["git add " + path.join(testDir, "packages/package-2/package.json")] },
          { args: ["git add " + path.join(testDir, "packages/package-3/package.json")] },
          { args: ["git add " + path.join(testDir, "packages/package-4/package.json")] },
+         { args: ["git add " + path.join(testDir, "packages/package-5/package.json")] },
          { args: ["git commit -m \"$(echo \"v1.0.1\")\""] },
          { args: ["git tag v1.0.1"] }
        ]],
@@ -713,6 +729,7 @@ describe("PublishCommand", () => {
          { args: ["cd " + path.join(testDir, "packages/package-2") + " && npm publish --tag lerna-temp"] },
          { args: ["cd " + path.join(testDir, "packages/package-3") + " && npm publish --tag lerna-temp"] },
          { args: ["cd " + path.join(testDir, "packages/package-4") + " && npm publish --tag lerna-temp"] }
+         // No package-5.  It's private.
        ], true],
        [ChildProcessUtilities, "execSync", {}, [
          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
@@ -731,6 +748,8 @@ describe("PublishCommand", () => {
          { args: ["npm dist-tag rm package-4 lerna-temp"] },
          { args: ["npm dist-tag add package-4@1.0.1 latest"] },
 
+         // No package-5.  It's private.
+
          { args: ["git symbolic-ref --short HEAD"], returns: "master" },
          { args: ["git push origin master"] },
          { args: ["git push origin v1.0.1"] }
@@ -748,10 +767,12 @@ describe("PublishCommand", () => {
           assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
           assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
           assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
+          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).version, "1.0.1");
 
           assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
           assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
           assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).dependencies["package-1"], "^1.0.1");
 
           done();
         } catch (err) {
