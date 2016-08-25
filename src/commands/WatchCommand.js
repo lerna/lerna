@@ -12,13 +12,9 @@ export default class WatchCommand extends Command {
     this.script = script;
     this.args = args;
 
-    if (!this.script) {
-      callback(new Error("You must specify which npm script to run."));
-      return;
-    }
-
-    if (!this.glob) {
-      callback(new Error("You must specify glob of files to watch."));
+    // missing arguments
+    if (!this.script || !this.glob) {
+      callback(new Error("You must specify a glob of files to watch and NPM script to run."));
       return;
     }
 
