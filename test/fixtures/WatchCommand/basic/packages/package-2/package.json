@@ -1,0 +1,8 @@
+{
+  "name": "package-2",
+  "version": "1.0.0",
+  "scripts": {
+    "hello": "echo 'Hello, World!'",
+    "prepublish": "cp index.src.js index.js"
+  }
+}
