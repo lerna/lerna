@@ -16,7 +16,7 @@ export default class UpdatedCommand extends Command {
 
   execute(callback) {
     const formattedUpdates = this.updates
-      .map((update) => `- ${update.package.name}`)
+      .map((update) => `- ${update.package.name}${update.package.isPrivate() ? " (private)" : ""}`)
       .join("\n");
 
     this.logger.newLine();
