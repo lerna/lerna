@@ -61,10 +61,9 @@ export default class WatchCommand extends Command {
       const srcFile = path.relative(packageLocation, src);
       console.log(`${chalk.cyan(`${pkg}/${srcFile}`)} changed, running ${chalk.yellow(this.script)} script`);
       NpmUtilities.runScriptInDir(this.script, [srcFile].concat(this.args), packageLocation, (err, stdout) => {
+        this.logger.info(stdout);
         if (err) {
           this.logger.error(err);
-        } else {
-          this.logger.info(stdout);
         }
       });
     });
