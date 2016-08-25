@@ -65,6 +65,14 @@ export default class FileSystemUtilities {
 
   @logger.logifySync
   static unlinkSync(filePath) {
-    fs.unlink(filePath);
+    fs.unlinkSync(filePath);
+  }
+
+  @logger.logifySync
+  static isSymlink(path) {
+    const lstat = fs.lstatSync(path);
+    return lstat && lstat.isSymbolicLink()
+      ? fs.readlinkSync(path)
+      : false;
   }
 }

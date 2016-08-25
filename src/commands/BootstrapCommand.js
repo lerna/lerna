@@ -5,6 +5,7 @@ import Command from "../Command";
 import async from "async";
 import find from "lodash.find";
 import path from "path";
+import semver from "semver";
 
 export default class BootstrapCommand extends Command {
   initialize(callback) {
@@ -194,27 +195,59 @@ export default class BootstrapCommand extends Command {
     this.filteredPackages.forEach((filteredPackage) => {
       const packageLocation = path.join(this.repository.packagesLocation, filteredPackage.name);
       Object.keys(filteredPackage.allDependencies)
-        // filter out already install dependencies
-        .filter((pkg) => !filteredPackage.hasDependencyInstalled(pkg))
         .forEach((dependency) => {
-          // get path to dependency
+          // skip this dependency?
+          let skip = false;
+          // get path to dependency and its package.json
           const dependencyLocation = path.join(this.repository.packagesLocation, dependency);
-          // make sure path to dependency package.json exists
           const dependencyPackageJsonLocation = path.join(dependencyLocation, "package.json");
           // ignore dependencies without a package.json file
           if (!FileSystemUtilities.existsSync(dependencyPackageJsonLocation)) {
             this.logger.error(`Unable to find package.json for ${dependency} dependency. Skipping...`);
           } else {
-            const dependencyLocation = path.join(this.repository.packagesLocation, dependency);
-            const dependencyLinkLocation = path.join(packageLocation, "node_modules", dependency);
-            actions.push((cb) => FileSystemUtilities.mkdirp(path.join(packageLocation, "node_modules"), cb));
-            actions.push((cb) => FileSystemUtilities.symlink(dependencyLocation, dependencyLinkLocation, "dir", cb));
-            const dependencyPackageJson = require(dependencyPackageJsonLocation);
-            if (dependencyPackageJson.bin) {
-              const destFolder = path.join(this.repository.packagesLocation, filteredPackage.name, "node_modules");
-              actions.push((cb) => {
-                this.createBinaryLink(dependencyLocation, destFolder, dependency, dependencyPackageJson.bin, cb);
-              });
+            const installedDepLocation = path.join(filteredPackage.nodeModulesLocation, dependency);
+            // check if dependency is already installed
+            if (FileSystemUtilities.existsSync(installedDepLocation)) {
+              const isDepSymlink = FileSystemUtilities.isSymlink(installedDepLocation);
+              // installed dependency is a symlink pointing to a different location
+              if (isDepSymlink !== dependencyLocation) {
+                this.logger.warning(
+                  `Symlink already exists for ${dependency} dependency of ${filteredPackage.name},` +
+                  "but links to different location. Replacing with updated symlink..."
+                );
+              } else if (semver.satisfies(
+                  require(dependencyPackageJsonLocation).version,
+                  filteredPackage.allDependencies[dependency]
+              )) {
+                // dependency is compatible with package, remove folder and replace with symlink
+                this.logger.warning(
+                  `${dependency} is already installed for ${filteredPackage.name}.` +
+                  "Replacing with symlink..."
+                );
+                // remove installed dependency
+                actions.push((cb) => FileSystemUtilities.rimraf(installedDepLocation, cb));
+              } else {
+                // dependency is not compatible with package, do nothing
+                this.logger.warning(
+                  `${dependency} is already installed for ${filteredPackage.name}.` +
+                  "No compatible package found. Skipping..."
+                );
+                skip = true;
+              }
+            }
+            if (!skip) {
+              // ensure node_modules folder
+              actions.push((cb) => FileSystemUtilities.mkdirp(path.join(packageLocation, "node_modules"), cb));
+              // create package symlink
+              const dependencyLinkLocation = path.join(packageLocation, "node_modules", dependency);
+              actions.push((cb) => FileSystemUtilities.symlink(dependencyLocation, dependencyLinkLocation, "dir", cb));
+              const dependencyPackageJson = require(dependencyPackageJsonLocation);
+              if (dependencyPackageJson.bin) {
+                const destFolder = path.join(this.repository.packagesLocation, filteredPackage.name, "node_modules");
+                actions.push((cb) => {
+                  this.createBinaryLink(dependencyLocation, destFolder, dependency, dependencyPackageJson.bin, cb);
+                });
+              }
             }
           }
         });
