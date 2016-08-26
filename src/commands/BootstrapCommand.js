@@ -7,6 +7,7 @@ import async from "async";
 import find from "lodash.find";
 import path from "path";
 import normalize from "normalize-path";
+import { isString } from "util";
 
 export default class BootstrapCommand extends Command {
   initialize(callback) {
@@ -140,6 +141,8 @@ export default class BootstrapCommand extends Command {
     const destPackageJsonLocation = path.join(dest, "package.json");
     const destIndexJsLocation = path.join(dest, "index.js");
 
+    const packageJsonObj = require(srcPackageJsonLocation);
+
     const packageJsonFileContents = JSON.stringify({
       name: name,
       version: require(srcPackageJsonLocation).version
@@ -153,7 +156,28 @@ export default class BootstrapCommand extends Command {
         return callback(err);
       }
 
-      FileSystemUtilities.writeFile(destIndexJsLocation, indexJsFileContents, callback);
+      FileSystemUtilities.writeFile(destIndexJsLocation, indexJsFileContents, (err) => {
+        if (err) {
+          return callback(err);
+        }
+
+        const styles = isString(packageJsonObj.styles) ? [packageJsonObj.styles] : packageJsonObj.styles;
+
+        if (styles && Array.isArray(styles)) {
+          styles.forEach((styleName) => {
+            const srcStylesPath = path.join(src, styleName);
+            const destStylesPath = path.join(dest, styleName);
+
+            try {
+              const stylesContent = FileSystemUtilities.readFileSync(srcStylesPath);
+              FileSystemUtilities.writeFileSync(destStylesPath, stylesContent);
+            } catch (e) {
+              return callback(e);
+            }
+          });
+        }
+        return callback(null);        
+      });
     });
   }
 
