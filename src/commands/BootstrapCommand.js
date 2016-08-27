@@ -139,6 +139,7 @@ export default class BootstrapCommand extends Command {
     const srcPackageJsonLocation = path.join(src, "package.json");
     const destPackageJsonLocation = path.join(dest, "package.json");
     const destIndexJsLocation = path.join(dest, "index.js");
+    const destIndexDTsLocation = path.join(dest, "index.d.ts");
 
     const packageJsonFileContents = JSON.stringify({
       name: name,
@@ -148,12 +149,20 @@ export default class BootstrapCommand extends Command {
     const prefix = this.repository.linkedFiles.prefix || "";
     const indexJsFileContents = prefix + "module.exports = require(" +  JSON.stringify(normalize(src)) + ");";
 
+    const indexDTsFileContents = "import * as module from " + JSON.stringify(normalize(src)) + ";\nexport = module;";
+
     FileSystemUtilities.writeFile(destPackageJsonLocation, packageJsonFileContents, (err) => {
       if (err) {
         return callback(err);
       }
 
-      FileSystemUtilities.writeFile(destIndexJsLocation, indexJsFileContents, callback);
+      FileSystemUtilities.writeFile(destIndexJsLocation, indexJsFileContents, (err) => {
+        if (err) {
+          return callback(err);
+        }
+
+        FileSystemUtilities.writeFile(destIndexDTsLocation, indexDTsFileContents, callback);
+      });
     });
   }
 
