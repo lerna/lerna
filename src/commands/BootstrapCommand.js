@@ -193,7 +193,6 @@ export default class BootstrapCommand extends Command {
     this.progressBar.init(this.filteredPackages.length);
     const actions = [];
     this.filteredPackages.forEach((filteredPackage) => {
-      const packageLocation = path.join(this.repository.packagesLocation, filteredPackage.name);
       // actions to run for this package
       const packageActions = [];
       Object.keys(filteredPackage.allDependencies)
@@ -208,33 +207,35 @@ export default class BootstrapCommand extends Command {
           const dependencyPackageJsonLocation = path.join(dependencyLocation, "package.json");
           // ignore dependencies without a package.json file
           if (!FileSystemUtilities.existsSync(dependencyPackageJsonLocation)) {
-            this.logger.error(`Unable to find package.json for ${dependency} dependency. Skipping...`);
+            this.logger.error(
+              `Unable to find package.json for ${dependency} dependency of ${filteredPackage.name},  ` +
+              "Skipping..."
+            );
           } else {
-            const installedDepLocation = path.join(filteredPackage.nodeModulesLocation, dependency);
+            const pkgDependencyLocation = path.join(filteredPackage.nodeModulesLocation, dependency);
             // check if dependency is already installed
-            if (FileSystemUtilities.existsSync(installedDepLocation)) {
-              const isDepSymlink = FileSystemUtilities.isSymlink(installedDepLocation);
+            if (FileSystemUtilities.existsSync(pkgDependencyLocation)) {
+              const isDepSymlink = FileSystemUtilities.isSymlink(pkgDependencyLocation);
               // installed dependency is a symlink pointing to a different location
-              if (isDepSymlink !== dependencyLocation) {
+              if (isDepSymlink !== false && isDepSymlink !== dependencyLocation) {
                 this.logger.warning(
                   `Symlink already exists for ${dependency} dependency of ${filteredPackage.name}, ` +
                   "but links to different location. Replacing with updated symlink..."
                 );
               // installed dependency is not a symlink
-              } else if (!isDepSymlink) {
+              } else if (isDepSymlink === false) {
                 this.logger.warning(
                   `${dependency} is already installed for ${filteredPackage.name}. ` +
                   "Replacing with symlink..."
                 );
                 // remove installed dependency
-                packageActions.push((cb) => FileSystemUtilities.rimraf(installedDepLocation, cb));
+                packageActions.push((cb) => FileSystemUtilities.rimraf(pkgDependencyLocation, cb));
               }
             }
             // ensure node_modules folder
-            packageActions.push((cb) => FileSystemUtilities.mkdirp(path.join(packageLocation, "node_modules"), cb));
+            packageActions.push((cb) => FileSystemUtilities.mkdirp(filteredPackage.nodeModulesLocation, cb));
             // create package symlink
-            const dependencyLinkLocation = path.join(packageLocation, "node_modules", dependency);
-            packageActions.push((cb) => FileSystemUtilities.symlink(dependencyLocation, dependencyLinkLocation, "dir", cb));
+            packageActions.push((cb) => FileSystemUtilities.symlink(dependencyLocation, pkgDependencyLocation, "dir", cb));
             const dependencyPackageJson = require(dependencyPackageJsonLocation);
             if (dependencyPackageJson.bin) {
               const destFolder = path.join(this.repository.packagesLocation, filteredPackage.name, "node_modules");
