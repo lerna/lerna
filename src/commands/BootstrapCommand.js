@@ -91,7 +91,7 @@ export default class BootstrapCommand extends Command {
       // then we've encountered a cycle in the dependency graph.  Run a
       // single-package batch with the package that has the most dependents.
       if (todoPackages.length && !batch.length) {
-        this.logger.warning(
+        this.logger.warn(
           "Encountered a cycle in the dependency graph.  " +
           "This may cause instability if dependencies are used during `prepublish`."
         );

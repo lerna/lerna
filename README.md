@@ -524,3 +524,9 @@ $ lerna publish --only-explicit-updates
 ```
 
 Ex: in Babel, `babel-types` is depended upon by all packages in the monorepo (over 100). However, Babel uses `^` for most of it's dependencies so it isn't necessary to bump the versions of all packages if only `babel-types` is updated. This option allows only the packages that have been explicitly updated to make a new version.
+
+#### --loglevel [silent|error|warn|success|info|verbose|silly]
+
+What level of logs to report.  On failure, all logs are written to lerna-debug.log in the current working directory.
+
+Any logs of a higher level than the setting are shown.  The default is "info".

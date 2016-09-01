@@ -4,19 +4,39 @@ import pad from "pad";
 
 const cwd = process.cwd();
 
+const DEFAULT_LOGLEVEL = "info";
+
+const LEVELS = [
+  [ "silly",   "purple" ],
+  [ "verbose", "blue"   ],
+  [ "info",    "white"  ],
+  [ "success", "green"  ],
+  [ "warn",    "yellow" ],
+  [ "error",   "red"    ],
+  [ "silent",           ],
+];
+
+const TYPE_TO_LEVEL = LEVELS
+  .reduce((map, [type], index) => (map[type] = index, map), {});
+
 class Logger {
   constructor() {
+    this.setLogLevel();
     this.logs = [];
   }
 
-  _log(type, verbose, style, message, error) {
+  setLogLevel(type) {
+    this.loglevel = TYPE_TO_LEVEL[type || DEFAULT_LOGLEVEL];
+  }
+
+  _log(type, style, level, message, error) {
     this.logs.push({
       type,
       message,
       error
     });
 
-    if (verbose) {
+    if (level < this.loglevel) {
       return;
     }
 
@@ -29,34 +49,18 @@ class Logger {
     }
 
     progressBar.clear();
-    if (process.env.NODE_ENV !== "test") {
-      console.log(message);
-    }
+    this._emit(message);
     progressBar.restore();
   }
 
-  debug(message, verbose = true) {
-    this._log("debug", verbose, chalk.blue, message);
-  }
-
-  info(message, verbose = false) {
-    this._log("info", verbose, chalk.white, message);
-  }
-
-  success(message, verbose = false) {
-    this._log("success", verbose, chalk.green, message);
-  }
-
-  warning(message, verbose = false) {
-    this._log("warning", verbose, chalk.yellow, message);
-  }
-
-  error(message, error, verbose = false) {
-    this._log("error", verbose, chalk.red, message, error);
+  _emit(message) {
+    if (process.env.NODE_ENV !== "test") {
+      console.log(message);
+    }
   }
 
   newLine() {
-    this.info("");
+    this._emit("");
   }
 
   logifyAsync(target, property, descriptor) {
@@ -120,5 +124,14 @@ class Logger {
     return (JSON.stringify(arg) || "").replace(cwd, ".");
   }
 }
+
+LEVELS.forEach(([type, color]) => {
+  if (!color) return; // "silent"
+  const style = chalk[color];
+  const level = TYPE_TO_LEVEL[type];
+  Logger.prototype[type] = function(message, error) {
+    this._log(type, style, level, message, error);
+  };
+});
 
 export default new Logger();

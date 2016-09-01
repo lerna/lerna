@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 var lerna = require("../lib/index");
+var logger = require("../lib/logger");
 var chalk = require("chalk");
 var meow = require("meow");
 
@@ -31,7 +32,8 @@ var cli = meow([
   "  --force-publish      Force publish for the specified packages (comma-separated) or all packages using * (skips the git diff check for changed packages)",
   "  --yes                Skip all confirmation prompts",
   "  --repo-version       Specify repo version to publish",
-  "  --concurrency        How many threads to use if lerna parallelises the tasks (defaults to 4)"
+  "  --concurrency        How many threads to use if lerna parallelises the tasks (defaults to 4)",
+  "  --loglevel           What level of logs to report (defaults to \"info\").  On failure, all logs are written to lerna-debug.log in the current working directory.",
 ], {
   alias: {
     independent: "i",
@@ -41,6 +43,8 @@ var cli = meow([
 });
 
 require("signal-exit").unload();
+
+logger.setLogLevel(cli.flags.loglevel);
 
 var commandName = cli.input[0];
 var Command = lerna.__commands__[commandName];
