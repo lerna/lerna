@@ -1,3 +1,4 @@
+import ChildProcessUtilities from "./ChildProcessUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
 import PackageUtilities from "./PackageUtilities";
 import ExitHandler from "./ExitHandler";
@@ -147,12 +148,26 @@ export default class Command {
       exitHandler.writeLogs();
     }
 
-    if (callback) {
-      callback(err, code);
-    }
+    const finish = function() {
+      if (callback) {
+        callback(err, code);
+      }
 
-    if (process.env.NODE_ENV !== "test") {
-      process.exit(code);
+      if (process.env.NODE_ENV !== "test") {
+        process.exit(code);
+      }
+    };
+
+    const childProcessCount = ChildProcessUtilities.getChildProcessCount();
+    if (childProcessCount > 0) {
+      logger.info(
+        `Waiting for ${childProcessCount} child ` +
+        `process${childProcessCount === 1 ? "" : "es"} to exit. ` +
+        "CTRL-C to exit immediately."
+      );
+      ChildProcessUtilities.onAllExited(finish);
+    } else {
+      finish();
     }
   }
 
