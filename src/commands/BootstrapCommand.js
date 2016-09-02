@@ -201,6 +201,7 @@ export default class BootstrapCommand extends Command {
           const match = find(this.packages, { name: dependency});
           return match && filteredPackage.hasMatchingDependency(match);
         })
+        .map((dependency) => dependency.replace(/^(@.*\/)(.*)$/, "$2"))
         .forEach((dependency) => {
           // get path to dependency and its package.json
           const dependencyLocation = path.join(this.repository.packagesLocation, dependency);
@@ -238,7 +239,7 @@ export default class BootstrapCommand extends Command {
             packageActions.push((cb) => FileSystemUtilities.symlink(dependencyLocation, pkgDependencyLocation, "dir", cb));
             const dependencyPackageJson = require(dependencyPackageJsonLocation);
             if (dependencyPackageJson.bin) {
-              const destFolder = path.join(this.repository.packagesLocation, filteredPackage.name, "node_modules");
+              const destFolder = filteredPackage.nodeModulesLocation;
               packageActions.push((cb) => {
                 this.createBinaryLink(dependencyLocation, destFolder, dependency, dependencyPackageJson.bin, cb);
               });
