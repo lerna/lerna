@@ -156,7 +156,7 @@ export default class Command {
       if (process.env.NODE_ENV !== "test") {
         process.exit(code);
       }
-    }
+    };
 
     const childProcessCount = ChildProcessUtilities.getChildProcessCount();
     if (childProcessCount > 0) {

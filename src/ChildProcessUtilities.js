@@ -46,7 +46,7 @@ export default class ChildProcessUtilities {
     let stderr = "";
 
     const childProcess = ChildProcessUtilities.registerChild(
-      child.spawn(command, args, objectAssign({
+      spawn(command, args, objectAssign({
         stdio: "inherit"
       }, opts))
         .on("error", () => {})

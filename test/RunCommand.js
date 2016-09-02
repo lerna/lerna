@@ -55,7 +55,7 @@ describe("RunCommand", () => {
 
   });
 
-  it("should wait for children to exit", done => {
+  it("should wait for children to exit", (done) => {
     const runCommand = new RunCommand(["my-script"], {});
 
     runCommand.runValidations();
@@ -69,10 +69,10 @@ describe("RunCommand", () => {
     });
 
     let lastInfo;
-    stub(logger, "info", message => lastInfo = message);
+    stub(logger, "info", (message) => lastInfo = message);
 
     let haveExited = false;
-    runCommand.runCommand(exitWithCode(0, err => {
+    runCommand.runCommand(exitWithCode(0, (err) => {
       assert.equal(lastInfo, "Waiting for 2 child processes to exit. CTRL-C to exit immediately.");
       haveExited = true;
       done(err);
@@ -80,6 +80,6 @@ describe("RunCommand", () => {
 
     assert.equal(haveExited, false);
 
-    children.forEach(child => child.emit("exit"));
+    children.forEach((child) => child.emit("exit"));
   });
 });
