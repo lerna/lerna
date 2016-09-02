@@ -198,12 +198,12 @@ export default class BootstrapCommand extends Command {
       Object.keys(filteredPackage.allDependencies)
         // filter out external dependencies and incompatible packages
         .filter((dependency) => {
-          const match = find(this.packages, { name: dependency});
-          return match && filteredPackage.hasMatchingDependency(match);
+          const match = this.packageGraph.get(dependency);
+          return match && filteredPackage.hasMatchingDependency(match.package);
         })
         .forEach((dependency) => {
-          // get Package of dependency (guaranteed to exist by above filter)
-          const dependencyPackage = find(this.packages, { name: dependency});
+          // get Package of dependency
+          const dependencyPackage = this.packageGraph.get(dependency).package;
           // get path to dependency and its package.json
           const dependencyLocation = dependencyPackage.location;
           const dependencyPackageJsonLocation = path.join(dependencyLocation, "package.json");
