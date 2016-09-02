@@ -65,6 +65,6 @@ export default class FileSystemUtilities {
 
   @logger.logifySync
   static unlinkSync(filePath) {
-    fs.unlink(filePath);
+    fs.unlinkSync(filePath);
   }
 }

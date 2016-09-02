@@ -84,7 +84,7 @@ export default class InitCommand extends Command {
     const versionLocation = this.repository.versionLocation;
     if (FileSystemUtilities.existsSync(versionLocation)) {
       this.logger.info("Removing old VERSION file.");
-      FileSystemUtilities.unlinkSync(versionLocation, "0.0.0");
+      FileSystemUtilities.unlinkSync(versionLocation);
     }
   }
 }
