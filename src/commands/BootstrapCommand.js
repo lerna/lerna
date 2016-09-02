@@ -201,10 +201,11 @@ export default class BootstrapCommand extends Command {
           const match = find(this.packages, { name: dependency});
           return match && filteredPackage.hasMatchingDependency(match);
         })
-        .map((dependency) => dependency.replace(/^(@.*\/)(.*)$/, "$2"))
         .forEach((dependency) => {
+          // get Package of dependency (guaranteed to exist by above filter)
+          const dependencyPackage = find(this.packages, { name: dependency});
           // get path to dependency and its package.json
-          const dependencyLocation = path.join(this.repository.packagesLocation, dependency);
+          const dependencyLocation = dependencyPackage.location;
           const dependencyPackageJsonLocation = path.join(dependencyLocation, "package.json");
           // ignore dependencies without a package.json file
           if (!FileSystemUtilities.existsSync(dependencyPackageJsonLocation)) {
@@ -213,7 +214,9 @@ export default class BootstrapCommand extends Command {
               "Skipping..."
             );
           } else {
-            const pkgDependencyLocation = path.join(filteredPackage.nodeModulesLocation, dependency);
+            // get the directory name of the package
+            const pkgDependencyFolder = dependencyLocation.split(path.sep).pop();
+            const pkgDependencyLocation = path.join(filteredPackage.nodeModulesLocation, pkgDependencyFolder);
             // check if dependency is already installed
             if (FileSystemUtilities.existsSync(pkgDependencyLocation)) {
               const isDepSymlink = FileSystemUtilities.isSymlink(pkgDependencyLocation);
