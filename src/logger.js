@@ -7,13 +7,13 @@ const cwd = process.cwd();
 const DEFAULT_LOGLEVEL = "info";
 
 const LEVELS = [
-  [ "silly",   "purple" ],
-  [ "verbose", "blue"   ],
-  [ "info",    "white"  ],
-  [ "success", "green"  ],
-  [ "warn",    "yellow" ],
-  [ "error",   "red"    ],
-  [ "silent",           ],
+  [ "silly",   "magenta" ],
+  [ "verbose", "blue"    ],
+  [ "info",    "white"   ],
+  [ "success", "green"   ],
+  [ "warn",    "yellow"  ],
+  [ "error",   "red"     ],
+  [ "silent",            ],
 ];
 
 const TYPE_TO_LEVEL = LEVELS
