@@ -18,6 +18,11 @@ export default class Package {
     return this._location;
   }
 
+  get scope() {
+    const match = this.name.match(/^(@.*)\/.*$/);
+    return match === null ? null : match[1];
+  }
+
   get nodeModulesLocation() {
     return path.join(this._location, "node_modules");
   }

@@ -30,16 +30,16 @@ describe("BootstrapCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install", "foo@^1.0.0"], { cwd: path.join(testDir, "packages/package-1"), stdio: STDIO_OPT }] }
+          { args: ["npm", ["install", "foo@^1.0.0"], { cwd: path.join(testDir, "packages", "package-1"), stdio: STDIO_OPT }] }
         ]],
         [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install", "foo@^1.0.0"], { cwd: path.join(testDir, "packages/package-2"), stdio: STDIO_OPT }] }
+          { args: ["npm", ["install", "foo@^1.0.0"], { cwd: path.join(testDir, "packages", "package-2"), stdio: STDIO_OPT }] }
         ]],
         [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install", "foo@0.1.12"], { cwd: path.join(testDir, "packages/package-3"), stdio: STDIO_OPT }] }
+          { args: ["npm", ["install", "foo@0.1.12"], { cwd: path.join(testDir, "packages" ,"package-3"), stdio: STDIO_OPT }] }
         ]],
         [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install", "@test/package-1@^0.0.0"], { cwd: path.join(testDir, "packages/package-4"), stdio: STDIO_OPT }] }
+          { args: ["npm", ["install", "@test/package-1@^0.0.0"], { cwd: path.join(testDir, "packages", "package-4"), stdio: STDIO_OPT }] }
         ]]
       ]);
 
@@ -49,14 +49,14 @@ describe("BootstrapCommand", () => {
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
           // Make sure the `prepublish` script got run (index.js got created).
-          assert.ok(pathExists.sync(path.join(testDir, "packages/package-1/index.js")));
+          assert.ok(pathExists.sync(path.join(testDir, "packages", "package-1", "index.js")));
           // package-1 should not have any packages symlinked
           assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-1", "node_modules", "package-2")));
           assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-1", "node_modules", "package-3")));
           assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-1", "node_modules", "package-4")));
           // package-2 package dependencies are symlinked
           assert.equal(
-            fs.readlinkSync(path.join(testDir, "packages", "package-2", "node_modules", "package-1")),
+            fs.readlinkSync(path.join(testDir, "packages", "package-2", "node_modules", "@test", "package-1")),
             path.join(testDir, "packages", "package-1"),
             "package-1 should be symlinked to package-2"
           );
@@ -64,7 +64,7 @@ describe("BootstrapCommand", () => {
           assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-2", "node_modules", "package-4")));
           // package-3 package dependencies are symlinked
           assert.equal(
-            fs.readlinkSync(path.join(testDir, "packages", "package-3", "node_modules", "package-1")),
+            fs.readlinkSync(path.join(testDir, "packages", "package-3", "node_modules", "@test", "package-1")),
             path.join(testDir, "packages", "package-1"),
             "package-1 should be symlinked to package-3"
           );
@@ -115,10 +115,10 @@ describe("BootstrapCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install", "foo@^1.0.0"], { cwd: path.join(testDir, "packages/package-1"), stdio: STDIO_OPT }] }
+          { args: ["npm", ["install", "foo@^1.0.0"], { cwd: path.join(testDir, "packages", "package-1"), stdio: STDIO_OPT }] }
         ]],
         [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install", "foo@^1.0.0"], { cwd: path.join(testDir, "packages/package-2"), stdio: STDIO_OPT }] }
+          { args: ["npm", ["install", "foo@^1.0.0"], { cwd: path.join(testDir, "packages", "package-2"), stdio: STDIO_OPT }] }
         ]]
       ]);
 

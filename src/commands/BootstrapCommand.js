@@ -204,8 +204,8 @@ export default class BootstrapCommand extends Command {
         .forEach((dependency) => {
           // get Package of dependency
           const dependencyPackage = this.packageGraph.get(dependency).package;
-          // get path to dependency and its package.json
-          const dependencyLocation = dependencyPackage.location;
+          // get path to dependency and its scope
+          const { location: dependencyLocation, scope: dependencyScope } = dependencyPackage;
           const dependencyPackageJsonLocation = path.join(dependencyLocation, "package.json");
           // ignore dependencies without a package.json file
           if (!FileSystemUtilities.existsSync(dependencyPackageJsonLocation)) {
@@ -215,7 +215,10 @@ export default class BootstrapCommand extends Command {
             );
           } else {
             // get the directory name of the package
-            const pkgDependencyFolder = dependencyLocation.split(path.sep).pop();
+            const pkgDependencyFolder = path.join(
+              dependencyScope ? dependencyScope : "",
+              dependencyLocation.split(path.sep).pop()
+            );
             const pkgDependencyLocation = path.join(filteredPackage.nodeModulesLocation, pkgDependencyFolder);
             // check if dependency is already installed
             if (FileSystemUtilities.existsSync(pkgDependencyLocation)) {
@@ -236,10 +239,14 @@ export default class BootstrapCommand extends Command {
                 packageActions.push((cb) => FileSystemUtilities.rimraf(pkgDependencyLocation, cb));
               }
             }
-            // ensure node_modules folder
-            packageActions.push((cb) => FileSystemUtilities.mkdirp(filteredPackage.nodeModulesLocation, cb));
+            // ensure destination path
+            packageActions.push((cb) => FileSystemUtilities.mkdirp(
+              pkgDependencyLocation.split(path.sep).slice(0, -1).join(path.sep), cb
+            ));
             // create package symlink
-            packageActions.push((cb) => FileSystemUtilities.symlink(dependencyLocation, pkgDependencyLocation, "dir", cb));
+            packageActions.push((cb) => FileSystemUtilities.symlink(
+              dependencyLocation, pkgDependencyLocation, "dir", cb
+            ));
             const dependencyPackageJson = require(dependencyPackageJsonLocation);
             if (dependencyPackageJson.bin) {
               const destFolder = filteredPackage.nodeModulesLocation;
