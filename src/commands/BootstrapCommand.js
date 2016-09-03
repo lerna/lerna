@@ -205,7 +205,7 @@ export default class BootstrapCommand extends Command {
           // get Package of dependency
           const dependencyPackage = this.packageGraph.get(dependency).package;
           // get path to dependency and its scope
-          const { location: dependencyLocation, scope: dependencyScope } = dependencyPackage;
+          const { location: dependencyLocation } = dependencyPackage;
           const dependencyPackageJsonLocation = path.join(dependencyLocation, "package.json");
           // ignore dependencies without a package.json file
           if (!FileSystemUtilities.existsSync(dependencyPackageJsonLocation)) {
@@ -214,12 +214,8 @@ export default class BootstrapCommand extends Command {
               "Skipping..."
             );
           } else {
-            // get the directory name of the package
-            const pkgDependencyFolder = path.join(
-              dependencyScope ? dependencyScope : "",
-              dependencyLocation.split(path.sep).pop()
-            );
-            const pkgDependencyLocation = path.join(filteredPackage.nodeModulesLocation, pkgDependencyFolder);
+            // get the destination directory name of the dependency
+            const pkgDependencyLocation = path.join(filteredPackage.nodeModulesLocation, dependencyPackage.name);
             // check if dependency is already installed
             if (FileSystemUtilities.existsSync(pkgDependencyLocation)) {
               const isDepSymlink = FileSystemUtilities.isSymlink(pkgDependencyLocation);
