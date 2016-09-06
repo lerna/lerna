@@ -4,8 +4,7 @@ import Command from "../Command";
 export default class UpdatedCommand extends Command {
   initialize(callback) {
     const updatedPackagesCollector = new UpdatedPackagesCollector(
-      this.packages,
-      this.packageGraph,
+      this.repository,
       this.flags,
       this.repository.publishConfig
     );
