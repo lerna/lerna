@@ -57,7 +57,7 @@ describe("ExecCommand", () => {
     assert.equal(execCommand.packages[0].name, "package-1");
     assert.equal(execCommand.packages[1].name, "package-2");
 
-    execCommand.flags.ignore = "package-1";
+    execCommand.flags.scope = "package-1";
 
     execCommand.initialize(function(error) {
       assert.equal(error, null);
