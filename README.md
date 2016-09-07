@@ -491,7 +491,9 @@ Excludes a subset of packages when running a command.
 $ lerna bootstrap --ignore component-*
 ```
 
-The `ignore` flag, when used with the `bootstrap` command, can also be set in `lerna.json` under the `bootstrapConfig` key. The command-line flag will take precendence over this option.
+The `ignore` flag, when used with the `bootstrap` and `exec` command, can also be set in `lerna.json` under the `bootstrapConfig` key. The command-line flag will take precendence over this option.
+
+**Note**: If both `scope` and `ignore` are provided to `exec`, `scope` takes precedence.
 
 **Example**
 
