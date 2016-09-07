@@ -25,6 +25,50 @@ describe("ExecCommand", () => {
     }));
   });
 
+  it("should filter packages with `ignore`", (done) => {
+    const execCommand = new ExecCommand(["ls"], {});
+
+    execCommand.runValidations();
+    execCommand.runPreparations();
+
+    assert.equal(execCommand.packages.length, 2);
+    assert.equal(execCommand.packages[0].name, "package-1");
+    assert.equal(execCommand.packages[1].name, "package-2");
+
+    execCommand.flags.ignore = "package-1";
+
+    execCommand.initialize(function(error) {
+      assert.equal(error, null);
+    });
+
+    assert.equal(execCommand.packages.length, 1);
+    assert.equal(execCommand.packages[0].name, "package-2");
+
+    done();
+  });
+
+  it("should filter packages with `scope`", (done) => {
+    const execCommand = new ExecCommand(["ls"], {});
+
+    execCommand.runValidations();
+    execCommand.runPreparations();
+
+    assert.equal(execCommand.packages.length, 2);
+    assert.equal(execCommand.packages[0].name, "package-1");
+    assert.equal(execCommand.packages[1].name, "package-2");
+
+    execCommand.flags.ignore = "package-1";
+
+    execCommand.initialize(function(error) {
+      assert.equal(error, null);
+    });
+
+    assert.equal(execCommand.packages.length, 1);
+    assert.equal(execCommand.packages[0].name, "package-1");
+
+    done();
+  });
+
   it("should run a command", (done) => {
     const execCommand = new ExecCommand(["ls"], {});
 
