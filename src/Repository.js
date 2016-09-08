@@ -10,7 +10,7 @@ export default class Repository {
       GitUtilities.init();
     }
 
-    this.rootPath = GitUtilities.getTopLevelDirectory();
+    this.rootPath = path.resolve(GitUtilities.getTopLevelDirectory());
     this.lernaJsonLocation = path.join(this.rootPath, "lerna.json");
     this.packageJsonLocation = path.join(this.rootPath, "package.json");
     this.packagesLocation = path.join(this.rootPath, "packages");
@@ -37,10 +37,6 @@ export default class Repository {
 
   get publishConfig() {
     return this.lernaJson && this.lernaJson.publishConfig || {};
-  }
-
-  get linkedFiles() {
-    return this.lernaJson && this.lernaJson.linkedFiles || {};
   }
 
   get bootstrapConfig() {

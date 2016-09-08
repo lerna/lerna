@@ -52,13 +52,13 @@ export default class FileSystemUtilities {
   }
 
   @logger.logifyAsync
-  static symlink(src, dest, callback) {
+  static symlink(src, dest, type, callback) {
     fs.lstat(dest, (err) => {
       if (!err) {
         // Something exists at `dest`.  Need to remove it first.
-        fs.unlink(dest, () => fs.symlink(src, dest, callback));
+        fs.unlink(dest, () => fs.symlink(src, dest, type, callback));
       } else {
-        fs.symlink(src, dest, callback);
+        fs.symlink(src, dest, type, callback);
       }
     });
   }
@@ -66,5 +66,13 @@ export default class FileSystemUtilities {
   @logger.logifySync
   static unlinkSync(filePath) {
     fs.unlinkSync(filePath);
+  }
+
+  @logger.logifySync
+  static isSymlink(path) {
+    const lstat = fs.lstatSync(path);
+    return lstat && lstat.isSymbolicLink()
+      ? fs.readlinkSync(path)
+      : false;
   }
 }
