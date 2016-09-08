@@ -29,6 +29,11 @@ export default class PublishCommand extends Command {
 
     try {
       this.updates = updatedPackagesCollector.getUpdates();
+
+      this.packagesToPublish = this.updates
+        .map((update) => update.package)
+        .filter((pkg) => !pkg.isPrivate());
+
     } catch (err) {
       throw err;
     }
@@ -338,11 +343,9 @@ export default class PublishCommand extends Command {
       this.execScript(update.package, "prepublish");
     });
 
-    this.progressBar.init(this.updates.length);
+    this.progressBar.init(this.packagesToPublish.length);
 
-    async.parallelLimit(this.updates.map((update) => {
-      const pkg = update.package;
-
+    async.parallelLimit(this.packagesToPublish.map((pkg) => {
       let attempts = 0;
 
       const run = (cb) => {
@@ -381,11 +384,9 @@ export default class PublishCommand extends Command {
   }
 
   npmUpdateAsLatest(callback) {
-    this.progressBar.init(this.updates.length);
+    this.progressBar.init(this.packagesToPublish.length);
 
-    async.parallelLimit(this.updates.map((update) => (cb) => {
-      const pkg = update.package;
-
+    async.parallelLimit(this.packagesToPublish.map((pkg) => (cb) => {
       let attempts = 0;
 
       while (true) {
