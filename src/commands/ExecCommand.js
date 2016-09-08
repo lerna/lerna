@@ -21,6 +21,14 @@ export default class ExecCommand extends Command {
         callback(err);
         return;
       }
+    } else if (this.flags.ignore) {
+      this.logger.info(`Ignoring packages that match ${this.flags.ignore}`);
+      try {
+        this.packages = PackageUtilities.filterPackages(this.packages, this.flags.ignore, true);
+      } catch (err) {
+        callback(err);
+        return;
+      }
     }
 
     callback(null, true);

@@ -25,6 +25,22 @@ describe("ExecCommand", () => {
     }));
   });
 
+  it("should filter packages with `ignore`", (done) => {
+    const execCommand = new ExecCommand(["ls"], { ignore: "package-1" });
+
+    execCommand.runValidations();
+    execCommand.runPreparations();
+
+    execCommand.initialize(function(error) {
+      assert.equal(error, null);
+    });
+
+    assert.equal(execCommand.packages.length, 1);
+    assert.equal(execCommand.packages[0].name, "package-2");
+
+    done();
+  });
+
   it("should run a command", (done) => {
     const execCommand = new ExecCommand(["ls"], {});
 
