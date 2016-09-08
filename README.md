@@ -215,6 +215,8 @@ More specifically, this command will:
 
 > A temporary dist-tag is used at the start to prevent the case where only some of the packages are published; this can cause issues for users installing a package that only has some updated packages.
 
+> Lerna won't publish packages which are marked as private (`"private": true` in the `package.json`).
+
 #### --npm-tag [tagname]
 
 ```sh
