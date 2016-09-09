@@ -59,7 +59,8 @@ export default class ChildProcessUtilities {
     // If the caller overrode that to "pipe", then we'll gather that up and
     // call back with it in case of failure.
     if (childProcess.stderr) {
-      childProcess.stderr.setEncoding("utf8").on("data", (chunk) => stderr += chunk);
+      childProcess.stderr.setEncoding("utf8");
+      childProcess.stderr.on("data", (chunk) => stderr += chunk);
     }
   }
 
