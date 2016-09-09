@@ -1,0 +1,9 @@
+{
+  "name": "package-2",
+  "version": "1.0.0",
+  "bin": "cli.js",
+  "dependencies": {
+    "@test/package-1": "^1.0.0",
+    "foo": "^1.0.0"
+  }
+}
