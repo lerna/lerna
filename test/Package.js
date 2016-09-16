@@ -75,8 +75,7 @@ describe("Package", () => {
     it("should return the combined dependencies", () => {
       assert.deepEqual(pkg.allDependencies, {
         "my-dependency": "^1.0.0",
-        "my-dev-dependency": "^1.0.0",
-        "my-peer-dependency": "^1.0.0"
+        "my-dev-dependency": "^1.0.0"
       });
     });
   });
