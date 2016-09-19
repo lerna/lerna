@@ -80,7 +80,6 @@ Your repository should now look like this:
 
 ```
 lerna-repo/
-  packages/
   package.json
   lerna.json
 ```
@@ -125,7 +124,6 @@ When run, this command will:
 
 1. Add `lerna` as a [`devDependency`](https://docs.npmjs.com/files/package.json#devdependencies) in `package.json` if it doesn't already exist.
 2. Create a `lerna.json` config file to store the `version` number.
-3. Create a `packages` directory if it hasn't been created already.
 
 Example output on a new git repo:
 

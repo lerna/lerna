@@ -14,20 +14,11 @@ export default class InitCommand extends Command {
   }
 
   execute(callback) {
-    this.ensurePackagesDirectory();
     this.ensurePackageJSON();
     this.ensureLernaJson();
     this.ensureNoVersionFile();
     this.logger.success("Successfully created Lerna files");
     callback(null, true);
-  }
-
-  ensurePackagesDirectory() {
-    const packagesLocation = this.repository.packagesLocation;
-    if (!FileSystemUtilities.existsSync(packagesLocation)) {
-      this.logger.info("Creating packages folder.");
-      FileSystemUtilities.mkdirSync(packagesLocation);
-    }
   }
 
   ensurePackageJSON() {
@@ -59,7 +50,12 @@ export default class InitCommand extends Command {
   }
 
   ensureLernaJson() {
-    let {versionLocation, lernaJsonLocation, lernaJson} = this.repository;
+    let {
+      versionLocation,
+      lernaJsonLocation,
+      lernaJson,
+      packageConfigs,
+    } = this.repository;
 
     let version;
 
@@ -82,6 +78,7 @@ export default class InitCommand extends Command {
 
     objectAssign(lernaJson, {
       lerna: this.lernaVersion,
+      packages: packageConfigs,
       version: version
     });
 

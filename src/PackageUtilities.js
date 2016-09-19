@@ -2,6 +2,7 @@ import FileSystemUtilities from "./FileSystemUtilities";
 import PackageGraph from "./PackageGraph";
 import Package from "./Package";
 import path from "path";
+import {sync as globSync} from "glob";
 import minimatch from "minimatch";
 
 export default class PackageUtilities {
@@ -27,25 +28,25 @@ export default class PackageUtilities {
     return require(PackageUtilities.getPackageConfigPath(packagesPath, name));
   }
 
-  static getPackages(packagesPath) {
+  static getPackages(repository) {
     const packages = [];
 
-    FileSystemUtilities.readdirSync(packagesPath).forEach((packageDirectory) => {
-      if (packageDirectory[0] === ".") {
-        return;
-      }
+    repository.packageConfigs.forEach(({glob}) => {
 
-      const packagePath = PackageUtilities.getPackagePath(packagesPath, packageDirectory);
-      const packageConfigPath = PackageUtilities.getPackageConfigPath(packagesPath, packageDirectory);
+      globSync(glob)
+        .map((fn) => path.resolve(fn))
+        .forEach((packageConfigPath) => {
+          const packagePath = path.dirname(packageConfigPath);
 
-      if (!FileSystemUtilities.existsSync(packageConfigPath)) {
-        return;
-      }
+          if (!FileSystemUtilities.existsSync(packageConfigPath)) {
+            return;
+          }
 
-      const packageJson = require(packageConfigPath);
-      const pkg = new Package(packageJson, packagePath);
+          const packageJson = require(packageConfigPath);
+          const pkg = new Package(packageJson, packagePath);
 
-      packages.push(pkg);
+          packages.push(pkg);
+        });
     });
 
     return packages;

@@ -4,6 +4,8 @@ import PackageUtilities from "./PackageUtilities";
 import path from "path";
 import logger from "./logger";
 
+const DEFAULT_PACKAGE_GLOB = "packages/*/package.json";
+
 export default class Repository {
   constructor() {
     if (!GitUtilities.isInitialized()) {
@@ -14,7 +16,7 @@ export default class Repository {
     this.rootPath = path.resolve(GitUtilities.getTopLevelDirectory());
     this.lernaJsonLocation = path.join(this.rootPath, "lerna.json");
     this.packageJsonLocation = path.join(this.rootPath, "package.json");
-    this.packagesLocation = path.join(this.rootPath, "packages");
+    this.packagesLocation = path.join(this.rootPath, "packages"); // TODO: Kill this.
 
     // Legacy
     this.versionLocation = path.join(this.rootPath, "VERSION");
@@ -44,6 +46,12 @@ export default class Repository {
     return this.lernaJson && this.lernaJson.bootstrapConfig || {};
   }
 
+  get packageConfigs() {
+    return (this.lernaJson || {}).packages || [{
+      glob: DEFAULT_PACKAGE_GLOB,
+    }];
+  }
+
   get packages() {
     if (!this._packages) {
       this.buildPackageGraph();
@@ -63,7 +71,7 @@ export default class Repository {
   }
 
   buildPackageGraph() {
-    this._packages = PackageUtilities.getPackages(this.packagesLocation);
+    this._packages = PackageUtilities.getPackages(this);
     this._packageGraph = PackageUtilities.getPackageGraph(this._packages);
   }
 }

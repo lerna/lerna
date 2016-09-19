@@ -25,7 +25,7 @@ export default class DiffCommand extends Command {
 
     this.filePath = this.package
       ? this.package.location
-      : this.repository.packagesLocation;
+      : this.repository.rootPath;
 
     this.lastCommit = GitUtilities.hasTags()
       ? GitUtilities.getLastTaggedCommit()

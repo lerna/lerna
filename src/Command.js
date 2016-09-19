@@ -39,12 +39,6 @@ export default class Command {
       return;
     }
 
-    if (!FileSystemUtilities.existsSync(this.repository.packagesLocation)) {
-      this.logger.warn("`packages/` directory does not exist, have you run `lerna init`?");
-      this._complete(null, 1);
-      return;
-    }
-
     if (!FileSystemUtilities.existsSync(this.repository.packageJsonLocation)) {
       this.logger.warn("`package.json` does not exist, have you run `lerna init`?");
       this._complete(null, 1);
