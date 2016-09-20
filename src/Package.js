@@ -49,7 +49,6 @@ export default class Package {
   get allDependencies() {
     return objectAssign(
       {},
-      this.peerDependencies,
       this.devDependencies,
       this.dependencies
     );
