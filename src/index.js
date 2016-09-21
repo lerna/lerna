@@ -8,19 +8,22 @@ import InitCommand from "./commands/InitCommand";
 import RunCommand from "./commands/RunCommand";
 import ExecCommand from "./commands/ExecCommand";
 import LsCommand from "./commands/LsCommand";
+import {exposeCommands} from "./Command";
 
-export const __commands__ = {
-  bootstrap: BootstrapCommand,
-  publish: PublishCommand,
-  updated: UpdatedCommand,
-  import: ImportCommand,
-  clean: CleanCommand,
-  diff: DiffCommand,
-  init: InitCommand,
-  run: RunCommand,
-  exec: ExecCommand,
-  ls: LsCommand
-};
+export const __commands__ = {};
+
+exposeCommands(__commands__, [
+  BootstrapCommand,
+  PublishCommand,
+  UpdatedCommand,
+  ImportCommand,
+  CleanCommand,
+  DiffCommand,
+  InitCommand,
+  RunCommand,
+  ExecCommand,
+  LsCommand,
+]);
 
 import PackageUtilities from "./PackageUtilities";
 

@@ -24,7 +24,7 @@ export default class Command {
 
   get name() {
     // For a class named "FooCommand" this returns "foo".
-    return this.className.replace("Command", "").toLowerCase();
+    return commandNameFromClassName(this.className);
   }
 
   get className() {
@@ -235,4 +235,25 @@ export default class Command {
   execute() {
     throw new Error("command.execute() needs to be implemented.");
   }
+}
+
+export function commandNameFromClassName(className) {
+  return className.replace("Command", "").toLowerCase();
+}
+
+export function exposeCommands(obj, commands) {
+  commands.forEach((cls) => {
+    const commandName = commandNameFromClassName(cls.name);
+    if (!cls.name.match(/Command$/)) {
+      throw new Error(`Invalid command class name "${cls.name}".  Must end with "Command".`);
+    }
+    if (obj[commandName]) {
+      throw new Error(`Duplicate command: "${commandName}"`);
+    }
+    if (!Command.isPrototypeOf(cls)) {
+      throw new Error(`Command does not extend Command: "${cls.name}"`);
+    }
+    obj[commandName] = cls;
+  });
+  return obj;
 }

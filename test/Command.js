@@ -3,6 +3,7 @@ import assert from "assert";
 import progressBar from "../src/progressBar";
 import initFixture from "./_initFixture";
 import Command from "../src/Command";
+import {exposeCommands} from "../src/Command";
 import logger from "../src/logger";
 import stub from "./_stub";
 
@@ -180,6 +181,41 @@ describe("Command", () => {
       it("should not provide a value to other commands", () => {
         assert.equal(new TestCommand([], {}).getOptions().ignore, undefined);
       });
+    });
+  });
+
+  describe("exposeCommands", () => {
+    class FooCommand extends Command {
+    }
+    class BarCommand extends Command {
+    }
+    class BadClassName extends Command {
+    }
+    class NonCommand {
+    }
+
+    it("makes a mapping from command names to classes", () => {
+      assert.deepEqual(exposeCommands({}, [FooCommand, BarCommand]), {
+        foo: FooCommand,
+        bar: BarCommand,
+      });
+    });
+    it("mutates the mapping that's passed in", () => {
+      const mapping = {};
+      exposeCommands(mapping, [FooCommand, BarCommand]);
+      assert.deepEqual(mapping, {
+        foo: FooCommand,
+        bar: BarCommand,
+      });
+    });
+    it("fails on bad class name", () => {
+      assert.throws(() => exposeCommands({}, [BadClassName]));
+    });
+    it("fails on duplicate class", () => {
+      assert.throws(() => exposeCommands({}, [FooCommand, FooCommand]));
+    });
+    it("fails on class that doesn't extend Command", () => {
+      assert.throws(() => exposeCommands({}, [NonCommand]));
     });
   });
 });
