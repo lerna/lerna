@@ -341,6 +341,10 @@ Check which `packages` have changed since the last release (the last git tag).
 
 Lerna determines the last git tag created and runs `git diff --name-only v6.8.1` to get all files changed since that tag. It then returns an array of packages that have an updated file.
 
+
+**Note that configuration for the `publish` command _also_ affects the
+`updated` command.  For example `config.publish.ignore`**
+
 ### clean
 
 ```sh
@@ -444,14 +448,16 @@ Running `lerna` without arguments will show all commands/options.
 {
   "lerna": "2.0.0-beta.31",
   "version": "1.1.3",
-  "publishConfig": {
-    "ignore": [
-      "ignored-file",
-      "*.md"
-    ]
-  },
-  "bootstrapConfig": {
-    "ignore": "component-*"
+  "commands": {
+    "publish": {
+      "ignore": [
+        "ignored-file",
+        "*.md"
+      ]
+    },
+    "bootstrap": {
+      "ignore": "component-*"
+    }
   },
   "packages": ["packages/*"]
 }
@@ -459,9 +465,9 @@ Running `lerna` without arguments will show all commands/options.
 
 - `lerna`: the current version of Lerna being used.
 - `version`: the current version of the repository.
-- `publishConfig.ignore`: an array of globs that won't be included in `lerna updated/publish`. Use this to prevent publishing a new version unnecessarily for changes, such as fixing a `README.md` typo.
-- `bootstrapConfig.ignore`: an glob that won't be bootstrapped when running the `lerna bootstrap` command.
-- `bootstrapConfig.scope`: an glob that restricts which packages will be bootstrapped when running the `lerna bootstrap` command.
+- `commands.publish.ignore`: an array of globs that won't be included in `lerna updated/publish`. Use this to prevent publishing a new version unnecessarily for changes, such as fixing a `README.md` typo.
+- `commands.bootstrap.ignore`: an array of globs that won't be bootstrapped when running the `lerna bootstrap` command.
+- `commands.bootstrap.scope`: an array of globs that restricts which packages will be bootstrapped when running the `lerna bootstrap` command.
 - `packages`: Array of globs to use as package locations.
 
 
@@ -497,6 +503,29 @@ For example the `nsp` dependency is necessary in this case for `lerna run nsp`
 
 ### Flags
 
+Options to Lerna can come from configuration (`lerna.json`) or on the command
+line.  Additionally options in config can live at the top level or may be
+applied to specific commands.
+
+Example:
+
+```json
+{
+  "lerna": "x.x.x",
+  "version": "1.2.0",
+  "exampleOption": "foo",
+  "command": {
+    "init": {
+      "exampleOption": "bar",
+    }
+  },
+}
+```
+
+In this case `exampleOption` will be "foo" for all commands except `init`,
+where it will be "bar".  In all cases it may be overridden to "baz" on the
+command-line with `--example-option=baz`.
+
 #### --concurrency
 
 How many threads to use when Lerna parallelizes the tasks (defaults to `4`)
@@ -525,7 +554,7 @@ Excludes a subset of packages when running a command.
 $ lerna bootstrap --ignore component-*
 ```
 
-The `ignore` flag, when used with the `bootstrap` command, can also be set in `lerna.json` under the `bootstrapConfig` key. The command-line flag will take precendence over this option.
+The `ignore` flag, when used with the `bootstrap` command, can also be set in `lerna.json` under the `commands.bootstrap` key. The command-line flag will take precendence over this option.
 
 **Example**
 
@@ -533,8 +562,10 @@ The `ignore` flag, when used with the `bootstrap` command, can also be set in `l
 {
   "lerna": "2.0.0-beta.31",
   "version": "0.0.0",
-  "bootstrapConfig": {
-    "ignore": "component-*"
+  "commands": {
+    "bootstrap": {
+      "ignore": "component-*"
+    }
   }
 }
 ```

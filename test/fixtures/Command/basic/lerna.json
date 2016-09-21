@@ -1,0 +1,14 @@
+{
+  "lerna": "__TEST_VERSION__",
+  "version": "1.0.0",
+  "testOption": "default",
+  "command": {
+    "testb": {
+      "testOption": "b",
+      "testOption2": "b"
+    },
+    "testc": {
+      "testOption2": "c"
+    }
+  }
+}

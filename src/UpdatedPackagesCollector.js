@@ -12,12 +12,11 @@ class Update {
 }
 
 export default class UpdatedPackagesCollector {
-  constructor(repository, flags, publishConfig) {
-    this.repository = repository;
-    this.packages = repository.packages;
-    this.packageGraph = repository.packageGraph;
-    this.flags = flags;
-    this.publishConfig = publishConfig;
+  constructor(command) {
+    this.repository = command.repository;
+    this.packages = command.repository.packages;
+    this.packageGraph = command.repository.packageGraph;
+    this.flags = command.getOptions();
   }
 
   getUpdates() {
@@ -151,9 +150,9 @@ export default class UpdatedPackagesCollector {
       return file.replace(folder + path.sep, "");
     });
 
-    if (this.publishConfig.ignore) {
+    if (this.flags.ignore) {
       changedFiles = changedFiles.filter((file) => {
-        return !find(this.publishConfig.ignore, (pattern) => {
+        return !find(this.flags.ignore, (pattern) => {
           return minimatch(file, pattern, {matchBase: true});
         });
       });

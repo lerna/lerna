@@ -23,6 +23,10 @@ export default class Repository {
 
     if (FileSystemUtilities.existsSync(this.lernaJsonLocation)) {
       this.lernaJson = JSON.parse(FileSystemUtilities.readFileSync(this.lernaJsonLocation));
+    } else {
+      // No need to distinguish between missing and empty.
+      // This saves us a lot of guards.
+      this.lernaJson = {};
     }
 
     if (FileSystemUtilities.existsSync(this.packageJsonLocation)) {
