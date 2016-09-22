@@ -195,27 +195,19 @@ describe("Command", () => {
     }
 
     it("makes a mapping from command names to classes", () => {
-      assert.deepEqual(exposeCommands({}, [FooCommand, BarCommand]), {
-        foo: FooCommand,
-        bar: BarCommand,
-      });
-    });
-    it("mutates the mapping that's passed in", () => {
-      const mapping = {};
-      exposeCommands(mapping, [FooCommand, BarCommand]);
-      assert.deepEqual(mapping, {
+      assert.deepEqual(exposeCommands([FooCommand, BarCommand]), {
         foo: FooCommand,
         bar: BarCommand,
       });
     });
     it("fails on bad class name", () => {
-      assert.throws(() => exposeCommands({}, [BadClassName]));
+      assert.throws(() => exposeCommands([BadClassName]));
     });
     it("fails on duplicate class", () => {
-      assert.throws(() => exposeCommands({}, [FooCommand, FooCommand]));
+      assert.throws(() => exposeCommands([FooCommand, FooCommand]));
     });
     it("fails on class that doesn't extend Command", () => {
-      assert.throws(() => exposeCommands({}, [NonCommand]));
+      assert.throws(() => exposeCommands([NonCommand]));
     });
   });
 });

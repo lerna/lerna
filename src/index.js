@@ -10,9 +10,7 @@ import ExecCommand from "./commands/ExecCommand";
 import LsCommand from "./commands/LsCommand";
 import {exposeCommands} from "./Command";
 
-export const __commands__ = {};
-
-exposeCommands(__commands__, [
+export const __commands__ = exposeCommands([
   BootstrapCommand,
   PublishCommand,
   UpdatedCommand,

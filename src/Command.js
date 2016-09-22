@@ -241,8 +241,8 @@ export function commandNameFromClassName(className) {
   return className.replace("Command", "").toLowerCase();
 }
 
-export function exposeCommands(obj, commands) {
-  commands.forEach((cls) => {
+export function exposeCommands(commands) {
+  return commands.reduce((obj, cls) => {
     const commandName = commandNameFromClassName(cls.name);
     if (!cls.name.match(/Command$/)) {
       throw new Error(`Invalid command class name "${cls.name}".  Must end with "Command".`);
@@ -254,6 +254,6 @@ export function exposeCommands(obj, commands) {
       throw new Error(`Command does not extend Command: "${cls.name}"`);
     }
     obj[commandName] = cls;
-  });
-  return obj;
+    return obj;
+  }, {});
 }
