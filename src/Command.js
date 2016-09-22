@@ -238,7 +238,7 @@ export default class Command {
 }
 
 export function commandNameFromClassName(className) {
-  return className.replace("Command", "").toLowerCase();
+  return className.replace(/Command$/, "").toLowerCase();
 }
 
 export function exposeCommands(commands) {
