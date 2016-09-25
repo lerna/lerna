@@ -53,6 +53,36 @@ describe("ImportCommand", () => {
       }));
     });
 
+    it("should support moved files within the external repo", (done) => {
+      const importCommand = new ImportCommand([externalDir], {});
+
+      importCommand.runValidations();
+      importCommand.runPreparations();
+
+      assertStubbedCalls([
+        [PromptUtilities, "confirm", { valueCallback: true }, [
+          { args: ["Are you sure you want to import these commits onto the current branch?"], returns: true }
+        ]],
+      ]);
+
+      ChildProcessUtilities.execSync("git mv old-file new-file", { cwd: externalDir });
+      ChildProcessUtilities.execSync("git commit -m 'Moved old-file to new-file'", { cwd: externalDir });
+
+      importCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done(err);
+
+        try {
+          const lastCommit = ChildProcessUtilities.execSync("git log --format=\"%s\"", {encoding:"utf8"}).split("\n")[0];
+          const newFilePath = path.join(testDir, "packages", path.basename(externalDir), "new-file");
+          assert.ok(pathExists.sync(newFilePath));
+          assert.equal(lastCommit, "Moved old-file to new-file");
+          done();
+        } catch (err) {
+          done(err);
+        }
+      }));
+    });
+
     it("should be possible to skip asking for confirmation", (done) => {
 
       const importCommand = new ImportCommand([externalDir], {

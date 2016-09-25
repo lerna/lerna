@@ -94,7 +94,8 @@ export default class ImportCommand extends Command {
       const patch = this.externalExecSync(`git format-patch -1 ${sha} --stdout`)
         .replace(/^([-+]{3} [ab])/mg,     replacement)
         .replace(/^(diff --git a)/mg,     replacement)
-        .replace(/^(diff --git \S+ b)/mg, replacement);
+        .replace(/^(diff --git \S+ b)/mg, replacement)
+        .replace(/^(rename (from|to)) /mg, `\$1 ${this.targetDir}/`);
 
       // Apply the modified patch to the current lerna repository, preserving
       // original commit date, author and message.
