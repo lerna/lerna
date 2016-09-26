@@ -1,5 +1,6 @@
 import ChildProcessUtilities from "./ChildProcessUtilities";
 import logger from "./logger";
+import escapeArgs from "command-join";
 
 export default class GitUtilities {
   @logger.logifySync
@@ -14,7 +15,7 @@ export default class GitUtilities {
 
   @logger.logifySync
   static addFile(file) {
-    ChildProcessUtilities.execSync("git add " + file);
+    ChildProcessUtilities.execSync("git add " + escapeArgs(file));
   }
 
   @logger.logifySync
@@ -61,7 +62,7 @@ export default class GitUtilities {
 
   @logger.logifySync
   static diffSinceIn(since, location) {
-    return ChildProcessUtilities.execSync("git diff --name-only " + since + " -- " + location);
+    return ChildProcessUtilities.execSync("git diff --name-only " + since + " -- " + escapeArgs(location));
   }
 
   @logger.logifySync

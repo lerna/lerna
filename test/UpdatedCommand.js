@@ -9,6 +9,7 @@ import exitWithCode from "./_exitWithCode";
 import initFixture from "./_initFixture";
 import logger from "../src/logger";
 import stub from "./_stub";
+import escapeArgs from "command-join";
 
 const execSync = (child.execSync || syncExec);
 
@@ -27,7 +28,7 @@ describe("UpdatedCommand", () => {
 
     it("should list changes", (done) => {
       execSync("git tag v1.0.0");
-      execSync("touch " + path.join(testDir, "packages/package-2/random-file"));
+      execSync("touch " + escapeArgs(path.join(testDir, "packages/package-2/random-file")));
       execSync("git add -A");
       execSync("git commit -m 'Commit'");
 
@@ -50,7 +51,7 @@ describe("UpdatedCommand", () => {
 
     it("should list changes with --force-publish *", (done) => {
       execSync("git tag v1.0.0");
-      execSync("touch " + path.join(testDir, "packages/package-2/random-file"));
+      execSync("touch " + escapeArgs(path.join(testDir, "packages/package-2/random-file")));
       execSync("git add -A");
       execSync("git commit -m 'Commit'");
 
@@ -75,7 +76,7 @@ describe("UpdatedCommand", () => {
 
     it("should list changes with --force-publish [package,package]", (done) => {
       execSync("git tag v1.0.0");
-      execSync("touch " + path.join(testDir, "packages/package-3/random-file"));
+      execSync("touch " + escapeArgs(path.join(testDir, "packages/package-3/random-file")));
       execSync("git add -A");
       execSync("git commit -m 'Commit'");
 
@@ -107,8 +108,8 @@ describe("UpdatedCommand", () => {
       fs.writeFileSync(lernaJsonLocation, JSON.stringify(lernaJson, null, 2));
 
       execSync("git tag v1.0.0");
-      execSync("touch " + path.join(testDir, "packages/package-2/ignored-file"));
-      execSync("touch " + path.join(testDir, "packages/package-3/random-file"));
+      execSync("touch " + escapeArgs(path.join(testDir, "packages/package-2/ignored-file")));
+      execSync("touch " + escapeArgs(path.join(testDir, "packages/package-3/random-file")));
       execSync("git add -A");
       execSync("git commit -m 'Commit'");
 
@@ -131,7 +132,7 @@ describe("UpdatedCommand", () => {
 
     it("should list changes for explicitly changed packages", (done) => {
       execSync("git tag v1.0.0");
-      execSync("touch " + path.join(testDir, "packages/package-2/random-file"));
+      execSync("touch " + escapeArgs(path.join(testDir, "packages/package-2/random-file")));
       execSync("git add -A");
       execSync("git commit -m 'Commit'");
 
@@ -168,7 +169,7 @@ describe("UpdatedCommand", () => {
 
     it("should list changes", (done) => {
       execSync("git tag v1.0.0");
-      execSync("touch " + path.join(testDir, "packages/package-3/random-file"));
+      execSync("touch " + escapeArgs(path.join(testDir, "packages/package-3/random-file")));
       execSync("git add -A");
       execSync("git commit -m 'Commit'");
 
@@ -191,7 +192,7 @@ describe("UpdatedCommand", () => {
 
     it("should list changes with --force-publish *", (done) => {
       execSync("git tag v1.0.0");
-      execSync("touch " + path.join(testDir, "packages/package-2/random-file"));
+      execSync("touch " + escapeArgs(path.join(testDir, "packages/package-2/random-file")));
       execSync("git add -A");
       execSync("git commit -m 'Commit'");
 
@@ -216,7 +217,7 @@ describe("UpdatedCommand", () => {
 
     it("should list changes with --force-publish [package,package]", (done) => {
       execSync("git tag v1.0.0");
-      execSync("touch " + path.join(testDir, "packages/package-4/random-file"));
+      execSync("touch " + escapeArgs(path.join(testDir, "packages/package-4/random-file")));
       execSync("git add -A");
       execSync("git commit -m 'Commit'");
 
@@ -248,8 +249,8 @@ describe("UpdatedCommand", () => {
       fs.writeFileSync(lernaJsonLocation, JSON.stringify(lernaJson, null, 2));
 
       execSync("git tag v1.0.0");
-      execSync("touch " + path.join(testDir, "packages/package-2/ignored-file"));
-      execSync("touch " + path.join(testDir, "packages/package-3/random-file"));
+      execSync("touch " + escapeArgs(path.join(testDir, "packages/package-2/ignored-file")));
+      execSync("touch " + escapeArgs(path.join(testDir, "packages/package-3/random-file")));
       execSync("git add -A");
       execSync("git commit -m 'Commit'");
 

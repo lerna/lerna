@@ -1,5 +1,6 @@
 import ChildProcessUtilities from "./ChildProcessUtilities";
 import logger from "./logger";
+import escapeArgs from "command-join";
 
 export default class NpmUtilities {
   @logger.logifyAsync
@@ -35,7 +36,7 @@ export default class NpmUtilities {
 
   @logger.logifySync
   static execInDir(command, args, directory, callback) {
-    ChildProcessUtilities.exec(`npm ${command} ${args.join(" ")}`, { cwd: directory, env: process.env }, callback);
+    ChildProcessUtilities.exec(`npm ${command} ${escapeArgs(args)}`, { cwd: directory, env: process.env }, callback);
   }
 
   @logger.logifyAsync
@@ -45,6 +46,6 @@ export default class NpmUtilities {
 
   @logger.logifyAsync
   static publishTaggedInDir(tag, directory, callback) {
-    ChildProcessUtilities.exec("cd " + directory + " && npm publish --tag " + tag, null, callback);
+    ChildProcessUtilities.exec("cd " + escapeArgs(directory) + " && npm publish --tag " + tag, null, callback);
   }
 }
