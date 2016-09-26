@@ -66,7 +66,7 @@ describe("ImportCommand", () => {
       ]);
 
       ChildProcessUtilities.execSync("git mv old-file new-file", { cwd: externalDir });
-      ChildProcessUtilities.execSync("git commit -m 'Moved old-file to new-file'", { cwd: externalDir });
+      ChildProcessUtilities.execSync("git commit -m \"Moved old-file to new-file\"", { cwd: externalDir });
 
       importCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done(err);
