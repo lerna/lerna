@@ -3,6 +3,7 @@ import assert from "assert";
 import path from "path";
 import fs from "fs";
 import { EOL } from "os";
+import normalizeNewline from "normalize-newline";
 
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
 import PromptUtilities from "../src/PromptUtilities";
@@ -88,7 +89,7 @@ describe("PublishCommand", () => {
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8"), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
+          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
 
           assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
           assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
@@ -268,7 +269,7 @@ describe("PublishCommand", () => {
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8"), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.0\"\n}\n");
+          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.0\"\n}\n");
 
           // The following wouldn't be the actual results of a canary release
           // because `git checkout --` would have removed the file changes.
@@ -438,7 +439,7 @@ describe("PublishCommand", () => {
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8"), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
+          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
 
           assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
           assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
@@ -503,7 +504,7 @@ describe("PublishCommand", () => {
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(fs.readFileSync(path.join(testDir, "lerna.json")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
+          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
 
           assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
           assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
@@ -561,7 +562,7 @@ describe("PublishCommand", () => {
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(fs.readFileSync(path.join(testDir, "lerna.json")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
+          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
 
           assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
           assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
@@ -656,7 +657,7 @@ describe("PublishCommand", () => {
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8"), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
+          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
 
           assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
           assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
@@ -761,7 +762,7 @@ describe("PublishCommand", () => {
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(fs.readFileSync(path.join(testDir, "lerna.json")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
+          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
 
           assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
           assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
