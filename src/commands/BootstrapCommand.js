@@ -146,7 +146,7 @@ export default class BootstrapCommand extends Command {
     const actions = [(cb) => FileSystemUtilities.mkdirp(destBinFolder, cb)];
     // symlink each binary
     srcBinFiles.forEach((binFile, idx) => {
-      actions.push((cb) => FileSystemUtilities.symlink(binFile, destBinFiles[idx], "file", cb));
+      actions.push((cb) => FileSystemUtilities.symlink(binFile, destBinFiles[idx], "junction", cb));
     });
     async.series(actions, callback);
   }
@@ -241,7 +241,7 @@ export default class BootstrapCommand extends Command {
             ));
             // create package symlink
             packageActions.push((cb) => FileSystemUtilities.symlink(
-              dependencyLocation, pkgDependencyLocation, "dir", cb
+              dependencyLocation, pkgDependencyLocation, "junction", cb
             ));
             const dependencyPackageJson = require(dependencyPackageJsonLocation);
             if (dependencyPackageJson.bin) {
