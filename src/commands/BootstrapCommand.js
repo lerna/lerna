@@ -146,7 +146,7 @@ export default class BootstrapCommand extends Command {
     const actions = [(cb) => FileSystemUtilities.mkdirp(destBinFolder, cb)];
     // symlink each binary
     srcBinFiles.forEach((binFile, idx) => {
-      actions.push((cb) => FileSystemUtilities.symlink(binFile, destBinFiles[idx], "junction", cb));
+      actions.push((cb) => FileSystemUtilities.symlink(binFile, destBinFiles[idx], "exec", cb));
     });
     async.series(actions, callback);
   }

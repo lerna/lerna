@@ -3,6 +3,9 @@ import logger from "./logger";
 import mkdirp from "mkdirp";
 import rimraf from "rimraf";
 import fs from "fs";
+import cmdShim from "cmd-shim";
+import readCmdShim from "read-cmd-shim";
+import { resolve, dirname } from "path";
 
 const ENDS_WITH_NEW_LINE = /\n$/;
 
@@ -53,6 +56,13 @@ export default class FileSystemUtilities {
 
   @logger.logifyAsync
   static symlink(src, dest, type, callback) {
+    if (type === "exec") {
+      if (process.platform === "win32") {
+        cmdShim(src, dest, callback);
+        return;
+      }
+      type = "file";
+    }
     fs.lstat(dest, (err) => {
       if (!err) {
         // Something exists at `dest`.  Need to remove it first.
@@ -71,8 +81,16 @@ export default class FileSystemUtilities {
   @logger.logifySync
   static isSymlink(path) {
     const lstat = fs.lstatSync(path);
-    return lstat && lstat.isSymbolicLink()
+    const isSymlink = lstat && lstat.isSymbolicLink()
       ? fs.readlinkSync(path)
       : false;
+    if (process.platform === "win32" && lstat && lstat.isFile() && !isSymlink) {
+      try {
+        return resolve(dirname(path), readCmdShim.sync(path));
+      } catch (e) {
+        return false;
+      }
+    }
+    return isSymlink;
   }
 }
