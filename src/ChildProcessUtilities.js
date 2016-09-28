@@ -52,11 +52,6 @@ export default class ChildProcessUtilities {
       }, opts))
     );
 
-    childProcess.on("error", () => {});
-    childProcess.on("exit", (code) => {
-      callback(code && (stderr || `Command failed: ${command} ${args.join(" ")}`), stdout);
-    });
-
     // By default stderr is inherited from us (just sent to _our_ output).
     // If the caller overrode that to "pipe", then we'll gather that up and
     // call back with it in case of failure.
@@ -69,6 +64,11 @@ export default class ChildProcessUtilities {
       childProcess.stdout.setEncoding("utf8");
       childProcess.stdout.on("data", (chunk) => stdout += chunk);
     }
+
+    childProcess.on("error", () => {});
+    childProcess.on("exit", (code) => {
+      callback(code && (stderr || `Command failed: ${command} ${args.join(" ")}`), stdout);
+    });
   }
 
   static registerChild(child) {
