@@ -9,7 +9,7 @@ export default class CleanCommand extends Command {
     if (this.flags.yes) {
       callback(null, true);
     } else {
-      this.logger.info(`About remove the following directories:\n${
+      this.logger.info(`About to remove the following directories:\n${
         this.packages.map((pkg) => "- " + pkg.nodeModulesLocation).join("\n")
       }`);
       PromptUtilities.confirm("Proceed?", (confirmed) => {
