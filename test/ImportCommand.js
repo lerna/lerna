@@ -3,6 +3,7 @@ import assert from "assert";
 import path from "path";
 import fs from "fs";
 import normalize from "normalize-path";
+import escapeArgs from "command-join";
 
 import PromptUtilities from "../src/PromptUtilities";
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
@@ -187,7 +188,7 @@ describe("ImportCommand", () => {
 
       fs.writeFileSync(uncommittedFile, "");
 
-      ChildProcessUtilities.execSync("git add " + uncommittedFile);
+      ChildProcessUtilities.execSync("git add " + escapeArgs(uncommittedFile));
 
       importCommand.runValidations();
       importCommand.runPreparations();
