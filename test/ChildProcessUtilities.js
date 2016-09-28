@@ -24,7 +24,7 @@ describe("ChildProcessUtilities", () => {
     it("should spawn a command in a child process", (done) => {
       ChildProcessUtilities.spawn("echo", ["foo"], { stdio: "pipe" }, (code, stdout) => {
         assert.equal(code, 0);
-        assert.equal(stdout, "foo\n");
+        assert.equal(stdout, `foo${os.EOL}`);
         done();
       });
     });
@@ -34,7 +34,7 @@ describe("ChildProcessUtilities", () => {
         path.join(__dirname, "./fixtures/ChildProcessUtilities/spawn/*")
       ], { stdio: "pipe" }, (code, stdout) => {
         assert.equal(code, 0);
-        assert.equal(stdout, "A\nB\n");
+        assert.equal(stdout, `A${os.EOL}B${os.EOL}`);
         done();
       });
     });

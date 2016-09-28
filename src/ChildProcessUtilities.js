@@ -50,11 +50,12 @@ export default class ChildProcessUtilities {
       spawn(command, args, objectAssign({
         stdio: "inherit"
       }, opts))
-        .on("error", () => {})
-        .on("exit", (code) => {
-          callback(code && (stderr || `Command failed: ${command} ${args.join(" ")}`), stdout);
-        })
     );
+
+    childProcess.on("error", () => {});
+    childProcess.on("exit", (code) => {
+      callback(code && (stderr || `Command failed: ${command} ${args.join(" ")}`), stdout);
+    });
 
     // By default stderr is inherited from us (just sent to _our_ output).
     // If the caller overrode that to "pipe", then we'll gather that up and
