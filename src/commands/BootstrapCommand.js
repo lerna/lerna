@@ -34,6 +34,8 @@ export default class BootstrapCommand extends Command {
     async.series([
       // install external dependencies
       (cb) => this.installExternalDependencies(cb),
+      // symlink binaries from devDependencies
+      (cb) => this.symlinkDevBinaries(cb),
       // symlink packages and their binaries
       (cb) => this.symlinkPackages(cb),
       // prepublish bootstrapped packages
@@ -263,5 +265,73 @@ export default class BootstrapCommand extends Command {
       this.progressBar.terminate();
       callback(err);
     });
+  }
+
+  /**
+   * Symlink binaries of devDependencies to individual packages' node_modules/.bin directory
+   * @param {Function} callback
+   */
+  symlinkDevBinaries(callback) {
+    async.waterfall([
+      (cb) => {
+        this.logger.info("Reading devDependencies");
+        const devDependencyKeys = Object.keys(this.repository.packageJson.devDependencies || {});
+        this.progressBar.init(devDependencyKeys.length);
+        const actions = [];
+        const rootBinaryDependencies = [];
+        devDependencyKeys
+          .forEach((dependency) => {
+            actions.push((cb) => {
+              const dependencyLocation = path.resolve(this.repository.rootPath, "node_modules", dependency);
+              const dependencyPackageJsonLocation = path.join(dependencyLocation, "package.json");
+              // ignore dependencies without a package.json file
+              if (!FileSystemUtilities.existsSync(dependencyPackageJsonLocation)) {
+                this.logger.error(
+                  `Unable to find package.json for ${dependency} dependency of ${this.repository.packageJson.name || "root package"},  ` +
+                  "Skipping..."
+                );
+              } else {
+                const dependencyPackageJson = require(dependencyPackageJsonLocation);
+                if (dependencyPackageJson.bin) {
+                  rootBinaryDependencies.push({dependency, dependencyLocation, bin: dependencyPackageJson.bin});
+                }
+              }
+              this.progressBar.tick(dependency);
+              cb();
+            });
+          });
+        async.series(actions, (err) => {
+          this.progressBar.terminate();
+          cb(err, rootBinaryDependencies);
+        });
+      },
+      (rootBinaryDependencies, cb) => {
+        this.logger.info("Symlinking devDependency binaries");
+        this.progressBar.init(this.filteredPackages.length);
+
+        const actions = [];
+        this.filteredPackages.forEach((filteredPackage) => {
+          // actions to run for this package
+          const packageActions = [];
+          rootBinaryDependencies
+            .forEach(({dependency, dependencyLocation, bin}) => {
+              const destFolder = filteredPackage.nodeModulesLocation;
+              packageActions.push((cb) => {
+                this.createBinaryLink(dependencyLocation, destFolder, dependency, bin, cb);
+              });
+            });
+          actions.push((cb) => {
+            async.series(packageActions, (err) => {
+              this.progressBar.tick(filteredPackage.name);
+              cb(err);
+            });
+          });
+        });
+        async.series(actions, (err) => {
+          this.progressBar.terminate();
+          cb(err);
+        });
+      }
+    ], callback);
   }
 }
