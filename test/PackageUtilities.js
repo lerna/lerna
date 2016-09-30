@@ -101,4 +101,22 @@ describe("PackageUtilities", () => {
     });
   });
 
+  describe(".topologicallyBatchPackages()", () => {
+    const fixture = path.join(__dirname, "fixtures/PackageUtilities/toposort/packages");
+    const packages = PackageUtilities.getPackages(fixture);
+
+    it("should batch roots, then internal/leaf nodes, then cycles", () => {
+      assert.deepEqual(
+        PackageUtilities.topologicallyBatchPackages(packages).map((batch) => batch.map((pkg) => pkg.name)),
+        [
+          ["package-dag-1", "package-standalone"],
+          ["package-dag-2a", "package-dag-2b"],
+          ["package-dag-3"],
+          ["package-cycle-1"],
+          ["package-cycle-2", "package-cycle-extraneous"]
+        ]
+      );
+    });
+  });
+
 });
