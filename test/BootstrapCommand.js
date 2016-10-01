@@ -17,6 +17,35 @@ const STDIO_OPT = ["ignore", "ignore", "pipe"];
 
 describe("BootstrapCommand", () => {
 
+  describe("lifecycle scripts", () => {
+    let testDir;
+
+    beforeEach((done) => {
+      testDir = initFixture("BootstrapCommand/lifecycle-scripts", done);
+    });
+
+    it("should run preinstall, postinstall and prepublish scripts", (done) => {
+      const bootstrapCommand = new BootstrapCommand([], {});
+
+      bootstrapCommand.runValidations();
+      bootstrapCommand.runPreparations();
+
+      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done(err);
+
+        try {
+          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
+          assert.ok(pathExists.sync(path.join(testDir, "packages", "package-preinstall", "did-preinstall")));
+          assert.ok(pathExists.sync(path.join(testDir, "packages", "package-postinstall", "did-postinstall")));
+          assert.ok(pathExists.sync(path.join(testDir, "packages", "package-prepublish", "did-prepublish")));
+          done();
+        } catch (err) {
+          done(err);
+        }
+      }));
+    });
+  });
+
   describe("dependencies between packages in the repo", () => {
     let testDir;
 
@@ -50,8 +79,6 @@ describe("BootstrapCommand", () => {
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
-          // Make sure the `prepublish` script got run (index.js got created).
-          assert.ok(pathExists.sync(path.join(testDir, "packages", "package-1", "index.js")));
           // package-1 should not have any packages symlinked
           assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-1", "node_modules", "package-2")));
           assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-1", "node_modules", "package-3")));
