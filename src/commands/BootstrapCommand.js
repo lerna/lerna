@@ -61,17 +61,10 @@ export default class BootstrapCommand extends Command {
     this.logger.info("Prepublishing packages");
 
     // Get a filtered list of packages that will be prepublished.
-    const todoPackages = this.filteredPackages.slice();
+    const packages = this.filteredPackages.slice();
+    const batches = PackageUtilities.topologicallyBatchPackages(packages, this.logger);
 
-    this.progressBar.init(todoPackages.length);
-
-    // This maps package names to the number of packages that depend on them.
-    // As packages are completed their names will be removed from this object.
-    const pendingDeps = {};
-    todoPackages.forEach((pkg) => this.filteredGraph.get(pkg.name).dependencies.forEach((dep) => {
-      if (!pendingDeps[dep]) pendingDeps[dep] = 0;
-      pendingDeps[dep]++;
-    }));
+    this.progressBar.init(packages.length);
 
     // Bootstrap runs the "prepublish" script in each package.  This script
     // may _use_ another package from the repo.  Therefore if a package in the
@@ -80,35 +73,15 @@ export default class BootstrapCommand extends Command {
     // batch includes all packages that have no remaining un-bootstrapped
     // dependencies within the repo.
     const bootstrapBatch = () => {
-      // Get all packages that have no remaining dependencies within the repo
-      // that haven't yet been bootstrapped.
-      const batch = todoPackages.filter((pkg) => {
-        const node = this.filteredGraph.get(pkg.name);
-        return !node.dependencies.filter((dep) => pendingDeps[dep]).length;
-      });
-
-      // If we weren't able to find a package with no remaining dependencies,
-      // then we've encountered a cycle in the dependency graph.  Run a
-      // single-package batch with the package that has the most dependents.
-      if (todoPackages.length && !batch.length) {
-        this.logger.warning(
-          "Encountered a cycle in the dependency graph.  " +
-          "This may cause instability if dependencies are used during `prepublish`."
-        );
-        batch.push(todoPackages.reduce((a, b) => (
-          (pendingDeps[a.name] || 0) > (pendingDeps[b.name] || 0) ? a : b
-        )));
-      }
+      const batch = batches.shift();
 
       async.parallelLimit(batch.map((pkg) => (done) => {
         pkg.runScript("prepublish", (err) => {
           this.progressBar.tick(pkg.name);
-          delete pendingDeps[pkg.name];
-          todoPackages.splice(todoPackages.indexOf(pkg), 1);
           done(err);
         });
       }), this.concurrency, (err) => {
-        if (todoPackages.length && !err) {
+        if (batches.length && !err) {
           bootstrapBatch();
         } else {
           this.progressBar.terminate();
