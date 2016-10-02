@@ -1,6 +1,5 @@
 import ChildProcessUtilities from "./ChildProcessUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
-import PackageUtilities from "./PackageUtilities";
 import ExitHandler from "./ExitHandler";
 import progressBar from "./progressBar";
 import Repository from "./Repository";
@@ -35,12 +34,6 @@ export default class Command {
   runValidations() {
     if (this.concurrency < 1) {
       this.logger.warning("command must be run with at least one thread.");
-      this._complete(null, 1);
-      return;
-    }
-
-    if (!FileSystemUtilities.existsSync(this.repository.packagesLocation)) {
-      this.logger.warning("`packages/` directory does not exist, have you run `lerna init`?");
       this._complete(null, 1);
       return;
     }
@@ -101,8 +94,9 @@ export default class Command {
 
   runPreparations() {
     try {
-      this.packages = PackageUtilities.getPackages(this.repository.packagesLocation);
-      this.packageGraph = PackageUtilities.getPackageGraph(this.packages);
+      this.repository.buildPackageGraph();
+      this.packages = this.repository.packages;
+      this.packageGraph = this.repository.packageGraph;
     } catch (err) {
       this.logger.error("Errored while collecting packages and package graph", err);
       this._complete(null, 1);

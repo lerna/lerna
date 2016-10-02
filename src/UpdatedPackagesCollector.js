@@ -1,4 +1,3 @@
-import PackageUtilities from "./PackageUtilities";
 import GitUtilities from "./GitUtilities";
 import progressBar from "./progressBar";
 import minimatch from "minimatch";
@@ -13,9 +12,10 @@ class Update {
 }
 
 export default class UpdatedPackagesCollector {
-  constructor(packages, packageGraph, flags, publishConfig) {
-    this.packages = packages;
-    this.packageGraph = packageGraph;
+  constructor(repository, flags, publishConfig) {
+    this.repository = repository;
+    this.packages = repository.packages;
+    this.packageGraph = repository.packageGraph;
     this.flags = flags;
     this.publishConfig = publishConfig;
   }
@@ -140,7 +140,7 @@ export default class UpdatedPackagesCollector {
   }
 
   hasDiffSinceThatIsntIgnored(pkg, commits) {
-    const folder = PackageUtilities.getPackagePath(PackageUtilities.getPackagesPath(""), pkg.name);
+    const folder = path.relative(this.repository.rootPath, pkg.location);
     const diff = GitUtilities.diffSinceIn(commits, pkg.location);
 
     if (diff === "") {
