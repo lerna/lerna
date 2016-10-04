@@ -334,7 +334,7 @@ export default class PublishCommand extends Command {
     if (FileSystemUtilities.existsSync(scriptLocation)) {
       require(scriptLocation);
     } else {
-      this.logger.debug(`No ${script} script found at ${scriptLocation}`);
+      this.logger.verbose(`No ${script} script found at ${scriptLocation}`);
     }
   }
 
@@ -349,7 +349,7 @@ export default class PublishCommand extends Command {
       let attempts = 0;
 
       const run = (cb) => {
-        this.logger.debug("Publishing " + pkg.name + "...");
+        this.logger.verbose("Publishing " + pkg.name + "...");
 
         NpmUtilities.publishTaggedInDir("lerna-temp", pkg.location, (err) => {
           err = err && err.stack || err;
