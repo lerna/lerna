@@ -33,7 +33,7 @@ export default class PackageUtilities {
 
     repository.packageConfigs.forEach(({glob}) => {
 
-      globSync(glob)
+      globSync(path.join(repository.rootPath, glob))
         .map((fn) => path.resolve(fn))
         .forEach((packageConfigPath) => {
           const packagePath = path.dirname(packageConfigPath);
