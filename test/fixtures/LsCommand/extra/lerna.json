@@ -1,0 +1,8 @@
+{
+  "lerna": "__TEST_VERSION__",
+  "version": "1.0.0",
+  "packages": [
+    {"glob": "packages/*/package.json"},
+    {"glob": "package-3/package.json"}
+  ]
+}

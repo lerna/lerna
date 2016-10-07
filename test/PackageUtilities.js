@@ -3,8 +3,16 @@ import path from "path";
 
 import PackageUtilities from "../src/PackageUtilities";
 import Package from "../src/Package";
+import Repository from "../src/Repository";
+import initFixture from "./_initFixture";
 
 describe("PackageUtilities", () => {
+  let testDir;
+
+  beforeEach((done) => {
+    testDir = initFixture("PackageUtilities/basic", done);
+  });
+
   describe(".getPackagesPath()", () => {
     it("should append the packages path to the repo path given", () => {
       assert.equal(
@@ -34,7 +42,7 @@ describe("PackageUtilities", () => {
 
   describe(".getPackageConfig()", () => {
     it("should get the config file for the given package in the given packages directory", () => {
-      const fixture = path.join(__dirname, "fixtures/PackageUtilities/basic/packages");
+      const fixture = path.join(testDir, "packages");
 
       assert.deepEqual(
         PackageUtilities.getPackageConfig(fixture, "package-1"),
@@ -48,8 +56,8 @@ describe("PackageUtilities", () => {
 
   describe(".getPackages()", () => {
     it("should collect all the packages from the given packages directory", () => {
-      const fixture = path.join(__dirname, "fixtures/PackageUtilities/basic/packages");
-      const result = PackageUtilities.getPackages(fixture);
+      const fixture = path.join(testDir, "packages");
+      const result = PackageUtilities.getPackages(new Repository);
 
       assert.equal(result.length, 4);
       assert(result[0] instanceof Package);
@@ -60,8 +68,14 @@ describe("PackageUtilities", () => {
   });
 
   describe(".filterPackages()", () => {
-    const fixture = path.join(__dirname, "fixtures/PackageUtilities/filtering/packages");
-    const packages = PackageUtilities.getPackages(fixture);
+    let packages;
+
+    beforeEach((done) => {
+      initFixture("PackageUtilities/filtering", () => {
+        packages = PackageUtilities.getPackages(new Repository);
+        done();
+      });
+    });
 
     it("should throw when --scope is given but empty", () => {
       assert.throws(() => {
