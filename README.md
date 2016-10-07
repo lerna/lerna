@@ -156,7 +156,7 @@ When run, this command will:
 2. Symlink together all Lerna `packages` that are dependencies of each other.
 3. `npm prepublish` all bootstrapped packages.
 
-`lerna bootstrap` respects the `--ignore` flag (see below).
+`lerna bootstrap` respects the `--ignore` flag (see [Flags](#flags)).
 
 #### How `bootstrap` works
 
@@ -352,9 +352,9 @@ $ lerna run build
 
 Run an [npm script](https://docs.npmjs.com/misc/scripts) in each package that contains that script.
 
-`lerna run` respects the `--concurrency` flag (see below).
+`lerna run` respects the `--concurrency` flag (see [Flags](#flags)).
 
-`lerna run` respects the `--scope` flag (see below).
+`lerna run` respects the `--scope` flag (see [Flags](#flags)).
 
 ```sh
 $ lerna run --scope my-component test
@@ -370,9 +370,9 @@ $ lerna exec -- protractor conf.js
 
 Run an arbitrary command in each package.
 
-`lerna exec` respects the `--concurrency` flag (see below).
+`lerna exec` respects the `--concurrency` flag (see [Flags](#flags)).
 
-`lerna exec` respects the `--scope` flag (see below).
+`lerna exec` respects the `--scope` flag (see [Flags](#flags)).
 
 ```sh
 $ lerna exec --scope my-component -- ls -la
