@@ -9,7 +9,7 @@ const DEFAULT_LOGLEVEL = "info";
 const LEVELS = [
   [ "silly",   "magenta" ],
   [ "verbose", "blue"    ],
-  [ "info",    "white"   ],
+  [ "info",    "reset"   ],
   [ "success", "green"   ],
   [ "warn",    "yellow"  ],
   [ "error",   "red"     ],
