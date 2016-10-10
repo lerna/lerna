@@ -111,7 +111,7 @@ export default class PackageUtilities {
       // single-package batch with the package that has the most dependents.
       if (packages.length && !batch.length) {
         if (logger) {
-          logger.warning(
+          logger.warn(
             "Encountered a cycle in the dependency graph. This may cause instability!"
           );
         }

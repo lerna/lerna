@@ -40,9 +40,7 @@ describe("UpdatedCommand", () => {
       let calls = 0;
       stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
-        if (calls === 1) assert.equal(message, "");
         if (calls === 2) assert.equal(message, "- package-2\n- package-3");
-        if (calls === 3) assert.equal(message, "");
         calls++;
       });
 
@@ -65,9 +63,7 @@ describe("UpdatedCommand", () => {
       let calls = 0;
       stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
-        if (calls === 1) assert.equal(message, "");
         if (calls === 2) assert.equal(message, "- package-1\n- package-2\n- package-3\n- package-4");
-        if (calls === 3) assert.equal(message, "");
         calls++;
       });
 
@@ -90,9 +86,7 @@ describe("UpdatedCommand", () => {
       let calls = 0;
       stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
-        if (calls === 1) assert.equal(message, "");
         if (calls === 2) assert.equal(message, "- package-2\n- package-3\n- package-4");
-        if (calls === 3) assert.equal(message, "");
         calls++;
       });
 
@@ -121,9 +115,7 @@ describe("UpdatedCommand", () => {
       let calls = 0;
       stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
-        if (calls === 1) assert.equal(message, "");
         if (calls === 2) assert.equal(message, "- package-3");
-        if (calls === 3) assert.equal(message, "");
         calls++;
       });
 
@@ -146,9 +138,7 @@ describe("UpdatedCommand", () => {
       let calls = 0;
       stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
-        if (calls === 1) assert.equal(message, "");
         if (calls === 2) assert.equal(message, "- package-2");
-        if (calls === 3) assert.equal(message, "");
         calls++;
       });
 
@@ -181,9 +171,7 @@ describe("UpdatedCommand", () => {
       let calls = 0;
       stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
-        if (calls === 1) assert.equal(message, "");
         if (calls === 2) assert.equal(message, "- package-3\n- package-4");
-        if (calls === 3) assert.equal(message, "");
         calls++;
       });
 
@@ -206,9 +194,7 @@ describe("UpdatedCommand", () => {
       let calls = 0;
       stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
-        if (calls === 1) assert.equal(message, "");
         if (calls === 2) assert.equal(message, "- package-1\n- package-2\n- package-3\n- package-4");
-        if (calls === 3) assert.equal(message, "");
         calls++;
       });
 
@@ -231,9 +217,7 @@ describe("UpdatedCommand", () => {
       let calls = 0;
       stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
-        if (calls === 1) assert.equal(message, "");
         if (calls === 2) assert.equal(message, "- package-2\n- package-3\n- package-4");
-        if (calls === 3) assert.equal(message, "");
         calls++;
       });
 
@@ -262,9 +246,7 @@ describe("UpdatedCommand", () => {
       let calls = 0;
       stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
-        if (calls === 1) assert.equal(message, "");
         if (calls === 2) assert.equal(message, "- package-3\n- package-4");
-        if (calls === 3) assert.equal(message, "");
         calls++;
       });
 
