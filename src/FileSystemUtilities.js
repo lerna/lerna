@@ -81,15 +81,18 @@ export default class FileSystemUtilities {
   @logger.logifySync
   static isSymlink(path) {
     const lstat = fs.lstatSync(path);
-    const isSymlink = lstat && lstat.isSymbolicLink()
+    let isSymlink = lstat && lstat.isSymbolicLink()
       ? fs.readlinkSync(path)
       : false;
-    if (process.platform === "win32" && lstat && lstat.isFile() && !isSymlink) {
-      try {
-        return resolve(dirname(path), readCmdShim.sync(path));
-      } catch (e) {
-        return false;
+    if (process.platform === "win32" && lstat) {
+      if (lstat.isFile() && !isSymlink) {
+        try {
+          return resolve(dirname(path), readCmdShim.sync(path));
+        } catch (e) {
+          return false;
+        }
       }
+      isSymlink = isSymlink && resolve(isSymlink);
     }
     return isSymlink;
   }
