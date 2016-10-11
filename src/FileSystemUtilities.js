@@ -14,47 +14,47 @@ function ensureEndsWithNewLine(string) {
 }
 
 export default class FileSystemUtilities {
-  @logger.logifySync
+  @logger.logifySync()
   static mkdirSync(filePath) {
     fs.mkdirSync(filePath);
   }
 
-  @logger.logifyAsync
+  @logger.logifyAsync()
   static mkdirp(filePath, callback) {
     mkdirp(filePath, callback);
   }
 
-  @logger.logifySync
+  @logger.logifySync()
   static readdirSync(filePath) {
     return fs.readdirSync(filePath);
   }
 
-  @logger.logifySync
+  @logger.logifySync()
   static existsSync(filePath) {
     return pathExists.sync(filePath);
   }
 
-  @logger.logifyAsync
+  @logger.logifyAsync()
   static writeFile(filePath, fileContents, callback) {
     fs.writeFile(filePath, ensureEndsWithNewLine(fileContents), callback);
   }
 
-  @logger.logifySync
+  @logger.logifySync()
   static writeFileSync(filePath, fileContents) {
     fs.writeFileSync(filePath, ensureEndsWithNewLine(fileContents));
   }
 
-  @logger.logifySync
+  @logger.logifySync()
   static readFileSync(filePath) {
     return fs.readFileSync(filePath, "utf-8").toString().trim();
   }
 
-  @logger.logifyAsync
+  @logger.logifyAsync()
   static rimraf(filePath, callback) {
     rimraf(filePath, callback);
   }
 
-  @logger.logifyAsync
+  @logger.logifyAsync()
   static symlink(src, dest, type, callback) {
     if (type === "exec") {
       if (process.platform === "win32") {
@@ -73,12 +73,12 @@ export default class FileSystemUtilities {
     });
   }
 
-  @logger.logifySync
+  @logger.logifySync()
   static unlinkSync(filePath) {
     fs.unlinkSync(filePath);
   }
 
-  @logger.logifySync
+  @logger.logifySync()
   static isSymlink(path) {
     const lstat = fs.lstatSync(path);
     const isSymlink = lstat && lstat.isSymbolicLink()
