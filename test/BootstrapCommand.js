@@ -13,7 +13,7 @@ import stub from "./_stub";
 
 import assertStubbedCalls from "./_assertStubbedCalls";
 
-const STDIO_OPT = ["ignore", "ignore", "pipe"];
+const STDIO_OPT = ["ignore", "pipe", "pipe"];
 
 describe("BootstrapCommand", () => {
 
