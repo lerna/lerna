@@ -42,6 +42,9 @@ describe("BootstrapCommand", () => {
         ]],
         [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
           { args: ["npm", ["install", "@test/package-1@^0.0.0"], { cwd: path.join(testDir, "packages", "package-4"), stdio: STDIO_OPT }] }
+        ]],
+        [ChildProcessUtilities, "spawn", {nodeCallback: true}, [
+          { args: ["npm", ["install","package-1@^1.0.0"], { cwd: path.join(testDir), stdio: STDIO_OPT }]}
         ]]
       ]);
 

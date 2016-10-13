@@ -101,6 +101,7 @@ export default class Command {
 
   runPreparations() {
     try {
+      this.mainPackage = PackageUtilities.getPackage(this.repository.rootPath, this.repository.packageJsonLocation);
       this.packages = PackageUtilities.getPackages(this.repository.packagesLocation);
       this.packageGraph = PackageUtilities.getPackageGraph(this.packages);
     } catch (err) {
