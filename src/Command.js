@@ -21,7 +21,9 @@ export default class Command {
   }
 
   run() {
-    this.logger.info("Lerna v" + this.lernaVersion);
+    if (!this.flags.quiet) {
+      this.logger.info("Lerna v" + this.lernaVersion);
+    }
 
     if (this.repository.isIndependent()) {
       this.logger.info("Independent Versioning Mode");
