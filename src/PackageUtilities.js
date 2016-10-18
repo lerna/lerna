@@ -83,4 +83,32 @@ export default class PackageUtilities {
     }
     return packages;
   }
+
+  static filterNonDependentPackages(packages, scope) {
+    const filteredGraph = PackageUtilities.getPackageGraph(packages);
+
+    let dependentPackages = [];
+    let fringe = new Set();
+    fringe.add(scope);
+
+    let dependencies;
+    while (fringe.size !== 0) {
+      let pkg = fringe.values().next().value;
+
+      dependencies = filteredGraph.get(pkg).dependencies;
+
+      dependencies.forEach((dependency) => {
+        if (!~dependentPackages.indexOf(dependency)) {
+          fringe.add(dependency);
+        }
+      });
+
+      dependentPackages.push(pkg);
+      fringe.delete(pkg);
+    }
+
+    return packages.filter((pkg) =>
+      ~dependentPackages.indexOf(pkg.name)
+    );
+  }
 }
