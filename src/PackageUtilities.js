@@ -98,7 +98,7 @@ export default class PackageUtilities {
       dependencies = filteredGraph.get(pkg).dependencies;
 
       dependencies.forEach((dependency) => {
-        if (!~dependentPackages.indexOf(dependency)) {
+        if (!~dependentPackages.indexOf(dependency) && !~fringe.indexOf(dependency)) {
           fringe.push(dependency);
         }
       });
