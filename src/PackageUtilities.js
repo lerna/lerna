@@ -88,23 +88,22 @@ export default class PackageUtilities {
     const filteredGraph = PackageUtilities.getPackageGraph(packages);
 
     let dependentPackages = [];
-    let fringe = new Set();
-    fringe.add(scope);
+    let fringe = [];
+    fringe.push(scope);
 
     let dependencies;
-    while (fringe.size !== 0) {
-      let pkg = fringe.values().next().value;
+    while (fringe.length !== 0) {
+      let pkg = fringe.shift();
 
       dependencies = filteredGraph.get(pkg).dependencies;
 
       dependencies.forEach((dependency) => {
         if (!~dependentPackages.indexOf(dependency)) {
-          fringe.add(dependency);
+          fringe.push(dependency);
         }
       });
 
       dependentPackages.push(pkg);
-      fringe.delete(pkg);
     }
 
     return packages.filter((pkg) =>
