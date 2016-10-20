@@ -63,48 +63,52 @@ class Logger {
     this._emit("");
   }
 
-  logifyAsync(target, property, descriptor) {
-    const message = target.name + "." + property;
-    const method = descriptor.value;
+  logifyAsync() {
+    return (target, property, descriptor) => {
+      const message = target.name + "." + property;
+      const method = descriptor.value;
 
-    return (...args) => {
-      const callback = args.pop();
-      const msg = this._formatMethod(message, args);
+      descriptor.value = (...args) => {
+        const callback = args.pop();
+        const msg = this._formatMethod(message, args);
 
-      this.info(msg, true);
+        this.verbose(msg);
 
-      // wrap final callback
-      args.push((error, value) => {
-        if (error) {
-          this.error(msg, true);
-        } else {
-          this.success(msg + " => " + this._formatValue(value), true);
-        }
+        // wrap final callback
+        args.push((error, value) => {
+          if (error) {
+            this.error(msg, error);
+          } else {
+            this.verbose(msg + " => " + this._formatValue(value));
+          }
 
-        callback(error, value);
-      });
+          callback(error, value);
+        });
 
-      method(...args);
+        method(...args);
+      };
     };
   }
 
-  logifySync(target, property, descriptor) {
-    const message = target.name + "." + property;
-    const method = descriptor.value;
+  logifySync() {
+    return (target, property, descriptor) => {
+      const message = target.name + "." + property;
+      const method = descriptor.value;
 
-    return (...args) => {
-      const msg = this._formatMethod(message, args);
+      descriptor.value = (...args) => {
+        const msg = this._formatMethod(message, args);
 
-      this.info(msg, true);
+        this.verbose(msg);
 
-      try {
-        const result = method(...args);
-        this.success(msg + " => " + this._formatValue(result), true);
-        return result;
-      } catch (error) {
-        this.error(msg, error, true);
-        throw error;
-      }
+        try {
+          const result = method(...args);
+          this.verbose(msg + " => " + this._formatValue(result));
+          return result;
+        } catch (error) {
+          this.error(msg, error);
+          throw error;
+        }
+      };
     };
   }
 
@@ -113,7 +117,12 @@ class Logger {
   }
 
   _formatArguments(args) {
-    return args.map(this._formatValue).join(", ");
+    const fullArgs = args.map(this._formatValue).join(", ");
+    if (fullArgs.length > 100) {
+      return fullArgs.slice(0, 100) + "...";
+    } else {
+      return fullArgs;
+    }
   }
 
   _formatValue(arg) {

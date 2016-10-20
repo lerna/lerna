@@ -3,7 +3,7 @@ import logger from "./logger";
 import escapeArgs from "command-join";
 
 export default class NpmUtilities {
-  @logger.logifyAsync
+  @logger.logifyAsync()
   static installInDir(directory, dependencies, callback) {
     let args = ["install"];
 
@@ -19,32 +19,32 @@ export default class NpmUtilities {
     ChildProcessUtilities.spawn("npm", args, opts, callback);
   }
 
-  @logger.logifySync
+  @logger.logifySync()
   static addDistTag(packageName, version, tag) {
     ChildProcessUtilities.execSync(`npm dist-tag add ${packageName}@${version} ${tag}`);
   }
 
-  @logger.logifySync
+  @logger.logifySync()
   static removeDistTag(packageName, tag) {
     ChildProcessUtilities.execSync(`npm dist-tag rm ${packageName} ${tag}`);
   }
 
-  @logger.logifySync
+  @logger.logifySync()
   static checkDistTag(packageName, tag) {
     return ChildProcessUtilities.execSync(`npm dist-tag ls ${packageName}`).indexOf(tag) >= 0;
   }
 
-  @logger.logifySync
+  @logger.logifyAsync()
   static execInDir(command, args, directory, callback) {
     ChildProcessUtilities.exec(`npm ${command} ${escapeArgs(args)}`, { cwd: directory, env: process.env }, callback);
   }
 
-  @logger.logifyAsync
+  @logger.logifyAsync()
   static runScriptInDir(script, args, directory, callback) {
     NpmUtilities.execInDir(`run ${script}`, args, directory, callback);
   }
 
-  @logger.logifyAsync
+  @logger.logifyAsync()
   static publishTaggedInDir(tag, directory, callback) {
     ChildProcessUtilities.exec("cd " + escapeArgs(directory) + " && npm publish --tag " + tag, null, callback);
   }
