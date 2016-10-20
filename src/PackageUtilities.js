@@ -96,7 +96,7 @@ export default class PackageUtilities {
       dependencies = packageGraph.get(pkg).dependencies;
 
       dependencies.forEach((dependency) => {
-        if (!~dependentPackages.indexOf(dependency) && !~fringe.indexOf(dependency)) {
+        if (dependentPackages.indexOf(dependency) < 0 && fringe.indexOf(dependency) < 0) {
           fringe.push(dependency);
         }
       });
@@ -105,7 +105,7 @@ export default class PackageUtilities {
     }
 
     return packages.filter((pkg) =>
-      ~dependentPackages.indexOf(pkg.name)
+      dependentPackages.indexOf(pkg.name) >= 0
     );
   }
 }
