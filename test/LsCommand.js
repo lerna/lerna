@@ -25,9 +25,7 @@ describe("LsCommand", () => {
   });
 
   it("should list local packages in package-1's dependency tree", (done) => {
-    const lsCommand = new LsCommand([], {
-      scope: "package-1"
-    });
+    const lsCommand = new LsCommand(["package-1"], {});
 
     lsCommand.runValidations();
     lsCommand.runPreparations();
@@ -40,9 +38,7 @@ describe("LsCommand", () => {
   });
 
   it("should list local packages in package-3's dependency tree", (done) => {
-    const lsCommand = new LsCommand([], {
-      scope: "package-3"
-    });
+    const lsCommand = new LsCommand(["package-3"], {});
 
     lsCommand.runValidations();
     lsCommand.runPreparations();
@@ -55,9 +51,7 @@ describe("LsCommand", () => {
   });
 
   it("should list local packages in package-4's dependency tree", (done) => {
-    const lsCommand = new LsCommand([], {
-      scope: "package-4"
-    });
+    const lsCommand = new LsCommand(["package-4"], {});
 
     lsCommand.runValidations();
     lsCommand.runPreparations();

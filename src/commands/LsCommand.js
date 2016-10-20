@@ -3,10 +3,15 @@ import PackageUtilities from "../PackageUtilities";
 
 export default class LsCommand extends Command {
   initialize(callback) {
+    if (this.input.length) {
+      const inputPackage = this.input[0];
+      if (!this.packageGraph.get(inputPackage)) {
+        callback(new Error(`The package ${inputPackage} does not exist`));
+        return;
+      }
 
-    if (this.flags.scope) {
       try {
-        this.packages = PackageUtilities.filterNonDependentPackages(this.packages, this.flags.scope);
+        this.packages = PackageUtilities.filterNonDependentPackages(this.packages, this.packageGraph, inputPackage);
       } catch (err) {
         callback(err);
         return;

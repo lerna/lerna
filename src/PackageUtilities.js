@@ -84,9 +84,7 @@ export default class PackageUtilities {
     return packages;
   }
 
-  static filterNonDependentPackages(packages, scope) {
-    const filteredGraph = PackageUtilities.getPackageGraph(packages);
-
+  static filterNonDependentPackages(packages, packageGraph, scope) {
     let dependentPackages = [];
     let fringe = [];
     fringe.push(scope);
@@ -95,7 +93,7 @@ export default class PackageUtilities {
     while (fringe.length !== 0) {
       let pkg = fringe.shift();
 
-      dependencies = filteredGraph.get(pkg).dependencies;
+      dependencies = packageGraph.get(pkg).dependencies;
 
       dependencies.forEach((dependency) => {
         if (!~dependentPackages.indexOf(dependency) && !~fringe.indexOf(dependency)) {
