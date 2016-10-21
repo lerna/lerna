@@ -100,8 +100,8 @@ export default class Command {
   }
 
   runPreparations() {
-    const scope = this.flags.scope || this.configFlags.scope;
-    const ignore = this.flags.ignore || this.configFlags.ignore;
+    const scope = this.flags.scope || (this.configFlags && this.configFlags.scope);
+    const ignore = this.flags.ignore || (this.configFlags && this.configFlags.ignore);
 
     if (scope) {
       this.logger.info(`Scoping to packages that match '${scope}'`);
