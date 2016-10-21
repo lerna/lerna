@@ -163,6 +163,71 @@ describe("BootstrapCommand", () => {
         }
       }));
     });
+
+    it("should only bootstrap scoped packages", (done) => {
+      const bootstrapCommand = new BootstrapCommand([], {
+        scope: "package-@(3|4)"
+      });
+
+      bootstrapCommand.runValidations();
+      bootstrapCommand.runPreparations();
+
+      assertStubbedCalls([
+        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
+          { args: ["npm", ["install", "foo@0.1.12"], { cwd: path.join(testDir, "packages" ,"package-3"), stdio: STDIO_OPT }] }
+        ]],
+        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
+          { args: ["npm", ["install", "@test/package-1@^0.0.0"], { cwd: path.join(testDir, "packages", "package-4"), stdio: STDIO_OPT }] }
+        ]]
+      ]);
+
+      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done(err);
+
+        try {
+          assert.ok(!pathExists.sync(path.join(testDir, "asini-debug.log")), "asini-debug.log should not exist");
+          // package-3 package dependencies are symlinked
+          assert.equal(
+            fs.readlinkSync(path.join(testDir, "packages", "package-3", "node_modules", "@test", "package-1")),
+            path.join(testDir, "packages", "package-1"),
+            "package-1 should be symlinked to package-3"
+          );
+          assert.equal(
+            fs.readlinkSync(path.join(testDir, "packages", "package-3", "node_modules", "package-2")),
+            path.join(testDir, "packages", "package-2"),
+            "package-2 should be symlinked to package-3"
+          );
+          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-3", "node_modules", "package-4")));
+          // package-4 package dependencies are symlinked
+          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", "package-1")));
+          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", "package-2")));
+          assert.equal(
+            fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", "package-3")),
+            path.join(testDir, "packages", "package-3"),
+            "package-3 should be symlinked to package-4"
+          );
+          // package binaries are symlinked
+          assert.equal(
+            fs.readlinkSync(path.join(testDir, "packages", "package-3", "node_modules", ".bin", "package-2")),
+            path.join(testDir, "packages", "package-2", "cli.js"),
+            "package-2 binary should be symlinked in package-3"
+          );
+          assert.equal(
+            fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", ".bin", "package3cli1")),
+            path.join(testDir, "packages", "package-3", "cli1.js"),
+            "package-3 binary should be symlinked in package-4"
+          );
+          assert.equal(
+            fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", ".bin", "package3cli2")),
+            path.join(testDir, "packages", "package-3", "cli2.js"),
+            "package-3 binary should be symlinked in package-4"
+          );
+          done();
+        } catch (err) {
+          done(err);
+        }
+      }));
+    });
   });
 
   describe("external dependencies that haven't been installed", () => {

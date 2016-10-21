@@ -36,23 +36,29 @@ describe("RunCommand", () => {
     runCommand.runCommand(exitWithCode(0, done));
   });
 
-  it("should run a command for a given scope", (done) => {
-    const runCommand = new RunCommand(["my-script"], {scope: "package-1"});
+  // Both of these commands should result in the same outcome
+  const filters = [
+    { test: "should run a command for a given scope", flag: "scope", flagValue: "package-1"},
+    { test: "should not run a command for ignored packages", flag: "ignore", flagValue: "package-@(2|3|4)"},
+  ];
+  filters.forEach((filter) => {
+    it(filter.test, (done) => {
+      const runCommand = new RunCommand(["my-script"], {[filter.flag]: filter.flagValue});
 
-    runCommand.runValidations();
-    runCommand.runPreparations();
+      runCommand.runValidations();
+      runCommand.runPreparations();
 
-    const ranInPackages = [];
-    stub(ChildProcessUtilities, "exec", (command, options, callback) => {
-      ranInPackages.push(options.cwd.substr(path.join(testDir, "packages/").length));
-      callback();
+      const ranInPackages = [];
+      stub(ChildProcessUtilities, "exec", (command, options, callback) => {
+        ranInPackages.push(options.cwd.substr(path.join(testDir, "packages/").length));
+        callback();
+      });
+
+      runCommand.runCommand(exitWithCode(0, () => {
+        assert.deepEqual(ranInPackages, ["package-1"]);
+        done();
+      }));
     });
-
-    runCommand.runCommand(exitWithCode(0, () => {
-      assert.deepEqual(ranInPackages, ["package-1"]);
-      done();
-    }));
-
   });
 
   it("should wait for children to exit", (done) => {
