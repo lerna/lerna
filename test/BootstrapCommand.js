@@ -208,17 +208,17 @@ describe("BootstrapCommand", () => {
           );
           // package binaries are symlinked
           assert.equal(
-            normalize(fs.readlinkSync(path.join(testDir, "packages", "package-3", "node_modules", ".bin", "package-2"))),
+            normalize(FileSystemUtilities.isSymlink(path.join(testDir, "packages", "package-3", "node_modules", ".bin", "package-2"))),
             normalize(path.join(testDir, "packages", "package-2", "cli.js")),
             "package-2 binary should be symlinked in package-3"
           );
           assert.equal(
-            normalize(fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", ".bin", "package3cli1"))),
+            normalize(FileSystemUtilities.isSymlink(path.join(testDir, "packages", "package-4", "node_modules", ".bin", "package3cli1"))),
             normalize(path.join(testDir, "packages", "package-3", "cli1.js")),
             "package-3 binary should be symlinked in package-4"
           );
           assert.equal(
-            normalize(fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", ".bin", "package3cli2"))),
+            normalize(FileSystemUtilities.isSymlink(path.join(testDir, "packages", "package-4", "node_modules", ".bin", "package3cli2"))),
             normalize(path.join(testDir, "packages", "package-3", "cli2.js")),
             "package-3 binary should be symlinked in package-4"
           );
