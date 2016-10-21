@@ -435,6 +435,7 @@ Running `lerna` without arguments will show all commands/options.
 - `bootstrapConfig.scope`: an glob that restricts which packages will be bootstrapped when running the `lerna bootstrap` command.
 - `packages`: Array of globs to use as package locations.
 
+
 ### Common `devDependencies`
 
 Most `devDependencies` can be pulled up to the root of a Lerna repo.
