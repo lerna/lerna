@@ -94,13 +94,8 @@ export default class Command {
   }
 
   runPreparations() {
-<<<<<<< 29077088f5b97eda6c8b12fab53f6ee8c4f7554e
     const scope = this.flags.scope || (this.configFlags && this.configFlags.scope);
     const ignore = this.flags.ignore || (this.configFlags && this.configFlags.ignore);
-=======
-    const scope = this.flags.scope || this.configFlags.scope;
-    const ignore = this.flags.ignore || this.configFlags.ignore;
->>>>>>> Refactoring to allow scope and ignore flags to work accross with bootstrap, exec, run, clean and ls commands
 
     if (scope) {
       this.logger.info(`Scoping to packages that match '${scope}'`);
@@ -109,15 +104,9 @@ export default class Command {
       this.logger.info(`Ignoring packages that match '${ignore}'`);
     }
     try {
-<<<<<<< 29077088f5b97eda6c8b12fab53f6ee8c4f7554e
       this.repository.buildPackageGraph();
       this.packages = this.repository.packages;
       this.filteredPackages = PackageUtilities.filterPackages(this.packages, {scope, ignore});
-=======
-      this.repository.buildPackageGraph({ignore, scope});
-      this.packages = this.repository.packages;
-      this.filteredPackages = this.repository.filteredPackages;
->>>>>>> Refactoring to allow scope and ignore flags to work accross with bootstrap, exec, run, clean and ls commands
       this.packageGraph = this.repository.packageGraph;
     } catch (err) {
       this.logger.error("Errored while collecting packages and package graph", err);
