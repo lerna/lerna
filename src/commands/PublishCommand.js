@@ -11,6 +11,8 @@ import { EOL } from "os";
 
 export default class PublishCommand extends Command {
   initialize(callback) {
+    this.configFlags = this.repository.publishConfig;
+
     if (this.flags.canary) {
       this.logger.info("Publishing canary build");
     }
@@ -24,7 +26,7 @@ export default class PublishCommand extends Command {
       this.packages,
       this.packageGraph,
       this.flags,
-      this.repository.publishConfig
+      this.configFlags
     );
 
     try {

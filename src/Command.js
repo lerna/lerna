@@ -100,9 +100,20 @@ export default class Command {
   }
 
   runPreparations() {
+    const scope = this.flags.scope || this.configFlags.scope;
+    const ignore = this.flags.ignore || this.configFlags.ignore;
+
+    if (scope) {
+      this.logger.info(`Scoping to packages that match '${scope}'`);
+    }
+    if (ignore) {
+      this.logger.info(`Ignoring packages that match '${ignore}'`);
+    }
     try {
-      this.packages = PackageUtilities.getPackages(this.repository.packagesLocation);
-      this.packageGraph = PackageUtilities.getPackageGraph(this.packages);
+      this.repository.buildPackageGraph({ignore, scope});
+      this.packages = this.repository.packages;
+      this.filteredPackages = this.repository.filteredPackages;
+      this.packageGraph = this.repository.packageGraph;
     } catch (err) {
       this.logger.error("Errored while collecting packages and package graph", err);
       this._complete(null, 1);

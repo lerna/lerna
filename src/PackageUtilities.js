@@ -56,7 +56,28 @@ export default class PackageUtilities {
   }
 
   /**
-  * Filters a given set of packages and returns the one matching the given glob
+  * Filters a given set of packages and returns all packages that match the scope glob
+  * and do not match the ignore glob
+  *
+  * @param {!Array.<Package>} packages The packages to filter
+  * @param {Object} filters The scope and ignore filters.
+  * @param {String} filters.scope glob The glob to match the package name against
+  * @param {String} filters.ignore glob The glob to filter the package name against
+  * @return {Array.<Package>} The packages with a name matching the glob
+  */
+  static getFilteredPackages(packages, {scope, ignore}) {
+    packages = packages.slice();
+    if (scope) {
+      packages = PackageUtilities.filterPackages(packages, scope);
+    }
+    if (ignore) {
+      packages = PackageUtilities.filterPackages(packages, ignore, true);
+    }
+    return packages;
+  }
+
+  /**
+  * Filters a given set of packages and returns all packages matching the given glob
   *
   * @param {!Array.<Package>} packages The packages to filter
   * @param {String} glob The glob to match the package name against

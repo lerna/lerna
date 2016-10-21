@@ -35,8 +35,8 @@ describe("ExecCommand", () => {
       assert.equal(error, null);
     });
 
-    assert.equal(execCommand.packages.length, 1);
-    assert.equal(execCommand.packages[0].name, "package-2");
+    assert.equal(execCommand.filteredPackages.length, 1);
+    assert.equal(execCommand.filteredPackages[0].name, "package-2");
 
     done();
   });
