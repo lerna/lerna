@@ -119,4 +119,39 @@ describe("PackageUtilities", () => {
     });
   });
 
+  describe(".getFilteredPackages()", () => {
+    const fixture = path.join(__dirname, "fixtures/PackageUtilities/filtering/packages");
+    const packages = PackageUtilities.getPackages(fixture);
+
+    it("should filter --scoped packages", () => {
+      const flags = { scope: "package-a-*"};
+      assert.deepEqual(
+        PackageUtilities.getFilteredPackages(packages, flags).map((pkg) => pkg.name),
+        ["package-a-1", "package-a-2"]
+      );
+    });
+
+    it("should filter --ignored packages", () => {
+      const flags = { ignore: "package-@(2|3|4)"};
+      assert.deepEqual(
+        PackageUtilities.getFilteredPackages(packages, flags).map((pkg) => pkg.name),
+        ["package-a-1", "package-a-2"]
+      );
+    });
+
+    it("should filter --ignored  and --scoped packages", () => {
+      const flags = { scope: "package-a-*", ignore: "package-a-2"};
+      assert.deepEqual(
+        PackageUtilities.getFilteredPackages(packages, flags).map((pkg) => pkg.name),
+        ["package-a-1"]
+      );
+    });
+
+    it("should throw when --scoped and --ignored filters exclud all packages", () => {
+      const flags = { scope: "package-a-*", ignore: "package-a-@(1|2)"};
+      assert.throws(() => {
+        PackageUtilities.getFilteredPackages(packages, flags);
+      });
+    });
+  });
 });
