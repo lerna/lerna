@@ -1,6 +1,5 @@
 import ChildProcessUtilities from "../ChildProcessUtilities";
 import Command from "../Command";
-import PackageUtilities from "../PackageUtilities";
 import async from "async";
 
 export default class ExecCommand extends Command {
