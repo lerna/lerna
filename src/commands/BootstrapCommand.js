@@ -44,7 +44,6 @@ export default class BootstrapCommand extends Command {
     ], callback);
   }
 
-
   runScriptInPackages(scriptName, callback) {
     const packages = this.filteredPackages.slice();
     const batches = PackageUtilities.topologicallyBatchPackages(packages, this.logger);
