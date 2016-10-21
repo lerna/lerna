@@ -161,7 +161,7 @@ When run, this command will:
 2. Symlink together all Lerna `packages` that are dependencies of each other.
 3. `npm prepublish` all bootstrapped packages.
 
-`lerna bootstrap` respects the `--ignore` flag (see [Flags](#flags)).
+`lerna bootstrap` respects the `--ignore` and `--scope` flags (see [Flags](#flags)).
 
 #### How `bootstrap` works
 
@@ -192,7 +192,7 @@ Let's use `babel` as an example.
 
 **Note:** Circular dependencies result in circular symlinks which *may* impact your editor/IDE.
 
-[Webstorm](https://www.jetbrains.com/webstorm/) locks up when circular symlinks are present. To prevent this, add `node_modules` to the list of ignored files and folders in `Preferences | Editor | File Types | Ignored files and folders`.  
+[Webstorm](https://www.jetbrains.com/webstorm/) locks up when circular symlinks are present. To prevent this, add `node_modules` to the list of ignored files and folders in `Preferences | Editor | File Types | Ignored files and folders`.
 
 ### publish
 
@@ -325,6 +325,8 @@ $ lerna clean
 
 Remove the `node_modules` directory from all packages.
 
+`lerna clean` respects the `--ignore` and `--scope` flags (see [Flags](#flags)).
+
 ### diff
 
 ```sh
@@ -347,6 +349,8 @@ $ lerna ls
 
 List all of the public packages in the current Lerna repo.
 
+`lerna ls` respects the `--ignore` and `--scope` flags (see [Flags](#flags)).
+
 ### run
 
 ```sh
@@ -357,9 +361,7 @@ $ lerna run build
 
 Run an [npm script](https://docs.npmjs.com/misc/scripts) in each package that contains that script.
 
-`lerna run` respects the `--concurrency` flag (see [Flags](#flags)).
-
-`lerna run` respects the `--scope` flag (see [Flags](#flags)).
+`lerna run` respects the `--concurrency`, `--scope` and `ignore` flags (see [Flags](#flags)).
 
 ```sh
 $ lerna run --scope my-component test
@@ -375,9 +377,7 @@ $ lerna exec -- protractor conf.js
 
 Run an arbitrary command in each package.
 
-`lerna exec` respects the `--concurrency` flag (see [Flags](#flags)).
-
-`lerna exec` respects the `--scope` flag (see [Flags](#flags)).
+`lerna exec` respects the `--concurrency`, `--scope` and `--ignore` flags (see [Flags](#flags)).
 
 ```sh
 $ lerna exec --scope my-component -- ls -la
@@ -425,6 +425,9 @@ Running `lerna` without arguments will show all commands/options.
       "ignored-file",
       "*.md"
     ]
+  },
+  "bootstrapConfig": {
+    "ignore": "component-*"
   }
 }
 ```
@@ -432,6 +435,8 @@ Running `lerna` without arguments will show all commands/options.
 - `lerna`: the current version of Lerna being used.
 - `version`: the current version of the repository.
 - `publishConfig.ignore`: an array of globs that won't be included in `lerna updated/publish`. Use this to prevent publishing a new version unnecessarily for changes, such as fixing a `README.md` typo.
+- `bootstrapConfig.ignore`: an glob that won't be bootstrapped when running the `lerna bootstrap` command.
+- `bootstrapConfig.scope`: an glob that restricts which packages will be bootstrapped when running the `lerna bootstrap` command.
 
 ### Common `devDependencies`
 
@@ -487,15 +492,13 @@ $ lerna run --scope toolbar-* test
 
 #### --ignore [glob]
 
-Excludes a subset of packages when running the `bootstrap` command.
+Excludes a subset of packages when running a command.
 
 ```sh
 $ lerna bootstrap --ignore component-*
 ```
 
-The `ignore` flag, when used with the `bootstrap` command, can also be set in `lerna.json` under the `bootstrapConfig` key. The command-line flag will take precendence over this option. This flag is supported in `bootstrap` and `exec` commands.
-
-**Note**: If both `scope` and `ignore` are provided to `exec` command, `scope` takes precedence.
+The `ignore` flag, when used with the `bootstrap` command, can also be set in `lerna.json` under the `bootstrapConfig` key. The command-line flag will take precendence over this option.
 
 **Example**
 
