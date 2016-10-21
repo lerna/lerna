@@ -25,7 +25,7 @@ export default class PublishCommand extends Command {
     const updatedPackagesCollector = new UpdatedPackagesCollector(
       this.repository,
       this.flags,
-      this.configFlags
+      this.repository.publishConfig
     );
 
     try {
