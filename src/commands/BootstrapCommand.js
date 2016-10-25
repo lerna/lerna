@@ -17,7 +17,7 @@ export default class BootstrapCommand extends Command {
       if (err) {
         callback(err);
       } else {
-        this.logger.success(`Successfully bootstrapped ${this.filteredPackages.length} packages.`);
+        this.logger.success(`Successfully bootstrapped ${this.packagesToBootstrap.length} packages.`);
         callback(null, true);
       }
     });
@@ -28,8 +28,12 @@ export default class BootstrapCommand extends Command {
    * @param {Function} callback
    */
   bootstrapPackages(callback) {
-    this.filteredGraph = PackageUtilities.getPackageGraph(this.filteredPackages);
-    this.logger.info(`Bootstrapping ${this.filteredPackages.length} packages`);
+    this.packagesToBootstrap = this.filteredPackages;
+    if (this.flags.includeDeps) {
+      this.packagesToBootstrap = PackageUtilities.addDependencies(this.filteredPackages, this.packageGraph);
+    }
+    this.filteredGraph = PackageUtilities.getPackageGraph(this.packagesToBootstrap);
+    this.logger.info(`Bootstrapping ${this.packagesToBootstrap.length} packages`);
     async.series([
       // preinstall bootstrapped packages
       (cb) => this.preinstallPackages(cb),
@@ -135,9 +139,9 @@ export default class BootstrapCommand extends Command {
    */
   installExternalDependencies(callback) {
     this.logger.info("Installing external dependencies");
-    this.progressBar.init(this.filteredPackages.length);
+    this.progressBar.init(this.packagesToBootstrap.length);
     const actions = [];
-    this.filteredPackages.forEach((pkg) => {
+    this.packagesToBootstrap.forEach((pkg) => {
       const allDependencies = pkg.allDependencies;
       const externalPackages = Object.keys(allDependencies)
         .filter((dependency) => {
@@ -168,9 +172,9 @@ export default class BootstrapCommand extends Command {
    */
   symlinkPackages(callback) {
     this.logger.info("Symlinking packages and binaries");
-    this.progressBar.init(this.filteredPackages.length);
+    this.progressBar.init(this.packagesToBootstrap.length);
     const actions = [];
-    this.filteredPackages.forEach((filteredPackage) => {
+    this.packagesToBootstrap.forEach((filteredPackage) => {
       // actions to run for this package
       const packageActions = [];
       Object.keys(filteredPackage.allDependencies)
