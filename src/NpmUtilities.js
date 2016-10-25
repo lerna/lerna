@@ -1,4 +1,6 @@
 import ChildProcessUtilities from "./ChildProcessUtilities";
+import FileSystemUtilities from "./FileSystemUtilities";
+import onExit from "signal-exit";
 import logger from "./logger";
 import escapeArgs from "command-join";
 import path from "path";
@@ -11,18 +13,62 @@ export default class NpmUtilities {
     // Nothing to do if we weren't given any deps.
     if (!(dependencies && dependencies.length)) return callback();
 
-    let args = ["install"];
-
-    if (dependencies) {
-      args = args.concat(dependencies);
-    }
+    const args = ["install"];
 
     const opts = {
       cwd: directory,
       stdio: ["ignore", "pipe", "pipe"],
     };
 
-    ChildProcessUtilities.spawn("npm", args, opts, callback);
+    const packageJson = path.join(directory, "package.json");
+    const packageJsonBkp = packageJson + ".lerna_backup";
+
+    FileSystemUtilities.rename(packageJson, packageJsonBkp, (err) => {
+      if (err) return callback(err);
+
+      const cleanup = () => {
+
+        // Need to do this one synchronously because we might be doing it on exit.
+        FileSystemUtilities.renameSync(packageJsonBkp, packageJson);
+      };
+
+      // If we die we need to be sure to put things back the way we found them.
+      const unregister = onExit(cleanup);
+
+      // Construct a basic fake package.json with just the deps we need to install.
+      const tempJson = JSON.stringify({
+        dependencies: dependencies.reduce((deps, dep) => {
+          const [pkg, version] = NpmUtilities.splitVersion(dep);
+          deps[pkg] = version || "*";
+          return deps;
+        }, {})
+      });
+
+      // Write out our temporary cooked up package.json and then install.
+      FileSystemUtilities.writeFile(packageJson, tempJson, (err) => {
+
+        // We have a few housekeeping tasks to take care of whether we succeed or fail.
+        const done = (err) => {
+          cleanup();
+          unregister();
+          callback(err);
+        };
+
+        if (err) {
+          return done(err);
+        } else {
+          ChildProcessUtilities.spawn("npm", args, opts, done);
+        }
+      });
+    });
+  }
+
+  // Take a dep like "foo@^1.0.0".
+  // Return a tuple like ["foo", "^1.0.0"].
+  // Handles scoped packages.
+  // Returns undefined for version if none specified.
+  static splitVersion(dep) {
+    return dep.match(/^(@?[^@]+)(?:@(.+))?/).slice(1, 3);
   }
 
   @logger.logifySync()

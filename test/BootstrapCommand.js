@@ -63,25 +63,67 @@ describe("BootstrapCommand", () => {
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
 
+      const wantPackage = {
+        [path.join(testDir, "package.json")]: {
+          dependencies: { "foo": "^1.0.0", "@test/package-1": "^0.0.0" }
+        },
+        [path.join(testDir, "packages" ,"package-3", "package.json")]: {
+          dependencies: { "foo": "0.1.12" }
+        },
+      };
+      const gotPackage = {};
+      stub(FileSystemUtilities, "writeFile", (fn, json, callback) => {
+        gotPackage[fn] = JSON.parse(json);
+        callback();
+      });
+
+      stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
+        callback();
+      });
+
+      const wantRimraf = {
+        [path.join(testDir, "packages" ,"package-1", "node_modules", "foo")]: true,
+        [path.join(testDir, "packages" ,"package-2", "node_modules", "foo")]: true,
+        [path.join(testDir, "packages" ,"package-4", "node_modules", "@test", "package-1")]: true,
+      };
+      const gotRimraf = {};
+      stub(FileSystemUtilities, "rimraf", (path, callback) => {
+        gotRimraf[path] = true;
+        callback();
+      });
+
       assertStubbedCalls([
-        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install", "foo@^1.0.0", "@test/package-1@^0.0.0"], { cwd: testDir, stdio: STDIO_OPT }] }
+        [FileSystemUtilities, "rename", { nodeCallback: true }, [
+          { args: [
+            path.join(testDir, "package.json"),
+            path.join(testDir, "package.json.lerna_backup"),
+          ] }
         ]],
-        [FileSystemUtilities, "rimraf", { nodeCallback: true }, [
-          { args: [path.join(testDir, "packages" ,"package-1", "node_modules", "foo")] }
+        [FileSystemUtilities, "renameSync", { }, [
+          { args: [
+            path.join(testDir, "package.json.lerna_backup"),
+            path.join(testDir, "package.json"),
+          ] }
         ]],
-        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install", "foo@0.1.12"], { cwd: path.join(testDir, "packages" ,"package-3"), stdio: STDIO_OPT }] }
+        [FileSystemUtilities, "rename", { nodeCallback: true }, [
+          { args: [
+            path.join(testDir, "packages" ,"package-3", "package.json"),
+            path.join(testDir, "packages" ,"package-3", "package.json.lerna_backup"),
+          ] }
         ]],
-        [FileSystemUtilities, "rimraf", { nodeCallback: true }, [
-          { args: [path.join(testDir, "packages" ,"package-2", "node_modules", "foo")] }
-        ]],
-        [FileSystemUtilities, "rimraf", { nodeCallback: true }, [
-          { args: [path.join(testDir, "packages" ,"package-4", "node_modules", "@test", "package-1")] }
+        [FileSystemUtilities, "renameSync", { }, [
+          { args: [
+            path.join(testDir, "packages" ,"package-3", "package.json.lerna_backup"),
+            path.join(testDir, "packages" ,"package-3", "package.json"),
+          ] }
         ]],
       ]);
 
-      bootstrapCommand.runCommand(exitWithCode(0, done));
+      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
+        assert.deepEqual(gotPackage, wantPackage, "Installed the right deps");
+        assert.deepEqual(gotRimraf, wantRimraf, "Removed the right stuff");
+        done(err);
+      }));
     });
 
     it("should not hoist when disallowed", (done) => {
@@ -90,25 +132,50 @@ describe("BootstrapCommand", () => {
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
 
+      const wantPackage = {
+        [path.join(testDir, "package.json")]: {
+          dependencies: { "foo": "^1.0.0" }
+        },
+        [path.join(testDir, "packages" ,"package-3", "package.json")]: {
+          dependencies: { "foo": "0.1.12" }
+        },
+        [path.join(testDir, "packages" ,"package-4", "package.json")]: {
+          dependencies: { "@test/package-1": "^0.0.0" }
+        },
+      };
+      const gotPackage = {};
+      stub(FileSystemUtilities, "writeFile", (fn, json, callback) => {
+        gotPackage[fn] = JSON.parse(json);
+        callback();
+      });
+
+      const wantRimraf = {
+        [path.join(testDir, "packages" ,"package-1", "node_modules", "foo")]: true,
+        [path.join(testDir, "packages" ,"package-2", "node_modules", "foo")]: true,
+      };
+      const gotRimraf = {};
+      stub(FileSystemUtilities, "rimraf", (path, callback) => {
+        gotRimraf[path] = true;
+        callback();
+      });
+
       assertStubbedCalls([
         [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install", "foo@^1.0.0"], { cwd: testDir, stdio: STDIO_OPT }] }
-        ]],
-        [FileSystemUtilities, "rimraf", { nodeCallback: true }, [
-          { args: [path.join(testDir, "packages" ,"package-1", "node_modules", "foo")] }
+          { args: ["npm", ["install"], { cwd: testDir, stdio: STDIO_OPT }] }
         ]],
         [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install", "foo@0.1.12"], { cwd: path.join(testDir, "packages" ,"package-3"), stdio: STDIO_OPT }] }
+          { args: ["npm", ["install"], { cwd: path.join(testDir, "packages" ,"package-3"), stdio: STDIO_OPT }] }
         ]],
         [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install", "@test/package-1@^0.0.0"], { cwd: path.join(testDir, "packages", "package-4"), stdio: STDIO_OPT }] }
-        ]],
-        [FileSystemUtilities, "rimraf", { nodeCallback: true }, [
-          { args: [path.join(testDir, "packages" ,"package-2", "node_modules", "foo")] }
+          { args: ["npm", ["install"], { cwd: path.join(testDir, "packages", "package-4"), stdio: STDIO_OPT }] }
         ]],
       ]);
 
-      bootstrapCommand.runCommand(exitWithCode(0, done));
+      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
+        assert.deepEqual(gotPackage, wantPackage, "Installed the right deps");
+        assert.deepEqual(gotRimraf, wantRimraf, "Removed the right stuff");
+        done(err);
+      }));
     });
   });
 
@@ -126,20 +193,9 @@ describe("BootstrapCommand", () => {
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
 
-      assertStubbedCalls([
-        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install", "foo@^1.0.0"], { cwd: path.join(testDir, "packages", "package-1"), stdio: STDIO_OPT }] }
-        ]],
-        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install", "foo@^1.0.0"], { cwd: path.join(testDir, "packages", "package-2"), stdio: STDIO_OPT }] }
-        ]],
-        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install", "foo@0.1.12"], { cwd: path.join(testDir, "packages" ,"package-3"), stdio: STDIO_OPT }] }
-        ]],
-        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install", "@test/package-1@^0.0.0"], { cwd: path.join(testDir, "packages", "package-4"), stdio: STDIO_OPT }] }
-        ]]
-      ]);
+      stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
+        callback();
+      });
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done(err);
@@ -209,12 +265,18 @@ describe("BootstrapCommand", () => {
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
 
+      const installed = [0,0,0];
+      stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
+        installed[+options.cwd.match(/package-(\d)$/)[1]]++;
+        callback();
+      });
+
       assertStubbedCalls([
         [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install", "foo@^1.0.0"], { cwd: path.join(testDir, "packages", "package-1"), stdio: STDIO_OPT }] }
+          { args: ["npm", ["install"], { cwd: path.join(testDir, "packages", "package-1"), stdio: STDIO_OPT }] }
         ]],
         [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install", "foo@^1.0.0"], { cwd: path.join(testDir, "packages", "package-2"), stdio: STDIO_OPT }] }
+          { args: ["npm", ["install"], { cwd: path.join(testDir, "packages", "package-2"), stdio: STDIO_OPT }] }
         ]]
       ]);
 
@@ -223,6 +285,7 @@ describe("BootstrapCommand", () => {
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
+          assert.deepEqual(installed, [0,1,1], "Did all our installs");
 
           done();
         } catch (err) {
@@ -239,12 +302,18 @@ describe("BootstrapCommand", () => {
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
 
+      const installed = [0,0,0,0,0];
+      stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
+        installed[+options.cwd.match(/package-(\d)$/)[1]]++;
+        callback();
+      });
+
       assertStubbedCalls([
         [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install", "foo@0.1.12"], { cwd: path.join(testDir, "packages" ,"package-3"), stdio: STDIO_OPT }] }
+          { args: ["npm", ["install"], { cwd: path.join(testDir, "packages" ,"package-3"), stdio: STDIO_OPT }] }
         ]],
         [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install", "@test/package-1@^0.0.0"], { cwd: path.join(testDir, "packages", "package-4"), stdio: STDIO_OPT }] }
+          { args: ["npm", ["install"], { cwd: path.join(testDir, "packages", "package-4"), stdio: STDIO_OPT }] }
         ]]
       ]);
 
@@ -253,6 +322,8 @@ describe("BootstrapCommand", () => {
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "asini-debug.log")), "asini-debug.log should not exist");
+          assert.deepEqual(installed, [0,0,0,1,1], "Did all our installs");
+
           // package-3 package dependencies are symlinked
           assert.equal(
             normalize(resolveSymlink(path.join(testDir, "packages", "package-3", "node_modules", "@test", "package-1"))),
@@ -310,6 +381,18 @@ describe("BootstrapCommand", () => {
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
 
+      const want = {
+        [path.join(testDir, "packages", "package-1")]: true,
+        [path.join(testDir, "packages", "package-2")]: true,
+        [path.join(testDir,             "package-3")]: true,
+        [path.join(testDir, "packages", "package-4")]: true,
+      };
+      const got = {};
+      stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
+        got[options.cwd] = true;
+        callback();
+      });
+
       assertStubbedCalls([
         [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
           { args: ["npm", ["install", "foo@^1.0.0"], { cwd: path.join(testDir, "packages", "package-1"), stdio: STDIO_OPT }] }
@@ -330,6 +413,9 @@ describe("BootstrapCommand", () => {
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
+
+          assert.deepEqual(want, got, "Installed everywhere");
+
           // Make sure the `prepublish` script got run (index.js got created).
           assert.ok(pathExists.sync(path.join(testDir, "packages", "package-1", "index.js")));
           // package-1 should not have any packages symlinked
@@ -395,14 +481,11 @@ describe("BootstrapCommand", () => {
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
 
-      assertStubbedCalls([
-        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install", "foo@^1.0.0"], { cwd: path.join(testDir, "packages", "package-1"), stdio: STDIO_OPT }] }
-        ]],
-        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install", "foo@^1.0.0"], { cwd: path.join(testDir, "packages", "package-2"), stdio: STDIO_OPT }] }
-        ]]
-      ]);
+      const installed = [0,0,0];
+      stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
+        installed[+options.cwd.match(/package-(\d)$/)[1]]++;
+        callback();
+      });
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done(err);
@@ -427,20 +510,19 @@ describe("BootstrapCommand", () => {
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
 
-      assertStubbedCalls([
-        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install", "foo@^1.0.0"], { cwd: path.join(testDir, "packages", "package-2"), stdio: STDIO_OPT }] }
-        ]],
-        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install", "foo@^1.0.0"], { cwd: path.join(testDir, "packages", "package-1"), stdio: STDIO_OPT }] }
-        ]]
-      ]);
+      const installed = [0,0,0];
+      stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
+        installed[+options.cwd.match(/package-(\d)$/)[1]]++;
+        callback();
+      });
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
+
+          assert.deepEqual(installed, [0,1,1], "Did all our installs");
 
           // Make sure the `prepublish` script got run (index.js got created)
           assert.ok(pathExists.sync(path.join(testDir, "packages", "package-1", "index.js")));
@@ -462,14 +544,11 @@ describe("BootstrapCommand", () => {
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
 
-      assertStubbedCalls([
-        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install", "foo@^1.0.0"], { cwd: path.join(testDir, "packages", "package-2"), stdio: STDIO_OPT }] }
-        ]],
-        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install", "foo@^1.0.0"], { cwd: path.join(testDir, "packages", "package-1"), stdio: STDIO_OPT }] }
-        ]]
-      ]);
+      const installed = [0,0,0];
+      stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
+        installed[+options.cwd.match(/package-(\d)$/)[1]]++;
+        callback();
+      });
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done(err);
@@ -479,6 +558,8 @@ describe("BootstrapCommand", () => {
 
           // Make sure the `prepublish` script got run (index.js got created), even though we --ignored package-1
           assert.ok(pathExists.sync(path.join(testDir, "packages", "package-1", "index.js")));
+
+          assert.deepEqual(installed, [0,1,1], "Did all our installs");
 
           done();
         } catch (err) {
@@ -504,6 +585,14 @@ describe("BootstrapCommand", () => {
       let installed = 0;
       let spawnArgs = [];
       let spawnOptions = [];
+      const writeFns = [];
+      const writeJsons = [];
+
+      stub(FileSystemUtilities, "writeFile", (fn, json, callback) => {
+        writeFns.push(fn);
+        writeJsons.push(JSON.parse(json));
+        callback();
+      });
 
       stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
         spawnArgs.push(args);
@@ -517,14 +606,20 @@ describe("BootstrapCommand", () => {
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
-          assert.deepEqual(spawnArgs, [
-            ["install", "external@^1.0.0"],
-            ["install", "external@^2.0.0"]
-          ]);
+          assert.deepEqual(spawnArgs, [ ["install"], ["install"] ]);
           assert.deepEqual(spawnOptions, [
             { cwd: path.join(testDir, "packages", "package-1"), stdio: STDIO_OPT },
             { cwd: path.join(testDir, "packages", "package-2"), stdio: STDIO_OPT }
           ]);
+          assert.deepEqual(writeFns, [
+            path.join(testDir, "packages", "package-1", "package.json"),
+            path.join(testDir, "packages", "package-2", "package.json"),
+          ]);
+          assert.deepEqual(writeJsons, [
+            { dependencies: {external: "^1.0.0"}},
+            { dependencies: {external: "^2.0.0"}},
+          ]);
+
           assert.equal(installed, 2, "The external dependencies were installed");
 
           done();

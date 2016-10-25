@@ -39,6 +39,16 @@ export default class FileSystemUtilities {
     fs.writeFile(filePath, ensureEndsWithNewLine(fileContents), callback);
   }
 
+  @logger.logifyAsync()
+  static rename(from, to, callback) {
+    fs.rename(from, to, callback);
+  }
+
+  @logger.logifySync()
+  static renameSync(from, to) {
+    fs.renameSync(from, to);
+  }
+
   @logger.logifySync()
   static writeFileSync(filePath, fileContents) {
     fs.writeFileSync(filePath, ensureEndsWithNewLine(fileContents));
