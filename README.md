@@ -618,6 +618,30 @@ By default, all tasks execute on packages in topologically sorted order as to re
 
 Topological sorting can cause concurrency bottlenecks if there are a small number of packages with many dependents or if some packages take a disproportionately long time to execute. The `--no-sort` option disables sorting, instead executing tasks in an arbitrary order with maximum concurrency.
 
+#### --hoist [glob]
+
+Install external dependencies matching `glob` at the repo root so they're
+available to all packages.  Any binaries from these dependencies will be
+linked into dependent package `node_modules/.bin/` directories so they're
+available for npm scripts.  If no `glob` is given the default is `**` (hoist
+everything).  This option only affects the `bootstrap` command.
+
+```sh
+$ lerna bootstrap --hoist
+```
+
+Note: If packages depend on different _versions_ of an external dependency,
+the most commonly used version will be hoisted, and a warning will be emitted.
+
+#### --nohoist [glob]
+
+Do _not_ install external dependencies matching `glob` at the repo root.  This
+can be used to opt out of hoisting for certain dependencies.
+
+```sh
+$ lerna bootstrap --hoist --nohoist=babel-*
+```
+
 ### Wizard
 
 If you prefer some guidance for cli (in case you're about to start using lerna or introducing it to a new team), you might like [lerna-wizard](https://github.com/szarouski/lerna-wizard). It will lead you through a series of well-defined steps:

@@ -1,6 +1,8 @@
 import ChildProcessUtilities from "./ChildProcessUtilities";
 import logger from "./logger";
 import escapeArgs from "command-join";
+import path from "path";
+import semver from "semver";
 
 export default class NpmUtilities {
   @logger.logifyAsync()
@@ -47,5 +49,15 @@ export default class NpmUtilities {
   @logger.logifyAsync()
   static publishTaggedInDir(tag, directory, callback) {
     ChildProcessUtilities.exec("cd " + escapeArgs(directory) + " && npm publish --tag " + tag, null, callback);
+  }
+
+  @logger.logifySync
+  static dependencyIsSatisfied(dir, dependency, needVersion) {
+    const packageJson = path.join(dir, dependency, "package.json");
+    try {
+      return semver.satisfies(require(packageJson).version, needVersion);
+    } catch (e) {
+      return false;
+    }
   }
 }

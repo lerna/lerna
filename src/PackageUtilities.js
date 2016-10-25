@@ -5,6 +5,7 @@ import path from "path";
 import {sync as globSync} from "glob";
 import minimatch from "minimatch";
 import async from "async";
+import isArray from "isarray";
 
 export default class PackageUtilities {
   static getGlobalVersion(versionPath) {
@@ -119,23 +120,38 @@ export default class PackageUtilities {
   * @throws in case a given glob would produce an empty list of packages
   */
   static _filterPackages(packages, glob, negate = false) {
-    if (typeof glob !== "undefined") {
-      packages = packages.filter((pkg) => {
-        if (negate) {
-          return !minimatch(pkg.name, glob);
-        } else {
-          return minimatch(pkg.name, glob);
-        }
-      });
 
-      if (!packages.length) {
-        throw new Error(`No packages found that match '${glob}'`);
-      }
-    } else {
-      // Always return a copy.
-      packages = packages.slice();
+    packages = packages.filter((pkg) => PackageUtilities.filterPackage(pkg, glob, negate));
+
+    if (!packages.length) {
+      throw new Error(`No packages found that match '${glob}'`);
     }
     return packages;
+  }
+
+  static filterPackage(pkg, glob, negate = false) {
+
+    // If there isn't a filter then we can just return the package.
+    if (!glob) return true;
+
+    // Include/exlude with no arguments implies splat.
+    // For example: `--hoist` is equivalent to `--hoist=**`.
+    // The double star here is to account for scoped packages.
+    if (glob === true) glob = "**";
+
+    if (!isArray(glob)) glob = [glob];
+
+    const maybeNegate = negate ? (v) => !v : (v) => v;
+
+    return glob.some((glob) => maybeNegate(minimatch(pkg.name, glob)));
+  }
+
+  static getFilteredPackage(pkg, {scope, ignore}) {
+
+    return (
+      PackageUtilities.filterPackage(pkg, scope) &&
+      PackageUtilities.filterPackage(pkg, ignore, true)
+    ) && pkg;
   }
 
   static topologicallyBatchPackages(packagesToBatch, logger = null) {
