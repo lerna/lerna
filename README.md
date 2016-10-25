@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  A tool for managing JavaScript projects with multiple packages.
+  A tool for managing JavaScript projects with multiple packages..
 </p>
 
 <p align="center">
@@ -187,7 +187,7 @@ Let's use `babel` as an example.
 
 **Note:** Circular dependencies result in circular symlinks which *may* impact your editor/IDE.
 
-[Webstorm](https://www.jetbrains.com/webstorm/) locks up when circular symlinks are present. To prevent this, add `node_modules` to the list of ignored files and folders in `Preferences | Editor | File Types | Ignored files and folders`.  
+[Webstorm](https://www.jetbrains.com/webstorm/) locks up when circular symlinks are present. To prevent this, add `node_modules` to the list of ignored files and folders in `Preferences | Editor | File Types | Ignored files and folders`.
 
 ### publish
 
