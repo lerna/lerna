@@ -31,9 +31,9 @@ export default class PackageUtilities {
   static getPackages(repository) {
     const packages = [];
 
-    repository.packageConfigs.forEach(({glob}) => {
+    repository.packageConfigs.forEach((globPath) => {
 
-      globSync(path.join(repository.rootPath, glob))
+      globSync(path.join(repository.rootPath, globPath, "package.json"))
         .map((fn) => path.resolve(fn))
         .forEach((packageConfigPath) => {
           const packagePath = path.dirname(packageConfigPath);
