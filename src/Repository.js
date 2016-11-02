@@ -43,6 +43,12 @@ export default class Repository {
     return this.lernaJson && this.lernaJson.bootstrapConfig || {};
   }
 
+  get extraPackagesLocations() {
+    const extraLocations = this.lernaJson && this.lernaJson.bootstrapConfig
+      && this.lernaJson.bootstrapConfig.extraPackagesLocations || [];
+    return extraLocations.map((loc) => path.join(this.rootPath, loc));
+  }
+
   isIndependent() {
     return this.version === "independent";
   }

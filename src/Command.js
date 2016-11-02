@@ -101,7 +101,7 @@ export default class Command {
 
   runPreparations() {
     try {
-      this.packages = PackageUtilities.getPackages(this.repository.packagesLocation);
+      this.packages = PackageUtilities.getPackages(this.repository.packagesLocation, ...this.repository.extraPackagesLocations);
       this.packageGraph = PackageUtilities.getPackageGraph(this.packages);
     } catch (err) {
       this.logger.error("Errored while collecting packages and package graph", err);
