@@ -57,6 +57,31 @@ describe("PackageUtilities", () => {
       assert.equal(result[0].version, "1.0.0");
       assert.equal(result[0].location, path.join(fixture, "package-1"));
     });
+
+    it("should collect all the packages from all provided directories", () => {
+      const fixturePackages = path.join(__dirname, "fixtures/PackageUtilities/extraPackageLocations/packages");
+      const fixtureOtherPackages = path.join(__dirname, "fixtures/PackageUtilities/extraPackageLocations/otherPackages");
+      const result = PackageUtilities.getPackages(fixturePackages, fixtureOtherPackages);
+
+      assert.equal(result.length, 4);
+      assert(result[0] instanceof Package);
+      assert.equal(result[0].name, "package-1");
+      assert.equal(result[0].version, "1.0.0");
+      assert.equal(result[0].location, path.join(fixturePackages, "package-1"));
+    });
+  });
+
+  describe(".getPackageInPath()", () => {
+    it("should collect all the packages from the given packages directory", () => {
+      const fixture = path.join(__dirname, "fixtures/PackageUtilities/basic/packages");
+      const result = PackageUtilities.getPackageInPath(fixture);
+
+      assert.equal(result.length, 4);
+      assert(result[0] instanceof Package);
+      assert.equal(result[0].name, "package-1");
+      assert.equal(result[0].version, "1.0.0");
+      assert.equal(result[0].location, path.join(fixture, "package-1"));
+    });
   });
 
   describe(".filterPackages()", () => {

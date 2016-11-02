@@ -187,7 +187,7 @@ Let's use `babel` as an example.
 
 **Note:** Circular dependencies result in circular symlinks which *may* impact your editor/IDE.
 
-[Webstorm](https://www.jetbrains.com/webstorm/) locks up when circular symlinks are present. To prevent this, add `node_modules` to the list of ignored files and folders in `Preferences | Editor | File Types | Ignored files and folders`.  
+[Webstorm](https://www.jetbrains.com/webstorm/) locks up when circular symlinks are present. To prevent this, add `node_modules` to the list of ignored files and folders in `Preferences | Editor | File Types | Ignored files and folders`.
 
 ### publish
 
@@ -423,6 +423,12 @@ Running `lerna` without arguments will show all commands/options.
   },
   "linkedFiles": {
     "prefix": "/**\n * @flow\n */"
+  },
+  "bootstrapConfig": {
+    "ignore": "component-*",
+    "extraPackagesLocations": [
+      "otherFolderLocation"
+    ]
   }
 }
 ```
@@ -431,6 +437,8 @@ Running `lerna` without arguments will show all commands/options.
 - `version`: the current version of the repository.
 - `publishConfig.ignore`: an array of globs that won't be included in `lerna updated/publish`. Use this to prevent publishing a new version unnecessarily for changes, such as fixing a `README.md` typo.
 - `linkedFiles.prefix`: a prefix added to linked dependency files.
+- `bootstrapConfig.ignore`: a glob to exclude a subset of packages when running the `bootstrap` command.
+- `bootstrapConfig.extraPackagesLocations`: an array of folder paths for other package locations.
 
 ### Common `devDependencies`
 

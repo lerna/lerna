@@ -27,16 +27,25 @@ export default class PackageUtilities {
     return require(PackageUtilities.getPackageConfigPath(packagesPath, name));
   }
 
-  static getPackages(packagesPath) {
+  static getPackages(...packagesPaths) {
     const packages = [];
 
-    FileSystemUtilities.readdirSync(packagesPath).forEach((packageDirectory) => {
+    packagesPaths.forEach(
+      (path) => packages.push(...PackageUtilities.getPackageInPath(path))
+    );
+
+    return packages;
+  }
+
+  static getPackageInPath(path) {
+    const packages = [];
+    FileSystemUtilities.readdirSync(path).forEach((packageDirectory) => {
       if (packageDirectory[0] === ".") {
         return;
       }
 
-      const packagePath = PackageUtilities.getPackagePath(packagesPath, packageDirectory);
-      const packageConfigPath = PackageUtilities.getPackageConfigPath(packagesPath, packageDirectory);
+      const packagePath = PackageUtilities.getPackagePath(path, packageDirectory);
+      const packageConfigPath = PackageUtilities.getPackageConfigPath(path, packageDirectory);
 
       if (!FileSystemUtilities.existsSync(packageConfigPath)) {
         return;
@@ -45,9 +54,8 @@ export default class PackageUtilities {
       const packageJson = require(packageConfigPath);
       const pkg = new Package(packageJson, packagePath);
 
-      packages.push(pkg);
+      return packages.push(pkg);
     });
-
     return packages;
   }
 
