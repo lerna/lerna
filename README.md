@@ -420,9 +420,6 @@ Running `lerna` without arguments will show all commands/options.
       "ignored-file",
       "*.md"
     ]
-  },
-  "linkedFiles": {
-    "prefix": "/**\n * @flow\n */"
   }
 }
 ```
@@ -430,7 +427,6 @@ Running `lerna` without arguments will show all commands/options.
 - `lerna`: the current version of Lerna being used.
 - `version`: the current version of the repository.
 - `publishConfig.ignore`: an array of globs that won't be included in `lerna updated/publish`. Use this to prevent publishing a new version unnecessarily for changes, such as fixing a `README.md` typo.
-- `linkedFiles.prefix`: a prefix added to linked dependency files.
 
 ### Common `devDependencies`
 
