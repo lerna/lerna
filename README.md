@@ -105,6 +105,10 @@ Independent mode allows you to more specifically update versions for each packag
 
 > The `version` key in `lerna.json` is ignored in independent mode.
 
+## Frequently asked questions
+
+See [FAQ.md](FAQ.md).
+
 ## Commands
 
 ### init
