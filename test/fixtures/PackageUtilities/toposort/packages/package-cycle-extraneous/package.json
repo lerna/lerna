@@ -1,0 +1,8 @@
+{
+  "name": "package-cycle-extraneous",
+  "version": "1.0.0",
+  "comment": "This package is used to break ties between package-cycle-{1,2}.",
+  "dependencies": {
+    "package-cycle-1": "1.0.0"
+  }
+}

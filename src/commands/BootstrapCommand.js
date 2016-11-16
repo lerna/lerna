@@ -32,10 +32,14 @@ export default class BootstrapCommand extends Command {
     this.filteredGraph = PackageUtilities.getPackageGraph(this.filteredPackages);
     this.logger.info(`Bootstrapping ${this.filteredPackages.length} packages`);
     async.series([
+      // preinstall bootstrapped packages
+      (cb) => this.preinstallPackages(cb),
       // install external dependencies
       (cb) => this.installExternalDependencies(cb),
       // symlink packages and their binaries
       (cb) => this.symlinkPackages(cb),
+      // postinstall bootstrapped packages
+      (cb) => this.postinstallPackages(cb),
       // prepublish bootstrapped packages
       (cb) => this.prepublishPackages(cb)
     ], callback);
@@ -53,62 +57,22 @@ export default class BootstrapCommand extends Command {
     return PackageUtilities.filterPackages(this.packages, ignore, true);
   }
 
-  /**
-   * Run the "prepublish" NPM script in all bootstrapped packages
-   * @param callback
-   */
-  prepublishPackages(callback) {
-    this.logger.info("Prepublishing packages");
+  runScriptInPackages(scriptName, callback) {
+    const packages = this.filteredPackages.slice();
+    const batches = PackageUtilities.topologicallyBatchPackages(packages, this.logger);
 
-    // Get a filtered list of packages that will be prepublished.
-    const todoPackages = this.filteredPackages.slice();
+    this.progressBar.init(packages.length);
 
-    this.progressBar.init(todoPackages.length);
-
-    // This maps package names to the number of packages that depend on them.
-    // As packages are completed their names will be removed from this object.
-    const pendingDeps = {};
-    todoPackages.forEach((pkg) => this.filteredGraph.get(pkg.name).dependencies.forEach((dep) => {
-      if (!pendingDeps[dep]) pendingDeps[dep] = 0;
-      pendingDeps[dep]++;
-    }));
-
-    // Bootstrap runs the "prepublish" script in each package.  This script
-    // may _use_ another package from the repo.  Therefore if a package in the
-    // repo depends on another we need to bootstrap the dependency before the
-    // dependent.  So the bootstrap proceeds in batches of packages where each
-    // batch includes all packages that have no remaining un-bootstrapped
-    // dependencies within the repo.
     const bootstrapBatch = () => {
-      // Get all packages that have no remaining dependencies within the repo
-      // that haven't yet been bootstrapped.
-      const batch = todoPackages.filter((pkg) => {
-        const node = this.filteredGraph.get(pkg.name);
-        return !node.dependencies.filter((dep) => pendingDeps[dep]).length;
-      });
-
-      // If we weren't able to find a package with no remaining dependencies,
-      // then we've encountered a cycle in the dependency graph.  Run a
-      // single-package batch with the package that has the most dependents.
-      if (todoPackages.length && !batch.length) {
-        this.logger.warn(
-          "Encountered a cycle in the dependency graph.  " +
-          "This may cause instability if dependencies are used during `prepublish`."
-        );
-        batch.push(todoPackages.reduce((a, b) => (
-          (pendingDeps[a.name] || 0) > (pendingDeps[b.name] || 0) ? a : b
-        )));
-      }
+      const batch = batches.shift();
 
       async.parallelLimit(batch.map((pkg) => (done) => {
-        pkg.runScript("prepublish", (err) => {
+        pkg.runScript(scriptName, (err) => {
           this.progressBar.tick(pkg.name);
-          delete pendingDeps[pkg.name];
-          todoPackages.splice(todoPackages.indexOf(pkg), 1);
           done(err);
         });
       }), this.concurrency, (err) => {
-        if (todoPackages.length && !err) {
+        if (batches.length && !err) {
           bootstrapBatch();
         } else {
           this.progressBar.terminate();
@@ -119,6 +83,33 @@ export default class BootstrapCommand extends Command {
 
     // Kick off the first batch.
     bootstrapBatch();
+  }
+
+  /**
+   * Run the "preinstall" NPM script in all bootstrapped packages
+   * @param callback
+   */
+  preinstallPackages(callback) {
+    this.logger.info("Preinstalling packages");
+    this.runScriptInPackages("preinstall", callback);
+  }
+
+  /**
+   * Run the "postinstall" NPM script in all bootstrapped packages
+   * @param callback
+   */
+  postinstallPackages(callback) {
+    this.logger.info("Postinstalling packages");
+    this.runScriptInPackages("postinstall", callback);
+  }
+
+  /**
+   * Run the "prepublish" NPM script in all bootstrapped packages
+   * @param callback
+   */
+  prepublishPackages(callback) {
+    this.logger.info("Prepublishing packages");
+    this.runScriptInPackages("prepublish", callback);
   }
 
   /**
