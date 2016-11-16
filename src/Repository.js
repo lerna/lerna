@@ -4,7 +4,7 @@ import PackageUtilities from "./PackageUtilities";
 import path from "path";
 import logger from "./logger";
 
-const DEFAULT_PACKAGE_GLOB = "packages/*/package.json";
+const DEFAULT_PACKAGE_GLOB = "packages/*";
 
 export default class Repository {
   constructor() {
@@ -46,9 +46,7 @@ export default class Repository {
   }
 
   get packageConfigs() {
-    return (this.lernaJson || {}).packages || [{
-      glob: DEFAULT_PACKAGE_GLOB,
-    }];
+    return (this.lernaJson || {}).packages || [DEFAULT_PACKAGE_GLOB];
   }
 
   get packages() {
