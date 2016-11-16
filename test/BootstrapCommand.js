@@ -200,8 +200,8 @@ describe("BootstrapCommand", () => {
           assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", "package-1")));
           assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", "package-2")));
           assert.equal(
-            fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", "package-3")),
-            path.join(testDir, "package-3"),
+            normalize(fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", "package-3"))),
+            normalize(path.join(testDir, "package-3")),
             "package-3 should be symlinked to package-4"
           );
           // package binaries are symlinked
