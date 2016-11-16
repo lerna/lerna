@@ -54,7 +54,7 @@ export default class InitCommand extends Command {
       versionLocation,
       lernaJsonLocation,
       lernaJson,
-      packageConfigs,
+      packageConfigs
     } = this.repository;
 
     let version;

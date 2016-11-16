@@ -426,7 +426,8 @@ Running `lerna` without arguments will show all commands/options.
   },
   "bootstrapConfig": {
     "ignore": "component-*"
-  }
+  },
+  "packages": ["packages/*"]
 }
 ```
 
@@ -435,6 +436,7 @@ Running `lerna` without arguments will show all commands/options.
 - `publishConfig.ignore`: an array of globs that won't be included in `lerna updated/publish`. Use this to prevent publishing a new version unnecessarily for changes, such as fixing a `README.md` typo.
 - `bootstrapConfig.ignore`: an glob that won't be bootstrapped when running the `lerna bootstrap` command.
 - `bootstrapConfig.scope`: an glob that restricts which packages will be bootstrapped when running the `lerna bootstrap` command.
+- `packages`: Array of globs to use as package locations.
 
 ### Common `devDependencies`
 
