@@ -64,8 +64,8 @@ describe("BootstrapCommand", () => {
           assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-2", "node_modules", "package-4")));
           // package-3 package dependencies are symlinked
           assert.equal(
-            fs.readlinkSync(path.join(testDir, "packages", "package-3", "node_modules", "@test", "package-1")),
-            path.join(testDir, "packages", "package-1"),
+            path.resolve(fs.readlinkSync(path.join(testDir, "packages", "package-3", "node_modules", "@test", "package-1"))),
+            path.resolve(path.join(testDir, "packages", "package-1")),
             "package-1 should be symlinked to package-3"
           );
           assert.equal(
@@ -177,16 +177,16 @@ describe("BootstrapCommand", () => {
           assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-1", "node_modules", "package-4")));
           // package-2 package dependencies are symlinked
           assert.equal(
-            fs.readlinkSync(path.join(testDir, "packages", "package-2", "node_modules", "@test", "package-1")),
-            path.join(testDir, "packages", "package-1"),
+            path.resolve(fs.readlinkSync(path.join(testDir, "packages", "package-2", "node_modules", "@test", "package-1"))),
+            path.resolve(path.join(testDir, "packages", "package-1")),
             "package-1 should be symlinked to package-2"
           );
           assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-2", "node_modules", "package-3")));
           assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-2", "node_modules", "package-4")));
           // package-3 package dependencies are symlinked
           assert.equal(
-            fs.readlinkSync(path.join(testDir, "package-3", "node_modules", "@test", "package-1")),
-            path.join(testDir, "packages", "package-1"),
+            path.resolve(fs.readlinkSync(path.join(testDir, "package-3", "node_modules", "@test", "package-1"))),
+            path.resolve(path.join(testDir, "packages", "package-1")),
             "package-1 should be symlinked to package-3"
           );
           assert.equal(
