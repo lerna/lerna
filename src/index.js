@@ -1,4 +1,5 @@
 import BootstrapCommand from "./commands/BootstrapCommand";
+import BootstrapProxyCommand from "./commands/BootstrapProxyCommand";
 import PublishCommand from "./commands/PublishCommand";
 import UpdatedCommand from "./commands/UpdatedCommand";
 import ImportCommand from "./commands/ImportCommand";
@@ -11,6 +12,7 @@ import LsCommand from "./commands/LsCommand";
 
 export const __commands__ = {
   bootstrap: BootstrapCommand,
+  bootstrapProxy: BootstrapProxyCommand,
   publish: PublishCommand,
   updated: UpdatedCommand,
   import: ImportCommand,
