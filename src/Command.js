@@ -188,11 +188,11 @@ export default class Command {
     }
   }
 
-  initialize(callback: Function) {
+  initialize(/* :: callback: Function */) {
     throw new Error("command.initialize() needs to be implemented.");
   }
 
-  execute(callback: Function) {
+  execute(/* :: callback: Function */) {
     throw new Error("command.execute() needs to be implemented.");
   }
 }

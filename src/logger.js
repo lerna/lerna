@@ -166,31 +166,31 @@ class Logger {
   }
 
   silly(message: string, error: ?Error) {
-    this._log('silly', message, error);
+    this._log("silly", message, error);
   }
 
   verbose(message: string, error: ?Error) {
-    this._log('verbose', message, error);
+    this._log("verbose", message, error);
   }
 
   info(message: string, error: ?Error) {
-    this._log('info', message, error);
+    this._log("info", message, error);
   }
 
   success(message: string, error: ?Error) {
-    this._log('success', message, error);
+    this._log("success", message, error);
   }
 
   warn(message: string, error: ?Error) {
-    this._log('warn', message, error);
+    this._log("warn", message, error);
   }
 
   error(message: string, error: ?Error) {
-    this._log('error', message, error);
+    this._log("error", message, error);
   }
 
   silent(message: string, error: ?Error) {
-    this._log('silent', message, error);
+    this._log("silent", message, error);
   }
 }
 

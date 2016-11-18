@@ -1,6 +1,6 @@
 // @flow
 
-import type Package from './Package';
+import type Package from "./Package";
 import semver from "semver";
 
 export class PackageGraphNode {
