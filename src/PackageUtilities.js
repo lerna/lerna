@@ -65,13 +65,13 @@ export default class PackageUtilities {
   * @param {String} filters.ignore glob The glob to filter the package name against
   * @return {Array.<Package>} The packages with a name matching the glob
   */
-  static getFilteredPackages(packages, {scope, ignore}) {
+  static filterPackages(packages, {scope, ignore}) {
     packages = packages.slice();
     if (scope) {
-      packages = PackageUtilities.filterPackages(packages, scope);
+      packages = PackageUtilities._filterPackages(packages, scope);
     }
     if (ignore) {
-      packages = PackageUtilities.filterPackages(packages, ignore, true);
+      packages = PackageUtilities._filterPackages(packages, ignore, true);
     }
     return packages;
   }
@@ -85,7 +85,7 @@ export default class PackageUtilities {
   * @return {Array.<Package>} The packages with a name matching the glob
   * @throws in case a given glob would produce an empty list of packages
   */
-  static filterPackages(packages, glob, negate = false) {
+  static _filterPackages(packages, glob, negate = false) {
     if (typeof glob !== "undefined") {
       packages = packages.filter((pkg) => {
         if (negate) {

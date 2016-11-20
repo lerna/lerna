@@ -3,6 +3,7 @@ import FileSystemUtilities from "./FileSystemUtilities";
 import ExitHandler from "./ExitHandler";
 import progressBar from "./progressBar";
 import Repository from "./Repository";
+import PackageUtilities from "./PackageUtilities";
 import logger from "./logger";
 
 const DEFAULT_CONCURRENCY = 4;
@@ -109,9 +110,9 @@ export default class Command {
       this.logger.info(`Ignoring packages that match '${ignore}'`);
     }
     try {
-      this.repository.buildPackageGraph({ignore, scope});
+      this.repository.buildPackageGraph();
       this.packages = this.repository.packages;
-      this.filteredPackages = this.repository.filteredPackages;
+      this.filteredPackages = PackageUtilities.filterPackages(this.packages, {scope, ignore});
       this.packageGraph = this.repository.packageGraph;
     } catch (err) {
       this.logger.error("Errored while collecting packages and package graph", err);

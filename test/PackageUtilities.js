@@ -59,43 +59,43 @@ describe("PackageUtilities", () => {
     });
   });
 
-  describe(".filterPackages()", () => {
+  describe("._filterPackages()", () => {
     const fixture = path.join(__dirname, "fixtures/PackageUtilities/filtering/packages");
     const packages = PackageUtilities.getPackages(fixture);
 
     it("should throw when --scope is given but empty", () => {
       assert.throws(() => {
-        PackageUtilities.filterPackages(packages, "");
+        PackageUtilities._filterPackages(packages, "");
       });
     });
 
     it("should throw when --scope is given but excludes all packages", () => {
       assert.throws(() => {
-        PackageUtilities.filterPackages(packages, "no-matchy");
+        PackageUtilities._filterPackages(packages, "no-matchy");
       });
     });
 
     it("should properly restrict the package scope", () => {
       assert.deepEqual(
-        PackageUtilities.filterPackages(packages, "package-3").map((pkg) => pkg.name),
+        PackageUtilities._filterPackages(packages, "package-3").map((pkg) => pkg.name),
         ["package-3"]
       );
     });
 
     it("should properly restrict the package scope with a glob", () => {
       assert.deepEqual(
-        PackageUtilities.filterPackages(packages, "package-a-*").map((pkg) => pkg.name),
+        PackageUtilities._filterPackages(packages, "package-a-*").map((pkg) => pkg.name),
         ["package-a-1", "package-a-2"]
       );
     });
 
     it("should properly filter packages by negating the glob", () => {
       assert.deepEqual(
-        PackageUtilities.filterPackages(packages, "package-3", true).map((pkg) => pkg.name),
+        PackageUtilities._filterPackages(packages, "package-3", true).map((pkg) => pkg.name),
         ["package-4", "package-a-1", "package-a-2"]
       );
       assert.deepEqual(
-        PackageUtilities.filterPackages(packages, "package-a-?", true).map((pkg) => pkg.name),
+        PackageUtilities._filterPackages(packages, "package-a-?", true).map((pkg) => pkg.name),
         ["package-3", "package-4"]
       );
     });
@@ -119,14 +119,14 @@ describe("PackageUtilities", () => {
     });
   });
 
-  describe(".getFilteredPackages()", () => {
+  describe(".filterPackages()", () => {
     const fixture = path.join(__dirname, "fixtures/PackageUtilities/filtering/packages");
     const packages = PackageUtilities.getPackages(fixture);
 
     it("should filter --scoped packages", () => {
       const flags = { scope: "package-a-*"};
       assert.deepEqual(
-        PackageUtilities.getFilteredPackages(packages, flags).map((pkg) => pkg.name),
+        PackageUtilities.filterPackages(packages, flags).map((pkg) => pkg.name),
         ["package-a-1", "package-a-2"]
       );
     });
@@ -134,7 +134,7 @@ describe("PackageUtilities", () => {
     it("should filter --ignored packages", () => {
       const flags = { ignore: "package-@(2|3|4)"};
       assert.deepEqual(
-        PackageUtilities.getFilteredPackages(packages, flags).map((pkg) => pkg.name),
+        PackageUtilities.filterPackages(packages, flags).map((pkg) => pkg.name),
         ["package-a-1", "package-a-2"]
       );
     });
@@ -142,7 +142,7 @@ describe("PackageUtilities", () => {
     it("should filter --ignored  and --scoped packages", () => {
       const flags = { scope: "package-a-*", ignore: "package-a-2"};
       assert.deepEqual(
-        PackageUtilities.getFilteredPackages(packages, flags).map((pkg) => pkg.name),
+        PackageUtilities.filterPackages(packages, flags).map((pkg) => pkg.name),
         ["package-a-1"]
       );
     });
@@ -150,7 +150,7 @@ describe("PackageUtilities", () => {
     it("should throw when --scoped and --ignored filters exclud all packages", () => {
       const flags = { scope: "package-a-*", ignore: "package-a-@(1|2)"};
       assert.throws(() => {
-        PackageUtilities.getFilteredPackages(packages, flags);
+        PackageUtilities.filterPackages(packages, flags);
       });
     });
   });

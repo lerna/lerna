@@ -51,13 +51,6 @@ export default class Repository {
     return this._packages;
   }
 
-  get filteredPackages() {
-    if (!this._filteredPackages) {
-      this.buildPackageGraph();
-    }
-    return this._filteredPackages;
-  }
-
   get packageGraph() {
     if (!this._packageGraph) {
       this.buildPackageGraph();
@@ -69,9 +62,8 @@ export default class Repository {
     return this.version === "independent";
   }
 
-  buildPackageGraph({scope, ignore}) {
+  buildPackageGraph() {
     this._packages = PackageUtilities.getPackages(this.packagesLocation);
     this._packageGraph = PackageUtilities.getPackageGraph(this._packages);
-    this._filteredPackages = PackageUtilities.getFilteredPackages(this._packages, {scope, ignore});
   }
 }
