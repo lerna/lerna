@@ -119,4 +119,30 @@ describe("PackageUtilities", () => {
     });
   });
 
+  describe(".runParallelBatches()", () => {
+    const batches = [
+      [ 1 ],
+      [ 2, 3 ],
+      [ 4, 5, 6 ],
+      [ 7, 8, 9, 10 ]
+    ];
+
+    const taskOrdering = [];
+
+    it("should run batches serially", () => {
+      PackageUtilities.runParallelBatches(batches, (n) => (cb) => {
+        taskOrdering.push(n);
+        cb();
+      }, 1, (err) => {
+        assert(!err);
+        assert.equal(taskOrdering.length, 10);
+        assert.deepEqual([
+          taskOrdering.slice(0, 1).sort(),
+          taskOrdering.slice(1, 3).sort(),
+          taskOrdering.slice(3, 6).sort(),
+          taskOrdering.slice(6, 10).sort()
+        ], batches);
+      });
+    });
+  });
 });

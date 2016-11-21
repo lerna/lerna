@@ -31,6 +31,10 @@ export default class RunCommand extends Command {
       }
     }
 
+    this.batchedPackages = this.flags.toposort
+      ? PackageUtilities.topologicallyBatchPackages(this.packagesWithScript, this.logger)
+      : [ this.packagesWithScript ];
+
     callback(null, true);
   }
 
@@ -47,9 +51,9 @@ export default class RunCommand extends Command {
   }
 
   runScriptInPackages(callback) {
-    async.parallelLimit(this.packagesWithScript.map((pkg) => (cb) => {
-      this.runScriptInPackage(pkg, cb);
-    }), this.concurrency, callback);
+    PackageUtilities.runParallelBatches(this.batchedPackages, (pkg) => (done) => {
+      this.runScriptInPackage(pkg, done);
+    }, this.concurrency, callback);
   }
 
   runScriptInPackage(pkg, callback) {

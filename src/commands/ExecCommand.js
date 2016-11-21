@@ -31,13 +31,17 @@ export default class ExecCommand extends Command {
       }
     }
 
+    this.batchedPackages = this.flags.toposort
+      ? PackageUtilities.topologicallyBatchPackages(this.packages, this.logger)
+      : [ this.packages ];
+
     callback(null, true);
   }
 
   execute(callback) {
-    async.parallelLimit(this.packages.map((pkg) => (cb) => {
-      this.runCommandInPackage(pkg, cb);
-    }), this.concurrency, callback);
+    PackageUtilities.runParallelBatches(this.batchedPackages, (pkg) => (done) => {
+      this.runCommandInPackage(pkg, done);
+    }, this.concurrency, callback);
   }
 
   runCommandInPackage(pkg, callback) {

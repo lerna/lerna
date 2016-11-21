@@ -29,8 +29,10 @@ export default class BootstrapCommand extends Command {
    */
   bootstrapPackages(callback) {
     this.filteredPackages = this.getPackages();
-    this.filteredGraph = PackageUtilities.getPackageGraph(this.filteredPackages);
     this.logger.info(`Bootstrapping ${this.filteredPackages.length} packages`);
+    this.batchedPackages = this.flags.toposort
+      ? PackageUtilities.topologicallyBatchPackages(this.filteredPackages, this.logger)
+      : [ this.filteredPackages ];
     async.series([
       // preinstall bootstrapped packages
       (cb) => this.preinstallPackages(cb),
@@ -58,31 +60,17 @@ export default class BootstrapCommand extends Command {
   }
 
   runScriptInPackages(scriptName, callback) {
-    const packages = this.filteredPackages.slice();
-    const batches = PackageUtilities.topologicallyBatchPackages(packages, this.logger);
+    this.progressBar.init(this.filteredPackages.length);
 
-    this.progressBar.init(packages.length);
-
-    const bootstrapBatch = () => {
-      const batch = batches.shift();
-
-      async.parallelLimit(batch.map((pkg) => (done) => {
-        pkg.runScript(scriptName, (err) => {
-          this.progressBar.tick(pkg.name);
-          done(err);
-        });
-      }), this.concurrency, (err) => {
-        if (batches.length && !err) {
-          bootstrapBatch();
-        } else {
-          this.progressBar.terminate();
-          callback(err);
-        }
+    PackageUtilities.runParallelBatches(this.batchedPackages, (pkg) => (done) => {
+      pkg.runScript(scriptName, (err) => {
+        this.progressBar.tick(pkg.name);
+        done(err);
       });
-    };
-
-    // Kick off the first batch.
-    bootstrapBatch();
+    }, this.concurrency, (err) => {
+      this.progressBar.terminate();
+      callback(err);
+    });
   }
 
   /**
