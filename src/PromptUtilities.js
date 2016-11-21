@@ -11,7 +11,7 @@ export default class PromptUtilities {
         { key: "y", name: "Yes", value: true },
         { key: "n", name: "No",  value: false }
       ]
-    }], (answers) => {
+    }]).then((answers) => {
       callback(answers.confirm);
     });
   }
@@ -24,7 +24,7 @@ export default class PromptUtilities {
       choices: choices,
       filter: filter,
       validate: validate
-    }], (answers) => {
+    }]).then((answers) => {
       callback(answers.prompt);
     });
   }
@@ -36,7 +36,7 @@ export default class PromptUtilities {
       message: "Enter a custom version",
       filter: filter,
       validate: validate
-    }], (answers) => {
+    }]).then((answers) => {
       callback(answers.input);
     });
   }
