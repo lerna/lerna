@@ -345,6 +345,7 @@ export default class BootstrapCommand extends Command {
       actions.push((cb) => {
         async.series(root.map(({name, dependents}) => (cb) => {
           async.series(dependents.map(({nodeModulesLocation: dir}) => (cb) => {
+            if (dir === this.repository.nodeModulesLocation) return cb();
             FileSystemUtilities.rimraf(path.join(dir, name), cb);
           }), cb);
         }), (err) => {
