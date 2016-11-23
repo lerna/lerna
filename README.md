@@ -141,7 +141,7 @@ $ Successfully created Lerna files
 #### --independent, -i
 
 ```sh
-$ lerna publish --independent
+$ lerna init --independent
 ```
 
 This flag tells Lerna to use independent versioning mode.
