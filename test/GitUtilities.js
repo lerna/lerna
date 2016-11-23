@@ -50,6 +50,12 @@ describe("GitUtilities", () => {
     });
   });
 
+  describe(".getLastTaggedCommitInBranch()", () => {
+    it("should exist", () => {
+      assert.ok(GitUtilities.getLastTaggedCommitInBranch);
+    });
+  });
+
   describe(".getFirstCommit()", () => {
     it("should exist", () => {
       assert.ok(GitUtilities.getFirstCommit);
@@ -59,6 +65,12 @@ describe("GitUtilities", () => {
   describe(".pushWithTags()", () => {
     it("should exist", () => {
       assert.ok(GitUtilities.pushWithTags);
+    });
+  });
+
+  describe(".getLastTag()", () => {
+    it("should exist", () => {
+      assert.ok(GitUtilities.getLastTag);
     });
   });
 
