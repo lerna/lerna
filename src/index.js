@@ -6,6 +6,7 @@ import CleanCommand from "./commands/CleanCommand";
 import DiffCommand from "./commands/DiffCommand";
 import InitCommand from "./commands/InitCommand";
 import RunCommand from "./commands/RunCommand";
+import ExportCommand from "./commands/ExportCommand";
 import ExecCommand from "./commands/ExecCommand";
 import LsCommand from "./commands/LsCommand";
 
@@ -14,6 +15,7 @@ export const __commands__ = {
   publish: PublishCommand,
   updated: UpdatedCommand,
   import: ImportCommand,
+  export: ExportCommand,
   clean: CleanCommand,
   diff: DiffCommand,
   init: InitCommand,

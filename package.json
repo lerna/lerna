@@ -45,7 +45,8 @@
     "rimraf": "^2.4.4",
     "semver": "^5.1.0",
     "signal-exit": "^2.1.2",
-    "sync-exec": "^0.6.2"
+    "sync-exec": "^0.6.2",
+    "user-home": "^2.0.0"
   },
   "bin": {
     "lerna": "./bin/lerna.js"
