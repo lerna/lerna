@@ -96,6 +96,9 @@ export default class Package {
     // check if semantic versions are compatible
     if (semver.satisfies(actualVersion, expectedVersion)) {
       return true;
+    // or the dependency is specified as a relative folder
+    } else if (/^file:\.\.\//.test(dependency.version)) {
+      return true;
     }
 
     if (showWarning) {
