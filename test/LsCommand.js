@@ -1,4 +1,5 @@
 import assert from "assert";
+import chalk from "chalk";
 
 import exitWithCode from "./_exitWithCode";
 import initFixture from "./_initFixture";
@@ -18,7 +19,7 @@ describe("LsCommand", () => {
     lsCommand.runPreparations();
 
     stub(logger, "info", (message) => {
-      assert.equal(message, "- package-1\n- package-2\n- package-3\n- package-4");
+      assert.equal(message, `- package-1\n- package-2\n- package-3\n- package-4\n- package-5 (${chalk.red("private")})`);
     });
 
     lsCommand.runCommand(exitWithCode(0, done));
