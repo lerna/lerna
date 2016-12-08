@@ -75,7 +75,7 @@ export default class PackageUtilities {
 
     while (fringe.length !== 0) {
       const pkg = fringe.shift();
-      const pkgDeps = pkg.dependencies || {};
+      const pkgDeps = Object.assign({}, pkg.dependencies, pkg.devDependencies);
       Object.keys(pkgDeps).forEach((dep) => {
         if (packageExistsInRepository(dep) && !packageAlreadyFound(dep) && !packageInFringe(dep)) {
           fringe.push(packageGraph.get(dep).package);
