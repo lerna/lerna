@@ -156,7 +156,7 @@ When run, this command will:
 2. Symlink together all Lerna `packages` that are dependencies of each other.
 3. `npm prepublish` all bootstrapped packages.
 
-`lerna bootstrap` respects the `--ignore`, `--scope` and `--include-deps` flags (see [Flags](#flags)).
+`lerna bootstrap` respects the `--ignore`, `--scope` and `--include-filtered-deps` flags (see [Flags](#flags)).
 
 #### How `bootstrap` works
 
@@ -513,9 +513,9 @@ The `ignore` flag, when used with the `bootstrap` command, can also be set in `l
 > Hint: The glob is matched against the package name defined in `package.json`,
 > not the directory name the package lives in.
 
-#### --include-deps
+#### --include-filtered-deps
 
-Used only in the `bootstrap` command, ensures that all dependencies of any scoped packages (either through `--scope` or `--ignore`) have all of their dependencies bootstrapped as well.
+Used only in the `bootstrap` command, ensures that all dependencies (and dev dependencies) of any scoped packages (either through `--scope` or `--ignore`) have all of their dependencies bootstrapped as well.
 
 > Note: This will override the `--scope` and `--ignore` flags.
 > > i.e. A package matched by the `--exclude` flag will still be bootstrapped if it is depended on by another package that is being bootstrapped.
@@ -523,12 +523,12 @@ Used only in the `bootstrap` command, ensures that all dependencies of any scope
 This is useful for situations where you want to "set up" a single package that relies on other packages being set up.
 
 ```sh
-$ lerna bootstrap --scope my-component --include-deps
-# my-component and all of its depencencies will be bootstrapped
+$ lerna bootstrap --scope my-component --include-filtered-deps
+# my-component and all of its dependencies will be bootstrapped
 ```
 
 ```sh
-$ lerna bootstrap --scope "package-*" --ignore "package-util-*" --include-deps
+$ lerna bootstrap --scope "package-*" --ignore "package-util-*" --include-filtered-deps
 # all package-util's will be ignored unless they are depended upon by a
 # package matched by "package-*"
 ```
