@@ -1,13 +1,22 @@
+// @flow
+
 import fs from "fs";
 import path from "path";
 import async from "async";
 import Command from "../Command";
 import progressBar from "../progressBar";
 import PromptUtilities from "../PromptUtilities";
-import {execSync, exec} from "../ChildProcessUtilities";
+import ChildProcessUtilities from "../ChildProcessUtilities";
+
+const unsafeRequire = require;
 
 export default class ImportCommand extends Command {
-  initialize(callback) {
+  externalExecOpts: Object;
+  targetDir: string;
+  preImportHead: string;
+  commits: Array<string>;
+
+  initialize(callback: Function) {
     const inputPath = this.input[0];
 
     if (!inputPath) {
@@ -23,7 +32,7 @@ export default class ImportCommand extends Command {
         throw new Error(`Input path "${inputPath}" is not a directory`);
       }
       const packageJson = path.join(externalRepoPath, "package.json");
-      const packageName = require(packageJson).name;
+      const packageName = unsafeRequire(packageJson).name;
       if (!packageName) {
         throw new Error(`No package name specified in "${packageJson}"`);
       }
@@ -54,9 +63,9 @@ export default class ImportCommand extends Command {
     }
 
     // Stash the repo's pre-import head away in case something goes wrong.
-    this.preImportHead = execSync("git log --format=\"%h\" -1").split("\n")[0];
+    this.preImportHead = ChildProcessUtilities.execSync("git log --format=\"%h\" -1").split("\n")[0];
 
-    if (execSync("git diff " + this.preImportHead)) {
+    if (ChildProcessUtilities.execSync("git diff " + this.preImportHead)) {
       return callback(new Error("Local repository has un-committed changes"));
     }
 
@@ -76,11 +85,11 @@ export default class ImportCommand extends Command {
     }
   }
 
-  externalExecSync(command) {
-    return execSync(command, this.externalExecOpts).trim();
+  externalExecSync(command: string) {
+    return ChildProcessUtilities.execSync(command, this.externalExecOpts).trim();
   }
 
-  execute(callback) {
+  execute(callback: Function) {
     const replacement = "$1/" + this.targetDir;
 
     progressBar.init(this.commits.length);
@@ -102,7 +111,7 @@ export default class ImportCommand extends Command {
       //
       // Fall back to three-way merge, which can help with duplicate commits
       // due to merge history.
-      exec("git am -3", {}, (err) => {
+      ChildProcessUtilities.exec("git am -3", {}, (err) => {
         if (err) {
 
           // Give some context for the error message.
@@ -110,8 +119,8 @@ export default class ImportCommand extends Command {
                 `Rolling back to previous HEAD (commit ${this.preImportHead}).`;
 
           // Abort the failed `git am` and roll back to previous HEAD.
-          execSync("git am --abort");
-          execSync("git reset --hard " + this.preImportHead);
+          ChildProcessUtilities.execSync("git am --abort");
+          ChildProcessUtilities.execSync("git reset --hard " + this.preImportHead);
         }
         done(err);
       }).stdin.end(patch);

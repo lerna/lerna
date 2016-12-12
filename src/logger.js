@@ -1,51 +1,83 @@
+// @flow
+
 import progressBar from "./progressBar";
 import chalk from "chalk";
 import pad from "pad";
 
+type Descriptor = {
+  configurable: boolean,
+  enumerable: boolean,
+  value: Function,
+  writable: boolean,
+  get: ?() => mixed,
+  set: ?(newValue: mixed) => mixed
+};
+
 const cwd = process.cwd();
 
-const DEFAULT_LOGLEVEL = "info";
+const LEVELS = {
+  silly   : 0,
+  verbose : 1,
+  info    : 2,
+  success : 3,
+  warn    : 4,
+  error   : 5,
+  silent  : 6
+};
 
-const LEVELS = [
-  [ "silly",   "magenta" ],
-  [ "verbose", "blue"    ],
-  [ "info",    "reset"   ],
-  [ "success", "green"   ],
-  [ "warn",    "yellow"  ],
-  [ "error",   "red"     ],
-  [ "silent",            ],
-];
+export type Levels = $Keys<typeof LEVELS>;
 
-const TYPE_TO_LEVEL = LEVELS
-  .reduce((map, [type], index) => (map[type] = index, map), {});
+const LEVELS_TO_STYLES: { [level: Levels]: string | null } = {
+  silly   : "magenta",
+  verbose : "blue",
+  info    : "reset",
+  success : "green",
+  warn    : "yellow",
+  error   : "red",
+  silent  : null
+};
+
+const DEFAULT_LOGLEVEL: Levels = "info";
+
+export type Log = {
+  type: Levels,
+  message: string,
+  error: ?Error
+};
 
 class Logger {
+  logs: Array<Object>;
+  logLevel: number;
+
   constructor() {
-    this.setLogLevel();
+    this.setLogLevel(DEFAULT_LOGLEVEL);
     this.logs = [];
   }
 
-  setLogLevel(type) {
-    this.loglevel = TYPE_TO_LEVEL[type || DEFAULT_LOGLEVEL];
+  setLogLevel(type: Levels) {
+    this.logLevel = LEVELS[type];
   }
 
-  _log(type, style, level, message, error) {
+  _log(type: Levels, message: string, error: ?Error) {
+    let level = LEVELS[type];
+    let style = LEVELS_TO_STYLES[type];
+
     this.logs.push({
       type,
       message,
       error
     });
 
-    if (level < this.loglevel) {
+    if (level < this.logLevel) {
       return;
     }
 
     if (error) {
-      message += "\n" + (error.stack || error);
+      message += "\n" + (error.stack || error.message);
     }
 
-    if (style) {
-      message = style(message);
+    if (style && chalk[style]) {
+      message = chalk[style](message);
     }
 
     progressBar.clear();
@@ -53,7 +85,7 @@ class Logger {
     progressBar.restore();
   }
 
-  _emit(message) {
+  _emit(message: string) {
     if (process.env.NODE_ENV !== "test") {
       console.log(message);
     }
@@ -64,12 +96,12 @@ class Logger {
   }
 
   logifyAsync() {
-    return (target, property, descriptor) => {
+    return (target: Function, property: string, descriptor: Descriptor) => {
       const message = target.name + "." + property;
       const method = descriptor.value;
 
       descriptor.value = (...args) => {
-        const callback = args.pop();
+        const callback: any = args.pop();
         const msg = this._formatMethod(message, args);
 
         this.verbose(msg);
@@ -91,9 +123,9 @@ class Logger {
   }
 
   logifySync() {
-    return (target, property, descriptor) => {
+    return (target: Function, property: string, descriptor: Descriptor) => {
       const message = target.name + "." + property;
-      const method = descriptor.value;
+      const method: Function = descriptor.value;
 
       descriptor.value = (...args) => {
         const msg = this._formatMethod(message, args);
@@ -112,11 +144,11 @@ class Logger {
     };
   }
 
-  _formatMethod(method, args) {
+  _formatMethod(method: string, args: Array<mixed>) {
     return pad(method, 30, " ") + "(" + this._formatArguments(args) + ")";
   }
 
-  _formatArguments(args) {
+  _formatArguments(args: Array<mixed>) {
     const fullArgs = args.map(this._formatValue).join(", ");
     if (fullArgs.length > 100) {
       return fullArgs.slice(0, 100) + "...";
@@ -125,22 +157,41 @@ class Logger {
     }
   }
 
-  _formatValue(arg) {
+  _formatValue(arg: mixed) {
     if (typeof arg === "function") {
       return "function " + arg.name + "() {...}";
     }
 
     return (JSON.stringify(arg) || "").replace(cwd, ".");
   }
-}
 
-LEVELS.forEach(([type, color]) => {
-  if (!color) return; // "silent"
-  const style = chalk[color];
-  const level = TYPE_TO_LEVEL[type];
-  Logger.prototype[type] = function(message, error) {
-    this._log(type, style, level, message, error);
-  };
-});
+  silly(message: string, error: ?Error) {
+    this._log("silly", message, error);
+  }
+
+  verbose(message: string, error: ?Error) {
+    this._log("verbose", message, error);
+  }
+
+  info(message: string, error: ?Error) {
+    this._log("info", message, error);
+  }
+
+  success(message: string, error: ?Error) {
+    this._log("success", message, error);
+  }
+
+  warn(message: string, error: ?Error) {
+    this._log("warn", message, error);
+  }
+
+  error(message: string, error: ?Error) {
+    this._log("error", message, error);
+  }
+
+  silent(message: string, error: ?Error) {
+    this._log("silent", message, error);
+  }
+}
 
 export default new Logger();

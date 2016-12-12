@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// @flow
 
 var lerna = require("../lib/index");
 var logger = require("../lib/logger");

@@ -1,10 +1,17 @@
-import NpmUtilities from "../NpmUtilities";
-import Command from "../Command";
+// @flow
+
 import PackageUtilities from "../PackageUtilities";
+import NpmUtilities from "../NpmUtilities";
+import type Package from "../Package";
+import Command from "../Command";
 import async from "async";
 
 export default class RunCommand extends Command {
-  initialize(callback) {
+  script: string;
+  args: Array<string>;
+  packagesWithScript: Array<Package>;
+
+  initialize(callback: Function) {
     this.script = this.input[0];
     this.args = this.input.slice(1);
 
@@ -34,7 +41,7 @@ export default class RunCommand extends Command {
     callback(null, true);
   }
 
-  execute(callback) {
+  execute(callback: Function) {
     this.runScriptInPackages((err) => {
       if (err) {
         callback(err);
@@ -46,13 +53,13 @@ export default class RunCommand extends Command {
     });
   }
 
-  runScriptInPackages(callback) {
+  runScriptInPackages(callback: Function) {
     async.parallelLimit(this.packagesWithScript.map((pkg) => (cb) => {
       this.runScriptInPackage(pkg, cb);
     }), this.concurrency, callback);
   }
 
-  runScriptInPackage(pkg, callback) {
+  runScriptInPackage(pkg: Package, callback: Function) {
     NpmUtilities.runScriptInDir(this.script, this.args, pkg.location, (err, stdout) => {
       this.logger.info(stdout);
       if (err) {

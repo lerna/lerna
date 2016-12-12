@@ -1,3 +1,5 @@
+// @flow
+
 import PackageUtilities from "./PackageUtilities";
 import GitUtilities from "./GitUtilities";
 import progressBar from "./progressBar";
@@ -5,15 +7,34 @@ import minimatch from "minimatch";
 import logger from "./logger";
 import find from "lodash.find";
 import path from "path";
+import type Package from "./Package";
+import type PackageGraph from "./PackageGraph";
 
-class Update {
-  constructor(pkg) {
+export class Update {
+  package: Package;
+
+  constructor(pkg: Package) {
     this.package = pkg;
   }
 }
 
+type Packages = Array<Package>;
+type PackageMap = {
+  [name: string]: Package
+};
+
 export default class UpdatedPackagesCollector {
-  constructor(packages, packageGraph, flags, publishConfig) {
+  packages: Packages;
+  packageGraph: PackageGraph;
+  flags: Object;
+  publishConfig: Object;
+
+  updatedPackages: PackageMap;
+  dependents: PackageMap;
+
+  cache: Object;
+
+  constructor(packages: Packages, packageGraph: PackageGraph, flags: Object, publishConfig: Object) {
     this.packages = packages;
     this.packageGraph = packageGraph;
     this.flags = flags;
@@ -34,7 +55,7 @@ export default class UpdatedPackagesCollector {
     let commits;
 
     if (this.flags.canary) {
-      let currentSHA;
+      let currentSHA: string;
 
       if (this.flags.canary !== true) {
         currentSHA = this.flags.canary;
@@ -60,7 +81,7 @@ export default class UpdatedPackagesCollector {
         return true;
       }
 
-      const forcePublish = (this.flags.forcePublish || "").split(",");
+      const forcePublish: Array<string> = (this.flags.forcePublish || "").split(",");
 
       if (forcePublish.indexOf("*") > -1) {
         return true;
@@ -78,7 +99,7 @@ export default class UpdatedPackagesCollector {
     return updatedPackages;
   }
 
-  isPackageDependentOf(packageName, dependency) {
+  isPackageDependentOf(packageName: string, dependency: string) {
     if (!this.cache[packageName]) {
       this.cache[packageName] = {};
     }
@@ -133,13 +154,13 @@ export default class UpdatedPackagesCollector {
     });
   }
 
-  getAssociatedCommits(sha) {
+  getAssociatedCommits(sha: string) {
     // if it's a merge commit, it will return all the commits that were part of the merge
     // ex: If `ab7533e` had 2 commits, ab7533e^..ab7533e would contain 2 commits + the merge commit
     return sha.slice(0, 8) + "^.." + sha.slice(0, 8);
   }
 
-  hasDiffSinceThatIsntIgnored(pkg, commits) {
+  hasDiffSinceThatIsntIgnored(pkg: Package, commits: string) {
     const folder = PackageUtilities.getPackagePath(PackageUtilities.getPackagesPath(""), pkg.name);
     const diff = GitUtilities.diffSinceIn(commits, pkg.location);
 

@@ -1,9 +1,20 @@
+// @flow
+
 import GitUtilities from "./GitUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
 import path from "path";
 import logger from "./logger";
 
 export default class Repository {
+  rootPath: string;
+  lernaJsonLocation: string;
+  packageJsonLocation: string;
+  packagesLocation: string;
+  versionLocation: string;
+
+  lernaJson: Object;
+  packageJson: Object;
+
   constructor() {
     if (!GitUtilities.isInitialized()) {
       logger.info("Initializing Git repository.");
@@ -27,23 +38,27 @@ export default class Repository {
     }
   }
 
-  get lernaVersion() {
+  get lernaVersion(): ?string {
     return this.lernaJson && this.lernaJson.lerna;
   }
 
-  get version() {
+  get version(): ?string {
     return this.lernaJson && this.lernaJson.version;
   }
 
-  get publishConfig() {
+  get publishConfig(): Object {
     return this.lernaJson && this.lernaJson.publishConfig || {};
   }
 
-  get bootstrapConfig() {
+  get linkedFiles(): Object {
+    return this.lernaJson && this.lernaJson.linkedFiles || {};
+  }
+
+  get bootstrapConfig(): Object {
     return this.lernaJson && this.lernaJson.bootstrapConfig || {};
   }
 
-  isIndependent() {
+  isIndependent(): boolean {
     return this.version === "independent";
   }
 }

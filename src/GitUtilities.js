@@ -1,3 +1,5 @@
+// @flow
+
 import ChildProcessUtilities from "./ChildProcessUtilities";
 import logger from "./logger";
 import escapeArgs from "command-join";

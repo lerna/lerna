@@ -1,10 +1,18 @@
-import GitUtilities from "../GitUtilities";
-import Command from "../Command";
+// @flow
+
 import ChildProcessUtilities from "../ChildProcessUtilities";
+import GitUtilities from "../GitUtilities";
+import type Package from "../Package";
+import Command from "../Command";
 import find from "lodash.find";
 
 export default class DiffCommand extends Command {
-  initialize(callback) {
+  packageName: string;
+  package: Package;
+  filePath: string;
+  lastCommit: string;
+
+  initialize(callback: Function) {
     this.packageName = this.input[0];
 
     if (this.packageName) {
@@ -34,7 +42,7 @@ export default class DiffCommand extends Command {
     callback(null, true);
   }
 
-  execute(callback) {
+  execute(callback: Function) {
     ChildProcessUtilities.spawn("git", ["diff", this.lastCommit, "--color=auto", this.filePath], {}, (code) => {
       if (code !== 0) {
         callback(new Error("Errored while spawning `git diff`."));

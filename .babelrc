@@ -2,6 +2,7 @@
   "presets": ["es2015"],
   "plugins": [
     "transform-decorators-legacy",
-    "add-module-exports"
+    "add-module-exports",
+    "transform-flow-strip-types"
   ]
 }

@@ -1,3 +1,5 @@
+// @flow
+
 import pathExists from "path-exists";
 import logger from "./logger";
 import mkdirp from "mkdirp";
@@ -15,47 +17,47 @@ function ensureEndsWithNewLine(string) {
 
 export default class FileSystemUtilities {
   @logger.logifySync()
-  static mkdirSync(filePath) {
+  static mkdirSync(filePath: string) {
     fs.mkdirSync(filePath);
   }
 
   @logger.logifyAsync()
-  static mkdirp(filePath, callback) {
+  static mkdirp(filePath: string, callback: Function) {
     mkdirp(filePath, callback);
   }
 
   @logger.logifySync()
-  static readdirSync(filePath) {
+  static readdirSync(filePath: string) {
     return fs.readdirSync(filePath);
   }
 
   @logger.logifySync()
-  static existsSync(filePath) {
+  static existsSync(filePath: string) {
     return pathExists.sync(filePath);
   }
 
   @logger.logifyAsync()
-  static writeFile(filePath, fileContents, callback) {
+  static writeFile(filePath: string, fileContents: string, callback: Function) {
     fs.writeFile(filePath, ensureEndsWithNewLine(fileContents), callback);
   }
 
   @logger.logifySync()
-  static writeFileSync(filePath, fileContents) {
+  static writeFileSync(filePath: string, fileContents: string) {
     fs.writeFileSync(filePath, ensureEndsWithNewLine(fileContents));
   }
 
   @logger.logifySync()
-  static readFileSync(filePath) {
+  static readFileSync(filePath: string) {
     return fs.readFileSync(filePath, "utf-8").toString().trim();
   }
 
   @logger.logifyAsync()
-  static rimraf(filePath, callback) {
+  static rimraf(filePath: string, callback: Function) {
     rimraf(filePath, callback);
   }
 
   @logger.logifyAsync()
-  static symlink(src, dest, type, callback) {
+  static symlink(src: string, dest: string, type: string, callback: Function) {
     if (type === "exec") {
       if (process.platform === "win32") {
         cmdShim(src, dest, callback);
@@ -74,12 +76,12 @@ export default class FileSystemUtilities {
   }
 
   @logger.logifySync()
-  static unlinkSync(filePath) {
+  static unlinkSync(filePath: string) {
     fs.unlinkSync(filePath);
   }
 
   @logger.logifySync()
-  static isSymlink(path) {
+  static isSymlink(path: string) {
     const lstat = fs.lstatSync(path);
     let isSymlink = lstat && lstat.isSymbolicLink()
       ? fs.readlinkSync(path)

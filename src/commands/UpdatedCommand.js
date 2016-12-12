@@ -1,8 +1,13 @@
+// @flow
+
 import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
+import type {Update} from "../UpdatedPackagesCollector";
 import Command from "../Command";
 
 export default class UpdatedCommand extends Command {
-  initialize(callback) {
+  updates: Array<Update>;
+
+  initialize(callback: Function) {
     const updatedPackagesCollector = new UpdatedPackagesCollector(
       this.packages,
       this.packageGraph,
@@ -14,7 +19,7 @@ export default class UpdatedCommand extends Command {
     callback(null, true);
   }
 
-  execute(callback) {
+  execute(callback: Function) {
     const formattedUpdates = this.updates
       .map((update) => `- ${update.package.name}${update.package.isPrivate() ? " (private)" : ""}`)
       .join("\n");

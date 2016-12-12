@@ -1,3 +1,5 @@
+// @flow
+
 import BootstrapCommand from "./commands/BootstrapCommand";
 import PublishCommand from "./commands/PublishCommand";
 import UpdatedCommand from "./commands/UpdatedCommand";
