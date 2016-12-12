@@ -43,6 +43,14 @@ export default class Repository {
     return this.lernaJson && this.lernaJson.bootstrapConfig || {};
   }
 
+  get npmConfig() {
+    return this.lernaJson && this.lernaJson.npmConfig || {};
+  }
+
+  get owners() {
+    return this.npmConfig.owners || [];
+  }
+
   isIndependent() {
     return this.version === "independent";
   }
