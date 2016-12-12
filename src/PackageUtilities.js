@@ -42,13 +42,17 @@ export default class PackageUtilities {
         return;
       }
 
-      const packageJson = require(packageConfigPath);
-      const pkg = new Package(packageJson, packagePath);
+      const pkg = PackageUtilities.getPackage(packagePath, packageConfigPath);
 
       packages.push(pkg);
     });
 
     return packages;
+  }
+
+  static getPackage(packagePath, packageConfigPath) {
+    const packageJson = require(packageConfigPath);
+    return new Package(packageJson, packagePath);
   }
 
   static getPackageGraph(packages) {
