@@ -89,7 +89,7 @@ export default class FileSystemUtilities {
   static isSymlink(path) {
     const lstat = fs.lstatSync(path);
     let isSymlink = lstat && lstat.isSymbolicLink()
-      ? fs.readlinkSync(path)
+      ? resolve(dirname(path), fs.readlinkSync(path))
       : false;
     if (process.platform === "win32" && lstat) {
       if (lstat.isFile() && !isSymlink) {
