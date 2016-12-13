@@ -11,6 +11,7 @@ import { EOL } from "os";
 
 export default class PublishCommand extends Command {
   initialize(callback) {
+
     if (this.flags.canary) {
       this.logger.info("Publishing canary build");
     }

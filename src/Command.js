@@ -1,9 +1,9 @@
 import ChildProcessUtilities from "./ChildProcessUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
-import PackageUtilities from "./PackageUtilities";
 import ExitHandler from "./ExitHandler";
 import progressBar from "./progressBar";
 import Repository from "./Repository";
+import PackageUtilities from "./PackageUtilities";
 import logger from "./logger";
 
 const DEFAULT_CONCURRENCY = 4;
@@ -100,9 +100,20 @@ export default class Command {
   }
 
   runPreparations() {
+    const scope = this.flags.scope || (this.configFlags && this.configFlags.scope);
+    const ignore = this.flags.ignore || (this.configFlags && this.configFlags.ignore);
+
+    if (scope) {
+      this.logger.info(`Scoping to packages that match '${scope}'`);
+    }
+    if (ignore) {
+      this.logger.info(`Ignoring packages that match '${ignore}'`);
+    }
     try {
-      this.packages = PackageUtilities.getPackages(this.repository.packagesLocation);
-      this.packageGraph = PackageUtilities.getPackageGraph(this.packages);
+      this.repository.buildPackageGraph();
+      this.packages = this.repository.packages;
+      this.filteredPackages = PackageUtilities.filterPackages(this.packages, {scope, ignore});
+      this.packageGraph = this.repository.packageGraph;
     } catch (err) {
       this.logger.error("Errored while collecting packages and package graph", err);
       this._complete(null, 1);
