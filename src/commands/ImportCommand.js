@@ -88,7 +88,7 @@ export default class ImportCommand extends Command {
     async.series(this.commits.map((sha) => (done) => {
       progressBar.tick(sha);
       // Get a list of files in this commit
-      const filesInPatch = this.externalExecSync(`git ls-tree --name-only -r ${sha}`)
+      const filesInPatch = this.externalExecSync(`git show --name-only --no-color ${sha}`)
       .split("\n")
       // Filter out empties
       .filter(function (file) {return !!file; })
@@ -106,7 +106,7 @@ export default class ImportCommand extends Command {
       // Map files to original and urlEncoded
       .map(function (file) {
         return {
-          encodedString: encodeURIComponent(file),
+          encodedString: encodeURI(file),
           originalString: file
         };
       });
@@ -131,7 +131,7 @@ export default class ImportCommand extends Command {
       // Remove all url encoded file names from patch
       patch = filesInPatch.reduce(function (partiallyReplacedPatch, file) {
         return partiallyReplacedPatch.replace(new RegExp(file.encodedString, "mg"), file.originalString);
-      }, patch);
+      }, patch + "");
 
       // Apply the modified patch to the current lerna repository, preserving
       // original commit date, author and message.
