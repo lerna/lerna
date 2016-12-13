@@ -195,11 +195,12 @@ export default class BootstrapCommand extends Command {
           } else {
             // get the destination directory name of the dependency
             const pkgDependencyLocation = path.join(filteredPackage.nodeModulesLocation, dependencyPackage.name);
+            const relativeDependencyLocation = path.relative(path.dirname(pkgDependencyLocation), dependencyLocation);
             // check if dependency is already installed
             if (FileSystemUtilities.existsSync(pkgDependencyLocation)) {
               const isDepSymlink = FileSystemUtilities.isSymlink(pkgDependencyLocation);
               // installed dependency is a symlink pointing to a different location
-              if (isDepSymlink !== false && isDepSymlink !== dependencyLocation) {
+              if (isDepSymlink !== false && isDepSymlink !== dependencyLocation && isDepSymlink !== relativeDependencyLocation) {
                 this.logger.warn(
                   `Symlink already exists for ${dependency} dependency of ${filteredPackage.name}, ` +
                   "but links to different location. Replacing with updated symlink..."
