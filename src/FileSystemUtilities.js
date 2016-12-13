@@ -5,7 +5,8 @@ import rimraf from "rimraf";
 import fs from "fs";
 import cmdShim from "cmd-shim";
 import readCmdShim from "read-cmd-shim";
-import { resolve, dirname, relative, isAbsolute } from "path";
+import { resolve, dirname, relative } from "path";
+import pathIsAbsolute from "path-is-absolute";
 
 const ENDS_WITH_NEW_LINE = /\n$/;
 
@@ -63,7 +64,7 @@ export default class FileSystemUtilities {
       }
       type = "file";
     }
-    if (isAbsolute(src) && process.platform !== "win32") {
+    if (pathIsAbsolute(src) && process.platform !== "win32") {
       if (type === "junction") {
         type = "dir";
       }
