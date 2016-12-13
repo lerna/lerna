@@ -3,6 +3,7 @@ import child from "child_process";
 import path from "path";
 import fs from "fs";
 import syncExec from "sync-exec";
+import chalk from "chalk";
 
 import UpdatedCommand from "../src/commands/UpdatedCommand";
 import exitWithCode from "./_exitWithCode";
@@ -63,7 +64,7 @@ describe("UpdatedCommand", () => {
       let calls = 0;
       stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
-        if (calls === 2) assert.equal(message, "- package-1\n- package-2\n- package-3\n- package-4");
+        if (calls === 2) assert.equal(message, `- package-1\n- package-2\n- package-3\n- package-4\n- package-5 (${chalk.red("private")}`);
         calls++;
       });
 
@@ -194,7 +195,7 @@ describe("UpdatedCommand", () => {
       let calls = 0;
       stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
-        if (calls === 2) assert.equal(message, "- package-1\n- package-2\n- package-3\n- package-4");
+        if (calls === 2) assert.equal(message, `- package-1\n- package-2\n- package-3\n- package-4\n- package-5 (${chalk.red("private")}`);
         calls++;
       });
 
