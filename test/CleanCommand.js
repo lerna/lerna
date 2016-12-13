@@ -54,4 +54,42 @@ describe("CleanCommand", () => {
     cleanCommand.initialize(done);
   });
 
+  // Both of these commands should result in the same outcome
+  const filters = [
+    { test: "should only clean scoped packages", flag: "scope", flagValue: "package-@(1|2)"},
+    { test: "should not clean ignored packages", flag: "ignore", flagValue: "package-@(3|4)"},
+  ];
+  filters.forEach((filter) => {
+    it(filter.test, (done) => {
+      const cleanCommand = new CleanCommand([], {
+        [filter.flag]: filter.flagValue
+      });
+
+      assertStubbedCalls([
+        [PromptUtilities, "confirm", { valueCallback: true }, [
+          { args: ["Proceed?"], returns: true }
+        ]],
+      ]);
+
+      cleanCommand.runValidations();
+      cleanCommand.runPreparations();
+
+      const actualDirToPackageName = (dir) => {
+        const prefixLength = path.join(testDir, "packages/").length;
+        const suffixLength = "/node_modules".length;
+        const packageNameLength = dir.length - prefixLength - suffixLength;
+        return dir.substr(prefixLength, packageNameLength);
+      };
+      const ranInPackages = [];
+      stub(FileSystemUtilities, "rimraf", (actualDir, callback) => {
+        ranInPackages.push(actualDirToPackageName(actualDir));
+        callback();
+      });
+
+      cleanCommand.runCommand(exitWithCode(0, () => {
+        assert.deepEqual(ranInPackages, ["package-1", "package-2"]);
+        done();
+      }));
+    });
+  });
 });
