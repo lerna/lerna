@@ -116,8 +116,14 @@ describe("PackageUtilities", () => {
   });
 
   describe(".topologicallyBatchPackages()", () => {
-    const fixture = path.join(__dirname, "fixtures/PackageUtilities/toposort/packages");
-    const packages = PackageUtilities.getPackages(fixture);
+    let packages;
+
+    beforeEach((done) => {
+      initFixture("PackageUtilities/toposort", () => {
+        packages = PackageUtilities.getPackages(new Repository);
+        done();
+      });
+    });
 
     it("should batch roots, then internal/leaf nodes, then cycles", () => {
       assert.deepEqual(
@@ -134,8 +140,14 @@ describe("PackageUtilities", () => {
   });
 
   describe(".filterPackages()", () => {
-    const fixture = path.join(__dirname, "fixtures/PackageUtilities/filtering/packages");
-    const packages = PackageUtilities.getPackages(fixture);
+    let packages;
+
+    beforeEach((done) => {
+      initFixture("PackageUtilities/filtering", () => {
+        packages = PackageUtilities.getPackages(new Repository);
+        done();
+      });
+    });
 
     it("should filter --scoped packages", () => {
       const flags = { scope: "package-a-*"};
