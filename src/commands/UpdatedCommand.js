@@ -1,5 +1,6 @@
 import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
 import Command from "../Command";
+import chalk from "chalk";
 
 export default class UpdatedCommand extends Command {
   initialize(callback) {
@@ -16,7 +17,7 @@ export default class UpdatedCommand extends Command {
 
   execute(callback) {
     const formattedUpdates = this.updates
-      .map((update) => `- ${update.package.name}${update.package.isPrivate() ? " (private)" : ""}`)
+      .map((update) => `- ${update.package.name}${update.package.isPrivate() ? ` (${chalk.red("private")})` : ""}`)
       .join("\n");
 
     this.logger.newLine();
