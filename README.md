@@ -57,10 +57,7 @@ The two primary commands in Lerna are `lerna bootstrap` and `lerna publish`.
 Let's start by installing Lerna globally with [npm](https://www.npmjs.com/).
 
 ```sh
-# install the latest 2.x version using the `prerelease` dist-tag
-$ npm install --global lerna@prerelease
-# install version directly
-$ npm install --global lerna@^2.0.0-beta
+$ npm install --g lerna
 ```
 
 Next we'll create a new [git](https://git-scm.com/) repository:
