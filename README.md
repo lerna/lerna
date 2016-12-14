@@ -129,7 +129,7 @@ Example output on a new git repo:
 
 ```sh
 > lerna init
-$ Lerna v2.0.0-beta.30
+$ Lerna v2.0.0-beta.31
 $ Creating packages directory.
 $ Updating package.json.
 $ Creating lerna.json.
@@ -416,7 +416,7 @@ Running `lerna` without arguments will show all commands/options.
 
 ```js
 {
-  "lerna": "2.0.0-beta.30",
+  "lerna": "2.0.0-beta.31",
   "version": "1.1.3",
   "publishConfig": {
     "ignore": [
@@ -504,7 +504,7 @@ The `ignore` flag, when used with the `bootstrap` command, can also be set in `l
 
 ```javascript
 {
-  "lerna": "2.0.0-beta.30",
+  "lerna": "2.0.0-beta.31",
   "version": "0.0.0",
   "bootstrapConfig": {
     "ignore": "component-*"
