@@ -27,14 +27,6 @@ Adds a `--loglevel [silent|error|warn|success|info|verbose|silly]` option.
 
 Any logs of a higher level than the setting are shown. The default is "info".
 
-Default output is unchanged:
-
-![image](https://cloud.githubusercontent.com/assets/115908/18188355/639a3504-7066-11e6-9997-ff9f9b882e1e.png)
-
-But now log level can be adjusted:
-
-![image](https://cloud.githubusercontent.com/assets/115908/18188375/7bf0d3b0-7066-11e6-8d47-38fe78dd4a8a.png)
-
 * [#386](https://github.com/lerna/lerna/pull/386) Add --scope and --ignore support for bootstrap, exec, run, clean and ls. ([@lukebatchelor](https://github.com/lukebatchelor))
 * [#358](https://github.com/lerna/lerna/pull/358) Run pre/post install scripts during bootstrap. ([@seansfkelley](https://github.com/seansfkelley))
 
