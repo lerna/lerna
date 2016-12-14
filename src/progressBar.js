@@ -18,7 +18,7 @@ class ProgressBarController {
     }
 
     // Don't do any of this while testing
-    if (process.env.NODE_ENV === "test") {
+    if (process.env.NODE_ENV === "lerna-test") {
       return;
     }
 
