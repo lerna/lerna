@@ -80,7 +80,6 @@ Your repository should now look like this:
 
 ```
 lerna-repo/
-  packages/
   package.json
   lerna.json
 ```
@@ -125,13 +124,12 @@ When run, this command will:
 
 1. Add `lerna` as a [`devDependency`](https://docs.npmjs.com/files/package.json#devdependencies) in `package.json` if it doesn't already exist.
 2. Create a `lerna.json` config file to store the `version` number.
-3. Create a `packages` directory if it hasn't been created already.
 
 Example output on a new git repo:
 
 ```sh
 > lerna init
-$ Lerna v2.0.0-beta.18
+$ Lerna v2.0.0-beta.31
 $ Creating packages directory.
 $ Updating package.json.
 $ Creating lerna.json.
@@ -418,7 +416,7 @@ Running `lerna` without arguments will show all commands/options.
 
 ```js
 {
-  "lerna": "2.0.0-beta.18",
+  "lerna": "2.0.0-beta.31",
   "version": "1.1.3",
   "publishConfig": {
     "ignore": [
@@ -428,7 +426,8 @@ Running `lerna` without arguments will show all commands/options.
   },
   "bootstrapConfig": {
     "ignore": "component-*"
-  }
+  },
+  "packages": ["packages/*"]
 }
 ```
 
@@ -437,6 +436,7 @@ Running `lerna` without arguments will show all commands/options.
 - `publishConfig.ignore`: an array of globs that won't be included in `lerna updated/publish`. Use this to prevent publishing a new version unnecessarily for changes, such as fixing a `README.md` typo.
 - `bootstrapConfig.ignore`: an glob that won't be bootstrapped when running the `lerna bootstrap` command.
 - `bootstrapConfig.scope`: an glob that restricts which packages will be bootstrapped when running the `lerna bootstrap` command.
+- `packages`: Array of globs to use as package locations.
 
 ### Common `devDependencies`
 
@@ -504,7 +504,7 @@ The `ignore` flag, when used with the `bootstrap` command, can also be set in `l
 
 ```javascript
 {
-  "lerna": "2.0.0-beta.16",
+  "lerna": "2.0.0-beta.31",
   "version": "0.0.0",
   "bootstrapConfig": {
     "ignore": "component-*"
