@@ -8,7 +8,7 @@ export default class LsCommand extends Command {
   }
 
   execute(callback) {
-    const formattedPackages = this.packages
+    const formattedPackages = this.filteredPackages
       .map((pkg) => `- ${pkg.name}${pkg.isPrivate() ? ` (${chalk.red("private")})` : ""}`)
       .join("\n");
 

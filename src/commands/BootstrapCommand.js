@@ -8,7 +8,7 @@ import path from "path";
 
 export default class BootstrapCommand extends Command {
   initialize(callback) {
-    // Nothing to do...
+    this.configFlags = this.repository.bootstrapConfig;
     callback(null, true);
   }
 
@@ -28,7 +28,6 @@ export default class BootstrapCommand extends Command {
    * @param {Function} callback
    */
   bootstrapPackages(callback) {
-    this.filteredPackages = this.getPackages();
     this.filteredGraph = PackageUtilities.getPackageGraph(this.filteredPackages);
     this.logger.info(`Bootstrapping ${this.filteredPackages.length} packages`);
     async.series([
@@ -45,17 +44,6 @@ export default class BootstrapCommand extends Command {
     ], callback);
   }
 
-  /**
-   * Get packages to bootstrap
-   * @returns {Array.<Package>}
-   */
-  getPackages() {
-    const ignore = this.flags.ignore || this.repository.bootstrapConfig.ignore;
-    if (ignore) {
-      this.logger.info(`Ignoring packages that match '${ignore}'`);
-    }
-    return PackageUtilities.filterPackages(this.packages, ignore, true);
-  }
 
   runScriptInPackages(scriptName, callback) {
     const packages = this.filteredPackages.slice();

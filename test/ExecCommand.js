@@ -35,8 +35,8 @@ describe("ExecCommand", () => {
       assert.equal(error, null);
     });
 
-    assert.equal(execCommand.packages.length, 1);
-    assert.equal(execCommand.packages[0].name, "package-2");
+    assert.equal(execCommand.filteredPackages.length, 1);
+    assert.equal(execCommand.filteredPackages[0].name, "package-2");
 
     done();
   });
@@ -93,21 +93,28 @@ describe("ExecCommand", () => {
     }));
   });
 
-  it("should run a command for a given scope", (done) => {
-    const execCommand = new ExecCommand(["ls"], {scope: "package-1"});
+  // Both of these commands should result in the same outcome
+  const filters = [
+    { test: "should run a command for a given scope", flag: "scope", flagValue: "package-1"},
+    { test: "should not run a command for ignored packages", flag: "ignore", flagValue: "package-@(2|3|4)"},
+  ];
+  filters.forEach((filter) => {
+    it(filter.test, (done) => {
+      const execCommand = new ExecCommand(["ls"], {[filter.flag]: filter.flagValue});
 
-    execCommand.runValidations();
-    execCommand.runPreparations();
+      execCommand.runValidations();
+      execCommand.runPreparations();
 
-    const ranInPackages = [];
-    stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
-      ranInPackages.push(options.cwd.substr(path.join(testDir, "packages/").length));
-      callback();
+      const ranInPackages = [];
+      stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
+        ranInPackages.push(options.cwd.substr(path.join(testDir, "packages/").length));
+        callback();
+      });
+
+      execCommand.runCommand(exitWithCode(0, () => {
+        assert.deepEqual(ranInPackages, ["package-1"]);
+        done();
+      }));
     });
-
-    execCommand.runCommand(exitWithCode(0, () => {
-      assert.deepEqual(ranInPackages, ["package-1"]);
-      done();
-    }));
   });
 });
