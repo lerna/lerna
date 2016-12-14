@@ -65,9 +65,6 @@ export default class FileSystemUtilities {
       type = "file";
     }
     if (pathIsAbsolute(src) && process.platform !== "win32") {
-      if (type === "junction") {
-        type = "dir";
-      }
       src = relative(dirname(dest), src);
     }
     fs.lstat(dest, (err) => {
