@@ -1,5 +1,5 @@
 import child from "child_process";
-import spawn from "cross-spawn";
+import spawn from "cross-glob-spawn";
 import objectAssign from "object-assign";
 import syncExec from "sync-exec";
 import {EventEmitter} from "events";
@@ -44,15 +44,12 @@ export default class ChildProcessUtilities {
 
   static spawn(command, args, opts, callback) {
     let stderr = "";
+    let stdout = "";
 
     const childProcess = ChildProcessUtilities.registerChild(
       spawn(command, args, objectAssign({
         stdio: "inherit"
       }, opts))
-        .on("error", () => {})
-        .on("exit", (code) => {
-          callback(code && (stderr || `Command failed: ${command} ${args.join(" ")}`));
-        })
     );
 
     // By default stderr is inherited from us (just sent to _our_ output).
@@ -62,6 +59,16 @@ export default class ChildProcessUtilities {
       childProcess.stderr.setEncoding("utf8");
       childProcess.stderr.on("data", (chunk) => stderr += chunk);
     }
+
+    if (childProcess.stdout) {
+      childProcess.stdout.setEncoding("utf8");
+      childProcess.stdout.on("data", (chunk) => stdout += chunk);
+    }
+
+    childProcess.on("error", () => {});
+    childProcess.on("exit", (code) => {
+      callback(code && (stderr || `Command failed: ${command} ${args.join(" ")}`), stdout);
+    });
   }
 
   static registerChild(child) {
