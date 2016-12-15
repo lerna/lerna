@@ -40,7 +40,6 @@
     "object-assign-sorted": "^1.0.0",
     "pad": "^1.0.0",
     "path-exists": "^2.1.0",
-    "path-is-absolute": "^1.0.1",
     "progress": "^1.1.8",
     "read-cmd-shim": "^1.0.1",
     "rimraf": "^2.4.4",
