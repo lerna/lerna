@@ -62,7 +62,7 @@ export default class Command {
     }
 
     if (
-      process.env.NODE_ENV !== "test" &&
+      process.env.NODE_ENV !== "lerna-test" &&
       this.lernaVersion !== this.repository.lernaVersion
     ) {
       this.logger.warn(
@@ -158,7 +158,7 @@ export default class Command {
         callback(err, code);
       }
 
-      if (process.env.NODE_ENV !== "test") {
+      if (process.env.NODE_ENV !== "lerna-test") {
         process.exit(code);
       }
     };
