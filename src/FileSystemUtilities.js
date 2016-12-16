@@ -63,7 +63,7 @@ export default class FileSystemUtilities {
       }
       type = "file";
     }
-    if (process.platform === "win32") {
+    if (process.platform !== "win32") {
       src = relative(dirname(dest), src);
     }
     fs.lstat(dest, (err) => {
