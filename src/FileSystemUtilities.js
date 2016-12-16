@@ -63,7 +63,9 @@ export default class FileSystemUtilities {
       }
       type = "file";
     }
-    src = relative(dirname(dest), src);
+    if (process.platform === "win32") {
+      src = relative(dirname(dest), src);
+    }
     fs.lstat(dest, (err) => {
       if (!err) {
         // Something exists at `dest`.  Need to remove it first.
