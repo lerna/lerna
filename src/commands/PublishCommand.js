@@ -6,11 +6,13 @@ import NpmUtilities from "../NpmUtilities";
 import Command from "../Command";
 import semver from "semver";
 import async from "async";
+import chalk from "chalk";
 import path from "path";
 import { EOL } from "os";
 
 export default class PublishCommand extends Command {
   initialize(callback) {
+
     if (this.flags.canary) {
       this.logger.info("Publishing canary build");
     }
@@ -21,8 +23,7 @@ export default class PublishCommand extends Command {
     }
 
     const updatedPackagesCollector = new UpdatedPackagesCollector(
-      this.packages,
-      this.packageGraph,
+      this.repository,
       this.flags,
       this.repository.publishConfig
     );
@@ -231,7 +232,8 @@ export default class PublishCommand extends Command {
     this.logger.newLine();
     this.logger.info("Changes:");
     this.logger.info(this.updates.map((update) => {
-      return `- ${update.package.name}: ${update.package.version} => ${this.updatesVersions[update.package.name]}`;
+      const pkg = update.package;
+      return `- ${pkg.name}: ${pkg.version} => ${this.updatesVersions[pkg.name]}${pkg.isPrivate() ? ` (${chalk.red("private")})` : ""}`;
     }).join(EOL));
     this.logger.newLine();
 

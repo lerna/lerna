@@ -19,5 +19,8 @@ as normal to create the `package.json` for your new package.
 You can use [`lerna import <package>`][import] to transfer an existing package
 into your Lerna repository; this command will preserve the commit history.
 
+[`lerna import <package>`][import] takes a local path rather than a URL. In this 
+case you will need to have the repo you wish to link to on your file system.
+
 [bootstrap]: https://github.com/lerna/lerna#bootstrap
 [import]: https://github.com/lerna/lerna#import

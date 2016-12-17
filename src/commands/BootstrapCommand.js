@@ -8,7 +8,7 @@ import path from "path";
 
 export default class BootstrapCommand extends Command {
   initialize(callback) {
-    // Nothing to do...
+    this.configFlags = this.repository.bootstrapConfig;
     callback(null, true);
   }
 
@@ -28,7 +28,6 @@ export default class BootstrapCommand extends Command {
    * @param {Function} callback
    */
   bootstrapPackages(callback) {
-    this.filteredPackages = this.getPackages();
     this.logger.info(`Bootstrapping ${this.filteredPackages.length} packages`);
     this.batchedPackages = this.flags.toposort
       ? PackageUtilities.topologicallyBatchPackages(this.filteredPackages, this.logger)
@@ -47,17 +46,6 @@ export default class BootstrapCommand extends Command {
     ], callback);
   }
 
-  /**
-   * Get packages to bootstrap
-   * @returns {Array.<Package>}
-   */
-  getPackages() {
-    const ignore = this.flags.ignore || this.repository.bootstrapConfig.ignore;
-    if (ignore) {
-      this.logger.info(`Ignoring packages that match '${ignore}'`);
-    }
-    return PackageUtilities.filterPackages(this.packages, ignore, true);
-  }
 
   runScriptInPackages(scriptName, callback) {
     this.progressBar.init(this.filteredPackages.length);
@@ -200,13 +188,13 @@ export default class BootstrapCommand extends Command {
               const isDepSymlink = FileSystemUtilities.isSymlink(pkgDependencyLocation);
               // installed dependency is a symlink pointing to a different location
               if (isDepSymlink !== false && isDepSymlink !== dependencyLocation) {
-                this.logger.warning(
+                this.logger.warn(
                   `Symlink already exists for ${dependency} dependency of ${filteredPackage.name}, ` +
                   "but links to different location. Replacing with updated symlink..."
                 );
               // installed dependency is not a symlink
               } else if (isDepSymlink === false) {
-                this.logger.warning(
+                this.logger.warn(
                   `${dependency} is already installed for ${filteredPackage.name}. ` +
                   "Replacing with symlink..."
                 );

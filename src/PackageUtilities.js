@@ -2,6 +2,7 @@ import FileSystemUtilities from "./FileSystemUtilities";
 import PackageGraph from "./PackageGraph";
 import Package from "./Package";
 import path from "path";
+import {sync as globSync} from "glob";
 import minimatch from "minimatch";
 import async from "async";
 
@@ -28,25 +29,25 @@ export default class PackageUtilities {
     return require(PackageUtilities.getPackageConfigPath(packagesPath, name));
   }
 
-  static getPackages(packagesPath) {
+  static getPackages(repository) {
     const packages = [];
 
-    FileSystemUtilities.readdirSync(packagesPath).forEach((packageDirectory) => {
-      if (packageDirectory[0] === ".") {
-        return;
-      }
+    repository.packageConfigs.forEach((globPath) => {
 
-      const packagePath = PackageUtilities.getPackagePath(packagesPath, packageDirectory);
-      const packageConfigPath = PackageUtilities.getPackageConfigPath(packagesPath, packageDirectory);
+      globSync(path.join(repository.rootPath, globPath, "package.json"))
+        .map((fn) => path.resolve(fn))
+        .forEach((packageConfigPath) => {
+          const packagePath = path.dirname(packageConfigPath);
 
-      if (!FileSystemUtilities.existsSync(packageConfigPath)) {
-        return;
-      }
+          if (!FileSystemUtilities.existsSync(packageConfigPath)) {
+            return;
+          }
 
-      const packageJson = require(packageConfigPath);
-      const pkg = new Package(packageJson, packagePath);
+          const packageJson = require(packageConfigPath);
+          const pkg = new Package(packageJson, packagePath);
 
-      packages.push(pkg);
+          packages.push(pkg);
+        });
     });
 
     return packages;
@@ -57,7 +58,28 @@ export default class PackageUtilities {
   }
 
   /**
-  * Filters a given set of packages and returns the one matching the given glob
+  * Filters a given set of packages and returns all packages that match the scope glob
+  * and do not match the ignore glob
+  *
+  * @param {!Array.<Package>} packages The packages to filter
+  * @param {Object} filters The scope and ignore filters.
+  * @param {String} filters.scope glob The glob to match the package name against
+  * @param {String} filters.ignore glob The glob to filter the package name against
+  * @return {Array.<Package>} The packages with a name matching the glob
+  */
+  static filterPackages(packages, {scope, ignore}) {
+    packages = packages.slice();
+    if (scope) {
+      packages = PackageUtilities._filterPackages(packages, scope);
+    }
+    if (ignore) {
+      packages = PackageUtilities._filterPackages(packages, ignore, true);
+    }
+    return packages;
+  }
+
+  /**
+  * Filters a given set of packages and returns all packages matching the given glob
   *
   * @param {!Array.<Package>} packages The packages to filter
   * @param {String} glob The glob to match the package name against
@@ -65,7 +87,7 @@ export default class PackageUtilities {
   * @return {Array.<Package>} The packages with a name matching the glob
   * @throws in case a given glob would produce an empty list of packages
   */
-  static filterPackages(packages, glob, negate = false) {
+  static _filterPackages(packages, glob, negate = false) {
     if (typeof glob !== "undefined") {
       packages = packages.filter((pkg) => {
         if (negate) {

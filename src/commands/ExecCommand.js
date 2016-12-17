@@ -1,6 +1,5 @@
 import ChildProcessUtilities from "../ChildProcessUtilities";
 import Command from "../Command";
-import PackageUtilities from "../PackageUtilities";
 import async from "async";
 
 export default class ExecCommand extends Command {
@@ -13,27 +12,9 @@ export default class ExecCommand extends Command {
       return;
     }
 
-    if (this.flags.scope) {
-      this.logger.info(`Scoping to packages that match '${this.flags.scope}'`);
-      try {
-        this.packages = PackageUtilities.filterPackages(this.packages, this.flags.scope);
-      } catch (err) {
-        callback(err);
-        return;
-      }
-    } else if (this.flags.ignore) {
-      this.logger.info(`Ignoring packages that match ${this.flags.ignore}`);
-      try {
-        this.packages = PackageUtilities.filterPackages(this.packages, this.flags.ignore, true);
-      } catch (err) {
-        callback(err);
-        return;
-      }
-    }
-
     this.batchedPackages = this.flags.toposort
-      ? PackageUtilities.topologicallyBatchPackages(this.packages, this.logger)
-      : [ this.packages ];
+      ? PackageUtilities.topologicallyBatchPackages(this.filteredPackages, this.logger)
+      : [ this.filteredPackages ];
 
     callback(null, true);
   }
