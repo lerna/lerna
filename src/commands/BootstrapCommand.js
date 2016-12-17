@@ -125,6 +125,6 @@ export default class BootstrapCommand extends Command {
    * @param {Function} callback
    */
   symlinkPackages(callback) {
-    LinkUtilities.symlinkPackages(this.filteredPackages, this.packageGraph, this.progressBar, this.logger, callback);
+    LinkUtilities.symlinkPackages(this.filteredPackages, this.packageGraph, callback);
   }
 }

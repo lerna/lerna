@@ -39,9 +39,9 @@ export default class LinkUtilities {
    * Symlink all packages to the packages/node_modules directory
    * Symlink package binaries to dependent packages' node_modules/.bin directory
    */
-  static symlinkPackages(packages, packageGraph, progressBar, logger, callback) {
+  @logger.logifyAsync()
+  static symlinkPackages(packages, packageGraph, callback) {
     logger.info("Symlinking packages and binaries");
-    progressBar.init(packages.length);
     const actions = [];
     packages.forEach((pkg) => {
       // actions to run for this package
@@ -104,15 +104,9 @@ export default class LinkUtilities {
           }
         });
       actions.push((cb) => {
-        async.series(packageActions, (err) => {
-          progressBar.tick(pkg.name);
-          cb(err);
-        });
+        async.series(packageActions, cb);
       });
     });
-    async.series(actions, (err) => {
-      progressBar.terminate();
-      callback(err);
-    });
+    async.series(actions, callback);
   }
 }

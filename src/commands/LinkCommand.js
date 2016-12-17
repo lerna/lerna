@@ -8,7 +8,7 @@ export default class LinkCommand extends Command {
   }
 
   execute(callback) {
-    LinkUtilities.symlinkPackages(this.filteredPackages, this.packageGraph, this.progressBar, this.logger, (err) => {
+    LinkUtilities.symlinkPackages(this.filteredPackages, this.packageGraph, (err) => {
       if (err) {
         callback(err);
       } else {
