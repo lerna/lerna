@@ -11,6 +11,7 @@ var cli = meow([
   "",
   "Commands:",
   "  bootstrap  Link together local packages and npm install remaining package dependencies",
+  "  link       Link together local packages without any installation",
   "  publish    Publish updated packages to npm",
   "  updated    Check which packages have changed since the last release",
   "  import     Import a package with git history from an external repository",
