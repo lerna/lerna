@@ -1,6 +1,6 @@
 import ChildProcessUtilities from "../ChildProcessUtilities";
+import PackageUtilities from "../PackageUtilities";
 import Command from "../Command";
-import async from "async";
 
 export default class ExecCommand extends Command {
   initialize(callback) {

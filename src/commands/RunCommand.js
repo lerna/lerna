@@ -1,6 +1,6 @@
 import NpmUtilities from "../NpmUtilities";
+import PackageUtilities from "../PackageUtilities";
 import Command from "../Command";
-import async from "async";
 
 export default class RunCommand extends Command {
   initialize(callback) {
