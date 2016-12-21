@@ -310,13 +310,8 @@ export default class PublishCommand extends Command {
   }
 
   gitCommitAndTagVersionForUpdates() {
-    let message = "Publish" + EOL;
-
-    const tags = this.updates.map((update) => {
-      const tag = `${update.package.name}@${this.updatesVersions[update.package.name]}`;
-      message += `${EOL} - ${tag}`;
-      return tag;
-    });
+    const tags = this.updates.map((update) => `${update.package.name}@${this.updatesVersions[update.package.name]}`);
+    const message = this.flags.message || tags.reduce((msg, tag) => msg + `${EOL} - ${tag}`, `Publish${EOL}`);
 
     GitUtilities.commit(message);
     tags.forEach(GitUtilities.addTag);
@@ -325,7 +320,8 @@ export default class PublishCommand extends Command {
 
   gitCommitAndTagVersion(version) {
     const tag = "v" + version;
-    GitUtilities.commit(tag);
+    const message = this.flags.message || tag;
+    GitUtilities.commit(message);
     GitUtilities.addTag(tag);
     return tag;
   }
