@@ -5,7 +5,7 @@ import rimraf from "rimraf";
 import fs from "fs";
 import cmdShim from "cmd-shim";
 import readCmdShim from "read-cmd-shim";
-import { resolve, dirname } from "path";
+import { resolve, dirname, relative } from "path";
 
 const ENDS_WITH_NEW_LINE = /\n$/;
 
@@ -63,6 +63,9 @@ export default class FileSystemUtilities {
       }
       type = "file";
     }
+    if (process.platform !== "win32") {
+      src = relative(dirname(dest), src);
+    }
     fs.lstat(dest, (err) => {
       if (!err) {
         // Something exists at `dest`.  Need to remove it first.
@@ -82,7 +85,7 @@ export default class FileSystemUtilities {
   static isSymlink(path) {
     const lstat = fs.lstatSync(path);
     let isSymlink = lstat && lstat.isSymbolicLink()
-      ? fs.readlinkSync(path)
+      ? resolve(dirname(path), fs.readlinkSync(path))
       : false;
     if (process.platform === "win32" && lstat) {
       if (lstat.isFile() && !isSymlink) {
