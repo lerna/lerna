@@ -92,6 +92,12 @@ describe("GitUtilities", () => {
     });
   });
 
+  describe(".getCurrentBranchDescription()", () => {
+    it("should exist", () => {
+      assert.ok(GitUtilities.getCurrentBranchDescription);
+    });
+  });
+
   describe(".getTopLevelDirectory()", () => {
     it("should exist", () => {
       assert.ok(GitUtilities.getTopLevelDirectory);

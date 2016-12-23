@@ -96,6 +96,11 @@ export default class GitUtilities {
   }
 
   @logger.logifySync()
+  static getCurrentBranchDescription() {
+    return ChildProcessUtilities.execSync("git branch | sed -n '/\* /s///p'");
+  }
+
+  @logger.logifySync()
   static init() {
     return ChildProcessUtilities.execSync("git init");
   }
