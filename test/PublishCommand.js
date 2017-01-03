@@ -35,6 +35,15 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git branch | sed -n '/\* /s///p'"] }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git branch | sed -n '/\* /s///p'"] }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git describe --tags --abbrev=0"] }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -132,6 +141,15 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git branch | sed -n '/\* /s///p'"] }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git branch | sed -n '/\* /s///p'"] }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git describe --tags --abbrev=0"] }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -227,6 +245,15 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git branch | sed -n '/\* /s///p'"] }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git branch | sed -n '/\* /s///p'"] }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git describe --tags --abbrev=0"] }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] },
           { args: ["git rev-parse HEAD"], returns: "81e3b44339e1403fe3d762e9435b7c9a155fdef7" },
           { args: ["git rev-parse HEAD"], returns: "81e3b44339e1403fe3d762e9435b7c9a155fdef7" }
@@ -316,6 +343,15 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git branch | sed -n '/\* /s///p'"] }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git branch | sed -n '/\* /s///p'"] }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git describe --tags --abbrev=0"] }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] },
           { args: ["git rev-parse HEAD"], returns: "81e3b44339e1403fe3d762e9435b7c9a155fdef7" },
           { args: ["git rev-parse HEAD"], returns: "81e3b44339e1403fe3d762e9435b7c9a155fdef7" }
@@ -402,6 +438,15 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git branch | sed -n '/\* /s///p'"] }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git branch | sed -n '/\* /s///p'"] }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git describe --tags --abbrev=0"] }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -480,6 +525,15 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git branch | sed -n '/\* /s///p'"] }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git branch | sed -n '/\* /s///p'"] }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git describe --tags --abbrev=0"] }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -548,6 +602,15 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git branch | sed -n '/\* /s///p'"] }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git branch | sed -n '/\* /s///p'"] }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git describe --tags --abbrev=0"] }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -602,6 +665,15 @@ describe("PublishCommand", () => {
       publishCommand.runPreparations();
 
       assertStubbedCalls([
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git branch | sed -n '/\* /s///p'"] }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git branch | sed -n '/\* /s///p'"] }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git describe --tags --abbrev=0"] }
+        ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
         ]],
@@ -859,6 +931,15 @@ describe("PublishCommand", () => {
       publishCommand.runPreparations();
 
       assertStubbedCalls([
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git branch | sed -n '/\* /s///p'"] }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git branch | sed -n '/\* /s///p'"] }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git describe --tags --abbrev=0"] }
+        ]],
        [ChildProcessUtilities, "execSync", {}, [
          { args: ["git tag"] }
        ]],
