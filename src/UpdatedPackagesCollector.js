@@ -27,6 +27,15 @@ export default class UpdatedPackagesCollector {
 
   collectUpdatedPackages() {
     logger.info("Checking for updated packages...");
+
+    const currentBranch = GitUtilities.getCurrentBranchDescription();
+    if (currentBranch !== "master") {
+      logger.info("Working not on master! Current branch: " + currentBranch);
+    }
+
+    const tag = GitUtilities.getLastTag();
+    logger.info("Comparing with: " + tag);
+
     progressBar.init(this.packages.length);
 
     const hasTags = GitUtilities.hasTags();
@@ -43,7 +52,7 @@ export default class UpdatedPackagesCollector {
 
       commits = this.getAssociatedCommits(currentSHA);
     } else if (hasTags) {
-      commits = GitUtilities.describeTag(GitUtilities.getLastTaggedCommit());
+      commits = GitUtilities.describeTag(GitUtilities.getLastTaggedCommitInBranch());
     }
 
     const updatedPackages = {};
