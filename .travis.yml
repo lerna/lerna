@@ -2,7 +2,7 @@ git:
   depth: 1
 sudo: false
 language: node_js
-install: npm
+install: npm install
 cache:
   directories:
   - node_modules
