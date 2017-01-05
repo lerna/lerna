@@ -40,22 +40,22 @@ export default class Command {
     }
 
     const lernaRegistry = ConfigUtilities.read(this.repository.rootPath).registry;
-    const npmRegistry = NpmUtilities.getConfig('registry');
+    const npmRegistry = NpmUtilities.getConfig("registry");
     if (lernaRegistry) {
       if (npmRegistry !== lernaRegistry) {
         this.logger.warn(
-          `Your lerna.json specifies that you should use the registry ` +
+          "Your lerna.json specifies that you should use the registry " +
           `${lernaRegistry}.\nTo change npm to use ${lernaRegistry} ` +
-          `instead, run \`npm config set registry ${lernaRegistry}\`.`
+          "instead, run `npm config set registry ${lernaRegistry}`."
         );
       }
     } else {
-      if (npmRegistry !== 'http://registry.npmjs.com/') {
+      if (npmRegistry !== "http://registry.npmjs.com/") {
         this.logger.warn(
-          `You have no configured registry, and your npm is not pointed at ` +
+          "You have no configured registry, and your npm is not pointed at " +
           `the public registry, so your packages won't be on npmjs.com.\n` +
-          `To suppress this message, add a "registry" key to lerna.json with ` +
-          `the result of \`npm config get registry\`.`
+          "To suppress this message, add a \"registry\" key to lerna.json with " +
+          "the result of `npm config get registry`."
         );
       }
     }
@@ -125,10 +125,10 @@ export default class Command {
     const ignore = this.flags.ignore || (this.configFlags && this.configFlags.ignore);
 
     if (scope) {
-      this.logger.info(`Scoping to packages that match '${scope}'`);
+      this.logger.info(`Scoping to packages that match "${scope}"`);
     }
     if (ignore) {
-      this.logger.info(`Ignoring packages that match '${ignore}'`);
+      this.logger.info(`Ignoring packages that match "${ignore}"`);
     }
     try {
       this.repository.buildPackageGraph();

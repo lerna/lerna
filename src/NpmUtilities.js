@@ -31,7 +31,7 @@ export default class NpmUtilities {
 
   @logger.logifySync()
   static getWhoIAm() {
-    return ChildProcessUtilities.execSync(`npm whoami`);
+    return ChildProcessUtilities.execSync("npm whoami");
   }
 
   @logger.logifySync()
@@ -40,7 +40,7 @@ export default class NpmUtilities {
   }
 
   @logger.logifySync()
-  static setConfig(packageName, tag) {
+  static setConfig(key, value) {
     ChildProcessUtilities.execSync(`npm config set ${key} ${value}`);
   }
 
