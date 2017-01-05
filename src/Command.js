@@ -1,5 +1,7 @@
 import ChildProcessUtilities from "./ChildProcessUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
+import ConfigUtilities from "./ConfigUtilities";
+import NpmUtilities from "./NpmUtilities";
 import ExitHandler from "./ExitHandler";
 import progressBar from "./progressBar";
 import Repository from "./Repository";
@@ -33,6 +35,31 @@ export default class Command {
   }
 
   runValidations() {
+    if (!NpmUtilities.getWhoIAm()) {
+      this.logger.warn("You're not logged in; you may not be able to perform some commands.");
+    }
+
+    const lernaRegistry = ConfigUtilities.read(this.repository.rootPath).registry;
+    const npmRegistry = NpmUtilities.getConfig('registry');
+    if (lernaRegistry) {
+      if (npmRegistry !== lernaRegistry) {
+        this.logger.warn(
+          `Your lerna.json specifies that you should use the registry ` +
+          `${lernaRegistry}.\nTo change npm to use ${lernaRegistry} ` +
+          `instead, run \`npm config set registry ${lernaRegistry}\`.`
+        );
+      }
+    } else {
+      if (npmRegistry !== 'http://registry.npmjs.com/') {
+        this.logger.warn(
+          `You have no configured registry, and your npm is not pointed at ` +
+          `the public registry, so your packages won't be on npmjs.com.\n` +
+          `To suppress this message, add a "registry" key to lerna.json with ` +
+          `the result of \`npm config get registry\`.`
+        );
+      }
+    }
+
     if (this.concurrency < 1) {
       this.logger.warn("command must be run with at least one thread.");
       this._complete(null, 1);
