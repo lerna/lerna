@@ -49,6 +49,10 @@ export default class BootstrapCommand extends Command {
     const packages = this.filteredPackages.slice();
     const batches = PackageUtilities.topologicallyBatchPackages(packages, this.logger);
 
+    if (!batches.length) {
+      return;
+    }
+
     this.progressBar.init(packages.length);
 
     const bootstrapBatch = () => {
