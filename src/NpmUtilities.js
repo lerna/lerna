@@ -31,7 +31,11 @@ export default class NpmUtilities {
 
   @logger.logifySync()
   static getWhoIAm() {
-    return ChildProcessUtilities.execSync("npm whoami");
+    try {
+      return ChildProcessUtilities.execSync("npm whoami", { stdio: "none" });
+    } catch (e) {
+      return undefined;
+    }
   }
 
   @logger.logifySync()
