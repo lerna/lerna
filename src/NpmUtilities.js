@@ -22,6 +22,16 @@ export default class NpmUtilities {
   }
 
   @logger.logifySync()
+  static addOwner(owner, packageName) {
+    ChildProcessUtilities.execSync(`npm owner add ${owner} ${packageName}`);
+  }
+
+  @logger.logifySync()
+  static removeOwner(owner, packageName) {
+    ChildProcessUtilities.execSync(`npm owner rm ${owner} ${packageName}`);
+  }
+
+  @logger.logifySync()
   static addDistTag(packageName, version, tag) {
     ChildProcessUtilities.execSync(`npm dist-tag add ${packageName}@${version} ${tag}`);
   }

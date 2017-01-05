@@ -19,6 +19,14 @@ Or the linter:
 $ npm run lint
 ```
 
+If you want to run a single unit test, you can globally install the test runner
+and point it at the file you're interested in
+
+```sh
+$ npm i -g mocha
+$ $(npm bin)/mocha -t 5000 path/to/your/test.js
+```
+
 If you want to test out Lerna on local repos:
 
 ```sh
