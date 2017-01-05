@@ -430,6 +430,18 @@ repo.  Each commit is modified to make changes relative to the package
 directory.  So, for example, the commit that added `package.json` will
 instead add `packages/<directory-name>/package.json`.
 
+### create
+
+```sh
+$ lerna create <package-name>
+```
+
+Creates a new package at `packages/<package-name>`, unless there is a configured
+package location, in which case the package is created in a new directory named
+`<package-name>` in the first configured location.
+
+This is useful for adding new packages to an existing lerna repository.
+
 ## Misc
 
 Lerna will log to a `lerna-debug.log` file (same as `npm-debug.log`) when it encounters an error running a command.
@@ -453,7 +465,8 @@ Running `lerna` without arguments will show all commands/options.
   "bootstrapConfig": {
     "ignore": "component-*"
   },
-  "packages": ["packages/*"]
+  "packages": ["packages/*"],
+  "registry": "https://registry.npmjs.org"
 }
 ```
 
@@ -463,6 +476,7 @@ Running `lerna` without arguments will show all commands/options.
 - `bootstrapConfig.ignore`: an glob that won't be bootstrapped when running the `lerna bootstrap` command.
 - `bootstrapConfig.scope`: an glob that restricts which packages will be bootstrapped when running the `lerna bootstrap` command.
 - `packages`: Array of globs to use as package locations.
+- `registry`: The registry to publish public modules into.
 
 
 ### Common `devDependencies`
