@@ -424,7 +424,8 @@ Running `lerna` without arguments will show all commands/options.
   "bootstrapConfig": {
     "ignore": "component-*"
   },
-  "packages": ["packages/*"]
+  "packages": ["packages/*"],
+  "registry": "http://localhost:4873/"
 }
 ```
 
@@ -434,6 +435,7 @@ Running `lerna` without arguments will show all commands/options.
 - `bootstrapConfig.ignore`: an glob that won't be bootstrapped when running the `lerna bootstrap` command.
 - `bootstrapConfig.scope`: an glob that restricts which packages will be bootstrapped when running the `lerna bootstrap` command.
 - `packages`: Array of globs to use as package locations.
+- `registry`: The url of the registry to publish non-private packages to, and to read package metadata from.
 
 ### Common `devDependencies`
 
