@@ -50,7 +50,7 @@ export default class BootstrapCommand extends Command {
     const batches = PackageUtilities.topologicallyBatchPackages(packages, this.logger);
 
     if (!batches.length) {
-      return;
+      return callback(null, true);
     }
 
     this.progressBar.init(packages.length);
