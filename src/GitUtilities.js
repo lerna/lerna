@@ -65,8 +65,8 @@ export default class GitUtilities {
   static getLastTag() {
     try {
       return ChildProcessUtilities.execSync("git describe --tags --abbrev=0");
-    } catch(e) {
-      return '0.0.0';
+    } catch (e) {
+      return "0.0.0";
     }
 
   }
