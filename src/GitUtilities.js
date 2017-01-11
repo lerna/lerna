@@ -46,7 +46,8 @@ export default class GitUtilities {
 
   @logger.logifySync()
   static getLastTaggedCommitInBranch() {
-    return ChildProcessUtilities.execSync("git rev-list -n 1 $(git describe --abbrev=0 --tags)");
+    const tagName = GitUtilities.getLastTag();
+    return ChildProcessUtilities.execSync("git rev-list -n 1 " + tagName);
   }
 
   @logger.logifySync()
@@ -62,7 +63,12 @@ export default class GitUtilities {
 
   @logger.logifySync()
   static getLastTag() {
-    return ChildProcessUtilities.execSync("git describe --tags --abbrev=0");
+    try {
+      return ChildProcessUtilities.execSync("git describe --tags --abbrev=0");
+    } catch(e) {
+      return '0.0.0';
+    }
+
   }
 
   @logger.logifySync()
