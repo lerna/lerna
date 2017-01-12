@@ -7,7 +7,7 @@ import exitWithCode from "./_exitWithCode";
 import initFixture from "./_initFixture";
 import stub from "./_stub";
 
-describe("WatchCommand", () => {
+describe.only("WatchCommand", () => {
 
   describe("initialization", () => {
     let testDir;

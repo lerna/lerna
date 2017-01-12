@@ -28,20 +28,23 @@ export default class WatchCommand extends Command {
 
     if (this.flags.scope) {
       this.logger.info(`Scoping to packages that match '${this.flags.scope}'`);
-      try {
-        this.packagesToWatch = PackageUtilities.filterPackages(this.packagesToWatch, this.flags.scope);
-      } catch (err) {
-        callback(err);
-        return;
-      }
-    } else if (this.flags.ignore) {
+    }
+
+    if (this.flags.ignore) {
       this.logger.info(`Ignoring packages that match '${this.flags.ignore}'`);
-      try {
-        this.packagesToWatch = PackageUtilities.filterPackages(this.packagesToWatch, this.flags.ignore, true);
-      } catch (err) {
-        callback(err);
-        return;
-      }
+    }
+
+    try {
+      this.packagesToWatch = PackageUtilities.filterPackages(
+        this.packagesToWatch,
+        {
+          scope: this.flags.scope,
+          ignore: this.flags.ignore,
+        }
+      );
+    } catch (err) {
+      callback(err);
+      return;
     }
 
     callback(null, true);
