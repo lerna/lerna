@@ -69,8 +69,10 @@ export default class BootstrapCommand extends Command {
       });
     };
 
-    // Kick off the first batch.
-    bootstrapBatch();
+    // Kick off the first batch if applicable.
+    if (batches.length) {
+      bootstrapBatch();
+    }
   }
 
   /**
