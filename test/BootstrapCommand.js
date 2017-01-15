@@ -6,6 +6,7 @@ import normalize from "normalize-path";
 
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
 import FileSystemUtilities from "../src/FileSystemUtilities";
+import NpmUtilities from "../src/NpmUtilities";
 import BootstrapCommand from "../src/commands/BootstrapCommand";
 import exitWithCode from "./_exitWithCode";
 import initFixture from "./_initFixture";
@@ -28,7 +29,7 @@ describe("BootstrapCommand", () => {
       testDir = initFixture("BootstrapCommand/lifecycle-scripts", done);
     });
 
-    it("should run preinstall, postinstall and prepublish scripts", (done) => {
+    it("should run preinstall script", (done) => {
       const bootstrapCommand = new BootstrapCommand([], {});
 
       bootstrapCommand.runValidations();
@@ -40,8 +41,106 @@ describe("BootstrapCommand", () => {
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
           assert.ok(pathExists.sync(path.join(testDir, "packages", "package-preinstall", "did-preinstall")));
+          done();
+        } catch (err) {
+          done(err);
+        }
+      }));
+    });
+
+    it("should run postinstall script", (done) => {
+      const bootstrapCommand = new BootstrapCommand([], {});
+
+      bootstrapCommand.runValidations();
+      bootstrapCommand.runPreparations();
+
+      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done(err);
+
+        try {
+          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
           assert.ok(pathExists.sync(path.join(testDir, "packages", "package-postinstall", "did-postinstall")));
-          assert.ok(pathExists.sync(path.join(testDir, "packages", "package-prepublish", "did-prepublish")));
+          done();
+        } catch (err) {
+          done(err);
+        }
+      }));
+    });
+
+    it("should run prepublish script if npm@<=3.x.x is used", (done) => {
+      const bootstrapCommand = new BootstrapCommand([], {});
+
+      bootstrapCommand.runValidations();
+      bootstrapCommand.runPreparations();
+
+      stub(NpmUtilities, "getNpmClientVersion", () => "3.2.8");
+
+      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done(err);
+
+        try {
+          assert.ok(
+            !pathExists.sync(path.join(testDir, "lerna-debug.log")),
+            "lerna-debug.log should not exist"
+          );
+          assert.ok(
+            !pathExists.sync(path.join(testDir, "packages", "package-prepublish-and-prepare", "did-prepare")),
+            "'prepare' script should be ignored"
+          );
+          assert.ok(pathExists.sync(path.join(testDir, "packages", "package-prepublish-and-prepare", "did-prepublish")));
+
+          done();
+        } catch (err) {
+          done(err);
+        }
+      }));
+    });
+
+    it("should run prepare script if available and npm@>=4.x.x is used", (done) => {
+      const bootstrapCommand = new BootstrapCommand([], {});
+
+      bootstrapCommand.runValidations();
+      bootstrapCommand.runPreparations();
+
+      stub(NpmUtilities, "getNpmClientVersion", () => "4.1.1");
+
+      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done(err);
+
+        try {
+          assert.ok(
+            !pathExists.sync(path.join(testDir, "lerna-debug.log")),
+            "lerna-debug.log should not exist"
+          );
+          assert.ok(
+            !pathExists.sync(path.join(testDir, "packages", "package-prepublish-and-prepare", "did-prepublish")),
+            "'prepublish' script should be ignored in case 'prepare' is available"
+          );
+          assert.ok(pathExists.sync(path.join(testDir, "packages", "package-prepublish-and-prepare", "did-prepare")));
+          done();
+        } catch (err) {
+          done(err);
+        }
+      }));
+    });
+
+    it("should run prepublish script if npm@>=4.x.x is used but prepare script is not available", (done) => {
+      const bootstrapCommand = new BootstrapCommand([], {});
+
+      bootstrapCommand.runValidations();
+      bootstrapCommand.runPreparations();
+
+      stub(NpmUtilities, "getNpmClientVersion", () => "4.1.1");
+
+      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done(err);
+
+        try {
+          assert.ok(
+            !pathExists.sync(path.join(testDir, "lerna-debug.log")),
+            "lerna-debug.log should not exist"
+          );
+          assert.ok(pathExists.sync(path.join(testDir, "packages", "package-prepublish-only", "did-prepublish")));
           done();
         } catch (err) {
           done(err);

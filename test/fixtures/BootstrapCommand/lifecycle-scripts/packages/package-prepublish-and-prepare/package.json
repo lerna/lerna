@@ -1,0 +1,8 @@
+{
+  "name": "package-prepublish-and-prepare",
+  "version": "1.0.0",
+  "scripts": {
+    "prepublish": "touch did-prepublish",
+    "prepare": "touch did-prepare"
+  }
+}
