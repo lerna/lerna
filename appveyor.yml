@@ -11,7 +11,7 @@ init:
 
 install:
   - ps: Install-Product node $env:nodejs_version
-  - appveyor-retry npm install --force
+  - npm install
 
 test_script:
   - node --version
