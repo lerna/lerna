@@ -11,7 +11,6 @@ init:
 
 install:
   - ps: Install-Product node $env:nodejs_version
-  - npm install --global npm@^3.0.0
   - npm install
 
 test_script:
