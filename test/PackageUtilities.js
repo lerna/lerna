@@ -139,6 +139,40 @@ describe("PackageUtilities", () => {
     });
   });
 
+
+  describe(".runParallelBatches()", () => {
+    const batches = [
+      [ 1 ],
+      [ 2, 3 ],
+      [ 4, 5, 6 ],
+      [ 7, 8, 9, 10 ]
+    ];
+
+    const taskOrdering = [];
+
+    // Array#sort sorts numbers lexicographically by default!
+    function numericalSort(a, b) {
+      return a - b;
+    }
+
+    it("should run batches serially", (done) => {
+      PackageUtilities.runParallelBatches(batches, (n) => (cb) => {
+        taskOrdering.push(n);
+        cb();
+      }, 1, (err) => {
+        assert(!err);
+        assert.equal(taskOrdering.length, 10);
+        assert.deepEqual([
+          taskOrdering.slice(0, 1).sort(numericalSort),
+          taskOrdering.slice(1, 3).sort(numericalSort),
+          taskOrdering.slice(3, 6).sort(numericalSort),
+          taskOrdering.slice(6, 10).sort(numericalSort)
+        ], batches);
+        done();
+      });
+    });
+  });
+
   describe(".filterPackages()", () => {
     let packages;
 

@@ -530,3 +530,9 @@ Ex: in Babel, `babel-types` is depended upon by all packages in the monorepo (ov
 What level of logs to report.  On failure, all logs are written to lerna-debug.log in the current working directory.
 
 Any logs of a higher level than the setting are shown.  The default is "info".
+
+#### --toposort
+
+If set, when executing a task for multiple packages, tasks will be topologically sorted as to respect the dependency relationships of the packages in question. Cycles are broken on a best-effort basis.
+
+Note that if you have packages with many dependents (or cycles), this flag can bottleneck execution on these packages, even with a high concurrency setting.

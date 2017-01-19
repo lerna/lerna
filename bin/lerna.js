@@ -11,6 +11,7 @@ var cli = meow([
   "",
   "Commands:",
   "  bootstrap  Link together local packages and npm install remaining package dependencies",
+  "  link       Link together local packages without any installation",
   "  publish    Publish updated packages to npm",
   "  updated    Check which packages have changed since the last release",
   "  import     Import a package with git history from an external repository",
@@ -34,6 +35,7 @@ var cli = meow([
   "  --repo-version       Specify repo version to publish",
   "  --concurrency        How many threads to use if lerna parallelises the tasks (defaults to 4)",
   "  --loglevel           What level of logs to report (defaults to \"info\").  On failure, all logs are written to lerna-debug.log in the current working directory.",
+  "  --toposort           When executing tasks, respect the dependency ordering of packages (only affects run, exec and bootstrap).",
 ], {
   alias: {
     independent: "i",
