@@ -353,6 +353,70 @@ describe("BootstrapCommand", () => {
         }
       }));
     });
+
+    it("should bootstrap any dependencies not included by --scope when --include-filtered-dependencies is true", (done) => {
+      // we scope to package-2 only but should still install package-1 as it is a dependency of package-2
+      const bootstrapCommand = new BootstrapCommand([], {
+        scope: "package-2",
+        includeFilteredDependencies: true
+      });
+
+      bootstrapCommand.runValidations();
+      bootstrapCommand.runPreparations();
+
+      assertStubbedCalls([
+        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
+          { args: ["npm", ["install", "foo@^1.0.0"], { cwd: path.join(testDir, "packages", "package-2"), stdio: STDIO_OPT }] }
+        ]],
+        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
+          { args: ["npm", ["install", "foo@^1.0.0"], { cwd: path.join(testDir, "packages", "package-1"), stdio: STDIO_OPT }] }
+        ]]
+      ]);
+
+      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done(err);
+
+        try {
+          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
+
+          done();
+        } catch (err) {
+          done(err);
+        }
+      }));
+    });
+
+    it("should bootstrap any dependencies exluded by --ignore when --include-filtered-dependencies is true", (done) => {
+      // we ignore package 1 but it should still be installed because it is a dependency of package-2
+      const bootstrapCommand = new BootstrapCommand([], {
+        ignore: "{@test/package-1,package-@(3|4)}",
+        includeFilteredDependencies: true
+      });
+
+      bootstrapCommand.runValidations();
+      bootstrapCommand.runPreparations();
+
+      assertStubbedCalls([
+        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
+          { args: ["npm", ["install", "foo@^1.0.0"], { cwd: path.join(testDir, "packages", "package-2"), stdio: STDIO_OPT }] }
+        ]],
+        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
+          { args: ["npm", ["install", "foo@^1.0.0"], { cwd: path.join(testDir, "packages", "package-1"), stdio: STDIO_OPT }] }
+        ]]
+      ]);
+
+      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done(err);
+
+        try {
+          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
+
+          done();
+        } catch (err) {
+          done(err);
+        }
+      }));
+    });
   });
 
   describe("external dependencies that haven't been installed", () => {
