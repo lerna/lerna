@@ -29,7 +29,7 @@ export default class BootstrapCommand extends Command {
    */
   bootstrapPackages(callback) {
     this.packagesToBootstrap = this.filteredPackages;
-    if (this.flags.includeFilteredDeps) {
+    if (this.flags.includeFilteredDependencies) {
       this.packagesToBootstrap = PackageUtilities.addDependencies(this.filteredPackages, this.packageGraph);
     }
     this.filteredGraph = PackageUtilities.getPackageGraph(this.packagesToBootstrap);

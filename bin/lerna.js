@@ -29,7 +29,7 @@ var cli = meow([
   "  --npm-tag [tagname]     Publish packages with the specified npm dist-tag",
   "  --scope [glob]          Restricts the scope to package names matching the given glob (Works only in combination with the 'run', 'exec', 'clean', 'ls' and 'bootstrap' commands).",
   "  --ignore [glob]         Ignores packages with names matching the given glob (Works only in combination with the 'run', 'exec', 'clean', 'ls' and 'bootstrap' commands).",
-  "  --include-filtered-deps Flag to force lerna to include all dependencies and transitive dependencies when running 'bootstrap', even if they should not be included by the scope or ignore flags",
+  "  --include-filtered-dependencies Flag to force lerna to include all dependencies and transitive dependencies when running 'bootstrap', even if they should not be included by the scope or ignore flags",
   "  --force-publish         Force publish for the specified packages (comma-separated) or all packages using * (skips the git diff check for changed packages)",
   "  --yes                   Skip all confirmation prompts",
   "  --repo-version          Specify repo version to publish",

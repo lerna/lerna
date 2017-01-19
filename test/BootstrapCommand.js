@@ -350,11 +350,11 @@ describe("BootstrapCommand", () => {
       }));
     });
 
-    it("should bootstrap any dependencies not included by --scope when --include-deps is true", (done) => {
+    it("should bootstrap any dependencies not included by --scope when --include-filtered-dependencies is true", (done) => {
       // we scope to package-2 only but should still install package-1 as it is a dependency of package-2
       const bootstrapCommand = new BootstrapCommand([], {
         scope: "package-2",
-        includeDeps: true
+        includeFilteredDependencies: true
       });
 
       bootstrapCommand.runValidations();
@@ -382,11 +382,11 @@ describe("BootstrapCommand", () => {
       }));
     });
 
-    it("should bootstrap any dependencies exluded by --ignore when --include-deps is true", (done) => {
+    it("should bootstrap any dependencies exluded by --ignore when --include-filtered-dependencies is true", (done) => {
       // we ignore package 1 but it should still be installed because it is a dependency of package-2
       const bootstrapCommand = new BootstrapCommand([], {
         ignore: "{@test/package-1,package-@(3|4)}",
-        includeDeps: true
+        includeFilteredDependencies: true
       });
 
       bootstrapCommand.runValidations();
