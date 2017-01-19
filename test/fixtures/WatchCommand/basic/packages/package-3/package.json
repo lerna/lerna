@@ -1,0 +1,7 @@
+{
+  "name": "package-3",
+  "version": "1.0.0",
+  "scripts": {
+    "prepublish": "cp index.src.js index.js"
+  }
+}
