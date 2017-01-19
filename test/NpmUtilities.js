@@ -6,4 +6,10 @@ describe("NpmUtilities", () => {
   it("should exist", () => {
     assert.ok(NpmUtilities);
   });
+
+  describe(".getNpmClientVersion()", () => {
+    it("should exist", () => {
+      assert.ok(NpmUtilities.getNpmClientVersion);
+    });
+  });
 });

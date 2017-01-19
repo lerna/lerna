@@ -1,5 +1,5 @@
 {
-  "name": "package-prepublish",
+  "name": "package-prepublish-only",
   "version": "1.0.0",
   "scripts": {
     "prepublish": "touch did-prepublish"

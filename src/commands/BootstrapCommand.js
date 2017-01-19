@@ -44,8 +44,7 @@ export default class BootstrapCommand extends Command {
     ], callback);
   }
 
-
-  runScriptInPackages(scriptName, callback) {
+  forEachPackage(task, callback) {
     const packages = this.filteredPackages.slice();
     const batches = PackageUtilities.topologicallyBatchPackages(packages, this.logger);
 
@@ -55,7 +54,7 @@ export default class BootstrapCommand extends Command {
       const batch = batches.shift();
 
       async.parallelLimit(batch.map((pkg) => (done) => {
-        pkg.runScript(scriptName, (err) => {
+        task(pkg, (err) => {
           this.progressBar.tick(pkg.name);
           done(err);
         });
@@ -71,6 +70,12 @@ export default class BootstrapCommand extends Command {
 
     // Kick off the first batch.
     bootstrapBatch();
+  }
+
+  runScriptInPackages(scriptName, callback) {
+    this.forEachPackage((pkg, done) => {
+      pkg.runScript(scriptName, done);
+    }, callback);
   }
 
   /**
@@ -92,12 +97,32 @@ export default class BootstrapCommand extends Command {
   }
 
   /**
-   * Run the "prepublish" NPM script in all bootstrapped packages
+   * Run the "prepublish" or "prepare" (depending on the version of npm client)
+   * NPM script in all bootstrapped packages
    * @param callback
    */
   prepublishPackages(callback) {
     this.logger.info("Prepublishing packages");
-    this.runScriptInPackages("prepublish", callback);
+
+    const npmClientVersionString = NpmUtilities.getNpmClientVersion();
+    const npmClientMajorVersion = parseInt(npmClientVersionString, 10);
+
+    if (npmClientMajorVersion <= 3) {
+      this.runScriptInPackages("prepublish", callback);
+      return;
+    }
+
+    this.forEachPackage(
+      (pkg, done) => {
+        if (pkg.scripts["prepare"]) {
+          pkg.runScript("prepare", done);
+        } else {
+          // fallback to "prepublish" to imitate npm client's behavior
+          pkg.runScript("prepublish", done);
+        }
+      },
+      callback
+    );
   }
 
   /**
