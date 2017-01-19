@@ -401,6 +401,22 @@ repo.  Each commit is modified to make changes relative to the package
 directory.  So, for example, the commit that added `package.json` will
 instead add `packages/<directory-name>/package.json`.
 
+### export
+
+```sh
+$ lerna export <package-name> <path-to-external-directory>
+```
+
+Export the package at `<package-name>` into a new directory, at
+`<path-to-external-directory>`.  Both parameters are optional; if
+`<package-name>` is omitted, all packages are ejected; if
+`<path-to-external-directory>` is not provided, the package or packages are
+exported to the user's home directory.  Also respects the `dry-run` option, in
+which case it only logs what would be moved.
+
+This allows you to move packages out of an existing lerna repository and into
+its own repository, in case it turns out to be easier to manage on its own.
+
 ## Misc
 
 Lerna will log to a `lerna-debug.log` file (same as `npm-debug.log`) when it encounters an error running a command.
