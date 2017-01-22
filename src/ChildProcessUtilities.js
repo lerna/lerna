@@ -50,8 +50,7 @@ export default class ChildProcessUtilities {
   }
 
   static spawn(command, args, opts, callback) {
-    let stderr = "";
-    let stdout = "";
+    let output = "";
 
     const childProcess = ChildProcessUtilities.registerChild(
       spawn(command, args, objectAssign({
@@ -60,9 +59,9 @@ export default class ChildProcessUtilities {
         .on("error", () => {})
         .on("close", (code) => {
           if (code) {
-            callback(stderr || `Command failed: ${command} ${args.join(" ")}`, stdout);
+            callback(`Command exited with status ${code}: ${command} ${args.join(" ")}`, output);
           } else {
-            callback(null, stdout);
+            callback(null, output);
           }
         })
     );
@@ -72,12 +71,12 @@ export default class ChildProcessUtilities {
     // call back with it in case of failure.
     if (childProcess.stderr) {
       childProcess.stderr.setEncoding("utf8");
-      childProcess.stderr.on("data", (chunk) => stderr += chunk);
+      childProcess.stderr.on("data", (chunk) => output += chunk);
     }
 
     if (childProcess.stdout) {
       childProcess.stdout.setEncoding("utf8");
-      childProcess.stdout.on("data", (chunk) => stdout += chunk);
+      childProcess.stdout.on("data", (chunk) => output += chunk);
     }
   }
 
