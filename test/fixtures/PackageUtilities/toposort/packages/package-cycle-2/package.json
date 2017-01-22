@@ -1,0 +1,7 @@
+{
+  "name": "package-cycle-2",
+  "version": "1.0.0",
+  "dependencies": {
+    "package-cycle-1": "1.0.0"
+  }
+}

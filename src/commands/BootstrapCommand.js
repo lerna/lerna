@@ -8,7 +8,7 @@ import path from "path";
 
 export default class BootstrapCommand extends Command {
   initialize(callback) {
-    // Nothing to do...
+    this.configFlags = this.repository.bootstrapConfig;
     callback(null, true);
   }
 
@@ -17,7 +17,7 @@ export default class BootstrapCommand extends Command {
       if (err) {
         callback(err);
       } else {
-        this.logger.success(`Successfully bootstrapped ${this.filteredPackages.length} packages.`);
+        this.logger.success(`Successfully bootstrapped ${this.packagesToBootstrap.length} packages.`);
         callback(null, true);
       }
     });
@@ -28,87 +28,42 @@ export default class BootstrapCommand extends Command {
    * @param {Function} callback
    */
   bootstrapPackages(callback) {
-    this.filteredPackages = this.getPackages();
-    this.filteredGraph = PackageUtilities.getPackageGraph(this.filteredPackages);
-    this.logger.info(`Bootstrapping ${this.filteredPackages.length} packages`);
+    this.packagesToBootstrap = this.filteredPackages;
+    if (this.flags.includeFilteredDependencies) {
+      this.packagesToBootstrap = PackageUtilities.addDependencies(this.filteredPackages, this.packageGraph);
+    }
+    this.filteredGraph = PackageUtilities.getPackageGraph(this.packagesToBootstrap);
+    this.logger.info(`Bootstrapping ${this.packagesToBootstrap.length} packages`);
     async.series([
+      // preinstall bootstrapped packages
+      (cb) => this.preinstallPackages(cb),
       // install external dependencies
       (cb) => this.installExternalDependencies(cb),
       // symlink packages and their binaries
       (cb) => this.symlinkPackages(cb),
+      // postinstall bootstrapped packages
+      (cb) => this.postinstallPackages(cb),
       // prepublish bootstrapped packages
       (cb) => this.prepublishPackages(cb)
     ], callback);
   }
 
-  /**
-   * Get packages to bootstrap
-   * @returns {Array.<Package>}
-   */
-  getPackages() {
-    const ignore = this.flags.ignore || this.repository.bootstrapConfig.ignore;
-    if (ignore) {
-      this.logger.info(`Ignoring packages that match '${ignore}'`);
-    }
-    return PackageUtilities.filterPackages(this.packages, ignore, true);
-  }
+  runScriptInPackages(scriptName, callback) {
+    const packages = this.filteredPackages.slice();
+    const batches = PackageUtilities.topologicallyBatchPackages(packages, this.logger);
 
-  /**
-   * Run the "prepublish" NPM script in all bootstrapped packages
-   * @param callback
-   */
-  prepublishPackages(callback) {
-    this.logger.info("Prepublishing packages");
+    this.progressBar.init(packages.length);
 
-    // Get a filtered list of packages that will be prepublished.
-    const todoPackages = this.filteredPackages.slice();
-
-    this.progressBar.init(todoPackages.length);
-
-    // This maps package names to the number of packages that depend on them.
-    // As packages are completed their names will be removed from this object.
-    const pendingDeps = {};
-    todoPackages.forEach((pkg) => this.filteredGraph.get(pkg.name).dependencies.forEach((dep) => {
-      if (!pendingDeps[dep]) pendingDeps[dep] = 0;
-      pendingDeps[dep]++;
-    }));
-
-    // Bootstrap runs the "prepublish" script in each package.  This script
-    // may _use_ another package from the repo.  Therefore if a package in the
-    // repo depends on another we need to bootstrap the dependency before the
-    // dependent.  So the bootstrap proceeds in batches of packages where each
-    // batch includes all packages that have no remaining un-bootstrapped
-    // dependencies within the repo.
     const bootstrapBatch = () => {
-      // Get all packages that have no remaining dependencies within the repo
-      // that haven't yet been bootstrapped.
-      const batch = todoPackages.filter((pkg) => {
-        const node = this.filteredGraph.get(pkg.name);
-        return !node.dependencies.filter((dep) => pendingDeps[dep]).length;
-      });
-
-      // If we weren't able to find a package with no remaining dependencies,
-      // then we've encountered a cycle in the dependency graph.  Run a
-      // single-package batch with the package that has the most dependents.
-      if (todoPackages.length && !batch.length) {
-        this.logger.warn(
-          "Encountered a cycle in the dependency graph.  " +
-          "This may cause instability if dependencies are used during `prepublish`."
-        );
-        batch.push(todoPackages.reduce((a, b) => (
-          (pendingDeps[a.name] || 0) > (pendingDeps[b.name] || 0) ? a : b
-        )));
-      }
+      const batch = batches.shift();
 
       async.parallelLimit(batch.map((pkg) => (done) => {
-        pkg.runScript("prepublish", (err) => {
+        pkg.runScript(scriptName, (err) => {
           this.progressBar.tick(pkg.name);
-          delete pendingDeps[pkg.name];
-          todoPackages.splice(todoPackages.indexOf(pkg), 1);
           done(err);
         });
       }), this.concurrency, (err) => {
-        if (todoPackages.length && !err) {
+        if (batches.length && !err) {
           bootstrapBatch();
         } else {
           this.progressBar.terminate();
@@ -119,6 +74,33 @@ export default class BootstrapCommand extends Command {
 
     // Kick off the first batch.
     bootstrapBatch();
+  }
+
+  /**
+   * Run the "preinstall" NPM script in all bootstrapped packages
+   * @param callback
+   */
+  preinstallPackages(callback) {
+    this.logger.info("Preinstalling packages");
+    this.runScriptInPackages("preinstall", callback);
+  }
+
+  /**
+   * Run the "postinstall" NPM script in all bootstrapped packages
+   * @param callback
+   */
+  postinstallPackages(callback) {
+    this.logger.info("Postinstalling packages");
+    this.runScriptInPackages("postinstall", callback);
+  }
+
+  /**
+   * Run the "prepublish" NPM script in all bootstrapped packages
+   * @param callback
+   */
+  prepublishPackages(callback) {
+    this.logger.info("Prepublishing packages");
+    this.runScriptInPackages("prepublish", callback);
   }
 
   /**
@@ -157,9 +139,9 @@ export default class BootstrapCommand extends Command {
    */
   installExternalDependencies(callback) {
     this.logger.info("Installing external dependencies");
-    this.progressBar.init(this.filteredPackages.length);
+    this.progressBar.init(this.packagesToBootstrap.length);
     const actions = [];
-    this.filteredPackages.forEach((pkg) => {
+    this.packagesToBootstrap.forEach((pkg) => {
       const allDependencies = pkg.allDependencies;
       const externalPackages = Object.keys(allDependencies)
         .filter((dependency) => {
@@ -190,9 +172,9 @@ export default class BootstrapCommand extends Command {
    */
   symlinkPackages(callback) {
     this.logger.info("Symlinking packages and binaries");
-    this.progressBar.init(this.filteredPackages.length);
+    this.progressBar.init(this.packagesToBootstrap.length);
     const actions = [];
-    this.filteredPackages.forEach((filteredPackage) => {
+    this.packagesToBootstrap.forEach((filteredPackage) => {
       // actions to run for this package
       const packageActions = [];
       Object.keys(filteredPackage.allDependencies)
@@ -221,13 +203,13 @@ export default class BootstrapCommand extends Command {
               const isDepSymlink = FileSystemUtilities.isSymlink(pkgDependencyLocation);
               // installed dependency is a symlink pointing to a different location
               if (isDepSymlink !== false && isDepSymlink !== dependencyLocation) {
-                this.logger.warning(
+                this.logger.warn(
                   `Symlink already exists for ${dependency} dependency of ${filteredPackage.name}, ` +
                   "but links to different location. Replacing with updated symlink..."
                 );
               // installed dependency is not a symlink
               } else if (isDepSymlink === false) {
-                this.logger.warning(
+                this.logger.warn(
                   `${dependency} is already installed for ${filteredPackage.name}. ` +
                   "Replacing with symlink..."
                 );

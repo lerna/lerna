@@ -2,16 +2,16 @@ git:
   depth: 1
 sudo: false
 language: node_js
+install: npm install
 cache:
   directories:
   - node_modules
 
 node_js:
- - '0.10'
- - '0.12'
  - '4'
  - '5'
  - '6'
+ - '7'
 
 before_script:
   - git config --global user.email test@example.com

@@ -54,7 +54,7 @@ class Logger {
   }
 
   _emit(message) {
-    if (process.env.NODE_ENV !== "test") {
+    if (process.env.NODE_ENV !== "lerna-test") {
       console.log(message);
     }
   }

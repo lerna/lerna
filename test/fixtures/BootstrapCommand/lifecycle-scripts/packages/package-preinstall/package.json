@@ -1,0 +1,7 @@
+{
+  "name": "package-preinstall",
+  "version": "1.0.0",
+  "scripts": {
+    "preinstall": "touch did-preinstall"
+  }
+}

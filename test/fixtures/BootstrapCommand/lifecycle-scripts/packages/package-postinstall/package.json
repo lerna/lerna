@@ -1,0 +1,7 @@
+{
+  "name": "package-postinstall",
+  "version": "1.0.0",
+  "scripts": {
+    "postinstall": "touch did-postinstall"
+  }
+}
