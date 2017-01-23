@@ -240,6 +240,14 @@ When run with this flag, `publish` publishes packages in a more granular way (pe
 
 > The intended use case for this flag is a per commit level release or nightly release.
 
+#### --git-remote [remote]
+
+```sh
+$ lerna publish --git-remote upstream
+```
+
+When run with this flag, `publish` will push the git changes to the specified remote instead of `origin`.
+
 #### --skip-git
 
 ```sh
