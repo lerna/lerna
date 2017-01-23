@@ -77,6 +77,7 @@ Your repository should now look like this:
 
 ```
 lerna-repo/
+  packages/
   package.json
   lerna.json
 ```
