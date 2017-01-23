@@ -29,7 +29,7 @@ export default class BootstrapCommand extends Command {
    */
   bootstrapPackages(callback) {
     this.logger.info(`Bootstrapping ${this.filteredPackages.length} packages`);
-    this.batchedPackages = this.flags.toposort
+    this.batchedPackages = this.toposort
       ? PackageUtilities.topologicallyBatchPackages(this.filteredPackages, this.logger)
       : [ this.filteredPackages ];
     async.series([

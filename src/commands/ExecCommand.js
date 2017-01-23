@@ -12,7 +12,7 @@ export default class ExecCommand extends Command {
       return;
     }
 
-    this.batchedPackages = this.flags.toposort
+    this.batchedPackages = this.toposort
       ? PackageUtilities.topologicallyBatchPackages(this.filteredPackages, this.logger)
       : [ this.filteredPackages ];
 

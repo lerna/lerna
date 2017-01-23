@@ -531,8 +531,8 @@ What level of logs to report.  On failure, all logs are written to lerna-debug.l
 
 Any logs of a higher level than the setting are shown.  The default is "info".
 
-#### --toposort
+#### --no-sort
 
-If set, when executing a task for multiple packages, tasks will be topologically sorted as to respect the dependency relationships of the packages in question. Cycles are broken on a best-effort basis.
+By default, all tasks execute on packages in topologically sorted order as to respect the dependency relationships of the packages in question. Cycles are broken on a best-effort basis in a way not guaranteed to be consistent across Lerna invocations.
 
-Note that if you have packages with many dependents (or cycles), this flag can bottleneck execution on these packages, even with a high concurrency setting.
+Topological sorting can cause concurrency bottlenecks if there are a small number of packages with many dependents or if some packages take a disproportionately long time to execute. The `--no-sort` option disables sorting, instead executing tasks in an arbitrary order with maximum concurrency.
