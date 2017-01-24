@@ -8,7 +8,7 @@ import path from "path";
 
 export default class BootstrapCommand extends Command {
   initialize(callback) {
-    // Nothing to do...
+    this.configFlags = this.repository.bootstrapConfig;
     callback(null, true);
   }
 
@@ -17,7 +17,7 @@ export default class BootstrapCommand extends Command {
       if (err) {
         callback(err);
       } else {
-        this.logger.success(`Successfully bootstrapped ${this.filteredPackages.length} packages.`);
+        this.logger.success(`Successfully bootstrapped ${this.packagesToBootstrap.length} packages.`);
         callback(null, true);
       }
     });
@@ -28,9 +28,12 @@ export default class BootstrapCommand extends Command {
    * @param {Function} callback
    */
   bootstrapPackages(callback) {
-    this.filteredPackages = this.getPackages();
-    this.filteredGraph = PackageUtilities.getPackageGraph(this.filteredPackages);
-    this.logger.info(`Bootstrapping ${this.filteredPackages.length} packages`);
+    this.packagesToBootstrap = this.filteredPackages;
+    if (this.flags.includeFilteredDependencies) {
+      this.packagesToBootstrap = PackageUtilities.addDependencies(this.filteredPackages, this.packageGraph);
+    }
+    this.filteredGraph = PackageUtilities.getPackageGraph(this.packagesToBootstrap);
+    this.logger.info(`Bootstrapping ${this.packagesToBootstrap.length} packages`);
     async.series([
       // preinstall bootstrapped packages
       (cb) => this.preinstallPackages(cb),
@@ -45,21 +48,13 @@ export default class BootstrapCommand extends Command {
     ], callback);
   }
 
-  /**
-   * Get packages to bootstrap
-   * @returns {Array.<Package>}
-   */
-  getPackages() {
-    const ignore = this.flags.ignore || this.repository.bootstrapConfig.ignore;
-    if (ignore) {
-      this.logger.info(`Ignoring packages that match '${ignore}'`);
-    }
-    return PackageUtilities.filterPackages(this.packages, ignore, true);
-  }
-
   runScriptInPackages(scriptName, callback) {
     const packages = this.filteredPackages.slice();
     const batches = PackageUtilities.topologicallyBatchPackages(packages, this.logger);
+
+    if (!batches.length) {
+      return callback(null, true);
+    }
 
     this.progressBar.init(packages.length);
 
@@ -148,9 +143,9 @@ export default class BootstrapCommand extends Command {
    */
   installExternalDependencies(callback) {
     this.logger.info("Installing external dependencies");
-    this.progressBar.init(this.filteredPackages.length);
+    this.progressBar.init(this.packagesToBootstrap.length);
     const actions = [];
-    this.filteredPackages.forEach((pkg) => {
+    this.packagesToBootstrap.forEach((pkg) => {
       const allDependencies = pkg.allDependencies;
       const externalPackages = Object.keys(allDependencies)
         .filter((dependency) => {
@@ -181,9 +176,9 @@ export default class BootstrapCommand extends Command {
    */
   symlinkPackages(callback) {
     this.logger.info("Symlinking packages and binaries");
-    this.progressBar.init(this.filteredPackages.length);
+    this.progressBar.init(this.packagesToBootstrap.length);
     const actions = [];
-    this.filteredPackages.forEach((filteredPackage) => {
+    this.packagesToBootstrap.forEach((filteredPackage) => {
       // actions to run for this package
       const packageActions = [];
       Object.keys(filteredPackage.allDependencies)
@@ -212,13 +207,13 @@ export default class BootstrapCommand extends Command {
               const isDepSymlink = FileSystemUtilities.isSymlink(pkgDependencyLocation);
               // installed dependency is a symlink pointing to a different location
               if (isDepSymlink !== false && isDepSymlink !== dependencyLocation) {
-                this.logger.warning(
+                this.logger.warn(
                   `Symlink already exists for ${dependency} dependency of ${filteredPackage.name}, ` +
                   "but links to different location. Replacing with updated symlink..."
                 );
               // installed dependency is not a symlink
               } else if (isDepSymlink === false) {
-                this.logger.warning(
+                this.logger.warn(
                   `${dependency} is already installed for ${filteredPackage.name}. ` +
                   "Replacing with symlink..."
                 );

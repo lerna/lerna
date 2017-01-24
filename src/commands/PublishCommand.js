@@ -6,11 +6,13 @@ import NpmUtilities from "../NpmUtilities";
 import Command from "../Command";
 import semver from "semver";
 import async from "async";
+import chalk from "chalk";
 import path from "path";
 import { EOL } from "os";
 
 export default class PublishCommand extends Command {
   initialize(callback) {
+
     if (this.flags.canary) {
       this.logger.info("Publishing canary build");
     }
@@ -21,10 +23,9 @@ export default class PublishCommand extends Command {
     }
 
     const updatedPackagesCollector = new UpdatedPackagesCollector(
-      this.packages,
-      this.packageGraph,
+      this.repository,
       this.flags,
-      this.repository.publishConfig
+      this.configFlags
     );
 
     try {
@@ -126,7 +127,7 @@ export default class PublishCommand extends Command {
         if (!(this.flags.canary || this.flags.skipGit)) {
           this.logger.info("Pushing tags to git...");
           this.logger.newLine();
-          GitUtilities.pushWithTags(this.tags);
+          GitUtilities.pushWithTags(this.flags.gitRemote || this.repository.publishConfig.gitRemote || "origin", this.tags);
         }
 
         let message = "Successfully published:";
@@ -231,7 +232,8 @@ export default class PublishCommand extends Command {
     this.logger.newLine();
     this.logger.info("Changes:");
     this.logger.info(this.updates.map((update) => {
-      return `- ${update.package.name}: ${update.package.version} => ${this.updatesVersions[update.package.name]}`;
+      const pkg = update.package;
+      return `- ${pkg.name}: ${pkg.version} => ${this.updatesVersions[pkg.name]}${pkg.isPrivate() ? ` (${chalk.red("private")})` : ""}`;
     }).join(EOL));
     this.logger.newLine();
 
@@ -292,7 +294,7 @@ export default class PublishCommand extends Command {
       const version = this.updatesVersions[depName];
 
       if (deps[depName] && version) {
-        deps[depName] = "^" + version;
+        deps[depName] = this.flags.exact ? version : "^" + version;
       }
     });
   }
@@ -308,13 +310,8 @@ export default class PublishCommand extends Command {
   }
 
   gitCommitAndTagVersionForUpdates() {
-    let message = "Publish" + EOL;
-
-    const tags = this.updates.map((update) => {
-      const tag = `${update.package.name}@${this.updatesVersions[update.package.name]}`;
-      message += `${EOL} - ${tag}`;
-      return tag;
-    });
+    const tags = this.updates.map((update) => `${update.package.name}@${this.updatesVersions[update.package.name]}`);
+    const message = this.flags.message || tags.reduce((msg, tag) => msg + `${EOL} - ${tag}`, `Publish${EOL}`);
 
     GitUtilities.commit(message);
     tags.forEach(GitUtilities.addTag);
@@ -323,7 +320,8 @@ export default class PublishCommand extends Command {
 
   gitCommitAndTagVersion(version) {
     const tag = "v" + version;
-    GitUtilities.commit(tag);
+    const message = this.flags.message || tag;
+    GitUtilities.commit(message);
     GitUtilities.addTag(tag);
     return tag;
   }

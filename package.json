@@ -1,6 +1,6 @@
 {
   "name": "lerna",
-  "version": "2.0.0-beta.30",
+  "version": "2.0.0-beta.32",
   "description": "Tool for managing JavaScript projects with multiple packages",
   "main": "lib/index.js",
   "scripts": {
@@ -28,6 +28,7 @@
     "cmd-shim": "^2.0.2",
     "command-join": "^1.1.1",
     "cross-spawn": "^4.0.0",
+    "glob": "^7.0.6",
     "inquirer": "^2.0.0",
     "lodash.find": "^4.3.0",
     "lodash.unionwith": "^4.2.0",
@@ -65,7 +66,7 @@
     "mocha": "^2.4.5",
     "normalize-newline": "^2.1.0"
   },
-  "engines": {
-    "node": ">=4"
+  "engines" : { 
+    "node" : ">= 4"
   }
 }
