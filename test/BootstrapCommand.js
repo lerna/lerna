@@ -537,4 +537,22 @@ describe("BootstrapCommand", () => {
       }));
     });
   });
+
+  describe("zero packages", () => {
+    beforeEach((done) => {
+      initFixture("BootstrapCommand/zero-pkgs", done);
+    });
+
+    it("should succeed in repositories with zero packages", (done) => {
+      const bootstrapCommand = new BootstrapCommand([], {});
+
+      bootstrapCommand.runValidations();
+      bootstrapCommand.runPreparations();
+
+      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
+        assert.equal(undefined, err);
+        done();
+      }));
+    });
+  });
 });
