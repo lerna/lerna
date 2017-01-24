@@ -311,6 +311,16 @@ $ lerna publish --repo-version 1.0.1
 When run with this flag, `publish` will skip the version selection prompt and use the specified version.
 Useful for bypassing the user input prompt if you already know which version to publish.
 
+#### --message, -m [msg]
+
+```sh
+$ lerna publish -m "chore: Publish"
+```
+
+When run with this flag, `publish` will use the provided message when committing the version updates
+for publication. Useful for integrating lerna into projects that expect commit messages to adhere
+to certain guidelines, such as projects which use [commitizen](https://github.com/commitizen/cz-cli) and/or [semantic-release](https://github.com/semantic-release/semantic-release).
+
 ### updated
 
 ```sh
