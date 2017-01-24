@@ -53,7 +53,7 @@ export default class BootstrapCommand extends Command {
   }
 
   runScriptInPackages(scriptName, callback) {
-    if (!batches.length) {
+    if (!this.packagesToBootstrap.length) {
       return callback(null, true);
     }
 
