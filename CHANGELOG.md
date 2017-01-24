@@ -1,3 +1,15 @@
+## v2.0.0-beta.32 (2017-01-04)
+
+#### Bug fix
+* [#435](https://github.com/lerna/lerna/pull/435) Use symlinks with relative paths instead of absolute on non-windows environments (Closes [#423](https://github.com/lerna/lerna/issues/423)).. ([@JaapRood](https://github.com/JaapRood))
+* [#440](https://github.com/lerna/lerna/pull/440) Change testing NODE_ENV to "lerna-test" (Closes [#406](https://github.com/lerna/lerna/issues/406)). ([@ryb73](https://github.com/ryb73))
+* [#444](https://github.com/lerna/lerna/pull/444) Use correct logger method for warnings. ([@evocateur](https://github.com/evocateur))
+
+#### Committers: 3
+- Daniel Stockman ([evocateur](https://github.com/evocateur))
+- Jaap van Hardeveld ([JaapRood](https://github.com/JaapRood))
+- Ryan Biwer ([ryb73](https://github.com/ryb73))
+
 ## v2.0.0-beta.31 (2016-12-14)
 
 #### Enhancement

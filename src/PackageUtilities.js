@@ -58,6 +58,37 @@ export default class PackageUtilities {
   }
 
   /**
+  * Takes a list of Packages and returns a list of those same Packages with any Packages
+  * they depend on. i.e if packageA depended on packageB
+  * `PackageUtilities.addDependencies([packageA], this.packageGraph)`
+  * would return [packageA, packageB]
+  * @param {!Array.<Package>} packages The packages to include dependencies for.
+  * @param {!<PackageGraph>} packageGraph The package graph for the whole repository.
+  * @return {Array.<Package>} The packages with any dependencies that were't already included.
+  */
+  static addDependencies(packages, packageGraph) {
+    const dependentPackages = [];
+    // the current list of packages we are expanding using breadth-first-search
+    const fringe = packages.slice();
+    const packageExistsInRepository = (packageName) => (!!packageGraph.get(packageName));
+    const packageAlreadyFound = (packageName) => dependentPackages.some((pkg) => pkg.name === packageName);
+    const packageInFringe = (packageName) => fringe.some((pkg) => pkg.name === packageName);
+
+    while (fringe.length !== 0) {
+      const pkg = fringe.shift();
+      const pkgDeps = Object.assign({}, pkg.dependencies, pkg.devDependencies);
+      Object.keys(pkgDeps).forEach((dep) => {
+        if (packageExistsInRepository(dep) && !packageAlreadyFound(dep) && !packageInFringe(dep)) {
+          fringe.push(packageGraph.get(dep).package);
+        }
+      });
+      dependentPackages.push(pkg);
+    }
+
+    return dependentPackages;
+  }
+
+  /**
   * Filters a given set of packages and returns all packages that match the scope glob
   * and do not match the ignore glob
   *

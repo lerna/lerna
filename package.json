@@ -1,6 +1,6 @@
 {
   "name": "lerna",
-  "version": "2.0.0-beta.31",
+  "version": "2.0.0-beta.32",
   "description": "Tool for managing JavaScript projects with multiple packages",
   "main": "lib/index.js",
   "scripts": {
@@ -65,5 +65,8 @@
     "fs-extra": "^0.30.0",
     "mocha": "^2.4.5",
     "normalize-newline": "^2.1.0"
+  },
+  "engines" : { 
+    "node" : ">= 4" 
   }
 }

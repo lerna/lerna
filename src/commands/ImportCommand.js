@@ -60,7 +60,7 @@ export default class ImportCommand extends Command {
       return callback(new Error("Local repository has un-committed changes"));
     }
 
-    this.logger.info(`About to import ${this.commits.length} commits into from ${inputPath} into ${this.targetDir}`);
+    this.logger.info(`About to import ${this.commits.length} commits from ${inputPath} into ${this.targetDir}`);
 
     if (this.flags.yes) {
       callback(null, true);

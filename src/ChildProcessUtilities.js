@@ -57,7 +57,7 @@ export default class ChildProcessUtilities {
         stdio: "inherit"
       }, opts))
         .on("error", () => {})
-        .on("exit", (code) => {
+        .on("close", (code) => {
           callback(code && (stderr || `Command failed: ${command} ${args.join(" ")}`));
         })
     );

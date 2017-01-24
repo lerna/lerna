@@ -77,6 +77,7 @@ Your repository should now look like this:
 
 ```
 lerna-repo/
+  packages/
   package.json
   lerna.json
 ```
@@ -156,7 +157,7 @@ When run, this command will:
 2. Symlink together all Lerna `packages` that are dependencies of each other.
 3. `npm prepublish` all bootstrapped packages.
 
-`lerna bootstrap` respects the `--ignore` and `--scope` flags (see [Flags](#flags)).
+`lerna bootstrap` respects the `--ignore`, `--scope` and `--include-filtered-dependencies` flags (see [Flags](#flags)).
 
 #### How `bootstrap` works
 
@@ -239,6 +240,14 @@ When run with this flag, `publish` publishes packages in a more granular way (pe
 
 > The intended use case for this flag is a per commit level release or nightly release.
 
+#### --git-remote [remote]
+
+```sh
+$ lerna publish --git-remote upstream
+```
+
+When run with this flag, `publish` will push the git changes to the specified remote instead of `origin`.
+
 #### --skip-git
 
 ```sh
@@ -301,6 +310,16 @@ $ lerna publish --repo-version 1.0.1
 
 When run with this flag, `publish` will skip the version selection prompt and use the specified version.
 Useful for bypassing the user input prompt if you already know which version to publish.
+
+#### --message, -m [msg]
+
+```sh
+$ lerna publish -m "chore: Publish"
+```
+
+When run with this flag, `publish` will use the provided message when committing the version updates
+for publication. Useful for integrating lerna into projects that expect commit messages to adhere
+to certain guidelines, such as projects which use [commitizen](https://github.com/commitizen/cz-cli) and/or [semantic-release](https://github.com/semantic-release/semantic-release).
 
 ### updated
 
@@ -435,6 +454,7 @@ Running `lerna` without arguments will show all commands/options.
 - `bootstrapConfig.scope`: an glob that restricts which packages will be bootstrapped when running the `lerna bootstrap` command.
 - `packages`: Array of globs to use as package locations.
 
+
 ### Common `devDependencies`
 
 Most `devDependencies` can be pulled up to the root of a Lerna repo.
@@ -511,6 +531,26 @@ The `ignore` flag, when used with the `bootstrap` command, can also be set in `l
 
 > Hint: The glob is matched against the package name defined in `package.json`,
 > not the directory name the package lives in.
+
+#### --include-filtered-dependencies
+
+Used only in the `bootstrap` command, ensures that all dependencies (and dev dependencies) of any scoped packages (either through `--scope` or `--ignore`) have all of their dependencies bootstrapped as well.
+
+> Note: This will override the `--scope` and `--ignore` flags.
+> > i.e. A package matched by the `--ignore` flag will still be bootstrapped if it is depended on by another package that is being bootstrapped.
+
+This is useful for situations where you want to "set up" a single package that relies on other packages being set up.
+
+```sh
+$ lerna bootstrap --scope my-component --include-filtered-dependencies
+# my-component and all of its dependencies will be bootstrapped
+```
+
+```sh
+$ lerna bootstrap --scope "package-*" --ignore "package-util-*" --include-filtered-dependencies
+# all package-util's will be ignored unless they are depended upon by a
+# package matched by "package-*"
+```
 
 #### --only-explicit-updates
 

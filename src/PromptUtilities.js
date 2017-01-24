@@ -33,7 +33,7 @@ export default class PromptUtilities {
     inquirer.prompt([{
       type: "input",
       name: "input",
-      message: "Enter a custom version",
+      message: message,
       filter: filter,
       validate: validate
     }], (answers) => {
