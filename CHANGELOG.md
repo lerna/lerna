@@ -1,29 +1,32 @@
 ## v2.0.0-beta.33 (2017-01-25)
 
-### Breaking Changes
+#### Breaking change
+* [#484](https://github.com/lerna/lerna/pull/484) Drop support for node 0.10 and node 0.12. ([@doug-wade](https://github.com/doug-wade))
 
-* Breaking: drop support for node 0.10 and node 0.12 (#484) (Douglas Wade)
-* Drop node 5 from travis/appveyor (#528) (Vicente Jr Yuchitcho)
+#### Enhancement
+* [#460](https://github.com/lerna/lerna/pull/460) Add --message option for custom commit msgs when publishing. ([@traviskaufman](https://github.com/traviskaufman))
+* [#508](https://github.com/lerna/lerna/pull/508) [Feature] Allow git remote to be changed for publish. ([@tdanecker](https://github.com/tdanecker))
+* [#390](https://github.com/lerna/lerna/pull/390) [Feature] Adds `--include-filtered-dependencies` flag for bootstrap command. ([@lukebatchelor](https://github.com/lukebatchelor))
+* [#426](https://github.com/lerna/lerna/pull/426) Add support for hidden '--exact' flag. ([@L8D](https://github.com/L8D))
 
-### New Feature
+#### Bug fix
+* [#458](https://github.com/lerna/lerna/pull/458) use message passed as argument to the static method input() in PromptUtilities. ([@btiwaree](https://github.com/btiwaree))
+* [#454](https://github.com/lerna/lerna/pull/454) Use close event to wait for spawned processes to finish. ([@xaka](https://github.com/xaka))
 
-* Add --message option for custom commit msgs when publishing (#460) (Travis Kaufman)
-* [Feature] Allow git remote to be changed for publish (#508) (tdanecker)
-* [Feature] Adds `--include-filtered-dependencies` flag for bootstrap command (#390) (lukebatchelor)
-* Add support for hidden '--exact' flag (#426) (Tenor Biel)
+#### Documentation
+* [#514](https://github.com/lerna/lerna/pull/514) Update README.md (s/--exclude/--ignore/). ([@xaka](https://github.com/xaka))
 
-### Bug Fix
+#### Committers: 9
+- Bishesh Tiwaree ([btiwaree](https://github.com/btiwaree))
+- Douglas Wade ([doug-wade](https://github.com/doug-wade))
+- Pavel Strashkin ([xaka](https://github.com/xaka))
+- Sam Gluck ([sdgluck](https://github.com/sdgluck))
+- Tenor Biel ([L8D](https://github.com/L8D))
+- Travis Kaufman ([traviskaufman](https://github.com/traviskaufman))
+- Vicente Jr Yuchitcho ([chitchu](https://github.com/chitchu))
+- [lukebatchelor](https://github.com/lukebatchelor)
+- [tdanecker](https://github.com/tdanecker)
 
-* Use close event to wait for spawned processes to finish (#454) (Pavel Strashkin)
-* Fix import logger info typo (#459) (Sam Gluck)
-* use message passed as argument to the static method input() in PromptUtilities (#458) (Bishesh Tiwaree)
-* 467: lerna bootstrap succeeds with 0 packages (#483) (Douglas Wade)
-
-### Docs
-
-* README: Added missing packages folder to example. (#517) [skip ci] (Itai Steinherz)
-* Update README.md (s/--exclude/--ignore/) (#514) (Pavel Strashkin)
- 
 ## v2.0.0-beta.32 (2017-01-04)
 
 #### Bug fix
