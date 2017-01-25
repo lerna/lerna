@@ -1,3 +1,29 @@
+## v2.0.0-beta.33 (2017-01-25)
+
+### Breaking Changes
+
+* Breaking: drop support for node 0.10 and node 0.12 (#484) (Douglas Wade)
+* Drop node 5 from travis/appveyor (#528) (Vicente Jr Yuchitcho)
+
+### New Feature
+
+* Add --message option for custom commit msgs when publishing (#460) (Travis Kaufman)
+* [Feature] Allow git remote to be changed for publish (#508) (tdanecker)
+* [Feature] Adds `--include-filtered-dependencies` flag for bootstrap command (#390) (lukebatchelor)
+* Add support for hidden '--exact' flag (#426) (Tenor Biel)
+
+### Bug Fix
+
+* Use close event to wait for spawned processes to finish (#454) (Pavel Strashkin)
+* Fix import logger info typo (#459) (Sam Gluck)
+* use message passed as argument to the static method input() in PromptUtilities (#458) (Bishesh Tiwaree)
+* 467: lerna bootstrap succeeds with 0 packages (#483) (Douglas Wade)
+
+### Docs
+
+* README: Added missing packages folder to example. (#517) [skip ci] (Itai Steinherz)
+* Update README.md (s/--exclude/--ignore/) (#514) (Pavel Strashkin)
+ 
 ## v2.0.0-beta.32 (2017-01-04)
 
 #### Bug fix
