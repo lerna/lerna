@@ -22,6 +22,8 @@ export default class PublishCommand extends Command {
       this.logger.info("Current version: " + this.globalVersion);
     }
 
+    this.configFlags = this.repository.publishConfig;
+
     const updatedPackagesCollector = new UpdatedPackagesCollector(
       this.repository,
       this.flags,
