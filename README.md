@@ -339,7 +339,7 @@ $ lerna clean
 
 Remove the `node_modules` directory from all packages.
 
-`lerna clean` respects the `--ignore` and `--scope` flags (see [Flags](#flags)).
+`lerna clean` respects the `--ignore`, `--scope`, and `--yes` flags (see [Flags](#flags)).
 
 ### diff
 
