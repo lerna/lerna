@@ -1,8 +1,9 @@
 import ChildProcessUtilities from "./ChildProcessUtilities";
 import logger from "./logger";
+import escapeArgs from "command-join";
 
 export default class GitUtilities {
-  @logger.logifySync
+  @logger.logifySync()
   static isInitialized() {
     try {
       ChildProcessUtilities.execSync("git rev-parse");
@@ -12,84 +13,84 @@ export default class GitUtilities {
     }
   }
 
-  @logger.logifySync
+  @logger.logifySync()
   static addFile(file) {
-    ChildProcessUtilities.execSync("git add " + file);
+    ChildProcessUtilities.execSync("git add " + escapeArgs(file));
   }
 
-  @logger.logifySync
+  @logger.logifySync()
   static commit(message) {
     // Use echo to allow multi\nline strings.
     ChildProcessUtilities.execSync("git commit -m \"$(echo \"" + message + "\")\"");
   }
 
-  @logger.logifySync
+  @logger.logifySync()
   static addTag(tag) {
     ChildProcessUtilities.execSync("git tag " + tag);
   }
 
-  @logger.logifySync
+  @logger.logifySync()
   static removeTag(tag) {
     ChildProcessUtilities.execSync("git tag -d " + tag);
   }
 
-  @logger.logifySync
+  @logger.logifySync()
   static hasTags() {
     return !!ChildProcessUtilities.execSync("git tag");
   }
 
-  @logger.logifySync
+  @logger.logifySync()
   static getLastTaggedCommit() {
     return ChildProcessUtilities.execSync("git rev-list --tags --max-count=1");
   }
 
-  @logger.logifySync
+  @logger.logifySync()
   static getFirstCommit() {
     return ChildProcessUtilities.execSync("git rev-list --max-parents=0 HEAD");
   }
 
-  @logger.logifySync
-  static pushWithTags(tags) {
-    ChildProcessUtilities.execSync("git push origin " + GitUtilities.getCurrentBranch());
-    ChildProcessUtilities.execSync("git push origin " + tags.join(" "));
+  @logger.logifySync()
+  static pushWithTags(remote, tags) {
+    ChildProcessUtilities.execSync(`git push ${remote} ${GitUtilities.getCurrentBranch()}`);
+    ChildProcessUtilities.execSync(`git push ${remote} ${tags.join(" ")}`);
   }
 
-  @logger.logifySync
+  @logger.logifySync()
   static describeTag(commit) {
     return ChildProcessUtilities.execSync("git describe --tags " + commit);
   }
 
-  @logger.logifySync
+  @logger.logifySync()
   static diffSinceIn(since, location) {
-    return ChildProcessUtilities.execSync("git diff --name-only " + since + " -- " + location);
+    return ChildProcessUtilities.execSync("git diff --name-only " + since + " -- " + escapeArgs(location));
   }
 
-  @logger.logifySync
+  @logger.logifySync()
   static getCurrentSHA() {
     return ChildProcessUtilities.execSync("git rev-parse HEAD");
   }
 
-  @logger.logifySync
+  @logger.logifySync()
   static getTopLevelDirectory() {
     return ChildProcessUtilities.execSync("git rev-parse --show-toplevel");
   }
 
-  @logger.logifySync
+  @logger.logifySync()
   static checkoutChanges(changes) {
     ChildProcessUtilities.execSync("git checkout -- " + changes);
   }
 
-  @logger.logifySync
+  @logger.logifySync()
   static getCurrentBranch() {
     return ChildProcessUtilities.execSync("git symbolic-ref --short HEAD");
   }
 
-  @logger.logifySync
+  @logger.logifySync()
   static init() {
     return ChildProcessUtilities.execSync("git init");
   }
 
-  @logger.logifySync
+  @logger.logifySync()
   static hasCommit() {
     try {
       ChildProcessUtilities.execSync("git log");

@@ -1,15 +1,18 @@
 import assert from "assert";
 
 import Package from "../src/Package";
+import ChildProcessUtilities from "../src/ChildProcessUtilities";
+import assertStubbedCalls from "./_assertStubbedCalls";
 
 describe("Package", () => {
-  let pkg
+  let pkg;
 
   beforeEach(() => {
     pkg = new Package(
       {
         name: "my-package",
         version: "1.0.0",
+        bin: "bin.js",
         scripts: { "my-script": "echo 'hello world'" },
         dependencies: { "my-dependency": "^1.0.0" },
         devDependencies: { "my-dev-dependency": "^1.0.0" },
@@ -45,6 +48,12 @@ describe("Package", () => {
     });
   });
 
+  describe("get .bin", () => {
+    it("should return the bin", () => {
+      assert.equal(pkg.bin, "bin.js");
+    });
+  });
+
   describe("get .dependencies", () => {
     it("should return the dependencies", () => {
       assert.deepEqual(pkg.dependencies, { "my-dependency": "^1.0.0" });
@@ -74,8 +83,7 @@ describe("Package", () => {
       assert.deepEqual(pkg.allDependencies, {
         "my-dependency": "^1.0.0",
         "my-dev-dependency": "^1.0.0",
-        "my-optional-dependency": "^1.0.0",
-        "my-peer-dependency": "^1.0.0"
+        "my-optional-dependency": "^1.0.0"
       });
     });
   });
@@ -91,6 +99,42 @@ describe("Package", () => {
   describe(".isPrivate()", () => {
     it("should return if the package is private", () => {
       assert.equal(pkg.isPrivate(), false);
+    });
+  });
+
+  describe(".runScript()", () => {
+    it("should run the script", (done) => {
+      assertStubbedCalls([
+        [ChildProcessUtilities, "exec", { nodeCallback: true }, [
+          {
+            args: [
+              "npm run my-script ",
+              {
+                cwd: "/path/to/package",
+                env: process.env
+              }
+            ]
+          }
+        ]]
+      ]);
+      pkg.runScript("my-script", () => {
+        done();
+      });
+    });
+  });
+
+  describe(".hasMatchingDependency()", () => {
+    it("should match included dependency", () => {
+      assert.equal(pkg.hasMatchingDependency({
+        name: "my-dependency",
+        version: "1.1.3"
+      }), true);
+    });
+    it("should not match included dependency", () => {
+      assert.equal(pkg.hasMatchingDependency({
+        name: "my-dev-dependency",
+        version: "2.0.7"
+      }), false);
     });
   });
 });

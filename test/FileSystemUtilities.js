@@ -30,9 +30,9 @@ describe("FileSystemUtilities", () => {
   });
 
   describe(".mkdirp()", () => {
-    it("should create a nested directory", done => {
+    it("should create a nested directory", (done) => {
       const dirPath = path.join(testDir, "mkdirp/test");
-      FileSystemUtilities.mkdirp(dirPath, err => {
+      FileSystemUtilities.mkdirp(dirPath, (err) => {
         assert.ok(pathExists.sync(dirPath));
         done(err);
       });
@@ -59,7 +59,7 @@ describe("FileSystemUtilities", () => {
   describe(".writeFile()", () => {
     it("should write a file", (done) => {
       const filePath = path.join(testDir, "writeFile-test");
-      FileSystemUtilities.writeFile(filePath, "contents", err => {
+      FileSystemUtilities.writeFile(filePath, "contents", (err) => {
         assert.ok(pathExists.sync(filePath));
         assert.equal(fs.readFileSync(filePath).toString(), "contents\n");
         done(err);
@@ -84,10 +84,10 @@ describe("FileSystemUtilities", () => {
   });
 
   describe(".rimraf()", () => {
-    it("should delete a directory", done => {
+    it("should delete a directory", (done) => {
       const dirPath = path.join(testDir, "rimraf/test");
       mkdirp.sync(dirPath);
-      FileSystemUtilities.rimraf(dirPath, err => {
+      FileSystemUtilities.rimraf(dirPath, (err) => {
         assert.ok(!pathExists.sync(dirPath));
         done(err);
       });

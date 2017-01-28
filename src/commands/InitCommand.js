@@ -14,7 +14,6 @@ export default class InitCommand extends Command {
   }
 
   execute(callback) {
-    this.ensurePackagesDirectory();
     this.ensurePackageJSON();
     this.ensureLernaJson();
     this.ensureNoVersionFile();
@@ -22,36 +21,41 @@ export default class InitCommand extends Command {
     callback(null, true);
   }
 
-  ensurePackagesDirectory() {
-    const packagesLocation = this.repository.packagesLocation;
-    if (!FileSystemUtilities.existsSync(packagesLocation)) {
-      this.logger.info("Creating packages folder.");
-      FileSystemUtilities.mkdirSync(packagesLocation);
-    }
-  }
-
   ensurePackageJSON() {
     let {packageJsonLocation, packageJson} = this.repository;
 
-    if (!packageJson) packageJson = {};
-    // if (!packageJson.private) packageJson.private = true;
-    if (!packageJson.devDependencies) packageJson.devDependencies = {};
-
-    objectAssignSorted(packageJson.devDependencies, {
-      lerna: this.lernaVersion
-    });
-
     if (!packageJson) {
+      packageJson = {};
       this.logger.info("Creating package.json.");
     } else {
       this.logger.info("Updating package.json.");
     }
+    // if (!packageJson.private) packageJson.private = true;
+
+    let targetDependencies;
+    if (packageJson.dependencies && packageJson.dependencies.lerna) {
+      // lerna is a dependency in the current project
+      targetDependencies = packageJson.dependencies;
+    } else {
+      // lerna is a devDependency or no dependency, yet
+      if (!packageJson.devDependencies) packageJson.devDependencies = {};
+      targetDependencies = packageJson.devDependencies;
+    }
+
+    objectAssignSorted(targetDependencies, {
+      lerna: this.lernaVersion
+    });
 
     FileSystemUtilities.writeFileSync(packageJsonLocation, JSON.stringify(packageJson, null, "  "));
   }
 
   ensureLernaJson() {
-    let {versionLocation, lernaJsonLocation, lernaJson} = this.repository;
+    let {
+      versionLocation,
+      lernaJsonLocation,
+      lernaJson,
+      packageConfigs
+    } = this.repository;
 
     let version;
 
@@ -74,6 +78,7 @@ export default class InitCommand extends Command {
 
     objectAssign(lernaJson, {
       lerna: this.lernaVersion,
+      packages: packageConfigs,
       version: version
     });
 
@@ -84,7 +89,7 @@ export default class InitCommand extends Command {
     const versionLocation = this.repository.versionLocation;
     if (FileSystemUtilities.existsSync(versionLocation)) {
       this.logger.info("Removing old VERSION file.");
-      FileSystemUtilities.unlinkSync(versionLocation, "0.0.0");
+      FileSystemUtilities.unlinkSync(versionLocation);
     }
   }
 }

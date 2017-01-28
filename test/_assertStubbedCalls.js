@@ -12,7 +12,7 @@ function debugCallsLog(expected, num, call) {
 
 function stringifyCall(object, method, args) {
   let str = `${object.name}.${method}(`;
-  if (args) str += args.map(a => JSON.stringify(a)).join(", ") + ", ";
+  if (args) str += args.map((a) => JSON.stringify(a)).join(", ") + ", ";
   return str + "...)";
 }
 

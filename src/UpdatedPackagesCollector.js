@@ -1,4 +1,3 @@
-import PackageUtilities from "./PackageUtilities";
 import GitUtilities from "./GitUtilities";
 import progressBar from "./progressBar";
 import minimatch from "minimatch";
@@ -13,9 +12,10 @@ class Update {
 }
 
 export default class UpdatedPackagesCollector {
-  constructor(packages, packageGraph, flags, publishConfig) {
-    this.packages = packages;
-    this.packageGraph = packageGraph;
+  constructor(repository, flags, publishConfig) {
+    this.repository = repository;
+    this.packages = repository.packages;
+    this.packageGraph = repository.packageGraph;
     this.flags = flags;
     this.publishConfig = publishConfig;
   }
@@ -49,7 +49,7 @@ export default class UpdatedPackagesCollector {
 
     const updatedPackages = {};
 
-    this.packages.filter(pkg => {
+    this.packages.filter((pkg) => {
       progressBar.tick(pkg.name);
 
       if (pkg.isPrivate()) {
@@ -60,7 +60,7 @@ export default class UpdatedPackagesCollector {
         return true;
       }
 
-      var forcePublish = (this.flags.forcePublish || "").split(",");
+      const forcePublish = (this.flags.forcePublish || "").split(",");
 
       if (forcePublish.indexOf("*") > -1) {
         return true;
@@ -69,7 +69,7 @@ export default class UpdatedPackagesCollector {
       } else {
         return this.hasDiffSinceThatIsntIgnored(pkg, commits);
       }
-    }).forEach(pkg => {
+    }).forEach((pkg) => {
       updatedPackages[pkg.name] = pkg;
     });
 
@@ -100,7 +100,7 @@ export default class UpdatedPackagesCollector {
 
     let hasSubDependents = false;
 
-    dependencies.forEach(dep => {
+    dependencies.forEach((dep) => {
       if (this.isPackageDependentOf(dep, dependency)) {
         this.cache[packageName][dependency] = "dependent";
         hasSubDependents = true;
@@ -114,8 +114,8 @@ export default class UpdatedPackagesCollector {
     const dependents = {};
     this.cache = {};
 
-    this.packages.forEach(pkg => {
-      Object.keys(this.updatedPackages).forEach(dependency => {
+    this.packages.forEach((pkg) => {
+      Object.keys(this.updatedPackages).forEach((dependency) => {
         if (this.isPackageDependentOf(pkg.name, dependency)) {
           dependents[pkg.name] = pkg;
         }
@@ -126,9 +126,9 @@ export default class UpdatedPackagesCollector {
   }
 
   collectUpdates() {
-    return this.packages.filter(pkg => {
-      return this.updatedPackages[pkg.name] || this.dependents[pkg.name] || this.flags.canary;
-    }).map(pkg => {
+    return this.packages.filter((pkg) => {
+      return this.updatedPackages[pkg.name] || (this.flags.onlyExplicitUpdates ? false : this.dependents[pkg.name]) || this.flags.canary;
+    }).map((pkg) => {
       return new Update(pkg);
     });
   }
@@ -140,21 +140,21 @@ export default class UpdatedPackagesCollector {
   }
 
   hasDiffSinceThatIsntIgnored(pkg, commits) {
-    var folder = PackageUtilities.getPackagePath(PackageUtilities.getPackagesPath(""), pkg.name);
-    var diff = GitUtilities.diffSinceIn(commits, pkg.location);
+    const folder = path.relative(this.repository.rootPath, pkg.location);
+    const diff = GitUtilities.diffSinceIn(commits, pkg.location);
 
     if (diff === "") {
       return false;
     }
 
-    var changedFiles = diff.split("\n").map(file => {
+    let changedFiles = diff.split("\n").map((file) => {
       return file.replace(folder + path.sep, "");
     });
 
     if (this.publishConfig.ignore) {
-      changedFiles = changedFiles.filter(file => {
-        return !find(this.publishConfig.ignore, pattern => {
-          return minimatch(file, pattern);
+      changedFiles = changedFiles.filter((file) => {
+        return !find(this.publishConfig.ignore, (pattern) => {
+          return minimatch(file, pattern, {matchBase: true});
         });
       });
     }

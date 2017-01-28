@@ -1,0 +1,8 @@
+{
+  "name": "package-2",
+  "version": "1.0.0",
+  "dependencies": {
+    "external": "^2.0.0",
+    "package-1": "^1.0.0"
+  }
+}

@@ -1,4 +1,5 @@
 import Command from "../Command";
+import chalk from "chalk";
 
 export default class LsCommand extends Command {
   initialize(callback) {
@@ -7,9 +8,8 @@ export default class LsCommand extends Command {
   }
 
   execute(callback) {
-    const formattedPackages = this.packages
-      .filter(pkg => !pkg.isPrivate())
-      .map(pkg => `- ${pkg.name}`)
+    const formattedPackages = this.filteredPackages
+      .map((pkg) => `- ${pkg.name}${pkg.isPrivate() ? ` (${chalk.red("private")})` : ""}`)
       .join("\n");
 
     this.logger.info(formattedPackages);

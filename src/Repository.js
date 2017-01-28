@@ -1,7 +1,10 @@
 import GitUtilities from "./GitUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
+import PackageUtilities from "./PackageUtilities";
 import path from "path";
 import logger from "./logger";
+
+const DEFAULT_PACKAGE_GLOB = "packages/*";
 
 export default class Repository {
   constructor() {
@@ -10,10 +13,10 @@ export default class Repository {
       GitUtilities.init();
     }
 
-    this.rootPath = GitUtilities.getTopLevelDirectory();
+    this.rootPath = path.resolve(GitUtilities.getTopLevelDirectory());
     this.lernaJsonLocation = path.join(this.rootPath, "lerna.json");
     this.packageJsonLocation = path.join(this.rootPath, "package.json");
-    this.packagesLocation = path.join(this.rootPath, "packages");
+    this.packagesLocation = path.join(this.rootPath, "packages"); // TODO: Kill this.
 
     // Legacy
     this.versionLocation = path.join(this.rootPath, "VERSION");
@@ -39,7 +42,34 @@ export default class Repository {
     return this.lernaJson && this.lernaJson.publishConfig || {};
   }
 
+  get bootstrapConfig() {
+    return this.lernaJson && this.lernaJson.bootstrapConfig || {};
+  }
+
+  get packageConfigs() {
+    return (this.lernaJson || {}).packages || [DEFAULT_PACKAGE_GLOB];
+  }
+
+  get packages() {
+    if (!this._packages) {
+      this.buildPackageGraph();
+    }
+    return this._packages;
+  }
+
+  get packageGraph() {
+    if (!this._packageGraph) {
+      this.buildPackageGraph();
+    }
+    return this._packageGraph;
+  }
+
   isIndependent() {
     return this.version === "independent";
+  }
+
+  buildPackageGraph() {
+    this._packages = PackageUtilities.getPackages(this);
+    this._packageGraph = PackageUtilities.getPackageGraph(this._packages);
   }
 }

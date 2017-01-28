@@ -1,8 +1,9 @@
+import ChildProcessUtilities from "./ChildProcessUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
-import PackageUtilities from "./PackageUtilities";
 import ExitHandler from "./ExitHandler";
 import progressBar from "./progressBar";
 import Repository from "./Repository";
+import PackageUtilities from "./PackageUtilities";
 import logger from "./logger";
 
 const DEFAULT_CONCURRENCY = 4;
@@ -33,31 +34,25 @@ export default class Command {
 
   runValidations() {
     if (this.concurrency < 1) {
-      this.logger.warning("command must be run with at least one thread.");
-      this._complete(null, 1);
-      return;
-    }
-
-    if (!FileSystemUtilities.existsSync(this.repository.packagesLocation)) {
-      this.logger.warning("`packages/` directory does not exist, have you run `lerna init`?");
+      this.logger.warn("command must be run with at least one thread.");
       this._complete(null, 1);
       return;
     }
 
     if (!FileSystemUtilities.existsSync(this.repository.packageJsonLocation)) {
-      this.logger.warning("`package.json` does not exist, have you run `lerna init`?");
+      this.logger.warn("`package.json` does not exist, have you run `lerna init`?");
       this._complete(null, 1);
       return;
     }
 
     if (!FileSystemUtilities.existsSync(this.repository.lernaJsonLocation)) {
-      this.logger.warning("`lerna.json` does not exist, have you run `lerna init`?");
+      this.logger.warn("`lerna.json` does not exist, have you run `lerna init`?");
       this._complete(null, 1);
       return;
     }
 
     if (this.flags.independent && !this.repository.isIndependent()) {
-      this.logger.warning(
+      this.logger.warn(
         "You ran lerna with `--independent` or `-i`, but the repository is not set to independent mode. " +
         "To use independent mode you need to set your `lerna.json` \"version\" to \"independent\". " +
         "Then you won't need to pass the `--independent` or `-i` flags."
@@ -67,10 +62,10 @@ export default class Command {
     }
 
     if (
-      process.env.NODE_ENV !== "test" &&
+      process.env.NODE_ENV !== "lerna-test" &&
       this.lernaVersion !== this.repository.lernaVersion
     ) {
-      this.logger.warning(
+      this.logger.warn(
         `Lerna version mismatch: The current version of lerna is ${this.lernaVersion}, ` +
         `but the Lerna version in \`lerna.json\` is ${this.repository.lernaVersion}. ` +
         `You can either run \`lerna init\` again or install \`lerna@${this.repository.lernaVersion}\`.`
@@ -80,28 +75,39 @@ export default class Command {
     }
 
     if (FileSystemUtilities.existsSync(this.repository.versionLocation)) {
-      this.logger.warning("You have a `VERSION` file in your repository, this is leftover from a previous ");
+      this.logger.warn("You have a `VERSION` file in your repository, this is leftover from a previous ");
       this._complete(null, 1);
       return;
     }
 
     if (process.env.NPM_DIST_TAG !== undefined) {
-      this.logger.warning("`NPM_DIST_TAG=[tagname] lerna publish` is deprecated, please use `lerna publish --tag [tagname]` instead.");
+      this.logger.warn("`NPM_DIST_TAG=[tagname] lerna publish` is deprecated, please use `lerna publish --tag [tagname]` instead.");
       this._complete(null, 1);
       return;
     }
 
     if (process.env.FORCE_VERSION !== undefined) {
-      this.logger.warning("`FORCE_VERSION=[package/*] lerna updated/publish` is deprecated, please use `lerna updated/publish --force-publish [package/*]` instead.");
+      this.logger.warn("`FORCE_VERSION=[package/*] lerna updated/publish` is deprecated, please use `lerna updated/publish --force-publish [package/*]` instead.");
       this._complete(null, 1);
       return;
     }
   }
 
   runPreparations() {
+    const scope = this.flags.scope || (this.configFlags && this.configFlags.scope);
+    const ignore = this.flags.ignore || (this.configFlags && this.configFlags.ignore);
+
+    if (scope) {
+      this.logger.info(`Scoping to packages that match '${scope}'`);
+    }
+    if (ignore) {
+      this.logger.info(`Ignoring packages that match '${ignore}'`);
+    }
     try {
-      this.packages = PackageUtilities.getPackages(this.repository.packagesLocation);
-      this.packageGraph = PackageUtilities.getPackageGraph(this.packages);
+      this.repository.buildPackageGraph();
+      this.packages = this.repository.packages;
+      this.filteredPackages = PackageUtilities.filterPackages(this.packages, {scope, ignore});
+      this.packageGraph = this.repository.packageGraph;
     } catch (err) {
       this.logger.error("Errored while collecting packages and package graph", err);
       this._complete(null, 1);
@@ -121,17 +127,17 @@ export default class Command {
     const methodName = `${this.constructor.name}.${method}`;
 
     try {
-      this.logger.debug(`Attempting running ${methodName}`);
+      this.logger.verbose(`Attempting running ${methodName}`);
 
       this[method]((err, completed) => {
         if (err) {
           this.logger.error(`Errored while running ${methodName}`, err);
           this._complete(err, 1, callback);
         } else if (!completed) {
-          this.logger.debug(`Exited early while running ${methodName}`);
+          this.logger.verbose(`Exited early while running ${methodName}`);
           this._complete(null, 1, callback);
         } else {
-          this.logger.debug(`Successfully ran ${methodName}`);
+          this.logger.verbose(`Successfully ran ${methodName}`);
           next();
         }
       });
@@ -147,12 +153,26 @@ export default class Command {
       exitHandler.writeLogs();
     }
 
-    if (callback) {
-      callback(err, code);
-    }
+    const finish = function() {
+      if (callback) {
+        callback(err, code);
+      }
 
-    if (process.env.NODE_ENV !== "test") {
-      process.exit(code);
+      if (process.env.NODE_ENV !== "lerna-test") {
+        process.exit(code);
+      }
+    };
+
+    const childProcessCount = ChildProcessUtilities.getChildProcessCount();
+    if (childProcessCount > 0) {
+      logger.info(
+        `Waiting for ${childProcessCount} child ` +
+        `process${childProcessCount === 1 ? "" : "es"} to exit. ` +
+        "CTRL-C to exit immediately."
+      );
+      ChildProcessUtilities.onAllExited(finish);
+    } else {
+      finish();
     }
   }
 

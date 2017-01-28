@@ -2,12 +2,17 @@ import assert from "assert";
 import child from "child_process";
 import path from "path";
 import fs from "fs";
+import syncExec from "sync-exec";
+import chalk from "chalk";
 
 import UpdatedCommand from "../src/commands/UpdatedCommand";
 import exitWithCode from "./_exitWithCode";
 import initFixture from "./_initFixture";
 import logger from "../src/logger";
 import stub from "./_stub";
+import escapeArgs from "command-join";
+
+const execSync = (child.execSync || syncExec);
 
 describe("UpdatedCommand", () => {
 
@@ -18,15 +23,15 @@ describe("UpdatedCommand", () => {
   describe("Basic", () => {
     let testDir;
 
-    beforeEach(done => {
+    beforeEach((done) => {
       testDir = initFixture("UpdatedCommand/basic", done);
     });
 
-    it("should list changes", done => {
-      child.execSync("git tag v1.0.0");
-      child.execSync("touch " + path.join(testDir, "packages/package-2/random-file"));
-      child.execSync("git add -A");
-      child.execSync("git commit -m 'Commit'");
+    it("should list changes", (done) => {
+      execSync("git tag v1.0.0");
+      execSync("touch " + escapeArgs(path.join(testDir, "packages/package-2/random-file")));
+      execSync("git add -A");
+      execSync("git commit -m 'Commit'");
 
       const updatedCommand = new UpdatedCommand([], {});
 
@@ -34,22 +39,20 @@ describe("UpdatedCommand", () => {
       updatedCommand.runPreparations();
 
       let calls = 0;
-      stub(logger, "info", message => {
+      stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
-        if (calls === 1) assert.equal(message, "");
         if (calls === 2) assert.equal(message, "- package-2\n- package-3");
-        if (calls === 3) assert.equal(message, "");
         calls++;
       });
 
       updatedCommand.runCommand(exitWithCode(0, done));
     });
 
-    it("should list changes with --force-publish *", done => {
-      child.execSync("git tag v1.0.0");
-      child.execSync("touch " + path.join(testDir, "packages/package-2/random-file"));
-      child.execSync("git add -A");
-      child.execSync("git commit -m 'Commit'");
+    it("should list changes with --force-publish *", (done) => {
+      execSync("git tag v1.0.0");
+      execSync("touch " + escapeArgs(path.join(testDir, "packages/package-2/random-file")));
+      execSync("git add -A");
+      execSync("git commit -m 'Commit'");
 
       const updatedCommand = new UpdatedCommand([], {
         forcePublish: "*"
@@ -59,22 +62,20 @@ describe("UpdatedCommand", () => {
       updatedCommand.runPreparations();
 
       let calls = 0;
-      stub(logger, "info", message => {
+      stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
-        if (calls === 1) assert.equal(message, "");
-        if (calls === 2) assert.equal(message, "- package-1\n- package-2\n- package-3\n- package-4");
-        if (calls === 3) assert.equal(message, "");
+        if (calls === 2) assert.equal(message, `- package-1\n- package-2\n- package-3\n- package-4\n- package-5 (${chalk.red("private")}`);
         calls++;
       });
 
       updatedCommand.runCommand(exitWithCode(0, done));
     });
 
-    it("should list changes with --force-publish [package,package]", done => {
-      child.execSync("git tag v1.0.0");
-      child.execSync("touch " + path.join(testDir, "packages/package-3/random-file"));
-      child.execSync("git add -A");
-      child.execSync("git commit -m 'Commit'");
+    it("should list changes with --force-publish [package,package]", (done) => {
+      execSync("git tag v1.0.0");
+      execSync("touch " + escapeArgs(path.join(testDir, "packages/package-3/random-file")));
+      execSync("git add -A");
+      execSync("git commit -m 'Commit'");
 
       const updatedCommand = new UpdatedCommand([], {
         forcePublish: "package-2,package-4"
@@ -84,18 +85,16 @@ describe("UpdatedCommand", () => {
       updatedCommand.runPreparations();
 
       let calls = 0;
-      stub(logger, "info", message => {
+      stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
-        if (calls === 1) assert.equal(message, "");
         if (calls === 2) assert.equal(message, "- package-2\n- package-3\n- package-4");
-        if (calls === 3) assert.equal(message, "");
         calls++;
       });
 
       updatedCommand.runCommand(exitWithCode(0, done));
     });
 
-    it("should list changes without ignored files", done => {
+    it("should list changes without ignored files", (done) => {
       const lernaJsonLocation = path.join(testDir, "lerna.json");
       const lernaJson = JSON.parse(fs.readFileSync(lernaJsonLocation));
       lernaJson.publishConfig = {
@@ -103,11 +102,11 @@ describe("UpdatedCommand", () => {
       };
       fs.writeFileSync(lernaJsonLocation, JSON.stringify(lernaJson, null, 2));
 
-      child.execSync("git tag v1.0.0");
-      child.execSync("touch " + path.join(testDir, "packages/package-2/ignored-file"));
-      child.execSync("touch " + path.join(testDir, "packages/package-3/random-file"));
-      child.execSync("git add -A");
-      child.execSync("git commit -m 'Commit'");
+      execSync("git tag v1.0.0");
+      execSync("touch " + escapeArgs(path.join(testDir, "packages/package-2/ignored-file")));
+      execSync("touch " + escapeArgs(path.join(testDir, "packages/package-3/random-file")));
+      execSync("git add -A");
+      execSync("git commit -m 'Commit'");
 
       const updatedCommand = new UpdatedCommand([], {});
 
@@ -115,11 +114,32 @@ describe("UpdatedCommand", () => {
       updatedCommand.runPreparations();
 
       let calls = 0;
-      stub(logger, "info", message => {
+      stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
-        if (calls === 1) assert.equal(message, "");
         if (calls === 2) assert.equal(message, "- package-3");
-        if (calls === 3) assert.equal(message, "");
+        calls++;
+      });
+
+      updatedCommand.runCommand(exitWithCode(0, done));
+    });
+
+    it("should list changes for explicitly changed packages", (done) => {
+      execSync("git tag v1.0.0");
+      execSync("touch " + escapeArgs(path.join(testDir, "packages/package-2/random-file")));
+      execSync("git add -A");
+      execSync("git commit -m 'Commit'");
+
+      const updatedCommand = new UpdatedCommand([], {
+        onlyExplicitUpdates: true
+      });
+
+      updatedCommand.runValidations();
+      updatedCommand.runPreparations();
+
+      let calls = 0;
+      stub(logger, "info", (message) => {
+        if (calls === 0) assert.equal(message, "Checking for updated packages...");
+        if (calls === 2) assert.equal(message, "- package-2");
         calls++;
       });
 
@@ -134,15 +154,15 @@ describe("UpdatedCommand", () => {
   describe("Circular Dependencies", () => {
     let testDir;
 
-    beforeEach(done => {
+    beforeEach((done) => {
       testDir = initFixture("UpdatedCommand/circular", done);
     });
 
-    it("should list changes", done => {
-      child.execSync("git tag v1.0.0");
-      child.execSync("touch " + path.join(testDir, "packages/package-3/random-file"));
-      child.execSync("git add -A");
-      child.execSync("git commit -m 'Commit'");
+    it("should list changes", (done) => {
+      execSync("git tag v1.0.0");
+      execSync("touch " + escapeArgs(path.join(testDir, "packages/package-3/random-file")));
+      execSync("git add -A");
+      execSync("git commit -m 'Commit'");
 
       const updatedCommand = new UpdatedCommand([], {});
 
@@ -150,22 +170,20 @@ describe("UpdatedCommand", () => {
       updatedCommand.runPreparations();
 
       let calls = 0;
-      stub(logger, "info", message => {
+      stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
-        if (calls === 1) assert.equal(message, "");
         if (calls === 2) assert.equal(message, "- package-3\n- package-4");
-        if (calls === 3) assert.equal(message, "");
         calls++;
       });
 
       updatedCommand.runCommand(exitWithCode(0, done));
     });
 
-    it("should list changes with --force-publish *", done => {
-      child.execSync("git tag v1.0.0");
-      child.execSync("touch " + path.join(testDir, "packages/package-2/random-file"));
-      child.execSync("git add -A");
-      child.execSync("git commit -m 'Commit'");
+    it("should list changes with --force-publish *", (done) => {
+      execSync("git tag v1.0.0");
+      execSync("touch " + escapeArgs(path.join(testDir, "packages/package-2/random-file")));
+      execSync("git add -A");
+      execSync("git commit -m 'Commit'");
 
       const updatedCommand = new UpdatedCommand([], {
         forcePublish: "*"
@@ -175,22 +193,20 @@ describe("UpdatedCommand", () => {
       updatedCommand.runPreparations();
 
       let calls = 0;
-      stub(logger, "info", message => {
+      stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
-        if (calls === 1) assert.equal(message, "");
-        if (calls === 2) assert.equal(message, "- package-1\n- package-2\n- package-3\n- package-4");
-        if (calls === 3) assert.equal(message, "");
+        if (calls === 2) assert.equal(message, `- package-1\n- package-2\n- package-3\n- package-4\n- package-5 (${chalk.red("private")}`);
         calls++;
       });
 
       updatedCommand.runCommand(exitWithCode(0, done));
     });
 
-    it("should list changes with --force-publish [package,package]", done => {
-      child.execSync("git tag v1.0.0");
-      child.execSync("touch " + path.join(testDir, "packages/package-4/random-file"));
-      child.execSync("git add -A");
-      child.execSync("git commit -m 'Commit'");
+    it("should list changes with --force-publish [package,package]", (done) => {
+      execSync("git tag v1.0.0");
+      execSync("touch " + escapeArgs(path.join(testDir, "packages/package-4/random-file")));
+      execSync("git add -A");
+      execSync("git commit -m 'Commit'");
 
       const updatedCommand = new UpdatedCommand([], {
         forcePublish: "package-2"
@@ -200,18 +216,16 @@ describe("UpdatedCommand", () => {
       updatedCommand.runPreparations();
 
       let calls = 0;
-      stub(logger, "info", message => {
+      stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
-        if (calls === 1) assert.equal(message, "");
         if (calls === 2) assert.equal(message, "- package-2\n- package-3\n- package-4");
-        if (calls === 3) assert.equal(message, "");
         calls++;
       });
 
       updatedCommand.runCommand(exitWithCode(0, done));
     });
 
-    it("should list changes without ignored files", done => {
+    it("should list changes without ignored files", (done) => {
       const lernaJsonLocation = path.join(testDir, "lerna.json");
       const lernaJson = JSON.parse(fs.readFileSync(lernaJsonLocation));
       lernaJson.publishConfig = {
@@ -219,11 +233,11 @@ describe("UpdatedCommand", () => {
       };
       fs.writeFileSync(lernaJsonLocation, JSON.stringify(lernaJson, null, 2));
 
-      child.execSync("git tag v1.0.0");
-      child.execSync("touch " + path.join(testDir, "packages/package-2/ignored-file"));
-      child.execSync("touch " + path.join(testDir, "packages/package-3/random-file"));
-      child.execSync("git add -A");
-      child.execSync("git commit -m 'Commit'");
+      execSync("git tag v1.0.0");
+      execSync("touch " + escapeArgs(path.join(testDir, "packages/package-2/ignored-file")));
+      execSync("touch " + escapeArgs(path.join(testDir, "packages/package-3/random-file")));
+      execSync("git add -A");
+      execSync("git commit -m 'Commit'");
 
       const updatedCommand = new UpdatedCommand([], {});
 
@@ -231,11 +245,9 @@ describe("UpdatedCommand", () => {
       updatedCommand.runPreparations();
 
       let calls = 0;
-      stub(logger, "info", message => {
+      stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
-        if (calls === 1) assert.equal(message, "");
         if (calls === 2) assert.equal(message, "- package-3\n- package-4");
-        if (calls === 3) assert.equal(message, "");
         calls++;
       });
 

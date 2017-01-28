@@ -4,19 +4,39 @@ import pad from "pad";
 
 const cwd = process.cwd();
 
+const DEFAULT_LOGLEVEL = "info";
+
+const LEVELS = [
+  [ "silly",   "magenta" ],
+  [ "verbose", "blue"    ],
+  [ "info",    "reset"   ],
+  [ "success", "green"   ],
+  [ "warn",    "yellow"  ],
+  [ "error",   "red"     ],
+  [ "silent",            ],
+];
+
+const TYPE_TO_LEVEL = LEVELS
+  .reduce((map, [type], index) => (map[type] = index, map), {});
+
 class Logger {
   constructor() {
+    this.setLogLevel();
     this.logs = [];
   }
 
-  _log(type, verbose, style, message, error) {
+  setLogLevel(type) {
+    this.loglevel = TYPE_TO_LEVEL[type || DEFAULT_LOGLEVEL];
+  }
+
+  _log(type, style, level, message, error) {
     this.logs.push({
       type,
       message,
       error
     });
 
-    if (verbose) {
+    if (level < this.loglevel) {
       return;
     }
 
@@ -29,78 +49,69 @@ class Logger {
     }
 
     progressBar.clear();
-    if (process.env.NODE_ENV !== "test") {
-      console.log(message);
-    }
+    this._emit(message);
     progressBar.restore();
   }
 
-  debug(message, verbose = true) {
-    this._log("debug", verbose, chalk.blue, message);
-  }
-
-  info(message, verbose = false) {
-    this._log("info", verbose, chalk.white, message);
-  }
-
-  success(message, verbose = false) {
-    this._log("success", verbose, chalk.green, message);
-  }
-
-  warning(message, verbose = false) {
-    this._log("warning", verbose, chalk.yellow, message);
-  }
-
-  error(message, error, verbose = false) {
-    this._log("error", verbose, chalk.red, message, error);
+  _emit(message) {
+    if (process.env.NODE_ENV !== "lerna-test") {
+      console.log(message);
+    }
   }
 
   newLine() {
-    this.info("");
+    this._emit("");
   }
 
-  logifyAsync(target, property, descriptor) {
-    const message = target.name + "." + property;
-    const method = descriptor.value;
+  logifyAsync() {
+    return (target, property, descriptor) => {
+      const message = target.name + "." + property;
+      const method = descriptor.value;
 
-    return (...args) => {
-      const callback = args.pop();
-      const msg = this._formatMethod(message, args);
+      descriptor.value = (...args) => {
+        const callback = args.pop();
+        const msg = this._formatMethod(message, args);
 
-      this.info(msg, true);
+        this.verbose(msg);
 
-      // wrap final callback
-      args.push((error, value) => {
-        if (error) {
-          this.error(msg, true);
-        } else {
-          this.success(msg + " => " + this._formatValue(value), true);
-        }
+        // wrap final callback
+        args.push((error, value) => {
+          if (error) {
+            this.error(msg, error);
+            if (value) {
+              this.error(value);
+            }
+          } else {
+            this.verbose(msg + " => " + this._formatValue(value));
+          }
 
-        callback(error, value);
-      });
+          callback(error, value);
+        });
 
-      method(...args);
+        method(...args);
+      };
     };
   }
 
-  logifySync(target, property, descriptor) {
-    const message = target.name + "." + property;
-    const method = descriptor.value;
+  logifySync() {
+    return (target, property, descriptor) => {
+      const message = target.name + "." + property;
+      const method = descriptor.value;
 
-    return (...args) => {
-      const msg = this._formatMethod(message, args);
+      descriptor.value = (...args) => {
+        const msg = this._formatMethod(message, args);
 
-      this.info(msg, true);
+        this.verbose(msg);
 
-      try {
-        const result = method(...args);
-        this.success(msg + " => " + this._formatValue(result), true);
-        return result;
-      } catch (error) {
-        this.error(msg, error, true);
-        throw error;
-      }
+        try {
+          const result = method(...args);
+          this.verbose(msg + " => " + this._formatValue(result));
+          return result;
+        } catch (error) {
+          this.error(msg, error);
+          throw error;
+        }
+      };
     };
   }
 
@@ -109,7 +120,12 @@ class Logger {
   }
 
   _formatArguments(args) {
-    return args.map(this._formatValue).join(", ");
+    const fullArgs = args.map(this._formatValue).join(", ");
+    if (fullArgs.length > 100) {
+      return fullArgs.slice(0, 100) + "...";
+    } else {
+      return fullArgs;
+    }
   }
 
   _formatValue(arg) {
@@ -120,5 +136,14 @@ class Logger {
     return (JSON.stringify(arg) || "").replace(cwd, ".");
   }
 }
+
+LEVELS.forEach(([type, color]) => {
+  if (!color) return; // "silent"
+  const style = chalk[color];
+  const level = TYPE_TO_LEVEL[type];
+  Logger.prototype[type] = function(message, error) {
+    this._log(type, style, level, message, error);
+  };
+});
 
 export default new Logger();

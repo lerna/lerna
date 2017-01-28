@@ -8,7 +8,7 @@ export default class DiffCommand extends Command {
     this.packageName = this.input[0];
 
     if (this.packageName) {
-      this.package = find(this.packages, pkg => {
+      this.package = find(this.packages, (pkg) => {
         return pkg.name === this.packageName;
       });
 
@@ -25,7 +25,7 @@ export default class DiffCommand extends Command {
 
     this.filePath = this.package
       ? this.package.location
-      : this.repository.packagesLocation;
+      : this.repository.rootPath;
 
     this.lastCommit = GitUtilities.hasTags()
       ? GitUtilities.getLastTaggedCommit()
@@ -35,7 +35,7 @@ export default class DiffCommand extends Command {
   }
 
   execute(callback) {
-    ChildProcessUtilities.spawn("git", ["diff", this.lastCommit, "--color=auto", this.filePath], code => {
+    ChildProcessUtilities.spawn("git", ["diff", this.lastCommit, "--color=auto", this.filePath], {}, (code) => {
       if (code !== 0) {
         callback(new Error("Errored while spawning `git diff`."));
       } else {

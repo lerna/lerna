@@ -10,35 +10,35 @@ import stub from "./_stub";
 describe("DiffCommand", () => {
   let testDir;
 
-  beforeEach(done => {
+  beforeEach((done) => {
     testDir = initFixture("DiffCommand/basic", done);
   });
 
-  it("should diff everything", done => {
+  it("should diff everything", (done) => {
     const diffCommand = new DiffCommand([], {});
 
     diffCommand.runValidations();
     diffCommand.runPreparations();
 
-    stub(ChildProcessUtilities, "spawn", (command, args, callback) => {
+    stub(ChildProcessUtilities, "spawn", (command, args, opts, callback) => {
       assert.equal(command, "git");
       assert.equal(args[0], "diff");
       assert.equal(args[1].length, 40); // commit
       assert.equal(args[2], "--color=auto");
-      assert.equal(args[3], path.join(testDir, "packages"));
+      assert.equal(args[3], testDir);
       callback(0);
     });
 
     diffCommand.runCommand(exitWithCode(0, done));
   });
 
-  it("should diff a specific package", done => {
+  it("should diff a specific package", (done) => {
     const diffCommand = new DiffCommand(["package-1"], {});
 
     diffCommand.runValidations();
     diffCommand.runPreparations();
 
-    stub(ChildProcessUtilities, "spawn", (command, args, callback) => {
+    stub(ChildProcessUtilities, "spawn", (command, args, opts, callback) => {
       assert.equal(command, "git");
       assert.equal(args[0], "diff");
       assert.equal(args[1].length, 40); // commit

@@ -1,5 +1,10 @@
 import semver from "semver";
 
+/**
+ * Represents a node in a PackageGraph.
+ * @constructor
+ * @param {!<Package>} pkg - A Package object to build the node from.
+ */
 export class PackageGraphNode {
   constructor(pkg) {
     this.package = pkg;
@@ -7,6 +12,11 @@ export class PackageGraphNode {
   }
 }
 
+/**
+ * Represents a node in a PackageGraph.
+ * @constructor
+ * @param {!Array.<Package>} packages An array of Packages to build the graph out of.
+ */
 export default class PackageGraph {
   constructor(packages) {
     this.nodes = [];

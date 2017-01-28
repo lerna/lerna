@@ -11,9 +11,7 @@ export default class PromptUtilities {
         { key: "y", name: "Yes", value: true },
         { key: "n", name: "No",  value: false }
       ]
-    }], (answers) => {
-      callback(answers.confirm);
-    });
+    }]).then((answers) => callback(answers.confirm));
   }
 
   static select(message, {choices, filter, validate} = {}, callback) {
@@ -24,20 +22,16 @@ export default class PromptUtilities {
       choices: choices,
       filter: filter,
       validate: validate
-    }], answers => {
-      callback(answers.prompt);
-    });
+    }]).then((answers) => callback(answers.prompt));
   }
 
   static input(message, {filter, validate} = {}, callback) {
     inquirer.prompt([{
       type: "input",
       name: "input",
-      message: "Enter a custom version",
+      message: message,
       filter: filter,
       validate: validate
-    }], answers => {
-      callback(answers.input);
-    });
+    }]).then((answers) => callback(answers.input));
   }
 }
