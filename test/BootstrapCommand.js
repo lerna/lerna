@@ -13,7 +13,7 @@ import stub from "./_stub";
 
 import assertStubbedCalls from "./_assertStubbedCalls";
 
-const STDIO_OPT = ["ignore", "ignore", "pipe"];
+const STDIO_OPT = ["ignore", "pipe", "pipe"];
 
 const resolveSymlink = (symlinkLocation) => {
   return path.resolve(path.dirname(symlinkLocation), fs.readlinkSync(symlinkLocation));
