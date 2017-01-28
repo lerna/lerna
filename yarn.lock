@@ -1356,8 +1356,8 @@ http-signature@~1.1.0:
     sshpk "^1.7.0"
 
 ignore@^3.1.2:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/ignore/-/ignore-3.2.0.tgz#8d88f03c3002a0ac52114db25d2c673b0bf1e435"
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/ignore/-/ignore-3.2.1.tgz#c614608a4a5406e8297cf517a7b333234068a7bc"
 
 imurmurhash@^0.1.4:
   version "0.1.4"
@@ -1519,7 +1519,7 @@ is-path-inside@^1.0.0:
 
 is-posix-bracket@^0.1.0:
   version "0.1.1"
-  resolved "http://registry.npmjs.org/is-posix-bracket/-/is-posix-bracket-0.1.1.tgz#3334dc79774368e92f016e6fbc0a88f5cd6e6bc4"
+  resolved "https://registry.yarnpkg.com/is-posix-bracket/-/is-posix-bracket-0.1.1.tgz#3334dc79774368e92f016e6fbc0a88f5cd6e6bc4"
 
 is-primitive@^2.0.0:
   version "2.0.0"
