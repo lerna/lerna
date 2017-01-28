@@ -379,6 +379,9 @@ describe("BootstrapCommand", () => {
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
 
+          // Make sure the `prepublish` script got run (index.js got created)
+          assert.ok(pathExists.sync(path.join(testDir, "packages", "package-1", "index.js")));
+
           done();
         } catch (err) {
           done(err);
@@ -410,6 +413,9 @@ describe("BootstrapCommand", () => {
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
+
+          // Make sure the `prepublish` script got run (index.js got created), even though we --ignored package-1
+          assert.ok(pathExists.sync(path.join(testDir, "packages", "package-1", "index.js")));
 
           done();
         } catch (err) {
