@@ -49,7 +49,7 @@ export default class BootstrapCommand extends Command {
   }
 
   runScriptInPackages(scriptName, callback) {
-    const packages = this.filteredPackages.slice();
+    const packages = this.packagesToBootstrap.slice();
     const batches = PackageUtilities.topologicallyBatchPackages(packages, this.logger);
 
     if (!batches.length) {
