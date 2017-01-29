@@ -78,6 +78,9 @@ class Logger {
         args.push((error, value) => {
           if (error) {
             this.error(msg, error);
+            if (value) {
+              this.error(value);
+            }
           } else {
             this.verbose(msg + " => " + this._formatValue(value));
           }
