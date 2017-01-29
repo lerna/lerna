@@ -1,6 +1,5 @@
 import child from "child_process";
 import spawn from "cross-spawn";
-import objectAssign from "object-assign";
 import syncExec from "sync-exec";
 import {EventEmitter} from "events";
 
@@ -15,7 +14,7 @@ const emitter = new EventEmitter;
 
 export default class ChildProcessUtilities {
   static exec(command, opts, callback) {
-    const mergedOpts = objectAssign({
+    const mergedOpts = Object.assign({
       maxBuffer: MAX_BUFFER
     }, opts);
     return ChildProcessUtilities.registerChild(
@@ -38,7 +37,7 @@ export default class ChildProcessUtilities {
   }
 
   static execSync(command, opts) {
-    const mergedOpts = objectAssign({
+    const mergedOpts = Object.assign({
       encoding: "utf8",
       maxBuffer: MAX_BUFFER
     }, opts);
@@ -53,7 +52,7 @@ export default class ChildProcessUtilities {
     let output = "";
 
     const childProcess = ChildProcessUtilities.registerChild(
-      spawn(command, args, objectAssign({
+      spawn(command, args, Object.assign({
         stdio: "inherit"
       }, opts))
         .on("error", () => {})

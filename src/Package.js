@@ -1,4 +1,3 @@
-import objectAssign from "object-assign";
 import path from "path";
 import semver from "semver";
 import NpmUtilities from "./NpmUtilities";
@@ -47,7 +46,7 @@ export default class Package {
   }
 
   get allDependencies() {
-    return objectAssign(
+    return Object.assign(
       {},
       this.devDependencies,
       this.dependencies
