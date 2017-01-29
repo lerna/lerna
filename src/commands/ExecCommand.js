@@ -1,6 +1,6 @@
 import ChildProcessUtilities from "../ChildProcessUtilities";
+import PackageUtilities from "../PackageUtilities";
 import Command from "../Command";
-import async from "async";
 
 export default class ExecCommand extends Command {
   initialize(callback) {
@@ -12,13 +12,17 @@ export default class ExecCommand extends Command {
       return;
     }
 
+    this.batchedPackages = this.toposort
+      ? PackageUtilities.topologicallyBatchPackages(this.filteredPackages, this.logger)
+      : [ this.filteredPackages ];
+
     callback(null, true);
   }
 
   execute(callback) {
-    async.parallelLimit(this.filteredPackages.map((pkg) => (cb) => {
-      this.runCommandInPackage(pkg, cb);
-    }), this.concurrency, callback);
+    PackageUtilities.runParallelBatches(this.batchedPackages, (pkg) => (done) => {
+      this.runCommandInPackage(pkg, done);
+    }, this.concurrency, callback);
   }
 
   runCommandInPackage(pkg, callback) {

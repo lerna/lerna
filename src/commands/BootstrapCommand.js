@@ -32,8 +32,12 @@ export default class BootstrapCommand extends Command {
     if (this.flags.includeFilteredDependencies) {
       this.packagesToBootstrap = PackageUtilities.addDependencies(this.filteredPackages, this.packageGraph);
     }
-    this.filteredGraph = PackageUtilities.getPackageGraph(this.packagesToBootstrap);
+ 
     this.logger.info(`Bootstrapping ${this.packagesToBootstrap.length} packages`);
+    this.batchedPackages = this.toposort
+      ? PackageUtilities.topologicallyBatchPackages(this.packagesToBootstrap, this.logger)
+      : [ this.packagesToBootstrap ];
+    
     async.series([
       // preinstall bootstrapped packages
       (cb) => this.preinstallPackages(cb),
@@ -49,35 +53,20 @@ export default class BootstrapCommand extends Command {
   }
 
   runScriptInPackages(scriptName, callback) {
-    const packages = this.packagesToBootstrap.slice();
-    const batches = PackageUtilities.topologicallyBatchPackages(packages, this.logger);
-
-    if (!batches.length) {
+    if (!this.packagesToBootstrap.length) {
       return callback(null, true);
     }
 
-    this.progressBar.init(packages.length);
-
-    const bootstrapBatch = () => {
-      const batch = batches.shift();
-
-      async.parallelLimit(batch.map((pkg) => (done) => {
-        pkg.runScript(scriptName, (err) => {
-          this.progressBar.tick(pkg.name);
-          done(err);
-        });
-      }), this.concurrency, (err) => {
-        if (batches.length && !err) {
-          bootstrapBatch();
-        } else {
-          this.progressBar.terminate();
-          callback(err);
-        }
+    this.progressBar.init(this.packagesToBootstrap.length);
+    PackageUtilities.runParallelBatches(this.batchedPackages, (pkg) => (done) => {
+      pkg.runScript(scriptName, (err) => {
+        this.progressBar.tick(pkg.name);
+        done(err);
       });
-    };
-
-    // Kick off the first batch.
-    bootstrapBatch();
+    }, this.concurrency, (err) => {
+      this.progressBar.terminate();
+      callback(err);
+    });
   }
 
   /**
