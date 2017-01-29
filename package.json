@@ -50,10 +50,6 @@
   "bin": {
     "lerna": "./bin/lerna.js"
   },
-  "files": [
-    "bin",
-    "lib"
-  ],
   "devDependencies": {
     "babel-cli": "^6.7.5",
     "babel-eslint": "^6.0.2",
