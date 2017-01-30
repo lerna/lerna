@@ -20,8 +20,7 @@ export default class GitUtilities {
 
   @logger.logifySync()
   static commit(message) {
-    // Use echo to allow multi\nline strings.
-    ChildProcessUtilities.execSync("git commit -m \"$(echo \"" + message + "\")\"");
+    ChildProcessUtilities.execSync("git commit -m \"" + message + "\"");
   }
 
   @logger.logifySync()
