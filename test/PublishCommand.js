@@ -41,9 +41,6 @@ describe("PublishCommand", () => {
           { args: ["git branch | sed -n '/\* /s///p'"] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git describe --tags --abbrev=0"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -147,9 +144,6 @@ describe("PublishCommand", () => {
           { args: ["git branch | sed -n '/\* /s///p'"] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git describe --tags --abbrev=0"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -251,10 +245,9 @@ describe("PublishCommand", () => {
           { args: ["git branch | sed -n '/\* /s///p'"] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git describe --tags --abbrev=0"] }
+          { args: ["git tag"] },
         ]],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git tag"] },
           { args: ["git rev-parse HEAD"], returns: "81e3b44339e1403fe3d762e9435b7c9a155fdef7" },
           { args: ["git rev-parse HEAD"], returns: "81e3b44339e1403fe3d762e9435b7c9a155fdef7" }
         ]],
@@ -349,10 +342,9 @@ describe("PublishCommand", () => {
           { args: ["git branch | sed -n '/\* /s///p'"] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git describe --tags --abbrev=0"] }
+          { args: ["git tag"] },
         ]],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git tag"] },
           { args: ["git rev-parse HEAD"], returns: "81e3b44339e1403fe3d762e9435b7c9a155fdef7" },
           { args: ["git rev-parse HEAD"], returns: "81e3b44339e1403fe3d762e9435b7c9a155fdef7" }
         ]],
@@ -444,9 +436,6 @@ describe("PublishCommand", () => {
           { args: ["git branch | sed -n '/\* /s///p'"] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git describe --tags --abbrev=0"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -531,9 +520,6 @@ describe("PublishCommand", () => {
           { args: ["git branch | sed -n '/\* /s///p'"] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git describe --tags --abbrev=0"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -608,9 +594,6 @@ describe("PublishCommand", () => {
           { args: ["git branch | sed -n '/\* /s///p'"] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git describe --tags --abbrev=0"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -670,9 +653,6 @@ describe("PublishCommand", () => {
         ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["git branch | sed -n '/\* /s///p'"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git describe --tags --abbrev=0"] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
@@ -938,11 +918,8 @@ describe("PublishCommand", () => {
           { args: ["git branch | sed -n '/\* /s///p'"] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git describe --tags --abbrev=0"] }
+          { args: ["git tag"] }
         ]],
-       [ChildProcessUtilities, "execSync", {}, [
-         { args: ["git tag"] }
-       ]],
        [PromptUtilities, "confirm", { valueCallback: true }, [
          { args: ["Are you sure you want to publish the above changes?"], returns: true }
        ]],

@@ -34,12 +34,17 @@ export default class UpdatedPackagesCollector {
       logger.info("Working not on master! Current branch: " + currentBranch);
     }
 
-    const tag = GitUtilities.getLastTag();
-    logger.info("Comparing with: " + tag);
+    const hasTags = GitUtilities.hasTags();
+
+    if (hasTags) {
+      const tag = GitUtilities.getLastTag();
+      logger.info("Comparing with: " + tag);
+    } else {
+      logger.info("No tags found! Comparing with initial commit.");
+    }
 
     progressBar.init(this.packages.length);
 
-    const hasTags = GitUtilities.hasTags();
     let commits;
 
     if (this.flags.canary) {
