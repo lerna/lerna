@@ -1,6 +1,6 @@
 import NpmUtilities from "../NpmUtilities";
+import PackageUtilities from "../PackageUtilities";
 import Command from "../Command";
-import async from "async";
 
 export default class RunCommand extends Command {
   initialize(callback) {
@@ -20,6 +20,10 @@ export default class RunCommand extends Command {
       return;
     }
 
+    this.batchedPackages = this.toposort
+      ? PackageUtilities.topologicallyBatchPackages(this.packagesWithScript, this.logger)
+      : [ this.packagesWithScript ];
+
     callback(null, true);
   }
 
@@ -36,9 +40,9 @@ export default class RunCommand extends Command {
   }
 
   runScriptInPackages(callback) {
-    async.parallelLimit(this.packagesWithScript.map((pkg) => (cb) => {
-      this.runScriptInPackage(pkg, cb);
-    }), this.concurrency, callback);
+    PackageUtilities.runParallelBatches(this.batchedPackages, (pkg) => (done) => {
+      this.runScriptInPackage(pkg, done);
+    }, this.concurrency, callback);
   }
 
   runScriptInPackage(pkg, callback) {

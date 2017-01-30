@@ -28,6 +28,7 @@ var cli = meow([
   "  --skip-git              Skip commiting, tagging, and pushing git changes (only affects publish)",
   "  --skip-npm              Stop before actually publishing change to npm (only affects publish)",
   "  --message, -m [msg]  Use a custom commit message when creating the publish commit (only affects publish)",
+  "  --exact                 Specify cross-dependency version numbers exactly rather than with a caret (^) (only affects publish)",
   "  --npm-tag [tagname]     Publish packages with the specified npm dist-tag",
   "  --scope [glob]          Restricts the scope to package names matching the given glob (Works only in combination with the 'run', 'exec', 'clean', 'ls' and 'bootstrap' commands).",
   "  --ignore [glob]         Ignores packages with names matching the given glob (Works only in combination with the 'run', 'exec', 'clean', 'ls' and 'bootstrap' commands).",
@@ -37,6 +38,7 @@ var cli = meow([
   "  --repo-version          Specify repo version to publish",
   "  --concurrency           How many threads to use if lerna parallelises the tasks (defaults to 4)",
   "  --loglevel              What level of logs to report (defaults to \"info\").  On failure, all logs are written to lerna-debug.log in the current working directory.",
+  "  --no-sort            When executing tasks, ignore the dependency ordering of packages (only affects run, exec and bootstrap)",
 ], {
   alias: {
     independent: "i",

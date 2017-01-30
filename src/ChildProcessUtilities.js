@@ -1,6 +1,5 @@
 import child from "child_process";
 import spawn from "cross-spawn";
-import objectAssign from "object-assign";
 import syncExec from "sync-exec";
 import {EventEmitter} from "events";
 
@@ -15,7 +14,7 @@ const emitter = new EventEmitter;
 
 export default class ChildProcessUtilities {
   static exec(command, opts, callback) {
-    const mergedOpts = objectAssign({
+    const mergedOpts = Object.assign({
       maxBuffer: MAX_BUFFER
     }, opts);
     return ChildProcessUtilities.registerChild(
@@ -38,7 +37,7 @@ export default class ChildProcessUtilities {
   }
 
   static execSync(command, opts) {
-    const mergedOpts = objectAssign({
+    const mergedOpts = Object.assign({
       encoding: "utf8",
       maxBuffer: MAX_BUFFER
     }, opts);
@@ -50,24 +49,33 @@ export default class ChildProcessUtilities {
   }
 
   static spawn(command, args, opts, callback) {
-    let stderr = "";
+    let output = "";
 
     const childProcess = ChildProcessUtilities.registerChild(
-      spawn(command, args, objectAssign({
+      spawn(command, args, Object.assign({
         stdio: "inherit"
       }, opts))
         .on("error", () => {})
         .on("close", (code) => {
-          callback(code && (stderr || `Command failed: ${command} ${args.join(" ")}`));
+          if (code) {
+            callback(`Command exited with status ${code}: ${command} ${args.join(" ")}`, output);
+          } else {
+            callback(null, output);
+          }
         })
     );
 
-    // By default stderr is inherited from us (just sent to _our_ output).
+    // By default stderr, stdout are inherited from us (just sent to _our_ output).
     // If the caller overrode that to "pipe", then we'll gather that up and
     // call back with it in case of failure.
     if (childProcess.stderr) {
       childProcess.stderr.setEncoding("utf8");
-      childProcess.stderr.on("data", (chunk) => stderr += chunk);
+      childProcess.stderr.on("data", (chunk) => output += chunk);
+    }
+
+    if (childProcess.stdout) {
+      childProcess.stdout.setEncoding("utf8");
+      childProcess.stdout.on("data", (chunk) => output += chunk);
     }
   }
 

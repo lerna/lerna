@@ -4,6 +4,7 @@ import Package from "./Package";
 import path from "path";
 import {sync as globSync} from "glob";
 import minimatch from "minimatch";
+import async from "async";
 
 export default class PackageUtilities {
   static getGlobalVersion(versionPath) {
@@ -183,5 +184,11 @@ export default class PackageUtilities {
     }
 
     return batches;
+  }
+
+  static runParallelBatches(batches, makeTask, concurrency, callback) {
+    async.series(batches.map((batch) => (cb) => {
+      async.parallelLimit(batch.map(makeTask), concurrency, cb);
+    }), callback);
   }
 }

@@ -208,7 +208,7 @@ More specifically, this command will:
   1. Run the equivalent of `lerna updated` to determine which packages need to be published.
   2. If necessary, increment the `version` key in `lerna.json`.
   3. Update the `package.json` of all updated packages to their new versions.
-  4. Update all dependencies of the updated packages with the new versions.
+  4. Update all dependencies of the updated packages with the new versions, specified with a [caret (^)](https://docs.npmjs.com/files/package.json#dependencies).
   5. Create a new git commit and tag for the new version.
   6. Publish updated packages to npm.
 2. Once all packages have been published, remove the `lerna-temp` tags and add the tags to `latest`.
@@ -216,6 +216,16 @@ More specifically, this command will:
 > A temporary dist-tag is used at the start to prevent the case where only some of the packages are published; this can cause issues for users installing a package that only has some updated packages.
 
 > Lerna won't publish packages which are marked as private (`"private": true` in the `package.json`).
+
+#### --exact
+
+```sh
+$ lerna publish --exact
+```
+
+When run with this flag, `publish` will specify updated dependencies in updated packages exactly (with no punctuation), instead of as semver compatible (with a `^`).
+
+For more information, see the package.json [dependencies](https://docs.npmjs.com/files/package.json#dependencies) documentation.
 
 #### --npm-tag [tagname]
 
@@ -570,3 +580,15 @@ Ex: in Babel, `babel-types` is depended upon by all packages in the monorepo (ov
 What level of logs to report.  On failure, all logs are written to lerna-debug.log in the current working directory.
 
 Any logs of a higher level than the setting are shown.  The default is "info".
+
+#### --no-sort
+
+By default, all tasks execute on packages in topologically sorted order as to respect the dependency relationships of the packages in question. Cycles are broken on a best-effort basis in a way not guaranteed to be consistent across Lerna invocations.
+
+Topological sorting can cause concurrency bottlenecks if there are a small number of packages with many dependents or if some packages take a disproportionately long time to execute. The `--no-sort` option disables sorting, instead executing tasks in an arbitrary order with maximum concurrency.
+
+### Wizard
+
+If you prefer some guidance for cli (in case you're about to start using lerna or introducing it to a new team), you might like [lerna-wizard](https://github.com/szarouski/lerna-wizard). It will lead you through a series of well-defined steps:
+
+![lerna-wizard demo image](https://raw.githubusercontent.com/szarouski/lerna-wizard/2e269fb5a3af7100397a1f874cea3fa78089486e/demo.png)
