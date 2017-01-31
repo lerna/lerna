@@ -1,11 +1,11 @@
 import pathExists from "path-exists";
 import logger from "./logger";
 import mkdirp from "mkdirp";
-import rimraf from "rimraf";
 import fs from "fs";
 import cmdShim from "cmd-shim";
 import readCmdShim from "read-cmd-shim";
-import { resolve, dirname, relative } from "path";
+import { resolve, dirname, relative, join } from "path";
+import ChildProcessUtilities from "./ChildProcessUtilities";
 
 const ENDS_WITH_NEW_LINE = /\n$/;
 
@@ -51,7 +51,10 @@ export default class FileSystemUtilities {
 
   @logger.logifyAsync()
   static rimraf(filePath, callback) {
-    rimraf(filePath, callback);
+    ChildProcessUtilities.exec("npm bin", {cwd: __dirname}, (err, npmBinPath) => {
+      if (err) return callback(err);
+      ChildProcessUtilities.spawn(join(npmBinPath.trim(), "rimraf"), [filePath], {}, callback);
+    });
   }
 
   @logger.logifyAsync()
