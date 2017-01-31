@@ -21,6 +21,47 @@ export default class Command {
     this.toposort = !flags || (flags.sort == null ? true : flags.sort);
   }
 
+  get name() {
+    // For a class named "FooCommand" this returns "foo".
+    return commandNameFromClassName(this.className);
+  }
+
+  get className() {
+    return this.constructor.name;
+  }
+
+  // Override this to inherit config from another command.
+  // For example `updated` inherits config from `publish`.
+  get otherCommandConfigs() {
+    return [];
+  }
+
+  getOptions(...objects) {
+
+    // Items lower down override items higher up.
+    return Object.assign(
+      {},
+
+      // Deprecated legacy options in `lerna.json`.
+      this._legacyOptions(),
+
+      // Global options from `lerna.json`.
+      this.repository.lernaJson,
+
+      // Option overrides for commands.
+      // Inherited options from `otherCommandConfigs` come before the current
+      // command's configuration.
+      ...[...this.otherCommandConfigs, this.name]
+        .map((name) => (this.repository.lernaJson.command || {})[name]),
+
+      // For example, the item from the `packages` array in config.
+      ...objects,
+
+      // CLI flags always override everything.
+      this.flags
+    );
+  }
+
   run() {
     this.logger.info("Lerna v" + this.lernaVersion);
 
@@ -95,8 +136,7 @@ export default class Command {
   }
 
   runPreparations() {
-    const scope = this.flags.scope || (this.configFlags && this.configFlags.scope);
-    const ignore = this.flags.ignore || (this.configFlags && this.configFlags.ignore);
+    const {scope, ignore} = this.getOptions();
 
     if (scope) {
       this.logger.info(`Scoping to packages that match '${scope}'`);
@@ -177,6 +217,16 @@ export default class Command {
     }
   }
 
+  _legacyOptions() {
+    return ["bootstrap", "publish"].reduce((opts, command) => {
+      if (this.name === command && this.repository.lernaJson[`${command}Config`]) {
+        logger.warn(`\`${command}Config.ignore\` is deprecated.  Use \`commands.${command}.ignore\`.`);
+        opts.ignore = this.repository.lernaJson[`${command}Config`].ignore;
+      }
+      return opts;
+    }, {});
+  }
+
   initialize() {
     throw new Error("command.initialize() needs to be implemented.");
   }
@@ -184,4 +234,25 @@ export default class Command {
   execute() {
     throw new Error("command.execute() needs to be implemented.");
   }
+}
+
+export function commandNameFromClassName(className) {
+  return className.replace(/Command$/, "").toLowerCase();
+}
+
+export function exposeCommands(commands) {
+  return commands.reduce((obj, cls) => {
+    const commandName = commandNameFromClassName(cls.name);
+    if (!cls.name.match(/Command$/)) {
+      throw new Error(`Invalid command class name "${cls.name}".  Must end with "Command".`);
+    }
+    if (obj[commandName]) {
+      throw new Error(`Duplicate command: "${commandName}"`);
+    }
+    if (!Command.isPrototypeOf(cls)) {
+      throw new Error(`Command does not extend Command: "${cls.name}"`);
+    }
+    obj[commandName] = cls;
+    return obj;
+  }, {});
 }

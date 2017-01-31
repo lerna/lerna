@@ -114,14 +114,8 @@ export default class Package {
    * @returns {Boolean}
    */
   hasDependencyInstalled(dependency) {
-    const packageJson = path.join(this.nodeModulesLocation, dependency, "package.json");
-    try {
-      return semver.satisfies(
-        require(packageJson).version,
-        this.allDependencies[dependency]
-      );
-    } catch (e) {
-      return false;
-    }
+    return NpmUtilities.dependencyIsSatisfied(
+      this.nodeModulesLocation, dependency, this.allDependencies[dependency]
+    );
   }
 }

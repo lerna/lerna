@@ -77,10 +77,18 @@ describe("PackageUtilities", () => {
       });
     });
 
-    it("should throw when --scope is given but empty", () => {
-      assert.throws(() => {
-        PackageUtilities._filterPackages(packages, "");
-      });
+    it("should return everything when --scope is given but empty", () => {
+      assert.deepEqual(
+        PackageUtilities.filterPackages(packages, "").map((pkg) => pkg.name),
+        ["package-3", "package-4", "package-a-1", "package-a-2"]
+      );
+    });
+
+    it("should return everything when --scope is just true", () => {
+      assert.deepEqual(
+        PackageUtilities.filterPackages(packages, true).map((pkg) => pkg.name),
+        ["package-3", "package-4", "package-a-1", "package-a-2"]
+      );
     });
 
     it("should throw when --scope is given but excludes all packages", () => {

@@ -1,6 +1,8 @@
 import GitUtilities from "./GitUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
 import PackageUtilities from "./PackageUtilities";
+import Package from "./Package";
+import NpmUtilities from "./NpmUtilities";
 import path from "path";
 import logger from "./logger";
 
@@ -23,11 +25,17 @@ export default class Repository {
 
     if (FileSystemUtilities.existsSync(this.lernaJsonLocation)) {
       this.lernaJson = JSON.parse(FileSystemUtilities.readFileSync(this.lernaJsonLocation));
+    } else {
+      // No need to distinguish between missing and empty.
+      // This saves us a lot of guards.
+      this.lernaJson = {};
     }
 
     if (FileSystemUtilities.existsSync(this.packageJsonLocation)) {
       this.packageJson = JSON.parse(FileSystemUtilities.readFileSync(this.packageJsonLocation));
     }
+
+    this.package = new Package(this.packageJson, this.rootPath);
   }
 
   get lernaVersion() {
@@ -44,6 +52,10 @@ export default class Repository {
 
   get bootstrapConfig() {
     return this.lernaJson && this.lernaJson.bootstrapConfig || {};
+  }
+
+  get nodeModulesLocation() {
+    return path.join(this.rootPath, "node_modules");
   }
 
   get packageConfigs() {
@@ -71,5 +83,11 @@ export default class Repository {
   buildPackageGraph() {
     this._packages = PackageUtilities.getPackages(this);
     this._packageGraph = PackageUtilities.getPackageGraph(this._packages);
+  }
+
+  hasDependencyInstalled(dependency, version) {
+    return NpmUtilities.dependencyIsSatisfied(
+      this.nodeModulesLocation, dependency, version
+    );
   }
 }

@@ -30,6 +30,8 @@ var cli = meow([
   "  --message, -m [msg]  Use a custom commit message when creating the publish commit (only affects publish)",
   "  --exact                 Specify cross-dependency version numbers exactly rather than with a caret (^) (only affects publish)",
   "  --npm-tag [tagname]     Publish packages with the specified npm dist-tag",
+  "  --hoist [glob]          Install external dependencies matching [glob] to the repo root.  Use with no glob for all.",
+  "  --nohoist [glob]        Don't hoist external dependencies matching [glob] to the repo root",
   "  --scope [glob]          Restricts the scope to package names matching the given glob (Works only in combination with the 'run', 'exec', 'clean', 'ls' and 'bootstrap' commands).",
   "  --ignore [glob]         Ignores packages with names matching the given glob (Works only in combination with the 'run', 'exec', 'clean', 'ls' and 'bootstrap' commands).",
   "  --include-filtered-dependencies Flag to force lerna to include all dependencies and transitive dependencies when running 'bootstrap', even if they should not be included by the scope or ignore flags",
