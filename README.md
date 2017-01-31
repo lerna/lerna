@@ -575,7 +575,7 @@ The `ignore` flag, when used with the `bootstrap` command, can also be set in `l
 
 #### --include-filtered-dependencies
 
-Used only in the `bootstrap` command, ensures that all dependencies (and dev dependencies) of any scoped packages (either through `--scope` or `--ignore`) have all of their dependencies bootstrapped as well.
+Used only in the `bootstrap` and `clean` commands, ensures that all dependencies (and dev dependencies) of any scoped packages (either through `--scope` or `--ignore`) are operated on as well.
 
 > Note: This will override the `--scope` and `--ignore` flags.
 > > i.e. A package matched by the `--ignore` flag will still be bootstrapped if it is depended on by another package that is being bootstrapped.
