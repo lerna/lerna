@@ -99,10 +99,10 @@ export default class Command {
     const ignore = this.flags.ignore || (this.configFlags && this.configFlags.ignore);
 
     if (scope) {
-      this.logger.info(`Scoping to packages that match '${scope}'`);
+      this.logger.info(`Scoping to packages that match "${scope}"`);
     }
     if (ignore) {
-      this.logger.info(`Ignoring packages that match '${ignore}'`);
+      this.logger.info(`Ignoring packages that match "${ignore}"`);
     }
     try {
       this.repository.buildPackageGraph();

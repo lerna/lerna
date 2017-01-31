@@ -30,6 +30,15 @@ export default class NpmUtilities {
   }
 
   @logger.logifySync()
+  static getWhoIAm() {
+    try {
+      return ChildProcessUtilities.execSync("npm whoami", { stdio: "none" });
+    } catch (e) {
+      return undefined;
+    }
+  }
+
+  @logger.logifySync()
   static checkDistTag(packageName, tag) {
     return ChildProcessUtilities.execSync(`npm dist-tag ls ${packageName}`).indexOf(tag) >= 0;
   }
