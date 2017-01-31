@@ -6,10 +6,12 @@
   "changelog": {
     "repo": "lerna/lerna",
     "labels": {
-      "breaking": "Breaking change",
-      "enhancement": "Enhancement",
-      "bug": "Bug fix",
-      "docs": "Documentation"
+      "Tag: Breaking Change": ":boom: Breaking Change",
+      "Tag: Enhancement": ":rocket: Enhancement",
+      "Tag: Bug Fix": ":bug: Bug Fix",
+      "Tag: Polish": ":nail_care: Polish",
+      "Tag: Documentation": ":memo: Documentation",
+      "Tag: Internal": ":house: Internal"
     },
     "cacheDir": ".changelog"
   },
