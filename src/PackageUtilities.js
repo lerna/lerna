@@ -5,7 +5,6 @@ import path from "path";
 import {sync as globSync} from "glob";
 import minimatch from "minimatch";
 import async from "async";
-import isArray from "isarray";
 
 export default class PackageUtilities {
   static getGlobalVersion(versionPath) {
@@ -139,7 +138,7 @@ export default class PackageUtilities {
     // The double star here is to account for scoped packages.
     if (glob === true) glob = "**";
 
-    if (!isArray(glob)) glob = [glob];
+    if (!Array.isArray(glob)) glob = [glob];
 
     const maybeNegate = negate ? (v) => !v : (v) => v;
 

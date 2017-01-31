@@ -30,7 +30,6 @@
     "cross-spawn": "^4.0.0",
     "glob": "^7.0.6",
     "inquirer": "^3.0.1",
-    "isarray": "^2.0.1",
     "lodash.find": "^4.3.0",
     "lodash.unionwith": "^4.2.0",
     "meow": "^3.7.0",
