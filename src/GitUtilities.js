@@ -22,7 +22,7 @@ export default class GitUtilities {
   static commit(message) {
     // Use multiple -m to allow multi\nline strings.
     const commitMessage = message.replace(new RegExp(`^(.*)(\n?)`, "gm")," -m \"$1\"");
-    ChildProcessUtilities.execSync("git commit " + commitMessage);
+    ChildProcessUtilities.execSync("git commit" + commitMessage);
   }
 
   @logger.logifySync()

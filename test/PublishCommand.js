@@ -148,7 +148,8 @@ describe("PublishCommand", () => {
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-3/package.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-4/package.json"))] },
-          { args: ["git commit -m \"Publish" + EOL + EOL + " - package-1@1.0.1" + EOL + " - package-2@1.1.0" + EOL + " - package-3@2.0.0" + EOL + " - package-4@1.1.0\""] },
+          
+          { args: ["git commit -m \"Publish\"\r -m \"\" -m \"\"\r -m \"\" -m \" - package-1@1.0.1\"\r -m \"\" -m \" - package-2@1.1.0\"\r -m \"\" -m \" - package-3@2.0.0\"\r -m \"\" -m \" - package-4@1.1.0\""] },
           { args: ["git tag package-1@1.0.1"] },
           { args: ["git tag package-2@1.1.0"] },
           { args: ["git tag package-3@2.0.0"] },
