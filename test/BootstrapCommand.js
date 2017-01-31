@@ -67,8 +67,17 @@ describe("BootstrapCommand", () => {
         [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
           { args: ["npm", ["install", "foo@^1.0.0", "@test/package-1@^0.0.0"], { cwd: testDir, stdio: STDIO_OPT }] }
         ]],
+        [FileSystemUtilities, "rimraf", { nodeCallback: true }, [
+          { args: [path.join(testDir, "packages" ,"package-1", "node_modules", "foo")] }
+        ]],
         [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
           { args: ["npm", ["install", "foo@0.1.12"], { cwd: path.join(testDir, "packages" ,"package-3"), stdio: STDIO_OPT }] }
+        ]],
+        [FileSystemUtilities, "rimraf", { nodeCallback: true }, [
+          { args: [path.join(testDir, "packages" ,"package-2", "node_modules", "foo")] }
+        ]],
+        [FileSystemUtilities, "rimraf", { nodeCallback: true }, [
+          { args: [path.join(testDir, "packages" ,"package-4", "node_modules", "@test", "package-1")] }
         ]],
       ]);
 
@@ -85,11 +94,17 @@ describe("BootstrapCommand", () => {
         [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
           { args: ["npm", ["install", "foo@^1.0.0"], { cwd: testDir, stdio: STDIO_OPT }] }
         ]],
+        [FileSystemUtilities, "rimraf", { nodeCallback: true }, [
+          { args: [path.join(testDir, "packages" ,"package-1", "node_modules", "foo")] }
+        ]],
         [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
           { args: ["npm", ["install", "foo@0.1.12"], { cwd: path.join(testDir, "packages" ,"package-3"), stdio: STDIO_OPT }] }
         ]],
         [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
           { args: ["npm", ["install", "@test/package-1@^0.0.0"], { cwd: path.join(testDir, "packages", "package-4"), stdio: STDIO_OPT }] }
+        ]],
+        [FileSystemUtilities, "rimraf", { nodeCallback: true }, [
+          { args: [path.join(testDir, "packages" ,"package-2", "node_modules", "foo")] }
         ]],
       ]);
 
