@@ -289,6 +289,18 @@ dependencies, without committing, tagging, pushing or publishing.
 
 > Only update versions and dependencies; don't actually publish (this only affects publish).
 
+#### --registry [registry]
+
+```sh
+$ lerna publish --registry https://my-private-registry
+```
+
+When run with this flag, `publish` will use the specified registry for your package(es).
+
+This is useful if you do not want to explicitly set up your registry
+configuration in all of your package.json files individually when e.g. using
+private registries.
+
 #### --force-publish [packages]
 
 ```sh

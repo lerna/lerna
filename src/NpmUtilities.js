@@ -97,8 +97,15 @@ export default class NpmUtilities {
   }
 
   @logger.logifyAsync()
-  static publishTaggedInDir(tag, directory, callback) {
-    ChildProcessUtilities.exec("cd " + escapeArgs(directory) + " && npm publish --tag " + tag, null, callback);
+  static publishTaggedInDir(opts, directory, callback) {
+    const validOpts = ["tag", "registry"];
+    const args = Object.keys(opts).map((argKey) => {
+      if (validOpts.indexOf(argKey) > -1) {
+        return `--${escapeArgs(argKey)} ${escapeArgs(opts[argKey])}`;
+      }
+    });
+    let command = ("npm publish " + args.join(" ")).trim();
+    ChildProcessUtilities.exec("cd " + escapeArgs(directory) + " && " + command, null, callback);
   }
 
   @logger.logifySync
