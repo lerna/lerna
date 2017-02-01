@@ -4,7 +4,7 @@ import mkdirp from "mkdirp";
 import fs from "fs";
 import cmdShim from "cmd-shim";
 import readCmdShim from "read-cmd-shim";
-import { resolve, dirname, relative, join } from "path";
+import { resolve, dirname, relative } from "path";
 import ChildProcessUtilities from "./ChildProcessUtilities";
 
 const ENDS_WITH_NEW_LINE = /\n$/;
@@ -51,10 +51,7 @@ export default class FileSystemUtilities {
 
   @logger.logifyAsync()
   static rimraf(filePath, callback) {
-    ChildProcessUtilities.exec("npm bin", {cwd: __dirname}, (err, npmBinPath) => {
-      if (err) return callback(err);
-      ChildProcessUtilities.spawn(join(npmBinPath.trim(), "rimraf"), [filePath], {}, callback);
-    });
+    ChildProcessUtilities.spawn(require.resolve("rimraf/bin"), [filePath], {}, callback);
   }
 
   @logger.logifyAsync()
