@@ -51,6 +51,7 @@ export default class FileSystemUtilities {
 
   @logger.logifyAsync()
   static rimraf(filePath, callback) {
+    // Note: if rimraf moves the location of its executable, this will need to be updated
     ChildProcessUtilities.spawn(require.resolve("rimraf/bin"), [filePath], {}, callback);
   }
 
