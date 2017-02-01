@@ -1,4 +1,4 @@
-## v2.0.0-beta.34 (2017-01-31)
+## v2.0.0-beta.35 (2017-02-01)
 
 3 new flags:
 
@@ -73,6 +73,14 @@ When running `lerna bootstrap --scope foo --include-filtered-dependencies` run p
 - Sean Kelley ([seansfkelley](https://github.com/seansfkelley))
 - Sergey Zarouski ([szarouski](https://github.com/szarouski))
 - [wtgtybhertgeghgtwtg](https://github.com/wtgtybhertgeghgtwtg)
+ 
+## v2.0.0-beta.34 (2017-01-26)
+
+#### :bug: Bug Fix
+* [#537](https://github.com/lerna/lerna/pull/537) [CRITICAL] Publish command is broken for 2.0.0-beta.33. ([@diogofcunha](https://github.com/diogofcunha))
+
+#### Committers: 1
+- Diogo ([diogofcunha](https://github.com/diogofcunha))
  
 ## v2.0.0-beta.33 (2017-01-25)
 
