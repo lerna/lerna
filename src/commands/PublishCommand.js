@@ -345,7 +345,13 @@ export default class PublishCommand extends Command {
       const run = (cb) => {
         this.logger.verbose("Publishing " + pkg.name + "...");
 
-        NpmUtilities.publishTaggedInDir("lerna-temp", pkg.location, (err) => {
+        let args = {
+          "tag": "lerna-temp"
+        };
+        if (this.flags.registry) {
+          args.registry = this.flags.registry;
+        }
+        NpmUtilities.publishTaggedInDir(args, pkg.location, (err) => {
           err = err && err.stack || err;
 
           if (!err ||
