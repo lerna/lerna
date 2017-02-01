@@ -46,6 +46,9 @@
     "signal-exit": "^3.0.2",
     "sync-exec": "^0.6.2"
   },
+  "bundledDependencies": [
+    "rimraf"
+  ],
   "bin": {
     "lerna": "./bin/lerna.js"
   },
