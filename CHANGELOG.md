@@ -1,12 +1,42 @@
 ## v2.0.0-beta.34 (2017-01-31)
 
-2 new flags:
+3 new flags:
 
-`--no-sort` (only for run, exec and bootstrap)
+###### `--no-sort` (only for run, exec and bootstrap)
   
 By default, all tasks execute on packages in topologically sorted order as to respect the dependency relationships of the packages in question. Cycles are broken on a best-effort basis in a way not guaranteed to be consistent across Lerna invocations.
   
 Topological sorting can cause concurrency bottlenecks if there are a small number of packages with many dependents or if some packages take a disproportionately long time to execute. The `--no-sort` option disables sorting, instead executing tasks in an arbitrary order with maximum concurrency.
+
+
+###### `--hoist` (only for bootstrap)
+
+Install external dependencies matching `glob` at the repo root so they're
+available to all packages.  Any binaries from these dependencies will be
+linked into dependent package `node_modules/.bin/` directories so they're
+available for npm scripts.  If the option is present but no `glob` is given
+the default is `**` (hoist everything).  This option only affects the
+`bootstrap` command.
+
+```sh
+$ lerna bootstrap --hoist
+```
+
+Note: If packages depend on different _versions_ of an external dependency,
+the most commonly used version will be hoisted, and a warning will be emitted.
+
+This option may also be set in `lerna.json` with `"hoist": true` or `"hoist": <glob>`.
+
+###### `--nohoist` (only for bootstrap)
+
+Do _not_ install external dependencies matching `glob` at the repo root.  This
+can be used to opt out of hoisting for certain dependencies.
+
+```sh
+$ lerna bootstrap --hoist --nohoist=babel-*
+```
+
+This option may also be set in `lerna.json` with `"nohoist": <glob>`.
 
 #### :rocket: Enhancement
 * [#507](https://github.com/lerna/lerna/pull/507) Automatic hoisting of common dependencies. ([@gigabo](https://github.com/gigabo))

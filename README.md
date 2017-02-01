@@ -623,8 +623,9 @@ Topological sorting can cause concurrency bottlenecks if there are a small numbe
 Install external dependencies matching `glob` at the repo root so they're
 available to all packages.  Any binaries from these dependencies will be
 linked into dependent package `node_modules/.bin/` directories so they're
-available for npm scripts.  If no `glob` is given the default is `**` (hoist
-everything).  This option only affects the `bootstrap` command.
+available for npm scripts.  If the option is present but no `glob` is given
+the default is `**` (hoist everything).  This option only affects the
+`bootstrap` command.
 
 ```sh
 $ lerna bootstrap --hoist
