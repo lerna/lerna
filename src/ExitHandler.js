@@ -1,7 +1,7 @@
 import FileSystemUtilities from "./FileSystemUtilities";
 import logger from "./logger";
 import path from "path";
-import pad from "pad";
+import { padEnd } from "lodash";
 
 export default class ExitHandler {
   constructor() {
@@ -28,7 +28,7 @@ export default class ExitHandler {
   }
 
   _formatType(type) {
-    return pad("lerna(" + type + ")", 15, " ");
+    return padEnd("lerna(" + type + ")", 15);
   }
 
   _formatError(error) {

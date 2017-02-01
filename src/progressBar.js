@@ -1,5 +1,5 @@
 import ProgressBar from "progress";
-import pad from "pad";
+import { padEnd } from "lodash";
 
 class ProgressBarController {
   constructor() {
@@ -36,7 +36,7 @@ class ProgressBarController {
   tick(name) {
     if (this.bar) {
       this.bar.tick({
-        packagename: pad(name.slice(0, 50), 50)
+        packagename: padEnd(name.slice(0, 50), 50)
       });
     }
   }

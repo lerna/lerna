@@ -3,7 +3,7 @@ import NpmUtilities from "../NpmUtilities";
 import PackageUtilities from "../PackageUtilities";
 import Command from "../Command";
 import async from "async";
-import find from "lodash.find";
+import { find } from "lodash";
 import path from "path";
 import semver from "semver";
 
@@ -33,12 +33,12 @@ export default class BootstrapCommand extends Command {
     if (this.flags.includeFilteredDependencies) {
       this.packagesToBootstrap = PackageUtilities.addDependencies(this.filteredPackages, this.packageGraph);
     }
- 
+
     this.logger.info(`Bootstrapping ${this.packagesToBootstrap.length} packages`);
     this.batchedPackages = this.toposort
       ? PackageUtilities.topologicallyBatchPackages(this.packagesToBootstrap, this.logger)
       : [ this.packagesToBootstrap ];
-    
+
     async.series([
       // preinstall bootstrapped packages
       (cb) => this.preinstallPackages(cb),
