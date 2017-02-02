@@ -1,6 +1,6 @@
 import progressBar from "./progressBar";
 import chalk from "chalk";
-import { padEnd } from "lodash";
+import padEnd from "lodash/padEnd";
 
 const cwd = process.cwd();
 

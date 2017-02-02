@@ -1,7 +1,7 @@
 import FileSystemUtilities from "./FileSystemUtilities";
 import logger from "./logger";
 import path from "path";
-import { padEnd } from "lodash";
+import padEnd from "lodash/padEnd";
 
 export default class ExitHandler {
   constructor() {

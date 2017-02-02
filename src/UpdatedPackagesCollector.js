@@ -2,7 +2,7 @@ import GitUtilities from "./GitUtilities";
 import progressBar from "./progressBar";
 import minimatch from "minimatch";
 import logger from "./logger";
-import { find } from "lodash";
+import find from "lodash/find";
 import path from "path";
 
 class Update {

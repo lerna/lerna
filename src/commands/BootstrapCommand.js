@@ -3,7 +3,7 @@ import NpmUtilities from "../NpmUtilities";
 import PackageUtilities from "../PackageUtilities";
 import Command from "../Command";
 import async from "async";
-import { find } from "lodash";
+import find from "lodash/find";
 import path from "path";
 import semver from "semver";
 

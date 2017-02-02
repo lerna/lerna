@@ -1,5 +1,5 @@
 import ProgressBar from "progress";
-import { padEnd } from "lodash";
+import padEnd from "lodash/padEnd";
 
 class ProgressBarController {
   constructor() {
