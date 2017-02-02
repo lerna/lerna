@@ -33,7 +33,7 @@ export default class BootstrapCommand extends Command {
     this.batchedPackages = this.toposort
       ? PackageUtilities.topologicallyBatchPackages(this.filteredPackages, this.logger)
       : [ this.filteredPackages ];
-    
+
     async.series([
       // preinstall bootstrapped packages
       (cb) => this.preinstallPackages(cb),

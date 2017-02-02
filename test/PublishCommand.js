@@ -691,7 +691,7 @@ describe("PublishCommand", () => {
   });
 
   /** =========================================================================
-   * NORMAL - EXPLICIT REGISTRY
+   * NORMAL - EXPLICIT REGISTRY FLAG
    * ======================================================================= */
 
   describe("normal mode with --registry", () => {
@@ -728,10 +728,10 @@ describe("PublishCommand", () => {
           { args: ["git tag v1.0.1"] }
         ]],
         [ChildProcessUtilities, "exec", { nodeCallback: true }, [
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm publish --tag lerna-temp --registry https://my-private-registry"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm publish --tag lerna-temp --registry https://my-private-registry"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm publish --tag lerna-temp --registry https://my-private-registry"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm publish --tag lerna-temp --registry https://my-private-registry"] }
+          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm publish --tag lerna-temp", {env: {"npm_config_registry":"https://my-private-registry"}}] },
+          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm publish --tag lerna-temp", {env: {"npm_config_registry":"https://my-private-registry"}}] },
+          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm publish --tag lerna-temp", {env: {"npm_config_registry":"https://my-private-registry"}}] },
+          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm publish --tag lerna-temp", {env: {"npm_config_registry":"https://my-private-registry"}}] }
           // No package-5.  It's private.
         ], true],
         [ChildProcessUtilities, "execSync", {}, [
@@ -781,6 +781,60 @@ describe("PublishCommand", () => {
         } catch (err) {
           done(err);
         }
+      }));
+    });
+  });
+
+  /** =========================================================================
+   * NORMAL - UPSTREAM REGISTRY CONFIG
+   * ======================================================================= */
+
+  describe("normal mode with upstream registry config", () => {
+    let testDir;
+
+    beforeEach((done) => {
+      testDir = initFixture("PublishCommand/registries", done);
+    });
+
+    it("should use upstream config property", (done) => {
+      const publishCommand = new PublishCommand([], {
+        repoVersion: "1.0.1"
+      });
+
+      publishCommand.runValidations();
+      publishCommand.runPreparations();
+
+      assertStubbedCalls([
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git tag"] }
+        ]],
+        [PromptUtilities, "confirm", { valueCallback: true }, [
+          { args: ["Are you sure you want to publish the above changes?"], returns: true }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
+          { args: ["git commit -m \"$(echo \"v1.0.1\")\""] },
+          { args: ["git tag v1.0.1"] }
+        ]],
+        [ChildProcessUtilities, "exec", { nodeCallback: true }, [
+          { args: ["cd " + escapeArgs(path.join(testDir, "packages", "package-1")) + " && npm publish --tag lerna-temp", {env: {"npm_config_registry":"https://my-secure-registry/upstream"}}] }
+          // No package-5.  It's private.
+        ], true],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-1 lerna-temp"] },
+          { args: ["npm dist-tag add package-1@1.0.1 latest"] },
+
+          { args: ["git symbolic-ref --short HEAD"], returns: "master" },
+          { args: ["git push origin master"] },
+          { args: ["git push origin v1.0.1"] }
+        ]],
+      ]);
+
+      publishCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done(err);
+        done();
       }));
     });
   });

@@ -8,7 +8,7 @@ import semver from "semver";
 
 export default class NpmUtilities {
   @logger.logifyAsync()
-  static installInDir(directory, dependencies, callback) {
+  static installInDir(directory, dependencies, registry, callback) {
 
     // Nothing to do if we weren't given any deps.
     if (!(dependencies && dependencies.length)) return callback();
@@ -20,6 +20,11 @@ export default class NpmUtilities {
       stdio: ["ignore", "pipe", "pipe"],
     };
 
+    if (registry) {
+      opts.env = {npm_config_registry: registry}
+    }
+
+    ChildProcessUtilities.spawn("npm", args, opts, callback);
     const packageJson = path.join(directory, "package.json");
     const packageJsonBkp = packageJson + ".lerna_backup";
 
@@ -97,15 +102,15 @@ export default class NpmUtilities {
   }
 
   @logger.logifyAsync()
-  static publishTaggedInDir(opts, directory, callback) {
-    const validOpts = ["tag", "registry"];
-    const args = Object.keys(opts).map((argKey) => {
-      if (validOpts.indexOf(argKey) > -1) {
-        return `--${escapeArgs(argKey)} ${escapeArgs(opts[argKey])}`;
-      }
-    });
-    let command = ("npm publish " + args.join(" ")).trim();
-    ChildProcessUtilities.exec("cd " + escapeArgs(directory) + " && " + command, null, callback);
+  static publishTaggedInDir(tag, directory, registry, callback) {
+    const command = ("npm publish --tag " + tag).trim();
+    let opts = null;
+
+    if (registry) {
+      opts = {env: {npm_config_registry: registry}};
+    }
+
+    ChildProcessUtilities.exec("cd " + escapeArgs(directory) + " && " + command, opts, callback);
   }
 
   @logger.logifySync
