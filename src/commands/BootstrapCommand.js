@@ -33,12 +33,12 @@ export default class BootstrapCommand extends Command {
     if (this.flags.includeFilteredDependencies) {
       this.packagesToBootstrap = PackageUtilities.addDependencies(this.filteredPackages, this.packageGraph);
     }
- 
+
     this.logger.info(`Bootstrapping ${this.packagesToBootstrap.length} packages`);
     this.batchedPackages = this.toposort
       ? PackageUtilities.topologicallyBatchPackages(this.packagesToBootstrap, this.logger)
       : [ this.packagesToBootstrap ];
-    
+
     async.series([
       // preinstall bootstrapped packages
       (cb) => this.preinstallPackages(cb),
@@ -317,6 +317,7 @@ export default class BootstrapCommand extends Command {
       actions.push((cb) => NpmUtilities.installInDir(
         this.repository.rootPath,
         root.map(({dependency}) => dependency).filter((dep) => dep),
+        this.getDownstreamRegistry(),
         (err) => {
           if (err) return cb(err);
 
@@ -359,7 +360,7 @@ export default class BootstrapCommand extends Command {
     Object.keys(leaves)
       .map((pkgName) => ({pkg: this.packageGraph.get(pkgName).package, deps: leaves[pkgName]}))
       .forEach(({pkg, deps}) => actions.push(
-        (cb) => NpmUtilities.installInDir(pkg.location, deps, (err) => {
+        (cb) => NpmUtilities.installInDir(pkg.location, deps, this.getDownstreamRegistry(), (err) => {
           this.progressBar.tick(pkg.name);
           cb(err);
         })

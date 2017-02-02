@@ -6,17 +6,21 @@ import semver from "semver";
 
 export default class NpmUtilities {
   @logger.logifyAsync()
-  static installInDir(directory, dependencies, callback) {
+  static installInDir(directory, dependencies, registry, callback) {
     let args = ["install"];
 
     if (dependencies) {
       args = args.concat(dependencies);
     }
 
-    const opts = {
+    let opts = {
       cwd: directory,
       stdio: ["ignore", "pipe", "pipe"],
     };
+
+    if (registry) {
+      opts.env = {npm_config_registry: registry}
+    }
 
     ChildProcessUtilities.spawn("npm", args, opts, callback);
   }
@@ -47,15 +51,15 @@ export default class NpmUtilities {
   }
 
   @logger.logifyAsync()
-  static publishTaggedInDir(opts, directory, callback) {
-    const validOpts = ["tag", "registry"];
-    const args = Object.keys(opts).map((argKey) => {
-      if (validOpts.indexOf(argKey) > -1) {
-        return `--${escapeArgs(argKey)} ${escapeArgs(opts[argKey])}`;
-      }
-    });
-    let command = ("npm publish " + args.join(" ")).trim();
-    ChildProcessUtilities.exec("cd " + escapeArgs(directory) + " && " + command, null, callback);
+  static publishTaggedInDir(tag, directory, registry, callback) {
+    const command = ("npm publish --tag " + tag).trim();
+    let opts = null;
+
+    if (registry) {
+      opts = {env: {npm_config_registry: registry}};
+    }
+
+    ChildProcessUtilities.exec("cd " + escapeArgs(directory) + " && " + command, opts, callback);
   }
 
   @logger.logifySync
