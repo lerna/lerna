@@ -7,6 +7,10 @@ import semver from "semver";
 export default class NpmUtilities {
   @logger.logifyAsync()
   static installInDir(directory, dependencies, callback) {
+
+    // Nothing to do if we weren't given any deps.
+    if (!(dependencies && dependencies.length)) return callback();
+
     let args = ["install"];
 
     if (dependencies) {
