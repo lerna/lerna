@@ -1,5 +1,5 @@
 {
   "lerna": "__TEST_VERSION__",
   "version": "1.0.0",
-  "upstreamRegistry": "https://my-secure-registry/upstream"
+  "registry": "https://my-secure-registry/npm"
 }

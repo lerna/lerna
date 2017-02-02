@@ -289,31 +289,6 @@ dependencies, without committing, tagging, pushing or publishing.
 
 > Only update versions and dependencies; don't actually publish (this only affects publish).
 
-#### --registry [registry]
-
-```sh
-$ lerna publish --registry https://my-private-registry
-$ lerna bootstrap --registry https://my-private-registry
-```
-
-When run with this flag, the above commands will use the specified registry for your package(s).
-
-This is useful if you do not want to explicitly set up your registry
-configuration in all of your package.json files individually when e.g. using
-private registries.
-
-> The `registry` flag can also be set in lerna.json.
-
-There could also be scenarios where your private registry is split up into an upstream
-and a downstream part (like in [Nexus3](https://books.sonatype.com/nexus-book/3.0/reference/npm.html)).
-
-In this case if you would like to configure each in lerna.json you should use the following properties:
-* upstreamRegistry
-* downstreamRegistry
-
-> If you defined these properties then the bootstrap and publish commands will each use the one suited for the job.
-
-
 #### --force-publish [packages]
 
 ```sh
@@ -666,6 +641,19 @@ can be used to opt out of hoisting for certain dependencies.
 ```sh
 $ lerna bootstrap --hoist --nohoist=babel-*
 ```
+
+#### --registry [registry]
+
+```sh
+$ lerna publish --registry https://my-private-registry
+$ lerna bootstrap --registry https://my-private-registry
+```
+
+When run with this flag, the above commands will use the specified registry for your package(s).
+
+This is useful if you do not want to explicitly set up your registry
+configuration in all of your package.json files individually when e.g. using
+private registries.
 
 ### Wizard
 

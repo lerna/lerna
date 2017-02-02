@@ -13,7 +13,7 @@ export default class NpmUtilities {
       args = args.concat(dependencies);
     }
 
-    let opts = {
+    const opts = {
       cwd: directory,
       stdio: ["ignore", "pipe", "pipe"],
     };
@@ -26,18 +26,21 @@ export default class NpmUtilities {
   }
 
   @logger.logifySync()
-  static addDistTag(packageName, version, tag) {
-    ChildProcessUtilities.execSync(`npm dist-tag add ${packageName}@${version} ${tag}`);
+  static addDistTag(packageName, version, tag, registry) {
+    const opts = NpmUtilities.getTagOpts(registry);
+    ChildProcessUtilities.execSync(`npm dist-tag add ${packageName}@${version} ${tag}`, opts);
   }
 
   @logger.logifySync()
-  static removeDistTag(packageName, tag) {
-    ChildProcessUtilities.execSync(`npm dist-tag rm ${packageName} ${tag}`);
+  static removeDistTag(packageName, tag, registry) {
+    const opts = NpmUtilities.getTagOpts(registry);
+    ChildProcessUtilities.execSync(`npm dist-tag rm ${packageName} ${tag}`, opts);
   }
 
   @logger.logifySync()
-  static checkDistTag(packageName, tag) {
-    return ChildProcessUtilities.execSync(`npm dist-tag ls ${packageName}`).indexOf(tag) >= 0;
+  static checkDistTag(packageName, tag, registry) {
+    const opts = NpmUtilities.getTagOpts(registry);
+    return ChildProcessUtilities.execSync(`npm dist-tag ls ${packageName}`, opts).indexOf(tag) >= 0;
   }
 
   @logger.logifyAsync()
@@ -53,13 +56,8 @@ export default class NpmUtilities {
   @logger.logifyAsync()
   static publishTaggedInDir(tag, directory, registry, callback) {
     const command = ("npm publish --tag " + tag).trim();
-    let opts = null;
-
-    if (registry) {
-      opts = {env: {npm_config_registry: registry}};
-    }
-
-    ChildProcessUtilities.exec("cd " + escapeArgs(directory) + " && " + command, opts, callback);
+    const opts = NpmUtilities.getTagOpts(registry);
+    ChildProcessUtilities.exec(`cd ${escapeArgs(directory)} && ${command}`, opts, callback);
   }
 
   @logger.logifySync
@@ -70,5 +68,9 @@ export default class NpmUtilities {
     } catch (e) {
       return false;
     }
+  }
+
+  static getTagOpts(registry) {
+    return registry ? {env: {npm_config_registry: registry}} : null;
   }
 }
