@@ -21,7 +21,7 @@ export default class NpmUtilities {
     };
 
     if (registry) {
-      opts.env = {npm_config_registry: registry}
+      opts.env = {npm_config_registry: registry};
     }
 
     ChildProcessUtilities.spawn("npm", args, opts, callback);
