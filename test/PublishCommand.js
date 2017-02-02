@@ -786,17 +786,17 @@ describe("PublishCommand", () => {
   });
 
   /** =========================================================================
-   * NORMAL - UPSTREAM REGISTRY CONFIG
+   * NORMAL - REGISTRY CONFIG
    * ======================================================================= */
 
-  describe("normal mode with upstream registry config", () => {
+  describe("normal mode with registry config", () => {
     let testDir;
 
     beforeEach((done) => {
       testDir = initFixture("PublishCommand/registries", done);
     });
 
-    it("should use upstream config property", (done) => {
+    it("should use config property", (done) => {
       const publishCommand = new PublishCommand([], {
         repoVersion: "1.0.1"
       });
@@ -818,7 +818,7 @@ describe("PublishCommand", () => {
           { args: ["git tag v1.0.1"] }
         ]],
         [ChildProcessUtilities, "exec", { nodeCallback: true }, [
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages", "package-1")) + " && npm publish --tag lerna-temp", {env: {"npm_config_registry":"https://my-secure-registry/upstream"}}] }
+          { args: ["cd " + escapeArgs(path.join(testDir, "packages", "package-1")) + " && npm publish --tag lerna-temp", {env: {"npm_config_registry":"https://my-secure-registry/npm"}}] }
           // No package-5.  It's private.
         ], true],
         [ChildProcessUtilities, "execSync", {}, [

@@ -62,21 +62,6 @@ export default class Command {
     );
   }
 
-  getUpstreamRegistry() {
-    // If there is a config in lerna conf "upstreamRegistry" use that
-    // Otherwise expect:
-    //     - single source of truth
-    //     - or the arg to come from the cli which should conform to the npm standard which is "registry"
-    const {upstreamRegistry, registry} = this.getOptions();
-    return upstreamRegistry || registry;
-  }
-
-  getDownstreamRegistry() {
-    // Same applies for this as well
-    const {downstreamRegistry, registry} = this.getOptions();
-    return downstreamRegistry || registry;
-  }
-
   run() {
     this.logger.info("Lerna v" + this.lernaVersion);
 
