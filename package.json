@@ -5,6 +5,7 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "babel src -d lib",
+    "coverage": "nyc --reporter=lcov npm run test",
     "dev": "babel -w src -d lib",
     "lint": "eslint src test",
     "fix": "eslint src test --fix",
@@ -63,7 +64,8 @@
     "eslint-plugin-flow-vars": "^0.5.0",
     "fs-extra": "^0.30.0",
     "mocha": "^2.4.5",
-    "normalize-newline": "^2.1.0"
+    "normalize-newline": "^2.1.0",
+    "nyc": "^10.1.2"
   },
   "engines": {
     "node": ">= 4"

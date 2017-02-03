@@ -12,3 +12,5 @@ src
 test
 tmp
 .npmignore
+.nyc_output
+coverage
