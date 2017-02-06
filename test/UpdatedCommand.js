@@ -41,7 +41,7 @@ describe("UpdatedCommand", () => {
       let calls = 0;
       stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
-        if (calls === 2) assert.equal(message, "- package-2\n- package-3");
+        if (calls === 1) assert.equal(message, "- package-2\n- package-3");
         calls++;
       });
 
@@ -64,7 +64,7 @@ describe("UpdatedCommand", () => {
       let calls = 0;
       stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
-        if (calls === 2) assert.equal(message, `- package-1\n- package-2\n- package-3\n- package-4\n- package-5 (${chalk.red("private")}`);
+        if (calls === 1) assert.equal(message, `- package-1\n- package-2\n- package-3\n- package-4\n- package-5 (${chalk.red("private")})`);
         calls++;
       });
 
@@ -87,7 +87,7 @@ describe("UpdatedCommand", () => {
       let calls = 0;
       stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
-        if (calls === 2) assert.equal(message, "- package-2\n- package-3\n- package-4");
+        if (calls === 1) assert.equal(message, "- package-2\n- package-3\n- package-4");
         calls++;
       });
 
@@ -116,7 +116,7 @@ describe("UpdatedCommand", () => {
       let calls = 0;
       stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
-        if (calls === 2) assert.equal(message, "- package-3");
+        if (calls === 1) assert.equal(message, "- package-3");
         calls++;
       });
 
@@ -139,7 +139,7 @@ describe("UpdatedCommand", () => {
       let calls = 0;
       stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
-        if (calls === 2) assert.equal(message, "- package-2");
+        if (calls === 1) assert.equal(message, "- package-2");
         calls++;
       });
 
@@ -172,7 +172,7 @@ describe("UpdatedCommand", () => {
       let calls = 0;
       stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
-        if (calls === 2) assert.equal(message, "- package-3\n- package-4");
+        if (calls === 1) assert.equal(message, "- package-3\n- package-4");
         calls++;
       });
 
@@ -194,8 +194,9 @@ describe("UpdatedCommand", () => {
 
       let calls = 0;
       stub(logger, "info", (message) => {
+        console.log(message)
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
-        if (calls === 2) assert.equal(message, `- package-1\n- package-2\n- package-3\n- package-4\n- package-5 (${chalk.red("private")}`);
+        if (calls === 1) assert.equal(message, `- package-1\n- package-2\n- package-3\n- package-4\n- package-5 (${chalk.red("private")})`);
         calls++;
       });
 
@@ -218,14 +219,14 @@ describe("UpdatedCommand", () => {
       let calls = 0;
       stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
-        if (calls === 2) assert.equal(message, "- package-2\n- package-3\n- package-4");
+        if (calls === 1) assert.equal(message, "- package-2\n- package-3\n- package-4");
         calls++;
       });
 
       updatedCommand.runCommand(exitWithCode(0, done));
     });
 
-    it("should list changes without ignored files", (done) => {
+    it.only("should list changes without ignored files", (done) => {
       const lernaJsonLocation = path.join(testDir, "lerna.json");
       const lernaJson = JSON.parse(fs.readFileSync(lernaJsonLocation));
       lernaJson.publishConfig = {
@@ -247,7 +248,7 @@ describe("UpdatedCommand", () => {
       let calls = 0;
       stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
-        if (calls === 2) assert.equal(message, "- package-3\n- package-4");
+        if (calls === 1) assert.equal(message, "- package-3\n- package-4");
         calls++;
       });
 
