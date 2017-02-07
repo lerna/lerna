@@ -147,8 +147,11 @@ export default class Command {
     try {
       this.repository.buildPackageGraph();
       this.packages = this.repository.packages;
-      this.filteredPackages = PackageUtilities.filterPackages(this.packages, {scope, ignore});
       this.packageGraph = this.repository.packageGraph;
+      this.filteredPackages = PackageUtilities.filterPackages(this.packages, {scope, ignore});
+      if (this.flags.includeFilteredDependencies) {
+        this.filteredPackages = PackageUtilities.addDependencies(this.filteredPackages, this.packageGraph);
+      }
     } catch (err) {
       this.logger.error("Errored while collecting packages and package graph", err);
       this._complete(null, 1);

@@ -67,4 +67,26 @@ describe("LsCommand", () => {
       lsCommand.runCommand(exitWithCode(0, done));
     });
   });
+
+  describe("with --include-filtered-dependencies", () => {
+    beforeEach((done) => {
+      initFixture("LsCommand/include-filtered-dependencies", done);
+    });
+
+    it("should list packages, including filtered ones", (done) => {
+      const lsCommand = new LsCommand([], {
+        scope: "@test/package-2",
+        includeFilteredDependencies: true
+      });
+
+      lsCommand.runValidations();
+      lsCommand.runPreparations();
+
+      stub(logger, "info", (message) => {
+        assert.equal(message, "- @test/package-2\n- @test/package-1");
+      });
+
+      lsCommand.runCommand(exitWithCode(0, done));
+    });
+  });
 });
