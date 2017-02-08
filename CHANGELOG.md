@@ -1,3 +1,26 @@
+## v2.0.0-beta.37 (2017-02-08)
+
+#### :rocket: Enhancement
+* [#581](https://github.com/lerna/lerna/pull/581) Improve support for --include-filtered-dependencies. ([@roblg](https://github.com/roblg))
+* [#576](https://github.com/lerna/lerna/pull/576) Install with no arguments. ([@gigabo](https://github.com/gigabo))
+* [#569](https://github.com/lerna/lerna/pull/569) Short-circuit out of install with no packages. ([@gigabo](https://github.com/gigabo))
+
+#### :bug: Bug Fix
+* [#574](https://github.com/lerna/lerna/pull/574) Use correct logger method in Package method.. ([@evocateur](https://github.com/evocateur))
+* [#568](https://github.com/lerna/lerna/pull/568) Check if directories exist before removing during hoist. ([@gigabo](https://github.com/gigabo))
+
+#### :house: Internal
+* [#562](https://github.com/lerna/lerna/pull/562) Replace `lodash.find`, `lodash.unionwith`, and `pad` with `lodash`.. ([@wtgtybhertgeghgtwtg](https://github.com/wtgtybhertgeghgtwtg))
+* [#584](https://github.com/lerna/lerna/pull/584) Bump `command-join`.. ([@wtgtybhertgeghgtwtg](https://github.com/wtgtybhertgeghgtwtg))
+* [#575](https://github.com/lerna/lerna/pull/575) Add coverage report. ([@doug-wade](https://github.com/doug-wade))
+
+#### Committers: 5
+- Bo Borgerson ([gigabo](https://github.com/gigabo))
+- Daniel Stockman ([evocateur](https://github.com/evocateur))
+- Douglas Wade ([doug-wade](https://github.com/doug-wade))
+- Robert Gay ([roblg](https://github.com/roblg))
+- [wtgtybhertgeghgtwtg](https://github.com/wtgtybhertgeghgtwtg)
+
 ## v2.0.0-beta.36 (2017-02-02)
 
 #### :bug: Bug Fix
