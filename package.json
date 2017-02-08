@@ -27,7 +27,7 @@
     "async": "^1.5.0",
     "chalk": "^1.1.1",
     "cmd-shim": "^2.0.2",
-    "command-join": "^1.1.1",
+    "command-join": "^2.0.0",
     "cross-spawn": "^4.0.0",
     "glob": "^7.0.6",
     "inquirer": "^3.0.1",
