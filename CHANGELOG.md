@@ -1,5 +1,8 @@
 ## v2.0.0-beta.37 (2017-02-08)
 
+`--include-filtered-dependencies` now works with `ls`,`exec`,`run` as well!
+- Fixes an issue with `--hoist` (from previous release)
+
 #### :rocket: Enhancement
 * [#581](https://github.com/lerna/lerna/pull/581) Improve support for --include-filtered-dependencies. ([@roblg](https://github.com/roblg))
 * [#576](https://github.com/lerna/lerna/pull/576) Install with no arguments. ([@gigabo](https://github.com/gigabo))
