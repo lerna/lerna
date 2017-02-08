@@ -93,4 +93,31 @@ describe("FileSystemUtilities", () => {
       });
     });
   });
+
+  describe(".rename()", () => {
+    it("should rename a file", (done) => {
+      const srcPath = path.join(testDir, "src");
+      const dstPath = path.join(testDir, "dst");
+      fs.writeFileSync(srcPath, "contents");
+      FileSystemUtilities.rename(srcPath, dstPath, (err) => {
+        assert.ok(pathExists.sync(dstPath));
+        assert.ok(!pathExists.sync(srcPath));
+        assert.equal(fs.readFileSync(dstPath).toString(), "contents");
+        done(err);
+      });
+    });
+  });
+
+  describe(".renameSync()", () => {
+    it("should rename a file", () => {
+      const srcPath = path.join(testDir, "src");
+      const dstPath = path.join(testDir, "dst");
+      fs.writeFileSync(srcPath, "contents");
+      FileSystemUtilities.renameSync(srcPath, dstPath);
+      assert.ok(pathExists.sync(dstPath));
+      assert.ok(!pathExists.sync(srcPath));
+      assert.equal(fs.readFileSync(dstPath).toString(), "contents");
+    });
+  });
+
 });

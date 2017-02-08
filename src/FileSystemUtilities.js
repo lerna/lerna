@@ -4,7 +4,7 @@ import mkdirp from "mkdirp";
 import fs from "fs";
 import cmdShim from "cmd-shim";
 import readCmdShim from "read-cmd-shim";
-import { resolve, dirname, relative, join } from "path";
+import { resolve, dirname, relative } from "path";
 import ChildProcessUtilities from "./ChildProcessUtilities";
 
 const ENDS_WITH_NEW_LINE = /\n$/;
@@ -39,6 +39,16 @@ export default class FileSystemUtilities {
     fs.writeFile(filePath, ensureEndsWithNewLine(fileContents), callback);
   }
 
+  @logger.logifyAsync()
+  static rename(from, to, callback) {
+    fs.rename(from, to, callback);
+  }
+
+  @logger.logifySync()
+  static renameSync(from, to) {
+    fs.renameSync(from, to);
+  }
+
   @logger.logifySync()
   static writeFileSync(filePath, fileContents) {
     fs.writeFileSync(filePath, ensureEndsWithNewLine(fileContents));
@@ -51,9 +61,15 @@ export default class FileSystemUtilities {
 
   @logger.logifyAsync()
   static rimraf(filePath, callback) {
-    ChildProcessUtilities.exec("npm bin", {cwd: __dirname}, (err, npmBinPath) => {
-      if (err) return callback(err);
-      ChildProcessUtilities.spawn(join(npmBinPath.trim(), "rimraf"), [filePath], {}, callback);
+
+    // Shelling out to a child process for a noop is expensive.
+    // Checking if `filePath` exists to be removed is cheap.
+    // This lets us short-circuit if we don't have anything to do.
+    pathExists(filePath).then((exists) => {
+      if (!exists) return callback();
+
+      // Note: if rimraf moves the location of its executable, this will need to be updated
+      ChildProcessUtilities.spawn(require.resolve("rimraf/bin"), [filePath], {}, callback);
     });
   }
 

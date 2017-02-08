@@ -1,0 +1,7 @@
+{
+  "name": "@test/package-3",
+  "version": "1.0.0",
+  "scripts": {
+    "my-script": "echo @test/package-3"
+  }
+}

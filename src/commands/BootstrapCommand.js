@@ -18,7 +18,7 @@ export default class BootstrapCommand extends Command {
       if (err) {
         callback(err);
       } else {
-        this.logger.success(`Successfully bootstrapped ${this.packagesToBootstrap.length} packages.`);
+        this.logger.success(`Successfully bootstrapped ${this.filteredPackages.length} packages.`);
         callback(null, true);
       }
     });
@@ -29,16 +29,11 @@ export default class BootstrapCommand extends Command {
    * @param {Function} callback
    */
   bootstrapPackages(callback) {
-    this.packagesToBootstrap = this.filteredPackages;
-    if (this.flags.includeFilteredDependencies) {
-      this.packagesToBootstrap = PackageUtilities.addDependencies(this.filteredPackages, this.packageGraph);
-    }
-
-    this.logger.info(`Bootstrapping ${this.packagesToBootstrap.length} packages`);
+    this.logger.info(`Bootstrapping ${this.filteredPackages.length} packages`);
     this.batchedPackages = this.toposort
-      ? PackageUtilities.topologicallyBatchPackages(this.packagesToBootstrap, this.logger)
-      : [ this.packagesToBootstrap ];
-
+      ? PackageUtilities.topologicallyBatchPackages(this.filteredPackages, this.logger)
+      : [ this.filteredPackages ];
+    
     async.series([
       // preinstall bootstrapped packages
       (cb) => this.preinstallPackages(cb),
@@ -54,11 +49,11 @@ export default class BootstrapCommand extends Command {
   }
 
   runScriptInPackages(scriptName, callback) {
-    if (!this.packagesToBootstrap.length) {
+    if (!this.filteredPackages.length) {
       return callback(null, true);
     }
 
-    this.progressBar.init(this.packagesToBootstrap.length);
+    this.progressBar.init(this.filteredPackages.length);
     PackageUtilities.runParallelBatches(this.batchedPackages, (pkg) => (done) => {
       pkg.runScript(scriptName, (err) => {
         this.progressBar.tick(pkg.name);
@@ -308,7 +303,7 @@ export default class BootstrapCommand extends Command {
    * @param {Function} callback
    */
   installExternalDependencies(callback) {
-    const {leaves, root} = this.getDependenciesToInstall(this.packagesToBootstrap);
+    const {leaves, root} = this.getDependenciesToInstall(this.filteredPackages);
 
     const actions = [];
 
@@ -385,9 +380,9 @@ export default class BootstrapCommand extends Command {
    */
   symlinkPackages(callback) {
     this.logger.info("Symlinking packages and binaries");
-    this.progressBar.init(this.packagesToBootstrap.length);
+    this.progressBar.init(this.filteredPackages.length);
     const actions = [];
-    this.packagesToBootstrap.forEach((filteredPackage) => {
+    this.filteredPackages.forEach((filteredPackage) => {
       // actions to run for this package
       const packageActions = [];
       Object.keys(filteredPackage.allDependencies)

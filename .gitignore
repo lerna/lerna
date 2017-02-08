@@ -25,3 +25,5 @@ node_modules
 lib
 tmp
 .changelog
+coverage/
+.nyc_output/

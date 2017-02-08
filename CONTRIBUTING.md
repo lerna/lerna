@@ -37,3 +37,11 @@ $ npm run dev
 
 Which will start a watch task that will continuously re-build Lerna while you
 are working on it.
+
+If you would like to check test coverage, run the coverage script, then open
+coverage/lcov-report/index.html in your favorite browser.
+
+```sh
+$ npm run coverage
+$ xdg-open coverage/lcov-report/index.html
+```

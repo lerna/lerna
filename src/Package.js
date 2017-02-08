@@ -98,7 +98,7 @@ export default class Package {
     }
 
     if (showWarning) {
-      logger.warning(
+      logger.warn(
         `Version mismatch inside "${this.name}". ` +
         `Depends on "${dependency.name}@${expectedVersion}" ` +
         `instead of "${dependency.name}@${actualVersion}".`

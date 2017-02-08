@@ -1,3 +1,8 @@
+## v2.0.0-beta.36 (2017-02-02)
+
+#### :bug: Bug Fix
+* [#566](https://github.com/lerna/lerna/pull/566) Fix rimraf bin resolution. ([@rtsao](https://github.com/rtsao))
+
 ## v2.0.0-beta.35 (2017-02-01)
 
 3 new flags:
