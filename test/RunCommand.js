@@ -93,7 +93,7 @@ describe("RunCommand", () => {
 
   });
 
-  describe.only("with --include-filtered-dependencies", () => {
+  describe("with --include-filtered-dependencies", () => {
     let testDir;
     beforeEach((done) => {
       testDir = initFixture("RunCommand/include-filtered-dependencies", done);
