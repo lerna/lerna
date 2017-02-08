@@ -1,6 +1,6 @@
 import progressBar from "./progressBar";
 import chalk from "chalk";
-import pad from "pad";
+import padEnd from "lodash/padEnd";
 
 const cwd = process.cwd();
 
@@ -116,7 +116,7 @@ class Logger {
   }
 
   _formatMethod(method, args) {
-    return pad(method, 30, " ") + "(" + this._formatArguments(args) + ")";
+    return padEnd(method, 30) + "(" + this._formatArguments(args) + ")";
   }
 
   _formatArguments(args) {

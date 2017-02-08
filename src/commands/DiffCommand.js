@@ -1,7 +1,7 @@
 import GitUtilities from "../GitUtilities";
 import Command from "../Command";
 import ChildProcessUtilities from "../ChildProcessUtilities";
-import find from "lodash.find";
+import find from "lodash/find";
 
 export default class DiffCommand extends Command {
   initialize(callback) {
