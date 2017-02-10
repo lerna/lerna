@@ -149,7 +149,7 @@ export default class Command {
       this.packages = this.repository.packages;
       this.packageGraph = this.repository.packageGraph;
       this.filteredPackages = PackageUtilities.filterPackages(this.packages, {scope, ignore});
-      if (this.flags.includeFilteredDependencies) {
+      if (this.getOptions().includeFilteredDependencies) {
         this.filteredPackages = PackageUtilities.addDependencies(this.filteredPackages, this.packageGraph);
       }
     } catch (err) {
