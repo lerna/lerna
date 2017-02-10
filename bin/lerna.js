@@ -40,7 +40,7 @@ var cli = meow([
   "  --repo-version          Specify repo version to publish",
   "  --concurrency           How many threads to use if lerna parallelises the tasks (defaults to 4)",
   "  --loglevel              What level of logs to report (defaults to \"info\").  On failure, all logs are written to lerna-debug.log in the current working directory.",
-  "  --no-sort            When executing tasks, ignore the dependency ordering of packages (only affects run, exec and bootstrap)",
+  "  --no-sort            When executing tasks, ignore the dependency ordering of packages (only affects run, exec, publish and bootstrap)",
 ], {
   alias: {
     independent: "i",
