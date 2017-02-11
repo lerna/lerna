@@ -338,7 +338,7 @@ export default class PublishCommand extends Command {
     });
 
     this.progressBar.init(this.packagesToPublish.length);
-    const registry = this.getOptions().registry;
+    this.npmRegistry = this.getOptions().registry;
 
     async.parallelLimit(this.packagesToPublish.map((pkg) => {
       let attempts = 0;
@@ -346,7 +346,7 @@ export default class PublishCommand extends Command {
       const run = (cb) => {
         this.logger.verbose("Publishing " + pkg.name + "...");
 
-        NpmUtilities.publishTaggedInDir("lerna-temp", pkg.location, registry, (err) => {
+        NpmUtilities.publishTaggedInDir("lerna-temp", pkg.location, this.npmRegistry, (err) => {
           err = err && err.stack || err;
 
           if (!err ||
@@ -380,7 +380,7 @@ export default class PublishCommand extends Command {
 
   npmUpdateAsLatest(callback) {
     this.progressBar.init(this.packagesToPublish.length);
-    const registry = this.getOptions().registry;
+    this.npmRegistry = this.getOptions().registry;
 
     async.parallelLimit(this.packagesToPublish.map((pkg) => (cb) => {
       let attempts = 0;
@@ -389,16 +389,16 @@ export default class PublishCommand extends Command {
         attempts++;
 
         try {
-          if (NpmUtilities.checkDistTag(pkg.name, "lerna-temp", registry)) {
-            NpmUtilities.removeDistTag(pkg.name, "lerna-temp", registry);
+          if (NpmUtilities.checkDistTag(pkg.name, "lerna-temp", this.npmRegistry)) {
+            NpmUtilities.removeDistTag(pkg.name, "lerna-temp", this.npmRegistry);
           }
 
           if (this.flags.npmTag) {
-            NpmUtilities.addDistTag(pkg.name, this.updatesVersions[pkg.name], this.flags.npmTag, registry);
+            NpmUtilities.addDistTag(pkg.name, this.updatesVersions[pkg.name], this.flags.npmTag, this.npmRegistry);
           } else if (this.flags.canary) {
-            NpmUtilities.addDistTag(pkg.name, pkg.version, "canary", registry);
+            NpmUtilities.addDistTag(pkg.name, pkg.version, "canary", this.npmRegistry);
           } else {
-            NpmUtilities.addDistTag(pkg.name, this.updatesVersions[pkg.name], "latest", registry);
+            NpmUtilities.addDistTag(pkg.name, this.updatesVersions[pkg.name], "latest", this.npmRegistry);
           }
 
           this.progressBar.tick(pkg.name);

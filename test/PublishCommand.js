@@ -728,28 +728,28 @@ describe("PublishCommand", () => {
           { args: ["git tag v1.0.1"] }
         ]],
         [ChildProcessUtilities, "exec", { nodeCallback: true }, [
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm publish --tag lerna-temp", {env: {"npm_config_registry":"https://my-private-registry"}}] },
+          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm publish --tag lerna-temp"] },
           { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm publish --tag lerna-temp", {env: {"npm_config_registry":"https://my-private-registry"}}] },
           { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm publish --tag lerna-temp", {env: {"npm_config_registry":"https://my-private-registry"}}] },
           { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm publish --tag lerna-temp", {env: {"npm_config_registry":"https://my-private-registry"}}] }
           // No package-5.  It's private.
         ], true],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-1 lerna-temp"] },
-          { args: ["npm dist-tag add package-1@1.0.1 latest"] },
+          { args: ["npm dist-tag ls package-1", {env: {"npm_config_registry":"https://my-private-registry"}}], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-1 lerna-temp", {env: {"npm_config_registry":"https://my-private-registry"}}] },
+          { args: ["npm dist-tag add package-1@1.0.1 latest", {env: {"npm_config_registry":"https://my-private-registry"}}] },
 
-          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-2 lerna-temp"] },
-          { args: ["npm dist-tag add package-2@1.0.1 latest"] },
+          { args: ["npm dist-tag ls package-2", {env: {"npm_config_registry":"https://my-private-registry"}}], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-2 lerna-temp", {env: {"npm_config_registry":"https://my-private-registry"}}] },
+          { args: ["npm dist-tag add package-2@1.0.1 latest", {env: {"npm_config_registry":"https://my-private-registry"}}] },
 
-          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-3 lerna-temp"] },
-          { args: ["npm dist-tag add package-3@1.0.1 latest"] },
+          { args: ["npm dist-tag ls package-3", {env: {"npm_config_registry":"https://my-private-registry"}}], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-3 lerna-temp", {env: {"npm_config_registry":"https://my-private-registry"}}] },
+          { args: ["npm dist-tag add package-3@1.0.1 latest", {env: {"npm_config_registry":"https://my-private-registry"}}] },
 
-          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-4 lerna-temp"] },
-          { args: ["npm dist-tag add package-4@1.0.1 latest"] },
+          { args: ["npm dist-tag ls package-4", {env: {"npm_config_registry":"https://my-private-registry"}}], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-4 lerna-temp", {env: {"npm_config_registry":"https://my-private-registry"}}] },
+          { args: ["npm dist-tag add package-4@1.0.1 latest", {env: {"npm_config_registry":"https://my-private-registry"}}] },
 
           // No package-5.  It's private.
 
@@ -822,9 +822,9 @@ describe("PublishCommand", () => {
           // No package-5.  It's private.
         ], true],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-1 lerna-temp"] },
-          { args: ["npm dist-tag add package-1@1.0.1 latest"] },
+          { args: ["npm dist-tag ls package-1", {env: {"npm_config_registry":"https://my-secure-registry/npm"}}], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-1 lerna-temp", {env: {"npm_config_registry":"https://my-secure-registry/npm"}}] },
+          { args: ["npm dist-tag add package-1@1.0.1 latest", {env: {"npm_config_registry":"https://my-secure-registry/npm"}}] },
 
           { args: ["git symbolic-ref --short HEAD"], returns: "master" },
           { args: ["git push origin master"] },

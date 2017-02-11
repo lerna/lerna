@@ -309,15 +309,15 @@ export default class BootstrapCommand extends Command {
    */
   installExternalDependencies(callback) {
     const {leaves, root} = this.getDependenciesToInstall(this.packagesToBootstrap);
-    const registry = this.getOptions().registry;
     const actions = [];
+    this.npmRegistry = this.getOptions().registry;
 
     // Start root install first, if any, since it's likely to take the longest.
     if (Object.keys(root).length) {
       actions.push((cb) => NpmUtilities.installInDir(
         this.repository.rootPath,
         root.map(({dependency}) => dependency).filter((dep) => dep),
-        registry,
+        this.npmRegistry,
         (err) => {
           if (err) return cb(err);
 
@@ -360,7 +360,7 @@ export default class BootstrapCommand extends Command {
     Object.keys(leaves)
       .map((pkgName) => ({pkg: this.packageGraph.get(pkgName).package, deps: leaves[pkgName]}))
       .forEach(({pkg, deps}) => actions.push(
-        (cb) => NpmUtilities.installInDir(pkg.location, deps, registry, (err) => {
+        (cb) => NpmUtilities.installInDir(pkg.location, deps, this.npmRegistry, (err) => {
           this.progressBar.tick(pkg.name);
           cb(err);
         })
