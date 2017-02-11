@@ -136,13 +136,16 @@ export default class Command {
   }
 
   runPreparations() {
-    const {scope, ignore} = this.getOptions();
+    const {scope, ignore, registry} = this.getOptions();
 
     if (scope) {
       this.logger.info(`Scoping to packages that match '${scope}'`);
     }
     if (ignore) {
       this.logger.info(`Ignoring packages that match '${ignore}'`);
+    }
+    if (registry) {
+      this.npmRegistry = registry;
     }
     try {
       this.repository.buildPackageGraph();

@@ -338,7 +338,6 @@ export default class PublishCommand extends Command {
     });
 
     this.progressBar.init(this.packagesToPublish.length);
-    this.npmRegistry = this.getOptions().registry;
 
     async.parallelLimit(this.packagesToPublish.map((pkg) => {
       let attempts = 0;
@@ -380,7 +379,6 @@ export default class PublishCommand extends Command {
 
   npmUpdateAsLatest(callback) {
     this.progressBar.init(this.packagesToPublish.length);
-    this.npmRegistry = this.getOptions().registry;
 
     async.parallelLimit(this.packagesToPublish.map((pkg) => (cb) => {
       let attempts = 0;

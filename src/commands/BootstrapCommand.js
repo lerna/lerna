@@ -305,7 +305,6 @@ export default class BootstrapCommand extends Command {
   installExternalDependencies(callback) {
     const {leaves, root} = this.getDependenciesToInstall(this.filteredPackages);
     const actions = [];
-    this.npmRegistry = this.getOptions().registry;
 
     // Start root install first, if any, since it's likely to take the longest.
     if (Object.keys(root).length) {
