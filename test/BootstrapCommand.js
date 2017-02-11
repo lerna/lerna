@@ -719,4 +719,27 @@ describe("BootstrapCommand", () => {
       }));
     });
   });
+
+  describe("registries", () => {
+    let testDir;
+
+    beforeEach((done) => {
+      testDir = initFixture("BootstrapCommand/registries", done);
+    });
+
+    it("should use config property", (done) => {
+      const bootstrapCommand = new BootstrapCommand([], {});
+
+      bootstrapCommand.runValidations();
+      bootstrapCommand.runPreparations();
+
+      assertStubbedCalls([
+        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
+          { args: ["npm", ["install"], { cwd: path.join(testDir, "packages", "package-1"), stdio: STDIO_OPT, env: { npm_config_registry: "https://my-secure-registry/npm" } }] }
+        ]]
+      ]);
+
+      bootstrapCommand.runCommand(exitWithCode(0, done));
+    });
+  });
 });

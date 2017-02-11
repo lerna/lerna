@@ -691,6 +691,155 @@ describe("PublishCommand", () => {
   });
 
   /** =========================================================================
+   * NORMAL - EXPLICIT REGISTRY FLAG
+   * ======================================================================= */
+
+  describe("normal mode with --registry", () => {
+    let testDir;
+
+    beforeEach((done) => {
+      testDir = initFixture("PublishCommand/normal", done);
+    });
+
+    it("should publish the changed packages", (done) => {
+      const publishCommand = new PublishCommand([], {
+        repoVersion: "1.0.1",
+        registry: "https://my-private-registry"
+      });
+
+      publishCommand.runValidations();
+      publishCommand.runPreparations();
+
+      assertStubbedCalls([
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git tag"] }
+        ]],
+        [PromptUtilities, "confirm", { valueCallback: true }, [
+          { args: ["Are you sure you want to publish the above changes?"], returns: true }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-3/package.json"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-4/package.json"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-5/package.json"))] },
+          { args: ["git commit -m \"$(echo \"v1.0.1\")\""] },
+          { args: ["git tag v1.0.1"] }
+        ]],
+        [ChildProcessUtilities, "exec", { nodeCallback: true }, [
+          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm publish --tag lerna-temp"] },
+          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm publish --tag lerna-temp", {env: {"npm_config_registry":"https://my-private-registry"}}] },
+          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm publish --tag lerna-temp", {env: {"npm_config_registry":"https://my-private-registry"}}] },
+          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm publish --tag lerna-temp", {env: {"npm_config_registry":"https://my-private-registry"}}] }
+          // No package-5.  It's private.
+        ], true],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["npm dist-tag ls package-1", {env: {"npm_config_registry":"https://my-private-registry"}}], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-1 lerna-temp", {env: {"npm_config_registry":"https://my-private-registry"}}] },
+          { args: ["npm dist-tag add package-1@1.0.1 latest", {env: {"npm_config_registry":"https://my-private-registry"}}] },
+
+          { args: ["npm dist-tag ls package-2", {env: {"npm_config_registry":"https://my-private-registry"}}], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-2 lerna-temp", {env: {"npm_config_registry":"https://my-private-registry"}}] },
+          { args: ["npm dist-tag add package-2@1.0.1 latest", {env: {"npm_config_registry":"https://my-private-registry"}}] },
+
+          { args: ["npm dist-tag ls package-3", {env: {"npm_config_registry":"https://my-private-registry"}}], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-3 lerna-temp", {env: {"npm_config_registry":"https://my-private-registry"}}] },
+          { args: ["npm dist-tag add package-3@1.0.1 latest", {env: {"npm_config_registry":"https://my-private-registry"}}] },
+
+          { args: ["npm dist-tag ls package-4", {env: {"npm_config_registry":"https://my-private-registry"}}], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-4 lerna-temp", {env: {"npm_config_registry":"https://my-private-registry"}}] },
+          { args: ["npm dist-tag add package-4@1.0.1 latest", {env: {"npm_config_registry":"https://my-private-registry"}}] },
+
+          // No package-5.  It's private.
+
+          { args: ["git symbolic-ref --short HEAD"], returns: "master" },
+          { args: ["git push origin master"] },
+          { args: ["git push origin v1.0.1"] }
+        ]],
+      ]);
+
+      publishCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done(err);
+
+        try {
+          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
+          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
+
+          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
+          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
+          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
+          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
+          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).version, "1.0.1");
+
+          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
+          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
+          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).dependencies["package-1"], "^1.0.1");
+
+          done();
+        } catch (err) {
+          done(err);
+        }
+      }));
+    });
+  });
+
+  /** =========================================================================
+   * NORMAL - REGISTRY CONFIG
+   * ======================================================================= */
+
+  describe("normal mode with registry config", () => {
+    let testDir;
+
+    beforeEach((done) => {
+      testDir = initFixture("PublishCommand/registries", done);
+    });
+
+    it("should use config property", (done) => {
+      const publishCommand = new PublishCommand([], {
+        repoVersion: "1.0.1"
+      });
+
+      publishCommand.runValidations();
+      publishCommand.runPreparations();
+
+      assertStubbedCalls([
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git tag"] }
+        ]],
+        [PromptUtilities, "confirm", { valueCallback: true }, [
+          { args: ["Are you sure you want to publish the above changes?"], returns: true }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
+          { args: ["git commit -m \"$(echo \"v1.0.1\")\""] },
+          { args: ["git tag v1.0.1"] }
+        ]],
+        [ChildProcessUtilities, "exec", { nodeCallback: true }, [
+          { args: ["cd " + escapeArgs(path.join(testDir, "packages", "package-1")) + " && npm publish --tag lerna-temp", {env: {"npm_config_registry":"https://my-secure-registry/npm"}}] }
+          // No package-5.  It's private.
+        ], true],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["npm dist-tag ls package-1", {env: {"npm_config_registry":"https://my-secure-registry/npm"}}], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-1 lerna-temp", {env: {"npm_config_registry":"https://my-secure-registry/npm"}}] },
+          { args: ["npm dist-tag add package-1@1.0.1 latest", {env: {"npm_config_registry":"https://my-secure-registry/npm"}}] },
+
+          { args: ["git symbolic-ref --short HEAD"], returns: "master" },
+          { args: ["git push origin master"] },
+          { args: ["git push origin v1.0.1"] }
+        ]],
+      ]);
+
+      publishCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done(err);
+        done();
+      }));
+    });
+  });
+
+  /** =========================================================================
    * NORMAL - REPO VERSION
    * ======================================================================= */
 

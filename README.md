@@ -643,6 +643,14 @@ can be used to opt out of hoisting for certain dependencies.
 $ lerna bootstrap --hoist --nohoist=babel-*
 ```
 
+#### --registry [registry]
+
+When run with this flag, forwarded npm commands will use the specified registry for your package(s).
+
+This is useful if you do not want to explicitly set up your registry
+configuration in all of your package.json files individually when e.g. using
+private registries.
+
 ### Wizard
 
 If you prefer some guidance for cli (in case you're about to start using lerna or introducing it to a new team), you might like [lerna-wizard](https://github.com/szarouski/lerna-wizard). It will lead you through a series of well-defined steps:
