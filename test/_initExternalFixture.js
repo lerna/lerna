@@ -1,6 +1,5 @@
 import rimraf from "rimraf";
 import child from "child_process";
-import syncExec from "sync-exec";
 import path from "path";
 import fse from "fs-extra";
 
@@ -22,7 +21,7 @@ export default function initExternalFixture(fixturePath, callback) {
 
   fse.copy(fixtureDir, testDir, (err) => {
     if (err) return callback(err);
-    (child.execSync || syncExec)("git init . && git add -A && git commit -m \"Init external commit\"", {
+    child.execSync("git init . && git add -A && git commit -m \"Init external commit\"", {
       cwd: testDir
     });
     callback();

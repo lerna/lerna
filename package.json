@@ -42,8 +42,7 @@
     "read-cmd-shim": "^1.0.1",
     "rimraf": "^2.4.4",
     "semver": "^5.1.0",
-    "signal-exit": "^3.0.2",
-    "sync-exec": "^0.6.2"
+    "signal-exit": "^3.0.2"
   },
   "bin": {
     "lerna": "./bin/lerna.js"

@@ -1,6 +1,5 @@
 import child from "child_process";
 import spawn from "cross-spawn";
-import syncExec from "sync-exec";
 import {EventEmitter} from "events";
 
 // Keep track of how many live children we have.
@@ -41,11 +40,7 @@ export default class ChildProcessUtilities {
       encoding: "utf8",
       maxBuffer: MAX_BUFFER
     }, opts);
-    if (child.execSync) {
-      return child.execSync(command, mergedOpts).trim();
-    } else {
-      return syncExec(command, mergedOpts).stdout.trim();
-    }
+    return child.execSync(command, mergedOpts).trim();
   }
 
   static spawn(command, args, opts, callback) {
