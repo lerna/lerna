@@ -26,7 +26,7 @@ describe("DiffCommand", () => {
       assert.equal(args[1].length, 40); // commit
       assert.equal(args[2], "--color=auto");
       assert.equal(args[3], testDir);
-      callback(0);
+      callback();
     });
 
     diffCommand.runCommand(exitWithCode(0, done));
@@ -44,7 +44,7 @@ describe("DiffCommand", () => {
       assert.equal(args[1].length, 40); // commit
       assert.equal(args[2], "--color=auto");
       assert.equal(args[3], path.join(testDir, "packages/package-1"));
-      callback(0);
+      callback();
     });
 
     diffCommand.runCommand(exitWithCode(0, done));
