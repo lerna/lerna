@@ -38,6 +38,9 @@ export default class Command {
 
   getOptions(...objects) {
 
+    // Command config object is either "commands" or "command".
+    const {commands, command} = this.repository.lernaJson;
+
     // Items lower down override items higher up.
     return Object.assign(
       {},
@@ -52,7 +55,7 @@ export default class Command {
       // Inherited options from `otherCommandConfigs` come before the current
       // command's configuration.
       ...[...this.otherCommandConfigs, this.name]
-        .map((name) => (this.repository.lernaJson.command || {})[name]),
+        .map((name) => (commands || command || {})[name]),
 
       // For example, the item from the `packages` array in config.
       ...objects,
