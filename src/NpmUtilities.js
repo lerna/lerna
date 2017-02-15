@@ -82,6 +82,25 @@ export default class NpmUtilities {
   }
 
   @logger.logifySync()
+  static getWhoIAm() {
+    try {
+      return ChildProcessUtilities.execSync("npm whoami", { stdio: "none" });
+    } catch (e) {
+      return undefined;
+    }
+  }
+
+  @logger.logifySync()
+  static getConfig(key) {
+    return ChildProcessUtilities.execSync(`npm config get ${key}`);
+  }
+
+  @logger.logifySync()
+  static setConfig(key, value) {
+    ChildProcessUtilities.execSync(`npm config set ${key} ${value}`);
+  }
+
+  @logger.logifySync()
   static checkDistTag(packageName, tag) {
     return ChildProcessUtilities.execSync(`npm dist-tag ls ${packageName}`).indexOf(tag) >= 0;
   }
