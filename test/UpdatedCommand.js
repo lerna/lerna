@@ -114,8 +114,10 @@ describe("UpdatedCommand", () => {
     it("should list changes without ignored files", (done) => {
       const lernaJsonLocation = path.join(testDir, "lerna.json");
       const lernaJson = JSON.parse(fs.readFileSync(lernaJsonLocation));
-      lernaJson.publishConfig = {
-        ignore: ["ignored-file"]
+      lernaJson.commands = {
+        publish: {
+          ignore: ["ignored-file"],
+        },
       };
       fs.writeFileSync(lernaJsonLocation, JSON.stringify(lernaJson, null, 2));
 
@@ -250,8 +252,10 @@ describe("UpdatedCommand", () => {
     it("should list changes without ignored files", (done) => {
       const lernaJsonLocation = path.join(testDir, "lerna.json");
       const lernaJson = JSON.parse(fs.readFileSync(lernaJsonLocation));
-      lernaJson.publishConfig = {
-        ignore: ["ignored-file"]
+      lernaJson.commands = {
+        publish: {
+          ignore: ["ignored-file"],
+        },
       };
       fs.writeFileSync(lernaJsonLocation, JSON.stringify(lernaJson, null, 2));
 
