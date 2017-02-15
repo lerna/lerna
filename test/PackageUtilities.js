@@ -207,6 +207,15 @@ describe("PackageUtilities", () => {
       );
     });
 
+    it("should filter --ignored packages", () => {
+      /* NOTE: ignore value is array at this point if option is "package-{3,4}" */
+      const flags = { ignore: ["package-3", "package-4"]};
+      assert.deepEqual(
+        PackageUtilities.filterPackages(packages, flags).map((pkg) => pkg.name),
+        ["package-a-1", "package-a-2"]
+      );
+    });
+
     it("should filter --ignored  and --scoped packages", () => {
       const flags = { scope: "package-a-*", ignore: "package-a-2"};
       assert.deepEqual(
