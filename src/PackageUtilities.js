@@ -141,8 +141,9 @@ export default class PackageUtilities {
     if (!Array.isArray(glob)) glob = [glob];
 
     const maybeNegate = negate ? (v) => !v : (v) => v;
+    const boolReducer = negate ? Array.prototype.every : Array.prototype.some;
 
-    return glob.some((glob) => maybeNegate(minimatch(pkg.name, glob)));
+    return boolReducer.call(glob, (glob) => maybeNegate(minimatch(pkg.name, glob)));
   }
 
   static getFilteredPackage(pkg, {scope, ignore}) {
