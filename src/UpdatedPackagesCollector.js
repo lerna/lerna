@@ -28,8 +28,6 @@ export default class UpdatedPackagesCollector {
   collectUpdatedPackages() {
     logger.info("Checking for updated packages...");
 
-    const currentBranch = GitUtilities.getCurrentBranchDescription();
-
     const hasTags = GitUtilities.hasTags();
 
     if (hasTags) {
