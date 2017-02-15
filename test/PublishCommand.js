@@ -35,10 +35,10 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git branch | sed -n '/\* /s///p'"] }
+          { args: ["git symbolic-ref --short -q HEAD"] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git branch | sed -n '/\* /s///p'"] }
+          { args: ["git symbolic-ref --short -q HEAD"] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
@@ -138,10 +138,10 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git branch | sed -n '/\* /s///p'"] }
+          { args: ["git symbolic-ref --short -q HEAD"] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git branch | sed -n '/\* /s///p'"] }
+          { args: ["git symbolic-ref --short -q HEAD"] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
@@ -239,10 +239,10 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git branch | sed -n '/\* /s///p'"] }
+          { args: ["git symbolic-ref --short -q HEAD"] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git branch | sed -n '/\* /s///p'"] }
+          { args: ["git symbolic-ref --short -q HEAD"] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] },
@@ -336,10 +336,10 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git branch | sed -n '/\* /s///p'"] }
+          { args: ["git symbolic-ref --short -q HEAD"] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git branch | sed -n '/\* /s///p'"] }
+          { args: ["git symbolic-ref --short -q HEAD"] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] },
@@ -430,10 +430,10 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git branch | sed -n '/\* /s///p'"] }
+          { args: ["git symbolic-ref --short -q HEAD"] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git branch | sed -n '/\* /s///p'"] }
+          { args: ["git symbolic-ref --short -q HEAD"] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
@@ -514,10 +514,10 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git branch | sed -n '/\* /s///p'"] }
+          { args: ["git symbolic-ref --short -q HEAD"] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git branch | sed -n '/\* /s///p'"] }
+          { args: ["git symbolic-ref --short -q HEAD"] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
@@ -588,10 +588,10 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git branch | sed -n '/\* /s///p'"] }
+          { args: ["git symbolic-ref --short -q HEAD"] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git branch | sed -n '/\* /s///p'"] }
+          { args: ["git symbolic-ref --short -q HEAD"] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
@@ -649,10 +649,10 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git branch | sed -n '/\* /s///p'"] }
+          { args: ["git symbolic-ref --short -q HEAD"] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git branch | sed -n '/\* /s///p'"] }
+          { args: ["git symbolic-ref --short -q HEAD"] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
@@ -912,10 +912,10 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git branch | sed -n '/\* /s///p'"] }
+          { args: ["git symbolic-ref --short -q HEAD"] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git branch | sed -n '/\* /s///p'"] }
+          { args: ["git symbolic-ref --short -q HEAD"] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
@@ -1013,10 +1013,10 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git branch | sed -n '/\* /s///p'"] }
+          { args: ["git symbolic-ref --short -q HEAD"] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git branch | sed -n '/\* /s///p'"] }
+          { args: ["git symbolic-ref --short -q HEAD"] }
         ]],
        [ChildProcessUtilities, "execSync", {}, [
          { args: ["git tag"] }
@@ -1116,10 +1116,10 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git branch | sed -n '/\* /s///p'"] }
+          { args: ["git symbolic-ref --short -q HEAD"] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git branch | sed -n '/\* /s///p'"] }
+          { args: ["git symbolic-ref --short -q HEAD"] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
@@ -1219,10 +1219,10 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git branch | sed -n '/\* /s///p'"] }
+          { args: ["git symbolic-ref --short -q HEAD"] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git branch | sed -n '/\* /s///p'"] }
+          { args: ["git symbolic-ref --short -q HEAD"] }
         ]],
        [ChildProcessUtilities, "execSync", {}, [
          { args: ["git tag"] }
@@ -1323,10 +1323,10 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git branch | sed -n '/\* /s///p'"] }
+          { args: ["git symbolic-ref --short -q HEAD"] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git branch | sed -n '/\* /s///p'"] }
+          { args: ["git symbolic-ref --short -q HEAD"] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }

@@ -19,7 +19,7 @@ export default class PublishCommand extends Command {
     }
 
     const currentBranch = GitUtilities.getCurrentBranchDescription();
-    if (currentBranch && currentBranch.includes("detached at")) {
+    if (currentBranch === "") {
       callback("You are working on detached branch, create new branch to publish changes.");
     }
 

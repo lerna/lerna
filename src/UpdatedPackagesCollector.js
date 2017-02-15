@@ -30,10 +30,6 @@ export default class UpdatedPackagesCollector {
 
     const currentBranch = GitUtilities.getCurrentBranchDescription();
 
-    if (currentBranch !== "master") {
-      logger.info("Working not on master! Current branch: " + currentBranch);
-    }
-
     const hasTags = GitUtilities.hasTags();
 
     if (hasTags) {

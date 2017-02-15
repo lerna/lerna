@@ -98,7 +98,7 @@ export default class GitUtilities {
 
   @logger.logifySync()
   static getCurrentBranchDescription() {
-    return ChildProcessUtilities.execSync("git branch | sed -n '/\* /s///p'");
+    return ChildProcessUtilities.execSync("git symbolic-ref --short -q HEAD");
   }
 
   @logger.logifySync()
