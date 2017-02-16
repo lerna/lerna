@@ -18,7 +18,11 @@ export default class Command {
     this.repository = new Repository();
     this.progressBar = progressBar;
     this.concurrency = (!flags || flags.concurrency === undefined) ? DEFAULT_CONCURRENCY : Math.max(1, +flags.concurrency || DEFAULT_CONCURRENCY);
-    this.toposort = !flags || (flags.sort == null ? true : flags.sort);
+
+    const {sort} = this.getOptions();
+
+    // If the option isn't present then the default is to sort.
+    this.toposort = sort == null || sort;
   }
 
   get name() {
