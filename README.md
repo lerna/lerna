@@ -434,6 +434,19 @@ repo.  Each commit is modified to make changes relative to the package
 directory.  So, for example, the commit that added `package.json` will
 instead add `packages/<directory-name>/package.json`.
 
+### owner
+
+```sh
+$ lerna owner <add|rm> <npm-user-name>
+```
+
+Add or remove the npm user with `<npm-user-name>` to the owners object in
+lerna.json, and grant or remove ownership in npm.
+
+This is useful for managing owners for modules in a Lerna module.  Rather than
+managing the permissions for each module individually, you can maintain a single
+list of owners for your modules, and manage permissions together.
+
 ## Misc
 
 Lerna will log to a `lerna-debug.log` file (same as `npm-debug.log`) when it encounters an error running a command.
@@ -459,7 +472,11 @@ Running `lerna` without arguments will show all commands/options.
       "ignore": "component-*"
     }
   },
-  "packages": ["packages/*"]
+  "packages": ["packages/*"],
+  "owners": [
+    "npm-user-name",
+    "another-npm-user"
+  ]
 }
 ```
 
@@ -469,6 +486,7 @@ Running `lerna` without arguments will show all commands/options.
 - `commands.bootstrap.ignore`: an array of globs that won't be bootstrapped when running the `lerna bootstrap` command.
 - `commands.bootstrap.scope`: an array of globs that restricts which packages will be bootstrapped when running the `lerna bootstrap` command.
 - `packages`: Array of globs to use as package locations.
+- `owners`: Array of npm user names to that have ownership permissions.
 
 
 ### Common `devDependencies`
