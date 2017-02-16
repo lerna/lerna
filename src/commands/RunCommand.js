@@ -12,8 +12,12 @@ export default class RunCommand extends Command {
       return;
     }
 
-    this.packagesWithScript = this.filteredPackages
-      .filter((pkg) => pkg.scripts && pkg.scripts[this.script]);
+    if (this.script === "test" || this.script === "env") {
+      this.packagesWithScript = this.filteredPackages;
+    } else {
+      this.packagesWithScript = this.filteredPackages
+        .filter((pkg) => pkg.scripts && pkg.scripts[this.script]);
+    }
 
     if (!this.packagesWithScript.length) {
       callback(new Error(`No packages found with the npm script '${this.script}'`));

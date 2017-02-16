@@ -38,6 +38,31 @@ describe("RunCommand", () => {
       runCommand.runCommand(exitWithCode(0, done));
     });
 
+    const defaultScripts = [ "test", "env" ];
+    defaultScripts.forEach((defaultScript) => {
+      it(`should always run ${defaultScript}`, (done) => {
+        const runCommand = new RunCommand([defaultScript], {});
+
+        runCommand.runValidations();
+        runCommand.runPreparations();
+
+        let calls = 0;
+        stub(ChildProcessUtilities, "exec", (command, options, callback) => {
+          calls++;
+
+          assert.equal(command, `npm run ${defaultScript} `);
+
+          callback();
+        });
+
+        runCommand.runCommand(exitWithCode(0, () => {
+          assert.equal(4, calls);
+
+          done();
+        }));
+      });
+    });
+
     // Both of these commands should result in the same outcome
     const filters = [
       { test: "should run a command for a given scope", flag: "scope", flagValue: "package-1"},
