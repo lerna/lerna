@@ -356,7 +356,7 @@ export default class PublishCommand extends Command {
       const run = (cb) => {
         this.logger.verbose("Publishing " + pkg.name + "...");
 
-        NpmUtilities.publishTaggedInDir("lerna-temp", pkg.location, (err) => {
+        NpmUtilities.publishTaggedInDir("lerna-temp", pkg.location, this.npmRegistry, (err) => {
           err = err && err.stack || err;
 
           if (!err ||
@@ -398,16 +398,16 @@ export default class PublishCommand extends Command {
         attempts++;
 
         try {
-          if (NpmUtilities.checkDistTag(pkg.name, "lerna-temp")) {
-            NpmUtilities.removeDistTag(pkg.name, "lerna-temp");
+          if (NpmUtilities.checkDistTag(pkg.name, "lerna-temp", this.npmRegistry)) {
+            NpmUtilities.removeDistTag(pkg.name, "lerna-temp", this.npmRegistry);
           }
 
           if (this.flags.npmTag) {
-            NpmUtilities.addDistTag(pkg.name, this.updatesVersions[pkg.name], this.flags.npmTag);
+            NpmUtilities.addDistTag(pkg.name, this.updatesVersions[pkg.name], this.flags.npmTag, this.npmRegistry);
           } else if (this.flags.canary) {
-            NpmUtilities.addDistTag(pkg.name, pkg.version, "canary");
+            NpmUtilities.addDistTag(pkg.name, pkg.version, "canary", this.npmRegistry);
           } else {
-            NpmUtilities.addDistTag(pkg.name, this.updatesVersions[pkg.name], "latest");
+            NpmUtilities.addDistTag(pkg.name, this.updatesVersions[pkg.name], "latest", this.npmRegistry);
           }
 
           this.progressBar.tick(pkg.name);

@@ -8,7 +8,7 @@ import semver from "semver";
 
 export default class NpmUtilities {
   @logger.logifyAsync()
-  static installInDir(directory, dependencies, callback) {
+  static installInDir(directory, dependencies, registry, callback) {
 
     // Nothing to do if we weren't given any deps.
     if (!(dependencies && dependencies.length)) return callback();
@@ -19,6 +19,10 @@ export default class NpmUtilities {
       cwd: directory,
       stdio: ["ignore", "pipe", "pipe"],
     };
+
+    if (registry) {
+      opts.env = {npm_config_registry: registry};
+    }
 
     const packageJson = path.join(directory, "package.json");
     const packageJsonBkp = packageJson + ".lerna_backup";
@@ -72,18 +76,21 @@ export default class NpmUtilities {
   }
 
   @logger.logifySync()
-  static addDistTag(packageName, version, tag) {
-    ChildProcessUtilities.execSync(`npm dist-tag add ${packageName}@${version} ${tag}`);
+  static addDistTag(packageName, version, tag, registry) {
+    const opts = NpmUtilities.getTagOpts(registry);
+    ChildProcessUtilities.execSync(`npm dist-tag add ${packageName}@${version} ${tag}`, opts);
   }
 
   @logger.logifySync()
-  static removeDistTag(packageName, tag) {
-    ChildProcessUtilities.execSync(`npm dist-tag rm ${packageName} ${tag}`);
+  static removeDistTag(packageName, tag, registry) {
+    const opts = NpmUtilities.getTagOpts(registry);
+    ChildProcessUtilities.execSync(`npm dist-tag rm ${packageName} ${tag}`, opts);
   }
 
   @logger.logifySync()
-  static checkDistTag(packageName, tag) {
-    return ChildProcessUtilities.execSync(`npm dist-tag ls ${packageName}`).indexOf(tag) >= 0;
+  static checkDistTag(packageName, tag, registry) {
+    const opts = NpmUtilities.getTagOpts(registry);
+    return ChildProcessUtilities.execSync(`npm dist-tag ls ${packageName}`, opts).indexOf(tag) >= 0;
   }
 
   @logger.logifyAsync()
@@ -97,8 +104,10 @@ export default class NpmUtilities {
   }
 
   @logger.logifyAsync()
-  static publishTaggedInDir(tag, directory, callback) {
-    ChildProcessUtilities.exec("cd " + escapeArgs(directory) + " && npm publish --tag " + tag, null, callback);
+  static publishTaggedInDir(tag, directory, registry, callback) {
+    const command = ("npm publish --tag " + tag).trim();
+    const opts = NpmUtilities.getTagOpts(registry);
+    ChildProcessUtilities.exec(`cd ${escapeArgs(directory)} && ${command}`, opts, callback);
   }
 
   @logger.logifySync
@@ -109,5 +118,9 @@ export default class NpmUtilities {
     } catch (e) {
       return false;
     }
+  }
+
+  static getTagOpts(registry) {
+    return registry ? {env: {npm_config_registry: registry}} : null;
   }
 }
