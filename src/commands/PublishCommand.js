@@ -1,5 +1,6 @@
 import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
 import FileSystemUtilities from "../FileSystemUtilities";
+import PackageUtilities from "../PackageUtilities";
 import PromptUtilities from "../PromptUtilities";
 import GitUtilities from "../GitUtilities";
 import NpmUtilities from "../NpmUtilities";
@@ -27,9 +28,19 @@ export default class PublishCommand extends Command {
     try {
       this.updates = updatedPackagesCollector.getUpdates();
 
-      this.packagesToPublish = this.updates
+      const packagesToPublish = this.updates
         .map((update) => update.package)
         .filter((pkg) => !pkg.isPrivate());
+
+      this.packageToPublishCount = packagesToPublish.length;
+      this.batchedPackagesToPublish = this.toposort
+        ? PackageUtilities.topologicallyBatchPackages(packagesToPublish, {
+          logger: this.logger,
+          // Don't sort based on devDependencies because that would increase the chance of dependency cycles
+          // causing less-than-ideal a publishing order.
+          depsOnly: true,
+        })
+        : [ packagesToPublish ];
 
     } catch (err) {
       throw err;
@@ -337,9 +348,9 @@ export default class PublishCommand extends Command {
       this.execScript(update.package, "prepublish");
     });
 
-    this.progressBar.init(this.packagesToPublish.length);
+    this.progressBar.init(this.packageToPublishCount);
 
-    async.parallelLimit(this.packagesToPublish.map((pkg) => {
+    PackageUtilities.runParallelBatches(this.batchedPackagesToPublish, (pkg) => {
       let attempts = 0;
 
       const run = (cb) => {
@@ -371,16 +382,16 @@ export default class PublishCommand extends Command {
       };
 
       return run;
-    }), this.concurrency, (err) => {
+    }, this.concurrency, (err) => {
       this.progressBar.terminate();
       callback(err);
     });
   }
 
   npmUpdateAsLatest(callback) {
-    this.progressBar.init(this.packagesToPublish.length);
+    this.progressBar.init(this.packageToPublishCount);
 
-    async.parallelLimit(this.packagesToPublish.map((pkg) => (cb) => {
+    PackageUtilities.runParallelBatches(this.batchedPackagesToPublish, (pkg) => (cb) => {
       let attempts = 0;
 
       while (true) {
@@ -412,7 +423,7 @@ export default class PublishCommand extends Command {
           }
         }
       }
-    }), 4, (err) => {
+    }, 4, (err) => {
       this.progressBar.terminate();
       callback(err);
     });

@@ -21,7 +21,7 @@ export default class RunCommand extends Command {
     }
 
     this.batchedPackages = this.toposort
-      ? PackageUtilities.topologicallyBatchPackages(this.packagesWithScript, this.logger)
+      ? PackageUtilities.topologicallyBatchPackages(this.packagesWithScript, {logger: this.logger})
       : [ this.packagesWithScript ];
 
     callback(null, true);

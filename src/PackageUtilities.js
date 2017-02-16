@@ -53,8 +53,8 @@ export default class PackageUtilities {
     return packages;
   }
 
-  static getPackageGraph(packages) {
-    return new PackageGraph(packages);
+  static getPackageGraph(packages, depsOnly = false) {
+    return new PackageGraph(packages, depsOnly);
   }
 
   /**
@@ -155,10 +155,13 @@ export default class PackageUtilities {
     ) && pkg;
   }
 
-  static topologicallyBatchPackages(packagesToBatch, logger = null) {
+  static topologicallyBatchPackages(packagesToBatch, {
+    depsOnly = false,
+    logger = null,
+  } = {}) {
     // We're going to be chopping stuff out of this array, so copy it.
     const packages = packagesToBatch.slice();
-    const packageGraph = PackageUtilities.getPackageGraph(packages);
+    const packageGraph = PackageUtilities.getPackageGraph(packages, depsOnly);
 
     // This maps package names to the number of packages that depend on them.
     // As packages are completed their names will be removed from this object.
