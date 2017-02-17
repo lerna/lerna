@@ -8,7 +8,9 @@ import semver from "semver";
 
 export default class NpmUtilities {
   @logger.logifyAsync()
-  static installInDir(directory, dependencies, registry, callback) {
+  static installInDir(directory, dependencies, config, callback) {
+
+    const {registry, client} = config;
 
     // Nothing to do if we weren't given any deps.
     if (!(dependencies && dependencies.length)) return callback();
@@ -61,7 +63,7 @@ export default class NpmUtilities {
         if (err) {
           return done(err);
         } else {
-          ChildProcessUtilities.spawn("npm", args, opts, done);
+          ChildProcessUtilities.spawn(client || "npm", args, opts, done);
         }
       });
     });

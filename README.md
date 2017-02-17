@@ -643,6 +643,24 @@ can be used to opt out of hoisting for certain dependencies.
 $ lerna bootstrap --hoist --nohoist=babel-*
 ```
 
+#### --npm-client [client]
+
+Install external dependencies using `[client] install`.  Must be an executable
+that knows how to install npm dependencies.
+
+```sh
+$ lerna bootstrap --npm-client=yarn
+```
+
+May also be configured in `lerna.json`:
+
+```js
+{
+  ...
+  "npmClient": "yarn"
+}
+```
+
 #### --registry [registry]
 
 When run with this flag, forwarded npm commands will use the specified registry for your package(s).
