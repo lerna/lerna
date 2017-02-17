@@ -154,11 +154,13 @@ export default class PublishCommand extends Command {
       // Allows automatic bumping to next semver via repoVersion flag
       if (this.flags.repoVersion === "patch" ||
           this.flags.repoVersion === "minor" ||
-          this.flags.repoVersion === "major"
+          this.flags.repoVersion === "major" ||
+          this.flags.repoVersion === "current"
       ) {
         const versions = {};
         this.updates.forEach((update) => {
-          versions[update.package.name] = semver.inc(update.package.version, this.flags.repoVersion);
+          versions[update.package.name] = this.flags.repoVersion === "current" ?
+            update.package.version : semver.inc(update.package.version, this.flags.repoVersion);
         });
 
         return callback(null, { versions });
