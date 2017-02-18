@@ -226,7 +226,7 @@ describe("PublishCommand", () => {
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-3/package.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-4/package.json"))] },
-          { args: ["git commit -m \"$(echo \"Publish\n\n - package-1@1.0.1\n - package-2@2.0.1\n - package-3@3.0.1\n - package-4@4.0.1\")\""] },
+          { args: ["git commit -m \"$(echo \"Publish" + EOL + EOL + " - package-1@1.0.1" + EOL + " - package-2@2.0.1" + EOL + " - package-3@3.0.1" + EOL + " - package-4@4.0.1\")\""] },
           { args: ["git tag package-1@1.0.1"] },
           { args: ["git tag package-2@2.0.1"] },
           { args: ["git tag package-3@3.0.1"] },
@@ -825,7 +825,7 @@ describe("PublishCommand", () => {
           { args: ["npm dist-tag ls package-4", {env: {"npm_config_registry":"https://my-private-registry"}}], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
           { args: ["npm dist-tag rm package-4 lerna-temp", {env: {"npm_config_registry":"https://my-private-registry"}}] },
           { args: ["npm dist-tag add package-4@1.0.1 latest", {env: {"npm_config_registry":"https://my-private-registry"}}] },
-          
+
           { args: ["npm dist-tag ls package-2", {env: {"npm_config_registry":"https://my-private-registry"}}], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
           { args: ["npm dist-tag rm package-2 lerna-temp", {env: {"npm_config_registry":"https://my-private-registry"}}] },
           { args: ["npm dist-tag add package-2@1.0.1 latest", {env: {"npm_config_registry":"https://my-private-registry"}}] },
