@@ -604,7 +604,7 @@ $ lerna updated --only-explicit-updates
 $ lerna publish --only-explicit-updates
 ```
 
-Ex: in Babel, `babel-types` is depended upon by all packages in the monorepo (over 100). However, Babel uses `^` for most of it's dependencies so it isn't necessary to bump the versions of all packages if only `babel-types` is updated. This option allows only the packages that have been explicitly updated to make a new version.
+Ex: in Babel, `babel-types` is depended upon by all packages in the monorepo (over 100). However, Babel uses `^` for most of its dependencies so it isn't necessary to bump the versions of all packages if only `babel-types` is updated. This option allows only the packages that have been explicitly updated to make a new version.
 
 #### --loglevel [silent|error|warn|success|info|verbose|silly]
 
