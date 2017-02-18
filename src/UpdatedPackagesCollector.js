@@ -150,9 +150,9 @@ export default class UpdatedPackagesCollector {
       return file.replace(folder + path.sep, "");
     });
 
-    if (this.flags.ignore) {
+    if (this.flags.publishConfig && this.flags.publishConfig.ignore) {
       changedFiles = changedFiles.filter((file) => {
-        return !find(this.flags.ignore, (pattern) => {
+        return !find(this.flags.publishConfig.ignore, (pattern) => {
           return minimatch(file, pattern, {matchBase: true});
         });
       });
