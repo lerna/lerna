@@ -46,19 +46,7 @@ export default class ChildProcessUtilities {
   static spawn(command, args, opts, callback) {
     let output = "";
 
-    const childProcess = ChildProcessUtilities.registerChild(
-      spawn(command, args, Object.assign({
-        stdio: "inherit"
-      }, opts))
-        .on("error", () => {})
-        .on("close", (code) => {
-          if (code) {
-            callback(`Command exited with status ${code}: ${command} ${args.join(" ")}`, output);
-          } else {
-            callback(null, output);
-          }
-        })
-    );
+    const childProcess = _spawn(command, args, opts, (err) => callback(err, output));
 
     // By default stderr, stdout are inherited from us (just sent to _our_ output).
     // If the caller overrode that to "pipe", then we'll gather that up and
@@ -72,6 +60,26 @@ export default class ChildProcessUtilities {
       childProcess.stdout.setEncoding("utf8");
       childProcess.stdout.on("data", (chunk) => output += chunk);
     }
+  }
+
+  static spawnStreaming(command, args, opts, prefix, callback) {
+    const partialLine = {};
+
+    opts = Object.assign({}, opts, {
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+
+    const childProcess = _spawn(command, args, opts, callback);
+
+    ["stdout", "stderr"].forEach((stream) => {
+      partialLine[stream] = "";
+      childProcess[stream].setEncoding("utf8").on("data", (chunk) => {
+        const lines = chunk.split("\n");
+        lines[0] = partialLine[stream] + lines[0];
+        partialLine[stream] = lines.pop();
+        lines.forEach((line) => process[stream].write(prefix + line + "\n"));
+      });
+    });
   }
 
   static registerChild(child) {
@@ -92,4 +100,20 @@ export default class ChildProcessUtilities {
   static onAllExited(callback) {
     emitter.on("empty", callback);
   }
+}
+
+function _spawn(command, args, opts, callback) {
+  return ChildProcessUtilities.registerChild(
+    spawn(command, args, Object.assign({
+      stdio: "inherit"
+    }, opts))
+      .on("error", () => {})
+      .on("close", (code) => {
+        if (code) {
+          callback(`Command exited with status ${code}: ${command} ${args.join(" ")}`);
+        } else {
+          callback(null);
+        }
+      })
+  );
 }

@@ -50,6 +50,18 @@ export default class RunCommand extends Command {
   }
 
   runScriptInPackage(pkg, callback) {
+    if (this.getOptions().stream) {
+      this.runScriptInPackageStreaming(pkg, callback);
+    } else {
+      this.runScriptInPackageCapturing(pkg, callback);
+    }
+  }
+
+  runScriptInPackageStreaming(pkg, callback) {
+    NpmUtilities.runScriptInPackageStreaming(this.script, this.args, pkg, callback);
+  }
+
+  runScriptInPackageCapturing(pkg, callback) {
     NpmUtilities.runScriptInDir(this.script, this.args, pkg.location, (err, stdout) => {
       this.logger.info(stdout);
       if (err) {
