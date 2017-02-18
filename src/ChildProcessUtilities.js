@@ -63,8 +63,6 @@ export default class ChildProcessUtilities {
   }
 
   static spawnStreaming(command, args, opts, prefix, callback) {
-    const partialLine = {};
-
     opts = Object.assign({}, opts, {
       stdio: ["ignore", "pipe", "pipe"],
     });
@@ -72,13 +70,24 @@ export default class ChildProcessUtilities {
     const childProcess = _spawn(command, args, opts, callback);
 
     ["stdout", "stderr"].forEach((stream) => {
-      partialLine[stream] = "";
-      childProcess[stream].setEncoding("utf8").on("data", (chunk) => {
-        const lines = chunk.split("\n");
-        lines[0] = partialLine[stream] + lines[0];
-        partialLine[stream] = lines.pop();
-        lines.forEach((line) => process[stream].write(prefix + line + "\n"));
-      });
+      let partialLine = "";
+      childProcess[stream].setEncoding("utf8")
+        .on("data", (chunk) => {
+          const lines = chunk.split("\n");
+          lines[0] = partialLine + lines[0];
+          partialLine = lines.pop();
+          lines.forEach((line) => process[stream].write(prefix + line + "\n"));
+        })
+        .on("end", () => {
+          if (partialLine) {
+
+            // If the child process ended its output with no final newline we
+            // need to flush that out.  We'll add a newline ourselves so we
+            // don't end up with output from multiple children on the same
+            // line.
+            process[stream].write(prefix + partialLine + "\n");
+          }
+        });
     });
   }
 
