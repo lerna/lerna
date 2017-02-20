@@ -69,11 +69,6 @@ export default class PublishCommand extends Command {
       this.masterVersion = version;
       this.updatesVersions = versions;
 
-      if (!this.updates.length) {
-        callback(new Error("No updated packages to publish."));
-        return;
-      }
-
       this.confirmVersions((err, confirmed) => {
         if (err) {
           callback(err);
