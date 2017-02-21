@@ -90,13 +90,8 @@ export default class NpmUtilities {
   }
 
   @logger.logifyAsync()
-  static execInDir(command, args, directory, callback) {
-    ChildProcessUtilities.exec(`npm ${command} ${escapeArgs(args)}`, { cwd: directory, env: process.env }, callback);
-  }
-
-  @logger.logifyAsync()
   static runScriptInDir(script, args, directory, callback) {
-    NpmUtilities.execInDir(`run ${script}`, args, directory, callback);
+    ChildProcessUtilities.exec(`npm run ${script} ${escapeArgs(args)}`, { cwd: directory, env: process.env }, callback);
   }
 
   @logger.logifyAsync()
