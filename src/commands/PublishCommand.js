@@ -57,7 +57,7 @@ export default class PublishCommand extends Command {
         return;
       }
 
-      let {version, versions} = results;
+      let { version, versions } = results;
 
       if (!versions) {
         versions = {};
@@ -150,11 +150,37 @@ export default class PublishCommand extends Command {
   }
 
   getVersionsForUpdates(callback) {
+    if (this.flags.cdVersion) {
+      // Allows automatic bumping to next semver via cdVersion flag
+      if (this.flags.cdVersion === "patch" ||
+          this.flags.cdVersion === "minor" ||
+          this.flags.cdVersion === "major" ||
+          this.flags.cdVersion === "current"
+      ) {
+        // Warn about possible problems with git and current
+        if (this.flags.cdVersion === "current" && !this.flags.skipGit) {
+          this.logger.info("WARNING! Using --cd-version=current without --skip-git can result in commits without changes and cause errors");
+        }
+
+        const versions = {};
+        this.updates.forEach((update) => {
+          versions[update.package.name] = this.flags.cdVersion === "current" ?
+            update.package.version : semver.inc(update.package.version, this.flags.cdVersion);
+        });
+
+        // Use the cdVersion flag to bump the global version as well
+        const version = this.flags.cdVersion === "current" ?
+          this.globalVersion : semver.inc(this.globalVersion, this.flags.cdVersion);
+        return callback(null, { versions, version });
+      }
+    }
+
     if (this.flags.repoVersion) {
       return callback(null, {
         version: this.flags.repoVersion
       });
     }
+
 
     // Non-Independent Canary Mode
     if (!this.repository.isIndependent() && this.flags.canary) {
