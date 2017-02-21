@@ -9,7 +9,7 @@
     "dev": "babel -w src -d lib",
     "lint": "eslint src test",
     "fix": "eslint src test --fix",
-    "test": "mocha -t 5000",
+    "test": "mocha -t 20000",
     "ci": "npm run lint && cross-env npm run test",
     "prepublish": "npm run build"
   },
