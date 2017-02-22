@@ -184,7 +184,6 @@ export default class PublishCommand extends Command {
       });
     }
 
-
     // Non-Independent Canary Mode
     if (!this.repository.isIndependent() && this.flags.canary) {
       const version = this.globalVersion + this.getCanaryVersionSuffix();
