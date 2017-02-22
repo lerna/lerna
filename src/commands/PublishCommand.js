@@ -161,17 +161,20 @@ export default class PublishCommand extends Command {
         if (this.flags.cdVersion === "current" && !this.flags.skipGit) {
           this.logger.info("WARNING! Using --cd-version=current without --skip-git can result in commits without changes and cause errors");
         }
+        // If the version is independent then send versions
+        if (this.repository.isIndependent()) {
+          const versions = {};
+          this.updates.forEach((update) => {
+            versions[update.package.name] = this.flags.cdVersion === "current" ?
+              update.package.version : semver.inc(update.package.version, this.flags.cdVersion);
+          });
+          return callback(null, { versions });
+        }
 
-        const versions = {};
-        this.updates.forEach((update) => {
-          versions[update.package.name] = this.flags.cdVersion === "current" ?
-            update.package.version : semver.inc(update.package.version, this.flags.cdVersion);
-        });
-
-        // Use the cdVersion flag to bump the global version as well
+        // Otherwise bump the global version
         const version = this.flags.cdVersion === "current" ?
           this.globalVersion : semver.inc(this.globalVersion, this.flags.cdVersion);
-        return callback(null, { versions, version });
+        return callback(null, { version });
       }
     }
 
