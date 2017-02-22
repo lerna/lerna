@@ -65,7 +65,7 @@ export default class UpdatedPackagesCollector {
         return true;
       } else if (forcePublish.indexOf(pkg.name) > -1) {
         return true;
-      } else {
+      } else if (!this.flags.forcePublish) { // Do not check diff status if specify the forcePublish field
         return this.hasDiffSinceThatIsntIgnored(pkg, commits);
       }
     }).forEach((pkg) => {
