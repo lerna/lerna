@@ -1149,6 +1149,9 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git symbolic-ref --short -q HEAD"] }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "confirm", { valueCallback: true }, [
@@ -1239,6 +1242,9 @@ describe("PublishCommand", () => {
       publishCommand.runPreparations();
 
       assertStubbedCalls([
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git symbolic-ref --short -q HEAD"] }
+        ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
         ]],
