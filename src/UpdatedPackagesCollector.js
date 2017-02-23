@@ -27,9 +27,18 @@ export default class UpdatedPackagesCollector {
 
   collectUpdatedPackages() {
     logger.info("Checking for updated packages...");
-    progressBar.init(this.packages.length);
 
     const hasTags = GitUtilities.hasTags();
+
+    if (hasTags) {
+      const tag = GitUtilities.getLastTag();
+      logger.info("Comparing with: " + tag);
+    } else {
+      logger.info("No tags found! Comparing with initial commit.");
+    }
+
+    progressBar.init(this.packages.length);
+
     let commits;
 
     if (this.flags.canary) {
@@ -43,7 +52,7 @@ export default class UpdatedPackagesCollector {
 
       commits = this.getAssociatedCommits(currentSHA);
     } else if (hasTags) {
-      commits = GitUtilities.describeTag(GitUtilities.getLastTaggedCommit());
+      commits = GitUtilities.describeTag(GitUtilities.getLastTaggedCommitInBranch());
     }
 
     const updatedPackages = {};

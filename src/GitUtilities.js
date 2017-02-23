@@ -45,6 +45,12 @@ export default class GitUtilities {
   }
 
   @logger.logifySync()
+  static getLastTaggedCommitInBranch() {
+    const tagName = GitUtilities.getLastTag();
+    return ChildProcessUtilities.execSync("git rev-list -n 1 " + tagName);
+  }
+
+  @logger.logifySync()
   static getFirstCommit() {
     return ChildProcessUtilities.execSync("git rev-list --max-parents=0 HEAD");
   }
@@ -53,6 +59,11 @@ export default class GitUtilities {
   static pushWithTags(remote, tags) {
     ChildProcessUtilities.execSync(`git push ${remote} ${GitUtilities.getCurrentBranch()}`);
     ChildProcessUtilities.execSync(`git push ${remote} ${tags.join(" ")}`);
+  }
+
+  @logger.logifySync()
+  static getLastTag() {
+    return ChildProcessUtilities.execSync("git describe --tags --abbrev=0");
   }
 
   @logger.logifySync()
@@ -83,6 +94,11 @@ export default class GitUtilities {
   @logger.logifySync()
   static getCurrentBranch() {
     return ChildProcessUtilities.execSync("git symbolic-ref --short HEAD");
+  }
+
+  @logger.logifySync()
+  static getCurrentBranchDescription() {
+    return ChildProcessUtilities.execSync("git symbolic-ref --short -q HEAD");
   }
 
   @logger.logifySync()

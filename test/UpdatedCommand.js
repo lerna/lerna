@@ -38,7 +38,25 @@ describe("UpdatedCommand", () => {
       let calls = 0;
       stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
+        if (calls === 1) assert.equal(message, "Comparing with: v1.0.0");
         if (calls === 2) assert.equal(message, "- package-2\n- package-3");
+        calls++;
+      });
+
+      updatedCommand.runCommand(exitWithCode(0, done));
+    });
+
+    it("should list all packages when no tag is found", (done) => {
+      const updatedCommand = new UpdatedCommand([], {});
+
+      updatedCommand.runValidations();
+      updatedCommand.runPreparations();
+
+      let calls = 0;
+      stub(logger, "info", (message) => {
+        if (calls === 0) assert.equal(message, "Checking for updated packages...");
+        if (calls === 1) assert.equal(message, "No tags found! Comparing with initial commit.");
+        if (calls === 2) assert.equal(message, `- package-1\n- package-2\n- package-3\n- package-4\n- package-5 (${chalk.red("private")})`);
         calls++;
       });
 
@@ -61,7 +79,8 @@ describe("UpdatedCommand", () => {
       let calls = 0;
       stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
-        if (calls === 2) assert.equal(message, `- package-1\n- package-2\n- package-3\n- package-4\n- package-5 (${chalk.red("private")}`);
+        if (calls === 1) assert.equal(message, "Comparing with: v1.0.0");
+        if (calls === 2) assert.equal(message, `- package-1\n- package-2\n- package-3\n- package-4\n- package-5 (${chalk.red("private")})`);
         calls++;
       });
 
@@ -84,6 +103,7 @@ describe("UpdatedCommand", () => {
       let calls = 0;
       stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
+        if (calls === 1) assert.equal(message, "Comparing with: v1.0.0");
         if (calls === 2) assert.equal(message, "- package-2\n- package-3\n- package-4");
         calls++;
       });
@@ -94,8 +114,10 @@ describe("UpdatedCommand", () => {
     it("should list changes without ignored files", (done) => {
       const lernaJsonLocation = path.join(testDir, "lerna.json");
       const lernaJson = JSON.parse(fs.readFileSync(lernaJsonLocation));
-      lernaJson.publishConfig = {
-        ignore: ["ignored-file"]
+      lernaJson.commands = {
+        publish: {
+          ignore: ["ignored-file"],
+        },
       };
       fs.writeFileSync(lernaJsonLocation, JSON.stringify(lernaJson, null, 2));
 
@@ -113,6 +135,7 @@ describe("UpdatedCommand", () => {
       let calls = 0;
       stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
+        if (calls === 1) assert.equal(message, "Comparing with: v1.0.0");
         if (calls === 2) assert.equal(message, "- package-3");
         calls++;
       });
@@ -136,6 +159,7 @@ describe("UpdatedCommand", () => {
       let calls = 0;
       stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
+        if (calls === 1) assert.equal(message, "Comparing with: v1.0.0");
         if (calls === 2) assert.equal(message, "- package-2");
         calls++;
       });
@@ -169,6 +193,7 @@ describe("UpdatedCommand", () => {
       let calls = 0;
       stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
+        if (calls === 1) assert.equal(message, "Comparing with: v1.0.0");
         if (calls === 2) assert.equal(message, "- package-3\n- package-4");
         calls++;
       });
@@ -192,7 +217,8 @@ describe("UpdatedCommand", () => {
       let calls = 0;
       stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
-        if (calls === 2) assert.equal(message, `- package-1\n- package-2\n- package-3\n- package-4\n- package-5 (${chalk.red("private")}`);
+        if (calls === 1) assert.equal(message, "Comparing with: v1.0.0");
+        if (calls === 2) assert.equal(message, `- package-1\n- package-2\n- package-3\n- package-4\n- package-5 (${chalk.red("private")})`);
         calls++;
       });
 
@@ -215,6 +241,7 @@ describe("UpdatedCommand", () => {
       let calls = 0;
       stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
+        if (calls === 1) assert.equal(message, "Comparing with: v1.0.0");
         if (calls === 2) assert.equal(message, "- package-2\n- package-3\n- package-4");
         calls++;
       });
@@ -225,8 +252,10 @@ describe("UpdatedCommand", () => {
     it("should list changes without ignored files", (done) => {
       const lernaJsonLocation = path.join(testDir, "lerna.json");
       const lernaJson = JSON.parse(fs.readFileSync(lernaJsonLocation));
-      lernaJson.publishConfig = {
-        ignore: ["ignored-file"]
+      lernaJson.commands = {
+        publish: {
+          ignore: ["ignored-file"],
+        },
       };
       fs.writeFileSync(lernaJsonLocation, JSON.stringify(lernaJson, null, 2));
 
@@ -244,6 +273,7 @@ describe("UpdatedCommand", () => {
       let calls = 0;
       stub(logger, "info", (message) => {
         if (calls === 0) assert.equal(message, "Checking for updated packages...");
+        if (calls === 1) assert.equal(message, "Comparing with: v1.0.0");
         if (calls === 2) assert.equal(message, "- package-3\n- package-4");
         calls++;
       });
