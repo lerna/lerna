@@ -426,16 +426,16 @@ export default class PublishCommand extends Command {
         attempts++;
 
         try {
-          if (NpmUtilities.checkDistTag(pkg.name, "lerna-temp", this.npmRegistry)) {
-            NpmUtilities.removeDistTag(pkg.name, "lerna-temp", this.npmRegistry);
+          if (NpmUtilities.checkDistTag(pkg.location, pkg.name, "lerna-temp", this.npmRegistry)) {
+            NpmUtilities.removeDistTag(pkg.location, pkg.name, "lerna-temp", this.npmRegistry);
           }
 
           if (this.flags.npmTag) {
-            NpmUtilities.addDistTag(pkg.name, this.updatesVersions[pkg.name], this.flags.npmTag, this.npmRegistry);
+            NpmUtilities.addDistTag(pkg.location, pkg.name, this.updatesVersions[pkg.name], this.flags.npmTag, this.npmRegistry);
           } else if (this.flags.canary) {
-            NpmUtilities.addDistTag(pkg.name, pkg.version, "canary", this.npmRegistry);
+            NpmUtilities.addDistTag(pkg.location, pkg.name, pkg.version, "canary", this.npmRegistry);
           } else {
-            NpmUtilities.addDistTag(pkg.name, this.updatesVersions[pkg.name], "latest", this.npmRegistry);
+            NpmUtilities.addDistTag(pkg.location, pkg.name, this.updatesVersions[pkg.name], "latest", this.npmRegistry);
           }
 
           this.progressBar.tick(pkg.name);

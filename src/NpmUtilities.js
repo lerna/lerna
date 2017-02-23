@@ -76,21 +76,21 @@ export default class NpmUtilities {
   }
 
   @logger.logifySync()
-  static addDistTag(packageName, version, tag, registry) {
+  static addDistTag(directory, packageName, version, tag, registry) {
     const opts = NpmUtilities.getTagOpts(registry);
-    ChildProcessUtilities.execSync(`npm dist-tag add ${packageName}@${version} ${tag}`, opts);
+    ChildProcessUtilities.execSync(`cd ${escapeArgs(directory)} && npm dist-tag add ${packageName}@${version} ${tag}`, opts);
   }
 
   @logger.logifySync()
-  static removeDistTag(packageName, tag, registry) {
+  static removeDistTag(directory, packageName, tag, registry) {
     const opts = NpmUtilities.getTagOpts(registry);
-    ChildProcessUtilities.execSync(`npm dist-tag rm ${packageName} ${tag}`, opts);
+    ChildProcessUtilities.execSync(`cd ${escapeArgs(directory)} && npm dist-tag rm ${packageName} ${tag}`, opts);
   }
 
   @logger.logifySync()
-  static checkDistTag(packageName, tag, registry) {
+  static checkDistTag(directory, packageName, tag, registry) {
     const opts = NpmUtilities.getTagOpts(registry);
-    return ChildProcessUtilities.execSync(`npm dist-tag ls ${packageName}`, opts).indexOf(tag) >= 0;
+    return ChildProcessUtilities.execSync(`cd ${escapeArgs(directory)} && npm dist-tag ls ${packageName}`, opts).indexOf(tag) >= 0;
   }
 
   @logger.logifyAsync()
