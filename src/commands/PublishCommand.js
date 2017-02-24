@@ -349,6 +349,7 @@ export default class PublishCommand extends Command {
   }
 
   npmPublishAsPrerelease(callback) {
+    const {skipTempTag} = this.getOptions();
     this.updates.forEach((update) => {
       this.execScript(update.package, "prepublish");
     });
@@ -361,29 +362,35 @@ export default class PublishCommand extends Command {
       const run = (cb) => {
         this.logger.verbose("Publishing " + pkg.name + "...");
 
-        NpmUtilities.publishTaggedInDir("lerna-temp", pkg.location, this.npmRegistry, (err) => {
-          err = err && err.stack || err;
+        if (!!skipTempTag) {
+          this.progressBar.tick(pkg.name);
+          this.execScript(pkg, "postpublish");
+          cb();
+        } else {
+          NpmUtilities.publishTaggedInDir("lerna-temp", pkg.location, this.npmRegistry, (err) => {
+            err = err && err.stack || err;
 
-          if (!err ||
-            // publishing over an existing package which is likely due to a timeout or something
-            err.indexOf("You cannot publish over the previously published version") > -1
-          ) {
-            this.progressBar.tick(pkg.name);
-            this.execScript(pkg, "postpublish");
-            cb();
-            return;
-          }
+            if (!err ||
+              // publishing over an existing package which is likely due to a timeout or something
+              err.indexOf("You cannot publish over the previously published version") > -1
+            ) {
+              this.progressBar.tick(pkg.name);
+              this.execScript(pkg, "postpublish");
+              cb();
+              return;
+            }
 
-          attempts++;
+            attempts++;
 
-          if (attempts < 5) {
-            this.logger.error("Attempting to retry publishing " + pkg.name + "...", err);
-            run(cb);
-          } else {
-            this.logger.error("Ran out of retries while publishing " + pkg.name, err);
-            cb(err);
-          }
-        });
+            if (attempts < 5) {
+              this.logger.error("Attempting to retry publishing " + pkg.name + "...", err);
+              run(cb);
+            } else {
+              this.logger.error("Ran out of retries while publishing " + pkg.name, err);
+              cb(err);
+            }
+          });
+        }
       };
 
       return run;
@@ -394,6 +401,7 @@ export default class PublishCommand extends Command {
   }
 
   npmUpdateAsLatest(callback) {
+    const {skipTempTag} = this.getOptions();
     this.progressBar.init(this.packageToPublishCount);
 
     PackageUtilities.runParallelBatches(this.batchedPackagesToPublish, (pkg) => (cb) => {
@@ -403,7 +411,7 @@ export default class PublishCommand extends Command {
         attempts++;
 
         try {
-          if (NpmUtilities.checkDistTag(pkg.name, "lerna-temp", this.npmRegistry)) {
+          if (!skipTempTag && NpmUtilities.checkDistTag(pkg.name, "lerna-temp", this.npmRegistry)) {
             NpmUtilities.removeDistTag(pkg.name, "lerna-temp", this.npmRegistry);
           }
 
