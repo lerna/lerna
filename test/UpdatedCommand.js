@@ -166,6 +166,28 @@ describe("UpdatedCommand", () => {
 
       updatedCommand.runCommand(exitWithCode(0, done));
     });
+
+    it('should list changes in private packages', (done) => {
+      child.execSync("git tag v1.0.0");
+      child.execSync("touch " + escapeArgs(path.join(testDir, "packages/package-5/random-file")));
+      child.execSync("git add -A");
+      child.execSync("git commit -m 'Commit'");
+
+      const updatedCommand = new UpdatedCommand([], {});
+
+      updatedCommand.runValidations();
+      updatedCommand.runPreparations();
+
+      let calls = 0;
+      stub(logger, "info", (message) => {
+        if (calls === 0) assert.equal(message, "Checking for updated packages...");
+        if (calls === 1) assert.equal(message, "Comparing with: v1.0.0");
+        if (calls === 2) assert.equal(message, `- package-5 (${chalk.red("private")})`);
+        calls++;
+      });
+
+      updatedCommand.runCommand(exitWithCode(0, done));
+    })
   });
 
   /** =========================================================================
