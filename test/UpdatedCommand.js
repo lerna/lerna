@@ -167,7 +167,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runCommand(exitWithCode(0, done));
     });
 
-    it('should list changes in private packages', (done) => {
+    it("should list changes in private packages", (done) => {
       child.execSync("git tag v1.0.0");
       child.execSync("touch " + escapeArgs(path.join(testDir, "packages/package-5/random-file")));
       child.execSync("git add -A");
@@ -187,7 +187,7 @@ describe("UpdatedCommand", () => {
       });
 
       updatedCommand.runCommand(exitWithCode(0, done));
-    })
+    });
   });
 
   /** =========================================================================
