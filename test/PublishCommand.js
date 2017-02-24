@@ -618,7 +618,7 @@ describe("PublishCommand", () => {
       testDir = initFixture("PublishCommand/normal", done);
     });
 
-    it("should publish the changed packages with npm tag", (done) => {
+    it("should publish the changed packages without the temp tag", (done) => {
       const publishCommand = new PublishCommand([], {
         npmTag: "prerelease",
         skipTempTag: true
@@ -650,14 +650,17 @@ describe("PublishCommand", () => {
           { args: ["git commit -m \"$(echo \"v1.0.1\")\""] },
           { args: ["git tag v1.0.1"] }
         ]],
+        [ChildProcessUtilities, "exec", { nodeCallback: true }, [
+          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm publish --tag prerelease"] },
+          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm publish --tag prerelease"] },
+          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm publish --tag prerelease"] },
+          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm publish --tag prerelease"] },
+        ], true],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["npm dist-tag add package-1@1.0.1 prerelease"] },
-
-          { args: ["npm dist-tag add package-3@1.0.1 prerelease"] },
-
-          { args: ["npm dist-tag add package-4@1.0.1 prerelease"] },
-
-          { args: ["npm dist-tag add package-2@1.0.1 prerelease"] },
+          // { args: ["npm dist-tag add package-1@1.0.1 prerelease"] },
+          // { args: ["npm dist-tag add package-3@1.0.1 prerelease"] },
+          // { args: ["npm dist-tag add package-4@1.0.1 prerelease"] },
+          // { args: ["npm dist-tag add package-2@1.0.1 prerelease"] },
 
           // No package-5.  It's private.
 
@@ -668,26 +671,10 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
-
-        try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
-
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).version, "1.0.1");
-
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).dependencies["package-1"], "^1.0.1");
-
+        if (err) {
+          return done(err);
+        } else {
           done();
-        } catch (err) {
-          done(err);
         }
       }));
     });

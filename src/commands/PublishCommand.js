@@ -350,6 +350,8 @@ export default class PublishCommand extends Command {
 
   npmPublishAsPrerelease(callback) {
     const {skipTempTag} = this.getOptions();
+    // if we skip temp tags we should tag with the proper value immediately therefore no updates will be needed
+    const tag = !skipTempTag ? "lerna-temp" : this.getDistTag();
     this.updates.forEach((update) => {
       this.execScript(update.package, "prepublish");
     });
@@ -362,35 +364,29 @@ export default class PublishCommand extends Command {
       const run = (cb) => {
         this.logger.verbose("Publishing " + pkg.name + "...");
 
-        if (skipTempTag) {
-          this.progressBar.tick(pkg.name);
-          this.execScript(pkg, "postpublish");
-          cb();
-        } else {
-          NpmUtilities.publishTaggedInDir("lerna-temp", pkg.location, this.npmRegistry, (err) => {
-            err = err && err.stack || err;
+        NpmUtilities.publishTaggedInDir(tag, pkg.location, this.npmRegistry, (err) => {
+          err = err && err.stack || err;
 
-            if (!err ||
-              // publishing over an existing package which is likely due to a timeout or something
-              err.indexOf("You cannot publish over the previously published version") > -1
-            ) {
-              this.progressBar.tick(pkg.name);
-              this.execScript(pkg, "postpublish");
-              cb();
-              return;
-            }
+          if (!err ||
+            // publishing over an existing package which is likely due to a timeout or something
+            err.indexOf("You cannot publish over the previously published version") > -1
+          ) {
+            this.progressBar.tick(pkg.name);
+            this.execScript(pkg, "postpublish");
+            cb();
+            return;
+          }
 
-            attempts++;
+          attempts++;
 
-            if (attempts < 5) {
-              this.logger.error("Attempting to retry publishing " + pkg.name + "...", err);
-              run(cb);
-            } else {
-              this.logger.error("Ran out of retries while publishing " + pkg.name, err);
-              cb(err);
-            }
-          });
-        }
+          if (attempts < 5) {
+            this.logger.error("Attempting to retry publishing " + pkg.name + "...", err);
+            run(cb);
+          } else {
+            this.logger.error("Ran out of retries while publishing " + pkg.name, err);
+            cb(err);
+          }
+        });
       };
 
       return run;
@@ -411,16 +407,8 @@ export default class PublishCommand extends Command {
         attempts++;
 
         try {
-          if (!skipTempTag && NpmUtilities.checkDistTag(pkg.name, "lerna-temp", this.npmRegistry)) {
-            NpmUtilities.removeDistTag(pkg.name, "lerna-temp", this.npmRegistry);
-          }
-
-          if (this.flags.npmTag) {
-            NpmUtilities.addDistTag(pkg.name, this.updatesVersions[pkg.name], this.flags.npmTag, this.npmRegistry);
-          } else if (this.flags.canary) {
-            NpmUtilities.addDistTag(pkg.name, pkg.version, "canary", this.npmRegistry);
-          } else {
-            NpmUtilities.addDistTag(pkg.name, this.updatesVersions[pkg.name], "latest", this.npmRegistry);
+          if (!skipTempTag) {
+            this.updateTag(pkg);
           }
 
           this.progressBar.tick(pkg.name);
@@ -440,5 +428,27 @@ export default class PublishCommand extends Command {
       this.progressBar.terminate();
       callback(err);
     });
+  }
+
+  updateTag(pkg) {
+    // we didn't skip temp tagging so we need to handle the situation accordingly
+    const distTag = this.getDistTag();
+
+    if (NpmUtilities.checkDistTag(pkg.name, "lerna-temp", this.npmRegistry)) {
+      NpmUtilities.removeDistTag(pkg.name, "lerna-temp", this.npmRegistry);
+    }
+
+    if (this.flags.npmTag) {
+      NpmUtilities.addDistTag(pkg.name, this.updatesVersions[pkg.name], distTag, this.npmRegistry);
+    } else if (this.flags.canary) {
+      NpmUtilities.addDistTag(pkg.name, pkg.version, distTag, this.npmRegistry);
+    } else {
+      NpmUtilities.addDistTag(pkg.name, this.updatesVersions[pkg.name], distTag, this.npmRegistry);
+    }
+  }
+
+  getDistTag() {
+    const {npmTag, canary} = this.getOptions();
+    return npmTag ? npmTag : canary ? "canary" : "latest";
   }
 }
