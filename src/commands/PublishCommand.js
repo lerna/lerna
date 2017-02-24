@@ -362,7 +362,7 @@ export default class PublishCommand extends Command {
       const run = (cb) => {
         this.logger.verbose("Publishing " + pkg.name + "...");
 
-        if (!!skipTempTag) {
+        if (skipTempTag) {
           this.progressBar.tick(pkg.name);
           this.execScript(pkg, "postpublish");
           cb();
