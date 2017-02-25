@@ -653,8 +653,9 @@ private registries.
 
 #### --skip-temp-tag
 
-When activated, this flag will make the publish process ignore a temporal tag publish while also
-also ignoring the `npm dist-tag ls` command from being fired.
+When activated, this flag will alter the default publish process by not creating
+a temporary tag and handling the process accordingly. Instead it will immediately
+publish with the proper dist-tag as [npm it self would](https://docs.npmjs.com/cli/dist-tag).
 
 ### Wizard
 
