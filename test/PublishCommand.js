@@ -657,10 +657,6 @@ describe("PublishCommand", () => {
           { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm publish --tag prerelease"] },
         ], true],
         [ChildProcessUtilities, "execSync", {}, [
-          // { args: ["npm dist-tag add package-1@1.0.1 prerelease"] },
-          // { args: ["npm dist-tag add package-3@1.0.1 prerelease"] },
-          // { args: ["npm dist-tag add package-4@1.0.1 prerelease"] },
-          // { args: ["npm dist-tag add package-2@1.0.1 prerelease"] },
 
           // No package-5.  It's private.
 
