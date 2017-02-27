@@ -35,9 +35,6 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -64,21 +61,21 @@ describe("PublishCommand", () => {
           // No package-5.  It's private.
         ], true],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag rm package-1 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag add package-1@1.0.1 latest"] },
+          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-1 lerna-temp"] },
+          { args: ["npm dist-tag add package-1@1.0.1 latest"] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag rm package-3 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag add package-3@1.0.1 latest"] },
+          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-3 lerna-temp"] },
+          { args: ["npm dist-tag add package-3@1.0.1 latest"] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag rm package-4 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag add package-4@1.0.1 latest"] },
+          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-4 lerna-temp"] },
+          { args: ["npm dist-tag add package-4@1.0.1 latest"] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag rm package-2 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag add package-2@1.0.1 latest"] },
+          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-2 lerna-temp"] },
+          { args: ["npm dist-tag add package-2@1.0.1 latest"] },
 
           // No package-5.  It's private.
 
@@ -135,9 +132,6 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -167,21 +161,21 @@ describe("PublishCommand", () => {
           { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm publish --tag lerna-temp"] },
         ]],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag rm package-1 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag add package-1@1.0.1 latest"] },
+          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-1 lerna-temp"] },
+          { args: ["npm dist-tag add package-1@1.0.1 latest"] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag ls package-3"], returns: "lerna-temp: 2.0.0" + EOL + "stable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag rm package-3 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag add package-3@2.0.0 latest"] },
+          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 2.0.0" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-3 lerna-temp"] },
+          { args: ["npm dist-tag add package-3@2.0.0 latest"] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag ls package-4"], returns: "lerna-temp: 1.1.0" + EOL + "stable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag rm package-4 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag add package-4@1.1.0 latest"] },
+          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.1.0" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-4 lerna-temp"] },
+          { args: ["npm dist-tag add package-4@1.1.0 latest"] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag ls package-2"], returns: "lerna-temp: 1.1.0" + EOL + "stable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag rm package-2 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag add package-2@1.1.0 latest"] },
+          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.1.0" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-2 lerna-temp"] },
+          { args: ["npm dist-tag add package-2@1.1.0 latest"] },
 
           { args: ["git symbolic-ref --short HEAD"], returns: "master" },
           { args: ["git push origin master"] },
@@ -233,12 +227,7 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] },
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
           { args: ["git rev-parse HEAD"], returns: "81e3b44339e1403fe3d762e9435b7c9a155fdef7" },
           { args: ["git rev-parse HEAD"], returns: "81e3b44339e1403fe3d762e9435b7c9a155fdef7" }
         ]],
@@ -254,21 +243,21 @@ describe("PublishCommand", () => {
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["git checkout -- packages/*/package.json"] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.0-alpha.81e3b443" + EOL + "stable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag rm package-1 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag add package-1@1.0.0-alpha.81e3b443 canary"] },
+          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.0-alpha.81e3b443" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-1 lerna-temp"] },
+          { args: ["npm dist-tag add package-1@1.0.0-alpha.81e3b443 canary"] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.0-alpha.81e3b443" + EOL + "stable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag rm package-3 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag add package-3@1.0.0-alpha.81e3b443 canary"] },
+          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.0-alpha.81e3b443" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-3 lerna-temp"] },
+          { args: ["npm dist-tag add package-3@1.0.0-alpha.81e3b443 canary"] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.0-alpha.81e3b443" + EOL + "stable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag rm package-4 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag add package-4@1.0.0-alpha.81e3b443 canary"] },
+          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.0-alpha.81e3b443" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-4 lerna-temp"] },
+          { args: ["npm dist-tag add package-4@1.0.0-alpha.81e3b443 canary"] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.0-alpha.81e3b443" + EOL + "stable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag rm package-2 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag add package-2@1.0.0-alpha.81e3b443 canary"] },
+          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.0-alpha.81e3b443" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-2 lerna-temp"] },
+          { args: ["npm dist-tag add package-2@1.0.0-alpha.81e3b443 canary"] },
 
           { args: ["git symbolic-ref --short HEAD"], returns: "master" },
           { args: ["git push origin master"] },
@@ -327,12 +316,7 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] },
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
           { args: ["git rev-parse HEAD"], returns: "81e3b44339e1403fe3d762e9435b7c9a155fdef7" },
           { args: ["git rev-parse HEAD"], returns: "81e3b44339e1403fe3d762e9435b7c9a155fdef7" }
         ]],
@@ -348,21 +332,21 @@ describe("PublishCommand", () => {
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["git checkout -- packages/*/package.json"] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.0-alpha.81e3b443" + EOL + "stable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag rm package-1 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag add package-1@1.0.0-alpha.81e3b443 canary"] },
+          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.0-alpha.81e3b443" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-1 lerna-temp"] },
+          { args: ["npm dist-tag add package-1@1.0.0-alpha.81e3b443 canary"] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag ls package-3"], returns: "lerna-temp: 3.0.0-alpha.81e3b443" + EOL + "stable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag rm package-3 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag add package-3@3.0.0-alpha.81e3b443 canary"] },
+          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 3.0.0-alpha.81e3b443" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-3 lerna-temp"] },
+          { args: ["npm dist-tag add package-3@3.0.0-alpha.81e3b443 canary"] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag ls package-4"], returns: "lerna-temp: 4.0.0-alpha.81e3b443" + EOL + "stable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag rm package-4 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag add package-4@4.0.0-alpha.81e3b443 canary"] },
+          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 4.0.0-alpha.81e3b443" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-4 lerna-temp"] },
+          { args: ["npm dist-tag add package-4@4.0.0-alpha.81e3b443 canary"] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag ls package-2"], returns: "lerna-temp: 2.0.0-alpha.81e3b443" + EOL + "stable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag rm package-2 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag add package-2@2.0.0-alpha.81e3b443 canary"] },
+          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 2.0.0-alpha.81e3b443" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-2 lerna-temp"] },
+          { args: ["npm dist-tag add package-2@2.0.0-alpha.81e3b443 canary"] },
 
           { args: ["git symbolic-ref --short HEAD"], returns: "master" },
           { args: ["git push origin master"] },
@@ -418,9 +402,6 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -436,21 +417,21 @@ describe("PublishCommand", () => {
           { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm publish --tag lerna-temp"] },
         ], true],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag rm package-1 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag add package-1@1.0.1 latest"] },
+          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-1 lerna-temp"] },
+          { args: ["npm dist-tag add package-1@1.0.1 latest"] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag rm package-3 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag add package-3@1.0.1 latest"] },
+          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-3 lerna-temp"] },
+          { args: ["npm dist-tag add package-3@1.0.1 latest"] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag rm package-4 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag add package-4@1.0.1 latest"] },
+          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-4 lerna-temp"] },
+          { args: ["npm dist-tag add package-4@1.0.1 latest"] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag rm package-2 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag add package-2@1.0.1 latest"] },
+          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-2 lerna-temp"] },
+          { args: ["npm dist-tag add package-2@1.0.1 latest"] },
         ]],
       ]);
 
@@ -498,9 +479,6 @@ describe("PublishCommand", () => {
       publishCommand.runPreparations();
 
       assertStubbedCalls([
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] }
-        ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
         ]],
@@ -570,9 +548,6 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -628,9 +603,6 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -657,21 +629,21 @@ describe("PublishCommand", () => {
           // No package-5.  It's private.
         ], true],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag rm package-1 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag add package-1@1.0.1 prerelease"] },
+          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-1 lerna-temp"] },
+          { args: ["npm dist-tag add package-1@1.0.1 prerelease"] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag rm package-3 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag add package-3@1.0.1 prerelease"] },
+          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-3 lerna-temp"] },
+          { args: ["npm dist-tag add package-3@1.0.1 prerelease"] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag rm package-4 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag add package-4@1.0.1 prerelease"] },
+          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-4 lerna-temp"] },
+          { args: ["npm dist-tag add package-4@1.0.1 prerelease"] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag rm package-2 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag add package-2@1.0.1 prerelease"] },
+          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-2 lerna-temp"] },
+          { args: ["npm dist-tag add package-2@1.0.1 prerelease"] },
 
           // No package-5.  It's private.
 
@@ -740,7 +712,6 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "confirm", { valueCallback: true }, [
@@ -764,21 +735,21 @@ describe("PublishCommand", () => {
           // No package-5.  It's private.
         ], true],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag ls package-1", {env: {"npm_config_registry":"https://my-private-registry"}}], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag rm package-1 lerna-temp", {env: {"npm_config_registry":"https://my-private-registry"}}] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag add package-1@1.0.1 latest", {env: {"npm_config_registry":"https://my-private-registry"}}] },
+          { args: ["npm dist-tag ls package-1", {env: {"npm_config_registry":"https://my-private-registry"}}], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-1 lerna-temp", {env: {"npm_config_registry":"https://my-private-registry"}}] },
+          { args: ["npm dist-tag add package-1@1.0.1 latest", {env: {"npm_config_registry":"https://my-private-registry"}}] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag ls package-3", {env: {"npm_config_registry":"https://my-private-registry"}}], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag rm package-3 lerna-temp", {env: {"npm_config_registry":"https://my-private-registry"}}] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag add package-3@1.0.1 latest", {env: {"npm_config_registry":"https://my-private-registry"}}] },
+          { args: ["npm dist-tag ls package-3", {env: {"npm_config_registry":"https://my-private-registry"}}], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-3 lerna-temp", {env: {"npm_config_registry":"https://my-private-registry"}}] },
+          { args: ["npm dist-tag add package-3@1.0.1 latest", {env: {"npm_config_registry":"https://my-private-registry"}}] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag ls package-4", {env: {"npm_config_registry":"https://my-private-registry"}}], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag rm package-4 lerna-temp", {env: {"npm_config_registry":"https://my-private-registry"}}] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag add package-4@1.0.1 latest", {env: {"npm_config_registry":"https://my-private-registry"}}] },
+          { args: ["npm dist-tag ls package-4", {env: {"npm_config_registry":"https://my-private-registry"}}], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-4 lerna-temp", {env: {"npm_config_registry":"https://my-private-registry"}}] },
+          { args: ["npm dist-tag add package-4@1.0.1 latest", {env: {"npm_config_registry":"https://my-private-registry"}}] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag ls package-2", {env: {"npm_config_registry":"https://my-private-registry"}}], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag rm package-2 lerna-temp", {env: {"npm_config_registry":"https://my-private-registry"}}] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag add package-2@1.0.1 latest", {env: {"npm_config_registry":"https://my-private-registry"}}] },
+          { args: ["npm dist-tag ls package-2", {env: {"npm_config_registry":"https://my-private-registry"}}], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-2 lerna-temp", {env: {"npm_config_registry":"https://my-private-registry"}}] },
+          { args: ["npm dist-tag add package-2@1.0.1 latest", {env: {"npm_config_registry":"https://my-private-registry"}}] },
 
           // No package-5.  It's private.
 
@@ -835,7 +806,6 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "confirm", { valueCallback: true }, [
@@ -852,9 +822,9 @@ describe("PublishCommand", () => {
           // No package-5.  It's private.
         ], true],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag ls package-1", {env: {"npm_config_registry":"https://my-secure-registry/npm"}}], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag rm package-1 lerna-temp", {env: {"npm_config_registry":"https://my-secure-registry/npm"}}] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag add package-1@1.0.1 latest", {env: {"npm_config_registry":"https://my-secure-registry/npm"}}] },
+          { args: ["npm dist-tag ls package-1", {env: {"npm_config_registry":"https://my-secure-registry/npm"}}], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-1 lerna-temp", {env: {"npm_config_registry":"https://my-secure-registry/npm"}}] },
+          { args: ["npm dist-tag add package-1@1.0.1 latest", {env: {"npm_config_registry":"https://my-secure-registry/npm"}}] },
 
           { args: ["git symbolic-ref --short HEAD"], returns: "master" },
           { args: ["git push origin master"] },
@@ -889,12 +859,9 @@ describe("PublishCommand", () => {
       publishCommand.runPreparations();
 
       assertStubbedCalls([
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git tag"] }
-        ]],
+       [ChildProcessUtilities, "execSync", {}, [
+         { args: ["git tag"] }
+       ]],
        [PromptUtilities, "confirm", { valueCallback: true }, [
          { args: ["Are you sure you want to publish the above changes?"], returns: true }
        ]],
@@ -916,21 +883,21 @@ describe("PublishCommand", () => {
          // No package-5.  It's private.
        ], true],
        [ChildProcessUtilities, "execSync", {}, [
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag rm package-1 lerna-temp"] },
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag add package-1@1.0.1 latest"] },
+         { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+         { args: ["npm dist-tag rm package-1 lerna-temp"] },
+         { args: ["npm dist-tag add package-1@1.0.1 latest"] },
 
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag rm package-3 lerna-temp"] },
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag add package-3@1.0.1 latest"] },
+         { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+         { args: ["npm dist-tag rm package-3 lerna-temp"] },
+         { args: ["npm dist-tag add package-3@1.0.1 latest"] },
 
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag rm package-4 lerna-temp"] },
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag add package-4@1.0.1 latest"] },
+         { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+         { args: ["npm dist-tag rm package-4 lerna-temp"] },
+         { args: ["npm dist-tag add package-4@1.0.1 latest"] },
 
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag rm package-2 lerna-temp"] },
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag add package-2@1.0.1 latest"] },
+         { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+         { args: ["npm dist-tag rm package-2 lerna-temp"] },
+         { args: ["npm dist-tag add package-2@1.0.1 latest"] },
 
          // No package-5.  It's private.
 
@@ -987,9 +954,6 @@ describe("PublishCommand", () => {
       publishCommand.runPreparations();
 
       assertStubbedCalls([
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] }
-        ]],
        [ChildProcessUtilities, "execSync", {}, [
          { args: ["git tag"] }
        ]],
@@ -1014,21 +978,21 @@ describe("PublishCommand", () => {
          // No package-5.  It's private.
        ], true],
        [ChildProcessUtilities, "execSync", {}, [
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag rm package-1 lerna-temp"] },
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag add package-1@1.0.1 latest"] },
+         { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+         { args: ["npm dist-tag rm package-1 lerna-temp"] },
+         { args: ["npm dist-tag add package-1@1.0.1 latest"] },
 
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag rm package-3 lerna-temp"] },
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag add package-3@1.0.1 latest"] },
+         { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+         { args: ["npm dist-tag rm package-3 lerna-temp"] },
+         { args: ["npm dist-tag add package-3@1.0.1 latest"] },
 
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag rm package-4 lerna-temp"] },
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag add package-4@1.0.1 latest"] },
+         { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+         { args: ["npm dist-tag rm package-4 lerna-temp"] },
+         { args: ["npm dist-tag add package-4@1.0.1 latest"] },
 
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag rm package-2 lerna-temp"] },
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag add package-2@1.0.1 latest"] },
+         { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+         { args: ["npm dist-tag rm package-2 lerna-temp"] },
+         { args: ["npm dist-tag add package-2@1.0.1 latest"] },
 
          // No package-5.  It's private.
 
@@ -1088,9 +1052,6 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -1117,21 +1078,21 @@ describe("PublishCommand", () => {
           // No package-5.  It's private.
         ], true],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag rm package-1 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag add package-1@1.0.1 latest"] },
+          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-1 lerna-temp"] },
+          { args: ["npm dist-tag add package-1@1.0.1 latest"] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag rm package-3 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag add package-3@1.0.1 latest"] },
+          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-3 lerna-temp"] },
+          { args: ["npm dist-tag add package-3@1.0.1 latest"] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag rm package-4 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag add package-4@1.0.1 latest"] },
+          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-4 lerna-temp"] },
+          { args: ["npm dist-tag add package-4@1.0.1 latest"] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag rm package-2 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag add package-2@1.0.1 latest"] },
+          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-2 lerna-temp"] },
+          { args: ["npm dist-tag add package-2@1.0.1 latest"] },
 
           // No package-5.  It's private.
 
@@ -1188,9 +1149,6 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "confirm", { valueCallback: true }, [
@@ -1213,21 +1171,21 @@ describe("PublishCommand", () => {
           { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm publish --tag lerna-temp"] }
         ], true],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag rm package-1 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag add package-1@1.1.0 latest"] },
+          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-1 lerna-temp"] },
+          { args: ["npm dist-tag add package-1@1.1.0 latest"] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag rm package-3 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag add package-3@1.1.0 latest"] },
+          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-3 lerna-temp"] },
+          { args: ["npm dist-tag add package-3@1.1.0 latest"] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag rm package-4 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag add package-4@1.1.0 latest"] },
+          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-4 lerna-temp"] },
+          { args: ["npm dist-tag add package-4@1.1.0 latest"] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag rm package-2 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag add package-2@1.1.0 latest"] },
+          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-2 lerna-temp"] },
+          { args: ["npm dist-tag add package-2@1.1.0 latest"] },
 
           { args: ["git symbolic-ref --short HEAD"], returns: "master" },
           { args: ["git push origin master"] },
@@ -1282,9 +1240,6 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "confirm", { valueCallback: true }, [
@@ -1308,21 +1263,21 @@ describe("PublishCommand", () => {
           { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm publish --tag lerna-temp"] }
         ], true],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag rm package-1 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag add package-1@1.0.1 latest"] },
+          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-1 lerna-temp"] },
+          { args: ["npm dist-tag add package-1@1.0.1 latest"] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag rm package-3 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag add package-3@3.0.1 latest"] },
+          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-3 lerna-temp"] },
+          { args: ["npm dist-tag add package-3@3.0.1 latest"] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag rm package-4 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag add package-4@4.0.1 latest"] },
+          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-4 lerna-temp"] },
+          { args: ["npm dist-tag add package-4@4.0.1 latest"] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag rm package-2 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag add package-2@2.0.1 latest"] },
+          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-2 lerna-temp"] },
+          { args: ["npm dist-tag add package-2@2.0.1 latest"] },
 
           { args: ["git symbolic-ref --short HEAD"], returns: "master" },
           { args: ["git push origin master"] },
@@ -1374,9 +1329,6 @@ describe("PublishCommand", () => {
       publishCommand.runPreparations();
 
       assertStubbedCalls([
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] }
-        ]],
        [ChildProcessUtilities, "execSync", {}, [
          { args: ["git tag"] }
        ]],
@@ -1404,21 +1356,21 @@ describe("PublishCommand", () => {
          // No package-5.  It's private.
        ], true],
        [ChildProcessUtilities, "execSync", {}, [
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag rm package-1 lerna-temp"] },
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag add package-1@1.0.1 latest"] },
+         { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+         { args: ["npm dist-tag rm package-1 lerna-temp"] },
+         { args: ["npm dist-tag add package-1@1.0.1 latest"] },
 
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag rm package-3 lerna-temp"] },
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag add package-3@1.0.1 latest"] },
+         { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+         { args: ["npm dist-tag rm package-3 lerna-temp"] },
+         { args: ["npm dist-tag add package-3@1.0.1 latest"] },
 
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag rm package-4 lerna-temp"] },
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag add package-4@1.0.1 latest"] },
+         { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+         { args: ["npm dist-tag rm package-4 lerna-temp"] },
+         { args: ["npm dist-tag add package-4@1.0.1 latest"] },
 
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag rm package-2 lerna-temp"] },
-         { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag add package-2@1.0.1 latest"] },
+         { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+         { args: ["npm dist-tag rm package-2 lerna-temp"] },
+         { args: ["npm dist-tag add package-2@1.0.1 latest"] },
 
          // No package-5.  It's private.
 
@@ -1476,9 +1428,6 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -1508,21 +1457,21 @@ describe("PublishCommand", () => {
           { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm publish --tag lerna-temp"] },
         ]],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag rm package-1 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm dist-tag add package-1@1.0.1 latest"] },
+          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-1 lerna-temp"] },
+          { args: ["npm dist-tag add package-1@1.0.1 latest"] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag ls package-3"], returns: "lerna-temp: 2.0.0" + EOL + "stable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag rm package-3 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm dist-tag add package-3@2.0.0 latest"] },
+          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 2.0.0" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-3 lerna-temp"] },
+          { args: ["npm dist-tag add package-3@2.0.0 latest"] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag ls package-4"], returns: "lerna-temp: 1.1.0" + EOL + "stable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag rm package-4 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm dist-tag add package-4@1.1.0 latest"] },
+          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.1.0" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-4 lerna-temp"] },
+          { args: ["npm dist-tag add package-4@1.1.0 latest"] },
 
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag ls package-2"], returns: "lerna-temp: 1.1.0" + EOL + "stable: 1.0.0" },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag rm package-2 lerna-temp"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm dist-tag add package-2@1.1.0 latest"] },
+          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.1.0" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-2 lerna-temp"] },
+          { args: ["npm dist-tag add package-2@1.1.0 latest"] },
 
           { args: ["git symbolic-ref --short HEAD"], returns: "master" },
           { args: ["git push origin master"] },
