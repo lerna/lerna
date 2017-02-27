@@ -314,15 +314,13 @@ Useful in [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous
 #### --cd-version
 
 ```sh
-$ lerna publish --cd-version (patch | major | minor | current) [--skip-git]
-# uses the next semantic version(s) or current value(s) this skips `Select a new version for...` prompt
+$ lerna publish --cd-version (patch | major | minor)
+# uses the next semantic version(s) value and this skips `Select a new version for...` prompt
 ```
 
 When run with this flag, `publish` will skip the version selection prompt (in independent mode) and use the next specified semantic version.
-You must still use `--yes` flag to avoid all prompts. This is useful in continuous delivery or anywhere where build systems need
-to publish without command prompts. Works in both normal and independent modes. **It's recommended you use --skip-git if you are using --cd-version=current**.
-Currently Lerna will attempt to commit changes to JSON files without actually making changes (same versions) which results in errors.
-
+You must still use the `--yes` flag to avoid all prompts. This is useful when build systems need
+to publish without command prompts. Works in both normal and independent modes.
 
 #### --repo-version
 
@@ -617,7 +615,7 @@ $ lerna updated --only-explicit-updates
 $ lerna publish --only-explicit-updates
 ```
 
-Ex: in Babel, `babel-types` is depended upon by all packages in the monorepo (over 100). However, Babel uses `^` for most of its dependencies so it isn't necessary to bump the versions of all packages if only `babel-types` is updated. This option allows only the packages that have been explicitly updated to make a new version.
+Ex: in Babel, `babel-types` is depended upon by all packages in the monorepo (over 100). However, Babel uses `^` for most of it's dependencies so it isn't necessary to bump the versions of all packages if only `babel-types` is updated. This option allows only the packages that have been explicitly updated to make a new version.
 
 #### --loglevel [silent|error|warn|success|info|verbose|silly]
 

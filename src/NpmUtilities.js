@@ -77,20 +77,20 @@ export default class NpmUtilities {
 
   @logger.logifySync()
   static addDistTag(directory, packageName, version, tag, registry) {
-    const opts = NpmUtilities.getTagOpts(registry);
-    ChildProcessUtilities.execSync(`cd ${escapeArgs(directory)} && npm dist-tag add ${packageName}@${version} ${tag}`, opts);
+    const opts = NpmUtilities.getTagOpts(registry, directory);
+    ChildProcessUtilities.execSync(`npm dist-tag add ${packageName}@${version} ${tag}`, opts);
   }
 
   @logger.logifySync()
   static removeDistTag(directory, packageName, tag, registry) {
-    const opts = NpmUtilities.getTagOpts(registry);
-    ChildProcessUtilities.execSync(`cd ${escapeArgs(directory)} && npm dist-tag rm ${packageName} ${tag}`, opts);
+    const opts = NpmUtilities.getTagOpts(registry, directory);
+    ChildProcessUtilities.execSync(`npm dist-tag rm ${packageName} ${tag}`, opts);
   }
 
   @logger.logifySync()
   static checkDistTag(directory, packageName, tag, registry) {
-    const opts = NpmUtilities.getTagOpts(registry);
-    return ChildProcessUtilities.execSync(`cd ${escapeArgs(directory)} && npm dist-tag ls ${packageName}`, opts).indexOf(tag) >= 0;
+    const opts = NpmUtilities.getTagOpts(registry, directory);
+    return ChildProcessUtilities.execSync(`npm dist-tag ls ${packageName}`, opts).indexOf(tag) >= 0;
   }
 
   @logger.logifyAsync()
@@ -106,8 +106,8 @@ export default class NpmUtilities {
   @logger.logifyAsync()
   static publishTaggedInDir(tag, directory, registry, callback) {
     const command = ("npm publish --tag " + tag).trim();
-    const opts = NpmUtilities.getTagOpts(registry);
-    ChildProcessUtilities.exec(`cd ${escapeArgs(directory)} && ${command}`, opts, callback);
+    const opts = NpmUtilities.getTagOpts(registry, directory);
+    ChildProcessUtilities.exec(`${command}`, opts, callback);
   }
 
   @logger.logifySync
@@ -120,7 +120,9 @@ export default class NpmUtilities {
     }
   }
 
-  static getTagOpts(registry) {
-    return registry ? {env: {npm_config_registry: registry}} : null;
+  static getTagOpts(registry, directory) {
+    const registryProp = registry ? { env: { npm_config_registry: registry } } : {};
+    const directoryProp = directory ? { cwd: directory } : {};
+    return Object.assign({}, registryProp, directoryProp);
   }
 }
