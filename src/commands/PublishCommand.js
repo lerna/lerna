@@ -351,7 +351,8 @@ export default class PublishCommand extends Command {
   npmPublishAsPrerelease(callback) {
     const {skipTempTag} = this.getOptions();
     // if we skip temp tags we should tag with the proper value immediately therefore no updates will be needed
-    const tag = !skipTempTag ? "lerna-temp" : this.getDistTag();
+    const tag = skipTempTag ? this.getDistTag() : "lerna-temp";
+
     this.updates.forEach((update) => {
       this.execScript(update.package, "prepublish");
     });
@@ -398,6 +399,11 @@ export default class PublishCommand extends Command {
 
   npmUpdateAsLatest(callback) {
     const {skipTempTag} = this.getOptions();
+
+    if (skipTempTag) {
+      return callback();
+    }
+
     this.progressBar.init(this.packageToPublishCount);
 
     PackageUtilities.runParallelBatches(this.batchedPackagesToPublish, (pkg) => (cb) => {
@@ -407,10 +413,7 @@ export default class PublishCommand extends Command {
         attempts++;
 
         try {
-          if (!skipTempTag) {
-            this.updateTag(pkg);
-          }
-
+          this.updateTag(pkg);
           this.progressBar.tick(pkg.name);
           cb();
           break;
@@ -431,7 +434,6 @@ export default class PublishCommand extends Command {
   }
 
   updateTag(pkg) {
-    // we didn't skip temp tagging so we need to handle the situation accordingly
     const distTag = this.getDistTag();
 
     if (NpmUtilities.checkDistTag(pkg.name, "lerna-temp", this.npmRegistry)) {
@@ -449,6 +451,6 @@ export default class PublishCommand extends Command {
 
   getDistTag() {
     const {npmTag, canary} = this.getOptions();
-    return npmTag ? npmTag : canary ? "canary" : "latest";
+    return npmTag || (canary && "canary") || "latest";
   }
 }
