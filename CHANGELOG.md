@@ -1,6 +1,6 @@
 ## v2.0.0-beta.38 (2017-02-28)
 
-📦 🐈 initial Yarn support and more!
+📦 🐈  Initial Yarn support and more!
 
 #### :rocket: Enhancement
 * [#605](https://github.com/lerna/lerna/pull/605) Add support for pluggable npm clients. ([@gigabo](https://github.com/gigabo))
