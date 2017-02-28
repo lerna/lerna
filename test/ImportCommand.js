@@ -2,8 +2,8 @@ import pathExists from "path-exists";
 import assert from "assert";
 import path from "path";
 import fs from "fs";
-import normalize from "normalize-path";
 import escapeArgs from "command-join";
+import mkdirp from "mkdirp";
 
 import PromptUtilities from "../src/PromptUtilities";
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
@@ -171,7 +171,33 @@ describe("ImportCommand", () => {
       importCommand.runPreparations();
 
       importCommand.runCommand(exitWithCode(1, (err) => {
-        const expect = `Target directory already exists "${normalize(targetDir)}"`;
+        const expect = `Target directory already exists "${targetDir}"`;
+        try {
+          assert.equal((err || {}).message, expect);
+          done();
+        } catch (err) {
+          done(err);
+        }
+      }));
+    });
+
+    it("should infer correct target directory given packages glob", (done) => {
+      const targetDir = path.relative(
+        process.cwd(),
+        path.join(testDir, "pkg", path.basename(externalDir))
+      );
+      mkdirp.sync(targetDir);
+
+      changeLernaConfig(testDir, (lernaJson) => {
+        lernaJson.packages = [ "pkg/*" ];
+      });
+
+      const importCommand = new ImportCommand([externalDir], {});
+      importCommand.runValidations();
+      importCommand.runPreparations();
+
+      importCommand.runCommand(exitWithCode(1, (err) => {
+        const expect = `Target directory already exists "${targetDir}"`;
         try {
           assert.equal((err || {}).message, expect);
           done();
@@ -201,3 +227,14 @@ describe("ImportCommand", () => {
     });
   });
 });
+
+// TODO: extract to test/_something, use from test/UpdatedCommand.js
+function changeLernaConfig(testDir, adjustFn) {
+  assert.equal(typeof testDir, "string");
+  assert.equal(typeof adjustFn, "function");
+
+  const lernaJsonLocation = path.join(testDir, "lerna.json");
+  const lernaJson = JSON.parse(fs.readFileSync(lernaJsonLocation));
+  adjustFn(lernaJson);
+  fs.writeFileSync(lernaJsonLocation, JSON.stringify(lernaJson, null, 2));
+}

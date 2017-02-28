@@ -9,7 +9,7 @@
     "dev": "babel -w src -d lib",
     "lint": "eslint src test",
     "fix": "eslint src test --fix",
-    "test": "mocha -t 5000",
+    "test": "mocha -t 20000",
     "ci": "npm run lint && cross-env DEBUG_CALLS=true npm run test",
     "prepublish": "npm run build"
   },
@@ -27,6 +27,7 @@
     "async": "^1.5.0",
     "chalk": "^1.1.1",
     "cmd-shim": "^2.0.2",
+    "columnify": "^1.5.4",
     "command-join": "^2.0.0",
     "cross-spawn": "^4.0.0",
     "glob": "^7.0.6",

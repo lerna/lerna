@@ -106,6 +106,17 @@ export default class NpmUtilities {
   }
 
   @logger.logifyAsync()
+  static runScriptInPackageStreaming(script, args, pkg, callback) {
+    ChildProcessUtilities.spawnStreaming(
+      "npm",
+      ["run", script, ...args],
+      { cwd: pkg.location, env: process.env },
+      pkg.name + ": ",
+      callback
+    );
+  }
+
+  @logger.logifyAsync()
   static publishTaggedInDir(tag, directory, registry, callback) {
     const command = ("npm publish --tag " + tag).trim();
     const opts = NpmUtilities.getTagOpts(registry);
