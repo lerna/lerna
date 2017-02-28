@@ -50,7 +50,7 @@ Defaults to running `npm run test` and `npm run env`
 ```json
 {
   "commands": {
-    "bootstrap" {
+    "bootstrap": {
       "includeFilteredDependencies": true
     }
   }
