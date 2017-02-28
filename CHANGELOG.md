@@ -7,8 +7,6 @@
 
 > We'll make yarn the default once we feel that it's more stable.
 
-Usage:
-
 ```sh
 $ lerna bootstrap --npm-client=yarn
 ```
