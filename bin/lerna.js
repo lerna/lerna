@@ -32,6 +32,7 @@ var cli = meow([
   "  --npm-tag [tagname]     Publish packages with the specified npm dist-tag",
   "  --hoist [glob]          Install external dependencies matching [glob] to the repo root.  Use with no glob for all.",
   "  --nohoist [glob]        Don't hoist external dependencies matching [glob] to the repo root",
+  "  --stream                Stream output with lines prefixed by package (only 'run')",
   "  --scope [glob]          Restricts the scope to package names matching the given glob (Works only in combination with the 'run', 'exec', 'clean', 'ls' and 'bootstrap' commands).",
   "  --ignore [glob]         Ignores packages with names matching the given glob (Works only in combination with the 'run', 'exec', 'clean', 'ls' and 'bootstrap' commands).",
   "  --include-filtered-dependencies Flag to force lerna to include all dependencies and transitive dependencies when running 'bootstrap', even if they should not be included by the scope or ignore flags",

@@ -643,6 +643,16 @@ can be used to opt out of hoisting for certain dependencies.
 $ lerna bootstrap --hoist --nohoist=babel-*
 ```
 
+#### --stream
+
+Stream output from child processes immediately, prefixed with the originating
+package name.  This can be useful for long-running processes such as "watch"
+builds.  This allows output from different packages to be interleaved.
+
+```sh
+$ lerna run watch --stream
+```
+
 #### --registry [registry]
 
 When run with this flag, forwarded npm commands will use the specified registry for your package(s).
