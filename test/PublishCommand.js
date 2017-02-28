@@ -608,6 +608,75 @@ describe("PublishCommand", () => {
   });
 
   /** =========================================================================
+   * NORMAL - SKIP TEMP TAG
+   * ======================================================================= */
+
+  describe("normal mode with --skip-temp-tag", () => {
+    let testDir;
+
+    beforeEach((done) => {
+      testDir = initFixture("PublishCommand/normal", done);
+    });
+
+    it("should publish the changed packages without the temp tag", (done) => {
+      const publishCommand = new PublishCommand([], {
+        npmTag: "prerelease",
+        skipTempTag: true
+      });
+
+      publishCommand.runValidations();
+      publishCommand.runPreparations();
+
+      assertStubbedCalls([
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git symbolic-ref --short -q HEAD"] }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git tag"] }
+        ]],
+        [PromptUtilities, "select", { valueCallback: true }, [
+          { args: ["Select a new version (currently 1.0.0)"], returns: "1.0.1" }
+        ]],
+        [PromptUtilities, "confirm", { valueCallback: true }, [
+          { args: ["Are you sure you want to publish the above changes?"], returns: true }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-3/package.json"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-4/package.json"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-5/package.json"))] },
+          { args: ["git commit -m \"$(echo \"v1.0.1\")\""] },
+          { args: ["git tag v1.0.1"] }
+        ]],
+        [ChildProcessUtilities, "exec", { nodeCallback: true }, [
+          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm publish --tag prerelease"] },
+          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm publish --tag prerelease"] },
+          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm publish --tag prerelease"] },
+          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm publish --tag prerelease"] },
+        ], true],
+        [ChildProcessUtilities, "execSync", {}, [
+
+          // No package-5.  It's private.
+
+          { args: ["git symbolic-ref --short HEAD"], returns: "master" },
+          { args: ["git push origin master"] },
+          { args: ["git push origin v1.0.1"] }
+        ]],
+      ]);
+
+      publishCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) {
+          return done(err);
+        } else {
+          done();
+        }
+      }));
+    });
+  });
+
+  /** =========================================================================
    * NORMAL - NPM TAG
    * ======================================================================= */
 

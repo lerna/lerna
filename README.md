@@ -661,6 +661,12 @@ This is useful if you do not want to explicitly set up your registry
 configuration in all of your package.json files individually when e.g. using
 private registries.
 
+#### --skip-temp-tag
+
+When activated, this flag will alter the default publish process by not creating
+a temporary tag and handling the process accordingly. Instead it will immediately
+publish with the proper dist-tag as [npm it self would](https://docs.npmjs.com/cli/dist-tag).
+
 ### Wizard
 
 If you prefer some guidance for cli (in case you're about to start using lerna or introducing it to a new team), you might like [lerna-wizard](https://github.com/szarouski/lerna-wizard). It will lead you through a series of well-defined steps:
