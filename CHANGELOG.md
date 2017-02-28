@@ -1,3 +1,38 @@
+## v2.0.0-beta.38 (2017-02-28)
+
+#### :rocket: Enhancement
+* [#605](https://github.com/lerna/lerna/pull/605) Add support for pluggable npm clients. ([@gigabo](https://github.com/gigabo))
+* [#620](https://github.com/lerna/lerna/pull/620) Feature: skip-temp-tag. ([@noherczeg](https://github.com/noherczeg))
+* [#608](https://github.com/lerna/lerna/pull/608) Add a --stream option to the run command. ([@gigabo](https://github.com/gigabo))
+* [#624](https://github.com/lerna/lerna/pull/624) Add versions to lerna ls. Closes [#603](https://github.com/lerna/lerna/issues/603) ([@ben-eb](https://github.com/ben-eb))
+* [#587](https://github.com/lerna/lerna/pull/587) Always run test and env scripts. ([@simon360](https://github.com/simon360))
+* [#598](https://github.com/lerna/lerna/pull/598) Durable `includeFilteredDependencies` config via lerna.json. ([@gigabo](https://github.com/gigabo))
+* [#596](https://github.com/lerna/lerna/pull/596) Support `sort` option in lerna.json. ([@gigabo](https://github.com/gigabo))
+* [#599](https://github.com/lerna/lerna/pull/599) Explicit registry flag feature. ([@noherczeg](https://github.com/noherczeg))
+* [#595](https://github.com/lerna/lerna/pull/595) Publish npm packages in topological order.. ([@loganfsmyth](https://github.com/loganfsmyth))
+
+#### :bug: Bug Fix
+* [#601](https://github.com/lerna/lerna/pull/601) Fix --ignore flag when globs are expanded to an array. ([@rtsao](https://github.com/rtsao))
+* [#597](https://github.com/lerna/lerna/pull/597) Support command config in either "commands" or "command". ([@gigabo](https://github.com/gigabo))
+* [#586](https://github.com/lerna/lerna/pull/586) Avoid exception after successful `lerna diff`. ([@evocateur](https://github.com/evocateur))
+
+#### :house: Internal
+* [#604](https://github.com/lerna/lerna/pull/604) Fix midair collision. ([@doug-wade](https://github.com/doug-wade))
+* [#594](https://github.com/lerna/lerna/pull/594) Remove `sync-exec` ([@wtgtybhertgeghgtwtg](https://github.com/wtgtybhertgeghgtwtg))
+
+#### Committers: 11
+- Ben Briggs ([ben-eb](https://github.com/ben-eb))
+- Bo Borgerson ([gigabo](https://github.com/gigabo))
+- Daniel Stockman ([evocateur](https://github.com/evocateur))
+- Douglas Wade ([doug-wade](https://github.com/doug-wade))
+- Garth Kidd ([garthk](https://github.com/garthk))
+- Gytis Vinclovas ([Gongreg](https://github.com/Gongreg))
+- Logan Smyth ([loganfsmyth](https://github.com/loganfsmyth))
+- Norbert Csaba Herczeg ([noherczeg](https://github.com/noherczeg))
+- Ryan Tsao ([rtsao](https://github.com/rtsao))
+- [simon360](https://github.com/simon360)
+- [wtgtybhertgeghgtwtg](https://github.com/wtgtybhertgeghgtwtg)
+
 ## v2.0.0-beta.37 (2017-02-08)
 
 `--include-filtered-dependencies` now works with `ls`,`exec`,`run` as well!
