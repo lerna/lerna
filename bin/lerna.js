@@ -30,6 +30,7 @@ var cli = meow([
   "  --message, -m [msg]  Use a custom commit message when creating the publish commit (only affects publish)",
   "  --exact                 Specify cross-dependency version numbers exactly rather than with a caret (^) (only affects publish)",
   "  --npm-tag [tagname]     Publish packages with the specified npm dist-tag",
+  "  --npm-client [client]   Executable used to install dependencies (npm, yarn, pnpm, ...)",
   "  --hoist [glob]          Install external dependencies matching [glob] to the repo root.  Use with no glob for all.",
   "  --nohoist [glob]        Don't hoist external dependencies matching [glob] to the repo root",
   "  --stream                Stream output with lines prefixed by package (only 'run')",
