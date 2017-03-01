@@ -1,3 +1,102 @@
+## v2.0.0-beta.38 (2017-02-28)
+
+📦 🐈  Initial Yarn support and more!
+
+#### :rocket: Enhancement
+* [#605](https://github.com/lerna/lerna/pull/605) Add support for pluggable npm clients. ([@gigabo](https://github.com/gigabo))
+
+> We'll make yarn the default once we feel that it's more stable.
+
+```sh
+$ lerna bootstrap --npm-client=yarn
+```
+
+```json
+{
+  "npmClient": "yarn"
+}
+```
+
+* [#595](https://github.com/lerna/lerna/pull/595) Publish npm packages in topological order ([@loganfsmyth](https://github.com/loganfsmyth))
+
+Very important fix for Babel that we used in the last release. This prevents a timing issue when publishing where a module will try to download a package that isn't published yet because it is published before it's own dependency is published itself. We used to get many issues from users on non-public npm about "babel-types" not being found.
+
+* [#608](https://github.com/lerna/lerna/pull/608) Add a --stream option to the run command. ([@gigabo](https://github.com/gigabo))
+
+Useful to get output for child processes immediately if using `lerna run` with a watch command
+
+```sh
+$ lerna run watch --stream
+```
+
+* [#624](https://github.com/lerna/lerna/pull/624) Add versions to lerna ls. Closes [#603](https://github.com/lerna/lerna/issues/603) ([@ben-eb](https://github.com/ben-eb))
+
+
+
+* [#620](https://github.com/lerna/lerna/pull/620) Feature: skip-temp-tag. ([@noherczeg](https://github.com/noherczeg))
+
+This will not create a temporary dist-tag called `lerna-temp` when publishing. Useful if your third party proxy doesn't support dist-tags.
+
+```sh
+$ lerna publish --skip-temp-tag
+```
+
+* [#587](https://github.com/lerna/lerna/pull/587) Always run test and env scripts. ([@simon360](https://github.com/simon360))
+
+Defaults to running `npm run test` and `npm run env` 
+
+* [#598](https://github.com/lerna/lerna/pull/598) Durable `includeFilteredDependencies` config via lerna.json. ([@gigabo](https://github.com/gigabo))
+
+```json
+{
+  "commands": {
+    "bootstrap": {
+      "includeFilteredDependencies": true
+    }
+  }
+}
+```
+
+* [#596](https://github.com/lerna/lerna/pull/596) Support `sort` option in lerna.json. ([@gigabo](https://github.com/gigabo))
+
+```js
+{
+  "commands": {
+    "run": {
+      "sort": false
+    }
+  }
+}
+```
+
+* [#599](https://github.com/lerna/lerna/pull/599) Explicit registry flag feature. ([@noherczeg](https://github.com/noherczeg))
+
+```sh
+$ lerna publish --registry https://my-private-registry
+```
+
+#### :bug: Bug Fix
+* [#601](https://github.com/lerna/lerna/pull/601) Fix --ignore flag when globs are expanded to an array. ([@rtsao](https://github.com/rtsao))
+* [#597](https://github.com/lerna/lerna/pull/597) Support command config in either "commands" or "command". ([@gigabo](https://github.com/gigabo))
+* [#586](https://github.com/lerna/lerna/pull/586) Avoid exception after successful `lerna diff`. ([@evocateur](https://github.com/evocateur))
+
+#### :house: Internal
+* [#604](https://github.com/lerna/lerna/pull/604) Fix midair collision. ([@doug-wade](https://github.com/doug-wade))
+* [#594](https://github.com/lerna/lerna/pull/594) Remove `sync-exec` ([@wtgtybhertgeghgtwtg](https://github.com/wtgtybhertgeghgtwtg))
+
+#### Committers: 11
+- Ben Briggs ([ben-eb](https://github.com/ben-eb))
+- Bo Borgerson ([gigabo](https://github.com/gigabo))
+- Daniel Stockman ([evocateur](https://github.com/evocateur))
+- Douglas Wade ([doug-wade](https://github.com/doug-wade))
+- Garth Kidd ([garthk](https://github.com/garthk))
+- Gytis Vinclovas ([Gongreg](https://github.com/Gongreg))
+- Logan Smyth ([loganfsmyth](https://github.com/loganfsmyth))
+- Norbert Csaba Herczeg ([noherczeg](https://github.com/noherczeg))
+- Ryan Tsao ([rtsao](https://github.com/rtsao))
+- [simon360](https://github.com/simon360)
+- [wtgtybhertgeghgtwtg](https://github.com/wtgtybhertgeghgtwtg)
+
 ## v2.0.0-beta.37 (2017-02-08)
 
 `--include-filtered-dependencies` now works with `ls`,`exec`,`run` as well!

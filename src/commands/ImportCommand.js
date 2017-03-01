@@ -34,7 +34,8 @@ export default class ImportCommand extends Command {
       return callback(e);
     }
 
-    this.targetDir = "packages/" + externalRepoBase;
+    const targetBase = getTargetBase(this.repository.packageConfigs);
+    this.targetDir = path.join(targetBase, externalRepoBase);
 
     try {
       if (fs.statSync(this.targetDir)) {
@@ -124,4 +125,11 @@ export default class ImportCommand extends Command {
       callback(err, !err);
     });
   }
+}
+
+function getTargetBase(packageConfigs) {
+  const straightPackageDirectories = packageConfigs
+    .filter((p) => path.basename(p) === "*")
+    .map((p) => path.dirname(p));
+  return straightPackageDirectories[0] || "packages";
 }

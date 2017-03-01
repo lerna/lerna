@@ -370,6 +370,10 @@ export default class PublishCommand extends Command {
   }
 
   npmPublishAsPrerelease(callback) {
+    const {skipTempTag} = this.getOptions();
+    // if we skip temp tags we should tag with the proper value immediately therefore no updates will be needed
+    const tag = skipTempTag ? this.getDistTag() : "lerna-temp";
+
     this.updates.forEach((update) => {
       this.execScript(update.package, "prepublish");
     });
@@ -382,7 +386,7 @@ export default class PublishCommand extends Command {
       const run = (cb) => {
         this.logger.verbose("Publishing " + pkg.name + "...");
 
-        NpmUtilities.publishTaggedInDir("lerna-temp", pkg.location, this.npmRegistry, (err) => {
+        NpmUtilities.publishTaggedInDir(tag, pkg.location, this.npmRegistry, (err) => {
           err = err && err.stack || err;
 
           if (!err ||
@@ -415,6 +419,12 @@ export default class PublishCommand extends Command {
   }
 
   npmUpdateAsLatest(callback) {
+    const {skipTempTag} = this.getOptions();
+
+    if (skipTempTag) {
+      return callback();
+    }
+
     this.progressBar.init(this.packageToPublishCount);
 
     PackageUtilities.runParallelBatches(this.batchedPackagesToPublish, (pkg) => (cb) => {
@@ -424,6 +434,7 @@ export default class PublishCommand extends Command {
         attempts++;
 
         try {
+
           if (NpmUtilities.checkDistTag(pkg.location, pkg.name, "lerna-temp", this.npmRegistry)) {
             NpmUtilities.removeDistTag(pkg.location, pkg.name, "lerna-temp", this.npmRegistry);
           }
@@ -436,6 +447,7 @@ export default class PublishCommand extends Command {
             NpmUtilities.addDistTag(pkg.location, pkg.name, this.updatesVersions[pkg.name], "latest", this.npmRegistry);
           }
 
+          this.updateTag(pkg);
           this.progressBar.tick(pkg.name);
           cb();
           break;
@@ -453,5 +465,26 @@ export default class PublishCommand extends Command {
       this.progressBar.terminate();
       callback(err);
     });
+  }
+
+  updateTag(pkg) {
+    const distTag = this.getDistTag();
+
+    if (NpmUtilities.checkDistTag(pkg.name, "lerna-temp", this.npmRegistry)) {
+      NpmUtilities.removeDistTag(pkg.name, "lerna-temp", this.npmRegistry);
+    }
+
+    if (this.flags.npmTag) {
+      NpmUtilities.addDistTag(pkg.name, this.updatesVersions[pkg.name], distTag, this.npmRegistry);
+    } else if (this.flags.canary) {
+      NpmUtilities.addDistTag(pkg.name, pkg.version, distTag, this.npmRegistry);
+    } else {
+      NpmUtilities.addDistTag(pkg.name, this.updatesVersions[pkg.name], distTag, this.npmRegistry);
+    }
+  }
+
+  getDistTag() {
+    const {npmTag, canary} = this.getOptions();
+    return npmTag || (canary && "canary") || "latest";
   }
 }

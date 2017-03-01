@@ -7,6 +7,18 @@ import LsCommand from "../src/commands/LsCommand";
 import logger from "../src/logger";
 import stub from "./_stub";
 
+function formatPrivate (pkg) {
+  return `${pkg} ${chalk.grey("v1.0.0")} (${chalk.red("private")})`;
+}
+
+function formatPublic (pkg) {
+  return `${pkg} ${chalk.grey("v1.0.0")}          `;
+}
+
+function formatOnlyPublic (pkg) {
+  return `${pkg} ${chalk.grey("v1.0.0")} `;
+}
+
 describe("LsCommand", () => {
 
   describe("in a basic repo", () => {
@@ -21,7 +33,7 @@ describe("LsCommand", () => {
       lsCommand.runPreparations();
 
       stub(logger, "info", (message) => {
-        assert.equal(message, `- package-1\n- package-2\n- package-3\n- package-4\n- package-5 (${chalk.red("private")})`);
+        assert.equal(message, `${formatPublic("package-1")}\n${formatPublic("package-2")}\n${formatPublic("package-3")}\n${formatPublic("package-4")}\n${formatPrivate("package-5")}`);
       });
 
       lsCommand.runCommand(exitWithCode(0, done));
@@ -41,7 +53,7 @@ describe("LsCommand", () => {
         lsCommand.runPreparations();
 
         stub(logger, "info", (message) => {
-          assert.equal(message, "- package-1");
+          assert.equal(message, formatOnlyPublic("package-1"));
         });
 
         lsCommand.runCommand(exitWithCode(0, done));
@@ -61,7 +73,7 @@ describe("LsCommand", () => {
       lsCommand.runPreparations();
 
       stub(logger, "info", (message) => {
-        assert.equal(message, "- package-1\n- package-2\n- package-3");
+        assert.equal(message, `${formatOnlyPublic("package-1")}\n${formatOnlyPublic("package-2")}\n${formatOnlyPublic("package-3")}`);
       });
 
       lsCommand.runCommand(exitWithCode(0, done));
@@ -83,7 +95,7 @@ describe("LsCommand", () => {
       lsCommand.runPreparations();
 
       stub(logger, "info", (message) => {
-        assert.equal(message, "- @test/package-2\n- @test/package-1");
+        assert.equal(message, `${formatOnlyPublic("@test/package-2")}\n${formatOnlyPublic("@test/package-1")}`);
       });
 
       lsCommand.runCommand(exitWithCode(0, done));

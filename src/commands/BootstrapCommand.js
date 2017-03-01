@@ -10,6 +10,10 @@ import semver from "semver";
 export default class BootstrapCommand extends Command {
   initialize(callback) {
     this.configFlags = this.repository.bootstrapConfig;
+    this.npmConfig = {
+      registry: this.npmRegistry,
+      client: this.getOptions().npmClient,
+    };
     callback(null, true);
   }
 
@@ -311,7 +315,7 @@ export default class BootstrapCommand extends Command {
       actions.push((cb) => NpmUtilities.installInDir(
         this.repository.rootPath,
         root.map(({dependency}) => dependency).filter((dep) => dep),
-        this.npmRegistry,
+        this.npmConfig,
         (err) => {
           if (err) return cb(err);
 
@@ -354,7 +358,7 @@ export default class BootstrapCommand extends Command {
     Object.keys(leaves)
       .map((pkgName) => ({pkg: this.packageGraph.get(pkgName).package, deps: leaves[pkgName]}))
       .forEach(({pkg, deps}) => actions.push(
-        (cb) => NpmUtilities.installInDir(pkg.location, deps, this.npmRegistry, (err) => {
+        (cb) => NpmUtilities.installInDir(pkg.location, deps, this.npmConfig, (err) => {
           this.progressBar.tick(pkg.name);
           cb(err);
         })

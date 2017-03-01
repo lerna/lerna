@@ -654,6 +654,34 @@ can be used to opt out of hoisting for certain dependencies.
 $ lerna bootstrap --hoist --nohoist=babel-*
 ```
 
+#### --npm-client [client]
+
+Install external dependencies using `[client] install`.  Must be an executable
+that knows how to install npm dependencies.
+
+```sh
+$ lerna bootstrap --npm-client=yarn
+```
+
+May also be configured in `lerna.json`:
+
+```js
+{
+  ...
+  "npmClient": "yarn"
+}
+```
+
+#### --stream
+
+Stream output from child processes immediately, prefixed with the originating
+package name.  This can be useful for long-running processes such as "watch"
+builds.  This allows output from different packages to be interleaved.
+
+```sh
+$ lerna run watch --stream
+```
+
 #### --registry [registry]
 
 When run with this flag, forwarded npm commands will use the specified registry for your package(s).
@@ -661,6 +689,12 @@ When run with this flag, forwarded npm commands will use the specified registry 
 This is useful if you do not want to explicitly set up your registry
 configuration in all of your package.json files individually when e.g. using
 private registries.
+
+#### --skip-temp-tag
+
+When activated, this flag will alter the default publish process by not creating
+a temporary tag and handling the process accordingly. Instead it will immediately
+publish with the proper dist-tag as [npm it self would](https://docs.npmjs.com/cli/dist-tag).
 
 ### Wizard
 

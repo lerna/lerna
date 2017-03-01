@@ -38,6 +38,31 @@ describe("RunCommand", () => {
       runCommand.runCommand(exitWithCode(0, done));
     });
 
+    it("should run with streaming enabled with --stream", (done) => {
+      const runCommand = new RunCommand(["my-script"], {stream: true});
+
+      runCommand.runValidations();
+      runCommand.runPreparations();
+
+      let calls = 0;
+      stub(ChildProcessUtilities, "spawnStreaming", (command, args, options, prefix, callback) => {
+        const pkg = "package-" + ([1,3][calls]);
+
+        assert.equal(command, "npm");
+        assert.deepEqual(args, ["run", "my-script"]);
+        assert.deepEqual(options, {
+          cwd: path.join(testDir, "packages/" + pkg),
+          env: process.env,
+        });
+        assert.equal(prefix, pkg + ": ");
+
+        calls++;
+        callback();
+      });
+
+      runCommand.runCommand(exitWithCode(0, done));
+    });
+
     const defaultScripts = [ "test", "env" ];
     defaultScripts.forEach((defaultScript) => {
       it(`should always run ${defaultScript}`, (done) => {
