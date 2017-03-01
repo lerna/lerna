@@ -1,6 +1,6 @@
 {
-  "name": "lerna",
-  "version": "2.0.0-beta.38",
+  "name": "lerna-auto1",
+  "version": "2.0.0-beta.38-auto1",
   "description": "Tool for managing JavaScript projects with multiple packages",
   "main": "lib/index.js",
   "scripts": {
@@ -13,15 +13,8 @@
     "ci": "npm run lint && cross-env DEBUG_CALLS=true npm run test",
     "prepublish": "npm run build"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/lerna/lerna.git"
-  },
   "author": "Sebastian McKenzie <sebmck@gmail.com>",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/lerna/lerna/issues"
-  },
   "homepage": "https://lernajs.io/",
   "dependencies": {
     "async": "^1.5.0",
