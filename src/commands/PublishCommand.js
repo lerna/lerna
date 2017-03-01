@@ -31,7 +31,16 @@ export default class PublishCommand extends Command {
     const updatedPackagesCollector = new UpdatedPackagesCollector(this);
 
     try {
-      this.updates = updatedPackagesCollector.getUpdates();
+      this.updates = updatedPackagesCollector.getUpdates().reduce(function (previousValue, item) {
+        if(!this.flags.packageName){
+          previousValue.push(item)
+          return previousValue
+        }
+        if(this.flags.packageName === item.package._package.name){
+          previousValue.push(item)
+        }
+        return previousValue;
+      }.bind(this),[]);
 
       const packagesToPublish = this.updates
         .map((update) => update.package)
