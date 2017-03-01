@@ -651,10 +651,10 @@ describe("PublishCommand", () => {
           { args: ["git tag v1.0.1"] }
         ]],
         [ChildProcessUtilities, "exec", { nodeCallback: true }, [
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-1")) + " && npm publish --tag prerelease"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-3")) + " && npm publish --tag prerelease"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-4")) + " && npm publish --tag prerelease"] },
-          { args: ["cd " + escapeArgs(path.join(testDir, "packages/package-2")) + " && npm publish --tag prerelease"] },
+          { args: ["npm publish --tag prerelease"] },
+          { args: ["npm publish --tag prerelease"] },
+          { args: ["npm publish --tag prerelease"] },
+          { args: ["npm publish --tag prerelease"] },
         ], true],
         [ChildProcessUtilities, "execSync", {}, [
 
