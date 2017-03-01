@@ -13,6 +13,14 @@
   <a href="https://slack.lernajs.io/"><img alt="Slack Status" src="https://slack.lernajs.io/badge.svg"></a>
 </p>
 
+- [About](#about)
+- [Getting Started](#getting-started)
+- [How It Works](#how-it-works)
+- [Commands](#commands)
+- [Misc](#misc)
+ - [Lerna.json](#lernajson)
+ - [Flags](#flags)
+
 ## About
 
 Splitting up large codebases into separate independently versioned packages
@@ -84,7 +92,7 @@ lerna-repo/
 
 This will create a `lerna.json` configuration file as well as a `packages` folder.
 
-## How it works
+## How It Works
 
 Lerna allows you to manage your project using one of two modes: Fixed or Independent.
 
