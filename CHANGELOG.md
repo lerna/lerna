@@ -21,6 +21,12 @@ $ lerna bootstrap --npm-client=yarn
 
 Very important fix for Babel that we used in the last release. This prevents a timing issue when publishing where a module will try to download a package that isn't published yet because it is published before it's own dependency is published itself. We used to get many issues from users on non-public npm about "babel-types" not being found.
 
+* [#475](https://github.com/lerna/lerna/pull/475) Lerna checks changes between last tag in current branch ([@](Gongreg))
+
+Lerna by default now check changes between last tag in current branch (instead of current latest tag in whole repository), it allows to publish older versions of project.
+
+Checks that user is in a branch and not a detached commit, because lerna can't publish without git branch.
+
 * [#608](https://github.com/lerna/lerna/pull/608) Add a --stream option to the run command. ([@gigabo](https://github.com/gigabo))
 
 Useful to get output for child processes immediately if using `lerna run` with a watch command
