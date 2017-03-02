@@ -316,7 +316,7 @@ export default class BootstrapCommand extends Command {
       // If we have anything to install in the root then we'll install
       // _everything_ that needs to go there.  This is important for
       // consistent behavior across npm clients.
-      const depsToInstallInRoot = root.filter(({isSatisfied}) => !isSatisfied).length
+      const depsToInstallInRoot = root.some(({isSatisfied}) => !isSatisfied)
         ? root.map(({dependency}) => dependency)
         : [];
 
@@ -369,7 +369,7 @@ export default class BootstrapCommand extends Command {
 
         // If we have any unsatisfied deps then we need to install everything.
         // This is important for consistent behavior across npm clients.
-        if (deps.filter(({isSatisfied}) => !isSatisfied).length) {
+        if (deps.some(({isSatisfied}) => !isSatisfied)) {
           actions.push(
             (cb) => NpmUtilities.installInDir(
               pkg.location, deps.map(({dependency}) => dependency), this.npmConfig, (err) => {
