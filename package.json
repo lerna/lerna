@@ -32,6 +32,7 @@
     "cross-spawn": "^4.0.0",
     "glob": "^7.0.6",
     "inquirer": "^3.0.1",
+    "jest": "^19.0.2",
     "lodash": "^4.17.4",
     "meow": "^3.7.0",
     "minimatch": "^3.0.0",
