@@ -213,6 +213,10 @@ export default class PublishCommand extends Command {
     const patch = semver.inc(currentVersion, "patch");
     const minor = semver.inc(currentVersion, "minor");
     const major = semver.inc(currentVersion, "major");
+    const prepatch = semver.inc(currentVersion, "prepatch");
+    const preminor = semver.inc(currentVersion, "preminor");
+    const premajor = semver.inc(currentVersion, "premajor");
+    const prerelease = semver.inc(currentVersion, "prerelease");
 
     let message = "Select a new version";
     if (packageName) message += ` for ${packageName}`;
@@ -223,6 +227,10 @@ export default class PublishCommand extends Command {
         { value: patch, name: `Patch (${patch})` },
         { value: minor, name: `Minor (${minor})` },
         { value: major, name: `Major (${major})` },
+        { value: prepatch, name: `Prepatch (${prepatch})` },
+        { value: preminor, name: `Preminor (${preminor})` },
+        { value: premajor, name: `Premajor (${premajor})` },
+        { value: prerelease, name: `Prerelease (${prerelease})` },
         { value: false, name: "Custom" }
       ]
     }, (choice) => {
