@@ -62,8 +62,7 @@
     "eslint-plugin-babel": "^3.3.0",
     "eslint-plugin-flow-vars": "^0.5.0",
     "fs-extra": "^0.30.0",
-    "normalize-newline": "^2.1.0",
-    "nyc": "^10.1.2"
+    "normalize-newline": "^2.1.0"
   },
   "jest": {
     "coverageDirectory": "coverage",
