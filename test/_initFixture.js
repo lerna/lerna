@@ -12,7 +12,7 @@ afterEach(() => {
   process.chdir(originalCwd);
 });
 
-after(() => {
+afterAll(() => {
   createdDirectories.map((dir) => rimraf.sync(dir));
 });
 

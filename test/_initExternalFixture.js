@@ -7,7 +7,7 @@ const tmpDir = path.resolve(__dirname, "../tmp");
 
 const createdDirectories = [];
 
-after(() => {
+afterAll(() => {
   createdDirectories.map((dir) => rimraf.sync(dir));
 });
 
