@@ -208,6 +208,14 @@ export default class BootstrapCommand extends Command {
      */
     const depsToInstall = {};
 
+    Object.keys(this.repository.package.allDependencies).forEach((name) => {
+      const version = this.repository.package.allDependencies[name];
+      depsToInstall[name] = {
+        versions   : {[version]: 0},
+        dependents : {[version]: []},
+      };
+    });
+
     // get the map of external dependencies to install
     packages.forEach((pkg) => {
 
