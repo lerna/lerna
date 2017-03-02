@@ -134,8 +134,9 @@ describe("ImportCommand", () => {
       importCommand.runPreparations();
 
       importCommand.runCommand(exitWithCode(1, (err) => {
-        const expect = `Cannot find module '${packageJson}'`;
-        assert.equal((err || {}).message, expect);
+        expect(err).toBeDefined();
+        expect(err.message).toMatch("package.json");
+        expect(err.code).toBe("MODULE_NOT_FOUND");
         done();
       }));
     });
