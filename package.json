@@ -5,11 +5,11 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "babel src -d lib",
-    "coverage": "nyc --reporter=lcov npm run test",
+    "coverage": "jest --coverage",
     "dev": "babel -w src -d lib",
     "lint": "eslint src test",
     "fix": "eslint src test --fix",
-    "test": "mocha -t 20000",
+    "test": "jest",
     "ci": "npm run lint && npm run test",
     "prepublish": "npm run build"
   },
@@ -67,6 +67,29 @@
     "mocha": "^2.4.5",
     "normalize-newline": "^2.1.0",
     "nyc": "^10.1.2"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.js"
+    ],
+    "modulePathIgnorePatterns": [
+      "<rootDir>/test/fixtures"
+    ],
+    "roots": [
+      "<rootDir>/src",
+      "<rootDir>/test"
+    ],
+    "setupFiles": [
+      "<rootDir>/test/_env.js"
+    ],
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/test/*.js"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/test/InitCommand.js",
+      "<rootDir>/test/_(.+)"
+    ]
   },
   "engines": {
     "node": ">= 4"
