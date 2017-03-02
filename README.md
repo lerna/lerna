@@ -286,9 +286,8 @@ When run with this flag, `publish` will update all `package.json` package
 versions and dependency versions, but it will not actually publish the
 packages to npm.
 
-This is useful as a workaround for an [npm
-issue](https://github.com/npm/registry/issues/42) which prevents README updates
-from appearing on npmjs.com when published via Lerna.  When publishing with
+> This was useful as a workaround for an [npm
+issue](https://github.com/npm/registry/issues/42) which has since been fixed.  When publishing with
 README changes, use `--skip-npm` and do the final `npm publish` by hand for
 each package.
 
