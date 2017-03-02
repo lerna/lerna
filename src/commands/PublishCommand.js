@@ -32,12 +32,12 @@ export default class PublishCommand extends Command {
 
     try {
       this.updates = updatedPackagesCollector.getUpdates().reduce(function (previousValue, item) {
-        if(!this.flags.packageName){
-          previousValue.push(item)
-          return previousValue
+        if (!this.flags.packageName) {
+          previousValue.push(item);
+          return previousValue;
         }
-        if(this.flags.packageName === item.package._package.name){
-          previousValue.push(item)
+        if (this.flags.packageName === item.package._package.name) {
+          previousValue.push(item);
         }
         return previousValue;
       }.bind(this),[]);
