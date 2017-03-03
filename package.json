@@ -63,6 +63,7 @@
     "fs-extra": "^0.30.0",
     "jest": "^19.0.2",
     "normalize-newline": "^2.1.0",
+    "pify": "^2.3.0",
     "recursive-copy": "^2.0.6"
   },
   "jest": {
