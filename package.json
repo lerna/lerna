@@ -12,7 +12,7 @@
     "test": "mocha -t 20000",
     "ci": "npm run lint && cross-env DEBUG_CALLS=true npm run test",
     "docs": "node ./scripts/docs/index.js",
-    "prepublish": "npm run build && npm run docs"
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
