@@ -5,10 +5,10 @@ import fs from "fs";
 import chalk from "chalk";
 
 import UpdatedCommand from "../src/commands/UpdatedCommand";
-import exitWithCode from "./_exitWithCode";
-import initFixture from "./_initFixture";
+import exitWithCode from "./helpers/exitWithCode";
+import initFixture from "./helpers/initFixture";
 import logger from "../src/logger";
-import stub from "./_stub";
+import stub from "./helpers/stub";
 import escapeArgs from "command-join";
 
 describe("UpdatedCommand", () => {

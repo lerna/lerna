@@ -4,7 +4,7 @@ import path from "path";
 import PackageUtilities from "../src/PackageUtilities";
 import Package from "../src/Package";
 import Repository from "../src/Repository";
-import initFixture from "./_initFixture";
+import initFixture from "./helpers/initFixture";
 
 describe("PackageUtilities", () => {
   let testDir;

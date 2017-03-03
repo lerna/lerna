@@ -2,10 +2,10 @@ import assert from "assert";
 import path from "path";
 
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
-import exitWithCode from "./_exitWithCode";
-import initFixture from "./_initFixture";
+import exitWithCode from "./helpers/exitWithCode";
+import initFixture from "./helpers/initFixture";
 import ExecCommand from "../src/commands/ExecCommand";
-import stub from "./_stub";
+import stub from "./helpers/stub";
 
 describe("ExecCommand", () => {
 

@@ -1,11 +1,11 @@
 import assert from "assert";
 import chalk from "chalk";
 
-import exitWithCode from "./_exitWithCode";
-import initFixture from "./_initFixture";
+import exitWithCode from "./helpers/exitWithCode";
+import initFixture from "./helpers/initFixture";
 import LsCommand from "../src/commands/LsCommand";
 import logger from "../src/logger";
-import stub from "./_stub";
+import stub from "./helpers/stub";
 
 function formatPrivate (pkg) {
   return `${pkg} ${chalk.grey("v1.0.0")} (${chalk.red("private")})`;

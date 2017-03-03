@@ -1,11 +1,11 @@
 import assert from "assert";
 
 import progressBar from "../src/progressBar";
-import initFixture from "./_initFixture";
+import initFixture from "./helpers/initFixture";
 import Command from "../src/Command";
 import {exposeCommands} from "../src/Command";
 import logger from "../src/logger";
-import stub from "./_stub";
+import stub from "./helpers/stub";
 
 describe("Command", () => {
   describe(".input", () => {

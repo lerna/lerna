@@ -2,12 +2,12 @@ import assert from "assert";
 import path from "path";
 
 import FileSystemUtilities from "../src/FileSystemUtilities";
-import exitWithCode from "./_exitWithCode";
-import initFixture from "./_initFixture";
+import exitWithCode from "./helpers/exitWithCode";
+import initFixture from "./helpers/initFixture";
 import CleanCommand from "../src/commands/CleanCommand";
 import PromptUtilities from "../src/PromptUtilities";
-import stub from "./_stub";
-import assertStubbedCalls from "./_assertStubbedCalls";
+import stub from "./helpers/stub";
+import assertStubbedCalls from "./helpers/assertStubbedCalls";
 
 describe("CleanCommand", () => {
 

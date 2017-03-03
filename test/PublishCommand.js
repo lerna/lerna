@@ -10,10 +10,10 @@ import ConventionalCommitUtilities from "../src/ConventionalCommitUtilities";
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
 import PromptUtilities from "../src/PromptUtilities";
 import PublishCommand from "../src/commands/PublishCommand";
-import exitWithCode from "./_exitWithCode";
-import initFixture from "./_initFixture";
+import exitWithCode from "./helpers/exitWithCode";
+import initFixture from "./helpers/initFixture";
 
-import assertStubbedCalls from "./_assertStubbedCalls";
+import assertStubbedCalls from "./helpers/assertStubbedCalls";
 
 describe("PublishCommand", () => {
 

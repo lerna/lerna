@@ -79,7 +79,7 @@
       "<rootDir>/test"
     ],
     "setupFiles": [
-      "<rootDir>/test/_env.js"
+      "<rootDir>/test/helpers/env.js"
     ],
     "testEnvironment": "node",
     "testMatch": [
