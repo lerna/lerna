@@ -1,6 +1,6 @@
 import assert from "assert";
 import chalk from "chalk";
-import stub from "./_stub";
+import stub from "./stub";
 
 function debugCallsLog(expected, num, call) {
   if (process.env.DEBUG_CALLS) {

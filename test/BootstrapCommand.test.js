@@ -7,11 +7,11 @@ import normalize from "normalize-path";
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
 import FileSystemUtilities from "../src/FileSystemUtilities";
 import BootstrapCommand from "../src/commands/BootstrapCommand";
-import exitWithCode from "./_exitWithCode";
-import initFixture from "./_initFixture";
-import stub from "./_stub";
+import exitWithCode from "./helpers/exitWithCode";
+import initFixture from "./helpers/initFixture";
+import stub from "./helpers/stub";
 
-import assertStubbedCalls from "./_assertStubbedCalls";
+import assertStubbedCalls from "./helpers/assertStubbedCalls";
 
 const STDIO_OPT = ["ignore", "pipe", "pipe"];
 

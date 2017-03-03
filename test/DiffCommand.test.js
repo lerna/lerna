@@ -2,10 +2,10 @@ import assert from "assert";
 import path from "path";
 
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
-import exitWithCode from "./_exitWithCode";
+import exitWithCode from "./helpers/exitWithCode";
 import DiffCommand from "../src/commands/DiffCommand";
-import initFixture from "./_initFixture";
-import stub from "./_stub";
+import initFixture from "./helpers/initFixture";
+import stub from "./helpers/stub";
 
 describe("DiffCommand", () => {
   let testDir;

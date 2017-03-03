@@ -8,10 +8,10 @@ import mkdirp from "mkdirp";
 import PromptUtilities from "../src/PromptUtilities";
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
 import ImportCommand from "../src/commands/ImportCommand";
-import exitWithCode from "./_exitWithCode";
-import initFixture from "./_initFixture";
-import initExternalFixture from "./_initExternalFixture";
-import assertStubbedCalls from "./_assertStubbedCalls";
+import exitWithCode from "./helpers/exitWithCode";
+import initFixture from "./helpers/initFixture";
+import initExternalFixture from "./helpers/initExternalFixture";
+import assertStubbedCalls from "./helpers/assertStubbedCalls";
 
 describe("ImportCommand", () => {
 

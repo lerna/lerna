@@ -2,12 +2,12 @@ import assert from "assert";
 import path from "path";
 
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
-import exitWithCode from "./_exitWithCode";
-import initFixture from "./_initFixture";
+import exitWithCode from "./helpers/exitWithCode";
+import initFixture from "./helpers/initFixture";
 import RunCommand from "../src/commands/RunCommand";
 import logger from "../src/logger";
-import stub from "./_stub";
-import FakeChild from "./_fakeChild";
+import stub from "./helpers/stub";
+import FakeChild from "./helpers/fakeChild";
 
 describe("RunCommand", () => {
 

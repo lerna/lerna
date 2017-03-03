@@ -1,5 +1,5 @@
 import assert from "assert";
-import stub from "./_stub";
+import stub from "./helpers/stub";
 
 import logger from "../src/logger";
 
