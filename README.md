@@ -64,9 +64,11 @@ The two primary commands in Lerna are `lerna bootstrap` and `lerna publish`.
 
 Let's start by installing Lerna globally with [npm](https://www.npmjs.com/).
 
+<!-- AUTO-GENERATED-CONTENT:START (INSTALLCMD:exact=true&flags=["--global"]) -->
 ```sh
-$ npm install --global lerna
+npm install --global lerna@2.0.0-beta.38
 ```
+<!-- AUTO-GENERATED-CONTENT:END *-->
 
 Next we'll create a new [git](https://git-scm.com/) repository:
 
@@ -133,14 +135,17 @@ When run, this command will:
 
 Example output on a new git repo:
 
+<!-- AUTO-GENERATED-CONTENT:START (TEMPLATE:src=./scripts/docs/init.md) -->
 ```sh
 > lerna init
-$ Lerna v2.0.0-beta.31
+$ Lerna v2.0.0-beta.38
 $ Creating packages directory.
 $ Updating package.json.
 $ Creating lerna.json.
 $ Successfully created Lerna files
 ```
+
+<!-- AUTO-GENERATED-CONTENT:END *-->
 
 #### --independent, -i
 
@@ -451,9 +456,10 @@ Running `lerna` without arguments will show all commands/options.
 
 ### lerna.json
 
+<!-- AUTO-GENERATED-CONTENT:START (TEMPLATE:src=./scripts/docs/lerna-json.md) -->
 ```js
 {
-  "lerna": "2.0.0-beta.31",
+  "lerna": "2.0.0-beta.38",
   "version": "1.1.3",
   "commands": {
     "publish": {
@@ -469,6 +475,8 @@ Running `lerna` without arguments will show all commands/options.
   "packages": ["packages/*"]
 }
 ```
+
+<!-- AUTO-GENERATED-CONTENT:END *-->
 
 - `lerna`: the current version of Lerna being used.
 - `version`: the current version of the repository.
@@ -516,9 +524,10 @@ applied to specific commands.
 
 Example:
 
+<!-- AUTO-GENERATED-CONTENT:START (TEMPLATE:src=./scripts/docs/lerna-json-flags.md) -->
 ```json
 {
-  "lerna": "x.x.x",
+  "lerna": "2.0.0-beta.38",
   "version": "1.2.0",
   "exampleOption": "foo",
   "command": {
@@ -528,6 +537,8 @@ Example:
   },
 }
 ```
+
+<!-- AUTO-GENERATED-CONTENT:END *-->
 
 In this case `exampleOption` will be "foo" for all commands except `init`,
 where it will be "bar".  In all cases it may be overridden to "baz" on the
@@ -565,9 +576,10 @@ The `ignore` flag, when used with the `bootstrap` command, can also be set in `l
 
 **Example**
 
+<!-- AUTO-GENERATED-CONTENT:START (TEMPLATE:src=./scripts/docs/lerna-json-ignore-flag.md) -->
 ```javascript
 {
-  "lerna": "2.0.0-beta.31",
+  "lerna": "2.0.0-beta.38",
   "version": "0.0.0",
   "commands": {
     "bootstrap": {
@@ -576,6 +588,8 @@ The `ignore` flag, when used with the `bootstrap` command, can also be set in `l
   }
 }
 ```
+
+<!-- AUTO-GENERATED-CONTENT:END *-->
 
 > Hint: The glob is matched against the package name defined in `package.json`,
 > not the directory name the package lives in.
