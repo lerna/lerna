@@ -27,3 +27,4 @@ tmp
 .changelog
 coverage/
 .nyc_output/
+.eslintcache
