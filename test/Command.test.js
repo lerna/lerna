@@ -79,9 +79,7 @@ describe("Command", () => {
   });
 
   describe(".getOptions()", () => {
-    beforeEach((done) => {
-      initFixture("Command/basic", done);
-    });
+    beforeEach(() => initFixture("Command/basic"));
 
     class TestACommand extends Command {
     }
@@ -124,9 +122,7 @@ describe("Command", () => {
   });
 
   describe("legacy options", () => {
-    beforeEach((done) => {
-      initFixture("Command/legacy", done);
-    });
+    beforeEach(() => initFixture("Command/legacy"));
 
     class TestCommand extends Command {
     }

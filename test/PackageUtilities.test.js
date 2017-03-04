@@ -9,9 +9,9 @@ import initFixture from "./helpers/initFixture";
 describe("PackageUtilities", () => {
   let testDir;
 
-  beforeEach((done) => {
-    testDir = initFixture("PackageUtilities/basic", done);
-  });
+  beforeEach(() => initFixture("PackageUtilities/basic").then((dir) => {
+    testDir = dir;
+  }));
 
   describe(".getPackagesPath()", () => {
     it("should append the packages path to the repo path given", () => {
@@ -70,12 +70,9 @@ describe("PackageUtilities", () => {
   describe("._filterPackages()", () => {
     let packages;
 
-    beforeEach((done) => {
-      initFixture("PackageUtilities/filtering", () => {
-        packages = PackageUtilities.getPackages(new Repository);
-        done();
-      });
-    });
+    beforeEach(() => initFixture("PackageUtilities/filtering").then(() => {
+      packages = PackageUtilities.getPackages(new Repository);
+    }));
 
     it("should return everything when --scope is given but empty", () => {
       assert.deepEqual(
@@ -126,12 +123,9 @@ describe("PackageUtilities", () => {
   describe(".topologicallyBatchPackages()", () => {
     let packages;
 
-    beforeEach((done) => {
-      initFixture("PackageUtilities/toposort", () => {
-        packages = PackageUtilities.getPackages(new Repository);
-        done();
-      });
-    });
+    beforeEach(() => initFixture("PackageUtilities/toposort").then(() => {
+      packages = PackageUtilities.getPackages(new Repository);
+    }));
 
     it("should batch roots, then internal/leaf nodes, then cycles", () => {
       assert.deepEqual(
@@ -184,12 +178,9 @@ describe("PackageUtilities", () => {
   describe(".filterPackages()", () => {
     let packages;
 
-    beforeEach((done) => {
-      initFixture("PackageUtilities/filtering", () => {
-        packages = PackageUtilities.getPackages(new Repository);
-        done();
-      });
-    });
+    beforeEach(() => initFixture("PackageUtilities/filtering").then(() => {
+      packages = PackageUtilities.getPackages(new Repository);
+    }));
 
     it("should filter --scoped packages", () => {
       const flags = { scope: "package-a-*"};

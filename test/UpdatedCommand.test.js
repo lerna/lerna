@@ -20,9 +20,9 @@ describe("UpdatedCommand", () => {
   describe("Basic", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("UpdatedCommand/basic", done);
-    });
+    beforeEach(() => initFixture("UpdatedCommand/basic").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should list changes", (done) => {
       child.execSync("git tag v1.0.0");
@@ -175,9 +175,9 @@ describe("UpdatedCommand", () => {
   describe("Circular Dependencies", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("UpdatedCommand/circular", done);
-    });
+    beforeEach(() => initFixture("UpdatedCommand/circular").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should list changes", (done) => {
       child.execSync("git tag v1.0.0");

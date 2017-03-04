@@ -10,9 +10,9 @@ import stub from "./helpers/stub";
 describe("DiffCommand", () => {
   let testDir;
 
-  beforeEach((done) => {
-    testDir = initFixture("DiffCommand/basic", done);
-  });
+  beforeEach(() => initFixture("DiffCommand/basic").then((dir) => {
+    testDir = dir;
+  }));
 
   it("should diff everything", (done) => {
     const diffCommand = new DiffCommand([], {});
