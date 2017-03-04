@@ -226,7 +226,7 @@ export default class BootstrapCommand extends Command {
         .map((name) => findPackage(name, pkg.allDependencies[name]) || { name, version: pkg.allDependencies[name] })
 
         // match external and version mismatched local packages
-        .filter((dep) => !hasPackage(dep.name, dep.version) || !pkg.hasMatchingDependency(dep))
+        .filter((dep) => !hasPackage(dep.name, dep.version) || !pkg.hasMatchingDependency(dep, this.logger))
 
         .forEach(({name, version}) => {
 
