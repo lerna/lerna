@@ -22,7 +22,7 @@ const gitInitInDir = (testDir) => {
   let chain = Promise.resolve();
 
   GIT_INIT_COMMANDS.forEach((cmd) => {
-    chain = chain.then(execAsync(cmd, opts));
+    chain = chain.then(() => execAsync(cmd, opts));
   });
 
   return chain;
