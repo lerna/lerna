@@ -72,6 +72,9 @@
     "collectCoverageFrom": [
       "src/**/*.js"
     ],
+    "modulePathIgnorePatterns": [
+      "<rootDir>/test/fixtures"
+    ],
     "roots": [
       "<rootDir>/src",
       "<rootDir>/test"
