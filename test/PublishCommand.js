@@ -24,9 +24,9 @@ describe("PublishCommand", () => {
   describe("normal mode", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/normal", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should publish the changed packages", (done) => {
       const publishCommand = new PublishCommand([], {});
@@ -120,9 +120,9 @@ describe("PublishCommand", () => {
   describe("independent mode", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/independent", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/independent").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should publish the changed packages in independent mode", (done) => {
       const publishCommand = new PublishCommand([], {
@@ -216,9 +216,9 @@ describe("PublishCommand", () => {
   describe("normal mode as canary", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/normal", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should publish the changed packages", (done) => {
       const publishCommand = new PublishCommand([], {
@@ -306,9 +306,9 @@ describe("PublishCommand", () => {
   describe("independent mode as canary", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/independent", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/independent").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should publish the changed packages", (done) => {
       const publishCommand = new PublishCommand([], {
@@ -395,9 +395,9 @@ describe("PublishCommand", () => {
   describe("normal mode with --skip-git", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/normal", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should publish the changed packages", (done) => {
       const publishCommand = new PublishCommand([], {
@@ -474,9 +474,9 @@ describe("PublishCommand", () => {
   describe("normal mode with --skip-npm", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/normal", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should update versions and push changes but not publish", (done) => {
       const publishCommand = new PublishCommand([], {
@@ -542,9 +542,9 @@ describe("PublishCommand", () => {
   describe("normal mode with --skip-git and --skip-npm", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/normal", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should update versions but not push changes or publish", (done) => {
       const publishCommand = new PublishCommand([], {
@@ -599,9 +599,9 @@ describe("PublishCommand", () => {
   describe("normal mode with --skip-temp-tag", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/normal", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should publish the changed packages without the temp tag", (done) => {
       const publishCommand = new PublishCommand([], {
@@ -666,9 +666,9 @@ describe("PublishCommand", () => {
   describe("normal mode with --npm-tag", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/normal", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should publish the changed packages with npm tag", (done) => {
       const publishCommand = new PublishCommand([], {
@@ -781,18 +781,18 @@ describe("PublishCommand", () => {
       NODE_ENV: "lerna-test",
     };
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/normal", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
+      testDir = dir;
+
+      // mock out the ENV to a simpler version for testing
+      process.env = mockEnv;
+    }));
 
     afterEach(() => {
       process.env = originalEnv;
     });
 
     it("should publish the changed packages", (done) => {
-      // mock out the ENV to a simpler version for testing
-      process.env = mockEnv;
-
       const publishCommand = new PublishCommand([], {
         repoVersion: "1.0.1",
         registry: "https://my-private-registry"
@@ -893,18 +893,18 @@ describe("PublishCommand", () => {
       NODE_ENV: "lerna-test",
     };
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/registries", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/registries").then((dir) => {
+      testDir = dir;
+
+      // mock out the ENV to a simpler version for testing
+      process.env = mockEnv;
+    }));
 
     afterEach(() => {
       process.env = originalEnv;
     });
 
     it("should use config property", (done) => {
-      // mock out the ENV to a simpler version for testing
-      process.env = mockEnv;
-
       const publishCommand = new PublishCommand([], {
         repoVersion: "1.0.1"
       });
@@ -959,9 +959,9 @@ describe("PublishCommand", () => {
   describe("normal mode with --repo-version", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/normal", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should publish the changed packages", (done) => {
       const publishCommand = new PublishCommand([], {
@@ -1054,9 +1054,9 @@ describe("PublishCommand", () => {
   describe("normal mode with --repo-version and --exact", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/normal", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should publish the changed packages", (done) => {
       const publishCommand = new PublishCommand([], {
@@ -1254,9 +1254,9 @@ describe("PublishCommand", () => {
   describe("normal mode with --cd-version", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/normal", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should use semver increments when passed to cdVersion flag", (done) => {
       const publishCommand = new PublishCommand([], {
@@ -1345,9 +1345,9 @@ describe("PublishCommand", () => {
   describe("indepdendent mode with --cd-version", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/independent", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/independent").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should use semver increments when passed to cdVersion flag", (done) => {
       const publishCommand = new PublishCommand([], {
@@ -1437,9 +1437,9 @@ describe("PublishCommand", () => {
   describe("normal mode with --git-remote", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/normal", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should publish the changed packages", (done) => {
       const publishCommand = new PublishCommand([], {
@@ -1535,9 +1535,9 @@ describe("PublishCommand", () => {
   describe("normal mode with --message", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/normal", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should publish the changed packages, committing the publish changes with a custom message", (done) => {
       const publishCommand = new PublishCommand([], {
@@ -1635,9 +1635,9 @@ describe("PublishCommand", () => {
   describe("independent mode with --message", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/independent", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/independent").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should publish the changed packages in independent mode, committing with a custom msg", (done) => {
       const publishCommand = new PublishCommand([], {

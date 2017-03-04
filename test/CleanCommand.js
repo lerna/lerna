@@ -14,9 +14,9 @@ describe("CleanCommand", () => {
   describe("basic tests", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("CleanCommand/basic", done);
-    });
+    beforeEach(() => initFixture("CleanCommand/basic").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should rm -rf the node_modules", (done) => {
       const cleanCommand = new CleanCommand([], {});
@@ -99,9 +99,9 @@ describe("CleanCommand", () => {
   describe("--include-filtered-dependencies", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("CleanCommand/include-filtered-dependencies", done);
-    });
+    beforeEach(() => initFixture("CleanCommand/include-filtered-dependencies").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should not remove node_modules from unaffiliated packages", (done) => {
       const cleanCommand = new CleanCommand([], {

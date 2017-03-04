@@ -1,31 +1,29 @@
-import rimraf from "rimraf";
-import child from "child_process";
 import path from "path";
-import fse from "fs-extra";
+import cp from "recursive-copy";
+import {
+  fixtureNamer,
+  getTempDir,
+  gitInit,
+  removeAll,
+} from "./fixtureUtils";
 
-const tmpDir = path.resolve(__dirname, "../tmp");
+const pTmpDir = getTempDir("external");
+const getFixtureName = fixtureNamer();
 
 const createdDirectories = [];
+afterAll(() => removeAll(createdDirectories));
 
-afterAll(() => {
-  createdDirectories.map((dir) => rimraf.sync(dir));
-});
+export default function initExternalFixture(fixturePath) {
+  const fixtureDir = path.resolve(__dirname, `../fixtures/${fixturePath}`);
+  const fixtureName = getFixtureName(fixturePath);
 
-let uniqueId = 0;
+  return pTmpDir.then((tmpDir) => {
+    const testDir = path.join(tmpDir, fixtureName);
 
-export default function initExternalFixture(fixturePath, callback) {
-  const fixtureDir = path.resolve(__dirname, "../fixtures/" + fixturePath);
-  const testDir = path.resolve(tmpDir, "test-external-" + Date.now() + "-" + (uniqueId++));
+    createdDirectories.push(testDir);
 
-  createdDirectories.push(testDir);
-
-  fse.copy(fixtureDir, testDir, (err) => {
-    if (err) return callback(err);
-    child.execSync("git init . && git add -A && git commit -m \"Init external commit\"", {
-      cwd: testDir
-    });
-    callback();
+    return cp(fixtureDir, testDir)
+      .then(() => gitInit(testDir, "Init external commit"))
+      .then(() => testDir);
   });
-
-  return testDir;
 }

@@ -11,9 +11,10 @@ describe("ExecCommand", () => {
 
   describe("in a basic repo", () => {
     let testDir;
-    beforeEach((done) => {
-      testDir = initFixture("ExecCommand/basic", done);
-    });
+
+    beforeEach(() => initFixture("ExecCommand/basic").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should complain if invoked without command", (done) => {
       const execCommand = new ExecCommand([], {});

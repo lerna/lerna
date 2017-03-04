@@ -24,9 +24,9 @@ describe("BootstrapCommand", () => {
   describe("lifecycle scripts", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("BootstrapCommand/lifecycle-scripts", done);
-    });
+    beforeEach(() => initFixture("BootstrapCommand/lifecycle-scripts").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should run preinstall, postinstall and prepublish scripts", (done) => {
       const bootstrapCommand = new BootstrapCommand([], {});
@@ -53,9 +53,9 @@ describe("BootstrapCommand", () => {
   describe("with hoisting", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("BootstrapCommand/basic", done);
-    });
+    beforeEach(() => initFixture("BootstrapCommand/basic").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should hoist", (done) => {
       const bootstrapCommand = new BootstrapCommand([], {hoist: true});
@@ -179,9 +179,9 @@ describe("BootstrapCommand", () => {
   describe("dependencies between packages in the repo", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("BootstrapCommand/basic", done);
-    });
+    beforeEach(() => initFixture("BootstrapCommand/basic").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should bootstrap packages", (done) => {
       const bootstrapCommand = new BootstrapCommand([], {});
@@ -363,9 +363,9 @@ describe("BootstrapCommand", () => {
   describe("a repo with packages outside of packages/", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("BootstrapCommand/extra", done);
-    });
+    beforeEach(() => initFixture("BootstrapCommand/extra").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should bootstrap packages", (done) => {
       const bootstrapCommand = new BootstrapCommand([], {});
@@ -558,9 +558,9 @@ describe("BootstrapCommand", () => {
   describe("external dependencies that haven't been installed", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("BootstrapCommand/cold", done);
-    });
+    beforeEach(() => initFixture("BootstrapCommand/cold").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should get installed", (done) => {
       const bootstrapCommand = new BootstrapCommand([], {});
@@ -605,9 +605,9 @@ describe("BootstrapCommand", () => {
   describe("external dependencies that have already been installed", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("BootstrapCommand/warm", done);
-    });
+    beforeEach(() => initFixture("BootstrapCommand/warm").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should not get re-installed", (done) => {
       const bootstrapCommand = new BootstrapCommand([], {});
@@ -638,9 +638,9 @@ describe("BootstrapCommand", () => {
   describe("packages with at least one external dependency to install", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("BootstrapCommand/tepid", done);
-    });
+    beforeEach(() => initFixture("BootstrapCommand/tepid").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should install all dependencies", (done) => {
       const bootstrapCommand = new BootstrapCommand([], {});
@@ -681,9 +681,9 @@ describe("BootstrapCommand", () => {
   describe("peer dependencies in packages in the repo", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("BootstrapCommand/peer", done);
-    });
+    beforeEach(() => initFixture("BootstrapCommand/peer").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should not bootstrap ignored peer dependencies", (done) => {
       const bootstrapCommand = new BootstrapCommand([], {
@@ -718,9 +718,7 @@ describe("BootstrapCommand", () => {
   });
 
   describe("zero packages", () => {
-    beforeEach((done) => {
-      initFixture("BootstrapCommand/zero-pkgs", done);
-    });
+    beforeEach(() => initFixture("BootstrapCommand/zero-pkgs"));
 
     it("should succeed in repositories with zero packages", (done) => {
       const bootstrapCommand = new BootstrapCommand([], {});
@@ -744,18 +742,18 @@ describe("BootstrapCommand", () => {
       NODE_ENV: "lerna-test",
     };
 
-    beforeEach((done) => {
-      testDir = initFixture("BootstrapCommand/registries", done);
-    });
+    beforeEach(() => initFixture("BootstrapCommand/registries").then((dir) => {
+      testDir = dir;
+
+      // mock out the ENV to a simpler version for testing
+      process.env = mockEnv;
+    }));
 
     afterEach(() => {
       process.env = originalEnv;
     });
 
     it("should use config property", (done) => {
-      // mock out the ENV to a simpler version for testing
-      process.env = mockEnv;
-
       const bootstrapCommand = new BootstrapCommand([], {});
       const env = Object.assign({}, mockEnv, {
         npm_config_registry: "https://my-secure-registry/npm",

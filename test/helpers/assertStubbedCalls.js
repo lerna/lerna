@@ -1,4 +1,4 @@
-import stub from "./_stub";
+import stub from "./stub";
 
 function stringifyCall(object, method, args) {
   let str = `${object.name}.${method}(`;

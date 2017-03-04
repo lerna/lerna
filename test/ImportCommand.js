@@ -16,15 +16,18 @@ import assertStubbedCalls from "./helpers/assertStubbedCalls";
 describe("ImportCommand", () => {
 
   describe("import", () => {
-    let testDir, externalDir;
+    let testDir;
+    let externalDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("ImportCommand/basic", done);
-    });
-
-    beforeEach((done) => {
-      externalDir = initExternalFixture("ImportCommand/external", done);
-    });
+    beforeEach(() =>
+      Promise.all([
+        initFixture("ImportCommand/basic"),
+        initExternalFixture("ImportCommand/external"),
+      ]).then((dirs) => {
+        testDir = dirs[0];
+        externalDir = dirs[1];
+      })
+    );
 
     it("should import into packages with commit history", (done) => {
       const importCommand = new ImportCommand([externalDir], {});
