@@ -4,7 +4,7 @@ import async from "async";
 import Command from "../Command";
 import progressBar from "../progressBar";
 import PromptUtilities from "../PromptUtilities";
-import {execSync, exec} from "../ChildProcessUtilities";
+import ChildProcessUtilities from "../ChildProcessUtilities";
 
 export default class ImportCommand extends Command {
   initialize(callback) {
@@ -55,9 +55,9 @@ export default class ImportCommand extends Command {
     }
 
     // Stash the repo's pre-import head away in case something goes wrong.
-    this.preImportHead = execSync("git log --format=\"%h\" -1").split("\n")[0];
+    this.preImportHead = ChildProcessUtilities.execSync("git log --format=\"%h\" -1").split("\n")[0];
 
-    if (execSync("git diff " + this.preImportHead)) {
+    if (ChildProcessUtilities.execSync("git diff " + this.preImportHead)) {
       return callback(new Error("Local repository has un-committed changes"));
     }
 
@@ -78,7 +78,7 @@ export default class ImportCommand extends Command {
   }
 
   externalExecSync(command) {
-    return execSync(command, this.externalExecOpts).trim();
+    return ChildProcessUtilities.execSync(command, this.externalExecOpts).trim();
   }
 
   execute(callback) {
@@ -103,7 +103,7 @@ export default class ImportCommand extends Command {
       //
       // Fall back to three-way merge, which can help with duplicate commits
       // due to merge history.
-      exec("git am -3", {}, (err) => {
+      ChildProcessUtilities.exec("git am -3", {}, (err) => {
         if (err) {
 
           // Give some context for the error message.
@@ -111,8 +111,8 @@ export default class ImportCommand extends Command {
                 `Rolling back to previous HEAD (commit ${this.preImportHead}).`;
 
           // Abort the failed `git am` and roll back to previous HEAD.
-          execSync("git am --abort");
-          execSync("git reset --hard " + this.preImportHead);
+          ChildProcessUtilities.execSync("git am --abort");
+          ChildProcessUtilities.execSync("git reset --hard " + this.preImportHead);
         }
         done(err);
       }).stdin.end(patch);
