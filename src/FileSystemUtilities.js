@@ -4,7 +4,7 @@ import mkdirp from "mkdirp";
 import fs from "fs";
 import cmdShim from "cmd-shim";
 import readCmdShim from "read-cmd-shim";
-import { resolve, dirname, relative } from "path";
+import path from "path";
 import ChildProcessUtilities from "./ChildProcessUtilities";
 
 const ENDS_WITH_NEW_LINE = /\n$/;
@@ -83,7 +83,7 @@ export default class FileSystemUtilities {
       type = "file";
     }
     if (process.platform !== "win32") {
-      src = relative(dirname(dest), src);
+      src = path.relative(path.dirname(dest), src);
     }
     fs.lstat(dest, (err) => {
       if (!err) {
@@ -101,20 +101,20 @@ export default class FileSystemUtilities {
   }
 
   @logger.logifySync()
-  static isSymlink(path) {
-    const lstat = fs.lstatSync(path);
+  static isSymlink(filePath) {
+    const lstat = fs.lstatSync(filePath);
     let isSymlink = lstat && lstat.isSymbolicLink()
-      ? resolve(dirname(path), fs.readlinkSync(path))
+      ? path.resolve(path.dirname(filePath), fs.readlinkSync(filePath))
       : false;
     if (process.platform === "win32" && lstat) {
       if (lstat.isFile() && !isSymlink) {
         try {
-          return resolve(dirname(path), readCmdShim.sync(path));
+          return path.resolve(path.dirname(filePath), readCmdShim.sync(filePath));
         } catch (e) {
           return false;
         }
       }
-      isSymlink = isSymlink && resolve(isSymlink);
+      isSymlink = isSymlink && path.resolve(isSymlink);
     }
     return isSymlink;
   }
