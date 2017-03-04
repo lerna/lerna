@@ -1,4 +1,3 @@
-import assert from "assert";
 import stub from "./_stub";
 
 function stringifyCall(object, method, args) {
@@ -24,16 +23,15 @@ export default function assertStubbedCalls(definitions) {
       let {args, returns, throws} = current.call;
 
       try {
-        assert.equal(object[method], current.object[current.method]);
+        expect(object[method]).toBe(current.object[current.method]);
 
         for (let a = 0; a < args.length; a++) {
-          assert.deepEqual(actualArgs[a], args[a]);
+          expect(actualArgs[a]).toEqual(args[a]);
         }
       } catch (err) {
-        throw new Error(
-          `Call ${currentCount} was expected to be: ${stringifyCall(current.object, current.method, args)}, ` +
-          `but was actually: ${stringifyCall(object, method, actualArgs)}.`
-        );
+        // prepend JestAssertionError message with useful metadata before re-throwing
+        err.message = `Call ${currentCount} of ${object.name}.${method}() has unexpected args!\n\n${err.message}`;
+        throw err;
       }
 
       if (current.opts.nodeCallback) {
