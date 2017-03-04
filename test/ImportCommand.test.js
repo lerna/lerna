@@ -137,9 +137,9 @@ describe("ImportCommand", () => {
       importCommand.runPreparations();
 
       importCommand.runCommand(exitWithCode(1, (err) => {
-        assert.ok(err, "error object missing");
-        assert.ok(err.message.search(packageJson) > -1, "path to package.json missing in error message");
-        assert.equal(err.code, "MODULE_NOT_FOUND");
+        expect(err).toBeDefined();
+        expect(err.message).toMatch("package.json");
+        expect(err.code).toBe("MODULE_NOT_FOUND");
         done();
       }));
     });
