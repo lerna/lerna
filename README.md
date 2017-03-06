@@ -189,7 +189,7 @@ Let's use `babel` as an example.
 ```
 
 - Lerna checks if each dependency is also part of the Lerna repo.
-  - In this example, `babel-generator` is a dependency, while `source-map` is not.
+  - In this example, `babel-generator` is an internal dependency, while `source-map` is an external dependency.
   - `source-map` is `npm install`ed like normal.
 - `packages/babel-core/node_modules/babel-generator` symlinks to `packages/babel-generator`
 - This allows nested directory imports
