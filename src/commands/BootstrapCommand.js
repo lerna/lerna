@@ -208,6 +208,14 @@ export default class BootstrapCommand extends Command {
      */
     const depsToInstall = {};
 
+    Object.keys(this.repository.package.allDependencies).forEach((name) => {
+      const version = this.repository.package.allDependencies[name];
+      depsToInstall[name] = {
+        versions   : {[version]: 0},
+        dependents : {[version]: []},
+      };
+    });
+
     // get the map of external dependencies to install
     packages.forEach((pkg) => {
 
@@ -271,9 +279,8 @@ export default class BootstrapCommand extends Command {
           name,
           dependents: (dependents[rootVersion] || [])
             .map((dep) => this.packageGraph.get(dep).package),
-          dependency: this.repository.hasDependencyInstalled(name, rootVersion)
-            ? null // Don't re-install if it's already there.
-            : `${name}@${rootVersion}`,
+          dependency: `${name}@${rootVersion}`,
+          isSatisfied: this.repository.hasDependencyInstalled(name, rootVersion),
         });
       }
 
@@ -293,9 +300,10 @@ export default class BootstrapCommand extends Command {
           }
 
           // only install dependency if it's not already installed
-          if (!findPackage(pkg).hasDependencyInstalled(name)) {
-            (leaves[pkg] || (leaves[pkg] = [])).push(`${name}@${version}`);
-          }
+          (leaves[pkg] || (leaves[pkg] = [])).push({
+            dependency: `${name}@${version}`,
+            isSatisfied: findPackage(pkg).hasDependencyInstalled(name),
+          });
         });
       });
     });
@@ -312,9 +320,17 @@ export default class BootstrapCommand extends Command {
 
     // Start root install first, if any, since it's likely to take the longest.
     if (Object.keys(root).length) {
+
+      // If we have anything to install in the root then we'll install
+      // _everything_ that needs to go there.  This is important for
+      // consistent behavior across npm clients.
+      const depsToInstallInRoot = root.some(({isSatisfied}) => !isSatisfied)
+        ? root.map(({dependency}) => dependency)
+        : [];
+
       actions.push((cb) => NpmUtilities.installInDir(
         this.repository.rootPath,
-        root.map(({dependency}) => dependency).filter((dep) => dep),
+        depsToInstallInRoot,
         this.npmConfig,
         (err) => {
           if (err) return cb(err);
@@ -357,12 +373,21 @@ export default class BootstrapCommand extends Command {
     // Install anything that needs to go into the leaves.
     Object.keys(leaves)
       .map((pkgName) => ({pkg: this.packageGraph.get(pkgName).package, deps: leaves[pkgName]}))
-      .forEach(({pkg, deps}) => actions.push(
-        (cb) => NpmUtilities.installInDir(pkg.location, deps, this.npmConfig, (err) => {
-          this.progressBar.tick(pkg.name);
-          cb(err);
-        })
-      ));
+      .forEach(({pkg, deps}) => {
+
+        // If we have any unsatisfied deps then we need to install everything.
+        // This is important for consistent behavior across npm clients.
+        if (deps.some(({isSatisfied}) => !isSatisfied)) {
+          actions.push(
+            (cb) => NpmUtilities.installInDir(
+              pkg.location, deps.map(({dependency}) => dependency), this.npmConfig, (err) => {
+                this.progressBar.tick(pkg.name);
+                cb(err);
+              }
+            )
+          );
+        }
+      });
 
     if (actions.length) {
 
