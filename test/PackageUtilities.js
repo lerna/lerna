@@ -7,116 +7,174 @@ import Repository from "../src/Repository";
 import initFixture from "./helpers/initFixture";
 
 describe("PackageUtilities", () => {
-  let testDir;
+  describe("public API", () => {
+    let testDir;
 
-  beforeEach(() => initFixture("PackageUtilities/basic").then((dir) => {
-    testDir = dir;
-  }));
+    beforeEach(() => initFixture("PackageUtilities/basic").then((dir) => {
+      testDir = dir;
+    }));
 
-  describe(".getPackagesPath()", () => {
-    it("should append the packages path to the repo path given", () => {
-      assert.equal(
-        PackageUtilities.getPackagesPath("/path/to/repo"),
-        path.join("/path/to/repo/packages")
-      );
+    describe(".getPackagesPath()", () => {
+      it("should append the packages path to the repo path given", () => {
+        assert.equal(
+          PackageUtilities.getPackagesPath("/path/to/repo"),
+          path.join("/path/to/repo/packages")
+        );
+      });
+    });
+
+    describe(".getPackagePath()", () => {
+      it("should append the package path to the packages path given", () => {
+        assert.equal(
+          PackageUtilities.getPackagePath("/path/to/repo/packages", "my-package"),
+          path.join("/path/to/repo/packages/my-package")
+        );
+      });
+    });
+
+    describe(".getPackageConfigPath()", () => {
+      it("should append the package config path to the packages path given", () => {
+        assert.equal(
+          PackageUtilities.getPackageConfigPath("/path/to/repo/packages", "my-package"),
+          path.join("/path/to/repo/packages/my-package/package.json")
+        );
+      });
+    });
+
+    describe(".getPackageConfig()", () => {
+      it("should get the config file for the given package in the given packages directory", () => {
+        const fixture = path.join(testDir, "packages");
+
+        assert.deepEqual(
+          PackageUtilities.getPackageConfig(fixture, "package-1"),
+          {
+            name: "package-1",
+            version: "1.0.0"
+          }
+        );
+      });
+    });
+
+    describe(".getPackages()", () => {
+      it("should collect all the packages from the given packages directory", () => {
+        const fixture = path.join(testDir, "packages");
+        const result = PackageUtilities.getPackages(new Repository);
+
+        assert.equal(result.length, 4);
+        assert(result[0] instanceof Package);
+        assert.equal(result[0].name, "package-1");
+        assert.equal(result[0].version, "1.0.0");
+        assert.equal(result[0].location, path.join(fixture, "package-1"));
+      });
     });
   });
 
-  describe(".getPackagePath()", () => {
-    it("should append the package path to the packages path given", () => {
-      assert.equal(
-        PackageUtilities.getPackagePath("/path/to/repo/packages", "my-package"),
-        path.join("/path/to/repo/packages/my-package")
-      );
-    });
-  });
-
-  describe(".getPackageConfigPath()", () => {
-    it("should append the package config path to the packages path given", () => {
-      assert.equal(
-        PackageUtilities.getPackageConfigPath("/path/to/repo/packages", "my-package"),
-        path.join("/path/to/repo/packages/my-package/package.json")
-      );
-    });
-  });
-
-  describe(".getPackageConfig()", () => {
-    it("should get the config file for the given package in the given packages directory", () => {
-      const fixture = path.join(testDir, "packages");
-
-      assert.deepEqual(
-        PackageUtilities.getPackageConfig(fixture, "package-1"),
-        {
-          name: "package-1",
-          version: "1.0.0"
-        }
-      );
-    });
-  });
-
-  describe(".getPackages()", () => {
-    it("should collect all the packages from the given packages directory", () => {
-      const fixture = path.join(testDir, "packages");
-      const result = PackageUtilities.getPackages(new Repository);
-
-      assert.equal(result.length, 4);
-      assert(result[0] instanceof Package);
-      assert.equal(result[0].name, "package-1");
-      assert.equal(result[0].version, "1.0.0");
-      assert.equal(result[0].location, path.join(fixture, "package-1"));
-    });
-  });
-
-  describe("._filterPackages()", () => {
+  describe(".filterPackages()", () => {
     let packages;
 
     beforeEach(() => initFixture("PackageUtilities/filtering").then(() => {
       packages = PackageUtilities.getPackages(new Repository);
     }));
 
-    it("should return everything when --scope is given but empty", () => {
+    it("includes all packages when --scope is omitted", () => {
+      const flags = {
+        // scope: undefined
+      };
       assert.deepEqual(
-        PackageUtilities.filterPackages(packages, "").map((pkg) => pkg.name),
+        PackageUtilities.filterPackages(packages, flags).map((pkg) => pkg.name),
         ["package-3", "package-4", "package-a-1", "package-a-2"]
       );
     });
 
-    it("should return everything when --scope is just true", () => {
+    it("includes all packages when --scope is boolean", () => {
+      const flags = {
+        scope: true, // --scope
+      };
       assert.deepEqual(
-        PackageUtilities.filterPackages(packages, true).map((pkg) => pkg.name),
+        PackageUtilities.filterPackages(packages, flags).map((pkg) => pkg.name),
         ["package-3", "package-4", "package-a-1", "package-a-2"]
       );
     });
 
-    it("should throw when --scope is given but excludes all packages", () => {
-      assert.throws(() => {
-        PackageUtilities._filterPackages(packages, "no-matchy");
-      });
-    });
-
-    it("should properly restrict the package scope", () => {
+    it("includes packages when --scope is a package name", () => {
+      const flags = {
+        scope: "package-3",
+      };
       assert.deepEqual(
-        PackageUtilities._filterPackages(packages, "package-3").map((pkg) => pkg.name),
+        PackageUtilities.filterPackages(packages, flags).map((pkg) => pkg.name),
         ["package-3"]
       );
     });
 
-    it("should properly restrict the package scope with a glob", () => {
+    it("excludes packages when --ignore is a package name", () => {
+      const flags = {
+        ignore: "package-3",
+      };
       assert.deepEqual(
-        PackageUtilities._filterPackages(packages, "package-a-*").map((pkg) => pkg.name),
+        PackageUtilities.filterPackages(packages, flags).map((pkg) => pkg.name),
+        ["package-4", "package-a-1", "package-a-2"]
+      );
+    });
+
+    it("includes packages when --scope is a glob", () => {
+      const flags = {
+        scope: "package-a-*",
+      };
+      assert.deepEqual(
+        PackageUtilities.filterPackages(packages, flags).map((pkg) => pkg.name),
         ["package-a-1", "package-a-2"]
       );
     });
 
-    it("should properly filter packages by negating the glob", () => {
+    it("excludes packages when --ignore is a glob", () => {
+      const flags = {
+        ignore: "package-@(2|3|4)",
+      };
       assert.deepEqual(
-        PackageUtilities._filterPackages(packages, "package-3", true).map((pkg) => pkg.name),
-        ["package-4", "package-a-1", "package-a-2"]
+        PackageUtilities.filterPackages(packages, flags).map((pkg) => pkg.name),
+        ["package-a-1", "package-a-2"]
       );
+    });
+
+    it("excludes packages when --ignore is a brace-expanded list", () => {
+      /* NOTE: ignore value is array at this point if option is "package-{3,4}" */
+      const flags = {
+        ignore: ["package-3", "package-4"],
+      };
       assert.deepEqual(
-        PackageUtilities._filterPackages(packages, "package-a-?", true).map((pkg) => pkg.name),
-        ["package-3", "package-4"]
+        PackageUtilities.filterPackages(packages, flags).map((pkg) => pkg.name),
+        ["package-a-1", "package-a-2"]
       );
+    });
+
+    it("filters packages when both --scope and --ignore are passed", () => {
+      const flags = {
+        scope: "package-a-*",
+        ignore: "package-a-2",
+      };
+      assert.deepEqual(
+        PackageUtilities.filterPackages(packages, flags).map((pkg) => pkg.name),
+        ["package-a-1"]
+      );
+    });
+
+    it("should throw when --scope glob excludes all packages", () => {
+      const flags = {
+        scope: "no-package-*",
+      };
+      assert.throws(() => {
+        PackageUtilities.filterPackages(packages, flags);
+      });
+    });
+
+    it("should throw when --scope and --ignore globs exclude all packages", () => {
+      const flags = {
+        scope: "package-a-*",
+        ignore: "package-a-@(1|2)",
+      };
+      assert.throws(() => {
+        PackageUtilities.filterPackages(packages, flags);
+      });
     });
   });
 
@@ -140,7 +198,6 @@ describe("PackageUtilities", () => {
       );
     });
   });
-
 
   describe(".runParallelBatches()", () => {
     const batches = [
@@ -171,54 +228,6 @@ describe("PackageUtilities", () => {
           taskOrdering.slice(6, 10).sort(numericalSort)
         ], batches);
         done();
-      });
-    });
-  });
-
-  describe(".filterPackages()", () => {
-    let packages;
-
-    beforeEach(() => initFixture("PackageUtilities/filtering").then(() => {
-      packages = PackageUtilities.getPackages(new Repository);
-    }));
-
-    it("should filter --scoped packages", () => {
-      const flags = { scope: "package-a-*"};
-      assert.deepEqual(
-        PackageUtilities.filterPackages(packages, flags).map((pkg) => pkg.name),
-        ["package-a-1", "package-a-2"]
-      );
-    });
-
-    it("should filter --ignored packages", () => {
-      const flags = { ignore: "package-@(2|3|4)"};
-      assert.deepEqual(
-        PackageUtilities.filterPackages(packages, flags).map((pkg) => pkg.name),
-        ["package-a-1", "package-a-2"]
-      );
-    });
-
-    it("should filter --ignored packages", () => {
-      /* NOTE: ignore value is array at this point if option is "package-{3,4}" */
-      const flags = { ignore: ["package-3", "package-4"]};
-      assert.deepEqual(
-        PackageUtilities.filterPackages(packages, flags).map((pkg) => pkg.name),
-        ["package-a-1", "package-a-2"]
-      );
-    });
-
-    it("should filter --ignored  and --scoped packages", () => {
-      const flags = { scope: "package-a-*", ignore: "package-a-2"};
-      assert.deepEqual(
-        PackageUtilities.filterPackages(packages, flags).map((pkg) => pkg.name),
-        ["package-a-1"]
-      );
-    });
-
-    it("should throw when --scoped and --ignored filters exclud all packages", () => {
-      const flags = { scope: "package-a-*", ignore: "package-a-@(1|2)"};
-      assert.throws(() => {
-        PackageUtilities.filterPackages(packages, flags);
       });
     });
   });
