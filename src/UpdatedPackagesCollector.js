@@ -1,6 +1,5 @@
 import GitUtilities from "./GitUtilities";
 import minimatch from "minimatch";
-import logger from "./logger";
 import find from "lodash/find";
 import path from "path";
 
@@ -12,6 +11,7 @@ class Update {
 
 export default class UpdatedPackagesCollector {
   constructor(command) {
+    this.logger = command.logger;
     this.repository = command.repository;
     this.packages = command.repository.packages;
     this.packageGraph = command.repository.packageGraph;
@@ -26,15 +26,15 @@ export default class UpdatedPackagesCollector {
   }
 
   collectUpdatedPackages() {
-    logger.info("Checking for updated packages...");
+    this.logger.info("Checking for updated packages...");
 
     const hasTags = GitUtilities.hasTags();
 
     if (hasTags) {
       const tag = GitUtilities.getLastTag();
-      logger.info("Comparing with: " + tag);
+      this.logger.info("Comparing with: " + tag);
     } else {
-      logger.info("No tags found! Comparing with initial commit.");
+      this.logger.info("No tags found! Comparing with initial commit.");
     }
 
     this.progressBar.init(this.packages.length);
