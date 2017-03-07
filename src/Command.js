@@ -17,9 +17,10 @@ export default class Command {
     this.logger = logger;
     this.repository = new Repository();
     this.progressBar = progressBar;
-    this.concurrency = (!flags || flags.concurrency === undefined) ? DEFAULT_CONCURRENCY : Math.max(1, +flags.concurrency || DEFAULT_CONCURRENCY);
 
-    const {sort} = this.getOptions();
+    const {sort, concurrency} = this.getOptions();
+
+    this.concurrency = Math.max(1, +concurrency || DEFAULT_CONCURRENCY);
 
     // If the option isn't present then the default is to sort.
     this.toposort = sort == null || sort;
