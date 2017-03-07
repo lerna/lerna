@@ -205,7 +205,7 @@ export default class Command {
   _complete(err, code, callback) {
     if (code !== 0) {
       const exitHandler = new ExitHandler();
-      exitHandler.writeLogs();
+      exitHandler.writeLogs(this.logger);
     }
 
     const finish = function() {
