@@ -1,5 +1,4 @@
 import GitUtilities from "./GitUtilities";
-import progressBar from "./progressBar";
 import minimatch from "minimatch";
 import logger from "./logger";
 import find from "lodash/find";
@@ -16,6 +15,7 @@ export default class UpdatedPackagesCollector {
     this.repository = command.repository;
     this.packages = command.repository.packages;
     this.packageGraph = command.repository.packageGraph;
+    this.progressBar = command.progressBar;
     this.flags = command.getOptions();
   }
 
@@ -37,7 +37,7 @@ export default class UpdatedPackagesCollector {
       logger.info("No tags found! Comparing with initial commit.");
     }
 
-    progressBar.init(this.packages.length);
+    this.progressBar.init(this.packages.length);
 
     let commits;
 
@@ -58,7 +58,7 @@ export default class UpdatedPackagesCollector {
     const updatedPackages = {};
 
     this.packages.filter((pkg) => {
-      progressBar.tick(pkg.name);
+      this.progressBar.tick(pkg.name);
 
       if (!hasTags) {
         return true;
@@ -77,7 +77,7 @@ export default class UpdatedPackagesCollector {
       updatedPackages[pkg.name] = pkg;
     });
 
-    progressBar.terminate();
+    this.progressBar.terminate();
 
     return updatedPackages;
   }
