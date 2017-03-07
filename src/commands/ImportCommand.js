@@ -2,7 +2,6 @@ import fs from "fs";
 import path from "path";
 import async from "async";
 import Command from "../Command";
-import progressBar from "../progressBar";
 import PromptUtilities from "../PromptUtilities";
 import {execSync, exec} from "../ChildProcessUtilities";
 
@@ -84,10 +83,10 @@ export default class ImportCommand extends Command {
   execute(callback) {
     const replacement = "$1/" + this.targetDir;
 
-    progressBar.init(this.commits.length);
+    this.progressBar.init(this.commits.length);
 
     async.series(this.commits.map((sha) => (done) => {
-      progressBar.tick(sha);
+      this.progressBar.tick(sha);
 
       // Create a patch file for this commit and prepend the target directory
       // to all affected files.  This moves the git history for the entire
@@ -117,7 +116,7 @@ export default class ImportCommand extends Command {
         done(err);
       }).stdin.end(patch);
     }), (err) => {
-      progressBar.terminate();
+      this.progressBar.terminate();
 
       if (!err) {
         this.logger.info("Import complete!");
