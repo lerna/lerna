@@ -1,25 +1,30 @@
 import pathExists from "path-exists";
 import assert from "assert";
 import mkdirp from "mkdirp";
-import rimraf from "rimraf";
 import path from "path";
 import fs from "fs";
 
+import {
+  fixtureNamer,
+  getTempDir,
+  mkdirpAsync,
+  rimrafAsync,
+} from "./helpers/fixtureUtils";
+
 import FileSystemUtilities from "../src/FileSystemUtilities";
 
-const tmpDir = path.resolve(__dirname, "../tmp");
+const pTmpDir = getTempDir();
+const getFixtureName = fixtureNamer();
 
 describe("FileSystemUtilities", () => {
   let testDir;
 
-  beforeEach(() => {
-    testDir = path.resolve(tmpDir, "test-" + Date.now());
-    mkdirp.sync(testDir);
-  });
+  beforeEach(() => pTmpDir.then((tmpDir) => {
+    testDir = path.resolve(tmpDir, getFixtureName("FileSystemUtilities"));
+    return mkdirpAsync(testDir);
+  }));
 
-  afterEach(() => {
-    rimraf.sync(testDir);
-  });
+  afterEach(() => rimrafAsync(testDir));
 
   describe(".mkdirSync()", () => {
     it("should create a directory", () => {
