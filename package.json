@@ -7,9 +7,9 @@
     "build": "babel src -d lib",
     "coverage": "jest --coverage",
     "dev": "babel -w src -d lib",
-    "lint": "eslint src test --cache",
-    "fix": "eslint src test --fix",
-    "pretest": "npm run lint",
+    "lint": "eslint . --ignore-path .gitignore",
+    "fix": "npm run lint -- --fix",
+    "pretest": "npm run lint -- --cache",
     "test": "jest",
     "ci": "npm run lint && npm run coverage -- --verbose",
     "prepublish": "npm run build"
