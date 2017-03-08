@@ -998,49 +998,49 @@ describe("PublishCommand", () => {
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
         ]],
-       [PromptUtilities, "confirm", { valueCallback: true }, [
-         { args: ["Are you sure you want to publish the above changes?"], returns: true }
-       ]],
-       [ChildProcessUtilities, "execSync", {}, [
-         { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
-         { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
-         { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
-         { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-3/package.json"))] },
-         { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-4/package.json"))] },
-         { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-5/package.json"))] },
-         { args: ["git commit -m \"$(echo \"v1.0.1\")\""] },
-         { args: ["git tag v1.0.1"] }
-       ]],
-       [ChildProcessUtilities, "exec", { nodeCallback: true }, [
-         { args: ["npm publish --tag lerna-temp"] },
-         { args: ["npm publish --tag lerna-temp"] },
-         { args: ["npm publish --tag lerna-temp"] },
-         { args: ["npm publish --tag lerna-temp"] },
-         // No package-5.  It's private.
-       ], true],
-       [ChildProcessUtilities, "execSync", {}, [
-         { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-         { args: ["npm dist-tag rm package-1 lerna-temp"] },
-         { args: ["npm dist-tag add package-1@1.0.1 latest"] },
+        [PromptUtilities, "confirm", { valueCallback: true }, [
+          { args: ["Are you sure you want to publish the above changes?"], returns: true }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-3/package.json"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-4/package.json"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-5/package.json"))] },
+          { args: ["git commit -m \"$(echo \"v1.0.1\")\""] },
+          { args: ["git tag v1.0.1"] }
+        ]],
+        [ChildProcessUtilities, "exec", { nodeCallback: true }, [
+          { args: ["npm publish --tag lerna-temp"] },
+          { args: ["npm publish --tag lerna-temp"] },
+          { args: ["npm publish --tag lerna-temp"] },
+          { args: ["npm publish --tag lerna-temp"] },
+          // No package-5.  It's private.
+        ], true],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-1 lerna-temp"] },
+          { args: ["npm dist-tag add package-1@1.0.1 latest"] },
 
-         { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-         { args: ["npm dist-tag rm package-3 lerna-temp"] },
-         { args: ["npm dist-tag add package-3@1.0.1 latest"] },
+          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-3 lerna-temp"] },
+          { args: ["npm dist-tag add package-3@1.0.1 latest"] },
 
-         { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-         { args: ["npm dist-tag rm package-4 lerna-temp"] },
-         { args: ["npm dist-tag add package-4@1.0.1 latest"] },
+          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-4 lerna-temp"] },
+          { args: ["npm dist-tag add package-4@1.0.1 latest"] },
 
-         { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-         { args: ["npm dist-tag rm package-2 lerna-temp"] },
-         { args: ["npm dist-tag add package-2@1.0.1 latest"] },
+          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-2 lerna-temp"] },
+          { args: ["npm dist-tag add package-2@1.0.1 latest"] },
 
-         // No package-5.  It's private.
+          // No package-5.  It's private.
 
-         { args: ["git symbolic-ref --short HEAD"], returns: "master" },
-         { args: ["git push origin master"] },
-         { args: ["git push origin v1.0.1"] }
-       ]],
+          { args: ["git symbolic-ref --short HEAD"], returns: "master" },
+          { args: ["git push origin master"] },
+          { args: ["git push origin v1.0.1"] }
+        ]],
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
@@ -1093,52 +1093,52 @@ describe("PublishCommand", () => {
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["git symbolic-ref --short -q HEAD"] }
         ]],
-       [ChildProcessUtilities, "execSync", {}, [
-         { args: ["git tag"] }
-       ]],
-       [PromptUtilities, "confirm", { valueCallback: true }, [
-         { args: ["Are you sure you want to publish the above changes?"], returns: true }
-       ]],
-       [ChildProcessUtilities, "execSync", {}, [
-         { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
-         { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
-         { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
-         { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-3/package.json"))] },
-         { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-4/package.json"))] },
-         { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-5/package.json"))] },
-         { args: ["git commit -m \"$(echo \"v1.0.1\")\""] },
-         { args: ["git tag v1.0.1"] }
-       ]],
-       [ChildProcessUtilities, "exec", { nodeCallback: true }, [
-         { args: ["npm publish --tag lerna-temp"] },
-         { args: ["npm publish --tag lerna-temp"] },
-         { args: ["npm publish --tag lerna-temp"] },
-         { args: ["npm publish --tag lerna-temp"] },
-         // No package-5.  It's private.
-       ], true],
-       [ChildProcessUtilities, "execSync", {}, [
-         { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-         { args: ["npm dist-tag rm package-1 lerna-temp"] },
-         { args: ["npm dist-tag add package-1@1.0.1 latest"] },
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git tag"] }
+        ]],
+        [PromptUtilities, "confirm", { valueCallback: true }, [
+          { args: ["Are you sure you want to publish the above changes?"], returns: true }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-3/package.json"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-4/package.json"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-5/package.json"))] },
+          { args: ["git commit -m \"$(echo \"v1.0.1\")\""] },
+          { args: ["git tag v1.0.1"] }
+        ]],
+        [ChildProcessUtilities, "exec", { nodeCallback: true }, [
+          { args: ["npm publish --tag lerna-temp"] },
+          { args: ["npm publish --tag lerna-temp"] },
+          { args: ["npm publish --tag lerna-temp"] },
+          { args: ["npm publish --tag lerna-temp"] },
+          // No package-5.  It's private.
+        ], true],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-1 lerna-temp"] },
+          { args: ["npm dist-tag add package-1@1.0.1 latest"] },
 
-         { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-         { args: ["npm dist-tag rm package-3 lerna-temp"] },
-         { args: ["npm dist-tag add package-3@1.0.1 latest"] },
+          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-3 lerna-temp"] },
+          { args: ["npm dist-tag add package-3@1.0.1 latest"] },
 
-         { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-         { args: ["npm dist-tag rm package-4 lerna-temp"] },
-         { args: ["npm dist-tag add package-4@1.0.1 latest"] },
+          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-4 lerna-temp"] },
+          { args: ["npm dist-tag add package-4@1.0.1 latest"] },
 
-         { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-         { args: ["npm dist-tag rm package-2 lerna-temp"] },
-         { args: ["npm dist-tag add package-2@1.0.1 latest"] },
+          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-2 lerna-temp"] },
+          { args: ["npm dist-tag add package-2@1.0.1 latest"] },
 
-         // No package-5.  It's private.
+          // No package-5.  It's private.
 
-         { args: ["git symbolic-ref --short HEAD"], returns: "master" },
-         { args: ["git push origin master"] },
-         { args: ["git push origin v1.0.1"] }
-       ]],
+          { args: ["git symbolic-ref --short HEAD"], returns: "master" },
+          { args: ["git push origin master"] },
+          { args: ["git push origin v1.0.1"] }
+        ]],
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
@@ -1581,55 +1581,55 @@ describe("PublishCommand", () => {
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["git symbolic-ref --short -q HEAD"] }
         ]],
-       [ChildProcessUtilities, "execSync", {}, [
-         { args: ["git tag"] }
-       ]],
-       [PromptUtilities, "select", { valueCallback: true }, [
-         { args: ["Select a new version (currently 1.0.0)"], returns: "1.0.1" }
-       ]],
-       [PromptUtilities, "confirm", { valueCallback: true }, [
-         { args: ["Are you sure you want to publish the above changes?"], returns: true }
-       ]],
-       [ChildProcessUtilities, "execSync", {}, [
-         { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
-         { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
-         { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
-         { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-3/package.json"))] },
-         { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-4/package.json"))] },
-         { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-5/package.json"))] },
-         { args: ["git commit -m \"$(echo \"A custom publish message\")\""] },
-         { args: ["git tag v1.0.1"] }
-       ]],
-       [ChildProcessUtilities, "exec", { nodeCallback: true }, [
-         { args: ["npm publish --tag lerna-temp"] },
-         { args: ["npm publish --tag lerna-temp"] },
-         { args: ["npm publish --tag lerna-temp"] },
-         { args: ["npm publish --tag lerna-temp"] },
-         // No package-5.  It's private.
-       ], true],
-       [ChildProcessUtilities, "execSync", {}, [
-         { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-         { args: ["npm dist-tag rm package-1 lerna-temp"] },
-         { args: ["npm dist-tag add package-1@1.0.1 latest"] },
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git tag"] }
+        ]],
+        [PromptUtilities, "select", { valueCallback: true }, [
+          { args: ["Select a new version (currently 1.0.0)"], returns: "1.0.1" }
+        ]],
+        [PromptUtilities, "confirm", { valueCallback: true }, [
+          { args: ["Are you sure you want to publish the above changes?"], returns: true }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-3/package.json"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-4/package.json"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-5/package.json"))] },
+          { args: ["git commit -m \"$(echo \"A custom publish message\")\""] },
+          { args: ["git tag v1.0.1"] }
+        ]],
+        [ChildProcessUtilities, "exec", { nodeCallback: true }, [
+          { args: ["npm publish --tag lerna-temp"] },
+          { args: ["npm publish --tag lerna-temp"] },
+          { args: ["npm publish --tag lerna-temp"] },
+          { args: ["npm publish --tag lerna-temp"] },
+          // No package-5.  It's private.
+        ], true],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-1 lerna-temp"] },
+          { args: ["npm dist-tag add package-1@1.0.1 latest"] },
 
-         { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-         { args: ["npm dist-tag rm package-3 lerna-temp"] },
-         { args: ["npm dist-tag add package-3@1.0.1 latest"] },
+          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-3 lerna-temp"] },
+          { args: ["npm dist-tag add package-3@1.0.1 latest"] },
 
-         { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-         { args: ["npm dist-tag rm package-4 lerna-temp"] },
-         { args: ["npm dist-tag add package-4@1.0.1 latest"] },
+          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-4 lerna-temp"] },
+          { args: ["npm dist-tag add package-4@1.0.1 latest"] },
 
-         { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-         { args: ["npm dist-tag rm package-2 lerna-temp"] },
-         { args: ["npm dist-tag add package-2@1.0.1 latest"] },
+          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-2 lerna-temp"] },
+          { args: ["npm dist-tag add package-2@1.0.1 latest"] },
 
-         // No package-5.  It's private.
+          // No package-5.  It's private.
 
-         { args: ["git symbolic-ref --short HEAD"], returns: "master" },
-         { args: ["git push origin master"] },
-         { args: ["git push origin v1.0.1"] }
-       ]],
+          { args: ["git symbolic-ref --short HEAD"], returns: "master" },
+          { args: ["git push origin master"] },
+          { args: ["git push origin v1.0.1"] }
+        ]],
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
