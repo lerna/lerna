@@ -20,13 +20,15 @@ describe("ImportCommand", () => {
     let externalDir;
 
     beforeEach(() =>
-      Promise.all([
-        initFixture("ImportCommand/basic"),
-        initExternalFixture("ImportCommand/external"),
-      ]).then((dirs) => {
-        testDir = dirs[0];
-        externalDir = dirs[1];
-      })
+      Promise.resolve()
+        .then(() => initExternalFixture("ImportCommand/external"))
+        .then((dir) => {
+          externalDir = dir;
+        })
+        .then(() => initFixture("ImportCommand/basic"))
+        .then((dir) => {
+          testDir = dir;
+        })
     );
 
     it("should import into packages with commit history", (done) => {
