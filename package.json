@@ -11,7 +11,7 @@
     "fix": "eslint src test --fix",
     "pretest": "npm run lint",
     "test": "jest",
-    "ci": "npm run lint && npm run coverage",
+    "ci": "npm run lint && npm run coverage -- --verbose",
     "prepublish": "npm run build"
   },
   "repository": {
