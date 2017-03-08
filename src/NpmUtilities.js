@@ -134,6 +134,11 @@ export default class NpmUtilities {
   }
 
   static getTagOpts(registry) {
-    return registry ? {env: {npm_config_registry: registry}} : null;
+    const opts = {};
+    if (registry) {
+      opts.env = Object.assign({}, process.env, {npm_config_registry: registry});
+      return opts;
+    }
+    return null;
   }
 }
