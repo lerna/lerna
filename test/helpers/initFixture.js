@@ -26,8 +26,8 @@ export default function initFixture(fixturePath) {
     createdDirectories.push(testDir);
 
     return cp(fixtureDir, testDir)
-      .then(() => process.chdir(testDir))
       .then(() => gitInit(testDir))
+      .then(() => process.chdir(testDir))
       .then(() => testDir);
   });
 }
