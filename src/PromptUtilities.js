@@ -20,6 +20,7 @@ export default class PromptUtilities {
       name: "prompt",
       message: message,
       choices: choices,
+      pageSize: choices.length,
       filter: filter,
       validate: validate
     }]).then((answers) => callback(answers.prompt));

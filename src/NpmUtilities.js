@@ -134,7 +134,7 @@ export default class NpmUtilities {
   }
 
   static getTagOpts(registry, directory) {
-    const registryProp = registry ? { env: { npm_config_registry: registry } } : {};
+    const registryProp = registry ? Object.assign({}, process.env, {npm_config_registry: registry}) : {};
     const directoryProp = directory ? { cwd: directory } : {};
     return Object.assign({}, registryProp, directoryProp);
   }

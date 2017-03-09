@@ -13,6 +13,14 @@
   <a href="https://slack.lernajs.io/"><img alt="Slack Status" src="https://slack.lernajs.io/badge.svg"></a>
 </p>
 
+- [About](#about)
+- [Getting Started](#getting-started)
+- [How It Works](#how-it-works)
+- [Commands](#commands)
+- [Misc](#misc)
+ - [Lerna.json](#lernajson)
+ - [Flags](#flags)
+
 ## About
 
 Splitting up large codebases into separate independently versioned packages
@@ -84,7 +92,7 @@ lerna-repo/
 
 This will create a `lerna.json` configuration file as well as a `packages` folder.
 
-## How it works
+## How It Works
 
 Lerna allows you to manage your project using one of two modes: Fixed or Independent.
 
@@ -181,7 +189,7 @@ Let's use `babel` as an example.
 ```
 
 - Lerna checks if each dependency is also part of the Lerna repo.
-  - In this example, `babel-generator` is a dependency, while `source-map` is not.
+  - In this example, `babel-generator` is an internal dependency, while `source-map` is an external dependency.
   - `source-map` is `npm install`ed like normal.
 - `packages/babel-core/node_modules/babel-generator` symlinks to `packages/babel-generator`
 - This allows nested directory imports
@@ -278,9 +286,8 @@ When run with this flag, `publish` will update all `package.json` package
 versions and dependency versions, but it will not actually publish the
 packages to npm.
 
-This is useful as a workaround for an [npm
-issue](https://github.com/npm/registry/issues/42) which prevents README updates
-from appearing on npmjs.com when published via Lerna.  When publishing with
+> This was useful as a workaround for an [npm
+issue](https://github.com/npm/registry/issues/42) which has since been fixed.  When publishing with
 README changes, use `--skip-npm` and do the final `npm publish` by hand for
 each package.
 
@@ -628,6 +635,8 @@ Any logs of a higher level than the setting are shown.  The default is "info".
 By default, all tasks execute on packages in topologically sorted order as to respect the dependency relationships of the packages in question. Cycles are broken on a best-effort basis in a way not guaranteed to be consistent across Lerna invocations.
 
 Topological sorting can cause concurrency bottlenecks if there are a small number of packages with many dependents or if some packages take a disproportionately long time to execute. The `--no-sort` option disables sorting, instead executing tasks in an arbitrary order with maximum concurrency.
+
+This option can also help if you run multiple "watch" commands. Since `lerna run` will execute commands in topologically sorted order, it can end up waiting for a command before moving on. This will block execution when you run "watch" commands, since they typically never end. An example of a "watch" command is [running `babel` with the `--watch` CLI flag](https://babeljs.io/docs/usage/cli/#babel-compile-files).
 
 #### --hoist [glob]
 

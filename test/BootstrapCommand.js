@@ -663,6 +663,49 @@ describe("BootstrapCommand", () => {
     });
   });
 
+  describe("packages with at least one external dependency to install", () => {
+    let testDir;
+
+    beforeEach((done) => {
+      testDir = initFixture("BootstrapCommand/tepid", done);
+    });
+
+    it("should install all dependencies", (done) => {
+      const bootstrapCommand = new BootstrapCommand([], {});
+
+      bootstrapCommand.runValidations();
+      bootstrapCommand.runPreparations();
+
+      stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
+        callback();
+      });
+
+      let got;
+      stub(FileSystemUtilities, "writeFile", (fn, json, callback) => {
+        got = JSON.parse(json);
+        callback();
+      });
+
+      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done(err);
+
+        try {
+          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
+          assert.deepEqual(got, {
+            dependencies: {
+              "external-1": "^1.0.0",
+              "external-2": "^1.0.0",
+            }
+          });
+
+          done();
+        } catch (err) {
+          done(err);
+        }
+      }));
+    });
+  });
+
   describe("peer dependencies in packages in the repo", () => {
     let testDir;
 

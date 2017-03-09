@@ -60,10 +60,6 @@ export default class UpdatedPackagesCollector {
     this.packages.filter((pkg) => {
       progressBar.tick(pkg.name);
 
-      if (pkg.isPrivate()) {
-        return false;
-      }
-
       if (!hasTags) {
         return true;
       }

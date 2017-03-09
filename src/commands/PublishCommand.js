@@ -234,6 +234,10 @@ export default class PublishCommand extends Command {
     const patch = semver.inc(currentVersion, "patch");
     const minor = semver.inc(currentVersion, "minor");
     const major = semver.inc(currentVersion, "major");
+    const prepatch = semver.inc(currentVersion, "prepatch");
+    const preminor = semver.inc(currentVersion, "preminor");
+    const premajor = semver.inc(currentVersion, "premajor");
+
 
     let message = "Select a new version";
     if (packageName) message += ` for ${packageName}`;
@@ -244,20 +248,51 @@ export default class PublishCommand extends Command {
         { value: patch, name: `Patch (${patch})` },
         { value: minor, name: `Minor (${minor})` },
         { value: major, name: `Major (${major})` },
-        { value: false, name: "Custom" }
+        { value: prepatch, name: `Prepatch (${prepatch})` },
+        { value: preminor, name: `Preminor (${preminor})` },
+        { value: premajor, name: `Premajor (${premajor})` },
+        { value: "PRERELEASE", name: "Prerelease" },
+        { value: "CUSTOM", name: "Custom" }
       ]
     }, (choice) => {
-      if (choice) {
-        callback(null, choice);
-        return;
+      switch (choice) {
+
+      case "CUSTOM": {
+        PromptUtilities.input("Enter a custom version", {
+          filter: semver.valid,
+          validate: (v) => semver.valid(v) ? true : "Must be a valid semver version",
+        }, (input) => {
+          callback(null, input);
+        });
+        break;
       }
 
-      PromptUtilities.input("Enter a custom version", {
-        filter: semver.valid,
-        validate: (v) => semver.valid(v) ? true : "Must be a valid semver version",
-      }, (input) => {
-        callback(null, input);
-      });
+      case "PRERELEASE": {
+        const components = semver.prerelease(currentVersion);
+        let existingId = null;
+        if (components && components.length === 2) {
+          existingId = components[0];
+        }
+        const defaultVersion = semver.inc(currentVersion, "prerelease", existingId);
+        const prompt = `(default: ${existingId ? `"${existingId}"` : "none"}, yielding ${defaultVersion})`;
+
+        PromptUtilities.input(`Enter a prerelease identifier ${prompt}`, {
+          filter: (v) => {
+            const prereleaseId = v ? v : existingId;
+            return semver.inc(currentVersion, "prerelease", prereleaseId);
+          },
+        }, (input) => {
+          callback(null, input);
+        });
+        break;
+      }
+
+      default: {
+        callback(null, choice);
+        break;
+      }
+
+      }
     });
   }
 
