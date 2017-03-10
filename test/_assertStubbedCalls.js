@@ -1,14 +1,5 @@
 import assert from "assert";
-import chalk from "chalk";
 import stub from "./_stub";
-
-function debugCallsLog(expected, num, call) {
-  if (process.env.DEBUG_CALLS) {
-    num = expected ? chalk.green(num) : chalk.yellow(num);
-    call = chalk.gray(call);
-    console.log("       ", num, call);
-  }
-}
 
 function stringifyCall(object, method, args) {
   let str = `${object.name}.${method}(`;
@@ -26,11 +17,9 @@ export default function assertStubbedCalls(definitions) {
       const currentCount = callCount++;
       const current = expected[currentCount];
 
-      debugCallsLog(false, currentCount, stringifyCall(object, method, actualArgs));
       if (!current) {
         throw new Error(`No call was expected for call ${currentCount} which was ${stringifyCall(object, method, actualArgs)}`);
       }
-      debugCallsLog(true, currentCount, stringifyCall(object, method, current.call.args));
 
       let {args, returns, throws} = current.call;
 
