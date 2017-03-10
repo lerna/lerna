@@ -318,6 +318,17 @@ $ lerna publish --canary --yes
 When run with this flag, `publish` will skip all confirmation prompts.
 Useful in [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous_integration) to automatically answer the publish confirmation prompt.
 
+#### --cd-version
+
+```sh
+$ lerna publish --cd-version (patch | major | minor)
+# uses the next semantic version(s) value and this skips `Select a new version for...` prompt
+```
+
+When run with this flag, `publish` will skip the version selection prompt (in independent mode) and use the next specified semantic version.
+You must still use the `--yes` flag to avoid all prompts. This is useful when build systems need
+to publish without command prompts. Works in both normal and independent modes.
+
 #### --repo-version
 
 ```sh

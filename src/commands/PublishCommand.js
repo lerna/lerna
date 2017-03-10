@@ -155,6 +155,27 @@ export default class PublishCommand extends Command {
   }
 
   getVersionsForUpdates(callback) {
+    if (this.flags.cdVersion) {
+      // Allows automatic bumping to next semver via cdVersion flag
+      if (this.flags.cdVersion === "patch" ||
+          this.flags.cdVersion === "minor" ||
+          this.flags.cdVersion === "major"
+      ) {
+        // If the version is independent then send versions
+        if (this.repository.isIndependent()) {
+          const versions = {};
+          this.updates.forEach((update) => {
+            versions[update.package.name] = semver.inc(update.package.version, this.flags.cdVersion);
+          });
+          return callback(null, { versions });
+        }
+
+        // Otherwise bump the global version
+        const version = semver.inc(this.globalVersion, this.flags.cdVersion);
+        return callback(null, { version });
+      }
+    }
+
     if (this.flags.repoVersion) {
       return callback(null, {
         version: this.flags.repoVersion
@@ -471,16 +492,16 @@ export default class PublishCommand extends Command {
   updateTag(pkg) {
     const distTag = this.getDistTag();
 
-    if (NpmUtilities.checkDistTag(pkg.name, "lerna-temp", this.npmRegistry)) {
-      NpmUtilities.removeDistTag(pkg.name, "lerna-temp", this.npmRegistry);
+    if (NpmUtilities.checkDistTag(pkg.location, pkg.name, "lerna-temp", this.npmRegistry)) {
+      NpmUtilities.removeDistTag(pkg.location, pkg.name, "lerna-temp", this.npmRegistry);
     }
 
     if (this.flags.npmTag) {
-      NpmUtilities.addDistTag(pkg.name, this.updatesVersions[pkg.name], distTag, this.npmRegistry);
+      NpmUtilities.addDistTag(pkg.location, pkg.name, this.updatesVersions[pkg.name], distTag, this.npmRegistry);
     } else if (this.flags.canary) {
-      NpmUtilities.addDistTag(pkg.name, pkg.version, distTag, this.npmRegistry);
+      NpmUtilities.addDistTag(pkg.location, pkg.name, pkg.version, distTag, this.npmRegistry);
     } else {
-      NpmUtilities.addDistTag(pkg.name, this.updatesVersions[pkg.name], distTag, this.npmRegistry);
+      NpmUtilities.addDistTag(pkg.location, pkg.name, this.updatesVersions[pkg.name], distTag, this.npmRegistry);
     }
   }
 
