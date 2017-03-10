@@ -839,75 +839,56 @@ describe("PublishCommand", () => {
         [ChildProcessUtilities, "exec", { nodeCallback: true }, [
           { args: ["npm publish --tag lerna-temp"] },
           { args: ["npm publish --tag lerna-temp", Object.assign({}, expectedOpts, {
-              "cwd": path.join(testDir,"packages/package-3")
-            })]
+            "cwd": path.join(testDir,"packages/package-3")
+          })]
           },
           { args: ["npm publish --tag lerna-temp", Object.assign({}, expectedOpts, {
-              "cwd": path.join(testDir,"packages/package-4")
-            })]
-          },
+            "cwd": path.join(testDir,"packages/package-4")
+          })]},
           { args: ["npm publish --tag lerna-temp", Object.assign({}, expectedOpts, {
-              "cwd": path.join(testDir,"packages/package-2")
-            })]
-          }
+            "cwd": path.join(testDir,"packages/package-2")
+          })]}
           // No package-5.  It's private.
         ], true],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["npm dist-tag ls package-1", Object.assign({}, expectedOpts, {
-              "cwd": path.join(testDir,"packages/package-1")
-            })],
+          { args: ["npm dist-tag ls package-1", Object.assign({}, expectedOpts, {"cwd": path.join(testDir,"packages/package-1")})],
             returns: "lerna-temp: 1.0.1\nstable: 1.0.0"
           },
           { args: ["npm dist-tag rm package-1 lerna-temp", Object.assign({}, expectedOpts, {
-              "cwd": path.join(testDir,"packages/package-1")
-            })]
-          },
+            "cwd": path.join(testDir,"packages/package-1")
+          })]},
           { args: ["npm dist-tag add package-1@1.0.1 latest", Object.assign({}, expectedOpts, {
-              "cwd": path.join(testDir,"packages/package-1")
-            })]
-          },
-
+            "cwd": path.join(testDir,"packages/package-1")
+          })]},
           { args: ["npm dist-tag ls package-3", Object.assign({}, expectedOpts, {
-              "cwd": path.join(testDir,"packages/package-3")
-            })],
-            returns: "lerna-temp: 1.0.1\nstable: 1.0.0"
-          },
+            "cwd": path.join(testDir,"packages/package-3")
+          })], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
           { args: ["npm dist-tag rm package-3 lerna-temp", Object.assign({}, expectedOpts, {
-              "cwd": path.join(testDir,"packages/package-3")
-            })]
-          },
+            "cwd": path.join(testDir,"packages/package-3")
+          })]},
           { args: ["npm dist-tag add package-3@1.0.1 latest", Object.assign({}, expectedOpts, {
-              "cwd": path.join(testDir,"packages/package-3")
-            })]
-          },
+            "cwd": path.join(testDir,"packages/package-3")
+          })]},
 
           { args: ["npm dist-tag ls package-4", Object.assign({}, expectedOpts, {
-              "cwd": path.join(testDir,"packages/package-4")
-            })],
-            returns: "lerna-temp: 1.0.1\nstable: 1.0.0"
-          },
+            "cwd": path.join(testDir,"packages/package-4")
+          })], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
           { args: ["npm dist-tag rm package-4 lerna-temp", Object.assign({}, expectedOpts, {
-              "cwd": path.join(testDir,"packages/package-4")
-            })]
-          },
+            "cwd": path.join(testDir,"packages/package-4")
+          })]},
           { args: ["npm dist-tag add package-4@1.0.1 latest", Object.assign({}, expectedOpts, {
-              "cwd": path.join(testDir,"packages/package-4")
-            })]
-          },
+            "cwd": path.join(testDir,"packages/package-4")
+          })]},
 
           { args: ["npm dist-tag ls package-2", Object.assign({}, expectedOpts, {
-              "cwd": path.join(testDir,"packages/package-2")
-            })],
-            returns: "lerna-temp: 1.0.1\nstable: 1.0.0"
-          },
+            "cwd": path.join(testDir,"packages/package-2")
+          })], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
           { args: ["npm dist-tag rm package-2 lerna-temp", Object.assign({}, expectedOpts, {
-              "cwd": path.join(testDir,"packages/package-2")
-            })]
-          },
+            "cwd": path.join(testDir,"packages/package-2")
+          })]},
           { args: ["npm dist-tag add package-2@1.0.1 latest", Object.assign({}, expectedOpts, {
-              "cwd": path.join(testDir,"packages/package-2")
-            })]
-          },
+            "cwd": path.join(testDir,"packages/package-2")
+          })]},
 
           // No package-5.  It's private.
 
@@ -990,8 +971,7 @@ describe("PublishCommand", () => {
         [ChildProcessUtilities, "exec", { nodeCallback: true }, [
           { args: ["npm publish --tag lerna-temp", Object.assign({}, expectedOpts, {
             "cwd": path.join(testDir,"packages/package-1")
-            })]
-          }
+          })]}
           // No package-5.  It's private.
         ], true],
         [ChildProcessUtilities, "execSync", {}, [
