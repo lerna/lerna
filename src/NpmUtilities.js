@@ -79,19 +79,19 @@ export default class NpmUtilities {
 
   @logger.logifySync()
   static addDistTag(directory, packageName, version, tag, registry) {
-    const opts = NpmUtilities.getTagOpts(registry, directory);
+    const opts = NpmUtilities.getExecOpts(directory, registry);
     ChildProcessUtilities.execSync(`npm dist-tag add ${packageName}@${version} ${tag}`, opts);
   }
 
   @logger.logifySync()
   static removeDistTag(directory, packageName, tag, registry) {
-    const opts = NpmUtilities.getTagOpts(registry, directory);
+    const opts = NpmUtilities.getExecOpts(directory, registry);
     ChildProcessUtilities.execSync(`npm dist-tag rm ${packageName} ${tag}`, opts);
   }
 
   @logger.logifySync()
   static checkDistTag(directory, packageName, tag, registry) {
-    const opts = NpmUtilities.getTagOpts(registry, directory);
+    const opts = NpmUtilities.getExecOpts(directory, registry);
     return ChildProcessUtilities.execSync(`npm dist-tag ls ${packageName}`, opts).indexOf(tag) >= 0;
   }
 
@@ -119,7 +119,7 @@ export default class NpmUtilities {
   @logger.logifyAsync()
   static publishTaggedInDir(tag, directory, registry, callback) {
     const command = ("npm publish --tag " + tag).trim();
-    const opts = NpmUtilities.getTagOpts(registry, directory);
+    const opts = NpmUtilities.getExecOpts(directory, registry);
     ChildProcessUtilities.exec(`${command}`, opts, callback);
   }
 
@@ -133,11 +133,17 @@ export default class NpmUtilities {
     }
   }
 
-  static getTagOpts(registry, directory) {
-    const registryProp = registry
-      ? { env: Object.assign({}, process.env, {npm_config_registry: registry}) }
-      : {};
-    const directoryProp = directory ? { cwd: directory } : {};
-    return Object.assign({}, registryProp, directoryProp);
+  static getExecOpts(directory, registry) {
+    const opts = {
+      cwd: directory,
+    };
+
+    if (registry) {
+      opts.env = Object.assign({}, process.env, {
+        npm_config_registry: registry,
+      });
+    }
+
+    return opts;
   }
 }
