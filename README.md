@@ -235,15 +235,6 @@ When run with this flag, `publish` will specify updated dependencies in updated 
 
 For more information, see the package.json [dependencies](https://docs.npmjs.com/files/package.json#dependencies) documentation.
 
-May also be configured in `lerna.json`:
-
-```js
-{
-  ...
-  "exact": true
-}
-```
-
 #### --npm-tag [tagname]
 
 ```sh
