@@ -353,6 +353,7 @@ export default class PublishCommand extends Command {
 
   updatePackageDepsObject(pkg, depsKey) {
     const deps = pkg[depsKey];
+    const {exact} = this.getOptions();
 
     if (!deps) {
       return;
@@ -362,7 +363,7 @@ export default class PublishCommand extends Command {
       const version = this.updatesVersions[depName];
 
       if (deps[depName] && version) {
-        deps[depName] = this.flags.exact ? version : "^" + version;
+        deps[depName] = exact ? version : ("^" + version);
       }
     });
   }
