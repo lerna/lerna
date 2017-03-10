@@ -802,8 +802,6 @@ describe("PublishCommand", () => {
 
     beforeEach((done) => {
       testDir = initFixture("PublishCommand/normal", done);
-      // mock out the ENV to a simpler version for testing
-      process.env = mockEnv;
     });
 
     afterEach(() => {
@@ -811,6 +809,9 @@ describe("PublishCommand", () => {
     });
 
     it("should publish the changed packages", (done) => {
+      // mock out the ENV to a simpler version for testing
+      process.env = mockEnv;
+
       const publishCommand = new PublishCommand([], {
         repoVersion: "1.0.1",
         registry: "https://my-private-registry"
@@ -913,8 +914,6 @@ describe("PublishCommand", () => {
 
     beforeEach((done) => {
       testDir = initFixture("PublishCommand/registries", done);
-      // mock out the ENV to a simpler version for testing
-      process.env = mockEnv;
     });
 
     afterEach(() => {
@@ -922,6 +921,9 @@ describe("PublishCommand", () => {
     });
 
     it("should use config property", (done) => {
+      // mock out the ENV to a simpler version for testing
+      process.env = mockEnv;
+
       const publishCommand = new PublishCommand([], {
         repoVersion: "1.0.1"
       });
