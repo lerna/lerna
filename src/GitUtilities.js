@@ -26,7 +26,7 @@ export default class GitUtilities {
 
   @logger.logifySync()
   static addTag(tag) {
-    ChildProcessUtilities.execSync("git tag " + tag);
+    ChildProcessUtilities.execSync("git tag -a " + tag + " -m \"" + tag + "\"");
   }
 
   @logger.logifySync()
