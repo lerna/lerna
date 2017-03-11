@@ -1,4 +1,5 @@
 import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
+import ConventionalCommitUtilties from "../ConventionalCommitUtilties";
 import FileSystemUtilities from "../FileSystemUtilities";
 import PackageUtilities from "../PackageUtilities";
 import PromptUtilities from "../PromptUtilities";
@@ -208,11 +209,19 @@ export default class PublishCommand extends Command {
 
       callback(null, { versions });
 
-    // Independent Non-Canary Mode
+    // Independent Conventional-Commits Mode
+    } else if (this.flags.conventionalCommits) {
+      const versions = {};
+      this.updates.map((update) => {
+        versions[update.package.name] = ConventionalCommitUtilties.recommendVersion(update.package.name, update.package.version);
+      });
+      callback(null, { versions });
+      // Independent Non-Canary Mode
     } else {
       async.mapLimit(this.updates, 1, (update, cb) => {
         this.promptVersion(update.package.name, update.package.version, cb);
       }, (err, versions) => {
+
         if (err) {
           return callback(err);
         }
@@ -330,6 +339,7 @@ export default class PublishCommand extends Command {
       const pkg = update.package;
       const packageLocation = pkg.location;
       const packageJsonLocation = path.join(packageLocation, "package.json");
+      const changelogLocation = path.join(packageLocation, "CHANGELOG.md");
 
       // set new version
       pkg.version = this.updatesVersions[pkg.name] || pkg.version;
@@ -341,6 +351,13 @@ export default class PublishCommand extends Command {
 
       // write new package
       FileSystemUtilities.writeFileSync(packageJsonLocation, pkg.toJsonString());
+
+      // we can now generate the Chnagelog, based on the
+      // the updated version that we're about to release.
+      if (this.flags.conventionalCommits) {
+        ConventionalCommitUtilties.updateChangelog(update.package.name, changelogLocation);
+        changedFiles.push(changelogLocation);
+      }
 
       // push to be git committed
       changedFiles.push(packageJsonLocation);

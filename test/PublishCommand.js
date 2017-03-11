@@ -6,6 +6,7 @@ import { EOL } from "os";
 import normalizeNewline from "normalize-newline";
 import escapeArgs from "command-join";
 
+import ConventionalCommitUtilties from "../src/ConventionalCommitUtilties";
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
 import PromptUtilities from "../src/PromptUtilities";
 import PublishCommand from "../src/commands/PublishCommand";
@@ -1596,6 +1597,116 @@ describe("PublishCommand", () => {
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-3/package.json"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-4/package.json"))] },
+          { args: ["git commit -m \"$(echo \"A custom publish message\")\""] },
+          { args: ["git tag package-1@1.0.1"] },
+          { args: ["git tag package-2@1.1.0"] },
+          { args: ["git tag package-3@2.0.0"] },
+          { args: ["git tag package-4@1.1.0"] }
+        ]],
+        [ChildProcessUtilities, "exec", { nodeCallback: true }, [
+          { args: ["npm publish --tag lerna-temp"] },
+          { args: ["npm publish --tag lerna-temp"] },
+          { args: ["npm publish --tag lerna-temp"] },
+          { args: ["npm publish --tag lerna-temp"] },
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-1 lerna-temp"] },
+          { args: ["npm dist-tag add package-1@1.0.1 latest"] },
+
+          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 2.0.0" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-3 lerna-temp"] },
+          { args: ["npm dist-tag add package-3@2.0.0 latest"] },
+
+          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.1.0" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-4 lerna-temp"] },
+          { args: ["npm dist-tag add package-4@1.1.0 latest"] },
+
+          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.1.0" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-2 lerna-temp"] },
+          { args: ["npm dist-tag add package-2@1.1.0 latest"] },
+
+          { args: ["git symbolic-ref --short HEAD"], returns: "master" },
+          { args: ["git push origin master"] },
+          { args: ["git push origin package-1@1.0.1 package-2@1.1.0 package-3@2.0.0 package-4@1.1.0"] },
+        ]]
+      ]);
+
+      publishCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done(err);
+
+        try {
+          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
+
+          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
+          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.1.0");
+          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "2.0.0");
+          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.1.0");
+
+          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
+          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.1.0");
+          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+
+          done();
+        } catch (err) {
+          done(err);
+        }
+      }));
+    });
+  });
+
+  /** =========================================================================
+   * INDEPENDENT - CONVENTIONAL COMMITS
+   * ======================================================================= */
+
+  describe("independent mode with --conventional-commits", () => {
+    let testDir;
+
+    beforeEach((done) => {
+      testDir = initFixture("PublishCommand/independent", done);
+    });
+
+    it("should use conventional-commits utility to guess version bump and generate CHANGELOG", (done) => {
+      const publishCommand = new PublishCommand([], {
+        independent: true,
+        message: "A custom publish message",
+        conventionalCommits: true
+      });
+
+      publishCommand.runValidations();
+      publishCommand.runPreparations();
+
+      assertStubbedCalls([
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git symbolic-ref --short -q HEAD"] }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git tag"] }
+        ]],
+        [ConventionalCommitUtilties, "recommendVersion", {}, [
+          { args: ["package-1", "1.0.0"], returns: "1.0.1"},
+          { args: ["package-2", "2.0.0"], returns: "1.1.0"},
+          { args: ["package-3", "3.0.0"], returns: "2.0.0"},
+          { args: ["package-4", "4.0.0"], returns: "1.1.0"}
+        ]],
+        [PromptUtilities, "confirm", { valueCallback: true }, [
+          { args: ["Are you sure you want to publish the above changes?"], returns: true }
+        ]],
+        [ConventionalCommitUtilties, "updateChangelog", {}, [
+          { args: ["package-1", path.join(testDir, "packages/package-1/CHANGELOG.md")]},
+          { args: ["package-2", path.join(testDir, "packages/package-2/CHANGELOG.md")]},
+          { args: ["package-3", path.join(testDir, "packages/package-3/CHANGELOG.md")]},
+          { args: ["package-4", path.join(testDir, "packages/package-4/CHANGELOG.md")]}
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/CHANGELOG.md"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/CHANGELOG.md"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-3/CHANGELOG.md"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-3/package.json"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-4/CHANGELOG.md"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-4/package.json"))] },
           { args: ["git commit -m \"$(echo \"A custom publish message\")\""] },
           { args: ["git tag package-1@1.0.1"] },
