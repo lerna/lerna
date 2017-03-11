@@ -6,8 +6,6 @@ import assert from "assert";
 
 import InitCommand from "../src/commands/InitCommand";
 
-// const originalCwd = process.cwd();
-
 describe("InitCommand", () => {
   let gitDir;
   let testDir;
@@ -17,10 +15,6 @@ describe("InitCommand", () => {
     beforeEach((done) => {
       gitDir = initFixture("InitCommand/git-dir", done);
     });
-
-    // afterEach(() => {
-    //   process.chdir(originalCwd);
-    // });
 
     it("should work in empty folder", (done) => {
       testDir = path.join(gitDir, "test-dir");
