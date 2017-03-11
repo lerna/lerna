@@ -102,6 +102,9 @@ describe("GitUtilities", () => {
     it("should exist", () => {
       assert.ok(GitUtilities.getTopLevelDirectory);
     });
+    it("should always be the current working directory", () => {
+      assert.equal(GitUtilities.getTopLevelDirectory(), process.cwd());
+    });
   });
 
   describe(".checkoutChanges()", () => {
