@@ -21,4 +21,28 @@ describe("NpmUtilities", () => {
       });
     });
   });
+
+  describe(".getExecOpts()", () => {
+    const originalEnv = Object.assign({}, process.env);
+    const mockEnv = {
+      mock_value: 1,
+      NODE_ENV: "lerna-test",
+    };
+
+    afterEach(() => {
+      process.env = originalEnv;
+    });
+
+    it("should handle environment variables properly", () => {
+      process.env = mockEnv;
+      const want = {cwd: "test_dir", env: Object.assign({}, mockEnv, {npm_config_registry: "https://my-secure-registry/npm"})};
+      assert.deepEqual(NpmUtilities.getExecOpts("test_dir", "https://my-secure-registry/npm"), want);
+    });
+
+    it("should handle missing environment variables", () => {
+      process.env = mockEnv;
+      const want = {cwd: "test_dir"};
+      assert.deepEqual(NpmUtilities.getExecOpts("test_dir"), want);
+    });
+  });
 });
