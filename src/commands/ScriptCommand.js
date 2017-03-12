@@ -22,7 +22,15 @@ export default class ScriptCommand extends Command {
   execute(callback) {
     PackageUtilities.runParallelBatches(this.batchedPackages, (pkg) => (done) => {
       this.runLernaLifecycleScriptInPackage(pkg, done);
-    }, this.concurrency, callback);
+    }, this.concurrency, (err) => {
+      if (err) {
+        callback(err);
+      } else {
+        this.logger.success(`Successfully ran lerna script '${this.script}' in packages:`);
+        this.logger.success(this.filteredPackages.map((pkg) => `- ${pkg.name}`).join("\n"));
+        callback(null, true);
+      }
+    });
   }
 
   runLernaLifecycleScriptInPackage(pkg, callback) {
@@ -39,24 +47,29 @@ export default class ScriptCommand extends Command {
 
   runLernaScriptInPackage({ pkg, prefix = "" }, callback) {
     const script = `${prefix}${this.script}`;
-    const input = this.repository.scripts[script];
-    if (!input) {
+    const rawCommand = this.repository.scripts[script];
+    if (!rawCommand) {
       callback(prefix ? null : new Error(`No lerna scripts found with '${script}'`));
     } else {
-      const args = input.split(" ").concat(prefix ? [] : this.args);
-      const command = args.shift();
-      this.runCommandInPackage({ pkg, command, args }, callback);
+      const command = prefix ? rawCommand : [rawCommand, ...this.args].join(" ");
+      this.runCommandInPackage({ pkg, script, command }, callback);
     }
   }
 
-  runCommandInPackage({ pkg, command, args }, callback) {
-    ChildProcessUtilities.spawn(command, args, {
+  runCommandInPackage({ pkg, script, command }, callback) {
+    ChildProcessUtilities.exec(command, {
       cwd: pkg.location,
       env: process.env
-    }, (code) => {
+    }, (code, stdout) => {
+      this.logger.info("");
+      this.logger.info(`> ${pkg.name}@${pkg.version} ${script} ${pkg.location}`);
+      this.logger.info(`> ${command}`);
+      this.logger.info("");
+      if (stdout) {
+        this.logger.info(stdout);
+      }
       if (code) {
-        this.logger.error(`Errored while running command '${command}' ` +
-                          `with arguments '${args.join(" ")}' in '${pkg.name}'`);
+        this.logger.error(`Errored while running command '${command}' in '${pkg.name}'`);
       }
       callback(code);
     });
