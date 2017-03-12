@@ -35,7 +35,12 @@ describe("NpmUtilities", () => {
 
     it("should handle environment variables properly", () => {
       process.env = mockEnv;
-      const want = {cwd: "test_dir", env: Object.assign({}, mockEnv, {npm_config_registry: "https://my-secure-registry/npm"})};
+      const want = {
+        cwd: "test_dir",
+        env: Object.assign({}, mockEnv, {
+          npm_config_registry: "https://my-secure-registry/npm"
+        })
+      };
       assert.deepEqual(NpmUtilities.getExecOpts("test_dir", "https://my-secure-registry/npm"), want);
     });
 
