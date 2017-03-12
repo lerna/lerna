@@ -12,7 +12,12 @@ export default class ScriptCommand extends Command {
       return;
     }
 
-    this.batchedPackages = this.toposort
+    this.nestedPackage = process.env.LERNA_SCRIPT_NESTED_PACKAGE;
+
+    this.batchedPackages
+      = this.nestedPackage
+      ? [[ this.repository.packages.filter(({ name }) => (name === this.nestedPackage)).pop() ]]
+      : this.toposort
       ? PackageUtilities.topologicallyBatchPackages(this.filteredPackages, {logger: this.logger})
       : [ this.filteredPackages ];
 
@@ -26,8 +31,10 @@ export default class ScriptCommand extends Command {
       if (err) {
         callback(err);
       } else {
-        this.logger.success(`Successfully ran lerna script '${this.script}' in packages:`);
-        this.logger.success(this.filteredPackages.map((pkg) => `- ${pkg.name}`).join("\n"));
+        if (!this.nestedPackage) {
+          this.logger.success(`Successfully ran lerna script '${this.script}' in packages:`);
+          this.logger.success(this.filteredPackages.map((pkg) => `- ${pkg.name}`).join("\n"));
+        }
         callback(null, true);
       }
     });
@@ -36,7 +43,7 @@ export default class ScriptCommand extends Command {
   runLernaLifecycleScriptInPackage(pkg, callback) {
     this.runLernaScriptInPackage({ pkg, prefix: "pre" }, (precode) => {
       if (precode) callback(precode);
-      else this.runLernaScriptInPackage({ pkg }, (code) => {
+      else this.runLernaScriptInPackage({ pkg, prefix: "" }, (code) => {
         if (code) callback(code);
         else this.runLernaScriptInPackage({ pkg, prefix: "post" }, (postcode) => {
           callback(postcode);
@@ -45,7 +52,7 @@ export default class ScriptCommand extends Command {
     });
   }
 
-  runLernaScriptInPackage({ pkg, prefix = "" }, callback) {
+  runLernaScriptInPackage({ pkg, prefix }, callback) {
     const script = `${prefix}${this.script}`;
     const rawCommand = this.repository.scripts[script];
     if (!rawCommand) {
@@ -59,7 +66,7 @@ export default class ScriptCommand extends Command {
   runCommandInPackage({ pkg, script, command }, callback) {
     ChildProcessUtilities.exec(command, {
       cwd: pkg.location,
-      env: process.env
+      env: Object.assign({}, process.env, { LERNA_SCRIPT_NESTED_PACKAGE: pkg.name })
     }, (code, stdout) => {
       this.logger.info("");
       this.logger.info(`> ${pkg.name}@${pkg.version} ${script} ${pkg.location}`);
