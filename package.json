@@ -88,8 +88,7 @@
       "**/test/*.js"
     ],
     "testPathIgnorePatterns": [
-      "<rootDir>/test/InitCommand.js",
-      "<rootDir>/test/_(.+)"
+      "<rootDir>/test/InitCommand.js"
     ]
   },
   "engines": {
