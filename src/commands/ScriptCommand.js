@@ -64,22 +64,28 @@ export default class ScriptCommand extends Command {
   }
 
   runCommandInPackage({ pkg, script, command }, callback) {
-    ChildProcessUtilities.exec(command, {
+    const prefix = this.getOptions().stream ? `${pkg.name}: ` : "";
+    const opts = {
       cwd: pkg.location,
       env: Object.assign({}, process.env, { LERNA_SCRIPT_NESTED_PACKAGE: pkg.name })
-    }, (code, stdout) => {
-      this.logger.info("");
-      this.logger.info(`> ${pkg.name}@${pkg.version} ${script} ${pkg.location}`);
-      this.logger.info(`> ${command}`);
-      this.logger.info("");
+    };
+    const cb = (code, stdout) => {
+      this.logger.info(prefix);
+      this.logger.info(`${prefix}> ${pkg.name}@${pkg.version} ${script} ${pkg.location}`);
+      this.logger.info(`${prefix}> ${command}`);
+      this.logger.info(prefix);
       if (stdout) {
-        this.logger.info(stdout);
+        this.logger.info(stdout.split("\n").map((line) => prefix + line).join("\n"));
       }
       if (code) {
         this.logger.error(`Errored while running command '${command}' in '${pkg.name}'`);
       }
       callback(code);
-    });
+    };
+    if (!prefix)
+      ChildProcessUtilities.exec(command, opts, cb);
+    else
+      ChildProcessUtilities.execStreaming(command, opts, `${pkg.name}: `, cb);
   }
 
 }

@@ -35,6 +35,12 @@ export default class ChildProcessUtilities {
     );
   }
 
+  static execStreaming(command, opts, prefix, callback) {
+    opts = this.getStreamingOpts(opts);
+    const childProcess = this.exec(command, opts, callback);
+    this.streaming(childProcess, prefix);
+  }
+
   static execSync(command, opts) {
     const mergedOpts = Object.assign({
       encoding: "utf8",
@@ -63,12 +69,18 @@ export default class ChildProcessUtilities {
   }
 
   static spawnStreaming(command, args, opts, prefix, callback) {
-    opts = Object.assign({}, opts, {
+    opts = this.getStreamingOpts(opts);
+    const childProcess = _spawn(command, args, opts, callback);
+    this.streaming(childProcess, prefix);
+  }
+
+  static getStreamingOpts(opts) {
+    return Object.assign({}, opts, {
       stdio: ["ignore", "pipe", "pipe"],
     });
+  }
 
-    const childProcess = _spawn(command, args, opts, callback);
-
+  static streaming(childProcess, prefix) {
     ["stdout", "stderr"].forEach((stream) => {
       let partialLine = "";
       childProcess[stream].setEncoding("utf8")
