@@ -35,6 +35,7 @@
     "cross-spawn": "^4.0.0",
     "dedent": "^0.7.0",
     "glob": "^7.0.6",
+    "graceful-fs": "^4.1.11",
     "inquirer": "^3.0.1",
     "lodash": "^4.17.4",
     "meow": "^3.7.0",
