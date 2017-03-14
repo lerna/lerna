@@ -1,10 +1,10 @@
+import path from "path";
+import findUp from "find-up";
 import GitUtilities from "./GitUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
 import PackageUtilities from "./PackageUtilities";
 import Package from "./Package";
 import NpmUtilities from "./NpmUtilities";
-import path from "path";
-import logger from "./logger";
 
 const DEFAULT_PACKAGE_GLOB = "packages/*";
 
@@ -15,10 +15,12 @@ export default class Repository {
       GitUtilities.init();
     }
 
-    this.rootPath = path.resolve(GitUtilities.getTopLevelDirectory());
-    this.lernaJsonLocation = path.join(this.rootPath, "lerna.json");
+    // findUp returns null when not found, and path.resolve starts from process.cwd()
+    const lernaJsonLocation = findUp.sync("lerna.json") || path.resolve("lerna.json");
+
+    this.rootPath = path.dirname(lernaJsonLocation);
+    this.lernaJsonLocation = lernaJsonLocation;
     this.packageJsonLocation = path.join(this.rootPath, "package.json");
-    this.packagesLocation = path.join(this.rootPath, "packages"); // TODO: Kill this.
 
     // Legacy
     this.versionLocation = path.join(this.rootPath, "VERSION");
