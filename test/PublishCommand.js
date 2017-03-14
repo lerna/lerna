@@ -1155,9 +1155,9 @@ describe("PublishCommand", () => {
   describe("normal mode with --repo-version and exact config", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/normal-exact", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/normal-exact").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should publish the changed packages", (done) => {
       const publishCommand = new PublishCommand([], {
