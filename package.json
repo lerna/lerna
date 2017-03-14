@@ -86,9 +86,6 @@
     "testEnvironment": "node",
     "testMatch": [
       "**/test/*.js"
-    ],
-    "testPathIgnorePatterns": [
-      "<rootDir>/test/InitCommand.js"
     ]
   },
   "engines": {
