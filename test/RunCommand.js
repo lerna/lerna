@@ -131,9 +131,10 @@ describe("RunCommand", () => {
 
       let haveExited = false;
       runCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
         assert.equal(lastInfo, "Waiting for 2 child processes to exit. CTRL-C to exit immediately.");
         haveExited = true;
-        done(err);
+        done();
       }));
 
       assert.equal(haveExited, false);

@@ -35,7 +35,7 @@ describe("BootstrapCommand", () => {
       bootstrapCommand.runPreparations();
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
@@ -44,7 +44,7 @@ describe("BootstrapCommand", () => {
           assert.ok(pathExists.sync(path.join(testDir, "packages", "package-prepublish", "did-prepublish")));
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -120,9 +120,10 @@ describe("BootstrapCommand", () => {
       ]);
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
         assert.deepEqual(gotPackage, wantPackage, "Installed the right deps");
         assert.deepEqual(gotRimraf, wantRimraf, "Removed the right stuff");
-        done(err);
+        done();
       }));
     });
 
@@ -168,9 +169,10 @@ describe("BootstrapCommand", () => {
       ]);
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
         assert.deepEqual(gotPackage, wantPackage, "Installed the right deps");
         assert.deepEqual(gotRimraf, wantRimraf, "Removed the right stuff");
-        done(err);
+        done();
       }));
     });
   });
@@ -194,7 +196,7 @@ describe("BootstrapCommand", () => {
       });
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
@@ -248,7 +250,7 @@ describe("BootstrapCommand", () => {
           );
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -275,7 +277,7 @@ describe("BootstrapCommand", () => {
       ]);
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
@@ -283,7 +285,7 @@ describe("BootstrapCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -310,7 +312,7 @@ describe("BootstrapCommand", () => {
       ]);
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "asini-debug.log")), "asini-debug.log should not exist");
@@ -354,7 +356,7 @@ describe("BootstrapCommand", () => {
           );
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -395,7 +397,7 @@ describe("BootstrapCommand", () => {
       ]);
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
@@ -454,7 +456,7 @@ describe("BootstrapCommand", () => {
           );
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -474,14 +476,14 @@ describe("BootstrapCommand", () => {
       });
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -503,7 +505,7 @@ describe("BootstrapCommand", () => {
       });
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
@@ -515,7 +517,7 @@ describe("BootstrapCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -537,7 +539,7 @@ describe("BootstrapCommand", () => {
       });
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
@@ -549,7 +551,7 @@ describe("BootstrapCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -590,13 +592,13 @@ describe("BootstrapCommand", () => {
       ]);
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -622,14 +624,14 @@ describe("BootstrapCommand", () => {
       });
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
           assert.ok(!installed, "The external dependency was not installed");
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -659,7 +661,7 @@ describe("BootstrapCommand", () => {
       });
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
@@ -672,7 +674,7 @@ describe("BootstrapCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -703,7 +705,7 @@ describe("BootstrapCommand", () => {
       });
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
@@ -711,7 +713,7 @@ describe("BootstrapCommand", () => {
           assert.ok(!installed, "The external peer dependency should not be installed");
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -727,7 +729,7 @@ describe("BootstrapCommand", () => {
       bootstrapCommand.runPreparations();
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        assert.equal(undefined, err);
+        if (err) return done.fail(err);
         done();
       }));
     });

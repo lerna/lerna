@@ -44,7 +44,7 @@ describe("ImportCommand", () => {
       ]);
 
       importCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           const lastCommit = ChildProcessUtilities.execSync("git log --format=\"%s\"", {encoding:"utf8"}).split("\n")[0];
@@ -54,7 +54,7 @@ describe("ImportCommand", () => {
           assert.equal(lastCommit, "Init external commit");
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -75,7 +75,7 @@ describe("ImportCommand", () => {
       ChildProcessUtilities.execSync("git commit -m \"Moved old-file to new-file\"", { cwd: externalDir });
 
       importCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           const lastCommit = ChildProcessUtilities.execSync("git log --format=\"%s\"", {encoding:"utf8"}).split("\n")[0];
@@ -84,7 +84,7 @@ describe("ImportCommand", () => {
           assert.equal(lastCommit, "Moved old-file to new-file");
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -182,7 +182,7 @@ describe("ImportCommand", () => {
           assert.equal((err || {}).message, expect);
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -208,7 +208,7 @@ describe("ImportCommand", () => {
           assert.equal((err || {}).message, expect);
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });

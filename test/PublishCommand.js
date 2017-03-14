@@ -88,7 +88,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -107,7 +107,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -187,7 +187,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -203,7 +203,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -271,7 +271,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -292,7 +292,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -362,7 +362,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -382,7 +382,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -444,7 +444,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -461,7 +461,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -510,7 +510,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -529,7 +529,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -569,7 +569,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -586,7 +586,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -650,11 +650,8 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) {
-          return done(err);
-        } else {
-          done();
-        }
+        if (err) return done.fail(err);
+        done();
       }));
     });
   });
@@ -732,7 +729,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -751,7 +748,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -855,7 +852,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -874,7 +871,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -946,7 +943,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
         done();
       }));
     });
@@ -1022,7 +1019,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -1041,7 +1038,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -1120,7 +1117,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -1142,7 +1139,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -1218,7 +1215,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -1241,7 +1238,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -1314,7 +1311,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -1332,7 +1329,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -1407,7 +1404,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -1424,7 +1421,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -1503,7 +1500,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -1522,7 +1519,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -1603,7 +1600,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -1622,7 +1619,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -1703,7 +1700,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -1719,7 +1716,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
