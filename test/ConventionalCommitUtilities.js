@@ -1,7 +1,8 @@
 import assert from "assert";
-
 import dedent from "dedent";
 import assertStubbedCalls from "./_assertStubbedCalls";
+import path from "path";
+
 import ConventionalCommitUtilities from "../src/ConventionalCommitUtilities";
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
 import FileSystemUtilities from "../src/FileSystemUtilities";
@@ -33,7 +34,7 @@ describe("ConventionalCommitUtilities", () => {
       assertStubbedCalls([
         [FileSystemUtilities, "existsSync", {}, [
           {
-            args: ["/foo/bar/CHANGELOG.md"],
+            args: [["", "foo", "bar", "CHANGELOG.md"].join(path.sep)],
             returns: false
           }
         ]],
@@ -45,7 +46,7 @@ describe("ConventionalCommitUtilities", () => {
         ]],
         [FileSystemUtilities, "writeFileSync", {}, [
           {
-            args: ["/foo/bar/CHANGELOG.md", dedent(`
+            args: [["", "foo", "bar", "CHANGELOG.md"].join(path.sep), dedent(`
             # Change Log
 
             All notable changes to this project will be documented in this file.
