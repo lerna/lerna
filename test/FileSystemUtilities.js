@@ -1,8 +1,8 @@
+import fs from "graceful-fs";
 import pathExists from "path-exists";
 import assert from "assert";
 import mkdirp from "mkdirp";
 import path from "path";
-import fs from "fs";
 
 import {
   fixtureNamer,

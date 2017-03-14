@@ -1,7 +1,7 @@
+import fs from "graceful-fs";
 import pathExists from "path-exists";
 import assert from "assert";
 import path from "path";
-import fs from "fs";
 import { EOL } from "os";
 import normalizeNewline from "normalize-newline";
 import escapeArgs from "command-join";

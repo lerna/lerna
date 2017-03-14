@@ -1,7 +1,7 @@
+import fs from "graceful-fs";
 import assert from "assert";
 import child from "child_process";
 import path from "path";
-import fs from "fs";
 import chalk from "chalk";
 
 import UpdatedCommand from "../src/commands/UpdatedCommand";

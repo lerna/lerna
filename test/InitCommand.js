@@ -1,5 +1,5 @@
+import fs from "graceful-fs";
 import path from "path";
-import fs from "fs";
 
 import { rimrafAsync } from "./helpers/fixtureUtils";
 import initFixture from "./helpers/initFixture";
