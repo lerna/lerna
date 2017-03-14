@@ -13,10 +13,17 @@ const CURRENT_SHA = child.execSync("git rev-parse --short HEAD", {
   encoding: "utf8",
 }).trim();
 
-export const execAsync = pify(child.exec);
-export const mkdirpAsync = pify(mkdirp);
-export const realpathAsync = pify(fs.realpath);
-export const rimrafAsync = pify(rimraf);
+const execAsync = pify(child.exec);
+const realpathAsync = pify(fs.realpath);
+
+const _mkdirpAsync = pify(mkdirp);
+const _rimrafAsync = pify(rimraf);
+
+// graceful-fs overrides for rimraf
+const { unlink, chmod, stat, lstat, rmdir, readdir } = fs;
+
+export const mkdirpAsync = (fp) => _mkdirpAsync(fp, { fs });
+export const rimrafAsync = (fp) => _rimrafAsync(fp, { unlink, chmod, stat, lstat, rmdir, readdir });
 
 export function getTempDir(suffix) {
   // e.g., "lerna-12345-deadbeef"
