@@ -37,13 +37,8 @@ export function getTempDir(suffix) {
   });
 }
 
-export function gitInit(testDir, message = "Init commit") {
-  const opts = { cwd: testDir };
-
-  return Promise.resolve()
-    .then(() => execAsync("git init .", opts))
-    .then(() => execAsync("git add -A", opts))
-    .then(() => execAsync(`git commit -m \"${message}\"`, opts));
+export function gitInit(cwd, message = "Init commit") {
+  return execAsync(`git init . && git add -A && git commit -m "${message}"`, { cwd });
 }
 
 export function removeAll(createdDirectories) {
