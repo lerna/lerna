@@ -34,7 +34,7 @@ describe("ConventionalCommitUtilities", () => {
       assertStubbedCalls([
         [FileSystemUtilities, "existsSync", {}, [
           {
-            args: [["", "foo", "bar", "CHANGELOG.md"].join(path.sep)],
+            args: [path.normalize("/foo/bar/CHANGELOG.md")],
             returns: false
           }
         ]],
@@ -46,7 +46,7 @@ describe("ConventionalCommitUtilities", () => {
         ]],
         [FileSystemUtilities, "writeFileSync", {}, [
           {
-            args: [["", "foo", "bar", "CHANGELOG.md"].join(path.sep), dedent(`
+            args: [path.normalize("/foo/bar/CHANGELOG.md"), dedent(`
             # Change Log
 
             All notable changes to this project will be documented in this file.
@@ -68,13 +68,13 @@ describe("ConventionalCommitUtilities", () => {
       assertStubbedCalls([
         [FileSystemUtilities, "existsSync", {}, [
           {
-            args: ["/foo/bar/CHANGELOG.md"],
+            args: [path.normalize("/foo/bar/CHANGELOG.md")],
             returns: true
           }
         ]],
         [FileSystemUtilities, "readFileSync", {}, [
           {
-            args: ["/foo/bar/CHANGELOG.md"],
+            args: [path.normalize("/foo/bar/CHANGELOG.md")],
             returns: dedent(`
             # Change Log
 
@@ -92,7 +92,7 @@ describe("ConventionalCommitUtilities", () => {
         ]],
         [FileSystemUtilities, "writeFileSync", {}, [
           {
-            args: ["/foo/bar/CHANGELOG.md", dedent(`
+            args: [path.normalize("/foo/bar/CHANGELOG.md"), dedent(`
             # Change Log
 
             All notable changes to this project will be documented in this file.
