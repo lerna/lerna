@@ -784,11 +784,10 @@ describe("BootstrapCommand", () => {
       // mock out the ENV to a simpler version for testing
       process.env = mockEnv;
 
+      const bootstrapCommand = new BootstrapCommand([], {});
       const env = Object.assign({}, mockEnv, {
         npm_config_registry: "https://my-secure-registry/npm",
       });
-
-      const bootstrapCommand = new BootstrapCommand([], {});
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
