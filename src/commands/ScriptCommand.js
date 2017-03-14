@@ -76,7 +76,7 @@ export default class ScriptCommand extends Command {
       this.logger.info(`${prefix}> ${command}`);
       this.logger.info(prefix);
       if (stdout)
-        this.logger.info(stdout.split("\n").map((line) => line).join("\n"));
+        this.logger.info(stdout.split("\n").map((line) => prefix + line).join("\n"));
     };
     const cb = (code, stdout) => {
       if (!stream)
