@@ -765,6 +765,7 @@ describe("BootstrapCommand", () => {
 
   describe("registries", () => {
     let testDir;
+
     const originalEnv = Object.assign({}, process.env);
     const mockEnv = {
       mock_value: 1,
@@ -782,6 +783,7 @@ describe("BootstrapCommand", () => {
     it("should use config property", (done) => {
       // mock out the ENV to a simpler version for testing
       process.env = mockEnv;
+
       const bootstrapCommand = new BootstrapCommand([], {});
       const env = Object.assign({}, mockEnv, {
         npm_config_registry: "https://my-secure-registry/npm",
