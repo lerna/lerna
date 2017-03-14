@@ -23,7 +23,9 @@ export default class NpmUtilities {
     };
 
     if (registry) {
-      opts.env = {npm_config_registry: registry};
+      opts.env = Object.assign({}, process.env, {
+        npm_config_registry: registry,
+      });
     }
 
     const packageJson = path.join(directory, "package.json");
