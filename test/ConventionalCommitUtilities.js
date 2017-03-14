@@ -40,7 +40,7 @@ describe("ConventionalCommitUtilities", () => {
         ]],
         [ChildProcessUtilities, "execSync", {}, [
           {
-            args: [`${require.resolve("conventional-changelog-cli/cli.js")} -l bar --commit-path=/foo/bar --pkg=/foo/bar/package.json -p angular`],
+            args: [`${require.resolve("conventional-changelog-cli/cli.js")} -l bar --commit-path=/foo/bar --pkg=${path.normalize("/foo/bar/package.json")} -p angular`],
             returns: "<a name='change' />feat: I should be placed in the CHANGELOG"
           }
         ]],
@@ -86,7 +86,7 @@ describe("ConventionalCommitUtilities", () => {
         ]],
         [ChildProcessUtilities, "execSync", {}, [
           {
-            args: [`${require.resolve("conventional-changelog-cli/cli.js")} -l bar --commit-path=/foo/bar/ --pkg=/foo/bar/package.json -p angular`],
+            args: [`${require.resolve("conventional-changelog-cli/cli.js")} -l bar --commit-path=/foo/bar/ --pkg=${path.normalize("/foo/bar/package.json")} -p angular`],
             returns: "<a name='change2' />fix: a second commit for our CHANGELOG"
           }
         ]],
