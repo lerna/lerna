@@ -2,20 +2,24 @@ git:
   depth: 1
 sudo: false
 language: node_js
-install: npm install
 cache:
+  yarn: true
   directories:
   - node_modules
 
 node_js:
- - '4'
- - '6'
  - '7'
+ - '6'
+ - '4'
 
 before_script:
   - git config --global user.email test@example.com
   - git config --global user.name "Tester McPerson"
-script: npm run ci
+
+script: yarn run ci
+
+matrix:
+  fast_finish: true
 
 notifications:
   slack: lernajs:qHyrojRoqBBu7OhDyX1OMiHQ

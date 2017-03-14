@@ -1,22 +1,29 @@
 # Test against this version of Node.js
 environment:
   matrix:
-    - nodejs_version: "4"
-    - nodejs_version: "6"
     - nodejs_version: "7"
+    - nodejs_version: "6"
+    - nodejs_version: "4"
 
 init:
   - git config --global user.email test@example.com
   - git config --global user.name "Tester McPerson"
 
+cache:
+  - "%LOCALAPPDATA%\\Yarn"
+
 install:
   - ps: Install-Product node $env:nodejs_version
-  - npm install
+  - yarn
+
+matrix:
+  fast_finish: true
 
 test_script:
   - node --version
   - npm --version
-  - npm run ci
+  - yarn --version
+  - yarn run ci
 
 # Don't actually build.
 build: off
