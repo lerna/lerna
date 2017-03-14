@@ -1,9 +1,9 @@
-import fs from "fs";
 import path from "path";
 import async from "async";
 import Command from "../Command";
 import PromptUtilities from "../PromptUtilities";
 import ChildProcessUtilities from "../ChildProcessUtilities";
+import FileSystemUtilities from "../FileSystemUtilities";
 
 export default class ImportCommand extends Command {
   initialize(callback) {
@@ -17,7 +17,7 @@ export default class ImportCommand extends Command {
     const externalRepoBase = path.basename(externalRepoPath);
 
     try {
-      const stats = fs.statSync(externalRepoPath);
+      const stats = FileSystemUtilities.statSync(externalRepoPath);
       if (!stats.isDirectory()) {
         throw new Error(`Input path "${inputPath}" is not a directory`);
       }
@@ -37,7 +37,7 @@ export default class ImportCommand extends Command {
     this.targetDir = path.join(targetBase, externalRepoBase);
 
     try {
-      if (fs.statSync(this.targetDir)) {
+      if (FileSystemUtilities.existsSync(this.targetDir)) {
         return callback(new Error(`Target directory already exists "${this.targetDir}"`));
       }
     } catch (e) { /* Pass */ }
