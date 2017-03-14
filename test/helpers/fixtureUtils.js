@@ -8,33 +8,36 @@ import mkdirp from "mkdirp";
 import pify from "pify";
 import rimraf from "rimraf";
 
+const CURRENT_SHA = child.execSync("git rev-parse --short HEAD", {
+  cwd: __dirname,
+  encoding: "utf8",
+}).trim();
+
 export const execAsync = pify(child.exec);
 export const mkdirpAsync = pify(mkdirp);
 export const realpathAsync = pify(fs.realpath);
 export const rimrafAsync = pify(rimraf);
 
 export function getTempDir(suffix) {
-  return execAsync("git rev-parse --short HEAD").then((sha) => {
-    // e.g., "lerna-12345-deadbeef"
-    const prefix = [
-      "lerna",
-      process.pid,
-      sha.trim(),
-    ];
+  // e.g., "lerna-12345-deadbeef"
+  const prefix = [
+    "lerna",
+    process.pid,
+    CURRENT_SHA,
+  ];
 
-    if (suffix) {
-      // e.g., "lerna-12345-deadbeef-external"
-      prefix.push(suffix);
-    }
+  if (suffix) {
+    // e.g., "lerna-12345-deadbeef-external"
+    prefix.push(suffix);
+  }
 
-    const tmpDir = path.join(os.tmpdir() || "/tmp", prefix.join("-"));
+  const tmpDir = path.join(os.tmpdir() || "/tmp", prefix.join("-"));
 
-    // We realpath because OS X symlinks /var -> /private/var
-    // and require() also calls realpath on its argument.
-    // Because we use require() to load package.json, it is
-    // also necessary to completely resolve the tmpDir.
-    return mkdirpAsync(tmpDir).then(() => realpathAsync(tmpDir));
-  });
+  // We realpath because OS X symlinks /var -> /private/var
+  // and require() also calls realpath on its argument.
+  // Because we use require() to load package.json, it is
+  // also necessary to completely resolve the tmpDir.
+  return mkdirpAsync(tmpDir).then(() => realpathAsync(tmpDir));
 }
 
 export function gitInit(cwd, message = "Init commit") {
