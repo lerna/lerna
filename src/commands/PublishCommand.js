@@ -355,7 +355,7 @@ export default class PublishCommand extends Command {
       // write new package
       FileSystemUtilities.writeFileSync(packageJsonLocation, pkg.toJsonString());
 
-      // we can now generate the Chnagelog, based on the
+      // we can now generate the Changelog, based on the
       // the updated version that we're about to release.
       if (this.flags.conventionalCommits) {
         ConventionalCommitUtilities.updateChangelog({
