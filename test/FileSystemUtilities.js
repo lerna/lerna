@@ -129,4 +129,12 @@ describe("FileSystemUtilities", () => {
     });
   });
 
+  describe(".statSync()", () => {
+    it("should stat a file", () => {
+      const dirPath = path.join(testDir, "stat-dir");
+      mkdirp.sync(dirPath);
+      const stat = FileSystemUtilities.statSync(dirPath);
+      assert.ok(stat.isDirectory());
+    });
+  });
 });

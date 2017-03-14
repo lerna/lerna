@@ -59,6 +59,11 @@ export default class FileSystemUtilities {
     return fs.readFileSync(filePath, "utf-8").toString().trim();
   }
 
+  @logger.logifySync()
+  static statSync(filePath) {
+    return fs.statSync(filePath);
+  }
+
   @logger.logifyAsync()
   static rimraf(filePath, callback) {
 
