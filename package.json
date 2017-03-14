@@ -11,7 +11,7 @@
     "fix": "npm run lint -- --fix",
     "pretest": "npm run lint -- --cache",
     "test": "jest",
-    "ci": "npm run lint && npm run coverage -- --verbose  -i",
+    "ci": "npm run lint && npm run coverage -- --verbose",
     "prepublish": "npm run build"
   },
   "repository": {
