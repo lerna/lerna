@@ -776,6 +776,10 @@ describe("BootstrapCommand", () => {
       testDir = initFixture("BootstrapCommand/registries", done);
     });
 
+    afterEach(() => {
+      process.env = originalEnv;
+    });
+
     it("should use config property", (done) => {
       // mock out the ENV to a simpler version for testing
       process.env = mockEnv;
