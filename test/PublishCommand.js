@@ -6,7 +6,7 @@ import { EOL } from "os";
 import normalizeNewline from "normalize-newline";
 import escapeArgs from "command-join";
 
-import ConventionalCommitUtilties from "../src/ConventionalCommitUtilties";
+import ConventionalCommitUtilities from "../src/ConventionalCommitUtilities";
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
 import PromptUtilities from "../src/PromptUtilities";
 import PublishCommand from "../src/commands/PublishCommand";
@@ -1684,20 +1684,20 @@ describe("PublishCommand", () => {
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["git tag"] }
         ]],
-        [ConventionalCommitUtilties, "recommendVersion", {}, [
-          { args: ["package-1", "1.0.0"], returns: "1.0.1"},
-          { args: ["package-2", "2.0.0"], returns: "1.1.0"},
-          { args: ["package-3", "3.0.0"], returns: "2.0.0"},
-          { args: ["package-4", "4.0.0"], returns: "1.1.0"}
+        [ConventionalCommitUtilities, "recommendVersion", {}, [
+          { args: [{name: "package-1", version: "1.0.0", location: path.join(testDir, "packages/package-1")}], returns: "1.0.1"},
+          { args: [{name: "package-2", version: "2.0.0", location: path.join(testDir, "packages/package-2")}], returns: "1.1.0"},
+          { args: [{name: "package-3", version: "3.0.0", location: path.join(testDir, "packages/package-3")}], returns: "2.0.0"},
+          { args: [{name: "package-4", version: "4.0.0", location: path.join(testDir, "packages/package-4")}], returns: "1.1.0"}
         ]],
         [PromptUtilities, "confirm", { valueCallback: true }, [
           { args: ["Are you sure you want to publish the above changes?"], returns: true }
         ]],
-        [ConventionalCommitUtilties, "updateChangelog", {}, [
-          { args: ["package-1", path.join(testDir, "packages/package-1/CHANGELOG.md")]},
-          { args: ["package-2", path.join(testDir, "packages/package-2/CHANGELOG.md")]},
-          { args: ["package-3", path.join(testDir, "packages/package-3/CHANGELOG.md")]},
-          { args: ["package-4", path.join(testDir, "packages/package-4/CHANGELOG.md")]}
+        [ConventionalCommitUtilities, "updateChangelog", {}, [
+          { args: [{name: "package-1", location: path.join(testDir, "packages/package-1")}]},
+          { args: [{name: "package-2", location: path.join(testDir, "packages/package-2")}]},
+          { args: [{name: "package-3", location: path.join(testDir, "packages/package-3")}]},
+          { args: [{name: "package-4", location: path.join(testDir, "packages/package-4")}]}
         ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/CHANGELOG.md"))] },

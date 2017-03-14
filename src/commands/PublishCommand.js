@@ -1,5 +1,5 @@
 import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
-import ConventionalCommitUtilties from "../ConventionalCommitUtilties";
+import ConventionalCommitUtilities from "../ConventionalCommitUtilities";
 import FileSystemUtilities from "../FileSystemUtilities";
 import PackageUtilities from "../PackageUtilities";
 import PromptUtilities from "../PromptUtilities";
@@ -213,7 +213,11 @@ export default class PublishCommand extends Command {
     } else if (this.flags.conventionalCommits) {
       const versions = {};
       this.updates.map((update) => {
-        versions[update.package.name] = ConventionalCommitUtilties.recommendVersion(update.package.name, update.package.version);
+        versions[update.package.name] = ConventionalCommitUtilities.recommendVersion({
+          name: update.package.name,
+          version: update.package.version,
+          location: update.package.location
+        });
       });
       callback(null, { versions });
       // Independent Non-Canary Mode
@@ -339,7 +343,6 @@ export default class PublishCommand extends Command {
       const pkg = update.package;
       const packageLocation = pkg.location;
       const packageJsonLocation = path.join(packageLocation, "package.json");
-      const changelogLocation = path.join(packageLocation, "CHANGELOG.md");
 
       // set new version
       pkg.version = this.updatesVersions[pkg.name] || pkg.version;
@@ -355,8 +358,11 @@ export default class PublishCommand extends Command {
       // we can now generate the Chnagelog, based on the
       // the updated version that we're about to release.
       if (this.flags.conventionalCommits) {
-        ConventionalCommitUtilties.updateChangelog(update.package.name, changelogLocation);
-        changedFiles.push(changelogLocation);
+        ConventionalCommitUtilities.updateChangelog({
+          name: pkg.name,
+          location: pkg.location
+        });
+        changedFiles.push(ConventionalCommitUtilities.changelogLocation(pkg));
       }
 
       // push to be git committed
