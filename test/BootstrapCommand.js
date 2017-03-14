@@ -766,11 +766,24 @@ describe("BootstrapCommand", () => {
   describe("registries", () => {
     let testDir;
 
+    const originalEnv = Object.assign({}, process.env);
+    const mockEnv = {
+      mock_value: 1,
+      NODE_ENV: "lerna-test",
+    };
+
     beforeEach((done) => {
       testDir = initFixture("BootstrapCommand/registries", done);
     });
 
     it("should use config property", (done) => {
+      // mock out the ENV to a simpler version for testing
+      process.env = mockEnv;
+
+      const env = Object.assign({}, mockEnv, {
+        npm_config_registry: "https://my-secure-registry/npm",
+      });
+
       const bootstrapCommand = new BootstrapCommand([], {});
 
       bootstrapCommand.runValidations();
@@ -778,7 +791,7 @@ describe("BootstrapCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install"], { cwd: path.join(testDir, "packages", "package-1"), stdio: STDIO_OPT, env: { npm_config_registry: "https://my-secure-registry/npm" } }] }
+          { args: ["npm", ["install"], { cwd: path.join(testDir, "packages", "package-1"), stdio: STDIO_OPT, env }] }
         ]]
       ]);
 
