@@ -1,7 +1,6 @@
 import path from "path";
 import semver from "semver";
 import NpmUtilities from "./NpmUtilities";
-import logger from "./logger";
 
 export default class Package {
   constructor(pkg, location) {
@@ -81,10 +80,10 @@ export default class Package {
   /**
    * Determine if a dependency version satisfies the requirements of this package
    * @param {Package} dependency
-   * @param {Boolean} showWarning
+   * @param {Logger} logger
    * @returns {Boolean}
    */
-  hasMatchingDependency(dependency, showWarning = false) {
+  hasMatchingDependency(dependency, logger) {
     const expectedVersion = this.allDependencies[dependency.name];
     const actualVersion = dependency.version;
 
@@ -97,7 +96,7 @@ export default class Package {
       return true;
     }
 
-    if (showWarning) {
+    if (logger) {
       logger.warn(
         `Version mismatch inside "${this.name}". ` +
         `Depends on "${dependency.name}@${expectedVersion}" ` +
