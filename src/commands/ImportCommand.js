@@ -88,15 +88,51 @@ export default class ImportCommand extends Command {
 
     async.series(this.commits.map((sha) => (done) => {
       progressBar.tick(sha);
+      // Get a list of files in this commit
+      const filesInPatch = this.externalExecSync(`git show --name-only --no-color ${sha}`)
+      .split("\n")
+      // Filter out empties
+      .filter(function (file) {return !!file; })
+      // Sort by longest first, to avoid the case where a file that is shorter matches
+      // a partial longer file
+      .sort(function (a, b) {
+        if (a.length < b.length) {
+          return 1;
+        }
+        if (a.length > b.length) {
+          return -1;
+        }
+        return 0;
+      })
+      // Map files to original and urlEncoded
+      .map(function (file) {
+        return {
+          encodedString: encodeURI(file),
+          originalString: file
+        };
+      });
 
       // Create a patch file for this commit and prepend the target directory
       // to all affected files.  This moves the git history for the entire
       // external repository into the package subdirectory, commit by commit.
-      const patch = this.externalExecSync(`git format-patch -1 ${sha} --stdout`)
+      let patch = this.externalExecSync(`git format-patch -1 ${sha} --stdout`);
+
+      // Replace all file names with url encoded file names
+      patch = filesInPatch.reduce(function (partiallyReplacedPatch, file) {
+        return partiallyReplacedPatch.replace(new RegExp(file.originalString, "mg"), file.encodedString);
+      }, patch);
+
+      // Replace the original path with the replacement path
+      patch = patch
         .replace(/^([-+]{3} [ab])/mg,     replacement)
         .replace(/^(diff --git a)/mg,     replacement)
         .replace(/^(diff --git \S+ b)/mg, replacement)
         .replace(/^(rename (from|to)) /mg, `\$1 ${this.targetDir}/`);
+
+      // Remove all url encoded file names from patch
+      patch = filesInPatch.reduce(function (partiallyReplacedPatch, file) {
+        return partiallyReplacedPatch.replace(new RegExp(file.encodedString, "mg"), file.originalString);
+      }, patch + "");
 
       // Apply the modified patch to the current lerna repository, preserving
       // original commit date, author and message.
