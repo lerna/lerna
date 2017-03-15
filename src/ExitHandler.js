@@ -1,5 +1,4 @@
 import FileSystemUtilities from "./FileSystemUtilities";
-import logger from "./logger";
 import path from "path";
 import padEnd from "lodash/padEnd";
 
@@ -8,7 +7,7 @@ export default class ExitHandler {
     this.errorsSeen = {};
   }
 
-  writeLogs() {
+  writeLogs(logger) {
     const filePath = path.join(process.cwd(), "lerna-debug.log");
     const fileContent = this._formatLogs(logger.logs);
 

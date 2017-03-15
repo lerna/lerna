@@ -205,7 +205,7 @@ export default class Command {
   _complete(err, code, callback) {
     if (code !== 0) {
       const exitHandler = new ExitHandler();
-      exitHandler.writeLogs();
+      exitHandler.writeLogs(this.logger);
     }
 
     const finish = function() {
@@ -220,7 +220,7 @@ export default class Command {
 
     const childProcessCount = ChildProcessUtilities.getChildProcessCount();
     if (childProcessCount > 0) {
-      logger.info(
+      this.logger.info(
         `Waiting for ${childProcessCount} child ` +
         `process${childProcessCount === 1 ? "" : "es"} to exit. ` +
         "CTRL-C to exit immediately."
@@ -234,7 +234,7 @@ export default class Command {
   _legacyOptions() {
     return ["bootstrap", "publish"].reduce((opts, command) => {
       if (this.name === command && this.repository.lernaJson[`${command}Config`]) {
-        logger.warn(`\`${command}Config.ignore\` is deprecated.  Use \`commands.${command}.ignore\`.`);
+        this.logger.warn(`\`${command}Config.ignore\` is deprecated.  Use \`commands.${command}.ignore\`.`);
         opts.ignore = this.repository.lernaJson[`${command}Config`].ignore;
       }
       return opts;

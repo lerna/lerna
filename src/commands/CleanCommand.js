@@ -2,7 +2,6 @@ import async from "async";
 import Command from "../Command";
 import FileSystemUtilities from "../FileSystemUtilities";
 import PromptUtilities from "../PromptUtilities";
-import progressBar from "../progressBar";
 
 export default class CleanCommand extends Command {
   initialize(callback) {
@@ -24,9 +23,9 @@ export default class CleanCommand extends Command {
   }
 
   execute(callback) {
-    progressBar.init(this.filteredPackages.length);
+    this.progressBar.init(this.filteredPackages.length);
     this.rimrafNodeModulesInPackages((err) => {
-      progressBar.terminate();
+      this.progressBar.terminate();
       if (err) {
         callback(err);
       } else {
@@ -39,7 +38,7 @@ export default class CleanCommand extends Command {
   rimrafNodeModulesInPackages(callback) {
     async.parallelLimit(this.filteredPackages.map((pkg) => (cb) => {
       FileSystemUtilities.rimraf(pkg.nodeModulesLocation, (err) => {
-        progressBar.tick(pkg.name);
+        this.progressBar.tick(pkg.name);
         cb(err);
       });
     }), this.concurrency, callback);
