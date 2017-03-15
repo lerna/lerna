@@ -1,6 +1,6 @@
 import assert from "assert";
 import dedent from "dedent";
-import assertStubbedCalls from "./_assertStubbedCalls";
+import assertStubbedCalls from "./helpers/assertStubbedCalls";
 import path from "path";
 
 import ConventionalCommitUtilities from "../src/ConventionalCommitUtilities";

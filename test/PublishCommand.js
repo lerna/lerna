@@ -1729,9 +1729,9 @@ describe("PublishCommand", () => {
   describe("independent mode with --conventional-commits", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/independent", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/independent").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should use conventional-commits utility to guess version bump and generate CHANGELOG", (done) => {
       const publishCommand = new PublishCommand([], {
