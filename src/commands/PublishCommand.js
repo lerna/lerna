@@ -1,4 +1,5 @@
 import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
+import ConventionalCommitUtilities from "../ConventionalCommitUtilities";
 import FileSystemUtilities from "../FileSystemUtilities";
 import PackageUtilities from "../PackageUtilities";
 import PromptUtilities from "../PromptUtilities";
@@ -208,11 +209,23 @@ export default class PublishCommand extends Command {
 
       callback(null, { versions });
 
-    // Independent Non-Canary Mode
+    // Independent Conventional-Commits Mode
+    } else if (this.flags.conventionalCommits) {
+      const versions = {};
+      this.updates.map((update) => {
+        versions[update.package.name] = ConventionalCommitUtilities.recommendVersion({
+          name: update.package.name,
+          version: update.package.version,
+          location: update.package.location
+        });
+      });
+      callback(null, { versions });
+      // Independent Non-Canary Mode
     } else {
       async.mapLimit(this.updates, 1, (update, cb) => {
         this.promptVersion(update.package.name, update.package.version, cb);
       }, (err, versions) => {
+
         if (err) {
           return callback(err);
         }
@@ -341,6 +354,16 @@ export default class PublishCommand extends Command {
 
       // write new package
       FileSystemUtilities.writeFileSync(packageJsonLocation, pkg.toJsonString());
+
+      // we can now generate the Changelog, based on the
+      // the updated version that we're about to release.
+      if (this.flags.conventionalCommits) {
+        ConventionalCommitUtilities.updateChangelog({
+          name: pkg.name,
+          location: pkg.location
+        });
+        changedFiles.push(ConventionalCommitUtilities.changelogLocation(pkg));
+      }
 
       // push to be git committed
       changedFiles.push(packageJsonLocation);

@@ -24,6 +24,7 @@ var cli = meow([
   "Options:",
   "  --independent, -i       Version packages independently",
   "  --canary, -c            Publish packages after every successful merge using the sha as part of the tag",
+  "  --conventional-commits  Use angular conventional-commit format to determine version bump and generate CHANGELOG",
   "  --git-remote [remote]   Push git changes to the specified remote instead of 'origin'",
   "  --skip-git              Skip commiting, tagging, and pushing git changes (only affects publish)",
   "  --skip-npm              Stop before actually publishing change to npm (only affects publish)",
