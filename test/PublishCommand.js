@@ -61,7 +61,7 @@ describe("PublishCommand", () => {
           { args: ["npm publish --tag lerna-temp"] },
           { args: ["npm publish --tag lerna-temp"] },
           // No package-5.  It's private.
-        ], true],
+        ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
           { args: ["npm dist-tag rm package-1 lerna-temp"] },
@@ -423,7 +423,7 @@ describe("PublishCommand", () => {
           { args: ["npm publish --tag lerna-temp"] },
           { args: ["npm publish --tag lerna-temp"] },
           { args: ["npm publish --tag lerna-temp"] },
-        ], true],
+        ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
           { args: ["npm dist-tag rm package-1 lerna-temp"] },
@@ -638,7 +638,7 @@ describe("PublishCommand", () => {
           { args: ["npm publish --tag prerelease"] },
           { args: ["npm publish --tag prerelease"] },
           { args: ["npm publish --tag prerelease"] },
-        ], true],
+        ]],
         [ChildProcessUtilities, "execSync", {}, [
 
           // No package-5.  It's private.
@@ -702,7 +702,7 @@ describe("PublishCommand", () => {
           { args: ["npm publish --tag lerna-temp"] },
           { args: ["npm publish --tag lerna-temp"] },
           // No package-5.  It's private.
-        ], true],
+        ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
           { args: ["npm dist-tag rm package-1 lerna-temp"] },
@@ -825,7 +825,7 @@ describe("PublishCommand", () => {
           { args: ["npm publish --tag lerna-temp", { env, cwd: path.join(testDir,"packages/package-4") }] },
           { args: ["npm publish --tag lerna-temp", { env, cwd: path.join(testDir,"packages/package-2") }] }
           // No package-5.  It's private.
-        ], true],
+        ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["npm dist-tag ls package-1", { env, cwd: path.join(testDir,"packages/package-1") }], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
           { args: ["npm dist-tag rm package-1 lerna-temp", { env, cwd: path.join(testDir,"packages/package-1") }]},
@@ -928,7 +928,7 @@ describe("PublishCommand", () => {
         ]],
         [ChildProcessUtilities, "exec", { nodeCallback: true }, [
           { args: ["npm publish --tag lerna-temp", { env, cwd: path.join(testDir,"packages/package-1") }]}
-        ], true],
+        ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["npm dist-tag ls package-1", { env, cwd: path.join(testDir,"packages/package-1") }],
             returns: "lerna-temp: 1.0.1\nstable: 1.0.0"
@@ -992,7 +992,7 @@ describe("PublishCommand", () => {
           { args: ["npm publish --tag lerna-temp"] },
           { args: ["npm publish --tag lerna-temp"] },
           // No package-5.  It's private.
-        ], true],
+        ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
           { args: ["npm dist-tag rm package-1 lerna-temp"] },
@@ -1090,7 +1090,7 @@ describe("PublishCommand", () => {
           { args: ["npm publish --tag lerna-temp"] },
           { args: ["npm publish --tag lerna-temp"] },
           // No package-5.  It's private.
-        ], true],
+        ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
           { args: ["npm dist-tag rm package-1 lerna-temp"] },
@@ -1188,7 +1188,7 @@ describe("PublishCommand", () => {
           { args: ["npm publish --tag lerna-temp"] },
           { args: ["npm publish --tag lerna-temp"] },
           // No package-5.  It's private.
-        ], true],
+        ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
           { args: ["npm dist-tag rm package-1 lerna-temp"] },
@@ -1286,7 +1286,7 @@ describe("PublishCommand", () => {
           { args: ["npm publish --tag lerna-temp", { cwd: path.join(testDir,"packages/package-3") }] },
           { args: ["npm publish --tag lerna-temp", { cwd: path.join(testDir,"packages/package-4") }] },
           { args: ["npm publish --tag lerna-temp", { cwd: path.join(testDir,"packages/package-2") }] }
-        ], true],
+        ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["npm dist-tag ls package-1", { cwd: path.join(testDir,"packages/package-1") }], returns: "lerna-temp: 1.1.0\nstable: 1.0.0" },
           { args: ["npm dist-tag rm package-1 lerna-temp", { cwd: path.join(testDir,"packages/package-1") }] },
@@ -1379,7 +1379,7 @@ describe("PublishCommand", () => {
           { args: ["npm publish --tag lerna-temp"] },
           { args: ["npm publish --tag lerna-temp"] },
           { args: ["npm publish --tag lerna-temp"] }
-        ], true],
+        ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
           { args: ["npm dist-tag rm package-1 lerna-temp"] },
@@ -1473,7 +1473,7 @@ describe("PublishCommand", () => {
           { args: ["npm publish --tag lerna-temp"] },
           { args: ["npm publish --tag lerna-temp"] },
           // No package-5.  It's private.
-        ], true],
+        ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
           { args: ["npm dist-tag rm package-1 lerna-temp"] },
@@ -1573,7 +1573,7 @@ describe("PublishCommand", () => {
           { args: ["npm publish --tag lerna-temp"] },
           { args: ["npm publish --tag lerna-temp"] },
           // No package-5.  It's private.
-        ], true],
+        ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
           { args: ["npm dist-tag rm package-1 lerna-temp"] },
