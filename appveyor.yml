@@ -1,29 +1,27 @@
-# Test against this version of Node.js
+clone_depth: 1
+
 environment:
   matrix:
     - nodejs_version: "7"
     - nodejs_version: "6"
     - nodejs_version: "4"
 
-init:
-  - git config --global user.email test@example.com
-  - git config --global user.name "Tester McPerson"
-
-cache:
-  - "%LOCALAPPDATA%\\Yarn"
-
-install:
-  - ps: Install-Product node $env:nodejs_version
-  - yarn
-
 matrix:
   fast_finish: true
 
+cache:
+  - "%LOCALAPPDATA%\\Yarn"
+  - node_modules -> yarn.lock
+
+install:
+  - ps: Install-Product node $env:nodejs_version
+  - yarn --frozen-lockfile
+
+before_test:
+  - git config --global user.email test@example.com
+  - git config --global user.name "Tester McPerson"
+
 test_script:
-  - node --version
-  - npm --version
-  - yarn --version
   - yarn run ci
 
-# Don't actually build.
 build: off
