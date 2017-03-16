@@ -16,7 +16,6 @@ import initFixture from "./helpers/initFixture";
 import assertStubbedCalls from "./helpers/assertStubbedCalls";
 
 describe("PublishCommand", () => {
-
   /** =========================================================================
    * NORMAL
    * ======================================================================= */
@@ -285,7 +284,6 @@ describe("PublishCommand", () => {
       }));
     });
   });
-
 
   /** =========================================================================
    * INDEPENDENT - CANARY
@@ -723,7 +721,6 @@ describe("PublishCommand", () => {
   });
 
   describe("auto confirmation", () => {
-
     it("should be possible to skip asking for confirmation", (done) => {
       const publishCommand = new PublishCommand([], {
         yes: true

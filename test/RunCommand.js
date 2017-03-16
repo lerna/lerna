@@ -10,7 +10,6 @@ import stub from "./helpers/stub";
 import FakeChild from "./helpers/fakeChild";
 
 describe("RunCommand", () => {
-
   describe("in a basic repo", () => {
     let testDir;
 
@@ -82,7 +81,6 @@ describe("RunCommand", () => {
 
         runCommand.runCommand(exitWithCode(0, () => {
           assert.equal(4, calls);
-
           done();
         }));
       });
@@ -141,7 +139,6 @@ describe("RunCommand", () => {
 
       children.forEach((child) => child.emit("exit"));
     });
-
   });
 
   describe("with --include-filtered-dependencies", () => {
@@ -173,5 +170,4 @@ describe("RunCommand", () => {
       }));
     });
   });
-
 });

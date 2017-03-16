@@ -20,7 +20,6 @@ const resolveSymlink = (symlinkLocation) => {
 };
 
 describe("BootstrapCommand", () => {
-
   describe("lifecycle scripts", () => {
     let testDir;
 
@@ -177,7 +176,6 @@ describe("BootstrapCommand", () => {
       }));
     });
   });
-
 
   describe("dependencies between packages in the repo", () => {
     let testDir;
@@ -391,7 +389,6 @@ describe("BootstrapCommand", () => {
         if (err) return done.fail(err);
 
         assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
-
         assert.deepEqual(want, got, "Installed everywhere");
 
         // Make sure the `prepublish` script got run (index.js got created).
@@ -492,7 +489,6 @@ describe("BootstrapCommand", () => {
         if (err) return done.fail(err);
 
         assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
-
         assert.deepEqual(installed, [0,1,1], "Did all our installs");
 
         // Make sure the `prepublish` script got run (index.js got created)

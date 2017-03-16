@@ -8,7 +8,6 @@ import ExecCommand from "../src/commands/ExecCommand";
 import stub from "./helpers/stub";
 
 describe("ExecCommand", () => {
-
   describe("in a basic repo", () => {
     let testDir;
 
@@ -120,7 +119,5 @@ describe("ExecCommand", () => {
         }));
       });
     });
-
   });
-
 });

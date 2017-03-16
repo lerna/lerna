@@ -10,7 +10,6 @@ import stub from "./helpers/stub";
 import assertStubbedCalls from "./helpers/assertStubbedCalls";
 
 describe("CleanCommand", () => {
-
   describe("basic tests", () => {
     let testDir;
 

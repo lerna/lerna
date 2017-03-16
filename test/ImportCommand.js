@@ -14,7 +14,6 @@ import initExternalFixture from "./helpers/initExternalFixture";
 import assertStubbedCalls from "./helpers/assertStubbedCalls";
 
 describe("ImportCommand", () => {
-
   describe("import", () => {
     let testDir;
     let externalDir;
@@ -85,7 +84,6 @@ describe("ImportCommand", () => {
     });
 
     it("should be possible to skip asking for confirmation", (done) => {
-
       const importCommand = new ImportCommand([externalDir], {
         yes: true
       });
@@ -186,6 +184,7 @@ describe("ImportCommand", () => {
       });
 
       const importCommand = new ImportCommand([externalDir], {});
+
       importCommand.runValidations();
       importCommand.runPreparations();
 

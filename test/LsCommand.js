@@ -20,7 +20,6 @@ function formatOnlyPublic (pkg) {
 }
 
 describe("LsCommand", () => {
-
   describe("in a basic repo", () => {
     beforeEach(() => initFixture("LsCommand/basic"));
 
@@ -36,7 +35,6 @@ describe("LsCommand", () => {
 
       lsCommand.runCommand(exitWithCode(0, done));
     });
-
 
     // Both of these commands should result in the same outcome
     const filters = [
