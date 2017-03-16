@@ -582,46 +582,32 @@ describe("BootstrapCommand", () => {
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
 
-      let installed = 0;
-      let spawnArgs = [];
-      let spawnOptions = [];
-      const writeFns = [];
-      const writeJsons = [];
-
-      stub(FileSystemUtilities, "writeFile", (fn, json, callback) => {
-        writeFns.push(fn);
-        writeJsons.push(JSON.parse(json));
-        callback();
-      });
-
-      stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
-        spawnArgs.push(args);
-        spawnOptions.push(options);
-        installed++;
-        callback();
-      });
+      assertStubbedCalls([
+        [FileSystemUtilities, "writeFile", { nodeCallback: true }, [
+          { args: [
+            path.join(testDir, "packages", "package-1", "package.json"),
+            JSON.stringify({ dependencies: { external: "^1.0.0" } }),
+          ] },
+        ]],
+        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
+          { args: ["npm", ["install"], { cwd: path.join(testDir, "packages", "package-1"), stdio: STDIO_OPT }] },
+        ]],
+        [FileSystemUtilities, "writeFile", { nodeCallback: true }, [
+          { args: [
+            path.join(testDir, "packages", "package-2", "package.json"),
+            JSON.stringify({ dependencies: { external: "^2.0.0" } }),
+          ] },
+        ]],
+        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
+          { args: ["npm", ["install"], { cwd: path.join(testDir, "packages", "package-2"), stdio: STDIO_OPT }] },
+        ]],
+      ]);
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
-          assert.deepEqual(spawnArgs, [ ["install"], ["install"] ]);
-          assert.deepEqual(spawnOptions, [
-            { cwd: path.join(testDir, "packages", "package-1"), stdio: STDIO_OPT },
-            { cwd: path.join(testDir, "packages", "package-2"), stdio: STDIO_OPT }
-          ]);
-          assert.deepEqual(writeFns, [
-            path.join(testDir, "packages", "package-1", "package.json"),
-            path.join(testDir, "packages", "package-2", "package.json"),
-          ]);
-          assert.deepEqual(writeJsons, [
-            { dependencies: {external: "^1.0.0"}},
-            { dependencies: {external: "^2.0.0"}},
-          ]);
-
-          assert.equal(installed, 2, "The external dependencies were installed");
-
           done();
         } catch (err) {
           done(err);
