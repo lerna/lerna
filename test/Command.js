@@ -83,9 +83,10 @@ describe("Command", () => {
   describe(".run()", () => {
     it("should exist", (done) => {
       class TestCommand extends Command {
-        initialize(callback) { callback(null, true); }
+        initialize(callback) {
+          callback(null, true);
+        }
         execute() {
-
           done();
         }
       }
@@ -147,6 +148,7 @@ describe("Command", () => {
     describe("bootstrapConfig", () => {
       class BootstrapCommand extends Command {
       }
+
       it("should warn when used", () => {
         let called = false;
         stub(logger, "warn", (message) => {
@@ -156,15 +158,18 @@ describe("Command", () => {
         new BootstrapCommand([], {}).getOptions();
         assert.ok(called, "warning was emitted");
       });
+
       it("should provide a correct value", () => {
         assert.equal(new BootstrapCommand([], {}).getOptions().ignore, "package-a");
       });
+
       it("should not warn with other commands", () => {
         let called = false;
         stub(logger, "warn", () => called = true);
         new TestCommand([], {}).getOptions();
         assert.ok(!called, "no warning was emitted");
       });
+
       it("should not provide a value to other commands", () => {
         assert.equal(new TestCommand([], {}).getOptions().ignore, undefined);
       });
@@ -173,6 +178,7 @@ describe("Command", () => {
     describe("publishConfig", () => {
       class PublishCommand extends Command {
       }
+
       it("should warn when used", () => {
         let called = false;
         stub(logger, "warn", (message) => {
@@ -182,15 +188,18 @@ describe("Command", () => {
         new PublishCommand([], {}).getOptions();
         assert.ok(called, "warning was emitted");
       });
+
       it("should provide a correct value", () => {
         assert.equal(new PublishCommand([], {}).getOptions().ignore, "package-b");
       });
+
       it("should not warn with other commands", () => {
         let called = false;
         stub(logger, "warn", () => called = true);
         new TestCommand([], {}).getOptions();
         assert.ok(!called, "no warning was emitted");
       });
+
       it("should not provide a value to other commands", () => {
         assert.equal(new TestCommand([], {}).getOptions().ignore, undefined);
       });
@@ -213,12 +222,15 @@ describe("Command", () => {
         bar: BarCommand,
       });
     });
+
     it("fails on bad class name", () => {
       assert.throws(() => exposeCommands([BadClassName]));
     });
+
     it("fails on duplicate class", () => {
       assert.throws(() => exposeCommands([FooCommand, FooCommand]));
     });
+
     it("fails on class that doesn't extend Command", () => {
       assert.throws(() => exposeCommands([NonCommand]));
     });

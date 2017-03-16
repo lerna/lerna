@@ -109,6 +109,7 @@ describe("Package", () => {
           }
         ]]
       ]);
+
       pkg.runScript("my-script", () => {
         done();
       });
@@ -122,6 +123,7 @@ describe("Package", () => {
         version: "1.1.3"
       }), true);
     });
+
     it("should not match included dependency", () => {
       let called;
       const logger = {
@@ -129,10 +131,12 @@ describe("Package", () => {
           called = msg;
         }
       };
-      assert.equal(pkg.hasMatchingDependency({
+      const result = pkg.hasMatchingDependency({
         name: "my-dev-dependency",
         version: "2.0.7"
-      }, logger), false);
+      }, logger);
+
+      assert.equal(result, false);
       assert.ok(called);
     });
   });
