@@ -37,15 +37,12 @@ describe("BootstrapCommand", () => {
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
-        try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
-          assert.ok(pathExists.sync(path.join(testDir, "packages", "package-preinstall", "did-preinstall")));
-          assert.ok(pathExists.sync(path.join(testDir, "packages", "package-postinstall", "did-postinstall")));
-          assert.ok(pathExists.sync(path.join(testDir, "packages", "package-prepublish", "did-prepublish")));
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
+        assert.ok(pathExists.sync(path.join(testDir, "packages", "package-preinstall", "did-preinstall")));
+        assert.ok(pathExists.sync(path.join(testDir, "packages", "package-postinstall", "did-postinstall")));
+        assert.ok(pathExists.sync(path.join(testDir, "packages", "package-prepublish", "did-prepublish")));
+
+        done();
       }));
     });
   });
@@ -121,8 +118,10 @@ describe("BootstrapCommand", () => {
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
+
         assert.deepEqual(gotPackage, wantPackage, "Installed the right deps");
         assert.deepEqual(gotRimraf, wantRimraf, "Removed the right stuff");
+
         done();
       }));
     });
@@ -170,8 +169,10 @@ describe("BootstrapCommand", () => {
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
+
         assert.deepEqual(gotPackage, wantPackage, "Installed the right deps");
         assert.deepEqual(gotRimraf, wantRimraf, "Removed the right stuff");
+
         done();
       }));
     });
@@ -198,60 +199,57 @@ describe("BootstrapCommand", () => {
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
-        try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
-          // package-1 should not have any packages symlinked
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-1", "node_modules", "package-2")));
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-1", "node_modules", "package-3")));
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-1", "node_modules", "package-4")));
-          // package-2 package dependencies are symlinked
-          assert.equal(
-            normalize(resolveSymlink(path.join(testDir, "packages", "package-2", "node_modules", "@test", "package-1"))),
-            normalize(path.join(testDir, "packages", "package-1")),
-            "package-1 should be symlinked to package-2"
-          );
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-2", "node_modules", "package-3")));
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-2", "node_modules", "package-4")));
-          // package-3 package dependencies are symlinked
-          assert.equal(
-            normalize(resolveSymlink(path.join(testDir, "packages", "package-3", "node_modules", "@test", "package-1"))),
-            normalize(path.join(testDir, "packages", "package-1")),
-            "package-1 should be symlinked to package-3"
-          );
-          assert.equal(
-            normalize(resolveSymlink(path.join(testDir, "packages", "package-3", "node_modules", "package-2"))),
-            normalize(path.join(testDir, "packages", "package-2")),
-            "package-2 should be symlinked to package-3"
-          );
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-3", "node_modules", "package-4")));
-          // package-4 package dependencies are symlinked
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", "package-1")));
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", "package-2")));
-          assert.equal(
-            normalize(resolveSymlink(path.join(testDir, "packages", "package-4", "node_modules", "package-3"))),
-            normalize(path.join(testDir, "packages", "package-3")),
-            "package-3 should be symlinked to package-4"
-          );
-          // package binaries are symlinked
-          assert.equal(
-            normalize(FileSystemUtilities.isSymlink(path.join(testDir, "packages", "package-3", "node_modules", ".bin", "package-2"))),
-            normalize(path.join(testDir, "packages", "package-2", "cli.js")),
-            "package-2 binary should be symlinked in package-3"
-          );
-          assert.equal(
-            normalize(FileSystemUtilities.isSymlink(path.join(testDir, "packages", "package-4", "node_modules", ".bin", "package3cli1"))),
-            normalize(path.join(testDir, "packages", "package-3", "cli1.js")),
-            "package-3 binary should be symlinked in package-4"
-          );
-          assert.equal(
-            normalize(FileSystemUtilities.isSymlink(path.join(testDir, "packages", "package-4", "node_modules", ".bin", "package3cli2"))),
-            normalize(path.join(testDir, "packages", "package-3", "cli2.js")),
-            "package-3 binary should be symlinked in package-4"
-          );
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
+        // package-1 should not have any packages symlinked
+        assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-1", "node_modules", "package-2")));
+        assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-1", "node_modules", "package-3")));
+        assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-1", "node_modules", "package-4")));
+        // package-2 package dependencies are symlinked
+        assert.equal(
+          normalize(resolveSymlink(path.join(testDir, "packages", "package-2", "node_modules", "@test", "package-1"))),
+          normalize(path.join(testDir, "packages", "package-1")),
+          "package-1 should be symlinked to package-2"
+        );
+        assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-2", "node_modules", "package-3")));
+        assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-2", "node_modules", "package-4")));
+        // package-3 package dependencies are symlinked
+        assert.equal(
+          normalize(resolveSymlink(path.join(testDir, "packages", "package-3", "node_modules", "@test", "package-1"))),
+          normalize(path.join(testDir, "packages", "package-1")),
+          "package-1 should be symlinked to package-3"
+        );
+        assert.equal(
+          normalize(resolveSymlink(path.join(testDir, "packages", "package-3", "node_modules", "package-2"))),
+          normalize(path.join(testDir, "packages", "package-2")),
+          "package-2 should be symlinked to package-3"
+        );
+        assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-3", "node_modules", "package-4")));
+        // package-4 package dependencies are symlinked
+        assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", "package-1")));
+        assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", "package-2")));
+        assert.equal(
+          normalize(resolveSymlink(path.join(testDir, "packages", "package-4", "node_modules", "package-3"))),
+          normalize(path.join(testDir, "packages", "package-3")),
+          "package-3 should be symlinked to package-4"
+        );
+        // package binaries are symlinked
+        assert.equal(
+          normalize(FileSystemUtilities.isSymlink(path.join(testDir, "packages", "package-3", "node_modules", ".bin", "package-2"))),
+          normalize(path.join(testDir, "packages", "package-2", "cli.js")),
+          "package-2 binary should be symlinked in package-3"
+        );
+        assert.equal(
+          normalize(FileSystemUtilities.isSymlink(path.join(testDir, "packages", "package-4", "node_modules", ".bin", "package3cli1"))),
+          normalize(path.join(testDir, "packages", "package-3", "cli1.js")),
+          "package-3 binary should be symlinked in package-4"
+        );
+        assert.equal(
+          normalize(FileSystemUtilities.isSymlink(path.join(testDir, "packages", "package-4", "node_modules", ".bin", "package3cli2"))),
+          normalize(path.join(testDir, "packages", "package-3", "cli2.js")),
+          "package-3 binary should be symlinked in package-4"
+        );
+
+        done();
       }));
     });
 
@@ -279,14 +277,10 @@ describe("BootstrapCommand", () => {
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
-        try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
-          assert.deepEqual(installed, [0,1,1], "Did all our installs");
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
+        assert.deepEqual(installed, [0,1,1], "Did all our installs");
 
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
+        done();
       }));
     });
 
@@ -314,50 +308,47 @@ describe("BootstrapCommand", () => {
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
-        try {
-          assert.ok(!pathExists.sync(path.join(testDir, "asini-debug.log")), "asini-debug.log should not exist");
-          assert.deepEqual(installed, [0,0,0,1,1], "Did all our installs");
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
+        assert.deepEqual(installed, [0,0,0,1,1], "Did all our installs");
 
-          // package-3 package dependencies are symlinked
-          assert.equal(
-            normalize(resolveSymlink(path.join(testDir, "packages", "package-3", "node_modules", "@test", "package-1"))),
-            normalize(path.join(testDir, "packages", "package-1")),
-            "package-1 should be symlinked to package-3"
-          );
-          assert.equal(
-            normalize(resolveSymlink(path.join(testDir, "packages", "package-3", "node_modules", "package-2"))),
-            normalize(path.join(testDir, "packages", "package-2")),
-            "package-2 should be symlinked to package-3"
-          );
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-3", "node_modules", "package-4")));
-          // package-4 package dependencies are symlinked
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", "package-1")));
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", "package-2")));
-          assert.equal(
-            normalize(resolveSymlink(path.join(testDir, "packages", "package-4", "node_modules", "package-3"))),
-            normalize(path.join(testDir, "packages", "package-3")),
-            "package-3 should be symlinked to package-4"
-          );
-          // package binaries are symlinked
-          assert.equal(
-            normalize(FileSystemUtilities.isSymlink(path.join(testDir, "packages", "package-3", "node_modules", ".bin", "package-2"))),
-            normalize(path.join(testDir, "packages", "package-2", "cli.js")),
-            "package-2 binary should be symlinked in package-3"
-          );
-          assert.equal(
-            normalize(FileSystemUtilities.isSymlink(path.join(testDir, "packages", "package-4", "node_modules", ".bin", "package3cli1"))),
-            normalize(path.join(testDir, "packages", "package-3", "cli1.js")),
-            "package-3 binary should be symlinked in package-4"
-          );
-          assert.equal(
-            normalize(FileSystemUtilities.isSymlink(path.join(testDir, "packages", "package-4", "node_modules", ".bin", "package3cli2"))),
-            normalize(path.join(testDir, "packages", "package-3", "cli2.js")),
-            "package-3 binary should be symlinked in package-4"
-          );
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
+        // package-3 package dependencies are symlinked
+        assert.equal(
+          normalize(resolveSymlink(path.join(testDir, "packages", "package-3", "node_modules", "@test", "package-1"))),
+          normalize(path.join(testDir, "packages", "package-1")),
+          "package-1 should be symlinked to package-3"
+        );
+        assert.equal(
+          normalize(resolveSymlink(path.join(testDir, "packages", "package-3", "node_modules", "package-2"))),
+          normalize(path.join(testDir, "packages", "package-2")),
+          "package-2 should be symlinked to package-3"
+        );
+        assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-3", "node_modules", "package-4")));
+        // package-4 package dependencies are symlinked
+        assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", "package-1")));
+        assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", "package-2")));
+        assert.equal(
+          normalize(resolveSymlink(path.join(testDir, "packages", "package-4", "node_modules", "package-3"))),
+          normalize(path.join(testDir, "packages", "package-3")),
+          "package-3 should be symlinked to package-4"
+        );
+        // package binaries are symlinked
+        assert.equal(
+          normalize(FileSystemUtilities.isSymlink(path.join(testDir, "packages", "package-3", "node_modules", ".bin", "package-2"))),
+          normalize(path.join(testDir, "packages", "package-2", "cli.js")),
+          "package-2 binary should be symlinked in package-3"
+        );
+        assert.equal(
+          normalize(FileSystemUtilities.isSymlink(path.join(testDir, "packages", "package-4", "node_modules", ".bin", "package3cli1"))),
+          normalize(path.join(testDir, "packages", "package-3", "cli1.js")),
+          "package-3 binary should be symlinked in package-4"
+        );
+        assert.equal(
+          normalize(FileSystemUtilities.isSymlink(path.join(testDir, "packages", "package-4", "node_modules", ".bin", "package3cli2"))),
+          normalize(path.join(testDir, "packages", "package-3", "cli2.js")),
+          "package-3 binary should be symlinked in package-4"
+        );
+
+        done();
       }));
     });
   });
@@ -399,65 +390,62 @@ describe("BootstrapCommand", () => {
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
-        try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
 
-          assert.deepEqual(want, got, "Installed everywhere");
+        assert.deepEqual(want, got, "Installed everywhere");
 
-          // Make sure the `prepublish` script got run (index.js got created).
-          assert.ok(pathExists.sync(path.join(testDir, "packages", "package-1", "index.js")));
-          // package-1 should not have any packages symlinked
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-1", "node_modules", "package-2")));
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-1", "node_modules", "package-3")));
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-1", "node_modules", "package-4")));
-          // package-2 package dependencies are symlinked
-          assert.equal(
-            path.resolve(resolveSymlink(path.join(testDir, "packages", "package-2", "node_modules", "@test", "package-1"))),
-            path.resolve(path.join(testDir, "packages", "package-1")),
-            "package-1 should be symlinked to package-2"
-          );
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-2", "node_modules", "package-3")));
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-2", "node_modules", "package-4")));
-          // package-3 package dependencies are symlinked
-          assert.equal(
-            normalize(resolveSymlink(path.join(testDir, "package-3", "node_modules", "@test", "package-1"))),
-            normalize(path.join(testDir, "packages", "package-1")),
-            "package-1 should be symlinked to package-3"
-          );
-          assert.equal(
-            normalize(resolveSymlink(path.join(testDir, "package-3", "node_modules", "package-2"))),
-            normalize(path.join(testDir, "packages", "package-2")),
-            "package-2 should be symlinked to package-3"
-          );
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "package-3", "node_modules", "package-4")));
-          // package-4 package dependencies are symlinked
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", "package-1")));
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", "package-2")));
-          assert.equal(
-            normalize(resolveSymlink(path.join(testDir, "packages", "package-4", "node_modules", "package-3"))),
-            normalize(path.join(testDir, "package-3")),
-            "package-3 should be symlinked to package-4"
-          );
-          // package binaries are symlinked
-          assert.equal(
-            normalize(FileSystemUtilities.isSymlink(path.join(testDir, "package-3", "node_modules", ".bin", "package-2"))),
-            normalize(path.join(testDir, "packages", "package-2", "cli.js")),
-            "package-2 binary should be symlinked in package-3"
-          );
-          assert.equal(
-            normalize(FileSystemUtilities.isSymlink(path.join(testDir, "packages", "package-4", "node_modules", ".bin", "package3cli1"))),
-            normalize(path.join(testDir, "package-3", "cli1.js")),
-            "package-3 binary should be symlinked in package-4"
-          );
-          assert.equal(
-            normalize(FileSystemUtilities.isSymlink(path.join(testDir, "packages", "package-4", "node_modules", ".bin", "package3cli2"))),
-            normalize(path.join(testDir, "package-3", "cli2.js")),
-            "package-3 binary should be symlinked in package-4"
-          );
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
+        // Make sure the `prepublish` script got run (index.js got created).
+        assert.ok(pathExists.sync(path.join(testDir, "packages", "package-1", "index.js")));
+        // package-1 should not have any packages symlinked
+        assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-1", "node_modules", "package-2")));
+        assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-1", "node_modules", "package-3")));
+        assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-1", "node_modules", "package-4")));
+        // package-2 package dependencies are symlinked
+        assert.equal(
+          path.resolve(resolveSymlink(path.join(testDir, "packages", "package-2", "node_modules", "@test", "package-1"))),
+          path.resolve(path.join(testDir, "packages", "package-1")),
+          "package-1 should be symlinked to package-2"
+        );
+        assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-2", "node_modules", "package-3")));
+        assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-2", "node_modules", "package-4")));
+        // package-3 package dependencies are symlinked
+        assert.equal(
+          normalize(resolveSymlink(path.join(testDir, "package-3", "node_modules", "@test", "package-1"))),
+          normalize(path.join(testDir, "packages", "package-1")),
+          "package-1 should be symlinked to package-3"
+        );
+        assert.equal(
+          normalize(resolveSymlink(path.join(testDir, "package-3", "node_modules", "package-2"))),
+          normalize(path.join(testDir, "packages", "package-2")),
+          "package-2 should be symlinked to package-3"
+        );
+        assert.throws(() => fs.readlinkSync(path.join(testDir, "package-3", "node_modules", "package-4")));
+        // package-4 package dependencies are symlinked
+        assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", "package-1")));
+        assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", "package-2")));
+        assert.equal(
+          normalize(resolveSymlink(path.join(testDir, "packages", "package-4", "node_modules", "package-3"))),
+          normalize(path.join(testDir, "package-3")),
+          "package-3 should be symlinked to package-4"
+        );
+        // package binaries are symlinked
+        assert.equal(
+          normalize(FileSystemUtilities.isSymlink(path.join(testDir, "package-3", "node_modules", ".bin", "package-2"))),
+          normalize(path.join(testDir, "packages", "package-2", "cli.js")),
+          "package-2 binary should be symlinked in package-3"
+        );
+        assert.equal(
+          normalize(FileSystemUtilities.isSymlink(path.join(testDir, "packages", "package-4", "node_modules", ".bin", "package3cli1"))),
+          normalize(path.join(testDir, "package-3", "cli1.js")),
+          "package-3 binary should be symlinked in package-4"
+        );
+        assert.equal(
+          normalize(FileSystemUtilities.isSymlink(path.join(testDir, "packages", "package-4", "node_modules", ".bin", "package3cli2"))),
+          normalize(path.join(testDir, "package-3", "cli2.js")),
+          "package-3 binary should be symlinked in package-4"
+        );
+
+        done();
       }));
     });
 
@@ -478,13 +466,9 @@ describe("BootstrapCommand", () => {
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
-        try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
 
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
+        done();
       }));
     });
 
@@ -507,18 +491,14 @@ describe("BootstrapCommand", () => {
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
-        try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
 
-          assert.deepEqual(installed, [0,1,1], "Did all our installs");
+        assert.deepEqual(installed, [0,1,1], "Did all our installs");
 
-          // Make sure the `prepublish` script got run (index.js got created)
-          assert.ok(pathExists.sync(path.join(testDir, "packages", "package-1", "index.js")));
+        // Make sure the `prepublish` script got run (index.js got created)
+        assert.ok(pathExists.sync(path.join(testDir, "packages", "package-1", "index.js")));
 
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
+        done();
       }));
     });
 
@@ -541,18 +521,14 @@ describe("BootstrapCommand", () => {
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
-        try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
 
-          // Make sure the `prepublish` script got run (index.js got created), even though we --ignored package-1
-          assert.ok(pathExists.sync(path.join(testDir, "packages", "package-1", "index.js")));
+        // Make sure the `prepublish` script got run (index.js got created), even though we --ignored package-1
+        assert.ok(pathExists.sync(path.join(testDir, "packages", "package-1", "index.js")));
 
-          assert.deepEqual(installed, [0,1,1], "Did all our installs");
+        assert.deepEqual(installed, [0,1,1], "Did all our installs");
 
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
+        done();
       }));
     });
   });
@@ -594,12 +570,9 @@ describe("BootstrapCommand", () => {
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
-        try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
+
+        done();
       }));
     });
   });
@@ -626,13 +599,10 @@ describe("BootstrapCommand", () => {
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
-        try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
-          assert.ok(!installed, "The external dependency was not installed");
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
+        assert.ok(!installed, "The external dependency was not installed");
+
+        done();
       }));
     });
   });
@@ -663,19 +633,15 @@ describe("BootstrapCommand", () => {
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
-        try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
-          assert.deepEqual(got, {
-            dependencies: {
-              "external-1": "^1.0.0",
-              "external-2": "^1.0.0",
-            }
-          });
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
+        assert.deepEqual(got, {
+          dependencies: {
+            "external-1": "^1.0.0",
+            "external-2": "^1.0.0",
+          }
+        });
 
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
+        done();
       }));
     });
   });
@@ -707,14 +673,11 @@ describe("BootstrapCommand", () => {
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
-        try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
-          assert.ok(!pathExists.sync(path.join(testDir, "packages/package-1/node_modules/package-2")), "The linkable peer dependency should not be installed");
-          assert.ok(!installed, "The external peer dependency should not be installed");
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
+        assert.ok(!pathExists.sync(path.join(testDir, "packages/package-1/node_modules/package-2")), "The linkable peer dependency should not be installed");
+        assert.ok(!installed, "The external peer dependency should not be installed");
+
+        done();
       }));
     });
   });
@@ -730,6 +693,7 @@ describe("BootstrapCommand", () => {
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
+
         done();
       }));
     });

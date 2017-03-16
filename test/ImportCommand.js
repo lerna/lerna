@@ -46,16 +46,14 @@ describe("ImportCommand", () => {
       importCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
-        try {
-          const lastCommit = ChildProcessUtilities.execSync("git log --format=\"%s\"", {encoding:"utf8"}).split("\n")[0];
-          const packageJson = path.join(testDir, "packages", path.basename(externalDir), "package.json");
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.ok(pathExists.sync(packageJson));
-          assert.equal(lastCommit, "Init external commit");
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
+
+        const lastCommit = ChildProcessUtilities.execSync("git log --format=\"%s\"", {encoding:"utf8"}).split("\n")[0];
+        const packageJson = path.join(testDir, "packages", path.basename(externalDir), "package.json");
+        assert.ok(pathExists.sync(packageJson));
+        assert.equal(lastCommit, "Init external commit");
+
+        done();
       }));
     });
 
@@ -77,15 +75,12 @@ describe("ImportCommand", () => {
       importCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
-        try {
-          const lastCommit = ChildProcessUtilities.execSync("git log --format=\"%s\"", {encoding:"utf8"}).split("\n")[0];
-          const newFilePath = path.join(testDir, "packages", path.basename(externalDir), "new-file");
-          assert.ok(pathExists.sync(newFilePath));
-          assert.equal(lastCommit, "Moved old-file to new-file");
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
+        const lastCommit = ChildProcessUtilities.execSync("git log --format=\"%s\"", {encoding:"utf8"}).split("\n")[0];
+        const newFilePath = path.join(testDir, "packages", path.basename(externalDir), "new-file");
+        assert.ok(pathExists.sync(newFilePath));
+        assert.equal(lastCommit, "Moved old-file to new-file");
+
+        done();
       }));
     });
 
@@ -108,8 +103,7 @@ describe("ImportCommand", () => {
       importCommand.runPreparations();
 
       importCommand.runCommand(exitWithCode(1, (err) => {
-        const expect = "Missing argument: Path to external repository";
-        assert.equal((err || {}).message, expect);
+        assert.equal((err || {}).message, "Missing argument: Path to external repository");
         done();
       }));
     });
@@ -122,8 +116,7 @@ describe("ImportCommand", () => {
       importCommand.runPreparations();
 
       importCommand.runCommand(exitWithCode(1, (err) => {
-        const expect = `No repository found at "${missing}"`;
-        assert.equal((err || {}).message, expect);
+        assert.equal((err || {}).message, `No repository found at "${missing}"`);
         done();
       }));
     });
@@ -157,8 +150,7 @@ describe("ImportCommand", () => {
       importCommand.runPreparations();
 
       importCommand.runCommand(exitWithCode(1, (err) => {
-        const expect = `No package name specified in "${packageJson}"`;
-        assert.equal((err || {}).message, expect);
+        assert.equal((err || {}).message, `No package name specified in "${packageJson}"`);
         done();
       }));
     });
@@ -177,13 +169,8 @@ describe("ImportCommand", () => {
       importCommand.runPreparations();
 
       importCommand.runCommand(exitWithCode(1, (err) => {
-        const expect = `Target directory already exists "${targetDir}"`;
-        try {
-          assert.equal((err || {}).message, expect);
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
+        assert.equal((err || {}).message, `Target directory already exists "${targetDir}"`);
+        done();
       }));
     });
 
@@ -203,13 +190,8 @@ describe("ImportCommand", () => {
       importCommand.runPreparations();
 
       importCommand.runCommand(exitWithCode(1, (err) => {
-        const expect = `Target directory already exists "${targetDir}"`;
-        try {
-          assert.equal((err || {}).message, expect);
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
+        assert.equal((err || {}).message, `Target directory already exists "${targetDir}"`);
+        done();
       }));
     });
 
@@ -226,8 +208,7 @@ describe("ImportCommand", () => {
       importCommand.runPreparations();
 
       importCommand.runCommand(exitWithCode(1, (err) => {
-        const expect = "Local repository has un-committed changes";
-        assert.equal((err || {}).message, expect);
+        assert.equal((err || {}).message, "Local repository has un-committed changes");
         done();
       }));
     });
