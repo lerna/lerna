@@ -522,11 +522,10 @@ describe("BootstrapCommand", () => {
         if (err) return done.fail(err);
 
         assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
+        assert.deepEqual(installed, [0,1,1], "Did all our installs");
 
         // Make sure the `prepublish` script got run (index.js got created), even though we --ignored package-1
         assert.ok(pathExists.sync(path.join(testDir, "packages", "package-1", "index.js")));
-
-        assert.deepEqual(installed, [0,1,1], "Did all our installs");
 
         done();
       }));
