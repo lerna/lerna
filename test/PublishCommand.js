@@ -1740,7 +1740,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
 
