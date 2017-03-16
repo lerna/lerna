@@ -36,9 +36,7 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -136,9 +134,7 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -234,12 +230,9 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] },
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
+
           { args: ["git rev-parse HEAD"], returns: "81e3b44339e1403fe3d762e9435b7c9a155fdef7" },
           { args: ["git rev-parse HEAD"], returns: "81e3b44339e1403fe3d762e9435b7c9a155fdef7" }
         ]],
@@ -328,12 +321,9 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] },
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
+
           { args: ["git rev-parse HEAD"], returns: "81e3b44339e1403fe3d762e9435b7c9a155fdef7" },
           { args: ["git rev-parse HEAD"], returns: "81e3b44339e1403fe3d762e9435b7c9a155fdef7" }
         ]],
@@ -419,9 +409,7 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -500,9 +488,7 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -571,9 +557,7 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -630,9 +614,7 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -698,9 +680,7 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -993,9 +973,7 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "confirm", { valueCallback: true }, [
@@ -1191,9 +1169,7 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "confirm", { valueCallback: true }, [
@@ -1292,9 +1268,7 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "confirm", { valueCallback: true }, [
@@ -1386,9 +1360,7 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "confirm", { valueCallback: true }, [
@@ -1479,9 +1451,7 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -1680,9 +1650,7 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -1780,9 +1748,7 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [ConventionalCommitUtilities, "recommendVersion", {}, [
