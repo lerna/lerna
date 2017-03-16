@@ -2,7 +2,7 @@ import assert from "assert";
 
 import Package from "../src/Package";
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
-import assertStubbedCalls from "./_assertStubbedCalls";
+import assertStubbedCalls from "./helpers/assertStubbedCalls";
 
 describe("Package", () => {
   let pkg;

@@ -1,7 +1,7 @@
+import fs from "graceful-fs";
 import pathExists from "path-exists";
 import assert from "assert";
 import path from "path";
-import fs from "fs";
 import { EOL } from "os";
 import normalizeNewline from "normalize-newline";
 import escapeArgs from "command-join";
@@ -10,10 +10,10 @@ import ConventionalCommitUtilities from "../src/ConventionalCommitUtilities";
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
 import PromptUtilities from "../src/PromptUtilities";
 import PublishCommand from "../src/commands/PublishCommand";
-import exitWithCode from "./_exitWithCode";
-import initFixture from "./_initFixture";
+import exitWithCode from "./helpers/exitWithCode";
+import initFixture from "./helpers/initFixture";
 
-import assertStubbedCalls from "./_assertStubbedCalls";
+import assertStubbedCalls from "./helpers/assertStubbedCalls";
 
 describe("PublishCommand", () => {
 
@@ -24,9 +24,9 @@ describe("PublishCommand", () => {
   describe("normal mode", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/normal", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should publish the changed packages", (done) => {
       const publishCommand = new PublishCommand([], {});
@@ -88,7 +88,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -107,7 +107,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -120,9 +120,9 @@ describe("PublishCommand", () => {
   describe("independent mode", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/independent", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/independent").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should publish the changed packages in independent mode", (done) => {
       const publishCommand = new PublishCommand([], {
@@ -187,7 +187,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -203,7 +203,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -216,9 +216,9 @@ describe("PublishCommand", () => {
   describe("normal mode as canary", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/normal", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should publish the changed packages", (done) => {
       const publishCommand = new PublishCommand([], {
@@ -271,7 +271,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -292,7 +292,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -306,9 +306,9 @@ describe("PublishCommand", () => {
   describe("independent mode as canary", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/independent", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/independent").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should publish the changed packages", (done) => {
       const publishCommand = new PublishCommand([], {
@@ -362,7 +362,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -382,7 +382,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -395,9 +395,9 @@ describe("PublishCommand", () => {
   describe("normal mode with --skip-git", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/normal", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should publish the changed packages", (done) => {
       const publishCommand = new PublishCommand([], {
@@ -444,7 +444,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -461,7 +461,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -474,9 +474,9 @@ describe("PublishCommand", () => {
   describe("normal mode with --skip-npm", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/normal", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should update versions and push changes but not publish", (done) => {
       const publishCommand = new PublishCommand([], {
@@ -510,7 +510,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -529,7 +529,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -542,9 +542,9 @@ describe("PublishCommand", () => {
   describe("normal mode with --skip-git and --skip-npm", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/normal", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should update versions but not push changes or publish", (done) => {
       const publishCommand = new PublishCommand([], {
@@ -569,7 +569,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -586,7 +586,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -599,9 +599,9 @@ describe("PublishCommand", () => {
   describe("normal mode with --skip-temp-tag", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/normal", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should publish the changed packages without the temp tag", (done) => {
       const publishCommand = new PublishCommand([], {
@@ -650,11 +650,8 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) {
-          return done(err);
-        } else {
-          done();
-        }
+        if (err) return done.fail(err);
+        done();
       }));
     });
   });
@@ -666,9 +663,9 @@ describe("PublishCommand", () => {
   describe("normal mode with --npm-tag", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/normal", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should publish the changed packages with npm tag", (done) => {
       const publishCommand = new PublishCommand([], {
@@ -732,7 +729,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -751,7 +748,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -781,18 +778,18 @@ describe("PublishCommand", () => {
       NODE_ENV: "lerna-test",
     };
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/normal", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
+      testDir = dir;
+
+      // mock out the ENV to a simpler version for testing
+      process.env = mockEnv;
+    }));
 
     afterEach(() => {
       process.env = originalEnv;
     });
 
     it("should publish the changed packages", (done) => {
-      // mock out the ENV to a simpler version for testing
-      process.env = mockEnv;
-
       const publishCommand = new PublishCommand([], {
         repoVersion: "1.0.1",
         registry: "https://my-private-registry"
@@ -855,7 +852,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -874,7 +871,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -893,18 +890,18 @@ describe("PublishCommand", () => {
       NODE_ENV: "lerna-test",
     };
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/registries", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/registries").then((dir) => {
+      testDir = dir;
+
+      // mock out the ENV to a simpler version for testing
+      process.env = mockEnv;
+    }));
 
     afterEach(() => {
       process.env = originalEnv;
     });
 
     it("should use config property", (done) => {
-      // mock out the ENV to a simpler version for testing
-      process.env = mockEnv;
-
       const publishCommand = new PublishCommand([], {
         repoVersion: "1.0.1"
       });
@@ -946,7 +943,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
         done();
       }));
     });
@@ -959,9 +956,9 @@ describe("PublishCommand", () => {
   describe("normal mode with --repo-version", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/normal", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should publish the changed packages", (done) => {
       const publishCommand = new PublishCommand([], {
@@ -1022,7 +1019,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -1041,7 +1038,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -1054,9 +1051,9 @@ describe("PublishCommand", () => {
   describe("normal mode with --repo-version and --exact", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/normal", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should publish the changed packages", (done) => {
       const publishCommand = new PublishCommand([], {
@@ -1120,7 +1117,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -1142,7 +1139,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -1155,9 +1152,9 @@ describe("PublishCommand", () => {
   describe("normal mode with --repo-version and exact config", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/normal-exact", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/normal-exact").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should publish the changed packages", (done) => {
       const publishCommand = new PublishCommand([], {
@@ -1218,7 +1215,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -1241,7 +1238,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -1254,9 +1251,9 @@ describe("PublishCommand", () => {
   describe("normal mode with --cd-version", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/normal", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should use semver increments when passed to cdVersion flag", (done) => {
       const publishCommand = new PublishCommand([], {
@@ -1314,7 +1311,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -1332,7 +1329,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -1345,9 +1342,9 @@ describe("PublishCommand", () => {
   describe("indepdendent mode with --cd-version", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/independent", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/independent").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should use semver increments when passed to cdVersion flag", (done) => {
       const publishCommand = new PublishCommand([], {
@@ -1407,7 +1404,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -1424,7 +1421,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -1437,9 +1434,9 @@ describe("PublishCommand", () => {
   describe("normal mode with --git-remote", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/normal", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should publish the changed packages", (done) => {
       const publishCommand = new PublishCommand([], {
@@ -1503,7 +1500,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -1522,7 +1519,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -1535,9 +1532,9 @@ describe("PublishCommand", () => {
   describe("normal mode with --message", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/normal", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should publish the changed packages, committing the publish changes with a custom message", (done) => {
       const publishCommand = new PublishCommand([], {
@@ -1603,7 +1600,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -1622,7 +1619,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -1635,9 +1632,9 @@ describe("PublishCommand", () => {
   describe("independent mode with --message", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/independent", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/independent").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should publish the changed packages in independent mode, committing with a custom msg", (done) => {
       const publishCommand = new PublishCommand([], {
@@ -1703,7 +1700,7 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
@@ -1719,7 +1716,7 @@ describe("PublishCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -1732,9 +1729,9 @@ describe("PublishCommand", () => {
   describe("independent mode with --conventional-commits", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("PublishCommand/independent", done);
-    });
+    beforeEach(() => initFixture("PublishCommand/independent").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should use conventional-commits utility to guess version bump and generate CHANGELOG", (done) => {
       const publishCommand = new PublishCommand([], {

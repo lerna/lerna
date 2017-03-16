@@ -1,30 +1,35 @@
+import fs from "graceful-fs";
 import pathExists from "path-exists";
 import assert from "assert";
 import path from "path";
-import fs from "fs";
 import escapeArgs from "command-join";
 import mkdirp from "mkdirp";
 
 import PromptUtilities from "../src/PromptUtilities";
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
 import ImportCommand from "../src/commands/ImportCommand";
-import exitWithCode from "./_exitWithCode";
-import initFixture from "./_initFixture";
-import initExternalFixture from "./_initExternalFixture";
-import assertStubbedCalls from "./_assertStubbedCalls";
+import exitWithCode from "./helpers/exitWithCode";
+import initFixture from "./helpers/initFixture";
+import initExternalFixture from "./helpers/initExternalFixture";
+import assertStubbedCalls from "./helpers/assertStubbedCalls";
 
 describe("ImportCommand", () => {
 
   describe("import", () => {
-    let testDir, externalDir;
+    let testDir;
+    let externalDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("ImportCommand/basic", done);
-    });
-
-    beforeEach((done) => {
-      externalDir = initExternalFixture("ImportCommand/external", done);
-    });
+    beforeEach(() =>
+      Promise.resolve()
+        .then(() => initExternalFixture("ImportCommand/external"))
+        .then((dir) => {
+          externalDir = dir;
+        })
+        .then(() => initFixture("ImportCommand/basic"))
+        .then((dir) => {
+          testDir = dir;
+        })
+    );
 
     it("should import into packages with commit history", (done) => {
       const importCommand = new ImportCommand([externalDir], {});
@@ -39,7 +44,7 @@ describe("ImportCommand", () => {
       ]);
 
       importCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           const lastCommit = ChildProcessUtilities.execSync("git log --format=\"%s\"", {encoding:"utf8"}).split("\n")[0];
@@ -49,7 +54,7 @@ describe("ImportCommand", () => {
           assert.equal(lastCommit, "Init external commit");
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -70,7 +75,7 @@ describe("ImportCommand", () => {
       ChildProcessUtilities.execSync("git commit -m \"Moved old-file to new-file\"", { cwd: externalDir });
 
       importCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           const lastCommit = ChildProcessUtilities.execSync("git log --format=\"%s\"", {encoding:"utf8"}).split("\n")[0];
@@ -79,7 +84,7 @@ describe("ImportCommand", () => {
           assert.equal(lastCommit, "Moved old-file to new-file");
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -134,8 +139,9 @@ describe("ImportCommand", () => {
       importCommand.runPreparations();
 
       importCommand.runCommand(exitWithCode(1, (err) => {
-        const expect = `Cannot find module '${packageJson}'`;
-        assert.equal((err || {}).message, expect);
+        expect(err).toBeDefined();
+        expect(err.message).toMatch("package.json");
+        expect(err.code).toBe("MODULE_NOT_FOUND");
         done();
       }));
     });
@@ -176,7 +182,7 @@ describe("ImportCommand", () => {
           assert.equal((err || {}).message, expect);
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -202,7 +208,7 @@ describe("ImportCommand", () => {
           assert.equal((err || {}).message, expect);
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });

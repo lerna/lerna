@@ -1,11 +1,12 @@
 #!/usr/bin/env node
+"use strict";
 
-var lerna = require("../lib/index");
-var logger = require("../lib/logger");
-var chalk = require("chalk");
-var meow = require("meow");
+const lerna = require("../lib/index");
+const logger = require("../lib/logger");
+const chalk = require("chalk");
+const meow = require("meow");
 
-var cli = meow([
+const cli = meow([
   "Usage",
   "  $ lerna [command]",
   "",
@@ -57,8 +58,8 @@ require("signal-exit").unload();
 
 logger.setLogLevel(cli.flags.loglevel);
 
-var commandName = cli.input[0];
-var Command = lerna.__commands__[commandName];
+const commandName = cli.input[0];
+const Command = lerna.__commands__[commandName];
 
 if (!Command) {
 
@@ -69,6 +70,6 @@ if (!Command) {
 
   cli.showHelp();
 } else {
-  var command = new Command(cli.input.slice(1), cli.flags);
+  const command = new Command(cli.input.slice(1), cli.flags);
   command.run();
 }

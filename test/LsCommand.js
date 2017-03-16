@@ -1,11 +1,11 @@
 import assert from "assert";
 import chalk from "chalk";
 
-import exitWithCode from "./_exitWithCode";
-import initFixture from "./_initFixture";
+import exitWithCode from "./helpers/exitWithCode";
+import initFixture from "./helpers/initFixture";
 import LsCommand from "../src/commands/LsCommand";
 import logger from "../src/logger";
-import stub from "./_stub";
+import stub from "./helpers/stub";
 
 function formatPrivate (pkg) {
   return `${pkg} ${chalk.grey("v1.0.0")} (${chalk.red("private")})`;
@@ -22,9 +22,7 @@ function formatOnlyPublic (pkg) {
 describe("LsCommand", () => {
 
   describe("in a basic repo", () => {
-    beforeEach((done) => {
-      initFixture("LsCommand/basic", done);
-    });
+    beforeEach(() => initFixture("LsCommand/basic"));
 
     it("should list packages", (done) => {
       const lsCommand = new LsCommand([], {});
@@ -62,9 +60,7 @@ describe("LsCommand", () => {
   });
 
   describe("in a repo with packages outside of packages/", () => {
-    beforeEach((done) => {
-      initFixture("LsCommand/extra", done);
-    });
+    beforeEach(() => initFixture("LsCommand/extra"));
 
     it("should list packages", (done) => {
       const lsCommand = new LsCommand([], {});
@@ -81,9 +77,7 @@ describe("LsCommand", () => {
   });
 
   describe("with --include-filtered-dependencies", () => {
-    beforeEach((done) => {
-      initFixture("LsCommand/include-filtered-dependencies", done);
-    });
+    beforeEach(() => initFixture("LsCommand/include-filtered-dependencies"));
 
     it("should list packages, including filtered ones", (done) => {
       const lsCommand = new LsCommand([], {

@@ -1,3 +1,297 @@
-// import assert from "assert";
-//
-// import InitCommand from "../src/commands/InitCommand";
+import fs from "graceful-fs";
+import path from "path";
+
+import { rimrafAsync } from "./helpers/fixtureUtils";
+import initFixture from "./helpers/initFixture";
+
+import InitCommand from "../src/commands/InitCommand";
+
+describe("InitCommand", () => {
+  let testDir;
+
+  describe("in an empty directory", () => {
+    beforeEach(() => initFixture("InitCommand/empty").then((dir) => {
+      testDir = dir;
+
+      // ensure fixture directory is _completely_ empty
+      return Promise.all([".git", "DELETE_ME"].map((fp) =>
+        rimrafAsync(path.join(dir, fp))
+      ));
+    }));
+
+    it("initializes git repo with lerna files", (done) => {
+      const instance = new InitCommand([], {});
+
+      instance.runCommand((err, code) => {
+        if (err) throw err;
+        expect(code).toBe(0);
+
+        expect(fs.readdirSync(testDir)).toEqual([
+          ".git",
+          "lerna.json",
+          "package.json",
+        ]);
+
+        const lernaJson = require(path.join(testDir, "lerna.json"));
+        expect(lernaJson).toEqual({
+          lerna: instance.lernaVersion,
+          packages: ["packages/*"],
+          version: "0.0.0",
+        });
+
+        const packageJson = require(path.join(testDir, "package.json"));
+        expect(packageJson).toEqual({
+          devDependencies: {
+            lerna: instance.lernaVersion,
+          },
+        });
+
+        done();
+      });
+    });
+
+    it("initializes git repo with lerna files in independent mode", (done) => {
+      const instance = new InitCommand([], {
+        independent: true,
+      });
+
+      instance.runCommand((err, code) => {
+        if (err) throw err;
+        expect(code).toBe(0);
+
+        expect(fs.readdirSync(testDir)).toEqual([
+          ".git",
+          "lerna.json",
+          "package.json",
+        ]);
+
+        const lernaJson = require(path.join(testDir, "lerna.json"));
+        expect(lernaJson.version).toBe("independent");
+
+        done();
+      });
+    });
+  });
+
+  describe("when package.json exists", () => {
+    let packageJsonLocation;
+
+    beforeEach(() => initFixture("InitCommand/has-package").then((dir) => {
+      testDir = dir;
+      packageJsonLocation = path.join(dir, "package.json");
+    }));
+
+    it("adds lerna to sorted devDependencies", (done) => {
+      fs.writeFileSync(packageJsonLocation, JSON.stringify({
+        name: "repo-root",
+        devDependencies: {
+          alpha: "first",
+          omega: "last",
+        },
+      }));
+
+      const instance = new InitCommand([], {});
+
+      instance.runCommand((err, code) => {
+        if (err) throw err;
+        expect(code).toBe(0);
+
+        const packageJson = require(packageJsonLocation);
+        expect(packageJson).toEqual({
+          name: "repo-root",
+          devDependencies: {
+            alpha: "first",
+            lerna: instance.lernaVersion,
+            omega: "last",
+          },
+        });
+
+        done();
+      });
+    });
+
+    it("updates existing lerna in devDependencies", (done) => {
+      fs.writeFileSync(packageJsonLocation, JSON.stringify({
+        name: "repo-root",
+        dependencies: {
+          alpha: "first",
+          omega: "last",
+        },
+        devDependencies: {
+          lerna: "0.1.100",
+        },
+      }));
+
+      const instance = new InitCommand([], {});
+
+      instance.runCommand((err, code) => {
+        if (err) throw err;
+        expect(code).toBe(0);
+
+        const packageJson = require(packageJsonLocation);
+        expect(packageJson).toEqual({
+          name: "repo-root",
+          dependencies: {
+            alpha: "first",
+            omega: "last",
+          },
+          devDependencies: {
+            lerna: instance.lernaVersion,
+          },
+        });
+
+        done();
+      });
+    });
+
+    it("updates existing lerna in sorted dependencies", (done) => {
+      fs.writeFileSync(packageJsonLocation, JSON.stringify({
+        name: "repo-root",
+        dependencies: {
+          alpha: "first",
+          lerna: "0.1.100",
+          omega: "last",
+        },
+      }));
+
+      const instance = new InitCommand([], {});
+
+      instance.runCommand((err, code) => {
+        if (err) throw err;
+        expect(code).toBe(0);
+
+        const packageJson = require(packageJsonLocation);
+        expect(packageJson).toEqual({
+          name: "repo-root",
+          dependencies: {
+            alpha: "first",
+            lerna: instance.lernaVersion,
+            omega: "last",
+          },
+        });
+
+        done();
+      });
+    });
+  });
+
+  describe("when lerna.json exists", () => {
+    let lernaJsonLocation;
+
+    beforeEach(() => initFixture("InitCommand/has-lerna").then((dir) => {
+      testDir = dir;
+      lernaJsonLocation = path.join(dir, "lerna.json");
+    }));
+
+    it("updates lerna property to current version", (done) => {
+      fs.writeFileSync(lernaJsonLocation, JSON.stringify({
+        lerna: "0.1.100",
+        packages: ["foo/*"],
+        version: "1.2.3",
+        hoist: true,
+      }));
+
+      const instance = new InitCommand([], {});
+
+      instance.runCommand((err, code) => {
+        if (err) throw err;
+        expect(code).toBe(0);
+
+        const lernaJson = require(lernaJsonLocation);
+        expect(lernaJson).toEqual({
+          lerna: instance.lernaVersion,
+          packages: ["foo/*"],
+          version: "1.2.3",
+          hoist: true,
+        });
+
+        done();
+      });
+    });
+
+    it("updates lerna property to current version in independent mode", (done) => {
+      fs.writeFileSync(lernaJsonLocation, JSON.stringify({
+        lerna: "0.1.100",
+        packages: ["bar/*"],
+        version: "independent",
+        hoist: true,
+      }));
+
+      const instance = new InitCommand([], {
+        independent: true,
+      });
+
+      instance.runCommand((err, code) => {
+        if (err) throw err;
+        expect(code).toBe(0);
+
+        const lernaJson = require(lernaJsonLocation);
+        expect(lernaJson).toEqual({
+          lerna: instance.lernaVersion,
+          packages: ["bar/*"],
+          version: "independent",
+          hoist: true,
+        });
+
+        done();
+      });
+    });
+  });
+
+  describe("when VERSION exists", () => {
+    beforeEach(() => initFixture("InitCommand/has-version").then((dir) => {
+      testDir = dir;
+    }));
+
+    it("removes file", (done) => {
+      const instance = new InitCommand([], {});
+
+      instance.runCommand((err, code) => {
+        if (err) throw err;
+        expect(code).toBe(0);
+
+        expect(fs.readdirSync(testDir)).toEqual([
+          ".git",
+          "lerna.json",
+          "package.json",
+        ]);
+
+        done();
+      });
+    });
+
+    it("logs deprecation", (done) => {
+      const instance = new InitCommand([], {});
+      instance.logger = {
+        verbose: jest.fn(),
+        info: jest.fn(),
+        success: jest.fn(),
+        warn: jest.fn(),
+        error: jest.fn(),
+      };
+
+      instance.runCommand((err, code) => {
+        if (err) throw err;
+        expect(code).toBe(0);
+
+        expect(instance.logger.info).toBeCalledWith("Removing old VERSION file.");
+
+        done();
+      });
+    });
+
+    it("uses value for lerna.json version property", (done) => {
+      const instance = new InitCommand([], {});
+
+      instance.runCommand((err, code) => {
+        if (err) throw err;
+        expect(code).toBe(0);
+
+        const lernaJson = require(path.join(testDir, "lerna.json"));
+        expect(lernaJson).toHaveProperty("version", "1.2.3");
+
+        done();
+      });
+    });
+  });
+});

@@ -1,14 +1,14 @@
+import fs from "graceful-fs";
 import assert from "assert";
 import child from "child_process";
 import path from "path";
-import fs from "fs";
 import chalk from "chalk";
 
 import UpdatedCommand from "../src/commands/UpdatedCommand";
-import exitWithCode from "./_exitWithCode";
-import initFixture from "./_initFixture";
+import exitWithCode from "./helpers/exitWithCode";
+import initFixture from "./helpers/initFixture";
 import logger from "../src/logger";
-import stub from "./_stub";
+import stub from "./helpers/stub";
 import escapeArgs from "command-join";
 
 describe("UpdatedCommand", () => {
@@ -20,9 +20,9 @@ describe("UpdatedCommand", () => {
   describe("Basic", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("UpdatedCommand/basic", done);
-    });
+    beforeEach(() => initFixture("UpdatedCommand/basic").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should list changes", (done) => {
       child.execSync("git tag v1.0.0");
@@ -197,9 +197,9 @@ describe("UpdatedCommand", () => {
   describe("Circular Dependencies", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("UpdatedCommand/circular", done);
-    });
+    beforeEach(() => initFixture("UpdatedCommand/circular").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should list changes", (done) => {
       child.execSync("git tag v1.0.0");

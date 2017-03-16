@@ -1,7 +1,7 @@
+import fs from "graceful-fs";
 import pathExists from "path-exists";
 import logger from "./logger";
 import mkdirp from "mkdirp";
-import fs from "fs";
 import cmdShim from "cmd-shim";
 import readCmdShim from "read-cmd-shim";
 import path from "path";
@@ -21,7 +21,7 @@ export default class FileSystemUtilities {
 
   @logger.logifyAsync()
   static mkdirp(filePath, callback) {
-    mkdirp(filePath, callback);
+    mkdirp(filePath, { fs }, callback);
   }
 
   @logger.logifySync()
@@ -57,6 +57,11 @@ export default class FileSystemUtilities {
   @logger.logifySync()
   static readFileSync(filePath) {
     return fs.readFileSync(filePath, "utf-8").toString().trim();
+  }
+
+  @logger.logifySync()
+  static statSync(filePath) {
+    return fs.statSync(filePath);
   }
 
   @logger.logifyAsync()

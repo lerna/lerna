@@ -1,17 +1,17 @@
+import fs from "graceful-fs";
 import pathExists from "path-exists";
 import assert from "assert";
 import path from "path";
-import fs from "fs";
 import normalize from "normalize-path";
 
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
 import FileSystemUtilities from "../src/FileSystemUtilities";
 import BootstrapCommand from "../src/commands/BootstrapCommand";
-import exitWithCode from "./_exitWithCode";
-import initFixture from "./_initFixture";
-import stub from "./_stub";
+import exitWithCode from "./helpers/exitWithCode";
+import initFixture from "./helpers/initFixture";
+import stub from "./helpers/stub";
 
-import assertStubbedCalls from "./_assertStubbedCalls";
+import assertStubbedCalls from "./helpers/assertStubbedCalls";
 
 const STDIO_OPT = ["ignore", "pipe", "pipe"];
 
@@ -24,9 +24,9 @@ describe("BootstrapCommand", () => {
   describe("lifecycle scripts", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("BootstrapCommand/lifecycle-scripts", done);
-    });
+    beforeEach(() => initFixture("BootstrapCommand/lifecycle-scripts").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should run preinstall, postinstall and prepublish scripts", (done) => {
       const bootstrapCommand = new BootstrapCommand([], {});
@@ -35,7 +35,7 @@ describe("BootstrapCommand", () => {
       bootstrapCommand.runPreparations();
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
@@ -44,7 +44,7 @@ describe("BootstrapCommand", () => {
           assert.ok(pathExists.sync(path.join(testDir, "packages", "package-prepublish", "did-prepublish")));
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -53,9 +53,9 @@ describe("BootstrapCommand", () => {
   describe("with hoisting", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("BootstrapCommand/basic", done);
-    });
+    beforeEach(() => initFixture("BootstrapCommand/basic").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should hoist", (done) => {
       const bootstrapCommand = new BootstrapCommand([], {hoist: true});
@@ -120,9 +120,10 @@ describe("BootstrapCommand", () => {
       ]);
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
         assert.deepEqual(gotPackage, wantPackage, "Installed the right deps");
         assert.deepEqual(gotRimraf, wantRimraf, "Removed the right stuff");
-        done(err);
+        done();
       }));
     });
 
@@ -168,9 +169,10 @@ describe("BootstrapCommand", () => {
       ]);
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
         assert.deepEqual(gotPackage, wantPackage, "Installed the right deps");
         assert.deepEqual(gotRimraf, wantRimraf, "Removed the right stuff");
-        done(err);
+        done();
       }));
     });
   });
@@ -179,9 +181,9 @@ describe("BootstrapCommand", () => {
   describe("dependencies between packages in the repo", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("BootstrapCommand/basic", done);
-    });
+    beforeEach(() => initFixture("BootstrapCommand/basic").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should bootstrap packages", (done) => {
       const bootstrapCommand = new BootstrapCommand([], {});
@@ -194,7 +196,7 @@ describe("BootstrapCommand", () => {
       });
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
@@ -248,7 +250,7 @@ describe("BootstrapCommand", () => {
           );
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -275,7 +277,7 @@ describe("BootstrapCommand", () => {
       ]);
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
@@ -283,7 +285,7 @@ describe("BootstrapCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -310,7 +312,7 @@ describe("BootstrapCommand", () => {
       ]);
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "asini-debug.log")), "asini-debug.log should not exist");
@@ -354,7 +356,7 @@ describe("BootstrapCommand", () => {
           );
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -363,9 +365,9 @@ describe("BootstrapCommand", () => {
   describe("a repo with packages outside of packages/", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("BootstrapCommand/extra", done);
-    });
+    beforeEach(() => initFixture("BootstrapCommand/extra").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should bootstrap packages", (done) => {
       const bootstrapCommand = new BootstrapCommand([], {});
@@ -395,7 +397,7 @@ describe("BootstrapCommand", () => {
       ]);
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
@@ -454,7 +456,7 @@ describe("BootstrapCommand", () => {
           );
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -474,14 +476,14 @@ describe("BootstrapCommand", () => {
       });
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -503,7 +505,7 @@ describe("BootstrapCommand", () => {
       });
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
@@ -515,7 +517,7 @@ describe("BootstrapCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -537,7 +539,7 @@ describe("BootstrapCommand", () => {
       });
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
@@ -549,7 +551,7 @@ describe("BootstrapCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -558,9 +560,9 @@ describe("BootstrapCommand", () => {
   describe("external dependencies that haven't been installed", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("BootstrapCommand/cold", done);
-    });
+    beforeEach(() => initFixture("BootstrapCommand/cold").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should get installed", (done) => {
       const bootstrapCommand = new BootstrapCommand([], {});
@@ -590,13 +592,13 @@ describe("BootstrapCommand", () => {
       ]);
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -605,9 +607,9 @@ describe("BootstrapCommand", () => {
   describe("external dependencies that have already been installed", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("BootstrapCommand/warm", done);
-    });
+    beforeEach(() => initFixture("BootstrapCommand/warm").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should not get re-installed", (done) => {
       const bootstrapCommand = new BootstrapCommand([], {});
@@ -622,14 +624,14 @@ describe("BootstrapCommand", () => {
       });
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
           assert.ok(!installed, "The external dependency was not installed");
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -638,9 +640,9 @@ describe("BootstrapCommand", () => {
   describe("packages with at least one external dependency to install", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("BootstrapCommand/tepid", done);
-    });
+    beforeEach(() => initFixture("BootstrapCommand/tepid").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should install all dependencies", (done) => {
       const bootstrapCommand = new BootstrapCommand([], {});
@@ -659,7 +661,7 @@ describe("BootstrapCommand", () => {
       });
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
@@ -672,7 +674,7 @@ describe("BootstrapCommand", () => {
 
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
@@ -681,9 +683,9 @@ describe("BootstrapCommand", () => {
   describe("peer dependencies in packages in the repo", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("BootstrapCommand/peer", done);
-    });
+    beforeEach(() => initFixture("BootstrapCommand/peer").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should not bootstrap ignored peer dependencies", (done) => {
       const bootstrapCommand = new BootstrapCommand([], {
@@ -703,7 +705,7 @@ describe("BootstrapCommand", () => {
       });
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
         try {
           assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
@@ -711,16 +713,14 @@ describe("BootstrapCommand", () => {
           assert.ok(!installed, "The external peer dependency should not be installed");
           done();
         } catch (err) {
-          done(err);
+          done.fail(err);
         }
       }));
     });
   });
 
   describe("zero packages", () => {
-    beforeEach((done) => {
-      initFixture("BootstrapCommand/zero-pkgs", done);
-    });
+    beforeEach(() => initFixture("BootstrapCommand/zero-pkgs"));
 
     it("should succeed in repositories with zero packages", (done) => {
       const bootstrapCommand = new BootstrapCommand([], {});
@@ -729,7 +729,7 @@ describe("BootstrapCommand", () => {
       bootstrapCommand.runPreparations();
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        assert.equal(undefined, err);
+        if (err) return done.fail(err);
         done();
       }));
     });
@@ -744,18 +744,18 @@ describe("BootstrapCommand", () => {
       NODE_ENV: "lerna-test",
     };
 
-    beforeEach((done) => {
-      testDir = initFixture("BootstrapCommand/registries", done);
-    });
+    beforeEach(() => initFixture("BootstrapCommand/registries").then((dir) => {
+      testDir = dir;
+
+      // mock out the ENV to a simpler version for testing
+      process.env = mockEnv;
+    }));
 
     afterEach(() => {
       process.env = originalEnv;
     });
 
     it("should use config property", (done) => {
-      // mock out the ENV to a simpler version for testing
-      process.env = mockEnv;
-
       const bootstrapCommand = new BootstrapCommand([], {});
       const env = Object.assign({}, mockEnv, {
         npm_config_registry: "https://my-secure-registry/npm",
