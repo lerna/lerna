@@ -15,7 +15,7 @@ cache:
   directories:
   - node_modules
 
-install: yarn
+install: yarn --frozen-lockfile
 
 before_script:
   - git config --global user.email test@example.com

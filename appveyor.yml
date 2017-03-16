@@ -15,7 +15,7 @@ cache:
 
 install:
   - ps: Install-Product node $env:nodejs_version
-  - yarn
+  - yarn --frozen-lockfile
 
 before_test:
   - git config --global user.email test@example.com
