@@ -686,11 +686,7 @@ describe("BootstrapCommand", () => {
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
 
-      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        done();
-      }));
+      bootstrapCommand.runCommand(exitWithCode(0, done));
     });
   });
 

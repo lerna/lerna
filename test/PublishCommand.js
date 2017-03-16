@@ -903,10 +903,7 @@ describe("PublishCommand", () => {
         ]],
       ]);
 
-      publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-        done();
-      }));
+      publishCommand.runCommand(exitWithCode(0, done));
     });
   });
 
