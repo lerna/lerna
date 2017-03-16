@@ -83,7 +83,7 @@ export default class GitUtilities {
 
   @logger.logifySync()
   static getTopLevelDirectory() {
-    return ChildProcessUtilities.execSync("git rev-parse --show-toplevel");
+    return process.cwd();
   }
 
   @logger.logifySync()
