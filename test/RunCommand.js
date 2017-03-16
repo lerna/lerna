@@ -79,7 +79,8 @@ describe("RunCommand", () => {
           callback();
         });
 
-        runCommand.runCommand(exitWithCode(0, () => {
+        runCommand.runCommand(exitWithCode(0, (err) => {
+          if (err) return done.fail(err);
           assert.equal(4, calls);
           done();
         }));
@@ -104,7 +105,8 @@ describe("RunCommand", () => {
           callback();
         });
 
-        runCommand.runCommand(exitWithCode(0, () => {
+        runCommand.runCommand(exitWithCode(0, (err) => {
+          if (err) return done.fail(err);
           assert.deepEqual(ranInPackages, ["package-1"]);
           done();
         }));
@@ -163,7 +165,8 @@ describe("RunCommand", () => {
         callback();
       });
 
-      runCommand.runCommand(exitWithCode(0, () => {
+      runCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
         const expected = ["package-1", "package-2"];
         assert.deepEqual(ranInPackages.sort(), expected.sort());
         done();

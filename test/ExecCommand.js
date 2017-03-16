@@ -60,7 +60,8 @@ describe("ExecCommand", () => {
         callback();
       });
 
-      execCommand.runCommand(exitWithCode(0, () => {
+      execCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
         assert.equal(calls, 2);
         done();
       }));
@@ -89,7 +90,8 @@ describe("ExecCommand", () => {
         callback();
       });
 
-      execCommand.runCommand(exitWithCode(0, () => {
+      execCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
         assert.equal(calls, 2);
         done();
       }));
@@ -113,7 +115,8 @@ describe("ExecCommand", () => {
           callback();
         });
 
-        execCommand.runCommand(exitWithCode(0, () => {
+        execCommand.runCommand(exitWithCode(0, (err) => {
+          if (err) return done.fail(err);
           assert.deepEqual(ranInPackages, ["package-1"]);
           done();
         }));

@@ -87,7 +87,8 @@ describe("CleanCommand", () => {
           callback();
         });
 
-        cleanCommand.runCommand(exitWithCode(0, () => {
+        cleanCommand.runCommand(exitWithCode(0, (err) => {
+          if (err) return done.fail(err);
           assert.deepEqual(ranInPackages, ["package-1", "package-2"]);
           done();
         }));
@@ -123,7 +124,8 @@ describe("CleanCommand", () => {
         callback();
       });
 
-      cleanCommand.runCommand(exitWithCode(0, () => {
+      cleanCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
         const expected = ["package-1", "package-2"].map((pkg) => path.join(testDir, "packages", pkg, "node_modules"));
         assert.deepEqual(ranInPackages.sort(), expected.sort());
         done();
