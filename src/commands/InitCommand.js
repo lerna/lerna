@@ -1,4 +1,5 @@
 import FileSystemUtilities from "../FileSystemUtilities";
+import GitUtilities from "../GitUtilities";
 import Command from "../Command";
 import objectAssignSorted from "object-assign-sorted";
 
@@ -8,7 +9,11 @@ export default class InitCommand extends Command {
   runPreparations() {}
 
   initialize(callback) {
-    // Nothing to do...
+    if (!GitUtilities.isInitialized()) {
+      this.logger.info("Initializing Git repository.");
+      GitUtilities.init();
+    }
+
     callback(null, true);
   }
 

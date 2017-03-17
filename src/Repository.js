@@ -1,6 +1,5 @@
 import path from "path";
 import findUp from "find-up";
-import GitUtilities from "./GitUtilities";
 import loadJsonFile from "load-json-file";
 import PackageUtilities from "./PackageUtilities";
 import Package from "./Package";
@@ -10,11 +9,6 @@ const DEFAULT_PACKAGE_GLOB = "packages/*";
 
 export default class Repository {
   constructor() {
-    if (!GitUtilities.isInitialized()) {
-      logger.info("Initializing Git repository.");
-      GitUtilities.init();
-    }
-
     // findUp returns null when not found, and path.resolve starts from process.cwd()
     const lernaJsonLocation = findUp.sync("lerna.json") || path.resolve("lerna.json");
 

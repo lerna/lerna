@@ -1,5 +1,6 @@
 import ChildProcessUtilities from "./ChildProcessUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
+import GitUtilities from "./GitUtilities";
 import ExitHandler from "./ExitHandler";
 import progressBar from "./progressBar";
 import Repository from "./Repository";
@@ -95,6 +96,12 @@ export default class Command {
   }
 
   runValidations() {
+    if (!GitUtilities.isInitialized()) {
+      this.logger.warn("This is not a git repository, did you already run `git init` or `lerna init`?");
+      this._complete(null, 1);
+      return;
+    }
+
     if (!FileSystemUtilities.existsSync(this.repository.packageJsonLocation)) {
       this.logger.warn("`package.json` does not exist, have you run `lerna init`?");
       this._complete(null, 1);
