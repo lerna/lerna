@@ -17,13 +17,25 @@ export default class Command {
     this.logger = logger;
     this.repository = new Repository();
     this.progressBar = progressBar;
+  }
 
-    const {sort, concurrency} = this.getOptions();
+  get concurrency() {
+    if (!this._concurrency) {
+      const { concurrency } = this.getOptions();
+      this._concurrency = Math.max(1, +concurrency || DEFAULT_CONCURRENCY);
+    }
 
-    this.concurrency = Math.max(1, +concurrency || DEFAULT_CONCURRENCY);
+    return this._concurrency;
+  }
 
-    // If the option isn't present then the default is to sort.
-    this.toposort = sort == null || sort;
+  get toposort() {
+    if (!this._toposort) {
+      const { sort } = this.getOptions();
+      // If the option isn't present then the default is to sort.
+      this._toposort = sort == null || sort;
+    }
+
+    return this._toposort;
   }
 
   get name() {
@@ -83,12 +95,6 @@ export default class Command {
   }
 
   runValidations() {
-    if (this.concurrency < 1) {
-      this.logger.warn("command must be run with at least one thread.");
-      this._complete(null, 1);
-      return;
-    }
-
     if (!FileSystemUtilities.existsSync(this.repository.packageJsonLocation)) {
       this.logger.warn("`package.json` does not exist, have you run `lerna init`?");
       this._complete(null, 1);

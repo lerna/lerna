@@ -63,6 +63,23 @@ describe("Command", () => {
     });
   });
 
+  describe(".toposort", () => {
+    it("is enabled by default", () => {
+      const command = new Command([], {});
+      assert.equal(command.toposort, true);
+    });
+
+    it("is enabled when sort config is null", () => {
+      const command = new Command([], {sort: null});
+      assert.equal(command.toposort, true);
+    });
+
+    it("is disabled when sort config is explicitly false (--no-sort)", () => {
+      const command = new Command([], {sort: false});
+      assert.equal(command.toposort, false);
+    });
+  });
+
   describe(".run()", () => {
     it("should exist", (done) => {
       class TestCommand extends Command {
