@@ -1,7 +1,6 @@
 import path from "path";
 import findUp from "find-up";
 import GitUtilities from "./GitUtilities";
-import FileSystemUtilities from "./FileSystemUtilities";
 import loadJsonFile from "load-json-file";
 import PackageUtilities from "./PackageUtilities";
 import Package from "./Package";
@@ -22,28 +21,28 @@ export default class Repository {
     this.rootPath = path.dirname(lernaJsonLocation);
     this.lernaJsonLocation = lernaJsonLocation;
     this.packageJsonLocation = path.join(this.rootPath, "package.json");
+  }
 
-    if (FileSystemUtilities.existsSync(this.lernaJsonLocation)) {
-      this.lernaJson = loadJsonFile.sync(this.lernaJsonLocation);
-    } else {
-      // No need to distinguish between missing and empty.
-      // This saves us a lot of guards.
-      this.lernaJson = {};
+  get lernaJson() {
+    if (!this._lernaJson) {
+      try {
+        this._lernaJson = loadJsonFile.sync(this.lernaJsonLocation);
+      } catch (ex) {
+        // No need to distinguish between missing and empty,
+        // saves a lot of noisy guards elsewhere
+        this._lernaJson = {};
+      }
     }
 
-    if (FileSystemUtilities.existsSync(this.packageJsonLocation)) {
-      this.packageJson = loadJsonFile.sync(this.packageJsonLocation);
-    }
-
-    this.package = new Package(this.packageJson, this.rootPath);
+    return this._lernaJson;
   }
 
   get lernaVersion() {
-    return this.lernaJson && this.lernaJson.lerna;
+    return this.lernaJson.lerna;
   }
 
   get version() {
-    return this.lernaJson && this.lernaJson.version;
+    return this.lernaJson.version;
   }
 
   get nodeModulesLocation() {
@@ -51,13 +50,14 @@ export default class Repository {
   }
 
   get packageConfigs() {
-    return (this.lernaJson || {}).packages || [DEFAULT_PACKAGE_GLOB];
+    return this.lernaJson.packages || [DEFAULT_PACKAGE_GLOB];
   }
 
   get packages() {
     if (!this._packages) {
       this.buildPackageGraph();
     }
+
     return this._packages;
   }
 
@@ -65,7 +65,29 @@ export default class Repository {
     if (!this._packageGraph) {
       this.buildPackageGraph();
     }
+
     return this._packageGraph;
+  }
+
+  get packageJson() {
+    if (!this._packageJson) {
+      try {
+        this._packageJson = loadJsonFile.sync(this.packageJsonLocation);
+      } catch (ex) {
+        // try again next time
+        this._packageJson = null;
+      }
+    }
+
+    return this._packageJson;
+  }
+
+  get package() {
+    if (!this._package) {
+      this._package = new Package(this.packageJson, this.rootPath);
+    }
+
+    return this._package;
   }
 
   // Legacy
