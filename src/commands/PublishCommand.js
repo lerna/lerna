@@ -337,6 +337,7 @@ export default class PublishCommand extends Command {
   }
 
   updateUpdatedPackages() {
+    const { exact } = this.getOptions();
     const changedFiles = [];
 
     this.updates.forEach((update) => {
@@ -348,9 +349,9 @@ export default class PublishCommand extends Command {
       pkg.version = this.updatesVersions[pkg.name] || pkg.version;
 
       // update pkg dependencies
-      this.updatePackageDepsObject(pkg, "dependencies");
-      this.updatePackageDepsObject(pkg, "devDependencies");
-      this.updatePackageDepsObject(pkg, "peerDependencies");
+      this.updatePackageDepsObject(pkg, "dependencies", exact);
+      this.updatePackageDepsObject(pkg, "devDependencies", exact);
+      this.updatePackageDepsObject(pkg, "peerDependencies", exact);
 
       // write new package
       FileSystemUtilities.writeFileSync(packageJsonLocation, pkg.toJsonString());
@@ -374,9 +375,8 @@ export default class PublishCommand extends Command {
     }
   }
 
-  updatePackageDepsObject(pkg, depsKey) {
+  updatePackageDepsObject(pkg, depsKey, exact) {
     const deps = pkg[depsKey];
-    const {exact} = this.getOptions();
 
     if (!deps) {
       return;
