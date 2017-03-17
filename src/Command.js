@@ -18,12 +18,14 @@ export default class Command {
     this.repository = new Repository();
     this.progressBar = progressBar;
 
-    const {sort, concurrency} = this.getOptions();
+    const {sort, concurrency, includePeerDependencies} = this.getOptions();
 
     this.concurrency = Math.max(1, +concurrency || DEFAULT_CONCURRENCY);
 
     // If the option isn't present then the default is to sort.
     this.toposort = sort == null || sort;
+
+    process.env.LERNA_INCLUDE_PEER_DEPENDENCIES = includePeerDependencies;
   }
 
   get name() {

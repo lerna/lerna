@@ -45,8 +45,12 @@ export default class Package {
   }
 
   get allDependencies() {
+    const allDependencies = {};
+    if (process.env.LERNA_INCLUDE_PEER_DEPENDENCIES === "true") {
+      Object.assign(allDependencies, this.peerDependencies);
+    }
     return Object.assign(
-      {},
+      allDependencies,
       this.devDependencies,
       this.dependencies
     );
