@@ -1,7 +1,10 @@
 import fs from "graceful-fs";
 import path from "path";
 
-import { rimrafAsync } from "./helpers/fixtureUtils";
+import {
+  mkdirpAsync,
+  rimrafAsync,
+} from "./helpers/fixtureUtils";
 import initFixture from "./helpers/initFixture";
 
 import InitCommand from "../src/commands/InitCommand";
@@ -67,6 +70,47 @@ describe("InitCommand", () => {
 
         const lernaJson = require(path.join(testDir, "lerna.json"));
         expect(lernaJson.version).toBe("independent");
+
+        done();
+      });
+    });
+  });
+
+  describe("in a subdirectory of a git repo", () => {
+    beforeEach(() => initFixture("InitCommand/empty").then((dir) => {
+      const subDir = path.join(dir, "subdir");
+
+      return mkdirpAsync(subDir).then(() => {
+        process.chdir(subDir);
+        testDir = subDir;
+      });
+    }));
+
+    it("creates lerna files", (done) => {
+      const instance = new InitCommand([], {});
+
+      instance.runCommand((err, code) => {
+        if (err) throw err;
+        expect(code).toBe(0);
+
+        expect(fs.readdirSync(testDir)).toEqual([
+          "lerna.json",
+          "package.json",
+        ]);
+
+        const lernaJson = require(path.join(testDir, "lerna.json"));
+        expect(lernaJson).toEqual({
+          lerna: instance.lernaVersion,
+          packages: ["packages/*"],
+          version: "0.0.0",
+        });
+
+        const packageJson = require(path.join(testDir, "package.json"));
+        expect(packageJson).toEqual({
+          devDependencies: {
+            lerna: instance.lernaVersion,
+          },
+        });
 
         done();
       });

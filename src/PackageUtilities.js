@@ -29,12 +29,15 @@ export default class PackageUtilities {
     return require(PackageUtilities.getPackageConfigPath(packagesPath, name));
   }
 
-  static getPackages(repository) {
+  static getPackages({
+    packageConfigs,
+    rootPath,
+  }) {
     const packages = [];
 
-    repository.packageConfigs.forEach((globPath) => {
+    packageConfigs.forEach((globPath) => {
 
-      globSync(path.join(repository.rootPath, globPath, "package.json"))
+      globSync(path.join(rootPath, globPath, "package.json"))
         .map((fn) => path.resolve(fn))
         .forEach((packageConfigPath) => {
           const packagePath = path.dirname(packageConfigPath);

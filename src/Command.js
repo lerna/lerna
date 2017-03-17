@@ -1,5 +1,6 @@
 import ChildProcessUtilities from "./ChildProcessUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
+import GitUtilities from "./GitUtilities";
 import ExitHandler from "./ExitHandler";
 import progressBar from "./progressBar";
 import Repository from "./Repository";
@@ -17,13 +18,25 @@ export default class Command {
     this.logger = logger;
     this.repository = new Repository();
     this.progressBar = progressBar;
+  }
 
-    const {sort, concurrency} = this.getOptions();
+  get concurrency() {
+    if (!this._concurrency) {
+      const { concurrency } = this.getOptions();
+      this._concurrency = Math.max(1, +concurrency || DEFAULT_CONCURRENCY);
+    }
 
-    this.concurrency = Math.max(1, +concurrency || DEFAULT_CONCURRENCY);
+    return this._concurrency;
+  }
 
-    // If the option isn't present then the default is to sort.
-    this.toposort = sort == null || sort;
+  get toposort() {
+    if (!this._toposort) {
+      const { sort } = this.getOptions();
+      // If the option isn't present then the default is to sort.
+      this._toposort = sort == null || sort;
+    }
+
+    return this._toposort;
   }
 
   get name() {
@@ -83,8 +96,8 @@ export default class Command {
   }
 
   runValidations() {
-    if (this.concurrency < 1) {
-      this.logger.warn("command must be run with at least one thread.");
+    if (!GitUtilities.isInitialized()) {
+      this.logger.warn("This is not a git repository, did you already run `git init` or `lerna init`?");
       this._complete(null, 1);
       return;
     }
@@ -125,7 +138,7 @@ export default class Command {
     }
 
     if (FileSystemUtilities.existsSync(this.repository.versionLocation)) {
-      this.logger.warn("You have a `VERSION` file in your repository, this is leftover from a previous ");
+      this.logger.warn("You have a `VERSION` file in your repository, this is leftover from a previous version. Please run `lerna init` to update.");
       this._complete(null, 1);
       return;
     }

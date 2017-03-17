@@ -1,57 +1,42 @@
-import GitUtilities from "./GitUtilities";
-import FileSystemUtilities from "./FileSystemUtilities";
+import path from "path";
+import findUp from "find-up";
+import loadJsonFile from "load-json-file";
 import PackageUtilities from "./PackageUtilities";
 import Package from "./Package";
 import NpmUtilities from "./NpmUtilities";
-import path from "path";
-import logger from "./logger";
 
 const DEFAULT_PACKAGE_GLOB = "packages/*";
 
 export default class Repository {
   constructor() {
-    if (!GitUtilities.isInitialized()) {
-      logger.info("Initializing Git repository.");
-      GitUtilities.init();
-    }
+    // findUp returns null when not found, and path.resolve starts from process.cwd()
+    const lernaJsonLocation = findUp.sync("lerna.json") || path.resolve("lerna.json");
 
-    this.rootPath = path.resolve(GitUtilities.getTopLevelDirectory());
-    this.lernaJsonLocation = path.join(this.rootPath, "lerna.json");
+    this.rootPath = path.dirname(lernaJsonLocation);
+    this.lernaJsonLocation = lernaJsonLocation;
     this.packageJsonLocation = path.join(this.rootPath, "package.json");
-    this.packagesLocation = path.join(this.rootPath, "packages"); // TODO: Kill this.
+  }
 
-    // Legacy
-    this.versionLocation = path.join(this.rootPath, "VERSION");
-
-    if (FileSystemUtilities.existsSync(this.lernaJsonLocation)) {
-      this.lernaJson = JSON.parse(FileSystemUtilities.readFileSync(this.lernaJsonLocation));
-    } else {
-      // No need to distinguish between missing and empty.
-      // This saves us a lot of guards.
-      this.lernaJson = {};
+  get lernaJson() {
+    if (!this._lernaJson) {
+      try {
+        this._lernaJson = loadJsonFile.sync(this.lernaJsonLocation);
+      } catch (ex) {
+        // No need to distinguish between missing and empty,
+        // saves a lot of noisy guards elsewhere
+        this._lernaJson = {};
+      }
     }
 
-    if (FileSystemUtilities.existsSync(this.packageJsonLocation)) {
-      this.packageJson = JSON.parse(FileSystemUtilities.readFileSync(this.packageJsonLocation));
-    }
-
-    this.package = new Package(this.packageJson, this.rootPath);
+    return this._lernaJson;
   }
 
   get lernaVersion() {
-    return this.lernaJson && this.lernaJson.lerna;
+    return this.lernaJson.lerna;
   }
 
   get version() {
-    return this.lernaJson && this.lernaJson.version;
-  }
-
-  get publishConfig() {
-    return this.lernaJson && this.lernaJson.publishConfig || {};
-  }
-
-  get bootstrapConfig() {
-    return this.lernaJson && this.lernaJson.bootstrapConfig || {};
+    return this.lernaJson.version;
   }
 
   get nodeModulesLocation() {
@@ -59,13 +44,14 @@ export default class Repository {
   }
 
   get packageConfigs() {
-    return (this.lernaJson || {}).packages || [DEFAULT_PACKAGE_GLOB];
+    return this.lernaJson.packages || [DEFAULT_PACKAGE_GLOB];
   }
 
   get packages() {
     if (!this._packages) {
       this.buildPackageGraph();
     }
+
     return this._packages;
   }
 
@@ -73,7 +59,34 @@ export default class Repository {
     if (!this._packageGraph) {
       this.buildPackageGraph();
     }
+
     return this._packageGraph;
+  }
+
+  get packageJson() {
+    if (!this._packageJson) {
+      try {
+        this._packageJson = loadJsonFile.sync(this.packageJsonLocation);
+      } catch (ex) {
+        // try again next time
+        this._packageJson = null;
+      }
+    }
+
+    return this._packageJson;
+  }
+
+  get package() {
+    if (!this._package) {
+      this._package = new Package(this.packageJson, this.rootPath);
+    }
+
+    return this._package;
+  }
+
+  // Legacy
+  get versionLocation() {
+    return path.join(this.rootPath, "VERSION");
   }
 
   isIndependent() {
