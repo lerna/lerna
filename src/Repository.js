@@ -2,6 +2,7 @@ import path from "path";
 import findUp from "find-up";
 import GitUtilities from "./GitUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
+import loadJsonFile from "load-json-file";
 import PackageUtilities from "./PackageUtilities";
 import Package from "./Package";
 import NpmUtilities from "./NpmUtilities";
@@ -23,7 +24,7 @@ export default class Repository {
     this.packageJsonLocation = path.join(this.rootPath, "package.json");
 
     if (FileSystemUtilities.existsSync(this.lernaJsonLocation)) {
-      this.lernaJson = JSON.parse(FileSystemUtilities.readFileSync(this.lernaJsonLocation));
+      this.lernaJson = loadJsonFile.sync(this.lernaJsonLocation);
     } else {
       // No need to distinguish between missing and empty.
       // This saves us a lot of guards.
@@ -31,7 +32,7 @@ export default class Repository {
     }
 
     if (FileSystemUtilities.existsSync(this.packageJsonLocation)) {
-      this.packageJson = JSON.parse(FileSystemUtilities.readFileSync(this.packageJsonLocation));
+      this.packageJson = loadJsonFile.sync(this.packageJsonLocation);
     }
 
     this.package = new Package(this.packageJson, this.rootPath);
