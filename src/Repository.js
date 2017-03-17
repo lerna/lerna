@@ -46,14 +46,6 @@ export default class Repository {
     return this.lernaJson && this.lernaJson.version;
   }
 
-  get publishConfig() {
-    return this.lernaJson && this.lernaJson.publishConfig || {};
-  }
-
-  get bootstrapConfig() {
-    return this.lernaJson && this.lernaJson.bootstrapConfig || {};
-  }
-
   get nodeModulesLocation() {
     return path.join(this.rootPath, "node_modules");
   }

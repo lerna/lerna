@@ -140,7 +140,7 @@ export default class PublishCommand extends Command {
         if (!(this.flags.canary || this.flags.skipGit)) {
           this.logger.info("Pushing tags to git...");
           this.logger.newLine();
-          GitUtilities.pushWithTags(this.flags.gitRemote || this.repository.publishConfig.gitRemote || "origin", this.tags);
+          GitUtilities.pushWithTags(this.getOptions().gitRemote || "origin", this.tags);
         }
 
         let message = "Successfully published:";

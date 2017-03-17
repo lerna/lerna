@@ -9,7 +9,6 @@ import semver from "semver";
 
 export default class BootstrapCommand extends Command {
   initialize(callback) {
-    this.configFlags = this.repository.bootstrapConfig;
     this.npmConfig = {
       registry: this.npmRegistry,
       client: this.getOptions().npmClient,
