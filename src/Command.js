@@ -125,7 +125,7 @@ export default class Command {
     }
 
     if (FileSystemUtilities.existsSync(this.repository.versionLocation)) {
-      this.logger.warn("You have a `VERSION` file in your repository, this is leftover from a previous ");
+      this.logger.warn("You have a `VERSION` file in your repository, this is leftover from a previous version. Please run `lerna init` to update.");
       this._complete(null, 1);
       return;
     }

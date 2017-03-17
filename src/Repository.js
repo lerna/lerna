@@ -22,9 +22,6 @@ export default class Repository {
     this.lernaJsonLocation = lernaJsonLocation;
     this.packageJsonLocation = path.join(this.rootPath, "package.json");
 
-    // Legacy
-    this.versionLocation = path.join(this.rootPath, "VERSION");
-
     if (FileSystemUtilities.existsSync(this.lernaJsonLocation)) {
       this.lernaJson = JSON.parse(FileSystemUtilities.readFileSync(this.lernaJsonLocation));
     } else {
@@ -76,6 +73,11 @@ export default class Repository {
       this.buildPackageGraph();
     }
     return this._packageGraph;
+  }
+
+  // Legacy
+  get versionLocation() {
+    return path.join(this.rootPath, "VERSION");
   }
 
   isIndependent() {
