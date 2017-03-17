@@ -54,7 +54,9 @@ describe("BootstrapCommand", () => {
     }));
 
     it("should hoist", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {hoist: true});
+      const bootstrapCommand = new BootstrapCommand([], {
+        hoist: true
+      });
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
@@ -126,7 +128,10 @@ describe("BootstrapCommand", () => {
     });
 
     it("should not hoist when disallowed", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {hoist: true, nohoist: "@test/package-1"});
+      const bootstrapCommand = new BootstrapCommand([], {
+        hoist: true,
+        nohoist: "@test/package-1"
+      });
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();

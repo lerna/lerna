@@ -38,8 +38,8 @@ describe("LsCommand", () => {
 
     // Both of these commands should result in the same outcome
     const filters = [
-      { test: "should list changes for a given scope", flag: "scope", flagValue: "package-1"},
-      { test: "should not list changes for ignored packages", flag: "ignore", flagValue: "package-@(2|3|4|5)"},
+      { test: "should list changes for a given scope", flag: "scope", flagValue: "package-1" },
+      { test: "should not list changes for ignored packages", flag: "ignore", flagValue: "package-@(2|3|4|5)" },
     ];
     filters.forEach((filter) => {
       it(filter.test, (done) => {

@@ -44,21 +44,21 @@ describe("Command", () => {
 
   describe(".concurrency", () => {
     it("should be added to the instance", () => {
-      const command = new Command(null, {concurrency: 6});
+      const command = new Command(null, { concurrency: 6 });
       assert.equal(command.concurrency, 6);
     });
 
     it("should fall back to default if concurrency given is NaN", () => {
-      const command = new Command(null, {concurrency: "bla"});
+      const command = new Command(null, { concurrency: "bla" });
       assert.equal(command.concurrency, 4);
     });
 
     it("should fall back to default if concurrency given is 0", () => {
-      assert.equal(new Command(null, {concurrency: 0}).concurrency, 4);
+      assert.equal(new Command(null, { concurrency: 0 }).concurrency, 4);
     });
 
     it("should fall back to 1 if concurrency given is smaller than 1", () => {
-      assert.equal(new Command(null, {concurrency: -1}).concurrency, 1);
+      assert.equal(new Command(null, { concurrency: -1 }).concurrency, 1);
     });
   });
 
@@ -69,12 +69,12 @@ describe("Command", () => {
     });
 
     it("is enabled when sort config is null", () => {
-      const command = new Command([], {sort: null});
+      const command = new Command([], { sort: null });
       assert.equal(command.toposort, true);
     });
 
     it("is disabled when sort config is explicitly false (--no-sort)", () => {
-      const command = new Command([], {sort: false});
+      const command = new Command([], { sort: false });
       assert.equal(command.toposort, false);
     });
   });
@@ -125,15 +125,15 @@ describe("Command", () => {
     });
 
     it("should override command-level options with passed-in options", () => {
-      assert.equal(new TestCCommand([], {}).getOptions({testOption2: "p"}).testOption2, "p");
+      assert.equal(new TestCCommand([], {}).getOptions({ testOption2: "p" }).testOption2, "p");
     });
 
     it("should sieve properly within passed-in options", () => {
-      assert.equal(new TestCCommand([], {}).getOptions({testOption2: "p"}, {testOption2: "p2"}).testOption2, "p2");
+      assert.equal(new TestCCommand([], {}).getOptions({ testOption2: "p" }, { testOption2: "p2" }).testOption2, "p2");
     });
 
     it("should override everything with a CLI flag", () => {
-      assert.equal(new TestCCommand([], {testOption2: "f"}).getOptions({testOption2: "p"}).testOption2, "f");
+      assert.equal(new TestCCommand([], { testOption2: "f" }).getOptions({ testOption2: "p" }).testOption2, "f");
     });
 
   });

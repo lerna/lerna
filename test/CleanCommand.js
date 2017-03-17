@@ -57,8 +57,8 @@ describe("CleanCommand", () => {
 
     // Both of these commands should result in the same outcome
     const filters = [
-      { test: "should only clean scoped packages", flag: "scope", flagValue: "package-@(1|2)"},
-      { test: "should not clean ignored packages", flag: "ignore", flagValue: "package-@(3|4)"},
+      { test: "should only clean scoped packages", flag: "scope", flagValue: "package-@(1|2)" },
+      { test: "should not clean ignored packages", flag: "ignore", flagValue: "package-@(3|4)" },
     ];
     filters.forEach((filter) => {
       it(filter.test, (done) => {

@@ -1671,19 +1671,19 @@ describe("PublishCommand", () => {
           { args: ["git tag"] }
         ]],
         [ConventionalCommitUtilities, "recommendVersion", {}, [
-          { args: [{name: "package-1", version: "1.0.0", location: path.join(testDir, "packages/package-1")}], returns: "1.0.1"},
-          { args: [{name: "package-2", version: "2.0.0", location: path.join(testDir, "packages/package-2")}], returns: "1.1.0"},
-          { args: [{name: "package-3", version: "3.0.0", location: path.join(testDir, "packages/package-3")}], returns: "2.0.0"},
-          { args: [{name: "package-4", version: "4.0.0", location: path.join(testDir, "packages/package-4")}], returns: "1.1.0"}
+          { args: [{ name: "package-1", version: "1.0.0", location: path.join(testDir, "packages/package-1") }], returns: "1.0.1" },
+          { args: [{ name: "package-2", version: "2.0.0", location: path.join(testDir, "packages/package-2") }], returns: "1.1.0" },
+          { args: [{ name: "package-3", version: "3.0.0", location: path.join(testDir, "packages/package-3") }], returns: "2.0.0" },
+          { args: [{ name: "package-4", version: "4.0.0", location: path.join(testDir, "packages/package-4") }], returns: "1.1.0" }
         ]],
         [PromptUtilities, "confirm", { valueCallback: true }, [
           { args: ["Are you sure you want to publish the above changes?"], returns: true }
         ]],
         [ConventionalCommitUtilities, "updateChangelog", {}, [
-          { args: [{name: "package-1", location: path.join(testDir, "packages/package-1")}]},
-          { args: [{name: "package-2", location: path.join(testDir, "packages/package-2")}]},
-          { args: [{name: "package-3", location: path.join(testDir, "packages/package-3")}]},
-          { args: [{name: "package-4", location: path.join(testDir, "packages/package-4")}]}
+          { args: [{ name: "package-1", location: path.join(testDir, "packages/package-1") }] },
+          { args: [{ name: "package-2", location: path.join(testDir, "packages/package-2") }] },
+          { args: [{ name: "package-3", location: path.join(testDir, "packages/package-3") }] },
+          { args: [{ name: "package-4", location: path.join(testDir, "packages/package-4") }] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/CHANGELOG.md"))] },
