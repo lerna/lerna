@@ -9,6 +9,8 @@ import RunCommand from "./commands/RunCommand";
 import ExecCommand from "./commands/ExecCommand";
 import LsCommand from "./commands/LsCommand";
 import {exposeCommands} from "./Command";
+import UpdatedPackagesCollector from "./UpdatedPackagesCollector.js";
+import logger from "./logger";
 
 export const __commands__ = exposeCommands([
   BootstrapCommand,
@@ -30,3 +32,9 @@ export const getPackagePath = PackageUtilities.getPackagePath;
 export const getPackageConfigPath = PackageUtilities.getPackageConfigPath;
 export const getPackageConfig = PackageUtilities.getPackageConfig;
 export const getPackages = PackageUtilities.getPackages;
+export const getUpdatedPackages = (flags = {}) => {
+  logger.setLogLevel(flags.loglevel);
+  const command = new UpdatedCommand([], flags);
+  const updatedPackagesCollector = new UpdatedPackagesCollector(command);
+  return updatedPackagesCollector.getUpdates();
+};
