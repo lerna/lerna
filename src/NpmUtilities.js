@@ -17,14 +17,8 @@ export default class NpmUtilities {
 
     const args = ["install"];
 
-    const opts = {
-      cwd: directory,
-      stdio: ["ignore", "pipe", "pipe"],
-    };
-
-    if (registry) {
-      opts.env = {npm_config_registry: registry};
-    }
+    const opts = NpmUtilities.getExecOpts(directory, registry);
+    opts.stdio = ["ignore", "pipe", "pipe"];
 
     const packageJson = path.join(directory, "package.json");
     const packageJsonBkp = packageJson + ".lerna_backup";

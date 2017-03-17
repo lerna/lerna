@@ -62,15 +62,15 @@ export default class InitCommand extends Command {
       version = "independent";
     } else if (FileSystemUtilities.existsSync(versionLocation)) {
       version = FileSystemUtilities.readFileSync(versionLocation);
-    } else if (lernaJson && lernaJson.version) {
+    } else if (lernaJson.version) {
       version = lernaJson.version;
     } else {
       version = "0.0.0";
     }
 
-    if (!lernaJson) {
+    if (!FileSystemUtilities.existsSync(lernaJsonLocation)) {
       this.logger.info("Creating lerna.json.");
-      lernaJson = {};
+      // lernaJson already defaulted to empty object in Repository constructor
     } else {
       this.logger.info("Updating lerna.json.");
     }
@@ -81,7 +81,7 @@ export default class InitCommand extends Command {
       version: version
     });
 
-    FileSystemUtilities.writeFileSync(lernaJsonLocation, JSON.stringify(lernaJson, null, "  "));
+    FileSystemUtilities.writeFileSync(lernaJsonLocation, JSON.stringify(lernaJson, null, 2));
   }
 
   ensureNoVersionFile() {

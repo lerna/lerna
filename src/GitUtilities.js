@@ -6,7 +6,8 @@ export default class GitUtilities {
   @logger.logifySync()
   static isInitialized() {
     try {
-      ChildProcessUtilities.execSync("git rev-parse");
+      // we only want the return code, so ignore stdout/stderr
+      ChildProcessUtilities.execSync("git rev-parse", { stdio: "ignore" });
       return true;
     } catch (err) {
       return false;

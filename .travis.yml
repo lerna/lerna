@@ -2,20 +2,30 @@ git:
   depth: 1
 sudo: false
 language: node_js
-install: npm install
+node_js:
+ - '7'
+ - '6'
+ - '4'
+
+matrix:
+  fast_finish: true
+
 cache:
+  yarn: true
   directories:
   - node_modules
 
-node_js:
- - '4'
- - '6'
- - '7'
+before_install:
+  - curl -o- -L https://yarnpkg.com/install.sh | bash
+  - export PATH=$HOME/.yarn/bin:$PATH
+
+install: yarn --frozen-lockfile
 
 before_script:
   - git config --global user.email test@example.com
   - git config --global user.name "Tester McPerson"
-script: npm run ci
+
+script: yarn run ci
 
 notifications:
   slack: lernajs:qHyrojRoqBBu7OhDyX1OMiHQ

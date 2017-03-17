@@ -2,7 +2,7 @@ import assert from "assert";
 
 import Package from "../src/Package";
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
-import assertStubbedCalls from "./_assertStubbedCalls";
+import assertStubbedCalls from "./helpers/assertStubbedCalls";
 
 describe("Package", () => {
   let pkg;
@@ -123,10 +123,17 @@ describe("Package", () => {
       }), true);
     });
     it("should not match included dependency", () => {
+      let called;
+      const logger = {
+        warn(msg) {
+          called = msg;
+        }
+      };
       assert.equal(pkg.hasMatchingDependency({
         name: "my-dev-dependency",
         version: "2.0.7"
-      }), false);
+      }, logger), false);
+      assert.ok(called);
     });
   });
 });

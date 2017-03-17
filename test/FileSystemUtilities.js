@@ -1,25 +1,30 @@
+import fs from "graceful-fs";
 import pathExists from "path-exists";
 import assert from "assert";
 import mkdirp from "mkdirp";
-import rimraf from "rimraf";
 import path from "path";
-import fs from "fs";
+
+import {
+  fixtureNamer,
+  getTempDir,
+  mkdirpAsync,
+  rimrafAsync,
+} from "./helpers/fixtureUtils";
 
 import FileSystemUtilities from "../src/FileSystemUtilities";
 
-const tmpDir = path.resolve(__dirname, "../tmp");
+const pTmpDir = getTempDir();
+const getFixtureName = fixtureNamer();
 
 describe("FileSystemUtilities", () => {
   let testDir;
 
-  beforeEach(() => {
-    testDir = path.resolve(tmpDir, "test-" + Date.now());
-    mkdirp.sync(testDir);
-  });
+  beforeEach(() => pTmpDir.then((tmpDir) => {
+    testDir = path.resolve(tmpDir, getFixtureName("FileSystemUtilities"));
+    return mkdirpAsync(testDir);
+  }));
 
-  afterEach(() => {
-    rimraf.sync(testDir);
-  });
+  afterEach(() => rimrafAsync(testDir));
 
   describe(".mkdirSync()", () => {
     it("should create a directory", () => {
@@ -33,8 +38,9 @@ describe("FileSystemUtilities", () => {
     it("should create a nested directory", (done) => {
       const dirPath = path.join(testDir, "mkdirp/test");
       FileSystemUtilities.mkdirp(dirPath, (err) => {
+        if (err) return done.fail(err);
         assert.ok(pathExists.sync(dirPath));
-        done(err);
+        done();
       });
     });
   });
@@ -60,9 +66,10 @@ describe("FileSystemUtilities", () => {
     it("should write a file", (done) => {
       const filePath = path.join(testDir, "writeFile-test");
       FileSystemUtilities.writeFile(filePath, "contents", (err) => {
+        if (err) return done.fail(err);
         assert.ok(pathExists.sync(filePath));
         assert.equal(fs.readFileSync(filePath).toString(), "contents\n");
-        done(err);
+        done();
       });
     });
   });
@@ -88,8 +95,9 @@ describe("FileSystemUtilities", () => {
       const dirPath = path.join(testDir, "rimraf/test");
       mkdirp.sync(dirPath);
       FileSystemUtilities.rimraf(dirPath, (err) => {
+        if (err) return done.fail(err);
         assert.ok(!pathExists.sync(dirPath));
-        done(err);
+        done();
       });
     });
   });
@@ -100,10 +108,11 @@ describe("FileSystemUtilities", () => {
       const dstPath = path.join(testDir, "dst");
       fs.writeFileSync(srcPath, "contents");
       FileSystemUtilities.rename(srcPath, dstPath, (err) => {
+        if (err) return done.fail(err);
         assert.ok(pathExists.sync(dstPath));
         assert.ok(!pathExists.sync(srcPath));
         assert.equal(fs.readFileSync(dstPath).toString(), "contents");
-        done(err);
+        done();
       });
     });
   });
@@ -120,4 +129,12 @@ describe("FileSystemUtilities", () => {
     });
   });
 
+  describe(".statSync()", () => {
+    it("should stat a file", () => {
+      const dirPath = path.join(testDir, "stat-dir");
+      mkdirp.sync(dirPath);
+      const stat = FileSystemUtilities.statSync(dirPath);
+      assert.ok(stat.isDirectory());
+    });
+  });
 });

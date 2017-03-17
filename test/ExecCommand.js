@@ -2,18 +2,19 @@ import assert from "assert";
 import path from "path";
 
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
-import exitWithCode from "./_exitWithCode";
-import initFixture from "./_initFixture";
+import exitWithCode from "./helpers/exitWithCode";
+import initFixture from "./helpers/initFixture";
 import ExecCommand from "../src/commands/ExecCommand";
-import stub from "./_stub";
+import stub from "./helpers/stub";
 
 describe("ExecCommand", () => {
 
   describe("in a basic repo", () => {
     let testDir;
-    beforeEach((done) => {
-      testDir = initFixture("ExecCommand/basic", done);
-    });
+
+    beforeEach(() => initFixture("ExecCommand/basic").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should complain if invoked without command", (done) => {
       const execCommand = new ExecCommand([], {});
@@ -53,8 +54,8 @@ describe("ExecCommand", () => {
       stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
         assert.equal(command, "ls");
 
-        if (calls === 0) assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-1"), env: process.env });
-        if (calls === 1) assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-2"), env: process.env });
+        if (calls === 0) assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-1"), env: Object.assign({}, process.env, { LERNA_PACKAGE_NAME: "package-1" }) });
+        if (calls === 1) assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-2"), env: Object.assign({}, process.env, { LERNA_PACKAGE_NAME: "package-2" }) });
 
         calls++;
         callback();
@@ -77,11 +78,11 @@ describe("ExecCommand", () => {
         assert.equal(command, "ls");
 
         if (calls === 0) {
-          assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-1"), env: process.env });
+          assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-1"), env: Object.assign({}, process.env, { LERNA_PACKAGE_NAME: "package-1" }) });
           assert.deepEqual(args, ["-la"]);
         }
         if (calls === 1) {
-          assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-2"), env: process.env });
+          assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-2"), env: Object.assign({}, process.env, { LERNA_PACKAGE_NAME: "package-2" }) });
           assert.deepEqual(args, ["-la"]);
         }
 

@@ -2,21 +2,21 @@ import assert from "assert";
 import path from "path";
 
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
-import exitWithCode from "./_exitWithCode";
-import initFixture from "./_initFixture";
+import exitWithCode from "./helpers/exitWithCode";
+import initFixture from "./helpers/initFixture";
 import RunCommand from "../src/commands/RunCommand";
 import logger from "../src/logger";
-import stub from "./_stub";
-import FakeChild from "./_fakeChild";
+import stub from "./helpers/stub";
+import FakeChild from "./helpers/fakeChild";
 
 describe("RunCommand", () => {
 
   describe("in a basic repo", () => {
     let testDir;
 
-    beforeEach((done) => {
-      testDir = initFixture("RunCommand/basic", done);
-    });
+    beforeEach(() => initFixture("RunCommand/basic").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should run a command", (done) => {
       const runCommand = new RunCommand(["my-script"], {});
@@ -131,9 +131,10 @@ describe("RunCommand", () => {
 
       let haveExited = false;
       runCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
         assert.equal(lastInfo, "Waiting for 2 child processes to exit. CTRL-C to exit immediately.");
         haveExited = true;
-        done(err);
+        done();
       }));
 
       assert.equal(haveExited, false);
@@ -145,9 +146,10 @@ describe("RunCommand", () => {
 
   describe("with --include-filtered-dependencies", () => {
     let testDir;
-    beforeEach((done) => {
-      testDir = initFixture("RunCommand/include-filtered-dependencies", done);
-    });
+
+    beforeEach(() => initFixture("RunCommand/include-filtered-dependencies").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should run a command for the given scope, including filtered deps", (done) => {
       const runCommand = new RunCommand(["my-script"], {

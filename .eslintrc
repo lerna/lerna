@@ -6,7 +6,6 @@
     "max-len": 0
   },
   "env": {
-    "node": true,
-    "mocha": true
+    "node": true
   }
 }
