@@ -330,7 +330,7 @@ export default class PublishCommand extends Command {
 
   updateVersionInLernaJson() {
     this.repository.lernaJson.version = this.masterVersion;
-    FileSystemUtilities.writeFileSync(this.repository.lernaJsonLocation, JSON.stringify(this.repository.lernaJson, null, "  "));
+    FileSystemUtilities.writeFileSync(this.repository.lernaJsonLocation, JSON.stringify(this.repository.lernaJson, null, 2));
     if (!this.flags.skipGit) {
       GitUtilities.addFile(this.repository.lernaJsonLocation);
     }

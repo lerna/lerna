@@ -45,7 +45,7 @@ export default class InitCommand extends Command {
       lerna: this.lernaVersion
     });
 
-    FileSystemUtilities.writeFileSync(packageJsonLocation, JSON.stringify(packageJson, null, "  "));
+    FileSystemUtilities.writeFileSync(packageJsonLocation, JSON.stringify(packageJson, null, 2));
   }
 
   ensureLernaJson() {
