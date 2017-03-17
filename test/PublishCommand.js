@@ -1695,10 +1695,10 @@ describe("PublishCommand", () => {
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-4/CHANGELOG.md"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-4/package.json"))] },
           { args: ["git commit -m \"$(echo \"A custom publish message\")\""] },
-          { args: ["git tag package-1@1.0.1"] },
-          { args: ["git tag package-2@1.1.0"] },
-          { args: ["git tag package-3@2.0.0"] },
-          { args: ["git tag package-4@1.1.0"] }
+          { args: ["git tag -a package-1@1.0.1 -m \"package-1@1.0.1\""] },
+          { args: ["git tag -a package-2@1.1.0 -m \"package-2@1.1.0\""] },
+          { args: ["git tag -a package-3@2.0.0 -m \"package-3@2.0.0\""] },
+          { args: ["git tag -a package-4@1.1.0 -m \"package-4@1.1.0\""] }
         ]],
         [ChildProcessUtilities, "exec", { nodeCallback: true }, [
           { args: ["npm publish --tag lerna-temp"] },
