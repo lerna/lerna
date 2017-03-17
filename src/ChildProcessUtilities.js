@@ -40,7 +40,15 @@ export default class ChildProcessUtilities {
       encoding: "utf8",
       maxBuffer: MAX_BUFFER
     }, opts);
-    return child.execSync(command, mergedOpts).trim();
+
+    let stdout = child.execSync(command, mergedOpts);
+    if (stdout) {
+      // stdout is undefined when stdio[1] is anything other than "pipe"
+      // and there's no point trimming an empty string (no piped stdout)
+      stdout = stdout.trim();
+    }
+
+    return stdout;
   }
 
   static spawn(command, args, opts, callback) {

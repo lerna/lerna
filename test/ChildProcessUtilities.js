@@ -8,6 +8,10 @@ describe("ChildProcessUtilities", () => {
     it("should execute a command in a child process and return the result", () => {
       assert.equal(ChildProcessUtilities.execSync("echo foo"), "foo");
     });
+
+    it("does not error when stdout is ignored", () => {
+      expect(() => ChildProcessUtilities.execSync("echo foo", { stdio: "ignore" })).not.toThrow();
+    });
   });
 
   describe(".exec()", () => {
