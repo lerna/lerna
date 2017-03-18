@@ -15,7 +15,10 @@ describe("Package", () => {
         bin: "bin.js",
         scripts: { "my-script": "echo 'hello world'" },
         dependencies: { "my-dependency": "^1.0.0" },
-        devDependencies: { "my-dev-dependency": "^1.0.0" },
+        devDependencies: {
+          "my-dev-dependency": "^1.0.0",
+          "my-relative-dependency": "file:../my-relative-dependency"
+        },
         peerDependencies: { "my-peer-dependency": "^1.0.0" }
       },
       "/path/to/package"
@@ -61,7 +64,10 @@ describe("Package", () => {
 
   describe("get .devDependencies", () => {
     it("should return the devDependencies", () => {
-      assert.deepEqual(pkg.devDependencies, { "my-dev-dependency": "^1.0.0" });
+      assert.deepEqual(pkg.devDependencies, {
+        "my-dev-dependency": "^1.0.0",
+        "my-relative-dependency": "file:../my-relative-dependency"
+      });
     });
   });
 
@@ -75,7 +81,8 @@ describe("Package", () => {
     it("should return the combined dependencies", () => {
       assert.deepEqual(pkg.allDependencies, {
         "my-dependency": "^1.0.0",
-        "my-dev-dependency": "^1.0.0"
+        "my-dev-dependency": "^1.0.0",
+        "my-relative-dependency": "file:../my-relative-dependency"
       });
     });
   });
@@ -120,6 +127,12 @@ describe("Package", () => {
       assert.equal(pkg.hasMatchingDependency({
         name: "my-dependency",
         version: "1.1.3"
+      }), true);
+    });
+    it("should match an inlcuded dependency referenced by file", () => {
+      assert.equal(pkg.hasMatchingDependency({
+        name: "my-relative-dependency",
+        version: "file:../my-relative-dependency"
       }), true);
     });
     it("should not match included dependency", () => {
