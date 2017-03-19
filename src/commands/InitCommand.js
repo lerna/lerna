@@ -34,7 +34,6 @@ export default class InitCommand extends Command {
     } else {
       this.logger.info("Updating package.json.");
     }
-    // if (!packageJson.private) packageJson.private = true;
 
     let targetDependencies;
     if (packageJson.dependencies && packageJson.dependencies.lerna) {
@@ -47,7 +46,7 @@ export default class InitCommand extends Command {
     }
 
     objectAssignSorted(targetDependencies, {
-      lerna: this.lernaVersion
+      lerna: `^${this.lernaVersion}`
     });
 
     FileSystemUtilities.writeFileSync(packageJsonLocation, JSON.stringify(packageJson, null, 2));

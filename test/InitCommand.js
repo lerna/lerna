@@ -47,7 +47,7 @@ describe("InitCommand", () => {
           const packageJson = require(path.join(testDir, "package.json"));
           expect(packageJson).toEqual({
             devDependencies: {
-              lerna: instance.lernaVersion,
+              lerna: `^${instance.lernaVersion}`,
             },
           });
 
@@ -122,7 +122,7 @@ describe("InitCommand", () => {
           const packageJson = require(path.join(testDir, "package.json"));
           expect(packageJson).toEqual({
             devDependencies: {
-              lerna: instance.lernaVersion,
+              lerna: `^${instance.lernaVersion}`,
             },
           });
 
@@ -163,7 +163,7 @@ describe("InitCommand", () => {
             name: "repo-root",
             devDependencies: {
               alpha: "first",
-              lerna: instance.lernaVersion,
+              lerna: `^${instance.lernaVersion}`,
               omega: "last",
             },
           });
@@ -203,7 +203,7 @@ describe("InitCommand", () => {
               omega: "last",
             },
             devDependencies: {
-              lerna: instance.lernaVersion,
+              lerna: `^${instance.lernaVersion}`,
             },
           });
 
@@ -237,7 +237,7 @@ describe("InitCommand", () => {
             name: "repo-root",
             dependencies: {
               alpha: "first",
-              lerna: instance.lernaVersion,
+              lerna: `^${instance.lernaVersion}`,
               omega: "last",
             },
           });

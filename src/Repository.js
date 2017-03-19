@@ -1,6 +1,7 @@
 import path from "path";
 import findUp from "find-up";
 import loadJsonFile from "load-json-file";
+import semver from "semver";
 import PackageUtilities from "./PackageUtilities";
 import Package from "./Package";
 import NpmUtilities from "./NpmUtilities";
@@ -31,7 +32,7 @@ export default class Repository {
     return this._lernaJson;
   }
 
-  get lernaVersion() {
+  get initVersion() {
     return this.lernaJson.lerna;
   }
 
@@ -87,6 +88,10 @@ export default class Repository {
   // Legacy
   get versionLocation() {
     return path.join(this.rootPath, "VERSION");
+  }
+
+  isCompatibleLerna(cliVersion) {
+    return semver.satisfies(this.initVersion, `^${semver.major(cliVersion)}`);
   }
 
   isIndependent() {
