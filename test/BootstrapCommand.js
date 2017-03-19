@@ -248,6 +248,27 @@ describe("BootstrapCommand", () => {
             normalize(path.join(testDir, "packages", "package-3", "cli2.js")),
             "package-3 binary should be symlinked in package-4"
           );
+          // root devDependencies binaries are symlinked
+          assert.equal(
+            normalize(FileSystemUtilities.isSymlink(path.join(testDir, "packages", "package-1", "node_modules", ".bin", "devtool"))),
+            normalize(path.join(testDir, "node_modules", "fake-devtool", "cli.js")),
+            "fake-devtool binary should be symlinked in package-1"
+          );
+          assert.equal(
+            normalize(FileSystemUtilities.isSymlink(path.join(testDir, "packages", "package-2", "node_modules", ".bin", "devtool"))),
+            normalize(path.join(testDir, "node_modules", "fake-devtool", "cli.js")),
+            "fake-devtool binary should be symlinked in package-2"
+          );
+          assert.equal(
+            normalize(FileSystemUtilities.isSymlink(path.join(testDir, "packages", "package-3", "node_modules", ".bin", "devtool"))),
+            normalize(path.join(testDir, "node_modules", "fake-devtool", "cli.js")),
+            "fake-devtool binary should be symlinked in package-3"
+          );
+          assert.equal(
+            normalize(FileSystemUtilities.isSymlink(path.join(testDir, "packages", "package-4", "node_modules", ".bin", "devtool"))),
+            normalize(path.join(testDir, "node_modules", "fake-devtool", "cli.js")),
+            "fake-devtool binary should be symlinked in package-4"
+          );
           done();
         } catch (err) {
           done.fail(err);

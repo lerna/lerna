@@ -1,5 +1,4 @@
 {
-  "name": "independent",
   "devDependencies": {
     "fake-devtool": "1.0.0"
   }
