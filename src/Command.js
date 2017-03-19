@@ -102,13 +102,13 @@ export default class Command {
       return;
     }
 
-    if (!FileSystemUtilities.existsSync(this.repository.packageJsonLocation)) {
+    if (!this.repository.packageJson) {
       this.logger.warn("`package.json` does not exist, have you run `lerna init`?");
       this._complete(null, 1);
       return;
     }
 
-    if (!FileSystemUtilities.existsSync(this.repository.lernaJsonLocation)) {
+    if (!this.repository.initVersion) {
       this.logger.warn("`lerna.json` does not exist, have you run `lerna init`?");
       this._complete(null, 1);
       return;
