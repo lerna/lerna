@@ -57,6 +57,9 @@ describe("ImportCommand", () => {
     });
 
     it("should support moved files within the external repo", (done) => {
+      ChildProcessUtilities.execSync("git mv old-file new-file", { cwd: externalDir });
+      ChildProcessUtilities.execSync("git commit -m \"Moved old-file to new-file\"", { cwd: externalDir });
+
       const importCommand = new ImportCommand([externalDir], {});
 
       importCommand.runValidations();
@@ -67,9 +70,6 @@ describe("ImportCommand", () => {
           { args: ["Are you sure you want to import these commits onto the current branch?"], returns: true }
         ]],
       ]);
-
-      ChildProcessUtilities.execSync("git mv old-file new-file", { cwd: externalDir });
-      ChildProcessUtilities.execSync("git commit -m \"Moved old-file to new-file\"", { cwd: externalDir });
 
       importCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
@@ -120,11 +120,9 @@ describe("ImportCommand", () => {
     });
 
     it("should fail with a missing package.json", (done) => {
+      fs.unlinkSync(path.join(externalDir, "package.json"));
+
       const importCommand = new ImportCommand([externalDir], {});
-
-      const packageJson = path.join(externalDir, "package.json");
-
-      fs.unlinkSync(packageJson);
 
       importCommand.runValidations();
       importCommand.runPreparations();
@@ -154,14 +152,14 @@ describe("ImportCommand", () => {
     });
 
     it("should fail if target directory exists", (done) => {
-      const importCommand = new ImportCommand([externalDir], {});
-
       const targetDir = path.relative(
         process.cwd(),
         path.join(testDir, "packages", path.basename(externalDir))
       );
 
-      fs.mkdirSync(targetDir);
+      mkdirp.sync(targetDir);
+
+      const importCommand = new ImportCommand([externalDir], {});
 
       importCommand.runValidations();
       importCommand.runPreparations();
@@ -177,6 +175,7 @@ describe("ImportCommand", () => {
         process.cwd(),
         path.join(testDir, "pkg", path.basename(externalDir))
       );
+
       mkdirp.sync(targetDir);
 
       changeLernaConfig(testDir, (lernaJson) => {
@@ -195,13 +194,11 @@ describe("ImportCommand", () => {
     });
 
     it("should fail if repo has uncommitted changes", (done) => {
+      const uncommittedFile = path.join(testDir, "uncommittedFile");
+      fs.writeFileSync(uncommittedFile, "stuff");
+      ChildProcessUtilities.execSync(`git add ${escapeArgs(uncommittedFile)}`, { cwd: testDir });
+
       const importCommand = new ImportCommand([externalDir], {});
-
-      const uncommittedFile = path.join(testDir, "ucommittedFile");
-
-      fs.writeFileSync(uncommittedFile, "");
-
-      ChildProcessUtilities.execSync("git add " + escapeArgs(uncommittedFile));
 
       importCommand.runValidations();
       importCommand.runPreparations();
