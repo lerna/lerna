@@ -126,7 +126,7 @@ export default class Command {
 
     if (
       process.env.NODE_ENV !== "lerna-test" &&
-      !this.repository.isCompatibleLerna(this.lernaVersion)
+      !this.repository.isCompatibleLerna(this.lernaVersion, this.getOptions())
     ) {
       this.logger.warn(
         `Lerna major version mismatch: The current version of lerna is ${this.lernaVersion}, ` +

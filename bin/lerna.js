@@ -30,7 +30,7 @@ const cli = meow([
   "  --skip-git              Skip commiting, tagging, and pushing git changes (only affects publish)",
   "  --skip-npm              Stop before actually publishing change to npm (only affects publish)",
   "  --message, -m [msg]  Use a custom commit message when creating the publish commit (only affects publish)",
-  "  --exact                 Specify cross-dependency version numbers exactly rather than with a caret (^) (only affects publish)",
+  "  --exact                 Specify cross-dependency version numbers exactly rather than with a caret (^) (only affects publish and init)",
   "  --npm-tag [tagname]     Publish packages with the specified npm dist-tag",
   "  --npm-client [client]   Executable used to install dependencies (npm, yarn, pnpm, ...)",
   "  --hoist [glob]          Install external dependencies matching [glob] to the repo root.  Use with no glob for all.",

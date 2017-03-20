@@ -197,19 +197,40 @@ describe("Repository", () => {
   });
 
   describe("isCompatibleLerna()", () => {
-    it("returns true when lerna major version matches", () => {
+    it("returns true when lerna major version matches initVersion", () => {
       const repo = new Repository();
-      expect(repo.isCompatibleLerna("500.250.0")).toBe(true);
+      const opts = {};
+      expect(repo.isCompatibleLerna("500.250.0", opts)).toBe(true);
     });
 
-    it("returns true when initVersion is identical", () => {
+    it("returns true when lerna version is identical to initVersion", () => {
       const repo = new Repository();
-      expect(repo.isCompatibleLerna("500.0.0")).toBe(true);
+      const opts = {};
+      expect(repo.isCompatibleLerna("500.0.0", opts)).toBe(true);
     });
 
-    it("returns false when lerna major version does not match", () => {
+    it("returns false when lerna major version does not match initVersion", () => {
       const repo = new Repository();
-      expect(repo.isCompatibleLerna("1000.0.0")).toBe(false);
+      const opts = {};
+      expect(repo.isCompatibleLerna("1000.0.0", opts)).toBe(false);
+    });
+
+    describe("with --exact", () => {
+      it("returns true when lerna version is identical to initVersion", () => {
+        const repo = new Repository();
+        const opts = {
+          exact: true,
+        };
+        expect(repo.isCompatibleLerna("500.0.0", opts)).toBe(true);
+      });
+
+      it("returns false when lerna version does not exactly match initVersion", () => {
+        const repo = new Repository();
+        const opts = {
+          exact: true,
+        };
+        expect(repo.isCompatibleLerna("1000.0.0", opts)).toBe(false);
+      });
     });
   });
 

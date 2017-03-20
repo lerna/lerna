@@ -90,8 +90,9 @@ export default class Repository {
     return path.join(this.rootPath, "VERSION");
   }
 
-  isCompatibleLerna(cliVersion) {
-    return semver.satisfies(this.initVersion, `^${semver.major(cliVersion)}`);
+  isCompatibleLerna(cliVersion, { exact }) {
+    const needVersion = exact ? cliVersion : `^${semver.major(cliVersion)}`;
+    return semver.satisfies(this.initVersion, needVersion);
   }
 
   isIndependent() {
