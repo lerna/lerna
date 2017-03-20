@@ -81,8 +81,13 @@ describe("RunCommand", () => {
 
         runCommand.runCommand(exitWithCode(0, (err) => {
           if (err) return done.fail(err);
-          assert.equal(4, calls);
-          done();
+
+          try {
+            assert.equal(4, calls);
+            done();
+          } catch (ex) {
+            done.fail(ex);
+          }
         }));
       });
     });
@@ -107,8 +112,13 @@ describe("RunCommand", () => {
 
         runCommand.runCommand(exitWithCode(0, (err) => {
           if (err) return done.fail(err);
-          assert.deepEqual(ranInPackages, ["package-1"]);
-          done();
+
+          try {
+            assert.deepEqual(ranInPackages, ["package-1"]);
+            done();
+          } catch (ex) {
+            done.fail(ex);
+          }
         }));
       });
     });
@@ -132,9 +142,14 @@ describe("RunCommand", () => {
       let haveExited = false;
       runCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
-        assert.equal(lastInfo, "Waiting for 2 child processes to exit. CTRL-C to exit immediately.");
-        haveExited = true;
-        done();
+
+        try {
+          assert.equal(lastInfo, "Waiting for 2 child processes to exit. CTRL-C to exit immediately.");
+          haveExited = true;
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
       }));
 
       assert.equal(haveExited, false);
@@ -167,9 +182,14 @@ describe("RunCommand", () => {
 
       runCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
-        const expected = ["package-1", "package-2"];
-        assert.deepEqual(ranInPackages.sort(), expected.sort());
-        done();
+
+        try {
+          const expected = ["package-1", "package-2"];
+          assert.deepEqual(ranInPackages.sort(), expected.sort());
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
       }));
     });
   });

@@ -62,8 +62,13 @@ describe("ExecCommand", () => {
 
       execCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
-        assert.equal(calls, 2);
-        done();
+
+        try {
+          assert.equal(calls, 2);
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
       }));
     });
 
@@ -92,8 +97,13 @@ describe("ExecCommand", () => {
 
       execCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
-        assert.equal(calls, 2);
-        done();
+
+        try {
+          assert.equal(calls, 2);
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
       }));
     });
 
@@ -117,8 +127,13 @@ describe("ExecCommand", () => {
 
         execCommand.runCommand(exitWithCode(0, (err) => {
           if (err) return done.fail(err);
-          assert.deepEqual(ranInPackages, ["package-1"]);
-          done();
+
+          try {
+            assert.deepEqual(ranInPackages, ["package-1"]);
+            done();
+          } catch (ex) {
+            done.fail(ex);
+          }
         }));
       });
     });
