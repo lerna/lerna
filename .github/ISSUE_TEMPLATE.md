@@ -43,8 +43,19 @@
 
 ## Your Environment
 <!--- Include as many relevant details about the environment you experienced the bug in -->
-| `lerna --version` |  |
-| `npm --version`  |  |
-| `yarn --version` |  |
-| `node --version` |  |
-| OS |  |
+
+| Executable | Version |
+| ---: | :--- |
+| `lerna --version` | VERSION |
+| `npm --version`  | VERSION |
+| `yarn --version` | VERSION |
+| `node --version` | VERSION |
+
+| OS | Version |
+| --- | --- |
+| NAME | VERSION |
+<!-- For example:
+| macOS Sierra | 10.12.3 |
+| Windows 10 | 1607 |
+| Ubuntu | 16.10 |
+-->
