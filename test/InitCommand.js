@@ -395,4 +395,37 @@ describe("InitCommand", () => {
       });
     });
   });
+
+  describe("with --exact", () => {
+    let testDir;
+
+    beforeEach(() => initFixture("InitCommand/updates").then((dir) => {
+      testDir = dir;
+    }));
+
+    it("updates existing lerna in devDependencies with exact version", (done) => {
+      const instance = new InitCommand([], {
+        exact: true,
+      });
+
+      instance.runCommand((err, code) => {
+        if (err) return done.fail(err);
+
+        try {
+          expect(code).toBe(0);
+
+          const packageJson = require(path.join(testDir, "package.json"));
+          expect(packageJson).toMatchObject({
+            devDependencies: {
+              lerna: instance.lernaVersion,
+            },
+          });
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      });
+    });
+  });
 });

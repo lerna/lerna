@@ -45,8 +45,12 @@ export default class InitCommand extends Command {
       targetDependencies = packageJson.devDependencies;
     }
 
+    const dependencyVersion = this.getOptions().exact
+      ? this.lernaVersion
+      : `^${this.lernaVersion}`;
+
     objectAssignSorted(targetDependencies, {
-      lerna: `^${this.lernaVersion}`
+      lerna: dependencyVersion
     });
 
     FileSystemUtilities.writeFileSync(packageJsonLocation, JSON.stringify(packageJson, null, 2));
