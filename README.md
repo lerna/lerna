@@ -619,6 +619,8 @@ $ lerna bootstrap --scope "package-*" --ignore "package-util-*" --include-filter
 
 #### --only-explicit-updates
 
+> **Note:** You will rarely want to do this. It will update the versions in dependencies without publishing new versions of them. This means your packages will silently be updated without asking you for permission while publishing.
+
 Only will bump versions for packages that have been updated explicitly rather than cross-dependencies.
 
 > This may not make sense for a major version bump since other packages that depend on the updated packages wouldn't be updated.
