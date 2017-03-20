@@ -36,8 +36,13 @@ describe("FileSystemUtilities", () => {
       const dirPath = path.join(testDir, "mkdirp/test");
       FileSystemUtilities.mkdirp(dirPath, (err) => {
         if (err) return done.fail(err);
-        assert.ok(pathExists.sync(dirPath));
-        done();
+
+        try {
+          assert.ok(pathExists.sync(dirPath));
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
       });
     });
   });
@@ -64,9 +69,14 @@ describe("FileSystemUtilities", () => {
       const filePath = path.join(testDir, "writeFile-test");
       FileSystemUtilities.writeFile(filePath, "contents", (err) => {
         if (err) return done.fail(err);
-        assert.ok(pathExists.sync(filePath));
-        assert.equal(fs.readFileSync(filePath).toString(), "contents\n");
-        done();
+
+        try {
+          assert.ok(pathExists.sync(filePath));
+          assert.equal(fs.readFileSync(filePath).toString(), "contents\n");
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
       });
     });
   });
@@ -93,8 +103,13 @@ describe("FileSystemUtilities", () => {
       mkdirp.sync(dirPath);
       FileSystemUtilities.rimraf(dirPath, (err) => {
         if (err) return done.fail(err);
-        assert.ok(!pathExists.sync(dirPath));
-        done();
+
+        try {
+          assert.ok(!pathExists.sync(dirPath));
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
       });
     });
   });
@@ -106,10 +121,15 @@ describe("FileSystemUtilities", () => {
       fs.writeFileSync(srcPath, "contents");
       FileSystemUtilities.rename(srcPath, dstPath, (err) => {
         if (err) return done.fail(err);
-        assert.ok(pathExists.sync(dstPath));
-        assert.ok(!pathExists.sync(srcPath));
-        assert.equal(fs.readFileSync(dstPath).toString(), "contents");
-        done();
+
+        try {
+          assert.ok(pathExists.sync(dstPath));
+          assert.ok(!pathExists.sync(srcPath));
+          assert.equal(fs.readFileSync(dstPath).toString(), "contents");
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
       });
     });
   });
