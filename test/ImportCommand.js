@@ -47,10 +47,11 @@ describe("ImportCommand", () => {
 
         assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
 
-        const lastCommit = ChildProcessUtilities.execSync("git log --format=\"%s\"", {encoding:"utf8"}).split("\n")[0];
+        const lastCommit = ChildProcessUtilities.execSync("git log -1 --format=\"%s\"", { cwd: testDir });
+        assert.equal(lastCommit, "Init external commit");
+
         const packageJson = path.join(testDir, "packages", path.basename(externalDir), "package.json");
         assert.ok(pathExists.sync(packageJson));
-        assert.equal(lastCommit, "Init external commit");
 
         done();
       }));
@@ -74,10 +75,11 @@ describe("ImportCommand", () => {
       importCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
-        const lastCommit = ChildProcessUtilities.execSync("git log --format=\"%s\"", {encoding:"utf8"}).split("\n")[0];
+        const lastCommit = ChildProcessUtilities.execSync("git log -1 --format=\"%s\"", { cwd: testDir });
+        assert.equal(lastCommit, "Moved old-file to new-file");
+
         const newFilePath = path.join(testDir, "packages", path.basename(externalDir), "new-file");
         assert.ok(pathExists.sync(newFilePath));
-        assert.equal(lastCommit, "Moved old-file to new-file");
 
         done();
       }));
