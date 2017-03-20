@@ -8,11 +8,6 @@ import mkdirp from "mkdirp";
 import pify from "pify";
 import rimraf from "rimraf";
 
-const CURRENT_SHA = child.execSync("git rev-parse --short HEAD", {
-  cwd: __dirname,
-  encoding: "utf8",
-}).trim();
-
 const execAsync = pify(child.exec);
 const realpathAsync = pify(fs.realpath);
 
@@ -25,20 +20,16 @@ const { unlink, chmod, stat, lstat, rmdir, readdir } = fs;
 export const mkdirpAsync = (fp) => _mkdirpAsync(fp, { fs });
 export const rimrafAsync = (fp) => _rimrafAsync(fp, { unlink, chmod, stat, lstat, rmdir, readdir });
 
-export function getTempDir(suffix) {
-  // e.g., "lerna-12345-deadbeef"
+export function getTempDir(fixtureName) {
+  // e.g., "lerna-1490053388515-663678-BootstrapCommand_01_basic"
   const prefix = [
     "lerna",
-    process.pid,
-    CURRENT_SHA,
+    Date.now(),
+    Math.floor(Math.random() * 1e6),
+    fixtureName,
   ];
 
-  if (suffix) {
-    // e.g., "lerna-12345-deadbeef-external"
-    prefix.push(suffix);
-  }
-
-  const tmpDir = path.join(os.tmpdir() || "/tmp", prefix.join("-"));
+  const tmpDir = path.join(os.tmpdir(), prefix.join("-"));
 
   // We realpath because OS X symlinks /var -> /private/var
   // and require() also calls realpath on its argument.

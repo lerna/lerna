@@ -7,7 +7,6 @@ import {
   removeAll,
 } from "./fixtureUtils";
 
-const pTmpDir = getTempDir();
 const getFixtureName = fixtureNamer();
 
 const createdDirectories = [];
@@ -23,9 +22,7 @@ export default function initFixture(fixturePath) {
   const fixtureDir = path.resolve(__dirname, `../fixtures/${fixturePath}`);
   const fixtureName = getFixtureName(fixturePath);
 
-  return pTmpDir.then((tmpDir) => {
-    const testDir = path.join(tmpDir, fixtureName);
-
+  return getTempDir(fixtureName).then((testDir) => {
     createdDirectories.push(testDir);
 
     return cp(fixtureDir, testDir)

@@ -7,21 +7,18 @@ import path from "path";
 import {
   fixtureNamer,
   getTempDir,
-  mkdirpAsync,
   rimrafAsync,
 } from "./helpers/fixtureUtils";
 
 import FileSystemUtilities from "../src/FileSystemUtilities";
 
-const pTmpDir = getTempDir();
-const getFixtureName = fixtureNamer();
-
 describe("FileSystemUtilities", () => {
+  const getFixtureName = fixtureNamer();
+
   let testDir;
 
-  beforeEach(() => pTmpDir.then((tmpDir) => {
-    testDir = path.resolve(tmpDir, getFixtureName("FileSystemUtilities"));
-    return mkdirpAsync(testDir);
+  beforeEach(() => getTempDir(getFixtureName("FileSystemUtilities")).then((dir) => {
+    testDir = dir;
   }));
 
   afterEach(() => rimrafAsync(testDir));
