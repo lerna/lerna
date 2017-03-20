@@ -27,29 +27,34 @@ describe("InitCommand", () => {
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
-        expect(code).toBe(0);
 
-        expect(fs.readdirSync(testDir)).toEqual([
-          ".git",
-          "lerna.json",
-          "package.json",
-        ]);
+        try {
+          expect(code).toBe(0);
 
-        const lernaJson = require(path.join(testDir, "lerna.json"));
-        expect(lernaJson).toEqual({
-          lerna: instance.lernaVersion,
-          packages: ["packages/*"],
-          version: "0.0.0",
-        });
+          expect(fs.readdirSync(testDir)).toEqual([
+            ".git",
+            "lerna.json",
+            "package.json",
+          ]);
 
-        const packageJson = require(path.join(testDir, "package.json"));
-        expect(packageJson).toEqual({
-          devDependencies: {
+          const lernaJson = require(path.join(testDir, "lerna.json"));
+          expect(lernaJson).toEqual({
             lerna: instance.lernaVersion,
-          },
-        });
+            packages: ["packages/*"],
+            version: "0.0.0",
+          });
 
-        done();
+          const packageJson = require(path.join(testDir, "package.json"));
+          expect(packageJson).toEqual({
+            devDependencies: {
+              lerna: instance.lernaVersion,
+            },
+          });
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
       });
     });
 
@@ -60,18 +65,23 @@ describe("InitCommand", () => {
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
-        expect(code).toBe(0);
 
-        expect(fs.readdirSync(testDir)).toEqual([
-          ".git",
-          "lerna.json",
-          "package.json",
-        ]);
+        try {
+          expect(code).toBe(0);
 
-        const lernaJson = require(path.join(testDir, "lerna.json"));
-        expect(lernaJson.version).toBe("independent");
+          expect(fs.readdirSync(testDir)).toEqual([
+            ".git",
+            "lerna.json",
+            "package.json",
+          ]);
 
-        done();
+          const lernaJson = require(path.join(testDir, "lerna.json"));
+          expect(lernaJson.version).toBe("independent");
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
       });
     });
   });
@@ -93,28 +103,33 @@ describe("InitCommand", () => {
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
-        expect(code).toBe(0);
 
-        expect(fs.readdirSync(testDir)).toEqual([
-          "lerna.json",
-          "package.json",
-        ]);
+        try {
+          expect(code).toBe(0);
 
-        const lernaJson = require(path.join(testDir, "lerna.json"));
-        expect(lernaJson).toEqual({
-          lerna: instance.lernaVersion,
-          packages: ["packages/*"],
-          version: "0.0.0",
-        });
+          expect(fs.readdirSync(testDir)).toEqual([
+            "lerna.json",
+            "package.json",
+          ]);
 
-        const packageJson = require(path.join(testDir, "package.json"));
-        expect(packageJson).toEqual({
-          devDependencies: {
+          const lernaJson = require(path.join(testDir, "lerna.json"));
+          expect(lernaJson).toEqual({
             lerna: instance.lernaVersion,
-          },
-        });
+            packages: ["packages/*"],
+            version: "0.0.0",
+          });
 
-        done();
+          const packageJson = require(path.join(testDir, "package.json"));
+          expect(packageJson).toEqual({
+            devDependencies: {
+              lerna: instance.lernaVersion,
+            },
+          });
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
       });
     });
   });
@@ -139,19 +154,24 @@ describe("InitCommand", () => {
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
-        expect(code).toBe(0);
 
-        const packageJson = require(packageJsonLocation);
-        expect(packageJson).toEqual({
-          name: "repo-root",
-          devDependencies: {
-            alpha: "first",
-            lerna: instance.lernaVersion,
-            omega: "last",
-          },
-        });
+        try {
+          expect(code).toBe(0);
 
-        done();
+          const packageJson = require(packageJsonLocation);
+          expect(packageJson).toEqual({
+            name: "repo-root",
+            devDependencies: {
+              alpha: "first",
+              lerna: instance.lernaVersion,
+              omega: "last",
+            },
+          });
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
       });
     });
 
@@ -171,21 +191,26 @@ describe("InitCommand", () => {
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
-        expect(code).toBe(0);
 
-        const packageJson = require(packageJsonLocation);
-        expect(packageJson).toEqual({
-          name: "repo-root",
-          dependencies: {
-            alpha: "first",
-            omega: "last",
-          },
-          devDependencies: {
-            lerna: instance.lernaVersion,
-          },
-        });
+        try {
+          expect(code).toBe(0);
 
-        done();
+          const packageJson = require(packageJsonLocation);
+          expect(packageJson).toEqual({
+            name: "repo-root",
+            dependencies: {
+              alpha: "first",
+              omega: "last",
+            },
+            devDependencies: {
+              lerna: instance.lernaVersion,
+            },
+          });
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
       });
     });
 
@@ -203,19 +228,24 @@ describe("InitCommand", () => {
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
-        expect(code).toBe(0);
 
-        const packageJson = require(packageJsonLocation);
-        expect(packageJson).toEqual({
-          name: "repo-root",
-          dependencies: {
-            alpha: "first",
-            lerna: instance.lernaVersion,
-            omega: "last",
-          },
-        });
+        try {
+          expect(code).toBe(0);
 
-        done();
+          const packageJson = require(packageJsonLocation);
+          expect(packageJson).toEqual({
+            name: "repo-root",
+            dependencies: {
+              alpha: "first",
+              lerna: instance.lernaVersion,
+              omega: "last",
+            },
+          });
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
       });
     });
   });
@@ -239,17 +269,22 @@ describe("InitCommand", () => {
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
-        expect(code).toBe(0);
 
-        const lernaJson = require(lernaJsonLocation);
-        expect(lernaJson).toEqual({
-          lerna: instance.lernaVersion,
-          packages: ["foo/*"],
-          version: "1.2.3",
-          hoist: true,
-        });
+        try {
+          expect(code).toBe(0);
 
-        done();
+          const lernaJson = require(lernaJsonLocation);
+          expect(lernaJson).toEqual({
+            lerna: instance.lernaVersion,
+            packages: ["foo/*"],
+            version: "1.2.3",
+            hoist: true,
+          });
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
       });
     });
 
@@ -267,17 +302,22 @@ describe("InitCommand", () => {
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
-        expect(code).toBe(0);
 
-        const lernaJson = require(lernaJsonLocation);
-        expect(lernaJson).toEqual({
-          lerna: instance.lernaVersion,
-          packages: ["bar/*"],
-          version: "independent",
-          hoist: true,
-        });
+        try {
+          expect(code).toBe(0);
 
-        done();
+          const lernaJson = require(lernaJsonLocation);
+          expect(lernaJson).toEqual({
+            lerna: instance.lernaVersion,
+            packages: ["bar/*"],
+            version: "independent",
+            hoist: true,
+          });
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
       });
     });
   });
@@ -294,15 +334,20 @@ describe("InitCommand", () => {
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
-        expect(code).toBe(0);
 
-        expect(fs.readdirSync(testDir)).toEqual([
-          ".git",
-          "lerna.json",
-          "package.json",
-        ]);
+        try {
+          expect(code).toBe(0);
 
-        done();
+          expect(fs.readdirSync(testDir)).toEqual([
+            ".git",
+            "lerna.json",
+            "package.json",
+          ]);
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
       });
     });
 
@@ -318,11 +363,16 @@ describe("InitCommand", () => {
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
-        expect(code).toBe(0);
 
-        expect(instance.logger.info).toBeCalledWith("Removing old VERSION file.");
+        try {
+          expect(code).toBe(0);
 
-        done();
+          expect(instance.logger.info).toBeCalledWith("Removing old VERSION file.");
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
       });
     });
 
@@ -331,12 +381,17 @@ describe("InitCommand", () => {
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
-        expect(code).toBe(0);
 
-        const lernaJson = require(path.join(testDir, "lerna.json"));
-        expect(lernaJson).toHaveProperty("version", "1.2.3");
+        try {
+          expect(code).toBe(0);
 
-        done();
+          const lernaJson = require(path.join(testDir, "lerna.json"));
+          expect(lernaJson).toHaveProperty("version", "1.2.3");
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
       });
     });
   });
