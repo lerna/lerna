@@ -10,7 +10,8 @@ matrix:
   fast_finish: true
 
 cache:
-  - "%LOCALAPPDATA%\\Yarn"
+  # unpacking the yarn cache takes way too long
+  # - "%LOCALAPPDATA%\\Yarn"
   - node_modules -> yarn.lock
 
 install:

@@ -10,7 +10,6 @@ import stub from "./helpers/stub";
 import assertStubbedCalls from "./helpers/assertStubbedCalls";
 
 describe("CleanCommand", () => {
-
   describe("basic tests", () => {
     let testDir;
 
@@ -58,8 +57,8 @@ describe("CleanCommand", () => {
 
     // Both of these commands should result in the same outcome
     const filters = [
-      { test: "should only clean scoped packages", flag: "scope", flagValue: "package-@(1|2)"},
-      { test: "should not clean ignored packages", flag: "ignore", flagValue: "package-@(3|4)"},
+      { test: "should only clean scoped packages", flag: "scope", flagValue: "package-@(1|2)" },
+      { test: "should not clean ignored packages", flag: "ignore", flagValue: "package-@(3|4)" },
     ];
     filters.forEach((filter) => {
       it(filter.test, (done) => {
@@ -88,7 +87,8 @@ describe("CleanCommand", () => {
           callback();
         });
 
-        cleanCommand.runCommand(exitWithCode(0, () => {
+        cleanCommand.runCommand(exitWithCode(0, (err) => {
+          if (err) return done.fail(err);
           assert.deepEqual(ranInPackages, ["package-1", "package-2"]);
           done();
         }));
@@ -124,7 +124,8 @@ describe("CleanCommand", () => {
         callback();
       });
 
-      cleanCommand.runCommand(exitWithCode(0, () => {
+      cleanCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
         const expected = ["package-1", "package-2"].map((pkg) => path.join(testDir, "packages", pkg, "node_modules"));
         assert.deepEqual(ranInPackages.sort(), expected.sort());
         done();

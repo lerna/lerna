@@ -8,7 +8,6 @@ import ExecCommand from "../src/commands/ExecCommand";
 import stub from "./helpers/stub";
 
 describe("ExecCommand", () => {
-
   describe("in a basic repo", () => {
     let testDir;
 
@@ -61,7 +60,8 @@ describe("ExecCommand", () => {
         callback();
       });
 
-      execCommand.runCommand(exitWithCode(0, () => {
+      execCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
         assert.equal(calls, 2);
         done();
       }));
@@ -90,7 +90,8 @@ describe("ExecCommand", () => {
         callback();
       });
 
-      execCommand.runCommand(exitWithCode(0, () => {
+      execCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
         assert.equal(calls, 2);
         done();
       }));
@@ -98,8 +99,8 @@ describe("ExecCommand", () => {
 
     // Both of these commands should result in the same outcome
     const filters = [
-      { test: "should run a command for a given scope", flag: "scope", flagValue: "package-1"},
-      { test: "should not run a command for ignored packages", flag: "ignore", flagValue: "package-@(2|3|4)"},
+      { test: "should run a command for a given scope", flag: "scope", flagValue: "package-1" },
+      { test: "should not run a command for ignored packages", flag: "ignore", flagValue: "package-@(2|3|4)" },
     ];
     filters.forEach((filter) => {
       it(filter.test, (done) => {
@@ -114,13 +115,12 @@ describe("ExecCommand", () => {
           callback();
         });
 
-        execCommand.runCommand(exitWithCode(0, () => {
+        execCommand.runCommand(exitWithCode(0, (err) => {
+          if (err) return done.fail(err);
           assert.deepEqual(ranInPackages, ["package-1"]);
           done();
         }));
       });
     });
-
   });
-
 });

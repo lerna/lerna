@@ -10,9 +10,9 @@ import initFixture from "./helpers/initFixture";
 import InitCommand from "../src/commands/InitCommand";
 
 describe("InitCommand", () => {
-  let testDir;
-
   describe("in an empty directory", () => {
+    let testDir;
+
     beforeEach(() => initFixture("InitCommand/empty").then((dir) => {
       testDir = dir;
 
@@ -26,7 +26,7 @@ describe("InitCommand", () => {
       const instance = new InitCommand([], {});
 
       instance.runCommand((err, code) => {
-        if (err) throw err;
+        if (err) return done.fail(err);
         expect(code).toBe(0);
 
         expect(fs.readdirSync(testDir)).toEqual([
@@ -59,7 +59,7 @@ describe("InitCommand", () => {
       });
 
       instance.runCommand((err, code) => {
-        if (err) throw err;
+        if (err) return done.fail(err);
         expect(code).toBe(0);
 
         expect(fs.readdirSync(testDir)).toEqual([
@@ -77,6 +77,8 @@ describe("InitCommand", () => {
   });
 
   describe("in a subdirectory of a git repo", () => {
+    let testDir;
+
     beforeEach(() => initFixture("InitCommand/empty").then((dir) => {
       const subDir = path.join(dir, "subdir");
 
@@ -90,7 +92,7 @@ describe("InitCommand", () => {
       const instance = new InitCommand([], {});
 
       instance.runCommand((err, code) => {
-        if (err) throw err;
+        if (err) return done.fail(err);
         expect(code).toBe(0);
 
         expect(fs.readdirSync(testDir)).toEqual([
@@ -121,7 +123,6 @@ describe("InitCommand", () => {
     let packageJsonLocation;
 
     beforeEach(() => initFixture("InitCommand/has-package").then((dir) => {
-      testDir = dir;
       packageJsonLocation = path.join(dir, "package.json");
     }));
 
@@ -137,7 +138,7 @@ describe("InitCommand", () => {
       const instance = new InitCommand([], {});
 
       instance.runCommand((err, code) => {
-        if (err) throw err;
+        if (err) return done.fail(err);
         expect(code).toBe(0);
 
         const packageJson = require(packageJsonLocation);
@@ -169,7 +170,7 @@ describe("InitCommand", () => {
       const instance = new InitCommand([], {});
 
       instance.runCommand((err, code) => {
-        if (err) throw err;
+        if (err) return done.fail(err);
         expect(code).toBe(0);
 
         const packageJson = require(packageJsonLocation);
@@ -201,7 +202,7 @@ describe("InitCommand", () => {
       const instance = new InitCommand([], {});
 
       instance.runCommand((err, code) => {
-        if (err) throw err;
+        if (err) return done.fail(err);
         expect(code).toBe(0);
 
         const packageJson = require(packageJsonLocation);
@@ -223,7 +224,6 @@ describe("InitCommand", () => {
     let lernaJsonLocation;
 
     beforeEach(() => initFixture("InitCommand/has-lerna").then((dir) => {
-      testDir = dir;
       lernaJsonLocation = path.join(dir, "lerna.json");
     }));
 
@@ -238,7 +238,7 @@ describe("InitCommand", () => {
       const instance = new InitCommand([], {});
 
       instance.runCommand((err, code) => {
-        if (err) throw err;
+        if (err) return done.fail(err);
         expect(code).toBe(0);
 
         const lernaJson = require(lernaJsonLocation);
@@ -266,7 +266,7 @@ describe("InitCommand", () => {
       });
 
       instance.runCommand((err, code) => {
-        if (err) throw err;
+        if (err) return done.fail(err);
         expect(code).toBe(0);
 
         const lernaJson = require(lernaJsonLocation);
@@ -283,6 +283,8 @@ describe("InitCommand", () => {
   });
 
   describe("when VERSION exists", () => {
+    let testDir;
+
     beforeEach(() => initFixture("InitCommand/has-version").then((dir) => {
       testDir = dir;
     }));
@@ -291,7 +293,7 @@ describe("InitCommand", () => {
       const instance = new InitCommand([], {});
 
       instance.runCommand((err, code) => {
-        if (err) throw err;
+        if (err) return done.fail(err);
         expect(code).toBe(0);
 
         expect(fs.readdirSync(testDir)).toEqual([
@@ -315,7 +317,7 @@ describe("InitCommand", () => {
       };
 
       instance.runCommand((err, code) => {
-        if (err) throw err;
+        if (err) return done.fail(err);
         expect(code).toBe(0);
 
         expect(instance.logger.info).toBeCalledWith("Removing old VERSION file.");
@@ -328,7 +330,7 @@ describe("InitCommand", () => {
       const instance = new InitCommand([], {});
 
       instance.runCommand((err, code) => {
-        if (err) throw err;
+        if (err) return done.fail(err);
         expect(code).toBe(0);
 
         const lernaJson = require(path.join(testDir, "lerna.json"));

@@ -10,7 +10,6 @@ import stub from "./helpers/stub";
 import FakeChild from "./helpers/fakeChild";
 
 describe("RunCommand", () => {
-
   describe("in a basic repo", () => {
     let testDir;
 
@@ -80,9 +79,9 @@ describe("RunCommand", () => {
           callback();
         });
 
-        runCommand.runCommand(exitWithCode(0, () => {
+        runCommand.runCommand(exitWithCode(0, (err) => {
+          if (err) return done.fail(err);
           assert.equal(4, calls);
-
           done();
         }));
       });
@@ -90,8 +89,8 @@ describe("RunCommand", () => {
 
     // Both of these commands should result in the same outcome
     const filters = [
-      { test: "should run a command for a given scope", flag: "scope", flagValue: "package-1"},
-      { test: "should not run a command for ignored packages", flag: "ignore", flagValue: "package-@(2|3|4)"},
+      { test: "should run a command for a given scope", flag: "scope", flagValue: "package-1" },
+      { test: "should not run a command for ignored packages", flag: "ignore", flagValue: "package-@(2|3|4)" },
     ];
     filters.forEach((filter) => {
       it(filter.test, (done) => {
@@ -106,7 +105,8 @@ describe("RunCommand", () => {
           callback();
         });
 
-        runCommand.runCommand(exitWithCode(0, () => {
+        runCommand.runCommand(exitWithCode(0, (err) => {
+          if (err) return done.fail(err);
           assert.deepEqual(ranInPackages, ["package-1"]);
           done();
         }));
@@ -141,7 +141,6 @@ describe("RunCommand", () => {
 
       children.forEach((child) => child.emit("exit"));
     });
-
   });
 
   describe("with --include-filtered-dependencies", () => {
@@ -166,12 +165,12 @@ describe("RunCommand", () => {
         callback();
       });
 
-      runCommand.runCommand(exitWithCode(0, () => {
+      runCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
         const expected = ["package-1", "package-2"];
         assert.deepEqual(ranInPackages.sort(), expected.sort());
         done();
       }));
     });
   });
-
 });

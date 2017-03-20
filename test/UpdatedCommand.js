@@ -12,7 +12,6 @@ import stub from "./helpers/stub";
 import escapeArgs from "command-join";
 
 describe("UpdatedCommand", () => {
-
   /** =========================================================================
    * Basic
    * ======================================================================= */

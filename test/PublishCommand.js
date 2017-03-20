@@ -16,7 +16,6 @@ import initFixture from "./helpers/initFixture";
 import assertStubbedCalls from "./helpers/assertStubbedCalls";
 
 describe("PublishCommand", () => {
-
   /** =========================================================================
    * NORMAL
    * ======================================================================= */
@@ -61,7 +60,7 @@ describe("PublishCommand", () => {
           { args: ["npm publish --tag lerna-temp"] },
           { args: ["npm publish --tag lerna-temp"] },
           // No package-5.  It's private.
-        ], true],
+        ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
           { args: ["npm dist-tag rm package-1 lerna-temp"] },
@@ -90,25 +89,21 @@ describe("PublishCommand", () => {
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
-        try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
+        assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
 
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-5/package.json")).version, "1.0.1");
 
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).dependencies["package-1"], "^1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+        assert.equal(require(path.join(testDir, "packages/package-5/package.json")).dependencies["package-1"], "^1.0.1");
 
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
+        done();
       }));
     });
   });
@@ -189,22 +184,18 @@ describe("PublishCommand", () => {
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
-        try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
 
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.1.0");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "2.0.0");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.1.0");
+        assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.1.0");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "2.0.0");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.1.0");
 
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.1.0");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.1.0");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
 
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
+        done();
       }));
     });
   });
@@ -273,31 +264,26 @@ describe("PublishCommand", () => {
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
-        try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.0\"\n}\n");
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
+        assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.0\"\n}\n");
 
-          // The following wouldn't be the actual results of a canary release
-          // because `git checkout --` would have removed the file changes.
-          // However, this is what would've been published to npm so it's
-          // useful to test.
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.0-alpha.81e3b443");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.0-alpha.81e3b443");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.0-alpha.81e3b443");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.0-alpha.81e3b443");
+        // The following wouldn't be the actual results of a canary release
+        // because `git checkout --` would have removed the file changes.
+        // However, this is what would've been published to npm so it's
+        // useful to test.
+        assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.0-alpha.81e3b443");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.0-alpha.81e3b443");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.0-alpha.81e3b443");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.0-alpha.81e3b443");
 
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.0-alpha.81e3b443");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.0-alpha.81e3b443");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.0-alpha.81e3b443");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.0-alpha.81e3b443");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
 
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
+        done();
       }));
     });
   });
-
 
   /** =========================================================================
    * INDEPENDENT - CANARY
@@ -364,26 +350,22 @@ describe("PublishCommand", () => {
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
-        try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
 
-          // The following wouldn't be the actual results of a canary release
-          // because `git checkout --` would have removed the file changes.
-          // However, this is what would've been published to npm so it's
-          // useful to test.
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.0-alpha.81e3b443");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "2.0.0-alpha.81e3b443");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "3.0.0-alpha.81e3b443");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "4.0.0-alpha.81e3b443");
+        // The following wouldn't be the actual results of a canary release
+        // because `git checkout --` would have removed the file changes.
+        // However, this is what would've been published to npm so it's
+        // useful to test.
+        assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.0-alpha.81e3b443");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "2.0.0-alpha.81e3b443");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "3.0.0-alpha.81e3b443");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "4.0.0-alpha.81e3b443");
 
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.0-alpha.81e3b443");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^2.0.0-alpha.81e3b443");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.0-alpha.81e3b443");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^2.0.0-alpha.81e3b443");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
 
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
+        done();
       }));
     });
   });
@@ -423,7 +405,7 @@ describe("PublishCommand", () => {
           { args: ["npm publish --tag lerna-temp"] },
           { args: ["npm publish --tag lerna-temp"] },
           { args: ["npm publish --tag lerna-temp"] },
-        ], true],
+        ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
           { args: ["npm dist-tag rm package-1 lerna-temp"] },
@@ -446,23 +428,19 @@ describe("PublishCommand", () => {
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
-        try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
+        assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
 
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
 
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
 
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
+        done();
       }));
     });
   });
@@ -512,25 +490,21 @@ describe("PublishCommand", () => {
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
-        try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
+        assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
 
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-5/package.json")).version, "1.0.1");
 
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).dependencies["package-1"], "^1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+        assert.equal(require(path.join(testDir, "packages/package-5/package.json")).dependencies["package-1"], "^1.0.1");
 
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
+        done();
       }));
     });
   });
@@ -571,23 +545,19 @@ describe("PublishCommand", () => {
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
-        try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
+        assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
 
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
 
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
 
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
+        done();
       }));
     });
   });
@@ -638,7 +608,7 @@ describe("PublishCommand", () => {
           { args: ["npm publish --tag prerelease"] },
           { args: ["npm publish --tag prerelease"] },
           { args: ["npm publish --tag prerelease"] },
-        ], true],
+        ]],
         [ChildProcessUtilities, "execSync", {}, [
 
           // No package-5.  It's private.
@@ -702,7 +672,7 @@ describe("PublishCommand", () => {
           { args: ["npm publish --tag lerna-temp"] },
           { args: ["npm publish --tag lerna-temp"] },
           // No package-5.  It's private.
-        ], true],
+        ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
           { args: ["npm dist-tag rm package-1 lerna-temp"] },
@@ -731,31 +701,26 @@ describe("PublishCommand", () => {
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
-        try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
+        assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
 
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-5/package.json")).version, "1.0.1");
 
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).dependencies["package-1"], "^1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+        assert.equal(require(path.join(testDir, "packages/package-5/package.json")).dependencies["package-1"], "^1.0.1");
 
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
+        done();
       }));
     });
   });
 
   describe("auto confirmation", () => {
-
     it("should be possible to skip asking for confirmation", (done) => {
       const publishCommand = new PublishCommand([], {
         yes: true
@@ -825,7 +790,7 @@ describe("PublishCommand", () => {
           { args: ["npm publish --tag lerna-temp", { env, cwd: path.join(testDir,"packages/package-4") }] },
           { args: ["npm publish --tag lerna-temp", { env, cwd: path.join(testDir,"packages/package-2") }] }
           // No package-5.  It's private.
-        ], true],
+        ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["npm dist-tag ls package-1", { env, cwd: path.join(testDir,"packages/package-1") }], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
           { args: ["npm dist-tag rm package-1 lerna-temp", { env, cwd: path.join(testDir,"packages/package-1") }]},
@@ -854,25 +819,21 @@ describe("PublishCommand", () => {
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
-        try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
+        assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
 
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-5/package.json")).version, "1.0.1");
 
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).dependencies["package-1"], "^1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+        assert.equal(require(path.join(testDir, "packages/package-5/package.json")).dependencies["package-1"], "^1.0.1");
 
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
+        done();
       }));
     });
   });
@@ -928,7 +889,7 @@ describe("PublishCommand", () => {
         ]],
         [ChildProcessUtilities, "exec", { nodeCallback: true }, [
           { args: ["npm publish --tag lerna-temp", { env, cwd: path.join(testDir,"packages/package-1") }]}
-        ], true],
+        ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["npm dist-tag ls package-1", { env, cwd: path.join(testDir,"packages/package-1") }],
             returns: "lerna-temp: 1.0.1\nstable: 1.0.0"
@@ -942,10 +903,7 @@ describe("PublishCommand", () => {
         ]],
       ]);
 
-      publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-        done();
-      }));
+      publishCommand.runCommand(exitWithCode(0, done));
     });
   });
 
@@ -992,7 +950,7 @@ describe("PublishCommand", () => {
           { args: ["npm publish --tag lerna-temp"] },
           { args: ["npm publish --tag lerna-temp"] },
           // No package-5.  It's private.
-        ], true],
+        ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
           { args: ["npm dist-tag rm package-1 lerna-temp"] },
@@ -1021,25 +979,21 @@ describe("PublishCommand", () => {
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
-        try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
+        assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
 
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-5/package.json")).version, "1.0.1");
 
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).dependencies["package-1"], "^1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+        assert.equal(require(path.join(testDir, "packages/package-5/package.json")).dependencies["package-1"], "^1.0.1");
 
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
+        done();
       }));
     });
   });
@@ -1066,9 +1020,7 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "confirm", { valueCallback: true }, [
@@ -1090,7 +1042,7 @@ describe("PublishCommand", () => {
           { args: ["npm publish --tag lerna-temp"] },
           { args: ["npm publish --tag lerna-temp"] },
           // No package-5.  It's private.
-        ], true],
+        ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
           { args: ["npm dist-tag rm package-1 lerna-temp"] },
@@ -1119,28 +1071,24 @@ describe("PublishCommand", () => {
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
-        try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
+        assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
 
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-5/package.json")).version, "1.0.1");
 
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "1.0.1");
-          // remains semver because it is a diverged version,
-          // (different from the release version) and is specified
-          // as semver in the package-4's package.json
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).dependencies["package-1"], "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "1.0.1");
+        // remains semver because it is a diverged version,
+        // (different from the release version) and is specified
+        // as semver in the package-4's package.json
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+        assert.equal(require(path.join(testDir, "packages/package-5/package.json")).dependencies["package-1"], "1.0.1");
 
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
+        done();
       }));
     });
   });
@@ -1188,7 +1136,7 @@ describe("PublishCommand", () => {
           { args: ["npm publish --tag lerna-temp"] },
           { args: ["npm publish --tag lerna-temp"] },
           // No package-5.  It's private.
-        ], true],
+        ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
           { args: ["npm dist-tag rm package-1 lerna-temp"] },
@@ -1217,29 +1165,25 @@ describe("PublishCommand", () => {
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
-        try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")),
-            "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\",\n  \"exact\": true\n}\n");
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
+        assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")),
+          "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\",\n  \"exact\": true\n}\n");
 
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-5/package.json")).version, "1.0.1");
 
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "1.0.1");
-          // remains semver because it is a diverged version,
-          // (different from the release version) and is specified
-          // as semver in the package-4's package.json
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).dependencies["package-1"], "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "1.0.1");
+        // remains semver because it is a diverged version,
+        // (different from the release version) and is specified
+        // as semver in the package-4's package.json
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+        assert.equal(require(path.join(testDir, "packages/package-5/package.json")).dependencies["package-1"], "1.0.1");
 
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
+        done();
       }));
     });
   });
@@ -1286,7 +1230,7 @@ describe("PublishCommand", () => {
           { args: ["npm publish --tag lerna-temp", { cwd: path.join(testDir,"packages/package-3") }] },
           { args: ["npm publish --tag lerna-temp", { cwd: path.join(testDir,"packages/package-4") }] },
           { args: ["npm publish --tag lerna-temp", { cwd: path.join(testDir,"packages/package-2") }] }
-        ], true],
+        ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["npm dist-tag ls package-1", { cwd: path.join(testDir,"packages/package-1") }], returns: "lerna-temp: 1.1.0\nstable: 1.0.0" },
           { args: ["npm dist-tag rm package-1 lerna-temp", { cwd: path.join(testDir,"packages/package-1") }] },
@@ -1313,24 +1257,20 @@ describe("PublishCommand", () => {
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
-        try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.1.0\"\n}\n");
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
+        assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.1.0\"\n}\n");
 
-          assert.equal(require(path.join(testDir, "lerna.json")).version, "1.1.0");
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.1.0");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.1.0");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.1.0");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.1.0");
+        assert.equal(require(path.join(testDir, "lerna.json")).version, "1.1.0");
+        assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.1.0");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.1.0");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.1.0");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.1.0");
 
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.1.0");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.1.0");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.1.0");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.1.0");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
 
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
+        done();
       }));
     });
   });
@@ -1379,7 +1319,7 @@ describe("PublishCommand", () => {
           { args: ["npm publish --tag lerna-temp"] },
           { args: ["npm publish --tag lerna-temp"] },
           { args: ["npm publish --tag lerna-temp"] }
-        ], true],
+        ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
           { args: ["npm dist-tag rm package-1 lerna-temp"] },
@@ -1406,23 +1346,19 @@ describe("PublishCommand", () => {
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
-        try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"independent\"\n}\n");
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
+        assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"independent\"\n}\n");
 
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "2.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "3.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "4.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "2.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "3.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "4.0.1");
 
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^2.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^2.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
 
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
+        done();
       }));
     });
   });
@@ -1473,7 +1409,7 @@ describe("PublishCommand", () => {
           { args: ["npm publish --tag lerna-temp"] },
           { args: ["npm publish --tag lerna-temp"] },
           // No package-5.  It's private.
-        ], true],
+        ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
           { args: ["npm dist-tag rm package-1 lerna-temp"] },
@@ -1502,25 +1438,21 @@ describe("PublishCommand", () => {
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
-        try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
+        assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
 
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-5/package.json")).version, "1.0.1");
 
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).dependencies["package-1"], "^1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+        assert.equal(require(path.join(testDir, "packages/package-5/package.json")).dependencies["package-1"], "^1.0.1");
 
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
+        done();
       }));
     });
   });
@@ -1546,9 +1478,7 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -1573,7 +1503,7 @@ describe("PublishCommand", () => {
           { args: ["npm publish --tag lerna-temp"] },
           { args: ["npm publish --tag lerna-temp"] },
           // No package-5.  It's private.
-        ], true],
+        ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
           { args: ["npm dist-tag rm package-1 lerna-temp"] },
@@ -1602,25 +1532,21 @@ describe("PublishCommand", () => {
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
-        try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
+        assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
 
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-5/package.json")).version, "1.0.1");
 
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).dependencies["package-1"], "^1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+        assert.equal(require(path.join(testDir, "packages/package-5/package.json")).dependencies["package-1"], "^1.0.1");
 
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
+        done();
       }));
     });
   });
@@ -1702,22 +1628,18 @@ describe("PublishCommand", () => {
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
-        try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
 
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.1.0");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "2.0.0");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.1.0");
+        assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.1.0");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "2.0.0");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.1.0");
 
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.1.0");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.1.0");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
 
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
+        done();
       }));
     });
   });
@@ -1749,19 +1671,19 @@ describe("PublishCommand", () => {
           { args: ["git tag"] }
         ]],
         [ConventionalCommitUtilities, "recommendVersion", {}, [
-          { args: [{name: "package-1", version: "1.0.0", location: path.join(testDir, "packages/package-1")}], returns: "1.0.1"},
-          { args: [{name: "package-2", version: "2.0.0", location: path.join(testDir, "packages/package-2")}], returns: "1.1.0"},
-          { args: [{name: "package-3", version: "3.0.0", location: path.join(testDir, "packages/package-3")}], returns: "2.0.0"},
-          { args: [{name: "package-4", version: "4.0.0", location: path.join(testDir, "packages/package-4")}], returns: "1.1.0"}
+          { args: [{ name: "package-1", version: "1.0.0", location: path.join(testDir, "packages/package-1") }], returns: "1.0.1" },
+          { args: [{ name: "package-2", version: "2.0.0", location: path.join(testDir, "packages/package-2") }], returns: "1.1.0" },
+          { args: [{ name: "package-3", version: "3.0.0", location: path.join(testDir, "packages/package-3") }], returns: "2.0.0" },
+          { args: [{ name: "package-4", version: "4.0.0", location: path.join(testDir, "packages/package-4") }], returns: "1.1.0" }
         ]],
         [PromptUtilities, "confirm", { valueCallback: true }, [
           { args: ["Are you sure you want to publish the above changes?"], returns: true }
         ]],
         [ConventionalCommitUtilities, "updateChangelog", {}, [
-          { args: [{name: "package-1", location: path.join(testDir, "packages/package-1")}]},
-          { args: [{name: "package-2", location: path.join(testDir, "packages/package-2")}]},
-          { args: [{name: "package-3", location: path.join(testDir, "packages/package-3")}]},
-          { args: [{name: "package-4", location: path.join(testDir, "packages/package-4")}]}
+          { args: [{ name: "package-1", location: path.join(testDir, "packages/package-1") }] },
+          { args: [{ name: "package-2", location: path.join(testDir, "packages/package-2") }] },
+          { args: [{ name: "package-3", location: path.join(testDir, "packages/package-3") }] },
+          { args: [{ name: "package-4", location: path.join(testDir, "packages/package-4") }] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/CHANGELOG.md"))] },
@@ -1773,10 +1695,10 @@ describe("PublishCommand", () => {
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-4/CHANGELOG.md"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-4/package.json"))] },
           { args: ["git commit -m \"$(echo \"A custom publish message\")\""] },
-          { args: ["git tag package-1@1.0.1"] },
-          { args: ["git tag package-2@1.1.0"] },
-          { args: ["git tag package-3@2.0.0"] },
-          { args: ["git tag package-4@1.1.0"] }
+          { args: ["git tag -a package-1@1.0.1 -m \"package-1@1.0.1\""] },
+          { args: ["git tag -a package-2@1.1.0 -m \"package-2@1.1.0\""] },
+          { args: ["git tag -a package-3@2.0.0 -m \"package-3@2.0.0\""] },
+          { args: ["git tag -a package-4@1.1.0 -m \"package-4@1.1.0\""] }
         ]],
         [ChildProcessUtilities, "exec", { nodeCallback: true }, [
           { args: ["npm publish --tag lerna-temp"] },
@@ -1808,24 +1730,20 @@ describe("PublishCommand", () => {
       ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done(err);
+        if (err) return done.fail(err);
 
-        try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
+        assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
 
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.1.0");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "2.0.0");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.1.0");
+        assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.1.0");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "2.0.0");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.1.0");
 
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.1.0");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+        assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
+        assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.1.0");
+        assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
 
-          done();
-        } catch (err) {
-          done(err);
-        }
+        done();
       }));
     });
   });
