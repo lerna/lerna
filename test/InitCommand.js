@@ -22,6 +22,12 @@ describe("InitCommand", () => {
       ));
     }));
 
+    it("completely ignores validation and preparation lifecycle", () => {
+      const instance = new InitCommand([], {});
+      expect(() => instance.runValidations()).not.toThrow();
+      expect(() => instance.runPreparations()).not.toThrow();
+    });
+
     it("initializes git repo with lerna files", (done) => {
       const instance = new InitCommand([], {});
 
@@ -82,6 +88,54 @@ describe("InitCommand", () => {
         } catch (ex) {
           done.fail(ex);
         }
+      });
+    });
+
+    describe("with --exact", () => {
+      it("uses exact version when adding lerna dependency", (done) => {
+        const instance = new InitCommand([], {
+          exact: true,
+        });
+
+        instance.runCommand((err, code) => {
+          if (err) return done.fail(err);
+
+          try {
+            expect(code).toBe(0);
+
+            const packageJson = require(path.join(testDir, "package.json"));
+            expect(packageJson).toEqual({
+              devDependencies: {
+                lerna: instance.lernaVersion,
+              },
+            });
+
+            done();
+          } catch (ex) {
+            done.fail(ex);
+          }
+        });
+      });
+
+      it("sets lerna.json command.init.exact to true", (done) => {
+        const instance = new InitCommand([], {
+          exact: true,
+        });
+
+        instance.runCommand((err, code) => {
+          if (err) return done.fail(err);
+
+          try {
+            expect(code).toBe(0);
+
+            const lernaJson = require(path.join(testDir, "lerna.json"));
+            expect(lernaJson).toHaveProperty("command.init.exact", true);
+
+            done();
+          } catch (ex) {
+            done.fail(ex);
+          }
+        });
       });
     });
   });
@@ -396,14 +450,14 @@ describe("InitCommand", () => {
     });
   });
 
-  describe("with --exact", () => {
+  describe("when re-initializing with --exact", () => {
     let testDir;
 
     beforeEach(() => initFixture("InitCommand/updates").then((dir) => {
       testDir = dir;
     }));
 
-    it("updates existing lerna in devDependencies with exact version", (done) => {
+    it("sets lerna.json commands.init.exact to true", (done) => {
       const instance = new InitCommand([], {
         exact: true,
       });
@@ -414,12 +468,8 @@ describe("InitCommand", () => {
         try {
           expect(code).toBe(0);
 
-          const packageJson = require(path.join(testDir, "package.json"));
-          expect(packageJson).toMatchObject({
-            devDependencies: {
-              lerna: instance.lernaVersion,
-            },
-          });
+          const lernaJson = require(path.join(testDir, "lerna.json"));
+          expect(lernaJson).toHaveProperty("commands.init.exact", true);
 
           done();
         } catch (ex) {
