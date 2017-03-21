@@ -282,6 +282,14 @@ When run with this flag, `publish` publishes packages in a more granular way (pe
 
 > The intended use case for this flag is a per commit level release or nightly release.
 
+#### --conventional-commits
+
+```sh
+$ lerna publish --conventional-commits
+```
+
+When run with this flag, `publish` will use angular conventional-commit format to [determine version bump](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-recommended-bump) and [generate CHANGELOG](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-changelog-cli)
+
 #### --git-remote [remote]
 
 ```sh
