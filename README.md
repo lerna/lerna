@@ -649,21 +649,6 @@ $ lerna bootstrap --scope "package-*" --ignore "package-util-*" --include-filter
 # package matched by "package-*"
 ```
 
-#### --only-explicit-updates
-
-> **Note:** You will rarely want to do this. It will update the versions in dependencies without publishing new versions of them. This means your packages will silently be updated without asking you for permission while publishing.
-
-Only will bump versions for packages that have been updated explicitly rather than cross-dependencies.
-
-> This may not make sense for a major version bump since other packages that depend on the updated packages wouldn't be updated.
-
-```sh
-$ lerna updated --only-explicit-updates
-$ lerna publish --only-explicit-updates
-```
-
-Ex: in Babel, `babel-types` is depended upon by all packages in the monorepo (over 100). However, Babel uses `^` for most of its dependencies so it isn't necessary to bump the versions of all packages if only `babel-types` is updated. This option allows only the packages that have been explicitly updated to make a new version.
-
 #### --loglevel [silent|error|warn|success|info|verbose|silly]
 
 What level of logs to report.  On failure, all logs are written to lerna-debug.log in the current working directory.
