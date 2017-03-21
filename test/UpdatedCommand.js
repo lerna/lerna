@@ -150,7 +150,7 @@ describe("UpdatedCommand", () => {
       child.execSync("git commit -m 'Commit'");
 
       const updatedCommand = new UpdatedCommand([], {
-        [UpdatedPackagesCollector.___SECRET_FLAG___]: true
+        [SECRET_FLAG]: true
       });
 
       updatedCommand.runValidations();
@@ -304,3 +304,5 @@ describe("UpdatedCommand", () => {
     });
   });
 });
+
+const SECRET_FLAG = new Buffer("ZGFuZ2Vyb3VzbHlPbmx5UHVibGlzaEV4cGxpY2l0VXBkYXRlc1RoaXNJc0FDdXN0b21GbGFnRm9yQmFiZWxBbmRZb3VTaG91bGROb3RCZVVzaW5nSXRKdXN0RGVhbFdpdGhNb3JlUGFja2FnZXNCZWluZ1B1Ymxpc2hlZEl0SXNOb3RBQmlnRGVhbA==", "base64").toString("ascii");
