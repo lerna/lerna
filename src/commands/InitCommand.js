@@ -1,3 +1,4 @@
+import _ from "lodash";
 import FileSystemUtilities from "../FileSystemUtilities";
 import GitUtilities from "../GitUtilities";
 import Command from "../Command";
@@ -14,6 +15,8 @@ export default class InitCommand extends Command {
       GitUtilities.init();
     }
 
+    this.exact = this.getOptions().exact;
+
     callback(null, true);
   }
 
@@ -21,7 +24,7 @@ export default class InitCommand extends Command {
     this.ensurePackageJSON();
     this.ensureLernaJson();
     this.ensureNoVersionFile();
-    this.logger.success("Successfully created Lerna files");
+    this.logger.success("Successfully initialized Lerna files");
     callback(null, true);
   }
 
@@ -45,7 +48,7 @@ export default class InitCommand extends Command {
       targetDependencies = packageJson.devDependencies;
     }
 
-    const dependencyVersion = this.getOptions().exact
+    const dependencyVersion = this.exact
       ? this.lernaVersion
       : `^${this.lernaVersion}`;
 
@@ -88,6 +91,12 @@ export default class InitCommand extends Command {
       packages: packageConfigs,
       version: version
     });
+
+    if (this.exact) {
+      // ensure --exact is preserved for future init commands
+      const configKey = lernaJson.commands ? "commands" : "command";
+      _.set(lernaJson, `${configKey}.init.exact`, true);
+    }
 
     FileSystemUtilities.writeFileSync(lernaJsonLocation, JSON.stringify(lernaJson, null, 2));
   }
