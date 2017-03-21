@@ -65,7 +65,7 @@ export default class RunCommand extends Command {
     NpmUtilities.runScriptInDir(this.script, this.args, pkg.location, (err, stdout) => {
       this.logger.info(stdout);
       if (err) {
-        this.logger.error(`Errored while running npm script '${this.script}' in '${pkg.name}'`, err);
+        this.logger.error(`Errored while running npm script '${this.script}' in '${pkg.name}'`);
       }
       callback(err);
     });
