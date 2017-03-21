@@ -5,7 +5,6 @@ import path from "path";
 import chalk from "chalk";
 
 import UpdatedCommand from "../src/commands/UpdatedCommand";
-import UpdatedPackagesCollector from "../src/UpdatedPackagesCollector";
 import exitWithCode from "./helpers/exitWithCode";
 import initFixture from "./helpers/initFixture";
 import logger from "../src/logger";
