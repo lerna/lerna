@@ -23,6 +23,6 @@ before_test:
   - git config --global user.name "Tester McPerson"
 
 test_script:
-  - yarn run ci -- --runInBand
+  - yarn run ci
 
 build: off
