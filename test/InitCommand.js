@@ -47,7 +47,7 @@ describe("InitCommand", () => {
           const packageJson = require(path.join(testDir, "package.json"));
           expect(packageJson).toEqual({
             devDependencies: {
-              lerna: instance.lernaVersion,
+              lerna: `^${instance.lernaVersion}`,
             },
           });
 
@@ -122,7 +122,7 @@ describe("InitCommand", () => {
           const packageJson = require(path.join(testDir, "package.json"));
           expect(packageJson).toEqual({
             devDependencies: {
-              lerna: instance.lernaVersion,
+              lerna: `^${instance.lernaVersion}`,
             },
           });
 
@@ -163,7 +163,7 @@ describe("InitCommand", () => {
             name: "repo-root",
             devDependencies: {
               alpha: "first",
-              lerna: instance.lernaVersion,
+              lerna: `^${instance.lernaVersion}`,
               omega: "last",
             },
           });
@@ -203,7 +203,7 @@ describe("InitCommand", () => {
               omega: "last",
             },
             devDependencies: {
-              lerna: instance.lernaVersion,
+              lerna: `^${instance.lernaVersion}`,
             },
           });
 
@@ -237,7 +237,7 @@ describe("InitCommand", () => {
             name: "repo-root",
             dependencies: {
               alpha: "first",
-              lerna: instance.lernaVersion,
+              lerna: `^${instance.lernaVersion}`,
               omega: "last",
             },
           });
@@ -387,6 +387,39 @@ describe("InitCommand", () => {
 
           const lernaJson = require(path.join(testDir, "lerna.json"));
           expect(lernaJson).toHaveProperty("version", "1.2.3");
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      });
+    });
+  });
+
+  describe("with --exact", () => {
+    let testDir;
+
+    beforeEach(() => initFixture("InitCommand/updates").then((dir) => {
+      testDir = dir;
+    }));
+
+    it("updates existing lerna in devDependencies with exact version", (done) => {
+      const instance = new InitCommand([], {
+        exact: true,
+      });
+
+      instance.runCommand((err, code) => {
+        if (err) return done.fail(err);
+
+        try {
+          expect(code).toBe(0);
+
+          const packageJson = require(path.join(testDir, "package.json"));
+          expect(packageJson).toMatchObject({
+            devDependencies: {
+              lerna: instance.lernaVersion,
+            },
+          });
 
           done();
         } catch (ex) {

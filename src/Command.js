@@ -102,13 +102,13 @@ export default class Command {
       return;
     }
 
-    if (!FileSystemUtilities.existsSync(this.repository.packageJsonLocation)) {
+    if (!this.repository.packageJson) {
       this.logger.warn("`package.json` does not exist, have you run `lerna init`?");
       this._complete(null, 1);
       return;
     }
 
-    if (!FileSystemUtilities.existsSync(this.repository.lernaJsonLocation)) {
+    if (!this.repository.initVersion) {
       this.logger.warn("`lerna.json` does not exist, have you run `lerna init`?");
       this._complete(null, 1);
       return;
@@ -126,12 +126,12 @@ export default class Command {
 
     if (
       process.env.NODE_ENV !== "lerna-test" &&
-      this.lernaVersion !== this.repository.lernaVersion
+      !this.repository.isCompatibleLerna(this.lernaVersion, this.getOptions())
     ) {
       this.logger.warn(
-        `Lerna version mismatch: The current version of lerna is ${this.lernaVersion}, ` +
-        `but the Lerna version in \`lerna.json\` is ${this.repository.lernaVersion}. ` +
-        `You can either run \`lerna init\` again or install \`lerna@${this.repository.lernaVersion}\`.`
+        `Lerna major version mismatch: The current version of lerna is ${this.lernaVersion}, ` +
+        `but the Lerna version in \`lerna.json\` is ${this.repository.initVersion}. ` +
+        `You can either run \`lerna init\` again or install \`lerna@${this.repository.initVersion}\`.`
       );
       this._complete(null, 1);
       return;

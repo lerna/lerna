@@ -150,6 +150,30 @@ $ lerna init --independent
 
 This flag tells Lerna to use independent versioning mode.
 
+#### --exact
+
+```sh
+$ lerna init --exact
+```
+
+By default, `lerna init` will use a caret range when adding or updating
+the local version of `lerna`, just like `npm install --save-dev lerna`.
+
+To retain the `lerna` 1.x behavior of "exact" comparison, pass this flag.
+It will configure `lerna.json` to enforce exact match for all subsequent executions.
+
+```json
+{
+  "lerna": "2.0.0-rc.0",
+  "command": {
+    "init": {
+      "exact": true
+    }
+  },
+  "version": "0.0.0"
+}
+```
+
 ### bootstrap
 
 ```sh
