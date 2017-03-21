@@ -5,6 +5,7 @@ import path from "path";
 import chalk from "chalk";
 
 import UpdatedCommand from "../src/commands/UpdatedCommand";
+import UpdatedPackagesCollector from "../src/UpdatedPackagesCollector";
 import exitWithCode from "./helpers/exitWithCode";
 import initFixture from "./helpers/initFixture";
 import logger from "../src/logger";
@@ -149,7 +150,7 @@ describe("UpdatedCommand", () => {
       child.execSync("git commit -m 'Commit'");
 
       const updatedCommand = new UpdatedCommand([], {
-        onlyExplicitUpdates: true
+        [UpdatedPackagesCollector.___SECRET_FLAG___]: true
       });
 
       updatedCommand.runValidations();
