@@ -7,16 +7,19 @@ import { padStart } from "lodash";
 import mkdirp from "mkdirp";
 import pify from "pify";
 import rimraf from "rimraf";
+import cpr from "cpr";
 
 const execAsync = pify(child.exec);
 const realpathAsync = pify(fs.realpath);
 
+const _cpr = pify(cpr);
 const _mkdirpAsync = pify(mkdirp);
 const _rimrafAsync = pify(rimraf);
 
 // graceful-fs overrides for rimraf
 const { unlink, chmod, stat, lstat, rmdir, readdir } = fs;
 
+export const cp = (from, to) => _cpr(from, to, { overwrite: true });
 export const mkdirpAsync = (fp) => _mkdirpAsync(fp, { fs });
 export const rimrafAsync = (fp) => _rimrafAsync(fp, { unlink, chmod, stat, lstat, rmdir, readdir });
 

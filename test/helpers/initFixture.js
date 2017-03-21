@@ -1,6 +1,6 @@
 import path from "path";
-import cp from "recursive-copy";
 import {
+  cp,
   fixtureNamer,
   getTempDir,
   gitInit,
