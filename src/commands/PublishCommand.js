@@ -14,14 +14,10 @@ import { EOL } from "os";
 
 export default class PublishCommand extends Command {
   initialize(callback) {
+    this.gitEnabled = !(this.flags.canary || this.flags.skipGit);
 
     if (this.flags.canary) {
       this.logger.info("Publishing canary build");
-    }
-
-    const currentBranch = GitUtilities.getCurrentBranchDescription();
-    if (currentBranch === "") {
-      callback("You are working on detached branch, create new branch to publish changes.");
     }
 
     if (!this.repository.isIndependent()) {
@@ -94,12 +90,17 @@ export default class PublishCommand extends Command {
 
   execute(callback) {
     try {
+      if (this.gitEnabled && GitUtilities.isDetachedHead()) {
+        throw new Error("Detached git HEAD, please checkout a branch to publish changes.");
+      }
+
       if (!this.repository.isIndependent() && !this.flags.canary) {
         this.updateVersionInLernaJson();
       }
 
       this.updateUpdatedPackages();
-      if (!this.flags.skipGit) {
+
+      if (this.gitEnabled) {
         this.commitAndTagUpdates();
       }
     } catch (err) {
@@ -137,7 +138,7 @@ export default class PublishCommand extends Command {
           return;
         }
 
-        if (!(this.flags.canary || this.flags.skipGit)) {
+        if (this.gitEnabled) {
           this.logger.info("Pushing tags to git...");
           this.logger.newLine();
           GitUtilities.pushWithTags(this.getOptions().gitRemote || "origin", this.tags);
@@ -220,12 +221,12 @@ export default class PublishCommand extends Command {
         });
       });
       callback(null, { versions });
-      // Independent Non-Canary Mode
+
+    // Independent Non-Canary Mode
     } else {
       async.mapLimit(this.updates, 1, (update, cb) => {
         this.promptVersion(update.package.name, update.package.version, cb);
       }, (err, versions) => {
-
         if (err) {
           return callback(err);
         }
@@ -370,7 +371,7 @@ export default class PublishCommand extends Command {
       changedFiles.push(packageJsonLocation);
     });
 
-    if (!(this.flags.canary || this.flags.skipGit)) {
+    if (this.gitEnabled) {
       changedFiles.forEach(GitUtilities.addFile);
     }
   }
@@ -392,12 +393,10 @@ export default class PublishCommand extends Command {
   }
 
   commitAndTagUpdates() {
-    if (!this.flags.canary) {
-      if (this.repository.isIndependent()) {
-        this.tags = this.gitCommitAndTagVersionForUpdates();
-      } else {
-        this.tags = [this.gitCommitAndTagVersion(this.masterVersion)];
-      }
+    if (this.repository.isIndependent()) {
+      this.tags = this.gitCommitAndTagVersionForUpdates();
+    } else {
+      this.tags = [this.gitCommitAndTagVersion(this.masterVersion)];
     }
   }
 
@@ -407,14 +406,17 @@ export default class PublishCommand extends Command {
 
     GitUtilities.commit(message);
     tags.forEach(GitUtilities.addTag);
+
     return tags;
   }
 
   gitCommitAndTagVersion(version) {
     const tag = "v" + version;
     const message = this.flags.message || tag;
+
     GitUtilities.commit(message);
     GitUtilities.addTag(tag);
+
     return tag;
   }
 

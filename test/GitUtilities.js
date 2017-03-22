@@ -1,5 +1,6 @@
 import assert from "assert";
 
+import ChildProcessUtilities from "../src/ChildProcessUtilities";
 import GitUtilities from "../src/GitUtilities";
 
 /**
@@ -8,6 +9,33 @@ import GitUtilities from "../src/GitUtilities";
  */
 
 describe("GitUtilities", () => {
+  const cpuExecSync = ChildProcessUtilities.execSync;
+
+  beforeEach(() => {
+    ChildProcessUtilities.execSync = jest.fn();
+  });
+
+  afterEach(() => {
+    ChildProcessUtilities.execSync = cpuExecSync;
+  });
+
+  describe(".isDetachedHead()", () => {
+    it("calls getCurrentBranch()", () => {
+      expect(() => GitUtilities.isDetachedHead()).not.toThrow();
+      expect(ChildProcessUtilities.execSync).lastCalledWith("git rev-parse --abbrev-ref HEAD");
+    });
+
+    it("returns true when branchName is HEAD", () => {
+      ChildProcessUtilities.execSync.mockImplementation(() => "HEAD");
+      expect(GitUtilities.isDetachedHead()).toBe(true);
+    });
+
+    it("returns false when branchName is not HEAD", () => {
+      ChildProcessUtilities.execSync.mockImplementation(() => "master");
+      expect(GitUtilities.isDetachedHead()).toBe(false);
+    });
+  });
+
   describe(".isInitialized()", () => {
     it("should exist", () => {
       assert.ok(GitUtilities.isInitialized);
@@ -86,15 +114,16 @@ describe("GitUtilities", () => {
     });
   });
 
-  describe(".getCurrentSHA()", () => {
-    it("should exist", () => {
-      assert.ok(GitUtilities.getCurrentSHA);
+  describe(".getCurrentBranch()", () => {
+    it("calls `git rev-parse --abbrev-ref HEAD`", () => {
+      expect(() => GitUtilities.getCurrentBranch()).not.toThrow();
+      expect(ChildProcessUtilities.execSync).lastCalledWith("git rev-parse --abbrev-ref HEAD");
     });
   });
 
-  describe(".getCurrentBranchDescription()", () => {
+  describe(".getCurrentSHA()", () => {
     it("should exist", () => {
-      assert.ok(GitUtilities.getCurrentBranchDescription);
+      assert.ok(GitUtilities.getCurrentSHA);
     });
   });
 

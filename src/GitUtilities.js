@@ -4,6 +4,12 @@ import escapeArgs from "command-join";
 
 export default class GitUtilities {
   @logger.logifySync()
+  static isDetachedHead() {
+    const branchName = GitUtilities.getCurrentBranch();
+    return branchName === "HEAD";
+  }
+
+  @logger.logifySync()
   static isInitialized() {
     try {
       // we only want the return code, so ignore stdout/stderr
@@ -78,6 +84,11 @@ export default class GitUtilities {
   }
 
   @logger.logifySync()
+  static getCurrentBranch() {
+    return ChildProcessUtilities.execSync("git rev-parse --abbrev-ref HEAD");
+  }
+
+  @logger.logifySync()
   static getCurrentSHA() {
     return ChildProcessUtilities.execSync("git rev-parse HEAD");
   }
@@ -90,16 +101,6 @@ export default class GitUtilities {
   @logger.logifySync()
   static checkoutChanges(changes) {
     ChildProcessUtilities.execSync("git checkout -- " + changes);
-  }
-
-  @logger.logifySync()
-  static getCurrentBranch() {
-    return ChildProcessUtilities.execSync("git symbolic-ref --short HEAD");
-  }
-
-  @logger.logifySync()
-  static getCurrentBranchDescription() {
-    return ChildProcessUtilities.execSync("git symbolic-ref --short -q HEAD");
   }
 
   @logger.logifySync()
