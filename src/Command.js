@@ -154,6 +154,12 @@ export default class Command {
       this._complete(null, 1);
       return;
     }
+
+    if (this.flags.onlyExplicitUpdates) {
+      this.logger.warn("`--only-explicit-updates` has been removed. This flag was only ever added for Babel and we never should have exposed it to everyone.");
+      this._complete(null, 1);
+      return;
+    }
   }
 
   runPreparations() {
