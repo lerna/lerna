@@ -12,6 +12,8 @@ export default function assertStubbedCalls(definitions) {
   let callCount = 0;
 
   function stubMethod(object, method) {
+    const objectMethodName = `${object.name}.${method}`;
+
     stub(object, method, function(...actualArgs) {
       const currentCount = callCount++;
       const current = expected[currentCount];
@@ -23,14 +25,15 @@ export default function assertStubbedCalls(definitions) {
       let {args, returns, throws} = current.call;
 
       try {
-        expect(object[method]).toBe(current.object[current.method]);
+        expect(`${current.object.name}.${current.method}`).toBe(objectMethodName);
+        expect(current.object[current.method]).toBe(object[method]);
 
         for (let a = 0; a < args.length; a++) {
           expect(actualArgs[a]).toEqual(args[a]);
         }
       } catch (err) {
         // prepend JestAssertionError message with useful metadata before re-throwing
-        err.message = `Call ${currentCount} of ${object.name}.${method}() has unexpected args!\n\n${err.message}`;
+        err.message = `Call ${currentCount} of ${objectMethodName}() has unexpected args!\n\n${err.message}`;
         throw err;
       }
 

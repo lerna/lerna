@@ -35,7 +35,6 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -45,6 +44,7 @@ describe("PublishCommand", () => {
           { args: ["Are you sure you want to publish the above changes?"], returns: true }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
           { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
@@ -80,7 +80,7 @@ describe("PublishCommand", () => {
 
           // No package-5.  It's private.
 
-          { args: ["git symbolic-ref --short HEAD"], returns: "master" },
+          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
           { args: ["git push origin master"] },
           { args: ["git push origin v1.0.1"] }
         ]],
@@ -133,7 +133,6 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -146,6 +145,7 @@ describe("PublishCommand", () => {
           { args: ["Are you sure you want to publish the above changes?"], returns: true }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-3/package.json"))] },
@@ -179,7 +179,7 @@ describe("PublishCommand", () => {
           { args: ["npm dist-tag rm package-2 lerna-temp"] },
           { args: ["npm dist-tag add package-2@1.1.0 latest"] },
 
-          { args: ["git symbolic-ref --short HEAD"], returns: "master" },
+          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
           { args: ["git push origin master"] },
           { args: ["git push origin package-1@1.0.1 package-2@1.1.0 package-3@2.0.0 package-4@1.1.0"] },
         ]]
@@ -229,7 +229,6 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] },
 
           { args: ["git rev-parse HEAD"], returns: "81e3b44339e1403fe3d762e9435b7c9a155fdef7" },
@@ -262,10 +261,6 @@ describe("PublishCommand", () => {
           { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.0-alpha.81e3b443" + EOL + "stable: 1.0.0" },
           { args: ["npm dist-tag rm package-2 lerna-temp"] },
           { args: ["npm dist-tag add package-2@1.0.0-alpha.81e3b443 canary"] },
-
-          { args: ["git symbolic-ref --short HEAD"], returns: "master" },
-          { args: ["git push origin master"] },
-          { args: ["git push origin v1.0.1"] }
         ]]
       ]);
 
@@ -319,7 +314,6 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] },
 
           { args: ["git rev-parse HEAD"], returns: "81e3b44339e1403fe3d762e9435b7c9a155fdef7" },
@@ -352,10 +346,6 @@ describe("PublishCommand", () => {
           { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 2.0.0-alpha.81e3b443" + EOL + "stable: 1.0.0" },
           { args: ["npm dist-tag rm package-2 lerna-temp"] },
           { args: ["npm dist-tag add package-2@2.0.0-alpha.81e3b443 canary"] },
-
-          { args: ["git symbolic-ref --short HEAD"], returns: "master" },
-          { args: ["git push origin master"] },
-          { args: ["git push origin v1.0.1"] }
         ]]
       ]);
 
@@ -407,7 +397,6 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -486,7 +475,6 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -496,6 +484,7 @@ describe("PublishCommand", () => {
           { args: ["Are you sure you want to publish the above changes?"], returns: true }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
           { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
@@ -555,7 +544,6 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -612,7 +600,6 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -622,6 +609,7 @@ describe("PublishCommand", () => {
           { args: ["Are you sure you want to publish the above changes?"], returns: true }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
           { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
@@ -641,7 +629,7 @@ describe("PublishCommand", () => {
 
           // No package-5.  It's private.
 
-          { args: ["git symbolic-ref --short HEAD"], returns: "master" },
+          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
           { args: ["git push origin master"] },
           { args: ["git push origin v1.0.1"] }
         ]],
@@ -672,7 +660,6 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -682,6 +669,7 @@ describe("PublishCommand", () => {
           { args: ["Are you sure you want to publish the above changes?"], returns: true }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
           { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
@@ -717,7 +705,7 @@ describe("PublishCommand", () => {
 
           // No package-5.  It's private.
 
-          { args: ["git symbolic-ref --short HEAD"], returns: "master" },
+          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
           { args: ["git push origin master"] },
           { args: ["git push origin v1.0.1"] }
         ]],
@@ -797,13 +785,13 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "confirm", { valueCallback: true }, [
           { args: ["Are you sure you want to publish the above changes?"], returns: true }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
           { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
@@ -839,7 +827,7 @@ describe("PublishCommand", () => {
 
           // No package-5.  It's private.
 
-          { args: ["git symbolic-ref --short HEAD"], returns: "master" },
+          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
           { args: ["git push origin master"] },
           { args: ["git push origin v1.0.1"] }
         ]],
@@ -908,13 +896,13 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "confirm", { valueCallback: true }, [
           { args: ["Are you sure you want to publish the above changes?"], returns: true }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
           { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
           { args: ["git commit -m \"$(echo \"v1.0.1\")\""] },
@@ -930,7 +918,7 @@ describe("PublishCommand", () => {
           { args: ["npm dist-tag rm package-1 lerna-temp", { env, cwd: path.join(testDir,"packages/package-1") }] },
           { args: ["npm dist-tag add package-1@1.0.1 latest", { env, cwd: path.join(testDir,"packages/package-1") }] },
 
-          { args: ["git symbolic-ref --short HEAD"], returns: "master" },
+          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
           { args: ["git push origin master"] },
           { args: ["git push origin v1.0.1"] }
         ]],
@@ -961,13 +949,13 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "confirm", { valueCallback: true }, [
           { args: ["Are you sure you want to publish the above changes?"], returns: true }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
           { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
@@ -1003,7 +991,7 @@ describe("PublishCommand", () => {
 
           // No package-5.  It's private.
 
-          { args: ["git symbolic-ref --short HEAD"], returns: "master" },
+          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
           { args: ["git push origin master"] },
           { args: ["git push origin v1.0.1"] }
         ]],
@@ -1057,13 +1045,13 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "confirm", { valueCallback: true }, [
           { args: ["Are you sure you want to publish the above changes?"], returns: true }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
           { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
@@ -1099,7 +1087,7 @@ describe("PublishCommand", () => {
 
           // No package-5.  It's private.
 
-          { args: ["git symbolic-ref --short HEAD"], returns: "master" },
+          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
           { args: ["git push origin master"] },
           { args: ["git push origin v1.0.1"] }
         ]],
@@ -1155,13 +1143,13 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "confirm", { valueCallback: true }, [
           { args: ["Are you sure you want to publish the above changes?"], returns: true }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
           { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
@@ -1197,7 +1185,7 @@ describe("PublishCommand", () => {
 
           // No package-5.  It's private.
 
-          { args: ["git symbolic-ref --short HEAD"], returns: "master" },
+          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
           { args: ["git push origin master"] },
           { args: ["git push origin v1.0.1"] }
         ]],
@@ -1254,13 +1242,13 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "confirm", { valueCallback: true }, [
           { args: ["Are you sure you want to publish the above changes?"], returns: true }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
           { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
@@ -1293,7 +1281,7 @@ describe("PublishCommand", () => {
           { args: ["npm dist-tag rm package-2 lerna-temp", { cwd: path.join(testDir,"packages/package-2") }] },
           { args: ["npm dist-tag add package-2@1.1.0 latest", { cwd: path.join(testDir,"packages/package-2") }] },
 
-          { args: ["git symbolic-ref --short HEAD"], returns: "master" },
+          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
           { args: ["git push origin master"] },
           { args: ["git push origin v1.1.0"] }
         ]],
@@ -1346,13 +1334,13 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "confirm", { valueCallback: true }, [
           { args: ["Are you sure you want to publish the above changes?"], returns: true }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-3/package.json"))] },
@@ -1386,7 +1374,7 @@ describe("PublishCommand", () => {
           { args: ["npm dist-tag rm package-2 lerna-temp"] },
           { args: ["npm dist-tag add package-2@2.0.1 latest"] },
 
-          { args: ["git symbolic-ref --short HEAD"], returns: "master" },
+          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
           { args: ["git push origin master"] },
           { args: ["git push origin package-1@1.0.1 package-2@2.0.1 package-3@3.0.1 package-4@4.0.1"] }
         ]],
@@ -1437,7 +1425,6 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -1447,6 +1434,7 @@ describe("PublishCommand", () => {
           { args: ["Are you sure you want to publish the above changes?"], returns: true }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
           { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
@@ -1482,7 +1470,7 @@ describe("PublishCommand", () => {
 
           // No package-5.  It's private.
 
-          { args: ["git symbolic-ref --short HEAD"], returns: "master" },
+          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
           { args: ["git push upstream master"] },
           { args: ["git push upstream v1.0.1"] }
         ]],
@@ -1535,7 +1523,6 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -1545,6 +1532,7 @@ describe("PublishCommand", () => {
           { args: ["Are you sure you want to publish the above changes?"], returns: true }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
           { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
@@ -1580,7 +1568,7 @@ describe("PublishCommand", () => {
 
           // No package-5.  It's private.
 
-          { args: ["git symbolic-ref --short HEAD"], returns: "master" },
+          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
           { args: ["git push origin master"] },
           { args: ["git push origin v1.0.1"] }
         ]],
@@ -1634,7 +1622,6 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [PromptUtilities, "select", { valueCallback: true }, [
@@ -1647,6 +1634,7 @@ describe("PublishCommand", () => {
           { args: ["Are you sure you want to publish the above changes?"], returns: true }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
           { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-3/package.json"))] },
@@ -1680,7 +1668,7 @@ describe("PublishCommand", () => {
           { args: ["npm dist-tag rm package-2 lerna-temp"] },
           { args: ["npm dist-tag add package-2@1.1.0 latest"] },
 
-          { args: ["git symbolic-ref --short HEAD"], returns: "master" },
+          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
           { args: ["git push origin master"] },
           { args: ["git push origin package-1@1.0.1 package-2@1.1.0 package-3@2.0.0 package-4@1.1.0"] },
         ]]
@@ -1732,7 +1720,6 @@ describe("PublishCommand", () => {
 
       assertStubbedCalls([
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git symbolic-ref --short -q HEAD"] },
           { args: ["git tag"] }
         ]],
         [ConventionalCommitUtilities, "recommendVersion", {}, [
@@ -1743,6 +1730,9 @@ describe("PublishCommand", () => {
         ]],
         [PromptUtilities, "confirm", { valueCallback: true }, [
           { args: ["Are you sure you want to publish the above changes?"], returns: true }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
         ]],
         [ConventionalCommitUtilities, "updateChangelog", {}, [
           { args: [{ name: "package-1", location: path.join(testDir, "packages/package-1") }] },
@@ -1788,7 +1778,7 @@ describe("PublishCommand", () => {
           { args: ["npm dist-tag rm package-2 lerna-temp"] },
           { args: ["npm dist-tag add package-2@1.1.0 latest"] },
 
-          { args: ["git symbolic-ref --short HEAD"], returns: "master" },
+          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
           { args: ["git push origin master"] },
           { args: ["git push origin package-1@1.0.1 package-2@1.1.0 package-3@2.0.0 package-4@1.1.0"] },
         ]]
@@ -1807,6 +1797,90 @@ describe("PublishCommand", () => {
 
           assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
           assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.1.0");
+          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
+  });
+
+  /** =========================================================================
+   * INDEPENDENT - CANARY + NPMTAG + YES + EXACT
+   * ======================================================================= */
+
+  describe("independent mode --canary --npm-tag=next --yes --exact", () => {
+    let testDir;
+
+    beforeEach(() => initFixture("PublishCommand/independent").then((dir) => {
+      testDir = dir;
+    }));
+
+    it("should publish the changed packages", (done) => {
+      const publishCommand = new PublishCommand([], {
+        independent: true,
+        canary: true,
+        npmTag: "next",
+        yes: true,
+        exact: true,
+      });
+
+      publishCommand.runValidations();
+      publishCommand.runPreparations();
+
+      assertStubbedCalls([
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git tag"] },
+
+          { args: ["git rev-parse HEAD"], returns: "81e3b44339e1403fe3d762e9435b7c9a155fdef7" },
+          { args: ["git rev-parse HEAD"], returns: "81e3b44339e1403fe3d762e9435b7c9a155fdef7" }
+        ]],
+        [ChildProcessUtilities, "exec", { nodeCallback: true }, [
+          { args: ["npm publish --tag lerna-temp"] },
+          { args: ["npm publish --tag lerna-temp"] },
+          { args: ["npm publish --tag lerna-temp"] },
+          { args: ["npm publish --tag lerna-temp"] },
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git checkout -- packages/*/package.json"] },
+
+          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.0-alpha.81e3b443" + EOL + "latest: 1.0.0" },
+          { args: ["npm dist-tag rm package-1 lerna-temp"] },
+          { args: ["npm dist-tag add package-1@1.0.0-alpha.81e3b443 next"] },
+
+          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 3.0.0-alpha.81e3b443" + EOL + "latest: 1.0.0" },
+          { args: ["npm dist-tag rm package-3 lerna-temp"] },
+          { args: ["npm dist-tag add package-3@3.0.0-alpha.81e3b443 next"] },
+
+          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 4.0.0-alpha.81e3b443" + EOL + "latest: 1.0.0" },
+          { args: ["npm dist-tag rm package-4 lerna-temp"] },
+          { args: ["npm dist-tag add package-4@4.0.0-alpha.81e3b443 next"] },
+
+          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 2.0.0-alpha.81e3b443" + EOL + "latest: 1.0.0" },
+          { args: ["npm dist-tag rm package-2 lerna-temp"] },
+          { args: ["npm dist-tag add package-2@2.0.0-alpha.81e3b443 next"] },
+        ]]
+      ]);
+
+      publishCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
+
+          // The following wouldn't be the actual results of a canary release
+          // because `git checkout --` would have removed the file changes.
+          // However, this is what would've been published to npm so it's
+          // useful to test.
+          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.0-alpha.81e3b443");
+          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "2.0.0-alpha.81e3b443");
+          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "3.0.0-alpha.81e3b443");
+          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "4.0.0-alpha.81e3b443");
+
+          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "1.0.0-alpha.81e3b443");
+          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "2.0.0-alpha.81e3b443");
           assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
 
           done();
