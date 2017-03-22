@@ -1,69 +1,173 @@
-import assert from "assert";
 import path from "path";
 
+// mocked modules
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
+import GitUtilities from "../src/GitUtilities";
+
+// helpers
+import callsBack from "./helpers/callsBack";
 import exitWithCode from "./helpers/exitWithCode";
-import DiffCommand from "../src/commands/DiffCommand";
 import initFixture from "./helpers/initFixture";
-import stub from "./helpers/stub";
+
+// file under test
+import DiffCommand from "../src/commands/DiffCommand";
+
+jest.mock("../src/ChildProcessUtilities");
+jest.mock("../src/GitUtilities");
 
 describe("DiffCommand", () => {
+  const callbackSuccess = callsBack(null, true);
+  const callbackNonZero = callsBack(1);
+
   let testDir;
 
   beforeEach(() => initFixture("DiffCommand/basic").then((dir) => {
     testDir = dir;
+    GitUtilities.hasCommit.mockImplementation(() => true);
   }));
+  afterEach(() => jest.resetAllMocks());
 
-  it("should diff everything", (done) => {
+  it("should diff everything from the first commit", (done) => {
+    GitUtilities.getFirstCommit.mockImplementation(() => "beefcafe");
+    ChildProcessUtilities.spawn.mockImplementation(callbackSuccess);
+
     const diffCommand = new DiffCommand([], {});
 
     diffCommand.runValidations();
     diffCommand.runPreparations();
 
-    stub(ChildProcessUtilities, "spawn", (command, args, opts, callback) => {
-      assert.equal(command, "git");
-      assert.equal(args[0], "diff");
-      assert.equal(args[1].length, 40); // commit
-      assert.equal(args[2], "--color=auto");
-      assert.equal(args[3], testDir);
-      callback();
-    });
+    diffCommand.runCommand(exitWithCode(0, (err) => {
+      if (err) return done.fail(err);
+      try {
+        expect(ChildProcessUtilities.spawn).lastCalledWith(
+          "git",
+          [
+            "diff",
+            "beefcafe",
+            "--color=auto",
+            testDir,
+          ],
+          {},
+          expect.any(Function)
+        );
+        done();
+      } catch (ex) {
+        done.fail(ex);
+      }
+    }));
+  });
 
-    diffCommand.runCommand(exitWithCode(0, done));
+  it("should diff everything from the most recent tag", (done) => {
+    GitUtilities.hasTags.mockImplementation(() => true);
+    GitUtilities.getLastTaggedCommit.mockImplementation(() => "cafedead");
+    ChildProcessUtilities.spawn.mockImplementation(callbackSuccess);
+
+    const diffCommand = new DiffCommand([], {});
+
+    diffCommand.runValidations();
+    diffCommand.runPreparations();
+
+    diffCommand.runCommand(exitWithCode(0, (err) => {
+      if (err) return done.fail(err);
+      try {
+        expect(ChildProcessUtilities.spawn).lastCalledWith(
+          "git",
+          [
+            "diff",
+            "cafedead",
+            "--color=auto",
+            testDir,
+          ],
+          {},
+          expect.any(Function)
+        );
+        done();
+      } catch (ex) {
+        done.fail(ex);
+      }
+    }));
   });
 
   it("should diff a specific package", (done) => {
+    GitUtilities.getFirstCommit.mockImplementation(() => "deadbeef");
+    ChildProcessUtilities.spawn.mockImplementation(callbackSuccess);
+
     const diffCommand = new DiffCommand(["package-1"], {});
 
     diffCommand.runValidations();
     diffCommand.runPreparations();
 
-    stub(ChildProcessUtilities, "spawn", (command, args, opts, callback) => {
-      assert.equal(command, "git");
-      assert.equal(args[0], "diff");
-      assert.equal(args[1].length, 40); // commit
-      assert.equal(args[2], "--color=auto");
-      assert.equal(args[3], path.join(testDir, "packages/package-1"));
-      callback();
-    });
+    diffCommand.runCommand(exitWithCode(0, (err) => {
+      if (err) return done.fail(err);
+      try {
+        expect(ChildProcessUtilities.spawn).lastCalledWith(
+          "git",
+          [
+            "diff",
+            "deadbeef",
+            "--color=auto",
+            path.join(testDir, "packages/package-1"),
+          ],
+          {},
+          expect.any(Function)
+        );
+        done();
+      } catch (ex) {
+        done.fail(ex);
+      }
+    }));
+  });
 
-    diffCommand.runCommand(exitWithCode(0, done));
+  it("should error when attempting to diff a package that doesn't exist", (done) => {
+    const diffCommand = new DiffCommand(["missing"], {});
+
+    diffCommand.runValidations();
+    diffCommand.runPreparations();
+
+    diffCommand.runCommand(exitWithCode(1, (err) => {
+      try {
+        expect(err.message).toBe("Package 'missing' does not exist.");
+        done();
+      } catch (ex) {
+        done.fail(ex);
+      }
+    }));
   });
 
   it("should error when running in a repository without commits", (done) => {
+    // override beforeEach mock
+    GitUtilities.hasCommit.mockImplementation(() => false);
+
     const diffCommand = new DiffCommand(["package-1"], {});
 
     diffCommand.runValidations();
     diffCommand.runPreparations();
 
-    stub(ChildProcessUtilities, "execSync", (command) => {
-      assert.equal(command, "git log");
-      throw new Error("fatal: your current branch 'master' does not have any commits yet");
-    });
+    diffCommand.runCommand(exitWithCode(1, (err) => {
+      try {
+        expect(err.message).toBe("Can't diff. There are no commits in this repository, yet.");
+        done();
+      } catch (ex) {
+        done.fail(ex);
+      }
+    }));
+  });
 
-    diffCommand.initialize((err) => {
-      assert.equal(err.message, "Can't diff. There are no commits in this repository, yet.");
-      done();
-    });
+  it("should error when git diff exits non-zero", (done) => {
+    ChildProcessUtilities.spawn.mockImplementation(callbackNonZero);
+
+    const diffCommand = new DiffCommand(["package-1"], {});
+
+    diffCommand.runValidations();
+    diffCommand.runPreparations();
+
+    diffCommand.runCommand(exitWithCode(1, (err) => {
+      try {
+        expect(err.message).toBe("Errored while spawning `git diff`.");
+        done();
+      } catch (ex) {
+        done.fail(ex);
+      }
+    }));
   });
 });
