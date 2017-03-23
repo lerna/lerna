@@ -52,6 +52,7 @@
     "path-exists": "^2.1.0",
     "progress": "^2.0.0",
     "read-cmd-shim": "^1.0.1",
+    "read-pkg": "^2.0.0",
     "rimraf": "^2.6.1",
     "semver": "^5.1.0",
     "signal-exit": "^3.0.2"
