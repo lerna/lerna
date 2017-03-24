@@ -23,7 +23,7 @@ export const builder = {
 
 export default class ImportCommand extends Command {
   initialize(callback) {
-    const {yes} = this.getOptions();
+    const { yes } = this.getOptions();
     const inputPath = this.input[0];
 
     if (!inputPath) {
