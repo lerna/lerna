@@ -101,20 +101,45 @@ export default class FileSystemUtilities {
 
   @logger.logifySync()
   static isSymlink(filePath) {
-    const lstat = fs.lstatSync(filePath);
-    let isSymlink = lstat && lstat.isSymbolicLink()
-      ? path.resolve(path.dirname(filePath), fs.readlinkSync(filePath))
-      : false;
-    if (process.platform === "win32" && lstat) {
-      if (lstat.isFile() && !isSymlink) {
-        try {
-          return path.resolve(path.dirname(filePath), readCmdShim.sync(filePath));
-        } catch (e) {
-          return false;
-        }
-      }
-      isSymlink = isSymlink && path.resolve(isSymlink);
+    let result;
+
+    if (process.platform === "win32") {
+      result = resolveWindowsSymlink(filePath);
+    } else {
+      result = resolvePosixSymlink(filePath);
     }
-    return isSymlink;
+
+    return result;
   }
+}
+
+function resolveSymbolicLink(filePath) {
+  const lstat = fs.lstatSync(filePath);
+  const isSymlink = lstat.isSymbolicLink()
+    ? path.resolve(path.dirname(filePath), fs.readlinkSync(filePath))
+    : false;
+
+  return {
+    isSymlink,
+    lstat,
+  };
+}
+
+function resolvePosixSymlink(filePath) {
+  const {isSymlink} = resolveSymbolicLink(filePath);
+  return isSymlink;
+}
+
+function resolveWindowsSymlink(filePath) {
+  const {isSymlink, lstat} = resolveSymbolicLink(filePath);
+
+  if (lstat.isFile() && !isSymlink) {
+    try {
+      return path.resolve(path.dirname(filePath), readCmdShim.sync(filePath));
+    } catch (e) {
+      return false;
+    }
+  }
+
+  return isSymlink && path.resolve(isSymlink);
 }
