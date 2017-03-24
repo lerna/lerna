@@ -1,22 +1,8 @@
-import PackageUtilities from "../PackageUtilities";
 import NpmUtilities from "../NpmUtilities";
+import PackageUtilities from "../PackageUtilities";
 import Command from "../Command";
 
-const SUPPORTED_OPTS = {
-  stream: {
-    describe: "Stream output with lines prefixed by package."
-  }
-};
-
 export default class RunCommand extends Command {
-  static getSupportedOptions() {
-    return Object.assign({}, Command.getSupportedOptions(), SUPPORTED_OPTS);
-  }
-
-  static get describe() {
-    return "Run an npm script in each package that contains that script.";
-  }
-
   initialize(callback) {
     this.script = this.input[0];
     this.args = this.input.slice(1);
@@ -64,8 +50,7 @@ export default class RunCommand extends Command {
   }
 
   runScriptInPackage(pkg, callback) {
-    const {stream} = this.getAvailableOptions();
-    if (stream) {
+    if (this.getOptions().stream) {
       this.runScriptInPackageStreaming(pkg, callback);
     } else {
       this.runScriptInPackageCapturing(pkg, callback);

@@ -1,26 +1,11 @@
+import async from "async";
+import Command from "../Command";
 import FileSystemUtilities from "../FileSystemUtilities";
 import PromptUtilities from "../PromptUtilities";
-import Command from "../Command";
-import async from "async";
-
-const SUPPORTED_OPTS = {
-  yes: {
-    describe: "Skip all confirmation prompts"
-  }
-};
 
 export default class CleanCommand extends Command {
-  static getSupportedOptions() {
-    return Object.assign({}, Command.getSupportedOptions(), SUPPORTED_OPTS);
-  }
-
-  static get describe() {
-    return "Remove the node_modules directory from all packages.";
-  }
-
   initialize(callback) {
-    const {yes} = this.getAvailableOptions();
-    if (yes) {
+    if (this.flags.yes) {
       callback(null, true);
     } else {
       this.logger.info(`About to remove the following directories:\n${
