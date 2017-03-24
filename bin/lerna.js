@@ -64,6 +64,13 @@ logger.setLogLevel(cli.flags.loglevel);
 const commandName = cli.input[0];
 const Command = lerna.__commands__[commandName];
 
+console.log("Supported Flags for Commands:");
+Object.keys(lerna.__commands__)
+  .forEach((commandName) => {
+    // FIXME breaks...
+    console.log(lerna.__commands__[commandName].getSupportedOptions().toString());
+  });
+
 if (!Command) {
 
   // Don't emit "Invalid lerna command: undefined" when run with no command.

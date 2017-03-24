@@ -1,11 +1,19 @@
-import async from "async";
-import Command from "../Command";
 import FileSystemUtilities from "../FileSystemUtilities";
 import PromptUtilities from "../PromptUtilities";
+import Command from "../Command";
+import {uniq} from "lodash";
+import async from "async";
+
+const SUPPORTED_OPTS = ["yes"];
 
 export default class CleanCommand extends Command {
+  static getSupportedOptions() {
+    return uniq(Command.getSupportedOptions().concat(SUPPORTED_OPTS));
+  }
+
   initialize(callback) {
-    if (this.flags.yes) {
+    const {yes} = this.getAvailableOptions();
+    if (yes) {
       callback(null, true);
     } else {
       this.logger.info(`About to remove the following directories:\n${

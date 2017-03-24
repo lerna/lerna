@@ -1,8 +1,15 @@
-import NpmUtilities from "../NpmUtilities";
 import PackageUtilities from "../PackageUtilities";
+import NpmUtilities from "../NpmUtilities";
 import Command from "../Command";
+import {uniq} from "lodash";
+
+const SUPPORTED_OPTS = ["stream"];
 
 export default class RunCommand extends Command {
+  static getSupportedOptions() {
+    return uniq(Command.getSupportedOptions().concat(SUPPORTED_OPTS));
+  }
+
   initialize(callback) {
     this.script = this.input[0];
     this.args = this.input.slice(1);
@@ -50,7 +57,8 @@ export default class RunCommand extends Command {
   }
 
   runScriptInPackage(pkg, callback) {
-    if (this.getOptions().stream) {
+    const {stream} = this.getAvailableOptions();
+    if (stream) {
       this.runScriptInPackageStreaming(pkg, callback);
     } else {
       this.runScriptInPackageCapturing(pkg, callback);
