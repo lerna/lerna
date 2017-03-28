@@ -94,6 +94,15 @@ describe("Package", () => {
     });
   });
 
+  describe(".toJSON()", () => {
+    it("should return internal package for serialization", () => {
+      assert.equal(
+        JSON.stringify(pkg, null, 2),
+        JSON.stringify(pkg._package, null, 2),
+      );
+    });
+  });
+
   describe(".runScript()", () => {
     it("should run the script", (done) => {
       assertStubbedCalls([

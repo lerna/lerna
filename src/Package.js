@@ -65,6 +65,10 @@ export default class Package {
     return JSON.stringify(this._package, null, 2) + "\n";
   }
 
+  toJSON() {
+    return this._package;
+  }
+
   /**
    * Run a NPM script in this package's directory
    * @param {String} script NPM script to run
