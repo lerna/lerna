@@ -8,6 +8,14 @@ import escapeArgs from "command-join";
 import path from "path";
 import semver from "semver";
 
+// Take a dep like "foo@^1.0.0".
+// Return a tuple like ["foo", "^1.0.0"].
+// Handles scoped packages.
+// Returns undefined for version if none specified.
+function splitVersion(dep) {
+  return dep.match(/^(@?[^@]+)(?:@(.+))?/).slice(1, 3);
+}
+
 export default class NpmUtilities {
   @logger.logifyAsync()
   static installInDir(directory, dependencies, config, callback) {
@@ -48,7 +56,7 @@ export default class NpmUtilities {
       // Construct a basic fake package.json with just the deps we need to install.
       const tempJson = {
         dependencies: dependencies.reduce((deps, dep) => {
-          const [pkg, version] = NpmUtilities.splitVersion(dep);
+          const [pkg, version] = splitVersion(dep);
           deps[pkg] = version || "*";
           return deps;
         }, {})
@@ -59,14 +67,6 @@ export default class NpmUtilities {
         ChildProcessUtilities.spawn(client || "npm", args, opts, done);
       }).catch(done);
     });
-  }
-
-  // Take a dep like "foo@^1.0.0".
-  // Return a tuple like ["foo", "^1.0.0"].
-  // Handles scoped packages.
-  // Returns undefined for version if none specified.
-  static splitVersion(dep) {
-    return dep.match(/^(@?[^@]+)(?:@(.+))?/).slice(1, 3);
   }
 
   @logger.logifySync()
