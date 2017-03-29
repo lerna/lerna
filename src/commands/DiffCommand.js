@@ -22,6 +22,14 @@ function getLastCommit(execOpts) {
 }
 
 export default class DiffCommand extends Command {
+  static getSupportedOptions() {
+    return Object.assign({}, Command.getSupportedOptions());
+  }
+
+  static get describe() {
+    return "Diff all packages or a single package since the last release.";
+  }
+
   initialize(callback) {
     const packageName = this.input[0];
 
