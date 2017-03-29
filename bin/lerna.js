@@ -11,7 +11,7 @@ const yargs = require("yargs");
 const _ = require("lodash");
 
 yargs.epilogue("For more information, find our manual at https://github.com/lerna/lerna");
-yargs.usage("$ lerna [command]");
+yargs.usage("$ lerna [command] [flags]");
 yargs.wrap(yargs.terminalWidth());
 yargs
   .option("loglevel", {
