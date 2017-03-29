@@ -1,0 +1,315 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`[independent --canary --npm-tag=next --yes --exact] npm dist-tag add 1`] = `
+Object {
+  "packages/package-1": "package-1@1.0.0-alpha.deadbeef next",
+  "packages/package-2": "package-2@2.0.0-alpha.deadbeef next",
+  "packages/package-3": "package-3@3.0.0-alpha.deadbeef next",
+  "packages/package-4": "package-4@4.0.0-alpha.deadbeef next",
+}
+`;
+
+exports[`[independent --canary] bumps package versions 1`] = `
+Object {
+  "packages/package-1": "1.0.0-alpha.deadbeef",
+  "packages/package-2": "2.0.0-alpha.deadbeef",
+  "packages/package-3": "3.0.0-alpha.deadbeef",
+  "packages/package-4": "4.0.0-alpha.deadbeef",
+}
+`;
+
+exports[`[independent --canary] npm dist-tag add 1`] = `
+Object {
+  "packages/package-1": "package-1@1.0.0-alpha.deadbeef canary",
+  "packages/package-2": "package-2@2.0.0-alpha.deadbeef canary",
+  "packages/package-3": "package-3@3.0.0-alpha.deadbeef canary",
+  "packages/package-4": "package-4@4.0.0-alpha.deadbeef canary",
+}
+`;
+
+exports[`[independent --cd-version] git commit message 1`] = `
+"Publish
+
+ - package-1@1.0.1
+ - package-2@2.0.1
+ - package-3@3.0.1
+ - package-4@4.0.1"
+`;
+
+exports[`[independent --conventional-commits] git adds changed files 1`] = `
+Array [
+  "packages/package-1/CHANGELOG.md",
+  "packages/package-1/package.json",
+  "packages/package-2/CHANGELOG.md",
+  "packages/package-2/package.json",
+  "packages/package-3/CHANGELOG.md",
+  "packages/package-3/package.json",
+  "packages/package-4/CHANGELOG.md",
+  "packages/package-4/package.json",
+]
+`;
+
+exports[`[independent --conventional-commits] git commit message 1`] = `
+"Publish
+
+ - package-1@1.0.1
+ - package-2@1.1.0
+ - package-3@2.0.0
+ - package-4@1.1.0"
+`;
+
+exports[`[independent] bumps package versions 1`] = `
+Object {
+  "packages/package-1": "1.0.1",
+  "packages/package-2": "1.1.0",
+  "packages/package-3": "2.0.0",
+  "packages/package-4": "1.1.0",
+}
+`;
+
+exports[`[independent] git adds changed files 1`] = `
+Array [
+  "packages/package-1/package.json",
+  "packages/package-2/package.json",
+  "packages/package-3/package.json",
+  "packages/package-4/package.json",
+]
+`;
+
+exports[`[independent] git commit message 1`] = `
+"Publish
+
+ - package-1@1.0.1
+ - package-2@1.1.0
+ - package-3@2.0.0
+ - package-4@1.1.0"
+`;
+
+exports[`[independent] git push <remote> [tags] 1`] = `
+Array [
+  "origin",
+  Array [
+    "package-1@1.0.1",
+    "package-2@1.1.0",
+    "package-3@2.0.0",
+    "package-4@1.1.0",
+  ],
+]
+`;
+
+exports[`[independent] git tags added 1`] = `
+Array [
+  "package-1@1.0.1",
+  "package-2@1.1.0",
+  "package-3@2.0.0",
+  "package-4@1.1.0",
+]
+`;
+
+exports[`[independent] npm dist-tag add 1`] = `
+Object {
+  "packages/package-1": "package-1@1.0.1 latest",
+  "packages/package-2": "package-2@1.1.0 latest",
+  "packages/package-3": "package-3@2.0.0 latest",
+  "packages/package-4": "package-4@1.1.0 latest",
+}
+`;
+
+exports[`[normal --canary] bumps package versions 1`] = `
+Object {
+  "packages/package-1": "1.0.0-alpha.deadbeef",
+  "packages/package-2": "1.0.0-alpha.deadbeef",
+  "packages/package-3": "1.0.0-alpha.deadbeef",
+  "packages/package-4": "1.0.0-alpha.deadbeef",
+  "packages/package-5": "1.0.0-alpha.deadbeef",
+}
+`;
+
+exports[`[normal --canary] npm dist-tag add 1`] = `
+Object {
+  "packages/package-1": "package-1@1.0.0-alpha.deadbeef canary",
+  "packages/package-2": "package-2@1.0.0-alpha.deadbeef canary",
+  "packages/package-3": "package-3@1.0.0-alpha.deadbeef canary",
+  "packages/package-4": "package-4@1.0.0-alpha.deadbeef canary",
+}
+`;
+
+exports[`[normal --ignore] git adds changed files 1`] = `
+Array [
+  "lerna.json",
+  "packages/package-1/package.json",
+  "packages/package-5/package.json",
+]
+`;
+
+exports[`[normal --ignore] npm publish --tag 1`] = `
+Array [
+  Object {
+    "dir": "packages/package-1",
+    "tag": "lerna-temp",
+  },
+]
+`;
+
+exports[`[normal --npm-tag] npm dist-tag add 1`] = `
+Object {
+  "packages/package-1": "package-1@1.0.1 custom",
+  "packages/package-2": "package-2@1.0.1 custom",
+  "packages/package-3": "package-3@1.0.1 custom",
+  "packages/package-4": "package-4@1.0.1 custom",
+}
+`;
+
+exports[`[normal --skip-git --skip-npm] bumps package versions 1`] = `
+Object {
+  "packages/package-1": "1.0.1",
+  "packages/package-2": "1.0.1",
+  "packages/package-3": "1.0.1",
+  "packages/package-4": "1.0.1",
+  "packages/package-5": "1.0.1",
+}
+`;
+
+exports[`[normal --skip-git] npm dist-tag add 1`] = `
+Object {
+  "packages/package-1": "package-1@1.0.1 latest",
+  "packages/package-2": "package-2@1.0.1 latest",
+  "packages/package-3": "package-3@1.0.1 latest",
+  "packages/package-4": "package-4@1.0.1 latest",
+}
+`;
+
+exports[`[normal --skip-temp-tag] npm publish --tag 1`] = `
+Array [
+  Object {
+    "dir": "packages/package-1",
+    "tag": "latest",
+  },
+  Object {
+    "dir": "packages/package-3",
+    "tag": "latest",
+  },
+  Object {
+    "dir": "packages/package-4",
+    "tag": "latest",
+  },
+  Object {
+    "dir": "packages/package-2",
+    "tag": "latest",
+  },
+]
+`;
+
+exports[`[normal] bumps package versions 1`] = `
+Object {
+  "packages/package-1": "1.0.1",
+  "packages/package-2": "1.0.1",
+  "packages/package-3": "1.0.1",
+  "packages/package-4": "1.0.1",
+  "packages/package-5": "1.0.1",
+}
+`;
+
+exports[`[normal] git adds changed files 1`] = `
+Array [
+  "lerna.json",
+  "packages/package-1/package.json",
+  "packages/package-2/package.json",
+  "packages/package-3/package.json",
+  "packages/package-4/package.json",
+  "packages/package-5/package.json",
+]
+`;
+
+exports[`[normal] git push <remote> [tags] 1`] = `
+Array [
+  "origin",
+  Array [
+    "v1.0.1",
+  ],
+]
+`;
+
+exports[`[normal] npm dist-tag add 1`] = `
+Object {
+  "packages/package-1": "package-1@1.0.1 latest",
+  "packages/package-2": "package-2@1.0.1 latest",
+  "packages/package-3": "package-3@1.0.1 latest",
+  "packages/package-4": "package-4@1.0.1 latest",
+}
+`;
+
+exports[`[normal] npm dist-tag rm 1`] = `
+Object {
+  "packages/package-1": "lerna-temp",
+  "packages/package-2": "lerna-temp",
+  "packages/package-3": "lerna-temp",
+  "packages/package-4": "lerna-temp",
+}
+`;
+
+exports[`[normal] npm publish --tag 1`] = `
+Array [
+  Object {
+    "dir": "packages/package-1",
+    "tag": "lerna-temp",
+  },
+  Object {
+    "dir": "packages/package-3",
+    "tag": "lerna-temp",
+  },
+  Object {
+    "dir": "packages/package-4",
+    "tag": "lerna-temp",
+  },
+  Object {
+    "dir": "packages/package-2",
+    "tag": "lerna-temp",
+  },
+]
+`;
+
+exports[`[normal] prompt 1`] = `
+Array [
+  Array [
+    "Select a new version (currently 1.0.0)",
+    Object {
+      "choices": Array [
+        Object {
+          "name": "Patch (1.0.1)",
+          "value": "1.0.1",
+        },
+        Object {
+          "name": "Minor (1.1.0)",
+          "value": "1.1.0",
+        },
+        Object {
+          "name": "Major (2.0.0)",
+          "value": "2.0.0",
+        },
+        Object {
+          "name": "Prepatch (1.0.1-0)",
+          "value": "1.0.1-0",
+        },
+        Object {
+          "name": "Preminor (1.1.0-0)",
+          "value": "1.1.0-0",
+        },
+        Object {
+          "name": "Premajor (2.0.0-0)",
+          "value": "2.0.0-0",
+        },
+        Object {
+          "name": "Prerelease",
+          "value": "PRERELEASE",
+        },
+        Object {
+          "name": "Custom",
+          "value": "CUSTOM",
+        },
+      ],
+    },
+    [Function],
+  ],
+]
+`;
