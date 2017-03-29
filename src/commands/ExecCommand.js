@@ -3,6 +3,14 @@ import PackageUtilities from "../PackageUtilities";
 import Command from "../Command";
 
 export default class ExecCommand extends Command {
+  static getSupportedOptions() {
+    return Object.assign({}, Command.getSupportedOptions());
+  }
+
+  static get describe() {
+    return "Run an arbitrary command in each package.";
+  }
+
   initialize(callback) {
     this.command = this.input[0];
     this.args = this.input.slice(1);

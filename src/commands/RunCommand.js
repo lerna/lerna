@@ -1,13 +1,20 @@
 import PackageUtilities from "../PackageUtilities";
 import NpmUtilities from "../NpmUtilities";
 import Command from "../Command";
-import {uniq} from "lodash";
 
-const SUPPORTED_OPTS = ["stream"];
+const SUPPORTED_OPTS = {
+  stream: {
+    describe: "Stream output with lines prefixed by package."
+  }
+};
 
 export default class RunCommand extends Command {
   static getSupportedOptions() {
-    return uniq(Command.getSupportedOptions().concat(SUPPORTED_OPTS));
+    return Object.assign({}, Command.getSupportedOptions(), SUPPORTED_OPTS);
+  }
+
+  static get describe() {
+    return "Run an npm script in each package that contains that script.";
   }
 
   initialize(callback) {

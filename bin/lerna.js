@@ -7,68 +7,39 @@
 const lerna = require("../lib/index");
 const logger = require("../lib/logger");
 const chalk = require("chalk");
-const meow = require("meow");
+const yargs = require("yargs");
+const _ = require("lodash");
 
-const cli = meow([
-  "Usage",
-  "  $ lerna [command]",
-  "",
-  "Commands:",
-  "  bootstrap  Link together local packages and npm install remaining package dependencies",
-  "  publish    Publish updated packages to npm",
-  "  updated    Check which packages have changed since the last release",
-  "  import     Import a package with git history from an external repository",
-  "  clean      Remove the node_modules directory from all packages",
-  "  diff       Diff all packages or a single package since the last release",
-  "  init       Initialize a lerna repo",
-  "  run        Run npm script in each package",
-  "  exec       Run a command in each package",
-  "  ls         List all public packages",
-  "",
-  "Options:",
-  "  --independent, -i       Version packages independently",
-  "  --canary, -c            Publish packages after every successful merge using the sha as part of the tag",
-  "  --conventional-commits  Use angular conventional-commit format to determine version bump and generate CHANGELOG",
-  "  --git-remote [remote]   Push git changes to the specified remote instead of 'origin'",
-  "  --skip-git              Skip commiting, tagging, and pushing git changes (only affects publish)",
-  "  --skip-npm              Stop before actually publishing change to npm (only affects publish)",
-  "  --message, -m [msg]  Use a custom commit message when creating the publish commit (only affects publish)",
-  "  --exact                 Specify cross-dependency version numbers exactly rather than with a caret (^) (only affects publish and init)",
-  "  --npm-tag [tagname]     Publish packages with the specified npm dist-tag",
-  "  --npm-client [client]   Executable used to install dependencies (npm, yarn, pnpm, ...)",
-  "  --hoist [glob]          Install external dependencies matching [glob] to the repo root.  Use with no glob for all.",
-  "  --nohoist [glob]        Don't hoist external dependencies matching [glob] to the repo root",
-  "  --stream                Stream output with lines prefixed by package (only 'run')",
-  "  --scope [glob]          Restricts the scope to package names matching the given glob (Works only in combination with the 'run', 'exec', 'clean', 'ls' and 'bootstrap' commands).",
-  "  --ignore [glob]         Ignores packages with names matching the given glob (Works only in combination with the 'run', 'exec', 'clean', 'ls' and 'bootstrap' commands).",
-  "  --include-filtered-dependencies Flag to force lerna to include all dependencies and transitive dependencies when running 'bootstrap', even if they should not be included by the scope or ignore flags",
-  "  --force-publish         Force publish for the specified packages (comma-separated) or all packages using * (skips the git diff check for changed packages)",
-  "  --yes                   Skip all confirmation prompts",
-  "  --repo-version          Specify repo version to publish",
-  "  --concurrency           How many threads to use if lerna parallelises the tasks (defaults to 4)",
-  "  --loglevel              What level of logs to report (defaults to \"info\").  On failure, all logs are written to lerna-debug.log in the current working directory.",
-  "  --no-sort            When executing tasks, ignore the dependency ordering of packages (only affects run, exec, publish and bootstrap)",
-], {
-  alias: {
-    independent: "i",
-    canary: "c",
-    message: "m",
-    forcePublish: "force-version"
-  }
-});
+yargs.epilogue("For more information, find our manual at https://github.com/lerna/lerna");
+yargs.usage("$ lerna [command]");
+yargs.wrap(yargs.terminalWidth());
+yargs
+  .option("loglevel", {
+    default: "info",
+    describe: "What level of logs to report. On failure, all logs are written to lerna-debug.log in the current working directory.",
+    type: "string",
+    global: true
+  });
 
 require("signal-exit").unload();
 
-logger.setLogLevel(cli.flags.loglevel);
+logger.setLogLevel(yargs.argv.loglevel || "info");
 
-const commandName = cli.input[0];
+const commandName = yargs.argv._[0];
 const Command = lerna.__commands__[commandName];
 
-console.log("Supported Flags for Commands:");
 Object.keys(lerna.__commands__)
   .forEach((commandName) => {
-    // FIXME breaks...
-    console.log(lerna.__commands__[commandName].getSupportedOptions().toString());
+    const cmd = lerna.__commands__[commandName];
+    const opts = cmd.getSupportedOptions();
+    yargs.command(commandName, cmd.describe, (yargs) => {
+      Object.keys(opts)
+        .forEach((optionName) => {
+          let kebabName = _.kebabCase(optionName);
+          yargs.option(kebabName, opts[optionName]);
+        });
+      return yargs;
+    });
   });
 
 if (!Command) {
@@ -78,8 +49,15 @@ if (!Command) {
     console.log(chalk.red("Invalid lerna command: " + commandName));
   }
 
-  cli.showHelp();
+  yargs.showHelp();
+} else if (yargs.argv.help) {
+  yargs.showHelp();
 } else {
-  const command = new Command(cli.input.slice(1), cli.flags);
+  // camelCased properties will only be set when the user passed the flags in the CLI
+  // yargs seemingly does not provide a clean API which only returns flags given, so we should filter the flags for readability
+  const argsFiltered = _.omitBy(yargs.argv, (value, key) => {
+    return value === undefined || ["$0", "_"].indexOf(key) > -1 || key.indexOf("-") > -1;
+  });
+  const command = new Command(yargs.argv._.slice(1), argsFiltered);
   command.run();
 }

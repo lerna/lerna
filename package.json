@@ -80,7 +80,8 @@
     "jest": "^19.0.2",
     "normalize-newline": "^3.0.0",
     "normalize-path": "^2.1.1",
-    "replacestream": "^4.0.2"
+    "replacestream": "^4.0.2",
+    "yargs": "^7.0.2"
   },
   "jest": {
     "collectCoverageFrom": [

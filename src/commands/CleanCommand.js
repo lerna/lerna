@@ -1,14 +1,21 @@
 import FileSystemUtilities from "../FileSystemUtilities";
 import PromptUtilities from "../PromptUtilities";
 import Command from "../Command";
-import {uniq} from "lodash";
 import async from "async";
 
-const SUPPORTED_OPTS = ["yes"];
+const SUPPORTED_OPTS = {
+  yes: {
+    describe: "Skip all confirmation prompts"
+  }
+};
 
 export default class CleanCommand extends Command {
   static getSupportedOptions() {
-    return uniq(Command.getSupportedOptions().concat(SUPPORTED_OPTS));
+    return Object.assign({}, Command.getSupportedOptions(), SUPPORTED_OPTS);
+  }
+
+  static get describe() {
+    return "Remove the node_modules directory from all packages.";
   }
 
   initialize(callback) {

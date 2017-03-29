@@ -3,6 +3,14 @@ import chalk from "chalk";
 import columnify from "columnify";
 
 export default class LsCommand extends Command {
+  static getSupportedOptions() {
+    return Object.assign({}, Command.getSupportedOptions());
+  }
+
+  static get describe() {
+    return "List all public packages";
+  }
+
   initialize(callback) {
     // Nothing to do...
     callback(null, true);
