@@ -374,7 +374,7 @@ export default class PublishCommand extends Command {
     });
 
     if (this.gitEnabled) {
-      changedFiles.forEach(GitUtilities.addFile);
+      changedFiles.forEach((file) => GitUtilities.addFile(file));
     }
   }
 
@@ -407,7 +407,7 @@ export default class PublishCommand extends Command {
     const message = this.flags.message || tags.reduce((msg, tag) => msg + `${EOL} - ${tag}`, `Publish${EOL}`);
 
     GitUtilities.commit(message);
-    tags.forEach(GitUtilities.addTag);
+    tags.forEach((tag) => GitUtilities.addTag(tag));
 
     return tags;
   }
