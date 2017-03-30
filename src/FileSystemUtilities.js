@@ -1,7 +1,6 @@
-import fs from "graceful-fs";
+import fs from "fs-promise";
 import pathExists from "path-exists";
 import logger from "./logger";
-import mkdirp from "mkdirp";
 import cmdShim from "cmd-shim";
 import readCmdShim from "read-cmd-shim";
 import path from "path";
@@ -16,7 +15,7 @@ function ensureEndsWithNewLine(string) {
 export default class FileSystemUtilities {
   @logger.logifyAsync()
   static mkdirp(filePath, callback) {
-    mkdirp(filePath, { fs }, callback);
+    fs.ensureDir(filePath, callback);
   }
 
   @logger.logifySync()
