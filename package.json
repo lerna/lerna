@@ -50,7 +50,7 @@
     "meow": "^3.7.0",
     "minimatch": "^3.0.0",
     "normalize-path": "^2.0.1",
-    "path-exists": "^2.1.0",
+    "path-exists": "^3.0.0",
     "progress": "^2.0.0",
     "read-cmd-shim": "^1.0.1",
     "read-pkg": "^2.0.0",
