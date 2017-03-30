@@ -44,7 +44,7 @@
     "fs-promise": "^2.0.2",
     "glob": "^7.0.6",
     "graceful-fs": "^4.1.11",
-    "inquirer": "^3.0.1",
+    "inquirer": "^3.0.6",
     "load-json-file": "^2.0.0",
     "lodash": "^4.17.4",
     "meow": "^3.7.0",
