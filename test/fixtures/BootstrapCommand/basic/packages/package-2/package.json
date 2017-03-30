@@ -1,5 +1,5 @@
 {
-  "name": "package-2",
+  "name": "@test/package-2",
   "version": "1.0.0",
   "bin": "cli.js",
   "dependencies": {

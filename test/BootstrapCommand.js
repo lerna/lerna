@@ -235,7 +235,7 @@ describe("BootstrapCommand", () => {
             "package-1 should be symlinked to package-3"
           );
           assert.equal(
-            normalize(resolveSymlink(path.join(testDir, "packages", "package-3", "node_modules", "package-2"))),
+            normalize(resolveSymlink(path.join(testDir, "packages", "package-3", "node_modules", "@test", "package-2"))),
             normalize(path.join(testDir, "packages", "package-2")),
             "package-2 should be symlinked to package-3"
           );
@@ -342,7 +342,7 @@ describe("BootstrapCommand", () => {
             "package-1 should be symlinked to package-3"
           );
           assert.equal(
-            normalize(resolveSymlink(path.join(testDir, "packages", "package-3", "node_modules", "package-2"))),
+            normalize(resolveSymlink(path.join(testDir, "packages", "package-3", "node_modules", "@test", "package-2"))),
             normalize(path.join(testDir, "packages", "package-2")),
             "package-2 should be symlinked to package-3"
           );
