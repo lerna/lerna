@@ -77,8 +77,7 @@
     "eslint-plugin-babel": "^3.3.0",
     "eslint-plugin-flow-vars": "^0.5.0",
     "jest": "^19.0.2",
-    "normalize-newline": "^2.1.0",
-    "pify": "^2.3.0"
+    "normalize-newline": "^2.1.0"
   },
   "jest": {
     "collectCoverageFrom": [
