@@ -2706,9 +2706,9 @@ nopt@~3.0.6:
   dependencies:
     abbrev "1"
 
-normalize-newline@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/normalize-newline/-/normalize-newline-2.1.0.tgz#e2e4f101382abd9569a1f41c1e34f4a0473ea060"
+normalize-newline@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/normalize-newline/-/normalize-newline-3.0.0.tgz#1cbea804aba436001f83938ab21ec039d69ae9d3"
 
 normalize-package-data@^2.3.0, normalize-package-data@^2.3.2, normalize-package-data@^2.3.4, normalize-package-data@^2.3.5:
   version "2.3.5"
