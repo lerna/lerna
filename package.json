@@ -51,7 +51,6 @@
     "minimatch": "^3.0.0",
     "mkdirp": "^0.5.1",
     "normalize-path": "^2.0.1",
-    "object-assign-sorted": "^2.0.1",
     "path-exists": "^2.1.0",
     "progress": "^2.0.0",
     "read-cmd-shim": "^1.0.1",
