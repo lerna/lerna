@@ -22,11 +22,3 @@ export const __commands__ = exposeCommands([
   ExecCommand,
   LsCommand,
 ]);
-
-import PackageUtilities from "./PackageUtilities";
-
-export const getPackagesPath = PackageUtilities.getPackagesPath;
-export const getPackagePath = PackageUtilities.getPackagePath;
-export const getPackageConfigPath = PackageUtilities.getPackageConfigPath;
-export const getPackageConfig = PackageUtilities.getPackageConfig;
-export const getPackages = PackageUtilities.getPackages;
