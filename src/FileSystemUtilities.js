@@ -14,11 +14,6 @@ function ensureEndsWithNewLine(string) {
 }
 
 export default class FileSystemUtilities {
-  @logger.logifySync()
-  static mkdirSync(filePath) {
-    fs.mkdirSync(filePath);
-  }
-
   @logger.logifyAsync()
   static mkdirp(filePath, callback) {
     mkdirp(filePath, { fs }, callback);
