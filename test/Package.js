@@ -1,8 +1,13 @@
-import assert from "assert";
+// mocked modules
+import NpmUtilities from "../src/NpmUtilities";
 
+// helpers
+import callsBack from "./helpers/callsBack";
+
+// file under test
 import Package from "../src/Package";
-import ChildProcessUtilities from "../src/ChildProcessUtilities";
-import assertStubbedCalls from "./helpers/assertStubbedCalls";
+
+jest.mock("../src/NpmUtilities");
 
 describe("Package", () => {
   let pkg;
@@ -24,56 +29,56 @@ describe("Package", () => {
 
   describe("get .name", () => {
     it("should return the name", () => {
-      assert.equal(pkg.name, "my-package");
+      expect(pkg.name).toBe("my-package");
     });
   });
 
   describe("get .location", () => {
     it("should return the location", () => {
-      assert.equal(pkg.location, "/path/to/package");
+      expect(pkg.location).toBe("/path/to/package");
     });
   });
 
   describe("get .version", () => {
     it("should return the version", () => {
-      assert.equal(pkg.version, "1.0.0");
+      expect(pkg.version).toBe("1.0.0");
     });
   });
 
   describe("set .version", () => {
     it("should return the version", () => {
       pkg.version = "2.0.0";
-      assert.equal(pkg.version, "2.0.0");
+      expect(pkg.version).toBe("2.0.0");
     });
   });
 
   describe("get .bin", () => {
     it("should return the bin", () => {
-      assert.equal(pkg.bin, "bin.js");
+      expect(pkg.bin).toBe("bin.js");
     });
   });
 
   describe("get .dependencies", () => {
     it("should return the dependencies", () => {
-      assert.deepEqual(pkg.dependencies, { "my-dependency": "^1.0.0" });
+      expect(pkg.dependencies).toEqual({ "my-dependency": "^1.0.0" });
     });
   });
 
   describe("get .devDependencies", () => {
     it("should return the devDependencies", () => {
-      assert.deepEqual(pkg.devDependencies, { "my-dev-dependency": "^1.0.0" });
+      expect(pkg.devDependencies).toEqual({ "my-dev-dependency": "^1.0.0" });
     });
   });
 
   describe("get .peerDependencies", () => {
     it("should return the peerDependencies", () => {
-      assert.deepEqual(pkg.peerDependencies, { "my-peer-dependency": "^1.0.0" });
+      expect(pkg.peerDependencies).toEqual({ "my-peer-dependency": "^1.0.0" });
     });
   });
 
   describe("get .allDependencies", () => {
     it("should return the combined dependencies", () => {
-      assert.deepEqual(pkg.allDependencies, {
+      expect(pkg.allDependencies).toEqual({
         "my-dependency": "^1.0.0",
         "my-dev-dependency": "^1.0.0"
       });
@@ -82,7 +87,7 @@ describe("Package", () => {
 
   describe("get .scripts", () => {
     it("should return the scripts", () => {
-      assert.deepEqual(pkg.scripts, {
+      expect(pkg.scripts).toEqual({
         "my-script": "echo 'hello world'"
       });
     });
@@ -90,63 +95,62 @@ describe("Package", () => {
 
   describe(".isPrivate()", () => {
     it("should return if the package is private", () => {
-      assert.equal(pkg.isPrivate(), false);
+      expect(pkg.isPrivate()).toBe(false);
     });
   });
 
   describe(".toJSON()", () => {
     it("should return internal package for serialization", () => {
-      assert.equal(
-        JSON.stringify(pkg, null, 2),
-        JSON.stringify(pkg._package, null, 2),
+      expect(JSON.stringify(pkg, null, 2)).toBe(
+        JSON.stringify(pkg._package, null, 2)
       );
     });
   });
 
   describe(".runScript()", () => {
     it("should run the script", (done) => {
-      assertStubbedCalls([
-        [ChildProcessUtilities, "exec", { nodeCallback: true }, [
-          {
-            args: [
-              "npm run my-script ",
-              {
-                cwd: "/path/to/package",
-                env: process.env
-              }
-            ]
-          }
-        ]]
-      ]);
+      NpmUtilities.runScriptInDir = jest.fn(callsBack());
 
       pkg.runScript("my-script", () => {
-        done();
+        try {
+          expect(NpmUtilities.runScriptInDir).lastCalledWith(
+            "my-script",
+            [],
+            pkg.location,
+            expect.any(Function)
+          );
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
       });
     });
   });
 
   describe(".hasMatchingDependency()", () => {
     it("should match included dependency", () => {
-      assert.equal(pkg.hasMatchingDependency({
+      expect(pkg.hasMatchingDependency({
         name: "my-dependency",
         version: "1.1.3"
-      }), true);
+      })).toBe(true);
+    });
+
+    it("should not match missing dependency", () => {
+      expect(pkg.hasMatchingDependency({ name: "missing", version: "1.0.0" })).toBe(false);
     });
 
     it("should not match included dependency", () => {
-      let called;
       const logger = {
-        warn(msg) {
-          called = msg;
-        }
+        warn: jest.fn(),
       };
       const result = pkg.hasMatchingDependency({
         name: "my-dev-dependency",
         version: "2.0.7"
       }, logger);
 
-      assert.equal(result, false);
-      assert.ok(called);
+      expect(result).toBe(false);
+      expect(logger.warn).toBeCalled();
     });
   });
 });
