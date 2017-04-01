@@ -6,6 +6,32 @@ import minimatch from "minimatch";
 import readPkg from "read-pkg";
 import async from "async";
 
+/**
+* A predicate that determines if a given package name satisfies a glob.
+*
+* @param {!String} name The package name
+* @param {String|Array<String>} glob The glob (or globs) to match a package name against
+* @param {Boolean} negate Negate glob pattern matches
+* @return {Boolean} The packages with a name matching the glob
+*/
+function filterPackage(name, glob, negate) {
+  // If there isn't a filter then we can just return the package.
+  if (!glob) return true;
+
+  // Include/exlude with no arguments implies splat.
+  // For example: `--hoist` is equivalent to `--hoist=**`.
+  // The double star here is to account for scoped packages.
+  if (glob === true) glob = "**";
+
+  if (!Array.isArray(glob)) glob = [glob];
+
+  if (negate) {
+    return glob.every((glob) => !minimatch(name, glob));
+  } else {
+    return glob.some((glob) => minimatch(name, glob));
+  }
+}
+
 export default class PackageUtilities {
   static getPackages({
     packageConfigs,
@@ -78,54 +104,23 @@ export default class PackageUtilities {
   * @param {String} filters.scope glob The glob to match the package name against
   * @param {String} filters.ignore glob The glob to filter the package name against
   * @return {Array.<Package>} The packages with a name matching the glob
+  * @throws when a given glob would produce an empty list of packages
   */
   static filterPackages(packages, {scope, ignore}) {
     packages = packages.slice();
     if (scope) {
-      packages = PackageUtilities._filterPackages(packages, scope);
+      packages = packages.filter((pkg) => filterPackage(pkg.name, scope));
+      if (!packages.length) {
+        throw new Error(`No packages found that match scope '${scope}'`);
+      }
     }
     if (ignore) {
-      packages = PackageUtilities._filterPackages(packages, ignore, true);
+      packages = packages.filter((pkg) => filterPackage(pkg.name, ignore, true));
+      if (!packages.length) {
+        throw new Error(`No packages remain after ignoring '${ignore}'`);
+      }
     }
     return packages;
-  }
-
-  /**
-  * Filters a given set of packages and returns all packages matching the given glob
-  *
-  * @param {!Array.<Package>} packages The packages to filter
-  * @param {String} glob The glob to match the package name against
-  * @param {Boolean} negate Negate glob pattern matches
-  * @return {Array.<Package>} The packages with a name matching the glob
-  * @throws in case a given glob would produce an empty list of packages
-  */
-  static _filterPackages(packages, glob, negate = false) {
-
-    packages = packages.filter((pkg) => PackageUtilities.filterPackage(pkg, glob, negate));
-
-    if (!packages.length) {
-      throw new Error(`No packages found that match '${glob}'`);
-    }
-    return packages;
-  }
-
-  static filterPackage(pkg, glob, negate = false) {
-
-    // If there isn't a filter then we can just return the package.
-    if (!glob) return true;
-
-    // Include/exlude with no arguments implies splat.
-    // For example: `--hoist` is equivalent to `--hoist=**`.
-    // The double star here is to account for scoped packages.
-    if (glob === true) glob = "**";
-
-    if (!Array.isArray(glob)) glob = [glob];
-
-    if (negate) {
-      return glob.every((glob) => !minimatch(pkg.name, glob));
-    } else {
-      return glob.some((glob) => minimatch(pkg.name, glob));
-    }
   }
 
   static getFilteredPackage(pkg, {scope, ignore}) {
