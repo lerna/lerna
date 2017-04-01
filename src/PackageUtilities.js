@@ -1,9 +1,9 @@
-import FileSystemUtilities from "./FileSystemUtilities";
 import PackageGraph from "./PackageGraph";
 import Package from "./Package";
 import path from "path";
-import {sync as globSync} from "glob";
+import glob from "glob";
 import minimatch from "minimatch";
+import readPkg from "read-pkg";
 import async from "async";
 
 export default class PackageUtilities {
@@ -12,22 +12,22 @@ export default class PackageUtilities {
     rootPath,
   }) {
     const packages = [];
+    const globOpts = {
+      cwd: rootPath,
+      strict: true,
+      absolute: true,
+    };
 
     packageConfigs.forEach((globPath) => {
-
-      globSync(path.join(rootPath, globPath, "package.json"))
-        .map((fn) => path.resolve(fn))
-        .forEach((packageConfigPath) => {
-          const packagePath = path.dirname(packageConfigPath);
-
-          if (!FileSystemUtilities.existsSync(packageConfigPath)) {
-            return;
-          }
-
-          const packageJson = require(packageConfigPath);
-          const pkg = new Package(packageJson, packagePath);
-
-          packages.push(pkg);
+      glob.sync(path.join(globPath, "package.json"), globOpts)
+        .forEach((globResult) => {
+          // https://github.com/isaacs/node-glob/blob/master/common.js#L104
+          // glob always returns "\\" as "/" in windows, so everyone
+          // gets normalized because we can't have nice things.
+          const packageConfigPath = path.normalize(globResult);
+          const packageDir = path.dirname(packageConfigPath);
+          const packageJson = readPkg.sync(packageConfigPath, { normalize: false });
+          packages.push(new Package(packageJson, packageDir));
         });
     });
 
