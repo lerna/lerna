@@ -67,7 +67,7 @@ export default class PackageUtilities {
     return packages;
   }
 
-  static getPackageGraph(packages, depsOnly = false) {
+  static getPackageGraph(packages, depsOnly) {
     return new PackageGraph(packages, depsOnly);
   }
 
@@ -82,6 +82,7 @@ export default class PackageUtilities {
   */
   static addDependencies(packages, packageGraph) {
     const dependentPackages = [];
+
     // the current list of packages we are expanding using breadth-first-search
     const fringe = packages.slice();
     const packageExistsInRepository = (packageName) => (!!packageGraph.get(packageName));
@@ -91,11 +92,13 @@ export default class PackageUtilities {
     while (fringe.length !== 0) {
       const pkg = fringe.shift();
       const pkgDeps = Object.assign({}, pkg.dependencies, pkg.devDependencies);
+
       Object.keys(pkgDeps).forEach((dep) => {
         if (packageExistsInRepository(dep) && !packageAlreadyFound(dep) && !packageInFringe(dep)) {
           fringe.push(packageGraph.get(dep).package);
         }
       });
+
       dependentPackages.push(pkg);
     }
 
@@ -106,34 +109,36 @@ export default class PackageUtilities {
   * Filters a given set of packages and returns all packages that match the scope glob
   * and do not match the ignore glob
   *
-  * @param {!Array.<Package>} packages The packages to filter
+  * @param {!Array.<Package>} packagesToFilter The packages to filter
   * @param {Object} filters The scope and ignore filters.
   * @param {String} filters.scope glob The glob to match the package name against
   * @param {String} filters.ignore glob The glob to filter the package name against
   * @return {Array.<Package>} The packages with a name matching the glob
   * @throws when a given glob would produce an empty list of packages
   */
-  static filterPackages(packages, {scope, ignore}) {
-    packages = packages.slice();
+  static filterPackages(packagesToFilter, { scope, ignore }) {
+    let packages = packagesToFilter.slice();
+
     if (scope) {
       packages = packages.filter((pkg) => filterPackage(pkg.name, scope));
+
       if (!packages.length) {
         throw new Error(`No packages found that match scope '${scope}'`);
       }
     }
+
     if (ignore) {
       packages = packages.filter((pkg) => filterPackage(pkg.name, ignore, true));
+
       if (!packages.length) {
         throw new Error(`No packages remain after ignoring '${ignore}'`);
       }
     }
+
     return packages;
   }
 
-  static topologicallyBatchPackages(packagesToBatch, {
-    depsOnly = false,
-    logger = null,
-  } = {}) {
+  static topologicallyBatchPackages(packagesToBatch, { depsOnly, logger } = {}) {
     // We're going to be chopping stuff out of this array, so copy it.
     const packages = packagesToBatch.slice();
     const packageGraph = PackageUtilities.getPackageGraph(packages, depsOnly);
