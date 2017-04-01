@@ -1,6 +1,7 @@
 import path from "path";
 import findUp from "find-up";
 import loadJsonFile from "load-json-file";
+import readPkg from "read-pkg";
 import semver from "semver";
 import PackageUtilities from "./PackageUtilities";
 import Package from "./Package";
@@ -67,7 +68,7 @@ export default class Repository {
   get packageJson() {
     if (!this._packageJson) {
       try {
-        this._packageJson = loadJsonFile.sync(this.packageJsonLocation);
+        this._packageJson = readPkg.sync(this.packageJsonLocation, { normalize: false });
       } catch (ex) {
         // try again next time
         this._packageJson = null;
