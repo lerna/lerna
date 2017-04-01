@@ -33,6 +33,13 @@ function filterPackage(name, glob, negate) {
 }
 
 export default class PackageUtilities {
+  static isHoistedPackage(name, hoist, nohoist) {
+    return (
+      filterPackage(name, hoist) &&
+      filterPackage(name, nohoist, true)
+    );
+  }
+
   static getPackages({
     packageConfigs,
     rootPath,
