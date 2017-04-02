@@ -1,85 +1,107 @@
-import assert from "assert";
-
-import progressBar from "../src/progressBar";
-import initFixture from "./helpers/initFixture";
-import Command, { exposeCommands } from "../src/Command";
+// mocked or stubbed modules
+import ChildProcessUtilities from "../src/ChildProcessUtilities";
+import FileSystemUtilities from "../src/FileSystemUtilities";
+import GitUtilities from "../src/GitUtilities";
 import logger from "../src/logger";
-import stub from "./helpers/stub";
+import progressBar from "../src/progressBar";
+
+// helpers
+import callsBack from "./helpers/callsBack";
+import initFixture from "./helpers/initFixture";
+
+// file under test
+import Command, { exposeCommands } from "../src/Command";
+
+jest.mock("../src/ChildProcessUtilities");
+jest.mock("../src/FileSystemUtilities");
+jest.mock("../src/GitUtilities");
 
 describe("Command", () => {
+  beforeEach(() => {
+    // only used to check for VERSION file
+    FileSystemUtilities.existsSync = jest.fn(() => false);
+
+    // only used in runValidations(), tested elsewhere
+    GitUtilities.isInitialized = jest.fn(() => true);
+  });
+
+  afterEach(() => jest.resetAllMocks());
+
   describe(".input", () => {
     it("should be added to the instance", () => {
       const command = new Command(["a", "b", "c"]);
-      assert.deepEqual(command.input, ["a", "b", "c"]);
+      expect(command.input).toEqual(["a", "b", "c"]);
     });
   });
 
   describe(".flags", () => {
     it("should be added to the instance", () => {
       const command = new Command(null, { foo: "bar" });
-      assert.deepEqual(command.flags, { foo: "bar" });
+      expect(command.flags).toEqual({ foo: "bar" });
     });
   });
 
   describe(".lernaVersion", () => {
     it("should be added to the instance", () => {
       const command = new Command();
-      assert.deepEqual(command.lernaVersion, require("../package.json").version);
+      expect(command.lernaVersion).toEqual(require("../package.json").version);
     });
   });
 
   describe(".progressBar", () => {
     it("should be added to the instance", () => {
       const command = new Command();
-      assert.equal(command.progressBar, progressBar);
+      expect(command.progressBar).toBe(progressBar);
     });
   });
 
   describe(".logger", () => {
     it("should be added to the instance", () => {
       const command = new Command();
-      assert.equal(command.logger, logger);
+      expect(command.logger).toBe(logger);
     });
   });
 
   describe(".concurrency", () => {
     it("should be added to the instance", () => {
       const command = new Command(null, { concurrency: 6 });
-      assert.equal(command.concurrency, 6);
+      expect(command.concurrency).toBe(6);
     });
 
     it("should fall back to default if concurrency given is NaN", () => {
       const command = new Command(null, { concurrency: "bla" });
-      assert.equal(command.concurrency, 4);
+      expect(command.concurrency).toBe(4);
     });
 
     it("should fall back to default if concurrency given is 0", () => {
-      assert.equal(new Command(null, { concurrency: 0 }).concurrency, 4);
+      expect(new Command(null, { concurrency: 0 }).concurrency).toBe(4);
     });
 
     it("should fall back to 1 if concurrency given is smaller than 1", () => {
-      assert.equal(new Command(null, { concurrency: -1 }).concurrency, 1);
+      expect(new Command(null, { concurrency: -1 }).concurrency).toBe(1);
     });
   });
 
   describe(".toposort", () => {
     it("is enabled by default", () => {
       const command = new Command([], {});
-      assert.equal(command.toposort, true);
+      expect(command.toposort).toBe(true);
     });
 
     it("is enabled when sort config is null", () => {
       const command = new Command([], { sort: null });
-      assert.equal(command.toposort, true);
+      expect(command.toposort).toBe(true);
     });
 
     it("is disabled when sort config is explicitly false (--no-sort)", () => {
       const command = new Command([], { sort: false });
-      assert.equal(command.toposort, false);
+      expect(command.toposort).toBe(false);
     });
   });
 
   describe(".run()", () => {
+    beforeEach(() => initFixture("Command/basic"));
+
     it("should exist", (done) => {
       class TestCommand extends Command {
         initialize(callback) {
@@ -93,6 +115,62 @@ describe("Command", () => {
       const testCommand = new TestCommand([], {});
       testCommand.run();
     });
+
+    describe("when complete", () => {
+      class ExitCommand extends Command {
+        initialize(callback) {
+          callback(null, true);
+        }
+        execute(callback) {
+          callback(null, true);
+        }
+      }
+
+      beforeEach(() => {
+        ChildProcessUtilities.onAllExited = jest.fn(callsBack());
+      });
+
+      [null, "process", "processes"].forEach((msg, idx) => {
+        const title = (msg === null)
+          ? "calls finish"
+          : `waits for ${idx} child ${msg}`;
+
+        it(title, (done) => {
+          ChildProcessUtilities.getChildProcessCount = jest.fn(() => idx);
+
+          const exitCommand = new ExitCommand([], {});
+          const logInfo = jest.spyOn(exitCommand.logger, "info");
+
+          exitCommand.runValidations();
+          exitCommand.runPreparations();
+
+          exitCommand.runCommand((err, code) => {
+            if (err) return done.fail(err);
+            try {
+              expect(code).toBe(0);
+
+              if (msg) {
+                expect(logInfo).lastCalledWith(
+                  expect.stringContaining(`Waiting for ${idx} child ${msg} to exit.`)
+                );
+              }
+
+              done();
+            } catch (ex) {
+              done.fail(ex);
+            }
+          });
+        });
+      });
+    });
+  });
+
+  describe(".runValidations()", () => {
+    it("needs tests");
+  });
+
+  describe(".runPreparations()", () => {
+    it("needs tests");
   });
 
   describe(".getOptions()", () => {
@@ -109,33 +187,41 @@ describe("Command", () => {
     }
 
     it("should pick up global options", () => {
-      assert.equal(new TestACommand([], {}).getOptions().testOption, "default");
+      const instance = new TestACommand([], {});
+      expect(instance.getOptions().testOption).toBe("default");
     });
 
     it("should override global options with command-level options", () => {
-      assert.equal(new TestBCommand([], {}).getOptions().testOption, "b");
+      const instance = new TestBCommand([], {});
+      expect(instance.getOptions().testOption).toBe("b");
     });
 
     it("should override global options with inherited command-level options", () => {
-      assert.equal(new TestCCommand([], {}).getOptions().testOption, "b");
+      const instance = new TestCCommand([], {});
+      expect(instance.getOptions().testOption).toBe("b");
     });
 
     it("should override inherited command-level options with local command-level options", () => {
-      assert.equal(new TestCCommand([], {}).getOptions().testOption2, "c");
+      const instance = new TestCCommand([], {});
+      expect(instance.getOptions().testOption2).toBe("c");
     });
 
     it("should override command-level options with passed-in options", () => {
-      assert.equal(new TestCCommand([], {}).getOptions({ testOption2: "p" }).testOption2, "p");
+      const instance = new TestCCommand([], {});
+      expect(instance.getOptions({ testOption2: "p" }).testOption2).toBe("p");
     });
 
     it("should sieve properly within passed-in options", () => {
-      assert.equal(new TestCCommand([], {}).getOptions({ testOption2: "p" }, { testOption2: "p2" }).testOption2, "p2");
+      const instance = new TestCCommand([], {});
+      expect(instance.getOptions({ testOption2: "p" }, { testOption2: "p2" }).testOption2).toBe("p2");
     });
 
     it("should override everything with a CLI flag", () => {
-      assert.equal(new TestCCommand([], { testOption2: "f" }).getOptions({ testOption2: "p" }).testOption2, "f");
+      const instance = new TestCCommand([], {
+        testOption2: "f",
+      });
+      expect(instance.getOptions({ testOption2: "p" }).testOption2).toBe("f");
     });
-
   });
 
   describe("legacy options", () => {
@@ -149,28 +235,31 @@ describe("Command", () => {
       }
 
       it("should warn when used", () => {
-        let called = false;
-        stub(logger, "warn", (message) => {
-          called = true;
-          assert.equal(message, "`bootstrapConfig.ignore` is deprecated.  Use `commands.bootstrap.ignore`.");
-        });
-        new BootstrapCommand([], {}).getOptions();
-        assert.ok(called, "warning was emitted");
+        const instance = new BootstrapCommand([], {});
+        const logWarn = jest.spyOn(instance.logger, "warn");
+
+        instance.getOptions();
+        expect(logWarn).lastCalledWith(
+          "`bootstrapConfig.ignore` is deprecated.  Use `commands.bootstrap.ignore`."
+        );
       });
 
       it("should provide a correct value", () => {
-        assert.equal(new BootstrapCommand([], {}).getOptions().ignore, "package-a");
+        const instance = new BootstrapCommand([], {});
+        expect(instance.getOptions().ignore).toBe("package-a");
       });
 
       it("should not warn with other commands", () => {
-        let called = false;
-        stub(logger, "warn", () => called = true);
-        new TestCommand([], {}).getOptions();
-        assert.ok(!called, "no warning was emitted");
+        const instance = new TestCommand([], {});
+        const logWarn = jest.spyOn(instance.logger, "warn");
+
+        instance.getOptions();
+        expect(logWarn).not.toBeCalled();
       });
 
       it("should not provide a value to other commands", () => {
-        assert.equal(new TestCommand([], {}).getOptions().ignore, undefined);
+        const instance = new TestCommand([], {});
+        expect(instance.getOptions().ignore).toBe(undefined);
       });
     });
 
@@ -179,28 +268,31 @@ describe("Command", () => {
       }
 
       it("should warn when used", () => {
-        let called = false;
-        stub(logger, "warn", (message) => {
-          called = true;
-          assert.equal(message, "`publishConfig.ignore` is deprecated.  Use `commands.publish.ignore`.");
-        });
-        new PublishCommand([], {}).getOptions();
-        assert.ok(called, "warning was emitted");
+        const instance = new PublishCommand([], {});
+        const logWarn = jest.spyOn(instance.logger, "warn");
+
+        instance.getOptions();
+        expect(logWarn).lastCalledWith(
+          "`publishConfig.ignore` is deprecated.  Use `commands.publish.ignore`."
+        );
       });
 
       it("should provide a correct value", () => {
-        assert.equal(new PublishCommand([], {}).getOptions().ignore, "package-b");
+        const instance = new PublishCommand([], {});
+        expect(instance.getOptions().ignore).toBe("package-b");
       });
 
       it("should not warn with other commands", () => {
-        let called = false;
-        stub(logger, "warn", () => called = true);
-        new TestCommand([], {}).getOptions();
-        assert.ok(!called, "no warning was emitted");
+        const instance = new TestCommand([], {});
+        const logWarn = jest.spyOn(instance.logger, "warn");
+
+        instance.getOptions();
+        expect(logWarn).not.toBeCalled();
       });
 
       it("should not provide a value to other commands", () => {
-        assert.equal(new TestCommand([], {}).getOptions().ignore, undefined);
+        const instance = new TestCommand([], {});
+        expect(instance.getOptions().ignore).toBe(undefined);
       });
     });
   });
@@ -216,22 +308,31 @@ describe("Command", () => {
     }
 
     it("makes a mapping from command names to classes", () => {
-      assert.deepEqual(exposeCommands([FooCommand, BarCommand]), {
+      expect(exposeCommands([FooCommand, BarCommand])).toEqual({
         foo: FooCommand,
         bar: BarCommand,
       });
     });
 
     it("fails on bad class name", () => {
-      assert.throws(() => exposeCommands([BadClassName]));
+      expect(() => exposeCommands([BadClassName])).toThrow();
     });
 
     it("fails on duplicate class", () => {
-      assert.throws(() => exposeCommands([FooCommand, FooCommand]));
+      expect(() => exposeCommands([FooCommand, FooCommand])).toThrow();
     });
 
     it("fails on class that doesn't extend Command", () => {
-      assert.throws(() => exposeCommands([NonCommand]));
+      expect(() => exposeCommands([NonCommand])).toThrow();
+    });
+  });
+
+  describe("subclass implementation", () => {
+    ["initialize", "execute"].forEach((method) => {
+      it(`throws if ${method}() is not overridden`, () => {
+        const command = new Command([], {});
+        expect(() => command[method]()).toThrow();
+      });
     });
   });
 });
