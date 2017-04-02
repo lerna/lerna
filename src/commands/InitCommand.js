@@ -30,7 +30,7 @@ export default class InitCommand extends Command {
   }
 
   ensurePackageJSON() {
-    let {packageJsonLocation, packageJson} = this.repository;
+    let packageJson = this.repository.packageJson;
 
     if (!packageJson) {
       packageJson = {};
@@ -53,39 +53,34 @@ export default class InitCommand extends Command {
       ? this.lernaVersion
       : `^${this.lernaVersion}`;
 
-    writePkg.sync(packageJsonLocation, packageJson);
+    writePkg.sync(this.repository.packageJsonLocation, packageJson);
   }
 
   ensureLernaJson() {
-    let {
-      versionLocation,
-      lernaJsonLocation,
-      lernaJson,
-      packageConfigs
-    } = this.repository;
+    // lernaJson already defaulted to empty object in Repository constructor
+    const lernaJson = this.repository.lernaJson;
 
     let version;
 
     if (this.flags.independent) {
       version = "independent";
-    } else if (FileSystemUtilities.existsSync(versionLocation)) {
-      version = FileSystemUtilities.readFileSync(versionLocation);
-    } else if (lernaJson.version) {
-      version = lernaJson.version;
+    } else if (FileSystemUtilities.existsSync(this.repository.versionLocation)) {
+      version = FileSystemUtilities.readFileSync(this.repository.versionLocation);
+    } else if (this.repository.version) {
+      version = this.repository.version;
     } else {
       version = "0.0.0";
     }
 
-    if (!FileSystemUtilities.existsSync(lernaJsonLocation)) {
+    if (!this.repository.initVersion) {
       this.logger.info("Creating lerna.json.");
-      // lernaJson already defaulted to empty object in Repository constructor
     } else {
       this.logger.info("Updating lerna.json.");
     }
 
     Object.assign(lernaJson, {
       lerna: this.lernaVersion,
-      packages: packageConfigs,
+      packages: this.repository.packageConfigs,
       version: version
     });
 
@@ -95,7 +90,7 @@ export default class InitCommand extends Command {
       _.set(lernaJson, `${configKey}.init.exact`, true);
     }
 
-    writeJsonFile.sync(lernaJsonLocation, lernaJson, { indent: 2 });
+    writeJsonFile.sync(this.repository.lernaJsonLocation, lernaJson, { indent: 2 });
   }
 
   ensureNoVersionFile() {
