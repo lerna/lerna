@@ -3,12 +3,12 @@ import Command from "../Command";
 import ChildProcessUtilities from "../ChildProcessUtilities";
 import find from "lodash/find";
 
-function getLastCommit() {
-  if (GitUtilities.hasTags()) {
-    return GitUtilities.getLastTaggedCommit();
+function getLastCommit(execOpts) {
+  if (GitUtilities.hasTags(execOpts)) {
+    return GitUtilities.getLastTaggedCommit(execOpts);
   }
 
-  return GitUtilities.getFirstCommit();
+  return GitUtilities.getFirstCommit(execOpts);
 }
 
 export default class DiffCommand extends Command {
@@ -28,15 +28,12 @@ export default class DiffCommand extends Command {
       }
     }
 
-    if (!GitUtilities.hasCommit()) {
+    if (!GitUtilities.hasCommit(this.execOpts)) {
       callback(new Error("Can't diff. There are no commits in this repository, yet."));
       return;
     }
 
-    this.args = ["diff", getLastCommit(), "--color=auto"];
-    this.opts = {
-      cwd: this.repository.rootPath,
-    };
+    this.args = ["diff", getLastCommit(this.execOpts), "--color=auto"];
 
     if (targetPackage) {
       this.args.push("--", targetPackage.location);
@@ -46,7 +43,7 @@ export default class DiffCommand extends Command {
   }
 
   execute(callback) {
-    ChildProcessUtilities.spawn("git", this.args, this.opts, (code) => {
+    ChildProcessUtilities.spawn("git", this.args, this.execOpts, (code) => {
       if (code) {
         callback(new Error("Errored while spawning `git diff`."));
       } else {

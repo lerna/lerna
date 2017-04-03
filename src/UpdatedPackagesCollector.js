@@ -11,6 +11,7 @@ class Update {
 
 export default class UpdatedPackagesCollector {
   constructor(command) {
+    this.execOpts = command.execOpts;
     this.logger = command.logger;
     this.repository = command.repository;
     this.packages = command.filteredPackages;
@@ -28,10 +29,10 @@ export default class UpdatedPackagesCollector {
   collectUpdatedPackages() {
     this.logger.info("Checking for updated packages...");
 
-    const hasTags = GitUtilities.hasTags();
+    const hasTags = GitUtilities.hasTags(this.execOpts);
 
     if (hasTags) {
-      const tag = GitUtilities.getLastTag();
+      const tag = GitUtilities.getLastTag(this.execOpts);
       this.logger.info("Comparing with: " + tag);
     } else {
       this.logger.info("No tags found! Comparing with initial commit.");
@@ -47,12 +48,12 @@ export default class UpdatedPackagesCollector {
       if (this.flags.canary !== true) {
         currentSHA = this.flags.canary;
       } else {
-        currentSHA = GitUtilities.getCurrentSHA();
+        currentSHA = GitUtilities.getCurrentSHA(this.execOpts);
       }
 
       commits = this.getAssociatedCommits(currentSHA);
     } else if (hasTags) {
-      commits = GitUtilities.describeTag(GitUtilities.getLastTaggedCommitInBranch());
+      commits = GitUtilities.describeTag(GitUtilities.getLastTaggedCommitInBranch(this.execOpts), this.execOpts);
     }
 
     const updatedPackages = {};
@@ -145,7 +146,7 @@ export default class UpdatedPackagesCollector {
 
   hasDiffSinceThatIsntIgnored(pkg, commits) {
     const folder = path.relative(this.repository.rootPath, pkg.location);
-    const diff = GitUtilities.diffSinceIn(commits, pkg.location);
+    const diff = GitUtilities.diffSinceIn(commits, pkg.location, this.execOpts);
 
     if (diff === "") {
       return false;

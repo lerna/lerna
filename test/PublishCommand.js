@@ -30,6 +30,11 @@ jest.mock("../src/GitUtilities");
 jest.mock("../src/NpmUtilities");
 jest.mock("../src/PromptUtilities");
 
+const execOpts = (testDir) =>
+  expect.objectContaining({
+    cwd: testDir,
+  });
+
 const publishedTagInDirectories = (testDir) =>
   NpmUtilities.publishTaggedInDir.mock.calls.reduce((arr, args) => {
     const tag = args[0];
@@ -67,9 +72,6 @@ const gitCommitMessage = () =>
 const gitTagsAdded = () =>
   GitUtilities.addTag.mock.calls.map((args) => args[0]);
 
-const gitPushedWithTags = () =>
-  GitUtilities.pushWithTags.mock.calls[0];
-
 const updatedLernaJson = () =>
   writeJsonFile.sync.mock.calls[0][1];
 
@@ -95,8 +97,6 @@ describe("PublishCommand", () => {
     GitUtilities.isInitialized = jest.fn(() => true);
     GitUtilities.getCurrentBranch = jest.fn(() => "master");
     GitUtilities.getCurrentSHA = jest.fn(() => "deadbeefcafe");
-    // GitUtilities.diffSinceIn = jest.fn(() => "");
-    // GitUtilities.hasTags = jest.fn(() => true);
 
     NpmUtilities.publishTaggedInDir = jest.fn(callsBack());
     NpmUtilities.checkDistTag = jest.fn(() => true);
@@ -159,7 +159,8 @@ describe("PublishCommand", () => {
           expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[normal] npm publish --tag");
           expect(removedDistTagInDirectories(testDir)).toMatchSnapshot("[normal] npm dist-tag rm");
           expect(addedDistTagInDirectories(testDir)).toMatchSnapshot("[normal] npm dist-tag add");
-          expect(gitPushedWithTags()).toMatchSnapshot("[normal] git push <remote> [tags]");
+
+          expect(GitUtilities.pushWithTags).lastCalledWith("origin", gitTagsAdded(), execOpts(testDir));
 
           done();
         } catch (ex) {
@@ -229,7 +230,8 @@ describe("PublishCommand", () => {
           expect(GitUtilities.checkoutChanges).not.toBeCalled();
 
           expect(addedDistTagInDirectories(testDir)).toMatchSnapshot("[independent] npm dist-tag add");
-          expect(gitPushedWithTags()).toMatchSnapshot("[independent] git push <remote> [tags]");
+
+          expect(GitUtilities.pushWithTags).lastCalledWith("origin", gitTagsAdded(), execOpts(testDir));
 
           done();
         } catch (ex) {
@@ -285,7 +287,7 @@ describe("PublishCommand", () => {
           expect(GitUtilities.addFile).not.toBeCalled();
           expect(GitUtilities.commit).not.toBeCalled();
           expect(GitUtilities.addTag).not.toBeCalled();
-          expect(GitUtilities.checkoutChanges).lastCalledWith("packages/*/package.json");
+          expect(GitUtilities.checkoutChanges).lastCalledWith("packages/*/package.json", execOpts(testDir));
 
           expect(addedDistTagInDirectories(testDir)).toMatchSnapshot("[normal --canary] npm dist-tag add");
           expect(GitUtilities.pushWithTags).not.toBeCalled();
@@ -536,7 +538,7 @@ describe("PublishCommand", () => {
           expect(NpmUtilities.removeDistTag).not.toBeCalled();
           expect(NpmUtilities.addDistTag).not.toBeCalled();
 
-          expect(GitUtilities.pushWithTags).lastCalledWith("origin", ["v1.0.1"]);
+          expect(GitUtilities.pushWithTags).lastCalledWith("origin", ["v1.0.1"], execOpts(testDir));
 
           done();
         } catch (ex) {
@@ -871,7 +873,7 @@ describe("PublishCommand", () => {
             throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
           }
 
-          expect(GitUtilities.pushWithTags).lastCalledWith("upstream", ["v1.0.1"]);
+          expect(GitUtilities.pushWithTags).lastCalledWith("upstream", ["v1.0.1"], execOpts(testDir));
 
           done();
         } catch (ex) {
@@ -948,7 +950,7 @@ describe("PublishCommand", () => {
             throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
           }
 
-          expect(GitUtilities.commit).lastCalledWith("A custom publish message");
+          expect(GitUtilities.commit).lastCalledWith("A custom publish message", execOpts(testDir));
 
           done();
         } catch (ex) {
@@ -987,7 +989,7 @@ describe("PublishCommand", () => {
             throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
           }
 
-          expect(GitUtilities.commit).lastCalledWith("A custom publish message");
+          expect(GitUtilities.commit).lastCalledWith("A custom publish message", execOpts(testDir));
 
           done();
         } catch (ex) {
@@ -1045,6 +1047,24 @@ describe("PublishCommand", () => {
 
           expect(gitAddedFiles(testDir)).toMatchSnapshot("[independent --conventional-commits] git adds changed files");
           expect(gitCommitMessage()).toMatchSnapshot("[independent --conventional-commits] git commit message");
+
+          [
+            ["package-1", "1.0.0"],
+            ["package-2", "2.0.0"],
+            ["package-3", "3.0.0"],
+            ["package-4", "4.0.0"],
+          ].forEach(([name, version]) => {
+            const location = path.join(testDir, "packages", name);
+
+            expect(ConventionalCommitUtilities.recommendVersion).toBeCalledWith(
+              expect.objectContaining({ name, version }),
+              execOpts(testDir)
+            );
+            expect(ConventionalCommitUtilities.updateChangelog).toBeCalledWith(
+              expect.objectContaining({ name, location }),
+              execOpts(testDir)
+            );
+          });
 
           done();
         } catch (ex) {

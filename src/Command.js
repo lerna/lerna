@@ -48,6 +48,16 @@ export default class Command {
     return this.constructor.name;
   }
 
+  get execOpts() {
+    if (!this._execOpts) {
+      this._execOpts = {
+        cwd: this.repository.rootPath,
+      };
+    }
+
+    return this._execOpts;
+  }
+
   // Override this to inherit config from another command.
   // For example `updated` inherits config from `publish`.
   get otherCommandConfigs() {

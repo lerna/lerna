@@ -77,7 +77,11 @@ describe("InitCommand", () => {
         try {
           expect(code).toBe(0);
 
-          expect(GitUtilities.init).toBeCalled();
+          const execOpts = expect.objectContaining({
+            cwd: testDir,
+          });
+          expect(GitUtilities.isInitialized).lastCalledWith(execOpts);
+          expect(GitUtilities.init).lastCalledWith(execOpts);
 
           expect(writeJsonFile.sync).lastCalledWith(
             path.join(testDir, "lerna.json"),
