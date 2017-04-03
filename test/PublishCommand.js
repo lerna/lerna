@@ -1236,6 +1236,10 @@ describe("PublishCommand", () => {
       const publishCommand = new PublishCommand([], {
         cdVersion: "minor"
       });
+      const wantOptsPkg1 = { cwd: path.join(testDir,"packages/package-1"), env: process.env };
+      const wantOptsPkg2 = { cwd: path.join(testDir,"packages/package-2"), env: process.env };
+      const wantOptsPkg3 = { cwd: path.join(testDir,"packages/package-3"), env: process.env };
+      const wantOptsPkg4 = { cwd: path.join(testDir,"packages/package-4"), env: process.env };
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
@@ -1259,27 +1263,27 @@ describe("PublishCommand", () => {
           { args: ["git tag -a v1.1.0 -m \"v1.1.0\""] }
         ]],
         [ChildProcessUtilities, "exec", { nodeCallback: true }, [
-          { args: ["npm publish --tag lerna-temp", { cwd: path.join(testDir,"packages/package-1") }] },
-          { args: ["npm publish --tag lerna-temp", { cwd: path.join(testDir,"packages/package-3") }] },
-          { args: ["npm publish --tag lerna-temp", { cwd: path.join(testDir,"packages/package-4") }] },
-          { args: ["npm publish --tag lerna-temp", { cwd: path.join(testDir,"packages/package-2") }] }
+          { args: ["npm publish --tag lerna-temp", wantOptsPkg1] },
+          { args: ["npm publish --tag lerna-temp", wantOptsPkg3] },
+          { args: ["npm publish --tag lerna-temp", wantOptsPkg4] },
+          { args: ["npm publish --tag lerna-temp", wantOptsPkg2] }
         ]],
         [ChildProcessUtilities, "execSync", {}, [
-          { args: ["npm dist-tag ls package-1", { cwd: path.join(testDir,"packages/package-1") }], returns: "lerna-temp: 1.1.0\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-1 lerna-temp", { cwd: path.join(testDir,"packages/package-1") }] },
-          { args: ["npm dist-tag add package-1@1.1.0 latest", { cwd: path.join(testDir,"packages/package-1") }] },
+          { args: ["npm dist-tag ls package-1", wantOptsPkg1], returns: "lerna-temp: 1.1.0\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-1 lerna-temp", wantOptsPkg1] },
+          { args: ["npm dist-tag add package-1@1.1.0 latest", wantOptsPkg1] },
 
-          { args: ["npm dist-tag ls package-3", { cwd: path.join(testDir,"packages/package-3") }], returns: "lerna-temp: 1.1.0\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-3 lerna-temp", { cwd: path.join(testDir,"packages/package-3") }] },
-          { args: ["npm dist-tag add package-3@1.1.0 latest", { cwd: path.join(testDir,"packages/package-3") }] },
+          { args: ["npm dist-tag ls package-3", wantOptsPkg3], returns: "lerna-temp: 1.1.0\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-3 lerna-temp", wantOptsPkg3] },
+          { args: ["npm dist-tag add package-3@1.1.0 latest", wantOptsPkg3] },
 
-          { args: ["npm dist-tag ls package-4", { cwd: path.join(testDir,"packages/package-4") }], returns: "lerna-temp: 1.1.0\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-4 lerna-temp", { cwd: path.join(testDir,"packages/package-4") }] },
-          { args: ["npm dist-tag add package-4@1.1.0 latest", { cwd: path.join(testDir,"packages/package-4") }] },
+          { args: ["npm dist-tag ls package-4", wantOptsPkg4], returns: "lerna-temp: 1.1.0\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-4 lerna-temp", wantOptsPkg4] },
+          { args: ["npm dist-tag add package-4@1.1.0 latest", wantOptsPkg4] },
 
-          { args: ["npm dist-tag ls package-2", { cwd: path.join(testDir,"packages/package-2") }], returns: "lerna-temp: 1.1.0\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-2 lerna-temp", { cwd: path.join(testDir,"packages/package-2") }] },
-          { args: ["npm dist-tag add package-2@1.1.0 latest", { cwd: path.join(testDir,"packages/package-2") }] },
+          { args: ["npm dist-tag ls package-2", wantOptsPkg2], returns: "lerna-temp: 1.1.0\nstable: 1.0.0" },
+          { args: ["npm dist-tag rm package-2 lerna-temp", wantOptsPkg2] },
+          { args: ["npm dist-tag add package-2@1.1.0 latest", wantOptsPkg2] },
 
           { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
           { args: ["git push origin master"] },
