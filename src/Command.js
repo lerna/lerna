@@ -190,7 +190,6 @@ export default class Command {
           .filter((pkg) => this.filteredPackages.some((p) => p.name === pkg.name))
         ;
       }
-      console.log(this.flags);
     } catch (err) {
       this.logger.error("Errored while collecting packages and package graph", err);
       this._complete(null, 1);
