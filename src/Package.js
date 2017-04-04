@@ -61,10 +61,6 @@ export default class Package {
     return !!this._package.private;
   }
 
-  toJsonString() {
-    return JSON.stringify(this._package, null, 2) + "\n";
-  }
-
   toJSON() {
     return this._package;
   }
