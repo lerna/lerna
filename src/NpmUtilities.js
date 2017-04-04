@@ -1,4 +1,3 @@
-import readPkg from "read-pkg";
 import writePkg from "write-pkg";
 import ChildProcessUtilities from "./ChildProcessUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
@@ -6,7 +5,6 @@ import onExit from "signal-exit";
 import logger from "./logger";
 import escapeArgs from "command-join";
 import path from "path";
-import semver from "semver";
 
 // Take a dep like "foo@^1.0.0".
 // Return a tuple like ["foo", "^1.0.0"].
@@ -108,17 +106,6 @@ export default class NpmUtilities {
     const command = ("npm publish --tag " + tag).trim();
     const opts = NpmUtilities.getExecOpts(directory, registry);
     ChildProcessUtilities.exec(`${command}`, opts, callback);
-  }
-
-  @logger.logifySync
-  static dependencyIsSatisfied(dir, dependency, needVersion) {
-    const packageJson = path.join(dir, dependency, "package.json");
-    try {
-      const hasVersion = readPkg.sync(packageJson).version;
-      return semver.satisfies(hasVersion, needVersion);
-    } catch (e) {
-      return false;
-    }
   }
 
   static getExecOpts(directory, registry) {
