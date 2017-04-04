@@ -1,23 +1,31 @@
-import assert from "assert";
 import chalk from "chalk";
+import normalizeNewline from "normalize-newline";
 
+// mocked or stubbed modules
+import logger from "../src/logger";
+
+// helpers
 import exitWithCode from "./helpers/exitWithCode";
 import initFixture from "./helpers/initFixture";
+
+// file under test
 import LsCommand from "../src/commands/LsCommand";
-import logger from "../src/logger";
-import stub from "./helpers/stub";
 
-function formatPrivate (pkg) {
-  return `${pkg} ${chalk.grey("v1.0.0")} (${chalk.red("private")})`;
-}
+// keep snapshots stable cross-platform
+chalk.enabled = false;
 
-function formatPublic (pkg) {
-  return `${pkg} ${chalk.grey("v1.0.0")}          `;
-}
+const normalized = (spy) =>
+  spy.mock.calls.map((args) => normalizeNewline(args[0]));
 
-function formatOnlyPublic (pkg) {
-  return `${pkg} ${chalk.grey("v1.0.0")} `;
-}
+// isolates singleton logger method from other command instances
+const stubLogger = (instance, logMethod) =>
+  jest.spyOn(instance.logger, logMethod).mockImplementation(() => {});
+
+// restore singleton method after every isolated assertion
+const loggerInfo = logger.info;
+afterEach(() => {
+  logger.info = loggerInfo;
+});
 
 describe("LsCommand", () => {
   describe("in a basic repo", () => {
@@ -29,11 +37,17 @@ describe("LsCommand", () => {
       lsCommand.runValidations();
       lsCommand.runPreparations();
 
-      stub(logger, "info", (message) => {
-        assert.equal(message, `${formatPublic("package-1")}\n${formatPublic("package-2")}\n${formatPublic("package-3")}\n${formatPublic("package-4")}\n${formatPrivate("package-5")}`);
-      });
+      const logInfo = stubLogger(lsCommand, "info");
 
-      lsCommand.runCommand(exitWithCode(0, done));
+      lsCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+        try {
+          expect(normalized(logInfo)).toMatchSnapshot();
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
     });
 
     // Both of these commands should result in the same outcome
@@ -48,11 +62,17 @@ describe("LsCommand", () => {
         lsCommand.runValidations();
         lsCommand.runPreparations();
 
-        stub(logger, "info", (message) => {
-          assert.equal(message, formatOnlyPublic("package-1"));
-        });
+        const logInfo = stubLogger(lsCommand, "info");
 
-        lsCommand.runCommand(exitWithCode(0, done));
+        lsCommand.runCommand(exitWithCode(0, (err) => {
+          if (err) return done.fail(err);
+          try {
+            expect(normalized(logInfo)).toMatchSnapshot();
+            done();
+          } catch (ex) {
+            done.fail(ex);
+          }
+        }));
       });
     });
   });
@@ -66,11 +86,17 @@ describe("LsCommand", () => {
       lsCommand.runValidations();
       lsCommand.runPreparations();
 
-      stub(logger, "info", (message) => {
-        assert.equal(message, `${formatOnlyPublic("package-1")}\n${formatOnlyPublic("package-2")}\n${formatOnlyPublic("package-3")}`);
-      });
+      const logInfo = stubLogger(lsCommand, "info");
 
-      lsCommand.runCommand(exitWithCode(0, done));
+      lsCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+        try {
+          expect(normalized(logInfo)).toMatchSnapshot();
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
     });
   });
 
@@ -86,11 +112,17 @@ describe("LsCommand", () => {
       lsCommand.runValidations();
       lsCommand.runPreparations();
 
-      stub(logger, "info", (message) => {
-        assert.equal(message, `${formatOnlyPublic("@test/package-2")}\n${formatOnlyPublic("@test/package-1")}`);
-      });
+      const logInfo = stubLogger(lsCommand, "info");
 
-      lsCommand.runCommand(exitWithCode(0, done));
+      lsCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+        try {
+          expect(normalized(logInfo)).toMatchSnapshot();
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
     });
   });
 });
