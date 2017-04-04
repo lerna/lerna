@@ -1,3 +1,4 @@
+import writePkg from "write-pkg";
 import ChildProcessUtilities from "./ChildProcessUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
 import onExit from "signal-exit";
@@ -9,8 +10,10 @@ import semver from "semver";
 export default class NpmUtilities {
   @logger.logifyAsync()
   static installInDir(directory, dependencies, config, callback) {
-
-    const {registry, client} = config;
+    const {
+      registry,
+      client,
+    } = config;
 
     // Nothing to do if we weren't given any deps.
     if (!(dependencies && dependencies.length)) return callback();
@@ -27,7 +30,6 @@ export default class NpmUtilities {
       if (err) return callback(err);
 
       const cleanup = () => {
-
         // Need to do this one synchronously because we might be doing it on exit.
         FileSystemUtilities.renameSync(packageJsonBkp, packageJson);
       };
@@ -35,31 +37,26 @@ export default class NpmUtilities {
       // If we die we need to be sure to put things back the way we found them.
       const unregister = onExit(cleanup);
 
+      // We have a few housekeeping tasks to take care of whether we succeed or fail.
+      const done = (err) => {
+        cleanup();
+        unregister();
+        callback(err);
+      };
+
       // Construct a basic fake package.json with just the deps we need to install.
-      const tempJson = JSON.stringify({
+      const tempJson = {
         dependencies: dependencies.reduce((deps, dep) => {
           const [pkg, version] = NpmUtilities.splitVersion(dep);
           deps[pkg] = version || "*";
           return deps;
         }, {})
-      });
+      };
 
       // Write out our temporary cooked up package.json and then install.
-      FileSystemUtilities.writeFile(packageJson, tempJson, (err) => {
-
-        // We have a few housekeeping tasks to take care of whether we succeed or fail.
-        const done = (err) => {
-          cleanup();
-          unregister();
-          callback(err);
-        };
-
-        if (err) {
-          return done(err);
-        } else {
-          ChildProcessUtilities.spawn(client || "npm", args, opts, done);
-        }
-      });
+      writePkg(packageJson, tempJson).then(() => {
+        ChildProcessUtilities.spawn(client || "npm", args, opts, done);
+      }).catch(done);
     });
   }
 
