@@ -1,3 +1,5 @@
+import writePkg from "write-pkg";
+import writeJsonFile from "write-json-file";
 import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
 import ConventionalCommitUtilities from "../ConventionalCommitUtilities";
 import FileSystemUtilities from "../FileSystemUtilities";
@@ -331,7 +333,7 @@ export default class PublishCommand extends Command {
 
   updateVersionInLernaJson() {
     this.repository.lernaJson.version = this.masterVersion;
-    FileSystemUtilities.writeFileSync(this.repository.lernaJsonLocation, JSON.stringify(this.repository.lernaJson, null, 2));
+    writeJsonFile.sync(this.repository.lernaJsonLocation, this.repository.lernaJson, { indent: 2 });
     if (!this.flags.skipGit) {
       GitUtilities.addFile(this.repository.lernaJsonLocation);
     }
@@ -355,7 +357,7 @@ export default class PublishCommand extends Command {
       this.updatePackageDepsObject(pkg, "peerDependencies", exact);
 
       // write new package
-      FileSystemUtilities.writeFileSync(packageJsonLocation, pkg.toJsonString());
+      writePkg.sync(packageJsonLocation, pkg);
 
       // we can now generate the Changelog, based on the
       // the updated version that we're about to release.
