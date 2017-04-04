@@ -29,10 +29,14 @@ afterEach(() => {
 
 describe("LsCommand", () => {
   describe("in a basic repo", () => {
-    beforeEach(() => initFixture("LsCommand/basic"));
+    let testDir;
+
+    beforeEach(() => initFixture("LsCommand/basic").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should list packages", (done) => {
-      const lsCommand = new LsCommand([], {});
+      const lsCommand = new LsCommand([], {}, testDir);
 
       lsCommand.runValidations();
       lsCommand.runPreparations();
@@ -57,7 +61,9 @@ describe("LsCommand", () => {
     ];
     filters.forEach((filter) => {
       it(filter.test, (done) => {
-        const lsCommand = new LsCommand([], {[filter.flag]: filter.flagValue});
+        const lsCommand = new LsCommand([], {
+          [filter.flag]: filter.flagValue,
+        }, testDir);
 
         lsCommand.runValidations();
         lsCommand.runPreparations();
@@ -78,10 +84,14 @@ describe("LsCommand", () => {
   });
 
   describe("in a repo with packages outside of packages/", () => {
-    beforeEach(() => initFixture("LsCommand/extra"));
+    let testDir;
+
+    beforeEach(() => initFixture("LsCommand/extra").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should list packages", (done) => {
-      const lsCommand = new LsCommand([], {});
+      const lsCommand = new LsCommand([], {}, testDir);
 
       lsCommand.runValidations();
       lsCommand.runPreparations();
@@ -101,13 +111,17 @@ describe("LsCommand", () => {
   });
 
   describe("with --include-filtered-dependencies", () => {
-    beforeEach(() => initFixture("LsCommand/include-filtered-dependencies"));
+    let testDir;
+
+    beforeEach(() => initFixture("LsCommand/include-filtered-dependencies").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should list packages, including filtered ones", (done) => {
       const lsCommand = new LsCommand([], {
         scope: "@test/package-2",
         includeFilteredDependencies: true
-      });
+      }, testDir);
 
       lsCommand.runValidations();
       lsCommand.runPreparations();

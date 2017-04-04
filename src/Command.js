@@ -10,13 +10,13 @@ import logger from "./logger";
 const DEFAULT_CONCURRENCY = 4;
 
 export default class Command {
-  constructor(input, flags) {
+  constructor(input, flags, cwd) {
     this.input = input;
     this.flags = flags;
 
     this.lernaVersion = require("../package.json").version;
     this.logger = logger;
-    this.repository = new Repository();
+    this.repository = new Repository(cwd);
     this.progressBar = progressBar;
   }
 

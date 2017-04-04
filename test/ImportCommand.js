@@ -45,7 +45,7 @@ describe("ImportCommand", () => {
     );
 
     it("creates a module in packages location with imported commit history", (done) => {
-      const importCommand = new ImportCommand([externalDir], {});
+      const importCommand = new ImportCommand([externalDir], {}, testDir);
 
       importCommand.runValidations();
       importCommand.runPreparations();
@@ -72,7 +72,7 @@ describe("ImportCommand", () => {
       execa.sync("git", ["mv", "old-file", "new-file"], { cwd: externalDir });
       execa.sync("git", ["commit", "-m", "Moved old-file to new-file"], { cwd: externalDir });
 
-      const importCommand = new ImportCommand([externalDir], {});
+      const importCommand = new ImportCommand([externalDir], {}, testDir);
 
       importCommand.runValidations();
       importCommand.runPreparations();
@@ -96,7 +96,7 @@ describe("ImportCommand", () => {
     it("allows skipping confirmation prompt", (done) => {
       const importCommand = new ImportCommand([externalDir], {
         yes: true
-      });
+      }, testDir);
 
       importCommand.runValidations();
       importCommand.runPreparations();
@@ -105,7 +105,7 @@ describe("ImportCommand", () => {
     });
 
     it("errors without an argument", (done) => {
-      const importCommand = new ImportCommand([], {});
+      const importCommand = new ImportCommand([], {}, testDir);
 
       importCommand.runValidations();
       importCommand.runPreparations();
@@ -122,7 +122,7 @@ describe("ImportCommand", () => {
 
     it("errors when external directory is missing", (done) => {
       const missing = externalDir + "_invalidSuffix";
-      const importCommand = new ImportCommand([missing], {});
+      const importCommand = new ImportCommand([missing], {}, testDir);
 
       importCommand.runValidations();
       importCommand.runPreparations();
@@ -140,7 +140,7 @@ describe("ImportCommand", () => {
     it("errors when external package.json is missing", (done) => {
       fs.unlinkSync(path.join(externalDir, "package.json"));
 
-      const importCommand = new ImportCommand([externalDir], {});
+      const importCommand = new ImportCommand([externalDir], {}, testDir);
 
       importCommand.runValidations();
       importCommand.runPreparations();
@@ -157,7 +157,7 @@ describe("ImportCommand", () => {
     });
 
     it("errors when external package.json has no name property", (done) => {
-      const importCommand = new ImportCommand([externalDir], {});
+      const importCommand = new ImportCommand([externalDir], {}, testDir);
 
       const packageJson = path.join(externalDir, "package.json");
 
@@ -181,7 +181,7 @@ describe("ImportCommand", () => {
 
       fs.ensureDirSync(targetDir);
 
-      const importCommand = new ImportCommand([externalDir], {});
+      const importCommand = new ImportCommand([externalDir], {}, testDir);
 
       importCommand.runValidations();
       importCommand.runPreparations();
@@ -206,7 +206,7 @@ describe("ImportCommand", () => {
         packages: ["pkg/*"],
       });
 
-      const importCommand = new ImportCommand([externalDir], {});
+      const importCommand = new ImportCommand([externalDir], {}, testDir);
 
       importCommand.runValidations();
       importCommand.runPreparations();
@@ -228,7 +228,7 @@ describe("ImportCommand", () => {
       fs.writeFileSync(uncommittedFile, "stuff");
       execa.sync("git", ["add", uncommittedFile], { cwd: testDir });
 
-      const importCommand = new ImportCommand([externalDir], {});
+      const importCommand = new ImportCommand([externalDir], {}, testDir);
 
       importCommand.runValidations();
       importCommand.runPreparations();

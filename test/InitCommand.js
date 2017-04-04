@@ -63,13 +63,14 @@ describe("InitCommand", () => {
     }));
 
     it("completely ignores validation and preparation lifecycle", () => {
-      const instance = new InitCommand([], {});
+      const instance = new InitCommand([], {}, testDir);
+
       expect(() => instance.runValidations()).not.toThrow();
       expect(() => instance.runPreparations()).not.toThrow();
     });
 
     it("initializes git repo with lerna files", (done) => {
-      const instance = new InitCommand([], {});
+      const instance = new InitCommand([], {}, testDir);
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
@@ -112,7 +113,7 @@ describe("InitCommand", () => {
     it("initializes git repo with lerna files in independent mode", (done) => {
       const instance = new InitCommand([], {
         independent: true,
-      });
+      }, testDir);
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
@@ -139,7 +140,7 @@ describe("InitCommand", () => {
       it("uses exact version when adding lerna dependency", (done) => {
         const instance = new InitCommand([], {
           exact: true,
-        });
+        }, testDir);
 
         instance.runCommand((err, code) => {
           if (err) return done.fail(err);
@@ -166,7 +167,7 @@ describe("InitCommand", () => {
       it("sets lerna.json command.init.exact to true", (done) => {
         const instance = new InitCommand([], {
           exact: true,
-        });
+        }, testDir);
 
         instance.runCommand((err, code) => {
           if (err) return done.fail(err);
@@ -205,7 +206,7 @@ describe("InitCommand", () => {
     }));
 
     it("creates lerna files", (done) => {
-      const instance = new InitCommand([], {});
+      const instance = new InitCommand([], {}, testDir);
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
@@ -257,7 +258,7 @@ describe("InitCommand", () => {
         },
       }));
 
-      const instance = new InitCommand([], {});
+      const instance = new InitCommand([], {}, testDir);
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
@@ -294,7 +295,7 @@ describe("InitCommand", () => {
         },
       }));
 
-      const instance = new InitCommand([], {});
+      const instance = new InitCommand([], {}, testDir);
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
@@ -331,7 +332,7 @@ describe("InitCommand", () => {
         },
       }));
 
-      const instance = new InitCommand([], {});
+      const instance = new InitCommand([], {}, testDir);
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
@@ -373,7 +374,7 @@ describe("InitCommand", () => {
         version: "1.2.3",
       }));
 
-      const instance = new InitCommand([], {});
+      const instance = new InitCommand([], {}, testDir);
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
@@ -404,7 +405,7 @@ describe("InitCommand", () => {
 
       const instance = new InitCommand([], {
         independent: true,
-      });
+      }, testDir);
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
@@ -440,7 +441,7 @@ describe("InitCommand", () => {
     }));
 
     it("removes file", (done) => {
-      const instance = new InitCommand([], {});
+      const instance = new InitCommand([], {}, testDir);
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
@@ -458,7 +459,7 @@ describe("InitCommand", () => {
     });
 
     it("uses value for lerna.json version property", (done) => {
-      const instance = new InitCommand([], {});
+      const instance = new InitCommand([], {}, testDir);
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
@@ -510,7 +511,7 @@ describe("InitCommand", () => {
 
       const instance = new InitCommand([], {
         exact: true,
-      });
+      }, testDir);
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);

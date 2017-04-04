@@ -19,7 +19,7 @@ describe("PackageUtilities", () => {
     }));
 
     it("should collect all the packages from the given packages directory", () => {
-      const result = PackageUtilities.getPackages(new Repository());
+      const result = PackageUtilities.getPackages(new Repository(testDir));
       expect(result).toHaveLength(4);
 
       const pkgOne = result[0];
@@ -33,8 +33,8 @@ describe("PackageUtilities", () => {
   describe(".filterPackages()", () => {
     let packages;
 
-    beforeAll(() => initFixture("PackageUtilities/filtering").then(() => {
-      packages = PackageUtilities.getPackages(new Repository);
+    beforeAll(() => initFixture("PackageUtilities/filtering").then((testDir) => {
+      packages = PackageUtilities.getPackages(new Repository(testDir));
     }));
 
     it("includes all packages when --scope is omitted", () => {
@@ -151,8 +151,8 @@ describe("PackageUtilities", () => {
   describe(".topologicallyBatchPackages()", () => {
     let packages;
 
-    beforeEach(() => initFixture("PackageUtilities/toposort").then(() => {
-      packages = PackageUtilities.getPackages(new Repository);
+    beforeEach(() => initFixture("PackageUtilities/toposort").then((testDir) => {
+      packages = PackageUtilities.getPackages(new Repository(testDir));
     }));
 
     it("should batch roots, then internal/leaf nodes, then cycles", () => {

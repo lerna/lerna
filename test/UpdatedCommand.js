@@ -63,7 +63,7 @@ describe("UpdatedCommand", () => {
         "packages/package-2/random-file",
       ]);
 
-      const updatedCommand = new UpdatedCommand([], {});
+      const updatedCommand = new UpdatedCommand([], {}, testDir);
 
       updatedCommand.runValidations();
       updatedCommand.runPreparations();
@@ -82,7 +82,7 @@ describe("UpdatedCommand", () => {
     });
 
     it("should list all packages when no tag is found", (done) => {
-      const updatedCommand = new UpdatedCommand([], {});
+      const updatedCommand = new UpdatedCommand([], {}, testDir);
 
       updatedCommand.runValidations();
       updatedCommand.runPreparations();
@@ -107,7 +107,7 @@ describe("UpdatedCommand", () => {
 
       const updatedCommand = new UpdatedCommand([], {
         forcePublish: "*"
-      });
+      }, testDir);
 
       updatedCommand.runValidations();
       updatedCommand.runPreparations();
@@ -132,7 +132,7 @@ describe("UpdatedCommand", () => {
 
       const updatedCommand = new UpdatedCommand([], {
         forcePublish: "package-2,package-4"
-      });
+      }, testDir);
 
       updatedCommand.runValidations();
       updatedCommand.runPreparations();
@@ -164,7 +164,7 @@ describe("UpdatedCommand", () => {
         "packages/package-3/random-file",
       ]);
 
-      const updatedCommand = new UpdatedCommand([], {});
+      const updatedCommand = new UpdatedCommand([], {}, testDir);
 
       updatedCommand.runValidations();
       updatedCommand.runPreparations();
@@ -189,7 +189,7 @@ describe("UpdatedCommand", () => {
 
       const updatedCommand = new UpdatedCommand([], {
         [SECRET_FLAG]: true
-      });
+      }, testDir);
 
       updatedCommand.runValidations();
       updatedCommand.runPreparations();
@@ -212,7 +212,7 @@ describe("UpdatedCommand", () => {
         "packages/package-5/random-file",
       ]);
 
-      const updatedCommand = new UpdatedCommand([], {});
+      const updatedCommand = new UpdatedCommand([], {}, testDir);
 
       updatedCommand.runValidations();
       updatedCommand.runPreparations();
@@ -247,7 +247,7 @@ describe("UpdatedCommand", () => {
         "packages/package-3/random-file",
       ]);
 
-      const updatedCommand = new UpdatedCommand([], {});
+      const updatedCommand = new UpdatedCommand([], {}, testDir);
 
       updatedCommand.runValidations();
       updatedCommand.runPreparations();
@@ -272,7 +272,7 @@ describe("UpdatedCommand", () => {
 
       const updatedCommand = new UpdatedCommand([], {
         forcePublish: "*"
-      });
+      }, testDir);
 
       updatedCommand.runValidations();
       updatedCommand.runPreparations();
@@ -297,7 +297,7 @@ describe("UpdatedCommand", () => {
 
       const updatedCommand = new UpdatedCommand([], {
         forcePublish: "package-2"
-      });
+      }, testDir);
 
       updatedCommand.runValidations();
       updatedCommand.runPreparations();
@@ -329,7 +329,7 @@ describe("UpdatedCommand", () => {
         "packages/package-3/random-file",
       ]);
 
-      const updatedCommand = new UpdatedCommand([], {});
+      const updatedCommand = new UpdatedCommand([], {}, testDir);
 
       updatedCommand.runValidations();
       updatedCommand.runPreparations();

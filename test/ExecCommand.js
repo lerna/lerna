@@ -29,12 +29,12 @@ describe("ExecCommand", () => {
   describe("in a basic repo", () => {
     let testDir;
 
-    beforeEach(() => initFixture("ExecCommand/basic").then((dir) => {
+    beforeAll(() => initFixture("ExecCommand/basic").then((dir) => {
       testDir = dir;
     }));
 
     it("should complain if invoked without command", (done) => {
-      const execCommand = new ExecCommand([], {});
+      const execCommand = new ExecCommand([], {}, testDir);
 
       execCommand.runValidations();
       execCommand.runPreparations();
@@ -53,7 +53,7 @@ describe("ExecCommand", () => {
     it("passes execution error to callback", (done) => {
       ChildProcessUtilities.spawn = jest.fn(callsBack(1));
 
-      const execCommand = new ExecCommand(["boom"], {});
+      const execCommand = new ExecCommand(["boom"], {}, testDir);
 
       execCommand.runValidations();
       execCommand.runPreparations();
@@ -77,7 +77,7 @@ describe("ExecCommand", () => {
     it("should filter packages with `ignore`", (done) => {
       const execCommand = new ExecCommand(["ls"], {
         ignore: "package-1",
-      });
+      }, testDir);
 
       execCommand.runValidations();
       execCommand.runPreparations();
@@ -102,7 +102,7 @@ describe("ExecCommand", () => {
     });
 
     it("should run a command", (done) => {
-      const execCommand = new ExecCommand(["ls"], {});
+      const execCommand = new ExecCommand(["ls"], {}, testDir);
 
       execCommand.runValidations();
       execCommand.runPreparations();
@@ -125,7 +125,7 @@ describe("ExecCommand", () => {
     });
 
     it("should run a command with parameters", (done) => {
-      const execCommand = new ExecCommand(["ls", "-la"], {});
+      const execCommand = new ExecCommand(["ls", "-la"], {}, testDir);
 
       execCommand.runValidations();
       execCommand.runPreparations();
@@ -153,7 +153,7 @@ describe("ExecCommand", () => {
       it(filter.test, (done) => {
         const execCommand = new ExecCommand(["ls"], {
           [filter.flag]: filter.flagValue,
-        });
+        }, testDir);
 
         execCommand.runValidations();
         execCommand.runPreparations();

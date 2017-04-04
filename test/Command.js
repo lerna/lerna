@@ -100,7 +100,11 @@ describe("Command", () => {
   });
 
   describe(".run()", () => {
-    beforeEach(() => initFixture("Command/basic"));
+    let testDir;
+
+    beforeAll(() => initFixture("Command/basic").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should exist", (done) => {
       class TestCommand extends Command {
@@ -112,7 +116,7 @@ describe("Command", () => {
         }
       }
 
-      const testCommand = new TestCommand([], {});
+      const testCommand = new TestCommand([], {}, testDir);
       testCommand.run();
     });
 
@@ -138,7 +142,7 @@ describe("Command", () => {
         it(title, (done) => {
           ChildProcessUtilities.getChildProcessCount = jest.fn(() => idx);
 
-          const exitCommand = new ExitCommand([], {});
+          const exitCommand = new ExitCommand([], {}, testDir);
           const logInfo = jest.spyOn(exitCommand.logger, "info");
 
           exitCommand.runValidations();
@@ -174,7 +178,11 @@ describe("Command", () => {
   });
 
   describe(".getOptions()", () => {
-    beforeEach(() => initFixture("Command/basic"));
+    let testDir;
+
+    beforeAll(() => initFixture("Command/basic").then((dir) => {
+      testDir = dir;
+    }));
 
     class TestACommand extends Command {
     }
@@ -187,45 +195,49 @@ describe("Command", () => {
     }
 
     it("should pick up global options", () => {
-      const instance = new TestACommand([], {});
+      const instance = new TestACommand([], {}, testDir);
       expect(instance.getOptions().testOption).toBe("default");
     });
 
     it("should override global options with command-level options", () => {
-      const instance = new TestBCommand([], {});
+      const instance = new TestBCommand([], {}, testDir);
       expect(instance.getOptions().testOption).toBe("b");
     });
 
     it("should override global options with inherited command-level options", () => {
-      const instance = new TestCCommand([], {});
+      const instance = new TestCCommand([], {}, testDir);
       expect(instance.getOptions().testOption).toBe("b");
     });
 
     it("should override inherited command-level options with local command-level options", () => {
-      const instance = new TestCCommand([], {});
+      const instance = new TestCCommand([], {}, testDir);
       expect(instance.getOptions().testOption2).toBe("c");
     });
 
     it("should override command-level options with passed-in options", () => {
-      const instance = new TestCCommand([], {});
+      const instance = new TestCCommand([], {}, testDir);
       expect(instance.getOptions({ testOption2: "p" }).testOption2).toBe("p");
     });
 
     it("should sieve properly within passed-in options", () => {
-      const instance = new TestCCommand([], {});
+      const instance = new TestCCommand([], {}, testDir);
       expect(instance.getOptions({ testOption2: "p" }, { testOption2: "p2" }).testOption2).toBe("p2");
     });
 
     it("should override everything with a CLI flag", () => {
       const instance = new TestCCommand([], {
         testOption2: "f",
-      });
+      }, testDir);
       expect(instance.getOptions({ testOption2: "p" }).testOption2).toBe("f");
     });
   });
 
   describe("legacy options", () => {
-    beforeEach(() => initFixture("Command/legacy"));
+    let testDir;
+
+    beforeAll(() => initFixture("Command/legacy").then((dir) => {
+      testDir = dir;
+    }));
 
     class TestCommand extends Command {
     }
@@ -235,7 +247,7 @@ describe("Command", () => {
       }
 
       it("should warn when used", () => {
-        const instance = new BootstrapCommand([], {});
+        const instance = new BootstrapCommand([], {}, testDir);
         const logWarn = jest.spyOn(instance.logger, "warn");
 
         instance.getOptions();
@@ -245,12 +257,12 @@ describe("Command", () => {
       });
 
       it("should provide a correct value", () => {
-        const instance = new BootstrapCommand([], {});
+        const instance = new BootstrapCommand([], {}, testDir);
         expect(instance.getOptions().ignore).toBe("package-a");
       });
 
       it("should not warn with other commands", () => {
-        const instance = new TestCommand([], {});
+        const instance = new TestCommand([], {}, testDir);
         const logWarn = jest.spyOn(instance.logger, "warn");
 
         instance.getOptions();
@@ -258,7 +270,7 @@ describe("Command", () => {
       });
 
       it("should not provide a value to other commands", () => {
-        const instance = new TestCommand([], {});
+        const instance = new TestCommand([], {}, testDir);
         expect(instance.getOptions().ignore).toBe(undefined);
       });
     });
@@ -268,7 +280,7 @@ describe("Command", () => {
       }
 
       it("should warn when used", () => {
-        const instance = new PublishCommand([], {});
+        const instance = new PublishCommand([], {}, testDir);
         const logWarn = jest.spyOn(instance.logger, "warn");
 
         instance.getOptions();
@@ -278,12 +290,12 @@ describe("Command", () => {
       });
 
       it("should provide a correct value", () => {
-        const instance = new PublishCommand([], {});
+        const instance = new PublishCommand([], {}, testDir);
         expect(instance.getOptions().ignore).toBe("package-b");
       });
 
       it("should not warn with other commands", () => {
-        const instance = new TestCommand([], {});
+        const instance = new TestCommand([], {}, testDir);
         const logWarn = jest.spyOn(instance.logger, "warn");
 
         instance.getOptions();
@@ -291,7 +303,7 @@ describe("Command", () => {
       });
 
       it("should not provide a value to other commands", () => {
-        const instance = new TestCommand([], {});
+        const instance = new TestCommand([], {}, testDir);
         expect(instance.getOptions().ignore).toBe(undefined);
       });
     });

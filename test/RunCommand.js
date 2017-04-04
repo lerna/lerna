@@ -42,12 +42,12 @@ describe("RunCommand", () => {
   describe("in a basic repo", () => {
     let testDir;
 
-    beforeEach(() => initFixture("RunCommand/basic").then((dir) => {
+    beforeAll(() => initFixture("RunCommand/basic").then((dir) => {
       testDir = dir;
     }));
 
     it("runs a script in packages", (done) => {
-      const runCommand = new RunCommand(["my-script"], {});
+      const runCommand = new RunCommand(["my-script"], {}, testDir);
 
       runCommand.runValidations();
       runCommand.runPreparations();
@@ -68,7 +68,7 @@ describe("RunCommand", () => {
     it("runs a script in packages with --stream", (done) => {
       const runCommand = new RunCommand(["my-script"], {
         stream: true,
-      });
+      }, testDir);
 
       runCommand.runValidations();
       runCommand.runPreparations();
@@ -91,7 +91,7 @@ describe("RunCommand", () => {
       "env",
     ].forEach((defaultScript) => {
       it(`always runs ${defaultScript} script`, (done) => {
-        const runCommand = new RunCommand([defaultScript], {});
+        const runCommand = new RunCommand([defaultScript], {}, testDir);
 
         runCommand.runValidations();
         runCommand.runPreparations();
@@ -119,7 +119,7 @@ describe("RunCommand", () => {
       it(filter.test, (done) => {
         const runCommand = new RunCommand(["my-script"], {
           [filter.flag]: filter.flagValue,
-        });
+        }, testDir);
 
         runCommand.runValidations();
         runCommand.runPreparations();
@@ -142,7 +142,7 @@ describe("RunCommand", () => {
   describe("with --include-filtered-dependencies", () => {
     let testDir;
 
-    beforeEach(() => initFixture("RunCommand/include-filtered-dependencies").then((dir) => {
+    beforeAll(() => initFixture("RunCommand/include-filtered-dependencies").then((dir) => {
       testDir = dir;
     }));
 
@@ -150,7 +150,7 @@ describe("RunCommand", () => {
       const runCommand = new RunCommand(["my-script"], {
         scope: "@test/package-2",
         includeFilteredDependencies: true
-      });
+      }, testDir);
 
       runCommand.runValidations();
       runCommand.runPreparations();

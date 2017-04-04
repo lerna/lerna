@@ -88,7 +88,7 @@ describe("BootstrapCommand", () => {
     }));
 
     it("should run preinstall, postinstall and prepublish scripts", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {});
+      const bootstrapCommand = new BootstrapCommand([], {}, testDir);
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
@@ -121,7 +121,7 @@ describe("BootstrapCommand", () => {
     it("should hoist", (done) => {
       const bootstrapCommand = new BootstrapCommand([], {
         hoist: true
-      });
+      }, testDir);
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
@@ -144,7 +144,7 @@ describe("BootstrapCommand", () => {
       const bootstrapCommand = new BootstrapCommand([], {
         hoist: true,
         nohoist: "@test/package-1"
-      });
+      }, testDir);
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
@@ -175,7 +175,7 @@ describe("BootstrapCommand", () => {
     afterEach(resetSymlink);
 
     it("should bootstrap packages", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {});
+      const bootstrapCommand = new BootstrapCommand([], {}, testDir);
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
@@ -197,7 +197,7 @@ describe("BootstrapCommand", () => {
     it("should not bootstrap ignored packages", (done) => {
       const bootstrapCommand = new BootstrapCommand([], {
         ignore: "package-@(3|4)"
-      });
+      }, testDir);
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
@@ -218,7 +218,7 @@ describe("BootstrapCommand", () => {
     it("should only bootstrap scoped packages", (done) => {
       const bootstrapCommand = new BootstrapCommand([], {
         scope: "package-@(3|4)"
-      });
+      }, testDir);
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
@@ -249,7 +249,7 @@ describe("BootstrapCommand", () => {
     afterEach(resetSymlink);
 
     it("should bootstrap packages", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {});
+      const bootstrapCommand = new BootstrapCommand([], {}, testDir);
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
@@ -272,7 +272,7 @@ describe("BootstrapCommand", () => {
     it("should not bootstrap ignored packages", (done) => {
       const bootstrapCommand = new BootstrapCommand([], {
         ignore: "package-@(3|4)"
-      });
+      }, testDir);
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
@@ -295,7 +295,7 @@ describe("BootstrapCommand", () => {
       const bootstrapCommand = new BootstrapCommand([], {
         scope: "package-2",
         includeFilteredDependencies: true
-      });
+      }, testDir);
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
@@ -318,7 +318,7 @@ describe("BootstrapCommand", () => {
       const bootstrapCommand = new BootstrapCommand([], {
         ignore: "{@test/package-1,package-@(3|4)}",
         includeFilteredDependencies: true
-      });
+      }, testDir);
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
@@ -345,7 +345,7 @@ describe("BootstrapCommand", () => {
     }));
 
     it("should get installed", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {});
+      const bootstrapCommand = new BootstrapCommand([], {}, testDir);
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
@@ -365,10 +365,14 @@ describe("BootstrapCommand", () => {
   });
 
   describe("with external dependencies that have already been installed", () => {
-    beforeEach(() => initFixture("BootstrapCommand/warm"));
+    let testDir;
+
+    beforeEach(() => initFixture("BootstrapCommand/warm").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should not get re-installed", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {});
+      const bootstrapCommand = new BootstrapCommand([], {}, testDir);
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
@@ -395,7 +399,7 @@ describe("BootstrapCommand", () => {
     }));
 
     it("should install all dependencies", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {});
+      const bootstrapCommand = new BootstrapCommand([], {}, testDir);
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
@@ -415,10 +419,14 @@ describe("BootstrapCommand", () => {
   });
 
   describe("with package peerDependencies", () => {
-    beforeEach(() => initFixture("BootstrapCommand/peer"));
+    let testDir;
+
+    beforeEach(() => initFixture("BootstrapCommand/peer").then((dir) => {
+      testDir = dir;
+    }));
 
     it("does not bootstrap peerDependencies", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {});
+      const bootstrapCommand = new BootstrapCommand([], {}, testDir);
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
@@ -438,10 +446,14 @@ describe("BootstrapCommand", () => {
   });
 
   describe("zero packages", () => {
-    beforeEach(() => initFixture("BootstrapCommand/zero-pkgs"));
+    let testDir;
+
+    beforeEach(() => initFixture("BootstrapCommand/zero-pkgs").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should succeed in repositories with zero packages", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {});
+      const bootstrapCommand = new BootstrapCommand([], {}, testDir);
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
@@ -458,7 +470,7 @@ describe("BootstrapCommand", () => {
     }));
 
     it("should install packages from registry", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {});
+      const bootstrapCommand = new BootstrapCommand([], {}, testDir);
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
