@@ -34,6 +34,9 @@ export default class DiffCommand extends Command {
     }
 
     this.args = ["diff", getLastCommit(), "--color=auto"];
+    this.opts = {
+      cwd: this.repository.rootPath,
+    };
 
     if (targetPackage) {
       this.args.push("--", targetPackage.location);
@@ -43,7 +46,7 @@ export default class DiffCommand extends Command {
   }
 
   execute(callback) {
-    ChildProcessUtilities.spawn("git", this.args, {}, (code) => {
+    ChildProcessUtilities.spawn("git", this.args, this.opts, (code) => {
       if (code) {
         callback(new Error("Errored while spawning `git diff`."));
       } else {
