@@ -1,6 +1,7 @@
 import path from "path";
 import semver from "semver";
 import NpmUtilities from "./NpmUtilities";
+import dependencyIsSatisfied from "./utils/dependencyIsSatisfied";
 
 export default class Package {
   constructor(pkg, location) {
@@ -113,7 +114,7 @@ export default class Package {
    * @returns {Boolean}
    */
   hasDependencyInstalled(dependency) {
-    return NpmUtilities.dependencyIsSatisfied(
+    return dependencyIsSatisfied(
       this.nodeModulesLocation, dependency, this.allDependencies[dependency]
     );
   }
