@@ -1,12 +1,12 @@
-import assert from "assert";
-import os from "os";
+import { EOL } from "os";
 
+// file under test
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
 
 describe("ChildProcessUtilities", () => {
   describe(".execSync()", () => {
     it("should execute a command in a child process and return the result", () => {
-      assert.equal(ChildProcessUtilities.execSync("echo foo"), "foo");
+      expect(ChildProcessUtilities.execSync("echo foo")).toBe("foo");
     });
 
     it("does not error when stdout is ignored", () => {
@@ -17,17 +17,25 @@ describe("ChildProcessUtilities", () => {
   describe(".exec()", () => {
     it("should execute a command in a child process and call the callback with the result", (done) => {
       ChildProcessUtilities.exec("echo foo", null, (stderr, stdout) => {
-        assert.equal(stderr, null);
-        assert.equal(stdout, `foo${os.EOL}`);
-        done();
+        try {
+          expect(stderr).toBe(null);
+          expect(stdout).toBe(`foo${EOL}`);
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
       });
     });
 
     it("passes an error object to callback when stdout maxBuffer exceeded", (done) => {
       ChildProcessUtilities.exec("echo foo", { maxBuffer: 1 }, (stderr, stdout) => {
-        assert.equal(stderr, "Error: stdout maxBuffer exceeded");
-        assert.equal(stdout, "");
-        done();
+        try {
+          expect(String(stderr)).toBe("Error: stdout maxBuffer exceeded");
+          expect(stdout).toBe("");
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
       });
     });
 
@@ -35,9 +43,13 @@ describe("ChildProcessUtilities", () => {
       // windows is too weird
       it("passes an error object to callback when stdout maxBuffer exceeded", (done) => {
         ChildProcessUtilities.exec("echo foo >&2", { maxBuffer: 1 }, (stderr, stdout) => {
-          assert.equal(stderr, "Error: stderr maxBuffer exceeded.  Partial output follows:\n\n");
-          assert.equal(stdout, "");
-          done();
+          try {
+            expect(stderr).toBe("Error: stderr maxBuffer exceeded.  Partial output follows:\n\n");
+            expect(stdout).toBe("");
+            done();
+          } catch (ex) {
+            done.fail(ex);
+          }
         });
       });
     }
@@ -46,17 +58,25 @@ describe("ChildProcessUtilities", () => {
   describe(".spawn()", () => {
     it("should spawn a command in a child process", (done) => {
       ChildProcessUtilities.spawn("echo", ["foo"], { stdio: "pipe" }, (err, output) => {
-        assert.equal(err, null);
-        assert.equal(output.trim(), "foo");
-        done();
+        if (err) return done.fail(err);
+
+        try {
+          expect(output.trim()).toBe("foo");
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
       });
     });
 
     it("passes error message to callback", (done) => {
       ChildProcessUtilities.spawn("iAmTheModelOfAModernMajorGeneral", [], { stdio: "pipe" }, (err) => {
-        const inErrorMessage = String(err).indexOf("iAmTheModelOfAModernMajorGeneral") > -1;
-        assert.ok(inErrorMessage, "did not log missing executable error");
-        done();
+        try {
+          expect(String(err)).toMatch("iAmTheModelOfAModernMajorGeneral");
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
       });
     });
   });
