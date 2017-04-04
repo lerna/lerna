@@ -1,8 +1,9 @@
 import _ from "lodash";
+import writePkg from "write-pkg";
+import writeJsonFile from "write-json-file";
 import FileSystemUtilities from "../FileSystemUtilities";
 import GitUtilities from "../GitUtilities";
 import Command from "../Command";
-import objectAssignSorted from "object-assign-sorted";
 
 export default class InitCommand extends Command {
   // don't do any of this.
@@ -48,15 +49,11 @@ export default class InitCommand extends Command {
       targetDependencies = packageJson.devDependencies;
     }
 
-    const dependencyVersion = this.exact
+    targetDependencies.lerna = this.exact
       ? this.lernaVersion
       : `^${this.lernaVersion}`;
 
-    objectAssignSorted(targetDependencies, {
-      lerna: dependencyVersion
-    });
-
-    FileSystemUtilities.writeFileSync(packageJsonLocation, JSON.stringify(packageJson, null, 2));
+    writePkg.sync(packageJsonLocation, packageJson);
   }
 
   ensureLernaJson() {
@@ -98,7 +95,7 @@ export default class InitCommand extends Command {
       _.set(lernaJson, `${configKey}.init.exact`, true);
     }
 
-    FileSystemUtilities.writeFileSync(lernaJsonLocation, JSON.stringify(lernaJson, null, 2));
+    writeJsonFile.sync(lernaJsonLocation, lernaJson, { indent: 2 });
   }
 
   ensureNoVersionFile() {
