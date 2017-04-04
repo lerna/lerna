@@ -1503,6 +1503,71 @@ describe("PublishCommand", () => {
   });
 
   /** =========================================================================
+   * NORMAL - GIT REMOTE
+   * ======================================================================= */
+
+  describe("normal mode with --ignore", () => {
+    let testDir;
+
+    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
+      testDir = dir;
+    }));
+
+    it("should publish the changed packages", (done) => {
+      const publishCommand = new PublishCommand([], {
+        gitRemote: "upstream",
+        ignore: ["package-2", "package-3", "package-4"]
+      });
+
+      publishCommand.runValidations();
+      publishCommand.runPreparations();
+
+      assertStubbedCalls([
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git tag"] }
+        ]],
+        [PromptUtilities, "select", { valueCallback: true }, [
+          { args: ["Select a new version (currently 1.0.0)"], returns: "1.0.1" }
+        ]],
+        [PromptUtilities, "confirm", { valueCallback: true }, [
+          { args: ["Are you sure you want to publish the above changes?"], returns: true }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
+          { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
+          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-5/package.json"))] },
+          { args: ["git commit -m \"$(echo \"v1.0.1\")\""] },
+          { args: ["git tag -a v1.0.1 -m \"v1.0.1\""] }
+        ]],
+        [ChildProcessUtilities, "exec", { nodeCallback: true }, [
+          { args: ["npm publish --tag lerna-temp"] }
+        ]],
+        [ChildProcessUtilities, "execSync", {}, [
+          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
+          { args: ["npm dist-tag rm package-1 lerna-temp"] },
+          { args: ["npm dist-tag add package-1@1.0.1 latest"] },
+
+          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
+          { args: ["git push upstream master"] },
+          { args: ["git push upstream v1.0.1"] }
+        ]],
+      ]);
+
+      publishCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
+  });
+
+  /** =========================================================================
    * NORMAL - MESSAGE
    * ======================================================================= */
 
