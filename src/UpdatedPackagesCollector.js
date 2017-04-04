@@ -13,7 +13,7 @@ export default class UpdatedPackagesCollector {
   constructor(command) {
     this.logger = command.logger;
     this.repository = command.repository;
-    this.packages = command.repository.packages;
+    this.packages = command.filteredPackages;
     this.packageGraph = command.repository.packageGraph;
     this.progressBar = command.progressBar;
     this.flags = command.getOptions();
