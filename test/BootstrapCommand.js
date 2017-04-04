@@ -170,12 +170,15 @@ describe("BootstrapCommand", () => {
         gotRimraf[path] = true;
         callback();
       });
+      const wantOpts = { cwd: testDir, stdio: STDIO_OPT, env: process.env };
+      const wantPkg3Opts = { cwd: path.join(testDir, "packages" ,"package-3"), stdio: STDIO_OPT, env: process.env };
+      const wantPkg4Opts = { cwd: path.join(testDir, "packages", "package-4"), stdio: STDIO_OPT, env: process.env };
 
       assertStubbedCalls([
         [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install"], { cwd: testDir, stdio: STDIO_OPT }] },
-          { args: ["npm", ["install"], { cwd: path.join(testDir, "packages" ,"package-3"), stdio: STDIO_OPT }] },
-          { args: ["npm", ["install"], { cwd: path.join(testDir, "packages", "package-4"), stdio: STDIO_OPT }] },
+          { args: ["npm", ["install"], wantOpts] },
+          { args: ["npm", ["install"], wantPkg3Opts] },
+          { args: ["npm", ["install"], wantPkg4Opts] },
         ]],
       ]);
 
@@ -582,6 +585,8 @@ describe("BootstrapCommand", () => {
 
     it("should get installed", (done) => {
       const bootstrapCommand = new BootstrapCommand([], {});
+      const wantPkg1Opts = { cwd: path.join(testDir, "packages", "package-1"), stdio: STDIO_OPT, env: process.env };
+      const wantPkg2Opts = { cwd: path.join(testDir, "packages", "package-2"), stdio: STDIO_OPT, env: process.env };
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
@@ -594,7 +599,7 @@ describe("BootstrapCommand", () => {
           ] },
         ]],
         [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install"], { cwd: path.join(testDir, "packages", "package-1"), stdio: STDIO_OPT }] },
+          { args: ["npm", ["install"], wantPkg1Opts] },
         ]],
         [FileSystemUtilities, "writeFile", { nodeCallback: true }, [
           { args: [
@@ -603,7 +608,7 @@ describe("BootstrapCommand", () => {
           ] },
         ]],
         [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install"], { cwd: path.join(testDir, "packages", "package-2"), stdio: STDIO_OPT }] },
+          { args: ["npm", ["install"], wantPkg2Opts] },
         ]],
       ]);
 
@@ -783,6 +788,43 @@ describe("BootstrapCommand", () => {
       assertStubbedCalls([
         [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
           { args: ["npm", ["install"], { cwd: path.join(testDir, "packages", "package-1"), stdio: STDIO_OPT, env }] }
+        ]]
+      ]);
+
+      bootstrapCommand.runCommand(exitWithCode(0, done));
+    });
+  });
+
+  describe("environment", () => {
+    let testDir;
+
+    const originalEnv = Object.assign({}, process.env);
+    const mockEnv = {
+      mock_value: 1,
+      NODE_ENV: "lerna-test",
+    };
+
+    beforeEach(() => initFixture("BootstrapCommand/zero-pkgs").then((dir) => {
+      testDir = dir;
+
+      // mock out the ENV to a simpler version for testing
+      process.env = mockEnv;
+    }));
+
+    afterEach(() => {
+      process.env = originalEnv;
+    });
+
+    it("should always honour env vars", (done) => {
+      const bootstrapCommand = new BootstrapCommand([], {});
+      const wantPgkOpts = { cwd: path.join(testDir, "packages"), stdio: STDIO_OPT, env: process.env };
+
+      bootstrapCommand.runValidations();
+      bootstrapCommand.runPreparations();
+
+      assertStubbedCalls([
+        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
+          { args: ["npm", ["install"], wantPgkOpts] }
         ]]
       ]);
 

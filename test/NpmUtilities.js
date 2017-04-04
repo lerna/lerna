@@ -46,7 +46,7 @@ describe("NpmUtilities", () => {
 
     it("should handle missing environment variables", () => {
       process.env = mockEnv;
-      const want = { cwd: "test_dir" };
+      const want = { cwd: "test_dir", env: mockEnv };
       assert.deepEqual(NpmUtilities.getExecOpts("test_dir"), want);
     });
   });
