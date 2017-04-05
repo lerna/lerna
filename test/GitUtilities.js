@@ -26,8 +26,8 @@ describe("GitUtilities", () => {
 
   describe(".isInitialized()", () => {
     it("returns true when git command succeeds", () => {
-      expect(GitUtilities.isInitialized()).toBe(true);
-      expect(ChildProcessUtilities.execSync).lastCalledWith("git rev-parse", { stdio: "ignore" });
+      expect(GitUtilities.isInitialized("test")).toBe(true);
+      expect(ChildProcessUtilities.execSync).lastCalledWith("git rev-parse", { cwd: "test", stdio: "ignore" });
     });
 
     it("returns false when git command fails", () => {
@@ -179,8 +179,8 @@ describe("GitUtilities", () => {
   describe(".init()", () => {
     it("calls git init", () => {
       ChildProcessUtilities.execSync.mockImplementation(() => "stdout for logger");
-      expect(GitUtilities.init()).toBe("stdout for logger");
-      expect(ChildProcessUtilities.execSync).lastCalledWith("git init");
+      expect(GitUtilities.init("test")).toBe("stdout for logger");
+      expect(ChildProcessUtilities.execSync).lastCalledWith("git init", { cwd: "test" });
     });
   });
 
