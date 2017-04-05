@@ -130,14 +130,6 @@ export default class PackageUtilities {
     return packages;
   }
 
-  static getFilteredPackage(pkg, {scope, ignore}) {
-
-    return (
-      PackageUtilities.filterPackage(pkg, scope) &&
-      PackageUtilities.filterPackage(pkg, ignore, true)
-    ) && pkg;
-  }
-
   static topologicallyBatchPackages(packagesToBatch, {
     depsOnly = false,
     logger = null,
