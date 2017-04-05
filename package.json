@@ -50,7 +50,7 @@
     "normalize-path": "^2.0.1",
     "object-assign-sorted": "^2.0.1",
     "path-exists": "^2.1.0",
-    "progress": "^1.1.8",
+    "progress": "^2.0.0",
     "read-cmd-shim": "^1.0.1",
     "rimraf": "^2.6.1",
     "semver": "^5.1.0",
