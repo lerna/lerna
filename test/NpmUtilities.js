@@ -7,10 +7,12 @@ import {
   getTempDir,
   rimrafAsync,
 } from "./helpers/fixtureUtils";
+
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
 import FileSystemUtilities from "../src/FileSystemUtilities";
 import NpmUtilities from "../src/NpmUtilities";
 
+jest.mock("write-pkg");
 jest.mock("../src/ChildProcessUtilities");
 jest.mock("../src/FileSystemUtilities");
 
@@ -272,7 +274,7 @@ describe("NpmUtilities", () => {
       stubExecOpts();
       ChildProcessUtilities.spawn.mockImplementation(callbackSuccess);
       FileSystemUtilities.rename.mockImplementation(callbackSuccess);
-      FileSystemUtilities.writeFile.mockImplementation(callbackSuccess);
+      writePkg.mockImplementation(() => Promise.resolve());
     });
 
     afterEach(resetExecOpts);
@@ -297,14 +299,13 @@ describe("NpmUtilities", () => {
             path.join(directory, "package.json.lerna_backup"),
             path.join(directory, "package.json"),
           );
-          expect(FileSystemUtilities.writeFile).lastCalledWith(
+          expect(writePkg).lastCalledWith(
             path.join(directory, "package.json"),
-            JSON.stringify({
+            {
               dependencies: {
                 caret: "^1.0.0",
               },
-            }),
-            expect.any(Function),
+            },
           );
           expect(ChildProcessUtilities.spawn).lastCalledWith("npm", ["install"], {
             directory,
@@ -333,12 +334,12 @@ describe("NpmUtilities", () => {
         if (err) return done.fail(err);
 
         try {
-          expect(FileSystemUtilities.writeFile.mock.calls[0][1]).toBe(
-            JSON.stringify({
+          expect(writePkg.mock.calls[0][1]).toEqual(
+            {
               dependencies: {
                 tagged: "next",
               },
-            }),
+            },
           );
           expect(ChildProcessUtilities.spawn.mock.calls[0][2]).toMatchObject({
             registry,
@@ -364,12 +365,12 @@ describe("NpmUtilities", () => {
         if (err) return done.fail(err);
 
         try {
-          expect(FileSystemUtilities.writeFile.mock.calls[0][1]).toBe(
-            JSON.stringify({
+          expect(writePkg.mock.calls[0][1]).toEqual(
+            {
               dependencies: {
                 something: "github:foo/foo",
               },
-            }),
+            },
           );
           expect(ChildProcessUtilities.spawn).lastCalledWith("yarn", ["install"], {
             directory,
@@ -411,12 +412,12 @@ describe("NpmUtilities", () => {
         if (err) return done.fail(err);
 
         try {
-          expect(FileSystemUtilities.writeFile.mock.calls[0][1]).toBe(
-            JSON.stringify({
+          expect(writePkg.mock.calls[0][1]).toEqual(
+            {
               dependencies: {
                 noversion: "*",
               },
-            }),
+            },
           );
 
           done();
@@ -455,8 +456,8 @@ describe("NpmUtilities", () => {
       ];
       const config = {};
 
-      FileSystemUtilities.writeFile.mockImplementation((fileName, contents, cb) => {
-        return cb(new Error("Unable to write file"));
+      writePkg.mockImplementation(() => {
+        return Promise.reject(new Error("Unable to write file"));
       });
 
       NpmUtilities.installInDir(directory, dependencies, config, (err) => {
