@@ -22,14 +22,6 @@ const linkRelative = (from, to) => path.relative(path.dirname(to), from);
 describe("FileSystemUtilities", () => {
   afterEach(() => jest.resetAllMocks());
 
-  describe(".mkdirSync()", () => {
-    it("calls fs.mkdirSync", () => {
-      const dirPath = "mkdirSync-test";
-      FileSystemUtilities.mkdirSync(dirPath);
-      expect(fs.mkdirSync).lastCalledWith(dirPath);
-    });
-  });
-
   describe(".mkdirp()", () => {
     it("calls mkdirp() with fs override", (done) => {
       const dirPath = "mkdirp/test";
