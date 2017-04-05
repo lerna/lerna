@@ -45,7 +45,6 @@ describe("DiffCommand", () => {
             "diff",
             "beefcafe",
             "--color=auto",
-            testDir,
           ],
           {},
           expect.any(Function)
@@ -76,7 +75,6 @@ describe("DiffCommand", () => {
             "diff",
             "cafedead",
             "--color=auto",
-            testDir,
           ],
           {},
           expect.any(Function)
@@ -106,6 +104,7 @@ describe("DiffCommand", () => {
             "diff",
             "deadbeef",
             "--color=auto",
+            "--",
             path.join(testDir, "packages/package-1"),
           ],
           {},
