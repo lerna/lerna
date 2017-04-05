@@ -1,10 +1,14 @@
-import assert from "assert";
 import path from "path";
 
-import PackageUtilities from "../src/PackageUtilities";
+// tightly-coupled modules; TODO: decouple
 import Package from "../src/Package";
 import Repository from "../src/Repository";
+
+// helpers
 import initFixture from "./helpers/initFixture";
+
+// file under test
+import PackageUtilities from "../src/PackageUtilities";
 
 describe("PackageUtilities", () => {
   describe(".getPackages()", () => {
@@ -16,19 +20,20 @@ describe("PackageUtilities", () => {
 
     it("should collect all the packages from the given packages directory", () => {
       const result = PackageUtilities.getPackages(new Repository());
+      expect(result).toHaveLength(4);
 
-      assert.equal(result.length, 4);
-      assert(result[0] instanceof Package);
-      assert.equal(result[0].name, "package-1");
-      assert.equal(result[0].version, "1.0.0");
-      assert.equal(result[0].location, path.join(testDir, "packages", "package-1"));
+      const pkgOne = result[0];
+      expect(pkgOne).toBeInstanceOf(Package);
+      expect(pkgOne.name).toBe("package-1");
+      expect(pkgOne.version).toBe("1.0.0");
+      expect(pkgOne.location).toBe(path.join(testDir, "packages", "package-1"));
     });
   });
 
   describe(".filterPackages()", () => {
     let packages;
 
-    beforeEach(() => initFixture("PackageUtilities/filtering").then(() => {
+    beforeAll(() => initFixture("PackageUtilities/filtering").then(() => {
       packages = PackageUtilities.getPackages(new Repository);
     }));
 
@@ -36,8 +41,8 @@ describe("PackageUtilities", () => {
       const flags = {
         // scope: undefined
       };
-      assert.deepEqual(
-        PackageUtilities.filterPackages(packages, flags).map((pkg) => pkg.name),
+      const result = PackageUtilities.filterPackages(packages, flags);
+      expect(result.map((pkg) => pkg.name)).toEqual(
         ["package-3", "package-4", "package-a-1", "package-a-2"]
       );
     });
@@ -46,8 +51,8 @@ describe("PackageUtilities", () => {
       const flags = {
         scope: true, // --scope
       };
-      assert.deepEqual(
-        PackageUtilities.filterPackages(packages, flags).map((pkg) => pkg.name),
+      const result = PackageUtilities.filterPackages(packages, flags);
+      expect(result.map((pkg) => pkg.name)).toEqual(
         ["package-3", "package-4", "package-a-1", "package-a-2"]
       );
     });
@@ -56,8 +61,8 @@ describe("PackageUtilities", () => {
       const flags = {
         scope: "package-3",
       };
-      assert.deepEqual(
-        PackageUtilities.filterPackages(packages, flags).map((pkg) => pkg.name),
+      const result = PackageUtilities.filterPackages(packages, flags);
+      expect(result.map((pkg) => pkg.name)).toEqual(
         ["package-3"]
       );
     });
@@ -66,8 +71,8 @@ describe("PackageUtilities", () => {
       const flags = {
         ignore: "package-3",
       };
-      assert.deepEqual(
-        PackageUtilities.filterPackages(packages, flags).map((pkg) => pkg.name),
+      const result = PackageUtilities.filterPackages(packages, flags);
+      expect(result.map((pkg) => pkg.name)).toEqual(
         ["package-4", "package-a-1", "package-a-2"]
       );
     });
@@ -76,8 +81,8 @@ describe("PackageUtilities", () => {
       const flags = {
         scope: "package-a-*",
       };
-      assert.deepEqual(
-        PackageUtilities.filterPackages(packages, flags).map((pkg) => pkg.name),
+      const result = PackageUtilities.filterPackages(packages, flags);
+      expect(result.map((pkg) => pkg.name)).toEqual(
         ["package-a-1", "package-a-2"]
       );
     });
@@ -86,8 +91,8 @@ describe("PackageUtilities", () => {
       const flags = {
         ignore: "package-@(2|3|4)",
       };
-      assert.deepEqual(
-        PackageUtilities.filterPackages(packages, flags).map((pkg) => pkg.name),
+      const result = PackageUtilities.filterPackages(packages, flags);
+      expect(result.map((pkg) => pkg.name)).toEqual(
         ["package-a-1", "package-a-2"]
       );
     });
@@ -97,8 +102,8 @@ describe("PackageUtilities", () => {
       const flags = {
         ignore: ["package-3", "package-4"],
       };
-      assert.deepEqual(
-        PackageUtilities.filterPackages(packages, flags).map((pkg) => pkg.name),
+      const result = PackageUtilities.filterPackages(packages, flags);
+      expect(result.map((pkg) => pkg.name)).toEqual(
         ["package-a-1", "package-a-2"]
       );
     });
@@ -108,8 +113,8 @@ describe("PackageUtilities", () => {
         scope: "package-a-*",
         ignore: "package-a-2",
       };
-      assert.deepEqual(
-        PackageUtilities.filterPackages(packages, flags).map((pkg) => pkg.name),
+      const result = PackageUtilities.filterPackages(packages, flags);
+      expect(result.map((pkg) => pkg.name)).toEqual(
         ["package-a-1"]
       );
     });
@@ -118,9 +123,18 @@ describe("PackageUtilities", () => {
       const flags = {
         scope: "no-package-*",
       };
-      assert.throws(() => {
+      expect(() => {
         PackageUtilities.filterPackages(packages, flags);
-      });
+      }).toThrow();
+    });
+
+    it("should throw when --ignore glob excludes all packages", () => {
+      const flags = {
+        ignore: "package-*",
+      };
+      expect(() => {
+        PackageUtilities.filterPackages(packages, flags);
+      }).toThrow();
     });
 
     it("should throw when --scope and --ignore globs exclude all packages", () => {
@@ -128,9 +142,9 @@ describe("PackageUtilities", () => {
         scope: "package-a-*",
         ignore: "package-a-@(1|2)",
       };
-      assert.throws(() => {
+      expect(() => {
         PackageUtilities.filterPackages(packages, flags);
-      });
+      }).toThrow();
     });
   });
 
@@ -142,8 +156,9 @@ describe("PackageUtilities", () => {
     }));
 
     it("should batch roots, then internal/leaf nodes, then cycles", () => {
-      assert.deepEqual(
-        PackageUtilities.topologicallyBatchPackages(packages).map((batch) => batch.map((pkg) => pkg.name)),
+      const batchedPackages = PackageUtilities.topologicallyBatchPackages(packages);
+
+      expect(batchedPackages.map((batch) => batch.map((pkg) => pkg.name))).toEqual(
         [
           ["package-dag-1", "package-standalone"],
           ["package-dag-2a", "package-dag-2b"],
@@ -156,34 +171,40 @@ describe("PackageUtilities", () => {
   });
 
   describe(".runParallelBatches()", () => {
-    const batches = [
-      [ 1 ],
-      [ 2, 3 ],
-      [ 4, 5, 6 ],
-      [ 7, 8, 9, 10 ]
-    ];
-
-    const taskOrdering = [];
-
     // Array#sort sorts numbers lexicographically by default!
     function numericalSort(a, b) {
       return a - b;
     }
 
     it("should run batches serially", (done) => {
+      const batches = [
+        [ 1 ],
+        [ 2, 3 ],
+        [ 4, 5, 6 ],
+        [ 7, 8, 9, 10 ]
+      ];
+
+      const taskOrdering = [];
+
       PackageUtilities.runParallelBatches(batches, (n) => (cb) => {
         taskOrdering.push(n);
         cb();
       }, 1, (err) => {
-        assert(!err);
-        assert.equal(taskOrdering.length, 10);
-        assert.deepEqual([
-          taskOrdering.slice(0, 1).sort(numericalSort),
-          taskOrdering.slice(1, 3).sort(numericalSort),
-          taskOrdering.slice(3, 6).sort(numericalSort),
-          taskOrdering.slice(6, 10).sort(numericalSort)
-        ], batches);
-        done();
+        if (err) return done.fail(err);
+
+        try {
+          expect(taskOrdering).toHaveLength(10);
+          expect([
+            taskOrdering.slice(0, 1).sort(numericalSort),
+            taskOrdering.slice(1, 3).sort(numericalSort),
+            taskOrdering.slice(3, 6).sort(numericalSort),
+            taskOrdering.slice(6, 10).sort(numericalSort)
+          ]).toEqual(batches);
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
       });
     });
   });
