@@ -29,21 +29,6 @@ const stubExecOpts = () => {
 describe("NpmUtilities", () => {
   afterEach(() => jest.resetAllMocks());
 
-  describe(".splitVersion()", () => {
-    [
-      ["foo", ["foo", undefined], "no version"],
-      ["foo@1.0.0", ["foo", "1.0.0"], "exact version"],
-      ["foo@^1.0.0", ["foo", "^1.0.0"], "caret range"],
-      ["@foo/bar", ["@foo/bar", undefined], "scoped with no version"],
-      ["@foo/bar@1.0.0",  ["@foo/bar", "1.0.0"], "scoped with exact version"],
-      ["@foo/bar@^1.0.0", ["@foo/bar", "^1.0.0"], "scoped with caret range"],
-    ].forEach(([have, want, desc]) => {
-      it("should handle " + desc, () => {
-        expect(NpmUtilities.splitVersion(have)).toEqual(want);
-      });
-    });
-  });
-
   describe(".addDistTag()", () => {
     const directory = "/test/addDistTag";
     const packageName = "foo-pkg";
@@ -267,7 +252,10 @@ describe("NpmUtilities", () => {
     it("installs dependencies in targeted directory", (done) => {
       const directory = path.normalize("/test/installInDir");
       const dependencies = [
+        "@scoped/caret@^2.0.0",
+        "@scoped/exact@2.0.0",
         "caret@^1.0.0",
+        "exact@1.0.0",
       ];
       const config = {};
 
@@ -288,7 +276,10 @@ describe("NpmUtilities", () => {
             path.join(directory, "package.json"),
             {
               dependencies: {
+                "@scoped/caret": "^2.0.0",
+                "@scoped/exact": "2.0.0",
                 caret: "^1.0.0",
+                exact: "1.0.0",
               },
             },
           );
@@ -309,6 +300,7 @@ describe("NpmUtilities", () => {
       const registry = "https://custom-registry/installInDir";
       const directory = path.normalize("/test/installInDir");
       const dependencies = [
+        "@scoped/tagged@next",
         "tagged@next",
       ];
       const config = {
@@ -322,6 +314,7 @@ describe("NpmUtilities", () => {
           expect(writePkg.mock.calls[0][1]).toEqual(
             {
               dependencies: {
+                "@scoped/tagged": "next",
                 tagged: "next",
               },
             },
@@ -340,6 +333,7 @@ describe("NpmUtilities", () => {
     it("supports custom npmClient", (done) => {
       const directory = path.normalize("/test/installInDir");
       const dependencies = [
+        "@scoped/something@github:foo/bar",
         "something@github:foo/foo",
       ];
       const config = {
@@ -353,6 +347,7 @@ describe("NpmUtilities", () => {
           expect(writePkg.mock.calls[0][1]).toEqual(
             {
               dependencies: {
+                "@scoped/something": "github:foo/bar",
                 something: "github:foo/foo",
               },
             },
@@ -390,6 +385,7 @@ describe("NpmUtilities", () => {
       const directory = path.normalize("/test/installInDir");
       const dependencies = [
         "noversion",
+        "@scoped/noversion", // sorted by write-pkg
       ];
       const config = {};
 
@@ -400,6 +396,7 @@ describe("NpmUtilities", () => {
           expect(writePkg.mock.calls[0][1]).toEqual(
             {
               dependencies: {
+                "@scoped/noversion": "*",
                 noversion: "*",
               },
             },
