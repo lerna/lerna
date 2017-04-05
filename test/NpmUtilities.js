@@ -1,10 +1,13 @@
 import { EOL } from "os";
 import path from "path";
 import escapeArgs from "command-join";
-import writePkg from "write-pkg";
 
+// mocked modules
+import writePkg from "write-pkg";
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
 import FileSystemUtilities from "../src/FileSystemUtilities";
+
+// file under test
 import NpmUtilities from "../src/NpmUtilities";
 
 jest.mock("write-pkg");
