@@ -1,5 +1,9 @@
 import { EOL } from "os";
+
+// mocked modules
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
+
+// file under test
 import GitUtilities from "../src/GitUtilities";
 
 jest.mock("../src/ChildProcessUtilities");
