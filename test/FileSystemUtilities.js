@@ -1,14 +1,18 @@
-import fs from "fs-promise";
 import path from "path";
+
+// mocked modules
+import fs from "fs-promise";
 import pathExists from "path-exists";
 import cmdShim from "cmd-shim";
 import readCmdShim from "read-cmd-shim";
-
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
-import FileSystemUtilities from "../src/FileSystemUtilities";
+
+// helpers
 import callsBack from "./helpers/callsBack";
 
-// It is not our job to test other libraries and built-ins
+// file under test
+import FileSystemUtilities from "../src/FileSystemUtilities";
+
 jest.mock("fs-promise");
 jest.mock("path-exists");
 jest.mock("cmd-shim");
