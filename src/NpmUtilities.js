@@ -1,3 +1,4 @@
+import readPkg from "read-pkg";
 import writePkg from "write-pkg";
 import ChildProcessUtilities from "./ChildProcessUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
@@ -113,7 +114,8 @@ export default class NpmUtilities {
   static dependencyIsSatisfied(dir, dependency, needVersion) {
     const packageJson = path.join(dir, dependency, "package.json");
     try {
-      return semver.satisfies(require(packageJson).version, needVersion);
+      const hasVersion = readPkg.sync(packageJson).version;
+      return semver.satisfies(hasVersion, needVersion);
     } catch (e) {
       return false;
     }
