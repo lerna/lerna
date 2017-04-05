@@ -1,22 +1,17 @@
 import { EOL } from "os";
 import path from "path";
 import escapeArgs from "command-join";
+import readPkg from "read-pkg";
 import writePkg from "write-pkg";
-import {
-  fixtureNamer,
-  getTempDir,
-  rimrafAsync,
-} from "./helpers/fixtureUtils";
 
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
 import FileSystemUtilities from "../src/FileSystemUtilities";
 import NpmUtilities from "../src/NpmUtilities";
 
+jest.mock("read-pkg");
 jest.mock("write-pkg");
 jest.mock("../src/ChildProcessUtilities");
 jest.mock("../src/FileSystemUtilities");
-
-const getFixtureName = fixtureNamer();
 
 // we stub getExecOpts() in most tests because
 // we already have enough tests of getExecOpts()
@@ -210,27 +205,17 @@ describe("NpmUtilities", () => {
   });
 
   describe(".dependencyIsSatisfied()", () => {
-    let testDir;
-    let nodeModulesLocation;
-
-    beforeEach(() => getTempDir(getFixtureName("NpmUtilities/satisfied")).then((dir) => {
-      testDir = dir;
-      nodeModulesLocation = path.join(testDir, "node_modules");
-
-      return writePkg(path.join(nodeModulesLocation, "foo-pkg"), {
-        name: "foo-pkg",
-        version: "1.0.0",
-      });
-    }));
-
-    afterEach(() => rimrafAsync(testDir));
+    beforeEach(() => {
+      readPkg.sync.mockImplementation(() => ({ version: "1.0.0" }));
+    });
 
     it("returns true if a package satisfies the given version range", () => {
-      expect(NpmUtilities.dependencyIsSatisfied(nodeModulesLocation, "foo-pkg", "^1.0.0")).toBe(true);
+      expect(NpmUtilities.dependencyIsSatisfied("node_modules", "foo-pkg", "^1.0.0")).toBe(true);
+      expect(readPkg.sync).lastCalledWith(path.join("node_modules", "foo-pkg", "package.json"));
     });
 
     it("returns false if a package does not satisfy the given version range", () => {
-      expect(NpmUtilities.dependencyIsSatisfied(nodeModulesLocation, "foo-pkg", "^2.0.0")).toBe(false);
+      expect(NpmUtilities.dependencyIsSatisfied("node_modules", "foo-pkg", "^2.0.0")).toBe(false);
     });
   });
 
