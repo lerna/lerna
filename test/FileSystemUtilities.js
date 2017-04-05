@@ -1,7 +1,6 @@
-import fs from "graceful-fs";
+import fs from "fs-promise";
 import path from "path";
 import pathExists from "path-exists";
-import mkdirp from "mkdirp";
 import cmdShim from "cmd-shim";
 import readCmdShim from "read-cmd-shim";
 
@@ -10,9 +9,8 @@ import FileSystemUtilities from "../src/FileSystemUtilities";
 import callsBack from "./helpers/callsBack";
 
 // It is not our job to test other libraries and built-ins
-jest.mock("graceful-fs");
+jest.mock("fs-promise");
 jest.mock("path-exists");
-jest.mock("mkdirp");
 jest.mock("cmd-shim");
 jest.mock("read-cmd-shim");
 jest.mock("../src/ChildProcessUtilities");
@@ -23,12 +21,12 @@ describe("FileSystemUtilities", () => {
   afterEach(() => jest.resetAllMocks());
 
   describe(".mkdirp()", () => {
-    it("calls mkdirp() with fs override", (done) => {
+    it("calls fs.ensureDir", (done) => {
       const dirPath = "mkdirp/test";
-      mkdirp.mockImplementation(callsBack());
+      fs.ensureDir.mockImplementation(callsBack());
       FileSystemUtilities.mkdirp(dirPath, () => {
         try {
-          expect(mkdirp).lastCalledWith(dirPath, { fs }, expect.any(Function));
+          expect(fs.ensureDir).lastCalledWith(dirPath, expect.any(Function));
           done();
         } catch (ex) {
           done.fail(ex);
