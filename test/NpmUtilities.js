@@ -1,14 +1,12 @@
 import { EOL } from "os";
 import path from "path";
 import escapeArgs from "command-join";
-import readPkg from "read-pkg";
 import writePkg from "write-pkg";
 
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
 import FileSystemUtilities from "../src/FileSystemUtilities";
 import NpmUtilities from "../src/NpmUtilities";
 
-jest.mock("read-pkg");
 jest.mock("write-pkg");
 jest.mock("../src/ChildProcessUtilities");
 jest.mock("../src/FileSystemUtilities");
@@ -186,21 +184,6 @@ describe("NpmUtilities", () => {
       const cmd = `npm publish --tag ${tag}`;
       const opts = { directory, registry };
       expect(ChildProcessUtilities.exec).lastCalledWith(cmd, opts, expect.any(Function));
-    });
-  });
-
-  describe(".dependencyIsSatisfied()", () => {
-    beforeEach(() => {
-      readPkg.sync.mockImplementation(() => ({ version: "1.0.0" }));
-    });
-
-    it("returns true if a package satisfies the given version range", () => {
-      expect(NpmUtilities.dependencyIsSatisfied("node_modules", "foo-pkg", "^1.0.0")).toBe(true);
-      expect(readPkg.sync).lastCalledWith(path.join("node_modules", "foo-pkg", "package.json"));
-    });
-
-    it("returns false if a package does not satisfy the given version range", () => {
-      expect(NpmUtilities.dependencyIsSatisfied("node_modules", "foo-pkg", "^2.0.0")).toBe(false);
     });
   });
 
