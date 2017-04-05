@@ -172,7 +172,7 @@ export default class BootstrapCommand extends Command {
 
     // Configuration for what packages to hoist may be in lerna.json or it may
     // come in as command line options.
-    const {hoist: scope, nohoist: ignore} = this.getOptions();
+    const { hoist, nohoist } = this.getOptions();
 
     // This will contain entries for each hoistable dependency.
     const root = [];
@@ -256,7 +256,7 @@ export default class BootstrapCommand extends Command {
 
       let rootVersion;
 
-      if (scope && PackageUtilities.getFilteredPackage({name}, {scope, ignore})) {
+      if (hoist && PackageUtilities.isHoistedPackage(name, hoist, nohoist)) {
 
         // Get the most common version.
         const commonVersion = Object.keys(versions)
