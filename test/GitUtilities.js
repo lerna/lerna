@@ -169,14 +169,6 @@ describe("GitUtilities", () => {
     });
   });
 
-  describe(".getTopLevelDirectory()", () => {
-    it("returns root directory of repo", () => {
-      ChildProcessUtilities.execSync.mockImplementation(() => "/path/to/foo");
-      expect(GitUtilities.getTopLevelDirectory()).toBe("/path/to/foo");
-      expect(ChildProcessUtilities.execSync).lastCalledWith("git rev-parse --show-toplevel");
-    });
-  });
-
   describe(".checkoutChanges()", () => {
     it("calls git checkout with specified arg", () => {
       GitUtilities.checkoutChanges("packages/*/package.json");
