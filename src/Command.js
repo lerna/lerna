@@ -96,7 +96,7 @@ export default class Command {
   }
 
   runValidations() {
-    if (!GitUtilities.isInitialized()) {
+    if (!GitUtilities.isInitialized(this.repository.rootPath)) {
       this.logger.warn("This is not a git repository, did you already run `git init` or `lerna init`?");
       this._complete(null, 1);
       return;
