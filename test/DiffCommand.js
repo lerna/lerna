@@ -46,7 +46,9 @@ describe("DiffCommand", () => {
             "beefcafe",
             "--color=auto",
           ],
-          { cwd: testDir },
+          expect.objectContaining({
+            cwd: testDir,
+          }),
           expect.any(Function)
         );
         done();
@@ -76,7 +78,9 @@ describe("DiffCommand", () => {
             "cafedead",
             "--color=auto",
           ],
-          { cwd: testDir },
+          expect.objectContaining({
+            cwd: testDir,
+          }),
           expect.any(Function)
         );
         done();
@@ -107,7 +111,9 @@ describe("DiffCommand", () => {
             "--",
             path.join(testDir, "packages/package-1"),
           ],
-          { cwd: testDir },
+          expect.objectContaining({
+            cwd: testDir,
+          }),
           expect.any(Function)
         );
         done();

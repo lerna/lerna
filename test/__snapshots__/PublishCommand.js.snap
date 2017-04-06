@@ -85,18 +85,6 @@ exports[`[independent] git commit message 1`] = `
  - package-4@1.1.0"
 `;
 
-exports[`[independent] git push <remote> [tags] 1`] = `
-Array [
-  "origin",
-  Array [
-    "package-1@1.0.1",
-    "package-2@1.1.0",
-    "package-3@2.0.0",
-    "package-4@1.1.0",
-  ],
-]
-`;
-
 exports[`[independent] git tags added 1`] = `
 Array [
   "package-1@1.0.1",
@@ -218,15 +206,6 @@ Array [
   "packages/package-3/package.json",
   "packages/package-4/package.json",
   "packages/package-5/package.json",
-]
-`;
-
-exports[`[normal] git push <remote> [tags] 1`] = `
-Array [
-  "origin",
-  Array [
-    "v1.0.1",
-  ],
 ]
 `;
 

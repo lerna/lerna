@@ -18,15 +18,18 @@ describe("ConventionalCommitUtilities", () => {
     it("should invoke conventional-changelog-recommended bump to fetch next version", () => {
       ChildProcessUtilities.execSync = jest.fn(() => "major");
 
+      const opts = { cwd: "test" };
+
       const recommendVersion = ConventionalCommitUtilities.recommendVersion({
         name: "bar",
         version: "1.0.0",
         location: "/foo/bar",
-      });
+      }, opts);
 
       expect(recommendVersion).toBe("2.0.0");
       expect(ChildProcessUtilities.execSync).lastCalledWith(
         `${require.resolve("conventional-recommended-bump/cli.js")} -l bar --commit-path=/foo/bar -p angular`,
+        opts,
       );
     });
   });
@@ -36,16 +39,19 @@ describe("ConventionalCommitUtilities", () => {
       FileSystemUtilities.existsSync = jest.fn(() => false);
       ChildProcessUtilities.execSync = jest.fn(() => "<a name='change' />feat: I should be placed in the CHANGELOG");
 
+      const opts = { cwd: "test" };
+
       ConventionalCommitUtilities.updateChangelog({
         name: "bar",
         location: "/foo/bar"
-      });
+      }, opts);
 
       expect(FileSystemUtilities.existsSync).lastCalledWith(
         path.normalize("/foo/bar/CHANGELOG.md")
       );
       expect(ChildProcessUtilities.execSync).lastCalledWith(
         `${require.resolve("conventional-changelog-cli/cli.js")} -l bar --commit-path=/foo/bar --pkg=${path.normalize("/foo/bar/package.json")} -p angular`,
+        opts,
       );
       expect(FileSystemUtilities.writeFileSync).lastCalledWith(
         path.normalize("/foo/bar/CHANGELOG.md"),

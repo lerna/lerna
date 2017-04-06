@@ -92,7 +92,7 @@ export default class PublishCommand extends Command {
 
   execute(callback) {
     try {
-      if (this.gitEnabled && GitUtilities.isDetachedHead()) {
+      if (this.gitEnabled && GitUtilities.isDetachedHead(this.execOpts)) {
         throw new Error("Detached git HEAD, please checkout a branch to publish changes.");
       }
 
@@ -131,7 +131,7 @@ export default class PublishCommand extends Command {
       if (this.flags.canary) {
         this.logger.info("Resetting git state");
         // reset since the package.json files are changed
-        GitUtilities.checkoutChanges("packages/*/package.json");
+        GitUtilities.checkoutChanges("packages/*/package.json", this.execOpts);
       }
 
       this.npmUpdateAsLatest((err) => {
@@ -143,7 +143,7 @@ export default class PublishCommand extends Command {
         if (this.gitEnabled) {
           this.logger.info("Pushing tags to git...");
           this.logger.newLine();
-          GitUtilities.pushWithTags(this.getOptions().gitRemote || "origin", this.tags);
+          GitUtilities.pushWithTags(this.getOptions().gitRemote || "origin", this.tags, this.execOpts);
         }
 
         let message = "Successfully published:";
@@ -220,7 +220,7 @@ export default class PublishCommand extends Command {
           name: update.package.name,
           version: update.package.version,
           location: update.package.location
-        });
+        }, this.execOpts);
       });
       callback(null, { versions });
 
@@ -243,7 +243,7 @@ export default class PublishCommand extends Command {
   }
 
   getCanaryVersionSuffix() {
-    return "-alpha." + GitUtilities.getCurrentSHA().slice(0, 8);
+    return "-alpha." + GitUtilities.getCurrentSHA(this.execOpts).slice(0, 8);
   }
 
   promptVersion(packageName, currentVersion, callback) {
@@ -335,7 +335,7 @@ export default class PublishCommand extends Command {
     this.repository.lernaJson.version = this.masterVersion;
     writeJsonFile.sync(this.repository.lernaJsonLocation, this.repository.lernaJson, { indent: 2 });
     if (!this.flags.skipGit) {
-      GitUtilities.addFile(this.repository.lernaJsonLocation);
+      GitUtilities.addFile(this.repository.lernaJsonLocation, this.execOpts);
     }
   }
 
@@ -365,7 +365,7 @@ export default class PublishCommand extends Command {
         ConventionalCommitUtilities.updateChangelog({
           name: pkg.name,
           location: pkg.location
-        });
+        }, this.execOpts);
         changedFiles.push(ConventionalCommitUtilities.changelogLocation(pkg));
       }
 
@@ -374,7 +374,7 @@ export default class PublishCommand extends Command {
     });
 
     if (this.gitEnabled) {
-      changedFiles.forEach((file) => GitUtilities.addFile(file));
+      changedFiles.forEach((file) => GitUtilities.addFile(file, this.execOpts));
     }
   }
 
@@ -406,8 +406,8 @@ export default class PublishCommand extends Command {
     const tags = this.updates.map((update) => `${update.package.name}@${this.updatesVersions[update.package.name]}`);
     const message = this.flags.message || tags.reduce((msg, tag) => msg + `${EOL} - ${tag}`, `Publish${EOL}`);
 
-    GitUtilities.commit(message);
-    tags.forEach((tag) => GitUtilities.addTag(tag));
+    GitUtilities.commit(message, this.execOpts);
+    tags.forEach((tag) => GitUtilities.addTag(tag, this.execOpts));
 
     return tags;
   }
@@ -416,8 +416,8 @@ export default class PublishCommand extends Command {
     const tag = "v" + version;
     const message = this.flags.message || tag;
 
-    GitUtilities.commit(message);
-    GitUtilities.addTag(tag);
+    GitUtilities.commit(message, this.execOpts);
+    GitUtilities.addTag(tag, this.execOpts);
 
     return tag;
   }

@@ -11,9 +11,9 @@ export default class InitCommand extends Command {
   runPreparations() {}
 
   initialize(callback) {
-    if (!GitUtilities.isInitialized(this.repository.rootPath)) {
+    if (!GitUtilities.isInitialized(this.execOpts)) {
       this.logger.info("Initializing Git repository.");
-      GitUtilities.init(this.repository.rootPath);
+      GitUtilities.init(this.execOpts);
     }
 
     this.exact = this.getOptions().exact;
