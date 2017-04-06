@@ -7,28 +7,6 @@ import minimatch from "minimatch";
 import async from "async";
 
 export default class PackageUtilities {
-  static getGlobalVersion(versionPath) {
-    if (FileSystemUtilities.existsSync(versionPath)) {
-      return FileSystemUtilities.readFileSync(versionPath);
-    }
-  }
-
-  static getPackagesPath(rootPath) {
-    return path.join(rootPath, "packages");
-  }
-
-  static getPackagePath(packagesPath, name) {
-    return path.join(packagesPath, name);
-  }
-
-  static getPackageConfigPath(packagesPath, name) {
-    return path.join(PackageUtilities.getPackagePath(packagesPath, name), "package.json");
-  }
-
-  static getPackageConfig(packagesPath, name) {
-    return require(PackageUtilities.getPackageConfigPath(packagesPath, name));
-  }
-
   static getPackages({
     packageConfigs,
     rootPath,
