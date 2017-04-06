@@ -233,7 +233,7 @@ export default class Command {
 
   _complete(err, code, callback) {
     if (code !== 0) {
-      const exitHandler = new ExitHandler();
+      const exitHandler = new ExitHandler(this.repository.rootPath);
       exitHandler.writeLogs(this.logger);
     }
 

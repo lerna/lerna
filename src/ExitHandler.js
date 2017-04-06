@@ -3,12 +3,13 @@ import path from "path";
 import padEnd from "lodash/padEnd";
 
 export default class ExitHandler {
-  constructor() {
+  constructor(cwd) {
+    this.cwd = cwd;
     this.errorsSeen = {};
   }
 
   writeLogs(logger) {
-    const filePath = path.join(process.cwd(), "lerna-debug.log");
+    const filePath = path.join(this.cwd, "lerna-debug.log");
     const fileContent = this._formatLogs(logger.logs);
 
     FileSystemUtilities.writeFileSync(filePath, fileContent);
