@@ -382,14 +382,56 @@ export default class BootstrapCommand extends Command {
         // If we have any unsatisfied deps then we need to install everything.
         // This is important for consistent behavior across npm clients.
         if (deps.some(({isSatisfied}) => !isSatisfied)) {
-          actions.push(
-            (cb) => NpmUtilities.installInDir(
-              pkg.location, deps.map(({dependency}) => dependency), this.npmConfig, (err) => {
-                this.progressBar.tick(pkg.name);
-                cb(err);
-              }
-            )
-          );
+          if (root.length === 0) {
+            actions.push(
+              (cb) => NpmUtilities.installInDir(
+                pkg.location, deps.map(({dependency}) => dependency), this.npmConfig, (err) => {
+                  this.progressBar.tick(pkg.name);
+                  cb(err);
+                }
+              )
+            );
+          } else {
+            const targetLocation = path.join(pkg.location, "node_modules", "_node_modules");
+            const depNames = deps.map(({ dependency }) => dependency.match(/(.*)@/)[1]);
+            actions.push(
+              (cb) => async.series([
+                (cb) => FileSystemUtilities.mkdirp(targetLocation, cb),
+                (cb) => FileSystemUtilities.writeFile(
+                  path.join(targetLocation, "package.json"),
+                  FileSystemUtilities.readFileSync(path.join(pkg.location, "package.json")),
+                  cb
+                ),
+                (cb) => NpmUtilities.installInDir(
+                  targetLocation, deps.map(({dependency}) => dependency), this.npmConfig, (err) => {
+                    this.progressBar.tick(pkg.name);
+                    cb(err);
+                  }
+                ),
+                (cb) => async.parallel(
+                  depNames.map((dependency) =>
+                    (cb) => FileSystemUtilities.rename(
+                      path.join(targetLocation, "node_modules", dependency),
+                      path.join(pkg.location, "node_modules", dependency),
+                      cb
+                    )
+                  ),
+                  cb
+                ),
+                (cb) => async.parallel(
+                  depNames.map((dependency) =>
+                    (cb) => FileSystemUtilities.symlink(
+                      path.join(targetLocation, "node_modules"),
+                      path.join(pkg.location, "node_modules", dependency, "node_modules"),
+                      "dir",
+                      cb
+                    )
+                  ),
+                  cb
+                ),
+              ], cb)
+            );
+          }
         }
       });
 
