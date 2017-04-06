@@ -4,7 +4,7 @@ import execa from "execa";
 import readPkg from "read-pkg";
 import loadJsonFile from "load-json-file";
 import initDirName from "../helpers/initDirName";
-import initExternalFixture from "../helpers/initExternalFixture";
+import initFixture from "../helpers/initFixture";
 import replaceLernaVersion from "../helpers/replaceLernaVersion";
 
 expect.addSnapshotSerializer(replaceLernaVersion);
@@ -17,9 +17,6 @@ const initEmptyDir = () =>
   initDirName("InitCommand/empty").then((dir) => {
     return fs.ensureDir(dir).then(() => dir);
   });
-
-const initFixture = (name) =>
-  initExternalFixture(`InitCommand/${name}`);
 
 const parsePackageJson = (cwd) =>
   readPkg(path.join(cwd, "package.json"), { normalize: false });
@@ -44,7 +41,7 @@ describe("lerna init", () => {
     });
   }));
 
-  test.concurrent("updates existing metadata", () => initFixture("updates").then((cwd) => {
+  test.concurrent("updates existing metadata", () => initFixture("InitCommand/updates").then((cwd) => {
     return execa(LERNA, ["init", "--exact"], { cwd }).then((result) => {
       expect(result.stdout).toMatchSnapshot("stdout: updates");
 
@@ -55,7 +52,7 @@ describe("lerna init", () => {
     });
   }));
 
-  test.concurrent("removes VERSION file", () => initFixture("has-version").then((cwd) => {
+  test.concurrent("removes VERSION file", () => initFixture("InitCommand/has-version").then((cwd) => {
     return execa(LERNA, ["init"], { cwd }).then((result) => {
       expect(result.stdout).toMatchSnapshot("stdout: has-version");
     });
