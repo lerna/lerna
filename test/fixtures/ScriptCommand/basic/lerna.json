@@ -1,0 +1,10 @@
+{
+  "lerna": "__TEST_VERSION__",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "babel",
+    "prelifecycle": "echo pre",
+    "lifecycle": "echo main",
+    "postlifecycle": "echo post"
+  }
+}
