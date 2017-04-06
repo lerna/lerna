@@ -53,7 +53,10 @@ export default class UpdatedPackagesCollector {
 
       commits = this.getAssociatedCommits(currentSHA);
     } else if (hasTags) {
-      commits = GitUtilities.describeTag(GitUtilities.getLastTaggedCommitInBranch(this.execOpts), this.execOpts);
+      commits = GitUtilities.describeTag(
+        GitUtilities.getLastTaggedCommitInBranch(this.execOpts),
+        this.execOpts
+      );
     }
 
     const updatedPackages = {};
@@ -132,7 +135,11 @@ export default class UpdatedPackagesCollector {
 
   collectUpdates() {
     return this.packages.filter((pkg) => {
-      return this.updatedPackages[pkg.name] || (this.flags[SECRET_FLAG] ? false : this.dependents[pkg.name]) || this.flags.canary;
+      return (
+        this.updatedPackages[pkg.name] ||
+        (this.flags[SECRET_FLAG] ? false : this.dependents[pkg.name]) ||
+        this.flags.canary
+      );
     }).map((pkg) => {
       return new Update(pkg);
     });
@@ -168,4 +175,5 @@ export default class UpdatedPackagesCollector {
   }
 }
 
+// eslint-disable-next-line max-len
 const SECRET_FLAG = new Buffer("ZGFuZ2Vyb3VzbHlPbmx5UHVibGlzaEV4cGxpY2l0VXBkYXRlc1RoaXNJc0FDdXN0b21GbGFnRm9yQmFiZWxBbmRZb3VTaG91bGROb3RCZVVzaW5nSXRKdXN0RGVhbFdpdGhNb3JlUGFja2FnZXNCZWluZ1B1Ymxpc2hlZEl0SXNOb3RBQmlnRGVhbA==", "base64").toString("ascii");

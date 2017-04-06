@@ -50,7 +50,6 @@ class ProgressBarController {
   restore() {
     if (this.bar) {
       // This is a hack to get the bar to redraw it's last state.
-      // See: https://github.com/tj/node-progress/blob/d47913502ba5b551fcaad9e94fe7b2f5876a7939/lib/node-progress.js#L154-L159
       this.bar.stream.write(this.bar.lastDraw);
     }
   }

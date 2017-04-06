@@ -227,7 +227,10 @@ export default class BootstrapCommand extends Command {
       Object.keys(pkg.allDependencies)
 
         // map to package or normalized external dependency
-        .map((name) => findPackage(name, pkg.allDependencies[name]) || { name, version: pkg.allDependencies[name] })
+        .map((name) => (
+          findPackage(name, pkg.allDependencies[name]) ||
+          { name, version: pkg.allDependencies[name] }
+        ))
 
         // match external and version mismatched local packages
         .filter((dep) => !hasPackage(dep.name, dep.version) || !pkg.hasMatchingDependency(dep, this.logger))
@@ -262,7 +265,7 @@ export default class BootstrapCommand extends Command {
 
         // Get the most common version.
         const commonVersion = Object.keys(versions)
-          .reduce((a, b) => versions[a] > versions[b] ? a : b);
+          .reduce((a, b) => { return versions[a] > versions[b] ? a : b; });
 
         // Get the version required by the repo root (if any).
         // If the root doesn't have a dependency on this package then we'll
@@ -438,7 +441,10 @@ export default class BootstrapCommand extends Command {
             );
           } else {
             // get the destination directory name of the dependency
-            const pkgDependencyLocation = path.join(filteredPackage.nodeModulesLocation, dependencyPackage.name);
+            const pkgDependencyLocation = path.join(
+              filteredPackage.nodeModulesLocation,
+              dependencyPackage.name
+            );
             // check if dependency is already installed
             if (FileSystemUtilities.existsSync(pkgDependencyLocation)) {
               const isDepSymlink = FileSystemUtilities.isSymlink(pkgDependencyLocation);
@@ -470,7 +476,13 @@ export default class BootstrapCommand extends Command {
             if (dependencyPackageJson.bin) {
               const destFolder = filteredPackage.nodeModulesLocation;
               packageActions.push((cb) => {
-                this.createBinaryLink(dependencyLocation, destFolder, dependency, dependencyPackageJson.bin, cb);
+                this.createBinaryLink(
+                  dependencyLocation,
+                  destFolder,
+                  dependency,
+                  dependencyPackageJson.bin,
+                  cb
+                );
               });
             }
           }

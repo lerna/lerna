@@ -26,8 +26,8 @@ const npmTestInDir = (cwd) =>
 
 describe("lerna bootstrap", () => {
   describe("from CLI", () => {
-    test.concurrent("bootstraps all packages", () => initFixture("BootstrapCommand/integration").then((cwd) => {
-      return Promise.resolve()
+    test.concurrent("bootstraps all packages", () => initFixture("BootstrapCommand/integration")
+      .then((cwd) => Promise.resolve()
         .then(() => execa(LERNA, ["bootstrap"], { cwd }))
         .then((result) => {
           expect(result.stdout).toMatchSnapshot("stdout: simple");
@@ -35,13 +35,14 @@ describe("lerna bootstrap", () => {
         .then(() => execa(LERNA, ["run", "test", "--", "--silent"], { cwd }))
         .then((result) => {
           expect(result.stdout).toMatchSnapshot("stdout: simple");
-        });
-    }));
+        })
+      )
+    );
   });
 
   describe("from npm script", () => {
-    test.concurrent("bootstraps all packages", () => initFixture("BootstrapCommand/integration").then((cwd) => {
-      return copyTarball(cwd)
+    test.concurrent("bootstraps all packages", () => initFixture("BootstrapCommand/integration")
+      .then((cwd) => copyTarball(cwd)
         .then(() => writePkg(cwd, {
           "name": "integration",
           "scripts": {
@@ -56,7 +57,8 @@ describe("lerna bootstrap", () => {
         .then(() => npmTestInDir(cwd))
         .then((result) => {
           expect(result.stdout).toMatchSnapshot("stdout: postinstall");
-        });
-    }));
+        })
+      )
+    );
   });
 });

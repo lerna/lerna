@@ -146,8 +146,8 @@ describe("ExecCommand", () => {
 
     // Both of these commands should result in the same outcome
     const filters = [
-      { test: "should run a command for a given scope", flag: "scope", flagValue: "package-1" },
-      { test: "should not run a command for ignored packages", flag: "ignore", flagValue: "package-@(2|3|4)" },
+      { test: "runs a command for a given scope", flag: "scope", flagValue: "package-1" },
+      { test: "does not run a command for ignored packages", flag: "ignore", flagValue: "package-@(2|3|4)" },
     ];
     filters.forEach((filter) => {
       it(filter.test, (done) => {

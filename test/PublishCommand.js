@@ -332,7 +332,8 @@ describe("PublishCommand", () => {
           expect(PromptUtilities.select).not.toBeCalled();
 
           expect(writeJsonFile.sync).not.toBeCalled();
-          expect(updatedPackageVersions(testDir)).toMatchSnapshot("[independent --canary] bumps package versions");
+          expect(updatedPackageVersions(testDir))
+            .toMatchSnapshot("[independent --canary] bumps package versions");
 
           expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
             "package-1": "^1.0.0-alpha.deadbeef",
@@ -344,7 +345,8 @@ describe("PublishCommand", () => {
             "package-1": "^0.0.0",
           });
 
-          expect(addedDistTagInDirectories(testDir)).toMatchSnapshot("[independent --canary] npm dist-tag add");
+          expect(addedDistTagInDirectories(testDir))
+            .toMatchSnapshot("[independent --canary] npm dist-tag add");
 
           done();
         } catch (ex) {
@@ -472,7 +474,8 @@ describe("PublishCommand", () => {
           }
 
           expect(updatedLernaJson()).toMatchObject({ version: "1.0.1" });
-          expect(updatedPackageVersions(testDir)).toMatchSnapshot("[normal --skip-git --skip-npm] bumps package versions");
+          expect(updatedPackageVersions(testDir))
+            .toMatchSnapshot("[normal --skip-git --skip-npm] bumps package versions");
 
           expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
             "package-1": "^1.0.1",
@@ -533,7 +536,9 @@ describe("PublishCommand", () => {
             throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
           }
 
-          expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[normal --skip-temp-tag] npm publish --tag");
+          expect(publishedTagInDirectories(testDir))
+            .toMatchSnapshot("[normal --skip-temp-tag] npm publish --tag");
+
           expect(NpmUtilities.checkDistTag).not.toBeCalled();
           expect(NpmUtilities.removeDistTag).not.toBeCalled();
           expect(NpmUtilities.addDistTag).not.toBeCalled();
@@ -1045,8 +1050,10 @@ describe("PublishCommand", () => {
             throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
           }
 
-          expect(gitAddedFiles(testDir)).toMatchSnapshot("[independent --conventional-commits] git adds changed files");
-          expect(gitCommitMessage()).toMatchSnapshot("[independent --conventional-commits] git commit message");
+          expect(gitAddedFiles(testDir))
+            .toMatchSnapshot("[independent --conventional-commits] git adds changed files");
+          expect(gitCommitMessage())
+            .toMatchSnapshot("[independent --conventional-commits] git commit message");
 
           [
             ["package-1", "1.0.0"],
@@ -1106,7 +1113,8 @@ describe("PublishCommand", () => {
             throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
           }
 
-          expect(addedDistTagInDirectories(testDir)).toMatchSnapshot("[independent --canary --npm-tag=next --yes --exact] npm dist-tag add");
+          expect(addedDistTagInDirectories(testDir))
+            .toMatchSnapshot("[independent --canary --npm-tag=next --yes --exact] npm dist-tag add");
 
           done();
         } catch (ex) {

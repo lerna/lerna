@@ -128,7 +128,8 @@ describe("RunCommand", () => {
           if (err) return done.fail(err);
 
           try {
-            expect(ranInPackages(testDir)).toMatchSnapshot(`run <script> --${filter.flag} ${filter.flagValue}`);
+            expect(ranInPackages(testDir))
+              .toMatchSnapshot(`run <script> --${filter.flag} ${filter.flagValue}`);
 
             done();
           } catch (ex) {
@@ -159,7 +160,8 @@ describe("RunCommand", () => {
         if (err) return done.fail(err);
 
         try {
-          expect(ranInPackages(testDir)).toMatchSnapshot("run <script> --scope @test/package-2 --include-filtered-dependencies");
+          expect(ranInPackages(testDir))
+            .toMatchSnapshot("run <script> --scope @test/package-2 --include-filtered-dependencies");
 
           done();
         } catch (ex) {

@@ -277,7 +277,7 @@ export default class PublishCommand extends Command {
         case "CUSTOM": {
           PromptUtilities.input("Enter a custom version", {
             filter: semver.valid,
-            validate: (v) => semver.valid(v) ? true : "Must be a valid semver version",
+            validate: (v) => semver.valid(v) || "Must be a valid semver version",
           }, (input) => {
             callback(null, input);
           });
@@ -318,7 +318,11 @@ export default class PublishCommand extends Command {
     this.logger.info("Changes:");
     this.logger.info(this.updates.map((update) => {
       const pkg = update.package;
-      return `- ${pkg.name}: ${pkg.version} => ${this.updatesVersions[pkg.name]}${pkg.isPrivate() ? ` (${chalk.red("private")})` : ""}`;
+      let line = `- ${pkg.name}: ${pkg.version} => ${this.updatesVersions[pkg.name]}`;
+      if (pkg.isPrivate()) {
+        line += ` (${chalk.red("private")})`;
+      }
+      return line;
     }).join(EOL));
     this.logger.newLine();
 
@@ -404,8 +408,11 @@ export default class PublishCommand extends Command {
   }
 
   gitCommitAndTagVersionForUpdates() {
-    const tags = this.updates.map((update) => `${update.package.name}@${this.updatesVersions[update.package.name]}`);
-    const message = this.flags.message || tags.reduce((msg, tag) => msg + `${EOL} - ${tag}`, `Publish${EOL}`);
+    const tags = this.updates.map(({ package: { name } }) =>
+      `${name}@${this.updatesVersions[name]}`
+    );
+    const message = this.flags.message ||
+      tags.reduce((msg, tag) => msg + `${EOL} - ${tag}`, `Publish${EOL}`);
 
     GitUtilities.commit(message, this.execOpts);
     tags.forEach((tag) => GitUtilities.addTag(tag, this.execOpts));
@@ -435,7 +442,8 @@ export default class PublishCommand extends Command {
 
   npmPublishAsPrerelease(callback) {
     const { skipTempTag } = this.getOptions();
-    // if we skip temp tags we should tag with the proper value immediately therefore no updates will be needed
+    // if we skip temp tags we should tag with the proper value immediately
+    // therefore no updates will be needed
     const tag = skipTempTag ? this.getDistTag() : "lerna-temp";
 
     this.updates.forEach((update) => {
@@ -525,6 +533,8 @@ export default class PublishCommand extends Command {
       NpmUtilities.removeDistTag(pkg.location, pkg.name, "lerna-temp", this.npmRegistry);
     }
 
+    /* eslint-disable max-len */
+    // TODO: fix this API to be less verbose with parameters
     if (this.flags.npmTag) {
       NpmUtilities.addDistTag(pkg.location, pkg.name, this.updatesVersions[pkg.name], distTag, this.npmRegistry);
     } else if (this.flags.canary) {
@@ -532,6 +542,7 @@ export default class PublishCommand extends Command {
     } else {
       NpmUtilities.addDistTag(pkg.location, pkg.name, this.updatesVersions[pkg.name], distTag, this.npmRegistry);
     }
+    /* eslint-enable max-len */
   }
 
   getDistTag() {

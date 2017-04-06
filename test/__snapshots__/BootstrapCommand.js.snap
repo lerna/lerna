@@ -189,7 +189,7 @@ Array [
 ]
 `;
 
-exports[`BootstrapCommand with multiple package locations should bootstrap any dependencies excluded by --ignore when --include-filtered-dependencies is true 1`] = `
+exports[`BootstrapCommand with multiple package locations bootstraps dependencies excluded by --ignore with --include-filtered-dependencies 1`] = `
 Object {
   "packages/package-1": Array [
     "foo@^1.0.0",
@@ -200,7 +200,7 @@ Object {
 }
 `;
 
-exports[`BootstrapCommand with multiple package locations should bootstrap any dependencies not included by --scope when --include-filtered-dependencies is true 1`] = `
+exports[`BootstrapCommand with multiple package locations bootstraps dependencies not included by --scope with --include-filtered-dependencies 1`] = `
 Object {
   "packages/package-1": Array [
     "foo@^1.0.0",

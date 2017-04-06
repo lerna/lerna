@@ -147,6 +147,8 @@ export default class Command {
       return;
     }
 
+    /* eslint-disable max-len */
+    // TODO: remove these warnings eventually
     if (FileSystemUtilities.existsSync(this.repository.versionLocation)) {
       this.logger.warn("You have a `VERSION` file in your repository, this is leftover from a previous version. Please run `lerna init` to update.");
       this._complete(null, 1);
@@ -170,6 +172,7 @@ export default class Command {
       this._complete(null, 1);
       return;
     }
+    /* eslint-enable max-len */
   }
 
   runPreparations() {
