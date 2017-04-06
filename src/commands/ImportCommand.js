@@ -6,6 +6,20 @@ import ChildProcessUtilities from "../ChildProcessUtilities";
 import FileSystemUtilities from "../FileSystemUtilities";
 import GitUtilities from "../GitUtilities";
 
+export function handler(argv) {
+  return new ImportCommand(argv._, argv).run();
+}
+
+export const command = "import";
+
+export const describe = "Import the package at <path-to-external-repository>, with commit history, into packages/<directory-name>.";
+
+export const builder = {
+  "yes": {
+    describe: "Skip all confirmation prompts"
+  }
+};
+
 export default class ImportCommand extends Command {
   initialize(callback) {
     const inputPath = this.input[0];

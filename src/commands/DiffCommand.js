@@ -3,6 +3,16 @@ import Command from "../Command";
 import ChildProcessUtilities from "../ChildProcessUtilities";
 import find from "lodash/find";
 
+export function handler(argv) {
+  return new DiffCommand(argv._, argv).run();
+}
+
+export const command = "diff";
+
+export const describe = "Diff all packages or a single package since the last release.";
+
+export const builder = {};
+
 function getLastCommit(execOpts) {
   if (GitUtilities.hasTags(execOpts)) {
     return GitUtilities.getLastTaggedCommit(execOpts);
@@ -12,14 +22,6 @@ function getLastCommit(execOpts) {
 }
 
 export default class DiffCommand extends Command {
-  static getSupportedOptions() {
-    return Object.assign({}, Command.getSupportedOptions());
-  }
-
-  static get describe() {
-    return "Diff all packages or a single package since the last release.";
-  }
-
   initialize(callback) {
     const packageName = this.input[0];
 
