@@ -11,7 +11,8 @@ export function handler(argv) {
 
 export const command = "init";
 
-export const describe = "Create a new Lerna repo or upgrade an existing repo to the current version of Lerna.";
+export const describe = `Create a new Lerna repo or upgrade an existing repo to the current version 
+                         of Lerna.`;
 
 export const builder = {
   "exact": {
@@ -75,7 +76,7 @@ export default class InitCommand extends Command {
   }
 
   ensureLernaJson() {
-    const {independent} = this.getOptions();
+    const { independent } = this.getOptions();
 
     // lernaJson already defaulted to empty object in Repository constructor
     const lernaJson = this.repository.lernaJson;

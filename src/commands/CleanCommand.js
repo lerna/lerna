@@ -2,6 +2,19 @@ import async from "async";
 import Command from "../Command";
 import FileSystemUtilities from "../FileSystemUtilities";
 import PromptUtilities from "../PromptUtilities";
+export function handler(argv) {
+  return new CleanCommand(argv._, argv).run();
+}
+
+export const command = "clean";
+
+export const describe = "Remove the node_modules directory from all packages.";
+
+export const builder = {
+  "yes": {
+    describe: "Skip all confirmation prompts"
+  }
+};
 
 export default class CleanCommand extends Command {
   initialize(callback) {

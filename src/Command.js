@@ -18,20 +18,24 @@ export const builder = {
     coerce: (val) => Math.max(1, val)
   },
   "ignore": {
-    describe: "Ignores packages with names matching the given glob (Works only in combination with the 'run', 'exec', 'clean', 'ls' and 'bootstrap' commands).",
+    describe: `Ignores packages with names matching the given glob (Works only in combination with the 
+               'run', 'exec', 'clean', 'ls' and 'bootstrap' commands).`,
     type: "string",
     requiresArg: true
   },
   "include-filtered-dependencies": {
-    describe: "Flag to force lerna to include all dependencies and transitive dependencies when running 'bootstrap', even if they should not be included by the scope or ignore flags"
+    describe: `Flag to force lerna to include all dependencies and transitive dependencies when running 
+               'bootstrap', even if they should not be included by the scope or ignore flags`
   },
   "registry": {
-    describe: "When run with this flag, forwarded npm commands will use the specified registry for your package(s).",
+    describe: `When run with this flag, forwarded npm commands will use the specified registry for your 
+               package(s).`,
     type: "string",
     requiresArg: true
   },
   "scope": {
-    describe: "Restricts the scope to package names matching the given glob (Works only in combination with the 'run', 'exec', 'clean', 'ls' and 'bootstrap' commands).",
+    describe: `Restricts the scope to package names matching the given glob (Works only in combination 
+               with the 'run', 'exec', 'clean', 'ls' and 'bootstrap' commands).`,
     type: "string",
     requiresArg: true
   },
@@ -138,7 +142,7 @@ export default class Command {
   }
 
   runValidations() {
-    const {independent, onlyExplicitUpdates} = this.getOptions();
+    const { independent, onlyExplicitUpdates } = this.getOptions();
     if (!GitUtilities.isInitialized(this.repository.rootPath)) {
       this.logger.warn("This is not a git repository, did you already run `git init` or `lerna init`?");
       this._complete(null, 1);
