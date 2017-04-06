@@ -10,10 +10,10 @@ export default class GitUtilities {
   }
 
   @logger.logifySync()
-  static isInitialized() {
+  static isInitialized(cwd) {
     try {
       // we only want the return code, so ignore stdout/stderr
-      ChildProcessUtilities.execSync("git rev-parse", { stdio: "ignore" });
+      ChildProcessUtilities.execSync("git rev-parse", { cwd, stdio: "ignore" });
       return true;
     } catch (err) {
       return false;
@@ -94,18 +94,13 @@ export default class GitUtilities {
   }
 
   @logger.logifySync()
-  static getTopLevelDirectory() {
-    return ChildProcessUtilities.execSync("git rev-parse --show-toplevel");
-  }
-
-  @logger.logifySync()
   static checkoutChanges(changes) {
     ChildProcessUtilities.execSync("git checkout -- " + changes);
   }
 
   @logger.logifySync()
-  static init() {
-    return ChildProcessUtilities.execSync("git init");
+  static init(cwd) {
+    return ChildProcessUtilities.execSync("git init", { cwd });
   }
 
   @logger.logifySync()

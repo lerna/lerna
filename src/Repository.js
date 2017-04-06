@@ -1,10 +1,11 @@
 import path from "path";
 import findUp from "find-up";
 import loadJsonFile from "load-json-file";
+import readPkg from "read-pkg";
 import semver from "semver";
 import PackageUtilities from "./PackageUtilities";
 import Package from "./Package";
-import NpmUtilities from "./NpmUtilities";
+import dependencyIsSatisfied from "./utils/dependencyIsSatisfied";
 
 const DEFAULT_PACKAGE_GLOB = "packages/*";
 
@@ -67,7 +68,7 @@ export default class Repository {
   get packageJson() {
     if (!this._packageJson) {
       try {
-        this._packageJson = loadJsonFile.sync(this.packageJsonLocation);
+        this._packageJson = readPkg.sync(this.packageJsonLocation, { normalize: false });
       } catch (ex) {
         // try again next time
         this._packageJson = null;
@@ -104,7 +105,7 @@ export default class Repository {
   }
 
   hasDependencyInstalled(dependency, version) {
-    return NpmUtilities.dependencyIsSatisfied(
+    return dependencyIsSatisfied(
       this.nodeModulesLocation, dependency, version
     );
   }

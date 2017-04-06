@@ -1,0 +1,296 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BootstrapCommand lifecycle scripts should run preinstall, postinstall and prepublish scripts 1`] = `
+Object {
+  "packages/package-postinstall": Array [
+    "postinstall",
+  ],
+  "packages/package-preinstall": Array [
+    "preinstall",
+  ],
+  "packages/package-prepublish": Array [
+    "prepublish",
+  ],
+}
+`;
+
+exports[`BootstrapCommand with at least one external dependency to install should install all dependencies 1`] = `
+Object {
+  "packages/package-1": Array [
+    "external-1@^1.0.0",
+    "external-2@^1.0.0",
+  ],
+}
+`;
+
+exports[`BootstrapCommand with external dependencies that haven't been installed should get installed 1`] = `
+Object {
+  "packages/package-1": Array [
+    "external@^1.0.0",
+  ],
+  "packages/package-2": Array [
+    "external@^2.0.0",
+  ],
+}
+`;
+
+exports[`BootstrapCommand with hoisting should hoist 1`] = `
+Object {
+  "": Array [
+    "foo@^1.0.0",
+    "@test/package-1@^0.0.0",
+  ],
+  "packages/package-3": Array [
+    "foo@0.1.12",
+  ],
+}
+`;
+
+exports[`BootstrapCommand with hoisting should hoist 2`] = `
+Array [
+  "packages/package-1/node_modules/foo",
+  "packages/package-2/node_modules/foo",
+  "packages/package-4/node_modules/@test/package-1",
+]
+`;
+
+exports[`BootstrapCommand with hoisting should not hoist when disallowed 1`] = `
+Object {
+  "": Array [
+    "foo@^1.0.0",
+  ],
+  "packages/package-3": Array [
+    "foo@0.1.12",
+  ],
+  "packages/package-4": Array [
+    "@test/package-1@^0.0.0",
+  ],
+}
+`;
+
+exports[`BootstrapCommand with hoisting should not hoist when disallowed 2`] = `
+Array [
+  "packages/package-1/node_modules/foo",
+  "packages/package-2/node_modules/foo",
+]
+`;
+
+exports[`BootstrapCommand with local package dependencies should bootstrap packages 1`] = `
+Object {
+  "packages/package-1": Array [
+    "foo@^1.0.0",
+  ],
+  "packages/package-2": Array [
+    "foo@^1.0.0",
+  ],
+  "packages/package-3": Array [
+    "foo@0.1.12",
+  ],
+  "packages/package-4": Array [
+    "@test/package-1@^0.0.0",
+  ],
+}
+`;
+
+exports[`BootstrapCommand with local package dependencies should bootstrap packages 2`] = `
+Array [
+  Object {
+    "_src": "packages/package-1",
+    "dest": "packages/package-2/node_modules/@test/package-1",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-1",
+    "dest": "packages/package-3/node_modules/@test/package-1",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-2",
+    "dest": "packages/package-3/node_modules/@test/package-2",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-2/cli.js",
+    "dest": "packages/package-3/node_modules/.bin/package-2",
+    "type": "exec",
+  },
+  Object {
+    "_src": "packages/package-3",
+    "dest": "packages/package-4/node_modules/package-3",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-3/cli1.js",
+    "dest": "packages/package-4/node_modules/.bin/package3cli1",
+    "type": "exec",
+  },
+  Object {
+    "_src": "packages/package-3/cli2.js",
+    "dest": "packages/package-4/node_modules/.bin/package3cli2",
+    "type": "exec",
+  },
+]
+`;
+
+exports[`BootstrapCommand with local package dependencies should not bootstrap ignored packages 1`] = `
+Object {
+  "packages/package-1": Array [
+    "foo@^1.0.0",
+  ],
+  "packages/package-2": Array [
+    "foo@^1.0.0",
+  ],
+}
+`;
+
+exports[`BootstrapCommand with local package dependencies should only bootstrap scoped packages 1`] = `
+Object {
+  "packages/package-3": Array [
+    "foo@0.1.12",
+  ],
+  "packages/package-4": Array [
+    "@test/package-1@^0.0.0",
+  ],
+}
+`;
+
+exports[`BootstrapCommand with local package dependencies should only bootstrap scoped packages 2`] = `
+Array [
+  Object {
+    "_src": "packages/package-1",
+    "dest": "packages/package-3/node_modules/@test/package-1",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-2",
+    "dest": "packages/package-3/node_modules/@test/package-2",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-2/cli.js",
+    "dest": "packages/package-3/node_modules/.bin/package-2",
+    "type": "exec",
+  },
+  Object {
+    "_src": "packages/package-3",
+    "dest": "packages/package-4/node_modules/package-3",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-3/cli1.js",
+    "dest": "packages/package-4/node_modules/.bin/package3cli1",
+    "type": "exec",
+  },
+  Object {
+    "_src": "packages/package-3/cli2.js",
+    "dest": "packages/package-4/node_modules/.bin/package3cli2",
+    "type": "exec",
+  },
+]
+`;
+
+exports[`BootstrapCommand with multiple package locations should bootstrap any dependencies excluded by --ignore when --include-filtered-dependencies is true 1`] = `
+Object {
+  "packages/package-1": Array [
+    "foo@^1.0.0",
+  ],
+  "packages/package-2": Array [
+    "foo@^1.0.0",
+  ],
+}
+`;
+
+exports[`BootstrapCommand with multiple package locations should bootstrap any dependencies not included by --scope when --include-filtered-dependencies is true 1`] = `
+Object {
+  "packages/package-1": Array [
+    "foo@^1.0.0",
+  ],
+  "packages/package-2": Array [
+    "foo@^1.0.0",
+  ],
+}
+`;
+
+exports[`BootstrapCommand with multiple package locations should bootstrap packages 1`] = `
+Object {
+  "package-3": Array [
+    "foo@0.1.12",
+  ],
+  "packages/package-1": Array [
+    "foo@^1.0.0",
+  ],
+  "packages/package-2": Array [
+    "foo@^1.0.0",
+  ],
+  "packages/package-4": Array [
+    "@test/package-1@^0.0.0",
+  ],
+}
+`;
+
+exports[`BootstrapCommand with multiple package locations should bootstrap packages 2`] = `
+Object {
+  "packages/package-1": Array [
+    "prepublish",
+  ],
+}
+`;
+
+exports[`BootstrapCommand with multiple package locations should bootstrap packages 3`] = `
+Array [
+  Object {
+    "_src": "packages/package-1",
+    "dest": "packages/package-2/node_modules/@test/package-1",
+    "type": "junction",
+  },
+  Object {
+    "_src": "package-3",
+    "dest": "packages/package-4/node_modules/package-3",
+    "type": "junction",
+  },
+  Object {
+    "_src": "package-3/cli1.js",
+    "dest": "packages/package-4/node_modules/.bin/package3cli1",
+    "type": "exec",
+  },
+  Object {
+    "_src": "package-3/cli2.js",
+    "dest": "packages/package-4/node_modules/.bin/package3cli2",
+    "type": "exec",
+  },
+  Object {
+    "_src": "packages/package-1",
+    "dest": "package-3/node_modules/@test/package-1",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-2",
+    "dest": "package-3/node_modules/package-2",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-2/cli.js",
+    "dest": "package-3/node_modules/.bin/package-2",
+    "type": "exec",
+  },
+]
+`;
+
+exports[`BootstrapCommand with multiple package locations should not bootstrap ignored packages 1`] = `
+Object {
+  "packages/package-1": Array [
+    "foo@^1.0.0",
+  ],
+  "packages/package-2": Array [
+    "foo@^1.0.0",
+  ],
+}
+`;
+
+exports[`BootstrapCommand with registry config should install packages from registry 1`] = `
+Object {
+  "packages/package-1": Array [
+    "foo@^1.0.0",
+  ],
+}
+`;

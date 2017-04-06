@@ -1,27 +1,9 @@
-import child from "child_process";
 import os from "os";
 import path from "path";
 
-import fs from "graceful-fs";
+import fs from "fs-promise";
 import { padStart } from "lodash";
-import mkdirp from "mkdirp";
-import pify from "pify";
-import rimraf from "rimraf";
-import cpr from "cpr";
-
-const execAsync = pify(child.exec);
-const realpathAsync = pify(fs.realpath);
-
-const _cpr = pify(cpr);
-const _mkdirpAsync = pify(mkdirp);
-const _rimrafAsync = pify(rimraf);
-
-// graceful-fs overrides for rimraf
-const { unlink, chmod, stat, lstat, rmdir, readdir } = fs;
-
-export const cp = (from, to) => _cpr(from, to, { overwrite: true });
-export const mkdirpAsync = (fp) => _mkdirpAsync(fp, { fs });
-export const rimrafAsync = (fp) => _rimrafAsync(fp, { unlink, chmod, stat, lstat, rmdir, readdir });
+import execa from "execa";
 
 export function getTempDir(fixtureName) {
   // e.g., "lerna-1490053388515-663678-BootstrapCommand_01_basic"
@@ -38,15 +20,19 @@ export function getTempDir(fixtureName) {
   // and require() also calls realpath on its argument.
   // Because we use require() to load package.json, it is
   // also necessary to completely resolve the tmpDir.
-  return mkdirpAsync(tmpDir).then(() => realpathAsync(tmpDir));
+  return fs.ensureDir(tmpDir).then(() => fs.realpath(tmpDir));
 }
 
 export function gitInit(cwd, message = "Init commit") {
-  return execAsync(`git init . && git add -A && git commit -m "${message}"`, { cwd });
+  const opts = { cwd };
+  return Promise.resolve()
+    .then(() => execa("git", ["init", "."], opts))
+    .then(() => execa("git", ["add", "-A"], opts))
+    .then(() => execa("git", ["commit", "-m", message], opts));
 }
 
 export function removeAll(createdDirectories) {
-  return Promise.all(createdDirectories.map((dir) => rimrafAsync(dir)));
+  return Promise.all(createdDirectories.map((dir) => fs.remove(dir)));
 }
 
 export function fixtureNamer() {

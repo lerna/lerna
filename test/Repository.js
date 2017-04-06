@@ -1,8 +1,14 @@
 import path from "path";
+
+// mocked or stubbed modules
 import findUp from "find-up";
 import loadJsonFile from "load-json-file";
+import readPkg from "read-pkg";
+
+// helpers
 import initFixture from "./helpers/initFixture";
 
+// file under test
 import Repository from "../src/Repository";
 
 describe("Repository", () => {
@@ -10,7 +16,7 @@ describe("Repository", () => {
 
   const findUpSync = findUp.sync;
   const loadJsonFileSync = loadJsonFile.sync;
-  const pj = (...pathParts) => path.join(testDir, ...pathParts);
+  const readPkgSync = readPkg.sync;
 
   beforeEach(() => initFixture("Repository/basic").then((dir) => {
     testDir = dir;
@@ -22,33 +28,29 @@ describe("Repository", () => {
     });
 
     it("should be added to the instance", () => {
-      // const repo = new Repository();
-      // expect(repo.rootPath).toBe(testDir);
-      expect(new Repository()).toHaveProperty("rootPath", testDir);
+      const repo = new Repository();
+      expect(repo.rootPath).toBe(testDir);
     });
 
     it("resolves to CWD when lerna.json missing", () => {
       findUp.sync = jest.fn(() => null);
 
-      // const repo = new Repository();
-      // expect(repo.rootPath).toBe(testDir);
-      expect(new Repository()).toHaveProperty("rootPath", testDir);
+      const repo = new Repository();
+      expect(repo.rootPath).toBe(testDir);
     });
   });
 
   describe(".lernaJsonLocation", () => {
     it("should be added to the instance", () => {
-      // const repo = new Repository();
-      // expect(repo.lernaJsonLocation).toBe(pj("lerna.json"));
-      expect(new Repository()).toHaveProperty("lernaJsonLocation", pj("lerna.json"));
+      const repo = new Repository();
+      expect(repo.lernaJsonLocation).toBe(path.join(testDir, "lerna.json"));
     });
   });
 
   describe(".packageJsonLocation", () => {
     it("should be added to the instance", () => {
-      // const repo = new Repository();
-      // expect(repo.packageJsonLocation).toBe(pj("package.json"));
-      expect(new Repository()).toHaveProperty("packageJsonLocation", pj("package.json"));
+      const repo = new Repository();
+      expect(repo.packageJsonLocation).toBe(path.join(testDir, "package.json"));
     });
   });
 
@@ -92,7 +94,7 @@ describe("Repository", () => {
   describe("get .nodeModulesLocation", () => {
     it("returns the root node_modules location", () => {
       const repo = new Repository();
-      expect(repo.nodeModulesLocation).toBe(pj("node_modules"));
+      expect(repo.nodeModulesLocation).toBe(path.join(testDir, "node_modules"));
     });
   });
 
@@ -143,12 +145,12 @@ describe("Repository", () => {
 
   describe("get .packageJson", () => {
     afterEach(() => {
-      loadJsonFile.sync = loadJsonFileSync;
+      readPkg.sync = readPkgSync;
     });
 
     it("returns parsed package.json", () => {
       const repo = new Repository();
-      expect(repo.packageJson).toEqual({
+      expect(repo.packageJson).toMatchObject({
         "name": "test",
         "devDependencies": {
           "lerna": "500.0.0",
@@ -159,18 +161,18 @@ describe("Repository", () => {
 
     it("caches the first successful value", () => {
       const repo = new Repository();
-      expect(repo.package).toBe(repo.package);
+      expect(repo.packageJson).toBe(repo.packageJson);
     });
 
     it("does not cache failures", () => {
-      loadJsonFile.sync = jest.fn(() => {
+      readPkg.sync = jest.fn(() => {
         throw new Error("File not found");
       });
 
       const repo = new Repository();
       expect(repo.packageJson).toBe(null);
 
-      loadJsonFile.sync = loadJsonFileSync;
+      readPkg.sync = readPkgSync;
       expect(repo.packageJson).toHaveProperty("name", "test");
     });
   });
@@ -192,7 +194,7 @@ describe("Repository", () => {
   describe("get .versionLocation", () => {
     it("returns the path to (deprecated) VERSION file", () => {
       const repo = new Repository();
-      expect(repo.versionLocation).toBe(pj("VERSION"));
+      expect(repo.versionLocation).toBe(path.join(testDir, "VERSION"));
     });
   });
 

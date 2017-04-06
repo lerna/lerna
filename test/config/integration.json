@@ -1,0 +1,9 @@
+{
+  "bail": true,
+  "roots": [
+    "<rootDir>/test/integration"
+  ],
+  "testEnvironment": "node",
+  "setupTestFrameworkScriptFile": "<rootDir>/test/integration/_setupTestFramework.js",
+  "verbose": true
+}

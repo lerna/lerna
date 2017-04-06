@@ -1,43 +1,52 @@
-import assert from "assert";
-import stub from "./helpers/stub";
+// using CommonJS because we need to
+// modify chalk properties before the
+// logger singleton caches them :P
+const chalk = require("chalk");
 
-import logger from "../src/logger";
+// keep assertions stable cross-platform
+chalk.enabled = false;
+
+// file under test
+const logger = require("../src/logger");
 
 describe("logger", () => {
   it("should exist", () => {
-    assert.ok(logger);
+    expect(logger).toBeDefined();
   });
 
   describe("log levels", () => {
-    let called;
+    const _emit = logger._emit;
+    let emitSpy;
 
     beforeEach(() => {
-      called = false;
-      stub(logger, "_emit", () => called = true);
+      emitSpy = jest.spyOn(logger, "_emit").mockImplementation(() => {});
     });
 
-    afterEach(() => logger.setLogLevel());
+    afterEach(() => {
+      logger._emit = _emit;
+      logger.setLogLevel();
+    });
 
     it("should suppress verbose by default", () => {
-      logger.verbose("test");
-      assert.ok(!called);
+      logger.verbose("test default");
+      expect(emitSpy).not.toBeCalled();
     });
 
     it("should emit verbose if configured", () => {
       logger.setLogLevel("verbose");
-      logger.verbose("test");
-      assert.ok(called);
+      logger.verbose("test verbose");
+      expect(emitSpy).lastCalledWith("test verbose");
     });
 
     it("should emit error by default", () => {
-      logger.error("test");
-      assert.ok(called);
+      logger.error("test error");
+      expect(emitSpy).lastCalledWith("test error");
     });
 
     it("should suppress error if silent", () => {
       logger.setLogLevel("silent");
-      logger.error("test");
-      assert.ok(!called);
+      logger.error("test silent");
+      expect(emitSpy).not.toBeCalled();
     });
   });
 });

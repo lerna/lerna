@@ -1,0 +1,12 @@
+{
+  "name": "@integration/package-1",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "echo package-1",
+    "prepublish": "cp index.src.js index.js"
+  },
+  "dependencies": {
+    "pify": "^2.0.0"
+  }
+}

@@ -3,17 +3,27 @@ import Command from "../Command";
 import ChildProcessUtilities from "../ChildProcessUtilities";
 import find from "lodash/find";
 
+function getLastCommit() {
+  if (GitUtilities.hasTags()) {
+    return GitUtilities.getLastTaggedCommit();
+  }
+
+  return GitUtilities.getFirstCommit();
+}
+
 export default class DiffCommand extends Command {
   initialize(callback) {
-    this.packageName = this.input[0];
+    const packageName = this.input[0];
 
-    if (this.packageName) {
-      this.package = find(this.packages, (pkg) => {
-        return pkg.name === this.packageName;
+    let targetPackage;
+
+    if (packageName) {
+      targetPackage = find(this.packages, (pkg) => {
+        return pkg.name === packageName;
       });
 
-      if (!this.package) {
-        callback(new Error("Package '" + this.packageName + "' does not exist."));
+      if (!targetPackage) {
+        callback(new Error("Package '" + packageName + "' does not exist."));
         return;
       }
     }
@@ -23,19 +33,20 @@ export default class DiffCommand extends Command {
       return;
     }
 
-    this.filePath = this.package
-      ? this.package.location
-      : this.repository.rootPath;
+    this.args = ["diff", getLastCommit(), "--color=auto"];
+    this.opts = {
+      cwd: this.repository.rootPath,
+    };
 
-    this.lastCommit = GitUtilities.hasTags()
-      ? GitUtilities.getLastTaggedCommit()
-      : GitUtilities.getFirstCommit();
+    if (targetPackage) {
+      this.args.push("--", targetPackage.location);
+    }
 
     callback(null, true);
   }
 
   execute(callback) {
-    ChildProcessUtilities.spawn("git", ["diff", this.lastCommit, "--color=auto", this.filePath], {}, (code) => {
+    ChildProcessUtilities.spawn("git", this.args, this.opts, (code) => {
       if (code) {
         callback(new Error("Errored while spawning `git diff`."));
       } else {

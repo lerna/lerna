@@ -1,0 +1,108 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UpdatedCommand basic should list all packages when no tag is found 1`] = `
+Array [
+  "Checking for updated packages...",
+  "No tags found! Comparing with initial commit.",
+  "- package-1
+- package-2
+- package-3
+- package-4
+- package-5 (private)",
+]
+`;
+
+exports[`UpdatedCommand basic should list changes 1`] = `
+Array [
+  "Checking for updated packages...",
+  "Comparing with: v1.0.0",
+  "- package-2
+- package-3",
+]
+`;
+
+exports[`UpdatedCommand basic should list changes for explicitly changed packages 1`] = `
+Array [
+  "Checking for updated packages...",
+  "Comparing with: v1.0.0",
+  "- package-2",
+]
+`;
+
+exports[`UpdatedCommand basic should list changes in private packages 1`] = `
+Array [
+  "Checking for updated packages...",
+  "Comparing with: v1.0.0",
+  "- package-5 (private)",
+]
+`;
+
+exports[`UpdatedCommand basic should list changes with --force-publish * 1`] = `
+Array [
+  "Checking for updated packages...",
+  "Comparing with: v1.0.0",
+  "- package-1
+- package-2
+- package-3
+- package-4
+- package-5 (private)",
+]
+`;
+
+exports[`UpdatedCommand basic should list changes with --force-publish [package,package] 1`] = `
+Array [
+  "Checking for updated packages...",
+  "Comparing with: v1.0.0",
+  "- package-2
+- package-3
+- package-4",
+]
+`;
+
+exports[`UpdatedCommand basic should list changes without ignored files 1`] = `
+Array [
+  "Checking for updated packages...",
+  "Comparing with: v1.0.0",
+  "- package-3",
+]
+`;
+
+exports[`UpdatedCommand circular should list changes 1`] = `
+Array [
+  "Checking for updated packages...",
+  "Comparing with: v1.0.0",
+  "- package-3
+- package-4",
+]
+`;
+
+exports[`UpdatedCommand circular should list changes with --force-publish * 1`] = `
+Array [
+  "Checking for updated packages...",
+  "Comparing with: v1.0.0",
+  "- package-1
+- package-2
+- package-3
+- package-4
+- package-5 (private)",
+]
+`;
+
+exports[`UpdatedCommand circular should list changes with --force-publish [package,package] 1`] = `
+Array [
+  "Checking for updated packages...",
+  "Comparing with: v1.0.0",
+  "- package-2
+- package-3
+- package-4",
+]
+`;
+
+exports[`UpdatedCommand circular should list changes without ignored files 1`] = `
+Array [
+  "Checking for updated packages...",
+  "Comparing with: v1.0.0",
+  "- package-3
+- package-4",
+]
+`;

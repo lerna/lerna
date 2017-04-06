@@ -28,3 +28,4 @@ tmp
 coverage/
 .nyc_output/
 .eslintcache
+*.tgz

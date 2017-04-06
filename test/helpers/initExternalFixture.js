@@ -1,6 +1,6 @@
 import path from "path";
+import fs from "fs-promise";
 import {
-  cp,
   fixtureNamer,
   getTempDir,
   gitInit,
@@ -19,7 +19,7 @@ export default function initExternalFixture(fixturePath) {
   return getTempDir(fixtureName).then((testDir) => {
     createdDirectories.push(testDir);
 
-    return cp(fixtureDir, testDir)
+    return fs.copy(fixtureDir, testDir)
       .then(() => gitInit(testDir, "Init external commit"))
       .then(() => testDir);
   });

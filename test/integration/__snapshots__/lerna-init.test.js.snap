@@ -1,0 +1,69 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`lerna.json: empty directory 1`] = `
+Object {
+  "lerna": "__TEST_VERSION__",
+  "packages": Array [
+    "packages/*",
+  ],
+  "version": "0.0.0",
+}
+`;
+
+exports[`lerna.json: updates 1`] = `
+Object {
+  "commands": Object {
+    "bootstrap": Object {
+      "hoist": true,
+    },
+    "init": Object {
+      "exact": true,
+    },
+  },
+  "lerna": "__TEST_VERSION__",
+  "packages": Array [
+    "packages/*",
+  ],
+  "version": "1.0.0",
+}
+`;
+
+exports[`package.json: empty directory 1`] = `
+Object {
+  "devDependencies": Object {
+    "lerna": "^__TEST_VERSION__",
+  },
+}
+`;
+
+exports[`package.json: updates 1`] = `
+Object {
+  "devDependencies": Object {
+    "lerna": "__TEST_VERSION__",
+  },
+  "name": "updates",
+}
+`;
+
+exports[`stdout: empty directory 1`] = `
+"Lerna __TEST_VERSION__
+Initializing Git repository.
+Creating package.json.
+Creating lerna.json.
+Successfully initialized Lerna files"
+`;
+
+exports[`stdout: has-version 1`] = `
+"Lerna __TEST_VERSION__
+Creating package.json.
+Creating lerna.json.
+Removing old VERSION file.
+Successfully initialized Lerna files"
+`;
+
+exports[`stdout: updates 1`] = `
+"Lerna __TEST_VERSION__
+Updating package.json.
+Updating lerna.json.
+Successfully initialized Lerna files"
+`;
