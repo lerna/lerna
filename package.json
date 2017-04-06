@@ -73,6 +73,7 @@
     "eslint-config-babel": "^6.0.0",
     "eslint-plugin-babel": "^3.3.0",
     "eslint-plugin-flow-vars": "^0.5.0",
+    "eslint-plugin-flowtype": "^2.30.4",
     "jest": "^19.0.2",
     "normalize-newline": "^3.0.0",
     "normalize-path": "^2.1.1"
