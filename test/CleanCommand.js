@@ -46,7 +46,7 @@ describe("CleanCommand", () => {
     }));
 
     it("should rm -rf the node_modules", (done) => {
-      const cleanCommand = new CleanCommand([], {});
+      const cleanCommand = new CleanCommand([], {}, testDir);
 
       cleanCommand.runValidations();
       cleanCommand.runPreparations();
@@ -72,7 +72,7 @@ describe("CleanCommand", () => {
     it("should be possible to skip asking for confirmation", (done) => {
       const cleanCommand = new CleanCommand([], {
         yes: true
-      });
+      }, testDir);
 
       cleanCommand.runValidations();
       cleanCommand.runPreparations();
@@ -99,7 +99,7 @@ describe("CleanCommand", () => {
       it(filter.test, (done) => {
         const cleanCommand = new CleanCommand([], {
           [filter.flag]: filter.flagValue
-        });
+        }, testDir);
 
         cleanCommand.runValidations();
         cleanCommand.runPreparations();
@@ -132,7 +132,7 @@ describe("CleanCommand", () => {
       const cleanCommand = new CleanCommand([], {
         scope: "@test/package-2",
         includeFilteredDependencies: true
-      });
+      }, testDir);
 
       cleanCommand.runValidations();
       cleanCommand.runPreparations();

@@ -119,7 +119,7 @@ describe("PublishCommand", () => {
     }));
 
     it("should publish the changed packages", (done) => {
-      const publishCommand = new PublishCommand([], {});
+      const publishCommand = new PublishCommand([], {}, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
@@ -184,7 +184,7 @@ describe("PublishCommand", () => {
     it("should publish the changed packages in independent mode", (done) => {
       const publishCommand = new PublishCommand([], {
         independent: true
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
@@ -255,7 +255,7 @@ describe("PublishCommand", () => {
     it("should publish the changed packages", (done) => {
       const publishCommand = new PublishCommand([], {
         canary: true
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
@@ -315,7 +315,7 @@ describe("PublishCommand", () => {
       const publishCommand = new PublishCommand([], {
         independent: true,
         canary: true
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
@@ -368,7 +368,7 @@ describe("PublishCommand", () => {
     it("should publish the changed packages", (done) => {
       const publishCommand = new PublishCommand([], {
         skipGit: true
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
@@ -411,7 +411,7 @@ describe("PublishCommand", () => {
     it("should update versions and push changes but not publish", (done) => {
       const publishCommand = new PublishCommand([], {
         skipNpm: true
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
@@ -457,7 +457,7 @@ describe("PublishCommand", () => {
       const publishCommand = new PublishCommand([], {
         skipGit: true,
         skipNpm: true
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
@@ -519,7 +519,7 @@ describe("PublishCommand", () => {
     it("should publish the changed packages without the temp tag", (done) => {
       const publishCommand = new PublishCommand([], {
         skipTempTag: true
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
@@ -562,7 +562,7 @@ describe("PublishCommand", () => {
     it("should publish the changed packages with npm tag", (done) => {
       const publishCommand = new PublishCommand([], {
         npmTag: "custom"
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
@@ -625,7 +625,7 @@ describe("PublishCommand", () => {
       const registry = "https://my-private-registry";
       const publishCommand = new PublishCommand([], {
         registry,
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
@@ -690,7 +690,7 @@ describe("PublishCommand", () => {
     it("skips version prompt and publishes changed packages with designated version", (done) => {
       const publishCommand = new PublishCommand([], {
         repoVersion: "1.0.1-beta"
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
@@ -729,7 +729,7 @@ describe("PublishCommand", () => {
     it("updates matching local dependencies of published packages with exact versions", (done) => {
       const publishCommand = new PublishCommand([], {
         exact: true
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
@@ -780,7 +780,7 @@ describe("PublishCommand", () => {
     it("should use semver increments when passed to cdVersion flag", (done) => {
       const publishCommand = new PublishCommand([], {
         cdVersion: "minor"
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
@@ -820,7 +820,7 @@ describe("PublishCommand", () => {
       const publishCommand = new PublishCommand([], {
         independent: true,
         cdVersion: "patch"
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
@@ -859,7 +859,7 @@ describe("PublishCommand", () => {
     it("pushes tags to specified remote", (done) => {
       const publishCommand = new PublishCommand([], {
         gitRemote: "upstream"
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
@@ -897,7 +897,7 @@ describe("PublishCommand", () => {
     it("does not publish ignored packages", (done) => {
       const publishCommand = new PublishCommand([], {
         ignore: ["package-2", "package-3", "package-4"],
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
@@ -936,7 +936,7 @@ describe("PublishCommand", () => {
     it("commits changes with a custom message", (done) => {
       const publishCommand = new PublishCommand([], {
         message: "A custom publish message"
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
@@ -975,7 +975,7 @@ describe("PublishCommand", () => {
       const publishCommand = new PublishCommand([], {
         independent: true,
         message: "A custom publish message"
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
@@ -1031,7 +1031,7 @@ describe("PublishCommand", () => {
       const publishCommand = new PublishCommand([], {
         independent: true,
         conventionalCommits: true
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
@@ -1092,7 +1092,7 @@ describe("PublishCommand", () => {
         npmTag: "next",
         yes: true,
         exact: true,
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();

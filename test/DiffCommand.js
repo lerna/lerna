@@ -31,7 +31,7 @@ describe("DiffCommand", () => {
     GitUtilities.getFirstCommit.mockImplementation(() => "beefcafe");
     ChildProcessUtilities.spawn.mockImplementation(callbackSuccess);
 
-    const diffCommand = new DiffCommand([], {});
+    const diffCommand = new DiffCommand([], {}, testDir);
 
     diffCommand.runValidations();
     diffCommand.runPreparations();
@@ -63,7 +63,7 @@ describe("DiffCommand", () => {
     GitUtilities.getLastTaggedCommit.mockImplementation(() => "cafedead");
     ChildProcessUtilities.spawn.mockImplementation(callbackSuccess);
 
-    const diffCommand = new DiffCommand([], {});
+    const diffCommand = new DiffCommand([], {}, testDir);
 
     diffCommand.runValidations();
     diffCommand.runPreparations();
@@ -94,7 +94,7 @@ describe("DiffCommand", () => {
     GitUtilities.getFirstCommit.mockImplementation(() => "deadbeef");
     ChildProcessUtilities.spawn.mockImplementation(callbackSuccess);
 
-    const diffCommand = new DiffCommand(["package-1"], {});
+    const diffCommand = new DiffCommand(["package-1"], {}, testDir);
 
     diffCommand.runValidations();
     diffCommand.runPreparations();
@@ -124,7 +124,7 @@ describe("DiffCommand", () => {
   });
 
   it("should error when attempting to diff a package that doesn't exist", (done) => {
-    const diffCommand = new DiffCommand(["missing"], {});
+    const diffCommand = new DiffCommand(["missing"], {}, testDir);
 
     diffCommand.runValidations();
     diffCommand.runPreparations();
@@ -143,7 +143,7 @@ describe("DiffCommand", () => {
     // override beforeEach mock
     GitUtilities.hasCommit.mockImplementation(() => false);
 
-    const diffCommand = new DiffCommand(["package-1"], {});
+    const diffCommand = new DiffCommand(["package-1"], {}, testDir);
 
     diffCommand.runValidations();
     diffCommand.runPreparations();
@@ -161,7 +161,7 @@ describe("DiffCommand", () => {
   it("should error when git diff exits non-zero", (done) => {
     ChildProcessUtilities.spawn.mockImplementation(callbackNonZero);
 
-    const diffCommand = new DiffCommand(["package-1"], {});
+    const diffCommand = new DiffCommand(["package-1"], {}, testDir);
 
     diffCommand.runValidations();
     diffCommand.runPreparations();

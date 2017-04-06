@@ -3,7 +3,7 @@ import path from "path";
 import execa from "execa";
 import readPkg from "read-pkg";
 import writePkg from "write-pkg";
-import initExternalFixture from "../helpers/initExternalFixture";
+import initFixture from "../helpers/initFixture";
 import replaceLernaVersion from "../helpers/replaceLernaVersion";
 
 expect.addSnapshotSerializer(replaceLernaVersion);
@@ -17,9 +17,6 @@ const LERNA = path.join(ROOTDIR, PACKAGE.bin.lerna);
 const copyTarball = (cwd) =>
   fs.copy(TGZ_SRC, path.join(cwd, "lerna-latest.tgz"));
 
-const initFixture = (name) =>
-  initExternalFixture(`BootstrapCommand/${name}`);
-
 const installInDir = (cwd) =>
   execa("yarn", ["install", "--mutex", "network:42042"], { cwd });
 
@@ -29,7 +26,7 @@ const npmTestInDir = (cwd) =>
 
 describe("lerna bootstrap", () => {
   describe("from CLI", () => {
-    test.concurrent("bootstraps all packages", () => initFixture("integration").then((cwd) => {
+    test.concurrent("bootstraps all packages", () => initFixture("BootstrapCommand/integration").then((cwd) => {
       return Promise.resolve()
         .then(() => execa(LERNA, ["bootstrap"], { cwd }))
         .then((result) => {
@@ -43,7 +40,7 @@ describe("lerna bootstrap", () => {
   });
 
   describe("from npm script", () => {
-    test.concurrent("bootstraps all packages", () => initFixture("integration").then((cwd) => {
+    test.concurrent("bootstraps all packages", () => initFixture("BootstrapCommand/integration").then((cwd) => {
       return copyTarball(cwd)
         .then(() => writePkg(cwd, {
           "name": "integration",

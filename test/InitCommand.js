@@ -1,4 +1,3 @@
-import fs from "fs-promise";
 import path from "path";
 
 // mocked modules
@@ -12,7 +11,6 @@ import GitUtilities from "../src/GitUtilities";
 
 // helpers
 import initDirName from "./helpers/initDirName";
-import initFixture from "./helpers/initFixture";
 
 // file under test
 import InitCommand from "../src/commands/InitCommand";
@@ -27,14 +25,6 @@ jest.mock("write-json-file");
 jest.mock("write-pkg");
 jest.mock("../src/FileSystemUtilities");
 jest.mock("../src/GitUtilities");
-
-const initEmptyDir = () =>
-  initDirName("InitCommand/empty").then((dir) => {
-    return fs.ensureDir(dir).then(() => {
-      process.chdir(dir);
-      return dir;
-    });
-  });
 
 describe("InitCommand", () => {
   beforeEach(() => {
@@ -56,20 +46,21 @@ describe("InitCommand", () => {
   describe("in an empty directory", () => {
     let testDir;
 
-    beforeEach(() => initEmptyDir().then((dir) => {
+    beforeEach(() => initDirName("InitCommand/empty").then((dir) => {
       testDir = dir;
 
       GitUtilities.isInitialized = jest.fn(() => false);
     }));
 
     it("completely ignores validation and preparation lifecycle", () => {
-      const instance = new InitCommand([], {});
+      const instance = new InitCommand([], {}, testDir);
+
       expect(() => instance.runValidations()).not.toThrow();
       expect(() => instance.runPreparations()).not.toThrow();
     });
 
     it("initializes git repo with lerna files", (done) => {
-      const instance = new InitCommand([], {});
+      const instance = new InitCommand([], {}, testDir);
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
@@ -112,7 +103,7 @@ describe("InitCommand", () => {
     it("initializes git repo with lerna files in independent mode", (done) => {
       const instance = new InitCommand([], {
         independent: true,
-      });
+      }, testDir);
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
@@ -139,7 +130,7 @@ describe("InitCommand", () => {
       it("uses exact version when adding lerna dependency", (done) => {
         const instance = new InitCommand([], {
           exact: true,
-        });
+        }, testDir);
 
         instance.runCommand((err, code) => {
           if (err) return done.fail(err);
@@ -166,7 +157,7 @@ describe("InitCommand", () => {
       it("sets lerna.json command.init.exact to true", (done) => {
         const instance = new InitCommand([], {
           exact: true,
-        });
+        }, testDir);
 
         instance.runCommand((err, code) => {
           if (err) return done.fail(err);
@@ -198,14 +189,14 @@ describe("InitCommand", () => {
   describe("in a subdirectory of a git repo", () => {
     let testDir;
 
-    beforeEach(() => initEmptyDir().then((dir) => {
+    beforeEach(() => initDirName("InitCommand/empty").then((dir) => {
       testDir = path.join(dir, "subdir");
 
       findUp.sync = jest.fn(() => path.join(testDir, "lerna.json"));
     }));
 
     it("creates lerna files", (done) => {
-      const instance = new InitCommand([], {});
+      const instance = new InitCommand([], {}, testDir);
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
@@ -245,7 +236,7 @@ describe("InitCommand", () => {
   describe("when package.json exists", () => {
     let testDir;
 
-    beforeEach(() => initFixture("InitCommand/has-package").then((dir) => {
+    beforeEach(() => initDirName("InitCommand/has-package").then((dir) => {
       testDir = dir;
     }));
 
@@ -257,7 +248,7 @@ describe("InitCommand", () => {
         },
       }));
 
-      const instance = new InitCommand([], {});
+      const instance = new InitCommand([], {}, testDir);
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
@@ -294,7 +285,7 @@ describe("InitCommand", () => {
         },
       }));
 
-      const instance = new InitCommand([], {});
+      const instance = new InitCommand([], {}, testDir);
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
@@ -331,7 +322,7 @@ describe("InitCommand", () => {
         },
       }));
 
-      const instance = new InitCommand([], {});
+      const instance = new InitCommand([], {}, testDir);
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
@@ -361,7 +352,7 @@ describe("InitCommand", () => {
   describe("when lerna.json exists", () => {
     let testDir;
 
-    beforeEach(() => initFixture("InitCommand/has-lerna").then((dir) => {
+    beforeEach(() => initDirName("InitCommand/has-lerna").then((dir) => {
       testDir = dir;
 
       findUp.sync = jest.fn(() => path.join(testDir, "lerna.json"));
@@ -373,7 +364,7 @@ describe("InitCommand", () => {
         version: "1.2.3",
       }));
 
-      const instance = new InitCommand([], {});
+      const instance = new InitCommand([], {}, testDir);
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
@@ -404,7 +395,7 @@ describe("InitCommand", () => {
 
       const instance = new InitCommand([], {
         independent: true,
-      });
+      }, testDir);
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
@@ -432,7 +423,7 @@ describe("InitCommand", () => {
   describe("when VERSION exists", () => {
     let testDir;
 
-    beforeEach(() => initFixture("InitCommand/has-version").then((dir) => {
+    beforeEach(() => initDirName("InitCommand/has-version").then((dir) => {
       testDir = dir;
 
       FileSystemUtilities.existsSync = jest.fn(() => true);
@@ -440,7 +431,7 @@ describe("InitCommand", () => {
     }));
 
     it("removes file", (done) => {
-      const instance = new InitCommand([], {});
+      const instance = new InitCommand([], {}, testDir);
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
@@ -458,7 +449,7 @@ describe("InitCommand", () => {
     });
 
     it("uses value for lerna.json version property", (done) => {
-      const instance = new InitCommand([], {});
+      const instance = new InitCommand([], {}, testDir);
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
@@ -485,7 +476,7 @@ describe("InitCommand", () => {
   describe("when re-initializing with --exact", () => {
     let testDir;
 
-    beforeEach(() => initFixture("InitCommand/updates").then((dir) => {
+    beforeEach(() => initDirName("InitCommand/updates").then((dir) => {
       testDir = dir;
 
       findUp.sync = jest.fn(() => path.join(testDir, "lerna.json"));
@@ -510,7 +501,7 @@ describe("InitCommand", () => {
 
       const instance = new InitCommand([], {
         exact: true,
-      });
+      }, testDir);
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);

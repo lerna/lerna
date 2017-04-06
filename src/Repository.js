@@ -10,9 +10,14 @@ import dependencyIsSatisfied from "./utils/dependencyIsSatisfied";
 const DEFAULT_PACKAGE_GLOB = "packages/*";
 
 export default class Repository {
-  constructor() {
-    // findUp returns null when not found, and path.resolve starts from process.cwd()
-    const lernaJsonLocation = findUp.sync("lerna.json") || path.resolve("lerna.json");
+  constructor(cwd) {
+    const lernaJsonLocation = (
+      // findUp returns null when not found
+      findUp.sync("lerna.json", { cwd }) ||
+
+      // path.resolve(".", ...) starts from process.cwd()
+      path.resolve((cwd || "."), "lerna.json")
+    );
 
     this.rootPath = path.dirname(lernaJsonLocation);
     this.lernaJsonLocation = lernaJsonLocation;
