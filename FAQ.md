@@ -24,3 +24,11 @@ case you will need to have the repo you wish to link to on your file system.
 
 [bootstrap]: https://github.com/lerna/lerna#bootstrap
 [import]: https://github.com/lerna/lerna#import
+
+## How do I retry publishing if `publish` fails?
+
+Sometimes, `lerna publish` does not work.  Your network may have had a hiccup, you may have not been logged on to npm, etc.
+
+If the `lerna.json` has not yet been updated, simply try `lerna publish` again.
+
+If it has been updated, you can force re-publish.  `lerna publish --force-publish $(ls packages/)`
