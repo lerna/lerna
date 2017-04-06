@@ -1,7 +1,28 @@
 {
-  "presets": ["es2015"],
+  "presets": [
+    ["env", {
+      "targets": {
+        "node": 4
+      }
+    }]
+  ],
   "plugins": [
     "transform-decorators-legacy",
     "add-module-exports"
-  ]
+  ],
+  "env": {
+    "lerna-test": {
+      "presets": [
+        ["env", {
+          "targets": {
+            "node": "current"
+          }
+        }]
+      ],
+      "plugins": [
+        "transform-decorators-legacy",
+        "add-module-exports"
+      ]
+    }
+  }
 }
