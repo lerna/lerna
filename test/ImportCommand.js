@@ -33,15 +33,13 @@ describe("ImportCommand", () => {
     let externalDir;
 
     beforeEach(() =>
-      Promise.resolve()
-        .then(() => initExternalFixture("ImportCommand/external"))
-        .then((dir) => {
-          externalDir = dir;
-        })
-        .then(() => initFixture("ImportCommand/basic"))
-        .then((dir) => {
-          testDir = dir;
-        })
+      Promise.all([
+        initExternalFixture("ImportCommand/external"),
+        initFixture("ImportCommand/basic"),
+      ]).then(([extDir, basicDir]) => {
+        externalDir = extDir;
+        testDir = basicDir;
+      })
     );
 
     it("creates a module in packages location with imported commit history", (done) => {
