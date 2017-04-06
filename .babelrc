@@ -18,6 +18,10 @@
             "node": "current"
           }
         }]
+      ],
+      "plugins": [
+        "transform-decorators-legacy",
+        "add-module-exports"
       ]
     }
   }
