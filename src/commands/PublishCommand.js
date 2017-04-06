@@ -61,7 +61,8 @@ export default class PublishCommand extends Command {
         return;
       }
 
-      let {version, versions} = results;
+      const version = results.version;
+      let versions = results.versions;
 
       if (!versions) {
         versions = {};
@@ -273,40 +274,40 @@ export default class PublishCommand extends Command {
     }, (choice) => {
       switch (choice) {
 
-      case "CUSTOM": {
-        PromptUtilities.input("Enter a custom version", {
-          filter: semver.valid,
-          validate: (v) => semver.valid(v) ? true : "Must be a valid semver version",
-        }, (input) => {
-          callback(null, input);
-        });
-        break;
-      }
-
-      case "PRERELEASE": {
-        const components = semver.prerelease(currentVersion);
-        let existingId = null;
-        if (components && components.length === 2) {
-          existingId = components[0];
+        case "CUSTOM": {
+          PromptUtilities.input("Enter a custom version", {
+            filter: semver.valid,
+            validate: (v) => semver.valid(v) || "Must be a valid semver version",
+          }, (input) => {
+            callback(null, input);
+          });
+          break;
         }
-        const defaultVersion = semver.inc(currentVersion, "prerelease", existingId);
-        const prompt = `(default: ${existingId ? `"${existingId}"` : "none"}, yielding ${defaultVersion})`;
 
-        PromptUtilities.input(`Enter a prerelease identifier ${prompt}`, {
-          filter: (v) => {
-            const prereleaseId = v ? v : existingId;
-            return semver.inc(currentVersion, "prerelease", prereleaseId);
-          },
-        }, (input) => {
-          callback(null, input);
-        });
-        break;
-      }
+        case "PRERELEASE": {
+          const components = semver.prerelease(currentVersion);
+          let existingId = null;
+          if (components && components.length === 2) {
+            existingId = components[0];
+          }
+          const defaultVersion = semver.inc(currentVersion, "prerelease", existingId);
+          const prompt = `(default: ${existingId ? `"${existingId}"` : "none"}, yielding ${defaultVersion})`;
 
-      default: {
-        callback(null, choice);
-        break;
-      }
+          PromptUtilities.input(`Enter a prerelease identifier ${prompt}`, {
+            filter: (v) => {
+              const prereleaseId = v ? v : existingId;
+              return semver.inc(currentVersion, "prerelease", prereleaseId);
+            },
+          }, (input) => {
+            callback(null, input);
+          });
+          break;
+        }
+
+        default: {
+          callback(null, choice);
+          break;
+        }
 
       }
     });
@@ -317,7 +318,11 @@ export default class PublishCommand extends Command {
     this.logger.info("Changes:");
     this.logger.info(this.updates.map((update) => {
       const pkg = update.package;
-      return `- ${pkg.name}: ${pkg.version} => ${this.updatesVersions[pkg.name]}${pkg.isPrivate() ? ` (${chalk.red("private")})` : ""}`;
+      let line = `- ${pkg.name}: ${pkg.version} => ${this.updatesVersions[pkg.name]}`;
+      if (pkg.isPrivate()) {
+        line += ` (${chalk.red("private")})`;
+      }
+      return line;
     }).join(EOL));
     this.logger.newLine();
 
@@ -403,8 +408,11 @@ export default class PublishCommand extends Command {
   }
 
   gitCommitAndTagVersionForUpdates() {
-    const tags = this.updates.map((update) => `${update.package.name}@${this.updatesVersions[update.package.name]}`);
-    const message = this.flags.message || tags.reduce((msg, tag) => msg + `${EOL} - ${tag}`, `Publish${EOL}`);
+    const tags = this.updates.map(({ package: { name } }) =>
+      `${name}@${this.updatesVersions[name]}`
+    );
+    const message = this.flags.message ||
+      tags.reduce((msg, tag) => msg + `${EOL} - ${tag}`, `Publish${EOL}`);
 
     GitUtilities.commit(message, this.execOpts);
     tags.forEach((tag) => GitUtilities.addTag(tag, this.execOpts));
@@ -433,8 +441,9 @@ export default class PublishCommand extends Command {
   }
 
   npmPublishAsPrerelease(callback) {
-    const {skipTempTag} = this.getOptions();
-    // if we skip temp tags we should tag with the proper value immediately therefore no updates will be needed
+    const { skipTempTag } = this.getOptions();
+    // if we skip temp tags we should tag with the proper value immediately
+    // therefore no updates will be needed
     const tag = skipTempTag ? this.getDistTag() : "lerna-temp";
 
     this.updates.forEach((update) => {
@@ -482,7 +491,7 @@ export default class PublishCommand extends Command {
   }
 
   npmUpdateAsLatest(callback) {
-    const {skipTempTag} = this.getOptions();
+    const { skipTempTag } = this.getOptions();
 
     if (skipTempTag) {
       return callback();
@@ -524,6 +533,8 @@ export default class PublishCommand extends Command {
       NpmUtilities.removeDistTag(pkg.location, pkg.name, "lerna-temp", this.npmRegistry);
     }
 
+    /* eslint-disable max-len */
+    // TODO: fix this API to be less verbose with parameters
     if (this.flags.npmTag) {
       NpmUtilities.addDistTag(pkg.location, pkg.name, this.updatesVersions[pkg.name], distTag, this.npmRegistry);
     } else if (this.flags.canary) {
@@ -531,10 +542,11 @@ export default class PublishCommand extends Command {
     } else {
       NpmUtilities.addDistTag(pkg.location, pkg.name, this.updatesVersions[pkg.name], distTag, this.npmRegistry);
     }
+    /* eslint-enable max-len */
   }
 
   getDistTag() {
-    const {npmTag, canary} = this.getOptions();
+    const { npmTag, canary } = this.getOptions();
     return npmTag || (canary && "canary") || "latest";
   }
 }

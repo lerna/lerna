@@ -14,7 +14,7 @@ export default class PromptUtilities {
     }]).then((answers) => callback(answers.confirm));
   }
 
-  static select(message, {choices, filter, validate} = {}, callback) {
+  static select(message, { choices, filter, validate } = {}, callback) {
     inquirer.prompt([{
       type: "list",
       name: "prompt",
@@ -26,7 +26,7 @@ export default class PromptUtilities {
     }]).then((answers) => callback(answers.prompt));
   }
 
-  static input(message, {filter, validate} = {}, callback) {
+  static input(message, { filter, validate } = {}, callback) {
     inquirer.prompt([{
       type: "input",
       name: "input",

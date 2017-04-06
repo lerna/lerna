@@ -67,7 +67,7 @@ export default class Command {
   getOptions(...objects) {
 
     // Command config object is either "commands" or "command".
-    const {commands, command} = this.repository.lernaJson;
+    const { commands, command } = this.repository.lernaJson;
 
     // Items lower down override items higher up.
     return Object.assign(
@@ -147,6 +147,8 @@ export default class Command {
       return;
     }
 
+    /* eslint-disable max-len */
+    // TODO: remove these warnings eventually
     if (FileSystemUtilities.existsSync(this.repository.versionLocation)) {
       this.logger.warn("You have a `VERSION` file in your repository, this is leftover from a previous version. Please run `lerna init` to update.");
       this._complete(null, 1);
@@ -170,10 +172,11 @@ export default class Command {
       this._complete(null, 1);
       return;
     }
+    /* eslint-enable max-len */
   }
 
   runPreparations() {
-    const {scope, ignore, registry} = this.getOptions();
+    const { scope, ignore, registry } = this.getOptions();
 
     if (scope) {
       this.logger.info(`Scoping to packages that match '${scope}'`);
@@ -188,7 +191,7 @@ export default class Command {
       this.repository.buildPackageGraph();
       this.packages = this.repository.packages;
       this.packageGraph = this.repository.packageGraph;
-      this.filteredPackages = PackageUtilities.filterPackages(this.packages, {scope, ignore});
+      this.filteredPackages = PackageUtilities.filterPackages(this.packages, { scope, ignore });
       if (this.getOptions().includeFilteredDependencies) {
         this.filteredPackages = PackageUtilities.addDependencies(this.filteredPackages, this.packageGraph);
       }

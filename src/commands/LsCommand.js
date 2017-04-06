@@ -18,7 +18,7 @@ export default class LsCommand extends Command {
         };
       });
 
-    this.logger.info(columnify(formattedPackages, {showHeaders: false}));
+    this.logger.info(columnify(formattedPackages, { showHeaders: false }));
     callback(null, true);
   }
 }

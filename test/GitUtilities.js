@@ -38,7 +38,10 @@ describe("GitUtilities", () => {
   describe(".isInitialized()", () => {
     it("returns true when git command succeeds", () => {
       expect(GitUtilities.isInitialized({ cwd: "test" })).toBe(true);
-      expect(ChildProcessUtilities.execSync).lastCalledWith("git rev-parse", { cwd: "test", stdio: "ignore" });
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git rev-parse",
+        { cwd: "test", stdio: "ignore" }
+      );
     });
 
     it("returns false when git command fails", () => {
@@ -173,7 +176,10 @@ describe("GitUtilities", () => {
       ChildProcessUtilities.execSync.mockImplementation(() => "files");
       const opts = { cwd: "test" };
       expect(GitUtilities.diffSinceIn("foo@1.0.0", "packages/foo", opts)).toBe("files");
-      expect(ChildProcessUtilities.execSync).lastCalledWith("git diff --name-only foo@1.0.0 -- packages/foo", opts);
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git diff --name-only foo@1.0.0 -- packages/foo",
+        opts
+      );
     });
   });
 

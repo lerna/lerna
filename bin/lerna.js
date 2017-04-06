@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 "use strict";
 
+/* eslint-disable max-len */
+// too many long lines in this file to bother
+
 const lerna = require("../lib/index");
 const logger = require("../lib/logger");
 const chalk = require("chalk");

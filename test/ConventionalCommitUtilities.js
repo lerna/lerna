@@ -1,3 +1,6 @@
+/* eslint-disable max-len */
+// too many long lines in this file to bother
+
 import dedent from "dedent";
 import path from "path";
 

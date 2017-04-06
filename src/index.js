@@ -8,7 +8,7 @@ import InitCommand from "./commands/InitCommand";
 import RunCommand from "./commands/RunCommand";
 import ExecCommand from "./commands/ExecCommand";
 import LsCommand from "./commands/LsCommand";
-import {exposeCommands} from "./Command";
+import { exposeCommands } from "./Command";
 
 export const __commands__ = exposeCommands([
   BootstrapCommand,

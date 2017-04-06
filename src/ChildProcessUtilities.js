@@ -1,6 +1,6 @@
 import child from "child_process";
 import spawn from "cross-spawn";
-import {EventEmitter} from "events";
+import { EventEmitter } from "events";
 
 // Keep track of how many live children we have.
 let children = 0;

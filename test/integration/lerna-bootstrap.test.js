@@ -26,37 +26,41 @@ const npmTestInDir = (cwd) =>
 
 describe("lerna bootstrap", () => {
   describe("from CLI", () => {
-    test.concurrent("bootstraps all packages", () => initFixture("BootstrapCommand/integration").then((cwd) => {
-      return Promise.resolve()
-        .then(() => execa(LERNA, ["bootstrap"], { cwd }))
-        .then((result) => {
-          expect(result.stdout).toMatchSnapshot("stdout: simple");
-        })
-        .then(() => execa(LERNA, ["run", "test", "--", "--silent"], { cwd }))
-        .then((result) => {
-          expect(result.stdout).toMatchSnapshot("stdout: simple");
-        });
-    }));
+    test.concurrent("bootstraps all packages", () => {
+      return initFixture("BootstrapCommand/integration").then((cwd) => {
+        return Promise.resolve()
+          .then(() => execa(LERNA, ["bootstrap"], { cwd }))
+          .then((result) => {
+            expect(result.stdout).toMatchSnapshot("stdout: simple");
+          })
+          .then(() => execa(LERNA, ["run", "test", "--", "--silent"], { cwd }))
+          .then((result) => {
+            expect(result.stdout).toMatchSnapshot("stdout: simple");
+          });
+      });
+    });
   });
 
   describe("from npm script", () => {
-    test.concurrent("bootstraps all packages", () => initFixture("BootstrapCommand/integration").then((cwd) => {
-      return copyTarball(cwd)
-        .then(() => writePkg(cwd, {
-          "name": "integration",
-          "scripts": {
-            postinstall: "lerna bootstrap",
-            test: "lerna run test",
-          },
-          devDependencies: {
-            lerna: "file:lerna-latest.tgz",
-          }
-        }))
-        .then(() => installInDir(cwd))
-        .then(() => npmTestInDir(cwd))
-        .then((result) => {
-          expect(result.stdout).toMatchSnapshot("stdout: postinstall");
-        });
-    }));
+    test.concurrent("bootstraps all packages", () => {
+      return initFixture("BootstrapCommand/integration").then((cwd) => {
+        return copyTarball(cwd)
+          .then(() => writePkg(cwd, {
+            "name": "integration",
+            "scripts": {
+              postinstall: "lerna bootstrap",
+              test: "lerna run test",
+            },
+            devDependencies: {
+              lerna: "file:lerna-latest.tgz",
+            }
+          }))
+          .then(() => installInDir(cwd))
+          .then(() => npmTestInDir(cwd))
+          .then((result) => {
+            expect(result.stdout).toMatchSnapshot("stdout: postinstall");
+          });
+      });
+    });
   });
 });

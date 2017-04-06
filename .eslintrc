@@ -1,11 +1,3 @@
 {
-  "extends": "babel",
-  "rules": {
-    "space-infix-ops": 2,
-    "no-confusing-arrow": 0,
-    "max-len": 0
-  },
-  "env": {
-    "node": true
-  }
+  "extends": "babel"
 }

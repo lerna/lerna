@@ -59,12 +59,15 @@ export default class ImportCommand extends Command {
       return callback(new Error("Local repository has un-committed changes"));
     }
 
-    this.logger.info(`About to import ${this.commits.length} commits from ${inputPath} into ${this.targetDir}`);
+    this.logger.info(
+      `About to import ${this.commits.length} commits from ${inputPath} into ${this.targetDir}`
+    );
 
     if (this.flags.yes) {
       callback(null, true);
     } else {
-      PromptUtilities.confirm("Are you sure you want to import these commits onto the current branch?", (confirmed) => {
+      const message = "Are you sure you want to import these commits onto the current branch?";
+      PromptUtilities.confirm(message, (confirmed) => {
         if (confirmed) {
           callback(null, true);
         } else {
