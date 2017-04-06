@@ -67,7 +67,7 @@ export default class Command {
   getOptions(...objects) {
 
     // Command config object is either "commands" or "command".
-    const {commands, command} = this.repository.lernaJson;
+    const { commands, command } = this.repository.lernaJson;
 
     // Items lower down override items higher up.
     return Object.assign(
@@ -173,7 +173,7 @@ export default class Command {
   }
 
   runPreparations() {
-    const {scope, ignore, registry} = this.getOptions();
+    const { scope, ignore, registry } = this.getOptions();
 
     if (scope) {
       this.logger.info(`Scoping to packages that match '${scope}'`);
@@ -188,7 +188,7 @@ export default class Command {
       this.repository.buildPackageGraph();
       this.packages = this.repository.packages;
       this.packageGraph = this.repository.packageGraph;
-      this.filteredPackages = PackageUtilities.filterPackages(this.packages, {scope, ignore});
+      this.filteredPackages = PackageUtilities.filterPackages(this.packages, { scope, ignore });
       if (this.getOptions().includeFilteredDependencies) {
         this.filteredPackages = PackageUtilities.addDependencies(this.filteredPackages, this.packageGraph);
       }

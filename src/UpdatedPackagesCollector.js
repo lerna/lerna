@@ -94,7 +94,7 @@ export default class UpdatedPackagesCollector {
       return false;
     }
 
-    let dependencies = this.packageGraph.get(packageName).dependencies;
+    const dependencies = this.packageGraph.get(packageName).dependencies;
 
     if (dependencies.indexOf(dependency) > -1) {
       this.cache[packageName][dependency] = "dependent";
@@ -159,7 +159,7 @@ export default class UpdatedPackagesCollector {
     if (this.flags.ignore) {
       changedFiles = changedFiles.filter((file) => {
         return !find(this.flags.ignore, (pattern) => {
-          return minimatch(file, pattern, {matchBase: true});
+          return minimatch(file, pattern, { matchBase: true });
         });
       });
     }

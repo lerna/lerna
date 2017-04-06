@@ -140,12 +140,12 @@ function resolveSymbolicLink(filePath) {
 }
 
 function resolvePosixSymlink(filePath) {
-  const {isSymlink} = resolveSymbolicLink(filePath);
+  const { isSymlink } = resolveSymbolicLink(filePath);
   return isSymlink;
 }
 
 function resolveWindowsSymlink(filePath) {
-  const {isSymlink, lstat} = resolveSymbolicLink(filePath);
+  const { isSymlink, lstat } = resolveSymbolicLink(filePath);
 
   if (lstat.isFile() && !isSymlink) {
     try {

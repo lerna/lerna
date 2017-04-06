@@ -13,7 +13,7 @@ export default class ExecCommand extends Command {
     }
 
     this.batchedPackages = this.toposort
-      ? PackageUtilities.topologicallyBatchPackages(this.filteredPackages, {logger: this.logger})
+      ? PackageUtilities.topologicallyBatchPackages(this.filteredPackages, { logger: this.logger })
       : [ this.filteredPackages ];
 
     callback(null, true);
@@ -28,7 +28,7 @@ export default class ExecCommand extends Command {
   runCommandInPackage(pkg, callback) {
     ChildProcessUtilities.spawn(this.command, this.args, {
       cwd: pkg.location,
-      env: Object.assign({}, process.env, {LERNA_PACKAGE_NAME: pkg.name})
+      env: Object.assign({}, process.env, { LERNA_PACKAGE_NAME: pkg.name })
     }, (code) => {
       if (code) {
         this.logger.error(`Errored while running command '${this.command}' ` +

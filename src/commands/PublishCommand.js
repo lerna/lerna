@@ -61,7 +61,8 @@ export default class PublishCommand extends Command {
         return;
       }
 
-      let {version, versions} = results;
+      const version = results.version;
+      let versions = results.versions;
 
       if (!versions) {
         versions = {};
@@ -273,40 +274,40 @@ export default class PublishCommand extends Command {
     }, (choice) => {
       switch (choice) {
 
-      case "CUSTOM": {
-        PromptUtilities.input("Enter a custom version", {
-          filter: semver.valid,
-          validate: (v) => semver.valid(v) ? true : "Must be a valid semver version",
-        }, (input) => {
-          callback(null, input);
-        });
-        break;
-      }
-
-      case "PRERELEASE": {
-        const components = semver.prerelease(currentVersion);
-        let existingId = null;
-        if (components && components.length === 2) {
-          existingId = components[0];
+        case "CUSTOM": {
+          PromptUtilities.input("Enter a custom version", {
+            filter: semver.valid,
+            validate: (v) => semver.valid(v) ? true : "Must be a valid semver version",
+          }, (input) => {
+            callback(null, input);
+          });
+          break;
         }
-        const defaultVersion = semver.inc(currentVersion, "prerelease", existingId);
-        const prompt = `(default: ${existingId ? `"${existingId}"` : "none"}, yielding ${defaultVersion})`;
 
-        PromptUtilities.input(`Enter a prerelease identifier ${prompt}`, {
-          filter: (v) => {
-            const prereleaseId = v ? v : existingId;
-            return semver.inc(currentVersion, "prerelease", prereleaseId);
-          },
-        }, (input) => {
-          callback(null, input);
-        });
-        break;
-      }
+        case "PRERELEASE": {
+          const components = semver.prerelease(currentVersion);
+          let existingId = null;
+          if (components && components.length === 2) {
+            existingId = components[0];
+          }
+          const defaultVersion = semver.inc(currentVersion, "prerelease", existingId);
+          const prompt = `(default: ${existingId ? `"${existingId}"` : "none"}, yielding ${defaultVersion})`;
 
-      default: {
-        callback(null, choice);
-        break;
-      }
+          PromptUtilities.input(`Enter a prerelease identifier ${prompt}`, {
+            filter: (v) => {
+              const prereleaseId = v ? v : existingId;
+              return semver.inc(currentVersion, "prerelease", prereleaseId);
+            },
+          }, (input) => {
+            callback(null, input);
+          });
+          break;
+        }
+
+        default: {
+          callback(null, choice);
+          break;
+        }
 
       }
     });
@@ -433,7 +434,7 @@ export default class PublishCommand extends Command {
   }
 
   npmPublishAsPrerelease(callback) {
-    const {skipTempTag} = this.getOptions();
+    const { skipTempTag } = this.getOptions();
     // if we skip temp tags we should tag with the proper value immediately therefore no updates will be needed
     const tag = skipTempTag ? this.getDistTag() : "lerna-temp";
 
@@ -482,7 +483,7 @@ export default class PublishCommand extends Command {
   }
 
   npmUpdateAsLatest(callback) {
-    const {skipTempTag} = this.getOptions();
+    const { skipTempTag } = this.getOptions();
 
     if (skipTempTag) {
       return callback();
@@ -534,7 +535,7 @@ export default class PublishCommand extends Command {
   }
 
   getDistTag() {
-    const {npmTag, canary} = this.getOptions();
+    const { npmTag, canary } = this.getOptions();
     return npmTag || (canary && "canary") || "latest";
   }
 }
