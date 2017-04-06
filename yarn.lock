@@ -255,7 +255,7 @@ babel-core@^6.0.0, babel-core@^6.24.0:
     slash "^1.0.0"
     source-map "^0.5.0"
 
-babel-eslint@^6.0.0, babel-eslint@^6.0.2:
+babel-eslint@^6.0.2:
   version "6.1.2"
   resolved "https://registry.yarnpkg.com/babel-eslint/-/babel-eslint-6.1.2.tgz#5293419fe3672d66598d327da9694567ba6a5f2f"
   dependencies:
@@ -1366,21 +1366,13 @@ escope@^3.6.0:
     esrecurse "^4.1.0"
     estraverse "^4.1.1"
 
-eslint-config-babel@^1.0.1:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/eslint-config-babel/-/eslint-config-babel-1.0.2.tgz#bbb2210e7f2fe12e0ea2930646d5f2a7ad763189"
-  dependencies:
-    babel-eslint "^6.0.0"
-    eslint-plugin-babel "^3.0.0"
-    eslint-plugin-flow-vars "^0.4.0"
+eslint-config-babel@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-babel/-/eslint-config-babel-6.0.0.tgz#66feedf6ce6e04abe585cec1a65b5bcc96bed50a"
 
-eslint-plugin-babel@^3.0.0, eslint-plugin-babel@^3.3.0:
+eslint-plugin-babel@^3.3.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/eslint-plugin-babel/-/eslint-plugin-babel-3.3.0.tgz#2f494aedcf6f4aa4e75b9155980837bc1fbde193"
-
-eslint-plugin-flow-vars@^0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-flow-vars/-/eslint-plugin-flow-vars-0.4.0.tgz#b3acca59997cc93f6cbd3ca069eb790995951ffa"
 
 eslint-plugin-flow-vars@^0.5.0:
   version "0.5.0"
