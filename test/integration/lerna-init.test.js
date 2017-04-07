@@ -5,13 +5,7 @@ import readPkg from "read-pkg";
 import loadJsonFile from "load-json-file";
 import initDirName from "../helpers/initDirName";
 import initFixture from "../helpers/initFixture";
-import replaceLernaVersion from "../helpers/replaceLernaVersion";
-
-expect.addSnapshotSerializer(replaceLernaVersion);
-
-const ROOTDIR = path.resolve(__dirname, "../..");
-const PACKAGE = readPkg.sync(ROOTDIR);
-const LERNA = path.join(ROOTDIR, PACKAGE.bin.lerna);
+import { LERNA_BIN } from "../helpers/constants";
 
 const initEmptyDir = () =>
   initDirName("InitCommand/empty").then((dir) => {
@@ -31,7 +25,7 @@ const loadMetaData = (cwd) => Promise.all([
 
 describe("lerna init", () => {
   test.concurrent("initializes empty directory", () => initEmptyDir().then((cwd) => {
-    return execa(LERNA, ["init"], { cwd }).then((result) => {
+    return execa(LERNA_BIN, ["init"], { cwd }).then((result) => {
       expect(result.stdout).toMatchSnapshot("stdout: empty directory");
 
       return loadMetaData(cwd).then(([packageJson, lernaJson]) => {
@@ -42,7 +36,7 @@ describe("lerna init", () => {
   }));
 
   test.concurrent("updates existing metadata", () => initFixture("InitCommand/updates").then((cwd) => {
-    return execa(LERNA, ["init", "--exact"], { cwd }).then((result) => {
+    return execa(LERNA_BIN, ["init", "--exact"], { cwd }).then((result) => {
       expect(result.stdout).toMatchSnapshot("stdout: updates");
 
       return loadMetaData(cwd).then(([packageJson, lernaJson]) => {
@@ -53,7 +47,7 @@ describe("lerna init", () => {
   }));
 
   test.concurrent("removes VERSION file", () => initFixture("InitCommand/has-version").then((cwd) => {
-    return execa(LERNA, ["init"], { cwd }).then((result) => {
+    return execa(LERNA_BIN, ["init"], { cwd }).then((result) => {
       expect(result.stdout).toMatchSnapshot("stdout: has-version");
     });
   }));

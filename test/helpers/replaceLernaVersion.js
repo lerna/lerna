@@ -1,17 +1,19 @@
-import _ from "lodash";
-import normalizeNewline from "normalize-newline";
+// this file is not transpiled by Jest when configured in "snapshotSerializers"
+"use strict";
 
-const PLACEHOLDER = "__TEST_VERSION__";
-const VERSION = require("../../package.json").version;
-const REGEX = new RegExp(`v?${VERSION}`, "gm");
+const _ = require("lodash");
+const normalizeNewline = require("normalize-newline");
+const constants = require("./constants");
+
+const REGEX = new RegExp(`v?${constants.LERNA_VERSION}`, "gm");
 // TODO: maybe less naïve regex?
 
 function needsReplacement(str) {
-  return str.indexOf(PLACEHOLDER) === -1;
+  return str.indexOf(constants.__TEST_VERSION__) === -1;
 }
 
 function stableVersion(str) {
-  return str.replace(REGEX, PLACEHOLDER);
+  return str.replace(REGEX, constants.__TEST_VERSION__);
 }
 
 const stabilizeString = _.flow([
@@ -25,7 +27,7 @@ with __TEST_VERSION__ when found in snapshotted strings or object properties.
 
 @see http://facebook.github.io/jest/docs/expect.html#expectaddsnapshotserializerserializer
 **/
-export default {
+module.exports = {
   test(thing) {
     return _.isString(thing) && needsReplacement(thing) || (
       _.isPlainObject(thing) && _.isString(thing.lerna) && needsReplacement(thing.lerna)

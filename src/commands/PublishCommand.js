@@ -362,7 +362,10 @@ export default class PublishCommand extends Command {
       this.updatePackageDepsObject(pkg, "peerDependencies", exact);
 
       // write new package
-      writePkg.sync(packageJsonLocation, pkg);
+      writePkg.sync(packageJsonLocation, pkg.toJSON());
+      // NOTE: Object.prototype.toJSON() is normally called when passed to
+      // JSON.stringify(), but write-pkg iterates Object.keys() before serializing
+      // so it has to be explicit here (otherwise it mangles the instance properties)
 
       // we can now generate the Changelog, based on the
       // the updated version that we're about to release.

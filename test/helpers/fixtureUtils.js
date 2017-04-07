@@ -4,6 +4,9 @@ import path from "path";
 import fs from "fs-promise";
 import { padStart } from "lodash";
 import execa from "execa";
+import replaceStream from "replacestream";
+
+import { LERNA_VERSION, __TEST_VERSION__ } from "./constants";
 
 export function getTempDir(fixtureName) {
   // e.g., "lerna-1490053388515-663678-BootstrapCommand_01_basic"
@@ -48,4 +51,35 @@ export function fixtureNamer() {
 
     return parts.join("_");
   };
+}
+
+/**
+During fixture copy, replace "__TEST_VERSION__" with the current version.
+This is primarily for integration tests, but doesn't hurt unit tests.
+
+@param {stream.Readable} readStream
+@param {stream.Writable} writeStream
+@param {Object} file metadata
+@property {String} file.name source path of file being copied
+
+@see https://github.com/jprichardson/node-fs-extra/blob/master/lib/copy/ncp.js#L105
+**/
+function transform(readStream, writeStream, file) {
+  let stream = readStream;
+
+  if (path.extname(file.name) === ".json") {
+    stream = stream.pipe(replaceStream(__TEST_VERSION__, LERNA_VERSION));
+  }
+
+  writeStream.on("open", () => {
+    stream.pipe(writeStream);
+  });
+}
+
+export function copyFixture(fixturePath, testDir) {
+  const fixtureDir = path.resolve(__dirname, `../fixtures/${fixturePath}`);
+
+  return fs.copy(fixtureDir, testDir, {
+    transform,
+  });
 }
