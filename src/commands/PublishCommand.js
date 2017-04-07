@@ -16,14 +16,6 @@ import chalk from "chalk";
 import path from "path";
 import { EOL } from "os";
 
-function getLastCommit(execOpts) {
-  if (GitUtilities.hasTags(execOpts)) {
-    return GitUtilities.getLastTaggedCommit(execOpts);
-  }
-
-  return GitUtilities.getFirstCommit(execOpts);
-}
-
 export default class PublishCommand extends Command {
   initialize(callback) {
     this.gitEnabled = !(this.flags.canary || this.flags.skipGit);
@@ -273,11 +265,16 @@ export default class PublishCommand extends Command {
       const args = [
         "--no-pager",
         "diff",
-        getLastCommit(this.execOpts),
-        "--color=auto",
-        "--",
-        targetPackage.location
+        this.getLastCommit(this.execOpts),
+        "--color=auto"
       ];
+
+      if (packageName) {
+        args.push(
+          "--",
+          targetPackage.location
+        );
+      }
 
       ChildProcessUtilities.spawn("git", args, this.execOpts, (code) => {
         if (code) {
@@ -578,5 +575,13 @@ export default class PublishCommand extends Command {
   getDistTag() {
     const { npmTag, canary } = this.getOptions();
     return npmTag || (canary && "canary") || "latest";
+  }
+
+  getLastCommit(execOpts) {
+    if (GitUtilities.hasTags(execOpts)) {
+      return GitUtilities.getLastTaggedCommit(execOpts);
+    }
+
+    return GitUtilities.getFirstCommit(execOpts);
   }
 }
