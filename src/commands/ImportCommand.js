@@ -7,13 +7,13 @@ import FileSystemUtilities from "../FileSystemUtilities";
 import GitUtilities from "../GitUtilities";
 
 export function handler(argv) {
-  return new ImportCommand(argv._, argv).run();
+  return new ImportCommand([argv.repo], argv).run();
 }
 
-export const command = "import";
+export const command = "import <repo>";
 
-export const describe = `Import the package at <path-to-external-repository>, with commit history, 
-                         into packages/<directory-name>.`;
+export const describe = "Import the package at <path-to-external-repository>, with commit history, "
+                      + "into packages/<directory-name>.";
 
 export const builder = {
   "yes": {

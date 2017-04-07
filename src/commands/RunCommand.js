@@ -3,10 +3,10 @@ import PackageUtilities from "../PackageUtilities";
 import Command from "../Command";
 
 export function handler(argv) {
-  return new RunCommand(argv._, argv).run();
+  return new RunCommand([argv.script, ...argv.arguments], argv).run();
 }
 
-export const command = "run";
+export const command = "run <script> [arguments..]";
 
 export const describe = "Run an npm script in each package that contains that script.";
 

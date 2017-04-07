@@ -11,8 +11,8 @@ export function handler(argv) {
 
 export const command = "init";
 
-export const describe = `Create a new Lerna repo or upgrade an existing repo to the current version 
-                         of Lerna.`;
+export const describe = "Create a new Lerna repo or upgrade an existing repo to the current version "
+                      + "of Lerna.";
 
 export const builder = {
   "exact": {

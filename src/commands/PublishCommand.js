@@ -28,8 +28,8 @@ export const builder = {
     alias: "c"
   },
   "cd-version": {
-    describe: `Skip the version selection prompt (in independent mode) and use the next specified semantic 
-               version.`
+    describe: "Skip the version selection prompt (in independent mode) and use the next specified semantic "
+            + "version."
   },
   "conventional-commits": {
     describe: "Use angular conventional-commit format to determine version bump and generate CHANGELOG."
@@ -68,8 +68,8 @@ export const builder = {
     describe: "Stop before actually publishing change to npm."
   },
   "skip-temp-tag": {
-    describe: `Do not create a temporary tag while publishing. In stead use the normal npm publish 
-               methodology.`
+    describe: "Do not create a temporary tag while publishing. In stead use the normal npm publish"
+            + "methodology."
   }
 };
 

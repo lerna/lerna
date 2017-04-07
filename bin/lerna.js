@@ -14,8 +14,8 @@ yargs
   .wrap(yargs.terminalWidth())
   .option("loglevel", {
     default: "info",
-    describe: `What level of logs to report. On failure, all logs are written to lerna-debug.log in the 
-               current working directory.`,
+    describe: "What level of logs to report. On failure, all logs are written to lerna-debug.log in the"
+            + "current working directory.",
     type: "string",
     global: true
   })
