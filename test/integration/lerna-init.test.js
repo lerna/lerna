@@ -5,10 +5,7 @@ import readPkg from "read-pkg";
 import loadJsonFile from "load-json-file";
 import initDirName from "../helpers/initDirName";
 import initFixture from "../helpers/initFixture";
-import replaceLernaVersion from "../helpers/replaceLernaVersion";
 import { LERNA_BIN } from "../helpers/constants";
-
-expect.addSnapshotSerializer(replaceLernaVersion);
 
 const initEmptyDir = () =>
   initDirName("InitCommand/empty").then((dir) => {

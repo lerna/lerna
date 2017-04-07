@@ -5,5 +5,8 @@
   ],
   "testEnvironment": "node",
   "setupTestFrameworkScriptFile": "<rootDir>/test/integration/_setupTestFramework.js",
+  "snapshotSerializers": [
+    "<rootDir>/test/helpers/replaceLernaVersion.js"
+  ],
   "verbose": true
 }

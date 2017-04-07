@@ -3,10 +3,7 @@ import path from "path";
 import execa from "execa";
 import writePkg from "write-pkg";
 import initFixture from "../helpers/initFixture";
-import replaceLernaVersion from "../helpers/replaceLernaVersion";
 import { LERNA_BIN, REPO_ROOT, LERNA_VERSION } from "../helpers/constants";
-
-expect.addSnapshotSerializer(replaceLernaVersion);
 
 const TGZ_SRC = path.join(REPO_ROOT, `lerna-${LERNA_VERSION}.tgz`);
 

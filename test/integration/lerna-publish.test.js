@@ -2,10 +2,7 @@ import glob from "glob";
 import execa from "execa";
 import readPkg from "read-pkg";
 import initFixture from "../helpers/initFixture";
-import replaceLernaVersion from "../helpers/replaceLernaVersion";
 import { LERNA_BIN } from "../helpers/constants";
-
-expect.addSnapshotSerializer(replaceLernaVersion);
 
 const parsePackageJson = (filePath) =>
   readPkg(filePath, { normalize: false });
