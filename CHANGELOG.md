@@ -1,3 +1,76 @@
+## v2.0.0-rc.0 (2017-04-06)
+
+:tada: It's the first release candidate of `v2.0.0`! :tada:
+
+**Highlights**: Jest, CI automation improvements, and tons of internal refactoring!
+
+We've been in "beta" for quite some time, and it's time for our versioning to better communicate changes and guarantee API stability.
+
+Our goal is to focus on a few important bugfixes before pushing the big red button and cutting a `v2.0.0` for realsies. Check out the [milestone](https://github.com/lerna/lerna/milestone/1) to see if you can help!
+
+#### :boom: Breaking Change
+* [#732](https://github.com/lerna/lerna/pull/732) Remove broken public API. ([@evocateur](https://github.com/evocateur))
+
+Our apologies if you were using this, but did you know it's been broken since before the first 2.x beta?
+We have better opportunities in the offing for helping folks reuse parts of our inner logic (a `--json` flag for `lerna ls`, perhaps?), and encourage those who have complex needs to join or start discussions in the issues.
+
+#### :rocket: Enhancement
+* [#666](https://github.com/lerna/lerna/pull/666) Create annotated git tags instead of lightweight tags. ([@AlexLandau](https://github.com/AlexLandau))
+* [#665](https://github.com/lerna/lerna/pull/665) Automate CHANGELOG updates and version bumps during publish with `--conventional-commits` flag. ([@bcoe](https://github.com/bcoe))
+* [#607](https://github.com/lerna/lerna/pull/607) Increment version by semver keyword with `--cd-version` flag. ([@cif](https://github.com/cif))
+* [#641](https://github.com/lerna/lerna/pull/641) Add prompts for prerelease versions. ([@rtsao](https://github.com/rtsao))
+* [#647](https://github.com/lerna/lerna/pull/647) Allow concurrency to be configured via lerna.json. ([@gigabo](https://github.com/gigabo))
+* [#635](https://github.com/lerna/lerna/pull/635) Switch to Jest. ([@evocateur](https://github.com/evocateur))
+* [#714](https://github.com/lerna/lerna/pull/714) Refactor unit tests into Jest idioms, adding integration tests. ([@evocateur](https://github.com/evocateur))
+
+#### :bug: Bug Fix
+* [#731](https://github.com/lerna/lerna/pull/731) Symlink binaries of scoped packages correctly. ([@evocateur](https://github.com/evocateur))
+* [#729](https://github.com/lerna/lerna/pull/729) Upgrade progress to address upstream bug. ([@zzarcon](https://github.com/zzarcon))
+* [#728](https://github.com/lerna/lerna/pull/728) Handle `--ignore` flag correctly when publishing. ([@noherczeg](https://github.com/noherczeg))
+* [#711](https://github.com/lerna/lerna/pull/711) Do not reject detached `HEAD` when publishing a canary release. ([@evocateur](https://github.com/evocateur))
+* [#694](https://github.com/lerna/lerna/pull/694), [#705](https://github.com/lerna/lerna/pull/705) Loosen version check to major-only. ([@evocateur](https://github.com/evocateur))
+* [#687](https://github.com/lerna/lerna/pull/687) Support lerna execution from subdirectories of repo root. ([@evocateur](https://github.com/evocateur))
+* [#654](https://github.com/lerna/lerna/pull/654), [#672](https://github.com/lerna/lerna/pull/672) Merge current process.env when using `--registry` flag. ([@noherczeg](https://github.com/noherczeg)), ([@TheLarkInn](https://github.com/TheLarkInn))
+* [#621](https://github.com/lerna/lerna/pull/621) Include private packages in the list of updated packages. ([@spudly](https://github.com/spudly))
+* [#638](https://github.com/lerna/lerna/pull/638) Install with all dependencies when installing. ([@gigabo](https://github.com/gigabo))
+
+#### :nail_care: Polish
+* [#655](https://github.com/lerna/lerna/pull/655) Actually warn when a matching dependency version is not satisfied. ([@evocateur](https://github.com/evocateur))
+* [#674](https://github.com/lerna/lerna/pull/674) Appveyor status should reflect master, not latest. ([@evocateur](https://github.com/evocateur))
+
+#### :memo: Documentation
+* [#736](https://github.com/lerna/lerna/pull/736) Update FAQ.md with publish retry details. ([@cdaringe](https://github.com/cdaringe))
+* [#693](https://github.com/lerna/lerna/pull/693) Add GitHub issue and pull request templates. ([@evocateur](https://github.com/evocateur))
+* [#634](https://github.com/lerna/lerna/pull/634) Add documentation about "watch" commands next to `--no-sort`. ([@trotzig](https://github.com/trotzig))
+
+#### :house: Internal
+* [#738](https://github.com/lerna/lerna/pull/738) Use `babel-preset-env` instead of `babel-preset-es2015`. ([@evocateur](https://github.com/evocateur))
+* [#737](https://github.com/lerna/lerna/pull/737) Update eslint, config, and plugins. ([@evocateur](https://github.com/evocateur))
+* [#733](https://github.com/lerna/lerna/pull/733), [#734](https://github.com/lerna/lerna/pull/734) Refactor CWD handling. ([@evocateur](https://github.com/evocateur))
+* [#690](https://github.com/lerna/lerna/pull/690) Whitelist files included in package tarball. ([@evocateur](https://github.com/evocateur))
+* [#681](https://github.com/lerna/lerna/pull/681) Use `yarn --frozen-lockfile` in CI. ([@evocateur](https://github.com/evocateur))
+* [#673](https://github.com/lerna/lerna/pull/673) Use yarn instead of npm in CI. ([@evocateur](https://github.com/evocateur))
+* [#663](https://github.com/lerna/lerna/pull/663) add tests for `NpmUtilities.getExecOpts()`. ([@noherczeg](https://github.com/noherczeg))
+
+#### Committers: 17
+- Alex Landau ([AlexLandau](https://github.com/AlexLandau))
+- Ben Ipsen ([cif](https://github.com/cif))
+- Benjamin E. Coe ([bcoe](https://github.com/bcoe))
+- Bo Borgerson ([gigabo](https://github.com/gigabo))
+- Christopher Dieringer ([cdaringe](https://github.com/cdaringe))
+- Daniel Stockman ([evocateur](https://github.com/evocateur))
+- Hector Zarco  ([zzarcon](https://github.com/zzarcon))
+- Henric Trotzig ([trotzig](https://github.com/trotzig))
+- Henry Zhu ([hzoo](https://github.com/hzoo))
+- Norbert Csaba Herczeg ([noherczeg](https://github.com/noherczeg))
+- Nuno Campos ([nfcampos](https://github.com/nfcampos))
+- Ryan Tsao ([rtsao](https://github.com/rtsao))
+- Sean Larkin ([TheLarkInn](https://github.com/TheLarkInn))
+- Stephen John Sorensen ([spudly](https://github.com/spudly))
+- Vladimir Guguiev ([wizardzloy](https://github.com/wizardzloy))
+- Yasser Kaddour ([YasserKaddour](https://github.com/YasserKaddour))
+- james kyle ([thejameskyle](https://github.com/thejameskyle))
+
 ## v2.0.0-beta.38 (2017-02-28)
 
 📦 🐈  Initial Yarn support and more!
