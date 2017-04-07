@@ -2,6 +2,7 @@ import async from "async";
 import Command from "../Command";
 import FileSystemUtilities from "../FileSystemUtilities";
 import PromptUtilities from "../PromptUtilities";
+
 export function handler(argv) {
   return new CleanCommand(argv._, argv).run();
 }
