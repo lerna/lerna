@@ -19,7 +19,7 @@ const npmTestInDir = (cwd) =>
 
 describe("lerna bootstrap", () => {
   describe("from CLI", () => {
-    test.concurrent("bootstraps all packages", () => {
+    test.skip("bootstraps all packages", () => {
       return initFixture("BootstrapCommand/integration").then((cwd) => {
         return Promise.resolve()
           .then(() => execa(LERNA_BIN, ["bootstrap"], { cwd }))
