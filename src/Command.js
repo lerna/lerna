@@ -246,6 +246,8 @@ export default class Command {
       }
 
       if (process.env.NODE_ENV !== "lerna-test") {
+        // TODO: don't call process.exit()
+        // eslint-disable-next-line no-process-exit
         process.exit(code);
       }
     };
