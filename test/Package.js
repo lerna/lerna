@@ -101,9 +101,12 @@ describe("Package", () => {
 
   describe(".toJSON()", () => {
     it("should return internal package for serialization", () => {
-      expect(JSON.stringify(pkg, null, 2)).toBe(
-        JSON.stringify(pkg._package, null, 2)
-      );
+      expect(pkg.toJSON()).toBe(pkg._package);
+
+      const implicit = JSON.stringify(pkg, null, 2);
+      const explicit = JSON.stringify(pkg._package, null, 2);
+
+      expect(implicit).toBe(explicit);
     });
   });
 
