@@ -1,12 +1,14 @@
 /**
 Shared constants for tests
 **/
-import path from "path";
-import pkg from "../../package.json";
+"use strict";
 
-export const REPO_ROOT = path.resolve(__dirname, "../..");
-export const LERNA_BIN = path.resolve(REPO_ROOT, pkg.bin.lerna);
-export const LERNA_VERSION = pkg.version;
+const path = require("path");
+const pkg = require("../../package.json");
+
+exports.REPO_ROOT = path.resolve(__dirname, "../..");
+exports.LERNA_BIN = path.resolve(exports.REPO_ROOT, pkg.bin.lerna);
+exports.LERNA_VERSION = pkg.version;
 
 // placeholder used in fixture JSON files, replaced during tests
-export const __TEST_VERSION__ = "__TEST_VERSION__";
+exports.__TEST_VERSION__ = "__TEST_VERSION__";
