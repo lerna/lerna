@@ -1,15 +1,11 @@
-import path from "path";
 import glob from "glob";
 import execa from "execa";
 import readPkg from "read-pkg";
 import initFixture from "../helpers/initFixture";
 import replaceLernaVersion from "../helpers/replaceLernaVersion";
+import { LERNA_BIN } from "../helpers/constants";
 
 expect.addSnapshotSerializer(replaceLernaVersion);
-
-const ROOTDIR = path.resolve(__dirname, "../..");
-const PACKAGE = readPkg.sync(ROOTDIR);
-const LERNA = path.join(ROOTDIR, PACKAGE.bin.lerna);
 
 const parsePackageJson = (filePath) =>
   readPkg(filePath, { normalize: false });
@@ -39,7 +35,7 @@ describe("lerna publish", () => {
       "--yes",
     ];
 
-    return execa(LERNA, args, { cwd }).then((result) => {
+    return execa(LERNA_BIN, args, { cwd }).then((result) => {
       expect(result.stdout).toMatchSnapshot("stdout: updates fixed versions");
 
       return loadAllPackages(cwd).then((allPackageJsons) => {
@@ -56,7 +52,7 @@ describe("lerna publish", () => {
       "--yes",
     ];
 
-    return execa(LERNA, args, { cwd }).then((result) => {
+    return execa(LERNA_BIN, args, { cwd }).then((result) => {
       expect(result.stdout).toMatchSnapshot("stdout: updates independent versions");
 
       return loadAllPackages(cwd).then((allPackageJsons) => {

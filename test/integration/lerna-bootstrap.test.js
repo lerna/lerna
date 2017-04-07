@@ -1,18 +1,14 @@
 import fs from "fs-promise";
 import path from "path";
 import execa from "execa";
-import readPkg from "read-pkg";
 import writePkg from "write-pkg";
 import initFixture from "../helpers/initFixture";
 import replaceLernaVersion from "../helpers/replaceLernaVersion";
+import { LERNA_BIN, REPO_ROOT, LERNA_VERSION } from "../helpers/constants";
 
 expect.addSnapshotSerializer(replaceLernaVersion);
 
-const ROOTDIR = path.resolve(__dirname, "../..");
-const PACKAGE = readPkg.sync(ROOTDIR);
-const VERSION = PACKAGE.version;
-const TGZ_SRC = path.join(ROOTDIR, `lerna-${VERSION}.tgz`);
-const LERNA = path.join(ROOTDIR, PACKAGE.bin.lerna);
+const TGZ_SRC = path.join(REPO_ROOT, `lerna-${LERNA_VERSION}.tgz`);
 
 const copyTarball = (cwd) =>
   fs.copy(TGZ_SRC, path.join(cwd, "lerna-latest.tgz"));
@@ -29,11 +25,11 @@ describe("lerna bootstrap", () => {
     test.concurrent("bootstraps all packages", () => {
       return initFixture("BootstrapCommand/integration").then((cwd) => {
         return Promise.resolve()
-          .then(() => execa(LERNA, ["bootstrap"], { cwd }))
+          .then(() => execa(LERNA_BIN, ["bootstrap"], { cwd }))
           .then((result) => {
             expect(result.stdout).toMatchSnapshot("stdout: simple");
           })
-          .then(() => execa(LERNA, ["run", "test", "--", "--silent"], { cwd }))
+          .then(() => execa(LERNA_BIN, ["run", "test", "--", "--silent"], { cwd }))
           .then((result) => {
             expect(result.stdout).toMatchSnapshot("stdout: simple");
           });
