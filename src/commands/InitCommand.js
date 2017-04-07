@@ -69,7 +69,7 @@ export default class InitCommand extends Command {
     } else if (this.repository.version) {
       version = this.repository.version;
     } else {
-      version = "0.0.0";
+      version = "1.0.0";
     }
 
     if (!this.repository.initVersion) {
