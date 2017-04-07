@@ -1,3 +1,10 @@
+## v2.0.0-rc.1 (2017-04-07)
+
+A silent (but deadly) bug slipped into the last release. Many thanks to ([@timdp](https://github.com/timdp)) for discovering it.
+
+#### :bug: Bug Fix
+* [#744](https://github.com/lerna/lerna/pull/744) Fix package.json updates during publish. ([@evocateur](https://github.com/evocateur))
+
 ## v2.0.0-rc.0 (2017-04-06)
 
 :tada: It's the first release candidate of `v2.0.0`! :tada:
