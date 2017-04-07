@@ -1,6 +1,8 @@
-import _ from "lodash";
-import normalizeNewline from "normalize-newline";
-import { LERNA_VERSION, __TEST_VERSION__ } from "./constants";
+"use strict";
+
+const _ = require("lodash");
+const normalizeNewline = require("normalize-newline");
+const { LERNA_VERSION, __TEST_VERSION__ } = require("./constants");
 
 const REGEX = new RegExp(`v?${LERNA_VERSION}`, "gm");
 // TODO: maybe less naïve regex?
@@ -24,7 +26,7 @@ with __TEST_VERSION__ when found in snapshotted strings or object properties.
 
 @see http://facebook.github.io/jest/docs/expect.html#expectaddsnapshotserializerserializer
 **/
-export default {
+module.exports = {
   test(thing) {
     return _.isString(thing) && needsReplacement(thing) || (
       _.isPlainObject(thing) && _.isString(thing.lerna) && needsReplacement(thing.lerna)
