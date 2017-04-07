@@ -1,3 +1,4 @@
+/* eslint node/no-unsupported-features: ["error", { version: 4 }] */
 // this file is not transpiled by Jest when required in replaceLernaVersion.js
 "use strict";
 
