@@ -1,18 +1,19 @@
+// this file is not transpiled by Jest when configured in "snapshotSerializers"
 "use strict";
 
 const _ = require("lodash");
 const normalizeNewline = require("normalize-newline");
-const { LERNA_VERSION, __TEST_VERSION__ } = require("./constants");
+const constants = require("./constants");
 
-const REGEX = new RegExp(`v?${LERNA_VERSION}`, "gm");
+const REGEX = new RegExp(`v?${constants.LERNA_VERSION}`, "gm");
 // TODO: maybe less naïve regex?
 
 function needsReplacement(str) {
-  return str.indexOf(__TEST_VERSION__) === -1;
+  return str.indexOf(constants.__TEST_VERSION__) === -1;
 }
 
 function stableVersion(str) {
-  return str.replace(REGEX, __TEST_VERSION__);
+  return str.replace(REGEX, constants.__TEST_VERSION__);
 }
 
 const stabilizeString = _.flow([
