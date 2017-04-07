@@ -52,7 +52,7 @@ describe("lerna bootstrap", () => {
               test: "lerna run test",
             },
             devDependencies: {
-              lerna: "file:lerna-latest.tgz",
+              lerna: "file:./lerna-latest.tgz",
             }
           }))
           .then(() => installInDir(cwd))
