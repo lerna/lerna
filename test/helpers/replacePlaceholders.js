@@ -5,20 +5,33 @@ const _ = require("lodash");
 const normalizeNewline = require("normalize-newline");
 const constants = require("./constants");
 
-const REGEX = new RegExp(`v?${constants.LERNA_VERSION}`, "gm");
+const ROOTDIR_REGEX = new RegExp(constants.LERNA_ROOTDIR, "gm");
+const VERSION_REGEX = new RegExp(`v?${constants.LERNA_VERSION}`, "gm");
 // TODO: maybe less naïve regex?
 
 function needsReplacement(str) {
-  return str.indexOf(constants.__TEST_VERSION__) === -1;
+  return (
+    str.indexOf(constants.__TEST_ROOTDIR__) === -1 &&
+    str.indexOf(constants.__TEST_VERSION__) === -1
+  );
+}
+
+function stableRootDir(str) {
+  return str.replace(ROOTDIR_REGEX, constants.__TEST_ROOTDIR__);
 }
 
 function stableVersion(str) {
-  return str.replace(REGEX, constants.__TEST_VERSION__);
+  return str.replace(VERSION_REGEX, constants.__TEST_VERSION__);
 }
+
+const stabilizeValue = _.flow([
+  stableVersion,
+  stableRootDir,
+]);
 
 const stabilizeString = _.flow([
   normalizeNewline,
-  stableVersion,
+  stabilizeValue,
 ]);
 
 /**
@@ -38,8 +51,7 @@ module.exports = {
     if (_.isString(thing)) {
       thing = stabilizeString(thing);
     } else if (_.isPlainObject(thing)) {
-      thing.lerna = stableVersion(thing.lerna);
-      serialize(thing);
+      thing.lerna = stabilizeValue(thing.lerna);
     }
 
     return serialize(thing);
