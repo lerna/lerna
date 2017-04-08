@@ -5,15 +5,16 @@ const path = require("path");
 const fileUrl = require("file-url");
 const pkg = require("../../package.json");
 
+const LERNA_ROOTDIR = path.resolve(__dirname, "../..");
+const LERNA_PKG_TGZ = path.resolve(LERNA_ROOTDIR, `lerna-${pkg.version}.tgz`);
+
 /**
 Shared constants for tests
 **/
 exports.LERNA_VERSION = pkg.version;
-exports.LERNA_ROOTDIR = path.resolve(__dirname, "../..");
-exports.LERNA_DIR_URL = fileUrl(exports.LERNA_ROOTDIR);
-exports.LERNA_BIN = path.resolve(exports.LERNA_ROOTDIR, pkg.bin.lerna);
+exports.LERNA_PKG_URL = fileUrl(LERNA_PKG_TGZ);
+exports.LERNA_BIN = path.resolve(LERNA_ROOTDIR, pkg.bin.lerna);
 
 // placeholders used in fixture JSON files, replaced during tests
 exports.__TEST_VERSION__ = "__TEST_VERSION__";
-exports.__TEST_ROOTDIR__ = "__TEST_ROOTDIR__";
-exports.__TEST_DIR_URL__ = "__TEST_DIR_URL__";
+exports.__TEST_PKG_URL__ = "__TEST_PKG_URL__";

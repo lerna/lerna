@@ -12,6 +12,7 @@
     "dev": "babel -w src -d lib",
     "lint": "eslint . --ignore-path .gitignore",
     "fix": "npm run lint -- --fix",
+    "preintegration": "npm pack",
     "integration": "jest --config test/config/integration.json",
     "pretest": "npm run lint -- --cache",
     "test": "jest",

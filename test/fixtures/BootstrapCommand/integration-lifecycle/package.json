@@ -7,6 +7,6 @@
     "test": "lerna run test"
   },
   "devDependencies": {
-    "lerna": "__TEST_DIR_URL__"
+    "lerna": "__TEST_PKG_URL__"
   }
 }

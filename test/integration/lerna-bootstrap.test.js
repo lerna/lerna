@@ -4,7 +4,9 @@ import { LERNA_BIN } from "../helpers/constants";
 
 const installInDir = (cwd) =>
   execa("npm", ["install", "--cache-min=99999"], { cwd });
-  // yarn doesn't support installing from a local directory
+  // execa("yarn", ["install", "--mutex", "network:42042"], { cwd });
+  // NOTE: yarn doesn't support linking binaries from transitive dependencies
+  // AND it caches the tarball such that it breaks local test suite re-runs :P
 
 const npmTestInDir = (cwd) =>
   execa("npm", ["test", "--silent"], { cwd });
