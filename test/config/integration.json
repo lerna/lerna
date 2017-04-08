@@ -6,7 +6,7 @@
   "testEnvironment": "node",
   "setupTestFrameworkScriptFile": "<rootDir>/test/integration/_setupTestFramework.js",
   "snapshotSerializers": [
-    "<rootDir>/test/helpers/replacePlaceholders.js"
+    "<rootDir>/test/helpers/serializePlaceholders.js"
   ],
   "verbose": true
 }
