@@ -9,7 +9,6 @@ import PromptUtilities from "../src/PromptUtilities";
 // helpers
 import callsBack from "./helpers/callsBack";
 import exitWithCode from "./helpers/exitWithCode";
-import initExternalFixture from "./helpers/initExternalFixture";
 import initFixture from "./helpers/initFixture";
 import updateLernaConfig from "./helpers/updateLernaConfig";
 
@@ -34,7 +33,7 @@ describe("ImportCommand", () => {
 
     beforeEach(() =>
       Promise.all([
-        initExternalFixture("ImportCommand/external"),
+        initFixture("ImportCommand/external", "Init external commit"),
         initFixture("ImportCommand/basic"),
       ]).then(([extDir, basicDir]) => {
         externalDir = extDir;
