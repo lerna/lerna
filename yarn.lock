@@ -1611,6 +1611,10 @@ file-entry-cache@^2.0.0:
     flat-cache "^1.2.1"
     object-assign "^4.0.1"
 
+file-url@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/file-url/-/file-url-2.0.2.tgz#e951784d79095127d3713029ab063f40818ca2ae"
+
 filename-regex@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/filename-regex/-/filename-regex-2.0.0.tgz#996e3e80479b98b9897f15a8a58b3d084e926775"
