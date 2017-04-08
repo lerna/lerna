@@ -70,6 +70,7 @@ function transform(readStream, writeStream, file) {
   if (path.extname(file.name) === ".json") {
     stream = stream.pipe(replaceStream(constants.__TEST_VERSION__, constants.LERNA_VERSION));
     stream = stream.pipe(replaceStream(constants.__TEST_ROOTDIR__, constants.LERNA_ROOTDIR));
+    stream = stream.pipe(replaceStream(constants.__TEST_DIR_URL__, constants.LERNA_DIR_URL));
   }
 
   writeStream.on("open", () => {
