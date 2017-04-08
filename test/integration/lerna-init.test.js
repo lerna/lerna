@@ -1,16 +1,12 @@
-import fs from "fs-promise";
 import path from "path";
 import execa from "execa";
 import readPkg from "read-pkg";
 import loadJsonFile from "load-json-file";
-import initDirName from "../helpers/initDirName";
+import tempy from "tempy";
 import initFixture from "../helpers/initFixture";
 import { LERNA_BIN } from "../helpers/constants";
 
-const initEmptyDir = () =>
-  initDirName("InitCommand/empty").then((dir) => {
-    return fs.ensureDir(dir).then(() => dir);
-  });
+const initEmptyDir = () => tempy.directoryAsync();
 
 const parsePackageJson = (cwd) =>
   readPkg(path.join(cwd, "package.json"), { normalize: false });
