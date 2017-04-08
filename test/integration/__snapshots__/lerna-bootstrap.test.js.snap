@@ -17,3 +17,32 @@ Successfully ran npm script 'test' in packages:
 - @integration/package-3
 - package-4"
 `;
+
+exports[`stdout: simple 1`] = `
+"Lerna __TEST_VERSION__
+Bootstrapping 4 packages
+Preinstalling packages
+Installing external dependencies
+Symlinking packages and binaries
+Postinstalling packages
+Prepublishing packages
+Successfully bootstrapped 4 packages."
+`;
+
+exports[`stdout: simple 2`] = `
+"Lerna __TEST_VERSION__
+package-1
+
+package-2
+
+cli package-2 OK
+
+package-3 cli1 OK
+package-3 cli2 package-2 OK
+
+Successfully ran npm script 'test' in packages:
+- @integration/package-1
+- @integration/package-2
+- @integration/package-3
+- package-4"
+`;
