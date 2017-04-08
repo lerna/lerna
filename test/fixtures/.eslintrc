@@ -1,0 +1,11 @@
+{
+  "extends": "../../.eslintrc",
+  "rules": {
+    "node/no-missing-require": ["error", {
+      "allowModules": [
+        "@integration/package-1",
+        "@integration/package-2"
+      ]
+    }]
+  }
+}
