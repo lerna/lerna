@@ -1,17 +1,10 @@
-import fs from "fs-promise";
-import path from "path";
 import execa from "execa";
-import writePkg from "write-pkg";
 import initFixture from "../helpers/initFixture";
-import { LERNA_BIN, REPO_ROOT, LERNA_VERSION } from "../helpers/constants";
-
-const TGZ_SRC = path.join(REPO_ROOT, `lerna-${LERNA_VERSION}.tgz`);
-
-const copyTarball = (cwd) =>
-  fs.copy(TGZ_SRC, path.join(cwd, "lerna-latest.tgz"));
+import { LERNA_BIN } from "../helpers/constants";
 
 const installInDir = (cwd) =>
-  execa("yarn", ["install", "--mutex", "network:42042"], { cwd });
+  execa("npm", ["install", "--cache-min=99999"], { cwd });
+  // yarn doesn't support installing from a local directory
 
 const npmTestInDir = (cwd) =>
   execa("npm", ["test", "--silent"], { cwd });
@@ -36,18 +29,8 @@ describe("lerna bootstrap", () => {
 
   describe("from npm script", () => {
     test.concurrent("bootstraps all packages", () => {
-      return initFixture("BootstrapCommand/integration").then((cwd) => {
-        return copyTarball(cwd)
-          .then(() => writePkg(cwd, {
-            "name": "integration",
-            "scripts": {
-              postinstall: "lerna bootstrap",
-              test: "lerna run test",
-            },
-            devDependencies: {
-              lerna: "file:./lerna-latest.tgz",
-            }
-          }))
+      return initFixture("BootstrapCommand/integration-lifecycle").then((cwd) => {
+        return Promise.resolve()
           .then(() => installInDir(cwd))
           .then(() => npmTestInDir(cwd))
           .then((result) => {
