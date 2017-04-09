@@ -68,6 +68,23 @@ Array [
 ]
 `;
 
+exports[`packages: updates independent versions by npm 1`] = `
+"
+> integration@0.0.0 lp /tmp/05424c5c2996a34cdbc603dc0ea49797
+> lerna publish --skip-npm --cd-version=major --yes
+
+Lerna __TEST_VERSION__
+Current version: 1.0.0
+Checking for updated packages...
+No tags found! Comparing with initial commit.
+
+Changes:
+- @integration/package-1: 1.0.0 => 2.0.0
+- @integration/package-2: 1.0.0 => 2.0.0
+
+Assuming confirmation."
+`;
+
 exports[`stdout: updates fixed versions 1`] = `
 "Lerna __TEST_VERSION__
 Current version: 1.0.0

@@ -4,6 +4,9 @@ import readPkg from "read-pkg";
 import initFixture from "../helpers/initFixture";
 import { LERNA_BIN } from "../helpers/constants";
 
+const installInDir = (cwd) =>
+  execa("npm", ["install", "--cache-min=99999"], { cwd });
+
 const parsePackageJson = (filePath) =>
   readPkg(filePath, { normalize: false });
 
@@ -57,4 +60,15 @@ describe("lerna publish", () => {
       });
     });
   }));
+
+  test("updates independent versions by npm", () => {
+    return initFixture("PublishCommand/integration").then((cwd) => {
+      return Promise.resolve()
+        .then(() => installInDir(cwd))
+        .then(() => execa("npm", ["run", "lp"], { cwd }))
+        .then((result) => {
+          expect(result.stdout).toMatchSnapshot("packages: updates independent versions by npm");
+        });
+    });
+  });
 });

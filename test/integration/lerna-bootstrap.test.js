@@ -21,6 +21,10 @@ describe("lerna bootstrap", () => {
           .then((result) => {
             expect(result.stdout).toMatchSnapshot("stdout: simple");
           })
+          .then(() => execa(LERNA_BIN, ["bootstrap", "--ignore", "@integration/package-1"], { cwd }))
+          .then((result) => {
+            expect(result.stdout).toMatchSnapshot("stdout: simple");
+          })
           .then(() => execa(LERNA_BIN, ["run", "test", "--", "--silent"], { cwd }))
           .then((result) => {
             expect(result.stdout).toMatchSnapshot("stdout: simple");
