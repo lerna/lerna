@@ -70,7 +70,7 @@ Array [
 
 exports[`packages: updates independent versions by npm 1`] = `
 "
-> integration@0.0.0 lp /tmp/05424c5c2996a34cdbc603dc0ea49797
+> integration@0.0.0 lp /tmp/0bf080d532373b601b8a7cd4835db6c5
 > lerna publish --skip-npm --cd-version=major --yes
 
 Lerna __TEST_VERSION__
