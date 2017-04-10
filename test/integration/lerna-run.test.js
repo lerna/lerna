@@ -9,9 +9,16 @@ describe("lerna run", () => {
 
   test.concurrent("can run script in packages", () => {
     return initFixture("RunCommand/basic").then((cwd) => {
+      const args = [
+        "run",
+        "my-script",
+        "--scope=package-1",
+        "--",
+        "--silent"
+      ];
       return Promise.resolve()
         .then(() => installInDir(cwd))
-        .then(() => execa(LERNA_BIN, ["run", "my-script", "--scope=package-1"], { cwd }))
+        .then(() => execa(LERNA_BIN, args, { cwd }))
         .then((result) => {
           expect(result.stdout).toMatchSnapshot("stdout: simple");
         });

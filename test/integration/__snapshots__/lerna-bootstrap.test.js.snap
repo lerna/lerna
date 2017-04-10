@@ -20,6 +20,18 @@ Successfully ran npm script 'test' in packages:
 
 exports[`stdout: simple 1`] = `
 "Lerna __TEST_VERSION__
+Ignoring packages that match '@integration/package-1'
+Bootstrapping 3 packages
+Preinstalling packages
+Installing external dependencies
+Symlinking packages and binaries
+Postinstalling packages
+Prepublishing packages
+Successfully bootstrapped 3 packages."
+`;
+
+exports[`stdout: simple 2`] = `
+"Lerna __TEST_VERSION__
 Bootstrapping 4 packages
 Preinstalling packages
 Installing external dependencies
@@ -27,17 +39,6 @@ Symlinking packages and binaries
 Postinstalling packages
 Prepublishing packages
 Successfully bootstrapped 4 packages."
-`;
-
-exports[`stdout: simple 2`] = `
-"Lerna __TEST_VERSION__
-Ignoring packages that match '@integration/package-1'
-Bootstrapping 3 packages
-Preinstalling packages
-Symlinking packages and binaries
-Postinstalling packages
-Prepublishing packages
-Successfully bootstrapped 3 packages."
 `;
 
 exports[`stdout: simple 3`] = `

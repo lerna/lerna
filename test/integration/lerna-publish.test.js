@@ -63,9 +63,14 @@ describe("lerna publish", () => {
 
   test("updates independent versions by npm", () => {
     return initFixture("PublishCommand/integration").then((cwd) => {
+      const args = [
+        "run",
+        "lp",
+        "--silent"
+      ];
       return Promise.resolve()
         .then(() => installInDir(cwd))
-        .then(() => execa("npm", ["run", "lp"], { cwd }))
+        .then(() => execa("npm", args, { cwd }))
         .then((result) => {
           expect(result.stdout).toMatchSnapshot("packages: updates independent versions by npm");
         });
