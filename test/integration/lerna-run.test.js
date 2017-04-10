@@ -25,7 +25,7 @@ describe("lerna run", () => {
     });
   });
 
-  test.concurrent("can run script in packages through npm", () => {
+  test.concurrent("can run script in packages through npm lifecycle hook", () => {
     return initFixture("RunCommand/integration-lifecycle").then((cwd) => {
       return Promise.resolve()
         .then(() => installInDir(cwd))
