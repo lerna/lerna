@@ -3,7 +3,7 @@ import initFixture from "../helpers/initFixture";
 import { LERNA_BIN } from "../helpers/constants";
 
 const installInDir = (cwd) =>
-  execa("npm", ["install", "--cache-min=99999"], { cwd });
+  execa("npm", ["install", "--cache-min=99999", "--silent"], { cwd });
 
 describe("lerna run", () => {
 
@@ -21,6 +21,16 @@ describe("lerna run", () => {
         .then(() => execa(LERNA_BIN, args, { cwd }))
         .then((result) => {
           expect(result.stdout).toMatchSnapshot("stdout: simple");
+        });
+    });
+  });
+
+  test.concurrent("can run script in packages through npm", () => {
+    return initFixture("RunCommand/integration-lifecycle").then((cwd) => {
+      return Promise.resolve()
+        .then(() => installInDir(cwd))
+        .then((result) => {
+          expect(result.stdout).toMatchSnapshot("stdout: simple-npm");
         });
     });
   });

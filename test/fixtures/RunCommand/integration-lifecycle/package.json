@@ -1,0 +1,6 @@
+{
+  "name": "independent",
+  "scripts": {
+    "postinstall": "lerna run my-script --scope=package-1"
+  }
+}
