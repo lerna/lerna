@@ -41,7 +41,8 @@ describe("GitUtilities", () => {
     it("returns true when git command succeeds", () => {
       expect(GitUtilities.isInitialized({ cwd: "test" })).toBe(true);
       expect(ChildProcessUtilities.execSync).lastCalledWith(
-        "git rev-parse",
+        "git",
+        ["rev-parse"],
         { cwd: "test", stdio: "ignore" }
       );
     });
@@ -59,7 +60,9 @@ describe("GitUtilities", () => {
     it("calls git add with file argument", () => {
       const opts = { cwd: "test" };
       GitUtilities.addFile("foo", opts);
-      expect(ChildProcessUtilities.execSync).lastCalledWith("git add foo", opts);
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["add", "foo"], opts
+      );
     });
   });
 
@@ -69,7 +72,8 @@ describe("GitUtilities", () => {
       GitUtilities.commit("foo", opts);
 
       expect(ChildProcessUtilities.execSync).lastCalledWith(
-        "git commit -m foo",
+        "git",
+        ["commit", "-m", "foo"],
         opts
       );
       expect(tempWrite.sync).not.toBeCalled();
@@ -82,7 +86,8 @@ describe("GitUtilities", () => {
       GitUtilities.commit(`foo${EOL}bar`, opts);
 
       expect(ChildProcessUtilities.execSync).lastCalledWith(
-        "git commit -F TEMPFILE",
+        "git",
+        ["commit", "-F", "TEMPFILE"],
         opts
       );
       expect(tempWrite.sync).lastCalledWith(`foo${EOL}bar`, "lerna-commit.txt");
@@ -93,7 +98,9 @@ describe("GitUtilities", () => {
     it("creates annotated git tag", () => {
       const opts = { cwd: "test" };
       GitUtilities.addTag("foo", opts);
-      expect(ChildProcessUtilities.execSync).lastCalledWith("git tag -a foo -m \"foo\"", opts);
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["tag", "-a", "foo", "-m", "foo"], opts
+      );
     });
   });
 
@@ -101,7 +108,9 @@ describe("GitUtilities", () => {
     it("deletes specified git tag", () => {
       const opts = { cwd: "test" };
       GitUtilities.removeTag("foo", opts);
-      expect(ChildProcessUtilities.execSync).lastCalledWith("git tag -d foo", opts);
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["tag", "-d", "foo"], opts
+      );
     });
   });
 
@@ -110,7 +119,9 @@ describe("GitUtilities", () => {
       ChildProcessUtilities.execSync.mockImplementation(() => "v1.0.0");
       const opts = { cwd: "test" };
       expect(GitUtilities.hasTags(opts)).toBe(true);
-      expect(ChildProcessUtilities.execSync).lastCalledWith("git tag", opts);
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["tag"], opts
+      );
     });
 
     it("returns false when no git tags exist", () => {
@@ -124,7 +135,9 @@ describe("GitUtilities", () => {
       ChildProcessUtilities.execSync.mockImplementation(() => "deadbeef");
       const opts = { cwd: "test" };
       expect(GitUtilities.getLastTaggedCommit(opts)).toBe("deadbeef");
-      expect(ChildProcessUtilities.execSync).lastCalledWith("git rev-list --tags --max-count=1", opts);
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["rev-list", "--tags", "--max-count=1"], opts
+      );
     });
   });
 
@@ -139,7 +152,9 @@ describe("GitUtilities", () => {
       ChildProcessUtilities.execSync.mockImplementation(() => "deadbeef");
       const opts = { cwd: "test" };
       expect(GitUtilities.getLastTaggedCommitInBranch(opts)).toBe("deadbeef");
-      expect(ChildProcessUtilities.execSync).lastCalledWith("git rev-list -n 1 v1.0.0", opts);
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["rev-list", "-n", "1", "v1.0.0"], opts
+      );
     });
   });
 
@@ -148,7 +163,9 @@ describe("GitUtilities", () => {
       ChildProcessUtilities.execSync.mockImplementation(() => "beefcafe");
       const opts = { cwd: "test" };
       expect(GitUtilities.getFirstCommit(opts)).toBe("beefcafe");
-      expect(ChildProcessUtilities.execSync).lastCalledWith("git rev-list --max-parents=0 HEAD", opts);
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["rev-list", "--max-parents=0", "HEAD"], opts
+      );
     });
   });
 
@@ -162,8 +179,12 @@ describe("GitUtilities", () => {
       GitUtilities.getCurrentBranch = jest.fn(() => "master");
       const opts = { cwd: "test" };
       GitUtilities.pushWithTags("origin", ["foo@1.0.1", "foo-bar@1.0.0"], opts);
-      expect(ChildProcessUtilities.execSync).toBeCalledWith("git push origin master", opts);
-      expect(ChildProcessUtilities.execSync).lastCalledWith("git push origin foo@1.0.1 foo-bar@1.0.0", opts);
+      expect(ChildProcessUtilities.execSync).toBeCalledWith(
+        "git", ["push", "origin", "master"], opts
+      );
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["push", "origin", "foo@1.0.1", "foo-bar@1.0.0"], opts
+      );
     });
   });
 
@@ -172,7 +193,9 @@ describe("GitUtilities", () => {
       ChildProcessUtilities.execSync.mockImplementation(() => "v1.0.0");
       const opts = { cwd: "test" };
       expect(GitUtilities.getLastTag(opts)).toBe("v1.0.0");
-      expect(ChildProcessUtilities.execSync).lastCalledWith("git describe --tags --abbrev=0", opts);
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["describe", "--tags", "--abbrev=0"], opts
+      );
     });
   });
 
@@ -181,7 +204,9 @@ describe("GitUtilities", () => {
       ChildProcessUtilities.execSync.mockImplementation(() => "foo@1.0.0");
       const opts = { cwd: "test" };
       expect(GitUtilities.describeTag("deadbeef", opts)).toBe("foo@1.0.0");
-      expect(ChildProcessUtilities.execSync).lastCalledWith("git describe --tags deadbeef", opts);
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["describe", "--tags", "deadbeef"], opts
+      );
     });
   });
 
@@ -191,8 +216,7 @@ describe("GitUtilities", () => {
       const opts = { cwd: "test" };
       expect(GitUtilities.diffSinceIn("foo@1.0.0", "packages/foo", opts)).toBe("files");
       expect(ChildProcessUtilities.execSync).lastCalledWith(
-        "git diff --name-only foo@1.0.0 -- packages/foo",
-        opts
+        "git", ["diff", "--name-only", "foo@1.0.0", "--", "packages/foo"], opts
       );
     });
   });
@@ -202,7 +226,9 @@ describe("GitUtilities", () => {
       ChildProcessUtilities.execSync.mockImplementation(() => "master");
       const opts = { cwd: "test" };
       expect(GitUtilities.getCurrentBranch(opts)).toBe("master");
-      expect(ChildProcessUtilities.execSync).lastCalledWith("git rev-parse --abbrev-ref HEAD", opts);
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["rev-parse", "--abbrev-ref", "HEAD"], opts
+      );
     });
   });
 
@@ -211,7 +237,9 @@ describe("GitUtilities", () => {
       ChildProcessUtilities.execSync.mockImplementation(() => "deadcafe");
       const opts = { cwd: "test" };
       expect(GitUtilities.getCurrentSHA(opts)).toBe("deadcafe");
-      expect(ChildProcessUtilities.execSync).lastCalledWith("git rev-parse HEAD", opts);
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["rev-parse", "HEAD"], opts
+      );
     });
   });
 
@@ -219,7 +247,9 @@ describe("GitUtilities", () => {
     it("calls git checkout with specified arg", () => {
       const opts = { cwd: "test" };
       GitUtilities.checkoutChanges("packages/*/package.json", opts);
-      expect(ChildProcessUtilities.execSync).lastCalledWith("git checkout -- packages/*/package.json", opts);
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["checkout", "--", "packages/*/package.json"], opts
+      );
     });
   });
 
@@ -228,7 +258,9 @@ describe("GitUtilities", () => {
       ChildProcessUtilities.execSync.mockImplementation(() => "stdout for logger");
       const opts = { cwd: "test" };
       expect(GitUtilities.init(opts)).toBe("stdout for logger");
-      expect(ChildProcessUtilities.execSync).lastCalledWith("git init", opts);
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["init"], opts
+      );
     });
   });
 
@@ -236,7 +268,9 @@ describe("GitUtilities", () => {
     it("returns true when git command succeeds", () => {
       const opts = { cwd: "test" };
       expect(GitUtilities.hasCommit(opts)).toBe(true);
-      expect(ChildProcessUtilities.execSync).lastCalledWith("git log", opts);
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["log"], opts
+      );
     });
 
     it("returns false when git command fails", () => {
