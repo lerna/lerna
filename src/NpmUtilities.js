@@ -3,7 +3,6 @@ import ChildProcessUtilities from "./ChildProcessUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
 import onExit from "signal-exit";
 import logger from "./logger";
-import escapeArgs from "command-join";
 import path from "path";
 
 // Take a dep like "foo@^1.0.0".
@@ -17,18 +16,8 @@ function splitVersion(dep) {
 export default class NpmUtilities {
   @logger.logifyAsync()
   static installInDir(directory, dependencies, config, callback) {
-    const {
-      registry,
-      client,
-    } = config;
-
     // Nothing to do if we weren't given any deps.
     if (!(dependencies && dependencies.length)) return callback();
-
-    const args = ["install"];
-
-    const opts = NpmUtilities.getExecOpts(directory, registry);
-    opts.stdio = ["ignore", "pipe", "pipe"];
 
     const packageJson = path.join(directory, "package.json");
     const packageJsonBkp = packageJson + ".lerna_backup";
@@ -62,7 +51,11 @@ export default class NpmUtilities {
 
       // Write out our temporary cooked up package.json and then install.
       writePkg(packageJson, tempJson).then(() => {
-        ChildProcessUtilities.spawn(client || "npm", args, opts, done);
+        const opts = NpmUtilities.getExecOpts(directory, config.registry);
+        const args = ["install"];
+        const client = config.client || "npm";
+
+        ChildProcessUtilities.exec(client, args, opts, done);
       }).catch(done);
     });
   }
@@ -70,45 +63,39 @@ export default class NpmUtilities {
   @logger.logifySync()
   static addDistTag(directory, packageName, version, tag, registry) {
     const opts = NpmUtilities.getExecOpts(directory, registry);
-    ChildProcessUtilities.execSync(`npm dist-tag add ${packageName}@${version} ${tag}`, opts);
+    ChildProcessUtilities.execSync("npm", ["dist-tag", "add", `${packageName}@${version}`, tag], opts);
   }
 
   @logger.logifySync()
   static removeDistTag(directory, packageName, tag, registry) {
     const opts = NpmUtilities.getExecOpts(directory, registry);
-    ChildProcessUtilities.execSync(`npm dist-tag rm ${packageName} ${tag}`, opts);
+    ChildProcessUtilities.execSync("npm", ["dist-tag", "rm", packageName, tag], opts);
   }
 
   @logger.logifySync()
   static checkDistTag(directory, packageName, tag, registry) {
     const opts = NpmUtilities.getExecOpts(directory, registry);
-    return ChildProcessUtilities.execSync(`npm dist-tag ls ${packageName}`, opts).indexOf(tag) >= 0;
+    return ChildProcessUtilities.execSync("npm", ["dist-tag", "ls", packageName], opts).indexOf(tag) >= 0;
   }
 
   @logger.logifyAsync()
   static runScriptInDir(script, args, directory, callback) {
-    ChildProcessUtilities.exec(`npm run ${script} ${escapeArgs(args)}`, {
-      cwd: directory,
-      env: process.env,
-    }, callback);
+    const opts = NpmUtilities.getExecOpts(directory);
+    ChildProcessUtilities.exec("npm", ["run", script, ...args], opts, callback);
   }
 
   @logger.logifyAsync()
   static runScriptInPackageStreaming(script, args, pkg, callback) {
+    const opts = NpmUtilities.getExecOpts(pkg.location);
     ChildProcessUtilities.spawnStreaming(
-      "npm",
-      ["run", script, ...args],
-      { cwd: pkg.location, env: process.env },
-      pkg.name + ": ",
-      callback
+      "npm", ["run", script, ...args], opts, pkg.name, callback
     );
   }
 
   @logger.logifyAsync()
   static publishTaggedInDir(tag, directory, registry, callback) {
-    const command = ("npm publish --tag " + tag).trim();
     const opts = NpmUtilities.getExecOpts(directory, registry);
-    ChildProcessUtilities.exec(`${command}`, opts, callback);
+    ChildProcessUtilities.exec("npm", ["publish", "--tag", tag.trim()], opts, callback);
   }
 
   static getExecOpts(directory, registry) {
