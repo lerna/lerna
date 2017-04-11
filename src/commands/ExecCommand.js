@@ -35,16 +35,21 @@ export default class ExecCommand extends Command {
     }, this.concurrency, callback);
   }
 
-  runCommandInPackage(pkg, callback) {
-    ChildProcessUtilities.spawn(this.command, this.args, {
+  getOpts(pkg) {
+    return {
       cwd: pkg.location,
-      env: Object.assign({}, process.env, { LERNA_PACKAGE_NAME: pkg.name })
-    }, (code) => {
-      if (code) {
-        this.logger.error(`Errored while running command '${this.command}' ` +
-                          `with arguments '${this.args.join(" ")}' in '${pkg.name}'`);
+      env: Object.assign({}, process.env, {
+        LERNA_PACKAGE_NAME: pkg.name,
+      }),
+    };
+  }
+
+  runCommandInPackage(pkg, callback) {
+    ChildProcessUtilities.spawn(this.command, this.args, this.getOpts(pkg), (err) => {
+      if (err && err.code) {
+        this.logger.error(`Errored while executing '${err.cmd}' in '${pkg.name}'`);
       }
-      callback(code);
+      callback(err);
     });
   }
 }

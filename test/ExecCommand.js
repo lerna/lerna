@@ -51,7 +51,11 @@ describe("ExecCommand", () => {
     });
 
     it("passes execution error to callback", (done) => {
-      ChildProcessUtilities.spawn = jest.fn(callsBack(1));
+      const err = new Error("execa error");
+      err.code = 1;
+      err.cmd = "boom";
+
+      ChildProcessUtilities.spawn = jest.fn(callsBack(err));
 
       const execCommand = new ExecCommand(["boom"], {}, testDir);
 
@@ -63,9 +67,7 @@ describe("ExecCommand", () => {
       execCommand.runCommand(exitWithCode(1, () => {
         try {
           expect(spy).toHaveBeenCalledTimes(2);
-          expect(spy).toBeCalledWith(
-            expect.stringContaining("Errored while running command 'boom'")
-          );
+          expect(spy).toBeCalledWith("Errored while executing 'boom' in 'package-1'");
 
           done();
         } catch (ex) {
