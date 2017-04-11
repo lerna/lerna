@@ -36,6 +36,11 @@ single repository.
 **Lerna is a tool that optimizes the workflow around managing multi-package
 repositories with git and npm.**
 
+Lerna can also reduce the time and space requirements for numerous
+copies of packages in development and build environments - normally a
+downside of dividing a project into many separate NPM package. See the
+[hoist documentation](doc/hoist.md) for details.
+
 ### What does a Lerna repo look like?
 
 There's actually very little to it. You have a file system that looks like this:
@@ -675,6 +680,8 @@ the default is `**` (hoist everything).  This option only affects the
 ```sh
 $ lerna bootstrap --hoist
 ```
+
+For background on `--hoist`, see the [hoist documentation](doc/hoist.md).
 
 Note: If packages depend on different _versions_ of an external dependency,
 the most commonly used version will be hoisted, and a warning will be emitted.
