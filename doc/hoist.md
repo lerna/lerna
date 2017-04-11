@@ -16,7 +16,7 @@ directory instead.
 
 `--hoist` is intended to be transparent in use, a runtime optimization
 that ideally does not require any other modifications to a project.
-When the `--hoist` used:
+When the `--hoist` flag is used:
 
 * Common dependencies will be installed *only* to the top-level
   `node_modules`, and omitted from individual package `node_modules`.
@@ -30,7 +30,7 @@ When the `--hoist` used:
 
 ## Module resolution
 
-The [Node module resolution algoritm](https://nodejs.org/api/modules.html#modules_loading_from_node_modules_folders)
+The [Node module resolution algorithm](https://nodejs.org/api/modules.html#modules_loading_from_node_modules_folders)
 is recursive: When looking for package `A`, it looks in a local
 `node_modules/A` directory, then in `../node_modules/A`,
 `../../node_modules/A`, `../../../node_modules/A`, etc.
@@ -39,9 +39,9 @@ Tooling that follows this specification can transparently find
 dependencies which have been hoisted.
 
 Unfortunately, some tooling does not follow the module resolution spec
-closely, and instead assumes / requires that dependencies are present
+closely, and instead assumes or requires that dependencies are present
 specificially in the local `node_modules` directory. To work around
 this, it is possible to symlink packages from their hoisted top-level
 location, to individial package `node_modules` directory. Lerna does
-not (yet?) do so, and it is recommended instead to work with tooling
-makers to more correctly implement Node module resolution.
+not yet do this automatically, and it is recommended instead to work
+with tool maintainers to migrate to more compatible patterns.
