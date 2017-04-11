@@ -39,7 +39,7 @@ repositories with git and npm.**
 Lerna can also reduce the time and space requirements for numerous
 copies of packages in development and build environments - normally a
 downside of dividing a project into many separate NPM package. See the
-[Hoist documentation](doc/hoist.md) for details.
+[hoist documentation](doc/hoist.md) for details.
 
 ### What does a Lerna repo look like?
 
@@ -681,7 +681,7 @@ the default is `**` (hoist everything).  This option only affects the
 $ lerna bootstrap --hoist
 ```
 
-For background on `--hoist`, see the [Hoist documentation](doc/hoist.md)
+For background on `--hoist`, see the [hoist documentation](doc/hoist.md).
 
 Note: If packages depend on different _versions_ of an external dependency,
 the most commonly used version will be hoisted, and a warning will be emitted.
