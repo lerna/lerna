@@ -7,7 +7,7 @@ const installInDir = (cwd) =>
 
 describe("lerna run", () => {
 
-  test.concurrent("can run script in packages", () => {
+  test("can run script in packages", () => {
     return initFixture("RunCommand/basic").then((cwd) => {
       const args = [
         "run",
@@ -25,7 +25,7 @@ describe("lerna run", () => {
     });
   });
 
-  test.concurrent("can run script in packages through npm lifecycle hook", () => {
+  test("can run script in packages through npm lifecycle hook", () => {
     return initFixture("RunCommand/integration-lifecycle").then((cwd) => {
       return Promise.resolve()
         .then(() => installInDir(cwd))
