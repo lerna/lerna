@@ -14,6 +14,6 @@ exports[`stdout: simple-npm 1`] = `
 Scoping to packages that match 'package-1'
 package-1
 
-Successfully ran npm script 'my-script' in packages:
+Successfully ran npm script 'test' in packages:
 - package-1"
 `;

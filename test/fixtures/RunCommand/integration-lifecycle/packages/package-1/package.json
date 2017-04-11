@@ -2,6 +2,6 @@
   "name": "package-1",
   "version": "1.0.0",
   "scripts": {
-    "my-script": "echo package-1"
+    "test": "echo package-1"
   }
 }
