@@ -5,6 +5,25 @@ import FileSystemUtilities from "../FileSystemUtilities";
 import GitUtilities from "../GitUtilities";
 import Command from "../Command";
 
+export function handler(argv) {
+  return new InitCommand(argv._, argv).run();
+}
+
+export const command = "init";
+
+export const describe = "Create a new Lerna repo or upgrade an existing repo to the current version "
+                      + "of Lerna.";
+
+export const builder = {
+  "exact": {
+    describe: "Specify lerna dependency version in package.json without a caret (^)"
+  },
+  "independent": {
+    describe: "Version packages independently",
+    alias: "i"
+  }
+};
+
 export default class InitCommand extends Command {
   // don't do any of this.
   runValidations() {}
@@ -57,12 +76,14 @@ export default class InitCommand extends Command {
   }
 
   ensureLernaJson() {
+    const { independent } = this.getOptions();
+
     // lernaJson already defaulted to empty object in Repository constructor
     const lernaJson = this.repository.lernaJson;
 
     let version;
 
-    if (this.flags.independent) {
+    if (independent) {
       version = "independent";
     } else if (FileSystemUtilities.existsSync(this.repository.versionLocation)) {
       version = FileSystemUtilities.readFileSync(this.repository.versionLocation);

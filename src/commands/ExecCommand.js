@@ -2,6 +2,16 @@ import ChildProcessUtilities from "../ChildProcessUtilities";
 import PackageUtilities from "../PackageUtilities";
 import Command from "../Command";
 
+export function handler(argv) {
+  return new ExecCommand(argv._, argv).run();
+}
+
+export const command = "exec";
+
+export const describe = "Run an arbitrary command in each package.";
+
+export const builder = {};
+
 export default class ExecCommand extends Command {
   initialize(callback) {
     this.command = this.input[0];

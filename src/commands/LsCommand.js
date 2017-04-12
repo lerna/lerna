@@ -2,6 +2,16 @@ import Command from "../Command";
 import chalk from "chalk";
 import columnify from "columnify";
 
+export function handler(argv) {
+  return new LsCommand(argv._, argv).run();
+}
+
+export const command = "ls";
+
+export const describe = "List all public packages";
+
+export const builder = {};
+
 export default class LsCommand extends Command {
   initialize(callback) {
     // Nothing to do...

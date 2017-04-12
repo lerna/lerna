@@ -2,6 +2,20 @@ import NpmUtilities from "../NpmUtilities";
 import PackageUtilities from "../PackageUtilities";
 import Command from "../Command";
 
+export function handler(argv) {
+  return new RunCommand([argv.script, ...argv.arguments], argv).run();
+}
+
+export const command = "run <script> [arguments..]";
+
+export const describe = "Run an npm script in each package that contains that script.";
+
+export const builder = {
+  "stream": {
+    describe: "Stream output with lines prefixed by package."
+  }
+};
+
 export default class RunCommand extends Command {
   initialize(callback) {
     this.script = this.input[0];

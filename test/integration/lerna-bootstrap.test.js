@@ -27,6 +27,15 @@ describe("lerna bootstrap", () => {
           });
       });
     });
+    test.concurrent("respects ignore flag", () => {
+      return initFixture("BootstrapCommand/integration").then((cwd) => {
+        return Promise.resolve()
+          .then(() => execa(LERNA_BIN, ["bootstrap", "--ignore", "@integration/package-1"], { cwd }))
+          .then((result) => {
+            expect(result.stdout).toMatchSnapshot("stdout: simple");
+          });
+      });
+    });
   });
 
   describe("from npm script", () => {

@@ -10,7 +10,7 @@ import callsBack from "./helpers/callsBack";
 import initFixture from "./helpers/initFixture";
 
 // file under test
-import Command, { exposeCommands } from "../src/Command";
+import Command from "../src/Command";
 
 jest.mock("../src/ChildProcessUtilities");
 jest.mock("../src/FileSystemUtilities");
@@ -306,36 +306,6 @@ describe("Command", () => {
         const instance = new TestCommand([], {}, testDir);
         expect(instance.getOptions().ignore).toBe(undefined);
       });
-    });
-  });
-
-  describe("exposeCommands", () => {
-    class FooCommand extends Command {
-    }
-    class BarCommand extends Command {
-    }
-    class BadClassName extends Command {
-    }
-    class NonCommand {
-    }
-
-    it("makes a mapping from command names to classes", () => {
-      expect(exposeCommands([FooCommand, BarCommand])).toEqual({
-        foo: FooCommand,
-        bar: BarCommand,
-      });
-    });
-
-    it("fails on bad class name", () => {
-      expect(() => exposeCommands([BadClassName])).toThrow();
-    });
-
-    it("fails on duplicate class", () => {
-      expect(() => exposeCommands([FooCommand, FooCommand])).toThrow();
-    });
-
-    it("fails on class that doesn't extend Command", () => {
-      expect(() => exposeCommands([NonCommand])).toThrow();
     });
   });
 

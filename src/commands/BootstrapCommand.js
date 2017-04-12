@@ -7,6 +7,30 @@ import find from "lodash/find";
 import path from "path";
 import semver from "semver";
 
+export function handler(argv) {
+  return new BootstrapCommand(argv._, argv).run();
+}
+
+export const command = "bootstrap";
+
+export const describe = "Link local packages together and install remaining package dependencies";
+
+export const builder = {
+  "hoist": {
+    describe: "Install external dependencies matching [glob] to the repo root.  Use with no glob for all.",
+    type: "string"
+  },
+  "nohoist": {
+    describe: "Don't hoist external dependencies matching [glob] to the repo root",
+    type: "string"
+  },
+  "npm-client": {
+    describe: "Executable used to install dependencies (npm, yarn, pnpm, ...)",
+    type: "string",
+    requiresArg: true
+  }
+};
+
 export default class BootstrapCommand extends Command {
   initialize(callback) {
     this.npmConfig = {

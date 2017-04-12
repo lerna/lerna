@@ -14,6 +14,65 @@ import chalk from "chalk";
 import path from "path";
 import { EOL } from "os";
 
+export function handler(argv) {
+  return new PublishCommand(argv._, argv).run();
+}
+
+export const command = "publish";
+
+export const describe = "Publish packages in the current Lerna project.";
+
+export const builder = {
+  "canary": {
+    describe: "Publish packages after every successful merge using the sha as part of the tag.",
+    alias: "c"
+  },
+  "cd-version": {
+    describe: "Skip the version selection prompt (in independent mode) and use the next specified semantic "
+            + "version."
+  },
+  "conventional-commits": {
+    describe: "Use angular conventional-commit format to determine version bump and generate CHANGELOG."
+  },
+  "exact": {
+    describe: "Specify cross-dependency version numbers exactly rather than with a caret (^)."
+  },
+  "git-remote": {
+    describe: "Push git changes to the specified remote instead of 'origin'.",
+    type: "string",
+    requiresArg: true
+  },
+  "yes": {
+    describe: "Skip all confirmation prompts."
+  },
+  "message": {
+    describe: "Use a custom commit message when creating the publish commit.",
+    alias: "m",
+    type: "string",
+    requiresArg: true
+  },
+  "npm-tag": {
+    describe: "Publish packages with the specified npm dist-tag",
+    type: "string",
+    requiresArg: true
+  },
+  "repo-version": {
+    describe: "Specify repo version to publish.",
+    type: "string",
+    requiresArg: true
+  },
+  "skip-git": {
+    describe: "Skip commiting, tagging, and pushing git changes."
+  },
+  "skip-npm": {
+    describe: "Stop before actually publishing change to npm."
+  },
+  "skip-temp-tag": {
+    describe: "Do not create a temporary tag while publishing. In stead use the normal npm publish"
+            + "methodology."
+  }
+};
+
 export default class PublishCommand extends Command {
   initialize(callback) {
     this.gitEnabled = !(this.flags.canary || this.flags.skipGit);

@@ -1,0 +1,10 @@
+{
+  "name": "package-4",
+  "version": "1.0.0",
+  "dependencies": {
+    "package-1": "^0.0.0"
+  },
+  "scripts": {
+    "test": "echo package-4"
+  }
+}
