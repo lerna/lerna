@@ -4,7 +4,6 @@ exports[`stdout: simple 1`] = `
 "Lerna __TEST_VERSION__
 Scoping to packages that match 'package-1'
 package-1
-
 Successfully ran npm script 'my-script' in packages:
 - package-1"
 `;
@@ -13,7 +12,6 @@ exports[`stdout: simple-npm 1`] = `
 "Lerna __TEST_VERSION__
 Scoping to packages that match 'package-1'
 package-1
-
 Successfully ran npm script 'test' in packages:
 - package-1"
 `;

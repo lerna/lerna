@@ -9,7 +9,6 @@ const npmTestInDir = (cwd) =>
   execa("npm", ["test", "--silent"], { cwd });
 
 describe("lerna run", () => {
-
   test.concurrent("can run script in packages", () => {
     return initFixture("RunCommand/basic").then((cwd) => {
       const args = [
