@@ -469,7 +469,7 @@ $ lerna exec --scope my-component -- ls -la
 You may also get the name of the current package through the environment variable `LERNA_PACKAGE_NAME`:
 
 ```sh
-$ lerna exec -- npm view $LERNA_PACKAGE_NAME
+$ lerna exec -- npm view \$LERNA_PACKAGE_NAME
 ```
 
 > Hint: The commands are spawned in parallel, using the concurrency given.
