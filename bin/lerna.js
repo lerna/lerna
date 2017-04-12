@@ -38,5 +38,3 @@ yargs
   .help("h").alias("h", "help")
   .version().alias("v", "version")
   .argv;
-
-require("signal-exit").unload();
