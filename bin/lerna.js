@@ -6,6 +6,13 @@ const logger = require("../lib/logger");
 const yargs = require("yargs");
 const path = require("path");
 
+// the options grouped under "Global Options:" header
+const globalKeys = Object.keys(globalOptions).concat([
+  "loglevel",
+  "help",
+  "version",
+]);
+
 logger.setLogLevel(yargs.argv.loglevel);
 
 // workaround non-interactive yargs.terminalWidth() error
@@ -16,7 +23,7 @@ function terminalWidth() {
 
 yargs
   .epilogue("For more information, find our manual at https://github.com/lerna/lerna")
-  .usage("$ lerna [command] [flags]")
+  .usage("Usage: $0 <command> [options]")
   .wrap(terminalWidth())
   .option("loglevel", {
     default: "info",
@@ -25,10 +32,11 @@ yargs
     type: "string",
     global: true
   })
-  .options(globalOptions).group(Object.keys(globalOptions), "Global Options:")
+  .options(globalOptions).group(globalKeys, "Global Options:")
   .commandDir(path.join(__dirname, "..", "lib", "commands"))
   .demandCommand()
-  .help()
+  .help("h").alias("h", "help")
+  .version().alias("v", "version")
   .argv;
 
 require("signal-exit").unload();
