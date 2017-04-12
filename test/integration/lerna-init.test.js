@@ -24,10 +24,10 @@ describe("lerna init", () => {
     return execa(LERNA_BIN, ["init"], { cwd }).then((result) => {
       expect(result.stdout).toMatchSnapshot("stdout: empty directory");
 
-      return loadMetaData(cwd).then(([packageJson, lernaJson]) => {
-        expect(packageJson).toMatchSnapshot("package.json: empty directory");
-        expect(lernaJson).toMatchSnapshot("lerna.json: empty directory");
-      });
+      return loadMetaData(cwd);
+    }).then(([packageJson, lernaJson]) => {
+      expect(packageJson).toMatchSnapshot("package.json: empty directory");
+      expect(lernaJson).toMatchSnapshot("lerna.json: empty directory");
     });
   }));
 
@@ -35,10 +35,10 @@ describe("lerna init", () => {
     return execa(LERNA_BIN, ["init", "--exact"], { cwd }).then((result) => {
       expect(result.stdout).toMatchSnapshot("stdout: updates");
 
-      return loadMetaData(cwd).then(([packageJson, lernaJson]) => {
-        expect(packageJson).toMatchSnapshot("package.json: updates");
-        expect(lernaJson).toMatchSnapshot("lerna.json: updates");
-      });
+      return loadMetaData(cwd);
+    }).then(([packageJson, lernaJson]) => {
+      expect(packageJson).toMatchSnapshot("package.json: updates");
+      expect(lernaJson).toMatchSnapshot("lerna.json: updates");
     });
   }));
 

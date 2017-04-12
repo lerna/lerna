@@ -15,12 +15,10 @@ describe("lerna import", () => {
         "--yes"
       ];
 
-      return Promise.resolve()
-        .then(() => execa(LERNA_BIN, args, { cwd: basicPath }))
-        .then(() => {
-          return loadAllPackages(basicPath).then((allPackageJsons) => {
-            expect(allPackageJsons).toMatchSnapshot("simple: import with argument");
-          });
+      return execa(LERNA_BIN, args, { cwd: basicPath })
+        .then(() => loadAllPackages(basicPath))
+        .then((allPackageJsons) => {
+          expect(allPackageJsons).toMatchSnapshot("simple: import with argument");
         });
     });
   });
