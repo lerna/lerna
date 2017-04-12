@@ -1,30 +1,10 @@
-import glob from "glob";
 import execa from "execa";
-import readPkg from "read-pkg";
 import initFixture from "../helpers/initFixture";
+import { loadAllPackages } from "../helpers/packageTools";
 import { LERNA_BIN } from "../helpers/constants";
 
 const installInDir = (cwd) =>
   execa("npm", ["install", "--cache-min=99999"], { cwd });
-
-const parsePackageJson = (filePath) =>
-  readPkg(filePath, { normalize: false });
-
-const loadAllPackages = (cwd) => {
-  return new Promise((resolve, reject) => {
-    glob("packages/*/package.json", {
-      absolute: true,
-      strict: true,
-      cwd,
-    }, (err, files) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(Promise.all(files.map(parsePackageJson)));
-      }
-    });
-  });
-};
 
 describe("lerna publish", () => {
   test.concurrent("updates fixed versions", () => initFixture("PublishCommand/normal").then((cwd) => {

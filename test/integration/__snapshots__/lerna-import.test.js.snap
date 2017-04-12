@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`simple: import with argument 1`] = `
+Array [
+  Object {
+    "//": "Import should use _directory_ name, not package name",
+    "name": "external-name",
+  },
+]
+`;
