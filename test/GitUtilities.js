@@ -1,11 +1,13 @@
 import { EOL } from "os";
 
 // mocked modules
+import tempWrite from "temp-write";
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
 
 // file under test
 import GitUtilities from "../src/GitUtilities";
 
+jest.mock("temp-write");
 jest.mock("../src/ChildProcessUtilities");
 
 describe("GitUtilities", () => {
@@ -65,13 +67,25 @@ describe("GitUtilities", () => {
     it("calls git commit with message", () => {
       const opts = { cwd: "oneline" };
       GitUtilities.commit("foo", opts);
-      expect(ChildProcessUtilities.execSync).lastCalledWith("git commit -m \"$(echo \"foo\")\"", opts);
+
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git commit -m foo",
+        opts
+      );
+      expect(tempWrite.sync).not.toBeCalled();
     });
 
     it("allows multiline message", () => {
+      tempWrite.sync = jest.fn(() => "TEMPFILE");
+
       const opts = { cwd: "multiline" };
       GitUtilities.commit(`foo${EOL}bar`, opts);
-      expect(ChildProcessUtilities.execSync).lastCalledWith(`git commit -m "$(echo "foo${EOL}bar")"`, opts);
+
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git commit -F TEMPFILE",
+        opts
+      );
+      expect(tempWrite.sync).lastCalledWith(`foo${EOL}bar`, "lerna-commit.txt");
     });
   });
 

@@ -1,3 +1,5 @@
+import { EOL } from "os";
+import tempWrite from "temp-write";
 import ChildProcessUtilities from "./ChildProcessUtilities";
 import logger from "./logger";
 import escapeArgs from "command-join";
@@ -29,8 +31,16 @@ export default class GitUtilities {
 
   @logger.logifySync()
   static commit(message, opts) {
-    // Use echo to allow multi\nline strings.
-    ChildProcessUtilities.execSync("git commit -m \"$(echo \"" + message + "\")\"", opts);
+    const cmd = ["git", "commit"];
+
+    if (message.indexOf(EOL) > -1) {
+      // Use tempfile to allow multi\nline strings.
+      cmd.push("-F", tempWrite.sync(message, "lerna-commit.txt"));
+    } else {
+      cmd.push("-m", message);
+    }
+
+    ChildProcessUtilities.execSync(cmd.join(" "), opts);
   }
 
   @logger.logifySync()

@@ -1,5 +1,20 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`commit: updates fixed versions 1`] = `
+"v1.0.1
+"
+`;
+
+exports[`commit: updates independent versions 1`] = `
+"Publish
+
+ - package-1@2.0.0
+ - package-2@3.0.0
+ - package-3@4.0.0
+ - package-4@5.0.0
+"
+`;
+
 exports[`packages: updates fixed versions 1`] = `
 Array [
   Object {
@@ -66,19 +81,6 @@ Array [
     "version": "5.0.0",
   },
 ]
-`;
-
-exports[`packages: updates independent versions by npm 1`] = `
-"Lerna __TEST_VERSION__
-Current version: 1.0.0
-Checking for updated packages...
-No tags found! Comparing with initial commit.
-
-Changes:
-- @integration/package-1: 1.0.0 => 2.0.0
-- @integration/package-2: 1.0.0 => 2.0.0
-
-Assuming confirmation."
 `;
 
 exports[`stdout: updates fixed versions 1`] = `

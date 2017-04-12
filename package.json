@@ -56,7 +56,7 @@
     "safe-buffer": "^5.0.1",
     "semver": "^5.1.0",
     "signal-exit": "^3.0.2",
-    "tempy": "^0.1.0",
+    "temp-write": "^3.2.0",
     "write-json-file": "^2.0.0",
     "write-pkg": "^2.1.0",
     "yargs": "^7.0.2"
@@ -80,7 +80,8 @@
     "jest": "^19.0.2",
     "normalize-newline": "^3.0.0",
     "normalize-path": "^2.1.1",
-    "replacestream": "^4.0.2"
+    "replacestream": "^4.0.2",
+    "tempy": "^0.1.0"
   },
   "jest": {
     "collectCoverageFrom": [
