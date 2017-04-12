@@ -13,13 +13,13 @@ const globalKeys = Object.keys(globalOptions).concat([
   "version",
 ]);
 
-logger.setLogLevel(yargs.argv.loglevel);
-
 // workaround non-interactive yargs.terminalWidth() error
 // until https://github.com/yargs/yargs/pull/837 is released
 function terminalWidth() {
   return typeof process.stdout.columns !== "undefined" ? process.stdout.columns : null;
 }
+
+logger.setLogLevel(yargs.argv.loglevel);
 
 yargs
   .epilogue("For more information, find our manual at https://github.com/lerna/lerna")
