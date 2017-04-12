@@ -1,7 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`exec: with ignore 1`] = `
+exports[`ls: --ignore 1`] = `
 "Lerna __TEST_VERSION__
 Ignoring packages that match 'package-1'
-package-2 v1.0.0 "
+file-2.js
+package.json"
+`;
+
+exports[`ls: --scope 1`] = `
+"Lerna __TEST_VERSION__
+Scoping to packages that match 'package-1'
+file-1.js
+package.json"
 `;

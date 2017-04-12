@@ -3,10 +3,10 @@ import PackageUtilities from "../PackageUtilities";
 import Command from "../Command";
 
 export function handler(argv) {
-  return new ExecCommand(argv._, argv).run();
+  return new ExecCommand([argv.command, ...argv.arguments], argv).run();
 }
 
-export const command = "exec";
+export const command = "exec <command> [arguments..]";
 
 export const describe = "Run an arbitrary command in each package.";
 
