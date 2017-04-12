@@ -8,10 +8,16 @@ const path = require("path");
 
 logger.setLogLevel(yargs.argv.loglevel);
 
+// workaround non-interactive yargs.terminalWidth() error
+// until https://github.com/yargs/yargs/pull/837 is released
+function terminalWidth() {
+  return typeof process.stdout.columns !== "undefined" ? process.stdout.columns : null;
+}
+
 yargs
   .epilogue("For more information, find our manual at https://github.com/lerna/lerna")
   .usage("$ lerna [command] [flags]")
-  .wrap(yargs.terminalWidth())
+  .wrap(terminalWidth())
   .option("loglevel", {
     default: "info",
     describe: "What level of logs to report. On failure, all logs are written to lerna-debug.log in the"
