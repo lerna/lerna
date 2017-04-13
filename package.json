@@ -48,6 +48,7 @@
     "load-json-file": "^2.0.0",
     "lodash": "^4.17.4",
     "minimatch": "^3.0.0",
+    "p-finally": "^1.0.0",
     "path-exists": "^3.0.0",
     "progress": "^2.0.0",
     "read-cmd-shim": "^1.0.1",
@@ -56,7 +57,8 @@
     "safe-buffer": "^5.0.1",
     "semver": "^5.1.0",
     "signal-exit": "^3.0.2",
-    "tempy": "^0.1.0",
+    "strong-log-transformer": "^1.0.6",
+    "temp-write": "^3.2.0",
     "write-json-file": "^2.0.0",
     "write-pkg": "^2.1.0",
     "yargs": "^7.0.2"
@@ -80,7 +82,8 @@
     "jest": "^19.0.2",
     "normalize-newline": "^3.0.0",
     "normalize-path": "^2.1.1",
-    "replacestream": "^4.0.2"
+    "replacestream": "^4.0.2",
+    "tempy": "^0.1.0"
   },
   "jest": {
     "collectCoverageFrom": [

@@ -17,7 +17,6 @@ jest.mock("../src/GitUtilities");
 
 describe("DiffCommand", () => {
   const callbackSuccess = callsBack(null, true);
-  const callbackNonZero = callsBack(1);
 
   let testDir;
 
@@ -159,7 +158,9 @@ describe("DiffCommand", () => {
   });
 
   it("should error when git diff exits non-zero", (done) => {
-    ChildProcessUtilities.spawn.mockImplementation(callbackNonZero);
+    const err = new Error("An actual non-zero, not git diff pager SIGPIPE");
+    err.code = 1;
+    ChildProcessUtilities.spawn.mockImplementation(callsBack(err));
 
     const diffCommand = new DiffCommand(["package-1"], {}, testDir);
 
@@ -168,7 +169,7 @@ describe("DiffCommand", () => {
 
     diffCommand.runCommand(exitWithCode(1, (err) => {
       try {
-        expect(err.message).toBe("Errored while spawning `git diff`.");
+        expect(err.message).toBe("An actual non-zero, not git diff pager SIGPIPE");
         done();
       } catch (ex) {
         done.fail(ex);

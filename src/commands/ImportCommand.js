@@ -58,11 +58,17 @@ export default class ImportCommand extends Command {
     }
 
     this.externalExecOpts = {
-      encoding: "utf8",
       cwd: externalRepoPath
     };
 
-    this.commits = this.externalExecSync("git log --format=\"%h\"").split("\n").reverse();
+    this.commits = this.externalExecSync("git", ["log", "--format=%h"]).split("\n").reverse();
+    // this.commits = this.externalExecSync("git", [
+    //   "rev-list",
+    //   "--no-merges",
+    //   "--topo-order",
+    //   "--reverse",
+    //   "HEAD",
+    // ]).split("\n");
 
     if (!this.commits.length) {
       return callback(new Error(`No git commits to import at "${inputPath}"`));
@@ -71,7 +77,7 @@ export default class ImportCommand extends Command {
     // Stash the repo's pre-import head away in case something goes wrong.
     this.preImportHead = GitUtilities.getCurrentSHA(this.execOpts);
 
-    if (ChildProcessUtilities.execSync("git diff-index HEAD", this.execOpts)) {
+    if (ChildProcessUtilities.execSync("git", ["diff-index", "HEAD"], this.execOpts)) {
       return callback(new Error("Local repository has un-committed changes"));
     }
 
@@ -94,8 +100,8 @@ export default class ImportCommand extends Command {
     }
   }
 
-  externalExecSync(command) {
-    return ChildProcessUtilities.execSync(command, this.externalExecOpts).trim();
+  externalExecSync(cmd, args) {
+    return ChildProcessUtilities.execSync(cmd, args, this.externalExecOpts);
   }
 
   execute(callback) {
@@ -109,7 +115,7 @@ export default class ImportCommand extends Command {
       // Create a patch file for this commit and prepend the target directory
       // to all affected files.  This moves the git history for the entire
       // external repository into the package subdirectory, commit by commit.
-      const patch = this.externalExecSync(`git format-patch -1 ${sha} --stdout`)
+      const patch = this.externalExecSync("git", ["format-patch", "-1", sha, "--stdout"])
         .replace(/^([-+]{3} [ab])/mg,     replacement)
         .replace(/^(diff --git a)/mg,     replacement)
         .replace(/^(diff --git \S+ b)/mg, replacement)
@@ -120,16 +126,15 @@ export default class ImportCommand extends Command {
       //
       // Fall back to three-way merge, which can help with duplicate commits
       // due to merge history.
-      ChildProcessUtilities.exec("git am -3", this.execOpts, (err) => {
+      ChildProcessUtilities.exec("git", ["am", "-3"], this.execOpts, (err) => {
         if (err) {
-
           // Give some context for the error message.
           err = `Failed to apply commit ${sha}.\n${err}\n` +
                 `Rolling back to previous HEAD (commit ${this.preImportHead}).`;
 
           // Abort the failed `git am` and roll back to previous HEAD.
-          ChildProcessUtilities.execSync("git am --abort", this.execOpts);
-          ChildProcessUtilities.execSync(`git reset --hard ${this.preImportHead}`, this.execOpts);
+          ChildProcessUtilities.execSync("git", ["am", "--abort"], this.execOpts);
+          ChildProcessUtilities.execSync("git", ["reset", "--hard", this.preImportHead], this.execOpts);
         }
         done(err);
       }).stdin.end(patch);

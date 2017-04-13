@@ -53,9 +53,9 @@ export default class DiffCommand extends Command {
   }
 
   execute(callback) {
-    ChildProcessUtilities.spawn("git", this.args, this.execOpts, (code) => {
-      if (code) {
-        callback(new Error("Errored while spawning `git diff`."));
+    ChildProcessUtilities.spawn("git", this.args, this.execOpts, (err) => {
+      if (err && err.code) {
+        callback(err);
       } else {
         callback(null, true);
       }

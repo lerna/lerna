@@ -1,59 +1,56 @@
 import execa from "execa";
+import normalizeNewline from "normalize-newline";
 import initFixture from "../helpers/initFixture";
 import { loadAllPackages } from "../helpers/packageTools";
 import { LERNA_BIN } from "../helpers/constants";
 
-const installInDir = (cwd) =>
-  execa("npm", ["install", "--cache-min=99999"], { cwd });
+const lastCommitMessage = (cwd) =>
+  execa.stdout("git", ["log", "-1", "--format=%B"], { cwd }).then(normalizeNewline);
 
 describe("lerna publish", () => {
-  test.concurrent("updates fixed versions", () => initFixture("PublishCommand/normal").then((cwd) => {
-    const args = [
-      "publish",
-      "--skip-npm",
-      "--cd-version=patch",
-      "--yes",
-    ];
-
-    return execa(LERNA_BIN, args, { cwd }).then((result) => {
-      expect(result.stdout).toMatchSnapshot("stdout: updates fixed versions");
-
-      return loadAllPackages(cwd).then((allPackageJsons) => {
-        expect(allPackageJsons).toMatchSnapshot("packages: updates fixed versions");
-      });
-    });
-  }));
-
-  test("updates independent versions", () => initFixture("PublishCommand/independent").then((cwd) => {
-    const args = [
-      "publish",
-      "--skip-npm",
-      "--cd-version=major",
-      "--yes",
-    ];
-
-    return execa(LERNA_BIN, args, { cwd }).then((result) => {
-      expect(result.stdout).toMatchSnapshot("stdout: updates independent versions");
-
-      return loadAllPackages(cwd).then((allPackageJsons) => {
-        expect(allPackageJsons).toMatchSnapshot("packages: updates independent versions");
-      });
-    });
-  }));
-
-  test("updates independent versions by npm", () => {
-    return initFixture("PublishCommand/integration").then((cwd) => {
+  test.concurrent("updates fixed versions", () => {
+    return initFixture("PublishCommand/normal").then((cwd) => {
       const args = [
-        "run",
-        "lp",
-        "--silent"
+        "publish",
+        "--skip-npm",
+        "--cd-version=patch",
+        "--yes",
       ];
-      return Promise.resolve()
-        .then(() => installInDir(cwd))
-        .then(() => execa("npm", args, { cwd }))
-        .then((result) => {
-          expect(result.stdout).toMatchSnapshot("packages: updates independent versions by npm");
-        });
+
+      return execa(LERNA_BIN, args, { cwd }).then((result) => {
+        expect(result.stdout).toMatchSnapshot("stdout: updates fixed versions");
+
+        return Promise.all([
+          loadAllPackages(cwd),
+          lastCommitMessage(cwd),
+        ]);
+      }).then(([allPackageJsons, commitMessage]) => {
+        expect(allPackageJsons).toMatchSnapshot("packages: updates fixed versions");
+        expect(commitMessage).toMatchSnapshot("commit: updates fixed versions");
+      });
+    });
+  });
+
+  test.concurrent("updates independent versions", () => {
+    return initFixture("PublishCommand/independent").then((cwd) => {
+      const args = [
+        "publish",
+        "--skip-npm",
+        "--cd-version=major",
+        "--yes",
+      ];
+
+      return execa(LERNA_BIN, args, { cwd }).then((result) => {
+        expect(result.stdout).toMatchSnapshot("stdout: updates independent versions");
+
+        return Promise.all([
+          loadAllPackages(cwd),
+          lastCommitMessage(cwd),
+        ]);
+      }).then(([allPackageJsons, commitMessage]) => {
+        expect(allPackageJsons).toMatchSnapshot("packages: updates independent versions");
+        expect(commitMessage).toMatchSnapshot("commit: updates independent versions");
+      });
     });
   });
 });
