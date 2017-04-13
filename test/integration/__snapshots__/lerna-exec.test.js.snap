@@ -1,5 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`echo LERNA_PACKAGE_NAME 1`] = `
+"Lerna __TEST_VERSION__
+package-1
+package-2"
+`;
+
 exports[`ls: --ignore 1`] = `
 "Lerna __TEST_VERSION__
 Ignoring packages that match 'package-1'

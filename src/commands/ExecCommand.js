@@ -38,6 +38,7 @@ export default class ExecCommand extends Command {
   getOpts(pkg) {
     return {
       cwd: pkg.location,
+      shell: true,
       env: Object.assign({}, process.env, {
         LERNA_PACKAGE_NAME: pkg.name,
       }),
