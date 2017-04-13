@@ -35,7 +35,7 @@ export default class InitCommand extends Command {
       GitUtilities.init(this.execOpts);
     }
 
-    this.exact = this.getOptions().exact;
+    this.exact = this.options.exact;
 
     callback(null, true);
   }
@@ -76,14 +76,12 @@ export default class InitCommand extends Command {
   }
 
   ensureLernaJson() {
-    const { independent } = this.getOptions();
-
     // lernaJson already defaulted to empty object in Repository constructor
     const lernaJson = this.repository.lernaJson;
 
     let version;
 
-    if (independent) {
+    if (this.options.independent) {
       version = "independent";
     } else if (FileSystemUtilities.existsSync(this.repository.versionLocation)) {
       version = FileSystemUtilities.readFileSync(this.repository.versionLocation);

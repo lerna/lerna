@@ -3,10 +3,10 @@ import PackageUtilities from "../PackageUtilities";
 import Command from "../Command";
 
 export function handler(argv) {
-  return new RunCommand([argv.script, ...argv.arguments], argv).run();
+  return new RunCommand([argv.script, ...argv.args], argv).run();
 }
 
-export const command = "run <script> [arguments..]";
+export const command = "run <script> [args..]";
 
 export const describe = "Run an npm script in each package that contains that script.";
 
@@ -64,7 +64,7 @@ export default class RunCommand extends Command {
   }
 
   runScriptInPackage(pkg, callback) {
-    if (this.getOptions().stream) {
+    if (this.options.stream) {
       this.runScriptInPackageStreaming(pkg, callback);
     } else {
       this.runScriptInPackageCapturing(pkg, callback);

@@ -19,7 +19,7 @@ export const builder = {
 
 export default class CleanCommand extends Command {
   initialize(callback) {
-    if (this.flags.yes) {
+    if (this.options.yes) {
       callback(null, true);
     } else {
       this.logger.info(`About to remove the following directories:\n${

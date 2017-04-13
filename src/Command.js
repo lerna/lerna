@@ -1,3 +1,5 @@
+import _ from "lodash";
+import dedent from "dedent";
 import ChildProcessUtilities from "./ChildProcessUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
 import GitUtilities from "./GitUtilities";
@@ -10,39 +12,48 @@ import logger from "./logger";
 const DEFAULT_CONCURRENCY = 4;
 
 export const builder = {
+  "loglevel": {
+    default: "info",
+    describe: "What level of logs to report.",
+    type: "string",
+  },
   "concurrency": {
     describe: "How many threads to use if lerna parallelises the tasks.",
     type: "number",
     requiresArg: true,
     default: DEFAULT_CONCURRENCY,
   },
-  "ignore": {
-    describe: "Ignores packages with names matching the given glob (Works only in combination with the "
-            + "'run', 'exec', 'clean', 'ls' and 'bootstrap' commands).",
+  "scope": {
+    describe: dedent`
+      Restricts the scope to package names matching the given glob.
+      (Only for 'run', 'exec', 'clean', 'ls', and 'bootstrap' commands)
+    `,
     type: "string",
-    requiresArg: true
+    requiresArg: true,
+  },
+  "ignore": {
+    describe: dedent`
+      Ignore packages with names matching the given glob.
+      (Only for 'run', 'exec', 'clean', 'ls', and 'bootstrap' commands)
+    `,
+    type: "string",
+    requiresArg: true,
   },
   "include-filtered-dependencies": {
-    describe: "Flag to force lerna to include all dependencies and transitive dependencies when running "
-            + "'bootstrap', even if they should not be included by the scope or ignore flags."
+    describe: dedent`
+      Include all transitive dependencies when running a command, regardless of --scope or --ignore.
+    `,
   },
   "registry": {
-    describe: "When run with this flag, forwarded npm commands will use the specified registry for your "
-            + "package(s).",
+    describe: "Use the specified registry for all npm client operations.",
     type: "string",
-    requiresArg: true
-  },
-  "scope": {
-    describe: "Restricts the scope to package names matching the given glob (Works only in combination "
-            + "with the 'run', 'exec', 'clean', 'ls' and 'bootstrap' commands).",
-    type: "string",
-    requiresArg: true
+    requiresArg: true,
   },
   "sort": {
-    describe: "Sort packages topologically",
+    describe: "Sort packages topologically (all dependencies before dependents)",
     type: "boolean",
-    default: true
-  }
+    default: true,
+  },
 };
 
 export default class Command {
@@ -52,13 +63,14 @@ export default class Command {
 
     this.lernaVersion = require("../package.json").version;
     this.logger = logger;
-    this.repository = new Repository(cwd);
+    this.logger.setLogLevel(flags.loglevel);
     this.progressBar = progressBar;
+    this.repository = new Repository(cwd);
   }
 
   get concurrency() {
     if (!this._concurrency) {
-      const { concurrency } = this.getOptions();
+      const { concurrency } = this.options;
       this._concurrency = Math.max(1, +concurrency || DEFAULT_CONCURRENCY);
     }
 
@@ -67,7 +79,7 @@ export default class Command {
 
   get toposort() {
     if (!this._toposort) {
-      const { sort } = this.getOptions();
+      const { sort } = this.options;
       // If the option isn't present then the default is to sort.
       this._toposort = sort == null || sort;
     }
@@ -100,33 +112,31 @@ export default class Command {
     return [];
   }
 
-  getOptions(...objects) {
+  get options() {
+    if (!this._options) {
+      // Command config object is either "commands" or "command".
+      const { commands, command } = this.repository.lernaJson;
 
-    // Command config object is either "commands" or "command".
-    const { commands, command } = this.repository.lernaJson;
+      // The current command always overrides otherCommandConfigs
+      const lernaCommandOverrides = [
+        this.name,
+        ...this.otherCommandConfigs,
+      ].map((name) => (commands || command || {})[name]);
 
-    // Items lower down override items higher up.
-    return Object.assign(
-      {},
+      this._options = _.defaults(
+        {},
+        // CLI flags, which if defined overrule subsequent values
+        this.flags,
+        // Namespaced command options from `lerna.json`
+        ...lernaCommandOverrides,
+        // Global options from `lerna.json`
+        this.repository.lernaJson,
+        // Deprecated legacy options in `lerna.json`
+        this._legacyOptions()
+      );
+    }
 
-      // Deprecated legacy options in `lerna.json`.
-      this._legacyOptions(),
-
-      // Global options from `lerna.json`.
-      this.repository.lernaJson,
-
-      // Option overrides for commands.
-      // Inherited options from `otherCommandConfigs` come before the current
-      // command's configuration.
-      ...[...this.otherCommandConfigs, this.name]
-        .map((name) => (commands || command || {})[name]),
-
-      // For example, the item from the `packages` array in config.
-      ...objects,
-
-      // CLI flags always override everything.
-      this.flags
-    );
+    return this._options;
   }
 
   run() {
@@ -142,7 +152,6 @@ export default class Command {
   }
 
   runValidations() {
-    const { independent, onlyExplicitUpdates } = this.getOptions();
     if (!GitUtilities.isInitialized(this.repository.rootPath)) {
       this.logger.warn("This is not a git repository, did you already run `git init` or `lerna init`?");
       this._complete(null, 1);
@@ -161,7 +170,7 @@ export default class Command {
       return;
     }
 
-    if (independent && !this.repository.isIndependent()) {
+    if (this.options.independent && !this.repository.isIndependent()) {
       this.logger.warn(
         "You ran lerna with `--independent` or `-i`, but the repository is not set to independent mode. " +
         "To use independent mode you need to set your `lerna.json` \"version\" to \"independent\". " +
@@ -204,7 +213,7 @@ export default class Command {
       return;
     }
 
-    if (onlyExplicitUpdates) {
+    if (this.options.onlyExplicitUpdates) {
       this.logger.warn("`--only-explicit-updates` has been removed. This flag was only ever added for Babel and we never should have exposed it to everyone.");
       this._complete(null, 1);
       return;
@@ -213,23 +222,27 @@ export default class Command {
   }
 
   runPreparations() {
-    const { scope, ignore, registry } = this.getOptions();
+    const { scope, ignore, registry } = this.options;
 
     if (scope) {
       this.logger.info(`Scoping to packages that match '${scope}'`);
     }
+
     if (ignore) {
       this.logger.info(`Ignoring packages that match '${ignore}'`);
     }
+
     if (registry) {
       this.npmRegistry = registry;
     }
+
     try {
       this.repository.buildPackageGraph();
       this.packages = this.repository.packages;
       this.packageGraph = this.repository.packageGraph;
       this.filteredPackages = PackageUtilities.filterPackages(this.packages, { scope, ignore });
-      if (this.getOptions().includeFilteredDependencies) {
+
+      if (this.options.includeFilteredDependencies) {
         this.filteredPackages = PackageUtilities.addDependencies(this.filteredPackages, this.packageGraph);
       }
     } catch (err) {

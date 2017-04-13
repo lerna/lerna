@@ -20,7 +20,7 @@ export function handler(argv) {
 
 export const command = "publish";
 
-export const describe = "Publish packages in the current Lerna project.";
+export const describe = "Publish packages in the current project.";
 
 export const builder = {
   "canary": {
@@ -28,8 +28,15 @@ export const builder = {
     alias: "c"
   },
   "cd-version": {
-    describe: "Skip the version selection prompt (in independent mode) and use the next specified semantic "
-            + "version."
+    describe: "Skip the version selection prompt and increment semver 'major', 'minor', or 'patch'.",
+    type: "string",
+    requiresArg: true,
+    coerce: (choice) => {
+      if (!["major", "minor", "patch"].some((inc) => choice === inc)) {
+        throw new Error(`--cd-version must be one of 'major', 'minor', or 'patch', got '${choice}'`);
+      }
+      return choice;
+    },
   },
   "conventional-commits": {
     describe: "Use angular conventional-commit format to determine version bump and generate CHANGELOG."
@@ -38,6 +45,7 @@ export const builder = {
     describe: "Specify cross-dependency version numbers exactly rather than with a caret (^)."
   },
   "git-remote": {
+    defaultDescription: "origin",
     describe: "Push git changes to the specified remote instead of 'origin'.",
     type: "string",
     requiresArg: true
@@ -68,13 +76,13 @@ export const builder = {
     describe: "Stop before actually publishing change to npm."
   },
   "skip-temp-tag": {
-    describe: "Do not create a temporary tag while publishing. In stead use the normal npm publish"
-            + "methodology."
+    describe: "Do not create a temporary tag while publishing."
   }
 };
 
 export default class PublishCommand extends Command {
   initialize(callback) {
+    this.gitRemote = this.options.gitRemote || "origin";
     this.gitEnabled = !(this.flags.canary || this.flags.skipGit);
 
     if (this.flags.canary) {
@@ -178,7 +186,6 @@ export default class PublishCommand extends Command {
   }
 
   publishPackagesToNpm(callback) {
-
     this.logger.newLine();
     this.logger.info("Publishing packages to npm...");
 
@@ -203,7 +210,7 @@ export default class PublishCommand extends Command {
         if (this.gitEnabled) {
           this.logger.info("Pushing tags to git...");
           this.logger.newLine();
-          GitUtilities.pushWithTags(this.getOptions().gitRemote || "origin", this.tags, this.execOpts);
+          GitUtilities.pushWithTags(this.gitRemote, this.tags, this.execOpts);
         }
 
         let message = "Successfully published:";
@@ -220,24 +227,20 @@ export default class PublishCommand extends Command {
 
   getVersionsForUpdates(callback) {
     if (this.flags.cdVersion) {
-      // Allows automatic bumping to next semver via cdVersion flag
-      if (this.flags.cdVersion === "patch" ||
-          this.flags.cdVersion === "minor" ||
-          this.flags.cdVersion === "major"
-      ) {
-        // If the version is independent then send versions
-        if (this.repository.isIndependent()) {
-          const versions = {};
-          this.updates.forEach((update) => {
-            versions[update.package.name] = semver.inc(update.package.version, this.flags.cdVersion);
-          });
-          return callback(null, { versions });
-        }
+      // If the version is independent then send versions
+      if (this.repository.isIndependent()) {
+        const versions = {};
 
-        // Otherwise bump the global version
-        const version = semver.inc(this.globalVersion, this.flags.cdVersion);
-        return callback(null, { version });
+        this.updates.forEach((update) => {
+          versions[update.package.name] = semver.inc(update.package.version, this.flags.cdVersion);
+        });
+
+        return callback(null, { versions });
       }
+
+      // Otherwise bump the global version
+      const version = semver.inc(this.globalVersion, this.flags.cdVersion);
+      return callback(null, { version });
     }
 
     if (this.flags.repoVersion) {
@@ -398,13 +401,14 @@ export default class PublishCommand extends Command {
   updateVersionInLernaJson() {
     this.repository.lernaJson.version = this.masterVersion;
     writeJsonFile.sync(this.repository.lernaJsonLocation, this.repository.lernaJson, { indent: 2 });
+
     if (!this.flags.skipGit) {
       GitUtilities.addFile(this.repository.lernaJsonLocation, this.execOpts);
     }
   }
 
   updateUpdatedPackages() {
-    const { exact } = this.getOptions();
+    const { exact } = this.options;
     const changedFiles = [];
 
     this.updates.forEach((update) => {
@@ -503,10 +507,9 @@ export default class PublishCommand extends Command {
   }
 
   npmPublishAsPrerelease(callback) {
-    const { skipTempTag } = this.getOptions();
     // if we skip temp tags we should tag with the proper value immediately
     // therefore no updates will be needed
-    const tag = skipTempTag ? this.getDistTag() : "lerna-temp";
+    const tag = this.options.skipTempTag ? this.getDistTag() : "lerna-temp";
 
     this.updates.forEach((update) => {
       this.execScript(update.package, "prepublish");
@@ -553,9 +556,7 @@ export default class PublishCommand extends Command {
   }
 
   npmUpdateAsLatest(callback) {
-    const { skipTempTag } = this.getOptions();
-
-    if (skipTempTag) {
+    if (this.options.skipTempTag) {
       return callback();
     }
 
@@ -608,7 +609,6 @@ export default class PublishCommand extends Command {
   }
 
   getDistTag() {
-    const { npmTag, canary } = this.getOptions();
-    return npmTag || (canary && "canary") || "latest";
+    return this.options.npmTag || (this.options.canary && "canary") || "latest";
   }
 }

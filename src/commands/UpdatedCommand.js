@@ -9,9 +9,9 @@ export function handler(argv) {
 
 export const command = "updated";
 
-export const describe = "Check which packages have changed since the last release (the last git tag).";
+export const describe = "Check which packages have changed since the last publish.";
 
-export const builder = Object.assign({}, publishOptions);
+export const builder = (yargs) => yargs.options(publishOptions);
 
 export default class UpdatedCommand extends Command {
   initialize(callback) {
