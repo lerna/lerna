@@ -1,5 +1,6 @@
 import path from "path";
 import async from "async";
+import dedent from "dedent";
 import Command from "../Command";
 import PromptUtilities from "../PromptUtilities";
 import ChildProcessUtilities from "../ChildProcessUtilities";
@@ -7,13 +8,14 @@ import FileSystemUtilities from "../FileSystemUtilities";
 import GitUtilities from "../GitUtilities";
 
 export function handler(argv) {
-  return new ImportCommand([argv.repo], argv).run();
+  return new ImportCommand([argv.pathToRepo], argv).run();
 }
 
-export const command = "import <repo>";
+export const command = "import <pathToRepo>";
 
-export const describe = "Import the package at <path-to-external-repository>, with commit history, "
-                      + "into packages/<directory-name>.";
+export const describe = dedent`
+  Import the package in <pathToRepo> into packages/<directory-name> with commit history.
+`;
 
 export const builder = {
   "yes": {

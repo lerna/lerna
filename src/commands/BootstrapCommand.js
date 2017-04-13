@@ -17,8 +17,9 @@ export const describe = "Link local packages together and install remaining pack
 
 export const builder = {
   "hoist": {
-    describe: "Install external dependencies matching [glob] to the repo root.  Use with no glob for all.",
-    type: "string"
+    describe: "Install external dependencies matching [glob] to the repo root",
+    type: "string",
+    defaultDescription: "'**'",
   },
   "nohoist": {
     describe: "Don't hoist external dependencies matching [glob] to the repo root",

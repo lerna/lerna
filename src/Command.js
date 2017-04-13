@@ -1,3 +1,4 @@
+import dedent from "dedent";
 import ChildProcessUtilities from "./ChildProcessUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
 import GitUtilities from "./GitUtilities";
@@ -21,33 +22,37 @@ export const builder = {
     requiresArg: true,
     default: DEFAULT_CONCURRENCY,
   },
-  "ignore": {
-    describe: "Ignores packages with names matching the given glob (Works only in combination with the "
-            + "'run', 'exec', 'clean', 'ls' and 'bootstrap' commands).",
+  "scope": {
+    describe: dedent`
+      Restricts the scope to package names matching the given glob.
+      (Only for 'run', 'exec', 'clean', 'ls', and 'bootstrap' commands)
+    `,
     type: "string",
-    requiresArg: true
+    requiresArg: true,
+  },
+  "ignore": {
+    describe: dedent`
+      Ignore packages with names matching the given glob.
+      (Only for 'run', 'exec', 'clean', 'ls', and 'bootstrap' commands)
+    `,
+    type: "string",
+    requiresArg: true,
   },
   "include-filtered-dependencies": {
-    describe: "Flag to force lerna to include all dependencies and transitive dependencies when running "
-            + "'bootstrap', even if they should not be included by the scope or ignore flags."
+    describe: dedent`
+      Include all transitive dependencies when running a command, regardless of --scope or --ignore.
+    `,
   },
   "registry": {
-    describe: "When run with this flag, forwarded npm commands will use the specified registry for your "
-            + "package(s).",
+    describe: "Use the specified registry for all npm client operations.",
     type: "string",
-    requiresArg: true
-  },
-  "scope": {
-    describe: "Restricts the scope to package names matching the given glob (Works only in combination "
-            + "with the 'run', 'exec', 'clean', 'ls' and 'bootstrap' commands).",
-    type: "string",
-    requiresArg: true
+    requiresArg: true,
   },
   "sort": {
-    describe: "Sort packages topologically",
+    describe: "Sort packages topologically (all dependencies before dependents)",
     type: "boolean",
-    default: true
-  }
+    default: true,
+  },
 };
 
 export default class Command {

@@ -20,7 +20,7 @@ export function handler(argv) {
 
 export const command = "publish";
 
-export const describe = "Publish packages in the current Lerna project.";
+export const describe = "Publish packages in the current project.";
 
 export const builder = {
   "canary": {
@@ -28,8 +28,9 @@ export const builder = {
     alias: "c"
   },
   "cd-version": {
-    describe: "Skip the version selection prompt (in independent mode) and use the next specified semantic "
-            + "version."
+    describe: "Skip the version selection prompt and increment semver 'major', 'minor', or 'patch'.",
+    type: "string",
+    requiresArg: true,
   },
   "conventional-commits": {
     describe: "Use angular conventional-commit format to determine version bump and generate CHANGELOG."
@@ -38,6 +39,7 @@ export const builder = {
     describe: "Specify cross-dependency version numbers exactly rather than with a caret (^)."
   },
   "git-remote": {
+    defaultDescription: "origin",
     describe: "Push git changes to the specified remote instead of 'origin'.",
     type: "string",
     requiresArg: true
@@ -68,8 +70,7 @@ export const builder = {
     describe: "Stop before actually publishing change to npm."
   },
   "skip-temp-tag": {
-    describe: "Do not create a temporary tag while publishing. In stead use the normal npm publish"
-            + "methodology."
+    describe: "Do not create a temporary tag while publishing."
   }
 };
 
