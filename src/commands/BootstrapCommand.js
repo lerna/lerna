@@ -410,10 +410,13 @@ export default class BootstrapCommand extends Command {
         this.logger.info("Pruning hoisted dependencies");
 
         async.series(root.map(({ name, dependents }) => (cb) => {
-          async.series(dependents.map(({ nodeModulesLocation: dir }) => (cb) => {
-            if (dir === this.repository.nodeModulesLocation) return cb();
-            FileSystemUtilities.rimraf(path.join(dir, name), cb);
-          }), cb);
+          const dirs = dependents.filter(
+            (pkg) => pkg.nodeModulesLocation !== this.repository.nodeModulesLocation
+          ).map(
+            (pkg) => path.join(pkg.nodeModulesLocation, name)
+          );
+
+          FileSystemUtilities.rimraf(dirs, cb);
         }), (err) => {
           this.progressBar.tick("Prune hoisted");
           cb(err);
@@ -512,7 +515,7 @@ export default class BootstrapCommand extends Command {
                   "Replacing with symlink..."
                 );
                 // remove installed dependency
-                packageActions.push((cb) => FileSystemUtilities.rimraf(pkgDependencyLocation, cb));
+                packageActions.push((cb) => FileSystemUtilities.rimraf([pkgDependencyLocation], cb));
               }
             }
 
