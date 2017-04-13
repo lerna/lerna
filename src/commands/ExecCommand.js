@@ -38,6 +38,7 @@ export default class ExecCommand extends Command {
   runCommandInPackage(pkg, callback) {
     ChildProcessUtilities.spawn(this.command, this.args, {
       cwd: pkg.location,
+      shell: true,
       env: Object.assign({}, process.env, { LERNA_PACKAGE_NAME: pkg.name })
     }, (code) => {
       if (code) {

@@ -92,6 +92,7 @@ describe("ExecCommand", () => {
             env: expect.objectContaining({
               LERNA_PACKAGE_NAME: "package-2",
             }),
+            shell: true,
           }, expect.any(Function));
 
           done();
