@@ -1,4 +1,6 @@
 import async from "async";
+import path from "path";
+import _ from "lodash";
 import Command from "../Command";
 import FileSystemUtilities from "../FileSystemUtilities";
 import PromptUtilities from "../PromptUtilities";
@@ -19,12 +21,15 @@ export const builder = {
 
 export default class CleanCommand extends Command {
   initialize(callback) {
+    this.directoriesToDelete = this.filteredPackages.map((pkg) => pkg.nodeModulesLocation);
+
     if (this.options.yes) {
       callback(null, true);
     } else {
       this.logger.info(`About to remove the following directories:\n${
-        this.filteredPackages.map((pkg) => "- " + pkg.nodeModulesLocation).join("\n")
+        this.directoriesToDelete.map((dir) => path.relative(this.repository.rootPath, dir)).join("\n")
       }`);
+
       PromptUtilities.confirm("Proceed?", (confirmed) => {
         if (confirmed) {
           callback(null, true);
@@ -37,9 +42,11 @@ export default class CleanCommand extends Command {
   }
 
   execute(callback) {
-    this.progressBar.init(this.filteredPackages.length);
+    this.progressBar.init(this.directoriesToDelete.length);
+
     this.rimrafNodeModulesInPackages((err) => {
       this.progressBar.terminate();
+
       if (err) {
         callback(err);
       } else {
@@ -50,9 +57,12 @@ export default class CleanCommand extends Command {
   }
 
   rimrafNodeModulesInPackages(callback) {
-    async.parallelLimit(this.filteredPackages.map((pkg) => (cb) => {
-      FileSystemUtilities.rimraf(pkg.nodeModulesLocation, (err) => {
-        this.progressBar.tick(pkg.name);
+    const chunked = _.chunk(this.directoriesToDelete, this.concurrency);
+
+    async.parallelLimit(chunked.map((directories) => (cb) => {
+      FileSystemUtilities.rimraf(directories, (err) => {
+        this.progressBar.tick(directories.length);
+
         cb(err);
       });
     }), this.concurrency, callback);
