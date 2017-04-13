@@ -10,12 +10,8 @@ Successfully ran npm script 'my-script' in packages:
 
 exports[`stdout: test --ignore 1`] = `
 "Lerna __TEST_VERSION__
-Ignoring packages that match 'package-1'
-Error: no test specified
+Ignoring packages that match 'package-@(1|2|3)'
 package-4
-Error: no test specified
 Successfully ran npm script 'test' in packages:
-- package-2
-- package-3
 - package-4"
 `;

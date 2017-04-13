@@ -26,7 +26,8 @@ describe("lerna run", () => {
         "run",
         "--concurrency=1",
         "test",
-        "--ignore=package-1",
+        "--ignore",
+        "package-@(1|2|3)",
         // args below tell npm to be quiet
         "--", "--silent",
       ];
