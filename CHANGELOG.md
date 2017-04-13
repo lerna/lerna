@@ -1,3 +1,118 @@
+## v2.0.0-rc.2 (2017-04-13)
+
+Inching ever closer to :checkered_flag: v2.0.0!
+
+**Highlights**: `lerna exec` learned some new tricks (thanks to [execa](https://github.com/sindresorhus/execa#execa---)), and multi-line commit messages on Windows should now work.
+
+```sh
+$ lerna exec echo \$LERNA_PACKAGE_NAME
+# note the escaped $, so it evaluates in the subshell, not the current shell
+```
+
+Ever get tired of repeating yourself in all of the package deps with devDependencies on `babel-cli` or `rimraf`? Now, all you need to do is have them installed in the root, and the following replaces all that duplicate code:
+
+```sh
+$ lerna exec rimraf lib
+$ lerna exec babel -- src -d lib
+```
+
+The `--` is still useful for hiding args from `lerna`, but it isn't always necessary now.
+In the example above, I had to hide the `-d` from `lerna`'s arg parser, but positional arguments are just fine.
+When in doubt, always append the command you want to run (e.g., `babel src -d lib`) after the `--`, _after_ all other arguments to `lerna exec`.
+
+#### :rocket: Enhancement
+* [#719](https://github.com/lerna/lerna/pull/719) Use yargs to handle CLI args and subcommands. ([@noherczeg](https://github.com/noherczeg))
+
+<details><summary><code>lerna --help</code> is a bit cleaner now</summary><p>
+<!-- browsers demand the next line be empty -->
+
+```txt
+Usage: lerna <command> [options]
+
+Commands:
+  bootstrap                Link local packages together and install remaining package dependencies
+  clean                    Remove the node_modules directory from all packages.
+  diff <pkg>               Diff all packages or a single package since the last release.
+  exec <command> [args..]  Run an arbitrary command in each package.
+  import <pathToRepo>      Import the package in <pathToRepo> into packages/<directory-name> with commit history.
+  init                     Create a new Lerna repo or upgrade an existing repo to the current version of Lerna.
+  ls                       List all public packages
+  publish                  Publish packages in the current project.
+  run <script> [args..]    Run an npm script in each package that contains that script.
+  updated                  Check which packages have changed since the last publish.
+
+Global Options:
+  --loglevel                       What level of logs to report.  [string] [default: "info"]
+  --concurrency                    How many threads to use if lerna parallelises the tasks.  [number] [default: 4]
+  --scope                          Restricts the scope to package names matching the given glob.
+                                   (Only for 'run', 'exec', 'clean', 'ls', and 'bootstrap' commands)  [string]
+  --ignore                         Ignore packages with names matching the given glob.
+                                   (Only for 'run', 'exec', 'clean', 'ls', and 'bootstrap' commands)  [string]
+  --include-filtered-dependencies  Include all transitive dependencies when running a command, regardless of --scope or --ignore.
+  --registry                       Use the specified registry for all npm client operations.  [string]
+  --sort                           Sort packages topologically (all dependencies before dependents)  [boolean] [default: true]
+  -h, --help                       Show help  [boolean]
+  -v, --version                    Show version number  [boolean]
+
+When a command fails, all logs are written to lerna-debug.log in the current working directory.
+
+For more information, find our manual at https://github.com/lerna/lerna
+```
+</p></details>
+
+<details><summary>Targeted command help: <code>lerna bootstrap --help</code></summary><p>
+<!-- browsers demand the next line be empty -->
+
+```txt
+lerna bootstrap
+
+Global Options:
+  --loglevel                       What level of logs to report.  [string] [default: "info"]
+  --concurrency                    How many threads to use if lerna parallelises the tasks.  [number] [default: 4]
+  --scope                          Restricts the scope to package names matching the given glob.
+                                   (Only for 'run', 'exec', 'clean', 'ls', and 'bootstrap' commands)  [string]
+  --ignore                         Ignore packages with names matching the given glob.
+                                   (Only for 'run', 'exec', 'clean', 'ls', and 'bootstrap' commands)  [string]
+  --include-filtered-dependencies  Include all transitive dependencies when running a command, regardless of --scope or --ignore.
+  --registry                       Use the specified registry for all npm client operations.  [string]
+  --sort                           Sort packages topologically (all dependencies before dependents)  [boolean] [default: true]
+  -h, --help                       Show help  [boolean]
+  -v, --version                    Show version number  [boolean]
+
+Options:
+  --hoist       Install external dependencies matching [glob] to the repo root  [string] [default: '**']
+  --nohoist     Don't hoist external dependencies matching [glob] to the repo root  [string]
+  --npm-client  Executable used to install dependencies (npm, yarn, pnpm, ...)  [string]
+```
+</p></details>
+
+We've got plenty of room to grow our documentation, PRs welcome!
+
+#### :bug: Bug Fix
+* [#758](https://github.com/lerna/lerna/pull/758) Use temp-write for multi-line commit messages. ([@evocateur](https://github.com/evocateur))
+* [#761](https://github.com/lerna/lerna/pull/761) Use shell option when spawning `lerna exec`. ([@jwb](https://github.com/jwb))
+* [#762](https://github.com/lerna/lerna/pull/762) Fix durable option resolution. ([@evocateur](https://github.com/evocateur))
+
+#### :memo: Documentation
+* [#748](https://github.com/lerna/lerna/pull/748) Reference conventionalcommits.org website in README. ([@bcoe](https://github.com/bcoe))
+* [#751](https://github.com/lerna/lerna/pull/751) Update README.md and docs to better explain hoisting. ([@kylecordes](https://github.com/kylecordes))
+
+If you've ever had a question about hoisting, read [@kylecordes](https://github.com/kylecordes)'s brilliant docs [here](https://github.com/lerna/lerna/blob/master/doc/hoist.md)!
+
+#### :house: Internal
+* [#745](https://github.com/lerna/lerna/pull/745) Add eslint-plugin-node. ([@evocateur](https://github.com/evocateur))
+* [#747](https://github.com/lerna/lerna/pull/747) Fix bootstrap integration tests. ([@evocateur](https://github.com/evocateur))
+* [#749](https://github.com/lerna/lerna/pull/749) Convert eslint config to YAML. ([@evocateur](https://github.com/evocateur))
+* [#750](https://github.com/lerna/lerna/pull/750) Refactor fixture helpers to reduce duplication. ([@evocateur](https://github.com/evocateur))
+* [#759](https://github.com/lerna/lerna/pull/759) Use execa for child_process calls. ([@evocateur](https://github.com/evocateur))
+
+#### Committers: 5
+- Benjamin E. Coe ([bcoe](https://github.com/bcoe))
+- Daniel Stockman ([evocateur](https://github.com/evocateur))
+- John Bito ([jwb](https://github.com/jwb))
+- Kyle Cordes ([kylecordes](https://github.com/kylecordes))
+- Norbert Csaba Herczeg ([noherczeg](https://github.com/noherczeg))
+
 ## v2.0.0-rc.1 (2017-04-07)
 
 A silent (but deadly) bug slipped into the last release. Many thanks to ([@timdp](https://github.com/timdp)) for discovering it.
