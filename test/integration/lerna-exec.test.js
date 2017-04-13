@@ -36,4 +36,20 @@ describe("lerna exec", () => {
       });
     });
   });
+
+  test.concurrent("without --", () => {
+    return initFixture("ExecCommand/basic").then((cwd) => {
+      const args = [
+        "--concurrency=1",
+        "exec",
+        "ls",
+        // no --
+        "-C",
+      ];
+
+      return execa(LERNA_BIN, args, { cwd }).then((result) => {
+        expect(result.stdout).toMatchSnapshot("ls: without --");
+      });
+    });
+  });
 });

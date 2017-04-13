@@ -1,5 +1,6 @@
 import path from "path";
 import async from "async";
+import dedent from "dedent";
 import Command from "../Command";
 import PromptUtilities from "../PromptUtilities";
 import ChildProcessUtilities from "../ChildProcessUtilities";
@@ -7,13 +8,14 @@ import FileSystemUtilities from "../FileSystemUtilities";
 import GitUtilities from "../GitUtilities";
 
 export function handler(argv) {
-  return new ImportCommand([argv.repo], argv).run();
+  return new ImportCommand([argv.pathToRepo], argv).run();
 }
 
-export const command = "import <repo>";
+export const command = "import <pathToRepo>";
 
-export const describe = "Import the package at <path-to-external-repository>, with commit history, "
-                      + "into packages/<directory-name>.";
+export const describe = dedent`
+  Import the package in <pathToRepo> into packages/<directory-name> with commit history.
+`;
 
 export const builder = {
   "yes": {
@@ -23,7 +25,6 @@ export const builder = {
 
 export default class ImportCommand extends Command {
   initialize(callback) {
-    const { yes } = this.getOptions();
     const inputPath = this.input[0];
 
     if (!inputPath) {
@@ -35,11 +36,14 @@ export default class ImportCommand extends Command {
 
     try {
       const stats = FileSystemUtilities.statSync(externalRepoPath);
+
       if (!stats.isDirectory()) {
         throw new Error(`Input path "${inputPath}" is not a directory`);
       }
+
       const packageJson = path.join(externalRepoPath, "package.json");
       const packageName = require(packageJson).name;
+
       if (!packageName) {
         throw new Error(`No package name specified in "${packageJson}"`);
       }
@@ -47,6 +51,7 @@ export default class ImportCommand extends Command {
       if (e.code === "ENOENT") {
         return callback(new Error(`No repository found at "${inputPath}"`));
       }
+
       return callback(e);
     }
 
@@ -85,10 +90,11 @@ export default class ImportCommand extends Command {
       `About to import ${this.commits.length} commits from ${inputPath} into ${this.targetDir}`
     );
 
-    if (yes) {
+    if (this.options.yes) {
       callback(null, true);
     } else {
       const message = "Are you sure you want to import these commits onto the current branch?";
+
       PromptUtilities.confirm(message, (confirmed) => {
         if (confirmed) {
           callback(null, true);
@@ -153,5 +159,6 @@ function getTargetBase(packageConfigs) {
   const straightPackageDirectories = packageConfigs
     .filter((p) => path.basename(p) === "*")
     .map((p) => path.dirname(p));
+
   return straightPackageDirectories[0] || "packages";
 }
