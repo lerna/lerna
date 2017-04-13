@@ -9,6 +9,7 @@ describe("lerna run", () => {
         "run",
         "my-script",
         "--scope=package-1",
+        "--concurrency=1",
         // args below tell npm to be quiet
         "--", "--silent",
       ];
@@ -23,6 +24,7 @@ describe("lerna run", () => {
     return initFixture("RunCommand/integration-lifecycle").then((cwd) => {
       const args = [
         "run",
+        "--concurrency=1",
         "test",
         "--ignore=package-1",
         // args below tell npm to be quiet
