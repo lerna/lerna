@@ -29,7 +29,7 @@ describe("Command", () => {
 
   describe(".input", () => {
     it("should be added to the instance", () => {
-      const command = new Command(["a", "b", "c"]);
+      const command = new Command(["a", "b", "c"], {});
       expect(command.input).toEqual(["a", "b", "c"]);
     });
   });
@@ -43,21 +43,21 @@ describe("Command", () => {
 
   describe(".lernaVersion", () => {
     it("should be added to the instance", () => {
-      const command = new Command();
+      const command = new Command([], {});
       expect(command.lernaVersion).toEqual(require("../package.json").version);
     });
   });
 
   describe(".progressBar", () => {
     it("should be added to the instance", () => {
-      const command = new Command();
+      const command = new Command([], {});
       expect(command.progressBar).toBe(progressBar);
     });
   });
 
   describe(".logger", () => {
     it("should be added to the instance", () => {
-      const command = new Command();
+      const command = new Command([], {});
       expect(command.logger).toBe(logger);
     });
   });

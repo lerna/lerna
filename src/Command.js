@@ -10,6 +10,11 @@ import logger from "./logger";
 const DEFAULT_CONCURRENCY = 4;
 
 export const builder = {
+  "loglevel": {
+    default: "info",
+    describe: "What level of logs to report.",
+    type: "string",
+  },
   "concurrency": {
     describe: "How many threads to use if lerna parallelises the tasks.",
     type: "number",
@@ -52,8 +57,9 @@ export default class Command {
 
     this.lernaVersion = require("../package.json").version;
     this.logger = logger;
-    this.repository = new Repository(cwd);
+    this.logger.setLogLevel(flags.loglevel);
     this.progressBar = progressBar;
+    this.repository = new Repository(cwd);
   }
 
   get concurrency() {
