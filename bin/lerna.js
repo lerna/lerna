@@ -4,7 +4,6 @@
 const globalOptions = require("../lib/Command").builder;
 const logger = require("../lib/logger");
 const yargs = require("yargs");
-const path = require("path");
 
 // the options grouped under "Global Options:" header
 const globalKeys = Object.keys(globalOptions).concat([
@@ -33,7 +32,7 @@ yargs
     global: true
   })
   .options(globalOptions).group(globalKeys, "Global Options:")
-  .commandDir(path.join(__dirname, "..", "lib", "commands"))
+  .commandDir("../lib/commands")
   .demandCommand()
   .help("h").alias("h", "help")
   .version().alias("v", "version")
