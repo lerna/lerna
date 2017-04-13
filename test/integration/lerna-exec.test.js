@@ -53,13 +53,13 @@ describe("lerna exec", () => {
     });
   });
 
-  test.concurrent("exec echo $LERNA_PACKAGE_NAME", () => {
+  test.concurrent("echo $LERNA_PACKAGE_NAME", () => {
     return initFixture("ExecCommand/basic").then((cwd) => {
       const args = [
         "exec",
         "--concurrency=1",
         "echo",
-        (process.platform == "win32" ? "$Env:LERNA_PACKAGE_NAME" : "$LERNA_PACKAGE_NAME"),
+        (process.platform == "win32" ? "%LERNA_PACKAGE_NAME%" : "$LERNA_PACKAGE_NAME"),
       ];
 
       return execa(LERNA_BIN, args, { cwd }).then((result) => {
