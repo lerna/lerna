@@ -177,7 +177,7 @@ describe("Command", () => {
     it("needs tests");
   });
 
-  describe(".getOptions()", () => {
+  describe("get .options", () => {
     let testDir;
 
     beforeAll(() => initFixture("Command/basic").then((dir) => {
@@ -194,41 +194,43 @@ describe("Command", () => {
       }
     }
 
+    it("is a lazy getter", () => {
+      const instance = new TestACommand([], {}, testDir);
+      expect(instance.options).toBe(instance.options);
+    });
+
     it("should pick up global options", () => {
       const instance = new TestACommand([], {}, testDir);
-      expect(instance.getOptions().testOption).toBe("default");
+      expect(instance.options.testOption).toBe("default");
     });
 
     it("should override global options with command-level options", () => {
       const instance = new TestBCommand([], {}, testDir);
-      expect(instance.getOptions().testOption).toBe("b");
+      expect(instance.options.testOption).toBe("b");
     });
 
     it("should override global options with inherited command-level options", () => {
       const instance = new TestCCommand([], {}, testDir);
-      expect(instance.getOptions().testOption).toBe("b");
+      expect(instance.options.testOption).toBe("b");
     });
 
     it("should override inherited command-level options with local command-level options", () => {
       const instance = new TestCCommand([], {}, testDir);
-      expect(instance.getOptions().testOption2).toBe("c");
-    });
-
-    it("should override command-level options with passed-in options", () => {
-      const instance = new TestCCommand([], {}, testDir);
-      expect(instance.getOptions({ testOption2: "p" }).testOption2).toBe("p");
-    });
-
-    it("should sieve properly within passed-in options", () => {
-      const instance = new TestCCommand([], {}, testDir);
-      expect(instance.getOptions({ testOption2: "p" }, { testOption2: "p2" }).testOption2).toBe("p2");
+      expect(instance.options.testOption2).toBe("c");
     });
 
     it("should override everything with a CLI flag", () => {
       const instance = new TestCCommand([], {
         testOption2: "f",
       }, testDir);
-      expect(instance.getOptions({ testOption2: "p" }).testOption2).toBe("f");
+      expect(instance.options.testOption2).toBe("f");
+    });
+
+    it("should inherit durable options when a CLI flag is undefined", () => {
+      const instance = new TestCCommand([], {
+        testOption: undefined, // yargs does this when --test-option is not passed
+      }, testDir);
+      expect(instance.options.testOption).toBe("b");
     });
   });
 
@@ -250,7 +252,7 @@ describe("Command", () => {
         const instance = new BootstrapCommand([], {}, testDir);
         const logWarn = jest.spyOn(instance.logger, "warn");
 
-        instance.getOptions();
+        instance.options;
         expect(logWarn).lastCalledWith(
           "`bootstrapConfig.ignore` is deprecated.  Use `commands.bootstrap.ignore`."
         );
@@ -258,20 +260,20 @@ describe("Command", () => {
 
       it("should provide a correct value", () => {
         const instance = new BootstrapCommand([], {}, testDir);
-        expect(instance.getOptions().ignore).toBe("package-a");
+        expect(instance.options.ignore).toBe("package-a");
       });
 
       it("should not warn with other commands", () => {
         const instance = new TestCommand([], {}, testDir);
         const logWarn = jest.spyOn(instance.logger, "warn");
 
-        instance.getOptions();
+        instance.options;
         expect(logWarn).not.toBeCalled();
       });
 
       it("should not provide a value to other commands", () => {
         const instance = new TestCommand([], {}, testDir);
-        expect(instance.getOptions().ignore).toBe(undefined);
+        expect(instance.options.ignore).toBe(undefined);
       });
     });
 
@@ -283,7 +285,7 @@ describe("Command", () => {
         const instance = new PublishCommand([], {}, testDir);
         const logWarn = jest.spyOn(instance.logger, "warn");
 
-        instance.getOptions();
+        instance.options;
         expect(logWarn).lastCalledWith(
           "`publishConfig.ignore` is deprecated.  Use `commands.publish.ignore`."
         );
@@ -291,20 +293,20 @@ describe("Command", () => {
 
       it("should provide a correct value", () => {
         const instance = new PublishCommand([], {}, testDir);
-        expect(instance.getOptions().ignore).toBe("package-b");
+        expect(instance.options.ignore).toBe("package-b");
       });
 
       it("should not warn with other commands", () => {
         const instance = new TestCommand([], {}, testDir);
         const logWarn = jest.spyOn(instance.logger, "warn");
 
-        instance.getOptions();
+        instance.options;
         expect(logWarn).not.toBeCalled();
       });
 
       it("should not provide a value to other commands", () => {
         const instance = new TestCommand([], {}, testDir);
-        expect(instance.getOptions().ignore).toBe(undefined);
+        expect(instance.options.ignore).toBe(undefined);
       });
     });
   });

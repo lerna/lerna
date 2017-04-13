@@ -25,7 +25,6 @@ export const builder = {
 
 export default class ImportCommand extends Command {
   initialize(callback) {
-    const { yes } = this.getOptions();
     const inputPath = this.input[0];
 
     if (!inputPath) {
@@ -87,7 +86,7 @@ export default class ImportCommand extends Command {
       `About to import ${this.commits.length} commits from ${inputPath} into ${this.targetDir}`
     );
 
-    if (yes) {
+    if (this.options.yes) {
       callback(null, true);
     } else {
       const message = "Are you sure you want to import these commits onto the current branch?";

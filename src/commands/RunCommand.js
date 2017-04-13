@@ -64,7 +64,7 @@ export default class RunCommand extends Command {
   }
 
   runScriptInPackage(pkg, callback) {
-    if (this.getOptions().stream) {
+    if (this.options.stream) {
       this.runScriptInPackageStreaming(pkg, callback);
     } else {
       this.runScriptInPackageCapturing(pkg, callback);

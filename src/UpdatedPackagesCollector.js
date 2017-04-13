@@ -17,7 +17,7 @@ export default class UpdatedPackagesCollector {
     this.packages = command.filteredPackages;
     this.packageGraph = command.repository.packageGraph;
     this.progressBar = command.progressBar;
-    this.flags = command.getOptions();
+    this.options = command.options;
   }
 
   getUpdates() {
@@ -42,11 +42,11 @@ export default class UpdatedPackagesCollector {
 
     let commits;
 
-    if (this.flags.canary) {
+    if (this.options.canary) {
       let currentSHA;
 
-      if (this.flags.canary !== true) {
-        currentSHA = this.flags.canary;
+      if (this.options.canary !== true) {
+        currentSHA = this.options.canary;
       } else {
         currentSHA = GitUtilities.getCurrentSHA(this.execOpts);
       }
@@ -68,7 +68,7 @@ export default class UpdatedPackagesCollector {
         return true;
       }
 
-      const forcePublish = (this.flags.forcePublish || "").split(",");
+      const forcePublish = (this.options.forcePublish || "").split(",");
 
       if (forcePublish.indexOf("*") > -1) {
         return true;
@@ -137,8 +137,8 @@ export default class UpdatedPackagesCollector {
     return this.packages.filter((pkg) => {
       return (
         this.updatedPackages[pkg.name] ||
-        (this.flags[SECRET_FLAG] ? false : this.dependents[pkg.name]) ||
-        this.flags.canary
+        (this.options[SECRET_FLAG] ? false : this.dependents[pkg.name]) ||
+        this.options.canary
       );
     }).map((pkg) => {
       return new Update(pkg);
@@ -163,9 +163,9 @@ export default class UpdatedPackagesCollector {
       return file.replace(folder + path.sep, "");
     });
 
-    if (this.flags.ignore) {
+    if (this.options.ignore) {
       changedFiles = changedFiles.filter((file) => {
-        return !find(this.flags.ignore, (pattern) => {
+        return !find(this.options.ignore, (pattern) => {
           return minimatch(file, pattern, { matchBase: true });
         });
       });

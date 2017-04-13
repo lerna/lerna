@@ -36,7 +36,7 @@ export default class BootstrapCommand extends Command {
   initialize(callback) {
     this.npmConfig = {
       registry: this.npmRegistry,
-      client: this.getOptions().npmClient,
+      client: this.options.npmClient,
     };
 
     this.batchedPackages = this.toposort
@@ -199,7 +199,7 @@ export default class BootstrapCommand extends Command {
 
     // Configuration for what packages to hoist may be in lerna.json or it may
     // come in as command line options.
-    const { hoist, nohoist } = this.getOptions();
+    const { hoist, nohoist } = this.options;
 
     // This will contain entries for each hoistable dependency.
     const root = [];

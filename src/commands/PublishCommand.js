@@ -82,6 +82,7 @@ export const builder = {
 
 export default class PublishCommand extends Command {
   initialize(callback) {
+    this.gitRemote = this.options.gitRemote || "origin";
     this.gitEnabled = !(this.flags.canary || this.flags.skipGit);
 
     if (this.flags.canary) {
@@ -210,7 +211,7 @@ export default class PublishCommand extends Command {
         if (this.gitEnabled) {
           this.logger.info("Pushing tags to git...");
           this.logger.newLine();
-          GitUtilities.pushWithTags(this.getOptions().gitRemote || "origin", this.tags, this.execOpts);
+          GitUtilities.pushWithTags(this.gitRemote, this.tags, this.execOpts);
         }
 
         let message = "Successfully published:";
@@ -407,7 +408,7 @@ export default class PublishCommand extends Command {
   }
 
   updateUpdatedPackages() {
-    const { exact } = this.getOptions();
+    const { exact } = this.options;
     const changedFiles = [];
 
     this.updates.forEach((update) => {
@@ -506,10 +507,9 @@ export default class PublishCommand extends Command {
   }
 
   npmPublishAsPrerelease(callback) {
-    const { skipTempTag } = this.getOptions();
     // if we skip temp tags we should tag with the proper value immediately
     // therefore no updates will be needed
-    const tag = skipTempTag ? this.getDistTag() : "lerna-temp";
+    const tag = this.options.skipTempTag ? this.getDistTag() : "lerna-temp";
 
     this.updates.forEach((update) => {
       this.execScript(update.package, "prepublish");
@@ -556,9 +556,7 @@ export default class PublishCommand extends Command {
   }
 
   npmUpdateAsLatest(callback) {
-    const { skipTempTag } = this.getOptions();
-
-    if (skipTempTag) {
+    if (this.options.skipTempTag) {
       return callback();
     }
 
@@ -611,7 +609,6 @@ export default class PublishCommand extends Command {
   }
 
   getDistTag() {
-    const { npmTag, canary } = this.getOptions();
-    return npmTag || (canary && "canary") || "latest";
+    return this.options.npmTag || (this.options.canary && "canary") || "latest";
   }
 }
