@@ -31,6 +31,12 @@ export const builder = {
     describe: "Skip the version selection prompt and increment semver 'major', 'minor', or 'patch'.",
     type: "string",
     requiresArg: true,
+    coerce: (choice) => {
+      if (!["major", "minor", "patch"].some((inc) => choice === inc)) {
+        throw new Error(`--cd-version must be one of 'major', 'minor', or 'patch', got '${choice}'`);
+      }
+      return choice;
+    },
   },
   "conventional-commits": {
     describe: "Use angular conventional-commit format to determine version bump and generate CHANGELOG."
@@ -221,24 +227,20 @@ export default class PublishCommand extends Command {
 
   getVersionsForUpdates(callback) {
     if (this.flags.cdVersion) {
-      // Allows automatic bumping to next semver via cdVersion flag
-      if (this.flags.cdVersion === "patch" ||
-          this.flags.cdVersion === "minor" ||
-          this.flags.cdVersion === "major"
-      ) {
-        // If the version is independent then send versions
-        if (this.repository.isIndependent()) {
-          const versions = {};
-          this.updates.forEach((update) => {
-            versions[update.package.name] = semver.inc(update.package.version, this.flags.cdVersion);
-          });
-          return callback(null, { versions });
-        }
+      // If the version is independent then send versions
+      if (this.repository.isIndependent()) {
+        const versions = {};
 
-        // Otherwise bump the global version
-        const version = semver.inc(this.globalVersion, this.flags.cdVersion);
-        return callback(null, { version });
+        this.updates.forEach((update) => {
+          versions[update.package.name] = semver.inc(update.package.version, this.flags.cdVersion);
+        });
+
+        return callback(null, { versions });
       }
+
+      // Otherwise bump the global version
+      const version = semver.inc(this.globalVersion, this.flags.cdVersion);
+      return callback(null, { version });
     }
 
     if (this.flags.repoVersion) {
