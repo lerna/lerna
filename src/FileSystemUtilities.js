@@ -64,15 +64,24 @@ export default class FileSystemUtilities {
   }
 
   @logger.logifyAsync()
-  static rimraf(dirPath, callback) {
+  static rimraf(dirPaths, callback) {
     // Shelling out to a child process for a noop is expensive.
     // Checking if `dirPath` exists to be removed is cheap.
     // This lets us short-circuit if we don't have anything to do.
-    pathExists(dirPath).then((exists) => {
-      if (!exists) return callback();
+    const mapper = (dir) => Promise.all([pathExists(dir), dir]);
 
-      ChildProcessUtilities.spawn("rimraf", ["--no-glob", trailingSlash(dirPath)], {}, callback);
-    });
+    return Promise.all(dirPaths.map(mapper))
+      .then((values) => values.filter((x) => x[0]).map((x) => x[1]))
+      .then((candidates) => {
+        if (!candidates.length) {
+          return callback();
+        }
+
+        const args = candidates.map(trailingSlash);
+        args.unshift("--no-glob");
+
+        return ChildProcessUtilities.spawn("rimraf", args, {}, callback);
+      });
   }
 
   @logger.logifyAsync()
