@@ -59,7 +59,7 @@ describe("lerna exec", () => {
         "exec",
         "--concurrency=1",
         "echo",
-        "$LERNA_PACKAGE_NAME",
+        (process.platform == "win32" ? "$Env:LERNA_PACKAGE_NAME" : "$LERNA_PACKAGE_NAME"),
       ];
 
       return execa(LERNA_BIN, args, { cwd }).then((result) => {
