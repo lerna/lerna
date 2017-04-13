@@ -36,11 +36,14 @@ export default class ImportCommand extends Command {
 
     try {
       const stats = FileSystemUtilities.statSync(externalRepoPath);
+
       if (!stats.isDirectory()) {
         throw new Error(`Input path "${inputPath}" is not a directory`);
       }
+
       const packageJson = path.join(externalRepoPath, "package.json");
       const packageName = require(packageJson).name;
+
       if (!packageName) {
         throw new Error(`No package name specified in "${packageJson}"`);
       }
@@ -48,6 +51,7 @@ export default class ImportCommand extends Command {
       if (e.code === "ENOENT") {
         return callback(new Error(`No repository found at "${inputPath}"`));
       }
+
       return callback(e);
     }
 
@@ -90,6 +94,7 @@ export default class ImportCommand extends Command {
       callback(null, true);
     } else {
       const message = "Are you sure you want to import these commits onto the current branch?";
+
       PromptUtilities.confirm(message, (confirmed) => {
         if (confirmed) {
           callback(null, true);
@@ -154,5 +159,6 @@ function getTargetBase(packageConfigs) {
   const straightPackageDirectories = packageConfigs
     .filter((p) => path.basename(p) === "*")
     .map((p) => path.dirname(p));
+
   return straightPackageDirectories[0] || "packages";
 }

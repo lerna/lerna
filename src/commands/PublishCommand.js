@@ -186,7 +186,6 @@ export default class PublishCommand extends Command {
   }
 
   publishPackagesToNpm(callback) {
-
     this.logger.newLine();
     this.logger.info("Publishing packages to npm...");
 
@@ -402,6 +401,7 @@ export default class PublishCommand extends Command {
   updateVersionInLernaJson() {
     this.repository.lernaJson.version = this.masterVersion;
     writeJsonFile.sync(this.repository.lernaJsonLocation, this.repository.lernaJson, { indent: 2 });
+
     if (!this.flags.skipGit) {
       GitUtilities.addFile(this.repository.lernaJsonLocation, this.execOpts);
     }
