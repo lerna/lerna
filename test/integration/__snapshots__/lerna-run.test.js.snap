@@ -1,19 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`stdout: simple 1`] = `
+exports[`stdout: my-script --scope 1`] = `
 "Lerna __TEST_VERSION__
 Scoping to packages that match 'package-1'
 package-1
-
 Successfully ran npm script 'my-script' in packages:
 - package-1"
 `;
 
-exports[`stdout: simple-npm 1`] = `
+exports[`stdout: test --ignore 1`] = `
 "Lerna __TEST_VERSION__
-Scoping to packages that match 'package-1'
-package-1
-
+Ignoring packages that match 'package-@(1|2|3)'
+package-4
 Successfully ran npm script 'test' in packages:
-- package-1"
+- package-4"
 `;

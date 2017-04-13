@@ -11,29 +11,21 @@ const CHANGELOG_HEADER = dedent(`# Change Log
   All notable changes to this project will be documented in this file.
   See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.`);
 
-const RECOMMEND_CLI = require.resolve("conventional-recommended-bump/cli.js");
-const CHANGELOG_CLI = require.resolve("conventional-changelog-cli/cli.js");
-
 export default class ConventionalCommitUtilities {
   @logger.logifySync()
   static recommendVersion(pkg, opts) {
-    const name = pkg.name;
-    const version = pkg.version;
-    const pkgLocation = pkg.location;
-
     const recommendedBump = ChildProcessUtilities.execSync(
-      `${RECOMMEND_CLI} -l ${name} --commit-path=${pkgLocation} -p angular`,
+      "conventional-recommended-bump",
+      ["-l", pkg.name, "--commit-path", pkg.location, "-p", "angular"],
       opts
     );
 
-    return semver.inc(version, recommendedBump);
+    return semver.inc(pkg.version, recommendedBump);
   }
 
   @logger.logifySync()
   static updateChangelog(pkg, opts) {
-    const name = pkg.name;
-    const pkgLocation = pkg.location;
-    const pkgJsonLocation = path.join(pkgLocation, "package.json");
+    const pkgJsonLocation = path.join(pkg.location, "package.json");
     const changelogLocation = ConventionalCommitUtilities.changelogLocation(pkg);
 
     let changelogContents = "";
@@ -44,7 +36,8 @@ export default class ConventionalCommitUtilities {
     // run conventional-changelog-cli to generate the markdown
     // for the upcoming release.
     const newEntry = ChildProcessUtilities.execSync(
-      `${CHANGELOG_CLI} -l ${name} --commit-path=${pkgLocation} --pkg=${pkgJsonLocation} -p angular`,
+      "conventional-changelog",
+      ["-l", pkg.name, "--commit-path", pkg.location, "--pkg", pkgJsonLocation, "-p", "angular"],
       opts
     );
 

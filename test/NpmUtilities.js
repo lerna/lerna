@@ -1,6 +1,5 @@
 import { EOL } from "os";
 import path from "path";
-import escapeArgs from "command-join";
 
 // mocked modules
 import writePkg from "write-pkg";
@@ -42,18 +41,20 @@ describe("NpmUtilities", () => {
     it("adds a dist-tag for a given package@version", () => {
       NpmUtilities.addDistTag(directory, packageName, version, tag);
 
-      const cmd = `npm dist-tag add ${packageName}@${version} ${tag}`;
+      const cmd = "npm";
+      const args = ["dist-tag", "add", "foo-pkg@1.0.0", "added-tag"];
       const opts = { directory, registry: undefined };
-      expect(ChildProcessUtilities.execSync).lastCalledWith(cmd, opts);
+      expect(ChildProcessUtilities.execSync).lastCalledWith(cmd, args, opts);
     });
 
     it("supports custom registry", () => {
       const registry = "https://custom-registry/add";
       NpmUtilities.addDistTag(directory, packageName, version, tag, registry);
 
-      const cmd = `npm dist-tag add ${packageName}@${version} ${tag}`;
+      const cmd = "npm";
+      const args = ["dist-tag", "add", "foo-pkg@1.0.0", "added-tag"];
       const opts = { directory, registry };
-      expect(ChildProcessUtilities.execSync).lastCalledWith(cmd, opts);
+      expect(ChildProcessUtilities.execSync).lastCalledWith(cmd, args, opts);
     });
   });
 
@@ -68,18 +69,20 @@ describe("NpmUtilities", () => {
     it("removes a dist-tag for a given package", () => {
       NpmUtilities.removeDistTag(directory, packageName, tag);
 
-      const cmd = `npm dist-tag rm ${packageName} ${tag}`;
+      const cmd = "npm";
+      const args = ["dist-tag", "rm", "bar-pkg", "removed-tag"];
       const opts = { directory, registry: undefined };
-      expect(ChildProcessUtilities.execSync).lastCalledWith(cmd, opts);
+      expect(ChildProcessUtilities.execSync).lastCalledWith(cmd, args, opts);
     });
 
     it("supports custom registry", () => {
       const registry = "https://custom-registry/remove";
       NpmUtilities.removeDistTag(directory, packageName, tag, registry);
 
-      const cmd = `npm dist-tag rm ${packageName} ${tag}`;
+      const cmd = "npm";
+      const args = ["dist-tag", "rm", "bar-pkg", "removed-tag"];
       const opts = { directory, registry };
-      expect(ChildProcessUtilities.execSync).lastCalledWith(cmd, opts);
+      expect(ChildProcessUtilities.execSync).lastCalledWith(cmd, args, opts);
     });
   });
 
@@ -97,9 +100,10 @@ describe("NpmUtilities", () => {
       expect(NpmUtilities.checkDistTag(directory, packageName, "latest")).toBe(true);
       expect(NpmUtilities.checkDistTag(directory, packageName, "missing")).toBe(false);
 
-      const cmd = `npm dist-tag ls ${packageName}`;
+      const cmd = "npm";
+      const args = ["dist-tag", "ls", "baz-pkg"];
       const opts = { directory, registry: undefined };
-      expect(ChildProcessUtilities.execSync).toBeCalledWith(cmd, opts);
+      expect(ChildProcessUtilities.execSync).toBeCalledWith(cmd, args, opts);
     });
 
     it("supports custom registry", () => {
@@ -108,9 +112,10 @@ describe("NpmUtilities", () => {
 
       expect(NpmUtilities.checkDistTag(directory, packageName, "target-tag", registry)).toBe(true);
 
-      const cmd = `npm dist-tag ls ${packageName}`;
+      const cmd = "npm";
+      const args = ["dist-tag", "ls", "baz-pkg"];
       const opts = { directory, registry };
-      expect(ChildProcessUtilities.execSync).lastCalledWith(cmd, opts);
+      expect(ChildProcessUtilities.execSync).lastCalledWith(cmd, args, opts);
     });
   });
 
@@ -123,12 +128,12 @@ describe("NpmUtilities", () => {
 
       NpmUtilities.runScriptInDir(script, args, directory, callback);
 
-      const cmd = `npm run ${script} ${escapeArgs(args)}`;
+      const cmd = "npm";
+      const scriptArgs = ["run", "foo", "--bar", "baz"];
       const opts = {
         cwd: directory,
-        env: process.env,
       };
-      expect(ChildProcessUtilities.exec).lastCalledWith(cmd, opts, expect.any(Function));
+      expect(ChildProcessUtilities.exec).lastCalledWith(cmd, scriptArgs, opts, expect.any(Function));
     });
   });
 
@@ -146,19 +151,17 @@ describe("NpmUtilities", () => {
 
       expect(ChildProcessUtilities.spawnStreaming).lastCalledWith(
         "npm",
-        ["run", script, ...args],
+        ["run", "foo", "--bar", "baz"],
         {
           cwd: pkg.location,
-          env: process.env,
         },
-        "qux: ",
+        "qux",
         expect.any(Function)
       );
     });
   });
 
   describe(".publishTaggedInDir()", () => {
-    const tag = "published-tag";
     const directory = "/test/publishTaggedInDir";
     const callback = () => {};
 
@@ -166,27 +169,29 @@ describe("NpmUtilities", () => {
     afterEach(resetExecOpts);
 
     it("runs npm publish in a directory with --tag support", () => {
-      NpmUtilities.publishTaggedInDir(tag, directory, undefined, callback);
+      NpmUtilities.publishTaggedInDir("published-tag", directory, undefined, callback);
 
-      const cmd = `npm publish --tag ${tag}`;
+      const cmd = "npm";
+      const args = ["publish", "--tag", "published-tag"];
       const opts = { directory, registry: undefined };
-      expect(ChildProcessUtilities.exec).lastCalledWith(cmd, opts, expect.any(Function));
+      expect(ChildProcessUtilities.exec).lastCalledWith(cmd, args, opts, expect.any(Function));
     });
 
     it("trims trailing whitespace in tag parameter", () => {
-      NpmUtilities.publishTaggedInDir(`${tag}  `, directory, callback);
+      NpmUtilities.publishTaggedInDir("trailing-tag  ", directory, callback);
 
-      const actualCommand = ChildProcessUtilities.exec.mock.calls[0][0];
-      expect(actualCommand).toBe(`npm publish --tag ${tag}`);
+      const actualtag = ChildProcessUtilities.exec.mock.calls[0][1][2];
+      expect(actualtag).toBe("trailing-tag");
     });
 
     it("supports custom registry", () => {
       const registry = "https://custom-registry/publishTaggedInDir";
-      NpmUtilities.publishTaggedInDir(tag, directory, registry, callback);
+      NpmUtilities.publishTaggedInDir("published-tag", directory, registry, callback);
 
-      const cmd = `npm publish --tag ${tag}`;
+      const cmd = "npm";
+      const args = ["publish", "--tag", "published-tag"];
       const opts = { directory, registry };
-      expect(ChildProcessUtilities.exec).lastCalledWith(cmd, opts, expect.any(Function));
+      expect(ChildProcessUtilities.exec).lastCalledWith(cmd, args, opts, expect.any(Function));
     });
   });
 
@@ -228,7 +233,7 @@ describe("NpmUtilities", () => {
 
     beforeEach(() => {
       stubExecOpts();
-      ChildProcessUtilities.spawn.mockImplementation(callbackSuccess);
+      ChildProcessUtilities.exec.mockImplementation(callbackSuccess);
       FileSystemUtilities.rename.mockImplementation(callbackSuccess);
       writePkg.mockImplementation(() => Promise.resolve());
     });
@@ -269,10 +274,9 @@ describe("NpmUtilities", () => {
               },
             },
           );
-          expect(ChildProcessUtilities.spawn).lastCalledWith("npm", ["install"], {
+          expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["install"], {
             directory,
             registry: undefined,
-            stdio: ["ignore", "pipe", "pipe"],
           }, expect.any(Function));
 
           done();
@@ -305,7 +309,7 @@ describe("NpmUtilities", () => {
               },
             },
           );
-          expect(ChildProcessUtilities.spawn.mock.calls[0][2]).toMatchObject({
+          expect(ChildProcessUtilities.exec.mock.calls[0][2]).toMatchObject({
             registry,
           });
 
@@ -338,10 +342,9 @@ describe("NpmUtilities", () => {
               },
             },
           );
-          expect(ChildProcessUtilities.spawn).lastCalledWith("yarn", ["install"], {
+          expect(ChildProcessUtilities.exec).lastCalledWith("yarn", ["install"], {
             directory,
             registry: undefined,
-            stdio: ["ignore", "pipe", "pipe"],
           }, expect.any(Function));
 
           done();
@@ -451,7 +454,7 @@ describe("NpmUtilities", () => {
       ];
       const config = {};
 
-      ChildProcessUtilities.spawn.mockImplementation((client, args, opts, cb) => {
+      ChildProcessUtilities.exec.mockImplementation((client, args, opts, cb) => {
         return cb(new Error("Unable to install dependency"));
       });
 

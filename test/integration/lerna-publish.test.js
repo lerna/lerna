@@ -23,10 +23,10 @@ describe("lerna publish", () => {
         return Promise.all([
           loadAllPackages(cwd),
           lastCommitMessage(cwd),
-        ]).then(([allPackageJsons, commitMessage]) => {
-          expect(allPackageJsons).toMatchSnapshot("packages: updates fixed versions");
-          expect(commitMessage).toMatchSnapshot("commit: updates fixed versions");
-        });
+        ]);
+      }).then(([allPackageJsons, commitMessage]) => {
+        expect(allPackageJsons).toMatchSnapshot("packages: updates fixed versions");
+        expect(commitMessage).toMatchSnapshot("commit: updates fixed versions");
       });
     });
   });
@@ -46,10 +46,10 @@ describe("lerna publish", () => {
         return Promise.all([
           loadAllPackages(cwd),
           lastCommitMessage(cwd),
-        ]).then(([allPackageJsons, commitMessage]) => {
-          expect(allPackageJsons).toMatchSnapshot("packages: updates independent versions");
-          expect(commitMessage).toMatchSnapshot("commit: updates independent versions");
-        });
+        ]);
+      }).then(([allPackageJsons, commitMessage]) => {
+        expect(allPackageJsons).toMatchSnapshot("packages: updates independent versions");
+        expect(commitMessage).toMatchSnapshot("commit: updates independent versions");
       });
     });
   });

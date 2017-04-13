@@ -31,7 +31,8 @@ describe("ConventionalCommitUtilities", () => {
 
       expect(recommendVersion).toBe("2.0.0");
       expect(ChildProcessUtilities.execSync).lastCalledWith(
-        `${require.resolve("conventional-recommended-bump/cli.js")} -l bar --commit-path=/foo/bar -p angular`,
+        "conventional-recommended-bump",
+        ["-l", "bar", "--commit-path", "/foo/bar", "-p", "angular"],
         opts,
       );
     });
@@ -53,7 +54,8 @@ describe("ConventionalCommitUtilities", () => {
         path.normalize("/foo/bar/CHANGELOG.md")
       );
       expect(ChildProcessUtilities.execSync).lastCalledWith(
-        `${require.resolve("conventional-changelog-cli/cli.js")} -l bar --commit-path=/foo/bar --pkg=${path.normalize("/foo/bar/package.json")} -p angular`,
+        "conventional-changelog",
+        ["-l", "bar", "--commit-path", "/foo/bar", "--pkg", path.normalize("/foo/bar/package.json"), "-p", "angular"],
         opts,
       );
       expect(FileSystemUtilities.writeFileSync).lastCalledWith(

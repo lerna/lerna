@@ -12,6 +12,11 @@ function ensureEndsWithNewLine(string) {
   return ENDS_WITH_NEW_LINE.test(string) ? string : string + "\n";
 }
 
+// globs only return directories with a trailing slash
+function trailingSlash(filePath) {
+  return path.normalize(`${filePath}/`);
+}
+
 export default class FileSystemUtilities {
   @logger.logifyAsync()
   static mkdirp(filePath, callback) {
@@ -59,16 +64,14 @@ export default class FileSystemUtilities {
   }
 
   @logger.logifyAsync()
-  static rimraf(filePath, callback) {
-
+  static rimraf(dirPath, callback) {
     // Shelling out to a child process for a noop is expensive.
-    // Checking if `filePath` exists to be removed is cheap.
+    // Checking if `dirPath` exists to be removed is cheap.
     // This lets us short-circuit if we don't have anything to do.
-    pathExists(filePath).then((exists) => {
+    pathExists(dirPath).then((exists) => {
       if (!exists) return callback();
 
-      // Note: if rimraf moves the location of its executable, this will need to be updated
-      ChildProcessUtilities.spawn(require.resolve("rimraf/bin"), [filePath], {}, callback);
+      ChildProcessUtilities.spawn("rimraf", ["--no-glob", trailingSlash(dirPath)], {}, callback);
     });
   }
 

@@ -15,7 +15,6 @@ export const builder = {
     type: "number",
     requiresArg: true,
     default: DEFAULT_CONCURRENCY,
-    coerce: (val) => Math.max(1, val)
   },
   "ignore": {
     describe: "Ignores packages with names matching the given glob (Works only in combination with the "
@@ -41,6 +40,7 @@ export const builder = {
   },
   "sort": {
     describe: "Sort packages topologically",
+    type: "boolean",
     default: true
   }
 };
