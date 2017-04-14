@@ -31,6 +31,21 @@ describe("lerna publish", () => {
     });
   });
 
+  test.concurrent("validates --cd-version", () => {
+    return initFixture("PublishCommand/normal").then((cwd) => {
+      const args = [
+        "publish",
+        "--skip-npm",
+        "--cd-version=nope",
+        "--yes",
+      ];
+
+      return execa(LERNA_BIN, args, { cwd }).catch((error) => {
+        expect(error).toMatchSnapshot("stdout: validates cd-version");
+      });
+    });
+  });
+
   test.concurrent("updates independent versions", () => {
     return initFixture("PublishCommand/independent").then((cwd) => {
       const args = [
