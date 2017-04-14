@@ -27,7 +27,6 @@ export const builder = {
     type: "string"
   },
   "npm-client": {
-    default: "npm",
     describe: "Executable used to install dependencies (npm, yarn, pnpm, ...)",
     type: "string",
     requiresArg: true,
