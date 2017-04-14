@@ -1,3 +1,4 @@
+import getPort from "get-port";
 import FileSystemUtilities from "../FileSystemUtilities";
 import NpmUtilities from "../NpmUtilities";
 import PackageUtilities from "../PackageUtilities";
@@ -28,20 +29,29 @@ export const builder = {
   "npm-client": {
     describe: "Executable used to install dependencies (npm, yarn, pnpm, ...)",
     type: "string",
-    requiresArg: true
+    requiresArg: true,
   }
 };
 
 export default class BootstrapCommand extends Command {
   initialize(callback) {
+    const { registry, npmClient } = this.options;
+
     this.npmConfig = {
-      registry: this.npmRegistry,
-      client: this.options.npmClient,
+      registry,
+      npmClient,
     };
 
     this.batchedPackages = this.toposort
       ? PackageUtilities.topologicallyBatchPackages(this.filteredPackages, { logger: this.logger })
       : [ this.filteredPackages ];
+
+    if (npmClient === "yarn") {
+      return getPort(42424).then((port) => {
+        this.npmConfig.mutex = `network:${port}`;
+        callback(null, true);
+      }).catch(callback);
+    }
 
     callback(null, true);
   }

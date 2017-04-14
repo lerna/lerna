@@ -51,11 +51,16 @@ export default class NpmUtilities {
 
       // Write out our temporary cooked up package.json and then install.
       writePkg(packageJson, tempJson).then(() => {
+        // build command, arguments, and options
         const opts = NpmUtilities.getExecOpts(directory, config.registry);
         const args = ["install"];
-        const client = config.client || "npm";
+        const cmd = config.npmClient || "npm";
 
-        ChildProcessUtilities.exec(client, args, opts, done);
+        if (cmd === "yarn" && config.mutex) {
+          args.push("--mutex", config.mutex);
+        }
+
+        ChildProcessUtilities.exec(cmd, args, opts, done);
       }).catch(done);
     });
   }

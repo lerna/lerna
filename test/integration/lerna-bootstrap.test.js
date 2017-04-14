@@ -1,4 +1,6 @@
 import execa from "execa";
+import globby from "globby";
+import normalizePath from "normalize-path";
 import initFixture from "../helpers/initFixture";
 import { LERNA_BIN } from "../helpers/constants";
 
@@ -34,6 +36,25 @@ describe("lerna bootstrap", () => {
           .then(() => execa(LERNA_BIN, ["bootstrap", "--ignore", "@integration/package-1"], { cwd }))
           .then((result) => {
             expect(result.stdout).toMatchSnapshot("stdout: --ignore");
+          });
+      });
+    });
+
+    test.concurrent("--npm-client yarn", () => {
+      return initFixture("BootstrapCommand/integration").then((cwd) => {
+        return Promise.resolve()
+          .then(() => execa(LERNA_BIN, ["bootstrap", "--npm-client", "yarn"], { cwd }))
+          .then((result) => {
+            expect(result.stdout).toMatchSnapshot("stdout: --npm-client yarn");
+          })
+          .then(() => globby(["package-*/yarn.lock"], { cwd }))
+          .then((lockfiles) => lockfiles.map((fp) => normalizePath(fp)))
+          .then((lockfiles) => {
+            expect(lockfiles).toMatchSnapshot("lockfiles: --npm-client yarn");
+          })
+          .then(() => execa(LERNA_BIN, ["run", "test", "--", "--silent"], { cwd }))
+          .then((result) => {
+            expect(result.stdout).toMatchSnapshot("stdout: --npm-client yarn");
           });
       });
     });

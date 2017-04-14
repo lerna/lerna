@@ -327,7 +327,8 @@ describe("NpmUtilities", () => {
         "something@github:foo/foo",
       ];
       const config = {
-        client: "yarn",
+        npmClient: "yarn",
+        mutex: "network:12345",
       };
 
       NpmUtilities.installInDir(directory, dependencies, config, (err) => {
@@ -342,10 +343,15 @@ describe("NpmUtilities", () => {
               },
             },
           );
-          expect(ChildProcessUtilities.exec).lastCalledWith("yarn", ["install"], {
-            directory,
-            registry: undefined,
-          }, expect.any(Function));
+          expect(ChildProcessUtilities.exec).lastCalledWith(
+            "yarn",
+            ["install", "--mutex", "network:12345"],
+            {
+              directory,
+              registry: undefined,
+            },
+            expect.any(Function)
+          );
 
           done();
         } catch (ex) {

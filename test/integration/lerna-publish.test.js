@@ -1,7 +1,7 @@
 import execa from "execa";
 import normalizeNewline from "normalize-newline";
 import initFixture from "../helpers/initFixture";
-import { loadAllPackages } from "../helpers/packageTools";
+import loadPkgManifests from "../helpers/loadPkgManifests";
 import { LERNA_BIN } from "../helpers/constants";
 
 const lastCommitMessage = (cwd) =>
@@ -21,7 +21,7 @@ describe("lerna publish", () => {
         expect(result.stdout).toMatchSnapshot("stdout: updates fixed versions");
 
         return Promise.all([
-          loadAllPackages(cwd),
+          loadPkgManifests(cwd),
           lastCommitMessage(cwd),
         ]);
       }).then(([allPackageJsons, commitMessage]) => {
@@ -44,7 +44,7 @@ describe("lerna publish", () => {
         expect(result.stdout).toMatchSnapshot("stdout: updates independent versions");
 
         return Promise.all([
-          loadAllPackages(cwd),
+          loadPkgManifests(cwd),
           lastCommitMessage(cwd),
         ]);
       }).then(([allPackageJsons, commitMessage]) => {

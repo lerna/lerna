@@ -362,6 +362,30 @@ describe("BootstrapCommand", () => {
         }
       }));
     });
+
+    it("gets network mutex when --npm-client=yarn", (done) => {
+      const bootstrapCommand = new BootstrapCommand([], {
+        npmClient: "yarn",
+      }, testDir);
+
+      bootstrapCommand.runValidations();
+      bootstrapCommand.runPreparations();
+
+      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          expect(NpmUtilities.installInDir.mock.calls[0][2]).toMatchObject({
+            npmClient: "yarn",
+            mutex: expect.stringMatching(/^network:\d+$/),
+          });
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
   });
 
   describe("with external dependencies that have already been installed", () => {
@@ -481,7 +505,7 @@ describe("BootstrapCommand", () => {
         try {
           expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
           expect(NpmUtilities.installInDir.mock.calls[0][2]).toEqual({
-            client: undefined,
+            npmClient: undefined,
             registry: "https://my-secure-registry/npm",
           });
 

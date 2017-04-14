@@ -1,6 +1,6 @@
 import execa from "execa";
 import initFixture from "../helpers/initFixture";
-import { loadAllPackages } from "../helpers/packageTools";
+import loadPkgManifests from "../helpers/loadPkgManifests";
 import { LERNA_BIN } from "../helpers/constants";
 
 describe("lerna import", () => {
@@ -16,7 +16,7 @@ describe("lerna import", () => {
       ];
 
       return execa(LERNA_BIN, args, { cwd: basicPath })
-        .then(() => loadAllPackages(basicPath))
+        .then(() => loadPkgManifests(basicPath))
         .then((allPackageJsons) => {
           expect(allPackageJsons).toMatchSnapshot("simple: import with argument");
         });
