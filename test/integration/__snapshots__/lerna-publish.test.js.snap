@@ -113,3 +113,39 @@ Changes:
 
 Assuming confirmation."
 `;
+
+exports[`stdout: validates cd-version 1`] = `
+[Error: Command failed: /home/noherczeg/work/blackbelt/lerna/bin/lerna.js publish --skip-npm --cd-version=nope --yes
+/home/noherczeg/work/blackbelt/lerna/bin/lerna.js publish
+
+Global Options:
+  --loglevel                       What level of logs to report.  [string] [default: "info"]
+  --concurrency                    How many threads to use if lerna parallelises the tasks.  [number] [default: 4]
+  --scope                          Restricts the scope to package names matching the given glob.
+                                   (Only for 'run', 'exec', 'clean', 'ls', and 'bootstrap' commands)  [string]
+  --ignore                         Ignore packages with names matching the given glob.
+                                   (Only for 'run', 'exec', 'clean', 'ls', and 'bootstrap' commands)  [string]
+  --include-filtered-dependencies  Include all transitive dependencies when running a command, regardless of --scope or --ignore.
+  --registry                       Use the specified registry for all npm client operations.  [string]
+  --sort                           Sort packages topologically (all dependencies before dependents)  [boolean] [default: true]
+  -h, --help                       Show help  [boolean]
+  -v, --version                    Show version number  [boolean]
+
+Options:
+  --canary, -c            Publish packages after every successful merge using the sha as part of the tag.
+  --cd-version            Skip the version selection prompt and increment semver 'major', 'minor', or 'patch'.  [string] [choices: "major", "minor", "patch"]
+  --conventional-commits  Use angular conventional-commit format to determine version bump and generate CHANGELOG.
+  --exact                 Specify cross-dependency version numbers exactly rather than with a caret (^).
+  --git-remote            Push git changes to the specified remote instead of 'origin'.  [string] [default: origin]
+  --yes                   Skip all confirmation prompts.
+  --message, -m           Use a custom commit message when creating the publish commit.  [string]
+  --npm-tag               Publish packages with the specified npm dist-tag  [string]
+  --repo-version          Specify repo version to publish.  [string]
+  --skip-git              Skip commiting, tagging, and pushing git changes.
+  --skip-npm              Stop before actually publishing change to npm.
+  --skip-temp-tag         Do not create a temporary tag while publishing.
+
+Invalid values:
+  Argument: cd-version, Given: "nope", Choices: "major", "minor", "patch"
+]
+`;

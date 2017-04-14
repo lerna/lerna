@@ -31,12 +31,7 @@ export const builder = {
     describe: "Skip the version selection prompt and increment semver 'major', 'minor', or 'patch'.",
     type: "string",
     requiresArg: true,
-    coerce: (choice) => {
-      if (!["major", "minor", "patch"].some((inc) => choice === inc)) {
-        throw new Error(`--cd-version must be one of 'major', 'minor', or 'patch', got '${choice}'`);
-      }
-      return choice;
-    },
+    choices: ["major", "minor", "patch"]
   },
   "conventional-commits": {
     describe: "Use angular conventional-commit format to determine version bump and generate CHANGELOG."
