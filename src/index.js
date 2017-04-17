@@ -8,9 +8,8 @@ import InitCommand from "./commands/InitCommand";
 import RunCommand from "./commands/RunCommand";
 import ExecCommand from "./commands/ExecCommand";
 import LsCommand from "./commands/LsCommand";
-import {exposeCommands} from "./Command";
 
-export const __commands__ = exposeCommands([
+export default {
   BootstrapCommand,
   PublishCommand,
   UpdatedCommand,
@@ -20,13 +19,5 @@ export const __commands__ = exposeCommands([
   InitCommand,
   RunCommand,
   ExecCommand,
-  LsCommand,
-]);
-
-import PackageUtilities from "./PackageUtilities";
-
-export const getPackagesPath = PackageUtilities.getPackagesPath;
-export const getPackagePath = PackageUtilities.getPackagePath;
-export const getPackageConfigPath = PackageUtilities.getPackageConfigPath;
-export const getPackageConfig = PackageUtilities.getPackageConfig;
-export const getPackages = PackageUtilities.getPackages;
+  LsCommand
+};

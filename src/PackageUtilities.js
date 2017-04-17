@@ -1,32 +1,43 @@
-import FileSystemUtilities from "./FileSystemUtilities";
 import PackageGraph from "./PackageGraph";
 import Package from "./Package";
 import path from "path";
-import {sync as globSync} from "glob";
+import glob from "glob";
 import minimatch from "minimatch";
+import readPkg from "read-pkg";
 import async from "async";
 
+/**
+* A predicate that determines if a given package name satisfies a glob.
+*
+* @param {!String} name The package name
+* @param {String|Array<String>} glob The glob (or globs) to match a package name against
+* @param {Boolean} negate Negate glob pattern matches
+* @return {Boolean} The packages with a name matching the glob
+*/
+function filterPackage(name, glob, negate) {
+  // If there isn't a filter then we can just return the package.
+  if (!glob) return true;
+
+  // Include/exlude with no arguments implies splat.
+  // For example: `--hoist` is equivalent to `--hoist=**`.
+  // The double star here is to account for scoped packages.
+  if (glob === true) glob = "**";
+
+  if (!Array.isArray(glob)) glob = [glob];
+
+  if (negate) {
+    return glob.every((glob) => !minimatch(name, glob));
+  } else {
+    return glob.some((glob) => minimatch(name, glob));
+  }
+}
+
 export default class PackageUtilities {
-  static getGlobalVersion(versionPath) {
-    if (FileSystemUtilities.existsSync(versionPath)) {
-      return FileSystemUtilities.readFileSync(versionPath);
-    }
-  }
-
-  static getPackagesPath(rootPath) {
-    return path.join(rootPath, "packages");
-  }
-
-  static getPackagePath(packagesPath, name) {
-    return path.join(packagesPath, name);
-  }
-
-  static getPackageConfigPath(packagesPath, name) {
-    return path.join(PackageUtilities.getPackagePath(packagesPath, name), "package.json");
-  }
-
-  static getPackageConfig(packagesPath, name) {
-    return require(PackageUtilities.getPackageConfigPath(packagesPath, name));
+  static isHoistedPackage(name, hoist, nohoist) {
+    return (
+      filterPackage(name, hoist) &&
+      filterPackage(name, nohoist, true)
+    );
   }
 
   static getPackages({
@@ -34,29 +45,29 @@ export default class PackageUtilities {
     rootPath,
   }) {
     const packages = [];
+    const globOpts = {
+      cwd: rootPath,
+      strict: true,
+      absolute: true,
+    };
 
     packageConfigs.forEach((globPath) => {
-
-      globSync(path.join(rootPath, globPath, "package.json"))
-        .map((fn) => path.resolve(fn))
-        .forEach((packageConfigPath) => {
-          const packagePath = path.dirname(packageConfigPath);
-
-          if (!FileSystemUtilities.existsSync(packageConfigPath)) {
-            return;
-          }
-
-          const packageJson = require(packageConfigPath);
-          const pkg = new Package(packageJson, packagePath);
-
-          packages.push(pkg);
+      glob.sync(path.join(globPath, "package.json"), globOpts)
+        .forEach((globResult) => {
+          // https://github.com/isaacs/node-glob/blob/master/common.js#L104
+          // glob always returns "\\" as "/" in windows, so everyone
+          // gets normalized because we can't have nice things.
+          const packageConfigPath = path.normalize(globResult);
+          const packageDir = path.dirname(packageConfigPath);
+          const packageJson = readPkg.sync(packageConfigPath, { normalize: false });
+          packages.push(new Package(packageJson, packageDir));
         });
     });
 
     return packages;
   }
 
-  static getPackageGraph(packages, depsOnly = false) {
+  static getPackageGraph(packages, depsOnly) {
     return new PackageGraph(packages, depsOnly);
   }
 
@@ -71,6 +82,7 @@ export default class PackageUtilities {
   */
   static addDependencies(packages, packageGraph) {
     const dependentPackages = [];
+
     // the current list of packages we are expanding using breadth-first-search
     const fringe = packages.slice();
     const packageExistsInRepository = (packageName) => (!!packageGraph.get(packageName));
@@ -80,11 +92,13 @@ export default class PackageUtilities {
     while (fringe.length !== 0) {
       const pkg = fringe.shift();
       const pkgDeps = Object.assign({}, pkg.dependencies, pkg.devDependencies);
+
       Object.keys(pkgDeps).forEach((dep) => {
         if (packageExistsInRepository(dep) && !packageAlreadyFound(dep) && !packageInFringe(dep)) {
           fringe.push(packageGraph.get(dep).package);
         }
       });
+
       dependentPackages.push(pkg);
     }
 
@@ -95,73 +109,36 @@ export default class PackageUtilities {
   * Filters a given set of packages and returns all packages that match the scope glob
   * and do not match the ignore glob
   *
-  * @param {!Array.<Package>} packages The packages to filter
+  * @param {!Array.<Package>} packagesToFilter The packages to filter
   * @param {Object} filters The scope and ignore filters.
   * @param {String} filters.scope glob The glob to match the package name against
   * @param {String} filters.ignore glob The glob to filter the package name against
   * @return {Array.<Package>} The packages with a name matching the glob
+  * @throws when a given glob would produce an empty list of packages
   */
-  static filterPackages(packages, {scope, ignore}) {
-    packages = packages.slice();
+  static filterPackages(packagesToFilter, { scope, ignore }) {
+    let packages = packagesToFilter.slice();
+
     if (scope) {
-      packages = PackageUtilities._filterPackages(packages, scope);
+      packages = packages.filter((pkg) => filterPackage(pkg.name, scope));
+
+      if (!packages.length) {
+        throw new Error(`No packages found that match scope '${scope}'`);
+      }
     }
+
     if (ignore) {
-      packages = PackageUtilities._filterPackages(packages, ignore, true);
+      packages = packages.filter((pkg) => filterPackage(pkg.name, ignore, true));
+
+      if (!packages.length) {
+        throw new Error(`No packages remain after ignoring '${ignore}'`);
+      }
     }
+
     return packages;
   }
 
-  /**
-  * Filters a given set of packages and returns all packages matching the given glob
-  *
-  * @param {!Array.<Package>} packages The packages to filter
-  * @param {String} glob The glob to match the package name against
-  * @param {Boolean} negate Negate glob pattern matches
-  * @return {Array.<Package>} The packages with a name matching the glob
-  * @throws in case a given glob would produce an empty list of packages
-  */
-  static _filterPackages(packages, glob, negate = false) {
-
-    packages = packages.filter((pkg) => PackageUtilities.filterPackage(pkg, glob, negate));
-
-    if (!packages.length) {
-      throw new Error(`No packages found that match '${glob}'`);
-    }
-    return packages;
-  }
-
-  static filterPackage(pkg, glob, negate = false) {
-
-    // If there isn't a filter then we can just return the package.
-    if (!glob) return true;
-
-    // Include/exlude with no arguments implies splat.
-    // For example: `--hoist` is equivalent to `--hoist=**`.
-    // The double star here is to account for scoped packages.
-    if (glob === true) glob = "**";
-
-    if (!Array.isArray(glob)) glob = [glob];
-
-    if (negate) {
-      return glob.every((glob) => !minimatch(pkg.name, glob));
-    } else {
-      return glob.some((glob) => minimatch(pkg.name, glob));
-    }
-  }
-
-  static getFilteredPackage(pkg, {scope, ignore}) {
-
-    return (
-      PackageUtilities.filterPackage(pkg, scope) &&
-      PackageUtilities.filterPackage(pkg, ignore, true)
-    ) && pkg;
-  }
-
-  static topologicallyBatchPackages(packagesToBatch, {
-    depsOnly = false,
-    logger = null,
-  } = {}) {
+  static topologicallyBatchPackages(packagesToBatch, { depsOnly, logger } = {}) {
     // We're going to be chopping stuff out of this array, so copy it.
     const packages = packagesToBatch.slice();
     const packageGraph = PackageUtilities.getPackageGraph(packages, depsOnly);
@@ -193,9 +170,9 @@ export default class PackageUtilities {
           );
         }
 
-        batch.push(packages.reduce((a, b) => (
-          (refCounts[a.name] || 0) > (refCounts[b.name] || 0) ? a : b
-        )));
+        batch.push(packages.reduce((a, b) => {
+          return (refCounts[a.name] || 0) > (refCounts[b.name] || 0) ? a : b;
+        }));
       }
 
       batches.push(batch);

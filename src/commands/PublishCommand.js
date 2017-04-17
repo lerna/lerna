@@ -1,3 +1,5 @@
+import writePkg from "write-pkg";
+import writeJsonFile from "write-json-file";
 import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
 import ConventionalCommitUtilities from "../ConventionalCommitUtilities";
 import FileSystemUtilities from "../FileSystemUtilities";
@@ -12,8 +14,75 @@ import chalk from "chalk";
 import path from "path";
 import { EOL } from "os";
 
+export function handler(argv) {
+  return new PublishCommand(argv._, argv).run();
+}
+
+export const command = "publish";
+
+export const describe = "Publish packages in the current project.";
+
+export const builder = {
+  "canary": {
+    describe: "Publish packages after every successful merge using the sha as part of the tag.",
+    alias: "c"
+  },
+  "cd-version": {
+    describe: "Skip the version selection prompt and increment semver 'major', 'minor', or 'patch'.",
+    type: "string",
+    requiresArg: true,
+    coerce: (choice) => {
+      if (!["major", "minor", "patch"].some((inc) => choice === inc)) {
+        throw new Error(`--cd-version must be one of 'major', 'minor', or 'patch', got '${choice}'`);
+      }
+      return choice;
+    },
+  },
+  "conventional-commits": {
+    describe: "Use angular conventional-commit format to determine version bump and generate CHANGELOG."
+  },
+  "exact": {
+    describe: "Specify cross-dependency version numbers exactly rather than with a caret (^)."
+  },
+  "git-remote": {
+    defaultDescription: "origin",
+    describe: "Push git changes to the specified remote instead of 'origin'.",
+    type: "string",
+    requiresArg: true
+  },
+  "yes": {
+    describe: "Skip all confirmation prompts."
+  },
+  "message": {
+    describe: "Use a custom commit message when creating the publish commit.",
+    alias: "m",
+    type: "string",
+    requiresArg: true
+  },
+  "npm-tag": {
+    describe: "Publish packages with the specified npm dist-tag",
+    type: "string",
+    requiresArg: true
+  },
+  "repo-version": {
+    describe: "Specify repo version to publish.",
+    type: "string",
+    requiresArg: true
+  },
+  "skip-git": {
+    describe: "Skip commiting, tagging, and pushing git changes."
+  },
+  "skip-npm": {
+    describe: "Stop before actually publishing change to npm."
+  },
+  "skip-temp-tag": {
+    describe: "Do not create a temporary tag while publishing."
+  }
+};
+
 export default class PublishCommand extends Command {
   initialize(callback) {
+    this.gitRemote = this.options.gitRemote || "origin";
     this.gitEnabled = !(this.flags.canary || this.flags.skipGit);
 
     if (this.flags.canary) {
@@ -59,7 +128,8 @@ export default class PublishCommand extends Command {
         return;
       }
 
-      let {version, versions} = results;
+      const version = results.version;
+      let versions = results.versions;
 
       if (!versions) {
         versions = {};
@@ -90,7 +160,7 @@ export default class PublishCommand extends Command {
 
   execute(callback) {
     try {
-      if (this.gitEnabled && GitUtilities.isDetachedHead()) {
+      if (this.gitEnabled && GitUtilities.isDetachedHead(this.execOpts)) {
         throw new Error("Detached git HEAD, please checkout a branch to publish changes.");
       }
 
@@ -116,7 +186,6 @@ export default class PublishCommand extends Command {
   }
 
   publishPackagesToNpm(callback) {
-
     this.logger.newLine();
     this.logger.info("Publishing packages to npm...");
 
@@ -129,7 +198,7 @@ export default class PublishCommand extends Command {
       if (this.flags.canary) {
         this.logger.info("Resetting git state");
         // reset since the package.json files are changed
-        GitUtilities.checkoutChanges("packages/*/package.json");
+        GitUtilities.checkoutChanges("packages/*/package.json", this.execOpts);
       }
 
       this.npmUpdateAsLatest((err) => {
@@ -141,7 +210,7 @@ export default class PublishCommand extends Command {
         if (this.gitEnabled) {
           this.logger.info("Pushing tags to git...");
           this.logger.newLine();
-          GitUtilities.pushWithTags(this.getOptions().gitRemote || "origin", this.tags);
+          GitUtilities.pushWithTags(this.gitRemote, this.tags, this.execOpts);
         }
 
         let message = "Successfully published:";
@@ -158,24 +227,20 @@ export default class PublishCommand extends Command {
 
   getVersionsForUpdates(callback) {
     if (this.flags.cdVersion) {
-      // Allows automatic bumping to next semver via cdVersion flag
-      if (this.flags.cdVersion === "patch" ||
-          this.flags.cdVersion === "minor" ||
-          this.flags.cdVersion === "major"
-      ) {
-        // If the version is independent then send versions
-        if (this.repository.isIndependent()) {
-          const versions = {};
-          this.updates.forEach((update) => {
-            versions[update.package.name] = semver.inc(update.package.version, this.flags.cdVersion);
-          });
-          return callback(null, { versions });
-        }
+      // If the version is independent then send versions
+      if (this.repository.isIndependent()) {
+        const versions = {};
 
-        // Otherwise bump the global version
-        const version = semver.inc(this.globalVersion, this.flags.cdVersion);
-        return callback(null, { version });
+        this.updates.forEach((update) => {
+          versions[update.package.name] = semver.inc(update.package.version, this.flags.cdVersion);
+        });
+
+        return callback(null, { versions });
       }
+
+      // Otherwise bump the global version
+      const version = semver.inc(this.globalVersion, this.flags.cdVersion);
+      return callback(null, { version });
     }
 
     if (this.flags.repoVersion) {
@@ -218,7 +283,7 @@ export default class PublishCommand extends Command {
           name: update.package.name,
           version: update.package.version,
           location: update.package.location
-        });
+        }, this.execOpts);
       });
       callback(null, { versions });
 
@@ -241,7 +306,7 @@ export default class PublishCommand extends Command {
   }
 
   getCanaryVersionSuffix() {
-    return "-alpha." + GitUtilities.getCurrentSHA().slice(0, 8);
+    return "-alpha." + GitUtilities.getCurrentSHA(this.execOpts).slice(0, 8);
   }
 
   promptVersion(packageName, currentVersion, callback) {
@@ -271,40 +336,40 @@ export default class PublishCommand extends Command {
     }, (choice) => {
       switch (choice) {
 
-      case "CUSTOM": {
-        PromptUtilities.input("Enter a custom version", {
-          filter: semver.valid,
-          validate: (v) => semver.valid(v) ? true : "Must be a valid semver version",
-        }, (input) => {
-          callback(null, input);
-        });
-        break;
-      }
-
-      case "PRERELEASE": {
-        const components = semver.prerelease(currentVersion);
-        let existingId = null;
-        if (components && components.length === 2) {
-          existingId = components[0];
+        case "CUSTOM": {
+          PromptUtilities.input("Enter a custom version", {
+            filter: semver.valid,
+            validate: (v) => semver.valid(v) || "Must be a valid semver version",
+          }, (input) => {
+            callback(null, input);
+          });
+          break;
         }
-        const defaultVersion = semver.inc(currentVersion, "prerelease", existingId);
-        const prompt = `(default: ${existingId ? `"${existingId}"` : "none"}, yielding ${defaultVersion})`;
 
-        PromptUtilities.input(`Enter a prerelease identifier ${prompt}`, {
-          filter: (v) => {
-            const prereleaseId = v ? v : existingId;
-            return semver.inc(currentVersion, "prerelease", prereleaseId);
-          },
-        }, (input) => {
-          callback(null, input);
-        });
-        break;
-      }
+        case "PRERELEASE": {
+          const components = semver.prerelease(currentVersion);
+          let existingId = null;
+          if (components && components.length === 2) {
+            existingId = components[0];
+          }
+          const defaultVersion = semver.inc(currentVersion, "prerelease", existingId);
+          const prompt = `(default: ${existingId ? `"${existingId}"` : "none"}, yielding ${defaultVersion})`;
 
-      default: {
-        callback(null, choice);
-        break;
-      }
+          PromptUtilities.input(`Enter a prerelease identifier ${prompt}`, {
+            filter: (v) => {
+              const prereleaseId = v ? v : existingId;
+              return semver.inc(currentVersion, "prerelease", prereleaseId);
+            },
+          }, (input) => {
+            callback(null, input);
+          });
+          break;
+        }
+
+        default: {
+          callback(null, choice);
+          break;
+        }
 
       }
     });
@@ -315,7 +380,11 @@ export default class PublishCommand extends Command {
     this.logger.info("Changes:");
     this.logger.info(this.updates.map((update) => {
       const pkg = update.package;
-      return `- ${pkg.name}: ${pkg.version} => ${this.updatesVersions[pkg.name]}${pkg.isPrivate() ? ` (${chalk.red("private")})` : ""}`;
+      let line = `- ${pkg.name}: ${pkg.version} => ${this.updatesVersions[pkg.name]}`;
+      if (pkg.isPrivate()) {
+        line += ` (${chalk.red("private")})`;
+      }
+      return line;
     }).join(EOL));
     this.logger.newLine();
 
@@ -331,14 +400,15 @@ export default class PublishCommand extends Command {
 
   updateVersionInLernaJson() {
     this.repository.lernaJson.version = this.masterVersion;
-    FileSystemUtilities.writeFileSync(this.repository.lernaJsonLocation, JSON.stringify(this.repository.lernaJson, null, 2));
+    writeJsonFile.sync(this.repository.lernaJsonLocation, this.repository.lernaJson, { indent: 2 });
+
     if (!this.flags.skipGit) {
-      GitUtilities.addFile(this.repository.lernaJsonLocation);
+      GitUtilities.addFile(this.repository.lernaJsonLocation, this.execOpts);
     }
   }
 
   updateUpdatedPackages() {
-    const { exact } = this.getOptions();
+    const { exact } = this.options;
     const changedFiles = [];
 
     this.updates.forEach((update) => {
@@ -355,7 +425,10 @@ export default class PublishCommand extends Command {
       this.updatePackageDepsObject(pkg, "peerDependencies", exact);
 
       // write new package
-      FileSystemUtilities.writeFileSync(packageJsonLocation, pkg.toJsonString());
+      writePkg.sync(packageJsonLocation, pkg.toJSON());
+      // NOTE: Object.prototype.toJSON() is normally called when passed to
+      // JSON.stringify(), but write-pkg iterates Object.keys() before serializing
+      // so it has to be explicit here (otherwise it mangles the instance properties)
 
       // we can now generate the Changelog, based on the
       // the updated version that we're about to release.
@@ -363,7 +436,7 @@ export default class PublishCommand extends Command {
         ConventionalCommitUtilities.updateChangelog({
           name: pkg.name,
           location: pkg.location
-        });
+        }, this.execOpts);
         changedFiles.push(ConventionalCommitUtilities.changelogLocation(pkg));
       }
 
@@ -372,7 +445,7 @@ export default class PublishCommand extends Command {
     });
 
     if (this.gitEnabled) {
-      changedFiles.forEach(GitUtilities.addFile);
+      changedFiles.forEach((file) => GitUtilities.addFile(file, this.execOpts));
     }
   }
 
@@ -401,11 +474,14 @@ export default class PublishCommand extends Command {
   }
 
   gitCommitAndTagVersionForUpdates() {
-    const tags = this.updates.map((update) => `${update.package.name}@${this.updatesVersions[update.package.name]}`);
-    const message = this.flags.message || tags.reduce((msg, tag) => msg + `${EOL} - ${tag}`, `Publish${EOL}`);
+    const tags = this.updates.map(({ package: { name } }) =>
+      `${name}@${this.updatesVersions[name]}`
+    );
+    const message = this.flags.message ||
+      tags.reduce((msg, tag) => msg + `${EOL} - ${tag}`, `Publish${EOL}`);
 
-    GitUtilities.commit(message);
-    tags.forEach(GitUtilities.addTag);
+    GitUtilities.commit(message, this.execOpts);
+    tags.forEach((tag) => GitUtilities.addTag(tag, this.execOpts));
 
     return tags;
   }
@@ -414,8 +490,8 @@ export default class PublishCommand extends Command {
     const tag = "v" + version;
     const message = this.flags.message || tag;
 
-    GitUtilities.commit(message);
-    GitUtilities.addTag(tag);
+    GitUtilities.commit(message, this.execOpts);
+    GitUtilities.addTag(tag, this.execOpts);
 
     return tag;
   }
@@ -431,9 +507,9 @@ export default class PublishCommand extends Command {
   }
 
   npmPublishAsPrerelease(callback) {
-    const {skipTempTag} = this.getOptions();
-    // if we skip temp tags we should tag with the proper value immediately therefore no updates will be needed
-    const tag = skipTempTag ? this.getDistTag() : "lerna-temp";
+    // if we skip temp tags we should tag with the proper value immediately
+    // therefore no updates will be needed
+    const tag = this.options.skipTempTag ? this.getDistTag() : "lerna-temp";
 
     this.updates.forEach((update) => {
       this.execScript(update.package, "prepublish");
@@ -480,9 +556,7 @@ export default class PublishCommand extends Command {
   }
 
   npmUpdateAsLatest(callback) {
-    const {skipTempTag} = this.getOptions();
-
-    if (skipTempTag) {
+    if (this.options.skipTempTag) {
       return callback();
     }
 
@@ -522,6 +596,8 @@ export default class PublishCommand extends Command {
       NpmUtilities.removeDistTag(pkg.location, pkg.name, "lerna-temp", this.npmRegistry);
     }
 
+    /* eslint-disable max-len */
+    // TODO: fix this API to be less verbose with parameters
     if (this.flags.npmTag) {
       NpmUtilities.addDistTag(pkg.location, pkg.name, this.updatesVersions[pkg.name], distTag, this.npmRegistry);
     } else if (this.flags.canary) {
@@ -529,10 +605,10 @@ export default class PublishCommand extends Command {
     } else {
       NpmUtilities.addDistTag(pkg.location, pkg.name, this.updatesVersions[pkg.name], distTag, this.npmRegistry);
     }
+    /* eslint-enable max-len */
   }
 
   getDistTag() {
-    const {npmTag, canary} = this.getOptions();
-    return npmTag || (canary && "canary") || "latest";
+    return this.options.npmTag || (this.options.canary && "canary") || "latest";
   }
 }

@@ -1,35 +1,69 @@
-import fs from "graceful-fs";
 import path from "path";
+import tempy from "tempy";
 
-import {
-  mkdirpAsync,
-  rimrafAsync,
-} from "./helpers/fixtureUtils";
+// mocked modules
+import findUp from "find-up";
+import loadJsonFile from "load-json-file";
+import readPkg from "read-pkg";
+import writePkg from "write-pkg";
+import writeJsonFile from "write-json-file";
+import FileSystemUtilities from "../src/FileSystemUtilities";
+import GitUtilities from "../src/GitUtilities";
+
+// helpers
 import initFixture from "./helpers/initFixture";
 
+// file under test
 import InitCommand from "../src/commands/InitCommand";
 
+// from Repository
+jest.mock("find-up");
+jest.mock("load-json-file");
+jest.mock("read-pkg");
+
+// from InitCommand
+jest.mock("write-json-file");
+jest.mock("write-pkg");
+jest.mock("../src/FileSystemUtilities");
+jest.mock("../src/GitUtilities");
+
+const initEmptyDir = () => tempy.directoryAsync();
+
 describe("InitCommand", () => {
+  beforeEach(() => {
+    // defaults for most of these tests
+    GitUtilities.isInitialized = jest.fn(() => true);
+    FileSystemUtilities.existsSync = jest.fn(() => false);
+
+    findUp.sync = jest.fn(() => null);
+    loadJsonFile.sync = jest.fn(() => {
+      throw new Error("ENOENT");
+    });
+    readPkg.sync = jest.fn(() => {
+      throw new Error("ENOENT");
+    });
+  });
+
+  afterEach(() => jest.resetAllMocks());
+
   describe("in an empty directory", () => {
     let testDir;
 
-    beforeEach(() => initFixture("InitCommand/empty").then((dir) => {
+    beforeEach(() => initEmptyDir().then((dir) => {
       testDir = dir;
 
-      // ensure fixture directory is _completely_ empty
-      return Promise.all([".git", "DELETE_ME"].map((fp) =>
-        rimrafAsync(path.join(dir, fp))
-      ));
+      GitUtilities.isInitialized = jest.fn(() => false);
     }));
 
     it("completely ignores validation and preparation lifecycle", () => {
-      const instance = new InitCommand([], {});
+      const instance = new InitCommand([], {}, testDir);
+
       expect(() => instance.runValidations()).not.toThrow();
       expect(() => instance.runPreparations()).not.toThrow();
     });
 
     it("initializes git repo with lerna files", (done) => {
-      const instance = new InitCommand([], {});
+      const instance = new InitCommand([], {}, testDir);
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
@@ -37,25 +71,30 @@ describe("InitCommand", () => {
         try {
           expect(code).toBe(0);
 
-          expect(fs.readdirSync(testDir)).toEqual([
-            ".git",
-            "lerna.json",
-            "package.json",
-          ]);
-
-          const lernaJson = require(path.join(testDir, "lerna.json"));
-          expect(lernaJson).toEqual({
-            lerna: instance.lernaVersion,
-            packages: ["packages/*"],
-            version: "0.0.0",
+          const execOpts = expect.objectContaining({
+            cwd: testDir,
           });
+          expect(GitUtilities.isInitialized).lastCalledWith(execOpts);
+          expect(GitUtilities.init).lastCalledWith(execOpts);
 
-          const packageJson = require(path.join(testDir, "package.json"));
-          expect(packageJson).toEqual({
-            devDependencies: {
-              lerna: `^${instance.lernaVersion}`,
+          expect(writeJsonFile.sync).lastCalledWith(
+            path.join(testDir, "lerna.json"),
+            {
+              lerna: instance.lernaVersion,
+              packages: ["packages/*"],
+              version: "0.0.0",
             },
-          });
+            { indent: 2 }
+          );
+
+          expect(writePkg.sync).lastCalledWith(
+            path.join(testDir, "package.json"),
+            expect.objectContaining({
+              devDependencies: {
+                lerna: `^${instance.lernaVersion}`,
+              },
+            })
+          );
 
           done();
         } catch (ex) {
@@ -67,7 +106,7 @@ describe("InitCommand", () => {
     it("initializes git repo with lerna files in independent mode", (done) => {
       const instance = new InitCommand([], {
         independent: true,
-      });
+      }, testDir);
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
@@ -75,14 +114,13 @@ describe("InitCommand", () => {
         try {
           expect(code).toBe(0);
 
-          expect(fs.readdirSync(testDir)).toEqual([
-            ".git",
-            "lerna.json",
-            "package.json",
-          ]);
-
-          const lernaJson = require(path.join(testDir, "lerna.json"));
-          expect(lernaJson.version).toBe("independent");
+          expect(writeJsonFile.sync).lastCalledWith(
+            expect.stringContaining("lerna.json"),
+            expect.objectContaining({
+              version: "independent",
+            }),
+            { indent: 2 }
+          );
 
           done();
         } catch (ex) {
@@ -95,7 +133,7 @@ describe("InitCommand", () => {
       it("uses exact version when adding lerna dependency", (done) => {
         const instance = new InitCommand([], {
           exact: true,
-        });
+        }, testDir);
 
         instance.runCommand((err, code) => {
           if (err) return done.fail(err);
@@ -103,12 +141,14 @@ describe("InitCommand", () => {
           try {
             expect(code).toBe(0);
 
-            const packageJson = require(path.join(testDir, "package.json"));
-            expect(packageJson).toEqual({
-              devDependencies: {
-                lerna: instance.lernaVersion,
-              },
-            });
+            expect(writePkg.sync).lastCalledWith(
+              expect.stringContaining("package.json"),
+              expect.objectContaining({
+                devDependencies: {
+                  lerna: instance.lernaVersion,
+                },
+              })
+            );
 
             done();
           } catch (ex) {
@@ -120,7 +160,7 @@ describe("InitCommand", () => {
       it("sets lerna.json command.init.exact to true", (done) => {
         const instance = new InitCommand([], {
           exact: true,
-        });
+        }, testDir);
 
         instance.runCommand((err, code) => {
           if (err) return done.fail(err);
@@ -128,8 +168,17 @@ describe("InitCommand", () => {
           try {
             expect(code).toBe(0);
 
-            const lernaJson = require(path.join(testDir, "lerna.json"));
-            expect(lernaJson).toHaveProperty("command.init.exact", true);
+            expect(writeJsonFile.sync).lastCalledWith(
+              expect.stringContaining("lerna.json"),
+              expect.objectContaining({
+                command: {
+                  init: {
+                    exact: true,
+                  },
+                },
+              }),
+              { indent: 2 }
+            );
 
             done();
           } catch (ex) {
@@ -143,17 +192,14 @@ describe("InitCommand", () => {
   describe("in a subdirectory of a git repo", () => {
     let testDir;
 
-    beforeEach(() => initFixture("InitCommand/empty").then((dir) => {
-      const subDir = path.join(dir, "subdir");
+    beforeEach(() => initEmptyDir().then((dir) => {
+      testDir = path.join(dir, "subdir");
 
-      return mkdirpAsync(subDir).then(() => {
-        process.chdir(subDir);
-        testDir = subDir;
-      });
+      findUp.sync = jest.fn(() => path.join(testDir, "lerna.json"));
     }));
 
     it("creates lerna files", (done) => {
-      const instance = new InitCommand([], {});
+      const instance = new InitCommand([], {}, testDir);
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
@@ -161,24 +207,26 @@ describe("InitCommand", () => {
         try {
           expect(code).toBe(0);
 
-          expect(fs.readdirSync(testDir)).toEqual([
-            "lerna.json",
-            "package.json",
-          ]);
+          expect(GitUtilities.init).not.toBeCalled();
 
-          const lernaJson = require(path.join(testDir, "lerna.json"));
-          expect(lernaJson).toEqual({
-            lerna: instance.lernaVersion,
-            packages: ["packages/*"],
-            version: "0.0.0",
-          });
-
-          const packageJson = require(path.join(testDir, "package.json"));
-          expect(packageJson).toEqual({
-            devDependencies: {
-              lerna: `^${instance.lernaVersion}`,
+          expect(writeJsonFile.sync).lastCalledWith(
+            path.join(testDir, "lerna.json"),
+            {
+              lerna: instance.lernaVersion,
+              packages: ["packages/*"],
+              version: "0.0.0",
             },
-          });
+            { indent: 2 }
+          );
+
+          expect(writePkg.sync).lastCalledWith(
+            path.join(testDir, "package.json"),
+            expect.objectContaining({
+              devDependencies: {
+                lerna: `^${instance.lernaVersion}`,
+              },
+            })
+          );
 
           done();
         } catch (ex) {
@@ -189,22 +237,21 @@ describe("InitCommand", () => {
   });
 
   describe("when package.json exists", () => {
-    let packageJsonLocation;
+    let testDir;
 
     beforeEach(() => initFixture("InitCommand/has-package").then((dir) => {
-      packageJsonLocation = path.join(dir, "package.json");
+      testDir = dir;
     }));
 
     it("adds lerna to sorted devDependencies", (done) => {
-      fs.writeFileSync(packageJsonLocation, JSON.stringify({
-        name: "repo-root",
+      readPkg.sync = jest.fn(() => ({
         devDependencies: {
           alpha: "first",
           omega: "last",
         },
       }));
 
-      const instance = new InitCommand([], {});
+      const instance = new InitCommand([], {}, testDir);
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
@@ -212,15 +259,16 @@ describe("InitCommand", () => {
         try {
           expect(code).toBe(0);
 
-          const packageJson = require(packageJsonLocation);
-          expect(packageJson).toEqual({
-            name: "repo-root",
-            devDependencies: {
-              alpha: "first",
-              lerna: `^${instance.lernaVersion}`,
-              omega: "last",
-            },
-          });
+          expect(writePkg.sync).lastCalledWith(
+            path.join(testDir, "package.json"),
+            expect.objectContaining({
+              devDependencies: {
+                alpha: "first",
+                lerna: `^${instance.lernaVersion}`,
+                omega: "last",
+              },
+            })
+          );
 
           done();
         } catch (ex) {
@@ -230,8 +278,7 @@ describe("InitCommand", () => {
     });
 
     it("updates existing lerna in devDependencies", (done) => {
-      fs.writeFileSync(packageJsonLocation, JSON.stringify({
-        name: "repo-root",
+      readPkg.sync = jest.fn(() => ({
         dependencies: {
           alpha: "first",
           omega: "last",
@@ -241,7 +288,7 @@ describe("InitCommand", () => {
         },
       }));
 
-      const instance = new InitCommand([], {});
+      const instance = new InitCommand([], {}, testDir);
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
@@ -249,17 +296,18 @@ describe("InitCommand", () => {
         try {
           expect(code).toBe(0);
 
-          const packageJson = require(packageJsonLocation);
-          expect(packageJson).toEqual({
-            name: "repo-root",
-            dependencies: {
-              alpha: "first",
-              omega: "last",
-            },
-            devDependencies: {
-              lerna: `^${instance.lernaVersion}`,
-            },
-          });
+          expect(writePkg.sync).lastCalledWith(
+            path.join(testDir, "package.json"),
+            expect.objectContaining({
+              dependencies: {
+                alpha: "first",
+                omega: "last",
+              },
+              devDependencies: {
+                lerna: `^${instance.lernaVersion}`,
+              },
+            })
+          );
 
           done();
         } catch (ex) {
@@ -269,8 +317,7 @@ describe("InitCommand", () => {
     });
 
     it("updates existing lerna in sorted dependencies", (done) => {
-      fs.writeFileSync(packageJsonLocation, JSON.stringify({
-        name: "repo-root",
+      readPkg.sync = jest.fn(() => ({
         dependencies: {
           alpha: "first",
           lerna: "0.1.100",
@@ -278,7 +325,7 @@ describe("InitCommand", () => {
         },
       }));
 
-      const instance = new InitCommand([], {});
+      const instance = new InitCommand([], {}, testDir);
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
@@ -286,15 +333,16 @@ describe("InitCommand", () => {
         try {
           expect(code).toBe(0);
 
-          const packageJson = require(packageJsonLocation);
-          expect(packageJson).toEqual({
-            name: "repo-root",
-            dependencies: {
-              alpha: "first",
-              lerna: `^${instance.lernaVersion}`,
-              omega: "last",
-            },
-          });
+          expect(writePkg.sync).lastCalledWith(
+            path.join(testDir, "package.json"),
+            expect.objectContaining({
+              dependencies: {
+                alpha: "first",
+                lerna: `^${instance.lernaVersion}`,
+                omega: "last",
+              },
+            })
+          );
 
           done();
         } catch (ex) {
@@ -305,21 +353,21 @@ describe("InitCommand", () => {
   });
 
   describe("when lerna.json exists", () => {
-    let lernaJsonLocation;
+    let testDir;
 
     beforeEach(() => initFixture("InitCommand/has-lerna").then((dir) => {
-      lernaJsonLocation = path.join(dir, "lerna.json");
+      testDir = dir;
+
+      findUp.sync = jest.fn(() => path.join(testDir, "lerna.json"));
     }));
 
     it("updates lerna property to current version", (done) => {
-      fs.writeFileSync(lernaJsonLocation, JSON.stringify({
+      loadJsonFile.sync = jest.fn(() => ({
         lerna: "0.1.100",
-        packages: ["foo/*"],
         version: "1.2.3",
-        hoist: true,
       }));
 
-      const instance = new InitCommand([], {});
+      const instance = new InitCommand([], {}, testDir);
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
@@ -327,13 +375,13 @@ describe("InitCommand", () => {
         try {
           expect(code).toBe(0);
 
-          const lernaJson = require(lernaJsonLocation);
-          expect(lernaJson).toEqual({
-            lerna: instance.lernaVersion,
-            packages: ["foo/*"],
-            version: "1.2.3",
-            hoist: true,
-          });
+          expect(writeJsonFile.sync).lastCalledWith(
+            expect.stringContaining("lerna.json"),
+            expect.objectContaining({
+              lerna: instance.lernaVersion,
+            }),
+            { indent: 2 }
+          );
 
           done();
         } catch (ex) {
@@ -343,16 +391,14 @@ describe("InitCommand", () => {
     });
 
     it("updates lerna property to current version in independent mode", (done) => {
-      fs.writeFileSync(lernaJsonLocation, JSON.stringify({
+      loadJsonFile.sync = jest.fn(() => ({
         lerna: "0.1.100",
-        packages: ["bar/*"],
         version: "independent",
-        hoist: true,
       }));
 
       const instance = new InitCommand([], {
         independent: true,
-      });
+      }, testDir);
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
@@ -360,13 +406,14 @@ describe("InitCommand", () => {
         try {
           expect(code).toBe(0);
 
-          const lernaJson = require(lernaJsonLocation);
-          expect(lernaJson).toEqual({
-            lerna: instance.lernaVersion,
-            packages: ["bar/*"],
-            version: "independent",
-            hoist: true,
-          });
+          expect(writeJsonFile.sync).lastCalledWith(
+            expect.stringContaining("lerna.json"),
+            expect.objectContaining({
+              lerna: instance.lernaVersion,
+              version: "independent",
+            }),
+            { indent: 2 }
+          );
 
           done();
         } catch (ex) {
@@ -381,10 +428,13 @@ describe("InitCommand", () => {
 
     beforeEach(() => initFixture("InitCommand/has-version").then((dir) => {
       testDir = dir;
+
+      FileSystemUtilities.existsSync = jest.fn(() => true);
+      FileSystemUtilities.readFileSync = jest.fn(() => "1.2.3");
     }));
 
     it("removes file", (done) => {
-      const instance = new InitCommand([], {});
+      const instance = new InitCommand([], {}, testDir);
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
@@ -392,36 +442,7 @@ describe("InitCommand", () => {
         try {
           expect(code).toBe(0);
 
-          expect(fs.readdirSync(testDir)).toEqual([
-            ".git",
-            "lerna.json",
-            "package.json",
-          ]);
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      });
-    });
-
-    it("logs deprecation", (done) => {
-      const instance = new InitCommand([], {});
-      instance.logger = {
-        verbose: jest.fn(),
-        info: jest.fn(),
-        success: jest.fn(),
-        warn: jest.fn(),
-        error: jest.fn(),
-      };
-
-      instance.runCommand((err, code) => {
-        if (err) return done.fail(err);
-
-        try {
-          expect(code).toBe(0);
-
-          expect(instance.logger.info).toBeCalledWith("Removing old VERSION file.");
+          expect(FileSystemUtilities.unlinkSync).lastCalledWith(path.join(testDir, "VERSION"));
 
           done();
         } catch (ex) {
@@ -431,7 +452,7 @@ describe("InitCommand", () => {
     });
 
     it("uses value for lerna.json version property", (done) => {
-      const instance = new InitCommand([], {});
+      const instance = new InitCommand([], {}, testDir);
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
@@ -439,8 +460,13 @@ describe("InitCommand", () => {
         try {
           expect(code).toBe(0);
 
-          const lernaJson = require(path.join(testDir, "lerna.json"));
-          expect(lernaJson).toHaveProperty("version", "1.2.3");
+          expect(writeJsonFile.sync).lastCalledWith(
+            expect.stringContaining("lerna.json"),
+            expect.objectContaining({
+              version: "1.2.3",
+            }),
+            { indent: 2 }
+          );
 
           done();
         } catch (ex) {
@@ -455,12 +481,30 @@ describe("InitCommand", () => {
 
     beforeEach(() => initFixture("InitCommand/updates").then((dir) => {
       testDir = dir;
+
+      findUp.sync = jest.fn(() => path.join(testDir, "lerna.json"));
     }));
 
     it("sets lerna.json commands.init.exact to true", (done) => {
+      loadJsonFile.sync = jest.fn(() => ({
+        lerna: "0.1.100",
+        commands: {
+          bootstrap: {
+            hoist: true,
+          },
+        },
+        version: "1.2.3",
+      }));
+
+      readPkg.sync = jest.fn(() => ({
+        devDependencies: {
+          lerna: instance.lernaVersion,
+        },
+      }));
+
       const instance = new InitCommand([], {
         exact: true,
-      });
+      }, testDir);
 
       instance.runCommand((err, code) => {
         if (err) return done.fail(err);
@@ -468,8 +512,20 @@ describe("InitCommand", () => {
         try {
           expect(code).toBe(0);
 
-          const lernaJson = require(path.join(testDir, "lerna.json"));
-          expect(lernaJson).toHaveProperty("commands.init.exact", true);
+          expect(writeJsonFile.sync).lastCalledWith(
+            expect.stringContaining("lerna.json"),
+            expect.objectContaining({
+              commands: {
+                bootstrap: {
+                  hoist: true,
+                },
+                init: {
+                  exact: true,
+                },
+              },
+            }),
+            { indent: 2 }
+          );
 
           done();
         } catch (ex) {

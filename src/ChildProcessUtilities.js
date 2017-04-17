@@ -1,113 +1,46 @@
-import child from "child_process";
-import spawn from "cross-spawn";
-import {EventEmitter} from "events";
+import { EventEmitter } from "events";
+import execa from "execa";
+import pFinally from "p-finally";
+import logTransformer from "strong-log-transformer";
 
 // Keep track of how many live children we have.
 let children = 0;
 
-// maxBuffer value for running exec
-const MAX_BUFFER = 500 * 1024;
-
 // This is used to alert listeners when all children have exited.
-const emitter = new EventEmitter;
+const emitter = new EventEmitter();
 
 export default class ChildProcessUtilities {
-  static exec(command, opts, callback) {
-    const mergedOpts = Object.assign({
-      maxBuffer: MAX_BUFFER
-    }, opts);
-    return ChildProcessUtilities.registerChild(
-      child.exec(command, mergedOpts, (err, stdout, stderr) => {
-        if (err != null) {
+  static exec(command, args, opts, callback) {
+    const options = Object.assign({}, opts);
+    options.stdio = "pipe"; // node default
 
-          // If the error from `child.exec` is just that the child process
-          // emitted too much on stderr, then that stderr output is likely to
-          // be useful.
-          if (/^stderr maxBuffer exceeded/.test(err.message)) {
-            err = `Error: ${err.message}.  Partial output follows:\n\n${stderr}`;
-          }
-
-          callback(err || stderr, stdout);
-        } else {
-          callback(null, stdout);
-        }
-      })
-    );
+    return _spawn(command, args, options, callback);
   }
 
-  static execSync(command, opts) {
-    const mergedOpts = Object.assign({
-      encoding: "utf8",
-      maxBuffer: MAX_BUFFER
-    }, opts);
-
-    let stdout = child.execSync(command, mergedOpts);
-    if (stdout) {
-      // stdout is undefined when stdio[1] is anything other than "pipe"
-      // and there's no point trimming an empty string (no piped stdout)
-      stdout = stdout.trim();
-    }
-
-    return stdout;
+  static execSync(command, args, opts) {
+    return execa.sync(command, args, opts).stdout;
   }
 
   static spawn(command, args, opts, callback) {
-    let output = "";
+    const options = Object.assign({}, opts);
+    options.stdio = "inherit";
 
-    const childProcess = _spawn(command, args, opts, (err) => callback(err, output));
-
-    // By default stderr, stdout are inherited from us (just sent to _our_ output).
-    // If the caller overrode that to "pipe", then we'll gather that up and
-    // call back with it in case of failure.
-    if (childProcess.stderr) {
-      childProcess.stderr.setEncoding("utf8");
-      childProcess.stderr.on("data", (chunk) => output += chunk);
-    }
-
-    if (childProcess.stdout) {
-      childProcess.stdout.setEncoding("utf8");
-      childProcess.stdout.on("data", (chunk) => output += chunk);
-    }
+    return _spawn(command, args, options, callback);
   }
 
   static spawnStreaming(command, args, opts, prefix, callback) {
-    opts = Object.assign({}, opts, {
-      stdio: ["ignore", "pipe", "pipe"],
-    });
+    const options = Object.assign({}, opts);
+    options.stdio = ["ignore", "pipe", "pipe"];
 
-    const childProcess = _spawn(command, args, opts, callback);
+    const spawned = _spawn(command, args, options, callback);
 
-    ["stdout", "stderr"].forEach((stream) => {
-      let partialLine = "";
-      childProcess[stream].setEncoding("utf8")
-        .on("data", (chunk) => {
-          const lines = chunk.split("\n");
-          lines[0] = partialLine + lines[0];
-          partialLine = lines.pop();
-          lines.forEach((line) => process[stream].write(prefix + line + "\n"));
-        })
-        .on("end", () => {
-          if (partialLine) {
+    const prefixedStdout = logTransformer({ tag: `${prefix}:` });
+    const prefixedStderr = logTransformer({ tag: `${prefix} ERROR`, mergeMultiline: true });
 
-            // If the child process ended its output with no final newline we
-            // need to flush that out.  We'll add a newline ourselves so we
-            // don't end up with output from multiple children on the same
-            // line.
-            process[stream].write(prefix + partialLine + "\n");
-          }
-        });
-    });
-  }
+    spawned.stdout.pipe(prefixedStdout).pipe(process.stdout);
+    spawned.stderr.pipe(prefixedStderr).pipe(process.stderr);
 
-  static registerChild(child) {
-    children++;
-    child.on("exit", () => {
-      children--;
-      if (children === 0) {
-        emitter.emit("empty");
-      }
-    });
-    return child;
+    return spawned;
   }
 
   static getChildProcessCount() {
@@ -119,18 +52,29 @@ export default class ChildProcessUtilities {
   }
 }
 
+function registerChild(child) {
+  children++;
+
+  pFinally(child, () => {
+    children--;
+
+    if (children === 0) {
+      emitter.emit("empty");
+    }
+  });
+}
+
 function _spawn(command, args, opts, callback) {
-  return ChildProcessUtilities.registerChild(
-    spawn(command, args, Object.assign({
-      stdio: "inherit"
-    }, opts))
-      .on("error", () => {})
-      .on("close", (code) => {
-        if (code) {
-          callback(`Command exited with status ${code}: ${command} ${args.join(" ")}`);
-        } else {
-          callback(null);
-        }
-      })
-  );
+  const child = execa(command, args, opts);
+
+  registerChild(child);
+
+  if (callback) {
+    child.then(
+      (result) => callback(null, result.stdout),
+      (err) => callback(err)
+    );
+  }
+
+  return child;
 }

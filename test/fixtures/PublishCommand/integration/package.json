@@ -1,0 +1,11 @@
+{
+  "name": "integration",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "lp": "lerna publish --skip-npm --cd-version=major --yes"
+  },
+  "devDependencies": {
+    "lerna": "__TEST_PKG_URL__"
+  }
+}

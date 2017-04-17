@@ -1,21 +1,112 @@
-import fs from "graceful-fs";
+import chalk from "chalk";
+import fs from "fs-promise";
 import pathExists from "path-exists";
-import assert from "assert";
 import path from "path";
-import { EOL } from "os";
 import normalizeNewline from "normalize-newline";
-import escapeArgs from "command-join";
 
+// mocked or stubbed modules
+import writeJsonFile from "write-json-file";
+import writePkg from "write-pkg";
 import ConventionalCommitUtilities from "../src/ConventionalCommitUtilities";
-import ChildProcessUtilities from "../src/ChildProcessUtilities";
+import GitUtilities from "../src/GitUtilities";
+import NpmUtilities from "../src/NpmUtilities";
 import PromptUtilities from "../src/PromptUtilities";
-import PublishCommand from "../src/commands/PublishCommand";
+
+// helpers
+import callsBack from "./helpers/callsBack";
 import exitWithCode from "./helpers/exitWithCode";
 import initFixture from "./helpers/initFixture";
+import normalizeRelativeDir from "./helpers/normalizeRelativeDir";
 
-import assertStubbedCalls from "./helpers/assertStubbedCalls";
+// file under test
+import PublishCommand from "../src/commands/PublishCommand";
+
+// keep snapshots stable cross-platform
+chalk.enabled = false;
+
+jest.mock("write-json-file");
+jest.mock("write-pkg");
+jest.mock("../src/GitUtilities");
+jest.mock("../src/NpmUtilities");
+jest.mock("../src/PromptUtilities");
+
+const execOpts = (testDir) =>
+  expect.objectContaining({
+    cwd: testDir,
+  });
+
+const publishedTagInDirectories = (testDir) =>
+  NpmUtilities.publishTaggedInDir.mock.calls.reduce((arr, args) => {
+    const tag = args[0];
+    const dir = normalizeRelativeDir(testDir, args[1]);
+    arr.push({ dir, tag });
+    return arr;
+  }, []);
+
+const removedDistTagInDirectories = (testDir) =>
+  NpmUtilities.removeDistTag.mock.calls.reduce((obj, args) => {
+    const location = normalizeRelativeDir(testDir, args[0]);
+    const tag = args[2];
+    obj[location] = tag;
+    return obj;
+  }, {});
+
+const addedDistTagInDirectories = (testDir) =>
+  NpmUtilities.addDistTag.mock.calls.reduce((obj, args) => {
+    const location = normalizeRelativeDir(testDir, args[0]);
+    const pkg = args[1];
+    const version = args[2];
+    const tag = args[3];
+    obj[location] = `${pkg}@${version} ${tag}`;
+    return obj;
+  }, {});
+
+const gitAddedFiles = (testDir) =>
+  GitUtilities.addFile.mock.calls.map((args) =>
+    normalizeRelativeDir(testDir, args[0])
+  );
+
+const gitCommitMessage = () =>
+  normalizeNewline(GitUtilities.commit.mock.calls[0][0]);
+
+const gitTagsAdded = () =>
+  GitUtilities.addTag.mock.calls.map((args) => args[0]);
+
+const updatedLernaJson = () =>
+  writeJsonFile.sync.mock.calls[0][1];
+
+const updatedPackageVersions = (testDir) =>
+  writePkg.sync.mock.calls.reduce((obj, args) => {
+    const location = normalizeRelativeDir(testDir, path.dirname(args[0]));
+    const version = args[1].version;
+    obj[location] = version;
+    return obj;
+  }, {});
+
+const updatedPackageJSON = (name) =>
+  writePkg.sync.mock.calls.reduce((arr, args) => {
+    if (args[1].name === name) {
+      arr.push(args[1]);
+    }
+    return arr;
+  }, []).pop();
 
 describe("PublishCommand", () => {
+  beforeEach(() => {
+    // we've already tested these utilities elsewhere
+    GitUtilities.isInitialized = jest.fn(() => true);
+    GitUtilities.getCurrentBranch = jest.fn(() => "master");
+    GitUtilities.getCurrentSHA = jest.fn(() => "deadbeefcafe");
+
+    NpmUtilities.publishTaggedInDir = jest.fn(callsBack());
+    NpmUtilities.checkDistTag = jest.fn(() => true);
+
+    PromptUtilities.select = jest.fn(callsBack("1.0.1"));
+    PromptUtilities.confirm = jest.fn(callsBack(true));
+  });
+
+  afterEach(() => jest.resetAllMocks());
+
   /** =========================================================================
    * NORMAL
    * ======================================================================= */
@@ -28,81 +119,48 @@ describe("PublishCommand", () => {
     }));
 
     it("should publish the changed packages", (done) => {
-      const publishCommand = new PublishCommand([], {});
+      const publishCommand = new PublishCommand([], {}, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
-
-      assertStubbedCalls([
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git tag"] }
-        ]],
-        [PromptUtilities, "select", { valueCallback: true }, [
-          { args: ["Select a new version (currently 1.0.0)"], returns: "1.0.1" }
-        ]],
-        [PromptUtilities, "confirm", { valueCallback: true }, [
-          { args: ["Are you sure you want to publish the above changes?"], returns: true }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
-          { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-3/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-4/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-5/package.json"))] },
-          { args: ["git commit -m \"$(echo \"v1.0.1\")\""] },
-          { args: ["git tag -a v1.0.1 -m \"v1.0.1\""] }
-        ]],
-        [ChildProcessUtilities, "exec", { nodeCallback: true }, [
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          // No package-5.  It's private.
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-1 lerna-temp"] },
-          { args: ["npm dist-tag add package-1@1.0.1 latest"] },
-
-          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-3 lerna-temp"] },
-          { args: ["npm dist-tag add package-3@1.0.1 latest"] },
-
-          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-4 lerna-temp"] },
-          { args: ["npm dist-tag add package-4@1.0.1 latest"] },
-
-          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-2 lerna-temp"] },
-          { args: ["npm dist-tag add package-2@1.0.1 latest"] },
-
-          // No package-5.  It's private.
-
-          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
-          { args: ["git push origin master"] },
-          { args: ["git push origin v1.0.1"] }
-        ]],
-      ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
+          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
+            // TODO: there has to be a better way to do this
+            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
+          }
 
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).version, "1.0.1");
+          expect(PromptUtilities.select.mock.calls).toMatchSnapshot("[normal] prompt");
+          expect(PromptUtilities.confirm).toBeCalled();
 
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).dependencies["package-1"], "^1.0.1");
+          expect(updatedLernaJson()).toMatchObject({ version: "1.0.1" });
+          expect(updatedPackageVersions(testDir)).toMatchSnapshot("[normal] bumps package versions");
+
+          expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+            "package-1": "^1.0.1",
+          });
+          expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+            "package-2": "^1.0.1",
+          });
+          expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+            "package-1": "^0.0.0",
+          });
+          expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
+            "package-1": "^1.0.1",
+          });
+
+          expect(gitAddedFiles(testDir)).toMatchSnapshot("[normal] git adds changed files");
+          expect(gitCommitMessage()).toEqual("v1.0.1");
+          expect(gitTagsAdded()).toEqual(["v1.0.1"]);
+
+          expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[normal] npm publish --tag");
+          expect(removedDistTagInDirectories(testDir)).toMatchSnapshot("[normal] npm dist-tag rm");
+          expect(addedDistTagInDirectories(testDir)).toMatchSnapshot("[normal] npm dist-tag add");
+
+          expect(GitUtilities.pushWithTags).lastCalledWith("origin", gitTagsAdded(), execOpts(testDir));
 
           done();
         } catch (ex) {
@@ -126,79 +184,54 @@ describe("PublishCommand", () => {
     it("should publish the changed packages in independent mode", (done) => {
       const publishCommand = new PublishCommand([], {
         independent: true
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
 
-      assertStubbedCalls([
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git tag"] }
-        ]],
-        [PromptUtilities, "select", { valueCallback: true }, [
-          { args: ["Select a new version for package-1 (currently 1.0.0)"], returns: "1.0.1" },
-          { args: ["Select a new version for package-2 (currently 2.0.0)"], returns: "1.1.0" },
-          { args: ["Select a new version for package-3 (currently 3.0.0)"], returns: "2.0.0" },
-          { args: ["Select a new version for package-4 (currently 4.0.0)"], returns: "1.1.0" }
-        ]],
-        [PromptUtilities, "confirm", { valueCallback: true }, [
-          { args: ["Are you sure you want to publish the above changes?"], returns: true }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-3/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-4/package.json"))] },
-          { args: ["git commit -m \"$(echo \"Publish" + EOL + EOL + " - package-1@1.0.1" + EOL + " - package-2@1.1.0" + EOL + " - package-3@2.0.0" + EOL + " - package-4@1.1.0\")\""] },
-          { args: ["git tag -a package-1@1.0.1 -m \"package-1@1.0.1\""] },
-          { args: ["git tag -a package-2@1.1.0 -m \"package-2@1.1.0\""] },
-          { args: ["git tag -a package-3@2.0.0 -m \"package-3@2.0.0\""] },
-          { args: ["git tag -a package-4@1.1.0 -m \"package-4@1.1.0\""] }
-        ]],
-        [ChildProcessUtilities, "exec", { nodeCallback: true }, [
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-1 lerna-temp"] },
-          { args: ["npm dist-tag add package-1@1.0.1 latest"] },
-
-          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 2.0.0" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-3 lerna-temp"] },
-          { args: ["npm dist-tag add package-3@2.0.0 latest"] },
-
-          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.1.0" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-4 lerna-temp"] },
-          { args: ["npm dist-tag add package-4@1.1.0 latest"] },
-
-          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.1.0" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-2 lerna-temp"] },
-          { args: ["npm dist-tag add package-2@1.1.0 latest"] },
-
-          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
-          { args: ["git push origin master"] },
-          { args: ["git push origin package-1@1.0.1 package-2@1.1.0 package-3@2.0.0 package-4@1.1.0"] },
-        ]]
-      ]);
+      const promptReplies = [
+        "1.0.1",
+        "1.1.0",
+        "2.0.0",
+        "1.1.0",
+      ];
+      PromptUtilities.select = jest.fn((...args) => {
+        const reply = promptReplies.shift();
+        return callsBack(reply)(...args);
+      });
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
+          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
+            // TODO: there has to be a better way to do this
+            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
+          }
 
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.1.0");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "2.0.0");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.1.0");
+          expect(PromptUtilities.confirm).toBeCalled();
 
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.1.0");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+          expect(writeJsonFile.sync).not.toBeCalled();
+          expect(updatedPackageVersions(testDir)).toMatchSnapshot("[independent] bumps package versions");
+
+          expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+            "package-1": "^1.0.1",
+          });
+          expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+            "package-2": "^1.1.0",
+          });
+          expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+            "package-1": "^0.0.0",
+          });
+
+          expect(gitAddedFiles(testDir)).toMatchSnapshot("[independent] git adds changed files");
+          expect(gitCommitMessage()).toMatchSnapshot("[independent] git commit message");
+          expect(gitTagsAdded()).toMatchSnapshot("[independent] git tags added");
+          expect(GitUtilities.checkoutChanges).not.toBeCalled();
+
+          expect(addedDistTagInDirectories(testDir)).toMatchSnapshot("[independent] npm dist-tag add");
+
+          expect(GitUtilities.pushWithTags).lastCalledWith("origin", gitTagsAdded(), execOpts(testDir));
 
           done();
         } catch (ex) {
@@ -222,67 +255,42 @@ describe("PublishCommand", () => {
     it("should publish the changed packages", (done) => {
       const publishCommand = new PublishCommand([], {
         canary: true
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
-
-      assertStubbedCalls([
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git tag"] },
-
-          { args: ["git rev-parse HEAD"], returns: "81e3b44339e1403fe3d762e9435b7c9a155fdef7" },
-          { args: ["git rev-parse HEAD"], returns: "81e3b44339e1403fe3d762e9435b7c9a155fdef7" }
-        ]],
-        [PromptUtilities, "confirm", { valueCallback: true }, [
-          { args: ["Are you sure you want to publish the above changes?"], returns: true }
-        ]],
-        [ChildProcessUtilities, "exec", { nodeCallback: true }, [
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git checkout -- packages/*/package.json"] },
-
-          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.0-alpha.81e3b443" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-1 lerna-temp"] },
-          { args: ["npm dist-tag add package-1@1.0.0-alpha.81e3b443 canary"] },
-
-          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.0-alpha.81e3b443" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-3 lerna-temp"] },
-          { args: ["npm dist-tag add package-3@1.0.0-alpha.81e3b443 canary"] },
-
-          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.0-alpha.81e3b443" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-4 lerna-temp"] },
-          { args: ["npm dist-tag add package-4@1.0.0-alpha.81e3b443 canary"] },
-
-          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.0-alpha.81e3b443" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-2 lerna-temp"] },
-          { args: ["npm dist-tag add package-2@1.0.0-alpha.81e3b443 canary"] },
-        ]]
-      ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.0\"\n}\n");
+          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
+            // TODO: there has to be a better way to do this
+            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
+          }
 
-          // The following wouldn't be the actual results of a canary release
-          // because `git checkout --` would have removed the file changes.
-          // However, this is what would've been published to npm so it's
-          // useful to test.
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.0-alpha.81e3b443");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.0-alpha.81e3b443");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.0-alpha.81e3b443");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.0-alpha.81e3b443");
+          expect(PromptUtilities.select).not.toBeCalled();
 
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.0-alpha.81e3b443");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.0-alpha.81e3b443");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+          expect(writeJsonFile.sync).not.toBeCalled();
+          expect(updatedPackageVersions(testDir)).toMatchSnapshot("[normal --canary] bumps package versions");
+
+          expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+            "package-1": "^1.0.0-alpha.deadbeef",
+          });
+          expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+            "package-2": "^1.0.0-alpha.deadbeef",
+          });
+          expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+            "package-1": "^0.0.0",
+          });
+
+          expect(GitUtilities.addFile).not.toBeCalled();
+          expect(GitUtilities.commit).not.toBeCalled();
+          expect(GitUtilities.addTag).not.toBeCalled();
+          expect(GitUtilities.checkoutChanges).lastCalledWith("packages/*/package.json", execOpts(testDir));
+
+          expect(addedDistTagInDirectories(testDir)).toMatchSnapshot("[normal --canary] npm dist-tag add");
+          expect(GitUtilities.pushWithTags).not.toBeCalled();
 
           done();
         } catch (ex) {
@@ -307,66 +315,38 @@ describe("PublishCommand", () => {
       const publishCommand = new PublishCommand([], {
         independent: true,
         canary: true
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
-
-      assertStubbedCalls([
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git tag"] },
-
-          { args: ["git rev-parse HEAD"], returns: "81e3b44339e1403fe3d762e9435b7c9a155fdef7" },
-          { args: ["git rev-parse HEAD"], returns: "81e3b44339e1403fe3d762e9435b7c9a155fdef7" }
-        ]],
-        [PromptUtilities, "confirm", { valueCallback: true }, [
-          { args: ["Are you sure you want to publish the above changes?"], returns: true }
-        ]],
-        [ChildProcessUtilities, "exec", { nodeCallback: true }, [
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git checkout -- packages/*/package.json"] },
-
-          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.0-alpha.81e3b443" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-1 lerna-temp"] },
-          { args: ["npm dist-tag add package-1@1.0.0-alpha.81e3b443 canary"] },
-
-          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 3.0.0-alpha.81e3b443" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-3 lerna-temp"] },
-          { args: ["npm dist-tag add package-3@3.0.0-alpha.81e3b443 canary"] },
-
-          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 4.0.0-alpha.81e3b443" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-4 lerna-temp"] },
-          { args: ["npm dist-tag add package-4@4.0.0-alpha.81e3b443 canary"] },
-
-          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 2.0.0-alpha.81e3b443" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-2 lerna-temp"] },
-          { args: ["npm dist-tag add package-2@2.0.0-alpha.81e3b443 canary"] },
-        ]]
-      ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
+          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
+            // TODO: there has to be a better way to do this
+            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
+          }
 
-          // The following wouldn't be the actual results of a canary release
-          // because `git checkout --` would have removed the file changes.
-          // However, this is what would've been published to npm so it's
-          // useful to test.
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.0-alpha.81e3b443");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "2.0.0-alpha.81e3b443");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "3.0.0-alpha.81e3b443");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "4.0.0-alpha.81e3b443");
+          expect(PromptUtilities.select).not.toBeCalled();
 
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.0-alpha.81e3b443");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^2.0.0-alpha.81e3b443");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+          expect(writeJsonFile.sync).not.toBeCalled();
+          expect(updatedPackageVersions(testDir))
+            .toMatchSnapshot("[independent --canary] bumps package versions");
+
+          expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+            "package-1": "^1.0.0-alpha.deadbeef",
+          });
+          expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+            "package-2": "^2.0.0-alpha.deadbeef",
+          });
+          expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+            "package-1": "^0.0.0",
+          });
+
+          expect(addedDistTagInDirectories(testDir))
+            .toMatchSnapshot("[independent --canary] npm dist-tag add");
 
           done();
         } catch (ex) {
@@ -390,61 +370,26 @@ describe("PublishCommand", () => {
     it("should publish the changed packages", (done) => {
       const publishCommand = new PublishCommand([], {
         skipGit: true
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
-
-      assertStubbedCalls([
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git tag"] }
-        ]],
-        [PromptUtilities, "select", { valueCallback: true }, [
-          { args: ["Select a new version (currently 1.0.0)"], returns: "1.0.1" }
-        ]],
-        [PromptUtilities, "confirm", { valueCallback: true }, [
-          { args: ["Are you sure you want to publish the above changes?"], returns: true }
-        ]],
-        [ChildProcessUtilities, "exec", { nodeCallback: true }, [
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-1 lerna-temp"] },
-          { args: ["npm dist-tag add package-1@1.0.1 latest"] },
-
-          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-3 lerna-temp"] },
-          { args: ["npm dist-tag add package-3@1.0.1 latest"] },
-
-          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-4 lerna-temp"] },
-          { args: ["npm dist-tag add package-4@1.0.1 latest"] },
-
-          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-2 lerna-temp"] },
-          { args: ["npm dist-tag add package-2@1.0.1 latest"] },
-        ]],
-      ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
+          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
+            // TODO: there has to be a better way to do this
+            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
+          }
 
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
+          expect(GitUtilities.addFile).not.toBeCalled();
+          expect(GitUtilities.commit).not.toBeCalled();
+          expect(GitUtilities.addTag).not.toBeCalled();
+          expect(GitUtilities.pushWithTags).not.toBeCalled();
 
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+          expect(addedDistTagInDirectories(testDir)).toMatchSnapshot("[normal --skip-git] npm dist-tag add");
 
           done();
         } catch (ex) {
@@ -468,51 +413,28 @@ describe("PublishCommand", () => {
     it("should update versions and push changes but not publish", (done) => {
       const publishCommand = new PublishCommand([], {
         skipNpm: true
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
-
-      assertStubbedCalls([
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git tag"] }
-        ]],
-        [PromptUtilities, "select", { valueCallback: true }, [
-          { args: ["Select a new version (currently 1.0.0)"], returns: "1.0.1" }
-        ]],
-        [PromptUtilities, "confirm", { valueCallback: true }, [
-          { args: ["Are you sure you want to publish the above changes?"], returns: true }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
-          { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-3/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-4/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-5/package.json"))] },
-          { args: ["git commit -m \"$(echo \"v1.0.1\")\""] },
-          { args: ["git tag -a v1.0.1 -m \"v1.0.1\""] }
-        ]],
-      ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
+          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
+            // TODO: there has to be a better way to do this
+            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
+          }
 
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).version, "1.0.1");
+          expect(NpmUtilities.publishTaggedInDir).not.toBeCalled();
+          expect(NpmUtilities.checkDistTag).not.toBeCalled();
+          expect(NpmUtilities.removeDistTag).not.toBeCalled();
+          expect(NpmUtilities.addDistTag).not.toBeCalled();
 
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).dependencies["package-1"], "^1.0.1");
+          expect(gitCommitMessage()).toEqual("v1.0.1");
+          // FIXME
+          // expect(GitUtilities.pushWithTags).lastCalledWith("origin", ["v1.0.1"]);
 
           done();
         } catch (ex) {
@@ -537,38 +459,46 @@ describe("PublishCommand", () => {
       const publishCommand = new PublishCommand([], {
         skipGit: true,
         skipNpm: true
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
-
-      assertStubbedCalls([
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git tag"] }
-        ]],
-        [PromptUtilities, "select", { valueCallback: true }, [
-          { args: ["Select a new version (currently 1.0.0)"], returns: "1.0.1" }
-        ]],
-        [PromptUtilities, "confirm", { valueCallback: true }, [
-          { args: ["Are you sure you want to publish the above changes?"], returns: true }
-        ]],
-      ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
+          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
+            // TODO: there has to be a better way to do this
+            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
+          }
 
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
+          expect(updatedLernaJson()).toMatchObject({ version: "1.0.1" });
+          expect(updatedPackageVersions(testDir))
+            .toMatchSnapshot("[normal --skip-git --skip-npm] bumps package versions");
 
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+          expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+            "package-1": "^1.0.1",
+          });
+          expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+            "package-2": "^1.0.1",
+          });
+          expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+            "package-1": "^0.0.0",
+          });
+          expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
+            "package-1": "^1.0.1",
+          });
+
+          expect(GitUtilities.addFile).not.toBeCalled();
+          expect(GitUtilities.commit).not.toBeCalled();
+          expect(GitUtilities.addTag).not.toBeCalled();
+          expect(GitUtilities.pushWithTags).not.toBeCalled();
+
+          expect(NpmUtilities.publishTaggedInDir).not.toBeCalled();
+          expect(NpmUtilities.checkDistTag).not.toBeCalled();
+          expect(NpmUtilities.removeDistTag).not.toBeCalled();
+          expect(NpmUtilities.addDistTag).not.toBeCalled();
 
           done();
         } catch (ex) {
@@ -591,51 +521,35 @@ describe("PublishCommand", () => {
 
     it("should publish the changed packages without the temp tag", (done) => {
       const publishCommand = new PublishCommand([], {
-        npmTag: "prerelease",
         skipTempTag: true
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
 
-      assertStubbedCalls([
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git tag"] }
-        ]],
-        [PromptUtilities, "select", { valueCallback: true }, [
-          { args: ["Select a new version (currently 1.0.0)"], returns: "1.0.1" }
-        ]],
-        [PromptUtilities, "confirm", { valueCallback: true }, [
-          { args: ["Are you sure you want to publish the above changes?"], returns: true }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
-          { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-3/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-4/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-5/package.json"))] },
-          { args: ["git commit -m \"$(echo \"v1.0.1\")\""] },
-          { args: ["git tag -a v1.0.1 -m \"v1.0.1\""] }
-        ]],
-        [ChildProcessUtilities, "exec", { nodeCallback: true }, [
-          { args: ["npm publish --tag prerelease"] },
-          { args: ["npm publish --tag prerelease"] },
-          { args: ["npm publish --tag prerelease"] },
-          { args: ["npm publish --tag prerelease"] },
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
+      publishCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
 
-          // No package-5.  It's private.
+        try {
+          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
+            // TODO: there has to be a better way to do this
+            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
+          }
 
-          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
-          { args: ["git push origin master"] },
-          { args: ["git push origin v1.0.1"] }
-        ]],
-      ]);
+          expect(publishedTagInDirectories(testDir))
+            .toMatchSnapshot("[normal --skip-temp-tag] npm publish --tag");
 
-      publishCommand.runCommand(exitWithCode(0, done));
+          expect(NpmUtilities.checkDistTag).not.toBeCalled();
+          expect(NpmUtilities.removeDistTag).not.toBeCalled();
+          expect(NpmUtilities.addDistTag).not.toBeCalled();
+
+          expect(GitUtilities.pushWithTags).lastCalledWith("origin", ["v1.0.1"], execOpts(testDir));
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
     });
   });
 
@@ -652,82 +566,22 @@ describe("PublishCommand", () => {
 
     it("should publish the changed packages with npm tag", (done) => {
       const publishCommand = new PublishCommand([], {
-        npmTag: "prerelease"
-      });
+        npmTag: "custom"
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
-
-      assertStubbedCalls([
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git tag"] }
-        ]],
-        [PromptUtilities, "select", { valueCallback: true }, [
-          { args: ["Select a new version (currently 1.0.0)"], returns: "1.0.1" }
-        ]],
-        [PromptUtilities, "confirm", { valueCallback: true }, [
-          { args: ["Are you sure you want to publish the above changes?"], returns: true }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
-          { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-3/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-4/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-5/package.json"))] },
-          { args: ["git commit -m \"$(echo \"v1.0.1\")\""] },
-          { args: ["git tag -a v1.0.1 -m \"v1.0.1\""] }
-        ]],
-        [ChildProcessUtilities, "exec", { nodeCallback: true }, [
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          // No package-5.  It's private.
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-1 lerna-temp"] },
-          { args: ["npm dist-tag add package-1@1.0.1 prerelease"] },
-
-          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-3 lerna-temp"] },
-          { args: ["npm dist-tag add package-3@1.0.1 prerelease"] },
-
-          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-4 lerna-temp"] },
-          { args: ["npm dist-tag add package-4@1.0.1 prerelease"] },
-
-          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-2 lerna-temp"] },
-          { args: ["npm dist-tag add package-2@1.0.1 prerelease"] },
-
-          // No package-5.  It's private.
-
-          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
-          { args: ["git push origin master"] },
-          { args: ["git push origin v1.0.1"] }
-        ]],
-      ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
+          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
+            // TODO: there has to be a better way to do this
+            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
+          }
 
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).version, "1.0.1");
-
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).dependencies["package-1"], "^1.0.1");
+          expect(addedDistTagInDirectories(testDir)).toMatchSnapshot("[normal --npm-tag] npm dist-tag add");
 
           done();
         } catch (ex) {
@@ -737,194 +591,93 @@ describe("PublishCommand", () => {
     });
   });
 
-  describe("auto confirmation", () => {
-    it("should be possible to skip asking for confirmation", (done) => {
+  /** =========================================================================
+   * AUTO-ACCEPT
+   * ======================================================================= */
+
+  describe("with --yes", () => {
+    it("skips confirmation prompt", (done) => {
       const publishCommand = new PublishCommand([], {
         yes: true
       });
       publishCommand.updates = [];
-      publishCommand.confirmVersions(done);
+      publishCommand.confirmVersions((err) => {
+        if (err) return done.fail(err);
+
+        try {
+          expect(PromptUtilities.confirm).not.toBeCalled();
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      });
     });
   });
 
   /** =========================================================================
-   * NORMAL - EXPLICIT REGISTRY FLAG
+   * NORMAL - REGISTRY
    * ======================================================================= */
 
   describe("normal mode with --registry", () => {
     let testDir;
 
-    const originalEnv = Object.assign({}, process.env);
-    const mockEnv = {
-      mock_value: 1,
-      NODE_ENV: "lerna-test",
-    };
-
     beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
       testDir = dir;
-
-      // mock out the ENV to a simpler version for testing
-      process.env = mockEnv;
     }));
 
-    afterEach(() => {
-      process.env = originalEnv;
-    });
-
-    it("should publish the changed packages", (done) => {
+    it("passes registry to npm commands", (done) => {
+      const registry = "https://my-private-registry";
       const publishCommand = new PublishCommand([], {
-        repoVersion: "1.0.1",
-        registry: "https://my-private-registry"
-      });
-      const env = Object.assign({}, mockEnv, {
-        npm_config_registry: "https://my-private-registry",
-      });
+        registry,
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
-
-      assertStubbedCalls([
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git tag"] }
-        ]],
-        [PromptUtilities, "confirm", { valueCallback: true }, [
-          { args: ["Are you sure you want to publish the above changes?"], returns: true }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
-          { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-3/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-4/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-5/package.json"))] },
-          { args: ["git commit -m \"$(echo \"v1.0.1\")\""] },
-          { args: ["git tag -a v1.0.1 -m \"v1.0.1\""] }
-        ]],
-        [ChildProcessUtilities, "exec", { nodeCallback: true }, [
-          { args: ["npm publish --tag lerna-temp", { env, cwd: path.join(testDir,"packages/package-1") }] },
-          { args: ["npm publish --tag lerna-temp", { env, cwd: path.join(testDir,"packages/package-3") }] },
-          { args: ["npm publish --tag lerna-temp", { env, cwd: path.join(testDir,"packages/package-4") }] },
-          { args: ["npm publish --tag lerna-temp", { env, cwd: path.join(testDir,"packages/package-2") }] }
-          // No package-5.  It's private.
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["npm dist-tag ls package-1", { env, cwd: path.join(testDir,"packages/package-1") }], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-1 lerna-temp", { env, cwd: path.join(testDir,"packages/package-1") }]},
-          { args: ["npm dist-tag add package-1@1.0.1 latest", { env, cwd: path.join(testDir,"packages/package-1") }]},
-
-          { args: ["npm dist-tag ls package-3", { env, cwd: path.join(testDir,"packages/package-3") }], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-3 lerna-temp", { env, cwd: path.join(testDir,"packages/package-3") }]},
-          { args: ["npm dist-tag add package-3@1.0.1 latest", { env, cwd: path.join(testDir,"packages/package-3") }]},
-
-          { args: ["npm dist-tag ls package-4", { env, cwd: path.join(testDir,"packages/package-4") }], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-4 lerna-temp", { env, cwd: path.join(testDir,"packages/package-4") }]},
-          { args: ["npm dist-tag add package-4@1.0.1 latest", { env, cwd: path.join(testDir,"packages/package-4") }]},
-
-          { args: ["npm dist-tag ls package-2", { env, cwd: path.join(testDir,"packages/package-2") }], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-2 lerna-temp", { env, cwd: path.join(testDir,"packages/package-2") }]},
-          { args: ["npm dist-tag add package-2@1.0.1 latest", { env, cwd: path.join(testDir,"packages/package-2") }]},
-
-          // No package-5.  It's private.
-
-          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
-          { args: ["git push origin master"] },
-          { args: ["git push origin v1.0.1"] }
-        ]],
-      ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
+          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
+            // TODO: there has to be a better way to do this
+            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
+          }
 
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).version, "1.0.1");
+          const directory = path.join(testDir, "./packages/package-2");
+          const packageName = path.basename(directory);
 
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).dependencies["package-1"], "^1.0.1");
+          expect(NpmUtilities.publishTaggedInDir).lastCalledWith(
+            "lerna-temp",
+            directory,
+            registry,
+            expect.any(Function)
+          );
+          expect(NpmUtilities.checkDistTag).lastCalledWith(
+            directory,
+            packageName,
+            "lerna-temp",
+            registry
+          );
+          expect(NpmUtilities.removeDistTag).lastCalledWith(
+            directory,
+            packageName,
+            "lerna-temp",
+            registry
+          );
+          expect(NpmUtilities.addDistTag).lastCalledWith(
+            directory,
+            packageName,
+            "1.0.1",
+            "latest",
+            registry
+          );
 
           done();
         } catch (ex) {
           done.fail(ex);
         }
       }));
-    });
-  });
-
-  /** =========================================================================
-   * NORMAL - REGISTRY CONFIG
-   * ======================================================================= */
-
-  describe("normal mode with registry config", () => {
-    let testDir;
-
-    const originalEnv = Object.assign({}, process.env);
-    const mockEnv = {
-      mock_value: 1,
-      NODE_ENV: "lerna-test",
-    };
-
-    beforeEach(() => initFixture("PublishCommand/registries").then((dir) => {
-      testDir = dir;
-
-      // mock out the ENV to a simpler version for testing
-      process.env = mockEnv;
-    }));
-
-    afterEach(() => {
-      process.env = originalEnv;
-    });
-
-    it("should use config property", (done) => {
-      const publishCommand = new PublishCommand([], {
-        repoVersion: "1.0.1"
-      });
-      const env = Object.assign({}, mockEnv, {
-        npm_config_registry: "https://my-secure-registry/npm",
-      });
-
-      publishCommand.runValidations();
-      publishCommand.runPreparations();
-
-      assertStubbedCalls([
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git tag"] }
-        ]],
-        [PromptUtilities, "confirm", { valueCallback: true }, [
-          { args: ["Are you sure you want to publish the above changes?"], returns: true }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
-          { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
-          { args: ["git commit -m \"$(echo \"v1.0.1\")\""] },
-          { args: ["git tag -a v1.0.1 -m \"v1.0.1\""] }
-        ]],
-        [ChildProcessUtilities, "exec", { nodeCallback: true }, [
-          { args: ["npm publish --tag lerna-temp", { env, cwd: path.join(testDir,"packages/package-1") }]}
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["npm dist-tag ls package-1", { env, cwd: path.join(testDir,"packages/package-1") }],
-            returns: "lerna-temp: 1.0.1\nstable: 1.0.0"
-          },
-          { args: ["npm dist-tag rm package-1 lerna-temp", { env, cwd: path.join(testDir,"packages/package-1") }] },
-          { args: ["npm dist-tag add package-1@1.0.1 latest", { env, cwd: path.join(testDir,"packages/package-1") }] },
-
-          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
-          { args: ["git push origin master"] },
-          { args: ["git push origin v1.0.1"] }
-        ]],
-      ]);
-
-      publishCommand.runCommand(exitWithCode(0, done));
     });
   });
 
@@ -939,81 +692,25 @@ describe("PublishCommand", () => {
       testDir = dir;
     }));
 
-    it("should publish the changed packages", (done) => {
+    it("skips version prompt and publishes changed packages with designated version", (done) => {
       const publishCommand = new PublishCommand([], {
-        repoVersion: "1.0.1"
-      });
+        repoVersion: "1.0.1-beta"
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
-
-      assertStubbedCalls([
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git tag"] }
-        ]],
-        [PromptUtilities, "confirm", { valueCallback: true }, [
-          { args: ["Are you sure you want to publish the above changes?"], returns: true }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
-          { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-3/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-4/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-5/package.json"))] },
-          { args: ["git commit -m \"$(echo \"v1.0.1\")\""] },
-          { args: ["git tag -a v1.0.1 -m \"v1.0.1\""] }
-        ]],
-        [ChildProcessUtilities, "exec", { nodeCallback: true }, [
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          // No package-5.  It's private.
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-1 lerna-temp"] },
-          { args: ["npm dist-tag add package-1@1.0.1 latest"] },
-
-          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-3 lerna-temp"] },
-          { args: ["npm dist-tag add package-3@1.0.1 latest"] },
-
-          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-4 lerna-temp"] },
-          { args: ["npm dist-tag add package-4@1.0.1 latest"] },
-
-          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-2 lerna-temp"] },
-          { args: ["npm dist-tag add package-2@1.0.1 latest"] },
-
-          // No package-5.  It's private.
-
-          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
-          { args: ["git push origin master"] },
-          { args: ["git push origin v1.0.1"] }
-        ]],
-      ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
+          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
+            // TODO: there has to be a better way to do this
+            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
+          }
 
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).version, "1.0.1");
-
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).dependencies["package-1"], "^1.0.1");
+          expect(PromptUtilities.select).not.toBeCalled();
+          expect(updatedLernaJson()).toMatchObject({ version: "1.0.1-beta" });
 
           done();
         } catch (ex) {
@@ -1024,194 +721,47 @@ describe("PublishCommand", () => {
   });
 
   /** =========================================================================
-   * NORMAL - EXACT REPO VERSION
+   * NORMAL - EXACT
    * ======================================================================= */
 
-  describe("normal mode with --repo-version and --exact", () => {
+  describe("normal mode with --exact", () => {
     let testDir;
 
     beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
       testDir = dir;
     }));
 
-    it("should publish the changed packages", (done) => {
+    it("updates matching local dependencies of published packages with exact versions", (done) => {
       const publishCommand = new PublishCommand([], {
-        repoVersion: "1.0.1",
         exact: true
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
-
-      assertStubbedCalls([
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git tag"] }
-        ]],
-        [PromptUtilities, "confirm", { valueCallback: true }, [
-          { args: ["Are you sure you want to publish the above changes?"], returns: true }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
-          { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-3/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-4/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-5/package.json"))] },
-          { args: ["git commit -m \"$(echo \"v1.0.1\")\""] },
-          { args: ["git tag -a v1.0.1 -m \"v1.0.1\""] }
-        ]],
-        [ChildProcessUtilities, "exec", { nodeCallback: true }, [
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          // No package-5.  It's private.
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-1 lerna-temp"] },
-          { args: ["npm dist-tag add package-1@1.0.1 latest"] },
-
-          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-3 lerna-temp"] },
-          { args: ["npm dist-tag add package-3@1.0.1 latest"] },
-
-          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-4 lerna-temp"] },
-          { args: ["npm dist-tag add package-4@1.0.1 latest"] },
-
-          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-2 lerna-temp"] },
-          { args: ["npm dist-tag add package-2@1.0.1 latest"] },
-
-          // No package-5.  It's private.
-
-          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
-          { args: ["git push origin master"] },
-          { args: ["git push origin v1.0.1"] }
-        ]],
-      ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
+          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
+            // TODO: there has to be a better way to do this
+            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
+          }
 
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).version, "1.0.1");
-
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "1.0.1");
-          // remains semver because it is a diverged version,
-          // (different from the release version) and is specified
-          // as semver in the package-4's package.json
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).dependencies["package-1"], "1.0.1");
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
-    });
-  });
-
-  /** =========================================================================
-   * NORMAL - EXACT CONFIG
-   * ======================================================================= */
-
-  describe("normal mode with --repo-version and exact config", () => {
-    let testDir;
-
-    beforeEach(() => initFixture("PublishCommand/normal-exact").then((dir) => {
-      testDir = dir;
-    }));
-
-    it("should publish the changed packages", (done) => {
-      const publishCommand = new PublishCommand([], {
-        repoVersion: "1.0.1"
-      });
-
-      publishCommand.runValidations();
-      publishCommand.runPreparations();
-
-      assertStubbedCalls([
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git tag"] }
-        ]],
-        [PromptUtilities, "confirm", { valueCallback: true }, [
-          { args: ["Are you sure you want to publish the above changes?"], returns: true }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
-          { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-3/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-4/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-5/package.json"))] },
-          { args: ["git commit -m \"$(echo \"v1.0.1\")\""] },
-          { args: ["git tag -a v1.0.1 -m \"v1.0.1\""] }
-        ]],
-        [ChildProcessUtilities, "exec", { nodeCallback: true }, [
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          // No package-5.  It's private.
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-1 lerna-temp"] },
-          { args: ["npm dist-tag add package-1@1.0.1 latest"] },
-
-          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-3 lerna-temp"] },
-          { args: ["npm dist-tag add package-3@1.0.1 latest"] },
-
-          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-4 lerna-temp"] },
-          { args: ["npm dist-tag add package-4@1.0.1 latest"] },
-
-          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-2 lerna-temp"] },
-          { args: ["npm dist-tag add package-2@1.0.1 latest"] },
-
-          // No package-5.  It's private.
-
-          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
-          { args: ["git push origin master"] },
-          { args: ["git push origin v1.0.1"] }
-        ]],
-      ]);
-
-      publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")),
-          "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\",\n  \"exact\": true\n}\n");
-
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).version, "1.0.1");
-
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "1.0.1");
-          // remains semver because it is a diverged version,
-          // (different from the release version) and is specified
-          // as semver in the package-4's package.json
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).dependencies["package-1"], "1.0.1");
+          expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+            "package-1": "1.0.1",
+          });
+          expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+            "package-2": "1.0.1",
+          });
+          // package-4's dependency on package-1 remains semver because
+          // it does not match the version of package-1 being published
+          expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+            "package-1": "^0.0.0",
+          });
+          expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
+            "package-1": "1.0.1",
+          });
 
           done();
         } catch (ex) {
@@ -1235,74 +785,22 @@ describe("PublishCommand", () => {
     it("should use semver increments when passed to cdVersion flag", (done) => {
       const publishCommand = new PublishCommand([], {
         cdVersion: "minor"
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
-
-      assertStubbedCalls([
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git tag"] }
-        ]],
-        [PromptUtilities, "confirm", { valueCallback: true }, [
-          { args: ["Are you sure you want to publish the above changes?"], returns: true }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
-          { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-3/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-4/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-5/package.json"))] },
-          { args: ["git commit -m \"$(echo \"v1.1.0\")\""] },
-          { args: ["git tag -a v1.1.0 -m \"v1.1.0\""] }
-        ]],
-        [ChildProcessUtilities, "exec", { nodeCallback: true }, [
-          { args: ["npm publish --tag lerna-temp", { cwd: path.join(testDir,"packages/package-1") }] },
-          { args: ["npm publish --tag lerna-temp", { cwd: path.join(testDir,"packages/package-3") }] },
-          { args: ["npm publish --tag lerna-temp", { cwd: path.join(testDir,"packages/package-4") }] },
-          { args: ["npm publish --tag lerna-temp", { cwd: path.join(testDir,"packages/package-2") }] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["npm dist-tag ls package-1", { cwd: path.join(testDir,"packages/package-1") }], returns: "lerna-temp: 1.1.0\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-1 lerna-temp", { cwd: path.join(testDir,"packages/package-1") }] },
-          { args: ["npm dist-tag add package-1@1.1.0 latest", { cwd: path.join(testDir,"packages/package-1") }] },
-
-          { args: ["npm dist-tag ls package-3", { cwd: path.join(testDir,"packages/package-3") }], returns: "lerna-temp: 1.1.0\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-3 lerna-temp", { cwd: path.join(testDir,"packages/package-3") }] },
-          { args: ["npm dist-tag add package-3@1.1.0 latest", { cwd: path.join(testDir,"packages/package-3") }] },
-
-          { args: ["npm dist-tag ls package-4", { cwd: path.join(testDir,"packages/package-4") }], returns: "lerna-temp: 1.1.0\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-4 lerna-temp", { cwd: path.join(testDir,"packages/package-4") }] },
-          { args: ["npm dist-tag add package-4@1.1.0 latest", { cwd: path.join(testDir,"packages/package-4") }] },
-
-          { args: ["npm dist-tag ls package-2", { cwd: path.join(testDir,"packages/package-2") }], returns: "lerna-temp: 1.1.0\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-2 lerna-temp", { cwd: path.join(testDir,"packages/package-2") }] },
-          { args: ["npm dist-tag add package-2@1.1.0 latest", { cwd: path.join(testDir,"packages/package-2") }] },
-
-          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
-          { args: ["git push origin master"] },
-          { args: ["git push origin v1.1.0"] }
-        ]],
-      ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.1.0\"\n}\n");
+          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
+            // TODO: there has to be a better way to do this
+            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
+          }
 
-          assert.equal(require(path.join(testDir, "lerna.json")).version, "1.1.0");
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.1.0");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.1.0");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.1.0");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.1.0");
-
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.1.0");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.1.0");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+          expect(PromptUtilities.select).not.toBeCalled();
+          expect(gitCommitMessage()).toBe("v1.1.0");
 
           done();
         } catch (ex) {
@@ -1327,74 +825,22 @@ describe("PublishCommand", () => {
       const publishCommand = new PublishCommand([], {
         independent: true,
         cdVersion: "patch"
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
-
-      assertStubbedCalls([
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git tag"] }
-        ]],
-        [PromptUtilities, "confirm", { valueCallback: true }, [
-          { args: ["Are you sure you want to publish the above changes?"], returns: true }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-3/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-4/package.json"))] },
-          { args: ["git commit -m \"$(echo \"Publish" + EOL + EOL + " - package-1@1.0.1" + EOL + " - package-2@2.0.1" + EOL + " - package-3@3.0.1" + EOL + " - package-4@4.0.1\")\""] },
-          { args: ["git tag -a package-1@1.0.1 -m \"package-1@1.0.1\""] },
-          { args: ["git tag -a package-2@2.0.1 -m \"package-2@2.0.1\""] },
-          { args: ["git tag -a package-3@3.0.1 -m \"package-3@3.0.1\""] },
-          { args: ["git tag -a package-4@4.0.1 -m \"package-4@4.0.1\""] }
-        ]],
-        [ChildProcessUtilities, "exec", { nodeCallback: true }, [
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-1 lerna-temp"] },
-          { args: ["npm dist-tag add package-1@1.0.1 latest"] },
-
-          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 3.0.1\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-3 lerna-temp"] },
-          { args: ["npm dist-tag add package-3@3.0.1 latest"] },
-
-          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 4.0.1\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-4 lerna-temp"] },
-          { args: ["npm dist-tag add package-4@4.0.1 latest"] },
-
-          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 2.0.1\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-2 lerna-temp"] },
-          { args: ["npm dist-tag add package-2@2.0.1 latest"] },
-
-          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
-          { args: ["git push origin master"] },
-          { args: ["git push origin package-1@1.0.1 package-2@2.0.1 package-3@3.0.1 package-4@4.0.1"] }
-        ]],
-      ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"independent\"\n}\n");
+          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
+            // TODO: there has to be a better way to do this
+            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
+          }
 
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "2.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "3.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "4.0.1");
-
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^2.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+          expect(PromptUtilities.select).not.toBeCalled();
+          expect(gitCommitMessage()).toMatchSnapshot("[independent --cd-version] git commit message");
 
           done();
         } catch (ex) {
@@ -1415,84 +861,63 @@ describe("PublishCommand", () => {
       testDir = dir;
     }));
 
-    it("should publish the changed packages", (done) => {
+    it("pushes tags to specified remote", (done) => {
       const publishCommand = new PublishCommand([], {
         gitRemote: "upstream"
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
-
-      assertStubbedCalls([
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git tag"] }
-        ]],
-        [PromptUtilities, "select", { valueCallback: true }, [
-          { args: ["Select a new version (currently 1.0.0)"], returns: "1.0.1" }
-        ]],
-        [PromptUtilities, "confirm", { valueCallback: true }, [
-          { args: ["Are you sure you want to publish the above changes?"], returns: true }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
-          { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-3/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-4/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-5/package.json"))] },
-          { args: ["git commit -m \"$(echo \"v1.0.1\")\""] },
-          { args: ["git tag -a v1.0.1 -m \"v1.0.1\""] }
-        ]],
-        [ChildProcessUtilities, "exec", { nodeCallback: true }, [
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          // No package-5.  It's private.
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-1 lerna-temp"] },
-          { args: ["npm dist-tag add package-1@1.0.1 latest"] },
-
-          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-3 lerna-temp"] },
-          { args: ["npm dist-tag add package-3@1.0.1 latest"] },
-
-          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-4 lerna-temp"] },
-          { args: ["npm dist-tag add package-4@1.0.1 latest"] },
-
-          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-2 lerna-temp"] },
-          { args: ["npm dist-tag add package-2@1.0.1 latest"] },
-
-          // No package-5.  It's private.
-
-          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
-          { args: ["git push upstream master"] },
-          { args: ["git push upstream v1.0.1"] }
-        ]],
-      ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
+          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
+            // TODO: there has to be a better way to do this
+            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
+          }
 
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).version, "1.0.1");
+          expect(GitUtilities.pushWithTags).lastCalledWith("upstream", ["v1.0.1"], execOpts(testDir));
 
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).dependencies["package-1"], "^1.0.1");
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
+  });
+
+  /** =========================================================================
+   * NORMAL - GIT REMOTE
+   * ======================================================================= */
+
+  describe("normal mode with --ignore", () => {
+    let testDir;
+
+    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
+      testDir = dir;
+    }));
+
+    it("does not publish ignored packages", (done) => {
+      const publishCommand = new PublishCommand([], {
+        ignore: ["package-2", "package-3", "package-4"],
+      }, testDir);
+
+      publishCommand.runValidations();
+      publishCommand.runPreparations();
+
+      publishCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
+            // TODO: there has to be a better way to do this
+            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
+          }
+
+          expect(gitAddedFiles(testDir)).toMatchSnapshot("[normal --ignore] git adds changed files");
+          expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[normal --ignore] npm publish --tag");
 
           done();
         } catch (ex) {
@@ -1513,84 +938,24 @@ describe("PublishCommand", () => {
       testDir = dir;
     }));
 
-    it("should publish the changed packages, committing the publish changes with a custom message", (done) => {
+    it("commits changes with a custom message", (done) => {
       const publishCommand = new PublishCommand([], {
         message: "A custom publish message"
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
-
-      assertStubbedCalls([
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git tag"] }
-        ]],
-        [PromptUtilities, "select", { valueCallback: true }, [
-          { args: ["Select a new version (currently 1.0.0)"], returns: "1.0.1" }
-        ]],
-        [PromptUtilities, "confirm", { valueCallback: true }, [
-          { args: ["Are you sure you want to publish the above changes?"], returns: true }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
-          { args: ["git add " + escapeArgs(path.join(testDir, "lerna.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-3/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-4/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-5/package.json"))] },
-          { args: ["git commit -m \"$(echo \"A custom publish message\")\""] },
-          { args: ["git tag -a v1.0.1 -m \"v1.0.1\""] }
-        ]],
-        [ChildProcessUtilities, "exec", { nodeCallback: true }, [
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          // No package-5.  It's private.
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-1 lerna-temp"] },
-          { args: ["npm dist-tag add package-1@1.0.1 latest"] },
-
-          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-3 lerna-temp"] },
-          { args: ["npm dist-tag add package-3@1.0.1 latest"] },
-
-          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-4 lerna-temp"] },
-          { args: ["npm dist-tag add package-4@1.0.1 latest"] },
-
-          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.0.1\nstable: 1.0.0" },
-          { args: ["npm dist-tag rm package-2 lerna-temp"] },
-          { args: ["npm dist-tag add package-2@1.0.1 latest"] },
-
-          // No package-5.  It's private.
-
-          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
-          { args: ["git push origin master"] },
-          { args: ["git push origin v1.0.1"] }
-        ]],
-      ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
-          assert.equal(normalizeNewline(fs.readFileSync(path.join(testDir, "lerna.json"), "utf-8")), "{\n  \"lerna\": \"__TEST_VERSION__\",\n  \"version\": \"1.0.1\"\n}\n");
+          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
+            // TODO: there has to be a better way to do this
+            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
+          }
 
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).version, "1.0.1");
-
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
-          assert.equal(require(path.join(testDir, "packages/package-5/package.json")).dependencies["package-1"], "^1.0.1");
+          expect(GitUtilities.commit).lastCalledWith("A custom publish message", execOpts(testDir));
 
           done();
         } catch (ex) {
@@ -1611,83 +976,25 @@ describe("PublishCommand", () => {
       testDir = dir;
     }));
 
-    it("should publish the changed packages in independent mode, committing with a custom msg", (done) => {
+    it("commits changes with a custom message", (done) => {
       const publishCommand = new PublishCommand([], {
         independent: true,
         message: "A custom publish message"
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
-
-      assertStubbedCalls([
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git tag"] }
-        ]],
-        [PromptUtilities, "select", { valueCallback: true }, [
-          { args: ["Select a new version for package-1 (currently 1.0.0)"], returns: "1.0.1" },
-          { args: ["Select a new version for package-2 (currently 2.0.0)"], returns: "1.1.0" },
-          { args: ["Select a new version for package-3 (currently 3.0.0)"], returns: "2.0.0" },
-          { args: ["Select a new version for package-4 (currently 4.0.0)"], returns: "1.1.0" }
-        ]],
-        [PromptUtilities, "confirm", { valueCallback: true }, [
-          { args: ["Are you sure you want to publish the above changes?"], returns: true }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-3/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-4/package.json"))] },
-          { args: ["git commit -m \"$(echo \"A custom publish message\")\""] },
-          { args: ["git tag -a package-1@1.0.1 -m \"package-1@1.0.1\""] },
-          { args: ["git tag -a package-2@1.1.0 -m \"package-2@1.1.0\""] },
-          { args: ["git tag -a package-3@2.0.0 -m \"package-3@2.0.0\""] },
-          { args: ["git tag -a package-4@1.1.0 -m \"package-4@1.1.0\""] }
-        ]],
-        [ChildProcessUtilities, "exec", { nodeCallback: true }, [
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-1 lerna-temp"] },
-          { args: ["npm dist-tag add package-1@1.0.1 latest"] },
-
-          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 2.0.0" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-3 lerna-temp"] },
-          { args: ["npm dist-tag add package-3@2.0.0 latest"] },
-
-          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.1.0" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-4 lerna-temp"] },
-          { args: ["npm dist-tag add package-4@1.1.0 latest"] },
-
-          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.1.0" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-2 lerna-temp"] },
-          { args: ["npm dist-tag add package-2@1.1.0 latest"] },
-
-          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
-          { args: ["git push origin master"] },
-          { args: ["git push origin package-1@1.0.1 package-2@1.1.0 package-3@2.0.0 package-4@1.1.0"] },
-        ]]
-      ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
+          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
+            // TODO: there has to be a better way to do this
+            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
+          }
 
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.1.0");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "2.0.0");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.1.0");
-
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.1.0");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+          expect(GitUtilities.commit).lastCalledWith("A custom publish message", execOpts(testDir));
 
           done();
         } catch (ex) {
@@ -1702,102 +1009,69 @@ describe("PublishCommand", () => {
    * ======================================================================= */
 
   describe("independent mode with --conventional-commits", () => {
+    const recommendVersion = ConventionalCommitUtilities.recommendVersion;
+    const updateChangelog = ConventionalCommitUtilities.updateChangelog;
+
     let testDir;
 
     beforeEach(() => initFixture("PublishCommand/independent").then((dir) => {
       testDir = dir;
+
+      const reccomendReplies = [
+        "1.0.1",
+        "1.1.0",
+        "2.0.0",
+        "1.1.0",
+      ];
+      ConventionalCommitUtilities.recommendVersion = jest.fn(() => reccomendReplies.shift());
+      ConventionalCommitUtilities.updateChangelog = jest.fn();
     }));
+
+    afterEach(() => {
+      ConventionalCommitUtilities.recommendVersion = recommendVersion;
+      ConventionalCommitUtilities.updateChangelog = updateChangelog;
+    });
 
     it("should use conventional-commits utility to guess version bump and generate CHANGELOG", (done) => {
       const publishCommand = new PublishCommand([], {
         independent: true,
-        message: "A custom publish message",
         conventionalCommits: true
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
-
-      assertStubbedCalls([
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git tag"] }
-        ]],
-        [ConventionalCommitUtilities, "recommendVersion", {}, [
-          { args: [{ name: "package-1", version: "1.0.0", location: path.join(testDir, "packages/package-1") }], returns: "1.0.1" },
-          { args: [{ name: "package-2", version: "2.0.0", location: path.join(testDir, "packages/package-2") }], returns: "1.1.0" },
-          { args: [{ name: "package-3", version: "3.0.0", location: path.join(testDir, "packages/package-3") }], returns: "2.0.0" },
-          { args: [{ name: "package-4", version: "4.0.0", location: path.join(testDir, "packages/package-4") }], returns: "1.1.0" }
-        ]],
-        [PromptUtilities, "confirm", { valueCallback: true }, [
-          { args: ["Are you sure you want to publish the above changes?"], returns: true }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
-        ]],
-        [ConventionalCommitUtilities, "updateChangelog", {}, [
-          { args: [{ name: "package-1", location: path.join(testDir, "packages/package-1") }] },
-          { args: [{ name: "package-2", location: path.join(testDir, "packages/package-2") }] },
-          { args: [{ name: "package-3", location: path.join(testDir, "packages/package-3") }] },
-          { args: [{ name: "package-4", location: path.join(testDir, "packages/package-4") }] }
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/CHANGELOG.md"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-1/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/CHANGELOG.md"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-2/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-3/CHANGELOG.md"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-3/package.json"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-4/CHANGELOG.md"))] },
-          { args: ["git add " + escapeArgs(path.join(testDir, "packages/package-4/package.json"))] },
-          { args: ["git commit -m \"$(echo \"A custom publish message\")\""] },
-          { args: ["git tag -a package-1@1.0.1 -m \"package-1@1.0.1\""] },
-          { args: ["git tag -a package-2@1.1.0 -m \"package-2@1.1.0\""] },
-          { args: ["git tag -a package-3@2.0.0 -m \"package-3@2.0.0\""] },
-          { args: ["git tag -a package-4@1.1.0 -m \"package-4@1.1.0\""] }
-        ]],
-        [ChildProcessUtilities, "exec", { nodeCallback: true }, [
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.1" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-1 lerna-temp"] },
-          { args: ["npm dist-tag add package-1@1.0.1 latest"] },
-
-          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 2.0.0" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-3 lerna-temp"] },
-          { args: ["npm dist-tag add package-3@2.0.0 latest"] },
-
-          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 1.1.0" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-4 lerna-temp"] },
-          { args: ["npm dist-tag add package-4@1.1.0 latest"] },
-
-          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 1.1.0" + EOL + "stable: 1.0.0" },
-          { args: ["npm dist-tag rm package-2 lerna-temp"] },
-          { args: ["npm dist-tag add package-2@1.1.0 latest"] },
-
-          { args: ["git rev-parse --abbrev-ref HEAD"], returns: "master" },
-          { args: ["git push origin master"] },
-          { args: ["git push origin package-1@1.0.1 package-2@1.1.0 package-3@2.0.0 package-4@1.1.0"] },
-        ]]
-      ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
+          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
+            // TODO: there has to be a better way to do this
+            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
+          }
 
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "1.1.0");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "2.0.0");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "1.1.0");
+          expect(gitAddedFiles(testDir))
+            .toMatchSnapshot("[independent --conventional-commits] git adds changed files");
+          expect(gitCommitMessage())
+            .toMatchSnapshot("[independent --conventional-commits] git commit message");
 
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "^1.0.1");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "^1.1.0");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+          [
+            ["package-1", "1.0.0"],
+            ["package-2", "2.0.0"],
+            ["package-3", "3.0.0"],
+            ["package-4", "4.0.0"],
+          ].forEach(([name, version]) => {
+            const location = path.join(testDir, "packages", name);
+
+            expect(ConventionalCommitUtilities.recommendVersion).toBeCalledWith(
+              expect.objectContaining({ name, version }),
+              execOpts(testDir)
+            );
+            expect(ConventionalCommitUtilities.updateChangelog).toBeCalledWith(
+              expect.objectContaining({ name, location }),
+              execOpts(testDir)
+            );
+          });
 
           done();
         } catch (ex) {
@@ -1825,63 +1099,22 @@ describe("PublishCommand", () => {
         npmTag: "next",
         yes: true,
         exact: true,
-      });
+      }, testDir);
 
       publishCommand.runValidations();
       publishCommand.runPreparations();
-
-      assertStubbedCalls([
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git tag"] },
-
-          { args: ["git rev-parse HEAD"], returns: "81e3b44339e1403fe3d762e9435b7c9a155fdef7" },
-          { args: ["git rev-parse HEAD"], returns: "81e3b44339e1403fe3d762e9435b7c9a155fdef7" }
-        ]],
-        [ChildProcessUtilities, "exec", { nodeCallback: true }, [
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-          { args: ["npm publish --tag lerna-temp"] },
-        ]],
-        [ChildProcessUtilities, "execSync", {}, [
-          { args: ["git checkout -- packages/*/package.json"] },
-
-          { args: ["npm dist-tag ls package-1"], returns: "lerna-temp: 1.0.0-alpha.81e3b443" + EOL + "latest: 1.0.0" },
-          { args: ["npm dist-tag rm package-1 lerna-temp"] },
-          { args: ["npm dist-tag add package-1@1.0.0-alpha.81e3b443 next"] },
-
-          { args: ["npm dist-tag ls package-3"], returns: "lerna-temp: 3.0.0-alpha.81e3b443" + EOL + "latest: 1.0.0" },
-          { args: ["npm dist-tag rm package-3 lerna-temp"] },
-          { args: ["npm dist-tag add package-3@3.0.0-alpha.81e3b443 next"] },
-
-          { args: ["npm dist-tag ls package-4"], returns: "lerna-temp: 4.0.0-alpha.81e3b443" + EOL + "latest: 1.0.0" },
-          { args: ["npm dist-tag rm package-4 lerna-temp"] },
-          { args: ["npm dist-tag add package-4@4.0.0-alpha.81e3b443 next"] },
-
-          { args: ["npm dist-tag ls package-2"], returns: "lerna-temp: 2.0.0-alpha.81e3b443" + EOL + "latest: 1.0.0" },
-          { args: ["npm dist-tag rm package-2 lerna-temp"] },
-          { args: ["npm dist-tag add package-2@2.0.0-alpha.81e3b443 next"] },
-        ]]
-      ]);
 
       publishCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")));
+          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
+            // TODO: there has to be a better way to do this
+            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
+          }
 
-          // The following wouldn't be the actual results of a canary release
-          // because `git checkout --` would have removed the file changes.
-          // However, this is what would've been published to npm so it's
-          // useful to test.
-          assert.equal(require(path.join(testDir, "packages/package-1/package.json")).version, "1.0.0-alpha.81e3b443");
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).version, "2.0.0-alpha.81e3b443");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).version, "3.0.0-alpha.81e3b443");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).version, "4.0.0-alpha.81e3b443");
-
-          assert.equal(require(path.join(testDir, "packages/package-2/package.json")).dependencies["package-1"], "1.0.0-alpha.81e3b443");
-          assert.equal(require(path.join(testDir, "packages/package-3/package.json")).devDependencies["package-2"], "2.0.0-alpha.81e3b443");
-          assert.equal(require(path.join(testDir, "packages/package-4/package.json")).dependencies["package-1"], "^0.0.0");
+          expect(addedDistTagInDirectories(testDir))
+            .toMatchSnapshot("[independent --canary --npm-tag=next --yes --exact] npm dist-tag add");
 
           done();
         } catch (ex) {

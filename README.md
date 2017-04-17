@@ -36,6 +36,11 @@ single repository.
 **Lerna is a tool that optimizes the workflow around managing multi-package
 repositories with git and npm.**
 
+Lerna can also reduce the time and space requirements for numerous
+copies of packages in development and build environments - normally a
+downside of dividing a project into many separate NPM package. See the
+[hoist documentation](doc/hoist.md) for details.
+
 ### What does a Lerna repo look like?
 
 There's actually very little to it. You have a file system that looks like this:
@@ -288,7 +293,7 @@ When run with this flag, `publish` publishes packages in a more granular way (pe
 $ lerna publish --conventional-commits
 ```
 
-When run with this flag, `publish` will use angular conventional-commit format to [determine version bump](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-recommended-bump) and [generate CHANGELOG](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-changelog-cli)
+When run with this flag, `publish` will use the [Conventional Commits Specification](https://conventionalcommits.org/) to [determine the version bump](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-recommended-bump) and [generate CHANGELOG](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-changelog-cli)
 
 #### --git-remote [remote]
 
@@ -464,7 +469,7 @@ $ lerna exec --scope my-component -- ls -la
 You may also get the name of the current package through the environment variable `LERNA_PACKAGE_NAME`:
 
 ```sh
-$ lerna exec -- npm view $LERNA_PACKAGE_NAME
+$ lerna exec -- npm view \$LERNA_PACKAGE_NAME
 ```
 
 > Hint: The commands are spawned in parallel, using the concurrency given.
@@ -687,6 +692,8 @@ the default is `**` (hoist everything).  This option only affects the
 ```sh
 $ lerna bootstrap --hoist
 ```
+
+For background on `--hoist`, see the [hoist documentation](doc/hoist.md).
 
 Note: If packages depend on different _versions_ of an external dependency,
 the most commonly used version will be hoisted, and a warning will be emitted.

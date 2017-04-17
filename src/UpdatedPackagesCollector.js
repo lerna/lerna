@@ -11,12 +11,13 @@ class Update {
 
 export default class UpdatedPackagesCollector {
   constructor(command) {
+    this.execOpts = command.execOpts;
     this.logger = command.logger;
     this.repository = command.repository;
-    this.packages = command.repository.packages;
+    this.packages = command.filteredPackages;
     this.packageGraph = command.repository.packageGraph;
     this.progressBar = command.progressBar;
-    this.flags = command.getOptions();
+    this.options = command.options;
   }
 
   getUpdates() {
@@ -28,10 +29,10 @@ export default class UpdatedPackagesCollector {
   collectUpdatedPackages() {
     this.logger.info("Checking for updated packages...");
 
-    const hasTags = GitUtilities.hasTags();
+    const hasTags = GitUtilities.hasTags(this.execOpts);
 
     if (hasTags) {
-      const tag = GitUtilities.getLastTag();
+      const tag = GitUtilities.getLastTag(this.execOpts);
       this.logger.info("Comparing with: " + tag);
     } else {
       this.logger.info("No tags found! Comparing with initial commit.");
@@ -41,18 +42,21 @@ export default class UpdatedPackagesCollector {
 
     let commits;
 
-    if (this.flags.canary) {
+    if (this.options.canary) {
       let currentSHA;
 
-      if (this.flags.canary !== true) {
-        currentSHA = this.flags.canary;
+      if (this.options.canary !== true) {
+        currentSHA = this.options.canary;
       } else {
-        currentSHA = GitUtilities.getCurrentSHA();
+        currentSHA = GitUtilities.getCurrentSHA(this.execOpts);
       }
 
       commits = this.getAssociatedCommits(currentSHA);
     } else if (hasTags) {
-      commits = GitUtilities.describeTag(GitUtilities.getLastTaggedCommitInBranch());
+      commits = GitUtilities.describeTag(
+        GitUtilities.getLastTaggedCommitInBranch(this.execOpts),
+        this.execOpts
+      );
     }
 
     const updatedPackages = {};
@@ -64,7 +68,7 @@ export default class UpdatedPackagesCollector {
         return true;
       }
 
-      const forcePublish = (this.flags.forcePublish || "").split(",");
+      const forcePublish = (this.options.forcePublish || "").split(",");
 
       if (forcePublish.indexOf("*") > -1) {
         return true;
@@ -93,7 +97,7 @@ export default class UpdatedPackagesCollector {
       return false;
     }
 
-    let dependencies = this.packageGraph.get(packageName).dependencies;
+    const dependencies = this.packageGraph.get(packageName).dependencies;
 
     if (dependencies.indexOf(dependency) > -1) {
       this.cache[packageName][dependency] = "dependent";
@@ -131,7 +135,11 @@ export default class UpdatedPackagesCollector {
 
   collectUpdates() {
     return this.packages.filter((pkg) => {
-      return this.updatedPackages[pkg.name] || (this.flags[SECRET_FLAG] ? false : this.dependents[pkg.name]) || this.flags.canary;
+      return (
+        this.updatedPackages[pkg.name] ||
+        (this.options[SECRET_FLAG] ? false : this.dependents[pkg.name]) ||
+        this.options.canary
+      );
     }).map((pkg) => {
       return new Update(pkg);
     });
@@ -145,7 +153,7 @@ export default class UpdatedPackagesCollector {
 
   hasDiffSinceThatIsntIgnored(pkg, commits) {
     const folder = path.relative(this.repository.rootPath, pkg.location);
-    const diff = GitUtilities.diffSinceIn(commits, pkg.location);
+    const diff = GitUtilities.diffSinceIn(commits, pkg.location, this.execOpts);
 
     if (diff === "") {
       return false;
@@ -155,10 +163,10 @@ export default class UpdatedPackagesCollector {
       return file.replace(folder + path.sep, "");
     });
 
-    if (this.flags.ignore) {
+    if (this.options.ignore) {
       changedFiles = changedFiles.filter((file) => {
-        return !find(this.flags.ignore, (pattern) => {
-          return minimatch(file, pattern, {matchBase: true});
+        return !find(this.options.ignore, (pattern) => {
+          return minimatch(file, pattern, { matchBase: true });
         });
       });
     }
@@ -167,4 +175,7 @@ export default class UpdatedPackagesCollector {
   }
 }
 
-const SECRET_FLAG = new Buffer("ZGFuZ2Vyb3VzbHlPbmx5UHVibGlzaEV4cGxpY2l0VXBkYXRlc1RoaXNJc0FDdXN0b21GbGFnRm9yQmFiZWxBbmRZb3VTaG91bGROb3RCZVVzaW5nSXRKdXN0RGVhbFdpdGhNb3JlUGFja2FnZXNCZWluZ1B1Ymxpc2hlZEl0SXNOb3RBQmlnRGVhbA==", "base64").toString("ascii");
+// TODO: remove this when we _really_ remove support for SECRET_FLAG
+const Buffer = require("safe-buffer").Buffer;
+// eslint-disable-next-line max-len
+const SECRET_FLAG = Buffer.from("ZGFuZ2Vyb3VzbHlPbmx5UHVibGlzaEV4cGxpY2l0VXBkYXRlc1RoaXNJc0FDdXN0b21GbGFnRm9yQmFiZWxBbmRZb3VTaG91bGROb3RCZVVzaW5nSXRKdXN0RGVhbFdpdGhNb3JlUGFja2FnZXNCZWluZ1B1Ymxpc2hlZEl0SXNOb3RBQmlnRGVhbA==", "base64").toString("ascii");

@@ -1,9 +1,10 @@
-import assert from "assert";
-
+// file under test
 import progressBar from "../src/progressBar";
 
 describe("progressBar", () => {
   it("should exist", () => {
-    assert.ok(progressBar);
+    expect(progressBar).toBeDefined();
   });
+
+  it("needs better tests");
 });

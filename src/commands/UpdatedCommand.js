@@ -1,6 +1,17 @@
 import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
+import { builder as publishOptions } from "./PublishCommand";
 import Command from "../Command";
 import chalk from "chalk";
+
+export function handler(argv) {
+  return new UpdatedCommand(argv._, argv).run();
+}
+
+export const command = "updated";
+
+export const describe = "Check which packages have changed since the last publish.";
+
+export const builder = (yargs) => yargs.options(publishOptions);
 
 export default class UpdatedCommand extends Command {
   initialize(callback) {
@@ -14,9 +25,9 @@ export default class UpdatedCommand extends Command {
   }
 
   execute(callback) {
-    const formattedUpdates = this.updates
-      .map((update) => `- ${update.package.name}${update.package.isPrivate() ? ` (${chalk.red("private")})` : ""}`)
-      .join("\n");
+    const formattedUpdates = this.updates.map((update) => update.package).map((pkg) =>
+      `- ${pkg.name}${pkg.isPrivate() ? ` (${chalk.red("private")})` : ""}`
+    ).join("\n");
 
     this.logger.newLine();
     this.logger.info(formattedUpdates);

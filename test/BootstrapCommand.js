@@ -1,25 +1,85 @@
-import fs from "graceful-fs";
-import pathExists from "path-exists";
-import assert from "assert";
-import path from "path";
-import normalize from "normalize-path";
-
-import ChildProcessUtilities from "../src/ChildProcessUtilities";
+// mocked or stubbed modules
 import FileSystemUtilities from "../src/FileSystemUtilities";
-import BootstrapCommand from "../src/commands/BootstrapCommand";
+import NpmUtilities from "../src/NpmUtilities";
+
+// helpers
+import callsBack from "./helpers/callsBack";
 import exitWithCode from "./helpers/exitWithCode";
 import initFixture from "./helpers/initFixture";
-import stub from "./helpers/stub";
+import normalizeRelativeDir from "./helpers/normalizeRelativeDir";
 
-import assertStubbedCalls from "./helpers/assertStubbedCalls";
+// file under test
+import BootstrapCommand from "../src/commands/BootstrapCommand";
 
-const STDIO_OPT = ["ignore", "pipe", "pipe"];
+jest.mock("../src/NpmUtilities");
 
-const resolveSymlink = (symlinkLocation) => {
-  return path.resolve(path.dirname(symlinkLocation), fs.readlinkSync(symlinkLocation));
+// stub rimraf because we trust isaacs
+const fsRimraf = FileSystemUtilities.rimraf;
+const resetRimraf = () => {
+  FileSystemUtilities.rimraf = fsRimraf;
+};
+const stubRimraf = () => {
+  FileSystemUtilities.rimraf = jest.fn(callsBack());
 };
 
+// stub symlink in certain tests to reduce redundancy
+const fsSymlink = FileSystemUtilities.symlink;
+const resetSymlink = () => {
+  FileSystemUtilities.symlink = fsSymlink;
+};
+const stubSymlink = () => {
+  FileSystemUtilities.symlink = jest.fn(callsBack());
+};
+
+// object snapshots have sorted keys
+const installedPackagesInDirectories = (testDir) =>
+  NpmUtilities.installInDir.mock.calls.reduce((obj, args) => {
+    const location = normalizeRelativeDir(testDir, args[0]);
+    const dependencies = args[1];
+    obj[location] = dependencies;
+    return obj;
+  }, {});
+
+const ranScriptsInDirectories = (testDir) =>
+  NpmUtilities.runScriptInDir.mock.calls.reduce((obj, args) => {
+    const location = normalizeRelativeDir(testDir, args[2]);
+    const script = args[0];
+
+    if (!obj[location]) {
+      obj[location] = [];
+    }
+    obj[location].push(script);
+
+    return obj;
+  }, {});
+
+const removedDirectories = (testDir) =>
+  FileSystemUtilities.rimraf.mock.calls.map((args) =>
+    normalizeRelativeDir(testDir, args[0])
+  );
+
+const symlinkedDirectories = (testDir) =>
+  FileSystemUtilities.symlink.mock.calls.map((args) => {
+    return {
+      _src: normalizeRelativeDir(testDir, args[0]),
+      dest: normalizeRelativeDir(testDir, args[1]),
+      type: args[2],
+    };
+  });
+
 describe("BootstrapCommand", () => {
+  beforeEach(() => {
+    // we stub installInDir() in most tests because
+    // we already have enough tests of installInDir()
+    NpmUtilities.installInDir.mockImplementation(callsBack());
+
+    // stub runScriptInDir() because it is a huge source
+    // of slowness when running tests for no good reason
+    NpmUtilities.runScriptInDir.mockImplementation(callsBack());
+  });
+
+  afterEach(() => jest.resetAllMocks());
+
   describe("lifecycle scripts", () => {
     let testDir;
 
@@ -28,7 +88,7 @@ describe("BootstrapCommand", () => {
     }));
 
     it("should run preinstall, postinstall and prepublish scripts", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {});
+      const bootstrapCommand = new BootstrapCommand([], {}, testDir);
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
@@ -37,10 +97,8 @@ describe("BootstrapCommand", () => {
         if (err) return done.fail(err);
 
         try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
-          assert.ok(pathExists.sync(path.join(testDir, "packages", "package-preinstall", "did-preinstall")));
-          assert.ok(pathExists.sync(path.join(testDir, "packages", "package-postinstall", "did-postinstall")));
-          assert.ok(pathExists.sync(path.join(testDir, "packages", "package-prepublish", "did-prepublish")));
+          expect(NpmUtilities.installInDir).not.toBeCalled();
+          expect(ranScriptsInDirectories(testDir)).toMatchSnapshot();
 
           done();
         } catch (ex) {
@@ -57,76 +115,23 @@ describe("BootstrapCommand", () => {
       testDir = dir;
     }));
 
+    beforeEach(stubRimraf);
+    afterEach(resetRimraf);
+
     it("should hoist", (done) => {
       const bootstrapCommand = new BootstrapCommand([], {
         hoist: true
-      });
+      }, testDir);
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
-
-      const wantPackage = {
-        [path.join(testDir, "package.json")]: {
-          dependencies: { "foo": "^1.0.0", "@test/package-1": "^0.0.0" }
-        },
-        [path.join(testDir, "packages" ,"package-3", "package.json")]: {
-          dependencies: { "foo": "0.1.12" }
-        },
-      };
-      const gotPackage = {};
-      stub(FileSystemUtilities, "writeFile", (fn, json, callback) => {
-        gotPackage[fn] = JSON.parse(json);
-        callback();
-      });
-
-      stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
-        callback();
-      });
-
-      const wantRimraf = {
-        [path.join(testDir, "packages" ,"package-1", "node_modules", "foo")]: true,
-        [path.join(testDir, "packages" ,"package-2", "node_modules", "foo")]: true,
-        [path.join(testDir, "packages" ,"package-4", "node_modules", "@test", "package-1")]: true,
-      };
-      const gotRimraf = {};
-      stub(FileSystemUtilities, "rimraf", (path, callback) => {
-        gotRimraf[path] = true;
-        callback();
-      });
-
-      assertStubbedCalls([
-        [FileSystemUtilities, "rename", { nodeCallback: true }, [
-          { args: [
-            path.join(testDir, "package.json"),
-            path.join(testDir, "package.json.lerna_backup"),
-          ] }
-        ]],
-        [FileSystemUtilities, "renameSync", { }, [
-          { args: [
-            path.join(testDir, "package.json.lerna_backup"),
-            path.join(testDir, "package.json"),
-          ] }
-        ]],
-        [FileSystemUtilities, "rename", { nodeCallback: true }, [
-          { args: [
-            path.join(testDir, "packages" ,"package-3", "package.json"),
-            path.join(testDir, "packages" ,"package-3", "package.json.lerna_backup"),
-          ] }
-        ]],
-        [FileSystemUtilities, "renameSync", { }, [
-          { args: [
-            path.join(testDir, "packages" ,"package-3", "package.json.lerna_backup"),
-            path.join(testDir, "packages" ,"package-3", "package.json"),
-          ] }
-        ]],
-      ]);
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          assert.deepEqual(gotPackage, wantPackage, "Installed the right deps");
-          assert.deepEqual(gotRimraf, wantRimraf, "Removed the right stuff");
+          expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
+          expect(removedDirectories(testDir)).toMatchSnapshot();
 
           done();
         } catch (ex) {
@@ -139,52 +144,17 @@ describe("BootstrapCommand", () => {
       const bootstrapCommand = new BootstrapCommand([], {
         hoist: true,
         nohoist: "@test/package-1"
-      });
+      }, testDir);
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
-
-      const wantPackage = {
-        [path.join(testDir, "package.json")]: {
-          dependencies: { "foo": "^1.0.0" }
-        },
-        [path.join(testDir, "packages" ,"package-3", "package.json")]: {
-          dependencies: { "foo": "0.1.12" }
-        },
-        [path.join(testDir, "packages" ,"package-4", "package.json")]: {
-          dependencies: { "@test/package-1": "^0.0.0" }
-        },
-      };
-      const gotPackage = {};
-      stub(FileSystemUtilities, "writeFile", (fn, json, callback) => {
-        gotPackage[fn] = JSON.parse(json);
-        callback();
-      });
-
-      const wantRimraf = {
-        [path.join(testDir, "packages" ,"package-1", "node_modules", "foo")]: true,
-        [path.join(testDir, "packages" ,"package-2", "node_modules", "foo")]: true,
-      };
-      const gotRimraf = {};
-      stub(FileSystemUtilities, "rimraf", (path, callback) => {
-        gotRimraf[path] = true;
-        callback();
-      });
-
-      assertStubbedCalls([
-        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install"], { cwd: testDir, stdio: STDIO_OPT }] },
-          { args: ["npm", ["install"], { cwd: path.join(testDir, "packages" ,"package-3"), stdio: STDIO_OPT }] },
-          { args: ["npm", ["install"], { cwd: path.join(testDir, "packages", "package-4"), stdio: STDIO_OPT }] },
-        ]],
-      ]);
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          assert.deepEqual(gotPackage, wantPackage, "Installed the right deps");
-          assert.deepEqual(gotRimraf, wantRimraf, "Removed the right stuff");
+          expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
+          expect(removedDirectories(testDir)).toMatchSnapshot();
 
           done();
         } catch (ex) {
@@ -194,76 +164,28 @@ describe("BootstrapCommand", () => {
     });
   });
 
-  describe("dependencies between packages in the repo", () => {
+  describe("with local package dependencies", () => {
     let testDir;
 
     beforeEach(() => initFixture("BootstrapCommand/basic").then((dir) => {
       testDir = dir;
     }));
 
+    beforeEach(stubSymlink);
+    afterEach(resetSymlink);
+
     it("should bootstrap packages", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {});
+      const bootstrapCommand = new BootstrapCommand([], {}, testDir);
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
-
-      stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
-        callback();
-      });
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
-          // package-1 should not have any packages symlinked
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-1", "node_modules", "package-2")));
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-1", "node_modules", "package-3")));
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-1", "node_modules", "package-4")));
-          // package-2 package dependencies are symlinked
-          assert.equal(
-            normalize(resolveSymlink(path.join(testDir, "packages", "package-2", "node_modules", "@test", "package-1"))),
-            normalize(path.join(testDir, "packages", "package-1")),
-            "package-1 should be symlinked to package-2"
-          );
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-2", "node_modules", "package-3")));
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-2", "node_modules", "package-4")));
-          // package-3 package dependencies are symlinked
-          assert.equal(
-            normalize(resolveSymlink(path.join(testDir, "packages", "package-3", "node_modules", "@test", "package-1"))),
-            normalize(path.join(testDir, "packages", "package-1")),
-            "package-1 should be symlinked to package-3"
-          );
-          assert.equal(
-            normalize(resolveSymlink(path.join(testDir, "packages", "package-3", "node_modules", "package-2"))),
-            normalize(path.join(testDir, "packages", "package-2")),
-            "package-2 should be symlinked to package-3"
-          );
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-3", "node_modules", "package-4")));
-          // package-4 package dependencies are symlinked
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", "package-1")));
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", "package-2")));
-          assert.equal(
-            normalize(resolveSymlink(path.join(testDir, "packages", "package-4", "node_modules", "package-3"))),
-            normalize(path.join(testDir, "packages", "package-3")),
-            "package-3 should be symlinked to package-4"
-          );
-          // package binaries are symlinked
-          assert.equal(
-            normalize(FileSystemUtilities.isSymlink(path.join(testDir, "packages", "package-3", "node_modules", ".bin", "package-2"))),
-            normalize(path.join(testDir, "packages", "package-2", "cli.js")),
-            "package-2 binary should be symlinked in package-3"
-          );
-          assert.equal(
-            normalize(FileSystemUtilities.isSymlink(path.join(testDir, "packages", "package-4", "node_modules", ".bin", "package3cli1"))),
-            normalize(path.join(testDir, "packages", "package-3", "cli1.js")),
-            "package-3 binary should be symlinked in package-4"
-          );
-          assert.equal(
-            normalize(FileSystemUtilities.isSymlink(path.join(testDir, "packages", "package-4", "node_modules", ".bin", "package3cli2"))),
-            normalize(path.join(testDir, "packages", "package-3", "cli2.js")),
-            "package-3 binary should be symlinked in package-4"
-          );
+          expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
+          expect(symlinkedDirectories(testDir)).toMatchSnapshot();
 
           done();
         } catch (ex) {
@@ -275,30 +197,16 @@ describe("BootstrapCommand", () => {
     it("should not bootstrap ignored packages", (done) => {
       const bootstrapCommand = new BootstrapCommand([], {
         ignore: "package-@(3|4)"
-      });
+      }, testDir);
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
-
-      const installed = [0,0,0];
-      stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
-        installed[+options.cwd.match(/package-(\d)$/)[1]]++;
-        callback();
-      });
-
-      assertStubbedCalls([
-        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install"], { cwd: path.join(testDir, "packages", "package-1"), stdio: STDIO_OPT }] },
-          { args: ["npm", ["install"], { cwd: path.join(testDir, "packages", "package-2"), stdio: STDIO_OPT }] },
-        ]]
-      ]);
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
-          assert.deepEqual(installed, [0,1,1], "Did all our installs");
+          expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
 
           done();
         } catch (ex) {
@@ -310,67 +218,17 @@ describe("BootstrapCommand", () => {
     it("should only bootstrap scoped packages", (done) => {
       const bootstrapCommand = new BootstrapCommand([], {
         scope: "package-@(3|4)"
-      });
+      }, testDir);
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
-
-      const installed = [0,0,0,0,0];
-      stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
-        installed[+options.cwd.match(/package-(\d)$/)[1]]++;
-        callback();
-      });
-
-      assertStubbedCalls([
-        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install"], { cwd: path.join(testDir, "packages" ,"package-3"), stdio: STDIO_OPT }] },
-          { args: ["npm", ["install"], { cwd: path.join(testDir, "packages", "package-4"), stdio: STDIO_OPT }] },
-        ]]
-      ]);
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
-          assert.deepEqual(installed, [0,0,0,1,1], "Did all our installs");
-
-          // package-3 package dependencies are symlinked
-          assert.equal(
-            normalize(resolveSymlink(path.join(testDir, "packages", "package-3", "node_modules", "@test", "package-1"))),
-            normalize(path.join(testDir, "packages", "package-1")),
-            "package-1 should be symlinked to package-3"
-          );
-          assert.equal(
-            normalize(resolveSymlink(path.join(testDir, "packages", "package-3", "node_modules", "package-2"))),
-            normalize(path.join(testDir, "packages", "package-2")),
-            "package-2 should be symlinked to package-3"
-          );
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-3", "node_modules", "package-4")));
-          // package-4 package dependencies are symlinked
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", "package-1")));
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", "package-2")));
-          assert.equal(
-            normalize(resolveSymlink(path.join(testDir, "packages", "package-4", "node_modules", "package-3"))),
-            normalize(path.join(testDir, "packages", "package-3")),
-            "package-3 should be symlinked to package-4"
-          );
-          // package binaries are symlinked
-          assert.equal(
-            normalize(FileSystemUtilities.isSymlink(path.join(testDir, "packages", "package-3", "node_modules", ".bin", "package-2"))),
-            normalize(path.join(testDir, "packages", "package-2", "cli.js")),
-            "package-2 binary should be symlinked in package-3"
-          );
-          assert.equal(
-            normalize(FileSystemUtilities.isSymlink(path.join(testDir, "packages", "package-4", "node_modules", ".bin", "package3cli1"))),
-            normalize(path.join(testDir, "packages", "package-3", "cli1.js")),
-            "package-3 binary should be symlinked in package-4"
-          );
-          assert.equal(
-            normalize(FileSystemUtilities.isSymlink(path.join(testDir, "packages", "package-4", "node_modules", ".bin", "package3cli2"))),
-            normalize(path.join(testDir, "packages", "package-3", "cli2.js")),
-            "package-3 binary should be symlinked in package-4"
-          );
+          expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
+          expect(symlinkedDirectories(testDir)).toMatchSnapshot();
 
           done();
         } catch (ex) {
@@ -380,97 +238,29 @@ describe("BootstrapCommand", () => {
     });
   });
 
-  describe("a repo with packages outside of packages/", () => {
+  describe("with multiple package locations", () => {
     let testDir;
 
     beforeEach(() => initFixture("BootstrapCommand/extra").then((dir) => {
       testDir = dir;
     }));
 
+    beforeEach(stubSymlink);
+    afterEach(resetSymlink);
+
     it("should bootstrap packages", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {});
+      const bootstrapCommand = new BootstrapCommand([], {}, testDir);
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
-
-      const want = {
-        [path.join(testDir, "packages", "package-1")]: true,
-        [path.join(testDir, "packages", "package-2")]: true,
-        [path.join(testDir,             "package-3")]: true,
-        [path.join(testDir, "packages", "package-4")]: true,
-      };
-      const got = {};
-      stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
-        got[options.cwd] = true;
-        callback();
-      });
-
-      assertStubbedCalls([
-        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install", "foo@^1.0.0"], { cwd: path.join(testDir, "packages", "package-1"), stdio: STDIO_OPT }] },
-          { args: ["npm", ["install", "foo@^1.0.0"], { cwd: path.join(testDir, "packages", "package-2"), stdio: STDIO_OPT }] },
-          { args: ["npm", ["install", "foo@0.1.12"], { cwd: path.join(testDir, "package-3"), stdio: STDIO_OPT }] },
-          { args: ["npm", ["install", "@test/package-1@^0.0.0"], { cwd: path.join(testDir, "packages", "package-4"), stdio: STDIO_OPT }] },
-        ]],
-      ]);
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
-          assert.deepEqual(want, got, "Installed everywhere");
-
-          // Make sure the `prepublish` script got run (index.js got created).
-          assert.ok(pathExists.sync(path.join(testDir, "packages", "package-1", "index.js")));
-          // package-1 should not have any packages symlinked
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-1", "node_modules", "package-2")));
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-1", "node_modules", "package-3")));
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-1", "node_modules", "package-4")));
-          // package-2 package dependencies are symlinked
-          assert.equal(
-            path.resolve(resolveSymlink(path.join(testDir, "packages", "package-2", "node_modules", "@test", "package-1"))),
-            path.resolve(path.join(testDir, "packages", "package-1")),
-            "package-1 should be symlinked to package-2"
-          );
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-2", "node_modules", "package-3")));
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-2", "node_modules", "package-4")));
-          // package-3 package dependencies are symlinked
-          assert.equal(
-            normalize(resolveSymlink(path.join(testDir, "package-3", "node_modules", "@test", "package-1"))),
-            normalize(path.join(testDir, "packages", "package-1")),
-            "package-1 should be symlinked to package-3"
-          );
-          assert.equal(
-            normalize(resolveSymlink(path.join(testDir, "package-3", "node_modules", "package-2"))),
-            normalize(path.join(testDir, "packages", "package-2")),
-            "package-2 should be symlinked to package-3"
-          );
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "package-3", "node_modules", "package-4")));
-          // package-4 package dependencies are symlinked
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", "package-1")));
-          assert.throws(() => fs.readlinkSync(path.join(testDir, "packages", "package-4", "node_modules", "package-2")));
-          assert.equal(
-            normalize(resolveSymlink(path.join(testDir, "packages", "package-4", "node_modules", "package-3"))),
-            normalize(path.join(testDir, "package-3")),
-            "package-3 should be symlinked to package-4"
-          );
-          // package binaries are symlinked
-          assert.equal(
-            normalize(FileSystemUtilities.isSymlink(path.join(testDir, "package-3", "node_modules", ".bin", "package-2"))),
-            normalize(path.join(testDir, "packages", "package-2", "cli.js")),
-            "package-2 binary should be symlinked in package-3"
-          );
-          assert.equal(
-            normalize(FileSystemUtilities.isSymlink(path.join(testDir, "packages", "package-4", "node_modules", ".bin", "package3cli1"))),
-            normalize(path.join(testDir, "package-3", "cli1.js")),
-            "package-3 binary should be symlinked in package-4"
-          );
-          assert.equal(
-            normalize(FileSystemUtilities.isSymlink(path.join(testDir, "packages", "package-4", "node_modules", ".bin", "package3cli2"))),
-            normalize(path.join(testDir, "package-3", "cli2.js")),
-            "package-3 binary should be symlinked in package-4"
-          );
+          expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
+          expect(ranScriptsInDirectories(testDir)).toMatchSnapshot();
+          expect(symlinkedDirectories(testDir)).toMatchSnapshot();
 
           done();
         } catch (ex) {
@@ -482,22 +272,16 @@ describe("BootstrapCommand", () => {
     it("should not bootstrap ignored packages", (done) => {
       const bootstrapCommand = new BootstrapCommand([], {
         ignore: "package-@(3|4)"
-      });
+      }, testDir);
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
-
-      const installed = [0,0,0];
-      stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
-        installed[+options.cwd.match(/package-(\d)$/)[1]]++;
-        callback();
-      });
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
+          expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
 
           done();
         } catch (ex) {
@@ -506,31 +290,21 @@ describe("BootstrapCommand", () => {
       }));
     });
 
-    it("should bootstrap any dependencies not included by --scope when --include-filtered-dependencies is true", (done) => {
+    it("bootstraps dependencies not included by --scope with --include-filtered-dependencies", (done) => {
       // we scope to package-2 only but should still install package-1 as it is a dependency of package-2
       const bootstrapCommand = new BootstrapCommand([], {
         scope: "package-2",
         includeFilteredDependencies: true
-      });
+      }, testDir);
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
-
-      const installed = [0,0,0];
-      stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
-        installed[+options.cwd.match(/package-(\d)$/)[1]]++;
-        callback();
-      });
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
-          assert.deepEqual(installed, [0,1,1], "Did all our installs");
-
-          // Make sure the `prepublish` script got run (index.js got created)
-          assert.ok(pathExists.sync(path.join(testDir, "packages", "package-1", "index.js")));
+          expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
 
           done();
         } catch (ex) {
@@ -539,31 +313,21 @@ describe("BootstrapCommand", () => {
       }));
     });
 
-    it("should bootstrap any dependencies exluded by --ignore when --include-filtered-dependencies is true", (done) => {
+    it("bootstraps dependencies excluded by --ignore with --include-filtered-dependencies", (done) => {
       // we ignore package 1 but it should still be installed because it is a dependency of package-2
       const bootstrapCommand = new BootstrapCommand([], {
         ignore: "{@test/package-1,package-@(3|4)}",
         includeFilteredDependencies: true
-      });
+      }, testDir);
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
-
-      const installed = [0,0,0];
-      stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
-        installed[+options.cwd.match(/package-(\d)$/)[1]]++;
-        callback();
-      });
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
-          assert.deepEqual(installed, [0,1,1], "Did all our installs");
-
-          // Make sure the `prepublish` script got run (index.js got created), even though we --ignored package-1
-          assert.ok(pathExists.sync(path.join(testDir, "packages", "package-1", "index.js")));
+          expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
 
           done();
         } catch (ex) {
@@ -573,7 +337,7 @@ describe("BootstrapCommand", () => {
     });
   });
 
-  describe("external dependencies that haven't been installed", () => {
+  describe("with external dependencies that haven't been installed", () => {
     let testDir;
 
     beforeEach(() => initFixture("BootstrapCommand/cold").then((dir) => {
@@ -581,37 +345,16 @@ describe("BootstrapCommand", () => {
     }));
 
     it("should get installed", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {});
+      const bootstrapCommand = new BootstrapCommand([], {}, testDir);
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
-
-      assertStubbedCalls([
-        [FileSystemUtilities, "writeFile", { nodeCallback: true }, [
-          { args: [
-            path.join(testDir, "packages", "package-1", "package.json"),
-            JSON.stringify({ dependencies: { external: "^1.0.0" } }),
-          ] },
-        ]],
-        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install"], { cwd: path.join(testDir, "packages", "package-1"), stdio: STDIO_OPT }] },
-        ]],
-        [FileSystemUtilities, "writeFile", { nodeCallback: true }, [
-          { args: [
-            path.join(testDir, "packages", "package-2", "package.json"),
-            JSON.stringify({ dependencies: { external: "^2.0.0" } }),
-          ] },
-        ]],
-        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install"], { cwd: path.join(testDir, "packages", "package-2"), stdio: STDIO_OPT }] },
-        ]],
-      ]);
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
+          expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
 
           done();
         } catch (ex) {
@@ -619,75 +362,22 @@ describe("BootstrapCommand", () => {
         }
       }));
     });
-  });
 
-  describe("external dependencies that have already been installed", () => {
-    let testDir;
-
-    beforeEach(() => initFixture("BootstrapCommand/warm").then((dir) => {
-      testDir = dir;
-    }));
-
-    it("should not get re-installed", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {});
+    it("gets network mutex when --npm-client=yarn", (done) => {
+      const bootstrapCommand = new BootstrapCommand([], {
+        npmClient: "yarn",
+      }, testDir);
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
-
-      let installed = false;
-      stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
-        installed = true;
-        callback();
-      });
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
-          assert.ok(!installed, "The external dependency was not installed");
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
-    });
-  });
-
-  describe("packages with at least one external dependency to install", () => {
-    let testDir;
-
-    beforeEach(() => initFixture("BootstrapCommand/tepid").then((dir) => {
-      testDir = dir;
-    }));
-
-    it("should install all dependencies", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {});
-
-      bootstrapCommand.runValidations();
-      bootstrapCommand.runPreparations();
-
-      stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
-        callback();
-      });
-
-      let got;
-      stub(FileSystemUtilities, "writeFile", (fn, json, callback) => {
-        got = JSON.parse(json);
-        callback();
-      });
-
-      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
-          assert.deepEqual(got, {
-            dependencies: {
-              "external-1": "^1.0.0",
-              "external-2": "^1.0.0",
-            }
+          expect(NpmUtilities.installInDir.mock.calls[0][2]).toMatchObject({
+            npmClient: "yarn",
+            mutex: expect.stringMatching(/^network:\d+$/),
           });
 
           done();
@@ -698,37 +388,78 @@ describe("BootstrapCommand", () => {
     });
   });
 
-  describe("peer dependencies in packages in the repo", () => {
+  describe("with external dependencies that have already been installed", () => {
+    let testDir;
+
+    beforeEach(() => initFixture("BootstrapCommand/warm").then((dir) => {
+      testDir = dir;
+    }));
+
+    it("should not get re-installed", (done) => {
+      const bootstrapCommand = new BootstrapCommand([], {}, testDir);
+
+      bootstrapCommand.runValidations();
+      bootstrapCommand.runPreparations();
+
+      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          expect(NpmUtilities.installInDir).not.toBeCalled();
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
+  });
+
+  describe("with at least one external dependency to install", () => {
+    let testDir;
+
+    beforeEach(() => initFixture("BootstrapCommand/tepid").then((dir) => {
+      testDir = dir;
+    }));
+
+    it("should install all dependencies", (done) => {
+      const bootstrapCommand = new BootstrapCommand([], {}, testDir);
+
+      bootstrapCommand.runValidations();
+      bootstrapCommand.runPreparations();
+
+      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
+  });
+
+  describe("with package peerDependencies", () => {
     let testDir;
 
     beforeEach(() => initFixture("BootstrapCommand/peer").then((dir) => {
       testDir = dir;
     }));
 
-    it("should not bootstrap ignored peer dependencies", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {
-        "ignore-peer-deps": true
-      });
+    it("does not bootstrap peerDependencies", (done) => {
+      const bootstrapCommand = new BootstrapCommand([], {}, testDir);
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
-
-      let installed = false;
-      stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
-        // This should never be reached
-        assert.deepEqual(args, ["install", "external@^1.0.0"]);
-        assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-1"), stdio: STDIO_OPT });
-        installed = true;
-        callback();
-      });
 
       bootstrapCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          assert.ok(!pathExists.sync(path.join(testDir, "lerna-debug.log")), "lerna-debug.log should not exist");
-          assert.ok(!pathExists.sync(path.join(testDir, "packages/package-1/node_modules/package-2")), "The linkable peer dependency should not be installed");
-          assert.ok(!installed, "The external peer dependency should not be installed");
+          expect(NpmUtilities.installInDir).not.toBeCalled();
 
           done();
         } catch (ex) {
@@ -739,10 +470,14 @@ describe("BootstrapCommand", () => {
   });
 
   describe("zero packages", () => {
-    beforeEach(() => initFixture("BootstrapCommand/zero-pkgs"));
+    let testDir;
+
+    beforeEach(() => initFixture("BootstrapCommand/zero-pkgs").then((dir) => {
+      testDir = dir;
+    }));
 
     it("should succeed in repositories with zero packages", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {});
+      const bootstrapCommand = new BootstrapCommand([], {}, testDir);
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
@@ -751,42 +486,34 @@ describe("BootstrapCommand", () => {
     });
   });
 
-  describe("registries", () => {
+  describe("with registry config", () => {
     let testDir;
-
-    const originalEnv = Object.assign({}, process.env);
-    const mockEnv = {
-      mock_value: 1,
-      NODE_ENV: "lerna-test",
-    };
 
     beforeEach(() => initFixture("BootstrapCommand/registries").then((dir) => {
       testDir = dir;
-
-      // mock out the ENV to a simpler version for testing
-      process.env = mockEnv;
     }));
 
-    afterEach(() => {
-      process.env = originalEnv;
-    });
-
-    it("should use config property", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {});
-      const env = Object.assign({}, mockEnv, {
-        npm_config_registry: "https://my-secure-registry/npm",
-      });
+    it("should install packages from registry", (done) => {
+      const bootstrapCommand = new BootstrapCommand([], {}, testDir);
 
       bootstrapCommand.runValidations();
       bootstrapCommand.runPreparations();
 
-      assertStubbedCalls([
-        [ChildProcessUtilities, "spawn", { nodeCallback: true }, [
-          { args: ["npm", ["install"], { cwd: path.join(testDir, "packages", "package-1"), stdio: STDIO_OPT, env }] }
-        ]]
-      ]);
+      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
 
-      bootstrapCommand.runCommand(exitWithCode(0, done));
+        try {
+          expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
+          expect(NpmUtilities.installInDir.mock.calls[0][2]).toEqual({
+            npmClient: undefined,
+            registry: "https://my-secure-registry/npm",
+          });
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
     });
   });
 });

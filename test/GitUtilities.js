@@ -1,153 +1,283 @@
-import assert from "assert";
+import { EOL } from "os";
 
+// mocked modules
+import tempWrite from "temp-write";
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
+
+// file under test
 import GitUtilities from "../src/GitUtilities";
 
-/**
- * Yes, I am aware that these aren't actually tests.
- * Please write them for me if it bothers you enough.
- */
+jest.mock("temp-write");
+jest.mock("../src/ChildProcessUtilities");
 
 describe("GitUtilities", () => {
-  const cpuExecSync = ChildProcessUtilities.execSync;
-
-  beforeEach(() => {
-    ChildProcessUtilities.execSync = jest.fn();
-  });
-
-  afterEach(() => {
-    ChildProcessUtilities.execSync = cpuExecSync;
-  });
+  afterEach(() => jest.resetAllMocks());
 
   describe(".isDetachedHead()", () => {
-    it("calls getCurrentBranch()", () => {
-      expect(() => GitUtilities.isDetachedHead()).not.toThrow();
-      expect(ChildProcessUtilities.execSync).lastCalledWith("git rev-parse --abbrev-ref HEAD");
+    const getCurrentBranch = GitUtilities.getCurrentBranch;
+    afterEach(() => {
+      GitUtilities.getCurrentBranch = getCurrentBranch;
     });
 
     it("returns true when branchName is HEAD", () => {
-      ChildProcessUtilities.execSync.mockImplementation(() => "HEAD");
+      GitUtilities.getCurrentBranch = jest.fn(() => "HEAD");
       expect(GitUtilities.isDetachedHead()).toBe(true);
     });
 
     it("returns false when branchName is not HEAD", () => {
-      ChildProcessUtilities.execSync.mockImplementation(() => "master");
+      GitUtilities.getCurrentBranch = jest.fn(() => "master");
       expect(GitUtilities.isDetachedHead()).toBe(false);
+    });
+
+    it("passes opts to getCurrentBranch()", () => {
+      GitUtilities.getCurrentBranch = jest.fn();
+      const opts = { cwd: "test" };
+      GitUtilities.isDetachedHead(opts);
+      expect(GitUtilities.getCurrentBranch).lastCalledWith(opts);
     });
   });
 
   describe(".isInitialized()", () => {
-    it("should exist", () => {
-      assert.ok(GitUtilities.isInitialized);
+    it("returns true when git command succeeds", () => {
+      expect(GitUtilities.isInitialized({ cwd: "test" })).toBe(true);
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git",
+        ["rev-parse"],
+        { cwd: "test", stdio: "ignore" }
+      );
+    });
+
+    it("returns false when git command fails", () => {
+      ChildProcessUtilities.execSync.mockImplementation(() => {
+        throw new Error("fatal: Not a git repository");
+      });
+      expect(() => GitUtilities.isInitialized()).not.toThrow();
+      expect(GitUtilities.isInitialized()).toBe(false);
     });
   });
 
   describe(".addFile()", () => {
-    it("should exist", () => {
-      assert.ok(GitUtilities.addFile);
+    it("calls git add with file argument", () => {
+      const opts = { cwd: "test" };
+      GitUtilities.addFile("foo", opts);
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["add", "foo"], opts
+      );
     });
   });
 
   describe(".commit()", () => {
-    it("should exist", () => {
-      assert.ok(GitUtilities.commit);
+    it("calls git commit with message", () => {
+      const opts = { cwd: "oneline" };
+      GitUtilities.commit("foo", opts);
+
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git",
+        ["commit", "-m", "foo"],
+        opts
+      );
+      expect(tempWrite.sync).not.toBeCalled();
+    });
+
+    it("allows multiline message", () => {
+      tempWrite.sync = jest.fn(() => "TEMPFILE");
+
+      const opts = { cwd: "multiline" };
+      GitUtilities.commit(`foo${EOL}bar`, opts);
+
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git",
+        ["commit", "-F", "TEMPFILE"],
+        opts
+      );
+      expect(tempWrite.sync).lastCalledWith(`foo${EOL}bar`, "lerna-commit.txt");
     });
   });
 
   describe(".addTag()", () => {
-    it("should exist", () => {
-      assert.ok(GitUtilities.addTag);
+    it("creates annotated git tag", () => {
+      const opts = { cwd: "test" };
+      GitUtilities.addTag("foo", opts);
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["tag", "-a", "foo", "-m", "foo"], opts
+      );
     });
   });
 
   describe(".removeTag()", () => {
-    it("should exist", () => {
-      assert.ok(GitUtilities.removeTag);
+    it("deletes specified git tag", () => {
+      const opts = { cwd: "test" };
+      GitUtilities.removeTag("foo", opts);
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["tag", "-d", "foo"], opts
+      );
     });
   });
 
   describe(".hasTags()", () => {
-    it("should exist", () => {
-      assert.ok(GitUtilities.hasTags);
+    it("returns true when one or more git tags exist", () => {
+      ChildProcessUtilities.execSync.mockImplementation(() => "v1.0.0");
+      const opts = { cwd: "test" };
+      expect(GitUtilities.hasTags(opts)).toBe(true);
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["tag"], opts
+      );
+    });
+
+    it("returns false when no git tags exist", () => {
+      ChildProcessUtilities.execSync.mockImplementation(() => "");
+      expect(GitUtilities.hasTags()).toBe(false);
     });
   });
 
   describe(".getLastTaggedCommit()", () => {
-    it("should exist", () => {
-      assert.ok(GitUtilities.getLastTaggedCommit);
+    it("returns SHA of closest git tag", () => {
+      ChildProcessUtilities.execSync.mockImplementation(() => "deadbeef");
+      const opts = { cwd: "test" };
+      expect(GitUtilities.getLastTaggedCommit(opts)).toBe("deadbeef");
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["rev-list", "--tags", "--max-count=1"], opts
+      );
     });
   });
 
   describe(".getLastTaggedCommitInBranch()", () => {
-    it("should exist", () => {
-      assert.ok(GitUtilities.getLastTaggedCommitInBranch);
+    const getLastTag = GitUtilities.getLastTag;
+    afterEach(() => {
+      GitUtilities.getLastTag = getLastTag;
+    });
+
+    it("returns SHA of closest git tag in branch", () => {
+      GitUtilities.getLastTag = jest.fn(() => "v1.0.0");
+      ChildProcessUtilities.execSync.mockImplementation(() => "deadbeef");
+      const opts = { cwd: "test" };
+      expect(GitUtilities.getLastTaggedCommitInBranch(opts)).toBe("deadbeef");
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["rev-list", "-n", "1", "v1.0.0"], opts
+      );
     });
   });
 
   describe(".getFirstCommit()", () => {
-    it("should exist", () => {
-      assert.ok(GitUtilities.getFirstCommit);
+    it("returns SHA of first commit", () => {
+      ChildProcessUtilities.execSync.mockImplementation(() => "beefcafe");
+      const opts = { cwd: "test" };
+      expect(GitUtilities.getFirstCommit(opts)).toBe("beefcafe");
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["rev-list", "--max-parents=0", "HEAD"], opts
+      );
     });
   });
 
   describe(".pushWithTags()", () => {
-    it("should exist", () => {
-      assert.ok(GitUtilities.pushWithTags);
+    const getCurrentBranch = GitUtilities.getCurrentBranch;
+    afterEach(() => {
+      GitUtilities.getCurrentBranch = getCurrentBranch;
+    });
+
+    it("pushes current branch and specified tag(s) to origin", () => {
+      GitUtilities.getCurrentBranch = jest.fn(() => "master");
+      const opts = { cwd: "test" };
+      GitUtilities.pushWithTags("origin", ["foo@1.0.1", "foo-bar@1.0.0"], opts);
+      expect(ChildProcessUtilities.execSync).toBeCalledWith(
+        "git", ["push", "origin", "master"], opts
+      );
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["push", "origin", "foo@1.0.1", "foo-bar@1.0.0"], opts
+      );
     });
   });
 
   describe(".getLastTag()", () => {
-    it("should exist", () => {
-      assert.ok(GitUtilities.getLastTag);
+    it("returns the closest tag", () => {
+      ChildProcessUtilities.execSync.mockImplementation(() => "v1.0.0");
+      const opts = { cwd: "test" };
+      expect(GitUtilities.getLastTag(opts)).toBe("v1.0.0");
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["describe", "--tags", "--abbrev=0"], opts
+      );
     });
   });
 
   describe(".describeTag()", () => {
-    it("should exist", () => {
-      assert.ok(GitUtilities.describeTag);
+    it("returns description of specified tag", () => {
+      ChildProcessUtilities.execSync.mockImplementation(() => "foo@1.0.0");
+      const opts = { cwd: "test" };
+      expect(GitUtilities.describeTag("deadbeef", opts)).toBe("foo@1.0.0");
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["describe", "--tags", "deadbeef"], opts
+      );
     });
   });
 
   describe(".diffSinceIn()", () => {
-    it("should exist", () => {
-      assert.ok(GitUtilities.diffSinceIn);
+    it("returns list of files changed since commit at location", () => {
+      ChildProcessUtilities.execSync.mockImplementation(() => "files");
+      const opts = { cwd: "test" };
+      expect(GitUtilities.diffSinceIn("foo@1.0.0", "packages/foo", opts)).toBe("files");
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["diff", "--name-only", "foo@1.0.0", "--", "packages/foo"], opts
+      );
     });
   });
 
   describe(".getCurrentBranch()", () => {
     it("calls `git rev-parse --abbrev-ref HEAD`", () => {
-      expect(() => GitUtilities.getCurrentBranch()).not.toThrow();
-      expect(ChildProcessUtilities.execSync).lastCalledWith("git rev-parse --abbrev-ref HEAD");
+      ChildProcessUtilities.execSync.mockImplementation(() => "master");
+      const opts = { cwd: "test" };
+      expect(GitUtilities.getCurrentBranch(opts)).toBe("master");
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["rev-parse", "--abbrev-ref", "HEAD"], opts
+      );
     });
   });
 
   describe(".getCurrentSHA()", () => {
-    it("should exist", () => {
-      assert.ok(GitUtilities.getCurrentSHA);
-    });
-  });
-
-  describe(".getTopLevelDirectory()", () => {
-    it("should exist", () => {
-      assert.ok(GitUtilities.getTopLevelDirectory);
+    it("returns SHA of current ref", () => {
+      ChildProcessUtilities.execSync.mockImplementation(() => "deadcafe");
+      const opts = { cwd: "test" };
+      expect(GitUtilities.getCurrentSHA(opts)).toBe("deadcafe");
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["rev-parse", "HEAD"], opts
+      );
     });
   });
 
   describe(".checkoutChanges()", () => {
-    it("should exist", () => {
-      assert.ok(GitUtilities.checkoutChanges);
+    it("calls git checkout with specified arg", () => {
+      const opts = { cwd: "test" };
+      GitUtilities.checkoutChanges("packages/*/package.json", opts);
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["checkout", "--", "packages/*/package.json"], opts
+      );
     });
   });
 
   describe(".init()", () => {
-    it("should exist", () => {
-      assert.ok(GitUtilities.init);
+    it("calls git init", () => {
+      ChildProcessUtilities.execSync.mockImplementation(() => "stdout for logger");
+      const opts = { cwd: "test" };
+      expect(GitUtilities.init(opts)).toBe("stdout for logger");
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["init"], opts
+      );
     });
   });
 
   describe(".hasCommit()", () => {
-    it("should exist", () => {
-      assert.ok(GitUtilities.hasCommit);
+    it("returns true when git command succeeds", () => {
+      const opts = { cwd: "test" };
+      expect(GitUtilities.hasCommit(opts)).toBe(true);
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["log"], opts
+      );
+    });
+
+    it("returns false when git command fails", () => {
+      ChildProcessUtilities.execSync.mockImplementation(() => {
+        throw new Error("fatal: your current branch 'master' does not have any commits yet");
+      });
+      expect(GitUtilities.hasCommit()).toBe(false);
     });
   });
 });

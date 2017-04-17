@@ -1,0 +1,12 @@
+{
+  "name": "integration-lifecycle",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "postinstall": "lerna bootstrap",
+    "test": "lerna run test"
+  },
+  "devDependencies": {
+    "lerna": "__TEST_PKG_URL__"
+  }
+}

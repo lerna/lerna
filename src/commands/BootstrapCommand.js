@@ -1,3 +1,4 @@
+import getPort from "get-port";
 import FileSystemUtilities from "../FileSystemUtilities";
 import NpmUtilities from "../NpmUtilities";
 import PackageUtilities from "../PackageUtilities";
@@ -7,12 +8,51 @@ import find from "lodash/find";
 import path from "path";
 import semver from "semver";
 
+export function handler(argv) {
+  return new BootstrapCommand(argv._, argv).run();
+}
+
+export const command = "bootstrap";
+
+export const describe = "Link local packages together and install remaining package dependencies";
+
+export const builder = {
+  "hoist": {
+    describe: "Install external dependencies matching [glob] to the repo root",
+    type: "string",
+    defaultDescription: "'**'",
+  },
+  "nohoist": {
+    describe: "Don't hoist external dependencies matching [glob] to the repo root",
+    type: "string"
+  },
+  "npm-client": {
+    describe: "Executable used to install dependencies (npm, yarn, pnpm, ...)",
+    type: "string",
+    requiresArg: true,
+  }
+};
+
 export default class BootstrapCommand extends Command {
   initialize(callback) {
+    const { registry, npmClient } = this.options;
+
     this.npmConfig = {
-      registry: this.npmRegistry,
-      client: this.getOptions().npmClient,
+      registry,
+      npmClient,
     };
+
+    this.batchedPackages = this.toposort
+      ? PackageUtilities.topologicallyBatchPackages(this.filteredPackages, { logger: this.logger })
+      : [ this.filteredPackages ];
+
+    if (npmClient === "yarn") {
+      return getPort(42424).then((port) => {
+        this.npmConfig.mutex = `network:${port}`;
+        callback(null, true);
+      }).catch(callback);
+    }
+
     callback(null, true);
   }
 
@@ -33,9 +73,6 @@ export default class BootstrapCommand extends Command {
    */
   bootstrapPackages(callback) {
     this.logger.info(`Bootstrapping ${this.filteredPackages.length} packages`);
-    this.batchedPackages = this.toposort
-      ? PackageUtilities.topologicallyBatchPackages(this.filteredPackages, {logger: this.logger})
-      : [ this.filteredPackages ];
 
     async.series([
       // preinstall bootstrapped packages
@@ -104,24 +141,32 @@ export default class BootstrapCommand extends Command {
    * @param {Function} callback
    */
   createBinaryLink(src, dest, name, bin, callback) {
+    const safeName = name[0] === "@"
+      ? name.substring(name.indexOf("/") + 1)
+      : name;
     const destBinFolder = path.join(dest, ".bin");
+
     // The `bin` in a package.json may be either a string or an object.
     // Normalize to an object.
     const bins = typeof bin === "string"
-      ? { [name]: bin }
+      ? { [safeName]: bin }
       : bin;
+
     const srcBinFiles = [];
     const destBinFiles = [];
-    Object.keys(bins).forEach((name) => {
-      srcBinFiles.push(path.join(src, bins[name]));
-      destBinFiles.push(path.join(destBinFolder, name));
+    Object.keys(bins).forEach((binName) => {
+      srcBinFiles.push(path.join(src, bins[binName]));
+      destBinFiles.push(path.join(destBinFolder, binName));
     });
+
     // make sure when have a destination folder (node_modules/.bin)
     const actions = [(cb) => FileSystemUtilities.mkdirp(destBinFolder, cb)];
+
     // symlink each binary
     srcBinFiles.forEach((binFile, idx) => {
       actions.push((cb) => FileSystemUtilities.symlink(binFile, destBinFiles[idx], "exec", cb));
     });
+
     async.series(actions, callback);
   }
 
@@ -144,7 +189,7 @@ export default class BootstrapCommand extends Command {
    * @param {Array.<String>} packages
    */
   dependencySatisfiesPackages(dependency, packages) {
-    const {version} = (this.hoistedPackageJson(dependency) || {});
+    const { version } = (this.hoistedPackageJson(dependency) || {});
     return packages.every((pkg) => {
       return semver.satisfies(
         version,
@@ -159,7 +204,6 @@ export default class BootstrapCommand extends Command {
    * @returns {Object}
    */
   getDependenciesToInstall(packages = []) {
-
     // find package by name
     const findPackage = (name, version) => find(this.packages, (pkg) => {
       return pkg.name === name && (!version || semver.satisfies(pkg.version, version));
@@ -169,7 +213,7 @@ export default class BootstrapCommand extends Command {
 
     // Configuration for what packages to hoist may be in lerna.json or it may
     // come in as command line options.
-    const {hoist: scope, nohoist: ignore} = this.getOptions();
+    const { hoist, nohoist } = this.options;
 
     // This will contain entries for each hoistable dependency.
     const root = [];
@@ -210,8 +254,8 @@ export default class BootstrapCommand extends Command {
     Object.keys(this.repository.package.allDependencies).forEach((name) => {
       const version = this.repository.package.allDependencies[name];
       depsToInstall[name] = {
-        versions   : {[version]: 0},
-        dependents : {[version]: []},
+        versions   : { [version]: 0 },
+        dependents : { [version]: [] },
       };
     });
 
@@ -222,13 +266,15 @@ export default class BootstrapCommand extends Command {
       Object.keys(pkg.allDependencies)
 
         // map to package or normalized external dependency
-        .map((name) => findPackage(name, pkg.allDependencies[name]) || { name, version: pkg.allDependencies[name] })
+        .map((name) => (
+          findPackage(name, pkg.allDependencies[name]) ||
+          { name, version: pkg.allDependencies[name] }
+        ))
 
         // match external and version mismatched local packages
         .filter((dep) => !hasPackage(dep.name, dep.version) || !pkg.hasMatchingDependency(dep, this.logger))
 
-        .forEach(({name, version}) => {
-
+        .forEach(({ name, version }) => {
           // Get the object for this package, auto-vivifying.
           const dep = depsToInstall[name] || (depsToInstall[name] = {
             versions   : {},
@@ -249,15 +295,14 @@ export default class BootstrapCommand extends Command {
 
     // determine where each dependency will be installed
     Object.keys(depsToInstall).forEach((name) => {
-      const {versions, dependents} = depsToInstall[name];
+      const { versions, dependents } = depsToInstall[name];
 
       let rootVersion;
 
-      if (scope && PackageUtilities.getFilteredPackage({name}, {scope, ignore})) {
-
+      if (hoist && PackageUtilities.isHoistedPackage(name, hoist, nohoist)) {
         // Get the most common version.
         const commonVersion = Object.keys(versions)
-          .reduce((a, b) => versions[a] > versions[b] ? a : b);
+          .reduce((a, b) => { return versions[a] > versions[b] ? a : b; });
 
         // Get the version required by the repo root (if any).
         // If the root doesn't have a dependency on this package then we'll
@@ -285,12 +330,10 @@ export default class BootstrapCommand extends Command {
 
       // Add less common versions to package installs.
       Object.keys(versions).forEach((version) => {
-
         // Only install deps that can't be hoisted in the leaves.
         if (version === rootVersion) return;
 
         dependents[version].forEach((pkg) => {
-
           if (rootVersion) {
             this.logger.warn(
               `"${pkg}" package depends on ${name}@${version}, ` +
@@ -306,6 +349,7 @@ export default class BootstrapCommand extends Command {
         });
       });
     });
+
     return { root, leaves };
   }
 
@@ -314,7 +358,7 @@ export default class BootstrapCommand extends Command {
    * @param {Function} callback
    */
   installExternalDependencies(callback) {
-    const {leaves, root} = this.getDependenciesToInstall(this.filteredPackages);
+    const { leaves, root } = this.getDependenciesToInstall(this.filteredPackages);
     const actions = [];
 
     // Start root install first, if any, since it's likely to take the longest.
@@ -323,42 +367,50 @@ export default class BootstrapCommand extends Command {
       // If we have anything to install in the root then we'll install
       // _everything_ that needs to go there.  This is important for
       // consistent behavior across npm clients.
-      const depsToInstallInRoot = root.some(({isSatisfied}) => !isSatisfied)
-        ? root.map(({dependency}) => dependency)
+      const depsToInstallInRoot = root.some(({ isSatisfied }) => !isSatisfied)
+        ? root.map(({ dependency }) => dependency)
         : [];
 
-      actions.push((cb) => NpmUtilities.installInDir(
-        this.repository.rootPath,
-        depsToInstallInRoot,
-        this.npmConfig,
-        (err) => {
-          if (err) return cb(err);
-
-          // Link binaries into dependent packages so npm scripts will have
-          // access to them.
-          async.series(root.map(({name, dependents}) => (cb) => {
-            const {bin} = (this.hoistedPackageJson(name) || {});
-            if (bin) {
-              async.series(dependents.map((pkg) => (cb) => {
-                const src  = this.hoistedDirectory(name);
-                const dest = pkg.nodeModulesLocation;
-                this.createBinaryLink(src, dest, name, bin, cb);
-              }), cb);
-            } else {
-              cb();
-            }
-          }), (err) => {
-            this.progressBar.tick("Install hoisted");
-            cb(err);
-          });
+      actions.push((cb) => {
+        if (depsToInstallInRoot.length) {
+          this.logger.info("Installing hoisted dependencies into root");
         }
-      ));
+
+        NpmUtilities.installInDir(
+          this.repository.rootPath,
+          depsToInstallInRoot,
+          this.npmConfig,
+          (err) => {
+            if (err) return cb(err);
+
+            // Link binaries into dependent packages so npm scripts will have
+            // access to them.
+            async.series(root.map(({ name, dependents }) => (cb) => {
+              const { bin } = (this.hoistedPackageJson(name) || {});
+              if (bin) {
+                async.series(dependents.map((pkg) => (cb) => {
+                  const src  = this.hoistedDirectory(name);
+                  const dest = pkg.nodeModulesLocation;
+                  this.createBinaryLink(src, dest, name, bin, cb);
+                }), cb);
+              } else {
+                cb();
+              }
+            }), (err) => {
+              this.progressBar.tick("Install hoisted");
+              cb(err);
+            });
+          }
+        );
+      });
 
       // Remove any hoisted dependencies that may have previously been
       // installed in package directories.
       actions.push((cb) => {
-        async.series(root.map(({name, dependents}) => (cb) => {
-          async.series(dependents.map(({nodeModulesLocation: dir}) => (cb) => {
+        this.logger.info("Pruning hoisted dependencies");
+
+        async.series(root.map(({ name, dependents }) => (cb) => {
+          async.series(dependents.map(({ nodeModulesLocation: dir }) => (cb) => {
             if (dir === this.repository.nodeModulesLocation) return cb();
             FileSystemUtilities.rimraf(path.join(dir, name), cb);
           }), cb);
@@ -371,27 +423,27 @@ export default class BootstrapCommand extends Command {
 
     // Install anything that needs to go into the leaves.
     Object.keys(leaves)
-      .map((pkgName) => ({pkg: this.packageGraph.get(pkgName).package, deps: leaves[pkgName]}))
-      .forEach(({pkg, deps}) => {
-
+      .map((pkgName) => ({ pkg: this.packageGraph.get(pkgName).package, deps: leaves[pkgName] }))
+      .forEach(({ pkg, deps }) => {
         // If we have any unsatisfied deps then we need to install everything.
         // This is important for consistent behavior across npm clients.
-        if (deps.some(({isSatisfied}) => !isSatisfied)) {
-          actions.push(
-            (cb) => NpmUtilities.installInDir(
-              pkg.location, deps.map(({dependency}) => dependency), this.npmConfig, (err) => {
+        if (deps.some(({ isSatisfied }) => !isSatisfied)) {
+          actions.push((cb) => {
+            NpmUtilities.installInDir(
+              pkg.location,
+              deps.map(({ dependency }) => dependency),
+              this.npmConfig,
+              (err) => {
                 this.progressBar.tick(pkg.name);
                 cb(err);
               }
-            )
-          );
+            );
+          });
         }
       });
 
     if (actions.length) {
-
       this.logger.info("Installing external dependencies");
-
       this.progressBar.init(actions.length);
     }
 
@@ -409,22 +461,27 @@ export default class BootstrapCommand extends Command {
   symlinkPackages(callback) {
     this.logger.info("Symlinking packages and binaries");
     this.progressBar.init(this.filteredPackages.length);
+
     const actions = [];
+
     this.filteredPackages.forEach((filteredPackage) => {
       // actions to run for this package
       const packageActions = [];
+
       Object.keys(filteredPackage.allDependencies)
-        // filter out external dependencies and incompatible packages
         .filter((dependency) => {
+          // filter out external dependencies and incompatible packages
           const match = this.packageGraph.get(dependency);
           return match && filteredPackage.hasMatchingDependency(match.package);
         })
         .forEach((dependency) => {
           // get Package of dependency
           const dependencyPackage = this.packageGraph.get(dependency).package;
+
           // get path to dependency and its scope
           const { location: dependencyLocation } = dependencyPackage;
           const dependencyPackageJsonLocation = path.join(dependencyLocation, "package.json");
+
           // ignore dependencies without a package.json file
           if (!FileSystemUtilities.existsSync(dependencyPackageJsonLocation)) {
             this.logger.error(
@@ -433,10 +490,15 @@ export default class BootstrapCommand extends Command {
             );
           } else {
             // get the destination directory name of the dependency
-            const pkgDependencyLocation = path.join(filteredPackage.nodeModulesLocation, dependencyPackage.name);
+            const pkgDependencyLocation = path.join(
+              filteredPackage.nodeModulesLocation,
+              dependencyPackage.name
+            );
+
             // check if dependency is already installed
             if (FileSystemUtilities.existsSync(pkgDependencyLocation)) {
               const isDepSymlink = FileSystemUtilities.isSymlink(pkgDependencyLocation);
+
               // installed dependency is a symlink pointing to a different location
               if (isDepSymlink !== false && isDepSymlink !== dependencyLocation) {
                 this.logger.warn(
@@ -453,23 +515,33 @@ export default class BootstrapCommand extends Command {
                 packageActions.push((cb) => FileSystemUtilities.rimraf(pkgDependencyLocation, cb));
               }
             }
+
             // ensure destination path
             packageActions.push((cb) => FileSystemUtilities.mkdirp(
               pkgDependencyLocation.split(path.sep).slice(0, -1).join(path.sep), cb
             ));
+
             // create package symlink
             packageActions.push((cb) => FileSystemUtilities.symlink(
               dependencyLocation, pkgDependencyLocation, "junction", cb
             ));
+
             const dependencyPackageJson = require(dependencyPackageJsonLocation);
             if (dependencyPackageJson.bin) {
               const destFolder = filteredPackage.nodeModulesLocation;
               packageActions.push((cb) => {
-                this.createBinaryLink(dependencyLocation, destFolder, dependency, dependencyPackageJson.bin, cb);
+                this.createBinaryLink(
+                  dependencyLocation,
+                  destFolder,
+                  dependency,
+                  dependencyPackageJson.bin,
+                  cb
+                );
               });
             }
           }
         });
+
       actions.push((cb) => {
         async.series(packageActions, (err) => {
           this.progressBar.tick(filteredPackage.name);
@@ -477,6 +549,7 @@ export default class BootstrapCommand extends Command {
         });
       });
     });
+
     async.series(actions, (err) => {
       this.progressBar.terminate();
       callback(err);

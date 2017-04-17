@@ -1,35 +1,12 @@
-import path from "path";
-import {
-  cp,
-  fixtureNamer,
-  getTempDir,
-  gitInit,
-  removeAll,
-} from "./fixtureUtils";
+import tempy from "tempy";
+import copyFixture from "./copyFixture";
+import gitInit from "./gitInit";
 
-const getFixtureName = fixtureNamer();
+export default initFixture;
 
-const createdDirectories = [];
-afterAll(() => removeAll(createdDirectories));
-
-const originalCwd = process.cwd();
-afterEach((done) => {
-  process.chdir(originalCwd);
-  process.nextTick(done);
-});
-
-export default function initFixture(fixturePath) {
-  const fixtureDir = path.resolve(__dirname, `../fixtures/${fixturePath}`);
-  const fixtureName = getFixtureName(fixturePath);
-
-  return getTempDir(fixtureName).then((testDir) => {
-    createdDirectories.push(testDir);
-
-    return cp(fixtureDir, testDir)
-      .then(() => gitInit(testDir))
-      .then(() => {
-        process.chdir(testDir);
-        return testDir;
-      });
-  });
+async function initFixture(fixturePath, commitMessage = "Init commit") {
+  const testDir = await tempy.directoryAsync();
+  await copyFixture(testDir, fixturePath);
+  await gitInit(testDir, commitMessage);
+  return testDir;
 }

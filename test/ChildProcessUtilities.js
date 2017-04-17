@@ -1,62 +1,107 @@
-import assert from "assert";
-import os from "os";
-
+// file under test
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
 
 describe("ChildProcessUtilities", () => {
   describe(".execSync()", () => {
     it("should execute a command in a child process and return the result", () => {
-      assert.equal(ChildProcessUtilities.execSync("echo foo"), "foo");
+      expect(ChildProcessUtilities.execSync("echo", ["execSync"])).toBe("execSync");
     });
 
     it("does not error when stdout is ignored", () => {
-      expect(() => ChildProcessUtilities.execSync("echo foo", { stdio: "ignore" })).not.toThrow();
+      expect(() => ChildProcessUtilities.execSync("echo", ["ignored"], { stdio: "ignore" })).not.toThrow();
     });
   });
 
   describe(".exec()", () => {
-    it("should execute a command in a child process and call the callback with the result", (done) => {
-      ChildProcessUtilities.exec("echo foo", null, (stderr, stdout) => {
-        assert.equal(stderr, null);
-        assert.equal(stdout, `foo${os.EOL}`);
+    afterEach((done) => {
+      if (ChildProcessUtilities.getChildProcessCount()) {
+        ChildProcessUtilities.onAllExited(done);
+      } else {
         done();
+      }
+    });
+
+    it("should execute a command in a child process and call the callback with the result", (done) => {
+      ChildProcessUtilities.exec("echo", ["foo"], null, (stderr, stdout) => {
+        try {
+          expect(stderr).toBe(null);
+          expect(stdout).toBe("foo");
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
       });
     });
 
     it("passes an error object to callback when stdout maxBuffer exceeded", (done) => {
-      ChildProcessUtilities.exec("echo foo", { maxBuffer: 1 }, (stderr, stdout) => {
-        assert.equal(stderr, "Error: stdout maxBuffer exceeded");
-        assert.equal(stdout, "");
-        done();
+      // this is expected
+      process.once("unhandledRejection", () => {});
+
+      ChildProcessUtilities.exec("echo", ["wat"], { maxBuffer: 1 }, (stderr, stdout) => {
+        try {
+          expect(String(stderr)).toBe("Error: stdout maxBuffer exceeded");
+          expect(stdout).toBeUndefined();
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
       });
     });
 
-    if (process.platform !== "win32") {
-      // windows is too weird
-      it("passes an error object to callback when stdout maxBuffer exceeded", (done) => {
-        ChildProcessUtilities.exec("echo foo >&2", { maxBuffer: 1 }, (stderr, stdout) => {
-          assert.equal(stderr, "Error: stderr maxBuffer exceeded.  Partial output follows:\n\n");
-          assert.equal(stdout, "");
-          done();
-        });
+    it("does not require a callback, instead returning a Promise", () => {
+      return ChildProcessUtilities.exec("echo", ["Promise"]).then((result) => {
+        expect(result.stdout).toBe("Promise");
       });
-    }
+    });
+
+    it("passes error object to callback", (done) => {
+      // this is also expected
+      process.once("unhandledRejection", () => {});
+
+      ChildProcessUtilities.exec("nowImTheModelOfAModernMajorGeneral", [], {}, (err) => {
+        try {
+          expect(err.message).toMatch(/\bnowImTheModelOfAModernMajorGeneral\b/);
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      });
+    });
+
+    it("passes Promise rejection through", () => {
+      return ChildProcessUtilities.exec("theVeneratedVirginianVeteranWhoseMenAreAll", []).catch((err) => {
+        // this is also expected, despite being in a weird place
+        process.once("unhandledRejection", () => {});
+
+        expect(err.message).toMatch(/\btheVeneratedVirginianVeteranWhoseMenAreAll\b/);
+      });
+    });
+
+    it("registers child processes that are created", () => {
+      const echoOne = ChildProcessUtilities.exec("echo", ["one"]);
+      expect(ChildProcessUtilities.getChildProcessCount()).toBe(1);
+
+      const echoTwo = ChildProcessUtilities.exec("echo", ["two"]);
+      expect(ChildProcessUtilities.getChildProcessCount()).toBe(2);
+
+      return Promise.all([
+        echoOne,
+        echoTwo,
+      ]).then(([one, two]) => {
+        expect(one.stdout).toBe("one");
+        expect(two.stdout).toBe("two");
+      });
+    });
   });
 
   describe(".spawn()", () => {
-    it("should spawn a command in a child process", (done) => {
-      ChildProcessUtilities.spawn("echo", ["foo"], { stdio: "pipe" }, (err, output) => {
-        assert.equal(err, null);
-        assert.equal(output.trim(), "foo");
-        done();
-      });
-    });
+    it("should spawn a command in a child process that always inherits stdio", () => {
+      const child = ChildProcessUtilities.spawn("echo", ["-n"]);
+      expect(child.stdio).toEqual([null, null, null]);
 
-    it("passes error message to callback", (done) => {
-      ChildProcessUtilities.spawn("iAmTheModelOfAModernMajorGeneral", [], { stdio: "pipe" }, (err) => {
-        const inErrorMessage = String(err).indexOf("iAmTheModelOfAModernMajorGeneral") > -1;
-        assert.ok(inErrorMessage, "did not log missing executable error");
-        done();
+      return child.then((result) => {
+        expect(result.code).toBe(0);
+        expect(result.signal).toBe(null);
       });
     });
   });

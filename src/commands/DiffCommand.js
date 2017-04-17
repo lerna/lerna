@@ -3,41 +3,59 @@ import Command from "../Command";
 import ChildProcessUtilities from "../ChildProcessUtilities";
 import find from "lodash/find";
 
+export function handler(argv) {
+  return new DiffCommand([argv.pkg], argv).run();
+}
+
+export const command = "diff <pkg>";
+
+export const describe = "Diff all packages or a single package since the last release.";
+
+export const builder = {};
+
+function getLastCommit(execOpts) {
+  if (GitUtilities.hasTags(execOpts)) {
+    return GitUtilities.getLastTaggedCommit(execOpts);
+  }
+
+  return GitUtilities.getFirstCommit(execOpts);
+}
+
 export default class DiffCommand extends Command {
   initialize(callback) {
-    this.packageName = this.input[0];
+    const packageName = this.input[0];
 
-    if (this.packageName) {
-      this.package = find(this.packages, (pkg) => {
-        return pkg.name === this.packageName;
+    let targetPackage;
+
+    if (packageName) {
+      targetPackage = find(this.packages, (pkg) => {
+        return pkg.name === packageName;
       });
 
-      if (!this.package) {
-        callback(new Error("Package '" + this.packageName + "' does not exist."));
+      if (!targetPackage) {
+        callback(new Error("Package '" + packageName + "' does not exist."));
         return;
       }
     }
 
-    if (!GitUtilities.hasCommit()) {
+    if (!GitUtilities.hasCommit(this.execOpts)) {
       callback(new Error("Can't diff. There are no commits in this repository, yet."));
       return;
     }
 
-    this.filePath = this.package
-      ? this.package.location
-      : this.repository.rootPath;
+    this.args = ["diff", getLastCommit(this.execOpts), "--color=auto"];
 
-    this.lastCommit = GitUtilities.hasTags()
-      ? GitUtilities.getLastTaggedCommit()
-      : GitUtilities.getFirstCommit();
+    if (targetPackage) {
+      this.args.push("--", targetPackage.location);
+    }
 
     callback(null, true);
   }
 
   execute(callback) {
-    ChildProcessUtilities.spawn("git", ["diff", this.lastCommit, "--color=auto", this.filePath], {}, (code) => {
-      if (code) {
-        callback(new Error("Errored while spawning `git diff`."));
+    ChildProcessUtilities.spawn("git", this.args, this.execOpts, (err) => {
+      if (err && err.code) {
+        callback(err);
       } else {
         callback(null, true);
       }

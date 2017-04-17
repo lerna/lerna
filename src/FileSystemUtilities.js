@@ -1,7 +1,6 @@
-import fs from "graceful-fs";
+import fs from "fs-promise";
 import pathExists from "path-exists";
 import logger from "./logger";
-import mkdirp from "mkdirp";
 import cmdShim from "cmd-shim";
 import readCmdShim from "read-cmd-shim";
 import path from "path";
@@ -13,15 +12,15 @@ function ensureEndsWithNewLine(string) {
   return ENDS_WITH_NEW_LINE.test(string) ? string : string + "\n";
 }
 
-export default class FileSystemUtilities {
-  @logger.logifySync()
-  static mkdirSync(filePath) {
-    fs.mkdirSync(filePath);
-  }
+// globs only return directories with a trailing slash
+function trailingSlash(filePath) {
+  return path.normalize(`${filePath}/`);
+}
 
+export default class FileSystemUtilities {
   @logger.logifyAsync()
   static mkdirp(filePath, callback) {
-    mkdirp(filePath, { fs }, callback);
+    fs.ensureDir(filePath, callback);
   }
 
   @logger.logifySync()
@@ -56,7 +55,7 @@ export default class FileSystemUtilities {
 
   @logger.logifySync()
   static readFileSync(filePath) {
-    return fs.readFileSync(filePath, "utf-8").toString().trim();
+    return fs.readFileSync(filePath, "utf8").trim();
   }
 
   @logger.logifySync()
@@ -65,39 +64,24 @@ export default class FileSystemUtilities {
   }
 
   @logger.logifyAsync()
-  static rimraf(filePath, callback) {
-
+  static rimraf(dirPath, callback) {
     // Shelling out to a child process for a noop is expensive.
-    // Checking if `filePath` exists to be removed is cheap.
+    // Checking if `dirPath` exists to be removed is cheap.
     // This lets us short-circuit if we don't have anything to do.
-    pathExists(filePath).then((exists) => {
+    pathExists(dirPath).then((exists) => {
       if (!exists) return callback();
 
-      // Note: if rimraf moves the location of its executable, this will need to be updated
-      ChildProcessUtilities.spawn(require.resolve("rimraf/bin"), [filePath], {}, callback);
+      ChildProcessUtilities.spawn("rimraf", ["--no-glob", trailingSlash(dirPath)], {}, callback);
     });
   }
 
   @logger.logifyAsync()
   static symlink(src, dest, type, callback) {
-    if (type === "exec") {
-      if (process.platform === "win32") {
-        cmdShim(src, dest, callback);
-        return;
-      }
-      type = "file";
+    if (process.platform === "win32") {
+      createWindowsSymlink(src, dest, type, callback);
+    } else {
+      createPosixSymlink(src, dest, type, callback);
     }
-    if (process.platform !== "win32") {
-      src = path.relative(path.dirname(dest), src);
-    }
-    fs.lstat(dest, (err) => {
-      if (!err) {
-        // Something exists at `dest`.  Need to remove it first.
-        fs.unlink(dest, () => fs.symlink(src, dest, type, callback));
-      } else {
-        fs.symlink(src, dest, type, callback);
-      }
-    });
   }
 
   @logger.logifySync()
@@ -107,20 +91,72 @@ export default class FileSystemUtilities {
 
   @logger.logifySync()
   static isSymlink(filePath) {
-    const lstat = fs.lstatSync(filePath);
-    let isSymlink = lstat && lstat.isSymbolicLink()
-      ? path.resolve(path.dirname(filePath), fs.readlinkSync(filePath))
-      : false;
-    if (process.platform === "win32" && lstat) {
-      if (lstat.isFile() && !isSymlink) {
-        try {
-          return path.resolve(path.dirname(filePath), readCmdShim.sync(filePath));
-        } catch (e) {
-          return false;
-        }
-      }
-      isSymlink = isSymlink && path.resolve(isSymlink);
+    let result;
+
+    if (process.platform === "win32") {
+      result = resolveWindowsSymlink(filePath);
+    } else {
+      result = resolvePosixSymlink(filePath);
     }
-    return isSymlink;
+
+    return result;
   }
+}
+
+function createSymbolicLink(src, dest, type, callback) {
+  fs.lstat(dest, (err) => {
+    if (!err) {
+      // Something exists at `dest`.  Need to remove it first.
+      fs.unlink(dest, () => fs.symlink(src, dest, type, callback));
+    } else {
+      fs.symlink(src, dest, type, callback);
+    }
+  });
+}
+
+function createPosixSymlink(origin, dest, type, callback) {
+  if (type === "exec") {
+    type = "file";
+  }
+  const src = path.relative(path.dirname(dest), origin);
+  createSymbolicLink(src, dest, type, callback);
+}
+
+function createWindowsSymlink(src, dest, type, callback) {
+  if (type === "exec") {
+    cmdShim(src, dest, callback);
+  } else {
+    createSymbolicLink(src, dest, type, callback);
+  }
+}
+
+function resolveSymbolicLink(filePath) {
+  const lstat = fs.lstatSync(filePath);
+  const isSymlink = lstat.isSymbolicLink()
+    ? path.resolve(path.dirname(filePath), fs.readlinkSync(filePath))
+    : false;
+
+  return {
+    isSymlink,
+    lstat,
+  };
+}
+
+function resolvePosixSymlink(filePath) {
+  const { isSymlink } = resolveSymbolicLink(filePath);
+  return isSymlink;
+}
+
+function resolveWindowsSymlink(filePath) {
+  const { isSymlink, lstat } = resolveSymbolicLink(filePath);
+
+  if (lstat.isFile() && !isSymlink) {
+    try {
+      return path.resolve(path.dirname(filePath), readCmdShim.sync(filePath));
+    } catch (e) {
+      return false;
+    }
+  }
+
+  return isSymlink && path.resolve(isSymlink);
 }

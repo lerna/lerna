@@ -2,6 +2,23 @@ import NpmUtilities from "../NpmUtilities";
 import PackageUtilities from "../PackageUtilities";
 import Command from "../Command";
 
+export function handler(argv) {
+  return new RunCommand([argv.script, ...argv.args], argv).run();
+}
+
+export const command = "run <script> [args..]";
+
+export const describe = "Run an npm script in each package that contains that script.";
+
+export const builder = {
+  "stream": {
+    describe: "Stream output with lines prefixed by package."
+  },
+  "only-updated": {
+    "describe": "When exectuting scripts/commands, only run the script/command on packages which have been updated since the last release"
+  }
+};
+
 export default class RunCommand extends Command {
   initialize(callback) {
     this.script = this.input[0];
@@ -25,7 +42,7 @@ export default class RunCommand extends Command {
     }
 
     this.batchedPackages = this.toposort
-      ? PackageUtilities.topologicallyBatchPackages(this.packagesWithScript, {logger: this.logger})
+      ? PackageUtilities.topologicallyBatchPackages(this.packagesWithScript, { logger: this.logger })
       : [ this.packagesWithScript ];
 
     callback(null, true);
@@ -50,7 +67,7 @@ export default class RunCommand extends Command {
   }
 
   runScriptInPackage(pkg, callback) {
-    if (this.getOptions().stream) {
+    if (this.options.stream) {
       this.runScriptInPackageStreaming(pkg, callback);
     } else {
       this.runScriptInPackageCapturing(pkg, callback);
@@ -63,9 +80,10 @@ export default class RunCommand extends Command {
 
   runScriptInPackageCapturing(pkg, callback) {
     NpmUtilities.runScriptInDir(this.script, this.args, pkg.location, (err, stdout) => {
-      this.logger.info(stdout);
       if (err) {
         this.logger.error(`Errored while running npm script '${this.script}' in '${pkg.name}'`);
+      } else {
+        this.logger.info(stdout);
       }
       callback(err);
     });

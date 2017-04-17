@@ -1,9 +1,10 @@
-import assert from "assert";
-
+// file under test
 import UpdatedPackagesCollector from "../src/UpdatedPackagesCollector";
 
 describe("UpdatedPackagesCollector", () => {
   it("should exist", () => {
-    assert.ok(UpdatedPackagesCollector);
+    expect(UpdatedPackagesCollector).toBeDefined();
   });
+
+  it("needs better tests");
 });

@@ -1,15 +1,43 @@
-import assert from "assert";
-import path from "path";
-
+// mocked or stubbed modules
 import FileSystemUtilities from "../src/FileSystemUtilities";
+import PromptUtilities from "../src/PromptUtilities";
+
+// helpers
+import callsBack from "./helpers/callsBack";
 import exitWithCode from "./helpers/exitWithCode";
 import initFixture from "./helpers/initFixture";
+import normalizeRelativeDir from "./helpers/normalizeRelativeDir";
+
+// file under test
 import CleanCommand from "../src/commands/CleanCommand";
-import PromptUtilities from "../src/PromptUtilities";
-import stub from "./helpers/stub";
-import assertStubbedCalls from "./helpers/assertStubbedCalls";
+
+jest.mock("../src/PromptUtilities");
+
+// stub rimraf because we trust isaacs
+const fsRimraf = FileSystemUtilities.rimraf;
+const resetRimraf = () => {
+  FileSystemUtilities.rimraf = fsRimraf;
+};
+const stubRimraf = () => {
+  FileSystemUtilities.rimraf = jest.fn(callsBack());
+};
+
+const removedDirectories = (testDir) =>
+  FileSystemUtilities.rimraf.mock.calls.map((args) =>
+    normalizeRelativeDir(testDir, args[0])
+  );
 
 describe("CleanCommand", () => {
+  beforeEach(() => {
+    stubRimraf();
+    PromptUtilities.confirm = jest.fn(callsBack(true));
+  });
+
+  afterEach(() => {
+    resetRimraf();
+    jest.resetAllMocks();
+  });
+
   describe("basic tests", () => {
     let testDir;
 
@@ -18,80 +46,72 @@ describe("CleanCommand", () => {
     }));
 
     it("should rm -rf the node_modules", (done) => {
-      const cleanCommand = new CleanCommand([], {});
-
-      assertStubbedCalls([
-        [PromptUtilities, "confirm", { valueCallback: true }, [
-          { args: ["Proceed?"], returns: true }
-        ]],
-      ]);
+      const cleanCommand = new CleanCommand([], {}, testDir);
 
       cleanCommand.runValidations();
       cleanCommand.runPreparations();
 
-      let curPkg = 1;
-      stub(FileSystemUtilities, "rimraf", (actualDir, callback) => {
-        const expectedDir = path.join(
-          testDir, "packages/package-" + curPkg, "node_modules"
-        );
+      cleanCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
 
-        assert.equal(actualDir, expectedDir);
+        try {
+          expect(PromptUtilities.confirm).toBeCalled();
 
-        curPkg++;
-        callback();
-      });
+          expect(removedDirectories(testDir)).toEqual([
+            "packages/package-1/node_modules",
+            "packages/package-2/node_modules",
+          ]);
 
-      cleanCommand.runCommand(exitWithCode(0, done));
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
     });
 
     it("should be possible to skip asking for confirmation", (done) => {
       const cleanCommand = new CleanCommand([], {
         yes: true
-      });
+      }, testDir);
 
       cleanCommand.runValidations();
       cleanCommand.runPreparations();
 
-      cleanCommand.initialize(done);
+      cleanCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          expect(PromptUtilities.confirm).not.toBeCalled();
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
     });
 
     // Both of these commands should result in the same outcome
     const filters = [
-      { test: "should only clean scoped packages", flag: "scope", flagValue: "package-@(1|2)" },
-      { test: "should not clean ignored packages", flag: "ignore", flagValue: "package-@(3|4)" },
+      { test: "should only clean scoped packages", flag: "scope", flagValue: "package-1" },
+      { test: "should not clean ignored packages", flag: "ignore", flagValue: "package-2" },
     ];
     filters.forEach((filter) => {
       it(filter.test, (done) => {
         const cleanCommand = new CleanCommand([], {
           [filter.flag]: filter.flagValue
-        });
-
-        assertStubbedCalls([
-          [PromptUtilities, "confirm", { valueCallback: true }, [
-            { args: ["Proceed?"], returns: true }
-          ]],
-        ]);
+        }, testDir);
 
         cleanCommand.runValidations();
         cleanCommand.runPreparations();
-
-        const actualDirToPackageName = (dir) => {
-          const prefixLength = path.join(testDir, "packages/").length;
-          const suffixLength = "/node_modules".length;
-          const packageNameLength = dir.length - prefixLength - suffixLength;
-          return dir.substr(prefixLength, packageNameLength);
-        };
-        const ranInPackages = [];
-        stub(FileSystemUtilities, "rimraf", (actualDir, callback) => {
-          ranInPackages.push(actualDirToPackageName(actualDir));
-          callback();
-        });
 
         cleanCommand.runCommand(exitWithCode(0, (err) => {
           if (err) return done.fail(err);
 
           try {
-            assert.deepEqual(ranInPackages, ["package-1", "package-2"]);
+            expect(removedDirectories(testDir)).toEqual([
+              "packages/package-1/node_modules",
+            ]);
+
             done();
           } catch (ex) {
             done.fail(ex);
@@ -112,29 +132,20 @@ describe("CleanCommand", () => {
       const cleanCommand = new CleanCommand([], {
         scope: "@test/package-2",
         includeFilteredDependencies: true
-      });
-
-      assertStubbedCalls([
-        [PromptUtilities, "confirm", { valueCallback: true }, [
-          { args: ["Proceed?"], returns: true }
-        ]],
-      ]);
+      }, testDir);
 
       cleanCommand.runValidations();
       cleanCommand.runPreparations();
-
-      const ranInPackages = [];
-      stub(FileSystemUtilities, "rimraf", (actualDir, callback) => {
-        ranInPackages.push(actualDir);
-        callback();
-      });
 
       cleanCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          const expected = ["package-1", "package-2"].map((pkg) => path.join(testDir, "packages", pkg, "node_modules"));
-          assert.deepEqual(ranInPackages.sort(), expected.sort());
+          expect(removedDirectories(testDir)).toEqual([
+            "packages/package-2/node_modules",
+            "packages/package-1/node_modules",
+          ]);
+
           done();
         } catch (ex) {
           done.fail(ex);

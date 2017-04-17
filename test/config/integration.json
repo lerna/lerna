@@ -1,0 +1,12 @@
+{
+  "bail": true,
+  "roots": [
+    "<rootDir>/test/integration"
+  ],
+  "testEnvironment": "node",
+  "setupTestFrameworkScriptFile": "<rootDir>/test/integration/_setupTestFramework.js",
+  "snapshotSerializers": [
+    "<rootDir>/test/helpers/serializePlaceholders.js"
+  ],
+  "verbose": true
+}

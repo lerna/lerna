@@ -1,70 +1,125 @@
-import assert from "assert";
 import path from "path";
 
+// mocked modules
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
+
+// helpers
+import callsBack from "./helpers/callsBack";
 import exitWithCode from "./helpers/exitWithCode";
 import initFixture from "./helpers/initFixture";
+
+// file under test
 import ExecCommand from "../src/commands/ExecCommand";
-import stub from "./helpers/stub";
+
+jest.mock("../src/ChildProcessUtilities");
+
+const calledWithArgs = () =>
+  ChildProcessUtilities.spawn.mock.calls[0][1];
+
+const calledInPackages = () =>
+  ChildProcessUtilities.spawn.mock.calls.map((args) => path.basename(args[2].cwd));
 
 describe("ExecCommand", () => {
+  beforeEach(() => {
+    ChildProcessUtilities.spawn = jest.fn(callsBack());
+  });
+
+  afterEach(() => jest.resetAllMocks());
+
   describe("in a basic repo", () => {
     let testDir;
 
-    beforeEach(() => initFixture("ExecCommand/basic").then((dir) => {
+    beforeAll(() => initFixture("ExecCommand/basic").then((dir) => {
       testDir = dir;
     }));
 
     it("should complain if invoked without command", (done) => {
-      const execCommand = new ExecCommand([], {});
+      const execCommand = new ExecCommand([], {}, testDir);
 
       execCommand.runValidations();
       execCommand.runPreparations();
 
       execCommand.runCommand(exitWithCode(1, (err) => {
-        assert.ok(err instanceof Error);
-        done();
+        try {
+          expect(err.message).toBe("You must specify which command to run.");
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
+
+    it("passes execution error to callback", (done) => {
+      const err = new Error("execa error");
+      err.code = 1;
+      err.cmd = "boom";
+
+      ChildProcessUtilities.spawn = jest.fn(callsBack(err));
+
+      const execCommand = new ExecCommand(["boom"], {}, testDir);
+
+      execCommand.runValidations();
+      execCommand.runPreparations();
+
+      const spy = jest.spyOn(execCommand.logger, "error");
+
+      execCommand.runCommand(exitWithCode(1, () => {
+        try {
+          expect(spy).toHaveBeenCalledTimes(2);
+          expect(spy).toBeCalledWith("Errored while executing 'boom' in 'package-1'");
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
       }));
     });
 
     it("should filter packages with `ignore`", (done) => {
-      const execCommand = new ExecCommand(["ls"], { ignore: "package-1" });
+      const execCommand = new ExecCommand(["ls"], {
+        ignore: "package-1",
+      }, testDir);
 
       execCommand.runValidations();
       execCommand.runPreparations();
-
-      execCommand.initialize(function(error) {
-        assert.equal(error, null);
-      });
-
-      assert.equal(execCommand.filteredPackages.length, 1);
-      assert.equal(execCommand.filteredPackages[0].name, "package-2");
-
-      done();
-    });
-
-    it("should run a command", (done) => {
-      const execCommand = new ExecCommand(["ls"], {});
-
-      execCommand.runValidations();
-      execCommand.runPreparations();
-
-      let calls = 0;
-      stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
-        assert.equal(command, "ls");
-
-        if (calls === 0) assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-1"), env: Object.assign({}, process.env, { LERNA_PACKAGE_NAME: "package-1" }) });
-        if (calls === 1) assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-2"), env: Object.assign({}, process.env, { LERNA_PACKAGE_NAME: "package-2" }) });
-
-        calls++;
-        callback();
-      });
 
       execCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          assert.equal(calls, 2);
+          expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(1);
+          expect(ChildProcessUtilities.spawn).lastCalledWith("ls", [], {
+            cwd: path.join(testDir, "packages/package-2"),
+            env: expect.objectContaining({
+              LERNA_PACKAGE_NAME: "package-2",
+            }),
+            shell: true,
+          }, expect.any(Function));
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
+
+    it("should run a command", (done) => {
+      const execCommand = new ExecCommand(["ls"], {}, testDir);
+
+      execCommand.runValidations();
+      execCommand.runPreparations();
+
+      execCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(2);
+          expect(calledInPackages()).toEqual([
+            "package-1",
+            "package-2",
+          ]);
+
           done();
         } catch (ex) {
           done.fail(ex);
@@ -73,33 +128,18 @@ describe("ExecCommand", () => {
     });
 
     it("should run a command with parameters", (done) => {
-      const execCommand = new ExecCommand(["ls", "-la"], {});
+      const execCommand = new ExecCommand(["ls", "-la"], {}, testDir);
 
       execCommand.runValidations();
       execCommand.runPreparations();
-
-      let calls = 0;
-      stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
-        assert.equal(command, "ls");
-
-        if (calls === 0) {
-          assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-1"), env: Object.assign({}, process.env, { LERNA_PACKAGE_NAME: "package-1" }) });
-          assert.deepEqual(args, ["-la"]);
-        }
-        if (calls === 1) {
-          assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-2"), env: Object.assign({}, process.env, { LERNA_PACKAGE_NAME: "package-2" }) });
-          assert.deepEqual(args, ["-la"]);
-        }
-
-        calls++;
-        callback();
-      });
 
       execCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          assert.equal(calls, 2);
+          expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(2);
+          expect(calledWithArgs()).toEqual(["-la"]);
+
           done();
         } catch (ex) {
           done.fail(ex);
@@ -109,27 +149,24 @@ describe("ExecCommand", () => {
 
     // Both of these commands should result in the same outcome
     const filters = [
-      { test: "should run a command for a given scope", flag: "scope", flagValue: "package-1" },
-      { test: "should not run a command for ignored packages", flag: "ignore", flagValue: "package-@(2|3|4)" },
+      { test: "runs a command for a given scope", flag: "scope", flagValue: "package-1" },
+      { test: "does not run a command for ignored packages", flag: "ignore", flagValue: "package-@(2|3|4)" },
     ];
     filters.forEach((filter) => {
       it(filter.test, (done) => {
-        const execCommand = new ExecCommand(["ls"], {[filter.flag]: filter.flagValue});
+        const execCommand = new ExecCommand(["ls"], {
+          [filter.flag]: filter.flagValue,
+        }, testDir);
 
         execCommand.runValidations();
         execCommand.runPreparations();
-
-        const ranInPackages = [];
-        stub(ChildProcessUtilities, "spawn", (command, args, options, callback) => {
-          ranInPackages.push(options.cwd.substr(path.join(testDir, "packages/").length));
-          callback();
-        });
 
         execCommand.runCommand(exitWithCode(0, (err) => {
           if (err) return done.fail(err);
 
           try {
-            assert.deepEqual(ranInPackages, ["package-1"]);
+            expect(calledInPackages()).toEqual(["package-1"]);
+
             done();
           } catch (ex) {
             done.fail(ex);

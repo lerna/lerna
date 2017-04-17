@@ -1,9 +1,27 @@
 import path from "path";
 import async from "async";
+import dedent from "dedent";
 import Command from "../Command";
 import PromptUtilities from "../PromptUtilities";
 import ChildProcessUtilities from "../ChildProcessUtilities";
 import FileSystemUtilities from "../FileSystemUtilities";
+import GitUtilities from "../GitUtilities";
+
+export function handler(argv) {
+  return new ImportCommand([argv.pathToRepo], argv).run();
+}
+
+export const command = "import <pathToRepo>";
+
+export const describe = dedent`
+  Import the package in <pathToRepo> into packages/<directory-name> with commit history.
+`;
+
+export const builder = {
+  "yes": {
+    describe: "Skip all confirmation prompts"
+  }
+};
 
 export default class ImportCommand extends Command {
   initialize(callback) {
@@ -18,11 +36,14 @@ export default class ImportCommand extends Command {
 
     try {
       const stats = FileSystemUtilities.statSync(externalRepoPath);
+
       if (!stats.isDirectory()) {
         throw new Error(`Input path "${inputPath}" is not a directory`);
       }
+
       const packageJson = path.join(externalRepoPath, "package.json");
       const packageName = require(packageJson).name;
+
       if (!packageName) {
         throw new Error(`No package name specified in "${packageJson}"`);
       }
@@ -30,42 +51,51 @@ export default class ImportCommand extends Command {
       if (e.code === "ENOENT") {
         return callback(new Error(`No repository found at "${inputPath}"`));
       }
+
       return callback(e);
     }
 
     const targetBase = getTargetBase(this.repository.packageConfigs);
     this.targetDir = path.join(targetBase, externalRepoBase);
 
-    try {
-      if (FileSystemUtilities.existsSync(this.targetDir)) {
-        return callback(new Error(`Target directory already exists "${this.targetDir}"`));
-      }
-    } catch (e) { /* Pass */ }
+    if (FileSystemUtilities.existsSync(path.resolve(this.repository.rootPath, this.targetDir))) {
+      return callback(new Error(`Target directory already exists "${this.targetDir}"`));
+    }
 
     this.externalExecOpts = {
-      encoding: "utf8",
       cwd: externalRepoPath
     };
 
-    this.commits = this.externalExecSync("git log --format=\"%h\"").split("\n").reverse();
+    this.commits = this.externalExecSync("git", ["log", "--format=%h"]).split("\n").reverse();
+    // this.commits = this.externalExecSync("git", [
+    //   "rev-list",
+    //   "--no-merges",
+    //   "--topo-order",
+    //   "--reverse",
+    //   "HEAD",
+    // ]).split("\n");
 
     if (!this.commits.length) {
       return callback(new Error(`No git commits to import at "${inputPath}"`));
     }
 
     // Stash the repo's pre-import head away in case something goes wrong.
-    this.preImportHead = ChildProcessUtilities.execSync("git log --format=\"%h\" -1").split("\n")[0];
+    this.preImportHead = GitUtilities.getCurrentSHA(this.execOpts);
 
-    if (ChildProcessUtilities.execSync("git diff " + this.preImportHead)) {
+    if (ChildProcessUtilities.execSync("git", ["diff-index", "HEAD"], this.execOpts)) {
       return callback(new Error("Local repository has un-committed changes"));
     }
 
-    this.logger.info(`About to import ${this.commits.length} commits from ${inputPath} into ${this.targetDir}`);
+    this.logger.info(
+      `About to import ${this.commits.length} commits from ${inputPath} into ${this.targetDir}`
+    );
 
-    if (this.flags.yes) {
+    if (this.options.yes) {
       callback(null, true);
     } else {
-      PromptUtilities.confirm("Are you sure you want to import these commits onto the current branch?", (confirmed) => {
+      const message = "Are you sure you want to import these commits onto the current branch?";
+
+      PromptUtilities.confirm(message, (confirmed) => {
         if (confirmed) {
           callback(null, true);
         } else {
@@ -76,8 +106,8 @@ export default class ImportCommand extends Command {
     }
   }
 
-  externalExecSync(command) {
-    return ChildProcessUtilities.execSync(command, this.externalExecOpts).trim();
+  externalExecSync(cmd, args) {
+    return ChildProcessUtilities.execSync(cmd, args, this.externalExecOpts);
   }
 
   execute(callback) {
@@ -91,7 +121,7 @@ export default class ImportCommand extends Command {
       // Create a patch file for this commit and prepend the target directory
       // to all affected files.  This moves the git history for the entire
       // external repository into the package subdirectory, commit by commit.
-      const patch = this.externalExecSync(`git format-patch -1 ${sha} --stdout`)
+      const patch = this.externalExecSync("git", ["format-patch", "-1", sha, "--stdout"])
         .replace(/^([-+]{3} [ab])/mg,     replacement)
         .replace(/^(diff --git a)/mg,     replacement)
         .replace(/^(diff --git \S+ b)/mg, replacement)
@@ -102,16 +132,15 @@ export default class ImportCommand extends Command {
       //
       // Fall back to three-way merge, which can help with duplicate commits
       // due to merge history.
-      ChildProcessUtilities.exec("git am -3", {}, (err) => {
+      ChildProcessUtilities.exec("git", ["am", "-3"], this.execOpts, (err) => {
         if (err) {
-
           // Give some context for the error message.
           err = `Failed to apply commit ${sha}.\n${err}\n` +
                 `Rolling back to previous HEAD (commit ${this.preImportHead}).`;
 
           // Abort the failed `git am` and roll back to previous HEAD.
-          ChildProcessUtilities.execSync("git am --abort");
-          ChildProcessUtilities.execSync("git reset --hard " + this.preImportHead);
+          ChildProcessUtilities.execSync("git", ["am", "--abort"], this.execOpts);
+          ChildProcessUtilities.execSync("git", ["reset", "--hard", this.preImportHead], this.execOpts);
         }
         done(err);
       }).stdin.end(patch);
@@ -130,5 +159,6 @@ function getTargetBase(packageConfigs) {
   const straightPackageDirectories = packageConfigs
     .filter((p) => path.basename(p) === "*")
     .map((p) => path.dirname(p));
+
   return straightPackageDirectories[0] || "packages";
 }

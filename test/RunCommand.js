@@ -1,89 +1,107 @@
-import assert from "assert";
-import path from "path";
+// mocked modules
+import NpmUtilities from "../src/NpmUtilities";
 
-import ChildProcessUtilities from "../src/ChildProcessUtilities";
+// helpers
+import callsBack from "./helpers/callsBack";
 import exitWithCode from "./helpers/exitWithCode";
 import initFixture from "./helpers/initFixture";
+import normalizeRelativeDir from "./helpers/normalizeRelativeDir";
+
+// file under test
 import RunCommand from "../src/commands/RunCommand";
-import logger from "../src/logger";
-import stub from "./helpers/stub";
-import FakeChild from "./helpers/fakeChild";
+
+jest.mock("../src/NpmUtilities");
+
+const ranInPackages = (testDir) =>
+  NpmUtilities.runScriptInDir.mock.calls.reduce((arr, args) => {
+    const script = args[0];
+    const params = args[1];
+    const dir = normalizeRelativeDir(testDir, args[2]);
+    arr.push([dir, script].concat(params).join(" "));
+    return arr;
+  }, []);
+
+const ranInPackagesStreaming = (testDir) =>
+  NpmUtilities.runScriptInPackageStreaming.mock.calls.reduce((arr, args) => {
+    const script = args[0];
+    const params = args[1];
+    const pkg = args[2];
+    const dir = normalizeRelativeDir(testDir, pkg.location);
+    arr.push([dir, script].concat(params).join(" "));
+    return arr;
+  }, []);
 
 describe("RunCommand", () => {
+  beforeEach(() => {
+    NpmUtilities.runScriptInDir = jest.fn(callsBack());
+    NpmUtilities.runScriptInPackageStreaming = jest.fn(callsBack());
+  });
+
+  afterEach(() => jest.resetAllMocks());
+
   describe("in a basic repo", () => {
     let testDir;
 
-    beforeEach(() => initFixture("RunCommand/basic").then((dir) => {
+    beforeAll(() => initFixture("RunCommand/basic").then((dir) => {
       testDir = dir;
     }));
 
-    it("should run a command", (done) => {
-      const runCommand = new RunCommand(["my-script"], {});
+    it("runs a script in packages", (done) => {
+      const runCommand = new RunCommand(["my-script"], {}, testDir);
 
       runCommand.runValidations();
       runCommand.runPreparations();
 
-      let calls = 0;
-      stub(ChildProcessUtilities, "exec", (command, options, callback) => {
-        assert.equal(command, "npm run my-script ");
+      runCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
 
-        if (calls === 0) assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-1"), env: process.env });
-        if (calls === 1) assert.deepEqual(options, { cwd: path.join(testDir, "packages/package-3"), env: process.env });
+        try {
+          expect(ranInPackages(testDir)).toMatchSnapshot("run <script>");
 
-        calls++;
-        callback();
-      });
-
-      runCommand.runCommand(exitWithCode(0, done));
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
     });
 
-    it("should run with streaming enabled with --stream", (done) => {
-      const runCommand = new RunCommand(["my-script"], {stream: true});
+    it("runs a script in packages with --stream", (done) => {
+      const runCommand = new RunCommand(["my-script"], {
+        stream: true,
+      }, testDir);
 
       runCommand.runValidations();
       runCommand.runPreparations();
 
-      let calls = 0;
-      stub(ChildProcessUtilities, "spawnStreaming", (command, args, options, prefix, callback) => {
-        const pkg = "package-" + ([1,3][calls]);
+      runCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
 
-        assert.equal(command, "npm");
-        assert.deepEqual(args, ["run", "my-script"]);
-        assert.deepEqual(options, {
-          cwd: path.join(testDir, "packages/" + pkg),
-          env: process.env,
-        });
-        assert.equal(prefix, pkg + ": ");
+        try {
+          expect(ranInPackagesStreaming(testDir)).toMatchSnapshot("run <script> --stream");
 
-        calls++;
-        callback();
-      });
-
-      runCommand.runCommand(exitWithCode(0, done));
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
     });
 
-    const defaultScripts = [ "test", "env" ];
-    defaultScripts.forEach((defaultScript) => {
-      it(`should always run ${defaultScript}`, (done) => {
-        const runCommand = new RunCommand([defaultScript], {});
+    [
+      "test",
+      "env",
+    ].forEach((defaultScript) => {
+      it(`always runs ${defaultScript} script`, (done) => {
+        const runCommand = new RunCommand([defaultScript], {}, testDir);
 
         runCommand.runValidations();
         runCommand.runPreparations();
-
-        let calls = 0;
-        stub(ChildProcessUtilities, "exec", (command, options, callback) => {
-          calls++;
-
-          assert.equal(command, `npm run ${defaultScript} `);
-
-          callback();
-        });
 
         runCommand.runCommand(exitWithCode(0, (err) => {
           if (err) return done.fail(err);
 
           try {
-            assert.equal(4, calls);
+            expect(ranInPackages(testDir)).toMatchSnapshot(`run ${defaultScript}`);
+
             done();
           } catch (ex) {
             done.fail(ex);
@@ -94,27 +112,25 @@ describe("RunCommand", () => {
 
     // Both of these commands should result in the same outcome
     const filters = [
-      { test: "should run a command for a given scope", flag: "scope", flagValue: "package-1" },
-      { test: "should not run a command for ignored packages", flag: "ignore", flagValue: "package-@(2|3|4)" },
+      { test: "runs a script only in scoped packages", flag: "scope", flagValue: "package-1" },
+      { test: "does not run a script in ignored packages", flag: "ignore", flagValue: "package-@(2|3|4)" },
     ];
     filters.forEach((filter) => {
       it(filter.test, (done) => {
-        const runCommand = new RunCommand(["my-script"], {[filter.flag]: filter.flagValue});
+        const runCommand = new RunCommand(["my-script"], {
+          [filter.flag]: filter.flagValue,
+        }, testDir);
 
         runCommand.runValidations();
         runCommand.runPreparations();
-
-        const ranInPackages = [];
-        stub(ChildProcessUtilities, "exec", (command, options, callback) => {
-          ranInPackages.push(options.cwd.substr(path.join(testDir, "packages/").length));
-          callback();
-        });
 
         runCommand.runCommand(exitWithCode(0, (err) => {
           if (err) return done.fail(err);
 
           try {
-            assert.deepEqual(ranInPackages, ["package-1"]);
+            expect(ranInPackages(testDir))
+              .toMatchSnapshot(`run <script> --${filter.flag} ${filter.flagValue}`);
+
             done();
           } catch (ex) {
             done.fail(ex);
@@ -122,70 +138,31 @@ describe("RunCommand", () => {
         }));
       });
     });
-
-    it("should wait for children to exit", (done) => {
-      const runCommand = new RunCommand(["my-script"], {});
-
-      runCommand.runValidations();
-      runCommand.runPreparations();
-
-      const children = [];
-      stub(ChildProcessUtilities, "exec", (command, options, callback) => {
-        children.unshift(new FakeChild);
-        ChildProcessUtilities.registerChild(children[0]);
-        callback();
-      });
-
-      let lastInfo;
-      stub(logger, "info", (message) => lastInfo = message);
-
-      let haveExited = false;
-      runCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          assert.equal(lastInfo, "Waiting for 2 child processes to exit. CTRL-C to exit immediately.");
-          haveExited = true;
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
-
-      assert.equal(haveExited, false);
-
-      children.forEach((child) => child.emit("exit"));
-    });
   });
 
   describe("with --include-filtered-dependencies", () => {
     let testDir;
 
-    beforeEach(() => initFixture("RunCommand/include-filtered-dependencies").then((dir) => {
+    beforeAll(() => initFixture("RunCommand/include-filtered-dependencies").then((dir) => {
       testDir = dir;
     }));
 
-    it("should run a command for the given scope, including filtered deps", (done) => {
+    it("runs scoped command including filtered deps", (done) => {
       const runCommand = new RunCommand(["my-script"], {
         scope: "@test/package-2",
         includeFilteredDependencies: true
-      });
+      }, testDir);
 
       runCommand.runValidations();
       runCommand.runPreparations();
-
-      const ranInPackages = [];
-      stub(ChildProcessUtilities, "exec", (command, options, callback) => {
-        ranInPackages.push(options.cwd.substr(path.join(testDir, "packages/").length));
-        callback();
-      });
 
       runCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
 
         try {
-          const expected = ["package-1", "package-2"];
-          assert.deepEqual(ranInPackages.sort(), expected.sort());
+          expect(ranInPackages(testDir))
+            .toMatchSnapshot("run <script> --scope @test/package-2 --include-filtered-dependencies");
+
           done();
         } catch (ex) {
           done.fail(ex);
