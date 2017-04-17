@@ -15,7 +15,8 @@ export const builder = {
     describe: "Stream output with lines prefixed by package."
   },
   "only-updated": {
-    "describe": "When exectuting scripts/commands, only run the script/command on packages which have been updated since the last release"
+    "describe": "When exectuting scripts/commands, only run the script/command on packages which "
+    + "have been updated since the last release"
   }
 };
 
@@ -29,10 +30,15 @@ export default class RunCommand extends Command {
       return;
     }
 
+    const filteredPackages = this.flags.onlyUpdated
+      ? PackageUtilities.filterPackagesThatAreNotUpdated(this.filteredPackages, this)
+      : this.filteredPackages
+    ;
+
     if (this.script === "test" || this.script === "env") {
-      this.packagesWithScript = this.filteredPackages;
+      this.packagesWithScript = filteredPackages;
     } else {
-      this.packagesWithScript = this.filteredPackages
+      this.packagesWithScript = filteredPackages
         .filter((pkg) => pkg.scripts && pkg.scripts[this.script]);
     }
 

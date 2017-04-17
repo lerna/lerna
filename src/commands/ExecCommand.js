@@ -12,7 +12,8 @@ export const describe = "Run an arbitrary command in each package.";
 
 export const builder = {
   "only-updated": {
-    "describe": "When exectuting scripts/commands, only run the script/command on packages which have been updated since the last release"
+    "describe": "When exectuting scripts/commands, only run the script/command on packages which "
+    + "have been updated since the last release"
   }
 };
 
@@ -26,8 +27,13 @@ export default class ExecCommand extends Command {
       return;
     }
 
+    const filteredPackages = this.flags.onlyUpdated
+      ? PackageUtilities.filterPackagesThatAreNotUpdated(this.filteredPackages, this)
+      : this.filteredPackages
+    ;
+
     this.batchedPackages = this.toposort
-      ? PackageUtilities.topologicallyBatchPackages(this.filteredPackages, { logger: this.logger })
+      ? PackageUtilities.topologicallyBatchPackages(filteredPackages, { logger: this.logger })
       : [ this.filteredPackages ];
 
     callback(null, true);

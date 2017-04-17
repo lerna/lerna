@@ -1,6 +1,5 @@
 import _ from "lodash";
 import dedent from "dedent";
-import UpdatedPackagesCollector from "./UpdatedPackagesCollector";
 import ChildProcessUtilities from "./ChildProcessUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
 import GitUtilities from "./GitUtilities";
@@ -245,13 +244,6 @@ export default class Command {
 
       if (this.options.includeFilteredDependencies) {
         this.filteredPackages = PackageUtilities.addDependencies(this.filteredPackages, this.packageGraph);
-      }
-      if (this.flags.onlyUpdated) {
-        const updatedPackagesCollector = new UpdatedPackagesCollector(this);
-        this.filteredPackages = updatedPackagesCollector.getUpdates()
-          .map((update) => update.package)
-          .filter((pkg) => this.filteredPackages.some((p) => p.name === pkg.name))
-        ;
       }
     } catch (err) {
       this.logger.error("Errored while collecting packages and package graph", err);
