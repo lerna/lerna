@@ -16,60 +16,58 @@ const npmTestInDir = (cwd) =>
 
 describe("lerna bootstrap", () => {
   describe("from CLI", () => {
-    test.concurrent("bootstraps all packages", () => {
-      return initFixture("BootstrapCommand/integration").then((cwd) => {
-        return Promise.resolve()
-          .then(() => execa(LERNA_BIN, ["bootstrap"], { cwd }))
-          .then((result) => {
-            expect(result.stdout).toMatchSnapshot("stdout: simple");
-          })
-          .then(() => execa(LERNA_BIN, ["run", "test", "--", "--silent"], { cwd }))
-          .then((result) => {
-            expect(result.stdout).toMatchSnapshot("stdout: simple");
-          });
-      });
+    test.concurrent("bootstraps all packages", async () => {
+      const cwd = await initFixture("BootstrapCommand/integration");
+      const args = [
+        "bootstrap",
+      ];
+
+      const stdout = await execa.stdout(LERNA_BIN, args, { cwd });
+      expect(stdout).toMatchSnapshot("stdout: simple");
+
+      const output = await execa.stdout(LERNA_BIN, ["run", "test", "--", "--silent"], { cwd });
+      expect(output).toMatchSnapshot("stdout: simple");
     });
 
-    test.concurrent("respects ignore flag", () => {
-      return initFixture("BootstrapCommand/integration").then((cwd) => {
-        return Promise.resolve()
-          .then(() => execa(LERNA_BIN, ["bootstrap", "--ignore", "@integration/package-1"], { cwd }))
-          .then((result) => {
-            expect(result.stdout).toMatchSnapshot("stdout: --ignore");
-          });
-      });
+    test.concurrent("respects ignore flag", async () => {
+      const cwd = await initFixture("BootstrapCommand/integration");
+      const args = [
+        "bootstrap",
+        "--ignore",
+        "@integration/package-1",
+      ];
+
+      const stdout = await execa.stdout(LERNA_BIN, args, { cwd });
+      expect(stdout).toMatchSnapshot("stdout: --ignore");
     });
 
-    test.concurrent("--npm-client yarn", () => {
-      return initFixture("BootstrapCommand/integration").then((cwd) => {
-        return Promise.resolve()
-          .then(() => execa(LERNA_BIN, ["bootstrap", "--npm-client", "yarn"], { cwd }))
-          .then((result) => {
-            expect(result.stdout).toMatchSnapshot("stdout: --npm-client yarn");
-          })
-          .then(() => globby(["package-*/yarn.lock"], { cwd }))
-          .then((lockfiles) => lockfiles.map((fp) => normalizePath(fp)))
-          .then((lockfiles) => {
-            expect(lockfiles).toMatchSnapshot("lockfiles: --npm-client yarn");
-          })
-          .then(() => execa(LERNA_BIN, ["run", "test", "--", "--silent"], { cwd }))
-          .then((result) => {
-            expect(result.stdout).toMatchSnapshot("stdout: --npm-client yarn");
-          });
-      });
+    test.concurrent("--npm-client yarn", async () => {
+      const cwd = await initFixture("BootstrapCommand/integration");
+      const args = [
+        "bootstrap",
+        "--npm-client",
+        "yarn",
+      ];
+
+      const stdout = await execa.stdout(LERNA_BIN, args, { cwd });
+      expect(stdout).toMatchSnapshot("stdout: --npm-client yarn");
+
+      const lockfiles = await globby(["package-*/yarn.lock"], { cwd })
+        .then((globbed) => globbed.map((fp) => normalizePath(fp)));
+      expect(lockfiles).toMatchSnapshot("lockfiles: --npm-client yarn");
+
+      const output = await execa.stdout(LERNA_BIN, ["run", "test", "--", "--silent"], { cwd });
+      expect(output).toMatchSnapshot("stdout: --npm-client yarn");
     });
   });
 
-  describe("from npm script", () => {
-    test.concurrent("bootstraps all packages", () => {
-      return initFixture("BootstrapCommand/integration-lifecycle").then((cwd) => {
-        return Promise.resolve()
-          .then(() => installInDir(cwd))
-          .then(() => npmTestInDir(cwd))
-          .then((result) => {
-            expect(result.stdout).toMatchSnapshot("stdout: postinstall");
-          });
-      });
+  describe("from npm script", async () => {
+    test.concurrent("bootstraps all packages", async () => {
+      const cwd = await initFixture("BootstrapCommand/integration-lifecycle");
+      await installInDir(cwd);
+
+      const result = await npmTestInDir(cwd);
+      expect(result.stdout).toMatchSnapshot("stdout: postinstall");
     });
   });
 });
