@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+
 const yargs = require("yargs");
 const dedent = require("dedent");
 const globalOptions = require("../lib/Command").builder;

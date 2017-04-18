@@ -2,6 +2,7 @@ import path from "path";
 
 // mocked modules
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
+import UpdatedPackagesCollector from "../src/UpdatedPackagesCollector";
 
 // helpers
 import callsBack from "./helpers/callsBack";
@@ -12,6 +13,7 @@ import initFixture from "./helpers/initFixture";
 import ExecCommand from "../src/commands/ExecCommand";
 
 jest.mock("../src/ChildProcessUtilities");
+jest.mock("../src/UpdatedPackagesCollector");
 
 const calledWithArgs = () =>
   ChildProcessUtilities.spawn.mock.calls[0][1];
@@ -79,6 +81,40 @@ describe("ExecCommand", () => {
     it("should filter packages with `ignore`", (done) => {
       const execCommand = new ExecCommand(["ls"], {
         ignore: "package-1",
+      }, testDir);
+
+      execCommand.runValidations();
+      execCommand.runPreparations();
+
+      execCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(1);
+          expect(ChildProcessUtilities.spawn).lastCalledWith("ls", [], {
+            cwd: path.join(testDir, "packages/package-2"),
+            env: expect.objectContaining({
+              LERNA_PACKAGE_NAME: "package-2",
+            }),
+            shell: true,
+          }, expect.any(Function));
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
+
+    it("should filter packages that are not updated when onlyUpdate", (done) => {
+
+      UpdatedPackagesCollector.prototype.getUpdates = jest.fn(() => [{ package: {
+        name: "package-2",
+        location: path.join(testDir, "packages/package-2")
+      } }]);
+
+      const execCommand = new ExecCommand(["ls"], {
+        onlyUpdated: true,
       }, testDir);
 
       execCommand.runValidations();

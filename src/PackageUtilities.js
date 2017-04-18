@@ -1,6 +1,5 @@
 import PackageGraph from "./PackageGraph";
 import Package from "./Package";
-import UpdatedPackagesCollector from "./UpdatedPackagesCollector";
 import path from "path";
 import glob from "glob";
 import minimatch from "minimatch";
@@ -139,9 +138,8 @@ export default class PackageUtilities {
     return packages;
   }
 
-  static filterPackagesThatAreNotUpdated(packagesToFilter, command) {
-    const updatedPackagesCollector = new UpdatedPackagesCollector(command);
-    return updatedPackagesCollector.getUpdates()
+  static filterPackagesThatAreNotUpdated(packagesToFilter, packageUpdates) {
+    return packageUpdates
       .map((update) => update.package)
       .filter((pkg) => packagesToFilter.some((p) => p.name === pkg.name))
     ;

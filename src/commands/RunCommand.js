@@ -1,5 +1,6 @@
 import NpmUtilities from "../NpmUtilities";
 import PackageUtilities from "../PackageUtilities";
+import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
 import Command from "../Command";
 
 export function handler(argv) {
@@ -30,10 +31,15 @@ export default class RunCommand extends Command {
       return;
     }
 
-    const filteredPackages = this.flags.onlyUpdated
-      ? PackageUtilities.filterPackagesThatAreNotUpdated(this.filteredPackages, this)
-      : this.filteredPackages
-    ;
+    let filteredPackages = this.filteredPackages;
+    if (this.flags.onlyUpdated) {
+      const updatedPackagesCollector = new UpdatedPackagesCollector(this);
+      const packageUpdates = updatedPackagesCollector.getUpdates();
+      filteredPackages = PackageUtilities.filterPackagesThatAreNotUpdated(
+        filteredPackages,
+        packageUpdates
+      );
+    }
 
     if (this.script === "test" || this.script === "env") {
       this.packagesWithScript = filteredPackages;

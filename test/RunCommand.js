@@ -1,5 +1,8 @@
+import path from "path";
+
 // mocked modules
 import NpmUtilities from "../src/NpmUtilities";
+import UpdatedPackagesCollector from "../src/UpdatedPackagesCollector";
 
 // helpers
 import callsBack from "./helpers/callsBack";
@@ -138,6 +141,36 @@ describe("RunCommand", () => {
         }));
       });
     });
+
+    it.only("should filter packages that are not updated when onlyUpdate", (done) => {
+
+      UpdatedPackagesCollector.prototype.getUpdates = jest.fn(() => [{ package: {
+        name: "package-3",
+        location: path.join(testDir, "packages/package-3"),
+        scripts: { "my-script": "echo package-3" }
+      } }]);
+
+      const runCommand = new RunCommand(["my-script"], {
+        onlyUpdated: true,
+      }, testDir);
+
+      runCommand.runValidations();
+      runCommand.runPreparations();
+
+      runCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          expect(ranInPackages(testDir))
+            .toMatchSnapshot("run <script> --only-updated");
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
+
   });
 
   describe("with --include-filtered-dependencies", () => {
@@ -170,4 +203,5 @@ describe("RunCommand", () => {
       }));
     });
   });
+
 });

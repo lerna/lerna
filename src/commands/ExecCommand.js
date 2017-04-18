@@ -1,5 +1,6 @@
 import ChildProcessUtilities from "../ChildProcessUtilities";
 import PackageUtilities from "../PackageUtilities";
+import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
 import Command from "../Command";
 
 export function handler(argv) {
@@ -27,10 +28,15 @@ export default class ExecCommand extends Command {
       return;
     }
 
-    const filteredPackages = this.flags.onlyUpdated
-      ? PackageUtilities.filterPackagesThatAreNotUpdated(this.filteredPackages, this)
-      : this.filteredPackages
-    ;
+    let filteredPackages = this.filteredPackages;
+    if (this.flags.onlyUpdated) {
+      const updatedPackagesCollector = new UpdatedPackagesCollector(this);
+      const packageUpdates = updatedPackagesCollector.getUpdates();
+      filteredPackages = PackageUtilities.filterPackagesThatAreNotUpdated(
+        filteredPackages,
+        packageUpdates
+      );
+    }
 
     this.batchedPackages = this.toposort
       ? PackageUtilities.topologicallyBatchPackages(filteredPackages, { logger: this.logger })
