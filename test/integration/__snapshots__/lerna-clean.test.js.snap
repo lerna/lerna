@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`stdout: global --yes 1`] = `
+"Lerna __TEST_VERSION__
+All clean!"
+`;
+
+exports[`stdout: local npm 1`] = `
+"Lerna __TEST_VERSION__
+All clean!"
+`;
