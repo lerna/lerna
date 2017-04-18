@@ -1,3 +1,24 @@
+## v2.0.0-rc.3 (2017-04-18)
+
+Barring show-stopping bugs, our goal is to cut `v2.0.0` later this week. Big props to all of our brave users riding the bleeding edge of release candidates and reporting issues!
+
+#### :bug: Bug Fix
+* [#764](https://github.com/lerna/lerna/pull/764) Use network mutex when bootstrapping with yarn. ([@evocateur](https://github.com/evocateur))
+
+`lerna bootstrap --npmClient=yarn` should no longer require `--concurrency=1` to avoid yarn cache race conditions.
+
+* [#769](https://github.com/lerna/lerna/pull/769) Fix custom version prompt. ([@timdorr](https://github.com/timdorr))
+* [#771](https://github.com/lerna/lerna/pull/771) Resolve internal CLI calls with Windows-safe pattern. ([@evocateur](https://github.com/evocateur))
+
+If you've ever encountered the error `Error: spawn rimraf ENOENT`, this should fix that. Turns out `yarn` doesn't match a behavior of `npm` when installing, and does _not_ symlink transitive dependency binaries.
+
+#### :house: Internal
+* [#770](https://github.com/lerna/lerna/pull/770) Pass multiple directories to rimraf. ([@evocateur](https://github.com/evocateur))
+
+#### Committers: 2
+- Daniel Stockman ([evocateur](https://github.com/evocateur))
+- Tim Dorr ([timdorr](https://github.com/timdorr))
+
 ## v2.0.0-rc.2 (2017-04-13)
 
 Inching ever closer to :checkered_flag: v2.0.0!
