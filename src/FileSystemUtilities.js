@@ -12,6 +12,9 @@ function ensureEndsWithNewLine(string) {
   return ENDS_WITH_NEW_LINE.test(string) ? string : string + "\n";
 }
 
+// NOTE: if rimraf moves the location of its executable, this will need to be updated
+const RIMRAF_CLI = require.resolve("rimraf/bin");
+
 // globs only return directories with a trailing slash
 function trailingSlash(filePath) {
   return path.normalize(`${filePath}/`);
@@ -79,8 +82,11 @@ export default class FileSystemUtilities {
 
         const args = candidates.map(trailingSlash);
         args.unshift("--no-glob");
+        args.unshift(RIMRAF_CLI);
 
-        return ChildProcessUtilities.spawn("rimraf", args, {}, callback);
+        // We call this resolved CLI path in the "path/to/node path/to/cli <..args>"
+        // pattern to avoid Windows hangups with shebangs (e.g., WSH can't handle it)
+        return ChildProcessUtilities.spawn(process.execPath, args, {}, callback);
       });
   }
 
