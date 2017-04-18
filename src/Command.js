@@ -1,13 +1,12 @@
 import _ from "lodash";
+import log from "npmlog";
 import dedent from "dedent";
 import ChildProcessUtilities from "./ChildProcessUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
 import GitUtilities from "./GitUtilities";
 import ExitHandler from "./ExitHandler";
-import progressBar from "./progressBar";
 import Repository from "./Repository";
 import PackageUtilities from "./PackageUtilities";
-import logger from "./logger";
 
 const DEFAULT_CONCURRENCY = 4;
 
@@ -58,14 +57,17 @@ export const builder = {
 
 export default class Command {
   constructor(input, flags, cwd) {
+    log.pause();
+    log.level = flags.loglevel;
+    log.heading = "lerna";
+
     this.input = input;
     this.flags = flags;
 
     this.lernaVersion = require("../package.json").version;
-    this.logger = logger;
-    this.logger.setLogLevel(flags.loglevel);
-    this.progressBar = progressBar;
     this.repository = new Repository(cwd);
+
+    log.resume();
   }
 
   get concurrency() {
