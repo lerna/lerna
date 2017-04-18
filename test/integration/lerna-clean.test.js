@@ -1,4 +1,5 @@
 import execa from "execa";
+import getPort from "get-port";
 import globby from "globby";
 import initFixture from "../helpers/initFixture";
 import { LERNA_BIN } from "../helpers/constants";
@@ -31,11 +32,14 @@ describe("lerna clean", () => {
     expect(found).toEqual([]);
   });
 
+  // FIXME
   test.skip("local yarn", async () => {
     const cwd = await initFixture("CleanCommand/integration");
-    const mutex = ["--mutex", "network:42042"];
 
-    await execa("yarn", ["install", ...mutex], { cwd });
+    const port = await getPort(42042);
+    const mutex = ["--mutex", `network:${port}`];
+
+    await execa("yarn", ["install", "--no-lockfile", ...mutex], { cwd });
 
     const stdout = await execa.stdout("yarn", ["clean", "--silent", ...mutex], { cwd });
     expect(stdout).toMatchSnapshot("stdout: local yarn");

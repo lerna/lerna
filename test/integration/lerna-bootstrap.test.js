@@ -1,18 +1,9 @@
 import execa from "execa";
+import getPort from "get-port";
 import globby from "globby";
 import normalizePath from "normalize-path";
 import initFixture from "../helpers/initFixture";
 import { LERNA_BIN } from "../helpers/constants";
-
-const installInDir = (cwd) =>
-  execa("npm", ["install", "--cache-min=99999"], { cwd });
-  // execa("yarn", ["install", "--mutex", "network:42042"], { cwd });
-  // NOTE: yarn doesn't support linking binaries from transitive dependencies
-  // AND it caches the tarball such that it breaks local test suite re-runs :P
-
-const npmTestInDir = (cwd) =>
-  execa("npm", ["test", "--silent"], { cwd });
-  // yarn doesn't support --silent yet (https://github.com/yarnpkg/yarn/pull/2420)
 
 describe("lerna bootstrap", () => {
   describe("from CLI", () => {
@@ -64,9 +55,25 @@ describe("lerna bootstrap", () => {
   describe("from npm script", async () => {
     test.concurrent("bootstraps all packages", async () => {
       const cwd = await initFixture("BootstrapCommand/integration-lifecycle");
-      await installInDir(cwd);
+      await execa("npm", ["install", "--cache-min=99999"], { cwd });
 
-      const result = await npmTestInDir(cwd);
+      const result = await execa("npm", ["test", "--silent"], { cwd });
+      expect(result.stdout).toMatchSnapshot("stdout: postinstall");
+    });
+
+    test.skip("works with yarn install", async () => {
+      const cwd = await initFixture("BootstrapCommand/integration-lifecycle");
+
+      const port = await getPort(42042);
+      const mutex = ["--mutex", `network:${port}`];
+
+      // NOTE: yarn doesn't support linking binaries from transitive dependencies,
+      // so it's important to test _both_ lifecycle variants.
+      // TODO: ...eventually :P
+      // FIXME: yarn doesn't understand file:// URLs... /sigh
+      await execa("yarn", ["install", "--no-lockfile", ...mutex], { cwd });
+
+      const result = await execa("yarn", ["test", "--silent", ...mutex], { cwd });
       expect(result.stdout).toMatchSnapshot("stdout: postinstall");
     });
   });
