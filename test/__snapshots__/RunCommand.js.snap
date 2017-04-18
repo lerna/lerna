@@ -1,58 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`run <script> --ignore package-@(2|3|4) 1`] = `
-Array [
-  "packages/package-1 my-script",
-]
-`;
-
 exports[`run <script> --only-updated 1`] = `
 Array [
   "packages/package-3 my-script",
-]
-`;
-
-exports[`run <script> --scope @test/package-2 --include-filtered-dependencies 1`] = `
-Array [
-  "packages/package-1 my-script",
-  "packages/package-2 my-script",
-]
-`;
-
-exports[`run <script> --scope package-1 1`] = `
-Array [
-  "packages/package-1 my-script",
-]
-`;
-
-exports[`run <script> --stream 1`] = `
-Array [
-  "packages/package-1 my-script",
-  "packages/package-3 my-script",
-]
-`;
-
-exports[`run <script> 1`] = `
-Array [
-  "packages/package-1 my-script",
-  "packages/package-3 my-script",
-]
-`;
-
-exports[`run env 1`] = `
-Array [
-  "packages/package-1 env",
-  "packages/package-4 env",
-  "packages/package-2 env",
-  "packages/package-3 env",
-]
-`;
-
-exports[`run test 1`] = `
-Array [
-  "packages/package-1 test",
-  "packages/package-4 test",
-  "packages/package-2 test",
-  "packages/package-3 test",
 ]
 `;
