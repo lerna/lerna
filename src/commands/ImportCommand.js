@@ -19,6 +19,7 @@ export const describe = dedent`
 
 export const builder = {
   "yes": {
+    group: "Command Options:",
     describe: "Skip all confirmation prompts"
   }
 };

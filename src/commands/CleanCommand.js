@@ -15,6 +15,7 @@ export const describe = "Remove the node_modules directory from all packages.";
 
 export const builder = {
   "yes": {
+    group: "Command Options:",
     describe: "Skip all confirmation prompts"
   }
 };

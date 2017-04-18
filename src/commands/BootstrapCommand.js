@@ -18,15 +18,18 @@ export const describe = "Link local packages together and install remaining pack
 
 export const builder = {
   "hoist": {
+    group: "Command Options:",
     describe: "Install external dependencies matching [glob] to the repo root",
     type: "string",
     defaultDescription: "'**'",
   },
   "nohoist": {
+    group: "Command Options:",
     describe: "Don't hoist external dependencies matching [glob] to the repo root",
     type: "string"
   },
   "npm-client": {
+    group: "Command Options:",
     describe: "Executable used to install dependencies (npm, yarn, pnpm, ...)",
     type: "string",
     requiresArg: true,

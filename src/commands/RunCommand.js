@@ -12,6 +12,7 @@ export const describe = "Run an npm script in each package that contains that sc
 
 export const builder = {
   "stream": {
+    group: "Command Options:",
     describe: "Stream output with lines prefixed by package."
   }
 };

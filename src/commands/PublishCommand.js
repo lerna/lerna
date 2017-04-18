@@ -24,10 +24,12 @@ export const describe = "Publish packages in the current project.";
 
 export const builder = {
   "canary": {
+    group: "Command Options:",
     describe: "Publish packages after every successful merge using the sha as part of the tag.",
     alias: "c"
   },
   "cd-version": {
+    group: "Command Options:",
     describe: "Skip the version selection prompt and increment semver 'major', 'minor', or 'patch'.",
     type: "string",
     requiresArg: true,
@@ -39,43 +41,53 @@ export const builder = {
     },
   },
   "conventional-commits": {
+    group: "Command Options:",
     describe: "Use angular conventional-commit format to determine version bump and generate CHANGELOG."
   },
   "exact": {
+    group: "Command Options:",
     describe: "Specify cross-dependency version numbers exactly rather than with a caret (^)."
   },
   "git-remote": {
+    group: "Command Options:",
     defaultDescription: "origin",
     describe: "Push git changes to the specified remote instead of 'origin'.",
     type: "string",
     requiresArg: true
   },
   "yes": {
+    group: "Command Options:",
     describe: "Skip all confirmation prompts."
   },
   "message": {
+    group: "Command Options:",
     describe: "Use a custom commit message when creating the publish commit.",
     alias: "m",
     type: "string",
     requiresArg: true
   },
   "npm-tag": {
+    group: "Command Options:",
     describe: "Publish packages with the specified npm dist-tag",
     type: "string",
     requiresArg: true
   },
   "repo-version": {
+    group: "Command Options:",
     describe: "Specify repo version to publish.",
     type: "string",
     requiresArg: true
   },
   "skip-git": {
+    group: "Command Options:",
     describe: "Skip commiting, tagging, and pushing git changes."
   },
   "skip-npm": {
+    group: "Command Options:",
     describe: "Stop before actually publishing change to npm."
   },
   "skip-temp-tag": {
+    group: "Command Options:",
     describe: "Do not create a temporary tag while publishing."
   }
 };
