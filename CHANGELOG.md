@@ -244,7 +244,7 @@ $ lerna publish --skip-temp-tag
 
 * [#587](https://github.com/lerna/lerna/pull/587) Always run test and env scripts. ([@simon360](https://github.com/simon360))
 
-Defaults to running `npm run test` and `npm run env` 
+Defaults to running `npm run test` and `npm run env`
 
 * [#598](https://github.com/lerna/lerna/pull/598) Durable `includeFilteredDependencies` config via lerna.json. ([@gigabo](https://github.com/gigabo))
 
@@ -334,9 +334,9 @@ $ lerna publish --registry https://my-private-registry
 3 new flags:
 
 ###### `--no-sort` (only for run, exec and bootstrap)
-  
+
 By default, all tasks execute on packages in topologically sorted order as to respect the dependency relationships of the packages in question. Cycles are broken on a best-effort basis in a way not guaranteed to be consistent across Lerna invocations.
-  
+
 Topological sorting can cause concurrency bottlenecks if there are a small number of packages with many dependents or if some packages take a disproportionately long time to execute. The `--no-sort` option disables sorting, instead executing tasks in an arbitrary order with maximum concurrency.
 
 
@@ -404,7 +404,7 @@ When running `lerna bootstrap --scope foo --include-filtered-dependencies` run p
 - Sean Kelley ([seansfkelley](https://github.com/seansfkelley))
 - Sergey Zarouski ([szarouski](https://github.com/szarouski))
 - [wtgtybhertgeghgtwtg](https://github.com/wtgtybhertgeghgtwtg)
- 
+
 ## v2.0.0-beta.34 (2017-01-26)
 
 #### :bug: Bug Fix
@@ -412,7 +412,7 @@ When running `lerna bootstrap --scope foo --include-filtered-dependencies` run p
 
 #### Committers: 1
 - Diogo ([diogofcunha](https://github.com/diogofcunha))
- 
+
 ## v2.0.0-beta.33 (2017-01-25)
 
 - Drop Node 0.10/0.12/5
@@ -446,7 +446,7 @@ lerna publish --git-remote upstream
 `my-component` and all of its dependencies will be bootstrapped
 
 ```sh
-lerna bootstrap --scope my-component --include-filtered-dependencies 
+lerna bootstrap --scope my-component --include-filtered-dependencies
 ```
 
 * [#426](https://github.com/lerna/lerna/pull/426) Add support for hidden '--exact' flag. ([@L8D](https://github.com/L8D))
@@ -520,7 +520,7 @@ Any logs of a higher level than the setting are shown. The default is "info".
 
 * [#386](https://github.com/lerna/lerna/pull/386) Add --scope and --ignore support for bootstrap, exec, run, clean and ls. ([@lukebatchelor](https://github.com/lukebatchelor))		
 * [#358](https://github.com/lerna/lerna/pull/358) Run pre/post install scripts during bootstrap. ([@seansfkelley](https://github.com/seansfkelley))		
-  		
+
 #### Bug fix		
 * [#442](https://github.com/lerna/lerna/pull/442) Increase maxBuffer. ([@rygine](https://github.com/rygine))		
 * [#372](https://github.com/lerna/lerna/pull/372) Fix logifyAsync, logifySync decorators. ([@seansfkelley](https://github.com/seansfkelley))		
