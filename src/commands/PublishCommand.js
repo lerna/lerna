@@ -339,7 +339,7 @@ export default class PublishCommand extends Command {
         case "CUSTOM": {
           PromptUtilities.input("Enter a custom version", {
             filter: semver.valid,
-            validate: (v) => semver.valid(v) || "Must be a valid semver version",
+            validate: (v) => v !== null || "Must be a valid semver version",
           }, (input) => {
             callback(null, input);
           });
