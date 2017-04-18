@@ -142,7 +142,7 @@ describe("RunCommand", () => {
       });
     });
 
-    it.only("should filter packages that are not updated when onlyUpdate", (done) => {
+    it("should filter packages that are not updated when onlyUpdate", (done) => {
 
       UpdatedPackagesCollector.prototype.getUpdates = jest.fn(() => [{ package: {
         name: "package-3",
