@@ -13,7 +13,7 @@ export const describe = "Run an arbitrary command in each package.";
 
 export const builder = {
   "only-updated": {
-    "describe": "When exectuting scripts/commands, only run the script/command on packages which "
+    "describe": "When executing scripts/commands, only run the script/command on packages which "
     + "have been updated since the last release"
   }
 };

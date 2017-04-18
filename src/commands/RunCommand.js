@@ -16,7 +16,7 @@ export const builder = {
     describe: "Stream output with lines prefixed by package."
   },
   "only-updated": {
-    "describe": "When exectuting scripts/commands, only run the script/command on packages which "
+    "describe": "When executing scripts/commands, only run the script/command on packages which "
     + "have been updated since the last release"
   }
 };

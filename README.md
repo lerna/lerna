@@ -656,7 +656,9 @@ $ lerna bootstrap --scope "package-*" --ignore "package-util-*" --include-filter
 
 #### --only-updated
 
-When exectuting a script or command, only run the script or command on packages that have been updated since the last release.
+When executing a script or command, only run the script or command on packages that have been updated since the last release.
+
+A package is considered "updated" using the same rules as `lerna updated`.
 
 ```sh
 $ lerna exec --only-updated -- ls -la
