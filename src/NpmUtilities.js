@@ -15,7 +15,13 @@ function splitVersion(dep) {
 
 export default class NpmUtilities {
   @logger.logifyAsync()
-  static installInDir(directory, dependencies, config, callback) {
+  static installInDir(directory, dependencies, config, npmGlobalStyle, callback) {
+    // npmGlobalStyle is an optional argument
+    if (typeof npmGlobalStyle === "function") {
+      callback = npmGlobalStyle;
+      npmGlobalStyle = false;
+    }
+
     // Nothing to do if we weren't given any deps.
     if (!(dependencies && dependencies.length)) return callback();
 
@@ -54,7 +60,12 @@ export default class NpmUtilities {
         // build command, arguments, and options
         const opts = NpmUtilities.getExecOpts(directory, config.registry);
         const args = ["install"];
-        const cmd = config.npmClient || "npm";
+        let cmd = config.npmClient || "npm";
+
+        if (npmGlobalStyle) {
+          cmd = "npm";
+          args.push("--global-style");
+        }
 
         if (cmd === "yarn" && config.mutex) {
           args.push("--mutex", config.mutex);

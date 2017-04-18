@@ -428,6 +428,8 @@ export default class BootstrapCommand extends Command {
     }
 
     // Install anything that needs to go into the leaves.
+    // Use `npm install --global-style` for leaves when hoisting is enabled
+    const npmGlobalStyle = this.options.hoist;
     Object.keys(leaves)
       .map((pkgName) => ({ pkg: this.packageGraph.get(pkgName).package, deps: leaves[pkgName] }))
       .forEach(({ pkg, deps }) => {
@@ -439,6 +441,7 @@ export default class BootstrapCommand extends Command {
               pkg.location,
               deps.map(({ dependency }) => dependency),
               this.npmConfig,
+              npmGlobalStyle,
               (err) => {
                 this.progressBar.tick(pkg.name);
                 cb(err);
