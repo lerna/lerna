@@ -11,12 +11,22 @@ const CHANGELOG_HEADER = dedent(`# Change Log
   All notable changes to this project will be documented in this file.
   See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.`);
 
+// We call these resolved CLI files in the "path/to/node path/to/cli <..args>"
+// pattern to avoid Windows hangups with shebangs (e.g., WSH can't handle it)
+const RECOMMEND_CLI = require.resolve("conventional-recommended-bump/cli");
+const CHANGELOG_CLI = require.resolve("conventional-changelog-cli/cli");
+
 export default class ConventionalCommitUtilities {
   @logger.logifySync()
   static recommendVersion(pkg, opts) {
     const recommendedBump = ChildProcessUtilities.execSync(
-      "conventional-recommended-bump",
-      ["-l", pkg.name, "--commit-path", pkg.location, "-p", "angular"],
+      process.execPath,
+      [
+        RECOMMEND_CLI,
+        "-l", pkg.name,
+        "--commit-path", pkg.location,
+        "-p", "angular",
+      ],
       opts
     );
 
@@ -36,8 +46,14 @@ export default class ConventionalCommitUtilities {
     // run conventional-changelog-cli to generate the markdown
     // for the upcoming release.
     const newEntry = ChildProcessUtilities.execSync(
-      "conventional-changelog",
-      ["-l", pkg.name, "--commit-path", pkg.location, "--pkg", pkgJsonLocation, "-p", "angular"],
+      process.execPath,
+      [
+        CHANGELOG_CLI,
+        "-l", pkg.name,
+        "--commit-path", pkg.location,
+        "--pkg", pkgJsonLocation,
+        "-p", "angular",
+      ],
       opts
     );
 

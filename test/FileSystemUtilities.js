@@ -99,8 +99,12 @@ describe("FileSystemUtilities", () => {
       FileSystemUtilities.rimraf(["rimraf/test"], () => {
         try {
           expect(ChildProcessUtilities.spawn).lastCalledWith(
-            "rimraf",
-            ["--no-glob", path.normalize("rimraf/test/")],
+            process.execPath,
+            [
+              require.resolve("rimraf/bin"),
+              "--no-glob",
+              path.normalize("rimraf/test/"),
+            ],
             {},
             expect.any(Function)
           );
