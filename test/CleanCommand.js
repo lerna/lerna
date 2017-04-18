@@ -24,8 +24,8 @@ const stubRimraf = () => {
 
 const removedDirectories = (testDir) =>
   FileSystemUtilities.rimraf.mock.calls.map((args) =>
-    normalizeRelativeDir(testDir, args[0])
-  );
+    args[0].map((dir) => normalizeRelativeDir(testDir, dir))
+  ).reduce((acc, val) => acc.concat(val), []);
 
 describe("CleanCommand", () => {
   beforeEach(() => {
@@ -60,6 +60,7 @@ describe("CleanCommand", () => {
           expect(removedDirectories(testDir)).toEqual([
             "packages/package-1/node_modules",
             "packages/package-2/node_modules",
+            "packages/package-3/node_modules",
           ]);
 
           done();
@@ -92,8 +93,12 @@ describe("CleanCommand", () => {
 
     // Both of these commands should result in the same outcome
     const filters = [
-      { test: "should only clean scoped packages", flag: "scope", flagValue: "package-1" },
-      { test: "should not clean ignored packages", flag: "ignore", flagValue: "package-2" },
+      { test: "should only clean scoped packages",
+        flag: "scope", flagValue: "package-1",
+      },
+      { test: "should not clean ignored packages",
+        flag: "ignore", flagValue: ["package-2", "@test/package-3"],
+      },
     ];
     filters.forEach((filter) => {
       it(filter.test, (done) => {
