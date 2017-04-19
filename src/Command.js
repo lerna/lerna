@@ -146,7 +146,7 @@ export default class Command {
   }
 
   run() {
-    log.info(this.lernaVersion);
+    log.info("version", this.lernaVersion);
 
     if (this.repository.isIndependent()) {
       log.info("versioning", "independent");
