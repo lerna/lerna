@@ -1,5 +1,3 @@
-import _ from "lodash";
-import log from "npmlog";
 import chalk from "chalk";
 import execa from "execa";
 import path from "path";
@@ -8,21 +6,19 @@ import normalizeNewline from "normalize-newline";
 // mocked or stubbed modules
 import output from "../src/utils/output";
 
-jest.mock("../src/utils/output");
-
 // helpers
 import exitWithCode from "./helpers/exitWithCode";
 import initFixture from "./helpers/initFixture";
+import loggingOutput from "./helpers/loggingOutput";
 import updateLernaConfig from "./helpers/updateLernaConfig";
 
 // file under test
 import UpdatedCommand from "../src/commands/UpdatedCommand";
 
+jest.mock("../src/utils/output");
+
 // keep snapshots stable cross-platform
 chalk.enabled = false;
-
-// silence logs
-log.level = "silent";
 
 const consoleOutput = () =>
   output.mock.calls.map((args) => normalizeNewline(args[0]));
@@ -43,25 +39,8 @@ const setupGitChanges = (testDir, filePaths) => {
   gitCommit(opts);
 };
 
-const getInfoMessages = _.flow(
-  (list) => _.filter(list, (m) => {
-    // select all info, warn, and error logs
-    return log.levels[m.level] >= log.levels.info;
-  }),
-  (list) => _.map(list, "message"),
-  // remove empty logs ("newline")
-  _.compact
-);
-
-const logInfoOutput = () => getInfoMessages(log.record);
-
 describe("UpdatedCommand", () => {
-  afterEach(() => {
-    jest.resetAllMocks();
-
-    // clear logs between tests
-    log.record.length = 0;
-  });
+  afterEach(() => jest.resetAllMocks());
 
   /** =========================================================================
    * Basic
@@ -87,7 +66,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
         try {
-          expect(logInfoOutput()).toMatchSnapshot();
+          expect(loggingOutput()).toMatchSnapshot();
           expect(consoleOutput()).toMatchSnapshot();
           done();
         } catch (ex) {
@@ -105,7 +84,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
         try {
-          expect(logInfoOutput()).toMatchSnapshot();
+          expect(loggingOutput()).toMatchSnapshot();
           expect(consoleOutput()).toMatchSnapshot();
           done();
         } catch (ex) {
@@ -129,7 +108,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
         try {
-          expect(logInfoOutput()).toMatchSnapshot();
+          expect(loggingOutput()).toMatchSnapshot();
           expect(consoleOutput()).toMatchSnapshot();
           done();
         } catch (ex) {
@@ -153,7 +132,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
         try {
-          expect(logInfoOutput()).toMatchSnapshot();
+          expect(loggingOutput()).toMatchSnapshot();
           expect(consoleOutput()).toMatchSnapshot();
           done();
         } catch (ex) {
@@ -184,7 +163,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
         try {
-          expect(logInfoOutput()).toMatchSnapshot();
+          expect(loggingOutput()).toMatchSnapshot();
           expect(consoleOutput()).toMatchSnapshot();
           done();
         } catch (ex) {
@@ -208,7 +187,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
         try {
-          expect(logInfoOutput()).toMatchSnapshot();
+          expect(loggingOutput()).toMatchSnapshot();
           expect(consoleOutput()).toMatchSnapshot();
           done();
         } catch (ex) {
@@ -230,7 +209,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
         try {
-          expect(logInfoOutput()).toMatchSnapshot();
+          expect(loggingOutput()).toMatchSnapshot();
           expect(consoleOutput()).toMatchSnapshot();
           done();
         } catch (ex) {
