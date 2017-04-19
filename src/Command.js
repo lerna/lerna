@@ -4,9 +4,9 @@ import dedent from "dedent";
 import ChildProcessUtilities from "./ChildProcessUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
 import GitUtilities from "./GitUtilities";
-import ExitHandler from "./ExitHandler";
 import Repository from "./Repository";
 import PackageUtilities from "./PackageUtilities";
+import writeLogFile from "./utils/writeLogFile";
 
 const DEFAULT_CONCURRENCY = 4;
 
@@ -288,8 +288,7 @@ export default class Command {
 
   _complete(err, code, callback) {
     if (code !== 0) {
-      const exitHandler = new ExitHandler(this.repository.rootPath);
-      exitHandler.writeLogs(this.logger);
+      writeLogFile(this.repository.rootPath);
     }
 
     const finish = function() {
