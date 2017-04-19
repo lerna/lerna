@@ -12,7 +12,7 @@ const DEFAULT_CONCURRENCY = 4;
 
 export const builder = {
   "loglevel": {
-    default: "info",
+    defaultDescription: "info",
     describe: "What level of logs to report.",
     type: "string",
   },
@@ -58,8 +58,11 @@ export const builder = {
 export default class Command {
   constructor(input, flags, cwd) {
     log.pause();
-    log.level = flags.loglevel;
     log.heading = "lerna";
+
+    if (flags.loglevel) {
+      log.level = flags.loglevel;
+    }
 
     this.input = input;
     this.flags = flags;
