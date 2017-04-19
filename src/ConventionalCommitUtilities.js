@@ -1,7 +1,7 @@
+import log from "npmlog";
 import ChildProcessUtilities from "./ChildProcessUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
 import dedent from "dedent";
-import logger from "./logger";
 import semver from "semver";
 import path from "path";
 
@@ -17,8 +17,9 @@ const RECOMMEND_CLI = require.resolve("conventional-recommended-bump/cli");
 const CHANGELOG_CLI = require.resolve("conventional-changelog-cli/cli");
 
 export default class ConventionalCommitUtilities {
-  @logger.logifySync()
   static recommendVersion(pkg, opts) {
+    log.silly("recommendVersion", "for %s at %s", pkg.name, pkg.location);
+
     const recommendedBump = ChildProcessUtilities.execSync(
       process.execPath,
       [
@@ -30,11 +31,13 @@ export default class ConventionalCommitUtilities {
       opts
     );
 
+    log.verbose("recommendVersion", "increment %s by %s", pkg.version, recommendedBump);
     return semver.inc(pkg.version, recommendedBump);
   }
 
-  @logger.logifySync()
   static updateChangelog(pkg, opts) {
+    log.silly("updateChangelog", "for %s at %s", pkg.name, pkg.location);
+
     const pkgJsonLocation = path.join(pkg.location, "package.json");
     const changelogLocation = ConventionalCommitUtilities.changelogLocation(pkg);
 
@@ -57,6 +60,8 @@ export default class ConventionalCommitUtilities {
       opts
     );
 
+    log.silly("updateChangelog", "writing new entry: %s", newEntry);
+
     // CHANGELOG entries start with <a name=, we remove
     // the header if it exists by starting at the first entry.
     if (changelogContents.indexOf("<a name=") !== -1) {
@@ -75,9 +80,10 @@ export default class ConventionalCommitUtilities {
 
         ${changelogContents}`.replace(/\n+$/, "\n"))
     );
+
+    log.verbose("updateChangelog", "wrote %s", changelogLocation);
   }
 
-  @logger.logifySync()
   static changelogLocation(pkg) {
     return path.join(pkg.location, CHANGELOG_NAME);
   }
