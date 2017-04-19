@@ -118,7 +118,6 @@ export default class PublishCommand extends Command {
       this.packageToPublishCount = packagesToPublish.length;
       this.batchedPackagesToPublish = this.toposort
         ? PackageUtilities.topologicallyBatchPackages(packagesToPublish, {
-          logger: this.logger,
           // Don't sort based on devDependencies because that would increase the chance of dependency cycles
           // causing less-than-ideal a publishing order.
           depsOnly: true,
