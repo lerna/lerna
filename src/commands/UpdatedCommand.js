@@ -1,8 +1,8 @@
-import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
-import { builder as publishOptions } from "./PublishCommand";
-import Command from "../Command";
 import chalk from "chalk";
+import Command from "../Command";
 import output from "../utils/output";
+import { builder as publishOptions } from "./PublishCommand";
+import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
 
 export function handler(argv) {
   return new UpdatedCommand(argv._, argv).run();
