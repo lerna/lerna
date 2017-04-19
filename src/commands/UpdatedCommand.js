@@ -2,6 +2,7 @@ import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
 import { builder as publishOptions } from "./PublishCommand";
 import Command from "../Command";
 import chalk from "chalk";
+import output from "../utils/output";
 
 export function handler(argv) {
   return new UpdatedCommand(argv._, argv).run();
@@ -29,9 +30,10 @@ export default class UpdatedCommand extends Command {
       `- ${pkg.name}${pkg.isPrivate() ? ` (${chalk.red("private")})` : ""}`
     ).join("\n");
 
-    this.logger.newLine();
-    this.logger.info(formattedUpdates);
-    this.logger.newLine();
+    output("");
+    output(formattedUpdates);
+    output("");
+
     callback(null, true);
   }
 }
