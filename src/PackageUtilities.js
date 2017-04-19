@@ -1,3 +1,4 @@
+import log from "npmlog";
 import PackageGraph from "./PackageGraph";
 import Package from "./Package";
 import path from "path";
@@ -143,7 +144,7 @@ export default class PackageUtilities {
     return packages;
   }
 
-  static topologicallyBatchPackages(packagesToBatch, { depsOnly, logger } = {}) {
+  static topologicallyBatchPackages(packagesToBatch, { depsOnly } = {}) {
     // We're going to be chopping stuff out of this array, so copy it.
     const packages = packagesToBatch.slice();
     const packageGraph = PackageUtilities.getPackageGraph(packages, depsOnly);
@@ -169,11 +170,10 @@ export default class PackageUtilities {
       // then we've encountered a cycle in the dependency graph.  Run a
       // single-package batch with the package that has the most dependents.
       if (packages.length && !batch.length) {
-        if (logger) {
-          logger.warn(
-            "Encountered a cycle in the dependency graph. This may cause instability!"
-          );
-        }
+        log.warn(
+          "ECYCLE",
+          "Encountered a cycle in the dependency graph. This may cause instability!"
+        );
 
         batch.push(packages.reduce((a, b) => {
           return (refCounts[a.name] || 0) > (refCounts[b.name] || 0) ? a : b;

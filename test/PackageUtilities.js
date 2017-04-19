@@ -1,4 +1,5 @@
 import path from "path";
+import log from "npmlog";
 
 // tightly-coupled modules; TODO: decouple
 import Package from "../src/Package";
@@ -9,6 +10,9 @@ import initFixture from "./helpers/initFixture";
 
 // file under test
 import PackageUtilities from "../src/PackageUtilities";
+
+// silence logs
+log.level = "silent";
 
 describe("PackageUtilities", () => {
   describe(".getPackages()", () => {
@@ -164,8 +168,14 @@ describe("PackageUtilities", () => {
     }));
 
     it("should batch roots, then internal/leaf nodes, then cycles", () => {
+      let warnedCycle;
+      log.once("log.warn", () => {
+        warnedCycle = true;
+      });
+
       const batchedPackages = PackageUtilities.topologicallyBatchPackages(packages);
 
+      expect(warnedCycle).toBe(true);
       expect(batchedPackages.map((batch) => batch.map((pkg) => pkg.name))).toEqual(
         [
           ["package-dag-1", "package-standalone"],
