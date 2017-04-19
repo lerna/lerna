@@ -1,6 +1,6 @@
+import log from "npmlog";
 import fs from "fs-promise";
 import pathExists from "path-exists";
-import logger from "./logger";
 import cmdShim from "cmd-shim";
 import readCmdShim from "read-cmd-shim";
 import path from "path";
@@ -21,53 +21,53 @@ function trailingSlash(filePath) {
 }
 
 export default class FileSystemUtilities {
-  @logger.logifyAsync()
   static mkdirp(filePath, callback) {
+    log.silly("mkdirp", filePath);
     fs.ensureDir(filePath, callback);
   }
 
-  @logger.logifySync()
   static readdirSync(filePath) {
+    log.silly("readdirSync", filePath);
     return fs.readdirSync(filePath);
   }
 
-  @logger.logifySync()
   static existsSync(filePath) {
+    log.silly("existsSync", filePath);
     return pathExists.sync(filePath);
   }
 
-  @logger.logifyAsync()
   static writeFile(filePath, fileContents, callback) {
+    log.silly("writeFile", [filePath, fileContents]);
     fs.writeFile(filePath, ensureEndsWithNewLine(fileContents), callback);
   }
 
-  @logger.logifyAsync()
   static rename(from, to, callback) {
+    log.silly("rename", [from, to]);
     fs.rename(from, to, callback);
   }
 
-  @logger.logifySync()
   static renameSync(from, to) {
+    log.silly("renameSync", [from, to]);
     fs.renameSync(from, to);
   }
 
-  @logger.logifySync()
   static writeFileSync(filePath, fileContents) {
+    log.silly("writeFileSync", [filePath, fileContents]);
     fs.writeFileSync(filePath, ensureEndsWithNewLine(fileContents));
   }
 
-  @logger.logifySync()
   static readFileSync(filePath) {
+    log.silly("readFileSync", filePath);
     return fs.readFileSync(filePath, "utf8").trim();
   }
 
-  @logger.logifySync()
   static statSync(filePath) {
+    log.silly("statSync", filePath);
     return fs.statSync(filePath);
   }
 
-  @logger.logifyAsync()
   static rimraf(dirPaths, callback) {
+    log.silly("rimraf", "%j", dirPaths);
     // Shelling out to a child process for a noop is expensive.
     // Checking if `dirPath` exists to be removed is cheap.
     // This lets us short-circuit if we don't have anything to do.
@@ -77,6 +77,7 @@ export default class FileSystemUtilities {
       .then((values) => values.filter((x) => x[0]).map((x) => x[1]))
       .then((candidates) => {
         if (!candidates.length) {
+          log.verbose("rimraf", "no directories to delete");
           return callback();
         }
 
@@ -86,12 +87,15 @@ export default class FileSystemUtilities {
 
         // We call this resolved CLI path in the "path/to/node path/to/cli <..args>"
         // pattern to avoid Windows hangups with shebangs (e.g., WSH can't handle it)
-        return ChildProcessUtilities.spawn(process.execPath, args, {}, callback);
+        return ChildProcessUtilities.spawn(process.execPath, args, {}, () => {
+          log.verbose("rimraf", "deleted %j", candidates);
+          callback();
+        });
       });
   }
 
-  @logger.logifyAsync()
   static symlink(src, dest, type, callback) {
+    log.silly("symlink", [src, dest, type]);
     if (process.platform === "win32") {
       createWindowsSymlink(src, dest, type, callback);
     } else {
@@ -99,13 +103,13 @@ export default class FileSystemUtilities {
     }
   }
 
-  @logger.logifySync()
   static unlinkSync(filePath) {
+    log.silly("unlinkSync", filePath);
     fs.unlinkSync(filePath);
   }
 
-  @logger.logifySync()
   static isSymlink(filePath) {
+    log.silly("isSymlink", filePath);
     let result;
 
     if (process.platform === "win32") {
