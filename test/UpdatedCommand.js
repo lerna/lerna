@@ -1,3 +1,4 @@
+import _ from "lodash";
 import log from "npmlog";
 import chalk from "chalk";
 import execa from "execa";
@@ -42,8 +43,25 @@ const setupGitChanges = (testDir, filePaths) => {
   gitCommit(opts);
 };
 
+const getInfoMessages = _.flow(
+  (list) => _.filter(list, (m) => {
+    // select all info, warn, and error logs
+    return log.levels[m.level] >= log.levels.info;
+  }),
+  (list) => _.map(list, "message"),
+  // remove empty logs ("newline")
+  _.compact
+);
+
+const logInfoOutput = () => getInfoMessages(log.record);
+
 describe("UpdatedCommand", () => {
-  afterEach(() => jest.resetAllMocks());
+  afterEach(() => {
+    jest.resetAllMocks();
+
+    // clear logs between tests
+    log.record.length = 0;
+  });
 
   /** =========================================================================
    * Basic
@@ -69,6 +87,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
         try {
+          expect(logInfoOutput()).toMatchSnapshot();
           expect(consoleOutput()).toMatchSnapshot();
           done();
         } catch (ex) {
@@ -86,6 +105,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
         try {
+          expect(logInfoOutput()).toMatchSnapshot();
           expect(consoleOutput()).toMatchSnapshot();
           done();
         } catch (ex) {
@@ -109,6 +129,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
         try {
+          expect(logInfoOutput()).toMatchSnapshot();
           expect(consoleOutput()).toMatchSnapshot();
           done();
         } catch (ex) {
@@ -132,6 +153,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
         try {
+          expect(logInfoOutput()).toMatchSnapshot();
           expect(consoleOutput()).toMatchSnapshot();
           done();
         } catch (ex) {
@@ -162,6 +184,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
         try {
+          expect(logInfoOutput()).toMatchSnapshot();
           expect(consoleOutput()).toMatchSnapshot();
           done();
         } catch (ex) {
@@ -185,6 +208,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
         try {
+          expect(logInfoOutput()).toMatchSnapshot();
           expect(consoleOutput()).toMatchSnapshot();
           done();
         } catch (ex) {
@@ -206,6 +230,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
         try {
+          expect(logInfoOutput()).toMatchSnapshot();
           expect(consoleOutput()).toMatchSnapshot();
           done();
         } catch (ex) {
