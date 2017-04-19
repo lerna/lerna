@@ -20,6 +20,8 @@ export default class UpdatedPackagesCollector {
   }
 
   getUpdates() {
+    this.tracker.silly("getUpdates");
+
     this.updatedPackages = this.collectUpdatedPackages();
     this.dependents = this.collectDependents();
     return this.collectUpdates();
@@ -32,9 +34,10 @@ export default class UpdatedPackagesCollector {
 
     if (hasTags) {
       const tag = GitUtilities.getLastTag(this.execOpts);
-      this.tracker.info("", "Comparing with: " + tag);
+      this.tracker.info("", "Comparing with tag " + tag);
     } else {
-      this.tracker.info("", "No tags found! Comparing with initial commit.");
+      this.tracker.warn("", "No tags found!");
+      this.tracker.info("", "Comparing with initial commit.");
     }
 
     let commits;
@@ -76,6 +79,7 @@ export default class UpdatedPackagesCollector {
         return this.hasDiffSinceThatIsntIgnored(pkg, commits);
       }
     }).forEach((pkg) => {
+      this.tracker.verbose("has update", pkg.name);
       updatedPackages[pkg.name] = pkg;
     });
 
@@ -85,6 +89,8 @@ export default class UpdatedPackagesCollector {
   }
 
   isPackageDependentOf(packageName, dependency) {
+    this.tracker.silly("isPackageDependentOf", packageName, dependency);
+
     if (!this.cache[packageName]) {
       this.cache[packageName] = {};
     }
@@ -117,12 +123,15 @@ export default class UpdatedPackagesCollector {
   }
 
   collectDependents() {
+    this.tracker.silly("collectDependents");
+
     const dependents = {};
     this.cache = {};
 
     this.packages.forEach((pkg) => {
       Object.keys(this.updatedPackages).forEach((dependency) => {
         if (this.isPackageDependentOf(pkg.name, dependency)) {
+          this.tracker.verbose("dependent", "%s depends on %s", pkg.name, dependency);
           dependents[pkg.name] = pkg;
         }
       });
@@ -132,6 +141,8 @@ export default class UpdatedPackagesCollector {
   }
 
   collectUpdates() {
+    this.tracker.silly("collectUpdates");
+
     return this.packages.filter((pkg) => {
       return (
         this.updatedPackages[pkg.name] ||
@@ -139,6 +150,7 @@ export default class UpdatedPackagesCollector {
         this.options.canary
       );
     }).map((pkg) => {
+      this.tracker.verbose("has filtered update", pkg.name);
       return new Update(pkg);
     });
   }
