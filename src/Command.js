@@ -69,7 +69,7 @@ export default class Command {
 
     this.lernaVersion = require("../package.json").version;
     this.repository = new Repository(cwd);
-    this.tracker = log.newGroup(this.name);
+    this.logger = log.newGroup(this.name);
 
     log.resume();
   }
