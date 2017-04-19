@@ -30,9 +30,8 @@ export default class UpdatedCommand extends Command {
       `- ${pkg.name}${pkg.isPrivate() ? ` (${chalk.red("private")})` : ""}`
     ).join("\n");
 
-    output("");
+    this.tracker.info("result");
     output(formattedUpdates);
-    output("");
 
     callback(null, true);
   }
