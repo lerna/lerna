@@ -1,4 +1,6 @@
+import log from "npmlog";
 import path from "path";
+import dedent from "dedent";
 import semver from "semver";
 import NpmUtilities from "./NpmUtilities";
 import dependencyIsSatisfied from "./utils/dependencyIsSatisfied";
@@ -71,6 +73,8 @@ export default class Package {
    * @param {Function} callback
    */
   runScript(script, callback) {
+    log.silly("runScript", script, this.name);
+
     if (this.scripts[script]) {
       NpmUtilities.runScriptInDir(script, [], this.location, callback);
     } else {
@@ -81,10 +85,12 @@ export default class Package {
   /**
    * Determine if a dependency version satisfies the requirements of this package
    * @param {Package} dependency
-   * @param {Logger} logger
+   * @param {Boolean} doWarn
    * @returns {Boolean}
    */
-  hasMatchingDependency(dependency, logger) {
+  hasMatchingDependency(dependency, doWarn) {
+    log.silly("hasMatchingDependency", this.name, dependency.name);
+
     const expectedVersion = this.allDependencies[dependency.name];
     const actualVersion = dependency.version;
 
@@ -97,12 +103,11 @@ export default class Package {
       return true;
     }
 
-    if (logger) {
-      logger.warn(
-        `Version mismatch inside "${this.name}". ` +
-        `Depends on "${dependency.name}@${expectedVersion}" ` +
-        `instead of "${dependency.name}@${actualVersion}".`
-      );
+    if (doWarn) {
+      log.warn(this.name, dedent`
+        depends on "${dependency.name}@${expectedVersion}"
+        instead of "${dependency.name}@${actualVersion}"
+      `);
     }
 
     return false;
@@ -110,12 +115,14 @@ export default class Package {
 
   /**
    * Determine if a dependency has already been installed for this package
-   * @param {String} dependency Name of the dependency
+   * @param {String} depName Name of the dependency
    * @returns {Boolean}
    */
-  hasDependencyInstalled(dependency) {
+  hasDependencyInstalled(depName) {
+    log.silly("hasDependencyInstalled", this.name, depName);
+
     return dependencyIsSatisfied(
-      this.nodeModulesLocation, dependency, this.allDependencies[dependency]
+      this.nodeModulesLocation, depName, this.allDependencies[depName]
     );
   }
 }
