@@ -12,11 +12,10 @@ class Update {
 export default class UpdatedPackagesCollector {
   constructor(command) {
     this.execOpts = command.execOpts;
-    this.logger = command.logger;
+    this.tracker = command.tracker;
     this.repository = command.repository;
     this.packages = command.filteredPackages;
     this.packageGraph = command.repository.packageGraph;
-    this.progressBar = command.progressBar;
     this.options = command.options;
   }
 
@@ -27,18 +26,16 @@ export default class UpdatedPackagesCollector {
   }
 
   collectUpdatedPackages() {
-    this.logger.info("Checking for updated packages...");
+    this.tracker.info("", "Checking for updated packages...");
 
     const hasTags = GitUtilities.hasTags(this.execOpts);
 
     if (hasTags) {
       const tag = GitUtilities.getLastTag(this.execOpts);
-      this.logger.info("Comparing with: " + tag);
+      this.tracker.info("", "Comparing with: " + tag);
     } else {
-      this.logger.info("No tags found! Comparing with initial commit.");
+      this.tracker.info("", "No tags found! Comparing with initial commit.");
     }
-
-    this.progressBar.init(this.packages.length);
 
     let commits;
 
@@ -60,9 +57,10 @@ export default class UpdatedPackagesCollector {
     }
 
     const updatedPackages = {};
+    const progress = this.tracker.newItem("collectUpdatedPackages", this.packages.length);
 
     this.packages.filter((pkg) => {
-      this.progressBar.tick(pkg.name);
+      progress.completeWork(1);
 
       if (!hasTags) {
         return true;
@@ -81,7 +79,7 @@ export default class UpdatedPackagesCollector {
       updatedPackages[pkg.name] = pkg;
     });
 
-    this.progressBar.terminate();
+    progress.finish();
 
     return updatedPackages;
   }
