@@ -127,10 +127,10 @@ export default class GitUtilities {
   }
 
   static diffSinceIn(since, location, opts) {
-    log.silly("diffSinceIn", [since, location]);
+    log.verbose("diffSinceIn", [since, location, opts]);
 
     const diff = ChildProcessUtilities.execSync("git", ["diff", "--name-only", since, "--", location], opts);
-    log.verbose("diffSinceIn", diff);
+    log.silly("diff", diff);
 
     return diff;
   }
