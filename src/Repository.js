@@ -1,3 +1,4 @@
+import log from "npmlog";
 import path from "path";
 import findUp from "find-up";
 import loadJsonFile from "load-json-file";
@@ -20,6 +21,8 @@ export default class Repository {
     );
 
     this.rootPath = path.dirname(lernaJsonLocation);
+    log.verbose("rootPath", this.rootPath);
+
     this.lernaJsonLocation = lernaJsonLocation;
     this.packageJsonLocation = path.join(this.rootPath, "package.json");
   }
@@ -109,9 +112,11 @@ export default class Repository {
     this._packageGraph = PackageUtilities.getPackageGraph(this._packages);
   }
 
-  hasDependencyInstalled(dependency, version) {
+  hasDependencyInstalled(depName, version) {
+    log.silly("hasDependencyInstalled", "ROOT", depName, version);
+
     return dependencyIsSatisfied(
-      this.nodeModulesLocation, dependency, version
+      this.nodeModulesLocation, depName, version
     );
   }
 }
