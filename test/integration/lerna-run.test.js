@@ -16,6 +16,7 @@ describe("lerna run", () => {
 
       return execa(LERNA_BIN, args, { cwd }).then((result) => {
         expect(result.stdout).toMatchSnapshot("stdout: my-script --scope");
+        expect(result.stderr).toMatchSnapshot("stderr: my-script --scope");
       });
     });
   });
@@ -34,6 +35,7 @@ describe("lerna run", () => {
 
       return execa(LERNA_BIN, args, { cwd }).then((result) => {
         expect(result.stdout).toMatchSnapshot("stdout: test --ignore");
+        expect(result.stderr).toMatchSnapshot("stderr: test --ignore");
       });
     });
   });
