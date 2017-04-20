@@ -1,3 +1,4 @@
+import log from "npmlog";
 import yargs from "yargs/yargs";
 import dedent from "dedent";
 import { builder as globalOptions } from "./Command";
@@ -18,6 +19,12 @@ export default function CLI(argv, cwd) {
     "help",
     "version",
   ]);
+
+  if (process.stdout.isTTY) {
+    // log.enableColor();
+    // log.enableUnicode();
+    log.enableProgress();
+  }
 
   return cli
     .usage("Usage: $0 <command> [options]")
