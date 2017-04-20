@@ -12,6 +12,7 @@ import ConventionalCommitUtilities from "../src/ConventionalCommitUtilities";
 import GitUtilities from "../src/GitUtilities";
 import NpmUtilities from "../src/NpmUtilities";
 import PromptUtilities from "../src/PromptUtilities";
+import output from "../src/utils/output";
 
 // helpers
 import callsBack from "./helpers/callsBack";
@@ -27,6 +28,7 @@ jest.mock("write-pkg");
 jest.mock("../src/GitUtilities");
 jest.mock("../src/NpmUtilities");
 jest.mock("../src/PromptUtilities");
+jest.mock("../src/utils/output");
 
 // silence logs
 log.level = "silent";
@@ -38,6 +40,9 @@ const execOpts = (testDir) =>
   expect.objectContaining({
     cwd: testDir,
   });
+
+const consoleOutput = () =>
+  output.mock.calls.map((args) => normalizeNewline(args[0]));
 
 const publishedTagInDirectories = (testDir) =>
   NpmUtilities.publishTaggedInDir.mock.calls.reduce((arr, args) => {
@@ -165,6 +170,7 @@ describe("PublishCommand", () => {
           expect(addedDistTagInDirectories(testDir)).toMatchSnapshot("[normal] npm dist-tag add");
 
           expect(GitUtilities.pushWithTags).lastCalledWith("origin", gitTagsAdded(), execOpts(testDir));
+          expect(consoleOutput()).toMatchSnapshot("[normal] console output");
 
           done();
         } catch (ex) {
@@ -236,6 +242,7 @@ describe("PublishCommand", () => {
           expect(addedDistTagInDirectories(testDir)).toMatchSnapshot("[independent] npm dist-tag add");
 
           expect(GitUtilities.pushWithTags).lastCalledWith("origin", gitTagsAdded(), execOpts(testDir));
+          expect(consoleOutput()).toMatchSnapshot("[independent] console output");
 
           done();
         } catch (ex) {

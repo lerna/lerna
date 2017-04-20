@@ -67,6 +67,23 @@ Object {
 }
 `;
 
+exports[`[independent] console output 1`] = `
+Array [
+  "",
+  "Changes:",
+  " - package-1: 1.0.0 => 1.0.1
+ - package-2: 2.0.0 => 1.1.0
+ - package-3: 3.0.0 => 2.0.0
+ - package-4: 4.0.0 => 1.1.0",
+  "",
+  "Successfully published:",
+  " - package-1@1.0.1
+ - package-2@1.1.0
+ - package-3@2.0.0
+ - package-4@1.1.0",
+]
+`;
+
 exports[`[independent] git adds changed files 1`] = `
 Array [
   "packages/package-1/package.json",
@@ -196,6 +213,25 @@ Object {
   "packages/package-4": "1.0.1",
   "packages/package-5": "1.0.1",
 }
+`;
+
+exports[`[normal] console output 1`] = `
+Array [
+  "",
+  "Changes:",
+  " - package-1: 1.0.0 => 1.0.1
+ - package-2: 1.0.0 => 1.0.1
+ - package-3: 1.0.0 => 1.0.1
+ - package-4: 1.0.0 => 1.0.1
+ - package-5: 1.0.0 => 1.0.1 (private)",
+  "",
+  "Successfully published:",
+  " - package-1@1.0.1
+ - package-2@1.0.1
+ - package-3@1.0.1
+ - package-4@1.0.1
+ - package-5@1.0.1",
+]
 `;
 
 exports[`[normal] git adds changed files 1`] = `
