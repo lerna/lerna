@@ -1,4 +1,4 @@
-import { EventEmitter } from "events";
+import EventEmitter from "events";
 import execa from "execa";
 import pFinally from "p-finally";
 import logTransformer from "strong-log-transformer";
