@@ -1,9 +1,10 @@
-import log from "npmlog";
-import fs from "fs-promise";
-import pathExists from "path-exists";
 import cmdShim from "cmd-shim";
-import readCmdShim from "read-cmd-shim";
+import fs from "fs-promise";
+import log from "npmlog";
 import path from "path";
+import pathExists from "path-exists";
+import readCmdShim from "read-cmd-shim";
+
 import ChildProcessUtilities from "./ChildProcessUtilities";
 
 const ENDS_WITH_NEW_LINE = /\n$/;

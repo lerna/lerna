@@ -1,9 +1,10 @@
 import _ from "lodash";
-import writePkg from "write-pkg";
 import writeJsonFile from "write-json-file";
+import writePkg from "write-pkg";
+
+import Command from "../Command";
 import FileSystemUtilities from "../FileSystemUtilities";
 import GitUtilities from "../GitUtilities";
-import Command from "../Command";
 
 export function handler(argv) {
   return new InitCommand(argv._, argv).run();

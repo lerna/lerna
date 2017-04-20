@@ -1,6 +1,7 @@
+import _ from "lodash";
 import async from "async";
 import path from "path";
-import _ from "lodash";
+
 import Command from "../Command";
 import FileSystemUtilities from "../FileSystemUtilities";
 import PromptUtilities from "../PromptUtilities";

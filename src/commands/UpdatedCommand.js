@@ -1,7 +1,8 @@
 import chalk from "chalk";
+
+import { builder as publishOptions } from "./PublishCommand";
 import Command from "../Command";
 import output from "../utils/output";
-import { builder as publishOptions } from "./PublishCommand";
 import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
 
 export function handler(argv) {

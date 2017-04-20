@@ -1,18 +1,19 @@
-import writePkg from "write-pkg";
-import writeJsonFile from "write-json-file";
-import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
-import ConventionalCommitUtilities from "../ConventionalCommitUtilities";
-import FileSystemUtilities from "../FileSystemUtilities";
-import PackageUtilities from "../PackageUtilities";
-import PromptUtilities from "../PromptUtilities";
-import GitUtilities from "../GitUtilities";
-import NpmUtilities from "../NpmUtilities";
-import Command from "../Command";
-import semver from "semver";
+import { EOL } from "os";
 import async from "async";
 import chalk from "chalk";
 import path from "path";
-import { EOL } from "os";
+import semver from "semver";
+import writeJsonFile from "write-json-file";
+import writePkg from "write-pkg";
+
+import Command from "../Command";
+import ConventionalCommitUtilities from "../ConventionalCommitUtilities";
+import FileSystemUtilities from "../FileSystemUtilities";
+import GitUtilities from "../GitUtilities";
+import NpmUtilities from "../NpmUtilities";
+import PackageUtilities from "../PackageUtilities";
+import PromptUtilities from "../PromptUtilities";
+import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
 
 export function handler(argv) {
   return new PublishCommand(argv._, argv).run();

@@ -1,8 +1,8 @@
-import log from "npmlog";
 import chalk from "chalk";
 import execa from "execa";
-import path from "path";
+import log from "npmlog";
 import normalizeNewline from "normalize-newline";
+import path from "path";
 
 // mocked or stubbed modules
 import output from "../src/utils/output";

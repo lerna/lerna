@@ -1,7 +1,8 @@
-import GitUtilities from "./GitUtilities";
-import minimatch from "minimatch";
 import _ from "lodash";
+import minimatch from "minimatch";
 import path from "path";
+
+import GitUtilities from "./GitUtilities";
 
 class Update {
   constructor(pkg) {

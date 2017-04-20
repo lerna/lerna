@@ -1,5 +1,5 @@
-import log from "npmlog";
 import chalk from "chalk";
+import log from "npmlog";
 import normalizeNewline from "normalize-newline";
 
 // mocked or stubbed modules

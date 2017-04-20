@@ -1,9 +1,10 @@
 import log from "npmlog";
-import writePkg from "write-pkg";
-import ChildProcessUtilities from "./ChildProcessUtilities";
-import FileSystemUtilities from "./FileSystemUtilities";
 import onExit from "signal-exit";
 import path from "path";
+import writePkg from "write-pkg";
+
+import ChildProcessUtilities from "./ChildProcessUtilities";
+import FileSystemUtilities from "./FileSystemUtilities";
 
 // Take a dep like "foo@^1.0.0".
 // Return a tuple like ["foo", "^1.0.0"].

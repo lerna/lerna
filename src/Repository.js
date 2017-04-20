@@ -1,12 +1,13 @@
-import log from "npmlog";
-import path from "path";
 import findUp from "find-up";
 import loadJsonFile from "load-json-file";
+import log from "npmlog";
+import path from "path";
 import readPkg from "read-pkg";
 import semver from "semver";
-import PackageUtilities from "./PackageUtilities";
-import Package from "./Package";
+
 import dependencyIsSatisfied from "./utils/dependencyIsSatisfied";
+import Package from "./Package";
+import PackageUtilities from "./PackageUtilities";
 
 const DEFAULT_PACKAGE_GLOB = "packages/*";
 

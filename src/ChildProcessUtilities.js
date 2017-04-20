@@ -1,7 +1,7 @@
 import EventEmitter from "events";
 import execa from "execa";
-import pFinally from "p-finally";
 import logTransformer from "strong-log-transformer";
+import pFinally from "p-finally";
 
 // Keep track of how many live children we have.
 let children = 0;

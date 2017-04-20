@@ -1,11 +1,12 @@
-import path from "path";
 import async from "async";
 import dedent from "dedent";
-import Command from "../Command";
-import PromptUtilities from "../PromptUtilities";
+import path from "path";
+
 import ChildProcessUtilities from "../ChildProcessUtilities";
+import Command from "../Command";
 import FileSystemUtilities from "../FileSystemUtilities";
 import GitUtilities from "../GitUtilities";
+import PromptUtilities from "../PromptUtilities";
 
 export function handler(argv) {
   return new ImportCommand([argv.pathToRepo], argv).run();

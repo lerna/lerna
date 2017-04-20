@@ -1,11 +1,12 @@
 import _ from "lodash";
-import log from "npmlog";
 import dedent from "dedent";
+import log from "npmlog";
+
 import ChildProcessUtilities from "./ChildProcessUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
 import GitUtilities from "./GitUtilities";
-import Repository from "./Repository";
 import PackageUtilities from "./PackageUtilities";
+import Repository from "./Repository";
 import writeLogFile from "./utils/writeLogFile";
 
 // handle log.success()

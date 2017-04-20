@@ -1,5 +1,5 @@
-import path from "path";
 import log from "npmlog";
+import path from "path";
 
 // tightly-coupled modules; TODO: decouple
 import Package from "../src/Package";

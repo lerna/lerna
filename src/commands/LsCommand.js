@@ -1,6 +1,7 @@
-import Command from "../Command";
 import chalk from "chalk";
 import columnify from "columnify";
+
+import Command from "../Command";
 import output from "../utils/output";
 
 export function handler(argv) {

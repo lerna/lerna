@@ -1,8 +1,8 @@
-import log from "npmlog";
-import fs from "fs-promise";
-import pathExists from "path-exists";
 import execa from "execa";
+import fs from "fs-promise";
+import log from "npmlog";
 import path from "path";
+import pathExists from "path-exists";
 
 // mocked or stubbed modules
 import PromptUtilities from "../src/PromptUtilities";

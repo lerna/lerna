@@ -1,6 +1,6 @@
+import Command from "../Command";
 import NpmUtilities from "../NpmUtilities";
 import PackageUtilities from "../PackageUtilities";
-import Command from "../Command";
 
 export function handler(argv) {
   return new RunCommand([argv.script, ...argv.args], argv).run();

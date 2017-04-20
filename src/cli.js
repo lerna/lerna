@@ -1,6 +1,7 @@
+import dedent from "dedent";
 import log from "npmlog";
 import yargs from "yargs/yargs";
-import dedent from "dedent";
+
 import { builder as globalOptions } from "./Command";
 
 /**

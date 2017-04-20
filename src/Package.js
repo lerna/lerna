@@ -1,9 +1,10 @@
+import dedent from "dedent";
 import log from "npmlog";
 import path from "path";
-import dedent from "dedent";
 import semver from "semver";
-import NpmUtilities from "./NpmUtilities";
+
 import dependencyIsSatisfied from "./utils/dependencyIsSatisfied";
+import NpmUtilities from "./NpmUtilities";
 
 export default class Package {
   constructor(pkg, location) {

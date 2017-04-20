@@ -1,6 +1,6 @@
 import ChildProcessUtilities from "../ChildProcessUtilities";
-import PackageUtilities from "../PackageUtilities";
 import Command from "../Command";
+import PackageUtilities from "../PackageUtilities";
 
 export function handler(argv) {
   return new ExecCommand([argv.command, ...argv.args], argv).run();

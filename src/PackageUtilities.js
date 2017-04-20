@@ -1,11 +1,12 @@
+import async from "async";
+import glob from "glob";
 import log from "npmlog";
+import minimatch from "minimatch";
+import path from "path";
+import readPkg from "read-pkg";
+
 import PackageGraph from "./PackageGraph";
 import Package from "./Package";
-import path from "path";
-import glob from "glob";
-import minimatch from "minimatch";
-import readPkg from "read-pkg";
-import async from "async";
 
 /**
 * A predicate that determines if a given package name satisfies a glob.

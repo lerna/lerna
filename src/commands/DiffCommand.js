@@ -1,7 +1,8 @@
-import GitUtilities from "../GitUtilities";
-import Command from "../Command";
-import ChildProcessUtilities from "../ChildProcessUtilities";
 import _ from "lodash";
+
+import ChildProcessUtilities from "../ChildProcessUtilities";
+import Command from "../Command";
+import GitUtilities from "../GitUtilities";
 
 export function handler(argv) {
   return new DiffCommand([argv.pkg], argv).run();

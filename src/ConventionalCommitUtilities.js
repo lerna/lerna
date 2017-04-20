@@ -1,9 +1,10 @@
+import dedent from "dedent";
 import log from "npmlog";
+import path from "path";
+import semver from "semver";
+
 import ChildProcessUtilities from "./ChildProcessUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
-import dedent from "dedent";
-import semver from "semver";
-import path from "path";
 
 const CHANGELOG_NAME = "CHANGELOG.md";
 const CHANGELOG_HEADER = dedent(`# Change Log

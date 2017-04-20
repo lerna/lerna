@@ -1,9 +1,9 @@
-import log from "npmlog";
 import chalk from "chalk";
 import fs from "fs-promise";
-import pathExists from "path-exists";
-import path from "path";
+import log from "npmlog";
 import normalizeNewline from "normalize-newline";
+import path from "path";
+import pathExists from "path-exists";
 
 // mocked or stubbed modules
 import writeJsonFile from "write-json-file";

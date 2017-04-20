@@ -1,6 +1,7 @@
-import log from "npmlog";
 import { EOL } from "os";
+import log from "npmlog";
 import tempWrite from "temp-write";
+
 import ChildProcessUtilities from "./ChildProcessUtilities";
 
 export default class GitUtilities {

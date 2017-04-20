@@ -1,12 +1,13 @@
+import _ from "lodash";
+import async from "async";
 import getPort from "get-port";
+import path from "path";
+import semver from "semver";
+
+import Command from "../Command";
 import FileSystemUtilities from "../FileSystemUtilities";
 import NpmUtilities from "../NpmUtilities";
 import PackageUtilities from "../PackageUtilities";
-import Command from "../Command";
-import async from "async";
-import _ from "lodash";
-import path from "path";
-import semver from "semver";
 
 export function handler(argv) {
   return new BootstrapCommand(argv._, argv).run();
