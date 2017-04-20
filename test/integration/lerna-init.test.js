@@ -20,31 +20,32 @@ const loadMetaData = (cwd) => Promise.all([
 ]);
 
 describe("lerna init", () => {
-  test.concurrent("initializes empty directory", () => initEmptyDir().then((cwd) => {
-    return execa(LERNA_BIN, ["init"], { cwd }).then((result) => {
-      expect(result.stderr).toMatchSnapshot("stderr: empty directory");
+  test.concurrent("initializes empty directory", async () => {
+    const cwd = await initEmptyDir();
 
-      return loadMetaData(cwd);
-    }).then(([packageJson, lernaJson]) => {
-      expect(packageJson).toMatchSnapshot("package.json: empty directory");
-      expect(lernaJson).toMatchSnapshot("lerna.json: empty directory");
-    });
-  }));
+    const { stderr } = await execa(LERNA_BIN, ["init"], { cwd });
+    expect(stderr).toMatchSnapshot("stderr: empty directory");
 
-  test.concurrent("updates existing metadata", () => initFixture("InitCommand/updates").then((cwd) => {
-    return execa(LERNA_BIN, ["init", "--exact"], { cwd }).then((result) => {
-      expect(result.stderr).toMatchSnapshot("stderr: updates");
+    const [packageJson, lernaJson] = await loadMetaData(cwd);
+    expect(packageJson).toMatchSnapshot("package.json: empty directory");
+    expect(lernaJson).toMatchSnapshot("lerna.json: empty directory");
+  });
 
-      return loadMetaData(cwd);
-    }).then(([packageJson, lernaJson]) => {
-      expect(packageJson).toMatchSnapshot("package.json: updates");
-      expect(lernaJson).toMatchSnapshot("lerna.json: updates");
-    });
-  }));
+  test.concurrent("updates existing metadata", async () => {
+    const cwd = await initFixture("InitCommand/updates");
 
-  test.concurrent("removes VERSION file", () => initFixture("InitCommand/has-version").then((cwd) => {
-    return execa(LERNA_BIN, ["init"], { cwd }).then((result) => {
-      expect(result.stderr).toMatchSnapshot("stderr: has-version");
-    });
-  }));
+    const { stderr } = await execa(LERNA_BIN, ["init", "--exact"], { cwd });
+    expect(stderr).toMatchSnapshot("stderr: updates");
+
+    const [packageJson, lernaJson] = await loadMetaData(cwd);
+    expect(packageJson).toMatchSnapshot("package.json: updates");
+    expect(lernaJson).toMatchSnapshot("lerna.json: updates");
+  });
+
+  test.concurrent("removes VERSION file", async () => {
+    const cwd = await initFixture("InitCommand/has-version");
+
+    const { stderr } = await execa(LERNA_BIN, ["init"], { cwd });
+    expect(stderr).toMatchSnapshot("stderr: has-version");
+  });
 });
