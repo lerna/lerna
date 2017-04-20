@@ -19,8 +19,9 @@ describe("lerna publish", () => {
       "--yes",
     ];
 
-    const stdout = await execa.stdout(LERNA_BIN, args, { cwd });
+    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
     expect(stdout).toMatchSnapshot("stdout: updates fixed versions");
+    expect(stderr).toMatchSnapshot("stderr: updates fixed versions");
 
     const [allPackageJsons, commitMessage] = await Promise.all([
       loadPkgManifests(cwd),
@@ -40,8 +41,9 @@ describe("lerna publish", () => {
       "--yes",
     ];
 
-    const stdout = await execa.stdout(LERNA_BIN, args, { cwd });
+    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
     expect(stdout).toMatchSnapshot("stdout: updates independent versions");
+    expect(stderr).toMatchSnapshot("stderr: updates independent versions");
 
     const [allPackageJsons, commitMessage] = await Promise.all([
       loadPkgManifests(cwd),
@@ -64,8 +66,9 @@ describe("lerna publish", () => {
       "--yes",
     ];
 
-    const stdout = await execa.stdout(LERNA_BIN, args, { cwd });
+    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
     expect(stdout).toMatchSnapshot("stdout: --conventional-commits");
+    expect(stderr).toMatchSnapshot("stderr: --conventional-commits");
 
     const [allPackageJsons, changelogFiles] = await Promise.all([
       loadPkgManifests(cwd),
