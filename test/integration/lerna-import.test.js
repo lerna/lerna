@@ -1,7 +1,8 @@
 import execa from "execa";
+
+import { LERNA_BIN } from "../helpers/constants";
 import initFixture from "../helpers/initFixture";
 import loadPkgManifests from "../helpers/loadPkgManifests";
-import { LERNA_BIN } from "../helpers/constants";
 
 describe("lerna import", () => {
   test.concurrent("works with argument provided", async () => {

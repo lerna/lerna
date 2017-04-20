@@ -2,9 +2,10 @@ import execa from "execa";
 import fs from "fs-promise";
 import globby from "globby";
 import normalizeNewline from "normalize-newline";
+
+import { LERNA_BIN } from "../helpers/constants";
 import initFixture from "../helpers/initFixture";
 import loadPkgManifests from "../helpers/loadPkgManifests";
-import { LERNA_BIN } from "../helpers/constants";
 
 const lastCommitMessage = (cwd) =>
   execa.stdout("git", ["log", "-1", "--format=%B"], { cwd }).then(normalizeNewline);

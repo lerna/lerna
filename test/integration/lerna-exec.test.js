@@ -1,6 +1,7 @@
 import execa from "execa";
-import initFixture from "../helpers/initFixture";
+
 import { LERNA_BIN } from "../helpers/constants";
+import initFixture from "../helpers/initFixture";
 
 describe("lerna exec", () => {
   test.concurrent("--ignore <pkg> ls -- -1", async () => {

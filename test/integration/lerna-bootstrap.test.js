@@ -2,8 +2,9 @@ import execa from "execa";
 import getPort from "get-port";
 import globby from "globby";
 import normalizePath from "normalize-path";
-import initFixture from "../helpers/initFixture";
+
 import { LERNA_BIN } from "../helpers/constants";
+import initFixture from "../helpers/initFixture";
 
 describe("lerna bootstrap", () => {
   describe("from CLI", () => {
