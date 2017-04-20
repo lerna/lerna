@@ -50,7 +50,7 @@ export default class BootstrapCommand extends Command {
 
     this.batchedPackages = this.toposort
       ? PackageUtilities.topologicallyBatchPackages(this.filteredPackages)
-      : [ this.filteredPackages ];
+      : [this.filteredPackages];
 
     if (npmClient === "yarn") {
       return getPort(42424).then((port) => {
@@ -67,7 +67,7 @@ export default class BootstrapCommand extends Command {
       if (err) {
         callback(err);
       } else {
-        this.logger.success(`Successfully bootstrapped ${this.filteredPackages.length} packages.`);
+        this.logger.success("", `Bootstrapped ${this.filteredPackages.length} packages`);
         callback(null, true);
       }
     });
@@ -78,7 +78,7 @@ export default class BootstrapCommand extends Command {
    * @param {Function} callback
    */
   bootstrapPackages(callback) {
-    this.logger.info(`Bootstrapping ${this.filteredPackages.length} packages`);
+    this.logger.info("", `Bootstrapping ${this.filteredPackages.length} packages`);
 
     async.series([
       // preinstall bootstrapped packages
@@ -99,14 +99,17 @@ export default class BootstrapCommand extends Command {
       return callback(null, true);
     }
 
-    this.progressBar.init(this.filteredPackages.length);
+    const tracker = this.logger.newItem(scriptName, 1);
+    tracker.addWork(this.filteredPackages.length);
+
     PackageUtilities.runParallelBatches(this.batchedPackages, (pkg) => (done) => {
       pkg.runScript(scriptName, (err) => {
-        this.progressBar.tick(pkg.name);
+        tracker.silly(pkg.name);
+        tracker.completeWork(1);
         done(err);
       });
     }, this.concurrency, (err) => {
-      this.progressBar.terminate();
+      tracker.finish();
       callback(err);
     });
   }
@@ -116,7 +119,7 @@ export default class BootstrapCommand extends Command {
    * @param callback
    */
   preinstallPackages(callback) {
-    this.logger.info("Preinstalling packages");
+    this.logger.info("lifecycle", "preinstall");
     this.runScriptInPackages("preinstall", callback);
   }
 
@@ -125,7 +128,7 @@ export default class BootstrapCommand extends Command {
    * @param callback
    */
   postinstallPackages(callback) {
-    this.logger.info("Postinstalling packages");
+    this.logger.info("lifecycle", "postinstall");
     this.runScriptInPackages("postinstall", callback);
   }
 
@@ -134,7 +137,7 @@ export default class BootstrapCommand extends Command {
    * @param callback
    */
   prepublishPackages(callback) {
-    this.logger.info("Prepublishing packages");
+    this.logger.info("lifecycle", "prepublish");
     this.runScriptInPackages("prepublish", callback);
   }
 
@@ -205,11 +208,10 @@ export default class BootstrapCommand extends Command {
   }
 
   /**
-   * Given an array of packages, return map of dependencies to install
-   * @param {Array.<Package>} packages An array of packages
+   * Return a object of root and leaf dependencies to install
    * @returns {Object}
    */
-  getDependenciesToInstall(packages = []) {
+  getDependenciesToInstall() {
     // find package by name
     const findPackage = (name, version) => find(this.packages, (pkg) => {
       return pkg.name === name && (!version || semver.satisfies(pkg.version, version));
@@ -266,7 +268,7 @@ export default class BootstrapCommand extends Command {
     });
 
     // get the map of external dependencies to install
-    packages.forEach((pkg) => {
+    this.filteredPackages.forEach((pkg) => {
 
       // for all package dependencies
       Object.keys(pkg.allDependencies)
@@ -278,7 +280,7 @@ export default class BootstrapCommand extends Command {
         ))
 
         // match external and version mismatched local packages
-        .filter((dep) => !hasPackage(dep.name, dep.version) || !pkg.hasMatchingDependency(dep, this.logger))
+        .filter((dep) => !hasPackage(dep.name, dep.version) || !pkg.hasMatchingDependency(dep, true))
 
         .forEach(({ name, version }) => {
           // Get the object for this package, auto-vivifying.
@@ -317,6 +319,7 @@ export default class BootstrapCommand extends Command {
 
         if (rootVersion !== commonVersion) {
           this.logger.warn(
+            "EHOIST_ROOT_VERSION",
             `The repository root depends on ${name}@${rootVersion}, ` +
             `which differs from the more common ${name}@${commonVersion}.`
           );
@@ -342,6 +345,7 @@ export default class BootstrapCommand extends Command {
         dependents[version].forEach((pkg) => {
           if (rootVersion) {
             this.logger.warn(
+              "EHOIST_PKG_VERSION",
               `"${pkg}" package depends on ${name}@${version}, ` +
               `which differs from the hoisted ${name}@${rootVersion}.`
             );
@@ -364,7 +368,9 @@ export default class BootstrapCommand extends Command {
    * @param {Function} callback
    */
   installExternalDependencies(callback) {
-    const { leaves, root } = this.getDependenciesToInstall(this.filteredPackages);
+    const tracker = this.logger.newItem("installExternalDependencies", 1);
+
+    const { leaves, root } = this.getDependenciesToInstall();
     const actions = [];
 
     // Start root install first, if any, since it's likely to take the longest.
@@ -379,7 +385,7 @@ export default class BootstrapCommand extends Command {
 
       actions.push((cb) => {
         if (depsToInstallInRoot.length) {
-          this.logger.info("Installing hoisted dependencies into root");
+          tracker.info("hoist", "Installing hoisted dependencies into root");
         }
 
         NpmUtilities.installInDir(
@@ -403,7 +409,8 @@ export default class BootstrapCommand extends Command {
                 cb();
               }
             }), (err) => {
-              this.progressBar.tick("Install hoisted");
+              tracker.info("hoist", "Finished installing in root");
+              tracker.completeWork(1);
               cb(err);
             });
           }
@@ -413,18 +420,33 @@ export default class BootstrapCommand extends Command {
       // Remove any hoisted dependencies that may have previously been
       // installed in package directories.
       actions.push((cb) => {
-        this.logger.info("Pruning hoisted dependencies");
+        tracker.info("hoist", "Pruning hoisted dependencies");
 
-        async.series(root.map(({ name, dependents }) => (cb) => {
-          const dirs = dependents.filter(
-            (pkg) => pkg.nodeModulesLocation !== this.repository.nodeModulesLocation
-          ).map(
-            (pkg) => path.join(pkg.nodeModulesLocation, name)
-          );
+        // There's no reason we can't compute the list of candidate directories
+        // in a synchronous fashion, since we want to send everything to rimraf
+        // all at once.
+        const staleDirs = root
+          .filter((pkg) => pkg.dependents.length)
+          .reduce((list, { name, dependents }) => {
+            const dirs = dependents.filter(
+              (pkg) => pkg.nodeModulesLocation !== this.repository.nodeModulesLocation
+            ).map(
+              (pkg) => path.join(pkg.nodeModulesLocation, name)
+            );
 
-          FileSystemUtilities.rimraf(dirs, cb);
-        }), (err) => {
-          this.progressBar.tick("Prune hoisted");
+            return list.concat(dirs);
+          }, []);
+
+        if (!staleDirs.length) {
+          tracker.verbose("prune", "nothing to delete");
+          return cb();
+        }
+
+        tracker.verbose("prune", staleDirs);
+
+        FileSystemUtilities.rimraf(staleDirs, (err) => {
+          tracker.info("hoist", "Finished pruning hoisted dependencies");
+          tracker.completeWork(1);
           cb(err);
         });
       });
@@ -446,7 +468,8 @@ export default class BootstrapCommand extends Command {
               this.npmConfig,
               npmGlobalStyle,
               (err) => {
-                this.progressBar.tick(pkg.name);
+                tracker.verbose("installed leaf", pkg.name);
+                tracker.completeWork(1);
                 cb(err);
               }
             );
@@ -455,12 +478,12 @@ export default class BootstrapCommand extends Command {
       });
 
     if (actions.length) {
-      this.logger.info("Installing external dependencies");
-      this.progressBar.init(actions.length);
+      tracker.info("", "Installing external dependencies");
+      tracker.addWork(actions.length);
     }
 
     async.parallelLimit(actions, this.concurrency, (err) => {
-      this.progressBar.terminate();
+      tracker.finish();
       callback(err);
     });
   }
@@ -471,8 +494,10 @@ export default class BootstrapCommand extends Command {
    * @param {Function} callback
    */
   symlinkPackages(callback) {
-    this.logger.info("Symlinking packages and binaries");
-    this.progressBar.init(this.filteredPackages.length);
+    const tracker = this.logger.newItem("symlinkPackages", 1);
+
+    tracker.info("", "Symlinking packages and binaries");
+    tracker.addWork(this.filteredPackages.length);
 
     const actions = [];
 
@@ -496,7 +521,8 @@ export default class BootstrapCommand extends Command {
 
           // ignore dependencies without a package.json file
           if (!FileSystemUtilities.existsSync(dependencyPackageJsonLocation)) {
-            this.logger.error(
+            tracker.warn(
+              "ENOPKG",
               `Unable to find package.json for ${dependency} dependency of ${filteredPackage.name},  ` +
               "Skipping..."
             );
@@ -513,13 +539,15 @@ export default class BootstrapCommand extends Command {
 
               // installed dependency is a symlink pointing to a different location
               if (isDepSymlink !== false && isDepSymlink !== dependencyLocation) {
-                this.logger.warn(
+                tracker.warn(
+                  "EREPLACE_OTHER",
                   `Symlink already exists for ${dependency} dependency of ${filteredPackage.name}, ` +
                   "but links to different location. Replacing with updated symlink..."
                 );
               // installed dependency is not a symlink
               } else if (isDepSymlink === false) {
-                this.logger.warn(
+                tracker.warn(
+                  "EREPLACE_EXIST",
                   `${dependency} is already installed for ${filteredPackage.name}. ` +
                   "Replacing with symlink..."
                 );
@@ -556,14 +584,15 @@ export default class BootstrapCommand extends Command {
 
       actions.push((cb) => {
         async.series(packageActions, (err) => {
-          this.progressBar.tick(filteredPackage.name);
+          tracker.silly(filteredPackage.name);
+          tracker.completeWork(1);
           cb(err);
         });
       });
     });
 
     async.series(actions, (err) => {
-      this.progressBar.terminate();
+      tracker.finish();
       callback(err);
     });
   }
