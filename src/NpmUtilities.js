@@ -32,7 +32,7 @@ export default class NpmUtilities {
     const packageJson = path.join(directory, "package.json");
     const packageJsonBkp = packageJson + ".lerna_backup";
 
-    log.silly("installInDir", "backing up %s", packageJson);
+    log.silly("installInDir", "backup", packageJson);
     FileSystemUtilities.rename(packageJson, packageJsonBkp, (err) => {
       if (err) {
         log.error("installInDir", "problem backing up package.json", err);
@@ -40,7 +40,7 @@ export default class NpmUtilities {
       }
 
       const cleanup = () => {
-        log.silly("installInDir", "restoring %s", packageJson);
+        log.silly("installInDir", "cleanup", packageJson);
         // Need to do this one synchronously because we might be doing it on exit.
         FileSystemUtilities.renameSync(packageJsonBkp, packageJson);
       };
@@ -64,7 +64,7 @@ export default class NpmUtilities {
         }, {})
       };
 
-      log.silly("installInDir", "writing tempJson: %j", tempJson);
+      log.silly("installInDir", "writing tempJson", tempJson);
       // Write out our temporary cooked up package.json and then install.
       writePkg(packageJson, tempJson).then(() => {
         // build command, arguments, and options
