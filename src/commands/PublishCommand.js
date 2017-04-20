@@ -107,27 +107,20 @@ export default class PublishCommand extends Command {
       this.logger.info("Current version: " + this.globalVersion);
     }
 
-    const updatedPackagesCollector = new UpdatedPackagesCollector(this);
+    this.updates = new UpdatedPackagesCollector(this).getUpdates();
 
-    try {
-      this.updates = updatedPackagesCollector.getUpdates();
+    const packagesToPublish = this.updates
+      .map((update) => update.package)
+      .filter((pkg) => !pkg.isPrivate());
 
-      const packagesToPublish = this.updates
-        .map((update) => update.package)
-        .filter((pkg) => !pkg.isPrivate());
-
-      this.packageToPublishCount = packagesToPublish.length;
-      this.batchedPackagesToPublish = this.toposort
-        ? PackageUtilities.topologicallyBatchPackages(packagesToPublish, {
-          // Don't sort based on devDependencies because that would increase the chance of dependency cycles
-          // causing less-than-ideal a publishing order.
-          depsOnly: true,
-        })
-        : [ packagesToPublish ];
-
-    } catch (err) {
-      throw err;
-    }
+    this.packageToPublishCount = packagesToPublish.length;
+    this.batchedPackagesToPublish = this.toposort
+      ? PackageUtilities.topologicallyBatchPackages(packagesToPublish, {
+        // Don't sort based on devDependencies because that would increase the chance of dependency cycles
+        // causing less-than-ideal a publishing order.
+        depsOnly: true,
+      })
+      : [packagesToPublish];
 
     if (!this.updates.length) {
       callback(new Error("No updated packages to publish."));
@@ -153,20 +146,7 @@ export default class PublishCommand extends Command {
       this.masterVersion = version;
       this.updatesVersions = versions;
 
-      this.confirmVersions((err, confirmed) => {
-        if (err) {
-          callback(err);
-          return;
-        }
-
-        if (!confirmed) {
-          this.logger.info("Okay bye!");
-          callback(null, false);
-          return;
-        }
-
-        callback(null, true);
-      });
+      this.confirmVersions(callback);
     });
   }
 
@@ -400,13 +380,13 @@ export default class PublishCommand extends Command {
     }).join(EOL));
     this.logger.newLine();
 
-    if (!this.flags.yes) {
+    if (this.flags.yes) {
+      this.logger.info("auto-confirmed");
+      callback(null, true);
+    } else {
       PromptUtilities.confirm("Are you sure you want to publish the above changes?", (confirm) => {
         callback(null, confirm);
       });
-    } else {
-      this.logger.info("Assuming confirmation.");
-      callback(null, true);
     }
   }
 
