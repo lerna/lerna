@@ -13,8 +13,9 @@ describe("lerna clean", () => {
       "--concurrency=1",
     ];
 
-    const stdout = await execa.stdout(LERNA_BIN, args, { cwd });
+    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
     expect(stdout).toMatchSnapshot("stdout: global --yes");
+    expect(stderr).toMatchSnapshot("stderr: global --yes");
 
     const found = await globby(["package-*/node_modules"], { cwd });
     expect(found).toEqual([]);
@@ -25,8 +26,9 @@ describe("lerna clean", () => {
 
     await execa("npm", ["install", "--cache-min=99999"], { cwd });
 
-    const stdout = await execa.stdout("npm", ["run", "clean", "--silent"], { cwd });
+    const { stdout, stderr } = await execa("npm", ["run", "clean", "--silent"], { cwd });
     expect(stdout).toMatchSnapshot("stdout: local npm");
+    expect(stderr).toMatchSnapshot("stderr: local npm");
 
     const found = await globby(["package-*/node_modules"], { cwd });
     expect(found).toEqual([]);
@@ -41,8 +43,9 @@ describe("lerna clean", () => {
 
     await execa("yarn", ["install", "--no-lockfile", ...mutex], { cwd });
 
-    const stdout = await execa.stdout("yarn", ["clean", "--silent", ...mutex], { cwd });
+    const { stdout, stderr } = await execa("yarn", ["clean", "--silent", ...mutex], { cwd });
     expect(stdout).toMatchSnapshot("stdout: local yarn");
+    expect(stderr).toMatchSnapshot("stderr: local yarn");
 
     const found = await globby(["package-*/node_modules"], { cwd });
     expect(found).toEqual([]);
