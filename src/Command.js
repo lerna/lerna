@@ -139,7 +139,7 @@ export default class Command {
     return this._options;
   }
 
-  run() {
+  run(callback) {
     this.logger.info("Lerna v" + this.lernaVersion);
 
     if (this.repository.isIndependent()) {
@@ -148,7 +148,7 @@ export default class Command {
 
     this.runValidations();
     this.runPreparations();
-    this.runCommand();
+    this.runCommand(callback);
   }
 
   runValidations() {
