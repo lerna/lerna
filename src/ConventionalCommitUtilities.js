@@ -60,7 +60,7 @@ export default class ConventionalCommitUtilities {
       opts
     );
 
-    log.silly("updateChangelog", "writing new entry: %s", newEntry);
+    log.silly("updateChangelog", "writing new entry: %j", newEntry);
 
     // CHANGELOG entries start with <a name=, we remove
     // the header if it exists by starting at the first entry.
@@ -81,7 +81,7 @@ export default class ConventionalCommitUtilities {
         ${changelogContents}`.replace(/\n+$/, "\n"))
     );
 
-    log.verbose("updateChangelog", "wrote %s", changelogLocation);
+    log.verbose("updateChangelog", "wrote", changelogLocation);
   }
 
   static changelogLocation(pkg) {
