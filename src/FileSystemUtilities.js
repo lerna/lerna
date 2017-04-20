@@ -67,7 +67,7 @@ export default class FileSystemUtilities {
   }
 
   static rimraf(dirPaths, callback) {
-    log.silly("rimraf", "%j", dirPaths);
+    log.silly("rimraf", dirPaths);
     // Shelling out to a child process for a noop is expensive.
     // Checking if `dirPath` exists to be removed is cheap.
     // This lets us short-circuit if we don't have anything to do.
@@ -118,11 +118,13 @@ export default class FileSystemUtilities {
       result = resolvePosixSymlink(filePath);
     }
 
+    log.verbose("isSymlink", [filePath, result]);
     return result;
   }
 }
 
 function createSymbolicLink(src, dest, type, callback) {
+  log.silly("createSymbolicLink", [src, dest, type]);
   fs.lstat(dest, (err) => {
     if (!err) {
       // Something exists at `dest`.  Need to remove it first.
