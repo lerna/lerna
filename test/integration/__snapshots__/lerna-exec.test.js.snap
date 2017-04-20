@@ -1,28 +1,36 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`echo LERNA_PACKAGE_NAME 1`] = `
-"Lerna __TEST_VERSION__
-package-1
+exports[`stderr: echo LERNA_PACKAGE_NAME 1`] = `"lerna info version __TEST_VERSION__"`;
+
+exports[`stderr: ls --ignore 1`] = `
+"lerna info version __TEST_VERSION__
+lerna info ignore package-1"
+`;
+
+exports[`stderr: ls --scope 1`] = `
+"lerna info version __TEST_VERSION__
+lerna info scope package-1"
+`;
+
+exports[`stderr: without -- 1`] = `"lerna info version __TEST_VERSION__"`;
+
+exports[`stdout: echo LERNA_PACKAGE_NAME 1`] = `
+"package-1
 package-2"
 `;
 
-exports[`ls: --ignore 1`] = `
-"Lerna __TEST_VERSION__
-Ignoring packages that match 'package-1'
-file-2.js
+exports[`stdout: ls --ignore 1`] = `
+"file-2.js
 package.json"
 `;
 
-exports[`ls: --scope 1`] = `
-"Lerna __TEST_VERSION__
-Scoping to packages that match 'package-1'
-file-1.js
+exports[`stdout: ls --scope 1`] = `
+"file-1.js
 package.json"
 `;
 
-exports[`ls: without -- 1`] = `
-"Lerna __TEST_VERSION__
-file-1.js
+exports[`stdout: without -- 1`] = `
+"file-1.js
 package.json
 file-2.js
 package.json"

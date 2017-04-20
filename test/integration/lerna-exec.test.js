@@ -16,7 +16,8 @@ describe("lerna exec", () => {
       ];
 
       return execa(LERNA_BIN, args, { cwd }).then((result) => {
-        expect(result.stdout).toMatchSnapshot("ls: --ignore");
+        expect(result.stdout).toMatchSnapshot("stdout: ls --ignore");
+        expect(result.stderr).toMatchSnapshot("stderr: ls --ignore");
       });
     });
   });
@@ -32,7 +33,8 @@ describe("lerna exec", () => {
       ];
 
       return execa(LERNA_BIN, args, { cwd }).then((result) => {
-        expect(result.stdout).toMatchSnapshot("ls: --scope");
+        expect(result.stdout).toMatchSnapshot("stdout: ls --scope");
+        expect(result.stderr).toMatchSnapshot("stderr: ls --scope");
       });
     });
   });
@@ -48,7 +50,8 @@ describe("lerna exec", () => {
       ];
 
       return execa(LERNA_BIN, args, { cwd }).then((result) => {
-        expect(result.stdout).toMatchSnapshot("ls: without --");
+        expect(result.stdout).toMatchSnapshot("stdout: without --");
+        expect(result.stderr).toMatchSnapshot("stderr: without --");
       });
     });
   });
@@ -63,7 +66,8 @@ describe("lerna exec", () => {
       ];
 
       return execa(LERNA_BIN, args, { cwd }).then((result) => {
-        expect(result.stdout).toMatchSnapshot("echo LERNA_PACKAGE_NAME");
+        expect(result.stdout).toMatchSnapshot("stdout: echo LERNA_PACKAGE_NAME");
+        expect(result.stderr).toMatchSnapshot("stderr: echo LERNA_PACKAGE_NAME");
       });
     });
   });
