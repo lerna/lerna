@@ -8,6 +8,9 @@ import Repository from "./Repository";
 import PackageUtilities from "./PackageUtilities";
 import writeLogFile from "./utils/writeLogFile";
 
+// handle log.success()
+log.addLevel("success", 3001, { fg: "green", bold: true });
+
 const DEFAULT_CONCURRENCY = 4;
 
 export const builder = {
