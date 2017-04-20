@@ -4,7 +4,7 @@ import NpmUtilities from "../NpmUtilities";
 import PackageUtilities from "../PackageUtilities";
 import Command from "../Command";
 import async from "async";
-import find from "lodash/find";
+import _ from "lodash";
 import path from "path";
 import semver from "semver";
 
@@ -213,7 +213,7 @@ export default class BootstrapCommand extends Command {
    */
   getDependenciesToInstall() {
     // find package by name
-    const findPackage = (name, version) => find(this.packages, (pkg) => {
+    const findPackage = (name, version) => _.find(this.packages, (pkg) => {
       return pkg.name === name && (!version || semver.satisfies(pkg.version, version));
     });
 

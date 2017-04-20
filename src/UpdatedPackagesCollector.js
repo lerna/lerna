@@ -1,6 +1,6 @@
 import GitUtilities from "./GitUtilities";
 import minimatch from "minimatch";
-import find from "lodash/find";
+import _ from "lodash";
 import path from "path";
 
 class Update {
@@ -175,7 +175,7 @@ export default class UpdatedPackagesCollector {
 
     if (this.options.ignore) {
       changedFiles = changedFiles.filter((file) => {
-        return !find(this.options.ignore, (pattern) => {
+        return !_.find(this.options.ignore, (pattern) => {
           return minimatch(file, pattern, { matchBase: true });
         });
       });

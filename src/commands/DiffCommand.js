@@ -1,7 +1,7 @@
 import GitUtilities from "../GitUtilities";
 import Command from "../Command";
 import ChildProcessUtilities from "../ChildProcessUtilities";
-import find from "lodash/find";
+import _ from "lodash";
 
 export function handler(argv) {
   return new DiffCommand([argv.pkg], argv).run();
@@ -28,7 +28,7 @@ export default class DiffCommand extends Command {
     let targetPackage;
 
     if (packageName) {
-      targetPackage = find(this.packages, (pkg) => {
+      targetPackage = _.find(this.packages, (pkg) => {
         return pkg.name === packageName;
       });
 
