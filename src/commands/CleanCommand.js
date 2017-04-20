@@ -27,45 +27,37 @@ export default class CleanCommand extends Command {
     if (this.options.yes) {
       callback(null, true);
     } else {
-      this.logger.info(`About to remove the following directories:\n${
+      this.logger.info("", `About to remove the following directories:\n${
         this.directoriesToDelete.map((dir) => path.relative(this.repository.rootPath, dir)).join("\n")
       }`);
 
       PromptUtilities.confirm("Proceed?", (confirmed) => {
-        if (confirmed) {
-          callback(null, true);
-        } else {
-          this.logger.info("Okay bye!");
-          callback(null, false);
-        }
+        callback(null, confirmed);
       });
     }
   }
 
   execute(callback) {
-    this.progressBar.init(this.directoriesToDelete.length);
+    const tracker = this.logger.newItem("execute");
+    tracker.addWork(this.directoriesToDelete.length);
 
-    this.rimrafNodeModulesInPackages((err) => {
-      this.progressBar.terminate();
-
-      if (err) {
-        callback(err);
-      } else {
-        this.logger.info("All clean!");
-        callback(null, true);
-      }
-    });
-  }
-
-  rimrafNodeModulesInPackages(callback) {
     const chunked = _.chunk(this.directoriesToDelete, this.concurrency);
 
     async.parallelLimit(chunked.map((directories) => (cb) => {
       FileSystemUtilities.rimraf(directories, (err) => {
-        this.progressBar.tick(directories.length);
+        tracker.completeWork(directories.length);
 
         cb(err);
       });
-    }), this.concurrency, callback);
+    }), this.concurrency, (err) => {
+      tracker.finish();
+
+      if (err) {
+        callback(err);
+      } else {
+        this.logger.success("clean", "finished");
+        callback(null, true);
+      }
+    });
   }
 }
