@@ -1,9 +1,6 @@
 import _ from "lodash";
 import log from "npmlog";
 
-// silence logs
-log.level = "silent";
-
 // clear logs between tests
 afterEach(() => {
   log.record.length = 0;

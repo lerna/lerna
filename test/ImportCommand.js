@@ -1,3 +1,4 @@
+import log from "npmlog";
 import fs from "fs-promise";
 import pathExists from "path-exists";
 import execa from "execa";
@@ -16,6 +17,9 @@ import updateLernaConfig from "./helpers/updateLernaConfig";
 import ImportCommand from "../src/commands/ImportCommand";
 
 jest.mock("../src/PromptUtilities");
+
+// silence logs
+log.level = "silent";
 
 const lastCommitInDir = (cwd) =>
   execa.sync("git", ["log", "-1", "--format=%s"], { cwd }).stdout;

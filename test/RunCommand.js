@@ -1,3 +1,5 @@
+import log from "npmlog";
+
 // mocked modules
 import NpmUtilities from "../src/NpmUtilities";
 
@@ -11,6 +13,9 @@ import normalizeRelativeDir from "./helpers/normalizeRelativeDir";
 import RunCommand from "../src/commands/RunCommand";
 
 jest.mock("../src/NpmUtilities");
+
+// silence logs
+log.level = "silent";
 
 const ranInPackages = (testDir) =>
   NpmUtilities.runScriptInDir.mock.calls.reduce((arr, args) => {

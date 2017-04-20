@@ -1,3 +1,4 @@
+import log from "npmlog";
 import chalk from "chalk";
 import execa from "execa";
 import path from "path";
@@ -16,6 +17,9 @@ import updateLernaConfig from "./helpers/updateLernaConfig";
 import UpdatedCommand from "../src/commands/UpdatedCommand";
 
 jest.mock("../src/utils/output");
+
+// silence logs
+log.level = "silent";
 
 // keep snapshots stable cross-platform
 chalk.enabled = false;

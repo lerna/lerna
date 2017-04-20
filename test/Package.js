@@ -1,3 +1,5 @@
+import log from "npmlog";
+
 // mocked modules
 import NpmUtilities from "../src/NpmUtilities";
 
@@ -9,6 +11,9 @@ import loggingOutput from "./helpers/loggingOutput";
 import Package from "../src/Package";
 
 jest.mock("../src/NpmUtilities");
+
+// silence logs
+log.level = "silent";
 
 describe("Package", () => {
   let pkg;

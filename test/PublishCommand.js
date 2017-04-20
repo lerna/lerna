@@ -1,3 +1,4 @@
+import log from "npmlog";
 import chalk from "chalk";
 import fs from "fs-promise";
 import pathExists from "path-exists";
@@ -21,14 +22,17 @@ import normalizeRelativeDir from "./helpers/normalizeRelativeDir";
 // file under test
 import PublishCommand from "../src/commands/PublishCommand";
 
-// keep snapshots stable cross-platform
-chalk.enabled = false;
-
 jest.mock("write-json-file");
 jest.mock("write-pkg");
 jest.mock("../src/GitUtilities");
 jest.mock("../src/NpmUtilities");
 jest.mock("../src/PromptUtilities");
+
+// silence logs
+log.level = "silent";
+
+// keep snapshots stable cross-platform
+chalk.enabled = false;
 
 const execOpts = (testDir) =>
   expect.objectContaining({
