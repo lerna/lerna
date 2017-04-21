@@ -49,6 +49,11 @@ export default class PackageUtilities {
       cwd: rootPath,
       strict: true,
       absolute: true,
+      ignore: [
+        // allow globs like "packages/**",
+        // but avoid picking up node_modules/**/package.json
+        "**/node_modules/**",
+      ],
     };
 
     packageConfigs.forEach((globPath) => {
