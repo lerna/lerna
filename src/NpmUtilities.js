@@ -16,7 +16,7 @@ function splitVersion(dep) {
 
 export default class NpmUtilities {
   static installInDir(directory, dependencies, config, npmGlobalStyle, callback) {
-    log.silly("installInDir", [directory, dependencies, config, npmGlobalStyle]);
+    log.silly("installInDir", path.basename(directory), dependencies);
 
     // npmGlobalStyle is an optional argument
     if (typeof npmGlobalStyle === "function") {
@@ -89,35 +89,35 @@ export default class NpmUtilities {
   }
 
   static addDistTag(directory, packageName, version, tag, registry) {
-    log.silly("addDistTag", [directory, packageName, version, tag, registry]);
+    log.silly("addDistTag", tag, version, packageName);
 
     const opts = NpmUtilities.getExecOpts(directory, registry);
     ChildProcessUtilities.execSync("npm", ["dist-tag", "add", `${packageName}@${version}`, tag], opts);
   }
 
   static removeDistTag(directory, packageName, tag, registry) {
-    log.silly("removeDistTag", [directory, packageName, tag, registry]);
+    log.silly("removeDistTag", tag, packageName);
 
     const opts = NpmUtilities.getExecOpts(directory, registry);
     ChildProcessUtilities.execSync("npm", ["dist-tag", "rm", packageName, tag], opts);
   }
 
   static checkDistTag(directory, packageName, tag, registry) {
-    log.silly("checkDistTag", [directory, packageName, tag, registry]);
+    log.silly("checkDistTag", tag, packageName);
 
     const opts = NpmUtilities.getExecOpts(directory, registry);
     return ChildProcessUtilities.execSync("npm", ["dist-tag", "ls", packageName], opts).indexOf(tag) >= 0;
   }
 
   static runScriptInDir(script, args, directory, callback) {
-    log.silly("runScriptInDir", [script, args, directory]);
+    log.silly("runScriptInDir", script, args, path.basename(directory));
 
     const opts = NpmUtilities.getExecOpts(directory);
     ChildProcessUtilities.exec("npm", ["run", script, ...args], opts, callback);
   }
 
   static runScriptInPackageStreaming(script, args, pkg, callback) {
-    log.silly("runScriptInPackageStreaming", [script, args, pkg]);
+    log.silly("runScriptInPackageStreaming", [script, args, pkg.name]);
 
     const opts = NpmUtilities.getExecOpts(pkg.location);
     ChildProcessUtilities.spawnStreaming(
@@ -126,15 +126,13 @@ export default class NpmUtilities {
   }
 
   static publishTaggedInDir(tag, directory, registry, callback) {
-    log.silly("publishTaggedInDir", [tag, directory, registry]);
+    log.silly("publishTaggedInDir", tag, path.basename(directory));
 
     const opts = NpmUtilities.getExecOpts(directory, registry);
     ChildProcessUtilities.exec("npm", ["publish", "--tag", tag.trim()], opts, callback);
   }
 
   static getExecOpts(directory, registry) {
-    log.silly("getExecOpts", [directory, registry]);
-
     const opts = {
       cwd: directory,
     };
@@ -145,6 +143,7 @@ export default class NpmUtilities {
       });
     }
 
+    log.silly("getExecOpts", opts);
     return opts;
   }
 }
