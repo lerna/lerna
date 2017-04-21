@@ -12,13 +12,8 @@ import PackageUtilities from "../src/PackageUtilities";
 
 describe("PackageUtilities", () => {
   describe(".getPackages()", () => {
-    let testDir;
-
-    beforeEach(() => initFixture("PackageUtilities/basic").then((dir) => {
-      testDir = dir;
-    }));
-
-    it("should collect all the packages from the given packages directory", () => {
+    it("should collect all the packages from the given packages directory", async () => {
+      const testDir = await initFixture("PackageUtilities/basic");
       const result = PackageUtilities.getPackages(new Repository(testDir));
       expect(result).toHaveLength(4);
 
@@ -27,6 +22,19 @@ describe("PackageUtilities", () => {
       expect(pkgOne.name).toBe("package-1");
       expect(pkgOne.version).toBe("1.0.0");
       expect(pkgOne.location).toBe(path.join(testDir, "packages", "package-1"));
+    });
+
+    it("finds nested packages with globstar", async () => {
+      const testDir = await initFixture("PackageUtilities/globstar");
+      const result = PackageUtilities.getPackages(new Repository(testDir));
+      expect(result.map((pkg) => pkg.name)).toEqual([
+        "globstar-monorepo",
+        "package-2",
+        "package-4",
+        "package-1",
+        "package-3",
+        "package-5",
+      ]);
     });
   });
 
