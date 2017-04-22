@@ -86,9 +86,11 @@ export const builder = {
     group: "Command Options:",
     describe: "Stop before actually publishing change to npm."
   },
-  "skip-temp-tag": {
+  "temp-tag": {
     group: "Command Options:",
-    describe: "Do not create a temporary tag while publishing."
+    describe: "Create a temporary tag while publishing.",
+    type: "boolean",
+    default: false
   }
 };
 
@@ -521,7 +523,7 @@ export default class PublishCommand extends Command {
   npmPublishAsPrerelease(callback) {
     // if we skip temp tags we should tag with the proper value immediately
     // therefore no updates will be needed
-    const tag = this.options.skipTempTag ? this.getDistTag() : "lerna-temp";
+    const tag = !this.options.tempTag ? this.getDistTag() : "lerna-temp";
 
     this.updates.forEach((update) => {
       this.execScript(update.package, "prepublish");
@@ -568,7 +570,7 @@ export default class PublishCommand extends Command {
   }
 
   npmUpdateAsLatest(callback) {
-    if (this.options.skipTempTag) {
+    if (!this.options.tempTag) {
       return callback();
     }
 

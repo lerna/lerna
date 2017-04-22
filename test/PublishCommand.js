@@ -509,19 +509,19 @@ describe("PublishCommand", () => {
   });
 
   /** =========================================================================
-   * NORMAL - SKIP TEMP TAG
+   * NORMAL - TEMP TAG
    * ======================================================================= */
 
-  describe("normal mode with --skip-temp-tag", () => {
+  describe("normal mode with --temp-tag", () => {
     let testDir;
 
     beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
       testDir = dir;
     }));
 
-    it("should publish the changed packages without the temp tag", (done) => {
+    it("should publish the changed packages with a temp tag", (done) => {
       const publishCommand = new PublishCommand([], {
-        skipTempTag: true
+        tempTag: true
       }, testDir);
 
       publishCommand.runValidations();
@@ -536,12 +536,31 @@ describe("PublishCommand", () => {
             throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
           }
 
-          expect(publishedTagInDirectories(testDir))
-            .toMatchSnapshot("[normal --skip-temp-tag] npm publish --tag");
+          const directory = path.join(testDir, "./packages/package-2");
+          const packageName = path.basename(directory);
 
-          expect(NpmUtilities.checkDistTag).not.toBeCalled();
-          expect(NpmUtilities.removeDistTag).not.toBeCalled();
-          expect(NpmUtilities.addDistTag).not.toBeCalled();
+          expect(publishedTagInDirectories(testDir))
+            .toMatchSnapshot("[normal --temp-tag] npm publish --tag");
+
+          expect(NpmUtilities.checkDistTag).lastCalledWith(
+            directory,
+            packageName,
+            "lerna-temp",
+            undefined
+          );
+          expect(NpmUtilities.removeDistTag).lastCalledWith(
+            directory,
+            packageName,
+            "lerna-temp",
+            undefined
+          );
+          expect(NpmUtilities.addDistTag).lastCalledWith(
+            directory,
+            packageName,
+            "1.0.1",
+            "latest",
+            undefined
+          );
 
           expect(GitUtilities.pushWithTags).lastCalledWith("origin", ["v1.0.1"], execOpts(testDir));
 
@@ -645,33 +664,16 @@ describe("PublishCommand", () => {
           }
 
           const directory = path.join(testDir, "./packages/package-2");
-          const packageName = path.basename(directory);
 
           expect(NpmUtilities.publishTaggedInDir).lastCalledWith(
-            "lerna-temp",
+            "latest",
             directory,
             registry,
             expect.any(Function)
           );
-          expect(NpmUtilities.checkDistTag).lastCalledWith(
-            directory,
-            packageName,
-            "lerna-temp",
-            registry
-          );
-          expect(NpmUtilities.removeDistTag).lastCalledWith(
-            directory,
-            packageName,
-            "lerna-temp",
-            registry
-          );
-          expect(NpmUtilities.addDistTag).lastCalledWith(
-            directory,
-            packageName,
-            "1.0.1",
-            "latest",
-            registry
-          );
+          expect(NpmUtilities.checkDistTag).not.toBeCalled();
+          expect(NpmUtilities.removeDistTag).not.toBeCalled();
+          expect(NpmUtilities.addDistTag).not.toBeCalled();
 
           done();
         } catch (ex) {

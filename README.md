@@ -731,11 +731,15 @@ This is useful if you do not want to explicitly set up your registry
 configuration in all of your package.json files individually when e.g. using
 private registries.
 
-#### --skip-temp-tag
+#### --skip-temp-tag (DEPRECATED)
 
-When activated, this flag will alter the default publish process by not creating
-a temporary tag and handling the process accordingly. Instead it will immediately
-publish with the proper dist-tag as [npm it self would](https://docs.npmjs.com/cli/dist-tag).
+This flag is no longer active due to the fact that the default behavior of 
+Lerna is to publish "as-is" without a temp-tag.
+
+#### --temp-tag
+
+When activated, this flag will alter the default publish process by creating
+a temporary tag in the first place to check for [...] and later removing it.
 
 ### Wizard
 
