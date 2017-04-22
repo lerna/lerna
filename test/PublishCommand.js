@@ -157,8 +157,6 @@ describe("PublishCommand", () => {
           expect(gitTagsAdded()).toEqual(["v1.0.1"]);
 
           expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[normal] npm publish --tag");
-          expect(removedDistTagInDirectories(testDir)).toMatchSnapshot("[normal] npm dist-tag rm");
-          expect(addedDistTagInDirectories(testDir)).toMatchSnapshot("[normal] npm dist-tag add");
 
           expect(GitUtilities.pushWithTags).lastCalledWith("origin", gitTagsAdded(), execOpts(testDir));
 
@@ -229,7 +227,7 @@ describe("PublishCommand", () => {
           expect(gitTagsAdded()).toMatchSnapshot("[independent] git tags added");
           expect(GitUtilities.checkoutChanges).not.toBeCalled();
 
-          expect(addedDistTagInDirectories(testDir)).toMatchSnapshot("[independent] npm dist-tag add");
+          expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[independent] npm publish --tag");
 
           expect(GitUtilities.pushWithTags).lastCalledWith("origin", gitTagsAdded(), execOpts(testDir));
 
@@ -289,8 +287,9 @@ describe("PublishCommand", () => {
           expect(GitUtilities.addTag).not.toBeCalled();
           expect(GitUtilities.checkoutChanges).lastCalledWith("packages/*/package.json", execOpts(testDir));
 
-          expect(addedDistTagInDirectories(testDir)).toMatchSnapshot("[normal --canary] npm dist-tag add");
           expect(GitUtilities.pushWithTags).not.toBeCalled();
+          expect(publishedTagInDirectories(testDir))
+            .toMatchSnapshot("[normal --canary] npm publish --tag");
 
           done();
         } catch (ex) {
@@ -345,8 +344,8 @@ describe("PublishCommand", () => {
             "package-1": "^0.0.0",
           });
 
-          expect(addedDistTagInDirectories(testDir))
-            .toMatchSnapshot("[independent --canary] npm dist-tag add");
+          expect(publishedTagInDirectories(testDir))
+            .toMatchSnapshot("[independent --canary] npm publish --tag");
 
           done();
         } catch (ex) {
@@ -389,7 +388,7 @@ describe("PublishCommand", () => {
           expect(GitUtilities.addTag).not.toBeCalled();
           expect(GitUtilities.pushWithTags).not.toBeCalled();
 
-          expect(addedDistTagInDirectories(testDir)).toMatchSnapshot("[normal --skip-git] npm dist-tag add");
+          expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[normal --skip-git] npm publish --tag");
 
           done();
         } catch (ex) {
@@ -537,6 +536,8 @@ describe("PublishCommand", () => {
           }
 
           expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[normal --temp-tag] npm publish --tag");
+          expect(removedDistTagInDirectories(testDir)).toMatchSnapshot("[normal --temp-tag] npm dist-tag rm");
+          expect(addedDistTagInDirectories(testDir)).toMatchSnapshot("[normal --temp-tag] npm dist-tag add");
 
           expect(GitUtilities.pushWithTags).lastCalledWith("origin", ["v1.0.1"], execOpts(testDir));
 
