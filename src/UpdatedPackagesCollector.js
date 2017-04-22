@@ -10,6 +10,27 @@ class Update {
   }
 }
 
+function getForcedPackages({ forcePublish }) {
+  // new Set(null) is equivalent to new Set([])
+  // i.e., an empty Set
+  let inputs = null;
+
+  if (forcePublish === true) {
+    // --force-publish
+    inputs = ["*"];
+  } else if (typeof forcePublish === "string") {
+    // --force-publish=*
+    // --force-publish=foo
+    // --force-publish=foo,bar
+    inputs = forcePublish.split(",");
+  } else if (Array.isArray(forcePublish)) {
+    // --force-publish foo --force-publish baz
+    inputs = [...forcePublish];
+  }
+
+  return new Set(inputs);
+}
+
 export default class UpdatedPackagesCollector {
   constructor(command) {
     this.execOpts = command.execOpts;
@@ -62,28 +83,29 @@ export default class UpdatedPackagesCollector {
 
     const updatedPackages = {};
     const tracker = this.logger.newItem("find updated packages");
-    tracker.addWork(this.packages.length);
 
-    this.packages.filter((pkg) => {
-      tracker.completeWork(1);
-
-      if (!hasTags) {
-        return true;
-      }
-
-      const forcePublish = (this.options.forcePublish || "").split(",");
-
-      if (forcePublish.indexOf("*") > -1) {
-        return true;
-      } else if (forcePublish.indexOf(pkg.name) > -1) {
-        return true;
-      } else {
-        return this.hasDiffSinceThatIsntIgnored(pkg, commits);
-      }
-    }).forEach((pkg) => {
+    const registerUpdated = (pkg) => {
       this.logger.verbose("has update", pkg.name);
       updatedPackages[pkg.name] = pkg;
-    });
+    };
+
+    const forced = getForcedPackages(this.options);
+
+    if (!hasTags || forced.has("*")) {
+      this.packages.forEach(registerUpdated);
+    } else {
+      tracker.addWork(this.packages.length);
+
+      this.packages.filter((pkg) => {
+        tracker.completeWork(1);
+
+        if (forced.has(pkg.name)) {
+          return true;
+        } else {
+          return this.hasDiffSinceThatIsntIgnored(pkg, commits);
+        }
+      }).forEach(registerUpdated);
+    }
 
     tracker.finish();
 
