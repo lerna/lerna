@@ -7,6 +7,7 @@ import FileSystemUtilities from "./FileSystemUtilities";
 import GitUtilities from "./GitUtilities";
 import PackageUtilities from "./PackageUtilities";
 import Repository from "./Repository";
+import filterFlags from "./utils/filterFlags";
 import writeLogFile from "./utils/writeLogFile";
 
 // handle log.success()
@@ -70,6 +71,9 @@ export default class Command {
 
     this.input = input;
     this.flags = flags;
+
+    log.verbose("input", input);
+    log.verbose("flags", filterFlags(flags));
 
     this.lernaVersion = require("../package.json").version;
     this.repository = new Repository(cwd);
