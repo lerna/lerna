@@ -122,13 +122,13 @@ export default class GitUtilities {
     log.silly("describeTag", commit);
 
     const description = ChildProcessUtilities.execSync("git", ["describe", "--tags", commit], opts);
-    log.verbose("describeTag", description);
+    log.silly("describeTag", description);
 
     return description;
   }
 
   static diffSinceIn(since, location, opts) {
-    log.verbose("diffSinceIn", [since, location, opts]);
+    log.silly("diffSinceIn", since, location);
 
     const diff = ChildProcessUtilities.execSync("git", ["diff", "--name-only", since, "--", location], opts);
     log.silly("diff", diff);
