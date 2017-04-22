@@ -96,7 +96,7 @@ describe("FileSystemUtilities", () => {
 
     it("calls rimraf CLI with arguments", (done) => {
       pathExists.mockImplementation(() => Promise.resolve(true));
-      FileSystemUtilities.rimraf(["rimraf/test"], () => {
+      FileSystemUtilities.rimraf("rimraf/test", () => {
         try {
           expect(ChildProcessUtilities.spawn).lastCalledWith(
             process.execPath,
@@ -117,7 +117,7 @@ describe("FileSystemUtilities", () => {
 
     it("does not attempt to delete a non-existent directory", (done) => {
       pathExists.mockImplementation(() => Promise.resolve(false));
-      FileSystemUtilities.rimraf(["rimraf/non-existent"], () => {
+      FileSystemUtilities.rimraf("rimraf/non-existent", () => {
         try {
           expect(ChildProcessUtilities.spawn).not.toBeCalled();
           done();

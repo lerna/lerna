@@ -428,12 +428,8 @@ export default class BootstrapCommand extends Command {
       // Remove any hoisted dependencies that may have previously been
       // installed in package directories.
       actions.push((cb) => {
-        tracker.info("hoist", "Pruning hoisted dependencies");
-
-        // There's no reason we can't compute the list of candidate directories
-        // in a synchronous fashion, since we want to send everything to rimraf
-        // all at once.
-        const staleDirs = root
+        // Compute the list of candidate directories synchronously
+        const candidates = root
           .filter((pkg) => pkg.dependents.length)
           .reduce((list, { name, dependents }) => {
             const dirs = dependents.filter(
@@ -445,15 +441,23 @@ export default class BootstrapCommand extends Command {
             return list.concat(dirs);
           }, []);
 
-        if (!staleDirs.length) {
+        if (!candidates.length) {
           tracker.verbose("hoist", "nothing to prune");
           tracker.completeWork(1); // the action "work"
           return cb();
         }
 
-        tracker.verbose("prune", staleDirs);
+        tracker.info("hoist", "Pruning hoisted dependencies");
+        tracker.silly("prune", candidates);
+        tracker.addWork(candidates.length);
 
-        FileSystemUtilities.rimraf(staleDirs, (err) => {
+        async.series(candidates.map((dirPath) => (done) => {
+          FileSystemUtilities.rimraf(dirPath, (err) => {
+            tracker.verbose("prune", dirPath);
+            tracker.completeWork(1);
+            done(err);
+          });
+        }), (err) => {
           tracker.info("hoist", "Finished pruning hoisted dependencies");
           tracker.completeWork(1); // the action "work"
           cb(err);
@@ -562,7 +566,7 @@ export default class BootstrapCommand extends Command {
                   "Replacing with symlink..."
                 );
                 // remove installed dependency
-                packageActions.push((cb) => FileSystemUtilities.rimraf([pkgDependencyLocation], cb));
+                packageActions.push((cb) => FileSystemUtilities.rimraf(pkgDependencyLocation, cb));
               }
             }
 

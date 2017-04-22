@@ -67,30 +67,29 @@ export default class FileSystemUtilities {
     return fs.statSync(filePath);
   }
 
-  static rimraf(dirPaths, callback) {
-    log.silly("rimraf", dirPaths);
+  static rimraf(dirPath, callback) {
+    log.silly("rimraf", dirPath);
     // Shelling out to a child process for a noop is expensive.
     // Checking if `dirPath` exists to be removed is cheap.
     // This lets us short-circuit if we don't have anything to do.
-    const mapper = (dir) => Promise.all([pathExists(dir), dir]);
 
-    return Promise.all(dirPaths.map(mapper))
-      .then((values) => values.filter((x) => x[0]).map((x) => x[1]))
-      .then((candidates) => {
-        if (!candidates.length) {
-          log.verbose("rimraf", "no directories to delete");
+    return pathExists(dirPath)
+      .then((exists) => {
+        if (!exists) {
           return callback();
         }
 
-        const args = candidates.map(trailingSlash);
-        args.unshift("--no-glob");
-        args.unshift(RIMRAF_CLI);
+        const args = [
+          RIMRAF_CLI,
+          "--no-glob",
+          trailingSlash(dirPath),
+        ];
 
         // We call this resolved CLI path in the "path/to/node path/to/cli <..args>"
         // pattern to avoid Windows hangups with shebangs (e.g., WSH can't handle it)
-        return ChildProcessUtilities.spawn(process.execPath, args, {}, () => {
-          log.verbose("rimraf", "deleted %j", candidates);
-          callback();
+        return ChildProcessUtilities.spawn(process.execPath, args, {}, (err) => {
+          log.silly("rimraf", "removed", dirPath);
+          callback(err);
         });
       });
   }
