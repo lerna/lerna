@@ -52,7 +52,6 @@
     "npmlog": "^4.0.2",
     "p-finally": "^1.0.0",
     "path-exists": "^3.0.0",
-    "progress": "^2.0.0",
     "read-cmd-shim": "^1.0.1",
     "read-pkg": "^2.0.0",
     "rimraf": "^2.6.1",
