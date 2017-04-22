@@ -61,10 +61,11 @@ export default class UpdatedPackagesCollector {
     }
 
     const updatedPackages = {};
-    const progress = this.logger.newItem("collectUpdatedPackages", this.packages.length);
+    const tracker = this.logger.newItem("find updated packages");
+    tracker.addWork(this.packages.length);
 
     this.packages.filter((pkg) => {
-      progress.completeWork(1);
+      tracker.completeWork(1);
 
       if (!hasTags) {
         return true;
@@ -84,7 +85,7 @@ export default class UpdatedPackagesCollector {
       updatedPackages[pkg.name] = pkg;
     });
 
-    progress.finish();
+    tracker.finish();
 
     return updatedPackages;
   }
