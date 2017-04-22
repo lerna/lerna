@@ -60,8 +60,8 @@ const ranScriptsInDirectories = (testDir) =>
 
 const removedDirectories = (testDir) =>
   FileSystemUtilities.rimraf.mock.calls.map((args) =>
-    args[0].map((dir) => normalizeRelativeDir(testDir, dir))
-  ).reduce((acc, val) => acc.concat(val), []);
+    normalizeRelativeDir(testDir, args[0])
+  );
 
 const symlinkedDirectories = (testDir) =>
   FileSystemUtilities.symlink.mock.calls.map((args) => {

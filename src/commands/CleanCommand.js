@@ -1,4 +1,3 @@
-import _ from "lodash";
 import async from "async";
 import path from "path";
 
@@ -39,15 +38,12 @@ export default class CleanCommand extends Command {
   }
 
   execute(callback) {
-    const tracker = this.logger.newItem("execute");
+    const tracker = this.logger.newItem("clean");
     tracker.addWork(this.directoriesToDelete.length);
 
-    const chunked = _.chunk(this.directoriesToDelete, this.concurrency);
-
-    async.parallelLimit(chunked.map((directories) => (cb) => {
-      FileSystemUtilities.rimraf(directories, (err) => {
-        tracker.completeWork(directories.length);
-
+    async.parallelLimit(this.directoriesToDelete.map((dirPath) => (cb) => {
+      FileSystemUtilities.rimraf(dirPath, (err) => {
+        tracker.completeWork(1);
         cb(err);
       });
     }), this.concurrency, (err) => {
