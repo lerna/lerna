@@ -731,11 +731,14 @@ This is useful if you do not want to explicitly set up your registry
 configuration in all of your package.json files individually when e.g. using
 private registries.
 
-#### --skip-temp-tag
+#### --temp-tag
 
-When activated, this flag will alter the default publish process by not creating
-a temporary tag and handling the process accordingly. Instead it will immediately
-publish with the proper dist-tag as [npm it self would](https://docs.npmjs.com/cli/dist-tag).
+When passed, this flag will alter the default publish process by first publishing 
+all changed packages to a temporary dist-tag (`lerna-temp`) and then moving the 
+new version(s) to the default [dist-tag](https://docs.npmjs.com/cli/dist-tag) (`latest`).
+
+This is not generally necessary, as Lerna will publish packages in topological 
+order (all dependencies before dependents) by default.
 
 ### Wizard
 
