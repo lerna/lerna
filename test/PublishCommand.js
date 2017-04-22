@@ -536,31 +536,7 @@ describe("PublishCommand", () => {
             throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
           }
 
-          const directory = path.join(testDir, "./packages/package-2");
-          const packageName = path.basename(directory);
-
-          expect(publishedTagInDirectories(testDir))
-            .toMatchSnapshot("[normal --temp-tag] npm publish --tag");
-
-          expect(NpmUtilities.checkDistTag).lastCalledWith(
-            directory,
-            packageName,
-            "lerna-temp",
-            undefined
-          );
-          expect(NpmUtilities.removeDistTag).lastCalledWith(
-            directory,
-            packageName,
-            "lerna-temp",
-            undefined
-          );
-          expect(NpmUtilities.addDistTag).lastCalledWith(
-            directory,
-            packageName,
-            "1.0.1",
-            "latest",
-            undefined
-          );
+          expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[normal --temp-tag] npm publish --tag");
 
           expect(GitUtilities.pushWithTags).lastCalledWith("origin", ["v1.0.1"], execOpts(testDir));
 
@@ -600,7 +576,7 @@ describe("PublishCommand", () => {
             throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
           }
 
-          expect(addedDistTagInDirectories(testDir)).toMatchSnapshot("[normal --npm-tag] npm dist-tag add");
+          expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[normal --npm-tag] npm publish --tag");
 
           done();
         } catch (ex) {
@@ -663,17 +639,11 @@ describe("PublishCommand", () => {
             throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
           }
 
-          const directory = path.join(testDir, "./packages/package-2");
-
-          expect(NpmUtilities.publishTaggedInDir).lastCalledWith(
-            "latest",
-            directory,
-            registry,
-            expect.any(Function)
-          );
           expect(NpmUtilities.checkDistTag).not.toBeCalled();
           expect(NpmUtilities.removeDistTag).not.toBeCalled();
           expect(NpmUtilities.addDistTag).not.toBeCalled();
+          expect(publishedTagInDirectories(testDir))
+            .toMatchSnapshot("[normal --registry] npm publish --tag");
 
           done();
         } catch (ex) {
@@ -1115,8 +1085,8 @@ describe("PublishCommand", () => {
             throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
           }
 
-          expect(addedDistTagInDirectories(testDir))
-            .toMatchSnapshot("[independent --canary --npm-tag=next --yes --exact] npm dist-tag add");
+          expect(publishedTagInDirectories(testDir))
+            .toMatchSnapshot("[independent --canary --npm-tag=next --yes --exact] npm publish --tag");
 
           done();
         } catch (ex) {

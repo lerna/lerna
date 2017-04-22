@@ -88,9 +88,7 @@ export const builder = {
   },
   "temp-tag": {
     group: "Command Options:",
-    describe: "Create a temporary tag while publishing.",
-    type: "boolean",
-    default: false
+    describe: "Create a temporary tag while publishing."
   }
 };
 
@@ -523,7 +521,7 @@ export default class PublishCommand extends Command {
   npmPublishAsPrerelease(callback) {
     // if we skip temp tags we should tag with the proper value immediately
     // therefore no updates will be needed
-    const tag = !this.options.tempTag ? this.getDistTag() : "lerna-temp";
+    const tag = this.options.tempTag ? "lerna-temp" : this.getDistTag();
 
     this.updates.forEach((update) => {
       this.execScript(update.package, "prepublish");

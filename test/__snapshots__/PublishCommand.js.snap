@@ -1,6 +1,25 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`[independent --canary --npm-tag=next --yes --exact] npm dist-tag add 1`] = `Object {}`;
+exports[`[independent --canary --npm-tag=next --yes --exact] npm publish --tag 1`] = `
+Array [
+  Object {
+    "dir": "packages/package-1",
+    "tag": "next",
+  },
+  Object {
+    "dir": "packages/package-3",
+    "tag": "next",
+  },
+  Object {
+    "dir": "packages/package-4",
+    "tag": "next",
+  },
+  Object {
+    "dir": "packages/package-2",
+    "tag": "next",
+  },
+]
+`;
 
 exports[`[independent --canary] bumps package versions 1`] = `
 Object {
@@ -111,7 +130,47 @@ Array [
 ]
 `;
 
-exports[`[normal --npm-tag] npm dist-tag add 1`] = `Object {}`;
+exports[`[normal --npm-tag] npm publish --tag 1`] = `
+Array [
+  Object {
+    "dir": "packages/package-1",
+    "tag": "custom",
+  },
+  Object {
+    "dir": "packages/package-3",
+    "tag": "custom",
+  },
+  Object {
+    "dir": "packages/package-4",
+    "tag": "custom",
+  },
+  Object {
+    "dir": "packages/package-2",
+    "tag": "custom",
+  },
+]
+`;
+
+exports[`[normal --registry] npm publish --tag 1`] = `
+Array [
+  Object {
+    "dir": "packages/package-1",
+    "tag": "latest",
+  },
+  Object {
+    "dir": "packages/package-3",
+    "tag": "latest",
+  },
+  Object {
+    "dir": "packages/package-4",
+    "tag": "latest",
+  },
+  Object {
+    "dir": "packages/package-2",
+    "tag": "latest",
+  },
+]
+`;
 
 exports[`[normal --skip-git --skip-npm] bumps package versions 1`] = `
 Object {
