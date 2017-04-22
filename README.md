@@ -295,6 +295,14 @@ $ lerna publish --conventional-commits
 
 When run with this flag, `publish` will use the [Conventional Commits Specification](https://conventionalcommits.org/) to [determine the version bump](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-recommended-bump) and [generate CHANGELOG](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-changelog-cli)
 
+#### --diff
+
+```sh
+$ lerna publish --diff
+```
+
+When run with this flag, `publish` will present you with a simple `git diff` of each package before the version selection.
+
 #### --git-remote [remote]
 
 ```sh

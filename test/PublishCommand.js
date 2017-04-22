@@ -8,6 +8,7 @@ import normalizeNewline from "normalize-newline";
 import writeJsonFile from "write-json-file";
 import writePkg from "write-pkg";
 import ConventionalCommitUtilities from "../src/ConventionalCommitUtilities";
+import ChildProcessUtilities from "../src/ChildProcessUtilities";
 import GitUtilities from "../src/GitUtilities";
 import NpmUtilities from "../src/NpmUtilities";
 import PromptUtilities from "../src/PromptUtilities";
@@ -822,6 +823,118 @@ describe("PublishCommand", () => {
       }));
     });
   });
+
+  /** =========================================================================
+   * NORMAL - DIFF
+   * ======================================================================= */
+
+  describe("normal mode with --diff", () => {
+    let testDir;
+
+    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
+      testDir = dir;
+    }));
+
+    it("shows a git diff before each version prompt", (done) => {
+      const publishCommand = new PublishCommand([], {
+        diff: true
+      }, testDir);
+
+      ChildProcessUtilities.spawn = jest.fn();
+      publishCommand.getLastCommit = jest.fn().mockReturnValue("commit_id");
+
+      publishCommand.runValidations();
+      publishCommand.runPreparations();
+
+      publishCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
+            // TODO: there has to be a better way to do this
+            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
+          }
+
+          const gitDiffArgs = [
+            "--no-pager",
+            "diff",
+            "commit_id",
+            "--color=auto"
+          ];
+
+          expect(ChildProcessUtilities.spawn).lastCalledWith(
+            "git", gitDiffArgs, { cwd: testDir }, () => {}
+          );
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
+  });
+
+  /** =========================================================================
+   * INDEPENDENT - DIFF
+   * ======================================================================= */
+
+  describe("independent mode with --diff", () => {
+    let testDir;
+
+    beforeEach(() => initFixture("PublishCommand/independent").then((dir) => {
+      testDir = dir;
+    }));
+
+    it("shows a git diff before each version prompt", (done) => {
+      const publishCommand = new PublishCommand([], {
+        diff: true
+      }, testDir);
+
+      ChildProcessUtilities.spawn = jest.fn();
+      publishCommand.getLastCommit = jest.fn().mockReturnValue("commit_id");
+
+      publishCommand.runValidations();
+      publishCommand.runPreparations();
+
+      publishCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
+            // TODO: there has to be a better way to do this
+            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
+          }
+
+          const gitDiffArgs = [
+            "--no-pager",
+            "diff",
+            "commit_id",
+            "--color=auto",
+            "--"
+          ];
+
+          [
+            ["package-1", "1.0.0"],
+            ["package-2", "2.0.0"],
+            ["package-3", "3.0.0"],
+            ["package-4", "4.0.0"],
+          ].forEach(([name, version]) => {
+            expect(ChildProcessUtilities.spawn).toHaveBeenCalledWith(
+              "git",
+              gitDiffArgs.concat(`${testDir}/packages/${name}`),
+              { cwd: testDir },
+              () => {}
+            );
+          });
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
+  });
+
 
   /** =========================================================================
    * NORMAL - GIT REMOTE

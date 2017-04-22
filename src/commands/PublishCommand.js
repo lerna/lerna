@@ -2,12 +2,14 @@ import writePkg from "write-pkg";
 import writeJsonFile from "write-json-file";
 import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
 import ConventionalCommitUtilities from "../ConventionalCommitUtilities";
+import ChildProcessUtilities from "../ChildProcessUtilities";
 import FileSystemUtilities from "../FileSystemUtilities";
 import PackageUtilities from "../PackageUtilities";
 import PromptUtilities from "../PromptUtilities";
 import GitUtilities from "../GitUtilities";
 import NpmUtilities from "../NpmUtilities";
 import Command from "../Command";
+import find from "lodash/find";
 import semver from "semver";
 import async from "async";
 import chalk from "chalk";
@@ -329,6 +331,31 @@ export default class PublishCommand extends Command {
     const preminor = semver.inc(currentVersion, "preminor");
     const premajor = semver.inc(currentVersion, "premajor");
 
+    if (this.flags.diff) {
+      const targetPackage = find(this.packages, (pkg) => {
+        return pkg.name === packageName;
+      });
+
+      const args = [
+        "--no-pager",
+        "diff",
+        this.getLastCommit(this.execOpts),
+        "--color=auto"
+      ];
+
+      if (packageName) {
+        args.push(
+          "--",
+          targetPackage.location
+        );
+      }
+
+      ChildProcessUtilities.spawn("git", args, this.execOpts, (code) => {
+        if (code) {
+          callback(new Error("Errored while spawning `git diff`."));
+        }
+      });
+    }
 
     let message = "Select a new version";
     if (packageName) message += ` for ${packageName}`;
@@ -622,5 +649,13 @@ export default class PublishCommand extends Command {
 
   getDistTag() {
     return this.options.npmTag || (this.options.canary && "canary") || "latest";
+  }
+
+  getLastCommit(execOpts) {
+    if (GitUtilities.hasTags(execOpts)) {
+      return GitUtilities.getLastTaggedCommit(execOpts);
+    }
+
+    return GitUtilities.getFirstCommit(execOpts);
   }
 }
