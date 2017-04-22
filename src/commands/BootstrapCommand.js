@@ -20,8 +20,11 @@ export const builder = {
   "hoist": {
     group: "Command Options:",
     describe: "Install external dependencies matching [glob] to the repo root",
-    type: "string",
     defaultDescription: "'**'",
+    coerce: (arg) => {
+      // `--hoist` is equivalent to `--hoist=**`.
+      return arg === true ? "**" : arg;
+    },
   },
   "nohoist": {
     group: "Command Options:",
