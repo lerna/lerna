@@ -1,25 +1,25 @@
 import execa from "execa";
+
+import { LERNA_BIN } from "../helpers/constants";
 import initFixture from "../helpers/initFixture";
 import loadPkgManifests from "../helpers/loadPkgManifests";
-import { LERNA_BIN } from "../helpers/constants";
 
 describe("lerna import", () => {
-  test.concurrent("works with argument provided", () => {
-    return Promise.all([
+  test.concurrent("works with argument provided", async () => {
+    const [externalPath, cwd] = await Promise.all([
       initFixture("ImportCommand/external", "Init external commit"),
       initFixture("ImportCommand/basic"),
-    ]).then(([externalPath, basicPath]) => {
-      const args = [
-        "import",
-        externalPath,
-        "--yes"
-      ];
+    ]);
 
-      return execa(LERNA_BIN, args, { cwd: basicPath })
-        .then(() => loadPkgManifests(basicPath))
-        .then((allPackageJsons) => {
-          expect(allPackageJsons).toMatchSnapshot("simple: import with argument");
-        });
-    });
+    const args = [
+      "import",
+      externalPath,
+      "--yes"
+    ];
+
+    await execa(LERNA_BIN, args, { cwd });
+
+    const allPackageJsons = await loadPkgManifests(cwd);
+    expect(allPackageJsons).toMatchSnapshot("simple: import with argument");
   });
 });

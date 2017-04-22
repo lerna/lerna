@@ -1,35 +1,46 @@
 import { EOL } from "os";
+import log from "npmlog";
 import tempWrite from "temp-write";
+
 import ChildProcessUtilities from "./ChildProcessUtilities";
-import logger from "./logger";
 
 export default class GitUtilities {
-  @logger.logifySync()
   static isDetachedHead(opts) {
+    log.silly("isDetachedHead");
+
     const branchName = GitUtilities.getCurrentBranch(opts);
-    return branchName === "HEAD";
+    const isDetached = branchName === "HEAD";
+    log.verbose("isDetachedHead", isDetached);
+
+    return isDetached;
   }
 
-  @logger.logifySync()
   static isInitialized(opts) {
+    log.silly("isInitialized");
+    let initialized;
+
     try {
       // we only want the return code, so ignore stdout/stderr
       ChildProcessUtilities.execSync("git", ["rev-parse"], Object.assign({}, opts, {
         stdio: "ignore"
       }));
-      return true;
+      initialized = true;
     } catch (err) {
-      return false;
+      log.verbose("isInitialized", "swallowed error", err);
+      initialized = false;
     }
+
+    log.verbose("isInitialized", initialized);
+    return initialized;
   }
 
-  @logger.logifySync()
   static addFile(file, opts) {
+    log.silly("addFile", file);
     ChildProcessUtilities.execSync("git", ["add", file], opts);
   }
 
-  @logger.logifySync()
   static commit(message, opts) {
+    log.silly("commit", message);
     const args = ["commit"];
 
     if (message.indexOf(EOL) > -1) {
@@ -39,89 +50,132 @@ export default class GitUtilities {
       args.push("-m", message);
     }
 
+    log.verbose("commit", args);
     ChildProcessUtilities.execSync("git", args, opts);
   }
 
-  @logger.logifySync()
   static addTag(tag, opts) {
+    log.silly("addTag", tag);
     ChildProcessUtilities.execSync("git", ["tag", "-a", tag, "-m", tag], opts);
   }
 
-  @logger.logifySync()
   static removeTag(tag, opts) {
+    log.silly("removeTag", tag);
     ChildProcessUtilities.execSync("git", ["tag", "-d", tag], opts);
   }
 
-  @logger.logifySync()
   static hasTags(opts) {
-    return !!ChildProcessUtilities.execSync("git", ["tag"], opts);
+    log.silly("hasTags");
+
+    const yes = !!ChildProcessUtilities.execSync("git", ["tag"], opts);
+    log.verbose("hasTags", yes);
+
+    return yes;
   }
 
-  @logger.logifySync()
   static getLastTaggedCommit(opts) {
-    return ChildProcessUtilities.execSync("git", ["rev-list", "--tags", "--max-count=1"], opts);
+    log.silly("getLastTaggedCommit");
+
+    const taggedCommit = ChildProcessUtilities.execSync("git", ["rev-list", "--tags", "--max-count=1"], opts);
+    log.verbose("getLastTaggedCommit", taggedCommit);
+
+    return taggedCommit;
   }
 
-  @logger.logifySync()
   static getLastTaggedCommitInBranch(opts) {
+    log.silly("getLastTaggedCommitInBranch");
+
     const tagName = GitUtilities.getLastTag(opts);
-    return ChildProcessUtilities.execSync("git", ["rev-list", "-n", "1", tagName], opts);
+    const commitInBranch = ChildProcessUtilities.execSync("git", ["rev-list", "-n", "1", tagName], opts);
+    log.verbose("getLastTaggedCommitInBranch", commitInBranch);
+
+    return commitInBranch;
   }
 
-  @logger.logifySync()
   static getFirstCommit(opts) {
-    return ChildProcessUtilities.execSync("git", ["rev-list", "--max-parents=0", "HEAD"], opts);
+    log.silly("getFirstCommit");
+
+    const firstCommit =  ChildProcessUtilities.execSync("git", ["rev-list", "--max-parents=0", "HEAD"], opts);
+    log.verbose("getFirstCommit", firstCommit);
+
+    return firstCommit;
   }
 
-  @logger.logifySync()
   static pushWithTags(remote, tags, opts) {
+    log.silly("pushWithTags", [remote, tags]);
+
     const branch = GitUtilities.getCurrentBranch(opts);
     ChildProcessUtilities.execSync("git", ["push", remote, branch], opts);
     ChildProcessUtilities.execSync("git", ["push", remote].concat(tags), opts);
   }
 
-  @logger.logifySync()
   static getLastTag(opts) {
-    return ChildProcessUtilities.execSync("git", ["describe", "--tags", "--abbrev=0"], opts);
+    log.silly("getLastTag");
+
+    const lastTag = ChildProcessUtilities.execSync("git", ["describe", "--tags", "--abbrev=0"], opts);
+    log.verbose("getLastTag", lastTag);
+
+    return lastTag;
   }
 
-  @logger.logifySync()
   static describeTag(commit, opts) {
-    return ChildProcessUtilities.execSync("git", ["describe", "--tags", commit], opts);
+    log.silly("describeTag", commit);
+
+    const description = ChildProcessUtilities.execSync("git", ["describe", "--tags", commit], opts);
+    log.silly("describeTag", description);
+
+    return description;
   }
 
-  @logger.logifySync()
   static diffSinceIn(since, location, opts) {
-    return ChildProcessUtilities.execSync("git", ["diff", "--name-only", since, "--", location], opts);
+    log.silly("diffSinceIn", since, location);
+
+    const diff = ChildProcessUtilities.execSync("git", ["diff", "--name-only", since, "--", location], opts);
+    log.silly("diff", diff);
+
+    return diff;
   }
 
-  @logger.logifySync()
   static getCurrentBranch(opts) {
-    return ChildProcessUtilities.execSync("git", ["rev-parse", "--abbrev-ref", "HEAD"], opts);
+    log.silly("getCurrentBranch");
+
+    const currentBranch = ChildProcessUtilities.execSync("git", ["rev-parse", "--abbrev-ref", "HEAD"], opts);
+    log.verbose("getCurrentBranch", currentBranch);
+
+    return currentBranch;
   }
 
-  @logger.logifySync()
   static getCurrentSHA(opts) {
-    return ChildProcessUtilities.execSync("git", ["rev-parse", "HEAD"], opts);
+    log.silly("getCurrentSHA");
+
+    const sha = ChildProcessUtilities.execSync("git", ["rev-parse", "HEAD"], opts);
+    log.verbose("getCurrentSHA", sha);
+
+    return sha;
   }
 
-  @logger.logifySync()
   static checkoutChanges(fileGlob, opts) {
+    log.silly("checkoutChanges", fileGlob);
     ChildProcessUtilities.execSync("git", ["checkout", "--", fileGlob], opts);
   }
 
-  @logger.logifySync()
   static init(opts) {
-    return ChildProcessUtilities.execSync("git", ["init"], opts);
+    log.silly("git init");
+    ChildProcessUtilities.execSync("git", ["init"], opts);
   }
 
-  @logger.logifySync()
   static hasCommit(opts) {
+    log.silly("hasCommit");
+    let retVal;
+
     try {
       ChildProcessUtilities.execSync("git", ["log"], opts);
-      return true;
+      retVal = true;
     } catch (e) {
-      return false;
+      retVal = false;
     }
+
+    log.verbose("hasCommit", retVal);
+    return retVal;
   }
 }

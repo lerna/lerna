@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Package .hasMatchingDependency() should not match included dependency 1`] = `
+Array [
+  "depends on \\"my-dev-dependency@^1.0.0\\"
+instead of \\"my-dev-dependency@2.0.7\\"",
+]
+`;

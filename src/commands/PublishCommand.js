@@ -1,18 +1,20 @@
-import writePkg from "write-pkg";
-import writeJsonFile from "write-json-file";
-import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
-import ConventionalCommitUtilities from "../ConventionalCommitUtilities";
-import FileSystemUtilities from "../FileSystemUtilities";
-import PackageUtilities from "../PackageUtilities";
-import PromptUtilities from "../PromptUtilities";
-import GitUtilities from "../GitUtilities";
-import NpmUtilities from "../NpmUtilities";
-import Command from "../Command";
-import semver from "semver";
+import { EOL } from "os";
 import async from "async";
 import chalk from "chalk";
 import path from "path";
-import { EOL } from "os";
+import semver from "semver";
+import writeJsonFile from "write-json-file";
+import writePkg from "write-pkg";
+
+import Command from "../Command";
+import ConventionalCommitUtilities from "../ConventionalCommitUtilities";
+import FileSystemUtilities from "../FileSystemUtilities";
+import GitUtilities from "../GitUtilities";
+import NpmUtilities from "../NpmUtilities";
+import output from "../utils/output";
+import PackageUtilities from "../PackageUtilities";
+import PromptUtilities from "../PromptUtilities";
+import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
 
 export function handler(argv) {
   return new PublishCommand(argv._, argv).run();
@@ -98,36 +100,28 @@ export default class PublishCommand extends Command {
     this.gitEnabled = !(this.flags.canary || this.flags.skipGit);
 
     if (this.flags.canary) {
-      this.logger.info("Publishing canary build");
+      this.logger.info("canary", "enabled");
     }
 
     if (!this.repository.isIndependent()) {
       this.globalVersion = this.repository.version;
-      this.logger.info("Current version: " + this.globalVersion);
+      this.logger.info("current version", this.globalVersion);
     }
 
-    const updatedPackagesCollector = new UpdatedPackagesCollector(this);
+    this.updates = new UpdatedPackagesCollector(this).getUpdates();
 
-    try {
-      this.updates = updatedPackagesCollector.getUpdates();
+    const packagesToPublish = this.updates
+      .map((update) => update.package)
+      .filter((pkg) => !pkg.isPrivate());
 
-      const packagesToPublish = this.updates
-        .map((update) => update.package)
-        .filter((pkg) => !pkg.isPrivate());
-
-      this.packageToPublishCount = packagesToPublish.length;
-      this.batchedPackagesToPublish = this.toposort
-        ? PackageUtilities.topologicallyBatchPackages(packagesToPublish, {
-          logger: this.logger,
-          // Don't sort based on devDependencies because that would increase the chance of dependency cycles
-          // causing less-than-ideal a publishing order.
-          depsOnly: true,
-        })
-        : [ packagesToPublish ];
-
-    } catch (err) {
-      throw err;
-    }
+    this.packageToPublishCount = packagesToPublish.length;
+    this.batchedPackagesToPublish = this.toposort
+      ? PackageUtilities.topologicallyBatchPackages(packagesToPublish, {
+        // Don't sort based on devDependencies because that would increase the chance of dependency cycles
+        // causing less-than-ideal a publishing order.
+        depsOnly: true,
+      })
+      : [packagesToPublish];
 
     if (!this.updates.length) {
       callback(new Error("No updated packages to publish."));
@@ -153,20 +147,7 @@ export default class PublishCommand extends Command {
       this.masterVersion = version;
       this.updatesVersions = versions;
 
-      this.confirmVersions((err, confirmed) => {
-        if (err) {
-          callback(err);
-          return;
-        }
-
-        if (!confirmed) {
-          this.logger.info("Okay bye!");
-          callback(null, false);
-          return;
-        }
-
-        callback(null, true);
-      });
+      this.confirmVersions(callback);
     });
   }
 
@@ -198,8 +179,7 @@ export default class PublishCommand extends Command {
   }
 
   publishPackagesToNpm(callback) {
-    this.logger.newLine();
-    this.logger.info("Publishing packages to npm...");
+    this.logger.info("publish", "Publishing packages to npm...");
 
     this.npmPublishAsPrerelease((err) => {
       if (err) {
@@ -208,7 +188,7 @@ export default class PublishCommand extends Command {
       }
 
       if (this.flags.canary) {
-        this.logger.info("Resetting git state");
+        this.logger.info("canary", "Resetting git state");
         // reset since the package.json files are changed
         GitUtilities.checkoutChanges("packages/*/package.json", this.execOpts);
       }
@@ -220,18 +200,18 @@ export default class PublishCommand extends Command {
         }
 
         if (this.gitEnabled) {
-          this.logger.info("Pushing tags to git...");
-          this.logger.newLine();
+          this.logger.info("git", "Pushing tags...");
           GitUtilities.pushWithTags(this.gitRemote, this.tags, this.execOpts);
         }
 
-        let message = "Successfully published:";
+        const message = this.updates.map((update) =>
+          ` - ${update.package.name}@${update.package.version}`
+        );
 
-        this.updates.forEach((update) => {
-          message += `${EOL} - ${update.package.name}@${update.package.version}`;
-        });
+        output("Successfully published:");
+        output(message.join(EOL));
 
-        this.logger.success(message);
+        this.logger.success("publish", "finished");
         callback(null, true);
       });
     });
@@ -388,25 +368,27 @@ export default class PublishCommand extends Command {
   }
 
   confirmVersions(callback) {
-    this.logger.newLine();
-    this.logger.info("Changes:");
-    this.logger.info(this.updates.map((update) => {
+    const changes = this.updates.map((update) => {
       const pkg = update.package;
-      let line = `- ${pkg.name}: ${pkg.version} => ${this.updatesVersions[pkg.name]}`;
+      let line = ` - ${pkg.name}: ${pkg.version} => ${this.updatesVersions[pkg.name]}`;
       if (pkg.isPrivate()) {
         line += ` (${chalk.red("private")})`;
       }
       return line;
-    }).join(EOL));
-    this.logger.newLine();
+    });
 
-    if (!this.flags.yes) {
+    output("");
+    output("Changes:");
+    output(changes.join(EOL));
+    output("");
+
+    if (this.flags.yes) {
+      this.logger.info("auto-confirmed");
+      callback(null, true);
+    } else {
       PromptUtilities.confirm("Are you sure you want to publish the above changes?", (confirm) => {
         callback(null, confirm);
       });
-    } else {
-      this.logger.info("Assuming confirmation.");
-      callback(null, true);
     }
   }
 
@@ -514,11 +496,13 @@ export default class PublishCommand extends Command {
     if (FileSystemUtilities.existsSync(scriptLocation)) {
       require(scriptLocation);
     } else {
-      this.logger.verbose(`No ${script} script found at ${scriptLocation}`);
+      this.logger.verbose("execScript", `No ${script} script found at ${scriptLocation}`);
     }
   }
 
   npmPublishAsPrerelease(callback) {
+    const tracker = this.logger.newItem("npmPublishAsPrerelease");
+
     // if we skip temp tags we should tag with the proper value immediately
     // therefore no updates will be needed
     const tag = this.options.tempTag ? "lerna-temp" : this.getDistTag();
@@ -527,13 +511,13 @@ export default class PublishCommand extends Command {
       this.execScript(update.package, "prepublish");
     });
 
-    this.progressBar.init(this.packageToPublishCount);
+    tracker.addWork(this.packageToPublishCount);
 
     PackageUtilities.runParallelBatches(this.batchedPackagesToPublish, (pkg) => {
       let attempts = 0;
 
       const run = (cb) => {
-        this.logger.verbose("Publishing " + pkg.name + "...");
+        tracker.verbose("publishing", pkg.name);
 
         NpmUtilities.publishTaggedInDir(tag, pkg.location, this.npmRegistry, (err) => {
           err = err && err.stack || err;
@@ -542,7 +526,8 @@ export default class PublishCommand extends Command {
             // publishing over an existing package which is likely due to a timeout or something
             err.indexOf("You cannot publish over the previously published version") > -1
           ) {
-            this.progressBar.tick(pkg.name);
+            tracker.info("published", pkg.name);
+            tracker.completeWork(1);
             this.execScript(pkg, "postpublish");
             cb();
             return;
@@ -551,10 +536,11 @@ export default class PublishCommand extends Command {
           attempts++;
 
           if (attempts < 5) {
-            this.logger.error("Attempting to retry publishing " + pkg.name + "...", err);
+            this.logger.error("publish", "Retrying failed publish:", pkg.name);
+            this.logger.verbose("publish error", err);
             run(cb);
           } else {
-            this.logger.error("Ran out of retries while publishing " + pkg.name, err);
+            this.logger.error("publish", "Ran out of retries while publishing", pkg.name, err);
             cb(err);
           }
         });
@@ -562,7 +548,7 @@ export default class PublishCommand extends Command {
 
       return run;
     }, this.concurrency, (err) => {
-      this.progressBar.terminate();
+      tracker.finish();
       callback(err);
     });
   }
@@ -572,7 +558,8 @@ export default class PublishCommand extends Command {
       return callback();
     }
 
-    this.progressBar.init(this.packageToPublishCount);
+    const tracker = this.logger.newItem("npmUpdateAsLatest");
+    tracker.addWork(this.packageToPublishCount);
 
     PackageUtilities.runParallelBatches(this.batchedPackagesToPublish, (pkg) => (cb) => {
       let attempts = 0;
@@ -582,12 +569,13 @@ export default class PublishCommand extends Command {
 
         try {
           this.updateTag(pkg);
-          this.progressBar.tick(pkg.name);
+          tracker.info("latest", pkg.name);
+          tracker.completeWork(1);
           cb();
           break;
         } catch (err) {
           if (attempts < 5) {
-            this.logger.error("Error updating version as latest", err);
+            this.logger.error("publish", "Error updating version as latest", err);
             continue;
           } else {
             cb(err);
@@ -596,7 +584,7 @@ export default class PublishCommand extends Command {
         }
       }
     }, 4, (err) => {
-      this.progressBar.terminate();
+      tracker.finish();
       callback(err);
     });
   }

@@ -1,8 +1,9 @@
 import chalk from "chalk";
 import fs from "fs-promise";
-import pathExists from "path-exists";
-import path from "path";
+import log from "npmlog";
 import normalizeNewline from "normalize-newline";
+import path from "path";
+import pathExists from "path-exists";
 
 // mocked or stubbed modules
 import writeJsonFile from "write-json-file";
@@ -11,6 +12,7 @@ import ConventionalCommitUtilities from "../src/ConventionalCommitUtilities";
 import GitUtilities from "../src/GitUtilities";
 import NpmUtilities from "../src/NpmUtilities";
 import PromptUtilities from "../src/PromptUtilities";
+import output from "../src/utils/output";
 
 // helpers
 import callsBack from "./helpers/callsBack";
@@ -21,19 +23,26 @@ import normalizeRelativeDir from "./helpers/normalizeRelativeDir";
 // file under test
 import PublishCommand from "../src/commands/PublishCommand";
 
-// keep snapshots stable cross-platform
-chalk.enabled = false;
-
 jest.mock("write-json-file");
 jest.mock("write-pkg");
 jest.mock("../src/GitUtilities");
 jest.mock("../src/NpmUtilities");
 jest.mock("../src/PromptUtilities");
+jest.mock("../src/utils/output");
+
+// silence logs
+log.level = "silent";
+
+// keep snapshots stable cross-platform
+chalk.enabled = false;
 
 const execOpts = (testDir) =>
   expect.objectContaining({
     cwd: testDir,
   });
+
+const consoleOutput = () =>
+  output.mock.calls.map((args) => normalizeNewline(args[0]));
 
 const publishedTagInDirectories = (testDir) =>
   NpmUtilities.publishTaggedInDir.mock.calls.reduce((arr, args) => {
@@ -159,6 +168,7 @@ describe("PublishCommand", () => {
           expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[normal] npm publish --tag");
 
           expect(GitUtilities.pushWithTags).lastCalledWith("origin", gitTagsAdded(), execOpts(testDir));
+          expect(consoleOutput()).toMatchSnapshot("[normal] console output");
 
           done();
         } catch (ex) {
@@ -230,6 +240,7 @@ describe("PublishCommand", () => {
           expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[independent] npm publish --tag");
 
           expect(GitUtilities.pushWithTags).lastCalledWith("origin", gitTagsAdded(), execOpts(testDir));
+          expect(consoleOutput()).toMatchSnapshot("[independent] console output");
 
           done();
         } catch (ex) {

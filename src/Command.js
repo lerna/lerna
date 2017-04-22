@@ -1,19 +1,23 @@
 import _ from "lodash";
 import dedent from "dedent";
+import log from "npmlog";
+
 import ChildProcessUtilities from "./ChildProcessUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
 import GitUtilities from "./GitUtilities";
-import ExitHandler from "./ExitHandler";
-import progressBar from "./progressBar";
-import Repository from "./Repository";
 import PackageUtilities from "./PackageUtilities";
-import logger from "./logger";
+import Repository from "./Repository";
+import filterFlags from "./utils/filterFlags";
+import writeLogFile from "./utils/writeLogFile";
+
+// handle log.success()
+log.addLevel("success", 3001, { fg: "green", bold: true });
 
 const DEFAULT_CONCURRENCY = 4;
 
 export const builder = {
   "loglevel": {
-    default: "info",
+    defaultDescription: "info",
     describe: "What level of logs to report.",
     type: "string",
   },
@@ -58,14 +62,24 @@ export const builder = {
 
 export default class Command {
   constructor(input, flags, cwd) {
+    log.pause();
+    log.heading = "lerna";
+
+    if (flags.loglevel) {
+      log.level = flags.loglevel;
+    }
+
     this.input = input;
     this.flags = flags;
 
+    log.verbose("input", input);
+    log.verbose("flags", filterFlags(flags));
+
     this.lernaVersion = require("../package.json").version;
-    this.logger = logger;
-    this.logger.setLogLevel(flags.loglevel);
-    this.progressBar = progressBar;
     this.repository = new Repository(cwd);
+    this.logger = log.newGroup(this.name);
+
+    log.resume();
   }
 
   get concurrency() {
@@ -140,10 +154,10 @@ export default class Command {
   }
 
   run() {
-    this.logger.info("Lerna v" + this.lernaVersion);
+    log.info("version", this.lernaVersion);
 
     if (this.repository.isIndependent()) {
-      this.logger.info("Independent Versioning Mode");
+      log.info("versioning", "independent");
     }
 
     this.runValidations();
@@ -153,25 +167,26 @@ export default class Command {
 
   runValidations() {
     if (!GitUtilities.isInitialized(this.repository.rootPath)) {
-      this.logger.warn("This is not a git repository, did you already run `git init` or `lerna init`?");
+      log.error("ENOGIT", "This is not a git repository, did you already run `git init` or `lerna init`?");
       this._complete(null, 1);
       return;
     }
 
     if (!this.repository.packageJson) {
-      this.logger.warn("`package.json` does not exist, have you run `lerna init`?");
+      log.error("ENOPKG", "`package.json` does not exist, have you run `lerna init`?");
       this._complete(null, 1);
       return;
     }
 
     if (!this.repository.initVersion) {
-      this.logger.warn("`lerna.json` does not exist, have you run `lerna init`?");
+      log.error("ENOLERNA", "`lerna.json` does not exist, have you run `lerna init`?");
       this._complete(null, 1);
       return;
     }
 
     if (this.options.independent && !this.repository.isIndependent()) {
-      this.logger.warn(
+      log.error(
+        "EVERSIONMODE",
         "You ran lerna with `--independent` or `-i`, but the repository is not set to independent mode. " +
         "To use independent mode you need to set your `lerna.json` \"version\" to \"independent\". " +
         "Then you won't need to pass the `--independent` or `-i` flags."
@@ -184,7 +199,8 @@ export default class Command {
       process.env.NODE_ENV !== "lerna-test" &&
       !this.repository.isCompatibleLerna(this.lernaVersion)
     ) {
-      this.logger.warn(
+      log.error(
+        "EMISMATCH",
         `Lerna major version mismatch: The current version of lerna is ${this.lernaVersion}, ` +
         `but the Lerna version in \`lerna.json\` is ${this.repository.initVersion}. ` +
         `You can either run \`lerna init\` again or install \`lerna@${this.repository.initVersion}\`.`
@@ -196,25 +212,25 @@ export default class Command {
     /* eslint-disable max-len */
     // TODO: remove these warnings eventually
     if (FileSystemUtilities.existsSync(this.repository.versionLocation)) {
-      this.logger.warn("You have a `VERSION` file in your repository, this is leftover from a previous version. Please run `lerna init` to update.");
+      log.warn("You have a `VERSION` file in your repository, this is leftover from a previous version. Please run `lerna init` to update.");
       this._complete(null, 1);
       return;
     }
 
     if (process.env.NPM_DIST_TAG !== undefined) {
-      this.logger.warn("`NPM_DIST_TAG=[tagname] lerna publish` is deprecated, please use `lerna publish --tag [tagname]` instead.");
+      log.warn("`NPM_DIST_TAG=[tagname] lerna publish` is deprecated, please use `lerna publish --tag [tagname]` instead.");
       this._complete(null, 1);
       return;
     }
 
     if (process.env.FORCE_VERSION !== undefined) {
-      this.logger.warn("`FORCE_VERSION=[package/*] lerna updated/publish` is deprecated, please use `lerna updated/publish --force-publish [package/*]` instead.");
+      log.warn("`FORCE_VERSION=[package/*] lerna updated/publish` is deprecated, please use `lerna updated/publish --force-publish [package/*]` instead.");
       this._complete(null, 1);
       return;
     }
 
     if (this.options.onlyExplicitUpdates) {
-      this.logger.warn("`--only-explicit-updates` has been removed. This flag was only ever added for Babel and we never should have exposed it to everyone.");
+      log.warn("`--only-explicit-updates` has been removed. This flag was only ever added for Babel and we never should have exposed it to everyone.");
       this._complete(null, 1);
       return;
     }
@@ -225,11 +241,11 @@ export default class Command {
     const { scope, ignore, registry } = this.options;
 
     if (scope) {
-      this.logger.info(`Scoping to packages that match '${scope}'`);
+      log.info("scope", scope);
     }
 
     if (ignore) {
-      this.logger.info(`Ignoring packages that match '${ignore}'`);
+      log.info("ignore", ignore);
     }
 
     if (registry) {
@@ -246,7 +262,7 @@ export default class Command {
         this.filteredPackages = PackageUtilities.addDependencies(this.filteredPackages, this.packageGraph);
       }
     } catch (err) {
-      this.logger.error("Errored while collecting packages and package graph", err);
+      log.error("EPACKAGES", "Errored while collecting packages and package graph", err);
       this._complete(null, 1);
       throw err;
     }
@@ -261,33 +277,30 @@ export default class Command {
   }
 
   _attempt(method, next, callback) {
-    const methodName = `${this.constructor.name}.${method}`;
-
     try {
-      this.logger.verbose(`Attempting running ${methodName}`);
+      log.silly(method, "attempt");
 
       this[method]((err, completed) => {
         if (err) {
-          this.logger.error(`Errored while running ${methodName}`, err);
+          log.error(method, "callback with error\n", err);
           this._complete(err, 1, callback);
         } else if (!completed) {
-          this.logger.verbose(`Exited early while running ${methodName}`);
+          log.verbose(method, "exited early");
           this._complete(null, 1, callback);
         } else {
-          this.logger.verbose(`Successfully ran ${methodName}`);
+          log.verbose(method, "success");
           next();
         }
       });
     } catch (err) {
-      this.logger.error(`Errored while running ${methodName}`, err);
+      log.error(method, "caught error\n", err);
       this._complete(err, 1, callback);
     }
   }
 
   _complete(err, code, callback) {
     if (code !== 0) {
-      const exitHandler = new ExitHandler(this.repository.rootPath);
-      exitHandler.writeLogs(this.logger);
+      writeLogFile(this.repository.rootPath);
     }
 
     const finish = function() {
@@ -304,7 +317,8 @@ export default class Command {
 
     const childProcessCount = ChildProcessUtilities.getChildProcessCount();
     if (childProcessCount > 0) {
-      this.logger.info(
+      log.warn(
+        "complete",
         `Waiting for ${childProcessCount} child ` +
         `process${childProcessCount === 1 ? "" : "es"} to exit. ` +
         "CTRL-C to exit immediately."
@@ -318,7 +332,10 @@ export default class Command {
   _legacyOptions() {
     return ["bootstrap", "publish"].reduce((opts, command) => {
       if (this.name === command && this.repository.lernaJson[`${command}Config`]) {
-        this.logger.warn(`\`${command}Config.ignore\` is deprecated.  Use \`commands.${command}.ignore\`.`);
+        log.warn(
+          "deprecated",
+          `\`${command}Config.ignore\` has been replaced by \`command.${command}.ignore\`.`
+        );
         opts.ignore = this.repository.lernaJson[`${command}Config`].ignore;
       }
       return opts;

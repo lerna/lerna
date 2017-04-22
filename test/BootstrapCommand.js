@@ -1,3 +1,5 @@
+import log from "npmlog";
+
 // mocked or stubbed modules
 import FileSystemUtilities from "../src/FileSystemUtilities";
 import NpmUtilities from "../src/NpmUtilities";
@@ -12,6 +14,9 @@ import normalizeRelativeDir from "./helpers/normalizeRelativeDir";
 import BootstrapCommand from "../src/commands/BootstrapCommand";
 
 jest.mock("../src/NpmUtilities");
+
+// silence logs
+log.level = "silent";
 
 // stub rimraf because we trust isaacs
 const fsRimraf = FileSystemUtilities.rimraf;

@@ -1,13 +1,19 @@
+import log from "npmlog";
+
 // mocked modules
 import NpmUtilities from "../src/NpmUtilities";
 
 // helpers
 import callsBack from "./helpers/callsBack";
+import loggingOutput from "./helpers/loggingOutput";
 
 // file under test
 import Package from "../src/Package";
 
 jest.mock("../src/NpmUtilities");
+
+// silence logs
+log.level = "silent";
 
 describe("Package", () => {
   let pkg;
@@ -141,19 +147,17 @@ describe("Package", () => {
 
     it("should not match missing dependency", () => {
       expect(pkg.hasMatchingDependency({ name: "missing", version: "1.0.0" })).toBe(false);
+      expect(loggingOutput()).toEqual([]);
     });
 
     it("should not match included dependency", () => {
-      const logger = {
-        warn: jest.fn(),
-      };
       const result = pkg.hasMatchingDependency({
         name: "my-dev-dependency",
         version: "2.0.7"
-      }, logger);
+      }, true);
 
       expect(result).toBe(false);
-      expect(logger.warn).toBeCalled();
+      expect(loggingOutput()).toMatchSnapshot();
     });
   });
 });

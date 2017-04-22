@@ -1,6 +1,7 @@
-import NpmUtilities from "../NpmUtilities";
-import PackageUtilities from "../PackageUtilities";
 import Command from "../Command";
+import NpmUtilities from "../NpmUtilities";
+import output from "../utils/output";
+import PackageUtilities from "../PackageUtilities";
 
 export function handler(argv) {
   return new RunCommand([argv.script, ...argv.args], argv).run();
@@ -40,8 +41,8 @@ export default class RunCommand extends Command {
     }
 
     this.batchedPackages = this.toposort
-      ? PackageUtilities.topologicallyBatchPackages(this.packagesWithScript, { logger: this.logger })
-      : [ this.packagesWithScript ];
+      ? PackageUtilities.topologicallyBatchPackages(this.packagesWithScript)
+      : [this.packagesWithScript];
 
     callback(null, true);
   }
@@ -51,8 +52,8 @@ export default class RunCommand extends Command {
       if (err) {
         callback(err);
       } else {
-        this.logger.success(`Successfully ran npm script '${this.script}' in packages:`);
-        this.logger.success(this.packagesWithScript.map((pkg) => `- ${pkg.name}`).join("\n"));
+        this.logger.success("run", `Ran npm script '${this.script}' in packages:`);
+        this.logger.success("", this.packagesWithScript.map((pkg) => `- ${pkg.name}`).join("\n"));
         callback(null, true);
       }
     });
@@ -79,9 +80,9 @@ export default class RunCommand extends Command {
   runScriptInPackageCapturing(pkg, callback) {
     NpmUtilities.runScriptInDir(this.script, this.args, pkg.location, (err, stdout) => {
       if (err) {
-        this.logger.error(`Errored while running npm script '${this.script}' in '${pkg.name}'`);
+        this.logger.error(this.script, `Errored while running script in '${pkg.name}'`);
       } else {
-        this.logger.info(stdout);
+        output(stdout);
       }
       callback(err);
     });

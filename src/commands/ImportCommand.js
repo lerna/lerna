@@ -1,11 +1,12 @@
-import path from "path";
 import async from "async";
 import dedent from "dedent";
-import Command from "../Command";
-import PromptUtilities from "../PromptUtilities";
+import path from "path";
+
 import ChildProcessUtilities from "../ChildProcessUtilities";
+import Command from "../Command";
 import FileSystemUtilities from "../FileSystemUtilities";
 import GitUtilities from "../GitUtilities";
+import PromptUtilities from "../PromptUtilities";
 
 export function handler(argv) {
   return new ImportCommand([argv.pathToRepo], argv).run();
@@ -88,6 +89,7 @@ export default class ImportCommand extends Command {
     }
 
     this.logger.info(
+      "",
       `About to import ${this.commits.length} commits from ${inputPath} into ${this.targetDir}`
     );
 
@@ -97,12 +99,7 @@ export default class ImportCommand extends Command {
       const message = "Are you sure you want to import these commits onto the current branch?";
 
       PromptUtilities.confirm(message, (confirmed) => {
-        if (confirmed) {
-          callback(null, true);
-        } else {
-          this.logger.info("Okay bye!");
-          callback(null, false);
-        }
+        callback(null, confirmed);
       });
     }
   }
@@ -112,12 +109,13 @@ export default class ImportCommand extends Command {
   }
 
   execute(callback) {
+    const tracker = this.logger.newItem("execute");
     const replacement = "$1/" + this.targetDir;
 
-    this.progressBar.init(this.commits.length);
+    tracker.addWork(this.commits.length);
 
     async.series(this.commits.map((sha) => (done) => {
-      this.progressBar.tick(sha);
+      tracker.info(sha);
 
       // Create a patch file for this commit and prepend the target directory
       // to all affected files.  This moves the git history for the entire
@@ -143,13 +141,16 @@ export default class ImportCommand extends Command {
           ChildProcessUtilities.execSync("git", ["am", "--abort"], this.execOpts);
           ChildProcessUtilities.execSync("git", ["reset", "--hard", this.preImportHead], this.execOpts);
         }
+
+        tracker.completeWork(1);
+
         done(err);
       }).stdin.end(patch);
     }), (err) => {
-      this.progressBar.terminate();
+      tracker.finish();
 
       if (!err) {
-        this.logger.info("Import complete!");
+        this.logger.success("import", "finished");
       }
       callback(err, !err);
     });

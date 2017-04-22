@@ -255,9 +255,8 @@ describe("GitUtilities", () => {
 
   describe(".init()", () => {
     it("calls git init", () => {
-      ChildProcessUtilities.execSync.mockImplementation(() => "stdout for logger");
       const opts = { cwd: "test" };
-      expect(GitUtilities.init(opts)).toBe("stdout for logger");
+      GitUtilities.init(opts);
       expect(ChildProcessUtilities.execSync).lastCalledWith(
         "git", ["init"], opts
       );

@@ -3,7 +3,13 @@
 exports[`UpdatedCommand basic should list all packages when no tag is found 1`] = `
 Array [
   "Checking for updated packages...",
-  "No tags found! Comparing with initial commit.",
+  "No tags found!",
+  "Comparing with initial commit.",
+]
+`;
+
+exports[`UpdatedCommand basic should list all packages when no tag is found 2`] = `
+Array [
   "- package-1
 - package-2
 - package-3
@@ -15,7 +21,12 @@ Array [
 exports[`UpdatedCommand basic should list changes 1`] = `
 Array [
   "Checking for updated packages...",
-  "Comparing with: v1.0.0",
+  "Comparing with tag v1.0.0",
+]
+`;
+
+exports[`UpdatedCommand basic should list changes 2`] = `
+Array [
   "- package-2
 - package-3",
 ]
@@ -24,7 +35,12 @@ Array [
 exports[`UpdatedCommand basic should list changes for explicitly changed packages 1`] = `
 Array [
   "Checking for updated packages...",
-  "Comparing with: v1.0.0",
+  "Comparing with tag v1.0.0",
+]
+`;
+
+exports[`UpdatedCommand basic should list changes for explicitly changed packages 2`] = `
+Array [
   "- package-2",
 ]
 `;
@@ -32,7 +48,12 @@ Array [
 exports[`UpdatedCommand basic should list changes in private packages 1`] = `
 Array [
   "Checking for updated packages...",
-  "Comparing with: v1.0.0",
+  "Comparing with tag v1.0.0",
+]
+`;
+
+exports[`UpdatedCommand basic should list changes in private packages 2`] = `
+Array [
   "- package-5 (private)",
 ]
 `;
@@ -40,7 +61,12 @@ Array [
 exports[`UpdatedCommand basic should list changes with --force-publish * 1`] = `
 Array [
   "Checking for updated packages...",
-  "Comparing with: v1.0.0",
+  "Comparing with tag v1.0.0",
+]
+`;
+
+exports[`UpdatedCommand basic should list changes with --force-publish * 2`] = `
+Array [
   "- package-1
 - package-2
 - package-3
@@ -52,7 +78,12 @@ Array [
 exports[`UpdatedCommand basic should list changes with --force-publish [package,package] 1`] = `
 Array [
   "Checking for updated packages...",
-  "Comparing with: v1.0.0",
+  "Comparing with tag v1.0.0",
+]
+`;
+
+exports[`UpdatedCommand basic should list changes with --force-publish [package,package] 2`] = `
+Array [
   "- package-2
 - package-3
 - package-4",
@@ -61,16 +92,20 @@ Array [
 
 exports[`UpdatedCommand basic should list changes without ignored files 1`] = `
 Array [
+  "[ 'ignored-file' ]",
   "Checking for updated packages...",
-  "Comparing with: v1.0.0",
+  "Comparing with tag v1.0.0",
+]
+`;
+
+exports[`UpdatedCommand basic should list changes without ignored files 2`] = `
+Array [
   "- package-3",
 ]
 `;
 
 exports[`UpdatedCommand circular should list changes 1`] = `
 Array [
-  "Checking for updated packages...",
-  "Comparing with: v1.0.0",
   "- package-3
 - package-4",
 ]
@@ -78,8 +113,6 @@ Array [
 
 exports[`UpdatedCommand circular should list changes with --force-publish * 1`] = `
 Array [
-  "Checking for updated packages...",
-  "Comparing with: v1.0.0",
   "- package-1
 - package-2
 - package-3
@@ -90,8 +123,6 @@ Array [
 
 exports[`UpdatedCommand circular should list changes with --force-publish [package,package] 1`] = `
 Array [
-  "Checking for updated packages...",
-  "Comparing with: v1.0.0",
   "- package-2
 - package-3
 - package-4",
@@ -100,8 +131,6 @@ Array [
 
 exports[`UpdatedCommand circular should list changes without ignored files 1`] = `
 Array [
-  "Checking for updated packages...",
-  "Comparing with: v1.0.0",
   "- package-3
 - package-4",
 ]

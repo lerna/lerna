@@ -1,4 +1,5 @@
 import { EOL } from "os";
+import log from "npmlog";
 import path from "path";
 
 // mocked modules
@@ -12,6 +13,9 @@ import NpmUtilities from "../src/NpmUtilities";
 jest.mock("write-pkg");
 jest.mock("../src/ChildProcessUtilities");
 jest.mock("../src/FileSystemUtilities");
+
+// silence logs
+log.level = "silent";
 
 // we stub getExecOpts() in most tests because
 // we already have enough tests of getExecOpts()

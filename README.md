@@ -139,12 +139,11 @@ When run, this command will:
 Example output on a new git repo:
 
 ```sh
-> lerna init
-$ Lerna v2.0.0-beta.31
-$ Creating packages directory.
-$ Updating package.json.
-$ Creating lerna.json.
-$ Successfully created Lerna files
+$ lerna init
+lerna info version v2.0.0-rc.3
+lerna info Updating package.json
+lerna info Creating lerna.json
+lerna success Initialized Lerna files
 ```
 
 #### --independent, -i

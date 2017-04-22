@@ -1,3 +1,4 @@
+import log from "npmlog";
 import path from "path";
 
 // mocked modules
@@ -12,6 +13,9 @@ import initFixture from "./helpers/initFixture";
 import ExecCommand from "../src/commands/ExecCommand";
 
 jest.mock("../src/ChildProcessUtilities");
+
+// silence logs
+log.level = "silent";
 
 const calledWithArgs = () =>
   ChildProcessUtilities.spawn.mock.calls[0][1];
@@ -55,6 +59,11 @@ describe("ExecCommand", () => {
       err.code = 1;
       err.cmd = "boom";
 
+      let errorLog;
+      log.once("log.error", (m) => {
+        errorLog = m;
+      });
+
       ChildProcessUtilities.spawn = jest.fn(callsBack(err));
 
       const execCommand = new ExecCommand(["boom"], {}, testDir);
@@ -62,12 +71,9 @@ describe("ExecCommand", () => {
       execCommand.runValidations();
       execCommand.runPreparations();
 
-      const spy = jest.spyOn(execCommand.logger, "error");
-
       execCommand.runCommand(exitWithCode(1, () => {
         try {
-          expect(spy).toHaveBeenCalledTimes(2);
-          expect(spy).toBeCalledWith("Errored while executing 'boom' in 'package-1'");
+          expect(errorLog).toHaveProperty("message", "Errored while executing 'boom' in 'package-1'");
 
           done();
         } catch (ex) {

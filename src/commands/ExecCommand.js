@@ -1,6 +1,6 @@
 import ChildProcessUtilities from "../ChildProcessUtilities";
-import PackageUtilities from "../PackageUtilities";
 import Command from "../Command";
+import PackageUtilities from "../PackageUtilities";
 
 export function handler(argv) {
   return new ExecCommand([argv.command, ...argv.args], argv).run();
@@ -23,8 +23,8 @@ export default class ExecCommand extends Command {
     }
 
     this.batchedPackages = this.toposort
-      ? PackageUtilities.topologicallyBatchPackages(this.filteredPackages, { logger: this.logger })
-      : [ this.filteredPackages ];
+      ? PackageUtilities.topologicallyBatchPackages(this.filteredPackages)
+      : [this.filteredPackages];
 
     callback(null, true);
   }
@@ -48,7 +48,7 @@ export default class ExecCommand extends Command {
   runCommandInPackage(pkg, callback) {
     ChildProcessUtilities.spawn(this.command, this.args, this.getOpts(pkg), (err) => {
       if (err && err.code) {
-        this.logger.error(`Errored while executing '${err.cmd}' in '${pkg.name}'`);
+        this.logger.error("exec", `Errored while executing '${err.cmd}' in '${pkg.name}'`);
       }
       callback(err);
     });

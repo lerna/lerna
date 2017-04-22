@@ -1,3 +1,4 @@
+import log from "npmlog";
 import path from "path";
 import tempy from "tempy";
 
@@ -26,6 +27,9 @@ jest.mock("write-json-file");
 jest.mock("write-pkg");
 jest.mock("../src/FileSystemUtilities");
 jest.mock("../src/GitUtilities");
+
+// silence logs
+log.level = "silent";
 
 const initEmptyDir = () => tempy.directoryAsync();
 
