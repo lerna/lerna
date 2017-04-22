@@ -100,7 +100,7 @@ export default class BootstrapCommand extends Command {
       return callback(null, true);
     }
 
-    const tracker = this.logger.newItem(scriptName, 1);
+    const tracker = this.logger.newItem(scriptName);
     tracker.addWork(this.filteredPackages.length);
 
     PackageUtilities.runParallelBatches(this.batchedPackages, (pkg) => (done) => {
@@ -212,7 +212,7 @@ export default class BootstrapCommand extends Command {
    * Return a object of root and leaf dependencies to install
    * @returns {Object}
    */
-  getDependenciesToInstall() {
+  getDependenciesToInstall(tracker) {
     // find package by name
     const findPackage = (name, version) => _.find(this.packages, (pkg) => {
       return pkg.name === name && (!version || semver.satisfies(pkg.version, version));
@@ -223,6 +223,10 @@ export default class BootstrapCommand extends Command {
     // Configuration for what packages to hoist may be in lerna.json or it may
     // come in as command line options.
     const { hoist, nohoist } = this.options;
+
+    if (hoist) {
+      tracker.verbose("hoist", "enabled for %j", hoist);
+    }
 
     // This will contain entries for each hoistable dependency.
     const root = [];
@@ -319,7 +323,7 @@ export default class BootstrapCommand extends Command {
         rootVersion = this.repository.package.allDependencies[name] || commonVersion;
 
         if (rootVersion !== commonVersion) {
-          this.logger.warn(
+          tracker.warn(
             "EHOIST_ROOT_VERSION",
             `The repository root depends on ${name}@${rootVersion}, ` +
             `which differs from the more common ${name}@${commonVersion}.`
@@ -345,7 +349,7 @@ export default class BootstrapCommand extends Command {
 
         dependents[version].forEach((pkg) => {
           if (rootVersion) {
-            this.logger.warn(
+            tracker.warn(
               "EHOIST_PKG_VERSION",
               `"${pkg}" package depends on ${name}@${version}, ` +
               `which differs from the hoisted ${name}@${rootVersion}.`
@@ -361,6 +365,9 @@ export default class BootstrapCommand extends Command {
       });
     });
 
+    tracker.silly("root dependencies", JSON.stringify(root, null, 2));
+    tracker.silly("leaf dependencies", JSON.stringify(leaves, null, 2));
+
     return { root, leaves };
   }
 
@@ -369,9 +376,9 @@ export default class BootstrapCommand extends Command {
    * @param {Function} callback
    */
   installExternalDependencies(callback) {
-    const tracker = this.logger.newItem("installExternalDependencies", 1);
+    const tracker = this.logger.newItem("install dependencies");
 
-    const { leaves, root } = this.getDependenciesToInstall();
+    const { leaves, root } = this.getDependenciesToInstall(tracker);
     const actions = [];
 
     // Start root install first, if any, since it's likely to take the longest.
@@ -439,7 +446,8 @@ export default class BootstrapCommand extends Command {
           }, []);
 
         if (!staleDirs.length) {
-          tracker.verbose("prune", "nothing to delete");
+          tracker.verbose("hoist", "nothing to prune");
+          tracker.completeWork(1); // the action "work"
           return cb();
         }
 
@@ -447,7 +455,7 @@ export default class BootstrapCommand extends Command {
 
         FileSystemUtilities.rimraf(staleDirs, (err) => {
           tracker.info("hoist", "Finished pruning hoisted dependencies");
-          tracker.completeWork(1);
+          tracker.completeWork(1); // the action "work"
           cb(err);
         });
       });
@@ -480,6 +488,7 @@ export default class BootstrapCommand extends Command {
 
     if (actions.length) {
       tracker.info("", "Installing external dependencies");
+      tracker.verbose("actions", "%d actions, concurrency %d", actions.length, this.concurrency);
       tracker.addWork(actions.length);
     }
 
@@ -495,7 +504,7 @@ export default class BootstrapCommand extends Command {
    * @param {Function} callback
    */
   symlinkPackages(callback) {
-    const tracker = this.logger.newItem("symlinkPackages", 1);
+    const tracker = this.logger.newItem("symlink packages");
 
     tracker.info("", "Symlinking packages and binaries");
     tracker.addWork(this.filteredPackages.length);
@@ -585,7 +594,7 @@ export default class BootstrapCommand extends Command {
 
       actions.push((cb) => {
         async.series(packageActions, (err) => {
-          tracker.silly(filteredPackage.name);
+          tracker.silly("packageActions", "finished", filteredPackage.name);
           tracker.completeWork(1);
           cb(err);
         });
