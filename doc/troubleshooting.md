@@ -7,7 +7,7 @@ in the past while using Lerna.
 
 ### Error when using yarn as an npm client
 
-Before the release of Lerna `v2.0.0-rc.3` users of the flag `--npm-client` 
+Prior to the release of Lerna `v2.0.0-rc.3` users of the flag `--npm-client` 
 who provided yarn as a client may have suffered from the bootstrap process 
 not being able to run properly.
 
@@ -16,7 +16,7 @@ Error running command.
 error Command failed with exit code 1.
 ```
 
-If you can upgrade Lerna to said version please do so, or as an alternative  
+If you can upgrade Lerna to said version please do so, or as an alternative 
 solution you can add `--concurrency=1`.
 
 ## Import Command
