@@ -95,6 +95,21 @@ describe("Command", () => {
     });
   });
 
+  describe(".execOpts", () => {
+    const ONE_HUNDRED_MEGABYTES = 1000 * 1000 * 100;
+    const REPO_PATH = process.cwd();
+
+    it("has maxBuffer", () => {
+      const command = new Command([], { maxBuffer: ONE_HUNDRED_MEGABYTES });
+      expect(command.execOpts.maxBuffer).toBe(ONE_HUNDRED_MEGABYTES);
+    });
+
+    it("has repo path", () => {
+      const command = new Command([], {}, REPO_PATH);
+      expect(command.execOpts.cwd).toBe(REPO_PATH);
+    });
+  });
+
   describe(".run()", () => {
     let testDir;
 

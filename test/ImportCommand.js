@@ -5,7 +5,6 @@ import path from "path";
 import pathExists from "path-exists";
 
 // mocked or stubbed modules
-import ChildProcessUtilities from "../src/ChildProcessUtilities";
 import PromptUtilities from "../src/PromptUtilities";
 
 // helpers
@@ -26,16 +25,11 @@ const lastCommitInDir = (cwd) =>
   execa.sync("git", ["log", "-1", "--format=%s"], { cwd }).stdout;
 
 describe("ImportCommand", () => {
-  const originalExecSync = ChildProcessUtilities.execSync;
-
   beforeEach(() => {
     PromptUtilities.confirm = jest.fn(callsBack(true));
   });
 
-  afterEach(() => {
-    jest.resetAllMocks();
-    ChildProcessUtilities.execSync = originalExecSync;
-  });
+  afterEach(() => jest.resetAllMocks());
 
   describe("import", () => {
     let testDir;
@@ -76,24 +70,25 @@ describe("ImportCommand", () => {
     });
 
     it("works with --max-buffer", (done) => {
-      ChildProcessUtilities.execSync = jest.fn(() => "test1\ntest2\ntest3");
-      const buff = 1000 * 1000 * 500;
+      const ONE_HUNDRED_MEGABYTES = 1000 * 1000 * 100;
       const importCommand = new ImportCommand([externalDir], {
-        maxBuffer: buff
+        maxBuffer: ONE_HUNDRED_MEGABYTES,
       }, testDir);
 
       importCommand.runValidations();
       importCommand.runPreparations();
 
-      importCommand.runCommand(exitWithCode(0, () => {
-        // not handling errors since we are only interested in call args
-        ChildProcessUtilities.execSync.mock.calls
-          .map((callInspected) => callInspected[2])
-          .forEach((callOpts) => {
-            // every call to ChildProcessUtilities.execSync() should contain the flag
-            expect(callOpts.maxBuffer).toEqual(buff);
-          });
-        done();
+      importCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          expect(importCommand.execOpts).toHaveProperty("maxBuffer", ONE_HUNDRED_MEGABYTES);
+          expect(importCommand.externalExecOpts).toHaveProperty("maxBuffer", ONE_HUNDRED_MEGABYTES);
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
       }));
     });
 

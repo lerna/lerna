@@ -120,6 +120,7 @@ export default class Command {
       this._execOpts = {
         cwd: this.repository.rootPath,
       };
+
       if (this.options.maxBuffer) {
         this._execOpts.maxBuffer = this.options.maxBuffer;
       }
@@ -174,10 +175,7 @@ export default class Command {
   }
 
   runValidations() {
-    const opts = Object.assign({}, this.execOpts, {
-      cwd: this.repository.rootPath
-    });
-    if (!GitUtilities.isInitialized(opts)) {
+    if (!GitUtilities.isInitialized(this.execOpts)) {
       log.error("ENOGIT", "This is not a git repository, did you already run `git init` or `lerna init`?");
       this._complete(null, 1);
       return;
