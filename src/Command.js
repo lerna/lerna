@@ -58,6 +58,11 @@ export const builder = {
     type: "boolean",
     default: true,
   },
+  "max-buffer": {
+    describe: "Set max-buffer(bytes) for Command execution",
+    type: "number",
+    requiresArg: true
+  }
 };
 
 export default class Command {
@@ -115,6 +120,9 @@ export default class Command {
       this._execOpts = {
         cwd: this.repository.rootPath,
       };
+      if (this.options.maxBuffer) {
+        this._execOpts.maxBuffer = this.options.maxBuffer;
+      }
     }
 
     return this._execOpts;
@@ -166,7 +174,10 @@ export default class Command {
   }
 
   runValidations() {
-    if (!GitUtilities.isInitialized(this.repository.rootPath)) {
+    const opts = Object.assign({}, this.execOpts, {
+      cwd: this.repository.rootPath
+    });
+    if (!GitUtilities.isInitialized(opts)) {
       log.error("ENOGIT", "This is not a git repository, did you already run `git init` or `lerna init`?");
       this._complete(null, 1);
       return;
