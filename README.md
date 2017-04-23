@@ -16,10 +16,11 @@
 - [About](#about)
 - [Getting Started](#getting-started)
 - [How It Works](#how-it-works)
+- [Troubleshooting](#troubleshooting)
 - [Commands](#commands)
 - [Misc](#misc)
- - [Lerna.json](#lernajson)
- - [Flags](#flags)
+- [Lerna.json](#lernajson)
+- [Flags](#flags)
 
 ## About
 
@@ -114,6 +115,11 @@ Independent mode Lerna projects allows maintainers to increment package versions
 Independent mode allows you to more specifically update versions for each package and makes sense for a group of components. Combining this mode with something like [semantic-release](https://github.com/semantic-release/semantic-release) would make it less painful. (There is work on this already at [atlassian/lerna-semantic-release](https://github.com/atlassian/lerna-semantic-release)).
 
 > The `version` key in `lerna.json` is ignored in independent mode.
+
+## Troubleshooting
+
+If you encounter any issues while using Lerna please check out our [Troubleshooting](doc/troubleshooting.md) 
+document where you might find the answer to your problem.
 
 ## Frequently asked questions
 
