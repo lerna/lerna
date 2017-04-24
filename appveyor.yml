@@ -24,6 +24,6 @@ before_test:
   - git config --global user.name "Tester McPerson"
 
 test_script:
-  - yarn run ci
+  - yarn run ci -- --runInBand
 
 build: off
