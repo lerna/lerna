@@ -69,6 +69,29 @@ describe("ImportCommand", () => {
       }));
     });
 
+    it("works with --max-buffer", (done) => {
+      const ONE_HUNDRED_MEGABYTES = 1000 * 1000 * 100;
+      const importCommand = new ImportCommand([externalDir], {
+        maxBuffer: ONE_HUNDRED_MEGABYTES,
+      }, testDir);
+
+      importCommand.runValidations();
+      importCommand.runPreparations();
+
+      importCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          expect(importCommand.execOpts).toHaveProperty("maxBuffer", ONE_HUNDRED_MEGABYTES);
+          expect(importCommand.externalExecOpts).toHaveProperty("maxBuffer", ONE_HUNDRED_MEGABYTES);
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
+
     it("supports moved files within the external repo", (done) => {
       execa.sync("git", ["mv", "old-file", "new-file"], { cwd: externalDir });
       execa.sync("git", ["commit", "-m", "Moved old-file to new-file"], { cwd: externalDir });

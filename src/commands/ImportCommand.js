@@ -36,6 +36,10 @@ export default class ImportCommand extends Command {
     const externalRepoPath = path.resolve(inputPath);
     const externalRepoBase = path.basename(externalRepoPath);
 
+    this.externalExecOpts = Object.assign({}, this.execOpts, {
+      cwd: externalRepoPath
+    });
+
     try {
       const stats = FileSystemUtilities.statSync(externalRepoPath);
 
@@ -63,10 +67,6 @@ export default class ImportCommand extends Command {
     if (FileSystemUtilities.existsSync(path.resolve(this.repository.rootPath, this.targetDir))) {
       return callback(new Error(`Target directory already exists "${this.targetDir}"`));
     }
-
-    this.externalExecOpts = {
-      cwd: externalRepoPath
-    };
 
     this.commits = this.externalExecSync("git", ["log", "--format=%h"]).split("\n").reverse();
     // this.commits = this.externalExecSync("git", [
