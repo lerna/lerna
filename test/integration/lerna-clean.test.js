@@ -11,7 +11,8 @@ const serializeTestRoot = (match, testDir, subPath) =>
   normalizePath(path.join("__TEST_ROOTDIR__", subPath));
 
 const normalizeStdio = (cwd) => {
-  const dirPath = new RegExp(`(${cwd})([\\S]+)`, "g");
+  // lol windows paths often look like escaped slashes, so re-re-escape them :P
+  const dirPath = new RegExp(`(${cwd.replace(/\\/g, "\\\\")})([\\S]+)`, "g");
 
   return (result) => {
     const stdout = result.stdout.replace(dirPath, serializeTestRoot);
