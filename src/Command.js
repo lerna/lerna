@@ -77,8 +77,8 @@ export default class Command {
     this.input = input;
     this.flags = flags;
 
-    log.verbose("input", input);
-    log.verbose("flags", filterFlags(flags));
+    log.silly("input", input);
+    log.silly("flags", filterFlags(flags));
 
     this.lernaVersion = require("../package.json").version;
     this.repository = new Repository(cwd);
@@ -297,7 +297,7 @@ export default class Command {
           log.verbose(method, "exited early");
           this._complete(null, 1, callback);
         } else {
-          log.verbose(method, "success");
+          log.silly(method, "success");
           next();
         }
       });

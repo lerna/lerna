@@ -30,7 +30,8 @@ export default class GitUtilities {
       initialized = false;
     }
 
-    log.verbose("isInitialized", initialized);
+    // this does not need to be verbose
+    log.silly("isInitialized", initialized);
     return initialized;
   }
 
