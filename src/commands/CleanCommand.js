@@ -42,6 +42,8 @@ export default class CleanCommand extends Command {
     tracker.addWork(this.directoriesToDelete.length);
 
     async.parallelLimit(this.directoriesToDelete.map((dirPath) => (cb) => {
+      tracker.info("clean", "removing", dirPath);
+
       FileSystemUtilities.rimraf(dirPath, (err) => {
         tracker.completeWork(1);
         cb(err);

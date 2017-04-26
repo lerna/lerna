@@ -2,11 +2,17 @@
 
 exports[`stderr: global --yes 1`] = `
 "lerna info version __TEST_VERSION__
+lerna info clean removing __TEST_ROOTDIR__/packages/package-1/node_modules
+lerna info clean removing __TEST_ROOTDIR__/packages/package-2/node_modules
+lerna info clean removing __TEST_ROOTDIR__/packages/package-3/node_modules
 lerna success clean finished"
 `;
 
 exports[`stderr: local npm 1`] = `
 "lerna info version __TEST_VERSION__
+lerna info clean removing __TEST_ROOTDIR__/packages/package-1/node_modules
+lerna info clean removing __TEST_ROOTDIR__/packages/package-2/node_modules
+lerna info clean removing __TEST_ROOTDIR__/packages/package-3/node_modules
 lerna success clean finished"
 `;
 
