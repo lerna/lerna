@@ -1,3 +1,35 @@
+## v2.0.0-rc.4 (2017-04-27)
+
+Now with less bugs! The `--hoist` flag works again, among other `rc.3` bugfixes, and our logging is _much_ more detailed now.
+
+#### :boom: Breaking Change
+* [#777](https://github.com/lerna/lerna/pull/777) Replace --skip-temp-tag with --temp-tag. ([@noherczeg](https://github.com/noherczeg))
+* [#779](https://github.com/lerna/lerna/pull/779) Log with npmlog. ([@evocateur](https://github.com/evocateur))
+
+#### :rocket: Enhancement
+* [#782](https://github.com/lerna/lerna/pull/782) Add --max-buffer flag. ([@noherczeg](https://github.com/noherczeg))
+
+#### :bug: Bug Fix
+* [#775](https://github.com/lerna/lerna/pull/775), [#784](https://github.com/lerna/lerna/pull/784) Install non-hoisted leaves using `npm --global-style`. ([@ricky](https://github.com/ricky))
+* [#776](https://github.com/lerna/lerna/pull/776) Ignore node_modules when traversing nested package locations. ([@evocateur](https://github.com/evocateur))
+* [#778](https://github.com/lerna/lerna/pull/778) Fix --hoist with no argument default. ([@evocateur](https://github.com/evocateur))
+* [#787](https://github.com/lerna/lerna/pull/787) Prevent log messages and progress bars from mangling prompts. ([@evocateur](https://github.com/evocateur))
+* [#790](https://github.com/lerna/lerna/pull/790) Log the directories being cleaned. ([@evocateur](https://github.com/evocateur))
+
+#### :nail_care: Polish
+* [#781](https://github.com/lerna/lerna/pull/781) Support `--force-publish` arrays and booleans. ([@evocateur](https://github.com/evocateur))
+
+#### :memo: Documentation
+* [#783](https://github.com/lerna/lerna/pull/783) Add troubleshooting docs. ([@noherczeg](https://github.com/noherczeg))
+
+#### :house: Internal
+* [#780](https://github.com/lerna/lerna/pull/780) Restore async rimraf loops. ([@evocateur](https://github.com/evocateur))
+
+#### Committers: 3
+- Daniel Stockman ([evocateur](https://github.com/evocateur))
+- Norbert Csaba Herczeg ([noherczeg](https://github.com/noherczeg))
+- [ricky](https://github.com/ricky)
+
 ## v2.0.0-rc.3 (2017-04-18)
 
 Barring show-stopping bugs, our goal is to cut `v2.0.0` later this week. Big props to all of our brave users riding the bleeding edge of release candidates and reporting issues!
