@@ -37,6 +37,12 @@ export default class ChildProcessUtilities {
     const prefixedStdout = logTransformer({ tag: `${prefix}:` });
     const prefixedStderr = logTransformer({ tag: `${prefix} ERROR`, mergeMultiline: true });
 
+    // Avoid "Possible EventEmitter memory leak detected" warning due to piped stdio
+    if (children > process.stdout.listenerCount("close")) {
+      process.stdout.setMaxListeners(children);
+      process.stderr.setMaxListeners(children);
+    }
+
     spawned.stdout.pipe(prefixedStdout).pipe(process.stdout);
     spawned.stderr.pipe(prefixedStderr).pipe(process.stderr);
 

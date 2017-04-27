@@ -1,3 +1,5 @@
+import async from "async";
+
 import ChildProcessUtilities from "../ChildProcessUtilities";
 import Command from "../Command";
 import PackageUtilities from "../PackageUtilities";
@@ -10,7 +12,13 @@ export const command = "exec <command> [args..]";
 
 export const describe = "Run an arbitrary command in each package.";
 
-export const builder = {};
+export const builder = {
+  "parallel": {
+    group: "Command Options:",
+    describe: "Run command in all packages with unlimited concurrency, streaming prefixed output",
+    type: "boolean",
+  },
+};
 
 export default class ExecCommand extends Command {
   initialize(callback) {
@@ -22,6 +30,9 @@ export default class ExecCommand extends Command {
       return;
     }
 
+    // don't interrupt spawned or streaming stdio
+    this.logger.disableProgress();
+
     this.batchedPackages = this.toposort
       ? PackageUtilities.topologicallyBatchPackages(this.filteredPackages)
       : [this.filteredPackages];
@@ -30,9 +41,13 @@ export default class ExecCommand extends Command {
   }
 
   execute(callback) {
-    PackageUtilities.runParallelBatches(this.batchedPackages, (pkg) => (done) => {
-      this.runCommandInPackage(pkg, done);
-    }, this.concurrency, callback);
+    if (this.options.parallel) {
+      this.runCommandInPackagesParallel(callback);
+    } else {
+      PackageUtilities.runParallelBatches(this.batchedPackages, (pkg) => (done) => {
+        this.runCommandInPackage(pkg, done);
+      }, this.concurrency, callback);
+    }
   }
 
   getOpts(pkg) {
@@ -43,6 +58,21 @@ export default class ExecCommand extends Command {
         LERNA_PACKAGE_NAME: pkg.name,
       }),
     };
+  }
+
+  runCommandInPackagesParallel(callback) {
+    this.logger.info(
+      "exec",
+      "in %d package(s): %s",
+      this.filteredPackages.length,
+      [this.command].concat(this.args).join(" ")
+    );
+
+    async.parallel(this.filteredPackages.map((pkg) => (done) => {
+      ChildProcessUtilities.spawnStreaming(
+        this.command, this.args, this.getOpts(pkg), pkg.name, done
+      );
+    }), callback);
   }
 
   runCommandInPackage(pkg, callback) {

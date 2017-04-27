@@ -64,4 +64,44 @@ describe("lerna exec", () => {
     expect(stdout).toMatchSnapshot("stdout: echo LERNA_PACKAGE_NAME");
     expect(stderr).toMatchSnapshot("stderr: echo LERNA_PACKAGE_NAME");
   });
+
+  test.concurrent("<cmd> --parallel", async () => {
+    const cwd = await initFixture("ExecCommand/basic");
+    const args = [
+      "exec",
+      "ls",
+      "--parallel",
+      // no --
+      "-C",
+    ];
+
+    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
+    expect(stderr).toMatchSnapshot("stderr: <cmd> --parallel");
+
+    // order is non-deterministic, so assert individually
+    expect(stdout).toMatch("package-1: file-1.js");
+    expect(stdout).toMatch("package-1: package.json");
+    expect(stdout).toMatch("package-2: file-2.js");
+    expect(stdout).toMatch("package-2: package.json");
+  });
+
+  test.concurrent("--parallel <cmd>", async () => {
+    const cwd = await initFixture("ExecCommand/basic");
+    const args = [
+      "exec",
+      "--parallel",
+      "ls",
+      // no --
+      "-C",
+    ];
+
+    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
+    expect(stderr).toMatchSnapshot("stderr: --parallel <cmd>");
+
+    // order is non-deterministic, so assert individually
+    expect(stdout).toMatch("package-1: file-1.js");
+    expect(stdout).toMatch("package-1: package.json");
+    expect(stdout).toMatch("package-2: file-2.js");
+    expect(stdout).toMatch("package-2: package.json");
+  });
 });
