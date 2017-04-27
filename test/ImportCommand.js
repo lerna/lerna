@@ -1,7 +1,8 @@
-import fs from "fs-promise";
-import pathExists from "path-exists";
 import execa from "execa";
+import fs from "fs-promise";
+import log from "npmlog";
 import path from "path";
+import pathExists from "path-exists";
 
 // mocked or stubbed modules
 import PromptUtilities from "../src/PromptUtilities";
@@ -16,6 +17,9 @@ import updateLernaConfig from "./helpers/updateLernaConfig";
 import ImportCommand from "../src/commands/ImportCommand";
 
 jest.mock("../src/PromptUtilities");
+
+// silence logs
+log.level = "silent";
 
 const lastCommitInDir = (cwd) =>
   execa.sync("git", ["log", "-1", "--format=%s"], { cwd }).stdout;
@@ -57,6 +61,29 @@ describe("ImportCommand", () => {
 
           const packageJson = path.join(testDir, "packages", path.basename(externalDir), "package.json");
           expect(pathExists.sync(packageJson)).toBe(true);
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
+
+    it("works with --max-buffer", (done) => {
+      const ONE_HUNDRED_MEGABYTES = 1000 * 1000 * 100;
+      const importCommand = new ImportCommand([externalDir], {
+        maxBuffer: ONE_HUNDRED_MEGABYTES,
+      }, testDir);
+
+      importCommand.runValidations();
+      importCommand.runPreparations();
+
+      importCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          expect(importCommand.execOpts).toHaveProperty("maxBuffer", ONE_HUNDRED_MEGABYTES);
+          expect(importCommand.externalExecOpts).toHaveProperty("maxBuffer", ONE_HUNDRED_MEGABYTES);
 
           done();
         } catch (ex) {

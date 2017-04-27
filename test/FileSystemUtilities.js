@@ -99,8 +99,12 @@ describe("FileSystemUtilities", () => {
       FileSystemUtilities.rimraf("rimraf/test", () => {
         try {
           expect(ChildProcessUtilities.spawn).lastCalledWith(
-            "rimraf",
-            ["--no-glob", path.normalize("rimraf/test/")],
+            process.execPath,
+            [
+              require.resolve("rimraf/bin"),
+              "--no-glob",
+              path.normalize("rimraf/test/"),
+            ],
             {},
             expect.any(Function)
           );
@@ -112,9 +116,8 @@ describe("FileSystemUtilities", () => {
     });
 
     it("does not attempt to delete a non-existent directory", (done) => {
-      const dirPath = "rimraf/non-existent";
       pathExists.mockImplementation(() => Promise.resolve(false));
-      FileSystemUtilities.rimraf(dirPath, () => {
+      FileSystemUtilities.rimraf("rimraf/non-existent", () => {
         try {
           expect(ChildProcessUtilities.spawn).not.toBeCalled();
           done();

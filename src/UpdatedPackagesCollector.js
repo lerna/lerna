@@ -1,12 +1,34 @@
-import GitUtilities from "./GitUtilities";
+import _ from "lodash";
 import minimatch from "minimatch";
-import find from "lodash/find";
 import path from "path";
+
+import GitUtilities from "./GitUtilities";
 
 class Update {
   constructor(pkg) {
     this.package = pkg;
   }
+}
+
+function getForcedPackages({ forcePublish }) {
+  // new Set(null) is equivalent to new Set([])
+  // i.e., an empty Set
+  let inputs = null;
+
+  if (forcePublish === true) {
+    // --force-publish
+    inputs = ["*"];
+  } else if (typeof forcePublish === "string") {
+    // --force-publish=*
+    // --force-publish=foo
+    // --force-publish=foo,bar
+    inputs = forcePublish.split(",");
+  } else if (Array.isArray(forcePublish)) {
+    // --force-publish foo --force-publish baz
+    inputs = [...forcePublish];
+  }
+
+  return new Set(inputs);
 }
 
 export default class UpdatedPackagesCollector {
@@ -16,29 +38,29 @@ export default class UpdatedPackagesCollector {
     this.repository = command.repository;
     this.packages = command.filteredPackages;
     this.packageGraph = command.repository.packageGraph;
-    this.progressBar = command.progressBar;
     this.options = command.options;
   }
 
   getUpdates() {
+    this.logger.silly("getUpdates");
+
     this.updatedPackages = this.collectUpdatedPackages();
     this.dependents = this.collectDependents();
     return this.collectUpdates();
   }
 
   collectUpdatedPackages() {
-    this.logger.info("Checking for updated packages...");
+    this.logger.info("", "Checking for updated packages...");
 
     const hasTags = GitUtilities.hasTags(this.execOpts);
 
     if (hasTags) {
       const tag = GitUtilities.getLastTag(this.execOpts);
-      this.logger.info("Comparing with: " + tag);
+      this.logger.info("", "Comparing with tag " + tag);
     } else {
-      this.logger.info("No tags found! Comparing with initial commit.");
+      this.logger.warn("", "No tags found!");
+      this.logger.info("", "Comparing with initial commit.");
     }
-
-    this.progressBar.init(this.packages.length);
 
     let commits;
 
@@ -60,33 +82,39 @@ export default class UpdatedPackagesCollector {
     }
 
     const updatedPackages = {};
+    const tracker = this.logger.newItem("find updated packages");
 
-    this.packages.filter((pkg) => {
-      this.progressBar.tick(pkg.name);
-
-      if (!hasTags) {
-        return true;
-      }
-
-      const forcePublish = (this.options.forcePublish || "").split(",");
-
-      if (forcePublish.indexOf("*") > -1) {
-        return true;
-      } else if (forcePublish.indexOf(pkg.name) > -1) {
-        return true;
-      } else {
-        return this.hasDiffSinceThatIsntIgnored(pkg, commits);
-      }
-    }).forEach((pkg) => {
+    const registerUpdated = (pkg) => {
+      this.logger.verbose("has update", pkg.name);
       updatedPackages[pkg.name] = pkg;
-    });
+    };
 
-    this.progressBar.terminate();
+    const forced = getForcedPackages(this.options);
+
+    if (!hasTags || forced.has("*")) {
+      this.packages.forEach(registerUpdated);
+    } else {
+      tracker.addWork(this.packages.length);
+
+      this.packages.filter((pkg) => {
+        tracker.completeWork(1);
+
+        if (forced.has(pkg.name)) {
+          return true;
+        } else {
+          return this.hasDiffSinceThatIsntIgnored(pkg, commits);
+        }
+      }).forEach(registerUpdated);
+    }
+
+    tracker.finish();
 
     return updatedPackages;
   }
 
   isPackageDependentOf(packageName, dependency) {
+    this.logger.silly("isPackageDependentOf", packageName, dependency);
+
     if (!this.cache[packageName]) {
       this.cache[packageName] = {};
     }
@@ -119,12 +147,15 @@ export default class UpdatedPackagesCollector {
   }
 
   collectDependents() {
+    this.logger.silly("collectDependents");
+
     const dependents = {};
     this.cache = {};
 
     this.packages.forEach((pkg) => {
       Object.keys(this.updatedPackages).forEach((dependency) => {
         if (this.isPackageDependentOf(pkg.name, dependency)) {
+          this.logger.verbose("dependent", "%s depends on %s", pkg.name, dependency);
           dependents[pkg.name] = pkg;
         }
       });
@@ -134,6 +165,8 @@ export default class UpdatedPackagesCollector {
   }
 
   collectUpdates() {
+    this.logger.silly("collectUpdates");
+
     return this.packages.filter((pkg) => {
       return (
         this.updatedPackages[pkg.name] ||
@@ -141,6 +174,7 @@ export default class UpdatedPackagesCollector {
         this.options.canary
       );
     }).map((pkg) => {
+      this.logger.verbose("has filtered update", pkg.name);
       return new Update(pkg);
     });
   }
@@ -165,7 +199,7 @@ export default class UpdatedPackagesCollector {
 
     if (this.options.ignore) {
       changedFiles = changedFiles.filter((file) => {
-        return !find(this.options.ignore, (pattern) => {
+        return !_.find(this.options.ignore, (pattern) => {
           return minimatch(file, pattern, { matchBase: true });
         });
       });

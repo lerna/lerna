@@ -1,4 +1,6 @@
 import async from "async";
+import path from "path";
+
 import Command from "../Command";
 import FileSystemUtilities from "../FileSystemUtilities";
 import PromptUtilities from "../PromptUtilities";
@@ -13,48 +15,48 @@ export const describe = "Remove the node_modules directory from all packages.";
 
 export const builder = {
   "yes": {
+    group: "Command Options:",
     describe: "Skip all confirmation prompts"
   }
 };
 
 export default class CleanCommand extends Command {
   initialize(callback) {
+    this.directoriesToDelete = this.filteredPackages.map((pkg) => pkg.nodeModulesLocation);
+
     if (this.options.yes) {
       callback(null, true);
     } else {
-      this.logger.info(`About to remove the following directories:\n${
-        this.filteredPackages.map((pkg) => "- " + pkg.nodeModulesLocation).join("\n")
+      this.logger.info("", `About to remove the following directories:\n${
+        this.directoriesToDelete.map((dir) => path.relative(this.repository.rootPath, dir)).join("\n")
       }`);
+
       PromptUtilities.confirm("Proceed?", (confirmed) => {
-        if (confirmed) {
-          callback(null, true);
-        } else {
-          this.logger.info("Okay bye!");
-          callback(null, false);
-        }
+        callback(null, confirmed);
       });
     }
   }
 
   execute(callback) {
-    this.progressBar.init(this.filteredPackages.length);
-    this.rimrafNodeModulesInPackages((err) => {
-      this.progressBar.terminate();
+    const tracker = this.logger.newItem("clean");
+    tracker.addWork(this.directoriesToDelete.length);
+
+    async.parallelLimit(this.directoriesToDelete.map((dirPath) => (cb) => {
+      tracker.info("clean", "removing", dirPath);
+
+      FileSystemUtilities.rimraf(dirPath, (err) => {
+        tracker.completeWork(1);
+        cb(err);
+      });
+    }), this.concurrency, (err) => {
+      tracker.finish();
+
       if (err) {
         callback(err);
       } else {
-        this.logger.info("All clean!");
+        this.logger.success("clean", "finished");
         callback(null, true);
       }
     });
-  }
-
-  rimrafNodeModulesInPackages(callback) {
-    async.parallelLimit(this.filteredPackages.map((pkg) => (cb) => {
-      FileSystemUtilities.rimraf(pkg.nodeModulesLocation, (err) => {
-        this.progressBar.tick(pkg.name);
-        cb(err);
-      });
-    }), this.concurrency, callback);
   }
 }

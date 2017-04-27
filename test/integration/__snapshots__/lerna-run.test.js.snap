@@ -1,17 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`stdout: my-script --scope 1`] = `
-"Lerna __TEST_VERSION__
-Scoping to packages that match 'package-1'
-package-1
-Successfully ran npm script 'my-script' in packages:
-- package-1"
+exports[`stderr: my-script --scope 1`] = `
+"lerna info version __TEST_VERSION__
+lerna info scope package-1
+lerna success run Ran npm script 'my-script' in packages:
+lerna success - package-1"
 `;
 
-exports[`stdout: test --ignore 1`] = `
-"Lerna __TEST_VERSION__
-Ignoring packages that match 'package-@(1|2|3)'
-package-4
-Successfully ran npm script 'test' in packages:
-- package-4"
+exports[`stderr: test --ignore 1`] = `
+"lerna info version __TEST_VERSION__
+lerna info ignore package-@(1|2|3)
+lerna success run Ran npm script 'test' in packages:
+lerna success - package-4"
 `;
+
+exports[`stdout: my-script --scope 1`] = `"package-1"`;
+
+exports[`stdout: test --ignore 1`] = `"package-4"`;

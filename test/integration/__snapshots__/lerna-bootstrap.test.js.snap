@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`lockfiles: --npm-client yarn 1`] = `
+exports[`--npm-client yarn: lockfiles 1`] = `
 Array [
   "package-1/yarn.lock",
   "package-2/yarn.lock",
@@ -8,78 +8,69 @@ Array [
 ]
 `;
 
-exports[`stdout: --ignore 1`] = `
-"Lerna __TEST_VERSION__
-Ignoring packages that match '@integration/package-1'
-Bootstrapping 3 packages
-Preinstalling packages
-Installing external dependencies
-Symlinking packages and binaries
-Postinstalling packages
-Prepublishing packages
-Successfully bootstrapped 3 packages."
+exports[`--npm-client yarn: stderr 1`] = `
+"lerna info version __TEST_VERSION__
+lerna info Bootstrapping 4 packages
+lerna info lifecycle preinstall
+lerna info Installing external dependencies
+lerna info Symlinking packages and binaries
+lerna info lifecycle postinstall
+lerna info lifecycle prepublish
+lerna success Bootstrapped 4 packages"
 `;
 
-exports[`stdout: --npm-client yarn 1`] = `
-"Lerna __TEST_VERSION__
-Bootstrapping 4 packages
-Preinstalling packages
-Installing external dependencies
-Symlinking packages and binaries
-Postinstalling packages
-Prepublishing packages
-Successfully bootstrapped 4 packages."
-`;
-
-exports[`stdout: --npm-client yarn 2`] = `
-"Lerna __TEST_VERSION__
-package-1
+exports[`--npm-client yarn: stdout 1`] = `
+"package-1
 package-2
 cli package-2 OK
 package-3 cli1 OK
-package-3 cli2 package-2 OK
-Successfully ran npm script 'test' in packages:
-- @integration/package-1
-- @integration/package-2
-- @integration/package-3
-- package-4"
+package-3 cli2 package-2 OK"
 `;
 
-exports[`stdout: postinstall 1`] = `
-"Lerna __TEST_VERSION__
-package-1
+exports[`ignore: stderr 1`] = `
+"lerna info version __TEST_VERSION__
+lerna info ignore @integration/package-1
+lerna info Bootstrapping 3 packages
+lerna info lifecycle preinstall
+lerna info Installing external dependencies
+lerna info Symlinking packages and binaries
+lerna info lifecycle postinstall
+lerna info lifecycle prepublish
+lerna success Bootstrapped 3 packages"
+`;
+
+exports[`npm postinstall: stderr 1`] = `
+"lerna info version __TEST_VERSION__
+lerna success run Ran npm script 'test' in packages:
+lerna success - @integration/package-1
+lerna success - @integration/package-2
+lerna success - @integration/package-3
+lerna success - package-4"
+`;
+
+exports[`npm postinstall: stdout 1`] = `
+"package-1
 package-2
 cli package-2 OK
 package-3 cli1 OK
-package-3 cli2 package-2 OK
-Successfully ran npm script 'test' in packages:
-- @integration/package-1
-- @integration/package-2
-- @integration/package-3
-- package-4"
+package-3 cli2 package-2 OK"
 `;
 
-exports[`stdout: simple 1`] = `
-"Lerna __TEST_VERSION__
-Bootstrapping 4 packages
-Preinstalling packages
-Installing external dependencies
-Symlinking packages and binaries
-Postinstalling packages
-Prepublishing packages
-Successfully bootstrapped 4 packages."
+exports[`simple: stderr 1`] = `
+"lerna info version __TEST_VERSION__
+lerna info Bootstrapping 4 packages
+lerna info lifecycle preinstall
+lerna info Installing external dependencies
+lerna info Symlinking packages and binaries
+lerna info lifecycle postinstall
+lerna info lifecycle prepublish
+lerna success Bootstrapped 4 packages"
 `;
 
-exports[`stdout: simple 2`] = `
-"Lerna __TEST_VERSION__
-package-1
+exports[`simple: stdout 1`] = `
+"package-1
 package-2
 cli package-2 OK
 package-3 cli1 OK
-package-3 cli2 package-2 OK
-Successfully ran npm script 'test' in packages:
-- @integration/package-1
-- @integration/package-2
-- @integration/package-3
-- package-4"
+package-3 cli2 package-2 OK"
 `;

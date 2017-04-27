@@ -1,3 +1,4 @@
+import log from "npmlog";
 import path from "path";
 
 // mocked modules
@@ -14,6 +15,9 @@ import DiffCommand from "../src/commands/DiffCommand";
 
 jest.mock("../src/ChildProcessUtilities");
 jest.mock("../src/GitUtilities");
+
+// silence logs
+log.level = "silent";
 
 describe("DiffCommand", () => {
   const callbackSuccess = callsBack(null, true);

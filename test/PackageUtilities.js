@@ -1,3 +1,4 @@
+import log from "npmlog";
 import path from "path";
 
 // tightly-coupled modules; TODO: decouple
@@ -10,15 +11,13 @@ import initFixture from "./helpers/initFixture";
 // file under test
 import PackageUtilities from "../src/PackageUtilities";
 
+// silence logs
+log.level = "silent";
+
 describe("PackageUtilities", () => {
   describe(".getPackages()", () => {
-    let testDir;
-
-    beforeEach(() => initFixture("PackageUtilities/basic").then((dir) => {
-      testDir = dir;
-    }));
-
-    it("should collect all the packages from the given packages directory", () => {
+    it("should collect all the packages from the given packages directory", async () => {
+      const testDir = await initFixture("PackageUtilities/basic");
       const result = PackageUtilities.getPackages(new Repository(testDir));
       expect(result).toHaveLength(4);
 
@@ -27,6 +26,19 @@ describe("PackageUtilities", () => {
       expect(pkgOne.name).toBe("package-1");
       expect(pkgOne.version).toBe("1.0.0");
       expect(pkgOne.location).toBe(path.join(testDir, "packages", "package-1"));
+    });
+
+    it("finds nested packages with globstar", async () => {
+      const testDir = await initFixture("PackageUtilities/globstar");
+      const result = PackageUtilities.getPackages(new Repository(testDir));
+      expect(result.map((pkg) => pkg.name)).toEqual([
+        "globstar-monorepo",
+        "package-2",
+        "package-4",
+        "package-1",
+        "package-3",
+        "package-5",
+      ]);
     });
   });
 
@@ -207,8 +219,14 @@ describe("PackageUtilities", () => {
     }));
 
     it("should batch roots, then internal/leaf nodes, then cycles", () => {
+      let warnedCycle;
+      log.once("log.warn", () => {
+        warnedCycle = true;
+      });
+
       const batchedPackages = PackageUtilities.topologicallyBatchPackages(packages);
 
+      expect(warnedCycle).toBe(true);
       expect(batchedPackages.map((batch) => batch.map((pkg) => pkg.name))).toEqual(
         [
           ["package-dag-1", "package-standalone"],

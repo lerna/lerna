@@ -45,25 +45,25 @@ Object {
 }
 `;
 
-exports[`stdout: empty directory 1`] = `
-"Lerna __TEST_VERSION__
-Initializing Git repository.
-Creating package.json.
-Creating lerna.json.
-Successfully initialized Lerna files"
+exports[`stderr: empty directory 1`] = `
+"lerna info version __TEST_VERSION__
+lerna info Initializing Git repository
+lerna info Creating package.json
+lerna info Creating lerna.json
+lerna success Initialized Lerna files"
 `;
 
-exports[`stdout: has-version 1`] = `
-"Lerna __TEST_VERSION__
-Creating package.json.
-Creating lerna.json.
-Removing old VERSION file.
-Successfully initialized Lerna files"
+exports[`stderr: has-version 1`] = `
+"lerna info version __TEST_VERSION__
+lerna info Creating package.json
+lerna info Creating lerna.json
+lerna info Removing old VERSION file
+lerna success Initialized Lerna files"
 `;
 
-exports[`stdout: updates 1`] = `
-"Lerna __TEST_VERSION__
-Updating package.json.
-Updating lerna.json.
-Successfully initialized Lerna files"
+exports[`stderr: updates 1`] = `
+"lerna info version __TEST_VERSION__
+lerna info Updating package.json
+lerna info Updating lerna.json
+lerna success Initialized Lerna files"
 `;

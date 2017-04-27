@@ -1,8 +1,9 @@
 import chalk from "chalk";
+import log from "npmlog";
 import normalizeNewline from "normalize-newline";
 
 // mocked or stubbed modules
-import logger from "../src/logger";
+import output from "../src/utils/output";
 
 // helpers
 import exitWithCode from "./helpers/exitWithCode";
@@ -11,23 +12,20 @@ import initFixture from "./helpers/initFixture";
 // file under test
 import LsCommand from "../src/commands/LsCommand";
 
+jest.mock("../src/utils/output");
+
+// silence logs
+log.level = "silent";
+
 // keep snapshots stable cross-platform
 chalk.enabled = false;
 
-const normalized = (spy) =>
-  spy.mock.calls.map((args) => normalizeNewline(args[0]));
-
-// isolates singleton logger method from other command instances
-const stubLogger = (instance, logMethod) =>
-  jest.spyOn(instance.logger, logMethod).mockImplementation(() => {});
-
-// restore singleton method after every isolated assertion
-const loggerInfo = logger.info;
-afterEach(() => {
-  logger.info = loggerInfo;
-});
+const consoleOutput = () =>
+  output.mock.calls.map((args) => normalizeNewline(args[0]));
 
 describe("LsCommand", () => {
+  afterEach(() => jest.resetAllMocks());
+
   describe("in a basic repo", () => {
     let testDir;
 
@@ -41,12 +39,10 @@ describe("LsCommand", () => {
       lsCommand.runValidations();
       lsCommand.runPreparations();
 
-      const logInfo = stubLogger(lsCommand, "info");
-
       lsCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
         try {
-          expect(normalized(logInfo)).toMatchSnapshot();
+          expect(consoleOutput()).toMatchSnapshot();
           done();
         } catch (ex) {
           done.fail(ex);
@@ -68,12 +64,10 @@ describe("LsCommand", () => {
         lsCommand.runValidations();
         lsCommand.runPreparations();
 
-        const logInfo = stubLogger(lsCommand, "info");
-
         lsCommand.runCommand(exitWithCode(0, (err) => {
           if (err) return done.fail(err);
           try {
-            expect(normalized(logInfo)).toMatchSnapshot();
+            expect(consoleOutput()).toMatchSnapshot();
             done();
           } catch (ex) {
             done.fail(ex);
@@ -96,12 +90,10 @@ describe("LsCommand", () => {
       lsCommand.runValidations();
       lsCommand.runPreparations();
 
-      const logInfo = stubLogger(lsCommand, "info");
-
       lsCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
         try {
-          expect(normalized(logInfo)).toMatchSnapshot();
+          expect(consoleOutput()).toMatchSnapshot();
           done();
         } catch (ex) {
           done.fail(ex);
@@ -126,12 +118,10 @@ describe("LsCommand", () => {
       lsCommand.runValidations();
       lsCommand.runPreparations();
 
-      const logInfo = stubLogger(lsCommand, "info");
-
       lsCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
         try {
-          expect(normalized(logInfo)).toMatchSnapshot();
+          expect(consoleOutput()).toMatchSnapshot();
           done();
         } catch (ex) {
           done.fail(ex);

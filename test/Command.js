@@ -1,9 +1,9 @@
+import log from "npmlog";
+
 // mocked or stubbed modules
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
 import FileSystemUtilities from "../src/FileSystemUtilities";
 import GitUtilities from "../src/GitUtilities";
-import logger from "../src/logger";
-import progressBar from "../src/progressBar";
 
 // helpers
 import callsBack from "./helpers/callsBack";
@@ -15,6 +15,9 @@ import Command from "../src/Command";
 jest.mock("../src/ChildProcessUtilities");
 jest.mock("../src/FileSystemUtilities");
 jest.mock("../src/GitUtilities");
+
+// silence logs
+log.level = "silent";
 
 describe("Command", () => {
   beforeEach(() => {
@@ -48,17 +51,10 @@ describe("Command", () => {
     });
   });
 
-  describe(".progressBar", () => {
-    it("should be added to the instance", () => {
-      const command = new Command([], {});
-      expect(command.progressBar).toBe(progressBar);
-    });
-  });
-
   describe(".logger", () => {
     it("should be added to the instance", () => {
       const command = new Command([], {});
-      expect(command.logger).toBe(logger);
+      expect(command.logger).toBeDefined();
     });
   });
 
@@ -96,6 +92,21 @@ describe("Command", () => {
     it("is disabled when sort config is explicitly false (--no-sort)", () => {
       const command = new Command([], { sort: false });
       expect(command.toposort).toBe(false);
+    });
+  });
+
+  describe(".execOpts", () => {
+    const ONE_HUNDRED_MEGABYTES = 1000 * 1000 * 100;
+    const REPO_PATH = process.cwd();
+
+    it("has maxBuffer", () => {
+      const command = new Command([], { maxBuffer: ONE_HUNDRED_MEGABYTES });
+      expect(command.execOpts.maxBuffer).toBe(ONE_HUNDRED_MEGABYTES);
+    });
+
+    it("has repo path", () => {
+      const command = new Command([], {}, REPO_PATH);
+      expect(command.execOpts.cwd).toBe(REPO_PATH);
     });
   });
 
@@ -143,7 +154,11 @@ describe("Command", () => {
           ChildProcessUtilities.getChildProcessCount = jest.fn(() => idx);
 
           const exitCommand = new ExitCommand([], {}, testDir);
-          const logInfo = jest.spyOn(exitCommand.logger, "info");
+
+          let warning;
+          log.once("log.warn", (m) => {
+            warning = m;
+          });
 
           exitCommand.runValidations();
           exitCommand.runPreparations();
@@ -154,9 +169,7 @@ describe("Command", () => {
               expect(code).toBe(0);
 
               if (msg) {
-                expect(logInfo).lastCalledWith(
-                  expect.stringContaining(`Waiting for ${idx} child ${msg} to exit.`)
-                );
+                expect(warning.message).toMatch(`Waiting for ${idx} child ${msg} to exit.`);
               }
 
               done();
@@ -245,16 +258,26 @@ describe("Command", () => {
     }
 
     describe("bootstrapConfig", () => {
+      afterEach(() => {
+        log.removeAllListeners("log.warn");
+      });
+
       class BootstrapCommand extends Command {
       }
 
       it("should warn when used", () => {
         const instance = new BootstrapCommand([], {}, testDir);
-        const logWarn = jest.spyOn(instance.logger, "warn");
+
+        let warning;
+        log.once("log.warn", (m) => {
+          warning = m;
+        });
 
         instance.options;
-        expect(logWarn).lastCalledWith(
-          "`bootstrapConfig.ignore` is deprecated.  Use `commands.bootstrap.ignore`."
+
+        expect(warning).toHaveProperty(
+          "message",
+          "`bootstrapConfig.ignore` has been replaced by `command.bootstrap.ignore`."
         );
       });
 
@@ -265,10 +288,12 @@ describe("Command", () => {
 
       it("should not warn with other commands", () => {
         const instance = new TestCommand([], {}, testDir);
-        const logWarn = jest.spyOn(instance.logger, "warn");
+
+        log.once("log.warn", () => {
+          throw new Error("should not warn bootstrapConfig");
+        });
 
         instance.options;
-        expect(logWarn).not.toBeCalled();
       });
 
       it("should not provide a value to other commands", () => {
@@ -278,16 +303,26 @@ describe("Command", () => {
     });
 
     describe("publishConfig", () => {
+      afterEach(() => {
+        log.removeAllListeners("log.warn");
+      });
+
       class PublishCommand extends Command {
       }
 
       it("should warn when used", () => {
         const instance = new PublishCommand([], {}, testDir);
-        const logWarn = jest.spyOn(instance.logger, "warn");
+
+        let warning;
+        log.once("log.warn", (m) => {
+          warning = m;
+        });
 
         instance.options;
-        expect(logWarn).lastCalledWith(
-          "`publishConfig.ignore` is deprecated.  Use `commands.publish.ignore`."
+
+        expect(warning).toHaveProperty(
+          "message",
+          "`publishConfig.ignore` has been replaced by `command.publish.ignore`."
         );
       });
 
@@ -298,10 +333,12 @@ describe("Command", () => {
 
       it("should not warn with other commands", () => {
         const instance = new TestCommand([], {}, testDir);
-        const logWarn = jest.spyOn(instance.logger, "warn");
+
+        log.once("log.warn", () => {
+          throw new Error("should not warn publishConfig");
+        });
 
         instance.options;
-        expect(logWarn).not.toBeCalled();
       });
 
       it("should not provide a value to other commands", () => {

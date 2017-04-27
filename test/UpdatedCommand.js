@@ -1,24 +1,31 @@
 import chalk from "chalk";
 import execa from "execa";
-import path from "path";
+import log from "npmlog";
 import normalizeNewline from "normalize-newline";
+import path from "path";
 
 // mocked or stubbed modules
-import logger from "../src/logger";
+import output from "../src/utils/output";
 
 // helpers
 import exitWithCode from "./helpers/exitWithCode";
 import initFixture from "./helpers/initFixture";
+import loggingOutput from "./helpers/loggingOutput";
 import updateLernaConfig from "./helpers/updateLernaConfig";
 
 // file under test
 import UpdatedCommand from "../src/commands/UpdatedCommand";
 
+jest.mock("../src/utils/output");
+
+// silence logs
+log.level = "silent";
+
 // keep snapshots stable cross-platform
 chalk.enabled = false;
 
-const normalized = (spy) =>
-  spy.mock.calls.map((args) => normalizeNewline(args[0]));
+const consoleOutput = () =>
+  output.mock.calls.map((args) => normalizeNewline(args[0]));
 
 const gitTag = (opts) => execa.sync("git", ["tag", "v1.0.0"], opts);
 const gitAdd = (opts) => execa.sync("git", ["add", "-A"], opts);
@@ -36,16 +43,8 @@ const setupGitChanges = (testDir, filePaths) => {
   gitCommit(opts);
 };
 
-// isolates singleton logger method from other command instances
-const stubLogger = (instance, logMethod) =>
-  jest.spyOn(instance.logger, logMethod).mockImplementation(() => {});
-
 describe("UpdatedCommand", () => {
-  const loggerInfo = logger.info;
-
-  afterEach(() => {
-    logger.info = loggerInfo;
-  });
+  afterEach(() => jest.resetAllMocks());
 
   /** =========================================================================
    * Basic
@@ -68,12 +67,11 @@ describe("UpdatedCommand", () => {
       updatedCommand.runValidations();
       updatedCommand.runPreparations();
 
-      const logInfo = stubLogger(updatedCommand, "info");
-
       updatedCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
         try {
-          expect(normalized(logInfo)).toMatchSnapshot();
+          expect(loggingOutput()).toMatchSnapshot();
+          expect(consoleOutput()).toMatchSnapshot();
           done();
         } catch (ex) {
           done.fail(ex);
@@ -87,12 +85,11 @@ describe("UpdatedCommand", () => {
       updatedCommand.runValidations();
       updatedCommand.runPreparations();
 
-      const logInfo = stubLogger(updatedCommand, "info");
-
       updatedCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
         try {
-          expect(normalized(logInfo)).toMatchSnapshot();
+          expect(loggingOutput()).toMatchSnapshot();
+          expect(consoleOutput()).toMatchSnapshot();
           done();
         } catch (ex) {
           done.fail(ex);
@@ -112,12 +109,11 @@ describe("UpdatedCommand", () => {
       updatedCommand.runValidations();
       updatedCommand.runPreparations();
 
-      const logInfo = stubLogger(updatedCommand, "info");
-
       updatedCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
         try {
-          expect(normalized(logInfo)).toMatchSnapshot();
+          expect(loggingOutput()).toMatchSnapshot();
+          expect(consoleOutput()).toMatchSnapshot();
           done();
         } catch (ex) {
           done.fail(ex);
@@ -137,12 +133,11 @@ describe("UpdatedCommand", () => {
       updatedCommand.runValidations();
       updatedCommand.runPreparations();
 
-      const logInfo = stubLogger(updatedCommand, "info");
-
       updatedCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
         try {
-          expect(normalized(logInfo)).toMatchSnapshot();
+          expect(loggingOutput()).toMatchSnapshot();
+          expect(consoleOutput()).toMatchSnapshot();
           done();
         } catch (ex) {
           done.fail(ex);
@@ -169,12 +164,11 @@ describe("UpdatedCommand", () => {
       updatedCommand.runValidations();
       updatedCommand.runPreparations();
 
-      const logInfo = stubLogger(updatedCommand, "info");
-
       updatedCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
         try {
-          expect(normalized(logInfo)).toMatchSnapshot();
+          expect(loggingOutput()).toMatchSnapshot();
+          expect(consoleOutput()).toMatchSnapshot();
           done();
         } catch (ex) {
           done.fail(ex);
@@ -194,12 +188,11 @@ describe("UpdatedCommand", () => {
       updatedCommand.runValidations();
       updatedCommand.runPreparations();
 
-      const logInfo = stubLogger(updatedCommand, "info");
-
       updatedCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
         try {
-          expect(normalized(logInfo)).toMatchSnapshot();
+          expect(loggingOutput()).toMatchSnapshot();
+          expect(consoleOutput()).toMatchSnapshot();
           done();
         } catch (ex) {
           done.fail(ex);
@@ -217,12 +210,11 @@ describe("UpdatedCommand", () => {
       updatedCommand.runValidations();
       updatedCommand.runPreparations();
 
-      const logInfo = stubLogger(updatedCommand, "info");
-
       updatedCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
         try {
-          expect(normalized(logInfo)).toMatchSnapshot();
+          expect(loggingOutput()).toMatchSnapshot();
+          expect(consoleOutput()).toMatchSnapshot();
           done();
         } catch (ex) {
           done.fail(ex);
@@ -252,12 +244,10 @@ describe("UpdatedCommand", () => {
       updatedCommand.runValidations();
       updatedCommand.runPreparations();
 
-      const logInfo = stubLogger(updatedCommand, "info");
-
       updatedCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
         try {
-          expect(normalized(logInfo)).toMatchSnapshot();
+          expect(consoleOutput()).toMatchSnapshot();
           done();
         } catch (ex) {
           done.fail(ex);
@@ -277,12 +267,10 @@ describe("UpdatedCommand", () => {
       updatedCommand.runValidations();
       updatedCommand.runPreparations();
 
-      const logInfo = stubLogger(updatedCommand, "info");
-
       updatedCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
         try {
-          expect(normalized(logInfo)).toMatchSnapshot();
+          expect(consoleOutput()).toMatchSnapshot();
           done();
         } catch (ex) {
           done.fail(ex);
@@ -302,12 +290,10 @@ describe("UpdatedCommand", () => {
       updatedCommand.runValidations();
       updatedCommand.runPreparations();
 
-      const logInfo = stubLogger(updatedCommand, "info");
-
       updatedCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
         try {
-          expect(normalized(logInfo)).toMatchSnapshot();
+          expect(consoleOutput()).toMatchSnapshot();
           done();
         } catch (ex) {
           done.fail(ex);
@@ -334,12 +320,10 @@ describe("UpdatedCommand", () => {
       updatedCommand.runValidations();
       updatedCommand.runPreparations();
 
-      const logInfo = stubLogger(updatedCommand, "info");
-
       updatedCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
         try {
-          expect(normalized(logInfo)).toMatchSnapshot();
+          expect(consoleOutput()).toMatchSnapshot();
           done();
         } catch (ex) {
           done.fail(ex);

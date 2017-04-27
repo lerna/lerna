@@ -1,75 +1,84 @@
 import execa from "execa";
+import getPort from "get-port";
 import globby from "globby";
 import normalizePath from "normalize-path";
-import initFixture from "../helpers/initFixture";
+
 import { LERNA_BIN } from "../helpers/constants";
-
-const installInDir = (cwd) =>
-  execa("npm", ["install", "--cache-min=99999"], { cwd });
-  // execa("yarn", ["install", "--mutex", "network:42042"], { cwd });
-  // NOTE: yarn doesn't support linking binaries from transitive dependencies
-  // AND it caches the tarball such that it breaks local test suite re-runs :P
-
-const npmTestInDir = (cwd) =>
-  execa("npm", ["test", "--silent"], { cwd });
-  // yarn doesn't support --silent yet (https://github.com/yarnpkg/yarn/pull/2420)
+import initFixture from "../helpers/initFixture";
 
 describe("lerna bootstrap", () => {
   describe("from CLI", () => {
-    test.concurrent("bootstraps all packages", () => {
-      return initFixture("BootstrapCommand/integration").then((cwd) => {
-        return Promise.resolve()
-          .then(() => execa(LERNA_BIN, ["bootstrap"], { cwd }))
-          .then((result) => {
-            expect(result.stdout).toMatchSnapshot("stdout: simple");
-          })
-          .then(() => execa(LERNA_BIN, ["run", "test", "--", "--silent"], { cwd }))
-          .then((result) => {
-            expect(result.stdout).toMatchSnapshot("stdout: simple");
-          });
-      });
+    test.concurrent("bootstraps all packages", async () => {
+      const cwd = await initFixture("BootstrapCommand/integration");
+      const args = [
+        "bootstrap",
+      ];
+
+      const stderr = await execa.stderr(LERNA_BIN, args, { cwd });
+      expect(stderr).toMatchSnapshot("simple: stderr");
+
+      const stdout = await execa.stdout(LERNA_BIN, ["run", "test", "--", "--silent"], { cwd });
+      expect(stdout).toMatchSnapshot("simple: stdout");
     });
 
-    test.concurrent("respects ignore flag", () => {
-      return initFixture("BootstrapCommand/integration").then((cwd) => {
-        return Promise.resolve()
-          .then(() => execa(LERNA_BIN, ["bootstrap", "--ignore", "@integration/package-1"], { cwd }))
-          .then((result) => {
-            expect(result.stdout).toMatchSnapshot("stdout: --ignore");
-          });
-      });
+    test.concurrent("respects ignore flag", async () => {
+      const cwd = await initFixture("BootstrapCommand/integration");
+      const args = [
+        "bootstrap",
+        "--ignore",
+        "@integration/package-1",
+      ];
+
+      const stderr = await execa.stderr(LERNA_BIN, args, { cwd });
+      expect(stderr).toMatchSnapshot("ignore: stderr");
     });
 
-    test.concurrent("--npm-client yarn", () => {
-      return initFixture("BootstrapCommand/integration").then((cwd) => {
-        return Promise.resolve()
-          .then(() => execa(LERNA_BIN, ["bootstrap", "--npm-client", "yarn"], { cwd }))
-          .then((result) => {
-            expect(result.stdout).toMatchSnapshot("stdout: --npm-client yarn");
-          })
-          .then(() => globby(["package-*/yarn.lock"], { cwd }))
-          .then((lockfiles) => lockfiles.map((fp) => normalizePath(fp)))
-          .then((lockfiles) => {
-            expect(lockfiles).toMatchSnapshot("lockfiles: --npm-client yarn");
-          })
-          .then(() => execa(LERNA_BIN, ["run", "test", "--", "--silent"], { cwd }))
-          .then((result) => {
-            expect(result.stdout).toMatchSnapshot("stdout: --npm-client yarn");
-          });
-      });
+    test.concurrent("--npm-client yarn", async () => {
+      const cwd = await initFixture("BootstrapCommand/integration");
+      const args = [
+        "bootstrap",
+        "--npm-client",
+        "yarn",
+      ];
+
+      const stderr = await execa.stderr(LERNA_BIN, args, { cwd });
+      expect(stderr).toMatchSnapshot("--npm-client yarn: stderr");
+
+      const lockfiles = await globby(["package-*/yarn.lock"], { cwd }).then(
+        (globbed) => globbed.map((fp) => normalizePath(fp))
+      );
+      expect(lockfiles).toMatchSnapshot("--npm-client yarn: lockfiles");
+
+      const stdout = await execa.stdout(LERNA_BIN, ["run", "test", "--", "--silent"], { cwd });
+      expect(stdout).toMatchSnapshot("--npm-client yarn: stdout");
     });
   });
 
-  describe("from npm script", () => {
-    test.concurrent("bootstraps all packages", () => {
-      return initFixture("BootstrapCommand/integration-lifecycle").then((cwd) => {
-        return Promise.resolve()
-          .then(() => installInDir(cwd))
-          .then(() => npmTestInDir(cwd))
-          .then((result) => {
-            expect(result.stdout).toMatchSnapshot("stdout: postinstall");
-          });
-      });
+  describe("from npm script", async () => {
+    test.concurrent("bootstraps all packages", async () => {
+      const cwd = await initFixture("BootstrapCommand/integration-lifecycle");
+      await execa("npm", ["install", "--cache-min=99999"], { cwd });
+
+      const { stdout, stderr } = await execa("npm", ["test", "--silent"], { cwd });
+      expect(stdout).toMatchSnapshot("npm postinstall: stdout");
+      expect(stderr).toMatchSnapshot("npm postinstall: stderr");
+    });
+
+    test.skip("works with yarn install", async () => {
+      const cwd = await initFixture("BootstrapCommand/integration-lifecycle");
+
+      const port = await getPort(42042);
+      const mutex = ["--mutex", `network:${port}`];
+
+      // NOTE: yarn doesn't support linking binaries from transitive dependencies,
+      // so it's important to test _both_ lifecycle variants.
+      // TODO: ...eventually :P
+      // FIXME: yarn doesn't understand file:// URLs... /sigh
+      await execa("yarn", ["install", "--no-lockfile", ...mutex], { cwd });
+
+      const { stdout, stderr } = await execa("yarn", ["test", "--silent", ...mutex], { cwd });
+      expect(stdout).toMatchSnapshot("yarn postinstall: stdout");
+      expect(stderr).toMatchSnapshot("yarn postinstall: stderr");
     });
   });
 });

@@ -1,6 +1,8 @@
-import Command from "../Command";
 import chalk from "chalk";
 import columnify from "columnify";
+
+import Command from "../Command";
+import output from "../utils/output";
 
 export function handler(argv) {
   return new LsCommand(argv._, argv).run();
@@ -28,7 +30,8 @@ export default class LsCommand extends Command {
         };
       });
 
-    this.logger.info(columnify(formattedPackages, { showHeaders: false }));
+    output(columnify(formattedPackages, { showHeaders: false }));
+
     callback(null, true);
   }
 }

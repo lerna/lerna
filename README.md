@@ -16,10 +16,11 @@
 - [About](#about)
 - [Getting Started](#getting-started)
 - [How It Works](#how-it-works)
+- [Troubleshooting](#troubleshooting)
 - [Commands](#commands)
 - [Misc](#misc)
- - [Lerna.json](#lernajson)
- - [Flags](#flags)
+- [Lerna.json](#lernajson)
+- [Flags](#flags)
 
 ## About
 
@@ -115,6 +116,11 @@ Independent mode allows you to more specifically update versions for each packag
 
 > The `version` key in `lerna.json` is ignored in independent mode.
 
+## Troubleshooting
+
+If you encounter any issues while using Lerna please check out our [Troubleshooting](doc/troubleshooting.md) 
+document where you might find the answer to your problem.
+
 ## Frequently asked questions
 
 See [FAQ.md](FAQ.md).
@@ -139,12 +145,11 @@ When run, this command will:
 Example output on a new git repo:
 
 ```sh
-> lerna init
-$ Lerna v2.0.0-beta.31
-$ Creating packages directory.
-$ Updating package.json.
-$ Creating lerna.json.
-$ Successfully created Lerna files
+$ lerna init
+lerna info version v2.0.0-rc.3
+lerna info Updating package.json
+lerna info Creating lerna.json
+lerna success Initialized Lerna files
 ```
 
 #### --independent, -i
@@ -674,6 +679,13 @@ What level of logs to report.  On failure, all logs are written to lerna-debug.l
 
 Any logs of a higher level than the setting are shown.  The default is "info".
 
+#### --max-buffer [in-bytes]
+
+Set a max buffer length for each underlying process call. Useful for example 
+when someone wants to import a repo with a larger amount of commits while 
+running `lerna import`. In that case the built-in buffer length might not 
+be sufficient.
+
 #### --no-sort
 
 By default, all tasks execute on packages in topologically sorted order as to respect the dependency relationships of the packages in question. Cycles are broken on a best-effort basis in a way not guaranteed to be consistent across Lerna invocations.
@@ -745,11 +757,14 @@ This is useful if you do not want to explicitly set up your registry
 configuration in all of your package.json files individually when e.g. using
 private registries.
 
-#### --skip-temp-tag
+#### --temp-tag
 
-When activated, this flag will alter the default publish process by not creating
-a temporary tag and handling the process accordingly. Instead it will immediately
-publish with the proper dist-tag as [npm it self would](https://docs.npmjs.com/cli/dist-tag).
+When passed, this flag will alter the default publish process by first publishing 
+all changed packages to a temporary dist-tag (`lerna-temp`) and then moving the 
+new version(s) to the default [dist-tag](https://docs.npmjs.com/cli/dist-tag) (`latest`).
+
+This is not generally necessary, as Lerna will publish packages in topological 
+order (all dependencies before dependents) by default.
 
 ### Wizard
 

@@ -1,9 +1,10 @@
-import fs from "fs-promise";
-import pathExists from "path-exists";
-import logger from "./logger";
 import cmdShim from "cmd-shim";
-import readCmdShim from "read-cmd-shim";
+import fs from "fs-promise";
+import log from "npmlog";
 import path from "path";
+import pathExists from "path-exists";
+import readCmdShim from "read-cmd-shim";
+
 import ChildProcessUtilities from "./ChildProcessUtilities";
 
 const ENDS_WITH_NEW_LINE = /\n$/;
@@ -12,71 +13,89 @@ function ensureEndsWithNewLine(string) {
   return ENDS_WITH_NEW_LINE.test(string) ? string : string + "\n";
 }
 
+// NOTE: if rimraf moves the location of its executable, this will need to be updated
+const RIMRAF_CLI = require.resolve("rimraf/bin");
+
 // globs only return directories with a trailing slash
 function trailingSlash(filePath) {
   return path.normalize(`${filePath}/`);
 }
 
 export default class FileSystemUtilities {
-  @logger.logifyAsync()
   static mkdirp(filePath, callback) {
+    log.silly("mkdirp", filePath);
     fs.ensureDir(filePath, callback);
   }
 
-  @logger.logifySync()
   static readdirSync(filePath) {
+    log.silly("readdirSync", filePath);
     return fs.readdirSync(filePath);
   }
 
-  @logger.logifySync()
   static existsSync(filePath) {
+    log.silly("existsSync", filePath);
     return pathExists.sync(filePath);
   }
 
-  @logger.logifyAsync()
   static writeFile(filePath, fileContents, callback) {
+    log.silly("writeFile", [filePath, fileContents]);
     fs.writeFile(filePath, ensureEndsWithNewLine(fileContents), callback);
   }
 
-  @logger.logifyAsync()
   static rename(from, to, callback) {
+    log.silly("rename", [from, to]);
     fs.rename(from, to, callback);
   }
 
-  @logger.logifySync()
   static renameSync(from, to) {
+    log.silly("renameSync", [from, to]);
     fs.renameSync(from, to);
   }
 
-  @logger.logifySync()
   static writeFileSync(filePath, fileContents) {
+    log.silly("writeFileSync", [filePath, fileContents]);
     fs.writeFileSync(filePath, ensureEndsWithNewLine(fileContents));
   }
 
-  @logger.logifySync()
   static readFileSync(filePath) {
+    log.silly("readFileSync", filePath);
     return fs.readFileSync(filePath, "utf8").trim();
   }
 
-  @logger.logifySync()
   static statSync(filePath) {
+    log.silly("statSync", filePath);
     return fs.statSync(filePath);
   }
 
-  @logger.logifyAsync()
   static rimraf(dirPath, callback) {
+    log.silly("rimraf", dirPath);
     // Shelling out to a child process for a noop is expensive.
     // Checking if `dirPath` exists to be removed is cheap.
     // This lets us short-circuit if we don't have anything to do.
-    pathExists(dirPath).then((exists) => {
-      if (!exists) return callback();
 
-      ChildProcessUtilities.spawn("rimraf", ["--no-glob", trailingSlash(dirPath)], {}, callback);
-    });
+    return pathExists(dirPath)
+      .then((exists) => {
+        if (!exists) {
+          return callback();
+        }
+
+        const args = [
+          RIMRAF_CLI,
+          "--no-glob",
+          trailingSlash(dirPath),
+        ];
+
+        // We call this resolved CLI path in the "path/to/node path/to/cli <..args>"
+        // pattern to avoid Windows hangups with shebangs (e.g., WSH can't handle it)
+        return ChildProcessUtilities.spawn(process.execPath, args, {}, (err) => {
+          log.verbose("rimraf", "removed", dirPath);
+          callback(err);
+        });
+      });
   }
 
-  @logger.logifyAsync()
   static symlink(src, dest, type, callback) {
+    log.silly("symlink", [src, dest, type]);
     if (process.platform === "win32") {
       createWindowsSymlink(src, dest, type, callback);
     } else {
@@ -84,13 +103,13 @@ export default class FileSystemUtilities {
     }
   }
 
-  @logger.logifySync()
   static unlinkSync(filePath) {
+    log.silly("unlinkSync", filePath);
     fs.unlinkSync(filePath);
   }
 
-  @logger.logifySync()
   static isSymlink(filePath) {
+    log.silly("isSymlink", filePath);
     let result;
 
     if (process.platform === "win32") {
@@ -99,11 +118,13 @@ export default class FileSystemUtilities {
       result = resolvePosixSymlink(filePath);
     }
 
+    log.verbose("isSymlink", [filePath, result]);
     return result;
   }
 }
 
 function createSymbolicLink(src, dest, type, callback) {
+  log.silly("createSymbolicLink", [src, dest, type]);
   fs.lstat(dest, (err) => {
     if (!err) {
       // Something exists at `dest`.  Need to remove it first.

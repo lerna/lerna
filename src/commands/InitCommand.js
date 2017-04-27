@@ -1,9 +1,10 @@
 import _ from "lodash";
-import writePkg from "write-pkg";
 import writeJsonFile from "write-json-file";
+import writePkg from "write-pkg";
+
+import Command from "../Command";
 import FileSystemUtilities from "../FileSystemUtilities";
 import GitUtilities from "../GitUtilities";
-import Command from "../Command";
 
 export function handler(argv) {
   return new InitCommand(argv._, argv).run();
@@ -31,7 +32,7 @@ export default class InitCommand extends Command {
 
   initialize(callback) {
     if (!GitUtilities.isInitialized(this.execOpts)) {
-      this.logger.info("Initializing Git repository.");
+      this.logger.info("", "Initializing Git repository");
       GitUtilities.init(this.execOpts);
     }
 
@@ -44,7 +45,7 @@ export default class InitCommand extends Command {
     this.ensurePackageJSON();
     this.ensureLernaJson();
     this.ensureNoVersionFile();
-    this.logger.success("Successfully initialized Lerna files");
+    this.logger.success("", "Initialized Lerna files");
     callback(null, true);
   }
 
@@ -53,9 +54,9 @@ export default class InitCommand extends Command {
 
     if (!packageJson) {
       packageJson = {};
-      this.logger.info("Creating package.json.");
+      this.logger.info("", "Creating package.json");
     } else {
-      this.logger.info("Updating package.json.");
+      this.logger.info("", "Updating package.json");
     }
 
     let targetDependencies;
@@ -92,9 +93,9 @@ export default class InitCommand extends Command {
     }
 
     if (!this.repository.initVersion) {
-      this.logger.info("Creating lerna.json.");
+      this.logger.info("", "Creating lerna.json");
     } else {
-      this.logger.info("Updating lerna.json.");
+      this.logger.info("", "Updating lerna.json");
     }
 
     Object.assign(lernaJson, {
@@ -115,7 +116,7 @@ export default class InitCommand extends Command {
   ensureNoVersionFile() {
     const versionLocation = this.repository.versionLocation;
     if (FileSystemUtilities.existsSync(versionLocation)) {
-      this.logger.info("Removing old VERSION file.");
+      this.logger.info("", "Removing old VERSION file");
       FileSystemUtilities.unlinkSync(versionLocation);
     }
   }

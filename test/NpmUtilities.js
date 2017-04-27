@@ -1,4 +1,5 @@
 import { EOL } from "os";
+import log from "npmlog";
 import path from "path";
 
 // mocked modules
@@ -12,6 +13,9 @@ import NpmUtilities from "../src/NpmUtilities";
 jest.mock("write-pkg");
 jest.mock("../src/ChildProcessUtilities");
 jest.mock("../src/FileSystemUtilities");
+
+// silence logs
+log.level = "silent";
 
 // we stub getExecOpts() in most tests because
 // we already have enough tests of getExecOpts()
@@ -320,6 +324,44 @@ describe("NpmUtilities", () => {
       });
     });
 
+    it("supports npm install --global-style", (done) => {
+      const directory = path.normalize("/test/installInDir");
+      const dependencies = [
+        "@scoped/foo@latest",
+        "foo@latest",
+      ];
+      const config = {};
+      const npmGlobalStyle = true;
+
+      NpmUtilities.installInDir(directory, dependencies, config, npmGlobalStyle, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          expect(writePkg.mock.calls[0][1]).toEqual(
+            {
+              dependencies: {
+                "@scoped/foo": "latest",
+                foo: "latest",
+              },
+            },
+          );
+          expect(ChildProcessUtilities.exec).lastCalledWith(
+            "npm",
+            ["install", "--global-style"],
+            {
+              directory,
+              registry: undefined,
+            },
+            expect.any(Function)
+          );
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      });
+    });
+
     it("supports custom npmClient", (done) => {
       const directory = path.normalize("/test/installInDir");
       const dependencies = [
@@ -346,6 +388,47 @@ describe("NpmUtilities", () => {
           expect(ChildProcessUtilities.exec).lastCalledWith(
             "yarn",
             ["install", "--mutex", "network:12345"],
+            {
+              directory,
+              registry: undefined,
+            },
+            expect.any(Function)
+          );
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      });
+    });
+
+    it("overrides custom npmClient when using global style", (done) => {
+      const directory = path.normalize("/test/installInDir");
+      const dependencies = [
+        "@scoped/something@github:foo/bar",
+        "something@github:foo/foo",
+      ];
+      const config = {
+        npmClient: "yarn",
+        mutex: "network:12345",
+      };
+      const npmGlobalStyle = true;
+
+      NpmUtilities.installInDir(directory, dependencies, config, npmGlobalStyle, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          expect(writePkg.mock.calls[0][1]).toEqual(
+            {
+              dependencies: {
+                "@scoped/something": "github:foo/bar",
+                something: "github:foo/foo",
+              },
+            },
+          );
+          expect(ChildProcessUtilities.exec).lastCalledWith(
+            "npm",
+            ["install", "--global-style"],
             {
               directory,
               registry: undefined,

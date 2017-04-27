@@ -1,3 +1,24 @@
+## v2.0.0-rc.3 (2017-04-18)
+
+Barring show-stopping bugs, our goal is to cut `v2.0.0` later this week. Big props to all of our brave users riding the bleeding edge of release candidates and reporting issues!
+
+#### :bug: Bug Fix
+* [#764](https://github.com/lerna/lerna/pull/764) Use network mutex when bootstrapping with yarn. ([@evocateur](https://github.com/evocateur))
+
+`lerna bootstrap --npmClient=yarn` should no longer require `--concurrency=1` to avoid yarn cache race conditions.
+
+* [#769](https://github.com/lerna/lerna/pull/769) Fix custom version prompt. ([@timdorr](https://github.com/timdorr))
+* [#771](https://github.com/lerna/lerna/pull/771) Resolve internal CLI calls with Windows-safe pattern. ([@evocateur](https://github.com/evocateur))
+
+If you've ever encountered the error `Error: spawn rimraf ENOENT`, this should fix that. Turns out `yarn` doesn't match a behavior of `npm` when installing, and does _not_ symlink transitive dependency binaries.
+
+#### :house: Internal
+* [#770](https://github.com/lerna/lerna/pull/770) Pass multiple directories to rimraf. ([@evocateur](https://github.com/evocateur))
+
+#### Committers: 2
+- Daniel Stockman ([evocateur](https://github.com/evocateur))
+- Tim Dorr ([timdorr](https://github.com/timdorr))
+
 ## v2.0.0-rc.2 (2017-04-13)
 
 Inching ever closer to :checkered_flag: v2.0.0!
@@ -244,7 +265,7 @@ $ lerna publish --skip-temp-tag
 
 * [#587](https://github.com/lerna/lerna/pull/587) Always run test and env scripts. ([@simon360](https://github.com/simon360))
 
-Defaults to running `npm run test` and `npm run env` 
+Defaults to running `npm run test` and `npm run env`
 
 * [#598](https://github.com/lerna/lerna/pull/598) Durable `includeFilteredDependencies` config via lerna.json. ([@gigabo](https://github.com/gigabo))
 
@@ -334,9 +355,9 @@ $ lerna publish --registry https://my-private-registry
 3 new flags:
 
 ###### `--no-sort` (only for run, exec and bootstrap)
-  
+
 By default, all tasks execute on packages in topologically sorted order as to respect the dependency relationships of the packages in question. Cycles are broken on a best-effort basis in a way not guaranteed to be consistent across Lerna invocations.
-  
+
 Topological sorting can cause concurrency bottlenecks if there are a small number of packages with many dependents or if some packages take a disproportionately long time to execute. The `--no-sort` option disables sorting, instead executing tasks in an arbitrary order with maximum concurrency.
 
 
@@ -404,7 +425,7 @@ When running `lerna bootstrap --scope foo --include-filtered-dependencies` run p
 - Sean Kelley ([seansfkelley](https://github.com/seansfkelley))
 - Sergey Zarouski ([szarouski](https://github.com/szarouski))
 - [wtgtybhertgeghgtwtg](https://github.com/wtgtybhertgeghgtwtg)
- 
+
 ## v2.0.0-beta.34 (2017-01-26)
 
 #### :bug: Bug Fix
@@ -412,7 +433,7 @@ When running `lerna bootstrap --scope foo --include-filtered-dependencies` run p
 
 #### Committers: 1
 - Diogo ([diogofcunha](https://github.com/diogofcunha))
- 
+
 ## v2.0.0-beta.33 (2017-01-25)
 
 - Drop Node 0.10/0.12/5
@@ -446,7 +467,7 @@ lerna publish --git-remote upstream
 `my-component` and all of its dependencies will be bootstrapped
 
 ```sh
-lerna bootstrap --scope my-component --include-filtered-dependencies 
+lerna bootstrap --scope my-component --include-filtered-dependencies
 ```
 
 * [#426](https://github.com/lerna/lerna/pull/426) Add support for hidden '--exact' flag. ([@L8D](https://github.com/L8D))
@@ -520,7 +541,7 @@ Any logs of a higher level than the setting are shown. The default is "info".
 
 * [#386](https://github.com/lerna/lerna/pull/386) Add --scope and --ignore support for bootstrap, exec, run, clean and ls. ([@lukebatchelor](https://github.com/lukebatchelor))		
 * [#358](https://github.com/lerna/lerna/pull/358) Run pre/post install scripts during bootstrap. ([@seansfkelley](https://github.com/seansfkelley))		
-  		
+
 #### Bug fix		
 * [#442](https://github.com/lerna/lerna/pull/442) Increase maxBuffer. ([@rygine](https://github.com/rygine))		
 * [#372](https://github.com/lerna/lerna/pull/372) Fix logifyAsync, logifySync decorators. ([@seansfkelley](https://github.com/seansfkelley))		

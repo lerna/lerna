@@ -1,8 +1,9 @@
 import chalk from "chalk";
 import fs from "fs-promise";
-import pathExists from "path-exists";
-import path from "path";
+import log from "npmlog";
 import normalizeNewline from "normalize-newline";
+import path from "path";
+import pathExists from "path-exists";
 
 // mocked or stubbed modules
 import writeJsonFile from "write-json-file";
@@ -11,6 +12,7 @@ import ConventionalCommitUtilities from "../src/ConventionalCommitUtilities";
 import GitUtilities from "../src/GitUtilities";
 import NpmUtilities from "../src/NpmUtilities";
 import PromptUtilities from "../src/PromptUtilities";
+import output from "../src/utils/output";
 
 // helpers
 import callsBack from "./helpers/callsBack";
@@ -21,19 +23,26 @@ import normalizeRelativeDir from "./helpers/normalizeRelativeDir";
 // file under test
 import PublishCommand from "../src/commands/PublishCommand";
 
-// keep snapshots stable cross-platform
-chalk.enabled = false;
-
 jest.mock("write-json-file");
 jest.mock("write-pkg");
 jest.mock("../src/GitUtilities");
 jest.mock("../src/NpmUtilities");
 jest.mock("../src/PromptUtilities");
+jest.mock("../src/utils/output");
+
+// silence logs
+log.level = "silent";
+
+// keep snapshots stable cross-platform
+chalk.enabled = false;
 
 const execOpts = (testDir) =>
   expect.objectContaining({
     cwd: testDir,
   });
+
+const consoleOutput = () =>
+  output.mock.calls.map((args) => normalizeNewline(args[0]));
 
 const publishedTagInDirectories = (testDir) =>
   NpmUtilities.publishTaggedInDir.mock.calls.reduce((arr, args) => {
@@ -157,10 +166,9 @@ describe("PublishCommand", () => {
           expect(gitTagsAdded()).toEqual(["v1.0.1"]);
 
           expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[normal] npm publish --tag");
-          expect(removedDistTagInDirectories(testDir)).toMatchSnapshot("[normal] npm dist-tag rm");
-          expect(addedDistTagInDirectories(testDir)).toMatchSnapshot("[normal] npm dist-tag add");
 
           expect(GitUtilities.pushWithTags).lastCalledWith("origin", gitTagsAdded(), execOpts(testDir));
+          expect(consoleOutput()).toMatchSnapshot("[normal] console output");
 
           done();
         } catch (ex) {
@@ -229,9 +237,10 @@ describe("PublishCommand", () => {
           expect(gitTagsAdded()).toMatchSnapshot("[independent] git tags added");
           expect(GitUtilities.checkoutChanges).not.toBeCalled();
 
-          expect(addedDistTagInDirectories(testDir)).toMatchSnapshot("[independent] npm dist-tag add");
+          expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[independent] npm publish --tag");
 
           expect(GitUtilities.pushWithTags).lastCalledWith("origin", gitTagsAdded(), execOpts(testDir));
+          expect(consoleOutput()).toMatchSnapshot("[independent] console output");
 
           done();
         } catch (ex) {
@@ -289,8 +298,9 @@ describe("PublishCommand", () => {
           expect(GitUtilities.addTag).not.toBeCalled();
           expect(GitUtilities.checkoutChanges).lastCalledWith("packages/*/package.json", execOpts(testDir));
 
-          expect(addedDistTagInDirectories(testDir)).toMatchSnapshot("[normal --canary] npm dist-tag add");
           expect(GitUtilities.pushWithTags).not.toBeCalled();
+          expect(publishedTagInDirectories(testDir))
+            .toMatchSnapshot("[normal --canary] npm publish --tag");
 
           done();
         } catch (ex) {
@@ -345,8 +355,8 @@ describe("PublishCommand", () => {
             "package-1": "^0.0.0",
           });
 
-          expect(addedDistTagInDirectories(testDir))
-            .toMatchSnapshot("[independent --canary] npm dist-tag add");
+          expect(publishedTagInDirectories(testDir))
+            .toMatchSnapshot("[independent --canary] npm publish --tag");
 
           done();
         } catch (ex) {
@@ -389,7 +399,7 @@ describe("PublishCommand", () => {
           expect(GitUtilities.addTag).not.toBeCalled();
           expect(GitUtilities.pushWithTags).not.toBeCalled();
 
-          expect(addedDistTagInDirectories(testDir)).toMatchSnapshot("[normal --skip-git] npm dist-tag add");
+          expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[normal --skip-git] npm publish --tag");
 
           done();
         } catch (ex) {
@@ -509,19 +519,19 @@ describe("PublishCommand", () => {
   });
 
   /** =========================================================================
-   * NORMAL - SKIP TEMP TAG
+   * NORMAL - TEMP TAG
    * ======================================================================= */
 
-  describe("normal mode with --skip-temp-tag", () => {
+  describe("normal mode with --temp-tag", () => {
     let testDir;
 
     beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
       testDir = dir;
     }));
 
-    it("should publish the changed packages without the temp tag", (done) => {
+    it("should publish the changed packages with a temp tag", (done) => {
       const publishCommand = new PublishCommand([], {
-        skipTempTag: true
+        tempTag: true
       }, testDir);
 
       publishCommand.runValidations();
@@ -536,12 +546,9 @@ describe("PublishCommand", () => {
             throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
           }
 
-          expect(publishedTagInDirectories(testDir))
-            .toMatchSnapshot("[normal --skip-temp-tag] npm publish --tag");
-
-          expect(NpmUtilities.checkDistTag).not.toBeCalled();
-          expect(NpmUtilities.removeDistTag).not.toBeCalled();
-          expect(NpmUtilities.addDistTag).not.toBeCalled();
+          expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[normal --temp-tag] npm publish --tag");
+          expect(removedDistTagInDirectories(testDir)).toMatchSnapshot("[normal --temp-tag] npm dist-tag rm");
+          expect(addedDistTagInDirectories(testDir)).toMatchSnapshot("[normal --temp-tag] npm dist-tag add");
 
           expect(GitUtilities.pushWithTags).lastCalledWith("origin", ["v1.0.1"], execOpts(testDir));
 
@@ -581,7 +588,7 @@ describe("PublishCommand", () => {
             throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
           }
 
-          expect(addedDistTagInDirectories(testDir)).toMatchSnapshot("[normal --npm-tag] npm dist-tag add");
+          expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[normal --npm-tag] npm publish --tag");
 
           done();
         } catch (ex) {
@@ -644,34 +651,11 @@ describe("PublishCommand", () => {
             throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
           }
 
-          const directory = path.join(testDir, "./packages/package-2");
-          const packageName = path.basename(directory);
-
-          expect(NpmUtilities.publishTaggedInDir).lastCalledWith(
-            "lerna-temp",
-            directory,
-            registry,
-            expect.any(Function)
-          );
-          expect(NpmUtilities.checkDistTag).lastCalledWith(
-            directory,
-            packageName,
-            "lerna-temp",
-            registry
-          );
-          expect(NpmUtilities.removeDistTag).lastCalledWith(
-            directory,
-            packageName,
-            "lerna-temp",
-            registry
-          );
-          expect(NpmUtilities.addDistTag).lastCalledWith(
-            directory,
-            packageName,
-            "1.0.1",
-            "latest",
-            registry
-          );
+          expect(NpmUtilities.checkDistTag).not.toBeCalled();
+          expect(NpmUtilities.removeDistTag).not.toBeCalled();
+          expect(NpmUtilities.addDistTag).not.toBeCalled();
+          expect(publishedTagInDirectories(testDir))
+            .toMatchSnapshot("[normal --registry] npm publish --tag");
 
           done();
         } catch (ex) {
@@ -1113,8 +1097,8 @@ describe("PublishCommand", () => {
             throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
           }
 
-          expect(addedDistTagInDirectories(testDir))
-            .toMatchSnapshot("[independent --canary --npm-tag=next --yes --exact] npm dist-tag add");
+          expect(publishedTagInDirectories(testDir))
+            .toMatchSnapshot("[independent --canary --npm-tag=next --yes --exact] npm publish --tag");
 
           done();
         } catch (ex) {

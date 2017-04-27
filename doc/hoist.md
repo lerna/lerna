@@ -23,6 +23,8 @@ When the `--hoist` flag is used:
 * Mostly-common dependencies are still hoisted, but outlier packages
   with different versions will get a normal, local `node_modules`
   installation of the necessary dependencies.
+  * In this instance, `lerna bootstrap` will always use `npm install`
+    with the `--global-style` flag, regardless of client configuration.
 * Binaries from those common packages are symlinked to individual
   package `node_modules/.bin` directories, so that `package.json`
   scripts continue to work unmodified.

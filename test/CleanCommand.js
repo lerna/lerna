@@ -1,3 +1,5 @@
+import log from "npmlog";
+
 // mocked or stubbed modules
 import FileSystemUtilities from "../src/FileSystemUtilities";
 import PromptUtilities from "../src/PromptUtilities";
@@ -12,6 +14,9 @@ import normalizeRelativeDir from "./helpers/normalizeRelativeDir";
 import CleanCommand from "../src/commands/CleanCommand";
 
 jest.mock("../src/PromptUtilities");
+
+// silence logs
+log.level = "silent";
 
 // stub rimraf because we trust isaacs
 const fsRimraf = FileSystemUtilities.rimraf;
@@ -60,6 +65,7 @@ describe("CleanCommand", () => {
           expect(removedDirectories(testDir)).toEqual([
             "packages/package-1/node_modules",
             "packages/package-2/node_modules",
+            "packages/package-3/node_modules",
           ]);
 
           done();
@@ -92,8 +98,12 @@ describe("CleanCommand", () => {
 
     // Both of these commands should result in the same outcome
     const filters = [
-      { test: "should only clean scoped packages", flag: "scope", flagValue: "package-1" },
-      { test: "should not clean ignored packages", flag: "ignore", flagValue: "package-2" },
+      { test: "should only clean scoped packages",
+        flag: "scope", flagValue: "package-1",
+      },
+      { test: "should not clean ignored packages",
+        flag: "ignore", flagValue: ["package-2", "@test/package-3"],
+      },
     ];
     filters.forEach((filter) => {
       it(filter.test, (done) => {

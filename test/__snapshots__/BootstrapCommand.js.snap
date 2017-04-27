@@ -75,6 +75,26 @@ Array [
 ]
 `;
 
+exports[`BootstrapCommand with hoisting should use global style to install disallowed external dependencies 1`] = `
+Object {
+  "": Array [
+    "foo@^1.0.0",
+    "@test/package-1@^0.0.0",
+  ],
+  "packages/package-3": Array [
+    "foo@0.1.12",
+  ],
+}
+`;
+
+exports[`BootstrapCommand with hoisting should use global style to install disallowed external dependencies 2`] = `
+Array [
+  "packages/package-1/node_modules/foo",
+  "packages/package-2/node_modules/foo",
+  "packages/package-4/node_modules/@test/package-1",
+]
+`;
+
 exports[`BootstrapCommand with local package dependencies should bootstrap packages 1`] = `
 Object {
   "packages/package-1": Array [

@@ -1,7 +1,9 @@
 import path from "path";
+import log from "npmlog";
 
 // mocked modules
 import NpmUtilities from "../src/NpmUtilities";
+import output from "../src/utils/output";
 import UpdatedPackagesCollector from "../src/UpdatedPackagesCollector";
 
 // helpers
@@ -14,6 +16,10 @@ import normalizeRelativeDir from "./helpers/normalizeRelativeDir";
 import RunCommand from "../src/commands/RunCommand";
 
 jest.mock("../src/NpmUtilities");
+jest.mock("../src/utils/output");
+
+// silence logs
+log.level = "silent";
 
 const ranInPackages = (testDir) =>
   NpmUtilities.runScriptInDir.mock.calls.reduce((arr, args) => {
@@ -36,7 +42,7 @@ const ranInPackagesStreaming = (testDir) =>
 
 describe("RunCommand", () => {
   beforeEach(() => {
-    NpmUtilities.runScriptInDir = jest.fn(callsBack());
+    NpmUtilities.runScriptInDir = jest.fn(callsBack(null, "stdout"));
     NpmUtilities.runScriptInPackageStreaming = jest.fn(callsBack());
   });
 
@@ -60,6 +66,7 @@ describe("RunCommand", () => {
 
         try {
           expect(ranInPackages(testDir)).toMatchSnapshot("run <script>");
+          expect(output).lastCalledWith("stdout");
 
           done();
         } catch (ex) {

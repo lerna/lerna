@@ -7,7 +7,6 @@
     }]
   ],
   "plugins": [
-    "transform-decorators-legacy",
     "add-module-exports"
   ],
   "env": {
@@ -20,7 +19,6 @@
         }]
       ],
       "plugins": [
-        "transform-decorators-legacy",
         "add-module-exports"
       ]
     }

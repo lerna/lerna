@@ -1,3 +1,5 @@
+import log from "npmlog";
+
 // mocked or stubbed modules
 import FileSystemUtilities from "../src/FileSystemUtilities";
 import NpmUtilities from "../src/NpmUtilities";
@@ -12,6 +14,9 @@ import normalizeRelativeDir from "./helpers/normalizeRelativeDir";
 import BootstrapCommand from "../src/commands/BootstrapCommand";
 
 jest.mock("../src/NpmUtilities");
+
+// silence logs
+log.level = "silent";
 
 // stub rimraf because we trust isaacs
 const fsRimraf = FileSystemUtilities.rimraf;
@@ -155,6 +160,45 @@ describe("BootstrapCommand", () => {
         try {
           expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
           expect(removedDirectories(testDir)).toMatchSnapshot();
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
+
+    it("should use global style to install disallowed external dependencies", (done) => {
+      const bootstrapCommand = new BootstrapCommand([], {
+        hoist: true
+      }, testDir);
+
+      bootstrapCommand.runValidations();
+      bootstrapCommand.runPreparations();
+
+      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
+          expect(removedDirectories(testDir)).toMatchSnapshot();
+
+          // foo@^1.0.0 will be hoisted, and should not use global style
+          expect(NpmUtilities.installInDir).toBeCalledWith(
+            expect.any(String),
+            expect.arrayContaining(["foo@^1.0.0"]),
+            expect.any(Object),
+            expect.any(Function)
+          );
+
+          // foo@0.1.2 differs from the more common foo@^1.0.0
+          expect(NpmUtilities.installInDir).toBeCalledWith(
+            expect.stringContaining("package-3"),
+            expect.arrayContaining(["foo@0.1.12"]),
+            expect.any(Object),
+            true, // npmGlobalStyle
+            expect.any(Function)
+          );
 
           done();
         } catch (ex) {
