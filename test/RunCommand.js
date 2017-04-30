@@ -146,6 +146,28 @@ describe("RunCommand", () => {
         }));
       });
     });
+
+    it("runs a script in all packages with --parallel", (done) => {
+      const runCommand = new RunCommand(["env"], {
+        parallel: true,
+      }, testDir);
+
+      runCommand.runValidations();
+      runCommand.runPreparations();
+
+      runCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          expect(ranInPackagesStreaming(testDir))
+            .toMatchSnapshot("run <script> --parallel");
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
   });
 
   describe("with --include-filtered-dependencies", () => {
