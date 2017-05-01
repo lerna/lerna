@@ -32,3 +32,13 @@ Sometimes, `lerna publish` does not work.  Your network may have had a hiccup, y
 If the `lerna.json` has not yet been updated, simply try `lerna publish` again.
 
 If it has been updated, you can force re-publish.  `lerna publish --force-publish $(ls packages/)`
+
+## The bootstrap process is really slow, what can I do?
+
+Projects having many packages inside them could take a very long time to to bootstrap.
+
+You can significantly reduce the time spent in `lerna bootstrap` if you turn
+on hoisting, see the [hoisting docs](./doc/hoist.md) for more information.
+
+In combination with that you may increase the bootstrap performance even more by
+[using yarn as an npm client](https://github.com/lerna/lerna#--npm-client-client) instead of `npm`.
