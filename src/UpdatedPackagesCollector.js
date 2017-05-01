@@ -82,10 +82,9 @@ export default class UpdatedPackagesCollector {
     }
 
     const updatedPackages = {};
-    const tracker = this.logger.newItem("find updated packages");
 
     const registerUpdated = (pkg) => {
-      this.logger.verbose("has update", pkg.name);
+      this.logger.verbose("updated", pkg.name);
       updatedPackages[pkg.name] = pkg;
     };
 
@@ -94,11 +93,7 @@ export default class UpdatedPackagesCollector {
     if (!hasTags || forced.has("*")) {
       this.packages.forEach(registerUpdated);
     } else {
-      tracker.addWork(this.packages.length);
-
       this.packages.filter((pkg) => {
-        tracker.completeWork(1);
-
         if (forced.has(pkg.name)) {
           return true;
         } else {
@@ -106,8 +101,6 @@ export default class UpdatedPackagesCollector {
         }
       }).forEach(registerUpdated);
     }
-
-    tracker.finish();
 
     return updatedPackages;
   }
