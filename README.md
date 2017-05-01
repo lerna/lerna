@@ -458,17 +458,24 @@ $ lerna run --scope my-component test
 ### exec
 
 ```sh
-$ lerna exec -- [command] # runs the command in all packages
+$ lerna exec -- <command> [..args] # runs the command in all packages
 $ lerna exec -- rm -rf ./node_modules
 $ lerna exec -- protractor conf.js
 ```
 
 Run an arbitrary command in each package.
+A double-dash (`--`) is necessary to pass dashed flags to the spawned command, but is not necessary when all the arguments are positional.
 
-`lerna exec` respects the `--concurrency`, `--scope` and `--ignore` flags (see [Flags](#flags)).
+`lerna exec` respects the `--concurrency`, `--scope`, `--ignore`, and `--parallel` flags (see [Flags](#flags)).
 
 ```sh
 $ lerna exec --scope my-component -- ls -la
+```
+
+To spawn long-running processes, pass the `--parallel` flag:
+```sh
+# transpile all modules as they change in every package
+$ lerna exec --parallel -- babel src -d lib -w
 ```
 
 You may also get the name of the current package through the environment variable `LERNA_PACKAGE_NAME`:
@@ -477,7 +484,7 @@ You may also get the name of the current package through the environment variabl
 $ lerna exec -- npm view \$LERNA_PACKAGE_NAME
 ```
 
-> Hint: The commands are spawned in parallel, using the concurrency given.
+> Hint: The commands are spawned in parallel, using the concurrency given (except with `--parallel`).
 > The output is piped through, so not deterministic.
 > If you want to run the command in one package after another, use it like this:
 
@@ -728,11 +735,18 @@ May also be configured in `lerna.json`:
 #### --stream
 
 Stream output from child processes immediately, prefixed with the originating
-package name.  This can be useful for long-running processes such as "watch"
-builds.  This allows output from different packages to be interleaved.
+package name. This allows output from different packages to be interleaved.
 
 ```sh
 $ lerna run watch --stream
+```
+
+#### --parallel
+
+Similar to `--stream`, but completely disregards concurrency and topological sorting, running a given command or script immediately in all matching packages with prefixed streaming output. This is the preferred flag for long-running processes such as `babel src -d lib -w` run over many packages.
+
+```sh
+$ lerna exec --parallel -- babel src -d lib -w
 ```
 
 #### --registry [registry]
