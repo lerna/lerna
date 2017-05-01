@@ -35,7 +35,7 @@ If it has been updated, you can force re-publish.  `lerna publish --force-publis
 
 ## The bootstrap process is really slow, what can I do?
 
-Projects having many repos inside them could take a very long time to to bootstrap.
+Projects having many packages inside them could take a very long time to to bootstrap.
 
 You can significantly reduce the time spent in `lerna bootstrap` if you turn 
 on hoisting, see the [hoisting docs](./doc/hoist.md) for more information.
