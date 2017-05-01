@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  A tool for managing JavaScript projects with multiple packages.
+  A tool for managing JavaScript projects with multiple packages..
 </p>
 
 <p align="center">
