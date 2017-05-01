@@ -51,12 +51,24 @@ export default class PackageUtilities {
       cwd: rootPath,
       strict: true,
       absolute: true,
-      ignore: [
+    };
+
+    const hasNodeModules = packageConfigs.some((cfg) => cfg.indexOf("node_modules") > -1);
+    const hasGlobStar = packageConfigs.some((cfg) => cfg.indexOf("**") > -1);
+
+    if (hasGlobStar) {
+      if (hasNodeModules) {
+        const message = "An explicit node_modules package path does not allow globstars (**)";
+        log.error("EPKGCONFIG", message);
+        throw new Error(message);
+      }
+
+      globOpts.ignore = [
         // allow globs like "packages/**",
         // but avoid picking up node_modules/**/package.json
         "**/node_modules/**",
-      ],
-    };
+      ];
+    }
 
     packageConfigs.forEach((globPath) => {
       glob.sync(path.join(globPath, "package.json"), globOpts)
