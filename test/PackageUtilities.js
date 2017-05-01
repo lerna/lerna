@@ -40,6 +40,28 @@ describe("PackageUtilities", () => {
         "package-5",
       ]);
     });
+
+    it("does not ignore explicit node_modules in packages config", async () => {
+      const testDir = await initFixture("PackageUtilities/explicit-node-modules");
+      const result = PackageUtilities.getPackages(new Repository(testDir));
+      expect(result.map((pkg) => pkg.name)).toEqual([
+        "alle-pattern-monorepo",
+        "package-1",
+        "package-2",
+        "package-3",
+        "package-4",
+        "@scoped/package-5",
+      ]);
+    });
+
+    it("throws an error when globstars and explicit node_modules configs are mixed", async () => {
+      const testDir = await initFixture("PackageUtilities/mixed-globstar");
+      try {
+        PackageUtilities.getPackages(new Repository(testDir));
+      } catch (err) {
+        expect(err.message).toMatch("An explicit node_modules package path does not allow globstars");
+      }
+    });
   });
 
   describe(".filterPackages()", () => {
