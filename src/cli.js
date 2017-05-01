@@ -1,4 +1,5 @@
 import dedent from "dedent";
+import isCI from "is-ci";
 import log from "npmlog";
 import yargs from "yargs/yargs";
 
@@ -21,9 +22,12 @@ export default function CLI(argv, cwd) {
     "version",
   ]);
 
-  if (process.stdout.isTTY) {
-    // log.enableColor();
-    // log.enableUnicode();
+  if (isCI || !process.stderr.isTTY) {
+    log.disableColor();
+    log.disableProgress();
+  } else if (process.stderr.isTTY) {
+    log.enableColor();
+    log.enableUnicode();
     log.enableProgress();
   }
 
