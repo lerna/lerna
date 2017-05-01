@@ -1,0 +1,7 @@
+{
+  "name": "mixed-globstar-monorepo",
+  "private": true,
+  "devDependencies": {
+    "lerna": "__TEST_VERSION__"
+  }
+}
