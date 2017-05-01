@@ -37,8 +37,8 @@ If it has been updated, you can force re-publish.  `lerna publish --force-publis
 
 Projects having many packages inside them could take a very long time to to bootstrap.
 
-You can significantly reduce the time spent in `lerna bootstrap` if you turn 
+You can significantly reduce the time spent in `lerna bootstrap` if you turn
 on hoisting, see the [hoisting docs](./doc/hoist.md) for more information.
 
-In combination with that you may increase the bootstrap performance even more by 
-[using yarn as an npm client](https://github.com/lerna/lerna#--npm-client-client) in stead of `npm`.
+In combination with that you may increase the bootstrap performance even more by
+[using yarn as an npm client](https://github.com/lerna/lerna#--npm-client-client) instead of `npm`.
