@@ -1,3 +1,5 @@
+import async from "async";
+
 import Command from "../Command";
 import NpmUtilities from "../NpmUtilities";
 import output from "../utils/output";
@@ -14,8 +16,14 @@ export const describe = "Run an npm script in each package that contains that sc
 export const builder = {
   "stream": {
     group: "Command Options:",
-    describe: "Stream output with lines prefixed by package."
-  }
+    describe: "Stream output with lines prefixed by package.",
+    type: "boolean",
+  },
+  "parallel": {
+    group: "Command Options:",
+    describe: "Run script in all packages with unlimited concurrency, streaming prefixed output",
+    type: "boolean",
+  },
 };
 
 export default class RunCommand extends Command {
@@ -40,6 +48,11 @@ export default class RunCommand extends Command {
       return;
     }
 
+    if (this.options.parallel || this.options.stream) {
+      // don't interrupt streaming stdio
+      this.logger.disableProgress();
+    }
+
     this.batchedPackages = this.toposort
       ? PackageUtilities.topologicallyBatchPackages(this.packagesWithScript)
       : [this.packagesWithScript];
@@ -48,7 +61,7 @@ export default class RunCommand extends Command {
   }
 
   execute(callback) {
-    this.runScriptInPackages((err) => {
+    const finish = (err) => {
       if (err) {
         callback(err);
       } else {
@@ -56,10 +69,16 @@ export default class RunCommand extends Command {
         this.logger.success("", this.packagesWithScript.map((pkg) => `- ${pkg.name}`).join("\n"));
         callback(null, true);
       }
-    });
+    };
+
+    if (this.options.parallel) {
+      this.runScriptInPackagesParallel(finish);
+    } else {
+      this.runScriptInPackagesBatched(finish);
+    }
   }
 
-  runScriptInPackages(callback) {
+  runScriptInPackagesBatched(callback) {
     PackageUtilities.runParallelBatches(this.batchedPackages, (pkg) => (done) => {
       this.runScriptInPackage(pkg, done);
     }, this.concurrency, callback);
@@ -71,6 +90,19 @@ export default class RunCommand extends Command {
     } else {
       this.runScriptInPackageCapturing(pkg, callback);
     }
+  }
+
+  runScriptInPackagesParallel(callback) {
+    this.logger.info(
+      "run",
+      "in %d package(s): npm run %s",
+      this.packagesWithScript.length,
+      [this.script].concat(this.args).join(" ")
+    );
+
+    async.parallel(this.packagesWithScript.map((pkg) => (done) => {
+      this.runScriptInPackageStreaming(pkg, done);
+    }), callback);
   }
 
   runScriptInPackageStreaming(pkg, callback) {

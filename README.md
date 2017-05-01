@@ -442,18 +442,26 @@ List all of the public packages in the current Lerna repo.
 ### run
 
 ```sh
-$ lerna run [script] # runs npm run my-script in all packages that have it
+$ lerna run <script> -- [..args] # runs npm run my-script in all packages that have it
 $ lerna run test
 $ lerna run build
+
+# watch all packages and transpile on change, streaming prefixed output
+$ lerna run --parallel watch
 ```
 
-Run an [npm script](https://docs.npmjs.com/misc/scripts) in each package that contains that script.
+Run an [npm script](https://docs.npmjs.com/misc/scripts) in each package that contains that script. A double-dash (`--`) is necessary to pass dashed arguments to the script execution.
 
-`lerna run` respects the `--concurrency`, `--scope` and `ignore` flags (see [Flags](#flags)).
+`lerna run` respects the `--concurrency`, `--scope`, `--ignore`, `--stream`, and `--parallel` flags (see [Flags](#flags)).
 
 ```sh
 $ lerna run --scope my-component test
 ```
+
+> Note: It is advised to constrain the scope of this command (and `lerna exec`,
+> below) when using the `--parallel` flag, as spawning dozens of subprocesses
+> may be harmful to your shell's equanimity (or maximum file descriptor limit,
+> for example). YMMV
 
 ### exec
 
