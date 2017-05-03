@@ -176,9 +176,8 @@ describe("RunCommand", () => {
         }
       }));
     });
-  });
-  
-  it("runs a script in all packages with --parallel", (done) => {
+
+    it("runs a script in all packages with --parallel", (done) => {
       const runCommand = new RunCommand(["env"], {
         parallel: true,
       }, testDir);
@@ -190,9 +189,7 @@ describe("RunCommand", () => {
         if (err) return done.fail(err);
 
         try {
-          expect(
-            
-            Streaming(testDir))
+          expect(ranInPackagesStreaming(testDir))
             .toMatchSnapshot("run <script> --parallel");
 
           done();
@@ -201,6 +198,7 @@ describe("RunCommand", () => {
         }
       }));
     });
+
   });
 
   describe("with --include-filtered-dependencies", () => {
