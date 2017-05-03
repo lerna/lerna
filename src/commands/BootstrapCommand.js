@@ -37,6 +37,12 @@ export const builder = {
     describe: "Executable used to install dependencies (npm, yarn, pnpm, ...)",
     type: "string",
     requiresArg: true,
+  },
+  "skip-git": {
+    group: "Command Options:",
+    describe: "Bypass checking for a git repository in the project root.",
+    type: "boolean",
+    default: true
   }
 };
 

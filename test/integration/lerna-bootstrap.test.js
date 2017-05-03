@@ -1,10 +1,12 @@
 import execa from "execa";
 import getPort from "get-port";
 import globby from "globby";
+import tempy from "tempy";
 import normalizePath from "normalize-path";
 
 import { LERNA_BIN } from "../helpers/constants";
 import initFixture from "../helpers/initFixture";
+import copyFixture from "../helpers/copyFixture";
 
 describe("lerna bootstrap", () => {
   describe("from CLI", () => {
@@ -31,6 +33,34 @@ describe("lerna bootstrap", () => {
 
       const stderr = await execa.stderr(LERNA_BIN, args, { cwd });
       expect(stderr).toMatchSnapshot("ignore: stderr");
+    });
+
+    test.concurrent("git repo check is ignored by default", async () => {
+      const cwd = await tempy.directoryAsync();
+      await copyFixture(cwd, "BootstrapCommand/integration");
+      const args = [
+        "bootstrap",
+      ];
+
+      const stderr = await execa.stderr(LERNA_BIN, args, { cwd });
+      expect(stderr).toMatchSnapshot("simple-no-git-check: stdout");
+    });
+
+    test.concurrent("produces error if --no-skip-git is provided and repo is not initialized", async () => {
+      const cwd = await tempy.directoryAsync();
+      await copyFixture(cwd, "BootstrapCommand/integration");
+      const args = [
+        "bootstrap",
+        "--no-skip-git"
+      ];
+      let expectedError = null;
+
+      try {
+        await execa(LERNA_BIN, args, { cwd });
+      } catch (err) {
+        expectedError = err;
+      }
+      expect(expectedError.toString()).toContain("ENOGIT");
     });
 
     test.concurrent("--npm-client yarn", async () => {
