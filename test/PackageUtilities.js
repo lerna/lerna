@@ -190,7 +190,7 @@ describe("PackageUtilities", () => {
       expect(updatedPackages).toHaveLength(0);
     });
 
-    it.only("should return only packages that are to be filtered and have been updated", () => {
+    it("should return only packages that are to be filtered and have been updated", () => {
       const packagesToFilter = [
         { name: "abc" },
         { name: "def" },
