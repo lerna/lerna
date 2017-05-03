@@ -46,23 +46,6 @@ describe("lerna bootstrap", () => {
       expect(stderr).toMatchSnapshot("simple-no-git-check: stdout");
     });
 
-    test.concurrent("errors if --no-skip-git-check is provided and repo is not initialized", async () => {
-      const cwd = await tempy.directoryAsync();
-      await copyFixture(cwd, "BootstrapCommand/integration");
-      const args = [
-        "bootstrap",
-        "--no-skip-git-check"
-      ];
-      let expectedError = null;
-
-      try {
-        await execa(LERNA_BIN, args, { cwd });
-      } catch (err) {
-        expectedError = err;
-      }
-      expect(expectedError.toString()).toContain("ENOGIT");
-    });
-
     test.concurrent("--npm-client yarn", async () => {
       const cwd = await initFixture("BootstrapCommand/integration");
       const args = [

@@ -37,16 +37,14 @@ export const builder = {
     describe: "Executable used to install dependencies (npm, yarn, pnpm, ...)",
     type: "string",
     requiresArg: true,
-  },
-  "skip-git-check": {
-    group: "Command Options:",
-    describe: "Bypass checking for an initialized git repository in the project root.",
-    type: "boolean",
-    default: true
   }
 };
 
 export default class BootstrapCommand extends Command {
+  get requiresGit() {
+    return false;
+  }
+
   initialize(callback) {
     const { registry, npmClient } = this.options;
 

@@ -21,6 +21,10 @@ export const builder = {
 };
 
 export default class CleanCommand extends Command {
+  get requiresGit() {
+    return false;
+  }
+
   initialize(callback) {
     this.directoriesToDelete = this.filteredPackages.map((pkg) => pkg.nodeModulesLocation);
 

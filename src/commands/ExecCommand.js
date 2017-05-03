@@ -21,6 +21,10 @@ export const builder = {
 };
 
 export default class ExecCommand extends Command {
+  get requiresGit() {
+    return false;
+  }
+
   initialize(callback) {
     this.command = this.input[0];
     this.args = this.input.slice(1);

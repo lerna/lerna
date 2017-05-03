@@ -129,6 +129,10 @@ export default class Command {
     return this._execOpts;
   }
 
+  get requiresGit() {
+    return true;
+  }
+
   // Override this to inherit config from another command.
   // For example `updated` inherits config from `publish`.
   get otherCommandConfigs() {
@@ -175,7 +179,7 @@ export default class Command {
   }
 
   runValidations() {
-    if (!this.options.skipGitCheck && !GitUtilities.isInitialized(this.execOpts)) {
+    if (this.requiresGit && !GitUtilities.isInitialized(this.execOpts)) {
       log.error("ENOGIT", "This is not a git repository, did you already run `git init` or `lerna init`?");
       this._complete(null, 1);
       return;

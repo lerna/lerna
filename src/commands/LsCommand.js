@@ -15,6 +15,10 @@ export const describe = "List all public packages";
 export const builder = {};
 
 export default class LsCommand extends Command {
+  get requiresGit() {
+    return false;
+  }
+
   initialize(callback) {
     // Nothing to do...
     callback(null, true);
