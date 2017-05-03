@@ -12,6 +12,15 @@ Array [
 ]
 `;
 
+exports[`run <script> --parallel 1`] = `
+Array [
+  "packages/package-1 env",
+  "packages/package-2 env",
+  "packages/package-3 env",
+  "packages/package-4 env",
+]
+`;
+
 exports[`run <script> --scope @test/package-2 --include-filtered-dependencies 1`] = `
 Array [
   "packages/package-1 my-script",

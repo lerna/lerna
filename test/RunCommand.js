@@ -150,7 +150,6 @@ describe("RunCommand", () => {
     });
 
     it("should filter packages that are not updated when onlyUpdate", (done) => {
-
       UpdatedPackagesCollector.prototype.getUpdates = jest.fn(() => [{ package: {
         name: "package-3",
         location: path.join(testDir, "packages/package-3"),
@@ -177,7 +176,31 @@ describe("RunCommand", () => {
         }
       }));
     });
+  });
+  
+  it("runs a script in all packages with --parallel", (done) => {
+      const runCommand = new RunCommand(["env"], {
+        parallel: true,
+      }, testDir);
 
+      runCommand.runValidations();
+      runCommand.runPreparations();
+
+      runCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          expect(
+            
+            Streaming(testDir))
+            .toMatchSnapshot("run <script> --parallel");
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
   });
 
   describe("with --include-filtered-dependencies", () => {
