@@ -46,7 +46,7 @@ describe("lerna bootstrap", () => {
       expect(stderr).toMatchSnapshot("simple-no-git-check: stdout");
     });
 
-    test.concurrent("produces error if --no-skip-git is provided and repo is not initialized", async () => {
+    test.concurrent("errors if --no-skip-git-check is provided and repo is not initialized", async () => {
       const cwd = await tempy.directoryAsync();
       await copyFixture(cwd, "BootstrapCommand/integration");
       const args = [
