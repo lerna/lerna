@@ -51,7 +51,7 @@ describe("lerna bootstrap", () => {
       await copyFixture(cwd, "BootstrapCommand/integration");
       const args = [
         "bootstrap",
-        "--no-skip-git"
+        "--no-skip-git-check"
       ];
       let expectedError = null;
 

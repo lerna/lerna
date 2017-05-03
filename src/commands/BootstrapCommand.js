@@ -38,9 +38,9 @@ export const builder = {
     type: "string",
     requiresArg: true,
   },
-  "skip-git": {
+  "skip-git-check": {
     group: "Command Options:",
-    describe: "Bypass checking for a git repository in the project root.",
+    describe: "Bypass checking for an initialized git repository in the project root.",
     type: "boolean",
     default: true
   }
