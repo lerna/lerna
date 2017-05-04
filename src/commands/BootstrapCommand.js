@@ -41,6 +41,10 @@ export const builder = {
 };
 
 export default class BootstrapCommand extends Command {
+  get requiresGit() {
+    return false;
+  }
+
   initialize(callback) {
     const { registry, npmClient } = this.options;
 

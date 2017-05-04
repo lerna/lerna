@@ -27,6 +27,10 @@ export const builder = {
 };
 
 export default class RunCommand extends Command {
+  get requiresGit() {
+    return false;
+  }
+
   initialize(callback) {
     this.script = this.input[0];
     this.args = this.input.slice(1);
