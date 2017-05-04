@@ -34,10 +34,10 @@ export default class UpdatedCommand extends Command {
     this.logger.info("result");
     output(formattedUpdates);
 
-    if (this.updates.length === 0) {
-      callback("No packages need updating");
-    } else {
-      callback(null, true);
-    }
+    const exitCode = this.updates.length === 0 ? 1 : 0;
+
+    this.logger.info("No packages need updating");
+
+    callback(null, true, exitCode);
   }
 }
