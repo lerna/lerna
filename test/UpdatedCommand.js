@@ -221,6 +221,29 @@ describe("UpdatedCommand", () => {
         }
       }));
     });
+
+    it("should error when there are no changes", (done) => {
+      gitTag({ cwd: testDir });
+
+      const updatedCommand = new UpdatedCommand([], {}, testDir);
+
+      updatedCommand.runValidations();
+      updatedCommand.runPreparations();
+
+      updatedCommand.runCommand(exitWithCode(1, (err) => {
+        if (err && err !== "No packages need updating") {
+          return done.fail(err);
+        }
+
+        try {
+          expect(loggingOutput()).toMatchSnapshot();
+          expect(consoleOutput()).toMatchSnapshot();
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
   });
 
   /** =========================================================================
@@ -323,6 +346,29 @@ describe("UpdatedCommand", () => {
       updatedCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
         try {
+          expect(consoleOutput()).toMatchSnapshot();
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
+
+    it("should error when there are no changes", (done) => {
+      gitTag({ cwd: testDir });
+
+      const updatedCommand = new UpdatedCommand([], {}, testDir);
+
+      updatedCommand.runValidations();
+      updatedCommand.runPreparations();
+
+      updatedCommand.runCommand(exitWithCode(1, (err) => {
+        if (err && err !== "No packages need updating") {
+          return done.fail(err);
+        }
+
+        try {
+          expect(loggingOutput()).toMatchSnapshot();
           expect(consoleOutput()).toMatchSnapshot();
           done();
         } catch (ex) {
