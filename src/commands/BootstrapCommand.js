@@ -46,18 +46,19 @@ export default class BootstrapCommand extends Command {
   }
 
   initialize(callback) {
-    const { registry, npmClient } = this.options;
+    const { registry, npmClient, mutex } = this.options;
 
     this.npmConfig = {
       registry,
       npmClient,
+      mutex
     };
 
     this.batchedPackages = this.toposort
       ? PackageUtilities.topologicallyBatchPackages(this.filteredPackages)
       : [this.filteredPackages];
 
-    if (npmClient === "yarn") {
+    if (npmClient === "yarn" && !mutex) {
       return getPort(42424).then((port) => {
         this.npmConfig.mutex = `network:${port}`;
         callback(null, true);
