@@ -11,6 +11,23 @@ const lastCommitMessage = (cwd) =>
   execa.stdout("git", ["log", "-1", "--format=%B"], { cwd }).then(normalizeNewline);
 
 describe("lerna publish", () => {
+  test.concurrent("exists with a exit code 0 when there are no updates", async () => {
+    const cwd = await initFixture("PublishCommand/normal");
+    await execa("git", ["tag", "-a", "v1.0.0", "-m", "v1.0.0"], { cwd });
+
+    const args = [
+      "publish",
+      "--skip-npm",
+      "--cd-version=patch",
+      "--yes",
+    ];
+
+    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
+
+    expect(stdout).toMatchSnapshot("stdout: exists with a exit code 0 when there are no updates");
+    expect(stderr).toMatchSnapshot("stderr: exists with a exit code 0 when there are no updates");
+  });
+
   test.concurrent("updates fixed versions", async () => {
     const cwd = await initFixture("PublishCommand/normal");
     const args = [

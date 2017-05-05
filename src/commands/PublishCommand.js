@@ -124,7 +124,8 @@ export default class PublishCommand extends Command {
       : [packagesToPublish];
 
     if (!this.updates.length) {
-      callback(new Error("No updated packages to publish."));
+      this.logger.info("No updated packages to publish.");
+      callback(null, true);
       return;
     }
 
