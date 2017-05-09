@@ -1,5 +1,5 @@
 import execa from "execa";
-import fs from "fs-promise";
+import fs from "fs-extra";
 import log from "npmlog";
 import path from "path";
 import pathExists from "path-exists";
