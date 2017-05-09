@@ -1721,7 +1721,7 @@ fstream@^1.0.0, fstream@^1.0.2, fstream@~1.0.10:
     mkdirp ">=0.5 0"
     rimraf "2"
 
-gauge@~2.7.1, gauge@~2.7.3:
+gauge@~2.7.3:
   version "2.7.3"
   resolved "https://registry.yarnpkg.com/gauge/-/gauge-2.7.3.tgz#1c23855f962f17b3ad3d0dc7443f304542edfe09"
   dependencies:
@@ -2836,16 +2836,7 @@ npm-run-path@^2.0.0:
   dependencies:
     path-key "^2.0.0"
 
-npmlog@^4.0.1:
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/npmlog/-/npmlog-4.0.2.tgz#d03950e0e78ce1527ba26d2a7592e9348ac3e75f"
-  dependencies:
-    are-we-there-yet "~1.1.2"
-    console-control-strings "~1.1.0"
-    gauge "~2.7.1"
-    set-blocking "~2.0.0"
-
-npmlog@^4.1.0:
+npmlog@^4.0.1, npmlog@^4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/npmlog/-/npmlog-4.1.0.tgz#dc59bee85f64f00ed424efb2af0783df25d1c0b5"
   dependencies:
@@ -3904,9 +3895,17 @@ wrappy@1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/wrappy/-/wrappy-1.0.2.tgz#b5243d8f3ec1aa35f1364605bc0d1036e30ab69f"
 
-write-file-atomic@^1.1.2, write-file-atomic@^1.3.3:
+write-file-atomic@^1.1.2:
   version "1.3.3"
   resolved "https://registry.yarnpkg.com/write-file-atomic/-/write-file-atomic-1.3.3.tgz#831dd22d491bdc135180bb996a0eb3f8bf587791"
+  dependencies:
+    graceful-fs "^4.1.11"
+    imurmurhash "^0.1.4"
+    slide "^1.1.5"
+
+write-file-atomic@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/write-file-atomic/-/write-file-atomic-2.0.0.tgz#bb99a5440d0d31dd860a68da392bffeef66251a1"
   dependencies:
     graceful-fs "^4.1.11"
     imurmurhash "^0.1.4"
