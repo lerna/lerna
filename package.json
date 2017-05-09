@@ -64,7 +64,7 @@
     "write-file-atomic": "^2.0.0",
     "write-json-file": "^2.0.0",
     "write-pkg": "^3.0.1",
-    "yargs": "^7.1.0"
+    "yargs": "^8.0.1"
   },
   "bin": {
     "lerna": "./bin/lerna.js"
