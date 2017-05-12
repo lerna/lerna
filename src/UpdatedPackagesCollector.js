@@ -52,34 +52,27 @@ export default class UpdatedPackagesCollector {
   collectUpdatedPackages() {
     this.logger.info("", "Checking for updated packages...");
 
-    const hasTags = GitUtilities.hasTags(this.execOpts);
+    const { execOpts, options } = this;
+    const { canary } = options;
+    let { since } = options;
 
-    if (hasTags) {
-      const tag = GitUtilities.getLastTag(this.execOpts);
-      this.logger.info("", "Comparing with tag " + tag);
-    } else {
-      this.logger.warn("", "No tags found!");
-      this.logger.info("", "Comparing with initial commit.");
-    }
+    if (GitUtilities.hasTags(execOpts)) {
+      if (canary) {
+        let currentSHA;
 
-    let commits;
+        if (canary !== true) {
+          currentSHA = canary;
+        } else {
+          currentSHA = GitUtilities.getCurrentSHA(execOpts);
+        }
 
-    if (this.options.canary) {
-      let currentSHA;
-
-      if (this.options.canary !== true) {
-        currentSHA = this.options.canary;
-      } else {
-        currentSHA = GitUtilities.getCurrentSHA(this.execOpts);
+        since = this.getAssociatedCommits(currentSHA);
+      } else if (!since) {
+        since = GitUtilities.getLastTag(execOpts);
       }
-
-      commits = this.getAssociatedCommits(currentSHA);
-    } else if (hasTags) {
-      commits = GitUtilities.describeTag(
-        GitUtilities.getLastTaggedCommitInBranch(this.execOpts),
-        this.execOpts
-      );
     }
+
+    this.logger.info("", `Comparing with ${since || "initial commit"}.`);
 
     const updatedPackages = {};
 
@@ -88,16 +81,16 @@ export default class UpdatedPackagesCollector {
       updatedPackages[pkg.name] = pkg;
     };
 
-    const forced = getForcedPackages(this.options);
+    const forced = getForcedPackages(options);
 
-    if (!hasTags || forced.has("*")) {
+    if (!since || forced.has("*")) {
       this.packages.forEach(registerUpdated);
     } else {
       this.packages.filter((pkg) => {
         if (forced.has(pkg.name)) {
           return true;
         } else {
-          return this.hasDiffSinceThatIsntIgnored(pkg, commits);
+          return this.hasDiffSinceThatIsntIgnored(pkg, since);
         }
       }).forEach(registerUpdated);
     }

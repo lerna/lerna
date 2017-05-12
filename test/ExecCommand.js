@@ -135,7 +135,7 @@ describe("ExecCommand", () => {
       }));
     });
 
-    it("should filter packages that are not updated with --only-updated", (done) => {
+    it("should filter packages that are not updated with --since", (done) => {
       UpdatedPackagesCollector.prototype.getUpdates = jest.fn(() => [{
         package: {
           name: "package-2",
@@ -144,7 +144,7 @@ describe("ExecCommand", () => {
       }]);
 
       const execCommand = new ExecCommand(["ls"], {
-        onlyUpdated: true,
+        since: "",
       }, testDir);
 
       execCommand.runValidations();

@@ -675,6 +675,22 @@ $ lerna exec --scope my-component -- ls -la
 $ lerna run --scope toolbar-* test
 ```
 
+#### --since [ref]
+
+When executing a script or command, only run the script or command on packages that have been updated since the specified `ref`. If `ref` is not specified, it defaults to the latest tag.
+
+```sh
+$ lerna exec --since -- ls -la
+```
+
+```
+$ lerna run test --since master
+```
+
+```
+$ lerna ls --since some-branch
+```
+
 #### --ignore [glob]
 
 Excludes a subset of packages when running a command.
@@ -720,20 +736,6 @@ $ lerna bootstrap --scope my-component --include-filtered-dependencies
 $ lerna bootstrap --scope "package-*" --ignore "package-util-*" --include-filtered-dependencies
 # all package-util's will be ignored unless they are depended upon by a
 # package matched by "package-*"
-```
-
-#### --only-updated
-
-When executing a script or command, only run the script or command on packages that have been updated since the last release.
-
-A package is considered "updated" using the same rules as `lerna updated`.
-
-```sh
-$ lerna exec --only-updated -- ls -la
-```
-
-```
-$ lerna run --only-updated test
 ```
 
 #### --loglevel [silent|error|warn|success|info|verbose|silly]

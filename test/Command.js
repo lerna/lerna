@@ -1,20 +1,17 @@
 import log from "npmlog";
 
-// mocked or stubbed modules
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
 import FileSystemUtilities from "../src/FileSystemUtilities";
 import GitUtilities from "../src/GitUtilities";
 
 // helpers
+import execa from "execa";
+
 import callsBack from "./helpers/callsBack";
 import initFixture from "./helpers/initFixture";
 
 // file under test
 import Command from "../src/Command";
-
-jest.mock("../src/ChildProcessUtilities");
-jest.mock("../src/FileSystemUtilities");
-jest.mock("../src/GitUtilities");
 
 // silence logs
 log.level = "silent";
@@ -187,7 +184,83 @@ describe("Command", () => {
   });
 
   describe(".runPreparations()", () => {
-    it("needs tests");
+    describe(".filteredPackages", () => {
+      let testDir;
+
+      beforeEach(() => initFixture("UpdatedCommand/basic").then((dir) => {
+        testDir = dir;
+      }));
+
+      class TestCommand extends Command {}
+
+      function cli(cmd, ...args) {
+        return execa.sync(cmd, args, { cwd: testDir }).stdout.toString("utf-8");
+      }
+
+      function run(opts) {
+        const cmd = new TestCommand([], opts, testDir);
+        cmd.run();
+        return cmd;
+      }
+
+      it("--scope should filter packages", () => {
+        const { filteredPackages } = run({ scope: ["package-2", "package-4"] });
+        expect(filteredPackages.length).toEqual(2);
+        expect(filteredPackages[0].name).toEqual("package-2");
+        expect(filteredPackages[1].name).toEqual("package-4");
+      });
+
+      it("--since should return all packages if no tag is found", () => {
+        const { filteredPackages } = run({ since: "" });
+        expect(filteredPackages.length).toEqual(5);
+      });
+
+      it("--since should return packages updated since the last tag", () => {
+        cli("git", "tag", "1.0.0");
+        cli("touch", "packages/package-2/random-file");
+        cli("git", "add", ".");
+        cli("git", "commit", "-m", "test");
+
+        const { filteredPackages } = run({ since: "" });
+        expect(filteredPackages.length).toEqual(2);
+        expect(filteredPackages[0].name).toEqual("package-2");
+        expect(filteredPackages[1].name).toEqual("package-3");
+      });
+
+      it("--since \"ref\" should return packages updated since the specified ref", () => {
+        // We first tag, then modify master to ensure that specifying --since will override checking against
+        // the latest tag.
+        cli("git", "tag", "1.0.0");
+        cli("touch", "packages/package-1/random-file");
+        cli("git", "add", ".");
+        cli("git", "commit", "-m", "test");
+
+        // Then we can checkout a new branch, update and commit.
+        cli("git", "checkout", "-b", "test");
+        cli("touch", "packages/package-2/random-file");
+        cli("git", "add", ".");
+        cli("git", "commit", "-m", "test");
+
+        const { filteredPackages } = run({ since: "master" });
+        expect(filteredPackages.length).toEqual(2);
+        expect(filteredPackages[0].name).toEqual("package-2");
+        expect(filteredPackages[1].name).toEqual("package-3");
+      });
+
+      it("should respect --scope and --since when used together", () => {
+        cli("git", "checkout", "-b", "test");
+        cli("touch", "packages/package-4/random-file");
+        cli("git", "add", ".");
+        cli("git", "commit", "-m", "test");
+
+        const { filteredPackages } = run({
+          scope: ["package-2", "package-3", "package-4"],
+          since: "master"
+        });
+        expect(filteredPackages.length).toEqual(1);
+        expect(filteredPackages[0].name).toEqual("package-4");
+      });
+    });
   });
 
   describe("get .options", () => {

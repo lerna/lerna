@@ -6,12 +6,6 @@ Array [
 ]
 `;
 
-exports[`run <script> --only-updated 1`] = `
-Array [
-  "packages/package-3 my-script",
-]
-`;
-
 exports[`run <script> --parallel 1`] = `
 Array [
   "packages/package-1 env",
@@ -31,6 +25,12 @@ Array [
 exports[`run <script> --scope package-1 1`] = `
 Array [
   "packages/package-1 my-script",
+]
+`;
+
+exports[`run <script> --since 1`] = `
+Array [
+  "packages/package-3 my-script",
 ]
 `;
 

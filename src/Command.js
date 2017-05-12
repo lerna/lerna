@@ -9,6 +9,7 @@ import PackageUtilities from "./PackageUtilities";
 import Repository from "./Repository";
 import filterFlags from "./utils/filterFlags";
 import writeLogFile from "./utils/writeLogFile";
+import UpdatedPackagesCollector from "./UpdatedPackagesCollector";
 
 // handle log.success()
 log.addLevel("success", 3001, { fg: "green", bold: true });
@@ -35,6 +36,14 @@ export const builder = {
     type: "string",
     requiresArg: true,
   },
+  "since": {
+    describe: dedent`
+      Restricts the scope to the packages that have been updated since the last release (tag).
+      (Only for 'run', 'exec', 'clean', 'ls', and 'bootstrap' commands)
+    `,
+    type: "string",
+    requiresArg: false,
+  },
   "ignore": {
     describe: dedent`
       Ignore packages with names matching the given glob.
@@ -45,7 +54,7 @@ export const builder = {
   },
   "include-filtered-dependencies": {
     describe: dedent`
-      Include all transitive dependencies when running a command, regardless of --scope or --ignore.
+      Include all transitive dependencies when running a command, regardless of --scope, --since or --ignore.
     `,
   },
   "registry": {
@@ -251,7 +260,7 @@ export default class Command {
   }
 
   runPreparations() {
-    const { scope, ignore, registry } = this.options;
+    const { scope, ignore, registry, since } = this.options;
 
     if (scope) {
       log.info("scope", scope);
@@ -270,6 +279,13 @@ export default class Command {
       this.packages = this.repository.packages;
       this.packageGraph = this.repository.packageGraph;
       this.filteredPackages = PackageUtilities.filterPackages(this.packages, { scope, ignore });
+
+      // The UpdatedPackgaesCollector requires that filteredPackages be present prior to checking for
+      // updates. That's okay because it further filters based on what's already been filtered.
+      if (typeof since === "string") {
+        const updated = new UpdatedPackagesCollector(this).getUpdates().map((update) => update.package.name);
+        this.filteredPackages = this.filteredPackages.filter((pkg) => updated.indexOf(pkg.name) > -1);
+      }
 
       if (this.options.includeFilteredDependencies) {
         this.filteredPackages = PackageUtilities.addDependencies(this.filteredPackages, this.packageGraph);
