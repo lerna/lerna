@@ -57,7 +57,7 @@ export default class GitUtilities {
 
   static addTag(tag, opts) {
     log.silly("addTag", tag);
-    ChildProcessUtilities.execSync("git", ["tag", "-a", tag, "-m", tag], opts);
+    ChildProcessUtilities.execSync("git", ["tag", tag, "-m", tag], opts);
   }
 
   static removeTag(tag, opts) {
