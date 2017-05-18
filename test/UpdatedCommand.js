@@ -230,7 +230,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runValidations();
       updatedCommand.runPreparations();
 
-      updatedCommand.runCommand(exitWithCode(1));
+      updatedCommand.runCommand(exitWithCode(1, done));
     });
   });
 
@@ -350,7 +350,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runValidations();
       updatedCommand.runPreparations();
 
-      updatedCommand.runCommand(exitWithCode(1));
+      updatedCommand.runCommand(exitWithCode(1, done));
     });
   });
 });
