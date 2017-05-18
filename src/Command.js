@@ -279,8 +279,8 @@ export default class Command {
 
   runCommand(callback) {
     this._attempt("initialize", () => {
-      this._attempt("execute", (exitCode = 0) => {
-        this._complete(null, exitCode, callback);
+      this._attempt("execute", () => {
+        this._complete(null, 0, callback);
       }, callback);
     }, callback);
   }
@@ -289,7 +289,7 @@ export default class Command {
     try {
       log.silly(method, "attempt");
 
-      this[method]((err, completed, exitCode) => {
+      this[method]((err, completed) => {
         if (err) {
           log.error(method, "callback with error\n", err);
           this._complete(err, 1, callback);
@@ -298,7 +298,7 @@ export default class Command {
           this._complete(null, 1, callback);
         } else {
           log.silly(method, "success");
-          next(exitCode);
+          next();
         }
       });
     } catch (err) {
