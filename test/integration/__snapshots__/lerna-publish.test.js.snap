@@ -83,6 +83,14 @@ Array [
 ]
 `;
 
+exports[`stderr: exists with a exit code 0 when there are no updates 1`] = `
+"lerna info version __TEST_VERSION__
+lerna info current version 1.0.0
+lerna info Checking for updated packages...
+lerna info Comparing with tag v1.0.0
+lerna info No updated packages to publish. "
+`;
+
 exports[`stderr: updates fixed versions 1`] = `
 "lerna info version __TEST_VERSION__
 lerna info current version 1.0.0
@@ -100,6 +108,8 @@ lerna WARN No tags found!
 lerna info Comparing with initial commit.
 lerna info auto-confirmed "
 `;
+
+exports[`stdout: exists with a exit code 0 when there are no updates 1`] = `""`;
 
 exports[`stdout: updates fixed versions 1`] = `
 "

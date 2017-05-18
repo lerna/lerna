@@ -221,6 +221,17 @@ describe("UpdatedCommand", () => {
         }
       }));
     });
+
+    it("should return a non-zero exit code when there are no changes", (done) => {
+      gitTag({ cwd: testDir });
+
+      const updatedCommand = new UpdatedCommand([], {}, testDir);
+
+      updatedCommand.runValidations();
+      updatedCommand.runPreparations();
+
+      updatedCommand.runCommand(exitWithCode(1, done));
+    });
   });
 
   /** =========================================================================
@@ -329,6 +340,17 @@ describe("UpdatedCommand", () => {
           done.fail(ex);
         }
       }));
+    });
+
+    it("should return a non-zero exit code when there are no changes", (done) => {
+      gitTag({ cwd: testDir });
+
+      const updatedCommand = new UpdatedCommand([], {}, testDir);
+
+      updatedCommand.runValidations();
+      updatedCommand.runPreparations();
+
+      updatedCommand.runCommand(exitWithCode(1, done));
     });
   });
 });

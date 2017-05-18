@@ -19,7 +19,13 @@ export default class UpdatedCommand extends Command {
   initialize(callback) {
     const updatedPackagesCollector = new UpdatedPackagesCollector(this);
     this.updates = updatedPackagesCollector.getUpdates();
-    callback(null, true);
+
+    const proceedWithUpdates = this.updates.length > 0;
+    if (!proceedWithUpdates) {
+      this.logger.info("No packages need updating");
+    }
+
+    callback(null, proceedWithUpdates);
   }
 
   get otherCommandConfigs() {
