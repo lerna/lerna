@@ -21,8 +21,9 @@ export const builder = {
     type: "boolean",
   },
   "only-updated": {
-    "describe": "When executing scripts/commands, only run the script/command on packages which "
-    + "have been updated since the last release"
+    group: "Command Options:",
+    describe: "Run script in packages that have been updated since the last release only",
+    type: "boolean",
   },
   "parallel": {
     group: "Command Options:",

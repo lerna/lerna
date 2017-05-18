@@ -1,7 +1,6 @@
 import async from "async";
 
 import ChildProcessUtilities from "../ChildProcessUtilities";
-
 import Command from "../Command";
 import PackageUtilities from "../PackageUtilities";
 import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
@@ -16,8 +15,9 @@ export const describe = "Run an arbitrary command in each package.";
 
 export const builder = {
   "only-updated": {
-    "describe": "When executing scripts/commands, only run the script/command on packages which "
-    + "have been updated since the last release"
+    group: "Command Options:",
+    describe: "Run command in packages that have been updated since the last release only",
+    type: "boolean",
   },
   "parallel": {
     group: "Command Options:",

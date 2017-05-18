@@ -149,12 +149,14 @@ describe("RunCommand", () => {
       });
     });
 
-    it("should filter packages that are not updated when onlyUpdate", (done) => {
-      UpdatedPackagesCollector.prototype.getUpdates = jest.fn(() => [{ package: {
-        name: "package-3",
-        location: path.join(testDir, "packages/package-3"),
-        scripts: { "my-script": "echo package-3" }
-      } }]);
+    it("should filter packages that are not updated with --only-updated", (done) => {
+      UpdatedPackagesCollector.prototype.getUpdates = jest.fn(() => [{
+        package: {
+          name: "package-3",
+          location: path.join(testDir, "packages/package-3"),
+          scripts: { "my-script": "echo package-3" },
+        },
+      }]);
 
       const runCommand = new RunCommand(["my-script"], {
         onlyUpdated: true,
@@ -198,7 +200,6 @@ describe("RunCommand", () => {
         }
       }));
     });
-
   });
 
   describe("with --include-filtered-dependencies", () => {
@@ -231,5 +232,4 @@ describe("RunCommand", () => {
       }));
     });
   });
-
 });

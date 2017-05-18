@@ -112,12 +112,13 @@ describe("ExecCommand", () => {
       }));
     });
 
-    it("should filter packages that are not updated when onlyUpdate", (done) => {
-
-      UpdatedPackagesCollector.prototype.getUpdates = jest.fn(() => [{ package: {
-        name: "package-2",
-        location: path.join(testDir, "packages/package-2")
-      } }]);
+    it("should filter packages that are not updated with --only-updated", (done) => {
+      UpdatedPackagesCollector.prototype.getUpdates = jest.fn(() => [{
+        package: {
+          name: "package-2",
+          location: path.join(testDir, "packages/package-2"),
+        },
+      }]);
 
       const execCommand = new ExecCommand(["ls"], {
         onlyUpdated: true,

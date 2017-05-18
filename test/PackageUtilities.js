@@ -183,12 +183,11 @@ describe("PackageUtilities", () => {
   });
 
   describe(".filterPackagesThatAreNotUpdated()", () => {
-
     it("should return an empty array when there are no packages to filter", () => {
       const packagesToFilter = [];
       const packageUpdates = [
         { package: { name: "ghi" } },
-        { package: { name: "xyz" } }
+        { package: { name: "xyz" } },
       ];
       const updatedPackages = PackageUtilities.filterPackagesThatAreNotUpdated(
         packagesToFilter,
@@ -230,7 +229,6 @@ describe("PackageUtilities", () => {
       expect(updatedPackages).toHaveLength(1);
       expect(updatedPackages).toEqual([{ name: "ghi" }]);
     });
-
   });
 
   describe(".topologicallyBatchPackages()", () => {
