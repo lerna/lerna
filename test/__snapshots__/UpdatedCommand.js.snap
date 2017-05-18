@@ -104,14 +104,6 @@ Array [
 ]
 `;
 
-exports[`UpdatedCommand basic should return a non-zero exit code when there are no changes 1`] = `Array []`;
-
-exports[`UpdatedCommand basic should return a non-zero exit code when there are no changes 2`] = `
-Array [
-  "",
-]
-`;
-
 exports[`UpdatedCommand circular should list changes 1`] = `
 Array [
   "- package-3
@@ -141,13 +133,5 @@ exports[`UpdatedCommand circular should list changes without ignored files 1`] =
 Array [
   "- package-3
 - package-4",
-]
-`;
-
-exports[`UpdatedCommand circular should return a non-zero exit code when there are no changes 1`] = `Array []`;
-
-exports[`UpdatedCommand circular should return a non-zero exit code when there are no changes 2`] = `
-Array [
-  "",
 ]
 `;
