@@ -19,7 +19,13 @@ export default class UpdatedCommand extends Command {
   initialize(callback) {
     const updatedPackagesCollector = new UpdatedPackagesCollector(this);
     this.updates = updatedPackagesCollector.getUpdates();
-    callback(null, true);
+
+    const proceedWithUpdates = this.updates.length > 0;
+    if (!proceedWithUpdates) {
+      this.logger.info("No packages need updating");
+    }
+
+    callback(null, proceedWithUpdates);
   }
 
   get otherCommandConfigs() {
@@ -34,10 +40,6 @@ export default class UpdatedCommand extends Command {
     this.logger.info("result");
     output(formattedUpdates);
 
-    const exitCode = this.updates.length === 0 ? 1 : 0;
-
-    this.logger.info("No packages need updating");
-
-    callback(null, true, exitCode);
+    callback(null, true);
   }
 }
