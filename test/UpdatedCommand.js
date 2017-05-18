@@ -230,17 +230,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runValidations();
       updatedCommand.runPreparations();
 
-      updatedCommand.runCommand(exitWithCode(1, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          expect(loggingOutput()).toMatchSnapshot();
-          expect(consoleOutput()).toMatchSnapshot();
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      updatedCommand.runCommand(exitWithCode(1));
     });
   });
 
@@ -360,17 +350,7 @@ describe("UpdatedCommand", () => {
       updatedCommand.runValidations();
       updatedCommand.runPreparations();
 
-      updatedCommand.runCommand(exitWithCode(1, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          expect(loggingOutput()).toMatchSnapshot();
-          expect(consoleOutput()).toMatchSnapshot();
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      updatedCommand.runCommand(exitWithCode(1));
     });
   });
 });
