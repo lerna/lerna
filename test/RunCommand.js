@@ -1,8 +1,10 @@
+import path from "path";
 import log from "npmlog";
 
 // mocked modules
 import NpmUtilities from "../src/NpmUtilities";
 import output from "../src/utils/output";
+import UpdatedPackagesCollector from "../src/UpdatedPackagesCollector";
 
 // helpers
 import callsBack from "./helpers/callsBack";
@@ -147,6 +149,34 @@ describe("RunCommand", () => {
       });
     });
 
+    it("should filter packages that are not updated when onlyUpdate", (done) => {
+      UpdatedPackagesCollector.prototype.getUpdates = jest.fn(() => [{ package: {
+        name: "package-3",
+        location: path.join(testDir, "packages/package-3"),
+        scripts: { "my-script": "echo package-3" }
+      } }]);
+
+      const runCommand = new RunCommand(["my-script"], {
+        onlyUpdated: true,
+      }, testDir);
+
+      runCommand.runValidations();
+      runCommand.runPreparations();
+
+      runCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          expect(ranInPackages(testDir))
+            .toMatchSnapshot("run <script> --only-updated");
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
+
     it("runs a script in all packages with --parallel", (done) => {
       const runCommand = new RunCommand(["env"], {
         parallel: true,
@@ -168,6 +198,7 @@ describe("RunCommand", () => {
         }
       }));
     });
+
   });
 
   describe("with --include-filtered-dependencies", () => {
@@ -200,4 +231,5 @@ describe("RunCommand", () => {
       }));
     });
   });
+
 });

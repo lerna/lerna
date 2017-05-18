@@ -1,8 +1,10 @@
 import async from "async";
 
 import ChildProcessUtilities from "../ChildProcessUtilities";
+
 import Command from "../Command";
 import PackageUtilities from "../PackageUtilities";
+import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
 
 export function handler(argv) {
   return new ExecCommand([argv.command, ...argv.args], argv).run();
@@ -13,6 +15,10 @@ export const command = "exec <command> [args..]";
 export const describe = "Run an arbitrary command in each package.";
 
 export const builder = {
+  "only-updated": {
+    "describe": "When executing scripts/commands, only run the script/command on packages which "
+    + "have been updated since the last release"
+  },
   "parallel": {
     group: "Command Options:",
     describe: "Run command in all packages with unlimited concurrency, streaming prefixed output",
@@ -37,8 +43,18 @@ export default class ExecCommand extends Command {
     // don't interrupt spawned or streaming stdio
     this.logger.disableProgress();
 
+    let filteredPackages = this.filteredPackages;
+    if (this.flags.onlyUpdated) {
+      const updatedPackagesCollector = new UpdatedPackagesCollector(this);
+      const packageUpdates = updatedPackagesCollector.getUpdates();
+      filteredPackages = PackageUtilities.filterPackagesThatAreNotUpdated(
+        filteredPackages,
+        packageUpdates
+      );
+    }
+
     this.batchedPackages = this.toposort
-      ? PackageUtilities.topologicallyBatchPackages(this.filteredPackages)
+      ? PackageUtilities.topologicallyBatchPackages(filteredPackages)
       : [this.filteredPackages];
 
     callback(null, true);

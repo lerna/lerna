@@ -157,6 +157,13 @@ export default class PackageUtilities {
     return packages;
   }
 
+  static filterPackagesThatAreNotUpdated(packagesToFilter, packageUpdates) {
+    return packageUpdates
+      .map((update) => update.package)
+      .filter((pkg) => packagesToFilter.some((p) => p.name === pkg.name))
+    ;
+  }
+
   static topologicallyBatchPackages(packagesToBatch, { depsOnly } = {}) {
     // We're going to be chopping stuff out of this array, so copy it.
     const packages = packagesToBatch.slice();

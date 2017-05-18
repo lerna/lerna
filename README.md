@@ -674,6 +674,20 @@ $ lerna bootstrap --scope "package-*" --ignore "package-util-*" --include-filter
 # package matched by "package-*"
 ```
 
+#### --only-updated
+
+When executing a script or command, only run the script or command on packages that have been updated since the last release.
+
+A package is considered "updated" using the same rules as `lerna updated`.
+
+```sh
+$ lerna exec --only-updated -- ls -la
+```
+
+```
+$ lerna run --only-updated test
+```
+
 #### --loglevel [silent|error|warn|success|info|verbose|silly]
 
 What level of logs to report.  On failure, all logs are written to lerna-debug.log in the current working directory.

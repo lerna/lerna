@@ -4,6 +4,7 @@ import Command from "../Command";
 import NpmUtilities from "../NpmUtilities";
 import output from "../utils/output";
 import PackageUtilities from "../PackageUtilities";
+import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
 
 export function handler(argv) {
   return new RunCommand([argv.script, ...argv.args], argv).run();
@@ -18,6 +19,10 @@ export const builder = {
     group: "Command Options:",
     describe: "Stream output with lines prefixed by package.",
     type: "boolean",
+  },
+  "only-updated": {
+    "describe": "When executing scripts/commands, only run the script/command on packages which "
+    + "have been updated since the last release"
   },
   "parallel": {
     group: "Command Options:",
@@ -40,10 +45,20 @@ export default class RunCommand extends Command {
       return;
     }
 
+    let filteredPackages = this.filteredPackages;
+    if (this.flags.onlyUpdated) {
+      const updatedPackagesCollector = new UpdatedPackagesCollector(this);
+      const packageUpdates = updatedPackagesCollector.getUpdates();
+      filteredPackages = PackageUtilities.filterPackagesThatAreNotUpdated(
+        filteredPackages,
+        packageUpdates
+      );
+    }
+
     if (this.script === "test" || this.script === "env") {
-      this.packagesWithScript = this.filteredPackages;
+      this.packagesWithScript = filteredPackages;
     } else {
-      this.packagesWithScript = this.filteredPackages
+      this.packagesWithScript = filteredPackages
         .filter((pkg) => pkg.scripts && pkg.scripts[this.script]);
     }
 
