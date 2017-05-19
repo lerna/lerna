@@ -78,7 +78,7 @@
     "eslint": "^3.19.0",
     "eslint-config-babel": "^6.0.0",
     "eslint-plugin-babel": "^4.1.1",
-    "eslint-plugin-flowtype": "^2.32.1",
+    "eslint-plugin-flowtype": "^2.33.0",
     "eslint-plugin-node": "^4.2.2",
     "file-url": "^2.0.2",
     "jest": "^19.0.2",
