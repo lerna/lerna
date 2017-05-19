@@ -1,3 +1,4 @@
+import chalk from "chalk";
 import EventEmitter from "events";
 import execa from "execa";
 import logTransformer from "strong-log-transformer";
@@ -8,6 +9,17 @@ let children = 0;
 
 // This is used to alert listeners when all children have exited.
 const emitter = new EventEmitter();
+
+// when streaming children are spawned, use this color for prefix
+const colorWheel = [
+  "cyan",
+  "magenta",
+  "blue",
+  "yellow",
+  "green",
+  "red",
+];
+const NUM_COLORS = colorWheel.length;
 
 export default class ChildProcessUtilities {
   static exec(command, args, opts, callback) {
@@ -32,10 +44,12 @@ export default class ChildProcessUtilities {
     const options = Object.assign({}, opts);
     options.stdio = ["ignore", "pipe", "pipe"];
 
+    const colorName = colorWheel[children % NUM_COLORS];
+    const color = chalk[colorName];
     const spawned = _spawn(command, args, options, callback);
 
-    const prefixedStdout = logTransformer({ tag: `${prefix}:` });
-    const prefixedStderr = logTransformer({ tag: `${prefix} ERROR`, mergeMultiline: true });
+    const prefixedStdout = logTransformer({ tag: `${color.bold(prefix)}:` });
+    const prefixedStderr = logTransformer({ tag: `${color(prefix)}:`, mergeMultiline: true });
 
     // Avoid "Possible EventEmitter memory leak detected" warning due to piped stdio
     if (children > process.stdout.listenerCount("close")) {
