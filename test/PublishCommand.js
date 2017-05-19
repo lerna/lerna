@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import fs from "fs-promise";
+import fs from "fs-extra";
 import log from "npmlog";
 import normalizeNewline from "normalize-newline";
 import path from "path";

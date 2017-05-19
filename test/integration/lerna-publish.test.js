@@ -1,5 +1,5 @@
 import execa from "execa";
-import fs from "fs-promise";
+import fs from "fs-extra";
 import globby from "globby";
 import normalizeNewline from "normalize-newline";
 

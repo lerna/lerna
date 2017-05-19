@@ -1,7 +1,7 @@
 import path from "path";
 
 // mocked modules
-import fs from "fs-promise";
+import fs from "fs-extra";
 import pathExists from "path-exists";
 import cmdShim from "cmd-shim";
 import readCmdShim from "read-cmd-shim";
@@ -13,7 +13,7 @@ import callsBack from "./helpers/callsBack";
 // file under test
 import FileSystemUtilities from "../src/FileSystemUtilities";
 
-jest.mock("fs-promise");
+jest.mock("fs-extra");
 jest.mock("path-exists");
 jest.mock("cmd-shim");
 jest.mock("read-cmd-shim");
