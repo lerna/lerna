@@ -99,7 +99,7 @@ describe("GitUtilities", () => {
       const opts = { cwd: "test" };
       GitUtilities.addTag("foo", opts);
       expect(ChildProcessUtilities.execSync).lastCalledWith(
-        "git", ["tag", "-a", "foo", "-m", "foo"], opts
+        "git", ["tag", "foo", "-m", "foo"], opts
       );
     });
   });
