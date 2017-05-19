@@ -3672,13 +3672,13 @@ temp-dir@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/temp-dir/-/temp-dir-1.0.0.tgz#0a7c0ea26d3a39afa7e0ebea9c1fc0bc4daa011d"
 
-temp-write@^3.2.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/temp-write/-/temp-write-3.2.0.tgz#9de5c847b952918ad2be13433da25772cfed5241"
+temp-write@^3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/temp-write/-/temp-write-3.3.0.tgz#c1a96de2b36061342eae81f44ff001aec8f615a9"
   dependencies:
     graceful-fs "^4.1.2"
     is-stream "^1.1.0"
-    mkdirp "^0.5.0"
+    make-dir "^1.0.0"
     pify "^2.2.0"
     temp-dir "^1.0.0"
     uuid "^3.0.1"
