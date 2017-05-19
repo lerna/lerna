@@ -42,7 +42,7 @@
     "find-up": "^2.1.0",
     "fs-extra": "^3.0.1",
     "get-port": "^3.1.0",
-    "glob": "^7.0.6",
+    "glob": "^7.1.2",
     "globby": "^6.1.0",
     "graceful-fs": "^4.1.11",
     "inquirer": "^3.0.6",
