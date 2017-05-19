@@ -353,6 +353,45 @@ describe("UpdatedCommand", () => {
       updatedCommand.runCommand(exitWithCode(1, done));
     });
   });
+
+  /** =========================================================================
+   * JSON Output
+   * ======================================================================= */
+
+  describe("with --json", () => {
+    let testDir;
+
+    beforeEach(() => initFixture("UpdatedCommand/basic").then((dir) => {
+      testDir = dir;
+    }));
+
+    it("should list changes as a json object", (done) => {
+      setupGitChanges(testDir, [
+        "packages/package-2/random-file",
+      ]);
+
+      const updatedCommand = new UpdatedCommand([], {
+        json: true
+      }, testDir);
+
+      updatedCommand.runValidations();
+      updatedCommand.runPreparations();
+
+      updatedCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+        try {
+          const outputStr = consoleOutput();
+          expect(outputStr).toMatchSnapshot();
+          // Output should be a parseable string
+          const jsonOutput = JSON.parse(outputStr);
+          expect(jsonOutput).toMatchSnapshot();
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
+  });
 });
 
 // TODO: remove this when we _really_ remove support for SECRET_FLAG

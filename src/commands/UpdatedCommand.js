@@ -33,12 +33,23 @@ export default class UpdatedCommand extends Command {
   }
 
   execute(callback) {
-    const formattedUpdates = this.updates.map((update) => update.package).map((pkg) =>
-      `- ${pkg.name}${pkg.isPrivate() ? ` (${chalk.red("private")})` : ""}`
-    ).join("\n");
+    const updatedPackages = this.updates.map((update) => update.package).map((pkg) => {
+      return {
+        name: pkg.name,
+        version: pkg.version,
+        private: pkg.isPrivate()
+      };
+    });
 
     this.logger.info("result");
-    output(formattedUpdates);
+    if (this.options.json) {
+      output(JSON.stringify(updatedPackages, null, 2));
+    } else {
+      const formattedUpdates = updatedPackages.map((pkg) =>
+        `- ${pkg.name}${pkg.private ? ` (${chalk.red("private")})` : ""}`
+      ).join("\n");
+      output(formattedUpdates);
+    }
 
     callback(null, true);
   }
