@@ -62,14 +62,6 @@ export const builder = {
     describe: "Set max-buffer(bytes) for Command execution",
     type: "number",
     requiresArg: true
-  },
-  "json": {
-    describe: dedent`
-      Returns output as a machine-readable json object
-      (Only for 'ls' and 'updated' commands)
-    `,
-    type: "boolean",
-    default: false
   }
 };
 
@@ -77,11 +69,6 @@ export default class Command {
   constructor(input, flags, cwd) {
     log.pause();
     log.heading = "lerna";
-
-    // Default to silent log level for JSON output
-    if (flags.json) {
-      log.level = "silent";
-    }
 
     if (flags.loglevel) {
       log.level = flags.loglevel;

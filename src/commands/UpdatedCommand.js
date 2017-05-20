@@ -1,9 +1,22 @@
+import _ from "lodash";
 import chalk from "chalk";
 
 import { builder as publishOptions } from "./PublishCommand";
 import Command from "../Command";
 import output from "../utils/output";
 import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
+
+const updatedOptions = _.assign(
+  {},
+  publishOptions,
+  {
+    "json": {
+      describe: "Show information in JSON format",
+      group: "Command Options:",
+      type: "boolean"
+    }
+  }
+);
 
 export function handler(argv) {
   return new UpdatedCommand(argv._, argv).run();
@@ -13,7 +26,7 @@ export const command = "updated";
 
 export const describe = "Check which packages have changed since the last publish.";
 
-export const builder = (yargs) => yargs.options(publishOptions);
+export const builder = (yargs) => yargs.options(updatedOptions);
 
 export default class UpdatedCommand extends Command {
   initialize(callback) {

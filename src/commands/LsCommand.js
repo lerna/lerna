@@ -12,7 +12,13 @@ export const command = "ls";
 
 export const describe = "List all public packages";
 
-export const builder = {};
+export const builder = {
+  "json": {
+    describe: "Show information in JSON format",
+    group: "Command Options:",
+    type: "boolean"
+  }
+};
 
 export default class LsCommand extends Command {
   get requiresGit() {

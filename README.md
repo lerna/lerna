@@ -455,7 +455,7 @@ $ lerna ls
 
 List all of the public packages in the current Lerna repo.
 
-`lerna ls` respects the `--ignore`, `--scope`, and `--json` flags (see [Flags](#flags)).
+`lerna ls` respects the `--ignore` and `--scope` flags (see [Flags](#flags)).
 
 #### --json
 
