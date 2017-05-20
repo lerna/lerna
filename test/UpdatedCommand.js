@@ -380,10 +380,8 @@ describe("UpdatedCommand", () => {
       updatedCommand.runCommand(exitWithCode(0, (err) => {
         if (err) return done.fail(err);
         try {
-          const outputStr = consoleOutput();
-          expect(outputStr).toMatchSnapshot();
           // Output should be a parseable string
-          const jsonOutput = JSON.parse(outputStr);
+          const jsonOutput = JSON.parse(consoleOutput());
           expect(jsonOutput).toMatchSnapshot();
           done();
         } catch (ex) {
