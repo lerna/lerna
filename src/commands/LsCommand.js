@@ -12,7 +12,13 @@ export const command = "ls";
 
 export const describe = "List all public packages";
 
-export const builder = {};
+export const builder = {
+  "json": {
+    describe: "Show information in JSON format",
+    group: "Command Options:",
+    type: "boolean"
+  }
+};
 
 export default class LsCommand extends Command {
   get requiresGit() {
@@ -29,12 +35,20 @@ export default class LsCommand extends Command {
       .map((pkg) => {
         return {
           name: pkg.name,
-          version: chalk.grey(`v${pkg.version}`),
-          private: pkg.isPrivate() ? `(${chalk.red("private")})` : ""
+          version: pkg.version,
+          private: pkg.isPrivate()
         };
       });
 
-    output(columnify(formattedPackages, { showHeaders: false }));
+    if (this.options.json) {
+      output(JSON.stringify(formattedPackages, null, 2));
+    } else {
+      formattedPackages.forEach((pkg) => {
+        pkg.version = chalk.grey(`v${pkg.version}`);
+        pkg.private = pkg.private ? `(${chalk.red("private")})` : "";
+      });
+      output(columnify(formattedPackages, { showHeaders: false }));
+    }
 
     callback(null, true);
   }

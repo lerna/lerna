@@ -129,4 +129,33 @@ describe("LsCommand", () => {
       }));
     });
   });
+
+  describe("with --json", () => {
+    let testDir;
+
+    beforeEach(() => initFixture("LsCommand/basic").then((dir) => {
+      testDir = dir;
+    }));
+
+    it("should list packages as json objects", (done) => {
+      const lsCommand = new LsCommand([], {
+        json: true
+      }, testDir);
+
+      lsCommand.runValidations();
+      lsCommand.runPreparations();
+
+      lsCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+        try {
+          // Output should be a parseable string
+          const jsonOutput = JSON.parse(consoleOutput());
+          expect(jsonOutput).toMatchSnapshot();
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
+  });
 });

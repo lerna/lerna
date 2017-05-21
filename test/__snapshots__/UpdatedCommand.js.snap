@@ -135,3 +135,18 @@ Array [
 - package-4",
 ]
 `;
+
+exports[`UpdatedCommand with --json should list changes as a json object 1`] = `
+Array [
+  Object {
+    "name": "package-2",
+    "private": false,
+    "version": "1.0.0",
+  },
+  Object {
+    "name": "package-3",
+    "private": false,
+    "version": "1.0.0",
+  },
+]
+`;

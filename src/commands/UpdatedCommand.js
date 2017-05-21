@@ -1,9 +1,22 @@
+import _ from "lodash";
 import chalk from "chalk";
 
 import { builder as publishOptions } from "./PublishCommand";
 import Command from "../Command";
 import output from "../utils/output";
 import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
+
+const updatedOptions = _.assign(
+  {},
+  publishOptions,
+  {
+    "json": {
+      describe: "Show information in JSON format",
+      group: "Command Options:",
+      type: "boolean"
+    }
+  }
+);
 
 export function handler(argv) {
   return new UpdatedCommand(argv._, argv).run();
@@ -13,7 +26,7 @@ export const command = "updated";
 
 export const describe = "Check which packages have changed since the last publish.";
 
-export const builder = (yargs) => yargs.options(publishOptions);
+export const builder = (yargs) => yargs.options(updatedOptions);
 
 export default class UpdatedCommand extends Command {
   initialize(callback) {
@@ -33,12 +46,23 @@ export default class UpdatedCommand extends Command {
   }
 
   execute(callback) {
-    const formattedUpdates = this.updates.map((update) => update.package).map((pkg) =>
-      `- ${pkg.name}${pkg.isPrivate() ? ` (${chalk.red("private")})` : ""}`
-    ).join("\n");
+    const updatedPackages = this.updates.map((update) => update.package).map((pkg) => {
+      return {
+        name: pkg.name,
+        version: pkg.version,
+        private: pkg.isPrivate()
+      };
+    });
 
     this.logger.info("result");
-    output(formattedUpdates);
+    if (this.options.json) {
+      output(JSON.stringify(updatedPackages, null, 2));
+    } else {
+      const formattedUpdates = updatedPackages.map((pkg) =>
+        `- ${pkg.name}${pkg.private ? ` (${chalk.red("private")})` : ""}`
+      ).join("\n");
+      output(formattedUpdates);
+    }
 
     callback(null, true);
   }

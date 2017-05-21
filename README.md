@@ -405,6 +405,24 @@ Lerna determines the last git tag created and runs `git diff --name-only v6.8.1`
 **Note that configuration for the `publish` command _also_ affects the
 `updated` command.  For example `config.publish.ignore`**
 
+#### --json
+
+```sh
+$ lerna updated --json
+```
+
+When run with this flag, `updated` will return an array of objects in the following format:
+
+```json
+[
+  {
+    "name": "package",
+    "version": "1.0.0",
+    "private": false
+  }
+]
+```
+
 ### clean
 
 ```sh
@@ -438,6 +456,24 @@ $ lerna ls
 List all of the public packages in the current Lerna repo.
 
 `lerna ls` respects the `--ignore` and `--scope` flags (see [Flags](#flags)).
+
+#### --json
+
+```sh
+$ lerna ls --json
+```
+
+When run with this flag, `ls` will return an array of objects in the following format:
+
+```json
+[
+  {
+    "name": "package",
+    "version": "1.0.0",
+    "private": false
+  }
+]
+```
 
 ### run
 

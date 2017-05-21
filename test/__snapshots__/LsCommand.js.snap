@@ -36,3 +36,33 @@ Array [
 @test/package-1 v1.0.0 ",
 ]
 `;
+
+exports[`LsCommand with --json should list packages as json objects 1`] = `
+Array [
+  Object {
+    "name": "package-1",
+    "private": false,
+    "version": "1.0.0",
+  },
+  Object {
+    "name": "package-2",
+    "private": false,
+    "version": "1.0.0",
+  },
+  Object {
+    "name": "package-3",
+    "private": false,
+    "version": "1.0.0",
+  },
+  Object {
+    "name": "package-4",
+    "private": false,
+    "version": "1.0.0",
+  },
+  Object {
+    "name": "package-5",
+    "private": true,
+    "version": "1.0.0",
+  },
+]
+`;
