@@ -8,7 +8,7 @@ export function handler(argv) {
   return new DiffCommand([argv.pkg], argv).run();
 }
 
-export const command = "diff <pkg>";
+export const command = "diff [pkg]";
 
 export const describe = "Diff all packages or a single package since the last release.";
 
@@ -25,6 +25,9 @@ function getLastCommit(execOpts) {
 export default class DiffCommand extends Command {
   initialize(callback) {
     const packageName = this.input[0];
+
+    // don't interrupt spawned or streaming stdio
+    this.logger.disableProgress();
 
     let targetPackage;
 
