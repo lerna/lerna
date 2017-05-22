@@ -1,0 +1,5 @@
+{
+  "lerna": "__TEST_VERSION__",
+  "version": "1.0.0",
+  "npmClientArgs": ["--production"]
+}

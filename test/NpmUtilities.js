@@ -402,6 +402,45 @@ describe("NpmUtilities", () => {
       });
     });
 
+    it("supports custom npmClientArgs", (done) => {
+      const directory = path.normalize("/test/installInDir");
+      const dependencies = [
+        "@scoped/something@github:foo/bar",
+        "something@github:foo/foo",
+      ];
+      const config = {
+        npmClientArgs: ["--production", "--no-optional"],
+      };
+
+      NpmUtilities.installInDir(directory, dependencies, config, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          expect(writePkg.mock.calls[0][1]).toEqual(
+            {
+              dependencies: {
+                "@scoped/something": "github:foo/bar",
+                something: "github:foo/foo",
+              },
+            },
+          );
+          expect(ChildProcessUtilities.exec).lastCalledWith(
+            "npm",
+            ["install", "--production", "--no-optional"],
+            {
+              directory,
+              registry: undefined,
+            },
+            expect.any(Function)
+          );
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      });
+    });
+
     it("overrides custom npmClient when using global style", (done) => {
       const directory = path.normalize("/test/installInDir");
       const dependencies = [

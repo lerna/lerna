@@ -199,7 +199,23 @@ When run, this command will:
 2. Symlink together all Lerna `packages` that are dependencies of each other.
 3. `npm prepublish` all bootstrapped packages.
 
-`lerna bootstrap` respects the `--ignore`, `--scope` and `--include-filtered-dependencies` flags (see [Flags](#flags)).
+`lerna bootstrap` respects the `--ignore`, `--scope` and `--include-filtered-dependencies` flags (see [Flags](#flags)). 
+
+Pass extra arguments to npm client by placing them after `--`:
+
+```sh
+$ lerna bootstrap -- --production --no-optional
+```
+
+May also be configured in `lerna.json`:
+
+```js
+{
+  ...
+  "npmClient": "yarn",
+  "npmClientArgs": ["--production", "--no-optional"]
+}
+```
 
 #### How `bootstrap` works
 

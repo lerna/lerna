@@ -10,10 +10,10 @@ import NpmUtilities from "../NpmUtilities";
 import PackageUtilities from "../PackageUtilities";
 
 export function handler(argv) {
-  return new BootstrapCommand(argv._, argv).run();
+  return new BootstrapCommand([...argv.args], argv).run();
 }
 
-export const command = "bootstrap";
+export const command = "bootstrap [args..]";
 
 export const describe = "Link local packages together and install remaining package dependencies";
 
@@ -46,12 +46,18 @@ export default class BootstrapCommand extends Command {
   }
 
   initialize(callback) {
-    const { registry, npmClient } = this.options;
+    const { registry, npmClient, npmClientArgs } = this.options;
 
     this.npmConfig = {
       registry,
       npmClient,
+      npmClientArgs,
     };
+
+    // lerna bootstrap ... -- <input>
+    if (this.input.length) {
+      this.npmConfig.npmClientArgs = [...(npmClientArgs || []), ...this.input];
+    }
 
     this.batchedPackages = this.toposort
       ? PackageUtilities.topologicallyBatchPackages(this.filteredPackages)

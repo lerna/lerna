@@ -1,0 +1,3 @@
+#!/usr/bin/env node
+
+require("fs").writeFileSync(require("path").resolve(__dirname, "npm-debug.log"), process.argv.slice(2));
