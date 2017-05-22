@@ -104,4 +104,48 @@ describe("lerna exec", () => {
     expect(stdout).toMatch("package-2: file-2.js");
     expect(stdout).toMatch("package-2: package.json");
   });
+
+  test.concurrent("--bail=false <cmd>", async () => {
+    const cwd = await initFixture("ExecCommand/basic");
+    const args = [
+      "exec",
+      "--bail=false",
+      "--concurrency=1",
+      "--",
+      "npm run fail-or-succeed",
+    ];
+
+    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
+    expect(stderr).toMatch(
+      "Failed at the package-1@1.0.0 fail-or-succeed script 'echo \"failure!\" && exit 1'."
+    );
+    expect(stdout).toMatch("failure!");
+    expect(stdout).toMatch("success!");
+  });
+
+  test.concurrent("--bail=true <cmd>", async () => {
+    const cwd = await initFixture("ExecCommand/basic");
+    const args = [
+      "exec",
+      "--bail=true",
+      "--concurrency=1",
+      "--",
+      "npm run fail-or-succeed",
+    ];
+
+    let hasError = false;
+    try {
+      await execa(LERNA_BIN, args, { cwd });
+    } catch (error) {
+      hasError = true;
+      expect(error.message).toMatch(
+        "exec Errored while executing 'npm run fail-or-succeed' in 'package-1'",
+      );
+
+      // Script should halt before any attempts on "package-2" are attempted.
+      expect(error.message).not.toMatch("package-2");
+    }
+
+    expect(hasError).toBe(true);
+  });
 });
