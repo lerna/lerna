@@ -536,6 +536,14 @@ $ lerna exec -- npm view \$LERNA_PACKAGE_NAME
 $ lerna exec --concurrency 1 -- ls -la
 ```
 
+#### --bail
+
+```sh
+$ lerna exec --bail=<boolean> <command>
+```
+
+This flag signifies whether or not the `exec` command should halt execution upon encountering an error thrown by one of the spawned subprocesses. Its default value is `true`.
+
 ### import
 
 ```sh

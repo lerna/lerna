@@ -14,6 +14,12 @@ export const command = "exec <command> [args..]";
 export const describe = "Run an arbitrary command in each package.";
 
 export const builder = {
+  "bail": {
+    group: "Command Options:",
+    describe: "Bail on exec execution when the command fails within a package",
+    type: "boolean",
+    default: true,
+  },
   "only-updated": {
     group: "Command Options:",
     describe: "Run command in packages that have been updated since the last release only",
@@ -77,6 +83,7 @@ export default class ExecCommand extends Command {
       env: Object.assign({}, process.env, {
         LERNA_PACKAGE_NAME: pkg.name,
       }),
+      reject: this.options.bail
     };
   }
 
