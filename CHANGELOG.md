@@ -1,3 +1,96 @@
+## v2.0.0-rc.5 (2017-05-22)
+
+This is the last release candidate.
+
+We need to fix [#789](https://github.com/lerna/lerna/issues/789) before we can release `v2.0.0`. All contributions are appreciated!
+
+#### :boom: Breaking Change
+* [#807](https://github.com/lerna/lerna/pull/807) Change exit codes for `updated` and `publish`. ([@koddsson](https://github.com/koddsson))
+
+  It is now possible to run `lerna publish` in CI unconditionally, only publishing when changes are actually detected, and never failing when it decides to not publish anything.
+
+  Previously:
+  - `lerna publish` when there are no updates to publish would throw an error
+  - `lerna updated` when there are no updates would `exit 0`, making it ineffective as a chained filter (e.g., `lerna updated && lerna publish`)
+
+  Now:
+  - `lerna publish` when there are no updates is a no-op, exiting successfully with a helpful log message
+  - `lerna updated` when there are no updates will exit non-zero (but _not_ throw an error), enabling it to be an effective filter
+
+#### :rocket: Enhancement
+* [#726](https://github.com/lerna/lerna/pull/726) Add --only-updated option to exec and run subcommands. ([@jameslnewell](https://github.com/jameslnewell))
+
+  When executing a script or command, only run the script or command on packages that have been updated since the last release. A package is considered "updated" using the same rules as `lerna updated`.
+
+  ```sh
+  lerna exec --only-updated -- ls -la
+  lerna run --only-updated test
+  ```
+
+  * [#795](https://github.com/lerna/lerna/pull/795) Add --parallel flag to `lerna exec`. ([@evocateur](https://github.com/evocateur))
+
+    With this flag, `lerna exec` will run the command in _all_ filtered packages
+  in parallel, completely ignoring concurrency and topological sorting.
+
+    ```sh
+    # transpile modules in all packages as changes occur
+    lerna exec -- babel src -d lib -w
+
+    # transpile watched modules only in package-foo
+    lerna exec --scope package-foo -- babel src -d lib -w
+    ```
+
+    It is advised to constrain the scope of the command when running with this
+  flag, as spawning dozens of subprocesses may be harmful to your shell's
+  equanimity (or maximum file descriptor limit, for example). YMMV
+
+* [#796](https://github.com/lerna/lerna/pull/796) Add --parallel flag to `lerna run`. ([@evocateur](https://github.com/evocateur))
+
+  This allows simpler invocation of `watch` scripts, with the caveat that concurrency and topological sorting are _completely_ ignored. This is generally the intention when calling `lerna run watch` and other similar script targets, hence the additional flag.
+
+  ```sh
+  # the following commands are equivalent
+  lerna run watch --concurrency=1000 --stream
+  lerna run watch --parallel
+  ```
+
+  Package filtering (`--scope` and `--ignore`) is still available when this new flag is being used, and it is advised to narrow the scope of parallel execution when you have more than a dozen packages or so (YMMV).
+
+* [#803](https://github.com/lerna/lerna/pull/803) Skip git repo check by default in Commands which do not rely on git. ([@noherczeg](https://github.com/noherczeg))
+* [#824](https://github.com/lerna/lerna/pull/824) Add json output to `ls` and `updated` commands. ([@ricky](https://github.com/ricky))
+
+  When run with `--json`, `lerna updated` and `lerna ls` will return an array of objects in the following format:
+
+  ```json
+  [
+    {
+      "name": "package",
+      "version": "1.0.0",
+      "private": false
+    }
+  ]
+  ```
+
+* [#829](https://github.com/lerna/lerna/pull/829) Prefix piped streams with rotating colors. ([@evocateur](https://github.com/evocateur))
+
+#### :bug: Bug Fix
+* [#798](https://github.com/lerna/lerna/pull/798) Disable progress bars when running in CI or non-interactive shell. ([@evocateur](https://github.com/evocateur))
+* [#799](https://github.com/lerna/lerna/pull/799) Do not ignore explicit `node_modules` in package paths. ([@evocateur](https://github.com/evocateur))
+* [#815](https://github.com/lerna/lerna/pull/815) Support GPG signing of git tags. ([@alethea](https://github.com/alethea))
+* [#828](https://github.com/lerna/lerna/pull/828) Switch to `fs-extra`. ([@evocateur](https://github.com/evocateur))
+* [#831](https://github.com/lerna/lerna/pull/831) Make `pkg` argument optional for `lerna diff`. ([@evocateur](https://github.com/evocateur))
+
+#### :house: Internal
+* [#827](https://github.com/lerna/lerna/pull/827), [#830](https://github.com/lerna/lerna/pull/830) Upgrade dependencies. ([@evocateur](https://github.com/evocateur))
+
+#### Committers: 6
+- Alethea Rose ([alethea](https://github.com/alethea))
+- Daniel Stockman ([evocateur](https://github.com/evocateur))
+- James Newell ([jameslnewell](https://github.com/jameslnewell))
+- Kristján Oddsson ([koddsson](https://github.com/koddsson))
+- Norbert Csaba Herczeg ([noherczeg](https://github.com/noherczeg))
+- [ricky](https://github.com/ricky)
+
 ## v2.0.0-rc.4 (2017-04-27)
 
 Now with less bugs! The `--hoist` flag works again, among other `rc.3` bugfixes, and our logging is _much_ more detailed now.
