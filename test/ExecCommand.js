@@ -84,6 +84,29 @@ describe("ExecCommand", () => {
       }));
     });
 
+    it("should ignore execution errors with --bail=false", (done) => {
+      const execCommand = new ExecCommand(["boom"], {
+        bail: false,
+      }, testDir);
+
+      execCommand.runValidations();
+      execCommand.runPreparations();
+
+      execCommand.runCommand(exitWithCode(0, () => {
+
+        try {
+          expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(2);
+          expect(ChildProcessUtilities.spawn).lastCalledWith("boom", [], expect.objectContaining({
+            reject: false,
+          }), expect.any(Function));
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
+
     it("should filter packages with `ignore`", (done) => {
       const execCommand = new ExecCommand(["ls"], {
         ignore: "package-1",
