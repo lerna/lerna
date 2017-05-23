@@ -223,12 +223,16 @@ Let's use `babel` as an example.
 ```
 
 - Lerna checks if each dependency is also part of the Lerna repo.
-  - In this example, `babel-generator` is an internal dependency, while `source-map` is an external dependency.
-  - `source-map` is `npm install`ed like normal.
+  - In this example, `babel-generator` can be an internal dependency, while `source-map` is always an external dependency.
+  - The version of `babel-generator` in the `package.json` of `babel-core` is satisfied by `packages/babel-generator`, passing for an internal dependency.
+  - `source-map` is `npm install`ed (or `yarn`ed) like normal.
 - `packages/babel-core/node_modules/babel-generator` symlinks to `packages/babel-generator`
 - This allows nested directory imports
 
-**Note:** Circular dependencies result in circular symlinks which *may* impact your editor/IDE.
+**Notes:**
+- When a dependency version in a package is not satisfied by a package of the same name in the repo, it will be `npm install`ed (or `yarn`ed) like normal.
+- Dist-tags, like `latest`, do not satisfy [semver](https://semver.npmjs.com/) ranges.
+- Circular dependencies result in circular symlinks which *may* impact your editor/IDE.
 
 [Webstorm](https://www.jetbrains.com/webstorm/) locks up when circular symlinks are present. To prevent this, add `node_modules` to the list of ignored files and folders in `Preferences | Editor | File Types | Ignored files and folders`.
 
