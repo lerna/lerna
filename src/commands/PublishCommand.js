@@ -472,8 +472,8 @@ export default class PublishCommand extends Command {
     const tags = this.updates.map(({ package: { name } }) =>
       `${name}@${this.updatesVersions[name]}`
     );
-    const message = this.options.message ||
-      tags.reduce((msg, tag) => msg + `${EOL} - ${tag}`, `Publish${EOL}`);
+    const subject = this.options.message || "Publish";
+    const message = tags.reduce((msg, tag) => msg + `${EOL} - ${tag}`, `${subject}${EOL}`);
 
     GitUtilities.commit(message, this.execOpts);
     tags.forEach((tag) => GitUtilities.addTag(tag, this.execOpts));
