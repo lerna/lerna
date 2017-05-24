@@ -50,7 +50,7 @@ export default class ExecCommand extends Command {
     this.logger.disableProgress();
 
     let filteredPackages = this.filteredPackages;
-    if (this.flags.onlyUpdated) {
+    if (this.options.onlyUpdated) {
       const updatedPackagesCollector = new UpdatedPackagesCollector(this);
       const packageUpdates = updatedPackagesCollector.getUpdates();
       filteredPackages = PackageUtilities.filterPackagesThatAreNotUpdated(
