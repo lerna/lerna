@@ -82,6 +82,15 @@ exports[`[independent --conventional-commits] git commit message 1`] = `
  - package-4@1.1.0"
 `;
 
+exports[`[independent --message] git commit message 1`] = `
+"chore: Custom publish message
+
+ - package-1@1.0.1
+ - package-2@1.0.1
+ - package-3@1.0.1
+ - package-4@1.0.1"
+`;
+
 exports[`[independent] bumps package versions 1`] = `
 Object {
   "packages/package-1": "1.0.1",
