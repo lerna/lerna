@@ -110,18 +110,18 @@ export default class PublishCommand extends Command {
 
     this.updates = new UpdatedPackagesCollector(this).getUpdates();
 
-    const packagesToPublish = this.updates
+    this.packagesToPublish = this.updates
       .map((update) => update.package)
       .filter((pkg) => !pkg.isPrivate());
 
-    this.packageToPublishCount = packagesToPublish.length;
+    this.packagesToPublishCount = this.packagesToPublish.length;
     this.batchedPackagesToPublish = this.toposort
-      ? PackageUtilities.topologicallyBatchPackages(packagesToPublish, {
+      ? PackageUtilities.topologicallyBatchPackages(this.packagesToPublish, {
         // Don't sort based on devDependencies because that would increase the chance of dependency cycles
         // causing less-than-ideal a publishing order.
         depsOnly: true,
       })
-      : [packagesToPublish];
+      : [this.packagesToPublish];
 
     if (!this.updates.length) {
       this.logger.info("No updated packages to publish.");
@@ -205,8 +205,8 @@ export default class PublishCommand extends Command {
           GitUtilities.pushWithTags(this.gitRemote, this.tags, this.execOpts);
         }
 
-        const message = this.updates.map((update) =>
-          ` - ${update.package.name}@${update.package.version}`
+        const message = this.packagesToPublish.map((pkg) =>
+          ` - ${pkg.name}@${pkg.version}`
         );
 
         output("Successfully published:");
@@ -512,7 +512,7 @@ export default class PublishCommand extends Command {
       this.execScript(update.package, "prepublish");
     });
 
-    tracker.addWork(this.packageToPublishCount);
+    tracker.addWork(this.packagesToPublishCount);
 
     PackageUtilities.runParallelBatches(this.batchedPackagesToPublish, (pkg) => {
       let attempts = 0;
@@ -560,7 +560,7 @@ export default class PublishCommand extends Command {
     }
 
     const tracker = this.logger.newItem("npmUpdateAsLatest");
-    tracker.addWork(this.packageToPublishCount);
+    tracker.addWork(this.packagesToPublishCount);
 
     PackageUtilities.runParallelBatches(this.batchedPackagesToPublish, (pkg) => (cb) => {
       let attempts = 0;
