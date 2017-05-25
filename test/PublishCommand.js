@@ -924,7 +924,7 @@ describe("PublishCommand", () => {
 
     it("commits changes with a custom message", (done) => {
       const publishCommand = new PublishCommand([], {
-        message: "A custom publish message"
+        message: "chore: Release %s :rocket:"
       }, testDir);
 
       publishCommand.runValidations();
@@ -939,7 +939,7 @@ describe("PublishCommand", () => {
             throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
           }
 
-          expect(GitUtilities.commit).lastCalledWith("A custom publish message", execOpts(testDir));
+          expect(GitUtilities.commit).lastCalledWith("chore: Release v1.0.1 :rocket:", execOpts(testDir));
 
           done();
         } catch (ex) {

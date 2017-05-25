@@ -483,7 +483,7 @@ export default class PublishCommand extends Command {
 
   gitCommitAndTagVersion(version) {
     const tag = "v" + version;
-    const message = this.options.message || tag;
+    const message = this.options.message && this.options.message.replace(/%s/g, tag) || tag;
 
     GitUtilities.commit(message, this.execOpts);
     GitUtilities.addTag(tag, this.execOpts);
