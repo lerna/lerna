@@ -12,6 +12,7 @@ exports[`commit: updates independent versions 1`] = `
  - package-2@3.0.0
  - package-3@4.0.0
  - package-4@5.0.0
+ - package-5@6.0.0
 "
 `;
 
@@ -80,6 +81,14 @@ Array [
     "name": "package-4",
     "version": "5.0.0",
   },
+  Object {
+    "dependencies": Object {
+      "package-3": "^4.0.0",
+    },
+    "name": "package-5",
+    "private": true,
+    "version": "6.0.0",
+  },
 ]
 `;
 
@@ -129,5 +138,6 @@ Changes:
  - package-2: 2.0.0 => 3.0.0
  - package-3: 3.0.0 => 4.0.0
  - package-4: 4.0.0 => 5.0.0
+ - package-5: 5.0.0 => 6.0.0 (private)
 "
 `;
