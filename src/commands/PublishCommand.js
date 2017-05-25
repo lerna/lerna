@@ -97,9 +97,9 @@ export const builder = {
 export default class PublishCommand extends Command {
   initialize(callback) {
     this.gitRemote = this.options.gitRemote || "origin";
-    this.gitEnabled = !(this.flags.canary || this.flags.skipGit);
+    this.gitEnabled = !(this.options.canary || this.options.skipGit);
 
-    if (this.flags.canary) {
+    if (this.options.canary) {
       this.logger.info("canary", "enabled");
     }
 
@@ -110,18 +110,18 @@ export default class PublishCommand extends Command {
 
     this.updates = new UpdatedPackagesCollector(this).getUpdates();
 
-    const packagesToPublish = this.updates
+    this.packagesToPublish = this.updates
       .map((update) => update.package)
       .filter((pkg) => !pkg.isPrivate());
 
-    this.packageToPublishCount = packagesToPublish.length;
+    this.packagesToPublishCount = this.packagesToPublish.length;
     this.batchedPackagesToPublish = this.toposort
-      ? PackageUtilities.topologicallyBatchPackages(packagesToPublish, {
+      ? PackageUtilities.topologicallyBatchPackages(this.packagesToPublish, {
         // Don't sort based on devDependencies because that would increase the chance of dependency cycles
         // causing less-than-ideal a publishing order.
         depsOnly: true,
       })
-      : [packagesToPublish];
+      : [this.packagesToPublish];
 
     if (!this.updates.length) {
       this.logger.info("No updated packages to publish.");
@@ -158,7 +158,7 @@ export default class PublishCommand extends Command {
         throw new Error("Detached git HEAD, please checkout a branch to publish changes.");
       }
 
-      if (!this.repository.isIndependent() && !this.flags.canary) {
+      if (!this.repository.isIndependent() && !this.options.canary) {
         this.updateVersionInLernaJson();
       }
 
@@ -172,7 +172,7 @@ export default class PublishCommand extends Command {
       return;
     }
 
-    if (this.flags.skipNpm) {
+    if (this.options.skipNpm) {
       callback(null, true);
     } else {
       this.publishPackagesToNpm(callback);
@@ -188,7 +188,7 @@ export default class PublishCommand extends Command {
         return;
       }
 
-      if (this.flags.canary) {
+      if (this.options.canary) {
         this.logger.info("canary", "Resetting git state");
         // reset since the package.json files are changed
         GitUtilities.checkoutChanges("packages/*/package.json", this.execOpts);
@@ -205,8 +205,8 @@ export default class PublishCommand extends Command {
           GitUtilities.pushWithTags(this.gitRemote, this.tags, this.execOpts);
         }
 
-        const message = this.updates.map((update) =>
-          ` - ${update.package.name}@${update.package.version}`
+        const message = this.packagesToPublish.map((pkg) =>
+          ` - ${pkg.name}@${pkg.version}`
         );
 
         output("Successfully published:");
@@ -219,31 +219,31 @@ export default class PublishCommand extends Command {
   }
 
   getVersionsForUpdates(callback) {
-    if (this.flags.cdVersion) {
+    if (this.options.cdVersion) {
       // If the version is independent then send versions
       if (this.repository.isIndependent()) {
         const versions = {};
 
         this.updates.forEach((update) => {
-          versions[update.package.name] = semver.inc(update.package.version, this.flags.cdVersion);
+          versions[update.package.name] = semver.inc(update.package.version, this.options.cdVersion);
         });
 
         return callback(null, { versions });
       }
 
       // Otherwise bump the global version
-      const version = semver.inc(this.globalVersion, this.flags.cdVersion);
+      const version = semver.inc(this.globalVersion, this.options.cdVersion);
       return callback(null, { version });
     }
 
-    if (this.flags.repoVersion) {
+    if (this.options.repoVersion) {
       return callback(null, {
-        version: this.flags.repoVersion
+        version: this.options.repoVersion
       });
     }
 
     // Non-Independent Canary Mode
-    if (!this.repository.isIndependent() && this.flags.canary) {
+    if (!this.repository.isIndependent() && this.options.canary) {
       const version = this.globalVersion + this.getCanaryVersionSuffix();
       callback(null, { version });
 
@@ -258,7 +258,7 @@ export default class PublishCommand extends Command {
       });
 
     // Independent Canary Mode
-    } else if (this.flags.canary) {
+    } else if (this.options.canary) {
       const versions = {};
       const canaryVersionSuffix = this.getCanaryVersionSuffix();
 
@@ -269,7 +269,7 @@ export default class PublishCommand extends Command {
       callback(null, { versions });
 
     // Independent Conventional-Commits Mode
-    } else if (this.flags.conventionalCommits) {
+    } else if (this.options.conventionalCommits) {
       const versions = {};
       this.updates.map((update) => {
         versions[update.package.name] = ConventionalCommitUtilities.recommendVersion({
@@ -383,7 +383,7 @@ export default class PublishCommand extends Command {
     output(changes.join(EOL));
     output("");
 
-    if (this.flags.yes) {
+    if (this.options.yes) {
       this.logger.info("auto-confirmed");
       callback(null, true);
     } else {
@@ -397,7 +397,7 @@ export default class PublishCommand extends Command {
     this.repository.lernaJson.version = this.masterVersion;
     writeJsonFile.sync(this.repository.lernaJsonLocation, this.repository.lernaJson, { indent: 2 });
 
-    if (!this.flags.skipGit) {
+    if (!this.options.skipGit) {
       GitUtilities.addFile(this.repository.lernaJsonLocation, this.execOpts);
     }
   }
@@ -427,7 +427,7 @@ export default class PublishCommand extends Command {
 
       // we can now generate the Changelog, based on the
       // the updated version that we're about to release.
-      if (this.flags.conventionalCommits) {
+      if (this.options.conventionalCommits) {
         ConventionalCommitUtilities.updateChangelog({
           name: pkg.name,
           location: pkg.location
@@ -472,8 +472,8 @@ export default class PublishCommand extends Command {
     const tags = this.updates.map(({ package: { name } }) =>
       `${name}@${this.updatesVersions[name]}`
     );
-    const message = this.flags.message ||
-      tags.reduce((msg, tag) => msg + `${EOL} - ${tag}`, `Publish${EOL}`);
+    const subject = this.options.message || "Publish";
+    const message = tags.reduce((msg, tag) => msg + `${EOL} - ${tag}`, `${subject}${EOL}`);
 
     GitUtilities.commit(message, this.execOpts);
     tags.forEach((tag) => GitUtilities.addTag(tag, this.execOpts));
@@ -483,7 +483,7 @@ export default class PublishCommand extends Command {
 
   gitCommitAndTagVersion(version) {
     const tag = "v" + version;
-    const message = this.flags.message || tag;
+    const message = this.options.message && this.options.message.replace(/%s/g, tag) || tag;
 
     GitUtilities.commit(message, this.execOpts);
     GitUtilities.addTag(tag, this.execOpts);
@@ -512,7 +512,7 @@ export default class PublishCommand extends Command {
       this.execScript(update.package, "prepublish");
     });
 
-    tracker.addWork(this.packageToPublishCount);
+    tracker.addWork(this.packagesToPublishCount);
 
     PackageUtilities.runParallelBatches(this.batchedPackagesToPublish, (pkg) => {
       let attempts = 0;
@@ -560,7 +560,7 @@ export default class PublishCommand extends Command {
     }
 
     const tracker = this.logger.newItem("npmUpdateAsLatest");
-    tracker.addWork(this.packageToPublishCount);
+    tracker.addWork(this.packagesToPublishCount);
 
     PackageUtilities.runParallelBatches(this.batchedPackagesToPublish, (pkg) => (cb) => {
       let attempts = 0;
@@ -599,9 +599,9 @@ export default class PublishCommand extends Command {
 
     /* eslint-disable max-len */
     // TODO: fix this API to be less verbose with parameters
-    if (this.flags.npmTag) {
+    if (this.options.npmTag) {
       NpmUtilities.addDistTag(pkg.location, pkg.name, this.updatesVersions[pkg.name], distTag, this.npmRegistry);
-    } else if (this.flags.canary) {
+    } else if (this.options.canary) {
       NpmUtilities.addDistTag(pkg.location, pkg.name, pkg.version, distTag, this.npmRegistry);
     } else {
       NpmUtilities.addDistTag(pkg.location, pkg.name, this.updatesVersions[pkg.name], distTag, this.npmRegistry);

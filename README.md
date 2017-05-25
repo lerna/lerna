@@ -388,12 +388,22 @@ Useful for bypassing the user input prompt if you already know which version to 
 #### --message, -m [msg]
 
 ```sh
-$ lerna publish -m "chore: Publish"
+$ lerna publish -m "chore: Publish %s"
+# commit message = "chore: Publish v1.0.0"
+
+$ lerna publish -m "chore: Publish" --independent
+# commit message = "chore: Publish
+#
+# - package-1@3.0.1
+# - package-2@1.5.4"
 ```
 
 When run with this flag, `publish` will use the provided message when committing the version updates
 for publication. Useful for integrating lerna into projects that expect commit messages to adhere
 to certain guidelines, such as projects which use [commitizen](https://github.com/commitizen/cz-cli) and/or [semantic-release](https://github.com/semantic-release/semantic-release).
+
+If the message contains `%s`, it will be replaced with the new global version version number prefixed with a "v".
+Note that this only applies when using the default "fixed" versioning mode, as there is no "global" version when using `--independent`.
 
 ### updated
 

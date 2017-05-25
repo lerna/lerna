@@ -84,7 +84,7 @@ export default class Command {
     }
 
     this.input = input;
-    this.flags = flags;
+    this._flags = flags;
 
     log.silly("input", input);
     log.silly("flags", filterFlags(flags));
@@ -162,7 +162,7 @@ export default class Command {
       this._options = _.defaults(
         {},
         // CLI flags, which if defined overrule subsequent values
-        this.flags,
+        this._flags,
         // Namespaced command options from `lerna.json`
         ...lernaCommandOverrides,
         // Global options from `lerna.json`
