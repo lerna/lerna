@@ -37,13 +37,6 @@ describe("Command", () => {
     });
   });
 
-  describe(".flags", () => {
-    it("should be added to the instance", () => {
-      const command = new Command(null, { foo: "bar" });
-      expect(command.flags).toEqual({ foo: "bar" });
-    });
-  });
-
   describe(".lernaVersion", () => {
     it("should be added to the instance", () => {
       const command = new Command([], {});
