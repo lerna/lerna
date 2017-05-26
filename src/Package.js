@@ -13,6 +13,7 @@ export default class Package {
   }
 
   get name() {
+    // Anonymous packages will appear in the log messages as directory paths.
     return this._package.name || this._location;
   }
 
