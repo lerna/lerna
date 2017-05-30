@@ -66,3 +66,9 @@ Array [
   },
 ]
 `;
+
+exports[`LsCommand with an undefined version should list packages 1`] = `
+Array [
+  "package-1 n/a ",
+]
+`;
