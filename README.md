@@ -687,19 +687,27 @@ $ lerna run --scope toolbar-* test
 
 #### --since [ref]
 
-When executing a script or command, only run the script or command on packages that have been updated since the specified `ref`. If `ref` is not specified, it defaults to the latest tag.
+When executing a script or command, scope the operation to packages that have been updated since the specified `ref`. If `ref` is not specified, it defaults to the latest tag.
+
+List the contents of packages that have changed since the latest tag:
 
 ```sh
 $ lerna exec --since -- ls -la
 ```
 
+Run the tests for all packages that have changed since `master`:
+
 ```
 $ lerna run test --since master
 ```
 
+List all packages that have changed since `some-branch`:
+
 ```
 $ lerna ls --since some-branch
 ```
+
+*This can be particularly useful when used in CI, if you can obtain the target branch a PR will be going into, because you can use that as the `ref` to the `--since` option. This works well for PRs going into master as well as feature branches.*
 
 #### --ignore [glob]
 
