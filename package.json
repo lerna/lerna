@@ -66,6 +66,9 @@
     "write-pkg": "^3.0.1",
     "yargs": "^8.0.1"
   },
+  "bundledDependencies": [
+    "rimraf"
+  ],
   "bin": {
     "lerna": "./bin/lerna.js"
   },
