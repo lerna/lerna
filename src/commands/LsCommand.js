@@ -44,7 +44,7 @@ export default class LsCommand extends Command {
       output(JSON.stringify(formattedPackages, null, 2));
     } else {
       formattedPackages.forEach((pkg) => {
-        pkg.version = chalk.grey(pkg.version ? `v${pkg.version}` : "n/a");
+        pkg.version = pkg.version ? chalk.grey(`v${pkg.version}`) : chalk.yellow("MISSING");
         pkg.private = pkg.private ? `(${chalk.red("private")})` : "";
       });
       output(columnify(formattedPackages, {
