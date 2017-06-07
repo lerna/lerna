@@ -179,6 +179,26 @@ describe("RunCommand", () => {
       }));
     });
 
+    it("does not error when no packages match", (done) => {
+      const runCommand = new RunCommand(["missing-script"], {}, testDir);
+
+      runCommand.runValidations();
+      runCommand.runPreparations();
+
+      runCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          expect(NpmUtilities.runScriptInDir).not.toBeCalled();
+          expect(output).not.toBeCalled();
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
+
     it("runs a script in all packages with --parallel", (done) => {
       const runCommand = new RunCommand(["env"], {
         parallel: true,
