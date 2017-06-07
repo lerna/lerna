@@ -239,6 +239,10 @@ describe("NpmUtilities", () => {
       stubExecOpts();
       ChildProcessUtilities.exec.mockImplementation(callbackSuccess);
       FileSystemUtilities.rename.mockImplementation(callbackSuccess);
+      FileSystemUtilities.readFileSync.mockImplementation(() => (`{
+        "name": "foo",
+        "version": "2.1.2"
+      }`));
       writePkg.mockImplementation(() => Promise.resolve());
     });
 
@@ -258,6 +262,8 @@ describe("NpmUtilities", () => {
         if (err) return done.fail(err);
 
         try {
+          expect(FileSystemUtilities.readFileSync).lastCalledWith(
+            path.join(directory, "package.json"));
           expect(FileSystemUtilities.rename).lastCalledWith(
             path.join(directory, "package.json"),
             path.join(directory, "package.json.lerna_backup"),
@@ -276,6 +282,8 @@ describe("NpmUtilities", () => {
                 caret: "^1.0.0",
                 exact: "1.0.0",
               },
+              name: "foo",
+              version: "2.1.2",
             },
           );
           expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["install"], {
@@ -311,6 +319,8 @@ describe("NpmUtilities", () => {
                 "@scoped/tagged": "next",
                 tagged: "next",
               },
+              name: "foo",
+              version: "2.1.2",
             },
           );
           expect(ChildProcessUtilities.exec.mock.calls[0][2]).toMatchObject({
@@ -343,6 +353,8 @@ describe("NpmUtilities", () => {
                 "@scoped/foo": "latest",
                 foo: "latest",
               },
+              name: "foo",
+              version: "2.1.2",
             },
           );
           expect(ChildProcessUtilities.exec).lastCalledWith(
@@ -383,6 +395,8 @@ describe("NpmUtilities", () => {
                 "@scoped/something": "github:foo/bar",
                 something: "github:foo/foo",
               },
+              name: "foo",
+              version: "2.1.2",
             },
           );
           expect(ChildProcessUtilities.exec).lastCalledWith(
@@ -424,6 +438,8 @@ describe("NpmUtilities", () => {
                 "@scoped/something": "github:foo/bar",
                 something: "github:foo/foo",
               },
+              name: "foo",
+              version: "2.1.2",
             },
           );
           expect(ChildProcessUtilities.exec).lastCalledWith(
@@ -477,6 +493,8 @@ describe("NpmUtilities", () => {
                 "@scoped/noversion": "*",
                 noversion: "*",
               },
+              name: "foo",
+              version: "2.1.2",
             },
           );
 

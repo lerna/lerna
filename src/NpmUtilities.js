@@ -33,6 +33,10 @@ export default class NpmUtilities {
     const packageJson = path.join(directory, "package.json");
     const packageJsonBkp = packageJson + ".lerna_backup";
 
+    // Grab the original package.json so that we can inject a few properties to
+    // the temporary fake replacement.
+    const originalPackage = JSON.parse(FileSystemUtilities.readFileSync(packageJson));
+
     log.silly("installInDir", "backup", packageJson);
     FileSystemUtilities.rename(packageJson, packageJsonBkp, (err) => {
       if (err) {
@@ -58,6 +62,8 @@ export default class NpmUtilities {
 
       // Construct a basic fake package.json with just the deps we need to install.
       const tempJson = {
+        name: originalPackage.name,
+        version: originalPackage.version,
         dependencies: dependencies.reduce((deps, dep) => {
           const [pkg, version] = splitVersion(dep);
           deps[pkg] = version || "*";
