@@ -538,6 +538,12 @@ You may also get the name of the current package through the environment variabl
 $ lerna exec -- npm view \$LERNA_PACKAGE_NAME
 ```
 
+You may also run a script located in the root dir, in a complicated dir structure through the environment variable `LERNA_ROOT_PATH`:  
+
+```sh
+$ cross-env lerna exec node $LERNA_ROOT_PATH/scripts/some-script.js
+```
+
 > Hint: The commands are spawned in parallel, using the concurrency given (except with `--parallel`).
 > The output is piped through, so not deterministic.
 > If you want to run the command in one package after another, use it like this:
