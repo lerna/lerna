@@ -50,8 +50,7 @@ export default class RunCommand extends Command {
     }
 
     if (!this.packagesWithScript.length) {
-      callback(new Error(`No packages found with the npm script '${this.script}'`));
-      return;
+      this.logger.warn(`No packages found with the npm script '${this.script}'`);
     }
 
     if (this.options.parallel || this.options.stream) {
@@ -71,8 +70,10 @@ export default class RunCommand extends Command {
       if (err) {
         callback(err);
       } else {
-        this.logger.success("run", `Ran npm script '${this.script}' in packages:`);
-        this.logger.success("", this.packagesWithScript.map((pkg) => `- ${pkg.name}`).join("\n"));
+        if (this.packagesWithScript.length) {
+          this.logger.success("run", `Ran npm script '${this.script}' in packages:`);
+          this.logger.success("", this.packagesWithScript.map((pkg) => `- ${pkg.name}`).join("\n"));
+        }
         callback(null, true);
       }
     };
