@@ -19,22 +19,33 @@ export const builder = {
     group: "Command Options:",
     describe: "Stream output with lines prefixed by package.",
     type: "boolean",
+    default: undefined,
   },
   "only-updated": {
     group: "Command Options:",
     describe: "Run script in packages that have been updated since the last release only",
     type: "boolean",
+    default: undefined,
   },
   "parallel": {
     group: "Command Options:",
     describe: "Run script in all packages with unlimited concurrency, streaming prefixed output",
     type: "boolean",
+    default: undefined,
   },
 };
 
 export default class RunCommand extends Command {
   get requiresGit() {
     return false;
+  }
+
+  get defaultOptions() {
+    return Object.assign({}, super.defaultOptions, {
+      onlyUpdated: false,
+      parallel: false,
+      stream: false,
+    });
   }
 
   initialize(callback) {

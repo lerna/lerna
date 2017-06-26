@@ -125,6 +125,7 @@ describe("ExecCommand", () => {
             env: expect.objectContaining({
               LERNA_PACKAGE_NAME: "package-2",
             }),
+            reject: true,
             shell: true,
           }, expect.any(Function));
 
@@ -160,6 +161,7 @@ describe("ExecCommand", () => {
             env: expect.objectContaining({
               LERNA_PACKAGE_NAME: "package-2",
             }),
+            reject: true,
             shell: true,
           }, expect.any(Function));
 

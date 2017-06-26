@@ -18,23 +18,33 @@ export const builder = {
     group: "Command Options:",
     describe: "Bail on exec execution when the command fails within a package",
     type: "boolean",
-    default: true,
+    default: undefined,
   },
   "only-updated": {
     group: "Command Options:",
     describe: "Run command in packages that have been updated since the last release only",
     type: "boolean",
+    default: undefined,
   },
   "parallel": {
     group: "Command Options:",
     describe: "Run command in all packages with unlimited concurrency, streaming prefixed output",
     type: "boolean",
+    default: undefined,
   },
 };
 
 export default class ExecCommand extends Command {
   get requiresGit() {
     return false;
+  }
+
+  get defaultOptions() {
+    return Object.assign({}, super.defaultOptions, {
+      bail: true,
+      onlyUpdated: false,
+      parallel: false,
+    });
   }
 
   initialize(callback) {

@@ -16,13 +16,20 @@ export const builder = {
   "json": {
     describe: "Show information in JSON format",
     group: "Command Options:",
-    type: "boolean"
+    type: "boolean",
+    default: undefined
   }
 };
 
 export default class LsCommand extends Command {
   get requiresGit() {
     return false;
+  }
+
+  get defaultOptions() {
+    return Object.assign({}, super.defaultOptions, {
+      json: false,
+    });
   }
 
   initialize(callback) {

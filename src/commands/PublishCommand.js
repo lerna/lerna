@@ -44,11 +44,15 @@ export const builder = {
   },
   "conventional-commits": {
     group: "Command Options:",
-    describe: "Use angular conventional-commit format to determine version bump and generate CHANGELOG."
+    describe: "Use angular conventional-commit format to determine version bump and generate CHANGELOG.",
+    type: "boolean",
+    default: undefined,
   },
   "exact": {
     group: "Command Options:",
-    describe: "Specify cross-dependency version numbers exactly rather than with a caret (^)."
+    describe: "Specify cross-dependency version numbers exactly rather than with a caret (^).",
+    type: "boolean",
+    default: undefined,
   },
   "git-remote": {
     group: "Command Options:",
@@ -59,7 +63,9 @@ export const builder = {
   },
   "yes": {
     group: "Command Options:",
-    describe: "Skip all confirmation prompts."
+    describe: "Skip all confirmation prompts.",
+    type: "boolean",
+    default: undefined,
   },
   "message": {
     group: "Command Options:",
@@ -82,19 +88,36 @@ export const builder = {
   },
   "skip-git": {
     group: "Command Options:",
-    describe: "Skip commiting, tagging, and pushing git changes."
+    describe: "Skip commiting, tagging, and pushing git changes.",
+    type: "boolean",
+    default: undefined,
   },
   "skip-npm": {
     group: "Command Options:",
-    describe: "Stop before actually publishing change to npm."
+    describe: "Stop before actually publishing change to npm.",
+    type: "boolean",
+    default: undefined,
   },
   "temp-tag": {
     group: "Command Options:",
-    describe: "Create a temporary tag while publishing."
+    describe: "Create a temporary tag while publishing.",
+    type: "boolean",
+    default: undefined,
   }
 };
 
 export default class PublishCommand extends Command {
+  get defaultOptions() {
+    return Object.assign({}, super.defaultOptions, {
+      conventionalCommits: false,
+      exact: false,
+      skipGit: false,
+      skipNpm: false,
+      tempTag: false,
+      yes: false,
+    });
+  }
+
   initialize(callback) {
     this.gitRemote = this.options.gitRemote || "origin";
     this.gitEnabled = !(this.options.canary || this.options.skipGit);

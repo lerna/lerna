@@ -24,8 +24,7 @@ export const builder = {
   "concurrency": {
     describe: "How many threads to use if lerna parallelises the tasks.",
     type: "number",
-    requiresArg: true,
-    default: DEFAULT_CONCURRENCY,
+    requiresArg: true
   },
   "scope": {
     describe: dedent`
@@ -56,7 +55,7 @@ export const builder = {
   "sort": {
     describe: "Sort packages topologically (all dependencies before dependents)",
     type: "boolean",
-    default: true,
+    default: undefined
   },
   "max-buffer": {
     describe: "Set max-buffer(bytes) for Command execution",
@@ -158,12 +157,21 @@ export default class Command {
         ...lernaCommandOverrides,
         // Global options from `lerna.json`
         this.repository.lernaJson,
+        // Command specific defaults
+        this.defaultOptions,
         // Deprecated legacy options in `lerna.json`
         this._legacyOptions()
       );
     }
 
     return this._options;
+  }
+
+  get defaultOptions () {
+    return {
+      concurrency: DEFAULT_CONCURRENCY,
+      sort: true
+    };
   }
 
   run() {
