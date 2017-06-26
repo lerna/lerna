@@ -82,6 +82,10 @@ export default class NpmUtilities {
           args.push("--mutex", config.mutex);
         }
 
+        if (cmd === "yarn") {
+          args.push("--non-interactive");
+        }
+
         log.silly("installInDir", [cmd, args]);
         ChildProcessUtilities.exec(cmd, args, opts, done);
       }).catch(done);
