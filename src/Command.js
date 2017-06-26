@@ -24,7 +24,7 @@ export const builder = {
   "concurrency": {
     describe: "How many threads to use if lerna parallelises the tasks.",
     type: "number",
-    requiresArg: true
+    requiresArg: true,
   },
   "scope": {
     describe: dedent`
@@ -55,12 +55,12 @@ export const builder = {
   "sort": {
     describe: "Sort packages topologically (all dependencies before dependents)",
     type: "boolean",
-    default: undefined
+    default: undefined,
   },
   "max-buffer": {
     describe: "Set max-buffer(bytes) for Command execution",
     type: "number",
-    requiresArg: true
+    requiresArg: true,
   }
 };
 
@@ -167,10 +167,10 @@ export default class Command {
     return this._options;
   }
 
-  get defaultOptions () {
+  get defaultOptions() {
     return {
       concurrency: DEFAULT_CONCURRENCY,
-      sort: true
+      sort: true,
     };
   }
 

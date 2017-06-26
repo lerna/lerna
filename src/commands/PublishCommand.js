@@ -28,7 +28,7 @@ export const builder = {
   "canary": {
     group: "Command Options:",
     describe: "Publish packages after every successful merge using the sha as part of the tag.",
-    alias: "c"
+    alias: "c",
   },
   "cd-version": {
     group: "Command Options:",
@@ -59,7 +59,7 @@ export const builder = {
     defaultDescription: "origin",
     describe: "Push git changes to the specified remote instead of 'origin'.",
     type: "string",
-    requiresArg: true
+    requiresArg: true,
   },
   "yes": {
     group: "Command Options:",
@@ -72,19 +72,19 @@ export const builder = {
     describe: "Use a custom commit message when creating the publish commit.",
     alias: "m",
     type: "string",
-    requiresArg: true
+    requiresArg: true,
   },
   "npm-tag": {
     group: "Command Options:",
     describe: "Publish packages with the specified npm dist-tag",
     type: "string",
-    requiresArg: true
+    requiresArg: true,
   },
   "repo-version": {
     group: "Command Options:",
     describe: "Specify repo version to publish.",
     type: "string",
-    requiresArg: true
+    requiresArg: true,
   },
   "skip-git": {
     group: "Command Options:",

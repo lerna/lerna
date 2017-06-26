@@ -17,7 +17,7 @@ export const builder = {
     describe: "Show information in JSON format",
     group: "Command Options:",
     type: "boolean",
-    default: undefined
+    default: undefined,
   }
 };
 
