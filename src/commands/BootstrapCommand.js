@@ -92,18 +92,40 @@ export default class BootstrapCommand extends Command {
   bootstrapPackages(callback) {
     this.logger.info("", `Bootstrapping ${this.filteredPackages.length} packages`);
 
-    async.series([
-      // preinstall bootstrapped packages
-      (cb) => this.preinstallPackages(cb),
-      // install external dependencies
-      (cb) => this.installExternalDependencies(cb),
-      // symlink packages and their binaries
-      (cb) => this.symlinkPackages(cb),
-      // postinstall bootstrapped packages
-      (cb) => this.postinstallPackages(cb),
-      // prepublish bootstrapped packages
-      (cb) => this.prepublishPackages(cb)
-    ], callback);
+    const { yarnWorkspaces } = this.options;
+
+    if (yarnWorkspaces && (yarnWorkspaces.indexOf("bootstrap") >= 0)) {
+      this.installRootPackageOnly(callback);
+    } else {
+      async.series([
+        // preinstall bootstrapped packages
+        (cb) => this.preinstallPackages(cb),
+        // install external dependencies
+        (cb) => this.installExternalDependencies(cb),
+        // symlink packages and their binaries
+        (cb) => this.symlinkPackages(cb),
+        // postinstall bootstrapped packages
+        (cb) => this.postinstallPackages(cb),
+        // prepublish bootstrapped packages
+        (cb) => this.prepublishPackages(cb)
+      ], callback);
+    }
+
+  }
+
+  installRootPackageOnly(callback) {
+    const tracker = this.logger.newItem("install dependencies");
+
+    NpmUtilities.installInDirOriginalPackageJson(
+      this.repository.rootPath,
+      this.npmConfig,
+      (err) => {
+        if (err) return callback(err);
+        tracker.info("hoist", "Finished installing in root");
+        tracker.completeWork(1);
+        callback(err);
+      }
+    );
   }
 
   runScriptInPackages(scriptName, callback) {

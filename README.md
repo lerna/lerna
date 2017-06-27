@@ -840,6 +840,23 @@ May also be configured in `lerna.json`:
 }
 ```
 
+#### --yarnWorkspaces
+
+Can be only configured in `lerna.json`:
+
+```js
+{
+  ...
+  "npmClient": "yarn",
+  "yarnWorkspaces": ["bootstrap"]
+}
+```
+
+Enables integration with [Yarn Workspaces](https://github.com/yarnpkg/rfcs/blob/master/implemented/0000-workspaces-install-phase-1.md) (available since yarn@0.27+).  
+The values in the array are the commands in which Lerna will delegate operation to Yarn (currently only bootstrapping).    
+If `yarnWorkspaces` exists in `lerna.json` then `packages` will be overridden by the value from `package.json/workspaces.`  
+
+
 #### --stream
 
 Stream output from child processes immediately, prefixed with the originating
