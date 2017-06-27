@@ -594,7 +594,8 @@ Running `lerna` without arguments will show all commands/options.
       "ignore": "component-*"
     }
   },
-  "packages": ["packages/*"]
+  "packages": ["packages/*"],
+  "publishDir": "lib/"
 }
 ```
 
@@ -604,6 +605,7 @@ Running `lerna` without arguments will show all commands/options.
 - `commands.bootstrap.ignore`: an array of globs that won't be bootstrapped when running the `lerna bootstrap` command.
 - `commands.bootstrap.scope`: an array of globs that restricts which packages will be bootstrapped when running the `lerna bootstrap` command.
 - `packages`: Array of globs to use as package locations.
+- `publishDir`: Relative path in each package that [`npm publish`](https://docs.npmjs.com/cli/publish) will run in. This folder must contain a `package.json`.
 
 
 ### Common `devDependencies`
