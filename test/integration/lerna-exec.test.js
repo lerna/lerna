@@ -117,7 +117,7 @@ describe("lerna exec", () => {
 
     const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
     expect(stderr).toMatch(
-      "Failed at the package-1@1.0.0 fail-or-succeed script 'echo \"failure!\" && exit 1'."
+      "Failed at the package-1@1.0.0 fail-or-succeed script"
     );
     expect(stdout).toMatch("failure!");
     expect(stdout).toMatch("success!");
@@ -135,7 +135,7 @@ describe("lerna exec", () => {
 
     const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
     expect(stderr).toMatch(
-      "Failed at the package-1@1.0.0 fail-or-succeed script 'echo \"failure!\" && exit 1'."
+      "Failed at the package-1@1.0.0 fail-or-succeed script"
     );
     expect(stdout).toMatch("failure!");
     expect(stdout).toMatch("success!");
