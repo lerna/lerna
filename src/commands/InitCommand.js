@@ -17,15 +17,26 @@ export const describe = "Create a new Lerna repo or upgrade an existing repo to 
 
 export const builder = {
   "exact": {
-    describe: "Specify lerna dependency version in package.json without a caret (^)"
+    describe: "Specify lerna dependency version in package.json without a caret (^)",
+    type: "boolean",
+    default: undefined,
   },
   "independent": {
     describe: "Version packages independently",
-    alias: "i"
+    alias: "i",
+    type: "boolean",
+    default: undefined,
   }
 };
 
 export default class InitCommand extends Command {
+  get defaultOptions() {
+    return {
+      exact: false,
+      independent: false,
+    };
+  }
+
   // don't do any of this.
   runValidations() {}
   runPreparations() {}

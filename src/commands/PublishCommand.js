@@ -28,7 +28,7 @@ export const builder = {
   "canary": {
     group: "Command Options:",
     describe: "Publish packages after every successful merge using the sha as part of the tag.",
-    alias: "c"
+    alias: "c",
   },
   "cd-version": {
     group: "Command Options:",
@@ -44,57 +44,80 @@ export const builder = {
   },
   "conventional-commits": {
     group: "Command Options:",
-    describe: "Use angular conventional-commit format to determine version bump and generate CHANGELOG."
+    describe: "Use angular conventional-commit format to determine version bump and generate CHANGELOG.",
+    type: "boolean",
+    default: undefined,
   },
   "exact": {
     group: "Command Options:",
-    describe: "Specify cross-dependency version numbers exactly rather than with a caret (^)."
+    describe: "Specify cross-dependency version numbers exactly rather than with a caret (^).",
+    type: "boolean",
+    default: undefined,
   },
   "git-remote": {
     group: "Command Options:",
     defaultDescription: "origin",
     describe: "Push git changes to the specified remote instead of 'origin'.",
     type: "string",
-    requiresArg: true
+    requiresArg: true,
   },
   "yes": {
     group: "Command Options:",
-    describe: "Skip all confirmation prompts."
+    describe: "Skip all confirmation prompts.",
+    type: "boolean",
+    default: undefined,
   },
   "message": {
     group: "Command Options:",
     describe: "Use a custom commit message when creating the publish commit.",
     alias: "m",
     type: "string",
-    requiresArg: true
+    requiresArg: true,
   },
   "npm-tag": {
     group: "Command Options:",
     describe: "Publish packages with the specified npm dist-tag",
     type: "string",
-    requiresArg: true
+    requiresArg: true,
   },
   "repo-version": {
     group: "Command Options:",
     describe: "Specify repo version to publish.",
     type: "string",
-    requiresArg: true
+    requiresArg: true,
   },
   "skip-git": {
     group: "Command Options:",
-    describe: "Skip commiting, tagging, and pushing git changes."
+    describe: "Skip commiting, tagging, and pushing git changes.",
+    type: "boolean",
+    default: undefined,
   },
   "skip-npm": {
     group: "Command Options:",
-    describe: "Stop before actually publishing change to npm."
+    describe: "Stop before actually publishing change to npm.",
+    type: "boolean",
+    default: undefined,
   },
   "temp-tag": {
     group: "Command Options:",
-    describe: "Create a temporary tag while publishing."
+    describe: "Create a temporary tag while publishing.",
+    type: "boolean",
+    default: undefined,
   }
 };
 
 export default class PublishCommand extends Command {
+  get defaultOptions() {
+    return Object.assign({}, super.defaultOptions, {
+      conventionalCommits: false,
+      exact: false,
+      skipGit: false,
+      skipNpm: false,
+      tempTag: false,
+      yes: false,
+    });
+  }
+
   initialize(callback) {
     this.gitRemote = this.options.gitRemote || "origin";
     this.gitEnabled = !(this.options.canary || this.options.skipGit);
