@@ -3,7 +3,6 @@ import async from "async";
 import ChildProcessUtilities from "../ChildProcessUtilities";
 import Command from "../Command";
 import PackageUtilities from "../PackageUtilities";
-import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
 
 export function handler(argv) {
   return new ExecCommand([argv.command, ...argv.args], argv).run();
@@ -17,12 +16,6 @@ export const builder = {
   "bail": {
     group: "Command Options:",
     describe: "Bail on exec execution when the command fails within a package",
-    type: "boolean",
-    default: undefined,
-  },
-  "only-updated": {
-    group: "Command Options:",
-    describe: "Run command in packages that have been updated since the last release only",
     type: "boolean",
     default: undefined,
   },
@@ -42,7 +35,6 @@ export default class ExecCommand extends Command {
   get defaultOptions() {
     return Object.assign({}, super.defaultOptions, {
       bail: true,
-      onlyUpdated: false,
       parallel: false,
     });
   }
@@ -59,19 +51,11 @@ export default class ExecCommand extends Command {
     // don't interrupt spawned or streaming stdio
     this.logger.disableProgress();
 
-    let filteredPackages = this.filteredPackages;
-    if (this.options.onlyUpdated) {
-      const updatedPackagesCollector = new UpdatedPackagesCollector(this);
-      const packageUpdates = updatedPackagesCollector.getUpdates();
-      filteredPackages = PackageUtilities.filterPackagesThatAreNotUpdated(
-        filteredPackages,
-        packageUpdates
-      );
-    }
+    const { filteredPackages } = this;
 
     this.batchedPackages = this.toposort
       ? PackageUtilities.topologicallyBatchPackages(filteredPackages)
-      : [this.filteredPackages];
+      : [filteredPackages];
 
     callback(null, true);
   }
