@@ -30,7 +30,7 @@ export const builder = {
   "nohoist": {
     group: "Command Options:",
     describe: "Don't hoist external dependencies matching [glob] to the repo root",
-    type: "string"
+    type: "string",
   },
   "npm-client": {
     group: "Command Options:",

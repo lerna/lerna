@@ -13,7 +13,8 @@ const updatedOptions = _.assign(
     "json": {
       describe: "Show information in JSON format",
       group: "Command Options:",
-      type: "boolean"
+      type: "boolean",
+      default: undefined,
     }
   }
 );
@@ -43,6 +44,12 @@ export default class UpdatedCommand extends Command {
 
   get otherCommandConfigs() {
     return ["publish"];
+  }
+
+  get defaultOptions() {
+    return Object.assign({}, super.defaultOptions, {
+      json: false,
+    });
   }
 
   execute(callback) {

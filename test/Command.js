@@ -268,6 +268,14 @@ describe("Command", () => {
     class TestBCommand extends Command {
     }
     class TestCCommand extends Command {
+      get defaultOptions() {
+        return {
+          testOption: "a",
+          testOption2: "a",
+          testOption3: "a",
+        };
+      }
+
       get otherCommandConfigs() {
         return ["testb"];
       }
@@ -310,6 +318,15 @@ describe("Command", () => {
         testOption: undefined, // yargs does this when --test-option is not passed
       }, testDir);
       expect(instance.options.testOption).toBe("b");
+    });
+
+    it("should merge flags with defaultOptions", () => {
+      const instance = new TestCCommand([], {
+        testOption: "b",
+      }, testDir);
+      expect(instance.options.testOption).toBe("b");
+      expect(instance.options.testOption2).toBe("c");
+      expect(instance.options.testOption3).toBe("a");
     });
   });
 
