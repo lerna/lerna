@@ -541,7 +541,7 @@ $ lerna exec -- npm view \$LERNA_PACKAGE_NAME
 You may also run a script located in the root dir, in a complicated dir structure through the environment variable `LERNA_ROOT_PATH`:  
 
 ```sh
-$ cross-env lerna exec node $LERNA_ROOT_PATH/scripts/some-script.js
+$ lerna exec -- node \$LERNA_ROOT_PATH/scripts/some-script.js
 ```
 
 > Hint: The commands are spawned in parallel, using the concurrency given (except with `--parallel`).
