@@ -86,6 +86,10 @@ export default class NpmUtilities {
           args.push("--non-interactive");
         }
 
+        if (config.npmClientArgs && config.npmClientArgs.length) {
+          args.push(...config.npmClientArgs);
+        }
+
         log.silly("installInDir", [cmd, args]);
         ChildProcessUtilities.exec(cmd, args, opts, done);
       }).catch(done);

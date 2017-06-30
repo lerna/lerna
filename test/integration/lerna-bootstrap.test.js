@@ -1,8 +1,10 @@
 import execa from "execa";
+import fs from "fs-extra";
 import getPort from "get-port";
 import globby from "globby";
-import tempy from "tempy";
 import normalizePath from "normalize-path";
+import path from "path";
+import tempy from "tempy";
 
 import { LERNA_BIN } from "../helpers/constants";
 import initFixture from "../helpers/initFixture";
@@ -64,6 +66,38 @@ describe("lerna bootstrap", () => {
 
       const stdout = await execa.stdout(LERNA_BIN, ["run", "test", "--", "--silent"], { cwd });
       expect(stdout).toMatchSnapshot("--npm-client yarn: stdout");
+    });
+
+    test.concurrent("passes remaining arguments to npm client", async () => {
+      const cwd = await initFixture("BootstrapCommand/npm-client-args-1");
+      const args = [
+        "bootstrap",
+        "--npm-client",
+        path.resolve(cwd, "npm"),
+        "--",
+        "--no-optional",
+      ];
+
+      await execa(LERNA_BIN, args, { cwd });
+
+      const npmDebugLog = fs.readFileSync(path.resolve(cwd, "npm-debug.log")).toString();
+      expect(npmDebugLog).toMatchSnapshot("passes remaining arguments to npm client");
+    });
+
+    test.concurrent("passes remaining arguments + npmClientArgs to npm client", async () => {
+      const cwd = await initFixture("BootstrapCommand/npm-client-args-2");
+      const args = [
+        "bootstrap",
+        "--npm-client",
+        path.resolve(cwd, "npm"),
+        "--",
+        "--no-optional",
+      ];
+
+      await execa(LERNA_BIN, args, { cwd });
+
+      const npmDebugLog = fs.readFileSync(path.resolve(cwd, "npm-debug.log")).toString();
+      expect(npmDebugLog).toMatchSnapshot("passes remaining arguments + npmClientArgs to npm client");
     });
   });
 

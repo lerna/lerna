@@ -585,4 +585,64 @@ describe("BootstrapCommand", () => {
       }));
     });
   });
+
+  describe("with remaining arguments", () => {
+    describe("by default", () => {
+      let testDir;
+
+      beforeEach(() => initFixture("BootstrapCommand/npm-client-args-1").then((dir) => {
+        testDir = dir;
+      }));
+
+      it("should turn it into npmClientArgs", (done) => {
+        const bootstrapCommand = new BootstrapCommand(["--production", "--no-optional"], {}, testDir);
+
+        bootstrapCommand.runValidations();
+        bootstrapCommand.runPreparations();
+
+        bootstrapCommand.runCommand(exitWithCode(0, (err) => {
+          if (err) return done.fail(err);
+
+          try {
+            expect(NpmUtilities.installInDir.mock.calls[0][2]).toMatchObject({
+              npmClientArgs: ["--production", "--no-optional"],
+            });
+
+            done();
+          } catch (ex) {
+            done.fail(ex);
+          }
+        }));
+      });
+    });
+
+    describe("and configured npmClientArgs option", () => {
+      let testDir;
+
+      beforeEach(() => initFixture("BootstrapCommand/npm-client-args-2").then((dir) => {
+        testDir = dir;
+      }));
+
+      it("should merge both together", (done) => {
+        const bootstrapCommand = new BootstrapCommand(["--no-optional"], {}, testDir);
+
+        bootstrapCommand.runValidations();
+        bootstrapCommand.runPreparations();
+
+        bootstrapCommand.runCommand(exitWithCode(0, (err) => {
+          if (err) return done.fail(err);
+
+          try {
+            expect(NpmUtilities.installInDir.mock.calls[0][2]).toMatchObject({
+              npmClientArgs: ["--production", "--no-optional"],
+            });
+
+            done();
+          } catch (ex) {
+            done.fail(ex);
+          }
+        }));
+      });
+    });
+  });
 });
