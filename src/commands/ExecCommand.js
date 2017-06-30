@@ -82,7 +82,7 @@ export default class ExecCommand extends Command {
       shell: true,
       env: Object.assign({}, process.env, {
         LERNA_PACKAGE_NAME: pkg.name,
-        LERNA_ROOT_PATH: process.cwd(),
+        LERNA_ROOT_PATH: this.repository.rootPath,
       }),
       reject: this.options.bail
     };
