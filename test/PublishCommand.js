@@ -202,6 +202,7 @@ describe("PublishCommand", () => {
         "1.1.0",
         "2.0.0",
         "1.1.0",
+        "1.0.1",
       ];
       PromptUtilities.select = jest.fn((...args) => {
         const reply = promptReplies.shift();
@@ -230,6 +231,9 @@ describe("PublishCommand", () => {
           });
           expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
             "package-1": "^0.0.0",
+          });
+          expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
+            "package-3": "^2.0.0",
           });
 
           expect(gitAddedFiles(testDir)).toMatchSnapshot("[independent] git adds changed files");
@@ -924,7 +928,7 @@ describe("PublishCommand", () => {
 
     it("commits changes with a custom message", (done) => {
       const publishCommand = new PublishCommand([], {
-        message: "A custom publish message"
+        message: "chore: Release %s :rocket:"
       }, testDir);
 
       publishCommand.runValidations();
@@ -939,7 +943,7 @@ describe("PublishCommand", () => {
             throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
           }
 
-          expect(GitUtilities.commit).lastCalledWith("A custom publish message", execOpts(testDir));
+          expect(GitUtilities.commit).lastCalledWith("chore: Release v1.0.1 :rocket:", execOpts(testDir));
 
           done();
         } catch (ex) {
@@ -963,7 +967,7 @@ describe("PublishCommand", () => {
     it("commits changes with a custom message", (done) => {
       const publishCommand = new PublishCommand([], {
         independent: true,
-        message: "A custom publish message"
+        message: "chore: Custom publish message"
       }, testDir);
 
       publishCommand.runValidations();
@@ -978,7 +982,11 @@ describe("PublishCommand", () => {
             throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
           }
 
-          expect(GitUtilities.commit).lastCalledWith("A custom publish message", execOpts(testDir));
+          expect(GitUtilities.commit).lastCalledWith(
+            expect.stringContaining("chore:"),
+            execOpts(testDir)
+          );
+          expect(gitCommitMessage()).toMatchSnapshot("[independent --message] git commit message");
 
           done();
         } catch (ex) {
@@ -1006,6 +1014,7 @@ describe("PublishCommand", () => {
         "1.1.0",
         "2.0.0",
         "1.1.0",
+        "5.1.1",
       ];
       ConventionalCommitUtilities.recommendVersion = jest.fn(() => reccomendReplies.shift());
       ConventionalCommitUtilities.updateChangelog = jest.fn();
@@ -1044,6 +1053,7 @@ describe("PublishCommand", () => {
             ["package-2", "2.0.0"],
             ["package-3", "3.0.0"],
             ["package-4", "4.0.0"],
+            ["package-5", "5.0.0"],
           ].forEach(([name, version]) => {
             const location = path.join(testDir, "packages", name);
 

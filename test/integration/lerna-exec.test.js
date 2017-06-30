@@ -104,4 +104,40 @@ describe("lerna exec", () => {
     expect(stdout).toMatch("package-2: file-2.js");
     expect(stdout).toMatch("package-2: package.json");
   });
+
+  test.concurrent("--bail=false <cmd>", async () => {
+    const cwd = await initFixture("ExecCommand/basic");
+    const args = [
+      "exec",
+      "--bail=false",
+      "--concurrency=1",
+      "--",
+      "npm run fail-or-succeed",
+    ];
+
+    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
+    expect(stderr).toMatch(
+      "Failed at the package-1@1.0.0 fail-or-succeed script"
+    );
+    expect(stdout).toMatch("failure!");
+    expect(stdout).toMatch("success!");
+  });
+
+  test.concurrent("--no-bail <cmd>", async () => {
+    const cwd = await initFixture("ExecCommand/basic");
+    const args = [
+      "exec",
+      "--no-bail",
+      "--concurrency=1",
+      "--",
+      "npm run fail-or-succeed",
+    ];
+
+    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
+    expect(stderr).toMatch(
+      "Failed at the package-1@1.0.0 fail-or-succeed script"
+    );
+    expect(stdout).toMatch("failure!");
+    expect(stdout).toMatch("success!");
+  });
 });

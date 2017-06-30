@@ -430,6 +430,31 @@ describe("BootstrapCommand", () => {
         }
       }));
     });
+
+    it("gets user defined mutex when --npm-client=yarn", (done) => {
+      const bootstrapCommand = new BootstrapCommand([], {
+        npmClient: "yarn",
+        mutex: "file:/test/this/path"
+      }, testDir);
+
+      bootstrapCommand.runValidations();
+      bootstrapCommand.runPreparations();
+
+      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          expect(NpmUtilities.installInDir.mock.calls[0][2]).toMatchObject({
+            npmClient: "yarn",
+            mutex: expect.stringMatching(/^file:\/test\/this\/path$/),
+          });
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
   });
 
   describe("with external dependencies that have already been installed", () => {

@@ -3,7 +3,6 @@ import async from "async";
 import ChildProcessUtilities from "../ChildProcessUtilities";
 import Command from "../Command";
 import PackageUtilities from "../PackageUtilities";
-import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
 
 export function handler(argv) {
   return new ExecCommand([argv.command, ...argv.args], argv).run();
@@ -14,21 +13,30 @@ export const command = "exec <command> [args..]";
 export const describe = "Run an arbitrary command in each package.";
 
 export const builder = {
-  "only-updated": {
+  "bail": {
     group: "Command Options:",
-    describe: "Run command in packages that have been updated since the last release only",
+    describe: "Bail on exec execution when the command fails within a package",
     type: "boolean",
+    default: undefined,
   },
   "parallel": {
     group: "Command Options:",
     describe: "Run command in all packages with unlimited concurrency, streaming prefixed output",
     type: "boolean",
+    default: undefined,
   },
 };
 
 export default class ExecCommand extends Command {
   get requiresGit() {
     return false;
+  }
+
+  get defaultOptions() {
+    return Object.assign({}, super.defaultOptions, {
+      bail: true,
+      parallel: false,
+    });
   }
 
   initialize(callback) {
@@ -43,19 +51,11 @@ export default class ExecCommand extends Command {
     // don't interrupt spawned or streaming stdio
     this.logger.disableProgress();
 
-    let filteredPackages = this.filteredPackages;
-    if (this.flags.onlyUpdated) {
-      const updatedPackagesCollector = new UpdatedPackagesCollector(this);
-      const packageUpdates = updatedPackagesCollector.getUpdates();
-      filteredPackages = PackageUtilities.filterPackagesThatAreNotUpdated(
-        filteredPackages,
-        packageUpdates
-      );
-    }
+    const { filteredPackages } = this;
 
     this.batchedPackages = this.toposort
       ? PackageUtilities.topologicallyBatchPackages(filteredPackages)
-      : [this.filteredPackages];
+      : [filteredPackages];
 
     callback(null, true);
   }
@@ -76,7 +76,9 @@ export default class ExecCommand extends Command {
       shell: true,
       env: Object.assign({}, process.env, {
         LERNA_PACKAGE_NAME: pkg.name,
+        LERNA_ROOT_PATH: this.repository.rootPath,
       }),
+      reject: this.options.bail
     };
   }
 

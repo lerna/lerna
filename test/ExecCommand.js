@@ -84,6 +84,29 @@ describe("ExecCommand", () => {
       }));
     });
 
+    it("should ignore execution errors with --bail=false", (done) => {
+      const execCommand = new ExecCommand(["boom"], {
+        bail: false,
+      }, testDir);
+
+      execCommand.runValidations();
+      execCommand.runPreparations();
+
+      execCommand.runCommand(exitWithCode(0, () => {
+
+        try {
+          expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(2);
+          expect(ChildProcessUtilities.spawn).lastCalledWith("boom", [], expect.objectContaining({
+            reject: false,
+          }), expect.any(Function));
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
+
     it("should filter packages with `ignore`", (done) => {
       const execCommand = new ExecCommand(["ls"], {
         ignore: "package-1",
@@ -102,6 +125,7 @@ describe("ExecCommand", () => {
             env: expect.objectContaining({
               LERNA_PACKAGE_NAME: "package-2",
             }),
+            reject: true,
             shell: true,
           }, expect.any(Function));
 
@@ -112,7 +136,7 @@ describe("ExecCommand", () => {
       }));
     });
 
-    it("should filter packages that are not updated with --only-updated", (done) => {
+    it("should filter packages that are not updated with --since", (done) => {
       UpdatedPackagesCollector.prototype.getUpdates = jest.fn(() => [{
         package: {
           name: "package-2",
@@ -121,7 +145,7 @@ describe("ExecCommand", () => {
       }]);
 
       const execCommand = new ExecCommand(["ls"], {
-        onlyUpdated: true,
+        since: "",
       }, testDir);
 
       execCommand.runValidations();
@@ -137,6 +161,7 @@ describe("ExecCommand", () => {
             env: expect.objectContaining({
               LERNA_PACKAGE_NAME: "package-2",
             }),
+            reject: true,
             shell: true,
           }, expect.any(Function));
 

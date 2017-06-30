@@ -82,6 +82,10 @@ export default class NpmUtilities {
           args.push("--mutex", config.mutex);
         }
 
+        if (cmd === "yarn") {
+          args.push("--non-interactive");
+        }
+
         if (config.npmClientArgs && config.npmClientArgs.length) {
           args.push(...config.npmClientArgs);
         }

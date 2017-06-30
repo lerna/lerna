@@ -149,7 +149,7 @@ describe("RunCommand", () => {
       });
     });
 
-    it("should filter packages that are not updated with --only-updated", (done) => {
+    it("should filter packages that are not updated with --since", (done) => {
       UpdatedPackagesCollector.prototype.getUpdates = jest.fn(() => [{
         package: {
           name: "package-3",
@@ -159,7 +159,7 @@ describe("RunCommand", () => {
       }]);
 
       const runCommand = new RunCommand(["my-script"], {
-        onlyUpdated: true,
+        since: "",
       }, testDir);
 
       runCommand.runValidations();
@@ -170,7 +170,27 @@ describe("RunCommand", () => {
 
         try {
           expect(ranInPackages(testDir))
-            .toMatchSnapshot("run <script> --only-updated");
+            .toMatchSnapshot("run <script> --since");
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
+
+    it("does not error when no packages match", (done) => {
+      const runCommand = new RunCommand(["missing-script"], {}, testDir);
+
+      runCommand.runValidations();
+      runCommand.runPreparations();
+
+      runCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          expect(NpmUtilities.runScriptInDir).not.toBeCalled();
+          expect(output).not.toBeCalled();
 
           done();
         } catch (ex) {

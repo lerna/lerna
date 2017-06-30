@@ -9,6 +9,7 @@ import PackageUtilities from "./PackageUtilities";
 import Repository from "./Repository";
 import filterFlags from "./utils/filterFlags";
 import writeLogFile from "./utils/writeLogFile";
+import UpdatedPackagesCollector from "./UpdatedPackagesCollector";
 
 // handle log.success()
 log.addLevel("success", 3001, { fg: "green", bold: true });
@@ -25,7 +26,6 @@ export const builder = {
     describe: "How many threads to use if lerna parallelises the tasks.",
     type: "number",
     requiresArg: true,
-    default: DEFAULT_CONCURRENCY,
   },
   "scope": {
     describe: dedent`
@@ -34,6 +34,15 @@ export const builder = {
     `,
     type: "string",
     requiresArg: true,
+  },
+  "since": {
+    describe: dedent`
+      Restricts the scope to the packages that have been updated since
+      the specified [ref], or if not specified, the latest tag.
+      (Only for 'run', 'exec', 'clean', 'ls', and 'bootstrap' commands)
+    `,
+    type: "string",
+    requiresArg: false,
   },
   "ignore": {
     describe: dedent`
@@ -45,7 +54,7 @@ export const builder = {
   },
   "include-filtered-dependencies": {
     describe: dedent`
-      Include all transitive dependencies when running a command, regardless of --scope or --ignore.
+      Include all transitive dependencies when running a command, regardless of --scope, --since or --ignore.
     `,
   },
   "registry": {
@@ -56,12 +65,12 @@ export const builder = {
   "sort": {
     describe: "Sort packages topologically (all dependencies before dependents)",
     type: "boolean",
-    default: true,
+    default: undefined,
   },
   "max-buffer": {
     describe: "Set max-buffer(bytes) for Command execution",
     type: "number",
-    requiresArg: true
+    requiresArg: true,
   }
 };
 
@@ -75,7 +84,7 @@ export default class Command {
     }
 
     this.input = input;
-    this.flags = flags;
+    this._flags = flags;
 
     log.silly("input", input);
     log.silly("flags", filterFlags(flags));
@@ -153,17 +162,26 @@ export default class Command {
       this._options = _.defaults(
         {},
         // CLI flags, which if defined overrule subsequent values
-        this.flags,
+        this._flags,
         // Namespaced command options from `lerna.json`
         ...lernaCommandOverrides,
         // Global options from `lerna.json`
         this.repository.lernaJson,
+        // Command specific defaults
+        this.defaultOptions,
         // Deprecated legacy options in `lerna.json`
         this._legacyOptions()
       );
     }
 
     return this._options;
+  }
+
+  get defaultOptions() {
+    return {
+      concurrency: DEFAULT_CONCURRENCY,
+      sort: true,
+    };
   }
 
   run() {
@@ -251,7 +269,7 @@ export default class Command {
   }
 
   runPreparations() {
-    const { scope, ignore, registry } = this.options;
+    const { scope, ignore, registry, since } = this.options;
 
     if (scope) {
       log.info("scope", scope);
@@ -270,6 +288,13 @@ export default class Command {
       this.packages = this.repository.packages;
       this.packageGraph = this.repository.packageGraph;
       this.filteredPackages = PackageUtilities.filterPackages(this.packages, { scope, ignore });
+
+      // The UpdatedPackgaesCollector requires that filteredPackages be present prior to checking for
+      // updates. That's okay because it further filters based on what's already been filtered.
+      if (typeof since === "string") {
+        const updated = new UpdatedPackagesCollector(this).getUpdates().map((update) => update.package.name);
+        this.filteredPackages = this.filteredPackages.filter((pkg) => updated.indexOf(pkg.name) > -1);
+      }
 
       if (this.options.includeFilteredDependencies) {
         this.filteredPackages = PackageUtilities.addDependencies(this.filteredPackages, this.packageGraph);

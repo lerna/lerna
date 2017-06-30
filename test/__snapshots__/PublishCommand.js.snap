@@ -27,6 +27,7 @@ Object {
   "packages/package-2": "2.0.0-alpha.deadbeef",
   "packages/package-3": "3.0.0-alpha.deadbeef",
   "packages/package-4": "4.0.0-alpha.deadbeef",
+  "packages/package-5": "5.0.0-alpha.deadbeef",
 }
 `;
 
@@ -57,7 +58,8 @@ exports[`[independent --cd-version] git commit message 1`] = `
  - package-1@1.0.1
  - package-2@2.0.1
  - package-3@3.0.1
- - package-4@4.0.1"
+ - package-4@4.0.1
+ - package-5@5.0.1"
 `;
 
 exports[`[independent --conventional-commits] git adds changed files 1`] = `
@@ -70,6 +72,8 @@ Array [
   "packages/package-3/package.json",
   "packages/package-4/CHANGELOG.md",
   "packages/package-4/package.json",
+  "packages/package-5/CHANGELOG.md",
+  "packages/package-5/package.json",
 ]
 `;
 
@@ -79,7 +83,18 @@ exports[`[independent --conventional-commits] git commit message 1`] = `
  - package-1@1.0.1
  - package-2@1.1.0
  - package-3@2.0.0
- - package-4@1.1.0"
+ - package-4@1.1.0
+ - package-5@5.1.1"
+`;
+
+exports[`[independent --message] git commit message 1`] = `
+"chore: Custom publish message
+
+ - package-1@1.0.1
+ - package-2@1.0.1
+ - package-3@1.0.1
+ - package-4@1.0.1
+ - package-5@1.0.1"
 `;
 
 exports[`[independent] bumps package versions 1`] = `
@@ -88,6 +103,7 @@ Object {
   "packages/package-2": "1.1.0",
   "packages/package-3": "2.0.0",
   "packages/package-4": "1.1.0",
+  "packages/package-5": "1.0.1",
 }
 `;
 
@@ -98,7 +114,8 @@ Array [
   " - package-1: 1.0.0 => 1.0.1
  - package-2: 2.0.0 => 1.1.0
  - package-3: 3.0.0 => 2.0.0
- - package-4: 4.0.0 => 1.1.0",
+ - package-4: 4.0.0 => 1.1.0
+ - package-5: 5.0.0 => 1.0.1 (private)",
   "",
   "Successfully published:",
   " - package-1@1.0.1
@@ -114,6 +131,7 @@ Array [
   "packages/package-2/package.json",
   "packages/package-3/package.json",
   "packages/package-4/package.json",
+  "packages/package-5/package.json",
 ]
 `;
 
@@ -123,7 +141,8 @@ exports[`[independent] git commit message 1`] = `
  - package-1@1.0.1
  - package-2@1.1.0
  - package-3@2.0.0
- - package-4@1.1.0"
+ - package-4@1.1.0
+ - package-5@1.0.1"
 `;
 
 exports[`[independent] git tags added 1`] = `
@@ -132,6 +151,7 @@ Array [
   "package-2@1.1.0",
   "package-3@2.0.0",
   "package-4@1.1.0",
+  "package-5@1.0.1",
 ]
 `;
 
@@ -340,8 +360,7 @@ Array [
   " - package-1@1.0.1
  - package-2@1.0.1
  - package-3@1.0.1
- - package-4@1.0.1
- - package-5@1.0.1",
+ - package-4@1.0.1",
 ]
 `;
 

@@ -387,7 +387,7 @@ describe("NpmUtilities", () => {
           );
           expect(ChildProcessUtilities.exec).lastCalledWith(
             "yarn",
-            ["install", "--mutex", "network:12345"],
+            ["install", "--mutex", "network:12345", "--non-interactive"],
             {
               directory,
               registry: undefined,

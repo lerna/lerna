@@ -239,12 +239,16 @@ Let's use `babel` as an example.
 ```
 
 - Lerna checks if each dependency is also part of the Lerna repo.
-  - In this example, `babel-generator` is an internal dependency, while `source-map` is an external dependency.
-  - `source-map` is `npm install`ed like normal.
+  - In this example, `babel-generator` can be an internal dependency, while `source-map` is always an external dependency.
+  - The version of `babel-generator` in the `package.json` of `babel-core` is satisfied by `packages/babel-generator`, passing for an internal dependency.
+  - `source-map` is `npm install`ed (or `yarn`ed) like normal.
 - `packages/babel-core/node_modules/babel-generator` symlinks to `packages/babel-generator`
 - This allows nested directory imports
 
-**Note:** Circular dependencies result in circular symlinks which *may* impact your editor/IDE.
+**Notes:**
+- When a dependency version in a package is not satisfied by a package of the same name in the repo, it will be `npm install`ed (or `yarn`ed) like normal.
+- Dist-tags, like `latest`, do not satisfy [semver](https://semver.npmjs.com/) ranges.
+- Circular dependencies result in circular symlinks which *may* impact your editor/IDE.
 
 [Webstorm](https://www.jetbrains.com/webstorm/) locks up when circular symlinks are present. To prevent this, add `node_modules` to the list of ignored files and folders in `Preferences | Editor | File Types | Ignored files and folders`.
 
@@ -262,16 +266,12 @@ Creates a new git commit/tag in the process of publishing to npm.
 
 More specifically, this command will:
 
-1. Publish each module in `packages` that has been updated since the last version to npm with the [dist-tag](https://docs.npmjs.com/cli/dist-tag) `lerna-temp`.
-  1. Run the equivalent of `lerna updated` to determine which packages need to be published.
-  2. If necessary, increment the `version` key in `lerna.json`.
-  3. Update the `package.json` of all updated packages to their new versions.
-  4. Update all dependencies of the updated packages with the new versions, specified with a [caret (^)](https://docs.npmjs.com/files/package.json#dependencies).
-  5. Create a new git commit and tag for the new version.
-  6. Publish updated packages to npm.
-2. Once all packages have been published, remove the `lerna-temp` tags and add the tags to `latest`.
-
-> A temporary dist-tag is used at the start to prevent the case where only some of the packages are published; this can cause issues for users installing a package that only has some updated packages.
+1. Run the equivalent of `lerna updated` to determine which packages need to be published.
+2. If necessary, increment the `version` key in `lerna.json`.
+3. Update the `package.json` of all updated packages to their new versions.
+4. Update all dependencies of the updated packages with the new versions, specified with a [caret (^)](https://docs.npmjs.com/files/package.json#dependencies).
+5. Create a new git commit and tag for the new version.
+6. Publish updated packages to npm.
 
 > Lerna won't publish packages which are marked as private (`"private": true` in the `package.json`).
 
@@ -400,12 +400,22 @@ Useful for bypassing the user input prompt if you already know which version to 
 #### --message, -m [msg]
 
 ```sh
-$ lerna publish -m "chore: Publish"
+$ lerna publish -m "chore: Publish %s"
+# commit message = "chore: Publish v1.0.0"
+
+$ lerna publish -m "chore: Publish" --independent
+# commit message = "chore: Publish
+#
+# - package-1@3.0.1
+# - package-2@1.5.4"
 ```
 
 When run with this flag, `publish` will use the provided message when committing the version updates
 for publication. Useful for integrating lerna into projects that expect commit messages to adhere
 to certain guidelines, such as projects which use [commitizen](https://github.com/commitizen/cz-cli) and/or [semantic-release](https://github.com/semantic-release/semantic-release).
+
+If the message contains `%s`, it will be replaced with the new global version version number prefixed with a "v".
+Note that this only applies when using the default "fixed" versioning mode, as there is no "global" version when using `--independent`.
 
 ### updated
 
@@ -544,6 +554,12 @@ You may also get the name of the current package through the environment variabl
 $ lerna exec -- npm view \$LERNA_PACKAGE_NAME
 ```
 
+You may also run a script located in the root dir, in a complicated dir structure through the environment variable `LERNA_ROOT_PATH`:  
+
+```sh
+$ lerna exec -- node \$LERNA_ROOT_PATH/scripts/some-script.js
+```
+
 > Hint: The commands are spawned in parallel, using the concurrency given (except with `--parallel`).
 > The output is piped through, so not deterministic.
 > If you want to run the command in one package after another, use it like this:
@@ -551,6 +567,14 @@ $ lerna exec -- npm view \$LERNA_PACKAGE_NAME
 ```sh
 $ lerna exec --concurrency 1 -- ls -la
 ```
+
+#### --bail
+
+```sh
+$ lerna exec --bail=<boolean> <command>
+```
+
+This flag signifies whether or not the `exec` command should halt execution upon encountering an error thrown by one of the spawned subprocesses. Its default value is `true`.
 
 ### import
 
@@ -679,6 +703,30 @@ $ lerna exec --scope my-component -- ls -la
 $ lerna run --scope toolbar-* test
 ```
 
+#### --since [ref]
+
+When executing a script or command, scope the operation to packages that have been updated since the specified `ref`. If `ref` is not specified, it defaults to the latest tag.
+
+List the contents of packages that have changed since the latest tag:
+
+```sh
+$ lerna exec --since -- ls -la
+```
+
+Run the tests for all packages that have changed since `master`:
+
+```
+$ lerna run test --since master
+```
+
+List all packages that have changed since `some-branch`:
+
+```
+$ lerna ls --since some-branch
+```
+
+*This can be particularly useful when used in CI, if you can obtain the target branch a PR will be going into, because you can use that as the `ref` to the `--since` option. This works well for PRs going into master as well as feature branches.*
+
 #### --ignore [glob]
 
 Excludes a subset of packages when running a command.
@@ -724,20 +772,6 @@ $ lerna bootstrap --scope my-component --include-filtered-dependencies
 $ lerna bootstrap --scope "package-*" --ignore "package-util-*" --include-filtered-dependencies
 # all package-util's will be ignored unless they are depended upon by a
 # package matched by "package-*"
-```
-
-#### --only-updated
-
-When executing a script or command, only run the script or command on packages that have been updated since the last release.
-
-A package is considered "updated" using the same rules as `lerna updated`.
-
-```sh
-$ lerna exec --only-updated -- ls -la
-```
-
-```
-$ lerna run --only-updated test
 ```
 
 #### --loglevel [silent|error|warn|success|info|verbose|silly]

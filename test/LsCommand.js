@@ -130,6 +130,31 @@ describe("LsCommand", () => {
     });
   });
 
+  describe("with an undefined version", () => {
+    let testDir;
+
+    beforeEach(() => initFixture("LsCommand/undefined-version").then((dir) => {
+      testDir = dir;
+    }));
+
+    it("should list packages", (done) => {
+      const lsCommand = new LsCommand([], {}, testDir);
+
+      lsCommand.runValidations();
+      lsCommand.runPreparations();
+
+      lsCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+        try {
+          expect(consoleOutput()).toMatchSnapshot();
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
+  });
+
   describe("with --json", () => {
     let testDir;
 

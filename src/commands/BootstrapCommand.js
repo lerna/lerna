@@ -30,7 +30,7 @@ export const builder = {
   "nohoist": {
     group: "Command Options:",
     describe: "Don't hoist external dependencies matching [glob] to the repo root",
-    type: "string"
+    type: "string",
   },
   "npm-client": {
     group: "Command Options:",
@@ -46,12 +46,13 @@ export default class BootstrapCommand extends Command {
   }
 
   initialize(callback) {
-    const { registry, npmClient, npmClientArgs } = this.options;
+    const { registry, npmClient, npmClientArgs, mutex } = this.options;
 
     this.npmConfig = {
       registry,
       npmClient,
       npmClientArgs,
+      mutex
     };
 
     // lerna bootstrap ... -- <input>
@@ -63,7 +64,7 @@ export default class BootstrapCommand extends Command {
       ? PackageUtilities.topologicallyBatchPackages(this.filteredPackages)
       : [this.filteredPackages];
 
-    if (npmClient === "yarn") {
+    if (npmClient === "yarn" && !mutex) {
       return getPort(42424).then((port) => {
         this.npmConfig.mutex = `network:${port}`;
         callback(null, true);
