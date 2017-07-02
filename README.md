@@ -118,7 +118,7 @@ Independent mode allows you to more specifically update versions for each packag
 
 ## Troubleshooting
 
-If you encounter any issues while using Lerna please check out our [Troubleshooting](doc/troubleshooting.md) 
+If you encounter any issues while using Lerna please check out our [Troubleshooting](doc/troubleshooting.md)
 document where you might find the answer to your problem.
 
 ## Frequently asked questions
@@ -199,7 +199,7 @@ When run, this command will:
 2. Symlink together all Lerna `packages` that are dependencies of each other.
 3. `npm prepublish` all bootstrapped packages.
 
-`lerna bootstrap` respects the `--ignore`, `--scope` and `--include-filtered-dependencies` flags (see [Flags](#flags)). 
+`lerna bootstrap` respects the `--ignore`, `--scope` and `--include-filtered-dependencies` flags (see [Flags](#flags)).
 
 Pass extra arguments to npm client by placing them after `--`:
 
@@ -302,9 +302,10 @@ This option can be used to publish a [`prerelease`](http://carrot.is/coding/npm_
 
 ```sh
 $ lerna publish --canary
+$ lerna publish --canary=beta
 ```
 
-When run with this flag, `publish` publishes packages in a more granular way (per commit). Before publishing to npm, it creates the new `version` tag by taking the current `version` and appending the current git sha (ex: `1.0.0-alpha.81e3b443`).
+When run with this flag, `publish` publishes packages in a more granular way (per commit). Before publishing to npm, it creates the new `version` tag by taking the current `version`, bumping it to the next /minor/ version, adding the provided meta suffix (defaults to `alpha`) and appending the current git sha (ex: `1.0.0-alpha.81e3b443`, `1.0.0-beta.81e3b443`).
 
 > The intended use case for this flag is a per commit level release or nightly release.
 
@@ -554,7 +555,7 @@ You may also get the name of the current package through the environment variabl
 $ lerna exec -- npm view \$LERNA_PACKAGE_NAME
 ```
 
-You may also run a script located in the root dir, in a complicated dir structure through the environment variable `LERNA_ROOT_PATH`:  
+You may also run a script located in the root dir, in a complicated dir structure through the environment variable `LERNA_ROOT_PATH`:
 
 ```sh
 $ lerna exec -- node \$LERNA_ROOT_PATH/scripts/some-script.js
@@ -782,9 +783,9 @@ Any logs of a higher level than the setting are shown.  The default is "info".
 
 #### --max-buffer [in-bytes]
 
-Set a max buffer length for each underlying process call. Useful for example 
-when someone wants to import a repo with a larger amount of commits while 
-running `lerna import`. In that case the built-in buffer length might not 
+Set a max buffer length for each underlying process call. Useful for example
+when someone wants to import a repo with a larger amount of commits while
+running `lerna import`. In that case the built-in buffer length might not
 be sufficient.
 
 #### --no-sort
@@ -867,11 +868,11 @@ private registries.
 
 #### --temp-tag
 
-When passed, this flag will alter the default publish process by first publishing 
-all changed packages to a temporary dist-tag (`lerna-temp`) and then moving the 
+When passed, this flag will alter the default publish process by first publishing
+all changed packages to a temporary dist-tag (`lerna-temp`) and then moving the
 new version(s) to the default [dist-tag](https://docs.npmjs.com/cli/dist-tag) (`latest`).
 
-This is not generally necessary, as Lerna will publish packages in topological 
+This is not generally necessary, as Lerna will publish packages in topological
 order (all dependencies before dependents) by default.
 
 ### Wizard
