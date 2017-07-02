@@ -27,7 +27,7 @@ export const describe = "Publish packages in the current project.";
 export const builder = {
   "canary": {
     group: "Command Options:",
-    defaultDescription: "canary",
+    defaultDescription: "alpha",
     describe: "Publish packages after every successful merge using the sha as part of the tag.",
     alias: "c"
   },
