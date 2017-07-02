@@ -28,11 +28,7 @@ export const builder = {
   "canary": {
     group: "Command Options:",
     describe: "Publish packages after every successful merge using the sha as part of the tag.",
-    alias: "c",
-    requiresArg: false,
-    coerce: (canary) => {
-      return canary === true ? "canary" : canary;
-    }
+    alias: "c"
   },
   "cd-version": {
     group: "Command Options:",
@@ -328,6 +324,10 @@ export default class PublishCommand extends Command {
   }
 
   getCanaryVersion(version, metaName) {
+    if (metaName == null || typeof metaName !== "string") {
+      metaName = "alpha";
+    }
+
     const minor = semver.inc(version, "minor");
     const hash = GitUtilities.getCurrentSHA(this.execOpts).slice(0, 8);
     return `${minor}-${metaName}.${hash}`;
