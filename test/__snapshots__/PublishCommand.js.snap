@@ -23,11 +23,11 @@ Array [
 
 exports[`[independent --canary] bumps package versions 1`] = `
 Object {
-  "packages/package-1": "1.0.0-alpha.deadbeef",
-  "packages/package-2": "2.0.0-alpha.deadbeef",
-  "packages/package-3": "3.0.0-alpha.deadbeef",
-  "packages/package-4": "4.0.0-alpha.deadbeef",
-  "packages/package-5": "5.0.0-alpha.deadbeef",
+  "packages/package-1": "1.1.0-alpha.deadbeef",
+  "packages/package-2": "2.1.0-alpha.deadbeef",
+  "packages/package-3": "3.1.0-alpha.deadbeef",
+  "packages/package-4": "4.1.0-alpha.deadbeef",
+  "packages/package-5": "5.1.0-alpha.deadbeef",
 }
 `;
 
@@ -178,11 +178,21 @@ Array [
 
 exports[`[normal --canary] bumps package versions 1`] = `
 Object {
-  "packages/package-1": "1.0.0-alpha.deadbeef",
-  "packages/package-2": "1.0.0-alpha.deadbeef",
-  "packages/package-3": "1.0.0-alpha.deadbeef",
-  "packages/package-4": "1.0.0-alpha.deadbeef",
-  "packages/package-5": "1.0.0-alpha.deadbeef",
+  "packages/package-1": "1.1.0-alpha.deadbeef",
+  "packages/package-2": "1.1.0-alpha.deadbeef",
+  "packages/package-3": "1.1.0-alpha.deadbeef",
+  "packages/package-4": "1.1.0-alpha.deadbeef",
+  "packages/package-5": "1.1.0-alpha.deadbeef",
+}
+`;
+
+exports[`[normal --canary] bumps package versions 2`] = `
+Object {
+  "packages/package-1": "1.1.0-beta.deadbeef",
+  "packages/package-2": "1.1.0-beta.deadbeef",
+  "packages/package-3": "1.1.0-beta.deadbeef",
+  "packages/package-4": "1.1.0-beta.deadbeef",
+  "packages/package-5": "1.1.0-beta.deadbeef",
 }
 `;
 
