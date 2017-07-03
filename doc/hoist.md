@@ -1,6 +1,6 @@
 # Lerna Hoisting
 
-> Do not use this feature, it is very dangerous and will break things.
+> Use caution when enabling this feature, as certain configurations can cause problems.
 
 When an overall project is divided into more than one NPM package, this
 organizational improvement generally comes with a cost: the various
