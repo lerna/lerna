@@ -1,5 +1,7 @@
 # Lerna Hoisting
 
+> Do not use this feature, it is very dangerous and will break things.
+
 When an overall project is divided into more than one NPM package, this
 organizational improvement generally comes with a cost: the various
 packages often have many duplicate dependencies in their `package.json`
