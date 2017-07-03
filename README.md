@@ -305,7 +305,7 @@ $ lerna publish --canary
 $ lerna publish --canary=beta
 ```
 
-When run with this flag, `publish` publishes packages in a more granular way (per commit). Before publishing to npm, it creates the new `version` tag by taking the current `version`, bumping it to the next /minor/ version, adding the provided meta suffix (defaults to `alpha`) and appending the current git sha (ex: `1.0.0-alpha.81e3b443`, `1.0.0-beta.81e3b443`).
+When run with this flag, `publish` publishes packages in a more granular way (per commit). Before publishing to npm, it creates the new `version` tag by taking the current `version`, bumping it to the next *minor* version, adding the provided meta suffix (defaults to `alpha`) and appending the current git sha (ex: `1.0.0` becomes `1.1.0-alpha.81e3b443`).
 
 > The intended use case for this flag is a per commit level release or nightly release.
 
