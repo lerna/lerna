@@ -2,5 +2,5 @@
   "lerna": "__TEST_VERSION__",
   "version": "1.0.0",
   "npmClient": "yarn",
-  "yarnWorkspaces": ["bootstrap"]
+  "useWorkspaces": true
 }

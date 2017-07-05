@@ -92,9 +92,9 @@ export default class BootstrapCommand extends Command {
   bootstrapPackages(callback) {
     this.logger.info("", `Bootstrapping ${this.filteredPackages.length} packages`);
 
-    const { yarnWorkspaces } = this.options;
+    const { useWorkspaces } = this.options;
 
-    if (yarnWorkspaces && (yarnWorkspaces.indexOf("bootstrap") >= 0)) {
+    if (useWorkspaces) {
       this.installRootPackageOnly(callback);
     } else {
       async.series([
