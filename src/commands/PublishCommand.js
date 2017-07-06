@@ -27,8 +27,9 @@ export const describe = "Publish packages in the current project.";
 export const builder = {
   "canary": {
     group: "Command Options:",
+    defaultDescription: "alpha",
     describe: "Publish packages after every successful merge using the sha as part of the tag.",
-    alias: "c",
+    alias: "c"
   },
   "cd-version": {
     group: "Command Options:",
@@ -267,7 +268,7 @@ export default class PublishCommand extends Command {
 
     // Non-Independent Canary Mode
     if (!this.repository.isIndependent() && this.options.canary) {
-      const version = this.globalVersion + this.getCanaryVersionSuffix();
+      const version = this.getCanaryVersion(this.globalVersion, this.options.canary);
       callback(null, { version });
 
     // Non-Independent Non-Canary Mode
@@ -283,10 +284,12 @@ export default class PublishCommand extends Command {
     // Independent Canary Mode
     } else if (this.options.canary) {
       const versions = {};
-      const canaryVersionSuffix = this.getCanaryVersionSuffix();
 
       this.updates.forEach((update) => {
-        versions[update.package.name] = update.package.version + canaryVersionSuffix;
+        versions[update.package.name] = this.getCanaryVersion(
+          update.package.version,
+          this.options.canary
+        );
       });
 
       callback(null, { versions });
@@ -321,8 +324,14 @@ export default class PublishCommand extends Command {
     }
   }
 
-  getCanaryVersionSuffix() {
-    return "-alpha." + GitUtilities.getCurrentSHA(this.execOpts).slice(0, 8);
+  getCanaryVersion(version, metaName) {
+    if (metaName == null || typeof metaName !== "string") {
+      metaName = "alpha";
+    }
+
+    const minor = semver.inc(version, "minor");
+    const hash = GitUtilities.getCurrentSHA(this.execOpts).slice(0, 8);
+    return `${minor}-${metaName}.${hash}`;
   }
 
   promptVersion(packageName, currentVersion, callback) {

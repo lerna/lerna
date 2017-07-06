@@ -288,10 +288,10 @@ describe("PublishCommand", () => {
           expect(updatedPackageVersions(testDir)).toMatchSnapshot("[normal --canary] bumps package versions");
 
           expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-            "package-1": "^1.0.0-alpha.deadbeef",
+            "package-1": "^1.1.0-alpha.deadbeef",
           });
           expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-            "package-2": "^1.0.0-alpha.deadbeef",
+            "package-2": "^1.1.0-alpha.deadbeef",
           });
           expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
             "package-1": "^0.0.0",
@@ -305,6 +305,42 @@ describe("PublishCommand", () => {
           expect(GitUtilities.pushWithTags).not.toBeCalled();
           expect(publishedTagInDirectories(testDir))
             .toMatchSnapshot("[normal --canary] npm publish --tag");
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
+
+    it("should use the provided value as the meta suffix", (done) => {
+      const publishCommand = new PublishCommand([], {
+        canary: "beta"
+      }, testDir);
+
+      publishCommand.runValidations();
+      publishCommand.runPreparations();
+
+      publishCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
+            // TODO: there has to be a better way to do this
+            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
+          }
+
+          expect(updatedPackageVersions(testDir)).toMatchSnapshot("[normal --canary] bumps package versions");
+
+          expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+            "package-1": "^1.1.0-beta.deadbeef",
+          });
+          expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+            "package-2": "^1.1.0-beta.deadbeef",
+          });
+          expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+            "package-1": "^0.0.0",
+          });
 
           done();
         } catch (ex) {
@@ -350,10 +386,10 @@ describe("PublishCommand", () => {
             .toMatchSnapshot("[independent --canary] bumps package versions");
 
           expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-            "package-1": "^1.0.0-alpha.deadbeef",
+            "package-1": "^1.1.0-alpha.deadbeef",
           });
           expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-            "package-2": "^2.0.0-alpha.deadbeef",
+            "package-2": "^2.1.0-alpha.deadbeef",
           });
           expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
             "package-1": "^0.0.0",
@@ -361,6 +397,41 @@ describe("PublishCommand", () => {
 
           expect(publishedTagInDirectories(testDir))
             .toMatchSnapshot("[independent --canary] npm publish --tag");
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
+
+    it("should use the provided value as the meta suffix", (done) => {
+      const publishCommand = new PublishCommand([], {
+        independent: true,
+        canary: "beta"
+      }, testDir);
+
+      publishCommand.runValidations();
+      publishCommand.runPreparations();
+
+      publishCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
+            // TODO: there has to be a better way to do this
+            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
+          }
+
+          expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+            "package-1": "^1.1.0-beta.deadbeef",
+          });
+          expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+            "package-2": "^2.1.0-beta.deadbeef",
+          });
+          expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+            "package-1": "^0.0.0",
+          });
 
           done();
         } catch (ex) {
