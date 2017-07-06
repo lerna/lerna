@@ -55,6 +55,9 @@ export default class Repository {
   }
 
   get packageConfigs() {
+    if (this.lernaJson.useWorkspaces) {
+      return this.packageJson.workspaces;
+    }
     return this.lernaJson.packages || [DEFAULT_PACKAGE_GLOB];
   }
 

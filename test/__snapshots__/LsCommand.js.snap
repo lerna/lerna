@@ -1,5 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`LsCommand in a Yarn workspace should use package.json/workspaces setting 1`] = `
+Array [
+  "package-1 v1.0.0 
+package-2 v1.0.0 ",
+]
+`;
+
 exports[`LsCommand in a basic repo does not list changes for ignored packages 1`] = `
 Array [
   "package-1 v1.0.0 ",

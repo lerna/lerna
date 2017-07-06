@@ -183,4 +183,29 @@ describe("LsCommand", () => {
       }));
     });
   });
+
+  describe("in a Yarn workspace", () => {
+    let testDir;
+
+    beforeEach(() => initFixture("LsCommand/yarn-workspaces").then((dir) => {
+      testDir = dir;
+    }));
+
+    it("should use package.json/workspaces setting", (done) => {
+      const lsCommand = new LsCommand([], {}, testDir);
+
+      lsCommand.runValidations();
+      lsCommand.runPreparations();
+
+      lsCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+        try {
+          expect(consoleOutput()).toMatchSnapshot();
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
+  });
 });

@@ -77,6 +77,7 @@ describe("BootstrapCommand", () => {
     // we stub installInDir() in most tests because
     // we already have enough tests of installInDir()
     NpmUtilities.installInDir.mockImplementation(callsBack());
+    NpmUtilities.installInDirOriginalPackageJson.mockImplementation(callsBack());
 
     // stub runScriptInDir() because it is a huge source
     // of slowness when running tests for no good reason
@@ -635,6 +636,37 @@ describe("BootstrapCommand", () => {
           try {
             expect(NpmUtilities.installInDir.mock.calls[0][2]).toMatchObject({
               npmClientArgs: ["--production", "--no-optional"],
+            });
+
+            done();
+          } catch (ex) {
+            done.fail(ex);
+          }
+        }));
+      });
+    });
+
+    describe("with yarn workspaces", () => {
+      let testDir;
+
+      beforeEach(() => initFixture("BootstrapCommand/yarn-workspaces").then((dir) => {
+        testDir = dir;
+      }));
+
+      it("should use workspaces feature when installing", (done) => {
+        const bootstrapCommand = new BootstrapCommand([], {}, testDir);
+
+        bootstrapCommand.runValidations();
+        bootstrapCommand.runPreparations();
+
+        bootstrapCommand.runCommand(exitWithCode(0, (err) => {
+          if (err) return done.fail(err);
+
+          try {
+            expect(NpmUtilities.installInDir).not.toBeCalled();
+            expect(NpmUtilities.installInDirOriginalPackageJson.mock.calls[0][1]).toMatchObject({
+              "mutex": expect.stringMatching(/^network:\d+$/),
+              "npmClient": "yarn",
             });
 
             done();

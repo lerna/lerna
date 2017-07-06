@@ -96,6 +96,38 @@ export default class NpmUtilities {
     });
   }
 
+  static installInDirOriginalPackageJson(directory, config, npmGlobalStyle, callback) {
+    log.silly("installInDir", path.basename(directory));
+
+    // npmGlobalStyle is an optional argument
+    if (typeof npmGlobalStyle === "function") {
+      callback = npmGlobalStyle;
+      npmGlobalStyle = false;
+    }
+
+    const packageJson = path.join(directory, "package.json");
+
+    log.silly("installInDir", packageJson);
+
+    // build command, arguments, and options
+    const opts = NpmUtilities.getExecOpts(directory, config.registry);
+    const args = ["install"];
+    let cmd = config.npmClient || "npm";
+
+    if (npmGlobalStyle) {
+      cmd = "npm";
+      args.push("--global-style");
+    }
+
+    if (cmd === "yarn" && config.mutex) {
+      args.push("--mutex", config.mutex);
+    }
+
+    log.silly("installInDir", [cmd, args]);
+    ChildProcessUtilities.exec(cmd, args, opts, callback);
+  }
+
+
   static addDistTag(directory, packageName, version, tag, registry) {
     log.silly("addDistTag", tag, version, packageName);
 
