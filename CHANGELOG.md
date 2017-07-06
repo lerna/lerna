@@ -1,3 +1,52 @@
+## v2.0.0 (2017-07-06)
+
+:tada: It's happening! :tada:
+
+#### :boom: Breaking Change
+* [#904](https://github.com/lerna/lerna/pull/904) Improved --canary functionality. ([@Craga89](https://github.com/Craga89))
+  `--canary` now bumps the generated version to the next semver minor, and accepts a value (e.g. `--canary=beta`) to override the default "alpha" tag.
+
+#### :rocket: Enhancement
+* [#899](https://github.com/lerna/lerna/pull/899) Support Yarn workspaces to replace bootstrap command. ([@bestander](https://github.com/bestander))
+* [#834](https://github.com/lerna/lerna/pull/834) Pass extra arguments to npmClient during bootstrap. ([@xaka](https://github.com/xaka))
+* [#873](https://github.com/lerna/lerna/pull/873) Add root path dir environment variable to `lerna run`. ([@yisraelx](https://github.com/yisraelx))
+* [#822](https://github.com/lerna/lerna/pull/822) Add --since flag to all commands that accept --scope. ([@treshugart](https://github.com/treshugart))
+* [#806](https://github.com/lerna/lerna/pull/806) Allow custom yarn mutex from lerna.json config. ([@ChristopheVandePoel](https://github.com/ChristopheVandePoel))
+* [#868](https://github.com/lerna/lerna/pull/868) lerna run: Don't error if no scoped packages are matched. ([@ricky](https://github.com/ricky))
+* [#835](https://github.com/lerna/lerna/pull/835) Flag for exec to bail upon child execution error. ([@rsolomon](https://github.com/rsolomon))
+
+#### :bug: Bug Fix
+* [#857](https://github.com/lerna/lerna/pull/857) Print n/a when a package has no version key.. ([@ben-eb](https://github.com/ben-eb))
+* [#897](https://github.com/lerna/lerna/pull/897) Run yarn in non-interactive mode. ([@tricoder42](https://github.com/tricoder42))
+* [#898](https://github.com/lerna/lerna/pull/898) Fix issue where Yargs default would override durable options. ([@treshugart](https://github.com/treshugart))
+* [#846](https://github.com/lerna/lerna/pull/846) Do not log private packages as published. ([@evocateur](https://github.com/evocateur))
+* [#845](https://github.com/lerna/lerna/pull/845) Preserve tag summary with `lerna publish --message`. ([@evocateur](https://github.com/evocateur))
+* [#844](https://github.com/lerna/lerna/pull/844) All CLI options should be configurable in lerna.json. ([@evocateur](https://github.com/evocateur))
+
+#### :memo: Documentation
+* [#840](https://github.com/lerna/lerna/pull/840) Update publish docs in README. ([@shilman](https://github.com/shilman))
+* [#836](https://github.com/lerna/lerna/pull/836) Add semver notes to bootstrap command docs. ([@loklaan](https://github.com/loklaan))
+
+#### :house: Internal
+* [#861](https://github.com/lerna/lerna/pull/861) chore(travis): test against node 8 and npm 5. ([@douglasduteil](https://github.com/douglasduteil))
+
+#### Committers: 15
+- Ben Briggs ([ben-eb](https://github.com/ben-eb))
+- Craig Michael Thompson ([Craga89](https://github.com/Craga89))
+- Daniel Stockman ([evocateur](https://github.com/evocateur))
+- Douglas Duteil ([douglasduteil](https://github.com/douglasduteil))
+- Konstantin Raev ([bestander](https://github.com/bestander))
+- Lochlan Bunn ([loklaan](https://github.com/loklaan))
+- Michael Shilman ([shilman](https://github.com/shilman))
+- Pavel Strashkin ([xaka](https://github.com/xaka))
+- Ricky Rivera ([ricky](https://github.com/ricky))
+- Ross Solomon ([rsolomon](https://github.com/rsolomon))
+- Simen Bekkhus ([SimenB](https://github.com/SimenB))
+- Tomáš Ehrlich ([tricoder42](https://github.com/tricoder42))
+- Trey Shugart ([treshugart](https://github.com/treshugart))
+- [ChristopheVandePoel](https://github.com/ChristopheVandePoel)
+- [yisraelx](https://github.com/yisraelx)
+
 ## v2.0.0-rc.5 (2017-05-22)
 
 This is the last release candidate.
