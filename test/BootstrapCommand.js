@@ -538,6 +538,55 @@ describe("BootstrapCommand", () => {
     });
   });
 
+  describe("mismatching version numbers", () => {
+    let testDir;
+
+    beforeEach(() => initFixture("BootstrapCommand/version-mismatch").then((dir) => {
+      testDir = dir;
+    }));
+    beforeEach(stubSymlink);
+    afterEach(resetSymlink);
+
+    it("should link when option.semverIgnore is true", (done) => {
+      const bootstrapCommand = new BootstrapCommand([], { semverIgnore: true }, testDir);
+
+      bootstrapCommand.runValidations();
+      bootstrapCommand.runPreparations();
+
+      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
+          expect(symlinkedDirectories(testDir)).toMatchSnapshot();
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
+    it("should link when option.semverIgnore is false", (done) => {
+      const bootstrapCommand = new BootstrapCommand([], { semverIgnore: false }, testDir);
+
+      bootstrapCommand.runValidations();
+      bootstrapCommand.runPreparations();
+
+      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
+          expect(symlinkedDirectories(testDir)).toMatchSnapshot();
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
+  });
+
   describe("zero packages", () => {
     let testDir;
 
