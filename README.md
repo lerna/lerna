@@ -840,7 +840,7 @@ May also be configured in `lerna.json`:
 }
 ```
 
-#### --use-orkspaces
+#### --use-workspaces
 
 Enables integration with [Yarn Workspaces](https://github.com/yarnpkg/rfcs/blob/master/implemented/0000-workspaces-install-phase-1.md) (available since yarn@0.27+).  
 The values in the array are the commands in which Lerna will delegate operation to Yarn (currently only bootstrapping).    
