@@ -852,7 +852,7 @@ May also be configured in `lerna.json`:
 {
   ...
   "npmClient": "yarn",
-  "use-workspaces": true
+  "useWorkspaces": true
 }
 ```
 
