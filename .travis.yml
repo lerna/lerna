@@ -6,6 +6,9 @@ node_js:
  - '8'
  - '6'
  - '4'
+env:
+  global:
+    - NO_UPDATE_NOTIFIER=1
 
 matrix:
   fast_finish: true
