@@ -266,36 +266,27 @@ export default class PublishCommand extends Command {
       });
     }
 
-    // Non-Independent Canary Mode
-    if (!this.repository.isIndependent() && this.options.canary) {
-      const version = this.getCanaryVersion(this.globalVersion, this.options.canary);
-      callback(null, { version });
+    if (this.options.canary) {
+      if (this.repository.isIndependent()) {
+        // Independent Canary Mode
+        const versions = {};
+        this.updates.forEach((update) => {
+          versions[update.package.name] = this.getCanaryVersion(
+            update.package.version,
+            this.options.canary
+          );
+        });
 
-    // Non-Independent Non-Canary Mode
-    } else if (!this.repository.isIndependent()) {
-      this.promptVersion(null, this.globalVersion, (err, version) => {
-        if (err) {
-          callback(err);
-        } else {
-          callback(null, { version });
-        }
-      });
+        return callback(null, { versions });
+      } else {
+        // Non-Independent Canary Mode
+        const version = this.getCanaryVersion(this.globalVersion, this.options.canary);
+        return callback(null, { version });
+      }
+    }
 
-    // Independent Canary Mode
-    } else if (this.options.canary) {
-      const versions = {};
-
-      this.updates.forEach((update) => {
-        versions[update.package.name] = this.getCanaryVersion(
-          update.package.version,
-          this.options.canary
-        );
-      });
-
-      callback(null, { versions });
-
-    // Independent Conventional-Commits Mode
-    } else if (this.options.conventionalCommits) {
+    if (this.options.conventionalCommits) {
+      // Independent Conventional-Commits Mode
       const versions = {};
       this.updates.map((update) => {
         versions[update.package.name] = ConventionalCommitUtilities.recommendVersion({
@@ -304,10 +295,11 @@ export default class PublishCommand extends Command {
           location: update.package.location
         }, this.execOpts);
       });
-      callback(null, { versions });
+      return callback(null, { versions });
+    }
 
-    // Independent Non-Canary Mode
-    } else {
+    if (this.repository.isIndependent()) {
+      // Independent Non-Canary Mode
       async.mapLimit(this.updates, 1, (update, cb) => {
         this.promptVersion(update.package.name, update.package.version, cb);
       }, (err, versions) => {
@@ -319,7 +311,16 @@ export default class PublishCommand extends Command {
           versions[update.package.name] = versions[index];
         });
 
-        callback(null, { versions });
+        return callback(null, { versions });
+      });
+    } else {
+      // Non-Independent Non-Canary Mode
+      this.promptVersion(null, this.globalVersion, (err, version) => {
+        if (err) {
+          return callback(err);
+        } else {
+          return callback(null, { version });
+        }
       });
     }
   }
