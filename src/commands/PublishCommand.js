@@ -286,16 +286,26 @@ export default class PublishCommand extends Command {
     }
 
     if (this.options.conventionalCommits) {
-      // Independent Conventional-Commits Mode
-      const versions = {};
-      this.updates.map((update) => {
-        versions[update.package.name] = ConventionalCommitUtilities.recommendVersion({
-          name: update.package.name,
-          version: update.package.version,
-          location: update.package.location
-        }, this.execOpts);
-      });
-      return callback(null, { versions });
+      if (this.repository.isIndependent()) {
+        // Independent Conventional-Commits Mode
+        const versions = {};
+        this.recommendVersions(this.updates, ConventionalCommitUtilities.recommendIndependentVersion,
+          (versionBump) => {
+            versions[versionBump.pkg.name] = versionBump.recommendedVersion;
+          });
+
+        return callback(null, { versions });
+      } else {
+        // Non-Independent Conventional-Commits Mode
+        let version = "0.0.0";
+        this.recommendVersions(this.updates, ConventionalCommitUtilities.recommendFixedVersion,
+          (versionBump) => {
+            if (semver.gt(versionBump.recommendedVersion, version)) {
+              version = versionBump.recommendedVersion;
+            }
+          });
+        return callback(null, { version });
+      }
     }
 
     if (this.repository.isIndependent()) {
@@ -323,6 +333,18 @@ export default class PublishCommand extends Command {
         }
       });
     }
+  }
+
+  recommendVersions(updates, recommendVersionFn, callback) {
+    updates.forEach((update) => {
+      const pkg = {
+        name: update.package.name,
+        version: update.package.version,
+        location: update.package.location
+      };
+      const recommendedVersion = recommendVersionFn(pkg, this.execOpts);
+      callback({ pkg, recommendedVersion });
+    });
   }
 
   getCanaryVersion(version, metaName) {
@@ -461,10 +483,19 @@ export default class PublishCommand extends Command {
       // we can now generate the Changelog, based on the
       // the updated version that we're about to release.
       if (this.options.conventionalCommits) {
-        ConventionalCommitUtilities.updateChangelog({
-          name: pkg.name,
-          location: pkg.location
-        }, this.execOpts);
+        if (this.repository.isIndependent()) {
+          ConventionalCommitUtilities.updateIndependentChangelog({
+            name: pkg.name,
+            location: pkg.location
+          }, this.execOpts);
+        } else {
+
+          ConventionalCommitUtilities.updateFixedChangelog({
+            name: pkg.name,
+            location: pkg.location
+          }, this.execOpts);
+        }
+
         changedFiles.push(ConventionalCommitUtilities.changelogLocation(pkg));
       }
 

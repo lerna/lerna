@@ -23,23 +23,21 @@ describe("ConventionalCommitUtilities", () => {
 
       const opts = { cwd: "test" };
 
+      const args = [
+        require.resolve("conventional-recommended-bump/cli"),
+        "-l", "bar",
+        "--commit-path", "/foo/bar",
+        "-p", "angular",
+      ];
+
       const recommendVersion = ConventionalCommitUtilities.recommendVersion({
         name: "bar",
         version: "1.0.0",
         location: "/foo/bar",
-      }, opts);
+      }, opts, "", args);
 
       expect(recommendVersion).toBe("2.0.0");
-      expect(ChildProcessUtilities.execSync).lastCalledWith(
-        process.execPath,
-        [
-          require.resolve("conventional-recommended-bump/cli"),
-          "-l", "bar",
-          "--commit-path", "/foo/bar",
-          "-p", "angular",
-        ],
-        opts,
-      );
+      expect(ChildProcessUtilities.execSync).lastCalledWith(process.execPath, args, opts);
     });
   });
 
@@ -50,25 +48,21 @@ describe("ConventionalCommitUtilities", () => {
 
       const opts = { cwd: "test" };
 
+      const args = [
+        require.resolve("conventional-changelog-cli/cli"),
+        "-l", "bar",
+        "--commit-path", "/foo/bar",
+        "--pkg", path.normalize("/foo/bar/package.json"),
+        "-p", "angular",
+      ];
+
       ConventionalCommitUtilities.updateChangelog({
         name: "bar",
         location: "/foo/bar"
-      }, opts);
+      }, opts, "", args);
 
-      expect(FileSystemUtilities.existsSync).lastCalledWith(
-        path.normalize("/foo/bar/CHANGELOG.md")
-      );
-      expect(ChildProcessUtilities.execSync).lastCalledWith(
-        process.execPath,
-        [
-          require.resolve("conventional-changelog-cli/cli"),
-          "-l", "bar",
-          "--commit-path", "/foo/bar",
-          "--pkg", path.normalize("/foo/bar/package.json"),
-          "-p", "angular",
-        ],
-        opts,
-      );
+      expect(FileSystemUtilities.existsSync).lastCalledWith(path.normalize("/foo/bar/CHANGELOG.md"));
+      expect(ChildProcessUtilities.execSync).lastCalledWith(process.execPath, args, opts);
       expect(FileSystemUtilities.writeFileSync).lastCalledWith(
         path.normalize("/foo/bar/CHANGELOG.md"),
         dedent`

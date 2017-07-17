@@ -1,5 +1,23 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`[fixed --conventional-commits] git adds changed files 1`] = `
+Array [
+  "lerna.json",
+  "packages/package-1/CHANGELOG.md",
+  "packages/package-1/package.json",
+  "packages/package-2/CHANGELOG.md",
+  "packages/package-2/package.json",
+  "packages/package-3/CHANGELOG.md",
+  "packages/package-3/package.json",
+  "packages/package-4/CHANGELOG.md",
+  "packages/package-4/package.json",
+  "packages/package-5/CHANGELOG.md",
+  "packages/package-5/package.json",
+]
+`;
+
+exports[`[fixed --conventional-commits] git commit message 1`] = `"v5.1.1"`;
+
 exports[`[independent --canary --npm-tag=next --yes --exact] npm publish --tag 1`] = `
 Array [
   Object {
