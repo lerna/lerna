@@ -176,7 +176,7 @@ describe("NpmUtilities", () => {
       NpmUtilities.publishTaggedInDir("published-tag", directory, undefined, callback);
 
       const cmd = "npm";
-      const args = ["publish", "--tag", "published-tag"];
+      const args = ["publish", "--tag", "published-tag", "--access", "restricted"];
       const opts = { directory, registry: undefined };
       expect(ChildProcessUtilities.exec).lastCalledWith(cmd, args, opts, expect.any(Function));
     });
@@ -193,7 +193,7 @@ describe("NpmUtilities", () => {
       NpmUtilities.publishTaggedInDir("published-tag", directory, registry, callback);
 
       const cmd = "npm";
-      const args = ["publish", "--tag", "published-tag"];
+      const args = ["publish", "--tag", "published-tag", "--access", "restricted"];
       const opts = { directory, registry };
       expect(ChildProcessUtilities.exec).lastCalledWith(cmd, args, opts, expect.any(Function));
     });
