@@ -65,7 +65,7 @@ The two primary commands in Lerna are `lerna bootstrap` and `lerna publish`.
 
 ## Getting Started
 
-> The instructions below are for Lerna 2.x which is currently in beta.
+> The instructions below are for Lerna 2.x.
 > We recommend using it instead of 1.x for a new Lerna project. Check the [wiki](https://github.com/lerna/lerna/wiki/1.x-Docs) if you need to see the 1.x README.
 
 Let's start by installing Lerna globally with [npm](https://www.npmjs.com/).
@@ -146,7 +146,7 @@ Example output on a new git repo:
 
 ```sh
 $ lerna init
-lerna info version v2.0.0-rc.3
+lerna info version v2.0.0
 lerna info Updating package.json
 lerna info Creating lerna.json
 lerna success Initialized Lerna files
@@ -174,7 +174,7 @@ It will configure `lerna.json` to enforce exact match for all subsequent executi
 
 ```json
 {
-  "lerna": "2.0.0-rc.0",
+  "lerna": "2.0.0",
   "command": {
     "init": {
       "exact": true
@@ -604,7 +604,7 @@ Running `lerna` without arguments will show all commands/options.
 
 ```js
 {
-  "lerna": "2.0.0-beta.31",
+  "lerna": "2.0.0",
   "version": "1.1.3",
   "commands": {
     "publish": {
@@ -742,7 +742,7 @@ The `ignore` flag, when used with the `bootstrap` command, can also be set in `l
 
 ```javascript
 {
-  "lerna": "2.0.0-beta.31",
+  "lerna": "2.0.0",
   "version": "0.0.0",
   "commands": {
     "bootstrap": {
