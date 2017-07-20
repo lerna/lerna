@@ -65,9 +65,6 @@ The two primary commands in Lerna are `lerna bootstrap` and `lerna publish`.
 
 ## Getting Started
 
-> The instructions below are for Lerna 2.x which is currently in beta.
-> We recommend using it instead of 1.x for a new Lerna project. Check the [wiki](https://github.com/lerna/lerna/wiki/1.x-Docs) if you need to see the 1.x README.
-
 Let's start by installing Lerna globally with [npm](https://www.npmjs.com/).
 
 ```sh
