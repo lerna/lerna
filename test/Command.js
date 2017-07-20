@@ -1,4 +1,6 @@
 import log from "npmlog";
+import touch from "touch";
+import path from "path";
 
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
 import FileSystemUtilities from "../src/FileSystemUtilities";
@@ -187,6 +189,9 @@ describe("Command", () => {
       class TestCommand extends Command {}
 
       function cli(cmd, ...args) {
+        if (cmd === "touch") {
+          return touch.sync(path.join(testDir, args[0]));
+        }
         return execa.sync(cmd, args, { cwd: testDir }).stdout.toString("utf-8");
       }
 

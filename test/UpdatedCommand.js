@@ -3,6 +3,7 @@ import execa from "execa";
 import log from "npmlog";
 import normalizeNewline from "normalize-newline";
 import path from "path";
+import touch from "touch";
 
 // mocked or stubbed modules
 import output from "../src/utils/output";
@@ -31,7 +32,7 @@ const gitTag = (opts) => execa.sync("git", ["tag", "v1.0.0"], opts);
 const gitAdd = (opts) => execa.sync("git", ["add", "-A"], opts);
 const gitCommit = (opts) => execa.sync("git", ["commit", "-m", "Commit"], opts);
 const touchFile = (opts) => (filePath) =>
-    execa.sync("touch", [path.join(opts.cwd, filePath)], opts);
+    touch.sync(path.join(opts.cwd, filePath));
 
 const setupGitChanges = (testDir, filePaths) => {
   const opts = {
