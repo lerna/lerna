@@ -2,38 +2,40 @@ import execa from "execa";
 
 import { LERNA_BIN } from "../helpers/constants";
 import initFixture from "../helpers/initFixture";
+import initExecTest from "../helpers/initExecTest";
 
 describe("lerna exec", () => {
-  test.concurrent("--ignore <pkg> ls -- -1", async () => {
+  const env = initExecTest("ExecCommand");
+  test.concurrent("--ignore <pkg> exec-test -- -1", async () => {
     const cwd = await initFixture("ExecCommand/basic");
     const args = [
       "exec",
       "--ignore=package-1",
-      "ls",
+      "exec-test",
       "--concurrency=1",
       "--",
-      // args to ls
+      // args to exec-test
       "-1",
     ];
 
-    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
-    expect(stdout).toMatchSnapshot("stdout: ls --ignore");
-    expect(stderr).toMatchSnapshot("stderr: ls --ignore");
+    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd, env });
+    expect(stdout).toMatchSnapshot("stdout: exec-test --ignore");
+    expect(stderr).toMatchSnapshot("stderr: exec-test --ignore");
   });
 
-  test.concurrent("ls --scope <pkg>", async () => {
+  test.concurrent("exec-test --scope <pkg>", async () => {
     const cwd = await initFixture("ExecCommand/basic");
     const args = [
       "exec",
       "--concurrency=1",
-      "ls",
+      "exec-test",
       "--scope=package-1",
-      // no args to ls
+      // no args to exec-test
     ];
 
-    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
-    expect(stdout).toMatchSnapshot("stdout: ls --scope");
-    expect(stderr).toMatchSnapshot("stderr: ls --scope");
+    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd, env });
+    expect(stdout).toMatchSnapshot("stdout: exec-test --scope");
+    expect(stderr).toMatchSnapshot("stderr: exec-test --scope");
   });
 
   test.concurrent("without --", async () => {
@@ -41,12 +43,12 @@ describe("lerna exec", () => {
     const args = [
       "--concurrency=1",
       "exec",
-      "ls",
+      "exec-test",
       // no --
       "-C",
     ];
 
-    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
+    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd, env });
     expect(stdout).toMatchSnapshot("stdout: without --");
     expect(stderr).toMatchSnapshot("stderr: without --");
   });
@@ -69,13 +71,13 @@ describe("lerna exec", () => {
     const cwd = await initFixture("ExecCommand/basic");
     const args = [
       "exec",
-      "ls",
+      "exec-test",
       "--parallel",
       // no --
       "-C",
     ];
 
-    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
+    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd, env });
     expect(stderr).toMatchSnapshot("stderr: <cmd> --parallel");
 
     // order is non-deterministic, so assert individually
@@ -90,12 +92,12 @@ describe("lerna exec", () => {
     const args = [
       "exec",
       "--parallel",
-      "ls",
+      "exec-test",
       // no --
       "-C",
     ];
 
-    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
+    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd, env });
     expect(stderr).toMatchSnapshot("stderr: --parallel <cmd>");
 
     // order is non-deterministic, so assert individually
