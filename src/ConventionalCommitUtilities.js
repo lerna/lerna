@@ -10,7 +10,7 @@ const CHANGELOG_NAME = "CHANGELOG.md";
 const CHANGELOG_HEADER = dedent(`# Change Log
 
   All notable changes to this project will be documented in this file.
-  See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.`);
+  See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.`);
 
 // We call these resolved CLI files in the "path/to/node path/to/cli <..args>"
 // pattern to avoid Windows hangups with shebangs (e.g., WSH can't handle it)
