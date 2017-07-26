@@ -35,10 +35,12 @@ export default function CLI(argv, cwd) {
     .usage("Usage: $0 <command> [options]")
     .options(globalOptions).group(globalKeys, "Global Options:")
     .commandDir("../lib/commands")
-    .demandCommand()
+    .demandCommand(1, "Pass --help to see all available commands and options.")
     .help("h").alias("h", "help")
     .version().alias("v", "version")
     .wrap(cli.terminalWidth())
+    .strict()
+    .showHelpOnFail(false, "A command is required.")
     .epilogue(dedent`
       When a command fails, all logs are written to lerna-debug.log in the current working directory.
 
