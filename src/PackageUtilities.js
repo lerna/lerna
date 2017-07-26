@@ -118,7 +118,9 @@ export default class PackageUtilities {
         }
       });
 
-      dependentPackages.push(pkg);
+      if (!packageAlreadyFound(pkg.name)) {
+        dependentPackages.push(pkg);
+      }
     }
 
     return dependentPackages;
