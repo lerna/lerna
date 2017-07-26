@@ -1,0 +1,9 @@
+{
+  "name": "package-4",
+  "description": "All but one package depend on this one, including itself",
+  "version": "1.0.0",
+  "dependencies": {
+    "package-1": "^1.0.0",
+    "package-4": "^1.0.0"
+  }
+}

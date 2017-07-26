@@ -1,0 +1,8 @@
+{
+  "name": "package-7",
+  "description": "This exists so that we have something we know we shouldnt see in the dep tree",
+  "version": "1.0.0",
+  "dependencies": {
+    "package-4": "^1.0.0"
+  }
+}
