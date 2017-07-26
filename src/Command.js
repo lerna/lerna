@@ -289,7 +289,7 @@ export default class Command {
       this.packageGraph = this.repository.packageGraph;
       this.filteredPackages = PackageUtilities.filterPackages(this.packages, { scope, ignore });
 
-      // The UpdatedPackgaesCollector requires that filteredPackages be present prior to checking for
+      // The UpdatedPackagesCollector requires that filteredPackages be present prior to checking for
       // updates. That's okay because it further filters based on what's already been filtered.
       if (typeof since === "string") {
         const updated = new UpdatedPackagesCollector(this).getUpdates().map((update) => update.package.name);
