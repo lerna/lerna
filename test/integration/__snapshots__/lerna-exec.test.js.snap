@@ -2,22 +2,22 @@
 
 exports[`stderr: <cmd> --parallel 1`] = `
 "lerna info version __TEST_VERSION__
-lerna info exec in 2 package(s): ls"
+lerna info exec in 2 package(s): exec-test"
 `;
 
 exports[`stderr: --parallel <cmd> 1`] = `
 "lerna info version __TEST_VERSION__
-lerna info exec in 2 package(s): ls"
+lerna info exec in 2 package(s): exec-test"
 `;
 
 exports[`stderr: echo LERNA_PACKAGE_NAME 1`] = `"lerna info version __TEST_VERSION__"`;
 
-exports[`stderr: ls --ignore 1`] = `
+exports[`stderr: exec-test --ignore 1`] = `
 "lerna info version __TEST_VERSION__
 lerna info ignore package-1"
 `;
 
-exports[`stderr: ls --scope 1`] = `
+exports[`stderr: exec-test --scope 1`] = `
 "lerna info version __TEST_VERSION__
 lerna info scope package-1"
 `;
@@ -29,19 +29,23 @@ exports[`stdout: echo LERNA_PACKAGE_NAME 1`] = `
 package-2"
 `;
 
-exports[`stdout: ls --ignore 1`] = `
-"file-2.js
+exports[`stdout: exec-test --ignore 1`] = `
+"package-2 -1
+file-2.js
 package.json"
 `;
 
-exports[`stdout: ls --scope 1`] = `
-"file-1.js
+exports[`stdout: exec-test --scope 1`] = `
+"package-1 
+file-1.js
 package.json"
 `;
 
 exports[`stdout: without -- 1`] = `
-"file-1.js
+"package-1 
+file-1.js
 package.json
+package-2 
 file-2.js
 package.json"
 `;
