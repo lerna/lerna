@@ -81,7 +81,7 @@ function registerChild(child) {
     if (children === 0) {
       emitter.emit("empty");
     }
-  });
+  }).catch(() => {});
 }
 
 function _spawn(command, args, opts, callback) {

@@ -34,9 +34,6 @@ describe("ChildProcessUtilities", () => {
     });
 
     it("passes an error object to callback when stdout maxBuffer exceeded", (done) => {
-      // this is expected
-      process.once("unhandledRejection", () => {});
-
       ChildProcessUtilities.exec("echo", ["wat"], { maxBuffer: 1 }, (stderr, stdout) => {
         try {
           expect(String(stderr)).toBe("Error: stdout maxBuffer exceeded");
@@ -55,9 +52,6 @@ describe("ChildProcessUtilities", () => {
     });
 
     it("passes error object to callback", (done) => {
-      // this is also expected
-      process.once("unhandledRejection", () => {});
-
       ChildProcessUtilities.exec("nowImTheModelOfAModernMajorGeneral", [], {}, (err) => {
         try {
           expect(err.message).toMatch(/\bnowImTheModelOfAModernMajorGeneral\b/);
@@ -70,9 +64,6 @@ describe("ChildProcessUtilities", () => {
 
     it("passes Promise rejection through", () => {
       return ChildProcessUtilities.exec("theVeneratedVirginianVeteranWhoseMenAreAll", []).catch((err) => {
-        // this is also expected, despite being in a weird place
-        process.once("unhandledRejection", () => {});
-
         expect(err.message).toMatch(/\btheVeneratedVirginianVeteranWhoseMenAreAll\b/);
       });
     });
