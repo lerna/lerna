@@ -29,16 +29,19 @@ export const builder = {
     group: "Command Options:",
     defaultDescription: "alpha",
     describe: "Publish packages after every successful merge using the sha as part of the tag.",
-    alias: "c"
+    alias: "c",
+    type: "string",
   },
   "cd-version": {
     group: "Command Options:",
-    describe: "Skip the version selection prompt and increment semver 'major', 'minor', or 'patch'.",
+    describe: "Skip the version selection prompt and increment semver 'major', 'minor', 'patch', etc.",
     type: "string",
     requiresArg: true,
     coerce: (choice) => {
-      if (!["major", "minor", "patch"].some((inc) => choice === inc)) {
-        throw new Error(`--cd-version must be one of 'major', 'minor', or 'patch', got '${choice}'`);
+      try {
+        semver.inc("1.0.0", choice);
+      } catch (error) {
+        throw new Error(`--cd-version must be semver-compatible: 'major', 'minor', 'patch', 'prerelease', etc.'`);
       }
       return choice;
     },
@@ -249,6 +252,7 @@ export default class PublishCommand extends Command {
         const versions = {};
 
         this.updates.forEach((update) => {
+          // TODO add semver.inc() argument for prerelease identifier
           versions[update.package.name] = semver.inc(update.package.version, this.options.cdVersion);
         });
 
@@ -256,6 +260,7 @@ export default class PublishCommand extends Command {
       }
 
       // Otherwise bump the global version
+      // TODO add semver.inc() argument for prerelease identifier
       const version = semver.inc(this.globalVersion, this.options.cdVersion);
       return callback(null, { version });
     }
@@ -347,14 +352,16 @@ export default class PublishCommand extends Command {
     });
   }
 
+  // TODO: rename `metaName` to preId or similar to match semver naming conventions
   getCanaryVersion(version, metaName) {
     if (metaName == null || typeof metaName !== "string") {
       metaName = "alpha";
     }
 
-    const minor = semver.inc(version, "minor");
+    // TODO: this should be the --cd-version value
+    const nextVersion = semver.inc(version, "minor");
     const hash = GitUtilities.getCurrentSHA(this.execOpts).slice(0, 8);
-    return `${minor}-${metaName}.${hash}`;
+    return `${nextVersion}-${metaName}.${hash}`;
   }
 
   promptVersion(packageName, currentVersion, callback) {
@@ -364,7 +371,6 @@ export default class PublishCommand extends Command {
     const prepatch = semver.inc(currentVersion, "prepatch");
     const preminor = semver.inc(currentVersion, "preminor");
     const premajor = semver.inc(currentVersion, "premajor");
-
 
     let message = "Select a new version";
     if (packageName) message += ` for ${packageName}`;
@@ -403,6 +409,7 @@ export default class PublishCommand extends Command {
           const defaultVersion = semver.inc(currentVersion, "prerelease", existingId);
           const prompt = `(default: ${existingId ? `"${existingId}"` : "none"}, yielding ${defaultVersion})`;
 
+          // TODO: allow specifying prerelease identifier as CLI option to skip the prompt
           PromptUtilities.input(`Enter a prerelease identifier ${prompt}`, {
             filter: (v) => {
               const prereleaseId = v ? v : existingId;
