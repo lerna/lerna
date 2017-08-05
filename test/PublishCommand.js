@@ -867,6 +867,34 @@ describe("PublishCommand", () => {
         }
       }));
     });
+
+    it("should prefix pre* versions with pre-id when specified", (done) => {
+      const publishCommand = new PublishCommand([], {
+        cdVersion: "preminor",
+        preid: "alpha",
+      }, testDir);
+
+      publishCommand.runValidations();
+      publishCommand.runPreparations();
+
+      publishCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
+            // TODO: there has to be a better way to do this
+            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
+          }
+
+          expect(PromptUtilities.select).not.toBeCalled();
+          expect(gitCommitMessage()).toBe("v1.1.0-alpha.0");
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
   });
 
   /** =========================================================================
@@ -900,6 +928,44 @@ describe("PublishCommand", () => {
 
           expect(PromptUtilities.select).not.toBeCalled();
           expect(gitCommitMessage()).toMatchSnapshot("[independent --cd-version] git commit message");
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
+
+    it("should prefix pre* versions with pre-id when specified", (done) => {
+      const publishCommand = new PublishCommand([], {
+        independent: true,
+        cdVersion: "prepatch",
+        preid: "beta"
+      }, testDir);
+
+      publishCommand.runValidations();
+      publishCommand.runPreparations();
+
+      publishCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
+            // TODO: there has to be a better way to do this
+            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
+          }
+
+          expect(PromptUtilities.select).not.toBeCalled();
+          expect(gitCommitMessage()).toMatchSnapshot("[independent --cd-version] git commit message");
+          expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+            "package-1": "^1.0.1-beta.0",
+          });
+          expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+            "package-2": "^2.0.1-beta.0",
+          });
+          expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+            "package-1": "^0.0.0",
+          });
 
           done();
         } catch (ex) {
