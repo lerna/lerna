@@ -41,7 +41,9 @@ export const builder = {
       try {
         semver.inc("1.0.0", choice);
       } catch (error) {
-        throw new Error(`--cd-version must be semver-compatible: 'major', 'minor', 'patch', 'prerelease', etc.'`);
+        throw new Error(
+          "--cd-version must be semver-compatible: 'major', 'minor', 'patch', 'prerelease', etc.'"
+        );
       }
       return choice;
     },
@@ -81,6 +83,13 @@ export const builder = {
   "npm-tag": {
     group: "Command Options:",
     describe: "Publish packages with the specified npm dist-tag",
+    type: "string",
+    requiresArg: true,
+  },
+  "prerelease-id": {
+    group: "Command Options:",
+    describe: "Specify the prerelease identifier (major.minor.patch-pre).",
+    alias: "p",
     type: "string",
     requiresArg: true,
   },
@@ -253,7 +262,11 @@ export default class PublishCommand extends Command {
 
         this.updates.forEach((update) => {
           // TODO add semver.inc() argument for prerelease identifier
-          versions[update.package.name] = semver.inc(update.package.version, this.options.cdVersion);
+          versions[update.package.name] = semver.inc(
+            update.package.version,
+            this.options.cdVersion,
+            this.options.prereleaseId
+          );
         });
 
         return callback(null, { versions });
