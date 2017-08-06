@@ -255,7 +255,7 @@ export default class PublishCommand extends Command {
   }
 
   getVersionsForUpdates(callback) {
-    if (this.options.cdVersion) {
+    if (this.options.cdVersion && !this.options.canary) {
       // If the version is independent then send versions
       if (this.repository.isIndependent()) {
         const versions = {};
