@@ -349,7 +349,7 @@ describe("PublishCommand", () => {
       }));
     });
 
-    it("should work with --canary and --cd-version", (done) => {
+    it("should work with --canary and --cd-version=patch", (done) => {
       const publishCommand = new PublishCommand([], {
         canary: "beta",
         cdVersion: "patch",
@@ -949,7 +949,7 @@ describe("PublishCommand", () => {
     * INDEPENDENT - CD VERSION - PRERELEASE
     * ======================================================================= */
 
-    it("should bump to prerelease versions with --cd-version --prerelease", (done) => {
+    it("should bump to prerelease versions with --cd-version=prerelease --prerelease-id=foo", (done) => {
       const publishCommand = new PublishCommand([], {
         cdVersion: "prerelease",
         prereleaseId: "foo",
