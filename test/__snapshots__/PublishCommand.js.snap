@@ -234,6 +234,16 @@ Object {
 }
 `;
 
+exports[`[normal --canary] bumps package versions 5`] = `
+Object {
+  "packages/package-1": "1.0.1-0",
+  "packages/package-2": "2.0.1-0",
+  "packages/package-3": "3.0.1-0",
+  "packages/package-4": "4.0.1-0",
+  "packages/package-5": "5.0.1-0",
+}
+`;
+
 exports[`[normal --canary] npm publish --tag 1`] = `
 Array [
   Object {
