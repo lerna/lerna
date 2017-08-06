@@ -380,13 +380,29 @@ Useful in [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous
 #### --cd-version
 
 ```sh
-$ lerna publish --cd-version (patch | major | minor)
+$ lerna publish --cd-version (patch | major | minor | prepatch | premajor | preminor | prerelease)
 # uses the next semantic version(s) value and this skips `Select a new version for...` prompt
 ```
 
 When run with this flag, `publish` will skip the version selection prompt (in independent mode) and use the next specified semantic version.
 You must still use the `--yes` flag to avoid all prompts. This is useful when build systems need
 to publish without command prompts. Works in both normal and independent modes.
+
+#### --prerelase-id, --preid
+
+```sh
+$ lerna publish --cd-version=prerelease
+# uses the next semantic prerelease version, e.g.
+# 1.0.0 => 1.0.0-0
+
+$ lerna publish --cd-version=prepatch --prerelease-id=next
+# uses the next semantic prerelease version with a specific prerelease identifier, e.g.
+# 1.0.0 => 1.0.1-next.0
+```
+
+When run with this flag, `lerna publish --cd-version` will
+increment `premajor`, `preminor`, `prepatch`, or `prerelease`
+versions using the specified [prerelease identifier](http://semver.org/#spec-item-9).
 
 #### --repo-version
 
