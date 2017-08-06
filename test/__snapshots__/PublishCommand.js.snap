@@ -216,11 +216,21 @@ Object {
 
 exports[`[normal --canary] bumps package versions 3`] = `
 Object {
-  "packages/package-1": "1.0.1-0",
-  "packages/package-2": "1.0.1-0",
-  "packages/package-3": "1.0.1-0",
-  "packages/package-4": "1.0.1-0",
-  "packages/package-5": "1.0.1-0",
+  "packages/package-1": "1.0.1-beta.deadbeef",
+  "packages/package-2": "1.0.1-beta.deadbeef",
+  "packages/package-3": "1.0.1-beta.deadbeef",
+  "packages/package-4": "1.0.1-beta.deadbeef",
+  "packages/package-5": "1.0.1-beta.deadbeef",
+}
+`;
+
+exports[`[normal --canary] bumps package versions 4`] = `
+Object {
+  "packages/package-1": "1.0.1-foo.0",
+  "packages/package-2": "2.0.1-foo.0",
+  "packages/package-3": "3.0.1-foo.0",
+  "packages/package-4": "4.0.1-foo.0",
+  "packages/package-5": "5.0.1-foo.0",
 }
 `;
 

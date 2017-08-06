@@ -348,6 +348,43 @@ describe("PublishCommand", () => {
         }
       }));
     });
+
+    it("should work with --canary and --cd-version", (done) => {
+      const publishCommand = new PublishCommand([], {
+        canary: "beta",
+        cdVersion: "patch",
+      }, testDir);
+
+      publishCommand.runValidations();
+      publishCommand.runPreparations();
+
+      publishCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
+            // TODO: there has to be a better way to do this
+            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
+          }
+
+          expect(updatedPackageVersions(testDir)).toMatchSnapshot("[normal --canary] bumps package versions");
+
+          expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+            "package-1": "^1.0.1-beta.deadbeef",
+          });
+          expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+            "package-2": "^1.0.1-beta.deadbeef",
+          });
+          expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+            "package-1": "^0.0.0",
+          });
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
   });
 
   /** =========================================================================
@@ -907,44 +944,6 @@ describe("PublishCommand", () => {
         }
       }));
     });
-  });
-
-  /** =========================================================================
-   * NORMAL - GIT REMOTE
-   * ======================================================================= */
-
-  describe("normal mode with --git-remote", () => {
-    let testDir;
-
-    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
-      testDir = dir;
-    }));
-
-    it("pushes tags to specified remote", (done) => {
-      const publishCommand = new PublishCommand([], {
-        gitRemote: "upstream"
-      }, testDir);
-
-      publishCommand.runValidations();
-      publishCommand.runPreparations();
-
-      publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
-            // TODO: there has to be a better way to do this
-            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
-          }
-
-          expect(GitUtilities.pushWithTags).lastCalledWith("upstream", ["v1.0.1"], execOpts(testDir));
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
-    });
 
     /** =========================================================================
     * INDEPENDENT - CD VERSION - PRERELEASE
@@ -979,6 +978,44 @@ describe("PublishCommand", () => {
           expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
             "package-1": "^0.0.0",
           });
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
+  });
+
+  /** =========================================================================
+   * NORMAL - GIT REMOTE
+   * ======================================================================= */
+
+  describe("normal mode with --git-remote", () => {
+    let testDir;
+
+    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
+      testDir = dir;
+    }));
+
+    it("pushes tags to specified remote", (done) => {
+      const publishCommand = new PublishCommand([], {
+        gitRemote: "upstream"
+      }, testDir);
+
+      publishCommand.runValidations();
+      publishCommand.runPreparations();
+
+      publishCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
+            // TODO: there has to be a better way to do this
+            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
+          }
+
+          expect(GitUtilities.pushWithTags).lastCalledWith("upstream", ["v1.0.1"], execOpts(testDir));
 
           done();
         } catch (ex) {
