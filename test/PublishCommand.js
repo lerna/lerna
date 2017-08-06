@@ -945,6 +945,47 @@ describe("PublishCommand", () => {
         }
       }));
     });
+
+    /** =========================================================================
+    * INDEPENDENT - CD VERSION - PRERELEASE
+    * ======================================================================= */
+
+    it("should bump to prerelease versions with --cd-version --prerelease", (done) => {
+      const publishCommand = new PublishCommand([], {
+        cdVersion: "prerelease",
+        prereleaseId: "foo",
+      }, testDir);
+
+      publishCommand.runValidations();
+      publishCommand.runPreparations();
+
+      publishCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
+            // TODO: there has to be a better way to do this
+            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
+          }
+
+          expect(updatedPackageVersions(testDir)).toMatchSnapshot("[normal --canary] bumps package versions");
+
+          expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+            "package-1": "^1.0.1-foo.0",
+          });
+          expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+            "package-2": "^2.0.1-foo.0",
+          });
+          expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+            "package-1": "^0.0.0",
+          });
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
   });
 
   /** =========================================================================
