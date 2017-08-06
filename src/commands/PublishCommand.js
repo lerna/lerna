@@ -89,7 +89,7 @@ export const builder = {
   "prerelease-id": {
     group: "Command Options:",
     describe: "Specify the prerelease identifier (major.minor.patch-pre).",
-    alias: "p",
+    alias: "preid",
     type: "string",
     requiresArg: true,
   },
