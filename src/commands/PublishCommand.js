@@ -365,16 +365,15 @@ export default class PublishCommand extends Command {
     });
   }
 
-  // TODO: rename `metaName` to preId or similar to match semver naming conventions
-  getCanaryVersion(version, metaName) {
-    if (metaName == null || typeof metaName !== "string") {
-      metaName = "alpha";
+  getCanaryVersion(version, prerelease) {
+    if (prerelease == null || typeof prerelease !== "string") {
+      prerelease = "alpha";
     }
 
-    // TODO: this should be the --cd-version value
-    const nextVersion = semver.inc(version, "minor");
+    const release = this.options.cdVersion || "minor";
+    const nextVersion = semver.inc(version, release);
     const hash = GitUtilities.getCurrentSHA(this.execOpts).slice(0, 8);
-    return `${nextVersion}-${metaName}.${hash}`;
+    return `${nextVersion}-${prerelease}.${hash}`;
   }
 
   promptVersion(packageName, currentVersion, callback) {
