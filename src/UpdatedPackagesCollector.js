@@ -57,7 +57,7 @@ export default class UpdatedPackagesCollector {
     let { since } = options;
 
     if (GitUtilities.hasTags(execOpts)) {
-      if (canary) {
+      if (canary && typeof since !== "string") {
         let currentSHA;
 
         if (canary !== true) {
@@ -157,7 +157,7 @@ export default class UpdatedPackagesCollector {
       return (
         this.updatedPackages[pkg.name] ||
         (this.options[SECRET_FLAG] ? false : this.dependents[pkg.name]) ||
-        this.options.canary
+        (this.options.canary && typeof this.options.since !== "string")
       );
     }).map((pkg) => {
       this.logger.verbose("has filtered update", pkg.name);
