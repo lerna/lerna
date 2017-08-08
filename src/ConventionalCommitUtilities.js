@@ -81,7 +81,18 @@ export default class ConventionalCommitUtilities {
     }
 
     // run conventional-changelog-cli to generate the markdown for the upcoming release.
-    const newEntry = ChildProcessUtilities.execSync(process.execPath, args, opts);
+    let newEntry = ChildProcessUtilities.execSync(process.execPath, args, opts);
+
+    // When force publishing, it is possible that there will be no actual changes, only a version bump.
+    // Add a note to indicate that only a version bump has occurred.
+    if (!newEntry.split("\n").some((line) => line.startsWith("*"))) {
+      newEntry =  dedent(
+        `
+        ${newEntry}
+        
+        **Note:** Version bump only for package ${pkg.name} 
+        `);
+    }
 
     log.silly("updateIndependentChangelog", "writing new entry: %j", newEntry);
 
