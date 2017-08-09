@@ -39,7 +39,6 @@ export default function CLI(argv, cwd) {
     .help("h").alias("h", "help")
     .version().alias("v", "version")
     .wrap(cli.terminalWidth())
-    .strict()
     .showHelpOnFail(false, "A command is required.")
     .epilogue(dedent`
       When a command fails, all logs are written to lerna-debug.log in the current working directory.
