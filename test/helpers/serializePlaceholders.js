@@ -6,8 +6,9 @@ const _ = require("lodash");
 const normalizeNewline = require("normalize-newline");
 const constants = require("./constants");
 
-const VERSION_REGEX = new RegExp(`v?${constants.LERNA_VERSION}`, "gm");
-// TODO: maybe less naïve regex?
+const VERSION_REGEX = new RegExp(`^(?:((?:.*?version )|\\^)|v?)${constants.LERNA_VERSION}`, "gm");
+const VERSION_REPLACEMENT = `$1${constants.__TEST_VERSION__}`;
+// TODO: maybe even less naïve regex?
 
 function needsReplacement(str) {
   return (
@@ -16,7 +17,7 @@ function needsReplacement(str) {
 }
 
 function stableVersion(str) {
-  return str.replace(VERSION_REGEX, constants.__TEST_VERSION__);
+  return str.replace(VERSION_REGEX, VERSION_REPLACEMENT);
 }
 
 const stabilizeString = _.flow([
