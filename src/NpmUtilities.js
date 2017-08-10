@@ -165,11 +165,11 @@ export default class NpmUtilities {
     );
   }
 
-  static publishTaggedInDir(tag, directory, registry, callback) {
+  static publishTaggedInDir(tag, directory, registry, publishDir = ".", callback) {
     log.silly("publishTaggedInDir", tag, path.basename(directory));
 
     const opts = NpmUtilities.getExecOpts(directory, registry);
-    ChildProcessUtilities.exec("npm", ["publish", "--tag", tag.trim()], opts, callback);
+    ChildProcessUtilities.exec("npm", ["publish", publishDir,  "--tag", tag.trim()], opts, callback);
   }
 
   static getExecOpts(directory, registry) {

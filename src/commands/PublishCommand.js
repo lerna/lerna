@@ -552,31 +552,32 @@ export default class PublishCommand extends Command {
       const run = (cb) => {
         tracker.verbose("publishing", pkg.name);
 
-        NpmUtilities.publishTaggedInDir(tag, pkg.location, this.npmRegistry, (err) => {
-          err = err && err.stack || err;
+        NpmUtilities.publishTaggedInDir(tag, pkg.location, this.npmRegistry, this.options.publishDir,
+          (err) => {
+            err = err && err.stack || err;
 
-          if (!err ||
-            // publishing over an existing package which is likely due to a timeout or something
-            err.indexOf("You cannot publish over the previously published version") > -1
-          ) {
-            tracker.info("published", pkg.name);
-            tracker.completeWork(1);
-            this.execScript(pkg, "postpublish");
-            cb();
-            return;
-          }
+            if (!err ||
+              // publishing over an existing package which is likely due to a timeout or something
+              err.indexOf("You cannot publish over the previously published version") > -1
+            ) {
+              tracker.info("published", pkg.name);
+              tracker.completeWork(1);
+              this.execScript(pkg, "postpublish");
+              cb();
+              return;
+            }
 
-          attempts++;
+            attempts++;
 
-          if (attempts < 5) {
-            this.logger.error("publish", "Retrying failed publish:", pkg.name);
-            this.logger.verbose("publish error", err);
-            run(cb);
-          } else {
-            this.logger.error("publish", "Ran out of retries while publishing", pkg.name, err);
-            cb(err);
-          }
-        });
+            if (attempts < 5) {
+              this.logger.error("publish", "Retrying failed publish:", pkg.name);
+              this.logger.verbose("publish error", err);
+              run(cb);
+            } else {
+              this.logger.error("publish", "Ran out of retries while publishing", pkg.name, err);
+              cb(err);
+            }
+          });
       };
 
       return run;

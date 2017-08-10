@@ -173,10 +173,10 @@ describe("NpmUtilities", () => {
     afterEach(resetExecOpts);
 
     it("runs npm publish in a directory with --tag support", () => {
-      NpmUtilities.publishTaggedInDir("published-tag", directory, undefined, callback);
+      NpmUtilities.publishTaggedInDir("published-tag", directory, undefined, undefined, callback);
 
       const cmd = "npm";
-      const args = ["publish", "--tag", "published-tag"];
+      const args = ["publish", ".", "--tag", "published-tag"];
       const opts = { directory, registry: undefined };
       expect(ChildProcessUtilities.exec).lastCalledWith(cmd, args, opts, expect.any(Function));
     });
@@ -184,17 +184,27 @@ describe("NpmUtilities", () => {
     it("trims trailing whitespace in tag parameter", () => {
       NpmUtilities.publishTaggedInDir("trailing-tag  ", directory, callback);
 
-      const actualtag = ChildProcessUtilities.exec.mock.calls[0][1][2];
+      const actualtag = ChildProcessUtilities.exec.mock.calls[0][1][3];
       expect(actualtag).toBe("trailing-tag");
     });
 
     it("supports custom registry", () => {
       const registry = "https://custom-registry/publishTaggedInDir";
-      NpmUtilities.publishTaggedInDir("published-tag", directory, registry, callback);
+      NpmUtilities.publishTaggedInDir("published-tag", directory, registry, undefined, callback);
 
       const cmd = "npm";
-      const args = ["publish", "--tag", "published-tag"];
+      const args = ["publish", ".", "--tag", "published-tag"];
       const opts = { directory, registry };
+      expect(ChildProcessUtilities.exec).lastCalledWith(cmd, args, opts, expect.any(Function));
+    });
+
+    it("publishes a folder", () => {
+      const publishDir = "lib";
+      NpmUtilities.publishTaggedInDir("published-tag", directory, undefined, publishDir, callback);
+
+      const cmd = "npm";
+      const args = ["publish", "lib", "--tag", "published-tag"];
+      const opts = { directory };
       expect(ChildProcessUtilities.exec).lastCalledWith(cmd, args, opts, expect.any(Function));
     });
   });
