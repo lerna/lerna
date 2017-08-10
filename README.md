@@ -380,13 +380,23 @@ Useful in [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous
 #### --cd-version
 
 ```sh
-$ lerna publish --cd-version (patch | major | minor)
+$ lerna publish --cd-version (patch | minor | major | prepatch | preminor | premajor | prerelease)
 # uses the next semantic version(s) value and this skips `Select a new version for...` prompt
 ```
 
 When run with this flag, `publish` will skip the version selection prompt (in independent mode) and use the next specified semantic version.
 You must still use the `--yes` flag to avoid all prompts. This is useful when build systems need
 to publish without command prompts. Works in both normal and independent modes.
+
+#### --pre-id
+
+```sh
+$ lerna publish --cd-version (prepatch | preminor | premajor | prerelease) --pre-id beta
+# prefixes the prerelease tag with given identifier
+```
+
+This flag works with connection with `--cd-version pre*` and allows to specify a meta suffix: `alpha`, `beta`, `rc`, or any other string (ex: `1.0.0` becomes `2.0.0-beta.0` after `lerna publish --cd-version premajor --preid beta`).
+By default, the current meta-suffix will be used, if any.
 
 #### --repo-version
 

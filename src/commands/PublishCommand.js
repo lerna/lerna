@@ -24,6 +24,19 @@ export const command = "publish";
 
 export const describe = "Publish packages in the current project.";
 
+const cdVersionOptions = [
+  "major",
+  "minor",
+  "patch",
+  "premajor",
+  "preminor",
+  "prepatch",
+  "prerelease"
+];
+// 'major', 'minor', ... , or 'prerelease'
+const cdVersionOptionsString =
+  `${cdVersionOptions.slice(0, -1).join(", ")}, or ${cdVersionOptions[cdVersionOptions.length - 1]}`;
+
 export const builder = {
   "canary": {
     group: "Command Options:",
@@ -33,15 +46,22 @@ export const builder = {
   },
   "cd-version": {
     group: "Command Options:",
-    describe: "Skip the version selection prompt and increment semver 'major', 'minor', or 'patch'.",
+    describe: `Skip the version selection prompt and increment semver ${cdVersionOptionsString}.`,
     type: "string",
     requiresArg: true,
     coerce: (choice) => {
-      if (!["major", "minor", "patch"].some((inc) => choice === inc)) {
-        throw new Error(`--cd-version must be one of 'major', 'minor', or 'patch', got '${choice}'`);
+      if (!cdVersionOptions.some((inc) => choice === inc)) {
+        throw new Error(`--cd-version must be one of ${cdVersionOptionsString}, got '${choice}'`);
       }
       return choice;
     },
+  },
+  "preid": {
+    group: "Command Options:",
+    describe:
+      "Set an identifier to be used to prefix premajor, preminor, prepatch or prerelease version increments.",
+    type: "string",
+    requiresArg: true,
   },
   "conventional-commits": {
     group: "Command Options:",
@@ -249,14 +269,18 @@ export default class PublishCommand extends Command {
         const versions = {};
 
         this.updates.forEach((update) => {
-          versions[update.package.name] = semver.inc(update.package.version, this.options.cdVersion);
+          versions[update.package.name] = semver.inc(
+            update.package.version,
+            this.options.cdVersion,
+            this.options.preid
+          );
         });
 
         return callback(null, { versions });
       }
 
       // Otherwise bump the global version
-      const version = semver.inc(this.globalVersion, this.options.cdVersion);
+      const version = semver.inc(this.globalVersion, this.options.cdVersion, this.options.preid);
       return callback(null, { version });
     }
 

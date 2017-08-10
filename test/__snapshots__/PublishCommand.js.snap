@@ -62,6 +62,16 @@ exports[`[independent --cd-version] git commit message 1`] = `
  - package-5@5.0.1"
 `;
 
+exports[`[independent --cd-version] git commit message 2`] = `
+"Publish
+
+ - package-1@1.0.1-beta.0
+ - package-2@2.0.1-beta.0
+ - package-3@3.0.1-beta.0
+ - package-4@4.0.1-beta.0
+ - package-5@5.0.1-beta.0"
+`;
+
 exports[`[independent --conventional-commits] git adds changed files 1`] = `
 Array [
   "packages/package-1/CHANGELOG.md",
