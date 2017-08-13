@@ -1,4 +1,6 @@
 import _ from "lodash";
+import globParent from "glob-parent";
+import path from "path";
 import writeJsonFile from "write-json-file";
 import writePkg from "write-pkg";
 
@@ -56,6 +58,7 @@ export default class InitCommand extends Command {
   execute(callback) {
     this.ensurePackageJSON();
     this.ensureLernaJson();
+    this.ensurePackagesDir();
     this.ensureNoVersionFile();
     this.logger.success("", "Initialized Lerna files");
     callback(null, true);
@@ -131,5 +134,14 @@ export default class InitCommand extends Command {
       this.logger.info("", "Removing old VERSION file");
       FileSystemUtilities.unlinkSync(versionLocation);
     }
+  }
+
+  ensurePackagesDir() {
+    this.logger.info("", "Creating packages directory");
+    this.repository.packageConfigs
+      .map((pkgGlob) => globParent(pkgGlob))
+      .forEach((pkgRoot) => FileSystemUtilities.mkdirpSync(
+        path.join(this.repository.rootPath, pkgRoot)
+      ));
   }
 }

@@ -39,6 +39,14 @@ describe("FileSystemUtilities", () => {
     });
   });
 
+  describe(".mkdirpSync()", () => {
+    it("calls fs.ensureDirSync", () => {
+      const dirPath = "mkdirpSync/test";
+      FileSystemUtilities.mkdirpSync(dirPath);
+      expect(fs.ensureDirSync).lastCalledWith(dirPath);
+    });
+  });
+
   describe(".readdirSync()", () => {
     it("calls fs.readdirSync", () => {
       const dirPath = "readdirSync-test";
