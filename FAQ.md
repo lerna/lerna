@@ -42,3 +42,45 @@ on hoisting, see the [hoisting docs](./doc/hoist.md) for more information.
 
 In combination with that you may increase the bootstrap performance even more by
 [using yarn as an npm client](https://github.com/lerna/lerna#--npm-client-client) instead of `npm`.
+
+## Root `package.json`
+
+The root `package.json`, at the very least, is how you install `lerna` locally during a CI build.
+You should also put there your testing, linting and similar tasks there to run them from root
+as running them separately from each package is slower. The root can also hold all the "hoisted" packages,
+which speeds up bootstrapping when using the [`--hoist`][hoist] flag.
+
+You can add the root as a managed location (in the `packages` array of `lerna.json`) - if that's something you need.
+This would cause lerna to link root's dependencies to your packages' directories, run `postinstall` script along with the others, etc.
+
+[hoist]: https://github.com/lerna/lerna/blob/master/doc/hoist.md
+
+## CI setup
+
+As mentioned above root `package.json` is responsible for installing `lerna` locally. You need to automate `bootstrap` though.
+This can be achieved by putting it as npm script to use it during CI phases.
+
+Example root `package.json`:
+```json
+{
+  "name": "my-monorepo",
+  "private": true,
+  "devDependencies": {
+    "eslint": "^3.19.0",
+    "jest": "^20.0.4",
+    "lerna": "^2.0.0"
+  },
+  "scripts": {
+    "bootstrap": "lerna bootstrap --hoist",
+    "pretest": "eslint packages",
+    "test": "jest"
+  }
+}
+```
+
+Example CircleCI's configuration file (`circle.yml`):
+```yml
+dependencies:
+  post:
+    - npm run bootstrap
+```
