@@ -86,10 +86,9 @@ export const builder = {
     type: "string",
     requiresArg: true,
   },
-  "prerelease-id": {
+  "preid": {
     group: "Command Options:",
     describe: "Specify the prerelease identifier (major.minor.patch-pre).",
-    alias: "preid",
     type: "string",
     requiresArg: true,
   },
@@ -265,7 +264,7 @@ export default class PublishCommand extends Command {
           versions[update.package.name] = semver.inc(
             update.package.version,
             this.options.cdVersion,
-            this.options.prereleaseId
+            this.options.preid
           );
         });
 
@@ -424,8 +423,8 @@ export default class PublishCommand extends Command {
           // TODO: allow specifying prerelease identifier as CLI option to skip the prompt
           PromptUtilities.input(`Enter a prerelease identifier ${prompt}`, {
             filter: (v) => {
-              const prereleaseId = v ? v : existingId;
-              return semver.inc(currentVersion, "prerelease", prereleaseId);
+              const preid = v || existingId;
+              return semver.inc(currentVersion, "prerelease", preid);
             },
           }, (input) => {
             callback(null, input);

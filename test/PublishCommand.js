@@ -949,10 +949,10 @@ describe("PublishCommand", () => {
     * INDEPENDENT - CD VERSION - PRERELEASE
     * ======================================================================= */
 
-    it("should bump to prerelease versions with --cd-version=prerelease --prerelease-id=foo", (done) => {
+    it("should bump to prerelease versions with --cd-version=prerelease --preid=foo", (done) => {
       const publishCommand = new PublishCommand([], {
         cdVersion: "prerelease",
-        prereleaseId: "foo",
+        preid: "foo",
       }, testDir);
 
       publishCommand.runValidations();
