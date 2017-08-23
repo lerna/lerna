@@ -318,13 +318,14 @@ export default class Command {
     try {
       log.silly(method, "attempt");
 
-      this[method]((err, completed) => {
+      this[method]((err, completed, code = 0) => {
         if (err) {
           log.error(method, "callback with error\n", err);
           this._complete(err, 1, callback);
         } else if (!completed) {
+          // an early exit is rarely an error
           log.verbose(method, "exited early");
-          this._complete(null, 1, callback);
+          this._complete(null, code, callback);
         } else {
           log.silly(method, "success");
           next();
@@ -337,7 +338,7 @@ export default class Command {
   }
 
   _complete(err, code, callback) {
-    if (code !== 0) {
+    if (err) {
       writeLogFile(this.repository.rootPath);
     }
 

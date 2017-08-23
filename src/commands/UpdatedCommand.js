@@ -39,7 +39,7 @@ export default class UpdatedCommand extends Command {
       this.logger.info("No packages need updating");
     }
 
-    callback(null, proceedWithUpdates);
+    callback(null, proceedWithUpdates, 1);
   }
 
   get otherCommandConfigs() {
