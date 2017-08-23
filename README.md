@@ -388,14 +388,14 @@ When run with this flag, `publish` will skip the version selection prompt (in in
 You must still use the `--yes` flag to avoid all prompts. This is useful when build systems need
 to publish without command prompts. Works in both normal and independent modes.
 
-#### --prerelase-id, --preid
+#### --preid
 
 ```sh
 $ lerna publish --cd-version=prerelease
 # uses the next semantic prerelease version, e.g.
 # 1.0.0 => 1.0.0-0
 
-$ lerna publish --cd-version=prepatch --prerelease-id=next
+$ lerna publish --cd-version=prepatch --preid=next
 # uses the next semantic prerelease version with a specific prerelease identifier, e.g.
 # 1.0.0 => 1.0.1-next.0
 ```
