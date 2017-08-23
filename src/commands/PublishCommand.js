@@ -254,16 +254,16 @@ export default class PublishCommand extends Command {
   }
 
   getVersionsForUpdates(callback) {
-    if (this.options.cdVersion && !this.options.canary) {
+    const cdVersion = this.options.cdVersion;
+    if (cdVersion && !this.options.canary) {
       // If the version is independent then send versions
       if (this.repository.isIndependent()) {
         const versions = {};
 
         this.updates.forEach((update) => {
-          // TODO add semver.inc() argument for prerelease identifier
           versions[update.package.name] = semver.inc(
             update.package.version,
-            this.options.cdVersion,
+            cdVersion,
             this.options.preid
           );
         });
@@ -272,8 +272,11 @@ export default class PublishCommand extends Command {
       }
 
       // Otherwise bump the global version
-      // TODO add semver.inc() argument for prerelease identifier
-      const version = semver.inc(this.globalVersion, this.options.cdVersion);
+      const version = semver.inc(
+        this.globalVersion,
+        cdVersion,
+        this.options.preid
+      );
       return callback(null, { version });
     }
 
