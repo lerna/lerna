@@ -23,52 +23,50 @@ describe("ConventionalCommitUtilities", () => {
 
       const opts = { cwd: "test" };
 
+      const args = [
+        require.resolve("conventional-recommended-bump/cli"),
+        "-l", "bar",
+        "--commit-path", "/foo/bar",
+        "-p", "angular",
+      ];
+
       const recommendVersion = ConventionalCommitUtilities.recommendVersion({
         name: "bar",
         version: "1.0.0",
         location: "/foo/bar",
-      }, opts);
+      }, opts, "", args);
 
       expect(recommendVersion).toBe("2.0.0");
-      expect(ChildProcessUtilities.execSync).lastCalledWith(
-        process.execPath,
-        [
-          require.resolve("conventional-recommended-bump/cli"),
-          "-l", "bar",
-          "--commit-path", "/foo/bar",
-          "-p", "angular",
-        ],
-        opts,
-      );
+      expect(ChildProcessUtilities.execSync).lastCalledWith(process.execPath, args, opts);
     });
   });
 
   describe(".updateChangelog()", () => {
     it("should populate initial CHANGELOG.md if it does not exist", () => {
       FileSystemUtilities.existsSync = jest.fn(() => false);
-      ChildProcessUtilities.execSync = jest.fn(() => "<a name='change' />feat: I should be placed in the CHANGELOG");
+      ChildProcessUtilities.execSync = jest.fn(() => dedent`<a name="1.0.0"></a>
+
+                                                            ### Features
+                                                            
+                                                            * feat: I should be placed in the CHANGELOG`);
 
       const opts = { cwd: "test" };
+
+      const args = [
+        require.resolve("conventional-changelog-cli/cli"),
+        "-l", "bar",
+        "--commit-path", "/foo/bar",
+        "--pkg", path.normalize("/foo/bar/package.json"),
+        "-p", "angular",
+      ];
 
       ConventionalCommitUtilities.updateChangelog({
         name: "bar",
         location: "/foo/bar"
-      }, opts);
+      }, opts, "", args);
 
-      expect(FileSystemUtilities.existsSync).lastCalledWith(
-        path.normalize("/foo/bar/CHANGELOG.md")
-      );
-      expect(ChildProcessUtilities.execSync).lastCalledWith(
-        process.execPath,
-        [
-          require.resolve("conventional-changelog-cli/cli"),
-          "-l", "bar",
-          "--commit-path", "/foo/bar",
-          "--pkg", path.normalize("/foo/bar/package.json"),
-          "-p", "angular",
-        ],
-        opts,
-      );
+      expect(FileSystemUtilities.existsSync).lastCalledWith(path.normalize("/foo/bar/CHANGELOG.md"));
+      expect(ChildProcessUtilities.execSync).lastCalledWith(process.execPath, args, opts);
       expect(FileSystemUtilities.writeFileSync).lastCalledWith(
         path.normalize("/foo/bar/CHANGELOG.md"),
         dedent`
@@ -77,21 +75,34 @@ describe("ConventionalCommitUtilities", () => {
           All notable changes to this project will be documented in this file.
           See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-          <a name='change' />feat: I should be placed in the CHANGELOG
-        `
-      );
+          <a name="1.0.0"></a>
+
+          ### Features
+
+          * feat: I should be placed in the CHANGELOG`);
     });
 
     it("should insert into existing CHANGELOG.md", () => {
       FileSystemUtilities.existsSync = jest.fn(() => true);
-      ChildProcessUtilities.execSync = jest.fn(() => "<a name='change2' />fix: a second commit for our CHANGELOG");
+      ChildProcessUtilities.execSync = jest.fn(() => dedent`<a name='change2' /></a>
+                                                            ## 1.0.1 (2017-08-11)(/compare/v1.0.1...v1.0.0) (2017-08-09)
+                                                            
+
+                                                            ### Bug Fixes
+                                                            
+                                                            * fix: a second commit for our CHANGELOG`);
+
       FileSystemUtilities.readFileSync = jest.fn(() => dedent`
         # Change Log
 
         All notable changes to this project will be documented in this file.
         See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-        <a name='change' />feat: I should be placed in the CHANGELOG
+        <a name="1.0.0"></a>
+
+        ### Features
+
+        * feat: I should be placed in the CHANGELOG
       `);
 
       ConventionalCommitUtilities.updateChangelog({
@@ -107,9 +118,63 @@ describe("ConventionalCommitUtilities", () => {
           All notable changes to this project will be documented in this file.
           See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-          <a name='change2' />fix: a second commit for our CHANGELOG
+          <a name='change2' /></a>
+          ## 1.0.1 (2017-08-11)(/compare/v1.0.1...v1.0.0) (2017-08-09)
+          
 
-          <a name='change' />feat: I should be placed in the CHANGELOG
+          ### Bug Fixes
+
+          * fix: a second commit for our CHANGELOG
+
+          <a name="1.0.0"></a>
+
+          ### Features
+
+          * feat: I should be placed in the CHANGELOG
+        `
+      );
+    });
+
+    it("should insert version bump message if no commits have been recorded", () => {
+      FileSystemUtilities.existsSync = jest.fn(() => true);
+      ChildProcessUtilities.execSync = jest.fn(() => dedent`<a name="1.0.1"></a>
+                                                            ## 1.0.1 (2017-08-11)(/compare/v1.0.1...v1.0.0) (2017-08-09)`);
+      FileSystemUtilities.readFileSync = jest.fn(() => dedent`
+        # Change Log
+
+        All notable changes to this project will be documented in this file.
+        See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+        <a name="1.0.0"></a>
+
+        ### Features
+
+        * add a feature aaa1111
+      `);
+
+      ConventionalCommitUtilities.updateChangelog({
+        name: "bar",
+        location: "/foo/bar/",
+      });
+
+      expect(FileSystemUtilities.writeFileSync).lastCalledWith(
+        path.normalize("/foo/bar/CHANGELOG.md"),
+        dedent`
+          # Change Log
+
+          All notable changes to this project will be documented in this file.
+          See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+          
+          <a name="1.0.1"></a>
+          ## 1.0.1 (2017-08-11)(/compare/v1.0.1...v1.0.0) (2017-08-09)
+          
+          **Note:** Version bump only for package bar
+          
+          <a name="1.0.0"></a>
+
+          ### Features
+
+          * add a feature aaa1111
         `
       );
     });

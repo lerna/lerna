@@ -18,28 +18,61 @@ const RECOMMEND_CLI = require.resolve("conventional-recommended-bump/cli");
 const CHANGELOG_CLI = require.resolve("conventional-changelog-cli/cli");
 
 export default class ConventionalCommitUtilities {
-  static recommendVersion(pkg, opts) {
-    log.silly("recommendVersion", "for %s at %s", pkg.name, pkg.location);
+  static recommendIndependentVersion(pkg, opts) {
+    const args = [
+      RECOMMEND_CLI,
+      "-l", pkg.name,
+      "--commit-path", pkg.location,
+      "-p", "angular",
+    ];
+    return ConventionalCommitUtilities.recommendVersion(pkg, opts, "recommendIndependentVersion", args);
+  }
 
-    const recommendedBump = ChildProcessUtilities.execSync(
-      process.execPath,
-      [
-        RECOMMEND_CLI,
-        "-l", pkg.name,
-        "--commit-path", pkg.location,
-        "-p", "angular",
-      ],
-      opts
-    );
+  static recommendFixedVersion(pkg, opts) {
+    const args = [
+      RECOMMEND_CLI,
+      "--commit-path", pkg.location,
+      "-p", "angular",
+    ];
+    return ConventionalCommitUtilities.recommendVersion(pkg, opts, "recommendFixedVersion", args);
+  }
 
-    log.verbose("recommendVersion", "increment %s by %s", pkg.version, recommendedBump);
+  static recommendVersion(pkg, opts, type, args) {
+    log.silly(type, "for %s at %s", pkg.name, pkg.location);
+
+    const recommendedBump = ChildProcessUtilities.execSync(process.execPath, args, opts);
+
+    log.verbose(type, "increment %s by %s", pkg.version, recommendedBump);
     return semver.inc(pkg.version, recommendedBump);
   }
 
-  static updateChangelog(pkg, opts) {
-    log.silly("updateChangelog", "for %s at %s", pkg.name, pkg.location);
-
+  static updateIndependentChangelog(pkg, opts) {
     const pkgJsonLocation = path.join(pkg.location, "package.json");
+    const args = [
+      CHANGELOG_CLI,
+      "-l", pkg.name,
+      "--commit-path", pkg.location,
+      "--pkg", pkgJsonLocation,
+      "-p", "angular",
+    ];
+    ConventionalCommitUtilities.updateChangelog(pkg, opts, "updateIndependentChangelog", args);
+  }
+
+  static updateFixedChangelog(pkg, opts) {
+    const pkgJsonLocation = path.join(pkg.location, "package.json");
+    const args = [
+      CHANGELOG_CLI,
+      "--commit-path", pkg.location,
+      "--pkg", pkgJsonLocation,
+      "-p", "angular",
+    ];
+    ConventionalCommitUtilities.updateChangelog(pkg, opts, "updateFixedChangelog", args);
+  }
+
+  static updateChangelog(pkg, opts, type, args) {
+    log.silly(type, "for %s at %s", pkg.name, pkg.location);
+
+
     const changelogLocation = ConventionalCommitUtilities.changelogLocation(pkg);
 
     let changelogContents = "";
@@ -47,33 +80,32 @@ export default class ConventionalCommitUtilities {
       changelogContents = FileSystemUtilities.readFileSync(changelogLocation);
     }
 
-    // run conventional-changelog-cli to generate the markdown
-    // for the upcoming release.
-    const newEntry = ChildProcessUtilities.execSync(
-      process.execPath,
-      [
-        CHANGELOG_CLI,
-        "-l", pkg.name,
-        "--commit-path", pkg.location,
-        "--pkg", pkgJsonLocation,
-        "-p", "angular",
-      ],
-      opts
-    );
+    // run conventional-changelog-cli to generate the markdown for the upcoming release.
+    let newEntry = ChildProcessUtilities.execSync(process.execPath, args, opts);
 
-    log.silly("updateChangelog", "writing new entry: %j", newEntry);
+    // When force publishing, it is possible that there will be no actual changes, only a version bump.
+    // Add a note to indicate that only a version bump has occurred.
+    if (!newEntry.split("\n").some((line) => line.startsWith("*"))) {
+      newEntry =  dedent(
+        `
+        ${newEntry}
+        
+        **Note:** Version bump only for package ${pkg.name} 
+        `);
+    }
+
+    log.silly("updateIndependentChangelog", "writing new entry: %j", newEntry);
 
     // CHANGELOG entries start with <a name=, we remove
     // the header if it exists by starting at the first entry.
     if (changelogContents.indexOf("<a name=") !== -1) {
-      changelogContents = changelogContents.substring(
-        changelogContents.indexOf("<a name=")
+      changelogContents = changelogContents.substring(changelogContents.indexOf("<a name=")
       );
     }
 
     FileSystemUtilities.writeFileSync(
       changelogLocation,
-       // only allow 1 \n at end of content.
+      // only allow 1 \n at end of content.
       dedent(
         `${CHANGELOG_HEADER}
 
@@ -82,7 +114,7 @@ export default class ConventionalCommitUtilities {
         ${changelogContents}`.replace(/\n+$/, "\n"))
     );
 
-    log.verbose("updateChangelog", "wrote", changelogLocation);
+    log.verbose(type, "wrote", changelogLocation);
   }
 
   static changelogLocation(pkg) {

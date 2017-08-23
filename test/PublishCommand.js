@@ -1068,82 +1068,160 @@ describe("PublishCommand", () => {
   });
 
   /** =========================================================================
-   * INDEPENDENT - CONVENTIONAL COMMITS
+   * CONVENTIONAL COMMITS
    * ======================================================================= */
 
-  describe("independent mode with --conventional-commits", () => {
-    const recommendVersion = ConventionalCommitUtilities.recommendVersion;
-    const updateChangelog = ConventionalCommitUtilities.updateChangelog;
+  describe("--conventional-commits", () => {
+    const recommendIndependentVersion = ConventionalCommitUtilities.recommendIndependentVersion;
+    const recommendFixedVersion = ConventionalCommitUtilities.recommendFixedVersion;
+
+    const updateIndependentChangelog = ConventionalCommitUtilities.updateIndependentChangelog;
+    const updateFixedChangelog = ConventionalCommitUtilities.updateFixedChangelog;
 
     let testDir;
 
-    beforeEach(() => initFixture("PublishCommand/independent").then((dir) => {
-      testDir = dir;
-
-      const reccomendReplies = [
+    function initialReccomendReplies() {
+      return [
         "1.0.1",
         "1.1.0",
         "2.0.0",
         "1.1.0",
         "5.1.1",
       ];
-      ConventionalCommitUtilities.recommendVersion = jest.fn(() => reccomendReplies.shift());
-      ConventionalCommitUtilities.updateChangelog = jest.fn();
-    }));
+    }
 
-    afterEach(() => {
-      ConventionalCommitUtilities.recommendVersion = recommendVersion;
-      ConventionalCommitUtilities.updateChangelog = updateChangelog;
+    let reccomendReplies;
+
+    beforeEach(() => {
+      reccomendReplies = initialReccomendReplies();
     });
 
-    it("should use conventional-commits utility to guess version bump and generate CHANGELOG", (done) => {
-      const publishCommand = new PublishCommand([], {
-        independent: true,
-        conventionalCommits: true
-      }, testDir);
-
-      publishCommand.runValidations();
-      publishCommand.runPreparations();
-
-      publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
-            // TODO: there has to be a better way to do this
-            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
-          }
-
-          expect(gitAddedFiles(testDir))
-            .toMatchSnapshot("[independent --conventional-commits] git adds changed files");
-          expect(gitCommitMessage())
-            .toMatchSnapshot("[independent --conventional-commits] git commit message");
-
-          [
-            ["package-1", "1.0.0"],
-            ["package-2", "2.0.0"],
-            ["package-3", "3.0.0"],
-            ["package-4", "4.0.0"],
-            ["package-5", "5.0.0"],
-          ].forEach(([name, version]) => {
-            const location = path.join(testDir, "packages", name);
-
-            expect(ConventionalCommitUtilities.recommendVersion).toBeCalledWith(
-              expect.objectContaining({ name, version }),
-              execOpts(testDir)
-            );
-            expect(ConventionalCommitUtilities.updateChangelog).toBeCalledWith(
-              expect.objectContaining({ name, location }),
-              execOpts(testDir)
-            );
-          });
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
+    describe("independent mode", () => {
+      beforeEach(() => initFixture("PublishCommand/independent").then((dir) => {
+        testDir = dir;
+        ConventionalCommitUtilities.recommendIndependentVersion = jest.fn(() => reccomendReplies.shift());
+        ConventionalCommitUtilities.updateIndependentChangelog = jest.fn();
       }));
+
+      afterEach(() => {
+        ConventionalCommitUtilities.recommendIndependentVersion = recommendIndependentVersion;
+        ConventionalCommitUtilities.updateIndependentChangelog = updateIndependentChangelog;
+      });
+
+      it("should use conventional-commits utility to guess version bump and generate CHANGELOG", (done) => {
+        const publishCommand = new PublishCommand([], {
+          independent: true,
+          conventionalCommits: true
+        }, testDir);
+
+        publishCommand.runValidations();
+        publishCommand.runPreparations();
+
+        publishCommand.runCommand(exitWithCode(0, (err) => {
+          if (err) return done.fail(err);
+
+          try {
+            if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
+              // TODO: there has to be a better way to do this
+              throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
+            }
+
+            expect(gitAddedFiles(testDir))
+              .toMatchSnapshot("[independent --conventional-commits] git adds changed files");
+            expect(gitCommitMessage())
+              .toMatchSnapshot("[independent --conventional-commits] git commit message");
+
+            [
+              ["package-1", "1.0.0"],
+              ["package-2", "2.0.0"],
+              ["package-3", "3.0.0"],
+              ["package-4", "4.0.0"],
+              ["package-5", "5.0.0"],
+            ].forEach(([name, version]) => {
+              const location = path.join(testDir, "packages", name);
+
+              expect(ConventionalCommitUtilities.recommendIndependentVersion).toBeCalledWith(
+                expect.objectContaining({ name, version }),
+                execOpts(testDir)
+              );
+              expect(ConventionalCommitUtilities.updateIndependentChangelog).toBeCalledWith(
+                expect.objectContaining({ name, location }),
+                execOpts(testDir)
+              );
+            });
+
+            done();
+          } catch (ex) {
+            done.fail(ex);
+          }
+        }));
+      });
     });
+
+    describe("fixed mode", () => {
+      beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
+        testDir = dir;
+
+        ConventionalCommitUtilities.recommendFixedVersion = jest.fn(() => reccomendReplies.shift());
+        ConventionalCommitUtilities.updateFixedChangelog = jest.fn();
+      }));
+
+      afterEach(() => {
+        ConventionalCommitUtilities.recommendFixedVersion = recommendFixedVersion;
+        ConventionalCommitUtilities.updateFixedChangelog = updateFixedChangelog;
+      });
+
+      it("should use conventional-commits utility to guess version bump and generate CHANGELOG", (done) => {
+        const publishCommand = new PublishCommand([], {
+          independent: false,
+          conventionalCommits: true
+        }, testDir);
+
+        publishCommand.runValidations();
+        publishCommand.runPreparations();
+
+        publishCommand.runCommand(exitWithCode(0, (err) => {
+          if (err) return done.fail(err);
+
+          try {
+            if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
+              // TODO: there has to be a better way to do this
+              throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
+            }
+
+            expect(gitAddedFiles(testDir))
+              .toMatchSnapshot("[fixed --conventional-commits] git adds changed files");
+            expect(gitCommitMessage())
+              .toMatchSnapshot("[fixed --conventional-commits] git commit message");
+
+            [
+              ["package-1", "1.0.0"],
+              ["package-2", "1.0.0"],
+              ["package-3", "1.0.0"],
+              ["package-4", "1.0.0"],
+              ["package-5", "1.0.0"],
+            ].forEach(([name, version]) => {
+              const location = path.join(testDir, "packages", name);
+
+              expect(ConventionalCommitUtilities.recommendFixedVersion).toBeCalledWith(
+                expect.objectContaining({ name, version, location }),
+                execOpts(testDir)
+              );
+
+              expect(ConventionalCommitUtilities.updateFixedChangelog).toBeCalledWith(
+                expect.objectContaining({ name, location }),
+                execOpts(testDir)
+              );
+            });
+
+            done();
+          } catch (ex) {
+            done.fail(ex);
+          }
+        }));
+      });
+    });
+
   });
 
   /** =========================================================================
