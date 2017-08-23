@@ -197,7 +197,8 @@ When run, this command will:
 
 1. `npm install` all external dependencies of each package.
 2. Symlink together all Lerna `packages` that are dependencies of each other.
-3. `npm prepublish` all bootstrapped packages.
+3. `npm run prepublish` in all bootstrapped packages.
+4. `npm run prepare` in all bootstrapped packages.
 
 `lerna bootstrap` respects the `--ignore`, `--scope` and `--include-filtered-dependencies` flags (see [Flags](#flags)).
 
