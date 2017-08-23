@@ -51,7 +51,7 @@ export const builder = {
     type: "string",
     requiresArg: true,
     coerce: (choice) => {
-      if (!cdVersionOptions.includes(choice)) {
+      if (cdVersionOptions.indexOf(choice) === -1) {
         throw new Error(
           `--cd-version must be one of: ${cdVersionOptionString}`
         );
