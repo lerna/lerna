@@ -41,3 +41,45 @@ Error: spawnSync /bin/sh ENOBUFS during ImportCommand.execute
 Run `lerna import` with the `--max-buffer` flag and provide a large enough 
 number (in bytes). At the writing of this entry the underlying default is 
 10MB, so you should keep this in mind. 
+
+## Publish Command
+
+### Publish does not detect manually created tags in fixed mode with Github/Github Enterprise
+
+Github and Github Enterprise use lightweight Git tags when a release is created through the [web ui](https://help.github.com/articles/working-with-tags),
+while Lerna uses annotated tags.
+
+This can cause an issue where Lerna will ignore previously published releases which have been manually performed and 
+tagged with the Github web ui. 
+
+For example if the publish history was as follows: 
+
+- v1.1.0 was published and tagged with `lerna publish`
+- v1.2.0 was manually published and tagged with the Github web ui
+- v1.2.1 was manually published and tagged with the Github web ui
+
+Running `lerna publish` now would detect v1.1.0 instead of v1.2.1 as the last released tag. 
+
+The implications of this depends on your usage of `lerna publish`:
+ 
+- The publish prompt would use v1.1.0 as the base for major/minor/patch suggestions. 
+- When using the --conventional-commit flag: 
+  - would suggest a semver increment based on all the commits since v1.1.0 (including commits from v1.2.0, v1.2.1 etc)
+  - The generated CHANGELOG.md files will repeat all the commits that have already been released in v1.2.0, v1.2.1 etc
+  
+
+#### Solution:
+
+If possible, use `lerna publish` over manual releases. 
+
+For new manual releases, use `git tag -a -m <version>` instead of using the Github web ui. 
+
+For existing lightweight tags, they can be converted to an annotated tag using something like this: 
+
+```sh
+date="$(git show <version> --format=%cD --no-patch)"
+GIT_COMMITTER_DATE="$date" git tag -a -m <version> -f <version> <version>
+git push --tags --force
+```
+
+See this [Stackoverflow post](https://stackoverflow.com/questions/5002555/can-a-lightweight-tag-be-converted-to-an-annotated-tag) for more details
