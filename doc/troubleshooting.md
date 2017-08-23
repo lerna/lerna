@@ -77,8 +77,15 @@ For new manual releases, use `git tag -a -m <version>` instead of using the Gith
 For existing lightweight tags, they can be converted to an annotated tag using something like this: 
 
 ```sh
-date="$(git show <version> --format=%cD --no-patch)"
-GIT_COMMITTER_DATE="$date" git tag -a -m <version> -f <version> <version>
+GIT_AUTHOR_NAME="$(git show $1 --format=%aN -s)"
+GIT_AUTHOR_EMAIL="$(git show $1 --format=%aE -s)"
+GIT_AUTHOR_DATE="$(git show $1 --format=%aD -s)"
+GIT_COMMITTER_NAME="$(git show $1 --format=%cN -s)"
+GIT_COMMITTER_EMAIL="$(git show $1 --format=%cE -s)"
+GIT_COMMITTER_DATE="$(git show $1 --format=%cD -s)"
+
+git tag -a -m $1 -f $1 $1
+
 git push --tags --force
 ```
 
