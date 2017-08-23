@@ -380,7 +380,7 @@ Useful in [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous
 #### --cd-version
 
 ```sh
-$ lerna publish --cd-version (patch | major | minor | prepatch | premajor | preminor | prerelease)
+$ lerna publish --cd-version (major | minor | patch | premajor | preminor | prepatch | prerelease)
 # uses the next semantic version(s) value and this skips `Select a new version for...` prompt
 ```
 
