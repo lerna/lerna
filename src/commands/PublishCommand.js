@@ -51,11 +51,9 @@ export const builder = {
     type: "string",
     requiresArg: true,
     coerce: (choice) => {
-      try {
-        semver.inc("1.0.0", choice);
-      } catch (error) {
+      if (!cdVersionOptions.includes(choice)) {
         throw new Error(
-          "--cd-version must be semver-compatible: 'major', 'minor', 'patch', 'prerelease', etc.'"
+          `--cd-version must be one of: ${cdVersionOptionString}`
         );
       }
       return choice;
