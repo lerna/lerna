@@ -24,6 +24,19 @@ export const command = "publish";
 
 export const describe = "Publish packages in the current project.";
 
+const cdVersionOptions = [
+  "major",
+  "minor",
+  "patch",
+  "premajor",
+  "preminor",
+  "prepatch",
+  "prerelease",
+];
+
+const cdVersionOptionString =
+  `'${cdVersionOptions.slice(0, -1).join("', '")}', or '${cdVersionOptions[cdVersionOptions.length - 1]}'.`;
+
 export const builder = {
   "canary": {
     group: "Command Options:",
@@ -34,7 +47,7 @@ export const builder = {
   },
   "cd-version": {
     group: "Command Options:",
-    describe: "Skip the version selection prompt and increment semver 'major', 'minor', 'patch', etc.",
+    describe: `Skip the version selection prompt and increment semver: ${cdVersionOptionString}`,
     type: "string",
     requiresArg: true,
     coerce: (choice) => {
