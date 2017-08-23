@@ -24,21 +24,37 @@ export const command = "publish";
 
 export const describe = "Publish packages in the current project.";
 
+const cdVersionOptions = [
+  "major",
+  "minor",
+  "patch",
+  "premajor",
+  "preminor",
+  "prepatch",
+  "prerelease",
+];
+
+const cdVersionOptionString =
+  `'${cdVersionOptions.slice(0, -1).join("', '")}', or '${cdVersionOptions[cdVersionOptions.length - 1]}'.`;
+
 export const builder = {
   "canary": {
     group: "Command Options:",
     defaultDescription: "alpha",
     describe: "Publish packages after every successful merge using the sha as part of the tag.",
-    alias: "c"
+    alias: "c",
+    type: "string",
   },
   "cd-version": {
     group: "Command Options:",
-    describe: "Skip the version selection prompt and increment semver 'major', 'minor', or 'patch'.",
+    describe: `Skip the version selection prompt and increment semver: ${cdVersionOptionString}`,
     type: "string",
     requiresArg: true,
     coerce: (choice) => {
-      if (!["major", "minor", "patch"].some((inc) => choice === inc)) {
-        throw new Error(`--cd-version must be one of 'major', 'minor', or 'patch', got '${choice}'`);
+      if (cdVersionOptions.indexOf(choice) === -1) {
+        throw new Error(
+          `--cd-version must be one of: ${cdVersionOptionString}`
+        );
       }
       return choice;
     },
@@ -78,6 +94,12 @@ export const builder = {
   "npm-tag": {
     group: "Command Options:",
     describe: "Publish packages with the specified npm dist-tag",
+    type: "string",
+    requiresArg: true,
+  },
+  "preid": {
+    group: "Command Options:",
+    describe: "Specify the prerelease identifier (major.minor.patch-pre).",
     type: "string",
     requiresArg: true,
   },
@@ -243,20 +265,29 @@ export default class PublishCommand extends Command {
   }
 
   getVersionsForUpdates(callback) {
-    if (this.options.cdVersion) {
+    const cdVersion = this.options.cdVersion;
+    if (cdVersion && !this.options.canary) {
       // If the version is independent then send versions
       if (this.repository.isIndependent()) {
         const versions = {};
 
         this.updates.forEach((update) => {
-          versions[update.package.name] = semver.inc(update.package.version, this.options.cdVersion);
+          versions[update.package.name] = semver.inc(
+            update.package.version,
+            cdVersion,
+            this.options.preid
+          );
         });
 
         return callback(null, { versions });
       }
 
       // Otherwise bump the global version
-      const version = semver.inc(this.globalVersion, this.options.cdVersion);
+      const version = semver.inc(
+        this.globalVersion,
+        cdVersion,
+        this.options.preid
+      );
       return callback(null, { version });
     }
 
@@ -347,14 +378,15 @@ export default class PublishCommand extends Command {
     });
   }
 
-  getCanaryVersion(version, metaName) {
-    if (metaName == null || typeof metaName !== "string") {
-      metaName = "alpha";
+  getCanaryVersion(version, preid) {
+    if (preid == null || typeof preid !== "string") {
+      preid = "alpha";
     }
 
-    const minor = semver.inc(version, "minor");
+    const release = this.options.cdVersion || "minor";
+    const nextVersion = semver.inc(version, release);
     const hash = GitUtilities.getCurrentSHA(this.execOpts).slice(0, 8);
-    return `${minor}-${metaName}.${hash}`;
+    return `${nextVersion}-${preid}.${hash}`;
   }
 
   promptVersion(packageName, currentVersion, callback) {
@@ -364,7 +396,6 @@ export default class PublishCommand extends Command {
     const prepatch = semver.inc(currentVersion, "prepatch");
     const preminor = semver.inc(currentVersion, "preminor");
     const premajor = semver.inc(currentVersion, "premajor");
-
 
     let message = "Select a new version";
     if (packageName) message += ` for ${packageName}`;
@@ -403,10 +434,11 @@ export default class PublishCommand extends Command {
           const defaultVersion = semver.inc(currentVersion, "prerelease", existingId);
           const prompt = `(default: ${existingId ? `"${existingId}"` : "none"}, yielding ${defaultVersion})`;
 
+          // TODO: allow specifying prerelease identifier as CLI option to skip the prompt
           PromptUtilities.input(`Enter a prerelease identifier ${prompt}`, {
             filter: (v) => {
-              const prereleaseId = v ? v : existingId;
-              return semver.inc(currentVersion, "prerelease", prereleaseId);
+              const preid = v || existingId;
+              return semver.inc(currentVersion, "prerelease", preid);
             },
           }, (input) => {
             callback(null, input);
