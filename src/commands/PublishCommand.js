@@ -378,15 +378,15 @@ export default class PublishCommand extends Command {
     });
   }
 
-  getCanaryVersion(version, prerelease) {
-    if (prerelease == null || typeof prerelease !== "string") {
-      prerelease = "alpha";
+  getCanaryVersion(version, preid) {
+    if (preid == null || typeof preid !== "string") {
+      preid = "alpha";
     }
 
     const release = this.options.cdVersion || "minor";
     const nextVersion = semver.inc(version, release);
     const hash = GitUtilities.getCurrentSHA(this.execOpts).slice(0, 8);
-    return `${nextVersion}-${prerelease}.${hash}`;
+    return `${nextVersion}-${preid}.${hash}`;
   }
 
   promptVersion(packageName, currentVersion, callback) {
