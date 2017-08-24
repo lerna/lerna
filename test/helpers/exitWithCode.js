@@ -11,9 +11,12 @@ export default function exitWithCode(expectedCode, done) {
 
     try {
       expect(actualCode).toBe(expectedCode);
+      expect(process.exitCode).toBe(expectedCode);
       done();
     } catch (err) {
       fail(err);
+    } finally {
+      process.exitCode = undefined;
     }
   };
 }
