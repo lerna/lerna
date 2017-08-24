@@ -45,7 +45,7 @@
     "glob": "^7.1.2",
     "globby": "^6.1.0",
     "graceful-fs": "^4.1.11",
-    "inquirer": "^3.2.1",
+    "inquirer": "^3.2.2",
     "is-ci": "^1.0.10",
     "load-json-file": "^3.0.0",
     "lodash": "^4.17.4",
