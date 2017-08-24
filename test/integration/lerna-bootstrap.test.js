@@ -114,7 +114,7 @@ describe("lerna bootstrap", () => {
     test.skip("works with yarn install", async () => {
       const cwd = await initFixture("BootstrapCommand/integration-lifecycle");
 
-      const port = await getPort(42042);
+      const port = await getPort({ port: 42042, host: '0.0.0.0' });
       const mutex = ["--mutex", `network:${port}`];
 
       // NOTE: yarn doesn't support linking binaries from transitive dependencies,

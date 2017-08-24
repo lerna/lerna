@@ -63,7 +63,7 @@ describe("lerna clean", () => {
   test.skip("local yarn", async () => {
     const cwd = await initFixture("CleanCommand/integration");
 
-    const port = await getPort(42042);
+    const port = await getPort({ port: 42042, host: '0.0.0.0' });
     const mutex = ["--mutex", `network:${port}`];
 
     await execa("yarn", ["install", "--no-lockfile", ...mutex], { cwd });
