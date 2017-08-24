@@ -117,6 +117,26 @@ describe("ImportCommand", () => {
       }));
     });
 
+    it("exits early when confirmation is rejected", (done) => {
+      PromptUtilities.confirm = jest.fn(callsBack(false));
+
+      const importCommand = new ImportCommand([externalDir], {}, testDir);
+
+      importCommand.runValidations();
+      importCommand.runPreparations();
+
+      importCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          expect(lastCommitInDir(testDir)).toBe("Init commit");
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
+
     it("allows skipping confirmation prompt", (done) => {
       const importCommand = new ImportCommand([externalDir], {
         yes: true

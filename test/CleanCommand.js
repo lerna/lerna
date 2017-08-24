@@ -75,6 +75,27 @@ describe("CleanCommand", () => {
       }));
     });
 
+    it("exits early when confirmation is rejected", (done) => {
+      PromptUtilities.confirm = jest.fn(callsBack(false));
+
+      const cleanCommand = new CleanCommand([], {}, testDir);
+
+      cleanCommand.runValidations();
+      cleanCommand.runPreparations();
+
+      cleanCommand.runCommand(exitWithCode(0, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          expect(removedDirectories(testDir)).toEqual([]);
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      }));
+    });
+
     it("should be possible to skip asking for confirmation", (done) => {
       const cleanCommand = new CleanCommand([], {
         yes: true

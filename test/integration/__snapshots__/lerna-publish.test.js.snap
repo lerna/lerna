@@ -92,7 +92,7 @@ Array [
 ]
 `;
 
-exports[`stderr: exists with a exit code 0 when there are no updates 1`] = `
+exports[`stderr: exit 0 when no updates 1`] = `
 "lerna info version __TEST_VERSION__
 lerna info current version 1.0.0
 lerna info Checking for updated packages...
@@ -116,7 +116,7 @@ lerna info Comparing with initial commit.
 lerna info auto-confirmed "
 `;
 
-exports[`stdout: exists with a exit code 0 when there are no updates 1`] = `""`;
+exports[`stdout: exit 0 when no updates 1`] = `""`;
 
 exports[`stdout: updates fixed versions 1`] = `
 "
