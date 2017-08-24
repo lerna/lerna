@@ -173,10 +173,10 @@ describe("NpmUtilities", () => {
     afterEach(resetExecOpts);
 
     it("runs npm publish in a directory with --tag support", () => {
-      NpmUtilities.publishTaggedInDir("published-tag", directory, undefined, callback);
+      NpmUtilities.publishTaggedInDir("published-tag", directory, undefined, true, callback);
 
       const cmd = "npm";
-      const args = ["publish", "--tag", "published-tag"];
+      const args = ["publish", "--tag", "published-tag", "--access", "restricted"];
       const opts = { directory, registry: undefined };
       expect(ChildProcessUtilities.exec).lastCalledWith(cmd, args, opts, expect.any(Function));
     });
@@ -190,10 +190,10 @@ describe("NpmUtilities", () => {
 
     it("supports custom registry", () => {
       const registry = "https://custom-registry/publishTaggedInDir";
-      NpmUtilities.publishTaggedInDir("published-tag", directory, registry, callback);
+      NpmUtilities.publishTaggedInDir("published-tag", directory, registry, true, callback);
 
       const cmd = "npm";
-      const args = ["publish", "--tag", "published-tag"];
+      const args = ["publish", "--tag", "published-tag", "--access", "restricted"];
       const opts = { directory, registry };
       expect(ChildProcessUtilities.exec).lastCalledWith(cmd, args, opts, expect.any(Function));
     });

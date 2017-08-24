@@ -165,11 +165,21 @@ export default class NpmUtilities {
     );
   }
 
-  static publishTaggedInDir(tag, directory, registry, callback) {
+  static publishTaggedInDir(tag, directory, registry, isPrivate, callback) {
     log.silly("publishTaggedInDir", tag, path.basename(directory));
 
     const opts = NpmUtilities.getExecOpts(directory, registry);
-    ChildProcessUtilities.exec("npm", ["publish", "--tag", tag.trim()], opts, callback);
+
+    /* lernaAccess is used when publishing a scoped module publicly.
+       It is based on the private property on package.json
+     */
+    const lernaAccess = isPrivate ? "restricted" : "public";
+
+    ChildProcessUtilities.exec("npm", [
+      "publish",
+      "--tag", tag.trim(),
+      "--access", lernaAccess
+    ], opts, callback);
   }
 
   static getExecOpts(directory, registry) {
