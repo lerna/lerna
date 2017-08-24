@@ -1,3 +1,39 @@
+## v2.1.0 (2017-08-24)
+
+#### :rocket: Enhancement
+* [#922](https://github.com/lerna/lerna/pull/922) Support `--conventional-commits` in fixed versioning mode. ([@jezzay](https://github.com/jezzay))
+* [#960](https://github.com/lerna/lerna/pull/960) Improve support for semver prerelease identifiers when publishing. ([@shawnbot](https://github.com/shawnbot))
+
+#### :bug: Bug Fix
+* [#940](https://github.com/lerna/lerna/pull/940) Improve bootstrap performance with `--include-filtered-dependencies` in large, cyclic repos. ([@lukebatchelor](https://github.com/lukebatchelor))
+* [#943](https://github.com/lerna/lerna/pull/943) Return error and exit on invalid command. ([@Siilwyn](https://github.com/Siilwyn))
+* [#965](https://github.com/lerna/lerna/pull/965) Avoid false positives during integration test filtering. ([@darrylhodgins](https://github.com/darrylhodgins))
+* [#976](https://github.com/lerna/lerna/pull/976) Bump load-json-file. ([@anfedorov](https://github.com/anfedorov))
+* [#982](https://github.com/lerna/lerna/pull/982) Exit properly when there is nothing to publish. ([@evocateur](https://github.com/evocateur))
+
+#### :memo: Documentation
+* [#921](https://github.com/lerna/lerna/pull/921) Fixed spelling mistake in a comment for Command.js. ([@dlmr](https://github.com/dlmr))
+* [#978](https://github.com/lerna/lerna/pull/978) Add root package.json and CI setup sections to FAQ. ([@Andarist](https://github.com/Andarist))
+* [#981](https://github.com/lerna/lerna/pull/981) Add troubleshooting info for GitHub lightweight tags. ([@jezzay](https://github.com/jezzay))
+
+#### :house: Internal
+* [#934](https://github.com/lerna/lerna/pull/934) Platform independent integration tests. ([@jezzay](https://github.com/jezzay))
+* [#946](https://github.com/lerna/lerna/pull/946) Swallow promise rejection in registerChild as it is handled via callback. ([@viliusl](https://github.com/viliusl))
+* [#973](https://github.com/lerna/lerna/pull/973) Update LICENSE. ([@yanca018](https://github.com/yanca018))
+
+#### Committers: 11
+- Andrey Fedorov ([anfedorov](https://github.com/anfedorov))
+- Daniel Stockman ([evocateur](https://github.com/evocateur))
+- Darryl Hodgins ([darrylhodgins](https://github.com/darrylhodgins))
+- Gustaf Dalemar ([dlmr](https://github.com/dlmr))
+- Jeremy ([jezzay](https://github.com/jezzay))
+- Mateusz Burzyński ([Andarist](https://github.com/Andarist))
+- Selwyn ([Siilwyn](https://github.com/Siilwyn))
+- Shawn Allen ([shawnbot](https://github.com/shawnbot))
+- Vilius Lukošius ([viliusl](https://github.com/viliusl))
+- [lukebatchelor](https://github.com/lukebatchelor)
+- [yanca018](https://github.com/yanca018)
+
 ## v2.0.0 (2017-07-06)
 
 :tada: It's happening! :tada:
