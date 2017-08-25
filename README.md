@@ -74,10 +74,10 @@ Let's start by installing Lerna globally with [npm](https://www.npmjs.com/).
 $ npm install --global lerna
 ```
 
-Next we'll create a new [git](https://git-scm.com/) repository:
+Next we'll create a new folder:
 
 ```sh
-$ git init lerna-repo
+$ mkdir lerna-repo
 $ cd lerna-repo
 ```
 
@@ -87,7 +87,7 @@ And now let's turn it into a Lerna repo:
 $ lerna init
 ```
 
-Your repository should now look like this:
+This will create a `lerna.json` configuration file as well as a `packages` folder, so your fold should now look like this:
 
 ```
 lerna-repo/
@@ -95,8 +95,6 @@ lerna-repo/
   package.json
   lerna.json
 ```
-
-This will create a `lerna.json` configuration file as well as a `packages` folder.
 
 ## How It Works
 
