@@ -87,7 +87,7 @@ And now let's turn it into a Lerna repo:
 $ lerna init
 ```
 
-This will create a `lerna.json` configuration file as well as a `packages` folder, so your fold should now look like this:
+This will create a `lerna.json` configuration file as well as a `packages` folder, so your folder should now look like this:
 
 ```
 lerna-repo/
