@@ -330,7 +330,8 @@ describe("PublishCommand", () => {
             throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
           }
 
-          expect(updatedPackageVersions(testDir)).toMatchSnapshot("[normal --canary] bumps package versions");
+          expect(updatedPackageVersions(testDir))
+            .toMatchSnapshot("[normal --canary=beta] bumps package versions");
 
           expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
             "package-1": "^1.1.0-beta.deadbeef",
@@ -351,7 +352,7 @@ describe("PublishCommand", () => {
 
     it("should work with --canary and --cd-version=patch", (done) => {
       const publishCommand = new PublishCommand([], {
-        canary: "beta",
+        canary: true,
         cdVersion: "patch",
       }, testDir);
 
@@ -367,13 +368,14 @@ describe("PublishCommand", () => {
             throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
           }
 
-          expect(updatedPackageVersions(testDir)).toMatchSnapshot("[normal --canary] bumps package versions");
+          expect(updatedPackageVersions(testDir))
+            .toMatchSnapshot("[normal --canary --cd-version=patch] bumps package versions");
 
           expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-            "package-1": "^1.0.1-beta.deadbeef",
+            "package-1": "^1.0.1-alpha.deadbeef",
           });
           expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-            "package-2": "^1.0.1-beta.deadbeef",
+            "package-2": "^1.0.1-alpha.deadbeef",
           });
           expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
             "package-1": "^0.0.0",
@@ -967,7 +969,8 @@ describe("PublishCommand", () => {
             throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
           }
 
-          expect(updatedPackageVersions(testDir)).toMatchSnapshot("[normal --canary] bumps package versions");
+          expect(updatedPackageVersions(testDir))
+            .toMatchSnapshot("[independent --cd-version=prerelease --preid=foo] bumps package versions");
 
           expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
             "package-1": "^1.0.1-foo.0",
@@ -986,7 +989,7 @@ describe("PublishCommand", () => {
       }));
     });
 
-    it("should bump to prerelease versions with --cd-version prerelease (no --prerelease)", (done) => {
+    it("should bump to prerelease versions with --cd-version prerelease (no --preid)", (done) => {
       const publishCommand = new PublishCommand([], {
         cdVersion: "prerelease",
       }, testDir);
@@ -1003,7 +1006,8 @@ describe("PublishCommand", () => {
             throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
           }
 
-          expect(updatedPackageVersions(testDir)).toMatchSnapshot("[normal --canary] bumps package versions");
+          expect(updatedPackageVersions(testDir))
+            .toMatchSnapshot("[independent --cd-version=prerelease] bumps package versions");
 
           expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
             "package-1": "^1.0.1-0",
