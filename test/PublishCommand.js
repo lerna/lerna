@@ -627,6 +627,18 @@ describe("PublishCommand", () => {
         expect(gitCommitMessage()).toBe("v1.1.0");
       });
     });
+
+    it("throws an error when an invalid semver keyword is used", async () => {
+      expect.assertions(1);
+      try {
+        await run(testDir)("--cd-version", "poopypants");
+      } catch (err) {
+        expect(err.message).toBe(
+          "--cd-version must be one of: " +
+          "'major', 'minor', 'patch', 'premajor', 'preminor', 'prepatch', or 'prerelease'."
+        );
+      }
+    });
   });
 
   /** =========================================================================
