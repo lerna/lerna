@@ -19,6 +19,15 @@ import Command from "../src/Command";
 log.level = "silent";
 
 describe("Command", () => {
+  class OkCommand extends Command {
+    initialize(callback) {
+      callback(null, true);
+    }
+    execute(callback) {
+      callback(null, true);
+    }
+  }
+
   beforeEach(() => {
     // only used to check for VERSION file
     FileSystemUtilities.existsSync = jest.fn(() => false);
@@ -109,67 +118,48 @@ describe("Command", () => {
       testDir = dir;
     }));
 
-    it("should exist", (done) => {
-      class TestCommand extends Command {
-        initialize(callback) {
-          callback(null, true);
-        }
-        execute() {
-          done();
-        }
-      }
-
-      const testCommand = new TestCommand([], {}, testDir);
-      testCommand.run();
+    it("returns a Promise", async () => {
+      await new OkCommand([], {}, testDir).run();
     });
 
-    describe("when complete", () => {
-      class ExitCommand extends Command {
-        initialize(callback) {
-          callback(null, true);
-        }
-        execute(callback) {
-          callback(null, true);
-        }
-      }
-
+    describe("when finished", () => {
       beforeEach(() => {
         ChildProcessUtilities.onAllExited = jest.fn(callsBack());
+        ChildProcessUtilities.getChildProcessCount = jest.fn(() => 0);
       });
 
-      [null, "process", "processes"].forEach((msg, idx) => {
-        const title = (msg === null)
-          ? "calls finish"
-          : `waits for ${idx} child ${msg}`;
+      it("resolves immediately when no child processes active", async () => {
+        const ok = new OkCommand([], {}, testDir);
+        const { exitCode } = await ok.run();
+        expect(exitCode).toBe(0);
+      });
 
-        it(title, (done) => {
-          ChildProcessUtilities.getChildProcessCount = jest.fn(() => idx);
+      it("waits to resolve when 1 child process active", async () => {
+        ChildProcessUtilities.getChildProcessCount.mockReturnValue(1);
 
-          const exitCommand = new ExitCommand([], {}, testDir);
-
-          let warning;
-          log.once("log.warn", (m) => {
-            warning = m;
-          });
-
-          exitCommand.runValidations();
-          exitCommand.runPreparations();
-
-          exitCommand.runCommand((err, code) => {
-            if (err) return done.fail(err);
-            try {
-              expect(code).toBe(0);
-
-              if (msg) {
-                expect(warning.message).toMatch(`Waiting for ${idx} child ${msg} to exit.`);
-              }
-
-              done();
-            } catch (ex) {
-              done.fail(ex);
-            }
-          });
+        let warning;
+        log.once("log.warn", (m) => {
+          warning = m;
         });
+
+        const ok = new OkCommand([], {}, testDir);
+        await ok.run();
+
+        expect(warning.message).toMatch("Waiting for 1 child process to exit.");
+      });
+
+      it("waits to resolve when 2 child processes active", async () => {
+        ChildProcessUtilities.getChildProcessCount.mockReturnValue(2);
+
+        let warning;
+        log.once("log.warn", (m) => {
+          warning = m;
+        });
+
+        const ok = new OkCommand([], {}, testDir);
+        await ok.run();
+
+        expect(warning.message).toMatch("Waiting for 2 child processes to exit.");
       });
     });
   });
@@ -186,72 +176,66 @@ describe("Command", () => {
         testDir = dir;
       }));
 
-      class TestCommand extends Command {}
-
       function cli(cmd, ...args) {
-        if (cmd === "touch") {
-          return touch.sync(path.join(testDir, args[0]));
-        }
-        return execa.sync(cmd, args, { cwd: testDir }).stdout.toString("utf-8");
+        return execa(cmd, args, { cwd: testDir });
       }
 
       function run(opts) {
-        const cmd = new TestCommand([], opts, testDir);
-        cmd.run();
-        return cmd;
+        const cmd = new OkCommand([], opts, testDir);
+        return cmd.run().then(() => cmd);
       }
 
-      it("--scope should filter packages", () => {
-        const { filteredPackages } = run({ scope: ["package-2", "package-4"] });
+      it("--scope should filter packages", async () => {
+        const { filteredPackages } = await run({ scope: ["package-2", "package-4"] });
         expect(filteredPackages.length).toEqual(2);
         expect(filteredPackages[0].name).toEqual("package-2");
         expect(filteredPackages[1].name).toEqual("package-4");
       });
 
-      it("--since should return all packages if no tag is found", () => {
-        const { filteredPackages } = run({ since: "" });
+      it("--since should return all packages if no tag is found", async () => {
+        const { filteredPackages } = await run({ since: "" });
         expect(filteredPackages.length).toEqual(5);
       });
 
-      it("--since should return packages updated since the last tag", () => {
-        cli("git", "tag", "1.0.0");
-        cli("touch", "packages/package-2/random-file");
-        cli("git", "add", ".");
-        cli("git", "commit", "-m", "test");
+      it("--since should return packages updated since the last tag", async () => {
+        await cli("git", "tag", "1.0.0");
+        await touch(path.join(testDir, "packages/package-2/random-file"));
+        await cli("git", "add", ".");
+        await cli("git", "commit", "-m", "test");
 
-        const { filteredPackages } = run({ since: "" });
+        const { filteredPackages } = await run({ since: "" });
         expect(filteredPackages.length).toEqual(2);
         expect(filteredPackages[0].name).toEqual("package-2");
         expect(filteredPackages[1].name).toEqual("package-3");
       });
 
-      it("--since \"ref\" should return packages updated since the specified ref", () => {
+      it("--since \"ref\" should return packages updated since the specified ref", async () => {
         // We first tag, then modify master to ensure that specifying --since will override checking against
         // the latest tag.
-        cli("git", "tag", "1.0.0");
-        cli("touch", "packages/package-1/random-file");
-        cli("git", "add", ".");
-        cli("git", "commit", "-m", "test");
+        await cli("git", "tag", "1.0.0");
+        await touch(path.join(testDir, "packages/package-1/random-file"));
+        await cli("git", "add", ".");
+        await cli("git", "commit", "-m", "test");
 
         // Then we can checkout a new branch, update and commit.
-        cli("git", "checkout", "-b", "test");
-        cli("touch", "packages/package-2/random-file");
-        cli("git", "add", ".");
-        cli("git", "commit", "-m", "test");
+        await cli("git", "checkout", "-b", "test");
+        await touch(path.join(testDir, "packages/package-2/random-file"));
+        await cli("git", "add", ".");
+        await cli("git", "commit", "-m", "test");
 
-        const { filteredPackages } = run({ since: "master" });
+        const { filteredPackages } = await run({ since: "master" });
         expect(filteredPackages.length).toEqual(2);
         expect(filteredPackages[0].name).toEqual("package-2");
         expect(filteredPackages[1].name).toEqual("package-3");
       });
 
-      it("should respect --scope and --since when used together", () => {
-        cli("git", "checkout", "-b", "test");
-        cli("touch", "packages/package-4/random-file");
-        cli("git", "add", ".");
-        cli("git", "commit", "-m", "test");
+      it("should respect --scope and --since when used together", async () => {
+        await cli("git", "checkout", "-b", "test");
+        await touch(path.join(testDir, "packages/package-4/random-file"));
+        await cli("git", "add", ".");
+        await cli("git", "commit", "-m", "test");
 
-        const { filteredPackages } = run({
+        const { filteredPackages } = await run({
           scope: ["package-2", "package-3", "package-4"],
           since: "master"
         });
