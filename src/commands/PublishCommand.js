@@ -17,7 +17,8 @@ import PromptUtilities from "../PromptUtilities";
 import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
 
 export function handler(argv) {
-  return new PublishCommand(argv._, argv).run();
+  new PublishCommand(argv._, argv, argv._cwd).run()
+    .then(argv._onFinish, argv._onFinish);
 }
 
 export const command = "publish";

@@ -1,9 +1,7 @@
 import chalk from "chalk";
-import fs from "fs-extra";
 import log from "npmlog";
 import normalizeNewline from "normalize-newline";
 import path from "path";
-import pathExists from "path-exists";
 
 // mocked or stubbed modules
 import writeJsonFile from "write-json-file";
@@ -16,12 +14,15 @@ import output from "../src/utils/output";
 
 // helpers
 import callsBack from "./helpers/callsBack";
-import exitWithCode from "./helpers/exitWithCode";
 import initFixture from "./helpers/initFixture";
 import normalizeRelativeDir from "./helpers/normalizeRelativeDir";
+import yargsRunner from "./helpers/yargsRunner";
 
 // file under test
-import PublishCommand from "../src/commands/PublishCommand";
+import * as commandModule from "../src/commands/PublishCommand";
+
+const PublishCommand = commandModule.default;
+const run = yargsRunner(commandModule);
 
 jest.mock("write-json-file");
 jest.mock("write-pkg");
@@ -127,54 +128,44 @@ describe("PublishCommand", () => {
       testDir = dir;
     }));
 
-    it("should publish the changed packages", (done) => {
-      const publishCommand = new PublishCommand([], {}, testDir);
+    it("should publish the changed packages", () => {
+      return run(testDir)().then(() => {
+        expect(PromptUtilities.select.mock.calls).toMatchSnapshot("[normal] prompt");
+        expect(PromptUtilities.confirm).toBeCalled();
 
-      publishCommand.runValidations();
-      publishCommand.runPreparations();
+        expect(updatedLernaJson()).toMatchObject({ version: "1.0.1" });
+        expect(updatedPackageVersions(testDir)).toMatchSnapshot("[normal] bumps package versions");
 
-      publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
+        expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+          "package-1": "^1.0.1",
+        });
+        expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+          "package-2": "^1.0.1",
+        });
+        expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+          "package-1": "^0.0.0",
+        });
+        expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
+          "package-1": "^1.0.1",
+        });
 
-        try {
-          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
-            // TODO: there has to be a better way to do this
-            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
-          }
+        expect(gitAddedFiles(testDir)).toMatchSnapshot("[normal] git adds changed files");
+        expect(gitCommitMessage()).toEqual("v1.0.1");
+        expect(gitTagsAdded()).toEqual(["v1.0.1"]);
 
-          expect(PromptUtilities.select.mock.calls).toMatchSnapshot("[normal] prompt");
-          expect(PromptUtilities.confirm).toBeCalled();
+        expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[normal] npm publish --tag");
 
-          expect(updatedLernaJson()).toMatchObject({ version: "1.0.1" });
-          expect(updatedPackageVersions(testDir)).toMatchSnapshot("[normal] bumps package versions");
+        expect(GitUtilities.pushWithTags).lastCalledWith("origin", gitTagsAdded(), execOpts(testDir));
+        expect(consoleOutput()).toMatchSnapshot("[normal] console output");
+      });
+    });
 
-          expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-            "package-1": "^1.0.1",
-          });
-          expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-            "package-2": "^1.0.1",
-          });
-          expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-            "package-1": "^0.0.0",
-          });
-          expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
-            "package-1": "^1.0.1",
-          });
-
-          expect(gitAddedFiles(testDir)).toMatchSnapshot("[normal] git adds changed files");
-          expect(gitCommitMessage()).toEqual("v1.0.1");
-          expect(gitTagsAdded()).toEqual(["v1.0.1"]);
-
-          expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[normal] npm publish --tag");
-
-          expect(GitUtilities.pushWithTags).lastCalledWith("origin", gitTagsAdded(), execOpts(testDir));
-          expect(consoleOutput()).toMatchSnapshot("[normal] console output");
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+    it("throws an error when --independent is passed", () => {
+      return run(testDir)(
+        "--independent"
+      ).catch((error) => {
+        expect(error.exitCode).toBe(1);
+      });
     });
   });
 
@@ -189,14 +180,7 @@ describe("PublishCommand", () => {
       testDir = dir;
     }));
 
-    it("should publish the changed packages in independent mode", (done) => {
-      const publishCommand = new PublishCommand([], {
-        independent: true
-      }, testDir);
-
-      publishCommand.runValidations();
-      publishCommand.runPreparations();
-
+    it("should publish the changed packages in independent mode", () => {
       const promptReplies = [
         "1.0.1",
         "1.1.0",
@@ -209,48 +193,37 @@ describe("PublishCommand", () => {
         return callsBack(reply)(...args);
       });
 
-      publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
+      return run(testDir)(
+        "--independent" // not required due to lerna.json config, but here to assert it doesn't error
+      ).then(() => {
+        expect(PromptUtilities.confirm).toBeCalled();
 
-        try {
-          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
-            // TODO: there has to be a better way to do this
-            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
-          }
+        expect(writeJsonFile.sync).not.toBeCalled();
+        expect(updatedPackageVersions(testDir)).toMatchSnapshot("[independent] bumps package versions");
 
-          expect(PromptUtilities.confirm).toBeCalled();
+        expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+          "package-1": "^1.0.1",
+        });
+        expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+          "package-2": "^1.1.0",
+        });
+        expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+          "package-1": "^0.0.0",
+        });
+        expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
+          "package-3": "^2.0.0",
+        });
 
-          expect(writeJsonFile.sync).not.toBeCalled();
-          expect(updatedPackageVersions(testDir)).toMatchSnapshot("[independent] bumps package versions");
+        expect(gitAddedFiles(testDir)).toMatchSnapshot("[independent] git adds changed files");
+        expect(gitCommitMessage()).toMatchSnapshot("[independent] git commit message");
+        expect(gitTagsAdded()).toMatchSnapshot("[independent] git tags added");
+        expect(GitUtilities.checkoutChanges).not.toBeCalled();
 
-          expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-            "package-1": "^1.0.1",
-          });
-          expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-            "package-2": "^1.1.0",
-          });
-          expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-            "package-1": "^0.0.0",
-          });
-          expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
-            "package-3": "^2.0.0",
-          });
+        expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[independent] npm publish --tag");
 
-          expect(gitAddedFiles(testDir)).toMatchSnapshot("[independent] git adds changed files");
-          expect(gitCommitMessage()).toMatchSnapshot("[independent] git commit message");
-          expect(gitTagsAdded()).toMatchSnapshot("[independent] git tags added");
-          expect(GitUtilities.checkoutChanges).not.toBeCalled();
-
-          expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[independent] npm publish --tag");
-
-          expect(GitUtilities.pushWithTags).lastCalledWith("origin", gitTagsAdded(), execOpts(testDir));
-          expect(consoleOutput()).toMatchSnapshot("[independent] console output");
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+        expect(GitUtilities.pushWithTags).lastCalledWith("origin", gitTagsAdded(), execOpts(testDir));
+        expect(consoleOutput()).toMatchSnapshot("[independent] console output");
+      });
     });
   });
 
@@ -265,127 +238,73 @@ describe("PublishCommand", () => {
       testDir = dir;
     }));
 
-    it("should publish the changed packages", (done) => {
-      const publishCommand = new PublishCommand([], {
-        canary: true
-      }, testDir);
+    it("should publish the changed packages", () => {
+      return run(testDir)(
+        "--canary"
+      ).then(() => {
+        expect(PromptUtilities.select).not.toBeCalled();
 
-      publishCommand.runValidations();
-      publishCommand.runPreparations();
+        expect(writeJsonFile.sync).not.toBeCalled();
+        expect(updatedPackageVersions(testDir)).toMatchSnapshot("[normal --canary] bumps package versions");
 
-      publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
+        expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+          "package-1": "^1.1.0-alpha.deadbeef",
+        });
+        expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+          "package-2": "^1.1.0-alpha.deadbeef",
+        });
+        expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+          "package-1": "^0.0.0",
+        });
 
-        try {
-          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
-            // TODO: there has to be a better way to do this
-            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
-          }
+        expect(GitUtilities.addFile).not.toBeCalled();
+        expect(GitUtilities.commit).not.toBeCalled();
+        expect(GitUtilities.addTag).not.toBeCalled();
+        expect(GitUtilities.checkoutChanges).lastCalledWith("packages/*/package.json", execOpts(testDir));
 
-          expect(PromptUtilities.select).not.toBeCalled();
-
-          expect(writeJsonFile.sync).not.toBeCalled();
-          expect(updatedPackageVersions(testDir)).toMatchSnapshot("[normal --canary] bumps package versions");
-
-          expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-            "package-1": "^1.1.0-alpha.deadbeef",
-          });
-          expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-            "package-2": "^1.1.0-alpha.deadbeef",
-          });
-          expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-            "package-1": "^0.0.0",
-          });
-
-          expect(GitUtilities.addFile).not.toBeCalled();
-          expect(GitUtilities.commit).not.toBeCalled();
-          expect(GitUtilities.addTag).not.toBeCalled();
-          expect(GitUtilities.checkoutChanges).lastCalledWith("packages/*/package.json", execOpts(testDir));
-
-          expect(GitUtilities.pushWithTags).not.toBeCalled();
-          expect(publishedTagInDirectories(testDir))
-            .toMatchSnapshot("[normal --canary] npm publish --tag");
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+        expect(GitUtilities.pushWithTags).not.toBeCalled();
+        expect(publishedTagInDirectories(testDir))
+          .toMatchSnapshot("[normal --canary] npm publish --tag");
+      });
     });
 
-    it("should use the provided value as the meta suffix", (done) => {
-      const publishCommand = new PublishCommand([], {
-        canary: "beta"
-      }, testDir);
+    it("should use the provided value as the meta suffix", () => {
+      return run(testDir)(
+        "--canary", "beta"
+      ).then(() => {
+        expect(updatedPackageVersions(testDir))
+          .toMatchSnapshot("[normal --canary=beta] bumps package versions");
 
-      publishCommand.runValidations();
-      publishCommand.runPreparations();
-
-      publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
-            // TODO: there has to be a better way to do this
-            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
-          }
-
-          expect(updatedPackageVersions(testDir))
-            .toMatchSnapshot("[normal --canary=beta] bumps package versions");
-
-          expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-            "package-1": "^1.1.0-beta.deadbeef",
-          });
-          expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-            "package-2": "^1.1.0-beta.deadbeef",
-          });
-          expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-            "package-1": "^0.0.0",
-          });
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+        expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+          "package-1": "^1.1.0-beta.deadbeef",
+        });
+        expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+          "package-2": "^1.1.0-beta.deadbeef",
+        });
+        expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+          "package-1": "^0.0.0",
+        });
+      });
     });
 
-    it("should work with --canary and --cd-version=patch", (done) => {
-      const publishCommand = new PublishCommand([], {
-        canary: true,
-        cdVersion: "patch",
-      }, testDir);
+    it("should work with --canary and --cd-version=patch", () => {
+      return run(testDir)(
+        "--canary",
+        "--cd-version", "patch"
+      ).then(() => {
+        expect(updatedPackageVersions(testDir))
+          .toMatchSnapshot("[normal --canary --cd-version=patch] bumps package versions");
 
-      publishCommand.runValidations();
-      publishCommand.runPreparations();
-
-      publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
-            // TODO: there has to be a better way to do this
-            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
-          }
-
-          expect(updatedPackageVersions(testDir))
-            .toMatchSnapshot("[normal --canary --cd-version=patch] bumps package versions");
-
-          expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-            "package-1": "^1.0.1-alpha.deadbeef",
-          });
-          expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-            "package-2": "^1.0.1-alpha.deadbeef",
-          });
-          expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-            "package-1": "^0.0.0",
-          });
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+        expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+          "package-1": "^1.0.1-alpha.deadbeef",
+        });
+        expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+          "package-2": "^1.0.1-alpha.deadbeef",
+        });
+        expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+          "package-1": "^0.0.0",
+        });
+      });
     });
   });
 
@@ -400,83 +319,45 @@ describe("PublishCommand", () => {
       testDir = dir;
     }));
 
-    it("should publish the changed packages", (done) => {
-      const publishCommand = new PublishCommand([], {
-        independent: true,
-        canary: true
-      }, testDir);
+    it("should publish the changed packages", () => {
+      return run(testDir)(
+        "--canary"
+      ).then(() => {
+        expect(PromptUtilities.select).not.toBeCalled();
 
-      publishCommand.runValidations();
-      publishCommand.runPreparations();
+        expect(writeJsonFile.sync).not.toBeCalled();
+        expect(updatedPackageVersions(testDir))
+          .toMatchSnapshot("[independent --canary] bumps package versions");
 
-      publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
+        expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+          "package-1": "^1.1.0-alpha.deadbeef",
+        });
+        expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+          "package-2": "^2.1.0-alpha.deadbeef",
+        });
+        expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+          "package-1": "^0.0.0",
+        });
 
-        try {
-          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
-            // TODO: there has to be a better way to do this
-            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
-          }
-
-          expect(PromptUtilities.select).not.toBeCalled();
-
-          expect(writeJsonFile.sync).not.toBeCalled();
-          expect(updatedPackageVersions(testDir))
-            .toMatchSnapshot("[independent --canary] bumps package versions");
-
-          expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-            "package-1": "^1.1.0-alpha.deadbeef",
-          });
-          expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-            "package-2": "^2.1.0-alpha.deadbeef",
-          });
-          expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-            "package-1": "^0.0.0",
-          });
-
-          expect(publishedTagInDirectories(testDir))
-            .toMatchSnapshot("[independent --canary] npm publish --tag");
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+        expect(publishedTagInDirectories(testDir))
+          .toMatchSnapshot("[independent --canary] npm publish --tag");
+      });
     });
 
-    it("should use the provided value as the meta suffix", (done) => {
-      const publishCommand = new PublishCommand([], {
-        independent: true,
-        canary: "beta"
-      }, testDir);
-
-      publishCommand.runValidations();
-      publishCommand.runPreparations();
-
-      publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
-            // TODO: there has to be a better way to do this
-            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
-          }
-
-          expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-            "package-1": "^1.1.0-beta.deadbeef",
-          });
-          expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-            "package-2": "^2.1.0-beta.deadbeef",
-          });
-          expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-            "package-1": "^0.0.0",
-          });
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+    it("should use the provided value as the meta suffix", () => {
+      return run(testDir)(
+        "--canary", "beta"
+      ).then(() => {
+        expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+          "package-1": "^1.1.0-beta.deadbeef",
+        });
+        expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+          "package-2": "^2.1.0-beta.deadbeef",
+        });
+        expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+          "package-1": "^0.0.0",
+        });
+      });
     });
   });
 
@@ -491,35 +372,17 @@ describe("PublishCommand", () => {
       testDir = dir;
     }));
 
-    it("should publish the changed packages", (done) => {
-      const publishCommand = new PublishCommand([], {
-        skipGit: true
-      }, testDir);
+    it("should publish the changed packages", () => {
+      return run(testDir)(
+        "--skip-git"
+      ).then(() => {
+        expect(GitUtilities.addFile).not.toBeCalled();
+        expect(GitUtilities.commit).not.toBeCalled();
+        expect(GitUtilities.addTag).not.toBeCalled();
+        expect(GitUtilities.pushWithTags).not.toBeCalled();
 
-      publishCommand.runValidations();
-      publishCommand.runPreparations();
-
-      publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
-            // TODO: there has to be a better way to do this
-            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
-          }
-
-          expect(GitUtilities.addFile).not.toBeCalled();
-          expect(GitUtilities.commit).not.toBeCalled();
-          expect(GitUtilities.addTag).not.toBeCalled();
-          expect(GitUtilities.pushWithTags).not.toBeCalled();
-
-          expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[normal --skip-git] npm publish --tag");
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+        expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[normal --skip-git] npm publish --tag");
+      });
     });
   });
 
@@ -534,37 +397,19 @@ describe("PublishCommand", () => {
       testDir = dir;
     }));
 
-    it("should update versions and push changes but not publish", (done) => {
-      const publishCommand = new PublishCommand([], {
-        skipNpm: true
-      }, testDir);
+    it("should update versions and push changes but not publish", () => {
+      return run(testDir)(
+        "--skip-npm"
+      ).then(() => {
+        expect(NpmUtilities.publishTaggedInDir).not.toBeCalled();
+        expect(NpmUtilities.checkDistTag).not.toBeCalled();
+        expect(NpmUtilities.removeDistTag).not.toBeCalled();
+        expect(NpmUtilities.addDistTag).not.toBeCalled();
 
-      publishCommand.runValidations();
-      publishCommand.runPreparations();
-
-      publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
-            // TODO: there has to be a better way to do this
-            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
-          }
-
-          expect(NpmUtilities.publishTaggedInDir).not.toBeCalled();
-          expect(NpmUtilities.checkDistTag).not.toBeCalled();
-          expect(NpmUtilities.removeDistTag).not.toBeCalled();
-          expect(NpmUtilities.addDistTag).not.toBeCalled();
-
-          expect(gitCommitMessage()).toEqual("v1.0.1");
-          // FIXME
-          // expect(GitUtilities.pushWithTags).lastCalledWith("origin", ["v1.0.1"]);
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+        expect(gitCommitMessage()).toEqual("v1.0.1");
+        // FIXME
+        // expect(GitUtilities.pushWithTags).lastCalledWith("origin", ["v1.0.1"]);
+      });
     });
   });
 
@@ -579,56 +424,38 @@ describe("PublishCommand", () => {
       testDir = dir;
     }));
 
-    it("should update versions but not push changes or publish", (done) => {
-      const publishCommand = new PublishCommand([], {
-        skipGit: true,
-        skipNpm: true
-      }, testDir);
+    it("should update versions but not push changes or publish", () => {
+      return run(testDir)(
+        "--skip-git",
+        "--skip-npm"
+      ).then(() => {
+        expect(updatedLernaJson()).toMatchObject({ version: "1.0.1" });
+        expect(updatedPackageVersions(testDir))
+          .toMatchSnapshot("[normal --skip-git --skip-npm] bumps package versions");
 
-      publishCommand.runValidations();
-      publishCommand.runPreparations();
+        expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+          "package-1": "^1.0.1",
+        });
+        expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+          "package-2": "^1.0.1",
+        });
+        expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+          "package-1": "^0.0.0",
+        });
+        expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
+          "package-1": "^1.0.1",
+        });
 
-      publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
+        expect(GitUtilities.addFile).not.toBeCalled();
+        expect(GitUtilities.commit).not.toBeCalled();
+        expect(GitUtilities.addTag).not.toBeCalled();
+        expect(GitUtilities.pushWithTags).not.toBeCalled();
 
-        try {
-          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
-            // TODO: there has to be a better way to do this
-            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
-          }
-
-          expect(updatedLernaJson()).toMatchObject({ version: "1.0.1" });
-          expect(updatedPackageVersions(testDir))
-            .toMatchSnapshot("[normal --skip-git --skip-npm] bumps package versions");
-
-          expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-            "package-1": "^1.0.1",
-          });
-          expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-            "package-2": "^1.0.1",
-          });
-          expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-            "package-1": "^0.0.0",
-          });
-          expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
-            "package-1": "^1.0.1",
-          });
-
-          expect(GitUtilities.addFile).not.toBeCalled();
-          expect(GitUtilities.commit).not.toBeCalled();
-          expect(GitUtilities.addTag).not.toBeCalled();
-          expect(GitUtilities.pushWithTags).not.toBeCalled();
-
-          expect(NpmUtilities.publishTaggedInDir).not.toBeCalled();
-          expect(NpmUtilities.checkDistTag).not.toBeCalled();
-          expect(NpmUtilities.removeDistTag).not.toBeCalled();
-          expect(NpmUtilities.addDistTag).not.toBeCalled();
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+        expect(NpmUtilities.publishTaggedInDir).not.toBeCalled();
+        expect(NpmUtilities.checkDistTag).not.toBeCalled();
+        expect(NpmUtilities.removeDistTag).not.toBeCalled();
+        expect(NpmUtilities.addDistTag).not.toBeCalled();
+      });
     });
   });
 
@@ -643,34 +470,16 @@ describe("PublishCommand", () => {
       testDir = dir;
     }));
 
-    it("should publish the changed packages with a temp tag", (done) => {
-      const publishCommand = new PublishCommand([], {
-        tempTag: true
-      }, testDir);
+    it("should publish the changed packages with a temp tag", () => {
+      return run(testDir)(
+        "--temp-tag"
+      ).then(() => {
+        expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[normal --temp-tag] npm publish --tag");
+        expect(removedDistTagInDirectories(testDir)).toMatchSnapshot("[normal --temp-tag] npm dist-tag rm");
+        expect(addedDistTagInDirectories(testDir)).toMatchSnapshot("[normal --temp-tag] npm dist-tag add");
 
-      publishCommand.runValidations();
-      publishCommand.runPreparations();
-
-      publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
-            // TODO: there has to be a better way to do this
-            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
-          }
-
-          expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[normal --temp-tag] npm publish --tag");
-          expect(removedDistTagInDirectories(testDir)).toMatchSnapshot("[normal --temp-tag] npm dist-tag rm");
-          expect(addedDistTagInDirectories(testDir)).toMatchSnapshot("[normal --temp-tag] npm dist-tag add");
-
-          expect(GitUtilities.pushWithTags).lastCalledWith("origin", ["v1.0.1"], execOpts(testDir));
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+        expect(GitUtilities.pushWithTags).lastCalledWith("origin", ["v1.0.1"], execOpts(testDir));
+      });
     });
   });
 
@@ -685,30 +494,12 @@ describe("PublishCommand", () => {
       testDir = dir;
     }));
 
-    it("should publish the changed packages with npm tag", (done) => {
-      const publishCommand = new PublishCommand([], {
-        npmTag: "custom"
-      }, testDir);
-
-      publishCommand.runValidations();
-      publishCommand.runPreparations();
-
-      publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
-            // TODO: there has to be a better way to do this
-            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
-          }
-
-          expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[normal --npm-tag] npm publish --tag");
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+    it("should publish the changed packages with npm tag", () => {
+      return run(testDir)(
+        "--npm-tag", "custom"
+      ).then(() => {
+        expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[normal --npm-tag] npm publish --tag");
+      });
     });
   });
 
@@ -747,35 +538,19 @@ describe("PublishCommand", () => {
       testDir = dir;
     }));
 
-    it("passes registry to npm commands", (done) => {
+    it("passes registry to npm commands", () => {
       const registry = "https://my-private-registry";
-      const publishCommand = new PublishCommand([], {
-        registry,
-      }, testDir);
 
-      publishCommand.runValidations();
-      publishCommand.runPreparations();
-
-      publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
-            // TODO: there has to be a better way to do this
-            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
-          }
-
-          expect(NpmUtilities.checkDistTag).not.toBeCalled();
-          expect(NpmUtilities.removeDistTag).not.toBeCalled();
-          expect(NpmUtilities.addDistTag).not.toBeCalled();
-          expect(publishedTagInDirectories(testDir))
-            .toMatchSnapshot("[normal --registry] npm publish --tag");
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      return run(testDir)(
+        "--registry", registry
+      ).then(() => {
+        expect(NpmUtilities.checkDistTag).not.toBeCalled();
+        expect(NpmUtilities.removeDistTag).not.toBeCalled();
+        expect(NpmUtilities.addDistTag).not.toBeCalled();
+        // FIXME: this isn't actually asserting anything about --registry
+        expect(publishedTagInDirectories(testDir))
+          .toMatchSnapshot("[normal --registry] npm publish --tag");
+      });
     });
   });
 
@@ -790,31 +565,13 @@ describe("PublishCommand", () => {
       testDir = dir;
     }));
 
-    it("skips version prompt and publishes changed packages with designated version", (done) => {
-      const publishCommand = new PublishCommand([], {
-        repoVersion: "1.0.1-beta"
-      }, testDir);
-
-      publishCommand.runValidations();
-      publishCommand.runPreparations();
-
-      publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
-            // TODO: there has to be a better way to do this
-            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
-          }
-
-          expect(PromptUtilities.select).not.toBeCalled();
-          expect(updatedLernaJson()).toMatchObject({ version: "1.0.1-beta" });
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+    it("skips version prompt and publishes changed packages with designated version", () => {
+      return run(testDir)(
+        "--repo-version", "1.0.1-beta"
+      ).then(() => {
+        expect(PromptUtilities.select).not.toBeCalled();
+        expect(updatedLernaJson()).toMatchObject({ version: "1.0.1-beta" });
+      });
     });
   });
 
@@ -829,43 +586,25 @@ describe("PublishCommand", () => {
       testDir = dir;
     }));
 
-    it("updates matching local dependencies of published packages with exact versions", (done) => {
-      const publishCommand = new PublishCommand([], {
-        exact: true
-      }, testDir);
-
-      publishCommand.runValidations();
-      publishCommand.runPreparations();
-
-      publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
-            // TODO: there has to be a better way to do this
-            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
-          }
-
-          expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-            "package-1": "1.0.1",
-          });
-          expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-            "package-2": "1.0.1",
-          });
-          // package-4's dependency on package-1 remains semver because
-          // it does not match the version of package-1 being published
-          expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-            "package-1": "^0.0.0",
-          });
-          expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
-            "package-1": "1.0.1",
-          });
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+    it("updates matching local dependencies of published packages with exact versions", () => {
+      return run(testDir)(
+        "--exact"
+      ).then(() => {
+        expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+          "package-1": "1.0.1",
+        });
+        expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+          "package-2": "1.0.1",
+        });
+        // package-4's dependency on package-1 remains semver because
+        // it does not match the version of package-1 being published
+        expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+          "package-1": "^0.0.0",
+        });
+        expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
+          "package-1": "1.0.1",
+        });
+      });
     });
   });
 
@@ -880,31 +619,13 @@ describe("PublishCommand", () => {
       testDir = dir;
     }));
 
-    it("should use semver increments when passed to cdVersion flag", (done) => {
-      const publishCommand = new PublishCommand([], {
-        cdVersion: "minor"
-      }, testDir);
-
-      publishCommand.runValidations();
-      publishCommand.runPreparations();
-
-      publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
-            // TODO: there has to be a better way to do this
-            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
-          }
-
-          expect(PromptUtilities.select).not.toBeCalled();
-          expect(gitCommitMessage()).toBe("v1.1.0");
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+    it("should use semver increments when passed to cdVersion flag", () => {
+      return run(testDir)(
+        "--cd-version", "minor"
+      ).then(() => {
+        expect(PromptUtilities.select).not.toBeCalled();
+        expect(gitCommitMessage()).toBe("v1.1.0");
+      });
     });
   });
 
@@ -919,113 +640,57 @@ describe("PublishCommand", () => {
       testDir = dir;
     }));
 
-    it("should use semver increments when passed to cdVersion flag", (done) => {
-      const publishCommand = new PublishCommand([], {
-        independent: true,
-        cdVersion: "patch"
-      }, testDir);
-
-      publishCommand.runValidations();
-      publishCommand.runPreparations();
-
-      publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
-            // TODO: there has to be a better way to do this
-            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
-          }
-
-          expect(PromptUtilities.select).not.toBeCalled();
-          expect(gitCommitMessage()).toMatchSnapshot("[independent --cd-version] git commit message");
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+    it("should use semver increments when passed to cdVersion flag", () => {
+      return run(testDir)(
+        "--cd-version", "patch"
+      ).then(() => {
+        expect(PromptUtilities.select).not.toBeCalled();
+        expect(gitCommitMessage()).toMatchSnapshot("[independent --cd-version] git commit message");
+      });
     });
 
     /** =========================================================================
     * INDEPENDENT - CD VERSION - PRERELEASE
     * ======================================================================= */
 
-    it("should bump to prerelease versions with --cd-version=prerelease --preid=foo", (done) => {
-      const publishCommand = new PublishCommand([], {
-        cdVersion: "prerelease",
-        preid: "foo",
-      }, testDir);
+    it("should bump to prerelease versions with --cd-version=prerelease --preid=foo", () => {
+      return run(testDir)(
+        "--cd-version", "prerelease",
+        "--preid", "foo"
+      ).then(() => {
+        expect(updatedPackageVersions(testDir))
+          .toMatchSnapshot("[independent --cd-version=prerelease --preid=foo] bumps package versions");
 
-      publishCommand.runValidations();
-      publishCommand.runPreparations();
-
-      publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
-            // TODO: there has to be a better way to do this
-            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
-          }
-
-          expect(updatedPackageVersions(testDir))
-            .toMatchSnapshot("[independent --cd-version=prerelease --preid=foo] bumps package versions");
-
-          expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-            "package-1": "^1.0.1-foo.0",
-          });
-          expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-            "package-2": "^2.0.1-foo.0",
-          });
-          expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-            "package-1": "^0.0.0",
-          });
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+        expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+          "package-1": "^1.0.1-foo.0",
+        });
+        expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+          "package-2": "^2.0.1-foo.0",
+        });
+        expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+          "package-1": "^0.0.0",
+        });
+      });
     });
 
-    it("should bump to prerelease versions with --cd-version prerelease (no --preid)", (done) => {
-      const publishCommand = new PublishCommand([], {
-        cdVersion: "prerelease",
-      }, testDir);
+    it("should bump to prerelease versions with --cd-version prerelease (no --preid)", () => {
+      return run(testDir)(
+        "--cd-version", "prerelease"
+      ).then(() => {
+        expect(updatedPackageVersions(testDir))
+          .toMatchSnapshot("[independent --cd-version=prerelease] bumps package versions");
 
-      publishCommand.runValidations();
-      publishCommand.runPreparations();
-
-      publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
-            // TODO: there has to be a better way to do this
-            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
-          }
-
-          expect(updatedPackageVersions(testDir))
-            .toMatchSnapshot("[independent --cd-version=prerelease] bumps package versions");
-
-          expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-            "package-1": "^1.0.1-0",
-          });
-          expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-            "package-2": "^2.0.1-0",
-          });
-          expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-            "package-1": "^0.0.0",
-          });
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+        expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+          "package-1": "^1.0.1-0",
+        });
+        expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+          "package-2": "^2.0.1-0",
+        });
+        expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+          "package-1": "^0.0.0",
+        });
+      });
     });
-
   });
 
   /** =========================================================================
@@ -1039,30 +704,12 @@ describe("PublishCommand", () => {
       testDir = dir;
     }));
 
-    it("pushes tags to specified remote", (done) => {
-      const publishCommand = new PublishCommand([], {
-        gitRemote: "upstream"
-      }, testDir);
-
-      publishCommand.runValidations();
-      publishCommand.runPreparations();
-
-      publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
-            // TODO: there has to be a better way to do this
-            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
-          }
-
-          expect(GitUtilities.pushWithTags).lastCalledWith("upstream", ["v1.0.1"], execOpts(testDir));
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+    it("pushes tags to specified remote", () => {
+      return run(testDir)(
+        "--git-remote", "upstream"
+      ).then(() => {
+        expect(GitUtilities.pushWithTags).lastCalledWith("upstream", ["v1.0.1"], execOpts(testDir));
+      });
     });
   });
 
@@ -1077,31 +724,15 @@ describe("PublishCommand", () => {
       testDir = dir;
     }));
 
-    it("does not publish ignored packages", (done) => {
-      const publishCommand = new PublishCommand([], {
-        ignore: ["package-2", "package-3", "package-4"],
-      }, testDir);
-
-      publishCommand.runValidations();
-      publishCommand.runPreparations();
-
-      publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
-            // TODO: there has to be a better way to do this
-            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
-          }
-
-          expect(gitAddedFiles(testDir)).toMatchSnapshot("[normal --ignore] git adds changed files");
-          expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[normal --ignore] npm publish --tag");
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+    it("does not publish ignored packages", () => {
+      return run(testDir)(
+        "--ignore", "package-2",
+        "--ignore", "package-3",
+        "--ignore", "package-4",
+      ).then(() => {
+        expect(gitAddedFiles(testDir)).toMatchSnapshot("[normal --ignore] git adds changed files");
+        expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[normal --ignore] npm publish --tag");
+      });
     });
   });
 
@@ -1116,30 +747,12 @@ describe("PublishCommand", () => {
       testDir = dir;
     }));
 
-    it("commits changes with a custom message", (done) => {
-      const publishCommand = new PublishCommand([], {
-        message: "chore: Release %s :rocket:"
-      }, testDir);
-
-      publishCommand.runValidations();
-      publishCommand.runPreparations();
-
-      publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
-            // TODO: there has to be a better way to do this
-            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
-          }
-
-          expect(GitUtilities.commit).lastCalledWith("chore: Release v1.0.1 :rocket:", execOpts(testDir));
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+    it("commits changes with a custom message", () => {
+      return run(testDir)(
+        "--message", "chore: Release %s :rocket:"
+      ).then(() => {
+        expect(GitUtilities.commit).lastCalledWith("chore: Release v1.0.1 :rocket:", execOpts(testDir));
+      });
     });
   });
 
@@ -1154,35 +767,16 @@ describe("PublishCommand", () => {
       testDir = dir;
     }));
 
-    it("commits changes with a custom message", (done) => {
-      const publishCommand = new PublishCommand([], {
-        independent: true,
-        message: "chore: Custom publish message"
-      }, testDir);
-
-      publishCommand.runValidations();
-      publishCommand.runPreparations();
-
-      publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
-            // TODO: there has to be a better way to do this
-            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
-          }
-
-          expect(GitUtilities.commit).lastCalledWith(
-            expect.stringContaining("chore:"),
-            execOpts(testDir)
-          );
-          expect(gitCommitMessage()).toMatchSnapshot("[independent --message] git commit message");
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+    it("commits changes with a custom message", () => {
+      return run(testDir)(
+        "-m", "chore: Custom publish message"
+      ).then(() => {
+        expect(GitUtilities.commit).lastCalledWith(
+          expect.stringContaining("chore:"),
+          execOpts(testDir)
+        );
+        expect(gitCommitMessage()).toMatchSnapshot("[independent --message] git commit message");
+      });
     });
   });
 
@@ -1227,53 +821,34 @@ describe("PublishCommand", () => {
         ConventionalCommitUtilities.updateIndependentChangelog = updateIndependentChangelog;
       });
 
-      it("should use conventional-commits utility to guess version bump and generate CHANGELOG", (done) => {
-        const publishCommand = new PublishCommand([], {
-          independent: true,
-          conventionalCommits: true
-        }, testDir);
+      it("should use conventional-commits utility to guess version bump and generate CHANGELOG", () => {
+        return run(testDir)(
+          "--conventional-commits"
+        ).then(() => {
+          expect(gitAddedFiles(testDir))
+            .toMatchSnapshot("[independent --conventional-commits] git adds changed files");
+          expect(gitCommitMessage())
+            .toMatchSnapshot("[independent --conventional-commits] git commit message");
 
-        publishCommand.runValidations();
-        publishCommand.runPreparations();
+          [
+            ["package-1", "1.0.0"],
+            ["package-2", "2.0.0"],
+            ["package-3", "3.0.0"],
+            ["package-4", "4.0.0"],
+            ["package-5", "5.0.0"],
+          ].forEach(([name, version]) => {
+            const location = path.join(testDir, "packages", name);
 
-        publishCommand.runCommand(exitWithCode(0, (err) => {
-          if (err) return done.fail(err);
-
-          try {
-            if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
-              // TODO: there has to be a better way to do this
-              throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
-            }
-
-            expect(gitAddedFiles(testDir))
-              .toMatchSnapshot("[independent --conventional-commits] git adds changed files");
-            expect(gitCommitMessage())
-              .toMatchSnapshot("[independent --conventional-commits] git commit message");
-
-            [
-              ["package-1", "1.0.0"],
-              ["package-2", "2.0.0"],
-              ["package-3", "3.0.0"],
-              ["package-4", "4.0.0"],
-              ["package-5", "5.0.0"],
-            ].forEach(([name, version]) => {
-              const location = path.join(testDir, "packages", name);
-
-              expect(ConventionalCommitUtilities.recommendIndependentVersion).toBeCalledWith(
-                expect.objectContaining({ name, version }),
-                execOpts(testDir)
-              );
-              expect(ConventionalCommitUtilities.updateIndependentChangelog).toBeCalledWith(
-                expect.objectContaining({ name, location }),
-                execOpts(testDir)
-              );
-            });
-
-            done();
-          } catch (ex) {
-            done.fail(ex);
-          }
-        }));
+            expect(ConventionalCommitUtilities.recommendIndependentVersion).toBeCalledWith(
+              expect.objectContaining({ name, version }),
+              execOpts(testDir)
+            );
+            expect(ConventionalCommitUtilities.updateIndependentChangelog).toBeCalledWith(
+              expect.objectContaining({ name, location }),
+              execOpts(testDir)
+            );
+          });
+        });
       });
     });
 
@@ -1290,54 +865,35 @@ describe("PublishCommand", () => {
         ConventionalCommitUtilities.updateFixedChangelog = updateFixedChangelog;
       });
 
-      it("should use conventional-commits utility to guess version bump and generate CHANGELOG", (done) => {
-        const publishCommand = new PublishCommand([], {
-          independent: false,
-          conventionalCommits: true
-        }, testDir);
+      it("should use conventional-commits utility to guess version bump and generate CHANGELOG", () => {
+        return run(testDir)(
+          "--conventional-commits"
+        ).then(() => {
+          expect(gitAddedFiles(testDir))
+            .toMatchSnapshot("[fixed --conventional-commits] git adds changed files");
+          expect(gitCommitMessage())
+            .toMatchSnapshot("[fixed --conventional-commits] git commit message");
 
-        publishCommand.runValidations();
-        publishCommand.runPreparations();
+          [
+            ["package-1", "1.0.0"],
+            ["package-2", "1.0.0"],
+            ["package-3", "1.0.0"],
+            ["package-4", "1.0.0"],
+            ["package-5", "1.0.0"],
+          ].forEach(([name, version]) => {
+            const location = path.join(testDir, "packages", name);
 
-        publishCommand.runCommand(exitWithCode(0, (err) => {
-          if (err) return done.fail(err);
+            expect(ConventionalCommitUtilities.recommendFixedVersion).toBeCalledWith(
+              expect.objectContaining({ name, version, location }),
+              execOpts(testDir)
+            );
 
-          try {
-            if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
-              // TODO: there has to be a better way to do this
-              throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
-            }
-
-            expect(gitAddedFiles(testDir))
-              .toMatchSnapshot("[fixed --conventional-commits] git adds changed files");
-            expect(gitCommitMessage())
-              .toMatchSnapshot("[fixed --conventional-commits] git commit message");
-
-            [
-              ["package-1", "1.0.0"],
-              ["package-2", "1.0.0"],
-              ["package-3", "1.0.0"],
-              ["package-4", "1.0.0"],
-              ["package-5", "1.0.0"],
-            ].forEach(([name, version]) => {
-              const location = path.join(testDir, "packages", name);
-
-              expect(ConventionalCommitUtilities.recommendFixedVersion).toBeCalledWith(
-                expect.objectContaining({ name, version, location }),
-                execOpts(testDir)
-              );
-
-              expect(ConventionalCommitUtilities.updateFixedChangelog).toBeCalledWith(
-                expect.objectContaining({ name, location }),
-                execOpts(testDir)
-              );
-            });
-
-            done();
-          } catch (ex) {
-            done.fail(ex);
-          }
-        }));
+            expect(ConventionalCommitUtilities.updateFixedChangelog).toBeCalledWith(
+              expect.objectContaining({ name, location }),
+              execOpts(testDir)
+            );
+          });
+        });
       });
     });
 
@@ -1354,35 +910,16 @@ describe("PublishCommand", () => {
       testDir = dir;
     }));
 
-    it("should publish the changed packages", (done) => {
-      const publishCommand = new PublishCommand([], {
-        independent: true,
-        canary: true,
-        npmTag: "next",
-        yes: true,
-        exact: true,
-      }, testDir);
-
-      publishCommand.runValidations();
-      publishCommand.runPreparations();
-
-      publishCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          if (pathExists.sync(path.join(testDir, "lerna-debug.log"))) {
-            // TODO: there has to be a better way to do this
-            throw new Error(fs.readFileSync(path.join(testDir, "lerna-debug.log"), "utf8"));
-          }
-
-          expect(publishedTagInDirectories(testDir))
-            .toMatchSnapshot("[independent --canary --npm-tag=next --yes --exact] npm publish --tag");
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+    it("should publish the changed packages", () => {
+      return run(testDir)(
+        "--canary",
+        "--npm-tag", "next",
+        "--yes",
+        "--exact"
+      ).then(() => {
+        expect(publishedTagInDirectories(testDir))
+          .toMatchSnapshot("[independent --canary --npm-tag=next --yes --exact] npm publish --tag");
+      });
     });
   });
 });
