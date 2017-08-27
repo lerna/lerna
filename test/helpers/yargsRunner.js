@@ -31,6 +31,10 @@ export default function yargsRunner(commandModule) {
         const context = { _cwd: cwd, _onFinish };
         const parseFn = (yargsError, parsedArgv, yargsOutput) => {
           Object.assign(yargsMeta, { parsedArgv, yargsOutput });
+          // immediate rejection to avoid dangling promise timeout
+          if (yargsError) {
+            _onFinish(yargsError);
+          }
         };
 
         cli.parse([cmd, ...args], context, parseFn);
