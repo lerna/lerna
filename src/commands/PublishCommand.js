@@ -17,7 +17,8 @@ import PromptUtilities from "../PromptUtilities";
 import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
 
 export function handler(argv) {
-  return new PublishCommand(argv._, argv).run();
+  new PublishCommand(argv._, argv, argv._cwd).run()
+    .then(argv._onFinish, argv._onFinish);
 }
 
 export const command = "publish";
@@ -43,7 +44,8 @@ export const builder = {
     defaultDescription: "alpha",
     describe: "Publish packages after every successful merge using the sha as part of the tag.",
     alias: "c",
-    type: "string",
+    // NOTE: this type must remain undefined, as it is too overloaded to make sense
+    // type: "string",
   },
   "cd-version": {
     group: "Command Options:",

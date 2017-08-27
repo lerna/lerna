@@ -5,7 +5,8 @@ import Command from "../Command";
 import GitUtilities from "../GitUtilities";
 
 export function handler(argv) {
-  return new DiffCommand([argv.pkg], argv).run();
+  new DiffCommand([argv.pkg], argv, argv._cwd).run()
+    .then(argv._onFinish, argv._onFinish);
 }
 
 export const command = "diff [pkg]";

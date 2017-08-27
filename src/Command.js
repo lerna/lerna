@@ -74,6 +74,22 @@ export const builder = {
   }
 };
 
+class ValidationError extends Error {
+  constructor(prefix, message) {
+    super(message);
+    this.name = "ValidationError";
+    log.error(prefix, message);
+  }
+}
+
+class ValidationWarning extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "ValidationWarning";
+    log.warn("EINVALID", message);
+  }
+}
+
 export default class Command {
   constructor(input, flags, cwd) {
     log.pause();
@@ -191,79 +207,80 @@ export default class Command {
       log.info("versioning", "independent");
     }
 
-    this.runValidations();
-    this.runPreparations();
-    this.runCommand();
+    return new Promise((resolve, reject) => {
+      const onComplete = (err, exitCode) => {
+        if (err) {
+          err.exitCode = exitCode;
+          reject(err);
+        } else {
+          resolve({ exitCode });
+        }
+      };
+
+      try {
+        this.runValidations();
+        this.runPreparations();
+      } catch (err) {
+        return this._complete(err, 1, onComplete);
+      }
+
+      this.runCommand(onComplete);
+    });
   }
 
   runValidations() {
     if (this.requiresGit && !GitUtilities.isInitialized(this.execOpts)) {
-      log.error("ENOGIT", "This is not a git repository, did you already run `git init` or `lerna init`?");
-      this._complete(null, 1);
-      return;
+      throw new ValidationError(
+        "ENOGIT",
+        "This is not a git repository, did you already run `git init` or `lerna init`?"
+      );
     }
 
     if (!this.repository.packageJson) {
-      log.error("ENOPKG", "`package.json` does not exist, have you run `lerna init`?");
-      this._complete(null, 1);
-      return;
+      throw new ValidationError("ENOPKG", "`package.json` does not exist, have you run `lerna init`?");
     }
 
     if (!this.repository.initVersion) {
-      log.error("ENOLERNA", "`lerna.json` does not exist, have you run `lerna init`?");
-      this._complete(null, 1);
-      return;
+      throw new ValidationError("ENOLERNA", "`lerna.json` does not exist, have you run `lerna init`?");
     }
 
     if (this.options.independent && !this.repository.isIndependent()) {
-      log.error(
+      throw new ValidationError(
         "EVERSIONMODE",
         "You ran lerna with `--independent` or `-i`, but the repository is not set to independent mode. " +
         "To use independent mode you need to set your `lerna.json` \"version\" to \"independent\". " +
         "Then you won't need to pass the `--independent` or `-i` flags."
       );
-      this._complete(null, 1);
-      return;
     }
 
     if (
       process.env.NODE_ENV !== "lerna-test" &&
       !this.repository.isCompatibleLerna(this.lernaVersion)
     ) {
-      log.error(
+      throw new ValidationError(
         "EMISMATCH",
         `Lerna major version mismatch: The current version of lerna is ${this.lernaVersion}, ` +
         `but the Lerna version in \`lerna.json\` is ${this.repository.initVersion}. ` +
         `You can either run \`lerna init\` again or install \`lerna@${this.repository.initVersion}\`.`
       );
-      this._complete(null, 1);
-      return;
     }
 
     /* eslint-disable max-len */
     // TODO: remove these warnings eventually
     if (FileSystemUtilities.existsSync(this.repository.versionLocation)) {
-      log.warn("You have a `VERSION` file in your repository, this is leftover from a previous version. Please run `lerna init` to update.");
-      this._complete(null, 1);
-      return;
+      throw new ValidationWarning("You have a `VERSION` file in your repository, this is leftover from a previous version. Please run `lerna init` to update.");
     }
 
     if (process.env.NPM_DIST_TAG !== undefined) {
-      log.warn("`NPM_DIST_TAG=[tagname] lerna publish` is deprecated, please use `lerna publish --tag [tagname]` instead.");
-      this._complete(null, 1);
-      return;
+      throw new ValidationWarning("`NPM_DIST_TAG=[tagname] lerna publish` is deprecated, please use `lerna publish --tag [tagname]` instead.");
     }
 
     if (process.env.FORCE_VERSION !== undefined) {
-      log.warn("`FORCE_VERSION=[package/*] lerna updated/publish` is deprecated, please use `lerna updated/publish --force-publish [package/*]` instead.");
-      this._complete(null, 1);
-      return;
+      throw new ValidationWarning("`FORCE_VERSION=[package/*] lerna updated/publish` is deprecated, please use `lerna updated/publish --force-publish [package/*]` instead.");
     }
 
     if (this.options.onlyExplicitUpdates) {
-      log.warn("`--only-explicit-updates` has been removed. This flag was only ever added for Babel and we never should have exposed it to everyone.");
-      this._complete(null, 1);
-      return;
+      throw new ValidationWarning("`--only-explicit-updates` has been removed. This flag was only ever added for Babel and we never should have exposed it to everyone.");
     }
     /* eslint-enable max-len */
   }
@@ -301,7 +318,6 @@ export default class Command {
       }
     } catch (err) {
       log.error("EPACKAGES", "Errored while collecting packages and package graph", err);
-      this._complete(null, 1);
       throw err;
     }
   }
@@ -338,7 +354,11 @@ export default class Command {
   }
 
   _complete(err, code, callback) {
-    if (err) {
+    if (
+      err &&
+      err.name !== "ValidationWarning" &&
+      err.name !== "ValidationError"
+    ) {
       writeLogFile(this.repository.rootPath);
     }
 
