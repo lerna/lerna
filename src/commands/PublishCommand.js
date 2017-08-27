@@ -44,7 +44,8 @@ export const builder = {
     defaultDescription: "alpha",
     describe: "Publish packages after every successful merge using the sha as part of the tag.",
     alias: "c",
-    type: "string",
+    // NOTE: this type must remain undefined, as it is too overloaded to make sense
+    // type: "string",
   },
   "cd-version": {
     group: "Command Options:",
