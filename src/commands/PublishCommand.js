@@ -330,18 +330,18 @@ export default class PublishCommand extends Command {
         return callback(null, { versions });
       } else {
         // Non-Independent Conventional-Commits Mode
-        // const currentFixedVersion = this.repository.lernaJson.version || "0.0.0";
-        //
-        // this.updates.forEach((update) => {
-        //   const pkg = update.package;
-        //   if (semver.lt(pkg.version, currentFixedVersion)) {
-        //     this.logger.verbose("publish",
-        //       `Overriding version of ${pkg.name} from  ${pkg.version} to ${currentFixedVersion}`);
-        //     pkg.version = currentFixedVersion;
-        //     return update;
-        //   }
-        //   return update;
-        // });
+        const currentFixedVersion = this.repository.lernaJson.version || "0.0.0";
+
+        this.updates.forEach((update) => {
+          const pkg = update.package;
+          if (semver.lt(pkg.version, currentFixedVersion)) {
+            this.logger.verbose("publish",
+              `Overriding version of ${pkg.name} from  ${pkg.version} to ${currentFixedVersion}`);
+            pkg.version = currentFixedVersion;
+            return update;
+          }
+          return update;
+        });
 
         let version = "0.0.0";
         this.recommendVersions(this.updates, ConventionalCommitUtilities.recommendFixedVersion,
