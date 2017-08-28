@@ -9,13 +9,14 @@ import touch from "touch";
 import output from "../src/utils/output";
 
 // helpers
-import exitWithCode from "./helpers/exitWithCode";
 import initFixture from "./helpers/initFixture";
-import loggingOutput from "./helpers/loggingOutput";
 import updateLernaConfig from "./helpers/updateLernaConfig";
+import yargsRunner from "./helpers/yargsRunner";
 
 // file under test
-import UpdatedCommand from "../src/commands/UpdatedCommand";
+import * as commandModule from "../src/commands/UpdatedCommand";
+
+const run = yargsRunner(commandModule);
 
 jest.mock("../src/utils/output");
 
@@ -44,109 +45,55 @@ const setupGitChanges = (testDir, filePaths) => {
   gitCommit(opts);
 };
 
-describe("UpdatedCommand", () => {
+describe("UpdatedCommand", async () => {
   afterEach(() => jest.resetAllMocks());
 
   /** =========================================================================
    * Basic
    * ======================================================================= */
 
-  describe("basic", () => {
+  describe("basic", async () => {
     let testDir;
+    let lernaUpdated;
 
     beforeEach(() => initFixture("UpdatedCommand/basic").then((dir) => {
       testDir = dir;
+      lernaUpdated = run(testDir);
     }));
 
-    it("should list changes", (done) => {
+    it("should list changes", async () => {
       setupGitChanges(testDir, [
         "packages/package-2/random-file",
       ]);
 
-      const updatedCommand = new UpdatedCommand([], {}, testDir);
-
-      updatedCommand.runValidations();
-      updatedCommand.runPreparations();
-
-      updatedCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-        try {
-          expect(loggingOutput()).toMatchSnapshot();
-          expect(consoleOutput()).toMatchSnapshot();
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      await lernaUpdated();
+      expect(consoleOutput()).toMatchSnapshot();
     });
 
-    it("should list all packages when no tag is found", (done) => {
-      const updatedCommand = new UpdatedCommand([], {}, testDir);
-
-      updatedCommand.runValidations();
-      updatedCommand.runPreparations();
-
-      updatedCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-        try {
-          expect(loggingOutput()).toMatchSnapshot();
-          expect(consoleOutput()).toMatchSnapshot();
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+    it("should list all packages when no tag is found", async () => {
+      await lernaUpdated();
+      expect(consoleOutput()).toMatchSnapshot();
     });
 
-    it("should list changes with --force-publish *", (done) => {
+    it("should list changes with --force-publish *", async () => {
       setupGitChanges(testDir, [
         "packages/package-2/random-file",
       ]);
 
-      const updatedCommand = new UpdatedCommand([], {
-        forcePublish: "*"
-      }, testDir);
-
-      updatedCommand.runValidations();
-      updatedCommand.runPreparations();
-
-      updatedCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-        try {
-          expect(loggingOutput()).toMatchSnapshot();
-          expect(consoleOutput()).toMatchSnapshot();
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      await lernaUpdated("--force-publish");
+      expect(consoleOutput()).toMatchSnapshot();
     });
 
-    it("should list changes with --force-publish [package,package]", (done) => {
+    it("should list changes with --force-publish [package,package]", async () => {
       setupGitChanges(testDir, [
         "packages/package-3/random-file",
       ]);
 
-      const updatedCommand = new UpdatedCommand([], {
-        forcePublish: "package-2,package-4"
-      }, testDir);
-
-      updatedCommand.runValidations();
-      updatedCommand.runPreparations();
-
-      updatedCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-        try {
-          expect(loggingOutput()).toMatchSnapshot();
-          expect(consoleOutput()).toMatchSnapshot();
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      await lernaUpdated("--force-publish", "package-2,package-4");
+      expect(consoleOutput()).toMatchSnapshot();
     });
 
-    it("should list changes without ignored files", (done) => {
+    it("should list changes without ignored files", async () => {
       updateLernaConfig(testDir, {
         commands: { // "command" also supported
           publish: {
@@ -160,78 +107,37 @@ describe("UpdatedCommand", () => {
         "packages/package-3/random-file",
       ]);
 
-      const updatedCommand = new UpdatedCommand([], {}, testDir);
-
-      updatedCommand.runValidations();
-      updatedCommand.runPreparations();
-
-      updatedCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-        try {
-          expect(loggingOutput()).toMatchSnapshot();
-          expect(consoleOutput()).toMatchSnapshot();
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      await lernaUpdated();
+      expect(consoleOutput()).toMatchSnapshot();
     });
 
-    it("should list changes for explicitly changed packages", (done) => {
+    it("throws an error when --only-explicit-updates is passed", async () => {
       setupGitChanges(testDir, [
         "packages/package-2/random-file",
       ]);
 
-      const updatedCommand = new UpdatedCommand([], {
-        [SECRET_FLAG]: true
-      }, testDir);
-
-      updatedCommand.runValidations();
-      updatedCommand.runPreparations();
-
-      updatedCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-        try {
-          expect(loggingOutput()).toMatchSnapshot();
-          expect(consoleOutput()).toMatchSnapshot();
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      try {
+        await lernaUpdated("--only-explicit-updates");
+      } catch (err) {
+        expect(err.exitCode).toBe(1);
+        expect(err.message).toMatch("--only-explicit-updates");
+      }
     });
 
-    it("should list changes in private packages", (done) => {
+    it("should list changes in private packages", async () => {
       setupGitChanges(testDir, [
         "packages/package-5/random-file",
       ]);
 
-      const updatedCommand = new UpdatedCommand([], {}, testDir);
-
-      updatedCommand.runValidations();
-      updatedCommand.runPreparations();
-
-      updatedCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-        try {
-          expect(loggingOutput()).toMatchSnapshot();
-          expect(consoleOutput()).toMatchSnapshot();
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      await lernaUpdated();
+      expect(consoleOutput()).toMatchSnapshot();
     });
 
-    it("should return a non-zero exit code when there are no changes", (done) => {
+    it("should return a non-zero exit code when there are no changes", async () => {
       gitTag({ cwd: testDir });
 
-      const updatedCommand = new UpdatedCommand([], {}, testDir);
-
-      updatedCommand.runValidations();
-      updatedCommand.runPreparations();
-
-      updatedCommand.runCommand(exitWithCode(1, done));
+      const { exitCode } = await lernaUpdated();
+      expect(exitCode).toBe(1);
     });
   });
 
@@ -239,81 +145,43 @@ describe("UpdatedCommand", () => {
    * Circular
    * ======================================================================= */
 
-  describe("circular", () => {
+  describe("circular", async () => {
     let testDir;
+    let lernaUpdated;
 
     beforeEach(() => initFixture("UpdatedCommand/circular").then((dir) => {
       testDir = dir;
+      lernaUpdated = run(testDir);
     }));
 
-    it("should list changes", (done) => {
+    it("should list changes", async () => {
       setupGitChanges(testDir, [
         "packages/package-3/random-file",
       ]);
 
-      const updatedCommand = new UpdatedCommand([], {}, testDir);
-
-      updatedCommand.runValidations();
-      updatedCommand.runPreparations();
-
-      updatedCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-        try {
-          expect(consoleOutput()).toMatchSnapshot();
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      await lernaUpdated();
+      expect(consoleOutput()).toMatchSnapshot();
     });
 
-    it("should list changes with --force-publish *", (done) => {
+    it("should list changes with --force-publish *", async () => {
       setupGitChanges(testDir, [
         "packages/package-2/random-file",
       ]);
 
-      const updatedCommand = new UpdatedCommand([], {
-        forcePublish: "*"
-      }, testDir);
-
-      updatedCommand.runValidations();
-      updatedCommand.runPreparations();
-
-      updatedCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-        try {
-          expect(consoleOutput()).toMatchSnapshot();
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      await lernaUpdated("--force-publish=*");
+      expect(consoleOutput()).toMatchSnapshot();
     });
 
-    it("should list changes with --force-publish [package,package]", (done) => {
+    it("should list changes with --force-publish [package,package]", async () => {
       setupGitChanges(testDir, [
         "packages/package-4/random-file",
       ]);
 
-      const updatedCommand = new UpdatedCommand([], {
-        forcePublish: "package-2"
-      }, testDir);
-
-      updatedCommand.runValidations();
-      updatedCommand.runPreparations();
-
-      updatedCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-        try {
-          expect(consoleOutput()).toMatchSnapshot();
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      await lernaUpdated("--force-publish", "package-2");
+      expect(consoleOutput()).toMatchSnapshot();
     });
 
-    it("should list changes without ignored files", (done) => {
+    it("should list changes without ignored files", async () => {
       updateLernaConfig(testDir, {
         command: { // "commands" also supported
           publish: {
@@ -327,31 +195,15 @@ describe("UpdatedCommand", () => {
         "packages/package-3/random-file",
       ]);
 
-      const updatedCommand = new UpdatedCommand([], {}, testDir);
-
-      updatedCommand.runValidations();
-      updatedCommand.runPreparations();
-
-      updatedCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-        try {
-          expect(consoleOutput()).toMatchSnapshot();
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      await lernaUpdated();
+      expect(consoleOutput()).toMatchSnapshot();
     });
 
-    it("should return a non-zero exit code when there are no changes", (done) => {
+    it("should return a non-zero exit code when there are no changes", async () => {
       gitTag({ cwd: testDir });
 
-      const updatedCommand = new UpdatedCommand([], {}, testDir);
-
-      updatedCommand.runValidations();
-      updatedCommand.runPreparations();
-
-      updatedCommand.runCommand(exitWithCode(1, done));
+      const { exitCode } = await lernaUpdated();
+      expect(exitCode).toBe(1);
     });
   });
 
@@ -359,41 +211,20 @@ describe("UpdatedCommand", () => {
    * JSON Output
    * ======================================================================= */
 
-  describe("with --json", () => {
-    let testDir;
+  describe("with --json", async () => {
+    it("should list changes as a json object", async () => {
+      const testDir = await initFixture("UpdatedCommand/basic");
+      const lernaUpdated = run(testDir);
 
-    beforeEach(() => initFixture("UpdatedCommand/basic").then((dir) => {
-      testDir = dir;
-    }));
-
-    it("should list changes as a json object", (done) => {
       setupGitChanges(testDir, [
         "packages/package-2/random-file",
       ]);
 
-      const updatedCommand = new UpdatedCommand([], {
-        json: true
-      }, testDir);
+      await lernaUpdated("--json")
 
-      updatedCommand.runValidations();
-      updatedCommand.runPreparations();
-
-      updatedCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-        try {
-          // Output should be a parseable string
-          const jsonOutput = JSON.parse(consoleOutput());
-          expect(jsonOutput).toMatchSnapshot();
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      // Output should be a parseable string
+      const jsonOutput = JSON.parse(consoleOutput());
+      expect(jsonOutput).toMatchSnapshot();
     });
   });
 });
-
-// TODO: remove this when we _really_ remove support for SECRET_FLAG
-const Buffer = require("safe-buffer").Buffer;
-// eslint-disable-next-line max-len
-const SECRET_FLAG = Buffer.from("ZGFuZ2Vyb3VzbHlPbmx5UHVibGlzaEV4cGxpY2l0VXBkYXRlc1RoaXNJc0FDdXN0b21GbGFnRm9yQmFiZWxBbmRZb3VTaG91bGROb3RCZVVzaW5nSXRKdXN0RGVhbFdpdGhNb3JlUGFja2FnZXNCZWluZ1B1Ymxpc2hlZEl0SXNOb3RBQmlnRGVhbA==", "base64").toString("ascii");

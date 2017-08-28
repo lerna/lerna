@@ -20,7 +20,8 @@ const updatedOptions = _.assign(
 );
 
 export function handler(argv) {
-  return new UpdatedCommand(argv._, argv).run();
+  new UpdatedCommand(argv._, argv, argv._cwd).run()
+    .then(argv._onFinish, argv._onFinish);
 }
 
 export const command = "updated";

@@ -9,7 +9,8 @@ import GitUtilities from "../GitUtilities";
 import PromptUtilities from "../PromptUtilities";
 
 export function handler(argv) {
-  return new ImportCommand([argv.pathToRepo], argv).run();
+  new ImportCommand([argv.pathToRepo], argv, argv._cwd).run()
+    .then(argv._onFinish, argv._onFinish);
 }
 
 export const command = "import <pathToRepo>";
@@ -28,10 +29,6 @@ export const builder = {
 export default class ImportCommand extends Command {
   initialize(callback) {
     const inputPath = this.input[0];
-
-    if (!inputPath) {
-      return callback(new Error("Missing argument: Path to external repository"));
-    }
 
     const externalRepoPath = path.resolve(inputPath);
     const externalRepoBase = path.basename(externalRepoPath);
