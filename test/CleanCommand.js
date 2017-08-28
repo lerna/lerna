@@ -9,9 +9,12 @@ import callsBack from "./helpers/callsBack";
 import exitWithCode from "./helpers/exitWithCode";
 import initFixture from "./helpers/initFixture";
 import normalizeRelativeDir from "./helpers/normalizeRelativeDir";
+import yargsRunner from "./helpers/yargsRunner";
 
 // file under test
-import CleanCommand from "../src/commands/CleanCommand";
+import * as commandModule from "../src/commands/CleanCommand";
+
+const run = yargsRunner(commandModule);
 
 jest.mock("../src/PromptUtilities");
 
