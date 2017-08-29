@@ -29,20 +29,16 @@ chalk.enabled = false;
 const consoleOutput = () =>
   output.mock.calls.map((args) => normalizeNewline(args[0]));
 
-const gitTag = (opts) => execa.sync("git", ["tag", "v1.0.0"], opts);
-const gitAdd = (opts) => execa.sync("git", ["add", "-A"], opts);
-const gitCommit = (opts) => execa.sync("git", ["commit", "-m", "Commit"], opts);
-const touchFile = (opts) => (filePath) =>
-    touch.sync(path.join(opts.cwd, filePath));
+const gitTag = (cwd) => execa("git", ["tag", "v1.0.0"], { cwd });
+const gitAdd = (cwd) => execa("git", ["add", "-A"], { cwd });
+const gitCommit = (cwd) => execa("git", ["commit", "-m", "Commit"], { cwd });
+const touchFile = (cwd) => (filePath) => touch(path.join(cwd, filePath));
 
-const setupGitChanges = (testDir, filePaths) => {
-  const opts = {
-    cwd: testDir,
-  };
-  gitTag(opts);
-  filePaths.forEach(touchFile(opts));
-  gitAdd(opts);
-  gitCommit(opts);
+const setupGitChanges = async (cwd, filePaths) => {
+  await gitTag(cwd);
+  await Promise.all(filePaths.map(touchFile(cwd)));
+  await gitAdd(cwd);
+  await gitCommit(cwd);
 };
 
 describe("UpdatedCommand", async () => {
@@ -62,7 +58,7 @@ describe("UpdatedCommand", async () => {
     }));
 
     it("should list changes", async () => {
-      setupGitChanges(testDir, [
+      await setupGitChanges(testDir, [
         "packages/package-2/random-file",
       ]);
 
@@ -76,7 +72,7 @@ describe("UpdatedCommand", async () => {
     });
 
     it("should list changes with --force-publish *", async () => {
-      setupGitChanges(testDir, [
+      await setupGitChanges(testDir, [
         "packages/package-2/random-file",
       ]);
 
@@ -85,7 +81,7 @@ describe("UpdatedCommand", async () => {
     });
 
     it("should list changes with --force-publish [package,package]", async () => {
-      setupGitChanges(testDir, [
+      await setupGitChanges(testDir, [
         "packages/package-3/random-file",
       ]);
 
@@ -94,7 +90,7 @@ describe("UpdatedCommand", async () => {
     });
 
     it("should list changes without ignored files", async () => {
-      updateLernaConfig(testDir, {
+      await updateLernaConfig(testDir, {
         commands: { // "command" also supported
           publish: {
             ignore: ["ignored-file"],
@@ -102,7 +98,7 @@ describe("UpdatedCommand", async () => {
         },
       });
 
-      setupGitChanges(testDir, [
+      await setupGitChanges(testDir, [
         "packages/package-2/ignored-file",
         "packages/package-3/random-file",
       ]);
@@ -112,7 +108,7 @@ describe("UpdatedCommand", async () => {
     });
 
     it("throws an error when --only-explicit-updates is passed", async () => {
-      setupGitChanges(testDir, [
+      await setupGitChanges(testDir, [
         "packages/package-2/random-file",
       ]);
 
@@ -125,7 +121,7 @@ describe("UpdatedCommand", async () => {
     });
 
     it("should list changes in private packages", async () => {
-      setupGitChanges(testDir, [
+      await setupGitChanges(testDir, [
         "packages/package-5/random-file",
       ]);
 
@@ -134,7 +130,7 @@ describe("UpdatedCommand", async () => {
     });
 
     it("should return a non-zero exit code when there are no changes", async () => {
-      gitTag({ cwd: testDir });
+      await gitTag(testDir);
 
       const { exitCode } = await lernaUpdated();
       expect(exitCode).toBe(1);
@@ -155,7 +151,7 @@ describe("UpdatedCommand", async () => {
     }));
 
     it("should list changes", async () => {
-      setupGitChanges(testDir, [
+      await setupGitChanges(testDir, [
         "packages/package-3/random-file",
       ]);
 
@@ -164,7 +160,7 @@ describe("UpdatedCommand", async () => {
     });
 
     it("should list changes with --force-publish *", async () => {
-      setupGitChanges(testDir, [
+      await setupGitChanges(testDir, [
         "packages/package-2/random-file",
       ]);
 
@@ -173,7 +169,7 @@ describe("UpdatedCommand", async () => {
     });
 
     it("should list changes with --force-publish [package,package]", async () => {
-      setupGitChanges(testDir, [
+      await setupGitChanges(testDir, [
         "packages/package-4/random-file",
       ]);
 
@@ -182,7 +178,7 @@ describe("UpdatedCommand", async () => {
     });
 
     it("should list changes without ignored files", async () => {
-      updateLernaConfig(testDir, {
+      await updateLernaConfig(testDir, {
         command: { // "commands" also supported
           publish: {
             ignore: ["ignored-file"],
@@ -190,7 +186,7 @@ describe("UpdatedCommand", async () => {
         },
       });
 
-      setupGitChanges(testDir, [
+      await setupGitChanges(testDir, [
         "packages/package-2/ignored-file",
         "packages/package-3/random-file",
       ]);
@@ -200,7 +196,7 @@ describe("UpdatedCommand", async () => {
     });
 
     it("should return a non-zero exit code when there are no changes", async () => {
-      gitTag({ cwd: testDir });
+      await gitTag(testDir);
 
       const { exitCode } = await lernaUpdated();
       expect(exitCode).toBe(1);
@@ -216,7 +212,7 @@ describe("UpdatedCommand", async () => {
       const testDir = await initFixture("UpdatedCommand/basic");
       const lernaUpdated = run(testDir);
 
-      setupGitChanges(testDir, [
+      await setupGitChanges(testDir, [
         "packages/package-2/random-file",
       ]);
 

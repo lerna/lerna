@@ -24,7 +24,7 @@ jest.mock("../src/PromptUtilities");
 log.level = "silent";
 
 const lastCommitInDir = (cwd) =>
-  execa.sync("git", ["log", "-1", "--format=%s"], { cwd }).stdout;
+  execa.stdout("git", ["log", "-1", "--format=%s"], { cwd });
 
 describe("ImportCommand", () => {
   beforeEach(() => {
@@ -53,7 +53,7 @@ describe("ImportCommand", () => {
       const packageJson = path.join(testDir, "packages", path.basename(externalDir), "package.json");
       await lernaImport(externalDir);
 
-      expect(lastCommitInDir(testDir)).toBe("Init external commit");
+      expect(await lastCommitInDir(testDir)).toBe("Init external commit");
       expect(await pathExists(packageJson)).toBe(true);
     });
 
@@ -67,13 +67,13 @@ describe("ImportCommand", () => {
     it("supports moved files within the external repo", async () => {
       const newFilePath = path.join(testDir, "packages", path.basename(externalDir), "new-file");
 
-      execa.sync("git", ["mv", "old-file", "new-file"], { cwd: externalDir });
-      execa.sync("git", ["commit", "-m", "Moved old-file to new-file"], { cwd: externalDir });
+      await execa("git", ["mv", "old-file", "new-file"], { cwd: externalDir });
+      await execa("git", ["commit", "-m", "Moved old-file to new-file"], { cwd: externalDir });
 
       await lernaImport(externalDir);
 
-      expect(lastCommitInDir(testDir)).toBe("Moved old-file to new-file");
-      expect(pathExists.sync(newFilePath)).toBe(true);
+      expect(await lastCommitInDir(testDir)).toBe("Moved old-file to new-file");
+      expect(await pathExists(newFilePath)).toBe(true);
     });
 
     it("exits early when confirmation is rejected", async () => {
@@ -81,12 +81,14 @@ describe("ImportCommand", () => {
 
       await lernaImport(externalDir);
 
-      expect(lastCommitInDir(testDir)).toBe("Init commit");
+      expect(await lastCommitInDir(testDir)).toBe("Init commit");
     });
 
     it("allows skipping confirmation prompt", async () => {
       const { exitCode } = await lernaImport(externalDir, "--yes");
+
       expect(exitCode).toBe(0);
+      expect(PromptUtilities.confirm).not.toBeCalled();
     });
 
     it("errors without an argument", async () => {
@@ -109,7 +111,7 @@ describe("ImportCommand", () => {
     });
 
     it("errors when external package.json is missing", async () => {
-      fs.unlinkSync(path.join(externalDir, "package.json"));
+      await fs.unlink(path.join(externalDir, "package.json"));
 
       try {
         await lernaImport(externalDir);
@@ -123,7 +125,7 @@ describe("ImportCommand", () => {
     it("errors when external package.json has no name property", async () => {
       const packageJson = path.join(externalDir, "package.json");
 
-      fs.writeFileSync(packageJson, "{}");
+      await fs.writeFile(packageJson, "{}");
 
       try {
         await lernaImport(externalDir);
@@ -137,7 +139,7 @@ describe("ImportCommand", () => {
       const targetDir = path.join(testDir, "packages", path.basename(externalDir));
       const relativePath = path.relative(testDir, targetDir);
 
-      fs.ensureDirSync(targetDir);
+      await fs.ensureDir(targetDir);
 
       try {
         await lernaImport(externalDir);
@@ -151,9 +153,9 @@ describe("ImportCommand", () => {
       const targetDir = path.join(testDir, "pkg", path.basename(externalDir));
       const relativePath = path.relative(testDir, targetDir);
 
-      fs.ensureDirSync(targetDir);
+      await fs.ensureDir(targetDir);
 
-      updateLernaConfig(testDir, {
+      await updateLernaConfig(testDir, {
         packages: ["pkg/*"],
       });
 
@@ -168,8 +170,8 @@ describe("ImportCommand", () => {
     it("errors if repo has uncommitted changes", async () => {
       const uncommittedFile = path.join(testDir, "uncommittedFile");
 
-      fs.writeFileSync(uncommittedFile, "stuff");
-      execa.sync("git", ["add", uncommittedFile], { cwd: testDir });
+      await fs.writeFile(uncommittedFile, "stuff");
+      await execa("git", ["add", uncommittedFile], { cwd: testDir });
 
       try {
         await lernaImport(externalDir);
