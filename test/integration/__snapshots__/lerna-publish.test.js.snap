@@ -1,5 +1,35 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`commit: first feature added in fixed mode --conventional-commits --force-publish=* 1`] = `
+"v1.1.0
+"
+`;
+
+exports[`commit: first feature added in fixed mode --conventional-commits 1`] = `
+"v1.1.0
+"
+`;
+
+exports[`commit: initial commit in fixed mode --conventional-commits --force-publish=* 1`] = `
+"v1.0.1
+"
+`;
+
+exports[`commit: initial commit in fixed mode --conventional-commits 1`] = `
+"v1.0.1
+"
+`;
+
+exports[`commit: second feature added in fixed mode --conventional-commits --force-publish=* 1`] = `
+"v1.2.0
+"
+`;
+
+exports[`commit: second feature added in fixed mode --conventional-commits 1`] = `
+"v1.2.0
+"
+`;
+
 exports[`commit: updates fixed versions 1`] = `
 "v1.0.1
 "
@@ -14,6 +44,90 @@ exports[`commit: updates independent versions 1`] = `
  - package-4@5.0.0
  - package-5@6.0.0
 "
+`;
+
+exports[`packages: first feature added in fixed mode --conventional-commits --force-publish=* 1`] = `
+Array [
+  Object {
+    "foo": true,
+    "name": "package-1",
+    "version": "1.1.0",
+  },
+  Object {
+    "name": "package-2",
+    "version": "1.1.0",
+  },
+]
+`;
+
+exports[`packages: first feature added in fixed mode --conventional-commits 1`] = `
+Array [
+  Object {
+    "foobar": true,
+    "name": "package-1",
+    "version": "1.1.0",
+  },
+  Object {
+    "name": "package-2",
+    "version": "1.0.1",
+  },
+]
+`;
+
+exports[`packages: initial commit in fixed mode --conventional-commits --force-publish=* 1`] = `
+Array [
+  Object {
+    "name": "package-1",
+    "version": "1.0.1",
+  },
+  Object {
+    "name": "package-2",
+    "version": "1.0.1",
+  },
+]
+`;
+
+exports[`packages: initial commit in fixed mode --conventional-commits 1`] = `
+Array [
+  Object {
+    "name": "package-1",
+    "version": "1.0.1",
+  },
+  Object {
+    "name": "package-2",
+    "version": "1.0.1",
+  },
+]
+`;
+
+exports[`packages: second feature added in fixed mode --conventional-commits --force-publish=* 1`] = `
+Array [
+  Object {
+    "foo": true,
+    "name": "package-1",
+    "version": "1.2.0",
+  },
+  Object {
+    "bar": true,
+    "name": "package-2",
+    "version": "1.2.0",
+  },
+]
+`;
+
+exports[`packages: second feature added in fixed mode --conventional-commits 1`] = `
+Array [
+  Object {
+    "foobar": true,
+    "name": "package-1",
+    "version": "1.1.0",
+  },
+  Object {
+    "baz": true,
+    "name": "package-2",
+    "version": "1.2.0",
+  },
+]
 `;
 
 exports[`packages: updates fixed versions 1`] = `
@@ -117,6 +231,52 @@ lerna info auto-confirmed "
 `;
 
 exports[`stdout: exit 0 when no updates 1`] = `""`;
+
+exports[`stdout: first feature added in fixed mode --conventional-commits --force-publish=* 1`] = `
+"
+Changes:
+ - package-1: 1.0.1 => 1.1.0
+ - package-2: 1.0.1 => 1.1.0
+"
+`;
+
+exports[`stdout: first feature added in fixed mode --conventional-commits 1`] = `
+"
+Changes:
+ - package-1: 1.0.1 => 1.1.0
+"
+`;
+
+exports[`stdout: initial commit in fixed mode --conventional-commits --force-publish=* 1`] = `
+"
+Changes:
+ - package-1: 1.0.0 => 1.0.1
+ - package-2: 1.0.0 => 1.0.1
+"
+`;
+
+exports[`stdout: initial commit in fixed mode --conventional-commits 1`] = `
+"
+Changes:
+ - package-1: 1.0.0 => 1.0.1
+ - package-2: 1.0.0 => 1.0.1
+"
+`;
+
+exports[`stdout: second feature added in fixed mode --conventional-commits --force-publish=* 1`] = `
+"
+Changes:
+ - package-1: 1.1.0 => 1.2.0
+ - package-2: 1.1.0 => 1.2.0
+"
+`;
+
+exports[`stdout: second feature added in fixed mode --conventional-commits 1`] = `
+"
+Changes:
+ - package-2: 1.1.0 => 1.2.0
+"
+`;
 
 exports[`stdout: updates fixed versions 1`] = `
 "

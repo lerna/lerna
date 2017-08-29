@@ -2,6 +2,9 @@ import execa from "execa";
 import fs from "fs-extra";
 import globby from "globby";
 import normalizeNewline from "normalize-newline";
+import writeJsonFile from "write-json-file";
+import loadJsonFile from "load-json-file";
+import path from "path";
 
 import { LERNA_BIN } from "../helpers/constants";
 import initFixture from "../helpers/initFixture";
@@ -9,6 +12,21 @@ import loadPkgManifests from "../helpers/loadPkgManifests";
 
 const lastCommitMessage = (cwd) =>
   execa.stdout("git", ["log", "-1", "--format=%B"], { cwd }).then(normalizeNewline);
+
+async function pkgManifestsAndCommitMsg(cwd) {
+  return Promise.all([
+    loadPkgManifests(cwd),
+    lastCommitMessage(cwd),
+  ]);
+}
+
+async function commitChangeToPackage(cwd, packageName, commitMsg, data) {
+  const packageJSONPath = path.join(cwd, 'packages', packageName, 'package.json');
+  const pkg = await loadJsonFile(packageJSONPath);
+  await writeJsonFile(packageJSONPath, Object.assign(pkg, data));
+  await execa("git", ["add", "."], {cwd});
+  return await execa("git", ["commit", "-m", commitMsg], {cwd});
+}
 
 describe("lerna publish", () => {
   test.concurrent("exit 0 when no updates", async () => {
@@ -68,6 +86,128 @@ describe("lerna publish", () => {
 
     expect(allPackageJsons).toMatchSnapshot("packages: updates independent versions");
     expect(commitMessage).toMatchSnapshot("commit: updates independent versions");
+  });
+
+  test.concurrent("fixed mode --conventional-commits recommends versions for each publish", async () => {
+    const cwd = await initFixture("PublishCommand/normal-no-inter-dependencies", "chore: Init repo");
+    const args = [
+      "publish",
+      "--conventional-commits",
+      // "--skip-git", Note: git is not skipped to ensure creating tags for each publish execution works
+      "--skip-npm",
+      "--yes",
+    ];
+
+    // initial publish
+    const {stdout: initialStdout} = await execa(LERNA_BIN, args, {cwd});
+
+    expect(initialStdout).toMatchSnapshot(
+      "stdout: initial commit in fixed mode --conventional-commits");
+
+    const [initialAllPackageJsons, initialCommitMessage] = await pkgManifestsAndCommitMsg(cwd);
+
+    expect(initialAllPackageJsons).toMatchSnapshot(
+      "packages: initial commit in fixed mode --conventional-commits");
+
+    expect(initialCommitMessage).toMatchSnapshot(
+      "commit: initial commit in fixed mode --conventional-commits");
+
+
+    await commitChangeToPackage(cwd, 'package-1', "feat: Add foobar feature", {foobar: true});
+
+    // second publish adding the first feature
+    const {stdout: firstFeatureStdout} = await execa(LERNA_BIN, args, {cwd});
+
+    expect(firstFeatureStdout).toMatchSnapshot(
+      "stdout: first feature added in fixed mode --conventional-commits");
+
+    const [firstFeatPackageJsons, firstFeatCommitMessage] = await pkgManifestsAndCommitMsg(cwd);
+
+    expect(firstFeatPackageJsons).toMatchSnapshot(
+      "packages: first feature added in fixed mode --conventional-commits");
+
+    expect(firstFeatCommitMessage).toMatchSnapshot(
+      "commit: first feature added in fixed mode --conventional-commits");
+
+
+    await commitChangeToPackage(cwd, 'package-2', "feat: Add baz feature", {baz: true });
+
+    // third publish adding a second feature
+    const {stdout: secondFeatureStdout} = await execa(LERNA_BIN, args, {cwd});
+
+    expect(secondFeatureStdout).toMatchSnapshot(
+      "stdout: second feature added in fixed mode --conventional-commits");
+
+    const [secondFeatPackageJsons, secondFeatCommitMessage] = await pkgManifestsAndCommitMsg(cwd);
+
+    expect(secondFeatPackageJsons).toMatchSnapshot(
+      "packages: second feature added in fixed mode --conventional-commits");
+
+    expect(secondFeatCommitMessage).toMatchSnapshot(
+      "commit: second feature added in fixed mode --conventional-commits");
+
+
+  });
+
+  test.concurrent("fixed mode --conventional-commits --force-publish=*", async () => {
+    const cwd = await initFixture("PublishCommand/normal-no-inter-dependencies", "chore: Init repo");
+    const args = [
+      "publish",
+      "--force-publish=*",
+      "--conventional-commits",
+      // "--skip-git", Note: git is not skipped to ensure creating tags for each publish execution works
+      "--skip-npm",
+      "--yes",
+    ];
+
+    // initial publish
+    const {stdout: initialStdout} = await execa(LERNA_BIN, args, {cwd});
+
+    expect(initialStdout).toMatchSnapshot(
+      "stdout: initial commit in fixed mode --conventional-commits --force-publish=*");
+
+    const [initialAllPackageJsons, initialCommitMessage] = await pkgManifestsAndCommitMsg(cwd);
+
+    expect(initialAllPackageJsons).toMatchSnapshot(
+      "packages: initial commit in fixed mode --conventional-commits --force-publish=*");
+
+    expect(initialCommitMessage).toMatchSnapshot(
+      "commit: initial commit in fixed mode --conventional-commits --force-publish=*");
+
+
+    await commitChangeToPackage(cwd, 'package-1', "feat: Add foo feature", {foo: true});
+
+    // second publish adding the first feature
+    const {stdout: firstFeatureStdout} = await execa(LERNA_BIN, args, {cwd});
+
+    expect(firstFeatureStdout).toMatchSnapshot(
+      "stdout: first feature added in fixed mode --conventional-commits --force-publish=*");
+
+    const [firstFeatPackageJsons, firstFeatCommitMessage] = await pkgManifestsAndCommitMsg(cwd);
+
+    expect(firstFeatPackageJsons).toMatchSnapshot(
+      "packages: first feature added in fixed mode --conventional-commits --force-publish=*");
+
+    expect(firstFeatCommitMessage).toMatchSnapshot(
+      "commit: first feature added in fixed mode --conventional-commits --force-publish=*");
+
+
+    await commitChangeToPackage(cwd, 'package-2', "feat: Add bar feature", {bar: true});
+
+    // third publish adding a second feature
+    const {stdout: secondFeatureStdout} = await execa(LERNA_BIN, args, {cwd});
+
+    expect(secondFeatureStdout).toMatchSnapshot(
+      "stdout: second feature added in fixed mode --conventional-commits --force-publish=*");
+
+    const [secondFeatPackageJsons, secondFeatCommitMessage] = await pkgManifestsAndCommitMsg(cwd);
+
+    expect(secondFeatPackageJsons).toMatchSnapshot(
+      "packages: second feature added in fixed mode --conventional-commits --force-publish=*");
+
+    expect(secondFeatCommitMessage).toMatchSnapshot(
+      "commit: second feature added in fixed mode --conventional-commits --force-publish=*");
+
   });
 
   // TODO: stabilize timestamp of changelog output
