@@ -1,3 +1,13 @@
+## v2.1.1 (2017-08-28)
+
+A quick bugfix release to restore a broken `lerna publish --canary`, as reported in [#989](https://github.com/lerna/lerna/issues/989). Many thanks to all who pitched in to identify the issue!
+
+#### :bug: Bug Fix
+* [#990](https://github.com/lerna/lerna/pull/990) Use yargs parser in unit tests for greater fidelity. ([@evocateur](https://github.com/evocateur))
+
+#### Committers: 1
+- Daniel Stockman ([evocateur](https://github.com/evocateur))
+
 ## v2.1.0 (2017-08-24)
 
 #### :rocket: Enhancement
