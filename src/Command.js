@@ -259,10 +259,7 @@ export default class Command {
       );
     }
 
-    if (
-      process.env.NODE_ENV !== "lerna-test" &&
-      !this.repository.isCompatibleLerna(this.lernaVersion)
-    ) {
+    if (!this.repository.isCompatibleLerna(this.lernaVersion)) {
       throw new ValidationError(
         "EMISMATCH",
         dedent`
