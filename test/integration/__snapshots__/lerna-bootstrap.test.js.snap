@@ -16,6 +16,7 @@ lerna info Installing external dependencies
 lerna info Symlinking packages and binaries
 lerna info lifecycle postinstall
 lerna info lifecycle prepublish
+lerna info lifecycle prepare
 lerna success Bootstrapped 4 packages"
 `;
 
@@ -36,6 +37,7 @@ lerna info Installing external dependencies
 lerna info Symlinking packages and binaries
 lerna info lifecycle postinstall
 lerna info lifecycle prepublish
+lerna info lifecycle prepare
 lerna success Bootstrapped 3 packages"
 `;
 
@@ -68,6 +70,7 @@ lerna info Installing external dependencies
 lerna info Symlinking packages and binaries
 lerna info lifecycle postinstall
 lerna info lifecycle prepublish
+lerna info lifecycle prepare
 lerna success Bootstrapped 4 packages"
 `;
 
@@ -87,5 +90,6 @@ lerna info Installing external dependencies
 lerna info Symlinking packages and binaries
 lerna info lifecycle postinstall
 lerna info lifecycle prepublish
+lerna info lifecycle prepare
 lerna success Bootstrapped 4 packages"
 `;

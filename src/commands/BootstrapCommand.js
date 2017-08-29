@@ -107,7 +107,9 @@ export default class BootstrapCommand extends Command {
         // postinstall bootstrapped packages
         (cb) => this.postinstallPackages(cb),
         // prepublish bootstrapped packages
-        (cb) => this.prepublishPackages(cb)
+        (cb) => this.prepublishPackages(cb),
+        // prepare bootstrapped packages
+        (cb) => this.preparePackages(cb)
       ], callback);
     }
 
@@ -173,6 +175,15 @@ export default class BootstrapCommand extends Command {
   prepublishPackages(callback) {
     this.logger.info("lifecycle", "prepublish");
     this.runScriptInPackages("prepublish", callback);
+  }
+
+  /**
+   * Run the "prepublish" NPM script in all bootstrapped packages
+   * @param callback
+   */
+  preparePackages(callback) {
+    this.logger.info("lifecycle", "prepare");
+    this.runScriptInPackages("prepare", callback);
   }
 
   /**
