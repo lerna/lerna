@@ -94,7 +94,7 @@ export default class ConventionalCommitUtilities {
         `);
     }
 
-    log.silly("updateIndependentChangelog", "writing new entry: %j", newEntry);
+    log.silly(type, "writing new entry: %j", newEntry);
 
     // CHANGELOG entries start with <a name=, we remove
     // the header if it exists by starting at the first entry.
