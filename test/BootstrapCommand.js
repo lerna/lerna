@@ -6,7 +6,6 @@ import NpmUtilities from "../src/NpmUtilities";
 
 // helpers
 import callsBack from "./helpers/callsBack";
-import exitWithCode from "./helpers/exitWithCode";
 import initFixture from "./helpers/initFixture";
 import normalizeRelativeDir from "./helpers/normalizeRelativeDir";
 import yargsRunner from "./helpers/yargsRunner";
@@ -90,593 +89,279 @@ describe("BootstrapCommand", () => {
   afterEach(() => jest.resetAllMocks());
 
   describe("lifecycle scripts", () => {
-    let testDir;
+    it("should run preinstall, postinstall and prepublish scripts", async () => {
+      const testDir = await initFixture("BootstrapCommand/lifecycle-scripts");
+      const lernaBootstrap = run(testDir);
+      await lernaBootstrap();
 
-    beforeEach(() => initFixture("BootstrapCommand/lifecycle-scripts").then((dir) => {
-      testDir = dir;
-    }));
-
-    it("should run preinstall, postinstall and prepublish scripts", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {}, testDir);
-
-      bootstrapCommand.runValidations();
-      bootstrapCommand.runPreparations();
-
-      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          expect(NpmUtilities.installInDir).not.toBeCalled();
-          expect(ranScriptsInDirectories(testDir)).toMatchSnapshot();
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      expect(NpmUtilities.installInDir).not.toBeCalled();
+      expect(ranScriptsInDirectories(testDir)).toMatchSnapshot();
     });
   });
 
   describe("with hoisting", () => {
     let testDir;
+    let lernaBootstrap;
 
-    beforeEach(() => initFixture("BootstrapCommand/basic").then((dir) => {
-      testDir = dir;
-    }));
+    beforeEach(async () => {
+      testDir = await initFixture("BootstrapCommand/basic");
+      lernaBootstrap = run(testDir);
+    });
 
     beforeEach(stubRimraf);
     afterEach(resetRimraf);
 
-    it("should hoist", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {
-        hoist: true
-      }, testDir);
+    it("should hoist", async () => {
+      await lernaBootstrap("--hoist");
 
-      bootstrapCommand.runValidations();
-      bootstrapCommand.runPreparations();
-
-      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
-          expect(removedDirectories(testDir)).toMatchSnapshot();
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
+      expect(removedDirectories(testDir)).toMatchSnapshot();
     });
 
-    it("should not hoist when disallowed", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {
-        hoist: true,
-        nohoist: "@test/package-1"
-      }, testDir);
+    it("should not hoist when disallowed", async () => {
+      await lernaBootstrap("--hoist", "--nohoist", "@test/package-1");
 
-      bootstrapCommand.runValidations();
-      bootstrapCommand.runPreparations();
-
-      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
-          expect(removedDirectories(testDir)).toMatchSnapshot();
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
+      expect(removedDirectories(testDir)).toMatchSnapshot();
     });
 
-    it("should use global style to install disallowed external dependencies", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {
-        hoist: true
-      }, testDir);
+    it("should use global style to install disallowed external dependencies", async () => {
+      await lernaBootstrap("--hoist");
 
-      bootstrapCommand.runValidations();
-      bootstrapCommand.runPreparations();
+      expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
+      expect(removedDirectories(testDir)).toMatchSnapshot();
 
-      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
+      // foo@^1.0.0 will be hoisted, and should not use global style
+      expect(NpmUtilities.installInDir).toBeCalledWith(
+        expect.any(String),
+        expect.arrayContaining(["foo@^1.0.0"]),
+        expect.any(Object),
+        expect.any(Function)
+      );
 
-        try {
-          expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
-          expect(removedDirectories(testDir)).toMatchSnapshot();
-
-          // foo@^1.0.0 will be hoisted, and should not use global style
-          expect(NpmUtilities.installInDir).toBeCalledWith(
-            expect.any(String),
-            expect.arrayContaining(["foo@^1.0.0"]),
-            expect.any(Object),
-            expect.any(Function)
-          );
-
-          // foo@0.1.2 differs from the more common foo@^1.0.0
-          expect(NpmUtilities.installInDir).toBeCalledWith(
-            expect.stringContaining("package-3"),
-            expect.arrayContaining(["foo@0.1.12"]),
-            expect.any(Object),
-            true, // npmGlobalStyle
-            expect.any(Function)
-          );
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      // foo@0.1.2 differs from the more common foo@^1.0.0
+      expect(NpmUtilities.installInDir).lastCalledWith(
+        expect.stringContaining("package-3"),
+        expect.arrayContaining(["foo@0.1.12"]),
+        expect.any(Object),
+        "**", // npmGlobalStyle
+        expect.any(Function)
+      );
     });
   });
 
   describe("with local package dependencies", () => {
     let testDir;
+    let lernaBootstrap;
 
-    beforeEach(() => initFixture("BootstrapCommand/basic").then((dir) => {
-      testDir = dir;
-    }));
+    beforeEach(async () => {
+      testDir = await initFixture("BootstrapCommand/basic");
+      lernaBootstrap = run(testDir);
+    });
 
     beforeEach(stubSymlink);
     afterEach(resetSymlink);
 
-    it("should bootstrap packages", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {}, testDir);
+    it("should bootstrap packages", async () => {
+      await lernaBootstrap();
 
-      bootstrapCommand.runValidations();
-      bootstrapCommand.runPreparations();
-
-      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
-          expect(symlinkedDirectories(testDir)).toMatchSnapshot();
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
+      expect(symlinkedDirectories(testDir)).toMatchSnapshot();
     });
 
-    it("should not bootstrap ignored packages", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {
-        ignore: "package-@(3|4)"
-      }, testDir);
+    it("should not bootstrap ignored packages", async () => {
+      await lernaBootstrap("--ignore", "package-@(3|4)");
 
-      bootstrapCommand.runValidations();
-      bootstrapCommand.runPreparations();
-
-      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
     });
 
-    it("should only bootstrap scoped packages", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {
-        scope: "package-@(3|4)"
-      }, testDir);
+    it("should only bootstrap scoped packages", async () => {
+      await lernaBootstrap("--scope", "package-@(3|4)");
 
-      bootstrapCommand.runValidations();
-      bootstrapCommand.runPreparations();
-
-      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
-          expect(symlinkedDirectories(testDir)).toMatchSnapshot();
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
+      expect(symlinkedDirectories(testDir)).toMatchSnapshot();
     });
   });
 
   describe("with multiple package locations", () => {
     let testDir;
+    let lernaBootstrap;
 
-    beforeEach(() => initFixture("BootstrapCommand/extra").then((dir) => {
-      testDir = dir;
-    }));
+    beforeEach(async () => {
+      testDir = await initFixture("BootstrapCommand/extra");
+      lernaBootstrap = run(testDir);
+    });
 
     beforeEach(stubSymlink);
     afterEach(resetSymlink);
 
-    it("should bootstrap packages", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {}, testDir);
+    it("should bootstrap packages", async () => {
+      await lernaBootstrap();
 
-      bootstrapCommand.runValidations();
-      bootstrapCommand.runPreparations();
-
-      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
-          expect(ranScriptsInDirectories(testDir)).toMatchSnapshot();
-          expect(symlinkedDirectories(testDir)).toMatchSnapshot();
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
+      expect(ranScriptsInDirectories(testDir)).toMatchSnapshot();
+      expect(symlinkedDirectories(testDir)).toMatchSnapshot();
     });
 
-    it("should not bootstrap ignored packages", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {
-        ignore: "package-@(3|4)"
-      }, testDir);
+    it("should not bootstrap ignored packages", async () => {
+      await lernaBootstrap("--ignore", "package-@(3|4)");
 
-      bootstrapCommand.runValidations();
-      bootstrapCommand.runPreparations();
-
-      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
     });
 
-    it("bootstraps dependencies not included by --scope with --include-filtered-dependencies", (done) => {
+    it("bootstraps dependencies not included by --scope with --include-filtered-dependencies", async () => {
       // we scope to package-2 only but should still install package-1 as it is a dependency of package-2
-      const bootstrapCommand = new BootstrapCommand([], {
-        scope: "package-2",
-        includeFilteredDependencies: true
-      }, testDir);
+      await lernaBootstrap(
+        "--scope", "package-2",
+        "--include-filtered-dependencies"
+      );
 
-      bootstrapCommand.runValidations();
-      bootstrapCommand.runPreparations();
-
-      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
     });
 
-    it("bootstraps dependencies excluded by --ignore with --include-filtered-dependencies", (done) => {
+    it("bootstraps dependencies excluded by --ignore with --include-filtered-dependencies", async () => {
       // we ignore package 1 but it should still be installed because it is a dependency of package-2
-      const bootstrapCommand = new BootstrapCommand([], {
-        ignore: "{@test/package-1,package-@(3|4)}",
-        includeFilteredDependencies: true
-      }, testDir);
+      await lernaBootstrap(
+        "--ignore", "{@test/package-1,package-@(3|4)}",
+        "--include-filtered-dependencies"
+      );
 
-      bootstrapCommand.runValidations();
-      bootstrapCommand.runPreparations();
-
-      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
     });
   });
 
   describe("with external dependencies that haven't been installed", () => {
     let testDir;
+    let lernaBootstrap;
 
-    beforeEach(() => initFixture("BootstrapCommand/cold").then((dir) => {
-      testDir = dir;
-    }));
-
-    it("should get installed", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {}, testDir);
-
-      bootstrapCommand.runValidations();
-      bootstrapCommand.runPreparations();
-
-      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+    beforeEach(async () => {
+      testDir = await initFixture("BootstrapCommand/cold");
+      lernaBootstrap = run(testDir);
     });
 
-    it("gets network mutex when --npm-client=yarn", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {
-        npmClient: "yarn",
-      }, testDir);
+    it("should get installed", async () => {
+      await lernaBootstrap();
 
-      bootstrapCommand.runValidations();
-      bootstrapCommand.runPreparations();
-
-      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          expect(NpmUtilities.installInDir.mock.calls[0][2]).toMatchObject({
-            npmClient: "yarn",
-            mutex: expect.stringMatching(/^network:\d+$/),
-          });
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
     });
 
-    it("gets user defined mutex when --npm-client=yarn", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {
+    it("gets network mutex when --npm-client=yarn", async () => {
+      await lernaBootstrap("--npm-client", "yarn");
+
+      expect(NpmUtilities.installInDir.mock.calls[0][2]).toMatchObject({
         npmClient: "yarn",
-        mutex: "file:/test/this/path"
-      }, testDir);
+        mutex: expect.stringMatching(/^network:\d+$/),
+      });
+    });
 
-      bootstrapCommand.runValidations();
-      bootstrapCommand.runPreparations();
+    it("gets user defined mutex when --npm-client=yarn", async () => {
+      await lernaBootstrap("--npm-client", "yarn", "--mutex", "file:/test/this/path");
 
-      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          expect(NpmUtilities.installInDir.mock.calls[0][2]).toMatchObject({
-            npmClient: "yarn",
-            mutex: expect.stringMatching(/^file:\/test\/this\/path$/),
-          });
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      expect(NpmUtilities.installInDir.mock.calls[0][2]).toMatchObject({
+        npmClient: "yarn",
+        mutex: "file:/test/this/path",
+      });
     });
   });
 
   describe("with external dependencies that have already been installed", () => {
-    let testDir;
+    it("should not get re-installed", async () => {
+      const testDir = await initFixture("BootstrapCommand/warm");
+      const lernaBootstrap = run(testDir);
 
-    beforeEach(() => initFixture("BootstrapCommand/warm").then((dir) => {
-      testDir = dir;
-    }));
+      await lernaBootstrap();
 
-    it("should not get re-installed", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {}, testDir);
-
-      bootstrapCommand.runValidations();
-      bootstrapCommand.runPreparations();
-
-      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          expect(NpmUtilities.installInDir).not.toBeCalled();
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      expect(NpmUtilities.installInDir).not.toBeCalled();
     });
   });
 
   describe("with at least one external dependency to install", () => {
-    let testDir;
+    it("should install all dependencies", async () => {
+      const testDir = await initFixture("BootstrapCommand/tepid");
+      const lernaBootstrap = run(testDir);
 
-    beforeEach(() => initFixture("BootstrapCommand/tepid").then((dir) => {
-      testDir = dir;
-    }));
+      await lernaBootstrap();
 
-    it("should install all dependencies", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {}, testDir);
-
-      bootstrapCommand.runValidations();
-      bootstrapCommand.runPreparations();
-
-      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
     });
   });
 
   describe("with package peerDependencies", () => {
-    let testDir;
+    it("does not bootstrap peerDependencies", async () => {
+      const testDir = await initFixture("BootstrapCommand/peer");
+      const lernaBootstrap = run(testDir);
 
-    beforeEach(() => initFixture("BootstrapCommand/peer").then((dir) => {
-      testDir = dir;
-    }));
+      await lernaBootstrap();
 
-    it("does not bootstrap peerDependencies", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {}, testDir);
-
-      bootstrapCommand.runValidations();
-      bootstrapCommand.runPreparations();
-
-      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          expect(NpmUtilities.installInDir).not.toBeCalled();
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      expect(NpmUtilities.installInDir).not.toBeCalled();
     });
   });
 
   describe("zero packages", () => {
-    let testDir;
+    it("should succeed in repositories with zero packages", async () => {
+      const testDir = await initFixture("BootstrapCommand/zero-pkgs");
+      const lernaBootstrap = run(testDir);
 
-    beforeEach(() => initFixture("BootstrapCommand/zero-pkgs").then((dir) => {
-      testDir = dir;
-    }));
+      const { exitCode } = await lernaBootstrap();
 
-    it("should succeed in repositories with zero packages", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {}, testDir);
-
-      bootstrapCommand.runValidations();
-      bootstrapCommand.runPreparations();
-
-      bootstrapCommand.runCommand(exitWithCode(0, done));
+      expect(exitCode).toBe(0);
     });
   });
 
   describe("with registry config", () => {
-    let testDir;
+    it("should install packages from registry", async () => {
+      const testDir = await initFixture("BootstrapCommand/registries");
+      const lernaBootstrap = run(testDir);
 
-    beforeEach(() => initFixture("BootstrapCommand/registries").then((dir) => {
-      testDir = dir;
-    }));
+      await lernaBootstrap();
 
-    it("should install packages from registry", (done) => {
-      const bootstrapCommand = new BootstrapCommand([], {}, testDir);
-
-      bootstrapCommand.runValidations();
-      bootstrapCommand.runPreparations();
-
-      bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
-          expect(NpmUtilities.installInDir.mock.calls[0][2]).toEqual({
-            npmClient: undefined,
-            registry: "https://my-secure-registry/npm",
-          });
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
+      expect(NpmUtilities.installInDir.mock.calls[0][2]).toEqual({
+        npmClient: undefined,
+        registry: "https://my-secure-registry/npm",
+      });
     });
   });
 
   describe("with remaining arguments", () => {
     describe("by default", () => {
-      let testDir;
+      it("should turn it into npmClientArgs", async () => {
+        const testDir = await initFixture("BootstrapCommand/npm-client-args-1");
+        const lernaBootstrap = run(testDir);
 
-      beforeEach(() => initFixture("BootstrapCommand/npm-client-args-1").then((dir) => {
-        testDir = dir;
-      }));
+        await lernaBootstrap("--", "--no-optional", "--production");
 
-      it("should turn it into npmClientArgs", (done) => {
-        const bootstrapCommand = new BootstrapCommand(["--production", "--no-optional"], {}, testDir);
-
-        bootstrapCommand.runValidations();
-        bootstrapCommand.runPreparations();
-
-        bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-          if (err) return done.fail(err);
-
-          try {
-            expect(NpmUtilities.installInDir.mock.calls[0][2]).toMatchObject({
-              npmClientArgs: ["--production", "--no-optional"],
-            });
-
-            done();
-          } catch (ex) {
-            done.fail(ex);
-          }
-        }));
+        expect(NpmUtilities.installInDir.mock.calls[0][2]).toMatchObject({
+          npmClientArgs: ["--no-optional", "--production"],
+        });
       });
     });
 
     describe("and configured npmClientArgs option", () => {
-      let testDir;
+      it("should merge both together", async () => {
+        const testDir = await initFixture("BootstrapCommand/npm-client-args-2");
+        const lernaBootstrap = run(testDir);
 
-      beforeEach(() => initFixture("BootstrapCommand/npm-client-args-2").then((dir) => {
-        testDir = dir;
-      }));
+        await lernaBootstrap("--", "--no-optional");
 
-      it("should merge both together", (done) => {
-        const bootstrapCommand = new BootstrapCommand(["--no-optional"], {}, testDir);
-
-        bootstrapCommand.runValidations();
-        bootstrapCommand.runPreparations();
-
-        bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-          if (err) return done.fail(err);
-
-          try {
-            expect(NpmUtilities.installInDir.mock.calls[0][2]).toMatchObject({
-              npmClientArgs: ["--production", "--no-optional"],
-            });
-
-            done();
-          } catch (ex) {
-            done.fail(ex);
-          }
-        }));
+        expect(NpmUtilities.installInDir.mock.calls[0][2]).toMatchObject({
+          npmClientArgs: ["--production", "--no-optional"],
+        });
       });
     });
+  });
 
-    describe("with yarn workspaces", () => {
-      let testDir;
+  describe("with yarn workspaces", () => {
+    it("should use workspaces feature when installing", async () => {
+      const testDir = await initFixture("BootstrapCommand/yarn-workspaces");
+      const lernaBootstrap = run(testDir);
 
-      beforeEach(() => initFixture("BootstrapCommand/yarn-workspaces").then((dir) => {
-        testDir = dir;
-      }));
+      await lernaBootstrap();
 
-      it("should use workspaces feature when installing", (done) => {
-        const bootstrapCommand = new BootstrapCommand([], {}, testDir);
-
-        bootstrapCommand.runValidations();
-        bootstrapCommand.runPreparations();
-
-        bootstrapCommand.runCommand(exitWithCode(0, (err) => {
-          if (err) return done.fail(err);
-
-          try {
-            expect(NpmUtilities.installInDir).not.toBeCalled();
-            expect(NpmUtilities.installInDirOriginalPackageJson.mock.calls[0][1]).toMatchObject({
-              "mutex": expect.stringMatching(/^network:\d+$/),
-              "npmClient": "yarn",
-            });
-
-            done();
-          } catch (ex) {
-            done.fail(ex);
-          }
-        }));
+      expect(NpmUtilities.installInDir).not.toBeCalled();
+      expect(NpmUtilities.installInDirOriginalPackageJson.mock.calls[0][1]).toMatchObject({
+        "mutex": expect.stringMatching(/^network:\d+$/),
+        "npmClient": "yarn",
       });
     });
   });
