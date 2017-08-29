@@ -52,6 +52,8 @@ export default class DiffCommand extends Command {
 
     if (targetPackage) {
       this.args.push("--", targetPackage.location);
+    } else {
+      this.args.push("--", ...this.repository.packageParentDirs);
     }
 
     callback(null, true);

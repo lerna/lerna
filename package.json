@@ -43,6 +43,7 @@
     "fs-extra": "^4.0.1",
     "get-port": "^3.2.0",
     "glob": "^7.1.2",
+    "glob-parent": "^3.1.0",
     "globby": "^6.1.0",
     "graceful-fs": "^4.1.11",
     "inquirer": "^3.2.2",
