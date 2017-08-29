@@ -18,6 +18,8 @@ cache:
 install:
   - ps: Install-Product node $env:nodejs_version
   - IF %nodejs_version% EQU 4 npm -g install npm@3
+  - IF %nodejs_version% EQU 6 npm -g install npm@4
+  - IF %nodejs_version% EQU 8 npm -g install npm@5.4.0
   - yarn --frozen-lockfile
 
 before_test:
