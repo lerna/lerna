@@ -137,7 +137,9 @@ describe("ExecCommand", () => {
       await lernaExec("--", "ls", "-la");
 
       expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(2);
-      expect(ChildProcessUtilities.spawn).lastCalledWith("ls", ["-la"], expect.any(Object), expect.any(Function));
+      expect(ChildProcessUtilities.spawn).lastCalledWith(
+        "ls", ["-la"], expect.any(Object), expect.any(Function)
+      );
     });
 
     it("runs a command for a given scope", async () => {
