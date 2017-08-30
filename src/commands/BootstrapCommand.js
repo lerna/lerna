@@ -187,44 +187,6 @@ export default class BootstrapCommand extends Command {
     this.runScriptInPackages("prepare", callback);
   }
 
-  /**
-   * Create a symlink to a dependency's binary in the node_modules/.bin folder
-   * @param {String} src
-   * @param {String} dest
-   * @param {String} name
-   * @param {String|Object} bin
-   * @param {Function} callback
-   */
-  createBinaryLink(src, dest, name, bin, callback) {
-    const safeName = name[0] === "@"
-      ? name.substring(name.indexOf("/") + 1)
-      : name;
-    const destBinFolder = path.join(dest, ".bin");
-
-    // The `bin` in a package.json may be either a string or an object.
-    // Normalize to an object.
-    const bins = typeof bin === "string"
-      ? { [safeName]: bin }
-      : bin;
-
-    const srcBinFiles = [];
-    const destBinFiles = [];
-    Object.keys(bins).forEach((binName) => {
-      srcBinFiles.push(path.join(src, bins[binName]));
-      destBinFiles.push(path.join(destBinFolder, binName));
-    });
-
-    // make sure when have a destination folder (node_modules/.bin)
-    const actions = [(cb) => FileSystemUtilities.mkdirp(destBinFolder, cb)];
-
-    // symlink each binary
-    srcBinFiles.forEach((binFile, idx) => {
-      actions.push((cb) => FileSystemUtilities.symlink(binFile, destBinFiles[idx], "exec", cb));
-    });
-
-    async.series(actions, callback);
-  }
-
   hoistedDirectory(dependency) {
     return path.join(this.repository.rootPath, "node_modules", dependency);
   }
@@ -456,7 +418,7 @@ export default class BootstrapCommand extends Command {
                 async.series(dependents.map((pkg) => (cb) => {
                   const src  = this.hoistedDirectory(name);
                   const dest = pkg.nodeModulesLocation;
-                  this.createBinaryLink(src, dest, name, bin, cb);
+                  PackageUtilities.createBinaryLink(src, dest, name, bin, cb);
                 }), cb);
               } else {
                 cb();
@@ -552,107 +514,7 @@ export default class BootstrapCommand extends Command {
    * Symlink package binaries to dependent packages' node_modules/.bin directory
    * @param {Function} callback
    */
-  symlinkPackages(callback) {
-    const tracker = this.logger.newItem("symlink packages");
-
-    tracker.info("", "Symlinking packages and binaries");
-    tracker.addWork(this.filteredPackages.length);
-
-    const actions = [];
-
-    this.filteredPackages.forEach((filteredPackage) => {
-      // actions to run for this package
-      const packageActions = [];
-
-      Object.keys(filteredPackage.allDependencies)
-        .filter((dependency) => {
-          // filter out external dependencies and incompatible packages
-          const match = this.packageGraph.get(dependency);
-          return match && filteredPackage.hasMatchingDependency(match.package);
-        })
-        .forEach((dependency) => {
-          // get Package of dependency
-          const dependencyPackage = this.packageGraph.get(dependency).package;
-
-          // get path to dependency and its scope
-          const { location: dependencyLocation } = dependencyPackage;
-          const dependencyPackageJsonLocation = path.join(dependencyLocation, "package.json");
-
-          // ignore dependencies without a package.json file
-          if (!FileSystemUtilities.existsSync(dependencyPackageJsonLocation)) {
-            tracker.warn(
-              "ENOPKG",
-              `Unable to find package.json for ${dependency} dependency of ${filteredPackage.name},  ` +
-              "Skipping..."
-            );
-          } else {
-            // get the destination directory name of the dependency
-            const pkgDependencyLocation = path.join(
-              filteredPackage.nodeModulesLocation,
-              dependencyPackage.name
-            );
-
-            // check if dependency is already installed
-            if (FileSystemUtilities.existsSync(pkgDependencyLocation)) {
-              const isDepSymlink = FileSystemUtilities.isSymlink(pkgDependencyLocation);
-
-              // installed dependency is a symlink pointing to a different location
-              if (isDepSymlink !== false && isDepSymlink !== dependencyLocation) {
-                tracker.warn(
-                  "EREPLACE_OTHER",
-                  `Symlink already exists for ${dependency} dependency of ${filteredPackage.name}, ` +
-                  "but links to different location. Replacing with updated symlink..."
-                );
-              // installed dependency is not a symlink
-              } else if (isDepSymlink === false) {
-                tracker.warn(
-                  "EREPLACE_EXIST",
-                  `${dependency} is already installed for ${filteredPackage.name}. ` +
-                  "Replacing with symlink..."
-                );
-                // remove installed dependency
-                packageActions.push((cb) => FileSystemUtilities.rimraf(pkgDependencyLocation, cb));
-              }
-            }
-
-            // ensure destination path
-            packageActions.push((cb) => FileSystemUtilities.mkdirp(
-              pkgDependencyLocation.split(path.sep).slice(0, -1).join(path.sep), cb
-            ));
-
-            // create package symlink
-            packageActions.push((cb) => FileSystemUtilities.symlink(
-              dependencyLocation, pkgDependencyLocation, "junction", cb
-            ));
-
-            const dependencyPackageJson = require(dependencyPackageJsonLocation);
-            if (dependencyPackageJson.bin) {
-              const destFolder = filteredPackage.nodeModulesLocation;
-              packageActions.push((cb) => {
-                this.createBinaryLink(
-                  dependencyLocation,
-                  destFolder,
-                  dependency,
-                  dependencyPackageJson.bin,
-                  cb
-                );
-              });
-            }
-          }
-        });
-
-      actions.push((cb) => {
-        async.series(packageActions, (err) => {
-          tracker.silly("packageActions", "finished", filteredPackage.name);
-          tracker.completeWork(1);
-          cb(err);
-        });
-      });
-    });
-
-    async.series(actions, (err) => {
-      tracker.finish();
-      callback(err);
-    });
+  symlinkPackages(cb) {
+    PackageUtilities.symlinkPackages(this.filteredPackages, this.packageGraph, this.logger, cb);
   }
 }
