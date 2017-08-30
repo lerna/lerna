@@ -224,6 +224,9 @@ export default class PackageUtilities {
   /**
    * Symlink all packages to the packages/node_modules directory
    * Symlink package binaries to dependent packages' node_modules/.bin directory
+   * @param {Array.<Package>} packages
+   * @param {Object} packageGraph
+   * @param {Object} logger
    * @param {Function} callback
    */
   static symlinkPackages(packages, packageGraph, logger, callback) {
