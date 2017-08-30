@@ -5,7 +5,8 @@ import Command from "../Command";
 import PackageUtilities from "../PackageUtilities";
 
 export function handler(argv) {
-  return new ExecCommand([argv.command, ...argv.args], argv).run();
+  new ExecCommand([argv.command, ...argv.args], argv, argv._cwd).run()
+    .then(argv._onFinish, argv._onFinish);
 }
 
 export const command = "exec <command> [args..]";
@@ -42,11 +43,6 @@ export default class ExecCommand extends Command {
   initialize(callback) {
     this.command = this.input[0];
     this.args = this.input.slice(1);
-
-    if (!this.command) {
-      callback(new Error("You must specify which command to run."));
-      return;
-    }
 
     // don't interrupt spawned or streaming stdio
     this.logger.disableProgress();

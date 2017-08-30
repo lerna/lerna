@@ -7,7 +7,8 @@ import FileSystemUtilities from "../FileSystemUtilities";
 import GitUtilities from "../GitUtilities";
 
 export function handler(argv) {
-  return new InitCommand(argv._, argv).run();
+  new InitCommand(argv._, argv, argv._cwd).run()
+    .then(argv._onFinish, argv._onFinish);
 }
 
 export const command = "init";

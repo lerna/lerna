@@ -8,12 +8,14 @@ import UpdatedPackagesCollector from "../src/UpdatedPackagesCollector";
 
 // helpers
 import callsBack from "./helpers/callsBack";
-import exitWithCode from "./helpers/exitWithCode";
 import initFixture from "./helpers/initFixture";
 import normalizeRelativeDir from "./helpers/normalizeRelativeDir";
+import yargsRunner from "./helpers/yargsRunner";
 
 // file under test
-import RunCommand from "../src/commands/RunCommand";
+import * as commandModule from "../src/commands/RunCommand";
+
+const run = yargsRunner(commandModule);
 
 jest.mock("../src/NpmUtilities");
 jest.mock("../src/utils/output");
@@ -50,106 +52,53 @@ describe("RunCommand", () => {
 
   describe("in a basic repo", () => {
     let testDir;
+    let lernaRun;
 
-    beforeAll(() => initFixture("RunCommand/basic").then((dir) => {
-      testDir = dir;
-    }));
-
-    it("runs a script in packages", (done) => {
-      const runCommand = new RunCommand(["my-script"], {}, testDir);
-
-      runCommand.runValidations();
-      runCommand.runPreparations();
-
-      runCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          expect(ranInPackages(testDir)).toMatchSnapshot("run <script>");
-          expect(output).lastCalledWith("stdout");
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+    beforeAll(async () => {
+      testDir = await initFixture("RunCommand/basic");
+      lernaRun = run(testDir);
     });
 
-    it("runs a script in packages with --stream", (done) => {
-      const runCommand = new RunCommand(["my-script"], {
-        stream: true,
-      }, testDir);
+    it("runs a script in packages", async () => {
+      await lernaRun("my-script");
 
-      runCommand.runValidations();
-      runCommand.runPreparations();
-
-      runCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          expect(ranInPackagesStreaming(testDir)).toMatchSnapshot("run <script> --stream");
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      expect(ranInPackages(testDir)).toMatchSnapshot("run <script>");
+      expect(output).lastCalledWith("stdout");
     });
 
-    [
-      "test",
-      "env",
-    ].forEach((defaultScript) => {
-      it(`always runs ${defaultScript} script`, (done) => {
-        const runCommand = new RunCommand([defaultScript], {}, testDir);
+    it("runs a script in packages with --stream", async () => {
+      await lernaRun("my-script", "--stream");
 
-        runCommand.runValidations();
-        runCommand.runPreparations();
-
-        runCommand.runCommand(exitWithCode(0, (err) => {
-          if (err) return done.fail(err);
-
-          try {
-            expect(ranInPackages(testDir)).toMatchSnapshot(`run ${defaultScript}`);
-
-            done();
-          } catch (ex) {
-            done.fail(ex);
-          }
-        }));
-      });
+      expect(ranInPackagesStreaming(testDir)).toMatchSnapshot("run <script> --stream");
     });
 
-    // Both of these commands should result in the same outcome
-    const filters = [
-      { test: "runs a script only in scoped packages", flag: "scope", flagValue: "package-1" },
-      { test: "does not run a script in ignored packages", flag: "ignore", flagValue: "package-@(2|3|4)" },
-    ];
-    filters.forEach((filter) => {
-      it(filter.test, (done) => {
-        const runCommand = new RunCommand(["my-script"], {
-          [filter.flag]: filter.flagValue,
-        }, testDir);
+    it("always runs test script", async () => {
+      await lernaRun("test");
 
-        runCommand.runValidations();
-        runCommand.runPreparations();
-
-        runCommand.runCommand(exitWithCode(0, (err) => {
-          if (err) return done.fail(err);
-
-          try {
-            expect(ranInPackages(testDir))
-              .toMatchSnapshot(`run <script> --${filter.flag} ${filter.flagValue}`);
-
-            done();
-          } catch (ex) {
-            done.fail(ex);
-          }
-        }));
-      });
+      expect(ranInPackages(testDir)).toMatchSnapshot("run test");
     });
 
-    it("should filter packages that are not updated with --since", (done) => {
+    it("always runs env script", async () => {
+      await lernaRun("env");
+
+      expect(ranInPackages(testDir)).toMatchSnapshot("run env");
+    });
+
+    it("runs a script only in scoped packages", async () => {
+      await lernaRun("my-script", "--scope", "package-1");
+
+      expect(ranInPackages(testDir))
+        .toMatchSnapshot(`run <script> --scope package-1`);
+    });
+
+    it("does not run a script in ignored packages", async () => {
+      await lernaRun("my-script", "--ignore", "package-@(2|3|4)");
+
+      expect(ranInPackages(testDir))
+        .toMatchSnapshot(`run <script> --ignore package-@(2|3|4)`);
+    });
+
+    it("should filter packages that are not updated with --since", async () => {
       UpdatedPackagesCollector.prototype.getUpdates = jest.fn(() => [{
         package: {
           name: "package-3",
@@ -158,98 +107,35 @@ describe("RunCommand", () => {
         },
       }]);
 
-      const runCommand = new RunCommand(["my-script"], {
-        since: "",
-      }, testDir);
+      await lernaRun("my-script", "--since");
 
-      runCommand.runValidations();
-      runCommand.runPreparations();
-
-      runCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          expect(ranInPackages(testDir))
-            .toMatchSnapshot("run <script> --since");
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      expect(ranInPackages(testDir))
+        .toMatchSnapshot("run <script> --since");
     });
 
-    it("does not error when no packages match", (done) => {
-      const runCommand = new RunCommand(["missing-script"], {}, testDir);
+    it("does not error when no packages match", async () => {
+      await lernaRun("missing-script");
 
-      runCommand.runValidations();
-      runCommand.runPreparations();
-
-      runCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          expect(NpmUtilities.runScriptInDir).not.toBeCalled();
-          expect(output).not.toBeCalled();
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      expect(NpmUtilities.runScriptInDir).not.toBeCalled();
+      expect(output).not.toBeCalled();
     });
 
-    it("runs a script in all packages with --parallel", (done) => {
-      const runCommand = new RunCommand(["env"], {
-        parallel: true,
-      }, testDir);
+    it("runs a script in all packages with --parallel", async () => {
+      await lernaRun("env", "--parallel");
 
-      runCommand.runValidations();
-      runCommand.runPreparations();
-
-      runCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          expect(ranInPackagesStreaming(testDir))
-            .toMatchSnapshot("run <script> --parallel");
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      expect(ranInPackagesStreaming(testDir))
+        .toMatchSnapshot("run <script> --parallel");
     });
   });
 
   describe("with --include-filtered-dependencies", () => {
-    let testDir;
+    it("runs scoped command including filtered deps", async () => {
+      const testDir = await initFixture("RunCommand/include-filtered-dependencies");
+      const lernaRun = run(testDir);
+      await lernaRun("my-script", "--scope", "@test/package-2", "--include-filtered-dependencies");
 
-    beforeAll(() => initFixture("RunCommand/include-filtered-dependencies").then((dir) => {
-      testDir = dir;
-    }));
-
-    it("runs scoped command including filtered deps", (done) => {
-      const runCommand = new RunCommand(["my-script"], {
-        scope: "@test/package-2",
-        includeFilteredDependencies: true
-      }, testDir);
-
-      runCommand.runValidations();
-      runCommand.runPreparations();
-
-      runCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          expect(ranInPackages(testDir))
-            .toMatchSnapshot("run <script> --scope @test/package-2 --include-filtered-dependencies");
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      expect(ranInPackages(testDir))
+        .toMatchSnapshot("run <script> --scope @test/package-2 --include-filtered-dependencies");
     });
   });
 });

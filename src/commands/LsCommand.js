@@ -5,7 +5,8 @@ import Command from "../Command";
 import output from "../utils/output";
 
 export function handler(argv) {
-  return new LsCommand(argv._, argv).run();
+  new LsCommand(argv._, argv, argv._cwd).run()
+    .then(argv._onFinish, argv._onFinish);
 }
 
 export const command = "ls";

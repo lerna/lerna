@@ -10,9 +10,10 @@ to avoid any mocks that may be in use on those modules.
 @param {String} testDir where target lerna.json exists
 @param {Object} updates mixed into existing JSON via Object.assign
 **/
-export default function updateLernaConfig(testDir, updates) {
+export default async function updateLernaConfig(testDir, updates) {
   const lernaJsonLocation = path.join(testDir, "lerna.json");
-  const lernaJson = JSON.parse(fs.readFileSync(lernaJsonLocation));
+  const lernaJsonContent = await fs.readFile(lernaJsonLocation);
+  const lernaJson = JSON.parse(lernaJsonContent);
   Object.assign(lernaJson, updates);
-  fs.writeFileSync(lernaJsonLocation, JSON.stringify(lernaJson, null, 2));
+  await fs.writeFile(lernaJsonLocation, JSON.stringify(lernaJson, null, 2));
 }

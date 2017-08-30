@@ -6,12 +6,14 @@ import PromptUtilities from "../src/PromptUtilities";
 
 // helpers
 import callsBack from "./helpers/callsBack";
-import exitWithCode from "./helpers/exitWithCode";
 import initFixture from "./helpers/initFixture";
 import normalizeRelativeDir from "./helpers/normalizeRelativeDir";
+import yargsRunner from "./helpers/yargsRunner";
 
 // file under test
-import CleanCommand from "../src/commands/CleanCommand";
+import * as commandModule from "../src/commands/CleanCommand";
+
+const run = yargsRunner(commandModule);
 
 jest.mock("../src/PromptUtilities");
 
@@ -45,143 +47,79 @@ describe("CleanCommand", () => {
 
   describe("basic tests", () => {
     let testDir;
+    let lernaClean;
 
-    beforeEach(() => initFixture("CleanCommand/basic").then((dir) => {
-      testDir = dir;
-    }));
-
-    it("should rm -rf the node_modules", (done) => {
-      const cleanCommand = new CleanCommand([], {}, testDir);
-
-      cleanCommand.runValidations();
-      cleanCommand.runPreparations();
-
-      cleanCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          expect(PromptUtilities.confirm).toBeCalled();
-
-          expect(removedDirectories(testDir)).toEqual([
-            "packages/package-1/node_modules",
-            "packages/package-2/node_modules",
-            "packages/package-3/node_modules",
-          ]);
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+    beforeEach(async () => {
+      testDir = await initFixture("CleanCommand/basic");
+      lernaClean = run(testDir);
     });
 
-    it("exits early when confirmation is rejected", (done) => {
+    it("should rm -rf the node_modules", async () => {
+      await lernaClean();
+
+      expect(PromptUtilities.confirm).toBeCalled();
+      expect(removedDirectories(testDir)).toEqual([
+        "packages/package-1/node_modules",
+        "packages/package-2/node_modules",
+        "packages/package-3/node_modules",
+      ]);
+    });
+
+    it("exits early when confirmation is rejected", async () => {
       PromptUtilities.confirm = jest.fn(callsBack(false));
 
-      const cleanCommand = new CleanCommand([], {}, testDir);
+      await lernaClean();
 
-      cleanCommand.runValidations();
-      cleanCommand.runPreparations();
-
-      cleanCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          expect(removedDirectories(testDir)).toEqual([]);
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      expect(removedDirectories(testDir)).toEqual([]);
     });
 
-    it("should be possible to skip asking for confirmation", (done) => {
-      const cleanCommand = new CleanCommand([], {
-        yes: true
-      }, testDir);
+    it("should be possible to skip asking for confirmation", async () => {
+      await lernaClean("--yes");
 
-      cleanCommand.runValidations();
-      cleanCommand.runPreparations();
-
-      cleanCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          expect(PromptUtilities.confirm).not.toBeCalled();
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      expect(PromptUtilities.confirm).not.toBeCalled();
     });
 
-    // Both of these commands should result in the same outcome
-    const filters = [
-      { test: "should only clean scoped packages",
-        flag: "scope", flagValue: "package-1",
-      },
-      { test: "should not clean ignored packages",
-        flag: "ignore", flagValue: ["package-2", "@test/package-3"],
-      },
-    ];
-    filters.forEach((filter) => {
-      it(filter.test, (done) => {
-        const cleanCommand = new CleanCommand([], {
-          [filter.flag]: filter.flagValue
-        }, testDir);
+    it("should only clean scoped packages", async () => {
+      await lernaClean("--scope", "package-1");
 
-        cleanCommand.runValidations();
-        cleanCommand.runPreparations();
+      expect(removedDirectories(testDir)).toEqual([
+        "packages/package-1/node_modules",
+      ]);
+    });
 
-        cleanCommand.runCommand(exitWithCode(0, (err) => {
-          if (err) return done.fail(err);
+    it("should not clean ignored packages", async () => {
+      await lernaClean(
+        "--ignore", "package-2",
+        "--ignore", "@test/package-3"
+      );
 
-          try {
-            expect(removedDirectories(testDir)).toEqual([
-              "packages/package-1/node_modules",
-            ]);
+      expect(removedDirectories(testDir)).toEqual([
+        "packages/package-1/node_modules",
+      ]);
+    });
 
-            done();
-          } catch (ex) {
-            done.fail(ex);
-          }
-        }));
-      });
+    it("exits non-zero when rimraf errors egregiously", async () => {
+      FileSystemUtilities.rimraf = jest.fn(callsBack(new Error("whoops")));
+      expect.assertions(2);
+
+      try {
+        await lernaClean();
+      } catch (err) {
+        expect(err.exitCode).toBe(1);
+        expect(err.message).toMatch("whoops");
+      }
     });
   });
 
   describe("--include-filtered-dependencies", () => {
-    let testDir;
-
-    beforeEach(() => initFixture("CleanCommand/include-filtered-dependencies").then((dir) => {
-      testDir = dir;
-    }));
-
-    it("should not remove node_modules from unaffiliated packages", (done) => {
-      const cleanCommand = new CleanCommand([], {
-        scope: "@test/package-2",
-        includeFilteredDependencies: true
-      }, testDir);
-
-      cleanCommand.runValidations();
-      cleanCommand.runPreparations();
-
-      cleanCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          expect(removedDirectories(testDir)).toEqual([
-            "packages/package-2/node_modules",
-            "packages/package-1/node_modules",
-          ]);
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+    it("should not remove node_modules from unaffiliated packages", async () => {
+      const testDir = await initFixture("CleanCommand/include-filtered-dependencies");
+      const lernaClean = run(testDir);
+      await lernaClean("--scope", "@test/package-2", "--include-filtered-dependencies");
+      expect(removedDirectories(testDir)).toEqual([
+        "packages/package-2/node_modules",
+        "packages/package-1/node_modules",
+      ]);
     });
 
   });

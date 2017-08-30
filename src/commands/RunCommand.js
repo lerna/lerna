@@ -6,7 +6,8 @@ import output from "../utils/output";
 import PackageUtilities from "../PackageUtilities";
 
 export function handler(argv) {
-  return new RunCommand([argv.script, ...argv.args], argv).run();
+  new RunCommand([argv.script, ...argv.args], argv, argv._cwd).run()
+    .then(argv._onFinish, argv._onFinish);
 }
 
 export const command = "run <script> [args..]";

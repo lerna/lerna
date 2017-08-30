@@ -10,7 +10,8 @@ import NpmUtilities from "../NpmUtilities";
 import PackageUtilities from "../PackageUtilities";
 
 export function handler(argv) {
-  return new BootstrapCommand([...argv.args], argv).run();
+  new BootstrapCommand([...argv.args], argv, argv._cwd).run()
+    .then(argv._onFinish, argv._onFinish);
 }
 
 export const command = "bootstrap [args..]";
