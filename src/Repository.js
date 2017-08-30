@@ -1,4 +1,5 @@
 import findUp from "find-up";
+import globParent from "glob-parent";
 import loadJsonFile from "load-json-file";
 import log from "npmlog";
 import path from "path";
@@ -59,6 +60,11 @@ export default class Repository {
       return this.packageJson.workspaces;
     }
     return this.lernaJson.packages || [DEFAULT_PACKAGE_GLOB];
+  }
+
+  get packageParentDirs() {
+    return this.packageConfigs.map(globParent)
+      .map(parentDir => path.resolve(this.rootPath, parentDir));
   }
 
   get packages() {

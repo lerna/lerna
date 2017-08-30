@@ -124,6 +124,24 @@ describe("Repository", () => {
     });
   });
 
+  describe("get .packageParentDirs", () => {
+    it("returns a list of package parent directories", () => {
+      const repo = new Repository(testDir);
+      repo.lernaJson.packages = [
+        ".",
+        "packages/*",
+        "dir/nested/*",
+        "globstar/**",
+      ];
+      expect(repo.packageParentDirs).toEqual([
+        testDir,
+        path.join(testDir, "packages"),
+        path.join(testDir, "dir/nested"),
+        path.join(testDir, "globstar"),
+      ])
+    });
+  });
+
   describe("get .packages", () => {
     it("returns the list of packages", () => {
       const repo = new Repository(testDir);

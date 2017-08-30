@@ -33,7 +33,7 @@ describe("DiffCommand", () => {
   }));
   afterEach(() => jest.resetAllMocks());
 
-  it("should diff everything from the first commit", () => {
+  it("should diff packages from the first commit", () => {
     GitUtilities.getFirstCommit.mockImplementation(() => "beefcafe");
     ChildProcessUtilities.spawn.mockImplementation(callbackSuccess);
 
@@ -44,6 +44,8 @@ describe("DiffCommand", () => {
           "diff",
           "beefcafe",
           "--color=auto",
+          "--",
+          path.join(testDir, "packages"),
         ],
         expect.objectContaining({
           cwd: testDir,
@@ -53,7 +55,7 @@ describe("DiffCommand", () => {
     });
   });
 
-  it("should diff everything from the most recent tag", () => {
+  it("should diff packages from the most recent tag", () => {
     GitUtilities.hasTags.mockImplementation(() => true);
     GitUtilities.getLastTaggedCommit.mockImplementation(() => "cafedead");
     ChildProcessUtilities.spawn.mockImplementation(callbackSuccess);
@@ -65,6 +67,8 @@ describe("DiffCommand", () => {
           "diff",
           "cafedead",
           "--color=auto",
+          "--",
+          path.join(testDir, "packages"),
         ],
         expect.objectContaining({
           cwd: testDir,
