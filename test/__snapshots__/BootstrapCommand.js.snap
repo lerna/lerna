@@ -14,6 +14,42 @@ Object {
 }
 `;
 
+exports[`BootstrapCommand mismatching version numbers should link when option.semverIgnore is false 1`] = `
+Object {
+  "packages/package-1": Array [
+    "external@^1.0.0",
+  ],
+  "packages/package-2": Array [
+    "external@^2.0.0",
+    "package-1@^1.0.0",
+  ],
+}
+`;
+
+exports[`BootstrapCommand mismatching version numbers should link when option.semverIgnore is false 2`] = `Array []`;
+
+exports[`BootstrapCommand mismatching version numbers should link when option.semverIgnore is true 1`] = `
+Object {
+  "packages/package-1": Array [
+    "external@^1.0.0",
+  ],
+  "packages/package-2": Array [
+    "external@^2.0.0",
+    "package-1@^1.0.0",
+  ],
+}
+`;
+
+exports[`BootstrapCommand mismatching version numbers should link when option.semverIgnore is true 2`] = `
+Array [
+  Object {
+    "_src": "packages/package-1",
+    "dest": "packages/package-2/node_modules/package-1",
+    "type": "junction",
+  },
+]
+`;
+
 exports[`BootstrapCommand with at least one external dependency to install should install all dependencies 1`] = `
 Object {
   "packages/package-1": Array [

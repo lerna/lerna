@@ -38,6 +38,11 @@ export const builder = {
     describe: "Executable used to install dependencies (npm, yarn, pnpm, ...)",
     type: "string",
     requiresArg: true,
+  },
+  "semver-ignore": {
+    group: "Command Options:",
+    describe: "Ignore semver when determining whether to link or install from registry)",
+    type: "boolean",
   }
 };
 
@@ -559,6 +564,7 @@ export default class BootstrapCommand extends Command {
     tracker.addWork(this.filteredPackages.length);
 
     const actions = [];
+    const { semverIgnore } = this.options;
 
     this.filteredPackages.forEach((filteredPackage) => {
       // actions to run for this package
@@ -566,9 +572,12 @@ export default class BootstrapCommand extends Command {
 
       Object.keys(filteredPackage.allDependencies)
         .filter((dependency) => {
-          // filter out external dependencies and incompatible packages
+          // filter out external dependencies
           const match = this.packageGraph.get(dependency);
-          return match && filteredPackage.hasMatchingDependency(match.package);
+          // filter out incompatible packages
+          const hasMatchingDependency = match && filteredPackage.hasMatchingDependency(match.package);
+          // compatibility only matters when semverIgnore is false (default)
+          return match && (semverIgnore || hasMatchingDependency);
         })
         .forEach((dependency) => {
           // get Package of dependency
