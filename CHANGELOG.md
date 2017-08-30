@@ -1,3 +1,23 @@
+## v2.1.2 (2017-08-29)
+
+More bugfixes, plus support for the `prepare` lifecycle script found in npm 4+.
+
+#### :rocket: Enhancement
+* [#979](https://github.com/lerna/lerna/pull/979) Run "prepare" lifecycle script during bootstrap. ([@Andarist](https://github.com/Andarist))
+
+#### :bug: Bug Fix
+* [#992](https://github.com/lerna/lerna/pull/992) Fix --conventional-commits recommending already released version. ([@jezzay](https://github.com/jezzay))
+* [#993](https://github.com/lerna/lerna/pull/993) Fix silly level log output for --conventional-commits. ([@jezzay](https://github.com/jezzay))
+* [#996](https://github.com/lerna/lerna/pull/996) Only diff package locations, not the entire repository. ([@evocateur](https://github.com/evocateur))
+
+#### :house: Internal
+* [#997](https://github.com/lerna/lerna/pull/997) All command unit tests use yargs runner. ([@evocateur](https://github.com/evocateur))
+
+#### Committers: 3
+- Daniel Stockman ([evocateur](https://github.com/evocateur))
+- Jeremy ([jezzay](https://github.com/jezzay))
+- Mateusz Burzyński ([Andarist](https://github.com/Andarist))
+
 ## v2.1.1 (2017-08-28)
 
 A quick bugfix release to restore a broken `lerna publish --canary`, as reported in [#989](https://github.com/lerna/lerna/issues/989). Many thanks to all who pitched in to identify the issue!
