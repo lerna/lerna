@@ -336,8 +336,22 @@ export default class Command {
 
       this[method]((err, completed, code = 0) => {
         if (err) {
-          log.error(method, "callback with error\n", err);
-          this._complete(err, 1, callback);
+          // If we have package details we can direct the developers attention
+          // to that specific package.
+          if (err.pkg) {
+            log.error(method, `Error occured with '${err.pkg.name}' while ` +
+              `running '${err.cmd}'`);
+            log.error(method, `    See logs below for details:`);
+            log.pause();
+            console.error('\n');
+            console.error(err.stdout, err.stderr);
+            console.error('\n');
+            log.resume();
+            this._complete(err, 1, callback);
+          } else {
+            log.error(method, "callback with error\n", err);
+            this._complete(err, 1, callback);
+          }
         } else if (!completed) {
           // an early exit is rarely an error
           log.verbose(method, "exited early");
