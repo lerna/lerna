@@ -339,14 +339,7 @@ export default class Command {
           // If we have package details we can direct the developers attention
           // to that specific package.
           if (err.pkg) {
-            log.error(method, `Error occured with '${err.pkg.name}' while ` +
-              `running '${err.cmd}'`);
-            log.error(method, `    See logs below for details:`);
-            log.pause();
-            console.error('\n');
-            console.error(err.stdout, err.stderr);
-            console.error('\n');
-            log.resume();
+            this._logPackageError(method, err);
             this._complete(err, 1, callback);
           } else {
             log.error(method, "callback with error\n", err);
@@ -421,6 +414,35 @@ export default class Command {
 
   execute() {
     throw new Error("command.execute() needs to be implemented.");
+  }
+
+  _logPackageError(method, err) {
+    log.error(method, dedent`
+      Error occured with '${err.pkg.name}' while running '${err.cmd}'
+    `);
+
+    const pkgPrefix = `${err.cmd} [${err.pkg.name}]`;
+    log.error(pkgPrefix, `Output from stdout:`);
+    log.pause();
+    console.error(err.stdout);
+
+    log.resume();
+    log.error(pkgPrefix, `Output from stderr:`);
+    log.pause();
+    console.error(err.stderr);
+
+    log.resume();
+    log.error(pkgPrefix, `Stacktrace:`);
+    log.pause();
+    console.error(err.stack);
+
+    // Below is just to ensure something sensible is printed after the long
+    // stream of logs
+    console.error();
+    log.resume();
+    log.error(method, dedent`
+      Error occured with '${err.pkg.name}' while running '${err.cmd}'
+    `);
   }
 }
 
