@@ -609,6 +609,14 @@ repo.  Each commit is modified to make changes relative to the package
 directory.  So, for example, the commit that added `package.json` will
 instead add `packages/<directory-name>/package.json`.
 
+### link
+
+```sh
+$ lerna link
+```
+
+Symlink together all Lerna `packages` that are dependencies of each other in the current Lerna repo.
+
 ## Misc
 
 Lerna will log to a `lerna-debug.log` file (same as `npm-debug.log`) when it encounters an error running a command.

@@ -8,6 +8,7 @@ import InitCommand from "./commands/InitCommand";
 import RunCommand from "./commands/RunCommand";
 import ExecCommand from "./commands/ExecCommand";
 import LsCommand from "./commands/LsCommand";
+import LinkCommand from "./commands/LinkCommand";
 
 export default {
   BootstrapCommand,
@@ -19,5 +20,6 @@ export default {
   InitCommand,
   RunCommand,
   ExecCommand,
-  LsCommand
+  LsCommand,
+  LinkCommand
 };
