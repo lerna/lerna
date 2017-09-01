@@ -431,14 +431,8 @@ export default class Command {
     log.pause();
     console.error(err.stderr);
 
-    log.resume();
-    log.error(pkgPrefix, `Stacktrace:`);
-    log.pause();
-    console.error(err.stack);
-
     // Below is just to ensure something sensible is printed after the long
     // stream of logs
-    console.error();
     log.resume();
     log.error(method, dedent`
       Error occured with '${err.pkg.name}' while running '${err.cmd}'
