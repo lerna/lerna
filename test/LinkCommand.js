@@ -5,12 +5,14 @@ import FileSystemUtilities from "../src/FileSystemUtilities";
 
 // helpers
 import callsBack from "./helpers/callsBack";
-import exitWithCode from "./helpers/exitWithCode";
 import initFixture from "./helpers/initFixture";
 import normalizeRelativeDir from "./helpers/normalizeRelativeDir";
+import yargsRunner from "./helpers/yargsRunner";
 
 // file under test
-import LinkCommand from "../src/commands/LinkCommand";
+import * as commandModule from "../src/commands/LinkCommand";
+
+const run = yargsRunner(commandModule);
 
 // silence logs
 log.level = "silent";
@@ -41,32 +43,15 @@ describe("LinkCommand", () => {
   afterEach(() => jest.resetAllMocks());
 
   describe("with local package dependencies", () => {
-    let testDir;
-
-    beforeEach(() => initFixture("LinkCommand/basic").then((dir) => {
-      testDir = dir;
-    }));
-
     beforeEach(stubSymlink);
     afterEach(resetSymlink);
 
-    it("should symlink all packages", (done) => {
-      const linkCommand = new LinkCommand([], {}, testDir);
+    it("should symlink all packages", async () => {
+      const testDir = await initFixture("LinkCommand/basic");
+      const lernaLink = run(testDir);
+      await lernaLink();
 
-      linkCommand.runValidations();
-      linkCommand.runPreparations();
-
-      linkCommand.runCommand(exitWithCode(0, (err) => {
-        if (err) return done.fail(err);
-
-        try {
-          expect(symlinkedDirectories(testDir)).toMatchSnapshot();
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      }));
+      expect(symlinkedDirectories(testDir)).toMatchSnapshot();
     });
   });
 });

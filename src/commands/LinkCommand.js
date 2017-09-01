@@ -2,7 +2,8 @@ import Command from "../Command";
 import PackageUtilities from "../PackageUtilities";
 
 export function handler(argv) {
-  return new LinkCommand(argv._, argv).run();
+  new LinkCommand([argv.pkg], argv, argv._cwd).run()
+    .then(argv._onFinish, argv._onFinish);
 }
 
 export const command = "link";
@@ -12,13 +13,7 @@ export const describe = "Symlink together all packages which are dependencies of
 export const builder = {};
 
 export default class LinkCommand extends Command {
-  get defaultOptions() {
-    return {};
-  }
-
   initialize(callback) {
-    this.exact = this.options.exact;
-
     callback(null, true);
   }
 
