@@ -162,6 +162,53 @@ describe("Command", () => {
         expect(warning.message).toMatch("Waiting for 2 child processes to exit.");
       });
     });
+
+    describe("with package error", () => {
+      const originalConsoleError = console.error;
+
+      beforeEach(() => {
+        console.error = jest.fn();
+      });
+      afterEach(() => {
+        console.error = originalConsoleError;
+      });
+
+      it("logs stdout and stderr of error from package", async () => {
+        class PkgErrorCommand extends Command {
+          initialize(callback) {
+            callback(null, true);
+          }
+          execute(callback) {
+            // construct the error
+            const err = new Error("message");
+            err.cmd = "test-pkg-err";
+            err.stdout = "pkg-err-stdout";
+            err.stderr = "pkg-err-stderr";
+            // add pkg property with stub info
+            err.pkg = {
+              name: "pkg-err-name"
+            };
+            // "throw" the error to reject .run() promise
+            callback(err);
+          }
+        }
+
+        try {
+          await new PkgErrorCommand([], {}, testDir).run();
+        } catch (err) {
+          expect(console.error.mock.calls.length).toEqual(2);
+          expect(console.error.mock.calls[0]).toEqual(["pkg-err-stdout"]);
+          expect(console.error.mock.calls[1]).toEqual(["pkg-err-stderr"]);
+
+          expect(err.cmd).toEqual("test-pkg-err");
+          expect(err.stdout).toEqual("pkg-err-stdout");
+          expect(err.stderr).toEqual("pkg-err-stderr");
+          expect(err.pkg).toEqual({
+            name: "pkg-err-name"
+          });
+        }
+      });
+    });
   });
 
   describe(".runValidations()", () => {

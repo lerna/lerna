@@ -143,6 +143,9 @@ export default class BootstrapCommand extends Command {
       pkg.runScript(scriptName, (err) => {
         tracker.silly(pkg.name);
         tracker.completeWork(1);
+        if (err) {
+          err.pkg = pkg;
+        }
         done(err);
       });
     }, this.concurrency, (err) => {

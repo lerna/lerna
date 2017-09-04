@@ -336,8 +336,15 @@ export default class Command {
 
       this[method]((err, completed, code = 0) => {
         if (err) {
-          log.error(method, "callback with error\n", err);
-          this._complete(err, 1, callback);
+          // If we have package details we can direct the developers attention
+          // to that specific package.
+          if (err.pkg) {
+            this._logPackageError(method, err);
+            this._complete(err, 1, callback);
+          } else {
+            log.error(method, "callback with error\n", err);
+            this._complete(err, 1, callback);
+          }
         } else if (!completed) {
           // an early exit is rarely an error
           log.verbose(method, "exited early");
@@ -407,6 +414,29 @@ export default class Command {
 
   execute() {
     throw new Error("command.execute() needs to be implemented.");
+  }
+
+  _logPackageError(method, err) {
+    log.error(method, dedent`
+      Error occured with '${err.pkg.name}' while running '${err.cmd}'
+    `);
+
+    const pkgPrefix = `${err.cmd} [${err.pkg.name}]`;
+    log.error(pkgPrefix, `Output from stdout:`);
+    log.pause();
+    console.error(err.stdout);
+
+    log.resume();
+    log.error(pkgPrefix, `Output from stderr:`);
+    log.pause();
+    console.error(err.stderr);
+
+    // Below is just to ensure something sensible is printed after the long
+    // stream of logs
+    log.resume();
+    log.error(method, dedent`
+      Error occured with '${err.pkg.name}' while running '${err.cmd}'
+    `);
   }
 }
 
