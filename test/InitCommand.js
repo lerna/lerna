@@ -316,28 +316,16 @@ describe("InitCommand", () => {
       );
     });
 
-    it("does create package directories when glob is configured", (done) => {
+    it("does create package directories when glob is configured", async () => {
       loadJsonFile.sync = jest.fn(() => ({
         packages: ["modules/*"],
       }));
 
-      const instance = new InitCommand([], {}, testDir);
+      await lernaInit();
 
-      instance.runCommand((err, code) => {
-        if (err) return done.fail(err);
-
-        try {
-          expect(code).toBe(0);
-
-          expect(FileSystemUtilities.mkdirpSync).lastCalledWith(
-            path.join(testDir, "modules")
-          );
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      });
+      expect(FileSystemUtilities.mkdirpSync).lastCalledWith(
+        path.join(testDir, "modules")
+      );
     });
   });
 
