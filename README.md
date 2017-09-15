@@ -916,6 +916,12 @@ new version(s) to the default [dist-tag](https://docs.npmjs.com/cli/dist-tag) (`
 This is not generally necessary, as Lerna will publish packages in topological
 order (all dependencies before dependents) by default.
 
+### README Badge
+Using Lerna? Add a README badge to show it off: [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lernajs.io/)
+```
+[![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lernajs.io/)
+```
+
 ### Wizard
 
 If you prefer some guidance for cli (in case you're about to start using lerna or introducing it to a new team), you might like [lerna-wizard](https://github.com/szarouski/lerna-wizard). It will lead you through a series of well-defined steps:
