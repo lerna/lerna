@@ -91,12 +91,11 @@ Your repository should now look like this:
 
 ```
 lerna-repo/
-  packages/
   package.json
   lerna.json
 ```
 
-This will create a `lerna.json` configuration file as well as a `packages` folder.
+This will create a `lerna.json` configuration file as well as a `package.json` file.
 
 ## How It Works
 
