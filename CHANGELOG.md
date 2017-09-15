@@ -1,3 +1,23 @@
+## v2.2.0 (2017-09-15)
+
+A new command, tweaks to logging and init scaffolding, and documentation!
+
+#### :rocket: Enhancement
+* [#970](https://github.com/lerna/lerna/pull/970) Create configured "packages" directories during lerna init. ([@Siilwyn](https://github.com/Siilwyn))
+* [#1004](https://github.com/lerna/lerna/pull/1004) Improve logging of package lifecycle errors during bootstrap. ([@gauntface](https://github.com/gauntface))
+* [#1000](https://github.com/lerna/lerna/pull/1000) Add `lerna link` command. ([@Inkdpixels](https://github.com/Inkdpixels))
+
+#### :memo: Documentation
+* [#985](https://github.com/lerna/lerna/pull/985) Update installation instructions to match lerna init behavior. ([@sapegin](https://github.com/sapegin))
+* [#1011](https://github.com/lerna/lerna/pull/1011) Add shield example to README.md. ([@mfix22](https://github.com/mfix22))
+
+#### Committers: 5
+- Artem Sapegin ([sapegin](https://github.com/sapegin))
+- Matt Gaunt ([gauntface](https://github.com/gauntface))
+- Michael Fix ([mfix22](https://github.com/mfix22))
+- Selwyn ([Siilwyn](https://github.com/Siilwyn))
+- Tyll Weiß ([Inkdpixels](https://github.com/Inkdpixels))
+
 ## v2.1.2 (2017-08-29)
 
 More bugfixes, plus support for the `prepare` lifecycle script found in npm 4+.
