@@ -136,6 +136,6 @@ export default class InitCommand extends Command {
 
   ensurePackagesDir() {
     this.logger.info("", "Creating packages directory");
-    this.repository.packageParentDirs.map(FileSystemUtilities.mkdirpSync);
+    this.repository.packageParentDirs.map((dir) => FileSystemUtilities.mkdirpSync(dir));
   }
 }
