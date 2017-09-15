@@ -56,6 +56,7 @@ export default class InitCommand extends Command {
   execute(callback) {
     this.ensurePackageJSON();
     this.ensureLernaJson();
+    this.ensurePackagesDir();
     this.ensureNoVersionFile();
     this.logger.success("", "Initialized Lerna files");
     callback(null, true);
@@ -131,5 +132,10 @@ export default class InitCommand extends Command {
       this.logger.info("", "Removing old VERSION file");
       FileSystemUtilities.unlinkSync(versionLocation);
     }
+  }
+
+  ensurePackagesDir() {
+    this.logger.info("", "Creating packages directory");
+    this.repository.packageParentDirs.map((dir) => FileSystemUtilities.mkdirpSync(dir));
   }
 }

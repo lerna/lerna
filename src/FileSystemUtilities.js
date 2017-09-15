@@ -27,6 +27,11 @@ export default class FileSystemUtilities {
     fs.ensureDir(filePath, callback);
   }
 
+  static mkdirpSync(filePath) {
+    log.silly("mkdirpSync", filePath);
+    fs.ensureDirSync(filePath);
+  }
+
   static readdirSync(filePath) {
     log.silly("readdirSync", filePath);
     return fs.readdirSync(filePath);

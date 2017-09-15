@@ -96,6 +96,10 @@ describe("InitCommand", () => {
           },
         })
       );
+
+      expect(FileSystemUtilities.mkdirpSync).lastCalledWith(
+        path.join(testDir, "packages")
+      );
     });
 
     it("initializes git repo with lerna files in independent mode", async () => {
@@ -175,6 +179,10 @@ describe("InitCommand", () => {
             lerna: `^${lernaVersion}`,
           },
         })
+      );
+
+      expect(FileSystemUtilities.mkdirpSync).lastCalledWith(
+        path.join(testDir, "packages")
       );
     });
   });
@@ -305,6 +313,18 @@ describe("InitCommand", () => {
           version: "independent",
         }),
         { indent: 2 }
+      );
+    });
+
+    it("does create package directories when glob is configured", async () => {
+      loadJsonFile.sync = jest.fn(() => ({
+        packages: ["modules/*"],
+      }));
+
+      await lernaInit();
+
+      expect(FileSystemUtilities.mkdirpSync).lastCalledWith(
+        path.join(testDir, "modules")
       );
     });
   });
