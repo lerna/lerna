@@ -1,6 +1,4 @@
 import _ from "lodash";
-import globParent from "glob-parent";
-import path from "path";
 import writeJsonFile from "write-json-file";
 import writePkg from "write-pkg";
 
@@ -138,10 +136,6 @@ export default class InitCommand extends Command {
 
   ensurePackagesDir() {
     this.logger.info("", "Creating packages directory");
-    this.repository.packageConfigs
-      .map((pkgGlob) => globParent(pkgGlob))
-      .forEach((pkgRoot) => FileSystemUtilities.mkdirpSync(
-        path.join(this.repository.rootPath, pkgRoot)
-      ));
+    this.repository.packageParentDirs.map(FileSystemUtilities.mkdirpSync);
   }
 }
