@@ -49,16 +49,16 @@ exports[`stderr: empty directory 1`] = `
 "lerna info version __TEST_VERSION__
 lerna info Initializing Git repository
 lerna info Creating package.json
-lerna info Creating packages directory
 lerna info Creating lerna.json
+lerna info Creating packages directory
 lerna success Initialized Lerna files"
 `;
 
 exports[`stderr: has-version 1`] = `
 "lerna info version __TEST_VERSION__
 lerna info Creating package.json
-lerna info Creating packages directory
 lerna info Creating lerna.json
+lerna info Creating packages directory
 lerna info Removing old VERSION file
 lerna success Initialized Lerna files"
 `;
@@ -66,7 +66,7 @@ lerna success Initialized Lerna files"
 exports[`stderr: updates 1`] = `
 "lerna info version __TEST_VERSION__
 lerna info Updating package.json
-lerna info Creating packages directory
 lerna info Updating lerna.json
+lerna info Creating packages directory
 lerna success Initialized Lerna files"
 `;
