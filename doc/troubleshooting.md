@@ -42,6 +42,22 @@ Run `lerna import` with the `--max-buffer` flag and provide a large enough
 number (in bytes). At the writing of this entry the underlying default is 
 10MB, so you should keep this in mind. 
 
+### Merge conflict commits cannot be imported
+
+When you try to import a repository that contains merge commits that needed
+conflict resolutions, the import command fails with an error:
+
+```
+lerna ERR! execute Error: Command failed: git am -3
+lerna ERR! execute error: Failed to merge in the changes.
+lerna ERR! execute CONFLICT (content): Merge conflict in [file]
+```
+
+#### Solution
+
+Run `lerna import` with the `--flatten` flag to import the history in "flat"
+mode, i.e. with each merge commit as a single change the merge introduced.
+
 ## Publish Command
 
 ### Publish does not detect manually created tags in fixed mode with Github/Github Enterprise

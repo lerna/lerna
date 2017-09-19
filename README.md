@@ -751,6 +751,14 @@ $ lerna ls --since some-branch
 
 *This can be particularly useful when used in CI, if you can obtain the target branch a PR will be going into, because you can use that as the `ref` to the `--since` option. This works well for PRs going into master as well as feature branches.*
 
+#### --flatten
+
+When importing repositories with merge commits with conflicts, the import command will fail trying to apply all commits. The user can use this flag to ask for import of "flat" history, i.e. with each merge commit as a single change the merge introduced.
+
+```
+$ lerna import ~/Product --flatten
+```
+
 #### --ignore [glob]
 
 Excludes a subset of packages when running a command.

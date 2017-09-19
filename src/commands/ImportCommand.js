@@ -23,10 +23,22 @@ export const builder = {
   "yes": {
     group: "Command Options:",
     describe: "Skip all confirmation prompts",
-  }
+  },
+  "flatten": {
+    group: "Command Options:",
+    describe: "Import each merge commit as a single change the merge introduced",
+  },
 };
 
 export default class ImportCommand extends Command {
+  gitParamsForTargetCommits() {
+    const params = ["log", "--format=%h"];
+    if (this.options.flatten) {
+      params.push("--first-parent");
+    }
+    return params;
+  }
+
   initialize(callback) {
     const inputPath = this.input[0];
 
@@ -65,7 +77,7 @@ export default class ImportCommand extends Command {
       return callback(new Error(`Target directory already exists "${this.targetDir}"`));
     }
 
-    this.commits = this.externalExecSync("git", ["log", "--format=%h"]).split("\n").reverse();
+    this.commits = this.externalExecSync("git", this.gitParamsForTargetCommits()).split("\n").reverse();
     // this.commits = this.externalExecSync("git", [
     //   "rev-list",
     //   "--no-merges",
@@ -105,24 +117,39 @@ export default class ImportCommand extends Command {
     return ChildProcessUtilities.execSync(cmd, args, this.externalExecOpts);
   }
 
+  createPatchForCommit(sha) {
+    let patch = null;
+    if (this.options.flatten) {
+      const diff = this.externalExecSync("git", ["log", "--reverse", "--first-parent", "-p",
+        "-m", "--pretty=email", "--stat", "--binary", "-1", sha]);
+      const version = this.externalExecSync("git", ["--version"]).replace(/git version /g, '');
+      patch = `${diff}\n--\n${version}`;
+    } else {
+      patch = this.externalExecSync("git", ["format-patch", "-1", sha, "--stdout"]);
+    }
+
+    const replacement = "$1/" + this.targetDir;
+    // Create a patch file for this commit and prepend the target directory
+    // to all affected files.  This moves the git history for the entire
+    // external repository into the package subdirectory, commit by commit.
+    return (
+      patch
+        .replace(/^([-+]{3} [ab])/mg,     replacement)
+        .replace(/^(diff --git a)/mg,     replacement)
+        .replace(/^(diff --git \S+ b)/mg, replacement)
+        .replace(/^(rename (from|to)) /mg, `$1 ${this.targetDir}/`)
+    );
+  }
+
   execute(callback) {
     const tracker = this.logger.newItem("execute");
-    const replacement = "$1/" + this.targetDir;
 
     tracker.addWork(this.commits.length);
 
     async.series(this.commits.map((sha) => (done) => {
       tracker.info(sha);
 
-      // Create a patch file for this commit and prepend the target directory
-      // to all affected files.  This moves the git history for the entire
-      // external repository into the package subdirectory, commit by commit.
-      const patch = this.externalExecSync("git", ["format-patch", "-1", sha, "--stdout"])
-        .replace(/^([-+]{3} [ab])/mg,     replacement)
-        .replace(/^(diff --git a)/mg,     replacement)
-        .replace(/^(diff --git \S+ b)/mg, replacement)
-        .replace(/^(rename (from|to)) /mg, `$1 ${this.targetDir}/`);
-
+      const patch = this.createPatchForCommit(sha);
       // Apply the modified patch to the current lerna repository, preserving
       // original commit date, author and message.
       //
@@ -132,7 +159,8 @@ export default class ImportCommand extends Command {
         if (err) {
           // Give some context for the error message.
           err = `Failed to apply commit ${sha}.\n${err}\n` +
-                `Rolling back to previous HEAD (commit ${this.preImportHead}).`;
+                `Rolling back to previous HEAD (commit ${this.preImportHead}).\n` +
+                `You may try with --flatten to import flat history.`;
 
           // Abort the failed `git am` and roll back to previous HEAD.
           ChildProcessUtilities.execSync("git", ["am", "--abort"], this.execOpts);
