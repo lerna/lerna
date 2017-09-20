@@ -57,6 +57,35 @@ describe("ImportCommand", () => {
       expect(await pathExists(packageJson)).toBe(true);
     });
 
+    it("imports a repo with conflicted merge commits when run with --flatten", async () => {
+      const cwdExternalDir = { cwd: externalDir };
+      const branchName = "conflict_branch";
+      const conflictedFileName = "conflicted-file.txt";
+      const conflictedFile = path.join(externalDir, conflictedFileName);
+      await fs.writeFile(conflictedFile, "initial content");
+      await execa("git", ["add", conflictedFileName], cwdExternalDir);
+      await execa("git", ["commit", "-m", "Initial content written"], cwdExternalDir);
+      await execa("git", ["checkout", "-b", branchName], cwdExternalDir);
+      await fs.writeFile(conflictedFile, "branch content");
+      await execa("git", ["commit", "-am", "branch content written"], cwdExternalDir);
+      await execa("git", ["checkout", "master"], cwdExternalDir);
+      await fs.writeFile(conflictedFile, "master content");
+      await execa("git", ["commit", "-am", "master content written"], cwdExternalDir);
+      try {
+        await execa("git", ["merge", branchName], cwdExternalDir);
+      } catch (e) {}
+      await fs.writeFile(conflictedFile, "merged content");
+      await execa("git", ["add", conflictedFileName], cwdExternalDir);
+      await execa("git", ["commit", "-m", "Branch merged"], cwdExternalDir);
+      expect(await lastCommitInDir(externalDir)).toBe("Branch merged");
+
+      await lernaImport(externalDir, "--flatten");
+      expect(await lastCommitInDir(testDir)).toBe("Branch merged");
+
+      const newFilePath = path.join(testDir, "packages", path.basename(externalDir), conflictedFileName);
+      expect(await pathExists(newFilePath)).toBe(true);
+    });
+
     it.skip("works with --max-buffer", async () => {
       await lernaImport(externalDir, "--max-buffer=1");
       // TODO: this test kinda sucks, should never have to read instance properties
