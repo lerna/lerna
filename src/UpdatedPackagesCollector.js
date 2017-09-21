@@ -58,13 +58,7 @@ export default class UpdatedPackagesCollector {
 
     if (GitUtilities.hasTags(execOpts)) {
       if (canary) {
-        let currentSHA;
-
-        if (canary !== true) {
-          currentSHA = canary;
-        } else {
-          currentSHA = GitUtilities.getCurrentSHA(execOpts);
-        }
+        const currentSHA = GitUtilities.getCurrentSHA(execOpts);
 
         since = this.getAssociatedCommits(currentSHA);
       } else if (!since) {

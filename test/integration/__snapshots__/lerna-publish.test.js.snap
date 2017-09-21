@@ -206,6 +206,24 @@ Array [
 ]
 `;
 
+exports[`stderr: canary beta version 1`] = `
+"lerna info version __TEST_VERSION__
+lerna info canary enabled
+lerna info current version 1.0.0
+lerna info Checking for updated packages...
+lerna info Comparing with initial commit.
+lerna info auto-confirmed "
+`;
+
+exports[`stderr: canary beta version 2`] = `
+"lerna info version __TEST_VERSION__
+lerna info canary enabled
+lerna info current version 1.0.0
+lerna info Checking for updated packages...
+lerna info Comparing with initial commit.
+lerna info auto-confirmed "
+`;
+
 exports[`stderr: exit 0 when no updates 1`] = `
 "lerna info version __TEST_VERSION__
 lerna info current version 1.0.0
@@ -228,6 +246,28 @@ lerna info versioning independent
 lerna info Checking for updated packages...
 lerna info Comparing with initial commit.
 lerna info auto-confirmed "
+`;
+
+exports[`stdout: canary beta version 1`] = `
+"
+Changes:
+ - package-1: 1.0.0 => 1.1.0-beta.hash
+ - package-2: 1.0.0 => 1.1.0-beta.hash
+ - package-3: 1.0.0 => 1.1.0-beta.hash
+ - package-4: 1.0.0 => 1.1.0-beta.hash
+ - package-5: 1.0.0 => 1.1.0-beta.hash (private)
+"
+`;
+
+exports[`stdout: canary default version 1`] = `
+"
+Changes:
+ - package-1: 1.0.0 => 1.1.0-alpha.hash
+ - package-2: 1.0.0 => 1.1.0-alpha.hash
+ - package-3: 1.0.0 => 1.1.0-alpha.hash
+ - package-4: 1.0.0 => 1.1.0-alpha.hash
+ - package-5: 1.0.0 => 1.1.0-alpha.hash (private)
+"
 `;
 
 exports[`stdout: exit 0 when no updates 1`] = `""`;
