@@ -945,20 +945,22 @@ describe("PublishCommand", () => {
       });
 
       it("should reject a non matching branch", async () => {
-        await expect(run(testDir)("--allow-branch", "develop")).rejects.toEqual(
-          expect.stringMatching(/not allowed to be published/)
-        );
+        try {
+          await run(testDir)("--allow-branch", "develop");
+        } catch (err) {
+          expect(err).toEqual(expect.stringMatching(/not allowed to be published/));
+        }
       });
 
       it("should accept an exactly matching branch", async () => {
-        await expect(run(testDir)("--allow-branch", "master")).resolves.toEqual(
+        expect(await run(testDir)("--allow-branch", "master")).toEqual(
           expect.objectContaining({ exitCode: 0 })
         );
       });
 
       it("should accept a branch that matches by wildcard", async () => {
         GitUtilities.getCurrentBranch.mockReturnValueOnce("feature/awesome");
-        await expect(run(testDir)("--allow-branch", "feature/*")).resolves.toEqual(
+        expect(await run(testDir)("--allow-branch", "feature/*")).toEqual(
           expect.objectContaining({ exitCode: 0 })
         );
       });
@@ -972,20 +974,22 @@ describe("PublishCommand", () => {
       });
 
       it("should reject a non matching branch", async () => {
-        await expect(run(testDir)()).rejects.toEqual(
-          expect.stringMatching(/not allowed to be published/)
-        );
+        try {
+          await run(testDir)()
+        } catch (err) {
+          expect(err).toEqual(expect.stringMatching(/not allowed to be published/));
+        }
       });
 
       it("should accept a matching branch", async () => {
         GitUtilities.getCurrentBranch.mockReturnValueOnce("lerna");
-        await expect(run(testDir)()).resolves.toEqual(
+        expect(await run(testDir)()).toEqual(
           expect.objectContaining({ exitCode: 0 })
         );
       });
 
       it("should prioritize cli over defaults", async () => {
-        await expect(run(testDir)("--allow-branch", "master")).resolves.toEqual(
+        expect(await run(testDir)("--allow-branch", "master")).toEqual(
           expect.objectContaining({ exitCode: 0 })
         );
       });
