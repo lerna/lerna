@@ -202,7 +202,7 @@ export default class PackageUtilities {
           return (refCounts[a.name] || 0) > (refCounts[b.name] || 0) ? a : b;
         }));
         
-        log.silly("packages", batch.reduce((packages, package) => packages.push(package.name), []).join(', '));
+        log.silly("packages", batch.reduce((pkgs, pkg) => pkgs.push(pkg.name), []).join(', '));
       }
 
       batches.push(batch);
