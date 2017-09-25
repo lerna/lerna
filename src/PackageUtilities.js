@@ -201,6 +201,8 @@ export default class PackageUtilities {
         batch.push(packages.reduce((a, b) => {
           return (refCounts[a.name] || 0) > (refCounts[b.name] || 0) ? a : b;
         }));
+        
+        log.silly("packages", batch.reduce((packages, package) => packages.push(package.name), []).join(', '));
       }
 
       batches.push(batch);
