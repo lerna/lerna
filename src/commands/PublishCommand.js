@@ -1,6 +1,7 @@
 import { EOL } from "os";
 import async from "async";
 import chalk from "chalk";
+import minimatch from "minimatch";
 import path from "path";
 import semver from "semver";
 import writeJsonFile from "write-json-file";
@@ -128,7 +129,13 @@ export const builder = {
     describe: "Create a temporary tag while publishing.",
     type: "boolean",
     default: undefined,
-  }
+  },
+  "allow-branch": {
+    group: "Command Options:",
+    describe: "Specify which branches to allow publishing from.",
+    type: "string",
+    default: undefined,
+  },
 };
 
 export default class PublishCommand extends Command {
@@ -140,6 +147,7 @@ export default class PublishCommand extends Command {
       skipNpm: false,
       tempTag: false,
       yes: false,
+      allowBranch: false,
     });
   }
 
@@ -204,6 +212,12 @@ export default class PublishCommand extends Command {
     try {
       if (this.gitEnabled && GitUtilities.isDetachedHead(this.execOpts)) {
         throw new Error("Detached git HEAD, please checkout a branch to publish changes.");
+      }
+
+      const currentBranch = GitUtilities.getCurrentBranch(this.execOpts);
+      if (this.options.allowBranch && !minimatch(currentBranch, this.options.allowBranch)) {
+        throw new Error('Branch ' + currentBranch + ' is not allowed to be published. ' +
+          'Use --allow-branch ' + currentBranch + ' to override.');
       }
 
       if (!this.repository.isIndependent() && !this.options.canary) {
