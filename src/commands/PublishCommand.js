@@ -1,6 +1,7 @@
 import { EOL } from "os";
 import async from "async";
 import chalk from "chalk";
+import dedent from "dedent";
 import minimatch from "minimatch";
 import path from "path";
 import semver from "semver";
@@ -216,8 +217,10 @@ export default class PublishCommand extends Command {
 
       const currentBranch = GitUtilities.getCurrentBranch(this.execOpts);
       if (this.options.allowBranch && !minimatch(currentBranch, this.options.allowBranch)) {
-        throw new Error('Branch ' + currentBranch + ' is not allowed to be published. ' +
-          'Use --allow-branch ' + currentBranch + ' to override.');
+        throw new Error(dedent`
+          Branch ${currentBranch} is not allowed to be published.
+          Use --allow-branch ${currentBranch} to override.
+        `);
       }
 
       if (!this.repository.isIndependent() && !this.options.canary) {

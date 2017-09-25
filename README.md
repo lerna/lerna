@@ -449,7 +449,7 @@ If your `lerna.json` contains something like this:
 }
 ```
 
-and you are not on the branch `my-new-feature` currently lerna will prevent you from publishing. To force a publish anyways you can use
+and you are not on the branch `master` lerna will prevent you from publishing. To force a publish despite this config, pass the `--allow-branch` flag:
 
 ```sh
 $ lerna publish --allow-branch my-new-feature

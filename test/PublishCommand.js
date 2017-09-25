@@ -975,7 +975,7 @@ describe("PublishCommand", () => {
 
       it("should reject a non matching branch", async () => {
         try {
-          await run(testDir)()
+          await run(testDir)();
         } catch (err) {
           expect(err).toEqual(expect.stringMatching(/not allowed to be published/));
         }
