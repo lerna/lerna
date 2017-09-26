@@ -120,12 +120,27 @@ export default class ImportCommand extends Command {
   createPatchForCommit(sha) {
     let patch = null;
     if (this.options.flatten) {
-      const diff = this.externalExecSync("git", ["log", "--reverse", "--first-parent", "-p",
-        "-m", "--pretty=email", "--stat", "--binary", "-1", sha]);
+      const diff = this.externalExecSync("git", [
+        "log",
+        "--reverse",
+        "--first-parent",
+        "-p",
+        "-m",
+        "--pretty=email",
+        "--stat",
+        "--binary",
+        "-1",
+        sha
+      ]);
       const version = this.externalExecSync("git", ["--version"]).replace(/git version /g, '');
       patch = `${diff}\n--\n${version}`;
     } else {
-      patch = this.externalExecSync("git", ["format-patch", "-1", sha, "--stdout"]);
+      patch = this.externalExecSync("git", [
+        "format-patch",
+        "-1",
+        sha,
+        "--stdout"
+      ]);
     }
 
     const replacement = "$1/" + this.targetDir;

@@ -62,18 +62,22 @@ describe("ImportCommand", () => {
       const branchName = "conflict_branch";
       const conflictedFileName = "conflicted-file.txt";
       const conflictedFile = path.join(externalDir, conflictedFileName);
+
       await fs.writeFile(conflictedFile, "initial content");
       await execa("git", ["add", conflictedFileName], cwdExternalDir);
       await execa("git", ["commit", "-m", "Initial content written"], cwdExternalDir);
       await execa("git", ["checkout", "-b", branchName], cwdExternalDir);
+
       await fs.writeFile(conflictedFile, "branch content");
       await execa("git", ["commit", "-am", "branch content written"], cwdExternalDir);
       await execa("git", ["checkout", "master"], cwdExternalDir);
+
       await fs.writeFile(conflictedFile, "master content");
       await execa("git", ["commit", "-am", "master content written"], cwdExternalDir);
       try {
         await execa("git", ["merge", branchName], cwdExternalDir);
       } catch (e) {}
+
       await fs.writeFile(conflictedFile, "merged content");
       await execa("git", ["add", conflictedFileName], cwdExternalDir);
       await execa("git", ["commit", "-m", "Branch merged"], cwdExternalDir);
