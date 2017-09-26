@@ -663,6 +663,8 @@ Running `lerna` without arguments will show all commands/options.
     }
   },
   "packages": ["packages/*"]
+  "useGitVersion": true,
+  "gitVersionPrefix": "v"
 }
 ```
 
@@ -672,6 +674,23 @@ Running `lerna` without arguments will show all commands/options.
 - `commands.bootstrap.ignore`: an array of globs that won't be bootstrapped when running the `lerna bootstrap` command.
 - `commands.bootstrap.scope`: an array of globs that restricts which packages will be bootstrapped when running the `lerna bootstrap` command.
 - `packages`: Array of globs to use as package locations.
+- `useGitVersion`: a boolean (defaults to `false`) indicating if [git hosted urls](https://github.com/npm/hosted-git-info) should be allowed instead of plain version number. If enabled, Lerna will attempt to extract and save the interpackage dependency versions using git url-aware parser.
+    This allows packages to be distributed via git repos if eg. packages are private and [private npm repo is not an option](https://www.dotconferences.com/2016/05/fabien-potencier-monolithic-repositories-vs-many-repositories).
+    Please note that using `gitVersion` requires `publish` command to be used with `--exact` and is limited to urls with [`committish`](https://docs.npmjs.com/files/package.json#git-urls-as-dependencies) part present.
+
+    Example assuming 2 packages where `my-package-1` depends on `my-package-2`, for which `package.json` of `my-package-1` could be:
+  ```
+  {
+    name: "my-package-1",
+    version: "1.0.0",
+    bin: "bin.js",
+    dependencies: { "my-package-2": "github:example-user/my-package-2#1.0.0" },
+    devDependencies: { "my-dev-dependency": "^1.0.0" },
+    peerDependencies: { "my-peer-dependency": "^1.0.0" }
+  }
+  ```
+- `gitVersionPrefix`: version prefix string (defaults to 'v') ignored when extracting version number from commitish part of git url. eg. given `github:example-user/my-package-2#v1.0.0`
+ and `gitVersionPrefix: 'v'` version will be read as `1.0.0`. Ignored if `useGitVersion` is set to `false`.
 
 
 ### Common `devDependencies`
@@ -896,9 +915,9 @@ May also be configured in `lerna.json`:
 
 #### --use-workspaces
 
-Enables integration with [Yarn Workspaces](https://github.com/yarnpkg/rfcs/blob/master/implemented/0000-workspaces-install-phase-1.md) (available since yarn@0.27+).  
-The values in the array are the commands in which Lerna will delegate operation to Yarn (currently only bootstrapping).    
-If `--use-workspaces` is true then `packages` will be overridden by the value from `package.json/workspaces.`  
+Enables integration with [Yarn Workspaces](https://github.com/yarnpkg/rfcs/blob/master/implemented/0000-workspaces-install-phase-1.md) (available since yarn@0.27+).
+The values in the array are the commands in which Lerna will delegate operation to Yarn (currently only bootstrapping).
+If `--use-workspaces` is true then `packages` will be overridden by the value from `package.json/workspaces.`
 May also be configured in `lerna.json`:
 
 ```js

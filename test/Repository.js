@@ -138,7 +138,7 @@ describe("Repository", () => {
         path.join(testDir, "packages"),
         path.join(testDir, "dir/nested"),
         path.join(testDir, "globstar"),
-      ])
+      ]);
     });
   });
 

@@ -102,14 +102,126 @@ describe("Package", () => {
     });
   });
 
+  describe(".set versionSerializer()", () => {
+    it("should call 'deserialize' method of serializer'", () => {
+
+      const mockSerializer = {
+        serialize: jest.fn((pkg) => {
+          return pkg;
+        }),
+        deserialize: jest.fn((pkg) => {
+          return pkg;
+        })
+      };
+
+      pkg.versionSerializer = mockSerializer;
+
+      expect(mockSerializer.deserialize.mock.calls.length).toBe(1);
+      expect(mockSerializer.deserialize.mock.calls[0][0]).toBe(pkg._package);
+      expect(mockSerializer.serialize.mock.calls.length).toBe(0);
+    });
+
+    it("should call 'serialize' on old and 'deserialize' on new serializer'", () => {
+
+      const firstMockSerializer = {
+        serialize: jest.fn((pkg) => {
+          return pkg;
+        }),
+        deserialize: jest.fn((pkg) => {
+          return pkg;
+        })
+      };
+
+      const secondMockSerializer = {
+        serialize: jest.fn((pkg) => {
+          return pkg;
+        }),
+        deserialize: jest.fn((pkg) => {
+          return pkg;
+        })
+      };
+
+      pkg.versionSerializer = firstMockSerializer;
+
+      expect(firstMockSerializer.deserialize.mock.calls.length).toBe(1);
+      expect(firstMockSerializer.deserialize.mock.calls[0][0]).toBe(pkg._package);
+      expect(firstMockSerializer.serialize.mock.calls.length).toBe(0);
+
+      pkg.versionSerializer = secondMockSerializer;
+
+      expect(firstMockSerializer.deserialize.mock.calls.length).toBe(1);
+      expect(firstMockSerializer.serialize.mock.calls.length).toBe(1);
+      expect(firstMockSerializer.serialize.mock.calls[0][0]).toBe(pkg._package);
+
+      expect(secondMockSerializer.deserialize.mock.calls.length).toBe(1);
+      expect(secondMockSerializer.deserialize.mock.calls[0][0]).toBe(pkg._package);
+      expect(secondMockSerializer.serialize.mock.calls.length).toBe(0);
+    });
+  });
+
+
   describe(".toJSON()", () => {
-    it("should return internal package for serialization", () => {
-      expect(pkg.toJSON()).toBe(pkg._package);
+    it("should return internal package copy for serialization", () => {
+      expect(pkg.toJSON()).toEqual(pkg._package);
 
       const implicit = JSON.stringify(pkg, null, 2);
       const explicit = JSON.stringify(pkg._package, null, 2);
 
       expect(implicit).toBe(explicit);
+    });
+
+    it("should not change internal package with versionSerializer", () => {
+      const mockSerializer = {
+        serialize: jest.fn((pkg) => {
+          return Object.assign({}, pkg, { foo: true });
+        }),
+        deserialize: jest.fn((pkg) => {
+          const newPkg = Object.assign({}, pkg);
+          delete newPkg.foo;
+          return newPkg;
+        })
+      };
+
+      pkg.versionSerializer = mockSerializer;
+
+      let serializedPackage = pkg.toJSON();
+      const pkgPackageClone = Object.assign({}, pkg._package, { foo: true });
+
+      expect(serializedPackage).not.toEqual(pkg._package);
+      expect(serializedPackage).toEqual(pkgPackageClone);
+
+      expect(mockSerializer.deserialize.mock.calls.length).toBe(1);
+      expect(mockSerializer.serialize.mock.calls.length).toBe(1);
+      expect(mockSerializer.serialize.mock.calls[0][0]).toEqual(pkg._package);
+
+      serializedPackage = pkg.toJSON();
+
+      expect(serializedPackage).not.toEqual(pkg._package);
+      expect(serializedPackage).toEqual(pkgPackageClone);
+
+      expect(mockSerializer.deserialize.mock.calls.length).toBe(1);
+      expect(mockSerializer.serialize.mock.calls.length).toBe(2);
+      expect(mockSerializer.serialize.mock.calls[0][0]).toEqual(pkg._package);
+      expect(mockSerializer.serialize.mock.calls[1][0]).toEqual(pkg._package);
+    });
+
+    it("should use versionSerializer.serialize on internal package before return", () => {
+      const mockSerializer = {
+        serialize: jest.fn((pkg) => {
+          return pkg;
+        }),
+        deserialize: jest.fn((pkg) => {
+          return pkg;
+        })
+      };
+
+      pkg.versionSerializer = mockSerializer;
+
+      expect(pkg.toJSON()).toEqual(pkg._package);
+
+      expect(mockSerializer.deserialize.mock.calls.length).toBe(1);
+      expect(mockSerializer.serialize.mock.calls.length).toBe(1);
+      expect(mockSerializer.serialize.mock.calls[0][0]).toEqual(pkg._package);
     });
   });
 

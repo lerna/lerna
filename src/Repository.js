@@ -9,6 +9,8 @@ import semver from "semver";
 import dependencyIsSatisfied from "./utils/dependencyIsSatisfied";
 import Package from "./Package";
 import PackageUtilities from "./PackageUtilities";
+import GitVersionParser from "./GitVersionParser";
+import VersionSerializer from "./VersionSerializer";
 
 const DEFAULT_PACKAGE_GLOB = "packages/*";
 
@@ -118,8 +120,22 @@ export default class Repository {
   }
 
   buildPackageGraph() {
-    this._packages = PackageUtilities.getPackages(this);
-    this._packageGraph = PackageUtilities.getPackageGraph(this._packages);
+    const packages = PackageUtilities.getPackages(this);
+    const packageGraph = PackageUtilities.getPackageGraph(packages, false, this.lernaJson.useGitVersion
+      ? new GitVersionParser(this.lernaJson.gitVersionPrefix)
+      : null);
+
+    if (this.lernaJson.useGitVersion) {
+      packages.forEach((pkg) => {
+        pkg.versionSerializer = new VersionSerializer({
+          monorepoDependencies: packageGraph.get(pkg.name).dependencies,
+          versionParser: new GitVersionParser(this.lernaJson.gitVersionPrefix)
+        });
+      });
+    }
+
+    this._packages = packages;
+    this._packageGraph = packageGraph;
   }
 
   hasDependencyInstalled(depName, version) {

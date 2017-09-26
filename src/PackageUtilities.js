@@ -87,8 +87,8 @@ export default class PackageUtilities {
     return packages;
   }
 
-  static getPackageGraph(packages, depsOnly) {
-    return new PackageGraph(packages, depsOnly);
+  static getPackageGraph(packages, depsOnly, versionParser) {
+    return new PackageGraph(packages, depsOnly, versionParser);
   }
 
   /**
