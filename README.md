@@ -433,6 +433,28 @@ to certain guidelines, such as projects which use [commitizen](https://github.co
 If the message contains `%s`, it will be replaced with the new global version version number prefixed with a "v".
 Note that this only applies when using the default "fixed" versioning mode, as there is no "global" version when using `--independent`.
 
+#### --allow-branch [glob]
+
+Lerna allows you to specify a glob in your `lerna.json` that your current branch needs to match to be publishable.
+You can use this flag to override this setting.
+If your `lerna.json` contains something like this:
+
+```json
+{
+    "command": {
+        "publish": {
+          "allowBranch": "master"
+        }
+    }
+}
+```
+
+and you are not on the branch `master` lerna will prevent you from publishing. To force a publish despite this config, pass the `--allow-branch` flag:
+
+```sh
+$ lerna publish --allow-branch my-new-feature
+```
+
 ### updated
 
 ```sh
