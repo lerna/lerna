@@ -2,7 +2,6 @@ import chalk from "chalk";
 import log from "npmlog";
 import normalizeNewline from "normalize-newline";
 import path from "path";
-
 // mocked or stubbed modules
 import writeJsonFile from "write-json-file";
 import writePkg from "write-pkg";
@@ -11,13 +10,11 @@ import GitUtilities from "../src/GitUtilities";
 import NpmUtilities from "../src/NpmUtilities";
 import PromptUtilities from "../src/PromptUtilities";
 import output from "../src/utils/output";
-
 // helpers
 import callsBack from "./helpers/callsBack";
 import initFixture from "./helpers/initFixture";
 import normalizeRelativeDir from "./helpers/normalizeRelativeDir";
 import yargsRunner from "./helpers/yargsRunner";
-
 // file under test
 import * as commandModule from "../src/commands/PublishCommand";
 
@@ -995,4 +992,48 @@ describe("PublishCommand", () => {
       });
     });
   });
+
+  /** =========================================================================
+   * VERSION LIFECYCLE SCRIPTS
+   * ======================================================================= */
+
+  describe("lifecycle scripts", () => {
+    let testDir;
+
+    const scripts = ["preversion", "version", "postversion"];
+
+    beforeEach(async () => {
+      testDir = await initFixture("PublishCommand/lifecycle");
+    });
+
+    it("should call version lifecycle scripts for a package", async () => {
+      await run(testDir)();
+      scripts.forEach(script => {
+        expect(NpmUtilities.runScriptInDir).toHaveBeenCalledWith(
+          script,
+          [],
+          path.resolve(testDir, "packages", "package-1"),
+          jasmine.any(Function)
+        );
+      });
+    });
+
+    it("should not call version lifecycle scripts for a package missing them", async () => {
+      await run(testDir)();
+      scripts.forEach(script => {
+        expect(NpmUtilities.runScriptInDir).not.toHaveBeenCalledWith(
+          script,
+          [],
+          path.resolve(testDir, "packages", "package-2"),
+          jasmine.any(Function)
+        );
+      });
+    });
+
+    it("should call version lifecycle scripts in the correct order", async () => {
+      await run(testDir)();
+      expect(NpmUtilities.runScriptInDir.mock.calls.map(args => args[0])).toEqual(scripts);
+    });
+  });
 });
+

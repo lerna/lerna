@@ -536,11 +536,25 @@ export default class PublishCommand extends Command {
       this.updatePackageDepsObject(pkg, "devDependencies", exact);
       this.updatePackageDepsObject(pkg, "peerDependencies", exact);
 
+      // exec preversion script
+      pkg.runScript("preversion", (err) => {
+        if (err) {
+          this.logger.error("publish", "error running preversion", pkg.name, err);
+        }
+      });
+
       // write new package
       writePkg.sync(packageJsonLocation, pkg.toJSON());
       // NOTE: Object.prototype.toJSON() is normally called when passed to
       // JSON.stringify(), but write-pkg iterates Object.keys() before serializing
       // so it has to be explicit here (otherwise it mangles the instance properties)
+
+      // exec version script
+      pkg.runScript("version", (err) => {
+        if (err) {
+          this.logger.error("publish", "error running version", pkg.name, err);
+        }
+      });
 
       // we can now generate the Changelog, based on the
       // the updated version that we're about to release.
@@ -595,7 +609,7 @@ export default class PublishCommand extends Command {
   }
 
   gitCommitAndTagVersionForUpdates() {
-    const tags = this.updates.map(({ package: { name } }) =>
+    const tags = this.updates.map(({ "package": { name } }) =>
       `${name}@${this.updatesVersions[name]}`
     );
     const subject = this.options.message || "Publish";
@@ -603,6 +617,15 @@ export default class PublishCommand extends Command {
 
     GitUtilities.commit(message, this.execOpts);
     tags.forEach((tag) => GitUtilities.addTag(tag, this.execOpts));
+
+    // run the postversion script for each update
+    this.updates.forEach(({ "package": pkg }) => {
+      pkg.runScript("postversion", (err) => {
+        if (err) {
+          this.logger.error("publish", "error running postversion", pkg.name, err);
+        }
+      });
+    });
 
     return tags;
   }
@@ -613,6 +636,15 @@ export default class PublishCommand extends Command {
 
     GitUtilities.commit(message, this.execOpts);
     GitUtilities.addTag(tag, this.execOpts);
+
+    // run the postversion script for each update
+    this.updates.forEach(({ "package": pkg }) => {
+      pkg.runScript("postversion", (err) => {
+        if (err) {
+          this.logger.error("publish", "error running postversion", pkg.name, err);
+        }
+      });
+    });
 
     return tag;
   }
