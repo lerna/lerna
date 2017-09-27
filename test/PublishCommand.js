@@ -2,6 +2,7 @@ import chalk from "chalk";
 import log from "npmlog";
 import normalizeNewline from "normalize-newline";
 import path from "path";
+
 // mocked or stubbed modules
 import writeJsonFile from "write-json-file";
 import writePkg from "write-pkg";
@@ -10,11 +11,13 @@ import GitUtilities from "../src/GitUtilities";
 import NpmUtilities from "../src/NpmUtilities";
 import PromptUtilities from "../src/PromptUtilities";
 import output from "../src/utils/output";
+
 // helpers
 import callsBack from "./helpers/callsBack";
 import initFixture from "./helpers/initFixture";
 import normalizeRelativeDir from "./helpers/normalizeRelativeDir";
 import yargsRunner from "./helpers/yargsRunner";
+
 // file under test
 import * as commandModule from "../src/commands/PublishCommand";
 
@@ -1013,7 +1016,7 @@ describe("PublishCommand", () => {
           script,
           [],
           path.resolve(testDir, "packages", "package-1"),
-          jasmine.any(Function)
+          expect.any(Function)
         );
       });
     });
@@ -1025,7 +1028,7 @@ describe("PublishCommand", () => {
           script,
           [],
           path.resolve(testDir, "packages", "package-2"),
-          jasmine.any(Function)
+          expect.any(Function)
         );
       });
     });
