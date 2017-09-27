@@ -1,0 +1,13 @@
+{
+  "name": "package-1",
+  "version": "1.0.0",
+  "scripts": {
+    "preversion": "exit 0",
+    "version": "exit 0",
+    "postversion": "exit 0",
+    "prepublishOnly": "exit 0",
+    "prepublish": "exit 0",
+    "publish": "exit 0",
+    "postpublish": "exit 0"
+  }
+}
