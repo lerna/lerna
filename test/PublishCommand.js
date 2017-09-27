@@ -1012,7 +1012,7 @@ describe("PublishCommand", () => {
     it("should call version lifecycle scripts for a package", async () => {
       await run(testDir)();
       scripts.forEach(script => {
-        expect(NpmUtilities.runScriptInDir).toHaveBeenCalledWith(
+        expect(NpmUtilities.runScriptInDirSync).toHaveBeenCalledWith(
           script,
           [],
           path.resolve(testDir, "packages", "package-1"),
@@ -1024,7 +1024,7 @@ describe("PublishCommand", () => {
     it("should not call version lifecycle scripts for a package missing them", async () => {
       await run(testDir)();
       scripts.forEach(script => {
-        expect(NpmUtilities.runScriptInDir).not.toHaveBeenCalledWith(
+        expect(NpmUtilities.runScriptInDirSync).not.toHaveBeenCalledWith(
           script,
           [],
           path.resolve(testDir, "packages", "package-2"),
@@ -1035,7 +1035,7 @@ describe("PublishCommand", () => {
 
     it("should call version lifecycle scripts in the correct order", async () => {
       await run(testDir)();
-      expect(NpmUtilities.runScriptInDir.mock.calls.map(args => args[0])).toEqual(scripts);
+      expect(NpmUtilities.runScriptInDirSync.mock.calls.map(args => args[0])).toEqual(scripts);
     });
   });
 });
