@@ -215,7 +215,7 @@ lerna info Comparing with initial commit.
 lerna info auto-confirmed "
 `;
 
-exports[`stderr: canary beta version 2`] = `
+exports[`stderr: canary default version 1`] = `
 "lerna info version __TEST_VERSION__
 lerna info canary enabled
 lerna info current version 1.0.0

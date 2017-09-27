@@ -14,7 +14,7 @@ const lastCommitMessage = (cwd) =>
   execa.stdout("git", ["log", "-1", "--format=%B"], { cwd }).then(normalizeNewline);
 
 const lastCommitId = (cwd) =>
-  execa.stdout("git", ["rev-parse", "HEAD"], { cwd }).then((line) => line.trim().substring(0, 8));
+  execa.stdout("git", ["rev-parse", "HEAD"], { cwd }).then((line) => line.substring(0, 8));
 
 async function pkgManifestsAndCommitMsg(cwd) {
   return Promise.all([
@@ -81,7 +81,7 @@ describe("lerna publish", () => {
     const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
     const hash = await lastCommitId(cwd);
     expect(stdout.replace(new RegExp(hash, 'g'), 'hash')).toMatchSnapshot("stdout: canary default version");
-    expect(stderr).toMatchSnapshot("stderr: canary beta version");
+    expect(stderr).toMatchSnapshot("stderr: canary default version");
   });
 
   test.concurrent("uses meta suffix from canary flag", async () => {

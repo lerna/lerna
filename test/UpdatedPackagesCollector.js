@@ -29,8 +29,6 @@ describe("UpdatedPackagesCollector", () => {
     expect(UpdatedPackagesCollector).toBeDefined();
   });
 
-  it("needs better tests");
-
   describe(".collectUpdatedPackages()", () => {
     beforeEach(() => {
       GitUtilities.getCurrentSHA = jest.fn(() => "deadbeefcafe");
