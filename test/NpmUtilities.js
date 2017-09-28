@@ -1,12 +1,10 @@
 import { EOL } from "os";
 import log from "npmlog";
 import path from "path";
-
 // mocked modules
 import writePkg from "write-pkg";
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
 import FileSystemUtilities from "../src/FileSystemUtilities";
-
 // file under test
 import NpmUtilities from "../src/NpmUtilities";
 
@@ -138,6 +136,25 @@ describe("NpmUtilities", () => {
         cwd: directory,
       };
       expect(ChildProcessUtilities.exec).lastCalledWith(cmd, scriptArgs, opts, expect.any(Function));
+    });
+  });
+
+  describe(".runScriptInDirSync()", () => {
+    it("runs an npm script syncrhonously in a directory", () => {
+      const script = "foo";
+      const args = ["--bar", "baz"];
+      const directory = "/test/runScriptInDirSync";
+      const callback = () => {
+      };
+
+      NpmUtilities.runScriptInDirSync(script, args, directory, callback);
+
+      const cmd = "npm";
+      const scriptArgs = ["run", "foo", "--bar", "baz"];
+      const opts = {
+        cwd: directory,
+      };
+      expect(ChildProcessUtilities.execSync).lastCalledWith(cmd, scriptArgs, opts, expect.any(Function));
     });
   });
 

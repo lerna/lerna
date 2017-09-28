@@ -84,6 +84,21 @@ export default class Package {
   }
 
   /**
+   * Run a NPM script synchronously in this package's directory
+   * @param {String} script NPM script to run
+   * @param {Function} callback
+   */
+  runScriptSync(script, callback) {
+    log.silly("runScriptSync", script, this.name);
+
+    if (this.scripts[script]) {
+      NpmUtilities.runScriptInDirSync(script, [], this.location, callback);
+    } else {
+      callback();
+    }
+  }
+
+  /**
    * Determine if a dependency version satisfies the requirements of this package
    * @param {Package} dependency
    * @param {Boolean} doWarn

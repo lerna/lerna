@@ -1,12 +1,9 @@
 import log from "npmlog";
-
 // mocked modules
 import NpmUtilities from "../src/NpmUtilities";
-
 // helpers
 import callsBack from "./helpers/callsBack";
 import loggingOutput from "./helpers/loggingOutput";
-
 // file under test
 import Package from "../src/Package";
 
@@ -134,6 +131,21 @@ describe("Package", () => {
           done.fail(ex);
         }
       });
+    });
+  });
+
+  describe(".runScriptSync()", () => {
+    it("should run the script", () => {
+      NpmUtilities.runScriptInDirSync = jest.fn(callsBack());
+
+      pkg.runScriptSync("my-script", () => {});
+
+      expect(NpmUtilities.runScriptInDirSync).lastCalledWith(
+        "my-script",
+        [],
+        pkg.location,
+        expect.any(Function)
+      );
     });
   });
 

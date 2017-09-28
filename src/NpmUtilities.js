@@ -156,6 +156,13 @@ export default class NpmUtilities {
     ChildProcessUtilities.exec("npm", ["run", script, ...args], opts, callback);
   }
 
+  static runScriptInDirSync(script, args, directory, callback) {
+    log.silly("runScriptInDirSync", script, args, path.basename(directory));
+
+    const opts = NpmUtilities.getExecOpts(directory);
+    ChildProcessUtilities.execSync("npm", ["run", script, ...args], opts, callback);
+  }
+
   static runScriptInPackageStreaming(script, args, pkg, callback) {
     log.silly("runScriptInPackageStreaming", [script, args, pkg.name]);
 

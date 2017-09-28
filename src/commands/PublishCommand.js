@@ -537,7 +537,7 @@ export default class PublishCommand extends Command {
       this.updatePackageDepsObject(pkg, "peerDependencies", exact);
 
       // exec preversion script
-      pkg.runScript("preversion", (err) => {
+      pkg.runScriptSync("preversion", (err) => {
         if (err) {
           this.logger.error("publish", "error running preversion", pkg.name, err);
         }
@@ -550,7 +550,7 @@ export default class PublishCommand extends Command {
       // so it has to be explicit here (otherwise it mangles the instance properties)
 
       // exec version script
-      pkg.runScript("version", (err) => {
+      pkg.runScriptSync("version", (err) => {
         if (err) {
           this.logger.error("publish", "error running version", pkg.name, err);
         }
@@ -620,7 +620,7 @@ export default class PublishCommand extends Command {
 
     // run the postversion script for each update
     this.updates.forEach(({ "package": pkg }) => {
-      pkg.runScript("postversion", (err) => {
+      pkg.runScriptSync("postversion", (err) => {
         if (err) {
           this.logger.error("publish", "error running postversion", pkg.name, err);
         }
@@ -639,7 +639,7 @@ export default class PublishCommand extends Command {
 
     // run the postversion script for each update
     this.updates.forEach(({ "package": pkg }) => {
-      pkg.runScript("postversion", (err) => {
+      pkg.runScriptSync("postversion", (err) => {
         if (err) {
           this.logger.error("publish", "error running postversion", pkg.name, err);
         }
