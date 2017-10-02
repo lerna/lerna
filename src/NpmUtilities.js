@@ -14,15 +14,42 @@ function splitVersion(dep) {
   return dep.match(/^(@?[^@]+)(?:@(.+))?/).slice(1, 3);
 }
 
-export default class NpmUtilities {
-  static installInDir(directory, dependencies, config, npmGlobalStyle, callback) {
-    log.silly("installInDir", path.basename(directory), dependencies);
+function execInstall(directory, {
+  registry,
+  npmClient,
+  npmClientArgs,
+  npmGlobalStyle,
+  mutex,
+}) {
+  // build command, arguments, and options
+  const opts = NpmUtilities.getExecOpts(directory, registry);
+  const args = ["install"];
+  let cmd = npmClient || "npm";
 
-    // npmGlobalStyle is an optional argument
-    if (typeof npmGlobalStyle === "function") {
-      callback = npmGlobalStyle;
-      npmGlobalStyle = false;
-    }
+  if (npmGlobalStyle) {
+    cmd = "npm";
+    args.push("--global-style");
+  }
+
+  if (cmd === "yarn" && mutex) {
+    args.push("--mutex", mutex);
+  }
+
+  if (cmd === "yarn") {
+    args.push("--non-interactive");
+  }
+
+  if (npmClientArgs && npmClientArgs.length) {
+    args.push(...npmClientArgs);
+  }
+
+  log.silly("installInDir", [cmd, args]);
+  return ChildProcessUtilities.exec(cmd, args, opts);
+}
+
+export default class NpmUtilities {
+  static installInDir(directory, dependencies, config, callback) {
+    log.silly("installInDir", path.basename(directory), dependencies);
 
     // Nothing to do if we weren't given any deps.
     if (!(dependencies && dependencies.length)) {
@@ -67,64 +94,17 @@ export default class NpmUtilities {
 
       log.silly("installInDir", "writing tempJson", tempJson);
       // Write out our temporary cooked up package.json and then install.
-      writePkg(packageJson, tempJson).then(() => {
-        // build command, arguments, and options
-        const opts = NpmUtilities.getExecOpts(directory, config.registry);
-        const args = ["install"];
-        let cmd = config.npmClient || "npm";
-
-        if (npmGlobalStyle) {
-          cmd = "npm";
-          args.push("--global-style");
-        }
-
-        if (cmd === "yarn" && config.mutex) {
-          args.push("--mutex", config.mutex);
-        }
-
-        if (cmd === "yarn") {
-          args.push("--non-interactive");
-        }
-
-        if (config.npmClientArgs && config.npmClientArgs.length) {
-          args.push(...config.npmClientArgs);
-        }
-
-        log.silly("installInDir", [cmd, args]);
-        ChildProcessUtilities.exec(cmd, args, opts, done);
-      }).catch(done);
+      writePkg(packageJson, tempJson)
+        .then(() => execInstall(directory, config))
+        .then(() => done(), done);
     });
   }
 
-  static installInDirOriginalPackageJson(directory, config, npmGlobalStyle, callback) {
-    log.silly("installInDir", path.basename(directory));
+  static installInDirOriginalPackageJson(directory, config, callback) {
+    log.silly("installInDirOriginalPackageJson", directory);
 
-    // npmGlobalStyle is an optional argument
-    if (typeof npmGlobalStyle === "function") {
-      callback = npmGlobalStyle;
-      npmGlobalStyle = false;
-    }
-
-    const packageJson = path.join(directory, "package.json");
-
-    log.silly("installInDir", packageJson);
-
-    // build command, arguments, and options
-    const opts = NpmUtilities.getExecOpts(directory, config.registry);
-    const args = ["install"];
-    let cmd = config.npmClient || "npm";
-
-    if (npmGlobalStyle) {
-      cmd = "npm";
-      args.push("--global-style");
-    }
-
-    if (cmd === "yarn" && config.mutex) {
-      args.push("--mutex", config.mutex);
-    }
-
-    log.silly("installInDir", [cmd, args]);
-    ChildProcessUtilities.exec(cmd, args, opts, callback);
+    return execInstall(directory, config)
+      .then(() => callback(), callback);
   }
 
 

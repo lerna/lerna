@@ -131,20 +131,13 @@ describe("BootstrapCommand", () => {
       expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
       expect(removedDirectories(testDir)).toMatchSnapshot();
 
-      // foo@^1.0.0 will be hoisted, and should not use global style
-      expect(NpmUtilities.installInDir).toBeCalledWith(
-        expect.any(String),
-        expect.arrayContaining(["foo@^1.0.0"]),
-        expect.any(Object),
-        expect.any(Function)
-      );
-
       // foo@0.1.2 differs from the more common foo@^1.0.0
       expect(NpmUtilities.installInDir).lastCalledWith(
         expect.stringContaining("package-3"),
         expect.arrayContaining(["foo@0.1.12"]),
-        expect.any(Object),
-        "**", // npmGlobalStyle
+        expect.objectContaining({
+          npmGlobalStyle: true,
+        }),
         expect.any(Function)
       );
     });
@@ -180,6 +173,19 @@ describe("BootstrapCommand", () => {
 
       expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
       expect(symlinkedDirectories(testDir)).toMatchSnapshot();
+    });
+
+    it("never installs with global style", async () => {
+      await lernaBootstrap();
+
+      expect(NpmUtilities.installInDir).toBeCalledWith(
+        expect.any(String),
+        expect.arrayContaining(["foo@^1.0.0"]),
+        expect.objectContaining({
+          npmGlobalStyle: false,
+        }),
+        expect.any(Function)
+      );
     });
   });
 
@@ -316,10 +322,16 @@ describe("BootstrapCommand", () => {
       await lernaBootstrap();
 
       expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
-      expect(NpmUtilities.installInDir.mock.calls[0][2]).toEqual({
-        npmClient: undefined,
-        registry: "https://my-secure-registry/npm",
-      });
+      expect(NpmUtilities.installInDir).lastCalledWith(
+        expect.any(String),
+        expect.arrayContaining(["foo@^1.0.0"]),
+        expect.objectContaining({
+          registry: "https://my-secure-registry/npm",
+          npmClient: undefined,
+          npmGlobalStyle: false,
+        }),
+        expect.any(Function)
+      );
     });
   });
 
@@ -359,10 +371,14 @@ describe("BootstrapCommand", () => {
       await lernaBootstrap();
 
       expect(NpmUtilities.installInDir).not.toBeCalled();
-      expect(NpmUtilities.installInDirOriginalPackageJson.mock.calls[0][1]).toMatchObject({
-        "mutex": expect.stringMatching(/^network:\d+$/),
-        "npmClient": "yarn",
-      });
+      expect(NpmUtilities.installInDirOriginalPackageJson).lastCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          npmClient: "yarn",
+          mutex: expect.stringMatching(/^network:\d+$/),
+        }),
+        expect.any(Function)
+      );
     });
   });
 });
