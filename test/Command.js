@@ -1,6 +1,8 @@
+import loadJsonFile from "load-json-file";
 import log from "npmlog";
-import touch from "touch";
 import path from "path";
+import touch from "touch";
+import writeJsonFile from "write-json-file";
 
 import ChildProcessUtilities from "../src/ChildProcessUtilities";
 import FileSystemUtilities from "../src/FileSystemUtilities";
@@ -207,6 +209,24 @@ describe("Command", () => {
             name: "pkg-err-name"
           });
         }
+      });
+    });
+
+    describe("loglevel", () => {
+      afterEach(() => {
+        log.level = "silent";
+      });
+
+      it("is set from lerna.json config", async () => {
+        const lernaJsonLocation = path.join(testDir, "lerna.json");
+        const lernaConfig = await loadJsonFile(lernaJsonLocation);
+        lernaConfig.loglevel = "warn";
+        await writeJsonFile(lernaJsonLocation, lernaConfig, { indent: 2 });
+
+        const ok = new OkCommand([], {}, testDir);
+        await ok.run();
+
+        expect(log.level).toBe("warn");
       });
     });
   });
