@@ -13,6 +13,9 @@ import loadPkgManifests from "../helpers/loadPkgManifests";
 const lastCommitMessage = (cwd) =>
   execa.stdout("git", ["log", "-1", "--format=%B"], { cwd }).then(normalizeNewline);
 
+const lastCommitId = (cwd) =>
+  execa.stdout("git", ["rev-parse", "HEAD"], { cwd }).then((line) => line.substring(0, 8));
+
 async function pkgManifestsAndCommitMsg(cwd) {
   return Promise.all([
     loadPkgManifests(cwd),
@@ -64,6 +67,36 @@ describe("lerna publish", () => {
 
     expect(allPackageJsons).toMatchSnapshot("packages: updates fixed versions");
     expect(commitMessage).toMatchSnapshot("commit: updates fixed versions");
+  });
+
+  test.concurrent("uses detault suffix with canary flag", async () => {
+    const cwd = await initFixture("PublishCommand/normal");
+    const args = [
+      "publish",
+      "--canary",
+      "--skip-npm",
+      "--yes",
+    ];
+
+    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
+    const hash = await lastCommitId(cwd);
+    expect(stdout.replace(new RegExp(hash, 'g'), 'hash')).toMatchSnapshot("stdout: canary default version");
+    expect(stderr).toMatchSnapshot("stderr: canary default version");
+  });
+
+  test.concurrent("uses meta suffix from canary flag", async () => {
+    const cwd = await initFixture("PublishCommand/normal");
+    const args = [
+      "publish",
+      "--canary=beta",
+      "--skip-npm",
+      "--yes",
+    ];
+
+    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
+    const hash = await lastCommitId(cwd);
+    expect(stdout.replace(new RegExp(hash, 'g'), 'hash')).toMatchSnapshot("stdout: canary beta version");
+    expect(stderr).toMatchSnapshot("stderr: canary beta version");
   });
 
   test.concurrent("updates independent versions", async () => {
