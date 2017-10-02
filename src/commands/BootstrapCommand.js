@@ -47,12 +47,16 @@ export default class BootstrapCommand extends Command {
   }
 
   initialize(callback) {
-    const { registry, npmClient, npmClientArgs, mutex } = this.options;
+    const { registry, npmClient, npmClientArgs, mutex, hoist } = this.options;
+
+    // Use `npm install --global-style` for leaves when hoisting is enabled
+    const npmGlobalStyle = !!hoist;
 
     this.npmConfig = {
       registry,
       npmClient,
       npmClientArgs,
+      npmGlobalStyle,
       mutex
     };
 
@@ -68,10 +72,12 @@ export default class BootstrapCommand extends Command {
     if (npmClient === "yarn" && !mutex) {
       return getPort({ port: 42424, host: '0.0.0.0' }).then((port) => {
         this.npmConfig.mutex = `network:${port}`;
+        this.logger.silly("npmConfig", this.npmConfig);
         callback(null, true);
       }).catch(callback);
     }
 
+    this.logger.silly("npmConfig", this.npmConfig);
     callback(null, true);
   }
 
@@ -113,7 +119,6 @@ export default class BootstrapCommand extends Command {
         (cb) => this.preparePackages(cb)
       ], callback);
     }
-
   }
 
   installRootPackageOnly(callback) {
@@ -476,8 +481,6 @@ export default class BootstrapCommand extends Command {
     }
 
     // Install anything that needs to go into the leaves.
-    // Use `npm install --global-style` for leaves when hoisting is enabled
-    const npmGlobalStyle = this.options.hoist;
     Object.keys(leaves)
       .map((pkgName) => ({ pkg: this.packageGraph.get(pkgName).package, deps: leaves[pkgName] }))
       .forEach(({ pkg, deps }) => {
@@ -489,7 +492,6 @@ export default class BootstrapCommand extends Command {
               pkg.location,
               deps.map(({ dependency }) => dependency),
               this.npmConfig,
-              npmGlobalStyle,
               (err) => {
                 tracker.verbose("installed leaf", pkg.name);
                 tracker.completeWork(1);

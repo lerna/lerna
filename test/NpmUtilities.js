@@ -250,12 +250,10 @@ describe("NpmUtilities", () => {
   });
 
   describe(".installInDir()", () => {
-    const callbackSuccess = (...args) => args.pop()();
-
     beforeEach(() => {
       stubExecOpts();
-      ChildProcessUtilities.exec.mockImplementation(callbackSuccess);
-      FileSystemUtilities.rename.mockImplementation(callbackSuccess);
+      ChildProcessUtilities.exec.mockImplementation(() => Promise.resolve());
+      FileSystemUtilities.rename.mockImplementation((...args) => args.pop()());
       writePkg.mockImplementation(() => Promise.resolve());
     });
 
@@ -298,7 +296,7 @@ describe("NpmUtilities", () => {
           expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["install"], {
             directory,
             registry: undefined,
-          }, expect.any(Function));
+          });
 
           done();
         } catch (ex) {
@@ -322,7 +320,8 @@ describe("NpmUtilities", () => {
         if (err) return done.fail(err);
 
         try {
-          expect(writePkg.mock.calls[0][1]).toEqual(
+          expect(writePkg).lastCalledWith(
+            path.join(directory, "package.json"),
             {
               dependencies: {
                 "@scoped/tagged": "next",
@@ -330,7 +329,8 @@ describe("NpmUtilities", () => {
               },
             },
           );
-          expect(ChildProcessUtilities.exec.mock.calls[0][2]).toMatchObject({
+          expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["install"], {
+            directory,
             registry,
           });
 
@@ -347,14 +347,16 @@ describe("NpmUtilities", () => {
         "@scoped/foo@latest",
         "foo@latest",
       ];
-      const config = {};
-      const npmGlobalStyle = true;
+      const config = {
+        npmGlobalStyle: true,
+      };
 
-      NpmUtilities.installInDir(directory, dependencies, config, npmGlobalStyle, (err) => {
+      NpmUtilities.installInDir(directory, dependencies, config, (err) => {
         if (err) return done.fail(err);
 
         try {
-          expect(writePkg.mock.calls[0][1]).toEqual(
+          expect(writePkg).lastCalledWith(
+            path.join(directory, "package.json"),
             {
               dependencies: {
                 "@scoped/foo": "latest",
@@ -368,8 +370,7 @@ describe("NpmUtilities", () => {
             {
               directory,
               registry: undefined,
-            },
-            expect.any(Function)
+            }
           );
 
           done();
@@ -394,7 +395,8 @@ describe("NpmUtilities", () => {
         if (err) return done.fail(err);
 
         try {
-          expect(writePkg.mock.calls[0][1]).toEqual(
+          expect(writePkg).lastCalledWith(
+            path.join(directory, "package.json"),
             {
               dependencies: {
                 "@scoped/something": "github:foo/bar",
@@ -408,8 +410,7 @@ describe("NpmUtilities", () => {
             {
               directory,
               registry: undefined,
-            },
-            expect.any(Function)
+            }
           );
 
           done();
@@ -433,7 +434,8 @@ describe("NpmUtilities", () => {
         if (err) return done.fail(err);
 
         try {
-          expect(writePkg.mock.calls[0][1]).toEqual(
+          expect(writePkg).lastCalledWith(
+            path.join(directory, "package.json"),
             {
               dependencies: {
                 "@scoped/something": "github:foo/bar",
@@ -447,8 +449,7 @@ describe("NpmUtilities", () => {
             {
               directory,
               registry: undefined,
-            },
-            expect.any(Function)
+            }
           );
 
           done();
@@ -466,15 +467,16 @@ describe("NpmUtilities", () => {
       ];
       const config = {
         npmClient: "yarn",
+        npmGlobalStyle: true,
         mutex: "network:12345",
       };
-      const npmGlobalStyle = true;
 
-      NpmUtilities.installInDir(directory, dependencies, config, npmGlobalStyle, (err) => {
+      NpmUtilities.installInDir(directory, dependencies, config, (err) => {
         if (err) return done.fail(err);
 
         try {
-          expect(writePkg.mock.calls[0][1]).toEqual(
+          expect(writePkg).lastCalledWith(
+            path.join(directory, "package.json"),
             {
               dependencies: {
                 "@scoped/something": "github:foo/bar",
@@ -488,8 +490,7 @@ describe("NpmUtilities", () => {
             {
               directory,
               registry: undefined,
-            },
-            expect.any(Function)
+            }
           );
 
           done();
@@ -527,7 +528,8 @@ describe("NpmUtilities", () => {
         if (err) return done.fail(err);
 
         try {
-          expect(writePkg.mock.calls[0][1]).toEqual(
+          expect(writePkg).lastCalledWith(
+            path.join(directory, "package.json"),
             {
               dependencies: {
                 "@scoped/noversion": "*",
@@ -599,8 +601,8 @@ describe("NpmUtilities", () => {
       ];
       const config = {};
 
-      ChildProcessUtilities.exec.mockImplementation((client, args, opts, cb) => {
-        return cb(new Error("Unable to install dependency"));
+      ChildProcessUtilities.exec.mockImplementation(() => {
+        return Promise.reject(new Error("Unable to install dependency"));
       });
 
       NpmUtilities.installInDir(directory, dependencies, config, (err) => {
@@ -610,6 +612,74 @@ describe("NpmUtilities", () => {
           expect(FileSystemUtilities.renameSync).lastCalledWith(
             path.join(directory, "package.json.lerna_backup"),
             path.join(directory, "package.json"),
+          );
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      });
+    });
+  });
+
+  describe(".installInDirOriginalPackageJson()", () => {
+    beforeEach(() => {
+      stubExecOpts();
+    });
+
+    afterEach(resetExecOpts);
+
+    it("uses shared code path for install", (done) => {
+      ChildProcessUtilities.exec.mockImplementation(() => Promise.resolve());
+
+      const directory = path.normalize("/test/installInDirOriginalPackageJson");
+      const config = {
+        npmClient: "yarn",
+        npmClientArgs: ["--no-optional"],
+        mutex: "file:foo",
+      };
+
+      NpmUtilities.installInDirOriginalPackageJson(directory, config, (err) => {
+        if (err) return done.fail(err);
+
+        try {
+          expect(ChildProcessUtilities.exec).lastCalledWith(
+            "yarn",
+            ["install", "--mutex", "file:foo", "--non-interactive", "--no-optional"],
+            {
+              directory,
+              registry: undefined,
+            }
+          );
+
+          done();
+        } catch (ex) {
+          done.fail(ex);
+        }
+      });
+    });
+
+    it("calls back with error when thrown", (done) => {
+      ChildProcessUtilities.exec.mockImplementation(() =>
+        Promise.reject(new Error("whoopsy-doodle"))
+      );
+
+      const directory = path.normalize("/test/installInDirOriginalPackageJsonError");
+      const config = {
+        npmClient: "yarn",
+      };
+
+      NpmUtilities.installInDirOriginalPackageJson(directory, config, (err) => {
+        try {
+          expect(err.message).toBe("whoopsy-doodle");
+
+          expect(ChildProcessUtilities.exec).lastCalledWith(
+            "yarn",
+            ["install", "--non-interactive"],
+            {
+              directory,
+              registry: undefined,
+            }
           );
 
           done();
