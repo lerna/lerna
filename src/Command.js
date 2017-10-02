@@ -95,10 +95,6 @@ export default class Command {
     log.pause();
     log.heading = "lerna";
 
-    if (flags.loglevel) {
-      log.level = flags.loglevel;
-    }
-
     this.input = input;
     this._flags = flags;
 
@@ -108,8 +104,6 @@ export default class Command {
     this.lernaVersion = require("../package.json").version;
     this.repository = new Repository(cwd);
     this.logger = log.newGroup(this.name);
-
-    log.resume();
   }
 
   get concurrency() {
@@ -201,6 +195,14 @@ export default class Command {
   }
 
   run() {
+    const { loglevel } = this.options;
+
+    if (loglevel) {
+      log.level = loglevel;
+    }
+
+    // no logging is emitted until run() is called
+    log.resume();
     log.info("version", this.lernaVersion);
 
     if (this.repository.isIndependent()) {
