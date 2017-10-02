@@ -416,11 +416,11 @@ Useful for bypassing the user input prompt if you already know which version to 
 #### --message, -m [msg]
 
 ```sh
-$ lerna publish -m "chore: Publish %s"
-# commit message = "chore: Publish v1.0.0"
+$ lerna publish -m "chore(release): publish %s"
+# commit message = "chore(release): publish v1.0.0"
 
-$ lerna publish -m "chore: Publish" --independent
-# commit message = "chore: Publish
+$ lerna publish -m "chore(release): publish" --independent
+# commit message = "chore(release): publish
 #
 # - package-1@3.0.1
 # - package-2@1.5.4"
