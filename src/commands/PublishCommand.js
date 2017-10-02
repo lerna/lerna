@@ -247,7 +247,7 @@ export default class PublishCommand extends Command {
   publishPackagesToNpm(callback) {
     this.logger.info("publish", "Publishing packages to npm...");
 
-    this.npmPublishAsPrerelease((err) => {
+    this.npmPublish((err) => {
       if (err) {
         callback(err);
         return;
@@ -659,8 +659,8 @@ export default class PublishCommand extends Command {
     }
   }
 
-  npmPublishAsPrerelease(callback) {
-    const tracker = this.logger.newItem("npmPublishAsPrerelease");
+  npmPublish(callback) {
+    const tracker = this.logger.newItem("npmPublish");
 
     // if we skip temp tags we should tag with the proper value immediately
     // therefore no updates will be needed
