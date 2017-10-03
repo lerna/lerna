@@ -936,7 +936,7 @@ describe("PublishCommand", () => {
   });
 
 
-  describe('allow branch', () => {
+  describe("--allow-branch", () => {
     describe("cli", () => {
       let testDir;
 
@@ -953,16 +953,14 @@ describe("PublishCommand", () => {
       });
 
       it("should accept an exactly matching branch", async () => {
-        expect(await run(testDir)("--allow-branch", "master")).toEqual(
-          expect.objectContaining({ exitCode: 0 })
-        );
+        const { exitCode } = await run(testDir)("--allow-branch", "master");
+        expect(exitCode).toBe(0);
       });
 
       it("should accept a branch that matches by wildcard", async () => {
         GitUtilities.getCurrentBranch.mockReturnValueOnce("feature/awesome");
-        expect(await run(testDir)("--allow-branch", "feature/*")).toEqual(
-          expect.objectContaining({ exitCode: 0 })
-        );
+        const { exitCode } = await run(testDir)("--allow-branch", "feature/*");
+        expect(exitCode).toBe(0);
       });
     });
 
@@ -983,15 +981,25 @@ describe("PublishCommand", () => {
 
       it("should accept a matching branch", async () => {
         GitUtilities.getCurrentBranch.mockReturnValueOnce("lerna");
-        expect(await run(testDir)()).toEqual(
-          expect.objectContaining({ exitCode: 0 })
-        );
+
+        const { exitCode } = await run(testDir)();
+        expect(exitCode).toBe(0);
       });
 
       it("should prioritize cli over defaults", async () => {
-        expect(await run(testDir)("--allow-branch", "master")).toEqual(
-          expect.objectContaining({ exitCode: 0 })
-        );
+        const { exitCode } = await run(testDir)("--allow-branch", "master");
+        expect(exitCode).toBe(0);
+      });
+    });
+
+    describe("with --canary", () => {
+      it("does not restrict publishing canary versions", async () => {
+        const testDir = await initFixture("PublishCommand/normal");
+        GitUtilities.getCurrentBranch.mockReturnValueOnce("other");
+
+        const { exitCode } = await run(testDir)("--allow-branch", "master", "--canary");
+        expect(exitCode).toBe(0);
+        expect(updatedPackageVersions(testDir)).toMatchSnapshot();
       });
     });
   });
