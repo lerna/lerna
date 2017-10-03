@@ -945,20 +945,25 @@ describe("PublishCommand", () => {
       });
 
       it("should reject a non matching branch", async () => {
+        GitUtilities.getCurrentBranch.mockReturnValueOnce("unmatched");
+
         try {
-          await run(testDir)("--allow-branch", "develop");
+          await run(testDir)("--allow-branch", "master");
         } catch (err) {
-          expect(err).toEqual(expect.stringMatching(/not allowed to be published/));
+          expect(err.message).toMatch("Branch 'unmatched' is restricted from publishing");
         }
       });
 
       it("should accept an exactly matching branch", async () => {
-        const { exitCode } = await run(testDir)("--allow-branch", "master");
+        GitUtilities.getCurrentBranch.mockReturnValueOnce("exact-match");
+
+        const { exitCode } = await run(testDir)("--allow-branch", "exact-match");
         expect(exitCode).toBe(0);
       });
 
       it("should accept a branch that matches by wildcard", async () => {
         GitUtilities.getCurrentBranch.mockReturnValueOnce("feature/awesome");
+
         const { exitCode } = await run(testDir)("--allow-branch", "feature/*");
         expect(exitCode).toBe(0);
       });
@@ -972,10 +977,12 @@ describe("PublishCommand", () => {
       });
 
       it("should reject a non matching branch", async () => {
+        GitUtilities.getCurrentBranch.mockReturnValueOnce("unmatched");
+
         try {
           await run(testDir)();
         } catch (err) {
-          expect(err).toEqual(expect.stringMatching(/not allowed to be published/));
+          expect(err.message).toMatch("Branch 'unmatched' is restricted from publishing");
         }
       });
 
@@ -987,7 +994,9 @@ describe("PublishCommand", () => {
       });
 
       it("should prioritize cli over defaults", async () => {
-        const { exitCode } = await run(testDir)("--allow-branch", "master");
+        GitUtilities.getCurrentBranch.mockReturnValueOnce("cli-override");
+
+        const { exitCode } = await run(testDir)("--allow-branch", "cli-override");
         expect(exitCode).toBe(0);
       });
     });

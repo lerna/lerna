@@ -179,8 +179,8 @@ export default class PublishCommand extends Command {
         throw new ValidationError(
           "ENOTALLOWED",
           dedent`
-            Branch ${currentBranch} is not allowed to be published.
-            Use --allow-branch ${currentBranch} to override.
+            Branch '${currentBranch}' is restricted from publishing due to allowBranch config.
+            Please consider the reasons for this restriction before overriding the option.
           `
         );
       }
