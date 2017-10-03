@@ -1,3 +1,33 @@
+## v2.3.0 (2017-10-03)
+
+New options for `lerna import` and `lerna publish`, set `--loglevel` from lerna.json, and more!
+
+#### :rocket: Enhancement
+* [#1019](https://github.com/lerna/lerna/pull/1019) Add `--flatten` option to use when merge conflicts cannot be imported. ([@dmaksimovic](https://github.com/dmaksimovic))
+* [#1026](https://github.com/lerna/lerna/pull/1026) Add `--allow-branch` option to restrict publish to designated branches. ([@FaHeymann](https://github.com/FaHeymann))
+* [#1029](https://github.com/lerna/lerna/pull/1029) Call version lifecycle scripts during publish. ([@cwmoo740](https://github.com/cwmoo740))
+* [#1030](https://github.com/lerna/lerna/pull/1030) Add runScriptSync for use in version lifecycle methods. ([@cwmoo740](https://github.com/cwmoo740))
+
+#### :bug: Bug Fix
+* [#1020](https://github.com/lerna/lerna/pull/1020) Use `--canary=<value>` as prerelease tag, not commit-ish. ([@achingbrain](https://github.com/achingbrain))
+* [#1037](https://github.com/lerna/lerna/pull/1037) Support durable `--loglevel` config from lerna.json. ([@evocateur](https://github.com/evocateur))
+* [#1041](https://github.com/lerna/lerna/pull/1041) Pass npmClientArgs to yarn workspaces install command. ([@evocateur](https://github.com/evocateur))
+
+#### :memo: Documentation
+* [#1040](https://github.com/lerna/lerna/pull/1040) Tweak conventional message examples. ([@stevemao](https://github.com/stevemao))
+
+#### :house: Internal
+* [#1038](https://github.com/lerna/lerna/pull/1038) Rename `npmPublishAsPrerelease` to `npmPublish` to avoid confusion. ([@Hypnosphi](https://github.com/Hypnosphi))
+
+#### Committers: 7
+- Alex Potsides ([achingbrain](https://github.com/achingbrain))
+- Daniel Stockman ([evocateur](https://github.com/evocateur))
+- Darko Maksimovic ([dmaksimovic](https://github.com/dmaksimovic))
+- Fabian Heymann ([FaHeymann](https://github.com/FaHeymann))
+- Filipp Riabchun ([Hypnosphi](https://github.com/Hypnosphi))
+- Jeffrey Young ([cwmoo740](https://github.com/cwmoo740))
+- Steve Mao ([stevemao](https://github.com/stevemao))
+
 ## v2.2.0 (2017-09-15)
 
 A new command, tweaks to logging and init scaffolding, and documentation!
