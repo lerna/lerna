@@ -356,7 +356,10 @@ export default class Command {
         }
       });
     } catch (err) {
-      log.error(method, "caught error\n", err);
+      // ValidationError already logged appropriately
+      if (err.name !== "ValidationError") {
+        log.error(method, "caught error\n", err);
+      }
       this._complete(err, 1, callback);
     }
   }
