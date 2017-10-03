@@ -340,7 +340,7 @@ export default class Command {
         this.filteredPackages = PackageUtilities.addDependencies(this.filteredPackages, this.packageGraph);
       }
     } catch (err) {
-      log.error("EPACKAGES", "Errored while collecting packages and package graph", err);
+      this._logError("EPACKAGES", "Errored while collecting packages and package graph", err);
       throw err;
     }
   }
@@ -364,7 +364,7 @@ export default class Command {
           if (err.pkg) {
             this._logPackageError(method, err);
           } else {
-            log.error(method, "callback with error\n", err);
+            this._logError(method, "callback with error", err);
           }
           this._complete(err, 1, callback);
         } else if (!completed) {
@@ -379,7 +379,7 @@ export default class Command {
     } catch (err) {
       // ValidationError already logged appropriately
       if (err.name !== "ValidationError") {
-        log.error(method, "caught error\n", err);
+        this._logError(method, "caught error", err);
       }
       this._complete(err, 1, callback);
     }
@@ -441,6 +441,14 @@ export default class Command {
     throw new Error("command.execute() needs to be implemented.");
   }
 
+  _logError(method, description, err) {
+    log.error(method, description);
+
+    // npmlog does some funny stuff to the stack by default,
+    // so pass it directly to avoid duplication.
+    log.error("", cleanStack(err, this.className));
+  }
+
   _logPackageError(method, err) {
     log.error(method, dedent`
       Error occured with '${err.pkg.name}' while running '${err.cmd}'
@@ -467,4 +475,11 @@ export default class Command {
 
 export function commandNameFromClassName(className) {
   return className.replace(/Command$/, "").toLowerCase();
+}
+
+function cleanStack(err, className) {
+  const lines = err.stack.split('\n');
+  const cutoff = new RegExp(`^    at ${className}._attempt .*$`);
+  const relevantIndex = lines.findIndex((line) => cutoff.test(line));
+  return lines.slice(0, relevantIndex).join('\n');
 }
