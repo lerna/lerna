@@ -936,7 +936,7 @@ describe("PublishCommand", () => {
   });
 
 
-  describe('allow branch', () => {
+  describe("--allow-branch", () => {
     describe("cli", () => {
       let testDir;
 
@@ -945,24 +945,27 @@ describe("PublishCommand", () => {
       });
 
       it("should reject a non matching branch", async () => {
+        GitUtilities.getCurrentBranch.mockReturnValueOnce("unmatched");
+
         try {
-          await run(testDir)("--allow-branch", "develop");
+          await run(testDir)("--allow-branch", "master");
         } catch (err) {
-          expect(err).toEqual(expect.stringMatching(/not allowed to be published/));
+          expect(err.message).toMatch("Branch 'unmatched' is restricted from publishing");
         }
       });
 
       it("should accept an exactly matching branch", async () => {
-        expect(await run(testDir)("--allow-branch", "master")).toEqual(
-          expect.objectContaining({ exitCode: 0 })
-        );
+        GitUtilities.getCurrentBranch.mockReturnValueOnce("exact-match");
+
+        const { exitCode } = await run(testDir)("--allow-branch", "exact-match");
+        expect(exitCode).toBe(0);
       });
 
       it("should accept a branch that matches by wildcard", async () => {
         GitUtilities.getCurrentBranch.mockReturnValueOnce("feature/awesome");
-        expect(await run(testDir)("--allow-branch", "feature/*")).toEqual(
-          expect.objectContaining({ exitCode: 0 })
-        );
+
+        const { exitCode } = await run(testDir)("--allow-branch", "feature/*");
+        expect(exitCode).toBe(0);
       });
     });
 
@@ -974,24 +977,38 @@ describe("PublishCommand", () => {
       });
 
       it("should reject a non matching branch", async () => {
+        GitUtilities.getCurrentBranch.mockReturnValueOnce("unmatched");
+
         try {
           await run(testDir)();
         } catch (err) {
-          expect(err).toEqual(expect.stringMatching(/not allowed to be published/));
+          expect(err.message).toMatch("Branch 'unmatched' is restricted from publishing");
         }
       });
 
       it("should accept a matching branch", async () => {
         GitUtilities.getCurrentBranch.mockReturnValueOnce("lerna");
-        expect(await run(testDir)()).toEqual(
-          expect.objectContaining({ exitCode: 0 })
-        );
+
+        const { exitCode } = await run(testDir)();
+        expect(exitCode).toBe(0);
       });
 
       it("should prioritize cli over defaults", async () => {
-        expect(await run(testDir)("--allow-branch", "master")).toEqual(
-          expect.objectContaining({ exitCode: 0 })
-        );
+        GitUtilities.getCurrentBranch.mockReturnValueOnce("cli-override");
+
+        const { exitCode } = await run(testDir)("--allow-branch", "cli-override");
+        expect(exitCode).toBe(0);
+      });
+    });
+
+    describe("with --canary", () => {
+      it("does not restrict publishing canary versions", async () => {
+        const testDir = await initFixture("PublishCommand/normal");
+        GitUtilities.getCurrentBranch.mockReturnValueOnce("other");
+
+        const { exitCode } = await run(testDir)("--allow-branch", "master", "--canary");
+        expect(exitCode).toBe(0);
+        expect(updatedPackageVersions(testDir)).toMatchSnapshot();
       });
     });
   });

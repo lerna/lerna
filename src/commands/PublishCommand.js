@@ -8,7 +8,7 @@ import semver from "semver";
 import writeJsonFile from "write-json-file";
 import writePkg from "write-pkg";
 
-import Command from "../Command";
+import Command, { ValidationError } from "../Command";
 import ConventionalCommitUtilities from "../ConventionalCommitUtilities";
 import FileSystemUtilities from "../FileSystemUtilities";
 import GitUtilities from "../GitUtilities";
@@ -165,6 +165,27 @@ export default class PublishCommand extends Command {
       this.logger.info("current version", this.globalVersion);
     }
 
+    // git validation, if enabled, should happen before updates are calculated and versions picked
+    if (this.gitEnabled) {
+      if (GitUtilities.isDetachedHead(this.execOpts)) {
+        throw new ValidationError(
+          "ENOGIT",
+          "Detached git HEAD, please checkout a branch to publish changes."
+        );
+      }
+
+      const currentBranch = GitUtilities.getCurrentBranch(this.execOpts);
+      if (this.options.allowBranch && !minimatch(currentBranch, this.options.allowBranch)) {
+        throw new ValidationError(
+          "ENOTALLOWED",
+          dedent`
+            Branch '${currentBranch}' is restricted from publishing due to allowBranch config.
+            Please consider the reasons for this restriction before overriding the option.
+          `
+        );
+      }
+    }
+
     this.updates = new UpdatedPackagesCollector(this).getUpdates();
 
     this.packagesToPublish = this.updates
@@ -210,31 +231,14 @@ export default class PublishCommand extends Command {
   }
 
   execute(callback) {
-    try {
-      if (this.gitEnabled && GitUtilities.isDetachedHead(this.execOpts)) {
-        throw new Error("Detached git HEAD, please checkout a branch to publish changes.");
-      }
+    if (!this.repository.isIndependent() && !this.options.canary) {
+      this.updateVersionInLernaJson();
+    }
 
-      const currentBranch = GitUtilities.getCurrentBranch(this.execOpts);
-      if (this.options.allowBranch && !minimatch(currentBranch, this.options.allowBranch)) {
-        throw new Error(dedent`
-          Branch ${currentBranch} is not allowed to be published.
-          Use --allow-branch ${currentBranch} to override.
-        `);
-      }
+    this.updateUpdatedPackages();
 
-      if (!this.repository.isIndependent() && !this.options.canary) {
-        this.updateVersionInLernaJson();
-      }
-
-      this.updateUpdatedPackages();
-
-      if (this.gitEnabled) {
-        this.commitAndTagUpdates();
-      }
-    } catch (err) {
-      callback(err);
-      return;
+    if (this.gitEnabled) {
+      this.commitAndTagUpdates();
     }
 
     if (this.options.skipNpm) {

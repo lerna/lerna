@@ -74,7 +74,7 @@ export const builder = {
   }
 };
 
-class ValidationError extends Error {
+export class ValidationError extends Error {
   constructor(prefix, message) {
     super(message);
     this.name = "ValidationError";
@@ -342,11 +342,10 @@ export default class Command {
           // to that specific package.
           if (err.pkg) {
             this._logPackageError(method, err);
-            this._complete(err, 1, callback);
           } else {
             log.error(method, "callback with error\n", err);
-            this._complete(err, 1, callback);
           }
+          this._complete(err, 1, callback);
         } else if (!completed) {
           // an early exit is rarely an error
           log.verbose(method, "exited early");
@@ -357,7 +356,10 @@ export default class Command {
         }
       });
     } catch (err) {
-      log.error(method, "caught error\n", err);
+      // ValidationError already logged appropriately
+      if (err.name !== "ValidationError") {
+        log.error(method, "caught error\n", err);
+      }
       this._complete(err, 1, callback);
     }
   }

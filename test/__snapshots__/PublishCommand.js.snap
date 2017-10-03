@@ -498,3 +498,13 @@ Array [
   ],
 ]
 `;
+
+exports[`PublishCommand --allow-branch with --canary does not restrict publishing canary versions 1`] = `
+Object {
+  "packages/package-1": "1.1.0-alpha.deadbeef",
+  "packages/package-2": "1.1.0-alpha.deadbeef",
+  "packages/package-3": "1.1.0-alpha.deadbeef",
+  "packages/package-4": "1.1.0-alpha.deadbeef",
+  "packages/package-5": "1.1.0-alpha.deadbeef",
+}
+`;
