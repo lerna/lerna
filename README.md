@@ -909,6 +909,18 @@ May also be configured in `lerna.json`:
 }
 ```
 
+```js
+// package.json
+{
+	"private": true,
+	"devDependencies": {
+		"lerna": "^2.2.0"
+	},
+	"workspaces": [ <====
+		"packages/*"
+	]
+}
+```
 
 #### --stream
 
