@@ -909,6 +909,20 @@ May also be configured in `lerna.json`:
 }
 ```
 
+The root-level package.json must also include a `workspaces` array:
+```json
+{
+  "private": true,
+  "devDependencies": {
+    "lerna": "^2.2.0"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}
+```
+This list is broadly similar to lerna's `packages` config (a list of globs matching directories with a package.json),
+except it does not support recursive globs (`"**"`, a.k.a. "globstars").
 
 #### --stream
 
