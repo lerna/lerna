@@ -249,9 +249,11 @@ export default class Command {
     if (this.options.independent && !this.repository.isIndependent()) {
       throw new ValidationError(
         "EVERSIONMODE",
-        "You ran lerna with `--independent` or `-i`, but the repository is not set to independent mode. " +
-        "To use independent mode you need to set your `lerna.json` \"version\" to \"independent\". " +
-        "Then you won't need to pass the `--independent` or `-i` flags."
+        dedent`
+          You ran lerna with --independent or -i, but the repository is not set to independent mode.
+          To use independent mode you need to set lerna.json's "version" property to "independent".
+          Then you won't need to pass the --independent or -i flags.
+        `
       );
     }
 
@@ -261,9 +263,13 @@ export default class Command {
     ) {
       throw new ValidationError(
         "EMISMATCH",
-        `Lerna major version mismatch: The current version of lerna is ${this.lernaVersion}, ` +
-        `but the Lerna version in \`lerna.json\` is ${this.repository.initVersion}. ` +
-        `You can either run \`lerna init\` again or install \`lerna@${this.repository.initVersion}\`.`
+        dedent`
+          Incompatible local version of lerna detected!
+          The running version of lerna is ${this.lernaVersion}, but the version in lerna.json is ${
+            this.repository.initVersion
+          }.
+          You can either run 'lerna init' again or install 'lerna@^${this.repository.initVersion}'.
+        `
       );
     }
 
