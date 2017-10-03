@@ -1,3 +1,13 @@
+## v2.3.1 (2017-10-03)
+
+This is what happens when you forget to pull from upstream before publishing.
+
+#### :nail_care: Polish
+* [#1025](https://github.com/lerna/lerna/pull/1025) Log which packages are throwing ECYCLE error. ([@FezVrasta](https://github.com/FezVrasta))
+
+#### Committers: 1
+- Federico Zivolo ([FezVrasta](https://github.com/FezVrasta))
+
 ## v2.3.0 (2017-10-03)
 
 New options for `lerna import` and `lerna publish`, set `--loglevel` from lerna.json, and more!
