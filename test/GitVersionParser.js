@@ -9,11 +9,7 @@ log.level = "silent";
 describe("GitVersionParser", () => {
 
   describe("parseVersion - without prefix", () => {
-    let parser;
-
-    beforeEach(() => {
-      parser = new GitVersionParser("");
-    });
+    const parser = new GitVersionParser("");
 
     it("should work for semver version", () => {
       expect(parser.parseVersion("0.0.2")).toEqual({
@@ -41,11 +37,7 @@ describe("GitVersionParser", () => {
   });
 
   describe("parseVersion - with version prefix", () => {
-    let parser;
-
-    beforeEach(() => {
-      parser = new GitVersionParser("v");
-    });
+    const parser = new GitVersionParser("v");
 
     it("should work for semver version", () => {
       expect(parser.parseVersion("0.0.2")).toEqual({

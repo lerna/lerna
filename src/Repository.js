@@ -120,16 +120,18 @@ export default class Repository {
   }
 
   buildPackageGraph() {
-    const packages = PackageUtilities.getPackages(this);
-    const packageGraph = PackageUtilities.getPackageGraph(packages, false, this.lernaJson.useGitVersion
-      ? new GitVersionParser(this.lernaJson.gitVersionPrefix)
-      : null);
+    // FIXME: should be destructured from command.options to support CLI flag overrides
+    const { useGitVersion, gitVersionPrefix } = this.lernaJson;
 
-    if (this.lernaJson.useGitVersion) {
+    const versionParser = useGitVersion && new GitVersionParser(gitVersionPrefix);
+    const packages = PackageUtilities.getPackages(this);
+    const packageGraph = PackageUtilities.getPackageGraph(packages, false, versionParser);
+
+    if (useGitVersion) {
       packages.forEach((pkg) => {
         pkg.versionSerializer = new VersionSerializer({
-          monorepoDependencies: packageGraph.get(pkg.name).dependencies,
-          versionParser: new GitVersionParser(this.lernaJson.gitVersionPrefix)
+          graphDependencies: packageGraph.get(pkg.name).dependencies,
+          versionParser
         });
       });
     }

@@ -21,7 +21,7 @@ describe("VersionSerializer", () => {
       }
     };
     serializer = new VersionSerializer({
-      monorepoDependencies: [
+      graphDependencies: [
         "my-package-1", "my-package-2", "my-package-3"
       ],
       versionParser: parser
@@ -39,7 +39,7 @@ describe("VersionSerializer", () => {
       };
 
       serializer = new VersionSerializer({
-        monorepoDependencies: [
+        graphDependencies: [
           "my-package-1", "my-package-2", "my-package-3"
         ],
         versionParser: mockParser
@@ -56,7 +56,7 @@ describe("VersionSerializer", () => {
       };
 
       serializer.deserialize(pkg);
-      expect(mockParser.parseVersion.mock.calls.length).toBe(2);
+      expect(mockParser.parseVersion).toHaveBeenCalledTimes(2);
     });
 
     it("should not touch versions parser does not recognize", () => {
@@ -111,24 +111,19 @@ describe("VersionSerializer", () => {
     });
 
     it("should write back version strings transformed by deserialize", () => {
-        expect(serializer.deserialize({
-          name: "my-package-1",
-          version: "1.0.0",
-          bin: "bin.js",
-          scripts: { "my-script": "echo 'hello world'" },
-          dependencies: { "my-dependency": "dont-touch-this#1.0.0" },
-          devDependencies: { "my-package-2": "bbb#1.0.0" },
-          peerDependencies: { "my-package-3": "ccc#1.0.0" }
-        })).toEqual({
+
+      // since serializer is stateful, version prefixes will be stored in its state
+      serializer.deserialize({
         name: "my-package-1",
         version: "1.0.0",
         bin: "bin.js",
         scripts: { "my-script": "echo 'hello world'" },
         dependencies: { "my-dependency": "dont-touch-this#1.0.0" },
-        devDependencies: { "my-package-2": "1.0.0" },
-        peerDependencies: { "my-package-3": "1.0.0" }
-      });
+        devDependencies: { "my-package-2": "bbb#1.0.0" },
+        peerDependencies: { "my-package-3": "ccc#1.0.0" }
+      })
 
+      // the preserved prefixes should be written back
       expect(serializer.serialize({
         name: "my-package-1",
         version: "1.0.0",

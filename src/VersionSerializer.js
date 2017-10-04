@@ -1,6 +1,6 @@
 export default class VersionSerializer {
-  constructor({ monorepoDependencies, versionParser }) {
-    this._monorepoDependencies = monorepoDependencies;
+  constructor({ graphDependencies, versionParser }) {
+    this._graphDependencies = graphDependencies;
     this._versionParser = versionParser;
     this._dependenciesKeys = ["dependencies", "devDependencies", "peerDependencies"];
     this._strippedPrefixes = new Map();
@@ -33,7 +33,7 @@ export default class VersionSerializer {
 
   _stripPrefix(dependencies) {
     Object.keys(dependencies).forEach((name) => {
-      if (this._monorepoDependencies.includes(name)) {
+      if (this._graphDependencies.includes(name)) {
         const result = this._versionParser.parseVersion(dependencies[name]);
 
         if (result.prefix) {

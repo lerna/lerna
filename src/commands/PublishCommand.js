@@ -156,9 +156,11 @@ export default class PublishCommand extends Command {
     this.gitRemote = this.options.gitRemote || "origin";
     this.gitEnabled = !(this.options.canary || this.options.skipGit);
 
-    if (this.repository.lernaJson.useGitVersion && !this.options.exact) {
-      this.logger.error("config", ```Using git version without 'exact' option is not recommended.
-        Please make sure you publish with --exact.```);
+    if (this.options.useGitVersion && !this.options.exact) {
+      throw new Error(dedent`
+        Using git version without 'exact' option is not recommended.
+        Please make sure you publish with --exact.
+      `);
     }
 
     if (this.options.canary) {
@@ -608,7 +610,6 @@ export default class PublishCommand extends Command {
       }
     });
   }
-
 
   commitAndTagUpdates() {
     if (this.repository.isIndependent()) {

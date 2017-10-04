@@ -9,7 +9,7 @@ log.level = "silent";
 
 describe("PackageGraph", () => {
 
-  const createPackages = function(version, dependencyVersion) {
+  function createPackages(version, dependencyVersion = version) {
     dependencyVersion = dependencyVersion || version;
 
     return [
@@ -38,7 +38,7 @@ describe("PackageGraph", () => {
         "/path/to/package2"
       )
     ];
-  };
+  }
 
   describe("constructor", () => {
     it(".get should return dependencies", () => {
