@@ -530,6 +530,14 @@ export default class PublishCommand extends Command {
     }
   }
 
+  runSyncScriptInPackage(pkg, scriptName) {
+    pkg.runScriptSync(scriptName, (err) => {
+      if (err) {
+        this.logger.error("publish", `error running ${scriptName} in ${pkg.name}\n`, err.stack || err);
+      }
+    });
+  }
+
   updateUpdatedPackages() {
     const { exact } = this.options;
     const changedFiles = [];
@@ -548,11 +556,7 @@ export default class PublishCommand extends Command {
       this.updatePackageDepsObject(pkg, "peerDependencies", exact);
 
       // exec preversion script
-      pkg.runScriptSync("preversion", (err) => {
-        if (err) {
-          this.logger.error("publish", "error running preversion", pkg.name, err);
-        }
-      });
+      this.runSyncScriptInPackage(pkg, "preversion");
 
       // write new package
       writePkg.sync(packageJsonLocation, pkg.toJSON());
@@ -561,11 +565,7 @@ export default class PublishCommand extends Command {
       // so it has to be explicit here (otherwise it mangles the instance properties)
 
       // exec version script
-      pkg.runScriptSync("version", (err) => {
-        if (err) {
-          this.logger.error("publish", "error running version", pkg.name, err);
-        }
-      });
+      this.runSyncScriptInPackage(pkg, "version");
 
       // we can now generate the Changelog, based on the
       // the updated version that we're about to release.
@@ -617,6 +617,11 @@ export default class PublishCommand extends Command {
     } else {
       this.tags = [this.gitCommitAndTagVersion(this.masterVersion)];
     }
+
+    // run the postversion script for each update
+    this.updates.forEach((update) => {
+      this.runSyncScriptInPackage(update.package, "postversion");
+    });
   }
 
   gitCommitAndTagVersionForUpdates() {
@@ -629,15 +634,6 @@ export default class PublishCommand extends Command {
     GitUtilities.commit(message, this.execOpts);
     tags.forEach((tag) => GitUtilities.addTag(tag, this.execOpts));
 
-    // run the postversion script for each update
-    this.updates.forEach(({ "package": pkg }) => {
-      pkg.runScriptSync("postversion", (err) => {
-        if (err) {
-          this.logger.error("publish", "error running postversion", pkg.name, err);
-        }
-      });
-    });
-
     return tags;
   }
 
@@ -647,15 +643,6 @@ export default class PublishCommand extends Command {
 
     GitUtilities.commit(message, this.execOpts);
     GitUtilities.addTag(tag, this.execOpts);
-
-    // run the postversion script for each update
-    this.updates.forEach(({ "package": pkg }) => {
-      pkg.runScriptSync("postversion", (err) => {
-        if (err) {
-          this.logger.error("publish", "error running postversion", pkg.name, err);
-        }
-      });
-    });
 
     return tag;
   }
@@ -707,10 +694,10 @@ export default class PublishCommand extends Command {
 
           if (attempts < 5) {
             this.logger.error("publish", "Retrying failed publish:", pkg.name);
-            this.logger.verbose("publish error", err);
+            this.logger.verbose("publish error", err.message);
             run(cb);
           } else {
-            this.logger.error("publish", "Ran out of retries while publishing", pkg.name, err);
+            this.logger.error("publish", "Ran out of retries while publishing", pkg.name, err.stack || err);
             cb(err);
           }
         });
@@ -745,7 +732,7 @@ export default class PublishCommand extends Command {
           break;
         } catch (err) {
           if (attempts < 5) {
-            this.logger.error("publish", "Error updating version as latest", err);
+            this.logger.error("publish", "Error updating version as latest", err.stack || err);
             continue;
           } else {
             cb(err);
