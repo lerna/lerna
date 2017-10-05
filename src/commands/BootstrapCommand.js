@@ -519,7 +519,7 @@ export default class BootstrapCommand extends Command {
    * Symlink package binaries to dependent packages' node_modules/.bin directory
    * @param {Function} callback
    */
-  symlinkPackages(cb) {
-    PackageUtilities.symlinkPackages(this.filteredPackages, this.packageGraph, this.logger, cb);
+  symlinkPackages(callback) {
+    PackageUtilities.symlinkPackages(this.filteredPackages, this.packageGraph, this.logger, callback);
   }
 }

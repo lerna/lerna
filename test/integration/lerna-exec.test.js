@@ -59,7 +59,7 @@ describe("lerna exec", () => {
       "exec",
       "--concurrency=1",
       "echo",
-      (process.platform == "win32" ? "%LERNA_PACKAGE_NAME%" : "$LERNA_PACKAGE_NAME"),
+      (process.platform === "win32" ? "%LERNA_PACKAGE_NAME%" : "$LERNA_PACKAGE_NAME"),
     ];
 
     const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });

@@ -186,7 +186,7 @@ export default class PackageUtilities {
       // that haven't yet been picked.
       const batch = packages.filter((pkg) => {
         const node = packageGraph.get(pkg.name);
-        return node.dependencies.filter((dep) => refCounts[dep]).length == 0;
+        return node.dependencies.filter((dep) => refCounts[dep]).length === 0;
       });
 
       // If we weren't able to find a package with no remaining dependencies,
