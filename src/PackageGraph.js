@@ -10,6 +10,10 @@ export class PackageGraphNode {
     this.package = pkg;
     this.dependencies = [];
   }
+
+  satisfies(versionRange) {
+    return semver.satisfies(this.package.version, versionRange);
+  }
 }
 
 /**
@@ -46,7 +50,7 @@ export default class PackageGraph {
             : dependencies[depName]
           );
 
-          if (semver.satisfies(packageNode.package.version, depVersion)) {
+          if (packageNode.satisfies(depVersion)) {
             node.dependencies.push(depName);
           }
         }
