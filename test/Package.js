@@ -116,40 +116,11 @@ describe("Package", () => {
       expect(mockSerializer.deserialize).toBeCalledWith(pkg._package);
       expect(mockSerializer.serialize).not.toBeCalled();
     });
-
-    it("should call 'serialize' on old and 'deserialize' on new serializer'", () => {
-
-      const firstMockSerializer = {
-        serialize: jest.fn((pkg) => pkg),
-        deserialize: jest.fn((pkg) => pkg)
-      };
-
-      const secondMockSerializer = {
-        serialize: jest.fn((pkg) => pkg),
-        deserialize: jest.fn((pkg) => pkg)
-      };
-
-      pkg.versionSerializer = firstMockSerializer;
-
-      expect(firstMockSerializer.deserialize).toBeCalled();
-      expect(firstMockSerializer.deserialize).toBeCalledWith(pkg._package);
-      expect(firstMockSerializer.serialize).not.toBeCalled();
-
-      pkg.versionSerializer = secondMockSerializer;
-
-      expect(firstMockSerializer.deserialize).toBeCalled();
-      expect(firstMockSerializer.serialize).toBeCalled();
-      expect(firstMockSerializer.serialize).toBeCalledWith(pkg._package);
-
-      expect(secondMockSerializer.deserialize).toBeCalled();
-      expect(secondMockSerializer.deserialize).toBeCalledWith(pkg._package);
-      expect(secondMockSerializer.serialize).not.toBeCalled();
-    });
   });
 
 
   describe(".toJSON()", () => {
-    it("should return internal package copy for serialization", () => {
+    it("should return clone of internal package for serialization", () => {
       expect(pkg.toJSON()).not.toBe(pkg._package);
       expect(pkg.toJSON()).toEqual(pkg._package);
 
@@ -160,38 +131,31 @@ describe("Package", () => {
     });
 
     it("should not change internal package with versionSerializer", () => {
+      pkg._package.state = "serialized"
+
       const mockSerializer = {
         serialize: jest.fn((pkg) => {
-          return Object.assign({}, pkg, { foo: true });
+          pkg.state = "serialized"
+          return pkg;
         }),
         deserialize: jest.fn((pkg) => {
-          const newPkg = Object.assign({}, pkg);
-          delete newPkg.foo;
-          return newPkg;
+          pkg.state = "deserialized"
+          return pkg
         })
       };
 
+      const serializedPkg = Object.assign({}, pkg._package, { state: "serialized" })
+      const deserializedPkg = Object.assign({}, pkg._package, { state: "deserialized" })
+
       pkg.versionSerializer = mockSerializer;
-
-      let serializedPackage = pkg.toJSON();
-      const pkgPackageClone = Object.assign({}, pkg._package, { foo: true });
-
-      expect(serializedPackage).not.toEqual(pkg._package);
-      expect(serializedPackage).toEqual(pkgPackageClone);
-
       expect(mockSerializer.deserialize).toBeCalled();
+      expect(pkg._package).toEqual(deserializedPkg);
+
+      const serializedResult = pkg.toJSON();
+      expect(pkg._package).toEqual(deserializedPkg);
+      expect(serializedResult).toEqual(serializedPkg);
+
       expect(mockSerializer.serialize).toBeCalled();
-      expect(mockSerializer.serialize).toBeCalledWith(pkg._package);
-
-      serializedPackage = pkg.toJSON();
-
-      expect(serializedPackage).not.toEqual(pkg._package);
-      expect(serializedPackage).toEqual(pkgPackageClone);
-
-      expect(mockSerializer.deserialize).toBeCalled();
-      expect(mockSerializer.serialize).toHaveBeenCalledTimes(2);
-      expect(mockSerializer.serialize).toBeCalledWith(pkg._package);
-      expect(mockSerializer.serialize).lastCalledWith(pkg._package);
     });
 
     it("should use versionSerializer.serialize on internal package before return", () => {

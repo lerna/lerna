@@ -5,11 +5,13 @@ import log from "npmlog";
 import ChildProcessUtilities from "./ChildProcessUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
 import GitUtilities from "./GitUtilities";
+import GitVersionParser from "./GitVersionParser";
 import PackageUtilities from "./PackageUtilities";
 import Repository from "./Repository";
 import filterFlags from "./utils/filterFlags";
 import writeLogFile from "./utils/writeLogFile";
 import UpdatedPackagesCollector from "./UpdatedPackagesCollector";
+import VersionSerializer from "./VersionSerializer";
 
 // handle log.success()
 log.addLevel("success", 3001, { fg: "green", bold: true });
@@ -294,7 +296,8 @@ export default class Command {
   }
 
   runPreparations() {
-    const { scope, ignore, registry, since } = this.options;
+    const { rootPath, packageConfigs } = this.repository;
+    const { scope, ignore, registry, since, useGitVersion, gitVersionPrefix } = this.options;
 
     if (scope) {
       log.info("scope", scope);
@@ -309,10 +312,22 @@ export default class Command {
     }
 
     try {
-      this.repository.buildPackageGraph();
-      this.packages = this.repository.packages;
-      this.packageGraph = this.repository.packageGraph;
-      this.filteredPackages = PackageUtilities.filterPackages(this.packages, { scope, ignore });
+      const versionParser = useGitVersion && new GitVersionParser(gitVersionPrefix);
+      const packages = PackageUtilities.getPackages({ rootPath, packageConfigs });
+      const packageGraph = PackageUtilities.getPackageGraph(packages, false, versionParser);
+
+      if (useGitVersion) {
+        packages.forEach((pkg) => {
+          pkg.versionSerializer = new VersionSerializer({
+            graphDependencies: packageGraph.get(pkg.name).dependencies,
+            versionParser
+          });
+        });
+      }
+
+      this.packages = packages;
+      this.packageGraph = packageGraph;
+      this.filteredPackages = PackageUtilities.filterPackages(packages, { scope, ignore });
 
       // The UpdatedPackagesCollector requires that filteredPackages be present prior to checking for
       // updates. That's okay because it further filters based on what's already been filtered.

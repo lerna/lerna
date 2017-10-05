@@ -8,9 +8,6 @@ import semver from "semver";
 
 import dependencyIsSatisfied from "./utils/dependencyIsSatisfied";
 import Package from "./Package";
-import PackageUtilities from "./PackageUtilities";
-import GitVersionParser from "./GitVersionParser";
-import VersionSerializer from "./VersionSerializer";
 
 const DEFAULT_PACKAGE_GLOB = "packages/*";
 
@@ -69,22 +66,6 @@ export default class Repository {
       .map(parentDir => path.resolve(this.rootPath, parentDir));
   }
 
-  get packages() {
-    if (!this._packages) {
-      this.buildPackageGraph();
-    }
-
-    return this._packages;
-  }
-
-  get packageGraph() {
-    if (!this._packageGraph) {
-      this.buildPackageGraph();
-    }
-
-    return this._packageGraph;
-  }
-
   get packageJson() {
     if (!this._packageJson) {
       try {
@@ -117,27 +98,6 @@ export default class Repository {
 
   isIndependent() {
     return this.version === "independent";
-  }
-
-  buildPackageGraph() {
-    // FIXME: should be destructured from command.options to support CLI flag overrides
-    const { useGitVersion, gitVersionPrefix } = this.lernaJson;
-
-    const versionParser = useGitVersion && new GitVersionParser(gitVersionPrefix);
-    const packages = PackageUtilities.getPackages(this);
-    const packageGraph = PackageUtilities.getPackageGraph(packages, false, versionParser);
-
-    if (useGitVersion) {
-      packages.forEach((pkg) => {
-        pkg.versionSerializer = new VersionSerializer({
-          graphDependencies: packageGraph.get(pkg.name).dependencies,
-          versionParser
-        });
-      });
-    }
-
-    this._packages = packages;
-    this._packageGraph = packageGraph;
   }
 
   hasDependencyInstalled(depName, version) {

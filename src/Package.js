@@ -62,13 +62,7 @@ export default class Package {
   }
 
   set versionSerializer(versionSerializer) {
-    const previousSerializer = this._versionSerializer;
-
     this._versionSerializer = versionSerializer;
-
-    if (previousSerializer) {
-      this._package = previousSerializer.serialize(this._package);
-    }
 
     if (versionSerializer) {
       this._package = versionSerializer.deserialize(this._package);
