@@ -13,7 +13,8 @@ export default class Package {
   }
 
   get name() {
-    return this._package.name;
+    // Anonymous packages will appear in the log messages as directory paths.
+    return this._package.name || this._location;
   }
 
   get location() {
@@ -58,6 +59,10 @@ export default class Package {
 
   get scripts() {
     return this._package.scripts || {};
+  }
+
+  hasName() {
+    return !!this._package.name;
   }
 
   isPrivate() {

@@ -40,6 +40,7 @@ export default class LsCommand extends Command {
 
   execute(callback) {
     const formattedPackages = this.filteredPackages
+      .filter((pkg) => pkg.hasName())
       .map((pkg) => {
         return {
           name: pkg.name,

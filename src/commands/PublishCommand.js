@@ -190,7 +190,7 @@ export default class PublishCommand extends Command {
 
     this.packagesToPublish = this.updates
       .map((update) => update.package)
-      .filter((pkg) => !pkg.isPrivate());
+      .filter((pkg) => !pkg.isPrivate() && pkg.hasName());
 
     this.packagesToPublishCount = this.packagesToPublish.length;
     this.batchedPackagesToPublish = this.toposort
