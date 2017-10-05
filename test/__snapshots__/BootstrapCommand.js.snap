@@ -36,7 +36,8 @@ Object {
 
 exports[`BootstrapCommand with hoisting should hoist 1`] = `
 Object {
-  "": Array [
+  "ROOT": Array [
+    "bar@^2.0.0",
     "foo@^1.0.0",
     "@test/package-1@^0.0.0",
   ],
@@ -48,6 +49,7 @@ Object {
 
 exports[`BootstrapCommand with hoisting should hoist 2`] = `
 Array [
+  "packages/package-1/node_modules/bar",
   "packages/package-1/node_modules/foo",
   "packages/package-2/node_modules/foo",
   "packages/package-4/node_modules/@test/package-1",
@@ -56,7 +58,8 @@ Array [
 
 exports[`BootstrapCommand with hoisting should not hoist when disallowed 1`] = `
 Object {
-  "": Array [
+  "ROOT": Array [
+    "bar@^2.0.0",
     "foo@^1.0.0",
   ],
   "packages/package-3": Array [
@@ -70,34 +73,16 @@ Object {
 
 exports[`BootstrapCommand with hoisting should not hoist when disallowed 2`] = `
 Array [
+  "packages/package-1/node_modules/bar",
   "packages/package-1/node_modules/foo",
   "packages/package-2/node_modules/foo",
-]
-`;
-
-exports[`BootstrapCommand with hoisting should use global style to install disallowed external dependencies 1`] = `
-Object {
-  "": Array [
-    "foo@^1.0.0",
-    "@test/package-1@^0.0.0",
-  ],
-  "packages/package-3": Array [
-    "foo@0.1.12",
-  ],
-}
-`;
-
-exports[`BootstrapCommand with hoisting should use global style to install disallowed external dependencies 2`] = `
-Array [
-  "packages/package-1/node_modules/foo",
-  "packages/package-2/node_modules/foo",
-  "packages/package-4/node_modules/@test/package-1",
 ]
 `;
 
 exports[`BootstrapCommand with local package dependencies should bootstrap packages 1`] = `
 Object {
   "packages/package-1": Array [
+    "bar@^2.0.0",
     "foo@^1.0.0",
   ],
   "packages/package-2": Array [
@@ -155,6 +140,7 @@ Array [
 exports[`BootstrapCommand with local package dependencies should not bootstrap ignored packages 1`] = `
 Object {
   "packages/package-1": Array [
+    "bar@^2.0.0",
     "foo@^1.0.0",
   ],
   "packages/package-2": Array [

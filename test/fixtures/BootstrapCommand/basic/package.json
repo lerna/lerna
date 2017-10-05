@@ -1,3 +1,8 @@
 {
-  "name": "independent"
+  "name": "basic",
+  "version": "monorepo",
+  "private": true,
+  "dependencies": {
+    "bar": "^2.0.0"
+  }
 }

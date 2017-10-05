@@ -47,16 +47,12 @@ export default class BootstrapCommand extends Command {
   }
 
   initialize(callback) {
-    const { registry, npmClient, npmClientArgs, mutex, hoist } = this.options;
-
-    // Use `npm install --global-style` for leaves when hoisting is enabled
-    const npmGlobalStyle = !!hoist;
+    const { registry, npmClient, npmClientArgs, mutex } = this.options;
 
     this.npmConfig = {
       registry,
       npmClient,
       npmClientArgs,
-      npmGlobalStyle,
       mutex
     };
 
@@ -480,6 +476,11 @@ export default class BootstrapCommand extends Command {
       });
     }
 
+    const leafNpmConfig = Object.assign({}, this.npmConfig, {
+      // Use `npm install --global-style` for leaves when hoisting is enabled
+      npmGlobalStyle: !!this.options.hoist,
+    });
+
     // Install anything that needs to go into the leaves.
     Object.keys(leaves)
       .map((pkgName) => ({ pkg: this.packageGraph.get(pkgName).package, deps: leaves[pkgName] }))
@@ -491,7 +492,7 @@ export default class BootstrapCommand extends Command {
             NpmUtilities.installInDir(
               pkg.location,
               deps.map(({ dependency }) => dependency),
-              this.npmConfig,
+              leafNpmConfig,
               (err) => {
                 tracker.verbose("installed leaf", pkg.name);
                 tracker.completeWork(1);
