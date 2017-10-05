@@ -236,21 +236,42 @@ describe("Command", () => {
   });
 
   describe(".runPreparations()", () => {
+    let testDir;
+
+    function cli(cmd, ...args) {
+      return execa(cmd, args, { cwd: testDir });
+    }
+
+    function run(opts) {
+      const cmd = new OkCommand([], opts, testDir);
+      return cmd.run().then(() => cmd);
+    }
+
+    describe("get .packages", () => {
+
+      it("returns the list of packages", async () => {
+        testDir = await initFixture("Command/basic")
+        const { packages } = await run();
+        expect(packages).toEqual([]);
+      });
+    });
+
+    describe("get .packageGraph", () => {
+
+      it("returns the graph of packages", async () => {
+        testDir = await initFixture("Command/basic")
+        const { packageGraph } = await run();
+        expect(packageGraph).toBeDefined();
+        expect(packageGraph).toHaveProperty("nodes", []);
+        expect(packageGraph).toHaveProperty("nodesByName", {});
+      });
+    });
+
     describe(".filteredPackages", () => {
-      let testDir;
 
       beforeEach(() => initFixture("UpdatedCommand/basic").then((dir) => {
         testDir = dir;
       }));
-
-      function cli(cmd, ...args) {
-        return execa(cmd, args, { cwd: testDir });
-      }
-
-      function run(opts) {
-        const cmd = new OkCommand([], opts, testDir);
-        return cmd.run().then(() => cmd);
-      }
 
       it("--scope should filter packages", async () => {
         const { filteredPackages } = await run({ scope: ["package-2", "package-4"] });

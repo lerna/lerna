@@ -2,6 +2,7 @@ import dedent from "dedent";
 import log from "npmlog";
 import path from "path";
 import semver from "semver";
+import _ from "lodash";
 
 import dependencyIsSatisfied from "./utils/dependencyIsSatisfied";
 import NpmUtilities from "./NpmUtilities";
@@ -60,12 +61,21 @@ export default class Package {
     return this._package.scripts || {};
   }
 
+  set versionSerializer(versionSerializer) {
+    this._versionSerializer = versionSerializer;
+
+    if (versionSerializer) {
+      this._package = versionSerializer.deserialize(this._package);
+    }
+  }
+
   isPrivate() {
     return !!this._package.private;
   }
 
   toJSON() {
-    return this._package;
+    const pkg = _.cloneDeep(this._package);
+    return this._versionSerializer ? this._versionSerializer.serialize(pkg) : pkg;
   }
 
   /**

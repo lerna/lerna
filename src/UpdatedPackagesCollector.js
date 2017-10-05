@@ -37,7 +37,7 @@ export default class UpdatedPackagesCollector {
     this.logger = command.logger;
     this.repository = command.repository;
     this.packages = command.filteredPackages;
-    this.packageGraph = command.repository.packageGraph;
+    this.packageGraph = command.packageGraph;
     this.options = command.options;
   }
 

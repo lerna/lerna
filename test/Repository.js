@@ -138,33 +138,7 @@ describe("Repository", () => {
         path.join(testDir, "packages"),
         path.join(testDir, "dir/nested"),
         path.join(testDir, "globstar"),
-      ])
-    });
-  });
-
-  describe("get .packages", () => {
-    it("returns the list of packages", () => {
-      const repo = new Repository(testDir);
-      expect(repo.packages).toEqual([]);
-    });
-
-    it("caches the initial value", () => {
-      const repo = new Repository(testDir);
-      expect(repo.packages).toBe(repo.packages);
-    });
-  });
-
-  describe("get .packageGraph", () => {
-    it("returns the graph of packages", () => {
-      const repo = new Repository(testDir);
-      expect(repo.packageGraph).toBeDefined();
-      expect(repo.packageGraph).toHaveProperty("nodes", []);
-      expect(repo.packageGraph).toHaveProperty("nodesByName", {});
-    });
-
-    it("caches the initial value", () => {
-      const repo = new Repository(testDir);
-      expect(repo.packageGraph).toBe(repo.packageGraph);
+      ]);
     });
   });
 

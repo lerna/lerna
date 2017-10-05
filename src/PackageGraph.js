@@ -20,7 +20,7 @@ export class PackageGraphNode {
  *    devDependencies that would normally be included.
  */
 export default class PackageGraph {
-  constructor(packages, depsOnly = false) {
+  constructor(packages, depsOnly = false, versionParser) {
     this.nodes = [];
     this.nodesByName = {};
 
@@ -38,11 +38,17 @@ export default class PackageGraph {
 
       for (let d = 0; d < depNames.length; d++) {
         const depName = depNames[d];
-        const depVersion = dependencies[depName];
         const packageNode = this.nodesByName[depName];
 
-        if (packageNode && semver.satisfies(packageNode.package.version, depVersion)) {
-          node.dependencies.push(depName);
+        if (packageNode) {
+          const depVersion = (versionParser
+            ? versionParser.parseVersion(dependencies[depName]).version
+            : dependencies[depName]
+          );
+
+          if (semver.satisfies(packageNode.package.version, depVersion)) {
+            node.dependencies.push(depName);
+          }
         }
       }
     }
