@@ -663,8 +663,6 @@ Running `lerna` without arguments will show all commands/options.
     }
   },
   "packages": ["packages/*"]
-  "useGitVersion": true,
-  "gitVersionPrefix": "v"
 }
 ```
 
@@ -674,24 +672,6 @@ Running `lerna` without arguments will show all commands/options.
 - `commands.bootstrap.ignore`: an array of globs that won't be bootstrapped when running the `lerna bootstrap` command.
 - `commands.bootstrap.scope`: an array of globs that restricts which packages will be bootstrapped when running the `lerna bootstrap` command.
 - `packages`: Array of globs to use as package locations.
-- `useGitVersion`: a boolean (defaults to `false`) indicating if [git hosted urls](https://github.com/npm/hosted-git-info) should be allowed instead of plain version number. If enabled, Lerna will attempt to extract and save the interpackage dependency versions using git url-aware parser.
-    This allows packages to be distributed via git repos if eg. packages are private and [private npm repo is not an option](https://www.dotconferences.com/2016/05/fabien-potencier-monolithic-repositories-vs-many-repositories).
-    Please note that using `gitVersion` requires `publish` command to be used with `--exact` and is limited to urls with [`committish`](https://docs.npmjs.com/files/package.json#git-urls-as-dependencies) part present.
-
-    Example assuming 2 packages where `my-package-1` depends on `my-package-2`, for which `package.json` of `my-package-1` could be:
-  ```
-  {
-    name: "my-package-1",
-    version: "1.0.0",
-    bin: "bin.js",
-    dependencies: { "my-package-2": "github:example-user/my-package-2#1.0.0" },
-    devDependencies: { "my-dev-dependency": "^1.0.0" },
-    peerDependencies: { "my-peer-dependency": "^1.0.0" }
-  }
-  ```
-- `gitVersionPrefix`: version prefix string (defaults to 'v') ignored when extracting version number from commitish part of git url. eg. given `github:example-user/my-package-2#v1.0.0`
- and `gitVersionPrefix: 'v'` version will be read as `1.0.0`. Ignored if `useGitVersion` is set to `false`.
-
 
 ### Common `devDependencies`
 
@@ -942,6 +922,63 @@ The root-level package.json must also include a `workspaces` array:
 ```
 This list is broadly similar to lerna's `packages` config (a list of globs matching directories with a package.json),
 except it does not support recursive globs (`"**"`, a.k.a. "globstars").
+
+#### --use-git-version
+
+Allow target versions of dependent packages to be written as [git hosted urls](https://github.com/npm/hosted-git-info) instead of a plain version number.
+If enabled, Lerna will attempt to extract and save the interpackage dependency versions from `package.json` files using git url-aware parser.
+
+Eg. assuming monorepo with 2 packages where `my-package-1` depends on `my-package-2`, `package.json` of `my-package-1` could be:
+```
+// packages/my-package-1/package.json
+{
+  name: "my-package-1",
+  version: "1.0.0",
+  bin: "bin.js",
+  dependencies: {
+    "my-package-2": "github:example-user/my-package-2#v1.0.0"
+  },
+  devDependencies: {
+    "my-dev-dependency": "^1.0.0"
+  },
+  peerDependencies: {
+    "my-peer-dependency": "^1.0.0"
+  }
+}
+```
+For the case above Lerna will read the version of `my-package-2` dependency as `1.0.0`.
+
+This allows packages to be distributed via git repos if eg. packages are private and [private npm repo is not an option](https://www.dotconferences.com/2016/05/fabien-potencier-monolithic-repositories-vs-many-repositories).
+
+Please note that using `--use-git-version`
+- is limited to urls with [`committish`](https://docs.npmjs.com/files/package.json#git-urls-as-dependencies) part present (ie. `github:example-user/my-package-2` is invalid)
+- requires `publish` command to be used with `--exact`
+
+May also be configured in `lerna.json`:
+```js
+{
+  ...
+  "useGitVersion": true
+}
+```
+
+#### --git-version-prefix
+
+Defines version prefix string (defaults to 'v') ignored when extracting version number from a commitish part of git url.
+Everything after the prefix will be considered a version.
+
+
+Eg. given `github:example-user/my-package-2#v1.0.0` and `gitVersionPrefix: 'v'` version will be read as `1.0.0`.
+
+Only used if `--use-git-version` is set to `true`.
+
+May also be configured in `lerna.json`:
+```js
+{
+  ...
+  "gitVersionPrefix": "v"
+}
+```
 
 #### --stream
 
