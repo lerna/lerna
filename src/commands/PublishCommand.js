@@ -694,10 +694,10 @@ export default class PublishCommand extends Command {
 
           if (attempts < 5) {
             this.logger.error("publish", "Retrying failed publish:", pkg.name);
-            this.logger.verbose("publish error", err);
+            this.logger.verbose("publish error", err.message);
             run(cb);
           } else {
-            this.logger.error("publish", "Ran out of retries while publishing", pkg.name, err);
+            this.logger.error("publish", "Ran out of retries while publishing", pkg.name, err.stack || err);
             cb(err);
           }
         });
@@ -732,7 +732,7 @@ export default class PublishCommand extends Command {
           break;
         } catch (err) {
           if (attempts < 5) {
-            this.logger.error("publish", "Error updating version as latest", err);
+            this.logger.error("publish", "Error updating version as latest", err.stack || err);
             continue;
           } else {
             cb(err);
