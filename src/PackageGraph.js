@@ -41,7 +41,7 @@ export default class PackageGraph {
         const depVersion = dependencies[depName];
         const packageNode = this.nodesByName[depName];
 
-        if (packageNode && semver.satisfies(packageNode.package.version, depVersion)) {
+        if (packageNode && (!semver.valid(depVersion) || semver.satisfies(packageNode.package.version, depVersion))) {
           node.dependencies.push(depName);
         }
       }
