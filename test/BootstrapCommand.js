@@ -43,7 +43,7 @@ const installedPackagesInDirectories = (testDir) =>
   NpmUtilities.installInDir.mock.calls.reduce((obj, args) => {
     const location = normalizeRelativeDir(testDir, args[0]);
     const dependencies = args[1];
-    obj[location] = dependencies;
+    obj[location || "ROOT"] = dependencies;
     return obj;
   }, {});
 
@@ -116,6 +116,30 @@ describe("BootstrapCommand", () => {
 
       expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
       expect(removedDirectories(testDir)).toMatchSnapshot();
+
+      // root includes explicit dependencies and hoisted from leaves
+      expect(NpmUtilities.installInDir).toBeCalledWith(
+        testDir,
+        ["bar@^2.0.0", "foo@^1.0.0", "@test/package-1@^0.0.0"],
+        {
+          registry: undefined,
+          npmClient: undefined,
+          npmClientArgs: undefined,
+          mutex: undefined,
+          // npmGlobalStyle is not included at all
+        },
+        expect.any(Function)
+      );
+
+      // foo@0.1.2 differs from the more common foo@^1.0.0
+      expect(NpmUtilities.installInDir).lastCalledWith(
+        expect.stringContaining("package-3"),
+        ["foo@0.1.12"],
+        expect.objectContaining({
+          npmGlobalStyle: true,
+        }),
+        expect.any(Function)
+      );
     });
 
     it("should not hoist when disallowed", async () => {
@@ -123,23 +147,6 @@ describe("BootstrapCommand", () => {
 
       expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
       expect(removedDirectories(testDir)).toMatchSnapshot();
-    });
-
-    it("should use global style to install disallowed external dependencies", async () => {
-      await lernaBootstrap("--hoist");
-
-      expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
-      expect(removedDirectories(testDir)).toMatchSnapshot();
-
-      // foo@0.1.2 differs from the more common foo@^1.0.0
-      expect(NpmUtilities.installInDir).lastCalledWith(
-        expect.stringContaining("package-3"),
-        expect.arrayContaining(["foo@0.1.12"]),
-        expect.objectContaining({
-          npmGlobalStyle: true,
-        }),
-        expect.any(Function)
-      );
     });
   });
 
