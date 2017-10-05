@@ -1,3 +1,29 @@
+## v2.4.0 (2017-10-05)
+
+I inadvertently made `lerna bootstrap --hoist` really slow in v2.3.0, so that's fixed. Big thanks to all the contributors!
+
+#### :rocket: Enhancement
+* [#1033](https://github.com/lerna/lerna/pull/1033) Add support for git-hosted urls as sibling package dependencies. ([@gustaff-weldon](https://github.com/gustaff-weldon))
+
+#### :bug: Bug Fix
+* [#1044](https://github.com/lerna/lerna/pull/1044) Throw publish validation errors before version selection. ([@evocateur](https://github.com/evocateur))
+* [#1047](https://github.com/lerna/lerna/pull/1047) Remove git requirement from link command. ([@jiverson](https://github.com/jiverson))
+* [#1051](https://github.com/lerna/lerna/pull/1051) When hoisting, only install with --global-style in leaf nodes, not root. ([@evocateur](https://github.com/evocateur))
+* [#1054](https://github.com/lerna/lerna/pull/1054) Set `process.exitCode` instead of calling `process.exit(code)`. ([@evocateur](https://github.com/evocateur))
+
+#### :nail_care: Polish
+* [#1048](https://github.com/lerna/lerna/pull/1048) Clean up code missed by lint settings. ([@jiverson](https://github.com/jiverson))
+* [#1052](https://github.com/lerna/lerna/pull/1052) Truncate stack (or pass directly) when logging errors. ([@evocateur](https://github.com/evocateur))
+
+#### :memo: Documentation
+* [#1042](https://github.com/lerna/lerna/pull/1042) Update workspace document. ([@nhducit](https://github.com/nhducit))
+
+#### Committers: 4
+- Daniel Stockman ([evocateur](https://github.com/evocateur))
+- Good stuff and well done! ([gustaff-weldon](https://github.com/gustaff-weldon))
+- Josh Iverson ([jiverson](https://github.com/jiverson))
+- nhducit ([nhducit](https://github.com/nhducit))
+
 ## v2.3.1 (2017-10-03)
 
 This is what happens when you forget to pull from upstream before publishing.
