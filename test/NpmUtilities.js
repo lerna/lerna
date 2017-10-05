@@ -220,7 +220,6 @@ describe("NpmUtilities", () => {
     const originalEnv = Object.assign({}, process.env);
     const mockEnv = {
       mock_value: 1,
-      NODE_ENV: "lerna-test",
     };
 
     afterEach(() => {

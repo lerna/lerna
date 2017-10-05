@@ -259,10 +259,7 @@ export default class Command {
       );
     }
 
-    if (
-      process.env.NODE_ENV !== "lerna-test" &&
-      !this.repository.isCompatibleLerna(this.lernaVersion)
-    ) {
+    if (!this.repository.isCompatibleLerna(this.lernaVersion)) {
       throw new ValidationError(
         "EMISMATCH",
         dedent`
@@ -394,15 +391,12 @@ export default class Command {
       writeLogFile(this.repository.rootPath);
     }
 
+    // process.exit() is an anti-pattern
+    process.exitCode = code;
+
     const finish = function() {
       if (callback) {
         callback(err, code);
-      }
-
-      if (process.env.NODE_ENV !== "lerna-test") {
-        // TODO: don't call process.exit()
-        // eslint-disable-next-line no-process-exit
-        process.exit(code);
       }
     };
 

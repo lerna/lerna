@@ -100,9 +100,6 @@
       "<rootDir>/src",
       "<rootDir>/test"
     ],
-    "setupFiles": [
-      "<rootDir>/test/helpers/env.js"
-    ],
     "testEnvironment": "node",
     "testMatch": [
       "**/test/*.js"
