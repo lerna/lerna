@@ -216,7 +216,7 @@ describe("UpdatedCommand", async () => {
         "packages/package-2/random-file",
       ]);
 
-      await lernaUpdated("--json")
+      await lernaUpdated("--json");
 
       // Output should be a parseable string
       const jsonOutput = JSON.parse(consoleOutput());
