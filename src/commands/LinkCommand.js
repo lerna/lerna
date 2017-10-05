@@ -13,6 +13,10 @@ export const describe = "Symlink together all packages which are dependencies of
 export const builder = {};
 
 export default class LinkCommand extends Command {
+  get requiresGit() {
+    return false;
+  }
+
   initialize(callback) {
     callback(null, true);
   }
