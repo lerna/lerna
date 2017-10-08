@@ -172,14 +172,23 @@ export default class ImportCommand extends Command {
       // due to merge history.
       ChildProcessUtilities.exec("git", ["am", "-3"], this.execOpts, (err) => {
         if (err) {
-          // Give some context for the error message.
-          err = `Failed to apply commit ${sha}.\n${err}\n` +
-                `Rolling back to previous HEAD (commit ${this.preImportHead}).\n` +
-                `You may try with --flatten to import flat history.`;
+          const isEmptyCommit = err.stdout.indexOf("Patch is empty.") === 0;
+          if (isEmptyCommit) {
+            // Automatically skip empty commits
+            ChildProcessUtilities.execSync("git", ["am", "--skip"], this.execOpts);
 
-          // Abort the failed `git am` and roll back to previous HEAD.
-          ChildProcessUtilities.execSync("git", ["am", "--abort"], this.execOpts);
-          ChildProcessUtilities.execSync("git", ["reset", "--hard", this.preImportHead], this.execOpts);
+            // Reset previous error
+            err = null
+          } else {
+            // Give some context for the error message.
+            err = `Failed to apply commit ${sha}.\n${err}\n` +
+                  `Rolling back to previous HEAD (commit ${this.preImportHead}).\n` +
+                  `You may try with --flatten to import flat history.`;
+
+            // Abort the failed `git am` and roll back to previous HEAD.
+            ChildProcessUtilities.execSync("git", ["am", "--abort"], this.execOpts);
+            ChildProcessUtilities.execSync("git", ["reset", "--hard", this.preImportHead], this.execOpts);
+          }
         }
 
         tracker.completeWork(1);
@@ -191,7 +200,10 @@ export default class ImportCommand extends Command {
 
       if (!err) {
         this.logger.success("import", "finished");
+      } else {
+        this.logger.error("import", err);
       }
+
       callback(err, !err);
     });
   }
