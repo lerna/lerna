@@ -15,7 +15,7 @@
     "preintegration": "npm pack",
     "integration": "jest --config test/config/integration.json",
     "pretest": "npm run lint -- --cache",
-    "test": "jest",
+    "test": "cross-env LC_ALL=en-US jest",
     "ci": "npm test -- --coverage --verbose && npm run integration",
     "prepublish": "npm run build"
   },
@@ -76,6 +76,7 @@
     "babel-eslint": "^7.2.3",
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-preset-env": "^1.6.0",
+    "cross-env": "^5.0.5",
     "eslint": "^4.5.0",
     "eslint-config-babel": "^7.0.2",
     "eslint-plugin-babel": "^4.1.2",
