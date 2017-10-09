@@ -334,6 +334,16 @@ When run with this flag, `publish` will publish to npm without running any of th
 
 > Only publish to npm; skip committing, tagging, and pushing git changes (this only affects publish).
 
+#### --skip-git-push
+
+```sh
+$ lerna publish --skip-git-push
+```
+
+When run with this flag, `publish` will publish to npm without pushing the commit and tags up to git remote.
+
+> Publish to npm without pushing commit and tags up to git remote (this only affects publish).
+
 #### --skip-npm
 
 ```sh
