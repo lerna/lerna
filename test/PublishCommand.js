@@ -387,6 +387,32 @@ describe("PublishCommand", () => {
   });
 
   /** =========================================================================
+   * NORMAL - SKIP GIT PUSH
+   * ======================================================================= */
+
+  describe("normal mode with --skip-git-push", () => {
+    let testDir;
+
+    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
+      testDir = dir;
+    }));
+
+    it("should publish the changed packages, commit, and tag, but not push", () => {
+      return run(testDir)(
+        "--skip-git-push"
+      ).then(() => {
+        expect(GitUtilities.addFile).toBeCalled();
+        expect(GitUtilities.commit).toBeCalled();
+        expect(GitUtilities.addTag).toBeCalled();
+        expect(GitUtilities.pushWithTags).not.toBeCalled();
+
+        expect(publishedTagInDirectories(testDir))
+          .toMatchSnapshot("[normal --skip-git-push] npm publish --tag");
+      });
+    });
+  });
+
+  /** =========================================================================
    * NORMAL - SKIP NPM
    * ======================================================================= */
 
@@ -449,6 +475,52 @@ describe("PublishCommand", () => {
         expect(GitUtilities.addFile).not.toBeCalled();
         expect(GitUtilities.commit).not.toBeCalled();
         expect(GitUtilities.addTag).not.toBeCalled();
+        expect(GitUtilities.pushWithTags).not.toBeCalled();
+
+        expect(NpmUtilities.publishTaggedInDir).not.toBeCalled();
+        expect(NpmUtilities.checkDistTag).not.toBeCalled();
+        expect(NpmUtilities.removeDistTag).not.toBeCalled();
+        expect(NpmUtilities.addDistTag).not.toBeCalled();
+      });
+    });
+  });
+
+  /** =========================================================================
+   * NORMAL - SKIP GIT PUSH AND SKIP NPM
+   * ======================================================================= */
+
+  describe("normal mode with --skip-git-push and --skip-npm", () => {
+    let testDir;
+
+    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
+      testDir = dir;
+    }));
+
+    it("should update versions, commit, and tag, but not push changes or publish", () => {
+      return run(testDir)(
+        "--skip-git-push",
+        "--skip-npm"
+      ).then(() => {
+        expect(updatedLernaJson()).toMatchObject({ version: "1.0.1" });
+        expect(updatedPackageVersions(testDir))
+          .toMatchSnapshot("[normal --skip-git-push --skip-npm] bumps package versions, commits, and tags");
+
+        expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+          "package-1": "^1.0.1",
+        });
+        expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+          "package-2": "^1.0.1",
+        });
+        expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+          "package-1": "^0.0.0",
+        });
+        expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
+          "package-1": "^1.0.1",
+        });
+
+        expect(GitUtilities.addFile).toBeCalled();
+        expect(GitUtilities.commit).toBeCalled();
+        expect(GitUtilities.addTag).toBeCalled();
         expect(GitUtilities.pushWithTags).not.toBeCalled();
 
         expect(NpmUtilities.publishTaggedInDir).not.toBeCalled();

@@ -355,6 +355,37 @@ Array [
 ]
 `;
 
+exports[`[normal --skip-git-push --skip-npm] bumps package versions, commits, and tags 1`] = `
+Object {
+  "packages/package-1": "1.0.1",
+  "packages/package-2": "1.0.1",
+  "packages/package-3": "1.0.1",
+  "packages/package-4": "1.0.1",
+  "packages/package-5": "1.0.1",
+}
+`;
+
+exports[`[normal --skip-git-push] npm publish --tag 1`] = `
+Array [
+  Object {
+    "dir": "packages/package-1",
+    "tag": "latest",
+  },
+  Object {
+    "dir": "packages/package-3",
+    "tag": "latest",
+  },
+  Object {
+    "dir": "packages/package-4",
+    "tag": "latest",
+  },
+  Object {
+    "dir": "packages/package-2",
+    "tag": "latest",
+  },
+]
+`;
+
 exports[`[normal --temp-tag] npm dist-tag add 1`] = `
 Object {
   "packages/package-1": "package-1@1.0.1 latest",
