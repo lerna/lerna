@@ -150,6 +150,15 @@ describe("BootstrapCommand", () => {
     });
   });
 
+  describe("with --npm-client and --hoist", async () => {
+    const testDir = await initFixture("BootstrapCommand/yarn-hoist");
+    const lernaBootstrap = run(testDir);
+
+    it("should throw", () => {
+      expect(() => lernaBootstrap()).toThrow();
+    });
+  });
+
   describe("with local package dependencies", () => {
     let testDir;
     let lernaBootstrap;
