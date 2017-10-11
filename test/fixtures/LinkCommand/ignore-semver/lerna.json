@@ -1,0 +1,9 @@
+{
+  "lerna": "__TEST_VERSION__",
+  "commands": {
+    "link": {
+      "ignoreSemver": true
+    }
+  },
+  "version": "1.0.0"
+}

@@ -1,0 +1,12 @@
+{
+  "name": "package-3",
+  "version": "1.0.0",
+  "bin": {
+    "package3cli1": "cli1.js",
+    "package3cli2": "cli2.js"
+  },
+  "devDependencies": {
+    "@test/package-1": "github:example-user/package-1",
+    "@test/package-2": "github:example-user/package-2"
+  }
+}

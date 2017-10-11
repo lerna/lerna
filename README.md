@@ -637,6 +637,14 @@ $ lerna link
 
 Symlink together all Lerna `packages` that are dependencies of each other in the current Lerna repo.
 
+#### --ignore-semver
+
+```sh
+$ lerna link --ignore-semver=<boolean>
+```
+
+This flag signifies whether or not the `link` command should ignore semantic version validation. Its default value is `false`.
+
 ## Misc
 
 Lerna will log to a `lerna-debug.log` file (same as `npm-debug.log`) when it encounters an error running a command.

@@ -54,4 +54,17 @@ describe("LinkCommand", () => {
       expect(symlinkedDirectories(testDir)).toMatchSnapshot();
     });
   });
+
+  describe("with --ignore-semver", () => {
+    beforeEach(stubSymlink);
+    afterEach(resetSymlink);
+
+    it("should symlink all packages", async () => {
+      const testDir = await initFixture("LinkCommand/ignore-semver");
+      const lernaLink = run(testDir);
+      await lernaLink();
+
+      expect(symlinkedDirectories(testDir)).toMatchSnapshot();
+    });
+  });
 });
