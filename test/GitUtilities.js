@@ -211,10 +211,21 @@ describe("GitUtilities", () => {
   });
 
   describe(".diffSinceIn()", () => {
-    it("returns list of files changed since commit at location", () => {
+    const opts = { cwd: "test" };
+
+    beforeEach(() => {
       ChildProcessUtilities.execSync.mockImplementation(() => "files");
-      const opts = { cwd: "test" };
+    });
+
+    it("returns a list of files changed since commit at location", () => {
       expect(GitUtilities.diffSinceIn("foo@1.0.0", "packages/foo", opts)).toBe("files");
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["diff", "--name-only", "foo@1.0.0", "--", "packages/foo"], opts
+      );
+    });
+
+    it("should account for Windows paths", () => {
+      expect(GitUtilities.diffSinceIn("foo@1.0.0", "C:/some/windows/path/packages/foo", opts)).toBe("files");
       expect(ChildProcessUtilities.execSync).lastCalledWith(
         "git", ["diff", "--name-only", "foo@1.0.0", "--", "packages/foo"], opts
       );

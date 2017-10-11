@@ -16,6 +16,7 @@
     "integration": "jest --config test/config/integration.json",
     "pretest": "npm run lint -- --cache",
     "test": "jest",
+    "test:watch": "jest --watchAll --no-watchman",
     "ci": "npm test -- --coverage --verbose && npm run integration",
     "prepublish": "npm run build"
   },

@@ -129,9 +129,19 @@ export default class GitUtilities {
   }
 
   static diffSinceIn(since, location, opts) {
-    log.silly("diffSinceIn", since, location);
+    let normalizedPath = location;
 
-    const diff = ChildProcessUtilities.execSync("git", ["diff", "--name-only", since, "--", location], opts);
+    /**
+     * There are cases on Windows where `location` comes in as the absolute path
+     * so when the diff runs it always reports there is no diff.
+     */
+    if(normalizedPath.indexOf('packages') > -1){
+      normalizedPath = `packages${ normalizedPath.split('packages')[1] }`.replace('\\', '/');
+    }
+
+    log.silly("diffSinceIn", since, normalizedPath);
+
+    const diff = ChildProcessUtilities.execSync("git", ["diff", "--name-only", since, "--", normalizedPath], opts); // eslint-disable-line
     log.silly("diff", diff);
 
     return diff;
