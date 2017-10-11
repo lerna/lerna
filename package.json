@@ -51,6 +51,7 @@
     "hosted-git-info": "^2.5.0",
     "inquirer": "^3.2.2",
     "is-ci": "^1.0.10",
+    "json-file-plus": "^3.3.0",
     "load-json-file": "^3.0.0",
     "lodash": "^4.17.4",
     "minimatch": "^3.0.4",
@@ -89,6 +90,7 @@
     "normalize-newline": "^3.0.0",
     "normalize-path": "^2.1.1",
     "replacestream": "^4.0.2",
+    "resolve-pkg": "^1.0.0",
     "tempy": "^0.1.0",
     "touch": "^3.1.0"
   },

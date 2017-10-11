@@ -1,3 +1,4 @@
+import AddCommand from "./commands/AddCommand";
 import BootstrapCommand from "./commands/BootstrapCommand";
 import PublishCommand from "./commands/PublishCommand";
 import UpdatedCommand from "./commands/UpdatedCommand";
@@ -11,6 +12,7 @@ import LsCommand from "./commands/LsCommand";
 import LinkCommand from "./commands/LinkCommand";
 
 export default {
+  AddCommand,
   BootstrapCommand,
   PublishCommand,
   UpdatedCommand,

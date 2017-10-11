@@ -443,7 +443,6 @@ export default class Command {
 
   _logError(method, description, err) {
     log.error(method, description);
-
     // npmlog does some funny stuff to the stack by default,
     // so pass it directly to avoid duplication.
     log.error("", cleanStack(err, this.className));
