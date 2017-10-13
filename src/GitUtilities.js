@@ -45,9 +45,9 @@ export default class GitUtilities {
     try {
       // returns non-zero exit code if its NOT ignored
       ChildProcessUtilities.execSync("git", ["check-ignore", file], opts);
-      return true
+      return true;
     } catch (err) {
-      return false
+      return false;
     }
   }
 
