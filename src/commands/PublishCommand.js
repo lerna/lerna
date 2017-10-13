@@ -591,7 +591,14 @@ export default class PublishCommand extends Command {
     });
 
     if (this.gitEnabled) {
-      changedFiles.forEach((file) => GitUtilities.addFile(file, this.execOpts));
+      changedFiles.forEach((file) => {
+        const ignored = GitUtilities.checkIgnore(file, this.execOpts)
+        if (ignored) {
+          this.logger.info('git', `skipping "${file}" because its git-ignored`)
+        } else {
+          return GitUtilities.addFile(file, this.execOpts)
+        }
+      });
     }
   }
 

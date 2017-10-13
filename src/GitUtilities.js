@@ -40,6 +40,17 @@ export default class GitUtilities {
     ChildProcessUtilities.execSync("git", ["add", file], opts);
   }
 
+  static checkIgnore(file, opts) {
+    log.silly("checkIgnore", file);
+    try {
+      // returns non-zero exit code if its NOT ignored
+      ChildProcessUtilities.execSync("git", ["check-ignore", file], opts);
+      return true
+    } catch (err) {
+      return false
+    }
+  }
+
   static commit(message, opts) {
     log.silly("commit", message);
     const args = ["commit"];
