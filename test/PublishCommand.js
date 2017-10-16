@@ -801,6 +801,7 @@ describe("PublishCommand", () => {
     const recommendFixedVersion = ConventionalCommitUtilities.recommendFixedVersion;
 
     const updateIndependentChangelog = ConventionalCommitUtilities.updateIndependentChangelog;
+    const updateFixedRootChangelog = ConventionalCommitUtilities.updateFixedRootChangelog;
     const updateFixedChangelog = ConventionalCommitUtilities.updateFixedChangelog;
 
     let testDir;
@@ -869,11 +870,13 @@ describe("PublishCommand", () => {
         testDir = dir;
 
         ConventionalCommitUtilities.recommendFixedVersion = jest.fn(() => reccomendReplies.shift());
+        ConventionalCommitUtilities.updateFixedRootChangelog = jest.fn();
         ConventionalCommitUtilities.updateFixedChangelog = jest.fn();
       }));
 
       afterEach(() => {
         ConventionalCommitUtilities.recommendFixedVersion = recommendFixedVersion;
+        ConventionalCommitUtilities.updateFixedRootChangelog = updateFixedRootChangelog;
         ConventionalCommitUtilities.updateFixedChangelog = updateFixedChangelog;
       });
 
@@ -905,6 +908,14 @@ describe("PublishCommand", () => {
               execOpts(testDir)
             );
           });
+
+          expect(ConventionalCommitUtilities.updateFixedRootChangelog).toBeCalledWith(
+            expect.objectContaining({
+              name: 'normal',
+              location: path.join(testDir)
+            }),
+            execOpts(testDir)
+          );
         });
       });
     });

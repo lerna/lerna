@@ -69,6 +69,15 @@ export default class ConventionalCommitUtilities {
     ConventionalCommitUtilities.updateChangelog(pkg, opts, "updateFixedChangelog", args);
   }
 
+  static updateFixedRootChangelog(pkg, opts) {
+    const args = [
+      CHANGELOG_CLI,
+      "-p", "angular",
+      "--context", path.resolve(__dirname, "..", "lib", "ConventionalChangelogContext.js"),
+    ];
+    ConventionalCommitUtilities.updateChangelog(pkg, opts, "updateFixedRootChangelog", args);
+  }
+
   static updateChangelog(pkg, opts, type, args) {
     log.silly(type, "for %s at %s", pkg.name, pkg.location);
 

@@ -178,5 +178,77 @@ describe("ConventionalCommitUtilities", () => {
         `
       );
     });
+
+    it("should pass package-specific arguments in independent mode", () => {
+      ConventionalCommitUtilities.updateChangelog = jest.fn();
+
+      ConventionalCommitUtilities.updateIndependentChangelog({
+        name: "bar",
+        location: "/foo/bar",
+      }, null);
+
+      expect(ConventionalCommitUtilities.updateChangelog).toBeCalledWith(
+        {
+          name: "bar",
+          location: "/foo/bar",
+        },
+        null,
+        "updateIndependentChangelog",
+        [
+          require.resolve("conventional-changelog-cli/cli"),
+          "-l", "bar",
+          "--commit-path", "/foo/bar",
+          "--pkg", path.normalize("/foo/bar/package.json"),
+          "-p", "angular",
+        ]
+      );
+    });
+
+    it("should pass package-specific arguments in fixed mode", () => {
+      ConventionalCommitUtilities.updateChangelog = jest.fn();
+
+      ConventionalCommitUtilities.updateFixedChangelog({
+        name: "bar",
+        location: "/foo/bar",
+      }, null);
+
+      expect(ConventionalCommitUtilities.updateChangelog).toBeCalledWith(
+        {
+          name: "bar",
+          location: "/foo/bar",
+        },
+        null,
+        "updateFixedChangelog",
+        [
+          require.resolve("conventional-changelog-cli/cli"),
+          "--commit-path", "/foo/bar",
+          "--pkg", path.normalize("/foo/bar/package.json"),
+          "-p", "angular",
+        ]
+      );
+    });
+
+    it("should pass custom context in fixed root mode", () => {
+      ConventionalCommitUtilities.updateChangelog = jest.fn();
+
+      ConventionalCommitUtilities.updateFixedRootChangelog({
+        name: "bar",
+        location: "/foo/bar",
+      }, null);
+
+      expect(ConventionalCommitUtilities.updateChangelog).toBeCalledWith(
+        {
+          name: "bar",
+          location: "/foo/bar",
+        },
+        null,
+        "updateFixedRootChangelog",
+        [
+          require.resolve("conventional-changelog-cli/cli"),
+          "-p", "angular",
+          "--context", path.resolve(__dirname, "..", "lib", "ConventionalChangelogContext.js")
+        ]
+      );
+    });
   });
 });
