@@ -1,6 +1,7 @@
 import _ from "lodash";
 import minimatch from "minimatch";
 import path from "path";
+import semver from "semver";
 
 import GitUtilities from "./GitUtilities";
 
@@ -45,6 +46,7 @@ export default class UpdatedPackagesCollector {
     this.logger.silly("getUpdates");
 
     this.updatedPackages = this.collectUpdatedPackages();
+    this.prereleasedPackages = this.collectPrereleasedPackages();
     this.dependents = this.collectDependents();
     return this.collectUpdates();
   }
@@ -131,9 +133,10 @@ export default class UpdatedPackagesCollector {
 
     const dependents = {};
     this.cache = {};
+    const keys = Object.keys(Object.assign({}, this.updatedPackages, this.prereleasedPackages));
 
     this.packages.forEach((pkg) => {
-      Object.keys(this.updatedPackages).forEach((dependency) => {
+      keys.forEach((dependency) => {
         if (this.isPackageDependentOf(pkg.name, dependency)) {
           this.logger.verbose("dependent", "%s depends on %s", pkg.name, dependency);
           dependents[pkg.name] = pkg;
@@ -144,12 +147,36 @@ export default class UpdatedPackagesCollector {
     return dependents;
   }
 
+  isPrereleaseIncrement() {
+    const {cdVersion} = this.options;
+    return cdVersion && cdVersion.startsWith('pre');
+  }
+
+  collectPrereleasedPackages() {
+    this.logger.info("", "Checking for prereleased packages...");
+    if (this.isPrereleaseIncrement()) {
+      return {};
+    }
+
+    const prereleasedPackages = {}
+
+    this.packages.forEach(pkg => {
+      if (semver.prerelease(pkg.version)) {
+        this.logger.verbose("prereleased", pkg.name);
+        prereleasedPackages[pkg.name] = pkg;
+      }
+    });
+
+    return prereleasedPackages;
+  }
+
   collectUpdates() {
     this.logger.silly("collectUpdates");
 
     return this.packages.filter((pkg) => {
       return (
         this.updatedPackages[pkg.name] ||
+        this.prereleasedPackages[pkg.name] ||
         (this.options[SECRET_FLAG] ? false : this.dependents[pkg.name]) ||
         this.options.canary
       );

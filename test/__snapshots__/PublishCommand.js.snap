@@ -499,6 +499,20 @@ Array [
 ]
 `;
 
+exports[`[republish prereleased] patch 1`] = `
+Object {
+  "packages/package-3": "1.0.1",
+  "packages/package-4": "1.0.1",
+  "packages/package-5": "1.0.1",
+}
+`;
+
+exports[`[republish prereleased] prerelease 1`] = `
+Object {
+  "packages/package-3": "1.0.1-beta.4",
+}
+`;
+
 exports[`PublishCommand --allow-branch with --canary does not restrict publishing canary versions 1`] = `
 Object {
   "packages/package-1": "1.1.0-alpha.deadbeef",
