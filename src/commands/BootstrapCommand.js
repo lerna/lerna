@@ -73,6 +73,8 @@ export default class BootstrapCommand extends Command {
       }).catch(callback);
     }
 
+    PackageUtilities.validatePackageNames(this.filteredPackages);
+
     this.logger.silly("npmConfig", this.npmConfig);
     callback(null, true);
   }
