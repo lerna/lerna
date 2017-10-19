@@ -219,6 +219,7 @@ export default class Command {
     return new Promise((resolve, reject) => {
       const onComplete = (err, exitCode) => {
         if (err) {
+          if(typeof err === 'string') err = { stack:err };
           err.exitCode = exitCode;
           reject(err);
         } else {
@@ -477,7 +478,7 @@ export function commandNameFromClassName(className) {
 }
 
 function cleanStack(err, className) {
-  const lines = err.stack.split('\n');
+  const lines = (err.stack) ? err.stack.split('\n') : err.split('\n');
   const cutoff = new RegExp(`^    at ${className}._attempt .*$`);
   const relevantIndex = lines.findIndex((line) => cutoff.test(line));
   return lines.slice(0, relevantIndex).join('\n');

@@ -143,7 +143,8 @@ export default class ImportCommand extends Command {
       ]);
     }
 
-    const replacement = "$1/" + this.targetDir;
+    const formattedTarget = this.targetDir.replace(/\\/g, '/');
+    const replacement = `$1/${ formattedTarget }`;
     // Create a patch file for this commit and prepend the target directory
     // to all affected files.  This moves the git history for the entire
     // external repository into the package subdirectory, commit by commit.
@@ -152,7 +153,7 @@ export default class ImportCommand extends Command {
         .replace(/^([-+]{3} [ab])/mg,     replacement)
         .replace(/^(diff --git a)/mg,     replacement)
         .replace(/^(diff --git \S+ b)/mg, replacement)
-        .replace(/^(rename (from|to)) /mg, `$1 ${this.targetDir}/`)
+        .replace(/^(rename (from|to)) /mg, `$1 ${formattedTarget}/`)
     );
   }
 

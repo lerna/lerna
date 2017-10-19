@@ -1,4 +1,5 @@
 import { EOL } from "os";
+import path from "path";
 
 // mocked modules
 import tempWrite from "temp-write";
@@ -213,7 +214,7 @@ describe("GitUtilities", () => {
   describe(".diffSinceIn()", () => {
     it("returns list of files changed since commit at location", () => {
       ChildProcessUtilities.execSync.mockImplementation(() => "files");
-      const opts = { cwd: "test" };
+      const opts = { cwd: path.resolve(__dirname, "./..") };
       expect(GitUtilities.diffSinceIn("foo@1.0.0", "packages/foo", opts)).toBe("files");
       expect(ChildProcessUtilities.execSync).lastCalledWith(
         "git", ["diff", "--name-only", "foo@1.0.0", "--", "packages/foo"], opts

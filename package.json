@@ -9,15 +9,17 @@
   ],
   "scripts": {
     "build": "babel src -d lib",
+    "ci": "npm test -- --coverage --verbose && npm run integration",
     "dev": "babel -w src -d lib",
-    "lint": "eslint . --ignore-path .gitignore",
     "fix": "npm run lint -- --fix",
     "preintegration": "npm pack",
-    "integration": "jest --config test/config/integration.json",
+    "integration": "cross-env LC_ALL=en-US jest --config test/config/integration.json",
+    "lint": "eslint . --ignore-path .gitignore",
+    "prepublish": "npm run build",
     "pretest": "npm run lint -- --cache",
     "test": "cross-env LC_ALL=en-US jest",
-    "ci": "npm test -- --coverage --verbose && npm run integration",
-    "prepublish": "npm run build"
+    "test:watch": "cross-env LC_ALL=en-US jest --watchAll --no-watchman",
+    "test:watch-integration": "npm run integration -- --watchAll --no-watchman"
   },
   "repository": {
     "type": "git",
