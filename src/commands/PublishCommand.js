@@ -200,13 +200,18 @@ export default class PublishCommand extends Command {
       .filter((pkg) => !pkg.isPrivate());
 
     this.packagesToPublishCount = this.packagesToPublish.length;
+    try {
     this.batchedPackagesToPublish = this.toposort
       ? PackageUtilities.topologicallyBatchPackages(this.packagesToPublish, {
         // Don't sort based on devDependencies because that would increase the chance of dependency cycles
         // causing less-than-ideal a publishing order.
         depsOnly: true,
+        rejectCycles: this.options.rejectCycles
       })
       : [this.packagesToPublish];
+    } catch (e) {
+      return callback(e);
+    }
 
     if (!this.updates.length) {
       this.logger.info("No updated packages to publish.");

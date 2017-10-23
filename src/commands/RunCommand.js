@@ -68,9 +68,15 @@ export default class RunCommand extends Command {
       this.logger.disableProgress();
     }
 
+    try {
     this.batchedPackages = this.toposort
-      ? PackageUtilities.topologicallyBatchPackages(this.packagesWithScript)
+      ? PackageUtilities.topologicallyBatchPackages(this.packagesWithScript, {
+        rejectCycles: this.options.rejectCycles
+      })
       : [this.packagesWithScript];
+    } catch (e) {
+      return callback(e);
+    }
 
     callback(null, true);
   }
