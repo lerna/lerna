@@ -232,21 +232,18 @@ describe("PackageUtilities", () => {
   });
 
   describe(".topologicallyBatchPackages()", () => {
-    let packages;
-
-    beforeEach(() => initFixture("PackageUtilities/toposort").then((testDir) => {
-      packages = PackageUtilities.getPackages(new Repository(testDir));
-    }));
-
-    it("should batch roots, then internal/leaf nodes, then cycles", () => {
-      let warnedCycle;
-      log.once("log.warn", () => {
-        warnedCycle = true;
+    it("should batch roots, then internal/leaf nodes, then cycles", async () => {
+      let logMessage = null;
+      log.once("log.warn", (e) => {
+        logMessage = e.message;
       });
 
+      const testDir = await initFixture("PackageUtilities/toposort");
+      const packages = PackageUtilities.getPackages(new Repository(testDir));
       const batchedPackages = PackageUtilities.topologicallyBatchPackages(packages);
 
-      expect(warnedCycle).toBe(true);
+      expect(logMessage).toEqual(expect.stringContaining(
+        'Packages in cycle are: "package-cycle-1", "package-cycle-2", "package-cycle-extraneous"'));
       expect(batchedPackages.map((batch) => batch.map((pkg) => pkg.name))).toEqual(
         [
           ["package-dag-1", "package-standalone"],
@@ -256,6 +253,30 @@ describe("PackageUtilities", () => {
           ["package-cycle-2", "package-cycle-extraneous"]
         ]
       );
+    });
+
+    it("should throw an error if a cycle is detected and reject-cycles is truthy", async () => {
+      const testDir = await initFixture("PackageUtilities/toposort");
+      const packages = PackageUtilities.getPackages(new Repository(testDir));
+
+      expect(() => {
+        PackageUtilities.topologicallyBatchPackages(packages, {
+          rejectCycles: true
+        });
+      }).toThrowError();
+    });
+
+    it("should not warn about cycles if one is not detected", async () => {
+      let warnedCycle = false;
+      log.once("log.warn", () => {
+        warnedCycle = true;
+      });
+
+      const testDir = await initFixture("PackageUtilities/basic");
+      const packages = PackageUtilities.getPackages(new Repository(testDir));
+      PackageUtilities.topologicallyBatchPackages(packages);
+
+      expect(warnedCycle).toBeFalsy();
     });
   });
 
