@@ -895,10 +895,10 @@ May also be configured in `lerna.json`:
 
 #### --reject-cycles
 
-Fail immediately if a cycle is found (in `oobstrap`, `exec`, `publish` or `run`).
+Fail immediately if a cycle is found (in `bootstrap`, `exec`, `publish` or `run`).
 
 ```sh
-$ lerna boostrap --reject-cycles
+$ lerna bootstrap --reject-cycles
 ```
 
 #### --use-workspaces
