@@ -212,6 +212,7 @@ lerna info canary enabled
 lerna info current version 1.0.0
 lerna info Checking for updated packages...
 lerna info Comparing with initial commit.
+lerna info Checking for prereleased packages...
 lerna info auto-confirmed "
 `;
 
@@ -221,6 +222,7 @@ lerna info canary enabled
 lerna info current version 1.0.0
 lerna info Checking for updated packages...
 lerna info Comparing with initial commit.
+lerna info Checking for prereleased packages...
 lerna info auto-confirmed "
 `;
 
@@ -229,6 +231,7 @@ exports[`stderr: exit 0 when no updates 1`] = `
 lerna info current version 1.0.0
 lerna info Checking for updated packages...
 lerna info Comparing with v1.0.0.
+lerna info Checking for prereleased packages...
 lerna info No updated packages to publish. "
 `;
 
@@ -237,6 +240,7 @@ exports[`stderr: updates fixed versions 1`] = `
 lerna info current version 1.0.0
 lerna info Checking for updated packages...
 lerna info Comparing with initial commit.
+lerna info Checking for prereleased packages...
 lerna info auto-confirmed "
 `;
 
@@ -245,6 +249,7 @@ exports[`stderr: updates independent versions 1`] = `
 lerna info versioning independent
 lerna info Checking for updated packages...
 lerna info Comparing with initial commit.
+lerna info Checking for prereleased packages...
 lerna info auto-confirmed "
 `;
 

@@ -641,6 +641,48 @@ describe("PublishCommand", () => {
     });
   });
 
+    /** =========================================================================
+   * CD VERSION - REPUBLISH PRERELEASED
+   * ======================================================================= */
+
+  describe("CD VERSION - REPUBLISH PRERELEASED ", () => {
+    let testDir;
+
+    beforeEach(async () => {
+      testDir = await initFixture("PublishCommand/republish-prereleased");
+
+      GitUtilities.hasTags.mockReturnValue(true);
+      GitUtilities.getLastTag.mockReturnValue('v1.0.1-beta.3');
+      GitUtilities.diffSinceIn.mockImplementation((since, location) => {
+        if (location.endsWith('package-3')) {
+          return 'packages/package-3/newfile.json';
+        }
+        return '';
+      });
+    });
+
+    it('publishes changed & prereleased packages if --cd-version is non-prerelease', async () => {
+      // should republish 3, 4, and 5 because:
+      // package 3 changed
+      // package 5 has a prerelease version
+      // package 4 depends on package 5
+      await run(testDir)("--cd-version", "patch");
+      expect(gitCommitMessage()).toBe("v1.0.1");
+      expect(updatedPackageVersions(testDir)).toMatchSnapshot("[republish prereleased] patch");
+      expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+        "package-5": "^1.0.1",
+      });
+    });
+
+    it('should not publish prereleased packages if --cd-version is a pre-* increment', async () => {
+      // should republish only package 3, because it changed
+      await run(testDir)("--cd-version", "prerelease", '---preid', 'beta');
+      expect(gitCommitMessage()).toBe("v1.0.1-beta.4");
+      expect(updatedPackageVersions(testDir)).toMatchSnapshot("[republish prereleased] prerelease");
+    });
+
+  });
+
   /** =========================================================================
    * INDEPENDENT - CD VERSION
    * ======================================================================= */
