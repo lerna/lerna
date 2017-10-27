@@ -4,10 +4,13 @@ import getPort from "get-port";
 import path from "path";
 import semver from "semver";
 
-import Command from "../Command";
+import Command, {ValidationError} from "../Command";
 import FileSystemUtilities from "../FileSystemUtilities";
 import NpmUtilities from "../NpmUtilities";
 import PackageUtilities from "../PackageUtilities";
+
+const YARN_HOIST_MESSAGE = `--hoist is not supported with --npm-client=yarn, use yarn workspaces instead
+A guide is available at https://yarnpkg.com/blog/2017/08/02/introducing-workspaces/#setting-up-workspaces`;
 
 export function handler(argv) {
   new BootstrapCommand([...argv.args], argv, argv._cwd).run()
@@ -47,7 +50,12 @@ export default class BootstrapCommand extends Command {
   }
 
   initialize(callback) {
-    const { registry, npmClient, npmClientArgs, mutex } = this.options;
+    const { registry, npmClient, npmClientArgs, mutex, hoist } = this.options;
+
+    if (npmClient === "yarn" && typeof hoist === "string") {
+      const err = new ValidationError("", YARN_HOIST_MESSAGE);
+      return callback(err);
+    }
 
     this.npmConfig = {
       registry,
