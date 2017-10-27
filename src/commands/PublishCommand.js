@@ -595,6 +595,21 @@ export default class PublishCommand extends Command {
       changedFiles.push(packageJsonLocation);
     });
 
+    if (this.options.conventionalCommits) {
+      if (!this.repository.isIndependent()) {
+        const packageJson = this.repository.packageJson;
+
+        ConventionalCommitUtilities.updateFixedRootChangelog({
+          name: packageJson && packageJson.name ? packageJson.name : 'root',
+          location: this.repository.rootPath
+        }, this.execOpts);
+
+        changedFiles.push(ConventionalCommitUtilities.changelogLocation({
+          location: this.repository.rootPath
+        }));
+      }
+    }
+
     if (this.gitEnabled) {
       changedFiles.forEach((file) => GitUtilities.addFile(file, this.execOpts));
     }

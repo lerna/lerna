@@ -167,6 +167,27 @@ export default class PackageUtilities {
     ;
   }
 
+  static validatePackageNames(packages) {
+    const existingPackageNames = {};
+
+    packages.forEach((pkg) => {
+      if (!existingPackageNames[pkg.name]) {
+        existingPackageNames[pkg.name] = [];
+      }
+
+      existingPackageNames[pkg.name].push(pkg._location);
+    });
+
+    for (const pkgName in existingPackageNames) {
+      if (existingPackageNames[pkgName].length > 1) {
+        log.warn(
+          `Package name "${pkgName}" used in multiple packages:
+          \t${existingPackageNames[pkgName].join('\n\t')}`
+        );
+      }
+    }
+  }
+
   static topologicallyBatchPackages(packagesToBatch, { depsOnly, rejectCycles } = {}) {
     // We're going to be chopping stuff out of this array, so copy it.
     const packages = packagesToBatch.slice();
@@ -208,7 +229,7 @@ export default class PackageUtilities {
         batch.push(packages.reduce((a, b) => {
           return (refCounts[a.name] || 0) > (refCounts[b.name] || 0) ? a : b;
         }));
-        
+
         log.silly("packages", batch.map((pkg) => pkg.name));
       }
 

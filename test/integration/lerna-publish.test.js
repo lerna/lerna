@@ -28,7 +28,7 @@ async function commitChangeToPackage(cwd, packageName, commitMsg, data) {
   const pkg = await loadJsonFile(packageJSONPath);
   await writeJsonFile(packageJSONPath, Object.assign(pkg, data));
   await execa("git", ["add", "."], {cwd});
-  return await execa("git", ["commit", "-m", commitMsg], {cwd});
+  return await execa("git", ["commit", "--no-gpg-sign", "-m", commitMsg], {cwd});
 }
 
 describe("lerna publish", () => {
@@ -243,10 +243,9 @@ describe("lerna publish", () => {
 
   });
 
-  // TODO: stabilize timestamp of changelog output
-  // TODO: make interesting git history for meaningful snapshots
-  test.skip("--conventional-commits", async () => {
-    const cwd = await initFixture("PublishCommand/independent");
+  // TODO: stabilize timestamp and commit sha of changelog output
+  test.skip("fixed mode --conventional-commits changelog", async () => {
+    const cwd = await initFixture("PublishCommand/normal", "feat: init repo");
     const args = [
       "publish",
       "--conventional-commits",
@@ -255,19 +254,96 @@ describe("lerna publish", () => {
       "--yes",
     ];
 
+    await commitChangeToPackage(
+      cwd,
+      "package-1",
+      "feat(package-1): Add foo feature",
+      { foo: true }
+    );
+    await commitChangeToPackage(
+      cwd,
+      "package-1",
+      "fix(package-1): Fix foo feature",
+      { foo: false }
+    );
+    await commitChangeToPackage(
+      cwd,
+      "package-2",
+      "fix(package-2): Fix bar feature",
+      { bar: true }
+    );
+    await commitChangeToPackage(
+      cwd,
+      "package-3",
+      "feat(package-3): Add baz feature\n\nBREAKING CHANGE: ... more information...",
+      { baz: true }
+    );
+
     const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
-    expect(stdout).toMatchSnapshot("stdout: --conventional-commits");
-    expect(stderr).toMatchSnapshot("stderr: --conventional-commits");
+    expect(stdout).toMatchSnapshot("stdout: --conventional-commits fixed mode");
+    expect(stderr).toMatchSnapshot("stderr: --conventional-commits fixed mode");
 
     const [allPackageJsons, changelogFiles] = await Promise.all([
       loadPkgManifests(cwd),
       globby(["CHANGELOG.md"], { cwd, absolute: true, matchBase: true })
         .then((changelogs) => Promise.all(
-          changelogs.map((fp) => fs.readFile(fp, "utf8"))
+          changelogs.map(async (fp) => [fp, await fs.readFile(fp, "utf8")])
         )),
     ]);
 
-    expect(allPackageJsons).toMatchSnapshot("packages: --conventional-commits");
-    expect(changelogFiles).toMatchSnapshot("changelog: --conventional-commits");
+    expect(allPackageJsons).toMatchSnapshot("packages: --conventional-commits fixed mode");
+    expect(changelogFiles).toMatchSnapshot("changelog: --conventional-commits fixed mode");
+  });
+
+  // TODO: stabilize timestamp of and commit sha changelog output
+  test.skip("independent mode --conventional-commits changelog", async () => {
+    const cwd = await initFixture("PublishCommand/independent", "feat: init repo");
+    const args = [
+      "publish",
+      "--conventional-commits",
+      "--skip-git",
+      "--skip-npm",
+      "--yes",
+    ];
+
+    await commitChangeToPackage(
+      cwd,
+      "package-1",
+      "feat(package-1): Add foo feature",
+      { foo: true }
+    );
+    await commitChangeToPackage(
+      cwd,
+      "package-1",
+      "fix(package-1): Fix foo feature",
+      { foo: false }
+    );
+    await commitChangeToPackage(
+      cwd,
+      "package-2",
+      "fix(package-2): Fix bar feature",
+      { bar: true }
+    );
+    await commitChangeToPackage(
+      cwd,
+      "package-3",
+      "feat(package-3): Add baz feature\n\nBREAKING CHANGE: ... more information...",
+      { baz: true }
+    );
+
+    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
+    expect(stdout).toMatchSnapshot("stdout: --conventional-commits independent mode");
+    expect(stderr).toMatchSnapshot("stderr: --conventional-commits independent mode");
+
+    const [allPackageJsons, changelogFiles] = await Promise.all([
+      loadPkgManifests(cwd),
+      globby(["CHANGELOG.md"], { cwd, absolute: true, matchBase: true })
+        .then((changelogs) => Promise.all(
+          changelogs.map(async (fp) => [fp, await fs.readFile(fp, "utf8")])
+        )),
+    ]);
+
+    expect(allPackageJsons).toMatchSnapshot("packages: --conventional-commits independent mode");
+    expect(changelogFiles).toMatchSnapshot("changelog: --conventional-commits independent mode");
   });
 });

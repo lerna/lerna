@@ -231,6 +231,49 @@ describe("PackageUtilities", () => {
     });
   });
 
+  describe(".validatePackageNames()", () => {
+    it("should log a warning if multiple packages have the same name", () => {
+      const logMessages = [];
+      const packagesToValidate = [
+        { name: "name1", _location: "packages/package1" },
+        { name: "name2", _location: "packages/package2" },
+        { name: "name3", _location: "packages/package3" },
+        { name: "name1", _location: "packages/package4" },
+        { name: "name1", _location: "packages/package5" },
+        { name: "name2", _location: "packages/package6" },
+      ];
+      log.on("log.warn", (message) => {
+        logMessages.push(message.prefix);
+      });
+
+      PackageUtilities.validatePackageNames(packagesToValidate);
+      
+      expect(logMessages[0]).toContain('Package name "name1" used in multiple packages:');
+      expect(logMessages[0]).toContain('packages/package1');
+      expect(logMessages[0]).toContain('packages/package4');
+      expect(logMessages[0]).toContain('packages/package5');
+      expect(logMessages[1]).toContain('Package name "name2" used in multiple packages:');
+      expect(logMessages[1]).toContain('packages/package2');
+      expect(logMessages[1]).toContain('packages/package6');
+    });
+
+    it("should not log any warning if packages all have the unique name", () => {
+      let didLogOccur = false;
+      const packagesToValidate = [
+        { name: "name1", _location: "packages/package1" },
+        { name: "name2", _location: "packages/package2" },
+        { name: "name3", _location: "packages/package3" }
+      ];
+      log.once("log.warn", () => {
+        didLogOccur = true;
+      });
+
+      PackageUtilities.validatePackageNames(packagesToValidate);
+      
+      expect(didLogOccur).toBeFalsy();
+    });
+  });
+
   describe(".topologicallyBatchPackages()", () => {
     it("should batch roots, then internal/leaf nodes, then cycles", async () => {
       let logMessage = null;
