@@ -894,6 +894,14 @@ May also be configured in `lerna.json`:
 }
 ```
 
+#### --reject-cycles
+
+Fail immediately if a cycle is found (in `bootstrap`, `exec`, `publish` or `run`).
+
+```sh
+$ lerna bootstrap --reject-cycles
+```
+
 #### --use-workspaces
 
 Enables integration with [Yarn Workspaces](https://github.com/yarnpkg/rfcs/blob/master/implemented/0000-workspaces-install-phase-1.md) (available since yarn@0.27+).

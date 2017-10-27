@@ -49,9 +49,15 @@ export default class ExecCommand extends Command {
 
     const { filteredPackages } = this;
 
+    try {
     this.batchedPackages = this.toposort
-      ? PackageUtilities.topologicallyBatchPackages(filteredPackages)
+      ? PackageUtilities.topologicallyBatchPackages(filteredPackages, {
+        rejectCycles: this.options.rejectCycles
+      })
       : [filteredPackages];
+    } catch (e) {
+      return callback(e);
+    }
 
     callback(null, true);
   }

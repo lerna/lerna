@@ -50,7 +50,7 @@ export default class BootstrapCommand extends Command {
   }
 
   initialize(callback) {
-    const { registry, npmClient, npmClientArgs, mutex, hoist } = this.options;
+    const { registry, rejectCycles, npmClient, npmClientArgs, mutex, hoist } = this.options;
 
     if (npmClient === "yarn" && typeof hoist === "string") {
       const err = new ValidationError("", YARN_HOIST_MESSAGE);
@@ -69,9 +69,15 @@ export default class BootstrapCommand extends Command {
       this.npmConfig.npmClientArgs = [...(npmClientArgs || []), ...this.input];
     }
 
-    this.batchedPackages = this.toposort
-      ? PackageUtilities.topologicallyBatchPackages(this.filteredPackages)
-      : [this.filteredPackages];
+    try {
+      this.batchedPackages = this.toposort
+        ? PackageUtilities.topologicallyBatchPackages(this.filteredPackages, {
+          rejectCycles
+        })
+        : [this.filteredPackages];
+    } catch (e) {
+      return callback(e);
+    }
 
     if (npmClient === "yarn" && !mutex) {
       return getPort({ port: 42424, host: '0.0.0.0' }).then((port) => {

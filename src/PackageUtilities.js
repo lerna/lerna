@@ -174,10 +174,10 @@ export default class PackageUtilities {
       if (!existingPackageNames[pkg.name]) {
         existingPackageNames[pkg.name] = [];
       }
-  
+
       existingPackageNames[pkg.name].push(pkg._location);
     });
-  
+
     for (const pkgName in existingPackageNames) {
       if (existingPackageNames[pkgName].length > 1) {
         log.warn(
@@ -188,7 +188,7 @@ export default class PackageUtilities {
     }
   }
 
-  static topologicallyBatchPackages(packagesToBatch, { depsOnly } = {}) {
+  static topologicallyBatchPackages(packagesToBatch, { depsOnly, rejectCycles } = {}) {
     // We're going to be chopping stuff out of this array, so copy it.
     const packages = packagesToBatch.slice();
     const packageGraph = PackageUtilities.getPackageGraph(packages, depsOnly);
@@ -214,15 +214,22 @@ export default class PackageUtilities {
       // then we've encountered a cycle in the dependency graph.  Run a
       // single-package batch with the package that has the most dependents.
       if (packages.length && !batch.length) {
+        const cyclePackageNames = packages.map((p) => `"${p.name}"`);
+        const message = "Encountered a cycle in the dependency graph."
+          + "This may cause instability! Packages in cycle are: " + cyclePackageNames.join(", ");
+
+        if (rejectCycles) {
+          throw new Error(message);
+        }
         log.warn(
           "ECYCLE",
-          "Encountered a cycle in the dependency graph. This may cause instability!"
+          message
         );
 
         batch.push(packages.reduce((a, b) => {
           return (refCounts[a.name] || 0) > (refCounts[b.name] || 0) ? a : b;
         }));
-        
+
         log.silly("packages", batch.map((pkg) => pkg.name));
       }
 

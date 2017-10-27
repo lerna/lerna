@@ -64,6 +64,11 @@ export const builder = {
     type: "string",
     requiresArg: true,
   },
+  "reject-cycles": {
+    describe: "Fail if a cycle is detected among dependencies",
+    type: "boolean",
+    default: false
+  },
   "sort": {
     describe: "Sort packages topologically (all dependencies before dependents)",
     type: "boolean",
