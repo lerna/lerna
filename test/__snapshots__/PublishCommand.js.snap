@@ -13,6 +13,7 @@ Array [
   "packages/package-4/package.json",
   "packages/package-5/CHANGELOG.md",
   "packages/package-5/package.json",
+  "CHANGELOG.md",
 ]
 `;
 
