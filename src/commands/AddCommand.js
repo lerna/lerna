@@ -173,7 +173,8 @@ export default class AddCommand extends Command {
   }
 
   packageSatisfied(name, versionRange) {
-    const pkg = this.packages.find(pkg => pkg.name === name);
+    const pkg = this.getPackage(name);
+
     if (!pkg) {
       return false;
     }
