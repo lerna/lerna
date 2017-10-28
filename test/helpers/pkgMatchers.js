@@ -1,33 +1,33 @@
 import semver from "semver";
 
-const matchDependency = dependecyType => {
+const matchDependency = dependencyType => {
   return (manifest, pkg, range) => {
-    const noDeps = typeof manifest[dependecyType] !== 'object';
+    const noDeps = typeof manifest[dependencyType] !== 'object';
     const id = [pkg, range].filter(Boolean).join('@');
-    const verb = dependecyType === 'dependencies'
+    const verb = dependencyType === 'dependencies'
       ? 'depend'
       : 'dev-depend';
 
     const expectation = `expected ${manifest.name} to ${verb} on ${id}`;
-    const json = JSON.stringify(manifest[dependecyType], null, '  ');
+    const json = JSON.stringify(manifest[dependencyType], null, '  ');
 
     if (noDeps) {
       return {
-        message: `${expectation} but no .${dependecyType} specified`,
+        message: `${expectation} but no .${dependencyType} specified`,
         pass: false
       }
     }
 
-    const missingDep = !(pkg in manifest[dependecyType]);
+    const missingDep = !(pkg in manifest[dependencyType]);
 
     if (missingDep) {
       return {
-        message: `${expectation} but it is missing from .${dependecyType}\n${json}`,
+        message: `${expectation} but it is missing from .${dependencyType}\n${json}`,
         pass: false
       };
     }
 
-    const version = manifest[dependecyType][pkg];
+    const version = manifest[dependencyType][pkg];
     const mismatchedDep = range ? !semver.intersects(version, range) : false;
 
     if (mismatchedDep) {
