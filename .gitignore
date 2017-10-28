@@ -30,3 +30,5 @@ coverage/
 .nyc_output/
 .eslintcache
 *.tgz
+
+package-lock.json
