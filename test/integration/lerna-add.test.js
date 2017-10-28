@@ -2,7 +2,6 @@ import path from "path";
 import execa from "execa";
 import globby from "globby";
 import loadJson from "load-json-file";
-import resolvePkg from "resolve-pkg";
 
 import { LERNA_BIN } from "../helpers/constants";
 import initFixture from "../helpers/initFixture";
