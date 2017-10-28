@@ -5,7 +5,6 @@ import semver from "semver";
 import writePkg from "write-pkg";
 import BootstrapCommand from "./BootstrapCommand";
 import Command, { ValidationError } from "../Command";
-import FileSystemUtilities from "../FileSystemUtilities";
 
 export const command = "add [args..]";
 
