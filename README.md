@@ -229,7 +229,7 @@ Let's use `babel` as an example.
 $ lerna add <package>[@version] [--dev]
 ```
 
-Add `package` as dependency to packages in in the current Lerna repo.
+Add local or remote `package` as dependency to packages in in the current Lerna repo.
 
 When run, this command will:
 
@@ -243,7 +243,8 @@ When run, this command will:
 ```
 lerna add module-1 --scope=module-2 # Install module-1 to module-2
 lerna add module-1 --scope=module-2 --dev # Install module-1 to module-2 in devDependencies
-lerna add module-1 # Install module-1 in all modules
+lerna add module-1 # Install module-1 in all modules except module-1
+lerna add babel-core # Install babel-core in all modules
 ```
 
 ```js

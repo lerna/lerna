@@ -1,5 +1,6 @@
 import path from "path";
 import dedent from "dedent";
+import packageJson from "package-json";
 import readPkg from "read-pkg";
 import semver from "semver";
 import writePkg from "write-pkg";
@@ -38,18 +39,8 @@ export default class AddCommand extends Command {
       return callback(err);
     }
 
-    const missing = pkgs.filter(pkg => !this.packageExists(pkg.name));
-    const available = pkgs.filter(pkg => this.packageExists(pkg.name));
-
-    if (missing.length > 0) {
-      const err = new ValidationError(
-        "ENOTFOUND",
-        notFoundMessage(missing, this.packages)
-      );
-      return callback(err);
-    }
-
-    const unsatisfied = available
+    const unsatisfied = pkgs
+      .filter(pkg => this.packageExists(pkg.name))
       .filter(a => !this.packageSatisfied(a.name, a.versionRange))
       .map(u => ({
         name: u.name,
@@ -67,51 +58,48 @@ export default class AddCommand extends Command {
 
     this.dependencyType = this.options.dev ? 'devDependencies' : 'dependencies';
 
-    this.packagesToInstall = available
-      .filter(a => this.packageSatisfied(a.name, a.versionRange))
-      .map(a => {
-        const pkg = this.getPackage(a.name);
-        return {
-          name: a.name,
-          version: pkg.version,
-          versionRange: a.versionRange
-        }
-      });
+    Promise.all(
+      pkgs.map(({name, versionRange}) =>
+        this.getPackageVersion(name, versionRange)
+          .then(version => ({name, version, versionRange}))
+      )
+    ).then(packagesToInstall => {
+      this.packagesToInstall = packagesToInstall;
 
-    this.packagesToChange = this.filteredPackages
-      // Skip packages that only would install themselves
-      .filter(filteredPackage => {
-        const notSamePackage = pkgToInstall => pkgToInstall.name !== filteredPackage.name;
-        const addable = this.packagesToInstall.some(notSamePackage);
-        if (!addable) {
-          this.logger.warn(`Will not add ${filteredPackage.name} to itself.`);
-        }
-        return addable;
-      })
-      // Skip packages without actual changes to manifest
-      .filter(filteredPackage => {
-        const deps = filteredPackage[this.dependencyType] || {};
+      this.packagesToChange = this.filteredPackages
+        // Skip packages that only would install themselves
+        .filter(filteredPackage => {
+          const notSamePackage = pkgToInstall => pkgToInstall.name !== filteredPackage.name;
+          const addable = this.packagesToInstall.some(notSamePackage);
+          if (!addable) {
+            this.logger.warn(`Will not add ${filteredPackage.name} to itself.`);
+          }
+          return addable;
+        })
+        // Skip packages without actual changes to manifest
+        .filter(filteredPackage => {
+          const deps = filteredPackage[this.dependencyType] || {};
 
-        // Check if one of the packages to install necessiates a change to filteredPackage's manifest
-        return this.packagesToInstall
-          .filter(pkgToInstall => pkgToInstall.name !== filteredPackage.name)
-          .some(pkgToInstall => {
-            if (!(pkgToInstall.name in deps)) {
-              return true;
-            }
-            const current = deps[pkgToInstall.name];
-            const range = getRangeToReference(current, pkgToInstall.version, pkgToInstall.versionRange);
-            return range !== current;
-          });
-      });
+          // Check if one of the packages to install necessiates a change to filteredPackage's manifest
+          return this.packagesToInstall
+            .filter(pkgToInstall => pkgToInstall.name !== filteredPackage.name)
+            .some(pkgToInstall => {
+              if (!(pkgToInstall.name in deps)) {
+                return true;
+              }
+              const current = deps[pkgToInstall.name];
+              const range = getRangeToReference(current, pkgToInstall.version, pkgToInstall.versionRange);
+              return range !== current;
+            });
+        });
 
-
-    if (this.packagesToChange.length === 0) {
-      const packagesToInstallList = this.packagesToInstall.map(pkg => pkg.name).join(', ');
-      this.logger.warn(`No packages found in scope where ${packagesToInstallList} can be added.`);
-    }
-
-    callback(null, this.packagesToChange.length > 0);
+      if (this.packagesToChange.length === 0) {
+        const packagesToInstallList = this.packagesToInstall.map(pkg => pkg.name).join(', ');
+        this.logger.warn(`No packages found in scope where ${packagesToInstallList} can be added.`);
+      }
+    })
+    .then(() => callback(null, this.packagesToChange.length > 0))
+    .catch(callback);
   }
 
   execute(callback) {
@@ -144,15 +132,29 @@ export default class AddCommand extends Command {
           const ammendment = {[this.dependencyType]: applicable};
 
           return readPkg(manifestPath, {normalize: false})
-            .then(manifestJson => Object.assign({}, manifestJson, ammendment))
-            .then(manifestJson => writePkg(manifestPath, manifestJson));
+            .then(a => {
+              const b = Object.assign({}, a, ammendment);
+              return {a, b};
+            })
+            .then(({a, b}) => {
+              const changed = JSON.stringify(a) !== JSON.stringify(b);
+              const exec = changed ? () => writePkg(manifestPath, b) : () => Promise.resolve;
+
+              return exec()
+                .then(() => ({
+                  name: pkgToChange.name,
+                  changed
+                }));
+            });
         })
       )
-      .then(() => {
-        this.logger.info(`Changes require bootstrap in ${this.packagesToChange.length} packages`);
+      .then((pkgs) => {
+        const changedPkgs = pkgs.filter(p => p.changed);
+
+        this.logger.info(`Changes require bootstrap in ${changedPkgs.length} packages`);
 
         const options = Object.assign({}, this.options, {
-          scope: this.packagesToChange.map(pkgToChange => pkgToChange.name)
+          scope: changedPkgs.map(p => p.name)
         });
 
         return new BootstrapCommand([], options, this.repository.rootPath).run()
@@ -163,6 +165,13 @@ export default class AddCommand extends Command {
 
   getPackage(name) {
     return this.packages.find(pkg => pkg.name === name);
+  }
+
+  getPackageVersion(name, versionRange) {
+    if (this.packageSatisfied(name, versionRange)) {
+      return Promise.resolve(this.getPackage(name).version);
+    }
+    return packageJson(name, {version: versionRange}).then(pkg => pkg.version);
   }
 
   packageExists(name) {
@@ -180,13 +189,6 @@ export default class AddCommand extends Command {
     }
     return semver.intersects(pkg.version, versionRange);
   }
-}
-
-function notFoundMessage(missing, available) {
-  return dedent`
-    Packages not found: ${missing.map(m => m.name).join(', ')}.
-    Available: ${available.map(m => m.name).join(', ')}
-  `;
 }
 
 function notSatisfiedMessage(unsatisfied) {

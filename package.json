@@ -56,6 +56,7 @@
     "minimatch": "^3.0.4",
     "npmlog": "^4.1.2",
     "p-finally": "^1.0.0",
+    "package-json": "^4.0.1",
     "path-exists": "^3.0.0",
     "read-cmd-shim": "^1.0.1",
     "read-pkg": "^2.0.0",

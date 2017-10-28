@@ -66,19 +66,24 @@ describe("AddCommand", () => {
     (await expectError(() => lernaAdd())).toMatch(/^Missing list of packages/);
   });
 
-  it("should throw for packages not in project", async () => {
-    const testDir = await initFixture("AddCommand/basic");
-    const lernaAdd = run(testDir);
-    (await expectError(() => lernaAdd("lerna"))).toMatch(/Packages not found: lerna/);
-  });
-
-  it("should throw for unsatisfiable version ranges", async () => {
+  it("should throw for locally unsatisfiable version ranges", async () => {
     const testDir = await initFixture("AddCommand/basic");
     const lernaAdd = run(testDir);
     (await expectError(() => lernaAdd("@test/package-1@2"))).toMatch(/Requested range not satisfiable:/);
   });
 
-  it("should reference to dependencies", async () => {
+  it("should reference remote dependencies", async () => {
+    const testDir = await initFixture("AddCommand/basic");
+    const lernaAdd = run(testDir);
+    await lernaAdd("lerna");
+
+    expect(readPkg(testDir, 'packages/package-1')).toDependOn("lerna");
+    expect(readPkg(testDir, 'packages/package-2')).toDependOn("lerna");
+    expect(readPkg(testDir, 'packages/package-3')).toDependOn("lerna");
+    expect(readPkg(testDir, 'packages/package-4')).toDependOn("lerna");
+  });
+
+  it("should reference local dependencies", async () => {
     const testDir = await initFixture("AddCommand/basic");
     const lernaAdd = run(testDir);
     await lernaAdd("@test/package-1");
