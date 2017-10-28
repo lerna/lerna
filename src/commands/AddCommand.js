@@ -156,11 +156,11 @@ export default class AddCommand extends Command {
       this.logger.info(`Changes require bootstrap in ${this.packagesToChange.length} packages`);
 
       // Bootstrap all changed packages
-      const flags = Object.assign({}, this.flags, {
+      const options = Object.assign({}, this.options, {
         scope: this.packagesToChange.map(pkgToChange => pkgToChange.name)
       });
 
-      return new BootstrapCommand([], flags, this.cwd).run()
+      return new BootstrapCommand([], options, this.repository.rootPath).run()
         .then(() => callback())
         .catch(callback);
   }
