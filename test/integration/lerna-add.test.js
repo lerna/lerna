@@ -37,31 +37,4 @@ describe("lerna add", () => {
     expect(pkgs['package-3']).toDependOn('@test/package-1');
     expect(pkgs['package-4']).toDependOn('@test/package-1');
   });
-
-  test("add to scoped package", async () => {
-    const cwd = await initFixture("AddCommand/basic");
-    await cli(["@test/package-1", "--scope", "@test/package-2"], {cwd});
-    const pkgs = await getPkgs(cwd);
-    expect(pkgs['@test/package-1']).not.toDependOn('@test/package-1');
-    expect(pkgs['@test/package-2']).toDependOn('@test/package-1');
-    expect(pkgs['package-3']).not.toDependOn('@test/package-1');
-    expect(pkgs['package-4']).not.toDependOn('@test/package-1');
-  });
-
-  test("omits ignored package", async () => {
-    const cwd = await initFixture("AddCommand/basic");
-    await cli(["@test/package-1", "--ignore", "@test/package-2"], {cwd});
-    const pkgs = await getPkgs(cwd);
-    expect(pkgs['@test/package-1']).not.toDependOn('@test/package-1');
-    expect(pkgs['@test/package-2']).not.toDependOn('@test/package-1');
-    expect(pkgs['package-3']).toDependOn('@test/package-1');
-    expect(pkgs['package-4']).toDependOn('@test/package-1');
-  });
-
-  test("makes added pkg available", async () => {
-    const cwd = await initFixture("AddCommand/basic");
-    const pkg3 = path.join(cwd, 'packages/package-3');
-    await cli(["@test/package-1", "--scope", "package-3"], {cwd});
-    expect(() => resolvePkg("@test/package-1", {cwd: pkg3})).not.toThrow();
-  });
 });
