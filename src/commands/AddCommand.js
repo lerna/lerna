@@ -27,12 +27,6 @@ export default class AddCommand extends Command {
     return false;
   }
 
-  constructor(input, flags, cwd) {
-    super(input, flags, cwd);
-    this.flags = flags;
-    this.cwd = cwd;
-  }
-
   initialize(callback) {
     const pkgs = this.input
       .filter(input => typeof input === 'string' && input.trim() !== '')
