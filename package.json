@@ -51,7 +51,6 @@
     "hosted-git-info": "^2.5.0",
     "inquirer": "^3.2.2",
     "is-ci": "^1.0.10",
-    "json-file-plus": "^3.3.0",
     "load-json-file": "^3.0.0",
     "lodash": "^4.17.4",
     "minimatch": "^3.0.4",

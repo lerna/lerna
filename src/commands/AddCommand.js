@@ -1,7 +1,8 @@
 import path from "path";
 import dedent from "dedent";
-import {JSONFile} from "json-file-plus";
+import readPkg from "read-pkg";
 import semver from "semver";
+import writePkg from "write-pkg";
 import BootstrapCommand from "./BootstrapCommand";
 import Command, { ValidationError } from "../Command";
 import FileSystemUtilities from "../FileSystemUtilities";
@@ -117,51 +118,49 @@ export default class AddCommand extends Command {
   execute(callback) {
     this.logger.info(`Add ${this.dependencyType} in ${this.packagesToChange.length} packages`);
 
-    this.packagesToChange
-      .forEach(pkgToChange => {
-        const manifestPath = path.join(pkgToChange.location, "package.json");
+    Promise.all(
+      this.packagesToChange
+        .map(pkgToChange => {
+          const manifestPath = path.join(pkgToChange.location, "package.json");
 
-        const notSamePackage = pkgToInstall => pkgToChange.name !== pkgToInstall.name;
+          const notSamePackage = pkgToInstall => pkgToChange.name !== pkgToInstall.name;
 
-        const applicable = this.packagesToInstall
-          .filter(notSamePackage)
-          .reduce((results, pkgToInstall) => {
-            const deps = pkgToChange[this.dependencyType] || {};
-            const current = deps[pkgToInstall.name];
-            const range = getRangeToReference(
-              current,
-              pkgToInstall.version,
-              pkgToInstall.versionRange
-            );
-            const id = `${pkgToInstall.name}@${range}`;
-            const message = `Add ${id} as ${this.dependencyType} in ${pkgToChange.name}`;
-            this.logger.verbose(message);
-            results[pkgToInstall.name] = range;
-            return results;
-          }, {});
+          const applicable = this.packagesToInstall
+            .filter(notSamePackage)
+            .reduce((results, pkgToInstall) => {
+              const deps = pkgToChange[this.dependencyType] || {};
+              const current = deps[pkgToInstall.name];
+              const range = getRangeToReference(
+                current,
+                pkgToInstall.version,
+                pkgToInstall.versionRange
+              );
+              const id = `${pkgToInstall.name}@${range}`;
+              const message = `Add ${id} as ${this.dependencyType} in ${pkgToChange.name}`;
+              this.logger.verbose(message);
+              results[pkgToInstall.name] = range;
+              return results;
+            }, {});
 
-        const source = FileSystemUtilities.readFileSync(manifestPath);
+          const ammendment = {[this.dependencyType]: applicable};
 
-        const file = new JSONFile(manifestPath, source);
-        file.set({[this.dependencyType]: applicable});
+          return readPkg(manifestPath, {normalize: false})
+            .then(manifestJson => Object.assign({}, manifestJson, ammendment))
+            .then(manifestJson => writePkg(manifestPath, manifestJson));
+        })
+      )
+      .then(() => {
+        this.logger.info(`Changes require bootstrap in ${this.packagesToChange.length} packages`);
 
-        const rewritten = file.stringify();
+        // Bootstrap all changed packages
+        const options = Object.assign({}, this.options, {
+          scope: this.packagesToChange.map(pkgToChange => pkgToChange.name)
+        });
 
-        if (rewritten !== source) {
-          FileSystemUtilities.writeFileSync(manifestPath, rewritten);
-        }
+        return new BootstrapCommand([], options, this.repository.rootPath).run()
+          .then(() => callback())
+          .catch(callback);
       });
-
-      this.logger.info(`Changes require bootstrap in ${this.packagesToChange.length} packages`);
-
-      // Bootstrap all changed packages
-      const options = Object.assign({}, this.options, {
-        scope: this.packagesToChange.map(pkgToChange => pkgToChange.name)
-      });
-
-      return new BootstrapCommand([], options, this.repository.rootPath).run()
-        .then(() => callback())
-        .catch(callback);
   }
 
   getPackage(name) {
