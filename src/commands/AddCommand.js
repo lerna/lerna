@@ -17,8 +17,7 @@ export const builder = {
 };
 
 export function handler(argv) {
-  new AddCommand([argv.script, ...argv.args], argv, argv._cwd)
-    .run()
+  new AddCommand([...argv.args], argv, argv._cwd).run()
     .then(argv._onFinish, argv._onFinish);
 }
 
