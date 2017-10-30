@@ -5,13 +5,15 @@ import initFixture from "../helpers/initFixture";
 import initExecTest from "../helpers/initExecTest";
 
 describe("lerna exec", () => {
+  const EXEC_TEST_COMMAND = process.platform === "win32" ? "exec-test.cmd" : "exec-test";
   const env = initExecTest("ExecCommand");
+
   test.concurrent("--ignore <pkg> exec-test -- -1", async () => {
     const cwd = await initFixture("ExecCommand/basic");
     const args = [
       "exec",
       "--ignore=package-1",
-      "exec-test",
+      EXEC_TEST_COMMAND,
       "--concurrency=1",
       "--",
       // args to exec-test
@@ -28,7 +30,7 @@ describe("lerna exec", () => {
     const args = [
       "exec",
       "--concurrency=1",
-      "exec-test",
+      EXEC_TEST_COMMAND,
       "--scope=package-1",
       // no args to exec-test
     ];
@@ -43,7 +45,7 @@ describe("lerna exec", () => {
     const args = [
       "--concurrency=1",
       "exec",
-      "exec-test",
+      EXEC_TEST_COMMAND,
       // no --
       "-C",
     ];
@@ -71,14 +73,14 @@ describe("lerna exec", () => {
     const cwd = await initFixture("ExecCommand/basic");
     const args = [
       "exec",
-      "exec-test",
+      EXEC_TEST_COMMAND,
       "--parallel",
       // no --
       "-C",
     ];
 
     const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd, env });
-    expect(stderr).toMatchSnapshot("stderr: <cmd> --parallel");
+    expect(stderr).toMatch(EXEC_TEST_COMMAND);
 
     // order is non-deterministic, so assert individually
     expect(stdout).toMatch("package-1: file-1.js");
@@ -92,13 +94,13 @@ describe("lerna exec", () => {
     const args = [
       "exec",
       "--parallel",
-      "exec-test",
+      EXEC_TEST_COMMAND,
       // no --
       "-C",
     ];
 
     const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd, env });
-    expect(stderr).toMatchSnapshot("stderr: --parallel <cmd>");
+    expect(stderr).toMatch(EXEC_TEST_COMMAND);
 
     // order is non-deterministic, so assert individually
     expect(stdout).toMatch("package-1: file-1.js");

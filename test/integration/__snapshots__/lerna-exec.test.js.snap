@@ -1,15 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`stderr: <cmd> --parallel 1`] = `
-"lerna info version __TEST_VERSION__
-lerna info exec in 2 package(s): exec-test"
-`;
-
-exports[`stderr: --parallel <cmd> 1`] = `
-"lerna info version __TEST_VERSION__
-lerna info exec in 2 package(s): exec-test"
-`;
-
 exports[`stderr: echo LERNA_PACKAGE_NAME 1`] = `"lerna info version __TEST_VERSION__"`;
 
 exports[`stderr: exec-test --ignore 1`] = `
