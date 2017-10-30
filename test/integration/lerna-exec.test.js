@@ -80,7 +80,7 @@ describe("lerna exec", () => {
     ];
 
     const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd, env });
-    expect(stderr).toMatchSnapshot("stderr: <cmd> --parallel");
+    expect(stderr).toMatch(EXEC_TEST_COMMAND);
 
     // order is non-deterministic, so assert individually
     expect(stdout).toMatch("package-1: file-1.js");
@@ -100,7 +100,7 @@ describe("lerna exec", () => {
     ];
 
     const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd, env });
-    expect(stderr).toMatchSnapshot("stderr: --parallel <cmd>");
+    expect(stderr).toMatch(EXEC_TEST_COMMAND);
 
     // order is non-deterministic, so assert individually
     expect(stdout).toMatch("package-1: file-1.js");
