@@ -6,7 +6,7 @@ function initExecTest(fixtureDir) {
   const execTestDir = path.resolve(__dirname, `../fixtures/${fixtureDir}`);
   const execPath = `${execTestDir}${path.delimiter}${process.env.PATH}`;
 
-  return Object.assign({}, process.env, {
+  return {
     PATH: execPath,
-  });
+  };
 }

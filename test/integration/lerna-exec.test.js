@@ -5,6 +5,7 @@ import initFixture from "../helpers/initFixture";
 import initExecTest from "../helpers/initExecTest";
 
 describe("lerna exec", () => {
+  const EXEC_TEST_COMMAND = process.platform === "win32" ? "exec-test.cmd" : "exec-test";
   const env = initExecTest("ExecCommand");
 
   test.concurrent("--ignore <pkg> exec-test -- -1", async () => {
@@ -12,7 +13,7 @@ describe("lerna exec", () => {
     const args = [
       "exec",
       "--ignore=package-1",
-      "exec-test",
+      EXEC_TEST_COMMAND,
       "--concurrency=1",
       "--",
       // args to exec-test
@@ -29,7 +30,7 @@ describe("lerna exec", () => {
     const args = [
       "exec",
       "--concurrency=1",
-      "exec-test",
+      EXEC_TEST_COMMAND,
       "--scope=package-1",
       // no args to exec-test
     ];
@@ -44,7 +45,7 @@ describe("lerna exec", () => {
     const args = [
       "--concurrency=1",
       "exec",
-      "exec-test",
+      EXEC_TEST_COMMAND,
       // no --
       "-C",
     ];
@@ -72,7 +73,7 @@ describe("lerna exec", () => {
     const cwd = await initFixture("ExecCommand/basic");
     const args = [
       "exec",
-      "exec-test",
+      EXEC_TEST_COMMAND,
       "--parallel",
       // no --
       "-C",
@@ -93,7 +94,7 @@ describe("lerna exec", () => {
     const args = [
       "exec",
       "--parallel",
-      "exec-test",
+      EXEC_TEST_COMMAND,
       // no --
       "-C",
     ];
