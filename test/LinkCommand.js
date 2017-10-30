@@ -55,12 +55,12 @@ describe("LinkCommand", () => {
     });
   });
 
-  describe("with --ignore-semver", () => {
+  describe("with --force-local", () => {
     beforeEach(stubSymlink);
     afterEach(resetSymlink);
 
-    it("should symlink all packages", async () => {
-      const testDir = await initFixture("LinkCommand/ignore-semver");
+    it("should force symlink of all packages", async () => {
+      const testDir = await initFixture("LinkCommand/force-local");
       const lernaLink = run(testDir);
       await lernaLink();
 

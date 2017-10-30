@@ -637,13 +637,13 @@ $ lerna link
 
 Symlink together all Lerna `packages` that are dependencies of each other in the current Lerna repo.
 
-#### --ignore-semver
+#### --force-local
 
 ```sh
-$ lerna link --ignore-semver=<boolean>
+$ lerna link --force-local
 ```
 
-This flag signifies whether or not the `link` command should ignore semantic version validation. Its default value is `false`.
+When passed, this flag causes the `link` command to always symlink local dependencies regardless of matching version range.
 
 ## Misc
 

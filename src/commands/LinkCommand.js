@@ -11,9 +11,9 @@ export const command = "link";
 export const describe = "Symlink together all packages which are dependencies of each other";
 
 export const builder = {
-  "ignore-semver": {
+  "force-local": {
     group: "Command Options:",
-    describe: "Ignore semver",
+    describe: "Force local",
     type: "boolean",
     default: undefined,
   }
@@ -26,7 +26,7 @@ export default class LinkCommand extends Command {
 
   get defaultOptions() {
     return Object.assign({}, super.defaultOptions, {
-      ignoreSemver: false
+      forceLocal: false
     });
   }
 
@@ -35,7 +35,7 @@ export default class LinkCommand extends Command {
   }
 
   execute(callback) {
-    const {packages, packageGraph, logger, options: { ignoreSemver }} = this;
-    PackageUtilities.symlinkPackages(packages, packageGraph, logger, ignoreSemver, callback);
+    const {packages, packageGraph, logger, options: { forceLocal }} = this;
+    PackageUtilities.symlinkPackages(packages, packageGraph, logger, forceLocal, callback);
   }
 }

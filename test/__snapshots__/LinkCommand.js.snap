@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`LinkCommand with --ignore-semver should symlink all packages 1`] = `
+exports[`LinkCommand with --force-local should force symlink of all packages 1`] = `
 Array [
   Object {
     "_src": "packages/package-1",

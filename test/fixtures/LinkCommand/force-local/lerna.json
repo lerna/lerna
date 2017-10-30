@@ -2,7 +2,7 @@
   "lerna": "__TEST_VERSION__",
   "commands": {
     "link": {
-      "ignoreSemver": true
+      "forceLocal": true
     }
   },
   "version": "1.0.0"

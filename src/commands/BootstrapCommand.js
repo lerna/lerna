@@ -521,7 +521,8 @@ export default class BootstrapCommand extends Command {
    * @param {Function} callback
    */
   symlinkPackages(callback) {
+    const forceLocal = false;
     const { filteredPackages, packageGraph, logger } = this;
-    PackageUtilities.symlinkPackages(filteredPackages, packageGraph, logger, false, callback);
+    PackageUtilities.symlinkPackages(filteredPackages, packageGraph, logger, forceLocal, callback);
   }
 }
