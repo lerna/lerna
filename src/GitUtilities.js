@@ -1,5 +1,6 @@
 import { EOL } from "os";
 import log from "npmlog";
+import path from "path";
 import tempWrite from "temp-write";
 
 import ChildProcessUtilities from "./ChildProcessUtilities";
@@ -129,9 +130,12 @@ export default class GitUtilities {
   }
 
   static diffSinceIn(since, location, opts) {
-    log.silly("diffSinceIn", since, location);
+    const formattedLocation = path.relative(opts.cwd, location).replace(/\\/g, '/');
+    log.silly("diffSinceIn", since, formattedLocation);
 
-    const diff = ChildProcessUtilities.execSync("git", ["diff", "--name-only", since, "--", location], opts);
+    const diff = ChildProcessUtilities.execSync("git", [
+      "diff", "--name-only", since, "--", formattedLocation
+    ], opts);
     log.silly("diff", diff);
 
     return diff;

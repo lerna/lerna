@@ -6,6 +6,8 @@
   plugins:
     - node
   rules:
+    space-before-blocks:
+      - error
     node/no-unsupported-features:
       - error
       - version: 4
