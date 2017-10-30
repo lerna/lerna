@@ -201,7 +201,7 @@ export default class PackageUtilities {
         batch.push(packages.reduce((a, b) => {
           return (refCounts[a.name] || 0) > (refCounts[b.name] || 0) ? a : b;
         }));
-        
+
         log.silly("packages", batch.map((pkg) => pkg.name));
       }
 
@@ -231,7 +231,7 @@ export default class PackageUtilities {
    * @param {Object} logger
    * @param {Function} callback
    */
-  static symlinkPackages(packages, packageGraph, logger, ignoreSemver, callback) {
+  static symlinkPackages(packages, packageGraph, logger, forceLocal, callback) {
     const tracker = logger.newItem("symlink packages");
 
     tracker.info("", "Symlinking packages and binaries");
@@ -248,7 +248,7 @@ export default class PackageUtilities {
           return (
             match &&
             FileSystemUtilities.existsSync(path.join(match.package.location, "package.json")) &&
-            (ignoreSemver || iteratedPackage.hasMatchingDependency(match.package))
+            (forceLocal || iteratedPackage.hasMatchingDependency(match.package))
           );
         });
 
