@@ -6,6 +6,7 @@ import initExecTest from "../helpers/initExecTest";
 
 describe("lerna exec", () => {
   const env = initExecTest("ExecCommand");
+
   test.concurrent("--ignore <pkg> exec-test -- -1", async () => {
     const cwd = await initFixture("ExecCommand/basic");
     const args = [
