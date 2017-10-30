@@ -11,6 +11,15 @@ import initFixture from "../helpers/initFixture";
 import copyFixture from "../helpers/copyFixture";
 
 describe("lerna bootstrap", () => {
+  const npmTest = (cwd) => execa(LERNA_BIN, [
+    "run",
+    "test",
+    "--",
+    // arguments to npm test
+    "--silent",
+    "--onload-script=false",
+  ], { cwd });
+
   describe("from CLI", () => {
     test.concurrent("bootstraps all packages", async () => {
       const cwd = await initFixture("BootstrapCommand/integration");
@@ -21,7 +30,7 @@ describe("lerna bootstrap", () => {
       const stderr = await execa.stderr(LERNA_BIN, args, { cwd });
       expect(stderr).toMatchSnapshot("simple: stderr");
 
-      const stdout = await execa.stdout(LERNA_BIN, ["run", "test", "--", "--silent"], { cwd });
+      const { stdout } = await npmTest(cwd);
       expect(stdout).toMatchSnapshot("simple: stdout");
     });
 
@@ -64,7 +73,7 @@ describe("lerna bootstrap", () => {
       );
       expect(lockfiles).toMatchSnapshot("--npm-client yarn: lockfiles");
 
-      const stdout = await execa.stdout(LERNA_BIN, ["run", "test", "--", "--silent"], { cwd });
+      const { stdout } = await npmTest(cwd);
       expect(stdout).toMatchSnapshot("--npm-client yarn: stdout");
     });
 
@@ -106,7 +115,7 @@ describe("lerna bootstrap", () => {
       const cwd = await initFixture("BootstrapCommand/integration-lifecycle");
       await execa("npm", ["install", "--cache-min=99999"], { cwd });
 
-      const { stdout, stderr } = await execa("npm", ["test", "--silent"], { cwd });
+      const { stdout, stderr } = await npmTest(cwd);
       expect(stdout).toMatchSnapshot("npm postinstall: stdout");
       expect(stderr).toMatchSnapshot("npm postinstall: stderr");
     });

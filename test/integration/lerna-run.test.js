@@ -17,7 +17,7 @@ describe("lerna run", () => {
       "--scope=package-1",
       "--concurrency=1",
       // args below tell npm to be quiet
-      "--", "--silent",
+      "--", "--silent", "--onload-script=false",
     ];
     const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
     expect(stdout).toMatchSnapshot("stdout: my-script --scope");
@@ -33,7 +33,7 @@ describe("lerna run", () => {
       "--ignore",
       "package-@(1|2|3)",
       // args below tell npm to be quiet
-      "--", "--silent",
+      "--", "--silent", "--onload-script=false",
     ];
     const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
     expect(stdout).toMatchSnapshot("stdout: test --ignore");
@@ -48,7 +48,7 @@ describe("lerna run", () => {
       "test",
       "--concurrency=1",
       // args below tell npm to be quiet
-      "--", "--silent",
+      "--", "--silent", "--onload-script=false",
     ];
     const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
     expect(stdout).toMatchSnapshot("stdout: test --stream");
@@ -62,7 +62,7 @@ describe("lerna run", () => {
       "test",
       "--parallel",
       // args below tell npm to be quiet
-      "--", "--silent",
+      "--", "--silent", "--onload-script=false",
     ];
     const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
     expect(stderr).toMatchSnapshot("stderr: test --parallel");
@@ -81,7 +81,7 @@ describe("lerna run", () => {
       "--parallel",
       "my-script",
       // args below tell npm to be quiet
-      "--", "--silent",
+      "--", "--silent", "--onload-script=false",
     ];
     const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
     expect(stderr).toMatchSnapshot("stderr: my-script --parallel");
