@@ -223,6 +223,30 @@ Let's use `babel` as an example.
 - `babel-generator` and `source-map` (among others) are dependencies of `babel-core`.
 -  `babel-core`'s [`package.json`](https://github.com/babel/babel/blob/13c961d29d76ccd38b1fc61333a874072e9a8d6a/packages/babel-core/package.json#L28-L47) lists both these packages as keys in `dependencies`, as shown below.
 
+### add
+
+```sh
+$ lerna add <package>[@version] [--dev]
+```
+
+Add local or remote `package` as dependency to packages in in the current Lerna repo.
+
+When run, this command will:
+
+1. Add `package` to each applicable package. Applicable are packages that are not `package` and are in scope
+2. Bootstrap packages with changes to their manifest file (`package.json`)
+
+`lerna add` respects the `--ignore`, `--scope` and `--include-filtered-dependencies` flags (see [Flags](#flags)).
+
+#### Examples
+
+```
+lerna add module-1 --scope=module-2 # Install module-1 to module-2
+lerna add module-1 --scope=module-2 --dev # Install module-1 to module-2 in devDependencies
+lerna add module-1 # Install module-1 in all modules except module-1
+lerna add babel-core # Install babel-core in all modules
+```
+
 ```js
 // babel-core package.json
 {
