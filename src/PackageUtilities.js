@@ -259,7 +259,7 @@ export default class PackageUtilities {
    * @param {Object} logger
    * @param {Function} callback
    */
-  static symlinkPackages(packages, packageGraph, logger, callback) {
+  static symlinkPackages(packages, packageGraph, logger, forceLocal, callback) {
     const tracker = logger.newItem("symlink packages");
 
     tracker.info("", "Symlinking packages and binaries");
@@ -276,7 +276,7 @@ export default class PackageUtilities {
           return (
             match &&
             FileSystemUtilities.existsSync(path.join(match.package.location, "package.json")) &&
-            iteratedPackage.hasMatchingDependency(match.package)
+            (forceLocal || iteratedPackage.hasMatchingDependency(match.package))
           );
         });
 

@@ -10,11 +10,24 @@ export const command = "link";
 
 export const describe = "Symlink together all packages which are dependencies of each other";
 
-export const builder = {};
+export const builder = {
+  "force-local": {
+    group: "Command Options:",
+    describe: "Force local",
+    type: "boolean",
+    default: undefined,
+  }
+};
 
 export default class LinkCommand extends Command {
   get requiresGit() {
     return false;
+  }
+
+  get defaultOptions() {
+    return Object.assign({}, super.defaultOptions, {
+      forceLocal: false
+    });
   }
 
   initialize(callback) {
@@ -22,8 +35,7 @@ export default class LinkCommand extends Command {
   }
 
   execute(callback) {
-    const {packages, packageGraph, logger} = this;
-
-    PackageUtilities.symlinkPackages(packages, packageGraph, logger, callback);
+    const {packages, packageGraph, logger, options: { forceLocal }} = this;
+    PackageUtilities.symlinkPackages(packages, packageGraph, logger, forceLocal, callback);
   }
 }

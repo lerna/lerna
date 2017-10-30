@@ -54,4 +54,17 @@ describe("LinkCommand", () => {
       expect(symlinkedDirectories(testDir)).toMatchSnapshot();
     });
   });
+
+  describe("with --force-local", () => {
+    beforeEach(stubSymlink);
+    afterEach(resetSymlink);
+
+    it("should force symlink of all packages", async () => {
+      const testDir = await initFixture("LinkCommand/force-local");
+      const lernaLink = run(testDir);
+      await lernaLink();
+
+      expect(symlinkedDirectories(testDir)).toMatchSnapshot();
+    });
+  });
 });

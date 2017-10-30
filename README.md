@@ -638,6 +638,14 @@ $ lerna link
 
 Symlink together all Lerna `packages` that are dependencies of each other in the current Lerna repo.
 
+#### --force-local
+
+```sh
+$ lerna link --force-local
+```
+
+When passed, this flag causes the `link` command to always symlink local dependencies regardless of matching version range.
+
 ## Misc
 
 Lerna will log to a `lerna-debug.log` file (same as `npm-debug.log`) when it encounters an error running a command.
