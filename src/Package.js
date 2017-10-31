@@ -57,6 +57,15 @@ export default class Package {
     );
   }
 
+  get fullDependencies() {
+    return Object.assign(
+      {},
+      this.peerDependencies,
+      this.devDependencies,
+      this.dependencies
+    );
+  }
+
   get scripts() {
     return this._package.scripts || {};
   }
@@ -117,7 +126,7 @@ export default class Package {
   hasMatchingDependency(dependency, doWarn) {
     log.silly("hasMatchingDependency", this.name, dependency.name);
 
-    const expectedVersion = this.allDependencies[dependency.name];
+    const expectedVersion = this.fullDependencies[dependency.name];
     const actualVersion = dependency.version;
 
     if (!expectedVersion) {
@@ -148,7 +157,7 @@ export default class Package {
     log.silly("hasDependencyInstalled", this.name, depName);
 
     return dependencyIsSatisfied(
-      this.nodeModulesLocation, depName, this.allDependencies[depName]
+      this.nodeModulesLocation, depName, this.fullDependencies[depName]
     );
   }
 }

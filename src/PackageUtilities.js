@@ -267,7 +267,7 @@ export default class PackageUtilities {
 
     const actions = packages.map((iteratedPackage) => {
       const filteredDependencyNames = Object
-        .keys(iteratedPackage.allDependencies)
+        .keys(iteratedPackage.fullDependencies)
         .filter((dependency) => {
           // Filter out external dependencies and incompatible packages
           // (e.g. dependencies without a package.json file)
