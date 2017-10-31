@@ -134,6 +134,11 @@ Array [
     "dest": "packages/package-4/node_modules/.bin/package3cli2",
     "type": "exec",
   },
+  Object {
+    "_src": "packages/package-1",
+    "dest": "packages/package-5/node_modules/@test/package-1",
+    "type": "junction",
+  },
 ]
 `;
 
