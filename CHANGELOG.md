@@ -1,3 +1,40 @@
+## v2.5.0 (2017-11-01)
+
+A new command (`lerna add`), new flags for bootstrap and link commands, and a much-improved experience when publishing "final" releases after a series of prereleases!
+
+#### :rocket: Enhancement
+* [#1069](https://github.com/lerna/lerna/pull/1069) Implement `lerna add <pkg>[@version] [--dev]`. ([@marionebl](https://github.com/marionebl))
+* [#1077](https://github.com/lerna/lerna/pull/1077) Republish prereleased packages during subsequent non-prerelease publish. ([@spudly](https://github.com/spudly))
+* [#1078](https://github.com/lerna/lerna/pull/1078) Generate root changelog in fixed mode. ([@ZauberNerd](https://github.com/ZauberNerd))
+* [#1081](https://github.com/lerna/lerna/pull/1081) Warn during bootstrap when two or more packages have the same package.json name. ([@amfio](https://github.com/amfio))
+* [#1082](https://github.com/lerna/lerna/pull/1082) Add --force-local to link command. ([@jiverson](https://github.com/jiverson))
+* [#1087](https://github.com/lerna/lerna/pull/1087) Add --reject-cycles to bootstrap, logging packages when found. ([@mitchhentges](https://github.com/mitchhentges))
+
+#### :bug: Bug Fix
+* [#1059](https://github.com/lerna/lerna/pull/1059) Improve "import" edgecases + (i18n fixes + git tweaks). ([@swernerx](https://github.com/swernerx))
+* [#1063](https://github.com/lerna/lerna/pull/1063) Fail when --hoist and --yarn are used together. ([@marionebl](https://github.com/marionebl))
+* [#1083](https://github.com/lerna/lerna/pull/1083) Fixed diffing on Windows. ([@the0neWhoKnocks](https://github.com/the0neWhoKnocks))
+
+#### :memo: Documentation
+* [#1062](https://github.com/lerna/lerna/pull/1062) Fix README typo. ([@imagentleman](https://github.com/imagentleman))
+
+#### :house: Internal
+* [#1080](https://github.com/lerna/lerna/pull/1080) Add test for skipping empty patches during import --flatten. ([@gyoshev](https://github.com/gyoshev))
+* [#1092](https://github.com/lerna/lerna/pull/1092) Make integration tests less flaky on Windows. ([@evocateur](https://github.com/evocateur))
+
+#### Committers: 11
+- Alex Gyoshev ([gyoshev](https://github.com/gyoshev))
+- Alexander Field ([amfio](https://github.com/amfio))
+- Björn Brauer ([ZauberNerd](https://github.com/ZauberNerd))
+- Daniel Stockman ([evocateur](https://github.com/evocateur))
+- Josh Iverson ([jiverson](https://github.com/jiverson))
+- José Antonio Chio ([imagentleman](https://github.com/imagentleman))
+- Mario Nebl ([marionebl](https://github.com/marionebl))
+- Mitchell Hentges ([mitchhentges](https://github.com/mitchhentges))
+- Sebastian Werner ([swernerx](https://github.com/swernerx))
+- Stephen John Sorensen ([spudly](https://github.com/spudly))
+- [the0neWhoKnocks](https://github.com/the0neWhoKnocks)
+
 ## v2.4.0 (2017-10-05)
 
 I inadvertently made `lerna bootstrap --hoist` really slow in v2.3.0, so that's fixed. Big thanks to all the contributors!
