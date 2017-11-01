@@ -1,3 +1,13 @@
+## v2.5.1 (2017-11-01)
+
+A quick bugfix for an overlooked case in `lerna add`.
+
+#### :bug: Bug Fix
+* [#1100](https://github.com/lerna/lerna/pull/1100) Preserve existing deps with lerna add. ([@marionebl](https://github.com/marionebl))
+
+#### Committers: 1
+- Mario Nebl ([marionebl](https://github.com/marionebl))
+
 ## v2.5.0 (2017-11-01)
 
 A new command (`lerna add`), new flags for bootstrap and link commands, and a much-improved experience when publishing "final" releases after a series of prereleases!
