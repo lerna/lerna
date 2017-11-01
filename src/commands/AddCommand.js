@@ -14,7 +14,7 @@ export const describe = "Add packages as dependency to matched packages";
 
 export const builder = {
   dev: {
-    describe: `Save as devDependency`
+    describe: "Save as to devDependencies"
   },
 };
 
@@ -30,10 +30,10 @@ export default class AddCommand extends Command {
 
   initialize(callback) {
     const pkgs = this.input
-      .filter(input => typeof input === 'string' && input.trim() !== '')
-      .map(input => splitVersion(input) || [input, 'latest'])
+      .filter(input => typeof input === "string" && input.trim() !== "")
+      .map(input => splitVersion(input) || [input, "latest"])
       .filter(split => Array.isArray(split))
-      .map(([name, versionRange = 'latest']) => ({name, versionRange}));
+      .map(([name, versionRange = "latest"]) => ({name, versionRange}));
 
     if (pkgs.length === 0) {
       const err = new ValidationError("EINPUT", "Missing list of packages to add to your project.");
@@ -57,7 +57,7 @@ export default class AddCommand extends Command {
       return callback(err);
     }
 
-    this.dependencyType = this.options.dev ? 'devDependencies' : 'dependencies';
+    this.dependencyType = this.options.dev ? "devDependencies" : "dependencies";
 
     Promise.all(
       pkgs.map(({name, versionRange}) =>
@@ -95,7 +95,7 @@ export default class AddCommand extends Command {
         });
 
       if (this.packagesToChange.length === 0) {
-        const packagesToInstallList = this.packagesToInstall.map(pkg => pkg.name).join(', ');
+        const packagesToInstallList = this.packagesToInstall.map(pkg => pkg.name).join(", ");
         this.logger.warn(`No packages found in scope where ${packagesToInstallList} can be added.`);
       }
     })
@@ -187,7 +187,7 @@ export default class AddCommand extends Command {
     if (!pkg) {
       return false;
     }
-    if (versionRange === 'latest') {
+    if (versionRange === "latest") {
       return true;
     }
     return semver.intersects(pkg.version, versionRange);
@@ -197,12 +197,12 @@ export default class AddCommand extends Command {
 function notSatisfiedMessage(unsatisfied) {
   return dedent`
     Requested range not satisfiable:
-    ${unsatisfied.map(u => `${u.name}@${u.versionRange} (available: ${u.version})`).join(', ')}
+    ${unsatisfied.map(u => `${u.name}@${u.versionRange} (available: ${u.version})`).join(", ")}
   `;
 }
 
 function getRangeToReference(current, available, requested) {
-  const resolved = requested === 'latest'
+  const resolved = requested === "latest"
     ? `^${available}`
     : requested;
 
