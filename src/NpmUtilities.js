@@ -5,7 +5,7 @@ import writePkg from "write-pkg";
 
 import ChildProcessUtilities from "./ChildProcessUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
-import splitVersion from "../utils/splitVersion";
+import splitVersion from "./utils/splitVersion";
 
 function execInstall(directory, {
   registry,
