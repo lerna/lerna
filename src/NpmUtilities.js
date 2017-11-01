@@ -5,14 +5,7 @@ import writePkg from "write-pkg";
 
 import ChildProcessUtilities from "./ChildProcessUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
-
-// Take a dep like "foo@^1.0.0".
-// Return a tuple like ["foo", "^1.0.0"].
-// Handles scoped packages.
-// Returns undefined for version if none specified.
-function splitVersion(dep) {
-  return dep.match(/^(@?[^@]+)(?:@(.+))?/).slice(1, 3);
-}
+import splitVersion from "../utils/splitVersion";
 
 function execInstall(directory, {
   registry,

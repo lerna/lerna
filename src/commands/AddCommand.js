@@ -6,6 +6,7 @@ import semver from "semver";
 import writePkg from "write-pkg";
 import BootstrapCommand from "./BootstrapCommand";
 import Command, { ValidationError } from "../Command";
+import splitVersion from "../utils/splitVersion";
 
 export const command = "add [args..]";
 
@@ -129,7 +130,6 @@ export default class AddCommand extends Command {
               return results;
             }, {});
 
-
           return readPkg(manifestPath, {normalize: false})
             .then(a => {
               const previous = a[this.dependencyType] || {};
@@ -199,10 +199,6 @@ function notSatisfiedMessage(unsatisfied) {
     Requested range not satisfiable:
     ${unsatisfied.map(u => `${u.name}@${u.versionRange} (available: ${u.version})`).join(', ')}
   `;
-}
-
-function splitVersion(dep) {
-  return dep.match(/^(@?[^@]+)(?:@(.+))?/).slice(1, 3);
 }
 
 function getRangeToReference(current, available, requested) {
