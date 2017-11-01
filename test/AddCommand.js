@@ -150,6 +150,22 @@ describe("AddCommand", () => {
     expect(readPkg(testDir, 'packages/package-4')).not.toDevDependOn("@test/package-1");
   });
 
+  it("should retain existing dependencies", async () => {
+    const testDir = await initFixture("AddCommand/existing");
+    const lernaAdd = run(testDir);
+    await lernaAdd("@test/package-2");
+
+    expect(readPkg(testDir, 'packages/package-1')).toDependOn("foo");
+  });
+
+  it("should retain existing devDependencies", async () => {
+    const testDir = await initFixture("AddCommand/existing");
+    const lernaAdd = run(testDir);
+    await lernaAdd("@test/package-1", "--dev");
+
+    expect(readPkg(testDir, 'packages/package-2')).toDevDependOn("bar");
+  });
+
   it("should bootstrap changed packages", async () => {
     const testDir = await initFixture("AddCommand/basic");
     const lernaAdd = run(testDir);
