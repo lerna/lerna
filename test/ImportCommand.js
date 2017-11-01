@@ -110,6 +110,22 @@ describe("ImportCommand", () => {
       expect(await pathExists(newFilePath)).toBe(true);
     });
 
+    it("skips empty patches with --flatten", async () => {
+      const cwdExternalDir = { cwd: externalDir };
+      const filePath = path.join(externalDir, "file.txt");
+
+      await fs.writeFile(filePath, "non-empty content");
+      await execa("git", ["add", filePath], cwdExternalDir);
+      await execa("git", ["commit", "-m", "Non-empty commit"], cwdExternalDir);
+
+      await execa("git", ["commit", "--allow-empty", "-m", "Empty commit"], cwdExternalDir);
+
+      const { exitCode } = await lernaImport(externalDir, "--flatten");
+
+      expect(await lastCommitInDir(testDir)).toBe("Non-empty commit");
+      expect(exitCode).toBe(0);
+    });
+
     it("exits early when confirmation is rejected", async () => {
       PromptUtilities.confirm = jest.fn(callsBack(false));
 
