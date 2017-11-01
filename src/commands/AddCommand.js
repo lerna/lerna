@@ -129,10 +129,13 @@ export default class AddCommand extends Command {
               return results;
             }, {});
 
-          const ammendment = {[this.dependencyType]: applicable};
 
           return readPkg(manifestPath, {normalize: false})
             .then(a => {
+              const previous = a[this.dependencyType] || {};
+              const payload = Object.assign({}, previous, applicable);
+              const ammendment = {[this.dependencyType]: payload};
+
               const b = Object.assign({}, a, ammendment);
               return {a, b};
             })
