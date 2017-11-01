@@ -141,7 +141,7 @@ export default class AddCommand extends Command {
             })
             .then(({a, b}) => {
               const changed = JSON.stringify(a) !== JSON.stringify(b);
-              const exec = changed ? () => writePkg(manifestPath, b) : () => Promise.resolve;
+              const exec = changed ? () => writePkg(manifestPath, b) : () => Promise.resolve();
 
               return exec()
                 .then(() => ({

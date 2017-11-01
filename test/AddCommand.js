@@ -155,7 +155,7 @@ describe("AddCommand", () => {
     const lernaAdd = run(testDir);
     await lernaAdd("@test/package-2");
 
-    expect(readPkg(testDir, 'packages/package-1')).toDependOn("foo");
+    expect(readPkg(testDir, 'packages/package-1')).toDependOn("pify");
   });
 
   it("should retain existing devDependencies", async () => {
@@ -163,7 +163,7 @@ describe("AddCommand", () => {
     const lernaAdd = run(testDir);
     await lernaAdd("@test/package-1", "--dev");
 
-    expect(readPkg(testDir, 'packages/package-2')).toDevDependOn("bar");
+    expect(readPkg(testDir, 'packages/package-2')).toDevDependOn("file-url");
   });
 
   it("should bootstrap changed packages", async () => {
@@ -202,5 +202,30 @@ describe("AddCommand", () => {
     await lernaAdd("@test/package-1");
 
     expect(BootstrapCommand).not.toHaveBeenCalled();
+  });
+
+  it("bootstraps mixed local and external dependencies", async () => {
+    const testDir = await initFixture("AddCommand/existing");
+    const lernaAdd = run(testDir);
+    await lernaAdd("@test/package-2", "pify");
+
+    const pkg1 = readPkg(testDir, 'packages/package-1');
+    const pkg2 = readPkg(testDir, 'packages/package-2');
+    const pkg3 = readPkg(testDir, 'packages/package-3');
+
+    expect(pkg1).toDependOn("pify", "^3.0.0"); // overwrites ^2.0.0
+    expect(pkg1).toDependOn("@test/package-2");
+
+    expect(pkg2).toDependOn("pify", "^3.0.0");
+
+    expect(pkg3).toDependOn("pify", "^3.0.0");
+    expect(pkg3).toDependOn("@test/package-2"); // existing, but should stay
+
+    const flags = commandFlags(BootstrapCommand);
+    expect(flags.scope).toEqual([
+      '@test/package-1',
+      '@test/package-2',
+      '@test/package-3',
+    ]);
   });
 });

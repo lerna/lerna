@@ -1,0 +1,8 @@
+{
+  "name": "@test/package-3",
+  "version": "1.0.0",
+  "dependencies": {
+    "@test/package-2": "^1.0.0",
+    "pify": "^3.0.0"
+  }
+}
