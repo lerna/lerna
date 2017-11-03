@@ -2,6 +2,7 @@ import async from "async";
 import glob from "glob";
 import log from "npmlog";
 import minimatch from "minimatch";
+import {entries} from "lodash";
 import path from "path";
 import readPkg from "read-pkg";
 
@@ -315,27 +316,15 @@ export default class PackageUtilities {
         ));
 
         // create package symlink
-        actions.push((cb) => FileSystemUtilities.symlink(
-          dependencyPackage.location, depencyPath, "junction", cb
-        ));
+        actions.push((cb) => {
+          FileSystemUtilities.symlink(
+            dependencyPackage.location, depencyPath, "junction", cb
+          );
+        });
 
-        // Create the symlinks for binaries of the iterated package dependency.
-        const dependencyPackageJsonLocation = path.join(dependencyPackage.location, "package.json");
-        const dependencyPackageJson = require(dependencyPackageJsonLocation);
-
-        if (dependencyPackageJson.bin) {
-          const destFolder = iteratedPackage.nodeModulesLocation;
-
-          actions.push((cb) => {
-            PackageUtilities.createBinaryLink(
-              dependencyPackage.location,
-              destFolder,
-              dependencyName,
-              dependencyPackageJson.bin,
-              cb
-            );
-          });
-        }
+        actions.push((cb) => {
+          PackageUtilities.createBinaryLink(dependencyPackage, iteratedPackage, cb);
+        });
 
         return actions;
       }, []);
@@ -356,40 +345,57 @@ export default class PackageUtilities {
   }
 
   /**
-   * Create a symlink to a dependency's binary in the node_modules/.bin folder
-   * @param {String} src
-   * @param {String} dest
-   * @param {String} name
-   * @param {String|Object} bin
+   * Symlink bins of srcPackage to node_modules/.bin in destPackage
+   * @param {Object|string} srcPackageRef
+   * @param {Object|string} destPackageRef
    * @param {Function} callback
    */
-  static createBinaryLink(src, dest, name, bin, callback) {
-    const safeName = name[0] === "@"
-      ? name.substring(name.indexOf("/") + 1)
-      : name;
-    const destBinFolder = path.join(dest, ".bin");
+  static createBinaryLink(srcPackageRef, destPackageRef, callback) {
+    const srcPackage = resolvePackageRef(srcPackageRef);
+    const destPackage = resolvePackageRef(destPackageRef);
 
-    // The `bin` in a package.json may be either a string or an object.
-    // Normalize to an object.
-    const bins = typeof bin === "string"
-      ? { [safeName]: bin }
-      : bin;
+    const bin = getPackageBin(srcPackageRef);
 
-    const srcBinFiles = [];
-    const destBinFiles = [];
-    Object.keys(bins).forEach((binName) => {
-      srcBinFiles.push(path.join(src, bins[binName]));
-      destBinFiles.push(path.join(destBinFolder, binName));
-    });
+    const actions = entries(bin)
+      .map(([name, file]) => ({
+        src: path.join(srcPackage.location, file),
+        dst: path.join(destPackage.binLocation, name)
+      }))
+      .reduce((acc, {src, dst}) => {
+        const link = cb => FileSystemUtilities.symlink(src, dst, "exec", cb);
+        const exec = (cb) => async.series([link], cb);
+        acc.push(exec);
+        return acc;
+      }, []);
 
-    // make sure when have a destination folder (node_modules/.bin)
-    const actions = [(cb) => FileSystemUtilities.mkdirp(destBinFolder, cb)];
+    if (actions.length === 0) {
+      return callback();
+    }
 
-    // symlink each binary
-    srcBinFiles.forEach((binFile, idx) => {
-      actions.push((cb) => FileSystemUtilities.symlink(binFile, destBinFiles[idx], "exec", cb));
-    });
+    const ensureBin = cb => FileSystemUtilities.mkdirp(destPackage.binLocation, cb);
+    const linkEntries = cb => async.parallel(actions, cb);
 
-    async.series(actions, callback);
+    async.series([ensureBin, linkEntries], callback);
   }
+}
+
+function getPackageBin(pkgRef) {
+  const pkg = resolvePackageRef(pkgRef);
+  const name = getSafeName(pkg.name);
+
+  return typeof pkg.bin === "string"
+    ? {[name]: pkg.bin}
+    : pkg.bin || {};
+}
+
+function resolvePackageRef(pkgRef) {
+  return pkgRef instanceof Package
+    ? pkgRef
+    : new Package(readPkg.sync(pkgRef), pkgRef);
+}
+
+function getSafeName(rawName) {
+  return rawName[0] === "@"
+      ? rawName.substring(rawName.indexOf("/") + 1)
+      : rawName;
 }
