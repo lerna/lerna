@@ -157,11 +157,9 @@ export default class NpmUtilities {
       cwd: directory,
     };
 
-    if (registry) {
-      opts.env = Object.assign({}, process.env, {
-        npm_config_registry: registry,
-      });
-    }
+    opts.env = Object.assign({}, process.env, {
+      npm_config_registry: registry || 'https://registry.npmjs.org/',
+    });
 
     log.silly("getExecOpts", opts);
     return opts;
