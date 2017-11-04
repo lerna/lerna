@@ -1,5 +1,8 @@
+import async from "async";
+import fs from "fs";
 import log from "npmlog";
 import path from "path";
+import readPkg from "read-pkg";
 
 // tightly-coupled modules; TODO: decouple
 import Package from "../src/Package";
@@ -247,7 +250,7 @@ describe("PackageUtilities", () => {
       });
 
       PackageUtilities.validatePackageNames(packagesToValidate);
-      
+
       expect(logMessages[0]).toContain('Package name "name1" used in multiple packages:');
       expect(logMessages[0]).toContain('packages/package1');
       expect(logMessages[0]).toContain('packages/package4');
@@ -269,7 +272,7 @@ describe("PackageUtilities", () => {
       });
 
       PackageUtilities.validatePackageNames(packagesToValidate);
-      
+
       expect(didLogOccur).toBeFalsy();
     });
   });
@@ -389,6 +392,118 @@ describe("PackageUtilities", () => {
       expect(packagesWithDeps.some((pkg) => pkg.name === "package-4")).toBe(true);
       expect(packagesWithDeps.some((pkg) => pkg.name === "package-5")).toBe(true);
       expect(packagesWithDeps.some((pkg) => pkg.name === "package-6")).toBe(true);
+    });
+  });
+
+  describe.only(".createBinaryLink()", () => {
+    it("should work with references", async (done) => {
+      const testDir = await initFixture("PackageUtilities/links");
+      const srcRef = path.join(testDir, "packages/package-2");
+      const destRef = path.join(testDir, "packages/package-3");
+
+      const cb = (err) => {
+        expect(err).toBe(null);
+        done();
+      };
+
+      PackageUtilities.createBinaryLink(srcRef, destRef, cb);
+    });
+
+    it("should work with packages", async (done) => {
+      const testDir = await initFixture("PackageUtilities/links");
+      const srcRef = path.join(testDir, "packages/package-2");
+      const destRef = path.join(testDir, "packages/package-3");
+      const src = new Package(await readPkg(srcRef), srcRef);
+      const dest = new Package(await readPkg(destRef), destRef);
+
+      const cb = (err) => {
+        expect(err).toBe(null);
+        done();
+      };
+
+      PackageUtilities.createBinaryLink(src, dest, cb);
+    });
+
+    it("should work with missing bin files", async (done) => {
+      const testDir = await initFixture("PackageUtilities/links");
+      const srcRef = path.join(testDir, "packages/package-3");
+      const destRef = path.join(testDir, "packages/package-4");
+
+      const cb = (err) => {
+        expect(err).toBe(null);
+        done();
+      };
+
+      PackageUtilities.createBinaryLink(srcRef, destRef, cb);
+    });
+
+    it("should create a link string bin entry", async (done) => {
+      const testDir = await initFixture("PackageUtilities/links");
+      const srcRef = path.join(testDir, "packages/package-2");
+      const destRef = path.join(testDir, "packages/package-3");
+      const src = new Package(await readPkg(srcRef), srcRef);
+      const dest = new Package(await readPkg(destRef), destRef);
+
+      const cb = () => {
+        const links = fs.readdirSync(dest.binLocation);
+        expect(links).toEqual(['links-2']);
+        done();
+      };
+
+      PackageUtilities.createBinaryLink(src, dest, cb);
+    });
+
+    it("should create links for object bin entry", async (done) => {
+      const testDir = await initFixture("PackageUtilities/links");
+      const srcRef = path.join(testDir, "packages/package-3");
+      const destRef = path.join(testDir, "packages/package-4");
+      const src = new Package(await readPkg(srcRef), srcRef);
+      const dest = new Package(await readPkg(destRef), destRef);
+
+      const cb = () => {
+        const links = fs.readdirSync(dest.binLocation);
+        expect(links).toEqual(['links3cli1', 'links3cli2', 'links3cli3']);
+        done();
+      };
+
+      PackageUtilities.createBinaryLink(src, dest, cb);
+    });
+
+    it("should make links targets executable", async (done) => {
+      const testDir = await initFixture("PackageUtilities/links");
+      const srcRef = path.join(testDir, "packages/package-3");
+      const destRef = path.join(testDir, "packages/package-4");
+      const src = new Package(await readPkg(srcRef), srcRef);
+      const dest = new Package(await readPkg(destRef), destRef);
+
+      const cb = () => {
+        const cli1Mode = fs.statSync(path.join(src.location, 'cli1.js')).mode;
+        const cli2Mode = fs.statSync(path.join(src.location, 'cli2.js')).mode;
+        expect((cli1Mode & parseInt('777', 8)).toString(8)).toBe('755');
+        expect((cli2Mode & parseInt('777', 8)).toString(8)).toBe('755');
+        done();
+      };
+
+      PackageUtilities.createBinaryLink(src, dest, cb);
+    });
+
+    it("should preserve previous bin entries", async (done) => {
+      const testDir = await initFixture("PackageUtilities/links");
+      const firstSrcRef = path.join(testDir, "packages/package-2");
+      const secondSrcRef = path.join(testDir, "packages/package-3")
+      const destRef = path.join(testDir, "packages/package-4");
+      const dest = new Package(await readPkg(destRef), destRef);
+
+      const cb = () => {
+        const links = fs.readdirSync(dest.binLocation);
+        expect(links).toEqual(['links-2', 'links3cli1', 'links3cli2', 'links3cli3']);
+        done();
+      };
+
+      async.series([
+        (cb) => PackageUtilities.createBinaryLink(firstSrcRef, dest, cb),
+        (cb) => PackageUtilities.createBinaryLink(secondSrcRef, dest, cb),
+      ], cb);
     });
   });
 });

@@ -363,7 +363,19 @@ export default class PackageUtilities {
       }))
       .reduce((acc, {src, dst}) => {
         const link = cb => FileSystemUtilities.symlink(src, dst, "exec", cb);
-        const chmod = cb => FileSystemUtilities.chmod(src, "755", cb);
+        const chmod = cb => {
+          // link targets may be not be there (yet)
+          const stats = safeStatSync(src);
+          if (stats === null) {
+            return cb();
+          }
+
+          const mode = (stats.mode & parseInt('777', '0')).toString('8');
+          if (mode[0] === '7') {
+            return cb();
+          }
+          FileSystemUtilities.chmod(dst, "755", cb)
+        };
         const exec = (cb) => async.series([link, chmod], cb);
         acc.push(exec);
         return acc;
@@ -389,14 +401,22 @@ function getPackageBin(pkgRef) {
     : pkg.bin || {};
 }
 
+function getSafeName(rawName) {
+  return rawName[0] === "@"
+      ? rawName.substring(rawName.indexOf("/") + 1)
+      : rawName;
+}
+
 function resolvePackageRef(pkgRef) {
   return pkgRef instanceof Package
     ? pkgRef
     : new Package(readPkg.sync(pkgRef), pkgRef);
 }
 
-function getSafeName(rawName) {
-  return rawName[0] === "@"
-      ? rawName.substring(rawName.indexOf("/") + 1)
-      : rawName;
+function safeStatSync(file) {
+  try {
+    return FileSystemUtilities.statSync(file);
+  } catch (err) {
+    return null;
+  }
 }

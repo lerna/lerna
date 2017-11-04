@@ -1,0 +1,8 @@
+{
+  "name": "@package-utilities/links-2",
+  "version": "1.0.0",
+  "bin": "cli.js",
+  "dependencies": {
+    "@package-utilities/links-1": "^1.0.0"
+  }
+}
