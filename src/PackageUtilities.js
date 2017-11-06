@@ -364,7 +364,7 @@ export default class PackageUtilities {
       .reduce((acc, {src, dst}) => {
         const link = (cb) => FileSystemUtilities.symlink(src, dst, "exec", cb);
         const chmod = (cb) => FileSystemUtilities.chmod(src, "755", cb);
-        const actions = FileSystemUtilities.existsSync(src) ? [link, chmod] : [link];
+        const actions = FileSystemUtilities.existsSync(src) ? [link, chmod] : [];
 
         acc.push((cb) => async.series(actions, cb));
         return acc;

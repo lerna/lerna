@@ -462,7 +462,7 @@ describe("PackageUtilities", () => {
 
       const cb = () => {
         const links = fs.readdirSync(dest.binLocation);
-        expect(links).toEqual(['links3cli1', 'links3cli2', 'links3cli3']);
+        expect(links).toEqual(['links3cli1', 'links3cli2']);
         done();
       };
 
@@ -496,7 +496,7 @@ describe("PackageUtilities", () => {
 
       const cb = () => {
         const links = fs.readdirSync(dest.binLocation);
-        expect(links).toEqual(['links-2', 'links3cli1', 'links3cli2', 'links3cli3']);
+        expect(links).toEqual(['links-2', 'links3cli1', 'links3cli2']);
         done();
       };
 
