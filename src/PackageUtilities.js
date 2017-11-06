@@ -370,8 +370,8 @@ export default class PackageUtilities {
             return cb();
           }
 
-          const mode = (stats.mode & parseInt('777', '0')).toString('8');
-          if (mode[0] === '7') {
+          const mode = (stats.mode & parseInt("777", "0")).toString("8");
+          if (mode[0] === "7") {
             return cb();
           }
           FileSystemUtilities.chmod(src, "755", cb)
