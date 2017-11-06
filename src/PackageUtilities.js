@@ -362,23 +362,11 @@ export default class PackageUtilities {
         dst: path.join(destPackage.binLocation, name)
       }))
       .reduce((acc, {src, dst}) => {
-        const link = cb => FileSystemUtilities.symlink(src, dst, "exec", cb);
-        const chmod = cb => {
-          // link targets may be not be there (yet)
-          const stats = safeStatSync(src);
-          if (stats === null) {
-            return cb();
-          }
+        const link = (cb) => FileSystemUtilities.symlink(src, dst, "exec", cb);
+        const chmod = (cb) => FileSystemUtilities.chmod(src, "755", cb);
+        const actions = FileSystemUtilities.existsSync(src) ? [link, chmod] : [link];
 
-          const mode = (stats.mode & parseInt("777", "0")).toString("8");
-          if (mode[0] === "7") {
-            return cb();
-          }
-          console.log(src);
-          FileSystemUtilities.chmod(src, "755", cb)
-        };
-        const exec = (cb) => async.series([link, chmod], cb);
-        acc.push(exec);
+        acc.push((cb) => async.series(actions, cb));
         return acc;
       }, []);
 
@@ -412,12 +400,4 @@ function resolvePackageRef(pkgRef) {
   return pkgRef instanceof Package
     ? pkgRef
     : new Package(readPkg.sync(pkgRef), pkgRef);
-}
-
-function safeStatSync(file) {
-  try {
-    return FileSystemUtilities.statSync(file);
-  } catch (err) {
-    return null;
-  }
 }
