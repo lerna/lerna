@@ -374,7 +374,7 @@ export default class PackageUtilities {
           if (mode[0] === '7') {
             return cb();
           }
-          FileSystemUtilities.chmod(dst, "755", cb)
+          FileSystemUtilities.chmod(src, "755", cb)
         };
         const exec = (cb) => async.series([link, chmod], cb);
         acc.push(exec);
