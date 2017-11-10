@@ -164,5 +164,16 @@ describe("ExecCommand", () => {
         "packages/package-2 ls",
       ]);
     });
+
+    it("executes a command in all packages with --stream", async () => {
+      ChildProcessUtilities.spawnStreaming = jest.fn(callsBack());
+
+      await lernaExec("--stream", "ls");
+
+      expect(execInPackagesStreaming(testDir)).toEqual([
+        "packages/package-1 ls",
+        "packages/package-2 ls",
+      ]);
+    });
   });
 });

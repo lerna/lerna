@@ -109,6 +109,44 @@ describe("lerna exec", () => {
     expect(stdout).toMatch("package-2: package.json");
   });
 
+  test.concurrent("<cmd> --stream", async () => {
+    const cwd = await initFixture("ExecCommand/basic");
+    const args = [
+      "exec",
+      EXEC_TEST_COMMAND,
+      "--stream",
+      "-C",
+    ];
+
+    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd, env });
+    expect(stderr).toMatchSnapshot("stderr: test --stream");
+
+    // order is non-deterministic, so assert individually
+    expect(stdout).toMatch("package-1: file-1.js");
+    expect(stdout).toMatch("package-1: package.json");
+    expect(stdout).toMatch("package-2: file-2.js");
+    expect(stdout).toMatch("package-2: package.json");
+  });
+
+  test.concurrent("--stream <cmd>", async () => {
+    const cwd = await initFixture("ExecCommand/basic");
+    const args = [
+      "exec",
+      "--stream",
+      EXEC_TEST_COMMAND,
+      "-C",
+    ];
+
+    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd, env });
+    expect(stderr).toMatchSnapshot("stderr: test --stream");
+
+    // order is non-deterministic, so assert individually
+    expect(stdout).toMatch("package-1: file-1.js");
+    expect(stdout).toMatch("package-1: package.json");
+    expect(stdout).toMatch("package-2: file-2.js");
+    expect(stdout).toMatch("package-2: package.json");
+  });
+
   test.concurrent("--bail=false <cmd>", async () => {
     const cwd = await initFixture("ExecCommand/basic");
     const args = [
