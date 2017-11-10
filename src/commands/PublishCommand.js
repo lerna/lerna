@@ -272,7 +272,9 @@ export default class PublishCommand extends Command {
       if (this.options.canary) {
         this.logger.info("canary", "Resetting git state");
         // reset since the package.json files are changed
-        GitUtilities.checkoutChanges("packages/*/package.json", this.execOpts);
+        this.repository.packageParentDirs.forEach(packageDir => {
+          GitUtilities.checkoutChanges(`${packageDir}/*/package.json`, this.execOpts);
+        })
       }
 
       this.npmUpdateAsLatest((err) => {
