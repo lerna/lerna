@@ -23,7 +23,7 @@ export default class ConventionalCommitUtilities {
       RECOMMEND_CLI,
       "-l", pkg.name,
       "--commit-path", pkg.location,
-      "-p", "angular",
+      "-p", ConventionalCommitUtilities.changelogPreset(opts),
     ];
     return ConventionalCommitUtilities.recommendVersion(pkg, opts, "recommendIndependentVersion", args);
   }
@@ -32,7 +32,7 @@ export default class ConventionalCommitUtilities {
     const args = [
       RECOMMEND_CLI,
       "--commit-path", pkg.location,
-      "-p", "angular",
+      "-p", ConventionalCommitUtilities.changelogPreset(opts),
     ];
     return ConventionalCommitUtilities.recommendVersion(pkg, opts, "recommendFixedVersion", args);
   }
@@ -53,7 +53,7 @@ export default class ConventionalCommitUtilities {
       "-l", pkg.name,
       "--commit-path", pkg.location,
       "--pkg", pkgJsonLocation,
-      "-p", "angular",
+      "-p", ConventionalCommitUtilities.changelogPreset(opts),
     ];
     ConventionalCommitUtilities.updateChangelog(pkg, opts, "updateIndependentChangelog", args);
   }
@@ -64,7 +64,7 @@ export default class ConventionalCommitUtilities {
       CHANGELOG_CLI,
       "--commit-path", pkg.location,
       "--pkg", pkgJsonLocation,
-      "-p", "angular",
+      "-p", ConventionalCommitUtilities.changelogPreset(opts),
     ];
     ConventionalCommitUtilities.updateChangelog(pkg, opts, "updateFixedChangelog", args);
   }
@@ -72,7 +72,7 @@ export default class ConventionalCommitUtilities {
   static updateFixedRootChangelog(pkg, opts) {
     const args = [
       CHANGELOG_CLI,
-      "-p", "angular",
+      "-p", ConventionalCommitUtilities.changelogPreset(opts),
       "--context", path.resolve(__dirname, "..", "lib", "ConventionalChangelogContext.js"),
     ];
     ConventionalCommitUtilities.updateChangelog(pkg, opts, "updateFixedRootChangelog", args);
@@ -80,7 +80,6 @@ export default class ConventionalCommitUtilities {
 
   static updateChangelog(pkg, opts, type, args) {
     log.silly(type, "for %s at %s", pkg.name, pkg.location);
-
 
     const changelogLocation = ConventionalCommitUtilities.changelogLocation(pkg);
 
@@ -95,7 +94,7 @@ export default class ConventionalCommitUtilities {
     // When force publishing, it is possible that there will be no actual changes, only a version bump.
     // Add a note to indicate that only a version bump has occurred.
     if (!newEntry.split("\n").some((line) => line.startsWith("*"))) {
-      newEntry =  dedent(
+      newEntry = dedent(
         `
         ${newEntry}
         
@@ -128,5 +127,9 @@ export default class ConventionalCommitUtilities {
 
   static changelogLocation(pkg) {
     return path.join(pkg.location, CHANGELOG_NAME);
+  }
+
+  static changelogPreset(opts) {
+    return opts && opts.changelogPreset ? opts.changelogPreset : "angular";
   }
 }

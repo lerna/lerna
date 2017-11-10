@@ -69,6 +69,12 @@ export const builder = {
     type: "boolean",
     default: undefined,
   },
+  "changelog-preset": {
+    group: "Command Options:",
+    describe: "Use another conventional-changelog preset rather than angular.",
+    type: "string",
+    default: undefined,
+  },
   "exact": {
     group: "Command Options:",
     describe: "Specify cross-dependency version numbers exactly rather than with a caret (^).",
@@ -152,6 +158,18 @@ export default class PublishCommand extends Command {
     });
   }
 
+  get changelogOpts() {
+    if (!this._changelogOpts) {
+      const { changelogPreset, } = this.options;
+
+      this._changelogOpts = Object.assign({}, this.execOpts, {
+        changelogPreset,
+      });
+    }
+
+    return this._changelogOpts;
+  }
+
   initialize(callback) {
     this.gitRemote = this.options.gitRemote || "origin";
     this.gitEnabled = !(this.options.canary || this.options.skipGit);
@@ -201,14 +219,14 @@ export default class PublishCommand extends Command {
 
     this.packagesToPublishCount = this.packagesToPublish.length;
     try {
-    this.batchedPackagesToPublish = this.toposort
-      ? PackageUtilities.topologicallyBatchPackages(this.packagesToPublish, {
-        // Don't sort based on devDependencies because that would increase the chance of dependency cycles
-        // causing less-than-ideal a publishing order.
-        depsOnly: true,
-        rejectCycles: this.options.rejectCycles
-      })
-      : [this.packagesToPublish];
+      this.batchedPackagesToPublish = this.toposort
+        ? PackageUtilities.topologicallyBatchPackages(this.packagesToPublish, {
+          // Don't sort based on devDependencies because that would increase the chance of dependency cycles
+          // causing less-than-ideal a publishing order.
+          depsOnly: true,
+          rejectCycles: this.options.rejectCycles
+        })
+        : [this.packagesToPublish];
     } catch (e) {
       return callback(e);
     }
@@ -419,7 +437,8 @@ export default class PublishCommand extends Command {
         version: update.package.version,
         location: update.package.location
       };
-      const recommendedVersion = recommendVersionFn(pkg, this.execOpts);
+
+      const recommendedVersion = recommendVersionFn(pkg, this.changelogOpts);
       callback({ pkg, recommendedVersion });
     });
   }
@@ -544,7 +563,7 @@ export default class PublishCommand extends Command {
   }
 
   updateUpdatedPackages() {
-    const { exact } = this.options;
+    const { exact, conventionalCommits } = this.options;
     const changedFiles = [];
 
     this.updates.forEach((update) => {
@@ -574,18 +593,17 @@ export default class PublishCommand extends Command {
 
       // we can now generate the Changelog, based on the
       // the updated version that we're about to release.
-      if (this.options.conventionalCommits) {
+      if (conventionalCommits) {
         if (this.repository.isIndependent()) {
           ConventionalCommitUtilities.updateIndependentChangelog({
             name: pkg.name,
             location: pkg.location
-          }, this.execOpts);
+          }, this.changelogOpts);
         } else {
-
           ConventionalCommitUtilities.updateFixedChangelog({
             name: pkg.name,
             location: pkg.location
-          }, this.execOpts);
+          }, this.changelogOpts);
         }
 
         changedFiles.push(ConventionalCommitUtilities.changelogLocation(pkg));
@@ -595,14 +613,14 @@ export default class PublishCommand extends Command {
       changedFiles.push(packageJsonLocation);
     });
 
-    if (this.options.conventionalCommits) {
+    if (conventionalCommits) {
       if (!this.repository.isIndependent()) {
         const packageJson = this.repository.packageJson;
 
         ConventionalCommitUtilities.updateFixedRootChangelog({
           name: packageJson && packageJson.name ? packageJson.name : 'root',
           location: this.repository.rootPath
-        }, this.execOpts);
+        }, this.changelogOpts);
 
         changedFiles.push(ConventionalCommitUtilities.changelogLocation({
           location: this.repository.rootPath
