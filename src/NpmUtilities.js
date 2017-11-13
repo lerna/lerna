@@ -157,11 +157,10 @@ export default class NpmUtilities {
       cwd: directory,
     };
 
-    if (registry) {
-      opts.env = Object.assign({}, process.env, {
-        npm_config_registry: registry,
-      });
-    }
+    // pass environment variables to sub commands
+    opts.env = Object.assign({}, process.env, registry ? {
+      npm_config_registry: registry,
+    } : {});
 
     log.silly("getExecOpts", opts);
     return opts;

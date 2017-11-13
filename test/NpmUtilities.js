@@ -134,6 +134,7 @@ describe("NpmUtilities", () => {
       const scriptArgs = ["run", "foo", "--bar", "baz"];
       const opts = {
         cwd: directory,
+        env: process.env,
       };
       expect(ChildProcessUtilities.exec).lastCalledWith(cmd, scriptArgs, opts, expect.any(Function));
     });
@@ -153,6 +154,7 @@ describe("NpmUtilities", () => {
       const scriptArgs = ["run", "foo", "--bar", "baz"];
       const opts = {
         cwd: directory,
+        env: process.env,
       };
       expect(ChildProcessUtilities.execSync).lastCalledWith(cmd, scriptArgs, opts, expect.any(Function));
     });
@@ -175,6 +177,7 @@ describe("NpmUtilities", () => {
         ["run", "foo", "--bar", "baz"],
         {
           cwd: pkg.location,
+          env: process.env,
         },
         "qux",
         expect.any(Function)
@@ -243,6 +246,7 @@ describe("NpmUtilities", () => {
       const opts = NpmUtilities.getExecOpts("test_dir");
       const want = {
         cwd: "test_dir",
+        env: mockEnv
       };
       expect(opts).toEqual(want);
     });
