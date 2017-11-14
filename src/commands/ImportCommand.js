@@ -171,7 +171,7 @@ export default class ImportCommand extends Command {
       //
       // Fall back to three-way merge, which can help with duplicate commits
       // due to merge history.
-      ChildProcessUtilities.exec("git", ["am", "-3"], this.execOpts, (err) => {
+      ChildProcessUtilities.exec("git", ["am", "-3", "--keep-non-patch"], this.execOpts, (err) => {
         if (err) {
           const isEmptyCommit = err.stdout.indexOf("Patch is empty.") === 0;
           if (isEmptyCommit) {
