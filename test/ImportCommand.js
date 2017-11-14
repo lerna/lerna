@@ -230,5 +230,19 @@ describe("ImportCommand", () => {
         expect(err.message).toBe("Local repository has un-committed changes");
       }
     });
+
+    it("does not remove custom subject prefixes in [brackets]", async () => {
+      const newFilePath = path.join(testDir, "packages", path.basename(externalDir), "new-file");
+
+      await execa("git", ["mv", "old-file", "new-file"], { cwd: externalDir });
+      await execa("git", ["commit", "--no-gpg-sign", "-m", "[ISSUE-10] Moved old-file to new-file"],
+        { cwd: externalDir });
+
+      await lernaImport(externalDir);
+
+      expect(await lastCommitInDir(testDir)).toBe("[ISSUE-10] Moved old-file to new-file");
+      expect(await pathExists(newFilePath)).toBe(true);
+    });
+
   });
 });
