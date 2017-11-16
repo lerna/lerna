@@ -260,7 +260,10 @@ describe("PublishCommand", () => {
         expect(GitUtilities.addFile).not.toBeCalled();
         expect(GitUtilities.commit).not.toBeCalled();
         expect(GitUtilities.addTag).not.toBeCalled();
-        expect(GitUtilities.checkoutChanges).lastCalledWith("packages/*/package.json", execOpts(testDir));
+        expect(GitUtilities.checkoutChanges).lastCalledWith(
+          expect.stringContaining("packages/*/package.json"),
+          execOpts(testDir)
+        );
 
         expect(GitUtilities.pushWithTags).not.toBeCalled();
         expect(publishedTagInDirectories(testDir))
