@@ -90,23 +90,21 @@ const matchDependency = dependencyType => {
   }
 };
 
+const X_OK = (fs.constants || fs).X_OK;
+
 const matchExecutableFile = () => {
   return (pkgRef, raw) => {
     const files = Array.isArray(raw) ? raw : [raw];
     const expectation = `expected ${files.join(', ')} to be executable`;
 
-    if (os.platform() === "win32") {
-      return {
-        message: `${expectation}, skipped check on win32`,
-        pass: true
-      };
-    }
-
     const pkg = toPackage(pkgRef);
 
     const failed = files.filter(file => {
-      const stats = fs.statSync(path.join(pkg.location, file));
-      return (stats.mode & parseInt("777", 8)).toString('8')[0] !== "7";
+      try {
+        return fs.accessSync(path.join(pkg.location, file), X_OK);
+      } catch (_) {
+        return false;
+      }
     });
 
     const pass = failed.length === 0;
