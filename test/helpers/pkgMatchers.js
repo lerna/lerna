@@ -90,7 +90,7 @@ const matchDependency = dependencyType => {
   }
 };
 
-const mactchExecutableFile = () => {
+const matchExecutableFile = () => {
   return (pkgRef, raw) => {
     const files = Array.isArray(raw) ? raw : [raw];
     const expectation = `expected ${files.join(', ')} to be executable`;
@@ -126,6 +126,6 @@ const mactchExecutableFile = () => {
 export default {
   toDependOn: matchDependency('dependencies'),
   toDevDependOn: matchDependency('devDependencies'),
-  toHaveExecutable: mactchExecutableFile(),
+  toHaveExecutable: matchExecutableFile(),
   toHaveBinaryLink: matchBinaryLinks()
 }
