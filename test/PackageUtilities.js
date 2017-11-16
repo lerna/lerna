@@ -397,7 +397,7 @@ describe("PackageUtilities", () => {
     });
   });
 
-  describe.only(".createBinaryLink()", () => {
+  describe(".createBinaryLink()", () => {
     it("should work with references", async (done) => {
       const testDir = await initFixture("PackageUtilities/links");
       const srcRef = path.join(testDir, "packages/package-2");
