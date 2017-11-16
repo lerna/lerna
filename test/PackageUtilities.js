@@ -484,7 +484,7 @@ describe("PackageUtilities", () => {
       const secondSrcRef = path.join(testDir, "packages/package-3")
       const dest = path.join(testDir, "packages/package-4");
 
-      const cb = () => {
+      const finish = () => {
         expect(dest).toHaveBinaryLink(['links-2', 'links3cli1', 'links3cli2']);
         done();
       };
@@ -492,7 +492,7 @@ describe("PackageUtilities", () => {
       async.series([
         (cb) => PackageUtilities.createBinaryLink(firstSrcRef, dest, cb),
         (cb) => PackageUtilities.createBinaryLink(secondSrcRef, dest, cb),
-      ], cb);
+      ], finish);
     });
   });
 });
