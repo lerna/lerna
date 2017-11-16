@@ -12,7 +12,7 @@ const toPackage = (ref) => {
     : new Package(readPkg.sync(ref, {normalize: false}), ref);
 }
 
-const matchBinaryLinks = (options = {check: false}) => {
+const matchBinaryLinks = () => {
   return (pkgRef, raw) => {
     const pkg = toPackage(pkgRef);
 
@@ -37,10 +37,6 @@ const matchBinaryLinks = (options = {check: false}) => {
         ].filter(Boolean).join(' '),
         pass: false
       };
-    }
-
-    if (options.check) {
-
     }
 
     return {
