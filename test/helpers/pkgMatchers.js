@@ -9,7 +9,7 @@ import Package from "../../src/Package";
 const toPackage = (ref) => {
   return ref instanceof Package
     ? ref
-    : new Package(readPkg.sync(ref), ref);
+    : new Package(readPkg.sync(ref, {normalize: false}), ref);
 }
 
 const matchBinaryLinks = (options = {check: false}) => {
