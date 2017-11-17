@@ -437,8 +437,7 @@ export default class BootstrapCommand extends Command {
               if (bin) {
                 async.series(dependents.map((pkg) => (cb) => {
                   const src  = this.hoistedDirectory(name);
-                  const dest = pkg.nodeModulesLocation;
-                  PackageUtilities.createBinaryLink(src, dest, name, bin, cb);
+                  PackageUtilities.createBinaryLink(src, pkg, cb);
                 }), cb);
               } else {
                 cb();

@@ -22,6 +22,16 @@ function trailingSlash(filePath) {
 }
 
 export default class FileSystemUtilities {
+  static chmod(filePath, mode, cb) {
+    log.silly("chmod", filePath, mode);
+    fs.chmod(filePath, mode, cb);
+  }
+
+  static chmodSync(filePath, mode) {
+    log.silly("chmodSync", filePath, mode);
+    fs.chmodSync(filePath, mode);
+  }
+
   static mkdirp(filePath, callback) {
     log.silly("mkdirp", filePath);
     fs.ensureDir(filePath, callback);
