@@ -298,6 +298,14 @@ More specifically, this command will:
 
 > Lerna won't publish packages which are marked as private (`"private": true` in the `package.json`).
 
+**Note:** to publish scoped packages, you need to add the following to each packages `package.json`:
+
+```js
+"publishConfig": {
+  "access": "public"
+}
+```
+
 #### --exact
 
 ```sh
