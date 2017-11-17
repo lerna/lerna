@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 "use strict";
-const resolveCwd = require("resolve-cwd");
-const CLI = resolveCwd.silent("lerna/lib/cli") || "../lib/cli";
+const importLocal = require("import-local");
 
-require(CLI)().parse(process.argv.slice(2));
+if (importLocal(__filename)) {
+  require("npmlog").verbose("cli", "using local version of lerna");
+} else {
+  require("../lib/cli")().parse(process.argv.slice(2));
+}
+

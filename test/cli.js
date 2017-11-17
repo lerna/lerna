@@ -8,24 +8,32 @@ const bin = (args, options) => execa(BIN, args, options);
 
 describe("cli", () => {
   it("should throw without command", async () => {
+    expect.assertions(1);
+
     try {
       await bin([]);
-      fail(`Expected an exception, but it didn"t throw anything`); // eslint-disable-line
     } catch (err) {
+      expect(err.message).toContain('Pass --help to see all available commands and options.');
     }
   });
 
   it("should not throw for --help", async () => {
+    expect.assertions(1);
+    let error = null;
+
     try {
       await bin(["--help"]);
     } catch (err) {
-      fail(`Unexpected exception: ${err.message}`); // eslint-disable-line
+      error = err;
     }
+
+    expect(error).toBe(null);
   });
 
   it("should prefer local installs", async () => {
     const cwd = await initFixture("cli/local-install");
-    const result = await bin(["--help"], {cwd});
-    expect(result.stdout).toBe("fixtures/cli/local-install/node_modules/lib/cli.js");
+    const result = await bin(["--verbose"], {cwd});
+    expect(result.stdout).toContain("fixtures/cli/local-instal/node_modules/lerna/bin/lerna.js");
+    expect(result.stdout).toContain("fixtures/cli/local-instal/node_modules/lerna/lib/cli.js");
   });
 });
