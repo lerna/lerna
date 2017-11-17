@@ -103,7 +103,7 @@ const matchExecutableFile = () => {
       try {
         return fs.accessSync(path.join(pkg.location, file), X_OK);
       } catch (_) {
-        return false;
+        return true;
       }
     });
 
