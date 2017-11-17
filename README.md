@@ -609,7 +609,7 @@ $ lerna exec -- protractor conf.js
 Run an arbitrary command in each package.
 A double-dash (`--`) is necessary to pass dashed flags to the spawned command, but is not necessary when all the arguments are positional.
 
-`lerna exec` respects the `--concurrency`, `--scope`, `--ignore`, and `--parallel` flags (see [Flags](#flags)).
+`lerna exec` respects the `--concurrency`, `--scope`, `--ignore`, `--stream` and `--parallel` flags (see [Flags](#flags)).
 
 ```sh
 $ lerna exec --scope my-component -- ls -la
