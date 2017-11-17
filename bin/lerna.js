@@ -1,4 +1,6 @@
 #!/usr/bin/env node
 "use strict";
+const resolveCwd = require("resolve-cwd");
+const CLI = resolveCwd.silent("lerna/lib/cli") || "../lib/cli";
 
-require("../lib/cli")().parse(process.argv.slice(2));
+require(CLI)().parse(process.argv.slice(2));
