@@ -1,3 +1,4 @@
+/* global jasmine */
 import execa from "execa";
 import path from "path";
 
@@ -5,6 +6,8 @@ import initFixture from "./helpers/initFixture";
 
 const BIN = path.join(__dirname, "../bin/lerna.js");
 const bin = (args, options) => execa(BIN, args, options);
+
+jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
 
 describe("cli", () => {
   it("should throw without command", async () => {
