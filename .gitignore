@@ -22,8 +22,9 @@ composer.lock
 
 # Project Specific
 /node_modules
+packages/*/node_modules
+packages/*/lib
 *.log
-/lib
 tmp
 .changelog
 coverage/
