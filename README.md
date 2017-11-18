@@ -340,6 +340,16 @@ $ lerna publish --conventional-commits
 
 When run with this flag, `publish` will use the [Conventional Commits Specification](https://conventionalcommits.org/) to [determine the version bump](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-recommended-bump) and [generate CHANGELOG](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-changelog-cli)
 
+#### --changelog-preset
+
+```sh
+$ lerna publish --conventional-commits --changelog-preset=angular-bitbucket
+```
+
+By default, the changelog preset is set to `angular`. In some cases you might want to change either use a another preset or a custom one.
+
+Presets are names of built-in or installable configuration for conventional changelog.
+
 #### --git-remote [remote]
 
 ```sh
@@ -599,7 +609,7 @@ $ lerna exec -- protractor conf.js
 Run an arbitrary command in each package.
 A double-dash (`--`) is necessary to pass dashed flags to the spawned command, but is not necessary when all the arguments are positional.
 
-`lerna exec` respects the `--concurrency`, `--scope`, `--ignore`, and `--parallel` flags (see [Flags](#flags)).
+`lerna exec` respects the `--concurrency`, `--scope`, `--ignore`, `--stream` and `--parallel` flags (see [Flags](#flags)).
 
 ```sh
 $ lerna exec --scope my-component -- ls -la

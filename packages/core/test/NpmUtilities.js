@@ -199,7 +199,7 @@ describe("NpmUtilities", () => {
     });
 
     it("trims trailing whitespace in tag parameter", () => {
-      NpmUtilities.publishTaggedInDir("trailing-tag  ", directory, callback);
+      NpmUtilities.publishTaggedInDir("trailing-tag ", directory, callback);
 
       const actualtag = ChildProcessUtilities.exec.mock.calls[0][1][2];
       expect(actualtag).toBe("trailing-tag");

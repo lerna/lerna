@@ -25,6 +25,10 @@ export default class Package {
     return path.join(this._location, "node_modules");
   }
 
+  get binLocation() {
+    return path.join(this.nodeModulesLocation, ".bin");
+  }
+
   get version() {
     return this._package.version;
   }

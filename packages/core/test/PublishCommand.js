@@ -39,7 +39,7 @@ chalk.enabled = false;
 
 const execOpts = (testDir) =>
   expect.objectContaining({
-    cwd: testDir,
+    cwd: testDir
   });
 
 const consoleOutput = () =>
@@ -260,7 +260,10 @@ describe("PublishCommand", () => {
         expect(GitUtilities.addFile).not.toBeCalled();
         expect(GitUtilities.commit).not.toBeCalled();
         expect(GitUtilities.addTag).not.toBeCalled();
-        expect(GitUtilities.checkoutChanges).lastCalledWith("packages/*/package.json", execOpts(testDir));
+        expect(GitUtilities.checkoutChanges).lastCalledWith(
+          expect.stringContaining("packages/*/package.json"),
+          execOpts(testDir)
+        );
 
         expect(GitUtilities.pushWithTags).not.toBeCalled();
         expect(publishedTagInDirectories(testDir))
@@ -641,9 +644,9 @@ describe("PublishCommand", () => {
     });
   });
 
-    /** =========================================================================
-   * CD VERSION - REPUBLISH PRERELEASED
-   * ======================================================================= */
+  /** =========================================================================
+ * CD VERSION - REPUBLISH PRERELEASED
+ * ======================================================================= */
 
   describe("CD VERSION - REPUBLISH PRERELEASED ", () => {
     let testDir;
@@ -878,7 +881,7 @@ describe("PublishCommand", () => {
 
       it("should use conventional-commits utility to guess version bump and generate CHANGELOG", () => {
         return run(testDir)(
-          "--conventional-commits"
+          "--conventional-commits",
         ).then(() => {
           expect(gitAddedFiles(testDir))
             .toMatchSnapshot("[independent --conventional-commits] git adds changed files");
@@ -905,6 +908,33 @@ describe("PublishCommand", () => {
           });
         });
       });
+
+      it("accepts --changelog-preset option", () => {
+        return run(testDir)(
+          "--conventional-commits",
+          "--changelog-preset",
+          "foo-bar"
+        ).then(() => {
+          const name = "package-3";
+          const version = "3.0.0";
+          const location = path.join(testDir, "packages", name);
+
+          expect(ConventionalCommitUtilities.recommendIndependentVersion).toBeCalledWith(
+            expect.objectContaining({ name, version }),
+            expect.objectContaining({
+              cwd: testDir,
+              changelogPreset: "foo-bar",
+            })
+          );
+          expect(ConventionalCommitUtilities.updateIndependentChangelog).toBeCalledWith(
+            expect.objectContaining({ name, location }),
+            expect.objectContaining({
+              cwd: testDir,
+              changelogPreset: "foo-bar",
+            })
+          );
+        });
+      });
     });
 
     describe("fixed mode", () => {
@@ -924,7 +954,7 @@ describe("PublishCommand", () => {
 
       it("should use conventional-commits utility to guess version bump and generate CHANGELOG", () => {
         return run(testDir)(
-          "--conventional-commits"
+          "--conventional-commits",
         ).then(() => {
           expect(gitAddedFiles(testDir))
             .toMatchSnapshot("[fixed --conventional-commits] git adds changed files");
@@ -957,6 +987,33 @@ describe("PublishCommand", () => {
               location: path.join(testDir)
             }),
             execOpts(testDir)
+          );
+        });
+      });
+
+      it("accepts --changelog-preset option", () => {
+        return run(testDir)(
+          "--conventional-commits",
+          "--changelog-preset",
+          "baz-qux"
+        ).then(() => {
+          const name = "package-5";
+          const version = "1.0.0";
+          const location = path.join(testDir, "packages", name);
+
+          expect(ConventionalCommitUtilities.recommendFixedVersion).toBeCalledWith(
+            expect.objectContaining({ name, version, location }),
+            expect.objectContaining({
+              cwd: testDir,
+              changelogPreset: "baz-qux",
+            })
+          );
+          expect(ConventionalCommitUtilities.updateFixedChangelog).toBeCalledWith(
+            expect.objectContaining({ name, location }),
+            expect.objectContaining({
+              cwd: testDir,
+              changelogPreset: "baz-qux",
+            })
           );
         });
       });

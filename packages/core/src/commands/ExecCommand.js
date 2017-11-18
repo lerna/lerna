@@ -20,6 +20,12 @@ export const builder = {
     type: "boolean",
     default: undefined,
   },
+  "stream": {
+    group: "Command Options:",
+    describe: "Stream output with lines prefixed by package.",
+    type: "boolean",
+    default: undefined,
+  },
   "parallel": {
     group: "Command Options:",
     describe: "Run command in all packages with unlimited concurrency, streaming prefixed output",
@@ -50,11 +56,11 @@ export default class ExecCommand extends Command {
     const { filteredPackages } = this;
 
     try {
-    this.batchedPackages = this.toposort
-      ? PackageUtilities.topologicallyBatchPackages(filteredPackages, {
-        rejectCycles: this.options.rejectCycles
-      })
-      : [filteredPackages];
+      this.batchedPackages = this.toposort
+        ? PackageUtilities.topologicallyBatchPackages(filteredPackages, {
+          rejectCycles: this.options.rejectCycles
+        })
+        : [filteredPackages];
     } catch (e) {
       return callback(e);
     }
@@ -100,11 +106,17 @@ export default class ExecCommand extends Command {
   }
 
   runCommandInPackage(pkg, callback) {
-    ChildProcessUtilities.spawn(this.command, this.args, this.getOpts(pkg), (err) => {
+    const done = (err) => {
       if (err && err.code) {
         this.logger.error("exec", `Errored while executing '${err.cmd}' in '${pkg.name}'`);
       }
       callback(err);
-    });
+    }
+
+    if (this.options.stream) {
+      ChildProcessUtilities.spawnStreaming(this.command, this.args, this.getOpts(pkg), pkg.name, done);
+    } else {
+      ChildProcessUtilities.spawn(this.command, this.args, this.getOpts(pkg), done);
+    }
   }
 }
