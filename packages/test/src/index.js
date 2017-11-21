@@ -1,3 +1,3 @@
-import initFixture from "./init-fixture";
+import initFixture from "./initFixture";
 
 export {initFixture};

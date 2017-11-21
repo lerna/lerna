@@ -1,6 +1,6 @@
 import tempy from "tempy";
-import copyFixture from "./copy-fixture";
-import gitInit from "./git-init";
+import copyFixture from "./copyFixture";
+import gitInit from "./gitInit";
 
 module.exports = initFixture;
 
