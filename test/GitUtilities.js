@@ -65,6 +65,23 @@ describe("GitUtilities", () => {
         "git", ["add", "foo"], opts
       );
     });
+    it("works with absolute path for cwd", () => {
+      const cwd = path.resolve("test");
+      const opts = { cwd };
+      GitUtilities.addFile("foo", opts);
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["add", "foo"], opts
+      );
+    });
+    it("works with absolute paths for file and cwd", () => {
+      const cwd = path.resolve("test");
+      const file = path.resolve("test", "foo");
+      const opts = { cwd };
+      GitUtilities.addFile(file, opts);
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["add", "foo"], opts
+      );
+    });
   });
 
   describe(".commit()", () => {
