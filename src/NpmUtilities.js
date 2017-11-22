@@ -17,8 +17,10 @@ function execInstall(directory, {
   // build command, arguments, and options
   const opts = NpmUtilities.getExecOpts(directory, registry);
   const args = ["install"];
-  let cmd = npmClient || "npm";
-
+  let cmd = "npm";
+  if (npmClient) {
+      cmd = npmClient;
+  }
   if (npmGlobalStyle) {
     cmd = "npm";
     args.push("--global-style");
@@ -145,11 +147,12 @@ export default class NpmUtilities {
     );
   }
 
-  static publishTaggedInDir(tag, directory, registry, callback) {
+  static publishTaggedInDir(tag, directory, registry, config, callback) {
     log.silly("publishTaggedInDir", tag, path.basename(directory));
 
     const opts = NpmUtilities.getExecOpts(directory, registry);
-    ChildProcessUtilities.exec("npm", ["publish", "--tag", tag.trim()], opts, callback);
+    const cmd = config.npmClient || 'cmd';
+    ChildProcessUtilities.exec(cmd, ["publish", "--tag", tag.trim()], opts, callback);
   }
 
   static getExecOpts(directory, registry) {

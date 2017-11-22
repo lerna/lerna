@@ -67,7 +67,6 @@ export default class UpdatedPackagesCollector {
         since = GitUtilities.getLastTag(execOpts);
       }
     }
-
     this.logger.info("", `Comparing with ${since || "initial commit"}.`);
 
     const updatedPackages = {};
@@ -211,7 +210,6 @@ export default class UpdatedPackagesCollector {
         });
       });
     }
-
     return !!changedFiles.length;
   }
 }
