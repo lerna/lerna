@@ -64,6 +64,7 @@
     "safe-buffer": "^5.1.1",
     "semver": "^5.4.1",
     "signal-exit": "^3.0.2",
+    "slash": "^1.0.0",
     "strong-log-transformer": "^1.0.6",
     "temp-write": "^3.3.0",
     "write-file-atomic": "^2.3.0",
