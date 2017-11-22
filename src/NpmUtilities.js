@@ -126,7 +126,6 @@ export default class NpmUtilities {
 
   static runScriptInDir(script, args, directory, callback) {
     log.silly("runScriptInDir", script, args, path.basename(directory));
-
     const opts = NpmUtilities.getExecOpts(directory);
     ChildProcessUtilities.exec("npm", ["run", script, ...args], opts, callback);
   }
@@ -149,9 +148,14 @@ export default class NpmUtilities {
 
   static publishTaggedInDir(tag, directory, registry, config, callback) {
     log.silly("publishTaggedInDir", tag, path.basename(directory));
-
     const opts = NpmUtilities.getExecOpts(directory, registry);
-    const cmd = config.npmClient || 'cmd';
+    let cmd = 'npm';
+    if (typeof config === 'function') {
+        callback = config;
+    }
+    if (typeof config === 'object' && config.npmClient) {
+        cmd = config.npmClient;
+    }
     ChildProcessUtilities.exec(cmd, ["publish", "--tag", tag.trim()], opts, callback);
   }
 
