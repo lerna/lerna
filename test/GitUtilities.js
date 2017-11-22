@@ -67,15 +67,16 @@ describe("GitUtilities", () => {
     });
     it("works with absolute path for cwd", () => {
       const cwd = path.resolve("test");
+      const file = "foo";
       const opts = { cwd };
-      GitUtilities.addFile("foo", opts);
+      GitUtilities.addFile(file, opts);
       expect(ChildProcessUtilities.execSync).lastCalledWith(
         "git", ["add", "foo"], opts
       );
     });
     it("works with absolute paths for file and cwd", () => {
       const cwd = path.resolve("test");
-      const file = path.resolve("test", "foo");
+      const file = path.resolve(cwd, "foo");
       const opts = { cwd };
       GitUtilities.addFile(file, opts);
       expect(ChildProcessUtilities.execSync).lastCalledWith(
