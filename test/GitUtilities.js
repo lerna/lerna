@@ -83,6 +83,13 @@ describe("GitUtilities", () => {
         "git", ["add", "foo"], opts
       );
     });
+    it("uses a POSIX path in the Git command, given a Windows file path", () => {
+      const opts = { cwd: "test" };
+      GitUtilities.addFile("foo\\bar", opts);
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["add", "foo/bar"], opts
+      );
+    })
   });
 
   describe(".commit()", () => {
