@@ -150,12 +150,20 @@ describe("BootstrapCommand", () => {
     });
   });
 
-  describe("with --npm-client and --hoist", async () => {
-    const testDir = await initFixture("BootstrapCommand/yarn-hoist");
-    const lernaBootstrap = run(testDir);
+  describe("with --npm-client and --hoist", () => {
+    it("should throw", async () => {
+      expect.assertions(1);
 
-    it("should throw", () => {
-      expect(() => lernaBootstrap()).toThrow();
+      const testDir = await initFixture("BootstrapCommand/yarn-hoist");
+      const lernaBootstrap = run(testDir);
+
+      try {
+        await lernaBootstrap();
+      } catch (err) {
+        expect(err.message).toMatch(
+          "--hoist is not supported with --npm-client=yarn, use yarn workspaces instead"
+        );
+      }
     });
   });
 
@@ -395,6 +403,21 @@ describe("BootstrapCommand", () => {
         }),
         expect.any(Function)
       );
+    });
+
+    it("errors when package.json workspaces exists but --use-workspaces is not enabled", async () => {
+      expect.assertions(1);
+
+      const testDir = await initFixture("BootstrapCommand/yarn-workspaces");
+      const lernaBootstrap = run(testDir);
+
+      try {
+        await lernaBootstrap("--no-use-workspaces");
+      } catch (err) {
+        expect(err.message).toMatch(
+          "Yarn workspaces are configured in package.json, but not enabled in lerna.json!"
+        );
+      }
     });
   });
 });
