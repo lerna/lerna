@@ -41,7 +41,7 @@ describe("Repository", () => {
       findUp.sync = jest.fn(() => null);
 
       const repo = new Repository();
-      expect(repo.rootPath).toBe(path.resolve(__dirname, ".."));
+      expect(repo.rootPath).toBe(process.cwd());
     });
   });
 

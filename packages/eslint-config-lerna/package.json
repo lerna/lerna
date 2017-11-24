@@ -1,12 +1,8 @@
 {
-  "name": "@lerna/test",
+  "name": "eslint-config-lerna",
   "version": "2.5.1",
-  "description": "Tool for managing JavaScript projects with multiple packages",
-  "main": "lib/index.js",
-  "scripts": {
-    "build": "babel src -d lib",
-    "watch": "yarn run build --watch"
-  },
+  "description": "eslint config for lerna",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lerna/lerna.git"
@@ -21,10 +17,9 @@
     "node": ">= 4"
   },
   "dependencies": {
-    "file-url": "^2.0.2",
-    "fs-extra": "^4.0.2",
-    "pkg-dir": "^2.0.0",
-    "replacestream": "^4.0.3",
-    "tempy": "^0.2.1"
+    "eslint-config-babel": "^7.0.2",
+    "eslint-plugin-babel": "^4.1.2",
+    "eslint-plugin-flowtype": "^2.35.0",
+    "eslint-plugin-node": "^5.1.1"
   }
 }

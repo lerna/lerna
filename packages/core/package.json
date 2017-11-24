@@ -9,8 +9,7 @@
   ],
   "scripts": {
     "build": "babel src -d lib",
-    "dev": "babel -w src -d lib",
-    "test": "jest"
+    "watch": "yarn run build --watch"
   },
   "repository": {
     "type": "git",
@@ -64,33 +63,12 @@
   },
   "devDependencies": {
     "@lerna/test": "^2.5.1",
-    "babel-cli": "^6.26.0",
-    "babel-eslint": "^7.2.3",
-    "babel-plugin-add-module-exports": "^0.2.1",
-    "babel-preset-env": "^1.6.0",
     "file-url": "^2.0.2",
-    "jest": "^19.0.2",
     "normalize-newline": "^3.0.0",
     "normalize-path": "^2.1.1",
     "replacestream": "^4.0.2",
     "tempy": "^0.1.0",
     "touch": "^3.1.0"
-  },
-  "jest": {
-    "collectCoverageFrom": [
-      "src/**/*.js"
-    ],
-    "modulePathIgnorePatterns": [
-      "<rootDir>/test/fixtures"
-    ],
-    "roots": [
-      "<rootDir>/src",
-      "<rootDir>/test"
-    ],
-    "testEnvironment": "node",
-    "testMatch": [
-      "**/test/*.js"
-    ]
   },
   "engines": {
     "node": ">= 4"

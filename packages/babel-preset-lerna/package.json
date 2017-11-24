@@ -1,12 +1,8 @@
 {
-  "name": "@lerna/test",
+  "name": "babel-preset-lerna",
   "version": "2.5.1",
-  "description": "Tool for managing JavaScript projects with multiple packages",
-  "main": "lib/index.js",
-  "scripts": {
-    "build": "babel src -d lib",
-    "watch": "yarn run build --watch"
-  },
+  "description": "babel preset for lerna",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lerna/lerna.git"
@@ -21,10 +17,7 @@
     "node": ">= 4"
   },
   "dependencies": {
-    "file-url": "^2.0.2",
-    "fs-extra": "^4.0.2",
-    "pkg-dir": "^2.0.0",
-    "replacestream": "^4.0.3",
-    "tempy": "^0.2.1"
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-preset-env": "^1.6.0"
   }
 }

@@ -4,14 +4,43 @@
   "description": "Tool for managing JavaScript projects with multiple packages",
   "private": true,
   "scripts": {
+    "build": "lerna run build --parallel",
     "ci": "lerna run test --stream -- --coverage --verbose",
-    "setup": "lerna bootstrap && lerna run build"
+    "lint": "eslint . --ignore-path .gitignore",
+    "setup": "lerna bootstrap && lerna run build",
+    "test": "jest",
+    "watch": "lerna run watch --parallel"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lerna/lerna.git"
   },
+  "babel": {
+    "presets": ["lerna"]
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": ["lerna"]
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "<rootDir>/packages/**/*.js"
+    ],
+    "modulePathIgnorePatterns": [
+      "<rootDir>/fixtures"
+    ],
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/test/*.js"
+    ]
+  },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^7.2.3",
+    "babel-preset-lerna": "file:./packages/babel-preset-lerna",
+    "eslint": "^4.5.0",
+    "eslint-config-lerna": "file:./packages/eslint-config-lerna",
+    "jest": "^19.0.2",
     "lerna": "^2.5.1"
   },
   "author": "Sebastian McKenzie <sebmck@gmail.com>",

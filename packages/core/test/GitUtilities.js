@@ -217,7 +217,7 @@ describe("GitUtilities", () => {
       const opts = { cwd: path.resolve(__dirname, "./..") };
       expect(GitUtilities.diffSinceIn("foo@1.0.0", "packages/foo", opts)).toBe("files");
       expect(ChildProcessUtilities.execSync).lastCalledWith(
-        "git", ["diff", "--name-only", "foo@1.0.0", "--", "packages/foo"], opts
+        "git", ["diff", "--name-only", "foo@1.0.0", "--", "../foo"], opts
       );
     });
   });

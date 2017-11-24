@@ -1,4 +1,4 @@
 ---
-  extends: ../.eslintrc.yaml
+  extends: lerna
   env:
     jest: true

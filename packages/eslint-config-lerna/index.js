@@ -1,0 +1,11 @@
+module.exports = {
+  extends: ['babel', 'plugin:node/recommended'],
+  plugins: ['node'],
+  rules: {
+    'space-before-blocks': 'error',
+    'node/no-unsupported-features': ['error', {
+      version: 4,
+      ignores: ['syntax']
+    }]
+  }
+};

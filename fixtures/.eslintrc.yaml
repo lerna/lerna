@@ -1,5 +1,5 @@
 ---
-  extends: ../../.eslintrc.yaml
+  extends: lerna
   rules:
     node/no-missing-require:
       - error

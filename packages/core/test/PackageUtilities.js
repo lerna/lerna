@@ -1,4 +1,5 @@
 import {initFixture} from "@lerna/test";
+import async from "async";
 import log from "npmlog";
 import path from "path";
 import readPkg from "read-pkg";
@@ -9,6 +10,8 @@ import Repository from "../src/Repository";
 
 // file under test
 import PackageUtilities from "../src/PackageUtilities";
+
+import pkgMatchers from "./helpers/pkgMatchers";
 
 // silence logs
 log.level = "silent";
