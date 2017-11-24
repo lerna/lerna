@@ -1,31 +1,4 @@
-# Change Log
-
-All notable changes to this project will be documented in this file.
-See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
-
-      <a name="0.0.0"></a>
-# [0.0.0](https://github.com/lerna/lerna/compare/1.0.0...0.0.0) (2017-11-24)
-
-
-### Reverts
-
-* remove remnants of [#1122](https://github.com/lerna/lerna/issues/1122) ([ff6dbf5](https://github.com/lerna/lerna/commit/ff6dbf5))
-
-
-
-
-      <a name="0.0.0"></a>
-# [0.0.0](https://github.com/lerna/lerna/compare/1.0.0...0.0.0) (2017-11-24)
-
-
-### Reverts
-
-* remove remnants of [#1122](https://github.com/lerna/lerna/issues/1122) ([ff6dbf5](https://github.com/lerna/lerna/commit/ff6dbf5))
-
-
-
-
-    ## v2.5.1 (2017-11-01)
+## v2.5.1 (2017-11-01)
 
 A quick bugfix for an overlooked case in `lerna add`.
 
@@ -230,7 +203,7 @@ A quick bugfix release to restore a broken `lerna publish --canary`, as reported
 
 #### :boom: Breaking Change
 * [#904](https://github.com/lerna/lerna/pull/904) Improved --canary functionality. ([@Craga89](https://github.com/Craga89))
-`--canary` now bumps the generated version to the next semver minor, and accepts a value (e.g. `--canary=beta`) to override the default "alpha" tag.
+  `--canary` now bumps the generated version to the next semver minor, and accepts a value (e.g. `--canary=beta`) to override the default "alpha" tag.
 
 #### :rocket: Enhancement
 * [#899](https://github.com/lerna/lerna/pull/899) Support Yarn workspaces to replace bootstrap command. ([@bestander](https://github.com/bestander))
@@ -282,69 +255,69 @@ We need to fix [#789](https://github.com/lerna/lerna/issues/789) before we can r
 #### :boom: Breaking Change
 * [#807](https://github.com/lerna/lerna/pull/807) Change exit codes for `updated` and `publish`. ([@koddsson](https://github.com/koddsson))
 
-It is now possible to run `lerna publish` in CI unconditionally, only publishing when changes are actually detected, and never failing when it decides to not publish anything.
+  It is now possible to run `lerna publish` in CI unconditionally, only publishing when changes are actually detected, and never failing when it decides to not publish anything.
 
-Previously:
-- `lerna publish` when there are no updates to publish would throw an error
-- `lerna updated` when there are no updates would `exit 0`, making it ineffective as a chained filter (e.g., `lerna updated && lerna publish`)
+  Previously:
+  - `lerna publish` when there are no updates to publish would throw an error
+  - `lerna updated` when there are no updates would `exit 0`, making it ineffective as a chained filter (e.g., `lerna updated && lerna publish`)
 
-Now:
-- `lerna publish` when there are no updates is a no-op, exiting successfully with a helpful log message
-- `lerna updated` when there are no updates will exit non-zero (but _not_ throw an error), enabling it to be an effective filter
+  Now:
+  - `lerna publish` when there are no updates is a no-op, exiting successfully with a helpful log message
+  - `lerna updated` when there are no updates will exit non-zero (but _not_ throw an error), enabling it to be an effective filter
 
 #### :rocket: Enhancement
 * [#726](https://github.com/lerna/lerna/pull/726) Add --only-updated option to exec and run subcommands. ([@jameslnewell](https://github.com/jameslnewell))
 
-When executing a script or command, only run the script or command on packages that have been updated since the last release. A package is considered "updated" using the same rules as `lerna updated`.
+  When executing a script or command, only run the script or command on packages that have been updated since the last release. A package is considered "updated" using the same rules as `lerna updated`.
 
-```sh
-lerna exec --only-updated -- ls -la
-lerna run --only-updated test
-```
+  ```sh
+  lerna exec --only-updated -- ls -la
+  lerna run --only-updated test
+  ```
 
-* [#795](https://github.com/lerna/lerna/pull/795) Add --parallel flag to `lerna exec`. ([@evocateur](https://github.com/evocateur))
+  * [#795](https://github.com/lerna/lerna/pull/795) Add --parallel flag to `lerna exec`. ([@evocateur](https://github.com/evocateur))
 
-With this flag, `lerna exec` will run the command in _all_ filtered packages
-in parallel, completely ignoring concurrency and topological sorting.
+    With this flag, `lerna exec` will run the command in _all_ filtered packages
+  in parallel, completely ignoring concurrency and topological sorting.
 
-```sh
-# transpile modules in all packages as changes occur
-lerna exec -- babel src -d lib -w
+    ```sh
+    # transpile modules in all packages as changes occur
+    lerna exec -- babel src -d lib -w
 
-# transpile watched modules only in package-foo
-lerna exec --scope package-foo -- babel src -d lib -w
-```
+    # transpile watched modules only in package-foo
+    lerna exec --scope package-foo -- babel src -d lib -w
+    ```
 
-It is advised to constrain the scope of the command when running with this
-flag, as spawning dozens of subprocesses may be harmful to your shell's
-equanimity (or maximum file descriptor limit, for example). YMMV
+    It is advised to constrain the scope of the command when running with this
+  flag, as spawning dozens of subprocesses may be harmful to your shell's
+  equanimity (or maximum file descriptor limit, for example). YMMV
 
 * [#796](https://github.com/lerna/lerna/pull/796) Add --parallel flag to `lerna run`. ([@evocateur](https://github.com/evocateur))
 
-This allows simpler invocation of `watch` scripts, with the caveat that concurrency and topological sorting are _completely_ ignored. This is generally the intention when calling `lerna run watch` and other similar script targets, hence the additional flag.
+  This allows simpler invocation of `watch` scripts, with the caveat that concurrency and topological sorting are _completely_ ignored. This is generally the intention when calling `lerna run watch` and other similar script targets, hence the additional flag.
 
-```sh
-# the following commands are equivalent
-lerna run watch --concurrency=1000 --stream
-lerna run watch --parallel
-```
+  ```sh
+  # the following commands are equivalent
+  lerna run watch --concurrency=1000 --stream
+  lerna run watch --parallel
+  ```
 
-Package filtering (`--scope` and `--ignore`) is still available when this new flag is being used, and it is advised to narrow the scope of parallel execution when you have more than a dozen packages or so (YMMV).
+  Package filtering (`--scope` and `--ignore`) is still available when this new flag is being used, and it is advised to narrow the scope of parallel execution when you have more than a dozen packages or so (YMMV).
 
 * [#803](https://github.com/lerna/lerna/pull/803) Skip git repo check by default in Commands which do not rely on git. ([@noherczeg](https://github.com/noherczeg))
 * [#824](https://github.com/lerna/lerna/pull/824) Add json output to `ls` and `updated` commands. ([@ricky](https://github.com/ricky))
 
-When run with `--json`, `lerna updated` and `lerna ls` will return an array of objects in the following format:
+  When run with `--json`, `lerna updated` and `lerna ls` will return an array of objects in the following format:
 
-```json
-[
-{
-  "name": "package",
-  "version": "1.0.0",
-  "private": false
-}
-]
-```
+  ```json
+  [
+    {
+      "name": "package",
+      "version": "1.0.0",
+      "private": false
+    }
+  ]
+  ```
 
 * [#829](https://github.com/lerna/lerna/pull/829) Prefix piped streams with rotating colors. ([@evocateur](https://github.com/evocateur))
 
@@ -451,29 +424,29 @@ When in doubt, always append the command you want to run (e.g., `babel src -d li
 Usage: lerna <command> [options]
 
 Commands:
-bootstrap                Link local packages together and install remaining package dependencies
-clean                    Remove the node_modules directory from all packages.
-diff <pkg>               Diff all packages or a single package since the last release.
-exec <command> [args..]  Run an arbitrary command in each package.
-import <pathToRepo>      Import the package in <pathToRepo> into packages/<directory-name> with commit history.
-init                     Create a new Lerna repo or upgrade an existing repo to the current version of Lerna.
-ls                       List all public packages
-publish                  Publish packages in the current project.
-run <script> [args..]    Run an npm script in each package that contains that script.
-updated                  Check which packages have changed since the last publish.
+  bootstrap                Link local packages together and install remaining package dependencies
+  clean                    Remove the node_modules directory from all packages.
+  diff <pkg>               Diff all packages or a single package since the last release.
+  exec <command> [args..]  Run an arbitrary command in each package.
+  import <pathToRepo>      Import the package in <pathToRepo> into packages/<directory-name> with commit history.
+  init                     Create a new Lerna repo or upgrade an existing repo to the current version of Lerna.
+  ls                       List all public packages
+  publish                  Publish packages in the current project.
+  run <script> [args..]    Run an npm script in each package that contains that script.
+  updated                  Check which packages have changed since the last publish.
 
 Global Options:
---loglevel                       What level of logs to report.  [string] [default: "info"]
---concurrency                    How many threads to use if lerna parallelises the tasks.  [number] [default: 4]
---scope                          Restricts the scope to package names matching the given glob.
-                               (Only for 'run', 'exec', 'clean', 'ls', and 'bootstrap' commands)  [string]
---ignore                         Ignore packages with names matching the given glob.
-                               (Only for 'run', 'exec', 'clean', 'ls', and 'bootstrap' commands)  [string]
---include-filtered-dependencies  Include all transitive dependencies when running a command, regardless of --scope or --ignore.
---registry                       Use the specified registry for all npm client operations.  [string]
---sort                           Sort packages topologically (all dependencies before dependents)  [boolean] [default: true]
--h, --help                       Show help  [boolean]
--v, --version                    Show version number  [boolean]
+  --loglevel                       What level of logs to report.  [string] [default: "info"]
+  --concurrency                    How many threads to use if lerna parallelises the tasks.  [number] [default: 4]
+  --scope                          Restricts the scope to package names matching the given glob.
+                                   (Only for 'run', 'exec', 'clean', 'ls', and 'bootstrap' commands)  [string]
+  --ignore                         Ignore packages with names matching the given glob.
+                                   (Only for 'run', 'exec', 'clean', 'ls', and 'bootstrap' commands)  [string]
+  --include-filtered-dependencies  Include all transitive dependencies when running a command, regardless of --scope or --ignore.
+  --registry                       Use the specified registry for all npm client operations.  [string]
+  --sort                           Sort packages topologically (all dependencies before dependents)  [boolean] [default: true]
+  -h, --help                       Show help  [boolean]
+  -v, --version                    Show version number  [boolean]
 
 When a command fails, all logs are written to lerna-debug.log in the current working directory.
 
@@ -488,22 +461,22 @@ For more information, find our manual at https://github.com/lerna/lerna
 lerna bootstrap
 
 Global Options:
---loglevel                       What level of logs to report.  [string] [default: "info"]
---concurrency                    How many threads to use if lerna parallelises the tasks.  [number] [default: 4]
---scope                          Restricts the scope to package names matching the given glob.
-                               (Only for 'run', 'exec', 'clean', 'ls', and 'bootstrap' commands)  [string]
---ignore                         Ignore packages with names matching the given glob.
-                               (Only for 'run', 'exec', 'clean', 'ls', and 'bootstrap' commands)  [string]
---include-filtered-dependencies  Include all transitive dependencies when running a command, regardless of --scope or --ignore.
---registry                       Use the specified registry for all npm client operations.  [string]
---sort                           Sort packages topologically (all dependencies before dependents)  [boolean] [default: true]
--h, --help                       Show help  [boolean]
--v, --version                    Show version number  [boolean]
+  --loglevel                       What level of logs to report.  [string] [default: "info"]
+  --concurrency                    How many threads to use if lerna parallelises the tasks.  [number] [default: 4]
+  --scope                          Restricts the scope to package names matching the given glob.
+                                   (Only for 'run', 'exec', 'clean', 'ls', and 'bootstrap' commands)  [string]
+  --ignore                         Ignore packages with names matching the given glob.
+                                   (Only for 'run', 'exec', 'clean', 'ls', and 'bootstrap' commands)  [string]
+  --include-filtered-dependencies  Include all transitive dependencies when running a command, regardless of --scope or --ignore.
+  --registry                       Use the specified registry for all npm client operations.  [string]
+  --sort                           Sort packages topologically (all dependencies before dependents)  [boolean] [default: true]
+  -h, --help                       Show help  [boolean]
+  -v, --version                    Show version number  [boolean]
 
 Options:
---hoist       Install external dependencies matching [glob] to the repo root  [string] [default: '**']
---nohoist     Don't hoist external dependencies matching [glob] to the repo root  [string]
---npm-client  Executable used to install dependencies (npm, yarn, pnpm, ...)  [string]
+  --hoist       Install external dependencies matching [glob] to the repo root  [string] [default: '**']
+  --nohoist     Don't hoist external dependencies matching [glob] to the repo root  [string]
+  --npm-client  Executable used to install dependencies (npm, yarn, pnpm, ...)  [string]
 ```
 </p></details>
 
@@ -629,7 +602,7 @@ $ lerna bootstrap --npm-client=yarn
 
 ```json
 {
-"npmClient": "yarn"
+  "npmClient": "yarn"
 }
 ```
 
@@ -671,11 +644,11 @@ Defaults to running `npm run test` and `npm run env`
 
 ```json
 {
-"commands": {
-"bootstrap": {
-  "includeFilteredDependencies": true
-}
-}
+  "commands": {
+    "bootstrap": {
+      "includeFilteredDependencies": true
+    }
+  }
 }
 ```
 
@@ -683,11 +656,11 @@ Defaults to running `npm run test` and `npm run env`
 
 ```js
 {
-"commands": {
-"run": {
-  "sort": false
-}
-}
+  "commands": {
+    "run": {
+      "sort": false
+    }
+  }
 }
 ```
 
@@ -921,9 +894,9 @@ Configured via an array of globs in `lerna.json`:
 
 ```json		
 {		
-"lerna": "2.0.0-beta.31",		
-"version": "1.1.3",		
-"packages": ["packages/*"]		
+  "lerna": "2.0.0-beta.31",		
+  "version": "1.1.3",		
+  "packages": ["packages/*"]		
 }		
 ```		
 
