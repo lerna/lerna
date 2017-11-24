@@ -41,7 +41,7 @@
     "eslint": "^4.5.0",
     "eslint-config-lerna": "file:./packages/eslint-config-lerna",
     "jest": "^19.0.2",
-    "lerna": "^2.5.1"
+    "lerna": "file:/.packages/cli"
   },
   "author": "Sebastian McKenzie <sebmck@gmail.com>",
   "license": "MIT",
