@@ -8,9 +8,6 @@
   "files": [
     "cli.js"
   ],
-  "scripts": {
-    "test": "jest"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lerna/lerna.git"
