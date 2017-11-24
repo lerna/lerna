@@ -1,0 +1,25 @@
+{
+  "name": "eslint-config-lerna",
+  "version": "2.5.1",
+  "description": "eslint config for lerna",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lerna/lerna.git"
+  },
+  "author": "Sebastian McKenzie <sebmck@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lerna/lerna/issues"
+  },
+  "homepage": "https://lernajs.io/",
+  "engines": {
+    "node": ">= 4"
+  },
+  "dependencies": {
+    "eslint-config-babel": "^7.0.2",
+    "eslint-plugin-babel": "^4.1.2",
+    "eslint-plugin-flowtype": "^2.35.0",
+    "eslint-plugin-node": "^5.1.1"
+  }
+}

@@ -1,0 +1,26 @@
+module.exports = {
+  "presets": [
+    ["env", {
+      "targets": {
+        "node": 4
+      }
+    }]
+  ],
+  "plugins": [
+    "add-module-exports"
+  ],
+  "env": {
+    "lerna-test": {
+      "presets": [
+        ["env", {
+          "targets": {
+            "node": "current"
+          }
+        }]
+      ],
+      "plugins": [
+        "add-module-exports"
+      ]
+    }
+  }
+};

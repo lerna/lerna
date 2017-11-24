@@ -21,9 +21,10 @@ composer.lock
 *.swo
 
 # Project Specific
-node_modules
+/node_modules
+packages/*/node_modules
+packages/*/lib
 *.log
-lib
 tmp
 .changelog
 coverage/

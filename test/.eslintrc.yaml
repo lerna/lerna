@@ -1,4 +1,0 @@
----
-  extends: ../.eslintrc.yaml
-  env:
-    jest: true

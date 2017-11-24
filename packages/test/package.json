@@ -1,0 +1,30 @@
+{
+  "name": "@lerna/test",
+  "version": "2.5.1",
+  "description": "Tool for managing JavaScript projects with multiple packages",
+  "main": "lib/index.js",
+  "scripts": {
+    "build": "babel src -d lib",
+    "watch": "yarn run build --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lerna/lerna.git"
+  },
+  "author": "Sebastian McKenzie <sebmck@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lerna/lerna/issues"
+  },
+  "homepage": "https://lernajs.io/",
+  "engines": {
+    "node": ">= 4"
+  },
+  "dependencies": {
+    "file-url": "^2.0.2",
+    "fs-extra": "^4.0.2",
+    "pkg-dir": "^2.0.0",
+    "replacestream": "^4.0.3",
+    "tempy": "^0.2.1"
+  }
+}

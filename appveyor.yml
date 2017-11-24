@@ -20,6 +20,7 @@ install:
   - ps: Install-Product node $env:nodejs_version
   - IF %nodejs_version% EQU 8 npm -g install npm@latest-5
   - yarn --frozen-lockfile
+  - yarn run setup
 
 before_test:
   - git config --global user.email test@example.com

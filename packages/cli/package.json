@@ -1,0 +1,25 @@
+{
+  "name": "@lerna/cli",
+  "version": "2.5.1",
+  "description": "Tool for managing JavaScript projects with multiple packages",
+  "bin": {
+    "lerna": "cli.js"
+  },
+  "files": [
+    "cli.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lerna/lerna.git"
+  },
+  "author": "Sebastian McKenzie <sebmck@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lerna/lerna/issues"
+  },
+  "homepage": "https://lernajs.io/",
+  "dependencies": {
+    "@lerna/core": "^2.5.1",
+    "npmlog": "^4.1.2"
+  }
+}

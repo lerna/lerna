@@ -1,115 +1,51 @@
 {
-  "name": "lerna",
+  "name": "@lerna/root",
   "version": "2.5.1",
   "description": "Tool for managing JavaScript projects with multiple packages",
-  "main": "lib/index.js",
-  "files": [
-    "bin",
-    "lib"
-  ],
+  "private": true,
   "scripts": {
-    "build": "babel src -d lib",
-    "ci": "npm test -- --coverage --verbose && npm run integration",
-    "dev": "babel -w src -d lib",
-    "fix": "npm run lint -- --fix",
-    "preintegration": "npm pack",
-    "integration": "cross-env LC_ALL=en-US jest --config test/config/integration.json",
+    "build": "lerna run build --parallel",
+    "ci": "lerna run test --stream -- --coverage --verbose",
     "lint": "eslint . --ignore-path .gitignore",
-    "prepublish": "npm run build",
-    "pretest": "npm run lint -- --cache",
-    "test": "cross-env LC_ALL=en-US jest",
-    "test:watch": "cross-env LC_ALL=en-US jest --watchAll --no-watchman",
-    "test:watch-integration": "npm run integration -- --watchAll --no-watchman"
+    "setup": "lerna bootstrap && lerna run build",
+    "test": "jest",
+    "watch": "lerna run watch --parallel"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lerna/lerna.git"
   },
-  "author": "Sebastian McKenzie <sebmck@gmail.com>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/lerna/lerna/issues"
+  "babel": {
+    "presets": ["lerna"]
   },
-  "homepage": "https://lernajs.io/",
-  "dependencies": {
-    "async": "^1.5.0",
-    "chalk": "^2.1.0",
-    "cmd-shim": "^2.0.2",
-    "columnify": "^1.5.4",
-    "command-join": "^2.0.0",
-    "conventional-changelog-cli": "^1.3.2",
-    "conventional-recommended-bump": "^1.0.1",
-    "dedent": "^0.7.0",
-    "execa": "^0.8.0",
-    "find-up": "^2.1.0",
-    "fs-extra": "^4.0.1",
-    "get-port": "^3.2.0",
-    "glob": "^7.1.2",
-    "glob-parent": "^3.1.0",
-    "globby": "^6.1.0",
-    "graceful-fs": "^4.1.11",
-    "hosted-git-info": "^2.5.0",
-    "inquirer": "^3.2.2",
-    "is-ci": "^1.0.10",
-    "load-json-file": "^3.0.0",
-    "lodash": "^4.17.4",
-    "minimatch": "^3.0.4",
-    "npmlog": "^4.1.2",
-    "p-finally": "^1.0.0",
-    "package-json": "^4.0.1",
-    "path-exists": "^3.0.0",
-    "read-cmd-shim": "^1.0.1",
-    "read-pkg": "^2.0.0",
-    "rimraf": "^2.6.1",
-    "safe-buffer": "^5.1.1",
-    "semver": "^5.4.1",
-    "signal-exit": "^3.0.2",
-    "strong-log-transformer": "^1.0.6",
-    "temp-write": "^3.3.0",
-    "write-file-atomic": "^2.3.0",
-    "write-json-file": "^2.2.0",
-    "write-pkg": "^3.1.0",
-    "yargs": "^8.0.2"
-  },
-  "bin": {
-    "lerna": "./bin/lerna.js"
-  },
-  "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-eslint": "^7.2.3",
-    "babel-plugin-add-module-exports": "^0.2.1",
-    "babel-preset-env": "^1.6.0",
-    "cross-env": "^5.0.5",
-    "eslint": "^4.5.0",
-    "eslint-config-babel": "^7.0.2",
-    "eslint-plugin-babel": "^4.1.2",
-    "eslint-plugin-flowtype": "^2.35.0",
-    "eslint-plugin-node": "^5.1.1",
-    "file-url": "^2.0.2",
-    "jest": "^19.0.2",
-    "normalize-newline": "^3.0.0",
-    "normalize-path": "^2.1.1",
-    "replacestream": "^4.0.2",
-    "tempy": "^0.1.0",
-    "touch": "^3.1.0"
+  "eslintConfig": {
+    "root": true,
+    "extends": ["lerna"]
   },
   "jest": {
     "collectCoverageFrom": [
-      "src/**/*.js"
+      "<rootDir>/packages/**/*.js"
     ],
     "modulePathIgnorePatterns": [
-      "<rootDir>/test/fixtures"
-    ],
-    "roots": [
-      "<rootDir>/src",
-      "<rootDir>/test"
+      "<rootDir>/fixtures"
     ],
     "testEnvironment": "node",
     "testMatch": [
       "**/test/*.js"
     ]
   },
-  "engines": {
-    "node": ">= 4"
-  }
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^7.2.3",
+    "babel-preset-lerna": "file:./packages/babel-preset-lerna",
+    "eslint": "^4.5.0",
+    "eslint-config-lerna": "file:./packages/eslint-config-lerna",
+    "jest": "^19.0.2",
+    "lerna": "file:./packages/cli"
+  },
+  "author": "Sebastian McKenzie <sebmck@gmail.com>",
+  "license": "MIT",
+  "workspaces": [
+    "packages/*"
+  ]
 }
