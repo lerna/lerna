@@ -1,5 +1,5 @@
 {
-  "name": "@lerna/cli",
+  "name": "lerna",
   "version": "2.5.1",
   "description": "Tool for managing JavaScript projects with multiple packages",
   "bin": {
@@ -19,7 +19,6 @@
   },
   "homepage": "https://lernajs.io/",
   "dependencies": {
-    "@lerna/core": "^2.5.1",
-    "npmlog": "^4.1.2"
+    "@lerna/cli": "^2.5.1"
   }
 }
