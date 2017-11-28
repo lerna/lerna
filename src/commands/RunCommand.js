@@ -27,6 +27,12 @@ export const builder = {
     type: "boolean",
     default: undefined,
   },
+  "npm-client": {
+    group: "Command Options:",
+    describe: "Executable used to install dependencies (npm, yarn, pnpm, ...)",
+    type: "string",
+    requiresArg: true,
+  },
 };
 
 export default class RunCommand extends Command {
@@ -42,8 +48,10 @@ export default class RunCommand extends Command {
   }
 
   initialize(callback) {
+    const { parallel, stream, npmClient } = this.options;
     this.script = this.input[0];
     this.args = this.input.slice(1);
+    this.npmClient = npmClient || 'npm';
 
     if (!this.script) {
       callback(new Error("You must specify which npm script to run."));
@@ -63,7 +71,7 @@ export default class RunCommand extends Command {
       this.logger.warn(`No packages found with the npm script '${this.script}'`);
     }
 
-    if (this.options.parallel || this.options.stream) {
+    if (parallel || stream) {
       // don't interrupt streaming stdio
       this.logger.disableProgress();
     }
@@ -129,11 +137,18 @@ export default class RunCommand extends Command {
   }
 
   runScriptInPackageStreaming(pkg, callback) {
-    NpmUtilities.runScriptInPackageStreaming(this.script, this.args, pkg, callback);
+    NpmUtilities.runScriptInPackageStreaming(this.script, {
+      args: this.args, pkg, 
+      npmClient: this.npmClient
+    }, callback);
   }
 
   runScriptInPackageCapturing(pkg, callback) {
-    NpmUtilities.runScriptInDir(this.script, this.args, pkg.location, (err, stdout) => {
+    NpmUtilities.runScriptInDir(this.script, {
+      args: this.args, 
+      directory: pkg.location, 
+      npmClient: this.npmClient
+    }, (err, stdout) => {
       if (err) {
         this.logger.error(this.script, `Errored while running script in '${pkg.name}'`);
       } else {

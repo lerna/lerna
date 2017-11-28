@@ -26,19 +26,17 @@ log.level = "silent";
 const ranInPackages = (testDir) =>
   NpmUtilities.runScriptInDir.mock.calls.reduce((arr, args) => {
     const script = args[0];
-    const params = args[1];
-    const dir = normalizeRelativeDir(testDir, args[2]);
-    arr.push([dir, script].concat(params).join(" "));
+    const dir = normalizeRelativeDir(testDir, args[1].directory);
+    arr.push([dir, script].concat(args[1].args).join(" "));
     return arr;
   }, []);
 
 const ranInPackagesStreaming = (testDir) =>
   NpmUtilities.runScriptInPackageStreaming.mock.calls.reduce((arr, args) => {
     const script = args[0];
-    const params = args[1];
-    const pkg = args[2];
+    const pkg = args[1].pkg;
     const dir = normalizeRelativeDir(testDir, pkg.location);
-    arr.push([dir, script].concat(params).join(" "));
+    arr.push([dir, script].concat(args[1].args).join(" "));
     return arr;
   }, []);
 

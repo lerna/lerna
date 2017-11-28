@@ -91,7 +91,7 @@ export default class Package {
     log.silly("runScript", script, this.name);
 
     if (this.scripts[script]) {
-      NpmUtilities.runScriptInDir(script, [], this.location, callback);
+      NpmUtilities.runScriptInDir(script, {args: [], directory: this.location, npmClient: 'npm'}, callback);
     } else {
       callback();
     }
@@ -106,7 +106,11 @@ export default class Package {
     log.silly("runScriptSync", script, this.name);
 
     if (this.scripts[script]) {
-      NpmUtilities.runScriptInDirSync(script, [], this.location, callback);
+      NpmUtilities.runScriptInDirSync(script, {
+        args: [], 
+        directory: this.location, 
+        npmClient: 'npm'
+      }, callback);
     } else {
       callback();
     }

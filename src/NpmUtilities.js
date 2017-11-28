@@ -122,26 +122,26 @@ export default class NpmUtilities {
     return ChildProcessUtilities.execSync("npm", ["dist-tag", "ls", packageName], opts).indexOf(tag) >= 0;
   }
 
-  static runScriptInDir(script, args, directory, callback) {
+  static runScriptInDir(script, {args, directory, npmClient}, callback) {
     log.silly("runScriptInDir", script, args, path.basename(directory));
 
     const opts = NpmUtilities.getExecOpts(directory);
-    ChildProcessUtilities.exec("npm", ["run", script, ...args], opts, callback);
+    ChildProcessUtilities.exec(npmClient, ["run", script, ...args], opts, callback);
   }
 
-  static runScriptInDirSync(script, args, directory, callback) {
+  static runScriptInDirSync(script, {args, directory, npmClient}, callback) {
     log.silly("runScriptInDirSync", script, args, path.basename(directory));
 
     const opts = NpmUtilities.getExecOpts(directory);
-    ChildProcessUtilities.execSync("npm", ["run", script, ...args], opts, callback);
+    ChildProcessUtilities.execSync(npmClient, ["run", script, ...args], opts, callback);
   }
 
-  static runScriptInPackageStreaming(script, args, pkg, callback) {
+  static runScriptInPackageStreaming(script, {args, pkg, npmClient}, callback) {
     log.silly("runScriptInPackageStreaming", [script, args, pkg.name]);
 
     const opts = NpmUtilities.getExecOpts(pkg.location);
     ChildProcessUtilities.spawnStreaming(
-      "npm", ["run", script, ...args], opts, pkg.name, callback
+      npmClient, ["run", script, ...args], opts, pkg.name, callback
     );
   }
 
