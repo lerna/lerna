@@ -92,8 +92,8 @@ export default class Package {
 
     if (this.scripts[script]) {
       NpmUtilities.runScriptInDir(script, {
-        args: [], 
-        directory: this.location, 
+        args: [],
+        directory: this.location,
         npmClient: 'npm'
       }, callback);
     } else {

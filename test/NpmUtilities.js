@@ -246,7 +246,7 @@ describe("NpmUtilities", () => {
     afterEach(resetExecOpts);
 
     it("runs npm publish in a directory with --tag support", () => {
-      NpmUtilities.publishTaggedInDir("published-tag", directory, undefined, callback);
+      NpmUtilities.publishTaggedInDir("published-tag", directory, {}, callback);
 
       const cmd = "npm";
       const args = ["publish", "--tag", "published-tag"];

@@ -101,29 +101,23 @@ export default class NpmUtilities {
   }
 
 
-  static addDistTag(directory, packageName, version, tag, npmConfig) {
+  static addDistTag(directory, packageName, version, tag, {client = 'npm', registry} = {}) {
     log.silly("addDistTag", tag, version, packageName);
-    const npmClient = (npmConfig && npmConfig.client) || 'npm';
-    const npmRegistry = (npmConfig && npmConfig.registry) || undefined;
-    const opts = NpmUtilities.getExecOpts(directory, npmRegistry);
-    ChildProcessUtilities.execSync(npmClient, ["dist-tag", "add", `${packageName}@${version}`, tag], opts);
+    const opts = NpmUtilities.getExecOpts(directory, registry);
+    ChildProcessUtilities.execSync(client, ["dist-tag", "add", `${packageName}@${version}`, tag], opts);
   }
 
-  static removeDistTag(directory, packageName, tag, npmConfig) {
+  static removeDistTag(directory, packageName, tag, {client = 'npm', registry} = {}) {
     log.silly("removeDistTag", tag, packageName);
-    const npmClient = (npmConfig && npmConfig.client) || 'npm';
-    const npmRegistry = (npmConfig && npmConfig.registry) || undefined;
-    const opts = NpmUtilities.getExecOpts(directory, npmRegistry);
-    ChildProcessUtilities.execSync(npmClient, ["dist-tag", "rm", packageName, tag], opts);
+    const opts = NpmUtilities.getExecOpts(directory, registry);
+    ChildProcessUtilities.execSync(client, ["dist-tag", "rm", packageName, tag], opts);
   }
 
-  static checkDistTag(directory, packageName, tag, npmConfig) {
+  static checkDistTag(directory, packageName, tag, {client = 'npm', registry} = {}) {
     log.silly("checkDistTag", tag, packageName);
-    const npmClient = (npmConfig && npmConfig.client) || 'npm';
-    const npmRegistry = (npmConfig && npmConfig.registry) || undefined;
-    const opts = NpmUtilities.getExecOpts(directory, npmRegistry);
+    const opts = NpmUtilities.getExecOpts(directory, registry);
     return ChildProcessUtilities
-      .execSync(npmClient, ["dist-tag", "ls", packageName], opts)
+      .execSync(client, ["dist-tag", "ls", packageName], opts)
       .indexOf(tag) >= 0;
 
   }
@@ -151,12 +145,10 @@ export default class NpmUtilities {
     );
   }
 
-  static publishTaggedInDir(tag, directory, npmConfig, callback) {
+  static publishTaggedInDir(tag, directory, {client = 'npm', registry}, callback) {
     log.silly("publishTaggedInDir", tag, path.basename(directory));
-    const npmClient = (npmConfig && npmConfig.client) || 'npm';
-    const npmRegistry = (npmConfig && npmConfig.registry) || undefined;
-    const opts = NpmUtilities.getExecOpts(directory, npmRegistry);
-    ChildProcessUtilities.exec(npmClient, ["publish", "--tag", tag.trim()], opts, callback);
+    const opts = NpmUtilities.getExecOpts(directory, registry);
+    ChildProcessUtilities.exec(client, ["publish", "--tag", tag.trim()], opts, callback);
   }
 
   static getExecOpts(directory, registry) {
