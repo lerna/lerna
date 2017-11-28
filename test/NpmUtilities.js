@@ -51,12 +51,21 @@ describe("NpmUtilities", () => {
 
     it("supports custom registry", () => {
       const registry = "https://custom-registry/add";
-      NpmUtilities.addDistTag(directory, packageName, version, tag, registry);
+      NpmUtilities.addDistTag(directory, packageName, version, tag, {registry});
 
       const cmd = "npm";
       const args = ["dist-tag", "add", "foo-pkg@1.0.0", "added-tag"];
       const opts = { directory, registry };
       expect(ChildProcessUtilities.execSync).lastCalledWith(cmd, args, opts);
+    });
+
+    it("supports custom client", () => {
+      const client = "yarn";
+      NpmUtilities.addDistTag(directory, packageName, version, tag, {client});
+
+      const args = ["dist-tag", "add", "foo-pkg@1.0.0", "added-tag"];
+      const opts = { directory };
+      expect(ChildProcessUtilities.execSync).lastCalledWith(client, args, opts);
     });
   });
 
@@ -79,12 +88,21 @@ describe("NpmUtilities", () => {
 
     it("supports custom registry", () => {
       const registry = "https://custom-registry/remove";
-      NpmUtilities.removeDistTag(directory, packageName, tag, registry);
+      NpmUtilities.removeDistTag(directory, packageName, tag, {registry});
 
       const cmd = "npm";
       const args = ["dist-tag", "rm", "bar-pkg", "removed-tag"];
       const opts = { directory, registry };
       expect(ChildProcessUtilities.execSync).lastCalledWith(cmd, args, opts);
+    });
+
+    it("supports custom client", () => {
+      const client = "yarn";
+      NpmUtilities.removeDistTag(directory, packageName, tag, {client});
+
+      const args = ["dist-tag", "rm", "bar-pkg", "removed-tag"];
+      const opts = { directory };
+      expect(ChildProcessUtilities.execSync).lastCalledWith(client, args, opts);
     });
   });
 
@@ -112,49 +130,60 @@ describe("NpmUtilities", () => {
       const registry = "https://custom-registry/check";
       ChildProcessUtilities.execSync.mockImplementation(() => "target-tag");
 
-      expect(NpmUtilities.checkDistTag(directory, packageName, "target-tag", registry)).toBe(true);
+      expect(NpmUtilities.checkDistTag(directory, packageName, "target-tag", {registry})).toBe(true);
 
       const cmd = "npm";
       const args = ["dist-tag", "ls", "baz-pkg"];
       const opts = { directory, registry };
       expect(ChildProcessUtilities.execSync).lastCalledWith(cmd, args, opts);
     });
+
+    it("supports custom client", () => {
+      const client = "yarn";
+      ChildProcessUtilities.execSync.mockImplementation(() => "target-tag");
+
+      expect(NpmUtilities.checkDistTag(directory, packageName, "target-tag", {client})).toBe(true);
+
+      const args = ["dist-tag", "ls", "baz-pkg"];
+      const opts = { directory };
+      expect(ChildProcessUtilities.execSync).lastCalledWith(client, args, opts);
+    });
   });
 
   describe(".runScriptInDir()", () => {
     it("runs an npm script in a directory", () => {
       const script = "foo";
-      const config = {
+      const options = {
         args: ["--bar", "baz"],
         directory: "/test/runScriptInDir",
         npmClient: 'npm'
       }
       const callback = () => {};
 
-      NpmUtilities.runScriptInDir(script, config, callback);
+      NpmUtilities.runScriptInDir(script, options, callback);
 
       const cmd = "npm";
       const scriptArgs = ["run", "foo", "--bar", "baz"];
       const opts = {
-        cwd: config.directory,
+        cwd: options.directory,
       };
       expect(ChildProcessUtilities.exec).lastCalledWith(cmd, scriptArgs, opts, expect.any(Function));
     });
     it("support different npmClient", () => {
       const script = "foo";
-      const config = {
+      const options = {
         args: ["--bar", "baz"],
         directory: "/test/runScriptInDir",
         npmClient: 'yarn'
       }
       const callback = () => {};
 
-      NpmUtilities.runScriptInDir(script, config, callback);
+      NpmUtilities.runScriptInDir(script, options, callback);
 
       const cmd = "yarn";
       const scriptArgs = ["run", "foo", "--bar", "baz"];
       const opts = {
-        cwd: config.directory,
+        cwd: options.directory,
       };
       expect(ChildProcessUtilities.exec).lastCalledWith(cmd, scriptArgs, opts, expect.any(Function));
     });
@@ -234,12 +263,21 @@ describe("NpmUtilities", () => {
 
     it("supports custom registry", () => {
       const registry = "https://custom-registry/publishTaggedInDir";
-      NpmUtilities.publishTaggedInDir("published-tag", directory, registry, callback);
+      NpmUtilities.publishTaggedInDir("published-tag", directory, {registry}, callback);
 
       const cmd = "npm";
       const args = ["publish", "--tag", "published-tag"];
       const opts = { directory, registry };
       expect(ChildProcessUtilities.exec).lastCalledWith(cmd, args, opts, expect.any(Function));
+    });
+
+    it("supports custom client", () => {
+      const client = "yarn";
+      NpmUtilities.publishTaggedInDir("published-tag", directory, {client}, callback);
+
+      const args = ["publish", "--tag", "published-tag"];
+      const opts = { directory };
+      expect(ChildProcessUtilities.exec).lastCalledWith(client, args, opts, expect.any(Function));
     });
   });
 

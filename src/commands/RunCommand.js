@@ -29,7 +29,7 @@ export const builder = {
   },
   "npm-client": {
     group: "Command Options:",
-    describe: "Executable used to install dependencies (npm, yarn, pnpm, ...)",
+    describe: "Executable used to run scripts (npm, yarn, pnpm, ...)",
     type: "string",
     requiresArg: true,
   },

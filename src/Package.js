@@ -91,7 +91,11 @@ export default class Package {
     log.silly("runScript", script, this.name);
 
     if (this.scripts[script]) {
-      NpmUtilities.runScriptInDir(script, {args: [], directory: this.location, npmClient: 'npm'}, callback);
+      NpmUtilities.runScriptInDir(script, {
+        args: [], 
+        directory: this.location, 
+        npmClient: 'npm'
+      }, callback);
     } else {
       callback();
     }

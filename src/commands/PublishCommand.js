@@ -107,6 +107,12 @@ export const builder = {
     type: "string",
     requiresArg: true,
   },
+  "npm-client": {
+    group: "Command Options:",
+    describe: "Executable used to publish dependencies (npm, yarn, pnpm, ...)",
+    type: "string",
+    requiresArg: true,
+  },
   "preid": {
     group: "Command Options:",
     describe: "Specify the prerelease identifier (major.minor.patch-pre).",
@@ -173,6 +179,11 @@ export default class PublishCommand extends Command {
   initialize(callback) {
     this.gitRemote = this.options.gitRemote || "origin";
     this.gitEnabled = !(this.options.canary || this.options.skipGit);
+
+    this.npmConfig = {
+      client: this.options.npmClient || 'npm',
+      registry: this.registry
+    }
 
     if (this.options.useGitVersion && !this.options.exact) {
       throw new Error(dedent`
@@ -716,7 +727,7 @@ export default class PublishCommand extends Command {
       const run = (cb) => {
         tracker.verbose("publishing", pkg.name);
 
-        NpmUtilities.publishTaggedInDir(tag, pkg.location, this.npmRegistry, (err) => {
+        NpmUtilities.publishTaggedInDir(tag, pkg.location, this.npmConfig, (err) => {
           err = err && err.stack || err;
 
           if (!err ||
@@ -789,18 +800,18 @@ export default class PublishCommand extends Command {
   updateTag(pkg) {
     const distTag = this.getDistTag();
 
-    if (NpmUtilities.checkDistTag(pkg.location, pkg.name, "lerna-temp", this.npmRegistry)) {
-      NpmUtilities.removeDistTag(pkg.location, pkg.name, "lerna-temp", this.npmRegistry);
+    if (NpmUtilities.checkDistTag(pkg.location, pkg.name, "lerna-temp", this.npmConfig)) {
+      NpmUtilities.removeDistTag(pkg.location, pkg.name, "lerna-temp", this.npmConfig);
     }
 
     /* eslint-disable max-len */
     // TODO: fix this API to be less verbose with parameters
     if (this.options.npmTag) {
-      NpmUtilities.addDistTag(pkg.location, pkg.name, this.updatesVersions[pkg.name], distTag, this.npmRegistry);
+      NpmUtilities.addDistTag(pkg.location, pkg.name, this.updatesVersions[pkg.name], distTag, this.npmConfig);
     } else if (this.options.canary) {
-      NpmUtilities.addDistTag(pkg.location, pkg.name, pkg.version, distTag, this.npmRegistry);
+      NpmUtilities.addDistTag(pkg.location, pkg.name, pkg.version, distTag, this.npmConfig);
     } else {
-      NpmUtilities.addDistTag(pkg.location, pkg.name, this.updatesVersions[pkg.name], distTag, this.npmRegistry);
+      NpmUtilities.addDistTag(pkg.location, pkg.name, this.updatesVersions[pkg.name], distTag, this.npmConfig);
     }
     /* eslint-enable max-len */
   }
