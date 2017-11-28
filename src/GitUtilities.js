@@ -2,6 +2,7 @@ import { EOL } from "os";
 import log from "npmlog";
 import path from "path";
 import tempWrite from "temp-write";
+import slash from "slash"
 
 import ChildProcessUtilities from "./ChildProcessUtilities";
 
@@ -38,7 +39,9 @@ export default class GitUtilities {
 
   static addFile(file, opts) {
     log.silly("addFile", file);
-    ChildProcessUtilities.execSync("git", ["add", file], opts);
+    const relativePath = path.relative(opts.cwd, path.resolve(opts.cwd, file));
+    const portablePath = slash(relativePath);
+    ChildProcessUtilities.execSync("git", ["add", portablePath], opts);
   }
 
   static commit(message, opts) {

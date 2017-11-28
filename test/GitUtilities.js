@@ -65,6 +65,31 @@ describe("GitUtilities", () => {
         "git", ["add", "foo"], opts
       );
     });
+    it("works with absolute path for cwd", () => {
+      const cwd = path.resolve("test");
+      const file = "foo";
+      const opts = { cwd };
+      GitUtilities.addFile(file, opts);
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["add", "foo"], opts
+      );
+    });
+    it("works with absolute paths for file and cwd", () => {
+      const cwd = path.resolve("test");
+      const file = path.resolve(cwd, "foo");
+      const opts = { cwd };
+      GitUtilities.addFile(file, opts);
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["add", "foo"], opts
+      );
+    });
+    it("uses a POSIX path in the Git command, given a Windows file path", () => {
+      const opts = { cwd: "test" };
+      GitUtilities.addFile("foo\\bar", opts);
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git", ["add", "foo/bar"], opts
+      );
+    })
   });
 
   describe(".commit()", () => {
