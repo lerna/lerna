@@ -662,6 +662,9 @@ export default class PublishCommand extends Command {
     this.updates.forEach((update) => {
       this.runSyncScriptInPackage(update.package, "postversion");
     });
+
+    // run postversion, if set in the root directory
+    this.runSyncScriptInPackage(this.repository.package, "postversion");
   }
 
   gitCommitAndTagVersionForUpdates() {
