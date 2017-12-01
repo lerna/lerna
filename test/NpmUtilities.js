@@ -122,24 +122,44 @@ describe("NpmUtilities", () => {
   });
 
   describe(".runScriptInDir()", () => {
+    const originalEnv = Object.assign({}, process.env);
+    const mockEnv = {
+      mock_value: 1,
+    };
+
+    afterEach(() => {
+      process.env = originalEnv;
+    });
+
     it("runs an npm script in a directory", () => {
       const script = "foo";
       const args = ["--bar", "baz"];
       const directory = "/test/runScriptInDir";
       const callback = () => {};
 
+      process.env = mockEnv;
       NpmUtilities.runScriptInDir(script, args, directory, callback);
 
       const cmd = "npm";
       const scriptArgs = ["run", "foo", "--bar", "baz"];
       const opts = {
         cwd: directory,
+        env: mockEnv
       };
       expect(ChildProcessUtilities.exec).lastCalledWith(cmd, scriptArgs, opts, expect.any(Function));
     });
   });
 
   describe(".runScriptInDirSync()", () => {
+    const originalEnv = Object.assign({}, process.env);
+    const mockEnv = {
+      mock_value: 1,
+    };
+
+    afterEach(() => {
+      process.env = originalEnv;
+    });
+
     it("runs an npm script syncrhonously in a directory", () => {
       const script = "foo";
       const args = ["--bar", "baz"];
@@ -147,18 +167,29 @@ describe("NpmUtilities", () => {
       const callback = () => {
       };
 
+      process.env = mockEnv;
       NpmUtilities.runScriptInDirSync(script, args, directory, callback);
 
       const cmd = "npm";
       const scriptArgs = ["run", "foo", "--bar", "baz"];
       const opts = {
         cwd: directory,
+        env: mockEnv
       };
       expect(ChildProcessUtilities.execSync).lastCalledWith(cmd, scriptArgs, opts, expect.any(Function));
     });
   });
 
   describe(".runScriptInPackageStreaming()", () => {
+    const originalEnv = Object.assign({}, process.env);
+    const mockEnv = {
+      mock_value: 1,
+    };
+
+    afterEach(() => {
+      process.env = originalEnv;
+    });
+
     it("runs an npm script in a package with streaming", () => {
       const script = "foo";
       const args = ["--bar", "baz"];
@@ -168,6 +199,7 @@ describe("NpmUtilities", () => {
       };
       const callback = () => {};
 
+      process.env = mockEnv;
       NpmUtilities.runScriptInPackageStreaming(script, args, pkg, callback);
 
       expect(ChildProcessUtilities.spawnStreaming).lastCalledWith(
@@ -175,6 +207,7 @@ describe("NpmUtilities", () => {
         ["run", "foo", "--bar", "baz"],
         {
           cwd: pkg.location,
+          env: mockEnv
         },
         "qux",
         expect.any(Function)
@@ -228,6 +261,16 @@ describe("NpmUtilities", () => {
 
     it("should handle environment variables properly", () => {
       process.env = mockEnv;
+      const opts = NpmUtilities.getExecOpts("test_dir");
+      const want = {
+        cwd: "test_dir",
+        env: mockEnv
+      };
+      expect(opts).toEqual(want);
+    });
+
+    it("should handle add registry environment variable if passed", () => {
+      process.env = mockEnv;
       const opts = NpmUtilities.getExecOpts("test_dir", "https://my-secure-registry/npm");
       const want = {
         cwd: "test_dir",
@@ -243,6 +286,7 @@ describe("NpmUtilities", () => {
       const opts = NpmUtilities.getExecOpts("test_dir");
       const want = {
         cwd: "test_dir",
+        env: mockEnv
       };
       expect(opts).toEqual(want);
     });

@@ -155,11 +155,12 @@ export default class NpmUtilities {
   static getExecOpts(directory, registry) {
     const opts = {
       cwd: directory,
+      env: Object.assign({}, process.env)
     };
 
     if (registry) {
-      opts.env = Object.assign({}, process.env, {
-        npm_config_registry: registry,
+      opts.env = Object.assign({}, opts.env, {
+        npm_config_registry: registry
       });
     }
 
