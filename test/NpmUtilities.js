@@ -229,18 +229,6 @@ describe("NpmUtilities", () => {
       process.env = originalEnv;
     });
 
-    it("should handle environment variables properly", () => {
-      process.env = mockEnv;
-      const opts = NpmUtilities.getExecOpts("test_dir", "https://my-secure-registry/npm");
-      const want = {
-        cwd: "test_dir",
-        env: Object.assign({}, mockEnv, {
-          npm_config_registry: "https://my-secure-registry/npm"
-        })
-      };
-      expect(opts).toEqual(want);
-    });
-
     it("should handle missing environment variables", () => {
       process.env = mockEnv;
       const opts = NpmUtilities.getExecOpts("test_dir");
