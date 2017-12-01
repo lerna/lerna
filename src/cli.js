@@ -35,6 +35,14 @@ export default function CLI(argv, cwd) {
     .usage("Usage: $0 <command> [options]")
     .options(globalOptions).group(globalKeys, "Global Options:")
     .commandDir("../lib/commands")
+    .command("*", "", {}, (argv) => {
+      // a default command with no description catches typos or missing subcommands
+      log.error("lerna", `${argv._.length ? "Invalid" : "Missing"} command!`);
+      log.error("lerna", "Pass --help to see all available commands and options.");
+
+      // exit non-zero instead of throw an error so the CLI can be usefully chained
+      process.exitCode = 1;
+    })
     .demandCommand(1, "Pass --help to see all available commands and options.")
     .help("h").alias("h", "help")
     .version().alias("v", "version")
