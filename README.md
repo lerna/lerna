@@ -173,7 +173,7 @@ It will configure `lerna.json` to enforce exact match for all subsequent executi
 ```json
 {
   "lerna": "2.0.0",
-  "command": {
+  "commands": {
     "init": {
       "exact": true
     }
@@ -479,7 +479,7 @@ Note that this only applies when using the default "fixed" versioning mode, as t
 This can be configured in lerna.json, as well:
 ```json
 {
-  "command": {
+  "commands": {
     "publish": {
       "message": "chore(release): publish %s"
     }
@@ -495,7 +495,7 @@ If your `lerna.json` contains something like this:
 
 ```json
 {
-  "command": {
+  "commands": {
     "publish": {
       "allowBranch": "master"
     }
@@ -778,7 +778,7 @@ Example:
   "lerna": "x.x.x",
   "version": "1.2.0",
   "exampleOption": "foo",
-  "command": {
+  "commands": {
     "init": {
       "exampleOption": "bar",
     }
