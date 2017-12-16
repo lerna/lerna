@@ -140,8 +140,7 @@ export const builder = {
   "allow-branch": {
     group: "Command Options:",
     describe: "Specify which branches to allow publishing from.",
-    type: "string",
-    default: undefined,
+    type: "array",
   },
 };
 
@@ -200,7 +199,10 @@ export default class PublishCommand extends Command {
       }
 
       const currentBranch = GitUtilities.getCurrentBranch(this.execOpts);
-      if (this.options.allowBranch && !minimatch(currentBranch, this.options.allowBranch)) {
+      if (
+        this.options.allowBranch &&
+        ![].concat(this.options.allowBranch).some(x => minimatch(currentBranch, x))
+      ) {
         throw new ValidationError(
           "ENOTALLOWED",
           dedent`

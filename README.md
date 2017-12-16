@@ -489,7 +489,7 @@ This can be configured in lerna.json, as well:
 
 #### --allow-branch [glob]
 
-Lerna allows you to specify a glob in your `lerna.json` that your current branch needs to match to be publishable.
+Lerna allows you to specify a glob or an array of globs in your `lerna.json` that your current branch needs to match to be publishable.
 You can use this flag to override this setting.
 If your `lerna.json` contains something like this:
 
@@ -498,6 +498,19 @@ If your `lerna.json` contains something like this:
   "command": {
     "publish": {
       "allowBranch": "master"
+    }
+  }
+}
+```
+
+```json
+{
+  "command": {
+    "publish": {
+      "allowBranch": [
+        "master",
+        "feature/*"
+      ]
     }
   }
 }
