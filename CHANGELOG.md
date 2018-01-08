@@ -1,3 +1,36 @@
+## v2.6.0 (2018-01-08)
+
+Happy 2018! :tada:
+
+#### :rocket: Enhancement
+* [#1110](https://github.com/lerna/lerna/pull/1110) Add `--stream` option to `lerna exec`. ([@alan-agius4](https://github.com/alan-agius4))
+* [#1111](https://github.com/lerna/lerna/pull/1111) Add `--changelog-preset` option to customize `--conventional-commits` output. ([@alan-agius4](https://github.com/alan-agius4))
+
+#### :bug: Bug Fix
+* [#1134](https://github.com/lerna/lerna/pull/1134) Normalize path used for `git add` in respect to OS/environment. ([@zenflow](https://github.com/zenflow))
+* [#1129](https://github.com/lerna/lerna/pull/1129) Throw error in bootstrap when Yarn workspaces is misconfigured. ([@evocateur](https://github.com/evocateur))
+* [#1101](https://github.com/lerna/lerna/pull/1101) Set chmod for linked binaries. ([@marionebl](https://github.com/marionebl))
+* [#1112](https://github.com/lerna/lerna/pull/1112) Use all `packages` locations when resetting canary changes. ([@jwickens](https://github.com/jwickens))
+* [#1115](https://github.com/lerna/lerna/pull/1115) Keep non-patch subject parts when importing repository. ([@koenpunt](https://github.com/koenpunt))
+
+#### :memo: Documentation
+* [#1139](https://github.com/lerna/lerna/pull/1139) add docs on how to publish scoped packages. ([@cezaraugusto](https://github.com/cezaraugusto))
+* [#1108](https://github.com/lerna/lerna/pull/1108) Minor typo fix in hoist.md. ([@tdmalone](https://github.com/tdmalone))
+* [#1166](https://github.com/lerna/lerna/pull/1166) fix: typo in README.md "in in". ([@vladgolubev](https://github.com/vladgolubev))
+* [#1176](https://github.com/lerna/lerna/pull/1176) Fix typo in README.md. ([@LoicPoullain](https://github.com/LoicPoullain))
+
+#### Committers: 10
+- Alan Agius ([alan-agius4](https://github.com/alan-agius4))
+- Cezar Augusto ([cezaraugusto](https://github.com/cezaraugusto))
+- Daniel Stockman ([evocateur](https://github.com/evocateur))
+- Jonathan R Wickens ([jwickens](https://github.com/jwickens))
+- Koen Punt ([koenpunt](https://github.com/koenpunt))
+- Loïc Poullain ([LoicPoullain](https://github.com/LoicPoullain))
+- Mario Nebl ([marionebl](https://github.com/marionebl))
+- Matthew Francis Brunetti ([zenflow](https://github.com/zenflow))
+- Tim Malone ([tdmalone](https://github.com/tdmalone))
+- Vlad Holubiev ([vladgolubev](https://github.com/vladgolubev))
+
 ## v2.5.1 (2017-11-01)
 
 A quick bugfix for an overlooked case in `lerna add`.
