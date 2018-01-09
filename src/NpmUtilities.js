@@ -147,6 +147,7 @@ export default class NpmUtilities {
 
   static publishTaggedInDir(tag, directory, {client = 'npm', registry}, callback) {
     log.silly("publishTaggedInDir", tag, path.basename(directory));
+
     const opts = NpmUtilities.getExecOpts(directory, registry);
     ChildProcessUtilities.exec(client, ["publish", "--tag", tag.trim()], opts, callback);
   }
