@@ -570,6 +570,9 @@ export default class PublishCommand extends Command {
     const { exact, conventionalCommits } = this.options;
     const changedFiles = [];
 
+    // exec preversion lifecycle in root (before all updates)
+    this.runSyncScriptInPackage(this.repository.package, "preversion");
+
     this.updates.forEach((update) => {
       const pkg = update.package;
       const packageLocation = pkg.location;
@@ -631,6 +634,9 @@ export default class PublishCommand extends Command {
         }));
       }
     }
+
+    // exec version lifecycle in root (after all updates)
+    this.runSyncScriptInPackage(this.repository.package, "version");
 
     if (this.gitEnabled) {
       changedFiles.forEach((file) => GitUtilities.addFile(file, this.execOpts));
