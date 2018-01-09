@@ -28,19 +28,23 @@ const stabilizeString = _.flow([normalizeNewline, stableVersion]);
  */
 module.exports = {
   test(thing) {
-    return (
-      (_.isString(thing) && needsReplacement(thing)) ||
-      (_.isPlainObject(thing) && _.isString(thing.lerna) && needsReplacement(thing.lerna))
-    );
+    if (_.isString(thing) && needsReplacement(thing)) {
+      return true;
+    }
+
+    if (_.isPlainObject(thing) && _.isString(thing.lerna) && needsReplacement(thing.lerna)) {
+      return true;
+    }
+
+    return false;
   },
 
   print(thing, serialize) {
     if (_.isString(thing)) {
-      thing = stabilizeString(thing); // eslint-disable-line no-param-reassign
-    } else if (_.isPlainObject(thing)) {
-      thing.lerna = stableVersion(thing.lerna);
+      return stabilizeString(thing);
     }
 
+    thing.lerna = stableVersion(thing.lerna);
     return serialize(thing);
   },
 };

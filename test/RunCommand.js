@@ -59,38 +59,38 @@ describe("RunCommand", () => {
     it("runs a script in packages", async () => {
       await lernaRun("my-script");
 
-      expect(ranInPackages(testDir)).toMatchSnapshot("run <script>");
+      expect(ranInPackages(testDir)).toMatchSnapshot();
       expect(output).lastCalledWith("stdout");
     });
 
     it("runs a script in packages with --stream", async () => {
       await lernaRun("my-script", "--stream");
 
-      expect(ranInPackagesStreaming(testDir)).toMatchSnapshot("run <script> --stream");
+      expect(ranInPackagesStreaming(testDir)).toMatchSnapshot();
     });
 
     it("always runs test script", async () => {
       await lernaRun("test");
 
-      expect(ranInPackages(testDir)).toMatchSnapshot("run test");
+      expect(ranInPackages(testDir)).toMatchSnapshot();
     });
 
     it("always runs env script", async () => {
       await lernaRun("env");
 
-      expect(ranInPackages(testDir)).toMatchSnapshot("run env");
+      expect(ranInPackages(testDir)).toMatchSnapshot();
     });
 
     it("runs a script only in scoped packages", async () => {
       await lernaRun("my-script", "--scope", "package-1");
 
-      expect(ranInPackages(testDir)).toMatchSnapshot(`run <script> --scope package-1`);
+      expect(ranInPackages(testDir)).toMatchSnapshot();
     });
 
     it("does not run a script in ignored packages", async () => {
       await lernaRun("my-script", "--ignore", "package-@(2|3|4)");
 
-      expect(ranInPackages(testDir)).toMatchSnapshot(`run <script> --ignore package-@(2|3|4)`);
+      expect(ranInPackages(testDir)).toMatchSnapshot();
     });
 
     it("should filter packages that are not updated with --since", async () => {
@@ -106,7 +106,7 @@ describe("RunCommand", () => {
 
       await lernaRun("my-script", "--since");
 
-      expect(ranInPackages(testDir)).toMatchSnapshot("run <script> --since");
+      expect(ranInPackages(testDir)).toMatchSnapshot();
     });
 
     it("does not error when no packages match", async () => {
@@ -119,7 +119,7 @@ describe("RunCommand", () => {
     it("runs a script in all packages with --parallel", async () => {
       await lernaRun("env", "--parallel");
 
-      expect(ranInPackagesStreaming(testDir)).toMatchSnapshot("run <script> --parallel");
+      expect(ranInPackagesStreaming(testDir)).toMatchSnapshot();
     });
   });
 
@@ -129,9 +129,7 @@ describe("RunCommand", () => {
       const lernaRun = run(testDir);
       await lernaRun("my-script", "--scope", "@test/package-2", "--include-filtered-dependencies");
 
-      expect(ranInPackages(testDir)).toMatchSnapshot(
-        "run <script> --scope @test/package-2 --include-filtered-dependencies",
-      );
+      expect(ranInPackages(testDir)).toMatchSnapshot();
     });
   });
 });
