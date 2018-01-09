@@ -1077,6 +1077,13 @@ describe("PublishCommand", () => {
         const { exitCode } = await run(testDir)("--allow-branch", "feature/*");
         expect(exitCode).toBe(0);
       });
+
+      it("should accept a branch that matches one of the items passed", async () => {
+        GitUtilities.getCurrentBranch.mockReturnValueOnce("feature/awesome");
+
+        const { exitCode } = await run(testDir)("--allow-branch", "master","feature/*");
+        expect(exitCode).toBe(0);
+      });
     });
 
     describe("lerna.json", () => {
