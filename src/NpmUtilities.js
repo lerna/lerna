@@ -101,24 +101,22 @@ export default class NpmUtilities {
   }
 
 
-  static addDistTag(directory, packageName, version, tag, {client = 'npm', registry} = {}) {
+  static addDistTag(directory, packageName, version, tag, registry) {
     log.silly("addDistTag", tag, version, packageName);
     const opts = NpmUtilities.getExecOpts(directory, registry);
-    ChildProcessUtilities.execSync(client, ["dist-tag", "add", `${packageName}@${version}`, tag], opts);
+    ChildProcessUtilities.execSync("npm", ["dist-tag", "add", `${packageName}@${version}`, tag], opts);
   }
 
-  static removeDistTag(directory, packageName, tag, {client = 'npm', registry} = {}) {
+  static removeDistTag(directory, packageName, tag, registry) {
     log.silly("removeDistTag", tag, packageName);
     const opts = NpmUtilities.getExecOpts(directory, registry);
-    ChildProcessUtilities.execSync(client, ["dist-tag", "rm", packageName, tag], opts);
+    ChildProcessUtilities.execSync("npm", ["dist-tag", "rm", packageName, tag], opts);
   }
 
-  static checkDistTag(directory, packageName, tag, {client = 'npm', registry} = {}) {
+  static checkDistTag(directory, packageName, tag, registry) {
     log.silly("checkDistTag", tag, packageName);
     const opts = NpmUtilities.getExecOpts(directory, registry);
-    return ChildProcessUtilities
-      .execSync(client, ["dist-tag", "ls", packageName], opts)
-      .indexOf(tag) >= 0;
+    return ChildProcessUtilities.execSync("npm", ["dist-tag", "ls", packageName], opts).indexOf(tag) >= 0;
 
   }
 

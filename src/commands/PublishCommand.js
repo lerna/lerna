@@ -182,7 +182,7 @@ export default class PublishCommand extends Command {
 
     this.npmConfig = {
       client: this.options.npmClient || 'npm',
-      registry: this.registry
+      registry: this.npmRegistry
     }
 
     if (this.options.useGitVersion && !this.options.exact) {
@@ -727,7 +727,7 @@ export default class PublishCommand extends Command {
       const run = (cb) => {
         tracker.verbose("publishing", pkg.name);
 
-        NpmUtilities.publishTaggedInDir(tag, pkg.location, this.npmConfig, (err) => {
+        NpmUtilities.publishTaggedInDir(tag, pkg.location, this.npmConfig.registry, (err) => {
           err = err && err.stack || err;
 
           if (!err ||
@@ -800,18 +800,18 @@ export default class PublishCommand extends Command {
   updateTag(pkg) {
     const distTag = this.getDistTag();
 
-    if (NpmUtilities.checkDistTag(pkg.location, pkg.name, "lerna-temp", this.npmConfig)) {
-      NpmUtilities.removeDistTag(pkg.location, pkg.name, "lerna-temp", this.npmConfig);
+    if (NpmUtilities.checkDistTag(pkg.location, pkg.name, "lerna-temp", this.npmConfig.registry)) {
+      NpmUtilities.removeDistTag(pkg.location, pkg.name, "lerna-temp", this.npmConfig.registry);
     }
 
     /* eslint-disable max-len */
     // TODO: fix this API to be less verbose with parameters
     if (this.options.npmTag) {
-      NpmUtilities.addDistTag(pkg.location, pkg.name, this.updatesVersions[pkg.name], distTag, this.npmConfig);
+      NpmUtilities.addDistTag(pkg.location, pkg.name, this.updatesVersions[pkg.name], distTag, this.npmConfig.registry);
     } else if (this.options.canary) {
-      NpmUtilities.addDistTag(pkg.location, pkg.name, pkg.version, distTag, this.npmConfig);
+      NpmUtilities.addDistTag(pkg.location, pkg.name, pkg.version, distTag, this.npmConfig.registry);
     } else {
-      NpmUtilities.addDistTag(pkg.location, pkg.name, this.updatesVersions[pkg.name], distTag, this.npmConfig);
+      NpmUtilities.addDistTag(pkg.location, pkg.name, this.updatesVersions[pkg.name], distTag, this.npmConfig.registry);
     }
     /* eslint-enable max-len */
   }
