@@ -19,20 +19,24 @@ const CHANGELOG_CLI = require.resolve("conventional-changelog-cli/cli");
 
 export default class ConventionalCommitUtilities {
   static recommendIndependentVersion(pkg, opts) {
+    // `-p` here is overridden because `conventional-recommended-bump`
+    // cannot accept custom preset.
     const args = [
       RECOMMEND_CLI,
       "-l", pkg.name,
       "--commit-path", pkg.location,
-      "-p", ConventionalCommitUtilities.changelogPreset(opts),
+      "-p", "angular",
     ];
     return ConventionalCommitUtilities.recommendVersion(pkg, opts, "recommendIndependentVersion", args);
   }
 
   static recommendFixedVersion(pkg, opts) {
+    // `-p` here is overridden because `conventional-recommended-bump`
+    // cannot accept custom preset.
     const args = [
       RECOMMEND_CLI,
       "--commit-path", pkg.location,
-      "-p", ConventionalCommitUtilities.changelogPreset(opts),
+      "-p", "angular",
     ];
     return ConventionalCommitUtilities.recommendVersion(pkg, opts, "recommendFixedVersion", args);
   }
