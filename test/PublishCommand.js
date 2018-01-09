@@ -142,6 +142,10 @@ describe("PublishCommand", () => {
         expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
           "package-2": "^1.0.1",
         });
+        // peerDependencies are _never_ modified automatically
+        expect(updatedPackageJSON("package-3").peerDependencies).toMatchObject({
+          "package-2": "^1.0.0",
+        });
         expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
           "package-1": "^0.0.0",
         });

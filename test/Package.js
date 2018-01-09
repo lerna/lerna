@@ -24,7 +24,7 @@ describe("Package", () => {
         scripts: { "my-script": "echo 'hello world'" },
         dependencies: { "my-dependency": "^1.0.0" },
         devDependencies: { "my-dev-dependency": "^1.0.0" },
-        peerDependencies: { "my-peer-dependency": "^1.0.0" }
+        peerDependencies: { "my-peer-dependency": ">=1.0.0" }
       },
       "/path/to/package"
     );
@@ -75,7 +75,7 @@ describe("Package", () => {
 
   describe("get .peerDependencies", () => {
     it("should return the peerDependencies", () => {
-      expect(pkg.peerDependencies).toEqual({ "my-peer-dependency": "^1.0.0" });
+      expect(pkg.peerDependencies).toEqual({ "my-peer-dependency": ">=1.0.0" });
     });
   });
 
