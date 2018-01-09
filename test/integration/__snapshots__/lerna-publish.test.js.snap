@@ -148,6 +148,9 @@ Array [
       "package-2": "^1.0.1",
     },
     "name": "package-3",
+    "peerDependencies": Object {
+      "package-2": "^1.0.0",
+    },
     "version": "1.0.1",
   },
   Object {
