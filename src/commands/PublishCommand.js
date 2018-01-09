@@ -800,18 +800,18 @@ export default class PublishCommand extends Command {
   updateTag(pkg) {
     const distTag = this.getDistTag();
 
-    if (NpmUtilities.checkDistTag(pkg.location, pkg.name, "lerna-temp", this.npmConfig.registry)) {
-      NpmUtilities.removeDistTag(pkg.location, pkg.name, "lerna-temp", this.npmConfig.registry);
+    if (NpmUtilities.checkDistTag(pkg.location, pkg.name, "lerna-temp", this.npmRegistry)) {
+      NpmUtilities.removeDistTag(pkg.location, pkg.name, "lerna-temp", this.npmRegistry);
     }
 
     /* eslint-disable max-len */
     // TODO: fix this API to be less verbose with parameters
     if (this.options.npmTag) {
-      NpmUtilities.addDistTag(pkg.location, pkg.name, this.updatesVersions[pkg.name], distTag, this.npmConfig.registry);
+      NpmUtilities.addDistTag(pkg.location, pkg.name, this.updatesVersions[pkg.name], distTag, this.npmRegistry);
     } else if (this.options.canary) {
-      NpmUtilities.addDistTag(pkg.location, pkg.name, pkg.version, distTag, this.npmConfig.registry);
+      NpmUtilities.addDistTag(pkg.location, pkg.name, pkg.version, distTag, this.npmRegistry);
     } else {
-      NpmUtilities.addDistTag(pkg.location, pkg.name, this.updatesVersions[pkg.name], distTag, this.npmConfig.registry);
+      NpmUtilities.addDistTag(pkg.location, pkg.name, this.updatesVersions[pkg.name], distTag, this.npmRegistry);
     }
     /* eslint-enable max-len */
   }
