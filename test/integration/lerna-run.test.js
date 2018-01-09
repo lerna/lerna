@@ -10,7 +10,7 @@ const initFixture = require("../helpers/initFixture");
  * because Windows makes the snapshots impossible to stabilize.
  */
 describe("lerna run", () => {
-  test.concurrent("my-script --scope", async () => {
+  test("my-script --scope", async () => {
     const cwd = await initFixture("RunCommand/basic");
     const args = [
       "run",
@@ -23,11 +23,11 @@ describe("lerna run", () => {
       "--onload-script=false",
     ];
     const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
-    expect(stdout).toMatchSnapshot("stdout: my-script --scope");
-    expect(stderr).toMatchSnapshot("stderr: my-script --scope");
+    expect(stdout).toBe("package-1");
+    expect(stderr).toMatchSnapshot("stderr");
   });
 
-  test.concurrent("test --ignore", async () => {
+  test("test --ignore", async () => {
     const cwd = await initFixture("RunCommand/integration-lifecycle");
     const args = [
       "run",
@@ -41,11 +41,11 @@ describe("lerna run", () => {
       "--onload-script=false",
     ];
     const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
-    expect(stdout).toMatchSnapshot("stdout: test --ignore");
-    expect(stderr).toMatchSnapshot("stderr: test --ignore");
+    expect(stdout).toBe("package-4");
+    expect(stderr).toMatchSnapshot("stderr");
   });
 
-  test.concurrent("test --stream", async () => {
+  test("test --stream", async () => {
     const cwd = await initFixture("RunCommand/integration-lifecycle");
     const args = [
       "run",
@@ -58,11 +58,11 @@ describe("lerna run", () => {
       "--onload-script=false",
     ];
     const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
-    expect(stdout).toMatchSnapshot("stdout: test --stream");
-    expect(stderr).toMatchSnapshot("stderr: test --stream");
+    expect(stdout).toMatchSnapshot("stdout");
+    expect(stderr).toMatchSnapshot("stderr");
   });
 
-  test.concurrent("test --parallel", async () => {
+  test("test --parallel", async () => {
     const cwd = await initFixture("RunCommand/integration-lifecycle");
     const args = [
       "run",
@@ -74,7 +74,7 @@ describe("lerna run", () => {
       "--onload-script=false",
     ];
     const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
-    expect(stderr).toMatchSnapshot("stderr: test --parallel");
+    expect(stderr).toMatchSnapshot("stderr");
 
     // order is non-deterministic, so assert each item seperately
     expect(stdout).toMatch("package-1: package-1");
@@ -83,7 +83,7 @@ describe("lerna run", () => {
     expect(stdout).toMatch("package-4: package-4");
   });
 
-  test.concurrent("my-script --parallel", async () => {
+  test("my-script --parallel", async () => {
     const cwd = await initFixture("RunCommand/basic");
     const args = [
       "run",
@@ -95,7 +95,7 @@ describe("lerna run", () => {
       "--onload-script=false",
     ];
     const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
-    expect(stderr).toMatchSnapshot("stderr: my-script --parallel");
+    expect(stderr).toMatchSnapshot("stderr");
 
     // order is non-deterministic, so assert each item seperately
     expect(stdout).toMatch("package-1: package-1");
