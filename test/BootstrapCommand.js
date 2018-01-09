@@ -49,7 +49,7 @@ const installedPackagesInDirectories = (testDir) =>
 
 const ranScriptsInDirectories = (testDir) =>
   NpmUtilities.runScriptInDir.mock.calls.reduce((obj, args) => {
-    const location = normalizeRelativeDir(testDir, args[2]);
+    const location = normalizeRelativeDir(testDir, args[1].directory);
     const script = args[0];
 
     if (!obj[location]) {

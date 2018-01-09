@@ -1148,8 +1148,10 @@ describe("PublishCommand", () => {
       scripts.forEach(script => {
         expect(NpmUtilities.runScriptInDirSync).toHaveBeenCalledWith(
           script,
-          [],
-          path.resolve(testDir, "packages", "package-1"),
+          { args: [],
+            directory: path.resolve(testDir, "packages", "package-1"),
+            npmClient: 'npm'
+          },
           expect.any(Function)
         );
       });
@@ -1160,8 +1162,10 @@ describe("PublishCommand", () => {
       scripts.forEach(script => {
         expect(NpmUtilities.runScriptInDirSync).not.toHaveBeenCalledWith(
           script,
-          [],
-          path.resolve(testDir, "packages", "package-2"),
+          { args: [],
+            directory: path.resolve(testDir, "packages", "package-2"),
+            npmClient: 'npm'
+          },
           expect.any(Function)
         );
       });

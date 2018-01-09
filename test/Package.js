@@ -182,8 +182,10 @@ describe("Package", () => {
         try {
           expect(NpmUtilities.runScriptInDir).lastCalledWith(
             "my-script",
-            [],
-            pkg.location,
+           {  args: [],
+              directory: pkg.location,
+              npmClient: 'npm'
+            },
             expect.any(Function)
           );
 
@@ -203,8 +205,10 @@ describe("Package", () => {
 
       expect(NpmUtilities.runScriptInDirSync).lastCalledWith(
         "my-script",
-        [],
-        pkg.location,
+        { args: [],
+          directory: pkg.location,
+          npmClient: 'npm'
+        },
         expect.any(Function)
       );
     });

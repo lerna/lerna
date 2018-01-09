@@ -124,16 +124,37 @@ describe("NpmUtilities", () => {
   describe(".runScriptInDir()", () => {
     it("runs an npm script in a directory", () => {
       const script = "foo";
-      const args = ["--bar", "baz"];
-      const directory = "/test/runScriptInDir";
+      const options = {
+        args: ["--bar", "baz"],
+        directory: "/test/runScriptInDir",
+        npmClient: 'npm'
+      }
       const callback = () => {};
 
-      NpmUtilities.runScriptInDir(script, args, directory, callback);
+      NpmUtilities.runScriptInDir(script, options, callback);
 
       const cmd = "npm";
       const scriptArgs = ["run", "foo", "--bar", "baz"];
       const opts = {
-        cwd: directory,
+        cwd: options.directory,
+      };
+      expect(ChildProcessUtilities.exec).lastCalledWith(cmd, scriptArgs, opts, expect.any(Function));
+    });
+    it("support different npmClient", () => {
+      const script = "foo";
+      const options = {
+        args: ["--bar", "baz"],
+        directory: "/test/runScriptInDir",
+        npmClient: 'yarn'
+      }
+      const callback = () => {};
+
+      NpmUtilities.runScriptInDir(script, options, callback);
+
+      const cmd = "yarn";
+      const scriptArgs = ["run", "foo", "--bar", "baz"];
+      const opts = {
+        cwd: options.directory,
       };
       expect(ChildProcessUtilities.exec).lastCalledWith(cmd, scriptArgs, opts, expect.any(Function));
     });
@@ -142,17 +163,20 @@ describe("NpmUtilities", () => {
   describe(".runScriptInDirSync()", () => {
     it("runs an npm script syncrhonously in a directory", () => {
       const script = "foo";
-      const args = ["--bar", "baz"];
-      const directory = "/test/runScriptInDirSync";
+      const config = {
+        args: ["--bar", "baz"],
+        directory: "/test/runScriptInDirSync",
+        npmClient: 'npm'
+      }
       const callback = () => {
       };
 
-      NpmUtilities.runScriptInDirSync(script, args, directory, callback);
+      NpmUtilities.runScriptInDirSync(script, config, callback);
 
       const cmd = "npm";
       const scriptArgs = ["run", "foo", "--bar", "baz"];
       const opts = {
-        cwd: directory,
+        cwd: config.directory,
       };
       expect(ChildProcessUtilities.execSync).lastCalledWith(cmd, scriptArgs, opts, expect.any(Function));
     });
@@ -161,20 +185,23 @@ describe("NpmUtilities", () => {
   describe(".runScriptInPackageStreaming()", () => {
     it("runs an npm script in a package with streaming", () => {
       const script = "foo";
-      const args = ["--bar", "baz"];
-      const pkg = {
-        name: "qux",
-        location: "/test/runScriptInPackageStreaming",
-      };
+      const config = {
+        args: ["--bar", "baz"],
+        pkg: {
+          name: "qux",
+          location: "/test/runScriptInPackageStreaming",
+        },
+        npmClient: 'npm'
+      }
       const callback = () => {};
 
-      NpmUtilities.runScriptInPackageStreaming(script, args, pkg, callback);
+      NpmUtilities.runScriptInPackageStreaming(script, config, callback);
 
       expect(ChildProcessUtilities.spawnStreaming).lastCalledWith(
         "npm",
         ["run", "foo", "--bar", "baz"],
         {
-          cwd: pkg.location,
+          cwd: config.pkg.location,
         },
         "qux",
         expect.any(Function)
@@ -190,7 +217,7 @@ describe("NpmUtilities", () => {
     afterEach(resetExecOpts);
 
     it("runs npm publish in a directory with --tag support", () => {
-      NpmUtilities.publishTaggedInDir("published-tag", directory, undefined, callback);
+      NpmUtilities.publishTaggedInDir("published-tag", directory, {}, callback);
 
       const cmd = "npm";
       const args = ["publish", "--tag", "published-tag"];
@@ -199,7 +226,7 @@ describe("NpmUtilities", () => {
     });
 
     it("trims trailing whitespace in tag parameter", () => {
-      NpmUtilities.publishTaggedInDir("trailing-tag ", directory, callback);
+      NpmUtilities.publishTaggedInDir("trailing-tag ", directory, {}, callback);
 
       const actualtag = ChildProcessUtilities.exec.mock.calls[0][1][2];
       expect(actualtag).toBe("trailing-tag");
@@ -207,7 +234,7 @@ describe("NpmUtilities", () => {
 
     it("supports custom registry", () => {
       const registry = "https://custom-registry/publishTaggedInDir";
-      NpmUtilities.publishTaggedInDir("published-tag", directory, registry, callback);
+      NpmUtilities.publishTaggedInDir("published-tag", directory, {registry}, callback);
 
       const cmd = "npm";
       const args = ["publish", "--tag", "published-tag"];
