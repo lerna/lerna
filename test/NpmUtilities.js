@@ -134,6 +134,7 @@ describe("NpmUtilities", () => {
       const scriptArgs = ["run", "foo", "--bar", "baz"];
       const opts = {
         cwd: directory,
+        env: expect.any(Object),
       };
       expect(ChildProcessUtilities.exec).lastCalledWith(cmd, scriptArgs, opts, expect.any(Function));
     });
@@ -153,6 +154,7 @@ describe("NpmUtilities", () => {
       const scriptArgs = ["run", "foo", "--bar", "baz"];
       const opts = {
         cwd: directory,
+        env: expect.any(Object),
       };
       expect(ChildProcessUtilities.execSync).lastCalledWith(cmd, scriptArgs, opts, expect.any(Function));
     });
@@ -175,6 +177,7 @@ describe("NpmUtilities", () => {
         ["run", "foo", "--bar", "baz"],
         {
           cwd: pkg.location,
+          env: expect.any(Object),
         },
         "qux",
         expect.any(Function)
@@ -226,23 +229,14 @@ describe("NpmUtilities", () => {
       process.env = originalEnv;
     });
 
-    it("should handle environment variables properly", () => {
-      process.env = mockEnv;
-      const opts = NpmUtilities.getExecOpts("test_dir", "https://my-secure-registry/npm");
-      const want = {
-        cwd: "test_dir",
-        env: Object.assign({}, mockEnv, {
-          npm_config_registry: "https://my-secure-registry/npm"
-        })
-      };
-      expect(opts).toEqual(want);
-    });
-
     it("should handle missing environment variables", () => {
       process.env = mockEnv;
       const opts = NpmUtilities.getExecOpts("test_dir");
       const want = {
         cwd: "test_dir",
+        env: Object.assign({}, mockEnv, {
+          npm_config_registry: "https://registry.npmjs.org/"
+        })
       };
       expect(opts).toEqual(want);
     });

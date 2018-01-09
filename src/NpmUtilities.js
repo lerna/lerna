@@ -152,16 +152,14 @@ export default class NpmUtilities {
     ChildProcessUtilities.exec("npm", ["publish", "--tag", tag.trim()], opts, callback);
   }
 
-  static getExecOpts(directory, registry) {
+  static getExecOpts(directory) {
     const opts = {
       cwd: directory,
     };
 
-    if (registry) {
-      opts.env = Object.assign({}, process.env, {
-        npm_config_registry: registry,
-      });
-    }
+    opts.env = Object.assign({}, process.env, {
+      npm_config_registry: "https://registry.npmjs.org/",
+    });
 
     log.silly("getExecOpts", opts);
     return opts;
