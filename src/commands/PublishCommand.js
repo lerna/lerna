@@ -718,7 +718,7 @@ export default class PublishCommand extends Command {
       const run = (cb) => {
         tracker.verbose("publishing", pkg.name);
 
-        NpmUtilities.publishTaggedInDir(tag, pkg.location, this.npmRegistry, (err) => {
+        NpmUtilities.publishTaggedInDir(tag, pkg.location, this.npmRegistry, this.options, (err) => {
           err = err && err.stack || err;
 
           if (!err ||
