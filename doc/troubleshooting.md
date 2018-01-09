@@ -19,9 +19,9 @@ error Command failed with exit code 1.
 If you can upgrade Lerna to said version please do so, or as an alternative 
 solution you can add `--concurrency=1`.
 
-### Artifactory intergration issues
+### Private npm registry (Artifactory, npm Enterprise, etc) integration issues
 
-If `lerna bootstrap` is failing because you have repositories on a private server make sure you are including that regsitry. Example: `lerna bootstrap -- --regsitry=http://[registry-url]`.
+If `lerna bootstrap` is failing because you have repositories on a private server make sure you are including that registry. Example: `lerna bootstrap -- --registry=http://[registry-url]`.
 
 ## Import Command
 
@@ -111,7 +111,7 @@ git push --tags --force
 
 See this [Stackoverflow post](https://stackoverflow.com/questions/5002555/can-a-lightweight-tag-be-converted-to-an-annotated-tag) for more details
 
-### Artifactory intergration issues
+### Publishing to a private npm registry (Artifactory, npm Enterprise, etc)
 
 If `lerna publish` is failing ensure you have the following your `package.json`:
 
@@ -124,5 +124,5 @@ If `lerna publish` is failing ensure you have the following your `package.json`:
 You may also need to add the following to your `.npmrc` file on the individual package(s):
 
 ```
-registry = https://[regsitry-url]
+registry = https://[registry-url]
 ```
