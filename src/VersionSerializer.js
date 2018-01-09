@@ -2,7 +2,7 @@ export default class VersionSerializer {
   constructor({ graphDependencies, versionParser }) {
     this._graphDependencies = graphDependencies;
     this._versionParser = versionParser;
-    this._dependenciesKeys = ["dependencies", "devDependencies", "peerDependencies"];
+    this._dependenciesKeys = ["dependencies", "devDependencies"];
     this._strippedPrefixes = new Map();
   }
 

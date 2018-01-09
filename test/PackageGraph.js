@@ -21,7 +21,6 @@ describe("PackageGraph", () => {
           scripts: { "my-script": "echo 'hello world'" },
           dependencies: { "my-dependency": "^1.0.0" },
           devDependencies: { "my-dev-dependency": "^1.0.0" },
-          peerDependencies: { "my-peer-dependency": "^1.0.0" }
         },
         "/path/to/package1"
       ),
@@ -33,7 +32,7 @@ describe("PackageGraph", () => {
           scripts: { "my-script": "echo 'hello world'" },
           dependencies: { "my-dependency": "^1.0.0" },
           devDependencies: { "my-package-1": dependencyVersion },
-          peerDependencies: { "my-peer-dependency": "^1.0.0" }
+          peerDependencies: { "my-package-1": ">=1.0.0" }
         },
         "/path/to/package2"
       )

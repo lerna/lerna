@@ -584,7 +584,6 @@ export default class PublishCommand extends Command {
       // update pkg dependencies
       this.updatePackageDepsObject(pkg, "dependencies", exact);
       this.updatePackageDepsObject(pkg, "devDependencies", exact);
-      this.updatePackageDepsObject(pkg, "peerDependencies", exact);
 
       // exec preversion script
       this.runSyncScriptInPackage(pkg, "preversion");
