@@ -26,7 +26,6 @@
     global-require: off
     import/first: off
     import/no-dynamic-require: off
-    no-constant-condition: off
     no-continue: off
     no-empty: off
     no-param-reassign: off
