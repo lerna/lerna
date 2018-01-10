@@ -35,5 +35,3 @@
     no-use-before-define:
       - error
       - nofunc
-    # TODO: fix the remaining overrides
-    prefer-destructuring: off

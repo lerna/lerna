@@ -24,19 +24,18 @@ jest.mock("../src/utils/output");
 log.level = "silent";
 
 const ranInPackages = testDir =>
-  NpmUtilities.runScriptInDir.mock.calls.reduce((arr, args) => {
-    const script = args[0];
-    const dir = normalizeRelativeDir(testDir, args[1].directory);
-    arr.push([dir, script].concat(args[1].args).join(" "));
+  NpmUtilities.runScriptInDir.mock.calls.reduce((arr, [script, cfg]) => {
+    const { args, directory } = cfg;
+    const dir = normalizeRelativeDir(testDir, directory);
+    arr.push([dir, script].concat(args).join(" "));
     return arr;
   }, []);
 
 const ranInPackagesStreaming = testDir =>
-  NpmUtilities.runScriptInPackageStreaming.mock.calls.reduce((arr, args) => {
-    const script = args[0];
-    const pkg = args[1].pkg;
+  NpmUtilities.runScriptInPackageStreaming.mock.calls.reduce((arr, [script, cfg]) => {
+    const { args, pkg } = cfg;
     const dir = normalizeRelativeDir(testDir, pkg.location);
-    arr.push([dir, script].concat(args[1].args).join(" "));
+    arr.push([dir, script].concat(args).join(" "));
     return arr;
   }, []);
 

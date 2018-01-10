@@ -15,9 +15,9 @@ describe("GitUtilities", () => {
   afterEach(() => jest.resetAllMocks());
 
   describe(".isDetachedHead()", () => {
-    const getCurrentBranch = GitUtilities.getCurrentBranch;
+    const originalGetCurrentBranch = GitUtilities.getCurrentBranch;
     afterEach(() => {
-      GitUtilities.getCurrentBranch = getCurrentBranch;
+      GitUtilities.getCurrentBranch = originalGetCurrentBranch;
     });
 
     it("returns true when branchName is HEAD", () => {
@@ -155,9 +155,9 @@ describe("GitUtilities", () => {
   });
 
   describe(".getLastTaggedCommitInBranch()", () => {
-    const getLastTag = GitUtilities.getLastTag;
+    const getLastTagOriginal = GitUtilities.getLastTag;
     afterEach(() => {
-      GitUtilities.getLastTag = getLastTag;
+      GitUtilities.getLastTag = getLastTagOriginal;
     });
 
     it("returns SHA of closest git tag in branch", () => {
@@ -183,9 +183,9 @@ describe("GitUtilities", () => {
   });
 
   describe(".pushWithTags()", () => {
-    const getCurrentBranch = GitUtilities.getCurrentBranch;
+    const getCurrentBranchOriginal = GitUtilities.getCurrentBranch;
     afterEach(() => {
-      GitUtilities.getCurrentBranch = getCurrentBranch;
+      GitUtilities.getCurrentBranch = getCurrentBranchOriginal;
     });
 
     it("pushes current branch and specified tag(s) to origin", () => {

@@ -48,26 +48,28 @@ export default class RunCommand extends Command {
   }
 
   initialize(callback) {
-    const { parallel, stream, npmClient } = this.options;
-    this.script = this.input[0];
-    this.args = this.input.slice(1);
-    this.npmClient = npmClient || "npm";
+    const [script, ...args] = this.input;
+    this.script = script;
+    this.args = args;
 
-    if (!this.script) {
+    if (!script) {
       callback(new Error("You must specify which npm script to run."));
       return;
     }
 
+    const { parallel, stream, npmClient } = this.options;
+    this.npmClient = npmClient || "npm";
+
     const { filteredPackages } = this;
 
-    if (this.script === "test" || this.script === "env") {
+    if (script === "test" || script === "env") {
       this.packagesWithScript = filteredPackages;
     } else {
-      this.packagesWithScript = filteredPackages.filter(pkg => pkg.scripts && pkg.scripts[this.script]);
+      this.packagesWithScript = filteredPackages.filter(pkg => pkg.scripts && pkg.scripts[script]);
     }
 
     if (!this.packagesWithScript.length) {
-      this.logger.warn(`No packages found with the npm script '${this.script}'`);
+      this.logger.warn(`No packages found with the npm script '${script}'`);
     }
 
     if (parallel || stream) {

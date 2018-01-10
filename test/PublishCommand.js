@@ -82,8 +82,7 @@ const updatedLernaJson = () => writeJsonFile.sync.mock.calls[0][1];
 const updatedPackageVersions = testDir =>
   writePkg.sync.mock.calls.reduce((obj, args) => {
     const location = normalizeRelativeDir(testDir, path.dirname(args[0]));
-    const version = args[1].version;
-    obj[location] = version;
+    obj[location] = args[1].version;
     return obj;
   }, {});
 
@@ -804,37 +803,25 @@ describe("PublishCommand", () => {
    * ======================================================================= */
 
   describe("--conventional-commits", () => {
-    const recommendIndependentVersion = ConventionalCommitUtilities.recommendIndependentVersion;
-    const recommendFixedVersion = ConventionalCommitUtilities.recommendFixedVersion;
-
-    const updateIndependentChangelog = ConventionalCommitUtilities.updateIndependentChangelog;
-    const updateFixedRootChangelog = ConventionalCommitUtilities.updateFixedRootChangelog;
-    const updateFixedChangelog = ConventionalCommitUtilities.updateFixedChangelog;
-
     let testDir;
 
-    function initialReccomendReplies() {
-      return ["1.0.1", "1.1.0", "2.0.0", "1.1.0", "5.1.1"];
-    }
-
-    let reccomendReplies;
-
-    beforeEach(() => {
-      reccomendReplies = initialReccomendReplies();
-    });
-
     describe("independent mode", () => {
+      const recommendIndependentVersionOriginal = ConventionalCommitUtilities.recommendIndependentVersion;
+      const updateIndependentChangelogOriginal = ConventionalCommitUtilities.updateIndependentChangelog;
+
       beforeEach(() =>
         initFixture("PublishCommand/independent").then(dir => {
           testDir = dir;
+
+          const reccomendReplies = ["1.0.1", "1.1.0", "2.0.0", "1.1.0", "5.1.1"];
           ConventionalCommitUtilities.recommendIndependentVersion = jest.fn(() => reccomendReplies.shift());
           ConventionalCommitUtilities.updateIndependentChangelog = jest.fn();
         }),
       );
 
       afterEach(() => {
-        ConventionalCommitUtilities.recommendIndependentVersion = recommendIndependentVersion;
-        ConventionalCommitUtilities.updateIndependentChangelog = updateIndependentChangelog;
+        ConventionalCommitUtilities.recommendIndependentVersion = recommendIndependentVersionOriginal;
+        ConventionalCommitUtilities.updateIndependentChangelog = updateIndependentChangelogOriginal;
       });
 
       it("should use conventional-commits utility to guess version bump and generate CHANGELOG", () =>
@@ -890,10 +877,15 @@ describe("PublishCommand", () => {
     });
 
     describe("fixed mode", () => {
+      const recommendFixedVersionOriginal = ConventionalCommitUtilities.recommendFixedVersion;
+      const updateFixedRootChangelogOriginal = ConventionalCommitUtilities.updateFixedRootChangelog;
+      const updateFixedChangelogOriginal = ConventionalCommitUtilities.updateFixedChangelog;
+
       beforeEach(() =>
         initFixture("PublishCommand/normal").then(dir => {
           testDir = dir;
 
+          const reccomendReplies = ["1.0.1", "1.1.0", "2.0.0", "1.1.0", "5.1.1"];
           ConventionalCommitUtilities.recommendFixedVersion = jest.fn(() => reccomendReplies.shift());
           ConventionalCommitUtilities.updateFixedRootChangelog = jest.fn();
           ConventionalCommitUtilities.updateFixedChangelog = jest.fn();
@@ -901,9 +893,9 @@ describe("PublishCommand", () => {
       );
 
       afterEach(() => {
-        ConventionalCommitUtilities.recommendFixedVersion = recommendFixedVersion;
-        ConventionalCommitUtilities.updateFixedRootChangelog = updateFixedRootChangelog;
-        ConventionalCommitUtilities.updateFixedChangelog = updateFixedChangelog;
+        ConventionalCommitUtilities.recommendFixedVersion = recommendFixedVersionOriginal;
+        ConventionalCommitUtilities.updateFixedRootChangelog = updateFixedRootChangelogOriginal;
+        ConventionalCommitUtilities.updateFixedChangelog = updateFixedChangelogOriginal;
       });
 
       it("should use conventional-commits utility to guess version bump and generate CHANGELOG", () =>

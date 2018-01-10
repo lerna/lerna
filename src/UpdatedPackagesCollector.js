@@ -6,7 +6,7 @@ import semver from "semver";
 import GitUtilities from "./GitUtilities";
 
 // TODO: remove this when we _really_ remove support for SECRET_FLAG
-const Buffer = require("safe-buffer").Buffer;
+const Buffer = require("safe-buffer").Buffer; // eslint-disable-line prefer-destructuring
 
 const SECRET_FLAG = Buffer.from(
   // eslint-disable-next-line max-len
@@ -117,9 +117,9 @@ export default class UpdatedPackagesCollector {
       return false;
     }
 
-    const dependencies = this.packageGraph.get(packageName).dependencies;
+    const graphDependencies = this.packageGraph.get(packageName).dependencies;
 
-    if (dependencies.indexOf(dependency) > -1) {
+    if (graphDependencies.indexOf(dependency) > -1) {
       this.cache[packageName][dependency] = "dependent";
       return true;
     }
@@ -128,7 +128,7 @@ export default class UpdatedPackagesCollector {
 
     let hasSubDependents = false;
 
-    dependencies.forEach(dep => {
+    graphDependencies.forEach(dep => {
       if (this.isPackageDependentOf(dep, dependency)) {
         this.cache[packageName][dependency] = "dependent";
         hasSubDependents = true;

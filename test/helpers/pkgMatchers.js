@@ -84,6 +84,7 @@ const matchDependency = dependencyType => (manifest, pkg, range) => {
   };
 };
 
+// eslint-disable-next-line prefer-destructuring
 const X_OK = (fs.constants || fs).X_OK;
 
 const matchExecutableFile = () => (pkgRef, raw) => {

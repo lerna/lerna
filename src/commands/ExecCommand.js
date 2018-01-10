@@ -47,8 +47,9 @@ export default class ExecCommand extends Command {
   }
 
   initialize(callback) {
-    this.command = this.input[0];
-    this.args = this.input.slice(1);
+    const [cmd, ...args] = this.input;
+    this.command = cmd;
+    this.args = args;
 
     // don't interrupt spawned or streaming stdio
     this.logger.disableProgress();

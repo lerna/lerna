@@ -239,24 +239,19 @@ export default class PublishCommand extends Command {
       return;
     }
 
-    this.getVersionsForUpdates((err, results) => {
+    this.getVersionsForUpdates((err, { version, versions }) => {
       if (err) {
         callback(err);
         return;
       }
 
-      const version = results.version;
-      let versions = results.versions;
-
-      if (!versions) {
-        versions = {};
-        this.updates.forEach(update => {
-          versions[update.package.name] = version;
-        });
-      }
-
       this.masterVersion = version;
-      this.updatesVersions = versions;
+      this.updatesVersions =
+        versions ||
+        this.updates.reduce((acc, update) => {
+          acc[update.package.name] = version;
+          return acc;
+        }, {});
 
       this.confirmVersions(callback);
     });
@@ -320,47 +315,52 @@ export default class PublishCommand extends Command {
   }
 
   getVersionsForUpdates(callback) {
-    const cdVersion = this.options.cdVersion;
-    if (cdVersion && !this.options.canary) {
-      // If the version is independent then send versions
-      if (this.repository.isIndependent()) {
+    const { canary, cdVersion, conventionalCommits, preid, repoVersion } = this.options;
+    const independentVersions = this.repository.isIndependent();
+
+    if (cdVersion && !canary) {
+      if (independentVersions) {
+        // Independent Semver Keyword Mode
         const versions = {};
 
         this.updates.forEach(update => {
-          versions[update.package.name] = semver.inc(update.package.version, cdVersion, this.options.preid);
+          const { name, version } = update.package;
+          versions[name] = semver.inc(version, cdVersion, preid);
         });
 
         return callback(null, { versions });
       }
 
-      // Otherwise bump the global version
-      const version = semver.inc(this.globalVersion, cdVersion, this.options.preid);
+      // Non-Independent Semver Keyword Mode
+      const version = semver.inc(this.globalVersion, cdVersion, preid);
       return callback(null, { version });
     }
 
-    if (this.options.repoVersion) {
+    if (repoVersion) {
       return callback(null, {
-        version: this.options.repoVersion,
+        version: repoVersion,
       });
     }
 
-    if (this.options.canary) {
-      if (this.repository.isIndependent()) {
+    if (canary) {
+      if (independentVersions) {
         // Independent Canary Mode
         const versions = {};
         this.updates.forEach(update => {
-          versions[update.package.name] = this.getCanaryVersion(update.package.version, this.options.canary);
+          const { name, version } = update.package;
+          versions[name] = this.getCanaryVersion(version, canary);
         });
 
         return callback(null, { versions });
       }
+
       // Non-Independent Canary Mode
-      const version = this.getCanaryVersion(this.globalVersion, this.options.canary);
+      const version = this.getCanaryVersion(this.globalVersion, canary);
       return callback(null, { version });
     }
 
-    if (this.options.conventionalCommits) {
-      if (this.repository.isIndependent()) {
+    if (conventionalCommits) {
+      if (independentVersions) {
         // Independent Conventional-Commits Mode
         const versions = {};
         this.recommendVersions(
@@ -373,6 +373,7 @@ export default class PublishCommand extends Command {
 
         return callback(null, { versions });
       }
+
       // Non-Independent Conventional-Commits Mode
       const currentFixedVersion = this.repository.lernaJson.version;
 
@@ -393,10 +394,11 @@ export default class PublishCommand extends Command {
           version = versionBump.recommendedVersion;
         }
       });
+
       return callback(null, { version });
     }
 
-    if (this.repository.isIndependent()) {
+    if (independentVersions) {
       // Independent Non-Canary Mode
       async.mapLimit(
         this.updates,
@@ -495,11 +497,7 @@ export default class PublishCommand extends Command {
           }
 
           case "PRERELEASE": {
-            const components = semver.prerelease(currentVersion);
-            let existingId = null;
-            if (components && components.length === 2) {
-              existingId = components[0];
-            }
+            const [existingId] = semver.prerelease(currentVersion) || [];
             const defaultVersion = semver.inc(currentVersion, "prerelease", existingId);
             const prompt = `(default: ${
               existingId ? `"${existingId}"` : "none"
@@ -574,6 +572,7 @@ export default class PublishCommand extends Command {
 
   updateUpdatedPackages() {
     const { exact, conventionalCommits } = this.options;
+    const independentVersions = this.repository.isIndependent();
     const changedFiles = [];
 
     // exec preversion lifecycle in root (before all updates)
@@ -581,8 +580,7 @@ export default class PublishCommand extends Command {
 
     this.updates.forEach(update => {
       const pkg = update.package;
-      const packageLocation = pkg.location;
-      const packageJsonLocation = path.join(packageLocation, "package.json");
+      const packageJsonLocation = path.join(pkg.location, "package.json");
 
       // set new version
       pkg.version = this.updatesVersions[pkg.name] || pkg.version;
@@ -606,22 +604,10 @@ export default class PublishCommand extends Command {
       // we can now generate the Changelog, based on the
       // the updated version that we're about to release.
       if (conventionalCommits) {
-        if (this.repository.isIndependent()) {
-          ConventionalCommitUtilities.updateIndependentChangelog(
-            {
-              name: pkg.name,
-              location: pkg.location,
-            },
-            this.changelogOpts,
-          );
+        if (independentVersions) {
+          ConventionalCommitUtilities.updateIndependentChangelog(pkg, this.changelogOpts);
         } else {
-          ConventionalCommitUtilities.updateFixedChangelog(
-            {
-              name: pkg.name,
-              location: pkg.location,
-            },
-            this.changelogOpts,
-          );
+          ConventionalCommitUtilities.updateFixedChangelog(pkg, this.changelogOpts);
         }
 
         changedFiles.push(ConventionalCommitUtilities.changelogLocation(pkg));
@@ -631,24 +617,22 @@ export default class PublishCommand extends Command {
       changedFiles.push(packageJsonLocation);
     });
 
-    if (conventionalCommits) {
-      if (!this.repository.isIndependent()) {
-        const packageJson = this.repository.packageJson;
+    if (conventionalCommits && !independentVersions) {
+      const rootPkg = this.repository.packageJson;
 
-        ConventionalCommitUtilities.updateFixedRootChangelog(
-          {
-            name: packageJson && packageJson.name ? packageJson.name : "root",
-            location: this.repository.rootPath,
-          },
-          this.changelogOpts,
-        );
+      ConventionalCommitUtilities.updateFixedRootChangelog(
+        {
+          name: rootPkg && rootPkg.name ? rootPkg.name : "root",
+          location: this.repository.rootPath,
+        },
+        this.changelogOpts,
+      );
 
-        changedFiles.push(
-          ConventionalCommitUtilities.changelogLocation({
-            location: this.repository.rootPath,
-          }),
-        );
-      }
+      changedFiles.push(
+        ConventionalCommitUtilities.changelogLocation({
+          location: this.repository.rootPath,
+        }),
+      );
     }
 
     // exec version lifecycle in root (after all updates)

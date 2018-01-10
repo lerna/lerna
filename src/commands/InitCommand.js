@@ -63,7 +63,7 @@ export default class InitCommand extends Command {
   }
 
   ensurePackageJSON() {
-    let packageJson = this.repository.packageJson;
+    let { packageJson } = this.repository;
 
     if (!packageJson) {
       packageJson = {};
@@ -91,7 +91,7 @@ export default class InitCommand extends Command {
 
   ensureLernaJson() {
     // lernaJson already defaulted to empty object in Repository constructor
-    const lernaJson = this.repository.lernaJson;
+    const { lernaJson, version: repositoryVersion } = this.repository;
 
     let version;
 
@@ -99,8 +99,8 @@ export default class InitCommand extends Command {
       version = "independent";
     } else if (FileSystemUtilities.existsSync(this.repository.versionLocation)) {
       version = FileSystemUtilities.readFileSync(this.repository.versionLocation);
-    } else if (this.repository.version) {
-      version = this.repository.version;
+    } else if (repositoryVersion) {
+      version = repositoryVersion;
     } else {
       version = "0.0.0";
     }
@@ -127,7 +127,7 @@ export default class InitCommand extends Command {
   }
 
   ensureNoVersionFile() {
-    const versionLocation = this.repository.versionLocation;
+    const { versionLocation } = this.repository;
     if (FileSystemUtilities.existsSync(versionLocation)) {
       this.logger.info("", "Removing old VERSION file");
       FileSystemUtilities.unlinkSync(versionLocation);
