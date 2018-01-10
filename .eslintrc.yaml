@@ -33,7 +33,6 @@
     import/first: off
     import/no-dynamic-require: off
     no-param-reassign: off
-    no-restricted-syntax: off
     no-shadow: off
     no-use-before-define: off
     prefer-destructuring: off

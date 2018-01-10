@@ -176,14 +176,14 @@ export default class PackageUtilities {
       existingPackageNames[pkg.name].push(pkg.location);
     });
 
-    for (const pkgName in existingPackageNames) {
+    Object.keys(existingPackageNames).forEach(pkgName => {
       if (existingPackageNames[pkgName].length > 1) {
         log.warn(
           `Package name "${pkgName}" used in multiple packages:
           \t${existingPackageNames[pkgName].join("\n\t")}`,
         );
       }
-    }
+    });
   }
 
   static topologicallyBatchPackages(packagesToBatch, { depsOnly, rejectCycles } = {}) {
