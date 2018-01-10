@@ -6,8 +6,7 @@ import initFixture from "../helpers/initFixture";
 /**
  * NOTE: We do not test the "missing test script" case here
  * because Windows makes the snapshots impossible to stabilize.
- * */
-
+ */
 describe("lerna run", () => {
   test.concurrent("my-script --scope", async () => {
     const cwd = await initFixture("RunCommand/basic");

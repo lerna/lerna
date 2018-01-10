@@ -20,11 +20,11 @@ function stableVersion(str) {
 const stabilizeString = _.flow([normalizeNewline, stableVersion]);
 
 /**
-A snapshot serializer that replaces all instances of unstable version number
-with __TEST_VERSION__ when found in snapshotted strings or object properties.
-
-@see http://facebook.github.io/jest/docs/expect.html#expectaddsnapshotserializerserializer
-* */
+ * A snapshot serializer that replaces all instances of unstable version number
+ * with __TEST_VERSION__ when found in snapshotted strings or object properties.
+ *
+ * @see http://facebook.github.io/jest/docs/expect.html#expectaddsnapshotserializerserializer
+ */
 module.exports = {
   test(thing) {
     return (

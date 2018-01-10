@@ -6,13 +6,13 @@ import yargs from "yargs/yargs";
 import { builder as globalOptions } from "./Command";
 
 /**
-Essentially a factory that returns a yargs() instance that can
-be used to call parse() immediately (as in ../bin/lerna) or by
-unit tests to encapsulate instantiation with "real" arguments.
-
-@param {Array = []} argv
-@param {String = process.cwd()} cwd
-* */
+ * Essentially a factory that returns a yargs() instance that can
+ * be used to call parse() immediately (as in ../bin/lerna) or by
+ * unit tests to encapsulate instantiation with "real" arguments.
+ *
+ * @param {Array = []} argv
+ * @param {String = process.cwd()} cwd
+ */
 export default function CLI(argv, cwd) {
   const cli = yargs(argv, cwd);
 
