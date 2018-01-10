@@ -413,7 +413,7 @@ export default class Command {
     // process.exit() is an anti-pattern
     process.exitCode = code;
 
-    const finish = function() {
+    const finish = () => {
       if (callback) {
         callback(err, code);
       }

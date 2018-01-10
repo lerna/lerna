@@ -23,7 +23,6 @@
         ignores:
           - syntax
     # TODO: fix the remaining overrides
-    func-names: off
     global-require: off
     import/first: off
     import/no-dynamic-require: off
