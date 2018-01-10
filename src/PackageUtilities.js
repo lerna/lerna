@@ -28,11 +28,11 @@ function filterPackage(name, filters, negate) {
   // For example: `--hoist` is equivalent to `--hoist=**`.
   // The double star here is to account for scoped packages.
   if (filters === true) {
-    filters = "**";
+    filters = "**"; // eslint-disable-line no-param-reassign
   }
 
   if (!Array.isArray(filters)) {
-    filters = [filters];
+    filters = [filters]; // eslint-disable-line no-param-reassign
   }
 
   if (negate) {

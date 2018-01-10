@@ -145,10 +145,8 @@ function createSymbolicLink(src, dest, type, callback) {
   });
 }
 
-function createPosixSymlink(origin, dest, type, callback) {
-  if (type === "exec") {
-    type = "file";
-  }
+function createPosixSymlink(origin, dest, _type, callback) {
+  const type = _type === "exec" ? "file" : _type;
   const src = path.relative(path.dirname(dest), origin);
   createSymbolicLink(src, dest, type, callback);
 }

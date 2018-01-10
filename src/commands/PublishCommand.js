@@ -439,10 +439,9 @@ export default class PublishCommand extends Command {
     });
   }
 
-  getCanaryVersion(version, preid) {
-    if (preid == null || typeof preid !== "string") {
-      preid = "alpha";
-    }
+  getCanaryVersion(version, _preid) {
+    // FIXME: this complicated defaulting should be done in yargs option.coerce()
+    const preid = _preid == null || typeof _preid !== "string" ? "alpha" : _preid;
 
     const release = this.options.cdVersion || "minor";
     const nextVersion = semver.inc(version, release);
@@ -745,7 +744,8 @@ export default class PublishCommand extends Command {
           tracker.verbose("publishing", pkg.name);
 
           NpmUtilities.publishTaggedInDir(tag, pkg.location, this.npmConfig, err => {
-            err = (err && err.stack) || err;
+            // FIXME: this err.stack conditional is too cute
+            err = (err && err.stack) || err; // eslint-disable-line no-param-reassign
 
             if (
               !err ||

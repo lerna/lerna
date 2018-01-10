@@ -9,8 +9,6 @@ log.level = "silent";
 
 describe("PackageGraph", () => {
   function createPackages(version, dependencyVersion = version) {
-    dependencyVersion = dependencyVersion || version;
-
     return [
       new Package(
         {

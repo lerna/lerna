@@ -36,7 +36,7 @@ module.exports = {
 
   print(thing, serialize) {
     if (_.isString(thing)) {
-      thing = stabilizeString(thing);
+      thing = stabilizeString(thing); // eslint-disable-line no-param-reassign
     } else if (_.isPlainObject(thing)) {
       thing.lerna = stableVersion(thing.lerna);
     }

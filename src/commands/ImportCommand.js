@@ -168,30 +168,30 @@ export default class ImportCommand extends Command {
         // Fall back to three-way merge, which can help with duplicate commits
         // due to merge history.
         ChildProcessUtilities.exec("git", ["am", "-3", "--keep-non-patch"], this.execOpts, err => {
+          tracker.completeWork(1);
+
           if (err) {
-            const isEmptyCommit = err.stdout.indexOf("Patch is empty.") === 0;
-            if (isEmptyCommit) {
+            if (err.stdout.indexOf("Patch is empty.") === 0) {
               // Automatically skip empty commits
               ChildProcessUtilities.execSync("git", ["am", "--skip"], this.execOpts);
-
-              // Reset previous error
-              err = null;
             } else {
               // Give some context for the error message.
-              err =
-                `Failed to apply commit ${sha}.\n${err}\n` +
-                `Rolling back to previous HEAD (commit ${this.preImportHead}).\n` +
-                `You may try with --flatten to import flat history.`;
+              err.message = dedent`
+                Failed to apply commit ${sha}.
+                ${err.message}
+                Rolling back to previous HEAD (commit ${this.preImportHead}).
+                You may try with --flatten to import flat history.
+              `;
 
               // Abort the failed `git am` and roll back to previous HEAD.
               ChildProcessUtilities.execSync("git", ["am", "--abort"], this.execOpts);
               ChildProcessUtilities.execSync("git", ["reset", "--hard", this.preImportHead], this.execOpts);
+
+              return done(err);
             }
           }
 
-          tracker.completeWork(1);
-
-          done(err);
+          done();
         }).stdin.end(patch);
       }),
       err => {

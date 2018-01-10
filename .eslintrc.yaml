@@ -22,6 +22,10 @@
       - version: 4
         ignores:
           - syntax
+    no-param-reassign:
+      - error
+      - ignorePropertyModificationsFor:
+        - err
     no-underscore-dangle:
       - error
       - allowAfterThis: true
@@ -29,6 +33,5 @@
           - _cwd
           - _onFinish
     # TODO: fix the remaining overrides
-    no-param-reassign: off
     no-use-before-define: off
     prefer-destructuring: off

@@ -220,7 +220,7 @@ export default class Command {
       const onComplete = (err, exitCode) => {
         if (err) {
           if (typeof err === "string") {
-            err = { stack: err };
+            err = { stack: err }; // eslint-disable-line no-param-reassign
           }
           err.exitCode = exitCode;
           reject(err);
