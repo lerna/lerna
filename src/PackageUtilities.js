@@ -199,7 +199,7 @@ export default class PackageUtilities {
         if (!refCounts[dep]) {
           refCounts[dep] = 0;
         }
-        refCounts[dep]++;
+        refCounts[dep] += 1;
       }),
     );
 

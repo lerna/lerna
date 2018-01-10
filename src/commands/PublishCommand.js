@@ -758,7 +758,7 @@ export default class PublishCommand extends Command {
               return;
             }
 
-            attempts++;
+            attempts += 1;
 
             if (attempts < 5) {
               this.logger.error("publish", "Retrying failed publish:", pkg.name);
@@ -796,7 +796,7 @@ export default class PublishCommand extends Command {
 
         // eslint-disable-next-line no-constant-condition
         while (true) {
-          attempts++;
+          attempts += 1;
 
           try {
             this.updateTag(pkg);

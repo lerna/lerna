@@ -66,10 +66,10 @@ export default class ChildProcessUtilities {
 }
 
 function registerChild(child) {
-  children++;
+  children += 1;
 
   pFinally(child, () => {
-    children--;
+    children -= 1;
 
     if (children === 0) {
       emitter.emit("empty");

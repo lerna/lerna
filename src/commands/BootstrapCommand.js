@@ -348,7 +348,7 @@ export default class BootstrapCommand extends Command {
           }
 
           // Record the dependency on this version.
-          dep.versions[version]++;
+          dep.versions[version] += 1;
           dep.dependents[version].push(pkg.name);
         });
     });
