@@ -75,7 +75,9 @@ describe("ImportCommand", () => {
       await execa("git", ["commit", "--no-gpg-sign", "-am", "master content written"], cwdExternalDir);
       try {
         await execa("git", ["merge", branchName], cwdExternalDir);
-      } catch (e) {}
+      } catch (e) {
+        // skip
+      }
 
       await fs.writeFile(conflictedFile, "merged content");
       await execa("git", ["add", conflictedFileName], cwdExternalDir);
