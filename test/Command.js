@@ -446,7 +446,7 @@ describe("Command", () => {
           warning = m;
         });
 
-        instance.options;
+        instance.options; // eslint-disable-line no-unused-expressions
 
         expect(warning).toHaveProperty(
           "message",
@@ -466,7 +466,7 @@ describe("Command", () => {
           throw new Error("should not warn bootstrapConfig");
         });
 
-        instance.options;
+        instance.options; // eslint-disable-line no-unused-expressions
       });
 
       it("should not provide a value to other commands", () => {
@@ -490,7 +490,7 @@ describe("Command", () => {
           warning = m;
         });
 
-        instance.options;
+        instance.options; // eslint-disable-line no-unused-expressions
 
         expect(warning).toHaveProperty(
           "message",
@@ -510,7 +510,7 @@ describe("Command", () => {
           throw new Error("should not warn publishConfig");
         });
 
-        instance.options;
+        instance.options; // eslint-disable-line no-unused-expressions
       });
 
       it("should not provide a value to other commands", () => {
