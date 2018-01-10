@@ -32,7 +32,6 @@
     no-param-reassign: off
     no-plusplus: off
     no-restricted-syntax: off
-    no-return-await: off
     no-shadow: off
     no-underscore-dangle: off
     no-unused-expressions: off

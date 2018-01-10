@@ -25,7 +25,7 @@ async function commitChangeToPackage(cwd, packageName, commitMsg, data) {
   const pkg = await loadJsonFile(packageJSONPath);
   await writeJsonFile(packageJSONPath, Object.assign(pkg, data));
   await execa("git", ["add", "."], { cwd });
-  return await execa("git", ["commit", "--no-gpg-sign", "-m", commitMsg], { cwd });
+  return execa("git", ["commit", "--no-gpg-sign", "-m", commitMsg], { cwd });
 }
 
 describe("lerna publish", () => {
