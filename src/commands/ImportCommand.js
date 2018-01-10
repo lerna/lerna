@@ -56,6 +56,7 @@ export default class ImportCommand extends Command {
       }
 
       const packageJson = path.join(externalRepoPath, "package.json");
+      // eslint-disable-next-line import/no-dynamic-require
       const packageName = require(packageJson).name;
 
       if (!packageName) {
