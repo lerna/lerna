@@ -210,12 +210,12 @@ describe("PackageUtilities", () => {
     it("should log a warning if multiple packages have the same name", () => {
       const logMessages = [];
       const packagesToValidate = [
-        { name: "name1", _location: "packages/package1" },
-        { name: "name2", _location: "packages/package2" },
-        { name: "name3", _location: "packages/package3" },
-        { name: "name1", _location: "packages/package4" },
-        { name: "name1", _location: "packages/package5" },
-        { name: "name2", _location: "packages/package6" },
+        new Package({ name: "name1" }, "packages/package1"),
+        new Package({ name: "name2" }, "packages/package2"),
+        new Package({ name: "name3" }, "packages/package3"),
+        new Package({ name: "name1" }, "packages/package4"),
+        new Package({ name: "name1" }, "packages/package5"),
+        new Package({ name: "name2" }, "packages/package6"),
       ];
       log.on("log.warn", message => {
         logMessages.push(message.prefix);
@@ -235,9 +235,9 @@ describe("PackageUtilities", () => {
     it("should not log any warning if packages all have the unique name", () => {
       let didLogOccur = false;
       const packagesToValidate = [
-        { name: "name1", _location: "packages/package1" },
-        { name: "name2", _location: "packages/package2" },
-        { name: "name3", _location: "packages/package3" },
+        new Package({ name: "name1" }, "packages/package1"),
+        new Package({ name: "name2" }, "packages/package2"),
+        new Package({ name: "name3" }, "packages/package3"),
       ];
       log.once("log.warn", () => {
         didLogOccur = true;

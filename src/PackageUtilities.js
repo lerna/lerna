@@ -173,7 +173,7 @@ export default class PackageUtilities {
         existingPackageNames[pkg.name] = [];
       }
 
-      existingPackageNames[pkg.name].push(pkg._location);
+      existingPackageNames[pkg.name].push(pkg.location);
     });
 
     for (const pkgName in existingPackageNames) {
