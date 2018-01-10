@@ -238,7 +238,7 @@ export default class BootstrapCommand extends Command {
 
   hoistedPackageJson(dependency) {
     try {
-      // eslint-disable-next-line import/no-dynamic-require
+      // eslint-disable-next-line import/no-dynamic-require, global-require
       return require(path.join(this.hoistedDirectory(dependency), "package.json"));
     } catch (e) {
       // Pass.

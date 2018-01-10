@@ -716,7 +716,7 @@ export default class PublishCommand extends Command {
     const scriptLocation = path.join(pkg.location, "scripts", `${script}.js`);
 
     if (FileSystemUtilities.existsSync(scriptLocation)) {
-      // eslint-disable-next-line import/no-dynamic-require
+      // eslint-disable-next-line import/no-dynamic-require, global-require
       require(scriptLocation);
     } else {
       this.logger.verbose("execScript", `No ${script} script found at ${scriptLocation}`);

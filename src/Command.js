@@ -17,6 +17,7 @@ import VersionSerializer from "./VersionSerializer";
 log.addLevel("success", 3001, { fg: "green", bold: true });
 
 const DEFAULT_CONCURRENCY = 4;
+const LERNA_VERSION = require("../package.json").version;
 
 export const builder = {
   loglevel: {
@@ -108,7 +109,7 @@ export default class Command {
     log.silly("input", input);
     log.silly("flags", filterFlags(flags));
 
-    this.lernaVersion = require("../package.json").version;
+    this.lernaVersion = LERNA_VERSION;
     this.repository = new Repository(cwd);
     this.logger = log.newGroup(this.name);
   }

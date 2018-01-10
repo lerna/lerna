@@ -47,9 +47,10 @@ describe("Command", () => {
   });
 
   describe(".lernaVersion", () => {
-    it("should be added to the instance", () => {
+    it("should be added to the instance", async () => {
       const command = new Command([], {});
-      expect(command.lernaVersion).toEqual(require("../package.json").version);
+      const { version } = await loadJsonFile(path.resolve(__dirname, "../package.json"));
+      expect(command.lernaVersion).toEqual(version);
     });
   });
 

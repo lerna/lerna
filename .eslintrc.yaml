@@ -29,7 +29,6 @@
           - _cwd
           - _onFinish
     # TODO: fix the remaining overrides
-    global-require: off
     no-param-reassign: off
     no-shadow: off
     no-use-before-define: off
