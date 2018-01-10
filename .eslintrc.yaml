@@ -22,6 +22,12 @@
       - version: 4
         ignores:
           - syntax
+    no-underscore-dangle:
+      - error
+      - allowAfterThis: true
+        allow:
+          - _cwd
+          - _onFinish
     # TODO: fix the remaining overrides
     global-require: off
     import/first: off
@@ -30,6 +36,5 @@
     no-plusplus: off
     no-restricted-syntax: off
     no-shadow: off
-    no-underscore-dangle: off
     no-use-before-define: off
     prefer-destructuring: off

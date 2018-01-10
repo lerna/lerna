@@ -13,6 +13,7 @@ jest.mock("../src/NpmUtilities");
 log.level = "silent";
 
 describe("Package", () => {
+  /* eslint no-underscore-dangle: ["error", { "allow": ["_package"] }] */
   let pkg;
 
   beforeEach(() => {

@@ -77,6 +77,7 @@ function registerChild(child) {
   }).catch(() => {});
 }
 
+// eslint-disable-next-line no-underscore-dangle
 function _spawn(command, args, opts, callback) {
   const child = execa(command, args, opts);
 
