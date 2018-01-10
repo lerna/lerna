@@ -32,5 +32,4 @@
     no-shadow: off
     no-underscore-dangle: off
     no-use-before-define: off
-    no-useless-concat: off
     prefer-destructuring: off
