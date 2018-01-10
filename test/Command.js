@@ -1,3 +1,4 @@
+import execa from "execa";
 import loadJsonFile from "load-json-file";
 import log from "npmlog";
 import path from "path";
@@ -9,8 +10,6 @@ import FileSystemUtilities from "../src/FileSystemUtilities";
 import GitUtilities from "../src/GitUtilities";
 
 // helpers
-import execa from "execa";
-
 import callsBack from "./helpers/callsBack";
 import initFixture from "./helpers/initFixture";
 
