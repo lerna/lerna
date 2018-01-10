@@ -4,6 +4,7 @@ import packageJson from "package-json";
 import readPkg from "read-pkg";
 import semver from "semver";
 import writePkg from "write-pkg";
+
 import BootstrapCommand from "./BootstrapCommand";
 import Command, { ValidationError } from "../Command";
 import splitVersion from "../utils/splitVersion";
@@ -19,6 +20,7 @@ export const builder = {
 };
 
 export function handler(argv) {
+  // eslint-disable-next-line no-use-before-define
   new AddCommand([...argv.args], argv, argv._cwd).run().then(argv._onFinish, argv._onFinish);
 }
 

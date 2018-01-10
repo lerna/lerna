@@ -32,6 +32,8 @@
         allow:
           - _cwd
           - _onFinish
+    no-use-before-define:
+      - error
+      - nofunc
     # TODO: fix the remaining overrides
-    no-use-before-define: off
     prefer-destructuring: off

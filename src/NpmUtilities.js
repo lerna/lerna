@@ -9,6 +9,7 @@ import splitVersion from "./utils/splitVersion";
 
 function execInstall(directory, { registry, npmClient, npmClientArgs, npmGlobalStyle, mutex }) {
   // build command, arguments, and options
+  // eslint-disable-next-line no-use-before-define
   const opts = NpmUtilities.getExecOpts(directory, registry);
   const args = ["install"];
   let cmd = npmClient || "npm";

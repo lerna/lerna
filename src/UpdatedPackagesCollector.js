@@ -5,6 +5,15 @@ import semver from "semver";
 
 import GitUtilities from "./GitUtilities";
 
+// TODO: remove this when we _really_ remove support for SECRET_FLAG
+const Buffer = require("safe-buffer").Buffer;
+
+const SECRET_FLAG = Buffer.from(
+  // eslint-disable-next-line max-len
+  "ZGFuZ2Vyb3VzbHlPbmx5UHVibGlzaEV4cGxpY2l0VXBkYXRlc1RoaXNJc0FDdXN0b21GbGFnRm9yQmFiZWxBbmRZb3VTaG91bGROb3RCZVVzaW5nSXRKdXN0RGVhbFdpdGhNb3JlUGFja2FnZXNCZWluZ1B1Ymxpc2hlZEl0SXNOb3RBQmlnRGVhbA==",
+  "base64",
+).toString("ascii");
+
 class Update {
   constructor(pkg) {
     this.package = pkg;
@@ -213,12 +222,3 @@ export default class UpdatedPackagesCollector {
     return !!changedFiles.length;
   }
 }
-
-// TODO: remove this when we _really_ remove support for SECRET_FLAG
-const Buffer = require("safe-buffer").Buffer;
-
-const SECRET_FLAG = Buffer.from(
-  // eslint-disable-next-line max-len
-  "ZGFuZ2Vyb3VzbHlPbmx5UHVibGlzaEV4cGxpY2l0VXBkYXRlc1RoaXNJc0FDdXN0b21GbGFnRm9yQmFiZWxBbmRZb3VTaG91bGROb3RCZVVzaW5nSXRKdXN0RGVhbFdpdGhNb3JlUGFja2FnZXNCZWluZ1B1Ymxpc2hlZEl0SXNOb3RBQmlnRGVhbA==",
-  "base64",
-).toString("ascii");

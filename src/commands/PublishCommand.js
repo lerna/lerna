@@ -19,6 +19,7 @@ import PromptUtilities from "../PromptUtilities";
 import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
 
 export function handler(argv) {
+  // eslint-disable-next-line no-use-before-define
   new PublishCommand(argv._, argv, argv._cwd).run().then(argv._onFinish, argv._onFinish);
 }
 
