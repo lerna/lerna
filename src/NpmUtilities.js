@@ -64,10 +64,10 @@ export default class NpmUtilities {
       const unregister = onExit(cleanup);
 
       // We have a few housekeeping tasks to take care of whether we succeed or fail.
-      const done = err => {
+      const done = finalError => {
         cleanup();
         unregister();
-        callback(err);
+        callback(finalError);
       };
 
       // Construct a basic fake package.json with just the deps we need to install.

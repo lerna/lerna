@@ -106,8 +106,8 @@ describe("Package", () => {
   describe(".set versionSerializer", () => {
     it("should call 'deserialize' method of serializer'", () => {
       const mockSerializer = {
-        serialize: jest.fn(pkg => pkg),
-        deserialize: jest.fn(pkg => pkg),
+        serialize: jest.fn(obj => obj),
+        deserialize: jest.fn(obj => obj),
       };
 
       pkg.versionSerializer = mockSerializer;
@@ -133,13 +133,13 @@ describe("Package", () => {
       pkg._package.state = "serialized";
 
       const mockSerializer = {
-        serialize: jest.fn(pkg => {
-          pkg.state = "serialized";
-          return pkg;
+        serialize: jest.fn(obj => {
+          obj.state = "serialized";
+          return obj;
         }),
-        deserialize: jest.fn(pkg => {
-          pkg.state = "deserialized";
-          return pkg;
+        deserialize: jest.fn(obj => {
+          obj.state = "deserialized";
+          return obj;
         }),
       };
 
@@ -159,8 +159,8 @@ describe("Package", () => {
 
     it("should use versionSerializer.serialize on internal package before return", () => {
       const mockSerializer = {
-        serialize: jest.fn(pkg => pkg),
-        deserialize: jest.fn(pkg => pkg),
+        serialize: jest.fn(obj => obj),
+        deserialize: jest.fn(obj => obj),
       };
 
       pkg.versionSerializer = mockSerializer;

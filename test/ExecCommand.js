@@ -59,16 +59,16 @@ describe("ExecCommand", () => {
     });
 
     it("passes execution error to callback", async () => {
-      const err = new Error("execa error");
-      err.code = 1;
-      err.cmd = "boom";
+      const boom = new Error("execa error");
+      boom.code = 1;
+      boom.cmd = "boom";
 
       let errorLog;
       log.once("log.error", m => {
         errorLog = m;
       });
 
-      ChildProcessUtilities.spawn = jest.fn(callsBack(err));
+      ChildProcessUtilities.spawn = jest.fn(callsBack(boom));
 
       try {
         await lernaExec("boom");

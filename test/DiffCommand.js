@@ -107,9 +107,9 @@ describe("DiffCommand", () => {
   });
 
   it("should error when git diff exits non-zero", async () => {
-    const err = new Error("An actual non-zero, not git diff pager SIGPIPE");
-    err.code = 1;
-    ChildProcessUtilities.spawn.mockImplementation(callsBack(err));
+    const nonZero = new Error("An actual non-zero, not git diff pager SIGPIPE");
+    nonZero.code = 1;
+    ChildProcessUtilities.spawn.mockImplementation(callsBack(nonZero));
 
     try {
       await lernaDiff("package-1");

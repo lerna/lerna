@@ -30,6 +30,5 @@
           - _onFinish
     # TODO: fix the remaining overrides
     no-param-reassign: off
-    no-shadow: off
     no-use-before-define: off
     prefer-destructuring: off

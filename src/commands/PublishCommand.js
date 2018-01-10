@@ -282,9 +282,9 @@ export default class PublishCommand extends Command {
   publishPackagesToNpm(callback) {
     this.logger.info("publish", "Publishing packages to npm...");
 
-    this.npmPublish(err => {
-      if (err) {
-        callback(err);
+    this.npmPublish(publishError => {
+      if (publishError) {
+        callback(publishError);
         return;
       }
 
@@ -296,9 +296,9 @@ export default class PublishCommand extends Command {
         });
       }
 
-      this.npmUpdateAsLatest(err => {
-        if (err) {
-          callback(err);
+      this.npmUpdateAsLatest(updateError => {
+        if (updateError) {
+          callback(updateError);
           return;
         }
 

@@ -438,45 +438,50 @@ export default class BootstrapCommand extends Command {
         ? root.map(({ dependency }) => dependency)
         : [];
 
-      actions.push(cb => {
+      actions.push(actionDone => {
         if (depsToInstallInRoot.length) {
           tracker.info("hoist", "Installing hoisted dependencies into root");
         }
 
-        NpmUtilities.installInDir(this.repository.rootPath, depsToInstallInRoot, this.npmConfig, err => {
-          if (err) {
-            return cb(err);
-          }
+        NpmUtilities.installInDir(
+          this.repository.rootPath,
+          depsToInstallInRoot,
+          this.npmConfig,
+          installError => {
+            if (installError) {
+              return actionDone(installError);
+            }
 
-          // Link binaries into dependent packages so npm scripts will have
-          // access to them.
-          async.series(
-            root.map(({ name, dependents }) => cb => {
-              const { bin } = this.hoistedPackageJson(name) || {};
-              if (bin) {
-                async.series(
-                  dependents.map(pkg => cb => {
-                    const src = this.hoistedDirectory(name);
-                    PackageUtilities.createBinaryLink(src, pkg, cb);
-                  }),
-                  cb,
-                );
-              } else {
-                cb();
-              }
-            }),
-            err => {
-              tracker.info("hoist", "Finished installing in root");
-              tracker.completeWork(1);
-              cb(err);
-            },
-          );
-        });
+            // Link binaries into dependent packages so npm scripts will have
+            // access to them.
+            async.series(
+              root.map(({ name, dependents }) => itemDone => {
+                const { bin } = this.hoistedPackageJson(name) || {};
+                if (bin) {
+                  async.series(
+                    dependents.map(pkg => linkDone => {
+                      const src = this.hoistedDirectory(name);
+                      PackageUtilities.createBinaryLink(src, pkg, linkDone);
+                    }),
+                    itemDone,
+                  );
+                } else {
+                  itemDone();
+                }
+              }),
+              err => {
+                tracker.info("hoist", "Finished installing in root");
+                tracker.completeWork(1);
+                actionDone(err);
+              },
+            );
+          },
+        );
       });
 
       // Remove any hoisted dependencies that may have previously been
       // installed in package directories.
-      actions.push(cb => {
+      actions.push(actionDone => {
         // Compute the list of candidate directories synchronously
         const candidates = root.filter(pkg => pkg.dependents.length).reduce((list, { name, dependents }) => {
           const dirs = dependents
@@ -489,7 +494,7 @@ export default class BootstrapCommand extends Command {
         if (!candidates.length) {
           tracker.verbose("hoist", "nothing to prune");
           tracker.completeWork(1); // the action "work"
-          return cb();
+          return actionDone();
         }
 
         tracker.info("hoist", "Pruning hoisted dependencies");
@@ -507,7 +512,7 @@ export default class BootstrapCommand extends Command {
           err => {
             tracker.info("hoist", "Finished pruning hoisted dependencies");
             tracker.completeWork(1); // the action "work"
-            cb(err);
+            actionDone(err);
           },
         );
       });

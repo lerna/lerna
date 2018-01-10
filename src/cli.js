@@ -33,9 +33,9 @@ export default function CLI(argv, cwd) {
     .options(globalOptions)
     .group(globalKeys, "Global Options:")
     .commandDir("../lib/commands")
-    .command("*", "", {}, argv => {
+    .command("*", "", {}, parsed => {
       // a default command with no description catches typos or missing subcommands
-      log.error("lerna", `${argv._.length ? "Invalid" : "Missing"} command!`);
+      log.error("lerna", `${parsed._.length ? "Invalid" : "Missing"} command!`);
       log.error("lerna", "Pass --help to see all available commands and options.");
 
       // exit non-zero instead of throw an error so the CLI can be usefully chained

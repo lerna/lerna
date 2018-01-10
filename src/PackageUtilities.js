@@ -14,31 +14,31 @@ import Package from "./Package";
  * A predicate that determines if a given package name satisfies a glob.
  *
  * @param {!String} name The package name
- * @param {String|Array<String>} glob The glob (or globs) to match a package name against
+ * @param {String|Array<String>} filters The glob (or globs) to match a package name against
  * @param {Boolean} negate Negate glob pattern matches
  * @return {Boolean} The packages with a name matching the glob
  */
-function filterPackage(name, glob, negate) {
+function filterPackage(name, filters, negate) {
   // If there isn't a filter then we can just return the package.
-  if (!glob) {
+  if (!filters) {
     return true;
   }
 
   // Include/exlude with no arguments implies splat.
   // For example: `--hoist` is equivalent to `--hoist=**`.
   // The double star here is to account for scoped packages.
-  if (glob === true) {
-    glob = "**";
+  if (filters === true) {
+    filters = "**";
   }
 
-  if (!Array.isArray(glob)) {
-    glob = [glob];
+  if (!Array.isArray(filters)) {
+    filters = [filters];
   }
 
   if (negate) {
-    return glob.every(glob => !minimatch(name, glob));
+    return filters.every(pattern => !minimatch(name, pattern));
   }
-  return glob.some(glob => minimatch(name, glob));
+  return filters.some(pattern => minimatch(name, pattern));
 }
 
 export default class PackageUtilities {
@@ -278,7 +278,7 @@ export default class PackageUtilities {
       });
 
       // actions to run for this package
-      const packageActions = filteredDependencyNames.reduce((actions, dependencyName) => {
+      const packageActions = filteredDependencyNames.reduce((acc, dependencyName) => {
         // get Package of dependency
         const dependencyPackage = packageGraph.get(dependencyName).package;
         const depencyPath = path.join(iteratedPackage.nodeModulesLocation, dependencyPackage.name);
@@ -302,12 +302,12 @@ export default class PackageUtilities {
                 "Replacing with symlink...",
             );
             // remove installed dependency
-            actions.push(cb => FileSystemUtilities.rimraf(depencyPath, cb));
+            acc.push(cb => FileSystemUtilities.rimraf(depencyPath, cb));
           }
         }
 
         // ensure destination path
-        actions.push(cb =>
+        acc.push(cb =>
           FileSystemUtilities.mkdirp(
             depencyPath
               .split(path.sep)
@@ -318,15 +318,15 @@ export default class PackageUtilities {
         );
 
         // create package symlink
-        actions.push(cb => {
+        acc.push(cb => {
           FileSystemUtilities.symlink(dependencyPackage.location, depencyPath, "junction", cb);
         });
 
-        actions.push(cb => {
+        acc.push(cb => {
           PackageUtilities.createBinaryLink(dependencyPackage, iteratedPackage, cb);
         });
 
-        return actions;
+        return acc;
       }, []);
 
       return cb => {
@@ -364,9 +364,9 @@ export default class PackageUtilities {
       .reduce((acc, { src, dst }) => {
         const link = cb => FileSystemUtilities.symlink(src, dst, "exec", cb);
         const chmod = cb => FileSystemUtilities.chmod(src, "755", cb);
-        const actions = FileSystemUtilities.existsSync(src) ? [link, chmod] : [];
+        const linkActions = FileSystemUtilities.existsSync(src) ? [link, chmod] : [];
 
-        acc.push(cb => async.series(actions, cb));
+        acc.push(cb => async.series(linkActions, cb));
         return acc;
       }, []);
 
