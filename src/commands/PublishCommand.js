@@ -807,7 +807,7 @@ export default class PublishCommand extends Command {
           } catch (err) {
             if (attempts < 5) {
               this.logger.error("publish", "Error updating version as latest", err.stack || err);
-              continue;
+              continue; // eslint-disable-line no-continue
             } else {
               cb(err);
               return;
