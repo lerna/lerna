@@ -2,8 +2,7 @@ import Command from "../Command";
 import PackageUtilities from "../PackageUtilities";
 
 export function handler(argv) {
-  new LinkCommand([argv.pkg], argv, argv._cwd).run()
-    .then(argv._onFinish, argv._onFinish);
+  new LinkCommand([argv.pkg], argv, argv._cwd).run().then(argv._onFinish, argv._onFinish);
 }
 
 export const command = "link";
@@ -16,7 +15,7 @@ export const builder = {
     describe: "Force local",
     type: "boolean",
     default: undefined,
-  }
+  },
 };
 
 export default class LinkCommand extends Command {
@@ -26,7 +25,7 @@ export default class LinkCommand extends Command {
 
   get defaultOptions() {
     return Object.assign({}, super.defaultOptions, {
-      forceLocal: false
+      forceLocal: false,
     });
   }
 
@@ -35,7 +34,7 @@ export default class LinkCommand extends Command {
   }
 
   execute(callback) {
-    const {packages, packageGraph, logger, options: { forceLocal }} = this;
+    const { packages, packageGraph, logger, options: { forceLocal } } = this;
     PackageUtilities.symlinkPackages(packages, packageGraph, logger, forceLocal, callback);
   }
 }

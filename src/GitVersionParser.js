@@ -16,7 +16,7 @@ export default class GitVersionParser {
 
     return {
       prefix: targetMatches ? targetMatches[1] : null,
-      version: targetMatches ? targetMatches[2] : version
+      version: targetMatches ? targetMatches[2] : version,
     };
   }
 }

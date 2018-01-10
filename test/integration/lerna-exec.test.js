@@ -61,7 +61,7 @@ describe("lerna exec", () => {
       "exec",
       "--concurrency=1",
       "echo",
-      (process.platform === "win32" ? "%LERNA_PACKAGE_NAME%" : "$LERNA_PACKAGE_NAME"),
+      process.platform === "win32" ? "%LERNA_PACKAGE_NAME%" : "$LERNA_PACKAGE_NAME",
     ];
 
     const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
@@ -111,12 +111,7 @@ describe("lerna exec", () => {
 
   test.concurrent("<cmd> --stream", async () => {
     const cwd = await initFixture("ExecCommand/basic");
-    const args = [
-      "exec",
-      EXEC_TEST_COMMAND,
-      "--stream",
-      "-C",
-    ];
+    const args = ["exec", EXEC_TEST_COMMAND, "--stream", "-C"];
 
     const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd, env });
     expect(stderr).toMatchSnapshot("stderr: test --stream");
@@ -130,12 +125,7 @@ describe("lerna exec", () => {
 
   test.concurrent("--stream <cmd>", async () => {
     const cwd = await initFixture("ExecCommand/basic");
-    const args = [
-      "exec",
-      "--stream",
-      EXEC_TEST_COMMAND,
-      "-C",
-    ];
+    const args = ["exec", "--stream", EXEC_TEST_COMMAND, "-C"];
 
     const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd, env });
     expect(stderr).toMatchSnapshot("stderr: test --stream");
@@ -149,36 +139,20 @@ describe("lerna exec", () => {
 
   test.concurrent("--bail=false <cmd>", async () => {
     const cwd = await initFixture("ExecCommand/basic");
-    const args = [
-      "exec",
-      "--bail=false",
-      "--concurrency=1",
-      "--",
-      "npm run fail-or-succeed",
-    ];
+    const args = ["exec", "--bail=false", "--concurrency=1", "--", "npm run fail-or-succeed"];
 
     const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
-    expect(stderr).toMatch(
-      "Failed at the package-1@1.0.0 fail-or-succeed script"
-    );
+    expect(stderr).toMatch("Failed at the package-1@1.0.0 fail-or-succeed script");
     expect(stdout).toMatch("failure!");
     expect(stdout).toMatch("success!");
   });
 
   test.concurrent("--no-bail <cmd>", async () => {
     const cwd = await initFixture("ExecCommand/basic");
-    const args = [
-      "exec",
-      "--no-bail",
-      "--concurrency=1",
-      "--",
-      "npm run fail-or-succeed",
-    ];
+    const args = ["exec", "--no-bail", "--concurrency=1", "--", "npm run fail-or-succeed"];
 
     const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
-    expect(stderr).toMatch(
-      "Failed at the package-1@1.0.0 fail-or-succeed script"
-    );
+    expect(stderr).toMatch("Failed at the package-1@1.0.0 fail-or-succeed script");
     expect(stdout).toMatch("failure!");
     expect(stdout).toMatch("success!");
   });

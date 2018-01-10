@@ -18,9 +18,11 @@ describe("Repository", () => {
   const loadJsonFileSync = loadJsonFile.sync;
   const readPkgSync = readPkg.sync;
 
-  beforeAll(() => initFixture("Repository/basic").then((dir) => {
-    testDir = dir;
-  }));
+  beforeAll(() =>
+    initFixture("Repository/basic").then(dir => {
+      testDir = dir;
+    }),
+  );
 
   describe(".rootPath", () => {
     afterEach(() => {
@@ -69,8 +71,8 @@ describe("Repository", () => {
     it("returns parsed lerna.json", () => {
       const repo = new Repository(testDir);
       expect(repo.lernaJson).toEqual({
-        "lerna": "500.0.0",
-        "version": "1.0.0"
+        lerna: "500.0.0",
+        version: "1.0.0",
       });
     });
 
@@ -108,17 +110,12 @@ describe("Repository", () => {
   describe("get .packageConfigs", () => {
     it("returns the default packageConfigs", () => {
       const repo = new Repository(testDir);
-      expect(repo.packageConfigs).toEqual([
-        "packages/*",
-      ]);
+      expect(repo.packageConfigs).toEqual(["packages/*"]);
     });
 
     it("returns custom packageConfigs", () => {
       const repo = new Repository(testDir);
-      const customPackages = [
-        ".",
-        "my-packages/*",
-      ];
+      const customPackages = [".", "my-packages/*"];
       repo.lernaJson.packages = customPackages;
       expect(repo.packageConfigs).toBe(customPackages);
     });
@@ -127,12 +124,7 @@ describe("Repository", () => {
   describe("get .packageParentDirs", () => {
     it("returns a list of package parent directories", () => {
       const repo = new Repository(testDir);
-      repo.lernaJson.packages = [
-        ".",
-        "packages/*",
-        "dir/nested/*",
-        "globstar/**",
-      ];
+      repo.lernaJson.packages = [".", "packages/*", "dir/nested/*", "globstar/**"];
       expect(repo.packageParentDirs).toEqual([
         testDir,
         path.join(testDir, "packages"),
@@ -150,11 +142,11 @@ describe("Repository", () => {
     it("returns parsed package.json", () => {
       const repo = new Repository(testDir);
       expect(repo.packageJson).toMatchObject({
-        "name": "test",
-        "devDependencies": {
-          "lerna": "500.0.0",
-          "external": "^1.0.0"
-        }
+        name: "test",
+        devDependencies: {
+          lerna: "500.0.0",
+          external: "^1.0.0",
+        },
       });
     });
 

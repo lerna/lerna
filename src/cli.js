@@ -12,15 +12,12 @@ unit tests to encapsulate instantiation with "real" arguments.
 
 @param {Array = []} argv
 @param {String = process.cwd()} cwd
-**/
+* */
 export default function CLI(argv, cwd) {
   const cli = yargs(argv, cwd);
 
   // the options grouped under "Global Options:" header
-  const globalKeys = Object.keys(globalOptions).concat([
-    "help",
-    "version",
-  ]);
+  const globalKeys = Object.keys(globalOptions).concat(["help", "version"]);
 
   if (isCI || !process.stderr.isTTY) {
     log.disableColor();
@@ -33,9 +30,10 @@ export default function CLI(argv, cwd) {
 
   return cli
     .usage("Usage: $0 <command> [options]")
-    .options(globalOptions).group(globalKeys, "Global Options:")
+    .options(globalOptions)
+    .group(globalKeys, "Global Options:")
     .commandDir("../lib/commands")
-    .command("*", "", {}, (argv) => {
+    .command("*", "", {}, argv => {
       // a default command with no description catches typos or missing subcommands
       log.error("lerna", `${argv._.length ? "Invalid" : "Missing"} command!`);
       log.error("lerna", "Pass --help to see all available commands and options.");
@@ -44,11 +42,12 @@ export default function CLI(argv, cwd) {
       process.exitCode = 1;
     })
     .demandCommand(1, "Pass --help to see all available commands and options.")
-    .help("h").alias("h", "help")
-    .version().alias("v", "version")
-    .wrap(cli.terminalWidth())
     .showHelpOnFail(false, "A command is required.")
-    .epilogue(dedent`
+    .help("h")
+    .alias("h", "help")
+    .version()
+    .alias("v", "version")
+    .wrap(cli.terminalWidth()).epilogue(dedent`
       When a command fails, all logs are written to lerna-debug.log in the current working directory.
 
       For more information, find our manual at https://github.com/lerna/lerna

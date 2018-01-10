@@ -45,10 +45,9 @@ export default class PackageGraph {
         const packageNode = this.nodesByName[depName];
 
         if (packageNode) {
-          const depVersion = (versionParser
+          const depVersion = versionParser
             ? versionParser.parseVersion(dependencies[depName]).version
-            : dependencies[depName]
-          );
+            : dependencies[depName];
 
           if (packageNode.satisfies(depVersion)) {
             node.dependencies.push(depName);

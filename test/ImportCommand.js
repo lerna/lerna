@@ -23,8 +23,7 @@ jest.mock("../src/PromptUtilities");
 // silence logs
 log.level = "silent";
 
-const lastCommitInDir = (cwd) =>
-  execa.stdout("git", ["log", "-1", "--format=%s"], { cwd });
+const lastCommitInDir = cwd => execa.stdout("git", ["log", "-1", "--format=%s"], { cwd });
 
 describe("ImportCommand", () => {
   beforeEach(() => {
@@ -101,8 +100,9 @@ describe("ImportCommand", () => {
       const newFilePath = path.join(testDir, "packages", path.basename(externalDir), "new-file");
 
       await execa("git", ["mv", "old-file", "new-file"], { cwd: externalDir });
-      await execa("git", ["commit", "--no-gpg-sign", "-m", "Moved old-file to new-file"],
-        { cwd: externalDir });
+      await execa("git", ["commit", "--no-gpg-sign", "-m", "Moved old-file to new-file"], {
+        cwd: externalDir,
+      });
 
       await lernaImport(externalDir);
 
@@ -150,7 +150,7 @@ describe("ImportCommand", () => {
     });
 
     it("errors when external directory is missing", async () => {
-      const missing = externalDir + "_invalidSuffix";
+      const missing = `${externalDir}_invalidSuffix`;
 
       try {
         await lernaImport(missing);
@@ -235,14 +235,14 @@ describe("ImportCommand", () => {
       const newFilePath = path.join(testDir, "packages", path.basename(externalDir), "new-file");
 
       await execa("git", ["mv", "old-file", "new-file"], { cwd: externalDir });
-      await execa("git", ["commit", "--no-gpg-sign", "-m", "[ISSUE-10] Moved old-file to new-file"],
-        { cwd: externalDir });
+      await execa("git", ["commit", "--no-gpg-sign", "-m", "[ISSUE-10] Moved old-file to new-file"], {
+        cwd: externalDir,
+      });
 
       await lernaImport(externalDir);
 
       expect(await lastCommitInDir(testDir)).toBe("[ISSUE-10] Moved old-file to new-file");
       expect(await pathExists(newFilePath)).toBe(true);
     });
-
   });
 });

@@ -39,7 +39,7 @@ const stubSymlink = () => {
 };
 
 // object snapshots have sorted keys
-const installedPackagesInDirectories = (testDir) =>
+const installedPackagesInDirectories = testDir =>
   NpmUtilities.installInDir.mock.calls.reduce((obj, args) => {
     const location = normalizeRelativeDir(testDir, args[0]);
     const dependencies = args[1];
@@ -47,7 +47,7 @@ const installedPackagesInDirectories = (testDir) =>
     return obj;
   }, {});
 
-const ranScriptsInDirectories = (testDir) =>
+const ranScriptsInDirectories = testDir =>
   NpmUtilities.runScriptInDir.mock.calls.reduce((obj, args) => {
     const location = normalizeRelativeDir(testDir, args[1].directory);
     const script = args[0];
@@ -60,19 +60,15 @@ const ranScriptsInDirectories = (testDir) =>
     return obj;
   }, {});
 
-const removedDirectories = (testDir) =>
-  FileSystemUtilities.rimraf.mock.calls.map((args) =>
-    normalizeRelativeDir(testDir, args[0])
-  );
+const removedDirectories = testDir =>
+  FileSystemUtilities.rimraf.mock.calls.map(args => normalizeRelativeDir(testDir, args[0]));
 
-const symlinkedDirectories = (testDir) =>
-  FileSystemUtilities.symlink.mock.calls.map((args) => {
-    return {
-      _src: normalizeRelativeDir(testDir, args[0]),
-      dest: normalizeRelativeDir(testDir, args[1]),
-      type: args[2],
-    };
-  });
+const symlinkedDirectories = testDir =>
+  FileSystemUtilities.symlink.mock.calls.map(args => ({
+    _src: normalizeRelativeDir(testDir, args[0]),
+    dest: normalizeRelativeDir(testDir, args[1]),
+    type: args[2],
+  }));
 
 describe("BootstrapCommand", () => {
   beforeEach(() => {
@@ -128,7 +124,7 @@ describe("BootstrapCommand", () => {
           mutex: undefined,
           // npmGlobalStyle is not included at all
         },
-        expect.any(Function)
+        expect.any(Function),
       );
 
       // foo@0.1.2 differs from the more common foo@^1.0.0
@@ -138,7 +134,7 @@ describe("BootstrapCommand", () => {
         expect.objectContaining({
           npmGlobalStyle: true,
         }),
-        expect.any(Function)
+        expect.any(Function),
       );
     });
 
@@ -161,7 +157,7 @@ describe("BootstrapCommand", () => {
         await lernaBootstrap();
       } catch (err) {
         expect(err.message).toMatch(
-          "--hoist is not supported with --npm-client=yarn, use yarn workspaces instead"
+          "--hoist is not supported with --npm-client=yarn, use yarn workspaces instead",
         );
       }
     });
@@ -208,7 +204,7 @@ describe("BootstrapCommand", () => {
         expect.objectContaining({
           npmGlobalStyle: false,
         }),
-        expect.any(Function)
+        expect.any(Function),
       );
     });
   });
@@ -241,20 +237,14 @@ describe("BootstrapCommand", () => {
 
     it("bootstraps dependencies not included by --scope with --include-filtered-dependencies", async () => {
       // we scope to package-2 only but should still install package-1 as it is a dependency of package-2
-      await lernaBootstrap(
-        "--scope", "package-2",
-        "--include-filtered-dependencies"
-      );
+      await lernaBootstrap("--scope", "package-2", "--include-filtered-dependencies");
 
       expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
     });
 
     it("bootstraps dependencies excluded by --ignore with --include-filtered-dependencies", async () => {
       // we ignore package 1 but it should still be installed because it is a dependency of package-2
-      await lernaBootstrap(
-        "--ignore", "{@test/package-1,package-@(3|4)}",
-        "--include-filtered-dependencies"
-      );
+      await lernaBootstrap("--ignore", "{@test/package-1,package-@(3|4)}", "--include-filtered-dependencies");
 
       expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
     });
@@ -354,7 +344,7 @@ describe("BootstrapCommand", () => {
           npmClient: undefined,
           npmGlobalStyle: false,
         }),
-        expect.any(Function)
+        expect.any(Function),
       );
     });
   });
@@ -401,7 +391,7 @@ describe("BootstrapCommand", () => {
           npmClient: "yarn",
           mutex: expect.stringMatching(/^network:\d+$/),
         }),
-        expect.any(Function)
+        expect.any(Function),
       );
     });
 
@@ -415,7 +405,7 @@ describe("BootstrapCommand", () => {
         await lernaBootstrap("--no-use-workspaces");
       } catch (err) {
         expect(err.message).toMatch(
-          "Yarn workspaces are configured in package.json, but not enabled in lerna.json!"
+          "Yarn workspaces are configured in package.json, but not enabled in lerna.json!",
         );
       }
     });

@@ -11,14 +11,7 @@ let children = 0;
 const emitter = new EventEmitter();
 
 // when streaming children are spawned, use this color for prefix
-const colorWheel = [
-  "cyan",
-  "magenta",
-  "blue",
-  "yellow",
-  "green",
-  "red",
-];
+const colorWheel = ["cyan", "magenta", "blue", "yellow", "green", "red"];
 const NUM_COLORS = colorWheel.length;
 
 export default class ChildProcessUtilities {
@@ -90,10 +83,7 @@ function _spawn(command, args, opts, callback) {
   registerChild(child);
 
   if (callback) {
-    child.then(
-      (result) => callback(null, result.stdout),
-      (err) => callback(err)
-    );
+    child.then(result => callback(null, result.stdout), err => callback(err));
   }
 
   return child;

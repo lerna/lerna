@@ -2,7 +2,7 @@ import { EOL } from "os";
 import log from "npmlog";
 import path from "path";
 import tempWrite from "temp-write";
-import slash from "slash"
+import slash from "slash";
 
 import ChildProcessUtilities from "./ChildProcessUtilities";
 
@@ -23,9 +23,13 @@ export default class GitUtilities {
 
     try {
       // we only want the return code, so ignore stdout/stderr
-      ChildProcessUtilities.execSync("git", ["rev-parse"], Object.assign({}, opts, {
-        stdio: "ignore"
-      }));
+      ChildProcessUtilities.execSync(
+        "git",
+        ["rev-parse"],
+        Object.assign({}, opts, {
+          stdio: "ignore",
+        }),
+      );
       initialized = true;
     } catch (err) {
       log.verbose("isInitialized", "swallowed error", err);
@@ -100,7 +104,7 @@ export default class GitUtilities {
   static getFirstCommit(opts) {
     log.silly("getFirstCommit");
 
-    const firstCommit =  ChildProcessUtilities.execSync("git", ["rev-list", "--max-parents=0", "HEAD"], opts);
+    const firstCommit = ChildProcessUtilities.execSync("git", ["rev-list", "--max-parents=0", "HEAD"], opts);
     log.verbose("getFirstCommit", firstCommit);
 
     return firstCommit;
@@ -133,12 +137,14 @@ export default class GitUtilities {
   }
 
   static diffSinceIn(since, location, opts) {
-    const formattedLocation = path.relative(opts.cwd, location).replace(/\\/g, '/');
+    const formattedLocation = path.relative(opts.cwd, location).replace(/\\/g, "/");
     log.silly("diffSinceIn", since, formattedLocation);
 
-    const diff = ChildProcessUtilities.execSync("git", [
-      "diff", "--name-only", since, "--", formattedLocation
-    ], opts);
+    const diff = ChildProcessUtilities.execSync(
+      "git",
+      ["diff", "--name-only", since, "--", formattedLocation],
+      opts,
+    );
     log.silly("diff", diff);
 
     return diff;

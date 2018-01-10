@@ -20,7 +20,7 @@ This is primarily for integration tests, but doesn't hurt unit tests.
 @property {String} file.name source path of file being copied
 
 @see https://github.com/jprichardson/node-fs-extra/blob/master/lib/copy/ncp.js#L105
-**/
+* */
 function transform(readStream, writeStream, file) {
   let stream = readStream;
 

@@ -23,5 +23,5 @@ export default {
   RunCommand,
   ExecCommand,
   LsCommand,
-  LinkCommand
+  LinkCommand,
 };

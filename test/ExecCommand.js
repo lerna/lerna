@@ -22,10 +22,9 @@ jest.mock("../src/UpdatedPackagesCollector");
 // silence logs
 log.level = "silent";
 
-const calledInPackages = () =>
-  ChildProcessUtilities.spawn.mock.calls.map((args) => path.basename(args[2].cwd));
+const calledInPackages = () => ChildProcessUtilities.spawn.mock.calls.map(args => path.basename(args[2].cwd));
 
-const execInPackagesStreaming = (testDir) =>
+const execInPackagesStreaming = testDir =>
   ChildProcessUtilities.spawnStreaming.mock.calls.reduce((arr, args) => {
     const command = args[0];
     const params = args[1];
@@ -65,7 +64,7 @@ describe("ExecCommand", () => {
       err.cmd = "boom";
 
       let errorLog;
-      log.once("log.error", (m) => {
+      log.once("log.error", m => {
         errorLog = m;
       });
 
@@ -83,54 +82,68 @@ describe("ExecCommand", () => {
 
       expect(exitCode).toBe(0);
       expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(2);
-      expect(ChildProcessUtilities.spawn).lastCalledWith("boom", [], expect.objectContaining({
-        reject: false,
-      }), expect.any(Function));
+      expect(ChildProcessUtilities.spawn).lastCalledWith(
+        "boom",
+        [],
+        expect.objectContaining({
+          reject: false,
+        }),
+        expect.any(Function),
+      );
     });
 
     it("should filter packages with `ignore`", async () => {
       await lernaExec("ls", "--ignore", "package-1");
 
       expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(1);
-      expect(ChildProcessUtilities.spawn).lastCalledWith("ls", [], {
-        cwd: path.join(testDir, "packages/package-2"),
-        env: expect.objectContaining({
-          LERNA_PACKAGE_NAME: "package-2",
-        }),
-        reject: true,
-        shell: true,
-      }, expect.any(Function));
+      expect(ChildProcessUtilities.spawn).lastCalledWith(
+        "ls",
+        [],
+        {
+          cwd: path.join(testDir, "packages/package-2"),
+          env: expect.objectContaining({
+            LERNA_PACKAGE_NAME: "package-2",
+          }),
+          reject: true,
+          shell: true,
+        },
+        expect.any(Function),
+      );
     });
 
     it("should filter packages that are not updated with --since", async () => {
-      UpdatedPackagesCollector.prototype.getUpdates = jest.fn(() => [{
-        package: {
-          name: "package-2",
-          location: path.join(testDir, "packages/package-2"),
+      UpdatedPackagesCollector.prototype.getUpdates = jest.fn(() => [
+        {
+          package: {
+            name: "package-2",
+            location: path.join(testDir, "packages/package-2"),
+          },
         },
-      }]);
+      ]);
 
       await lernaExec("ls", "--since");
 
       expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(1);
-      expect(ChildProcessUtilities.spawn).lastCalledWith("ls", [], {
-        cwd: path.join(testDir, "packages/package-2"),
-        env: expect.objectContaining({
-          LERNA_PACKAGE_NAME: "package-2",
-        }),
-        reject: true,
-        shell: true,
-      }, expect.any(Function));
+      expect(ChildProcessUtilities.spawn).lastCalledWith(
+        "ls",
+        [],
+        {
+          cwd: path.join(testDir, "packages/package-2"),
+          env: expect.objectContaining({
+            LERNA_PACKAGE_NAME: "package-2",
+          }),
+          reject: true,
+          shell: true,
+        },
+        expect.any(Function),
+      );
     });
 
     it("should run a command", async () => {
       await lernaExec("ls");
 
       expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(2);
-      expect(calledInPackages()).toEqual([
-        "package-1",
-        "package-2",
-      ]);
+      expect(calledInPackages()).toEqual(["package-1", "package-2"]);
     });
 
     it("should run a command with parameters", async () => {
@@ -138,7 +151,10 @@ describe("ExecCommand", () => {
 
       expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(2);
       expect(ChildProcessUtilities.spawn).lastCalledWith(
-        "ls", ["-la"], expect.any(Object), expect.any(Function)
+        "ls",
+        ["-la"],
+        expect.any(Object),
+        expect.any(Function),
       );
     });
 
@@ -159,10 +175,7 @@ describe("ExecCommand", () => {
 
       await lernaExec("--parallel", "ls");
 
-      expect(execInPackagesStreaming(testDir)).toEqual([
-        "packages/package-1 ls",
-        "packages/package-2 ls",
-      ]);
+      expect(execInPackagesStreaming(testDir)).toEqual(["packages/package-1 ls", "packages/package-2 ls"]);
     });
 
     it("executes a command in all packages with --stream", async () => {
@@ -170,10 +183,7 @@ describe("ExecCommand", () => {
 
       await lernaExec("--stream", "ls");
 
-      expect(execInPackagesStreaming(testDir)).toEqual([
-        "packages/package-1 ls",
-        "packages/package-2 ls",
-      ]);
+      expect(execInPackagesStreaming(testDir)).toEqual(["packages/package-1 ls", "packages/package-2 ls"]);
     });
   });
 });

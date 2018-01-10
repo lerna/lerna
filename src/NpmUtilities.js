@@ -7,13 +7,7 @@ import ChildProcessUtilities from "./ChildProcessUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
 import splitVersion from "./utils/splitVersion";
 
-function execInstall(directory, {
-  registry,
-  npmClient,
-  npmClientArgs,
-  npmGlobalStyle,
-  mutex,
-}) {
+function execInstall(directory, { registry, npmClient, npmClientArgs, npmGlobalStyle, mutex }) {
   // build command, arguments, and options
   const opts = NpmUtilities.getExecOpts(directory, registry);
   const args = ["install"];
@@ -51,10 +45,10 @@ export default class NpmUtilities {
     }
 
     const packageJson = path.join(directory, "package.json");
-    const packageJsonBkp = packageJson + ".lerna_backup";
+    const packageJsonBkp = `${packageJson}.lerna_backup`;
 
     log.silly("installInDir", "backup", packageJson);
-    FileSystemUtilities.rename(packageJson, packageJsonBkp, (err) => {
+    FileSystemUtilities.rename(packageJson, packageJsonBkp, err => {
       if (err) {
         log.error("installInDir", "problem backing up package.json", err);
         return callback(err);
@@ -70,7 +64,7 @@ export default class NpmUtilities {
       const unregister = onExit(cleanup);
 
       // We have a few housekeeping tasks to take care of whether we succeed or fail.
-      const done = (err) => {
+      const done = err => {
         cleanup();
         unregister();
         callback(err);
@@ -82,7 +76,7 @@ export default class NpmUtilities {
           const [pkg, version] = splitVersion(dep);
           deps[pkg] = version || "*";
           return deps;
-        }, {})
+        }, {}),
       };
 
       log.silly("installInDir", "writing tempJson", tempJson);
@@ -96,10 +90,8 @@ export default class NpmUtilities {
   static installInDirOriginalPackageJson(directory, config, callback) {
     log.silly("installInDirOriginalPackageJson", directory);
 
-    return execInstall(directory, config)
-      .then(() => callback(), callback);
+    return execInstall(directory, config).then(() => callback(), callback);
   }
-
 
   static addDistTag(directory, packageName, version, tag, registry) {
     log.silly("addDistTag", tag, version, packageName);
@@ -122,30 +114,28 @@ export default class NpmUtilities {
     return ChildProcessUtilities.execSync("npm", ["dist-tag", "ls", packageName], opts).indexOf(tag) >= 0;
   }
 
-  static runScriptInDir(script, {args, directory, npmClient}, callback) {
+  static runScriptInDir(script, { args, directory, npmClient }, callback) {
     log.silly("runScriptInDir", script, args, path.basename(directory));
 
     const opts = NpmUtilities.getExecOpts(directory);
     ChildProcessUtilities.exec(npmClient, ["run", script, ...args], opts, callback);
   }
 
-  static runScriptInDirSync(script, {args, directory, npmClient}, callback) {
+  static runScriptInDirSync(script, { args, directory, npmClient }, callback) {
     log.silly("runScriptInDirSync", script, args, path.basename(directory));
 
     const opts = NpmUtilities.getExecOpts(directory);
     ChildProcessUtilities.execSync(npmClient, ["run", script, ...args], opts, callback);
   }
 
-  static runScriptInPackageStreaming(script, {args, pkg, npmClient}, callback) {
+  static runScriptInPackageStreaming(script, { args, pkg, npmClient }, callback) {
     log.silly("runScriptInPackageStreaming", [script, args, pkg.name]);
 
     const opts = NpmUtilities.getExecOpts(pkg.location);
-    ChildProcessUtilities.spawnStreaming(
-      npmClient, ["run", script, ...args], opts, pkg.name, callback
-    );
+    ChildProcessUtilities.spawnStreaming(npmClient, ["run", script, ...args], opts, pkg.name, callback);
   }
 
-  static publishTaggedInDir(tag, directory, {client = 'npm', registry}, callback) {
+  static publishTaggedInDir(tag, directory, { client = "npm", registry }, callback) {
     log.silly("publishTaggedInDir", tag, path.basename(directory));
 
     const opts = NpmUtilities.getExecOpts(directory, registry);

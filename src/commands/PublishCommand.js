@@ -19,29 +19,21 @@ import PromptUtilities from "../PromptUtilities";
 import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
 
 export function handler(argv) {
-  new PublishCommand(argv._, argv, argv._cwd).run()
-    .then(argv._onFinish, argv._onFinish);
+  new PublishCommand(argv._, argv, argv._cwd).run().then(argv._onFinish, argv._onFinish);
 }
 
 export const command = "publish";
 
 export const describe = "Publish packages in the current project.";
 
-const cdVersionOptions = [
-  "major",
-  "minor",
-  "patch",
-  "premajor",
-  "preminor",
-  "prepatch",
-  "prerelease",
-];
+const cdVersionOptions = ["major", "minor", "patch", "premajor", "preminor", "prepatch", "prerelease"];
 
-const cdVersionOptionString =
-  `'${cdVersionOptions.slice(0, -1).join("', '")}', or '${cdVersionOptions[cdVersionOptions.length - 1]}'.`;
+const cdVersionOptionString = `'${cdVersionOptions.slice(0, -1).join("', '")}', or '${
+  cdVersionOptions[cdVersionOptions.length - 1]
+}'.`;
 
 export const builder = {
-  "canary": {
+  canary: {
     group: "Command Options:",
     defaultDescription: "alpha",
     describe: "Publish packages after every successful merge using the sha as part of the tag.",
@@ -54,11 +46,9 @@ export const builder = {
     describe: `Skip the version selection prompt and increment semver: ${cdVersionOptionString}`,
     type: "string",
     requiresArg: true,
-    coerce: (choice) => {
+    coerce: choice => {
       if (cdVersionOptions.indexOf(choice) === -1) {
-        throw new Error(
-          `--cd-version must be one of: ${cdVersionOptionString}`
-        );
+        throw new Error(`--cd-version must be one of: ${cdVersionOptionString}`);
       }
       return choice;
     },
@@ -75,7 +65,7 @@ export const builder = {
     type: "string",
     default: undefined,
   },
-  "exact": {
+  exact: {
     group: "Command Options:",
     describe: "Specify cross-dependency version numbers exactly rather than with a caret (^).",
     type: "boolean",
@@ -88,13 +78,13 @@ export const builder = {
     type: "string",
     requiresArg: true,
   },
-  "yes": {
+  yes: {
     group: "Command Options:",
     describe: "Skip all confirmation prompts.",
     type: "boolean",
     default: undefined,
   },
-  "message": {
+  message: {
     group: "Command Options:",
     describe: "Use a custom commit message when creating the publish commit.",
     alias: "m",
@@ -113,7 +103,7 @@ export const builder = {
     type: "string",
     requiresArg: true,
   },
-  "preid": {
+  preid: {
     group: "Command Options:",
     describe: "Specify the prerelease identifier (major.minor.patch-pre).",
     type: "string",
@@ -165,7 +155,7 @@ export default class PublishCommand extends Command {
 
   get changelogOpts() {
     if (!this._changelogOpts) {
-      const { changelogPreset, } = this.options;
+      const { changelogPreset } = this.options;
 
       this._changelogOpts = Object.assign({}, this.execOpts, {
         changelogPreset,
@@ -180,9 +170,9 @@ export default class PublishCommand extends Command {
     this.gitEnabled = !(this.options.canary || this.options.skipGit);
 
     this.npmConfig = {
-      client: this.options.npmClient || 'npm',
-      registry: this.npmRegistry
-    }
+      client: this.options.npmClient || "npm",
+      registry: this.npmRegistry,
+    };
 
     if (this.options.useGitVersion && !this.options.exact) {
       throw new Error(dedent`
@@ -205,7 +195,7 @@ export default class PublishCommand extends Command {
       if (GitUtilities.isDetachedHead(this.execOpts)) {
         throw new ValidationError(
           "ENOGIT",
-          "Detached git HEAD, please checkout a branch to publish changes."
+          "Detached git HEAD, please checkout a branch to publish changes.",
         );
       }
 
@@ -219,26 +209,24 @@ export default class PublishCommand extends Command {
           dedent`
             Branch '${currentBranch}' is restricted from publishing due to allowBranch config.
             Please consider the reasons for this restriction before overriding the option.
-          `
+          `,
         );
       }
     }
 
     this.updates = new UpdatedPackagesCollector(this).getUpdates();
 
-    this.packagesToPublish = this.updates
-      .map((update) => update.package)
-      .filter((pkg) => !pkg.isPrivate());
+    this.packagesToPublish = this.updates.map(update => update.package).filter(pkg => !pkg.isPrivate());
 
     this.packagesToPublishCount = this.packagesToPublish.length;
     try {
       this.batchedPackagesToPublish = this.toposort
         ? PackageUtilities.topologicallyBatchPackages(this.packagesToPublish, {
-          // Don't sort based on devDependencies because that would increase the chance of dependency cycles
-          // causing less-than-ideal a publishing order.
-          depsOnly: true,
-          rejectCycles: this.options.rejectCycles
-        })
+            // Don't sort based on devDependencies because that would increase the chance of dependency cycles
+            // causing less-than-ideal a publishing order.
+            depsOnly: true,
+            rejectCycles: this.options.rejectCycles,
+          })
         : [this.packagesToPublish];
     } catch (e) {
       return callback(e);
@@ -261,7 +249,7 @@ export default class PublishCommand extends Command {
 
       if (!versions) {
         versions = {};
-        this.updates.forEach((update) => {
+        this.updates.forEach(update => {
           versions[update.package.name] = version;
         });
       }
@@ -294,7 +282,7 @@ export default class PublishCommand extends Command {
   publishPackagesToNpm(callback) {
     this.logger.info("publish", "Publishing packages to npm...");
 
-    this.npmPublish((err) => {
+    this.npmPublish(err => {
       if (err) {
         callback(err);
         return;
@@ -305,10 +293,10 @@ export default class PublishCommand extends Command {
         // reset since the package.json files are changed
         this.repository.packageConfigs.forEach(pkgGlob => {
           GitUtilities.checkoutChanges(`${pkgGlob}/package.json`, this.execOpts);
-        })
+        });
       }
 
-      this.npmUpdateAsLatest((err) => {
+      this.npmUpdateAsLatest(err => {
         if (err) {
           callback(err);
           return;
@@ -319,9 +307,7 @@ export default class PublishCommand extends Command {
           GitUtilities.pushWithTags(this.gitRemote, this.tags, this.execOpts);
         }
 
-        const message = this.packagesToPublish.map((pkg) =>
-          ` - ${pkg.name}@${pkg.version}`
-        );
+        const message = this.packagesToPublish.map(pkg => ` - ${pkg.name}@${pkg.version}`);
 
         output("Successfully published:");
         output(message.join(EOL));
@@ -339,29 +325,21 @@ export default class PublishCommand extends Command {
       if (this.repository.isIndependent()) {
         const versions = {};
 
-        this.updates.forEach((update) => {
-          versions[update.package.name] = semver.inc(
-            update.package.version,
-            cdVersion,
-            this.options.preid
-          );
+        this.updates.forEach(update => {
+          versions[update.package.name] = semver.inc(update.package.version, cdVersion, this.options.preid);
         });
 
         return callback(null, { versions });
       }
 
       // Otherwise bump the global version
-      const version = semver.inc(
-        this.globalVersion,
-        cdVersion,
-        this.options.preid
-      );
+      const version = semver.inc(this.globalVersion, cdVersion, this.options.preid);
       return callback(null, { version });
     }
 
     if (this.options.repoVersion) {
       return callback(null, {
-        version: this.options.repoVersion
+        version: this.options.repoVersion,
       });
     }
 
@@ -369,88 +347,91 @@ export default class PublishCommand extends Command {
       if (this.repository.isIndependent()) {
         // Independent Canary Mode
         const versions = {};
-        this.updates.forEach((update) => {
-          versions[update.package.name] = this.getCanaryVersion(
-            update.package.version,
-            this.options.canary
-          );
+        this.updates.forEach(update => {
+          versions[update.package.name] = this.getCanaryVersion(update.package.version, this.options.canary);
         });
 
         return callback(null, { versions });
-      } else {
-        // Non-Independent Canary Mode
-        const version = this.getCanaryVersion(this.globalVersion, this.options.canary);
-        return callback(null, { version });
       }
+      // Non-Independent Canary Mode
+      const version = this.getCanaryVersion(this.globalVersion, this.options.canary);
+      return callback(null, { version });
     }
 
     if (this.options.conventionalCommits) {
       if (this.repository.isIndependent()) {
         // Independent Conventional-Commits Mode
         const versions = {};
-        this.recommendVersions(this.updates, ConventionalCommitUtilities.recommendIndependentVersion,
-          (versionBump) => {
+        this.recommendVersions(
+          this.updates,
+          ConventionalCommitUtilities.recommendIndependentVersion,
+          versionBump => {
             versions[versionBump.pkg.name] = versionBump.recommendedVersion;
-          });
+          },
+        );
 
         return callback(null, { versions });
-      } else {
-        // Non-Independent Conventional-Commits Mode
-        const currentFixedVersion = this.repository.lernaJson.version;
-
-        this.updates.forEach((update) => {
-          const pkg = update.package;
-          if (semver.lt(pkg.version, currentFixedVersion)) {
-            this.logger.verbose("publish",
-              `Overriding version of ${pkg.name} from  ${pkg.version} to ${currentFixedVersion}`);
-            pkg.version = currentFixedVersion;
-          }
-        });
-
-        let version = "0.0.0";
-        this.recommendVersions(this.updates, ConventionalCommitUtilities.recommendFixedVersion,
-          (versionBump) => {
-            if (semver.gt(versionBump.recommendedVersion, version)) {
-              version = versionBump.recommendedVersion;
-            }
-          });
-        return callback(null, { version });
       }
+      // Non-Independent Conventional-Commits Mode
+      const currentFixedVersion = this.repository.lernaJson.version;
+
+      this.updates.forEach(update => {
+        const pkg = update.package;
+        if (semver.lt(pkg.version, currentFixedVersion)) {
+          this.logger.verbose(
+            "publish",
+            `Overriding version of ${pkg.name} from  ${pkg.version} to ${currentFixedVersion}`,
+          );
+          pkg.version = currentFixedVersion;
+        }
+      });
+
+      let version = "0.0.0";
+      this.recommendVersions(this.updates, ConventionalCommitUtilities.recommendFixedVersion, versionBump => {
+        if (semver.gt(versionBump.recommendedVersion, version)) {
+          version = versionBump.recommendedVersion;
+        }
+      });
+      return callback(null, { version });
     }
 
     if (this.repository.isIndependent()) {
       // Independent Non-Canary Mode
-      async.mapLimit(this.updates, 1, (update, cb) => {
-        this.promptVersion(update.package.name, update.package.version, cb);
-      }, (err, versions) => {
-        if (err) {
-          return callback(err);
-        }
+      async.mapLimit(
+        this.updates,
+        1,
+        (update, cb) => {
+          this.promptVersion(update.package.name, update.package.version, cb);
+        },
+        (err, versions) => {
+          if (err) {
+            return callback(err);
+          }
 
-        this.updates.forEach((update, index) => {
-          versions[update.package.name] = versions[index];
-        });
+          this.updates.forEach((update, index) => {
+            versions[update.package.name] = versions[index];
+          });
 
-        return callback(null, { versions });
-      });
+          return callback(null, { versions });
+        },
+      );
     } else {
       // Non-Independent Non-Canary Mode
       this.promptVersion(null, this.globalVersion, (err, version) => {
         if (err) {
           return callback(err);
-        } else {
-          return callback(null, { version });
         }
+        return callback(null, { version });
       });
     }
   }
 
   recommendVersions(updates, recommendVersionFn, callback) {
-    updates.forEach((update) => {
+    updates.forEach(update => {
       const pkg = {
         name: update.package.name,
         version: update.package.version,
-        location: update.package.location
+        location: update.package.location,
       };
 
       const recommendedVersion = recommendVersionFn(pkg, this.changelogOpts);
@@ -478,65 +459,79 @@ export default class PublishCommand extends Command {
     const premajor = semver.inc(currentVersion, "premajor");
 
     let message = "Select a new version";
-    if (packageName) message += ` for ${packageName}`;
+    if (packageName) {
+      message += ` for ${packageName}`;
+    }
     message += ` (currently ${currentVersion})`;
 
-    PromptUtilities.select(message, {
-      choices: [
-        { value: patch, name: `Patch (${patch})` },
-        { value: minor, name: `Minor (${minor})` },
-        { value: major, name: `Major (${major})` },
-        { value: prepatch, name: `Prepatch (${prepatch})` },
-        { value: preminor, name: `Preminor (${preminor})` },
-        { value: premajor, name: `Premajor (${premajor})` },
-        { value: "PRERELEASE", name: "Prerelease" },
-        { value: "CUSTOM", name: "Custom" }
-      ]
-    }, (choice) => {
-      switch (choice) {
-
-        case "CUSTOM": {
-          PromptUtilities.input("Enter a custom version", {
-            filter: semver.valid,
-            validate: (v) => v !== null || "Must be a valid semver version",
-          }, (input) => {
-            callback(null, input);
-          });
-          break;
-        }
-
-        case "PRERELEASE": {
-          const components = semver.prerelease(currentVersion);
-          let existingId = null;
-          if (components && components.length === 2) {
-            existingId = components[0];
+    PromptUtilities.select(
+      message,
+      {
+        choices: [
+          { value: patch, name: `Patch (${patch})` },
+          { value: minor, name: `Minor (${minor})` },
+          { value: major, name: `Major (${major})` },
+          { value: prepatch, name: `Prepatch (${prepatch})` },
+          { value: preminor, name: `Preminor (${preminor})` },
+          { value: premajor, name: `Premajor (${premajor})` },
+          { value: "PRERELEASE", name: "Prerelease" },
+          { value: "CUSTOM", name: "Custom" },
+        ],
+      },
+      choice => {
+        switch (choice) {
+          case "CUSTOM": {
+            PromptUtilities.input(
+              "Enter a custom version",
+              {
+                filter: semver.valid,
+                validate: v => v !== null || "Must be a valid semver version",
+              },
+              input => {
+                callback(null, input);
+              },
+            );
+            break;
           }
-          const defaultVersion = semver.inc(currentVersion, "prerelease", existingId);
-          const prompt = `(default: ${existingId ? `"${existingId}"` : "none"}, yielding ${defaultVersion})`;
 
-          // TODO: allow specifying prerelease identifier as CLI option to skip the prompt
-          PromptUtilities.input(`Enter a prerelease identifier ${prompt}`, {
-            filter: (v) => {
-              const preid = v || existingId;
-              return semver.inc(currentVersion, "prerelease", preid);
-            },
-          }, (input) => {
-            callback(null, input);
-          });
-          break;
+          case "PRERELEASE": {
+            const components = semver.prerelease(currentVersion);
+            let existingId = null;
+            if (components && components.length === 2) {
+              existingId = components[0];
+            }
+            const defaultVersion = semver.inc(currentVersion, "prerelease", existingId);
+            const prompt = `(default: ${
+              existingId ? `"${existingId}"` : "none"
+            }, yielding ${defaultVersion})`;
+
+            // TODO: allow specifying prerelease identifier as CLI option to skip the prompt
+            PromptUtilities.input(
+              `Enter a prerelease identifier ${prompt}`,
+              {
+                filter: v => {
+                  const preid = v || existingId;
+                  return semver.inc(currentVersion, "prerelease", preid);
+                },
+              },
+              input => {
+                callback(null, input);
+              },
+            );
+            break;
+          }
+
+          default: {
+            callback(null, choice);
+            break;
+          }
         }
-
-        default: {
-          callback(null, choice);
-          break;
-        }
-
-      }
-    });
+      },
+    );
   }
 
   confirmVersions(callback) {
-    const changes = this.updates.map((update) => {
+    const changes = this.updates.map(update => {
       const pkg = update.package;
       let line = ` - ${pkg.name}: ${pkg.version} => ${this.updatesVersions[pkg.name]}`;
       if (pkg.isPrivate()) {
@@ -554,7 +549,7 @@ export default class PublishCommand extends Command {
       this.logger.info("auto-confirmed");
       callback(null, true);
     } else {
-      PromptUtilities.confirm("Are you sure you want to publish the above changes?", (confirm) => {
+      PromptUtilities.confirm("Are you sure you want to publish the above changes?", confirm => {
         callback(null, confirm);
       });
     }
@@ -570,7 +565,7 @@ export default class PublishCommand extends Command {
   }
 
   runSyncScriptInPackage(pkg, scriptName) {
-    pkg.runScriptSync(scriptName, (err) => {
+    pkg.runScriptSync(scriptName, err => {
       if (err) {
         this.logger.error("publish", `error running ${scriptName} in ${pkg.name}\n`, err.stack || err);
       }
@@ -584,7 +579,7 @@ export default class PublishCommand extends Command {
     // exec preversion lifecycle in root (before all updates)
     this.runSyncScriptInPackage(this.repository.package, "preversion");
 
-    this.updates.forEach((update) => {
+    this.updates.forEach(update => {
       const pkg = update.package;
       const packageLocation = pkg.location;
       const packageJsonLocation = path.join(packageLocation, "package.json");
@@ -612,15 +607,21 @@ export default class PublishCommand extends Command {
       // the updated version that we're about to release.
       if (conventionalCommits) {
         if (this.repository.isIndependent()) {
-          ConventionalCommitUtilities.updateIndependentChangelog({
-            name: pkg.name,
-            location: pkg.location
-          }, this.changelogOpts);
+          ConventionalCommitUtilities.updateIndependentChangelog(
+            {
+              name: pkg.name,
+              location: pkg.location,
+            },
+            this.changelogOpts,
+          );
         } else {
-          ConventionalCommitUtilities.updateFixedChangelog({
-            name: pkg.name,
-            location: pkg.location
-          }, this.changelogOpts);
+          ConventionalCommitUtilities.updateFixedChangelog(
+            {
+              name: pkg.name,
+              location: pkg.location,
+            },
+            this.changelogOpts,
+          );
         }
 
         changedFiles.push(ConventionalCommitUtilities.changelogLocation(pkg));
@@ -634,14 +635,19 @@ export default class PublishCommand extends Command {
       if (!this.repository.isIndependent()) {
         const packageJson = this.repository.packageJson;
 
-        ConventionalCommitUtilities.updateFixedRootChangelog({
-          name: packageJson && packageJson.name ? packageJson.name : 'root',
-          location: this.repository.rootPath
-        }, this.changelogOpts);
+        ConventionalCommitUtilities.updateFixedRootChangelog(
+          {
+            name: packageJson && packageJson.name ? packageJson.name : "root",
+            location: this.repository.rootPath,
+          },
+          this.changelogOpts,
+        );
 
-        changedFiles.push(ConventionalCommitUtilities.changelogLocation({
-          location: this.repository.rootPath
-        }));
+        changedFiles.push(
+          ConventionalCommitUtilities.changelogLocation({
+            location: this.repository.rootPath,
+          }),
+        );
       }
     }
 
@@ -649,7 +655,7 @@ export default class PublishCommand extends Command {
     this.runSyncScriptInPackage(this.repository.package, "version");
 
     if (this.gitEnabled) {
-      changedFiles.forEach((file) => GitUtilities.addFile(file, this.execOpts));
+      changedFiles.forEach(file => GitUtilities.addFile(file, this.execOpts));
     }
   }
 
@@ -660,11 +666,11 @@ export default class PublishCommand extends Command {
       return;
     }
 
-    this.packageGraph.get(pkg.name).dependencies.forEach((depName) => {
+    this.packageGraph.get(pkg.name).dependencies.forEach(depName => {
       const version = this.updatesVersions[depName];
 
       if (deps[depName] && version) {
-        deps[depName] = exact ? version : ("^" + version);
+        deps[depName] = exact ? version : `^${version}`;
       }
     });
   }
@@ -677,7 +683,7 @@ export default class PublishCommand extends Command {
     }
 
     // run the postversion script for each update
-    this.updates.forEach((update) => {
+    this.updates.forEach(update => {
       this.runSyncScriptInPackage(update.package, "postversion");
     });
 
@@ -686,21 +692,19 @@ export default class PublishCommand extends Command {
   }
 
   gitCommitAndTagVersionForUpdates() {
-    const tags = this.updates.map(({ "package": { name } }) =>
-      `${name}@${this.updatesVersions[name]}`
-    );
+    const tags = this.updates.map(({ package: { name } }) => `${name}@${this.updatesVersions[name]}`);
     const subject = this.options.message || "Publish";
-    const message = tags.reduce((msg, tag) => msg + `${EOL} - ${tag}`, `${subject}${EOL}`);
+    const message = tags.reduce((msg, tag) => `${msg}${EOL} - ${tag}`, `${subject}${EOL}`);
 
     GitUtilities.commit(message, this.execOpts);
-    tags.forEach((tag) => GitUtilities.addTag(tag, this.execOpts));
+    tags.forEach(tag => GitUtilities.addTag(tag, this.execOpts));
 
     return tags;
   }
 
   gitCommitAndTagVersion(version) {
-    const tag = "v" + version;
-    const message = this.options.message && this.options.message.replace(/%s/g, tag) || tag;
+    const tag = `v${version}`;
+    const message = (this.options.message && this.options.message.replace(/%s/g, tag)) || tag;
 
     GitUtilities.commit(message, this.execOpts);
     GitUtilities.addTag(tag, this.execOpts);
@@ -709,7 +713,7 @@ export default class PublishCommand extends Command {
   }
 
   execScript(pkg, script) {
-    const scriptLocation = path.join(pkg.location, "scripts", script + ".js");
+    const scriptLocation = path.join(pkg.location, "scripts", `${script}.js`);
 
     if (FileSystemUtilities.existsSync(scriptLocation)) {
       require(scriptLocation);
@@ -725,50 +729,56 @@ export default class PublishCommand extends Command {
     // therefore no updates will be needed
     const tag = this.options.tempTag ? "lerna-temp" : this.getDistTag();
 
-    this.updates.forEach((update) => {
+    this.updates.forEach(update => {
       this.execScript(update.package, "prepublish");
     });
 
     tracker.addWork(this.packagesToPublishCount);
 
-    PackageUtilities.runParallelBatches(this.batchedPackagesToPublish, (pkg) => {
-      let attempts = 0;
+    PackageUtilities.runParallelBatches(
+      this.batchedPackagesToPublish,
+      pkg => {
+        let attempts = 0;
 
-      const run = (cb) => {
-        tracker.verbose("publishing", pkg.name);
+        const run = cb => {
+          tracker.verbose("publishing", pkg.name);
 
-        NpmUtilities.publishTaggedInDir(tag, pkg.location, this.npmConfig, (err) => {
-          err = err && err.stack || err;
+          NpmUtilities.publishTaggedInDir(tag, pkg.location, this.npmConfig, err => {
+            err = (err && err.stack) || err;
 
-          if (!err ||
-            // publishing over an existing package which is likely due to a timeout or something
-            err.indexOf("You cannot publish over the previously published version") > -1
-          ) {
-            tracker.info("published", pkg.name);
-            tracker.completeWork(1);
-            this.execScript(pkg, "postpublish");
-            cb();
-            return;
-          }
+            if (
+              !err ||
+              // publishing over an existing package which is likely due to a timeout or something
+              err.indexOf("You cannot publish over the previously published version") > -1
+            ) {
+              tracker.info("published", pkg.name);
+              tracker.completeWork(1);
+              this.execScript(pkg, "postpublish");
+              cb();
+              return;
+            }
 
-          attempts++;
+            attempts++;
 
-          if (attempts < 5) {
-            this.logger.error("publish", "Retrying failed publish:", pkg.name);
-            this.logger.verbose("publish error", err.message);
-            run(cb);
-          } else {
-            this.logger.error("publish", "Ran out of retries while publishing", pkg.name, err.stack || err);
-            cb(err);
-          }
-        });
-      };
+            if (attempts < 5) {
+              this.logger.error("publish", "Retrying failed publish:", pkg.name);
+              this.logger.verbose("publish error", err.message);
+              run(cb);
+            } else {
+              this.logger.error("publish", "Ran out of retries while publishing", pkg.name, err.stack || err);
+              cb(err);
+            }
+          });
+        };
 
-      return run;
-    }, this.concurrency, (err) => {
-      tracker.finish();
-      callback(err);
-    });
+        return run;
+      },
+      this.concurrency,
+      err => {
+        tracker.finish();
+        callback(err);
+      },
+    );
   }
 
   npmUpdateAsLatest(callback) {
@@ -779,32 +789,37 @@ export default class PublishCommand extends Command {
     const tracker = this.logger.newItem("npmUpdateAsLatest");
     tracker.addWork(this.packagesToPublishCount);
 
-    PackageUtilities.runParallelBatches(this.batchedPackagesToPublish, (pkg) => (cb) => {
-      let attempts = 0;
+    PackageUtilities.runParallelBatches(
+      this.batchedPackagesToPublish,
+      pkg => cb => {
+        let attempts = 0;
 
-      while (true) {
-        attempts++;
+        while (true) {
+          attempts++;
 
-        try {
-          this.updateTag(pkg);
-          tracker.info("latest", pkg.name);
-          tracker.completeWork(1);
-          cb();
-          break;
-        } catch (err) {
-          if (attempts < 5) {
-            this.logger.error("publish", "Error updating version as latest", err.stack || err);
-            continue;
-          } else {
-            cb(err);
-            return;
+          try {
+            this.updateTag(pkg);
+            tracker.info("latest", pkg.name);
+            tracker.completeWork(1);
+            cb();
+            break;
+          } catch (err) {
+            if (attempts < 5) {
+              this.logger.error("publish", "Error updating version as latest", err.stack || err);
+              continue;
+            } else {
+              cb(err);
+              return;
+            }
           }
         }
-      }
-    }, 4, (err) => {
-      tracker.finish();
-      callback(err);
-    });
+      },
+      4,
+      err => {
+        tracker.finish();
+        callback(err);
+      },
+    );
   }
 
   updateTag(pkg) {
@@ -817,11 +832,23 @@ export default class PublishCommand extends Command {
     /* eslint-disable max-len */
     // TODO: fix this API to be less verbose with parameters
     if (this.options.npmTag) {
-      NpmUtilities.addDistTag(pkg.location, pkg.name, this.updatesVersions[pkg.name], distTag, this.npmRegistry);
+      NpmUtilities.addDistTag(
+        pkg.location,
+        pkg.name,
+        this.updatesVersions[pkg.name],
+        distTag,
+        this.npmRegistry,
+      );
     } else if (this.options.canary) {
       NpmUtilities.addDistTag(pkg.location, pkg.name, pkg.version, distTag, this.npmRegistry);
     } else {
-      NpmUtilities.addDistTag(pkg.location, pkg.name, this.updatesVersions[pkg.name], distTag, this.npmRegistry);
+      NpmUtilities.addDistTag(
+        pkg.location,
+        pkg.name,
+        this.updatesVersions[pkg.name],
+        distTag,
+        this.npmRegistry,
+      );
     }
     /* eslint-enable max-len */
   }

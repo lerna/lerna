@@ -8,6 +8,7 @@
  */
 const path = require("path");
 const fs = require("fs");
+
 const cwd = process.cwd();
 const parsedCwd = path.parse(cwd);
 
@@ -17,8 +18,10 @@ const passedArgs = process.argv.splice(2).join(" ");
 
 // List all files in the current directory and filter out the exec-test* files
 // to focus on the files under test
-const files = fs.readdirSync(cwd).filter((file) => file.indexOf("exec-test") === -1).join("\n");
+const files = fs
+  .readdirSync(cwd)
+  .filter(file => file.indexOf("exec-test") === -1)
+  .join("\n");
 
 console.log(`${parsedCwd.base} ${passedArgs}`);
 console.log(files);
-

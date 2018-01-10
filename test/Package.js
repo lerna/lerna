@@ -24,9 +24,9 @@ describe("Package", () => {
         scripts: { "my-script": "echo 'hello world'" },
         dependencies: { "my-dependency": "^1.0.0" },
         devDependencies: { "my-dev-dependency": "^1.0.0" },
-        peerDependencies: { "my-peer-dependency": ">=1.0.0" }
+        peerDependencies: { "my-peer-dependency": ">=1.0.0" },
       },
-      "/path/to/package"
+      "/path/to/package",
     );
   });
 
@@ -83,7 +83,7 @@ describe("Package", () => {
     it("should return the combined dependencies", () => {
       expect(pkg.allDependencies).toEqual({
         "my-dependency": "^1.0.0",
-        "my-dev-dependency": "^1.0.0"
+        "my-dev-dependency": "^1.0.0",
       });
     });
   });
@@ -91,7 +91,7 @@ describe("Package", () => {
   describe("get .scripts", () => {
     it("should return the scripts", () => {
       expect(pkg.scripts).toEqual({
-        "my-script": "echo 'hello world'"
+        "my-script": "echo 'hello world'",
       });
     });
   });
@@ -104,10 +104,9 @@ describe("Package", () => {
 
   describe(".set versionSerializer", () => {
     it("should call 'deserialize' method of serializer'", () => {
-
       const mockSerializer = {
-        serialize: jest.fn((pkg) => pkg),
-        deserialize: jest.fn((pkg) => pkg)
+        serialize: jest.fn(pkg => pkg),
+        deserialize: jest.fn(pkg => pkg),
       };
 
       pkg.versionSerializer = mockSerializer;
@@ -117,7 +116,6 @@ describe("Package", () => {
       expect(mockSerializer.serialize).not.toBeCalled();
     });
   });
-
 
   describe(".toJSON()", () => {
     it("should return clone of internal package for serialization", () => {
@@ -131,21 +129,21 @@ describe("Package", () => {
     });
 
     it("should not change internal package with versionSerializer", () => {
-      pkg._package.state = "serialized"
+      pkg._package.state = "serialized";
 
       const mockSerializer = {
-        serialize: jest.fn((pkg) => {
-          pkg.state = "serialized"
+        serialize: jest.fn(pkg => {
+          pkg.state = "serialized";
           return pkg;
         }),
-        deserialize: jest.fn((pkg) => {
-          pkg.state = "deserialized"
-          return pkg
-        })
+        deserialize: jest.fn(pkg => {
+          pkg.state = "deserialized";
+          return pkg;
+        }),
       };
 
-      const serializedPkg = Object.assign({}, pkg._package, { state: "serialized" })
-      const deserializedPkg = Object.assign({}, pkg._package, { state: "deserialized" })
+      const serializedPkg = Object.assign({}, pkg._package, { state: "serialized" });
+      const deserializedPkg = Object.assign({}, pkg._package, { state: "deserialized" });
 
       pkg.versionSerializer = mockSerializer;
       expect(mockSerializer.deserialize).toBeCalled();
@@ -160,8 +158,8 @@ describe("Package", () => {
 
     it("should use versionSerializer.serialize on internal package before return", () => {
       const mockSerializer = {
-        serialize: jest.fn((pkg) => pkg),
-        deserialize: jest.fn((pkg) => pkg)
+        serialize: jest.fn(pkg => pkg),
+        deserialize: jest.fn(pkg => pkg),
       };
 
       pkg.versionSerializer = mockSerializer;
@@ -175,18 +173,19 @@ describe("Package", () => {
   });
 
   describe(".runScript()", () => {
-    it("should run the script", (done) => {
+    it("should run the script", done => {
       NpmUtilities.runScriptInDir = jest.fn(callsBack());
 
       pkg.runScript("my-script", () => {
         try {
           expect(NpmUtilities.runScriptInDir).lastCalledWith(
             "my-script",
-           {  args: [],
+            {
+              args: [],
               directory: pkg.location,
-              npmClient: 'npm'
+              npmClient: "npm",
             },
-            expect.any(Function)
+            expect.any(Function),
           );
 
           done();
@@ -205,21 +204,24 @@ describe("Package", () => {
 
       expect(NpmUtilities.runScriptInDirSync).lastCalledWith(
         "my-script",
-        { args: [],
+        {
+          args: [],
           directory: pkg.location,
-          npmClient: 'npm'
+          npmClient: "npm",
         },
-        expect.any(Function)
+        expect.any(Function),
       );
     });
   });
 
   describe(".hasMatchingDependency()", () => {
     it("should match included dependency", () => {
-      expect(pkg.hasMatchingDependency({
-        name: "my-dependency",
-        version: "1.1.3"
-      })).toBe(true);
+      expect(
+        pkg.hasMatchingDependency({
+          name: "my-dependency",
+          version: "1.1.3",
+        }),
+      ).toBe(true);
     });
 
     it("should not match missing dependency", () => {
@@ -228,10 +230,13 @@ describe("Package", () => {
     });
 
     it("should not match included dependency", () => {
-      const result = pkg.hasMatchingDependency({
-        name: "my-dev-dependency",
-        version: "2.0.7"
-      }, true);
+      const result = pkg.hasMatchingDependency(
+        {
+          name: "my-dev-dependency",
+          version: "2.0.7",
+        },
+        true,
+      );
 
       expect(result).toBe(false);
       expect(loggingOutput()).toMatchSnapshot();

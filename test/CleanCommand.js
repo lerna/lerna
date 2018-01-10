@@ -29,10 +29,8 @@ const stubRimraf = () => {
   FileSystemUtilities.rimraf = jest.fn(callsBack());
 };
 
-const removedDirectories = (testDir) =>
-  FileSystemUtilities.rimraf.mock.calls.map((args) =>
-    normalizeRelativeDir(testDir, args[0])
-  );
+const removedDirectories = testDir =>
+  FileSystemUtilities.rimraf.mock.calls.map(args => normalizeRelativeDir(testDir, args[0]));
 
 describe("CleanCommand", () => {
   beforeEach(() => {
@@ -82,20 +80,13 @@ describe("CleanCommand", () => {
     it("should only clean scoped packages", async () => {
       await lernaClean("--scope", "package-1");
 
-      expect(removedDirectories(testDir)).toEqual([
-        "packages/package-1/node_modules",
-      ]);
+      expect(removedDirectories(testDir)).toEqual(["packages/package-1/node_modules"]);
     });
 
     it("should not clean ignored packages", async () => {
-      await lernaClean(
-        "--ignore", "package-2",
-        "--ignore", "@test/package-3"
-      );
+      await lernaClean("--ignore", "package-2", "--ignore", "@test/package-3");
 
-      expect(removedDirectories(testDir)).toEqual([
-        "packages/package-1/node_modules",
-      ]);
+      expect(removedDirectories(testDir)).toEqual(["packages/package-1/node_modules"]);
     });
 
     it("exits non-zero when rimraf errors egregiously", async () => {
@@ -121,6 +112,5 @@ describe("CleanCommand", () => {
         "packages/package-1/node_modules",
       ]);
     });
-
   });
 });

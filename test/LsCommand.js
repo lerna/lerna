@@ -22,8 +22,7 @@ log.level = "silent";
 // keep snapshots stable cross-platform
 chalk.enabled = false;
 
-const consoleOutput = () =>
-  output.mock.calls.map((args) => normalizeNewline(args[0]));
+const consoleOutput = () => output.mock.calls.map(args => normalizeNewline(args[0]));
 
 describe("LsCommand", () => {
   afterEach(() => jest.resetAllMocks());
