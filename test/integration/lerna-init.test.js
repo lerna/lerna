@@ -9,16 +9,11 @@ import initFixture from "../helpers/initFixture";
 
 const initEmptyDir = () => tempy.directoryAsync();
 
-const parsePackageJson = (cwd) =>
-  readPkg(path.join(cwd, "package.json"), { normalize: false });
+const parsePackageJson = cwd => readPkg(path.join(cwd, "package.json"), { normalize: false });
 
-const parseLernaJson = (cwd) =>
-  loadJsonFile(path.join(cwd, "lerna.json"));
+const parseLernaJson = cwd => loadJsonFile(path.join(cwd, "lerna.json"));
 
-const loadMetaData = (cwd) => Promise.all([
-  parsePackageJson(cwd),
-  parseLernaJson(cwd),
-]);
+const loadMetaData = cwd => Promise.all([parsePackageJson(cwd), parseLernaJson(cwd)]);
 
 describe("lerna init", () => {
   test.concurrent("initializes empty directory", async () => {

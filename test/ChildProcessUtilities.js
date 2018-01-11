@@ -13,7 +13,7 @@ describe("ChildProcessUtilities", () => {
   });
 
   describe(".exec()", () => {
-    afterEach((done) => {
+    afterEach(done => {
       if (ChildProcessUtilities.getChildProcessCount()) {
         ChildProcessUtilities.onAllExited(done);
       } else {
@@ -21,7 +21,7 @@ describe("ChildProcessUtilities", () => {
       }
     });
 
-    it("should execute a command in a child process and call the callback with the result", (done) => {
+    it("should execute a command in a child process and call the callback with the result", done => {
       ChildProcessUtilities.exec("echo", ["foo"], null, (stderr, stdout) => {
         try {
           expect(stderr).toBe(null);
@@ -33,7 +33,7 @@ describe("ChildProcessUtilities", () => {
       });
     });
 
-    it("passes an error object to callback when stdout maxBuffer exceeded", (done) => {
+    it("passes an error object to callback when stdout maxBuffer exceeded", done => {
       ChildProcessUtilities.exec("echo", ["wat"], { maxBuffer: 1 }, (stderr, stdout) => {
         try {
           expect(String(stderr)).toBe("Error: stdout maxBuffer exceeded");
@@ -45,14 +45,13 @@ describe("ChildProcessUtilities", () => {
       });
     });
 
-    it("does not require a callback, instead returning a Promise", () => {
-      return ChildProcessUtilities.exec("echo", ["Promise"]).then((result) => {
+    it("does not require a callback, instead returning a Promise", () =>
+      ChildProcessUtilities.exec("echo", ["Promise"]).then(result => {
         expect(result.stdout).toBe("Promise");
-      });
-    });
+      }));
 
-    it("passes error object to callback", (done) => {
-      ChildProcessUtilities.exec("nowImTheModelOfAModernMajorGeneral", [], {}, (err) => {
+    it("passes error object to callback", done => {
+      ChildProcessUtilities.exec("nowImTheModelOfAModernMajorGeneral", [], {}, err => {
         try {
           expect(err.message).toMatch(/\bnowImTheModelOfAModernMajorGeneral\b/);
           done();
@@ -62,11 +61,10 @@ describe("ChildProcessUtilities", () => {
       });
     });
 
-    it("passes Promise rejection through", () => {
-      return ChildProcessUtilities.exec("theVeneratedVirginianVeteranWhoseMenAreAll", []).catch((err) => {
+    it("passes Promise rejection through", () =>
+      ChildProcessUtilities.exec("theVeneratedVirginianVeteranWhoseMenAreAll", []).catch(err => {
         expect(err.message).toMatch(/\btheVeneratedVirginianVeteranWhoseMenAreAll\b/);
-      });
-    });
+      }));
 
     it("registers child processes that are created", () => {
       const echoOne = ChildProcessUtilities.exec("echo", ["one"]);
@@ -75,10 +73,7 @@ describe("ChildProcessUtilities", () => {
       const echoTwo = ChildProcessUtilities.exec("echo", ["two"]);
       expect(ChildProcessUtilities.getChildProcessCount()).toBe(2);
 
-      return Promise.all([
-        echoOne,
-        echoTwo,
-      ]).then(([one, two]) => {
+      return Promise.all([echoOne, echoTwo]).then(([one, two]) => {
         expect(one.stdout).toBe("one");
         expect(two.stdout).toBe("two");
       });
@@ -90,7 +85,7 @@ describe("ChildProcessUtilities", () => {
       const child = ChildProcessUtilities.spawn("echo", ["-n"]);
       expect(child.stdio).toEqual([null, null, null]);
 
-      return child.then((result) => {
+      return child.then(result => {
         expect(result.code).toBe(0);
         expect(result.signal).toBe(null);
       });

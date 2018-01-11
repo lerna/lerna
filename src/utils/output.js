@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import log from "npmlog";
 
 export default function output(...args) {

@@ -7,7 +7,7 @@ export default class VersionSerializer {
   }
 
   serialize(pkg) {
-    this._dependenciesKeys.forEach((key) => {
+    this._dependenciesKeys.forEach(key => {
       this._prependPrefix(pkg[key] || {});
     });
 
@@ -15,7 +15,7 @@ export default class VersionSerializer {
   }
 
   deserialize(pkg) {
-    this._dependenciesKeys.forEach((key) => {
+    this._dependenciesKeys.forEach(key => {
       this._stripPrefix(pkg[key] || {});
     });
 
@@ -32,7 +32,7 @@ export default class VersionSerializer {
   }
 
   _stripPrefix(dependencies) {
-    Object.keys(dependencies).forEach((name) => {
+    Object.keys(dependencies).forEach(name => {
       if (this._graphDependencies.includes(name)) {
         const result = this._versionParser.parseVersion(dependencies[name]);
 

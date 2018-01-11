@@ -11,11 +11,7 @@ describe("lerna import", () => {
       initFixture("ImportCommand/basic"),
     ]);
 
-    const args = [
-      "import",
-      externalPath,
-      "--yes"
-    ];
+    const args = ["import", externalPath, "--yes"];
 
     await execa(LERNA_BIN, args, { cwd });
 

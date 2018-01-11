@@ -23,8 +23,7 @@ jest.mock("../src/PromptUtilities");
 // silence logs
 log.level = "silent";
 
-const lastCommitInDir = (cwd) =>
-  execa.stdout("git", ["log", "-1", "--format=%s"], { cwd });
+const lastCommitInDir = cwd => execa.stdout("git", ["log", "-1", "--format=%s"], { cwd });
 
 describe("ImportCommand", () => {
   beforeEach(() => {
@@ -76,7 +75,9 @@ describe("ImportCommand", () => {
       await execa("git", ["commit", "--no-gpg-sign", "-am", "master content written"], cwdExternalDir);
       try {
         await execa("git", ["merge", branchName], cwdExternalDir);
-      } catch (e) {}
+      } catch (e) {
+        // skip
+      }
 
       await fs.writeFile(conflictedFile, "merged content");
       await execa("git", ["add", conflictedFileName], cwdExternalDir);
@@ -90,19 +91,18 @@ describe("ImportCommand", () => {
       expect(await pathExists(newFilePath)).toBe(true);
     });
 
-    it.skip("works with --max-buffer", async () => {
-      await lernaImport(externalDir, "--max-buffer=1");
-      // TODO: this test kinda sucks, should never have to read instance properties
-      // expect(importCommand.execOpts).toHaveProperty("maxBuffer", ONE_HUNDRED_MEGABYTES);
-      // expect(importCommand.externalExecOpts).toHaveProperty("maxBuffer", ONE_HUNDRED_MEGABYTES);
-    });
+    // FIXME: this test kinda sucks, should never have to read instance properties
+    // it("works with --max-buffer", async () => {
+    //   await lernaImport(externalDir, "--max-buffer=1");
+    // });
 
     it("supports moved files within the external repo", async () => {
       const newFilePath = path.join(testDir, "packages", path.basename(externalDir), "new-file");
 
       await execa("git", ["mv", "old-file", "new-file"], { cwd: externalDir });
-      await execa("git", ["commit", "--no-gpg-sign", "-m", "Moved old-file to new-file"],
-        { cwd: externalDir });
+      await execa("git", ["commit", "--no-gpg-sign", "-m", "Moved old-file to new-file"], {
+        cwd: externalDir,
+      });
 
       await lernaImport(externalDir);
 
@@ -150,7 +150,7 @@ describe("ImportCommand", () => {
     });
 
     it("errors when external directory is missing", async () => {
-      const missing = externalDir + "_invalidSuffix";
+      const missing = `${externalDir}_invalidSuffix`;
 
       try {
         await lernaImport(missing);
@@ -235,14 +235,14 @@ describe("ImportCommand", () => {
       const newFilePath = path.join(testDir, "packages", path.basename(externalDir), "new-file");
 
       await execa("git", ["mv", "old-file", "new-file"], { cwd: externalDir });
-      await execa("git", ["commit", "--no-gpg-sign", "-m", "[ISSUE-10] Moved old-file to new-file"],
-        { cwd: externalDir });
+      await execa("git", ["commit", "--no-gpg-sign", "-m", "[ISSUE-10] Moved old-file to new-file"], {
+        cwd: externalDir,
+      });
 
       await lernaImport(externalDir);
 
       expect(await lastCommitInDir(testDir)).toBe("[ISSUE-10] Moved old-file to new-file");
       expect(await pathExists(newFilePath)).toBe(true);
     });
-
   });
 });

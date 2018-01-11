@@ -1,3 +1,4 @@
+import execa from "execa";
 import loadJsonFile from "load-json-file";
 import log from "npmlog";
 import path from "path";
@@ -9,8 +10,6 @@ import FileSystemUtilities from "../src/FileSystemUtilities";
 import GitUtilities from "../src/GitUtilities";
 
 // helpers
-import execa from "execa";
-
 import callsBack from "./helpers/callsBack";
 import initFixture from "./helpers/initFixture";
 
@@ -48,9 +47,10 @@ describe("Command", () => {
   });
 
   describe(".lernaVersion", () => {
-    it("should be added to the instance", () => {
+    it("should be added to the instance", async () => {
       const command = new Command([], {});
-      expect(command.lernaVersion).toEqual(require("../package.json").version);
+      const { version } = await loadJsonFile(path.resolve(__dirname, "../package.json"));
+      expect(command.lernaVersion).toEqual(version);
     });
   });
 
@@ -116,9 +116,11 @@ describe("Command", () => {
   describe(".run()", () => {
     let testDir;
 
-    beforeAll(() => initFixture("Command/basic").then((dir) => {
-      testDir = dir;
-    }));
+    beforeAll(() =>
+      initFixture("Command/basic").then(dir => {
+        testDir = dir;
+      }),
+    );
 
     it("returns a Promise", async () => {
       await new OkCommand([], {}, testDir).run();
@@ -140,7 +142,7 @@ describe("Command", () => {
         ChildProcessUtilities.getChildProcessCount.mockReturnValue(1);
 
         let warning;
-        log.once("log.warn", (m) => {
+        log.once("log.warn", m => {
           warning = m;
         });
 
@@ -154,7 +156,7 @@ describe("Command", () => {
         ChildProcessUtilities.getChildProcessCount.mockReturnValue(2);
 
         let warning;
-        log.once("log.warn", (m) => {
+        log.once("log.warn", m => {
           warning = m;
         });
 
@@ -188,7 +190,7 @@ describe("Command", () => {
             err.stderr = "pkg-err-stderr";
             // add pkg property with stub info
             err.pkg = {
-              name: "pkg-err-name"
+              name: "pkg-err-name",
             };
             // "throw" the error to reject .run() promise
             callback(err);
@@ -198,7 +200,7 @@ describe("Command", () => {
         try {
           await new PkgErrorCommand([], {}, testDir).run();
         } catch (err) {
-          expect(console.error.mock.calls.length).toEqual(2);
+          expect(console.error.mock.calls).toHaveLength(2);
           expect(console.error.mock.calls[0]).toEqual(["pkg-err-stdout"]);
           expect(console.error.mock.calls[1]).toEqual(["pkg-err-stderr"]);
 
@@ -206,7 +208,7 @@ describe("Command", () => {
           expect(err.stdout).toEqual("pkg-err-stdout");
           expect(err.stderr).toEqual("pkg-err-stderr");
           expect(err.pkg).toEqual({
-            name: "pkg-err-name"
+            name: "pkg-err-name",
           });
         }
       });
@@ -231,9 +233,9 @@ describe("Command", () => {
     });
   });
 
-  describe(".runValidations()", () => {
-    it("needs tests");
-  });
+  // describe(".runValidations()", () => {
+  //   it("needs tests");
+  // });
 
   describe(".runPreparations()", () => {
     let testDir;
@@ -248,18 +250,16 @@ describe("Command", () => {
     }
 
     describe("get .packages", () => {
-
       it("returns the list of packages", async () => {
-        testDir = await initFixture("Command/basic")
+        testDir = await initFixture("Command/basic");
         const { packages } = await run();
         expect(packages).toEqual([]);
       });
     });
 
     describe("get .packageGraph", () => {
-
       it("returns the graph of packages", async () => {
-        testDir = await initFixture("Command/basic")
+        testDir = await initFixture("Command/basic");
         const { packageGraph } = await run();
         expect(packageGraph).toBeDefined();
         expect(packageGraph).toHaveProperty("nodes", []);
@@ -268,21 +268,22 @@ describe("Command", () => {
     });
 
     describe(".filteredPackages", () => {
-
-      beforeEach(() => initFixture("UpdatedCommand/basic").then((dir) => {
-        testDir = dir;
-      }));
+      beforeEach(() =>
+        initFixture("UpdatedCommand/basic").then(dir => {
+          testDir = dir;
+        }),
+      );
 
       it("--scope should filter packages", async () => {
         const { filteredPackages } = await run({ scope: ["package-2", "package-4"] });
-        expect(filteredPackages.length).toEqual(2);
+        expect(filteredPackages).toHaveLength(2);
         expect(filteredPackages[0].name).toEqual("package-2");
         expect(filteredPackages[1].name).toEqual("package-4");
       });
 
       it("--since should return all packages if no tag is found", async () => {
         const { filteredPackages } = await run({ since: "" });
-        expect(filteredPackages.length).toEqual(5);
+        expect(filteredPackages).toHaveLength(5);
       });
 
       it("--since should return packages updated since the last tag", async () => {
@@ -292,12 +293,12 @@ describe("Command", () => {
         await cli("git", "commit", "--no-gpg-sign", "-m", "test");
 
         const { filteredPackages } = await run({ since: "" });
-        expect(filteredPackages.length).toEqual(2);
+        expect(filteredPackages).toHaveLength(2);
         expect(filteredPackages[0].name).toEqual("package-2");
         expect(filteredPackages[1].name).toEqual("package-3");
       });
 
-      it("--since \"ref\" should return packages updated since the specified ref", async () => {
+      it('--since "ref" should return packages updated since the specified ref', async () => {
         // We first tag, then modify master to ensure that specifying --since will override checking against
         // the latest tag.
         await cli("git", "tag", "1.0.0");
@@ -312,7 +313,7 @@ describe("Command", () => {
         await cli("git", "commit", "--no-gpg-sign", "-m", "test");
 
         const { filteredPackages } = await run({ since: "master" });
-        expect(filteredPackages.length).toEqual(2);
+        expect(filteredPackages).toHaveLength(2);
         expect(filteredPackages[0].name).toEqual("package-2");
         expect(filteredPackages[1].name).toEqual("package-3");
       });
@@ -325,9 +326,9 @@ describe("Command", () => {
 
         const { filteredPackages } = await run({
           scope: ["package-2", "package-3", "package-4"],
-          since: "master"
+          since: "master",
         });
-        expect(filteredPackages.length).toEqual(1);
+        expect(filteredPackages).toHaveLength(1);
         expect(filteredPackages[0].name).toEqual("package-4");
       });
     });
@@ -336,14 +337,14 @@ describe("Command", () => {
   describe("get .options", () => {
     let testDir;
 
-    beforeAll(() => initFixture("Command/basic").then((dir) => {
-      testDir = dir;
-    }));
+    beforeAll(() =>
+      initFixture("Command/basic").then(dir => {
+        testDir = dir;
+      }),
+    );
 
-    class TestACommand extends Command {
-    }
-    class TestBCommand extends Command {
-    }
+    class TestACommand extends Command {}
+    class TestBCommand extends Command {}
     class TestCCommand extends Command {
       get defaultOptions() {
         return {
@@ -384,23 +385,35 @@ describe("Command", () => {
     });
 
     it("should override everything with a CLI flag", () => {
-      const instance = new TestCCommand([], {
-        testOption2: "f",
-      }, testDir);
+      const instance = new TestCCommand(
+        [],
+        {
+          testOption2: "f",
+        },
+        testDir,
+      );
       expect(instance.options.testOption2).toBe("f");
     });
 
     it("should inherit durable options when a CLI flag is undefined", () => {
-      const instance = new TestCCommand([], {
-        testOption: undefined, // yargs does this when --test-option is not passed
-      }, testDir);
+      const instance = new TestCCommand(
+        [],
+        {
+          testOption: undefined, // yargs does this when --test-option is not passed
+        },
+        testDir,
+      );
       expect(instance.options.testOption).toBe("b");
     });
 
     it("should merge flags with defaultOptions", () => {
-      const instance = new TestCCommand([], {
-        testOption: "b",
-      }, testDir);
+      const instance = new TestCCommand(
+        [],
+        {
+          testOption: "b",
+        },
+        testDir,
+      );
       expect(instance.options.testOption).toBe("b");
       expect(instance.options.testOption2).toBe("c");
       expect(instance.options.testOption3).toBe("a");
@@ -410,34 +423,34 @@ describe("Command", () => {
   describe("legacy options", () => {
     let testDir;
 
-    beforeAll(() => initFixture("Command/legacy").then((dir) => {
-      testDir = dir;
-    }));
+    beforeAll(() =>
+      initFixture("Command/legacy").then(dir => {
+        testDir = dir;
+      }),
+    );
 
-    class TestCommand extends Command {
-    }
+    class TestCommand extends Command {}
 
     describe("bootstrapConfig", () => {
       afterEach(() => {
         log.removeAllListeners("log.warn");
       });
 
-      class BootstrapCommand extends Command {
-      }
+      class BootstrapCommand extends Command {}
 
       it("should warn when used", () => {
         const instance = new BootstrapCommand([], {}, testDir);
 
         let warning;
-        log.once("log.warn", (m) => {
+        log.once("log.warn", m => {
           warning = m;
         });
 
-        instance.options;
+        instance.options; // eslint-disable-line no-unused-expressions
 
         expect(warning).toHaveProperty(
           "message",
-          "`bootstrapConfig.ignore` has been replaced by `command.bootstrap.ignore`."
+          "`bootstrapConfig.ignore` has been replaced by `command.bootstrap.ignore`.",
         );
       });
 
@@ -453,7 +466,7 @@ describe("Command", () => {
           throw new Error("should not warn bootstrapConfig");
         });
 
-        instance.options;
+        instance.options; // eslint-disable-line no-unused-expressions
       });
 
       it("should not provide a value to other commands", () => {
@@ -467,22 +480,21 @@ describe("Command", () => {
         log.removeAllListeners("log.warn");
       });
 
-      class PublishCommand extends Command {
-      }
+      class PublishCommand extends Command {}
 
       it("should warn when used", () => {
         const instance = new PublishCommand([], {}, testDir);
 
         let warning;
-        log.once("log.warn", (m) => {
+        log.once("log.warn", m => {
           warning = m;
         });
 
-        instance.options;
+        instance.options; // eslint-disable-line no-unused-expressions
 
         expect(warning).toHaveProperty(
           "message",
-          "`publishConfig.ignore` has been replaced by `command.publish.ignore`."
+          "`publishConfig.ignore` has been replaced by `command.publish.ignore`.",
         );
       });
 
@@ -498,7 +510,7 @@ describe("Command", () => {
           throw new Error("should not warn publishConfig");
         });
 
-        instance.options;
+        instance.options; // eslint-disable-line no-unused-expressions
       });
 
       it("should not provide a value to other commands", () => {
@@ -509,7 +521,7 @@ describe("Command", () => {
   });
 
   describe("subclass implementation", () => {
-    ["initialize", "execute"].forEach((method) => {
+    ["initialize", "execute"].forEach(method => {
       it(`throws if ${method}() is not overridden`, () => {
         const command = new Command([], {});
         expect(() => command[method]()).toThrow();

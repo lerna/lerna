@@ -11,16 +11,16 @@ async function copyFixture(targetDir, fixturePath) {
 }
 
 /**
-During fixture copy, replace "__TEST_VERSION__" with the current version.
-This is primarily for integration tests, but doesn't hurt unit tests.
-
-@param {stream.Readable} readStream
-@param {stream.Writable} writeStream
-@param {Object} file metadata
-@property {String} file.name source path of file being copied
-
-@see https://github.com/jprichardson/node-fs-extra/blob/master/lib/copy/ncp.js#L105
-**/
+ * During fixture copy, replace "__TEST_VERSION__" with the current version.
+ * This is primarily for integration tests, but doesn't hurt unit tests.
+ *
+ * @param {stream.Readable} readStream
+ * @param {stream.Writable} writeStream
+ * @param {Object} file metadata
+ * @property {String} file.name source path of file being copied
+ *
+ * @see https://github.com/jprichardson/node-fs-extra/blob/master/lib/copy/ncp.js#L105
+ */
 function transform(readStream, writeStream, file) {
   let stream = readStream;
 

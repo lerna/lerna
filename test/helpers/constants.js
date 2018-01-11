@@ -1,6 +1,6 @@
 /* eslint node/no-unsupported-features: ["error", { version: 4 }] */
-// this file is not transpiled by Jest when required in replaceLernaVersion.js
-"use strict";
+// this file is not transpiled by Jest when required in serializePlaceholders.js
+"use strict"; // eslint-disable-line strict, lines-around-directive
 
 const path = require("path");
 const fileUrl = require("file-url");
@@ -10,8 +10,8 @@ const LERNA_ROOTDIR = path.resolve(__dirname, "../..");
 const LERNA_PKG_TGZ = path.resolve(LERNA_ROOTDIR, `lerna-${pkg.version}.tgz`);
 
 /**
-Shared constants for tests
-**/
+ * Shared constants for tests
+ */
 exports.LERNA_VERSION = pkg.version;
 exports.LERNA_PKG_URL = fileUrl(LERNA_PKG_TGZ);
 exports.LERNA_BIN = path.resolve(LERNA_ROOTDIR, pkg.bin.lerna);

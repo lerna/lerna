@@ -54,11 +54,7 @@ export default class Package {
   }
 
   get allDependencies() {
-    return Object.assign(
-      {},
-      this.devDependencies,
-      this.dependencies
-    );
+    return Object.assign({}, this.devDependencies, this.dependencies);
   }
 
   get scripts() {
@@ -91,11 +87,15 @@ export default class Package {
     log.silly("runScript", script, this.name);
 
     if (this.scripts[script]) {
-      NpmUtilities.runScriptInDir(script, {
-        args: [],
-        directory: this.location,
-        npmClient: 'npm'
-      }, callback);
+      NpmUtilities.runScriptInDir(
+        script,
+        {
+          args: [],
+          directory: this.location,
+          npmClient: "npm",
+        },
+        callback,
+      );
     } else {
       callback();
     }
@@ -110,11 +110,15 @@ export default class Package {
     log.silly("runScriptSync", script, this.name);
 
     if (this.scripts[script]) {
-      NpmUtilities.runScriptInDirSync(script, {
-        args: [], 
-        directory: this.location, 
-        npmClient: 'npm'
-      }, callback);
+      NpmUtilities.runScriptInDirSync(
+        script,
+        {
+          args: [],
+          directory: this.location,
+          npmClient: "npm",
+        },
+        callback,
+      );
     } else {
       callback();
     }
@@ -142,10 +146,13 @@ export default class Package {
     }
 
     if (doWarn) {
-      log.warn(this.name, dedent`
-        depends on "${dependency.name}@${expectedVersion}"
-        instead of "${dependency.name}@${actualVersion}"
-      `);
+      log.warn(
+        this.name,
+        dedent`
+          depends on "${dependency.name}@${expectedVersion}"
+          instead of "${dependency.name}@${actualVersion}"
+        `,
+      );
     }
 
     return false;
@@ -159,8 +166,6 @@ export default class Package {
   hasDependencyInstalled(depName) {
     log.silly("hasDependencyInstalled", this.name, depName);
 
-    return dependencyIsSatisfied(
-      this.nodeModulesLocation, depName, this.allDependencies[depName]
-    );
+    return dependencyIsSatisfied(this.nodeModulesLocation, depName, this.allDependencies[depName]);
   }
 }

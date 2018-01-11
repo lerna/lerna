@@ -13,13 +13,11 @@ const DEFAULT_PACKAGE_GLOB = "packages/*";
 
 export default class Repository {
   constructor(cwd) {
-    const lernaJsonLocation = (
+    const lernaJsonLocation =
       // findUp returns null when not found
       findUp.sync("lerna.json", { cwd }) ||
-
       // path.resolve(".", ...) starts from process.cwd()
-      path.resolve((cwd || "."), "lerna.json")
-    );
+      path.resolve(cwd || ".", "lerna.json");
 
     this.rootPath = path.dirname(lernaJsonLocation);
     log.verbose("rootPath", this.rootPath);
@@ -62,8 +60,7 @@ export default class Repository {
   }
 
   get packageParentDirs() {
-    return this.packageConfigs.map(globParent)
-      .map(parentDir => path.resolve(this.rootPath, parentDir));
+    return this.packageConfigs.map(globParent).map(parentDir => path.resolve(this.rootPath, parentDir));
   }
 
   get packageJson() {
@@ -103,8 +100,6 @@ export default class Repository {
   hasDependencyInstalled(depName, version) {
     log.silly("hasDependencyInstalled", "ROOT", depName, version);
 
-    return dependencyIsSatisfied(
-      this.nodeModulesLocation, depName, version
-    );
+    return dependencyIsSatisfied(this.nodeModulesLocation, depName, version);
   }
 }

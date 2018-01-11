@@ -27,18 +27,15 @@ const stubSymlink = () => {
 };
 
 // object snapshots have sorted keys
-const symlinkedDirectories = (testDir) =>
-  FileSystemUtilities.symlink.mock.calls.map((args) => {
-    return {
-      _src: normalizeRelativeDir(testDir, args[0]),
-      dest: normalizeRelativeDir(testDir, args[1]),
-      type: args[2],
-    };
-  });
+const symlinkedDirectories = testDir =>
+  FileSystemUtilities.symlink.mock.calls.map(args => ({
+    _src: normalizeRelativeDir(testDir, args[0]),
+    dest: normalizeRelativeDir(testDir, args[1]),
+    type: args[2],
+  }));
 
 describe("LinkCommand", () => {
-  beforeEach(() => {
-  });
+  beforeEach(() => {});
 
   afterEach(() => jest.resetAllMocks());
 

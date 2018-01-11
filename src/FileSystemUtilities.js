@@ -10,7 +10,7 @@ import ChildProcessUtilities from "./ChildProcessUtilities";
 const ENDS_WITH_NEW_LINE = /\n$/;
 
 function ensureEndsWithNewLine(string) {
-  return ENDS_WITH_NEW_LINE.test(string) ? string : string + "\n";
+  return ENDS_WITH_NEW_LINE.test(string) ? string : `${string}\n`;
 }
 
 // NOTE: if rimraf moves the location of its executable, this will need to be updated
@@ -88,25 +88,20 @@ export default class FileSystemUtilities {
     // Checking if `dirPath` exists to be removed is cheap.
     // This lets us short-circuit if we don't have anything to do.
 
-    return pathExists(dirPath)
-      .then((exists) => {
-        if (!exists) {
-          return callback();
-        }
+    return pathExists(dirPath).then(exists => {
+      if (!exists) {
+        return callback();
+      }
 
-        const args = [
-          RIMRAF_CLI,
-          "--no-glob",
-          trailingSlash(dirPath),
-        ];
+      const args = [RIMRAF_CLI, "--no-glob", trailingSlash(dirPath)];
 
-        // We call this resolved CLI path in the "path/to/node path/to/cli <..args>"
-        // pattern to avoid Windows hangups with shebangs (e.g., WSH can't handle it)
-        return ChildProcessUtilities.spawn(process.execPath, args, {}, (err) => {
-          log.verbose("rimraf", "removed", dirPath);
-          callback(err);
-        });
+      // We call this resolved CLI path in the "path/to/node path/to/cli <..args>"
+      // pattern to avoid Windows hangups with shebangs (e.g., WSH can't handle it)
+      return ChildProcessUtilities.spawn(process.execPath, args, {}, err => {
+        log.verbose("rimraf", "removed", dirPath);
+        callback(err);
       });
+    });
   }
 
   static symlink(src, dest, type, callback) {
@@ -140,7 +135,7 @@ export default class FileSystemUtilities {
 
 function createSymbolicLink(src, dest, type, callback) {
   log.silly("createSymbolicLink", [src, dest, type]);
-  fs.lstat(dest, (err) => {
+  fs.lstat(dest, err => {
     if (!err) {
       // Something exists at `dest`.  Need to remove it first.
       fs.unlink(dest, () => fs.symlink(src, dest, type, callback));
@@ -150,10 +145,8 @@ function createSymbolicLink(src, dest, type, callback) {
   });
 }
 
-function createPosixSymlink(origin, dest, type, callback) {
-  if (type === "exec") {
-    type = "file";
-  }
+function createPosixSymlink(origin, dest, _type, callback) {
+  const type = _type === "exec" ? "file" : _type;
   const src = path.relative(path.dirname(dest), origin);
   createSymbolicLink(src, dest, type, callback);
 }

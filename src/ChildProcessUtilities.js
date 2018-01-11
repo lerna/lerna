@@ -11,14 +11,7 @@ let children = 0;
 const emitter = new EventEmitter();
 
 // when streaming children are spawned, use this color for prefix
-const colorWheel = [
-  "cyan",
-  "magenta",
-  "blue",
-  "yellow",
-  "green",
-  "red",
-];
+const colorWheel = ["cyan", "magenta", "blue", "yellow", "green", "red"];
 const NUM_COLORS = colorWheel.length;
 
 export default class ChildProcessUtilities {
@@ -73,10 +66,10 @@ export default class ChildProcessUtilities {
 }
 
 function registerChild(child) {
-  children++;
+  children += 1;
 
   pFinally(child, () => {
-    children--;
+    children -= 1;
 
     if (children === 0) {
       emitter.emit("empty");
@@ -84,16 +77,14 @@ function registerChild(child) {
   }).catch(() => {});
 }
 
+// eslint-disable-next-line no-underscore-dangle
 function _spawn(command, args, opts, callback) {
   const child = execa(command, args, opts);
 
   registerChild(child);
 
   if (callback) {
-    child.then(
-      (result) => callback(null, result.stdout),
-      (err) => callback(err)
-    );
+    child.then(result => callback(null, result.stdout), err => callback(err));
   }
 
   return child;

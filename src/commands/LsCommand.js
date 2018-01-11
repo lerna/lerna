@@ -5,8 +5,8 @@ import Command from "../Command";
 import output from "../utils/output";
 
 export function handler(argv) {
-  new LsCommand(argv._, argv, argv._cwd).run()
-    .then(argv._onFinish, argv._onFinish);
+  // eslint-disable-next-line no-use-before-define
+  new LsCommand(argv._, argv, argv._cwd).run().then(argv._onFinish, argv._onFinish);
 }
 
 export const command = "ls";
@@ -14,12 +14,12 @@ export const command = "ls";
 export const describe = "List all public packages";
 
 export const builder = {
-  "json": {
+  json: {
     describe: "Show information in JSON format",
     group: "Command Options:",
     type: "boolean",
     default: undefined,
-  }
+  },
 };
 
 export default class LsCommand extends Command {
@@ -39,30 +39,29 @@ export default class LsCommand extends Command {
   }
 
   execute(callback) {
-    const formattedPackages = this.filteredPackages
-      .map((pkg) => {
-        return {
-          name: pkg.name,
-          version: pkg.version,
-          private: pkg.isPrivate()
-        };
-      });
+    const formattedPackages = this.filteredPackages.map(pkg => ({
+      name: pkg.name,
+      version: pkg.version,
+      private: pkg.isPrivate(),
+    }));
 
     if (this.options.json) {
       output(JSON.stringify(formattedPackages, null, 2));
     } else {
-      formattedPackages.forEach((pkg) => {
+      formattedPackages.forEach(pkg => {
         pkg.version = pkg.version ? chalk.grey(`v${pkg.version}`) : chalk.yellow("MISSING");
         pkg.private = pkg.private ? `(${chalk.red("private")})` : "";
       });
-      output(columnify(formattedPackages, {
-        showHeaders: false,
-        config: {
-          version: {
-            align: "right"
-          }
-        }
-      }));
+      output(
+        columnify(formattedPackages, {
+          showHeaders: false,
+          config: {
+            version: {
+              align: "right",
+            },
+          },
+        }),
+      );
     }
 
     callback(null, true);

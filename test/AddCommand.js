@@ -17,11 +17,10 @@ log.level = "silent";
 
 const run = yargsRunner(commandModule);
 
-const readPkg = (testDir, pkg) => {
-  return JSON.parse(FileSystemUtilities.readFileSync(path.join(testDir, pkg, "package.json")));
-};
+const readPkg = (testDir, pkg) =>
+  JSON.parse(FileSystemUtilities.readFileSync(path.join(testDir, pkg, "package.json")));
 
-const expectError = async (fn) => {
+const expectError = async fn => {
   try {
     await fn();
     throw new Error(`Expected ${fn.toString()} to fail.`);
@@ -31,9 +30,7 @@ const expectError = async (fn) => {
   }
 };
 
-const commandFlags = (mock) => {
-  return mock.mock.calls[0][1];
-};
+const commandFlags = mock => mock.mock.calls[0][1];
 
 jest.mock("../src/NpmUtilities");
 jest.mock("../src/commands/BootstrapCommand");
@@ -51,11 +48,9 @@ describe("AddCommand", () => {
     // of slowness when running tests for no good reason
     NpmUtilities.runScriptInDir.mockImplementation(callsBack());
 
-    BootstrapCommand.mockImplementation(() => {
-      return {
-        run: async () => {}
-      };
-    })
+    BootstrapCommand.mockImplementation(() => ({
+      run: async () => {},
+    }));
   });
 
   afterEach(() => jest.resetAllMocks());
@@ -222,10 +217,6 @@ describe("AddCommand", () => {
     expect(pkg3).toDependOn("@test/package-2"); // existing, but should stay
 
     const flags = commandFlags(BootstrapCommand);
-    expect(flags.scope).toEqual([
-      "@test/package-1",
-      "@test/package-2",
-      "@test/package-3",
-    ]);
+    expect(flags.scope).toEqual(["@test/package-1", "@test/package-2", "@test/package-3"]);
   });
 });

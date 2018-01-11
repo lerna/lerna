@@ -58,12 +58,14 @@ describe("InitCommand", () => {
     let testDir;
     let lernaInit;
 
-    beforeEach(() => initEmptyDir().then((dir) => {
-      testDir = dir;
-      lernaInit = run(testDir);
+    beforeEach(() =>
+      initEmptyDir().then(dir => {
+        testDir = dir;
+        lernaInit = run(testDir);
 
-      GitUtilities.isInitialized = jest.fn(() => false);
-    }));
+        GitUtilities.isInitialized = jest.fn(() => false);
+      }),
+    );
 
     it("completely ignores validation and preparation lifecycle", async () => {
       await lernaInit();
@@ -85,7 +87,7 @@ describe("InitCommand", () => {
           packages: ["packages/*"],
           version: "0.0.0",
         },
-        { indent: 2 }
+        { indent: 2 },
       );
 
       expect(writePkg.sync).lastCalledWith(
@@ -94,12 +96,10 @@ describe("InitCommand", () => {
           devDependencies: {
             lerna: `^${lernaVersion}`,
           },
-        })
+        }),
       );
 
-      expect(FileSystemUtilities.mkdirpSync).lastCalledWith(
-        path.join(testDir, "packages")
-      );
+      expect(FileSystemUtilities.mkdirpSync).lastCalledWith(path.join(testDir, "packages"));
     });
 
     it("initializes git repo with lerna files in independent mode", async () => {
@@ -110,7 +110,7 @@ describe("InitCommand", () => {
         expect.objectContaining({
           version: "independent",
         }),
-        { indent: 2 }
+        { indent: 2 },
       );
     });
 
@@ -124,7 +124,7 @@ describe("InitCommand", () => {
             devDependencies: {
               lerna: lernaVersion,
             },
-          })
+          }),
         );
       });
 
@@ -140,7 +140,7 @@ describe("InitCommand", () => {
               },
             },
           }),
-          { indent: 2 }
+          { indent: 2 },
         );
       });
     });
@@ -150,12 +150,14 @@ describe("InitCommand", () => {
     let testDir;
     let lernaInit;
 
-    beforeEach(() => initEmptyDir().then((dir) => {
-      testDir = path.join(dir, "subdir");
-      lernaInit = run(testDir);
+    beforeEach(() =>
+      initEmptyDir().then(dir => {
+        testDir = path.join(dir, "subdir");
+        lernaInit = run(testDir);
 
-      findUp.sync = jest.fn(() => path.join(testDir, "lerna.json"));
-    }));
+        findUp.sync = jest.fn(() => path.join(testDir, "lerna.json"));
+      }),
+    );
 
     it("creates lerna files", async () => {
       await lernaInit();
@@ -169,7 +171,7 @@ describe("InitCommand", () => {
           packages: ["packages/*"],
           version: "0.0.0",
         },
-        { indent: 2 }
+        { indent: 2 },
       );
 
       expect(writePkg.sync).lastCalledWith(
@@ -178,12 +180,10 @@ describe("InitCommand", () => {
           devDependencies: {
             lerna: `^${lernaVersion}`,
           },
-        })
+        }),
       );
 
-      expect(FileSystemUtilities.mkdirpSync).lastCalledWith(
-        path.join(testDir, "packages")
-      );
+      expect(FileSystemUtilities.mkdirpSync).lastCalledWith(path.join(testDir, "packages"));
     });
   });
 
@@ -191,11 +191,12 @@ describe("InitCommand", () => {
     let testDir;
     let lernaInit;
 
-    beforeEach(() => initFixture("InitCommand/has-package").then((dir) => {
-      testDir = dir;
-      lernaInit = run(testDir);
-
-    }));
+    beforeEach(() =>
+      initFixture("InitCommand/has-package").then(dir => {
+        testDir = dir;
+        lernaInit = run(testDir);
+      }),
+    );
 
     it("adds lerna to sorted devDependencies", async () => {
       readPkg.sync = jest.fn(() => ({
@@ -215,7 +216,7 @@ describe("InitCommand", () => {
             lerna: `^${lernaVersion}`,
             omega: "last",
           },
-        })
+        }),
       );
     });
 
@@ -242,7 +243,7 @@ describe("InitCommand", () => {
           devDependencies: {
             lerna: `^${lernaVersion}`,
           },
-        })
+        }),
       );
     });
 
@@ -265,7 +266,7 @@ describe("InitCommand", () => {
             lerna: `^${lernaVersion}`,
             omega: "last",
           },
-        })
+        }),
       );
     });
   });
@@ -274,12 +275,14 @@ describe("InitCommand", () => {
     let testDir;
     let lernaInit;
 
-    beforeEach(() => initFixture("InitCommand/has-lerna").then((dir) => {
-      testDir = dir;
-      lernaInit = run(testDir);
+    beforeEach(() =>
+      initFixture("InitCommand/has-lerna").then(dir => {
+        testDir = dir;
+        lernaInit = run(testDir);
 
-      findUp.sync = jest.fn(() => path.join(testDir, "lerna.json"));
-    }));
+        findUp.sync = jest.fn(() => path.join(testDir, "lerna.json"));
+      }),
+    );
 
     it("updates lerna property to current version", async () => {
       loadJsonFile.sync = jest.fn(() => ({
@@ -294,7 +297,7 @@ describe("InitCommand", () => {
         expect.objectContaining({
           lerna: lernaVersion,
         }),
-        { indent: 2 }
+        { indent: 2 },
       );
     });
 
@@ -312,7 +315,7 @@ describe("InitCommand", () => {
           lerna: lernaVersion,
           version: "independent",
         }),
-        { indent: 2 }
+        { indent: 2 },
       );
     });
 
@@ -323,9 +326,7 @@ describe("InitCommand", () => {
 
       await lernaInit();
 
-      expect(FileSystemUtilities.mkdirpSync).lastCalledWith(
-        path.join(testDir, "modules")
-      );
+      expect(FileSystemUtilities.mkdirpSync).lastCalledWith(path.join(testDir, "modules"));
     });
   });
 
@@ -333,13 +334,15 @@ describe("InitCommand", () => {
     let testDir;
     let lernaInit;
 
-    beforeEach(() => initFixture("InitCommand/has-version").then((dir) => {
-      testDir = dir;
-      lernaInit = run(testDir);
+    beforeEach(() =>
+      initFixture("InitCommand/has-version").then(dir => {
+        testDir = dir;
+        lernaInit = run(testDir);
 
-      FileSystemUtilities.existsSync = jest.fn(() => true);
-      FileSystemUtilities.readFileSync = jest.fn(() => "1.2.3");
-    }));
+        FileSystemUtilities.existsSync = jest.fn(() => true);
+        FileSystemUtilities.readFileSync = jest.fn(() => "1.2.3");
+      }),
+    );
 
     it("removes file", async () => {
       await lernaInit();
@@ -355,7 +358,7 @@ describe("InitCommand", () => {
         expect.objectContaining({
           version: "1.2.3",
         }),
-        { indent: 2 }
+        { indent: 2 },
       );
     });
   });
@@ -364,12 +367,14 @@ describe("InitCommand", () => {
     let testDir;
     let lernaInit;
 
-    beforeEach(() => initFixture("InitCommand/updates").then((dir) => {
-      testDir = dir;
-      lernaInit = run(testDir);
+    beforeEach(() =>
+      initFixture("InitCommand/updates").then(dir => {
+        testDir = dir;
+        lernaInit = run(testDir);
 
-      findUp.sync = jest.fn(() => path.join(testDir, "lerna.json"));
-    }));
+        findUp.sync = jest.fn(() => path.join(testDir, "lerna.json"));
+      }),
+    );
 
     it("sets lerna.json commands.init.exact to true", async () => {
       loadJsonFile.sync = jest.fn(() => ({
@@ -402,7 +407,7 @@ describe("InitCommand", () => {
             },
           },
         }),
-        { indent: 2 }
+        { indent: 2 },
       );
     });
   });

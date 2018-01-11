@@ -27,12 +27,14 @@ describe("DiffCommand", () => {
   let testDir;
   let lernaDiff;
 
-  beforeEach(() => initFixture("DiffCommand/basic").then((dir) => {
-    testDir = dir;
-    lernaDiff = run(testDir);
-    GitUtilities.isInitialized.mockImplementation(() => true);
-    GitUtilities.hasCommit.mockImplementation(() => true);
-  }));
+  beforeEach(() =>
+    initFixture("DiffCommand/basic").then(dir => {
+      testDir = dir;
+      lernaDiff = run(testDir);
+      GitUtilities.isInitialized.mockImplementation(() => true);
+      GitUtilities.hasCommit.mockImplementation(() => true);
+    }),
+  );
   afterEach(() => jest.resetAllMocks());
 
   it("should diff packages from the first commit", async () => {
@@ -43,17 +45,11 @@ describe("DiffCommand", () => {
 
     expect(ChildProcessUtilities.spawn).lastCalledWith(
       "git",
-      [
-        "diff",
-        "beefcafe",
-        "--color=auto",
-        "--",
-        path.join(testDir, "packages"),
-      ],
+      ["diff", "beefcafe", "--color=auto", "--", path.join(testDir, "packages")],
       expect.objectContaining({
         cwd: testDir,
       }),
-      expect.any(Function)
+      expect.any(Function),
     );
   });
 
@@ -66,17 +62,11 @@ describe("DiffCommand", () => {
 
     expect(ChildProcessUtilities.spawn).lastCalledWith(
       "git",
-      [
-        "diff",
-        "cafedead",
-        "--color=auto",
-        "--",
-        path.join(testDir, "packages"),
-      ],
+      ["diff", "cafedead", "--color=auto", "--", path.join(testDir, "packages")],
       expect.objectContaining({
         cwd: testDir,
       }),
-      expect.any(Function)
+      expect.any(Function),
     );
   });
 
@@ -87,17 +77,11 @@ describe("DiffCommand", () => {
     await lernaDiff("package-1");
     expect(ChildProcessUtilities.spawn).lastCalledWith(
       "git",
-      [
-        "diff",
-        "deadbeef",
-        "--color=auto",
-        "--",
-        path.join(testDir, "packages/package-1"),
-      ],
+      ["diff", "deadbeef", "--color=auto", "--", path.join(testDir, "packages/package-1")],
       expect.objectContaining({
         cwd: testDir,
       }),
-      expect.any(Function)
+      expect.any(Function),
     );
   });
 
@@ -123,9 +107,9 @@ describe("DiffCommand", () => {
   });
 
   it("should error when git diff exits non-zero", async () => {
-    const err = new Error("An actual non-zero, not git diff pager SIGPIPE");
-    err.code = 1;
-    ChildProcessUtilities.spawn.mockImplementation(callsBack(err));
+    const nonZero = new Error("An actual non-zero, not git diff pager SIGPIPE");
+    nonZero.code = 1;
+    ChildProcessUtilities.spawn.mockImplementation(callsBack(nonZero));
 
     try {
       await lernaDiff("package-1");
