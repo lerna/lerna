@@ -10,15 +10,21 @@
     "add-module-exports"
   ],
   "env": {
-    "lerna-test": {
+    "test": {
       "presets": [
         ["env", {
+          "exclude": ["transform-async-to-generator", "transform-regenerator"],
           "targets": {
             "node": "current"
           }
         }]
       ],
       "plugins": [
+        ["fast-async", {
+          "compiler": {
+            "noRuntime": true
+          }
+        }],
         "add-module-exports"
       ]
     }

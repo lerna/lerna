@@ -13,12 +13,12 @@
     "dev": "babel -w src -d lib",
     "fix": "npm run lint -- --fix",
     "preintegration": "npm pack",
-    "integration": "cross-env LC_ALL=en-US jest --config test/config/integration.json",
+    "integration": "cross-env LC_ALL=en-US NODE_ENV=test jest --config test/config/integration.json",
     "lint": "eslint . --ignore-path .gitignore --cache",
     "prepublish": "npm run build",
     "pretest": "npm run lint",
-    "test": "cross-env LC_ALL=en-US jest",
-    "test:watch": "cross-env LC_ALL=en-US jest --watchAll --no-watchman",
+    "test": "cross-env LC_ALL=en-US NODE_ENV=test jest",
+    "test:watch": "cross-env LC_ALL=en-US NODE_ENV=test jest --watchAll --no-watchman",
     "test:watch-integration": "npm run integration -- --watchAll --no-watchman"
   },
   "repository": {
@@ -88,6 +88,7 @@
     "eslint-plugin-jest": "^21.6.1",
     "eslint-plugin-node": "^5.1.1",
     "eslint-plugin-prettier": "^2.4.0",
+    "fast-async": "^6.3.0",
     "file-url": "^2.0.2",
     "jest": "^19.0.2",
     "normalize-newline": "^3.0.0",
