@@ -47,10 +47,10 @@ describe("ChildProcessUtilities", () => {
       });
     });
 
-    it("does not require a callback, instead returning a Promise", () =>
-      ChildProcessUtilities.exec("echo", ["Promise"]).then(result => {
-        expect(result.stdout).toBe("Promise");
-      }));
+    it("does not require a callback, instead returning a Promise", async () => {
+      const { stdout } = await ChildProcessUtilities.exec("echo", ["Promise"]);
+      expect(stdout).toBe("Promise");
+    });
 
     it("passes error object to callback", done => {
       ChildProcessUtilities.exec("nowImTheModelOfAModernMajorGeneral", [], {}, err => {
@@ -63,34 +63,37 @@ describe("ChildProcessUtilities", () => {
       });
     });
 
-    it("passes Promise rejection through", () =>
-      ChildProcessUtilities.exec("theVeneratedVirginianVeteranWhoseMenAreAll", []).catch(err => {
-        expect(err.message).toMatch(/\btheVeneratedVirginianVeteranWhoseMenAreAll\b/);
-      }));
+    it("passes Promise rejection through", async () => {
+      expect.assertions(1);
 
-    it("registers child processes that are created", () => {
+      try {
+        await ChildProcessUtilities.exec("theVeneratedVirginianVeteranWhoseMenAreAll", []);
+      } catch (err) {
+        expect(err.message).toMatch(/\btheVeneratedVirginianVeteranWhoseMenAreAll\b/);
+      }
+    });
+
+    it("registers child processes that are created", async () => {
       const echoOne = ChildProcessUtilities.exec("echo", ["one"]);
       expect(ChildProcessUtilities.getChildProcessCount()).toBe(1);
 
       const echoTwo = ChildProcessUtilities.exec("echo", ["two"]);
       expect(ChildProcessUtilities.getChildProcessCount()).toBe(2);
 
-      return Promise.all([echoOne, echoTwo]).then(([one, two]) => {
-        expect(one.stdout).toBe("one");
-        expect(two.stdout).toBe("two");
-      });
+      const [one, two] = await Promise.all([echoOne, echoTwo]);
+      expect(one.stdout).toBe("one");
+      expect(two.stdout).toBe("two");
     });
   });
 
   describe(".spawn()", () => {
-    it("should spawn a command in a child process that always inherits stdio", () => {
+    it("should spawn a command in a child process that always inherits stdio", async () => {
       const child = ChildProcessUtilities.spawn("echo", ["-n"]);
       expect(child.stdio).toEqual([null, null, null]);
 
-      return child.then(result => {
-        expect(result.code).toBe(0);
-        expect(result.signal).toBe(null);
-      });
+      const { code, signal } = await child;
+      expect(code).toBe(0);
+      expect(signal).toBe(null);
     });
   });
 });

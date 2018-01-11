@@ -93,7 +93,7 @@ describe("lerna bootstrap", () => {
     });
   });
 
-  describe("from npm script", async () => {
+  describe("from npm script", () => {
     test("bootstraps all packages", async () => {
       const cwd = await initFixture("BootstrapCommand/integration-lifecycle");
       await execa("npm", ["install", "--cache-min=99999"], { cwd });

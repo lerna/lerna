@@ -42,23 +42,21 @@ const setupGitChanges = async (cwd, filePaths) => {
   await gitCommit(cwd);
 };
 
-describe("UpdatedCommand", async () => {
+describe("UpdatedCommand", () => {
   afterEach(() => jest.resetAllMocks());
 
   /** =========================================================================
    * Basic
    * ======================================================================= */
 
-  describe("basic", async () => {
+  describe("basic", () => {
     let testDir;
     let lernaUpdated;
 
-    beforeEach(() =>
-      initFixture("UpdatedCommand/basic").then(dir => {
-        testDir = dir;
-        lernaUpdated = run(testDir);
-      })
-    );
+    beforeEach(async () => {
+      testDir = await initFixture("UpdatedCommand/basic");
+      lernaUpdated = run(testDir);
+    });
 
     it("should list changes", async () => {
       await setupGitChanges(testDir, ["packages/package-2/random-file"]);
@@ -132,16 +130,14 @@ describe("UpdatedCommand", async () => {
    * Circular
    * ======================================================================= */
 
-  describe("circular", async () => {
+  describe("circular", () => {
     let testDir;
     let lernaUpdated;
 
-    beforeEach(() =>
-      initFixture("UpdatedCommand/circular").then(dir => {
-        testDir = dir;
-        lernaUpdated = run(testDir);
-      })
-    );
+    beforeEach(async () => {
+      testDir = await initFixture("UpdatedCommand/circular");
+      lernaUpdated = run(testDir);
+    });
 
     it("should list changes", async () => {
       await setupGitChanges(testDir, ["packages/package-3/random-file"]);
@@ -192,7 +188,7 @@ describe("UpdatedCommand", async () => {
    * JSON Output
    * ======================================================================= */
 
-  describe("with --json", async () => {
+  describe("with --json", () => {
     it("should list changes as a json object", async () => {
       const testDir = await initFixture("UpdatedCommand/basic");
       const lernaUpdated = run(testDir);
