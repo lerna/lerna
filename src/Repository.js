@@ -34,7 +34,7 @@ export default class Repository {
       } catch (err) {
         // don't swallow syntax errors
         if (err.name === "JSONError") {
-          throw err;
+          throw new ValidationError(err.name, err.message);
         }
         // No need to distinguish between missing and empty,
         // saves a lot of noisy guards elsewhere
@@ -75,7 +75,7 @@ export default class Repository {
       } catch (err) {
         // don't swallow syntax errors
         if (err.name === "JSONError") {
-          throw err;
+          throw new ValidationError(err.name, err.message);
         }
         // try again next time
         this._packageJson = null;
