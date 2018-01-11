@@ -1,5 +1,5 @@
 import execa from "execa";
-import getPort from "get-port";
+// import getPort from "get-port";
 import globby from "globby";
 import normalizePath from "normalize-path";
 import path from "path";
@@ -54,8 +54,8 @@ describe("lerna clean", () => {
     expect(found).toEqual([]);
   });
 
-  // FIXME
-  test.skip("local yarn", async () => {
+  /*
+  test("local yarn", async () => {
     const cwd = await initFixture("CleanCommand/integration");
 
     const port = await getPort({ port: 42042, host: "0.0.0.0" });
@@ -70,7 +70,8 @@ describe("lerna clean", () => {
     expect(stdout).toMatchSnapshot("stdout: local yarn");
     expect(stderr).toMatchSnapshot("stderr: local yarn");
 
-    const found = await globby(["package-*/node_modules"], { cwd });
+    const found = await globby(["node_modules"], { cwd });
     expect(found).toEqual([]);
   });
+  */
 });

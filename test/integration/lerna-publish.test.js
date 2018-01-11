@@ -1,6 +1,6 @@
 import execa from "execa";
-import fs from "fs-extra";
-import globby from "globby";
+// import fs from "fs-extra";
+// import globby from "globby";
 import normalizeNewline from "normalize-newline";
 import writeJsonFile from "write-json-file";
 import loadJsonFile from "load-json-file";
@@ -227,8 +227,8 @@ describe("lerna publish", () => {
     );
   });
 
-  // TODO: stabilize timestamp and commit sha of changelog output
-  test.skip("fixed mode --conventional-commits changelog", async () => {
+  /* TODO: stabilize timestamp and commit sha of changelog output
+  test("fixed mode --conventional-commits changelog", async () => {
     const cwd = await initFixture("PublishCommand/normal", "feat: init repo");
     const args = ["publish", "--conventional-commits", "--skip-git", "--skip-npm", "--yes"];
 
@@ -256,9 +256,10 @@ describe("lerna publish", () => {
     expect(allPackageJsons).toMatchSnapshot("packages: --conventional-commits fixed mode");
     expect(changelogFiles).toMatchSnapshot("changelog: --conventional-commits fixed mode");
   });
+  */
 
-  // TODO: stabilize timestamp of and commit sha changelog output
-  test.skip("independent mode --conventional-commits changelog", async () => {
+  /* TODO: stabilize timestamp of and commit sha changelog output
+  test("independent mode --conventional-commits changelog", async () => {
     const cwd = await initFixture("PublishCommand/independent", "feat: init repo");
     const args = ["publish", "--conventional-commits", "--skip-git", "--skip-npm", "--yes"];
 
@@ -286,4 +287,5 @@ describe("lerna publish", () => {
     expect(allPackageJsons).toMatchSnapshot("packages: --conventional-commits independent mode");
     expect(changelogFiles).toMatchSnapshot("changelog: --conventional-commits independent mode");
   });
+  */
 });

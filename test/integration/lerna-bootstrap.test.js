@@ -1,6 +1,6 @@
 import execa from "execa";
 import fs from "fs-extra";
-import getPort from "get-port";
+// import getPort from "get-port";
 import globby from "globby";
 import normalizePath from "normalize-path";
 import path from "path";
@@ -101,7 +101,8 @@ describe("lerna bootstrap", () => {
       expect(stderr).toMatchSnapshot("npm postinstall: stderr");
     });
 
-    test.skip("works with yarn install", async () => {
+    /*
+    test("works with yarn install", async () => {
       const cwd = await initFixture("BootstrapCommand/integration-lifecycle");
 
       const port = await getPort({ port: 42042, host: "0.0.0.0" });
@@ -117,5 +118,6 @@ describe("lerna bootstrap", () => {
       expect(stdout).toMatchSnapshot("yarn postinstall: stdout");
       expect(stderr).toMatchSnapshot("yarn postinstall: stderr");
     });
+    */
   });
 });

@@ -91,12 +91,10 @@ describe("ImportCommand", () => {
       expect(await pathExists(newFilePath)).toBe(true);
     });
 
-    it.skip("works with --max-buffer", async () => {
-      await lernaImport(externalDir, "--max-buffer=1");
-      // TODO: this test kinda sucks, should never have to read instance properties
-      // expect(importCommand.execOpts).toHaveProperty("maxBuffer", ONE_HUNDRED_MEGABYTES);
-      // expect(importCommand.externalExecOpts).toHaveProperty("maxBuffer", ONE_HUNDRED_MEGABYTES);
-    });
+    // FIXME: this test kinda sucks, should never have to read instance properties
+    // it("works with --max-buffer", async () => {
+    //   await lernaImport(externalDir, "--max-buffer=1");
+    // });
 
     it("supports moved files within the external repo", async () => {
       const newFilePath = path.join(testDir, "packages", path.basename(externalDir), "new-file");

@@ -200,7 +200,7 @@ describe("Command", () => {
         try {
           await new PkgErrorCommand([], {}, testDir).run();
         } catch (err) {
-          expect(console.error.mock.calls.length).toEqual(2);
+          expect(console.error.mock.calls).toHaveLength(2);
           expect(console.error.mock.calls[0]).toEqual(["pkg-err-stdout"]);
           expect(console.error.mock.calls[1]).toEqual(["pkg-err-stderr"]);
 
@@ -233,9 +233,9 @@ describe("Command", () => {
     });
   });
 
-  describe(".runValidations()", () => {
-    it("needs tests");
-  });
+  // describe(".runValidations()", () => {
+  //   it("needs tests");
+  // });
 
   describe(".runPreparations()", () => {
     let testDir;
@@ -276,14 +276,14 @@ describe("Command", () => {
 
       it("--scope should filter packages", async () => {
         const { filteredPackages } = await run({ scope: ["package-2", "package-4"] });
-        expect(filteredPackages.length).toEqual(2);
+        expect(filteredPackages).toHaveLength(2);
         expect(filteredPackages[0].name).toEqual("package-2");
         expect(filteredPackages[1].name).toEqual("package-4");
       });
 
       it("--since should return all packages if no tag is found", async () => {
         const { filteredPackages } = await run({ since: "" });
-        expect(filteredPackages.length).toEqual(5);
+        expect(filteredPackages).toHaveLength(5);
       });
 
       it("--since should return packages updated since the last tag", async () => {
@@ -293,7 +293,7 @@ describe("Command", () => {
         await cli("git", "commit", "--no-gpg-sign", "-m", "test");
 
         const { filteredPackages } = await run({ since: "" });
-        expect(filteredPackages.length).toEqual(2);
+        expect(filteredPackages).toHaveLength(2);
         expect(filteredPackages[0].name).toEqual("package-2");
         expect(filteredPackages[1].name).toEqual("package-3");
       });
@@ -313,7 +313,7 @@ describe("Command", () => {
         await cli("git", "commit", "--no-gpg-sign", "-m", "test");
 
         const { filteredPackages } = await run({ since: "master" });
-        expect(filteredPackages.length).toEqual(2);
+        expect(filteredPackages).toHaveLength(2);
         expect(filteredPackages[0].name).toEqual("package-2");
         expect(filteredPackages[1].name).toEqual("package-3");
       });
@@ -328,7 +328,7 @@ describe("Command", () => {
           scope: ["package-2", "package-3", "package-4"],
           since: "master",
         });
-        expect(filteredPackages.length).toEqual(1);
+        expect(filteredPackages).toHaveLength(1);
         expect(filteredPackages[0].name).toEqual("package-4");
       });
     });

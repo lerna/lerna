@@ -36,8 +36,8 @@ describe("PackageGraph", () => {
     ];
   }
 
-  describe("constructor", () => {
-    it(".get should return dependencies", () => {
+  describe(".get()", () => {
+    it("should return dependencies", () => {
       const [pkg1, pkg2] = createPackages("0.0.1");
       const graph = new PackageGraph([pkg1, pkg2]);
 
@@ -45,7 +45,7 @@ describe("PackageGraph", () => {
       expect(graph.get(pkg2.name).dependencies).toEqual([pkg1.name]);
     });
 
-    it(".get should not return the dependencies for unrecognized versions", () => {
+    it("should not return the dependencies for unrecognized versions", () => {
       const [pkg1, pkg2] = createPackages("0.0.1", "github:user-foo/project-foo#v0.0.1");
       const graph = new PackageGraph([pkg1, pkg2]);
 
@@ -53,7 +53,7 @@ describe("PackageGraph", () => {
       expect(graph.get(pkg2.name).dependencies).toEqual([]);
     });
 
-    it(".get should not return the dependencies for unrecognized versions", () => {
+    it("should return the dependencies for parsed versions", () => {
       const [pkg1, pkg2] = createPackages("0.0.1", "github:user-foo/project-foo#v0.0.1");
 
       const mockParser = {
