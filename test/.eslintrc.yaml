@@ -1,7 +1,11 @@
 ---
-  extends: ../.eslintrc.yaml
+  extends:
+    - ../.eslintrc.yaml
+    - plugin:jest/recommended
   env:
     jest: true
+  plugins:
+    - jest
   rules:
     no-console: off
     no-underscore-dangle:

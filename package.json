@@ -85,6 +85,7 @@
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-babel": "^4.1.2",
     "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-jest": "^21.6.1",
     "eslint-plugin-node": "^5.1.1",
     "eslint-plugin-prettier": "^2.4.0",
     "file-url": "^2.0.2",
