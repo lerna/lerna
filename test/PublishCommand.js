@@ -608,7 +608,7 @@ describe("PublishCommand", () => {
    * CD VERSION - REPUBLISH PRERELEASED
    * ======================================================================= */
 
-  describe("CD VERSION - REPUBLISH PRERELEASED ", () => {
+  describe("normal mode with previous prerelease", () => {
     let testDir;
 
     beforeEach(async () => {

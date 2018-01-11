@@ -54,20 +54,6 @@ exports[`PublishCommand --conventional-commits independent mode should use conve
  - package-5@5.1.1"
 `;
 
-exports[`PublishCommand CD VERSION - REPUBLISH PRERELEASED  publishes changed & prereleased packages if --cd-version is non-prerelease: updated packages 1`] = `
-Object {
-  "packages/package-3": "1.0.1",
-  "packages/package-4": "1.0.1",
-  "packages/package-5": "1.0.1",
-}
-`;
-
-exports[`PublishCommand CD VERSION - REPUBLISH PRERELEASED  should not publish prereleased packages if --cd-version is a pre-* increment: updated packages 1`] = `
-Object {
-  "packages/package-3": "1.0.1-beta.4",
-}
-`;
-
 exports[`PublishCommand indepdendent mode with --cd-version should bump to prerelease versions with --cd-version prerelease (no --preid): updated packages 1`] = `
 Object {
   "packages/package-1": "1.0.1-0",
@@ -522,4 +508,18 @@ Array [
     "tag": "lerna-temp",
   },
 ]
+`;
+
+exports[`PublishCommand normal mode with previous prerelease publishes changed & prereleased packages if --cd-version is non-prerelease: updated packages 1`] = `
+Object {
+  "packages/package-3": "1.0.1",
+  "packages/package-4": "1.0.1",
+  "packages/package-5": "1.0.1",
+}
+`;
+
+exports[`PublishCommand normal mode with previous prerelease should not publish prereleased packages if --cd-version is a pre-* increment: updated packages 1`] = `
+Object {
+  "packages/package-3": "1.0.1-beta.4",
+}
 `;
