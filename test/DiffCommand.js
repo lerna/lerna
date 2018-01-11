@@ -27,14 +27,12 @@ describe("DiffCommand", () => {
   let testDir;
   let lernaDiff;
 
-  beforeEach(() =>
-    initFixture("DiffCommand/basic").then(dir => {
-      testDir = dir;
-      lernaDiff = run(testDir);
-      GitUtilities.isInitialized.mockImplementation(() => true);
-      GitUtilities.hasCommit.mockImplementation(() => true);
-    }),
-  );
+  beforeEach(async () => {
+    testDir = await initFixture("DiffCommand/basic");
+    lernaDiff = run(testDir);
+    GitUtilities.isInitialized.mockImplementation(() => true);
+    GitUtilities.hasCommit.mockImplementation(() => true);
+  });
   afterEach(() => jest.resetAllMocks());
 
   it("should diff packages from the first commit", async () => {
