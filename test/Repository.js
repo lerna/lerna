@@ -84,6 +84,19 @@ describe("Repository", () => {
       const repo = new Repository(testDir);
       expect(repo.lernaJson).toEqual({});
     });
+
+    it("errors when lerna.json is not valid JSON", async () => {
+      expect.assertions(1);
+
+      const cwd = await initFixture("Repository/invalid-json");
+      const repo = new Repository(cwd);
+
+      try {
+        repo.lernaJson; // eslint-disable-line no-unused-expressions
+      } catch (err) {
+        expect(err.name).toBe("JSONError");
+      }
+    });
   });
 
   describe("get .initVersion", () => {
@@ -165,6 +178,19 @@ describe("Repository", () => {
 
       readPkg.sync = readPkgSync;
       expect(repo.packageJson).toHaveProperty("name", "test");
+    });
+
+    it("errors when root package.json is not valid JSON", async () => {
+      expect.assertions(1);
+
+      const cwd = await initFixture("Repository/invalid-json");
+      const repo = new Repository(cwd);
+
+      try {
+        repo.packageJson; // eslint-disable-line no-unused-expressions
+      } catch (err) {
+        expect(err.name).toBe("JSONError");
+      }
     });
   });
 

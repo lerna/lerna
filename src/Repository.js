@@ -30,7 +30,11 @@ export default class Repository {
     if (!this._lernaJson) {
       try {
         this._lernaJson = loadJsonFile.sync(this.lernaJsonLocation);
-      } catch (ex) {
+      } catch (err) {
+        // don't swallow syntax errors
+        if (err.name === "JSONError") {
+          throw err;
+        }
         // No need to distinguish between missing and empty,
         // saves a lot of noisy guards elsewhere
         this._lernaJson = {};
@@ -67,7 +71,11 @@ export default class Repository {
     if (!this._packageJson) {
       try {
         this._packageJson = readPkg.sync(this.packageJsonLocation, { normalize: false });
-      } catch (ex) {
+      } catch (err) {
+        // don't swallow syntax errors
+        if (err.name === "JSONError") {
+          throw err;
+        }
         // try again next time
         this._packageJson = null;
       }
