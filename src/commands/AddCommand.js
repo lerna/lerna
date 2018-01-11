@@ -22,7 +22,8 @@ export const builder = {
 
 export function handler(argv) {
   // eslint-disable-next-line no-use-before-define
-  return new AddCommand([...argv.args], argv, argv._cwd).run().then(argv._onResolved, argv._onRejected);
+  const cmd = new AddCommand([...argv.args], argv, argv._cwd);
+  return cmd.run().then(argv._onResolved, argv._onRejected);
 }
 
 export default class AddCommand extends Command {
