@@ -116,11 +116,9 @@ describe("Command", () => {
   describe(".run()", () => {
     let testDir;
 
-    beforeAll(() =>
-      initFixture("Command/basic").then(dir => {
-        testDir = dir;
-      }),
-    );
+    beforeAll(async () => {
+      testDir = await initFixture("Command/basic");
+    });
 
     it("returns a Promise", async () => {
       await new OkCommand([], {}, testDir).run();
@@ -268,11 +266,9 @@ describe("Command", () => {
     });
 
     describe(".filteredPackages", () => {
-      beforeEach(() =>
-        initFixture("UpdatedCommand/basic").then(dir => {
-          testDir = dir;
-        }),
-      );
+      beforeEach(async () => {
+        testDir = await initFixture("UpdatedCommand/basic");
+      });
 
       it("--scope should filter packages", async () => {
         const { filteredPackages } = await run({ scope: ["package-2", "package-4"] });
@@ -337,11 +333,9 @@ describe("Command", () => {
   describe("get .options", () => {
     let testDir;
 
-    beforeAll(() =>
-      initFixture("Command/basic").then(dir => {
-        testDir = dir;
-      }),
-    );
+    beforeAll(async () => {
+      testDir = await initFixture("Command/basic");
+    });
 
     class TestACommand extends Command {}
     class TestBCommand extends Command {}
@@ -423,11 +417,9 @@ describe("Command", () => {
   describe("legacy options", () => {
     let testDir;
 
-    beforeAll(() =>
-      initFixture("Command/legacy").then(dir => {
-        testDir = dir;
-      }),
-    );
+    beforeAll(async () => {
+      testDir = await initFixture("Command/legacy");
+    });
 
     class TestCommand extends Command {}
 

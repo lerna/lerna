@@ -9,46 +9,34 @@ import initFixture from "../helpers/initFixture";
 
 const serializeTestRoot = (match, testDir, subPath) => normalizePath(path.join("__TEST_ROOTDIR__", subPath));
 
-const normalizeStdio = cwd => {
+const normalizeLog = cwd => {
   // lol windows paths often look like escaped slashes, so re-re-escape them :P
   const dirPath = new RegExp(`(${cwd.replace(/\\/g, "\\\\")})([\\S]+)`, "g");
 
-  return result => {
-    const stdout = result.stdout.replace(dirPath, serializeTestRoot);
-    const stderr = result.stderr.replace(dirPath, serializeTestRoot);
-
-    return Object.assign(result, {
-      stdout,
-      stderr,
-    });
-  };
+  return stderr => stderr.replace(dirPath, serializeTestRoot);
 };
 
 describe("lerna clean", () => {
-  test.concurrent("global", async () => {
+  test("global", async () => {
     const cwd = await initFixture("CleanCommand/basic");
     const args = ["clean", "--yes", "--concurrency=1"];
 
-    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd }).then(normalizeStdio(cwd));
+    const { stderr } = await execa(LERNA_BIN, args, { cwd });
 
-    expect(stdout).toMatchSnapshot("stdout: global --yes");
-    expect(stderr).toMatchSnapshot("stderr: global --yes");
+    expect(normalizeLog(cwd)(stderr)).toMatchSnapshot("stderr");
 
     const found = await globby(["package-*/node_modules"], { cwd });
     expect(found).toEqual([]);
   });
 
-  test.concurrent("local npm", async () => {
+  test("local npm", async () => {
     const cwd = await initFixture("CleanCommand/integration");
 
     await execa("npm", ["install", "--cache-min=99999"], { cwd });
 
-    const { stdout, stderr } = await execa("npm", ["run", "clean", "--silent"], { cwd }).then(
-      normalizeStdio(cwd),
-    );
+    const { stderr } = await execa("npm", ["run", "clean", "--silent"], { cwd });
 
-    expect(stdout).toMatchSnapshot("stdout: local npm");
-    expect(stderr).toMatchSnapshot("stderr: local npm");
+    expect(normalizeLog(cwd)(stderr)).toMatchSnapshot("stderr");
 
     const found = await globby(["package-*/node_modules"], { cwd });
     expect(found).toEqual([]);
@@ -63,12 +51,9 @@ describe("lerna clean", () => {
 
     await execa("yarn", ["install", "--no-lockfile", ...mutex], { cwd });
 
-    const { stdout, stderr } = await execa("yarn", ["clean", "--silent", ...mutex], { cwd }).then(
-      normalizeStdio(cwd),
-    );
+    const { stderr } = await execa("yarn", ["clean", "--silent", ...mutex], { cwd });
 
-    expect(stdout).toMatchSnapshot("stdout: local yarn");
-    expect(stderr).toMatchSnapshot("stderr: local yarn");
+    expect(normalizeLog(cwd)(stderr)).toMatchSnapshot("stderr");
 
     const found = await globby(["node_modules"], { cwd });
     expect(found).toEqual([]);

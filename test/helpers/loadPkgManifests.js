@@ -1,8 +1,10 @@
 import globby from "globby";
 import loadJsonFile from "load-json-file";
 
-export default function loadPkgManifests(cwd) {
-  return globby(
+export default loadPkgManifests;
+
+async function loadPkgManifests(cwd) {
+  const files = await globby(
     [
       // all child packages, at any level
       "**/package.json",
@@ -15,5 +17,7 @@ export default function loadPkgManifests(cwd) {
       cwd,
       absolute: true,
     },
-  ).then(files => Promise.all(files.map(fp => loadJsonFile(fp))));
+  );
+
+  return Promise.all(files.map(fp => loadJsonFile(fp)));
 }

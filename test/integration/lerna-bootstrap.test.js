@@ -26,79 +26,79 @@ describe("lerna bootstrap", () => {
     );
 
   describe("from CLI", () => {
-    test.concurrent("bootstraps all packages", async () => {
+    test("bootstraps all packages", async () => {
       const cwd = await initFixture("BootstrapCommand/integration");
       const args = ["bootstrap"];
 
       const stderr = await execa.stderr(LERNA_BIN, args, { cwd });
-      expect(stderr).toMatchSnapshot("simple: stderr");
+      expect(stderr).toMatchSnapshot("stderr");
 
       const { stdout } = await npmTest(cwd);
-      expect(stdout).toMatchSnapshot("simple: stdout");
+      expect(stdout).toMatchSnapshot("stdout");
     });
 
-    test.concurrent("respects ignore flag", async () => {
+    test("respects ignore flag", async () => {
       const cwd = await initFixture("BootstrapCommand/integration");
       const args = ["bootstrap", "--ignore", "@integration/package-1"];
 
       const stderr = await execa.stderr(LERNA_BIN, args, { cwd });
-      expect(stderr).toMatchSnapshot("ignore: stderr");
+      expect(stderr).toMatchSnapshot("stderr");
     });
 
-    test.concurrent("git repo check is ignored by default", async () => {
+    test("git repo check is ignored by default", async () => {
       const cwd = await tempy.directoryAsync();
       await copyFixture(cwd, "BootstrapCommand/integration");
       const args = ["bootstrap"];
 
       const stderr = await execa.stderr(LERNA_BIN, args, { cwd });
-      expect(stderr).toMatchSnapshot("simple-no-git-check: stdout");
+      expect(stderr).toMatchSnapshot("stderr");
     });
 
-    test.concurrent("--npm-client yarn", async () => {
+    test("--npm-client yarn", async () => {
       const cwd = await initFixture("BootstrapCommand/integration");
       const args = ["bootstrap", "--npm-client", "yarn"];
 
       const stderr = await execa.stderr(LERNA_BIN, args, { cwd });
-      expect(stderr).toMatchSnapshot("--npm-client yarn: stderr");
+      expect(stderr).toMatchSnapshot("stderr");
 
       const lockfiles = await globby(["package-*/yarn.lock"], { cwd }).then(globbed =>
         globbed.map(fp => normalizePath(fp)),
       );
-      expect(lockfiles).toMatchSnapshot("--npm-client yarn: lockfiles");
+      expect(lockfiles).toMatchSnapshot("lockfiles");
 
       const { stdout } = await npmTest(cwd);
-      expect(stdout).toMatchSnapshot("--npm-client yarn: stdout");
+      expect(stdout).toMatchSnapshot("stdout");
     });
 
-    test.concurrent("passes remaining arguments to npm client", async () => {
+    test("passes remaining arguments to npm client", async () => {
       const cwd = await initFixture("BootstrapCommand/npm-client-args-1");
       const args = ["bootstrap", "--npm-client", path.resolve(cwd, "npm"), "--", "--no-optional"];
 
       await execa(LERNA_BIN, args, { cwd });
 
       const npmDebugLog = fs.readFileSync(path.resolve(cwd, "npm-debug.log")).toString();
-      expect(npmDebugLog).toMatchSnapshot("passes remaining arguments to npm client");
+      expect(npmDebugLog).toMatchSnapshot();
     });
 
-    test.concurrent("passes remaining arguments + npmClientArgs to npm client", async () => {
+    test("passes remaining arguments + npmClientArgs to npm client", async () => {
       const cwd = await initFixture("BootstrapCommand/npm-client-args-2");
       const args = ["bootstrap", "--npm-client", path.resolve(cwd, "npm"), "--", "--no-optional"];
 
       await execa(LERNA_BIN, args, { cwd });
 
       const npmDebugLog = fs.readFileSync(path.resolve(cwd, "npm-debug.log")).toString();
-      expect(npmDebugLog).toMatchSnapshot("passes remaining arguments + npmClientArgs to npm client");
+      expect(npmDebugLog).toMatchSnapshot();
     });
   });
 
-  describe("from npm script", async () => {
-    test.concurrent("bootstraps all packages", async () => {
+  describe("from npm script", () => {
+    test("bootstraps all packages", async () => {
       const cwd = await initFixture("BootstrapCommand/integration-lifecycle");
       await execa("npm", ["install", "--cache-min=99999"], { cwd });
 
       const { stdout, stderr } = await npmTest(cwd);
-      expect(stdout).toMatchSnapshot("npm postinstall: stdout");
-      expect(stderr).toMatchSnapshot("npm postinstall: stderr");
+      expect(stdout).toMatchSnapshot("stdout");
+      expect(stderr).toMatchSnapshot("stderr");
     });
 
     /*
@@ -115,8 +115,8 @@ describe("lerna bootstrap", () => {
       await execa("yarn", ["install", "--no-lockfile", ...mutex], { cwd });
 
       const { stdout, stderr } = await execa("yarn", ["test", "--silent", ...mutex], { cwd });
-      expect(stdout).toMatchSnapshot("yarn postinstall: stdout");
-      expect(stderr).toMatchSnapshot("yarn postinstall: stderr");
+      expect(stdout).toMatchSnapshot("stdout");
+      expect(stderr).toMatchSnapshot("stderr");
     });
     */
   });

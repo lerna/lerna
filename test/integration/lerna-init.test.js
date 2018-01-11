@@ -16,32 +16,32 @@ const parseLernaJson = cwd => loadJsonFile(path.join(cwd, "lerna.json"));
 const loadMetaData = cwd => Promise.all([parsePackageJson(cwd), parseLernaJson(cwd)]);
 
 describe("lerna init", () => {
-  test.concurrent("initializes empty directory", async () => {
+  test("initializes empty directory", async () => {
     const cwd = await initEmptyDir();
 
     const { stderr } = await execa(LERNA_BIN, ["init"], { cwd });
-    expect(stderr).toMatchSnapshot("stderr: empty directory");
+    expect(stderr).toMatchSnapshot("stderr");
 
     const [packageJson, lernaJson] = await loadMetaData(cwd);
-    expect(packageJson).toMatchSnapshot("package.json: empty directory");
-    expect(lernaJson).toMatchSnapshot("lerna.json: empty directory");
+    expect(packageJson).toMatchSnapshot("package.json");
+    expect(lernaJson).toMatchSnapshot("lerna.json");
   });
 
-  test.concurrent("updates existing metadata", async () => {
+  test("updates existing metadata", async () => {
     const cwd = await initFixture("InitCommand/updates");
 
     const { stderr } = await execa(LERNA_BIN, ["init", "--exact"], { cwd });
-    expect(stderr).toMatchSnapshot("stderr: updates");
+    expect(stderr).toMatchSnapshot("stderr");
 
     const [packageJson, lernaJson] = await loadMetaData(cwd);
-    expect(packageJson).toMatchSnapshot("package.json: updates");
-    expect(lernaJson).toMatchSnapshot("lerna.json: updates");
+    expect(packageJson).toMatchSnapshot("package.json");
+    expect(lernaJson).toMatchSnapshot("lerna.json");
   });
 
-  test.concurrent("removes VERSION file", async () => {
+  test("removes VERSION file", async () => {
     const cwd = await initFixture("InitCommand/has-version");
 
     const { stderr } = await execa(LERNA_BIN, ["init"], { cwd });
-    expect(stderr).toMatchSnapshot("stderr: has-version");
+    expect(stderr).toMatchSnapshot("stderr");
   });
 });
