@@ -195,19 +195,9 @@ export default class Command {
   }
 
   run() {
-    const { loglevel } = this.options;
-
-    if (loglevel) {
-      log.level = loglevel;
-    }
-
     // no logging is emitted until run() is called
     log.resume();
     log.info("version", this.lernaVersion);
-
-    if (this.repository.isIndependent()) {
-      log.info("versioning", "independent");
-    }
 
     return new Promise((resolve, reject) => {
       const onComplete = (err, exitCode) => {
@@ -234,6 +224,13 @@ export default class Command {
   }
 
   runValidations() {
+    // this.options getter might throw (invalid JSON in lerna.json)
+    const { loglevel, independent, onlyExplicitUpdates } = this.options;
+
+    if (loglevel) {
+      log.level = loglevel;
+    }
+
     if (this.requiresGit && !GitUtilities.isInitialized(this.execOpts)) {
       throw new ValidationError(
         "ENOGIT",
@@ -249,7 +246,7 @@ export default class Command {
       throw new ValidationError("ENOLERNA", "`lerna.json` does not exist, have you run `lerna init`?");
     }
 
-    if (this.options.independent && !this.repository.isIndependent()) {
+    if (independent && !this.repository.isIndependent()) {
       throw new ValidationError(
         "EVERSIONMODE",
         dedent`
@@ -293,7 +290,7 @@ export default class Command {
       );
     }
 
-    if (this.options.onlyExplicitUpdates) {
+    if (onlyExplicitUpdates) {
       throw new ValidationWarning(
         "`--only-explicit-updates` has been removed. This flag was only ever added for Babel and we never should have exposed it to everyone.",
       );
@@ -302,6 +299,10 @@ export default class Command {
   }
 
   runPreparations() {
+    if (this.repository.isIndependent()) {
+      log.info("versioning", "independent");
+    }
+
     const { rootPath, packageConfigs } = this.repository;
     const { scope, ignore, registry, since, useGitVersion, gitVersionPrefix } = this.options;
 
