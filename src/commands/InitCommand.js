@@ -8,7 +8,7 @@ import GitUtilities from "../GitUtilities";
 
 export function handler(argv) {
   // eslint-disable-next-line no-use-before-define
-  new InitCommand(argv._, argv, argv._cwd).run().then(argv._onFinish, argv._onFinish);
+  return new InitCommand(argv._, argv, argv._cwd).run().then(argv._onResolved, argv._onRejected);
 }
 
 export const command = "init";

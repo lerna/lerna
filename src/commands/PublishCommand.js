@@ -21,7 +21,7 @@ import ValidationError from "../utils/ValidationError";
 
 export function handler(argv) {
   // eslint-disable-next-line no-use-before-define
-  new PublishCommand(argv._, argv, argv._cwd).run().then(argv._onFinish, argv._onFinish);
+  return new PublishCommand(argv._, argv, argv._cwd).run().then(argv._onResolved, argv._onRejected);
 }
 
 export const command = "publish";
