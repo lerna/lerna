@@ -8,7 +8,7 @@ import semver from "semver";
 import writeJsonFile from "write-json-file";
 import writePkg from "write-pkg";
 
-import Command, { ValidationError } from "../Command";
+import Command from "../Command";
 import ConventionalCommitUtilities from "../ConventionalCommitUtilities";
 import FileSystemUtilities from "../FileSystemUtilities";
 import GitUtilities from "../GitUtilities";
@@ -17,6 +17,7 @@ import output from "../utils/output";
 import PackageUtilities from "../PackageUtilities";
 import PromptUtilities from "../PromptUtilities";
 import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
+import ValidationError from "../utils/ValidationError";
 
 export function handler(argv) {
   // eslint-disable-next-line no-use-before-define

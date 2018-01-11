@@ -12,6 +12,7 @@ import filterFlags from "./utils/filterFlags";
 import writeLogFile from "./utils/writeLogFile";
 import UpdatedPackagesCollector from "./UpdatedPackagesCollector";
 import VersionSerializer from "./VersionSerializer";
+import ValidationError from "./utils/ValidationError";
 
 // handle log.success()
 log.addLevel("success", 3001, { fg: "green", bold: true });
@@ -81,14 +82,6 @@ export const builder = {
     requiresArg: true,
   },
 };
-
-export class ValidationError extends Error {
-  constructor(prefix, message) {
-    super(message);
-    this.name = "ValidationError";
-    log.error(prefix, message);
-  }
-}
 
 class ValidationWarning extends Error {
   constructor(message) {

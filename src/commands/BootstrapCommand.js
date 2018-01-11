@@ -5,10 +5,11 @@ import getPort from "get-port";
 import path from "path";
 import semver from "semver";
 
-import Command, { ValidationError } from "../Command";
+import Command from "../Command";
 import FileSystemUtilities from "../FileSystemUtilities";
 import NpmUtilities from "../NpmUtilities";
 import PackageUtilities from "../PackageUtilities";
+import ValidationError from "../utils/ValidationError";
 
 export function handler(argv) {
   // eslint-disable-next-line no-use-before-define

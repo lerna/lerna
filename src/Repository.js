@@ -7,6 +7,7 @@ import readPkg from "read-pkg";
 import semver from "semver";
 
 import dependencyIsSatisfied from "./utils/dependencyIsSatisfied";
+import ValidationError from "./utils/ValidationError";
 import Package from "./Package";
 
 const DEFAULT_PACKAGE_GLOB = "packages/*";

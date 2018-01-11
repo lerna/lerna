@@ -6,8 +6,9 @@ import semver from "semver";
 import writePkg from "write-pkg";
 
 import BootstrapCommand from "./BootstrapCommand";
-import Command, { ValidationError } from "../Command";
+import Command from "../Command";
 import splitVersion from "../utils/splitVersion";
+import ValidationError from "../utils/ValidationError";
 
 export const command = "add [args..]";
 
