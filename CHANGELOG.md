@@ -1,3 +1,35 @@
+## v2.7.0 (2018-01-12)
+
+#### :rocket: Enhancement
+
+* [#1140](https://github.com/lerna/lerna/pull/1140) Warn user and exit non-zero if command is invalid. ([@cezaraugusto](https://github.com/cezaraugusto))
+* [#1145](https://github.com/lerna/lerna/pull/1145) run/publish: Use npmClient instead of hardcoded npm. ([@oreporan](https://github.com/oreporan))
+* [#1149](https://github.com/lerna/lerna/pull/1149) Add support for root-level version lifecycle. ([@bigtimebuddy](https://github.com/bigtimebuddy))
+
+#### :bug: Bug Fix
+
+* [#1187](https://github.com/lerna/lerna/pull/1187) Completely ignore peerDependencies during publish. ([@evocateur](https://github.com/evocateur))
+* [#1193](https://github.com/lerna/lerna/pull/1193) Throw error when lerna.json or package.json have invalid syntax. ([@evocateur](https://github.com/evocateur))
+
+#### :memo: Documentation
+
+* [#1164](https://github.com/lerna/lerna/pull/1164) docs: replace "command" with "commands" to avoid ambiguity. ([@fengyuanchen](https://github.com/fengyuanchen))
+* [#1186](https://github.com/lerna/lerna/pull/1186) docs: 📇 Add private registry tips to troubleshooting.md. ([@frankstallone](https://github.com/frankstallone))
+
+#### :house: Internal
+
+* [#1188](https://github.com/lerna/lerna/pull/1188) Prettier. ([@evocateur](https://github.com/evocateur))
+
+#### Committers: 7
+
+* Alan Agius ([alan-agius4](https://github.com/alan-agius4))
+* Cezar Augusto ([cezaraugusto](https://github.com/cezaraugusto))
+* Chen Fengyuan ([fengyuanchen](https://github.com/fengyuanchen))
+* Daniel Stockman ([evocateur](https://github.com/evocateur))
+* Frank Stallone ([frankstallone](https://github.com/frankstallone))
+* Matt Karl ([bigtimebuddy](https://github.com/bigtimebuddy))
+* Ore Poran ([oreporan](https://github.com/oreporan))
+
 ## v2.6.0 (2018-01-08)
 
 Happy 2018! :tada:
