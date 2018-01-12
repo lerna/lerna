@@ -6,7 +6,7 @@ import PackageUtilities from "../PackageUtilities";
 
 export function handler(argv) {
   // eslint-disable-next-line no-use-before-define
-  return new ExecCommand(argv).run();
+  return new ExecCommand(argv);
 }
 
 export const command = "exec <cmd> [args..]";

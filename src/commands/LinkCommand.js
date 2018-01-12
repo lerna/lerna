@@ -3,7 +3,7 @@ import PackageUtilities from "../PackageUtilities";
 
 export function handler(argv) {
   // eslint-disable-next-line no-use-before-define
-  return new LinkCommand(argv).run();
+  return new LinkCommand(argv);
 }
 
 export const command = "link";

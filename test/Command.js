@@ -20,6 +20,9 @@ import Command from "../src/Command";
 log.level = "silent";
 
 describe("Command", () => {
+  // swallow errors when passed in argv
+  const onRejected = () => {};
+
   class OkCommand extends Command {
     initialize(callback) {
       callback(null, true);
@@ -41,7 +44,7 @@ describe("Command", () => {
 
   describe(".lernaVersion", () => {
     it("should be added to the instance", async () => {
-      const command = new Command({});
+      const command = new Command({ onRejected });
       const { version } = await loadJsonFile(path.resolve(__dirname, "../package.json"));
       expect(command.lernaVersion).toEqual(version);
     });
@@ -49,44 +52,44 @@ describe("Command", () => {
 
   describe(".logger", () => {
     it("should be added to the instance", () => {
-      const command = new Command({});
+      const command = new Command({ onRejected });
       expect(command.logger).toBeDefined();
     });
   });
 
   describe(".concurrency", () => {
     it("should be added to the instance", () => {
-      const command = new Command({ concurrency: 6 });
+      const command = new Command({ onRejected, concurrency: 6 });
       expect(command.concurrency).toBe(6);
     });
 
     it("should fall back to default if concurrency given is NaN", () => {
-      const command = new Command({ concurrency: "bla" });
+      const command = new Command({ onRejected, concurrency: "bla" });
       expect(command.concurrency).toBe(4);
     });
 
     it("should fall back to default if concurrency given is 0", () => {
-      expect(new Command({ concurrency: 0 }).concurrency).toBe(4);
+      expect(new Command({ onRejected, concurrency: 0 }).concurrency).toBe(4);
     });
 
     it("should fall back to 1 if concurrency given is smaller than 1", () => {
-      expect(new Command({ concurrency: -1 }).concurrency).toBe(1);
+      expect(new Command({ onRejected, concurrency: -1 }).concurrency).toBe(1);
     });
   });
 
   describe(".toposort", () => {
     it("is enabled by default", () => {
-      const command = new Command({});
+      const command = new Command({ onRejected });
       expect(command.toposort).toBe(true);
     });
 
     it("is enabled when sort config is null", () => {
-      const command = new Command({ sort: null });
+      const command = new Command({ onRejected, sort: null });
       expect(command.toposort).toBe(true);
     });
 
     it("is disabled when sort config is explicitly false (--no-sort)", () => {
-      const command = new Command({ sort: false });
+      const command = new Command({ onRejected, sort: false });
       expect(command.toposort).toBe(false);
     });
   });
@@ -96,12 +99,12 @@ describe("Command", () => {
     const REPO_PATH = process.cwd();
 
     it("has maxBuffer", () => {
-      const command = new Command({ maxBuffer: ONE_HUNDRED_MEGABYTES });
+      const command = new Command({ onRejected, maxBuffer: ONE_HUNDRED_MEGABYTES });
       expect(command.execOpts.maxBuffer).toBe(ONE_HUNDRED_MEGABYTES);
     });
 
     it("has repo path", () => {
-      const command = new Command({ cwd: REPO_PATH });
+      const command = new Command({ onRejected, cwd: REPO_PATH });
       expect(command.execOpts.cwd).toBe(REPO_PATH);
     });
   });
@@ -116,7 +119,7 @@ describe("Command", () => {
     );
 
     it("returns a Promise", async () => {
-      await new OkCommand({ cwd: testDir }).run();
+      await new OkCommand({ onRejected, cwd: testDir });
     });
 
     describe("when finished", () => {
@@ -126,8 +129,7 @@ describe("Command", () => {
       });
 
       it("resolves immediately when no child processes active", async () => {
-        const ok = new OkCommand({ cwd: testDir });
-        const { exitCode } = await ok.run();
+        const { exitCode } = await new OkCommand({ onRejected, cwd: testDir });
         expect(exitCode).toBe(0);
       });
 
@@ -139,8 +141,7 @@ describe("Command", () => {
           warning = m;
         });
 
-        const ok = new OkCommand({ cwd: testDir });
-        await ok.run();
+        await new OkCommand({ onRejected, cwd: testDir });
 
         expect(warning.message).toMatch("Waiting for 1 child process to exit.");
       });
@@ -153,8 +154,7 @@ describe("Command", () => {
           warning = m;
         });
 
-        const ok = new OkCommand({ cwd: testDir });
-        await ok.run();
+        await new OkCommand({ onRejected, cwd: testDir });
 
         expect(warning.message).toMatch("Waiting for 2 child processes to exit.");
       });
@@ -185,13 +185,13 @@ describe("Command", () => {
             err.pkg = {
               name: "pkg-err-name",
             };
-            // "throw" the error to reject .run() promise
+            // "throw" the error to reject command promise
             callback(err);
           }
         }
 
         try {
-          await new PkgErrorCommand({ cwd: testDir }).run();
+          await new PkgErrorCommand({ onRejected, cwd: testDir });
         } catch (err) {
           expect(console.error.mock.calls).toHaveLength(2);
           expect(console.error.mock.calls[0]).toEqual(["pkg-err-stdout"]);
@@ -218,113 +218,107 @@ describe("Command", () => {
         lernaConfig.loglevel = "warn";
         await writeJsonFile(lernaJsonLocation, lernaConfig, { indent: 2 });
 
-        const ok = new OkCommand({ cwd: testDir });
-        await ok.run();
+        await new OkCommand({ onRejected, cwd: testDir });
 
         expect(log.level).toBe("warn");
       });
     });
   });
 
-  // describe(".runValidations()", () => {
-  //   it("needs tests");
-  // });
+  describe("get .packages", () => {
+    it("returns the list of packages", async () => {
+      const testDir = await initFixture("Command/basic");
+      const { packages } = new OkCommand({ onRejected, cwd: testDir });
+      expect(packages).toEqual([]);
+    });
+  });
 
-  describe(".runPreparations()", () => {
+  describe("get .packageGraph", () => {
+    it("returns the graph of packages", async () => {
+      const testDir = await initFixture("Command/basic");
+      const { packageGraph } = new OkCommand({ onRejected, cwd: testDir });
+      expect(packageGraph).toEqual({
+        nodes: [],
+        nodesByName: {},
+      });
+    });
+  });
+
+  describe(".filteredPackages", () => {
     let testDir;
 
     function cli(cmd, ...args) {
       return execa(cmd, args, { cwd: testDir });
     }
 
-    function run(opts) {
-      const argv = Object.assign({}, opts, { cwd: testDir });
-      const cmd = new OkCommand(argv);
-      return cmd.run().then(() => cmd);
-    }
+    beforeEach(() =>
+      initFixture("UpdatedCommand/basic").then(dir => {
+        testDir = dir;
+      }),
+    );
 
-    describe("get .packages", () => {
-      it("returns the list of packages", async () => {
-        testDir = await initFixture("Command/basic");
-        const { packages } = await run();
-        expect(packages).toEqual([]);
+    it("--scope should filter packages", async () => {
+      const { filteredPackages } = new OkCommand({
+        onRejected,
+        cwd: testDir,
+        scope: ["package-2", "package-4"],
       });
+      expect(filteredPackages).toHaveLength(2);
+      expect(filteredPackages[0].name).toEqual("package-2");
+      expect(filteredPackages[1].name).toEqual("package-4");
     });
 
-    describe("get .packageGraph", () => {
-      it("returns the graph of packages", async () => {
-        testDir = await initFixture("Command/basic");
-        const { packageGraph } = await run();
-        expect(packageGraph).toBeDefined();
-        expect(packageGraph).toHaveProperty("nodes", []);
-        expect(packageGraph).toHaveProperty("nodesByName", {});
-      });
+    it("--since should return all packages if no tag is found", async () => {
+      const { filteredPackages } = new OkCommand({ onRejected, cwd: testDir, since: "" });
+      expect(filteredPackages).toHaveLength(5);
     });
 
-    describe(".filteredPackages", () => {
-      beforeEach(() =>
-        initFixture("UpdatedCommand/basic").then(dir => {
-          testDir = dir;
-        }),
-      );
+    it("--since should return packages updated since the last tag", async () => {
+      await cli("git", "tag", "1.0.0");
+      await touch(path.join(testDir, "packages/package-2/random-file"));
+      await cli("git", "add", ".");
+      await cli("git", "commit", "--no-gpg-sign", "-m", "test");
 
-      it("--scope should filter packages", async () => {
-        const { filteredPackages } = await run({ scope: ["package-2", "package-4"] });
-        expect(filteredPackages).toHaveLength(2);
-        expect(filteredPackages[0].name).toEqual("package-2");
-        expect(filteredPackages[1].name).toEqual("package-4");
+      const { filteredPackages } = new OkCommand({ onRejected, cwd: testDir, since: "" });
+      expect(filteredPackages).toHaveLength(2);
+      expect(filteredPackages[0].name).toEqual("package-2");
+      expect(filteredPackages[1].name).toEqual("package-3");
+    });
+
+    it('--since "ref" should return packages updated since the specified ref', async () => {
+      // We first tag, then modify master to ensure that specifying --since will override checking against
+      // the latest tag.
+      await cli("git", "tag", "1.0.0");
+      await touch(path.join(testDir, "packages/package-1/random-file"));
+      await cli("git", "add", ".");
+      await cli("git", "commit", "--no-gpg-sign", "-m", "test");
+
+      // Then we can checkout a new branch, update and commit.
+      await cli("git", "checkout", "-b", "test");
+      await touch(path.join(testDir, "packages/package-2/random-file"));
+      await cli("git", "add", ".");
+      await cli("git", "commit", "--no-gpg-sign", "-m", "test");
+
+      const { filteredPackages } = new OkCommand({ onRejected, cwd: testDir, since: "master" });
+      expect(filteredPackages).toHaveLength(2);
+      expect(filteredPackages[0].name).toEqual("package-2");
+      expect(filteredPackages[1].name).toEqual("package-3");
+    });
+
+    it("should respect --scope and --since when used together", async () => {
+      await cli("git", "checkout", "-b", "test");
+      await touch(path.join(testDir, "packages/package-4/random-file"));
+      await cli("git", "add", ".");
+      await cli("git", "commit", "--no-gpg-sign", "-m", "test");
+
+      const { filteredPackages } = new OkCommand({
+        onRejected,
+        cwd: testDir,
+        scope: ["package-2", "package-3", "package-4"],
+        since: "master",
       });
-
-      it("--since should return all packages if no tag is found", async () => {
-        const { filteredPackages } = await run({ since: "" });
-        expect(filteredPackages).toHaveLength(5);
-      });
-
-      it("--since should return packages updated since the last tag", async () => {
-        await cli("git", "tag", "1.0.0");
-        await touch(path.join(testDir, "packages/package-2/random-file"));
-        await cli("git", "add", ".");
-        await cli("git", "commit", "--no-gpg-sign", "-m", "test");
-
-        const { filteredPackages } = await run({ since: "" });
-        expect(filteredPackages).toHaveLength(2);
-        expect(filteredPackages[0].name).toEqual("package-2");
-        expect(filteredPackages[1].name).toEqual("package-3");
-      });
-
-      it('--since "ref" should return packages updated since the specified ref', async () => {
-        // We first tag, then modify master to ensure that specifying --since will override checking against
-        // the latest tag.
-        await cli("git", "tag", "1.0.0");
-        await touch(path.join(testDir, "packages/package-1/random-file"));
-        await cli("git", "add", ".");
-        await cli("git", "commit", "--no-gpg-sign", "-m", "test");
-
-        // Then we can checkout a new branch, update and commit.
-        await cli("git", "checkout", "-b", "test");
-        await touch(path.join(testDir, "packages/package-2/random-file"));
-        await cli("git", "add", ".");
-        await cli("git", "commit", "--no-gpg-sign", "-m", "test");
-
-        const { filteredPackages } = await run({ since: "master" });
-        expect(filteredPackages).toHaveLength(2);
-        expect(filteredPackages[0].name).toEqual("package-2");
-        expect(filteredPackages[1].name).toEqual("package-3");
-      });
-
-      it("should respect --scope and --since when used together", async () => {
-        await cli("git", "checkout", "-b", "test");
-        await touch(path.join(testDir, "packages/package-4/random-file"));
-        await cli("git", "add", ".");
-        await cli("git", "commit", "--no-gpg-sign", "-m", "test");
-
-        const { filteredPackages } = await run({
-          scope: ["package-2", "package-3", "package-4"],
-          since: "master",
-        });
-        expect(filteredPackages).toHaveLength(1);
-        expect(filteredPackages[0].name).toEqual("package-4");
-      });
+      expect(filteredPackages).toHaveLength(1);
+      expect(filteredPackages[0].name).toEqual("package-4");
     });
   });
 
@@ -354,32 +348,33 @@ describe("Command", () => {
     }
 
     it("is a lazy getter", () => {
-      const instance = new TestACommand({ cwd: testDir });
+      const instance = new TestACommand({ onRejected, cwd: testDir });
       expect(instance.options).toBe(instance.options);
     });
 
     it("should pick up global options", () => {
-      const instance = new TestACommand({ cwd: testDir });
+      const instance = new TestACommand({ onRejected, cwd: testDir });
       expect(instance.options.testOption).toBe("default");
     });
 
     it("should override global options with command-level options", () => {
-      const instance = new TestBCommand({ cwd: testDir });
+      const instance = new TestBCommand({ onRejected, cwd: testDir });
       expect(instance.options.testOption).toBe("b");
     });
 
     it("should override global options with inherited command-level options", () => {
-      const instance = new TestCCommand({ cwd: testDir });
+      const instance = new TestCCommand({ onRejected, cwd: testDir });
       expect(instance.options.testOption).toBe("b");
     });
 
     it("should override inherited command-level options with local command-level options", () => {
-      const instance = new TestCCommand({ cwd: testDir });
+      const instance = new TestCCommand({ onRejected, cwd: testDir });
       expect(instance.options.testOption2).toBe("c");
     });
 
     it("should override everything with a CLI flag", () => {
       const instance = new TestCCommand({
+        onRejected,
         testOption2: "f",
         cwd: testDir,
       });
@@ -388,6 +383,7 @@ describe("Command", () => {
 
     it("should inherit durable options when a CLI flag is undefined", () => {
       const instance = new TestCCommand({
+        onRejected,
         testOption: undefined, // yargs does this when --test-option is not passed
         cwd: testDir,
       });
@@ -396,6 +392,7 @@ describe("Command", () => {
 
     it("should merge flags with defaultOptions", () => {
       const instance = new TestCCommand({
+        onRejected,
         testOption: "b",
         cwd: testDir,
       });
@@ -424,12 +421,12 @@ describe("Command", () => {
       class BootstrapCommand extends Command {}
 
       it("should warn when used", () => {
-        const instance = new BootstrapCommand({ cwd: testDir });
-
         let warning;
         log.once("log.warn", m => {
           warning = m;
         });
+
+        const instance = new BootstrapCommand({ onRejected, cwd: testDir });
 
         instance.options; // eslint-disable-line no-unused-expressions
 
@@ -440,12 +437,12 @@ describe("Command", () => {
       });
 
       it("should provide a correct value", () => {
-        const instance = new BootstrapCommand({ cwd: testDir });
+        const instance = new BootstrapCommand({ onRejected, cwd: testDir });
         expect(instance.options.ignore).toBe("package-a");
       });
 
       it("should not warn with other commands", () => {
-        const instance = new TestCommand({ cwd: testDir });
+        const instance = new TestCommand({ onRejected, cwd: testDir });
 
         log.once("log.warn", () => {
           throw new Error("should not warn bootstrapConfig");
@@ -455,7 +452,7 @@ describe("Command", () => {
       });
 
       it("should not provide a value to other commands", () => {
-        const instance = new TestCommand({ cwd: testDir });
+        const instance = new TestCommand({ onRejected, cwd: testDir });
         expect(instance.options.ignore).toBe(undefined);
       });
     });
@@ -468,12 +465,12 @@ describe("Command", () => {
       class PublishCommand extends Command {}
 
       it("should warn when used", () => {
-        const instance = new PublishCommand({ cwd: testDir });
-
         let warning;
         log.once("log.warn", m => {
           warning = m;
         });
+
+        const instance = new PublishCommand({ onRejected, cwd: testDir });
 
         instance.options; // eslint-disable-line no-unused-expressions
 
@@ -484,12 +481,12 @@ describe("Command", () => {
       });
 
       it("should provide a correct value", () => {
-        const instance = new PublishCommand({ cwd: testDir });
+        const instance = new PublishCommand({ onRejected, cwd: testDir });
         expect(instance.options.ignore).toBe("package-b");
       });
 
       it("should not warn with other commands", () => {
-        const instance = new TestCommand({ cwd: testDir });
+        const instance = new TestCommand({ onRejected, cwd: testDir });
 
         log.once("log.warn", () => {
           throw new Error("should not warn publishConfig");
@@ -499,7 +496,7 @@ describe("Command", () => {
       });
 
       it("should not provide a value to other commands", () => {
-        const instance = new TestCommand({ cwd: testDir });
+        const instance = new TestCommand({ onRejected, cwd: testDir });
         expect(instance.options.ignore).toBe(undefined);
       });
     });
@@ -508,7 +505,7 @@ describe("Command", () => {
   describe("subclass implementation", () => {
     ["initialize", "execute"].forEach(method => {
       it(`throws if ${method}() is not overridden`, () => {
-        const command = new Command({});
+        const command = new Command({ onRejected });
         expect(() => command[method]()).toThrow();
       });
     });

@@ -6,7 +6,7 @@ import output from "../utils/output";
 
 export function handler(argv) {
   // eslint-disable-next-line no-use-before-define
-  return new LsCommand(argv).run();
+  return new LsCommand(argv);
 }
 
 export const command = "ls";

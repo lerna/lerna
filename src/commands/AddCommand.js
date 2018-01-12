@@ -22,7 +22,7 @@ export const builder = {
 
 export function handler(argv) {
   // eslint-disable-next-line no-use-before-define
-  return new AddCommand(argv).run();
+  return new AddCommand(argv);
 }
 
 export default class AddCommand extends Command {
@@ -148,11 +148,12 @@ export default class AddCommand extends Command {
         this.logger.info(`Changes require bootstrap in ${changedPkgs.length} packages`);
 
         const options = Object.assign({}, this.options, {
+          args: [],
           cwd: this.repository.rootPath,
           scope: changedPkgs.map(p => p.name),
         });
 
-        return new BootstrapCommand(options).run();
+        return new BootstrapCommand(options);
       })
       .then(() => callback())
       .catch(callback);

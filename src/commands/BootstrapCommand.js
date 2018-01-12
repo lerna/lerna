@@ -13,7 +13,7 @@ import ValidationError from "../utils/ValidationError";
 
 export function handler(argv) {
   // eslint-disable-next-line no-use-before-define
-  return new BootstrapCommand(argv).run();
+  return new BootstrapCommand(argv);
 }
 
 export const command = "bootstrap [args..]";

@@ -10,7 +10,7 @@ import PromptUtilities from "../PromptUtilities";
 
 export function handler(argv) {
   // eslint-disable-next-line no-use-before-define
-  return new ImportCommand(argv).run();
+  return new ImportCommand(argv);
 }
 
 export const command = "import <pathToRepo>";

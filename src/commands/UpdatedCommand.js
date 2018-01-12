@@ -17,7 +17,7 @@ const updatedOptions = _.assign({}, publishOptions, {
 
 export function handler(argv) {
   // eslint-disable-next-line no-use-before-define
-  return new UpdatedCommand(argv).run();
+  return new UpdatedCommand(argv);
 }
 
 export const command = "updated";
