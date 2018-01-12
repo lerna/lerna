@@ -1,26 +1,28 @@
-import _ from "lodash";
-import async from "async";
-import dedent from "dedent";
-import getPort from "get-port";
-import path from "path";
-import semver from "semver";
+"use strict";
 
-import Command from "../Command";
-import FileSystemUtilities from "../FileSystemUtilities";
-import NpmUtilities from "../NpmUtilities";
-import PackageUtilities from "../PackageUtilities";
-import ValidationError from "../utils/ValidationError";
+const _ = require("lodash");
+const async = require("async");
+const dedent = require("dedent");
+const getPort = require("get-port");
+const path = require("path");
+const semver = require("semver");
 
-export function handler(argv) {
+const Command = require("../Command");
+const FileSystemUtilities = require("../FileSystemUtilities");
+const NpmUtilities = require("../NpmUtilities");
+const PackageUtilities = require("../PackageUtilities");
+const ValidationError = require("../utils/ValidationError");
+
+exports.handler = function handler(argv) {
   // eslint-disable-next-line no-use-before-define
   return new BootstrapCommand(argv);
-}
+};
 
-export const command = "bootstrap [args..]";
+exports.command = "bootstrap [args..]";
 
-export const describe = "Link local packages together and install remaining package dependencies";
+exports.describe = "Link local packages together and install remaining package dependencies";
 
-export const builder = {
+exports.builder = {
   hoist: {
     group: "Command Options:",
     describe: "Install external dependencies matching [glob] to the repo root",
@@ -42,7 +44,7 @@ export const builder = {
   },
 };
 
-export default class BootstrapCommand extends Command {
+class BootstrapCommand extends Command {
   get requiresGit() {
     return false;
   }
