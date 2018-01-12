@@ -1,6 +1,8 @@
-import execa from "execa";
+"use strict";
 
-export default gitInit;
+const execa = require("execa");
+
+module.exports = gitInit;
 
 async function gitInit(cwd, message) {
   const opts = { cwd };

@@ -1,9 +1,11 @@
-import fs from "fs-extra";
-import path from "path";
-import replaceStream from "replacestream";
-import * as constants from "./constants";
+"use strict";
 
-export default copyFixture;
+const fs = require("fs-extra");
+const path = require("path");
+const replaceStream = require("replacestream");
+const constants = require("./constants");
+
+module.exports = copyFixture;
 
 async function copyFixture(targetDir, fixturePath) {
   const fixtureDir = path.resolve(__dirname, `../fixtures/${fixturePath}`);

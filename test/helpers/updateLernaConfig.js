@@ -1,5 +1,9 @@
-import fs from "fs-extra";
-import path from "path";
+"use strict";
+
+const fs = require("fs-extra");
+const path = require("path");
+
+module.exports = updateLernaConfig;
 
 /**
  * Update a fixture lerna.json inside a test case.
@@ -10,7 +14,7 @@ import path from "path";
  * @param {String} testDir where target lerna.json exists
  * @param {Object} updates mixed into existing JSON via Object.assign
  */
-export default async function updateLernaConfig(testDir, updates) {
+async function updateLernaConfig(testDir, updates) {
   const lernaJsonLocation = path.join(testDir, "lerna.json");
   const lernaJsonContent = await fs.readFile(lernaJsonLocation);
   const lernaJson = JSON.parse(lernaJsonContent);

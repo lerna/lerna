@@ -1,10 +1,12 @@
-import fs from "fs";
-import os from "os";
-import path from "path";
-import readPkg from "read-pkg";
-import semver from "semver";
+"use strict";
 
-import Package from "../../src/Package";
+const fs = require("fs");
+const os = require("os");
+const path = require("path");
+const readPkg = require("read-pkg");
+const semver = require("semver");
+
+const Package = require("../../src/Package");
 
 const toPackage = ref =>
   ref instanceof Package ? ref : new Package(readPkg.sync(ref, { normalize: false }), ref);
@@ -114,7 +116,7 @@ const matchExecutableFile = () => (pkgRef, raw) => {
   };
 };
 
-export default {
+module.exports = {
   toDependOn: matchDependency("dependencies"),
   toDevDependOn: matchDependency("devDependencies"),
   toHaveExecutable: matchExecutableFile(),

@@ -1,6 +1,10 @@
-import path from "path";
-import normalizePath from "normalize-path";
+"use strict";
 
-export default function normalizeRelativeDir(testDir, filePath) {
+const path = require("path");
+const normalizePath = require("normalize-path");
+
+module.exports = normalizeRelativeDir;
+
+function normalizeRelativeDir(testDir, filePath) {
   return normalizePath(path.relative(testDir, filePath));
 }

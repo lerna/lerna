@@ -1,5 +1,9 @@
-import yargs from "yargs/yargs";
-import { builder as globalOptions } from "../../src/Command";
+"use strict";
+
+const yargs = require("yargs/yargs");
+const globalOptions = require("../../src/Command").builder;
+
+module.exports = yargsRunner;
 
 /**
  * A higher-order function to help with passing _actual_ yargs-parsed argv
@@ -8,7 +12,7 @@ import { builder as globalOptions } from "../../src/Command";
  * @param {Object} commandModule The yargs command exports
  * @return {Function} with partially-applied yargs config
  */
-export default function yargsRunner(commandModule) {
+function yargsRunner(commandModule) {
   const cmd = commandModule.command.split(" ")[0];
 
   return cwd => {
