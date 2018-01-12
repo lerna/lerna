@@ -7,6 +7,7 @@ import readPkg from "read-pkg";
 import semver from "semver";
 
 import dependencyIsSatisfied from "./utils/dependencyIsSatisfied";
+import ValidationError from "./utils/ValidationError";
 import Package from "./Package";
 
 const DEFAULT_PACKAGE_GLOB = "packages/*";
@@ -30,7 +31,11 @@ export default class Repository {
     if (!this._lernaJson) {
       try {
         this._lernaJson = loadJsonFile.sync(this.lernaJsonLocation);
-      } catch (ex) {
+      } catch (err) {
+        // don't swallow syntax errors
+        if (err.name === "JSONError") {
+          throw new ValidationError(err.name, err.message);
+        }
         // No need to distinguish between missing and empty,
         // saves a lot of noisy guards elsewhere
         this._lernaJson = {};
@@ -67,7 +72,11 @@ export default class Repository {
     if (!this._packageJson) {
       try {
         this._packageJson = readPkg.sync(this.packageJsonLocation, { normalize: false });
-      } catch (ex) {
+      } catch (err) {
+        // don't swallow syntax errors
+        if (err.name === "JSONError") {
+          throw new ValidationError(err.name, err.message);
+        }
         // try again next time
         this._packageJson = null;
       }

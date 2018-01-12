@@ -6,7 +6,8 @@ import GitUtilities from "../GitUtilities";
 
 export function handler(argv) {
   // eslint-disable-next-line no-use-before-define
-  new DiffCommand([argv.pkg], argv, argv._cwd).run().then(argv._onFinish, argv._onFinish);
+  const cmd = new DiffCommand([argv.pkg], argv, argv._cwd);
+  return cmd.run().then(argv._onResolved, argv._onRejected);
 }
 
 export const command = "diff [pkg]";

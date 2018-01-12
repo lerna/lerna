@@ -31,7 +31,8 @@
       - allowAfterThis: true
         allow:
           - _cwd
-          - _onFinish
+          - _onResolved
+          - _onRejected
     no-use-before-define:
       - error
       - nofunc

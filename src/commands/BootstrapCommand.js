@@ -5,14 +5,16 @@ import getPort from "get-port";
 import path from "path";
 import semver from "semver";
 
-import Command, { ValidationError } from "../Command";
+import Command from "../Command";
 import FileSystemUtilities from "../FileSystemUtilities";
 import NpmUtilities from "../NpmUtilities";
 import PackageUtilities from "../PackageUtilities";
+import ValidationError from "../utils/ValidationError";
 
 export function handler(argv) {
   // eslint-disable-next-line no-use-before-define
-  new BootstrapCommand([...argv.args], argv, argv._cwd).run().then(argv._onFinish, argv._onFinish);
+  const cmd = new BootstrapCommand([...argv.args], argv, argv._cwd);
+  return cmd.run().then(argv._onResolved, argv._onRejected);
 }
 
 export const command = "bootstrap [args..]";

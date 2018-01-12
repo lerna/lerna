@@ -6,8 +6,9 @@ import semver from "semver";
 import writePkg from "write-pkg";
 
 import BootstrapCommand from "./BootstrapCommand";
-import Command, { ValidationError } from "../Command";
+import Command from "../Command";
 import splitVersion from "../utils/splitVersion";
+import ValidationError from "../utils/ValidationError";
 
 export const command = "add [args..]";
 
@@ -21,7 +22,8 @@ export const builder = {
 
 export function handler(argv) {
   // eslint-disable-next-line no-use-before-define
-  new AddCommand([...argv.args], argv, argv._cwd).run().then(argv._onFinish, argv._onFinish);
+  const cmd = new AddCommand([...argv.args], argv, argv._cwd);
+  return cmd.run().then(argv._onResolved, argv._onRejected);
 }
 
 export default class AddCommand extends Command {

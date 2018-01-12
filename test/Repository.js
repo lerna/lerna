@@ -1,3 +1,4 @@
+import log from "npmlog";
 import path from "path";
 
 // mocked or stubbed modules
@@ -10,6 +11,9 @@ import initFixture from "./helpers/initFixture";
 
 // file under test
 import Repository from "../src/Repository";
+
+// silence logs
+log.level = "silent";
 
 describe("Repository", () => {
   let testDir;
@@ -83,6 +87,20 @@ describe("Repository", () => {
 
       const repo = new Repository(testDir);
       expect(repo.lernaJson).toEqual({});
+    });
+
+    it("errors when lerna.json is not valid JSON", async () => {
+      expect.assertions(2);
+
+      const cwd = await initFixture("Repository/invalid-json");
+      const repo = new Repository(cwd);
+
+      try {
+        repo.lernaJson; // eslint-disable-line no-unused-expressions
+      } catch (err) {
+        expect(err.name).toBe("ValidationError");
+        expect(err.prefix).toBe("JSONError");
+      }
     });
   });
 
@@ -165,6 +183,20 @@ describe("Repository", () => {
 
       readPkg.sync = readPkgSync;
       expect(repo.packageJson).toHaveProperty("name", "test");
+    });
+
+    it("errors when root package.json is not valid JSON", async () => {
+      expect.assertions(2);
+
+      const cwd = await initFixture("Repository/invalid-json");
+      const repo = new Repository(cwd);
+
+      try {
+        repo.packageJson; // eslint-disable-line no-unused-expressions
+      } catch (err) {
+        expect(err.name).toBe("ValidationError");
+        expect(err.prefix).toBe("JSONError");
+      }
     });
   });
 
