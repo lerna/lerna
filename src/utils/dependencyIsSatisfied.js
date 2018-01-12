@@ -1,9 +1,13 @@
-import log from "npmlog";
-import path from "path";
-import readPkg from "read-pkg";
-import semver from "semver";
+"use strict";
 
-export default function dependencyIsSatisfied(dir, depName, needVersion) {
+const log = require("npmlog");
+const path = require("path");
+const readPkg = require("read-pkg");
+const semver = require("semver");
+
+module.exports = dependencyIsSatisfied;
+
+function dependencyIsSatisfied(dir, depName, needVersion) {
   log.silly("dependencyIsSatisfied", [depName, needVersion, dir]);
 
   let retVal;

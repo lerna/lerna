@@ -1,10 +1,12 @@
-import path from "path";
+"use strict";
+
+const path = require("path");
 
 // mocked modules
-import readPkg from "read-pkg";
+const readPkg = require("read-pkg");
 
 // file under test
-import dependencyIsSatisfied from "../src/utils/dependencyIsSatisfied";
+const dependencyIsSatisfied = require("../src/utils/dependencyIsSatisfied");
 
 jest.mock("read-pkg");
 
