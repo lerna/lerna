@@ -215,7 +215,7 @@ export default class UpdatedPackagesCollector {
 
     if (this.options.ignore) {
       changedFiles = changedFiles.filter(
-        file => !_.find(this.options.ignore, pattern => minimatch(file, pattern, { matchBase: true })),
+        file => !_.find(this.options.ignore, pattern => minimatch(file, pattern, { matchBase: false })),
       );
     }
 
