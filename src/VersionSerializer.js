@@ -1,4 +1,6 @@
-export default class VersionSerializer {
+"use strict";
+
+class VersionSerializer {
   constructor({ graphDependencies, versionParser }) {
     this._graphDependencies = graphDependencies;
     this._versionParser = versionParser;
@@ -44,3 +46,5 @@ export default class VersionSerializer {
     });
   }
 }
+
+module.exports = VersionSerializer;

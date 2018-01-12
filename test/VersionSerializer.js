@@ -1,7 +1,9 @@
-import log from "npmlog";
+"use strict";
+
+const log = require("npmlog");
 
 // file under test
-import VersionSerializer from "../src/VersionSerializer";
+const VersionSerializer = require("../src/VersionSerializer");
 
 // silence logs
 log.level = "silent";
