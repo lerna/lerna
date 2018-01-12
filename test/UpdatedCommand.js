@@ -1,20 +1,22 @@
-import chalk from "chalk";
-import execa from "execa";
-import log from "npmlog";
-import normalizeNewline from "normalize-newline";
-import path from "path";
-import touch from "touch";
+"use strict";
+
+const chalk = require("chalk");
+const execa = require("execa");
+const log = require("npmlog");
+const normalizeNewline = require("normalize-newline");
+const path = require("path");
+const touch = require("touch");
 
 // mocked or stubbed modules
-import output from "../src/utils/output";
+const output = require("../src/utils/output");
 
 // helpers
-import initFixture from "./helpers/initFixture";
-import updateLernaConfig from "./helpers/updateLernaConfig";
-import yargsRunner from "./helpers/yargsRunner";
+const initFixture = require("./helpers/initFixture");
+const updateLernaConfig = require("./helpers/updateLernaConfig");
+const yargsRunner = require("./helpers/yargsRunner");
 
 // file under test
-import * as commandModule from "../src/commands/UpdatedCommand";
+const commandModule = require("../src/commands/UpdatedCommand");
 
 const run = yargsRunner(commandModule);
 
