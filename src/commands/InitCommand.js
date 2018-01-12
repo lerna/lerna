@@ -1,22 +1,23 @@
-import _ from "lodash";
-import writeJsonFile from "write-json-file";
-import writePkg from "write-pkg";
+"use strict";
 
-import Command from "../Command";
-import FileSystemUtilities from "../FileSystemUtilities";
-import GitUtilities from "../GitUtilities";
+const _ = require("lodash");
+const writeJsonFile = require("write-json-file");
+const writePkg = require("write-pkg");
 
-export function handler(argv) {
+const Command = require("../Command");
+const FileSystemUtilities = require("../FileSystemUtilities");
+const GitUtilities = require("../GitUtilities");
+
+exports.handler = function handler(argv) {
   // eslint-disable-next-line no-use-before-define
   return new InitCommand(argv);
-}
+};
 
-export const command = "init";
+exports.command = "init";
 
-export const describe =
-  "Create a new Lerna repo or upgrade an existing repo to the current version of Lerna.";
+exports.describe = "Create a new Lerna repo or upgrade an existing repo to the current version of Lerna.";
 
-export const builder = {
+exports.builder = {
   exact: {
     describe: "Specify lerna dependency version in package.json without a caret (^)",
     type: "boolean",
@@ -30,7 +31,7 @@ export const builder = {
   },
 };
 
-export default class InitCommand extends Command {
+class InitCommand extends Command {
   get defaultOptions() {
     return {
       exact: false,

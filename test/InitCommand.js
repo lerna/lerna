@@ -1,22 +1,24 @@
-import log from "npmlog";
-import path from "path";
-import tempy from "tempy";
+"use strict";
+
+const log = require("npmlog");
+const path = require("path");
+const tempy = require("tempy");
 
 // mocked modules
-import findUp from "find-up";
-import loadJsonFile from "load-json-file";
-import readPkg from "read-pkg";
-import writePkg from "write-pkg";
-import writeJsonFile from "write-json-file";
-import FileSystemUtilities from "../src/FileSystemUtilities";
-import GitUtilities from "../src/GitUtilities";
+const findUp = require("find-up");
+const loadJsonFile = require("load-json-file");
+const readPkg = require("read-pkg");
+const writePkg = require("write-pkg");
+const writeJsonFile = require("write-json-file");
+const FileSystemUtilities = require("../src/FileSystemUtilities");
+const GitUtilities = require("../src/GitUtilities");
 
 // helpers
-import initFixture from "./helpers/initFixture";
-import yargsRunner from "./helpers/yargsRunner";
+const initFixture = require("./helpers/initFixture");
+const yargsRunner = require("./helpers/yargsRunner");
 
 // file under test
-import * as commandModule from "../src/commands/InitCommand";
+const commandModule = require("../src/commands/InitCommand");
 
 const run = yargsRunner(commandModule);
 const lernaVersion = require("../package.json").version;
