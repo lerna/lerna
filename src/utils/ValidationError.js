@@ -1,6 +1,8 @@
-import log from "npmlog";
+"use strict";
 
-export default class ValidationError extends Error {
+const log = require("npmlog");
+
+class ValidationError extends Error {
   constructor(prefix, message) {
     super(message);
     this.name = "ValidationError";
@@ -9,3 +11,5 @@ export default class ValidationError extends Error {
     log.error(prefix, message);
   }
 }
+
+module.exports = ValidationError;
