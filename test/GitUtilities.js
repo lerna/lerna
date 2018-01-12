@@ -1,12 +1,14 @@
-import { EOL } from "os";
-import path from "path";
+"use strict";
+
+const { EOL } = require("os");
+const path = require("path");
 
 // mocked modules
-import tempWrite from "temp-write";
-import ChildProcessUtilities from "../src/ChildProcessUtilities";
+const tempWrite = require("temp-write");
+const ChildProcessUtilities = require("../src/ChildProcessUtilities");
 
 // file under test
-import GitUtilities from "../src/GitUtilities";
+const GitUtilities = require("../src/GitUtilities");
 
 jest.mock("temp-write");
 jest.mock("../src/ChildProcessUtilities");
