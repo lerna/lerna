@@ -1,9 +1,11 @@
-import _ from "lodash";
-import minimatch from "minimatch";
-import path from "path";
-import semver from "semver";
+"use strict";
 
-import GitUtilities from "./GitUtilities";
+const _ = require("lodash");
+const minimatch = require("minimatch");
+const path = require("path");
+const semver = require("semver");
+
+const GitUtilities = require("./GitUtilities");
 
 // TODO: remove this when we _really_ remove support for SECRET_FLAG
 const Buffer = require("safe-buffer").Buffer; // eslint-disable-line prefer-destructuring
@@ -41,7 +43,7 @@ function getForcedPackages({ forcePublish }) {
   return new Set(inputs);
 }
 
-export default class UpdatedPackagesCollector {
+class UpdatedPackagesCollector {
   constructor(command) {
     this.execOpts = command.execOpts;
     this.logger = command.logger;
@@ -222,3 +224,5 @@ export default class UpdatedPackagesCollector {
     return !!changedFiles.length;
   }
 }
+
+module.exports = UpdatedPackagesCollector;
