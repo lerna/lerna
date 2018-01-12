@@ -1,9 +1,13 @@
-import os from "os";
-import path from "path";
-import log from "npmlog";
-import writeFileAtomic from "write-file-atomic";
+"use strict";
 
-export default function writeLogFile(cwd) {
+const os = require("os");
+const path = require("path");
+const log = require("npmlog");
+const writeFileAtomic = require("write-file-atomic");
+
+module.exports = writeLogFile;
+
+function writeLogFile(cwd) {
   let logOutput = "";
 
   log.record.forEach(m => {
