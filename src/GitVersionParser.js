@@ -1,7 +1,9 @@
-import { escapeRegExp } from "lodash";
-import hostedGitInfo from "hosted-git-info";
+"use strict";
 
-export default class GitVersionParser {
+const { escapeRegExp } = require("lodash");
+const hostedGitInfo = require("hosted-git-info");
+
+class GitVersionParser {
   constructor(versionPrefix = "v") {
     this._gitUrlPattern = new RegExp(`(.+?#${escapeRegExp(versionPrefix)})(.+)$`);
   }
@@ -20,3 +22,5 @@ export default class GitVersionParser {
     };
   }
 }
+
+module.exports = GitVersionParser;

@@ -1,7 +1,9 @@
-import log from "npmlog";
+"use strict";
+
+const log = require("npmlog");
 
 // file under test
-import GitVersionParser from "../src/GitVersionParser";
+const GitVersionParser = require("../src/GitVersionParser");
 
 // silence logs
 log.level = "silent";
