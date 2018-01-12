@@ -1,5 +1,7 @@
+"use strict";
+
 // file under test
-import ChildProcessUtilities from "../src/ChildProcessUtilities";
+const ChildProcessUtilities = require("../src/ChildProcessUtilities");
 
 describe("ChildProcessUtilities", () => {
   describe(".execSync()", () => {

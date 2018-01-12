@@ -1,8 +1,10 @@
-import chalk from "chalk";
-import EventEmitter from "events";
-import execa from "execa";
-import logTransformer from "strong-log-transformer";
-import pFinally from "p-finally";
+"use strict";
+
+const chalk = require("chalk");
+const EventEmitter = require("events");
+const execa = require("execa");
+const logTransformer = require("strong-log-transformer");
+const pFinally = require("p-finally");
 
 // Keep track of how many live children we have.
 let children = 0;
@@ -14,55 +16,53 @@ const emitter = new EventEmitter();
 const colorWheel = ["cyan", "magenta", "blue", "yellow", "green", "red"];
 const NUM_COLORS = colorWheel.length;
 
-export default class ChildProcessUtilities {
-  static exec(command, args, opts, callback) {
-    const options = Object.assign({}, opts);
-    options.stdio = "pipe"; // node default
+function exec(command, args, opts, callback) {
+  const options = Object.assign({}, opts);
+  options.stdio = "pipe"; // node default
 
-    return _spawn(command, args, options, callback);
+  return _spawn(command, args, options, callback);
+}
+
+function execSync(command, args, opts) {
+  return execa.sync(command, args, opts).stdout;
+}
+
+function spawn(command, args, opts, callback) {
+  const options = Object.assign({}, opts);
+  options.stdio = "inherit";
+
+  return _spawn(command, args, options, callback);
+}
+
+function spawnStreaming(command, args, opts, prefix, callback) {
+  const options = Object.assign({}, opts);
+  options.stdio = ["ignore", "pipe", "pipe"];
+
+  const colorName = colorWheel[children % NUM_COLORS];
+  const color = chalk[colorName];
+  const spawned = _spawn(command, args, options, callback);
+
+  const prefixedStdout = logTransformer({ tag: `${color.bold(prefix)}:` });
+  const prefixedStderr = logTransformer({ tag: `${color(prefix)}:`, mergeMultiline: true });
+
+  // Avoid "Possible EventEmitter memory leak detected" warning due to piped stdio
+  if (children > process.stdout.listenerCount("close")) {
+    process.stdout.setMaxListeners(children);
+    process.stderr.setMaxListeners(children);
   }
 
-  static execSync(command, args, opts) {
-    return execa.sync(command, args, opts).stdout;
-  }
+  spawned.stdout.pipe(prefixedStdout).pipe(process.stdout);
+  spawned.stderr.pipe(prefixedStderr).pipe(process.stderr);
 
-  static spawn(command, args, opts, callback) {
-    const options = Object.assign({}, opts);
-    options.stdio = "inherit";
+  return spawned;
+}
 
-    return _spawn(command, args, options, callback);
-  }
+function getChildProcessCount() {
+  return children;
+}
 
-  static spawnStreaming(command, args, opts, prefix, callback) {
-    const options = Object.assign({}, opts);
-    options.stdio = ["ignore", "pipe", "pipe"];
-
-    const colorName = colorWheel[children % NUM_COLORS];
-    const color = chalk[colorName];
-    const spawned = _spawn(command, args, options, callback);
-
-    const prefixedStdout = logTransformer({ tag: `${color.bold(prefix)}:` });
-    const prefixedStderr = logTransformer({ tag: `${color(prefix)}:`, mergeMultiline: true });
-
-    // Avoid "Possible EventEmitter memory leak detected" warning due to piped stdio
-    if (children > process.stdout.listenerCount("close")) {
-      process.stdout.setMaxListeners(children);
-      process.stderr.setMaxListeners(children);
-    }
-
-    spawned.stdout.pipe(prefixedStdout).pipe(process.stdout);
-    spawned.stderr.pipe(prefixedStderr).pipe(process.stderr);
-
-    return spawned;
-  }
-
-  static getChildProcessCount() {
-    return children;
-  }
-
-  static onAllExited(callback) {
-    emitter.on("empty", callback);
-  }
+function onAllExited(callback) {
+  emitter.on("empty", callback);
 }
 
 function registerChild(child) {
@@ -89,3 +89,10 @@ function _spawn(command, args, opts, callback) {
 
   return child;
 }
+
+exports.exec = exec;
+exports.execSync = execSync;
+exports.spawn = spawn;
+exports.spawnStreaming = spawnStreaming;
+exports.getChildProcessCount = getChildProcessCount;
+exports.onAllExited = onAllExited;
