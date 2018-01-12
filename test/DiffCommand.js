@@ -1,17 +1,19 @@
-import log from "npmlog";
-import path from "path";
+"use strict";
+
+const log = require("npmlog");
+const path = require("path");
 
 // mocked modules
-import ChildProcessUtilities from "../src/ChildProcessUtilities";
-import GitUtilities from "../src/GitUtilities";
+const ChildProcessUtilities = require("../src/ChildProcessUtilities");
+const GitUtilities = require("../src/GitUtilities");
 
 // helpers
-import callsBack from "./helpers/callsBack";
-import initFixture from "./helpers/initFixture";
-import yargsRunner from "./helpers/yargsRunner";
+const callsBack = require("./helpers/callsBack");
+const initFixture = require("./helpers/initFixture");
+const yargsRunner = require("./helpers/yargsRunner");
 
 // file under test
-import * as commandModule from "../src/commands/DiffCommand";
+const commandModule = require("../src/commands/DiffCommand");
 
 const run = yargsRunner(commandModule);
 

@@ -1,19 +1,21 @@
-import _ from "lodash";
+"use strict";
 
-import ChildProcessUtilities from "../ChildProcessUtilities";
-import Command from "../Command";
-import GitUtilities from "../GitUtilities";
+const _ = require("lodash");
 
-export function handler(argv) {
+const ChildProcessUtilities = require("../ChildProcessUtilities");
+const Command = require("../Command");
+const GitUtilities = require("../GitUtilities");
+
+exports.handler = function handler(argv) {
   // eslint-disable-next-line no-use-before-define
   return new DiffCommand(argv);
-}
+};
 
-export const command = "diff [pkgName]";
+exports.command = "diff [pkgName]";
 
-export const describe = "Diff all packages or a single package since the last release.";
+exports.describe = "Diff all packages or a single package since the last release.";
 
-export const builder = {};
+exports.builder = {};
 
 function getLastCommit(execOpts) {
   if (GitUtilities.hasTags(execOpts)) {
@@ -23,7 +25,7 @@ function getLastCommit(execOpts) {
   return GitUtilities.getFirstCommit(execOpts);
 }
 
-export default class DiffCommand extends Command {
+class DiffCommand extends Command {
   initialize(callback) {
     const packageName = this.options.pkgName;
 
