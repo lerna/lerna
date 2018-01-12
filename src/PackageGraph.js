@@ -1,11 +1,13 @@
-import semver from "semver";
+"use strict";
+
+const semver = require("semver");
 
 /**
  * Represents a node in a PackageGraph.
  * @constructor
  * @param {!<Package>} pkg - A Package object to build the node from.
  */
-export class PackageGraphNode {
+class PackageGraphNode {
   constructor(pkg) {
     this.package = pkg;
     this.dependencies = [];
@@ -23,7 +25,7 @@ export class PackageGraphNode {
  * @param {boolean} [depsOnly=false] True to create a graph of only dependencies, excluding the
  *    devDependencies that would normally be included.
  */
-export default class PackageGraph {
+class PackageGraph {
   constructor(packages, depsOnly = false, versionParser) {
     this.nodes = [];
     this.nodesByName = {};
@@ -61,3 +63,5 @@ export default class PackageGraph {
     return this.nodesByName[packageName];
   }
 }
+
+module.exports = PackageGraph;
