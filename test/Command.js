@@ -1,20 +1,22 @@
-import execa from "execa";
-import loadJsonFile from "load-json-file";
-import log from "npmlog";
-import path from "path";
-import touch from "touch";
-import writeJsonFile from "write-json-file";
+"use strict";
 
-import ChildProcessUtilities from "../src/ChildProcessUtilities";
-import FileSystemUtilities from "../src/FileSystemUtilities";
-import GitUtilities from "../src/GitUtilities";
+const execa = require("execa");
+const loadJsonFile = require("load-json-file");
+const log = require("npmlog");
+const path = require("path");
+const touch = require("touch");
+const writeJsonFile = require("write-json-file");
+
+const ChildProcessUtilities = require("../src/ChildProcessUtilities");
+const FileSystemUtilities = require("../src/FileSystemUtilities");
+const GitUtilities = require("../src/GitUtilities");
 
 // helpers
-import callsBack from "./helpers/callsBack";
-import initFixture from "./helpers/initFixture";
+const callsBack = require("./helpers/callsBack");
+const initFixture = require("./helpers/initFixture");
 
 // file under test
-import Command from "../src/Command";
+const Command = require("../src/Command");
 
 // silence logs
 log.level = "silent";
