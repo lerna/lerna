@@ -92,18 +92,15 @@ class ValidationWarning extends Error {
 }
 
 export default class Command {
-  constructor(input, flags, cwd) {
+  constructor(argv) {
     log.pause();
     log.heading = "lerna";
 
-    this.input = input;
-    this._flags = flags;
-
-    log.silly("input", input);
-    log.silly("flags", filterFlags(flags));
+    this._argv = argv;
+    log.silly("argv", filterFlags(argv));
 
     this.lernaVersion = LERNA_VERSION;
-    this.repository = new Repository(cwd);
+    this.repository = new Repository(argv.cwd);
     this.logger = log.newGroup(this.name);
   }
 
@@ -172,7 +169,7 @@ export default class Command {
       this._options = _.defaults(
         {},
         // CLI flags, which if defined overrule subsequent values
-        this._flags,
+        this._argv,
         // Namespaced command options from `lerna.json`
         ...lernaCommandOverrides,
         // Global options from `lerna.json`
@@ -197,6 +194,9 @@ export default class Command {
   run() {
     log.info("version", this.lernaVersion);
 
+    // passed via yargs context, never actual CLI
+    const { onResolved, onRejected } = this._argv;
+
     return new Promise((resolve, reject) => {
       const onComplete = (err, exitCode) => {
         if (err) {
@@ -219,7 +219,7 @@ export default class Command {
       }
 
       this.runCommand(onComplete);
-    });
+    }).then(onResolved, onRejected);
   }
 
   configureLogging() {

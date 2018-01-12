@@ -30,7 +30,7 @@ const expectError = async fn => {
   }
 };
 
-const commandFlags = mock => mock.mock.calls[0][1];
+const commandFlags = mock => mock.mock.calls[0][0];
 
 jest.mock("../src/NpmUtilities");
 jest.mock("../src/commands/BootstrapCommand");

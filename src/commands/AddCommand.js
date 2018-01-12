@@ -10,7 +10,7 @@ import Command from "../Command";
 import splitVersion from "../utils/splitVersion";
 import ValidationError from "../utils/ValidationError";
 
-export const command = "add [args..]";
+export const command = "add [pkgNames..]";
 
 export const describe = "Add packages as dependency to matched packages";
 
@@ -22,8 +22,7 @@ export const builder = {
 
 export function handler(argv) {
   // eslint-disable-next-line no-use-before-define
-  const cmd = new AddCommand([...argv.args], argv, argv._cwd);
-  return cmd.run().then(argv._onResolved, argv._onRejected);
+  return new AddCommand(argv).run();
 }
 
 export default class AddCommand extends Command {
@@ -32,7 +31,7 @@ export default class AddCommand extends Command {
   }
 
   initialize(callback) {
-    const pkgs = this.input
+    const pkgs = this.options.pkgNames
       .filter(input => typeof input === "string" && input.trim() !== "")
       .map(input => splitVersion(input) || [input, "latest"])
       .filter(split => Array.isArray(split))
@@ -149,10 +148,11 @@ export default class AddCommand extends Command {
         this.logger.info(`Changes require bootstrap in ${changedPkgs.length} packages`);
 
         const options = Object.assign({}, this.options, {
+          cwd: this.repository.rootPath,
           scope: changedPkgs.map(p => p.name),
         });
 
-        return new BootstrapCommand([], options, this.repository.rootPath).run();
+        return new BootstrapCommand(options).run();
       })
       .then(() => callback())
       .catch(callback);

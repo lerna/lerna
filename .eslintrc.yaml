@@ -29,10 +29,6 @@
     no-underscore-dangle:
       - error
       - allowAfterThis: true
-        allow:
-          - _cwd
-          - _onResolved
-          - _onRejected
     no-use-before-define:
       - error
       - nofunc

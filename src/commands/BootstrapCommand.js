@@ -13,8 +13,7 @@ import ValidationError from "../utils/ValidationError";
 
 export function handler(argv) {
   // eslint-disable-next-line no-use-before-define
-  const cmd = new BootstrapCommand([...argv.args], argv, argv._cwd);
-  return cmd.run().then(argv._onResolved, argv._onRejected);
+  return new BootstrapCommand(argv).run();
 }
 
 export const command = "bootstrap [args..]";
@@ -49,7 +48,7 @@ export default class BootstrapCommand extends Command {
   }
 
   initialize(callback) {
-    const { registry, rejectCycles, npmClient, npmClientArgs, mutex, hoist } = this.options;
+    const { args, registry, rejectCycles, npmClient, npmClientArgs, mutex, hoist } = this.options;
 
     if (npmClient === "yarn" && typeof hoist === "string") {
       return callback(
@@ -87,8 +86,8 @@ export default class BootstrapCommand extends Command {
     };
 
     // lerna bootstrap ... -- <input>
-    if (this.input.length) {
-      this.npmConfig.npmClientArgs = [...(npmClientArgs || []), ...this.input];
+    if (args.length) {
+      this.npmConfig.npmClientArgs = [...(npmClientArgs || []), ...args];
     }
 
     try {

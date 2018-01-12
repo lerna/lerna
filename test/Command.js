@@ -39,16 +39,9 @@ describe("Command", () => {
 
   afterEach(() => jest.resetAllMocks());
 
-  describe(".input", () => {
-    it("should be added to the instance", () => {
-      const command = new Command(["a", "b", "c"], {});
-      expect(command.input).toEqual(["a", "b", "c"]);
-    });
-  });
-
   describe(".lernaVersion", () => {
     it("should be added to the instance", async () => {
-      const command = new Command([], {});
+      const command = new Command({});
       const { version } = await loadJsonFile(path.resolve(__dirname, "../package.json"));
       expect(command.lernaVersion).toEqual(version);
     });
@@ -56,44 +49,44 @@ describe("Command", () => {
 
   describe(".logger", () => {
     it("should be added to the instance", () => {
-      const command = new Command([], {});
+      const command = new Command({});
       expect(command.logger).toBeDefined();
     });
   });
 
   describe(".concurrency", () => {
     it("should be added to the instance", () => {
-      const command = new Command(null, { concurrency: 6 });
+      const command = new Command({ concurrency: 6 });
       expect(command.concurrency).toBe(6);
     });
 
     it("should fall back to default if concurrency given is NaN", () => {
-      const command = new Command(null, { concurrency: "bla" });
+      const command = new Command({ concurrency: "bla" });
       expect(command.concurrency).toBe(4);
     });
 
     it("should fall back to default if concurrency given is 0", () => {
-      expect(new Command(null, { concurrency: 0 }).concurrency).toBe(4);
+      expect(new Command({ concurrency: 0 }).concurrency).toBe(4);
     });
 
     it("should fall back to 1 if concurrency given is smaller than 1", () => {
-      expect(new Command(null, { concurrency: -1 }).concurrency).toBe(1);
+      expect(new Command({ concurrency: -1 }).concurrency).toBe(1);
     });
   });
 
   describe(".toposort", () => {
     it("is enabled by default", () => {
-      const command = new Command([], {});
+      const command = new Command({});
       expect(command.toposort).toBe(true);
     });
 
     it("is enabled when sort config is null", () => {
-      const command = new Command([], { sort: null });
+      const command = new Command({ sort: null });
       expect(command.toposort).toBe(true);
     });
 
     it("is disabled when sort config is explicitly false (--no-sort)", () => {
-      const command = new Command([], { sort: false });
+      const command = new Command({ sort: false });
       expect(command.toposort).toBe(false);
     });
   });
@@ -103,12 +96,12 @@ describe("Command", () => {
     const REPO_PATH = process.cwd();
 
     it("has maxBuffer", () => {
-      const command = new Command([], { maxBuffer: ONE_HUNDRED_MEGABYTES });
+      const command = new Command({ maxBuffer: ONE_HUNDRED_MEGABYTES });
       expect(command.execOpts.maxBuffer).toBe(ONE_HUNDRED_MEGABYTES);
     });
 
     it("has repo path", () => {
-      const command = new Command([], {}, REPO_PATH);
+      const command = new Command({ cwd: REPO_PATH });
       expect(command.execOpts.cwd).toBe(REPO_PATH);
     });
   });
@@ -123,7 +116,7 @@ describe("Command", () => {
     );
 
     it("returns a Promise", async () => {
-      await new OkCommand([], {}, testDir).run();
+      await new OkCommand({ cwd: testDir }).run();
     });
 
     describe("when finished", () => {
@@ -133,7 +126,7 @@ describe("Command", () => {
       });
 
       it("resolves immediately when no child processes active", async () => {
-        const ok = new OkCommand([], {}, testDir);
+        const ok = new OkCommand({ cwd: testDir });
         const { exitCode } = await ok.run();
         expect(exitCode).toBe(0);
       });
@@ -146,7 +139,7 @@ describe("Command", () => {
           warning = m;
         });
 
-        const ok = new OkCommand([], {}, testDir);
+        const ok = new OkCommand({ cwd: testDir });
         await ok.run();
 
         expect(warning.message).toMatch("Waiting for 1 child process to exit.");
@@ -160,7 +153,7 @@ describe("Command", () => {
           warning = m;
         });
 
-        const ok = new OkCommand([], {}, testDir);
+        const ok = new OkCommand({ cwd: testDir });
         await ok.run();
 
         expect(warning.message).toMatch("Waiting for 2 child processes to exit.");
@@ -198,7 +191,7 @@ describe("Command", () => {
         }
 
         try {
-          await new PkgErrorCommand([], {}, testDir).run();
+          await new PkgErrorCommand({ cwd: testDir }).run();
         } catch (err) {
           expect(console.error.mock.calls).toHaveLength(2);
           expect(console.error.mock.calls[0]).toEqual(["pkg-err-stdout"]);
@@ -225,7 +218,7 @@ describe("Command", () => {
         lernaConfig.loglevel = "warn";
         await writeJsonFile(lernaJsonLocation, lernaConfig, { indent: 2 });
 
-        const ok = new OkCommand([], {}, testDir);
+        const ok = new OkCommand({ cwd: testDir });
         await ok.run();
 
         expect(log.level).toBe("warn");
@@ -245,7 +238,8 @@ describe("Command", () => {
     }
 
     function run(opts) {
-      const cmd = new OkCommand([], opts, testDir);
+      const argv = Object.assign({}, opts, { cwd: testDir });
+      const cmd = new OkCommand(argv);
       return cmd.run().then(() => cmd);
     }
 
@@ -360,60 +354,51 @@ describe("Command", () => {
     }
 
     it("is a lazy getter", () => {
-      const instance = new TestACommand([], {}, testDir);
+      const instance = new TestACommand({ cwd: testDir });
       expect(instance.options).toBe(instance.options);
     });
 
     it("should pick up global options", () => {
-      const instance = new TestACommand([], {}, testDir);
+      const instance = new TestACommand({ cwd: testDir });
       expect(instance.options.testOption).toBe("default");
     });
 
     it("should override global options with command-level options", () => {
-      const instance = new TestBCommand([], {}, testDir);
+      const instance = new TestBCommand({ cwd: testDir });
       expect(instance.options.testOption).toBe("b");
     });
 
     it("should override global options with inherited command-level options", () => {
-      const instance = new TestCCommand([], {}, testDir);
+      const instance = new TestCCommand({ cwd: testDir });
       expect(instance.options.testOption).toBe("b");
     });
 
     it("should override inherited command-level options with local command-level options", () => {
-      const instance = new TestCCommand([], {}, testDir);
+      const instance = new TestCCommand({ cwd: testDir });
       expect(instance.options.testOption2).toBe("c");
     });
 
     it("should override everything with a CLI flag", () => {
-      const instance = new TestCCommand(
-        [],
-        {
-          testOption2: "f",
-        },
-        testDir,
-      );
+      const instance = new TestCCommand({
+        testOption2: "f",
+        cwd: testDir,
+      });
       expect(instance.options.testOption2).toBe("f");
     });
 
     it("should inherit durable options when a CLI flag is undefined", () => {
-      const instance = new TestCCommand(
-        [],
-        {
-          testOption: undefined, // yargs does this when --test-option is not passed
-        },
-        testDir,
-      );
+      const instance = new TestCCommand({
+        testOption: undefined, // yargs does this when --test-option is not passed
+        cwd: testDir,
+      });
       expect(instance.options.testOption).toBe("b");
     });
 
     it("should merge flags with defaultOptions", () => {
-      const instance = new TestCCommand(
-        [],
-        {
-          testOption: "b",
-        },
-        testDir,
-      );
+      const instance = new TestCCommand({
+        testOption: "b",
+        cwd: testDir,
+      });
       expect(instance.options.testOption).toBe("b");
       expect(instance.options.testOption2).toBe("c");
       expect(instance.options.testOption3).toBe("a");
@@ -439,7 +424,7 @@ describe("Command", () => {
       class BootstrapCommand extends Command {}
 
       it("should warn when used", () => {
-        const instance = new BootstrapCommand([], {}, testDir);
+        const instance = new BootstrapCommand({ cwd: testDir });
 
         let warning;
         log.once("log.warn", m => {
@@ -455,12 +440,12 @@ describe("Command", () => {
       });
 
       it("should provide a correct value", () => {
-        const instance = new BootstrapCommand([], {}, testDir);
+        const instance = new BootstrapCommand({ cwd: testDir });
         expect(instance.options.ignore).toBe("package-a");
       });
 
       it("should not warn with other commands", () => {
-        const instance = new TestCommand([], {}, testDir);
+        const instance = new TestCommand({ cwd: testDir });
 
         log.once("log.warn", () => {
           throw new Error("should not warn bootstrapConfig");
@@ -470,7 +455,7 @@ describe("Command", () => {
       });
 
       it("should not provide a value to other commands", () => {
-        const instance = new TestCommand([], {}, testDir);
+        const instance = new TestCommand({ cwd: testDir });
         expect(instance.options.ignore).toBe(undefined);
       });
     });
@@ -483,7 +468,7 @@ describe("Command", () => {
       class PublishCommand extends Command {}
 
       it("should warn when used", () => {
-        const instance = new PublishCommand([], {}, testDir);
+        const instance = new PublishCommand({ cwd: testDir });
 
         let warning;
         log.once("log.warn", m => {
@@ -499,12 +484,12 @@ describe("Command", () => {
       });
 
       it("should provide a correct value", () => {
-        const instance = new PublishCommand([], {}, testDir);
+        const instance = new PublishCommand({ cwd: testDir });
         expect(instance.options.ignore).toBe("package-b");
       });
 
       it("should not warn with other commands", () => {
-        const instance = new TestCommand([], {}, testDir);
+        const instance = new TestCommand({ cwd: testDir });
 
         log.once("log.warn", () => {
           throw new Error("should not warn publishConfig");
@@ -514,7 +499,7 @@ describe("Command", () => {
       });
 
       it("should not provide a value to other commands", () => {
-        const instance = new TestCommand([], {}, testDir);
+        const instance = new TestCommand({ cwd: testDir });
         expect(instance.options.ignore).toBe(undefined);
       });
     });
@@ -523,7 +508,7 @@ describe("Command", () => {
   describe("subclass implementation", () => {
     ["initialize", "execute"].forEach(method => {
       it(`throws if ${method}() is not overridden`, () => {
-        const command = new Command([], {});
+        const command = new Command({});
         expect(() => command[method]()).toThrow();
       });
     });

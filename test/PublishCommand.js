@@ -491,7 +491,8 @@ describe("PublishCommand", () => {
 
   describe("with --yes", () => {
     it("skips confirmation prompt", done => {
-      const publishCommand = new PublishCommand([], {
+      const publishCommand = new PublishCommand({
+        _: [],
         yes: true,
       });
       publishCommand.updates = [];

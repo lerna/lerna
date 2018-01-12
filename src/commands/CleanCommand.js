@@ -7,8 +7,7 @@ import PromptUtilities from "../PromptUtilities";
 
 export function handler(argv) {
   // eslint-disable-next-line no-use-before-define
-  const cmd = new CleanCommand(argv._, argv, argv._cwd);
-  return cmd.run().then(argv._onResolved, argv._onRejected);
+  return new CleanCommand(argv).run();
 }
 
 export const command = "clean";
