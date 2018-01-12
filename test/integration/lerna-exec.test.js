@@ -1,8 +1,10 @@
-import execa from "execa";
+"use strict";
 
-import { LERNA_BIN } from "../helpers/constants";
-import initFixture from "../helpers/initFixture";
-import initExecTest from "../helpers/initExecTest";
+const execa = require("execa");
+
+const { LERNA_BIN } = require("../helpers/constants");
+const initFixture = require("../helpers/initFixture");
+const initExecTest = require("../helpers/initExecTest");
 
 describe("lerna exec", () => {
   const EXEC_TEST_COMMAND = process.platform === "win32" ? "exec-test.cmd" : "exec-test";

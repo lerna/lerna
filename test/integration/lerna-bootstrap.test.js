@@ -1,14 +1,16 @@
-import execa from "execa";
-import fs from "fs-extra";
-// import getPort from "get-port";
-import globby from "globby";
-import normalizePath from "normalize-path";
-import path from "path";
-import tempy from "tempy";
+"use strict";
 
-import { LERNA_BIN } from "../helpers/constants";
-import initFixture from "../helpers/initFixture";
-import copyFixture from "../helpers/copyFixture";
+const execa = require("execa");
+const fs = require("fs-extra");
+// const getPort = require("get-port");
+const globby = require("globby");
+const normalizePath = require("normalize-path");
+const path = require("path");
+const tempy = require("tempy");
+
+const { LERNA_BIN } = require("../helpers/constants");
+const initFixture = require("../helpers/initFixture");
+const copyFixture = require("../helpers/copyFixture");
 
 describe("lerna bootstrap", () => {
   const npmTest = cwd =>

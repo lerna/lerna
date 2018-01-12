@@ -1,11 +1,13 @@
-import execa from "execa";
-// import getPort from "get-port";
-import globby from "globby";
-import normalizePath from "normalize-path";
-import path from "path";
+"use strict";
 
-import { LERNA_BIN } from "../helpers/constants";
-import initFixture from "../helpers/initFixture";
+const execa = require("execa");
+// const getPort = require("get-port");
+const globby = require("globby");
+const normalizePath = require("normalize-path");
+const path = require("path");
+
+const { LERNA_BIN } = require("../helpers/constants");
+const initFixture = require("../helpers/initFixture");
 
 const serializeTestRoot = (match, testDir, subPath) => normalizePath(path.join("__TEST_ROOTDIR__", subPath));
 

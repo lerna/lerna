@@ -1,11 +1,13 @@
-import path from "path";
-import execa from "execa";
-import globby from "globby";
-import loadJson from "load-json-file";
+"use strict";
 
-import { LERNA_BIN } from "../helpers/constants";
-import initFixture from "../helpers/initFixture";
-import pkgMatchers from "../helpers/pkgMatchers";
+const path = require("path");
+const execa = require("execa");
+const globby = require("globby");
+const loadJson = require("load-json-file");
+
+const { LERNA_BIN } = require("../helpers/constants");
+const initFixture = require("../helpers/initFixture");
+const pkgMatchers = require("../helpers/pkgMatchers");
 
 const cli = (args, options) => execa(LERNA_BIN, ["add", ...args], options);
 
