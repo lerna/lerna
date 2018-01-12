@@ -1,6 +1,7 @@
 /* eslint node/no-unsupported-features: ["error", { version: 4 }] */
 // this file is not transpiled by Jest when configured in "snapshotSerializers"
-"use strict"; // eslint-disable-line strict, lines-around-directive
+
+"use strict";
 
 const _ = require("lodash");
 const normalizeNewline = require("normalize-newline");

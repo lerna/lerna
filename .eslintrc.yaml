@@ -32,3 +32,4 @@
     no-use-before-define:
       - error
       - nofunc
+    strict: off
