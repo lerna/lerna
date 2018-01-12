@@ -1,18 +1,20 @@
-import findUp from "find-up";
-import globParent from "glob-parent";
-import loadJsonFile from "load-json-file";
-import log from "npmlog";
-import path from "path";
-import readPkg from "read-pkg";
-import semver from "semver";
+"use strict";
 
-import dependencyIsSatisfied from "./utils/dependencyIsSatisfied";
-import ValidationError from "./utils/ValidationError";
-import Package from "./Package";
+const findUp = require("find-up");
+const globParent = require("glob-parent");
+const loadJsonFile = require("load-json-file");
+const log = require("npmlog");
+const path = require("path");
+const readPkg = require("read-pkg");
+const semver = require("semver");
+
+const dependencyIsSatisfied = require("./utils/dependencyIsSatisfied");
+const ValidationError = require("./utils/ValidationError");
+const Package = require("./Package");
 
 const DEFAULT_PACKAGE_GLOB = "packages/*";
 
-export default class Repository {
+class Repository {
   constructor(cwd) {
     const lernaJsonLocation =
       // findUp returns null when not found
@@ -112,3 +114,5 @@ export default class Repository {
     return dependencyIsSatisfied(this.nodeModulesLocation, depName, version);
   }
 }
+
+module.exports = Repository;
