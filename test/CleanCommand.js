@@ -1,17 +1,19 @@
-import log from "npmlog";
+"use strict";
+
+const log = require("npmlog");
 
 // mocked or stubbed modules
-import FileSystemUtilities from "../src/FileSystemUtilities";
-import PromptUtilities from "../src/PromptUtilities";
+const FileSystemUtilities = require("../src/FileSystemUtilities");
+const PromptUtilities = require("../src/PromptUtilities");
 
 // helpers
-import callsBack from "./helpers/callsBack";
-import initFixture from "./helpers/initFixture";
-import normalizeRelativeDir from "./helpers/normalizeRelativeDir";
-import yargsRunner from "./helpers/yargsRunner";
+const callsBack = require("./helpers/callsBack");
+const initFixture = require("./helpers/initFixture");
+const normalizeRelativeDir = require("./helpers/normalizeRelativeDir");
+const yargsRunner = require("./helpers/yargsRunner");
 
 // file under test
-import * as commandModule from "../src/commands/CleanCommand";
+const commandModule = require("../src/commands/CleanCommand");
 
 const run = yargsRunner(commandModule);
 

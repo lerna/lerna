@@ -1,27 +1,29 @@
-import async from "async";
-import path from "path";
+"use strict";
 
-import Command from "../Command";
-import FileSystemUtilities from "../FileSystemUtilities";
-import PromptUtilities from "../PromptUtilities";
+const async = require("async");
+const path = require("path");
 
-export function handler(argv) {
+const Command = require("../Command");
+const FileSystemUtilities = require("../FileSystemUtilities");
+const PromptUtilities = require("../PromptUtilities");
+
+exports.handler = function handler(argv) {
   // eslint-disable-next-line no-use-before-define
   return new CleanCommand(argv);
-}
+};
 
-export const command = "clean";
+exports.command = "clean";
 
-export const describe = "Remove the node_modules directory from all packages.";
+exports.describe = "Remove the node_modules directory from all packages.";
 
-export const builder = {
+exports.builder = {
   yes: {
     group: "Command Options:",
     describe: "Skip all confirmation prompts",
   },
 };
 
-export default class CleanCommand extends Command {
+class CleanCommand extends Command {
   get requiresGit() {
     return false;
   }
