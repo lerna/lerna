@@ -1,16 +1,18 @@
-import Command from "../Command";
-import PackageUtilities from "../PackageUtilities";
+"use strict";
 
-export function handler(argv) {
+const Command = require("../Command");
+const PackageUtilities = require("../PackageUtilities");
+
+exports.handler = function handler(argv) {
   // eslint-disable-next-line no-use-before-define
   return new LinkCommand(argv);
-}
+};
 
-export const command = "link";
+exports.command = "link";
 
-export const describe = "Symlink together all packages which are dependencies of each other";
+exports.describe = "Symlink together all packages which are dependencies of each other";
 
-export const builder = {
+exports.builder = {
   "force-local": {
     group: "Command Options:",
     describe: "Force local",
@@ -19,7 +21,7 @@ export const builder = {
   },
 };
 
-export default class LinkCommand extends Command {
+class LinkCommand extends Command {
   get requiresGit() {
     return false;
   }
