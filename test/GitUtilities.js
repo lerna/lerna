@@ -236,6 +236,15 @@ describe("GitUtilities", () => {
     });
   });
 
+  describe(".getWorkspaceRoot()", () => {
+    it("calls `git rev-parse --show-toplevel`", () => {
+      ChildProcessUtilities.execSync.mockImplementation(() => "master");
+      const opts = { cwd: "test" };
+      expect(GitUtilities.getWorkspaceRoot(opts)).toBe("master");
+      expect(ChildProcessUtilities.execSync).lastCalledWith("git", ["rev-parse", "--show-toplevel"], opts);
+    });
+  });
+
   describe(".getCurrentBranch()", () => {
     it("calls `git rev-parse --abbrev-ref HEAD`", () => {
       ChildProcessUtilities.execSync.mockImplementation(() => "master");

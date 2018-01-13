@@ -150,6 +150,14 @@ export default class GitUtilities {
     return diff;
   }
 
+  static getWorkspaceRoot(opts) {
+    log.silly("getWorkspaceRoot");
+    const root = ChildProcessUtilities.execSync("git", ["rev-parse", "--show-toplevel"], opts);
+    log.verbose("getWorkspaceRoot", root);
+
+    return root;
+  }
+
   static getCurrentBranch(opts) {
     log.silly("getCurrentBranch");
 

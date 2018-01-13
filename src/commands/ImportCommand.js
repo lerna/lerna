@@ -73,10 +73,17 @@ export default class ImportCommand extends Command {
     }
 
     const targetBase = getTargetBase(this.repository.packageConfigs);
-    this.targetDir = path.join(targetBase, externalRepoBase);
 
-    if (FileSystemUtilities.existsSync(path.resolve(this.repository.rootPath, this.targetDir))) {
-      return callback(new Error(`Target directory already exists "${this.targetDir}"`));
+    // Compute a target directory relative to the Lerna root
+    const targetDir = path.join(targetBase, externalRepoBase);
+
+    // Compute a target directory relative to the Git root
+    const gitRepoRoot = GitUtilities.getWorkspaceRoot(this.execOpts);
+    const lernaRootRelativeToGitRoot = path.relative(gitRepoRoot, this.repository.rootPath);
+    this.targetDirRelativeToGitRoot = path.join(lernaRootRelativeToGitRoot, targetDir);
+
+    if (FileSystemUtilities.existsSync(path.resolve(this.repository.rootPath, targetDir))) {
+      return callback(new Error(`Target directory already exists "${targetDir}"`));
     }
 
     this.commits = this.externalExecSync("git", this.gitParamsForTargetCommits())
@@ -103,7 +110,7 @@ export default class ImportCommand extends Command {
 
     this.logger.info(
       "",
-      `About to import ${this.commits.length} commits from ${inputPath} into ${this.targetDir}`,
+      `About to import ${this.commits.length} commits from ${inputPath} into ${targetDir}`,
     );
 
     if (this.options.yes) {
@@ -142,7 +149,7 @@ export default class ImportCommand extends Command {
       patch = this.externalExecSync("git", ["format-patch", "-1", sha, "--stdout"]);
     }
 
-    const formattedTarget = this.targetDir.replace(/\\/g, "/");
+    const formattedTarget = this.targetDirRelativeToGitRoot.replace(/\\/g, "/");
     const replacement = `$1/${formattedTarget}`;
     // Create a patch file for this commit and prepend the target directory
     // to all affected files.  This moves the git history for the entire
