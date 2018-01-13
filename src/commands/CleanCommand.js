@@ -38,7 +38,7 @@ class CleanCommand extends Command {
         "",
         `About to remove the following directories:\n${this.directoriesToDelete
           .map(dir => path.relative(this.repository.rootPath, dir))
-          .join("\n")}`,
+          .join("\n")}`
       );
 
       PromptUtilities.confirm("Proceed?", confirmed => {
@@ -70,7 +70,7 @@ class CleanCommand extends Command {
           this.logger.success("clean", "finished");
           callback(null, true);
         }
-      },
+      }
     );
   }
 }

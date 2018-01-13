@@ -119,7 +119,7 @@ class RunCommand extends Command {
         this.runScriptInPackage(pkg, done);
       },
       this.concurrency,
-      callback,
+      callback
     );
   }
 
@@ -136,14 +136,14 @@ class RunCommand extends Command {
       "run",
       "in %d package(s): npm run %s",
       this.packagesWithScript.length,
-      [this.script].concat(this.args).join(" "),
+      [this.script].concat(this.args).join(" ")
     );
 
     async.parallel(
       this.packagesWithScript.map(pkg => done => {
         this.runScriptInPackageStreaming(pkg, done);
       }),
-      callback,
+      callback
     );
   }
 
@@ -155,7 +155,7 @@ class RunCommand extends Command {
         pkg,
         npmClient: this.npmClient,
       },
-      callback,
+      callback
     );
   }
 
@@ -174,7 +174,7 @@ class RunCommand extends Command {
           output(stdout);
         }
         callback(err);
-      },
+      }
     );
   }
 }

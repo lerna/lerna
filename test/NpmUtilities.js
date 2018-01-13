@@ -28,7 +28,7 @@ const resetExecOpts = () => {
 const stubExecOpts = () => {
   NpmUtilities.getExecOpts = jest.fn(
     // shorthand so we don't have to mess with process.env everywhere
-    (directory, registry) => ({ directory, registry }),
+    (directory, registry) => ({ directory, registry })
   );
 };
 
@@ -207,7 +207,7 @@ describe("NpmUtilities", () => {
           cwd: config.pkg.location,
         },
         "qux",
-        expect.any(Function),
+        expect.any(Function)
       );
     });
   });
@@ -314,11 +314,11 @@ describe("NpmUtilities", () => {
           expect(FileSystemUtilities.rename).lastCalledWith(
             path.join(directory, "package.json"),
             path.join(directory, "package.json.lerna_backup"),
-            expect.any(Function),
+            expect.any(Function)
           );
           expect(FileSystemUtilities.renameSync).lastCalledWith(
             path.join(directory, "package.json.lerna_backup"),
-            path.join(directory, "package.json"),
+            path.join(directory, "package.json")
           );
           expect(writePkg).lastCalledWith(path.join(directory, "package.json"), {
             dependencies: {
@@ -429,7 +429,7 @@ describe("NpmUtilities", () => {
             {
               directory,
               registry: undefined,
-            },
+            }
           );
 
           done();
@@ -464,7 +464,7 @@ describe("NpmUtilities", () => {
             {
               directory,
               registry: undefined,
-            },
+            }
           );
 
           done();
@@ -584,7 +584,7 @@ describe("NpmUtilities", () => {
 
           expect(FileSystemUtilities.renameSync).lastCalledWith(
             path.join(directory, "package.json.lerna_backup"),
-            path.join(directory, "package.json"),
+            path.join(directory, "package.json")
           );
 
           done();
@@ -600,7 +600,7 @@ describe("NpmUtilities", () => {
       const config = {};
 
       ChildProcessUtilities.exec.mockImplementation(() =>
-        Promise.reject(new Error("Unable to install dependency")),
+        Promise.reject(new Error("Unable to install dependency"))
       );
 
       NpmUtilities.installInDir(directory, dependencies, config, err => {
@@ -609,7 +609,7 @@ describe("NpmUtilities", () => {
 
           expect(FileSystemUtilities.renameSync).lastCalledWith(
             path.join(directory, "package.json.lerna_backup"),
-            path.join(directory, "package.json"),
+            path.join(directory, "package.json")
           );
 
           done();
@@ -649,7 +649,7 @@ describe("NpmUtilities", () => {
             {
               directory,
               registry: undefined,
-            },
+            }
           );
 
           done();

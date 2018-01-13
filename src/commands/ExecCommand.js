@@ -81,7 +81,7 @@ class ExecCommand extends Command {
           this.runCommandInPackage(pkg, done);
         },
         this.concurrency,
-        callback,
+        callback
       );
     }
   }
@@ -103,14 +103,14 @@ class ExecCommand extends Command {
       "exec",
       "in %d package(s): %s",
       this.filteredPackages.length,
-      [this.command].concat(this.args).join(" "),
+      [this.command].concat(this.args).join(" ")
     );
 
     async.parallel(
       this.filteredPackages.map(pkg => done => {
         ChildProcessUtilities.spawnStreaming(this.command, this.args, this.getOpts(pkg), pkg.name, done);
       }),
-      callback,
+      callback
     );
   }
 

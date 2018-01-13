@@ -126,7 +126,7 @@ describe("RunCommand", () => {
       await lernaRun("my-script", "--scope", "@test/package-2", "--include-filtered-dependencies");
 
       expect(ranInPackages(testDir)).toMatchSnapshot(
-        "run <script> --scope @test/package-2 --include-filtered-dependencies",
+        "run <script> --scope @test/package-2 --include-filtered-dependencies"
       );
     });
   });

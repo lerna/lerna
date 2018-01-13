@@ -62,7 +62,7 @@ class LsCommand extends Command {
               align: "right",
             },
           },
-        }),
+        })
       );
     }
 

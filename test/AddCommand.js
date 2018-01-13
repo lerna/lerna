@@ -169,7 +169,7 @@ describe("AddCommand", () => {
     expect(BootstrapCommand.handler).lastCalledWith(
       expect.objectContaining({
         scope: ["@test/package-2", "package-3", "package-4"],
-      }),
+      })
     );
   });
 
@@ -181,7 +181,7 @@ describe("AddCommand", () => {
     expect(BootstrapCommand.handler).lastCalledWith(
       expect.objectContaining({
         scope: ["@test/package-2", "package-3"],
-      }),
+      })
     );
   });
 
@@ -193,7 +193,7 @@ describe("AddCommand", () => {
     expect(BootstrapCommand.handler).lastCalledWith(
       expect.objectContaining({
         scope: ["package-3", "package-4"],
-      }),
+      })
     );
   });
 
@@ -225,7 +225,7 @@ describe("AddCommand", () => {
     expect(BootstrapCommand.handler).lastCalledWith(
       expect.objectContaining({
         scope: ["@test/package-1", "@test/package-2", "@test/package-3"],
-      }),
+      })
     );
   });
 });

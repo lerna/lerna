@@ -417,7 +417,7 @@ describe("Command", () => {
 
         expect(warning).toHaveProperty(
           "message",
-          "`bootstrapConfig.ignore` has been replaced by `command.bootstrap.ignore`.",
+          "`bootstrapConfig.ignore` has been replaced by `command.bootstrap.ignore`."
         );
       });
 
@@ -461,7 +461,7 @@ describe("Command", () => {
 
         expect(warning).toHaveProperty(
           "message",
-          "`publishConfig.ignore` has been replaced by `command.publish.ignore`.",
+          "`publishConfig.ignore` has been replaced by `command.publish.ignore`."
         );
       });
 

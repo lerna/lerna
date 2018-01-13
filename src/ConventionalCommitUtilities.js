@@ -104,7 +104,7 @@ function updateChangelog(pkg, opts, type, args) {
         ${newEntry}
 
         **Note:** Version bump only for package ${pkg.name}
-        `,
+        `
     );
   }
 
@@ -124,8 +124,8 @@ function updateChangelog(pkg, opts, type, args) {
 
         ${newEntry}
 
-        ${changelogContents}`.replace(/\n+$/, "\n"),
-    ),
+        ${changelogContents}`.replace(/\n+$/, "\n")
+    )
   );
 
   log.verbose(type, "wrote", changelogFileLoc);

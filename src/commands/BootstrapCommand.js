@@ -59,8 +59,8 @@ class BootstrapCommand extends Command {
           dedent`
             --hoist is not supported with --npm-client=yarn, use yarn workspaces instead
             A guide is available at https://yarnpkg.com/blog/2017/08/02/introducing-workspaces/
-          `,
-        ),
+          `
+        )
       );
     }
 
@@ -75,8 +75,8 @@ class BootstrapCommand extends Command {
           dedent`
             Yarn workspaces are configured in package.json, but not enabled in lerna.json!
             Please choose one: useWorkspaces = true in lerna.json, or remove package.json workspaces config
-          `,
-        ),
+          `
+        )
       );
     }
 
@@ -154,7 +154,7 @@ class BootstrapCommand extends Command {
           // prepare bootstrapped packages
           cb => this.preparePackages(cb),
         ],
-        callback,
+        callback
       );
     }
   }
@@ -196,7 +196,7 @@ class BootstrapCommand extends Command {
       err => {
         tracker.finish();
         callback(err);
-      },
+      }
     );
   }
 
@@ -330,8 +330,7 @@ class BootstrapCommand extends Command {
 
         // map to package or normalized external dependency
         .map(
-          name =>
-            findPackage(name, pkg.allDependencies[name]) || { name, version: pkg.allDependencies[name] },
+          name => findPackage(name, pkg.allDependencies[name]) || { name, version: pkg.allDependencies[name] }
         )
 
         // match external and version mismatched local packages
@@ -377,7 +376,7 @@ class BootstrapCommand extends Command {
           tracker.warn(
             "EHOIST_ROOT_VERSION",
             `The repository root depends on ${name}@${rootVersion}, ` +
-              `which differs from the more common ${name}@${commonVersion}.`,
+              `which differs from the more common ${name}@${commonVersion}.`
           );
         }
 
@@ -404,7 +403,7 @@ class BootstrapCommand extends Command {
             tracker.warn(
               "EHOIST_PKG_VERSION",
               `"${pkg}" package depends on ${name}@${version}, ` +
-                `which differs from the hoisted ${name}@${rootVersion}.`,
+                `which differs from the hoisted ${name}@${rootVersion}.`
             );
           }
 
@@ -467,7 +466,7 @@ class BootstrapCommand extends Command {
                       const src = this.hoistedDirectory(name);
                       PackageUtilities.createBinaryLink(src, pkg, linkDone);
                     }),
-                    itemDone,
+                    itemDone
                   );
                 } else {
                   itemDone();
@@ -477,9 +476,9 @@ class BootstrapCommand extends Command {
                 tracker.info("hoist", "Finished installing in root");
                 tracker.completeWork(1);
                 actionDone(err);
-              },
+              }
             );
-          },
+          }
         );
       });
 
@@ -517,7 +516,7 @@ class BootstrapCommand extends Command {
             tracker.info("hoist", "Finished pruning hoisted dependencies");
             tracker.completeWork(1); // the action "work"
             actionDone(err);
-          },
+          }
         );
       });
     }
@@ -543,7 +542,7 @@ class BootstrapCommand extends Command {
                 tracker.verbose("installed leaf", pkg.name);
                 tracker.completeWork(1);
                 cb(err);
-              },
+              }
             );
           });
         }

@@ -93,7 +93,7 @@ describe("GitUtilities", () => {
       expect(ChildProcessUtilities.execSync).lastCalledWith(
         "git",
         ["commit", "--no-gpg-sign", "-m", "foo"],
-        opts,
+        opts
       );
       expect(tempWrite.sync).not.toBeCalled();
     });
@@ -107,7 +107,7 @@ describe("GitUtilities", () => {
       expect(ChildProcessUtilities.execSync).lastCalledWith(
         "git",
         ["commit", "--no-gpg-sign", "-F", "TEMPFILE"],
-        opts,
+        opts
       );
       expect(tempWrite.sync).lastCalledWith(`foo${EOL}bar`, "lerna-commit.txt");
     });
@@ -151,7 +151,7 @@ describe("GitUtilities", () => {
       expect(ChildProcessUtilities.execSync).lastCalledWith(
         "git",
         ["rev-list", "--tags", "--max-count=1"],
-        opts,
+        opts
       );
     });
   });
@@ -179,7 +179,7 @@ describe("GitUtilities", () => {
       expect(ChildProcessUtilities.execSync).lastCalledWith(
         "git",
         ["rev-list", "--max-parents=0", "HEAD"],
-        opts,
+        opts
       );
     });
   });
@@ -198,7 +198,7 @@ describe("GitUtilities", () => {
       expect(ChildProcessUtilities.execSync).lastCalledWith(
         "git",
         ["push", "origin", "foo@1.0.1", "foo-bar@1.0.0"],
-        opts,
+        opts
       );
     });
   });
@@ -211,7 +211,7 @@ describe("GitUtilities", () => {
       expect(ChildProcessUtilities.execSync).lastCalledWith(
         "git",
         ["describe", "--tags", "--abbrev=0"],
-        opts,
+        opts
       );
     });
   });
@@ -233,7 +233,7 @@ describe("GitUtilities", () => {
       expect(ChildProcessUtilities.execSync).lastCalledWith(
         "git",
         ["diff", "--name-only", "foo@1.0.0", "--", "packages/foo"],
-        opts,
+        opts
       );
     });
   });
@@ -255,7 +255,7 @@ describe("GitUtilities", () => {
       expect(ChildProcessUtilities.execSync).lastCalledWith(
         "git",
         ["rev-parse", "--abbrev-ref", "HEAD"],
-        opts,
+        opts
       );
     });
   });
@@ -276,7 +276,7 @@ describe("GitUtilities", () => {
       expect(ChildProcessUtilities.execSync).lastCalledWith(
         "git",
         ["checkout", "--", "packages/*/package.json"],
-        opts,
+        opts
       );
     });
   });
