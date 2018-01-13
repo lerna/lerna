@@ -78,7 +78,7 @@ function updateFixedRootChangelog(pkg, opts) {
     "-p",
     exports.changelogPreset(opts),
     "--context",
-    path.resolve(__dirname, "..", "lib", "ConventionalChangelogContext.js"),
+    path.resolve(__dirname, "ConventionalChangelogContext.js"),
   ];
   exports.updateChangelog(pkg, opts, "updateFixedRootChangelog", args);
 }

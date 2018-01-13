@@ -2,20 +2,17 @@
   "name": "lerna",
   "version": "2.7.2",
   "description": "Tool for managing JavaScript projects with multiple packages",
-  "main": "lib/index.js",
+  "main": "src/index.js",
   "files": [
     "bin",
-    "lib"
+    "src"
   ],
   "scripts": {
-    "build": "babel src -d lib",
     "ci": "npm test -- --coverage --verbose && npm run integration",
-    "dev": "babel -w src -d lib",
     "fix": "npm run lint -- --fix",
     "preintegration": "npm pack",
     "integration": "cross-env LC_ALL=en-US NODE_ENV=test jest --config test/config/integration.json",
     "lint": "eslint . --ignore-path .gitignore --cache",
-    "prepublish": "npm run build",
     "pretest": "npm run lint",
     "test": "cross-env LC_ALL=en-US NODE_ENV=test jest",
     "test:watch": "cross-env LC_ALL=en-US NODE_ENV=test jest --watchAll --no-watchman",

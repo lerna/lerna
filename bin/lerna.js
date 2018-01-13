@@ -13,4 +13,4 @@ const context = {
   },
 };
 
-require("../lib/cli")().parse(argv, context);
+require("../src/cli")().parse(argv, context);

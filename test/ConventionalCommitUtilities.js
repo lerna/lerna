@@ -291,7 +291,7 @@ describe("ConventionalCommitUtilities", () => {
           "-p",
           "angular",
           "--context",
-          path.resolve(__dirname, "..", "lib", "ConventionalChangelogContext.js"),
+          path.resolve(__dirname, "..", "src", "ConventionalChangelogContext.js"),
         ]
       );
     });
