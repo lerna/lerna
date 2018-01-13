@@ -73,8 +73,6 @@
     "lerna": "./bin/lerna.js"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-preset-env": "^1.6.0",
     "cross-env": "^5.0.5",
     "eslint": "^4.5.0",
     "eslint-config-airbnb-base": "^12.1.0",
