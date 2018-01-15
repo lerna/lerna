@@ -653,10 +653,10 @@ To spawn long-running processes, pass the `--parallel` flag:
 $ lerna exec --parallel -- babel src -d lib -w
 ```
 
-You may also get the name of the current package through the environment variable `LERNA_PACKAGE_NAME`:
+You may also get the name and path of the current package through the environment variables `LERNA_PACKAGE_NAME` and `LERNA_PACKAGE_PATH`:
 
 ```sh
-$ lerna exec -- npm view \$LERNA_PACKAGE_NAME
+$ lerna exec -- echo \$LERNA_PACKAGE_PATH - \$LERNA_PACKAGE_NAME
 ```
 
 You may also run a script located in the root dir, in a complicated dir structure through the environment variable `LERNA_ROOT_PATH`:
