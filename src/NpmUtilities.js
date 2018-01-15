@@ -136,11 +136,21 @@ export default class NpmUtilities {
     ChildProcessUtilities.spawnStreaming(npmClient, ["run", script, ...args], opts, pkg.name, callback);
   }
 
-  static publishTaggedInDir(tag, directory, { client = "npm", registry }, callback) {
+  static publishTaggedInDir(tag, pkg, { npmClient, registry }, callback) {
+    const directory = pkg.location;
+
     log.silly("publishTaggedInDir", tag, path.basename(directory));
 
     const opts = NpmUtilities.getExecOpts(directory, registry);
-    ChildProcessUtilities.exec(client, ["publish", "--tag", tag.trim()], opts, callback);
+    const args = ["publish", "--tag", tag.trim()];
+
+    if (npmClient === "yarn") {
+      // skip prompt for new version, use existing instead
+      // https://yarnpkg.com/en/docs/cli/publish#toc-yarn-publish-new-version
+      args.push("--new-version", pkg.version);
+    }
+
+    ChildProcessUtilities.exec(npmClient, args, opts, callback);
   }
 
   static getExecOpts(directory, registry) {

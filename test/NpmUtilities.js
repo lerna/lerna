@@ -210,35 +210,47 @@ describe("NpmUtilities", () => {
 
   describe(".publishTaggedInDir()", () => {
     const directory = "/test/publishTaggedInDir";
+    const pkg = { name: "test", location: directory, version: "1.10.100" };
     const callback = () => {};
 
     beforeEach(stubExecOpts);
     afterEach(resetExecOpts);
 
     it("runs npm publish in a directory with --tag support", () => {
-      NpmUtilities.publishTaggedInDir("published-tag", directory, {}, callback);
+      const npmClient = "npm";
+      NpmUtilities.publishTaggedInDir("published-tag", pkg, { npmClient }, callback);
 
-      const cmd = "npm";
       const args = ["publish", "--tag", "published-tag"];
       const opts = { directory, registry: undefined };
-      expect(ChildProcessUtilities.exec).lastCalledWith(cmd, args, opts, expect.any(Function));
+      expect(ChildProcessUtilities.exec).lastCalledWith(npmClient, args, opts, expect.any(Function));
     });
 
     it("trims trailing whitespace in tag parameter", () => {
-      NpmUtilities.publishTaggedInDir("trailing-tag ", directory, {}, callback);
+      NpmUtilities.publishTaggedInDir("trailing-tag ", pkg, { npmClient: "npm" }, callback);
 
       const actualtag = ChildProcessUtilities.exec.mock.calls[0][1][2];
       expect(actualtag).toBe("trailing-tag");
     });
 
     it("supports custom registry", () => {
+      const npmClient = "npm";
       const registry = "https://custom-registry/publishTaggedInDir";
-      NpmUtilities.publishTaggedInDir("published-tag", directory, { registry }, callback);
+      NpmUtilities.publishTaggedInDir("custom-registry", pkg, { npmClient, registry }, callback);
 
-      const cmd = "npm";
-      const args = ["publish", "--tag", "published-tag"];
+      const args = ["publish", "--tag", "custom-registry"];
       const opts = { directory, registry };
-      expect(ChildProcessUtilities.exec).lastCalledWith(cmd, args, opts, expect.any(Function));
+      expect(ChildProcessUtilities.exec).lastCalledWith(npmClient, args, opts, expect.any(Function));
+    });
+
+    describe("with npmClient yarn", () => {
+      it("appends --new-version to avoid interactive prompt", () => {
+        const npmClient = "yarn";
+        NpmUtilities.publishTaggedInDir("yarn-publish", pkg, { npmClient }, callback);
+
+        const args = ["publish", "--tag", "yarn-publish", "--new-version", "1.10.100"];
+        const opts = { directory, registry: undefined };
+        expect(ChildProcessUtilities.exec).lastCalledWith(npmClient, args, opts, expect.any(Function));
+      });
     });
   });
 
