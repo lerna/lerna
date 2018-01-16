@@ -245,4 +245,33 @@ describe("ImportCommand", () => {
       expect(await pathExists(newFilePath)).toBe(true);
     });
   });
+
+  describe("with non-root Lerna dir", () => {
+    let testDir;
+    let lernaRootDir;
+    let externalDir;
+    let lernaImport;
+
+    beforeEach(async () => {
+      const [extDir, fixtureDir] = await Promise.all([
+        initFixture("ImportCommand/external", "Init external commit"),
+        initFixture("ImportCommand/lerna-not-in-root"),
+      ]);
+
+      externalDir = extDir;
+      testDir = fixtureDir;
+      lernaRootDir = path.join(testDir, "subdir");
+      lernaImport = run(lernaRootDir);
+    });
+
+    // Issue 1197
+    it("creates a module in packages location with imported commit history", async () => {
+      const packageJson = path.join(lernaRootDir, "packages", path.basename(externalDir), "package.json");
+
+      await lernaImport(externalDir);
+
+      expect(await lastCommitInDir(testDir)).toBe("Init external commit");
+      expect(await pathExists(packageJson)).toBe(true);
+    });
+  });
 });
