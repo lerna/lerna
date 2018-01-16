@@ -5,6 +5,7 @@ export default class ValidationError extends Error {
     super(message);
     this.name = "ValidationError";
     this.prefix = prefix;
+    log.resume(); // might be paused, noop otherwise
     log.error(prefix, message);
   }
 }

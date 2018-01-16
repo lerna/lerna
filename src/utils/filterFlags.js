@@ -6,5 +6,5 @@ import _ from "lodash";
  * and yargs spam.
  */
 export default function filterFlags(argv) {
-  return _.omit(_.omitBy(argv, _.isNil), ["h", "help", "v", "version", "$0"]);
+  return _.omit(_.omitBy(argv, _.isNil), ["h", "help", "v", "version", "$0", "_onRejected"]);
 }
