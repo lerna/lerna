@@ -173,7 +173,7 @@ export default class PublishCommand extends Command {
     this.gitEnabled = !(this.options.canary || this.options.skipGit);
 
     this.npmConfig = {
-      client: this.options.npmClient || "npm",
+      npmClient: this.options.npmClient || "npm",
       registry: this.npmRegistry,
     };
 
@@ -730,7 +730,7 @@ export default class PublishCommand extends Command {
         const run = cb => {
           tracker.verbose("publishing", pkg.name);
 
-          NpmUtilities.publishTaggedInDir(tag, pkg.location, this.npmConfig, err => {
+          NpmUtilities.publishTaggedInDir(tag, pkg, this.npmConfig, err => {
             // FIXME: this err.stack conditional is too cute
             err = (err && err.stack) || err; // eslint-disable-line no-param-reassign
 

@@ -47,7 +47,7 @@ const consoleOutput = () => output.mock.calls.map(args => normalizeNewline(args[
 const publishedTagInDirectories = testDir =>
   NpmUtilities.publishTaggedInDir.mock.calls.reduce((arr, args) => {
     const tag = args[0];
-    const dir = normalizeRelativeDir(testDir, args[1]);
+    const dir = normalizeRelativeDir(testDir, args[1].location);
     arr.push({ dir, tag });
     return arr;
   }, []);
