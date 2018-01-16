@@ -3,7 +3,7 @@
 #### :bug: Bug Fix
 
 * [#1194](https://github.com/lerna/lerna/pull/1194) Treat 'lerna run test' like any other command. ([@tkrotoff](https://github.com/tkrotoff))
-* [#1199](https://github.com/lerna/lerna/pull/1199) Fix import command so it works if Lerna root is a subdir of git root. [@RoystonS](https://github.com/RoystonS))
+* [#1199](https://github.com/lerna/lerna/pull/1199) Fix import command so it works if Lerna root is a subdir of git root. ([@RoystonS](https://github.com/RoystonS))
 * [#1204](https://github.com/lerna/lerna/pull/1204) Avoid interactive prompt during yarn publish. ([@evocateur](https://github.com/evocateur))
 
 #### Committers: 3
