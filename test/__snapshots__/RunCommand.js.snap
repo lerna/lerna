@@ -56,12 +56,3 @@ Array [
   "packages/package-3 env",
 ]
 `;
-
-exports[`run test 1`] = `
-Array [
-  "packages/package-1 test",
-  "packages/package-4 test",
-  "packages/package-2 test",
-  "packages/package-3 test",
-]
-`;

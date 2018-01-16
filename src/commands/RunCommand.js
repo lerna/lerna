@@ -63,7 +63,7 @@ export default class RunCommand extends Command {
 
     const { filteredPackages } = this;
 
-    if (script === "test" || script === "env") {
+    if (script === "env") {
       this.packagesWithScript = filteredPackages;
     } else {
       this.packagesWithScript = filteredPackages.filter(pkg => pkg.scripts && pkg.scripts[script]);

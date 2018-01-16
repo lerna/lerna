@@ -69,12 +69,6 @@ describe("RunCommand", () => {
       expect(ranInPackagesStreaming(testDir)).toMatchSnapshot("run <script> --stream");
     });
 
-    it("always runs test script", async () => {
-      await lernaRun("test");
-
-      expect(ranInPackages(testDir)).toMatchSnapshot("run test");
-    });
-
     it("always runs env script", async () => {
       await lernaRun("env");
 
