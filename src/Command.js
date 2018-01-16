@@ -195,8 +195,6 @@ export default class Command {
   }
 
   run() {
-    // no logging is emitted until run() is called
-    log.resume();
     log.info("version", this.lernaVersion);
 
     return new Promise((resolve, reject) => {
@@ -213,6 +211,7 @@ export default class Command {
       };
 
       try {
+        this.configureLogging();
         this.runValidations();
         this.runPreparations();
       } catch (err) {
@@ -223,13 +222,20 @@ export default class Command {
     });
   }
 
-  runValidations() {
+  configureLogging() {
     // this.options getter might throw (invalid JSON in lerna.json)
-    const { loglevel, independent, onlyExplicitUpdates } = this.options;
+    const { loglevel } = this.options;
 
     if (loglevel) {
       log.level = loglevel;
     }
+
+    // emit all buffered logs at configured level and higher
+    log.resume();
+  }
+
+  runValidations() {
+    const { independent, onlyExplicitUpdates } = this.options;
 
     if (this.requiresGit && !GitUtilities.isInitialized(this.execOpts)) {
       throw new ValidationError(
