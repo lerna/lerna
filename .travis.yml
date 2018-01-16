@@ -1,3 +1,6 @@
+# don't build tags, it's redundant
+if: tag IS blank
+
 git:
   depth: 1
 sudo: false
