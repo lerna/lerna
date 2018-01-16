@@ -7,7 +7,7 @@ const gitInit = require("./gitInit");
 module.exports = initFixture;
 
 async function initFixture(fixturePath, commitMessage = "Init commit") {
-  const testDir = await tempy.directoryAsync();
+  const testDir = tempy.directory();
   await copyFixture(testDir, fixturePath);
   await gitInit(testDir, commitMessage);
   return testDir;
