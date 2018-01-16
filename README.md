@@ -462,6 +462,9 @@ Useful for bypassing the user input prompt if you already know which version to 
 $ lerna publish -m "chore(release): publish %s"
 # commit message = "chore(release): publish v1.0.0"
 
+$ lerna publish -m "chore(release): publish %v"
+# commit message = "chore(release): publish 1.0.0"
+
 $ lerna publish -m "chore(release): publish" --independent
 # commit message = "chore(release): publish
 #
@@ -474,6 +477,7 @@ for publication. Useful for integrating lerna into projects that expect commit m
 to certain guidelines, such as projects which use [commitizen](https://github.com/commitizen/cz-cli) and/or [semantic-release](https://github.com/semantic-release/semantic-release).
 
 If the message contains `%s`, it will be replaced with the new global version version number prefixed with a "v".
+If the message contains `%v`, it will be replaced with the new global version version number without the leading "v".
 Note that this only applies when using the default "fixed" versioning mode, as there is no "global" version when using `--independent`.
 
 This can be configured in lerna.json, as well:
