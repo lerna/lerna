@@ -772,9 +772,14 @@ describe("PublishCommand", () => {
       }),
     );
 
-    it("commits changes with a custom message", () =>
+    it("commits changes with a custom message using %s", () =>
       run(testDir)("--message", "chore: Release %s :rocket:").then(() => {
         expect(GitUtilities.commit).lastCalledWith("chore: Release v1.0.1 :rocket:", execOpts(testDir));
+      }));
+
+    it("commits changes with a custom message using %v", () =>
+      run(testDir)("--message", "chore: Release %v :rocket:").then(() => {
+        expect(GitUtilities.commit).lastCalledWith("chore: Release 1.0.1 :rocket:", execOpts(testDir));
       }));
   });
 
