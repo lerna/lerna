@@ -1,3 +1,18 @@
+## v2.7.2 (2018-01-16)
+
+#### :rocket: Enhancement
+
+* [#1205](https://github.com/lerna/lerna/pull/1205) Add %v as placeholder for raw version in `--message`. ([@mojavelinux](https://github.com/mojavelinux))
+
+#### :bug: Bug Fix
+
+* [#1206](https://github.com/lerna/lerna/pull/1206) Avoid dropping early logs below default level. ([@evocateur](https://github.com/evocateur))
+
+#### Committers: 2
+
+* Dan Allen ([mojavelinux](https://github.com/mojavelinux))
+* Daniel Stockman ([evocateur](https://github.com/evocateur))
+
 ## v2.7.1 (2018-01-16)
 
 #### :bug: Bug Fix
