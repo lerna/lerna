@@ -46,7 +46,7 @@
     "globby": "^7.1.1",
     "graceful-fs": "^4.1.11",
     "hosted-git-info": "^2.5.0",
-    "inquirer": "^3.2.2",
+    "inquirer": "^5.0.0",
     "is-ci": "^1.0.10",
     "load-json-file": "^4.0.0",
     "lodash": "^4.17.4",
