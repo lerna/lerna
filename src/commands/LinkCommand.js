@@ -3,8 +3,7 @@ import PackageUtilities from "../PackageUtilities";
 
 export function handler(argv) {
   // eslint-disable-next-line no-use-before-define
-  const cmd = new LinkCommand([argv.pkg], argv, argv._cwd);
-  return cmd.run().then(argv._onResolved, argv._onRejected);
+  return new LinkCommand(argv);
 }
 
 export const command = "link";

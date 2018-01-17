@@ -7,8 +7,7 @@ import PackageUtilities from "../PackageUtilities";
 
 export function handler(argv) {
   // eslint-disable-next-line no-use-before-define
-  const cmd = new RunCommand([argv.script, ...argv.args], argv, argv._cwd);
-  return cmd.run().then(argv._onResolved, argv._onRejected);
+  return new RunCommand(argv);
 }
 
 export const command = "run <script> [args..]";
@@ -49,7 +48,7 @@ export default class RunCommand extends Command {
   }
 
   initialize(callback) {
-    const [script, ...args] = this.input;
+    const { script, args } = this.options;
     this.script = script;
     this.args = args;
 

@@ -6,11 +6,10 @@ import GitUtilities from "../GitUtilities";
 
 export function handler(argv) {
   // eslint-disable-next-line no-use-before-define
-  const cmd = new DiffCommand([argv.pkg], argv, argv._cwd);
-  return cmd.run().then(argv._onResolved, argv._onRejected);
+  return new DiffCommand(argv);
 }
 
-export const command = "diff [pkg]";
+export const command = "diff [pkgName]";
 
 export const describe = "Diff all packages or a single package since the last release.";
 
@@ -26,7 +25,7 @@ function getLastCommit(execOpts) {
 
 export default class DiffCommand extends Command {
   initialize(callback) {
-    const packageName = this.input[0];
+    const packageName = this.options.pkgName;
 
     // don't interrupt spawned or streaming stdio
     this.logger.disableProgress();

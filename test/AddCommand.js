@@ -30,8 +30,6 @@ const expectError = async fn => {
   }
 };
 
-const commandFlags = mock => mock.mock.calls[0][1];
-
 jest.mock("../src/NpmUtilities");
 jest.mock("../src/commands/BootstrapCommand");
 
@@ -165,30 +163,36 @@ describe("AddCommand", () => {
     const testDir = await initFixture("AddCommand/basic");
     const lernaAdd = run(testDir);
     await lernaAdd("@test/package-1");
-    const flags = commandFlags(BootstrapCommand);
 
-    expect(flags).toHaveProperty("scope");
-    expect(flags.scope).toEqual(["@test/package-2", "package-3", "package-4"]);
+    expect(BootstrapCommand).lastCalledWith(
+      expect.objectContaining({
+        scope: ["@test/package-2", "package-3", "package-4"],
+      }),
+    );
   });
 
   it("should only bootstrap scoped packages", async () => {
     const testDir = await initFixture("AddCommand/basic");
     const lernaAdd = run(testDir);
     await lernaAdd("@test/package-1", "--scope", "@test/package-2", "--scope", "package-3");
-    const flags = commandFlags(BootstrapCommand);
 
-    expect(flags).toHaveProperty("scope");
-    expect(flags.scope).toEqual(["@test/package-2", "package-3"]);
+    expect(BootstrapCommand).lastCalledWith(
+      expect.objectContaining({
+        scope: ["@test/package-2", "package-3"],
+      }),
+    );
   });
 
   it("should not bootstrap ignored packages", async () => {
     const testDir = await initFixture("AddCommand/basic");
     const lernaAdd = run(testDir);
     await lernaAdd("@test/package-1", "--ignore", "@test/package-2");
-    const flags = commandFlags(BootstrapCommand);
 
-    expect(flags).toHaveProperty("scope");
-    expect(flags.scope).toEqual(["package-3", "package-4"]);
+    expect(BootstrapCommand).lastCalledWith(
+      expect.objectContaining({
+        scope: ["package-3", "package-4"],
+      }),
+    );
   });
 
   it("should not bootstrap unchanged packages", async () => {
@@ -216,7 +220,10 @@ describe("AddCommand", () => {
     expect(pkg3).toDependOn("pify", "^3.0.0");
     expect(pkg3).toDependOn("@test/package-2"); // existing, but should stay
 
-    const flags = commandFlags(BootstrapCommand);
-    expect(flags.scope).toEqual(["@test/package-1", "@test/package-2", "@test/package-3"]);
+    expect(BootstrapCommand).lastCalledWith(
+      expect.objectContaining({
+        scope: ["@test/package-1", "@test/package-2", "@test/package-3"],
+      }),
+    );
   });
 });

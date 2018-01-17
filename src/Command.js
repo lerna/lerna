@@ -92,19 +92,50 @@ class ValidationWarning extends Error {
 }
 
 export default class Command {
-  constructor(input, flags, cwd) {
+  constructor(argv) {
     log.pause();
     log.heading = "lerna";
 
-    this.input = input;
-    this._flags = flags;
-
-    log.silly("input", input);
-    log.silly("flags", filterFlags(flags));
+    this._argv = argv;
+    log.silly("argv", filterFlags(argv));
 
     this.lernaVersion = LERNA_VERSION;
-    this.repository = new Repository(cwd);
+    this.repository = new Repository(argv.cwd);
     this.logger = log.newGroup(this.name);
+
+    log.info("version", this.lernaVersion);
+
+    // launch the command
+    const runner = new Promise((resolve, reject) => {
+      const onComplete = (err, exitCode) => {
+        if (err) {
+          if (typeof err === "string") {
+            err = { stack: err }; // eslint-disable-line no-param-reassign
+          }
+          err.exitCode = exitCode;
+          reject(err);
+        } else {
+          resolve({ exitCode });
+        }
+      };
+
+      try {
+        this.configureLogging();
+        this.runValidations();
+        this.runPreparations();
+      } catch (err) {
+        return this._complete(err, 1, onComplete);
+      }
+
+      this.runCommand(onComplete);
+    });
+
+    // passed via yargs context, never actual CLI
+    runner.then(argv.onResolved, argv.onRejected);
+
+    // proxy "Promise" methods to "private" instance
+    this.then = (onResolved, onRejected) => runner.then(onResolved, onRejected);
+    this.catch = onRejected => runner.catch(onRejected);
   }
 
   get concurrency() {
@@ -172,7 +203,7 @@ export default class Command {
       this._options = _.defaults(
         {},
         // CLI flags, which if defined overrule subsequent values
-        this._flags,
+        this._argv,
         // Namespaced command options from `lerna.json`
         ...lernaCommandOverrides,
         // Global options from `lerna.json`
@@ -192,34 +223,6 @@ export default class Command {
       concurrency: DEFAULT_CONCURRENCY,
       sort: true,
     };
-  }
-
-  run() {
-    log.info("version", this.lernaVersion);
-
-    return new Promise((resolve, reject) => {
-      const onComplete = (err, exitCode) => {
-        if (err) {
-          if (typeof err === "string") {
-            err = { stack: err }; // eslint-disable-line no-param-reassign
-          }
-          err.exitCode = exitCode;
-          reject(err);
-        } else {
-          resolve({ exitCode });
-        }
-      };
-
-      try {
-        this.configureLogging();
-        this.runValidations();
-        this.runPreparations();
-      } catch (err) {
-        return this._complete(err, 1, onComplete);
-      }
-
-      this.runCommand(onComplete);
-    });
   }
 
   configureLogging() {

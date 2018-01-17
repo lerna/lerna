@@ -20,26 +20,26 @@ export default function yargsRunner(commandModule) {
     return (...args) =>
       new Promise((resolve, reject) => {
         const yargsMeta = {};
-        const onResolved = result => {
-          Object.assign(result, yargsMeta);
-          resolve(result);
-        };
-        const onRejected = result => {
-          Object.assign(result, yargsMeta);
-          // tests expect errors thrown to indicate failure,
-          // _not_ just non-zero exitCode
-          reject(result);
-        };
+
         const context = {
-          _cwd: cwd,
-          _onResolved: onResolved,
-          _onRejected: onRejected,
+          cwd,
+          onResolved: result => {
+            Object.assign(result, yargsMeta);
+            resolve(result);
+          },
+          onRejected: result => {
+            Object.assign(result, yargsMeta);
+            // tests expect errors thrown to indicate failure,
+            // _not_ just non-zero exitCode
+            reject(result);
+          },
         };
+
         const parseFn = (yargsError, parsedArgv, yargsOutput) => {
           Object.assign(yargsMeta, { parsedArgv, yargsOutput });
           // immediate rejection to avoid dangling promise timeout
           if (yargsError) {
-            onRejected(yargsError);
+            context.onRejected(yargsError);
           }
         };
 

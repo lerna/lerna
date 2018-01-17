@@ -6,11 +6,10 @@ import PackageUtilities from "../PackageUtilities";
 
 export function handler(argv) {
   // eslint-disable-next-line no-use-before-define
-  const cmd = new ExecCommand([argv.command, ...argv.args], argv, argv._cwd);
-  return cmd.run().then(argv._onResolved, argv._onRejected);
+  return new ExecCommand(argv);
 }
 
-export const command = "exec <command> [args..]";
+export const command = "exec <cmd> [args..]";
 
 export const describe = "Run an arbitrary command in each package.";
 
@@ -48,7 +47,7 @@ export default class ExecCommand extends Command {
   }
 
   initialize(callback) {
-    const [cmd, ...args] = this.input;
+    const { cmd, args } = this.options;
     this.command = cmd;
     this.args = args;
 

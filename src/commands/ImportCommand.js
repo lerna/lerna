@@ -10,8 +10,7 @@ import PromptUtilities from "../PromptUtilities";
 
 export function handler(argv) {
   // eslint-disable-next-line no-use-before-define
-  const cmd = new ImportCommand([argv.pathToRepo], argv, argv._cwd);
-  return cmd.run().then(argv._onResolved, argv._onRejected);
+  return new ImportCommand(argv);
 }
 
 export const command = "import <pathToRepo>";
@@ -41,7 +40,7 @@ export default class ImportCommand extends Command {
   }
 
   initialize(callback) {
-    const inputPath = this.input[0];
+    const inputPath = this.options.pathToRepo;
 
     const externalRepoPath = path.resolve(inputPath);
     const externalRepoBase = path.basename(externalRepoPath);
