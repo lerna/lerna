@@ -89,7 +89,6 @@
     "normalize-path": "^2.1.1",
     "path-key": "^2.0.1",
     "prettier": "^1.9.2",
-    "replacestream": "^4.0.2",
     "tempy": "^0.2.1",
     "touch": "^3.1.0"
   },
