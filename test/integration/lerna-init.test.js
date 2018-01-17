@@ -9,8 +9,6 @@ const tempy = require("tempy");
 const { LERNA_BIN } = require("../helpers/constants");
 const initFixture = require("../helpers/initFixture");
 
-const initEmptyDir = () => tempy.directoryAsync();
-
 const parsePackageJson = cwd => readPkg(path.join(cwd, "package.json"), { normalize: false });
 
 const parseLernaJson = cwd => loadJsonFile(path.join(cwd, "lerna.json"));
@@ -19,7 +17,7 @@ const loadMetaData = cwd => Promise.all([parsePackageJson(cwd), parseLernaJson(c
 
 describe("lerna init", () => {
   test("initializes empty directory", async () => {
-    const cwd = await initEmptyDir();
+    const cwd = tempy.directory();
 
     const { stderr } = await execa(LERNA_BIN, ["init"], { cwd });
     expect(stderr).toMatchSnapshot("stderr");

@@ -37,8 +37,6 @@ jest.mock("../src/GitUtilities");
 // silence logs
 log.level = "silent";
 
-const initEmptyDir = () => tempy.directoryAsync();
-
 describe("InitCommand", () => {
   beforeEach(() => {
     // defaults for most of these tests
@@ -61,7 +59,7 @@ describe("InitCommand", () => {
     let lernaInit;
 
     beforeEach(async () => {
-      testDir = await initEmptyDir();
+      testDir = tempy.directory();
       lernaInit = run(testDir);
 
       GitUtilities.isInitialized = jest.fn(() => false);
@@ -151,7 +149,7 @@ describe("InitCommand", () => {
     let lernaInit;
 
     beforeEach(async () => {
-      const dir = await initEmptyDir();
+      const dir = tempy.directory();
       testDir = path.join(dir, "subdir");
       lernaInit = run(testDir);
 

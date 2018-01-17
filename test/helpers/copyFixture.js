@@ -2,36 +2,33 @@
 
 const fs = require("fs-extra");
 const path = require("path");
-const replaceStream = require("replacestream");
+const globby = require("globby");
 const constants = require("./constants");
 
 module.exports = copyFixture;
 
 async function copyFixture(targetDir, fixturePath) {
   const fixtureDir = path.resolve(__dirname, `../fixtures/${fixturePath}`);
-  await fs.copy(fixtureDir, targetDir, { transform });
+  await fs.copy(fixtureDir, targetDir);
+
+  const jsonFiles = await globby(["./package.json", "**/lerna.json"], { cwd: targetDir, absolute: true });
+  await Promise.all(jsonFiles.map(fileName => transform(fileName)));
 }
 
 /**
- * During fixture copy, replace "__TEST_VERSION__" with the current version.
+ * During fixture copy, replace "__TEST_VERSION__" with the current version
+ * and "__TEST_PKG_URL__" with the generated file-url.
  * This is primarily for integration tests, but doesn't hurt unit tests.
  *
- * @param {stream.Readable} readStream
- * @param {stream.Writable} writeStream
- * @param {Object} file metadata
- * @property {String} file.name source path of file being copied
- *
- * @see https://github.com/jprichardson/node-fs-extra/blob/master/lib/copy/ncp.js#L105
+ * @param {String} fileName source path of file being copied
  */
-function transform(readStream, writeStream, file) {
-  let stream = readStream;
+async function transform(fileName) {
+  const original = await fs.readFile(fileName, "utf8");
+  const filtered = original
+    .replace(constants.__TEST_VERSION__, constants.LERNA_VERSION)
+    .replace(constants.__TEST_PKG_URL__, constants.LERNA_PKG_URL);
 
-  if (path.extname(file.name) === ".json") {
-    stream = stream.pipe(replaceStream(constants.__TEST_VERSION__, constants.LERNA_VERSION));
-    stream = stream.pipe(replaceStream(constants.__TEST_PKG_URL__, constants.LERNA_PKG_URL));
+  if (original !== filtered) {
+    await fs.writeFile(fileName, filtered, "utf8");
   }
-
-  writeStream.on("open", () => {
-    stream.pipe(writeStream);
-  });
 }

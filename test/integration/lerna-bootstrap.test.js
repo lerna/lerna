@@ -48,7 +48,7 @@ describe("lerna bootstrap", () => {
     });
 
     test("git repo check is ignored by default", async () => {
-      const cwd = await tempy.directoryAsync();
+      const cwd = tempy.directory();
       await copyFixture(cwd, "BootstrapCommand/integration");
       const args = ["bootstrap"];
 
