@@ -124,6 +124,12 @@ export const builder = {
     type: "boolean",
     default: undefined,
   },
+  "skip-git-push": {
+    group: "Command Options:",
+    describe: "Stop before actually pushing commits and tag to git",
+    type: "boolean",
+    default: undefined,
+  },
   "skip-npm": {
     group: "Command Options:",
     describe: "Stop before actually publishing change to npm.",
@@ -149,6 +155,7 @@ export default class PublishCommand extends Command {
       conventionalCommits: false,
       exact: false,
       skipGit: false,
+      skipGitPush: false,
       skipNpm: false,
       tempTag: false,
       yes: false,
@@ -171,6 +178,7 @@ export default class PublishCommand extends Command {
   initialize(callback) {
     this.gitRemote = this.options.gitRemote || "origin";
     this.gitEnabled = !(this.options.canary || this.options.skipGit);
+    this.gitPushEnabled = !(this.options.skipGitPush);
 
     this.npmConfig = {
       npmClient: this.options.npmClient || "npm",
@@ -300,7 +308,7 @@ export default class PublishCommand extends Command {
           return;
         }
 
-        if (this.gitEnabled) {
+        if (this.gitEnabled && this.gitPushEnabled) {
           this.logger.info("git", "Pushing tags...");
           GitUtilities.pushWithTags(this.gitRemote, this.tags, this.execOpts);
         }
