@@ -23,10 +23,12 @@ async function copyFixture(targetDir, fixturePath) {
  * @param {String} fileName source path of file being copied
  */
 async function transform(fileName) {
-  let data = await fs.readFile(fileName, "utf8");
+  const original = await fs.readFile(fileName, "utf8");
+  const filtered = original
+    .replace(constants.__TEST_VERSION__, constants.LERNA_VERSION)
+    .replace(constants.__TEST_PKG_URL__, constants.LERNA_PKG_URL);
 
-  data = data.replace(constants.__TEST_VERSION__, constants.LERNA_VERSION);
-  data = data.replace(constants.__TEST_PKG_URL__, constants.LERNA_PKG_URL);
-
-  return fs.writeFile(fileName, data, "utf8");
+  if (original !== filtered) {
+    await fs.writeFile(fileName, filtered, "utf8");
+  }
 }
