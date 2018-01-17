@@ -19,9 +19,11 @@ log.level = "silent";
 
 describe("Repository", () => {
   let testDir;
+  let testDirWithWorkspaces;
 
   beforeAll(async () => {
     testDir = await initFixture("Repository/basic");
+    testDirWithWorkspaces = await initFixture("Repository/yarn-workspaces");
   });
 
   describe(".rootPath", () => {
@@ -136,6 +138,11 @@ describe("Repository", () => {
       const customPackages = [".", "my-packages/*"];
       repo.lernaJson.packages = customPackages;
       expect(repo.packageConfigs).toBe(customPackages);
+    });
+
+    it("returns workspace packageConfigs", () => {
+      const repo = new Repository(testDirWithWorkspaces);
+      expect(repo.packageConfigs).toEqual(["packages/*"]);
     });
   });
 
