@@ -144,6 +144,12 @@ describe("Repository", () => {
       const repo = new Repository(testDirWithWorkspaces);
       expect(repo.packageConfigs).toEqual(["packages/*"]);
     });
+
+    it("throws with friendly error if workspaces are not configured", () => {
+      const repo = new Repository(testDir);
+      repo.lernaJson.useWorkspaces = true;
+      expect(() => repo.packageConfigs).toThrowErrorMatchingSnapshot();
+    });
   });
 
   describe("get .packageParentDirs", () => {

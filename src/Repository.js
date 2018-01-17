@@ -61,6 +61,14 @@ class Repository {
 
   get packageConfigs() {
     if (this.lernaJson.useWorkspaces) {
+      if (!this.packageJson.workspaces) {
+        throw new ValidationError(
+          "Invalid workspaces",
+          "workspaces need to be defined in the root package.json." +
+            "See: https://github.com/lerna/lerna#--use-workspaces"
+        );
+      }
+
       return this.packageJson.workspaces;
     }
     return this.lernaJson.packages || [DEFAULT_PACKAGE_GLOB];
