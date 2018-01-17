@@ -35,7 +35,7 @@ function CLI(argv, cwd) {
     .usage("Usage: $0 <command> [options]")
     .options(globalOptions)
     .group(globalKeys, "Global Options:")
-    .commandDir("../lib/commands")
+    .commandDir("./commands")
     .command("*", "", {}, parsed => {
       // a default command with no description catches typos or missing subcommands
       log.error("lerna", `${parsed._.length ? "Invalid" : "Missing"} command!`);

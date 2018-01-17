@@ -90,7 +90,7 @@ describe("ExecCommand", () => {
         expect.objectContaining({
           reject: false,
         }),
-        expect.any(Function),
+        expect.any(Function)
       );
     });
 
@@ -109,7 +109,7 @@ describe("ExecCommand", () => {
           reject: true,
           shell: true,
         },
-        expect.any(Function),
+        expect.any(Function)
       );
     });
 
@@ -137,7 +137,7 @@ describe("ExecCommand", () => {
           reject: true,
           shell: true,
         },
-        expect.any(Function),
+        expect.any(Function)
       );
     });
 
@@ -156,7 +156,7 @@ describe("ExecCommand", () => {
         "ls",
         ["-la"],
         expect.any(Object),
-        expect.any(Function),
+        expect.any(Function)
       );
     });
 

@@ -19,9 +19,7 @@
       - 2
     node/no-unsupported-features:
       - error
-      - version: 4
-        ignores:
-          - syntax
+      - version: 6.9.0
     no-param-reassign:
       - error
       - ignorePropertyModificationsFor:

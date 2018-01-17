@@ -40,7 +40,7 @@ describe("ConventionalCommitUtilities", () => {
         },
         opts,
         "",
-        args,
+        args
       );
 
       expect(recommendVersion).toBe("2.0.0");
@@ -56,7 +56,7 @@ describe("ConventionalCommitUtilities", () => {
 
           ### Features
 
-          * feat: I should be placed in the CHANGELOG`,
+          * feat: I should be placed in the CHANGELOG`
       );
 
       const opts = { cwd: "test" };
@@ -80,7 +80,7 @@ describe("ConventionalCommitUtilities", () => {
         },
         opts,
         "",
-        args,
+        args
       );
 
       expect(FileSystemUtilities.existsSync).lastCalledWith(path.normalize("/foo/bar/CHANGELOG.md"));
@@ -97,7 +97,7 @@ describe("ConventionalCommitUtilities", () => {
 
           ### Features
 
-          * feat: I should be placed in the CHANGELOG`,
+          * feat: I should be placed in the CHANGELOG`
       );
     });
 
@@ -110,7 +110,7 @@ describe("ConventionalCommitUtilities", () => {
 
           ### Bug Fixes
 
-          * fix: a second commit for our CHANGELOG`,
+          * fix: a second commit for our CHANGELOG`
       );
 
       FileSystemUtilities.readFileSync = jest.fn(
@@ -125,7 +125,7 @@ describe("ConventionalCommitUtilities", () => {
           ### Features
 
           * feat: I should be placed in the CHANGELOG
-        `,
+        `
       );
 
       ConventionalCommitUtilities.updateChangelog({
@@ -154,7 +154,7 @@ describe("ConventionalCommitUtilities", () => {
           ### Features
 
           * feat: I should be placed in the CHANGELOG
-        `,
+        `
       );
     });
 
@@ -162,7 +162,7 @@ describe("ConventionalCommitUtilities", () => {
       FileSystemUtilities.existsSync = jest.fn(() => true);
       ChildProcessUtilities.execSync = jest.fn(
         () => dedent`<a name="1.0.1"></a>
-          ## 1.0.1 (2017-08-11)(/compare/v1.0.1...v1.0.0) (2017-08-09)`,
+          ## 1.0.1 (2017-08-11)(/compare/v1.0.1...v1.0.0) (2017-08-09)`
       );
       FileSystemUtilities.readFileSync = jest.fn(
         () => dedent`
@@ -176,7 +176,7 @@ describe("ConventionalCommitUtilities", () => {
           ### Features
 
           * add a feature aaa1111
-        `,
+        `
       );
 
       ConventionalCommitUtilities.updateChangelog({
@@ -202,7 +202,7 @@ describe("ConventionalCommitUtilities", () => {
           ### Features
 
           * add a feature aaa1111
-        `,
+        `
       );
     });
 
@@ -214,7 +214,7 @@ describe("ConventionalCommitUtilities", () => {
           name: "bar",
           location: "/foo/bar",
         },
-        null,
+        null
       );
 
       expect(ConventionalCommitUtilities.updateChangelog).toBeCalledWith(
@@ -234,7 +234,7 @@ describe("ConventionalCommitUtilities", () => {
           path.normalize("/foo/bar/package.json"),
           "-p",
           "angular",
-        ],
+        ]
       );
     });
 
@@ -246,7 +246,7 @@ describe("ConventionalCommitUtilities", () => {
           name: "bar",
           location: "/foo/bar",
         },
-        null,
+        null
       );
 
       expect(ConventionalCommitUtilities.updateChangelog).toBeCalledWith(
@@ -264,7 +264,7 @@ describe("ConventionalCommitUtilities", () => {
           path.normalize("/foo/bar/package.json"),
           "-p",
           "angular",
-        ],
+        ]
       );
     });
 
@@ -276,7 +276,7 @@ describe("ConventionalCommitUtilities", () => {
           name: "bar",
           location: "/foo/bar",
         },
-        null,
+        null
       );
 
       expect(ConventionalCommitUtilities.updateChangelog).toBeCalledWith(
@@ -291,8 +291,8 @@ describe("ConventionalCommitUtilities", () => {
           "-p",
           "angular",
           "--context",
-          path.resolve(__dirname, "..", "lib", "ConventionalChangelogContext.js"),
-        ],
+          path.resolve(__dirname, "..", "src", "ConventionalChangelogContext.js"),
+        ]
       );
     });
   });

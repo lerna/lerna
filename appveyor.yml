@@ -8,8 +8,6 @@ environment:
   matrix:
     - nodejs_version: "8"
     - nodejs_version: "6"
-    # node v4 is broken on appveyor
-    # - nodejs_version: "4"
 
 matrix:
   fast_finish: true

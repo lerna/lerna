@@ -111,7 +111,7 @@ class ImportCommand extends Command {
 
     this.logger.info(
       "",
-      `About to import ${this.commits.length} commits from ${inputPath} into ${targetDir}`,
+      `About to import ${this.commits.length} commits from ${inputPath} into ${targetDir}`
     );
 
     if (this.options.yes) {
@@ -214,7 +214,7 @@ class ImportCommand extends Command {
         }
 
         callback(err, !err);
-      },
+      }
     );
   }
 }

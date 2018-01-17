@@ -96,7 +96,7 @@ class Package {
           directory: this.location,
           npmClient: "npm",
         },
-        callback,
+        callback
       );
     } else {
       callback();
@@ -119,7 +119,7 @@ class Package {
           directory: this.location,
           npmClient: "npm",
         },
-        callback,
+        callback
       );
     } else {
       callback();
@@ -153,7 +153,7 @@ class Package {
         dedent`
           depends on "${dependency.name}@${expectedVersion}"
           instead of "${dependency.name}@${actualVersion}"
-        `,
+        `
       );
     }
 

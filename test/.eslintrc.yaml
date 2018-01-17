@@ -7,6 +7,11 @@
   plugins:
     - jest
   rules:
+    node/no-unsupported-features:
+      - error
+      - ignores:
+          - asyncAwait
+          # jest transpiles fast-async
     no-console: off
     no-underscore-dangle:
       - error

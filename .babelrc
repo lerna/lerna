@@ -1,28 +1,9 @@
 {
-  "presets": [
-    ["env", {
-      "targets": {
-        "node": 4
+  "plugins": [
+    ["fast-async", {
+      "compiler": {
+        "noRuntime": true
       }
     }]
-  ],
-  "env": {
-    "test": {
-      "presets": [
-        ["env", {
-          "exclude": ["transform-async-to-generator", "transform-regenerator"],
-          "targets": {
-            "node": "current"
-          }
-        }]
-      ],
-      "plugins": [
-        ["fast-async", {
-          "compiler": {
-            "noRuntime": true
-          }
-        }]
-      ]
-    }
-  }
+  ]
 }

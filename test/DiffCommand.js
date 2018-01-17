@@ -35,7 +35,7 @@ describe("DiffCommand", () => {
       lernaDiff = run(testDir);
       GitUtilities.isInitialized.mockImplementation(() => true);
       GitUtilities.hasCommit.mockImplementation(() => true);
-    }),
+    })
   );
   afterEach(() => jest.resetAllMocks());
 
@@ -51,7 +51,7 @@ describe("DiffCommand", () => {
       expect.objectContaining({
         cwd: testDir,
       }),
-      expect.any(Function),
+      expect.any(Function)
     );
   });
 
@@ -68,7 +68,7 @@ describe("DiffCommand", () => {
       expect.objectContaining({
         cwd: testDir,
       }),
-      expect.any(Function),
+      expect.any(Function)
     );
   });
 
@@ -83,7 +83,7 @@ describe("DiffCommand", () => {
       expect.objectContaining({
         cwd: testDir,
       }),
-      expect.any(Function),
+      expect.any(Function)
     );
   });
 

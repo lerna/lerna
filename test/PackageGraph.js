@@ -21,7 +21,7 @@ describe("PackageGraph", () => {
           dependencies: { "my-dependency": "^1.0.0" },
           devDependencies: { "my-dev-dependency": "^1.0.0" },
         },
-        "/path/to/package1",
+        "/path/to/package1"
       ),
       new Package(
         {
@@ -33,7 +33,7 @@ describe("PackageGraph", () => {
           devDependencies: { "my-package-1": dependencyVersion },
           peerDependencies: { "my-package-1": ">=1.0.0" },
         },
-        "/path/to/package2",
+        "/path/to/package2"
       ),
     ];
   }

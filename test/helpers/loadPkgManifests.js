@@ -18,6 +18,6 @@ function loadPkgManifests(cwd) {
     {
       cwd,
       absolute: true,
-    },
+    }
   ).then(files => Promise.all(files.map(fp => loadJsonFile(fp))));
 }

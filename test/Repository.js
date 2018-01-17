@@ -27,7 +27,7 @@ describe("Repository", () => {
   beforeAll(() =>
     initFixture("Repository/basic").then(dir => {
       testDir = dir;
-    }),
+    })
   );
 
   describe(".rootPath", () => {

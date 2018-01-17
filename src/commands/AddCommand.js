@@ -62,8 +62,8 @@ class AddCommand extends Command {
 
     Promise.all(
       pkgs.map(({ name, versionRange }) =>
-        this.getPackageVersion(name, versionRange).then(version => ({ name, version, versionRange })),
-      ),
+        this.getPackageVersion(name, versionRange).then(version => ({ name, version, versionRange }))
+      )
     )
       .then(packagesToInstall => {
         this.packagesToInstall = packagesToInstall;
@@ -142,7 +142,7 @@ class AddCommand extends Command {
               changed,
             }));
           });
-      }),
+      })
     )
       .then(pkgs => {
         const changedPkgs = pkgs.filter(p => p.changed);

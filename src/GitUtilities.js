@@ -29,7 +29,7 @@ function isInitialized(opts) {
       ["rev-parse"],
       Object.assign({}, opts, {
         stdio: "ignore",
-      }),
+      })
     );
     initialized = true;
   } catch (err) {
@@ -144,7 +144,7 @@ function diffSinceIn(since, location, opts) {
   const diff = ChildProcessUtilities.execSync(
     "git",
     ["diff", "--name-only", since, "--", formattedLocation],
-    opts,
+    opts
   );
   log.silly("diff", diff);
 
