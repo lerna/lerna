@@ -1,5 +1,9 @@
-import _ from "lodash";
-import log from "npmlog";
+"use strict";
+
+const _ = require("lodash");
+const log = require("npmlog");
+
+module.exports = loggingOutput;
 
 // clear logs between tests
 afterEach(() => {
@@ -19,6 +23,6 @@ const getVisibleMessages = _.flow(
   _.compact,
 );
 
-export default function loggingOutput() {
+function loggingOutput() {
   return getVisibleMessages(log.record);
 }

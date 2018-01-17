@@ -1,12 +1,16 @@
-import { EOL } from "os";
-import log from "npmlog";
-import path from "path";
+"use strict";
+
+const { EOL } = require("os");
+const log = require("npmlog");
+const path = require("path");
+
 // mocked modules
-import writePkg from "write-pkg";
-import ChildProcessUtilities from "../src/ChildProcessUtilities";
-import FileSystemUtilities from "../src/FileSystemUtilities";
+const writePkg = require("write-pkg");
+const ChildProcessUtilities = require("../src/ChildProcessUtilities");
+const FileSystemUtilities = require("../src/FileSystemUtilities");
+
 // file under test
-import NpmUtilities from "../src/NpmUtilities";
+const NpmUtilities = require("../src/NpmUtilities");
 
 jest.mock("write-pkg");
 jest.mock("../src/ChildProcessUtilities");

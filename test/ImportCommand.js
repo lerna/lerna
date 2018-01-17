@@ -1,20 +1,22 @@
-import execa from "execa";
-import fs from "fs-extra";
-import log from "npmlog";
-import path from "path";
-import pathExists from "path-exists";
+"use strict";
+
+const execa = require("execa");
+const fs = require("fs-extra");
+const log = require("npmlog");
+const path = require("path");
+const pathExists = require("path-exists");
 
 // mocked or stubbed modules
-import PromptUtilities from "../src/PromptUtilities";
+const PromptUtilities = require("../src/PromptUtilities");
 
 // helpers
-import callsBack from "./helpers/callsBack";
-import initFixture from "./helpers/initFixture";
-import updateLernaConfig from "./helpers/updateLernaConfig";
-import yargsRunner from "./helpers/yargsRunner";
+const callsBack = require("./helpers/callsBack");
+const initFixture = require("./helpers/initFixture");
+const updateLernaConfig = require("./helpers/updateLernaConfig");
+const yargsRunner = require("./helpers/yargsRunner");
 
 // file under test
-import * as commandModule from "../src/commands/ImportCommand";
+const commandModule = require("../src/commands/ImportCommand");
 
 const run = yargsRunner(commandModule);
 

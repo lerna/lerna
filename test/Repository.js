@@ -1,16 +1,18 @@
-import log from "npmlog";
-import path from "path";
+"use strict";
+
+const log = require("npmlog");
+const path = require("path");
 
 // mocked or stubbed modules
-import findUp from "find-up";
-import loadJsonFile from "load-json-file";
-import readPkg from "read-pkg";
+const findUp = require("find-up");
+const loadJsonFile = require("load-json-file");
+const readPkg = require("read-pkg");
 
 // helpers
-import initFixture from "./helpers/initFixture";
+const initFixture = require("./helpers/initFixture");
 
 // file under test
-import Repository from "../src/Repository";
+const Repository = require("../src/Repository");
 
 // silence logs
 log.level = "silent";

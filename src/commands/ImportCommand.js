@@ -1,25 +1,27 @@
-import async from "async";
-import dedent from "dedent";
-import path from "path";
+"use strict";
 
-import ChildProcessUtilities from "../ChildProcessUtilities";
-import Command from "../Command";
-import FileSystemUtilities from "../FileSystemUtilities";
-import GitUtilities from "../GitUtilities";
-import PromptUtilities from "../PromptUtilities";
+const async = require("async");
+const dedent = require("dedent");
+const path = require("path");
 
-export function handler(argv) {
+const ChildProcessUtilities = require("../ChildProcessUtilities");
+const Command = require("../Command");
+const FileSystemUtilities = require("../FileSystemUtilities");
+const GitUtilities = require("../GitUtilities");
+const PromptUtilities = require("../PromptUtilities");
+
+exports.handler = function handler(argv) {
   // eslint-disable-next-line no-use-before-define
   return new ImportCommand(argv);
-}
+};
 
-export const command = "import <pathToRepo>";
+exports.command = "import <pathToRepo>";
 
-export const describe = dedent`
+exports.describe = dedent`
   Import the package in <pathToRepo> into packages/<directory-name> with commit history.
 `;
 
-export const builder = {
+exports.builder = {
   yes: {
     group: "Command Options:",
     describe: "Skip all confirmation prompts",
@@ -30,7 +32,7 @@ export const builder = {
   },
 };
 
-export default class ImportCommand extends Command {
+class ImportCommand extends Command {
   gitParamsForTargetCommits() {
     const params = ["log", "--format=%h"];
     if (this.options.flatten) {

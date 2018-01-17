@@ -6,9 +6,6 @@
       }
     }]
   ],
-  "plugins": [
-    "add-module-exports"
-  ],
   "env": {
     "test": {
       "presets": [
@@ -24,8 +21,7 @@
           "compiler": {
             "noRuntime": true
           }
-        }],
-        "add-module-exports"
+        }]
       ]
     }
   }

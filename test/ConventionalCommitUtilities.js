@@ -1,12 +1,14 @@
-import dedent from "dedent";
-import path from "path";
+"use strict";
+
+const dedent = require("dedent");
+const path = require("path");
 
 // mocked modules
-import ChildProcessUtilities from "../src/ChildProcessUtilities";
-import FileSystemUtilities from "../src/FileSystemUtilities";
+const ChildProcessUtilities = require("../src/ChildProcessUtilities");
+const FileSystemUtilities = require("../src/FileSystemUtilities");
 
 // file under test
-import ConventionalCommitUtilities from "../src/ConventionalCommitUtilities";
+const ConventionalCommitUtilities = require("../src/ConventionalCommitUtilities");
 
 jest.mock("../src/ChildProcessUtilities");
 jest.mock("../src/FileSystemUtilities");

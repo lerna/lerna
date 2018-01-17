@@ -1,32 +1,34 @@
-import { EOL } from "os";
-import async from "async";
-import chalk from "chalk";
-import dedent from "dedent";
-import minimatch from "minimatch";
-import path from "path";
-import semver from "semver";
-import writeJsonFile from "write-json-file";
-import writePkg from "write-pkg";
+"use strict";
 
-import Command from "../Command";
-import ConventionalCommitUtilities from "../ConventionalCommitUtilities";
-import FileSystemUtilities from "../FileSystemUtilities";
-import GitUtilities from "../GitUtilities";
-import NpmUtilities from "../NpmUtilities";
-import output from "../utils/output";
-import PackageUtilities from "../PackageUtilities";
-import PromptUtilities from "../PromptUtilities";
-import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
-import ValidationError from "../utils/ValidationError";
+const os = require("os");
+const async = require("async");
+const chalk = require("chalk");
+const dedent = require("dedent");
+const minimatch = require("minimatch");
+const path = require("path");
+const semver = require("semver");
+const writeJsonFile = require("write-json-file");
+const writePkg = require("write-pkg");
 
-export function handler(argv) {
+const Command = require("../Command");
+const ConventionalCommitUtilities = require("../ConventionalCommitUtilities");
+const FileSystemUtilities = require("../FileSystemUtilities");
+const GitUtilities = require("../GitUtilities");
+const NpmUtilities = require("../NpmUtilities");
+const output = require("../utils/output");
+const PackageUtilities = require("../PackageUtilities");
+const PromptUtilities = require("../PromptUtilities");
+const UpdatedPackagesCollector = require("../UpdatedPackagesCollector");
+const ValidationError = require("../utils/ValidationError");
+
+exports.handler = function handler(argv) {
   // eslint-disable-next-line no-use-before-define
   return new PublishCommand(argv);
-}
+};
 
-export const command = "publish";
+exports.command = "publish";
 
-export const describe = "Publish packages in the current project.";
+exports.describe = "Publish packages in the current project.";
 
 const cdVersionOptions = ["major", "minor", "patch", "premajor", "preminor", "prepatch", "prerelease"];
 
@@ -34,7 +36,7 @@ const cdVersionOptionString = `'${cdVersionOptions.slice(0, -1).join("', '")}', 
   cdVersionOptions[cdVersionOptions.length - 1]
 }'.`;
 
-export const builder = {
+exports.builder = {
   canary: {
     group: "Command Options:",
     defaultDescription: "alpha",
@@ -142,7 +144,7 @@ export const builder = {
   },
 };
 
-export default class PublishCommand extends Command {
+class PublishCommand extends Command {
   get defaultOptions() {
     return Object.assign({}, super.defaultOptions, {
       conventionalCommits: false,
@@ -307,7 +309,7 @@ export default class PublishCommand extends Command {
         const message = this.packagesToPublish.map(pkg => ` - ${pkg.name}@${pkg.version}`);
 
         output("Successfully published:");
-        output(message.join(EOL));
+        output(message.join(os.EOL));
 
         this.logger.success("publish", "finished");
         callback(null, true);
@@ -541,7 +543,7 @@ export default class PublishCommand extends Command {
 
     output("");
     output("Changes:");
-    output(changes.join(EOL));
+    output(changes.join(os.EOL));
     output("");
 
     if (this.options.yes) {
@@ -679,7 +681,7 @@ export default class PublishCommand extends Command {
   gitCommitAndTagVersionForUpdates() {
     const tags = this.updates.map(({ package: { name } }) => `${name}@${this.updatesVersions[name]}`);
     const subject = this.options.message || "Publish";
-    const message = tags.reduce((msg, tag) => `${msg}${EOL} - ${tag}`, `${subject}${EOL}`);
+    const message = tags.reduce((msg, tag) => `${msg}${os.EOL} - ${tag}`, `${subject}${os.EOL}`);
 
     GitUtilities.commit(message, this.execOpts);
     tags.forEach(tag => GitUtilities.addTag(tag, this.execOpts));

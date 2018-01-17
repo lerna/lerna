@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-"use strict"; // eslint-disable-line strict, lines-around-directive
+"use strict";
 
 const argv = process.argv.slice(2);
 const context = {

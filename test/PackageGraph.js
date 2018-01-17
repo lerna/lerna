@@ -1,8 +1,10 @@
-import log from "npmlog";
+"use strict";
+
+const log = require("npmlog");
 
 // file under test
-import Package from "../src/Package";
-import PackageGraph from "../src/PackageGraph";
+const Package = require("../src/Package");
+const PackageGraph = require("../src/PackageGraph");
 
 // silence logs
 log.level = "silent";

@@ -1,8 +1,10 @@
+"use strict";
+
 // mocked modules
-import GitUtilities from "../src/GitUtilities";
+const GitUtilities = require("../src/GitUtilities");
 
 // file under test
-import UpdatedPackagesCollector from "../src/UpdatedPackagesCollector";
+const UpdatedPackagesCollector = require("../src/UpdatedPackagesCollector");
 
 jest.mock("../src/GitUtilities");
 

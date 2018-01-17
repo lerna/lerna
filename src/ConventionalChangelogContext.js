@@ -1,7 +1,9 @@
-import Repository from "./Repository";
+"use strict";
+
+const Repository = require("./Repository");
 
 const repository = new Repository(process.cwd());
 
-export default {
+module.exports = {
   version: repository.version,
 };

@@ -1,9 +1,12 @@
-import dedent from "dedent";
-import isCI from "is-ci";
-import log from "npmlog";
-import yargs from "yargs/yargs";
+"use strict";
 
-import { builder as globalOptions } from "./Command";
+const dedent = require("dedent");
+const isCI = require("is-ci");
+const log = require("npmlog");
+const yargs = require("yargs/yargs");
+const globalOptions = require("./Command").builder;
+
+module.exports = CLI;
 
 /**
  * Essentially a factory that returns a yargs() instance that can
@@ -13,7 +16,7 @@ import { builder as globalOptions } from "./Command";
  * @param {Array = []} argv
  * @param {String = process.cwd()} cwd
  */
-export default function CLI(argv, cwd) {
+function CLI(argv, cwd) {
   const cli = yargs(argv, cwd);
 
   // the options grouped under "Global Options:" header

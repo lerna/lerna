@@ -1,19 +1,21 @@
-import async from "async";
+"use strict";
 
-import ChildProcessUtilities from "../ChildProcessUtilities";
-import Command from "../Command";
-import PackageUtilities from "../PackageUtilities";
+const async = require("async");
 
-export function handler(argv) {
+const ChildProcessUtilities = require("../ChildProcessUtilities");
+const Command = require("../Command");
+const PackageUtilities = require("../PackageUtilities");
+
+exports.handler = function handler(argv) {
   // eslint-disable-next-line no-use-before-define
   return new ExecCommand(argv);
-}
+};
 
-export const command = "exec <cmd> [args..]";
+exports.command = "exec <cmd> [args..]";
 
-export const describe = "Run an arbitrary command in each package.";
+exports.describe = "Run an arbitrary command in each package.";
 
-export const builder = {
+exports.builder = {
   bail: {
     group: "Command Options:",
     describe: "Bail on exec execution when the command fails within a package",
@@ -34,7 +36,7 @@ export const builder = {
   },
 };
 
-export default class ExecCommand extends Command {
+class ExecCommand extends Command {
   get requiresGit() {
     return false;
   }

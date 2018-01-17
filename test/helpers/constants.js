@@ -1,6 +1,7 @@
 /* eslint node/no-unsupported-features: ["error", { version: 4 }] */
 // this file is not transpiled by Jest when required in serializePlaceholders.js
-"use strict"; // eslint-disable-line strict, lines-around-directive
+
+"use strict";
 
 const path = require("path");
 const fileUrl = require("file-url");

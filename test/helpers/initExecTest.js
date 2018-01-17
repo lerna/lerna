@@ -1,6 +1,8 @@
-import path from "path";
+"use strict";
 
-export default initExecTest;
+const path = require("path");
+
+module.exports = initExecTest;
 
 function initExecTest(fixtureDir) {
   const execTestDir = path.resolve(__dirname, `../fixtures/${fixtureDir}`);

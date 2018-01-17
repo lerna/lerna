@@ -1,13 +1,15 @@
-import dedent from "dedent";
-import log from "npmlog";
-import path from "path";
-import semver from "semver";
-import _ from "lodash";
+"use strict";
 
-import dependencyIsSatisfied from "./utils/dependencyIsSatisfied";
-import NpmUtilities from "./NpmUtilities";
+const dedent = require("dedent");
+const log = require("npmlog");
+const path = require("path");
+const semver = require("semver");
+const _ = require("lodash");
 
-export default class Package {
+const dependencyIsSatisfied = require("./utils/dependencyIsSatisfied");
+const NpmUtilities = require("./NpmUtilities");
+
+class Package {
   constructor(pkg, location) {
     this._package = pkg;
     this._location = location;
@@ -169,3 +171,5 @@ export default class Package {
     return dependencyIsSatisfied(this.nodeModulesLocation, depName, this.allDependencies[depName]);
   }
 }
+
+module.exports = Package;

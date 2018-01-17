@@ -1,19 +1,21 @@
-import chalk from "chalk";
-import columnify from "columnify";
+"use strict";
 
-import Command from "../Command";
-import output from "../utils/output";
+const chalk = require("chalk");
+const columnify = require("columnify");
 
-export function handler(argv) {
+const Command = require("../Command");
+const output = require("../utils/output");
+
+exports.handler = function handler(argv) {
   // eslint-disable-next-line no-use-before-define
   return new LsCommand(argv);
-}
+};
 
-export const command = "ls";
+exports.command = "ls";
 
-export const describe = "List all public packages";
+exports.describe = "List all public packages";
 
-export const builder = {
+exports.builder = {
   json: {
     describe: "Show information in JSON format",
     group: "Command Options:",
@@ -22,7 +24,7 @@ export const builder = {
   },
 };
 
-export default class LsCommand extends Command {
+class LsCommand extends Command {
   get requiresGit() {
     return false;
   }

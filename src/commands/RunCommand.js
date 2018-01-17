@@ -1,20 +1,22 @@
-import async from "async";
+"use strict";
 
-import Command from "../Command";
-import NpmUtilities from "../NpmUtilities";
-import output from "../utils/output";
-import PackageUtilities from "../PackageUtilities";
+const async = require("async");
 
-export function handler(argv) {
+const Command = require("../Command");
+const NpmUtilities = require("../NpmUtilities");
+const output = require("../utils/output");
+const PackageUtilities = require("../PackageUtilities");
+
+exports.handler = function handler(argv) {
   // eslint-disable-next-line no-use-before-define
   return new RunCommand(argv);
-}
+};
 
-export const command = "run <script> [args..]";
+exports.command = "run <script> [args..]";
 
-export const describe = "Run an npm script in each package that contains that script.";
+exports.describe = "Run an npm script in each package that contains that script.";
 
-export const builder = {
+exports.builder = {
   stream: {
     group: "Command Options:",
     describe: "Stream output with lines prefixed by package.",
@@ -35,7 +37,7 @@ export const builder = {
   },
 };
 
-export default class RunCommand extends Command {
+class RunCommand extends Command {
   get requiresGit() {
     return false;
   }

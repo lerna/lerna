@@ -1,27 +1,28 @@
-import chalk from "chalk";
-import log from "npmlog";
-import normalizeNewline from "normalize-newline";
-import path from "path";
+"use strict";
+
+const chalk = require("chalk");
+const log = require("npmlog");
+const normalizeNewline = require("normalize-newline");
+const path = require("path");
 
 // mocked or stubbed modules
-import writeJsonFile from "write-json-file";
-import writePkg from "write-pkg";
-import ConventionalCommitUtilities from "../src/ConventionalCommitUtilities";
-import GitUtilities from "../src/GitUtilities";
-import NpmUtilities from "../src/NpmUtilities";
-import PromptUtilities from "../src/PromptUtilities";
-import output from "../src/utils/output";
+const writeJsonFile = require("write-json-file");
+const writePkg = require("write-pkg");
+const ConventionalCommitUtilities = require("../src/ConventionalCommitUtilities");
+const GitUtilities = require("../src/GitUtilities");
+const NpmUtilities = require("../src/NpmUtilities");
+const PromptUtilities = require("../src/PromptUtilities");
+const output = require("../src/utils/output");
 
 // helpers
-import callsBack from "./helpers/callsBack";
-import initFixture from "./helpers/initFixture";
-import normalizeRelativeDir from "./helpers/normalizeRelativeDir";
-import yargsRunner from "./helpers/yargsRunner";
+const callsBack = require("./helpers/callsBack");
+const initFixture = require("./helpers/initFixture");
+const normalizeRelativeDir = require("./helpers/normalizeRelativeDir");
+const yargsRunner = require("./helpers/yargsRunner");
 
 // file under test
-import * as commandModule from "../src/commands/PublishCommand";
+const commandModule = require("../src/commands/PublishCommand");
 
-const PublishCommand = commandModule.default;
 const run = yargsRunner(commandModule);
 
 jest.mock("write-json-file");
@@ -491,7 +492,7 @@ describe("PublishCommand", () => {
 
   describe("with --yes", () => {
     it("skips confirmation prompt", done => {
-      const publishCommand = new PublishCommand({
+      const publishCommand = commandModule.handler({
         _: [],
         yes: true,
       });

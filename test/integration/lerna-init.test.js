@@ -1,11 +1,13 @@
-import execa from "execa";
-import loadJsonFile from "load-json-file";
-import path from "path";
-import readPkg from "read-pkg";
-import tempy from "tempy";
+"use strict";
 
-import { LERNA_BIN } from "../helpers/constants";
-import initFixture from "../helpers/initFixture";
+const execa = require("execa");
+const loadJsonFile = require("load-json-file");
+const path = require("path");
+const readPkg = require("read-pkg");
+const tempy = require("tempy");
+
+const { LERNA_BIN } = require("../helpers/constants");
+const initFixture = require("../helpers/initFixture");
 
 const initEmptyDir = () => tempy.directoryAsync();
 

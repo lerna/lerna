@@ -1,11 +1,16 @@
-import log from "npmlog";
+"use strict";
+
+const log = require("npmlog");
+
 // mocked modules
-import NpmUtilities from "../src/NpmUtilities";
+const NpmUtilities = require("../src/NpmUtilities");
+
 // helpers
-import callsBack from "./helpers/callsBack";
-import loggingOutput from "./helpers/loggingOutput";
+const callsBack = require("./helpers/callsBack");
+const loggingOutput = require("./helpers/loggingOutput");
+
 // file under test
-import Package from "../src/Package";
+const Package = require("../src/Package");
 
 jest.mock("../src/NpmUtilities");
 

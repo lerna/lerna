@@ -1,14 +1,16 @@
-import execa from "execa";
-// import fs from "fs-extra";
-// import globby from "globby";
-import normalizeNewline from "normalize-newline";
-import writeJsonFile from "write-json-file";
-import loadJsonFile from "load-json-file";
-import path from "path";
+"use strict";
 
-import { LERNA_BIN } from "../helpers/constants";
-import initFixture from "../helpers/initFixture";
-import loadPkgManifests from "../helpers/loadPkgManifests";
+const execa = require("execa");
+// const fs = require("fs-extra");
+// const globby = require("globby");
+const normalizeNewline = require("normalize-newline");
+const writeJsonFile = require("write-json-file");
+const loadJsonFile = require("load-json-file");
+const path = require("path");
+
+const { LERNA_BIN } = require("../helpers/constants");
+const initFixture = require("../helpers/initFixture");
+const loadPkgManifests = require("../helpers/loadPkgManifests");
 
 const lastCommitMessage = cwd =>
   execa.stdout("git", ["log", "-1", "--format=%B"], { cwd }).then(normalizeNewline);

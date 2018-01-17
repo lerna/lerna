@@ -1,18 +1,20 @@
-import async from "async";
-import log from "npmlog";
-import path from "path";
-import readPkg from "read-pkg";
+"use strict";
+
+const async = require("async");
+const log = require("npmlog");
+const path = require("path");
+const readPkg = require("read-pkg");
 
 // tightly-coupled modules; TODO: decouple
-import Package from "../src/Package";
-import Repository from "../src/Repository";
+const Package = require("../src/Package");
+const Repository = require("../src/Repository");
 
 // helpers
-import initFixture from "./helpers/initFixture";
-import pkgMatchers from "./helpers/pkgMatchers";
+const initFixture = require("./helpers/initFixture");
+const pkgMatchers = require("./helpers/pkgMatchers");
 
 // file under test
-import PackageUtilities from "../src/PackageUtilities";
+const PackageUtilities = require("../src/PackageUtilities");
 
 // silence logs
 log.level = "silent";

@@ -1,8 +1,10 @@
-import execa from "execa";
+"use strict";
 
-import { LERNA_BIN } from "../helpers/constants";
-import initFixture from "../helpers/initFixture";
-import loadPkgManifests from "../helpers/loadPkgManifests";
+const execa = require("execa");
+
+const { LERNA_BIN } = require("../helpers/constants");
+const initFixture = require("../helpers/initFixture");
+const loadPkgManifests = require("../helpers/loadPkgManifests");
 
 describe("lerna import", () => {
   test.concurrent("works with argument provided", async () => {

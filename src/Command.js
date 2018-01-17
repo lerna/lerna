@@ -1,18 +1,20 @@
-import _ from "lodash";
-import dedent from "dedent";
-import log from "npmlog";
+"use strict";
 
-import ChildProcessUtilities from "./ChildProcessUtilities";
-import FileSystemUtilities from "./FileSystemUtilities";
-import GitUtilities from "./GitUtilities";
-import GitVersionParser from "./GitVersionParser";
-import PackageUtilities from "./PackageUtilities";
-import Repository from "./Repository";
-import filterFlags from "./utils/filterFlags";
-import writeLogFile from "./utils/writeLogFile";
-import UpdatedPackagesCollector from "./UpdatedPackagesCollector";
-import VersionSerializer from "./VersionSerializer";
-import ValidationError from "./utils/ValidationError";
+const _ = require("lodash");
+const dedent = require("dedent");
+const log = require("npmlog");
+
+const ChildProcessUtilities = require("./ChildProcessUtilities");
+const FileSystemUtilities = require("./FileSystemUtilities");
+const GitUtilities = require("./GitUtilities");
+const GitVersionParser = require("./GitVersionParser");
+const PackageUtilities = require("./PackageUtilities");
+const Repository = require("./Repository");
+const filterFlags = require("./utils/filterFlags");
+const writeLogFile = require("./utils/writeLogFile");
+const UpdatedPackagesCollector = require("./UpdatedPackagesCollector");
+const VersionSerializer = require("./VersionSerializer");
+const ValidationError = require("./utils/ValidationError");
 
 // handle log.success()
 log.addLevel("success", 3001, { fg: "green", bold: true });
@@ -20,7 +22,7 @@ log.addLevel("success", 3001, { fg: "green", bold: true });
 const DEFAULT_CONCURRENCY = 4;
 const LERNA_VERSION = require("../package.json").version;
 
-export const builder = {
+const builder = {
   loglevel: {
     defaultDescription: "info",
     describe: "What level of logs to report.",
@@ -91,7 +93,7 @@ class ValidationWarning extends Error {
   }
 }
 
-export default class Command {
+class Command {
   constructor(argv) {
     log.pause();
     log.heading = "lerna";
@@ -486,7 +488,7 @@ export default class Command {
   }
 }
 
-export function commandNameFromClassName(className) {
+function commandNameFromClassName(className) {
   return className.replace(/Command$/, "").toLowerCase();
 }
 
@@ -496,3 +498,6 @@ function cleanStack(err, className) {
   const relevantIndex = lines.findIndex(line => cutoff.test(line));
   return lines.slice(0, relevantIndex).join("\n");
 }
+
+module.exports = Command;
+module.exports.builder = builder;

@@ -1,31 +1,33 @@
-import path from "path";
-import dedent from "dedent";
-import packageJson from "package-json";
-import readPkg from "read-pkg";
-import semver from "semver";
-import writePkg from "write-pkg";
+"use strict";
 
-import BootstrapCommand from "./BootstrapCommand";
-import Command from "../Command";
-import splitVersion from "../utils/splitVersion";
-import ValidationError from "../utils/ValidationError";
+const path = require("path");
+const dedent = require("dedent");
+const packageJson = require("package-json");
+const readPkg = require("read-pkg");
+const semver = require("semver");
+const writePkg = require("write-pkg");
 
-export const command = "add [pkgNames..]";
+const BootstrapCommand = require("./BootstrapCommand");
+const Command = require("../Command");
+const splitVersion = require("../utils/splitVersion");
+const ValidationError = require("../utils/ValidationError");
 
-export const describe = "Add packages as dependency to matched packages";
+exports.command = "add [pkgNames..]";
 
-export const builder = {
+exports.describe = "Add packages as dependency to matched packages";
+
+exports.builder = {
   dev: {
     describe: "Save as to devDependencies",
   },
 };
 
-export function handler(argv) {
+exports.handler = function handler(argv) {
   // eslint-disable-next-line no-use-before-define
   return new AddCommand(argv);
-}
+};
 
-export default class AddCommand extends Command {
+class AddCommand extends Command {
   get requireGit() {
     return false;
   }
@@ -153,7 +155,7 @@ export default class AddCommand extends Command {
           scope: changedPkgs.map(p => p.name),
         });
 
-        return new BootstrapCommand(options);
+        return BootstrapCommand.handler(options);
       })
       .then(() => callback())
       .catch(callback);

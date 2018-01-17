@@ -1,10 +1,12 @@
-import _ from "lodash";
-import chalk from "chalk";
+"use strict";
 
-import { builder as publishOptions } from "./PublishCommand";
-import Command from "../Command";
-import output from "../utils/output";
-import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
+const _ = require("lodash");
+const chalk = require("chalk");
+
+const Command = require("../Command");
+const output = require("../utils/output");
+const publishOptions = require("./PublishCommand").builder;
+const UpdatedPackagesCollector = require("../UpdatedPackagesCollector");
 
 const updatedOptions = _.assign({}, publishOptions, {
   json: {
@@ -15,18 +17,18 @@ const updatedOptions = _.assign({}, publishOptions, {
   },
 });
 
-export function handler(argv) {
+exports.handler = function handler(argv) {
   // eslint-disable-next-line no-use-before-define
   return new UpdatedCommand(argv);
-}
+};
 
-export const command = "updated";
+exports.command = "updated";
 
-export const describe = "Check which packages have changed since the last publish.";
+exports.describe = "Check which packages have changed since the last publish.";
 
-export const builder = yargs => yargs.options(updatedOptions);
+exports.builder = yargs => yargs.options(updatedOptions);
 
-export default class UpdatedCommand extends Command {
+class UpdatedCommand extends Command {
   initialize(callback) {
     const updatedPackagesCollector = new UpdatedPackagesCollector(this);
     this.updates = updatedPackagesCollector.getUpdates();

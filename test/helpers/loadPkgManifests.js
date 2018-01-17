@@ -1,7 +1,11 @@
-import globby from "globby";
-import loadJsonFile from "load-json-file";
+"use strict";
 
-export default function loadPkgManifests(cwd) {
+const globby = require("globby");
+const loadJsonFile = require("load-json-file");
+
+module.exports = loadPkgManifests;
+
+function loadPkgManifests(cwd) {
   return globby(
     [
       // all child packages, at any level
