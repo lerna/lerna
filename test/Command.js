@@ -94,10 +94,6 @@ describe("Command", () => {
       expect(testFactory().toposort).toBe(true);
     });
 
-    it("is enabled when sort config is null", () => {
-      expect(testFactory({ sort: null }).toposort).toBe(true);
-    });
-
     it("is disabled when sort config is explicitly false (--no-sort)", () => {
       expect(testFactory({ sort: false }).toposort).toBe(false);
     });

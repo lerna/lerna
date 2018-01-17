@@ -150,13 +150,9 @@ class Command {
   }
 
   get toposort() {
-    if (!this._toposort) {
-      const { sort } = this.options;
-      // If the option isn't present then the default is to sort.
-      this._toposort = sort == null || sort;
-    }
-
-    return this._toposort;
+    const { sort } = this.options;
+    // If the option isn't present then the default is to sort.
+    return sort === undefined || sort;
   }
 
   get name() {
