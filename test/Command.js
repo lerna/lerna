@@ -17,6 +17,7 @@ const initFixture = require("./helpers/initFixture");
 
 // file under test
 const Command = require("../src/Command");
+const LERNA_VERSION = require("../package.json").version;
 
 // silence logs
 log.level = "silent";
@@ -60,8 +61,7 @@ describe("Command", () => {
 
   describe(".lernaVersion", () => {
     it("should be added to the instance", async () => {
-      const { version } = await loadJsonFile(path.resolve(__dirname, "../package.json"));
-      expect(testFactory().lernaVersion).toEqual(version);
+      expect(testFactory().lernaVersion).toEqual(LERNA_VERSION);
     });
   });
 
