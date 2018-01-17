@@ -5,8 +5,8 @@ const loadJsonFile = require("load-json-file");
 
 module.exports = loadPkgManifests;
 
-function loadPkgManifests(cwd) {
-  return globby(
+async function loadPkgManifests(cwd) {
+  const files = await globby(
     [
       // all child packages, at any level
       "**/package.json",
@@ -19,5 +19,7 @@ function loadPkgManifests(cwd) {
       cwd,
       absolute: true,
     }
-  ).then(files => Promise.all(files.map(fp => loadJsonFile(fp))));
+  );
+
+  return Promise.all(files.map(fp => loadJsonFile(fp)));
 }

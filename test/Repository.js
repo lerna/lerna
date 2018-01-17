@@ -20,17 +20,13 @@ log.level = "silent";
 describe("Repository", () => {
   let testDir;
 
-  const findUpSync = findUp.sync;
-  const loadJsonFileSync = loadJsonFile.sync;
-  const readPkgSync = readPkg.sync;
-
-  beforeAll(() =>
-    initFixture("Repository/basic").then(dir => {
-      testDir = dir;
-    })
-  );
+  beforeAll(async () => {
+    testDir = await initFixture("Repository/basic");
+  });
 
   describe(".rootPath", () => {
+    const findUpSync = findUp.sync;
+
     afterEach(() => {
       findUp.sync = findUpSync;
     });
@@ -70,6 +66,8 @@ describe("Repository", () => {
   });
 
   describe("get .lernaJson", () => {
+    const loadJsonFileSync = loadJsonFile.sync;
+
     afterEach(() => {
       loadJsonFile.sync = loadJsonFileSync;
     });
@@ -155,6 +153,8 @@ describe("Repository", () => {
   });
 
   describe("get .packageJson", () => {
+    const readPkgSync = readPkg.sync;
+
     afterEach(() => {
       readPkg.sync = readPkgSync;
     });

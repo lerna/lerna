@@ -1,53 +1,49 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`stderr: my-script --parallel 1`] = `
-"lerna info version __TEST_VERSION__
+exports[`lerna run my-script --parallel: stderr 1`] = `
+lerna info version __TEST_VERSION__
 lerna info run in 2 package(s): npm run my-script --silent --onload-script=false
 lerna success run Ran npm script 'my-script' in packages:
 lerna success - package-1
-lerna success - package-3"
+lerna success - package-3
 `;
 
-exports[`stderr: my-script --scope 1`] = `
-"lerna info version __TEST_VERSION__
+exports[`lerna run my-script --scope: stderr 1`] = `
+lerna info version __TEST_VERSION__
 lerna info scope package-1
 lerna success run Ran npm script 'my-script' in packages:
-lerna success - package-1"
+lerna success - package-1
 `;
 
-exports[`stderr: test --ignore 1`] = `
-"lerna info version __TEST_VERSION__
+exports[`lerna run test --ignore: stderr 1`] = `
+lerna info version __TEST_VERSION__
 lerna info ignore package-@(1|2|3)
 lerna success run Ran npm script 'test' in packages:
-lerna success - package-4"
+lerna success - package-4
 `;
 
-exports[`stderr: test --parallel 1`] = `
-"lerna info version __TEST_VERSION__
+exports[`lerna run test --parallel: stderr 1`] = `
+lerna info version __TEST_VERSION__
 lerna info run in 4 package(s): npm run test --silent --onload-script=false
 lerna success run Ran npm script 'test' in packages:
 lerna success - package-1
 lerna success - package-2
 lerna success - package-3
-lerna success - package-4"
+lerna success - package-4
 `;
 
-exports[`stderr: test --stream 1`] = `
-"lerna info version __TEST_VERSION__
+exports[`lerna run test --stream: stderr 1`] = `
+lerna info version __TEST_VERSION__
 lerna success run Ran npm script 'test' in packages:
 lerna success - package-1
 lerna success - package-2
 lerna success - package-3
-lerna success - package-4"
+lerna success - package-4
 `;
 
-exports[`stdout: my-script --scope 1`] = `"package-1"`;
-
-exports[`stdout: test --ignore 1`] = `"package-4"`;
-
-exports[`stdout: test --stream 1`] = `
-"package-3: package-3
+exports[`lerna run test --stream: stdout 1`] = `
+package-3: package-3
 package-4: package-4
 package-1: package-1
-package-2: package-2"
+package-2: package-2
 `;

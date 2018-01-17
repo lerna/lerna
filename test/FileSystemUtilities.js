@@ -180,18 +180,7 @@ describe("FileSystemUtilities", () => {
   });
 
   describe(".isSymlink()", () => {
-    const originalPlatform = process.platform;
-    afterEach(() => {
-      process.platform = originalPlatform;
-    });
-
-    describe("posix", () => {
-      beforeEach(() => {
-        if (originalPlatform === "win32") {
-          process.platform = "linux";
-        }
-      });
-
+    if (process.platform !== "win32") {
       it("returns false when filePath is not a symlink", () => {
         const filePath = path.resolve("./not/a/symlink");
         fs.lstatSync.mockImplementation(() => ({
@@ -209,14 +198,8 @@ describe("FileSystemUtilities", () => {
         fs.readlinkSync.mockImplementation(() => linkRelative(original, filePath));
         expect(FileSystemUtilities.isSymlink(filePath)).toBe(original);
       });
-    });
-
-    describe("windows", () => {
-      beforeEach(() => {
-        process.platform = "win32";
-      });
-
-      it("returns false when filePath is not a symlink", () => {
+    } else {
+      it("returns false when filePath is not a symlink (windows)", () => {
         const filePath = path.resolve("./not/a/symlink");
         fs.lstatSync.mockImplementation(() => ({
           isSymbolicLink: () => false,
@@ -225,7 +208,7 @@ describe("FileSystemUtilities", () => {
         expect(FileSystemUtilities.isSymlink(filePath)).toBe(false);
       });
 
-      it("returns resolved path of an existing symlink", () => {
+      it("returns resolved path of an existing symlink (windows)", () => {
         const original = path.resolve("./packages/package-2");
         const filePath = path.resolve("./packages/package-1/node_modules/package-2");
         fs.lstatSync.mockImplementation(() => ({
@@ -258,27 +241,16 @@ describe("FileSystemUtilities", () => {
         readCmdShim.sync.mockImplementation(() => linkRelative(original, filePath));
         expect(FileSystemUtilities.isSymlink(filePath)).toBe(original);
       });
-    });
+    }
   });
 
   describe(".symlink()", () => {
-    const originalPlatform = process.platform;
-    afterEach(() => {
-      process.platform = originalPlatform;
-    });
-
     beforeEach(() => {
       fs.lstat.mockImplementation(callsBack("ENOENT"));
       fs.symlink.mockImplementation(callsBack());
     });
 
-    describe("posix", () => {
-      beforeEach(() => {
-        if (originalPlatform === "win32") {
-          process.platform = "linux";
-        }
-      });
-
+    if (process.platform !== "win32") {
       it("creates relative symlink to a directory", done => {
         const src = path.resolve("./packages/package-2");
         const dst = path.resolve("./packages/package-1/node_modules/package-2");
@@ -329,13 +301,7 @@ describe("FileSystemUtilities", () => {
           }
         });
       });
-    });
-
-    describe("windows", () => {
-      beforeEach(() => {
-        process.platform = "win32";
-      });
-
+    } else {
       it("creates command shim to an executable file", done => {
         const src = path.resolve("./packages/package-2/cli.js");
         const dst = path.resolve("./packages/package-1/node_modules/.bin/package-2");
@@ -372,6 +338,6 @@ describe("FileSystemUtilities", () => {
           }
         });
       });
-    });
+    }
   });
 });
