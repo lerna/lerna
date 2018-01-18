@@ -1,0 +1,9 @@
+{
+  "lerna": "__TEST_VERSION__",
+  "packages": [
+    ".",
+    "packages/*"
+  ],
+  "conventionalCommits": true,
+  "version": "1.0.0"
+}

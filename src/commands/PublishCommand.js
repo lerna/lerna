@@ -577,8 +577,15 @@ export default class PublishCommand extends Command {
     const independentVersions = this.repository.isIndependent();
     const changedFiles = [];
 
+    const rootPkg = this.repository.package;
+    const rootPkgName = rootPkg.name || "root";
+
+    // The mere presence of the Package instance is not sufficient,
+    // it must also be a part of the graph of "managed" packages.
+    const rootIsPublished = !!this.packageGraph.get(rootPkgName);
+
     // exec preversion lifecycle in root (before all updates)
-    this.runSyncScriptInPackage(this.repository.package, "preversion");
+    this.runSyncScriptInPackage(rootPkg, "preversion");
 
     this.updates.forEach(update => {
       const pkg = update.package;
@@ -619,26 +626,13 @@ export default class PublishCommand extends Command {
       changedFiles.push(packageJsonLocation);
     });
 
-    if (conventionalCommits && !independentVersions) {
-      const rootPkg = this.repository.packageJson;
-
-      ConventionalCommitUtilities.updateFixedRootChangelog(
-        {
-          name: rootPkg && rootPkg.name ? rootPkg.name : "root",
-          location: this.repository.rootPath,
-        },
-        this.changelogOpts,
-      );
-
-      changedFiles.push(
-        ConventionalCommitUtilities.changelogLocation({
-          location: this.repository.rootPath,
-        }),
-      );
+    if (conventionalCommits && !(independentVersions || rootIsPublished)) {
+      ConventionalCommitUtilities.updateFixedRootChangelog(rootPkg, this.changelogOpts);
+      changedFiles.push(ConventionalCommitUtilities.changelogLocation(rootPkg));
     }
 
     // exec version lifecycle in root (after all updates)
-    this.runSyncScriptInPackage(this.repository.package, "version");
+    this.runSyncScriptInPackage(rootPkg, "version");
 
     if (this.gitEnabled) {
       changedFiles.forEach(file => GitUtilities.addFile(file, this.execOpts));
