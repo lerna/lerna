@@ -958,6 +958,14 @@ describe("PublishCommand", () => {
           }),
         );
       });
+
+      it("avoids double-updating root changelog that is also a package", async () => {
+        const testDir = await initFixture("PublishCommand/fixed-root-conventional");
+        await run(testDir)(); // { conventionalCommits: true } in lerna.json
+
+        expect(ConventionalCommitUtilities.updateFixedRootChangelog).not.toBeCalled();
+        expect(ConventionalCommitUtilities.updateFixedChangelog).toHaveBeenCalledTimes(3);
+      });
     });
   });
 
