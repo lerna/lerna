@@ -12,8 +12,7 @@ import path from "path";
  */
 export default async function updateLernaConfig(testDir, updates) {
   const lernaJsonLocation = path.join(testDir, "lerna.json");
-  const lernaJsonContent = await fs.readFile(lernaJsonLocation);
-  const lernaJson = JSON.parse(lernaJsonContent);
+  const lernaJson = await fs.readJson(lernaJsonLocation);
   Object.assign(lernaJson, updates);
-  await fs.writeFile(lernaJsonLocation, JSON.stringify(lernaJson, null, 2));
+  await fs.writeJson(lernaJsonLocation, lernaJson, { spaces: 2 });
 }
