@@ -808,77 +808,74 @@ describe("PublishCommand", () => {
    * ======================================================================= */
 
   describe("--conventional-commits", () => {
-    let testDir;
-
     describe("independent mode", () => {
       const recommendIndependentVersionOriginal = ConventionalCommitUtilities.recommendIndependentVersion;
       const updateIndependentChangelogOriginal = ConventionalCommitUtilities.updateIndependentChangelog;
 
-      beforeEach(() =>
-        initFixture("PublishCommand/independent").then(dir => {
-          testDir = dir;
-
-          const reccomendReplies = ["1.0.1", "1.1.0", "2.0.0", "1.1.0", "5.1.1"];
-          ConventionalCommitUtilities.recommendIndependentVersion = jest.fn(() => reccomendReplies.shift());
-          ConventionalCommitUtilities.updateIndependentChangelog = jest.fn();
-        }),
-      );
+      beforeEach(() => {
+        const reccomendReplies = ["1.0.1", "1.1.0", "2.0.0", "1.1.0", "5.1.1"];
+        ConventionalCommitUtilities.recommendIndependentVersion = jest.fn(() => reccomendReplies.shift());
+        ConventionalCommitUtilities.updateIndependentChangelog = jest.fn();
+      });
 
       afterEach(() => {
         ConventionalCommitUtilities.recommendIndependentVersion = recommendIndependentVersionOriginal;
         ConventionalCommitUtilities.updateIndependentChangelog = updateIndependentChangelogOriginal;
       });
 
-      it("should use conventional-commits utility to guess version bump and generate CHANGELOG", () =>
-        run(testDir)("--conventional-commits").then(() => {
-          expect(gitAddedFiles(testDir)).toMatchSnapshot(
-            "[independent --conventional-commits] git adds changed files",
-          );
-          expect(gitCommitMessage()).toMatchSnapshot(
-            "[independent --conventional-commits] git commit message",
-          );
+      it("should use conventional-commits utility to guess version bump and generate CHANGELOG", async () => {
+        const testDir = await initFixture("PublishCommand/independent");
 
-          [
-            ["package-1", "1.0.0"],
-            ["package-2", "2.0.0"],
-            ["package-3", "3.0.0"],
-            ["package-4", "4.0.0"],
-            ["package-5", "5.0.0"],
-          ].forEach(([name, version]) => {
-            const location = path.join(testDir, "packages", name);
+        await run(testDir)("--conventional-commits");
 
-            expect(ConventionalCommitUtilities.recommendIndependentVersion).toBeCalledWith(
-              expect.objectContaining({ name, version }),
-              execOpts(testDir),
-            );
-            expect(ConventionalCommitUtilities.updateIndependentChangelog).toBeCalledWith(
-              expect.objectContaining({ name, location }),
-              execOpts(testDir),
-            );
-          });
-        }));
+        expect(gitAddedFiles(testDir)).toMatchSnapshot(
+          "[independent --conventional-commits] git adds changed files",
+        );
+        expect(gitCommitMessage()).toMatchSnapshot("[independent --conventional-commits] git commit message");
 
-      it("accepts --changelog-preset option", () =>
-        run(testDir)("--conventional-commits", "--changelog-preset", "foo-bar").then(() => {
-          const name = "package-3";
-          const version = "3.0.0";
+        [
+          ["package-1", "1.0.0"],
+          ["package-2", "2.0.0"],
+          ["package-3", "3.0.0"],
+          ["package-4", "4.0.0"],
+          ["package-5", "5.0.0"],
+        ].forEach(([name, version]) => {
           const location = path.join(testDir, "packages", name);
 
           expect(ConventionalCommitUtilities.recommendIndependentVersion).toBeCalledWith(
             expect.objectContaining({ name, version }),
-            expect.objectContaining({
-              cwd: testDir,
-              changelogPreset: "foo-bar",
-            }),
+            execOpts(testDir),
           );
           expect(ConventionalCommitUtilities.updateIndependentChangelog).toBeCalledWith(
             expect.objectContaining({ name, location }),
-            expect.objectContaining({
-              cwd: testDir,
-              changelogPreset: "foo-bar",
-            }),
+            execOpts(testDir),
           );
-        }));
+        });
+      });
+
+      it("accepts --changelog-preset option", async () => {
+        const testDir = await initFixture("PublishCommand/independent");
+        const name = "package-3";
+        const version = "3.0.0";
+        const location = path.join(testDir, "packages", name);
+
+        await run(testDir)("--conventional-commits", "--changelog-preset", "foo-bar");
+
+        expect(ConventionalCommitUtilities.recommendIndependentVersion).toBeCalledWith(
+          expect.objectContaining({ name, version }),
+          expect.objectContaining({
+            cwd: testDir,
+            changelogPreset: "foo-bar",
+          }),
+        );
+        expect(ConventionalCommitUtilities.updateIndependentChangelog).toBeCalledWith(
+          expect.objectContaining({ name, location }),
+          expect.objectContaining({
+            cwd: testDir,
+            changelogPreset: "foo-bar",
+          }),
+        );
+      });
     });
 
     describe("fixed mode", () => {
@@ -886,16 +883,12 @@ describe("PublishCommand", () => {
       const updateFixedRootChangelogOriginal = ConventionalCommitUtilities.updateFixedRootChangelog;
       const updateFixedChangelogOriginal = ConventionalCommitUtilities.updateFixedChangelog;
 
-      beforeEach(() =>
-        initFixture("PublishCommand/normal").then(dir => {
-          testDir = dir;
-
-          const reccomendReplies = ["1.0.1", "1.1.0", "2.0.0", "1.1.0", "5.1.1"];
-          ConventionalCommitUtilities.recommendFixedVersion = jest.fn(() => reccomendReplies.shift());
-          ConventionalCommitUtilities.updateFixedRootChangelog = jest.fn();
-          ConventionalCommitUtilities.updateFixedChangelog = jest.fn();
-        }),
-      );
+      beforeEach(() => {
+        const reccomendReplies = ["1.0.1", "1.1.0", "2.0.0", "1.1.0", "5.1.1"];
+        ConventionalCommitUtilities.recommendFixedVersion = jest.fn(() => reccomendReplies.shift());
+        ConventionalCommitUtilities.updateFixedRootChangelog = jest.fn();
+        ConventionalCommitUtilities.updateFixedChangelog = jest.fn();
+      });
 
       afterEach(() => {
         ConventionalCommitUtilities.recommendFixedVersion = recommendFixedVersionOriginal;
@@ -903,63 +896,68 @@ describe("PublishCommand", () => {
         ConventionalCommitUtilities.updateFixedChangelog = updateFixedChangelogOriginal;
       });
 
-      it("should use conventional-commits utility to guess version bump and generate CHANGELOG", () =>
-        run(testDir)("--conventional-commits").then(() => {
-          expect(gitAddedFiles(testDir)).toMatchSnapshot(
-            "[fixed --conventional-commits] git adds changed files",
-          );
-          expect(gitCommitMessage()).toMatchSnapshot("[fixed --conventional-commits] git commit message");
+      it("should use conventional-commits utility to guess version bump and generate CHANGELOG", async () => {
+        const testDir = await initFixture("PublishCommand/normal");
 
-          [
-            ["package-1", "1.0.0"],
-            ["package-2", "1.0.0"],
-            ["package-3", "1.0.0"],
-            ["package-4", "1.0.0"],
-            ["package-5", "1.0.0"],
-          ].forEach(([name, version]) => {
-            const location = path.join(testDir, "packages", name);
+        await run(testDir)("--conventional-commits");
 
-            expect(ConventionalCommitUtilities.recommendFixedVersion).toBeCalledWith(
-              expect.objectContaining({ name, version, location }),
-              execOpts(testDir),
-            );
+        expect(gitAddedFiles(testDir)).toMatchSnapshot(
+          "[fixed --conventional-commits] git adds changed files",
+        );
+        expect(gitCommitMessage()).toMatchSnapshot("[fixed --conventional-commits] git commit message");
 
-            expect(ConventionalCommitUtilities.updateFixedChangelog).toBeCalledWith(
-              expect.objectContaining({ name, location }),
-              execOpts(testDir),
-            );
-          });
-
-          expect(ConventionalCommitUtilities.updateFixedRootChangelog).toBeCalledWith(
-            expect.objectContaining({
-              name: "normal",
-              location: path.join(testDir),
-            }),
-            execOpts(testDir),
-          );
-        }));
-
-      it("accepts --changelog-preset option", () =>
-        run(testDir)("--conventional-commits", "--changelog-preset", "baz-qux").then(() => {
-          const name = "package-5";
-          const version = "1.0.0";
+        [
+          ["package-1", "1.0.0"],
+          ["package-2", "1.0.0"],
+          ["package-3", "1.0.0"],
+          ["package-4", "1.0.0"],
+          ["package-5", "1.0.0"],
+        ].forEach(([name, version]) => {
           const location = path.join(testDir, "packages", name);
 
           expect(ConventionalCommitUtilities.recommendFixedVersion).toBeCalledWith(
             expect.objectContaining({ name, version, location }),
-            expect.objectContaining({
-              cwd: testDir,
-              changelogPreset: "baz-qux",
-            }),
+            execOpts(testDir),
           );
+
           expect(ConventionalCommitUtilities.updateFixedChangelog).toBeCalledWith(
             expect.objectContaining({ name, location }),
-            expect.objectContaining({
-              cwd: testDir,
-              changelogPreset: "baz-qux",
-            }),
+            execOpts(testDir),
           );
-        }));
+        });
+
+        expect(ConventionalCommitUtilities.updateFixedRootChangelog).toBeCalledWith(
+          expect.objectContaining({
+            name: "normal",
+            location: path.join(testDir),
+          }),
+          execOpts(testDir),
+        );
+      });
+
+      it("accepts --changelog-preset option", async () => {
+        const testDir = await initFixture("PublishCommand/normal");
+        const name = "package-5";
+        const version = "1.0.0";
+        const location = path.join(testDir, "packages", name);
+
+        await run(testDir)("--conventional-commits", "--changelog-preset", "baz-qux");
+
+        expect(ConventionalCommitUtilities.recommendFixedVersion).toBeCalledWith(
+          expect.objectContaining({ name, version, location }),
+          expect.objectContaining({
+            cwd: testDir,
+            changelogPreset: "baz-qux",
+          }),
+        );
+        expect(ConventionalCommitUtilities.updateFixedChangelog).toBeCalledWith(
+          expect.objectContaining({ name, location }),
+          expect.objectContaining({
+            cwd: testDir,
+            changelogPreset: "baz-qux",
+          }),
+        );
+      });
     });
   });
 
