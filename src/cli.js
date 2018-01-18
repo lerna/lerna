@@ -36,7 +36,7 @@ function CLI(argv, cwd) {
     .options(globalOptions)
     .group(globalKeys, "Global Options:")
     .commandDir("./commands")
-    .command("*", "", {}, parsed => {
+    .command("*", false, {}, parsed => {
       // a default command with no description catches typos or missing subcommands
       log.error("lerna", `${parsed._.length ? "Invalid" : "Missing"} command!`);
       log.error("lerna", "Pass --help to see all available commands and options.");
@@ -46,9 +46,7 @@ function CLI(argv, cwd) {
     })
     .demandCommand(1, "Pass --help to see all available commands and options.")
     .showHelpOnFail(false, "A command is required.")
-    .help("h")
     .alias("h", "help")
-    .version()
     .alias("v", "version")
     .wrap(cli.terminalWidth()).epilogue(dedent`
       When a command fails, all logs are written to lerna-debug.log in the current working directory.

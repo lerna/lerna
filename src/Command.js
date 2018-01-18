@@ -47,7 +47,6 @@ const builder = {
       (Only for 'run', 'exec', 'clean', 'ls', and 'bootstrap' commands)
     `,
     type: "string",
-    requiresArg: false,
   },
   ignore: {
     describe: dedent`
@@ -70,7 +69,7 @@ const builder = {
   "reject-cycles": {
     describe: "Fail if a cycle is detected among dependencies",
     type: "boolean",
-    default: false,
+    default: undefined,
   },
   sort: {
     describe: "Sort packages topologically (all dependencies before dependents)",
