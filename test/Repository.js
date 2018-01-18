@@ -137,6 +137,18 @@ describe("Repository", () => {
       repo.lernaJson.packages = customPackages;
       expect(repo.packageConfigs).toBe(customPackages);
     });
+
+    it("returns workspace packageConfigs", async () => {
+      const testDirWithWorkspaces = await initFixture("Repository/yarn-workspaces");
+      const repo = new Repository(testDirWithWorkspaces);
+      expect(repo.packageConfigs).toEqual(["packages/*"]);
+    });
+
+    it("throws with friendly error if workspaces are not configured", () => {
+      const repo = new Repository(testDir);
+      repo.lernaJson.useWorkspaces = true;
+      expect(() => repo.packageConfigs).toThrow(/workspaces need to be defined/);
+    });
   });
 
   describe("get .packageParentDirs", () => {

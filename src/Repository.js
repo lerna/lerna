@@ -1,3 +1,4 @@
+import dedent from "dedent";
 import findUp from "find-up";
 import globParent from "glob-parent";
 import loadJsonFile from "load-json-file";
@@ -59,6 +60,16 @@ export default class Repository {
 
   get packageConfigs() {
     if (this.lernaJson.useWorkspaces) {
+      if (!this.packageJson.workspaces) {
+        throw new ValidationError(
+          "EWORKSPACES",
+          dedent`
+            Yarn workspaces need to be defined in the root package.json.
+            See: https://github.com/lerna/lerna#--use-workspaces
+          `,
+        );
+      }
+
       return this.packageJson.workspaces;
     }
     return this.lernaJson.packages || [DEFAULT_PACKAGE_GLOB];
