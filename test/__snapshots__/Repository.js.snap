@@ -1,3 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`Repository get .packageConfigs throws with friendly error if workspaces are not configured 1`] = `"workspaces need to be defined in the root package.json.See: https://github.com/lerna/lerna#--use-workspaces"`;

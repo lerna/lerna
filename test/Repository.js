@@ -19,11 +19,9 @@ log.level = "silent";
 
 describe("Repository", () => {
   let testDir;
-  let testDirWithWorkspaces;
 
   beforeAll(async () => {
     testDir = await initFixture("Repository/basic");
-    testDirWithWorkspaces = await initFixture("Repository/yarn-workspaces");
   });
 
   describe(".rootPath", () => {
@@ -140,7 +138,8 @@ describe("Repository", () => {
       expect(repo.packageConfigs).toBe(customPackages);
     });
 
-    it("returns workspace packageConfigs", () => {
+    it("returns workspace packageConfigs", async () => {
+      const testDirWithWorkspaces = await initFixture("Repository/yarn-workspaces");
       const repo = new Repository(testDirWithWorkspaces);
       expect(repo.packageConfigs).toEqual(["packages/*"]);
     });
@@ -148,7 +147,7 @@ describe("Repository", () => {
     it("throws with friendly error if workspaces are not configured", () => {
       const repo = new Repository(testDir);
       repo.lernaJson.useWorkspaces = true;
-      expect(() => repo.packageConfigs).toThrowErrorMatchingSnapshot();
+      expect(() => repo.packageConfigs).toThrow(/workspaces need to be defined/);
     });
   });
 

@@ -1,5 +1,6 @@
 "use strict";
 
+const dedent = require("dedent");
 const findUp = require("find-up");
 const globParent = require("glob-parent");
 const loadJsonFile = require("load-json-file");
@@ -63,9 +64,11 @@ class Repository {
     if (this.lernaJson.useWorkspaces) {
       if (!this.packageJson.workspaces) {
         throw new ValidationError(
-          "Invalid workspaces",
-          "workspaces need to be defined in the root package.json." +
-            "See: https://github.com/lerna/lerna#--use-workspaces"
+          "EWORKSPACES",
+          dedent`
+            Yarn workspaces need to be defined in the root package.json.
+            See: https://github.com/lerna/lerna#--use-workspaces
+          `
         );
       }
 
