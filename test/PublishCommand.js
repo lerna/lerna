@@ -789,15 +789,11 @@ describe("PublishCommand", () => {
    * ======================================================================= */
 
   describe("--conventional-commits", () => {
-    let testDir;
-
     describe("independent mode", () => {
       const recommendIndependentVersionOriginal = ConventionalCommitUtilities.recommendIndependentVersion;
       const updateIndependentChangelogOriginal = ConventionalCommitUtilities.updateIndependentChangelog;
 
       beforeEach(async () => {
-        testDir = await initFixture("PublishCommand/independent");
-
         const reccomendReplies = ["1.0.1", "1.1.0", "2.0.0", "1.1.0", "5.1.1"];
         ConventionalCommitUtilities.recommendIndependentVersion = jest.fn(() => reccomendReplies.shift());
         ConventionalCommitUtilities.updateIndependentChangelog = jest.fn();
@@ -809,6 +805,8 @@ describe("PublishCommand", () => {
       });
 
       it("should use conventional-commits utility to guess version bump and generate CHANGELOG", async () => {
+        const testDir = await initFixture("PublishCommand/independent");
+
         await run(testDir)("--conventional-commits");
 
         expect(gitAddedFiles(testDir)).toMatchSnapshot("git added files");
@@ -835,6 +833,7 @@ describe("PublishCommand", () => {
       });
 
       it("accepts --changelog-preset option", async () => {
+        const testDir = await initFixture("PublishCommand/independent");
         const name = "package-3";
         const version = "3.0.0";
         const location = path.join(testDir, "packages", name);
@@ -864,8 +863,6 @@ describe("PublishCommand", () => {
       const updateFixedChangelogOriginal = ConventionalCommitUtilities.updateFixedChangelog;
 
       beforeEach(async () => {
-        testDir = await initFixture("PublishCommand/normal");
-
         const reccomendReplies = ["1.0.1", "1.1.0", "2.0.0", "1.1.0", "5.1.1"];
         ConventionalCommitUtilities.recommendFixedVersion = jest.fn(() => reccomendReplies.shift());
         ConventionalCommitUtilities.updateFixedRootChangelog = jest.fn();
@@ -879,6 +876,8 @@ describe("PublishCommand", () => {
       });
 
       it("should use conventional-commits utility to guess version bump and generate CHANGELOG", async () => {
+        const testDir = await initFixture("PublishCommand/normal");
+
         await run(testDir)("--conventional-commits");
 
         expect(gitAddedFiles(testDir)).toMatchSnapshot("git added files");
@@ -914,6 +913,7 @@ describe("PublishCommand", () => {
       });
 
       it("accepts --changelog-preset option", async () => {
+        const testDir = await initFixture("PublishCommand/normal");
         const name = "package-5";
         const version = "1.0.0";
         const location = path.join(testDir, "packages", name);
