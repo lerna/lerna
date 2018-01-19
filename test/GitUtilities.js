@@ -106,7 +106,7 @@ describe("GitUtilities", () => {
 
       expect(ChildProcessUtilities.execSync).lastCalledWith(
         "git",
-        ["commit", "--no-verify","-F", "TEMPFILE"],
+        ["commit", "--no-verify", "-F", "TEMPFILE"],
         opts
       );
       expect(tempWrite.sync).lastCalledWith(`foo${EOL}bar`, "lerna-commit.txt");
