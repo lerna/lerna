@@ -1,15 +1,15 @@
 "use strict";
 
+const fs = require("fs-extra");
 const execa = require("execa");
 const loadJsonFile = require("load-json-file");
 const log = require("npmlog");
 const path = require("path");
+const tempy = require("tempy");
 const touch = require("touch");
 const writeJsonFile = require("write-json-file");
 
 const ChildProcessUtilities = require("../src/ChildProcessUtilities");
-const FileSystemUtilities = require("../src/FileSystemUtilities");
-const GitUtilities = require("../src/GitUtilities");
 
 // helpers
 const callsBack = require("./helpers/callsBack");
@@ -22,15 +22,26 @@ const LERNA_VERSION = require("../package.json").version;
 // silence logs
 log.level = "silent";
 
+const onAllExitedOriginal = ChildProcessUtilities.onAllExited;
+const getChildProcessCountOriginal = ChildProcessUtilities.getChildProcessCount;
+
 describe("Command", () => {
   const originalCWD = process.cwd();
 
+  afterEach(() => jest.resetAllMocks());
+
   beforeAll(async () => {
+    ChildProcessUtilities.onAllExited = jest.fn(callsBack());
+    ChildProcessUtilities.getChildProcessCount = jest.fn(() => 0);
+
     const testDir = await initFixture("Command/basic");
     process.chdir(testDir);
   });
 
   afterAll(() => {
+    ChildProcessUtilities.onAllExited = onAllExitedOriginal;
+    ChildProcessUtilities.getChildProcessCount = getChildProcessCountOriginal;
+
     process.chdir(originalCWD);
   });
 
@@ -48,16 +59,6 @@ describe("Command", () => {
 
   // convenience to avoid silly "not implemented errors"
   const testFactory = (argv = {}) => new OkCommand(argv);
-
-  beforeEach(() => {
-    // only used to check for VERSION file
-    FileSystemUtilities.existsSync = jest.fn(() => false);
-
-    // only used in runValidations(), tested elsewhere
-    GitUtilities.isInitialized = jest.fn(() => true);
-  });
-
-  afterEach(() => jest.resetAllMocks());
 
   describe(".lernaVersion", () => {
     it("should be added to the instance", async () => {
@@ -101,7 +102,6 @@ describe("Command", () => {
 
   describe(".execOpts", () => {
     const ONE_HUNDRED_MEGABYTES = 1000 * 1000 * 100;
-    const REPO_PATH = process.cwd();
 
     it("has maxBuffer", () => {
       const command = testFactory({ maxBuffer: ONE_HUNDRED_MEGABYTES });
@@ -109,8 +109,8 @@ describe("Command", () => {
     });
 
     it("has repo path", () => {
-      const command = testFactory({ cwd: REPO_PATH });
-      expect(command.execOpts.cwd).toBe(REPO_PATH);
+      const command = testFactory();
+      expect(command.execOpts.cwd).toBe(process.cwd());
     });
   });
 
@@ -216,7 +216,7 @@ describe("Command", () => {
       lernaConfig.loglevel = "warn";
       await writeJsonFile(lernaJsonLocation, lernaConfig, { indent: 2 });
 
-      await testFactory({ cwd });
+      await testFactory({ cwd, onRejected });
 
       expect(log.level).toBe("warn");
     });
@@ -489,6 +489,49 @@ describe("Command", () => {
         const command = new Command({ onRejected });
         expect(() => command[method]()).toThrow();
       });
+    });
+  });
+
+  describe("validations", () => {
+    it("throws ENOGIT when repository is not initialized", async () => {
+      const cwd = tempy.directory();
+
+      try {
+        await testFactory({ cwd, onRejected });
+      } catch (err) {
+        expect(err.exitCode).toBe(1);
+        expect(err.prefix).toBe("ENOGIT");
+      }
+
+      expect.assertions(2);
+    });
+
+    it("throws ENOPKG when root package.json is not found", async () => {
+      const cwd = await initFixture("Command/basic");
+      await fs.remove(path.join(cwd, "package.json"));
+
+      try {
+        await testFactory({ cwd, onRejected });
+      } catch (err) {
+        expect(err.exitCode).toBe(1);
+        expect(err.prefix).toBe("ENOPKG");
+      }
+
+      expect.assertions(2);
+    });
+
+    it("throws ENOLERNA when lerna.json is not found", async () => {
+      const cwd = await initFixture("Command/basic");
+      await fs.remove(path.join(cwd, "lerna.json"));
+
+      try {
+        await testFactory({ cwd, onRejected });
+      } catch (err) {
+        expect(err.exitCode).toBe(1);
+        expect(err.prefix).toBe("ENOLERNA");
+      }
+
+      expect.assertions(2);
     });
   });
 });
