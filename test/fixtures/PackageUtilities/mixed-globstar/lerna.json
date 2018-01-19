@@ -1,5 +1,4 @@
 {
-  "lerna": "__TEST_VERSION__",
   "packages": [
     "src/**",
     "packages/node_modules/*"

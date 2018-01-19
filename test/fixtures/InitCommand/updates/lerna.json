@@ -1,5 +1,4 @@
 {
-  "lerna": "__TEST_VERSION__",
   "commands": {
     "bootstrap": {
       "hoist": true

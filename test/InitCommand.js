@@ -81,7 +81,6 @@ describe("InitCommand", () => {
       expect(writeJsonFile.sync).lastCalledWith(
         path.join(testDir, "lerna.json"),
         {
-          lerna: lernaVersion,
           packages: ["packages/*"],
           version: "0.0.0",
         },
@@ -164,7 +163,6 @@ describe("InitCommand", () => {
       expect(writeJsonFile.sync).lastCalledWith(
         path.join(testDir, "lerna.json"),
         {
-          lerna: lernaVersion,
           packages: ["packages/*"],
           version: "0.0.0",
         },
@@ -277,7 +275,7 @@ describe("InitCommand", () => {
       findUp.sync = jest.fn(() => path.join(testDir, "lerna.json"));
     });
 
-    it("updates lerna property to current version", async () => {
+    it("deletes lerna property if found", async () => {
       loadJsonFile.sync = jest.fn(() => ({
         lerna: "0.1.100",
         version: "1.2.3",
@@ -287,32 +285,15 @@ describe("InitCommand", () => {
 
       expect(writeJsonFile.sync).lastCalledWith(
         expect.stringContaining("lerna.json"),
-        expect.objectContaining({
-          lerna: lernaVersion,
-        }),
+        {
+          packages: ["packages/*"],
+          version: "1.2.3",
+        },
         { indent: 2 }
       );
     });
 
-    it("updates lerna property to current version in independent mode", async () => {
-      loadJsonFile.sync = jest.fn(() => ({
-        lerna: "0.1.100",
-        version: "independent",
-      }));
-
-      await lernaInit("--independent");
-
-      expect(writeJsonFile.sync).lastCalledWith(
-        expect.stringContaining("lerna.json"),
-        expect.objectContaining({
-          lerna: lernaVersion,
-          version: "independent",
-        }),
-        { indent: 2 }
-      );
-    });
-
-    it("does create package directories when glob is configured", async () => {
+    it("creates package directories when glob is configured", async () => {
       loadJsonFile.sync = jest.fn(() => ({
         packages: ["modules/*"],
       }));

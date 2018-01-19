@@ -75,7 +75,6 @@ describe("Repository", () => {
     it("returns parsed lerna.json", () => {
       const repo = new Repository(testDir);
       expect(repo.lernaJson).toEqual({
-        lerna: "500.0.0",
         version: "1.0.0",
       });
     });
@@ -101,13 +100,6 @@ describe("Repository", () => {
         expect(err.name).toBe("ValidationError");
         expect(err.prefix).toBe("JSONError");
       }
-    });
-  });
-
-  describe("get .initVersion", () => {
-    it("reads the `lerna` key from lerna.json", () => {
-      const repo = new Repository(testDir);
-      expect(repo.initVersion).toBe("500.0.0");
     });
   });
 
@@ -232,23 +224,6 @@ describe("Repository", () => {
     it("returns the path to (deprecated) VERSION file", () => {
       const repo = new Repository(testDir);
       expect(repo.versionLocation).toBe(path.join(testDir, "VERSION"));
-    });
-  });
-
-  describe("isCompatibleLerna()", () => {
-    it("returns true when lerna CLI version satisfies initVersion range", () => {
-      const repo = new Repository(testDir);
-      expect(repo.isCompatibleLerna("500.250.0")).toBe(true);
-    });
-
-    it("returns true when lerna version is identical to initVersion", () => {
-      const repo = new Repository(testDir);
-      expect(repo.isCompatibleLerna("500.0.0")).toBe(true);
-    });
-
-    it("returns false when lerna CLI version does not satisfy initVersion range", () => {
-      const repo = new Repository(testDir);
-      expect(repo.isCompatibleLerna("1000.0.0")).toBe(false);
     });
   });
 

@@ -2,7 +2,6 @@
 
 exports[`lerna init initializes empty directory: lerna.json 1`] = `
 Object {
-  lerna: "__TEST_VERSION__",
   packages: Array [
     packages/*,
   ],
@@ -46,7 +45,6 @@ Object {
       exact: true,
     },
   },
-  lerna: "__TEST_VERSION__",
   packages: Array [
     packages/*,
   ],
