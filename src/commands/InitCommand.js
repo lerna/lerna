@@ -1,36 +1,37 @@
-import _ from "lodash";
-import writeJsonFile from "write-json-file";
-import writePkg from "write-pkg";
+"use strict";
 
-import Command from "../Command";
-import FileSystemUtilities from "../FileSystemUtilities";
-import GitUtilities from "../GitUtilities";
+const _ = require("lodash");
+const writeJsonFile = require("write-json-file");
+const writePkg = require("write-pkg");
 
-export function handler(argv) {
-  new InitCommand(argv._, argv, argv._cwd).run()
-    .then(argv._onFinish, argv._onFinish);
-}
+const Command = require("../Command");
+const FileSystemUtilities = require("../FileSystemUtilities");
+const GitUtilities = require("../GitUtilities");
 
-export const command = "init";
+exports.handler = function handler(argv) {
+  // eslint-disable-next-line no-use-before-define
+  return new InitCommand(argv);
+};
 
-export const describe = "Create a new Lerna repo or upgrade an existing repo to the current version "
-                      + "of Lerna.";
+exports.command = "init";
 
-export const builder = {
-  "exact": {
+exports.describe = "Create a new Lerna repo or upgrade an existing repo to the current version of Lerna.";
+
+exports.builder = {
+  exact: {
     describe: "Specify lerna dependency version in package.json without a caret (^)",
     type: "boolean",
     default: undefined,
   },
-  "independent": {
+  independent: {
     describe: "Version packages independently",
     alias: "i",
     type: "boolean",
     default: undefined,
-  }
+  },
 };
 
-export default class InitCommand extends Command {
+class InitCommand extends Command {
   get defaultOptions() {
     return {
       exact: false,
@@ -63,7 +64,7 @@ export default class InitCommand extends Command {
   }
 
   ensurePackageJSON() {
-    let packageJson = this.repository.packageJson;
+    let { packageJson } = this.repository;
 
     if (!packageJson) {
       packageJson = {};
@@ -78,20 +79,20 @@ export default class InitCommand extends Command {
       targetDependencies = packageJson.dependencies;
     } else {
       // lerna is a devDependency or no dependency, yet
-      if (!packageJson.devDependencies) packageJson.devDependencies = {};
+      if (!packageJson.devDependencies) {
+        packageJson.devDependencies = {};
+      }
       targetDependencies = packageJson.devDependencies;
     }
 
-    targetDependencies.lerna = this.exact
-      ? this.lernaVersion
-      : `^${this.lernaVersion}`;
+    targetDependencies.lerna = this.exact ? this.lernaVersion : `^${this.lernaVersion}`;
 
     writePkg.sync(this.repository.packageJsonLocation, packageJson);
   }
 
   ensureLernaJson() {
     // lernaJson already defaulted to empty object in Repository constructor
-    const lernaJson = this.repository.lernaJson;
+    const { lernaJson, version: repositoryVersion } = this.repository;
 
     let version;
 
@@ -99,8 +100,8 @@ export default class InitCommand extends Command {
       version = "independent";
     } else if (FileSystemUtilities.existsSync(this.repository.versionLocation)) {
       version = FileSystemUtilities.readFileSync(this.repository.versionLocation);
-    } else if (this.repository.version) {
-      version = this.repository.version;
+    } else if (repositoryVersion) {
+      version = repositoryVersion;
     } else {
       version = "0.0.0";
     }
@@ -114,7 +115,7 @@ export default class InitCommand extends Command {
     Object.assign(lernaJson, {
       lerna: this.lernaVersion,
       packages: this.repository.packageConfigs,
-      version: version
+      version,
     });
 
     if (this.exact) {
@@ -127,7 +128,7 @@ export default class InitCommand extends Command {
   }
 
   ensureNoVersionFile() {
-    const versionLocation = this.repository.versionLocation;
+    const { versionLocation } = this.repository;
     if (FileSystemUtilities.existsSync(versionLocation)) {
       this.logger.info("", "Removing old VERSION file");
       FileSystemUtilities.unlinkSync(versionLocation);
@@ -136,6 +137,6 @@ export default class InitCommand extends Command {
 
   ensurePackagesDir() {
     this.logger.info("", "Creating packages directory");
-    this.repository.packageParentDirs.map((dir) => FileSystemUtilities.mkdirpSync(dir));
+    this.repository.packageParentDirs.map(dir => FileSystemUtilities.mkdirpSync(dir));
   }
 }

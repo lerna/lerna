@@ -1,12 +1,16 @@
-import { EOL } from "os";
-import log from "npmlog";
-import path from "path";
+"use strict";
+
+const { EOL } = require("os");
+const log = require("npmlog");
+const path = require("path");
+
 // mocked modules
-import writePkg from "write-pkg";
-import ChildProcessUtilities from "../src/ChildProcessUtilities";
-import FileSystemUtilities from "../src/FileSystemUtilities";
+const writePkg = require("write-pkg");
+const ChildProcessUtilities = require("../src/ChildProcessUtilities");
+const FileSystemUtilities = require("../src/FileSystemUtilities");
+
 // file under test
-import NpmUtilities from "../src/NpmUtilities";
+const NpmUtilities = require("../src/NpmUtilities");
 
 jest.mock("write-pkg");
 jest.mock("../src/ChildProcessUtilities");
@@ -124,16 +128,37 @@ describe("NpmUtilities", () => {
   describe(".runScriptInDir()", () => {
     it("runs an npm script in a directory", () => {
       const script = "foo";
-      const args = ["--bar", "baz"];
-      const directory = "/test/runScriptInDir";
+      const options = {
+        args: ["--bar", "baz"],
+        directory: "/test/runScriptInDir",
+        npmClient: "npm",
+      };
       const callback = () => {};
 
-      NpmUtilities.runScriptInDir(script, args, directory, callback);
+      NpmUtilities.runScriptInDir(script, options, callback);
 
       const cmd = "npm";
       const scriptArgs = ["run", "foo", "--bar", "baz"];
       const opts = {
-        cwd: directory,
+        cwd: options.directory,
+      };
+      expect(ChildProcessUtilities.exec).lastCalledWith(cmd, scriptArgs, opts, expect.any(Function));
+    });
+    it("support different npmClient", () => {
+      const script = "foo";
+      const options = {
+        args: ["--bar", "baz"],
+        directory: "/test/runScriptInDir",
+        npmClient: "yarn",
+      };
+      const callback = () => {};
+
+      NpmUtilities.runScriptInDir(script, options, callback);
+
+      const cmd = "yarn";
+      const scriptArgs = ["run", "foo", "--bar", "baz"];
+      const opts = {
+        cwd: options.directory,
       };
       expect(ChildProcessUtilities.exec).lastCalledWith(cmd, scriptArgs, opts, expect.any(Function));
     });
@@ -142,17 +167,19 @@ describe("NpmUtilities", () => {
   describe(".runScriptInDirSync()", () => {
     it("runs an npm script syncrhonously in a directory", () => {
       const script = "foo";
-      const args = ["--bar", "baz"];
-      const directory = "/test/runScriptInDirSync";
-      const callback = () => {
+      const config = {
+        args: ["--bar", "baz"],
+        directory: "/test/runScriptInDirSync",
+        npmClient: "npm",
       };
+      const callback = () => {};
 
-      NpmUtilities.runScriptInDirSync(script, args, directory, callback);
+      NpmUtilities.runScriptInDirSync(script, config, callback);
 
       const cmd = "npm";
       const scriptArgs = ["run", "foo", "--bar", "baz"];
       const opts = {
-        cwd: directory,
+        cwd: config.directory,
       };
       expect(ChildProcessUtilities.execSync).lastCalledWith(cmd, scriptArgs, opts, expect.any(Function));
     });
@@ -161,20 +188,23 @@ describe("NpmUtilities", () => {
   describe(".runScriptInPackageStreaming()", () => {
     it("runs an npm script in a package with streaming", () => {
       const script = "foo";
-      const args = ["--bar", "baz"];
-      const pkg = {
-        name: "qux",
-        location: "/test/runScriptInPackageStreaming",
+      const config = {
+        args: ["--bar", "baz"],
+        pkg: {
+          name: "qux",
+          location: "/test/runScriptInPackageStreaming",
+        },
+        npmClient: "npm",
       };
       const callback = () => {};
 
-      NpmUtilities.runScriptInPackageStreaming(script, args, pkg, callback);
+      NpmUtilities.runScriptInPackageStreaming(script, config, callback);
 
       expect(ChildProcessUtilities.spawnStreaming).lastCalledWith(
         "npm",
         ["run", "foo", "--bar", "baz"],
         {
-          cwd: pkg.location,
+          cwd: config.pkg.location,
         },
         "qux",
         expect.any(Function)
@@ -184,35 +214,47 @@ describe("NpmUtilities", () => {
 
   describe(".publishTaggedInDir()", () => {
     const directory = "/test/publishTaggedInDir";
+    const pkg = { name: "test", location: directory, version: "1.10.100" };
     const callback = () => {};
 
     beforeEach(stubExecOpts);
     afterEach(resetExecOpts);
 
     it("runs npm publish in a directory with --tag support", () => {
-      NpmUtilities.publishTaggedInDir("published-tag", directory, undefined, callback);
+      const npmClient = "npm";
+      NpmUtilities.publishTaggedInDir("published-tag", pkg, { npmClient }, callback);
 
-      const cmd = "npm";
       const args = ["publish", "--tag", "published-tag"];
       const opts = { directory, registry: undefined };
-      expect(ChildProcessUtilities.exec).lastCalledWith(cmd, args, opts, expect.any(Function));
+      expect(ChildProcessUtilities.exec).lastCalledWith(npmClient, args, opts, expect.any(Function));
     });
 
     it("trims trailing whitespace in tag parameter", () => {
-      NpmUtilities.publishTaggedInDir("trailing-tag  ", directory, callback);
+      NpmUtilities.publishTaggedInDir("trailing-tag ", pkg, { npmClient: "npm" }, callback);
 
       const actualtag = ChildProcessUtilities.exec.mock.calls[0][1][2];
       expect(actualtag).toBe("trailing-tag");
     });
 
     it("supports custom registry", () => {
+      const npmClient = "npm";
       const registry = "https://custom-registry/publishTaggedInDir";
-      NpmUtilities.publishTaggedInDir("published-tag", directory, registry, callback);
+      NpmUtilities.publishTaggedInDir("custom-registry", pkg, { npmClient, registry }, callback);
 
-      const cmd = "npm";
-      const args = ["publish", "--tag", "published-tag"];
+      const args = ["publish", "--tag", "custom-registry"];
       const opts = { directory, registry };
-      expect(ChildProcessUtilities.exec).lastCalledWith(cmd, args, opts, expect.any(Function));
+      expect(ChildProcessUtilities.exec).lastCalledWith(npmClient, args, opts, expect.any(Function));
+    });
+
+    describe("with npmClient yarn", () => {
+      it("appends --new-version to avoid interactive prompt", () => {
+        const npmClient = "yarn";
+        NpmUtilities.publishTaggedInDir("yarn-publish", pkg, { npmClient }, callback);
+
+        const args = ["publish", "--tag", "yarn-publish", "--new-version", "1.10.100"];
+        const opts = { directory, registry: undefined };
+        expect(ChildProcessUtilities.exec).lastCalledWith(npmClient, args, opts, expect.any(Function));
+      });
     });
   });
 
@@ -232,8 +274,8 @@ describe("NpmUtilities", () => {
       const want = {
         cwd: "test_dir",
         env: Object.assign({}, mockEnv, {
-          npm_config_registry: "https://my-secure-registry/npm"
-        })
+          npm_config_registry: "https://my-secure-registry/npm",
+        }),
       };
       expect(opts).toEqual(want);
     });
@@ -258,40 +300,34 @@ describe("NpmUtilities", () => {
 
     afterEach(resetExecOpts);
 
-    it("installs dependencies in targeted directory", (done) => {
+    it("installs dependencies in targeted directory", done => {
       const directory = path.normalize("/test/installInDir");
-      const dependencies = [
-        "@scoped/caret@^2.0.0",
-        "@scoped/exact@2.0.0",
-        "caret@^1.0.0",
-        "exact@1.0.0",
-      ];
+      const dependencies = ["@scoped/caret@^2.0.0", "@scoped/exact@2.0.0", "caret@^1.0.0", "exact@1.0.0"];
       const config = {};
 
-      NpmUtilities.installInDir(directory, dependencies, config, (err) => {
-        if (err) return done.fail(err);
+      NpmUtilities.installInDir(directory, dependencies, config, err => {
+        if (err) {
+          return done.fail(err);
+        }
 
         try {
           expect(FileSystemUtilities.rename).lastCalledWith(
             path.join(directory, "package.json"),
             path.join(directory, "package.json.lerna_backup"),
-            expect.any(Function),
+            expect.any(Function)
           );
           expect(FileSystemUtilities.renameSync).lastCalledWith(
             path.join(directory, "package.json.lerna_backup"),
-            path.join(directory, "package.json"),
+            path.join(directory, "package.json")
           );
-          expect(writePkg).lastCalledWith(
-            path.join(directory, "package.json"),
-            {
-              dependencies: {
-                "@scoped/caret": "^2.0.0",
-                "@scoped/exact": "2.0.0",
-                caret: "^1.0.0",
-                exact: "1.0.0",
-              },
+          expect(writePkg).lastCalledWith(path.join(directory, "package.json"), {
+            dependencies: {
+              "@scoped/caret": "^2.0.0",
+              "@scoped/exact": "2.0.0",
+              caret: "^1.0.0",
+              exact: "1.0.0",
             },
-          );
+          });
           expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["install"], {
             directory,
             registry: undefined,
@@ -304,30 +340,26 @@ describe("NpmUtilities", () => {
       });
     });
 
-    it("supports custom registry", (done) => {
+    it("supports custom registry", done => {
       const registry = "https://custom-registry/installInDir";
       const directory = path.normalize("/test/installInDir");
-      const dependencies = [
-        "@scoped/tagged@next",
-        "tagged@next",
-      ];
+      const dependencies = ["@scoped/tagged@next", "tagged@next"];
       const config = {
         registry,
       };
 
-      NpmUtilities.installInDir(directory, dependencies, config, (err) => {
-        if (err) return done.fail(err);
+      NpmUtilities.installInDir(directory, dependencies, config, err => {
+        if (err) {
+          return done.fail(err);
+        }
 
         try {
-          expect(writePkg).lastCalledWith(
-            path.join(directory, "package.json"),
-            {
-              dependencies: {
-                "@scoped/tagged": "next",
-                tagged: "next",
-              },
+          expect(writePkg).lastCalledWith(path.join(directory, "package.json"), {
+            dependencies: {
+              "@scoped/tagged": "next",
+              tagged: "next",
             },
-          );
+          });
           expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["install"], {
             directory,
             registry,
@@ -340,37 +372,29 @@ describe("NpmUtilities", () => {
       });
     });
 
-    it("supports npm install --global-style", (done) => {
+    it("supports npm install --global-style", done => {
       const directory = path.normalize("/test/installInDir");
-      const dependencies = [
-        "@scoped/foo@latest",
-        "foo@latest",
-      ];
+      const dependencies = ["@scoped/foo@latest", "foo@latest"];
       const config = {
         npmGlobalStyle: true,
       };
 
-      NpmUtilities.installInDir(directory, dependencies, config, (err) => {
-        if (err) return done.fail(err);
+      NpmUtilities.installInDir(directory, dependencies, config, err => {
+        if (err) {
+          return done.fail(err);
+        }
 
         try {
-          expect(writePkg).lastCalledWith(
-            path.join(directory, "package.json"),
-            {
-              dependencies: {
-                "@scoped/foo": "latest",
-                foo: "latest",
-              },
+          expect(writePkg).lastCalledWith(path.join(directory, "package.json"), {
+            dependencies: {
+              "@scoped/foo": "latest",
+              foo: "latest",
             },
-          );
-          expect(ChildProcessUtilities.exec).lastCalledWith(
-            "npm",
-            ["install", "--global-style"],
-            {
-              directory,
-              registry: undefined,
-            }
-          );
+          });
+          expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["install", "--global-style"], {
+            directory,
+            registry: undefined,
+          });
 
           done();
         } catch (ex) {
@@ -379,30 +403,26 @@ describe("NpmUtilities", () => {
       });
     });
 
-    it("supports custom npmClient", (done) => {
+    it("supports custom npmClient", done => {
       const directory = path.normalize("/test/installInDir");
-      const dependencies = [
-        "@scoped/something@github:foo/bar",
-        "something@github:foo/foo",
-      ];
+      const dependencies = ["@scoped/something@github:foo/bar", "something@github:foo/foo"];
       const config = {
         npmClient: "yarn",
         mutex: "network:12345",
       };
 
-      NpmUtilities.installInDir(directory, dependencies, config, (err) => {
-        if (err) return done.fail(err);
+      NpmUtilities.installInDir(directory, dependencies, config, err => {
+        if (err) {
+          return done.fail(err);
+        }
 
         try {
-          expect(writePkg).lastCalledWith(
-            path.join(directory, "package.json"),
-            {
-              dependencies: {
-                "@scoped/something": "github:foo/bar",
-                something: "github:foo/foo",
-              },
+          expect(writePkg).lastCalledWith(path.join(directory, "package.json"), {
+            dependencies: {
+              "@scoped/something": "github:foo/bar",
+              something: "github:foo/foo",
             },
-          );
+          });
           expect(ChildProcessUtilities.exec).lastCalledWith(
             "yarn",
             ["install", "--mutex", "network:12345", "--non-interactive"],
@@ -419,29 +439,25 @@ describe("NpmUtilities", () => {
       });
     });
 
-    it("supports custom npmClientArgs", (done) => {
+    it("supports custom npmClientArgs", done => {
       const directory = path.normalize("/test/installInDir");
-      const dependencies = [
-        "@scoped/something@github:foo/bar",
-        "something@github:foo/foo",
-      ];
+      const dependencies = ["@scoped/something@github:foo/bar", "something@github:foo/foo"];
       const config = {
         npmClientArgs: ["--production", "--no-optional"],
       };
 
-      NpmUtilities.installInDir(directory, dependencies, config, (err) => {
-        if (err) return done.fail(err);
+      NpmUtilities.installInDir(directory, dependencies, config, err => {
+        if (err) {
+          return done.fail(err);
+        }
 
         try {
-          expect(writePkg).lastCalledWith(
-            path.join(directory, "package.json"),
-            {
-              dependencies: {
-                "@scoped/something": "github:foo/bar",
-                something: "github:foo/foo",
-              },
+          expect(writePkg).lastCalledWith(path.join(directory, "package.json"), {
+            dependencies: {
+              "@scoped/something": "github:foo/bar",
+              something: "github:foo/foo",
             },
-          );
+          });
           expect(ChildProcessUtilities.exec).lastCalledWith(
             "npm",
             ["install", "--production", "--no-optional"],
@@ -458,39 +474,31 @@ describe("NpmUtilities", () => {
       });
     });
 
-    it("overrides custom npmClient when using global style", (done) => {
+    it("overrides custom npmClient when using global style", done => {
       const directory = path.normalize("/test/installInDir");
-      const dependencies = [
-        "@scoped/something@github:foo/bar",
-        "something@github:foo/foo",
-      ];
+      const dependencies = ["@scoped/something@github:foo/bar", "something@github:foo/foo"];
       const config = {
         npmClient: "yarn",
         npmGlobalStyle: true,
         mutex: "network:12345",
       };
 
-      NpmUtilities.installInDir(directory, dependencies, config, (err) => {
-        if (err) return done.fail(err);
+      NpmUtilities.installInDir(directory, dependencies, config, err => {
+        if (err) {
+          return done.fail(err);
+        }
 
         try {
-          expect(writePkg).lastCalledWith(
-            path.join(directory, "package.json"),
-            {
-              dependencies: {
-                "@scoped/something": "github:foo/bar",
-                something: "github:foo/foo",
-              },
+          expect(writePkg).lastCalledWith(path.join(directory, "package.json"), {
+            dependencies: {
+              "@scoped/something": "github:foo/bar",
+              something: "github:foo/foo",
             },
-          );
-          expect(ChildProcessUtilities.exec).lastCalledWith(
-            "npm",
-            ["install", "--global-style"],
-            {
-              directory,
-              registry: undefined,
-            }
-          );
+          });
+          expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["install", "--global-style"], {
+            directory,
+            registry: undefined,
+          });
 
           done();
         } catch (ex) {
@@ -499,13 +507,15 @@ describe("NpmUtilities", () => {
       });
     });
 
-    it("finishes early when no dependencies exist", (done) => {
+    it("finishes early when no dependencies exist", done => {
       const directory = path.normalize("/test/installInDir");
       const dependencies = [];
       const config = {};
 
-      NpmUtilities.installInDir(directory, dependencies, config, (err) => {
-        if (err) return done.fail(err);
+      NpmUtilities.installInDir(directory, dependencies, config, err => {
+        if (err) {
+          return done.fail(err);
+        }
         try {
           expect(NpmUtilities.getExecOpts).not.toBeCalled();
           done();
@@ -515,7 +525,7 @@ describe("NpmUtilities", () => {
       });
     });
 
-    it("defaults temporary dependency versions to '*'", (done) => {
+    it("defaults temporary dependency versions to '*'", done => {
       const directory = path.normalize("/test/installInDir");
       const dependencies = [
         "noversion",
@@ -523,19 +533,18 @@ describe("NpmUtilities", () => {
       ];
       const config = {};
 
-      NpmUtilities.installInDir(directory, dependencies, config, (err) => {
-        if (err) return done.fail(err);
+      NpmUtilities.installInDir(directory, dependencies, config, err => {
+        if (err) {
+          return done.fail(err);
+        }
 
         try {
-          expect(writePkg).lastCalledWith(
-            path.join(directory, "package.json"),
-            {
-              dependencies: {
-                "@scoped/noversion": "*",
-                noversion: "*",
-              },
+          expect(writePkg).lastCalledWith(path.join(directory, "package.json"), {
+            dependencies: {
+              "@scoped/noversion": "*",
+              noversion: "*",
             },
-          );
+          });
 
           done();
         } catch (ex) {
@@ -544,18 +553,14 @@ describe("NpmUtilities", () => {
       });
     });
 
-    it("passes rename error to callback", (done) => {
+    it("passes rename error to callback", done => {
       const directory = path.normalize("/test/installInDir/renameError");
-      const dependencies = [
-        "I'm just here so we don't exit early",
-      ];
+      const dependencies = ["I'm just here so we don't exit early"];
       const config = {};
 
-      FileSystemUtilities.rename.mockImplementation((from, to, cb) => {
-        return cb(new Error("Unable to rename file"));
-      });
+      FileSystemUtilities.rename.mockImplementation((from, to, cb) => cb(new Error("Unable to rename file")));
 
-      NpmUtilities.installInDir(directory, dependencies, config, (err) => {
+      NpmUtilities.installInDir(directory, dependencies, config, err => {
         try {
           expect(err.message).toBe("Unable to rename file");
 
@@ -566,24 +571,20 @@ describe("NpmUtilities", () => {
       });
     });
 
-    it("cleans up synchronously after writeFile error", (done) => {
+    it("cleans up synchronously after writeFile error", done => {
       const directory = path.normalize("/test/installInDir/writeError");
-      const dependencies = [
-        "I'm just here so we don't exit early",
-      ];
+      const dependencies = ["I'm just here so we don't exit early"];
       const config = {};
 
-      writePkg.mockImplementation(() => {
-        return Promise.reject(new Error("Unable to write file"));
-      });
+      writePkg.mockImplementation(() => Promise.reject(new Error("Unable to write file")));
 
-      NpmUtilities.installInDir(directory, dependencies, config, (err) => {
+      NpmUtilities.installInDir(directory, dependencies, config, err => {
         try {
           expect(err.message).toBe("Unable to write file");
 
           expect(FileSystemUtilities.renameSync).lastCalledWith(
             path.join(directory, "package.json.lerna_backup"),
-            path.join(directory, "package.json"),
+            path.join(directory, "package.json")
           );
 
           done();
@@ -593,24 +594,22 @@ describe("NpmUtilities", () => {
       });
     });
 
-    it("cleans up synchronously after client install error", (done) => {
+    it("cleans up synchronously after client install error", done => {
       const directory = path.normalize("/test/installInDir/clientError");
-      const dependencies = [
-        "I'm just here so we don't exit early",
-      ];
+      const dependencies = ["I'm just here so we don't exit early"];
       const config = {};
 
-      ChildProcessUtilities.exec.mockImplementation(() => {
-        return Promise.reject(new Error("Unable to install dependency"));
-      });
+      ChildProcessUtilities.exec.mockImplementation(() =>
+        Promise.reject(new Error("Unable to install dependency"))
+      );
 
-      NpmUtilities.installInDir(directory, dependencies, config, (err) => {
+      NpmUtilities.installInDir(directory, dependencies, config, err => {
         try {
           expect(err.message).toBe("Unable to install dependency");
 
           expect(FileSystemUtilities.renameSync).lastCalledWith(
             path.join(directory, "package.json.lerna_backup"),
-            path.join(directory, "package.json"),
+            path.join(directory, "package.json")
           );
 
           done();
@@ -628,7 +627,7 @@ describe("NpmUtilities", () => {
 
     afterEach(resetExecOpts);
 
-    it("uses shared code path for install", (done) => {
+    it("uses shared code path for install", done => {
       ChildProcessUtilities.exec.mockImplementation(() => Promise.resolve());
 
       const directory = path.normalize("/test/installInDirOriginalPackageJson");
@@ -638,8 +637,10 @@ describe("NpmUtilities", () => {
         mutex: "file:foo",
       };
 
-      NpmUtilities.installInDirOriginalPackageJson(directory, config, (err) => {
-        if (err) return done.fail(err);
+      NpmUtilities.installInDirOriginalPackageJson(directory, config, err => {
+        if (err) {
+          return done.fail(err);
+        }
 
         try {
           expect(ChildProcessUtilities.exec).lastCalledWith(
@@ -658,28 +659,22 @@ describe("NpmUtilities", () => {
       });
     });
 
-    it("calls back with error when thrown", (done) => {
-      ChildProcessUtilities.exec.mockImplementation(() =>
-        Promise.reject(new Error("whoopsy-doodle"))
-      );
+    it("calls back with error when thrown", done => {
+      ChildProcessUtilities.exec.mockImplementation(() => Promise.reject(new Error("whoopsy-doodle")));
 
       const directory = path.normalize("/test/installInDirOriginalPackageJsonError");
       const config = {
         npmClient: "yarn",
       };
 
-      NpmUtilities.installInDirOriginalPackageJson(directory, config, (err) => {
+      NpmUtilities.installInDirOriginalPackageJson(directory, config, err => {
         try {
           expect(err.message).toBe("whoopsy-doodle");
 
-          expect(ChildProcessUtilities.exec).lastCalledWith(
-            "yarn",
-            ["install", "--non-interactive"],
-            {
-              directory,
-              registry: undefined,
-            }
-          );
+          expect(ChildProcessUtilities.exec).lastCalledWith("yarn", ["install", "--non-interactive"], {
+            directory,
+            registry: undefined,
+          });
 
           done();
         } catch (ex) {

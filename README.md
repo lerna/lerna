@@ -173,7 +173,7 @@ It will configure `lerna.json` to enforce exact match for all subsequent executi
 ```json
 {
   "lerna": "2.0.0",
-  "command": {
+  "commands": {
     "init": {
       "exact": true
     }
@@ -229,7 +229,7 @@ Let's use `babel` as an example.
 $ lerna add <package>[@version] [--dev]
 ```
 
-Add local or remote `package` as dependency to packages in in the current Lerna repo.
+Add local or remote `package` as dependency to packages in the current Lerna repo.
 
 When run, this command will:
 
@@ -298,6 +298,14 @@ More specifically, this command will:
 
 > Lerna won't publish packages which are marked as private (`"private": true` in the `package.json`).
 
+**Note:** to publish scoped packages, you need to add the following to each `package.json`:
+
+```js
+"publishConfig": {
+  "access": "public"
+}
+```
+
 #### --exact
 
 ```sh
@@ -339,6 +347,16 @@ $ lerna publish --conventional-commits
 ```
 
 When run with this flag, `publish` will use the [Conventional Commits Specification](https://conventionalcommits.org/) to [determine the version bump](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-recommended-bump) and [generate CHANGELOG](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-changelog-cli)
+
+#### --changelog-preset
+
+```sh
+$ lerna publish --conventional-commits --changelog-preset=angular-bitbucket
+```
+
+By default, the changelog preset is set to `angular`. In some cases you might want to change either use a another preset or a custom one.
+
+Presets are names of built-in or installable configuration for conventional changelog.
 
 #### --git-remote [remote]
 
@@ -444,6 +462,9 @@ Useful for bypassing the user input prompt if you already know which version to 
 $ lerna publish -m "chore(release): publish %s"
 # commit message = "chore(release): publish v1.0.0"
 
+$ lerna publish -m "chore(release): publish %v"
+# commit message = "chore(release): publish 1.0.0"
+
 $ lerna publish -m "chore(release): publish" --independent
 # commit message = "chore(release): publish
 #
@@ -456,21 +477,46 @@ for publication. Useful for integrating lerna into projects that expect commit m
 to certain guidelines, such as projects which use [commitizen](https://github.com/commitizen/cz-cli) and/or [semantic-release](https://github.com/semantic-release/semantic-release).
 
 If the message contains `%s`, it will be replaced with the new global version version number prefixed with a "v".
+If the message contains `%v`, it will be replaced with the new global version version number without the leading "v".
 Note that this only applies when using the default "fixed" versioning mode, as there is no "global" version when using `--independent`.
+
+This can be configured in lerna.json, as well:
+```json
+{
+  "commands": {
+    "publish": {
+      "message": "chore(release): publish %s"
+    }
+  }
+}
+```
 
 #### --allow-branch [glob]
 
-Lerna allows you to specify a glob in your `lerna.json` that your current branch needs to match to be publishable.
+Lerna allows you to specify a glob or an array of globs in your `lerna.json` that your current branch needs to match to be publishable.
 You can use this flag to override this setting.
 If your `lerna.json` contains something like this:
 
 ```json
 {
-    "command": {
-        "publish": {
-          "allowBranch": "master"
-        }
+  "commands": {
+    "publish": {
+      "allowBranch": "master"
     }
+  }
+}
+```
+
+```json
+{
+  "command": {
+    "publish": {
+      "allowBranch": [
+        "master",
+        "feature/*"
+      ]
+    }
+  }
 }
 ```
 
@@ -599,7 +645,7 @@ $ lerna exec -- protractor conf.js
 Run an arbitrary command in each package.
 A double-dash (`--`) is necessary to pass dashed flags to the spawned command, but is not necessary when all the arguments are positional.
 
-`lerna exec` respects the `--concurrency`, `--scope`, `--ignore`, and `--parallel` flags (see [Flags](#flags)).
+`lerna exec` respects the `--concurrency`, `--scope`, `--ignore`, `--stream` and `--parallel` flags (see [Flags](#flags)).
 
 ```sh
 $ lerna exec --scope my-component -- ls -la
@@ -749,7 +795,7 @@ Example:
   "lerna": "x.x.x",
   "version": "1.2.0",
   "exampleOption": "foo",
-  "command": {
+  "commands": {
     "init": {
       "exampleOption": "bar",
     }

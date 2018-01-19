@@ -1,346 +1,347 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`commit: first feature added in fixed mode --conventional-commits --force-publish=* 1`] = `
-"v1.1.0
-"
-`;
-
-exports[`commit: first feature added in fixed mode --conventional-commits 1`] = `
-"v1.1.0
-"
-`;
-
-exports[`commit: initial commit in fixed mode --conventional-commits --force-publish=* 1`] = `
-"v1.0.1
-"
-`;
-
-exports[`commit: initial commit in fixed mode --conventional-commits 1`] = `
-"v1.0.1
-"
-`;
-
-exports[`commit: second feature added in fixed mode --conventional-commits --force-publish=* 1`] = `
-"v1.2.0
-"
-`;
-
-exports[`commit: second feature added in fixed mode --conventional-commits 1`] = `
-"v1.2.0
-"
-`;
-
-exports[`commit: updates fixed versions 1`] = `
-"v1.0.1
-"
-`;
-
-exports[`commit: updates independent versions 1`] = `
-"Publish
-
- - package-1@2.0.0
- - package-2@3.0.0
- - package-3@4.0.0
- - package-4@5.0.0
- - package-5@6.0.0
-"
-`;
-
-exports[`packages: first feature added in fixed mode --conventional-commits --force-publish=* 1`] = `
-Array [
-  Object {
-    "foo": true,
-    "name": "package-1",
-    "version": "1.1.0",
-  },
-  Object {
-    "name": "package-2",
-    "version": "1.1.0",
-  },
-]
-`;
-
-exports[`packages: first feature added in fixed mode --conventional-commits 1`] = `
-Array [
-  Object {
-    "foobar": true,
-    "name": "package-1",
-    "version": "1.1.0",
-  },
-  Object {
-    "name": "package-2",
-    "version": "1.0.1",
-  },
-]
-`;
-
-exports[`packages: initial commit in fixed mode --conventional-commits --force-publish=* 1`] = `
-Array [
-  Object {
-    "name": "package-1",
-    "version": "1.0.1",
-  },
-  Object {
-    "name": "package-2",
-    "version": "1.0.1",
-  },
-]
-`;
-
-exports[`packages: initial commit in fixed mode --conventional-commits 1`] = `
-Array [
-  Object {
-    "name": "package-1",
-    "version": "1.0.1",
-  },
-  Object {
-    "name": "package-2",
-    "version": "1.0.1",
-  },
-]
-`;
-
-exports[`packages: second feature added in fixed mode --conventional-commits --force-publish=* 1`] = `
-Array [
-  Object {
-    "foo": true,
-    "name": "package-1",
-    "version": "1.2.0",
-  },
-  Object {
-    "bar": true,
-    "name": "package-2",
-    "version": "1.2.0",
-  },
-]
-`;
-
-exports[`packages: second feature added in fixed mode --conventional-commits 1`] = `
-Array [
-  Object {
-    "foobar": true,
-    "name": "package-1",
-    "version": "1.1.0",
-  },
-  Object {
-    "baz": true,
-    "name": "package-2",
-    "version": "1.2.0",
-  },
-]
-`;
-
-exports[`packages: updates fixed versions 1`] = `
-Array [
-  Object {
-    "name": "package-1",
-    "version": "1.0.1",
-  },
-  Object {
-    "dependencies": Object {
-      "package-1": "^1.0.1",
-    },
-    "name": "package-2",
-    "version": "1.0.1",
-  },
-  Object {
-    "devDependencies": Object {
-      "package-2": "^1.0.1",
-    },
-    "name": "package-3",
-    "version": "1.0.1",
-  },
-  Object {
-    "dependencies": Object {
-      "package-1": "^0.0.0",
-    },
-    "name": "package-4",
-    "version": "1.0.1",
-  },
-  Object {
-    "dependencies": Object {
-      "package-1": "^1.0.1",
-    },
-    "name": "package-5",
-    "private": true,
-    "version": "1.0.1",
-  },
-]
-`;
-
-exports[`packages: updates independent versions 1`] = `
-Array [
-  Object {
-    "name": "package-1",
-    "version": "2.0.0",
-  },
-  Object {
-    "dependencies": Object {
-      "package-1": "^2.0.0",
-    },
-    "name": "package-2",
-    "version": "3.0.0",
-  },
-  Object {
-    "devDependencies": Object {
-      "package-2": "^3.0.0",
-    },
-    "name": "package-3",
-    "version": "4.0.0",
-  },
-  Object {
-    "dependencies": Object {
-      "package-1": "^0.0.0",
-    },
-    "name": "package-4",
-    "version": "5.0.0",
-  },
-  Object {
-    "dependencies": Object {
-      "package-3": "^4.0.0",
-    },
-    "name": "package-5",
-    "private": true,
-    "version": "6.0.0",
-  },
-]
-`;
-
-exports[`stderr: canary beta version 1`] = `
-"lerna info version __TEST_VERSION__
-lerna info canary enabled
-lerna info current version 1.0.0
-lerna info Checking for updated packages...
-lerna info Comparing with initial commit.
-lerna info Checking for prereleased packages...
-lerna info auto-confirmed "
-`;
-
-exports[`stderr: canary default version 1`] = `
-"lerna info version __TEST_VERSION__
-lerna info canary enabled
-lerna info current version 1.0.0
-lerna info Checking for updated packages...
-lerna info Comparing with initial commit.
-lerna info Checking for prereleased packages...
-lerna info auto-confirmed "
-`;
-
-exports[`stderr: exit 0 when no updates 1`] = `
-"lerna info version __TEST_VERSION__
+exports[`lerna publish exit 0 when no updates: stderr 1`] = `
+lerna info version __TEST_VERSION__
 lerna info current version 1.0.0
 lerna info Checking for updated packages...
 lerna info Comparing with v1.0.0.
 lerna info Checking for prereleased packages...
-lerna info No updated packages to publish. "
+lerna info No updated packages to publish. 
 `;
 
-exports[`stderr: updates fixed versions 1`] = `
-"lerna info version __TEST_VERSION__
+exports[`lerna publish fixed mode --conventional-commits --force-publish=* 1`] = `
+
+Changes:
+ - package-1: 1.0.0 => 1.0.1
+ - package-2: 1.0.0 => 1.0.1
+
+`;
+
+exports[`lerna publish fixed mode --conventional-commits --force-publish=* 2`] = `
+
+Changes:
+ - package-1: 1.0.1 => 1.1.0
+ - package-2: 1.0.1 => 1.1.0
+
+`;
+
+exports[`lerna publish fixed mode --conventional-commits --force-publish=* 3`] = `
+
+Changes:
+ - package-1: 1.1.0 => 1.2.0
+ - package-2: 1.1.0 => 1.2.0
+
+`;
+
+exports[`lerna publish fixed mode --conventional-commits --force-publish=*: commit 1`] = `
+v1.0.1
+
+`;
+
+exports[`lerna publish fixed mode --conventional-commits --force-publish=*: commit 2`] = `
+v1.1.0
+
+`;
+
+exports[`lerna publish fixed mode --conventional-commits --force-publish=*: commit 3`] = `
+v1.2.0
+
+`;
+
+exports[`lerna publish fixed mode --conventional-commits --force-publish=*: packages 1`] = `
+Array [
+  Object {
+    name: package-1,
+    version: 1.0.1,
+  },
+  Object {
+    name: package-2,
+    version: 1.0.1,
+  },
+]
+`;
+
+exports[`lerna publish fixed mode --conventional-commits --force-publish=*: packages 2`] = `
+Array [
+  Object {
+    foo: true,
+    name: package-1,
+    version: 1.1.0,
+  },
+  Object {
+    name: package-2,
+    version: 1.1.0,
+  },
+]
+`;
+
+exports[`lerna publish fixed mode --conventional-commits --force-publish=*: packages 3`] = `
+Array [
+  Object {
+    foo: true,
+    name: package-1,
+    version: 1.2.0,
+  },
+  Object {
+    bar: true,
+    name: package-2,
+    version: 1.2.0,
+  },
+]
+`;
+
+exports[`lerna publish fixed mode --conventional-commits recommends versions for each publish 1`] = `
+
+Changes:
+ - package-1: 1.0.0 => 1.0.1
+ - package-2: 1.0.0 => 1.0.1
+
+`;
+
+exports[`lerna publish fixed mode --conventional-commits recommends versions for each publish 2`] = `
+
+Changes:
+ - package-1: 1.0.1 => 1.1.0
+
+`;
+
+exports[`lerna publish fixed mode --conventional-commits recommends versions for each publish 3`] = `
+
+Changes:
+ - package-2: 1.1.0 => 1.2.0
+
+`;
+
+exports[`lerna publish fixed mode --conventional-commits recommends versions for each publish: commit 1`] = `
+v1.0.1
+
+`;
+
+exports[`lerna publish fixed mode --conventional-commits recommends versions for each publish: commit 2`] = `
+v1.1.0
+
+`;
+
+exports[`lerna publish fixed mode --conventional-commits recommends versions for each publish: commit 3`] = `
+v1.2.0
+
+`;
+
+exports[`lerna publish fixed mode --conventional-commits recommends versions for each publish: packages 1`] = `
+Array [
+  Object {
+    name: package-1,
+    version: 1.0.1,
+  },
+  Object {
+    name: package-2,
+    version: 1.0.1,
+  },
+]
+`;
+
+exports[`lerna publish fixed mode --conventional-commits recommends versions for each publish: packages 2`] = `
+Array [
+  Object {
+    foobar: true,
+    name: package-1,
+    version: 1.1.0,
+  },
+  Object {
+    name: package-2,
+    version: 1.0.1,
+  },
+]
+`;
+
+exports[`lerna publish fixed mode --conventional-commits recommends versions for each publish: packages 3`] = `
+Array [
+  Object {
+    foobar: true,
+    name: package-1,
+    version: 1.1.0,
+  },
+  Object {
+    baz: true,
+    name: package-2,
+    version: 1.2.0,
+  },
+]
+`;
+
+exports[`lerna publish updates fixed versions: commit 1`] = `
+v1.0.1
+
+`;
+
+exports[`lerna publish updates fixed versions: packages 1`] = `
+Array [
+  Object {
+    name: package-1,
+    version: 1.0.1,
+  },
+  Object {
+    dependencies: Object {
+      package-1: ^1.0.1,
+    },
+    name: package-2,
+    version: 1.0.1,
+  },
+  Object {
+    devDependencies: Object {
+      package-2: ^1.0.1,
+    },
+    name: package-3,
+    peerDependencies: Object {
+      package-2: ^1.0.0,
+    },
+    version: 1.0.1,
+  },
+  Object {
+    dependencies: Object {
+      package-1: ^0.0.0,
+    },
+    name: package-4,
+    version: 1.0.1,
+  },
+  Object {
+    dependencies: Object {
+      package-1: ^1.0.1,
+    },
+    name: package-5,
+    private: true,
+    version: 1.0.1,
+  },
+]
+`;
+
+exports[`lerna publish updates fixed versions: stderr 1`] = `
+lerna info version __TEST_VERSION__
 lerna info current version 1.0.0
 lerna info Checking for updated packages...
 lerna info Comparing with initial commit.
 lerna info Checking for prereleased packages...
-lerna info auto-confirmed "
+lerna info auto-confirmed 
 `;
 
-exports[`stderr: updates independent versions 1`] = `
-"lerna info version __TEST_VERSION__
-lerna info versioning independent
-lerna info Checking for updated packages...
-lerna info Comparing with initial commit.
-lerna info Checking for prereleased packages...
-lerna info auto-confirmed "
-`;
+exports[`lerna publish updates fixed versions: stdout 1`] = `
 
-exports[`stdout: canary beta version 1`] = `
-"
-Changes:
- - package-1: 1.0.0 => 1.1.0-beta.hash
- - package-2: 1.0.0 => 1.1.0-beta.hash
- - package-3: 1.0.0 => 1.1.0-beta.hash
- - package-4: 1.0.0 => 1.1.0-beta.hash
- - package-5: 1.0.0 => 1.1.0-beta.hash (private)
-"
-`;
-
-exports[`stdout: canary default version 1`] = `
-"
-Changes:
- - package-1: 1.0.0 => 1.1.0-alpha.hash
- - package-2: 1.0.0 => 1.1.0-alpha.hash
- - package-3: 1.0.0 => 1.1.0-alpha.hash
- - package-4: 1.0.0 => 1.1.0-alpha.hash
- - package-5: 1.0.0 => 1.1.0-alpha.hash (private)
-"
-`;
-
-exports[`stdout: exit 0 when no updates 1`] = `""`;
-
-exports[`stdout: first feature added in fixed mode --conventional-commits --force-publish=* 1`] = `
-"
-Changes:
- - package-1: 1.0.1 => 1.1.0
- - package-2: 1.0.1 => 1.1.0
-"
-`;
-
-exports[`stdout: first feature added in fixed mode --conventional-commits 1`] = `
-"
-Changes:
- - package-1: 1.0.1 => 1.1.0
-"
-`;
-
-exports[`stdout: initial commit in fixed mode --conventional-commits --force-publish=* 1`] = `
-"
-Changes:
- - package-1: 1.0.0 => 1.0.1
- - package-2: 1.0.0 => 1.0.1
-"
-`;
-
-exports[`stdout: initial commit in fixed mode --conventional-commits 1`] = `
-"
-Changes:
- - package-1: 1.0.0 => 1.0.1
- - package-2: 1.0.0 => 1.0.1
-"
-`;
-
-exports[`stdout: second feature added in fixed mode --conventional-commits --force-publish=* 1`] = `
-"
-Changes:
- - package-1: 1.1.0 => 1.2.0
- - package-2: 1.1.0 => 1.2.0
-"
-`;
-
-exports[`stdout: second feature added in fixed mode --conventional-commits 1`] = `
-"
-Changes:
- - package-2: 1.1.0 => 1.2.0
-"
-`;
-
-exports[`stdout: updates fixed versions 1`] = `
-"
 Changes:
  - package-1: 1.0.0 => 1.0.1
  - package-2: 1.0.0 => 1.0.1
  - package-3: 1.0.0 => 1.0.1
  - package-4: 1.0.0 => 1.0.1
  - package-5: 1.0.0 => 1.0.1 (private)
-"
+
 `;
 
-exports[`stdout: updates independent versions 1`] = `
-"
+exports[`lerna publish updates independent versions: commit 1`] = `
+Publish
+
+ - package-1@2.0.0
+ - package-2@3.0.0
+ - package-3@4.0.0
+ - package-4@5.0.0
+ - package-5@6.0.0
+
+`;
+
+exports[`lerna publish updates independent versions: packages 1`] = `
+Array [
+  Object {
+    name: package-1,
+    version: 2.0.0,
+  },
+  Object {
+    dependencies: Object {
+      package-1: ^2.0.0,
+    },
+    name: package-2,
+    version: 3.0.0,
+  },
+  Object {
+    devDependencies: Object {
+      package-2: ^3.0.0,
+    },
+    name: package-3,
+    version: 4.0.0,
+  },
+  Object {
+    dependencies: Object {
+      package-1: ^0.0.0,
+    },
+    name: package-4,
+    version: 5.0.0,
+  },
+  Object {
+    dependencies: Object {
+      package-3: ^4.0.0,
+    },
+    name: package-5,
+    private: true,
+    version: 6.0.0,
+  },
+]
+`;
+
+exports[`lerna publish updates independent versions: stderr 1`] = `
+lerna info version __TEST_VERSION__
+lerna info versioning independent
+lerna info Checking for updated packages...
+lerna info Comparing with initial commit.
+lerna info Checking for prereleased packages...
+lerna info auto-confirmed 
+`;
+
+exports[`lerna publish updates independent versions: stdout 1`] = `
+
 Changes:
  - package-1: 1.0.0 => 2.0.0
  - package-2: 2.0.0 => 3.0.0
  - package-3: 3.0.0 => 4.0.0
  - package-4: 4.0.0 => 5.0.0
  - package-5: 5.0.0 => 6.0.0 (private)
-"
+
+`;
+
+exports[`lerna publish uses detault suffix with canary flag: stderr 1`] = `
+lerna info version __TEST_VERSION__
+lerna info canary enabled
+lerna info current version 1.0.0
+lerna info Checking for updated packages...
+lerna info Comparing with initial commit.
+lerna info Checking for prereleased packages...
+lerna info auto-confirmed 
+`;
+
+exports[`lerna publish uses detault suffix with canary flag: stdout 1`] = `
+
+Changes:
+ - package-1: 1.0.0 => 1.1.0-alpha.hash
+ - package-2: 1.0.0 => 1.1.0-alpha.hash
+ - package-3: 1.0.0 => 1.1.0-alpha.hash
+ - package-4: 1.0.0 => 1.1.0-alpha.hash
+ - package-5: 1.0.0 => 1.1.0-alpha.hash (private)
+
+`;
+
+exports[`lerna publish uses meta suffix from canary flag: stderr 1`] = `
+lerna info version __TEST_VERSION__
+lerna info canary enabled
+lerna info current version 1.0.0
+lerna info Checking for updated packages...
+lerna info Comparing with initial commit.
+lerna info Checking for prereleased packages...
+lerna info auto-confirmed 
+`;
+
+exports[`lerna publish uses meta suffix from canary flag: stdout 1`] = `
+
+Changes:
+ - package-1: 1.0.0 => 1.1.0-beta.hash
+ - package-2: 1.0.0 => 1.1.0-beta.hash
+ - package-3: 1.0.0 => 1.1.0-beta.hash
+ - package-4: 1.0.0 => 1.1.0-beta.hash
+ - package-5: 1.0.0 => 1.1.0-beta.hash (private)
+
 `;

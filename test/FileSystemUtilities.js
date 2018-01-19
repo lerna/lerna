@@ -1,17 +1,19 @@
-import path from "path";
+"use strict";
+
+const path = require("path");
 
 // mocked modules
-import fs from "fs-extra";
-import pathExists from "path-exists";
-import cmdShim from "cmd-shim";
-import readCmdShim from "read-cmd-shim";
-import ChildProcessUtilities from "../src/ChildProcessUtilities";
+const fs = require("fs-extra");
+const pathExists = require("path-exists");
+const cmdShim = require("cmd-shim");
+const readCmdShim = require("read-cmd-shim");
+const ChildProcessUtilities = require("../src/ChildProcessUtilities");
 
 // helpers
-import callsBack from "./helpers/callsBack";
+const callsBack = require("./helpers/callsBack");
 
 // file under test
-import FileSystemUtilities from "../src/FileSystemUtilities";
+const FileSystemUtilities = require("../src/FileSystemUtilities");
 
 jest.mock("fs-extra");
 jest.mock("path-exists");
@@ -25,7 +27,7 @@ describe("FileSystemUtilities", () => {
   afterEach(() => jest.resetAllMocks());
 
   describe(".mkdirp()", () => {
-    it("calls fs.ensureDir", (done) => {
+    it("calls fs.ensureDir", done => {
       const dirPath = "mkdirp/test";
       fs.ensureDir.mockImplementation(callsBack());
       FileSystemUtilities.mkdirp(dirPath, () => {
@@ -66,7 +68,7 @@ describe("FileSystemUtilities", () => {
   });
 
   describe(".writeFile()", () => {
-    it("calls fs.writeFile", (done) => {
+    it("calls fs.writeFile", done => {
       const filePath = "writeFile-test";
       fs.writeFile.mockImplementation(callsBack());
       FileSystemUtilities.writeFile(filePath, "contents", () => {
@@ -102,17 +104,13 @@ describe("FileSystemUtilities", () => {
       ChildProcessUtilities.spawn.mockImplementation(callsBack());
     });
 
-    it("calls rimraf CLI with arguments", (done) => {
+    it("calls rimraf CLI with arguments", done => {
       pathExists.mockImplementation(() => Promise.resolve(true));
       FileSystemUtilities.rimraf("rimraf/test", () => {
         try {
           expect(ChildProcessUtilities.spawn).lastCalledWith(
             process.execPath,
-            [
-              require.resolve("rimraf/bin"),
-              "--no-glob",
-              path.normalize("rimraf/test/"),
-            ],
+            [require.resolve("rimraf/bin"), "--no-glob", path.normalize("rimraf/test/")],
             {},
             expect.any(Function)
           );
@@ -123,7 +121,7 @@ describe("FileSystemUtilities", () => {
       });
     });
 
-    it("does not attempt to delete a non-existent directory", (done) => {
+    it("does not attempt to delete a non-existent directory", done => {
       pathExists.mockImplementation(() => Promise.resolve(false));
       FileSystemUtilities.rimraf("rimraf/non-existent", () => {
         try {
@@ -137,7 +135,7 @@ describe("FileSystemUtilities", () => {
   });
 
   describe(".rename()", () => {
-    it("calls fs.rename", (done) => {
+    it("calls fs.rename", done => {
       const srcPath = "rename-src";
       const dstPath = "rename-dst";
       fs.rename.mockImplementation(callsBack());
@@ -182,18 +180,7 @@ describe("FileSystemUtilities", () => {
   });
 
   describe(".isSymlink()", () => {
-    const originalPlatform = process.platform;
-    afterEach(() => {
-      process.platform = originalPlatform;
-    });
-
-    describe("posix", () => {
-      beforeEach(() => {
-        if (originalPlatform === "win32") {
-          process.platform = "linux";
-        }
-      });
-
+    if (process.platform !== "win32") {
       it("returns false when filePath is not a symlink", () => {
         const filePath = path.resolve("./not/a/symlink");
         fs.lstatSync.mockImplementation(() => ({
@@ -208,19 +195,11 @@ describe("FileSystemUtilities", () => {
         fs.lstatSync.mockImplementation(() => ({
           isSymbolicLink: () => true,
         }));
-        fs.readlinkSync.mockImplementation(() =>
-          linkRelative(original, filePath)
-        );
+        fs.readlinkSync.mockImplementation(() => linkRelative(original, filePath));
         expect(FileSystemUtilities.isSymlink(filePath)).toBe(original);
       });
-    });
-
-    describe("windows", () => {
-      beforeEach(() => {
-        process.platform = "win32";
-      });
-
-      it("returns false when filePath is not a symlink", () => {
+    } else {
+      it("returns false when filePath is not a symlink (windows)", () => {
         const filePath = path.resolve("./not/a/symlink");
         fs.lstatSync.mockImplementation(() => ({
           isSymbolicLink: () => false,
@@ -229,16 +208,14 @@ describe("FileSystemUtilities", () => {
         expect(FileSystemUtilities.isSymlink(filePath)).toBe(false);
       });
 
-      it("returns resolved path of an existing symlink", () => {
+      it("returns resolved path of an existing symlink (windows)", () => {
         const original = path.resolve("./packages/package-2");
         const filePath = path.resolve("./packages/package-1/node_modules/package-2");
         fs.lstatSync.mockImplementation(() => ({
           isSymbolicLink: () => true,
           isFile: () => false,
         }));
-        fs.readlinkSync.mockImplementation(() =>
-          linkRelative(original, filePath)
-        );
+        fs.readlinkSync.mockImplementation(() => linkRelative(original, filePath));
         expect(FileSystemUtilities.isSymlink(filePath)).toBe(original);
       });
 
@@ -261,33 +238,20 @@ describe("FileSystemUtilities", () => {
           isSymbolicLink: () => false,
           isFile: () => true,
         }));
-        readCmdShim.sync.mockImplementation(() =>
-          linkRelative(original, filePath)
-        );
+        readCmdShim.sync.mockImplementation(() => linkRelative(original, filePath));
         expect(FileSystemUtilities.isSymlink(filePath)).toBe(original);
       });
-    });
+    }
   });
 
   describe(".symlink()", () => {
-    const originalPlatform = process.platform;
-    afterEach(() => {
-      process.platform = originalPlatform;
-    });
-
     beforeEach(() => {
       fs.lstat.mockImplementation(callsBack("ENOENT"));
       fs.symlink.mockImplementation(callsBack());
     });
 
-    describe("posix", () => {
-      beforeEach(() => {
-        if (originalPlatform === "win32") {
-          process.platform = "linux";
-        }
-      });
-
-      it("creates relative symlink to a directory", (done) => {
+    if (process.platform !== "win32") {
+      it("creates relative symlink to a directory", done => {
         const src = path.resolve("./packages/package-2");
         const dst = path.resolve("./packages/package-1/node_modules/package-2");
         const type = "junction"; // even in posix environments :P
@@ -303,7 +267,7 @@ describe("FileSystemUtilities", () => {
         });
       });
 
-      it("creates relative symlink to an executable file", (done) => {
+      it("creates relative symlink to an executable file", done => {
         const src = path.resolve("./packages/package-2/cli.js");
         const dst = path.resolve("./packages/package-1/node_modules/.bin/package-2");
         const type = "exec";
@@ -319,7 +283,7 @@ describe("FileSystemUtilities", () => {
         });
       });
 
-      it("overwrites an existing symlink", (done) => {
+      it("overwrites an existing symlink", done => {
         const src = path.resolve("./packages/package-2");
         const dst = path.resolve("./packages/package-1/node_modules/package-2");
         const type = "junction"; // even in posix environments :P
@@ -337,14 +301,8 @@ describe("FileSystemUtilities", () => {
           }
         });
       });
-    });
-
-    describe("windows", () => {
-      beforeEach(() => {
-        process.platform = "win32";
-      });
-
-      it("creates command shim to an executable file", (done) => {
+    } else {
+      it("creates command shim to an executable file", done => {
         const src = path.resolve("./packages/package-2/cli.js");
         const dst = path.resolve("./packages/package-1/node_modules/.bin/package-2");
         const type = "exec";
@@ -362,7 +320,7 @@ describe("FileSystemUtilities", () => {
         });
       });
 
-      it("always uses absolute paths when creating symlinks", (done) => {
+      it("always uses absolute paths when creating symlinks", done => {
         const src = path.resolve("./packages/package-2");
         const dst = path.resolve("./packages/package-1/node_modules/package-2");
         const type = "junction"; // only _actually_ matters in windows
@@ -380,6 +338,6 @@ describe("FileSystemUtilities", () => {
           }
         });
       });
-    });
+    }
   });
 });

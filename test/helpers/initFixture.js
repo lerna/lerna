@@ -1,11 +1,13 @@
-import tempy from "tempy";
-import copyFixture from "./copyFixture";
-import gitInit from "./gitInit";
+"use strict";
 
-export default initFixture;
+const tempy = require("tempy");
+const copyFixture = require("./copyFixture");
+const gitInit = require("./gitInit");
+
+module.exports = initFixture;
 
 async function initFixture(fixturePath, commitMessage = "Init commit") {
-  const testDir = await tempy.directoryAsync();
+  const testDir = tempy.directory();
   await copyFixture(testDir, fixturePath);
   await gitInit(testDir, commitMessage);
   return testDir;

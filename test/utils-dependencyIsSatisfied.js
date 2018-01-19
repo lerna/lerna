@@ -1,10 +1,12 @@
-import path from "path";
+"use strict";
+
+const path = require("path");
 
 // mocked modules
-import readPkg from "read-pkg";
+const readPkg = require("read-pkg");
 
 // file under test
-import dependencyIsSatisfied from "../src/utils/dependencyIsSatisfied";
+const dependencyIsSatisfied = require("../src/utils/dependencyIsSatisfied");
 
 jest.mock("read-pkg");
 
@@ -15,10 +17,9 @@ describe("utils/dependencyIsSatisfied", () => {
 
   it("returns true if a package satisfies the given version range", () => {
     expect(dependencyIsSatisfied("node_modules", "foo-pkg", "^1.0.0")).toBe(true);
-    expect(readPkg.sync).lastCalledWith(
-      path.join("node_modules", "foo-pkg", "package.json"),
-      { normalize: false }
-    );
+    expect(readPkg.sync).lastCalledWith(path.join("node_modules", "foo-pkg", "package.json"), {
+      normalize: false,
+    });
   });
 
   it("returns false if a package does not satisfy the given version range", () => {

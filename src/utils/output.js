@@ -1,6 +1,11 @@
-import log from "npmlog";
+"use strict";
 
-export default function output(...args) {
+/* eslint-disable no-console */
+const log = require("npmlog");
+
+module.exports = output;
+
+function output(...args) {
   log.clearProgress();
   console.log(...args);
   log.showProgress();

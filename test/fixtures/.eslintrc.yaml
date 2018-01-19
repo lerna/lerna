@@ -1,8 +1,12 @@
 ---
   extends: ../../.eslintrc.yaml
   rules:
+    global-require: off
+    import/no-unresolved: off
     node/no-missing-require:
       - error
       - allowModules:
         - "@integration/package-1"
         - "@integration/package-2"
+    no-console: off
+    strict: off

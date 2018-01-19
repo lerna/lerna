@@ -1,4 +1,20 @@
 ---
-  extends: ../.eslintrc.yaml
+  extends:
+    - ../.eslintrc.yaml
+    - plugin:jest/recommended
   env:
     jest: true
+  plugins:
+    - jest
+  rules:
+    node/no-unsupported-features:
+      - error
+      - ignores:
+          - asyncAwait
+          # jest transpiles fast-async
+    no-console: off
+    no-underscore-dangle:
+      - error
+      - allow:
+          - __TEST_PKG_URL__
+          - __TEST_VERSION__

@@ -1,13 +1,15 @@
-import dedent from "dedent";
-import log from "npmlog";
-import path from "path";
-import semver from "semver";
-import _ from "lodash";
+"use strict";
 
-import dependencyIsSatisfied from "./utils/dependencyIsSatisfied";
-import NpmUtilities from "./NpmUtilities";
+const dedent = require("dedent");
+const log = require("npmlog");
+const path = require("path");
+const semver = require("semver");
+const _ = require("lodash");
 
-export default class Package {
+const dependencyIsSatisfied = require("./utils/dependencyIsSatisfied");
+const NpmUtilities = require("./NpmUtilities");
+
+class Package {
   constructor(pkg, location) {
     this._package = pkg;
     this._location = location;
@@ -23,6 +25,10 @@ export default class Package {
 
   get nodeModulesLocation() {
     return path.join(this._location, "node_modules");
+  }
+
+  get binLocation() {
+    return path.join(this.nodeModulesLocation, ".bin");
   }
 
   get version() {
@@ -50,11 +56,7 @@ export default class Package {
   }
 
   get allDependencies() {
-    return Object.assign(
-      {},
-      this.devDependencies,
-      this.dependencies
-    );
+    return Object.assign({}, this.devDependencies, this.dependencies);
   }
 
   get scripts() {
@@ -87,7 +89,15 @@ export default class Package {
     log.silly("runScript", script, this.name);
 
     if (this.scripts[script]) {
-      NpmUtilities.runScriptInDir(script, [], this.location, callback);
+      NpmUtilities.runScriptInDir(
+        script,
+        {
+          args: [],
+          directory: this.location,
+          npmClient: "npm",
+        },
+        callback
+      );
     } else {
       callback();
     }
@@ -102,7 +112,15 @@ export default class Package {
     log.silly("runScriptSync", script, this.name);
 
     if (this.scripts[script]) {
-      NpmUtilities.runScriptInDirSync(script, [], this.location, callback);
+      NpmUtilities.runScriptInDirSync(
+        script,
+        {
+          args: [],
+          directory: this.location,
+          npmClient: "npm",
+        },
+        callback
+      );
     } else {
       callback();
     }
@@ -130,10 +148,13 @@ export default class Package {
     }
 
     if (doWarn) {
-      log.warn(this.name, dedent`
-        depends on "${dependency.name}@${expectedVersion}"
-        instead of "${dependency.name}@${actualVersion}"
-      `);
+      log.warn(
+        this.name,
+        dedent`
+          depends on "${dependency.name}@${expectedVersion}"
+          instead of "${dependency.name}@${actualVersion}"
+        `
+      );
     }
 
     return false;
@@ -147,8 +168,8 @@ export default class Package {
   hasDependencyInstalled(depName) {
     log.silly("hasDependencyInstalled", this.name, depName);
 
-    return dependencyIsSatisfied(
-      this.nodeModulesLocation, depName, this.allDependencies[depName]
-    );
+    return dependencyIsSatisfied(this.nodeModulesLocation, depName, this.allDependencies[depName]);
   }
 }
+
+module.exports = Package;

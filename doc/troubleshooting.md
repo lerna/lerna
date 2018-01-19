@@ -19,6 +19,10 @@ error Command failed with exit code 1.
 If you can upgrade Lerna to said version please do so, or as an alternative 
 solution you can add `--concurrency=1`.
 
+### Private npm registry (Artifactory, npm Enterprise, etc) integration issues
+
+If `lerna bootstrap` is failing because you have repositories on a private server make sure you are including that registry. Example: `lerna bootstrap -- --registry=http://[registry-url]`.
+
 ## Import Command
 
 ### Buffer problems during import
@@ -106,3 +110,19 @@ git push --tags --force
 ```
 
 See this [Stackoverflow post](https://stackoverflow.com/questions/5002555/can-a-lightweight-tag-be-converted-to-an-annotated-tag) for more details
+
+### Publishing to a private npm registry (Artifactory, npm Enterprise, etc)
+
+If `lerna publish` is failing ensure you have the following your `package.json`:
+
+```javascript
+	"publishConfig": {
+		"registry": "https://[registry-url]"
+	}
+```
+
+You may also need to add the following to your `.npmrc` file on the individual package(s):
+
+```
+registry = https://[registry-url]
+```
