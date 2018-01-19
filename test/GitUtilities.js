@@ -92,7 +92,7 @@ describe("GitUtilities", () => {
 
       expect(ChildProcessUtilities.execSync).lastCalledWith(
         "git",
-        ["commit", "--no-gpg-sign", "-m", "foo"],
+        ["commit", "--no-gpg-sign", "--no-verify", "-m", "foo"],
         opts
       );
       expect(tempWrite.sync).not.toBeCalled();
@@ -106,7 +106,7 @@ describe("GitUtilities", () => {
 
       expect(ChildProcessUtilities.execSync).lastCalledWith(
         "git",
-        ["commit", "--no-gpg-sign", "-F", "TEMPFILE"],
+        ["commit", "--no-gpg-sign", "--no-verify","-F", "TEMPFILE"],
         opts
       );
       expect(tempWrite.sync).lastCalledWith(`foo${EOL}bar`, "lerna-commit.txt");

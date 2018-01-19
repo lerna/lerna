@@ -51,7 +51,7 @@ function addFile(file, opts) {
 
 function commit(message, opts) {
   log.silly("commit", message);
-  const args = ["commit", "--no-gpg-sign"];
+  const args = ["commit", "--no-gpg-sign", "--no-verify"];
 
   if (message.indexOf(EOL) > -1) {
     // Use tempfile to allow multi\nline strings.
