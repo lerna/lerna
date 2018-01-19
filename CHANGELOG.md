@@ -1,3 +1,23 @@
+## v2.8.0 (2018-01-19)
+
+This is the first release on the `2.x` branch, which has been created to facilitate maintenance releases while v3.0 is in development on `master`. Efforts will be made to backport fixes from `master`, but no guarantees about release cadence.
+
+#### :rocket: Enhancement
+
+* [#1212](https://github.com/lerna/lerna/pull/1212) Throw friendly error when workspaces are not configured correctly. ([@craigbilner](https://github.com/craigbilner))
+
+#### :bug: Bug Fix
+
+* [#1219](https://github.com/lerna/lerna/pull/1219) Avoid triggering pre-commit and commitmsg hooks during publish. ([@alan-agius4](https://github.com/alan-agius4))
+* [#1220](https://github.com/lerna/lerna/pull/1220) Remove --no-gpg-sign from `git commit`. ([@evocateur](https://github.com/evocateur))
+* [#1217](https://github.com/lerna/lerna/pull/1217) Avoid duplicate root changelog entries. ([@evocateur](https://github.com/evocateur))
+
+#### Committers: 3
+
+* Alan Agius ([alan-agius4](https://github.com/alan-agius4))
+* Craig Bilner ([craigbilner](https://github.com/craigbilner))
+* Daniel Stockman ([evocateur](https://github.com/evocateur))
+
 ## v2.7.2 (2018-01-16)
 
 #### :rocket: Enhancement
