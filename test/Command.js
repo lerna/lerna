@@ -290,7 +290,7 @@ describe("Command", () => {
         await cli("git", "tag", "1.0.0");
         await touch(path.join(testDir, "packages/package-2/random-file"));
         await cli("git", "add", ".");
-        await cli("git", "commit", "--no-gpg-sign", "-m", "test");
+        await cli("git", "commit", "-m", "test");
 
         const { filteredPackages } = await run({ since: "" });
         expect(filteredPackages).toHaveLength(2);
@@ -304,13 +304,13 @@ describe("Command", () => {
         await cli("git", "tag", "1.0.0");
         await touch(path.join(testDir, "packages/package-1/random-file"));
         await cli("git", "add", ".");
-        await cli("git", "commit", "--no-gpg-sign", "-m", "test");
+        await cli("git", "commit", "-m", "test");
 
         // Then we can checkout a new branch, update and commit.
         await cli("git", "checkout", "-b", "test");
         await touch(path.join(testDir, "packages/package-2/random-file"));
         await cli("git", "add", ".");
-        await cli("git", "commit", "--no-gpg-sign", "-m", "test");
+        await cli("git", "commit", "-m", "test");
 
         const { filteredPackages } = await run({ since: "master" });
         expect(filteredPackages).toHaveLength(2);
@@ -322,7 +322,7 @@ describe("Command", () => {
         await cli("git", "checkout", "-b", "test");
         await touch(path.join(testDir, "packages/package-4/random-file"));
         await cli("git", "add", ".");
-        await cli("git", "commit", "--no-gpg-sign", "-m", "test");
+        await cli("git", "commit", "-m", "test");
 
         const { filteredPackages } = await run({
           scope: ["package-2", "package-3", "package-4"],

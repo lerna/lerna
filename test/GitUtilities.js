@@ -88,11 +88,7 @@ describe("GitUtilities", () => {
       const opts = { cwd: "oneline" };
       GitUtilities.commit("foo", opts);
 
-      expect(ChildProcessUtilities.execSync).lastCalledWith(
-        "git",
-        ["commit", "--no-gpg-sign", "-m", "foo"],
-        opts,
-      );
+      expect(ChildProcessUtilities.execSync).lastCalledWith("git", ["commit", "-m", "foo"], opts);
       expect(tempWrite.sync).not.toBeCalled();
     });
 
@@ -102,11 +98,7 @@ describe("GitUtilities", () => {
       const opts = { cwd: "multiline" };
       GitUtilities.commit(`foo${EOL}bar`, opts);
 
-      expect(ChildProcessUtilities.execSync).lastCalledWith(
-        "git",
-        ["commit", "--no-gpg-sign", "-F", "TEMPFILE"],
-        opts,
-      );
+      expect(ChildProcessUtilities.execSync).lastCalledWith("git", ["commit", "-F", "TEMPFILE"], opts);
       expect(tempWrite.sync).lastCalledWith(`foo${EOL}bar`, "lerna-commit.txt");
     });
   });

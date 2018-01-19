@@ -64,15 +64,15 @@ describe("ImportCommand", () => {
 
       await fs.writeFile(conflictedFile, "initial content");
       await execa("git", ["add", conflictedFileName], cwdExternalDir);
-      await execa("git", ["commit", "--no-gpg-sign", "-m", "Initial content written"], cwdExternalDir);
+      await execa("git", ["commit", "-m", "Initial content written"], cwdExternalDir);
       await execa("git", ["checkout", "-b", branchName], cwdExternalDir);
 
       await fs.writeFile(conflictedFile, "branch content");
-      await execa("git", ["commit", "--no-gpg-sign", "-am", "branch content written"], cwdExternalDir);
+      await execa("git", ["commit", "-am", "branch content written"], cwdExternalDir);
       await execa("git", ["checkout", "master"], cwdExternalDir);
 
       await fs.writeFile(conflictedFile, "master content");
-      await execa("git", ["commit", "--no-gpg-sign", "-am", "master content written"], cwdExternalDir);
+      await execa("git", ["commit", "-am", "master content written"], cwdExternalDir);
       try {
         await execa("git", ["merge", branchName], cwdExternalDir);
       } catch (e) {
@@ -81,7 +81,7 @@ describe("ImportCommand", () => {
 
       await fs.writeFile(conflictedFile, "merged content");
       await execa("git", ["add", conflictedFileName], cwdExternalDir);
-      await execa("git", ["commit", "--no-gpg-sign", "-m", "Branch merged"], cwdExternalDir);
+      await execa("git", ["commit", "-m", "Branch merged"], cwdExternalDir);
       expect(await lastCommitInDir(externalDir)).toBe("Branch merged");
 
       await lernaImport(externalDir, "--flatten");
@@ -100,7 +100,7 @@ describe("ImportCommand", () => {
       const newFilePath = path.join(testDir, "packages", path.basename(externalDir), "new-file");
 
       await execa("git", ["mv", "old-file", "new-file"], { cwd: externalDir });
-      await execa("git", ["commit", "--no-gpg-sign", "-m", "Moved old-file to new-file"], {
+      await execa("git", ["commit", "-m", "Moved old-file to new-file"], {
         cwd: externalDir,
       });
 
@@ -235,7 +235,7 @@ describe("ImportCommand", () => {
       const newFilePath = path.join(testDir, "packages", path.basename(externalDir), "new-file");
 
       await execa("git", ["mv", "old-file", "new-file"], { cwd: externalDir });
-      await execa("git", ["commit", "--no-gpg-sign", "-m", "[ISSUE-10] Moved old-file to new-file"], {
+      await execa("git", ["commit", "-m", "[ISSUE-10] Moved old-file to new-file"], {
         cwd: externalDir,
       });
 
