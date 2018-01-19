@@ -266,7 +266,7 @@ describe("Command", () => {
       await git("tag", "1.0.0");
       await touch(path.join(cwd, "packages/package-2/random-file"));
       await git("add", ".");
-      await git("commit", "--no-gpg-sign", "-m", "test");
+      await git("commit", "-m", "test");
 
       const { filteredPackages } = testFactory({ cwd, since: "" });
       expect(filteredPackages).toHaveLength(2);
@@ -283,13 +283,13 @@ describe("Command", () => {
       await git("tag", "1.0.0");
       await touch(path.join(cwd, "packages/package-1/random-file"));
       await git("add", ".");
-      await git("commit", "--no-gpg-sign", "-m", "test");
+      await git("commit", "-m", "test");
 
       // Then we can checkout a new branch, update and commit.
       await git("checkout", "-b", "test");
       await touch(path.join(cwd, "packages/package-2/random-file"));
       await git("add", ".");
-      await git("commit", "--no-gpg-sign", "-m", "test");
+      await git("commit", "-m", "test");
 
       const { filteredPackages } = testFactory({ cwd, since: "master" });
       expect(filteredPackages).toHaveLength(2);
@@ -304,7 +304,7 @@ describe("Command", () => {
       await git("checkout", "-b", "test");
       await touch(path.join(cwd, "packages/package-4/random-file"));
       await git("add", ".");
-      await git("commit", "--no-gpg-sign", "-m", "test");
+      await git("commit", "-m", "test");
 
       const { filteredPackages } = testFactory({
         cwd,
