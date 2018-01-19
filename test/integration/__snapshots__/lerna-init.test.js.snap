@@ -26,15 +26,6 @@ lerna info Creating packages directory
 lerna success Initialized Lerna files
 `;
 
-exports[`lerna init removes VERSION file: stderr 1`] = `
-lerna info version __TEST_VERSION__
-lerna info Creating package.json
-lerna info Creating lerna.json
-lerna info Creating packages directory
-lerna info Removing old VERSION file
-lerna success Initialized Lerna files
-`;
-
 exports[`lerna init updates existing metadata: lerna.json 1`] = `
 Object {
   commands: Object {
