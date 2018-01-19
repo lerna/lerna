@@ -16,7 +16,7 @@ describe("cli", () => {
     try {
       await bin([]);
     } catch (err) {
-      expect(err.message).toContain('Pass --help to see all available commands and options.');
+      expect(err.message).toContain("Pass --help to see all available commands and options.");
     }
   });
 
@@ -35,7 +35,7 @@ describe("cli", () => {
 
   it("should prefer local installs", async () => {
     const cwd = await initFixture("cli/local-install");
-    const result = await bin(["--verbose"], {cwd});
+    const result = await bin(["--verbose"], { cwd });
     expect(result.stdout).toContain("fixtures/cli/local-instal/node_modules/lerna/bin/lerna.js");
     expect(result.stdout).toContain("fixtures/cli/local-instal/node_modules/lerna/lib/cli.js");
   });
