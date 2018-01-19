@@ -5,6 +5,7 @@
 const importLocal = require("import-local");
 
 if (importLocal(__filename)) {
+  // eslint-disable-next-line import/no-dynamic-require, global-require
   require("npmlog").verbose("cli", "using local version of lerna");
 } else {
   const argv = process.argv.slice(2);
@@ -18,5 +19,6 @@ if (importLocal(__filename)) {
     },
   };
 
+  // eslint-disable-next-line import/no-dynamic-require, global-require
   require("../src/cli")().parse(argv, context);
 }
