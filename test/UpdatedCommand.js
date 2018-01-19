@@ -32,7 +32,7 @@ const consoleOutput = () => output.mock.calls.map(args => normalizeNewline(args[
 
 const gitTag = cwd => execa("git", ["tag", "v1.0.0"], { cwd });
 const gitAdd = cwd => execa("git", ["add", "-A"], { cwd });
-const gitCommit = cwd => execa("git", ["commit", "--no-gpg-sign", "-m", "Commit"], { cwd });
+const gitCommit = cwd => execa("git", ["commit", "-m", "Commit"], { cwd });
 const touchFile = cwd => filePath => touch(path.join(cwd, filePath));
 
 const setupGitChanges = async (cwd, filePaths) => {
