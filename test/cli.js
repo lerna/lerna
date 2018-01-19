@@ -1,8 +1,8 @@
 /* global jasmine */
-import execa from "execa";
-import path from "path";
+const execa = require("execa");
+const path = require("path");
 
-import initFixture from "./helpers/initFixture";
+const initFixture = require("./helpers/initFixture");
 
 const BIN = path.join(__dirname, "../bin/lerna.js");
 const bin = (args, options) => execa(BIN, args, options);
