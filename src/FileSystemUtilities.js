@@ -142,8 +142,13 @@ function createSymbolicLink(src, dest, type, callback) {
 
 function createPosixSymlink(origin, dest, _type, callback) {
   const type = _type === "exec" ? "file" : _type;
-  const src = path.relative(path.dirname(dest), origin);
-  createSymbolicLink(src, dest, type, callback);
+  const destDir = path.dirname(dest);
+  Promise.all([fs.realpath(origin), fs.realpath(destDir)])
+    .then(([realOrigin, realDestDir]) => {
+      const src = path.relative(realDestDir, realOrigin);
+      createSymbolicLink(src, dest, type, callback);
+    })
+    .catch(callback);
 }
 
 function createWindowsSymlink(src, dest, type, callback) {
