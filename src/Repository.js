@@ -7,7 +7,6 @@ const loadJsonFile = require("load-json-file");
 const log = require("npmlog");
 const path = require("path");
 const readPkg = require("read-pkg");
-const semver = require("semver");
 
 const dependencyIsSatisfied = require("./utils/dependencyIsSatisfied");
 const ValidationError = require("./utils/ValidationError");
@@ -46,10 +45,6 @@ class Repository {
     }
 
     return this._lernaJson;
-  }
-
-  get initVersion() {
-    return this.lernaJson.lerna;
   }
 
   get version() {
@@ -109,10 +104,6 @@ class Repository {
   // Legacy
   get versionLocation() {
     return path.join(this.rootPath, "VERSION");
-  }
-
-  isCompatibleLerna(cliVersion) {
-    return semver.satisfies(cliVersion, `^${this.initVersion}`);
   }
 
   isIndependent() {

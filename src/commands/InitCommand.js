@@ -106,17 +106,18 @@ class InitCommand extends Command {
       version = "0.0.0";
     }
 
-    if (!this.repository.initVersion) {
+    if (!this.repository.version) {
       this.logger.info("", "Creating lerna.json");
     } else {
       this.logger.info("", "Updating lerna.json");
     }
 
     Object.assign(lernaJson, {
-      lerna: this.lernaVersion,
       packages: this.repository.packageConfigs,
       version,
     });
+
+    delete lernaJson.lerna; // no longer relevant
 
     if (this.exact) {
       // ensure --exact is preserved for future init commands

@@ -102,9 +102,6 @@ class Command {
     log.silly("argv", filterFlags(argv));
 
     this.lernaVersion = LERNA_VERSION;
-    this.repository = new Repository(argv.cwd);
-    this.logger = log.newGroup(this.name);
-
     log.info("version", this.lernaVersion);
 
     // launch the command
@@ -122,6 +119,7 @@ class Command {
       };
 
       try {
+        this.repository = new Repository(argv.cwd);
         this.configureLogging();
         this.runValidations();
         this.runPreparations();
@@ -231,6 +229,9 @@ class Command {
       log.level = loglevel;
     }
 
+    // create logger that subclasses use
+    this.logger = log.newGroup(this.name);
+
     // emit all buffered logs at configured level and higher
     log.resume();
   }
@@ -249,7 +250,7 @@ class Command {
       throw new ValidationError("ENOPKG", "`package.json` does not exist, have you run `lerna init`?");
     }
 
-    if (!this.repository.initVersion) {
+    if (!this.repository.version) {
       throw new ValidationError("ENOLERNA", "`lerna.json` does not exist, have you run `lerna init`?");
     }
 
@@ -260,19 +261,6 @@ class Command {
           You ran lerna with --independent or -i, but the repository is not set to independent mode.
           To use independent mode you need to set lerna.json's "version" property to "independent".
           Then you won't need to pass the --independent or -i flags.
-        `
-      );
-    }
-
-    if (!this.repository.isCompatibleLerna(this.lernaVersion)) {
-      throw new ValidationError(
-        "EMISMATCH",
-        dedent`
-          Incompatible local version of lerna detected!
-          The running version of lerna is ${this.lernaVersion}, but the version in lerna.json is ${
-          this.repository.initVersion
-        }.
-          You can either run 'lerna init' again or install 'lerna@^${this.repository.initVersion}'.
         `
       );
     }

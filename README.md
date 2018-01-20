@@ -172,7 +172,6 @@ It will configure `lerna.json` to enforce exact match for all subsequent executi
 
 ```json
 {
-  "lerna": "2.0.0",
   "commands": {
     "init": {
       "exact": true
@@ -722,7 +721,6 @@ Running `lerna` without arguments will show all commands/options.
 
 ```js
 {
-  "lerna": "2.0.0",
   "version": "1.1.3",
   "commands": {
     "publish": {
@@ -785,7 +783,6 @@ Example:
 
 ```json
 {
-  "lerna": "x.x.x",
   "version": "1.2.0",
   "exampleOption": "foo",
   "commands": {
@@ -866,7 +863,6 @@ The `ignore` flag, when used with the `bootstrap` command, can also be set in `l
 
 ```javascript
 {
-  "lerna": "2.0.0",
   "version": "0.0.0",
   "commands": {
     "bootstrap": {
