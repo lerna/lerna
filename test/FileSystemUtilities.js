@@ -195,7 +195,7 @@ describe("FileSystemUtilities", () => {
         fs.lstatSync.mockImplementation(() => ({
           isSymbolicLink: () => true,
         }));
-        fs.readlinkSync.mockImplementation(() => linkRelative(original, filePath));
+        fs.realpathSync.mockImplementation(() => original);
         expect(FileSystemUtilities.isSymlink(filePath)).toBe(original);
       });
     } else {
@@ -251,54 +251,84 @@ describe("FileSystemUtilities", () => {
     });
 
     if (process.platform !== "win32") {
-      it("creates relative symlink to a directory", done => {
-        const src = path.resolve("./packages/package-2");
-        const dst = path.resolve("./packages/package-1/node_modules/package-2");
-        const type = "junction"; // even in posix environments :P
+      describe("without any parent directories being symlinks", () => {
+        beforeEach(() => {
+          fs.realpath.mockImplementation(filePath => Promise.resolve(filePath));
+        });
 
-        FileSystemUtilities.symlink(src, dst, type, () => {
-          try {
-            expect(fs.unlink).not.toBeCalled();
-            expect(fs.symlink).lastCalledWith(linkRelative(src, dst), dst, type, expect.any(Function));
-            done();
-          } catch (ex) {
-            done.fail(ex);
-          }
+        it("creates relative symlink to a directory", done => {
+          const src = path.resolve("./packages/package-2");
+          const dst = path.resolve("./packages/package-1/node_modules/package-2");
+          const type = "junction"; // even in posix environments :P
+
+          FileSystemUtilities.symlink(src, dst, type, () => {
+            try {
+              expect(fs.unlink).not.toBeCalled();
+              expect(fs.symlink).lastCalledWith(linkRelative(src, dst), dst, type, expect.any(Function));
+              done();
+            } catch (ex) {
+              done.fail(ex);
+            }
+          });
+        });
+
+        it("creates relative symlink to an executable file", done => {
+          const src = path.resolve("./packages/package-2/cli.js");
+          const dst = path.resolve("./packages/package-1/node_modules/.bin/package-2");
+          const type = "exec";
+
+          FileSystemUtilities.symlink(src, dst, type, () => {
+            try {
+              expect(fs.unlink).not.toBeCalled();
+              expect(fs.symlink).lastCalledWith(linkRelative(src, dst), dst, "file", expect.any(Function));
+              done();
+            } catch (ex) {
+              done.fail(ex);
+            }
+          });
+        });
+
+        it("overwrites an existing symlink", done => {
+          const src = path.resolve("./packages/package-2");
+          const dst = path.resolve("./packages/package-1/node_modules/package-2");
+          const type = "junction"; // even in posix environments :P
+
+          fs.lstat.mockImplementation(callsBack()); // something _does_ exist at destination
+          fs.unlink.mockImplementation(callsBack());
+
+          FileSystemUtilities.symlink(src, dst, type, () => {
+            try {
+              expect(fs.unlink).lastCalledWith(dst, expect.any(Function));
+              expect(fs.symlink).lastCalledWith(linkRelative(src, dst), dst, type, expect.any(Function));
+              done();
+            } catch (ex) {
+              done.fail(ex);
+            }
+          });
         });
       });
 
-      it("creates relative symlink to an executable file", done => {
-        const src = path.resolve("./packages/package-2/cli.js");
-        const dst = path.resolve("./packages/package-1/node_modules/.bin/package-2");
-        const type = "exec";
-
-        FileSystemUtilities.symlink(src, dst, type, () => {
-          try {
-            expect(fs.unlink).not.toBeCalled();
-            expect(fs.symlink).lastCalledWith(linkRelative(src, dst), dst, "file", expect.any(Function));
-            done();
-          } catch (ex) {
-            done.fail(ex);
-          }
+      describe("with some parent directories being symlinks", () => {
+        beforeEach(() => {
+          fs.realpath.mockImplementation(filePath =>
+            path.resolve(filePath.replace(/package-1\/node_modules$/, "../all_node_modules/package-1"))
+          );
         });
-      });
 
-      it("overwrites an existing symlink", done => {
-        const src = path.resolve("./packages/package-2");
-        const dst = path.resolve("./packages/package-1/node_modules/package-2");
-        const type = "junction"; // even in posix environments :P
+        it("creates a resolvable relative symlink to a directory", done => {
+          const src = path.resolve("./packages/package-2");
+          const dst = path.resolve("./packages/package-1/node_modules/package-2");
+          const type = "junction"; // even in posix environments :P
 
-        fs.lstat.mockImplementation(callsBack()); // something _does_ exist at destination
-        fs.unlink.mockImplementation(callsBack());
-
-        FileSystemUtilities.symlink(src, dst, type, () => {
-          try {
-            expect(fs.unlink).lastCalledWith(dst, expect.any(Function));
-            expect(fs.symlink).lastCalledWith(linkRelative(src, dst), dst, type, expect.any(Function));
-            done();
-          } catch (ex) {
-            done.fail(ex);
-          }
+          FileSystemUtilities.symlink(src, dst, type, () => {
+            try {
+              expect(fs.unlink).not.toBeCalled();
+              expect(fs.symlink).lastCalledWith("../../packages/package-2", dst, type, expect.any(Function));
+              done();
+            } catch (ex) {
+              done.fail(ex);
+            }
+          });
         });
       });
     } else {

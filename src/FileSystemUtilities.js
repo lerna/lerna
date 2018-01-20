@@ -142,8 +142,13 @@ function createSymbolicLink(src, dest, type, callback) {
 
 function createPosixSymlink(origin, dest, _type, callback) {
   const type = _type === "exec" ? "file" : _type;
-  const src = path.relative(path.dirname(dest), origin);
-  createSymbolicLink(src, dest, type, callback);
+  const destDir = path.dirname(dest);
+  Promise.all([fs.realpath(origin), fs.realpath(destDir)])
+    .then(([realOrigin, realDestDir]) => {
+      const src = path.relative(realDestDir, realOrigin);
+      createSymbolicLink(src, dest, type, callback);
+    })
+    .catch(callback);
 }
 
 function createWindowsSymlink(src, dest, type, callback) {
@@ -154,11 +159,9 @@ function createWindowsSymlink(src, dest, type, callback) {
   }
 }
 
-function resolveSymbolicLink(filePath) {
+function resolveSymbolicLink(filePath, resolver) {
   const lstat = fs.lstatSync(filePath);
-  const resolvedPath = lstat.isSymbolicLink()
-    ? path.resolve(path.dirname(filePath), fs.readlinkSync(filePath))
-    : false;
+  const resolvedPath = lstat.isSymbolicLink() ? resolver() : false;
 
   return {
     resolvedPath,
@@ -167,11 +170,13 @@ function resolveSymbolicLink(filePath) {
 }
 
 function resolvePosixSymlink(filePath) {
-  return resolveSymbolicLink(filePath).resolvedPath;
+  return resolveSymbolicLink(filePath, () => fs.realpathSync(filePath)).resolvedPath;
 }
 
 function resolveWindowsSymlink(filePath) {
-  const { resolvedPath, lstat } = resolveSymbolicLink(filePath);
+  const { resolvedPath, lstat } = resolveSymbolicLink(filePath, () =>
+    path.resolve(path.dirname(filePath), fs.readlinkSync(filePath))
+  );
 
   if (lstat.isFile() && !resolvedPath) {
     try {
