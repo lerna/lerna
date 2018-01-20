@@ -1,7 +1,7 @@
 "use strict";
 
 const async = require("async");
-const glob = require("glob");
+const globby = require("globby");
 const log = require("npmlog");
 const minimatch = require("minimatch");
 const { entries } = require("lodash");
@@ -73,7 +73,7 @@ function getPackages({ packageConfigs, rootPath }) {
   }
 
   packageConfigs.forEach(globPath => {
-    glob.sync(path.join(globPath, "package.json"), globOpts).forEach(globResult => {
+    globby.sync(path.join(globPath, "package.json"), globOpts).forEach(globResult => {
       // https://github.com/isaacs/node-glob/blob/master/common.js#L104
       // glob always returns "\\" as "/" in windows, so everyone
       // gets normalized because we can't have nice things.
