@@ -159,11 +159,9 @@ function createWindowsSymlink(src, dest, type, callback) {
   }
 }
 
-function resolveSymbolicLink(filePath) {
+function resolveSymbolicLink(filePath, resolver) {
   const lstat = fs.lstatSync(filePath);
-  const resolvedPath = lstat.isSymbolicLink()
-    ? path.resolve(path.dirname(filePath), fs.readlinkSync(filePath))
-    : false;
+  const resolvedPath = lstat.isSymbolicLink() ? resolver() : false;
 
   return {
     resolvedPath,
@@ -172,11 +170,13 @@ function resolveSymbolicLink(filePath) {
 }
 
 function resolvePosixSymlink(filePath) {
-  return resolveSymbolicLink(filePath).resolvedPath;
+  return resolveSymbolicLink(filePath, () => fs.realpathSync(filePath)).resolvedPath;
 }
 
 function resolveWindowsSymlink(filePath) {
-  const { resolvedPath, lstat } = resolveSymbolicLink(filePath);
+  const { resolvedPath, lstat } = resolveSymbolicLink(filePath, () =>
+    path.resolve(path.dirname(filePath), fs.readlinkSync(filePath))
+  );
 
   if (lstat.isFile() && !resolvedPath) {
     try {

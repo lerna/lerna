@@ -195,7 +195,7 @@ describe("FileSystemUtilities", () => {
         fs.lstatSync.mockImplementation(() => ({
           isSymbolicLink: () => true,
         }));
-        fs.readlinkSync.mockImplementation(() => linkRelative(original, filePath));
+        fs.realpathSync.mockImplementation(() => original);
         expect(FileSystemUtilities.isSymlink(filePath)).toBe(original);
       });
     } else {
