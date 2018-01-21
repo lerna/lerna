@@ -304,37 +304,6 @@ describe("InitCommand", () => {
     });
   });
 
-  describe("when VERSION exists", () => {
-    let testDir;
-    let lernaInit;
-
-    beforeEach(async () => {
-      testDir = await initFixture("InitCommand/has-version");
-      lernaInit = run(testDir);
-
-      FileSystemUtilities.existsSync = jest.fn(() => true);
-      FileSystemUtilities.readFileSync = jest.fn(() => "1.2.3");
-    });
-
-    it("removes file", async () => {
-      await lernaInit();
-
-      expect(FileSystemUtilities.unlinkSync).lastCalledWith(path.join(testDir, "VERSION"));
-    });
-
-    it("uses value for lerna.json version property", async () => {
-      await lernaInit();
-
-      expect(writeJsonFile.sync).lastCalledWith(
-        expect.stringContaining("lerna.json"),
-        expect.objectContaining({
-          version: "1.2.3",
-        }),
-        { indent: 2 }
-      );
-    });
-  });
-
   describe("when re-initializing with --exact", () => {
     let testDir;
     let lernaInit;

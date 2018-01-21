@@ -101,11 +101,6 @@ class Repository {
     return this._package;
   }
 
-  // Legacy
-  get versionLocation() {
-    return path.join(this.rootPath, "VERSION");
-  }
-
   isIndependent() {
     return this.version === "independent";
   }

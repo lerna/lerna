@@ -37,11 +37,4 @@ describe("lerna init", () => {
     expect(packageJson).toMatchSnapshot("package.json");
     expect(lernaJson).toMatchSnapshot("lerna.json");
   });
-
-  test("removes VERSION file", async () => {
-    const cwd = await initFixture("InitCommand/has-version");
-
-    const { stderr } = await execa(LERNA_BIN, ["init"], { cwd });
-    expect(stderr).toMatchSnapshot("stderr");
-  });
 });

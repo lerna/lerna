@@ -220,13 +220,6 @@ describe("Repository", () => {
     });
   });
 
-  describe("get .versionLocation", () => {
-    it("returns the path to (deprecated) VERSION file", () => {
-      const repo = new Repository(testDir);
-      expect(repo.versionLocation).toBe(path.join(testDir, "VERSION"));
-    });
-  });
-
   describe("isIndependent()", () => {
     it("returns if the repository versioning is independent", () => {
       const repo = new Repository(testDir);

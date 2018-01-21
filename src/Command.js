@@ -5,7 +5,6 @@ const dedent = require("dedent");
 const log = require("npmlog");
 
 const ChildProcessUtilities = require("./ChildProcessUtilities");
-const FileSystemUtilities = require("./FileSystemUtilities");
 const GitUtilities = require("./GitUtilities");
 const GitVersionParser = require("./GitVersionParser");
 const PackageUtilities = require("./PackageUtilities");
@@ -84,14 +83,6 @@ const builder = {
     requiresArg: true,
   },
 };
-
-class ValidationWarning extends Error {
-  constructor(message) {
-    super(message);
-    this.name = "ValidationWarning";
-    log.warn("EINVALID", message);
-  }
-}
 
 class Command {
   constructor(argv) {
@@ -237,8 +228,6 @@ class Command {
   }
 
   runValidations() {
-    const { independent, onlyExplicitUpdates } = this.options;
-
     if (this.requiresGit && !GitUtilities.isInitialized(this.execOpts)) {
       throw new ValidationError(
         "ENOGIT",
@@ -254,7 +243,7 @@ class Command {
       throw new ValidationError("ENOLERNA", "`lerna.json` does not exist, have you run `lerna init`?");
     }
 
-    if (independent && !this.repository.isIndependent()) {
+    if (this.options.independent && !this.repository.isIndependent()) {
       throw new ValidationError(
         "EVERSIONMODE",
         dedent`
@@ -264,33 +253,6 @@ class Command {
         `
       );
     }
-
-    /* eslint-disable max-len */
-    // TODO: remove these warnings eventually
-    if (FileSystemUtilities.existsSync(this.repository.versionLocation)) {
-      throw new ValidationWarning(
-        "You have a `VERSION` file in your repository, this is leftover from a previous version. Please run `lerna init` to update."
-      );
-    }
-
-    if (process.env.NPM_DIST_TAG !== undefined) {
-      throw new ValidationWarning(
-        "`NPM_DIST_TAG=[tagname] lerna publish` is deprecated, please use `lerna publish --tag [tagname]` instead."
-      );
-    }
-
-    if (process.env.FORCE_VERSION !== undefined) {
-      throw new ValidationWarning(
-        "`FORCE_VERSION=[package/*] lerna updated/publish` is deprecated, please use `lerna updated/publish --force-publish [package/*]` instead."
-      );
-    }
-
-    if (onlyExplicitUpdates) {
-      throw new ValidationWarning(
-        "`--only-explicit-updates` has been removed. This flag was only ever added for Babel and we never should have exposed it to everyone."
-      );
-    }
-    /* eslint-enable max-len */
   }
 
   runPreparations() {
@@ -396,7 +358,7 @@ class Command {
   }
 
   _complete(err, code, callback) {
-    if (err && err.name !== "ValidationWarning" && err.name !== "ValidationError") {
+    if (err && err.name !== "ValidationError") {
       writeLogFile(this.repository.rootPath);
     }
 
