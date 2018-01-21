@@ -93,6 +93,14 @@ describe("BootstrapCommand", () => {
       expect(NpmUtilities.installInDir).not.toBeCalled();
       expect(ranScriptsInDirectories(testDir)).toMatchSnapshot();
     });
+
+    it("shouldn't run lifecycle scripts with --ignore-scripts", async () => {
+      const testDir = await initFixture("BootstrapCommand/ignored-scripts");
+      const lernaBootstrap = run(testDir);
+      await lernaBootstrap("--ignore-scripts");
+
+      expect(ranScriptsInDirectories(testDir)).toMatchSnapshot();
+    });
   });
 
   describe("with hoisting", () => {
