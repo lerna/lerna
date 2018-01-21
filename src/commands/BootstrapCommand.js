@@ -36,6 +36,12 @@ exports.builder = {
     describe: "Don't hoist external dependencies matching [glob] to the repo root",
     type: "string",
   },
+  "ignore-scripts": {
+    group: "Command Options:",
+    describe: "Don't run lifecycle scripts in bootstrapped packages",
+    type: "boolean",
+    default: undefined,
+  },
   "npm-client": {
     group: "Command Options:",
     describe: "Executable used to install dependencies (npm, yarn, pnpm, ...)",
