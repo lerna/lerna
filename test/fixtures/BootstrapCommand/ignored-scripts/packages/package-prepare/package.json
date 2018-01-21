@@ -1,0 +1,7 @@
+{
+  "name": "package-prepare",
+  "version": "1.0.0",
+  "scripts": {
+    "prepare": "touch did-prepare"
+  }
+}

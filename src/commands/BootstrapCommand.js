@@ -36,6 +36,12 @@ exports.builder = {
     describe: "Don't hoist external dependencies matching [glob] to the repo root",
     type: "string",
   },
+  "ignore-scripts": {
+    group: "Command Options:",
+    describe: "Don't run lifecycle scripts in bootstrapped packages",
+    type: "boolean",
+    default: undefined,
+  },
   "npm-client": {
     group: "Command Options:",
     describe: "Executable used to install dependencies (npm, yarn, pnpm, ...)",
@@ -139,21 +145,22 @@ class BootstrapCommand extends Command {
     if (this.options.useWorkspaces) {
       this.installRootPackageOnly(callback);
     } else {
+      const { ignoreScripts } = this.options;
       async.series(
         [
           // preinstall bootstrapped packages
-          cb => this.preinstallPackages(cb),
+          !ignoreScripts && (cb => this.preinstallPackages(cb)),
           // install external dependencies
           cb => this.installExternalDependencies(cb),
           // symlink packages and their binaries
           cb => this.symlinkPackages(cb),
           // postinstall bootstrapped packages
-          cb => this.postinstallPackages(cb),
+          !ignoreScripts && (cb => this.postinstallPackages(cb)),
           // prepublish bootstrapped packages
-          cb => this.prepublishPackages(cb),
+          !ignoreScripts && (cb => this.prepublishPackages(cb)),
           // prepare bootstrapped packages
-          cb => this.preparePackages(cb),
-        ],
+          !ignoreScripts && (cb => this.preparePackages(cb)),
+        ].filter(Boolean),
         callback
       );
     }
@@ -228,7 +235,7 @@ class BootstrapCommand extends Command {
   }
 
   /**
-   * Run the "prepublish" NPM script in all bootstrapped packages
+   * Run the "prepare" NPM script in all bootstrapped packages
    * @param callback
    */
   preparePackages(callback) {

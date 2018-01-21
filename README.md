@@ -197,7 +197,7 @@ When run, this command will:
 3. `npm run prepublish` in all bootstrapped packages.
 4. `npm run prepare` in all bootstrapped packages.
 
-`lerna bootstrap` respects the `--ignore`, `--scope` and `--include-filtered-dependencies` flags (see [Flags](#flags)).
+`lerna bootstrap` respects the `--ignore`, `--ignore-scripts`, `--scope` and `--include-filtered-dependencies` flags (see [Flags](#flags)).
 
 Pass extra arguments to npm client by placing them after `--`:
 
@@ -874,6 +874,14 @@ The `ignore` flag, when used with the `bootstrap` command, can also be set in `l
 
 > Hint: The glob is matched against the package name defined in `package.json`,
 > not the directory name the package lives in.
+
+#### --ignore-scripts
+
+When used with the `bootstrap` command it won't run any lifecycle scripts in bootstrapped packages.
+
+```sh
+$ lerna bootstrap --ignore-scripts
+```
 
 #### --include-filtered-dependencies
 
