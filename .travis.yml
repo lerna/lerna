@@ -22,11 +22,7 @@ cache:
   - node_modules
 
 before_install:
-  - if [[ `node -v` == v4* ]]; then npm i -g npm@latest-3; fi
-  - if [[ `node -v` == v6* ]]; then npm i -g npm@latest-4; fi
-  - if [[ `node -v` == v8* ]]; then npm i -g npm@latest-5; fi
-  - curl -o- -L https://yarnpkg.com/install.sh | bash
-  - export PATH=$HOME/.yarn/bin:$PATH
+  - npm i -g npm@latest-5
 
 install: yarn --frozen-lockfile
 
