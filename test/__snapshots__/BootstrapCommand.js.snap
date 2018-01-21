@@ -14,6 +14,8 @@ Object {
 }
 `;
 
+exports[`BootstrapCommand lifecycle scripts shouldn't run lifecycle scripts with --ignore-scripts 1`] = `Object {}`;
+
 exports[`BootstrapCommand with at least one external dependency to install should install all dependencies 1`] = `
 Object {
   "packages/package-1": Array [

@@ -1,0 +1,7 @@
+{
+  "name": "package-prepublish",
+  "version": "1.0.0",
+  "scripts": {
+    "prepublish": "touch did-prepublish"
+  }
+}
