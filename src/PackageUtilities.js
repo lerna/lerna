@@ -180,7 +180,7 @@ export default class PackageUtilities {
       if (existingPackageNames[pkgName].length > 1) {
         log.warn(
           `Package name "${pkgName}" used in multiple packages:
-          \t${existingPackageNames[pkgName].join("\n\t")}`,
+          \t${existingPackageNames[pkgName].join("\n\t")}`
         );
       }
     });
@@ -200,7 +200,7 @@ export default class PackageUtilities {
           refCounts[dep] = 0;
         }
         refCounts[dep] += 1;
-      }),
+      })
     );
 
     const batches = [];
@@ -246,7 +246,7 @@ export default class PackageUtilities {
       batches.map(batch => cb => {
         async.parallelLimit(batch.map(makeTask), concurrency, cb);
       }),
-      callback,
+      callback
     );
   }
 
@@ -292,14 +292,14 @@ export default class PackageUtilities {
             tracker.warn(
               "EREPLACE_OTHER",
               `Symlink already exists for ${dependencyName} dependency of ${iteratedPackage.name}, ` +
-                "but links to different location. Replacing with updated symlink...",
+                "but links to different location. Replacing with updated symlink..."
             );
             // installed dependency is not a symlink
           } else if (isDepSymlink === false) {
             tracker.warn(
               "EREPLACE_EXIST",
               `${dependencyName} is already installed for ${iteratedPackage.name}. ` +
-                "Replacing with symlink...",
+                "Replacing with symlink..."
             );
             // remove installed dependency
             acc.push(cb => FileSystemUtilities.rimraf(depencyPath, cb));
@@ -313,8 +313,8 @@ export default class PackageUtilities {
               .split(path.sep)
               .slice(0, -1)
               .join(path.sep),
-            cb,
-          ),
+            cb
+          )
         );
 
         // create package symlink

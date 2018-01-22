@@ -22,7 +22,7 @@ describe("lerna bootstrap", () => {
         "--silent",
         "--onload-script=false",
       ],
-      { cwd },
+      { cwd }
     );
 
   describe("from CLI", () => {
@@ -62,7 +62,7 @@ describe("lerna bootstrap", () => {
       expect(stderr).toMatchSnapshot("--npm-client yarn: stderr");
 
       const lockfiles = await globby(["package-*/yarn.lock"], { cwd }).then(globbed =>
-        globbed.map(fp => normalizePath(fp)),
+        globbed.map(fp => normalizePath(fp))
       );
       expect(lockfiles).toMatchSnapshot("--npm-client yarn: lockfiles");
 

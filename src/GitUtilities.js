@@ -28,7 +28,7 @@ export default class GitUtilities {
         ["rev-parse"],
         Object.assign({}, opts, {
           stdio: "ignore",
-        }),
+        })
       );
       initialized = true;
     } catch (err) {
@@ -143,7 +143,7 @@ export default class GitUtilities {
     const diff = ChildProcessUtilities.execSync(
       "git",
       ["diff", "--name-only", since, "--", formattedLocation],
-      opts,
+      opts
     );
     log.silly("diff", diff);
 

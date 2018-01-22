@@ -27,7 +27,7 @@ describe("Package", () => {
         devDependencies: { "my-dev-dependency": "^1.0.0" },
         peerDependencies: { "my-peer-dependency": ">=1.0.0" },
       },
-      "/path/to/package",
+      "/path/to/package"
     );
   });
 
@@ -186,7 +186,7 @@ describe("Package", () => {
               directory: pkg.location,
               npmClient: "npm",
             },
-            expect.any(Function),
+            expect.any(Function)
           );
 
           done();
@@ -210,7 +210,7 @@ describe("Package", () => {
           directory: pkg.location,
           npmClient: "npm",
         },
-        expect.any(Function),
+        expect.any(Function)
       );
     });
   });
@@ -221,7 +221,7 @@ describe("Package", () => {
         pkg.hasMatchingDependency({
           name: "my-dependency",
           version: "1.1.3",
-        }),
+        })
       ).toBe(true);
     });
 
@@ -236,7 +236,7 @@ describe("Package", () => {
           name: "my-dev-dependency",
           version: "2.0.7",
         },
-        true,
+        true
       );
 
       expect(result).toBe(false);

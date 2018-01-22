@@ -66,7 +66,7 @@ export default class Repository {
           dedent`
             Yarn workspaces need to be defined in the root package.json.
             See: https://github.com/lerna/lerna#--use-workspaces
-          `,
+          `
         );
       }
 

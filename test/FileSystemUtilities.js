@@ -110,7 +110,7 @@ describe("FileSystemUtilities", () => {
             process.execPath,
             [require.resolve("rimraf/bin"), "--no-glob", path.normalize("rimraf/test/")],
             {},
-            expect.any(Function),
+            expect.any(Function)
           );
           done();
         } catch (ex) {

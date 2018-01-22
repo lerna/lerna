@@ -44,7 +44,7 @@ describe("lerna clean", () => {
     await execa("npm", ["install", "--cache-min=99999"], { cwd });
 
     const { stdout, stderr } = await execa("npm", ["run", "clean", "--silent"], { cwd }).then(
-      normalizeStdio(cwd),
+      normalizeStdio(cwd)
     );
 
     expect(stdout).toMatchSnapshot("stdout: local npm");

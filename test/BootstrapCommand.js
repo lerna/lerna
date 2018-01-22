@@ -132,7 +132,7 @@ describe("BootstrapCommand", () => {
           mutex: undefined,
           // npmGlobalStyle is not included at all
         },
-        expect.any(Function),
+        expect.any(Function)
       );
 
       // foo@0.1.2 differs from the more common foo@^1.0.0
@@ -142,7 +142,7 @@ describe("BootstrapCommand", () => {
         expect.objectContaining({
           npmGlobalStyle: true,
         }),
-        expect.any(Function),
+        expect.any(Function)
       );
     });
 
@@ -165,7 +165,7 @@ describe("BootstrapCommand", () => {
         await lernaBootstrap();
       } catch (err) {
         expect(err.message).toMatch(
-          "--hoist is not supported with --npm-client=yarn, use yarn workspaces instead",
+          "--hoist is not supported with --npm-client=yarn, use yarn workspaces instead"
         );
       }
     });
@@ -212,7 +212,7 @@ describe("BootstrapCommand", () => {
         expect.objectContaining({
           npmGlobalStyle: false,
         }),
-        expect.any(Function),
+        expect.any(Function)
       );
     });
   });
@@ -352,7 +352,7 @@ describe("BootstrapCommand", () => {
           npmClient: undefined,
           npmGlobalStyle: false,
         }),
-        expect.any(Function),
+        expect.any(Function)
       );
     });
   });
@@ -399,7 +399,7 @@ describe("BootstrapCommand", () => {
           npmClient: "yarn",
           mutex: expect.stringMatching(/^network:\d+$/),
         }),
-        expect.any(Function),
+        expect.any(Function)
       );
     });
 
@@ -413,7 +413,7 @@ describe("BootstrapCommand", () => {
         await lernaBootstrap("--no-use-workspaces");
       } catch (err) {
         expect(err.message).toMatch(
-          "Yarn workspaces are configured in package.json, but not enabled in lerna.json!",
+          "Yarn workspaces are configured in package.json, but not enabled in lerna.json!"
         );
       }
     });

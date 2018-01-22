@@ -61,7 +61,7 @@ export default class LsCommand extends Command {
               align: "right",
             },
           },
-        }),
+        })
       );
     }
 

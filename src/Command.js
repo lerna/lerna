@@ -166,7 +166,7 @@ export default class Command {
 
       // The current command always overrides otherCommandConfigs
       const lernaCommandOverrides = [this.name, ...this.otherCommandConfigs].map(
-        name => (commands || command || {})[name],
+        name => (commands || command || {})[name]
       );
 
       this._options = _.defaults(
@@ -180,7 +180,7 @@ export default class Command {
         // Command specific defaults
         this.defaultOptions,
         // Deprecated legacy options in `lerna.json`
-        this._legacyOptions(),
+        this._legacyOptions()
       );
     }
 
@@ -240,7 +240,7 @@ export default class Command {
     if (this.requiresGit && !GitUtilities.isInitialized(this.execOpts)) {
       throw new ValidationError(
         "ENOGIT",
-        "This is not a git repository, did you already run `git init` or `lerna init`?",
+        "This is not a git repository, did you already run `git init` or `lerna init`?"
       );
     }
 
@@ -259,7 +259,7 @@ export default class Command {
           You ran lerna with --independent or -i, but the repository is not set to independent mode.
           To use independent mode you need to set lerna.json's "version" property to "independent".
           Then you won't need to pass the --independent or -i flags.
-        `,
+        `
       );
     }
 
@@ -272,7 +272,7 @@ export default class Command {
           this.repository.initVersion
         }.
           You can either run 'lerna init' again or install 'lerna@^${this.repository.initVersion}'.
-        `,
+        `
       );
     }
 
@@ -280,25 +280,25 @@ export default class Command {
     // TODO: remove these warnings eventually
     if (FileSystemUtilities.existsSync(this.repository.versionLocation)) {
       throw new ValidationWarning(
-        "You have a `VERSION` file in your repository, this is leftover from a previous version. Please run `lerna init` to update.",
+        "You have a `VERSION` file in your repository, this is leftover from a previous version. Please run `lerna init` to update."
       );
     }
 
     if (process.env.NPM_DIST_TAG !== undefined) {
       throw new ValidationWarning(
-        "`NPM_DIST_TAG=[tagname] lerna publish` is deprecated, please use `lerna publish --tag [tagname]` instead.",
+        "`NPM_DIST_TAG=[tagname] lerna publish` is deprecated, please use `lerna publish --tag [tagname]` instead."
       );
     }
 
     if (process.env.FORCE_VERSION !== undefined) {
       throw new ValidationWarning(
-        "`FORCE_VERSION=[package/*] lerna updated/publish` is deprecated, please use `lerna updated/publish --force-publish [package/*]` instead.",
+        "`FORCE_VERSION=[package/*] lerna updated/publish` is deprecated, please use `lerna updated/publish --force-publish [package/*]` instead."
       );
     }
 
     if (onlyExplicitUpdates) {
       throw new ValidationWarning(
-        "`--only-explicit-updates` has been removed. This flag was only ever added for Babel and we never should have exposed it to everyone.",
+        "`--only-explicit-updates` has been removed. This flag was only ever added for Babel and we never should have exposed it to everyone."
       );
     }
     /* eslint-enable max-len */
@@ -367,10 +367,10 @@ export default class Command {
           () => {
             this._complete(null, 0, callback);
           },
-          callback,
+          callback
         );
       },
-      callback,
+      callback
     );
   }
 
@@ -426,7 +426,7 @@ export default class Command {
         "complete",
         `Waiting for ${childProcessCount} child ` +
           `process${childProcessCount === 1 ? "" : "es"} to exit. ` +
-          "CTRL-C to exit immediately.",
+          "CTRL-C to exit immediately."
       );
       ChildProcessUtilities.onAllExited(finish);
     } else {
@@ -439,7 +439,7 @@ export default class Command {
       if (this.name === command && this.repository.lernaJson[`${command}Config`]) {
         log.warn(
           "deprecated",
-          `\`${command}Config.ignore\` has been replaced by \`command.${command}.ignore\`.`,
+          `\`${command}Config.ignore\` has been replaced by \`command.${command}.ignore\`.`
         );
         opts.ignore = this.repository.lernaJson[`${command}Config`].ignore;
       }

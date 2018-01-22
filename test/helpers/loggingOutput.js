@@ -12,11 +12,11 @@ const getVisibleMessages = _.flow(
       list,
       m =>
         // select all info, warn, and error logs
-        log.levels[m.level] >= log.levels.info,
+        log.levels[m.level] >= log.levels.info
     ),
   list => _.map(list, "message"),
   // remove empty logs ("newline")
-  _.compact,
+  _.compact
 );
 
 export default function loggingOutput() {

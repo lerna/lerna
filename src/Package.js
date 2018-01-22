@@ -94,7 +94,7 @@ export default class Package {
           directory: this.location,
           npmClient: "npm",
         },
-        callback,
+        callback
       );
     } else {
       callback();
@@ -117,7 +117,7 @@ export default class Package {
           directory: this.location,
           npmClient: "npm",
         },
-        callback,
+        callback
       );
     } else {
       callback();
@@ -151,7 +151,7 @@ export default class Package {
         dedent`
           depends on "${dependency.name}@${expectedVersion}"
           instead of "${dependency.name}@${actualVersion}"
-        `,
+        `
       );
     }
 

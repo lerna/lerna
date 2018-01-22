@@ -103,7 +103,7 @@ export default class ConventionalCommitUtilities {
         ${newEntry}
         
         **Note:** Version bump only for package ${pkg.name} 
-        `,
+        `
       );
     }
 
@@ -123,8 +123,8 @@ export default class ConventionalCommitUtilities {
 
         ${newEntry}
 
-        ${changelogContents}`.replace(/\n+$/, "\n"),
-      ),
+        ${changelogContents}`.replace(/\n+$/, "\n")
+      )
     );
 
     log.verbose(type, "wrote", changelogLocation);

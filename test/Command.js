@@ -119,7 +119,7 @@ describe("Command", () => {
     beforeAll(() =>
       initFixture("Command/basic").then(dir => {
         testDir = dir;
-      }),
+      })
     );
 
     it("returns a Promise", async () => {
@@ -271,7 +271,7 @@ describe("Command", () => {
       beforeEach(() =>
         initFixture("UpdatedCommand/basic").then(dir => {
           testDir = dir;
-        }),
+        })
       );
 
       it("--scope should filter packages", async () => {
@@ -340,7 +340,7 @@ describe("Command", () => {
     beforeAll(() =>
       initFixture("Command/basic").then(dir => {
         testDir = dir;
-      }),
+      })
     );
 
     class TestACommand extends Command {}
@@ -390,7 +390,7 @@ describe("Command", () => {
         {
           testOption2: "f",
         },
-        testDir,
+        testDir
       );
       expect(instance.options.testOption2).toBe("f");
     });
@@ -401,7 +401,7 @@ describe("Command", () => {
         {
           testOption: undefined, // yargs does this when --test-option is not passed
         },
-        testDir,
+        testDir
       );
       expect(instance.options.testOption).toBe("b");
     });
@@ -412,7 +412,7 @@ describe("Command", () => {
         {
           testOption: "b",
         },
-        testDir,
+        testDir
       );
       expect(instance.options.testOption).toBe("b");
       expect(instance.options.testOption2).toBe("c");
@@ -426,7 +426,7 @@ describe("Command", () => {
     beforeAll(() =>
       initFixture("Command/legacy").then(dir => {
         testDir = dir;
-      }),
+      })
     );
 
     class TestCommand extends Command {}
@@ -450,7 +450,7 @@ describe("Command", () => {
 
         expect(warning).toHaveProperty(
           "message",
-          "`bootstrapConfig.ignore` has been replaced by `command.bootstrap.ignore`.",
+          "`bootstrapConfig.ignore` has been replaced by `command.bootstrap.ignore`."
         );
       });
 
@@ -494,7 +494,7 @@ describe("Command", () => {
 
         expect(warning).toHaveProperty(
           "message",
-          "`publishConfig.ignore` has been replaced by `command.publish.ignore`.",
+          "`publishConfig.ignore` has been replaced by `command.publish.ignore`."
         );
       });
 

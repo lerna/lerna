@@ -11,7 +11,7 @@ const Buffer = require("safe-buffer").Buffer; // eslint-disable-line prefer-dest
 const SECRET_FLAG = Buffer.from(
   // eslint-disable-next-line max-len
   "ZGFuZ2Vyb3VzbHlPbmx5UHVibGlzaEV4cGxpY2l0VXBkYXRlc1RoaXNJc0FDdXN0b21GbGFnRm9yQmFiZWxBbmRZb3VTaG91bGROb3RCZVVzaW5nSXRKdXN0RGVhbFdpdGhNb3JlUGFja2FnZXNCZWluZ1B1Ymxpc2hlZEl0SXNOb3RBQmlnRGVhbA==",
-  "base64",
+  "base64"
 ).toString("ascii");
 
 class Update {
@@ -189,7 +189,7 @@ export default class UpdatedPackagesCollector {
           this.updatedPackages[pkg.name] ||
           this.prereleasedPackages[pkg.name] ||
           (this.options[SECRET_FLAG] ? false : this.dependents[pkg.name]) ||
-          this.options.canary,
+          this.options.canary
       )
       .map(pkg => {
         this.logger.verbose("has filtered update", pkg.name);
@@ -215,7 +215,7 @@ export default class UpdatedPackagesCollector {
 
     if (this.options.ignore) {
       changedFiles = changedFiles.filter(
-        file => !_.find(this.options.ignore, pattern => minimatch(file, pattern, { matchBase: true })),
+        file => !_.find(this.options.ignore, pattern => minimatch(file, pattern, { matchBase: true }))
       );
     }
 

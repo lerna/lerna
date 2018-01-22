@@ -122,7 +122,7 @@ describe("PublishCommand", () => {
     beforeEach(() =>
       initFixture("PublishCommand/normal").then(dir => {
         testDir = dir;
-      }),
+      })
     );
 
     it("should publish the changed packages", () =>
@@ -176,7 +176,7 @@ describe("PublishCommand", () => {
     beforeEach(() =>
       initFixture("PublishCommand/independent").then(dir => {
         testDir = dir;
-      }),
+      })
     );
 
     it("should publish the changed packages in independent mode", () => {
@@ -187,7 +187,7 @@ describe("PublishCommand", () => {
       });
 
       return run(testDir)(
-        "--independent", // not required due to lerna.json config, but here to assert it doesn't error
+        "--independent" // not required due to lerna.json config, but here to assert it doesn't error
       ).then(() => {
         expect(PromptUtilities.confirm).toBeCalled();
 
@@ -230,7 +230,7 @@ describe("PublishCommand", () => {
     beforeEach(() =>
       initFixture("PublishCommand/normal").then(dir => {
         testDir = dir;
-      }),
+      })
     );
 
     it("should publish the changed packages", () =>
@@ -255,7 +255,7 @@ describe("PublishCommand", () => {
         expect(GitUtilities.addTag).not.toBeCalled();
         expect(GitUtilities.checkoutChanges).lastCalledWith(
           expect.stringContaining("packages/*/package.json"),
-          execOpts(testDir),
+          execOpts(testDir)
         );
 
         expect(GitUtilities.pushWithTags).not.toBeCalled();
@@ -265,7 +265,7 @@ describe("PublishCommand", () => {
     it("should use the provided value as the meta suffix", () =>
       run(testDir)("--canary", "beta").then(() => {
         expect(updatedPackageVersions(testDir)).toMatchSnapshot(
-          "[normal --canary=beta] bumps package versions",
+          "[normal --canary=beta] bumps package versions"
         );
 
         expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
@@ -282,7 +282,7 @@ describe("PublishCommand", () => {
     it("should work with --canary and --cd-version=patch", () =>
       run(testDir)("--canary", "--cd-version", "patch").then(() => {
         expect(updatedPackageVersions(testDir)).toMatchSnapshot(
-          "[normal --canary --cd-version=patch] bumps package versions",
+          "[normal --canary --cd-version=patch] bumps package versions"
         );
 
         expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
@@ -307,7 +307,7 @@ describe("PublishCommand", () => {
     beforeEach(() =>
       initFixture("PublishCommand/independent").then(dir => {
         testDir = dir;
-      }),
+      })
     );
 
     it("should publish the changed packages", () =>
@@ -316,7 +316,7 @@ describe("PublishCommand", () => {
 
         expect(writeJsonFile.sync).not.toBeCalled();
         expect(updatedPackageVersions(testDir)).toMatchSnapshot(
-          "[independent --canary] bumps package versions",
+          "[independent --canary] bumps package versions"
         );
 
         expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
@@ -330,7 +330,7 @@ describe("PublishCommand", () => {
         });
 
         expect(publishedTagInDirectories(testDir)).toMatchSnapshot(
-          "[independent --canary] npm publish --tag",
+          "[independent --canary] npm publish --tag"
         );
       }));
 
@@ -358,7 +358,7 @@ describe("PublishCommand", () => {
     beforeEach(() =>
       initFixture("PublishCommand/normal").then(dir => {
         testDir = dir;
-      }),
+      })
     );
 
     it("should publish the changed packages", () =>
@@ -382,7 +382,7 @@ describe("PublishCommand", () => {
     beforeEach(() =>
       initFixture("PublishCommand/normal").then(dir => {
         testDir = dir;
-      }),
+      })
     );
 
     it("should update versions and push changes but not publish", () =>
@@ -408,14 +408,14 @@ describe("PublishCommand", () => {
     beforeEach(() =>
       initFixture("PublishCommand/normal").then(dir => {
         testDir = dir;
-      }),
+      })
     );
 
     it("should update versions but not push changes or publish", () =>
       run(testDir)("--skip-git", "--skip-npm").then(() => {
         expect(updatedLernaJson()).toMatchObject({ version: "1.0.1" });
         expect(updatedPackageVersions(testDir)).toMatchSnapshot(
-          "[normal --skip-git --skip-npm] bumps package versions",
+          "[normal --skip-git --skip-npm] bumps package versions"
         );
 
         expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
@@ -453,7 +453,7 @@ describe("PublishCommand", () => {
     beforeEach(() =>
       initFixture("PublishCommand/normal").then(dir => {
         testDir = dir;
-      }),
+      })
     );
 
     it("should publish the changed packages with a temp tag", () =>
@@ -476,7 +476,7 @@ describe("PublishCommand", () => {
     beforeEach(() =>
       initFixture("PublishCommand/normal").then(dir => {
         testDir = dir;
-      }),
+      })
     );
 
     it("should publish the changed packages with npm tag", () =>
@@ -521,7 +521,7 @@ describe("PublishCommand", () => {
     beforeEach(() =>
       initFixture("PublishCommand/normal").then(dir => {
         testDir = dir;
-      }),
+      })
     );
 
     it("passes registry to npm commands", () => {
@@ -547,7 +547,7 @@ describe("PublishCommand", () => {
     beforeEach(() =>
       initFixture("PublishCommand/normal").then(dir => {
         testDir = dir;
-      }),
+      })
     );
 
     it("skips version prompt and publishes changed packages with designated version", () =>
@@ -567,7 +567,7 @@ describe("PublishCommand", () => {
     beforeEach(() =>
       initFixture("PublishCommand/normal").then(dir => {
         testDir = dir;
-      }),
+      })
     );
 
     it("updates matching local dependencies of published packages with exact versions", () =>
@@ -599,7 +599,7 @@ describe("PublishCommand", () => {
     beforeEach(() =>
       initFixture("PublishCommand/normal").then(dir => {
         testDir = dir;
-      }),
+      })
     );
 
     it("should use semver increments when passed to cdVersion flag", () =>
@@ -615,7 +615,7 @@ describe("PublishCommand", () => {
       } catch (err) {
         expect(err.message).toBe(
           "--cd-version must be one of: " +
-            "'major', 'minor', 'patch', 'premajor', 'preminor', 'prepatch', or 'prerelease'.",
+            "'major', 'minor', 'patch', 'premajor', 'preminor', 'prepatch', or 'prerelease'."
         );
       }
     });
@@ -672,7 +672,7 @@ describe("PublishCommand", () => {
     beforeEach(() =>
       initFixture("PublishCommand/independent").then(dir => {
         testDir = dir;
-      }),
+      })
     );
 
     it("should use semver increments when passed to cdVersion flag", () =>
@@ -688,7 +688,7 @@ describe("PublishCommand", () => {
     it("should bump to prerelease versions with --cd-version=prerelease --preid=foo", () =>
       run(testDir)("--cd-version", "prerelease", "--preid", "foo").then(() => {
         expect(updatedPackageVersions(testDir)).toMatchSnapshot(
-          "[independent --cd-version=prerelease --preid=foo] bumps package versions",
+          "[independent --cd-version=prerelease --preid=foo] bumps package versions"
         );
 
         expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
@@ -705,7 +705,7 @@ describe("PublishCommand", () => {
     it("should bump to prerelease versions with --cd-version prerelease (no --preid)", () =>
       run(testDir)("--cd-version", "prerelease").then(() => {
         expect(updatedPackageVersions(testDir)).toMatchSnapshot(
-          "[independent --cd-version=prerelease] bumps package versions",
+          "[independent --cd-version=prerelease] bumps package versions"
         );
 
         expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
@@ -730,7 +730,7 @@ describe("PublishCommand", () => {
     beforeEach(() =>
       initFixture("PublishCommand/normal").then(dir => {
         testDir = dir;
-      }),
+      })
     );
 
     it("pushes tags to specified remote", () =>
@@ -749,7 +749,7 @@ describe("PublishCommand", () => {
     beforeEach(() =>
       initFixture("PublishCommand/normal").then(dir => {
         testDir = dir;
-      }),
+      })
     );
 
     it("does not publish ignored packages", () =>
@@ -769,7 +769,7 @@ describe("PublishCommand", () => {
     beforeEach(() =>
       initFixture("PublishCommand/normal").then(dir => {
         testDir = dir;
-      }),
+      })
     );
 
     it("commits changes with a custom message using %s", () =>
@@ -793,7 +793,7 @@ describe("PublishCommand", () => {
     beforeEach(() =>
       initFixture("PublishCommand/independent").then(dir => {
         testDir = dir;
-      }),
+      })
     );
 
     it("commits changes with a custom message", () =>
@@ -829,7 +829,7 @@ describe("PublishCommand", () => {
         await run(testDir)("--conventional-commits");
 
         expect(gitAddedFiles(testDir)).toMatchSnapshot(
-          "[independent --conventional-commits] git adds changed files",
+          "[independent --conventional-commits] git adds changed files"
         );
         expect(gitCommitMessage()).toMatchSnapshot("[independent --conventional-commits] git commit message");
 
@@ -844,11 +844,11 @@ describe("PublishCommand", () => {
 
           expect(ConventionalCommitUtilities.recommendIndependentVersion).toBeCalledWith(
             expect.objectContaining({ name, version }),
-            execOpts(testDir),
+            execOpts(testDir)
           );
           expect(ConventionalCommitUtilities.updateIndependentChangelog).toBeCalledWith(
             expect.objectContaining({ name, location }),
-            execOpts(testDir),
+            execOpts(testDir)
           );
         });
       });
@@ -866,14 +866,14 @@ describe("PublishCommand", () => {
           expect.objectContaining({
             cwd: testDir,
             changelogPreset: "foo-bar",
-          }),
+          })
         );
         expect(ConventionalCommitUtilities.updateIndependentChangelog).toBeCalledWith(
           expect.objectContaining({ name, location }),
           expect.objectContaining({
             cwd: testDir,
             changelogPreset: "foo-bar",
-          }),
+          })
         );
       });
     });
@@ -902,7 +902,7 @@ describe("PublishCommand", () => {
         await run(testDir)("--conventional-commits");
 
         expect(gitAddedFiles(testDir)).toMatchSnapshot(
-          "[fixed --conventional-commits] git adds changed files",
+          "[fixed --conventional-commits] git adds changed files"
         );
         expect(gitCommitMessage()).toMatchSnapshot("[fixed --conventional-commits] git commit message");
 
@@ -917,12 +917,12 @@ describe("PublishCommand", () => {
 
           expect(ConventionalCommitUtilities.recommendFixedVersion).toBeCalledWith(
             expect.objectContaining({ name, version, location }),
-            execOpts(testDir),
+            execOpts(testDir)
           );
 
           expect(ConventionalCommitUtilities.updateFixedChangelog).toBeCalledWith(
             expect.objectContaining({ name, location }),
-            execOpts(testDir),
+            execOpts(testDir)
           );
         });
 
@@ -931,7 +931,7 @@ describe("PublishCommand", () => {
             name: "normal",
             location: path.join(testDir),
           }),
-          execOpts(testDir),
+          execOpts(testDir)
         );
       });
 
@@ -948,14 +948,14 @@ describe("PublishCommand", () => {
           expect.objectContaining({
             cwd: testDir,
             changelogPreset: "baz-qux",
-          }),
+          })
         );
         expect(ConventionalCommitUtilities.updateFixedChangelog).toBeCalledWith(
           expect.objectContaining({ name, location }),
           expect.objectContaining({
             cwd: testDir,
             changelogPreset: "baz-qux",
-          }),
+          })
         );
       });
 
@@ -979,13 +979,13 @@ describe("PublishCommand", () => {
     beforeEach(() =>
       initFixture("PublishCommand/independent").then(dir => {
         testDir = dir;
-      }),
+      })
     );
 
     it("should publish the changed packages", () =>
       run(testDir)("--canary", "--npm-tag", "next", "--yes", "--exact").then(() => {
         expect(publishedTagInDirectories(testDir)).toMatchSnapshot(
-          "[independent --canary --npm-tag=next --yes --exact] npm publish --tag",
+          "[independent --canary --npm-tag=next --yes --exact] npm publish --tag"
         );
       }));
   });
@@ -1097,7 +1097,7 @@ describe("PublishCommand", () => {
             directory: path.resolve(testDir, "packages", "package-1"),
             npmClient: "npm",
           },
-          expect.any(Function),
+          expect.any(Function)
         );
       });
     });
@@ -1112,7 +1112,7 @@ describe("PublishCommand", () => {
             directory: path.resolve(testDir, "packages", "package-2"),
             npmClient: "npm",
           },
-          expect.any(Function),
+          expect.any(Function)
         );
       });
     });

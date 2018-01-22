@@ -75,7 +75,7 @@ describe("PackageUtilities", () => {
     beforeAll(() =>
       initFixture("PackageUtilities/filtering").then(testDir => {
         packages = PackageUtilities.getPackages(new Repository(testDir));
-      }),
+      })
     );
 
     it("includes all packages when --scope is omitted", () => {
@@ -179,7 +179,7 @@ describe("PackageUtilities", () => {
       const packageUpdates = [{ package: { name: "ghi" } }, { package: { name: "xyz" } }];
       const updatedPackages = PackageUtilities.filterPackagesThatAreNotUpdated(
         packagesToFilter,
-        packageUpdates,
+        packageUpdates
       );
       expect(updatedPackages).toHaveLength(0);
     });
@@ -189,7 +189,7 @@ describe("PackageUtilities", () => {
       const packageUpdates = [];
       const updatedPackages = PackageUtilities.filterPackagesThatAreNotUpdated(
         packagesToFilter,
-        packageUpdates,
+        packageUpdates
       );
       expect(updatedPackages).toHaveLength(0);
     });
@@ -199,7 +199,7 @@ describe("PackageUtilities", () => {
       const packageUpdates = [{ package: { name: "ghi" } }, { package: { name: "xyz" } }];
       const updatedPackages = PackageUtilities.filterPackagesThatAreNotUpdated(
         packagesToFilter,
-        packageUpdates,
+        packageUpdates
       );
       expect(updatedPackages).toHaveLength(1);
       expect(updatedPackages).toEqual([{ name: "ghi" }]);
@@ -262,8 +262,8 @@ describe("PackageUtilities", () => {
 
       expect(logMessage).toEqual(
         expect.stringContaining(
-          'Packages in cycle are: "package-cycle-1", "package-cycle-2", "package-cycle-extraneous"',
-        ),
+          'Packages in cycle are: "package-cycle-1", "package-cycle-2", "package-cycle-extraneous"'
+        )
       );
       expect(batchedPackages.map(batch => batch.map(pkg => pkg.name))).toEqual([
         ["package-dag-1", "package-standalone"],
@@ -335,7 +335,7 @@ describe("PackageUtilities", () => {
           } catch (ex) {
             done.fail(ex);
           }
-        },
+        }
       );
     });
   });
@@ -353,7 +353,7 @@ describe("PackageUtilities", () => {
       initFixture("PackageUtilities/cycles-and-repeated-deps").then(testDir => {
         packages = PackageUtilities.getPackages(new Repository(testDir));
         packageGraph = PackageUtilities.getPackageGraph(packages);
-      }),
+      })
     );
 
     it("should add all transitive dependencies of passed in packages with no repeats", () => {
@@ -469,7 +469,7 @@ describe("PackageUtilities", () => {
           cb => PackageUtilities.createBinaryLink(firstSrcRef, dest, cb),
           cb => PackageUtilities.createBinaryLink(secondSrcRef, dest, cb),
         ],
-        finish,
+        finish
       );
     });
   });

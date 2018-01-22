@@ -91,7 +91,7 @@ describe("VersionSerializer", () => {
           peerDependencies: {
             "my-package-3": ">=1.0.0",
           },
-        }),
+        })
       ).toEqual({
         name: "my-package-1",
         version: "1.0.0",
@@ -161,7 +161,7 @@ describe("VersionSerializer", () => {
           peerDependencies: {
             "my-package-3": ">=1.0.0",
           },
-        }),
+        })
       ).toEqual({
         name: "my-package-1",
         version: "1.0.0",

@@ -198,7 +198,7 @@ export default class PublishCommand extends Command {
       if (GitUtilities.isDetachedHead(this.execOpts)) {
         throw new ValidationError(
           "ENOGIT",
-          "Detached git HEAD, please checkout a branch to publish changes.",
+          "Detached git HEAD, please checkout a branch to publish changes."
         );
       }
 
@@ -212,7 +212,7 @@ export default class PublishCommand extends Command {
           dedent`
             Branch '${currentBranch}' is restricted from publishing due to allowBranch config.
             Please consider the reasons for this restriction before overriding the option.
-          `,
+          `
         );
       }
     }
@@ -370,7 +370,7 @@ export default class PublishCommand extends Command {
           ConventionalCommitUtilities.recommendIndependentVersion,
           versionBump => {
             versions[versionBump.pkg.name] = versionBump.recommendedVersion;
-          },
+          }
         );
 
         return callback(null, { versions });
@@ -384,7 +384,7 @@ export default class PublishCommand extends Command {
         if (semver.lt(pkg.version, currentFixedVersion)) {
           this.logger.verbose(
             "publish",
-            `Overriding version of ${pkg.name} from  ${pkg.version} to ${currentFixedVersion}`,
+            `Overriding version of ${pkg.name} from  ${pkg.version} to ${currentFixedVersion}`
           );
           pkg.version = currentFixedVersion;
         }
@@ -418,7 +418,7 @@ export default class PublishCommand extends Command {
           });
 
           return callback(null, { versions });
-        },
+        }
       );
     } else {
       // Non-Independent Non-Canary Mode
@@ -493,7 +493,7 @@ export default class PublishCommand extends Command {
               },
               input => {
                 callback(null, input);
-              },
+              }
             );
             break;
           }
@@ -516,7 +516,7 @@ export default class PublishCommand extends Command {
               },
               input => {
                 callback(null, input);
-              },
+              }
             );
             break;
           }
@@ -526,7 +526,7 @@ export default class PublishCommand extends Command {
             break;
           }
         }
-      },
+      }
     );
   }
 
@@ -761,7 +761,7 @@ export default class PublishCommand extends Command {
       err => {
         tracker.finish();
         callback(err);
-      },
+      }
     );
   }
 
@@ -803,7 +803,7 @@ export default class PublishCommand extends Command {
       err => {
         tracker.finish();
         callback(err);
-      },
+      }
     );
   }
 
@@ -822,7 +822,7 @@ export default class PublishCommand extends Command {
         pkg.name,
         this.updatesVersions[pkg.name],
         distTag,
-        this.npmRegistry,
+        this.npmRegistry
       );
     } else if (this.options.canary) {
       NpmUtilities.addDistTag(pkg.location, pkg.name, pkg.version, distTag, this.npmRegistry);
@@ -832,7 +832,7 @@ export default class PublishCommand extends Command {
         pkg.name,
         this.updatesVersions[pkg.name],
         distTag,
-        this.npmRegistry,
+        this.npmRegistry
       );
     }
     /* eslint-enable max-len */

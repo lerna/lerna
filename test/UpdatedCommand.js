@@ -55,7 +55,7 @@ describe("UpdatedCommand", async () => {
       initFixture("UpdatedCommand/basic").then(dir => {
         testDir = dir;
         lernaUpdated = run(testDir);
-      }),
+      })
     );
 
     it("should list changes", async () => {
@@ -138,7 +138,7 @@ describe("UpdatedCommand", async () => {
       initFixture("UpdatedCommand/circular").then(dir => {
         testDir = dir;
         lernaUpdated = run(testDir);
-      }),
+      })
     );
 
     it("should list changes", async () => {
