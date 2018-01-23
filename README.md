@@ -114,6 +114,16 @@ Independent mode allows you to more specifically update versions for each packag
 
 > The `version` key in `lerna.json` is ignored in independent mode.
 
+If your project already exists, and you wish to switch to independent versioning, adding a key in your `lerna.json` with `"version": "independent"` will make the change for your application henceforth. For example:
+
+```json
+{
+  "lerna": "X.0.0",
+  "packages": ["packages/*"],
+  "version": "independent"
+}
+```
+
 ## Troubleshooting
 
 If you encounter any issues while using Lerna please check out our [Troubleshooting](doc/troubleshooting.md)
