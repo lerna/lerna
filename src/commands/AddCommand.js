@@ -14,13 +14,19 @@ const ValidationError = require("../utils/ValidationError");
 
 exports.command = "add [pkgNames..]";
 
-exports.describe = "Add packages as dependency to matched packages";
+exports.describe = "Add dependencies to matched packages";
 
-exports.builder = {
-  dev: {
-    describe: "Save as to devDependencies",
-  },
-};
+exports.builder = yargs =>
+  yargs
+    .options({
+      dev: {
+        describe: "Save to devDependencies",
+      },
+    })
+    .positional("pkgNames", {
+      describe: "One or more package names to add as a dependency",
+      type: "string",
+    });
 
 exports.handler = function handler(argv) {
   // eslint-disable-next-line no-use-before-define

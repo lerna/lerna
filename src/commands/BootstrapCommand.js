@@ -18,37 +18,47 @@ exports.handler = function handler(argv) {
   return new BootstrapCommand(argv);
 };
 
-exports.command = "bootstrap [args..]";
+exports.command = "bootstrap";
 
 exports.describe = "Link local packages together and install remaining package dependencies";
 
-exports.builder = {
-  hoist: {
-    group: "Command Options:",
-    describe: "Install external dependencies matching [glob] to the repo root",
-    defaultDescription: "'**'",
-    coerce: arg =>
-      // `--hoist` is equivalent to `--hoist=**`.
-      arg === true ? "**" : arg,
-  },
-  nohoist: {
-    group: "Command Options:",
-    describe: "Don't hoist external dependencies matching [glob] to the repo root",
-    type: "string",
-  },
-  "ignore-scripts": {
-    group: "Command Options:",
-    describe: "Don't run lifecycle scripts in bootstrapped packages",
-    type: "boolean",
-    default: undefined,
-  },
-  "npm-client": {
-    group: "Command Options:",
-    describe: "Executable used to install dependencies (npm, yarn, pnpm, ...)",
-    type: "string",
-    requiresArg: true,
-  },
-};
+exports.builder = yargs =>
+  yargs
+    .example(
+      "$0 bootstrap -- --no-optional",
+      "# execute `npm install --no-optional` in bootstrapped packages"
+    )
+    .options({
+      hoist: {
+        group: "Command Options:",
+        describe: "Install external dependencies matching [glob] to the repo root",
+        defaultDescription: "'**'",
+        coerce: arg =>
+          // `--hoist` is equivalent to `--hoist=**`.
+          arg === true ? "**" : arg,
+      },
+      nohoist: {
+        group: "Command Options:",
+        describe: "Don't hoist external dependencies matching [glob] to the repo root",
+        type: "string",
+      },
+      mutex: {
+        hidden: true,
+        // untyped and hidden on purpose
+      },
+      "ignore-scripts": {
+        group: "Command Options:",
+        describe: "Don't run lifecycle scripts in bootstrapped packages",
+        type: "boolean",
+        default: undefined,
+      },
+      "npm-client": {
+        group: "Command Options:",
+        describe: "Executable used to install dependencies (npm, yarn, pnpm, ...)",
+        type: "string",
+        requiresArg: true,
+      },
+    });
 
 class BootstrapCommand extends Command {
   get requiresGit() {
@@ -56,7 +66,7 @@ class BootstrapCommand extends Command {
   }
 
   initialize(callback) {
-    const { args, registry, rejectCycles, npmClient, npmClientArgs, mutex, hoist } = this.options;
+    const { registry, rejectCycles, npmClient, npmClientArgs, mutex, hoist } = this.options;
 
     if (npmClient === "yarn" && typeof hoist === "string") {
       return callback(
@@ -94,8 +104,9 @@ class BootstrapCommand extends Command {
     };
 
     // lerna bootstrap ... -- <input>
-    if (args.length) {
-      this.npmConfig.npmClientArgs = [...(npmClientArgs || []), ...args];
+    const doubleDashArgs = this.options["--"] || [];
+    if (doubleDashArgs.length) {
+      this.npmConfig.npmClientArgs = [...(npmClientArgs || []), ...doubleDashArgs];
     }
 
     try {

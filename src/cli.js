@@ -36,16 +36,25 @@ function CLI(argv, cwd) {
     .options(globalOptions)
     .group(globalKeys, "Global Options:")
     .commandDir("./commands")
-    .command("*", false, {}, parsed => {
-      // a default command with no description catches typos or missing subcommands
-      log.error("lerna", `${parsed._.length ? "Invalid" : "Missing"} command!`);
-      log.error("lerna", "Pass --help to see all available commands and options.");
+    .demandCommand(1, "A command is required. Pass --help to see all available commands and options.")
+    .recommendCommands()
+    .strict()
+    .fail((msg, err) => {
+      // certain yargs validations throw strings :P
+      const actual = err || new Error(msg);
 
-      // exit non-zero instead of throw an error so the CLI can be usefully chained
+      // ValidationErrors are already logged
+      if (actual.name !== "ValidationError") {
+        // the recommendCommands() message is too terse
+        if (/Did you mean/.test(actual.message)) {
+          log.error("lerna", `Unknown command "${cli.parsed.argv._[0]}"`);
+        }
+        log.error("lerna", actual.message);
+      }
+
+      // exit non-zero so the CLI can be usefully chained
       process.exitCode = 1;
     })
-    .demandCommand(1, "Pass --help to see all available commands and options.")
-    .showHelpOnFail(false, "A command is required.")
     .alias("h", "help")
     .alias("v", "version")
     .wrap(cli.terminalWidth()).epilogue(dedent`

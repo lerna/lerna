@@ -149,7 +149,7 @@ describe("ExecCommand", () => {
     });
 
     it("should run a command with parameters", async () => {
-      await lernaExec("--", "ls", "-la");
+      await lernaExec("ls", "--", "-la");
 
       expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(2);
       expect(ChildProcessUtilities.spawn).lastCalledWith(

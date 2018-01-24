@@ -15,22 +15,25 @@ exports.handler = function handler(argv) {
   return new ImportCommand(argv);
 };
 
-exports.command = "import <pathToRepo>";
+exports.command = "import <dir>";
 
 exports.describe = dedent`
-  Import the package in <pathToRepo> into packages/<directory-name> with commit history.
+  Import the package in <dir> into packages/<dir> with commit history.
 `;
 
-exports.builder = {
-  yes: {
-    group: "Command Options:",
-    describe: "Skip all confirmation prompts",
-  },
-  flatten: {
-    group: "Command Options:",
-    describe: "Import each merge commit as a single change the merge introduced",
-  },
-};
+exports.builder = yargs =>
+  yargs
+    .options({
+      yes: {
+        group: "Command Options:",
+        describe: "Skip all confirmation prompts",
+      },
+      flatten: {
+        group: "Command Options:",
+        describe: "Import each merge commit as a single change the merge introduced",
+      },
+    })
+    .positional("dir", { describe: "The path to an external git repository that contains an npm package" });
 
 class ImportCommand extends Command {
   gitParamsForTargetCommits() {

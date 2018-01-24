@@ -16,12 +16,3 @@ exports[`lerna exec exec-test --scope <pkg> 1`] = `
 file-1.js
 package.json
 `;
-
-exports[`lerna exec without -- 1`] = `
---> in "package-1" with extra args ""
-file-1.js
-package.json
---> in "package-2" with extra args ""
-file-2.js
-package.json
-`;

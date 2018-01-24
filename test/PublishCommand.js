@@ -179,9 +179,7 @@ describe("PublishCommand", () => {
       });
 
       const testDir = await initFixture("PublishCommand/independent");
-      await run(testDir)(
-        "--independent" // not required due to lerna.json config, but here to assert it doesn't error
-      );
+      await run(testDir)(); // --independent is only valid in InitCommand
 
       expect(PromptUtilities.confirm).toBeCalled();
       expect(writeJsonFile.sync).not.toBeCalled();

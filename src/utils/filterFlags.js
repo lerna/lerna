@@ -10,5 +10,5 @@ module.exports = filterFlags;
  * and yargs spam.
  */
 function filterFlags(argv) {
-  return _.omit(_.omitBy(argv, _.isNil), ["h", "help", "v", "version", "$0", "onRejected"]);
+  return _.omit(_.omitBy(argv, _.isNil), ["h", "help", "v", "version", "$0"]);
 }
