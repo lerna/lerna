@@ -61,7 +61,7 @@ class UpdatedPackagesCollector {
     let { since } = options;
 
     if (GitUtilities.hasTags(execOpts)) {
-      if (canary) {
+      if (since === undefined && canary) {
         const currentSHA = GitUtilities.getCurrentSHA(execOpts);
 
         since = this.getAssociatedCommits(currentSHA);
@@ -182,7 +182,7 @@ class UpdatedPackagesCollector {
           this.updatedPackages[pkg.name] ||
           this.prereleasedPackages[pkg.name] ||
           this.dependents[pkg.name] ||
-          this.options.canary
+          (this.options.since === undefined && this.options.canary)
       )
       .map(pkg => {
         this.logger.verbose("has filtered update", pkg.name);

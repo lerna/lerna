@@ -72,6 +72,36 @@ describe("UpdatedPackagesCollector", () => {
       expect(GitUtilities.diffSinceIn).toBeCalledWith("deadbeef^..deadbeef", "location-2", undefined);
     });
 
+    it("should use the last tag for commit ranges when the canary flag is set and since is set", () => {
+      new UpdatedPackagesCollector({
+        options: {
+          canary: true,
+          since: "",
+        },
+        repository,
+        logger,
+        filteredPackages,
+      }).getUpdates();
+
+      expect(GitUtilities.diffSinceIn).toBeCalledWith("lastTag", "location-1", undefined);
+      expect(GitUtilities.diffSinceIn).toBeCalledWith("lastTag", "location-2", undefined);
+    });
+
+    it("should use the tag for commit ranges when the canary flag is set and since is set to tag", () => {
+      new UpdatedPackagesCollector({
+        options: {
+          canary: true,
+          since: "olderTag",
+        },
+        repository,
+        logger,
+        filteredPackages,
+      }).getUpdates();
+
+      expect(GitUtilities.diffSinceIn).toBeCalledWith("olderTag", "location-1", undefined);
+      expect(GitUtilities.diffSinceIn).toBeCalledWith("olderTag", "location-2", undefined);
+    });
+
     it("should use the last tag in non-canary mode for commit ranges when a repo has tags", () => {
       new UpdatedPackagesCollector({
         options: {},
@@ -82,6 +112,20 @@ describe("UpdatedPackagesCollector", () => {
 
       expect(GitUtilities.diffSinceIn).toBeCalledWith("lastTag", "location-1", undefined);
       expect(GitUtilities.diffSinceIn).toBeCalledWith("lastTag", "location-2", undefined);
+    });
+
+    it("should use the tag in non-canary mode for commit ranges when since is set to tag", () => {
+      new UpdatedPackagesCollector({
+        options: {
+          since: "olderTag",
+        },
+        repository,
+        logger,
+        filteredPackages,
+      }).getUpdates();
+
+      expect(GitUtilities.diffSinceIn).toBeCalledWith("olderTag", "location-1", undefined);
+      expect(GitUtilities.diffSinceIn).toBeCalledWith("olderTag", "location-2", undefined);
     });
   });
 });

@@ -44,7 +44,7 @@ const builder = {
     describe: dedent`
       Restricts the scope to the packages that have been updated since
       the specified [ref], or if not specified, the latest tag.
-      (Only for 'run', 'exec', 'clean', 'ls', and 'bootstrap' commands)
+      (Only for 'run', 'exec', 'clean', 'ls', 'bootstrap' and 'publish' commands)
     `,
     type: "string",
     requiresArg: false,
