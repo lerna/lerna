@@ -29,16 +29,6 @@ log.level = "silent";
 
 const readPkg = (testDir, pkg) => fs.readJsonSync(path.join(testDir, pkg, "package.json"));
 
-const expectError = async fn => {
-  try {
-    await fn();
-    throw new Error(`Expected ${fn.toString()} to fail.`);
-  } catch (err) {
-    const assert = expect(err.message);
-    return assert;
-  }
-};
-
 describe("AddCommand", () => {
   beforeEach(() => {
     // we stub installInDir() in most tests because
@@ -58,13 +48,23 @@ describe("AddCommand", () => {
   it("should throw without packages", async () => {
     const testDir = await initFixture("AddCommand/basic");
     const lernaAdd = run(testDir);
-    (await expectError(() => lernaAdd())).toMatch(/^Missing list of packages/);
+    try {
+      await lernaAdd();
+    } catch (err) {
+      expect(err.message).toMatch(/^Missing list of packages/);
+    }
+    expect.assertions(1);
   });
 
   it("should throw for locally unsatisfiable version ranges", async () => {
     const testDir = await initFixture("AddCommand/basic");
     const lernaAdd = run(testDir);
-    (await expectError(() => lernaAdd("@test/package-1@2"))).toMatch(/Requested range not satisfiable:/);
+    try {
+      await lernaAdd("@test/package-1@2");
+    } catch (err) {
+      expect(err.message).toMatch(/Requested range not satisfiable:/);
+    }
+    expect.assertions(1);
   });
 
   it("should reference remote dependencies", async () => {
