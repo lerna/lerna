@@ -76,20 +76,3 @@ lerna info lifecycle prepublish
 lerna info lifecycle prepare
 lerna success Bootstrapped 3 packages
 `;
-
-exports[`lerna bootstrap from npm script bootstraps all packages: stderr 1`] = `
-lerna info version __TEST_VERSION__
-lerna success run Ran npm script 'test' in packages:
-lerna success - @integration/package-1
-lerna success - @integration/package-2
-lerna success - @integration/package-3
-lerna success - package-4
-`;
-
-exports[`lerna bootstrap from npm script bootstraps all packages: stdout 1`] = `
-package-1
-package-2
-cli package-2 OK
-package-3 cli1 OK
-package-3 cli2 package-2 OK
-`;
