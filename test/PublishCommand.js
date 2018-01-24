@@ -437,25 +437,13 @@ describe("PublishCommand", () => {
    * ======================================================================= */
 
   describe("with --yes", () => {
-    it("skips confirmation prompt", done => {
-      const publishCommand = commandModule.handler({
-        _: [],
-        yes: true,
-      });
-      publishCommand.updates = [];
-      publishCommand.confirmVersions(err => {
-        if (err) {
-          return done.fail(err);
-        }
+    it("skips confirmation prompt", async () => {
+      const testDir = await initFixture("PublishCommand/normal");
+      await run(testDir)("--yes", "--repo-version", "1.0.1-auto-confirm");
 
-        try {
-          expect(PromptUtilities.confirm).not.toBeCalled();
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      });
+      expect(PromptUtilities.select).not.toBeCalled();
+      expect(PromptUtilities.confirm).not.toBeCalled();
+      expect(updatedLernaJson()).toMatchObject({ version: "1.0.1-auto-confirm" });
     });
   });
 
