@@ -57,7 +57,8 @@ class BootstrapCommand extends Command {
 
   initialize(callback) {
     const { args, registry, rejectCycles, npmClient, npmClientArgs, mutex, hoist } = this.options;
-
+    const filteredLength = this.filteredPackages.length;
+    this.packageCountLabel = `${filteredLength} package${filteredLength > 1 's' : ''}`;
     if (npmClient === "yarn" && typeof hoist === "string") {
       return callback(
         new ValidationError(
@@ -129,19 +130,17 @@ class BootstrapCommand extends Command {
       if (err) {
         callback(err);
       } else {
-        this.logger.success("", `Bootstrapped ${this.filteredPackages.length} packages`);
+        this.logger.success("", `Bootstrapped ${this.packageCountLabel}`);
         callback(null, true);
       }
     });
   }
-
   /**
    * Bootstrap packages
    * @param {Function} callback
    */
   bootstrapPackages(callback) {
-    this.logger.info("", `Bootstrapping ${this.filteredPackages.length} packages`);
-
+    this.logger.info("", `Bootstrapping ${this.packageCountLabel}`);
     if (this.options.useWorkspaces) {
       this.installRootPackageOnly(callback);
     } else {
