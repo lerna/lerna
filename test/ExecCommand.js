@@ -56,7 +56,7 @@ describe("ExecCommand", () => {
       try {
         await lernaExec("--parallel");
       } catch (err) {
-        expect(err.message).toBe("Not enough non-option arguments: got 0, need at least 1");
+        expect(err.message).toBe("A command to execute is required");
       }
     });
 

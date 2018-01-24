@@ -5,6 +5,7 @@ const async = require("async");
 const ChildProcessUtilities = require("../ChildProcessUtilities");
 const Command = require("../Command");
 const PackageUtilities = require("../PackageUtilities");
+const ValidationError = require("../utils/ValidationError");
 
 exports.handler = function handler(argv) {
   // eslint-disable-next-line no-use-before-define
@@ -65,6 +66,10 @@ class ExecCommand extends Command {
     const { cmd, args } = this.options;
     this.command = cmd || dashedArgs.shift();
     this.args = (args || []).concat(dashedArgs);
+
+    if (!this.command) {
+      return callback(new ValidationError("exec", "A command to execute is required"));
+    }
 
     // don't interrupt spawned or streaming stdio
     this.logger.disableProgress();
