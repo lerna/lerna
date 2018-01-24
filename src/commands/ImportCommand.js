@@ -45,7 +45,7 @@ class ImportCommand extends Command {
   }
 
   initialize(callback) {
-    const inputPath = this.options.pathToRepo;
+    const inputPath = this.options.dir;
 
     const externalRepoPath = path.resolve(inputPath);
     const externalRepoBase = path.basename(externalRepoPath);
