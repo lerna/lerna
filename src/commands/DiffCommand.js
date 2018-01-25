@@ -15,7 +15,10 @@ exports.command = "diff [pkgName]";
 
 exports.describe = "Diff all packages or a single package since the last release.";
 
-exports.builder = {};
+exports.builder = yargs =>
+  yargs.positional("pkgName", {
+    describe: "An optional package name to filter the diff output",
+  });
 
 function getLastCommit(execOpts) {
   if (GitUtilities.hasTags(execOpts)) {

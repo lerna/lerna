@@ -40,20 +40,6 @@ describe("lerna exec", () => {
     expect(stdout).toMatchSnapshot();
   });
 
-  test("without --", async () => {
-    const cwd = await initFixture("ExecCommand/basic");
-    const args = [
-      "--concurrency=1",
-      "exec",
-      EXEC_TEST_COMMAND,
-      // no --
-      "-C",
-    ];
-
-    const { stdout } = await execa(LERNA_BIN, args, { cwd, env });
-    expect(stdout).toMatchSnapshot();
-  });
-
   test("echo $LERNA_PACKAGE_NAME", async () => {
     const cwd = await initFixture("ExecCommand/basic");
     const args = [
@@ -135,7 +121,7 @@ describe("lerna exec", () => {
 
   test("--bail=false <cmd>", async () => {
     const cwd = await initFixture("ExecCommand/basic");
-    const args = ["exec", "--bail=false", "--concurrency=1", "--", "npm run fail-or-succeed"];
+    const args = ["exec", "--bail=false", "--concurrency=1", "--", "npm", "run", "fail-or-succeed"];
 
     const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
     expect(stderr).toMatch("Failed at the package-1@1.0.0 fail-or-succeed script");
@@ -145,7 +131,7 @@ describe("lerna exec", () => {
 
   test("--no-bail <cmd>", async () => {
     const cwd = await initFixture("ExecCommand/basic");
-    const args = ["exec", "--no-bail", "--concurrency=1", "--", "npm run fail-or-succeed"];
+    const args = ["exec", "--no-bail", "--concurrency=1", "--", "npm", "run", "fail-or-succeed"];
 
     const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
     expect(stderr).toMatch("Failed at the package-1@1.0.0 fail-or-succeed script");

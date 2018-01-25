@@ -47,7 +47,6 @@ const builder = {
       (Only for 'run', 'exec', 'clean', 'ls', and 'bootstrap' commands)
     `,
     type: "string",
-    requiresArg: false,
   },
   ignore: {
     describe: dedent`
@@ -70,7 +69,7 @@ const builder = {
   "reject-cycles": {
     describe: "Fail if a cycle is detected among dependencies",
     type: "boolean",
-    default: false,
+    default: undefined,
   },
   sort: {
     describe: "Sort packages topologically (all dependencies before dependents)",
@@ -96,7 +95,7 @@ class Command {
     log.info("version", this.lernaVersion);
 
     // launch the command
-    const runner = new Promise((resolve, reject) => {
+    let runner = new Promise((resolve, reject) => {
       const onComplete = (err, exitCode) => {
         if (err) {
           if (typeof err === "string") {
@@ -121,8 +120,8 @@ class Command {
       this.runCommand(onComplete);
     });
 
-    // passed via yargs context, never actual CLI
-    runner.then(argv.onResolved, argv.onRejected);
+    // passed via yargs context in tests, never actual CLI
+    runner = runner.then(argv.onResolved, argv.onRejected);
 
     // proxy "Promise" methods to "private" instance
     this.then = (onResolved, onRejected) => runner.then(onResolved, onRejected);

@@ -14,10 +14,16 @@ module.exports = yargsRunner;
  */
 function yargsRunner(commandModule) {
   const cmd = commandModule.command.split(" ")[0];
+  const hackDoubleDash = makeWorkAround();
 
   return cwd => {
     // create a _new_ yargs instance every time cwd changes to avoid singleton pollution
     const cli = yargs([], cwd)
+      .strict()
+      .exitProcess(false)
+      .detectLocale(false)
+      .showHelpOnFail(false)
+      .wrap(null)
       .options(globalOptions)
       .command(commandModule);
 
@@ -40,14 +46,40 @@ function yargsRunner(commandModule) {
         };
 
         const parseFn = (yargsError, parsedArgv, yargsOutput) => {
+          // this is synchronous, before the async handlers resolve
           Object.assign(yargsMeta, { parsedArgv, yargsOutput });
-          // immediate rejection to avoid dangling promise timeout
-          if (yargsError) {
-            context.onRejected(yargsError);
-          }
         };
 
-        cli.parse([cmd, ...args], context, parseFn);
+        // workaround wonky yargs-parser configuration not being read during tests
+        hackDoubleDash(args, context);
+
+        cli
+          .fail((msg, err) => {
+            // since yargs 10.1.0, this is the only way to catch handler rejection
+            // _and_ yargs validation exceptions when using async command handlers
+            const actual = err || new Error(msg);
+            // backfill exitCode for test convenience
+            yargsMeta.exitCode = "exitCode" in actual ? actual.exitCode : 1;
+            context.onRejected(actual);
+          })
+          .parse([cmd, ...args], context, parseFn);
       });
+  };
+}
+
+function makeWorkAround() {
+  let hasWarned;
+
+  return (args, context) => {
+    const doubleDashed = args.indexOf("--");
+
+    if (doubleDashed > -1) {
+      if (!hasWarned) {
+        console.warn("TODO: remove yargs require.main workaround");
+        hasWarned = true;
+      }
+
+      context["--"] = args.slice(doubleDashed + 1);
+    }
   };
 }

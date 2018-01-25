@@ -187,7 +187,7 @@ describe("Command", () => {
       }
 
       try {
-        await new PkgErrorCommand({ onRejected });
+        await new PkgErrorCommand({});
       } catch (err) {
         expect(console.error.mock.calls).toHaveLength(2);
         expect(console.error.mock.calls[0]).toEqual(["pkg-err-stdout"]);
@@ -497,7 +497,7 @@ describe("Command", () => {
       const cwd = tempy.directory();
 
       try {
-        await testFactory({ cwd, onRejected });
+        await testFactory({ cwd });
       } catch (err) {
         expect(err.exitCode).toBe(1);
         expect(err.prefix).toBe("ENOGIT");
@@ -511,7 +511,7 @@ describe("Command", () => {
       await fs.remove(path.join(cwd, "package.json"));
 
       try {
-        await testFactory({ cwd, onRejected });
+        await testFactory({ cwd });
       } catch (err) {
         expect(err.exitCode).toBe(1);
         expect(err.prefix).toBe("ENOPKG");
@@ -525,7 +525,7 @@ describe("Command", () => {
       await fs.remove(path.join(cwd, "lerna.json"));
 
       try {
-        await testFactory({ cwd, onRejected });
+        await testFactory({ cwd });
       } catch (err) {
         expect(err.exitCode).toBe(1);
         expect(err.prefix).toBe("ENOLERNA");
