@@ -19,6 +19,7 @@ cache:
 
 install:
   - ps: Install-Product node $env:nodejs_version
+  - npm config set loglevel warn
   - npm -g install npm@latest-5
   - yarn --frozen-lockfile
 
