@@ -1,15 +1,33 @@
 ---
   root: true
   extends:
-    - babel
+    - airbnb-base
     - plugin:node/recommended
+    - plugin:prettier/recommended
   plugins:
     - node
+    - prettier
   rules:
-    space-before-blocks:
+    class-methods-use-this: off
+    consistent-return: off
+    curly:
       - error
+      - all
+    max-len:
+      - error
+      - 110   # keep in sync with .prettierrc.yaml printWidth
+      - 2
     node/no-unsupported-features:
       - error
-      - version: 4
-        ignores:
-          - syntax
+      - version: 6.9.0
+    no-param-reassign:
+      - error
+      - ignorePropertyModificationsFor:
+        - err
+    no-underscore-dangle:
+      - error
+      - allowAfterThis: true
+    no-use-before-define:
+      - error
+      - nofunc
+    strict: off

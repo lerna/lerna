@@ -1,7 +1,9 @@
-import log from "npmlog";
+"use strict";
+
+const log = require("npmlog");
 
 // file under test
-import VersionSerializer from "../src/VersionSerializer";
+const VersionSerializer = require("../src/VersionSerializer");
 
 // silence logs
 log.level = "silent";
@@ -12,18 +14,16 @@ describe("VersionSerializer", () => {
   beforeEach(() => {
     const parser = {
       parseVersion(version) {
-       const chunks = version.split("#");
-       return  {
-         prefix: chunks.length > 1 ? chunks[0] + "#" : null,
-         version: chunks.length > 1 ? chunks[1] : version,
-       };
-      }
+        const chunks = version.split("#");
+        return {
+          prefix: chunks.length > 1 ? `${chunks[0]}#` : null,
+          version: chunks.length > 1 ? chunks[1] : version,
+        };
+      },
     };
     serializer = new VersionSerializer({
-      graphDependencies: [
-        "my-package-1", "my-package-2", "my-package-3"
-      ],
-      versionParser: parser
+      graphDependencies: ["my-package-1", "my-package-2", "my-package-3"],
+      versionParser: parser,
     });
   });
 
@@ -32,15 +32,13 @@ describe("VersionSerializer", () => {
       const mockParser = {
         parseVersion: jest.fn().mockReturnValue({
           prefix: null,
-          version: "0.0.1"
-        })
+          version: "0.0.1",
+        }),
       };
 
       serializer = new VersionSerializer({
-        graphDependencies: [
-          "my-package-1", "my-package-2", "my-package-3"
-        ],
-        versionParser: mockParser
+        graphDependencies: ["my-package-1", "my-package-2", "my-package-3"],
+        versionParser: mockParser,
       });
 
       const pkg = {
@@ -55,7 +53,7 @@ describe("VersionSerializer", () => {
         },
         peerDependencies: {
           "my-package-3": ">=1.0.0",
-        }
+        },
       };
 
       serializer.deserialize(pkg);
@@ -74,27 +72,29 @@ describe("VersionSerializer", () => {
         },
         peerDependencies: {
           "my-package-3": ">=1.0.0",
-        }
+        },
       };
 
       expect(serializer.deserialize(pkg)).toEqual(pkg);
     });
 
     it("should extract versions recognized by parser", () => {
-      expect(serializer.deserialize({
-        name: "my-package-1",
-        version: "1.0.0",
-        dependencies: {
-          "my-dependency": "dont-touch-this#1.0.0",
-        },
-        devDependencies: {
-          "my-package-2": "bbb#1.0.0",
-          "my-package-3": "ccc#1.0.0",
-        },
-        peerDependencies: {
-          "my-package-3": ">=1.0.0",
-        }
-      })).toEqual({
+      expect(
+        serializer.deserialize({
+          name: "my-package-1",
+          version: "1.0.0",
+          dependencies: {
+            "my-dependency": "dont-touch-this#1.0.0",
+          },
+          devDependencies: {
+            "my-package-2": "bbb#1.0.0",
+            "my-package-3": "ccc#1.0.0",
+          },
+          peerDependencies: {
+            "my-package-3": ">=1.0.0",
+          },
+        })
+      ).toEqual({
         name: "my-package-1",
         version: "1.0.0",
         dependencies: {
@@ -106,7 +106,7 @@ describe("VersionSerializer", () => {
         },
         peerDependencies: {
           "my-package-3": ">=1.0.0",
-        }
+        },
       });
     });
   });
@@ -125,7 +125,7 @@ describe("VersionSerializer", () => {
         },
         peerDependencies: {
           "my-package-3": ">=1.0.0",
-        }
+        },
       };
 
       expect(serializer.serialize(pkg)).toEqual(pkg);
@@ -145,24 +145,26 @@ describe("VersionSerializer", () => {
         },
         peerDependencies: {
           "my-package-3": ">=1.0.0",
-        }
-      })
+        },
+      });
 
       // the preserved prefixes should be written back
-      expect(serializer.serialize({
-        name: "my-package-1",
-        version: "1.0.0",
-        dependencies: {
-          "my-dependency": "dont-touch-this#1.0.0",
-        },
-        devDependencies: {
-          "my-package-2": "1.0.0",
-          "my-package-3": "1.0.0",
-        },
-        peerDependencies: {
-          "my-package-3": ">=1.0.0",
-        }
-      })).toEqual({
+      expect(
+        serializer.serialize({
+          name: "my-package-1",
+          version: "1.0.0",
+          dependencies: {
+            "my-dependency": "dont-touch-this#1.0.0",
+          },
+          devDependencies: {
+            "my-package-2": "1.0.0",
+            "my-package-3": "1.0.0",
+          },
+          peerDependencies: {
+            "my-package-3": ">=1.0.0",
+          },
+        })
+      ).toEqual({
         name: "my-package-1",
         version: "1.0.0",
         dependencies: {
@@ -174,7 +176,7 @@ describe("VersionSerializer", () => {
         },
         peerDependencies: {
           "my-package-3": ">=1.0.0",
-        }
+        },
       });
     });
   });

@@ -1,44 +1,33 @@
-import path from "path";
-import log from "npmlog";
+"use strict";
 
-import FileSystemUtilities from "../src/FileSystemUtilities";
+const fs = require("fs-extra");
+const path = require("path");
+const log = require("npmlog");
 
 // mocked or stubbed modules
-import NpmUtilities from "../src/NpmUtilities";
-import BootstrapCommand from "../src/commands/BootstrapCommand";
+const NpmUtilities = require("../src/NpmUtilities");
+const BootstrapCommand = require("../src/commands/BootstrapCommand");
 
-import callsBack from "./helpers/callsBack";
-import initFixture from "./helpers/initFixture";
-import yargsRunner from "./helpers/yargsRunner";
-import * as commandModule from "../src/commands/AddCommand";
-import pkgMatchers from "./helpers/pkgMatchers";
+// helpers
+const callsBack = require("./helpers/callsBack");
+const initFixture = require("./helpers/initFixture");
+const yargsRunner = require("./helpers/yargsRunner");
+const pkgMatchers = require("./helpers/pkgMatchers");
 
-log.level = "silent";
+// file under test
+const commandModule = require("../src/commands/AddCommand");
 
 const run = yargsRunner(commandModule);
-
-const readPkg = (testDir, pkg) => {
-  return JSON.parse(FileSystemUtilities.readFileSync(path.join(testDir, pkg, "package.json")));
-};
-
-const expectError = async (fn) => {
-  try {
-    await fn();
-    throw new Error(`Expected ${fn.toString()} to fail.`);
-  } catch (err) {
-    const assert = expect(err.message);
-    return assert;
-  }
-};
-
-const commandFlags = (mock) => {
-  return mock.mock.calls[0][1];
-};
 
 jest.mock("../src/NpmUtilities");
 jest.mock("../src/commands/BootstrapCommand");
 
 expect.extend(pkgMatchers);
+
+// silence logs
+log.level = "silent";
+
+const readPkg = (testDir, pkg) => fs.readJsonSync(path.join(testDir, pkg, "package.json"));
 
 describe("AddCommand", () => {
   beforeEach(() => {
@@ -51,11 +40,7 @@ describe("AddCommand", () => {
     // of slowness when running tests for no good reason
     NpmUtilities.runScriptInDir.mockImplementation(callsBack());
 
-    BootstrapCommand.mockImplementation(() => {
-      return {
-        run: async () => {}
-      };
-    })
+    BootstrapCommand.handler.mockImplementation(() => Promise.resolve());
   });
 
   afterEach(() => jest.resetAllMocks());
@@ -63,13 +48,23 @@ describe("AddCommand", () => {
   it("should throw without packages", async () => {
     const testDir = await initFixture("AddCommand/basic");
     const lernaAdd = run(testDir);
-    (await expectError(() => lernaAdd())).toMatch(/^Missing list of packages/);
+    try {
+      await lernaAdd();
+    } catch (err) {
+      expect(err.message).toMatch(/^Missing list of packages/);
+    }
+    expect.assertions(1);
   });
 
   it("should throw for locally unsatisfiable version ranges", async () => {
     const testDir = await initFixture("AddCommand/basic");
     const lernaAdd = run(testDir);
-    (await expectError(() => lernaAdd("@test/package-1@2"))).toMatch(/Requested range not satisfiable:/);
+    try {
+      await lernaAdd("@test/package-1@2");
+    } catch (err) {
+      expect(err.message).toMatch(/Requested range not satisfiable:/);
+    }
+    expect.assertions(1);
   });
 
   it("should reference remote dependencies", async () => {
@@ -170,30 +165,36 @@ describe("AddCommand", () => {
     const testDir = await initFixture("AddCommand/basic");
     const lernaAdd = run(testDir);
     await lernaAdd("@test/package-1");
-    const flags = commandFlags(BootstrapCommand);
 
-    expect(flags).toHaveProperty("scope");
-    expect(flags.scope).toEqual(["@test/package-2", "package-3", "package-4"]);
+    expect(BootstrapCommand.handler).lastCalledWith(
+      expect.objectContaining({
+        scope: ["@test/package-2", "package-3", "package-4"],
+      })
+    );
   });
 
   it("should only bootstrap scoped packages", async () => {
     const testDir = await initFixture("AddCommand/basic");
     const lernaAdd = run(testDir);
     await lernaAdd("@test/package-1", "--scope", "@test/package-2", "--scope", "package-3");
-    const flags = commandFlags(BootstrapCommand);
 
-    expect(flags).toHaveProperty("scope");
-    expect(flags.scope).toEqual(["@test/package-2", "package-3"]);
+    expect(BootstrapCommand.handler).lastCalledWith(
+      expect.objectContaining({
+        scope: ["@test/package-2", "package-3"],
+      })
+    );
   });
 
   it("should not bootstrap ignored packages", async () => {
     const testDir = await initFixture("AddCommand/basic");
     const lernaAdd = run(testDir);
     await lernaAdd("@test/package-1", "--ignore", "@test/package-2");
-    const flags = commandFlags(BootstrapCommand);
 
-    expect(flags).toHaveProperty("scope");
-    expect(flags.scope).toEqual(["package-3", "package-4"]);
+    expect(BootstrapCommand.handler).lastCalledWith(
+      expect.objectContaining({
+        scope: ["package-3", "package-4"],
+      })
+    );
   });
 
   it("should not bootstrap unchanged packages", async () => {
@@ -201,7 +202,7 @@ describe("AddCommand", () => {
     const lernaAdd = run(testDir);
     await lernaAdd("@test/package-1");
 
-    expect(BootstrapCommand).not.toHaveBeenCalled();
+    expect(BootstrapCommand.handler).not.toHaveBeenCalled();
   });
 
   it("bootstraps mixed local and external dependencies", async () => {
@@ -221,11 +222,10 @@ describe("AddCommand", () => {
     expect(pkg3).toDependOn("pify", "^3.0.0");
     expect(pkg3).toDependOn("@test/package-2"); // existing, but should stay
 
-    const flags = commandFlags(BootstrapCommand);
-    expect(flags.scope).toEqual([
-      "@test/package-1",
-      "@test/package-2",
-      "@test/package-3",
-    ]);
+    expect(BootstrapCommand.handler).lastCalledWith(
+      expect.objectContaining({
+        scope: ["@test/package-1", "@test/package-2", "@test/package-3"],
+      })
+    );
   });
 });

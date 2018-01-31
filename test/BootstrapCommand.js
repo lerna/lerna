@@ -1,17 +1,19 @@
-import log from "npmlog";
+"use strict";
+
+const log = require("npmlog");
 
 // mocked or stubbed modules
-import FileSystemUtilities from "../src/FileSystemUtilities";
-import NpmUtilities from "../src/NpmUtilities";
+const FileSystemUtilities = require("../src/FileSystemUtilities");
+const NpmUtilities = require("../src/NpmUtilities");
 
 // helpers
-import callsBack from "./helpers/callsBack";
-import initFixture from "./helpers/initFixture";
-import normalizeRelativeDir from "./helpers/normalizeRelativeDir";
-import yargsRunner from "./helpers/yargsRunner";
+const callsBack = require("./helpers/callsBack");
+const initFixture = require("./helpers/initFixture");
+const normalizeRelativeDir = require("./helpers/normalizeRelativeDir");
+const yargsRunner = require("./helpers/yargsRunner");
 
 // file under test
-import * as commandModule from "../src/commands/BootstrapCommand";
+const commandModule = require("../src/commands/BootstrapCommand");
 
 const run = yargsRunner(commandModule);
 
@@ -39,7 +41,7 @@ const stubSymlink = () => {
 };
 
 // object snapshots have sorted keys
-const installedPackagesInDirectories = (testDir) =>
+const installedPackagesInDirectories = testDir =>
   NpmUtilities.installInDir.mock.calls.reduce((obj, args) => {
     const location = normalizeRelativeDir(testDir, args[0]);
     const dependencies = args[1];
@@ -47,7 +49,7 @@ const installedPackagesInDirectories = (testDir) =>
     return obj;
   }, {});
 
-const ranScriptsInDirectories = (testDir) =>
+const ranScriptsInDirectories = testDir =>
   NpmUtilities.runScriptInDir.mock.calls.reduce((obj, args) => {
     const location = normalizeRelativeDir(testDir, args[1].directory);
     const script = args[0];
@@ -60,19 +62,15 @@ const ranScriptsInDirectories = (testDir) =>
     return obj;
   }, {});
 
-const removedDirectories = (testDir) =>
-  FileSystemUtilities.rimraf.mock.calls.map((args) =>
-    normalizeRelativeDir(testDir, args[0])
-  );
+const removedDirectories = testDir =>
+  FileSystemUtilities.rimraf.mock.calls.map(args => normalizeRelativeDir(testDir, args[0]));
 
-const symlinkedDirectories = (testDir) =>
-  FileSystemUtilities.symlink.mock.calls.map((args) => {
-    return {
-      _src: normalizeRelativeDir(testDir, args[0]),
-      dest: normalizeRelativeDir(testDir, args[1]),
-      type: args[2],
-    };
-  });
+const symlinkedDirectories = testDir =>
+  FileSystemUtilities.symlink.mock.calls.map(args => ({
+    _src: normalizeRelativeDir(testDir, args[0]),
+    dest: normalizeRelativeDir(testDir, args[1]),
+    type: args[2],
+  }));
 
 describe("BootstrapCommand", () => {
   beforeEach(() => {
@@ -95,6 +93,14 @@ describe("BootstrapCommand", () => {
       await lernaBootstrap();
 
       expect(NpmUtilities.installInDir).not.toBeCalled();
+      expect(ranScriptsInDirectories(testDir)).toMatchSnapshot();
+    });
+
+    it("shouldn't run lifecycle scripts with --ignore-scripts", async () => {
+      const testDir = await initFixture("BootstrapCommand/ignored-scripts");
+      const lernaBootstrap = run(testDir);
+      await lernaBootstrap("--ignore-scripts");
+
       expect(ranScriptsInDirectories(testDir)).toMatchSnapshot();
     });
   });
@@ -241,20 +247,14 @@ describe("BootstrapCommand", () => {
 
     it("bootstraps dependencies not included by --scope with --include-filtered-dependencies", async () => {
       // we scope to package-2 only but should still install package-1 as it is a dependency of package-2
-      await lernaBootstrap(
-        "--scope", "package-2",
-        "--include-filtered-dependencies"
-      );
+      await lernaBootstrap("--scope", "package-2", "--include-filtered-dependencies");
 
       expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
     });
 
     it("bootstraps dependencies excluded by --ignore with --include-filtered-dependencies", async () => {
       // we ignore package 1 but it should still be installed because it is a dependency of package-2
-      await lernaBootstrap(
-        "--ignore", "{@test/package-1,package-@(3|4)}",
-        "--include-filtered-dependencies"
-      );
+      await lernaBootstrap("--ignore", "{@test/package-1,package-@(3|4)}", "--include-filtered-dependencies");
 
       expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
     });

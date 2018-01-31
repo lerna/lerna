@@ -1,16 +1,18 @@
-import chalk from "chalk";
-import log from "npmlog";
-import normalizeNewline from "normalize-newline";
+"use strict";
+
+const chalk = require("chalk");
+const log = require("npmlog");
+const normalizeNewline = require("normalize-newline");
 
 // mocked or stubbed modules
-import output from "../src/utils/output";
+const output = require("../src/utils/output");
 
 // helpers
-import initFixture from "./helpers/initFixture";
-import yargsRunner from "./helpers/yargsRunner";
+const initFixture = require("./helpers/initFixture");
+const yargsRunner = require("./helpers/yargsRunner");
 
 // file under test
-import * as commandModule from "../src/commands/LsCommand";
+const commandModule = require("../src/commands/LsCommand");
 
 const run = yargsRunner(commandModule);
 
@@ -22,8 +24,7 @@ log.level = "silent";
 // keep snapshots stable cross-platform
 chalk.enabled = false;
 
-const consoleOutput = () =>
-  output.mock.calls.map((args) => normalizeNewline(args[0]));
+const consoleOutput = () => output.mock.calls.map(args => normalizeNewline(args[0]));
 
 describe("LsCommand", () => {
   afterEach(() => jest.resetAllMocks());

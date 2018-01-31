@@ -50,21 +50,10 @@ $ yarn lint
 If you want to test out Lerna on local repos:
 
 ```sh
-$ yarn build
 $ yarn link
 ```
 
 This will set your global `lerna` command to the local version.
-
-Note that Lerna needs to be built after changes are made. So you can either run
-`yarn build` to run it once, or you can run:
-
-```sh
-$ yarn dev
-```
-
-Which will start a watch task that will continuously re-build Lerna while you
-are working on it.
 
 If you would like to check test coverage, run the coverage script, then open
 `coverage/lcov-report/index.html` in your favorite browser.

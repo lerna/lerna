@@ -1,27 +1,28 @@
-import chalk from "chalk";
-import log from "npmlog";
-import normalizeNewline from "normalize-newline";
-import path from "path";
+"use strict";
+
+const chalk = require("chalk");
+const log = require("npmlog");
+const normalizeNewline = require("normalize-newline");
+const path = require("path");
 
 // mocked or stubbed modules
-import writeJsonFile from "write-json-file";
-import writePkg from "write-pkg";
-import ConventionalCommitUtilities from "../src/ConventionalCommitUtilities";
-import GitUtilities from "../src/GitUtilities";
-import NpmUtilities from "../src/NpmUtilities";
-import PromptUtilities from "../src/PromptUtilities";
-import output from "../src/utils/output";
+const writeJsonFile = require("write-json-file");
+const writePkg = require("write-pkg");
+const ConventionalCommitUtilities = require("../src/ConventionalCommitUtilities");
+const GitUtilities = require("../src/GitUtilities");
+const NpmUtilities = require("../src/NpmUtilities");
+const PromptUtilities = require("../src/PromptUtilities");
+const output = require("../src/utils/output");
 
 // helpers
-import callsBack from "./helpers/callsBack";
-import initFixture from "./helpers/initFixture";
-import normalizeRelativeDir from "./helpers/normalizeRelativeDir";
-import yargsRunner from "./helpers/yargsRunner";
+const callsBack = require("./helpers/callsBack");
+const initFixture = require("./helpers/initFixture");
+const normalizeRelativeDir = require("./helpers/normalizeRelativeDir");
+const yargsRunner = require("./helpers/yargsRunner");
 
 // file under test
-import * as commandModule from "../src/commands/PublishCommand";
+const commandModule = require("../src/commands/PublishCommand");
 
-const PublishCommand = commandModule.default;
 const run = yargsRunner(commandModule);
 
 jest.mock("write-json-file");
@@ -37,23 +38,22 @@ log.level = "silent";
 // keep snapshots stable cross-platform
 chalk.enabled = false;
 
-const execOpts = (testDir) =>
+const execOpts = testDir =>
   expect.objectContaining({
-    cwd: testDir
+    cwd: testDir,
   });
 
-const consoleOutput = () =>
-  output.mock.calls.map((args) => normalizeNewline(args[0]));
+const consoleOutput = () => output.mock.calls.map(args => normalizeNewline(args[0]));
 
-const publishedTagInDirectories = (testDir) =>
+const publishedTagInDirectories = testDir =>
   NpmUtilities.publishTaggedInDir.mock.calls.reduce((arr, args) => {
     const tag = args[0];
-    const dir = normalizeRelativeDir(testDir, args[1]);
+    const dir = normalizeRelativeDir(testDir, args[1].location);
     arr.push({ dir, tag });
     return arr;
   }, []);
 
-const removedDistTagInDirectories = (testDir) =>
+const removedDistTagInDirectories = testDir =>
   NpmUtilities.removeDistTag.mock.calls.reduce((obj, args) => {
     const location = normalizeRelativeDir(testDir, args[0]);
     const tag = args[2];
@@ -61,7 +61,7 @@ const removedDistTagInDirectories = (testDir) =>
     return obj;
   }, {});
 
-const addedDistTagInDirectories = (testDir) =>
+const addedDistTagInDirectories = testDir =>
   NpmUtilities.addDistTag.mock.calls.reduce((obj, args) => {
     const location = normalizeRelativeDir(testDir, args[0]);
     const pkg = args[1];
@@ -71,35 +71,31 @@ const addedDistTagInDirectories = (testDir) =>
     return obj;
   }, {});
 
-const gitAddedFiles = (testDir) =>
-  GitUtilities.addFile.mock.calls.map((args) =>
-    normalizeRelativeDir(testDir, args[0])
-  );
+const gitAddedFiles = testDir =>
+  GitUtilities.addFile.mock.calls.map(args => normalizeRelativeDir(testDir, args[0]));
 
-const gitCommitMessage = () =>
-  normalizeNewline(GitUtilities.commit.mock.calls[0][0]);
+const gitCommitMessage = () => normalizeNewline(GitUtilities.commit.mock.calls[0][0]);
 
-const gitTagsAdded = () =>
-  GitUtilities.addTag.mock.calls.map((args) => args[0]);
+const gitTagsAdded = () => GitUtilities.addTag.mock.calls.map(args => args[0]);
 
-const updatedLernaJson = () =>
-  writeJsonFile.sync.mock.calls[0][1];
+const updatedLernaJson = () => writeJsonFile.sync.mock.calls[0][1];
 
-const updatedPackageVersions = (testDir) =>
+const updatedPackageVersions = testDir =>
   writePkg.sync.mock.calls.reduce((obj, args) => {
     const location = normalizeRelativeDir(testDir, path.dirname(args[0]));
-    const version = args[1].version;
-    obj[location] = version;
+    obj[location] = args[1].version;
     return obj;
   }, {});
 
-const updatedPackageJSON = (name) =>
-  writePkg.sync.mock.calls.reduce((arr, args) => {
-    if (args[1].name === name) {
-      arr.push(args[1]);
-    }
-    return arr;
-  }, []).pop();
+const updatedPackageJSON = name =>
+  writePkg.sync.mock.calls
+    .reduce((arr, args) => {
+      if (args[1].name === name) {
+        arr.push(args[1]);
+      }
+      return arr;
+    }, [])
+    .pop();
 
 describe("PublishCommand", () => {
   beforeEach(() => {
@@ -122,54 +118,51 @@ describe("PublishCommand", () => {
    * ======================================================================= */
 
   describe("normal mode", () => {
-    let testDir;
+    it("should publish the changed packages", async () => {
+      const testDir = await initFixture("PublishCommand/normal");
+      await run(testDir)();
 
-    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
-      testDir = dir;
-    }));
+      expect(PromptUtilities.select.mock.calls).toMatchSnapshot("prompt");
+      expect(PromptUtilities.confirm).toBeCalled();
 
-    it("should publish the changed packages", () => {
-      return run(testDir)().then(() => {
-        expect(PromptUtilities.select.mock.calls).toMatchSnapshot("[normal] prompt");
-        expect(PromptUtilities.confirm).toBeCalled();
+      expect(updatedLernaJson()).toMatchObject({ version: "1.0.1" });
+      expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
 
-        expect(updatedLernaJson()).toMatchObject({ version: "1.0.1" });
-        expect(updatedPackageVersions(testDir)).toMatchSnapshot("[normal] bumps package versions");
-
-        expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-          "package-1": "^1.0.1",
-        });
-        expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-          "package-2": "^1.0.1",
-        });
-        // peerDependencies are _never_ modified automatically
-        expect(updatedPackageJSON("package-3").peerDependencies).toMatchObject({
-          "package-2": "^1.0.0",
-        });
-        expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-          "package-1": "^0.0.0",
-        });
-        expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
-          "package-1": "^1.0.1",
-        });
-
-        expect(gitAddedFiles(testDir)).toMatchSnapshot("[normal] git adds changed files");
-        expect(gitCommitMessage()).toEqual("v1.0.1");
-        expect(gitTagsAdded()).toEqual(["v1.0.1"]);
-
-        expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[normal] npm publish --tag");
-
-        expect(GitUtilities.pushWithTags).lastCalledWith("origin", gitTagsAdded(), execOpts(testDir));
-        expect(consoleOutput()).toMatchSnapshot("[normal] console output");
+      expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+        "package-1": "^1.0.1",
       });
+      expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+        "package-2": "^1.0.1",
+      });
+      // peerDependencies are _never_ modified automatically
+      expect(updatedPackageJSON("package-3").peerDependencies).toMatchObject({
+        "package-2": "^1.0.0",
+      });
+      expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+        "package-1": "^0.0.0",
+      });
+      expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
+        "package-1": "^1.0.1",
+      });
+
+      expect(gitAddedFiles(testDir)).toMatchSnapshot("git added files");
+      expect(gitCommitMessage()).toEqual("v1.0.1");
+      expect(gitTagsAdded()).toEqual(["v1.0.1"]);
+
+      expect(publishedTagInDirectories(testDir)).toMatchSnapshot("npm published");
+
+      expect(GitUtilities.pushWithTags).lastCalledWith("origin", gitTagsAdded(), execOpts(testDir));
+      expect(consoleOutput()).toMatchSnapshot("console output");
     });
 
-    it("throws an error when --independent is passed", () => {
-      return run(testDir)(
-        "--independent"
-      ).catch((error) => {
+    it("throws an error when --independent is passed", async () => {
+      expect.assertions(1);
+      const testDir = await initFixture("PublishCommand/normal");
+      try {
+        await run(testDir)("--independent");
+      } catch (error) {
         expect(error.exitCode).toBe(1);
-      });
+      }
     });
   });
 
@@ -178,56 +171,43 @@ describe("PublishCommand", () => {
    * ======================================================================= */
 
   describe("independent mode", () => {
-    let testDir;
-
-    beforeEach(() => initFixture("PublishCommand/independent").then((dir) => {
-      testDir = dir;
-    }));
-
-    it("should publish the changed packages in independent mode", () => {
-      const promptReplies = [
-        "1.0.1",
-        "1.1.0",
-        "2.0.0",
-        "1.1.0",
-        "1.0.1",
-      ];
+    it("should publish the changed packages in independent mode", async () => {
+      const promptReplies = ["1.0.1", "1.1.0", "2.0.0", "1.1.0", "1.0.1"];
       PromptUtilities.select = jest.fn((...args) => {
         const reply = promptReplies.shift();
         return callsBack(reply)(...args);
       });
 
-      return run(testDir)(
-        "--independent" // not required due to lerna.json config, but here to assert it doesn't error
-      ).then(() => {
-        expect(PromptUtilities.confirm).toBeCalled();
+      const testDir = await initFixture("PublishCommand/independent");
+      await run(testDir)(); // --independent is only valid in InitCommand
 
-        expect(writeJsonFile.sync).not.toBeCalled();
-        expect(updatedPackageVersions(testDir)).toMatchSnapshot("[independent] bumps package versions");
+      expect(PromptUtilities.confirm).toBeCalled();
+      expect(writeJsonFile.sync).not.toBeCalled();
 
-        expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-          "package-1": "^1.0.1",
-        });
-        expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-          "package-2": "^1.1.0",
-        });
-        expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-          "package-1": "^0.0.0",
-        });
-        expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
-          "package-3": "^2.0.0",
-        });
+      expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
 
-        expect(gitAddedFiles(testDir)).toMatchSnapshot("[independent] git adds changed files");
-        expect(gitCommitMessage()).toMatchSnapshot("[independent] git commit message");
-        expect(gitTagsAdded()).toMatchSnapshot("[independent] git tags added");
-        expect(GitUtilities.checkoutChanges).not.toBeCalled();
-
-        expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[independent] npm publish --tag");
-
-        expect(GitUtilities.pushWithTags).lastCalledWith("origin", gitTagsAdded(), execOpts(testDir));
-        expect(consoleOutput()).toMatchSnapshot("[independent] console output");
+      expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+        "package-1": "^1.0.1",
       });
+      expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+        "package-2": "^1.1.0",
+      });
+      expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+        "package-1": "^0.0.0",
+      });
+      expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
+        "package-3": "^2.0.0",
+      });
+
+      expect(gitAddedFiles(testDir)).toMatchSnapshot("git added files");
+      expect(gitCommitMessage()).toMatchSnapshot("git commit message");
+      expect(gitTagsAdded()).toMatchSnapshot("git tags added");
+      expect(GitUtilities.checkoutChanges).not.toBeCalled();
+
+      expect(publishedTagInDirectories(testDir)).toMatchSnapshot("npm published");
+
+      expect(GitUtilities.pushWithTags).lastCalledWith("origin", gitTagsAdded(), execOpts(testDir));
+      expect(consoleOutput()).toMatchSnapshot("console output");
     });
   });
 
@@ -236,81 +216,68 @@ describe("PublishCommand", () => {
    * ======================================================================= */
 
   describe("normal mode as canary", () => {
-    let testDir;
+    it("should publish the changed packages", async () => {
+      const testDir = await initFixture("PublishCommand/normal");
+      await run(testDir)("--canary");
 
-    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
-      testDir = dir;
-    }));
+      expect(PromptUtilities.select).not.toBeCalled();
 
-    it("should publish the changed packages", () => {
-      return run(testDir)(
-        "--canary"
-      ).then(() => {
-        expect(PromptUtilities.select).not.toBeCalled();
+      expect(writeJsonFile.sync).not.toBeCalled();
+      expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
 
-        expect(writeJsonFile.sync).not.toBeCalled();
-        expect(updatedPackageVersions(testDir)).toMatchSnapshot("[normal --canary] bumps package versions");
+      expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+        "package-1": "^1.1.0-alpha.deadbeef",
+      });
+      expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+        "package-2": "^1.1.0-alpha.deadbeef",
+      });
+      expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+        "package-1": "^0.0.0",
+      });
 
-        expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-          "package-1": "^1.1.0-alpha.deadbeef",
-        });
-        expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-          "package-2": "^1.1.0-alpha.deadbeef",
-        });
-        expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-          "package-1": "^0.0.0",
-        });
+      expect(GitUtilities.addFile).not.toBeCalled();
+      expect(GitUtilities.commit).not.toBeCalled();
+      expect(GitUtilities.addTag).not.toBeCalled();
+      expect(GitUtilities.checkoutChanges).lastCalledWith(
+        expect.stringContaining("packages/*/package.json"),
+        execOpts(testDir)
+      );
 
-        expect(GitUtilities.addFile).not.toBeCalled();
-        expect(GitUtilities.commit).not.toBeCalled();
-        expect(GitUtilities.addTag).not.toBeCalled();
-        expect(GitUtilities.checkoutChanges).lastCalledWith(
-          expect.stringContaining("packages/*/package.json"),
-          execOpts(testDir)
-        );
+      expect(GitUtilities.pushWithTags).not.toBeCalled();
+      expect(publishedTagInDirectories(testDir)).toMatchSnapshot("npm published");
+    });
 
-        expect(GitUtilities.pushWithTags).not.toBeCalled();
-        expect(publishedTagInDirectories(testDir))
-          .toMatchSnapshot("[normal --canary] npm publish --tag");
+    it("should use the provided value as the meta suffix", async () => {
+      const testDir = await initFixture("PublishCommand/normal");
+      await run(testDir)("--canary", "beta");
+
+      expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
+
+      expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+        "package-1": "^1.1.0-beta.deadbeef",
+      });
+      expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+        "package-2": "^1.1.0-beta.deadbeef",
+      });
+      expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+        "package-1": "^0.0.0",
       });
     });
 
-    it("should use the provided value as the meta suffix", () => {
-      return run(testDir)(
-        "--canary", "beta"
-      ).then(() => {
-        expect(updatedPackageVersions(testDir))
-          .toMatchSnapshot("[normal --canary=beta] bumps package versions");
+    it("should work with --canary and --cd-version=patch", async () => {
+      const testDir = await initFixture("PublishCommand/normal");
+      await run(testDir)("--canary", "--cd-version", "patch");
 
-        expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-          "package-1": "^1.1.0-beta.deadbeef",
-        });
-        expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-          "package-2": "^1.1.0-beta.deadbeef",
-        });
-        expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-          "package-1": "^0.0.0",
-        });
+      expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
+
+      expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+        "package-1": "^1.0.1-alpha.deadbeef",
       });
-    });
-
-    it("should work with --canary and --cd-version=patch", () => {
-      return run(testDir)(
-        "--canary",
-        "--cd-version", "patch"
-      ).then(() => {
-        expect(updatedPackageVersions(testDir))
-          .toMatchSnapshot("[normal --canary --cd-version=patch] bumps package versions");
-
-        expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-          "package-1": "^1.0.1-alpha.deadbeef",
-        });
-        expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-          "package-2": "^1.0.1-alpha.deadbeef",
-        });
-        expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-          "package-1": "^0.0.0",
-        });
+      expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+        "package-2": "^1.0.1-alpha.deadbeef",
+      });
+      expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+        "package-1": "^0.0.0",
       });
     });
   });
@@ -320,50 +287,40 @@ describe("PublishCommand", () => {
    * ======================================================================= */
 
   describe("independent mode as canary", () => {
-    let testDir;
+    it("should publish the changed packages", async () => {
+      const testDir = await initFixture("PublishCommand/independent");
+      await run(testDir)("--canary");
 
-    beforeEach(() => initFixture("PublishCommand/independent").then((dir) => {
-      testDir = dir;
-    }));
+      expect(PromptUtilities.select).not.toBeCalled();
 
-    it("should publish the changed packages", () => {
-      return run(testDir)(
-        "--canary"
-      ).then(() => {
-        expect(PromptUtilities.select).not.toBeCalled();
+      expect(writeJsonFile.sync).not.toBeCalled();
+      expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
 
-        expect(writeJsonFile.sync).not.toBeCalled();
-        expect(updatedPackageVersions(testDir))
-          .toMatchSnapshot("[independent --canary] bumps package versions");
-
-        expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-          "package-1": "^1.1.0-alpha.deadbeef",
-        });
-        expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-          "package-2": "^2.1.0-alpha.deadbeef",
-        });
-        expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-          "package-1": "^0.0.0",
-        });
-
-        expect(publishedTagInDirectories(testDir))
-          .toMatchSnapshot("[independent --canary] npm publish --tag");
+      expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+        "package-1": "^1.1.0-alpha.deadbeef",
       });
+      expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+        "package-2": "^2.1.0-alpha.deadbeef",
+      });
+      expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+        "package-1": "^0.0.0",
+      });
+
+      expect(publishedTagInDirectories(testDir)).toMatchSnapshot("npm published");
     });
 
-    it("should use the provided value as the meta suffix", () => {
-      return run(testDir)(
-        "--canary", "beta"
-      ).then(() => {
-        expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-          "package-1": "^1.1.0-beta.deadbeef",
-        });
-        expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-          "package-2": "^2.1.0-beta.deadbeef",
-        });
-        expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-          "package-1": "^0.0.0",
-        });
+    it("should use the provided value as the meta suffix", async () => {
+      const testDir = await initFixture("PublishCommand/independent");
+      await run(testDir)("--canary", "beta");
+
+      expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+        "package-1": "^1.1.0-beta.deadbeef",
+      });
+      expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+        "package-2": "^2.1.0-beta.deadbeef",
+      });
+      expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+        "package-1": "^0.0.0",
       });
     });
   });
@@ -373,23 +330,16 @@ describe("PublishCommand", () => {
    * ======================================================================= */
 
   describe("normal mode with --skip-git", () => {
-    let testDir;
+    it("should publish the changed packages", async () => {
+      const testDir = await initFixture("PublishCommand/normal");
+      await run(testDir)("--skip-git");
 
-    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
-      testDir = dir;
-    }));
+      expect(GitUtilities.addFile).not.toBeCalled();
+      expect(GitUtilities.commit).not.toBeCalled();
+      expect(GitUtilities.addTag).not.toBeCalled();
+      expect(GitUtilities.pushWithTags).not.toBeCalled();
 
-    it("should publish the changed packages", () => {
-      return run(testDir)(
-        "--skip-git"
-      ).then(() => {
-        expect(GitUtilities.addFile).not.toBeCalled();
-        expect(GitUtilities.commit).not.toBeCalled();
-        expect(GitUtilities.addTag).not.toBeCalled();
-        expect(GitUtilities.pushWithTags).not.toBeCalled();
-
-        expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[normal --skip-git] npm publish --tag");
-      });
+      expect(publishedTagInDirectories(testDir)).toMatchSnapshot("npm published");
     });
   });
 
@@ -398,25 +348,18 @@ describe("PublishCommand", () => {
    * ======================================================================= */
 
   describe("normal mode with --skip-npm", () => {
-    let testDir;
+    it("should update versions and push changes but not publish", async () => {
+      const testDir = await initFixture("PublishCommand/normal");
+      await run(testDir)("--skip-npm");
 
-    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
-      testDir = dir;
-    }));
+      expect(NpmUtilities.publishTaggedInDir).not.toBeCalled();
+      expect(NpmUtilities.checkDistTag).not.toBeCalled();
+      expect(NpmUtilities.removeDistTag).not.toBeCalled();
+      expect(NpmUtilities.addDistTag).not.toBeCalled();
 
-    it("should update versions and push changes but not publish", () => {
-      return run(testDir)(
-        "--skip-npm"
-      ).then(() => {
-        expect(NpmUtilities.publishTaggedInDir).not.toBeCalled();
-        expect(NpmUtilities.checkDistTag).not.toBeCalled();
-        expect(NpmUtilities.removeDistTag).not.toBeCalled();
-        expect(NpmUtilities.addDistTag).not.toBeCalled();
-
-        expect(gitCommitMessage()).toEqual("v1.0.1");
-        // FIXME
-        // expect(GitUtilities.pushWithTags).lastCalledWith("origin", ["v1.0.1"]);
-      });
+      expect(gitCommitMessage()).toEqual("v1.0.1");
+      // FIXME
+      // expect(GitUtilities.pushWithTags).lastCalledWith("origin", ["v1.0.1"]);
     });
   });
 
@@ -425,44 +368,35 @@ describe("PublishCommand", () => {
    * ======================================================================= */
 
   describe("normal mode with --skip-git and --skip-npm", () => {
-    let testDir;
+    it("should update versions but not push changes or publish", async () => {
+      const testDir = await initFixture("PublishCommand/normal");
+      await run(testDir)("--skip-git", "--skip-npm");
 
-    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
-      testDir = dir;
-    }));
+      expect(updatedLernaJson()).toMatchObject({ version: "1.0.1" });
+      expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
 
-    it("should update versions but not push changes or publish", () => {
-      return run(testDir)(
-        "--skip-git",
-        "--skip-npm"
-      ).then(() => {
-        expect(updatedLernaJson()).toMatchObject({ version: "1.0.1" });
-        expect(updatedPackageVersions(testDir))
-          .toMatchSnapshot("[normal --skip-git --skip-npm] bumps package versions");
-
-        expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-          "package-1": "^1.0.1",
-        });
-        expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-          "package-2": "^1.0.1",
-        });
-        expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-          "package-1": "^0.0.0",
-        });
-        expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
-          "package-1": "^1.0.1",
-        });
-
-        expect(GitUtilities.addFile).not.toBeCalled();
-        expect(GitUtilities.commit).not.toBeCalled();
-        expect(GitUtilities.addTag).not.toBeCalled();
-        expect(GitUtilities.pushWithTags).not.toBeCalled();
-
-        expect(NpmUtilities.publishTaggedInDir).not.toBeCalled();
-        expect(NpmUtilities.checkDistTag).not.toBeCalled();
-        expect(NpmUtilities.removeDistTag).not.toBeCalled();
-        expect(NpmUtilities.addDistTag).not.toBeCalled();
+      expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+        "package-1": "^1.0.1",
       });
+      expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+        "package-2": "^1.0.1",
+      });
+      expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+        "package-1": "^0.0.0",
+      });
+      expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
+        "package-1": "^1.0.1",
+      });
+
+      expect(GitUtilities.addFile).not.toBeCalled();
+      expect(GitUtilities.commit).not.toBeCalled();
+      expect(GitUtilities.addTag).not.toBeCalled();
+      expect(GitUtilities.pushWithTags).not.toBeCalled();
+
+      expect(NpmUtilities.publishTaggedInDir).not.toBeCalled();
+      expect(NpmUtilities.checkDistTag).not.toBeCalled();
+      expect(NpmUtilities.removeDistTag).not.toBeCalled();
+      expect(NpmUtilities.addDistTag).not.toBeCalled();
     });
   });
 
@@ -471,22 +405,15 @@ describe("PublishCommand", () => {
    * ======================================================================= */
 
   describe("normal mode with --temp-tag", () => {
-    let testDir;
+    it("should publish the changed packages with a temp tag", async () => {
+      const testDir = await initFixture("PublishCommand/normal");
+      await run(testDir)("--temp-tag");
 
-    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
-      testDir = dir;
-    }));
+      expect(publishedTagInDirectories(testDir)).toMatchSnapshot("npm published");
+      expect(removedDistTagInDirectories(testDir)).toMatchSnapshot("npm dist-tag rm");
+      expect(addedDistTagInDirectories(testDir)).toMatchSnapshot("npm dist-tag add");
 
-    it("should publish the changed packages with a temp tag", () => {
-      return run(testDir)(
-        "--temp-tag"
-      ).then(() => {
-        expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[normal --temp-tag] npm publish --tag");
-        expect(removedDistTagInDirectories(testDir)).toMatchSnapshot("[normal --temp-tag] npm dist-tag rm");
-        expect(addedDistTagInDirectories(testDir)).toMatchSnapshot("[normal --temp-tag] npm dist-tag add");
-
-        expect(GitUtilities.pushWithTags).lastCalledWith("origin", ["v1.0.1"], execOpts(testDir));
-      });
+      expect(GitUtilities.pushWithTags).lastCalledWith("origin", ["v1.0.1"], execOpts(testDir));
     });
   });
 
@@ -495,18 +422,11 @@ describe("PublishCommand", () => {
    * ======================================================================= */
 
   describe("normal mode with --npm-tag", () => {
-    let testDir;
+    it("should publish the changed packages with npm tag", async () => {
+      const testDir = await initFixture("PublishCommand/normal");
+      await run(testDir)("--npm-tag", "custom");
 
-    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
-      testDir = dir;
-    }));
-
-    it("should publish the changed packages with npm tag", () => {
-      return run(testDir)(
-        "--npm-tag", "custom"
-      ).then(() => {
-        expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[normal --npm-tag] npm publish --tag");
-      });
+      expect(publishedTagInDirectories(testDir)).toMatchSnapshot("npm published");
     });
   });
 
@@ -515,22 +435,13 @@ describe("PublishCommand", () => {
    * ======================================================================= */
 
   describe("with --yes", () => {
-    it("skips confirmation prompt", (done) => {
-      const publishCommand = new PublishCommand([], {
-        yes: true
-      });
-      publishCommand.updates = [];
-      publishCommand.confirmVersions((err) => {
-        if (err) return done.fail(err);
+    it("skips confirmation prompt", async () => {
+      const testDir = await initFixture("PublishCommand/normal");
+      await run(testDir)("--yes", "--repo-version", "1.0.1-auto-confirm");
 
-        try {
-          expect(PromptUtilities.confirm).not.toBeCalled();
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      });
+      expect(PromptUtilities.select).not.toBeCalled();
+      expect(PromptUtilities.confirm).not.toBeCalled();
+      expect(updatedLernaJson()).toMatchObject({ version: "1.0.1-auto-confirm" });
     });
   });
 
@@ -539,25 +450,17 @@ describe("PublishCommand", () => {
    * ======================================================================= */
 
   describe("normal mode with --registry", () => {
-    let testDir;
-
-    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
-      testDir = dir;
-    }));
-
-    it("passes registry to npm commands", () => {
+    it("passes registry to npm commands", async () => {
+      const testDir = await initFixture("PublishCommand/normal");
       const registry = "https://my-private-registry";
 
-      return run(testDir)(
-        "--registry", registry
-      ).then(() => {
-        expect(NpmUtilities.checkDistTag).not.toBeCalled();
-        expect(NpmUtilities.removeDistTag).not.toBeCalled();
-        expect(NpmUtilities.addDistTag).not.toBeCalled();
-        // FIXME: this isn't actually asserting anything about --registry
-        expect(publishedTagInDirectories(testDir))
-          .toMatchSnapshot("[normal --registry] npm publish --tag");
-      });
+      await run(testDir)("--registry", registry);
+
+      expect(NpmUtilities.checkDistTag).not.toBeCalled();
+      expect(NpmUtilities.removeDistTag).not.toBeCalled();
+      expect(NpmUtilities.addDistTag).not.toBeCalled();
+      // FIXME: this isn't actually asserting anything about --registry
+      expect(publishedTagInDirectories(testDir)).toMatchSnapshot("npm published");
     });
   });
 
@@ -566,19 +469,12 @@ describe("PublishCommand", () => {
    * ======================================================================= */
 
   describe("normal mode with --repo-version", () => {
-    let testDir;
+    it("skips version prompt and publishes changed packages with designated version", async () => {
+      const testDir = await initFixture("PublishCommand/normal");
+      await run(testDir)("--repo-version", "1.0.1-beta");
 
-    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
-      testDir = dir;
-    }));
-
-    it("skips version prompt and publishes changed packages with designated version", () => {
-      return run(testDir)(
-        "--repo-version", "1.0.1-beta"
-      ).then(() => {
-        expect(PromptUtilities.select).not.toBeCalled();
-        expect(updatedLernaJson()).toMatchObject({ version: "1.0.1-beta" });
-      });
+      expect(PromptUtilities.select).not.toBeCalled();
+      expect(updatedLernaJson()).toMatchObject({ version: "1.0.1-beta" });
     });
   });
 
@@ -587,30 +483,23 @@ describe("PublishCommand", () => {
    * ======================================================================= */
 
   describe("normal mode with --exact", () => {
-    let testDir;
+    it("updates matching local dependencies of published packages with exact versions", async () => {
+      const testDir = await initFixture("PublishCommand/normal");
+      await run(testDir)("--exact");
 
-    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
-      testDir = dir;
-    }));
-
-    it("updates matching local dependencies of published packages with exact versions", () => {
-      return run(testDir)(
-        "--exact"
-      ).then(() => {
-        expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-          "package-1": "1.0.1",
-        });
-        expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-          "package-2": "1.0.1",
-        });
-        // package-4's dependency on package-1 remains semver because
-        // it does not match the version of package-1 being published
-        expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-          "package-1": "^0.0.0",
-        });
-        expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
-          "package-1": "1.0.1",
-        });
+      expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+        "package-1": "1.0.1",
+      });
+      expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+        "package-2": "1.0.1",
+      });
+      // package-4's dependency on package-1 remains semver because
+      // it does not match the version of package-1 being published
+      expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+        "package-1": "^0.0.0",
+      });
+      expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
+        "package-1": "1.0.1",
       });
     });
   });
@@ -620,23 +509,18 @@ describe("PublishCommand", () => {
    * ======================================================================= */
 
   describe("normal mode with --cd-version", () => {
-    let testDir;
+    it("should use semver increments when passed to cdVersion flag", async () => {
+      const testDir = await initFixture("PublishCommand/normal");
+      await run(testDir)("--cd-version", "minor");
 
-    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
-      testDir = dir;
-    }));
-
-    it("should use semver increments when passed to cdVersion flag", () => {
-      return run(testDir)(
-        "--cd-version", "minor"
-      ).then(() => {
-        expect(PromptUtilities.select).not.toBeCalled();
-        expect(gitCommitMessage()).toBe("v1.1.0");
-      });
+      expect(PromptUtilities.select).not.toBeCalled();
+      expect(gitCommitMessage()).toBe("v1.1.0");
     });
 
     it("throws an error when an invalid semver keyword is used", async () => {
       expect.assertions(1);
+
+      const testDir = await initFixture("PublishCommand/normal");
       try {
         await run(testDir)("--cd-version", "poopypants");
       } catch (err) {
@@ -653,45 +537,44 @@ describe("PublishCommand", () => {
   });
 
   /** =========================================================================
- * CD VERSION - REPUBLISH PRERELEASED
- * ======================================================================= */
+   * CD VERSION - REPUBLISH PRERELEASED
+   * ======================================================================= */
 
-  describe("CD VERSION - REPUBLISH PRERELEASED ", () => {
-    let testDir;
-
+  describe("normal mode with previous prerelease", () => {
     beforeEach(async () => {
-      testDir = await initFixture("PublishCommand/republish-prereleased");
-
       GitUtilities.hasTags.mockReturnValue(true);
-      GitUtilities.getLastTag.mockReturnValue('v1.0.1-beta.3');
+      GitUtilities.getLastTag.mockReturnValue("v1.0.1-beta.3");
       GitUtilities.diffSinceIn.mockImplementation((since, location) => {
-        if (location.endsWith('package-3')) {
-          return 'packages/package-3/newfile.json';
+        if (location.endsWith("package-3")) {
+          return "packages/package-3/newfile.json";
         }
-        return '';
+        return "";
       });
     });
 
-    it('publishes changed & prereleased packages if --cd-version is non-prerelease', async () => {
+    it("publishes changed & prereleased packages if --cd-version is non-prerelease", async () => {
+      const testDir = await initFixture("PublishCommand/republish-prereleased");
       // should republish 3, 4, and 5 because:
       // package 3 changed
       // package 5 has a prerelease version
       // package 4 depends on package 5
       await run(testDir)("--cd-version", "patch");
+
       expect(gitCommitMessage()).toBe("v1.0.1");
-      expect(updatedPackageVersions(testDir)).toMatchSnapshot("[republish prereleased] patch");
+      expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
       expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
         "package-5": "^1.0.1",
       });
     });
 
-    it('should not publish prereleased packages if --cd-version is a pre-* increment', async () => {
+    it("should not publish prereleased packages if --cd-version is a pre-* increment", async () => {
+      const testDir = await initFixture("PublishCommand/republish-prereleased");
       // should republish only package 3, because it changed
-      await run(testDir)("--cd-version", "prerelease", '---preid', 'beta');
-      expect(gitCommitMessage()).toBe("v1.0.1-beta.4");
-      expect(updatedPackageVersions(testDir)).toMatchSnapshot("[republish prereleased] prerelease");
-    });
+      await run(testDir)("--cd-version", "prerelease", "---preid", "beta");
 
+      expect(gitCommitMessage()).toBe("v1.0.1-beta.4");
+      expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
+    });
   });
 
   /** =========================================================================
@@ -699,61 +582,49 @@ describe("PublishCommand", () => {
    * ======================================================================= */
 
   describe("indepdendent mode with --cd-version", () => {
-    let testDir;
+    it("should use semver increments when passed to cdVersion flag", async () => {
+      const testDir = await initFixture("PublishCommand/independent");
+      await run(testDir)("--cd-version", "patch");
 
-    beforeEach(() => initFixture("PublishCommand/independent").then((dir) => {
-      testDir = dir;
-    }));
-
-    it("should use semver increments when passed to cdVersion flag", () => {
-      return run(testDir)(
-        "--cd-version", "patch"
-      ).then(() => {
-        expect(PromptUtilities.select).not.toBeCalled();
-        expect(gitCommitMessage()).toMatchSnapshot("[independent --cd-version] git commit message");
-      });
+      expect(PromptUtilities.select).not.toBeCalled();
+      expect(gitCommitMessage()).toMatchSnapshot("git commit message");
     });
 
     /** =========================================================================
-    * INDEPENDENT - CD VERSION - PRERELEASE
-    * ======================================================================= */
+     * INDEPENDENT - CD VERSION - PRERELEASE
+     * ======================================================================= */
 
-    it("should bump to prerelease versions with --cd-version=prerelease --preid=foo", () => {
-      return run(testDir)(
-        "--cd-version", "prerelease",
-        "--preid", "foo"
-      ).then(() => {
-        expect(updatedPackageVersions(testDir))
-          .toMatchSnapshot("[independent --cd-version=prerelease --preid=foo] bumps package versions");
+    it("should bump to prerelease versions with --cd-version=prerelease --preid=foo", async () => {
+      const testDir = await initFixture("PublishCommand/independent");
+      await run(testDir)("--cd-version", "prerelease", "--preid", "foo");
 
-        expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-          "package-1": "^1.0.1-foo.0",
-        });
-        expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-          "package-2": "^2.0.1-foo.0",
-        });
-        expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-          "package-1": "^0.0.0",
-        });
+      expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
+
+      expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+        "package-1": "^1.0.1-foo.0",
+      });
+      expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+        "package-2": "^2.0.1-foo.0",
+      });
+      expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+        "package-1": "^0.0.0",
       });
     });
 
-    it("should bump to prerelease versions with --cd-version prerelease (no --preid)", () => {
-      return run(testDir)(
-        "--cd-version", "prerelease"
-      ).then(() => {
-        expect(updatedPackageVersions(testDir))
-          .toMatchSnapshot("[independent --cd-version=prerelease] bumps package versions");
+    it("should bump to prerelease versions with --cd-version prerelease (no --preid)", async () => {
+      const testDir = await initFixture("PublishCommand/independent");
+      await run(testDir)("--cd-version", "prerelease");
 
-        expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-          "package-1": "^1.0.1-0",
-        });
-        expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-          "package-2": "^2.0.1-0",
-        });
-        expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-          "package-1": "^0.0.0",
-        });
+      expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
+
+      expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+        "package-1": "^1.0.1-0",
+      });
+      expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+        "package-2": "^2.0.1-0",
+      });
+      expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+        "package-1": "^0.0.0",
       });
     });
   });
@@ -763,41 +634,25 @@ describe("PublishCommand", () => {
    * ======================================================================= */
 
   describe("normal mode with --git-remote", () => {
-    let testDir;
+    it("pushes tags to specified remote", async () => {
+      const testDir = await initFixture("PublishCommand/normal");
+      await run(testDir)("--git-remote", "upstream");
 
-    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
-      testDir = dir;
-    }));
-
-    it("pushes tags to specified remote", () => {
-      return run(testDir)(
-        "--git-remote", "upstream"
-      ).then(() => {
-        expect(GitUtilities.pushWithTags).lastCalledWith("upstream", ["v1.0.1"], execOpts(testDir));
-      });
+      expect(GitUtilities.pushWithTags).lastCalledWith("upstream", ["v1.0.1"], execOpts(testDir));
     });
   });
 
   /** =========================================================================
-   * NORMAL - GIT REMOTE
+   * NORMAL - IGNORE
    * ======================================================================= */
 
   describe("normal mode with --ignore", () => {
-    let testDir;
+    it("does not publish ignored packages", async () => {
+      const testDir = await initFixture("PublishCommand/normal");
+      await run(testDir)("--ignore", "package-2", "--ignore", "package-3", "--ignore", "package-4");
 
-    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
-      testDir = dir;
-    }));
-
-    it("does not publish ignored packages", () => {
-      return run(testDir)(
-        "--ignore", "package-2",
-        "--ignore", "package-3",
-        "--ignore", "package-4",
-      ).then(() => {
-        expect(gitAddedFiles(testDir)).toMatchSnapshot("[normal --ignore] git adds changed files");
-        expect(publishedTagInDirectories(testDir)).toMatchSnapshot("[normal --ignore] npm publish --tag");
-      });
+      expect(gitAddedFiles(testDir)).toMatchSnapshot("git added files");
+      expect(publishedTagInDirectories(testDir)).toMatchSnapshot("npm published");
     });
   });
 
@@ -806,18 +661,18 @@ describe("PublishCommand", () => {
    * ======================================================================= */
 
   describe("normal mode with --message", () => {
-    let testDir;
+    it("commits changes with a custom message using %s", async () => {
+      const testDir = await initFixture("PublishCommand/normal");
+      await run(testDir)("--message", "chore: Release %s :rocket:");
 
-    beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
-      testDir = dir;
-    }));
+      expect(GitUtilities.commit).lastCalledWith("chore: Release v1.0.1 :rocket:", execOpts(testDir));
+    });
 
-    it("commits changes with a custom message", () => {
-      return run(testDir)(
-        "--message", "chore: Release %s :rocket:"
-      ).then(() => {
-        expect(GitUtilities.commit).lastCalledWith("chore: Release v1.0.1 :rocket:", execOpts(testDir));
-      });
+    it("commits changes with a custom message using %v", async () => {
+      const testDir = await initFixture("PublishCommand/normal");
+      await run(testDir)("--message", "chore: Release %v :rocket:");
+
+      expect(GitUtilities.commit).lastCalledWith("chore: Release 1.0.1 :rocket:", execOpts(testDir));
     });
   });
 
@@ -826,22 +681,12 @@ describe("PublishCommand", () => {
    * ======================================================================= */
 
   describe("independent mode with --message", () => {
-    let testDir;
+    it("commits changes with a custom message", async () => {
+      const testDir = await initFixture("PublishCommand/independent");
+      await run(testDir)("-m", "chore: Custom publish message");
 
-    beforeEach(() => initFixture("PublishCommand/independent").then((dir) => {
-      testDir = dir;
-    }));
-
-    it("commits changes with a custom message", () => {
-      return run(testDir)(
-        "-m", "chore: Custom publish message"
-      ).then(() => {
-        expect(GitUtilities.commit).lastCalledWith(
-          expect.stringContaining("chore:"),
-          execOpts(testDir)
-        );
-        expect(gitCommitMessage()).toMatchSnapshot("[independent --message] git commit message");
-      });
+      expect(GitUtilities.commit).lastCalledWith(expect.stringContaining("chore:"), execOpts(testDir));
+      expect(gitCommitMessage()).toMatchSnapshot("git commit message");
     });
   });
 
@@ -850,183 +695,153 @@ describe("PublishCommand", () => {
    * ======================================================================= */
 
   describe("--conventional-commits", () => {
-    const recommendIndependentVersion = ConventionalCommitUtilities.recommendIndependentVersion;
-    const recommendFixedVersion = ConventionalCommitUtilities.recommendFixedVersion;
-
-    const updateIndependentChangelog = ConventionalCommitUtilities.updateIndependentChangelog;
-    const updateFixedRootChangelog = ConventionalCommitUtilities.updateFixedRootChangelog;
-    const updateFixedChangelog = ConventionalCommitUtilities.updateFixedChangelog;
-
-    let testDir;
-
-    function initialReccomendReplies() {
-      return [
-        "1.0.1",
-        "1.1.0",
-        "2.0.0",
-        "1.1.0",
-        "5.1.1",
-      ];
-    }
-
-    let reccomendReplies;
-
-    beforeEach(() => {
-      reccomendReplies = initialReccomendReplies();
-    });
-
     describe("independent mode", () => {
-      beforeEach(() => initFixture("PublishCommand/independent").then((dir) => {
-        testDir = dir;
+      const recommendIndependentVersionOriginal = ConventionalCommitUtilities.recommendIndependentVersion;
+      const updateIndependentChangelogOriginal = ConventionalCommitUtilities.updateIndependentChangelog;
+
+      beforeEach(async () => {
+        const reccomendReplies = ["1.0.1", "1.1.0", "2.0.0", "1.1.0", "5.1.1"];
         ConventionalCommitUtilities.recommendIndependentVersion = jest.fn(() => reccomendReplies.shift());
         ConventionalCommitUtilities.updateIndependentChangelog = jest.fn();
-      }));
+      });
 
       afterEach(() => {
-        ConventionalCommitUtilities.recommendIndependentVersion = recommendIndependentVersion;
-        ConventionalCommitUtilities.updateIndependentChangelog = updateIndependentChangelog;
+        ConventionalCommitUtilities.recommendIndependentVersion = recommendIndependentVersionOriginal;
+        ConventionalCommitUtilities.updateIndependentChangelog = updateIndependentChangelogOriginal;
       });
 
-      it("should use conventional-commits utility to guess version bump and generate CHANGELOG", () => {
-        return run(testDir)(
-          "--conventional-commits",
-        ).then(() => {
-          expect(gitAddedFiles(testDir))
-            .toMatchSnapshot("[independent --conventional-commits] git adds changed files");
-          expect(gitCommitMessage())
-            .toMatchSnapshot("[independent --conventional-commits] git commit message");
+      it("should use conventional-commits utility to guess version bump and generate CHANGELOG", async () => {
+        const testDir = await initFixture("PublishCommand/independent");
 
-          [
-            ["package-1", "1.0.0"],
-            ["package-2", "2.0.0"],
-            ["package-3", "3.0.0"],
-            ["package-4", "4.0.0"],
-            ["package-5", "5.0.0"],
-          ].forEach(([name, version]) => {
-            const location = path.join(testDir, "packages", name);
+        await run(testDir)("--conventional-commits");
 
-            expect(ConventionalCommitUtilities.recommendIndependentVersion).toBeCalledWith(
-              expect.objectContaining({ name, version }),
-              execOpts(testDir)
-            );
-            expect(ConventionalCommitUtilities.updateIndependentChangelog).toBeCalledWith(
-              expect.objectContaining({ name, location }),
-              execOpts(testDir)
-            );
-          });
-        });
-      });
+        expect(gitAddedFiles(testDir)).toMatchSnapshot("git added files");
+        expect(gitCommitMessage()).toMatchSnapshot("git commit message");
 
-      it("accepts --changelog-preset option", () => {
-        return run(testDir)(
-          "--conventional-commits",
-          "--changelog-preset",
-          "foo-bar"
-        ).then(() => {
-          const name = "package-3";
-          const version = "3.0.0";
+        [
+          ["package-1", "1.0.0"],
+          ["package-2", "2.0.0"],
+          ["package-3", "3.0.0"],
+          ["package-4", "4.0.0"],
+          ["package-5", "5.0.0"],
+        ].forEach(([name, version]) => {
           const location = path.join(testDir, "packages", name);
 
           expect(ConventionalCommitUtilities.recommendIndependentVersion).toBeCalledWith(
             expect.objectContaining({ name, version }),
-            expect.objectContaining({
-              cwd: testDir,
-              changelogPreset: "foo-bar",
-            })
+            execOpts(testDir)
           );
           expect(ConventionalCommitUtilities.updateIndependentChangelog).toBeCalledWith(
             expect.objectContaining({ name, location }),
-            expect.objectContaining({
-              cwd: testDir,
-              changelogPreset: "foo-bar",
-            })
-          );
-        });
-      });
-    });
-
-    describe("fixed mode", () => {
-      beforeEach(() => initFixture("PublishCommand/normal").then((dir) => {
-        testDir = dir;
-
-        ConventionalCommitUtilities.recommendFixedVersion = jest.fn(() => reccomendReplies.shift());
-        ConventionalCommitUtilities.updateFixedRootChangelog = jest.fn();
-        ConventionalCommitUtilities.updateFixedChangelog = jest.fn();
-      }));
-
-      afterEach(() => {
-        ConventionalCommitUtilities.recommendFixedVersion = recommendFixedVersion;
-        ConventionalCommitUtilities.updateFixedRootChangelog = updateFixedRootChangelog;
-        ConventionalCommitUtilities.updateFixedChangelog = updateFixedChangelog;
-      });
-
-      it("should use conventional-commits utility to guess version bump and generate CHANGELOG", () => {
-        return run(testDir)(
-          "--conventional-commits",
-        ).then(() => {
-          expect(gitAddedFiles(testDir))
-            .toMatchSnapshot("[fixed --conventional-commits] git adds changed files");
-          expect(gitCommitMessage())
-            .toMatchSnapshot("[fixed --conventional-commits] git commit message");
-
-          [
-            ["package-1", "1.0.0"],
-            ["package-2", "1.0.0"],
-            ["package-3", "1.0.0"],
-            ["package-4", "1.0.0"],
-            ["package-5", "1.0.0"],
-          ].forEach(([name, version]) => {
-            const location = path.join(testDir, "packages", name);
-
-            expect(ConventionalCommitUtilities.recommendFixedVersion).toBeCalledWith(
-              expect.objectContaining({ name, version, location }),
-              execOpts(testDir)
-            );
-
-            expect(ConventionalCommitUtilities.updateFixedChangelog).toBeCalledWith(
-              expect.objectContaining({ name, location }),
-              execOpts(testDir)
-            );
-          });
-
-          expect(ConventionalCommitUtilities.updateFixedRootChangelog).toBeCalledWith(
-            expect.objectContaining({
-              name: 'normal',
-              location: path.join(testDir)
-            }),
             execOpts(testDir)
           );
         });
       });
 
-      it("accepts --changelog-preset option", () => {
-        return run(testDir)(
-          "--conventional-commits",
-          "--changelog-preset",
-          "baz-qux"
-        ).then(() => {
-          const name = "package-5";
-          const version = "1.0.0";
+      it("accepts --changelog-preset option", async () => {
+        const testDir = await initFixture("PublishCommand/independent");
+        const name = "package-3";
+        const version = "3.0.0";
+        const location = path.join(testDir, "packages", name);
+
+        await run(testDir)("--conventional-commits", "--changelog-preset", "foo-bar");
+
+        expect(ConventionalCommitUtilities.recommendIndependentVersion).toBeCalledWith(
+          expect.objectContaining({ name, version }),
+          expect.objectContaining({
+            cwd: testDir,
+            changelogPreset: "foo-bar",
+          })
+        );
+        expect(ConventionalCommitUtilities.updateIndependentChangelog).toBeCalledWith(
+          expect.objectContaining({ name, location }),
+          expect.objectContaining({
+            cwd: testDir,
+            changelogPreset: "foo-bar",
+          })
+        );
+      });
+    });
+
+    describe("fixed mode", () => {
+      const recommendFixedVersionOriginal = ConventionalCommitUtilities.recommendFixedVersion;
+      const updateFixedRootChangelogOriginal = ConventionalCommitUtilities.updateFixedRootChangelog;
+      const updateFixedChangelogOriginal = ConventionalCommitUtilities.updateFixedChangelog;
+
+      beforeEach(async () => {
+        const reccomendReplies = ["1.0.1", "1.1.0", "2.0.0", "1.1.0", "5.1.1"];
+        ConventionalCommitUtilities.recommendFixedVersion = jest.fn(() => reccomendReplies.shift());
+        ConventionalCommitUtilities.updateFixedRootChangelog = jest.fn();
+        ConventionalCommitUtilities.updateFixedChangelog = jest.fn();
+      });
+
+      afterEach(() => {
+        ConventionalCommitUtilities.recommendFixedVersion = recommendFixedVersionOriginal;
+        ConventionalCommitUtilities.updateFixedRootChangelog = updateFixedRootChangelogOriginal;
+        ConventionalCommitUtilities.updateFixedChangelog = updateFixedChangelogOriginal;
+      });
+
+      it("should use conventional-commits utility to guess version bump and generate CHANGELOG", async () => {
+        const testDir = await initFixture("PublishCommand/normal");
+
+        await run(testDir)("--conventional-commits");
+
+        expect(gitAddedFiles(testDir)).toMatchSnapshot("git added files");
+        expect(gitCommitMessage()).toMatchSnapshot("git commit message");
+
+        [
+          ["package-1", "1.0.0"],
+          ["package-2", "1.0.0"],
+          ["package-3", "1.0.0"],
+          ["package-4", "1.0.0"],
+          ["package-5", "1.0.0"],
+        ].forEach(([name, version]) => {
           const location = path.join(testDir, "packages", name);
 
           expect(ConventionalCommitUtilities.recommendFixedVersion).toBeCalledWith(
             expect.objectContaining({ name, version, location }),
-            expect.objectContaining({
-              cwd: testDir,
-              changelogPreset: "baz-qux",
-            })
+            execOpts(testDir)
           );
+
           expect(ConventionalCommitUtilities.updateFixedChangelog).toBeCalledWith(
             expect.objectContaining({ name, location }),
-            expect.objectContaining({
-              cwd: testDir,
-              changelogPreset: "baz-qux",
-            })
+            execOpts(testDir)
           );
         });
+
+        expect(ConventionalCommitUtilities.updateFixedRootChangelog).toBeCalledWith(
+          expect.objectContaining({
+            name: "normal",
+            location: path.join(testDir),
+          }),
+          execOpts(testDir)
+        );
+      });
+
+      it("accepts --changelog-preset option", async () => {
+        const testDir = await initFixture("PublishCommand/normal");
+        const name = "package-5";
+        const version = "1.0.0";
+        const location = path.join(testDir, "packages", name);
+
+        await run(testDir)("--conventional-commits", "--changelog-preset", "baz-qux");
+
+        expect(ConventionalCommitUtilities.recommendFixedVersion).toBeCalledWith(
+          expect.objectContaining({ name, version, location }),
+          expect.objectContaining({
+            cwd: testDir,
+            changelogPreset: "baz-qux",
+          })
+        );
+        expect(ConventionalCommitUtilities.updateFixedChangelog).toBeCalledWith(
+          expect.objectContaining({ name, location }),
+          expect.objectContaining({
+            cwd: testDir,
+            changelogPreset: "baz-qux",
+          })
+        );
       });
     });
-
   });
 
   /** =========================================================================
@@ -1034,37 +849,20 @@ describe("PublishCommand", () => {
    * ======================================================================= */
 
   describe("independent mode --canary --npm-tag=next --yes --exact", () => {
-    let testDir;
+    it("should publish the changed packages", async () => {
+      const testDir = await initFixture("PublishCommand/independent");
+      await run(testDir)("--canary", "--npm-tag", "next", "--yes", "--exact");
 
-    beforeEach(() => initFixture("PublishCommand/independent").then((dir) => {
-      testDir = dir;
-    }));
-
-    it("should publish the changed packages", () => {
-      return run(testDir)(
-        "--canary",
-        "--npm-tag", "next",
-        "--yes",
-        "--exact"
-      ).then(() => {
-        expect(publishedTagInDirectories(testDir))
-          .toMatchSnapshot("[independent --canary --npm-tag=next --yes --exact] npm publish --tag");
-      });
+      expect(publishedTagInDirectories(testDir)).toMatchSnapshot("npm published");
     });
   });
 
-
   describe("--allow-branch", () => {
     describe("cli", () => {
-      let testDir;
-
-      beforeEach(async () => {
-        testDir = await initFixture("PublishCommand/normal");
-      });
-
       it("should reject a non matching branch", async () => {
         GitUtilities.getCurrentBranch.mockReturnValueOnce("unmatched");
 
+        const testDir = await initFixture("PublishCommand/normal");
         try {
           await run(testDir)("--allow-branch", "master");
         } catch (err) {
@@ -1075,6 +873,7 @@ describe("PublishCommand", () => {
       it("should accept an exactly matching branch", async () => {
         GitUtilities.getCurrentBranch.mockReturnValueOnce("exact-match");
 
+        const testDir = await initFixture("PublishCommand/normal");
         const { exitCode } = await run(testDir)("--allow-branch", "exact-match");
         expect(exitCode).toBe(0);
       });
@@ -1082,6 +881,7 @@ describe("PublishCommand", () => {
       it("should accept a branch that matches by wildcard", async () => {
         GitUtilities.getCurrentBranch.mockReturnValueOnce("feature/awesome");
 
+        const testDir = await initFixture("PublishCommand/normal");
         const { exitCode } = await run(testDir)("--allow-branch", "feature/*");
         expect(exitCode).toBe(0);
       });
@@ -1089,21 +889,17 @@ describe("PublishCommand", () => {
       it("should accept a branch that matches one of the items passed", async () => {
         GitUtilities.getCurrentBranch.mockReturnValueOnce("feature/awesome");
 
-        const { exitCode } = await run(testDir)("--allow-branch", "master","feature/*");
+        const testDir = await initFixture("PublishCommand/normal");
+        const { exitCode } = await run(testDir)("--allow-branch", "master", "feature/*");
         expect(exitCode).toBe(0);
       });
     });
 
     describe("lerna.json", () => {
-      let testDir;
-
-      beforeEach(async () => {
-        testDir = await initFixture("PublishCommand/allow-branch-lerna");
-      });
-
       it("should reject a non matching branch", async () => {
         GitUtilities.getCurrentBranch.mockReturnValueOnce("unmatched");
 
+        const testDir = await initFixture("PublishCommand/allow-branch-lerna");
         try {
           await run(testDir)();
         } catch (err) {
@@ -1114,6 +910,7 @@ describe("PublishCommand", () => {
       it("should accept a matching branch", async () => {
         GitUtilities.getCurrentBranch.mockReturnValueOnce("lerna");
 
+        const testDir = await initFixture("PublishCommand/allow-branch-lerna");
         const { exitCode } = await run(testDir)();
         expect(exitCode).toBe(0);
       });
@@ -1121,6 +918,7 @@ describe("PublishCommand", () => {
       it("should prioritize cli over defaults", async () => {
         GitUtilities.getCurrentBranch.mockReturnValueOnce("cli-override");
 
+        const testDir = await initFixture("PublishCommand/allow-branch-lerna");
         const { exitCode } = await run(testDir)("--allow-branch", "cli-override");
         expect(exitCode).toBe(0);
       });
@@ -1133,7 +931,7 @@ describe("PublishCommand", () => {
 
         const { exitCode } = await run(testDir)("--allow-branch", "master", "--canary");
         expect(exitCode).toBe(0);
-        expect(updatedPackageVersions(testDir)).toMatchSnapshot();
+        expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
       });
     });
   });
@@ -1143,22 +941,19 @@ describe("PublishCommand", () => {
    * ======================================================================= */
 
   describe("lifecycle scripts", () => {
-    let testDir;
-
     const scripts = ["preversion", "version", "postversion"];
 
-    beforeEach(async () => {
-      testDir = await initFixture("PublishCommand/lifecycle");
-    });
-
     it("should call version lifecycle scripts for a package", async () => {
+      const testDir = await initFixture("PublishCommand/lifecycle");
       await run(testDir)();
+
       scripts.forEach(script => {
         expect(NpmUtilities.runScriptInDirSync).toHaveBeenCalledWith(
           script,
-          { args: [],
+          {
+            args: [],
             directory: path.resolve(testDir, "packages", "package-1"),
-            npmClient: 'npm'
+            npmClient: "npm",
           },
           expect.any(Function)
         );
@@ -1166,13 +961,16 @@ describe("PublishCommand", () => {
     });
 
     it("should not call version lifecycle scripts for a package missing them", async () => {
+      const testDir = await initFixture("PublishCommand/lifecycle");
       await run(testDir)();
+
       scripts.forEach(script => {
         expect(NpmUtilities.runScriptInDirSync).not.toHaveBeenCalledWith(
           script,
-          { args: [],
+          {
+            args: [],
             directory: path.resolve(testDir, "packages", "package-2"),
-            npmClient: 'npm'
+            npmClient: "npm",
           },
           expect.any(Function)
         );
@@ -1180,9 +978,10 @@ describe("PublishCommand", () => {
     });
 
     it("should call version lifecycle scripts in the correct order", async () => {
+      const testDir = await initFixture("PublishCommand/lifecycle");
       await run(testDir)();
+
       expect(NpmUtilities.runScriptInDirSync.mock.calls.map(args => args[0])).toEqual(scripts);
     });
   });
 });
-

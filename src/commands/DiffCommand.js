@@ -1,19 +1,24 @@
-import _ from "lodash";
+"use strict";
 
-import ChildProcessUtilities from "../ChildProcessUtilities";
-import Command from "../Command";
-import GitUtilities from "../GitUtilities";
+const _ = require("lodash");
 
-export function handler(argv) {
-  new DiffCommand([argv.pkg], argv, argv._cwd).run()
-    .then(argv._onFinish, argv._onFinish);
-}
+const ChildProcessUtilities = require("../ChildProcessUtilities");
+const Command = require("../Command");
+const GitUtilities = require("../GitUtilities");
 
-export const command = "diff [pkg]";
+exports.handler = function handler(argv) {
+  // eslint-disable-next-line no-use-before-define
+  return new DiffCommand(argv);
+};
 
-export const describe = "Diff all packages or a single package since the last release.";
+exports.command = "diff [pkgName]";
 
-export const builder = {};
+exports.describe = "Diff all packages or a single package since the last release.";
+
+exports.builder = yargs =>
+  yargs.positional("pkgName", {
+    describe: "An optional package name to filter the diff output",
+  });
 
 function getLastCommit(execOpts) {
   if (GitUtilities.hasTags(execOpts)) {
@@ -23,9 +28,9 @@ function getLastCommit(execOpts) {
   return GitUtilities.getFirstCommit(execOpts);
 }
 
-export default class DiffCommand extends Command {
+class DiffCommand extends Command {
   initialize(callback) {
-    const packageName = this.input[0];
+    const packageName = this.options.pkgName;
 
     // don't interrupt spawned or streaming stdio
     this.logger.disableProgress();
@@ -33,12 +38,10 @@ export default class DiffCommand extends Command {
     let targetPackage;
 
     if (packageName) {
-      targetPackage = _.find(this.packages, (pkg) => {
-        return pkg.name === packageName;
-      });
+      targetPackage = _.find(this.packages, pkg => pkg.name === packageName);
 
       if (!targetPackage) {
-        callback(new Error("Package '" + packageName + "' does not exist."));
+        callback(new Error(`Package '${packageName}' does not exist.`));
         return;
       }
     }
@@ -60,7 +63,7 @@ export default class DiffCommand extends Command {
   }
 
   execute(callback) {
-    ChildProcessUtilities.spawn("git", this.args, this.execOpts, (err) => {
+    ChildProcessUtilities.spawn("git", this.args, this.execOpts, err => {
       if (err && err.code) {
         callback(err);
       } else {

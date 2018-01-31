@@ -1,32 +1,34 @@
-import Command from "../Command";
-import PackageUtilities from "../PackageUtilities";
+"use strict";
 
-export function handler(argv) {
-  new LinkCommand([argv.pkg], argv, argv._cwd).run()
-    .then(argv._onFinish, argv._onFinish);
-}
+const Command = require("../Command");
+const PackageUtilities = require("../PackageUtilities");
 
-export const command = "link";
+exports.handler = function handler(argv) {
+  // eslint-disable-next-line no-use-before-define
+  return new LinkCommand(argv);
+};
 
-export const describe = "Symlink together all packages which are dependencies of each other";
+exports.command = "link";
 
-export const builder = {
+exports.describe = "Symlink together all packages which are dependencies of each other";
+
+exports.builder = {
   "force-local": {
     group: "Command Options:",
     describe: "Force local",
     type: "boolean",
     default: undefined,
-  }
+  },
 };
 
-export default class LinkCommand extends Command {
+class LinkCommand extends Command {
   get requiresGit() {
     return false;
   }
 
   get defaultOptions() {
     return Object.assign({}, super.defaultOptions, {
-      forceLocal: false
+      forceLocal: false,
     });
   }
 
@@ -35,7 +37,7 @@ export default class LinkCommand extends Command {
   }
 
   execute(callback) {
-    const {packages, packageGraph, logger, options: { forceLocal }} = this;
+    const { packages, packageGraph, logger, options: { forceLocal } } = this;
     PackageUtilities.symlinkPackages(packages, packageGraph, logger, forceLocal, callback);
   }
 }

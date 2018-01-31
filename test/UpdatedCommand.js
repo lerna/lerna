@@ -1,20 +1,22 @@
-import chalk from "chalk";
-import execa from "execa";
-import log from "npmlog";
-import normalizeNewline from "normalize-newline";
-import path from "path";
-import touch from "touch";
+"use strict";
+
+const chalk = require("chalk");
+const execa = require("execa");
+const log = require("npmlog");
+const normalizeNewline = require("normalize-newline");
+const path = require("path");
+const touch = require("touch");
 
 // mocked or stubbed modules
-import output from "../src/utils/output";
+const output = require("../src/utils/output");
 
 // helpers
-import initFixture from "./helpers/initFixture";
-import updateLernaConfig from "./helpers/updateLernaConfig";
-import yargsRunner from "./helpers/yargsRunner";
+const initFixture = require("./helpers/initFixture");
+const updateLernaConfig = require("./helpers/updateLernaConfig");
+const yargsRunner = require("./helpers/yargsRunner");
 
 // file under test
-import * as commandModule from "../src/commands/UpdatedCommand";
+const commandModule = require("../src/commands/UpdatedCommand");
 
 const run = yargsRunner(commandModule);
 
@@ -26,13 +28,12 @@ log.level = "silent";
 // keep snapshots stable cross-platform
 chalk.enabled = false;
 
-const consoleOutput = () =>
-  output.mock.calls.map((args) => normalizeNewline(args[0]));
+const consoleOutput = () => output.mock.calls.map(args => normalizeNewline(args[0]));
 
-const gitTag = (cwd) => execa("git", ["tag", "v1.0.0"], { cwd });
-const gitAdd = (cwd) => execa("git", ["add", "-A"], { cwd });
-const gitCommit = (cwd) => execa("git", ["commit", "--no-gpg-sign", "-m", "Commit"], { cwd });
-const touchFile = (cwd) => (filePath) => touch(path.join(cwd, filePath));
+const gitTag = cwd => execa("git", ["tag", "v1.0.0"], { cwd });
+const gitAdd = cwd => execa("git", ["add", "-A"], { cwd });
+const gitCommit = cwd => execa("git", ["commit", "-m", "Commit"], { cwd });
+const touchFile = cwd => filePath => touch(path.join(cwd, filePath));
 
 const setupGitChanges = async (cwd, filePaths) => {
   await gitTag(cwd);
@@ -41,26 +42,24 @@ const setupGitChanges = async (cwd, filePaths) => {
   await gitCommit(cwd);
 };
 
-describe("UpdatedCommand", async () => {
+describe("UpdatedCommand", () => {
   afterEach(() => jest.resetAllMocks());
 
   /** =========================================================================
    * Basic
    * ======================================================================= */
 
-  describe("basic", async () => {
+  describe("basic", () => {
     let testDir;
     let lernaUpdated;
 
-    beforeEach(() => initFixture("UpdatedCommand/basic").then((dir) => {
-      testDir = dir;
+    beforeEach(async () => {
+      testDir = await initFixture("UpdatedCommand/basic");
       lernaUpdated = run(testDir);
-    }));
+    });
 
     it("should list changes", async () => {
-      await setupGitChanges(testDir, [
-        "packages/package-2/random-file",
-      ]);
+      await setupGitChanges(testDir, ["packages/package-2/random-file"]);
 
       await lernaUpdated();
       expect(consoleOutput()).toMatchSnapshot();
@@ -72,18 +71,14 @@ describe("UpdatedCommand", async () => {
     });
 
     it("should list changes with --force-publish *", async () => {
-      await setupGitChanges(testDir, [
-        "packages/package-2/random-file",
-      ]);
+      await setupGitChanges(testDir, ["packages/package-2/random-file"]);
 
       await lernaUpdated("--force-publish");
       expect(consoleOutput()).toMatchSnapshot();
     });
 
     it("should list changes with --force-publish [package,package]", async () => {
-      await setupGitChanges(testDir, [
-        "packages/package-3/random-file",
-      ]);
+      await setupGitChanges(testDir, ["packages/package-3/random-file"]);
 
       await lernaUpdated("--force-publish", "package-2,package-4");
       expect(consoleOutput()).toMatchSnapshot();
@@ -91,26 +86,22 @@ describe("UpdatedCommand", async () => {
 
     it("should list changes without ignored files", async () => {
       await updateLernaConfig(testDir, {
-        commands: { // "command" also supported
+        commands: {
+          // "command" also supported
           publish: {
             ignore: ["ignored-file"],
           },
         },
       });
 
-      await setupGitChanges(testDir, [
-        "packages/package-2/ignored-file",
-        "packages/package-3/random-file",
-      ]);
+      await setupGitChanges(testDir, ["packages/package-2/ignored-file", "packages/package-3/random-file"]);
 
       await lernaUpdated();
       expect(consoleOutput()).toMatchSnapshot();
     });
 
     it("throws an error when --only-explicit-updates is passed", async () => {
-      await setupGitChanges(testDir, [
-        "packages/package-2/random-file",
-      ]);
+      await setupGitChanges(testDir, ["packages/package-2/random-file"]);
 
       try {
         await lernaUpdated("--only-explicit-updates");
@@ -121,9 +112,7 @@ describe("UpdatedCommand", async () => {
     });
 
     it("should list changes in private packages", async () => {
-      await setupGitChanges(testDir, [
-        "packages/package-5/random-file",
-      ]);
+      await setupGitChanges(testDir, ["packages/package-5/random-file"]);
 
       await lernaUpdated();
       expect(consoleOutput()).toMatchSnapshot();
@@ -141,37 +130,31 @@ describe("UpdatedCommand", async () => {
    * Circular
    * ======================================================================= */
 
-  describe("circular", async () => {
+  describe("circular", () => {
     let testDir;
     let lernaUpdated;
 
-    beforeEach(() => initFixture("UpdatedCommand/circular").then((dir) => {
-      testDir = dir;
+    beforeEach(async () => {
+      testDir = await initFixture("UpdatedCommand/circular");
       lernaUpdated = run(testDir);
-    }));
+    });
 
     it("should list changes", async () => {
-      await setupGitChanges(testDir, [
-        "packages/package-3/random-file",
-      ]);
+      await setupGitChanges(testDir, ["packages/package-3/random-file"]);
 
       await lernaUpdated();
       expect(consoleOutput()).toMatchSnapshot();
     });
 
     it("should list changes with --force-publish *", async () => {
-      await setupGitChanges(testDir, [
-        "packages/package-2/random-file",
-      ]);
+      await setupGitChanges(testDir, ["packages/package-2/random-file"]);
 
       await lernaUpdated("--force-publish=*");
       expect(consoleOutput()).toMatchSnapshot();
     });
 
     it("should list changes with --force-publish [package,package]", async () => {
-      await setupGitChanges(testDir, [
-        "packages/package-4/random-file",
-      ]);
+      await setupGitChanges(testDir, ["packages/package-4/random-file"]);
 
       await lernaUpdated("--force-publish", "package-2");
       expect(consoleOutput()).toMatchSnapshot();
@@ -179,17 +162,15 @@ describe("UpdatedCommand", async () => {
 
     it("should list changes without ignored files", async () => {
       await updateLernaConfig(testDir, {
-        command: { // "commands" also supported
+        command: {
+          // "commands" also supported
           publish: {
             ignore: ["ignored-file"],
           },
         },
       });
 
-      await setupGitChanges(testDir, [
-        "packages/package-2/ignored-file",
-        "packages/package-3/random-file",
-      ]);
+      await setupGitChanges(testDir, ["packages/package-2/ignored-file", "packages/package-3/random-file"]);
 
       await lernaUpdated();
       expect(consoleOutput()).toMatchSnapshot();
@@ -207,14 +188,12 @@ describe("UpdatedCommand", async () => {
    * JSON Output
    * ======================================================================= */
 
-  describe("with --json", async () => {
+  describe("with --json", () => {
     it("should list changes as a json object", async () => {
       const testDir = await initFixture("UpdatedCommand/basic");
       const lernaUpdated = run(testDir);
 
-      await setupGitChanges(testDir, [
-        "packages/package-2/random-file",
-      ]);
+      await setupGitChanges(testDir, ["packages/package-2/random-file"]);
 
       await lernaUpdated("--json");
 

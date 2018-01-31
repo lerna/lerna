@@ -1,16 +1,18 @@
-import log from "npmlog";
+"use strict";
+
+const log = require("npmlog");
 
 // mocked or stubbed modules
-import FileSystemUtilities from "../src/FileSystemUtilities";
+const FileSystemUtilities = require("../src/FileSystemUtilities");
 
 // helpers
-import callsBack from "./helpers/callsBack";
-import initFixture from "./helpers/initFixture";
-import normalizeRelativeDir from "./helpers/normalizeRelativeDir";
-import yargsRunner from "./helpers/yargsRunner";
+const callsBack = require("./helpers/callsBack");
+const initFixture = require("./helpers/initFixture");
+const normalizeRelativeDir = require("./helpers/normalizeRelativeDir");
+const yargsRunner = require("./helpers/yargsRunner");
 
 // file under test
-import * as commandModule from "../src/commands/LinkCommand";
+const commandModule = require("../src/commands/LinkCommand");
 
 const run = yargsRunner(commandModule);
 
@@ -27,18 +29,15 @@ const stubSymlink = () => {
 };
 
 // object snapshots have sorted keys
-const symlinkedDirectories = (testDir) =>
-  FileSystemUtilities.symlink.mock.calls.map((args) => {
-    return {
-      _src: normalizeRelativeDir(testDir, args[0]),
-      dest: normalizeRelativeDir(testDir, args[1]),
-      type: args[2],
-    };
-  });
+const symlinkedDirectories = testDir =>
+  FileSystemUtilities.symlink.mock.calls.map(args => ({
+    _src: normalizeRelativeDir(testDir, args[0]),
+    dest: normalizeRelativeDir(testDir, args[1]),
+    type: args[2],
+  }));
 
 describe("LinkCommand", () => {
-  beforeEach(() => {
-  });
+  beforeEach(() => {});
 
   afterEach(() => jest.resetAllMocks());
 

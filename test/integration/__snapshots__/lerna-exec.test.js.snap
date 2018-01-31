@@ -1,45 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`stderr: echo LERNA_PACKAGE_NAME 1`] = `"lerna info version __TEST_VERSION__"`;
-
-exports[`stderr: exec-test --ignore 1`] = `
-"lerna info version __TEST_VERSION__
-lerna info ignore package-1"
-`;
-
-exports[`stderr: exec-test --scope 1`] = `
-"lerna info version __TEST_VERSION__
-lerna info scope package-1"
-`;
-
-exports[`stderr: test --stream 1`] = `"lerna info version __TEST_VERSION__"`;
-
-exports[`stderr: test --stream 2`] = `"lerna info version __TEST_VERSION__"`;
-
-exports[`stderr: without -- 1`] = `"lerna info version __TEST_VERSION__"`;
-
-exports[`stdout: echo LERNA_PACKAGE_NAME 1`] = `
-"package-1
-package-2"
-`;
-
-exports[`stdout: exec-test --ignore 1`] = `
-"package-2 -1
+exports[`lerna exec --ignore <pkg> exec-test -- -1 1`] = `
+--> in "package-2" with extra args "-1"
 file-2.js
-package.json"
+package.json
 `;
 
-exports[`stdout: exec-test --scope 1`] = `
-"package-1 
-file-1.js
-package.json"
+exports[`lerna exec echo $LERNA_PACKAGE_NAME 1`] = `
+package-1
+package-2
 `;
 
-exports[`stdout: without -- 1`] = `
-"package-1 
+exports[`lerna exec exec-test --scope <pkg> 1`] = `
+--> in "package-1" with extra args ""
 file-1.js
 package.json
-package-2 
-file-2.js
-package.json"
 `;

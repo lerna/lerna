@@ -1,19 +1,21 @@
-import path from "path";
-import log from "npmlog";
+"use strict";
+
+const path = require("path");
+const log = require("npmlog");
 
 // mocked modules
-import NpmUtilities from "../src/NpmUtilities";
-import output from "../src/utils/output";
-import UpdatedPackagesCollector from "../src/UpdatedPackagesCollector";
+const NpmUtilities = require("../src/NpmUtilities");
+const output = require("../src/utils/output");
+const UpdatedPackagesCollector = require("../src/UpdatedPackagesCollector");
 
 // helpers
-import callsBack from "./helpers/callsBack";
-import initFixture from "./helpers/initFixture";
-import normalizeRelativeDir from "./helpers/normalizeRelativeDir";
-import yargsRunner from "./helpers/yargsRunner";
+const callsBack = require("./helpers/callsBack");
+const initFixture = require("./helpers/initFixture");
+const normalizeRelativeDir = require("./helpers/normalizeRelativeDir");
+const yargsRunner = require("./helpers/yargsRunner");
 
 // file under test
-import * as commandModule from "../src/commands/RunCommand";
+const commandModule = require("../src/commands/RunCommand");
 
 const run = yargsRunner(commandModule);
 
@@ -23,20 +25,19 @@ jest.mock("../src/utils/output");
 // silence logs
 log.level = "silent";
 
-const ranInPackages = (testDir) =>
-  NpmUtilities.runScriptInDir.mock.calls.reduce((arr, args) => {
-    const script = args[0];
-    const dir = normalizeRelativeDir(testDir, args[1].directory);
-    arr.push([dir, script].concat(args[1].args).join(" "));
+const ranInPackages = testDir =>
+  NpmUtilities.runScriptInDir.mock.calls.reduce((arr, [script, cfg]) => {
+    const { args, directory } = cfg;
+    const dir = normalizeRelativeDir(testDir, directory);
+    arr.push([dir, script].concat(args).join(" "));
     return arr;
   }, []);
 
-const ranInPackagesStreaming = (testDir) =>
-  NpmUtilities.runScriptInPackageStreaming.mock.calls.reduce((arr, args) => {
-    const script = args[0];
-    const pkg = args[1].pkg;
+const ranInPackagesStreaming = testDir =>
+  NpmUtilities.runScriptInPackageStreaming.mock.calls.reduce((arr, [script, cfg]) => {
+    const { args, pkg } = cfg;
     const dir = normalizeRelativeDir(testDir, pkg.location);
-    arr.push([dir, script].concat(args[1].args).join(" "));
+    arr.push([dir, script].concat(args).join(" "));
     return arr;
   }, []);
 
@@ -60,55 +61,48 @@ describe("RunCommand", () => {
     it("runs a script in packages", async () => {
       await lernaRun("my-script");
 
-      expect(ranInPackages(testDir)).toMatchSnapshot("run <script>");
+      expect(ranInPackages(testDir)).toMatchSnapshot();
       expect(output).lastCalledWith("stdout");
     });
 
     it("runs a script in packages with --stream", async () => {
       await lernaRun("my-script", "--stream");
 
-      expect(ranInPackagesStreaming(testDir)).toMatchSnapshot("run <script> --stream");
-    });
-
-    it("always runs test script", async () => {
-      await lernaRun("test");
-
-      expect(ranInPackages(testDir)).toMatchSnapshot("run test");
+      expect(ranInPackagesStreaming(testDir)).toMatchSnapshot();
     });
 
     it("always runs env script", async () => {
       await lernaRun("env");
 
-      expect(ranInPackages(testDir)).toMatchSnapshot("run env");
+      expect(ranInPackages(testDir)).toMatchSnapshot();
     });
 
     it("runs a script only in scoped packages", async () => {
       await lernaRun("my-script", "--scope", "package-1");
 
-      expect(ranInPackages(testDir))
-        .toMatchSnapshot(`run <script> --scope package-1`);
+      expect(ranInPackages(testDir)).toMatchSnapshot();
     });
 
     it("does not run a script in ignored packages", async () => {
       await lernaRun("my-script", "--ignore", "package-@(2|3|4)");
 
-      expect(ranInPackages(testDir))
-        .toMatchSnapshot(`run <script> --ignore package-@(2|3|4)`);
+      expect(ranInPackages(testDir)).toMatchSnapshot();
     });
 
     it("should filter packages that are not updated with --since", async () => {
-      UpdatedPackagesCollector.prototype.getUpdates = jest.fn(() => [{
-        package: {
-          name: "package-3",
-          location: path.join(testDir, "packages/package-3"),
-          scripts: { "my-script": "echo package-3" },
+      UpdatedPackagesCollector.prototype.getUpdates = jest.fn(() => [
+        {
+          package: {
+            name: "package-3",
+            location: path.join(testDir, "packages/package-3"),
+            scripts: { "my-script": "echo package-3" },
+          },
         },
-      }]);
+      ]);
 
       await lernaRun("my-script", "--since");
 
-      expect(ranInPackages(testDir))
-        .toMatchSnapshot("run <script> --since");
+      expect(ranInPackages(testDir)).toMatchSnapshot();
     });
 
     it("does not error when no packages match", async () => {
@@ -121,8 +115,7 @@ describe("RunCommand", () => {
     it("runs a script in all packages with --parallel", async () => {
       await lernaRun("env", "--parallel");
 
-      expect(ranInPackagesStreaming(testDir))
-        .toMatchSnapshot("run <script> --parallel");
+      expect(ranInPackagesStreaming(testDir)).toMatchSnapshot();
     });
   });
 
@@ -132,8 +125,7 @@ describe("RunCommand", () => {
       const lernaRun = run(testDir);
       await lernaRun("my-script", "--scope", "@test/package-2", "--include-filtered-dependencies");
 
-      expect(ranInPackages(testDir))
-        .toMatchSnapshot("run <script> --scope @test/package-2 --include-filtered-dependencies");
+      expect(ranInPackages(testDir)).toMatchSnapshot();
     });
   });
 });

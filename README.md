@@ -13,20 +13,20 @@
   <a href="https://slack.lernajs.io/"><img alt="Slack Status" src="https://slack.lernajs.io/badge.svg"></a>
 </p>
 
-- [About](#about)
-- [Getting Started](#getting-started)
-- [How It Works](#how-it-works)
-- [Troubleshooting](#troubleshooting)
-- [Commands](#commands)
-- [Misc](#misc)
-- [Lerna.json](#lernajson)
-- [Flags](#flags)
+* [About](#about)
+* [Getting Started](#getting-started)
+* [How It Works](#how-it-works)
+* [Troubleshooting](#troubleshooting)
+* [Commands](#commands)
+* [Misc](#misc)
+* [Lerna.json](#lernajson)
+* [Flags](#flags)
 
 ## About
 
 Splitting up large codebases into separate independently versioned packages
 is extremely useful for code sharing. However, making changes across many
-repositories is *messy* and difficult to track, and testing across repositories
+repositories is _messy_ and difficult to track, and testing across repositories
 gets complicated really fast.
 
 To solve these (and many other) problems, some projects will organize their
@@ -172,7 +172,6 @@ It will configure `lerna.json` to enforce exact match for all subsequent executi
 
 ```json
 {
-  "lerna": "2.0.0",
   "commands": {
     "init": {
       "exact": true
@@ -198,7 +197,7 @@ When run, this command will:
 3. `npm run prepublish` in all bootstrapped packages.
 4. `npm run prepare` in all bootstrapped packages.
 
-`lerna bootstrap` respects the `--ignore`, `--scope` and `--include-filtered-dependencies` flags (see [Flags](#flags)).
+`lerna bootstrap` respects the `--ignore`, `--ignore-scripts`, `--scope` and `--include-filtered-dependencies` flags (see [Flags](#flags)).
 
 Pass extra arguments to npm client by placing them after `--`:
 
@@ -220,8 +219,8 @@ May also be configured in `lerna.json`:
 
 Let's use `babel` as an example.
 
-- `babel-generator` and `source-map` (among others) are dependencies of `babel-core`.
--  `babel-core`'s [`package.json`](https://github.com/babel/babel/blob/13c961d29d76ccd38b1fc61333a874072e9a8d6a/packages/babel-core/package.json#L28-L47) lists both these packages as keys in `dependencies`, as shown below.
+* `babel-generator` and `source-map` (among others) are dependencies of `babel-core`.
+* `babel-core`'s [`package.json`](https://github.com/babel/babel/blob/13c961d29d76ccd38b1fc61333a874072e9a8d6a/packages/babel-core/package.json#L28-L47) lists both these packages as keys in `dependencies`, as shown below.
 
 ### add
 
@@ -261,17 +260,18 @@ lerna add babel-core # Install babel-core in all modules
 }
 ```
 
-- Lerna checks if each dependency is also part of the Lerna repo.
-  - In this example, `babel-generator` can be an internal dependency, while `source-map` is always an external dependency.
-  - The version of `babel-generator` in the `package.json` of `babel-core` is satisfied by `packages/babel-generator`, passing for an internal dependency.
-  - `source-map` is `npm install`ed (or `yarn`ed) like normal.
-- `packages/babel-core/node_modules/babel-generator` symlinks to `packages/babel-generator`
-- This allows nested directory imports
+* Lerna checks if each dependency is also part of the Lerna repo.
+  * In this example, `babel-generator` can be an internal dependency, while `source-map` is always an external dependency.
+  * The version of `babel-generator` in the `package.json` of `babel-core` is satisfied by `packages/babel-generator`, passing for an internal dependency.
+  * `source-map` is `npm install`ed (or `yarn`ed) like normal.
+* `packages/babel-core/node_modules/babel-generator` symlinks to `packages/babel-generator`
+* This allows nested directory imports
 
 **Notes:**
-- When a dependency version in a package is not satisfied by a package of the same name in the repo, it will be `npm install`ed (or `yarn`ed) like normal.
-- Dist-tags, like `latest`, do not satisfy [semver](https://semver.npmjs.com/) ranges.
-- Circular dependencies result in circular symlinks which *may* impact your editor/IDE.
+
+* When a dependency version in a package is not satisfied by a package of the same name in the repo, it will be `npm install`ed (or `yarn`ed) like normal.
+* Dist-tags, like `latest`, do not satisfy [semver](https://semver.npmjs.com/) ranges.
+* Circular dependencies result in circular symlinks which _may_ impact your editor/IDE.
 
 [Webstorm](https://www.jetbrains.com/webstorm/) locks up when circular symlinks are present. To prevent this, add `node_modules` to the list of ignored files and folders in `Preferences | Editor | File Types | Ignored files and folders`.
 
@@ -336,7 +336,7 @@ $ lerna publish --canary
 $ lerna publish --canary=beta
 ```
 
-When run with this flag, `publish` publishes packages in a more granular way (per commit). Before publishing to npm, it creates the new `version` tag by taking the current `version`, bumping it to the next *minor* version, adding the provided meta suffix (defaults to `alpha`) and appending the current git sha (ex: `1.0.0` becomes `1.1.0-alpha.81e3b443`).
+When run with this flag, `publish` publishes packages in a more granular way (per commit). Before publishing to npm, it creates the new `version` tag by taking the current `version`, bumping it to the next _minor_ version, adding the provided meta suffix (defaults to `alpha`) and appending the current git sha (ex: `1.0.0` becomes `1.1.0-alpha.81e3b443`).
 
 > The intended use case for this flag is a per commit level release or nightly release.
 
@@ -385,11 +385,6 @@ $ lerna publish --skip-npm
 When run with this flag, `publish` will update all `package.json` package
 versions and dependency versions, but it will not actually publish the
 packages to npm.
-
-> This was useful as a workaround for an [npm
-issue](https://github.com/npm/registry/issues/42) which has since been fixed.  When publishing with
-README changes, use `--skip-npm` and do the final `npm publish` by hand for
-each package.
 
 This flag can be combined with `--skip-git` to _just_ update versions and
 dependencies, without committing, tagging, pushing or publishing.
@@ -470,6 +465,9 @@ Useful for bypassing the user input prompt if you already know which version to 
 $ lerna publish -m "chore(release): publish %s"
 # commit message = "chore(release): publish v1.0.0"
 
+$ lerna publish -m "chore(release): publish %v"
+# commit message = "chore(release): publish 1.0.0"
+
 $ lerna publish -m "chore(release): publish" --independent
 # commit message = "chore(release): publish
 #
@@ -482,9 +480,11 @@ for publication. Useful for integrating lerna into projects that expect commit m
 to certain guidelines, such as projects which use [commitizen](https://github.com/commitizen/cz-cli) and/or [semantic-release](https://github.com/semantic-release/semantic-release).
 
 If the message contains `%s`, it will be replaced with the new global version version number prefixed with a "v".
+If the message contains `%v`, it will be replaced with the new global version version number without the leading "v".
 Note that this only applies when using the default "fixed" versioning mode, as there is no "global" version when using `--independent`.
 
 This can be configured in lerna.json, as well:
+
 ```json
 {
   "commands": {
@@ -515,10 +515,7 @@ If your `lerna.json` contains something like this:
 {
   "command": {
     "publish": {
-      "allowBranch": [
-        "master",
-        "feature/*"
-      ]
+      "allowBranch": ["master", "feature/*"]
     }
   }
 }
@@ -540,9 +537,8 @@ Check which `packages` have changed since the last release (the last git tag).
 
 Lerna determines the last git tag created and runs `git diff --name-only v6.8.1` to get all files changed since that tag. It then returns an array of packages that have an updated file.
 
-
 **Note that configuration for the `publish` command _also_ affects the
-`updated` command.  For example `config.publish.ignore`**
+`updated` command. For example `config.publish.ignore`**
 
 #### --json
 
@@ -656,6 +652,7 @@ $ lerna exec --scope my-component -- ls -la
 ```
 
 To spawn long-running processes, pass the `--parallel` flag:
+
 ```sh
 # transpile all modules as they change in every package
 $ lerna exec --parallel -- babel src -d lib -w
@@ -696,12 +693,12 @@ $ lerna import <path-to-external-repository>
 ```
 
 Import the package at `<path-to-external-repository>`, with commit history,
-into `packages/<directory-name>`.  Original commit authors, dates and messages
-are preserved.  Commits are applied to the current branch.
+into `packages/<directory-name>`. Original commit authors, dates and messages
+are preserved. Commits are applied to the current branch.
 
 This is useful for gathering pre-existing standalone packages into a Lerna
-repo.  Each commit is modified to make changes relative to the package
-directory.  So, for example, the commit that added `package.json` will
+repo. Each commit is modified to make changes relative to the package
+directory. So, for example, the commit that added `package.json` will
 instead add `packages/<directory-name>/package.json`.
 
 ### link
@@ -732,7 +729,6 @@ Running `lerna` without arguments will show all commands/options.
 
 ```js
 {
-  "lerna": "2.0.0",
   "version": "1.1.3",
   "commands": {
     "publish": {
@@ -749,12 +745,12 @@ Running `lerna` without arguments will show all commands/options.
 }
 ```
 
-- `lerna`: the current version of Lerna being used.
-- `version`: the current version of the repository.
-- `commands.publish.ignore`: an array of globs that won't be included in `lerna updated/publish`. Use this to prevent publishing a new version unnecessarily for changes, such as fixing a `README.md` typo.
-- `commands.bootstrap.ignore`: an array of globs that won't be bootstrapped when running the `lerna bootstrap` command.
-- `commands.bootstrap.scope`: an array of globs that restricts which packages will be bootstrapped when running the `lerna bootstrap` command.
-- `packages`: Array of globs to use as package locations.
+* `lerna`: the current version of Lerna being used.
+* `version`: the current version of the repository.
+* `commands.publish.ignore`: an array of globs that won't be included in `lerna updated/publish`. Use this to prevent publishing a new version unnecessarily for changes, such as fixing a `README.md` typo.
+* `commands.bootstrap.ignore`: an array of globs that won't be bootstrapped when running the `lerna bootstrap` command.
+* `commands.bootstrap.scope`: an array of globs that restricts which packages will be bootstrapped when running the `lerna bootstrap` command.
+* `packages`: Array of globs to use as package locations.
 
 ### Common `devDependencies`
 
@@ -762,10 +758,10 @@ Most `devDependencies` can be pulled up to the root of a Lerna repo.
 
 This has a few benefits:
 
-- All packages use the same version of a given dependency
-- Can keep dependencies at the root up-to-date with an automated tool such as [GreenKeeper](https://greenkeeper.io/)
-- Dependency installation time is reduced
-- Less storage is needed
+* All packages use the same version of a given dependency
+* Can keep dependencies at the root up-to-date with an automated tool such as [GreenKeeper](https://greenkeeper.io/)
+* Dependency installation time is reduced
+* Less storage is needed
 
 Note that `devDependencies` providing "binary" executables that are used by
 npm scripts still need to be installed directly in each package where they're
@@ -775,7 +771,6 @@ For example the `nsp` dependency is necessary in this case for `lerna run nsp`
 (and `npm run nsp` within the package's directory) to work correctly:
 
 ```json
-
 {
   "scripts": {
     "nsp": "nsp"
@@ -789,26 +784,25 @@ For example the `nsp` dependency is necessary in this case for `lerna run nsp`
 ### Flags
 
 Options to Lerna can come from configuration (`lerna.json`) or on the command
-line.  Additionally options in config can live at the top level or may be
+line. Additionally options in config can live at the top level or may be
 applied to specific commands.
 
 Example:
 
 ```json
 {
-  "lerna": "x.x.x",
   "version": "1.2.0",
   "exampleOption": "foo",
   "commands": {
     "init": {
-      "exampleOption": "bar",
+      "exampleOption": "bar"
     }
-  },
+  }
 }
 ```
 
 In this case `exampleOption` will be "foo" for all commands except `init`,
-where it will be "bar".  In all cases it may be overridden to "baz" on the
+where it will be "bar". In all cases it may be overridden to "baz" on the
 command-line with `--example-option=baz`.
 
 #### --concurrency
@@ -853,7 +847,7 @@ List all packages that have changed since `some-branch`:
 $ lerna ls --since some-branch
 ```
 
-*This can be particularly useful when used in CI, if you can obtain the target branch a PR will be going into, because you can use that as the `ref` to the `--since` option. This works well for PRs going into master as well as feature branches.*
+_This can be particularly useful when used in CI, if you can obtain the target branch a PR will be going into, because you can use that as the `ref` to the `--since` option. This works well for PRs going into master as well as feature branches._
 
 #### --flatten
 
@@ -877,7 +871,6 @@ The `ignore` flag, when used with the `bootstrap` command, can also be set in `l
 
 ```javascript
 {
-  "lerna": "2.0.0",
   "version": "0.0.0",
   "commands": {
     "bootstrap": {
@@ -890,11 +883,20 @@ The `ignore` flag, when used with the `bootstrap` command, can also be set in `l
 > Hint: The glob is matched against the package name defined in `package.json`,
 > not the directory name the package lives in.
 
+#### --ignore-scripts
+
+When used with the `bootstrap` command it won't run any lifecycle scripts in bootstrapped packages.
+
+```sh
+$ lerna bootstrap --ignore-scripts
+```
+
 #### --include-filtered-dependencies
 
 Used in combination with any command that accepts `--scope` (`bootstrap`, `clean`, `ls`, `run`, `exec`). Ensures that all dependencies (and dev dependencies) of any scoped packages (either through `--scope` or `--ignore`) are operated on as well.
 
 > Note: This will override the `--scope` and `--ignore` flags.
+>
 > > i.e. A package matched by the `--ignore` flag will still be bootstrapped if it is depended on by another package that is being bootstrapped.
 
 This is useful for situations where you want to "set up" a single package that relies on other packages being set up.
@@ -912,9 +914,9 @@ $ lerna bootstrap --scope "package-*" --ignore "package-util-*" --include-filter
 
 #### --loglevel [silent|error|warn|success|info|verbose|silly]
 
-What level of logs to report.  On failure, all logs are written to lerna-debug.log in the current working directory.
+What level of logs to report. On failure, all logs are written to lerna-debug.log in the current working directory.
 
-Any logs of a higher level than the setting are shown.  The default is "info".
+Any logs of a higher level than the setting are shown. The default is "info".
 
 #### --max-buffer [in-bytes]
 
@@ -934,10 +936,10 @@ This option can also help if you run multiple "watch" commands. Since `lerna run
 #### --hoist [glob]
 
 Install external dependencies matching `glob` at the repo root so they're
-available to all packages.  Any binaries from these dependencies will be
+available to all packages. Any binaries from these dependencies will be
 linked into dependent package `node_modules/.bin/` directories so they're
-available for npm scripts.  If the option is present but no `glob` is given
-the default is `**` (hoist everything).  This option only affects the
+available for npm scripts. If the option is present but no `glob` is given
+the default is `**` (hoist everything). This option only affects the
 `bootstrap` command.
 
 ```sh
@@ -951,7 +953,7 @@ the most commonly used version will be hoisted, and a warning will be emitted.
 
 #### --nohoist [glob]
 
-Do _not_ install external dependencies matching `glob` at the repo root.  This
+Do _not_ install external dependencies matching `glob` at the repo root. This
 can be used to opt out of hoisting for certain dependencies.
 
 ```sh
@@ -960,7 +962,7 @@ $ lerna bootstrap --hoist --nohoist=babel-*
 
 #### --npm-client [client]
 
-Install external dependencies using `[client] install`.  Must be an executable
+Install external dependencies using `[client] install`. Must be an executable
 that knows how to install npm dependencies.
 
 ```sh
@@ -1000,17 +1002,17 @@ May also be configured in `lerna.json`:
 ```
 
 The root-level package.json must also include a `workspaces` array:
+
 ```json
 {
   "private": true,
   "devDependencies": {
     "lerna": "^2.2.0"
   },
-  "workspaces": [
-    "packages/*"
-  ]
+  "workspaces": ["packages/*"]
 }
 ```
+
 This list is broadly similar to lerna's `packages` config (a list of globs matching directories with a package.json),
 except it does not support recursive globs (`"**"`, a.k.a. "globstars").
 
@@ -1020,6 +1022,7 @@ Allow target versions of dependent packages to be written as [git hosted urls](h
 If enabled, Lerna will attempt to extract and save the interpackage dependency versions from `package.json` files using git url-aware parser.
 
 Eg. assuming monorepo with 2 packages where `my-package-1` depends on `my-package-2`, `package.json` of `my-package-1` could be:
+
 ```
 // packages/my-package-1/package.json
 {
@@ -1037,15 +1040,18 @@ Eg. assuming monorepo with 2 packages where `my-package-1` depends on `my-packag
   }
 }
 ```
+
 For the case above Lerna will read the version of `my-package-2` dependency as `1.0.0`.
 
 This allows packages to be distributed via git repos if eg. packages are private and [private npm repo is not an option](https://www.dotconferences.com/2016/05/fabien-potencier-monolithic-repositories-vs-many-repositories).
 
 Please note that using `--use-git-version`
-- is limited to urls with [`committish`](https://docs.npmjs.com/files/package.json#git-urls-as-dependencies) part present (ie. `github:example-user/my-package-2` is invalid)
-- requires `publish` command to be used with `--exact`
+
+* is limited to urls with [`committish`](https://docs.npmjs.com/files/package.json#git-urls-as-dependencies) part present (ie. `github:example-user/my-package-2` is invalid)
+* requires `publish` command to be used with `--exact`
 
 May also be configured in `lerna.json`:
+
 ```js
 {
   ...
@@ -1058,12 +1064,12 @@ May also be configured in `lerna.json`:
 Defines version prefix string (defaults to 'v') ignored when extracting version number from a commitish part of git url.
 Everything after the prefix will be considered a version.
 
-
 Eg. given `github:example-user/my-package-2#v1.0.0` and `gitVersionPrefix: 'v'` version will be read as `1.0.0`.
 
 Only used if `--use-git-version` is set to `true`.
 
 May also be configured in `lerna.json`:
+
 ```js
 {
   ...
@@ -1106,7 +1112,9 @@ This is not generally necessary, as Lerna will publish packages in topological
 order (all dependencies before dependents) by default.
 
 ### README Badge
+
 Using Lerna? Add a README badge to show it off: [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lernajs.io/)
+
 ```
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lernajs.io/)
 ```

@@ -1,36 +1,34 @@
-import _ from "lodash";
-import chalk from "chalk";
+"use strict";
 
-import { builder as publishOptions } from "./PublishCommand";
-import Command from "../Command";
-import output from "../utils/output";
-import UpdatedPackagesCollector from "../UpdatedPackagesCollector";
+const _ = require("lodash");
+const chalk = require("chalk");
 
-const updatedOptions = _.assign(
-  {},
-  publishOptions,
-  {
-    "json": {
-      describe: "Show information in JSON format",
-      group: "Command Options:",
-      type: "boolean",
-      default: undefined,
-    }
-  }
-);
+const Command = require("../Command");
+const output = require("../utils/output");
+const publishOptions = require("./PublishCommand").builder;
+const UpdatedPackagesCollector = require("../UpdatedPackagesCollector");
 
-export function handler(argv) {
-  new UpdatedCommand(argv._, argv, argv._cwd).run()
-    .then(argv._onFinish, argv._onFinish);
-}
+const updatedOptions = _.assign({}, publishOptions, {
+  json: {
+    describe: "Show information in JSON format",
+    group: "Command Options:",
+    type: "boolean",
+    default: undefined,
+  },
+});
 
-export const command = "updated";
+exports.handler = function handler(argv) {
+  // eslint-disable-next-line no-use-before-define
+  return new UpdatedCommand(argv);
+};
 
-export const describe = "Check which packages have changed since the last publish.";
+exports.command = "updated";
 
-export const builder = (yargs) => yargs.options(updatedOptions);
+exports.describe = "Check which packages have changed since the last publish.";
 
-export default class UpdatedCommand extends Command {
+exports.builder = yargs => yargs.options(updatedOptions);
+
+class UpdatedCommand extends Command {
   initialize(callback) {
     const updatedPackagesCollector = new UpdatedPackagesCollector(this);
     this.updates = updatedPackagesCollector.getUpdates();
@@ -54,21 +52,19 @@ export default class UpdatedCommand extends Command {
   }
 
   execute(callback) {
-    const updatedPackages = this.updates.map((update) => update.package).map((pkg) => {
-      return {
-        name: pkg.name,
-        version: pkg.version,
-        private: pkg.isPrivate()
-      };
-    });
+    const updatedPackages = this.updates.map(update => update.package).map(pkg => ({
+      name: pkg.name,
+      version: pkg.version,
+      private: pkg.isPrivate(),
+    }));
 
     this.logger.info("result");
     if (this.options.json) {
       output(JSON.stringify(updatedPackages, null, 2));
     } else {
-      const formattedUpdates = updatedPackages.map((pkg) =>
-        `- ${pkg.name}${pkg.private ? ` (${chalk.red("private")})` : ""}`
-      ).join("\n");
+      const formattedUpdates = updatedPackages
+        .map(pkg => `- ${pkg.name}${pkg.private ? ` (${chalk.red("private")})` : ""}`)
+        .join("\n");
       output(formattedUpdates);
     }
 
