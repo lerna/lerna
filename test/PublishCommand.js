@@ -642,7 +642,11 @@ describe("PublishCommand", () => {
       } catch (err) {
         expect(err.message).toBe(
           "--cd-version must be one of: " +
-          "'major', 'minor', 'patch', 'premajor', 'preminor', 'prepatch', or 'prerelease'."
+          "'major', 'minor', 'patch', 'premajor', 'preminor', 'prepatch', or 'prerelease'\n"
+          +
+          "or must have format: [package name]:[cd version],...,[default cd version]\n"
+          +
+          "for example: --cd-version=babel:patch,babel-cli:minor,patch"
         );
       }
     });

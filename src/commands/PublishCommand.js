@@ -38,7 +38,32 @@ const cdVersionOptions = [
 ];
 
 const cdVersionOptionString =
-  `'${cdVersionOptions.slice(0, -1).join("', '")}', or '${cdVersionOptions[cdVersionOptions.length - 1]}'.`;
+  `'${cdVersionOptions.slice(0, -1).join("', '")}', or '${cdVersionOptions[cdVersionOptions.length - 1]}'`;
+
+
+const validateVersionOption = function(version) {
+  return !(cdVersionOptions.indexOf(version) === -1)
+};
+
+const validateCdVersionString = function(cdVersions) {
+  const componentsAndVersionsList = cdVersions.split(',');
+
+  if (componentsAndVersionsList.length === 1) {
+    return validateVersionOption(componentsAndVersionsList[0]);
+  }
+
+  const [commonCdVersion] = componentsAndVersionsList.splice(-1);
+
+  return validateVersionOption(commonCdVersion) && componentsAndVersionsList.every((version) => {
+      const partsComponentAndVersion = version.split(':');
+
+      if (partsComponentAndVersion.length !== 2) {
+        return false
+      }
+
+      return validateVersionOption(partsComponentAndVersion[1])
+    });
+};
 
 export const builder = {
   "canary": {
@@ -55,9 +80,17 @@ export const builder = {
     type: "string",
     requiresArg: true,
     coerce: (choice) => {
-      if (cdVersionOptions.indexOf(choice) === -1) {
+      if (!validateVersionOption(choice)) {
+        if  (validateCdVersionString(choice)) {
+          return choice
+        }
+
         throw new Error(
-          `--cd-version must be one of: ${cdVersionOptionString}`
+          `--cd-version must be one of: ${cdVersionOptionString}\n`
+          +
+          "or must have format: <package name>:<cd version>,...,<default cd version>\n"
+          +
+          "for example: --cd-version=babel:patch,babel-cli:minor,patch"
         );
       }
       return choice;
@@ -332,17 +365,37 @@ export default class PublishCommand extends Command {
     });
   }
 
+  parseCdVersions(cdVersion) {
+    const versionsList = cdVersion.split(',');
+
+    return versionsList.reduce((acc, nextVersion) => {
+      const preparedVersion = nextVersion.split(':');
+
+      if (preparedVersion.length > 1) {
+        acc[preparedVersion[0]] = preparedVersion[1]
+      } else {
+        acc['common'] = preparedVersion[0]
+      }
+
+      return acc
+    }, {})
+  }
+
   getVersionsForUpdates(callback) {
     const cdVersion = this.options.cdVersion;
+
     if (cdVersion && !this.options.canary) {
       // If the version is independent then send versions
       if (this.repository.isIndependent()) {
+        const cdVersions = this.parseCdVersions(cdVersion);
         const versions = {};
 
         this.updates.forEach((update) => {
+          const packageCdVersion = cdVersions[update.package.name] || cdVersions.common;
+
           versions[update.package.name] = semver.inc(
             update.package.version,
-            cdVersion,
+            packageCdVersion,
             this.options.preid
           );
         });
