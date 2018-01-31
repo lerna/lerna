@@ -664,7 +664,7 @@ class PublishCommand extends Command {
 
   commitAndTagUpdates() {
     if (this.repository.isIndependent()) {
-      this.tags = this.gitCommitAndTagVersionForUpdates();
+      this.tags = this.gitCommitAndTagVersionForUpdates(this.masterVersion);
     } else {
       this.tags = [this.gitCommitAndTagVersion(this.masterVersion)];
     }
@@ -678,9 +678,9 @@ class PublishCommand extends Command {
     this.runSyncScriptInPackage(this.repository.package, "postversion");
   }
 
-  gitCommitAndTagVersionForUpdates() {
+  gitCommitAndTagVersionForUpdates(version) {
     const tags = this.updates.map(({ package: { name } }) => `${name}@${this.updatesVersions[name]}`);
-    const subject = this.options.message || "Publish";
+    const subject = (this.options.message || "Publish").replace(/%v/g, version);
     const message = tags.reduce((msg, tag) => `${msg}${os.EOL} - ${tag}`, `${subject}${os.EOL}`);
 
     GitUtilities.commit(message, this.execOpts);
