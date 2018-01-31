@@ -34,7 +34,7 @@ const cdVersionOptions = ["major", "minor", "patch", "premajor", "preminor", "pr
 
 const cdVersionOptionString = `'${cdVersionOptions.slice(0, -1).join("', '")}', or '${
   cdVersionOptions[cdVersionOptions.length - 1]
-}'.`;
+}'`;
 
 const validateVersionOption = function(version) {
   return !(cdVersionOptions.indexOf(version) === -1)
