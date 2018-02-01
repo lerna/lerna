@@ -82,7 +82,8 @@ exports.builder = {
         }
 
         throw new Error(
-          `--cd-version must be one of: ${cdVersionOptionString}\n
+          `--cd-version must be one of:
+          ${cdVersionOptionString}\n
           or must have format: <package name>:<cd version>,...,<default cd version>\n
           for example: --cd-version=babel:patch,babel-cli:minor,patch
           `
