@@ -36,12 +36,10 @@ const cdVersionOptionString = `'${cdVersionOptions.slice(0, -1).join("', '")}', 
   cdVersionOptions[cdVersionOptions.length - 1]
 }'`;
 
-const validateVersionOption = function(version) {
-  return !(cdVersionOptions.indexOf(version) === -1)
-};
+const validateVersionOption = version => !(cdVersionOptions.indexOf(version) === -1);
 
-const validateCdVersionString = function(cdVersions) {
-  const componentsAndVersionsList = cdVersions.split(',');
+const validateCdVersionString = cdVersions => {
+  const componentsAndVersionsList = cdVersions.split(",");
 
   if (componentsAndVersionsList.length === 1) {
     return validateVersionOption(componentsAndVersionsList[0]);
@@ -49,15 +47,18 @@ const validateCdVersionString = function(cdVersions) {
 
   const [commonCdVersion] = componentsAndVersionsList.splice(-1);
 
-  return validateVersionOption(commonCdVersion) && componentsAndVersionsList.every((version) => {
-      const partsComponentAndVersion = version.split(':');
+  return (
+    validateVersionOption(commonCdVersion) &&
+    componentsAndVersionsList.every(version => {
+      const partsComponentAndVersion = version.split(":");
 
       if (partsComponentAndVersion.length !== 2) {
-        return false
+        return false;
       }
 
-      return validateVersionOption(partsComponentAndVersion[1])
-    });
+      return validateVersionOption(partsComponentAndVersion[1]);
+    })
+  );
 };
 
 exports.builder = {
@@ -76,16 +77,15 @@ exports.builder = {
     requiresArg: true,
     coerce: choice => {
       if (!validateVersionOption(choice)) {
-        if  (validateCdVersionString(choice)) {
-          return choice
+        if (validateCdVersionString(choice)) {
+          return choice;
         }
 
         throw new Error(
-          `--cd-version must be one of: ${cdVersionOptionString}\n`
-          +
-          "or must have format: <package name>:<cd version>,...,<default cd version>\n"
-          +
-          "for example: --cd-version=babel:patch,babel-cli:minor,patch"
+          `--cd-version must be one of: ${cdVersionOptionString}\n
+          or must have format: <package name>:<cd version>,...,<default cd version>\n
+          for example: --cd-version=babel:patch,babel-cli:minor,patch
+          `
         );
       }
       return choice;
@@ -352,19 +352,23 @@ class PublishCommand extends Command {
   }
 
   parseCdVersions(cdVersion) {
-    const versionsList = cdVersion.split(',');
+    const versionsList = cdVersion.split(",");
 
     return versionsList.reduce((acc, nextVersion) => {
-      const preparedVersion = nextVersion.split(':');
+      const preparedVersion = nextVersion.split(":");
 
       if (preparedVersion.length > 1) {
-        acc[preparedVersion[0]] = preparedVersion[1]
+        const [componentName, versionType] = preparedVersion;
+
+        acc[componentName] = versionType;
       } else {
-        acc['common'] = preparedVersion[0]
+        const [versionType] = preparedVersion;
+
+        acc.common = versionType;
       }
 
-      return acc
-    }, {})
+      return acc;
+    }, {});
   }
 
   getVersionsForUpdates(callback) {
