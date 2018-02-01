@@ -583,7 +583,6 @@ class PublishCommand extends Command {
 
     this.updates.forEach(update => {
       const pkg = update.package;
-      const packageJsonLocation = path.join(pkg.location, "package.json");
 
       // set new version
       pkg.version = this.updatesVersions[pkg.name] || pkg.version;
@@ -596,7 +595,7 @@ class PublishCommand extends Command {
       this.runSyncScriptInPackage(pkg, "preversion");
 
       // write new package
-      writePkg.sync(packageJsonLocation, pkg.toJSON());
+      writePkg.sync(pkg.manifestLocation, pkg.toJSON());
       // NOTE: Object.prototype.toJSON() is normally called when passed to
       // JSON.stringify(), but write-pkg iterates Object.keys() before serializing
       // so it has to be explicit here (otherwise it mangles the instance properties)
@@ -617,7 +616,7 @@ class PublishCommand extends Command {
       }
 
       // push to be git committed
-      changedFiles.push(packageJsonLocation);
+      changedFiles.push(pkg.manifestLocation);
     });
 
     if (conventionalCommits && !independentVersions) {
