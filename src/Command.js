@@ -385,15 +385,16 @@ class Command {
   }
 
   _legacyOptions() {
-    return ["bootstrap", "publish"].reduce((opts, command) => {
+    return ["bootstrap", "publish"].reduce((obj, command) => {
       if (this.name === command && this.repository.lernaJson[`${command}Config`]) {
         log.warn(
           "deprecated",
           `\`${command}Config.ignore\` has been replaced by \`command.${command}.ignore\`.`
         );
-        opts.ignore = this.repository.lernaJson[`${command}Config`].ignore;
+        obj.ignore = this.repository.lernaJson[`${command}Config`].ignore;
       }
-      return opts;
+
+      return obj;
     }, {});
   }
 

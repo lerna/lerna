@@ -251,9 +251,9 @@ class PublishCommand extends Command {
       this.masterVersion = version;
       this.updatesVersions =
         versions ||
-        this.updates.reduce((acc, update) => {
-          acc[update.package.name] = version;
-          return acc;
+        this.updates.reduce((obj, update) => {
+          obj[update.package.name] = version;
+          return obj;
         }, {});
 
       this.confirmVersions(callback);
@@ -324,12 +324,11 @@ class PublishCommand extends Command {
     if (cdVersion && !canary) {
       if (independentVersions) {
         // Independent Semver Keyword Mode
-        const versions = {};
-
-        this.updates.forEach(update => {
+        const versions = this.updates.reduce((obj, update) => {
           const { name, version } = update.package;
-          versions[name] = semver.inc(version, cdVersion, preid);
-        });
+          obj[name] = semver.inc(version, cdVersion, preid);
+          return obj;
+        }, {});
 
         return callback(null, { versions });
       }
@@ -348,11 +347,11 @@ class PublishCommand extends Command {
     if (canary) {
       if (independentVersions) {
         // Independent Canary Mode
-        const versions = {};
-        this.updates.forEach(update => {
+        const versions = this.updates.reduce((obj, update) => {
           const { name, version } = update.package;
-          versions[name] = this.getCanaryVersion(version, canary);
-        });
+          obj[name] = this.getCanaryVersion(version, canary);
+          return obj;
+        }, {});
 
         return callback(null, { versions });
       }
@@ -366,6 +365,7 @@ class PublishCommand extends Command {
       if (independentVersions) {
         // Independent Conventional-Commits Mode
         const versions = {};
+
         this.recommendVersions(
           this.updates,
           ConventionalCommitUtilities.recommendIndependentVersion,
@@ -392,6 +392,7 @@ class PublishCommand extends Command {
       });
 
       let version = "0.0.0";
+
       this.recommendVersions(this.updates, ConventionalCommitUtilities.recommendFixedVersion, versionBump => {
         if (semver.gt(versionBump.recommendedVersion, version)) {
           version = versionBump.recommendedVersion;
@@ -409,14 +410,15 @@ class PublishCommand extends Command {
         (update, cb) => {
           this.promptVersion(update.package.name, update.package.version, cb);
         },
-        (err, versions) => {
+        (err, result) => {
           if (err) {
             return callback(err);
           }
 
-          this.updates.forEach((update, index) => {
-            versions[update.package.name] = versions[index];
-          });
+          const versions = this.updates.reduce((obj, update, index) => {
+            obj[update.package.name] = result[index];
+            return obj;
+          }, {});
 
           return callback(null, { versions });
         }

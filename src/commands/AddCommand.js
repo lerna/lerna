@@ -119,15 +119,17 @@ class AddCommand extends Command {
 
         const notSamePackage = pkgToInstall => pkgToChange.name !== pkgToInstall.name;
 
-        const applicable = this.packagesToInstall.filter(notSamePackage).reduce((results, pkgToInstall) => {
+        const applicable = this.packagesToInstall.filter(notSamePackage).reduce((obj, pkgToInstall) => {
           const deps = pkgToChange[this.dependencyType] || {};
           const current = deps[pkgToInstall.name];
           const range = getRangeToReference(current, pkgToInstall.version, pkgToInstall.versionRange);
-          const id = `${pkgToInstall.name}@${range}`;
-          const message = `Add ${id} as ${this.dependencyType} in ${pkgToChange.name}`;
-          this.logger.verbose(message);
-          results[pkgToInstall.name] = range;
-          return results;
+
+          this.logger.verbose(
+            `Add ${pkgToInstall.name}@${range} as ${this.dependencyType} in ${pkgToChange.name}`
+          );
+          obj[pkgToInstall.name] = range;
+
+          return obj;
         }, {});
 
         return readPkg(manifestPath, { normalize: false })

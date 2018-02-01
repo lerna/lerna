@@ -74,10 +74,10 @@ function installInDir(directory, dependencies, config, callback) {
 
     // Construct a basic fake package.json with just the deps we need to install.
     const tempJson = {
-      dependencies: dependencies.reduce((deps, dep) => {
+      dependencies: dependencies.reduce((obj, dep) => {
         const [pkg, version] = splitVersion(dep);
-        deps[pkg] = version || "*";
-        return deps;
+        obj[pkg] = version || "*";
+        return obj;
       }, {}),
     };
 
