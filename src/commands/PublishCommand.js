@@ -355,20 +355,20 @@ class PublishCommand extends Command {
   parseCdVersions(cdVersion) {
     const versionsList = cdVersion.split(",");
 
-    return versionsList.reduce((acc, nextVersion) => {
+    return versionsList.reduce((obj, nextVersion) => {
       const preparedVersion = nextVersion.split(":");
 
       if (preparedVersion.length > 1) {
         const [componentName, versionType] = preparedVersion;
 
-        acc[componentName] = versionType;
+        obj[componentName] = versionType;
       } else {
         const [versionType] = preparedVersion;
 
-        acc.common = versionType;
+        obj.common = versionType;
       }
 
-      return acc;
+      return obj;
     }, {});
   }
 
@@ -383,7 +383,7 @@ class PublishCommand extends Command {
         const versions = this.updates.reduce((obj, update) => {
           const { name, version } = update.package;
           const packageCdVersion = cdVersions[name] || cdVersions.common;
-          
+
           obj[name] = semver.inc(version, packageCdVersion, preid);
           return obj;
         }, {});
