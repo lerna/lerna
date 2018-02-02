@@ -45,7 +45,9 @@ module.exports = {
       return stabilizeString(thing);
     }
 
+    // eslint-disable-next-line no-param-reassign
     thing.lerna = stableVersion(thing.lerna);
+
     return serialize(thing);
   },
 };

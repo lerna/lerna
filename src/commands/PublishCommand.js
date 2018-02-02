@@ -286,9 +286,9 @@ class PublishCommand extends Command {
       this.masterVersion = version;
       this.updatesVersions =
         versions ||
-        this.updates.reduce((acc, update) => {
-          acc[update.package.name] = version;
-          return acc;
+        this.updates.reduce((obj, update) => {
+          obj[update.package.name] = version;
+          return obj;
         }, {});
 
       this.confirmVersions(callback);
@@ -380,14 +380,13 @@ class PublishCommand extends Command {
       if (independentVersions) {
         // Independent Semver Keyword Mode
         const cdVersions = this.parseCdVersions(cdVersion);
-        const versions = {};
-
-        this.updates.forEach(update => {
+        const versions = this.updates.reduce((obj, update) => {
           const { name, version } = update.package;
           const packageCdVersion = cdVersions[name] || cdVersions.common;
-
-          versions[name] = semver.inc(version, packageCdVersion, preid);
-        });
+          
+          obj[name] = semver.inc(version, packageCdVersion, preid);
+          return obj;
+        }, {});
 
         return callback(null, { versions });
       }
@@ -406,11 +405,11 @@ class PublishCommand extends Command {
     if (canary) {
       if (independentVersions) {
         // Independent Canary Mode
-        const versions = {};
-        this.updates.forEach(update => {
+        const versions = this.updates.reduce((obj, update) => {
           const { name, version } = update.package;
-          versions[name] = this.getCanaryVersion(version, canary);
-        });
+          obj[name] = this.getCanaryVersion(version, canary);
+          return obj;
+        }, {});
 
         return callback(null, { versions });
       }
@@ -424,6 +423,7 @@ class PublishCommand extends Command {
       if (independentVersions) {
         // Independent Conventional-Commits Mode
         const versions = {};
+
         this.recommendVersions(
           this.updates,
           ConventionalCommitUtilities.recommendIndependentVersion,
@@ -450,6 +450,7 @@ class PublishCommand extends Command {
       });
 
       let version = "0.0.0";
+
       this.recommendVersions(this.updates, ConventionalCommitUtilities.recommendFixedVersion, versionBump => {
         if (semver.gt(versionBump.recommendedVersion, version)) {
           version = versionBump.recommendedVersion;
@@ -467,14 +468,15 @@ class PublishCommand extends Command {
         (update, cb) => {
           this.promptVersion(update.package.name, update.package.version, cb);
         },
-        (err, versions) => {
+        (err, result) => {
           if (err) {
             return callback(err);
           }
 
-          this.updates.forEach((update, index) => {
-            versions[update.package.name] = versions[index];
-          });
+          const versions = this.updates.reduce((obj, update, index) => {
+            obj[update.package.name] = result[index];
+            return obj;
+          }, {});
 
           return callback(null, { versions });
         }
@@ -641,7 +643,6 @@ class PublishCommand extends Command {
 
     this.updates.forEach(update => {
       const pkg = update.package;
-      const packageJsonLocation = path.join(pkg.location, "package.json");
 
       // set new version
       pkg.version = this.updatesVersions[pkg.name] || pkg.version;
@@ -654,7 +655,7 @@ class PublishCommand extends Command {
       this.runSyncScriptInPackage(pkg, "preversion");
 
       // write new package
-      writePkg.sync(packageJsonLocation, pkg.toJSON());
+      writePkg.sync(pkg.manifestLocation, pkg.toJSON());
       // NOTE: Object.prototype.toJSON() is normally called when passed to
       // JSON.stringify(), but write-pkg iterates Object.keys() before serializing
       // so it has to be explicit here (otherwise it mangles the instance properties)
@@ -675,7 +676,7 @@ class PublishCommand extends Command {
       }
 
       // push to be git committed
-      changedFiles.push(packageJsonLocation);
+      changedFiles.push(pkg.manifestLocation);
     });
 
     if (conventionalCommits && !independentVersions) {

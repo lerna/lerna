@@ -23,6 +23,10 @@ class Package {
     return this._location;
   }
 
+  get manifestLocation() {
+    return path.join(this._location, "package.json");
+  }
+
   get nodeModulesLocation() {
     return path.join(this._location, "node_modules");
   }

@@ -79,6 +79,7 @@ function makeWorkAround() {
         hasWarned = true;
       }
 
+      // eslint-disable-next-line no-param-reassign
       context["--"] = args.slice(doubleDashed + 1);
     }
   };

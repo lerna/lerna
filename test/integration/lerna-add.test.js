@@ -1,5 +1,6 @@
 "use strict";
 
+const _ = require("lodash");
 const path = require("path");
 const execa = require("execa");
 const globby = require("globby");
@@ -20,10 +21,7 @@ const getPkgs = async cwd => {
   const load = loadFrom(cwd);
   const manifests = await Promise.all(pkgs.map(pkg => load(pkg)));
 
-  return manifests.reduce((results, manifest) => {
-    results[manifest.name] = manifest;
-    return results;
-  }, {});
+  return _.keyBy(manifests, "name");
 };
 
 describe("lerna add", () => {

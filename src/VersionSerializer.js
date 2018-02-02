@@ -28,6 +28,7 @@ class VersionSerializer {
     this._strippedPrefixes.forEach((prefix, name) => {
       const version = dependencies[name];
       if (version) {
+        // eslint-disable-next-line no-param-reassign
         dependencies[name] = `${prefix}${version}`;
       }
     });
@@ -39,6 +40,7 @@ class VersionSerializer {
         const result = this._versionParser.parseVersion(dependencies[name]);
 
         if (result.prefix) {
+          // eslint-disable-next-line no-param-reassign
           dependencies[name] = result.version;
           this._strippedPrefixes.set(name, result.prefix);
         }

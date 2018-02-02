@@ -22,8 +22,11 @@
       - version: 6.9.0
     no-param-reassign:
       - error
-      - ignorePropertyModificationsFor:
-        - err
+      - props: true
+        ignorePropertyModificationsFor:
+          - err # Error decoration
+          - obj # .reduce() object
+          - pkg # Package instance
     no-underscore-dangle:
       - error
       - allowAfterThis: true
