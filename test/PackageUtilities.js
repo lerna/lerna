@@ -174,39 +174,6 @@ describe("PackageUtilities", () => {
     });
   });
 
-  describe(".filterPackagesThatAreNotUpdated()", () => {
-    it("should return an empty array when there are no packages to filter", () => {
-      const packagesToFilter = [];
-      const packageUpdates = [{ package: { name: "ghi" } }, { package: { name: "xyz" } }];
-      const updatedPackages = PackageUtilities.filterPackagesThatAreNotUpdated(
-        packagesToFilter,
-        packageUpdates
-      );
-      expect(updatedPackages).toHaveLength(0);
-    });
-
-    it("should return an empty array when there are no packages that have been updated", () => {
-      const packagesToFilter = [{ name: "abc" }, { name: "def" }, { name: "ghi" }, { name: "jkl" }];
-      const packageUpdates = [];
-      const updatedPackages = PackageUtilities.filterPackagesThatAreNotUpdated(
-        packagesToFilter,
-        packageUpdates
-      );
-      expect(updatedPackages).toHaveLength(0);
-    });
-
-    it("should return only packages that are to be filtered and have been updated", () => {
-      const packagesToFilter = [{ name: "abc" }, { name: "def" }, { name: "ghi" }, { name: "jkl" }];
-      const packageUpdates = [{ package: { name: "ghi" } }, { package: { name: "xyz" } }];
-      const updatedPackages = PackageUtilities.filterPackagesThatAreNotUpdated(
-        packagesToFilter,
-        packageUpdates
-      );
-      expect(updatedPackages).toHaveLength(1);
-      expect(updatedPackages).toEqual([{ name: "ghi" }]);
-    });
-  });
-
   describe(".validatePackageNames()", () => {
     it("should log a warning if multiple packages have the same name", () => {
       const logMessages = [];

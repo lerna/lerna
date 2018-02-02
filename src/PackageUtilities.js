@@ -160,12 +160,6 @@ function filterPackages(packagesToFilter, { scope, ignore }) {
   return packages;
 }
 
-function filterPackagesThatAreNotUpdated(packagesToFilter, packageUpdates) {
-  return packageUpdates
-    .map(update => update.package)
-    .filter(pkg => packagesToFilter.some(p => p.name === pkg.name));
-}
-
 function validatePackageNames(packages) {
   const existingPackageNames = {};
 
@@ -401,7 +395,6 @@ exports.getPackages = getPackages;
 exports.getPackageGraph = getPackageGraph;
 exports.addDependencies = addDependencies;
 exports.filterPackages = filterPackages;
-exports.filterPackagesThatAreNotUpdated = filterPackagesThatAreNotUpdated;
 exports.validatePackageNames = validatePackageNames;
 exports.topologicallyBatchPackages = topologicallyBatchPackages;
 exports.runParallelBatches = runParallelBatches;
