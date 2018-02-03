@@ -18,7 +18,6 @@ jest.mock("../src/NpmUtilities");
 log.level = "silent";
 
 describe("Package", () => {
-  /* eslint no-underscore-dangle: ["error", { "allow": ["_package"] }] */
   let pkg;
 
   beforeEach(() => {
@@ -55,7 +54,7 @@ describe("Package", () => {
   });
 
   describe("set .version", () => {
-    it("should return the version", () => {
+    it("should set the version", () => {
       pkg.version = "2.0.0";
       expect(pkg.version).toBe("2.0.0");
     });
@@ -118,24 +117,24 @@ describe("Package", () => {
       pkg.versionSerializer = mockSerializer;
 
       expect(mockSerializer.deserialize).toBeCalled();
-      expect(mockSerializer.deserialize).toBeCalledWith(pkg._package);
+      expect(mockSerializer.deserialize).toBeCalledWith(pkg.json);
       expect(mockSerializer.serialize).not.toBeCalled();
     });
   });
 
   describe(".toJSON()", () => {
     it("should return clone of internal package for serialization", () => {
-      expect(pkg.toJSON()).not.toBe(pkg._package);
-      expect(pkg.toJSON()).toEqual(pkg._package);
+      expect(pkg.toJSON()).not.toBe(pkg.json);
+      expect(pkg.toJSON()).toEqual(pkg.json);
 
       const implicit = JSON.stringify(pkg, null, 2);
-      const explicit = JSON.stringify(pkg._package, null, 2);
+      const explicit = JSON.stringify(pkg.json, null, 2);
 
       expect(implicit).toBe(explicit);
     });
 
     it("should not change internal package with versionSerializer", () => {
-      pkg._package.state = "serialized";
+      pkg.json.state = "serialized";
 
       const mockSerializer = {
         serialize: jest.fn(obj => {
@@ -148,15 +147,15 @@ describe("Package", () => {
         }),
       };
 
-      const serializedPkg = Object.assign({}, pkg._package, { state: "serialized" });
-      const deserializedPkg = Object.assign({}, pkg._package, { state: "deserialized" });
+      const serializedPkg = Object.assign({}, pkg.json, { state: "serialized" });
+      const deserializedPkg = Object.assign({}, pkg.json, { state: "deserialized" });
 
       pkg.versionSerializer = mockSerializer;
       expect(mockSerializer.deserialize).toBeCalled();
-      expect(pkg._package).toEqual(deserializedPkg);
+      expect(pkg.json).toEqual(deserializedPkg);
 
       const serializedResult = pkg.toJSON();
-      expect(pkg._package).toEqual(deserializedPkg);
+      expect(pkg.json).toEqual(deserializedPkg);
       expect(serializedResult).toEqual(serializedPkg);
 
       expect(mockSerializer.serialize).toBeCalled();
@@ -170,11 +169,11 @@ describe("Package", () => {
 
       pkg.versionSerializer = mockSerializer;
 
-      expect(pkg.toJSON()).toEqual(pkg._package);
+      expect(pkg.toJSON()).toEqual(pkg.json);
 
       expect(mockSerializer.deserialize).toBeCalled();
       expect(mockSerializer.serialize).toBeCalled();
-      expect(mockSerializer.serialize).toBeCalledWith(pkg._package);
+      expect(mockSerializer.serialize).toBeCalledWith(pkg.json);
     });
   });
 

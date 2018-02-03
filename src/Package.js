@@ -10,78 +10,91 @@ const dependencyIsSatisfied = require("./utils/dependencyIsSatisfied");
 const NpmUtilities = require("./NpmUtilities");
 
 class Package {
-  constructor(pkg, location) {
-    this._package = pkg;
-    this._location = location;
-  }
+  constructor(json, location) {
+    let pkg = json;
+    // TODO: less mutation by reference
 
-  get name() {
-    return this._package.name;
-  }
-
-  get location() {
-    return this._location;
-  }
-
-  get manifestLocation() {
-    return path.join(this._location, "package.json");
-  }
-
-  get nodeModulesLocation() {
-    return path.join(this._location, "node_modules");
-  }
-
-  get binLocation() {
-    return path.join(this.nodeModulesLocation, ".bin");
-  }
-
-  get version() {
-    return this._package.version;
-  }
-
-  set version(version) {
-    this._package.version = version;
-  }
-
-  get bin() {
-    return this._package.bin;
-  }
-
-  get dependencies() {
-    return this._package.dependencies;
-  }
-
-  get devDependencies() {
-    return this._package.devDependencies;
-  }
-
-  get peerDependencies() {
-    return this._package.peerDependencies;
-  }
-
-  get allDependencies() {
-    return Object.assign({}, this.devDependencies, this.dependencies);
-  }
-
-  get scripts() {
-    return this._package.scripts || {};
-  }
-
-  set versionSerializer(versionSerializer) {
-    this._versionSerializer = versionSerializer;
-
-    if (versionSerializer) {
-      this._package = versionSerializer.deserialize(this._package);
-    }
+    Object.defineProperties(this, {
+      // read-only
+      name: {
+        enumerable: true,
+        value: pkg.name,
+      },
+      location: {
+        value: location,
+      },
+      // mutable
+      version: {
+        get() {
+          return pkg.version;
+        },
+        set(version) {
+          pkg.version = version;
+        },
+      },
+      // collections
+      dependencies: {
+        get() {
+          return pkg.dependencies;
+        },
+      },
+      devDependencies: {
+        get() {
+          return pkg.devDependencies;
+        },
+      },
+      peerDependencies: {
+        get() {
+          return pkg.peerDependencies;
+        },
+      },
+      allDependencies: {
+        get() {
+          return Object.assign({}, pkg.devDependencies, pkg.dependencies);
+        },
+      },
+      // immutable
+      bin: {
+        value: pkg.bin,
+      },
+      scripts: {
+        value: pkg.scripts || {},
+      },
+      manifestLocation: {
+        value: path.join(location, "package.json"),
+      },
+      nodeModulesLocation: {
+        value: path.join(location, "node_modules"),
+      },
+      binLocation: {
+        value: path.join(location, "node_modules", ".bin"),
+      },
+      // side-effects
+      versionSerializer: {
+        set(impl) {
+          this.serialize = impl.serialize;
+          pkg = impl.deserialize(pkg);
+        },
+      },
+      serialize: {
+        value: K => K,
+        writable: true,
+      },
+      // "private"
+      json: {
+        get() {
+          return pkg;
+        },
+      },
+    });
   }
 
   isPrivate() {
-    return !!this._package.private;
+    return !!this.json.private;
   }
 
   toJSON() {
-    const pkg = _.cloneDeep(this._package);
-    return this._versionSerializer ? this._versionSerializer.serialize(pkg) : pkg;
+    return this.serialize(_.cloneDeep(this.json));
   }
 
   /**
