@@ -267,7 +267,7 @@ function symlinkPackages(packages, packageGraph, logger, forceLocal, callback) {
 
       return (
         match &&
-        FileSystemUtilities.existsSync(path.join(match.package.location, "package.json")) &&
+        FileSystemUtilities.existsSync(match.pkg.manifestLocation) &&
         (forceLocal || iteratedPackage.hasMatchingDependency(match.package))
       );
     });
