@@ -44,7 +44,7 @@ class LsCommand extends Command {
     const formattedPackages = this.filteredPackages.map(pkg => ({
       name: pkg.name,
       version: pkg.version,
-      private: pkg.isPrivate(),
+      private: pkg.private,
     }));
 
     if (this.options.json) {

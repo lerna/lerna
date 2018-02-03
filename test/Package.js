@@ -101,9 +101,9 @@ describe("Package", () => {
     });
   });
 
-  describe(".isPrivate()", () => {
-    it("should return if the package is private", () => {
-      expect(pkg.isPrivate()).toBe(false);
+  describe("get .private", () => {
+    it("should indicate if the package is private", () => {
+      expect(pkg.private).toBe(false);
     });
   });
 

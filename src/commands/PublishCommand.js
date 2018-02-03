@@ -220,7 +220,7 @@ class PublishCommand extends Command {
 
     this.updates = new UpdatedPackagesCollector(this).getUpdates();
 
-    this.packagesToPublish = this.updates.map(update => update.package).filter(pkg => !pkg.isPrivate());
+    this.packagesToPublish = this.updates.map(update => update.package).filter(pkg => !pkg.private);
 
     this.packagesToPublishCount = this.packagesToPublish.length;
     try {
@@ -527,7 +527,7 @@ class PublishCommand extends Command {
     const changes = this.updates.map(update => {
       const pkg = update.package;
       let line = ` - ${pkg.name}: ${pkg.version} => ${this.updatesVersions[pkg.name]}`;
-      if (pkg.isPrivate()) {
+      if (pkg.private) {
         line += ` (${chalk.red("private")})`;
       }
       return line;

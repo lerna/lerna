@@ -55,7 +55,7 @@ class UpdatedCommand extends Command {
     const updatedPackages = this.updates.map(update => update.package).map(pkg => ({
       name: pkg.name,
       version: pkg.version,
-      private: pkg.isPrivate(),
+      private: pkg.private,
     }));
 
     this.logger.info("result");

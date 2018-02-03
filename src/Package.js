@@ -23,6 +23,9 @@ class Package {
       location: {
         value: location,
       },
+      private: {
+        value: Boolean(pkg.private),
+      },
       // mutable
       version: {
         get() {
@@ -87,10 +90,6 @@ class Package {
         },
       },
     });
-  }
-
-  isPrivate() {
-    return !!this.json.private;
   }
 
   toJSON() {
