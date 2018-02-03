@@ -364,15 +364,7 @@ class PublishCommand extends Command {
     if (conventionalCommits) {
       if (independentVersions) {
         // Independent Conventional-Commits Mode
-        const versions = {};
-
-        this.recommendVersions(
-          this.updates,
-          ConventionalCommitUtilities.recommendIndependentVersion,
-          versionBump => {
-            versions[versionBump.pkg.name] = versionBump.recommendedVersion;
-          }
-        );
+        const versions = this.recommendVersions("independent");
 
         return callback(null, { versions });
       }
@@ -392,10 +384,11 @@ class PublishCommand extends Command {
       });
 
       let version = "0.0.0";
+      const bumps = this.recommendVersions("fixed");
 
-      this.recommendVersions(this.updates, ConventionalCommitUtilities.recommendFixedVersion, versionBump => {
-        if (semver.gt(versionBump.recommendedVersion, version)) {
-          version = versionBump.recommendedVersion;
+      Object.keys(bumps).forEach(name => {
+        if (semver.gt(bumps[name], version)) {
+          version = bumps[name];
         }
       });
 
@@ -434,17 +427,14 @@ class PublishCommand extends Command {
     }
   }
 
-  recommendVersions(updates, recommendVersionFn, callback) {
-    updates.forEach(update => {
-      const pkg = {
-        name: update.package.name,
-        version: update.package.version,
-        location: update.package.location,
-      };
+  recommendVersions(type) {
+    return this.updates.reduce((obj, update) => {
+      const pkg = update.package;
+      const version = ConventionalCommitUtilities.recommendVersion(pkg, type, this.changelogOpts);
 
-      const recommendedVersion = recommendVersionFn(pkg, this.changelogOpts);
-      callback({ pkg, recommendedVersion });
-    });
+      obj[pkg.name] = version;
+      return obj;
+    }, {});
   }
 
   getCanaryVersion(version, _preid) {
@@ -608,13 +598,10 @@ class PublishCommand extends Command {
       // we can now generate the Changelog, based on the
       // the updated version that we're about to release.
       if (conventionalCommits) {
-        if (independentVersions) {
-          ConventionalCommitUtilities.updateIndependentChangelog(pkg, this.changelogOpts);
-        } else {
-          ConventionalCommitUtilities.updateFixedChangelog(pkg, this.changelogOpts);
-        }
+        const type = independentVersions ? "independent" : "fixed";
+        const changelogLocation = ConventionalCommitUtilities.updateChangelog(pkg, type, this.changelogOpts);
 
-        changedFiles.push(ConventionalCommitUtilities.changelogLocation(pkg));
+        changedFiles.push(changelogLocation);
       }
 
       // push to be git committed
@@ -623,20 +610,16 @@ class PublishCommand extends Command {
 
     if (conventionalCommits && !independentVersions) {
       const rootPkg = this.repository.packageJson;
-
-      ConventionalCommitUtilities.updateFixedRootChangelog(
+      const changelogLocation = ConventionalCommitUtilities.updateChangelog(
         {
           name: rootPkg && rootPkg.name ? rootPkg.name : "root",
           location: this.repository.rootPath,
         },
+        "root",
         this.changelogOpts
       );
 
-      changedFiles.push(
-        ConventionalCommitUtilities.changelogLocation({
-          location: this.repository.rootPath,
-        })
-      );
+      changedFiles.push(changelogLocation);
     }
 
     // exec version lifecycle in root (after all updates)

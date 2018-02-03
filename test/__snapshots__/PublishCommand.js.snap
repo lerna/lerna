@@ -27,7 +27,7 @@ Array [
 ]
 `;
 
-exports[`PublishCommand --conventional-commits fixed mode should use conventional-commits utility to guess version bump and generate CHANGELOG: git commit message 1`] = `"v5.1.1"`;
+exports[`PublishCommand --conventional-commits fixed mode should use conventional-commits utility to guess version bump and generate CHANGELOG: git commit message 1`] = `"v2.0.0"`;
 
 exports[`PublishCommand --conventional-commits independent mode should use conventional-commits utility to guess version bump and generate CHANGELOG: git added files 1`] = `
 Array [
@@ -48,10 +48,10 @@ exports[`PublishCommand --conventional-commits independent mode should use conve
 "Publish
 
  - package-1@1.0.1
- - package-2@1.1.0
- - package-3@2.0.0
- - package-4@1.1.0
- - package-5@5.1.1"
+ - package-2@2.1.0
+ - package-3@4.0.0
+ - package-4@4.1.0
+ - package-5@5.0.1"
 `;
 
 exports[`PublishCommand indepdendent mode with --cd-version should bump to prerelease versions with --cd-version prerelease (no --preid): updated packages 1`] = `

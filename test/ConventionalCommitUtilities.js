@@ -2,6 +2,7 @@
 
 const dedent = require("dedent");
 const path = require("path");
+const Package = require("../src/Package");
 
 // mocked modules
 const ChildProcessUtilities = require("../src/ChildProcessUtilities");
@@ -17,74 +18,68 @@ describe("ConventionalCommitUtilities", () => {
   afterEach(() => jest.resetAllMocks());
 
   describe(".recommendVersion()", () => {
-    it("should invoke conventional-changelog-recommended bump to fetch next version", () => {
-      ChildProcessUtilities.execSync = jest.fn(() => "major");
+    it("invokes conventional-changelog-recommended bump to fetch next version", () => {
+      ChildProcessUtilities.execSync.mockReturnValueOnce("major");
 
-      const opts = { cwd: "test" };
-
-      const args = [
-        require.resolve("conventional-recommended-bump/cli"),
-        "-l",
-        "bar",
-        "--commit-path",
-        "/foo/bar",
-        "-p",
-        "angular",
-      ];
-
-      const recommendVersion = ConventionalCommitUtilities.recommendVersion(
-        {
-          name: "bar",
-          version: "1.0.0",
-          location: "/foo/bar",
-        },
-        opts,
-        "",
-        args
+      const bumpedVersion = ConventionalCommitUtilities.recommendVersion(
+        new Package({ name: "bar", version: "1.0.0" }, "/foo/bar"),
+        "fixed",
+        { cwd: "test-fixed-bump" }
       );
 
-      expect(recommendVersion).toBe("2.0.0");
-      expect(ChildProcessUtilities.execSync).lastCalledWith(process.execPath, args, opts);
+      expect(bumpedVersion).toBe("2.0.0");
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        process.execPath,
+        [require.resolve("conventional-recommended-bump/cli"), "-p", "angular", "--commit-path", "/foo/bar"],
+        { cwd: "test-fixed-bump" }
+      );
+    });
+
+    it("passes package-specific arguments in independent mode", () => {
+      ChildProcessUtilities.execSync.mockReturnValueOnce("minor");
+
+      const bumpedVersion = ConventionalCommitUtilities.recommendVersion(
+        new Package({ name: "bar", version: "1.0.0" }, "/foo/bar"),
+        "independent",
+        { cwd: "test-independent-bump" }
+      );
+
+      expect(bumpedVersion).toBe("1.1.0");
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        process.execPath,
+        [
+          require.resolve("conventional-recommended-bump/cli"),
+          "-p",
+          "angular",
+          "--commit-path",
+          "/foo/bar",
+          "-l",
+          "bar",
+        ],
+        { cwd: "test-independent-bump" }
+      );
     });
   });
 
   describe(".updateChangelog()", () => {
-    it("should populate initial CHANGELOG.md if it does not exist", () => {
-      FileSystemUtilities.existsSync = jest.fn(() => false);
-      ChildProcessUtilities.execSync = jest.fn(
-        () => dedent`<a name="1.0.0"></a>
+    beforeEach(() => {
+      ChildProcessUtilities.execSync.mockReturnValue(
+        dedent`<a name="1.0.0"></a>
 
           ### Features
 
           * feat: I should be placed in the CHANGELOG`
       );
+    });
 
-      const opts = { cwd: "test" };
-
-      const args = [
-        require.resolve("conventional-changelog-cli/cli"),
-        "-l",
-        "bar",
-        "--commit-path",
-        "/foo/bar",
-        "--pkg",
-        path.normalize("/foo/bar/package.json"),
-        "-p",
-        "angular",
-      ];
-
-      ConventionalCommitUtilities.updateChangelog(
-        {
-          name: "bar",
-          location: "/foo/bar",
-        },
-        opts,
-        "",
-        args
-      );
+    it("populates initial CHANGELOG.md if it does not exist", () => {
+      expect(
+        ConventionalCommitUtilities.updateChangelog(
+          new Package({ name: "bar", version: "1.0.0" }, "/foo/bar")
+        )
+      ).toBe(path.normalize("/foo/bar/CHANGELOG.md"));
 
       expect(FileSystemUtilities.existsSync).lastCalledWith(path.normalize("/foo/bar/CHANGELOG.md"));
-      expect(ChildProcessUtilities.execSync).lastCalledWith(process.execPath, args, opts);
       expect(FileSystemUtilities.writeFileSync).lastCalledWith(
         path.normalize("/foo/bar/CHANGELOG.md"),
         dedent`
@@ -101,10 +96,10 @@ describe("ConventionalCommitUtilities", () => {
       );
     });
 
-    it("should insert into existing CHANGELOG.md", () => {
-      FileSystemUtilities.existsSync = jest.fn(() => true);
-      ChildProcessUtilities.execSync = jest.fn(
-        () => dedent`<a name='change2' /></a>
+    it("appends to existing CHANGELOG.md", () => {
+      FileSystemUtilities.existsSync.mockReturnValueOnce(true);
+      ChildProcessUtilities.execSync.mockReturnValueOnce(
+        dedent`<a name='change2' /></a>
           ## 1.0.1 (2017-08-11)(/compare/v1.0.1...v1.0.0) (2017-08-09)
 
 
@@ -113,8 +108,8 @@ describe("ConventionalCommitUtilities", () => {
           * fix: a second commit for our CHANGELOG`
       );
 
-      FileSystemUtilities.readFileSync = jest.fn(
-        () => dedent`
+      FileSystemUtilities.readFileSync.mockReturnValueOnce(
+        dedent`
           # Change Log
 
           All notable changes to this project will be documented in this file.
@@ -128,10 +123,7 @@ describe("ConventionalCommitUtilities", () => {
         `
       );
 
-      ConventionalCommitUtilities.updateChangelog({
-        name: "bar",
-        location: "/foo/bar/",
-      });
+      ConventionalCommitUtilities.updateChangelog(new Package({ name: "bar", version: "1.0.0" }, "/foo/bar"));
 
       expect(FileSystemUtilities.writeFileSync).lastCalledWith(
         path.normalize("/foo/bar/CHANGELOG.md"),
@@ -158,14 +150,14 @@ describe("ConventionalCommitUtilities", () => {
       );
     });
 
-    it("should insert version bump message if no commits have been recorded", () => {
-      FileSystemUtilities.existsSync = jest.fn(() => true);
-      ChildProcessUtilities.execSync = jest.fn(
-        () => dedent`<a name="1.0.1"></a>
+    it("appends version bump message if no commits have been recorded", () => {
+      FileSystemUtilities.existsSync.mockReturnValueOnce(true);
+      ChildProcessUtilities.execSync.mockReturnValueOnce(
+        dedent`<a name="1.0.1"></a>
           ## 1.0.1 (2017-08-11)(/compare/v1.0.1...v1.0.0) (2017-08-09)`
       );
-      FileSystemUtilities.readFileSync = jest.fn(
-        () => dedent`
+      FileSystemUtilities.readFileSync.mockReturnValueOnce(
+        dedent`
           # Change Log
 
           All notable changes to this project will be documented in this file.
@@ -179,10 +171,7 @@ describe("ConventionalCommitUtilities", () => {
         `
       );
 
-      ConventionalCommitUtilities.updateChangelog({
-        name: "bar",
-        location: "/foo/bar/",
-      });
+      ConventionalCommitUtilities.updateChangelog(new Package({ name: "bar", version: "1.0.0" }, "/foo/bar"));
 
       expect(FileSystemUtilities.writeFileSync).lastCalledWith(
         path.normalize("/foo/bar/CHANGELOG.md"),
@@ -206,93 +195,68 @@ describe("ConventionalCommitUtilities", () => {
       );
     });
 
-    it("should pass package-specific arguments in independent mode", () => {
-      ConventionalCommitUtilities.updateChangelog = jest.fn();
+    it("passes package-specific arguments in independent mode", () => {
+      const pkg = new Package({ name: "bar", version: "1.0.0" }, "/foo/bar");
 
-      ConventionalCommitUtilities.updateIndependentChangelog(
-        {
-          name: "bar",
-          location: "/foo/bar",
-        },
-        null
-      );
+      ConventionalCommitUtilities.updateChangelog(pkg, "independent", { cwd: "test-independent" });
 
-      expect(ConventionalCommitUtilities.updateChangelog).toBeCalledWith(
-        {
-          name: "bar",
-          location: "/foo/bar",
-        },
-        null,
-        "updateIndependentChangelog",
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        process.execPath,
         [
           require.resolve("conventional-changelog-cli/cli"),
+          "-p",
+          "angular",
+          "--commit-path",
+          pkg.location,
+          "--pkg",
+          pkg.manifestLocation,
           "-l",
-          "bar",
-          "--commit-path",
-          "/foo/bar",
-          "--pkg",
-          path.normalize("/foo/bar/package.json"),
-          "-p",
-          "angular",
-        ]
+          pkg.name,
+        ],
+        { cwd: "test-independent" }
       );
     });
 
-    it("should pass package-specific arguments in fixed mode", () => {
-      ConventionalCommitUtilities.updateChangelog = jest.fn();
+    it("passes package-specific arguments in fixed mode", () => {
+      const pkg = new Package({ name: "bar", version: "1.0.0" }, "/foo/bar");
 
-      ConventionalCommitUtilities.updateFixedChangelog(
-        {
-          name: "bar",
-          location: "/foo/bar",
-        },
-        null
-      );
+      ConventionalCommitUtilities.updateChangelog(pkg, "fixed", { cwd: "test-fixed" });
 
-      expect(ConventionalCommitUtilities.updateChangelog).toBeCalledWith(
-        {
-          name: "bar",
-          location: "/foo/bar",
-        },
-        null,
-        "updateFixedChangelog",
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        process.execPath,
         [
           require.resolve("conventional-changelog-cli/cli"),
-          "--commit-path",
-          "/foo/bar",
-          "--pkg",
-          path.normalize("/foo/bar/package.json"),
           "-p",
           "angular",
-        ]
+          "--commit-path",
+          pkg.location,
+          "--pkg",
+          pkg.manifestLocation,
+        ],
+        { cwd: "test-fixed" }
       );
     });
 
-    it("should pass custom context in fixed root mode", () => {
-      ConventionalCommitUtilities.updateChangelog = jest.fn();
-
-      ConventionalCommitUtilities.updateFixedRootChangelog(
+    it("passes custom context in fixed root mode", () => {
+      ConventionalCommitUtilities.updateChangelog(
         {
           name: "bar",
           location: "/foo/bar",
         },
-        null
+        "root",
+        { cwd: "test-fixed-root" }
       );
 
-      expect(ConventionalCommitUtilities.updateChangelog).toBeCalledWith(
-        {
-          name: "bar",
-          location: "/foo/bar",
-        },
-        null,
-        "updateFixedRootChangelog",
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        process.execPath,
         [
           require.resolve("conventional-changelog-cli/cli"),
           "-p",
           "angular",
           "--context",
           path.resolve(__dirname, "..", "src", "ConventionalChangelogContext.js"),
-        ]
+        ],
+        { cwd: "test-fixed-root" }
       );
     });
   });

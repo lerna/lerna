@@ -19,22 +19,24 @@ const CHANGELOG_HEADER = dedent(`# Change Log
 const RECOMMEND_CLI = require.resolve("conventional-recommended-bump/cli");
 const CHANGELOG_CLI = require.resolve("conventional-changelog-cli/cli");
 
-function recommendIndependentVersion(pkg, opts) {
-  // `-p` here is overridden because `conventional-recommended-bump`
-  // cannot accept custom preset.
-  const args = [RECOMMEND_CLI, "-l", pkg.name, "--commit-path", pkg.location, "-p", "angular"];
-  return exports.recommendVersion(pkg, opts, "recommendIndependentVersion", args);
+function getChangelogLocation(pkg) {
+  return path.join(pkg.location, CHANGELOG_NAME);
 }
 
-function recommendFixedVersion(pkg, opts) {
-  // `-p` here is overridden because `conventional-recommended-bump`
-  // cannot accept custom preset.
-  const args = [RECOMMEND_CLI, "--commit-path", pkg.location, "-p", "angular"];
-  return exports.recommendVersion(pkg, opts, "recommendFixedVersion", args);
+function getChangelogPreset(opts) {
+  return opts && opts.changelogPreset ? opts.changelogPreset : "angular";
 }
 
-function recommendVersion(pkg, opts, type, args) {
+function recommendVersion(pkg, type, opts) {
   log.silly(type, "for %s at %s", pkg.name, pkg.location);
+
+  // `-p` here is overridden because `conventional-recommended-bump`
+  // cannot accept custom preset.
+  const args = [RECOMMEND_CLI, "-p", "angular", "--commit-path", pkg.location];
+
+  if (type === "independent") {
+    args.push("-l", pkg.name);
+  }
 
   const recommendedBump = ChildProcessUtilities.execSync(process.execPath, args, opts);
 
@@ -42,55 +44,21 @@ function recommendVersion(pkg, opts, type, args) {
   return semver.inc(pkg.version, recommendedBump);
 }
 
-function updateIndependentChangelog(pkg, opts) {
-  const pkgJsonLocation = path.join(pkg.location, "package.json");
-  const args = [
-    CHANGELOG_CLI,
-    "-l",
-    pkg.name,
-    "--commit-path",
-    pkg.location,
-    "--pkg",
-    pkgJsonLocation,
-    "-p",
-    exports.changelogPreset(opts),
-  ];
-  exports.updateChangelog(pkg, opts, "updateIndependentChangelog", args);
-}
-
-function updateFixedChangelog(pkg, opts) {
-  const pkgJsonLocation = path.join(pkg.location, "package.json");
-  const args = [
-    CHANGELOG_CLI,
-    "--commit-path",
-    pkg.location,
-    "--pkg",
-    pkgJsonLocation,
-    "-p",
-    exports.changelogPreset(opts),
-  ];
-  exports.updateChangelog(pkg, opts, "updateFixedChangelog", args);
-}
-
-function updateFixedRootChangelog(pkg, opts) {
-  const args = [
-    CHANGELOG_CLI,
-    "-p",
-    exports.changelogPreset(opts),
-    "--context",
-    path.resolve(__dirname, "ConventionalChangelogContext.js"),
-  ];
-  exports.updateChangelog(pkg, opts, "updateFixedRootChangelog", args);
-}
-
-function updateChangelog(pkg, opts, type, args) {
+function updateChangelog(pkg, type, opts) {
   log.silly(type, "for %s at %s", pkg.name, pkg.location);
 
-  const changelogFileLoc = exports.changelogLocation(pkg);
+  const changelogFileLoc = getChangelogLocation(pkg);
+  const args = [CHANGELOG_CLI, "-p", getChangelogPreset(opts)];
 
-  let changelogContents = "";
-  if (FileSystemUtilities.existsSync(changelogFileLoc)) {
-    changelogContents = FileSystemUtilities.readFileSync(changelogFileLoc);
+  if (type === "root") {
+    args.push("--context", path.resolve(__dirname, "ConventionalChangelogContext.js"));
+  } else {
+    // "fixed" & "independent" both need --commit-path and --pkg
+    args.push("--commit-path", pkg.location, "--pkg", pkg.manifestLocation);
+
+    if (type === "independent") {
+      args.push("-l", pkg.name);
+    }
   }
 
   // run conventional-changelog-cli to generate the markdown for the upcoming release.
@@ -109,6 +77,11 @@ function updateChangelog(pkg, opts, type, args) {
   }
 
   log.silly(type, "writing new entry: %j", newEntry);
+
+  let changelogContents = "";
+  if (FileSystemUtilities.existsSync(changelogFileLoc)) {
+    changelogContents = FileSystemUtilities.readFileSync(changelogFileLoc);
+  }
 
   // CHANGELOG entries start with <a name=, we remove
   // the header if it exists by starting at the first entry.
@@ -129,22 +102,8 @@ function updateChangelog(pkg, opts, type, args) {
   );
 
   log.verbose(type, "wrote", changelogFileLoc);
+  return changelogFileLoc;
 }
 
-function changelogLocation(pkg) {
-  return path.join(pkg.location, CHANGELOG_NAME);
-}
-
-function changelogPreset(opts) {
-  return opts && opts.changelogPreset ? opts.changelogPreset : "angular";
-}
-
-exports.recommendIndependentVersion = recommendIndependentVersion;
-exports.recommendFixedVersion = recommendFixedVersion;
 exports.recommendVersion = recommendVersion;
-exports.updateIndependentChangelog = updateIndependentChangelog;
-exports.updateFixedChangelog = updateFixedChangelog;
-exports.updateFixedRootChangelog = updateFixedRootChangelog;
 exports.updateChangelog = updateChangelog;
-exports.changelogLocation = changelogLocation;
-exports.changelogPreset = changelogPreset;
