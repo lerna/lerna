@@ -1,7 +1,8 @@
 # Guides
 
 ## Jest / Visual Studio Code Debugging
-It is possible to debug [Jest](https://facebook.github.io/jest/) tests in a Lerna manage package using [Visual Studio Code](https://code.visualstudio.com/). Debugging with breakpoints works with the vscode launch configuration below in the monorepo's <root>/.vscode/launch.json file. It launches Jest for a single package, my-package, managed in the monorepo.
+
+It is possible to debug [Jest](https://facebook.github.io/jest/) tests in a Lerna-managed package using [Visual Studio Code](https://code.visualstudio.com/). Debugging with breakpoints works with the vscode launch configuration below in the monorepo's `<root>/.vscode/launch.json` file. This example launches Jest for a single package `my-package` located in the monorepo.
 
 ```javascript
 {
@@ -20,10 +21,14 @@ It is possible to debug [Jest](https://facebook.github.io/jest/) tests in a Lern
     ],
     "args": [
         "${workspaceRoot}/node_modules/jest/bin/jest.js",
-        "--runInBand", // https://facebook.github.io/jest/docs/en/cli.html#runinband - don't parallelize
-        "--no-cache", // https://facebook.github.io/jest/docs/en/cli.html#cache - just avoid caching issues
-        "path/to/my-package" // from monorepo root
+        "--runInBand",
+        "--no-cache",
+        "packages/my-package"
     ]
 }
 ```
-Tested with Vsiaul Studio Code version 1.19.3 and Jest version 22.1.4.
+
+* [`--runInBand`](https://facebook.github.io/jest/docs/en/cli.html#runinband) avoids parallelizing tests across multiple processes
+* [`--no-cache`](https://facebook.github.io/jest/docs/en/cli.html#cache) helps avoid caching issues
+
+Tested with Visual Studio Code v1.19.3 and Jest v22.1.4.
