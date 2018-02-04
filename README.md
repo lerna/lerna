@@ -423,6 +423,14 @@ $ lerna publish --cd-version (major | minor | patch | premajor | preminor | prep
 When run with this flag, `publish` will skip the version selection prompt (in independent mode) and use the next specified semantic version.
 You must still use the `--yes` flag to avoid all prompts. This is useful when build systems need to publish without command prompts. Works in both normal and independent modes.
 
+Also you can put a specific version for each component:
+```sh
+$ lerna publish --cd-version=<package name>:<cd version>,...,<default cd version>
+# For example, if you have 3 components for publishing (pack-1, pack-2, pack-3) and you want to publish pack-1 with major version and rest components with patch, use:
+# lerna publish --cd-version:pack-1:major,patch
+#
+```
+
 If you have any packages with a prerelease version number (e.g. `2.0.0-beta.3`) and you run `lerna publish` with `--cd-version` and a non-prerelease version increment (major / minor / patch), it will publish those packages in addition to the packages that have changed since the last release.
 
 #### --preid
