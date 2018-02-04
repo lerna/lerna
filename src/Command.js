@@ -240,7 +240,7 @@ export default class Command {
     if (this.requiresGit && !GitUtilities.isInitialized(this.execOpts)) {
       throw new ValidationError(
         "ENOGIT",
-        "This is not a git repository, did you already run `git init` or `lerna init`?"
+        "git binary missing, or this is not a git repository. Did you already run `git init` or `lerna init`?"
       );
     }
 
