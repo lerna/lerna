@@ -142,6 +142,12 @@ exports.builder = {
     describe: "Specify which branches to allow publishing from.",
     type: "array",
   },
+  "run-prepublish": {
+    group: "Command Options:",
+    describe: "Run prepublish script before committing and publishing.",
+    type: "boolean",
+    default: undefined,
+  },
 };
 
 class PublishCommand extends Command {
@@ -266,6 +272,12 @@ class PublishCommand extends Command {
     }
 
     this.updateUpdatedPackages();
+
+    if (this.options.runPrepublish) {
+      this.repository.package.runScriptSync("prepublish", err => {
+        this.logger.error("failed prepublish", err);
+      });
+    }
 
     if (this.gitEnabled) {
       this.commitAndTagUpdates();
