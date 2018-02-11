@@ -4,7 +4,8 @@ const async = require("async");
 
 const ChildProcessUtilities = require("../ChildProcessUtilities");
 const Command = require("../Command");
-const PackageUtilities = require("../PackageUtilities");
+const batchPackages = require("../utils/batchPackages");
+const runParallelBatches = require("../utils/runParallelBatches");
 const ValidationError = require("../utils/ValidationError");
 
 exports.handler = function handler(argv) {
@@ -78,7 +79,7 @@ class ExecCommand extends Command {
 
     try {
       this.batchedPackages = this.toposort
-        ? PackageUtilities.batchPackages(filteredPackages, {
+        ? batchPackages(filteredPackages, {
             rejectCycles: this.options.rejectCycles,
           })
         : [filteredPackages];
@@ -93,7 +94,7 @@ class ExecCommand extends Command {
     if (this.options.parallel) {
       this.runCommandInPackagesParallel(callback);
     } else {
-      PackageUtilities.runParallelBatches(
+      runParallelBatches(
         this.batchedPackages,
         pkg => done => {
           this.runCommandInPackage(pkg, done);

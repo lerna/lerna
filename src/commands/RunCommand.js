@@ -4,8 +4,9 @@ const async = require("async");
 
 const Command = require("../Command");
 const NpmUtilities = require("../NpmUtilities");
+const batchPackages = require("../utils/batchPackages");
+const runParallelBatches = require("../utils/runParallelBatches");
 const output = require("../utils/output");
-const PackageUtilities = require("../PackageUtilities");
 
 exports.handler = function handler(argv) {
   // eslint-disable-next-line no-use-before-define
@@ -88,7 +89,7 @@ class RunCommand extends Command {
 
     try {
       this.batchedPackages = this.toposort
-        ? PackageUtilities.batchPackages(this.packagesWithScript, {
+        ? batchPackages(this.packagesWithScript, {
             rejectCycles: this.options.rejectCycles,
           })
         : [this.packagesWithScript];
@@ -120,7 +121,7 @@ class RunCommand extends Command {
   }
 
   runScriptInPackagesBatched(callback) {
-    PackageUtilities.runParallelBatches(
+    runParallelBatches(
       this.batchedPackages,
       pkg => done => {
         this.runScriptInPackage(pkg, done);

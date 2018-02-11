@@ -10,7 +10,12 @@ const semver = require("semver");
 const Command = require("../Command");
 const FileSystemUtilities = require("../FileSystemUtilities");
 const NpmUtilities = require("../NpmUtilities");
-const PackageUtilities = require("../PackageUtilities");
+const batchPackages = require("../utils/batchPackages");
+const matchPackageName = require("../utils/matchPackageName");
+const runParallelBatches = require("../utils/runParallelBatches");
+const symlinkPackages = require("../utils/symlinkPackages");
+const createBinaryLink = require("../utils/createBinaryLink");
+const validatePackageNames = require("../utils/validatePackageNames");
 const ValidationError = require("../utils/ValidationError");
 
 exports.handler = function handler(argv) {
@@ -111,7 +116,7 @@ class BootstrapCommand extends Command {
 
     try {
       this.batchedPackages = this.toposort
-        ? PackageUtilities.batchPackages(this.filteredPackages, {
+        ? batchPackages(this.filteredPackages, {
             rejectCycles,
           })
         : [this.filteredPackages];
@@ -129,7 +134,7 @@ class BootstrapCommand extends Command {
         .catch(callback);
     }
 
-    PackageUtilities.validatePackageNames(this.filteredPackages);
+    validatePackageNames(this.filteredPackages);
 
     this.logger.silly("npmConfig", this.npmConfig);
     callback(null, true);
@@ -198,7 +203,7 @@ class BootstrapCommand extends Command {
     const tracker = this.logger.newItem(scriptName);
     tracker.addWork(this.filteredPackages.length);
 
-    PackageUtilities.runParallelBatches(
+    runParallelBatches(
       this.batchedPackages,
       pkg => done => {
         pkg.runScript(scriptName, err => {
@@ -381,7 +386,7 @@ class BootstrapCommand extends Command {
 
       let rootVersion;
 
-      if (hoist && PackageUtilities.isHoistedPackage(name, hoist, nohoist)) {
+      if (hoist && isHoistedPackage(name, hoist, nohoist)) {
         // Get the most common version.
         const commonVersion = Object.keys(versions).reduce((a, b) => (versions[a] > versions[b] ? a : b));
 
@@ -482,7 +487,8 @@ class BootstrapCommand extends Command {
                   async.series(
                     dependents.map(pkg => linkDone => {
                       const src = this.hoistedDirectory(name);
-                      PackageUtilities.createBinaryLink(src, pkg, linkDone);
+
+                      createBinaryLink(src, pkg, linkDone);
                     }),
                     itemDone
                   );
@@ -584,6 +590,10 @@ class BootstrapCommand extends Command {
    * @param {Function} callback
    */
   symlinkPackages(callback) {
-    PackageUtilities.symlinkPackages(this.filteredPackages, this.packageGraph, this.logger, callback);
+    symlinkPackages(this.filteredPackages, this.packageGraph, this.logger, callback);
   }
+}
+
+function isHoistedPackage(name, hoist, nohoist) {
+  return matchPackageName(name, hoist) && matchPackageName(name, nohoist, true);
 }

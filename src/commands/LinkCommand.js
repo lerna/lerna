@@ -1,7 +1,8 @@
 "use strict";
 
 const Command = require("../Command");
-const PackageUtilities = require("../PackageUtilities");
+const createPackageGraph = require("../utils/createPackageGraph");
+const symlinkPackages = require("../utils/symlinkPackages");
 
 exports.handler = function handler(argv) {
   // eslint-disable-next-line no-use-before-define
@@ -40,9 +41,9 @@ class LinkCommand extends Command {
     let graph = this.packageGraph;
 
     if (this.options.forceLocal) {
-      graph = PackageUtilities.getPackageGraph(this.packages, { forceLocal: true });
+      graph = createPackageGraph(this.packages, { forceLocal: true });
     }
 
-    PackageUtilities.symlinkPackages(this.packages, graph, this.logger, callback);
+    symlinkPackages(this.packages, graph, this.logger, callback);
   }
 }
