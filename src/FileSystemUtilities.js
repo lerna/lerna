@@ -26,6 +26,11 @@ function chmodSync(filePath, mode) {
   fs.chmodSync(filePath, mode);
 }
 
+function existsSync(filePath) {
+  log.silly("existsSync", filePath);
+  return pathExists.sync(filePath);
+}
+
 function mkdirp(filePath, callback) {
   log.silly("mkdirp", filePath);
   fs.ensureDir(filePath, callback);
@@ -41,16 +46,6 @@ function readdirSync(filePath) {
   return fs.readdirSync(filePath);
 }
 
-function existsSync(filePath) {
-  log.silly("existsSync", filePath);
-  return pathExists.sync(filePath);
-}
-
-function writeFile(filePath, fileContents, callback) {
-  log.silly("writeFile", [filePath, fileContents]);
-  fs.writeFile(filePath, ensureEndsWithNewLine(fileContents), callback);
-}
-
 function rename(from, to, callback) {
   log.silly("rename", [from, to]);
   fs.rename(from, to, callback);
@@ -59,6 +54,11 @@ function rename(from, to, callback) {
 function renameSync(from, to) {
   log.silly("renameSync", [from, to]);
   fs.renameSync(from, to);
+}
+
+function writeFile(filePath, fileContents, callback) {
+  log.silly("writeFile", [filePath, fileContents]);
+  return fs.writeFile(filePath, ensureEndsWithNewLine(fileContents), callback);
 }
 
 function writeFileSync(filePath, fileContents) {
@@ -186,13 +186,13 @@ function resolveWindowsSymlink(filePath) {
 
 exports.chmod = chmod;
 exports.chmodSync = chmodSync;
+exports.existsSync = existsSync;
 exports.mkdirp = mkdirp;
 exports.mkdirpSync = mkdirpSync;
 exports.readdirSync = readdirSync;
-exports.existsSync = existsSync;
-exports.writeFile = writeFile;
 exports.rename = rename;
 exports.renameSync = renameSync;
+exports.writeFile = writeFile;
 exports.writeFileSync = writeFileSync;
 exports.readFileSync = readFileSync;
 exports.statSync = statSync;
