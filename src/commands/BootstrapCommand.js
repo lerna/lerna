@@ -111,7 +111,7 @@ class BootstrapCommand extends Command {
 
     try {
       this.batchedPackages = this.toposort
-        ? PackageUtilities.topologicallyBatchPackages(this.filteredPackages, {
+        ? PackageUtilities.batchPackages(this.filteredPackages, {
             rejectCycles,
           })
         : [this.filteredPackages];
@@ -403,7 +403,7 @@ class BootstrapCommand extends Command {
         // binaries are linked to the packages that depend on them.
         root.push({
           name,
-          dependents: (dependents[rootVersion] || []).map(dep => this.packageGraph.get(dep).package),
+          dependents: (dependents[rootVersion] || []).map(dep => this.packageGraph.get(dep).pkg),
           dependency: `${name}@${rootVersion}`,
           isSatisfied: this.repository.hasDependencyInstalled(name, rootVersion),
         });
@@ -546,7 +546,7 @@ class BootstrapCommand extends Command {
 
     // Install anything that needs to go into the leaves.
     Object.keys(leaves)
-      .map(pkgName => ({ pkg: this.packageGraph.get(pkgName).package, deps: leaves[pkgName] }))
+      .map(pkgName => ({ pkg: this.packageGraph.get(pkgName).pkg, deps: leaves[pkgName] }))
       .forEach(({ pkg, deps }) => {
         // If we have any unsatisfied deps then we need to install everything.
         // This is important for consistent behavior across npm clients.
@@ -584,8 +584,6 @@ class BootstrapCommand extends Command {
    * @param {Function} callback
    */
   symlinkPackages(callback) {
-    const forceLocal = false;
-    const { filteredPackages, packageGraph, logger } = this;
-    PackageUtilities.symlinkPackages(filteredPackages, packageGraph, logger, forceLocal, callback);
+    PackageUtilities.symlinkPackages(this.filteredPackages, this.packageGraph, this.logger, callback);
   }
 }

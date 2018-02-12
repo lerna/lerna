@@ -5,6 +5,12 @@ const log = require("npmlog");
 const path = require("path");
 const readPkg = require("read-pkg");
 
+// make console.log() "debugging" colorful
+// require("util").inspect.defaultOptions.colors = true;
+
+// make console.log() "debugging" dig deeper
+// require("util").inspect.defaultOptions.depth = 6;
+
 // tightly-coupled modules; TODO: decouple
 const Package = require("../src/Package");
 const Repository = require("../src/Repository");
@@ -217,7 +223,7 @@ describe("PackageUtilities", () => {
     });
   });
 
-  describe(".topologicallyBatchPackages()", () => {
+  describe(".batchPackages()", () => {
     it("should batch roots, then internal/leaf nodes, then cycles", async () => {
       let logMessage = null;
       log.once("log.warn", e => {
@@ -226,13 +232,15 @@ describe("PackageUtilities", () => {
 
       const testDir = await initFixture("PackageUtilities/toposort");
       const packages = PackageUtilities.getPackages(new Repository(testDir));
-      const batchedPackages = PackageUtilities.topologicallyBatchPackages(packages);
+      const batchedPackages = PackageUtilities.batchPackages(packages);
 
-      expect(logMessage).toEqual(
-        expect.stringContaining(
-          'Packages in cycle are: "package-cycle-1", "package-cycle-2", "package-cycle-extraneous"'
-        )
+      expect(logMessage).toMatch("Dependency cycles detected, you should fix these!");
+      expect(logMessage).toMatch("package-cycle-1 -> package-cycle-2 -> package-cycle-1");
+      expect(logMessage).toMatch("package-cycle-2 -> package-cycle-1 -> package-cycle-2");
+      expect(logMessage).toMatch(
+        "package-cycle-extraneous -> package-cycle-1 -> package-cycle-2 -> package-cycle-1"
       );
+
       expect(batchedPackages.map(batch => batch.map(pkg => pkg.name))).toEqual([
         ["package-dag-1", "package-standalone"],
         ["package-dag-2a", "package-dag-2b"],
@@ -247,10 +255,10 @@ describe("PackageUtilities", () => {
       const packages = PackageUtilities.getPackages(new Repository(testDir));
 
       expect(() => {
-        PackageUtilities.topologicallyBatchPackages(packages, {
+        PackageUtilities.batchPackages(packages, {
           rejectCycles: true,
         });
-      }).toThrowError();
+      }).toThrowError("Dependency cycles detected, you should fix these!");
     });
 
     it("should not warn about cycles if one is not detected", async () => {
@@ -261,9 +269,14 @@ describe("PackageUtilities", () => {
 
       const testDir = await initFixture("PackageUtilities/basic");
       const packages = PackageUtilities.getPackages(new Repository(testDir));
-      PackageUtilities.topologicallyBatchPackages(packages);
+      const batchedPackages = PackageUtilities.batchPackages(packages);
 
       expect(warnedCycle).toBeFalsy();
+      expect(batchedPackages.map(b => b.map(p => p.name))).toEqual([
+        ["package-1", "package-4"],
+        ["package-2"],
+        ["package-3"],
+      ]);
     });
   });
 
@@ -324,13 +337,14 @@ describe("PackageUtilities", () => {
       const packagesWithDeps = PackageUtilities.addDependencies(packagesToExpand, packageGraph);
 
       // should follow all transitive deps and pass all packages except 7 with no repeats
-      expect(packagesWithDeps).toHaveLength(6);
-      expect(packagesWithDeps.some(pkg => pkg.name === "package-1")).toBe(true);
-      expect(packagesWithDeps.some(pkg => pkg.name === "package-2")).toBe(true);
-      expect(packagesWithDeps.some(pkg => pkg.name === "package-3")).toBe(true);
-      expect(packagesWithDeps.some(pkg => pkg.name === "package-4")).toBe(true);
-      expect(packagesWithDeps.some(pkg => pkg.name === "package-5")).toBe(true);
-      expect(packagesWithDeps.some(pkg => pkg.name === "package-6")).toBe(true);
+      expect(packagesWithDeps).toEqual([
+        expect.objectContaining({ name: "package-1" }),
+        expect.objectContaining({ name: "package-2" }),
+        expect.objectContaining({ name: "package-3" }),
+        expect.objectContaining({ name: "package-4" }),
+        expect.objectContaining({ name: "package-5" }),
+        expect.objectContaining({ name: "package-6" }),
+      ]);
     });
   });
 

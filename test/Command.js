@@ -232,10 +232,7 @@ describe("Command", () => {
   describe("get .packageGraph", () => {
     it("returns the graph of packages", () => {
       const { packageGraph } = testFactory();
-      expect(packageGraph).toEqual({
-        nodes: [],
-        nodesByName: {},
-      });
+      expect(packageGraph).toBeInstanceOf(Map);
     });
   });
 

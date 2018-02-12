@@ -225,10 +225,10 @@ class PublishCommand extends Command {
     this.packagesToPublishCount = this.packagesToPublish.length;
     try {
       this.batchedPackagesToPublish = this.toposort
-        ? PackageUtilities.topologicallyBatchPackages(this.packagesToPublish, {
+        ? PackageUtilities.batchPackages(this.packagesToPublish, {
             // Don't sort based on devDependencies because that would increase the chance of dependency cycles
             // causing less-than-ideal a publishing order.
-            depsOnly: true,
+            graphType: "dependencies",
             rejectCycles: this.options.rejectCycles,
           })
         : [this.packagesToPublish];
@@ -524,8 +524,7 @@ class PublishCommand extends Command {
   }
 
   confirmVersions(callback) {
-    const changes = this.updates.map(update => {
-      const pkg = update.package;
+    const changes = this.updates.map(({ package: pkg }) => {
       let line = ` - ${pkg.name}: ${pkg.version} => ${this.updatesVersions[pkg.name]}`;
       if (pkg.private) {
         line += ` (${chalk.red("private")})`;
@@ -637,7 +636,7 @@ class PublishCommand extends Command {
       return;
     }
 
-    this.packageGraph.get(pkg.name).dependencies.forEach(depName => {
+    this.packageGraph.get(pkg.name).localDependencies.forEach((depNode, depName) => {
       const version = this.updatesVersions[depName];
 
       if (deps[depName] && version) {
@@ -654,8 +653,8 @@ class PublishCommand extends Command {
     }
 
     // run the postversion script for each update
-    this.updates.forEach(update => {
-      this.runSyncScriptInPackage(update.package, "postversion");
+    this.updates.forEach(({ package: pkg }) => {
+      this.runSyncScriptInPackage(pkg, "postversion");
     });
 
     // run postversion, if set in the root directory
@@ -703,9 +702,7 @@ class PublishCommand extends Command {
     // therefore no updates will be needed
     const tag = this.options.tempTag ? "lerna-temp" : this.getDistTag();
 
-    this.updates.forEach(update => {
-      this.execScript(update.package, "prepublish");
-    });
+    this.updates.forEach(({ package: pkg }) => this.execScript(pkg, "prepublish"));
 
     tracker.addWork(this.packagesToPublishCount);
 

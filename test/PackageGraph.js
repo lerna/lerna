@@ -10,65 +10,91 @@ const PackageGraph = require("../src/PackageGraph");
 log.level = "silent";
 
 describe("PackageGraph", () => {
-  function createPackages(version, dependencyVersion = version) {
-    return [
-      new Package(
-        {
-          name: "my-package-1",
-          version,
-          bin: "bin.js",
-          scripts: { "my-script": "echo 'hello world'" },
-          dependencies: { "my-dependency": "^1.0.0" },
-          devDependencies: { "my-dev-dependency": "^1.0.0" },
-        },
-        "/path/to/package1"
-      ),
-      new Package(
-        {
-          name: "my-package-2",
-          version,
-          bin: "bin.js",
-          scripts: { "my-script": "echo 'hello world'" },
-          dependencies: { "my-dependency": "^1.0.0" },
-          devDependencies: { "my-package-1": dependencyVersion },
-          peerDependencies: { "my-package-1": ">=1.0.0" },
-        },
-        "/path/to/package2"
-      ),
-    ];
-  }
-
   describe(".get()", () => {
-    it("should return dependencies", () => {
-      const [pkg1, pkg2] = createPackages("0.0.1");
-      const graph = new PackageGraph([pkg1, pkg2]);
+    it("should return a node with localDependencies", () => {
+      const packages = [
+        new Package(
+          {
+            name: "my-package-1",
+            version: "1.0.0",
+            dependencies: {
+              "external-thing": "^1.0.0",
+            },
+          },
+          "/path/to/package-1"
+        ),
+        new Package(
+          {
+            name: "my-package-2",
+            version: "1.0.0",
+            devDependencies: {
+              "my-package-1": "^1.0.0",
+            },
+          },
+          "/path/to/package-2"
+        ),
+      ];
+      const graph = new PackageGraph(packages, { graphType: "allDependencies" });
 
-      expect(graph.get(pkg1.name).dependencies).toEqual([]);
-      expect(graph.get(pkg2.name).dependencies).toEqual([pkg1.name]);
+      expect(graph.get("my-package-1").localDependencies.size).toBe(0);
+      expect(graph.get("my-package-2").localDependencies.has("my-package-1")).toBe(true);
     });
 
-    it("should not return the dependencies for unrecognized versions", () => {
-      const [pkg1, pkg2] = createPackages("0.0.1", "github:user-foo/project-foo#v0.0.1");
-      const graph = new PackageGraph([pkg1, pkg2]);
+    it("should skip gitCommittish of packages that are not in localDependencies", () => {
+      const packages = [
+        new Package(
+          {
+            name: "my-package-1",
+            version: "1.0.0",
+            devDependencies: {
+              "my-package-2": "^1.0.0",
+            },
+          },
+          "/path/to/package-1"
+        ),
+        new Package(
+          {
+            name: "my-package-2",
+            version: "1.0.0",
+            dependencies: {
+              "external-thing": "github:user-foo/project-foo#v1.0.0",
+            },
+          },
+          "/path/to/package-2"
+        ),
+      ];
+      const graph = new PackageGraph(packages, { graphType: "dependencies" });
 
-      expect(graph.get(pkg1.name).dependencies).toEqual([]);
-      expect(graph.get(pkg2.name).dependencies).toEqual([]);
+      expect(graph.get("my-package-1").localDependencies.size).toBe(0);
+      expect(graph.get("my-package-2").localDependencies.size).toBe(0);
     });
 
-    it("should return the dependencies for parsed versions", () => {
-      const [pkg1, pkg2] = createPackages("0.0.1", "github:user-foo/project-foo#v0.0.1");
+    it("should return the localDependencies for matched gitCommittish", () => {
+      const packages = [
+        new Package(
+          {
+            name: "my-package-1",
+            version: "1.0.0",
+            dependencies: {
+              "external-thing": "^1.0.0",
+            },
+          },
+          "/path/to/package-1"
+        ),
+        new Package(
+          {
+            name: "my-package-2",
+            version: "1.0.0",
+            devDependencies: {
+              "my-package-1": "github:user-foo/project-foo#v1.0.0",
+            },
+          },
+          "/path/to/package-2"
+        ),
+      ];
+      const graph = new PackageGraph(packages, { graphType: "allDependencies" });
 
-      const mockParser = {
-        parseVersion: jest.fn().mockReturnValue({
-          prefix: "github:user-foo/project-foo#v",
-          version: "0.0.1",
-        }),
-      };
-
-      const graph = new PackageGraph([pkg1, pkg2], false, mockParser);
-
-      expect(graph.get(pkg1.name).dependencies).toEqual([]);
-      expect(graph.get(pkg2.name).dependencies).toEqual([pkg1.name]);
+      expect(graph.get("my-package-2").localDependencies.has("my-package-1")).toBe(true);
     });
   });
 });

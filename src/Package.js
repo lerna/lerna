@@ -2,6 +2,7 @@
 
 const dedent = require("dedent");
 const log = require("npmlog");
+const npa = require("npm-package-arg");
 const path = require("path");
 const semver = require("semver");
 const _ = require("lodash");
@@ -9,8 +10,12 @@ const _ = require("lodash");
 const dependencyIsSatisfied = require("./utils/dependencyIsSatisfied");
 const NpmUtilities = require("./NpmUtilities");
 
+function binSafeName(rawName) {
+  return rawName[0] === "@" ? rawName.substring(rawName.indexOf("/") + 1) : rawName;
+}
+
 class Package {
-  constructor(json, location) {
+  constructor(json, location, rootPath = location) {
     let pkg = json;
     // TODO: less mutation by reference
 
@@ -25,6 +30,11 @@ class Package {
       },
       private: {
         value: Boolean(pkg.private),
+      },
+      resolved: {
+        get() {
+          return npa.resolve(pkg.name, path.relative(rootPath, location), rootPath);
+        },
       },
       // mutable
       version: {
@@ -58,10 +68,15 @@ class Package {
       },
       // immutable
       bin: {
-        value: pkg.bin,
+        value:
+          typeof pkg.bin === "string"
+            ? {
+                [binSafeName(pkg.name)]: pkg.bin,
+              }
+            : Object.assign({}, pkg.bin),
       },
       scripts: {
-        value: pkg.scripts || {},
+        value: Object.assign({}, pkg.scripts),
       },
       manifestLocation: {
         value: path.join(location, "package.json"),

@@ -37,14 +37,10 @@ const symlinkedDirectories = testDir =>
   }));
 
 describe("LinkCommand", () => {
-  beforeEach(() => {});
-
-  afterEach(() => jest.resetAllMocks());
+  beforeEach(stubSymlink);
+  afterEach(resetSymlink);
 
   describe("with local package dependencies", () => {
-    beforeEach(stubSymlink);
-    afterEach(resetSymlink);
-
     it("should symlink all packages", async () => {
       const testDir = await initFixture("LinkCommand/basic");
       const lernaLink = run(testDir);
@@ -55,9 +51,6 @@ describe("LinkCommand", () => {
   });
 
   describe("with --force-local", () => {
-    beforeEach(stubSymlink);
-    afterEach(resetSymlink);
-
     it("should force symlink of all packages", async () => {
       const testDir = await initFixture("LinkCommand/force-local");
       const lernaLink = run(testDir);

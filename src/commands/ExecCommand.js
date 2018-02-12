@@ -78,7 +78,7 @@ class ExecCommand extends Command {
 
     try {
       this.batchedPackages = this.toposort
-        ? PackageUtilities.topologicallyBatchPackages(filteredPackages, {
+        ? PackageUtilities.batchPackages(filteredPackages, {
             rejectCycles: this.options.rejectCycles,
           })
         : [filteredPackages];

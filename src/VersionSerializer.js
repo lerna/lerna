@@ -1,8 +1,8 @@
 "use strict";
 
 class VersionSerializer {
-  constructor({ graphDependencies, versionParser }) {
-    this._graphDependencies = graphDependencies;
+  constructor({ localDependencies, versionParser }) {
+    this._localDependencies = localDependencies;
     this._versionParser = versionParser;
     this._dependenciesKeys = ["dependencies", "devDependencies"];
     this._strippedPrefixes = new Map();
@@ -36,7 +36,7 @@ class VersionSerializer {
 
   _stripPrefix(dependencies) {
     Object.keys(dependencies).forEach(name => {
-      if (this._graphDependencies.includes(name)) {
+      if (this._localDependencies.has(name)) {
         const result = this._versionParser.parseVersion(dependencies[name]);
 
         if (result.prefix) {
