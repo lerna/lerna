@@ -16,7 +16,9 @@ const loadPkgManifests = require("../helpers/loadPkgManifests");
 // stabilize changelog commit SHA and datestamp
 expect.addSnapshotSerializer({
   print(val) {
-    return val.replace(/\b[a-f0-9]{7,8}\b/g, "SHA").replace(/\(\d{4}-\d{2}-\d{2}\)/g, "(YYYY-MM-DD)");
+    return normalizeNewline(val)
+      .replace(/\b[a-f0-9]{7,8}\b/g, "SHA")
+      .replace(/\(\d{4}-\d{2}-\d{2}\)/g, "(YYYY-MM-DD)");
   },
   test(val) {
     return val && typeof val === "string";
