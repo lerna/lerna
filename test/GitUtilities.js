@@ -121,14 +121,6 @@ describe("GitUtilities", () => {
     });
   });
 
-  describe(".removeTag()", () => {
-    it("deletes specified git tag", () => {
-      const opts = { cwd: "test" };
-      GitUtilities.removeTag("foo", opts);
-      expect(ChildProcessUtilities.execSync).lastCalledWith("git", ["tag", "-d", "foo"], opts);
-    });
-  });
-
   describe(".hasTags()", () => {
     it("returns true when one or more git tags exist", () => {
       ChildProcessUtilities.execSync.mockImplementation(() => "v1.0.0");

@@ -69,11 +69,6 @@ function addTag(tag, opts) {
   ChildProcessUtilities.execSync("git", ["tag", tag, "-m", tag], opts);
 }
 
-function removeTag(tag, opts) {
-  log.silly("removeTag", tag);
-  ChildProcessUtilities.execSync("git", ["tag", "-d", tag], opts);
-}
-
 function hasTags(opts) {
   log.silly("hasTags");
 
@@ -217,7 +212,6 @@ exports.isInitialized = isInitialized;
 exports.addFile = addFile;
 exports.commit = commit;
 exports.addTag = addTag;
-exports.removeTag = removeTag;
 exports.hasTags = hasTags;
 exports.getLastTaggedCommit = getLastTaggedCommit;
 exports.getLastTaggedCommitInBranch = getLastTaggedCommitInBranch;
