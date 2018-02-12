@@ -9,7 +9,8 @@ const semver = require("semver");
 
 const Command = require("../Command");
 const FileSystemUtilities = require("../FileSystemUtilities");
-const NpmUtilities = require("../NpmUtilities");
+const npmInstall = require("../utils/npm-install");
+const npmRunScript = require("../utils/npm-run-script");
 const batchPackages = require("../utils/batch-packages");
 const matchPackageName = require("../utils/match-package-name");
 const hasDependencyInstalled = require("../utils/has-dependency-installed");
@@ -71,7 +72,7 @@ class BootstrapCommand extends Command {
   }
 
   initialize(callback) {
-    const { registry, rejectCycles, npmClient, npmClientArgs, mutex, hoist } = this.options;
+    const { registry, rejectCycles, npmClient = "npm", npmClientArgs, mutex, hoist } = this.options;
 
     if (npmClient === "yarn" && typeof hoist === "string") {
       return callback(
@@ -185,14 +186,14 @@ class BootstrapCommand extends Command {
   installRootPackageOnly(callback) {
     const tracker = this.logger.newItem("install dependencies");
 
-    NpmUtilities.installInDirOriginalPackageJson(this.repository.rootPath, this.npmConfig, err => {
-      if (err) {
-        return callback(err);
-      }
-      tracker.info("hoist", "Finished installing in root");
-      tracker.completeWork(1);
-      callback(err);
-    });
+    npmInstall(this.repository.rootPath, this.npmConfig)
+      .then(() => {
+        tracker.info("hoist", "Finished installing in root");
+        tracker.completeWork(1);
+
+        callback();
+      })
+      .catch(callback);
   }
 
   runScriptInPackages(scriptName, callback) {
@@ -200,13 +201,24 @@ class BootstrapCommand extends Command {
       return callback(null, true);
     }
 
+    const packagesWithScript = new Set(this.filteredPackages.filter(pkg => pkg.scripts[scriptName]));
+
+    if (!packagesWithScript.size) {
+      return callback(null, true);
+    }
+
+    const { npmClient } = this.npmConfig;
     const tracker = this.logger.newItem(scriptName);
-    tracker.addWork(this.filteredPackages.length);
+    tracker.addWork(packagesWithScript.size);
 
     runParallelBatches(
       this.batchedPackages,
       pkg => done => {
-        pkg.runScript(scriptName, err => {
+        if (!packagesWithScript.has(pkg)) {
+          return done();
+        }
+
+        npmRunScript(scriptName, { args: [], npmClient, pkg }, err => {
           tracker.silly(pkg.name);
           tracker.completeWork(1);
           if (err) {
@@ -469,7 +481,7 @@ class BootstrapCommand extends Command {
           tracker.info("hoist", "Installing hoisted dependencies into root");
         }
 
-        NpmUtilities.installInDir(
+        npmInstall.dependencies(
           this.repository.rootPath,
           depsToInstallInRoot,
           this.npmConfig,
@@ -558,7 +570,7 @@ class BootstrapCommand extends Command {
         // This is important for consistent behavior across npm clients.
         if (deps.some(({ isSatisfied }) => !isSatisfied)) {
           actions.push(cb => {
-            NpmUtilities.installInDir(
+            npmInstall.dependencies(
               pkg.location,
               deps.map(({ dependency }) => dependency),
               leafNpmConfig,

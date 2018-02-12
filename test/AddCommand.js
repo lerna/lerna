@@ -5,11 +5,9 @@ const path = require("path");
 const log = require("npmlog");
 
 // mocked or stubbed modules
-const NpmUtilities = require("../src/NpmUtilities");
 const BootstrapCommand = require("../src/commands/BootstrapCommand");
 
 // helpers
-const callsBack = require("./helpers/callsBack");
 const initFixture = require("./helpers/initFixture");
 const yargsRunner = require("./helpers/yargsRunner");
 const pkgMatchers = require("./helpers/pkgMatchers");
@@ -19,7 +17,6 @@ const commandModule = require("../src/commands/AddCommand");
 
 const run = yargsRunner(commandModule);
 
-jest.mock("../src/NpmUtilities");
 jest.mock("../src/commands/BootstrapCommand");
 
 expect.extend(pkgMatchers);
@@ -31,15 +28,7 @@ const readPkg = (testDir, pkg) => fs.readJsonSync(path.join(testDir, pkg, "packa
 
 describe("AddCommand", () => {
   beforeEach(() => {
-    // we stub installInDir() in most tests because
-    // we already have enough tests of installInDir()
-    NpmUtilities.installInDir.mockImplementation(callsBack());
-    NpmUtilities.installInDirOriginalPackageJson.mockImplementation(callsBack());
-
-    // stub runScriptInDir() because it is a huge source
-    // of slowness when running tests for no good reason
-    NpmUtilities.runScriptInDir.mockImplementation(callsBack());
-
+    // we already have enough tests of BootstrapCommand
     BootstrapCommand.handler.mockImplementation(() => Promise.resolve());
   });
 

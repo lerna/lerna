@@ -17,10 +17,12 @@ const writePkg = require("write-pkg");
 const Command = require("../Command");
 const ConventionalCommitUtilities = require("../ConventionalCommitUtilities");
 const GitUtilities = require("../GitUtilities");
-const NpmUtilities = require("../NpmUtilities");
 const PromptUtilities = require("../PromptUtilities");
 const output = require("../utils/output");
 const UpdatedPackagesCollector = require("../UpdatedPackagesCollector");
+const npmDistTag = require("../utils/npm-dist-tag");
+const npmPublish = require("../utils/npm-publish");
+const npmRunScript = require("../utils/npm-run-script");
 const batchPackages = require("../utils/batch-packages");
 const ValidationError = require("../utils/ValidationError");
 
@@ -500,11 +502,17 @@ class PublishCommand extends Command {
   }
 
   runSyncScriptInPackage(pkg, scriptName) {
-    pkg.runScriptSync(scriptName, err => {
-      if (err) {
+    if (pkg.scripts[scriptName]) {
+      try {
+        npmRunScript.sync(scriptName, {
+          args: ["--silent"],
+          npmClient: this.npmConfig.npmClient,
+          pkg,
+        });
+      } catch (err) {
         this.logger.error("publish", `error running ${scriptName} in ${pkg.name}\n`, err.stack || err);
       }
-    });
+    }
   }
 
   updateUpdatedPackages() {
@@ -696,7 +704,7 @@ class PublishCommand extends Command {
     const mapPackage = pkg => {
       tracker.verbose("publishing", pkg.name);
 
-      return NpmUtilities.publishTaggedInDir(distTag, pkg, this.npmConfig).then(() => {
+      return npmPublish(distTag, pkg, this.npmConfig).then(() => {
         tracker.info("published", pkg.name);
         tracker.completeWork(1);
 
@@ -739,10 +747,10 @@ class PublishCommand extends Command {
 
   removeTempTag(pkg) {
     return Promise.resolve()
-      .then(() => NpmUtilities.checkDistTag(pkg.location, pkg.name, "lerna-temp", this.npmRegistry))
+      .then(() => npmDistTag.check(pkg, "lerna-temp", this.npmRegistry))
       .then(exists => {
         if (exists) {
-          return NpmUtilities.removeDistTag(pkg.location, pkg.name, "lerna-temp", this.npmRegistry);
+          return npmDistTag.remove(pkg, "lerna-temp", this.npmRegistry);
         }
       });
   }
@@ -751,9 +759,7 @@ class PublishCommand extends Command {
     const distTag = this.getDistTag();
     const version = this.options.canary ? pkg.version : this.updatesVersions.get(pkg.name);
 
-    return this.removeTempTag(pkg).then(() =>
-      NpmUtilities.addDistTag(pkg.location, pkg.name, version, distTag, this.npmRegistry)
-    );
+    return this.removeTempTag(pkg).then(() => npmDistTag.add(pkg, version, distTag, this.npmRegistry));
   }
 
   getDistTag() {

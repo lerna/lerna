@@ -4,7 +4,8 @@ const log = require("npmlog");
 
 // mocked or stubbed modules
 const FileSystemUtilities = require("../src/FileSystemUtilities");
-const NpmUtilities = require("../src/NpmUtilities");
+const npmInstall = require("../src/utils/npm-install");
+const npmRunScript = require("../src/utils/npm-run-script");
 
 // helpers
 const callsBack = require("./helpers/callsBack");
@@ -17,7 +18,8 @@ const commandModule = require("../src/commands/BootstrapCommand");
 
 const run = yargsRunner(commandModule);
 
-jest.mock("../src/NpmUtilities");
+jest.mock("../src/utils/npm-install");
+jest.mock("../src/utils/npm-run-script");
 
 // silence logs
 log.level = "silent";
@@ -42,7 +44,7 @@ const stubSymlink = () => {
 
 // object snapshots have sorted keys
 const installedPackagesInDirectories = testDir =>
-  NpmUtilities.installInDir.mock.calls.reduce((obj, args) => {
+  npmInstall.dependencies.mock.calls.reduce((obj, args) => {
     const location = normalizeRelativeDir(testDir, args[0]);
     const dependencies = args[1];
     obj[location || "ROOT"] = dependencies;
@@ -50,14 +52,14 @@ const installedPackagesInDirectories = testDir =>
   }, {});
 
 const ranScriptsInDirectories = testDir =>
-  NpmUtilities.runScriptInDir.mock.calls.reduce((obj, args) => {
-    const location = normalizeRelativeDir(testDir, args[1].directory);
-    const script = args[0];
+  npmRunScript.mock.calls.reduce((obj, [script, { npmClient, pkg }]) => {
+    const location = normalizeRelativeDir(testDir, pkg.location);
 
     if (!obj[location]) {
       obj[location] = [];
     }
-    obj[location].push(script);
+
+    obj[location].push(`${npmClient} run ${script}`);
 
     return obj;
   }, {});
@@ -74,14 +76,14 @@ const symlinkedDirectories = testDir =>
 
 describe("BootstrapCommand", () => {
   beforeEach(() => {
-    // we stub installInDir() in most tests because
-    // we already have enough tests of installInDir()
-    NpmUtilities.installInDir.mockImplementation(callsBack());
-    NpmUtilities.installInDirOriginalPackageJson.mockImplementation(callsBack());
+    // we stub npmInstall in most tests because
+    // we already have enough tests of npmInstall
+    npmInstall.mockImplementation(() => Promise.resolve());
+    npmInstall.dependencies.mockImplementation(callsBack());
 
     // stub runScriptInDir() because it is a huge source
     // of slowness when running tests for no good reason
-    NpmUtilities.runScriptInDir.mockImplementation(callsBack());
+    npmRunScript.mockImplementation(callsBack());
   });
 
   afterEach(() => jest.resetAllMocks());
@@ -92,7 +94,7 @@ describe("BootstrapCommand", () => {
       const lernaBootstrap = run(testDir);
       await lernaBootstrap();
 
-      expect(NpmUtilities.installInDir).not.toBeCalled();
+      expect(npmInstall.dependencies).not.toBeCalled();
       expect(ranScriptsInDirectories(testDir)).toMatchSnapshot();
     });
 
@@ -124,12 +126,12 @@ describe("BootstrapCommand", () => {
       expect(removedDirectories(testDir)).toMatchSnapshot();
 
       // root includes explicit dependencies and hoisted from leaves
-      expect(NpmUtilities.installInDir).toBeCalledWith(
+      expect(npmInstall.dependencies).toBeCalledWith(
         testDir,
         ["bar@^2.0.0", "foo@^1.0.0", "@test/package-1@^0.0.0"],
         {
           registry: undefined,
-          npmClient: undefined,
+          npmClient: "npm",
           npmClientArgs: undefined,
           mutex: undefined,
           // npmGlobalStyle is not included at all
@@ -138,7 +140,7 @@ describe("BootstrapCommand", () => {
       );
 
       // foo@0.1.2 differs from the more common foo@^1.0.0
-      expect(NpmUtilities.installInDir).lastCalledWith(
+      expect(npmInstall.dependencies).lastCalledWith(
         expect.stringContaining("package-3"),
         ["foo@0.1.12"],
         expect.objectContaining({
@@ -208,7 +210,7 @@ describe("BootstrapCommand", () => {
     it("never installs with global style", async () => {
       await lernaBootstrap();
 
-      expect(NpmUtilities.installInDir).toBeCalledWith(
+      expect(npmInstall.dependencies).toBeCalledWith(
         expect.any(String),
         expect.arrayContaining(["foo@^1.0.0"]),
         expect.objectContaining({
@@ -278,7 +280,7 @@ describe("BootstrapCommand", () => {
     it("gets network mutex when --npm-client=yarn", async () => {
       await lernaBootstrap("--npm-client", "yarn");
 
-      expect(NpmUtilities.installInDir.mock.calls[0][2]).toMatchObject({
+      expect(npmInstall.dependencies.mock.calls[0][2]).toMatchObject({
         npmClient: "yarn",
         mutex: expect.stringMatching(/^network:\d+$/),
       });
@@ -287,7 +289,7 @@ describe("BootstrapCommand", () => {
     it("gets user defined mutex when --npm-client=yarn", async () => {
       await lernaBootstrap("--npm-client", "yarn", "--mutex", "file:/test/this/path");
 
-      expect(NpmUtilities.installInDir.mock.calls[0][2]).toMatchObject({
+      expect(npmInstall.dependencies.mock.calls[0][2]).toMatchObject({
         npmClient: "yarn",
         mutex: "file:/test/this/path",
       });
@@ -307,7 +309,7 @@ describe("BootstrapCommand", () => {
 
       await lernaBootstrap();
 
-      expect(NpmUtilities.installInDir).not.toBeCalled();
+      expect(npmInstall.dependencies).not.toBeCalled();
     });
   });
 
@@ -329,7 +331,7 @@ describe("BootstrapCommand", () => {
 
       await lernaBootstrap();
 
-      expect(NpmUtilities.installInDir).not.toBeCalled();
+      expect(npmInstall.dependencies).not.toBeCalled();
     });
   });
 
@@ -352,12 +354,12 @@ describe("BootstrapCommand", () => {
       await lernaBootstrap();
 
       expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
-      expect(NpmUtilities.installInDir).lastCalledWith(
+      expect(npmInstall.dependencies).lastCalledWith(
         expect.any(String),
         expect.arrayContaining(["foo@^1.0.0"]),
         expect.objectContaining({
           registry: "https://my-secure-registry/npm",
-          npmClient: undefined,
+          npmClient: "npm",
           npmGlobalStyle: false,
         }),
         expect.any(Function)
@@ -373,7 +375,7 @@ describe("BootstrapCommand", () => {
 
         await lernaBootstrap("--", "--no-optional", "--production");
 
-        expect(NpmUtilities.installInDir.mock.calls[0][2]).toMatchObject({
+        expect(npmInstall.dependencies.mock.calls[0][2]).toMatchObject({
           npmClientArgs: ["--no-optional", "--production"],
         });
       });
@@ -386,7 +388,7 @@ describe("BootstrapCommand", () => {
 
         await lernaBootstrap("--", "--no-optional");
 
-        expect(NpmUtilities.installInDir.mock.calls[0][2]).toMatchObject({
+        expect(npmInstall.dependencies.mock.calls[0][2]).toMatchObject({
           npmClientArgs: ["--production", "--no-optional"],
         });
       });
@@ -400,14 +402,13 @@ describe("BootstrapCommand", () => {
 
       await lernaBootstrap();
 
-      expect(NpmUtilities.installInDir).not.toBeCalled();
-      expect(NpmUtilities.installInDirOriginalPackageJson).lastCalledWith(
+      expect(npmInstall.dependencies).not.toBeCalled();
+      expect(npmInstall).lastCalledWith(
         expect.any(String),
         expect.objectContaining({
           npmClient: "yarn",
           mutex: expect.stringMatching(/^network:\d+$/),
-        }),
-        expect.any(Function)
+        })
       );
     });
 

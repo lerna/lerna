@@ -9,8 +9,10 @@ const writeJsonFile = require("write-json-file");
 const writePkg = require("write-pkg");
 const ConventionalCommitUtilities = require("../src/ConventionalCommitUtilities");
 const GitUtilities = require("../src/GitUtilities");
-const NpmUtilities = require("../src/NpmUtilities");
 const PromptUtilities = require("../src/PromptUtilities");
+const npmDistTag = require("../src/utils/npm-dist-tag");
+const npmPublish = require("../src/utils/npm-publish");
+const npmRunScript = require("../src/utils/npm-run-script");
 
 // helpers
 const consoleOutput = require("./helpers/consoleOutput");
@@ -26,15 +28,17 @@ const run = yargsRunner(commandModule);
 jest.mock("write-json-file");
 jest.mock("write-pkg");
 jest.mock("../src/GitUtilities");
-jest.mock("../src/NpmUtilities");
 jest.mock("../src/PromptUtilities");
 jest.mock("../src/ConventionalCommitUtilities");
+jest.mock("../src/utils/npm-dist-tag");
+jest.mock("../src/utils/npm-publish");
+jest.mock("../src/utils/npm-run-script");
 
 // silence logs
 log.level = "silent";
 
 const publishedTagInDirectories = testDir =>
-  NpmUtilities.publishTaggedInDir.mock.calls.reduce((arr, args) => {
+  npmPublish.mock.calls.reduce((arr, args) => {
     const tag = args[0];
     const dir = normalizeRelativeDir(testDir, args[1].location);
     arr.push({ dir, tag });
@@ -42,20 +46,16 @@ const publishedTagInDirectories = testDir =>
   }, []);
 
 const removedDistTagInDirectories = testDir =>
-  NpmUtilities.removeDistTag.mock.calls.reduce((obj, args) => {
-    const location = normalizeRelativeDir(testDir, args[0]);
-    const tag = args[2];
+  npmDistTag.remove.mock.calls.reduce((obj, [pkg, tag]) => {
+    const location = normalizeRelativeDir(testDir, pkg.location);
     obj[location] = tag;
     return obj;
   }, {});
 
 const addedDistTagInDirectories = testDir =>
-  NpmUtilities.addDistTag.mock.calls.reduce((obj, args) => {
-    const location = normalizeRelativeDir(testDir, args[0]);
-    const pkg = args[1];
-    const version = args[2];
-    const tag = args[3];
-    obj[location] = `${pkg}@${version} ${tag}`;
+  npmDistTag.add.mock.calls.reduce((obj, [pkg, version, tag]) => {
+    const location = normalizeRelativeDir(testDir, pkg.location);
+    obj[location] = `${pkg.name}@${version} ${tag}`;
     return obj;
   }, {});
 
@@ -99,8 +99,8 @@ describe("PublishCommand", () => {
   GitUtilities.getShortSHA.mockReturnValue("deadbeef");
   GitUtilities.diffSinceIn.mockReturnValue("");
 
-  NpmUtilities.publishTaggedInDir.mockResolvedValue();
-  NpmUtilities.checkDistTag.mockReturnValue(true);
+  npmPublish.mockResolvedValue();
+  npmDistTag.check.mockReturnValue(true);
 
   PromptUtilities.select.mockResolvedValue("1.0.1");
   PromptUtilities.confirm.mockResolvedValue(true);
@@ -360,10 +360,10 @@ describe("PublishCommand", () => {
       const testDir = await initFixture("PublishCommand/normal");
       await run(testDir)("--skip-npm");
 
-      expect(NpmUtilities.publishTaggedInDir).not.toBeCalled();
-      expect(NpmUtilities.checkDistTag).not.toBeCalled();
-      expect(NpmUtilities.removeDistTag).not.toBeCalled();
-      expect(NpmUtilities.addDistTag).not.toBeCalled();
+      expect(npmPublish).not.toBeCalled();
+      expect(npmDistTag.check).not.toBeCalled();
+      expect(npmDistTag.remove).not.toBeCalled();
+      expect(npmDistTag.add).not.toBeCalled();
 
       expect(gitCommitMessage()).toEqual("v1.0.1");
       // FIXME
@@ -401,10 +401,10 @@ describe("PublishCommand", () => {
       expect(GitUtilities.addTag).not.toBeCalled();
       expect(GitUtilities.pushWithTags).not.toBeCalled();
 
-      expect(NpmUtilities.publishTaggedInDir).not.toBeCalled();
-      expect(NpmUtilities.checkDistTag).not.toBeCalled();
-      expect(NpmUtilities.removeDistTag).not.toBeCalled();
-      expect(NpmUtilities.addDistTag).not.toBeCalled();
+      expect(npmPublish).not.toBeCalled();
+      expect(npmDistTag.check).not.toBeCalled();
+      expect(npmDistTag.remove).not.toBeCalled();
+      expect(npmDistTag.add).not.toBeCalled();
     });
   });
 
@@ -470,9 +470,9 @@ describe("PublishCommand", () => {
 
       await run(testDir)("--registry", registry);
 
-      expect(NpmUtilities.checkDistTag).not.toBeCalled();
-      expect(NpmUtilities.removeDistTag).not.toBeCalled();
-      expect(NpmUtilities.addDistTag).not.toBeCalled();
+      expect(npmDistTag.check).not.toBeCalled();
+      expect(npmDistTag.remove).not.toBeCalled();
+      expect(npmDistTag.add).not.toBeCalled();
       // FIXME: this isn't actually asserting anything about --registry
       expect(publishedTagInDirectories(testDir)).toMatchSnapshot("npm published");
     });
@@ -946,15 +946,14 @@ describe("PublishCommand", () => {
       await run(testDir)();
 
       scripts.forEach(script => {
-        expect(NpmUtilities.runScriptInDirSync).toHaveBeenCalledWith(
-          script,
-          {
-            args: [],
-            directory: path.resolve(testDir, "packages", "package-1"),
-            npmClient: "npm",
-          },
-          expect.any(Function)
-        );
+        expect(npmRunScript.sync).toHaveBeenCalledWith(script, {
+          args: ["--silent"],
+          npmClient: "npm",
+          pkg: expect.objectContaining({
+            name: "package-1",
+            location: path.resolve(testDir, "packages", "package-1"),
+          }),
+        });
       });
     });
 
@@ -963,15 +962,14 @@ describe("PublishCommand", () => {
       await run(testDir)();
 
       scripts.forEach(script => {
-        expect(NpmUtilities.runScriptInDirSync).not.toHaveBeenCalledWith(
-          script,
-          {
-            args: [],
-            directory: path.resolve(testDir, "packages", "package-2"),
-            npmClient: "npm",
-          },
-          expect.any(Function)
-        );
+        expect(npmRunScript.sync).not.toHaveBeenCalledWith(script, {
+          args: ["--silent"],
+          npmClient: "npm",
+          pkg: expect.objectContaining({
+            name: "package-2",
+            location: path.resolve(testDir, "packages", "package-2"),
+          }),
+        });
       });
     });
 
@@ -979,7 +977,7 @@ describe("PublishCommand", () => {
       const testDir = await initFixture("PublishCommand/lifecycle");
       await run(testDir)();
 
-      expect(NpmUtilities.runScriptInDirSync.mock.calls.map(args => args[0])).toEqual(scripts);
+      expect(npmRunScript.sync.mock.calls.map(args => args[0])).toEqual(scripts);
     });
   });
 
