@@ -1,6 +1,7 @@
 "use strict";
 
 const log = require("npmlog");
+const path = require("path");
 
 // mocked modules
 const NpmUtilities = require("../src/NpmUtilities");
@@ -18,7 +19,8 @@ jest.mock("../src/NpmUtilities");
 log.level = "silent";
 
 describe("Package", () => {
-  const factory = json => new Package(json, `/root/path/to/${json.name || "package"}`, "/root");
+  const factory = json =>
+    new Package(json, path.normalize(`/root/path/to/${json.name || "package"}`), path.normalize("/root"));
 
   describe("get .name", () => {
     it("should return the name", () => {
@@ -30,18 +32,19 @@ describe("Package", () => {
   describe("get .location", () => {
     it("should return the location", () => {
       const pkg = factory({ name: "get-location" });
-      expect(pkg.location).toBe("/root/path/to/get-location");
+      expect(pkg.location).toBe(path.normalize("/root/path/to/get-location"));
     });
   });
 
   describe("get .resolved", () => {
-    it("returns npa.Result relative to rootPath", () => {
+    it("returns npa.Result relative to rootPath, always posix", () => {
       const pkg = factory({ name: "get-resolved" });
       expect(pkg.resolved).toMatchObject({
         type: "directory",
         where: "/root",
         name: "get-resolved",
-        fetchSpec: pkg.location,
+        // windows is ridiculous
+        fetchSpec: expect.stringContaining(path.normalize(pkg.location)),
       });
     });
   });
