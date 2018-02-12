@@ -1,0 +1,11 @@
+{
+  "name": "prepublish",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "prepublish": "exit 0"
+  },
+  "devDependencies": {
+    "lerna": "__TEST_PKG_URL__"
+  }
+}

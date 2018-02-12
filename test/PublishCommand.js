@@ -956,4 +956,17 @@ describe("PublishCommand", () => {
       expect(NpmUtilities.runScriptInDirSync.mock.calls.map(args => args[0])).toEqual(scripts);
     });
   });
+
+  /** =========================================================================
+   * RUN PREPUBLISH
+   * ======================================================================= */
+
+  describe("prepublish script", () => {
+    it("should be called if run prepublish flag is set", async () => {
+      const testDir = await initFixture("PublishCommand/prepublish");
+      await run(testDir)("--run-prepublish");
+
+      expect(NpmUtilities.runScriptInDirSync.mock.calls[0][0]).toEqual("prepublish");
+    });
+  });
 });

@@ -451,6 +451,14 @@ $ lerna publish --repo-version 1.0.1
 When run with this flag, `publish` will skip the version selection prompt and use the specified version.
 Useful for bypassing the user input prompt if you already know which version to publish.
 
+#### --run-prepublish
+
+```sh
+$ lerna publish --run-prepublish
+```
+
+Will run the prepublish script in the main package.json. This is run once lerna updates the versions but before it does a git commit or publishes the packages.
+
 #### --message, -m [msg]
 
 ```sh
