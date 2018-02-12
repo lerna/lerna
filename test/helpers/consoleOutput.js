@@ -12,5 +12,12 @@ chalk.enabled = false;
 module.exports = consoleOutput;
 
 function consoleOutput() {
-  return output.mock.calls.map(args => normalizeNewline(args[0])).join("\n");
+  return output.mock.calls
+    .map(args =>
+      normalizeNewline(args[0])
+        .split("\n")
+        .map(line => line.trimRight())
+        .join("\n")
+    )
+    .join("\n");
 }
