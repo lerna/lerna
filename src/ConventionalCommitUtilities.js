@@ -73,14 +73,8 @@ function recommendVersion(pkg, type, { changelogPreset }) {
   }
 
   return getChangelogConfig(changelogPreset).then(config => {
-    // cc-core mutates input :P
-    if (config.recommendedBumpOpts) {
-      // "new" preset API
-      options.config = config.recommendedBumpOpts;
-    } else {
-      // "old" preset API
-      options.config = config;
-    }
+    // "new" preset API
+    options.config = config;
 
     return new Promise((resolve, reject) => {
       conventionalRecommendedBump(options, (err, data) => {
@@ -189,6 +183,5 @@ function updateChangelog(pkg, type, { changelogPreset, version }) {
   });
 }
 
-exports.getChangelogConfig = getChangelogConfig;
 exports.recommendVersion = recommendVersion;
 exports.updateChangelog = updateChangelog;

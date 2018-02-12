@@ -36,7 +36,7 @@
     "command-join": "^2.0.0",
     "conventional-changelog-angular": "^1.6.2",
     "conventional-changelog-core": "^2.0.1",
-    "conventional-recommended-bump": "^1.0.1",
+    "conventional-recommended-bump": "^2.0.1",
     "dedent": "^0.7.0",
     "execa": "^0.9.0",
     "find-up": "^2.1.0",

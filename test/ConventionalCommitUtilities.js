@@ -42,10 +42,12 @@ describe("ConventionalCommitUtilities", () => {
       expect(bumpedVersion).toBe("2.0.0");
       expect(conventionalRecommendedBump).lastCalledWith(
         {
-          config: {
-            parserOpts: expect.any(Object),
-            whatBump: expect.any(Function),
-          },
+          config: expect.objectContaining({
+            recommendedBumpOpts: {
+              parserOpts: expect.any(Object),
+              whatBump: expect.any(Function),
+            },
+          }),
           path: "/foo/bar",
         },
         expect.any(Function)
@@ -64,10 +66,12 @@ describe("ConventionalCommitUtilities", () => {
       expect(bumpedVersion).toBe("1.1.0");
       expect(conventionalRecommendedBump).lastCalledWith(
         {
-          config: {
-            parserOpts: expect.any(Object),
-            whatBump: expect.any(Function),
-          },
+          config: expect.objectContaining({
+            recommendedBumpOpts: {
+              parserOpts: expect.any(Object),
+              whatBump: expect.any(Function),
+            },
+          }),
           path: "/foo/bar",
           lernaPackage: "bar",
         },
