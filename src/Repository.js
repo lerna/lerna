@@ -70,7 +70,7 @@ export default class Repository {
         );
       }
 
-      return this.packageJson.workspaces;
+      return this.packageJson.workspaces.packages || this.packageJson.workspaces;
     }
     return this.lernaJson.packages || [DEFAULT_PACKAGE_GLOB];
   }
