@@ -178,6 +178,15 @@ function getCurrentSHA(opts) {
   return sha;
 }
 
+function getShortSHA(opts) {
+  log.silly("getShortSHA");
+
+  const sha = ChildProcessUtilities.execSync("git", ["rev-parse", "--short", "HEAD"], opts);
+  log.verbose("getShortSHA", sha);
+
+  return sha;
+}
+
 function checkoutChanges(fileGlob, opts) {
   log.silly("checkoutChanges", fileGlob);
   ChildProcessUtilities.execSync("git", ["checkout", "--", fileGlob], opts);
@@ -220,6 +229,7 @@ exports.diffSinceIn = diffSinceIn;
 exports.getWorkspaceRoot = getWorkspaceRoot;
 exports.getCurrentBranch = getCurrentBranch;
 exports.getCurrentSHA = getCurrentSHA;
+exports.getShortSHA = getShortSHA;
 exports.checkoutChanges = checkoutChanges;
 exports.init = init;
 exports.hasCommit = hasCommit;

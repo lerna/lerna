@@ -269,6 +269,15 @@ describe("GitUtilities", () => {
     });
   });
 
+  describe(".getShortSHA()", () => {
+    it("returns short SHA of current ref", () => {
+      ChildProcessUtilities.execSync.mockImplementation(() => "deadbee");
+      const opts = { cwd: "test" };
+      expect(GitUtilities.getShortSHA(opts)).toBe("deadbee");
+      expect(ChildProcessUtilities.execSync).lastCalledWith("git", ["rev-parse", "--short", "HEAD"], opts);
+    });
+  });
+
   describe(".checkoutChanges()", () => {
     it("calls git checkout with specified arg", () => {
       const opts = { cwd: "test" };
