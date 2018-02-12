@@ -1,171 +1,245 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`lerna publish exit 0 when no updates: stderr 1`] = `
-lerna info version __TEST_VERSION__
-lerna info current version 1.0.0
-lerna info Checking for updated packages...
-lerna info Comparing with v1.0.0.
-lerna info Checking for prereleased packages...
-lerna info No updated packages to publish. 
-`;
-
-exports[`lerna publish fixed mode --conventional-commits --force-publish=* 1`] = `
-
-Changes:
- - package-1: 1.0.0 => 1.0.1
- - package-2: 1.0.0 => 1.0.1
-
-`;
-
-exports[`lerna publish fixed mode --conventional-commits --force-publish=* 2`] = `
-
-Changes:
- - package-1: 1.0.1 => 1.1.0
- - package-2: 1.0.1 => 1.1.0
-
-`;
-
-exports[`lerna publish fixed mode --conventional-commits --force-publish=* 3`] = `
-
-Changes:
- - package-1: 1.1.0 => 1.2.0
- - package-2: 1.1.0 => 1.2.0
-
-`;
-
-exports[`lerna publish fixed mode --conventional-commits --force-publish=*: commit 1`] = `
-v1.0.1
-
-`;
-
-exports[`lerna publish fixed mode --conventional-commits --force-publish=*: commit 2`] = `
-v1.1.0
-
-`;
-
-exports[`lerna publish fixed mode --conventional-commits --force-publish=*: commit 3`] = `
-v1.2.0
-
-`;
-
-exports[`lerna publish fixed mode --conventional-commits --force-publish=*: packages 1`] = `
-Array [
-  Object {
-    name: package-1,
-    version: 1.0.1,
-  },
-  Object {
-    name: package-2,
-    version: 1.0.1,
-  },
-]
-`;
-
-exports[`lerna publish fixed mode --conventional-commits --force-publish=*: packages 2`] = `
-Array [
-  Object {
-    foo: true,
-    name: package-1,
-    version: 1.1.0,
-  },
-  Object {
-    name: package-2,
-    version: 1.1.0,
-  },
-]
-`;
-
-exports[`lerna publish fixed mode --conventional-commits --force-publish=*: packages 3`] = `
-Array [
-  Object {
-    foo: true,
-    name: package-1,
-    version: 1.2.0,
-  },
-  Object {
-    bar: true,
-    name: package-2,
-    version: 1.2.0,
-  },
-]
-`;
-
 exports[`lerna publish fixed mode --conventional-commits recommends versions for each publish 1`] = `
 
 Changes:
  - package-1: 1.0.0 => 1.0.1
  - package-2: 1.0.0 => 1.0.1
 
-`;
-
-exports[`lerna publish fixed mode --conventional-commits recommends versions for each publish 2`] = `
 
 Changes:
  - package-1: 1.0.1 => 1.1.0
 
-`;
-
-exports[`lerna publish fixed mode --conventional-commits recommends versions for each publish 3`] = `
 
 Changes:
  - package-2: 1.1.0 => 1.2.0
 
-`;
 
-exports[`lerna publish fixed mode --conventional-commits recommends versions for each publish: commit 1`] = `
-v1.0.1
-
-`;
-
-exports[`lerna publish fixed mode --conventional-commits recommends versions for each publish: commit 2`] = `
-v1.1.0
+Changes:
+ - package-1: 1.2.0 => 2.0.0
+ - package-2: 1.2.0 => 2.0.0
 
 `;
 
-exports[`lerna publish fixed mode --conventional-commits recommends versions for each publish: commit 3`] = `
-v1.2.0
+exports[`lerna publish independent mode --conventional-commits changelog 1`] = `
+
+Changes:
+ - package-1: 1.0.0 => 1.1.0
+ - package-2: 2.0.0 => 2.1.0
+ - package-3: 3.0.0 => 4.0.0
+ - package-4: 4.0.0 => 4.1.0
+ - package-5: 5.0.0 => 5.1.0 (private)
 
 `;
 
-exports[`lerna publish fixed mode --conventional-commits recommends versions for each publish: packages 1`] = `
+exports[`lerna publish independent mode --conventional-commits changelog 2`] = `
 Array [
-  Object {
-    name: package-1,
-    version: 1.0.1,
-  },
-  Object {
-    name: package-2,
-    version: 1.0.1,
-  },
+  # Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+<a name="1.1.0"></a>
+# 1.1.0 (YYYY-MM-DD)
+
+
+### Bug Fixes
+
+* **package-1:** Fix foo SHA
+
+
+### Features
+
+* init repo SHA
+* **package-1:** Add foo SHA
+,
+  # Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+<a name="2.1.0"></a>
+# 2.1.0 (YYYY-MM-DD)
+
+
+### Bug Fixes
+
+* **package-2:** Fix bar SHA
+
+
+### Features
+
+* init repo SHA
+,
+  # Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+<a name="4.0.0"></a>
+# 4.0.0 (YYYY-MM-DD)
+
+
+### Features
+
+* init repo SHA
+* **package-3:** Add baz feature SHA
+
+
+### BREAKING CHANGES
+
+* **package-3:** yup
+,
+  # Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+<a name="4.1.0"></a>
+# 4.1.0 (YYYY-MM-DD)
+
+
+### Features
+
+* init repo SHA
+,
+  # Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+<a name="5.1.0"></a>
+# 5.1.0 (YYYY-MM-DD)
+
+
+### Features
+
+* init repo SHA
+,
 ]
 `;
 
-exports[`lerna publish fixed mode --conventional-commits recommends versions for each publish: packages 2`] = `
-Array [
-  Object {
-    foobar: true,
-    name: package-1,
-    version: 1.1.0,
-  },
-  Object {
-    name: package-2,
-    version: 1.0.1,
-  },
-]
+exports[`lerna publish normal mode --conventional-commits changelog 1`] = `
+
+Changes:
+ - package-1: 1.0.0 => 2.0.0
+ - package-2: 1.0.0 => 2.0.0
+ - package-3: 1.0.0 => 2.0.0
+ - package-4: 1.0.0 => 2.0.0
+ - package-5: 1.0.0 => 2.0.0 (private)
+
 `;
 
-exports[`lerna publish fixed mode --conventional-commits recommends versions for each publish: packages 3`] = `
+exports[`lerna publish normal mode --conventional-commits changelog 2`] = `
 Array [
-  Object {
-    foobar: true,
-    name: package-1,
-    version: 1.1.0,
-  },
-  Object {
-    baz: true,
-    name: package-2,
-    version: 1.2.0,
-  },
+  # Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+<a name="2.0.0"></a>
+# 2.0.0 (YYYY-MM-DD)
+
+
+### Bug Fixes
+
+* **package-1:** Fix foo SHA
+* **package-2:** Fix bar SHA
+
+
+### Features
+
+* init repo SHA
+* **package-1:** Add foo SHA
+* **package-3:** Add baz feature SHA
+
+
+### BREAKING CHANGES
+
+* **package-3:** yup
+,
+  # Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+<a name="2.0.0"></a>
+# 2.0.0 (YYYY-MM-DD)
+
+
+### Bug Fixes
+
+* **package-1:** Fix foo SHA
+
+
+### Features
+
+* init repo SHA
+* **package-1:** Add foo SHA
+,
+  # Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+<a name="2.0.0"></a>
+# 2.0.0 (YYYY-MM-DD)
+
+
+### Bug Fixes
+
+* **package-2:** Fix bar SHA
+
+
+### Features
+
+* init repo SHA
+,
+  # Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+<a name="2.0.0"></a>
+# 2.0.0 (YYYY-MM-DD)
+
+
+### Features
+
+* init repo SHA
+* **package-3:** Add baz feature SHA
+
+
+### BREAKING CHANGES
+
+* **package-3:** yup
+,
+  # Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+<a name="2.0.0"></a>
+# 2.0.0 (YYYY-MM-DD)
+
+
+### Features
+
+* init repo SHA
+,
+  # Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+<a name="2.0.0"></a>
+# 2.0.0 (YYYY-MM-DD)
+
+
+### Features
+
+* init repo SHA
+,
 ]
 `;
 
@@ -213,15 +287,6 @@ Array [
     version: 1.0.1,
   },
 ]
-`;
-
-exports[`lerna publish updates fixed versions: stderr 1`] = `
-lerna info version __TEST_VERSION__
-lerna info current version 1.0.0
-lerna info Checking for updated packages...
-lerna info Comparing with initial commit.
-lerna info Checking for prereleased packages...
-lerna info auto-confirmed 
 `;
 
 exports[`lerna publish updates fixed versions: stdout 1`] = `
@@ -284,15 +349,6 @@ Array [
 ]
 `;
 
-exports[`lerna publish updates independent versions: stderr 1`] = `
-lerna info version __TEST_VERSION__
-lerna info versioning independent
-lerna info Checking for updated packages...
-lerna info Comparing with initial commit.
-lerna info Checking for prereleased packages...
-lerna info auto-confirmed 
-`;
-
 exports[`lerna publish updates independent versions: stdout 1`] = `
 
 Changes:
@@ -304,44 +360,24 @@ Changes:
 
 `;
 
-exports[`lerna publish uses detault suffix with canary flag: stderr 1`] = `
-lerna info version __TEST_VERSION__
-lerna info canary enabled
-lerna info current version 1.0.0
-lerna info Checking for updated packages...
-lerna info Comparing with initial commit.
-lerna info Checking for prereleased packages...
-lerna info auto-confirmed 
-`;
-
-exports[`lerna publish uses detault suffix with canary flag: stdout 1`] = `
+exports[`lerna publish uses default suffix with canary flag: stdout 1`] = `
 
 Changes:
- - package-1: 1.0.0 => 1.1.0-alpha.hash
- - package-2: 1.0.0 => 1.1.0-alpha.hash
- - package-3: 1.0.0 => 1.1.0-alpha.hash
- - package-4: 1.0.0 => 1.1.0-alpha.hash
- - package-5: 1.0.0 => 1.1.0-alpha.hash (private)
+ - package-1: 1.0.0 => 1.1.0-alpha.SHA
+ - package-2: 1.0.0 => 1.1.0-alpha.SHA
+ - package-3: 1.0.0 => 1.1.0-alpha.SHA
+ - package-4: 1.0.0 => 1.1.0-alpha.SHA
+ - package-5: 1.0.0 => 1.1.0-alpha.SHA (private)
 
-`;
-
-exports[`lerna publish uses meta suffix from canary flag: stderr 1`] = `
-lerna info version __TEST_VERSION__
-lerna info canary enabled
-lerna info current version 1.0.0
-lerna info Checking for updated packages...
-lerna info Comparing with initial commit.
-lerna info Checking for prereleased packages...
-lerna info auto-confirmed 
 `;
 
 exports[`lerna publish uses meta suffix from canary flag: stdout 1`] = `
 
 Changes:
- - package-1: 1.0.0 => 1.1.0-beta.hash
- - package-2: 1.0.0 => 1.1.0-beta.hash
- - package-3: 1.0.0 => 1.1.0-beta.hash
- - package-4: 1.0.0 => 1.1.0-beta.hash
- - package-5: 1.0.0 => 1.1.0-beta.hash (private)
+ - package-1: 1.0.0 => 1.1.0-beta.SHA
+ - package-2: 1.0.0 => 1.1.0-beta.SHA
+ - package-3: 1.0.0 => 1.1.0-beta.SHA
+ - package-4: 1.0.0 => 1.1.0-beta.SHA
+ - package-5: 1.0.0 => 1.1.0-beta.SHA (private)
 
 `;

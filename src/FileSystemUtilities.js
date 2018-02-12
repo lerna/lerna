@@ -66,6 +66,11 @@ function writeFileSync(filePath, fileContents) {
   fs.writeFileSync(filePath, ensureEndsWithNewLine(fileContents));
 }
 
+function readFile(filePath) {
+  log.silly("readFile", filePath);
+  return fs.readFile(filePath, "utf8").then(content => content.trim());
+}
+
 function readFileSync(filePath) {
   log.silly("readFileSync", filePath);
   return fs.readFileSync(filePath, "utf8").trim();
@@ -194,6 +199,7 @@ exports.rename = rename;
 exports.renameSync = renameSync;
 exports.writeFile = writeFile;
 exports.writeFileSync = writeFileSync;
+exports.readFile = readFile;
 exports.readFileSync = readFileSync;
 exports.statSync = statSync;
 exports.rimraf = rimraf;

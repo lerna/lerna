@@ -1,109 +1,194 @@
 "use strict";
 
+const conventionalChangelogCore = require("conventional-changelog-core");
+const conventionalRecommendedBump = require("conventional-recommended-bump");
 const dedent = require("dedent");
+const getStream = require("get-stream");
 const log = require("npmlog");
+const npa = require("npm-package-arg");
 const path = require("path");
 const semver = require("semver");
 
-const ChildProcessUtilities = require("./ChildProcessUtilities");
 const FileSystemUtilities = require("./FileSystemUtilities");
+const ValidationError = require("./utils/ValidationError");
 
-const CHANGELOG_NAME = "CHANGELOG.md";
-const CHANGELOG_HEADER = dedent(`# Change Log
+const cfgCache = new Map();
 
-  All notable changes to this project will be documented in this file.
-  See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.`);
+function getChangelogConfig(changelogPreset = "conventional-changelog-angular") {
+  let config = cfgCache.get(changelogPreset);
 
-// We call these resolved CLI files in the "path/to/node path/to/cli <..args>"
-// pattern to avoid Windows hangups with shebangs (e.g., WSH can't handle it)
-const RECOMMEND_CLI = require.resolve("conventional-recommended-bump/cli");
-const CHANGELOG_CLI = require.resolve("conventional-changelog-cli/cli");
+  if (!config) {
+    let presetPackageName = changelogPreset;
 
-function getChangelogLocation(pkg) {
-  return path.join(pkg.location, CHANGELOG_NAME);
-}
+    if (presetPackageName.indexOf("conventional-changelog-") < 0) {
+      // https://github.com/npm/npm-package-arg#result-object
+      const parsed = npa(presetPackageName);
 
-function getChangelogPreset(opts) {
-  return opts && opts.changelogPreset ? opts.changelogPreset : "angular";
-}
+      if (!parsed.name && parsed.raw[0] === "@") {
+        // npa parses sub-path reference as a directory,
+        // which results in an undefined "name" property
+        throw new ValidationError(
+          "ESCOPE",
+          "A scoped conventional-changelog preset must use the full package name to reference subpaths"
+        );
+      }
 
-function recommendVersion(pkg, type, opts) {
-  log.silly(type, "for %s at %s", pkg.name, pkg.location);
+      // implicit 'conventional-changelog-' prefix
+      const parts = parsed.name.split("/");
+      const start = parsed.scope ? 1 : 0;
 
-  // `-p` here is overridden because `conventional-recommended-bump`
-  // cannot accept custom preset.
-  const args = [RECOMMEND_CLI, "-p", "angular", "--commit-path", pkg.location];
+      //        foo =>        conventional-changelog-foo
+      // @scope/foo => @scope/conventional-changelog-foo
+      parts.splice(start, 1, `conventional-changelog-${parts[start]}`);
 
-  if (type === "independent") {
-    args.push("-l", pkg.name);
-  }
+      // _technically_ supports 'foo/lib/bar.js', but that's gross
+      presetPackageName = parts.join("/");
+    }
 
-  const recommendedBump = ChildProcessUtilities.execSync(process.execPath, args, opts);
+    try {
+      // eslint-disable-next-line global-require, import/no-dynamic-require
+      config = require(presetPackageName);
 
-  log.verbose(type, "increment %s by %s", pkg.version, recommendedBump);
-  return semver.inc(pkg.version, recommendedBump);
-}
+      cfgCache.set(changelogPreset, config);
+    } catch (err) {
+      log.silly("getChangelogConfig", err);
 
-function updateChangelog(pkg, type, opts) {
-  log.silly(type, "for %s at %s", pkg.name, pkg.location);
-
-  const changelogFileLoc = getChangelogLocation(pkg);
-  const args = [CHANGELOG_CLI, "-p", getChangelogPreset(opts)];
-
-  if (type === "root") {
-    args.push("--context", path.resolve(__dirname, "ConventionalChangelogContext.js"));
-  } else {
-    // "fixed" & "independent" both need --commit-path and --pkg
-    args.push("--commit-path", pkg.location, "--pkg", pkg.manifestLocation);
-
-    if (type === "independent") {
-      args.push("-l", pkg.name);
+      throw new ValidationError("EPRESET", `Unable to load conventional-commits preset '${changelogPreset}'`);
     }
   }
 
-  // run conventional-changelog-cli to generate the markdown for the upcoming release.
-  let newEntry = ChildProcessUtilities.execSync(process.execPath, args, opts);
+  // the core presets are bloody Q.all() spreads
+  return Promise.resolve(config);
+}
 
-  // When force publishing, it is possible that there will be no actual changes, only a version bump.
-  // Add a note to indicate that only a version bump has occurred.
-  if (!newEntry.split("\n").some(line => line.startsWith("*"))) {
-    newEntry = dedent(
-      `
+function recommendVersion(pkg, type, { changelogPreset }) {
+  log.silly(type, "for %s at %s", pkg.name, pkg.location);
+
+  const options = {
+    path: pkg.location,
+  };
+
+  if (type === "independent") {
+    options.lernaPackage = pkg.name;
+  }
+
+  return getChangelogConfig(changelogPreset).then(config => {
+    // cc-core mutates input :P
+    if (config.recommendedBumpOpts) {
+      // "new" preset API
+      options.config = config.recommendedBumpOpts;
+    } else {
+      // "old" preset API
+      options.config = config;
+    }
+
+    return new Promise((resolve, reject) => {
+      conventionalRecommendedBump(options, (err, data) => {
+        if (err) {
+          return reject(err);
+        }
+
+        log.verbose(type, "increment %s by %s", pkg.version, data.releaseType);
+        resolve(semver.inc(pkg.version, data.releaseType));
+      });
+    });
+  });
+}
+
+function makeBumpOnlyFilter(pkg) {
+  return newEntry => {
+    // When force publishing, it is possible that there will be no actual changes, only a version bump.
+    // Add a note to indicate that only a version bump has occurred.
+    if (!newEntry.split("\n").some(line => line.startsWith("*"))) {
+      return dedent(`
         ${newEntry}
 
         **Note:** Version bump only for package ${pkg.name}
-        `
-    );
-  }
+        `);
+    }
 
-  log.silly(type, "writing new entry: %j", newEntry);
+    return newEntry;
+  };
+}
 
-  let changelogContents = "";
-  if (FileSystemUtilities.existsSync(changelogFileLoc)) {
-    changelogContents = FileSystemUtilities.readFileSync(changelogFileLoc);
-  }
+function readExistingChangelog({ location }) {
+  const changelogFileLoc = path.join(location, "CHANGELOG.md");
 
-  // CHANGELOG entries start with <a name=, we remove
-  // the header if it exists by starting at the first entry.
-  if (changelogContents.indexOf("<a name=") !== -1) {
-    changelogContents = changelogContents.substring(changelogContents.indexOf("<a name="));
-  }
+  return FileSystemUtilities.readFile(changelogFileLoc)
+    .catch(() => "") // allow missing file
+    .then(changelogContents => {
+      // CHANGELOG entries start with <a name=, we remove
+      // the header if it exists by starting at the first entry.
+      const firstEntryIndex = changelogContents.indexOf("<a name=");
 
-  FileSystemUtilities.writeFileSync(
-    changelogFileLoc,
-    // only allow 1 \n at end of content.
-    dedent(
-      `${CHANGELOG_HEADER}
+      if (firstEntryIndex !== -1) {
+        return changelogContents.substring(firstEntryIndex);
+      }
+
+      return changelogContents;
+    })
+    .then(changelogContents => [changelogFileLoc, changelogContents]);
+}
+
+function updateChangelog(pkg, type, { changelogPreset, version }) {
+  log.silly(type, "for %s at %s", pkg.name, pkg.location);
+
+  return getChangelogConfig(changelogPreset).then(config => {
+    const options = {};
+    let context; // pass as positional because cc-core's merge-config is wack
+
+    // cc-core mutates input :P
+    if (config.conventionalChangelog) {
+      // "new" preset API
+      options.config = Object.assign({}, config.conventionalChangelog);
+    } else {
+      // "old" preset API
+      options.config = Object.assign({}, config);
+    }
+
+    // NOTE: must pass as positional argument due to weird bug in merge-config
+    const gitRawCommitsOpts = Object.assign({}, options.config.gitRawCommitsOpts);
+
+    if (type === "root") {
+      context = { version };
+    } else {
+      // "fixed" or "independent"
+      gitRawCommitsOpts.path = pkg.location;
+      options.pkg = { path: pkg.manifestLocation };
+
+      if (type === "independent") {
+        options.lernaPackage = pkg.name;
+      }
+    }
+
+    // generate the markdown for the upcoming release.
+    const changelogStream = conventionalChangelogCore(options, context, gitRawCommitsOpts);
+
+    return Promise.all([
+      getStream(changelogStream).then(makeBumpOnlyFilter(pkg)),
+      readExistingChangelog(pkg),
+    ]).then(([newEntry, [changelogFileLoc, changelogContents]]) => {
+      log.silly(type, "writing new entry: %j", newEntry);
+
+      return FileSystemUtilities.writeFile(
+        changelogFileLoc,
+        dedent`
+        # Change Log
+
+        All notable changes to this project will be documented in this file.
+        See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
         ${newEntry}
 
-        ${changelogContents}`.replace(/\n+$/, "\n")
-    )
-  );
-
-  log.verbose(type, "wrote", changelogFileLoc);
-  return changelogFileLoc;
+        ${changelogContents}`
+      ).then(() => {
+        log.verbose(type, "wrote", changelogFileLoc);
+        return changelogFileLoc;
+      });
+    });
+  });
 }
 
+exports.getChangelogConfig = getChangelogConfig;
 exports.recommendVersion = recommendVersion;
 exports.updateChangelog = updateChangelog;
