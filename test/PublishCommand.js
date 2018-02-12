@@ -1,6 +1,5 @@
 "use strict";
 
-const chalk = require("chalk");
 const log = require("npmlog");
 const normalizeNewline = require("normalize-newline");
 const path = require("path");
@@ -12,10 +11,10 @@ const ConventionalCommitUtilities = require("../src/ConventionalCommitUtilities"
 const GitUtilities = require("../src/GitUtilities");
 const NpmUtilities = require("../src/NpmUtilities");
 const PromptUtilities = require("../src/PromptUtilities");
-const output = require("../src/utils/output");
 
 // helpers
 const callsBack = require("./helpers/callsBack");
+const consoleOutput = require("./helpers/consoleOutput");
 const initFixture = require("./helpers/initFixture");
 const normalizeRelativeDir = require("./helpers/normalizeRelativeDir");
 const yargsRunner = require("./helpers/yargsRunner");
@@ -31,20 +30,14 @@ jest.mock("../src/GitUtilities");
 jest.mock("../src/NpmUtilities");
 jest.mock("../src/PromptUtilities");
 jest.mock("../src/ConventionalCommitUtilities");
-jest.mock("../src/utils/output");
 
 // silence logs
 log.level = "silent";
-
-// keep snapshots stable cross-platform
-chalk.enabled = false;
 
 const execOpts = testDir =>
   expect.objectContaining({
     cwd: testDir,
   });
-
-const consoleOutput = () => output.mock.calls.map(args => normalizeNewline(args[0]));
 
 const publishedTagInDirectories = testDir =>
   NpmUtilities.publishTaggedInDir.mock.calls.reduce((arr, args) => {

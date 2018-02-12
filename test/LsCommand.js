@@ -1,13 +1,9 @@
 "use strict";
 
-const chalk = require("chalk");
 const log = require("npmlog");
-const normalizeNewline = require("normalize-newline");
-
-// mocked or stubbed modules
-const output = require("../src/utils/output");
 
 // helpers
+const consoleOutput = require("./helpers/consoleOutput");
 const initFixture = require("./helpers/initFixture");
 const yargsRunner = require("./helpers/yargsRunner");
 
@@ -16,15 +12,8 @@ const commandModule = require("../src/commands/LsCommand");
 
 const run = yargsRunner(commandModule);
 
-jest.mock("../src/utils/output");
-
 // silence logs
 log.level = "silent";
-
-// keep snapshots stable cross-platform
-chalk.enabled = false;
-
-const consoleOutput = () => output.mock.calls.map(args => normalizeNewline(args[0]));
 
 describe("LsCommand", () => {
   afterEach(() => jest.resetAllMocks());

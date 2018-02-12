@@ -1,16 +1,12 @@
 "use strict";
 
-const chalk = require("chalk");
 const execa = require("execa");
 const log = require("npmlog");
-const normalizeNewline = require("normalize-newline");
 const path = require("path");
 const touch = require("touch");
 
-// mocked or stubbed modules
-const output = require("../src/utils/output");
-
 // helpers
+const consoleOutput = require("./helpers/consoleOutput");
 const initFixture = require("./helpers/initFixture");
 const updateLernaConfig = require("./helpers/updateLernaConfig");
 const yargsRunner = require("./helpers/yargsRunner");
@@ -20,15 +16,8 @@ const commandModule = require("../src/commands/UpdatedCommand");
 
 const run = yargsRunner(commandModule);
 
-jest.mock("../src/utils/output");
-
 // silence logs
 log.level = "silent";
-
-// keep snapshots stable cross-platform
-chalk.enabled = false;
-
-const consoleOutput = () => output.mock.calls.map(args => normalizeNewline(args[0]));
 
 const gitTag = cwd => execa("git", ["tag", "v1.0.0"], { cwd });
 const gitAdd = cwd => execa("git", ["add", "-A"], { cwd });

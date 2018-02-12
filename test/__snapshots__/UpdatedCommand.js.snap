@@ -1,82 +1,58 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`UpdatedCommand basic should list all packages when no tag is found 1`] = `
-Array [
-  "- package-1
+"- package-1
 - package-2
 - package-3
 - package-4
-- package-5 (private)",
-]
+- package-5 (private)"
 `;
 
 exports[`UpdatedCommand basic should list changes 1`] = `
-Array [
-  "- package-2
-- package-3",
-]
+"- package-2
+- package-3"
 `;
 
-exports[`UpdatedCommand basic should list changes in private packages 1`] = `
-Array [
-  "- package-5 (private)",
-]
-`;
+exports[`UpdatedCommand basic should list changes in private packages 1`] = `"- package-5 (private)"`;
 
 exports[`UpdatedCommand basic should list changes with --force-publish * 1`] = `
-Array [
-  "- package-1
+"- package-1
 - package-2
 - package-3
 - package-4
-- package-5 (private)",
-]
+- package-5 (private)"
 `;
 
 exports[`UpdatedCommand basic should list changes with --force-publish [package,package] 1`] = `
-Array [
-  "- package-2
+"- package-2
 - package-3
-- package-4",
-]
+- package-4"
 `;
 
-exports[`UpdatedCommand basic should list changes without ignored files 1`] = `
-Array [
-  "- package-3",
-]
-`;
+exports[`UpdatedCommand basic should list changes without ignored files 1`] = `"- package-3"`;
 
 exports[`UpdatedCommand circular should list changes 1`] = `
-Array [
-  "- package-3
-- package-4",
-]
+"- package-3
+- package-4"
 `;
 
 exports[`UpdatedCommand circular should list changes with --force-publish * 1`] = `
-Array [
-  "- package-1
+"- package-1
 - package-2
 - package-3
 - package-4
-- package-5 (private)",
-]
+- package-5 (private)"
 `;
 
 exports[`UpdatedCommand circular should list changes with --force-publish [package,package] 1`] = `
-Array [
-  "- package-2
+"- package-2
 - package-3
-- package-4",
-]
+- package-4"
 `;
 
 exports[`UpdatedCommand circular should list changes without ignored files 1`] = `
-Array [
-  "- package-3
-- package-4",
-]
+"- package-3
+- package-4"
 `;
 
 exports[`UpdatedCommand with --json should list changes as a json object 1`] = `

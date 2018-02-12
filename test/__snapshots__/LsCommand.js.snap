@@ -1,47 +1,31 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`LsCommand in a Yarn workspace should use package.json/workspaces setting 1`] = `
-Array [
-  "package-1 v1.0.0 
-package-2 v1.0.0 ",
-]
+"package-1 v1.0.0
+package-2 v1.0.0 "
 `;
 
-exports[`LsCommand in a basic repo does not list changes for ignored packages 1`] = `
-Array [
-  "package-1 v1.0.0 ",
-]
-`;
+exports[`LsCommand in a basic repo does not list changes for ignored packages 1`] = `"package-1 v1.0.0 "`;
 
-exports[`LsCommand in a basic repo lists changes for a given scope 1`] = `
-Array [
-  "package-1 v1.0.0 ",
-]
-`;
+exports[`LsCommand in a basic repo lists changes for a given scope 1`] = `"package-1 v1.0.0 "`;
 
 exports[`LsCommand in a basic repo should list packages 1`] = `
-Array [
-  "package-1 v1.0.0          
+"package-1 v1.0.0
 package-2 v1.0.0          
 package-3 v1.0.0          
 package-4 v1.0.0          
-package-5 v1.0.0 (private)",
-]
+package-5 v1.0.0 (private)"
 `;
 
 exports[`LsCommand in a repo with packages outside of packages/ should list packages 1`] = `
-Array [
-  "package-1 v1.0.0 
+"package-1 v1.0.0
 package-2 v1.0.0 
-package-3 v1.0.0 ",
-]
+package-3 v1.0.0 "
 `;
 
 exports[`LsCommand with --include-filtered-dependencies should list packages, including filtered ones 1`] = `
-Array [
-  "@test/package-2 v1.0.0 
-@test/package-1 v1.0.0 ",
-]
+"@test/package-2 v1.0.0
+@test/package-1 v1.0.0 "
 `;
 
 exports[`LsCommand with --json should list packages as json objects 1`] = `
@@ -74,8 +58,4 @@ Array [
 ]
 `;
 
-exports[`LsCommand with an undefined version should list packages 1`] = `
-Array [
-  "package-1 MISSING ",
-]
-`;
+exports[`LsCommand with an undefined version should list packages 1`] = `"package-1 MISSING "`;
