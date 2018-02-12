@@ -1,6 +1,7 @@
 "use strict";
 
 const log = require("npmlog");
+const os = require("os");
 const path = require("path");
 
 // mocked modules
@@ -41,10 +42,10 @@ describe("Package", () => {
       const pkg = factory({ name: "get-resolved" });
       expect(pkg.resolved).toMatchObject({
         type: "directory",
-        where: "/root",
         name: "get-resolved",
-        // windows is ridiculous
-        fetchSpec: expect.stringContaining(path.normalize(pkg.location)),
+        where: path.normalize("/root"),
+        // windows is so fucking ridiculous
+        fetchSpec: path.resolve(os.homedir(), pkg.location),
       });
     });
   });
