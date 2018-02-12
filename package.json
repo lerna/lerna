@@ -51,6 +51,7 @@
     "load-json-file": "^4.0.0",
     "lodash": "^4.17.4",
     "minimatch": "^3.0.4",
+    "npm-package-arg": "^6.0.0",
     "npmlog": "^4.1.2",
     "p-finally": "^1.0.0",
     "package-json": "^4.0.1",

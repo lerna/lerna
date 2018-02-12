@@ -22,7 +22,7 @@ describe("VersionSerializer", () => {
       },
     };
     serializer = new VersionSerializer({
-      graphDependencies: ["my-package-1", "my-package-2", "my-package-3"],
+      localDependencies: new Set(["my-package-1", "my-package-2", "my-package-3"]),
       versionParser: parser,
     });
   });
@@ -37,7 +37,7 @@ describe("VersionSerializer", () => {
       };
 
       serializer = new VersionSerializer({
-        graphDependencies: ["my-package-1", "my-package-2", "my-package-3"],
+        localDependencies: new Set(["my-package-1", "my-package-2", "my-package-3"]),
         versionParser: mockParser,
       });
 

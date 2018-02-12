@@ -11,6 +11,7 @@ const readPkg = require("read-pkg");
 const PackageGraph = require("./PackageGraph");
 const FileSystemUtilities = require("./FileSystemUtilities");
 const Package = require("./Package");
+const ValidationError = require("./utils/ValidationError");
 
 /**
  * A predicate that determines if a given package name satisfies a glob.
@@ -80,15 +81,16 @@ function getPackages({ packageConfigs, rootPath }) {
       const packageConfigPath = path.normalize(globResult);
       const packageDir = path.dirname(packageConfigPath);
       const packageJson = readPkg.sync(packageConfigPath, { normalize: false });
-      packages.push(new Package(packageJson, packageDir));
+      packages.push(new Package(packageJson, packageDir, rootPath));
     });
   });
 
   return packages;
 }
 
-function getPackageGraph(packages, depsOnly, versionParser) {
-  return new PackageGraph(packages, depsOnly, versionParser);
+// a convenient wrapper around the underlying constructor
+function getPackageGraph(packages, { graphType = "allDependencies", forceLocal } = {}) {
+  return new PackageGraph(packages, { graphType, forceLocal });
 }
 
 /**
@@ -101,30 +103,27 @@ function getPackageGraph(packages, depsOnly, versionParser) {
  * @return {Array.<Package>} The packages with any dependencies that were't already included.
  */
 function addDependencies(packages, packageGraph) {
-  const dependentPackages = [];
-
   // the current list of packages we are expanding using breadth-first-search
-  const fringe = packages.slice();
-  const packageExistsInRepository = packageName => !!packageGraph.get(packageName);
-  const packageAlreadyFound = packageName => dependentPackages.some(pkg => pkg.name === packageName);
-  const packageInFringe = packageName => fringe.some(pkg => pkg.name === packageName);
+  const search = new Set(packages.map(({ name }) => name).map(name => packageGraph.get(name)));
 
-  while (fringe.length !== 0) {
-    const pkg = fringe.shift();
-    const pkgDeps = Object.assign({}, pkg.dependencies, pkg.devDependencies);
+  // an intermediate list of matched PackageGraphNodes
+  const result = [];
 
-    Object.keys(pkgDeps).forEach(dep => {
-      if (packageExistsInRepository(dep) && !packageAlreadyFound(dep) && !packageInFringe(dep)) {
-        fringe.push(packageGraph.get(dep).package);
+  search.forEach(currentNode => {
+    // anything searched for is always a result
+    result.push(currentNode);
+
+    currentNode.localDependencies.forEach((meta, depName) => {
+      const depNode = packageGraph.get(depName);
+
+      if (depNode !== currentNode && !search.has(depNode)) {
+        search.add(depNode);
       }
     });
+  });
 
-    if (!packageAlreadyFound(pkg.name)) {
-      dependentPackages.push(pkg);
-    }
-  }
-
-  return dependentPackages;
+  // actual Package instances, not PackageGraphNodes
+  return result.map(node => node.pkg);
 }
 
 /**
@@ -181,56 +180,44 @@ function validatePackageNames(packages) {
   });
 }
 
-function topologicallyBatchPackages(packagesToBatch, { depsOnly, rejectCycles } = {}) {
-  // We're going to be chopping stuff out of this array, so copy it.
-  const packages = packagesToBatch.slice();
-  const packageGraph = exports.getPackageGraph(packages, depsOnly);
-
-  // This maps package names to the number of packages that depend on them.
-  // As packages are completed their names will be removed from this object.
-  const refCounts = {};
-  packages.forEach(pkg =>
-    packageGraph.get(pkg.name).dependencies.forEach(dep => {
-      if (!refCounts[dep]) {
-        refCounts[dep] = 0;
-      }
-      refCounts[dep] += 1;
-    })
-  );
-
+function batchPackages(packagesToBatch, { graphType, rejectCycles } = {}) {
+  // create a new graph because we will be mutating it
+  const graph = exports.getPackageGraph(packagesToBatch, { graphType });
+  const [cyclePaths, cycleNodes] = graph.partitionCycles();
   const batches = [];
-  while (packages.length) {
-    // Get all packages that have no remaining dependencies within the repo
-    // that haven't yet been picked.
-    const batch = packages.filter(pkg => {
-      const node = packageGraph.get(pkg.name);
-      return node.dependencies.filter(dep => refCounts[dep]).length === 0;
-    });
 
-    // If we weren't able to find a package with no remaining dependencies,
-    // then we've encountered a cycle in the dependency graph.  Run a
-    // single-package batch with the package that has the most dependents.
-    if (packages.length && !batch.length) {
-      const cyclePackageNames = packages.map(p => `"${p.name}"`);
-      const message = `${"Encountered a cycle in the dependency graph." +
-        "This may cause instability! Packages in cycle are: "}${cyclePackageNames.join(", ")}`;
+  if (cyclePaths.size) {
+    const cycleMessage = ["Dependency cycles detected, you should fix these!"]
+      .concat(Array.from(cyclePaths).map(cycle => cycle.join(" -> ")))
+      .join("\n");
 
-      if (rejectCycles) {
-        throw new Error(message);
-      }
-      log.warn("ECYCLE", message);
-
-      batch.push(packages.reduce((a, b) => ((refCounts[a.name] || 0) > (refCounts[b.name] || 0) ? a : b)));
-
-      log.silly("packages", batch.map(pkg => pkg.name));
+    if (rejectCycles) {
+      throw new ValidationError("ECYCLE", cycleMessage);
     }
 
-    batches.push(batch);
+    log.warn("ECYCLE", cycleMessage);
+  }
 
-    batch.forEach(pkg => {
-      delete refCounts[pkg.name];
-      packages.splice(packages.indexOf(pkg), 1);
-    });
+  while (graph.size) {
+    // pick the current set of nodes _without_ localDependencies (aka it is a "source" node)
+    const batch = Array.from(graph.values()).filter(node => node.is("source"));
+
+    log.silly("batched", batch);
+    // batches are composed of Package instances, not PackageGraphNodes
+    batches.push(batch.map(node => node.pkg));
+
+    // pruning the graph changes the node.is("source") evaluation
+    graph.prune(...batch);
+  }
+
+  if (cycleNodes.size) {
+    // isolate cycles behind a single-package batch of the cyclical package with the most dependents
+    const [king, ...rats] = Array.from(cycleNodes)
+      .sort((a, b) => b.localDependents.size - a.localDependents.size)
+      .map(node => node.pkg);
+
+    batches.push([king]);
+    batches.push(rats);
   }
 
   return batches;
@@ -253,82 +240,75 @@ function runParallelBatches(batches, makeTask, concurrency, callback) {
  * @param {Object} logger
  * @param {Function} callback
  */
-function symlinkPackages(packages, packageGraph, logger, forceLocal, callback) {
+function symlinkPackages(packages, packageGraph, logger, callback) {
   const tracker = logger.newItem("symlink packages");
 
   tracker.info("", "Symlinking packages and binaries");
   tracker.addWork(packages.length);
 
-  const actions = packages.map(iteratedPackage => {
-    const filteredDependencyNames = Object.keys(iteratedPackage.allDependencies).filter(dependency => {
-      // Filter out external dependencies and incompatible packages
-      // (e.g. dependencies without a package.json file)
-      const match = packageGraph.get(dependency);
+  const nodes =
+    packageGraph.size === packages.length
+      ? packageGraph.values()
+      : new Set(packages.map(({ name }) => packageGraph.get(name)));
 
-      return (
-        match &&
-        FileSystemUtilities.existsSync(match.package.manifestLocation) &&
-        (forceLocal || iteratedPackage.hasMatchingDependency(match.package))
-      );
-    });
+  const actions = Array.from(nodes).map(currentNode => {
+    const { nodeModulesLocation } = currentNode.pkg;
 
     // actions to run for this package
-    const packageActions = filteredDependencyNames.reduce((acc, dependencyName) => {
-      // get Package of dependency
-      const dependencyPackage = packageGraph.get(dependencyName).package;
-      const depencyPath = path.join(iteratedPackage.nodeModulesLocation, dependencyPackage.name);
+    const packageActions = [];
 
-      // check if dependency is already installed
-      if (FileSystemUtilities.existsSync(depencyPath)) {
-        const isDepSymlink = FileSystemUtilities.isSymlink(depencyPath);
-
-        // installed dependency is a symlink pointing to a different location
-        if (isDepSymlink !== false && isDepSymlink !== dependencyPackage.location) {
-          tracker.warn(
-            "EREPLACE_OTHER",
-            `Symlink already exists for ${dependencyName} dependency of ${iteratedPackage.name}, ` +
-              "but links to different location. Replacing with updated symlink..."
-          );
-          // installed dependency is not a symlink
-        } else if (isDepSymlink === false) {
-          tracker.warn(
-            "EREPLACE_EXIST",
-            `${dependencyName} is already installed for ${iteratedPackage.name}. ` +
-              "Replacing with symlink..."
-          );
-          // remove installed dependency
-          acc.push(cb => FileSystemUtilities.rimraf(depencyPath, cb));
-        }
+    currentNode.localDependencies.forEach(({ type }, dependencyName) => {
+      if (type === "directory") {
+        // a local file: specifier is already a symlink
+        return;
       }
 
-      // ensure destination path
-      acc.push(cb =>
-        FileSystemUtilities.mkdirp(
-          depencyPath
-            .split(path.sep)
-            .slice(0, -1)
-            .join(path.sep),
-          cb
-        )
-      );
+      // get PackageGraphNode of dependency
+      const dependencyNode = packageGraph.get(dependencyName);
+      const targetDirectory = path.join(nodeModulesLocation, dependencyName);
+
+      // check if dependency is already installed
+      if (FileSystemUtilities.existsSync(targetDirectory)) {
+        const isDepSymlink = FileSystemUtilities.isSymlink(targetDirectory);
+
+        if (isDepSymlink !== false && isDepSymlink !== dependencyNode.location) {
+          // installed dependency is a symlink pointing to a different location
+          tracker.warn(
+            "EREPLACE_OTHER",
+            `Symlink already exists for ${dependencyName} dependency of ${currentNode.name}, ` +
+              "but links to different location. Replacing with updated symlink..."
+          );
+        } else if (isDepSymlink === false) {
+          // installed dependency is not a symlink
+          tracker.warn(
+            "EREPLACE_EXIST",
+            `${dependencyName} is already installed for ${currentNode.name}. Replacing with symlink...`
+          );
+
+          // remove installed dependency
+          packageActions.push(next => FileSystemUtilities.rimraf(targetDirectory, next));
+        }
+      } else {
+        // ensure destination directory exists (dealing with scoped subdirs)
+        packageActions.push(next => FileSystemUtilities.mkdirp(path.dirname(targetDirectory), next));
+      }
 
       // create package symlink
-      acc.push(cb => {
-        FileSystemUtilities.symlink(dependencyPackage.location, depencyPath, "junction", cb);
+      packageActions.push(next => {
+        FileSystemUtilities.symlink(dependencyNode.location, targetDirectory, "junction", next);
       });
 
-      acc.push(cb => {
-        exports.createBinaryLink(dependencyPackage, iteratedPackage, cb);
+      packageActions.push(next => {
+        // TODO: pass PackageGraphNodes directly instead of Packages
+        exports.createBinaryLink(dependencyNode.pkg, currentNode.pkg, next);
       });
+    });
 
-      return acc;
-    }, []);
-
-    return cb => {
+    return finish => {
       async.series(packageActions, err => {
-        tracker.silly("packageActions", "finished", iteratedPackage.name);
+        tracker.silly("packageActions", "finished", currentNode.name);
         tracker.completeWork(1);
-        cb(err);
+        finish(err);
       });
     };
   });
@@ -349,21 +329,21 @@ function createBinaryLink(srcPackageRef, destPackageRef, callback) {
   const srcPackage = resolvePackageRef(srcPackageRef);
   const destPackage = resolvePackageRef(destPackageRef);
 
-  const bin = getPackageBin(srcPackageRef);
-
-  const actions = entries(bin)
+  const actions = entries(srcPackage.bin)
     .map(([name, file]) => ({
       src: path.join(srcPackage.location, file),
       dst: path.join(destPackage.binLocation, name),
     }))
-    .reduce((acc, { src, dst }) => {
-      const link = cb => FileSystemUtilities.symlink(src, dst, "exec", cb);
-      const chmod = cb => FileSystemUtilities.chmod(src, "755", cb);
-      const linkActions = FileSystemUtilities.existsSync(src) ? [link, chmod] : [];
-
-      acc.push(cb => async.series(linkActions, cb));
-      return acc;
-    }, []);
+    .filter(({ src }) => FileSystemUtilities.existsSync(src))
+    .map(({ src, dst }) => cb =>
+      async.series(
+        [
+          next => FileSystemUtilities.symlink(src, dst, "exec", next),
+          done => FileSystemUtilities.chmod(src, "755", done),
+        ],
+        cb
+      )
+    );
 
   if (actions.length === 0) {
     return callback();
@@ -375,19 +355,12 @@ function createBinaryLink(srcPackageRef, destPackageRef, callback) {
   async.series([ensureBin, linkEntries], callback);
 }
 
-function getPackageBin(pkgRef) {
-  const pkg = resolvePackageRef(pkgRef);
-  const name = getSafeName(pkg.name);
-
-  return typeof pkg.bin === "string" ? { [name]: pkg.bin } : pkg.bin || {};
-}
-
-function getSafeName(rawName) {
-  return rawName[0] === "@" ? rawName.substring(rawName.indexOf("/") + 1) : rawName;
-}
-
 function resolvePackageRef(pkgRef) {
-  return pkgRef instanceof Package ? pkgRef : new Package(readPkg.sync(pkgRef), pkgRef);
+  if (pkgRef instanceof Package) {
+    return pkgRef;
+  }
+
+  return new Package(readPkg.sync(pkgRef), pkgRef);
 }
 
 exports.isHoistedPackage = isHoistedPackage;
@@ -396,7 +369,7 @@ exports.getPackageGraph = getPackageGraph;
 exports.addDependencies = addDependencies;
 exports.filterPackages = filterPackages;
 exports.validatePackageNames = validatePackageNames;
-exports.topologicallyBatchPackages = topologicallyBatchPackages;
+exports.batchPackages = batchPackages;
 exports.runParallelBatches = runParallelBatches;
 exports.symlinkPackages = symlinkPackages;
 exports.createBinaryLink = createBinaryLink;

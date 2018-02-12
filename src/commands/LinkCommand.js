@@ -37,7 +37,12 @@ class LinkCommand extends Command {
   }
 
   execute(callback) {
-    const { packages, packageGraph, logger, options: { forceLocal } } = this;
-    PackageUtilities.symlinkPackages(packages, packageGraph, logger, forceLocal, callback);
+    let graph = this.packageGraph;
+
+    if (this.options.forceLocal) {
+      graph = PackageUtilities.getPackageGraph(this.packages, { forceLocal: true });
+    }
+
+    PackageUtilities.symlinkPackages(this.packages, graph, this.logger, callback);
   }
 }

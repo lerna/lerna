@@ -275,14 +275,15 @@ class Command {
     }
 
     try {
-      const versionParser = useGitVersion && new GitVersionParser(gitVersionPrefix);
       const packages = PackageUtilities.getPackages({ rootPath, packageConfigs });
-      const packageGraph = PackageUtilities.getPackageGraph(packages, false, versionParser);
+      const packageGraph = PackageUtilities.getPackageGraph(packages);
 
       if (useGitVersion) {
+        const versionParser = new GitVersionParser(gitVersionPrefix);
+
         packages.forEach(pkg => {
           pkg.versionSerializer = new VersionSerializer({
-            graphDependencies: packageGraph.get(pkg.name).dependencies,
+            localDependencies: packageGraph.get(pkg.name).localDependencies,
             versionParser,
           });
         });

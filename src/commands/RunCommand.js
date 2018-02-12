@@ -88,7 +88,7 @@ class RunCommand extends Command {
 
     try {
       this.batchedPackages = this.toposort
-        ? PackageUtilities.topologicallyBatchPackages(this.packagesWithScript, {
+        ? PackageUtilities.batchPackages(this.packagesWithScript, {
             rejectCycles: this.options.rejectCycles,
           })
         : [this.packagesWithScript];

@@ -30,8 +30,7 @@ exports.builder = yargs => yargs.options(updatedOptions);
 
 class UpdatedCommand extends Command {
   initialize(callback) {
-    const updatedPackagesCollector = new UpdatedPackagesCollector(this);
-    this.updates = updatedPackagesCollector.getUpdates();
+    this.updates = new UpdatedPackagesCollector(this).getUpdates();
 
     const proceedWithUpdates = this.updates.length > 0;
     if (!proceedWithUpdates) {

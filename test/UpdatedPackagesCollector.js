@@ -19,6 +19,8 @@ const filteredPackages = [
   },
 ];
 
+const packageGraph = new Map(filteredPackages.map(pkg => [pkg.name, pkg]));
+
 const logger = {
   silly: () => {},
   info: () => {},
@@ -36,7 +38,7 @@ describe("UpdatedPackagesCollector", () => {
 
   describe(".collectUpdatedPackages()", () => {
     beforeEach(() => {
-      GitUtilities.getCurrentSHA = jest.fn(() => "deadbeefcafe");
+      GitUtilities.getShortSHA = jest.fn(() => "deadbeef");
       GitUtilities.hasTags = jest.fn(() => true);
       GitUtilities.diffSinceIn = jest.fn(() => "");
       GitUtilities.getLastTag = jest.fn(() => "lastTag");
@@ -52,6 +54,7 @@ describe("UpdatedPackagesCollector", () => {
         repository,
         logger,
         filteredPackages,
+        packageGraph,
       }).getUpdates();
 
       expect(GitUtilities.diffSinceIn).toBeCalledWith("deadbeef^..deadbeef", "location-1", undefined);
@@ -66,6 +69,7 @@ describe("UpdatedPackagesCollector", () => {
         repository,
         logger,
         filteredPackages,
+        packageGraph,
       }).getUpdates();
 
       expect(GitUtilities.diffSinceIn).toBeCalledWith("deadbeef^..deadbeef", "location-1", undefined);
@@ -78,6 +82,7 @@ describe("UpdatedPackagesCollector", () => {
         repository,
         logger,
         filteredPackages,
+        packageGraph,
       }).getUpdates();
 
       expect(GitUtilities.diffSinceIn).toBeCalledWith("lastTag", "location-1", undefined);
