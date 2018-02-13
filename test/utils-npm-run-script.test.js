@@ -67,25 +67,6 @@ describe("npm-run-script", () => {
     });
   });
 
-  describe("npmRunScript.sync()", () => {
-    it("runs an npm script synchronously in a directory", () => {
-      const script = "foo";
-      const config = {
-        args: ["--bar", "baz"],
-        pkg: {
-          location: "/test/npm/run/script/sync",
-        },
-        npmClient: "npm",
-      };
-
-      npmRunScript.sync(script, config);
-
-      expect(ChildProcessUtilities.execSync).lastCalledWith("npm", ["run", script, "--bar", "baz"], {
-        cwd: config.pkg.location,
-      });
-    });
-  });
-
   describe("npmRunScript.stream()", () => {
     it("runs an npm script in a package with streaming", done => {
       expect.assertions(1);
