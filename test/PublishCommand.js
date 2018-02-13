@@ -94,24 +94,24 @@ const updatedPackageJSON = name =>
     .pop();
 
 describe("PublishCommand", () => {
-  beforeEach(() => {
-    // default exports that return Promises
-    writePkg.mockImplementation(() => Promise.resolve());
-    writeJsonFile.mockImplementation(() => Promise.resolve());
+  // default exports that return Promises
+  writePkg.mockResolvedValue();
+  writeJsonFile.mockResolvedValue();
 
-    // we've already tested these utilities elsewhere
-    GitUtilities.isInitialized = jest.fn(() => true);
-    GitUtilities.getCurrentBranch = jest.fn(() => "master");
-    GitUtilities.getShortSHA = jest.fn(() => "deadbeef");
+  // we've already tested these utilities elsewhere
+  GitUtilities.isInitialized.mockReturnValue(true);
+  GitUtilities.getCurrentBranch.mockReturnValue("master");
+  GitUtilities.getShortSHA.mockReturnValue("deadbeef");
+  GitUtilities.diffSinceIn.mockReturnValue("");
 
-    NpmUtilities.publishTaggedInDir = jest.fn(() => Promise.resolve());
-    NpmUtilities.checkDistTag = jest.fn(() => true);
+  NpmUtilities.publishTaggedInDir.mockResolvedValue();
+  NpmUtilities.checkDistTag.mockReturnValue(true);
 
-    PromptUtilities.select.mockImplementation(() => Promise.resolve("1.0.1"));
-    PromptUtilities.confirm.mockImplementation(() => Promise.resolve(true));
-  });
+  PromptUtilities.select.mockResolvedValue("1.0.1");
+  PromptUtilities.confirm.mockResolvedValue(true);
 
-  afterEach(() => jest.resetAllMocks());
+  // don't reset default impls, just clear calls
+  afterEach(jest.clearAllMocks);
 
   /** =========================================================================
    * NORMAL
@@ -536,15 +536,13 @@ describe("PublishCommand", () => {
    * ======================================================================= */
 
   describe("normal mode with previous prerelease", () => {
-    beforeEach(async () => {
-      GitUtilities.hasTags.mockReturnValue(true);
-      GitUtilities.getLastTag.mockReturnValue("v1.0.1-beta.3");
-      GitUtilities.diffSinceIn.mockImplementation((since, location) => {
-        if (location.endsWith("package-3")) {
-          return "packages/package-3/newfile.json";
-        }
-        return "";
-      });
+    beforeEach(() => {
+      GitUtilities.hasTags.mockReturnValueOnce(true);
+      GitUtilities.getLastTag.mockReturnValueOnce("v1.0.1-beta.3");
+      GitUtilities.diffSinceIn
+        .mockReturnValueOnce("")
+        .mockReturnValueOnce("")
+        .mockReturnValueOnce("packages/package-3/newfile.json");
     });
 
     it("publishes changed & prereleased packages if --cd-version is non-prerelease", async () => {
