@@ -23,8 +23,8 @@ const commandModule = require("../src/commands/PublishCommand");
 
 const run = yargsRunner(commandModule);
 
-jest.mock("write-json-file", () => jest.fn(() => Promise.resolve()));
-jest.mock("write-pkg", () => jest.fn(() => Promise.resolve()));
+jest.mock("write-json-file");
+jest.mock("write-pkg");
 jest.mock("../src/GitUtilities");
 jest.mock("../src/NpmUtilities");
 jest.mock("../src/PromptUtilities");
@@ -32,11 +32,6 @@ jest.mock("../src/ConventionalCommitUtilities");
 
 // silence logs
 log.level = "silent";
-
-const execOpts = testDir =>
-  expect.objectContaining({
-    cwd: testDir,
-  });
 
 const publishedTagInDirectories = testDir =>
   NpmUtilities.publishTaggedInDir.mock.calls.reduce((arr, args) => {
@@ -151,7 +146,13 @@ describe("PublishCommand", () => {
 
       expect(publishedTagInDirectories(testDir)).toMatchSnapshot("npm published");
 
-      expect(GitUtilities.pushWithTags).lastCalledWith("origin", gitTagsAdded(), execOpts(testDir));
+      expect(GitUtilities.pushWithTags).lastCalledWith(
+        "origin",
+        gitTagsAdded(),
+        expect.objectContaining({
+          cwd: testDir,
+        })
+      );
       expect(consoleOutput()).toMatchSnapshot("console output");
     });
 
@@ -174,7 +175,7 @@ describe("PublishCommand", () => {
     it("should publish the changed packages in independent mode", async () => {
       // mock version prompt choices
       ["1.0.1", "1.1.0", "2.0.0", "1.1.0", "1.0.1"].forEach(chosenVersion =>
-        PromptUtilities.select.mockReturnValueOnce(Promise.resolve(chosenVersion))
+        PromptUtilities.select.mockResolvedValueOnce(chosenVersion)
       );
 
       const testDir = await initFixture("PublishCommand/independent");
@@ -205,7 +206,13 @@ describe("PublishCommand", () => {
 
       expect(publishedTagInDirectories(testDir)).toMatchSnapshot("npm published");
 
-      expect(GitUtilities.pushWithTags).lastCalledWith("origin", gitTagsAdded(), execOpts(testDir));
+      expect(GitUtilities.pushWithTags).lastCalledWith(
+        "origin",
+        gitTagsAdded(),
+        expect.objectContaining({
+          cwd: testDir,
+        })
+      );
       expect(consoleOutput()).toMatchSnapshot("console output");
     });
   });
@@ -239,7 +246,9 @@ describe("PublishCommand", () => {
       expect(GitUtilities.addTag).not.toBeCalled();
       expect(GitUtilities.checkoutChanges).lastCalledWith(
         expect.stringContaining("packages/*/package.json"),
-        execOpts(testDir)
+        expect.objectContaining({
+          cwd: testDir,
+        })
       );
 
       expect(GitUtilities.pushWithTags).not.toBeCalled();
@@ -412,7 +421,13 @@ describe("PublishCommand", () => {
       expect(removedDistTagInDirectories(testDir)).toMatchSnapshot("npm dist-tag rm");
       expect(addedDistTagInDirectories(testDir)).toMatchSnapshot("npm dist-tag add");
 
-      expect(GitUtilities.pushWithTags).lastCalledWith("origin", ["v1.0.1"], execOpts(testDir));
+      expect(GitUtilities.pushWithTags).lastCalledWith(
+        "origin",
+        ["v1.0.1"],
+        expect.objectContaining({
+          cwd: testDir,
+        })
+      );
     });
   });
 
@@ -631,7 +646,13 @@ describe("PublishCommand", () => {
       const testDir = await initFixture("PublishCommand/normal");
       await run(testDir)("--git-remote", "upstream");
 
-      expect(GitUtilities.pushWithTags).lastCalledWith("upstream", ["v1.0.1"], execOpts(testDir));
+      expect(GitUtilities.pushWithTags).lastCalledWith(
+        "upstream",
+        ["v1.0.1"],
+        expect.objectContaining({
+          cwd: testDir,
+        })
+      );
     });
   });
 
@@ -658,14 +679,24 @@ describe("PublishCommand", () => {
       const testDir = await initFixture("PublishCommand/normal");
       await run(testDir)("--message", "chore: Release %s :rocket:");
 
-      expect(GitUtilities.commit).lastCalledWith("chore: Release v1.0.1 :rocket:", execOpts(testDir));
+      expect(GitUtilities.commit).lastCalledWith(
+        "chore: Release v1.0.1 :rocket:",
+        expect.objectContaining({
+          cwd: testDir,
+        })
+      );
     });
 
     it("commits changes with a custom message using %v", async () => {
       const testDir = await initFixture("PublishCommand/normal");
       await run(testDir)("--message", "chore: Release %v :rocket:");
 
-      expect(GitUtilities.commit).lastCalledWith("chore: Release 1.0.1 :rocket:", execOpts(testDir));
+      expect(GitUtilities.commit).lastCalledWith(
+        "chore: Release 1.0.1 :rocket:",
+        expect.objectContaining({
+          cwd: testDir,
+        })
+      );
     });
   });
 
@@ -678,7 +709,12 @@ describe("PublishCommand", () => {
       const testDir = await initFixture("PublishCommand/independent");
       await run(testDir)("-m", "chore: Custom publish message");
 
-      expect(GitUtilities.commit).lastCalledWith(expect.stringContaining("chore:"), execOpts(testDir));
+      expect(GitUtilities.commit).lastCalledWith(
+        expect.stringContaining("chore: Custom publish message"),
+        expect.objectContaining({
+          cwd: testDir,
+        })
+      );
       expect(gitCommitMessage()).toMatchSnapshot("git commit message");
     });
   });
@@ -688,18 +724,16 @@ describe("PublishCommand", () => {
    * ======================================================================= */
 
   describe("--conventional-commits", () => {
-    beforeEach(() => {
-      ConventionalCommitUtilities.updateChangelog.mockImplementation(pkg =>
-        Promise.resolve(path.join(pkg.location, "CHANGELOG.md"))
-      );
-    });
+    ConventionalCommitUtilities.updateChangelog.mockImplementation(pkg =>
+      Promise.resolve(path.join(pkg.location, "CHANGELOG.md"))
+    );
 
     describe("independent mode", () => {
       const versionBumps = ["1.0.1", "2.1.0", "4.0.0", "4.1.0", "5.0.1"];
 
       beforeEach(() => {
         versionBumps.forEach(bump =>
-          ConventionalCommitUtilities.recommendVersion.mockReturnValueOnce(Promise.resolve(bump))
+          ConventionalCommitUtilities.recommendVersion.mockResolvedValueOnce(bump)
         );
       });
 
@@ -747,11 +781,11 @@ describe("PublishCommand", () => {
     describe("fixed mode", () => {
       beforeEach(() => {
         ConventionalCommitUtilities.recommendVersion
-          .mockReturnValueOnce(Promise.resolve("1.0.1"))
-          .mockReturnValueOnce(Promise.resolve("1.1.0"))
-          .mockReturnValueOnce(Promise.resolve("2.0.0"))
-          .mockReturnValueOnce(Promise.resolve("1.1.0"))
-          .mockReturnValueOnce(Promise.resolve("1.0.0"));
+          .mockResolvedValueOnce("1.0.1")
+          .mockResolvedValueOnce("1.1.0")
+          .mockResolvedValueOnce("2.0.0")
+          .mockResolvedValueOnce("1.1.0")
+          .mockResolvedValueOnce("1.0.0");
       });
 
       it("should use conventional-commits utility to guess version bump and generate CHANGELOG", async () => {
@@ -781,7 +815,7 @@ describe("PublishCommand", () => {
         expect(ConventionalCommitUtilities.updateChangelog).lastCalledWith(
           expect.objectContaining({
             name: "normal",
-            location: path.join(testDir),
+            location: testDir,
           }),
           "root",
           { changelogPreset: undefined, version: "2.0.0" }
@@ -947,5 +981,17 @@ describe("PublishCommand", () => {
 
       expect(NpmUtilities.runScriptInDirSync.mock.calls.map(args => args[0])).toEqual(scripts);
     });
+  });
+
+  it("publishes all transitive dependents after change", async () => {
+    const testDir = await initFixture("PublishCommand/snake-graph");
+
+    GitUtilities.hasTags.mockReturnValueOnce(true);
+    GitUtilities.getLastTag.mockReturnValueOnce("v1.0.0");
+    GitUtilities.diffSinceIn.mockReturnValueOnce("packages/package-1/package.json");
+
+    await run(testDir)("--cd-version", "major", "--yes");
+
+    expect(updatedPackageVersions(testDir)).toMatchSnapshot();
   });
 });

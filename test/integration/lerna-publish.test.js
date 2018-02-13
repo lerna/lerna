@@ -91,6 +91,18 @@ describe("lerna publish", () => {
     expect(commitMessage).toMatchSnapshot("commit");
   });
 
+  test("updates all transitive dependents", async () => {
+    const cwd = await initFixture("PublishCommand/snake-graph");
+    const args = ["publish", "--skip-npm", "--cd-version=major", "--yes"];
+
+    await execa("git", ["tag", "v1.0.0", "-m", "v1.0.0"], { cwd });
+    await commitChangeToPackage(cwd, "package-1", "change", { change: true });
+
+    await runner(cwd)(...args);
+
+    expect(await loadPkgManifests(cwd)).toMatchSnapshot();
+  });
+
   test("uses default suffix with canary flag", async () => {
     const cwd = await initFixture("PublishCommand/normal");
     const args = ["publish", "--canary", "--skip-npm", "--yes"];

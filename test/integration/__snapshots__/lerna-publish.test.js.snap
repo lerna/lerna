@@ -243,6 +243,49 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ]
 `;
 
+exports[`lerna publish updates all transitive dependents 1`] = `
+Array [
+  Object {
+    change: true,
+    description: no local dependencies, four local dependents (three transitive),
+    name: package-1,
+    version: 2.0.0,
+  },
+  Object {
+    dependencies: Object {
+      package-1: ^2.0.0,
+    },
+    description: one local dependency, one direct dependent, no transitive dependencies,
+    name: package-2,
+    version: 2.0.0,
+  },
+  Object {
+    dependencies: Object {
+      package-2: ^2.0.0,
+    },
+    description: one local dependency, one direct dependent, one transitive dependency,
+    name: package-3,
+    version: 2.0.0,
+  },
+  Object {
+    dependencies: Object {
+      package-3: ^2.0.0,
+    },
+    description: one local dependency, one direct dependent, two transitive dependencies,
+    name: package-4,
+    version: 2.0.0,
+  },
+  Object {
+    dependencies: Object {
+      package-4: ^2.0.0,
+    },
+    description: one local dependency, no dependents, three transitive dependencies,
+    name: package-5,
+    version: 2.0.0,
+  },
+]
+`;
+
 exports[`lerna publish updates fixed versions: commit 1`] = `
 v1.0.1
 

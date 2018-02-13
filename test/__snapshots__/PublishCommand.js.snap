@@ -518,3 +518,13 @@ Object {
   "packages/package-3": "1.0.1-beta.4",
 }
 `;
+
+exports[`PublishCommand publishes all transitive dependents after change 1`] = `
+Object {
+  "packages/package-1": "2.0.0",
+  "packages/package-2": "2.0.0",
+  "packages/package-3": "2.0.0",
+  "packages/package-4": "2.0.0",
+  "packages/package-5": "2.0.0",
+}
+`;

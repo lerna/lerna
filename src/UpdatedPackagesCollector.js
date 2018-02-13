@@ -74,14 +74,11 @@ class UpdatedPackagesCollector {
   getUpdates() {
     this.logger.silly("getUpdates");
 
-    const updatedPackages = this.collectUpdatedPackages();
-    const prereleasedPackages = this.collectPrereleasedPackages();
-    const dependents = new Set(
-      [...updatedPackages, ...prereleasedPackages].reduce(
-        (arr, node) => arr.concat(...node.localDependents),
-        []
-      )
-    );
+    this.candidates = new Set();
+
+    this.collectUpdatedPackages();
+    this.collectPrereleasedPackages();
+    this.collectTransitiveDependents();
 
     const updates = [];
 
@@ -96,7 +93,7 @@ class UpdatedPackagesCollector {
       this.packages.forEach(mapper);
     } else {
       this.packages.forEach((node, name) => {
-        if (updatedPackages.has(node) || prereleasedPackages.has(node) || dependents.has(node)) {
+        if (this.candidates.has(node)) {
           mapper(node, name);
         }
       });
@@ -126,42 +123,70 @@ class UpdatedPackagesCollector {
 
     this.logger.info("", `Comparing with ${since || "initial commit"}.`);
 
-    const updatedPackages = new Set();
     const forced = getForcedPackages(forcePublish);
 
     if (!since || forced.has("*")) {
-      this.packages.forEach(node => updatedPackages.add(node));
+      this.packages.forEach(node => this.candidates.add(node));
     } else {
       const hasDiffSinceThatIsntIgnored = makeDiffSince(rootPath, execOpts, ignorePatterns);
 
       this.packages.forEach((node, name) => {
         if (forced.has(name) || hasDiffSinceThatIsntIgnored(node, since)) {
-          updatedPackages.add(node);
+          this.candidates.add(node);
         }
       });
     }
-
-    return updatedPackages;
   }
 
   collectPrereleasedPackages() {
-    this.logger.info("", "Checking for prereleased packages...");
-
-    const prereleasedPackages = new Set();
-
     if ((this.options.cdVersion || "").startsWith("pre")) {
-      return prereleasedPackages;
+      return;
     }
+
+    this.logger.info("", "Checking for prereleased packages...");
 
     // skip packages that have not been previously prereleased
     this.packages.forEach((node, name) => {
       if (semver.prerelease(node.version)) {
         this.logger.verbose("prereleased", name);
-        prereleasedPackages.add(node);
+        this.candidates.add(node);
       }
     });
+  }
 
-    return prereleasedPackages;
+  collectTransitiveDependents() {
+    const collected = new Set();
+
+    this.candidates.forEach((currentNode, currentName) => {
+      if (currentNode.localDependents.size === 0) {
+        // no point diving into a non-existent tree
+        return;
+      }
+
+      // depth-first search, whee
+      const seen = new Set();
+
+      const visit = (dependentNode, dependentName, siblingDependents) => {
+        if (seen.has(dependentNode)) {
+          return;
+        }
+
+        seen.add(dependentNode);
+
+        if (dependentNode === currentNode || siblingDependents.has(currentName)) {
+          // a direct or transitive cycle, skip it
+          return;
+        }
+
+        collected.add(dependentNode);
+
+        dependentNode.localDependents.forEach(visit);
+      };
+
+      currentNode.localDependents.forEach(visit);
+    });
+
+    collected.forEach(node => this.candidates.add(node));
   }
 }
 
