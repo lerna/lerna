@@ -994,4 +994,50 @@ describe("PublishCommand", () => {
 
     expect(updatedPackageVersions(testDir)).toMatchSnapshot();
   });
+
+  describe("with relative file: specifiers", () => {
+    beforeEach(() => {
+      GitUtilities.hasTags.mockReturnValueOnce(true);
+      GitUtilities.getLastTag.mockReturnValueOnce("v1.0.0");
+      GitUtilities.diffSinceIn.mockReturnValueOnce("packages/package-1/package.json");
+    });
+
+    it("overwrites relative link with local version before npm publish but after git commit", async () => {
+      const testDir = await initFixture("PublishCommand/relative-file-specs");
+
+      await run(testDir)("--cd-version", "major", "--yes");
+
+      expect(updatedPackageVersions(testDir)).toMatchSnapshot();
+
+      // notably missing is package-1, which has no relative file: dependencies
+      expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+        "package-1": "^2.0.0",
+      });
+      expect(updatedPackageJSON("package-3").dependencies).toMatchObject({
+        "package-2": "^2.0.0",
+      });
+      expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+        "package-3": "^2.0.0",
+      });
+      expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
+        "package-4": "^2.0.0",
+      });
+    });
+
+    it("reverts overwritten link after publish", async () => {
+      const testDir = await initFixture("PublishCommand/relative-file-specs");
+
+      await run(testDir)("--cd-version", "minor", "--yes");
+
+      // notably missing is package-1, which has no relative file: dependencies
+      ["package-2", "package-3", "package-4", "package-5"].forEach(pkgDir => {
+        expect(GitUtilities.checkoutChanges).toBeCalledWith(
+          path.join(testDir, "packages", pkgDir, "package.json"),
+          expect.objectContaining({
+            cwd: testDir,
+          })
+        );
+      });
+    });
+  });
 });

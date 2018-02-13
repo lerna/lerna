@@ -253,6 +253,8 @@ class PublishCommand extends Command {
       tasks.push(() => this.commitAndTagUpdates());
     }
 
+    tasks.push(() => this.resolveLocalDependencyLinks());
+
     if (!this.options.skipNpm) {
       tasks.push(() => this.publishPackagesToNpm());
     }
@@ -260,6 +262,35 @@ class PublishCommand extends Command {
     pWaterfall(tasks)
       .then(() => callback(null, true))
       .catch(callback);
+  }
+
+  resolveLocalDependencyLinks() {
+    // resolve relative file: links to their actual version range
+    const updatesWithLocalLinks = this.updates
+      .map(({ package: pkg }) => this.packageGraph.get(pkg.name))
+      .filter(
+        ({ localDependencies }) =>
+          localDependencies.size &&
+          Array.from(localDependencies.values()).some(({ type }) => type === "directory")
+      );
+
+    return pMap(updatesWithLocalLinks, ({ pkg, localDependencies }) => {
+      // create a copy of the serialized JSON with resolved local links
+      const updated = Array.from(localDependencies.keys()).reduce((obj, linkedName) => {
+        // regardless of where the version comes from, we can't publish "file:../sibling-pkg" specs
+        const version = this.updatesVersions.get(linkedName) || this.packageGraph.get(linkedName).pkg.version;
+
+        // we only care about dependencies here, as devDependencies are ignored when installed
+        obj.dependencies[linkedName] = this.options.exact ? version : `^${version}`;
+
+        return obj;
+      }, pkg.toJSON()); // don't mutate shared Package instance
+
+      return writePkg(pkg.manifestLocation, updated).then(() => pkg);
+    }).then(modifiedPkgs => {
+      // a Set of modified Package instances is stored for resetting later
+      this.locallyResolved = new Set(modifiedPkgs);
+    });
   }
 
   publishPackagesToNpm() {
@@ -571,7 +602,12 @@ class PublishCommand extends Command {
       return;
     }
 
-    this.packageGraph.get(pkg.name).localDependencies.forEach((depNode, depName) => {
+    this.packageGraph.get(pkg.name).localDependencies.forEach(({ type }, depName) => {
+      if (type === "directory") {
+        // don't overwrite local file: specifiers (yet)
+        return;
+      }
+
       const version = this.updatesVersions.get(depName);
 
       if (deps[depName] && version) {
@@ -665,6 +701,12 @@ class PublishCommand extends Command {
         tracker.completeWork(1);
 
         this.execScript(pkg, "postpublish");
+
+        // reset any local relative links (git commit has already happened)
+        if (this.locallyResolved.has(pkg)) {
+          // done one-by-one to leave publishable state in working directory on error
+          return GitUtilities.checkoutChanges(pkg.manifestLocation, this.execOpts);
+        }
       });
     };
 

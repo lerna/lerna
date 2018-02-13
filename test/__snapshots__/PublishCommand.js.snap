@@ -528,3 +528,13 @@ Object {
   "packages/package-5": "2.0.0",
 }
 `;
+
+exports[`PublishCommand with relative file: specifiers overwrites relative link with local version before npm publish but after git commit 1`] = `
+Object {
+  "packages/package-1": "2.0.0",
+  "packages/package-2": "2.0.0",
+  "packages/package-3": "2.0.0",
+  "packages/package-4": "2.0.0",
+  "packages/package-5": "2.0.0",
+}
+`;
