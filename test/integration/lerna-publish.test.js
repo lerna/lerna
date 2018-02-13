@@ -59,6 +59,19 @@ describe("lerna publish", () => {
     expect(commitMessage).toMatchSnapshot("commit: updates fixed versions");
   });
 
+  test("updates all transitive dependents", async () => {
+    const cwd = await initFixture("PublishCommand/snake-graph-2.x");
+    const args = ["publish", "--skip-npm", "--cd-version=major", "--yes"];
+
+    await execa("git", ["tag", "v1.0.0", "-m", "v1.0.0"], { cwd });
+    await commitChangeToPackage(cwd, "package-1", "feat(package-1): Add foo", { foo: true });
+
+    const stdout = await execa.stdout(LERNA_BIN, args, { cwd });
+    expect(stdout).toMatchSnapshot("stdout: updates all transitive dependents");
+
+    expect(await loadPkgManifests(cwd)).toMatchSnapshot("packages: updates all transitive dependents");
+  });
+
   test.concurrent("uses detault suffix with canary flag", async () => {
     const cwd = await initFixture("PublishCommand/normal");
     const args = ["publish", "--canary", "--skip-npm", "--yes"];
