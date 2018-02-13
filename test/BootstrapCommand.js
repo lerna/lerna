@@ -420,4 +420,19 @@ describe("BootstrapCommand", () => {
       }
     });
   });
+
+  describe("with duplicate package names", () => {
+    it("throws an error", async () => {
+      expect.assertions(1);
+
+      const testDir = await initFixture("BootstrapCommand/duplicate-package-names");
+      const lernaBootstrap = run(testDir);
+
+      try {
+        await lernaBootstrap();
+      } catch (err) {
+        expect(err.message).toMatch(`Package name "package-1" used in multiple packages`);
+      }
+    });
+  });
 });

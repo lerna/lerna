@@ -15,7 +15,6 @@ const matchPackageName = require("../utils/matchPackageName");
 const runParallelBatches = require("../utils/runParallelBatches");
 const symlinkPackages = require("../utils/symlinkPackages");
 const createBinaryLink = require("../utils/createBinaryLink");
-const validatePackageNames = require("../utils/validatePackageNames");
 const ValidationError = require("../utils/ValidationError");
 
 exports.handler = function handler(argv) {
@@ -134,7 +133,7 @@ class BootstrapCommand extends Command {
         .catch(callback);
     }
 
-    validatePackageNames(this.filteredPackages);
+    this.validatePackageNames();
 
     this.logger.silly("npmConfig", this.npmConfig);
     callback(null, true);
@@ -591,6 +590,28 @@ class BootstrapCommand extends Command {
    */
   symlinkPackages(callback) {
     symlinkPackages(this.filteredPackages, this.packageGraph, this.logger, callback);
+  }
+
+  validatePackageNames() {
+    const foundPackages = new Map();
+
+    this.filteredPackages.forEach(({ name, location }) => {
+      if (foundPackages.has(name)) {
+        foundPackages.get(name).add(location);
+      } else {
+        foundPackages.set(name, new Set([location]));
+      }
+    });
+
+    foundPackages.forEach((locationsFound, pkgName) => {
+      if (locationsFound.size > 1) {
+        throw new ValidationError(
+          "ENAME",
+          `Package name "${pkgName}" used in multiple packages:
+          \t${Array.from(locationsFound).join("\n\t")}`
+        );
+      }
+    });
   }
 }
 
