@@ -351,12 +351,15 @@ When run with this flag, `publish` will use the [Conventional Commits Specificat
 #### --changelog-preset
 
 ```sh
-$ lerna publish --conventional-commits --changelog-preset=angular-bitbucket
+$ lerna publish --conventional-commits --changelog-preset angular-bitbucket
 ```
 
-By default, the changelog preset is set to `angular`. In some cases you might want to change either use a another preset or a custom one.
+By default, the changelog preset is set to [`angular`](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-changelog-angular#angular-convention).
+In some cases you might want to change either use a another preset or a custom one.
 
 Presets are names of built-in or installable configuration for conventional changelog.
+Presets may be passed as the full name of the package, or the auto-expanded suffix
+(e.g., `angular` is expanded to `conventional-changelog-angular`).
 
 #### --git-remote [remote]
 
