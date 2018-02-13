@@ -13,16 +13,16 @@ Object {
 exports[`PublishCommand --conventional-commits fixed mode should use conventional-commits utility to guess version bump and generate CHANGELOG: git added files 1`] = `
 Array [
   "lerna.json",
-  "packages/package-1/CHANGELOG.md",
   "packages/package-1/package.json",
-  "packages/package-2/CHANGELOG.md",
   "packages/package-2/package.json",
-  "packages/package-3/CHANGELOG.md",
   "packages/package-3/package.json",
-  "packages/package-4/CHANGELOG.md",
   "packages/package-4/package.json",
-  "packages/package-5/CHANGELOG.md",
   "packages/package-5/package.json",
+  "packages/package-1/CHANGELOG.md",
+  "packages/package-2/CHANGELOG.md",
+  "packages/package-3/CHANGELOG.md",
+  "packages/package-4/CHANGELOG.md",
+  "packages/package-5/CHANGELOG.md",
   "CHANGELOG.md",
 ]
 `;
@@ -31,16 +31,16 @@ exports[`PublishCommand --conventional-commits fixed mode should use conventiona
 
 exports[`PublishCommand --conventional-commits independent mode should use conventional-commits utility to guess version bump and generate CHANGELOG: git added files 1`] = `
 Array [
-  "packages/package-1/CHANGELOG.md",
   "packages/package-1/package.json",
-  "packages/package-2/CHANGELOG.md",
   "packages/package-2/package.json",
-  "packages/package-3/CHANGELOG.md",
   "packages/package-3/package.json",
-  "packages/package-4/CHANGELOG.md",
   "packages/package-4/package.json",
-  "packages/package-5/CHANGELOG.md",
   "packages/package-5/package.json",
+  "packages/package-1/CHANGELOG.md",
+  "packages/package-2/CHANGELOG.md",
+  "packages/package-3/CHANGELOG.md",
+  "packages/package-4/CHANGELOG.md",
+  "packages/package-5/CHANGELOG.md",
 ]
 `;
 
@@ -362,7 +362,6 @@ Array [
         },
       ],
     },
-    [Function],
   ],
 ]
 `;

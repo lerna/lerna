@@ -9,7 +9,8 @@ exports.input = input;
 
 function confirm(message, callback) {
   log.pause();
-  inquirer
+
+  return inquirer
     .prompt([
       {
         type: "expand",
@@ -21,13 +22,19 @@ function confirm(message, callback) {
     ])
     .then(answers => {
       log.resume();
-      callback(answers.confirm);
+
+      if (callback) {
+        callback(answers.confirm);
+      }
+
+      return answers.confirm;
     });
 }
 
 function select(message, { choices, filter, validate } = {}, callback) {
   log.pause();
-  inquirer
+
+  return inquirer
     .prompt([
       {
         type: "list",
@@ -41,13 +48,19 @@ function select(message, { choices, filter, validate } = {}, callback) {
     ])
     .then(answers => {
       log.resume();
-      callback(answers.prompt);
+
+      if (callback) {
+        callback(answers.prompt);
+      }
+
+      return answers.prompt;
     });
 }
 
 function input(message, { filter, validate } = {}, callback) {
   log.pause();
-  inquirer
+
+  return inquirer
     .prompt([
       {
         type: "input",
@@ -59,6 +72,11 @@ function input(message, { filter, validate } = {}, callback) {
     ])
     .then(answers => {
       log.resume();
-      callback(answers.input);
+
+      if (callback) {
+        callback(answers.input);
+      }
+
+      return answers.input;
     });
 }

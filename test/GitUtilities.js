@@ -14,6 +14,10 @@ jest.mock("temp-write");
 jest.mock("../src/ChildProcessUtilities");
 
 describe("GitUtilities", () => {
+  beforeEach(() => {
+    ChildProcessUtilities.exec.mockImplementation(() => Promise.resolve());
+  });
+
   afterEach(() => jest.resetAllMocks());
 
   describe(".isDetachedHead()", () => {
@@ -58,53 +62,60 @@ describe("GitUtilities", () => {
     });
   });
 
-  describe(".addFile()", () => {
-    it("calls git add with file argument", () => {
+  describe(".addFiles()", () => {
+    it("calls git add with files argument", async () => {
       const opts = { cwd: "test" };
-      GitUtilities.addFile("foo", opts);
-      expect(ChildProcessUtilities.execSync).lastCalledWith("git", ["add", "foo"], opts);
+
+      await GitUtilities.addFiles(["foo", "bar"], opts);
+
+      expect(ChildProcessUtilities.exec).lastCalledWith("git", ["add", "--", "foo", "bar"], opts);
     });
-    it("works with absolute path for cwd", () => {
+
+    it("works with absolute path for cwd", async () => {
       const cwd = path.resolve("test");
       const file = "foo";
       const opts = { cwd };
-      GitUtilities.addFile(file, opts);
-      expect(ChildProcessUtilities.execSync).lastCalledWith("git", ["add", "foo"], opts);
+
+      await GitUtilities.addFiles([file], opts);
+
+      expect(ChildProcessUtilities.exec).lastCalledWith("git", ["add", "--", "foo"], opts);
     });
-    it("works with absolute paths for file and cwd", () => {
+
+    it("works with absolute paths for file and cwd", async () => {
       const cwd = path.resolve("test");
       const file = path.resolve(cwd, "foo");
       const opts = { cwd };
-      GitUtilities.addFile(file, opts);
-      expect(ChildProcessUtilities.execSync).lastCalledWith("git", ["add", "foo"], opts);
+
+      await GitUtilities.addFiles([file], opts);
+
+      expect(ChildProcessUtilities.exec).lastCalledWith("git", ["add", "--", "foo"], opts);
     });
-    it("uses a POSIX path in the Git command, given a Windows file path", () => {
+
+    it("uses a POSIX path in the Git command, given a Windows file path", async () => {
       const opts = { cwd: "test" };
-      GitUtilities.addFile("foo\\bar", opts);
-      expect(ChildProcessUtilities.execSync).lastCalledWith("git", ["add", "foo/bar"], opts);
+
+      await GitUtilities.addFiles(["foo\\bar"], opts);
+
+      expect(ChildProcessUtilities.exec).lastCalledWith("git", ["add", "--", "foo/bar"], opts);
     });
   });
 
   describe(".commit()", () => {
-    it("calls git commit with message", () => {
+    it("calls git commit with message", async () => {
       const opts = { cwd: "oneline" };
-      GitUtilities.commit("foo", opts);
+      await GitUtilities.commit("foo", opts);
 
-      expect(ChildProcessUtilities.execSync).lastCalledWith(
-        "git",
-        ["commit", "--no-verify", "-m", "foo"],
-        opts
-      );
+      expect(ChildProcessUtilities.exec).lastCalledWith("git", ["commit", "--no-verify", "-m", "foo"], opts);
       expect(tempWrite.sync).not.toBeCalled();
     });
 
-    it("allows multiline message", () => {
+    it("allows multiline message", async () => {
       tempWrite.sync = jest.fn(() => "TEMPFILE");
 
       const opts = { cwd: "multiline" };
-      GitUtilities.commit(`foo${EOL}bar`, opts);
+      await GitUtilities.commit(`foo${EOL}bar`, opts);
 
-      expect(ChildProcessUtilities.execSync).lastCalledWith(
+      expect(ChildProcessUtilities.exec).lastCalledWith(
         "git",
         ["commit", "--no-verify", "-F", "TEMPFILE"],
         opts
@@ -114,10 +125,10 @@ describe("GitUtilities", () => {
   });
 
   describe(".addTag()", () => {
-    it("creates annotated git tag", () => {
+    it("creates annotated git tag", async () => {
       const opts = { cwd: "test" };
-      GitUtilities.addTag("foo", opts);
-      expect(ChildProcessUtilities.execSync).lastCalledWith("git", ["tag", "foo", "-m", "foo"], opts);
+      await GitUtilities.addTag("foo", opts);
+      expect(ChildProcessUtilities.exec).lastCalledWith("git", ["tag", "foo", "-m", "foo"], opts);
     });
   });
 
@@ -182,12 +193,12 @@ describe("GitUtilities", () => {
       GitUtilities.getCurrentBranch = getCurrentBranchOriginal;
     });
 
-    it("pushes current branch and specified tag(s) to origin", () => {
+    it("pushes current branch and specified tag(s) to origin", async () => {
       GitUtilities.getCurrentBranch = jest.fn(() => "master");
       const opts = { cwd: "test" };
-      GitUtilities.pushWithTags("origin", ["foo@1.0.1", "foo-bar@1.0.0"], opts);
-      expect(ChildProcessUtilities.execSync).toBeCalledWith("git", ["push", "origin", "master"], opts);
-      expect(ChildProcessUtilities.execSync).lastCalledWith(
+      await GitUtilities.pushWithTags("origin", ["foo@1.0.1", "foo-bar@1.0.0"], opts);
+      expect(ChildProcessUtilities.exec).toBeCalledWith("git", ["push", "origin", "master"], opts);
+      expect(ChildProcessUtilities.exec).lastCalledWith(
         "git",
         ["push", "origin", "foo@1.0.1", "foo-bar@1.0.0"],
         opts
@@ -271,10 +282,10 @@ describe("GitUtilities", () => {
   });
 
   describe(".checkoutChanges()", () => {
-    it("calls git checkout with specified arg", () => {
+    it("calls git checkout with specified arg", async () => {
       const opts = { cwd: "test" };
-      GitUtilities.checkoutChanges("packages/*/package.json", opts);
-      expect(ChildProcessUtilities.execSync).lastCalledWith(
+      await GitUtilities.checkoutChanges("packages/*/package.json", opts);
+      expect(ChildProcessUtilities.exec).lastCalledWith(
         "git",
         ["checkout", "--", "packages/*/package.json"],
         opts

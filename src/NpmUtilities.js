@@ -99,14 +99,14 @@ function addDistTag(directory, packageName, version, tag, registry) {
   log.silly("addDistTag", tag, version, packageName);
 
   const opts = exports.getExecOpts(directory, registry);
-  ChildProcessUtilities.execSync("npm", ["dist-tag", "add", `${packageName}@${version}`, tag], opts);
+  return ChildProcessUtilities.exec("npm", ["dist-tag", "add", `${packageName}@${version}`, tag], opts);
 }
 
 function removeDistTag(directory, packageName, tag, registry) {
   log.silly("removeDistTag", tag, packageName);
 
   const opts = exports.getExecOpts(directory, registry);
-  ChildProcessUtilities.execSync("npm", ["dist-tag", "rm", packageName, tag], opts);
+  return ChildProcessUtilities.exec("npm", ["dist-tag", "rm", packageName, tag], opts);
 }
 
 function checkDistTag(directory, packageName, tag, registry) {
@@ -151,7 +151,7 @@ function publishTaggedInDir(tag, pkg, { npmClient, registry }, callback) {
     args.push("--new-version", pkg.version);
   }
 
-  ChildProcessUtilities.exec(npmClient, args, opts, callback);
+  return ChildProcessUtilities.exec(npmClient, args, opts, callback);
 }
 
 function getExecOpts(directory, registry) {

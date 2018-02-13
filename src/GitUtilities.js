@@ -42,11 +42,10 @@ function isInitialized(opts) {
   return initialized;
 }
 
-function addFile(file, opts) {
-  log.silly("addFile", file);
-  const relativePath = path.relative(opts.cwd, path.resolve(opts.cwd, file));
-  const portablePath = slash(relativePath);
-  ChildProcessUtilities.execSync("git", ["add", portablePath], opts);
+function addFiles(files, opts) {
+  log.silly("addFiles", files);
+  const filePaths = files.map(file => slash(path.relative(opts.cwd, path.resolve(opts.cwd, file))));
+  return ChildProcessUtilities.exec("git", ["add", "--", ...filePaths], opts);
 }
 
 function commit(message, opts) {
@@ -61,12 +60,12 @@ function commit(message, opts) {
   }
 
   log.verbose("commit", args);
-  ChildProcessUtilities.execSync("git", args, opts);
+  return ChildProcessUtilities.exec("git", args, opts);
 }
 
 function addTag(tag, opts) {
   log.silly("addTag", tag);
-  ChildProcessUtilities.execSync("git", ["tag", tag, "-m", tag], opts);
+  return ChildProcessUtilities.exec("git", ["tag", tag, "-m", tag], opts);
 }
 
 function hasTags(opts) {
@@ -109,9 +108,11 @@ function getFirstCommit(opts) {
 function pushWithTags(remote, tags, opts) {
   log.silly("pushWithTags", [remote, tags]);
 
-  const branch = exports.getCurrentBranch(opts);
-  ChildProcessUtilities.execSync("git", ["push", remote, branch], opts);
-  ChildProcessUtilities.execSync("git", ["push", remote].concat(tags), opts);
+  return Promise.resolve(exports.getCurrentBranch(opts)).then(branch =>
+    ChildProcessUtilities.exec("git", ["push", remote, branch], opts).then(() =>
+      ChildProcessUtilities.exec("git", ["push", remote].concat(tags), opts)
+    )
+  );
 }
 
 function getLastTag(opts) {
@@ -184,7 +185,7 @@ function getShortSHA(opts) {
 
 function checkoutChanges(fileGlob, opts) {
   log.silly("checkoutChanges", fileGlob);
-  ChildProcessUtilities.execSync("git", ["checkout", "--", fileGlob], opts);
+  return ChildProcessUtilities.exec("git", ["checkout", "--", fileGlob], opts);
 }
 
 function init(opts) {
@@ -209,7 +210,7 @@ function hasCommit(opts) {
 
 exports.isDetachedHead = isDetachedHead;
 exports.isInitialized = isInitialized;
-exports.addFile = addFile;
+exports.addFiles = addFiles;
 exports.commit = commit;
 exports.addTag = addTag;
 exports.hasTags = hasTags;

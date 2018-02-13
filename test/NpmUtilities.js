@@ -33,6 +33,10 @@ const stubExecOpts = () => {
 };
 
 describe("NpmUtilities", () => {
+  beforeEach(() => {
+    ChildProcessUtilities.exec.mockImplementation(() => Promise.resolve());
+  });
+
   afterEach(() => jest.resetAllMocks());
 
   describe(".addDistTag()", () => {
@@ -44,23 +48,23 @@ describe("NpmUtilities", () => {
     beforeEach(stubExecOpts);
     afterEach(resetExecOpts);
 
-    it("adds a dist-tag for a given package@version", () => {
-      NpmUtilities.addDistTag(directory, packageName, version, tag);
+    it("adds a dist-tag for a given package@version", async () => {
+      await NpmUtilities.addDistTag(directory, packageName, version, tag);
 
       const cmd = "npm";
       const args = ["dist-tag", "add", "foo-pkg@1.0.0", "added-tag"];
       const opts = { directory, registry: undefined };
-      expect(ChildProcessUtilities.execSync).lastCalledWith(cmd, args, opts);
+      expect(ChildProcessUtilities.exec).lastCalledWith(cmd, args, opts);
     });
 
-    it("supports custom registry", () => {
+    it("supports custom registry", async () => {
       const registry = "https://custom-registry/add";
-      NpmUtilities.addDistTag(directory, packageName, version, tag, registry);
+      await NpmUtilities.addDistTag(directory, packageName, version, tag, registry);
 
       const cmd = "npm";
       const args = ["dist-tag", "add", "foo-pkg@1.0.0", "added-tag"];
       const opts = { directory, registry };
-      expect(ChildProcessUtilities.execSync).lastCalledWith(cmd, args, opts);
+      expect(ChildProcessUtilities.exec).lastCalledWith(cmd, args, opts);
     });
   });
 
@@ -72,23 +76,23 @@ describe("NpmUtilities", () => {
     beforeEach(stubExecOpts);
     afterEach(resetExecOpts);
 
-    it("removes a dist-tag for a given package", () => {
-      NpmUtilities.removeDistTag(directory, packageName, tag);
+    it("removes a dist-tag for a given package", async () => {
+      await NpmUtilities.removeDistTag(directory, packageName, tag);
 
       const cmd = "npm";
       const args = ["dist-tag", "rm", "bar-pkg", "removed-tag"];
       const opts = { directory, registry: undefined };
-      expect(ChildProcessUtilities.execSync).lastCalledWith(cmd, args, opts);
+      expect(ChildProcessUtilities.exec).lastCalledWith(cmd, args, opts);
     });
 
-    it("supports custom registry", () => {
+    it("supports custom registry", async () => {
       const registry = "https://custom-registry/remove";
-      NpmUtilities.removeDistTag(directory, packageName, tag, registry);
+      await NpmUtilities.removeDistTag(directory, packageName, tag, registry);
 
       const cmd = "npm";
       const args = ["dist-tag", "rm", "bar-pkg", "removed-tag"];
       const opts = { directory, registry };
-      expect(ChildProcessUtilities.execSync).lastCalledWith(cmd, args, opts);
+      expect(ChildProcessUtilities.exec).lastCalledWith(cmd, args, opts);
     });
   });
 
