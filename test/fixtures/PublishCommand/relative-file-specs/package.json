@@ -1,0 +1,10 @@
+{
+  "name": "relative-file-specs",
+  "description": "file: specifiers should act just like recognized semver ranges",
+  "private": true,
+  "version": "0.0.0-lerna",
+  "dependencies": {
+    "package-2": "file:packages/package-2",
+    "package-5": "file:packages/package-5"
+  }
+}

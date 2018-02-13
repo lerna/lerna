@@ -200,4 +200,21 @@ describe("lerna publish", () => {
       expect(changelogContents).toMatchSnapshot();
     })
   );
+
+  it("replaces file: specifier with local version before npm publish but after git commit", async () => {
+    const cwd = await initFixture("PublishCommand/relative-file-specs");
+
+    await execa("git", ["tag", "v1.0.0", "-m", "v1.0.0"], { cwd });
+    await commitChangeToPackage(cwd, "package-1", "feat(package-1): Add foo", { foo: true });
+
+    await runner(cwd)("publish", "--cd-version=major", "--skip-npm", "--yes");
+
+    expect(
+      await execa.stdout("git", ["show", "--unified=0", "--ignore-space-at-eol", "--format=%s"], { cwd })
+    ).toMatchSnapshot("committed");
+
+    expect(
+      await execa.stdout("git", ["diff", "--unified=0", "--ignore-space-at-eol"], { cwd })
+    ).toMatchSnapshot("unstaged");
+  });
 });
