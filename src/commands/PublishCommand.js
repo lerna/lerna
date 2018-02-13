@@ -501,103 +501,98 @@ class PublishCommand extends Command {
     );
   }
 
-  runSyncScriptInPackage(pkg, scriptName) {
+  runLifecycle(pkg, scriptName) {
     if (pkg.scripts[scriptName]) {
-      try {
-        npmRunScript.sync(scriptName, {
-          args: ["--silent"],
-          npmClient: this.npmConfig.npmClient,
-          pkg,
-        });
-      } catch (err) {
+      return npmRunScript(scriptName, {
+        args: ["--silent"],
+        npmClient: this.npmConfig.npmClient,
+        pkg,
+      }).catch(err => {
         this.logger.error("publish", `error running ${scriptName} in ${pkg.name}\n`, err.stack || err);
-      }
+      });
     }
   }
 
   updateUpdatedPackages() {
     const { exact, conventionalCommits, changelogPreset } = this.options;
     const independentVersions = this.repository.isIndependent();
-    const changedFiles = [];
+    const rootPkg = this.repository.package;
+    const changedFiles = new Set();
 
     // my kingdom for async await :(
     let chain = Promise.resolve();
 
     // exec preversion lifecycle in root (before all updates)
-    chain = chain.then(() => this.runSyncScriptInPackage(this.repository.package, "preversion"));
+    chain = chain.then(() => this.runLifecycle(rootPkg, "preversion"));
 
-    this.updates.forEach(({ package: pkg }) => {
-      let localChain = Promise.resolve();
+    chain = chain.then(() =>
+      pMap(
+        this.updates,
+        ({ package: pkg }) =>
+          // start the chain
+          Promise.resolve()
 
-      // exec preversion script
-      localChain = localChain.then(() => this.runSyncScriptInPackage(pkg, "preversion"));
+            // exec preversion script
+            .then(() => this.runLifecycle(pkg, "preversion"))
 
-      // write new package
-      localChain = localChain.then(() => {
-        // set new version
-        pkg.version = this.updatesVersions.get(pkg.name) || pkg.version;
+            // write new package
+            .then(() => {
+              // set new version
+              pkg.version = this.updatesVersions.get(pkg.name) || pkg.version;
 
-        // update pkg dependencies
-        this.updatePackageDepsObject(pkg, "dependencies", exact);
-        this.updatePackageDepsObject(pkg, "devDependencies", exact);
+              // update pkg dependencies
+              this.updatePackageDepsObject(pkg, "dependencies", exact);
+              this.updatePackageDepsObject(pkg, "devDependencies", exact);
 
-        // NOTE: Object.prototype.toJSON() is normally called when passed to
-        // JSON.stringify(), but write-pkg iterates Object.keys() before serializing
-        // so it has to be explicit here (otherwise it mangles the instance properties)
-        return writePkg(pkg.manifestLocation, pkg.toJSON()).then(() => {
-          // commit the updated manifest
-          changedFiles.push(pkg.manifestLocation);
-        });
-      });
+              // NOTE: Object.prototype.toJSON() is normally called when passed to
+              // JSON.stringify(), but write-pkg iterates Object.keys() before serializing
+              // so it has to be explicit here (otherwise it mangles the instance properties)
+              return writePkg(pkg.manifestLocation, pkg.toJSON()).then(() => {
+                // commit the updated manifest
+                changedFiles.add(pkg.manifestLocation);
+              });
+            })
 
-      // exec version script
-      localChain = localChain.then(() => this.runSyncScriptInPackage(pkg, "version"));
+            // exec version script
+            .then(() => this.runLifecycle(pkg, "version"))
 
-      // we can now generate the Changelog, based on the
-      // the updated version that we're about to release.
-      if (conventionalCommits) {
-        const type = independentVersions ? "independent" : "fixed";
+            .then(() => {
+              if (conventionalCommits) {
+                // we can now generate the Changelog, based on the
+                // the updated version that we're about to release.
+                const type = independentVersions ? "independent" : "fixed";
 
-        localChain = localChain.then(() =>
-          ConventionalCommitUtilities.updateChangelog(pkg, type, { changelogPreset }).then(
-            changelogLocation => {
-              // commit the updated changelog
-              changedFiles.push(changelogLocation);
-            }
-          )
-        );
-      }
-
-      // hook into the outer Promise chain
-      chain = chain.then(() => localChain);
-    });
+                return ConventionalCommitUtilities.updateChangelog(pkg, type, { changelogPreset }).then(
+                  changelogLocation => {
+                    // commit the updated changelog
+                    changedFiles.add(changelogLocation);
+                  }
+                );
+              }
+            }),
+        // TODO: tune the concurrency
+        { concurrency: 100 }
+      )
+    );
 
     if (conventionalCommits && !independentVersions) {
-      const rootPkg = this.repository.packageJson;
-
       chain = chain.then(() =>
-        ConventionalCommitUtilities.updateChangelog(
-          {
-            name: rootPkg && rootPkg.name ? rootPkg.name : "root",
-            location: this.repository.rootPath,
-          },
-          "root",
-          {
-            changelogPreset,
-            version: this.globalVersion,
-          }
-        ).then(changelogLocation => {
+        ConventionalCommitUtilities.updateChangelog(rootPkg, "root", {
+          changelogPreset,
+          version: this.globalVersion,
+        }).then(changelogLocation => {
           // commit the updated changelog
-          changedFiles.push(changelogLocation);
+          changedFiles.add(changelogLocation);
         })
       );
     }
 
     // exec version lifecycle in root (after all updates)
-    chain = chain.then(() => this.runSyncScriptInPackage(this.repository.package, "version"));
+    chain = chain.then(() => this.runLifecycle(rootPkg, "version"));
 
     if (this.gitEnabled) {
-      chain = chain.then(() => GitUtilities.addFiles(changedFiles, this.execOpts));
+      // chain = chain.then(() => GitUtilities.addFiles(changedFiles, this.execOpts));
+      chain = chain.then(() => GitUtilities.addFiles(Array.from(changedFiles), this.execOpts));
     }
 
     return chain;
@@ -639,11 +634,11 @@ class PublishCommand extends Command {
 
     // run the postversion script for each update
     chain = chain.then(() => {
-      this.updates.forEach(({ package: pkg }) => this.runSyncScriptInPackage(pkg, "postversion"));
+      this.updates.forEach(({ package: pkg }) => this.runLifecycle(pkg, "postversion"));
     });
 
     // run postversion, if set, in the root directory
-    chain = chain.then(() => this.runSyncScriptInPackage(this.repository.package, "postversion"));
+    chain = chain.then(() => this.runLifecycle(this.repository.package, "postversion"));
 
     return chain;
   }

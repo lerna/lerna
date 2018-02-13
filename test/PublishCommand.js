@@ -100,6 +100,7 @@ describe("PublishCommand", () => {
   GitUtilities.diffSinceIn.mockReturnValue("");
 
   npmPublish.mockResolvedValue();
+  npmRunScript.mockResolvedValue();
   npmDistTag.check.mockReturnValue(true);
 
   PromptUtilities.select.mockResolvedValue("1.0.1");
@@ -946,7 +947,7 @@ describe("PublishCommand", () => {
       await run(testDir)();
 
       scripts.forEach(script => {
-        expect(npmRunScript.sync).toHaveBeenCalledWith(script, {
+        expect(npmRunScript).toHaveBeenCalledWith(script, {
           args: ["--silent"],
           npmClient: "npm",
           pkg: expect.objectContaining({
@@ -962,7 +963,7 @@ describe("PublishCommand", () => {
       await run(testDir)();
 
       scripts.forEach(script => {
-        expect(npmRunScript.sync).not.toHaveBeenCalledWith(script, {
+        expect(npmRunScript).not.toHaveBeenCalledWith(script, {
           args: ["--silent"],
           npmClient: "npm",
           pkg: expect.objectContaining({
@@ -977,7 +978,7 @@ describe("PublishCommand", () => {
       const testDir = await initFixture("PublishCommand/lifecycle");
       await run(testDir)();
 
-      expect(npmRunScript.sync.mock.calls.map(args => args[0])).toEqual(scripts);
+      expect(npmRunScript.mock.calls.map(args => args[0])).toEqual(scripts);
     });
   });
 
