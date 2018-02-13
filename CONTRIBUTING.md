@@ -1,65 +1,97 @@
 # Contributing to Lerna
 
-First, ensure you have the [latest `yarn`](https://yarnpkg.com/en/docs/install).
+First, ensure you have the [latest `npm`](https://docs.npmjs.com/).
 
 To get started with the repo:
 
 ```sh
 $ git clone git@github.com:lerna/lerna.git && cd lerna
-$ yarn
+$ npm i
 ```
 
 ## Code Structure
 
 Currently, the [source](https://github.com/lerna/lerna/tree/master/src) is split up into a few categories:
 
-- Utilities: methods to run git, npm, fs, and more.
-- Abstractions for packages
-- [Lerna Commands](https://github.com/lerna/lerna/tree/master/src/commands): each command has an `initialize` and `execute` function.
-  - These commands are exposed in [src/index.js](https://github.com/lerna/lerna/blob/master/src/index.js) and run in the [`bin/lerna.js`](https://github.com/lerna/lerna/blob/e26c89170ffd13924ccb2d6e5f138d949eb53104/bin/lerna.js#L73-L74) script
+* Utilities: methods to run git, npm, fs, and more.
+* Abstractions for packages
+* [Lerna Commands](https://github.com/lerna/lerna/tree/master/src/commands): each command has an `initialize` and `execute` function.
+  * These commands are consumed as yargs subcommands in [src/cli.js](https://github.com/lerna/lerna/blob/master/src/cli.js), which is called from the executable [`bin/lerna.js`](https://github.com/lerna/lerna/blob/master/bin/lerna.js).
 
 ## Commands
 
-In order to run the tests:
+### Run Unit Tests
 
 ```sh
-$ yarn test
+$ npm test
 
-# If you want to watch for changes
-$ yarn test:watch
+# watch for changes
+$ npm run test:watch
 
-# If you want to watch individual files (e.g., in test/Command.js)
-$ yarn test:watch test.command
+# For a specific file (e.g., in test/Command.js)
+$ npm run test:watch -- Command.js
 ```
 
-To run the integration tests:
+By default, `npm test` also runs the linter.
+You can skip this by calling `jest` directly:
 
 ```sh
-$ yarn test:watch-integration
+$ npx jest
+$ npx jest --watch
+# etc
+```
+
+### Run Integration Tests
+
+```sh
+$ npm run integration
+
+# watch for changes
+$ npm run test:watch-integration
 
 # For a specific file
-$ yarn test:watch-integration lerna-publish
+$ npm run test:watch-integration -- lerna-publish
 ```
 
-Or the linter:
+### Linting
 
 ```sh
-$ yarn lint
+$ npm run lint
 ```
+
+It's also a good idea to hook up your editor to an eslint plugin.
+
+To fix lint errors from the command line:
+
+```sh
+$ npm run lint -- --fix
+```
+
+### Local CLI Testing
 
 If you want to test out Lerna on local repos:
 
 ```sh
-$ yarn link
+$ npm link
 ```
 
 This will set your global `lerna` command to the local version.
+
+Note: If the local repo that you are testing in _already_ depends on lerna,
+you'll need to link your local clone of lerna _into_ the target repo:
+
+```sh
+# in the target repo
+$ npm link lerna
+```
+
+### Coverage
 
 If you would like to check test coverage, run the coverage script, then open
 `coverage/lcov-report/index.html` in your favorite browser.
 
 ```sh
-$ yarn test --coverage
+$ npm test -- --coverage
 
 # OS X
 $ open coverage/lcov-report/index.html

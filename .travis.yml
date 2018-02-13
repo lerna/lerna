@@ -17,21 +17,22 @@ matrix:
   fast_finish: true
 
 cache:
-  yarn: true
   directories:
+  - $HOME/.npm
   - node_modules
 
 before_install:
   - npm config set loglevel warn
-  - npm i -g npm@latest-5
+  - if [[ `node -v` == v6* ]]; then npm i -g npm@latest-5; fi
+  - if [[ `npm -v` != `npm v npm dist-tags.latest-5` ]]; then npm i -g npm@latest-5; fi
 
-install: yarn --frozen-lockfile
+install: npm i --prefer-offline
 
 before_script:
   - git config --global user.email test@example.com
   - git config --global user.name "Tester McPerson"
 
-script: yarn run ci
+script: npm run ci
 
 notifications:
   slack: lernajs:qHyrojRoqBBu7OhDyX1OMiHQ

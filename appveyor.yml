@@ -13,21 +13,20 @@ matrix:
   fast_finish: true
 
 cache:
-  # unpacking the yarn cache takes way too long
-  # - "%LOCALAPPDATA%\\Yarn"
-  - node_modules -> yarn.lock
+  - '%APPDATA%\npm-cache'
+  - node_modules -> package-lock.json
 
 install:
   - ps: Install-Product node $env:nodejs_version
   - npm config set loglevel warn
-  - npm -g install npm@latest-5
-  - yarn --frozen-lockfile
+  - IF %nodejs_version% EQU 6 npm -g install npm@latest-5
+  - npm i --prefer-offline
 
 before_test:
   - git config --global user.email test@example.com
   - git config --global user.name "Tester McPerson"
 
 test_script:
-  - yarn run ci -- --runInBand
+  - npm run ci
 
 build: off
