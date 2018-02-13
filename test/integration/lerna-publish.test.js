@@ -6,7 +6,9 @@ const globby = require("globby");
 const normalizeNewline = require("normalize-newline");
 const writeJsonFile = require("write-json-file");
 const loadJsonFile = require("load-json-file");
+const tempWrite = require("temp-write");
 const path = require("path");
+const os = require("os");
 
 const runner = require("../helpers/cliRunner");
 const consoleOutput = require("../helpers/consoleOutput");
@@ -31,9 +33,22 @@ const lastCommitMessage = cwd =>
 async function commitChangeToPackage(cwd, packageName, commitMsg, data) {
   const packageJSONPath = path.join(cwd, "packages", packageName, "package.json");
   const pkg = await loadJsonFile(packageJSONPath);
+
   await writeJsonFile(packageJSONPath, Object.assign(pkg, data));
   await execa("git", ["add", "."], { cwd });
-  return execa("git", ["commit", "-m", commitMsg], { cwd });
+
+  let gitCommit;
+
+  if (commitMsg.indexOf(os.EOL) > -1) {
+    // Use tempfile to allow multi\nline strings.
+    const tmpFilePath = await tempWrite(commitMsg);
+
+    gitCommit = execa("git", ["commit", "-F", tmpFilePath], { cwd });
+  } else {
+    gitCommit = execa("git", ["commit", "-m", commitMsg], { cwd });
+  }
+
+  return gitCommit;
 }
 
 describe("lerna publish", () => {
@@ -136,7 +151,9 @@ describe("lerna publish", () => {
     // publish minor (package-2)
     await lerna(...args);
 
-    await commitChangeToPackage(cwd, "package-2", "fix: flip\n\nBREAKING CHANGE: yup", { bar: false });
+    await commitChangeToPackage(cwd, "package-2", `fix: flip${os.EOL}${os.EOL}BREAKING CHANGE: yup`, {
+      bar: false,
+    });
 
     // publish major (force all)
     await lerna(...args, "--force-publish");
@@ -155,7 +172,7 @@ describe("lerna publish", () => {
       await commitChangeToPackage(
         cwd,
         "package-3",
-        "feat(package-3): Add baz feature\n\nBREAKING CHANGE: yup",
+        `feat(package-3): Add baz feature${os.EOL}${os.EOL}BREAKING CHANGE: yup`,
         { baz: true }
       );
 
