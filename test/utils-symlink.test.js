@@ -12,14 +12,14 @@ const initFixture = require("./helpers/initFixture");
 const pkgMatchers = require("./helpers/pkgMatchers");
 
 // file under test
-const createBinaryLink = require("../src/utils/createBinaryLink");
+const symlink = require("../src/utils/symlink");
 
 // silence logs
 log.level = "silent";
 
 expect.extend(pkgMatchers);
 
-describe("createBinaryLink", () => {
+describe("symlink.bin()", () => {
   it("should work with references", async done => {
     const testDir = await initFixture("PackageUtilities/links");
     const srcRef = path.join(testDir, "packages/package-2");
@@ -30,7 +30,7 @@ describe("createBinaryLink", () => {
       done();
     };
 
-    createBinaryLink(srcRef, destRef, cb);
+    symlink.bin(srcRef, destRef, cb);
   });
 
   it("should work with packages", async done => {
@@ -45,7 +45,7 @@ describe("createBinaryLink", () => {
       done();
     };
 
-    createBinaryLink(src, dest, cb);
+    symlink.bin(src, dest, cb);
   });
 
   it("should work with missing bin files", async done => {
@@ -58,7 +58,7 @@ describe("createBinaryLink", () => {
       done();
     };
 
-    createBinaryLink(srcRef, destRef, cb);
+    symlink.bin(srcRef, destRef, cb);
   });
 
   it("should create a link string bin entry", async done => {
@@ -71,7 +71,7 @@ describe("createBinaryLink", () => {
       done();
     };
 
-    createBinaryLink(src, dest, cb);
+    symlink.bin(src, dest, cb);
   });
 
   it("should create links for object bin entry", async done => {
@@ -84,7 +84,7 @@ describe("createBinaryLink", () => {
       done();
     };
 
-    createBinaryLink(src, dest, cb);
+    symlink.bin(src, dest, cb);
   });
 
   it("should make links targets executable", async done => {
@@ -97,7 +97,7 @@ describe("createBinaryLink", () => {
       done();
     };
 
-    createBinaryLink(src, dest, cb);
+    symlink.bin(src, dest, cb);
   });
 
   it("should preserve previous bin entries", async done => {
@@ -112,7 +112,7 @@ describe("createBinaryLink", () => {
     };
 
     async.series(
-      [cb => createBinaryLink(firstSrcRef, dest, cb), cb => createBinaryLink(secondSrcRef, dest, cb)],
+      [cb => symlink.bin(firstSrcRef, dest, cb), cb => symlink.bin(secondSrcRef, dest, cb)],
       finish
     );
   });
