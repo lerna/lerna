@@ -2,12 +2,12 @@
 
 const dedent = require("dedent");
 const log = require("npmlog");
+const loadJsonFile = require("load-json-file");
 const npa = require("npm-package-arg");
 const path = require("path");
 const semver = require("semver");
 const _ = require("lodash");
 
-const dependencyIsSatisfied = require("./utils/dependencyIsSatisfied");
 const NpmUtilities = require("./NpmUtilities");
 
 function binSafeName(rawName) {
@@ -194,12 +194,26 @@ class Package {
   /**
    * Determine if a dependency has already been installed for this package
    * @param {String} depName Name of the dependency
+   * @param {String} [version] Optional version to test with, defaults to existing spec
    * @returns {Boolean}
    */
-  hasDependencyInstalled(depName) {
+  hasDependencyInstalled(depName, version) {
     log.silly("hasDependencyInstalled", this.name, depName);
 
-    return dependencyIsSatisfied(this.nodeModulesLocation, depName, this.allDependencies[depName]);
+    const needVersion = version || this.allDependencies[depName];
+
+    let retVal;
+    try {
+      const manifestLocation = path.join(this.nodeModulesLocation, depName, "package.json");
+      const pkg = loadJsonFile.sync(manifestLocation);
+
+      retVal = semver.satisfies(pkg.version, needVersion);
+    } catch (e) {
+      retVal = false;
+    }
+
+    log.verbose("hasDependencyInstalled", depName, retVal);
+    return retVal;
   }
 }
 

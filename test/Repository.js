@@ -6,7 +6,6 @@ const path = require("path");
 // mocked or stubbed modules
 const findUp = require("find-up");
 const loadJsonFile = require("load-json-file");
-const readPkg = require("read-pkg");
 
 // helpers
 const initFixture = require("./helpers/initFixture");
@@ -157,10 +156,10 @@ describe("Repository", () => {
   });
 
   describe("get .packageJson", () => {
-    const readPkgSync = readPkg.sync;
+    const loadJsonFileSync = loadJsonFile.sync;
 
     afterEach(() => {
-      readPkg.sync = readPkgSync;
+      loadJsonFile.sync = loadJsonFileSync;
     });
 
     it("returns parsed package.json", () => {
@@ -180,14 +179,14 @@ describe("Repository", () => {
     });
 
     it("does not cache failures", () => {
-      readPkg.sync = jest.fn(() => {
+      loadJsonFile.sync = jest.fn(() => {
         throw new Error("File not found");
       });
 
       const repo = new Repository(testDir);
       expect(repo.packageJson).toBe(null);
 
-      readPkg.sync = readPkgSync;
+      loadJsonFile.sync = loadJsonFileSync;
       expect(repo.packageJson).toHaveProperty("name", "test");
     });
 
@@ -227,23 +226,6 @@ describe("Repository", () => {
 
       repo.lernaJson.version = "independent";
       expect(repo.isIndependent()).toBe(true);
-    });
-  });
-
-  describe("hasDependencyInstalled()", () => {
-    it("should match installed dependency", () => {
-      const repo = new Repository(testDir);
-      expect(repo.hasDependencyInstalled("external", "^1")).toBe(true);
-    });
-
-    it("should not match non-installed dependency", () => {
-      const repo = new Repository(testDir);
-      expect(repo.hasDependencyInstalled("missing", "^1")).toBe(false);
-    });
-
-    it("should not match installed dependency with non-matching version", () => {
-      const repo = new Repository(testDir);
-      expect(repo.hasDependencyInstalled("external", "^2")).toBe(false);
     });
   });
 });

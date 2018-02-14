@@ -408,7 +408,7 @@ class BootstrapCommand extends Command {
           name,
           dependents: (dependents[rootVersion] || []).map(dep => this.packageGraph.get(dep).pkg),
           dependency: `${name}@${rootVersion}`,
-          isSatisfied: this.repository.hasDependencyInstalled(name, rootVersion),
+          isSatisfied: this.repository.package.hasDependencyInstalled(name, rootVersion),
         });
       }
 
