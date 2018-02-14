@@ -11,7 +11,6 @@ const Repository = require("./Repository");
 const writeLogFile = require("./utils/writeLogFile");
 const UpdatedPackagesCollector = require("./UpdatedPackagesCollector");
 const VersionSerializer = require("./VersionSerializer");
-const addDependencies = require("./utils/addDependencies");
 const collectPackages = require("./utils/collectPackages");
 const createPackageGraph = require("./utils/createPackageGraph");
 const filterPackages = require("./utils/filterPackages");
@@ -303,7 +302,7 @@ class Command {
       }
 
       if (this.options.includeFilteredDependencies) {
-        this.filteredPackages = addDependencies(this.filteredPackages, this.packageGraph);
+        this.filteredPackages = this.packageGraph.addDependencies(this.filteredPackages);
       }
     } catch (err) {
       this._logError("EPACKAGES", "Errored while collecting packages and package graph", err);

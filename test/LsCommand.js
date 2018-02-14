@@ -80,4 +80,19 @@ describe("LsCommand", () => {
       expect(consoleOutput()).toMatchSnapshot();
     });
   });
+
+  describe("with terribly complicated dependency cycles", () => {
+    // for reference: 1->2, 1->3, 1->4, 2->4, 2->5, 3->4, 3->6, 4->1, 4->4,  5->4, 6->4, 7->4
+    // We design the package tree in a very specific way. We want to test several different things
+    // * A package depending on itself isn't added twice (package 4)
+    // * A package being added twice in the same stage of the expansion isn't added twice (package 4)
+    // * A package that has already been processed wont get added twice (package 1)
+    it("should list all packages with no repeats", async () => {
+      const cwd = await initFixture("PackageUtilities/cycles-and-repeated-deps");
+      await run(cwd)("--scope", "package-1", "--include-filtered-dependencies");
+
+      // should follow all transitive deps and pass all packages except 7 with no repeats
+      expect(consoleOutput()).toMatchSnapshot();
+    });
+  });
 });

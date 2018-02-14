@@ -59,3 +59,12 @@ Array [
 `;
 
 exports[`LsCommand with an undefined version should list packages 1`] = `"package-1 MISSING"`;
+
+exports[`LsCommand with terribly complicated dependency cycles should list all packages with no repeats 1`] = `
+"package-1 v1.0.0
+package-2 v1.0.0
+package-3 v1.0.0
+package-4 v1.0.0
+package-5 v1.0.0
+package-6 v1.0.0"
+`;
