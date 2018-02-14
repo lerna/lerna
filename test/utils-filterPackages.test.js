@@ -1,7 +1,7 @@
 "use strict";
 
 const log = require("npmlog");
-const collectPackages = require("../src/utils/collectPackages");
+const collectPackages = require("../src/utils/collect-packages");
 
 // helpers
 const initFixture = require("./helpers/initFixture");

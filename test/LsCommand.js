@@ -95,4 +95,29 @@ describe("LsCommand", () => {
       expect(consoleOutput()).toMatchSnapshot();
     });
   });
+
+  describe("with fancy 'packages' configuration", () => {
+    it("lists globstar-nested packages", async () => {
+      const lernaLs = run(await initFixture("PackageUtilities/globstar"));
+      await lernaLs();
+      expect(consoleOutput()).toMatchSnapshot();
+    });
+
+    it("lists packages under explicitly configured node_modules directories", async () => {
+      const lernaLs = run(await initFixture("PackageUtilities/explicit-node-modules"));
+      await lernaLs();
+      expect(consoleOutput()).toMatchSnapshot();
+    });
+
+    it("throws an error when globstars and explicit node_modules configs are mixed", async () => {
+      expect.assertions(1);
+
+      try {
+        const lernaLs = run(await initFixture("PackageUtilities/mixed-globstar"));
+        await lernaLs();
+      } catch (err) {
+        expect(err.message).toMatch("An explicit node_modules package path does not allow globstars");
+      }
+    });
+  });
 });

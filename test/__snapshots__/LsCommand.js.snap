@@ -60,6 +60,24 @@ Array [
 
 exports[`LsCommand with an undefined version should list packages 1`] = `"package-1 MISSING"`;
 
+exports[`LsCommand with fancy 'packages' configuration lists globstar-nested packages 1`] = `
+"globstar  v1.0.0
+package-2 v1.0.0
+package-4 v1.0.0
+package-1 v1.0.0
+package-3 v1.0.0
+package-5 v1.0.0"
+`;
+
+exports[`LsCommand with fancy 'packages' configuration lists packages under explicitly configured node_modules directories 1`] = `
+"alle-pattern-root v1.0.0
+package-1         v1.0.0
+package-2         v1.0.0
+package-3         v1.0.0
+package-4         v1.0.0
+@scoped/package-5 v1.0.0"
+`;
+
 exports[`LsCommand with terribly complicated dependency cycles should list all packages with no repeats 1`] = `
 "package-1 v1.0.0
 package-2 v1.0.0
