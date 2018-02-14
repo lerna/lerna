@@ -18,10 +18,10 @@ const Command = require("../Command");
 const ConventionalCommitUtilities = require("../ConventionalCommitUtilities");
 const GitUtilities = require("../GitUtilities");
 const NpmUtilities = require("../NpmUtilities");
-const output = require("../utils/output");
-const PackageUtilities = require("../PackageUtilities");
 const PromptUtilities = require("../PromptUtilities");
+const output = require("../utils/output");
 const UpdatedPackagesCollector = require("../UpdatedPackagesCollector");
+const batchPackages = require("../utils/batch-packages");
 const ValidationError = require("../utils/ValidationError");
 
 exports.handler = function handler(argv) {
@@ -219,7 +219,7 @@ class PublishCommand extends Command {
     this.packagesToPublish = this.updates.map(({ package: pkg }) => pkg).filter(pkg => !pkg.private);
 
     this.batchedPackagesToPublish = this.toposort
-      ? PackageUtilities.batchPackages(this.packagesToPublish, {
+      ? batchPackages(this.packagesToPublish, {
           // Don't sort based on devDependencies because that would increase the chance of dependency cycles
           // causing less-than-ideal a publishing order.
           graphType: "dependencies",

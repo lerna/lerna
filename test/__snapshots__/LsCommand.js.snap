@@ -1,5 +1,37 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`LsCommand filtering excludes packages when --ignore is a brace-expanded list 1`] = `
+"package-a-1 v1.0.0
+package-a-2 v1.0.0"
+`;
+
+exports[`LsCommand filtering excludes packages when --ignore is a glob 1`] = `
+"package-a-1 v1.0.0
+package-a-2 v1.0.0"
+`;
+
+exports[`LsCommand filtering excludes packages when --ignore is a package name 1`] = `
+"package-4   v1.0.0
+package-a-1 v1.0.0
+package-a-2 v1.0.0"
+`;
+
+exports[`LsCommand filtering filters packages when both --scope and --ignore are passed 1`] = `"package-a-1 v1.0.0"`;
+
+exports[`LsCommand filtering includes all packages when --scope is omitted 1`] = `
+"package-3   v1.0.0
+package-4   v1.0.0
+package-a-1 v1.0.0
+package-a-2 v1.0.0"
+`;
+
+exports[`LsCommand filtering includes packages when --scope is a glob 1`] = `
+"package-a-1 v1.0.0
+package-a-2 v1.0.0"
+`;
+
+exports[`LsCommand filtering includes packages when --scope is a package name 1`] = `"package-3 v1.0.0"`;
+
 exports[`LsCommand in a Yarn workspace should use package.json/workspaces setting 1`] = `
 "package-1 v1.0.0
 package-2 v1.0.0"
@@ -59,3 +91,30 @@ Array [
 `;
 
 exports[`LsCommand with an undefined version should list packages 1`] = `"package-1 MISSING"`;
+
+exports[`LsCommand with fancy 'packages' configuration lists globstar-nested packages 1`] = `
+"globstar  v1.0.0
+package-2 v1.0.0
+package-4 v1.0.0
+package-1 v1.0.0
+package-3 v1.0.0
+package-5 v1.0.0"
+`;
+
+exports[`LsCommand with fancy 'packages' configuration lists packages under explicitly configured node_modules directories 1`] = `
+"alle-pattern-root v1.0.0
+package-1         v1.0.0
+package-2         v1.0.0
+package-3         v1.0.0
+package-4         v1.0.0
+@scoped/package-5 v1.0.0"
+`;
+
+exports[`LsCommand with terribly complicated dependency cycles should list all packages with no repeats 1`] = `
+"package-1 v1.0.0
+package-2 v1.0.0
+package-3 v1.0.0
+package-4 v1.0.0
+package-5 v1.0.0
+package-6 v1.0.0"
+`;

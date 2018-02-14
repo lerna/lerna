@@ -1,0 +1,12 @@
+{
+  "name": "package-3",
+  "version": "1.0.0",
+  "dependencies": {
+    "package-1": "^0.0.0",
+    "external": "^1.0.0"
+  },
+  "devDependencies": {
+    "even-more-externals": "^3.0.0",
+    "package-2": "^0.6.7"
+  }
+}

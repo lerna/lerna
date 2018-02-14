@@ -6,9 +6,7 @@ const globParent = require("glob-parent");
 const loadJsonFile = require("load-json-file");
 const log = require("npmlog");
 const path = require("path");
-const readPkg = require("read-pkg");
 
-const dependencyIsSatisfied = require("./utils/dependencyIsSatisfied");
 const ValidationError = require("./utils/ValidationError");
 const Package = require("./Package");
 
@@ -79,7 +77,7 @@ class Repository {
   get packageJson() {
     if (!this._packageJson) {
       try {
-        this._packageJson = readPkg.sync(this.packageJsonLocation, { normalize: false });
+        this._packageJson = loadJsonFile.sync(this.packageJsonLocation);
       } catch (err) {
         // don't swallow syntax errors
         if (err.name === "JSONError") {
@@ -103,12 +101,6 @@ class Repository {
 
   isIndependent() {
     return this.version === "independent";
-  }
-
-  hasDependencyInstalled(depName, version) {
-    log.silly("hasDependencyInstalled", "ROOT", depName, version);
-
-    return dependencyIsSatisfied(this.nodeModulesLocation, depName, version);
   }
 }
 

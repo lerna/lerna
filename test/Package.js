@@ -9,12 +9,12 @@ const NpmUtilities = require("../src/NpmUtilities");
 
 // helpers
 const callsBack = require("./helpers/callsBack");
-const loggingOutput = require("./helpers/loggingOutput");
 
 // file under test
 const Package = require("../src/Package");
 
 jest.mock("../src/NpmUtilities");
+jest.mock("load-json-file");
 
 // silence logs
 log.level = "silent";
@@ -290,42 +290,6 @@ describe("Package", () => {
         },
         expect.any(Function)
       );
-    });
-  });
-
-  describe(".hasMatchingDependency()", () => {
-    const pkg = factory({
-      name: "has-matching",
-      dependencies: { "my-dependency": "^1.0.0" },
-      devDependencies: { "my-dev-dependency": "^1.0.0" },
-      peerDependencies: { "my-peer-dependency": ">=1.0.0" },
-    });
-
-    it("should match included dependency", () => {
-      expect(
-        pkg.hasMatchingDependency({
-          name: "my-dependency",
-          version: "1.1.3",
-        })
-      ).toBe(true);
-    });
-
-    it("should not match missing dependency", () => {
-      expect(pkg.hasMatchingDependency({ name: "missing", version: "1.0.0" })).toBe(false);
-      expect(loggingOutput()).toEqual([]);
-    });
-
-    it("should not match included dependency", () => {
-      const result = pkg.hasMatchingDependency(
-        {
-          name: "my-dev-dependency",
-          version: "2.0.7",
-        },
-        true
-      );
-
-      expect(result).toBe(false);
-      expect(loggingOutput()).toMatchSnapshot();
     });
   });
 });

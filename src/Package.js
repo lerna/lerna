@@ -1,13 +1,10 @@
 "use strict";
 
-const dedent = require("dedent");
 const log = require("npmlog");
 const npa = require("npm-package-arg");
 const path = require("path");
-const semver = require("semver");
 const _ = require("lodash");
 
-const dependencyIsSatisfied = require("./utils/dependencyIsSatisfied");
 const NpmUtilities = require("./NpmUtilities");
 
 function binSafeName(rawName) {
@@ -155,51 +152,6 @@ class Package {
     } else {
       callback();
     }
-  }
-
-  /**
-   * Determine if a dependency version satisfies the requirements of this package
-   * @param {Package} dependency
-   * @param {Boolean} doWarn
-   * @returns {Boolean}
-   */
-  hasMatchingDependency(dependency, doWarn) {
-    log.silly("hasMatchingDependency", this.name, dependency.name);
-
-    const expectedVersion = this.allDependencies[dependency.name];
-    const actualVersion = dependency.version;
-
-    if (!expectedVersion) {
-      return false;
-    }
-
-    // check if semantic versions are compatible
-    if (semver.satisfies(actualVersion, expectedVersion)) {
-      return true;
-    }
-
-    if (doWarn) {
-      log.warn(
-        this.name,
-        dedent`
-          depends on "${dependency.name}@${expectedVersion}"
-          instead of "${dependency.name}@${actualVersion}"
-        `
-      );
-    }
-
-    return false;
-  }
-
-  /**
-   * Determine if a dependency has already been installed for this package
-   * @param {String} depName Name of the dependency
-   * @returns {Boolean}
-   */
-  hasDependencyInstalled(depName) {
-    log.silly("hasDependencyInstalled", this.name, depName);
-
-    return dependencyIsSatisfied(this.nodeModulesLocation, depName, this.allDependencies[depName]);
   }
 }
 

@@ -3,13 +3,12 @@
 const execa = require("execa");
 const loadJsonFile = require("load-json-file");
 const path = require("path");
-const readPkg = require("read-pkg");
 const tempy = require("tempy");
 
 const { LERNA_BIN } = require("../helpers/constants");
 const initFixture = require("../helpers/initFixture");
 
-const parsePackageJson = cwd => readPkg(path.join(cwd, "package.json"), { normalize: false });
+const parsePackageJson = cwd => loadJsonFile(path.join(cwd, "package.json"));
 
 const parseLernaJson = cwd => loadJsonFile(path.join(cwd, "lerna.json"));
 

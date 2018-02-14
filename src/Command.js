@@ -7,12 +7,13 @@ const log = require("npmlog");
 const ChildProcessUtilities = require("./ChildProcessUtilities");
 const GitUtilities = require("./GitUtilities");
 const GitVersionParser = require("./GitVersionParser");
-const PackageUtilities = require("./PackageUtilities");
+const PackageGraph = require("./PackageGraph");
 const Repository = require("./Repository");
-const filterFlags = require("./utils/filterFlags");
 const writeLogFile = require("./utils/writeLogFile");
 const UpdatedPackagesCollector = require("./UpdatedPackagesCollector");
 const VersionSerializer = require("./VersionSerializer");
+const collectPackages = require("./utils/collect-packages");
+const filterPackages = require("./utils/filter-packages");
 const ValidationError = require("./utils/ValidationError");
 
 // handle log.success()
@@ -275,8 +276,8 @@ class Command {
     }
 
     try {
-      const packages = PackageUtilities.getPackages({ rootPath, packageConfigs });
-      const packageGraph = PackageUtilities.getPackageGraph(packages);
+      const packages = collectPackages({ rootPath, packageConfigs });
+      const packageGraph = new PackageGraph(packages, { graphType: "allDependencies" });
 
       if (useGitVersion) {
         const versionParser = new GitVersionParser(gitVersionPrefix);
@@ -291,7 +292,7 @@ class Command {
 
       this.packages = packages;
       this.packageGraph = packageGraph;
-      this.filteredPackages = PackageUtilities.filterPackages(packages, { scope, ignore });
+      this.filteredPackages = filterPackages(packages, { scope, ignore });
 
       // The UpdatedPackagesCollector requires that filteredPackages be present prior to checking for
       // updates. That's okay because it further filters based on what's already been filtered.
@@ -301,7 +302,7 @@ class Command {
       }
 
       if (this.options.includeFilteredDependencies) {
-        this.filteredPackages = PackageUtilities.addDependencies(this.filteredPackages, this.packageGraph);
+        this.filteredPackages = this.packageGraph.addDependencies(this.filteredPackages);
       }
     } catch (err) {
       this._logError("EPACKAGES", "Errored while collecting packages and package graph", err);
@@ -444,6 +445,15 @@ function cleanStack(err, className) {
   const cutoff = new RegExp(`^    at ${className}._attempt .*$`);
   const relevantIndex = lines.findIndex(line => cutoff.test(line));
   return lines.slice(0, relevantIndex).join("\n");
+}
+
+/**
+ * Passed argv from yargs, return an object that contains _only_
+ * what was passed on the command line, omitting undefined values
+ * and yargs spam.
+ */
+function filterFlags(argv) {
+  return _.omit(_.omitBy(argv, _.isNil), ["h", "help", "v", "version", "$0"]);
 }
 
 module.exports = Command;

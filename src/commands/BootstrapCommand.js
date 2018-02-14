@@ -10,7 +10,12 @@ const semver = require("semver");
 const Command = require("../Command");
 const FileSystemUtilities = require("../FileSystemUtilities");
 const NpmUtilities = require("../NpmUtilities");
-const PackageUtilities = require("../PackageUtilities");
+const batchPackages = require("../utils/batch-packages");
+const matchPackageName = require("../utils/match-package-name");
+const hasDependencyInstalled = require("../utils/has-dependency-installed");
+const hasMatchingDependency = require("../utils/has-matching-dependency");
+const runParallelBatches = require("../utils/run-parallel-batches");
+const symlink = require("../utils/symlink");
 const ValidationError = require("../utils/ValidationError");
 
 exports.handler = function handler(argv) {
@@ -111,7 +116,7 @@ class BootstrapCommand extends Command {
 
     try {
       this.batchedPackages = this.toposort
-        ? PackageUtilities.batchPackages(this.filteredPackages, {
+        ? batchPackages(this.filteredPackages, {
             rejectCycles,
           })
         : [this.filteredPackages];
@@ -129,7 +134,7 @@ class BootstrapCommand extends Command {
         .catch(callback);
     }
 
-    PackageUtilities.validatePackageNames(this.filteredPackages);
+    this.validatePackageNames();
 
     this.logger.silly("npmConfig", this.npmConfig);
     callback(null, true);
@@ -198,7 +203,7 @@ class BootstrapCommand extends Command {
     const tracker = this.logger.newItem(scriptName);
     tracker.addWork(this.filteredPackages.length);
 
-    PackageUtilities.runParallelBatches(
+    runParallelBatches(
       this.batchedPackages,
       pkg => done => {
         pkg.runScript(scriptName, err => {
@@ -352,7 +357,7 @@ class BootstrapCommand extends Command {
         )
 
         // match external and version mismatched local packages
-        .filter(dep => !hasPackage(dep.name, dep.version) || !pkg.hasMatchingDependency(dep, true))
+        .filter(dep => !hasPackage(dep.name, dep.version) || !hasMatchingDependency(pkg, dep))
 
         .forEach(({ name, version }) => {
           // Get the object for this package, auto-vivifying.
@@ -381,7 +386,7 @@ class BootstrapCommand extends Command {
 
       let rootVersion;
 
-      if (hoist && PackageUtilities.isHoistedPackage(name, hoist, nohoist)) {
+      if (hoist && isHoistedPackage(name, hoist, nohoist)) {
         // Get the most common version.
         const commonVersion = Object.keys(versions).reduce((a, b) => (versions[a] > versions[b] ? a : b));
 
@@ -405,7 +410,7 @@ class BootstrapCommand extends Command {
           name,
           dependents: (dependents[rootVersion] || []).map(dep => this.packageGraph.get(dep).pkg),
           dependency: `${name}@${rootVersion}`,
-          isSatisfied: this.repository.hasDependencyInstalled(name, rootVersion),
+          isSatisfied: hasDependencyInstalled(this.repository.package, name, rootVersion),
         });
       }
 
@@ -428,7 +433,7 @@ class BootstrapCommand extends Command {
           // only install dependency if it's not already installed
           (leaves[pkg] || (leaves[pkg] = [])).push({
             dependency: `${name}@${version}`,
-            isSatisfied: findPackage(pkg).hasDependencyInstalled(name),
+            isSatisfied: hasDependencyInstalled(findPackage(pkg), name),
           });
         });
       });
@@ -482,7 +487,8 @@ class BootstrapCommand extends Command {
                   async.series(
                     dependents.map(pkg => linkDone => {
                       const src = this.hoistedDirectory(name);
-                      PackageUtilities.createBinaryLink(src, pkg, linkDone);
+
+                      symlink.bin(src, pkg, linkDone);
                     }),
                     itemDone
                   );
@@ -584,6 +590,32 @@ class BootstrapCommand extends Command {
    * @param {Function} callback
    */
   symlinkPackages(callback) {
-    PackageUtilities.symlinkPackages(this.filteredPackages, this.packageGraph, this.logger, callback);
+    symlink(this.filteredPackages, this.packageGraph, this.logger, callback);
   }
+
+  validatePackageNames() {
+    const foundPackages = new Map();
+
+    this.filteredPackages.forEach(({ name, location }) => {
+      if (foundPackages.has(name)) {
+        foundPackages.get(name).add(location);
+      } else {
+        foundPackages.set(name, new Set([location]));
+      }
+    });
+
+    foundPackages.forEach((locationsFound, pkgName) => {
+      if (locationsFound.size > 1) {
+        throw new ValidationError(
+          "ENAME",
+          `Package name "${pkgName}" used in multiple packages:
+          \t${Array.from(locationsFound).join("\n\t")}`
+        );
+      }
+    });
+  }
+}
+
+function isHoistedPackage(name, hoist, nohoist) {
+  return matchPackageName(name, hoist) && matchPackageName(name, nohoist, true);
 }

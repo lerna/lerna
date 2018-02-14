@@ -50,6 +50,19 @@ Array [
 ]
 `;
 
+exports[`RunCommand in a cyclical repo warns when cycles are encountered 1`] = `
+Array [
+  "packages/package-dag-1 env",
+  "packages/package-standalone env",
+  "packages/package-dag-2a env",
+  "packages/package-dag-2b env",
+  "packages/package-dag-3 env",
+  "packages/package-cycle-1 env",
+  "packages/package-cycle-2 env",
+  "packages/package-cycle-extraneous env",
+]
+`;
+
 exports[`RunCommand with --include-filtered-dependencies runs scoped command including filtered deps 1`] = `
 Array [
   "packages/package-1 my-script",

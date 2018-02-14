@@ -58,7 +58,6 @@ class InitCommand extends Command {
     this.ensurePackageJSON();
     this.ensureLernaJson();
     this.ensurePackagesDir();
-    this.ensureNoVersionFile();
     this.logger.success("", "Initialized Lerna files");
     callback(null, true);
   }
@@ -98,8 +97,6 @@ class InitCommand extends Command {
 
     if (this.options.independent) {
       version = "independent";
-    } else if (FileSystemUtilities.existsSync(this.repository.versionLocation)) {
-      version = FileSystemUtilities.readFileSync(this.repository.versionLocation);
     } else if (repositoryVersion) {
       version = repositoryVersion;
     } else {
@@ -126,14 +123,6 @@ class InitCommand extends Command {
     }
 
     writeJsonFile.sync(this.repository.lernaJsonLocation, lernaJson, { indent: 2 });
-  }
-
-  ensureNoVersionFile() {
-    const { versionLocation } = this.repository;
-    if (FileSystemUtilities.existsSync(versionLocation)) {
-      this.logger.info("", "Removing old VERSION file");
-      FileSystemUtilities.unlinkSync(versionLocation);
-    }
   }
 
   ensurePackagesDir() {
