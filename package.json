@@ -1,6 +1,6 @@
 {
   "name": "lerna",
-  "version": "3.0.0-dev",
+  "version": "3.0.0-alpha.0",
   "description": "Tool for managing JavaScript projects with multiple packages",
   "main": "src/index.js",
   "files": [
