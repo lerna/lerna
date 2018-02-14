@@ -1,3 +1,54 @@
+## v3.0.0-alpha.0 (2018-02-14)
+
+#### :boom: Breaking Change
+
+* [`#1122`](https://github.com/lerna/lerna/pull/1122) Use local lerna if available. ([@marionebl](https://github.com/marionebl))
+* [`#1207`](https://github.com/lerna/lerna/pull/1207) Refactor command superclass and yargs handlers. ([@evocateur](https://github.com/evocateur))
+* [`#1208`](https://github.com/lerna/lerna/pull/1208) Use CommonJS. ([@evocateur](https://github.com/evocateur))
+* [`#1209`](https://github.com/lerna/lerna/pull/1209) Drop support for node v4. ([@evocateur](https://github.com/evocateur))
+* [`#1211`](https://github.com/lerna/lerna/pull/1211) Bump major versions of dependencies. ([@evocateur](https://github.com/evocateur))
+* [`#1225`](https://github.com/lerna/lerna/pull/1225) Remove lerna.json compatibility check. ([@evocateur](https://github.com/evocateur))
+* [`#1226`](https://github.com/lerna/lerna/pull/1226) Remove all deprecated validations. ([@evocateur](https://github.com/evocateur))
+* [`#1234`](https://github.com/lerna/lerna/pull/1234) Upgrade to yargs 11. ([@evocateur](https://github.com/evocateur))
+
+#### :rocket: Enhancement
+
+* [`#1212`](https://github.com/lerna/lerna/pull/1212) Throw friendly error when workspaces are not configured correctly. ([@craigbilner](https://github.com/craigbilner))
+* [`#1227`](https://github.com/lerna/lerna/pull/1227) Add `--ignore-scripts` flag to bootstrap command. ([@Andarist](https://github.com/Andarist))
+* [`#1254`](https://github.com/lerna/lerna/pull/1254) Add support for new yarn workspaces config format. ([@detrohutt](https://github.com/detrohutt))
+* [`#1261`](https://github.com/lerna/lerna/pull/1261) Refactor publish command to be 98% async. ([@evocateur](https://github.com/evocateur))
+* [`#1262`](https://github.com/lerna/lerna/pull/1262) Rewrite npm5 `file:` links during publish. ([@evocateur](https://github.com/evocateur))
+
+#### :bug: Bug Fix
+
+* [`#1219`](https://github.com/lerna/lerna/pull/1219) Avoid triggering pre-commit and commitmsg hooks during publish. ([@alan-agius4](https://github.com/alan-agius4))
+* [`#1220`](https://github.com/lerna/lerna/pull/1220) Remove `--no-gpg-sign` from `git commit`. ([@evocateur](https://github.com/evocateur))
+
+#### :memo: Documentation
+
+* [`#1248`](https://github.com/lerna/lerna/pull/1248) Document another potential cause of git initialization failure. ([@fritz-c](https://github.com/fritz-c))
+* [`#1250`](https://github.com/lerna/lerna/pull/1250) Add guide for debugging Jest tests with VS Code. ([@millermatt](https://github.com/millermatt))
+
+#### :house: Internal
+
+* [`#1210`](https://github.com/lerna/lerna/pull/1210) Upgrade to Jest v22. ([@evocateur](https://github.com/evocateur))
+* [`#1224`](https://github.com/lerna/lerna/pull/1224) Remove explicit `glob` dependency in favor of `globby`. ([@wtgtybhertgeghgtwtg](https://github.com/wtgtybhertgeghgtwtg))
+* [`#1260`](https://github.com/lerna/lerna/pull/1260) `PackageGraph` is a `Map`, its nodes store relationships in a `Set`. ([@evocateur](https://github.com/evocateur))
+* [`#1266`](https://github.com/lerna/lerna/pull/1266) Split `PackageUtilities` into smaller files. ([@evocateur](https://github.com/evocateur))
+* [`#1267`](https://github.com/lerna/lerna/pull/1267) Split `NpmUtilities` into smaller files. ([@evocateur](https://github.com/evocateur))
+
+#### Committers: 9
+
+* Alan Agius ([alan-agius4](https://github.com/alan-agius4))
+* Alexander Roberts ([detrohutt](https://github.com/detrohutt))
+* Craig Bilner ([craigbilner](https://github.com/craigbilner))
+* Daniel Stockman ([evocateur](https://github.com/evocateur))
+* Fritz ([fritz-c](https://github.com/fritz-c))
+* Mario Nebl ([marionebl](https://github.com/marionebl))
+* Mateusz Burzyński ([Andarist](https://github.com/Andarist))
+* Matt Miller ([millermatt](https://github.com/millermatt))
+* [wtgtybhertgeghgtwtg](https://github.com/wtgtybhertgeghgtwtg)
+
 ## v2.7.2 (2018-01-16)
 
 #### :rocket: Enhancement
