@@ -1,3 +1,9 @@
 {
-  "name": "independent"
+  "name": "cold",
+  "version": "0.0.0-lerna",
+  "private": true,
+  "devDependencies": {
+    "external": "^2.0.0",
+    "other-external": "^15.0.0"
+  }
 }

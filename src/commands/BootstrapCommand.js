@@ -12,6 +12,8 @@ const FileSystemUtilities = require("../FileSystemUtilities");
 const NpmUtilities = require("../NpmUtilities");
 const batchPackages = require("../utils/batch-packages");
 const matchPackageName = require("../utils/match-package-name");
+const hasDependencyInstalled = require("../utils/has-dependency-installed");
+const hasMatchingDependency = require("../utils/has-matching-dependency");
 const runParallelBatches = require("../utils/run-parallel-batches");
 const symlink = require("../utils/symlink");
 const ValidationError = require("../utils/ValidationError");
@@ -355,7 +357,7 @@ class BootstrapCommand extends Command {
         )
 
         // match external and version mismatched local packages
-        .filter(dep => !hasPackage(dep.name, dep.version) || !pkg.hasMatchingDependency(dep, true))
+        .filter(dep => !hasPackage(dep.name, dep.version) || !hasMatchingDependency(pkg, dep))
 
         .forEach(({ name, version }) => {
           // Get the object for this package, auto-vivifying.
@@ -408,7 +410,7 @@ class BootstrapCommand extends Command {
           name,
           dependents: (dependents[rootVersion] || []).map(dep => this.packageGraph.get(dep).pkg),
           dependency: `${name}@${rootVersion}`,
-          isSatisfied: this.repository.package.hasDependencyInstalled(name, rootVersion),
+          isSatisfied: hasDependencyInstalled(this.repository.package, name, rootVersion),
         });
       }
 
@@ -431,7 +433,7 @@ class BootstrapCommand extends Command {
           // only install dependency if it's not already installed
           (leaves[pkg] || (leaves[pkg] = [])).push({
             dependency: `${name}@${version}`,
-            isSatisfied: findPackage(pkg).hasDependencyInstalled(name),
+            isSatisfied: hasDependencyInstalled(findPackage(pkg), name),
           });
         });
       });

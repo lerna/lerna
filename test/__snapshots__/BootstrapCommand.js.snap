@@ -25,6 +25,24 @@ Object {
 }
 `;
 
+exports[`BootstrapCommand with external dependencies that haven't been installed hoists appropriately 1`] = `
+Object {
+  "ROOT": Array [
+    "external@^2.0.0",
+    "other-external@^15.0.0",
+    "even-more-externals@^3.0.0",
+    "package-2@^0.6.7",
+    "package-1@^0.0.0",
+  ],
+  "packages/package-1": Array [
+    "external@^1.0.0",
+  ],
+  "packages/package-3": Array [
+    "external@^1.0.0",
+  ],
+}
+`;
+
 exports[`BootstrapCommand with external dependencies that haven't been installed should get installed 1`] = `
 Object {
   "packages/package-1": Array [
@@ -32,6 +50,12 @@ Object {
   ],
   "packages/package-2": Array [
     "external@^2.0.0",
+  ],
+  "packages/package-3": Array [
+    "external@^1.0.0",
+    "even-more-externals@^3.0.0",
+    "package-2@^0.6.7",
+    "package-1@^0.0.0",
   ],
 }
 `;

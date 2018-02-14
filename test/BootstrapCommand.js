@@ -292,6 +292,12 @@ describe("BootstrapCommand", () => {
         mutex: "file:/test/this/path",
       });
     });
+
+    it("hoists appropriately", async () => {
+      await lernaBootstrap("--hoist");
+
+      expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
+    });
   });
 
   describe("with external dependencies that have already been installed", () => {

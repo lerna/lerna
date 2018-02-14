@@ -1,11 +1,8 @@
 "use strict";
 
-const dedent = require("dedent");
 const log = require("npmlog");
-const loadJsonFile = require("load-json-file");
 const npa = require("npm-package-arg");
 const path = require("path");
-const semver = require("semver");
 const _ = require("lodash");
 
 const NpmUtilities = require("./NpmUtilities");
@@ -155,65 +152,6 @@ class Package {
     } else {
       callback();
     }
-  }
-
-  /**
-   * Determine if a dependency version satisfies the requirements of this package
-   * @param {Package} dependency
-   * @param {Boolean} doWarn
-   * @returns {Boolean}
-   */
-  hasMatchingDependency(dependency, doWarn) {
-    log.silly("hasMatchingDependency", this.name, dependency.name);
-
-    const expectedVersion = this.allDependencies[dependency.name];
-    const actualVersion = dependency.version;
-
-    if (!expectedVersion) {
-      return false;
-    }
-
-    // check if semantic versions are compatible
-    if (semver.satisfies(actualVersion, expectedVersion)) {
-      return true;
-    }
-
-    if (doWarn) {
-      log.warn(
-        this.name,
-        dedent`
-          depends on "${dependency.name}@${expectedVersion}"
-          instead of "${dependency.name}@${actualVersion}"
-        `
-      );
-    }
-
-    return false;
-  }
-
-  /**
-   * Determine if a dependency has already been installed for this package
-   * @param {String} depName Name of the dependency
-   * @param {String} [version] Optional version to test with, defaults to existing spec
-   * @returns {Boolean}
-   */
-  hasDependencyInstalled(depName, version) {
-    log.silly("hasDependencyInstalled", this.name, depName);
-
-    const needVersion = version || this.allDependencies[depName];
-
-    let retVal;
-    try {
-      const manifestLocation = path.join(this.nodeModulesLocation, depName, "package.json");
-      const pkg = loadJsonFile.sync(manifestLocation);
-
-      retVal = semver.satisfies(pkg.version, needVersion);
-    } catch (e) {
-      retVal = false;
-    }
-
-    log.verbose("hasDependencyInstalled", depName, retVal);
-    return retVal;
   }
 }
 
