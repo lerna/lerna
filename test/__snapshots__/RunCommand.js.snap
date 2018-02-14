@@ -2,70 +2,79 @@
 
 exports[`RunCommand in a basic repo always runs env script 1`] = `
 Array [
-  "packages/package-1 env",
-  "packages/package-4 env",
-  "packages/package-2 env",
-  "packages/package-3 env",
+  "packages/package-1 npm run env",
+  "packages/package-4 npm run env",
+  "packages/package-2 npm run env",
+  "packages/package-3 npm run env",
 ]
 `;
 
 exports[`RunCommand in a basic repo does not run a script in ignored packages 1`] = `
 Array [
-  "packages/package-1 my-script",
+  "packages/package-1 npm run my-script",
 ]
 `;
 
 exports[`RunCommand in a basic repo runs a script in all packages with --parallel 1`] = `
 Array [
-  "packages/package-1 env",
-  "packages/package-2 env",
-  "packages/package-3 env",
-  "packages/package-4 env",
+  "packages/package-1 npm run env",
+  "packages/package-2 npm run env",
+  "packages/package-3 npm run env",
+  "packages/package-4 npm run env",
 ]
 `;
 
 exports[`RunCommand in a basic repo runs a script in packages 1`] = `
 Array [
-  "packages/package-1 my-script",
-  "packages/package-3 my-script",
+  "packages/package-1 npm run my-script",
+  "packages/package-3 npm run my-script",
 ]
 `;
 
 exports[`RunCommand in a basic repo runs a script in packages with --stream 1`] = `
 Array [
-  "packages/package-1 my-script",
-  "packages/package-3 my-script",
+  "packages/package-1 npm run my-script",
+  "packages/package-3 npm run my-script",
 ]
 `;
 
 exports[`RunCommand in a basic repo runs a script only in scoped packages 1`] = `
 Array [
-  "packages/package-1 my-script",
+  "packages/package-1 npm run my-script",
 ]
 `;
 
 exports[`RunCommand in a basic repo should filter packages that are not updated with --since 1`] = `
 Array [
-  "packages/package-3 my-script",
+  "packages/package-3 npm run my-script",
+]
+`;
+
+exports[`RunCommand in a basic repo supports alternate npmClient configuration 1`] = `
+Array [
+  "packages/package-1 yarn run env",
+  "packages/package-4 yarn run env",
+  "packages/package-2 yarn run env",
+  "packages/package-3 yarn run env",
 ]
 `;
 
 exports[`RunCommand in a cyclical repo warns when cycles are encountered 1`] = `
 Array [
-  "packages/package-dag-1 env",
-  "packages/package-standalone env",
-  "packages/package-dag-2a env",
-  "packages/package-dag-2b env",
-  "packages/package-dag-3 env",
-  "packages/package-cycle-1 env",
-  "packages/package-cycle-2 env",
-  "packages/package-cycle-extraneous env",
+  "packages/package-dag-1 npm run env",
+  "packages/package-standalone npm run env",
+  "packages/package-dag-2a npm run env",
+  "packages/package-dag-2b npm run env",
+  "packages/package-dag-3 npm run env",
+  "packages/package-cycle-1 npm run env",
+  "packages/package-cycle-2 npm run env",
+  "packages/package-cycle-extraneous npm run env",
 ]
 `;
 
 exports[`RunCommand with --include-filtered-dependencies runs scoped command including filtered deps 1`] = `
 Array [
-  "packages/package-1 my-script",
-  "packages/package-2 my-script",
+  "packages/package-1 npm run my-script",
+  "packages/package-2 npm run my-script",
 ]
 `;

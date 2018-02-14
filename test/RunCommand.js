@@ -4,7 +4,7 @@ const path = require("path");
 const log = require("npmlog");
 
 // mocked modules
-const NpmUtilities = require("../src/NpmUtilities");
+const npmRunScript = require("../src/utils/npm-run-script");
 const output = require("../src/utils/output");
 const UpdatedPackagesCollector = require("../src/UpdatedPackagesCollector");
 
@@ -19,35 +19,33 @@ const commandModule = require("../src/commands/RunCommand");
 
 const run = yargsRunner(commandModule);
 
-jest.mock("../src/NpmUtilities");
 jest.mock("../src/utils/output");
+jest.mock("../src/utils/npm-run-script");
 
 // silence logs
 log.level = "silent";
 
 const ranInPackages = testDir =>
-  NpmUtilities.runScriptInDir.mock.calls.reduce((arr, [script, cfg]) => {
-    const { args, directory } = cfg;
-    const dir = normalizeRelativeDir(testDir, directory);
-    arr.push([dir, script].concat(args).join(" "));
+  npmRunScript.mock.calls.reduce((arr, [script, { args, npmClient, pkg }]) => {
+    const dir = normalizeRelativeDir(testDir, pkg.location);
+    const record = [dir, npmClient, "run", script].concat(args);
+    arr.push(record.join(" "));
     return arr;
   }, []);
 
 const ranInPackagesStreaming = testDir =>
-  NpmUtilities.runScriptInPackageStreaming.mock.calls.reduce((arr, [script, cfg]) => {
-    const { args, pkg } = cfg;
+  npmRunScript.stream.mock.calls.reduce((arr, [script, { args, npmClient, pkg }]) => {
     const dir = normalizeRelativeDir(testDir, pkg.location);
-    arr.push([dir, script].concat(args).join(" "));
+    const record = [dir, npmClient, "run", script].concat(args);
+    arr.push(record.join(" "));
     return arr;
   }, []);
 
 describe("RunCommand", () => {
-  beforeEach(() => {
-    NpmUtilities.runScriptInDir = jest.fn(callsBack(null, "stdout"));
-    NpmUtilities.runScriptInPackageStreaming = jest.fn(callsBack());
-  });
+  npmRunScript.mockImplementation(callsBack(null, "stdout"));
+  npmRunScript.stream.mockImplementation(callsBack());
 
-  afterEach(() => jest.resetAllMocks());
+  afterEach(jest.clearAllMocks);
 
   describe("in a basic repo", () => {
     let testDir;
@@ -108,7 +106,7 @@ describe("RunCommand", () => {
     it("does not error when no packages match", async () => {
       await lernaRun("missing-script");
 
-      expect(NpmUtilities.runScriptInDir).not.toBeCalled();
+      expect(npmRunScript).not.toBeCalled();
       expect(output).not.toBeCalled();
     });
 
@@ -116,6 +114,12 @@ describe("RunCommand", () => {
       await lernaRun("env", "--parallel");
 
       expect(ranInPackagesStreaming(testDir)).toMatchSnapshot();
+    });
+
+    it("supports alternate npmClient configuration", async () => {
+      await lernaRun("env", "--npm-client", "yarn");
+
+      expect(ranInPackages(testDir)).toMatchSnapshot();
     });
   });
 

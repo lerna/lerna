@@ -3,7 +3,7 @@
 const async = require("async");
 
 const Command = require("../Command");
-const NpmUtilities = require("../NpmUtilities");
+const npmRunScript = require("../utils/npm-run-script");
 const batchPackages = require("../utils/batch-packages");
 const runParallelBatches = require("../utils/run-parallel-batches");
 const output = require("../utils/output");
@@ -156,24 +156,24 @@ class RunCommand extends Command {
   }
 
   runScriptInPackageStreaming(pkg, callback) {
-    NpmUtilities.runScriptInPackageStreaming(
+    npmRunScript.stream(
       this.script,
       {
         args: this.args,
-        pkg,
         npmClient: this.npmClient,
+        pkg,
       },
       callback
     );
   }
 
   runScriptInPackageCapturing(pkg, callback) {
-    NpmUtilities.runScriptInDir(
+    npmRunScript(
       this.script,
       {
         args: this.args,
-        directory: pkg.location,
         npmClient: this.npmClient,
+        pkg,
       },
       (err, stdout) => {
         if (err) {

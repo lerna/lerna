@@ -1,23 +1,10 @@
 "use strict";
 
-const log = require("npmlog");
 const os = require("os");
 const path = require("path");
 
-// mocked modules
-const NpmUtilities = require("../src/NpmUtilities");
-
-// helpers
-const callsBack = require("./helpers/callsBack");
-
 // file under test
 const Package = require("../src/Package");
-
-jest.mock("../src/NpmUtilities");
-jest.mock("load-json-file");
-
-// silence logs
-log.level = "silent";
 
 describe("Package", () => {
   const factory = json =>
@@ -240,56 +227,6 @@ describe("Package", () => {
       expect(mockSerializer.deserialize).toBeCalled();
       expect(mockSerializer.serialize).toBeCalled();
       expect(mockSerializer.serialize).toBeCalledWith(pkg.json);
-    });
-  });
-
-  describe(".runScript()", () => {
-    it("should run the script", done => {
-      NpmUtilities.runScriptInDir = jest.fn(callsBack());
-
-      const pkg = factory({
-        scripts: { "my-script": "echo 'hello world'" },
-      });
-
-      pkg.runScript("my-script", () => {
-        try {
-          expect(NpmUtilities.runScriptInDir).lastCalledWith(
-            "my-script",
-            {
-              args: [],
-              directory: pkg.location,
-              npmClient: "npm",
-            },
-            expect.any(Function)
-          );
-
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      });
-    });
-  });
-
-  describe(".runScriptSync()", () => {
-    it("should run the script", () => {
-      NpmUtilities.runScriptInDirSync = jest.fn(callsBack());
-
-      const pkg = factory({
-        scripts: { "my-script": "echo 'hello world'" },
-      });
-
-      pkg.runScriptSync("my-script", () => {});
-
-      expect(NpmUtilities.runScriptInDirSync).lastCalledWith(
-        "my-script",
-        {
-          args: [],
-          directory: pkg.location,
-          npmClient: "npm",
-        },
-        expect.any(Function)
-      );
     });
   });
 });
