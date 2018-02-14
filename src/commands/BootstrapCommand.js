@@ -12,7 +12,7 @@ const FileSystemUtilities = require("../FileSystemUtilities");
 const NpmUtilities = require("../NpmUtilities");
 const batchPackages = require("../utils/batch-packages");
 const matchPackageName = require("../utils/match-package-name");
-const runParallelBatches = require("../utils/runParallelBatches");
+const runParallelBatches = require("../utils/run-parallel-batches");
 const symlink = require("../utils/symlink");
 const ValidationError = require("../utils/ValidationError");
 

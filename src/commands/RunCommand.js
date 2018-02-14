@@ -5,7 +5,7 @@ const async = require("async");
 const Command = require("../Command");
 const NpmUtilities = require("../NpmUtilities");
 const batchPackages = require("../utils/batch-packages");
-const runParallelBatches = require("../utils/runParallelBatches");
+const runParallelBatches = require("../utils/run-parallel-batches");
 const output = require("../utils/output");
 
 exports.handler = function handler(argv) {
