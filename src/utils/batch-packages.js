@@ -2,14 +2,14 @@
 
 const log = require("npmlog");
 
-const createPackageGraph = require("./createPackageGraph");
+const PackageGraph = require("../PackageGraph");
 const ValidationError = require("./ValidationError");
 
 module.exports = batchPackages;
 
-function batchPackages(packagesToBatch, { graphType, rejectCycles }) {
+function batchPackages(packagesToBatch, { graphType = "allDependencies", rejectCycles }) {
   // create a new graph because we will be mutating it
-  const graph = createPackageGraph(packagesToBatch, { graphType });
+  const graph = new PackageGraph(packagesToBatch, { graphType });
   const [cyclePaths, cycleNodes] = graph.partitionCycles();
   const batches = [];
 

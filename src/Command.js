@@ -7,12 +7,12 @@ const log = require("npmlog");
 const ChildProcessUtilities = require("./ChildProcessUtilities");
 const GitUtilities = require("./GitUtilities");
 const GitVersionParser = require("./GitVersionParser");
+const PackageGraph = require("./PackageGraph");
 const Repository = require("./Repository");
 const writeLogFile = require("./utils/writeLogFile");
 const UpdatedPackagesCollector = require("./UpdatedPackagesCollector");
 const VersionSerializer = require("./VersionSerializer");
 const collectPackages = require("./utils/collect-packages");
-const createPackageGraph = require("./utils/createPackageGraph");
 const filterPackages = require("./utils/filter-packages");
 const ValidationError = require("./utils/ValidationError");
 
@@ -277,7 +277,7 @@ class Command {
 
     try {
       const packages = collectPackages({ rootPath, packageConfigs });
-      const packageGraph = createPackageGraph(packages);
+      const packageGraph = new PackageGraph(packages, { graphType: "allDependencies" });
 
       if (useGitVersion) {
         const versionParser = new GitVersionParser(gitVersionPrefix);

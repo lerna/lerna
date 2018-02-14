@@ -1,7 +1,7 @@
 "use strict";
 
 const Command = require("../Command");
-const createPackageGraph = require("../utils/createPackageGraph");
+const PackageGraph = require("../PackageGraph");
 const symlink = require("../utils/symlink");
 
 exports.handler = function handler(argv) {
@@ -41,7 +41,7 @@ class LinkCommand extends Command {
     let graph = this.packageGraph;
 
     if (this.options.forceLocal) {
-      graph = createPackageGraph(this.packages, { forceLocal: true });
+      graph = new PackageGraph(this.packages, { graphType: "allDependencies", forceLocal: true });
     }
 
     symlink(this.packages, graph, this.logger, callback);
