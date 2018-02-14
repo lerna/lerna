@@ -21,7 +21,7 @@ const NpmUtilities = require("../NpmUtilities");
 const PromptUtilities = require("../PromptUtilities");
 const output = require("../utils/output");
 const UpdatedPackagesCollector = require("../UpdatedPackagesCollector");
-const batchPackages = require("../utils/batchPackages");
+const batchPackages = require("../utils/batch-packages");
 const ValidationError = require("../utils/ValidationError");
 
 exports.handler = function handler(argv) {

@@ -188,4 +188,47 @@ describe("ExecCommand", () => {
       expect(execInPackagesStreaming(testDir)).toEqual(["packages/package-1 ls", "packages/package-2 ls"]);
     });
   });
+
+  describe("in a cyclical repo", () => {
+    it("warns when cycles are encountered", async () => {
+      const testDir = await initFixture("PackageUtilities/toposort");
+      let logMessage = null;
+
+      log.once("log.warn", e => {
+        logMessage = e.message;
+      });
+
+      await run(testDir)("ls");
+
+      expect(logMessage).toMatch("Dependency cycles detected, you should fix these!");
+      expect(logMessage).toMatch("package-cycle-1 -> package-cycle-2 -> package-cycle-1");
+      expect(logMessage).toMatch("package-cycle-2 -> package-cycle-1 -> package-cycle-2");
+      expect(logMessage).toMatch(
+        "package-cycle-extraneous -> package-cycle-1 -> package-cycle-2 -> package-cycle-1"
+      );
+
+      expect(calledInPackages(testDir)).toEqual([
+        "package-dag-1",
+        "package-standalone",
+        "package-dag-2a",
+        "package-dag-2b",
+        "package-dag-3",
+        "package-cycle-1",
+        "package-cycle-2",
+        "package-cycle-extraneous",
+      ]);
+    });
+
+    it("should throw an error with --reject-cycles", async () => {
+      expect.assertions(1);
+
+      try {
+        const testDir = await initFixture("PackageUtilities/toposort");
+
+        await run(testDir)("ls", "--reject-cycles");
+      } catch (err) {
+        expect(err.message).toMatch("Dependency cycles detected, you should fix these!");
+      }
+    });
+  });
 });

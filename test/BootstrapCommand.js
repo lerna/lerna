@@ -435,4 +435,18 @@ describe("BootstrapCommand", () => {
       }
     });
   });
+
+  describe("in a cyclical repo", () => {
+    it("should throw an error with --reject-cycles", async () => {
+      expect.assertions(1);
+
+      try {
+        const testDir = await initFixture("PackageUtilities/toposort");
+
+        await run(testDir)("--reject-cycles");
+      } catch (err) {
+        expect(err.message).toMatch("Dependency cycles detected, you should fix these!");
+      }
+    });
+  });
 });

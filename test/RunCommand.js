@@ -128,4 +128,38 @@ describe("RunCommand", () => {
       expect(ranInPackages(testDir)).toMatchSnapshot();
     });
   });
+
+  describe("in a cyclical repo", () => {
+    it("warns when cycles are encountered", async () => {
+      const testDir = await initFixture("PackageUtilities/toposort");
+      let logMessage = null;
+
+      log.once("log.warn", e => {
+        logMessage = e.message;
+      });
+
+      await run(testDir)("env");
+
+      expect(logMessage).toMatch("Dependency cycles detected, you should fix these!");
+      expect(logMessage).toMatch("package-cycle-1 -> package-cycle-2 -> package-cycle-1");
+      expect(logMessage).toMatch("package-cycle-2 -> package-cycle-1 -> package-cycle-2");
+      expect(logMessage).toMatch(
+        "package-cycle-extraneous -> package-cycle-1 -> package-cycle-2 -> package-cycle-1"
+      );
+
+      expect(ranInPackages(testDir)).toMatchSnapshot();
+    });
+
+    it("should throw an error with --reject-cycles", async () => {
+      expect.assertions(1);
+
+      try {
+        const testDir = await initFixture("PackageUtilities/toposort");
+
+        await run(testDir)("env", "--reject-cycles");
+      } catch (err) {
+        expect(err.message).toMatch("Dependency cycles detected, you should fix these!");
+      }
+    });
+  });
 });

@@ -4,7 +4,7 @@ const async = require("async");
 
 const ChildProcessUtilities = require("../ChildProcessUtilities");
 const Command = require("../Command");
-const batchPackages = require("../utils/batchPackages");
+const batchPackages = require("../utils/batch-packages");
 const runParallelBatches = require("../utils/runParallelBatches");
 const ValidationError = require("../utils/ValidationError");
 

@@ -7,7 +7,7 @@ const ValidationError = require("./ValidationError");
 
 module.exports = batchPackages;
 
-function batchPackages(packagesToBatch, { graphType, rejectCycles } = {}) {
+function batchPackages(packagesToBatch, { graphType, rejectCycles }) {
   // create a new graph because we will be mutating it
   const graph = createPackageGraph(packagesToBatch, { graphType });
   const [cyclePaths, cycleNodes] = graph.partitionCycles();
