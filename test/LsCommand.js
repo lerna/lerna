@@ -120,4 +120,95 @@ describe("LsCommand", () => {
       }
     });
   });
+
+  describe("filtering", () => {
+    let lernaLs;
+
+    beforeAll(async () => {
+      const cwd = await initFixture("PackageUtilities/filtering");
+      lernaLs = run(cwd);
+    });
+
+    it("includes all packages when --scope is omitted", async () => {
+      await lernaLs();
+      expect(consoleOutput()).toMatchSnapshot();
+    });
+
+    it("includes packages when --scope is a package name", async () => {
+      await lernaLs("--scope", "package-3");
+      expect(consoleOutput()).toMatchSnapshot();
+    });
+
+    it("excludes packages when --ignore is a package name", async () => {
+      await lernaLs("--ignore", "package-3");
+      expect(consoleOutput()).toMatchSnapshot();
+    });
+
+    it("includes packages when --scope is a glob", async () => {
+      await lernaLs("--scope", "package-a-*");
+      expect(consoleOutput()).toMatchSnapshot();
+    });
+
+    it("excludes packages when --ignore is a glob", async () => {
+      await lernaLs("--ignore", "package-@(2|3|4)");
+      expect(consoleOutput()).toMatchSnapshot();
+    });
+
+    it("excludes packages when --ignore is a brace-expanded list", async () => {
+      await lernaLs("--ignore", "package-{3,4}");
+      expect(consoleOutput()).toMatchSnapshot();
+    });
+
+    it("filters packages when both --scope and --ignore are passed", async () => {
+      await lernaLs("--scope", "package-a-*", "--ignore", "package-a-2");
+      expect(consoleOutput()).toMatchSnapshot();
+    });
+
+    it("throws an error when --scope is lacking an argument", async () => {
+      try {
+        await lernaLs("--scope");
+      } catch (err) {
+        expect(err).toHaveProperty("message", expect.stringContaining("Not enough arguments"));
+      }
+    });
+
+    it("throws an error when --scope glob excludes all packages", async () => {
+      expect.assertions(1);
+
+      try {
+        await lernaLs("--scope", "no-package-*");
+      } catch (err) {
+        expect(err).toHaveProperty(
+          "message",
+          expect.stringContaining("No packages found that match scope 'no-package-*'")
+        );
+      }
+    });
+
+    it("throws an error when --ignore glob excludes all packages", async () => {
+      expect.assertions(1);
+
+      try {
+        await lernaLs("--ignore", "package-*");
+      } catch (err) {
+        expect(err).toHaveProperty(
+          "message",
+          expect.stringContaining("No packages remain after ignoring 'package-*'")
+        );
+      }
+    });
+
+    it("throws an error when --scope and --ignore globs exclude all packages", async () => {
+      expect.assertions(1);
+
+      try {
+        await lernaLs("--scope", "package-a-*", "--ignore", "package-a-@(1|2)");
+      } catch (err) {
+        expect(err).toHaveProperty(
+          "message",
+          expect.stringContaining("No packages remain after ignoring 'package-a-@(1|2)'")
+        );
+      }
+    });
+  });
 });

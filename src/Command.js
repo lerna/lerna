@@ -13,7 +13,7 @@ const UpdatedPackagesCollector = require("./UpdatedPackagesCollector");
 const VersionSerializer = require("./VersionSerializer");
 const collectPackages = require("./utils/collect-packages");
 const createPackageGraph = require("./utils/createPackageGraph");
-const filterPackages = require("./utils/filterPackages");
+const filterPackages = require("./utils/filter-packages");
 const ValidationError = require("./utils/ValidationError");
 
 // handle log.success()
