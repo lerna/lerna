@@ -26,7 +26,7 @@ const onAllExitedOriginal = ChildProcessUtilities.onAllExited;
 const getChildProcessCountOriginal = ChildProcessUtilities.getChildProcessCount;
 
 describe("Command", () => {
-  const originalCWD = process.cwd();
+  let testDir;
 
   afterEach(() => jest.resetAllMocks());
 
@@ -34,15 +34,12 @@ describe("Command", () => {
     ChildProcessUtilities.onAllExited = jest.fn(callsBack());
     ChildProcessUtilities.getChildProcessCount = jest.fn(() => 0);
 
-    const testDir = await initFixture("Command/basic");
-    process.chdir(testDir);
+    testDir = await initFixture("Command/basic");
   });
 
   afterAll(() => {
     ChildProcessUtilities.onAllExited = onAllExitedOriginal;
     ChildProcessUtilities.getChildProcessCount = getChildProcessCountOriginal;
-
-    process.chdir(originalCWD);
   });
 
   // swallow errors when passed in argv
@@ -58,7 +55,7 @@ describe("Command", () => {
   }
 
   // convenience to avoid silly "not implemented errors"
-  const testFactory = (argv = {}) => new OkCommand(argv);
+  const testFactory = (argv = {}) => new OkCommand(Object.assign({ cwd: testDir }, argv));
 
   describe(".lernaVersion", () => {
     it("should be added to the instance", async () => {
@@ -110,7 +107,7 @@ describe("Command", () => {
 
     it("has repo path", () => {
       const command = testFactory();
-      expect(command.execOpts.cwd).toBe(process.cwd());
+      expect(command.execOpts.cwd).toBe(testDir);
     });
   });
 
@@ -187,7 +184,7 @@ describe("Command", () => {
       }
 
       try {
-        await new PkgErrorCommand({});
+        await new PkgErrorCommand({ cwd: testDir });
       } catch (err) {
         expect(console.error.mock.calls).toHaveLength(2);
         expect(console.error.mock.calls[0]).toEqual(["pkg-err-stdout"]);
@@ -331,32 +328,33 @@ describe("Command", () => {
     }
 
     it("is a lazy getter", () => {
-      const instance = new TestACommand({ onRejected });
+      const instance = new TestACommand({ cwd: testDir, onRejected });
       expect(instance.options).toBe(instance.options);
     });
 
     it("should pick up global options", () => {
-      const instance = new TestACommand({ onRejected });
+      const instance = new TestACommand({ cwd: testDir, onRejected });
       expect(instance.options.testOption).toBe("default");
     });
 
     it("should override global options with command-level options", () => {
-      const instance = new TestBCommand({ onRejected });
+      const instance = new TestBCommand({ cwd: testDir, onRejected });
       expect(instance.options.testOption).toBe("b");
     });
 
     it("should override global options with inherited command-level options", () => {
-      const instance = new TestCCommand({ onRejected });
+      const instance = new TestCCommand({ cwd: testDir, onRejected });
       expect(instance.options.testOption).toBe("b");
     });
 
     it("should override inherited command-level options with local command-level options", () => {
-      const instance = new TestCCommand({ onRejected });
+      const instance = new TestCCommand({ cwd: testDir, onRejected });
       expect(instance.options.testOption2).toBe("c");
     });
 
     it("should override everything with a CLI flag", () => {
       const instance = new TestCCommand({
+        cwd: testDir,
         onRejected,
         testOption2: "f",
       });
@@ -365,6 +363,7 @@ describe("Command", () => {
 
     it("should inherit durable options when a CLI flag is undefined", () => {
       const instance = new TestCCommand({
+        cwd: testDir,
         onRejected,
         testOption: undefined, // yargs does this when --test-option is not passed
       });
@@ -373,6 +372,7 @@ describe("Command", () => {
 
     it("should merge flags with defaultOptions", () => {
       const instance = new TestCCommand({
+        cwd: testDir,
         onRejected,
         testOption: "b",
       });
@@ -483,7 +483,7 @@ describe("Command", () => {
   describe("subclass implementation", () => {
     ["initialize", "execute"].forEach(method => {
       it(`throws if ${method}() is not overridden`, () => {
-        const command = new Command({ onRejected });
+        const command = new Command({ cwd: testDir, onRejected });
         expect(() => command[method]()).toThrow();
       });
     });
@@ -491,6 +491,8 @@ describe("Command", () => {
 
   describe("validations", () => {
     it("throws ENOGIT when repository is not initialized", async () => {
+      expect.assertions(2);
+
       const cwd = tempy.directory();
 
       try {
@@ -499,12 +501,13 @@ describe("Command", () => {
         expect(err.exitCode).toBe(1);
         expect(err.prefix).toBe("ENOGIT");
       }
-
-      expect.assertions(2);
     });
 
     it("throws ENOPKG when root package.json is not found", async () => {
+      expect.assertions(2);
+
       const cwd = await initFixture("Command/basic");
+
       await fs.remove(path.join(cwd, "package.json"));
 
       try {
@@ -513,12 +516,13 @@ describe("Command", () => {
         expect(err.exitCode).toBe(1);
         expect(err.prefix).toBe("ENOPKG");
       }
-
-      expect.assertions(2);
     });
 
     it("throws ENOLERNA when lerna.json is not found", async () => {
+      expect.assertions(2);
+
       const cwd = await initFixture("Command/basic");
+
       await fs.remove(path.join(cwd, "lerna.json"));
 
       try {
@@ -527,8 +531,6 @@ describe("Command", () => {
         expect(err.exitCode).toBe(1);
         expect(err.prefix).toBe("ENOLERNA");
       }
-
-      expect.assertions(2);
     });
   });
 });
