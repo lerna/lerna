@@ -25,8 +25,6 @@ describe("ConventionalCommitUtilities", () => {
   FileSystemUtilities.readFile.mockResolvedValue("");
   FileSystemUtilities.writeFile.mockResolvedValue();
 
-  afterEach(jest.clearAllMocks);
-
   describe(".recommendVersion()", () => {
     it("invokes conventional-changelog-recommended bump to fetch next version", async () => {
       conventionalRecommendedBump.mockImplementationOnce(callsBack(null, { releaseType: "major" }));

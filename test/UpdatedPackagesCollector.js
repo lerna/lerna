@@ -9,8 +9,6 @@ const UpdatedPackagesCollector = require("../src/UpdatedPackagesCollector");
 jest.mock("../src/GitUtilities");
 
 describe("UpdatedPackagesCollector", () => {
-  afterEach(jest.clearAllMocks);
-
   GitUtilities.getShortSHA.mockReturnValue("deadbeef");
   GitUtilities.hasTags.mockReturnValue(true);
   GitUtilities.diffSinceIn.mockReturnValue("");

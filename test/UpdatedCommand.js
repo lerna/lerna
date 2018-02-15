@@ -29,9 +29,6 @@ const setupGitChanges = async (cwd, filePaths) => {
 };
 
 describe("UpdatedCommand", () => {
-  // consoleOutput sets a mock
-  afterEach(jest.clearAllMocks);
-
   /** =========================================================================
    * Basic
    * ======================================================================= */

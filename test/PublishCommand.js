@@ -103,9 +103,6 @@ describe("PublishCommand", () => {
   PromptUtilities.select.mockResolvedValue("1.0.1");
   PromptUtilities.confirm.mockResolvedValue(true);
 
-  // don't reset default impls, just clear calls
-  afterEach(jest.clearAllMocks);
-
   /** =========================================================================
    * NORMAL
    * ======================================================================= */

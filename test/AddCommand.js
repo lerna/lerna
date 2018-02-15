@@ -27,8 +27,6 @@ describe("AddCommand", () => {
   // we already have enough tests of BootstrapCommand
   BootstrapCommand.handler.mockResolvedValue();
 
-  afterEach(jest.clearAllMocks);
-
   it("should throw without packages", async () => {
     expect.assertions(1);
 

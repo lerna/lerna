@@ -61,9 +61,6 @@ describe("lerna publish", () => {
     }
   });
 
-  // consoleOutput sets a mock
-  afterEach(jest.clearAllMocks);
-
   test("exit 0 when no updates", async () => {
     const cwd = await initFixture("PublishCommand/normal");
     const args = ["publish"];

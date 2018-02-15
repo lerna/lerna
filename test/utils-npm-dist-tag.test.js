@@ -13,8 +13,6 @@ jest.mock("../src/ChildProcessUtilities");
 describe("dist-tag", () => {
   ChildProcessUtilities.exec.mockResolvedValue();
 
-  afterEach(jest.clearAllMocks);
-
   describe("npmDistTag.add()", () => {
     const pkg = {
       name: "foo-pkg",

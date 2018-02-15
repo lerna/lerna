@@ -13,9 +13,6 @@ const lernaLs = require("./helpers/command-runner")(require("../src/commands/LsC
 log.level = "silent";
 
 describe("LsCommand", () => {
-  // consoleOutput sets a mock
-  afterEach(jest.clearAllMocks);
-
   describe("in a basic repo", () => {
     it("should list packages", async () => {
       const testDir = await initFixture("LsCommand/basic");

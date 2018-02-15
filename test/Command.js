@@ -33,8 +33,6 @@ describe("Command", () => {
   ChildProcessUtilities.onAllExited = jest.fn(callsBack());
   ChildProcessUtilities.getChildProcessCount = jest.fn(() => 0);
 
-  afterEach(jest.clearAllMocks);
-
   // swallow errors when passed in argv
   const onRejected = () => {};
 

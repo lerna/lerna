@@ -25,8 +25,6 @@ describe("DiffCommand", () => {
   GitUtilities.isInitialized.mockReturnValue(true);
   GitUtilities.hasCommit.mockReturnValue(true);
 
-  afterEach(jest.clearAllMocks);
-
   it("should diff packages from the first commit", async () => {
     const testDir = await initFixture("DiffCommand/basic");
 

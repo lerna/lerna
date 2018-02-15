@@ -68,8 +68,6 @@ describe("BootstrapCommand", () => {
   // of slowness when running tests for no good reason
   npmRunScript.mockImplementation(callsBack());
 
-  afterEach(jest.clearAllMocks);
-
   describe("lifecycle scripts", () => {
     it("should run preinstall, postinstall and prepublish scripts", async () => {
       const testDir = await initFixture("BootstrapCommand/lifecycle-scripts");

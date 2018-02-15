@@ -26,8 +26,6 @@ describe("npm-install", () => {
   FileSystemUtilities.rename.mockImplementation(callsBack());
   writePkg.mockResolvedValue();
 
-  afterEach(jest.clearAllMocks);
-
   describe("npmInstall()", () => {
     it("returns a promise for a non-mangling install", async () => {
       expect.assertions(1);

@@ -35,8 +35,6 @@ describe("ExecCommand", () => {
   ChildProcessUtilities.spawn.mockImplementation(callsBack());
   ChildProcessUtilities.spawnStreaming.mockImplementation(callsBack());
 
-  afterEach(jest.clearAllMocks);
-
   describe("in a basic repo", () => {
     it("should complain if invoked without command", async () => {
       expect.assertions(1);

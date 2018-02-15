@@ -14,8 +14,6 @@ jest.mock("../src/ChildProcessUtilities");
 describe("npm-publish", () => {
   ChildProcessUtilities.exec.mockImplementation(callsBack());
 
-  afterEach(jest.clearAllMocks);
-
   const pkg = {
     name: "test",
     location: "/test/npmPublish",

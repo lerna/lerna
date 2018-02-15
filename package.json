@@ -103,6 +103,7 @@
     "populate--": true
   },
   "jest": {
+    "clearMocks": true,
     "collectCoverageFrom": [
       "src/**/*.js"
     ],

@@ -42,8 +42,6 @@ describe("RunCommand", () => {
   npmRunScript.mockImplementation(callsBack(null, "stdout"));
   npmRunScript.stream.mockImplementation(callsBack());
 
-  afterEach(jest.clearAllMocks);
-
   describe("in a basic repo", () => {
     it("runs a script in packages", async () => {
       const testDir = await initFixture("RunCommand/basic");

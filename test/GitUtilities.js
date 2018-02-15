@@ -16,8 +16,6 @@ jest.mock("../src/ChildProcessUtilities");
 describe("GitUtilities", () => {
   ChildProcessUtilities.exec.mockResolvedValue();
 
-  afterEach(jest.clearAllMocks);
-
   describe(".isDetachedHead()", () => {
     const originalGetCurrentBranch = GitUtilities.getCurrentBranch;
 

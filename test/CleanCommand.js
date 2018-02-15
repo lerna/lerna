@@ -34,8 +34,6 @@ describe("CleanCommand", () => {
 
   PromptUtilities.confirm.mockImplementation(callsBack(true));
 
-  afterEach(jest.clearAllMocks);
-
   describe("basic tests", () => {
     it("should rm -rf the node_modules", async () => {
       const testDir = await initFixture("CleanCommand/basic");

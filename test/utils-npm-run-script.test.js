@@ -15,8 +15,6 @@ describe("npm-run-script", () => {
   ChildProcessUtilities.exec.mockImplementation(callsBack());
   ChildProcessUtilities.spawnStreaming.mockImplementation(callsBack());
 
-  afterEach(jest.clearAllMocks);
-
   describe("npmRunScript()", () => {
     it("runs an npm script in a directory", done => {
       expect.assertions(1);

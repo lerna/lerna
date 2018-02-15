@@ -24,8 +24,6 @@ jest.mock("../src/ChildProcessUtilities");
 const linkRelative = (from, to) => path.relative(path.dirname(to), from);
 
 describe("FileSystemUtilities", () => {
-  afterEach(jest.clearAllMocks);
-
   describe(".mkdirp()", () => {
     it("calls fs.ensureDir", done => {
       expect.assertions(1);

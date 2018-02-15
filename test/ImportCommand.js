@@ -27,8 +27,6 @@ const lastCommitInDir = cwd => execa.stdout("git", ["log", "-1", "--format=%s"],
 describe("ImportCommand", () => {
   PromptUtilities.confirm.mockImplementation(callsBack(true));
 
-  afterEach(jest.clearAllMocks);
-
   describe("import", () => {
     const initBasicFixtures = () =>
       Promise.all([
