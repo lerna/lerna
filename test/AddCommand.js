@@ -21,7 +21,7 @@ expect.extend(pkgMatchers);
 // silence logs
 log.level = "silent";
 
-const readPkg = (testDir, pkg) => fs.readJsonSync(path.join(testDir, pkg, "package.json"));
+const readPkg = (testDir, pkg) => fs.readJSON(path.join(testDir, pkg, "package.json"));
 
 describe("AddCommand", () => {
   // we already have enough tests of BootstrapCommand
@@ -58,10 +58,10 @@ describe("AddCommand", () => {
 
     await lernaAdd(testDir)("lerna");
 
-    expect(readPkg(testDir, "packages/package-1")).toDependOn("lerna");
-    expect(readPkg(testDir, "packages/package-2")).toDependOn("lerna");
-    expect(readPkg(testDir, "packages/package-3")).toDependOn("lerna");
-    expect(readPkg(testDir, "packages/package-4")).toDependOn("lerna");
+    expect(await readPkg(testDir, "packages/package-1")).toDependOn("lerna");
+    expect(await readPkg(testDir, "packages/package-2")).toDependOn("lerna");
+    expect(await readPkg(testDir, "packages/package-3")).toDependOn("lerna");
+    expect(await readPkg(testDir, "packages/package-4")).toDependOn("lerna");
   });
 
   it("should reference local dependencies", async () => {
@@ -69,9 +69,9 @@ describe("AddCommand", () => {
 
     await lernaAdd(testDir)("@test/package-1");
 
-    expect(readPkg(testDir, "packages/package-2")).toDependOn("@test/package-1");
-    expect(readPkg(testDir, "packages/package-3")).toDependOn("@test/package-1");
-    expect(readPkg(testDir, "packages/package-4")).toDependOn("@test/package-1");
+    expect(await readPkg(testDir, "packages/package-2")).toDependOn("@test/package-1");
+    expect(await readPkg(testDir, "packages/package-3")).toDependOn("@test/package-1");
+    expect(await readPkg(testDir, "packages/package-4")).toDependOn("@test/package-1");
   });
 
   it("should reference to multiple dependencies", async () => {
@@ -79,12 +79,12 @@ describe("AddCommand", () => {
 
     await lernaAdd(testDir)("@test/package-1", "@test/package-2");
 
-    expect(readPkg(testDir, "packages/package-1")).toDependOn("@test/package-2");
-    expect(readPkg(testDir, "packages/package-2")).toDependOn("@test/package-1");
-    expect(readPkg(testDir, "packages/package-3")).toDependOn("@test/package-1");
-    expect(readPkg(testDir, "packages/package-3")).toDependOn("@test/package-2");
-    expect(readPkg(testDir, "packages/package-4")).toDependOn("@test/package-1");
-    expect(readPkg(testDir, "packages/package-4")).toDependOn("@test/package-2");
+    expect(await readPkg(testDir, "packages/package-1")).toDependOn("@test/package-2");
+    expect(await readPkg(testDir, "packages/package-2")).toDependOn("@test/package-1");
+    expect(await readPkg(testDir, "packages/package-3")).toDependOn("@test/package-1");
+    expect(await readPkg(testDir, "packages/package-3")).toDependOn("@test/package-2");
+    expect(await readPkg(testDir, "packages/package-4")).toDependOn("@test/package-1");
+    expect(await readPkg(testDir, "packages/package-4")).toDependOn("@test/package-2");
   });
 
   it("should reference current caret range if unspecified", async () => {
@@ -92,8 +92,8 @@ describe("AddCommand", () => {
 
     await lernaAdd(testDir)("@test/package-1", "@test/package-2");
 
-    expect(readPkg(testDir, "packages/package-1")).toDependOn("@test/package-2", "^2.0.0");
-    expect(readPkg(testDir, "packages/package-2")).toDependOn("@test/package-1", "^1.0.0");
+    expect(await readPkg(testDir, "packages/package-1")).toDependOn("@test/package-2", "^2.0.0");
+    expect(await readPkg(testDir, "packages/package-2")).toDependOn("@test/package-1", "^1.0.0");
   });
 
   it("should reference specfied range", async () => {
@@ -101,7 +101,7 @@ describe("AddCommand", () => {
 
     await lernaAdd(testDir)("@test/package-1@~1");
 
-    expect(readPkg(testDir, "packages/package-2")).toDependOn("@test/package-1", "~1");
+    expect(await readPkg(testDir, "packages/package-2")).toDependOn("@test/package-1", "~1");
   });
 
   it("should reference to devDepdendencies", async () => {
@@ -109,9 +109,9 @@ describe("AddCommand", () => {
 
     await lernaAdd(testDir)("@test/package-1", "--dev");
 
-    expect(readPkg(testDir, "packages/package-2")).toDevDependOn("@test/package-1");
-    expect(readPkg(testDir, "packages/package-3")).toDevDependOn("@test/package-1");
-    expect(readPkg(testDir, "packages/package-4")).toDevDependOn("@test/package-1");
+    expect(await readPkg(testDir, "packages/package-2")).toDevDependOn("@test/package-1");
+    expect(await readPkg(testDir, "packages/package-3")).toDevDependOn("@test/package-1");
+    expect(await readPkg(testDir, "packages/package-4")).toDevDependOn("@test/package-1");
   });
 
   it("should not reference packages to themeselves", async () => {
@@ -119,7 +119,7 @@ describe("AddCommand", () => {
 
     await lernaAdd(testDir)("@test/package-1");
 
-    expect(readPkg(testDir, "packages/package-1")).not.toDependOn("@test/package-1");
+    expect(await readPkg(testDir, "packages/package-1")).not.toDependOn("@test/package-1");
   });
 
   it("should respect scopes", async () => {
@@ -127,9 +127,9 @@ describe("AddCommand", () => {
 
     await lernaAdd(testDir)("@test/package-1", "--scope=@test/package-2");
 
-    expect(readPkg(testDir, "packages/package-2")).toDependOn("@test/package-1");
-    expect(readPkg(testDir, "packages/package-3")).not.toDevDependOn("@test/package-1");
-    expect(readPkg(testDir, "packages/package-4")).not.toDevDependOn("@test/package-1");
+    expect(await readPkg(testDir, "packages/package-2")).toDependOn("@test/package-1");
+    expect(await readPkg(testDir, "packages/package-3")).not.toDevDependOn("@test/package-1");
+    expect(await readPkg(testDir, "packages/package-4")).not.toDevDependOn("@test/package-1");
   });
 
   it("should retain existing dependencies", async () => {
@@ -137,7 +137,7 @@ describe("AddCommand", () => {
 
     await lernaAdd(testDir)("@test/package-2");
 
-    expect(readPkg(testDir, "packages/package-1")).toDependOn("pify");
+    expect(await readPkg(testDir, "packages/package-1")).toDependOn("pify");
   });
 
   it("should retain existing devDependencies", async () => {
@@ -145,7 +145,7 @@ describe("AddCommand", () => {
 
     await lernaAdd(testDir)("@test/package-1", "--dev");
 
-    expect(readPkg(testDir, "packages/package-2")).toDevDependOn("file-url");
+    expect(await readPkg(testDir, "packages/package-2")).toDevDependOn("file-url");
   });
 
   it("should bootstrap changed packages", async () => {
@@ -197,9 +197,9 @@ describe("AddCommand", () => {
 
     await lernaAdd(testDir)("@test/package-2", "pify");
 
-    const pkg1 = readPkg(testDir, "packages/package-1");
-    const pkg2 = readPkg(testDir, "packages/package-2");
-    const pkg3 = readPkg(testDir, "packages/package-3");
+    const pkg1 = await readPkg(testDir, "packages/package-1");
+    const pkg2 = await readPkg(testDir, "packages/package-2");
+    const pkg3 = await readPkg(testDir, "packages/package-3");
 
     expect(pkg1).toDependOn("pify", "^3.0.0"); // overwrites ^2.0.0
     expect(pkg1).toDependOn("@test/package-2");
