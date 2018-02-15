@@ -15,7 +15,7 @@ exports[`UpdatedCommand basic should list changes 1`] = `
 
 exports[`UpdatedCommand basic should list changes in private packages 1`] = `"- package-5 (private)"`;
 
-exports[`UpdatedCommand basic should list changes with --force-publish * 1`] = `
+exports[`UpdatedCommand basic should list changes with --force-publish 1`] = `
 "- package-1
 - package-2
 - package-3
@@ -23,7 +23,13 @@ exports[`UpdatedCommand basic should list changes with --force-publish * 1`] = `
 - package-5 (private)"
 `;
 
-exports[`UpdatedCommand basic should list changes with --force-publish [package,package] 1`] = `
+exports[`UpdatedCommand basic should list changes with --force-publish package-2 --force-publish package-4 1`] = `
+"- package-2
+- package-3
+- package-4"
+`;
+
+exports[`UpdatedCommand basic should list changes with --force-publish package-2,package-4 1`] = `
 "- package-2
 - package-3
 - package-4"
@@ -44,7 +50,7 @@ exports[`UpdatedCommand circular should list changes with --force-publish * 1`] 
 - package-5 (private)"
 `;
 
-exports[`UpdatedCommand circular should list changes with --force-publish [package,package] 1`] = `
+exports[`UpdatedCommand circular should list changes with --force-publish package-2 1`] = `
 "- package-2
 - package-3
 - package-4"

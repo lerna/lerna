@@ -59,17 +59,24 @@ describe("UpdatedCommand", () => {
       expect(consoleOutput()).toMatchSnapshot();
     });
 
-    it("should list changes with --force-publish *", async () => {
+    it("should list changes with --force-publish", async () => {
       await setupGitChanges(testDir, ["packages/package-2/random-file"]);
 
       await lernaUpdated("--force-publish");
       expect(consoleOutput()).toMatchSnapshot();
     });
 
-    it("should list changes with --force-publish [package,package]", async () => {
+    it("should list changes with --force-publish package-2,package-4", async () => {
       await setupGitChanges(testDir, ["packages/package-3/random-file"]);
 
       await lernaUpdated("--force-publish", "package-2,package-4");
+      expect(consoleOutput()).toMatchSnapshot();
+    });
+
+    it("should list changes with --force-publish package-2 --force-publish package-4", async () => {
+      await setupGitChanges(testDir, ["packages/package-3/random-file"]);
+
+      await lernaUpdated("--force-publish", "package-2", "--force-publish", "package-4");
       expect(consoleOutput()).toMatchSnapshot();
     });
 
@@ -142,7 +149,7 @@ describe("UpdatedCommand", () => {
       expect(consoleOutput()).toMatchSnapshot();
     });
 
-    it("should list changes with --force-publish [package,package]", async () => {
+    it("should list changes with --force-publish package-2", async () => {
       await setupGitChanges(testDir, ["packages/package-4/random-file"]);
 
       await lernaUpdated("--force-publish", "package-2");
