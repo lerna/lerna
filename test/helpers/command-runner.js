@@ -3,7 +3,7 @@
 const yargs = require("yargs/yargs");
 const globalOptions = require("../../src/Command").builder;
 
-module.exports = yargsRunner;
+module.exports = commandRunner;
 
 /**
  * A higher-order function to help with passing _actual_ yargs-parsed argv
@@ -12,7 +12,7 @@ module.exports = yargsRunner;
  * @param {Object} commandModule The yargs command exports
  * @return {Function} with partially-applied yargs config
  */
-function yargsRunner(commandModule) {
+function commandRunner(commandModule) {
   const cmd = commandModule.command.split(" ")[0];
   const hackDoubleDash = makeWorkAround();
 

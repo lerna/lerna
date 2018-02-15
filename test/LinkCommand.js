@@ -11,7 +11,7 @@ const initFixture = require("./helpers/initFixture");
 const normalizeRelativeDir = require("./helpers/normalizeRelativeDir");
 
 // file under test
-const lernaLink = require("./helpers/yargsRunner")(require("../src/commands/LinkCommand"));
+const lernaLink = require("./helpers/command-runner")(require("../src/commands/LinkCommand"));
 
 // silence logs
 log.level = "silent";

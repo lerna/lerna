@@ -13,7 +13,7 @@ const initFixture = require("./helpers/initFixture");
 const normalizeRelativeDir = require("./helpers/normalizeRelativeDir");
 
 // file under test
-const lernaExec = require("./helpers/yargsRunner")(require("../src/commands/ExecCommand"));
+const lernaExec = require("./helpers/command-runner")(require("../src/commands/ExecCommand"));
 
 jest.mock("../src/ChildProcessUtilities");
 jest.mock("../src/UpdatedPackagesCollector");

@@ -15,7 +15,7 @@ const initFixture = require("./helpers/initFixture");
 const updateLernaConfig = require("./helpers/updateLernaConfig");
 
 // file under test
-const lernaImport = require("./helpers/yargsRunner")(require("../src/commands/ImportCommand"));
+const lernaImport = require("./helpers/command-runner")(require("../src/commands/ImportCommand"));
 
 jest.mock("../src/PromptUtilities");
 

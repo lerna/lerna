@@ -11,7 +11,7 @@ const initFixture = require("./helpers/initFixture");
 const updateLernaConfig = require("./helpers/updateLernaConfig");
 
 // file under test
-const lernaUpdated = require("./helpers/yargsRunner")(require("../src/commands/UpdatedCommand"));
+const lernaUpdated = require("./helpers/command-runner")(require("../src/commands/UpdatedCommand"));
 
 // silence logs
 log.level = "silent";

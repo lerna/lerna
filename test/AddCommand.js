@@ -12,7 +12,7 @@ const initFixture = require("./helpers/initFixture");
 const pkgMatchers = require("./helpers/pkgMatchers");
 
 // file under test
-const lernaAdd = require("./helpers/yargsRunner")(require("../src/commands/AddCommand"));
+const lernaAdd = require("./helpers/command-runner")(require("../src/commands/AddCommand"));
 
 jest.mock("../src/commands/BootstrapCommand");
 

@@ -14,7 +14,7 @@ const initFixture = require("./helpers/initFixture");
 const normalizeRelativeDir = require("./helpers/normalizeRelativeDir");
 
 // file under test
-const lernaRun = require("./helpers/yargsRunner")(require("../src/commands/RunCommand"));
+const lernaRun = require("./helpers/command-runner")(require("../src/commands/RunCommand"));
 
 jest.mock("../src/utils/output");
 jest.mock("../src/utils/npm-run-script");

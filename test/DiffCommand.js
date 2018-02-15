@@ -12,7 +12,7 @@ const callsBack = require("./helpers/callsBack");
 const initFixture = require("./helpers/initFixture");
 
 // file under test
-const lernaDiff = require("./helpers/yargsRunner")(require("../src/commands/DiffCommand"));
+const lernaDiff = require("./helpers/command-runner")(require("../src/commands/DiffCommand"));
 
 jest.mock("../src/ChildProcessUtilities");
 jest.mock("../src/GitUtilities");

@@ -12,7 +12,7 @@ const initFixture = require("./helpers/initFixture");
 const normalizeRelativeDir = require("./helpers/normalizeRelativeDir");
 
 // file under test
-const lernaClean = require("./helpers/yargsRunner")(require("../src/commands/CleanCommand"));
+const lernaClean = require("./helpers/command-runner")(require("../src/commands/CleanCommand"));
 
 jest.mock("../src/PromptUtilities");
 

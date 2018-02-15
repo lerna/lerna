@@ -10,7 +10,7 @@ const initFixture = require("./helpers/initFixture");
 const lernaVersion = require("../package.json").version;
 
 // file under test
-const lernaInit = require("./helpers/yargsRunner")(require("../src/commands/InitCommand"));
+const lernaInit = require("./helpers/command-runner")(require("../src/commands/InitCommand"));
 
 // silence logs
 log.level = "silent";

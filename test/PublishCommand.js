@@ -20,7 +20,7 @@ const initFixture = require("./helpers/initFixture");
 const normalizeRelativeDir = require("./helpers/normalizeRelativeDir");
 
 // file under test
-const lernaPublish = require("./helpers/yargsRunner")(require("../src/commands/PublishCommand"));
+const lernaPublish = require("./helpers/command-runner")(require("../src/commands/PublishCommand"));
 
 jest.mock("write-json-file");
 jest.mock("write-pkg");
