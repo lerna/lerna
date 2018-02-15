@@ -90,7 +90,7 @@ describe("DiffCommand", () => {
       await lernaDiff("missing");
     } catch (err) {
       expect(err.exitCode).toBe(1);
-      expect(err.message).toBe("Package 'missing' does not exist.");
+      expect(err.message).toBe("Cannot diff, the package 'missing' does not exist.");
     }
   });
 
@@ -102,7 +102,7 @@ describe("DiffCommand", () => {
       await lernaDiff("package-1");
     } catch (err) {
       expect(err.exitCode).toBe(1);
-      expect(err.message).toBe("Can't diff. There are no commits in this repository, yet.");
+      expect(err.message).toBe("Cannot diff, there are no commits in this repository yet.");
     }
   });
 

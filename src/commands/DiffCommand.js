@@ -1,10 +1,9 @@
 "use strict";
 
-const _ = require("lodash");
-
 const ChildProcessUtilities = require("../ChildProcessUtilities");
 const Command = require("../Command");
 const GitUtilities = require("../GitUtilities");
+const ValidationError = require("../utils/ValidationError");
 
 exports.handler = function handler(argv) {
   // eslint-disable-next-line no-use-before-define
@@ -38,26 +37,26 @@ class DiffCommand extends Command {
     let targetPackage;
 
     if (packageName) {
-      targetPackage = _.find(this.packages, pkg => pkg.name === packageName);
+      targetPackage = this.packageGraph.get(packageName);
 
       if (!targetPackage) {
-        callback(new Error(`Package '${packageName}' does not exist.`));
-        return;
+        throw new ValidationError("ENOPKG", `Cannot diff, the package '${packageName}' does not exist.`);
       }
     }
 
     if (!GitUtilities.hasCommit(this.execOpts)) {
-      callback(new Error("Can't diff. There are no commits in this repository, yet."));
-      return;
+      throw new ValidationError("ENOCOMMITS", "Cannot diff, there are no commits in this repository yet.");
     }
 
-    this.args = ["diff", getLastCommit(this.execOpts), "--color=auto"];
+    const args = ["diff", getLastCommit(this.execOpts), "--color=auto"];
 
     if (targetPackage) {
-      this.args.push("--", targetPackage.location);
+      args.push("--", targetPackage.location);
     } else {
-      this.args.push("--", ...this.repository.packageParentDirs);
+      args.push("--", ...this.repository.packageParentDirs);
     }
+
+    this.args = args;
 
     callback(null, true);
   }
