@@ -7,29 +7,20 @@ const tempy = require("tempy");
 
 // helpers
 const initFixture = require("./helpers/initFixture");
-const yargsRunner = require("./helpers/yargsRunner");
+const lernaVersion = require("../package.json").version;
 
 // file under test
-const commandModule = require("../src/commands/InitCommand");
-
-const run = yargsRunner(commandModule);
-const lernaVersion = require("../package.json").version;
+const lernaInit = require("./helpers/yargsRunner")(require("../src/commands/InitCommand"));
 
 // silence logs
 log.level = "silent";
 
 describe("InitCommand", () => {
   describe("in an empty directory", () => {
-    let testDir;
-    let lernaInit;
-
-    beforeEach(() => {
-      testDir = tempy.directory();
-      lernaInit = run(testDir);
-    });
-
     it("initializes git repo with lerna files", async () => {
-      await lernaInit();
+      const testDir = tempy.directory();
+
+      await lernaInit(testDir)();
 
       const [lernaJson, pkgJson, packagesDirExists, gitDirExists] = await Promise.all([
         fs.readJSON(path.join(testDir, "lerna.json")),
@@ -52,14 +43,18 @@ describe("InitCommand", () => {
     });
 
     it("initializes git repo with lerna files in independent mode", async () => {
-      await lernaInit("--independent");
+      const testDir = tempy.directory();
+
+      await lernaInit(testDir)("--independent");
 
       expect(await fs.readJSON(path.join(testDir, "lerna.json"))).toHaveProperty("version", "independent");
     });
 
     describe("with --exact", () => {
       it("uses exact version when adding lerna dependency", async () => {
-        await lernaInit("--exact");
+        const testDir = tempy.directory();
+
+        await lernaInit(testDir)("--exact");
 
         expect(await fs.readJSON(path.join(testDir, "package.json"))).toMatchObject({
           devDependencies: {
@@ -69,7 +64,9 @@ describe("InitCommand", () => {
       });
 
       it("sets lerna.json command.init.exact to true", async () => {
-        await lernaInit("--exact");
+        const testDir = tempy.directory();
+
+        await lernaInit(testDir)("--exact");
 
         expect(await fs.readJSON(path.join(testDir, "lerna.json"))).toMatchObject({
           command: {
@@ -83,17 +80,12 @@ describe("InitCommand", () => {
   });
 
   describe("in a subdirectory of a git repo", () => {
-    let testDir;
-
-    beforeEach(async () => {
+    it("creates lerna files", async () => {
       const dir = await initFixture("InitCommand/empty");
-      testDir = path.join(dir, "subdir");
+      const testDir = path.join(dir, "subdir");
 
       await fs.ensureDir(testDir);
-    });
-
-    it("creates lerna files", async () => {
-      await run(testDir)();
+      await lernaInit(testDir)();
 
       const [lernaJson, pkgJson, packagesDirExists] = await Promise.all([
         fs.readJSON(path.join(testDir, "lerna.json")),
@@ -115,15 +107,8 @@ describe("InitCommand", () => {
   });
 
   describe("when package.json exists", () => {
-    let testDir;
-    let lernaInit;
-
-    beforeEach(async () => {
-      testDir = await initFixture("InitCommand/has-package");
-      lernaInit = run(testDir);
-    });
-
     it("adds lerna to sorted devDependencies", async () => {
+      const testDir = await initFixture("InitCommand/has-package");
       const pkgJsonPath = path.join(testDir, "package.json");
 
       await fs.outputJSON(pkgJsonPath, {
@@ -133,7 +118,7 @@ describe("InitCommand", () => {
         },
       });
 
-      await lernaInit();
+      await lernaInit(testDir)();
 
       expect(await fs.readJSON(pkgJsonPath)).toMatchObject({
         devDependencies: {
@@ -145,6 +130,7 @@ describe("InitCommand", () => {
     });
 
     it("updates existing lerna in devDependencies", async () => {
+      const testDir = await initFixture("InitCommand/has-package");
       const pkgJsonPath = path.join(testDir, "package.json");
 
       await fs.outputJSON(pkgJsonPath, {
@@ -157,7 +143,7 @@ describe("InitCommand", () => {
         },
       });
 
-      await lernaInit();
+      await lernaInit(testDir)();
 
       expect(await fs.readJSON(pkgJsonPath)).toMatchObject({
         dependencies: {
@@ -171,6 +157,7 @@ describe("InitCommand", () => {
     });
 
     it("updates existing lerna in sorted dependencies", async () => {
+      const testDir = await initFixture("InitCommand/has-package");
       const pkgJsonPath = path.join(testDir, "package.json");
 
       await fs.outputJSON(pkgJsonPath, {
@@ -181,7 +168,7 @@ describe("InitCommand", () => {
         },
       });
 
-      await lernaInit();
+      await lernaInit(testDir)();
 
       expect(await fs.readJSON(pkgJsonPath)).toMatchObject({
         dependencies: {
@@ -194,15 +181,8 @@ describe("InitCommand", () => {
   });
 
   describe("when lerna.json exists", () => {
-    let testDir;
-    let lernaInit;
-
-    beforeEach(async () => {
-      testDir = await initFixture("InitCommand/has-lerna");
-      lernaInit = run(testDir);
-    });
-
     it("deletes lerna property if found", async () => {
+      const testDir = await initFixture("InitCommand/has-lerna");
       const lernaJsonPath = path.join(testDir, "lerna.json");
 
       await fs.outputJSON(lernaJsonPath, {
@@ -210,7 +190,7 @@ describe("InitCommand", () => {
         version: "1.2.3",
       });
 
-      await lernaInit();
+      await lernaInit(testDir)();
 
       expect(await fs.readJSON(lernaJsonPath)).toEqual({
         packages: ["packages/*"],
@@ -219,28 +199,22 @@ describe("InitCommand", () => {
     });
 
     it("creates package directories when glob is configured", async () => {
+      const testDir = await initFixture("InitCommand/has-lerna");
       const lernaJsonPath = path.join(testDir, "lerna.json");
 
       await fs.outputJSON(lernaJsonPath, {
         packages: ["modules/*"],
       });
 
-      await lernaInit();
+      await lernaInit(testDir)();
 
       expect(await fs.exists(path.join(testDir, "modules"))).toBe(true);
     });
   });
 
   describe("when re-initializing with --exact", () => {
-    let testDir;
-    let lernaInit;
-
-    beforeEach(async () => {
-      testDir = await initFixture("InitCommand/updates");
-      lernaInit = run(testDir);
-    });
-
     it("sets lerna.json commands.init.exact to true", async () => {
+      const testDir = await initFixture("InitCommand/updates");
       const lernaJsonPath = path.join(testDir, "lerna.json");
       const pkgJsonPath = path.join(testDir, "package.json");
 
@@ -259,7 +233,7 @@ describe("InitCommand", () => {
         },
       });
 
-      await lernaInit("--exact");
+      await lernaInit(testDir)("--exact");
 
       expect(await fs.readJSON(lernaJsonPath)).toMatchObject({
         commands: {

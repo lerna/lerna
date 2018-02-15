@@ -11,12 +11,9 @@ const UpdatedPackagesCollector = require("../src/UpdatedPackagesCollector");
 const callsBack = require("./helpers/callsBack");
 const initFixture = require("./helpers/initFixture");
 const normalizeRelativeDir = require("./helpers/normalizeRelativeDir");
-const yargsRunner = require("./helpers/yargsRunner");
 
 // file under test
-const commandModule = require("../src/commands/ExecCommand");
-
-const run = yargsRunner(commandModule);
+const lernaExec = require("./helpers/yargsRunner")(require("../src/commands/ExecCommand"));
 
 jest.mock("../src/ChildProcessUtilities");
 jest.mock("../src/UpdatedPackagesCollector");
@@ -44,23 +41,23 @@ describe("ExecCommand", () => {
   afterEach(() => jest.resetAllMocks());
 
   describe("in a basic repo", () => {
-    let testDir;
-    let lernaExec;
-
-    beforeAll(async () => {
-      testDir = await initFixture("ExecCommand/basic");
-      lernaExec = run(testDir);
-    });
-
     it("should complain if invoked without command", async () => {
+      expect.assertions(1);
+
+      const testDir = await initFixture("ExecCommand/basic");
+
       try {
-        await lernaExec("--parallel");
+        await lernaExec(testDir)("--parallel");
       } catch (err) {
         expect(err.message).toBe("A command to execute is required");
       }
     });
 
     it("passes execution error to callback", async () => {
+      expect.assertions(1);
+
+      const testDir = await initFixture("ExecCommand/basic");
+
       const boom = new Error("execa error");
       boom.code = 1;
       boom.cmd = "boom";
@@ -73,14 +70,16 @@ describe("ExecCommand", () => {
       ChildProcessUtilities.spawn = jest.fn(callsBack(boom));
 
       try {
-        await lernaExec("boom");
+        await lernaExec(testDir)("boom");
       } catch (err) {
         expect(errorLog).toHaveProperty("message", "Errored while executing 'boom' in 'package-1'");
       }
     });
 
     it("should ignore execution errors with --bail=false", async () => {
-      const { exitCode } = await lernaExec("boom", "--no-bail");
+      const testDir = await initFixture("ExecCommand/basic");
+
+      const { exitCode } = await lernaExec(testDir)("boom", "--no-bail");
 
       expect(exitCode).toBe(0);
       expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(2);
@@ -95,7 +94,9 @@ describe("ExecCommand", () => {
     });
 
     it("should filter packages with `ignore`", async () => {
-      await lernaExec("ls", "--ignore", "package-1");
+      const testDir = await initFixture("ExecCommand/basic");
+
+      await lernaExec(testDir)("ls", "--ignore", "package-1");
 
       expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(1);
       expect(ChildProcessUtilities.spawn).lastCalledWith(
@@ -114,6 +115,8 @@ describe("ExecCommand", () => {
     });
 
     it("should filter packages that are not updated with --since", async () => {
+      const testDir = await initFixture("ExecCommand/basic");
+
       UpdatedPackagesCollector.prototype.getUpdates = jest.fn(() => [
         {
           package: {
@@ -123,7 +126,7 @@ describe("ExecCommand", () => {
         },
       ]);
 
-      await lernaExec("ls", "--since");
+      await lernaExec(testDir)("ls", "--since");
 
       expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(1);
       expect(ChildProcessUtilities.spawn).lastCalledWith(
@@ -142,14 +145,18 @@ describe("ExecCommand", () => {
     });
 
     it("should run a command", async () => {
-      await lernaExec("ls");
+      const testDir = await initFixture("ExecCommand/basic");
+
+      await lernaExec(testDir)("ls");
 
       expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(2);
       expect(calledInPackages()).toEqual(["package-1", "package-2"]);
     });
 
     it("should run a command with parameters", async () => {
-      await lernaExec("ls", "--", "-la");
+      const testDir = await initFixture("ExecCommand/basic");
+
+      await lernaExec(testDir)("ls", "--", "-la");
 
       expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(2);
       expect(ChildProcessUtilities.spawn).lastCalledWith(
@@ -161,29 +168,35 @@ describe("ExecCommand", () => {
     });
 
     it("runs a command for a given scope", async () => {
-      await lernaExec("ls", "--scope", "package-1");
+      const testDir = await initFixture("ExecCommand/basic");
+
+      await lernaExec(testDir)("ls", "--scope", "package-1");
 
       expect(calledInPackages()).toEqual(["package-1"]);
     });
 
     it("does not run a command for ignored packages", async () => {
-      await lernaExec("ls", "--ignore", "package-@(2|3|4)");
+      const testDir = await initFixture("ExecCommand/basic");
+
+      await lernaExec(testDir)("ls", "--ignore", "package-@(2|3|4)");
 
       expect(calledInPackages()).toEqual(["package-1"]);
     });
 
     it("executes a command in all packages with --parallel", async () => {
+      const testDir = await initFixture("ExecCommand/basic");
       ChildProcessUtilities.spawnStreaming = jest.fn(callsBack());
 
-      await lernaExec("--parallel", "ls");
+      await lernaExec(testDir)("--parallel", "ls");
 
       expect(execInPackagesStreaming(testDir)).toEqual(["packages/package-1 ls", "packages/package-2 ls"]);
     });
 
     it("executes a command in all packages with --stream", async () => {
+      const testDir = await initFixture("ExecCommand/basic");
       ChildProcessUtilities.spawnStreaming = jest.fn(callsBack());
 
-      await lernaExec("--stream", "ls");
+      await lernaExec(testDir)("--stream", "ls");
 
       expect(execInPackagesStreaming(testDir)).toEqual(["packages/package-1 ls", "packages/package-2 ls"]);
     });
@@ -192,13 +205,13 @@ describe("ExecCommand", () => {
   describe("in a cyclical repo", () => {
     it("warns when cycles are encountered", async () => {
       const testDir = await initFixture("PackageUtilities/toposort");
-      let logMessage = null;
 
+      let logMessage = null;
       log.once("log.warn", e => {
         logMessage = e.message;
       });
 
-      await run(testDir)("ls");
+      await lernaExec(testDir)("ls");
 
       expect(logMessage).toMatch("Dependency cycles detected, you should fix these!");
       expect(logMessage).toMatch("package-cycle-1 -> package-cycle-2 -> package-cycle-1");
@@ -207,7 +220,7 @@ describe("ExecCommand", () => {
         "package-cycle-extraneous -> package-cycle-1 -> package-cycle-2 -> package-cycle-1"
       );
 
-      expect(calledInPackages(testDir)).toEqual([
+      expect(calledInPackages()).toEqual([
         "package-dag-1",
         "package-standalone",
         "package-dag-2a",
@@ -222,10 +235,10 @@ describe("ExecCommand", () => {
     it("should throw an error with --reject-cycles", async () => {
       expect.assertions(1);
 
-      try {
-        const testDir = await initFixture("PackageUtilities/toposort");
+      const testDir = await initFixture("PackageUtilities/toposort");
 
-        await run(testDir)("ls", "--reject-cycles");
+      try {
+        await lernaExec(testDir)("ls", "--reject-cycles");
       } catch (err) {
         expect(err.message).toMatch("Dependency cycles detected, you should fix these!");
       }

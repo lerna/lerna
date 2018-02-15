@@ -9,12 +9,9 @@ const FileSystemUtilities = require("../src/FileSystemUtilities");
 const callsBack = require("./helpers/callsBack");
 const initFixture = require("./helpers/initFixture");
 const normalizeRelativeDir = require("./helpers/normalizeRelativeDir");
-const yargsRunner = require("./helpers/yargsRunner");
 
 // file under test
-const commandModule = require("../src/commands/LinkCommand");
-
-const run = yargsRunner(commandModule);
+const lernaLink = require("./helpers/yargsRunner")(require("../src/commands/LinkCommand"));
 
 // silence logs
 log.level = "silent";
@@ -43,8 +40,7 @@ describe("LinkCommand", () => {
   describe("with local package dependencies", () => {
     it("should symlink all packages", async () => {
       const testDir = await initFixture("LinkCommand/basic");
-      const lernaLink = run(testDir);
-      await lernaLink();
+      await lernaLink(testDir)();
 
       expect(symlinkedDirectories(testDir)).toMatchSnapshot();
     });
@@ -53,8 +49,7 @@ describe("LinkCommand", () => {
   describe("with --force-local", () => {
     it("should force symlink of all packages", async () => {
       const testDir = await initFixture("LinkCommand/force-local");
-      const lernaLink = run(testDir);
-      await lernaLink();
+      await lernaLink(testDir)();
 
       expect(symlinkedDirectories(testDir)).toMatchSnapshot();
     });

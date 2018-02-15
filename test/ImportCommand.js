@@ -13,12 +13,9 @@ const PromptUtilities = require("../src/PromptUtilities");
 const callsBack = require("./helpers/callsBack");
 const initFixture = require("./helpers/initFixture");
 const updateLernaConfig = require("./helpers/updateLernaConfig");
-const yargsRunner = require("./helpers/yargsRunner");
 
 // file under test
-const commandModule = require("../src/commands/ImportCommand");
-
-const run = yargsRunner(commandModule);
+const lernaImport = require("./helpers/yargsRunner")(require("../src/commands/ImportCommand"));
 
 jest.mock("../src/PromptUtilities");
 
@@ -35,34 +32,29 @@ describe("ImportCommand", () => {
   afterEach(() => jest.resetAllMocks());
 
   describe("import", () => {
-    let testDir;
-    let externalDir;
-    let lernaImport;
-
-    beforeEach(async () => {
-      const [extDir, basicDir] = await Promise.all([
-        initFixture("ImportCommand/external", "Init external commit"),
+    const initBasicFixtures = () =>
+      Promise.all([
         initFixture("ImportCommand/basic"),
+        initFixture("ImportCommand/external", "Init external commit"),
       ]);
 
-      externalDir = extDir;
-      testDir = basicDir;
-      lernaImport = run(testDir);
-    });
-
     it("creates a module in packages location with imported commit history", async () => {
+      const [testDir, externalDir] = await initBasicFixtures();
       const packageJson = path.join(testDir, "packages", path.basename(externalDir), "package.json");
-      await lernaImport(externalDir);
+
+      await lernaImport(testDir)(externalDir);
 
       expect(await lastCommitInDir(testDir)).toBe("Init external commit");
       expect(await pathExists(packageJson)).toBe(true);
     });
 
     it("imports a repo with conflicted merge commits when run with --flatten", async () => {
+      const [testDir, externalDir] = await initBasicFixtures();
       const cwdExternalDir = { cwd: externalDir };
       const branchName = "conflict_branch";
       const conflictedFileName = "conflicted-file.txt";
       const conflictedFile = path.join(externalDir, conflictedFileName);
+      const newFilePath = path.join(testDir, "packages", path.basename(externalDir), conflictedFileName);
 
       await fs.writeFile(conflictedFile, "initial content");
       await execa("git", ["add", conflictedFileName], cwdExternalDir);
@@ -75,6 +67,7 @@ describe("ImportCommand", () => {
 
       await fs.writeFile(conflictedFile, "master content");
       await execa("git", ["commit", "-am", "master content written"], cwdExternalDir);
+
       try {
         await execa("git", ["merge", branchName], cwdExternalDir);
       } catch (e) {
@@ -84,21 +77,15 @@ describe("ImportCommand", () => {
       await fs.writeFile(conflictedFile, "merged content");
       await execa("git", ["add", conflictedFileName], cwdExternalDir);
       await execa("git", ["commit", "-m", "Branch merged"], cwdExternalDir);
-      expect(await lastCommitInDir(externalDir)).toBe("Branch merged");
 
-      await lernaImport(externalDir, "--flatten");
+      await lernaImport(testDir)(externalDir, "--flatten");
+
       expect(await lastCommitInDir(testDir)).toBe("Branch merged");
-
-      const newFilePath = path.join(testDir, "packages", path.basename(externalDir), conflictedFileName);
       expect(await pathExists(newFilePath)).toBe(true);
     });
 
-    // FIXME: this test kinda sucks, should never have to read instance properties
-    // it("works with --max-buffer", async () => {
-    //   await lernaImport(externalDir, "--max-buffer=1");
-    // });
-
     it("supports moved files within the external repo", async () => {
+      const [testDir, externalDir] = await initBasicFixtures();
       const newFilePath = path.join(testDir, "packages", path.basename(externalDir), "new-file");
 
       await execa("git", ["mv", "old-file", "new-file"], { cwd: externalDir });
@@ -106,13 +93,14 @@ describe("ImportCommand", () => {
         cwd: externalDir,
       });
 
-      await lernaImport(externalDir);
+      await lernaImport(testDir)(externalDir);
 
       expect(await lastCommitInDir(testDir)).toBe("Moved old-file to new-file");
       expect(await pathExists(newFilePath)).toBe(true);
     });
 
     it("skips empty patches with --flatten", async () => {
+      const [testDir, externalDir] = await initBasicFixtures();
       const cwdExternalDir = { cwd: externalDir };
       const filePath = path.join(externalDir, "file.txt");
 
@@ -122,40 +110,46 @@ describe("ImportCommand", () => {
 
       await execa("git", ["commit", "--allow-empty", "-m", "Empty commit"], cwdExternalDir);
 
-      const { exitCode } = await lernaImport(externalDir, "--flatten");
+      const { exitCode } = await lernaImport(testDir)(externalDir, "--flatten");
 
       expect(await lastCommitInDir(testDir)).toBe("Non-empty commit");
       expect(exitCode).toBe(0);
     });
 
     it("exits early when confirmation is rejected", async () => {
+      const [testDir, externalDir] = await initBasicFixtures();
+
       PromptUtilities.confirm = jest.fn(callsBack(false));
 
-      await lernaImport(externalDir);
+      await lernaImport(testDir)(externalDir);
 
       expect(await lastCommitInDir(testDir)).toBe("Init commit");
     });
 
     it("allows skipping confirmation prompt", async () => {
-      const { exitCode } = await lernaImport(externalDir, "--yes");
+      const [testDir, externalDir] = await initBasicFixtures();
+      const { exitCode } = await lernaImport(testDir)(externalDir, "--yes");
 
       expect(exitCode).toBe(0);
       expect(PromptUtilities.confirm).not.toBeCalled();
     });
 
     it("errors without an argument", async () => {
+      const [testDir] = await initBasicFixtures();
+
       try {
-        await lernaImport();
+        await lernaImport(testDir)();
       } catch (err) {
         expect(err.message).toBe("Not enough non-option arguments: got 0, need at least 1");
       }
     });
 
     it("errors when external directory is missing", async () => {
+      const [testDir, externalDir] = await initBasicFixtures();
       const missing = `${externalDir}_invalidSuffix`;
 
       try {
-        await lernaImport(missing);
+        await lernaImport(testDir)(missing);
       } catch (err) {
         expect(err.exitCode).toBe(1);
         expect(err.message).toBe(`No repository found at "${missing}"`);
@@ -163,10 +157,12 @@ describe("ImportCommand", () => {
     });
 
     it("errors when external package.json is missing", async () => {
+      const [testDir, externalDir] = await initBasicFixtures();
+
       await fs.unlink(path.join(externalDir, "package.json"));
 
       try {
-        await lernaImport(externalDir);
+        await lernaImport(testDir)(externalDir);
       } catch (err) {
         expect(err.exitCode).toBe(1);
         expect(err.message).toMatch("package.json");
@@ -175,12 +171,13 @@ describe("ImportCommand", () => {
     });
 
     it("errors when external package.json has no name property", async () => {
+      const [testDir, externalDir] = await initBasicFixtures();
       const packageJson = path.join(externalDir, "package.json");
 
       await fs.writeFile(packageJson, "{}");
 
       try {
-        await lernaImport(externalDir);
+        await lernaImport(testDir)(externalDir);
       } catch (err) {
         expect(err.exitCode).toBe(1);
         expect(err.message).toBe(`No package name specified in "${packageJson}"`);
@@ -188,13 +185,14 @@ describe("ImportCommand", () => {
     });
 
     it("errors if target directory exists", async () => {
+      const [testDir, externalDir] = await initBasicFixtures();
       const targetDir = path.join(testDir, "packages", path.basename(externalDir));
       const relativePath = path.relative(testDir, targetDir);
 
       await fs.ensureDir(targetDir);
 
       try {
-        await lernaImport(externalDir);
+        await lernaImport(testDir)(externalDir);
       } catch (err) {
         expect(err.exitCode).toBe(1);
         expect(err.message).toBe(`Target directory already exists "${relativePath}"`);
@@ -202,6 +200,7 @@ describe("ImportCommand", () => {
     });
 
     it("infers correct target directory given packages glob", async () => {
+      const [testDir, externalDir] = await initBasicFixtures();
       const targetDir = path.join(testDir, "pkg", path.basename(externalDir));
       const relativePath = path.relative(testDir, targetDir);
 
@@ -212,7 +211,7 @@ describe("ImportCommand", () => {
       });
 
       try {
-        await lernaImport(externalDir);
+        await lernaImport(testDir)(externalDir);
       } catch (err) {
         expect(err.exitCode).toBe(1);
         expect(err.message).toBe(`Target directory already exists "${relativePath}"`);
@@ -220,13 +219,14 @@ describe("ImportCommand", () => {
     });
 
     it("errors if repo has uncommitted changes", async () => {
+      const [testDir, externalDir] = await initBasicFixtures();
       const uncommittedFile = path.join(testDir, "uncommittedFile");
 
       await fs.writeFile(uncommittedFile, "stuff");
       await execa("git", ["add", uncommittedFile], { cwd: testDir });
 
       try {
-        await lernaImport(externalDir);
+        await lernaImport(testDir)(externalDir);
       } catch (err) {
         expect(err.exitCode).toBe(1);
         expect(err.message).toBe("Local repository has un-committed changes");
@@ -234,6 +234,7 @@ describe("ImportCommand", () => {
     });
 
     it("does not remove custom subject prefixes in [brackets]", async () => {
+      const [testDir, externalDir] = await initBasicFixtures();
       const newFilePath = path.join(testDir, "packages", path.basename(externalDir), "new-file");
 
       await execa("git", ["mv", "old-file", "new-file"], { cwd: externalDir });
@@ -241,7 +242,7 @@ describe("ImportCommand", () => {
         cwd: externalDir,
       });
 
-      await lernaImport(externalDir);
+      await lernaImport(testDir)(externalDir);
 
       expect(await lastCommitInDir(testDir)).toBe("[ISSUE-10] Moved old-file to new-file");
       expect(await pathExists(newFilePath)).toBe(true);
@@ -249,30 +250,18 @@ describe("ImportCommand", () => {
   });
 
   describe("with non-root Lerna dir", () => {
-    let testDir;
-    let lernaRootDir;
-    let externalDir;
-    let lernaImport;
-
-    beforeEach(async () => {
-      const [extDir, fixtureDir] = await Promise.all([
+    // #1197
+    it("creates a module in packages location with imported commit history", async () => {
+      const [externalDir, rootDir] = await Promise.all([
         initFixture("ImportCommand/external", "Init external commit"),
         initFixture("ImportCommand/lerna-not-in-root"),
       ]);
+      const testDir = path.join(rootDir, "subdir");
+      const packageJson = path.join(testDir, "packages", path.basename(externalDir), "package.json");
 
-      externalDir = extDir;
-      testDir = fixtureDir;
-      lernaRootDir = path.join(testDir, "subdir");
-      lernaImport = run(lernaRootDir);
-    });
+      await lernaImport(testDir)(externalDir);
 
-    // Issue 1197
-    it("creates a module in packages location with imported commit history", async () => {
-      const packageJson = path.join(lernaRootDir, "packages", path.basename(externalDir), "package.json");
-
-      await lernaImport(externalDir);
-
-      expect(await lastCommitInDir(testDir)).toBe("Init external commit");
+      expect(await lastCommitInDir(rootDir)).toBe("Init external commit");
       expect(await pathExists(packageJson)).toBe(true);
     });
   });
