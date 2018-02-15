@@ -16,15 +16,6 @@ const lernaLink = require("./helpers/yargsRunner")(require("../src/commands/Link
 // silence logs
 log.level = "silent";
 
-// stub symlink in certain tests to reduce redundancy
-const fsSymlink = FileSystemUtilities.symlink;
-const resetSymlink = () => {
-  FileSystemUtilities.symlink = fsSymlink;
-};
-const stubSymlink = () => {
-  FileSystemUtilities.symlink = jest.fn(callsBack());
-};
-
 // object snapshots have sorted keys
 const symlinkedDirectories = testDir =>
   FileSystemUtilities.symlink.mock.calls.map(args => ({
@@ -34,8 +25,13 @@ const symlinkedDirectories = testDir =>
   }));
 
 describe("LinkCommand", () => {
-  beforeEach(stubSymlink);
-  afterEach(resetSymlink);
+  const fsSymlink = FileSystemUtilities.symlink;
+  beforeEach(() => {
+    FileSystemUtilities.symlink = jest.fn(callsBack());
+  });
+  afterEach(() => {
+    FileSystemUtilities.symlink = fsSymlink;
+  });
 
   describe("with local package dependencies", () => {
     it("should symlink all packages", async () => {

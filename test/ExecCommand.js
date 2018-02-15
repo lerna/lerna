@@ -21,24 +21,21 @@ jest.mock("../src/UpdatedPackagesCollector");
 // silence logs
 log.level = "silent";
 
-const calledInPackages = () => ChildProcessUtilities.spawn.mock.calls.map(args => path.basename(args[2].cwd));
+const calledInPackages = () =>
+  ChildProcessUtilities.spawn.mock.calls.map(([, , opts]) => path.basename(opts.cwd));
 
 const execInPackagesStreaming = testDir =>
-  ChildProcessUtilities.spawnStreaming.mock.calls.reduce((arr, args) => {
-    const command = args[0];
-    const params = args[1];
-    const opts = args[2];
+  ChildProcessUtilities.spawnStreaming.mock.calls.reduce((arr, [command, params, opts]) => {
     const dir = normalizeRelativeDir(testDir, opts.cwd);
     arr.push([dir, command].concat(params).join(" "));
     return arr;
   }, []);
 
 describe("ExecCommand", () => {
-  beforeEach(() => {
-    ChildProcessUtilities.spawn = jest.fn(callsBack());
-  });
+  ChildProcessUtilities.spawn.mockImplementation(callsBack());
+  ChildProcessUtilities.spawnStreaming.mockImplementation(callsBack());
 
-  afterEach(() => jest.resetAllMocks());
+  afterEach(jest.clearAllMocks);
 
   describe("in a basic repo", () => {
     it("should complain if invoked without command", async () => {
@@ -67,7 +64,7 @@ describe("ExecCommand", () => {
         errorLog = m;
       });
 
-      ChildProcessUtilities.spawn = jest.fn(callsBack(boom));
+      ChildProcessUtilities.spawn.mockImplementationOnce(callsBack(boom));
 
       try {
         await lernaExec(testDir)("boom");

@@ -25,11 +25,9 @@ log.level = "silent";
 const lastCommitInDir = cwd => execa.stdout("git", ["log", "-1", "--format=%s"], { cwd });
 
 describe("ImportCommand", () => {
-  beforeEach(() => {
-    PromptUtilities.confirm = jest.fn(callsBack(true));
-  });
+  PromptUtilities.confirm.mockImplementation(callsBack(true));
 
-  afterEach(() => jest.resetAllMocks());
+  afterEach(jest.clearAllMocks);
 
   describe("import", () => {
     const initBasicFixtures = () =>
@@ -119,7 +117,7 @@ describe("ImportCommand", () => {
     it("exits early when confirmation is rejected", async () => {
       const [testDir, externalDir] = await initBasicFixtures();
 
-      PromptUtilities.confirm = jest.fn(callsBack(false));
+      PromptUtilities.confirm.mockImplementationOnce(callsBack(false));
 
       await lernaImport(testDir)(externalDir);
 

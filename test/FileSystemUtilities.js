@@ -24,26 +24,25 @@ jest.mock("../src/ChildProcessUtilities");
 const linkRelative = (from, to) => path.relative(path.dirname(to), from);
 
 describe("FileSystemUtilities", () => {
-  afterEach(() => jest.resetAllMocks());
+  afterEach(jest.clearAllMocks);
 
   describe(".mkdirp()", () => {
     it("calls fs.ensureDir", done => {
+      expect.assertions(1);
       const dirPath = "mkdirp/test";
-      fs.ensureDir.mockImplementation(callsBack());
-      FileSystemUtilities.mkdirp(dirPath, () => {
-        try {
-          expect(fs.ensureDir).lastCalledWith(dirPath, expect.any(Function));
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      });
+
+      fs.ensureDir.mockImplementationOnce(callsBack());
+
+      FileSystemUtilities.mkdirp(dirPath, done);
+
+      expect(fs.ensureDir).lastCalledWith(dirPath, done);
     });
   });
 
   describe(".mkdirpSync()", () => {
     it("calls fs.ensureDirSync", () => {
       const dirPath = "mkdirpSync/test";
+
       FileSystemUtilities.mkdirpSync(dirPath);
       expect(fs.ensureDirSync).lastCalledWith(dirPath);
     });
@@ -52,7 +51,9 @@ describe("FileSystemUtilities", () => {
   describe(".readdirSync()", () => {
     it("calls fs.readdirSync", () => {
       const dirPath = "readdirSync-test";
-      fs.readdirSync.mockImplementation(() => ["a", "b", "c"]);
+
+      fs.readdirSync.mockReturnValueOnce(["a", "b", "c"]);
+
       expect(FileSystemUtilities.readdirSync(dirPath)).toEqual(["a", "b", "c"]);
       expect(fs.readdirSync).lastCalledWith(dirPath);
     });
@@ -61,7 +62,9 @@ describe("FileSystemUtilities", () => {
   describe(".existsSync()", () => {
     it("calls pathExists.sync", () => {
       const filePath = "existsSync-test";
-      pathExists.sync.mockImplementation(() => true);
+
+      pathExists.sync.mockReturnValueOnce(true);
+
       expect(FileSystemUtilities.existsSync(filePath)).toBe(true);
       expect(pathExists.sync).lastCalledWith(filePath);
     });
@@ -69,22 +72,20 @@ describe("FileSystemUtilities", () => {
 
   describe(".writeFile()", () => {
     it("calls fs.writeFile", done => {
+      expect.assertions(1);
       const filePath = "writeFile-test";
-      fs.writeFile.mockImplementation(callsBack());
-      FileSystemUtilities.writeFile(filePath, "contents", () => {
-        try {
-          expect(fs.writeFile).lastCalledWith(filePath, "contents\n", expect.any(Function));
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      });
+
+      fs.writeFile.mockImplementationOnce(callsBack());
+
+      FileSystemUtilities.writeFile(filePath, "contents", done);
+      expect(fs.writeFile).lastCalledWith(filePath, "contents\n", done);
     });
   });
 
   describe(".writeFileSync()", () => {
     it("calls fs.writeFileSync", () => {
       const filePath = "writeFileSync-test";
+
       FileSystemUtilities.writeFileSync(filePath, "contents");
       expect(fs.writeFileSync).lastCalledWith(filePath, "contents\n");
     });
@@ -93,60 +94,57 @@ describe("FileSystemUtilities", () => {
   describe(".readFileSync()", () => {
     it("calls fs.readFileSync", () => {
       const filePath = "readFileSync-test";
-      fs.readFileSync.mockImplementation(() => "contents\n");
+
+      fs.readFileSync.mockReturnValueOnce("contents\n");
+
       expect(FileSystemUtilities.readFileSync(filePath)).toBe("contents");
       expect(fs.readFileSync).lastCalledWith(filePath, "utf8");
     });
   });
 
   describe(".rimraf()", () => {
-    beforeEach(() => {
-      ChildProcessUtilities.spawn.mockImplementation(callsBack());
-    });
-
     it("calls rimraf CLI with arguments", done => {
-      pathExists.mockImplementation(() => Promise.resolve(true));
-      FileSystemUtilities.rimraf("rimraf/test", () => {
+      expect.assertions(1);
+      const dirPath = "rimraf/test";
+
+      pathExists.mockResolvedValueOnce(true);
+      ChildProcessUtilities.spawn.mockImplementationOnce(callsBack());
+
+      FileSystemUtilities.rimraf(dirPath, () => {
+        // a Promise gating a callback means we can't do the shorthand done()
         try {
           expect(ChildProcessUtilities.spawn).lastCalledWith(
             process.execPath,
-            [require.resolve("rimraf/bin"), "--no-glob", path.normalize("rimraf/test/")],
+            [require.resolve("rimraf/bin"), "--no-glob", path.normalize(`${dirPath}/`)],
             {},
             expect.any(Function)
           );
           done();
-        } catch (ex) {
-          done.fail(ex);
+        } catch (err) {
+          done.fail(err);
         }
       });
     });
 
     it("does not attempt to delete a non-existent directory", done => {
-      pathExists.mockImplementation(() => Promise.resolve(false));
-      FileSystemUtilities.rimraf("rimraf/non-existent", () => {
-        try {
-          expect(ChildProcessUtilities.spawn).not.toBeCalled();
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      });
+      expect.assertions(1);
+      pathExists.mockResolvedValueOnce(false);
+
+      FileSystemUtilities.rimraf("rimraf/non-existent", done);
+      expect(ChildProcessUtilities.spawn).not.toBeCalled();
     });
   });
 
   describe(".rename()", () => {
     it("calls fs.rename", done => {
+      expect.assertions(1);
       const srcPath = "rename-src";
       const dstPath = "rename-dst";
-      fs.rename.mockImplementation(callsBack());
-      FileSystemUtilities.rename(srcPath, dstPath, () => {
-        try {
-          expect(fs.rename).lastCalledWith(srcPath, dstPath, expect.any(Function));
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      });
+
+      fs.rename.mockImplementationOnce(callsBack());
+
+      FileSystemUtilities.rename(srcPath, dstPath, done);
+      expect(fs.rename).lastCalledWith(srcPath, dstPath, done);
     });
   });
 
@@ -154,6 +152,7 @@ describe("FileSystemUtilities", () => {
     it("calls fs.renameSync", () => {
       const srcPath = "renameSync-src";
       const dstPath = "renameSync-dst";
+
       FileSystemUtilities.renameSync(srcPath, dstPath);
       expect(fs.renameSync).lastCalledWith(srcPath, dstPath);
     });
@@ -161,11 +160,13 @@ describe("FileSystemUtilities", () => {
 
   describe(".statSync()", () => {
     it("calls fs.statSync", () => {
-      const dirPath = "stat-dir";
-      fs.statSync.mockImplementation(() => ({
+      fs.statSync.mockReturnValueOnce({
         isDirectory: () => true,
-      }));
+      });
+
+      const dirPath = "stat-dir";
       const stat = FileSystemUtilities.statSync(dirPath);
+
       expect(fs.statSync).lastCalledWith(dirPath);
       expect(stat.isDirectory()).toBe(true);
     });
@@ -174,6 +175,7 @@ describe("FileSystemUtilities", () => {
   describe(".unlinkSync()", () => {
     it("calls fs.unlinkSync", () => {
       const filePath = "unlinkSync-test";
+
       FileSystemUtilities.unlinkSync(filePath);
       expect(fs.unlinkSync).lastCalledWith(filePath);
     });
@@ -183,72 +185,83 @@ describe("FileSystemUtilities", () => {
     if (process.platform !== "win32") {
       it("returns false when filePath is not a symlink", () => {
         const filePath = path.resolve("./not/a/symlink");
-        fs.lstatSync.mockImplementation(() => ({
+
+        fs.lstatSync.mockReturnValueOnce({
           isSymbolicLink: () => false,
-        }));
+        });
+
         expect(FileSystemUtilities.isSymlink(filePath)).toBe(false);
       });
 
       it("returns resolved path of an existing symlink", () => {
         const original = path.resolve("./packages/package-2");
         const filePath = path.resolve("./packages/package-1/node_modules/package-2");
-        fs.lstatSync.mockImplementation(() => ({
+
+        fs.lstatSync.mockReturnValueOnce({
           isSymbolicLink: () => true,
-        }));
-        fs.readlinkSync.mockImplementation(() => linkRelative(original, filePath));
+        });
+        fs.readlinkSync.mockReturnValueOnce(linkRelative(original, filePath));
+
         expect(FileSystemUtilities.isSymlink(filePath)).toBe(original);
       });
     } else {
       it("returns false when filePath is not a symlink (windows)", () => {
         const filePath = path.resolve("./not/a/symlink");
-        fs.lstatSync.mockImplementation(() => ({
+
+        fs.lstatSync.mockReturnValueOnce({
           isSymbolicLink: () => false,
           isFile: () => false,
-        }));
+        });
+
         expect(FileSystemUtilities.isSymlink(filePath)).toBe(false);
       });
 
       it("returns resolved path of an existing symlink (windows)", () => {
         const original = path.resolve("./packages/package-2");
         const filePath = path.resolve("./packages/package-1/node_modules/package-2");
-        fs.lstatSync.mockImplementation(() => ({
+
+        fs.lstatSync.mockReturnValueOnce({
           isSymbolicLink: () => true,
           isFile: () => false,
-        }));
-        fs.readlinkSync.mockImplementation(() => linkRelative(original, filePath));
+        });
+        fs.readlinkSync.mockReturnValueOnce(linkRelative(original, filePath));
+
         expect(FileSystemUtilities.isSymlink(filePath)).toBe(original);
       });
 
       it("returns false when filePath is not a shimmed executable", () => {
         const filePath = path.resolve("./packages/package-1/node_modules/.bin/package-2");
-        fs.lstatSync.mockImplementation(() => ({
+
+        fs.lstatSync.mockReturnValueOnce({
           isSymbolicLink: () => false,
           isFile: () => true,
-        }));
-        readCmdShim.sync.mockImplementation(() => {
+        });
+        readCmdShim.sync.mockImplementationOnce(() => {
           throw new Error("ENOTASHIM");
         });
+
         expect(FileSystemUtilities.isSymlink(filePath)).toBe(false);
       });
 
       it("returns resolved path of a shimmed executable", () => {
         const original = path.resolve("./packages/package-2/cli.js");
         const filePath = path.resolve("./packages/package-1/node_modules/.bin/package-2.cmd");
-        fs.lstatSync.mockImplementation(() => ({
+
+        fs.lstatSync.mockReturnValueOnce({
           isSymbolicLink: () => false,
           isFile: () => true,
-        }));
-        readCmdShim.sync.mockImplementation(() => linkRelative(original, filePath));
+        });
+        readCmdShim.sync.mockReturnValueOnce(linkRelative(original, filePath));
+
         expect(FileSystemUtilities.isSymlink(filePath)).toBe(original);
       });
     }
   });
 
   describe(".symlink()", () => {
-    beforeEach(() => {
-      fs.lstat.mockImplementation(callsBack("ENOENT"));
-      fs.symlink.mockImplementation(callsBack());
-    });
+    fs.lstat.mockImplementation(callsBack("ENOENT"));
+    fs.unlink.mockImplementation(callsBack());
+    fs.symlink.mockImplementation(callsBack());
 
     if (process.platform !== "win32") {
       it("creates relative symlink to a directory", done => {
@@ -288,8 +301,7 @@ describe("FileSystemUtilities", () => {
         const dst = path.resolve("./packages/package-1/node_modules/package-2");
         const type = "junction"; // even in posix environments :P
 
-        fs.lstat.mockImplementation(callsBack()); // something _does_ exist at destination
-        fs.unlink.mockImplementation(callsBack());
+        fs.lstat.mockImplementationOnce(callsBack()); // something _does_ exist at destination
 
         FileSystemUtilities.symlink(src, dst, type, () => {
           try {
@@ -307,7 +319,7 @@ describe("FileSystemUtilities", () => {
         const dst = path.resolve("./packages/package-1/node_modules/.bin/package-2");
         const type = "exec";
 
-        cmdShim.mockImplementation(callsBack());
+        cmdShim.mockImplementationOnce(callsBack());
 
         FileSystemUtilities.symlink(src, dst, type, () => {
           try {
@@ -325,8 +337,7 @@ describe("FileSystemUtilities", () => {
         const dst = path.resolve("./packages/package-1/node_modules/package-2");
         const type = "junction"; // only _actually_ matters in windows
 
-        fs.lstat.mockImplementation(callsBack()); // something _does_ exist at destination
-        fs.unlink.mockImplementation(callsBack());
+        fs.lstat.mockImplementationOnce(callsBack()); // something _does_ exist at destination
 
         FileSystemUtilities.symlink(src, dst, type, () => {
           try {

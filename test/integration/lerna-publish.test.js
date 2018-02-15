@@ -59,9 +59,10 @@ describe("lerna publish", () => {
     if (process.cwd() !== currentDirectory) {
       process.chdir(currentDirectory);
     }
-
-    jest.resetAllMocks();
   });
+
+  // consoleOutput sets a mock
+  afterEach(jest.clearAllMocks);
 
   test("exit 0 when no updates", async () => {
     const cwd = await initFixture("PublishCommand/normal");

@@ -24,14 +24,14 @@ log.level = "silent";
 const readPkg = (testDir, pkg) => fs.readJsonSync(path.join(testDir, pkg, "package.json"));
 
 describe("AddCommand", () => {
-  beforeEach(() => {
-    // we already have enough tests of BootstrapCommand
-    BootstrapCommand.handler.mockImplementation(() => Promise.resolve());
-  });
+  // we already have enough tests of BootstrapCommand
+  BootstrapCommand.handler.mockResolvedValue();
 
-  afterEach(() => jest.resetAllMocks());
+  afterEach(jest.clearAllMocks);
 
   it("should throw without packages", async () => {
+    expect.assertions(1);
+
     const testDir = await initFixture("AddCommand/basic");
 
     try {
@@ -39,10 +39,11 @@ describe("AddCommand", () => {
     } catch (err) {
       expect(err.message).toMatch(/^Missing list of packages/);
     }
-    expect.assertions(1);
   });
 
   it("should throw for locally unsatisfiable version ranges", async () => {
+    expect.assertions(1);
+
     const testDir = await initFixture("AddCommand/basic");
 
     try {
@@ -50,7 +51,6 @@ describe("AddCommand", () => {
     } catch (err) {
       expect(err.message).toMatch(/Requested range not satisfiable:/);
     }
-    expect.assertions(1);
   });
 
   it("should reference remote dependencies", async () => {

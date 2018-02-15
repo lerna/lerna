@@ -21,18 +21,16 @@ jest.mock("../src/GitUtilities");
 log.level = "silent";
 
 describe("DiffCommand", () => {
-  const callbackSuccess = callsBack(null, true);
+  ChildProcessUtilities.spawn.mockImplementation(callsBack(null, true));
+  GitUtilities.isInitialized.mockReturnValue(true);
+  GitUtilities.hasCommit.mockReturnValue(true);
 
-  beforeEach(() => {
-    GitUtilities.isInitialized.mockImplementation(() => true);
-    GitUtilities.hasCommit.mockImplementation(() => true);
-  });
-  afterEach(() => jest.resetAllMocks());
+  afterEach(jest.clearAllMocks);
 
   it("should diff packages from the first commit", async () => {
     const testDir = await initFixture("DiffCommand/basic");
-    GitUtilities.getFirstCommit.mockImplementation(() => "beefcafe");
-    ChildProcessUtilities.spawn.mockImplementation(callbackSuccess);
+
+    GitUtilities.getFirstCommit.mockReturnValueOnce("beefcafe");
 
     await lernaDiff(testDir)();
 
@@ -47,9 +45,8 @@ describe("DiffCommand", () => {
   it("should diff packages from the most recent tag", async () => {
     const testDir = await initFixture("DiffCommand/basic");
 
-    GitUtilities.hasTags.mockImplementation(() => true);
-    GitUtilities.getLastTaggedCommit.mockImplementation(() => "cafedead");
-    ChildProcessUtilities.spawn.mockImplementation(callbackSuccess);
+    GitUtilities.hasTags.mockReturnValueOnce(true);
+    GitUtilities.getLastTaggedCommit.mockReturnValueOnce("cafedead");
 
     await lernaDiff(testDir)();
 
@@ -64,8 +61,7 @@ describe("DiffCommand", () => {
   it("should diff a specific package", async () => {
     const testDir = await initFixture("DiffCommand/basic");
 
-    GitUtilities.getFirstCommit.mockImplementation(() => "deadbeef");
-    ChildProcessUtilities.spawn.mockImplementation(callbackSuccess);
+    GitUtilities.getFirstCommit.mockReturnValueOnce("deadbeef");
 
     await lernaDiff(testDir)("package-1");
 
@@ -91,8 +87,7 @@ describe("DiffCommand", () => {
   it("should error when running in a repository without commits", async () => {
     const testDir = await initFixture("DiffCommand/basic");
 
-    // override beforeEach mock
-    GitUtilities.hasCommit.mockImplementation(() => false);
+    GitUtilities.hasCommit.mockReturnValueOnce(false);
 
     try {
       await lernaDiff(testDir)("package-1");
@@ -107,7 +102,8 @@ describe("DiffCommand", () => {
 
     const nonZero = new Error("An actual non-zero, not git diff pager SIGPIPE");
     nonZero.code = 1;
-    ChildProcessUtilities.spawn.mockImplementation(callsBack(nonZero));
+
+    ChildProcessUtilities.spawn.mockImplementationOnce(callsBack(nonZero));
 
     try {
       await lernaDiff(testDir)("package-1");

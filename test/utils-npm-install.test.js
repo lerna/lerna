@@ -22,9 +22,9 @@ jest.mock("../src/FileSystemUtilities");
 log.level = "silent";
 
 describe("npm-install", () => {
-  ChildProcessUtilities.exec.mockImplementation(() => Promise.resolve());
+  ChildProcessUtilities.exec.mockResolvedValue();
   FileSystemUtilities.rename.mockImplementation(callsBack());
-  writePkg.mockImplementation(() => Promise.resolve());
+  writePkg.mockResolvedValue();
 
   afterEach(jest.clearAllMocks);
 
@@ -49,9 +49,9 @@ describe("npm-install", () => {
     });
 
     it("does not swallow errors", async () => {
-      ChildProcessUtilities.exec.mockImplementationOnce(() => Promise.reject(new Error("whoopsy-doodle")));
-
       expect.assertions(2);
+
+      ChildProcessUtilities.exec.mockRejectedValueOnce(new Error("whoopsy-doodle"));
 
       const directory = path.normalize("/test/npm/install/error");
       const config = {
@@ -340,7 +340,7 @@ describe("npm-install", () => {
       const dependencies = ["I'm just here so we don't exit early"];
       const config = {};
 
-      writePkg.mockImplementationOnce(() => Promise.reject(new Error("Unable to write file")));
+      writePkg.mockRejectedValueOnce(new Error("Unable to write file"));
 
       npmInstall.dependencies(directory, dependencies, config, err => {
         try {
@@ -363,9 +363,7 @@ describe("npm-install", () => {
       const dependencies = ["I'm just here so we don't exit early"];
       const config = {};
 
-      ChildProcessUtilities.exec.mockImplementationOnce(() =>
-        Promise.reject(new Error("Unable to install dependency"))
-      );
+      ChildProcessUtilities.exec.mockRejectedValueOnce(new Error("Unable to install dependency"));
 
       npmInstall.dependencies(directory, dependencies, config, err => {
         try {

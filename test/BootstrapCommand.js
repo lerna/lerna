@@ -21,15 +21,6 @@ jest.mock("../src/utils/npm-run-script");
 // silence logs
 log.level = "silent";
 
-// stub rimraf because we trust isaacs
-const fsRimraf = FileSystemUtilities.rimraf;
-const resetRimraf = () => {
-  FileSystemUtilities.rimraf = fsRimraf;
-};
-const stubRimraf = () => {
-  FileSystemUtilities.rimraf = jest.fn(callsBack());
-};
-
 // stub symlink in certain tests to reduce redundancy
 const fsSymlink = FileSystemUtilities.symlink;
 const resetSymlink = () => {
@@ -41,10 +32,9 @@ const stubSymlink = () => {
 
 // object snapshots have sorted keys
 const installedPackagesInDirectories = testDir =>
-  npmInstall.dependencies.mock.calls.reduce((obj, args) => {
-    const location = normalizeRelativeDir(testDir, args[0]);
-    const dependencies = args[1];
-    obj[location || "ROOT"] = dependencies;
+  npmInstall.dependencies.mock.calls.reduce((obj, [location, dependencies]) => {
+    const relative = normalizeRelativeDir(testDir, location);
+    obj[relative || "ROOT"] = dependencies;
     return obj;
   }, {});
 
@@ -61,29 +51,24 @@ const ranScriptsInDirectories = testDir =>
     return obj;
   }, {});
 
-const removedDirectories = testDir =>
-  FileSystemUtilities.rimraf.mock.calls.map(args => normalizeRelativeDir(testDir, args[0]));
-
 const symlinkedDirectories = testDir =>
-  FileSystemUtilities.symlink.mock.calls.map(args => ({
-    _src: normalizeRelativeDir(testDir, args[0]),
-    dest: normalizeRelativeDir(testDir, args[1]),
-    type: args[2],
+  FileSystemUtilities.symlink.mock.calls.map(([src, dest, type]) => ({
+    _src: normalizeRelativeDir(testDir, src),
+    dest: normalizeRelativeDir(testDir, dest),
+    type,
   }));
 
 describe("BootstrapCommand", () => {
-  beforeEach(() => {
-    // we stub npmInstall in most tests because
-    // we already have enough tests of npmInstall
-    npmInstall.mockImplementation(() => Promise.resolve());
-    npmInstall.dependencies.mockImplementation(callsBack());
+  // we stub npmInstall in most tests because
+  // we already have enough tests of npmInstall
+  npmInstall.mockResolvedValue();
+  npmInstall.dependencies.mockImplementation(callsBack());
 
-    // stub runScriptInDir() because it is a huge source
-    // of slowness when running tests for no good reason
-    npmRunScript.mockImplementation(callsBack());
-  });
+  // stub runScriptInDir() because it is a huge source
+  // of slowness when running tests for no good reason
+  npmRunScript.mockImplementation(callsBack());
 
-  afterEach(() => jest.resetAllMocks());
+  afterEach(jest.clearAllMocks);
 
   describe("lifecycle scripts", () => {
     it("should run preinstall, postinstall and prepublish scripts", async () => {
@@ -105,8 +90,19 @@ describe("BootstrapCommand", () => {
   });
 
   describe("with hoisting", () => {
-    beforeEach(stubRimraf);
-    afterEach(resetRimraf);
+    // stub rimraf because we trust isaacs
+    const fsRimraf = FileSystemUtilities.rimraf;
+
+    beforeEach(() => {
+      FileSystemUtilities.rimraf = jest.fn(callsBack());
+    });
+
+    afterEach(() => {
+      FileSystemUtilities.rimraf = fsRimraf;
+    });
+
+    const removedDirectories = testDir =>
+      FileSystemUtilities.rimraf.mock.calls.map(([directory]) => normalizeRelativeDir(testDir, directory));
 
     it("should hoist", async () => {
       const testDir = await initFixture("BootstrapCommand/basic");

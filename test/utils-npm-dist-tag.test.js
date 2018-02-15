@@ -11,7 +11,7 @@ const npmDistTag = require("../src/utils/npm-dist-tag");
 jest.mock("../src/ChildProcessUtilities");
 
 describe("dist-tag", () => {
-  ChildProcessUtilities.exec.mockImplementation(() => Promise.resolve());
+  ChildProcessUtilities.exec.mockResolvedValue();
 
   afterEach(jest.clearAllMocks);
 

@@ -29,7 +29,8 @@ const setupGitChanges = async (cwd, filePaths) => {
 };
 
 describe("UpdatedCommand", () => {
-  afterEach(() => jest.resetAllMocks());
+  // consoleOutput sets a mock
+  afterEach(jest.clearAllMocks);
 
   /** =========================================================================
    * Basic

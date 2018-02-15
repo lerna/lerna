@@ -22,16 +22,14 @@ jest.mock("conventional-recommended-bump");
 jest.mock("../src/FileSystemUtilities");
 
 describe("ConventionalCommitUtilities", () => {
-  beforeEach(() => {
-    FileSystemUtilities.readFile.mockImplementation(() => Promise.resolve(""));
-    FileSystemUtilities.writeFile.mockImplementation(() => Promise.resolve());
-  });
+  FileSystemUtilities.readFile.mockResolvedValue("");
+  FileSystemUtilities.writeFile.mockResolvedValue();
 
-  afterEach(() => jest.resetAllMocks());
+  afterEach(jest.clearAllMocks);
 
   describe(".recommendVersion()", () => {
     it("invokes conventional-changelog-recommended bump to fetch next version", async () => {
-      conventionalRecommendedBump.mockImplementation(callsBack(null, { releaseType: "major" }));
+      conventionalRecommendedBump.mockImplementationOnce(callsBack(null, { releaseType: "major" }));
 
       const bumpedVersion = await ConventionalCommitUtilities.recommendVersion(
         new Package({ name: "bar", version: "1.0.0" }, "/foo/bar"),
@@ -55,7 +53,7 @@ describe("ConventionalCommitUtilities", () => {
     });
 
     it("passes package-specific arguments in independent mode", async () => {
-      conventionalRecommendedBump.mockImplementation(callsBack(null, { releaseType: "minor" }));
+      conventionalRecommendedBump.mockImplementationOnce(callsBack(null, { releaseType: "minor" }));
 
       const bumpedVersion = await ConventionalCommitUtilities.recommendVersion(
         new Package({ name: "bar", version: "1.0.0" }, "/foo/bar"),

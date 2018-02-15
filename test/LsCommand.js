@@ -13,7 +13,8 @@ const lernaLs = require("./helpers/yargsRunner")(require("../src/commands/LsComm
 log.level = "silent";
 
 describe("LsCommand", () => {
-  afterEach(() => jest.resetAllMocks());
+  // consoleOutput sets a mock
+  afterEach(jest.clearAllMocks);
 
   describe("in a basic repo", () => {
     it("should list packages", async () => {

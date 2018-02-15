@@ -9,38 +9,31 @@ const tempy = require("tempy");
 const touch = require("touch");
 const writeJsonFile = require("write-json-file");
 
+// partially mocked
 const ChildProcessUtilities = require("../src/ChildProcessUtilities");
 
 // helpers
 const callsBack = require("./helpers/callsBack");
 const initFixture = require("./helpers/initFixture");
+const LERNA_VERSION = require("../package.json").version;
 
 // file under test
 const Command = require("../src/Command");
-const LERNA_VERSION = require("../package.json").version;
 
 // silence logs
 log.level = "silent";
 
-const onAllExitedOriginal = ChildProcessUtilities.onAllExited;
-const getChildProcessCountOriginal = ChildProcessUtilities.getChildProcessCount;
-
 describe("Command", () => {
   let testDir;
 
-  afterEach(() => jest.resetAllMocks());
-
   beforeAll(async () => {
-    ChildProcessUtilities.onAllExited = jest.fn(callsBack());
-    ChildProcessUtilities.getChildProcessCount = jest.fn(() => 0);
-
     testDir = await initFixture("Command/basic");
   });
 
-  afterAll(() => {
-    ChildProcessUtilities.onAllExited = onAllExitedOriginal;
-    ChildProcessUtilities.getChildProcessCount = getChildProcessCountOriginal;
-  });
+  ChildProcessUtilities.onAllExited = jest.fn(callsBack());
+  ChildProcessUtilities.getChildProcessCount = jest.fn(() => 0);
+
+  afterEach(jest.clearAllMocks);
 
   // swallow errors when passed in argv
   const onRejected = () => {};
@@ -116,18 +109,13 @@ describe("Command", () => {
   });
 
   describe("when finished", () => {
-    beforeEach(() => {
-      ChildProcessUtilities.onAllExited = jest.fn(callsBack());
-      ChildProcessUtilities.getChildProcessCount = jest.fn(() => 0);
-    });
-
     it("resolves immediately when no child processes active", async () => {
       const { exitCode } = await testFactory();
       expect(exitCode).toBe(0);
     });
 
     it("waits to resolve when 1 child process active", async () => {
-      ChildProcessUtilities.getChildProcessCount.mockReturnValue(1);
+      ChildProcessUtilities.getChildProcessCount.mockReturnValueOnce(1);
 
       let warning;
       log.once("log.warn", m => {
@@ -140,7 +128,7 @@ describe("Command", () => {
     });
 
     it("waits to resolve when 2 child processes active", async () => {
-      ChildProcessUtilities.getChildProcessCount.mockReturnValue(2);
+      ChildProcessUtilities.getChildProcessCount.mockReturnValueOnce(2);
 
       let warning;
       log.once("log.warn", m => {
