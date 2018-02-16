@@ -635,6 +635,7 @@ $ lerna run --scope my-component test
 $ lerna exec -- <command> [..args] # runs the command in all packages
 $ lerna exec -- rm -rf ./node_modules
 $ lerna exec -- protractor conf.js
+$ lerna exec -- npm install --production # for production, install dependencies without devDependencies in all packages
 ```
 
 Run an arbitrary command in each package.
