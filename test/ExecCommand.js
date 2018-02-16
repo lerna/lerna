@@ -1,6 +1,5 @@
 "use strict";
 
-const log = require("npmlog");
 const path = require("path");
 
 // mocked modules
@@ -18,9 +17,6 @@ const lernaExec = require("./helpers/command-runner")(require("../src/commands/E
 
 jest.mock("../src/ChildProcessUtilities");
 jest.mock("../src/UpdatedPackagesCollector");
-
-// silence logs
-log.level = "silent";
 
 const calledInPackages = () =>
   ChildProcessUtilities.spawn.mock.calls.map(([, , opts]) => path.basename(opts.cwd));

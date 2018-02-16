@@ -2,7 +2,6 @@
 
 const fs = require("fs-extra");
 const path = require("path");
-const log = require("npmlog");
 
 // mocked or stubbed modules
 const BootstrapCommand = require("../src/commands/BootstrapCommand");
@@ -17,9 +16,6 @@ const lernaAdd = require("./helpers/command-runner")(require("../src/commands/Ad
 jest.mock("../src/commands/BootstrapCommand");
 
 expect.extend(pkgMatchers);
-
-// silence logs
-log.level = "silent";
 
 const readPkg = (testDir, pkg) => fs.readJSON(path.join(testDir, pkg, "package.json"));
 

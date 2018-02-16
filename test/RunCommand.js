@@ -1,7 +1,6 @@
 "use strict";
 
 const path = require("path");
-const log = require("npmlog");
 
 // mocked modules
 const npmRunScript = require("../src/utils/npm-run-script");
@@ -18,9 +17,6 @@ const normalizeRelativeDir = require("./helpers/normalizeRelativeDir");
 const lernaRun = require("./helpers/command-runner")(require("../src/commands/RunCommand"));
 
 jest.mock("../src/utils/npm-run-script");
-
-// silence logs
-log.level = "silent";
 
 const ranInPackages = testDir =>
   npmRunScript.mock.calls.reduce((arr, [script, { args, npmClient, pkg }]) => {

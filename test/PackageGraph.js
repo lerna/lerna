@@ -1,13 +1,8 @@
 "use strict";
 
-const log = require("npmlog");
-
 // file under test
 const Package = require("../src/Package");
 const PackageGraph = require("../src/PackageGraph");
-
-// silence logs
-log.level = "silent";
 
 describe("PackageGraph", () => {
   describe(".get()", () => {

@@ -1,7 +1,5 @@
 "use strict";
 
-const log = require("npmlog");
-
 // mocked or stubbed modules
 const FileSystemUtilities = require("../src/FileSystemUtilities");
 const npmInstall = require("../src/utils/npm-install");
@@ -17,9 +15,6 @@ const lernaBootstrap = require("./helpers/command-runner")(require("../src/comma
 
 jest.mock("../src/utils/npm-install");
 jest.mock("../src/utils/npm-run-script");
-
-// silence logs
-log.level = "silent";
 
 // stub symlink in certain tests to reduce redundancy
 const fsSymlink = FileSystemUtilities.symlink;

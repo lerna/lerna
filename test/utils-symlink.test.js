@@ -1,7 +1,6 @@
 "use strict";
 
 const async = require("async");
-const log = require("npmlog");
 const path = require("path");
 const readPkg = require("read-pkg");
 
@@ -13,9 +12,6 @@ const pkgMatchers = require("./helpers/pkgMatchers");
 
 // file under test
 const symlink = require("../src/utils/symlink");
-
-// silence logs
-log.level = "silent";
 
 expect.extend(pkgMatchers);
 

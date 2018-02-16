@@ -1,12 +1,7 @@
 "use strict";
 
-const log = require("npmlog");
-
 // file under test
 const VersionSerializer = require("../src/VersionSerializer");
-
-// silence logs
-log.level = "silent";
 
 describe("VersionSerializer", () => {
   let serializer;

@@ -2,7 +2,6 @@
 
 const execa = require("execa");
 const fs = require("fs-extra");
-const log = require("npmlog");
 const path = require("path");
 const pathExists = require("path-exists");
 
@@ -18,9 +17,6 @@ const updateLernaConfig = require("./helpers/updateLernaConfig");
 const lernaImport = require("./helpers/command-runner")(require("../src/commands/ImportCommand"));
 
 jest.mock("../src/PromptUtilities");
-
-// silence logs
-log.level = "silent";
 
 const lastCommitInDir = cwd => execa.stdout("git", ["log", "-1", "--format=%s"], { cwd });
 

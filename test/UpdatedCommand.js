@@ -1,7 +1,6 @@
 "use strict";
 
 const execa = require("execa");
-const log = require("npmlog");
 const path = require("path");
 const touch = require("touch");
 
@@ -12,9 +11,6 @@ const updateLernaConfig = require("./helpers/updateLernaConfig");
 
 // file under test
 const lernaUpdated = require("./helpers/command-runner")(require("../src/commands/UpdatedCommand"));
-
-// silence logs
-log.level = "silent";
 
 const gitTag = cwd => execa("git", ["tag", "v1.0.0"], { cwd });
 const gitAdd = cwd => execa("git", ["add", "-A"], { cwd });

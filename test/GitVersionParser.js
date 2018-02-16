@@ -1,12 +1,7 @@
 "use strict";
 
-const log = require("npmlog");
-
 // file under test
 const GitVersionParser = require("../src/GitVersionParser");
-
-// silence logs
-log.level = "silent";
 
 describe("GitVersionParser", () => {
   describe("parseVersion - without prefix", () => {

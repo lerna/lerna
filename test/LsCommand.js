@@ -1,16 +1,11 @@
 "use strict";
 
-const log = require("npmlog");
-
 // helpers
 const consoleOutput = require("./helpers/consoleOutput");
 const initFixture = require("./helpers/initFixture");
 
 // file under test
 const lernaLs = require("./helpers/command-runner")(require("../src/commands/LsCommand"));
-
-// silence logs
-log.level = "silent";
 
 describe("LsCommand", () => {
   describe("in a basic repo", () => {

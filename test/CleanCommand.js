@@ -1,7 +1,5 @@
 "use strict";
 
-const log = require("npmlog");
-
 // mocked or stubbed modules
 const FileSystemUtilities = require("../src/FileSystemUtilities");
 const PromptUtilities = require("../src/PromptUtilities");
@@ -15,9 +13,6 @@ const normalizeRelativeDir = require("./helpers/normalizeRelativeDir");
 const lernaClean = require("./helpers/command-runner")(require("../src/commands/CleanCommand"));
 
 jest.mock("../src/PromptUtilities");
-
-// silence logs
-log.level = "silent";
 
 const removedDirectories = testDir =>
   FileSystemUtilities.rimraf.mock.calls.map(([directory]) => normalizeRelativeDir(testDir, directory));

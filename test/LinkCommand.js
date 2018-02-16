@@ -1,7 +1,5 @@
 "use strict";
 
-const log = require("npmlog");
-
 // mocked or stubbed modules
 const FileSystemUtilities = require("../src/FileSystemUtilities");
 
@@ -12,9 +10,6 @@ const normalizeRelativeDir = require("./helpers/normalizeRelativeDir");
 
 // file under test
 const lernaLink = require("./helpers/command-runner")(require("../src/commands/LinkCommand"));
-
-// silence logs
-log.level = "silent";
 
 // object snapshots have sorted keys
 const symlinkedDirectories = testDir =>

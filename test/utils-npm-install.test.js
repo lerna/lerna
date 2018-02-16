@@ -1,6 +1,5 @@
 "use strict";
 
-const log = require("npmlog");
 const path = require("path");
 
 // mocked modules
@@ -17,9 +16,6 @@ const npmInstall = require("../src/utils/npm-install");
 jest.mock("write-pkg");
 jest.mock("../src/ChildProcessUtilities");
 jest.mock("../src/FileSystemUtilities");
-
-// silence logs
-log.level = "silent";
 
 describe("npm-install", () => {
   ChildProcessUtilities.exec.mockResolvedValue();

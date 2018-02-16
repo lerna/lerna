@@ -20,9 +20,6 @@ const LERNA_VERSION = require("../package.json").version;
 // file under test
 const Command = require("../src/Command");
 
-// silence logs
-log.level = "silent";
-
 describe("Command", () => {
   let testDir;
 

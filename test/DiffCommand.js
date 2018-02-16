@@ -1,6 +1,5 @@
 "use strict";
 
-const log = require("npmlog");
 const path = require("path");
 
 // mocked modules
@@ -16,9 +15,6 @@ const lernaDiff = require("./helpers/command-runner")(require("../src/commands/D
 
 jest.mock("../src/ChildProcessUtilities");
 jest.mock("../src/GitUtilities");
-
-// silence logs
-log.level = "silent";
 
 describe("DiffCommand", () => {
   ChildProcessUtilities.spawn.mockImplementation(callsBack(null, true));

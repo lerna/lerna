@@ -1,7 +1,6 @@
 "use strict";
 
 const fs = require("fs-extra");
-const log = require("npmlog");
 const path = require("path");
 const tempy = require("tempy");
 
@@ -11,9 +10,6 @@ const lernaVersion = require("../package.json").version;
 
 // file under test
 const lernaInit = require("./helpers/command-runner")(require("../src/commands/InitCommand"));
-
-// silence logs
-log.level = "silent";
 
 describe("InitCommand", () => {
   describe("in an empty directory", () => {

@@ -1,6 +1,5 @@
 "use strict";
 
-const log = require("npmlog");
 const normalizeNewline = require("normalize-newline");
 const path = require("path");
 
@@ -30,9 +29,6 @@ jest.mock("../src/ConventionalCommitUtilities");
 jest.mock("../src/utils/npm-dist-tag");
 jest.mock("../src/utils/npm-publish");
 jest.mock("../src/utils/npm-run-script");
-
-// silence logs
-log.level = "silent";
 
 const publishedTagInDirectories = testDir =>
   npmPublish.mock.calls.reduce((arr, args) => {

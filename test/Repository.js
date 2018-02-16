@@ -1,6 +1,5 @@
 "use strict";
 
-const log = require("npmlog");
 const path = require("path");
 
 // mocked or stubbed modules
@@ -12,9 +11,6 @@ const initFixture = require("./helpers/initFixture");
 
 // file under test
 const Repository = require("../src/Repository");
-
-// silence logs
-log.level = "silent";
 
 describe("Repository", () => {
   let testDir;
