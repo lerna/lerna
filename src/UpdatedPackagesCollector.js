@@ -1,6 +1,5 @@
 "use strict";
 
-const _ = require("lodash");
 const minimatch = require("minimatch");
 const path = require("path");
 const semver = require("semver");
@@ -35,6 +34,10 @@ function getForcedPackages(forcePublish) {
 }
 
 function makeDiffSince(rootPath, execOpts, ignorePatterns) {
+  const ignoreFilters = new Set(
+    Array.from(ignorePatterns || []).map(p => minimatch.filter(`!${p}`, { matchBase: true }))
+  );
+
   return function hasDiffSinceThatIsntIgnored(pkg, commits) {
     const folder = path.relative(rootPath, pkg.location);
     const diff = GitUtilities.diffSinceIn(commits, pkg.location, execOpts);
@@ -45,10 +48,10 @@ function makeDiffSince(rootPath, execOpts, ignorePatterns) {
 
     let changedFiles = diff.split("\n").map(file => file.replace(folder + path.sep, ""));
 
-    if (ignorePatterns) {
-      changedFiles = changedFiles.filter(
-        file => !_.find(ignorePatterns, pattern => minimatch(file, pattern, { matchBase: true }))
-      );
+    if (ignoreFilters.size) {
+      for (const ignored of ignoreFilters) {
+        changedFiles = changedFiles.filter(ignored);
+      }
     }
 
     return !!changedFiles.length;
