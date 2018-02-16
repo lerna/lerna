@@ -2,7 +2,7 @@
 
 const Command = require("../Command");
 const PackageGraph = require("../PackageGraph");
-const symlink = require("../utils/symlink");
+const symlinkDependencies = require("../utils/symlink-dependencies");
 
 exports.handler = function handler(argv) {
   // eslint-disable-next-line no-use-before-define
@@ -44,6 +44,6 @@ class LinkCommand extends Command {
       graph = new PackageGraph(this.packages, { graphType: "allDependencies", forceLocal: true });
     }
 
-    symlink(this.packages, graph, this.logger, callback);
+    symlinkDependencies(this.packages, graph, this.logger, callback);
   }
 }

@@ -16,7 +16,8 @@ const matchPackageName = require("../utils/match-package-name");
 const hasDependencyInstalled = require("../utils/has-dependency-installed");
 const hasMatchingDependency = require("../utils/has-matching-dependency");
 const runParallelBatches = require("../utils/run-parallel-batches");
-const symlink = require("../utils/symlink");
+const symlinkBinary = require("../utils/symlink-binary");
+const symlinkDependencies = require("../utils/symlink-dependencies");
 const ValidationError = require("../utils/ValidationError");
 
 exports.handler = function handler(argv) {
@@ -500,7 +501,7 @@ class BootstrapCommand extends Command {
                     dependents.map(pkg => linkDone => {
                       const src = this.hoistedDirectory(name);
 
-                      symlink.bin(src, pkg, linkDone);
+                      symlinkBinary(src, pkg, linkDone);
                     }),
                     itemDone
                   );
@@ -602,7 +603,7 @@ class BootstrapCommand extends Command {
    * @param {Function} callback
    */
   symlinkPackages(callback) {
-    symlink(this.filteredPackages, this.packageGraph, this.logger, callback);
+    symlinkDependencies(this.filteredPackages, this.packageGraph, this.logger, callback);
   }
 
   validatePackageNames() {

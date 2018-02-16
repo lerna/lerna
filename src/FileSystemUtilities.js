@@ -1,11 +1,9 @@
 "use strict";
 
-const cmdShim = require("cmd-shim");
 const fs = require("fs-extra");
 const log = require("npmlog");
 const path = require("path");
 const pathExists = require("path-exists");
-const readCmdShim = require("read-cmd-shim");
 
 const ChildProcessUtilities = require("./ChildProcessUtilities");
 
@@ -105,88 +103,9 @@ function rimraf(dirPath, callback) {
   });
 }
 
-function symlink(src, dest, type, callback) {
-  log.silly("symlink", [src, dest, type]);
-  if (process.platform === "win32") {
-    createWindowsSymlink(src, dest, type, callback);
-  } else {
-    createPosixSymlink(src, dest, type, callback);
-  }
-}
-
 function unlinkSync(filePath) {
   log.silly("unlinkSync", filePath);
   fs.unlinkSync(filePath);
-}
-
-function isSymlink(filePath) {
-  log.silly("isSymlink", filePath);
-  let result;
-
-  if (process.platform === "win32") {
-    result = resolveWindowsSymlink(filePath);
-  } else {
-    result = resolvePosixSymlink(filePath);
-  }
-
-  log.verbose("isSymlink", [filePath, result]);
-  return result;
-}
-
-function createSymbolicLink(src, dest, type, callback) {
-  log.silly("createSymbolicLink", [src, dest, type]);
-  fs.lstat(dest, err => {
-    if (!err) {
-      // Something exists at `dest`.  Need to remove it first.
-      fs.unlink(dest, () => fs.symlink(src, dest, type, callback));
-    } else {
-      fs.symlink(src, dest, type, callback);
-    }
-  });
-}
-
-function createPosixSymlink(origin, dest, _type, callback) {
-  const type = _type === "exec" ? "file" : _type;
-  const src = path.relative(path.dirname(dest), origin);
-  createSymbolicLink(src, dest, type, callback);
-}
-
-function createWindowsSymlink(src, dest, type, callback) {
-  if (type === "exec") {
-    cmdShim(src, dest, callback);
-  } else {
-    createSymbolicLink(src, dest, type, callback);
-  }
-}
-
-function resolveSymbolicLink(filePath) {
-  const lstat = fs.lstatSync(filePath);
-  const resolvedPath = lstat.isSymbolicLink()
-    ? path.resolve(path.dirname(filePath), fs.readlinkSync(filePath))
-    : false;
-
-  return {
-    resolvedPath,
-    lstat,
-  };
-}
-
-function resolvePosixSymlink(filePath) {
-  return resolveSymbolicLink(filePath).resolvedPath;
-}
-
-function resolveWindowsSymlink(filePath) {
-  const { resolvedPath, lstat } = resolveSymbolicLink(filePath);
-
-  if (lstat.isFile() && !resolvedPath) {
-    try {
-      return path.resolve(path.dirname(filePath), readCmdShim.sync(filePath));
-    } catch (e) {
-      return false;
-    }
-  }
-
-  return resolvedPath && path.resolve(resolvedPath);
 }
 
 exports.chmod = chmod;
@@ -203,6 +122,4 @@ exports.readFile = readFile;
 exports.readFileSync = readFileSync;
 exports.statSync = statSync;
 exports.rimraf = rimraf;
-exports.symlink = symlink;
 exports.unlinkSync = unlinkSync;
-exports.isSymlink = isSymlink;
