@@ -1,5 +1,14 @@
 "use strict";
 
+jest.mock("write-json-file");
+jest.mock("write-pkg");
+jest.mock("../src/GitUtilities");
+jest.mock("../src/PromptUtilities");
+jest.mock("../src/ConventionalCommitUtilities");
+jest.mock("../src/utils/npm-dist-tag");
+jest.mock("../src/utils/npm-publish");
+jest.mock("../src/utils/npm-run-script");
+
 const normalizeNewline = require("normalize-newline");
 const path = require("path");
 
@@ -21,15 +30,7 @@ const normalizeRelativeDir = require("./helpers/normalizeRelativeDir");
 // file under test
 const lernaPublish = require("./helpers/command-runner")(require("../src/commands/PublishCommand"));
 
-jest.mock("write-json-file");
-jest.mock("write-pkg");
-jest.mock("../src/GitUtilities");
-jest.mock("../src/PromptUtilities");
-jest.mock("../src/ConventionalCommitUtilities");
-jest.mock("../src/utils/npm-dist-tag");
-jest.mock("../src/utils/npm-publish");
-jest.mock("../src/utils/npm-run-script");
-
+// assertion helpers
 const publishedTagInDirectories = testDir =>
   npmPublish.mock.calls.reduce((arr, args) => {
     const tag = args[0];

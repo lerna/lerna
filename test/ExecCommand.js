@@ -1,5 +1,8 @@
 "use strict";
 
+jest.mock("../src/ChildProcessUtilities");
+jest.mock("../src/UpdatedPackagesCollector");
+
 const path = require("path");
 
 // mocked modules
@@ -15,9 +18,7 @@ const normalizeRelativeDir = require("./helpers/normalizeRelativeDir");
 // file under test
 const lernaExec = require("./helpers/command-runner")(require("../src/commands/ExecCommand"));
 
-jest.mock("../src/ChildProcessUtilities");
-jest.mock("../src/UpdatedPackagesCollector");
-
+// assertion helpers
 const calledInPackages = () =>
   ChildProcessUtilities.spawn.mock.calls.map(([, , opts]) => path.basename(opts.cwd));
 

@@ -1,5 +1,7 @@
 "use strict";
 
+jest.mock("../src/utils/npm-run-script");
+
 const path = require("path");
 
 // mocked modules
@@ -16,8 +18,7 @@ const normalizeRelativeDir = require("./helpers/normalizeRelativeDir");
 // file under test
 const lernaRun = require("./helpers/command-runner")(require("../src/commands/RunCommand"));
 
-jest.mock("../src/utils/npm-run-script");
-
+// assertion helpers
 const ranInPackages = testDir =>
   npmRunScript.mock.calls.reduce((arr, [script, { args, npmClient, pkg }]) => {
     const dir = normalizeRelativeDir(testDir, pkg.location);

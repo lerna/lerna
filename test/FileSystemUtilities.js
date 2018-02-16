@@ -1,5 +1,9 @@
 "use strict";
 
+jest.mock("fs-extra");
+jest.mock("path-exists");
+jest.mock("../src/ChildProcessUtilities");
+
 const path = require("path");
 
 // mocked modules
@@ -12,10 +16,6 @@ const callsBack = require("./helpers/callsBack");
 
 // file under test
 const FileSystemUtilities = require("../src/FileSystemUtilities");
-
-jest.mock("fs-extra");
-jest.mock("path-exists");
-jest.mock("../src/ChildProcessUtilities");
 
 describe("FileSystemUtilities", () => {
   describe(".mkdirp()", () => {

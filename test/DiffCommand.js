@@ -1,5 +1,8 @@
 "use strict";
 
+jest.mock("../src/ChildProcessUtilities");
+jest.mock("../src/GitUtilities");
+
 const path = require("path");
 
 // mocked modules
@@ -12,9 +15,6 @@ const initFixture = require("./helpers/initFixture");
 
 // file under test
 const lernaDiff = require("./helpers/command-runner")(require("../src/commands/DiffCommand"));
-
-jest.mock("../src/ChildProcessUtilities");
-jest.mock("../src/GitUtilities");
 
 describe("DiffCommand", () => {
   ChildProcessUtilities.spawn.mockImplementation(callsBack(null, true));

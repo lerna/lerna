@@ -1,5 +1,8 @@
 "use strict";
 
+jest.mock("temp-write");
+jest.mock("../src/ChildProcessUtilities");
+
 const { EOL } = require("os");
 const path = require("path");
 
@@ -9,9 +12,6 @@ const ChildProcessUtilities = require("../src/ChildProcessUtilities");
 
 // file under test
 const GitUtilities = require("../src/GitUtilities");
-
-jest.mock("temp-write");
-jest.mock("../src/ChildProcessUtilities");
 
 describe("GitUtilities", () => {
   ChildProcessUtilities.exec.mockResolvedValue();

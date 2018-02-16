@@ -1,5 +1,7 @@
 "use strict";
 
+jest.mock("../src/PromptUtilities");
+
 const execa = require("execa");
 const fs = require("fs-extra");
 const path = require("path");
@@ -16,8 +18,7 @@ const updateLernaConfig = require("./helpers/updateLernaConfig");
 // file under test
 const lernaImport = require("./helpers/command-runner")(require("../src/commands/ImportCommand"));
 
-jest.mock("../src/PromptUtilities");
-
+// assertion helpers
 const lastCommitInDir = cwd => execa.stdout("git", ["log", "-1", "--format=%s"], { cwd });
 
 describe("ImportCommand", () => {

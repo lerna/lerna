@@ -1,5 +1,10 @@
 "use strict";
 
+jest.mock("get-stream");
+jest.mock("conventional-changelog-core");
+jest.mock("conventional-recommended-bump");
+jest.mock("../src/FileSystemUtilities");
+
 const dedent = require("dedent");
 const path = require("path");
 const Package = require("../src/Package");
@@ -15,11 +20,6 @@ const callsBack = require("./helpers/callsBack");
 
 // file under test
 const ConventionalCommitUtilities = require("../src/ConventionalCommitUtilities");
-
-jest.mock("get-stream");
-jest.mock("conventional-changelog-core");
-jest.mock("conventional-recommended-bump");
-jest.mock("../src/FileSystemUtilities");
 
 describe("ConventionalCommitUtilities", () => {
   FileSystemUtilities.readFile.mockResolvedValue("");

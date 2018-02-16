@@ -1,14 +1,14 @@
 "use strict";
 
-const { EOL } = require("os");
+jest.mock("../src/ChildProcessUtilities");
+
+const os = require("os");
 
 // mocked modules
 const ChildProcessUtilities = require("../src/ChildProcessUtilities");
 
 // file under test
 const npmDistTag = require("../src/utils/npm-dist-tag");
-
-jest.mock("../src/ChildProcessUtilities");
 
 describe("dist-tag", () => {
   ChildProcessUtilities.exec.mockResolvedValue();
@@ -78,7 +78,7 @@ describe("dist-tag", () => {
     const registry = "https://custom-registry/check";
 
     it("tests if a dist-tag for a given package exists", () => {
-      ChildProcessUtilities.execSync.mockReturnValue(["latest", "target-tag"].join(EOL));
+      ChildProcessUtilities.execSync.mockReturnValue(["latest", "target-tag"].join(os.EOL));
 
       expect(npmDistTag.check(pkg, "target-tag")).toBe(true);
       expect(npmDistTag.check(pkg, "latest")).toBe(true);

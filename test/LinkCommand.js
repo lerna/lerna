@@ -1,5 +1,7 @@
 "use strict";
 
+jest.mock("../src/utils/create-symlink");
+
 // mocked or stubbed modules
 const createSymlink = require("../src/utils/create-symlink");
 
@@ -11,9 +13,7 @@ const normalizeRelativeDir = require("./helpers/normalizeRelativeDir");
 // file under test
 const lernaLink = require("./helpers/command-runner")(require("../src/commands/LinkCommand"));
 
-jest.mock("../src/utils/create-symlink");
-
-// object snapshots have sorted keys
+// assertion helpers
 const symlinkedDirectories = testDir =>
   createSymlink.mock.calls.map(([src, dest, type]) => ({
     _src: normalizeRelativeDir(testDir, src),

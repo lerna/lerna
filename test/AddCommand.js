@@ -1,5 +1,7 @@
 "use strict";
 
+jest.mock("../src/commands/BootstrapCommand");
+
 const fs = require("fs-extra");
 const path = require("path");
 
@@ -13,8 +15,7 @@ const pkgMatchers = require("./helpers/pkgMatchers");
 // file under test
 const lernaAdd = require("./helpers/command-runner")(require("../src/commands/AddCommand"));
 
-jest.mock("../src/commands/BootstrapCommand");
-
+// assertion helpers
 expect.extend(pkgMatchers);
 
 const readPkg = (testDir, pkg) => fs.readJSON(path.join(testDir, pkg, "package.json"));

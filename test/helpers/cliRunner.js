@@ -1,9 +1,9 @@
 "use strict";
 
+jest.mock("is-ci", () => true);
+
 const log = require("npmlog");
 const cli = require("../../src/cli");
-
-jest.mock("is-ci", () => true);
 
 // silence logs
 log.level = "silent";

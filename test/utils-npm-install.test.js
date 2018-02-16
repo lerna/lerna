@@ -1,5 +1,9 @@
 "use strict";
 
+jest.mock("write-pkg");
+jest.mock("../src/ChildProcessUtilities");
+jest.mock("../src/FileSystemUtilities");
+
 const path = require("path");
 
 // mocked modules
@@ -12,10 +16,6 @@ const callsBack = require("./helpers/callsBack");
 
 // file under test
 const npmInstall = require("../src/utils/npm-install");
-
-jest.mock("write-pkg");
-jest.mock("../src/ChildProcessUtilities");
-jest.mock("../src/FileSystemUtilities");
 
 describe("npm-install", () => {
   ChildProcessUtilities.exec.mockResolvedValue();

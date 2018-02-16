@@ -1,5 +1,7 @@
 "use strict";
 
+jest.mock("../src/ChildProcessUtilities");
+
 // mocked modules
 const ChildProcessUtilities = require("../src/ChildProcessUtilities");
 
@@ -8,8 +10,6 @@ const callsBack = require("./helpers/callsBack");
 
 // file under test
 const npmPublish = require("../src/utils/npm-publish");
-
-jest.mock("../src/ChildProcessUtilities");
 
 describe("npm-publish", () => {
   ChildProcessUtilities.exec.mockImplementation(callsBack());

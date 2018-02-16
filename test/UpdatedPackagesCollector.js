@@ -1,12 +1,12 @@
 "use strict";
 
+jest.mock("../src/GitUtilities");
+
 // mocked modules
 const GitUtilities = require("../src/GitUtilities");
 
 // file under test
 const UpdatedPackagesCollector = require("../src/UpdatedPackagesCollector");
-
-jest.mock("../src/GitUtilities");
 
 describe("UpdatedPackagesCollector", () => {
   GitUtilities.getShortSHA.mockReturnValue("deadbeef");

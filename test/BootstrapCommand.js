@@ -1,5 +1,9 @@
 "use strict";
 
+jest.mock("../src/utils/npm-install");
+jest.mock("../src/utils/npm-run-script");
+jest.mock("../src/utils/create-symlink");
+
 // mocked or stubbed modules
 const FileSystemUtilities = require("../src/FileSystemUtilities");
 const npmInstall = require("../src/utils/npm-install");
@@ -14,11 +18,7 @@ const normalizeRelativeDir = require("./helpers/normalizeRelativeDir");
 // file under test
 const lernaBootstrap = require("./helpers/command-runner")(require("../src/commands/BootstrapCommand"));
 
-jest.mock("../src/utils/npm-install");
-jest.mock("../src/utils/npm-run-script");
-jest.mock("../src/utils/create-symlink");
-
-// object snapshots have sorted keys
+// assertion helpers
 const installedPackagesInDirectories = testDir =>
   npmInstall.dependencies.mock.calls.reduce((obj, [location, dependencies]) => {
     const relative = normalizeRelativeDir(testDir, location);
