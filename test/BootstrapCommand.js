@@ -4,6 +4,7 @@
 const FileSystemUtilities = require("../src/FileSystemUtilities");
 const npmInstall = require("../src/utils/npm-install");
 const npmRunScript = require("../src/utils/npm-run-script");
+const createSymlink = require("../src/utils/create-symlink");
 
 // helpers
 const callsBack = require("./helpers/callsBack");
@@ -15,15 +16,7 @@ const lernaBootstrap = require("./helpers/command-runner")(require("../src/comma
 
 jest.mock("../src/utils/npm-install");
 jest.mock("../src/utils/npm-run-script");
-
-// stub symlink in certain tests to reduce redundancy
-const fsSymlink = FileSystemUtilities.symlink;
-const resetSymlink = () => {
-  FileSystemUtilities.symlink = fsSymlink;
-};
-const stubSymlink = () => {
-  FileSystemUtilities.symlink = jest.fn(callsBack());
-};
+jest.mock("../src/utils/create-symlink");
 
 // object snapshots have sorted keys
 const installedPackagesInDirectories = testDir =>
@@ -47,7 +40,7 @@ const ranScriptsInDirectories = testDir =>
   }, {});
 
 const symlinkedDirectories = testDir =>
-  FileSystemUtilities.symlink.mock.calls.map(([src, dest, type]) => ({
+  createSymlink.mock.calls.map(([src, dest, type]) => ({
     _src: normalizeRelativeDir(testDir, src),
     dest: normalizeRelativeDir(testDir, dest),
     type,
@@ -62,6 +55,9 @@ describe("BootstrapCommand", () => {
   // stub runScriptInDir() because it is a huge source
   // of slowness when running tests for no good reason
   npmRunScript.mockImplementation(callsBack());
+
+  // the underlying implementation of symlinkBinary and symlinkDependencies
+  createSymlink.mockImplementation(callsBack());
 
   describe("lifecycle scripts", () => {
     it("should run preinstall, postinstall and prepublish scripts", async () => {
@@ -157,9 +153,6 @@ describe("BootstrapCommand", () => {
   });
 
   describe("with local package dependencies", () => {
-    beforeEach(stubSymlink);
-    afterEach(resetSymlink);
-
     it("should bootstrap packages", async () => {
       const testDir = await initFixture("BootstrapCommand/basic");
 
@@ -203,9 +196,6 @@ describe("BootstrapCommand", () => {
   });
 
   describe("with multiple package locations", () => {
-    beforeEach(stubSymlink);
-    afterEach(resetSymlink);
-
     it("should bootstrap packages", async () => {
       const testDir = await initFixture("BootstrapCommand/extra");
 
@@ -244,6 +234,15 @@ describe("BootstrapCommand", () => {
       );
 
       expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
+    });
+
+    it("hoists appropriately", async () => {
+      const testDir = await initFixture("BootstrapCommand/extra");
+
+      await lernaBootstrap(testDir)("--hoist");
+
+      expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
+      expect(symlinkedDirectories(testDir)).toMatchSnapshot();
     });
   });
 
@@ -284,6 +283,7 @@ describe("BootstrapCommand", () => {
       await lernaBootstrap(testDir)("--hoist");
 
       expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
+      expect(symlinkedDirectories(testDir)).toMatchSnapshot();
     });
   });
 
@@ -295,6 +295,15 @@ describe("BootstrapCommand", () => {
 
       expect(npmInstall.dependencies).not.toBeCalled();
     });
+
+    it("hoists appropriately", async () => {
+      const testDir = await initFixture("BootstrapCommand/warm");
+
+      await lernaBootstrap(testDir)("--hoist");
+
+      expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
+      expect(symlinkedDirectories(testDir)).toMatchSnapshot();
+    });
   });
 
   describe("with at least one external dependency to install", () => {
@@ -304,6 +313,15 @@ describe("BootstrapCommand", () => {
       await lernaBootstrap(testDir)();
 
       expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
+    });
+
+    it("hoists appropriately", async () => {
+      const testDir = await initFixture("BootstrapCommand/tepid");
+
+      await lernaBootstrap(testDir)("--hoist");
+
+      expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
+      expect(symlinkedDirectories(testDir)).toMatchSnapshot();
     });
   });
 

@@ -1,15 +1,14 @@
 "use strict";
 
-const _ = require("lodash");
 const async = require("async");
 const path = require("path");
-const readPkg = require("read-pkg");
 
-const Package = require("../Package");
 const FileSystemUtilities = require("../FileSystemUtilities");
+const createSymlink = require("./create-symlink");
+const resolveSymlink = require("./resolve-symlink");
+const symlinkBinary = require("./symlink-binary");
 
-module.exports = symlinkPackages;
-module.exports.bin = createBinaryLink;
+module.exports = symlinkDependencies;
 
 /**
  * Symlink all packages to the packages/node_modules directory
@@ -19,7 +18,7 @@ module.exports.bin = createBinaryLink;
  * @param {Object} logger
  * @param {Function} callback
  */
-function symlinkPackages(packages, packageGraph, logger, callback) {
+function symlinkDependencies(packages, packageGraph, logger, callback) {
   const tracker = logger.newItem("symlink packages");
 
   tracker.info("", "Symlinking packages and binaries");
@@ -48,7 +47,7 @@ function symlinkPackages(packages, packageGraph, logger, callback) {
 
       // check if dependency is already installed
       if (FileSystemUtilities.existsSync(targetDirectory)) {
-        const isDepSymlink = FileSystemUtilities.isSymlink(targetDirectory);
+        const isDepSymlink = resolveSymlink(targetDirectory);
 
         if (isDepSymlink !== false && isDepSymlink !== dependencyNode.location) {
           // installed dependency is a symlink pointing to a different location
@@ -74,12 +73,12 @@ function symlinkPackages(packages, packageGraph, logger, callback) {
 
       // create package symlink
       packageActions.push(next => {
-        FileSystemUtilities.symlink(dependencyNode.location, targetDirectory, "junction", next);
+        createSymlink(dependencyNode.location, targetDirectory, "junction", next);
       });
 
       packageActions.push(next => {
         // TODO: pass PackageGraphNodes directly instead of Packages
-        createBinaryLink(dependencyNode.pkg, currentNode.pkg, next);
+        symlinkBinary(dependencyNode.pkg, currentNode.pkg, next);
       });
     });
 
@@ -96,48 +95,4 @@ function symlinkPackages(packages, packageGraph, logger, callback) {
     tracker.finish();
     callback(err);
   });
-}
-
-/**
- * Symlink bins of srcPackage to node_modules/.bin in destPackage
- * @param {Object|string} srcPackageRef
- * @param {Object|string} destPackageRef
- * @param {Function} callback
- */
-function createBinaryLink(srcPackageRef, destPackageRef, callback) {
-  const srcPackage = resolvePackageRef(srcPackageRef);
-  const destPackage = resolvePackageRef(destPackageRef);
-
-  const actions = _.entries(srcPackage.bin)
-    .map(([name, file]) => ({
-      src: path.join(srcPackage.location, file),
-      dst: path.join(destPackage.binLocation, name),
-    }))
-    .filter(({ src }) => FileSystemUtilities.existsSync(src))
-    .map(({ src, dst }) => cb =>
-      async.series(
-        [
-          next => FileSystemUtilities.symlink(src, dst, "exec", next),
-          done => FileSystemUtilities.chmod(src, "755", done),
-        ],
-        cb
-      )
-    );
-
-  if (actions.length === 0) {
-    return callback();
-  }
-
-  const ensureBin = cb => FileSystemUtilities.mkdirp(destPackage.binLocation, cb);
-  const linkEntries = cb => async.parallel(actions, cb);
-
-  async.series([ensureBin, linkEntries], callback);
-}
-
-function resolvePackageRef(pkgRef) {
-  if (pkgRef instanceof Package) {
-    return pkgRef;
-  }
-
-  return new Package(readPkg.sync(pkgRef), pkgRef);
 }

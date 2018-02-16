@@ -11,11 +11,11 @@ const initFixture = require("./helpers/initFixture");
 const pkgMatchers = require("./helpers/pkgMatchers");
 
 // file under test
-const symlink = require("../src/utils/symlink");
+const symlinkBinary = require("../src/utils/symlink-binary");
 
 expect.extend(pkgMatchers);
 
-describe("symlink.bin()", () => {
+describe("symlink-binary", () => {
   it("should work with references", async done => {
     const testDir = await initFixture("PackageUtilities/links");
     const srcRef = path.join(testDir, "packages/package-2");
@@ -26,7 +26,7 @@ describe("symlink.bin()", () => {
       done();
     };
 
-    symlink.bin(srcRef, destRef, cb);
+    symlinkBinary(srcRef, destRef, cb);
   });
 
   it("should work with packages", async done => {
@@ -41,7 +41,7 @@ describe("symlink.bin()", () => {
       done();
     };
 
-    symlink.bin(src, dest, cb);
+    symlinkBinary(src, dest, cb);
   });
 
   it("should work with missing bin files", async done => {
@@ -54,7 +54,7 @@ describe("symlink.bin()", () => {
       done();
     };
 
-    symlink.bin(srcRef, destRef, cb);
+    symlinkBinary(srcRef, destRef, cb);
   });
 
   it("should create a link string bin entry", async done => {
@@ -67,7 +67,7 @@ describe("symlink.bin()", () => {
       done();
     };
 
-    symlink.bin(src, dest, cb);
+    symlinkBinary(src, dest, cb);
   });
 
   it("should create links for object bin entry", async done => {
@@ -80,7 +80,7 @@ describe("symlink.bin()", () => {
       done();
     };
 
-    symlink.bin(src, dest, cb);
+    symlinkBinary(src, dest, cb);
   });
 
   it("should make links targets executable", async done => {
@@ -93,7 +93,7 @@ describe("symlink.bin()", () => {
       done();
     };
 
-    symlink.bin(src, dest, cb);
+    symlinkBinary(src, dest, cb);
   });
 
   it("should preserve previous bin entries", async done => {
@@ -108,7 +108,7 @@ describe("symlink.bin()", () => {
     };
 
     async.series(
-      [cb => symlink.bin(firstSrcRef, dest, cb), cb => symlink.bin(secondSrcRef, dest, cb)],
+      [cb => symlinkBinary(firstSrcRef, dest, cb), cb => symlinkBinary(secondSrcRef, dest, cb)],
       finish
     );
   });
