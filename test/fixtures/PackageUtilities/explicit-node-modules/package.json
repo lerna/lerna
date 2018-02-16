@@ -6,7 +6,6 @@
     "package-4": "^1.0.0"
   },
   "devDependencies": {
-    "lerna": "__TEST_VERSION__",
     "@scoped/package-5": "^1.0.0"
   }
 }

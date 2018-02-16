@@ -16,17 +16,14 @@ async function copyFixture(targetDir, fixturePath) {
 }
 
 /**
- * During fixture copy, replace "__TEST_VERSION__" with the current version
- * and "__TEST_PKG_URL__" with the generated file-url.
+ * During fixture copy, replace "__TEST_PKG_URL__" with the generated file-url.
  * This is primarily for integration tests, but doesn't hurt unit tests.
  *
  * @param {String} fileName source path of file being copied
  */
 async function transform(fileName) {
   const original = await fs.readFile(fileName, "utf8");
-  const filtered = original
-    .replace(constants.__TEST_VERSION__, constants.LERNA_VERSION)
-    .replace(constants.__TEST_PKG_URL__, constants.LERNA_PKG_URL);
+  const filtered = original.replace(constants.__TEST_PKG_URL__, constants.LERNA_PKG_URL);
 
   if (original !== filtered) {
     await fs.writeFile(fileName, filtered, "utf8");
