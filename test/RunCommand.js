@@ -5,18 +5,18 @@ const log = require("npmlog");
 
 // mocked modules
 const npmRunScript = require("../src/utils/npm-run-script");
-const output = require("../src/utils/output");
 const UpdatedPackagesCollector = require("../src/UpdatedPackagesCollector");
 
 // helpers
 const callsBack = require("./helpers/callsBack");
 const initFixture = require("./helpers/initFixture");
+const consoleOutput = require("./helpers/consoleOutput");
+const loggingOutput = require("./helpers/loggingOutput");
 const normalizeRelativeDir = require("./helpers/normalizeRelativeDir");
 
 // file under test
 const lernaRun = require("./helpers/command-runner")(require("../src/commands/RunCommand"));
 
-jest.mock("../src/utils/output");
 jest.mock("../src/utils/npm-run-script");
 
 // silence logs
@@ -49,7 +49,7 @@ describe("RunCommand", () => {
       await lernaRun(testDir)("my-script");
 
       expect(ranInPackages(testDir)).toMatchSnapshot();
-      expect(output).lastCalledWith("stdout");
+      expect(consoleOutput()).toMatch("stdout\nstdout");
     });
 
     it("runs a script in packages with --stream", async () => {
@@ -108,7 +108,7 @@ describe("RunCommand", () => {
       await lernaRun(testDir)("missing-script");
 
       expect(npmRunScript).not.toBeCalled();
-      expect(output).not.toBeCalled();
+      expect(consoleOutput()).toBe("");
     });
 
     it("runs a script in all packages with --parallel", async () => {
@@ -140,14 +140,10 @@ describe("RunCommand", () => {
   describe("in a cyclical repo", () => {
     it("warns when cycles are encountered", async () => {
       const testDir = await initFixture("PackageUtilities/toposort");
-      let logMessage = null;
-
-      log.once("log.warn", e => {
-        logMessage = e.message;
-      });
 
       await lernaRun(testDir)("env");
 
+      const [logMessage] = loggingOutput("warn");
       expect(logMessage).toMatch("Dependency cycles detected, you should fix these!");
       expect(logMessage).toMatch("package-cycle-1 -> package-cycle-2 -> package-cycle-1");
       expect(logMessage).toMatch("package-cycle-2 -> package-cycle-1 -> package-cycle-2");

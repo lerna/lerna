@@ -16,7 +16,9 @@ module.exports = updateLernaConfig;
  */
 async function updateLernaConfig(testDir, updates) {
   const lernaJsonLocation = path.join(testDir, "lerna.json");
-  const lernaJson = await fs.readJson(lernaJsonLocation);
+  const lernaJson = await fs.readJSON(lernaJsonLocation);
+
   Object.assign(lernaJson, updates);
-  await fs.writeJson(lernaJsonLocation, lernaJson, { spaces: 2 });
+
+  return fs.writeJSON(lernaJsonLocation, lernaJson, { spaces: 2 });
 }

@@ -10,6 +10,7 @@ const UpdatedPackagesCollector = require("../src/UpdatedPackagesCollector");
 // helpers
 const callsBack = require("./helpers/callsBack");
 const initFixture = require("./helpers/initFixture");
+const loggingOutput = require("./helpers/loggingOutput");
 const normalizeRelativeDir = require("./helpers/normalizeRelativeDir");
 
 // file under test
@@ -57,17 +58,12 @@ describe("ExecCommand", () => {
       boom.code = 1;
       boom.cmd = "boom";
 
-      let errorLog;
-      log.once("log.error", m => {
-        errorLog = m;
-      });
-
       ChildProcessUtilities.spawn.mockImplementationOnce(callsBack(boom));
 
       try {
         await lernaExec(testDir)("boom");
       } catch (err) {
-        expect(errorLog).toHaveProperty("message", "Errored while executing 'boom' in 'package-1'");
+        expect(err.message).toBe("execa error");
       }
     });
 
@@ -201,13 +197,9 @@ describe("ExecCommand", () => {
     it("warns when cycles are encountered", async () => {
       const testDir = await initFixture("PackageUtilities/toposort");
 
-      let logMessage = null;
-      log.once("log.warn", e => {
-        logMessage = e.message;
-      });
-
       await lernaExec(testDir)("ls");
 
+      const [logMessage] = loggingOutput("warn");
       expect(logMessage).toMatch("Dependency cycles detected, you should fix these!");
       expect(logMessage).toMatch("package-cycle-1 -> package-cycle-2 -> package-cycle-1");
       expect(logMessage).toMatch("package-cycle-2 -> package-cycle-1 -> package-cycle-2");

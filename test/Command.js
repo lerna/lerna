@@ -2,12 +2,10 @@
 
 const fs = require("fs-extra");
 const execa = require("execa");
-const loadJsonFile = require("load-json-file");
 const log = require("npmlog");
 const path = require("path");
 const tempy = require("tempy");
 const touch = require("touch");
-const writeJsonFile = require("write-json-file");
 
 // partially mocked
 const ChildProcessUtilities = require("../src/ChildProcessUtilities");
@@ -15,6 +13,8 @@ const ChildProcessUtilities = require("../src/ChildProcessUtilities");
 // helpers
 const callsBack = require("./helpers/callsBack");
 const initFixture = require("./helpers/initFixture");
+const loggingOutput = require("./helpers/loggingOutput");
+const updateLernaConfig = require("./helpers/updateLernaConfig");
 const LERNA_VERSION = require("../package.json").version;
 
 // file under test
@@ -115,27 +115,19 @@ describe("Command", () => {
     it("waits to resolve when 1 child process active", async () => {
       ChildProcessUtilities.getChildProcessCount.mockReturnValueOnce(1);
 
-      let warning;
-      log.once("log.warn", m => {
-        warning = m;
-      });
-
       await testFactory();
 
-      expect(warning.message).toMatch("Waiting for 1 child process to exit.");
+      const [logMessage] = loggingOutput("warn");
+      expect(logMessage).toMatch("Waiting for 1 child process to exit.");
     });
 
     it("waits to resolve when 2 child processes active", async () => {
       ChildProcessUtilities.getChildProcessCount.mockReturnValueOnce(2);
 
-      let warning;
-      log.once("log.warn", m => {
-        warning = m;
-      });
-
       await testFactory();
 
-      expect(warning.message).toMatch("Waiting for 2 child processes to exit.");
+      const [logMessage] = loggingOutput("warn");
+      expect(logMessage).toMatch("Waiting for 2 child processes to exit.");
     });
   });
 
@@ -194,11 +186,7 @@ describe("Command", () => {
     it("is set from lerna.json config", async () => {
       const cwd = await initFixture("Command/basic");
 
-      const lernaJsonLocation = path.join(cwd, "lerna.json");
-      const lernaConfig = await loadJsonFile(lernaJsonLocation);
-      lernaConfig.loglevel = "warn";
-      await writeJsonFile(lernaJsonLocation, lernaConfig, { indent: 2 });
-
+      await updateLernaConfig(cwd, { loglevel: "warn" });
       await testFactory({ cwd, onRejected });
 
       expect(log.level).toBe("warn");
@@ -378,27 +366,7 @@ describe("Command", () => {
     class TestCommand extends Command {}
 
     describe("bootstrapConfig", () => {
-      afterEach(() => {
-        log.removeAllListeners("log.warn");
-      });
-
       class BootstrapCommand extends Command {}
-
-      it("should warn when used", () => {
-        let warning;
-        log.once("log.warn", m => {
-          warning = m;
-        });
-
-        const instance = new BootstrapCommand({ onRejected, cwd });
-
-        instance.options; // eslint-disable-line no-unused-expressions
-
-        expect(warning).toHaveProperty(
-          "message",
-          "`bootstrapConfig.ignore` has been replaced by `command.bootstrap.ignore`."
-        );
-      });
 
       it("should provide a correct value", () => {
         const instance = new BootstrapCommand({ onRejected, cwd });
@@ -408,11 +376,9 @@ describe("Command", () => {
       it("should not warn with other commands", () => {
         const instance = new TestCommand({ onRejected, cwd });
 
-        log.once("log.warn", () => {
-          throw new Error("should not warn bootstrapConfig");
-        });
-
         instance.options; // eslint-disable-line no-unused-expressions
+
+        expect(loggingOutput("warn")).toHaveLength(0);
       });
 
       it("should not provide a value to other commands", () => {
@@ -422,27 +388,7 @@ describe("Command", () => {
     });
 
     describe("publishConfig", () => {
-      afterEach(() => {
-        log.removeAllListeners("log.warn");
-      });
-
       class PublishCommand extends Command {}
-
-      it("should warn when used", () => {
-        let warning;
-        log.once("log.warn", m => {
-          warning = m;
-        });
-
-        const instance = new PublishCommand({ onRejected, cwd });
-
-        instance.options; // eslint-disable-line no-unused-expressions
-
-        expect(warning).toHaveProperty(
-          "message",
-          "`publishConfig.ignore` has been replaced by `command.publish.ignore`."
-        );
-      });
 
       it("should provide a correct value", () => {
         const instance = new PublishCommand({ onRejected, cwd });
@@ -452,11 +398,9 @@ describe("Command", () => {
       it("should not warn with other commands", () => {
         const instance = new TestCommand({ onRejected, cwd });
 
-        log.once("log.warn", () => {
-          throw new Error("should not warn publishConfig");
-        });
-
         instance.options; // eslint-disable-line no-unused-expressions
+
+        expect(loggingOutput("warn")).toHaveLength(0);
       });
 
       it("should not provide a value to other commands", () => {

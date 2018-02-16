@@ -1,7 +1,7 @@
 "use strict";
 
-const _ = require("lodash");
 const log = require("npmlog");
+const normalizeNewline = require("normalize-newline");
 
 module.exports = loggingOutput;
 
@@ -10,19 +10,18 @@ afterEach(() => {
   log.record.length = 0;
 });
 
-const getVisibleMessages = _.flow(
-  list =>
-    _.filter(
-      list,
-      m =>
-        // select all info, warn, and error logs
-        log.levels[m.level] >= log.levels.info
-    ),
-  list => _.map(list, "message"),
-  // remove empty logs ("newline")
-  _.compact
-);
-
-function loggingOutput() {
-  return getVisibleMessages(log.record);
+function loggingOutput(minLevel = "info") {
+  // returns an array of log messages at or above the prescribed minLevel
+  return (
+    log.record
+      // select all non-empty info, warn, or error logs
+      .filter(m => log.levels[m.level] >= log.levels[minLevel] && m.message)
+      // return just the normalized message content
+      .map(m =>
+        normalizeNewline(m.message)
+          .split("\n")
+          .map(line => line.trimRight())
+          .join("\n")
+      )
+  );
 }
