@@ -1,6 +1,5 @@
 "use strict";
 
-const _ = require("lodash");
 const writeJsonFile = require("write-json-file");
 const writePkg = require("write-pkg");
 
@@ -118,8 +117,10 @@ class InitCommand extends Command {
 
     if (this.exact) {
       // ensure --exact is preserved for future init commands
-      const configKey = lernaJson.commands ? "commands" : "command";
-      _.set(lernaJson, `${configKey}.init.exact`, true);
+      const commandConfig = lernaJson.commands || lernaJson.command || (lernaJson.command = {});
+      const initConfig = commandConfig.init || (commandConfig.init = {});
+
+      initConfig.exact = true;
     }
 
     writeJsonFile.sync(this.repository.lernaJsonLocation, lernaJson, { indent: 2 });
