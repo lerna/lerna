@@ -114,6 +114,9 @@
       "<rootDir>/src",
       "<rootDir>/test"
     ],
+    "setupFiles": [
+      "<rootDir>/test/helpers/silence-logging.js"
+    ],
     "testEnvironment": "node",
     "testMatch": [
       "**/test/*.js"
