@@ -2,10 +2,26 @@
 
 const npa = require("npm-package-arg");
 const path = require("path");
-const _ = require("lodash");
 
 function binSafeName(rawName) {
   return rawName[0] === "@" ? rawName.substring(rawName.indexOf("/") + 1) : rawName;
+}
+
+// package.json files are not that complicated, so this is intentionally naïve
+function shallowCopy(json) {
+  return Object.keys(json).reduce((obj, key) => {
+    const val = json[key];
+
+    if (Array.isArray(val)) {
+      obj[key] = val.slice();
+    } else if (val && typeof val === "object") {
+      obj[key] = Object.assign({}, val);
+    } else {
+      obj[key] = val;
+    }
+
+    return obj;
+  }, {});
 }
 
 class Package {
@@ -95,14 +111,14 @@ class Package {
       // "private"
       json: {
         get() {
-          return pkg;
+          return shallowCopy(pkg);
         },
       },
     });
   }
 
   toJSON() {
-    return this.serialize(_.cloneDeep(this.json));
+    return this.serialize(this.json);
   }
 }
 
