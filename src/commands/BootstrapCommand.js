@@ -1,6 +1,5 @@
 "use strict";
 
-const _ = require("lodash");
 const async = require("async");
 const dedent = require("dedent");
 const getPort = require("get-port");
@@ -302,10 +301,13 @@ class BootstrapCommand extends Command {
    */
   getDependenciesToInstall(tracker) {
     // find package by name
-    const findPackage = (name, version) =>
-      _.find(this.packages, pkg => pkg.name === name && (!version || semver.satisfies(pkg.version, version)));
+    const findPackage = (name, version) => {
+      const node = this.packageGraph.get(name);
 
-    const hasPackage = (name, version) => Boolean(findPackage(name, version));
+      if (node && semver.satisfies(node.version, version)) {
+        return node.pkg;
+      }
+    };
 
     // Configuration for what packages to hoist may be in lerna.json or it may
     // come in as command line options.
@@ -370,7 +372,7 @@ class BootstrapCommand extends Command {
         )
 
         // match external and version mismatched local packages
-        .filter(dep => !hasPackage(dep.name, dep.version) || !hasMatchingDependency(pkg, dep))
+        .filter(dep => !findPackage(dep.name, dep.version) || !hasMatchingDependency(pkg, dep))
 
         .forEach(({ name, version }) => {
           // Get the object for this package, auto-vivifying.
@@ -434,19 +436,19 @@ class BootstrapCommand extends Command {
           return;
         }
 
-        dependents[version].forEach(pkg => {
+        dependents[version].forEach(pkgName => {
           if (rootVersion) {
             tracker.warn(
               "EHOIST_PKG_VERSION",
-              `"${pkg}" package depends on ${name}@${version}, ` +
+              `"${pkgName}" package depends on ${name}@${version}, ` +
                 `which differs from the hoisted ${name}@${rootVersion}.`
             );
           }
 
           // only install dependency if it's not already installed
-          (leaves[pkg] || (leaves[pkg] = [])).push({
+          (leaves[pkgName] || (leaves[pkgName] = [])).push({
             dependency: `${name}@${version}`,
-            isSatisfied: hasDependencyInstalled(findPackage(pkg), name),
+            isSatisfied: hasDependencyInstalled(this.packageGraph.get(pkgName).pkg, name),
           });
         });
       });
