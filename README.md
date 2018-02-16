@@ -199,12 +199,6 @@ When run, this command will:
 
 `lerna bootstrap` respects the `--ignore`, `--ignore-scripts`, `--scope` and `--include-filtered-dependencies` flags (see [Flags](#flags)).
 
-Pass extra arguments to npm client by placing them after `--`:
-
-```sh
-$ lerna bootstrap -- --production --no-optional
-```
-
 May also be configured in `lerna.json`:
 
 ```js
