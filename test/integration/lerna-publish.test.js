@@ -59,6 +59,9 @@ describe("lerna publish", () => {
     if (process.cwd() !== currentDirectory) {
       process.chdir(currentDirectory);
     }
+
+    // consoleOutput creates a mock
+    jest.clearAllMocks();
   });
 
   test("exit 0 when no updates", async () => {
