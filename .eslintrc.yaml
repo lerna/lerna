@@ -27,6 +27,11 @@
           - err # Error decoration
           - obj # .reduce() object
           - pkg # Package instance
+    no-restricted-syntax:
+      - error
+      - ForInStatement
+      - LabeledStatement
+      - WithStatement
     no-underscore-dangle:
       - error
       - allowAfterThis: true
