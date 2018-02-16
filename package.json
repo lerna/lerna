@@ -38,6 +38,7 @@
     "conventional-changelog-core": "^2.0.3",
     "conventional-recommended-bump": "^2.0.4",
     "dedent": "^0.7.0",
+    "escape-string-regexp": "^1.0.5",
     "execa": "^0.9.0",
     "find-up": "^2.1.0",
     "fs-extra": "^5.0.0",
