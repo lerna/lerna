@@ -90,7 +90,7 @@ class Command {
     log.heading = "lerna";
 
     this._argv = argv;
-    log.silly("argv", filterFlags(argv));
+    log.silly("argv", argv);
 
     this.lernaVersion = LERNA_VERSION;
     log.info("version", this.lernaVersion);
@@ -445,15 +445,6 @@ function cleanStack(err, className) {
   const cutoff = new RegExp(`^    at ${className}._attempt .*$`);
   const relevantIndex = lines.findIndex(line => cutoff.test(line));
   return lines.slice(0, relevantIndex).join("\n");
-}
-
-/**
- * Passed argv from yargs, return an object that contains _only_
- * what was passed on the command line, omitting undefined values
- * and yargs spam.
- */
-function filterFlags(argv) {
-  return _.omit(_.omitBy(argv, _.isNil), ["h", "help", "v", "version", "$0"]);
 }
 
 module.exports = Command;
