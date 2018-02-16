@@ -1,11 +1,11 @@
 "use strict";
 
-const { escapeRegExp } = require("lodash");
+const _ = require("lodash");
 const hostedGitInfo = require("hosted-git-info");
 
 class GitVersionParser {
   constructor(versionPrefix = "v") {
-    this._gitUrlPattern = new RegExp(`(.+?#${escapeRegExp(versionPrefix)})(.+)$`);
+    this._gitUrlPattern = new RegExp(`(.+?#${_.escapeRegExp(versionPrefix)})(.+)$`);
   }
 
   parseVersion(version) {
