@@ -1,6 +1,5 @@
 "use strict";
 
-const _ = require("lodash");
 const async = require("async");
 const path = require("path");
 const readPkg = require("read-pkg");
@@ -21,9 +20,9 @@ function symlinkBinary(srcPackageRef, destPackageRef, callback) {
   const srcPackage = resolvePackageRef(srcPackageRef);
   const destPackage = resolvePackageRef(destPackageRef);
 
-  const actions = _.entries(srcPackage.bin)
-    .map(([name, file]) => ({
-      src: path.join(srcPackage.location, file),
+  const actions = Object.keys(srcPackage.bin)
+    .map(name => ({
+      src: path.join(srcPackage.location, srcPackage.bin[name]),
       dst: path.join(destPackage.binLocation, name),
     }))
     .filter(({ src }) => FileSystemUtilities.existsSync(src))
