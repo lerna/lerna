@@ -15,7 +15,7 @@ const callsBack = require("./helpers/callsBack");
 const initFixture = require("./helpers/initFixture");
 const loggingOutput = require("./helpers/loggingOutput");
 const updateLernaConfig = require("./helpers/updateLernaConfig");
-const LERNA_VERSION = require("../package.json").version;
+const { LERNA_VERSION } = require("./helpers/constants");
 
 // file under test
 const Command = require("../src/Command");
