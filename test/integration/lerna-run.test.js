@@ -20,7 +20,6 @@ describe("lerna run", () => {
       // args below tell npm to be quiet
       "--",
       "--silent",
-      "--onload-script=false",
     ];
     const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
     expect(stdout).toBe("package-1");
@@ -38,7 +37,6 @@ describe("lerna run", () => {
       // args below tell npm to be quiet
       "--",
       "--silent",
-      "--onload-script=false",
     ];
     const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
     expect(stdout).toBe("package-4");
@@ -55,7 +53,6 @@ describe("lerna run", () => {
       // args below tell npm to be quiet
       "--",
       "--silent",
-      "--onload-script=false",
     ];
     const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
     expect(stdout).toMatchSnapshot("stdout");
@@ -71,7 +68,6 @@ describe("lerna run", () => {
       // args below tell npm to be quiet
       "--",
       "--silent",
-      "--onload-script=false",
     ];
     const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
     expect(stderr).toMatchSnapshot("stderr");
@@ -92,7 +88,6 @@ describe("lerna run", () => {
       // args below tell npm to be quiet
       "--",
       "--silent",
-      "--onload-script=false",
     ];
     const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
     expect(stderr).toMatchSnapshot("stderr");
