@@ -10,7 +10,6 @@
   "scripts": {
     "ci": "npm test -- --coverage --verbose && npm run integration",
     "fix": "npm run lint -- --fix",
-    "preintegration": "npm pack",
     "integration": "cross-env LC_ALL=en-US NODE_ENV=test jest --config jest.integration.js",
     "lint": "eslint . --ignore-path .gitignore --cache",
     "pretest": "npm run lint",
