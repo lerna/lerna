@@ -470,14 +470,3 @@ Changes:
  - package-5: 1.0.0 => 1.1.0-alpha.SHA (private)
 
 `;
-
-exports[`lerna publish uses meta suffix from canary flag: stdout 1`] = `
-
-Changes:
- - package-1: 1.0.0 => 1.1.0-beta.SHA
- - package-2: 1.0.0 => 1.1.0-beta.SHA
- - package-3: 1.0.0 => 1.1.0-beta.SHA
- - package-4: 1.0.0 => 1.1.0-beta.SHA
- - package-5: 1.0.0 => 1.1.0-beta.SHA (private)
-
-`;

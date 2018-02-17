@@ -110,14 +110,6 @@ describe("lerna publish", () => {
     expect(stdout).toMatchSnapshot("stdout");
   });
 
-  test("uses meta suffix from canary flag", async () => {
-    const cwd = await initFixture("PublishCommand/normal");
-    const args = ["publish", "--canary=beta", "--skip-npm", "--yes"];
-
-    const { stdout } = await runner(cwd)(...args);
-    expect(stdout).toMatchSnapshot("stdout");
-  });
-
   test("updates independent versions", async () => {
     const cwd = await initFixture("PublishCommand/independent");
     const args = ["publish", "--skip-npm", "--cd-version=major", "--yes"];
