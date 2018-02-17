@@ -1,10 +1,4 @@
 {
   "name": "integration",
-  "private": true,
-  "scripts": {
-    "clean": "lerna clean --yes"
-  },
-  "devDependencies": {
-    "lerna": "__TEST_PKG_URL__"
-  }
+  "private": true
 }
