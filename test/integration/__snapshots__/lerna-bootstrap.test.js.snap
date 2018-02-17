@@ -1,13 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`lerna bootstrap --npm-client yarn: lockfiles 1`] = `
-Array [
-  package-1/yarn.lock,
-  package-2/yarn.lock,
-  package-3/yarn.lock,
-]
-`;
-
 exports[`lerna bootstrap --npm-client yarn: stderr 1`] = `
 lerna info version __TEST_VERSION__
 lerna info Bootstrapping 4 packages
@@ -47,7 +39,3 @@ cli package-2 OK
 package-3 cli1 OK
 package-3 cli2 package-2 OK
 `;
-
-exports[`lerna bootstrap passes remaining arguments + npmClientArgs to npm client 1`] = `install,--production,--no-optional`;
-
-exports[`lerna bootstrap passes remaining arguments to npm client 1`] = `install,--no-optional`;
