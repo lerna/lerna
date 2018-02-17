@@ -134,44 +134,6 @@ describe("lerna publish", () => {
     expect(commitMessage).toMatchSnapshot("commit");
   });
 
-  test("fixed mode --conventional-commits recommends versions for each publish", async () => {
-    const cwd = await initFixture("PublishCommand/normal-no-inter-dependencies", "chore: Init repo");
-
-    // conventional-recommended-bump is incapable of accepting cwd config :P
-    process.chdir(cwd);
-
-    const lerna = runner(cwd);
-    const args = [
-      "publish",
-      "--conventional-commits",
-      // "--skip-git", Note: git is not skipped to ensure creating tags for each publish execution works
-      "--skip-npm",
-      "--yes",
-    ];
-
-    // publish patch (all)
-    const { stdout: out1 } = await lerna(...args);
-
-    await commitChangeToPackage(cwd, "package-1", "feat: foo", { foo: true });
-
-    // publish minor (package-1)
-    const { stdout: out2 } = await lerna(...args);
-
-    await commitChangeToPackage(cwd, "package-2", "feat: bar", { bar: true });
-
-    // publish minor (package-2)
-    const { stdout: out3 } = await lerna(...args);
-
-    await commitChangeToPackage(cwd, "package-2", `fix: flip${os.EOL}${os.EOL}BREAKING CHANGE: yup`, {
-      bar: false,
-    });
-
-    // publish major (force all)
-    const { stdout: out4 } = await lerna(...args, "--force-publish");
-
-    expect([out1, out2, out3, out4]).toMatchSnapshot();
-  });
-
   ["normal", "independent"].forEach(flavor =>
     test(`${flavor} mode --conventional-commits changelog`, async () => {
       const cwd = await initFixture(`PublishCommand/${flavor}`, "feat: init repo");
