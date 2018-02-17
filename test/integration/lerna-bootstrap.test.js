@@ -36,14 +36,6 @@ describe("lerna bootstrap", () => {
       expect(stdout).toMatchSnapshot("stdout");
     });
 
-    test("respects ignore flag", async () => {
-      const cwd = await initFixture("BootstrapCommand/integration");
-      const args = ["bootstrap", "--ignore", "@integration/package-1"];
-
-      const stderr = await execa.stderr(LERNA_BIN, args, { cwd });
-      expect(stderr).toMatchSnapshot("stderr");
-    });
-
     test("--npm-client yarn", async () => {
       const cwd = await initFixture("BootstrapCommand/integration");
       const args = ["bootstrap", "--npm-client", "yarn"];

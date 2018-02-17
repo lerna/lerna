@@ -51,16 +51,3 @@ package-3 cli2 package-2 OK
 exports[`lerna bootstrap from CLI passes remaining arguments + npmClientArgs to npm client 1`] = `install,--production,--no-optional`;
 
 exports[`lerna bootstrap from CLI passes remaining arguments to npm client 1`] = `install,--no-optional`;
-
-exports[`lerna bootstrap from CLI respects ignore flag: stderr 1`] = `
-lerna info version __TEST_VERSION__
-lerna info ignore @integration/package-1
-lerna info Bootstrapping 3 packages
-lerna info lifecycle preinstall
-lerna info Installing external dependencies
-lerna info Symlinking packages and binaries
-lerna info lifecycle postinstall
-lerna info lifecycle prepublish
-lerna info lifecycle prepare
-lerna success Bootstrapped 3 packages
-`;
