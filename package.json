@@ -8,7 +8,7 @@
     "src"
   ],
   "scripts": {
-    "ci": "npm test -- --coverage --verbose && npm run integration",
+    "ci": "npm test -- --ci --coverage --verbose && npm run integration -- --ci",
     "fix": "npm run lint -- --fix",
     "integration": "cross-env LC_ALL=en-US NODE_ENV=test jest --config jest.integration.js",
     "lint": "eslint . --ignore-path .gitignore --cache",
