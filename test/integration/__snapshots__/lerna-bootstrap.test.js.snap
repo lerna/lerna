@@ -48,18 +48,6 @@ package-3 cli1 OK
 package-3 cli2 package-2 OK
 `;
 
-exports[`lerna bootstrap from CLI git repo check is ignored by default: stderr 1`] = `
-lerna info version __TEST_VERSION__
-lerna info Bootstrapping 4 packages
-lerna info lifecycle preinstall
-lerna info Installing external dependencies
-lerna info Symlinking packages and binaries
-lerna info lifecycle postinstall
-lerna info lifecycle prepublish
-lerna info lifecycle prepare
-lerna success Bootstrapped 4 packages
-`;
-
 exports[`lerna bootstrap from CLI passes remaining arguments + npmClientArgs to npm client 1`] = `install,--production,--no-optional`;
 
 exports[`lerna bootstrap from CLI passes remaining arguments to npm client 1`] = `install,--no-optional`;

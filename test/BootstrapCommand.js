@@ -4,6 +4,9 @@ jest.mock("../src/utils/npm-install");
 jest.mock("../src/utils/npm-run-script");
 jest.mock("../src/utils/create-symlink");
 
+const fs = require("fs-extra");
+const path = require("path");
+
 // mocked or stubbed modules
 const FileSystemUtilities = require("../src/FileSystemUtilities");
 const npmInstall = require("../src/utils/npm-install");
@@ -335,16 +338,6 @@ describe("BootstrapCommand", () => {
     });
   });
 
-  describe("zero packages", () => {
-    it("should succeed in repositories with zero packages", async () => {
-      const testDir = await initFixture("BootstrapCommand/zero-pkgs");
-
-      const { exitCode } = await lernaBootstrap(testDir)();
-
-      expect(exitCode).toBe(0);
-    });
-  });
-
   describe("with registry config", () => {
     it("should install packages from registry", async () => {
       const testDir = await initFixture("BootstrapCommand/registries");
@@ -448,5 +441,23 @@ describe("BootstrapCommand", () => {
         expect(err.message).toMatch("Dependency cycles detected, you should fix these!");
       }
     });
+  });
+
+  it("succeeds in repositories with zero packages", async () => {
+    const testDir = await initFixture("BootstrapCommand/zero-pkgs");
+
+    const { exitCode } = await lernaBootstrap(testDir)();
+
+    expect(exitCode).toBe(0);
+  });
+
+  it("does not require an initialized git repo", async () => {
+    const testDir = await initFixture("BootstrapCommand/zero-pkgs");
+
+    fs.remove(path.join(testDir, ".git"));
+
+    const { exitCode } = await lernaBootstrap(testDir)();
+
+    expect(exitCode).toBe(0);
   });
 });

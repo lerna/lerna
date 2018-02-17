@@ -5,11 +5,9 @@ const fs = require("fs-extra");
 const globby = require("globby");
 const normalizePath = require("normalize-path");
 const path = require("path");
-const tempy = require("tempy");
 
 const { LERNA_BIN } = require("../helpers/constants");
 const initFixture = require("../helpers/initFixture");
-const copyFixture = require("../helpers/copyFixture");
 
 describe("lerna bootstrap", () => {
   const npmTest = cwd =>
@@ -41,15 +39,6 @@ describe("lerna bootstrap", () => {
     test("respects ignore flag", async () => {
       const cwd = await initFixture("BootstrapCommand/integration");
       const args = ["bootstrap", "--ignore", "@integration/package-1"];
-
-      const stderr = await execa.stderr(LERNA_BIN, args, { cwd });
-      expect(stderr).toMatchSnapshot("stderr");
-    });
-
-    test("git repo check is ignored by default", async () => {
-      const cwd = tempy.directory();
-      await copyFixture(cwd, "BootstrapCommand/integration");
-      const args = ["bootstrap"];
 
       const stderr = await execa.stderr(LERNA_BIN, args, { cwd });
       expect(stderr).toMatchSnapshot("stderr");
