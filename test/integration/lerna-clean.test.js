@@ -1,11 +1,10 @@
 "use strict";
 
-const execa = require("execa");
 const globby = require("globby");
 const normalizePath = require("normalize-path");
 const path = require("path");
 
-const { LERNA_BIN } = require("../helpers/constants");
+const cliRunner = require("../helpers/cli-runner");
 const initFixture = require("../helpers/initFixture");
 
 describe("lerna clean", () => {
@@ -23,7 +22,7 @@ describe("lerna clean", () => {
     const cwd = await initFixture("CleanCommand/basic");
     const args = ["clean", "--yes", "--concurrency=1"];
 
-    const stderr = await execa.stderr(LERNA_BIN, args, { cwd });
+    const { stderr } = await cliRunner(cwd)(...args);
     expect(normalizeLog(cwd)(stderr)).toMatchSnapshot("stderr");
 
     const found = await globby(["package-*/node_modules"], { cwd });

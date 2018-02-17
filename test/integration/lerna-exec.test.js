@@ -1,8 +1,6 @@
 "use strict";
 
-const execa = require("execa");
-
-const { LERNA_BIN } = require("../helpers/constants");
+const cliRunner = require("../helpers/cli-runner");
 const initFixture = require("../helpers/initFixture");
 const initExecTest = require("../helpers/initExecTest");
 
@@ -22,7 +20,7 @@ describe("lerna exec", () => {
       "-1",
     ];
 
-    const { stdout } = await execa(LERNA_BIN, args, { cwd, env });
+    const { stdout } = await cliRunner(cwd, env)(...args);
     expect(stdout).toMatchSnapshot();
   });
 
@@ -36,7 +34,7 @@ describe("lerna exec", () => {
       // no args to exec-test
     ];
 
-    const { stdout } = await execa(LERNA_BIN, args, { cwd, env });
+    const { stdout } = await cliRunner(cwd, env)(...args);
     expect(stdout).toMatchSnapshot();
   });
 
@@ -49,7 +47,7 @@ describe("lerna exec", () => {
       process.platform === "win32" ? "%LERNA_PACKAGE_NAME%" : "$LERNA_PACKAGE_NAME",
     ];
 
-    const { stdout } = await execa(LERNA_BIN, args, { cwd });
+    const { stdout } = await cliRunner(cwd)(...args);
     expect(stdout).toMatchSnapshot();
   });
 
@@ -63,7 +61,7 @@ describe("lerna exec", () => {
       "-C",
     ];
 
-    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd, env });
+    const { stdout, stderr } = await cliRunner(cwd, env)(...args);
     expect(stderr).toMatch(EXEC_TEST_COMMAND);
 
     // order is non-deterministic, so assert individually
@@ -83,7 +81,7 @@ describe("lerna exec", () => {
       "-C",
     ];
 
-    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd, env });
+    const { stdout, stderr } = await cliRunner(cwd, env)(...args);
     expect(stderr).toMatch(EXEC_TEST_COMMAND);
 
     // order is non-deterministic, so assert individually
@@ -97,7 +95,7 @@ describe("lerna exec", () => {
     const cwd = await initFixture("ExecCommand/basic");
     const args = ["exec", EXEC_TEST_COMMAND, "--stream", "-C"];
 
-    const { stdout } = await execa(LERNA_BIN, args, { cwd, env });
+    const { stdout } = await cliRunner(cwd, env)(...args);
 
     // order is non-deterministic, so assert individually
     expect(stdout).toMatch("package-1: file-1.js");
@@ -110,7 +108,7 @@ describe("lerna exec", () => {
     const cwd = await initFixture("ExecCommand/basic");
     const args = ["exec", "--stream", EXEC_TEST_COMMAND, "-C"];
 
-    const { stdout } = await execa(LERNA_BIN, args, { cwd, env });
+    const { stdout } = await cliRunner(cwd, env)(...args);
 
     // order is non-deterministic, so assert individually
     expect(stdout).toMatch("package-1: file-1.js");
@@ -123,7 +121,7 @@ describe("lerna exec", () => {
     const cwd = await initFixture("ExecCommand/basic");
     const args = ["exec", "--bail=false", "--concurrency=1", "--", "npm", "run", "fail-or-succeed"];
 
-    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
+    const { stdout, stderr } = await cliRunner(cwd)(...args);
     expect(stderr).toMatch("Failed at the package-1@1.0.0 fail-or-succeed script");
     expect(stdout).toMatch("failure!");
     expect(stdout).toMatch("success!");
@@ -133,7 +131,7 @@ describe("lerna exec", () => {
     const cwd = await initFixture("ExecCommand/basic");
     const args = ["exec", "--no-bail", "--concurrency=1", "--", "npm", "run", "fail-or-succeed"];
 
-    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
+    const { stdout, stderr } = await cliRunner(cwd)(...args);
     expect(stderr).toMatch("Failed at the package-1@1.0.0 fail-or-succeed script");
     expect(stdout).toMatch("failure!");
     expect(stdout).toMatch("success!");

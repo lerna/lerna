@@ -1,8 +1,6 @@
 "use strict";
 
-const execa = require("execa");
-
-const { LERNA_BIN } = require("../helpers/constants");
+const cliRunner = require("../helpers/cli-runner");
 const initFixture = require("../helpers/initFixture");
 
 /**
@@ -21,7 +19,7 @@ describe("lerna run", () => {
       "--",
       "--silent",
     ];
-    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
+    const { stdout, stderr } = await cliRunner(cwd)(...args);
     expect(stdout).toBe("package-1");
     expect(stderr).toMatchSnapshot("stderr");
   });
@@ -38,7 +36,7 @@ describe("lerna run", () => {
       "--",
       "--silent",
     ];
-    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
+    const { stdout, stderr } = await cliRunner(cwd)(...args);
     expect(stdout).toBe("package-4");
     expect(stderr).toMatchSnapshot("stderr");
   });
@@ -54,7 +52,7 @@ describe("lerna run", () => {
       "--",
       "--silent",
     ];
-    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
+    const { stdout, stderr } = await cliRunner(cwd)(...args);
     expect(stdout).toMatchSnapshot("stdout");
     expect(stderr).toMatchSnapshot("stderr");
   });
@@ -69,7 +67,7 @@ describe("lerna run", () => {
       "--",
       "--silent",
     ];
-    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
+    const { stdout, stderr } = await cliRunner(cwd)(...args);
     expect(stderr).toMatchSnapshot("stderr");
 
     // order is non-deterministic, so assert each item seperately
@@ -89,7 +87,7 @@ describe("lerna run", () => {
       "--",
       "--silent",
     ];
-    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
+    const { stdout, stderr } = await cliRunner(cwd)(...args);
     expect(stderr).toMatchSnapshot("stderr");
 
     // order is non-deterministic, so assert each item seperately

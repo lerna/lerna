@@ -10,7 +10,7 @@ const tempWrite = require("temp-write");
 const path = require("path");
 const os = require("os");
 
-const { LERNA_BIN } = require("../helpers/constants");
+const cliRunner = require("../helpers/cli-runner");
 const initFixture = require("../helpers/initFixture");
 const loadPkgManifests = require("../helpers/loadPkgManifests");
 
@@ -25,8 +25,6 @@ expect.addSnapshotSerializer({
     return val && typeof val === "string";
   },
 });
-
-const runner = cwd => (...args) => execa(LERNA_BIN, args, { cwd });
 
 const lastCommitMessage = cwd =>
   execa.stdout("git", ["log", "-1", "--format=%B"], { cwd }).then(normalizeNewline);
@@ -68,7 +66,7 @@ describe("lerna publish", () => {
 
     await execa("git", ["tag", "-a", "v1.0.0", "-m", "v1.0.0"], { cwd });
 
-    const { code, stdout } = await runner(cwd)(...args);
+    const { code, stdout } = await cliRunner(cwd)(...args);
 
     expect(code).toBe(0);
     expect(stdout).toBe("");
@@ -78,7 +76,7 @@ describe("lerna publish", () => {
     const cwd = await initFixture("PublishCommand/normal");
     const args = ["publish", "--skip-npm", "--cd-version=patch", "--yes"];
 
-    const { stdout } = await runner(cwd)(...args);
+    const { stdout } = await cliRunner(cwd)(...args);
     expect(stdout).toMatchSnapshot("stdout");
 
     const [allPackageJsons, commitMessage] = await Promise.all([
@@ -97,7 +95,7 @@ describe("lerna publish", () => {
     await execa("git", ["tag", "v1.0.0", "-m", "v1.0.0"], { cwd });
     await commitChangeToPackage(cwd, "package-1", "change", { change: true });
 
-    await runner(cwd)(...args);
+    await cliRunner(cwd)(...args);
 
     expect(await loadPkgManifests(cwd)).toMatchSnapshot();
   });
@@ -106,7 +104,7 @@ describe("lerna publish", () => {
     const cwd = await initFixture("PublishCommand/normal");
     const args = ["publish", "--canary", "--skip-npm", "--yes"];
 
-    const { stdout } = await runner(cwd)(...args);
+    const { stdout } = await cliRunner(cwd)(...args);
     expect(stdout).toMatchSnapshot("stdout");
   });
 
@@ -114,7 +112,7 @@ describe("lerna publish", () => {
     const cwd = await initFixture("PublishCommand/independent");
     const args = ["publish", "--skip-npm", "--cd-version=major", "--yes"];
 
-    const { stdout } = await runner(cwd)(...args);
+    const { stdout } = await cliRunner(cwd)(...args);
     expect(stdout).toMatchSnapshot("stdout");
 
     const [allPackageJsons, commitMessage] = await Promise.all([
@@ -144,7 +142,7 @@ describe("lerna publish", () => {
       // conventional-recommended-bump is incapable of accepting cwd config :P
       process.chdir(cwd);
 
-      const { stdout } = await runner(cwd)(...args);
+      const { stdout } = await cliRunner(cwd)(...args);
       expect(stdout).toMatchSnapshot();
 
       const changelogFilePaths = await globby(["CHANGELOG.md"], { cwd, absolute: true, matchBase: true });
@@ -160,7 +158,7 @@ describe("lerna publish", () => {
     await execa("git", ["tag", "v1.0.0", "-m", "v1.0.0"], { cwd });
     await commitChangeToPackage(cwd, "package-1", "feat(package-1): Add foo", { foo: true });
 
-    await runner(cwd)("publish", "--cd-version=major", "--skip-npm", "--yes");
+    await cliRunner(cwd)("publish", "--cd-version=major", "--skip-npm", "--yes");
 
     expect(
       await execa.stdout("git", ["show", "--unified=0", "--ignore-space-at-eol", "--format=%s"], { cwd })

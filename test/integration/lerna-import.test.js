@@ -1,8 +1,6 @@
 "use strict";
 
-const execa = require("execa");
-
-const { LERNA_BIN } = require("../helpers/constants");
+const cliRunner = require("../helpers/cli-runner");
 const initFixture = require("../helpers/initFixture");
 const loadPkgManifests = require("../helpers/loadPkgManifests");
 
@@ -13,9 +11,7 @@ describe("lerna import", () => {
       initFixture("ImportCommand/basic"),
     ]);
 
-    const args = ["import", externalPath, "--yes"];
-
-    await execa(LERNA_BIN, args, { cwd });
+    await cliRunner(cwd)("import", externalPath, "--yes");
 
     const allPackageJsons = await loadPkgManifests(cwd);
     expect(allPackageJsons).toMatchSnapshot();

@@ -1,11 +1,10 @@
 "use strict";
 
-const execa = require("execa");
 const loadJsonFile = require("load-json-file");
 const path = require("path");
 const tempy = require("tempy");
 
-const { LERNA_BIN } = require("../helpers/constants");
+const cliRunner = require("../helpers/cli-runner");
 const initFixture = require("../helpers/initFixture");
 
 describe("lerna init", () => {
@@ -16,7 +15,7 @@ describe("lerna init", () => {
   test("initializes empty directory", async () => {
     const cwd = tempy.directory();
 
-    const stderr = await execa.stderr(LERNA_BIN, ["init"], { cwd });
+    const { stderr } = await cliRunner(cwd)("init");
     expect(stderr).toMatchSnapshot("stderr");
 
     const [packageJson, lernaJson] = await loadMetaData(cwd);
@@ -27,7 +26,7 @@ describe("lerna init", () => {
   test("updates existing metadata", async () => {
     const cwd = await initFixture("InitCommand/updates");
 
-    const stderr = await execa.stderr(LERNA_BIN, ["init", "--exact"], { cwd });
+    const { stderr } = await cliRunner(cwd)("init", "--exact");
     expect(stderr).toMatchSnapshot("stderr");
 
     const [packageJson, lernaJson] = await loadMetaData(cwd);
