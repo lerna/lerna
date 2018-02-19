@@ -9,12 +9,12 @@ const GitUtilities = require("./GitUtilities");
 const GitVersionParser = require("./GitVersionParser");
 const PackageGraph = require("./PackageGraph");
 const Repository = require("./Repository");
-const writeLogFile = require("./utils/writeLogFile");
+const writeLogFile = require("./utils/write-log-file");
 const UpdatedPackagesCollector = require("./UpdatedPackagesCollector");
 const VersionSerializer = require("./VersionSerializer");
 const collectPackages = require("./utils/collect-packages");
 const filterPackages = require("./utils/filter-packages");
-const ValidationError = require("./utils/ValidationError");
+const ValidationError = require("./utils/validation-error");
 
 // handle log.success()
 log.addLevel("success", 3001, { fg: "green", bold: true });

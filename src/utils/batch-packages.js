@@ -3,7 +3,7 @@
 const log = require("npmlog");
 
 const PackageGraph = require("../PackageGraph");
-const ValidationError = require("./ValidationError");
+const ValidationError = require("./validation-error");
 
 module.exports = batchPackages;
 

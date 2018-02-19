@@ -24,7 +24,7 @@ const npmDistTag = require("../utils/npm-dist-tag");
 const npmPublish = require("../utils/npm-publish");
 const npmRunScript = require("../utils/npm-run-script");
 const batchPackages = require("../utils/batch-packages");
-const ValidationError = require("../utils/ValidationError");
+const ValidationError = require("../utils/validation-error");
 
 exports.handler = function handler(argv) {
   // eslint-disable-next-line no-use-before-define

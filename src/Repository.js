@@ -7,7 +7,7 @@ const loadJsonFile = require("load-json-file");
 const log = require("npmlog");
 const path = require("path");
 
-const ValidationError = require("./utils/ValidationError");
+const ValidationError = require("./utils/validation-error");
 const Package = require("./Package");
 
 const DEFAULT_PACKAGE_GLOB = "packages/*";

@@ -26,6 +26,7 @@ function writeLogFile(cwd) {
       });
   });
 
+  // this must be synchronous because it is called before process exit
   writeFileAtomic.sync(path.join(cwd, "lerna-debug.log"), logOutput);
 
   // truncate log after writing

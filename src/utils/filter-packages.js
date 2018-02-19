@@ -1,7 +1,7 @@
 "use strict";
 
 const matchPackageName = require("./match-package-name");
-const ValidationError = require("./ValidationError");
+const ValidationError = require("./validation-error");
 
 module.exports = filterPackages;
 

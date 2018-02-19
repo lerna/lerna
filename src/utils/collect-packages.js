@@ -5,7 +5,7 @@ const loadJsonFile = require("load-json-file");
 const path = require("path");
 
 const Package = require("../Package");
-const ValidationError = require("./ValidationError");
+const ValidationError = require("./validation-error");
 
 module.exports = collectPackages;
 

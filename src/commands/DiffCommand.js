@@ -3,7 +3,7 @@
 const ChildProcessUtilities = require("../ChildProcessUtilities");
 const Command = require("../Command");
 const GitUtilities = require("../GitUtilities");
-const ValidationError = require("../utils/ValidationError");
+const ValidationError = require("../utils/validation-error");
 
 exports.handler = function handler(argv) {
   // eslint-disable-next-line no-use-before-define

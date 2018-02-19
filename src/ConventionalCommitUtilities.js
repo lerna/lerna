@@ -10,7 +10,7 @@ const path = require("path");
 const semver = require("semver");
 
 const FileSystemUtilities = require("./FileSystemUtilities");
-const ValidationError = require("./utils/ValidationError");
+const ValidationError = require("./utils/validation-error");
 
 const cfgCache = new Map();
 

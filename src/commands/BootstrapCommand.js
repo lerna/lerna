@@ -17,7 +17,7 @@ const hasMatchingDependency = require("../utils/has-matching-dependency");
 const runParallelBatches = require("../utils/run-parallel-batches");
 const symlinkBinary = require("../utils/symlink-binary");
 const symlinkDependencies = require("../utils/symlink-dependencies");
-const ValidationError = require("../utils/ValidationError");
+const ValidationError = require("../utils/validation-error");
 
 exports.handler = function handler(argv) {
   // eslint-disable-next-line no-use-before-define

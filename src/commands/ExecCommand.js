@@ -6,7 +6,7 @@ const ChildProcessUtilities = require("../ChildProcessUtilities");
 const Command = require("../Command");
 const batchPackages = require("../utils/batch-packages");
 const runParallelBatches = require("../utils/run-parallel-batches");
-const ValidationError = require("../utils/ValidationError");
+const ValidationError = require("../utils/validation-error");
 
 exports.handler = function handler(argv) {
   // eslint-disable-next-line no-use-before-define

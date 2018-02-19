@@ -10,7 +10,7 @@ const writePkg = require("write-pkg");
 
 const BootstrapCommand = require("./BootstrapCommand");
 const Command = require("../Command");
-const ValidationError = require("../utils/ValidationError");
+const ValidationError = require("../utils/validation-error");
 
 exports.command = "add [pkgNames..]";
 
