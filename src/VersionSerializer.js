@@ -1,25 +1,25 @@
 "use strict";
 
+const escapeStringRegexp = require("escape-string-regexp");
+const npa = require("npm-package-arg");
+
 class VersionSerializer {
-  constructor({ localDependencies, versionParser }) {
+  constructor({ localDependencies, tagVersionPrefix = "v" }) {
     this._localDependencies = localDependencies;
-    this._versionParser = versionParser;
-    this._dependenciesKeys = ["dependencies", "devDependencies"];
+    this._gitUrlPattern = new RegExp(`(.+?#${escapeStringRegexp(tagVersionPrefix)})(.+)$`);
     this._strippedPrefixes = new Map();
   }
 
   serialize(pkg) {
-    this._dependenciesKeys.forEach(key => {
-      this._prependPrefix(pkg[key] || {});
-    });
+    this._prependPrefix(pkg.dependencies || {});
+    this._prependPrefix(pkg.devDependencies || {});
 
     return pkg;
   }
 
   deserialize(pkg) {
-    this._dependenciesKeys.forEach(key => {
-      this._stripPrefix(pkg[key] || {});
-    });
+    this._stripPrefix(pkg.dependencies || {});
+    this._stripPrefix(pkg.devDependencies || {});
 
     return pkg;
   }
@@ -37,7 +37,7 @@ class VersionSerializer {
   _stripPrefix(dependencies) {
     Object.keys(dependencies).forEach(name => {
       if (this._localDependencies.has(name)) {
-        const result = this._versionParser.parseVersion(dependencies[name]);
+        const result = this._parseVersion(name, dependencies[name]);
 
         if (result.prefix) {
           // eslint-disable-next-line no-param-reassign
@@ -46,6 +46,22 @@ class VersionSerializer {
         }
       }
     });
+  }
+
+  _parseVersion(name, version) {
+    // passing name to disambiguate deprecated "git scp"-style URLs
+    const result = npa.resolve(name, version);
+
+    let targetMatches;
+
+    if (result.gitCommittish) {
+      targetMatches = this._gitUrlPattern.exec(version);
+    }
+
+    return {
+      prefix: targetMatches ? targetMatches[1] : null,
+      version: targetMatches ? targetMatches[2] : version,
+    };
   }
 }
 

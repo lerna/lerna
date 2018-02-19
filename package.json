@@ -46,7 +46,6 @@
     "glob-parent": "^3.1.0",
     "globby": "^7.1.1",
     "graceful-fs": "^4.1.11",
-    "hosted-git-info": "^2.5.0",
     "import-local": "^1.0.0",
     "inquirer": "^5.1.0",
     "is-ci": "^1.0.10",

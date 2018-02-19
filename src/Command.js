@@ -6,7 +6,6 @@ const log = require("npmlog");
 
 const ChildProcessUtilities = require("./ChildProcessUtilities");
 const GitUtilities = require("./GitUtilities");
-const GitVersionParser = require("./GitVersionParser");
 const PackageGraph = require("./PackageGraph");
 const Repository = require("./Repository");
 const writeLogFile = require("./utils/write-log-file");
@@ -280,12 +279,10 @@ class Command {
       const packageGraph = new PackageGraph(packages, { graphType: "allDependencies" });
 
       if (useGitVersion) {
-        const versionParser = new GitVersionParser(gitVersionPrefix);
-
         packages.forEach(pkg => {
           pkg.versionSerializer = new VersionSerializer({
             localDependencies: packageGraph.get(pkg.name).localDependencies,
-            versionParser,
+            tagVersionPrefix: gitVersionPrefix,
           });
         });
       }

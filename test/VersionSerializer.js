@@ -4,69 +4,18 @@
 const VersionSerializer = require("../src/VersionSerializer");
 
 describe("VersionSerializer", () => {
-  let serializer;
-
-  beforeEach(() => {
-    const parser = {
-      parseVersion(version) {
-        const chunks = version.split("#");
-        return {
-          prefix: chunks.length > 1 ? `${chunks[0]}#` : null,
-          version: chunks.length > 1 ? chunks[1] : version,
-        };
-      },
-    };
-    serializer = new VersionSerializer({
-      localDependencies: new Set(["my-package-1", "my-package-2", "my-package-3"]),
-      versionParser: parser,
-    });
-  });
-
   describe("deserialize", () => {
-    it("should use version parser for inter-package dependencies only", () => {
-      const mockParser = {
-        parseVersion: jest.fn().mockReturnValue({
-          prefix: null,
-          version: "0.0.1",
-        }),
-      };
-
-      serializer = new VersionSerializer({
-        localDependencies: new Set(["my-package-1", "my-package-2", "my-package-3"]),
-        versionParser: mockParser,
-      });
-
-      const pkg = {
-        name: "my-package-1",
-        version: "1.0.0",
-        dependencies: {
-          "my-dependency": "^1.0.0",
-        },
-        devDependencies: {
-          "my-package-2": "^1.0.0",
-          "my-package-3": "^1.0.0",
-        },
-        peerDependencies: {
-          "my-package-3": ">=1.0.0",
-        },
-      };
-
-      serializer.deserialize(pkg);
-      expect(mockParser.parseVersion).toHaveBeenCalledTimes(2);
-    });
-
     it("should not touch versions parser does not recognize", () => {
+      const serializer = new VersionSerializer({
+        localDependencies: new Set(["my-package-1", "my-package-2", "my-package-3"]),
+        tagVersionPrefix: "v", // default
+      });
       const pkg = {
         name: "my-package-1",
         dependencies: {
-          "my-dependency": "^1.0.0",
-        },
-        devDependencies: {
+          "external-dep": "^1.0.0",
           "my-package-2": "^1.0.0",
           "my-package-3": "^1.0.0",
-        },
-        peerDependencies: {
-          "my-package-3": ">=1.0.0",
         },
       };
 
@@ -74,16 +23,22 @@ describe("VersionSerializer", () => {
     });
 
     it("should extract versions recognized by parser", () => {
+      const serializer = new VersionSerializer({
+        localDependencies: new Set(["my-package-1", "my-package-2", "my-package-3"]),
+      });
+
       expect(
         serializer.deserialize({
           name: "my-package-1",
           version: "1.0.0",
           dependencies: {
-            "my-dependency": "dont-touch-this#1.0.0",
+            "external-dep": "github:org/external-dep#v1.0.0",
           },
           devDependencies: {
-            "my-package-2": "bbb#1.0.0",
-            "my-package-3": "ccc#1.0.0",
+            // shorthand
+            "my-package-2": "github:user/my-package-2#v1.0.0",
+            // deprecated "git scp"-style
+            "my-package-3": "git@github.com:user/my-package-3#v1.0.0",
           },
           peerDependencies: {
             "my-package-3": ">=1.0.0",
@@ -93,9 +48,44 @@ describe("VersionSerializer", () => {
         name: "my-package-1",
         version: "1.0.0",
         dependencies: {
-          "my-dependency": "dont-touch-this#1.0.0",
+          "external-dep": "github:org/external-dep#v1.0.0",
         },
         devDependencies: {
+          "my-package-2": "1.0.0",
+          "my-package-3": "1.0.0",
+        },
+        peerDependencies: {
+          "my-package-3": ">=1.0.0",
+        },
+      });
+    });
+
+    it("supports custom tag version prefix", () => {
+      const serializer = new VersionSerializer({
+        localDependencies: new Set(["my-package-1", "my-package-2", "my-package-3"]),
+        tagVersionPrefix: "",
+      });
+
+      expect(
+        serializer.deserialize({
+          name: "my-package-1",
+          version: "1.0.0",
+          devDependencies: {
+            "external-dep": "github:org/external-dep#1.0.0",
+            // shorthand
+            "my-package-2": "github:user/my-package-2#1.0.0",
+            // deprecated "git scp"-style
+            "my-package-3": "git@github.com:user/my-package-3#1.0.0",
+          },
+          peerDependencies: {
+            "my-package-3": ">=1.0.0",
+          },
+        })
+      ).toEqual({
+        name: "my-package-1",
+        version: "1.0.0",
+        devDependencies: {
+          "external-dep": "github:org/external-dep#1.0.0",
           "my-package-2": "1.0.0",
           "my-package-3": "1.0.0",
         },
@@ -108,13 +98,15 @@ describe("VersionSerializer", () => {
 
   describe("serialize", () => {
     it("should not touch versions parser does not recognize", () => {
+      const serializer = new VersionSerializer({
+        localDependencies: new Set(["my-package-1", "my-package-2", "my-package-3"]),
+        tagVersionPrefix: "v", // default
+      });
       const pkg = {
         name: "my-package-1",
         version: "1.0.0",
-        dependencies: {
-          "my-dependency": "^1.0.0",
-        },
         devDependencies: {
+          "external-dep": "^1.0.0",
           "my-package-2": "^1.0.0",
           "my-package-3": "^1.0.0",
         },
@@ -127,16 +119,22 @@ describe("VersionSerializer", () => {
     });
 
     it("should write back version strings transformed by deserialize", () => {
+      const serializer = new VersionSerializer({
+        localDependencies: new Set(["my-package-1", "my-package-2", "my-package-3"]),
+      });
+
       // since serializer is stateful, version prefixes will be stored in its state
       serializer.deserialize({
         name: "my-package-1",
         version: "1.0.0",
         dependencies: {
-          "my-dependency": "dont-touch-this#1.0.0",
+          "external-dep": "github:org/external-dep#v1.0.0",
+          // normalized by npm-package-arg
+          "my-package-2": "git+ssh://git@github.com:user/my-package-2#v1.0.0",
         },
         devDependencies: {
-          "my-package-2": "bbb#1.0.0",
-          "my-package-3": "ccc#1.0.0",
+          // default sshurl with optional .git suffix
+          "my-package-3": "ssh://git@github.com:user/my-package-3.git#v1.0.0",
         },
         peerDependencies: {
           "my-package-3": ">=1.0.0",
@@ -149,10 +147,10 @@ describe("VersionSerializer", () => {
           name: "my-package-1",
           version: "1.0.0",
           dependencies: {
-            "my-dependency": "dont-touch-this#1.0.0",
+            "external-dep": "github:org/external-dep#v1.0.0",
+            "my-package-2": "1.0.0",
           },
           devDependencies: {
-            "my-package-2": "1.0.0",
             "my-package-3": "1.0.0",
           },
           peerDependencies: {
@@ -163,14 +161,55 @@ describe("VersionSerializer", () => {
         name: "my-package-1",
         version: "1.0.0",
         dependencies: {
-          "my-dependency": "dont-touch-this#1.0.0",
+          "external-dep": "github:org/external-dep#v1.0.0",
+          "my-package-2": "git+ssh://git@github.com:user/my-package-2#v1.0.0",
         },
         devDependencies: {
-          "my-package-2": "bbb#1.0.0",
-          "my-package-3": "ccc#1.0.0",
+          "my-package-3": "ssh://git@github.com:user/my-package-3.git#v1.0.0",
         },
         peerDependencies: {
           "my-package-3": ">=1.0.0",
+        },
+      });
+    });
+
+    it("supports custom tag version prefix", () => {
+      const serializer = new VersionSerializer({
+        localDependencies: new Set(["my-package-1", "my-package-2", "my-package-3"]),
+        tagVersionPrefix: "",
+      });
+
+      // since serializer is stateful, version prefixes will be stored in its state
+      serializer.deserialize({
+        name: "my-package-1",
+        version: "1.0.0",
+        dependencies: {
+          "external-dep": "github:org/external-dep#1.0.0",
+          // normalized by npm-package-arg
+          "my-package-2": "git+ssh://git@github.com:user/my-package-2#1.0.0",
+          // default sshurl with optional .git suffix
+          "my-package-3": "ssh://git@github.com:user/my-package-3.git#1.0.0",
+        },
+      });
+
+      // the preserved prefixes should be written back
+      expect(
+        serializer.serialize({
+          name: "my-package-1",
+          version: "1.0.0",
+          dependencies: {
+            "external-dep": "github:org/external-dep#1.0.0",
+            "my-package-2": "1.0.0",
+            "my-package-3": "1.0.0",
+          },
+        })
+      ).toEqual({
+        name: "my-package-1",
+        version: "1.0.0",
+        dependencies: {
+          "external-dep": "github:org/external-dep#1.0.0",
+          "my-package-2": "git+ssh://git@github.com:user/my-package-2#1.0.0",
+          "my-package-3": "ssh://git@github.com:user/my-package-3.git#1.0.0",
         },
       });
     });
