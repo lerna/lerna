@@ -13,7 +13,9 @@ exports.handler = function handler(argv) {
 
 exports.command = "ls";
 
-exports.describe = "List all public packages";
+exports.aliases = ["list"];
+
+exports.describe = "List local packages";
 
 exports.builder = {
   json: {
