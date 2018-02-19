@@ -36,36 +36,59 @@ class LsCommand extends Command {
   }
 
   initialize(callback) {
-    // Nothing to do...
-    callback(null, true);
-  }
-
-  execute(callback) {
-    const formattedPackages = this.filteredPackages.map(pkg => ({
+    this.resultList = this.filteredPackages.map(pkg => ({
       name: pkg.name,
       version: pkg.version,
       private: pkg.private,
     }));
 
+    callback(null, true);
+  }
+
+  execute(callback) {
+    let result;
+
     if (this.options.json) {
-      output(JSON.stringify(formattedPackages, null, 2));
+      result = this.formatJSON();
     } else {
-      formattedPackages.forEach(pkg => {
-        pkg.version = pkg.version ? chalk.grey(`v${pkg.version}`) : chalk.yellow("MISSING");
-        pkg.private = pkg.private ? `(${chalk.red("private")})` : "";
-      });
-      output(
-        columnify(formattedPackages, {
-          showHeaders: false,
-          config: {
-            version: {
-              align: "right",
-            },
-          },
-        })
-      );
+      result = this.formatColumns();
     }
 
+    output(result);
+
     callback(null, true);
+  }
+
+  formatJSON() {
+    return JSON.stringify(this.resultList, null, 2);
+  }
+
+  formatColumns() {
+    const formattedResults = this.resultList.map(result => {
+      const formatted = {
+        name: result.name,
+      };
+
+      if (result.version) {
+        formatted.version = chalk.grey(`v${result.version}`);
+      } else {
+        formatted.version = chalk.yellow("MISSING");
+      }
+
+      if (result.private) {
+        formatted.private = `(${chalk.red("private")})`;
+      }
+
+      return formatted;
+    });
+
+    return columnify(formattedResults, {
+      showHeaders: false,
+      config: {
+        version: {
+          align: "right",
+        },
+      },
+    });
   }
 }
