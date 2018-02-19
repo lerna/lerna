@@ -331,7 +331,7 @@ describe("npm-install", () => {
 
     it("cleans up synchronously after writeFile error", done => {
       const directory = path.normalize("/test/npm-install-deps/writeError");
-      const dependencies = ["I'm just here so we don't exit early"];
+      const dependencies = ["just-here-so-we-dont-exit-early"];
       const config = {};
 
       writePkg.mockRejectedValueOnce(new Error("Unable to write file"));
@@ -354,7 +354,7 @@ describe("npm-install", () => {
 
     it("cleans up synchronously after client install error", done => {
       const directory = path.normalize("/test/npm-install-deps/clientError");
-      const dependencies = ["I'm just here so we don't exit early"];
+      const dependencies = ["just-here-so-we-dont-exit-early"];
       const config = {};
 
       ChildProcessUtilities.exec.mockRejectedValueOnce(new Error("Unable to install dependency"));

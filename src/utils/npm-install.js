@@ -1,13 +1,13 @@
 "use strict";
 
 const log = require("npmlog");
+const npa = require("npm-package-arg");
 const onExit = require("signal-exit");
 const path = require("path");
 const writePkg = require("write-pkg");
 
 const ChildProcessUtilities = require("../ChildProcessUtilities");
 const FileSystemUtilities = require("../FileSystemUtilities");
-const splitVersion = require("./splitVersion");
 const getExecOpts = require("./get-npm-exec-opts");
 
 module.exports = npmInstall;
@@ -78,7 +78,7 @@ function installInDir(directory, dependencies, config, callback) {
     // Construct a basic fake package.json with just the deps we need to install.
     const tempJson = {
       dependencies: dependencies.reduce((obj, dep) => {
-        const [pkg, version] = splitVersion(dep);
+        const { name: pkg, rawSpec: version } = npa(dep);
         obj[pkg] = version || "*";
         return obj;
       }, {}),

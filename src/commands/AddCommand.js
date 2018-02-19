@@ -2,6 +2,7 @@
 
 const path = require("path");
 const dedent = require("dedent");
+const npa = require("npm-package-arg");
 const packageJson = require("package-json");
 const readPkg = require("read-pkg");
 const semver = require("semver");
@@ -9,7 +10,6 @@ const writePkg = require("write-pkg");
 
 const BootstrapCommand = require("./BootstrapCommand");
 const Command = require("../Command");
-const splitVersion = require("../utils/splitVersion");
 const ValidationError = require("../utils/ValidationError");
 
 exports.command = "add [pkgNames..]";
@@ -39,11 +39,10 @@ class AddCommand extends Command {
   }
 
   initialize(callback) {
-    const pkgs = this.options.pkgNames
-      .filter(input => typeof input === "string" && input.trim() !== "")
-      .map(input => splitVersion(input) || [input, "latest"])
-      .filter(split => Array.isArray(split))
-      .map(([name, versionRange = "latest"]) => ({ name, versionRange }));
+    const pkgs = this.options.pkgNames.map(input => {
+      const { name, fetchSpec: versionRange } = npa(input);
+      return { name, versionRange };
+    });
 
     if (pkgs.length === 0) {
       const err = new ValidationError("EINPUT", "Missing list of packages to add to your project.");
