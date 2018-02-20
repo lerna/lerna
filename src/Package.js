@@ -95,48 +95,48 @@ class Package {
       binLocation: {
         value: path.join(location, "node_modules", ".bin"),
       },
-      // side-effects
-      setDependencyVersion: {
-        value: (depKey, depName, depVersion, savePrefix) => {
-          const depCollection = pkg[depKey];
-
-          if (!depCollection || !depCollection[depName]) {
-            return;
-          }
-
-          const result = npa.resolve(depName, depCollection[depName], location);
-
-          if (result.registry) {
-            // a version (1.2.3) or range (^1.2.3)
-            depCollection[depName] = `${savePrefix}${depVersion}`;
-
-            return;
-          }
-
-          /* istanbul ignore else */
-          if (result.gitCommittish) {
-            // a git url with matching committish (#v1.2.3)
-            const [tagPrefix] = /^\D*/.exec(result.gitCommittish);
-
-            // update committish
-            result.hosted.committish = `${tagPrefix}${depVersion}`;
-
-            // always serialize the full git+ssh url (identical to previous result.saveSpec)
-            depCollection[depName] = result.hosted.sshurl({ noGitPlus: false, noCommittish: false });
-          }
-        },
-      },
       // "private"
       json: {
         get() {
-          return shallowCopy(pkg);
+          return pkg;
         },
       },
     });
   }
 
+  updateDependency(depName, depVersion, savePrefix) {
+    // first, try runtime dependencies
+    let depCollection = this.json.dependencies;
+
+    // fall back to devDependencies (it will always be one of these two)
+    if (!depCollection || !depCollection[depName]) {
+      depCollection = this.json.devDependencies;
+    }
+
+    const result = npa.resolve(depName, depCollection[depName], this.location);
+
+    if (result.registry) {
+      // a version (1.2.3) or range (^1.2.3)
+      depCollection[depName] = `${savePrefix}${depVersion}`;
+
+      return;
+    }
+
+    /* istanbul ignore else */
+    if (result.gitCommittish) {
+      // a git url with matching committish (#v1.2.3)
+      const [tagPrefix] = /^\D*/.exec(result.gitCommittish);
+
+      // update committish
+      result.hosted.committish = `${tagPrefix}${depVersion}`;
+
+      // always serialize the full git+ssh url (identical to previous result.saveSpec)
+      depCollection[depName] = result.hosted.sshurl({ noGitPlus: false, noCommittish: false });
+    }
+  }
+
   toJSON() {
-    return this.json;
+    return shallowCopy(this.json);
   }
 }
 

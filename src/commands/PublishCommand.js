@@ -559,8 +559,7 @@ class PublishCommand extends Command {
                 const depVersion = this.updatesVersions.get(depName);
 
                 if (depVersion) {
-                  pkg.setDependencyVersion("dependencies", depName, depVersion, this.savePrefix);
-                  pkg.setDependencyVersion("devDependencies", depName, depVersion, this.savePrefix);
+                  pkg.updateDependency(depName, depVersion, this.savePrefix);
                 }
               });
 
