@@ -61,11 +61,6 @@ const builder = {
       Include all transitive dependencies when running a command, regardless of --scope, --since or --ignore.
     `,
   },
-  registry: {
-    describe: "Use the specified registry for all npm client operations.",
-    type: "string",
-    requiresArg: true,
-  },
   "reject-cycles": {
     describe: "Fail if a cycle is detected among dependencies",
     type: "boolean",

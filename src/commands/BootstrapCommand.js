@@ -64,6 +64,12 @@ exports.builder = yargs =>
         type: "string",
         requiresArg: true,
       },
+      registry: {
+        group: "Command Options:",
+        describe: "Use the specified registry for all npm client operations.",
+        type: "string",
+        requiresArg: true,
+      },
     });
 
 class BootstrapCommand extends Command {

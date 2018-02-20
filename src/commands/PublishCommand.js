@@ -112,6 +112,12 @@ exports.builder = {
     type: "string",
     requiresArg: true,
   },
+  registry: {
+    group: "Command Options:",
+    describe: "Use the specified registry for all npm client operations.",
+    type: "string",
+    requiresArg: true,
+  },
   preid: {
     group: "Command Options:",
     describe: "Specify the prerelease identifier (major.minor.patch-pre).",
@@ -168,7 +174,7 @@ class PublishCommand extends Command {
 
     this.npmConfig = {
       npmClient: this.options.npmClient || "npm",
-      registry: this.npmRegistry,
+      registry: this.options.registry,
     };
 
     if (this.options.useGitVersion && !this.options.exact) {
@@ -742,10 +748,10 @@ class PublishCommand extends Command {
 
   removeTempTag(pkg) {
     return Promise.resolve()
-      .then(() => npmDistTag.check(pkg, "lerna-temp", this.npmRegistry))
+      .then(() => npmDistTag.check(pkg, "lerna-temp", this.npmConfig.registry))
       .then(exists => {
         if (exists) {
-          return npmDistTag.remove(pkg, "lerna-temp", this.npmRegistry);
+          return npmDistTag.remove(pkg, "lerna-temp", this.npmConfig.registry);
         }
       });
   }
@@ -754,7 +760,7 @@ class PublishCommand extends Command {
     const distTag = this.getDistTag();
     const version = this.options.canary ? pkg.version : this.updatesVersions.get(pkg.name);
 
-    return this.removeTempTag(pkg).then(() => npmDistTag.add(pkg, version, distTag, this.npmRegistry));
+    return this.removeTempTag(pkg).then(() => npmDistTag.add(pkg, version, distTag, this.npmConfig.registry));
   }
 
   getDistTag() {
