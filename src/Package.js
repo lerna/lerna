@@ -12,6 +12,7 @@ function shallowCopy(json) {
   return Object.keys(json).reduce((obj, key) => {
     const val = json[key];
 
+    /* istanbul ignore if */
     if (Array.isArray(val)) {
       obj[key] = val.slice();
     } else if (val && typeof val === "object") {
@@ -111,11 +112,20 @@ class Package {
           if (result.registry) {
             // a version (1.2.3) or range (^1.2.3)
             depCollection[depName] = `${savePrefix}${depVersion}`;
-          } else if (result.type === "git") {
+
+            return;
+          }
+
+          /* istanbul ignore else */
+          if (result.gitCommittish) {
+            // a git url with matching committish (#v1.2.3)
             const [tagPrefix] = /^\D*/.exec(result.gitCommittish);
 
+            // update committish
             result.hosted.committish = `${tagPrefix}${depVersion}`;
-            depCollection[depName] = result.hosted.toString({ noCommittish: false });
+
+            // always serialize the full git+ssh url (identical to previous result.saveSpec)
+            depCollection[depName] = result.hosted.sshurl({ noGitPlus: false, noCommittish: false });
           }
         },
       },

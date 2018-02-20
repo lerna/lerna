@@ -1027,6 +1027,42 @@ describe("PublishCommand", () => {
     expect(updatedPackageVersions(testDir)).toMatchSnapshot();
   });
 
+  describe("with git-hosted sibling dependencies", () => {
+    it("updates gitCommittish versions as sshurls", async () => {
+      const testDir = await initFixture("PublishCommand/git-hosted-sibling-deps");
+
+      await lernaPublish(testDir)("--cd-version", "minor", "--exact");
+
+      expect(updatedPackageVersions(testDir)).toMatchSnapshot();
+
+      // package-1 doesn't have any dependencies
+      expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+        "package-1": "git+ssh://git@github.com/user/package-1.git#v1.1.0",
+      });
+      expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+        "package-2": "git+ssh://git@github.com/user/package-2.git#v1.1.0",
+      });
+      expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+        "package-1": "github:user/package-1#v0.0.0", // non-matching semver
+      });
+      expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
+        "package-1": "git+ssh://git@github.com/user/package-1.git#v1.1.0",
+      });
+    });
+
+    it("throws an error when --exact is missing", async () => {
+      expect.assertions(1);
+
+      const testDir = await initFixture("PublishCommand/git-hosted-sibling-deps");
+
+      try {
+        await lernaPublish(testDir)("--cd-version", "minor");
+      } catch (err) {
+        expect(err.message).toMatch("Please make sure you publish with --exact");
+      }
+    });
+  });
+
   describe("with relative file: specifiers", () => {
     beforeEach(() => {
       GitUtilities.hasTags.mockReturnValueOnce(true);
