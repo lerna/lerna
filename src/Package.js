@@ -26,10 +26,7 @@ function shallowCopy(json) {
 }
 
 class Package {
-  constructor(json, location, rootPath = location) {
-    let pkg = json;
-    // TODO: less mutation by reference
-
+  constructor(pkg, location, rootPath = location) {
     Object.defineProperties(this, {
       // read-only
       name: {
@@ -129,16 +126,6 @@ class Package {
           }
         },
       },
-      versionSerializer: {
-        set(impl) {
-          this.serialize = impl.serialize;
-          pkg = impl.deserialize(pkg);
-        },
-      },
-      serialize: {
-        value: K => K,
-        writable: true,
-      },
       // "private"
       json: {
         get() {
@@ -149,7 +136,7 @@ class Package {
   }
 
   toJSON() {
-    return this.serialize(this.json);
+    return this.json;
   }
 }
 

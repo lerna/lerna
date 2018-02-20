@@ -149,22 +149,6 @@ describe("Package", () => {
     });
   });
 
-  describe(".set versionSerializer", () => {
-    it("should call 'deserialize' method of serializer'", () => {
-      const pkg = factory({ name: "serialized-version" });
-      const mockSerializer = {
-        serialize: jest.fn(obj => obj),
-        deserialize: jest.fn(obj => obj),
-      };
-
-      pkg.versionSerializer = mockSerializer;
-
-      expect(mockSerializer.deserialize).toBeCalled();
-      expect(mockSerializer.deserialize).toBeCalledWith(pkg.json);
-      expect(mockSerializer.serialize).not.toBeCalled();
-    });
-  });
-
   describe(".toJSON()", () => {
     it("should return clone of internal package for serialization", () => {
       const pkg = factory({
@@ -178,55 +162,6 @@ describe("Package", () => {
       const explicit = JSON.stringify(pkg.json, null, 2);
 
       expect(implicit).toBe(explicit);
-    });
-
-    it("should not change internal package with versionSerializer", () => {
-      const pkg = factory({
-        name: "is-idempotent",
-      });
-      const mockSerializer = {
-        serialize: jest.fn(obj => {
-          obj.state = "serialized";
-          return obj;
-        }),
-        deserialize: jest.fn(obj => {
-          obj.state = "deserialized";
-          return obj;
-        }),
-      };
-
-      pkg.json.state = "serialized";
-
-      const serializedPkg = Object.assign({}, pkg.json, { state: "serialized" });
-      const deserializedPkg = Object.assign({}, pkg.json, { state: "deserialized" });
-
-      pkg.versionSerializer = mockSerializer;
-      expect(mockSerializer.deserialize).toBeCalled();
-      expect(pkg.json).toEqual(deserializedPkg);
-
-      const serializedResult = pkg.toJSON();
-      expect(pkg.json).toEqual(deserializedPkg);
-      expect(serializedResult).toEqual(serializedPkg);
-
-      expect(mockSerializer.serialize).toBeCalled();
-    });
-
-    it("should use versionSerializer.serialize on internal package before return", () => {
-      const pkg = factory({
-        name: "is-serialized",
-      });
-      const mockSerializer = {
-        serialize: jest.fn(obj => obj),
-        deserialize: jest.fn(obj => obj),
-      };
-
-      pkg.versionSerializer = mockSerializer;
-
-      expect(pkg.toJSON()).toEqual(pkg.json);
-
-      expect(mockSerializer.deserialize).toBeCalled();
-      expect(mockSerializer.serialize).toBeCalled();
-      expect(mockSerializer.serialize).toBeCalledWith(pkg.json);
     });
   });
 });
