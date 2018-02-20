@@ -172,6 +172,9 @@ class PublishCommand extends Command {
     this.gitRemote = this.options.gitRemote || "origin";
     this.gitEnabled = !(this.options.canary || this.options.skipGit);
 
+    // https://docs.npmjs.com/misc/config#save-prefix
+    this.savePrefix = this.options.exact ? "" : "^";
+
     this.npmConfig = {
       npmClient: this.options.npmClient || "npm",
       registry: this.options.registry,
@@ -289,7 +292,7 @@ class PublishCommand extends Command {
         const version = this.updatesVersions.get(linkedName) || this.packageGraph.get(linkedName).pkg.version;
 
         // we only care about dependencies here, as devDependencies are ignored when installed
-        obj.dependencies[linkedName] = this.options.exact ? version : `^${version}`;
+        obj.dependencies[linkedName] = `${this.savePrefix}${version}`;
 
         return obj;
       }, pkg.toJSON()); // don't mutate shared Package instance
@@ -520,7 +523,7 @@ class PublishCommand extends Command {
   }
 
   updateUpdatedPackages() {
-    const { exact, conventionalCommits, changelogPreset } = this.options;
+    const { conventionalCommits, changelogPreset } = this.options;
     const independentVersions = this.repository.isIndependent();
     const rootPkg = this.repository.package;
     const changedFiles = new Set();
@@ -544,11 +547,22 @@ class PublishCommand extends Command {
             // write new package
             .then(() => {
               // set new version
-              pkg.version = this.updatesVersions.get(pkg.name) || pkg.version;
+              pkg.version = this.updatesVersions.get(pkg.name);
 
               // update pkg dependencies
-              this.updatePackageDepsObject(pkg, "dependencies", exact);
-              this.updatePackageDepsObject(pkg, "devDependencies", exact);
+              this.packageGraph.get(pkg.name).localDependencies.forEach(({ type }, depName) => {
+                if (type === "directory") {
+                  // don't overwrite local file: specifiers (yet)
+                  return;
+                }
+
+                const depVersion = this.updatesVersions.get(depName);
+
+                if (depVersion) {
+                  pkg.setDependencyVersion("dependencies", depName, depVersion, this.savePrefix);
+                  pkg.setDependencyVersion("devDependencies", depName, depVersion, this.savePrefix);
+                }
+              });
 
               // NOTE: Object.prototype.toJSON() is normally called when passed to
               // JSON.stringify(), but write-pkg iterates Object.keys() before serializing
@@ -602,27 +616,6 @@ class PublishCommand extends Command {
     }
 
     return chain;
-  }
-
-  updatePackageDepsObject(pkg, depsKey, exact) {
-    const deps = pkg[depsKey];
-
-    if (!deps) {
-      return;
-    }
-
-    this.packageGraph.get(pkg.name).localDependencies.forEach(({ type }, depName) => {
-      if (type === "directory") {
-        // don't overwrite local file: specifiers (yet)
-        return;
-      }
-
-      const version = this.updatesVersions.get(depName);
-
-      if (deps[depName] && version) {
-        deps[depName] = exact ? version : `^${version}`;
-      }
-    });
   }
 
   commitAndTagUpdates() {

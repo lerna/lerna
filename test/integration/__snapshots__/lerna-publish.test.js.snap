@@ -295,9 +295,11 @@ diff --git a/packages/package-5/package.json b/packages/package-5/package.json
 index SHA..SHA 100644
 --- a/packages/package-5/package.json
 +++ b/packages/package-5/package.json
-@@ -5 +5 @@
--    "package-4": "file:../package-4"
-+    "package-4": "^2.0.0"
+@@ -5,2 +5,2 @@
+-    "package-4": "file:../package-4",
+-    "package-6": "file:../package-6"
++    "package-4": "^2.0.0",
++    "package-6": "^1.0.0"
 `;
 
 exports[`lerna publish updates all transitive dependents 1`] = `

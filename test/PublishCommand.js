@@ -9,8 +9,10 @@ jest.mock("../src/utils/npm-dist-tag");
 jest.mock("../src/utils/npm-publish");
 jest.mock("../src/utils/npm-run-script");
 
+const fs = require("fs-extra");
 const normalizeNewline = require("normalize-newline");
 const path = require("path");
+const semver = require("semver");
 
 // mocked or stubbed modules
 const writeJsonFile = require("write-json-file");
@@ -832,6 +834,46 @@ describe("PublishCommand", () => {
         );
       });
     });
+
+    it("avoids duplicating previously-released version", async () => {
+      const testDir = await initFixture("PublishCommand/normal-no-inter-dependencies");
+
+      GitUtilities.hasTags.mockReturnValueOnce(true);
+      GitUtilities.getLastTag.mockReturnValueOnce("v1.0.0");
+      GitUtilities.diffSinceIn.mockReturnValueOnce(`packages/package-1/package.json`);
+
+      // feat(package-1): add thing
+      ConventionalCommitUtilities.recommendVersion.mockResolvedValueOnce("1.1.0");
+
+      await lernaPublish(testDir)("--conventional-commits");
+
+      expect(updatedPackageVersions(testDir)).toEqual({
+        "packages/package-1": "1.1.0",
+      });
+
+      // make subsequent publish start with the right globalVersion
+      await fs.writeJSON(path.join(testDir, "lerna.json"), { version: "1.1.0" });
+
+      // clear previous publish mock records
+      jest.clearAllMocks();
+
+      GitUtilities.hasTags.mockReturnValueOnce(true);
+      GitUtilities.getLastTag.mockReturnValueOnce("v1.1.0");
+      GitUtilities.diffSinceIn
+        .mockReturnValueOnce("") // package-1 has no changes
+        .mockReturnValueOnce(`packages/package-2/package.json`);
+
+      // fix(package-2): oops thing
+      ConventionalCommitUtilities.recommendVersion.mockImplementationOnce(pkg =>
+        Promise.resolve(semver.inc(pkg.version, "patch"))
+      );
+
+      await lernaPublish(testDir)("--conventional-commits", "--yes");
+
+      expect(updatedPackageVersions(testDir)).toEqual({
+        "packages/package-2": "1.1.1",
+      });
+    });
   });
 
   /** =========================================================================
@@ -1011,6 +1053,7 @@ describe("PublishCommand", () => {
       });
       expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
         "package-4": "^2.0.0",
+        "package-6": "^1.0.0", // FIXME: awkward... (_intentional_, for now)
       });
     });
 
@@ -1027,6 +1070,32 @@ describe("PublishCommand", () => {
             cwd: testDir,
           })
         );
+      });
+    });
+
+    it("falls back to existing relative version when it is not updated", async () => {
+      const testDir = await initFixture("PublishCommand/relative-independent");
+
+      await lernaPublish(testDir)("--cd-version", "minor", "--yes");
+
+      expect(updatedPackageVersions(testDir)).toMatchSnapshot();
+
+      // package-4 was updated, but package-6 was not
+      expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
+        "package-4": "^4.1.0",
+        "package-6": "^6.0.0",
+      });
+    });
+
+    it("respects --exact", async () => {
+      const testDir = await initFixture("PublishCommand/relative-independent");
+
+      await lernaPublish(testDir)("--cd-version", "patch", "--yes", "--exact");
+
+      // package-4 was updated, but package-6 was not
+      expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
+        "package-4": "4.0.1",
+        "package-6": "6.0.0",
       });
     });
   });

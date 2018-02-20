@@ -98,6 +98,27 @@ class Package {
         value: path.join(location, "node_modules", ".bin"),
       },
       // side-effects
+      setDependencyVersion: {
+        value: (depKey, depName, depVersion, savePrefix) => {
+          const depCollection = pkg[depKey];
+
+          if (!depCollection || !depCollection[depName]) {
+            return;
+          }
+
+          const result = npa.resolve(depName, depCollection[depName], location);
+
+          if (result.registry) {
+            // a version (1.2.3) or range (^1.2.3)
+            depCollection[depName] = `${savePrefix}${depVersion}`;
+          } else if (result.type === "git") {
+            const [tagPrefix] = /^\D*/.exec(result.gitCommittish);
+
+            result.hosted.committish = `${tagPrefix}${depVersion}`;
+            depCollection[depName] = result.hosted.toString({ noCommittish: false });
+          }
+        },
+      },
       versionSerializer: {
         set(impl) {
           this.serialize = impl.serialize;
