@@ -510,6 +510,24 @@ describe("PublishCommand", () => {
         "package-1": "1.0.1",
       });
     });
+
+    it("updates existing exact versions", async () => {
+      const testDir = await initFixture("PublishCommand/normal-exact");
+      await lernaPublish(testDir)();
+
+      expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+        "package-1": "1.0.1",
+      });
+      expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+        "package-2": "1.0.1",
+      });
+      expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+        "package-1": "0.1.0",
+      });
+      expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
+        "package-1": "1.0.1",
+      });
+    });
   });
 
   /** =========================================================================
