@@ -104,7 +104,9 @@ class Package {
     });
   }
 
-  updateDependency(depName, depVersion, savePrefix) {
+  updateDependency(resolved, depVersion, savePrefix) {
+    const depName = resolved.name;
+
     // first, try runtime dependencies
     let depCollection = this.json.dependencies;
 
@@ -113,25 +115,19 @@ class Package {
       depCollection = this.json.devDependencies;
     }
 
-    const result = npa.resolve(depName, depCollection[depName], this.location);
-
-    if (result.registry) {
-      // a version (1.2.3) or range (^1.2.3)
+    if (resolved.registry || resolved.type === "directory") {
+      // a version (1.2.3) OR range (^1.2.3) OR directory (file:../foo-pkg)
       depCollection[depName] = `${savePrefix}${depVersion}`;
-
-      return;
-    }
-
-    /* istanbul ignore else */
-    if (result.gitCommittish) {
+    } else if (resolved.gitCommittish) {
       // a git url with matching committish (#v1.2.3)
-      const [tagPrefix] = /^\D*/.exec(result.gitCommittish);
+      const [tagPrefix] = /^\D*/.exec(resolved.gitCommittish);
 
       // update committish
-      result.hosted.committish = `${tagPrefix}${depVersion}`;
+      const { hosted } = resolved; // take that, lint!
+      hosted.committish = `${tagPrefix}${depVersion}`;
 
-      // always serialize the full git+ssh url (identical to previous result.saveSpec)
-      depCollection[depName] = result.hosted.sshurl({ noGitPlus: false, noCommittish: false });
+      // always serialize the full git+ssh url (identical to previous resolved.saveSpec)
+      depCollection[depName] = hosted.sshurl({ noGitPlus: false, noCommittish: false });
     }
   }
 

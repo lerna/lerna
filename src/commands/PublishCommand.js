@@ -286,18 +286,15 @@ class PublishCommand extends Command {
       );
 
     return pMap(updatesWithLocalLinks, ({ pkg, localDependencies }) => {
-      // create a copy of the serialized JSON with resolved local links
-      const updated = Array.from(localDependencies.keys()).reduce((obj, linkedName) => {
+      for (const [depName, resolved] of localDependencies) {
         // regardless of where the version comes from, we can't publish "file:../sibling-pkg" specs
-        const version = this.updatesVersions.get(linkedName) || this.packageGraph.get(linkedName).pkg.version;
+        const depVersion = this.updatesVersions.get(depName) || this.packageGraph.get(depName).pkg.version;
 
-        // we only care about dependencies here, as devDependencies are ignored when installed
-        obj.dependencies[linkedName] = `${this.savePrefix}${version}`;
+        // it no longer matters if we mutate the shared Package instance
+        pkg.updateDependency(resolved, depVersion, this.savePrefix);
+      }
 
-        return obj;
-      }, pkg.toJSON()); // don't mutate shared Package instance
-
-      return writePkg(pkg.manifestLocation, updated).then(() => pkg);
+      return writePkg(pkg.manifestLocation, pkg.toJSON()).then(() => pkg);
     }).then(modifiedPkgs => {
       // a Set of modified Package instances is stored for resetting later
       this.locallyResolved = new Set(modifiedPkgs);
@@ -550,18 +547,14 @@ class PublishCommand extends Command {
               pkg.version = this.updatesVersions.get(pkg.name);
 
               // update pkg dependencies
-              this.packageGraph.get(pkg.name).localDependencies.forEach(({ type }, depName) => {
-                if (type === "directory") {
-                  // don't overwrite local file: specifiers (yet)
-                  return;
-                }
-
+              for (const [depName, resolved] of this.packageGraph.get(pkg.name).localDependencies) {
                 const depVersion = this.updatesVersions.get(depName);
 
-                if (depVersion) {
-                  pkg.updateDependency(depName, depVersion, this.savePrefix);
+                if (depVersion && resolved.type !== "directory") {
+                  // don't overwrite local file: specifiers (yet)
+                  pkg.updateDependency(resolved, depVersion, this.savePrefix);
                 }
-              });
+              }
 
               // NOTE: Object.prototype.toJSON() is normally called when passed to
               // JSON.stringify(), but write-pkg iterates Object.keys() before serializing
