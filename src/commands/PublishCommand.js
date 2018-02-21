@@ -180,13 +180,6 @@ class PublishCommand extends Command {
       registry: this.options.registry,
     };
 
-    if (this.options.useGitVersion && !this.options.exact) {
-      throw new Error(dedent`
-        Using git version without 'exact' option is not recommended.
-        Please make sure you publish with --exact.
-      `);
-    }
-
     if (this.options.canary) {
       this.logger.info("canary", "enabled");
       this.shortHash = GitUtilities.getShortSHA(this.execOpts);

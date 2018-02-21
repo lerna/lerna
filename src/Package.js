@@ -119,12 +119,19 @@ class Package {
       // a version (1.2.3) OR range (^1.2.3) OR directory (file:../foo-pkg)
       depCollection[depName] = `${savePrefix}${depVersion}`;
     } else if (resolved.gitCommittish) {
-      // a git url with matching committish (#v1.2.3)
+      // a git url with matching committish (#v1.2.3 or #1.2.3)
       const [tagPrefix] = /^\D*/.exec(resolved.gitCommittish);
 
       // update committish
       const { hosted } = resolved; // take that, lint!
       hosted.committish = `${tagPrefix}${depVersion}`;
+
+      // always serialize the full git+ssh url (identical to previous resolved.saveSpec)
+      depCollection[depName] = hosted.sshurl({ noGitPlus: false, noCommittish: false });
+    } else if (resolved.gitRange) {
+      // a git url with matching gitRange (#semver:^1.2.3)
+      const { hosted } = resolved; // take that, lint!
+      hosted.committish = `semver:${savePrefix}${depVersion}`;
 
       // always serialize the full git+ssh url (identical to previous resolved.saveSpec)
       depCollection[depName] = hosted.sshurl({ noGitPlus: false, noCommittish: false });

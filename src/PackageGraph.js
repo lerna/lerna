@@ -110,7 +110,8 @@ class PackageGraph extends Map {
 
     const satisfies = forceLocal
       ? () => true
-      : (version, resolved) => semver.satisfies(version, resolved.gitCommittish || resolved.fetchSpec);
+      : (version, resolved) =>
+          semver.satisfies(version, resolved.gitCommittish || resolved.gitRange || resolved.fetchSpec);
 
     this.forEach((currentNode, currentName) => {
       const { graphDependencies } = currentNode;
