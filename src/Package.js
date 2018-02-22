@@ -3,8 +3,8 @@
 const npa = require("npm-package-arg");
 const path = require("path");
 
-function binSafeName(rawName) {
-  return rawName[0] === "@" ? rawName.substring(rawName.indexOf("/") + 1) : rawName;
+function binSafeName({ name, scope }) {
+  return scope ? name.substring(scope.length + 1) : name;
 }
 
 // package.json files are not that complicated, so this is intentionally naïve
@@ -27,6 +27,8 @@ function shallowCopy(json) {
 
 class Package {
   constructor(pkg, location, rootPath = location) {
+    const resolved = npa.resolve(pkg.name, path.relative(rootPath, location), rootPath);
+
     Object.defineProperties(this, {
       // read-only
       name: {
@@ -40,9 +42,7 @@ class Package {
         value: Boolean(pkg.private),
       },
       resolved: {
-        get() {
-          return npa.resolve(pkg.name, path.relative(rootPath, location), rootPath);
-        },
+        value: Object.assign({}, resolved),
       },
       // mutable
       version: {
@@ -79,7 +79,7 @@ class Package {
         value:
           typeof pkg.bin === "string"
             ? {
-                [binSafeName(pkg.name)]: pkg.bin,
+                [binSafeName(resolved)]: pkg.bin,
               }
             : Object.assign({}, pkg.bin),
       },
