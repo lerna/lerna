@@ -129,6 +129,9 @@ class PackageGraph extends Map {
           // a local file: specifier OR a matching semver
           currentNode.localDependencies.set(depName, resolved);
           depNode.localDependents.set(currentName, currentNode);
+        } else {
+          // non-matching semver of a local dependency
+          currentNode.externalDependencies.set(depName, resolved);
         }
       });
     });

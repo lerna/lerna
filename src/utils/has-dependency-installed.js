@@ -9,19 +9,17 @@ module.exports = hasDependencyInstalled;
 
 /**
  * Determine if a dependency has already been installed for this package
- * @param {Package} inPkg The Package instance to check for installed dependency
+ * @param {Package} pkg The Package instance to check for installed dependency
  * @param {String} depName Name of the dependency
- * @param {String} [version] Optional version to test with, defaults to existing spec
+ * @param {String} needVersion version to test with
  * @returns {Boolean}
  */
-function hasDependencyInstalled(inPkg, depName, version) {
-  log.silly("hasDependencyInstalled", inPkg.name, depName);
-
-  const needVersion = version || inPkg.allDependencies[depName];
+function hasDependencyInstalled(pkg, depName, needVersion) {
+  log.silly("hasDependencyInstalled", pkg.name, depName);
 
   let retVal;
   try {
-    const manifestLocation = path.join(inPkg.nodeModulesLocation, depName, "package.json");
+    const manifestLocation = path.join(pkg.nodeModulesLocation, depName, "package.json");
     const dependency = loadJsonFile.sync(manifestLocation);
 
     retVal = semver.satisfies(dependency.version, needVersion);

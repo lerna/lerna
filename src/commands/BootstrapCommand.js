@@ -4,7 +4,6 @@ const async = require("async");
 const dedent = require("dedent");
 const getPort = require("get-port");
 const path = require("path");
-const semver = require("semver");
 
 const Command = require("../Command");
 const FileSystemUtilities = require("../FileSystemUtilities");
@@ -13,7 +12,6 @@ const npmRunScript = require("../utils/npm-run-script");
 const batchPackages = require("../utils/batch-packages");
 const matchPackageName = require("../utils/match-package-name");
 const hasDependencyInstalled = require("../utils/has-dependency-installed");
-const hasMatchingDependency = require("../utils/has-matching-dependency");
 const runParallelBatches = require("../utils/run-parallel-batches");
 const symlinkBinary = require("../utils/symlink-binary");
 const symlinkDependencies = require("../utils/symlink-dependencies");
@@ -291,179 +289,143 @@ class BootstrapCommand extends Command {
   }
 
   /**
-   * Determine if a dependency installed at the root satifies the requirements of the passed packages
-   * This helps to optimize the bootstrap process and skip dependencies that are already installed
-   * @param {String} dependency
-   * @param {Array.<String>} packages
-   */
-  dependencySatisfiesPackages(dependency, packages) {
-    const { version } = this.hoistedPackageJson(dependency) || {};
-    return packages.every(pkg => semver.satisfies(version, pkg.allDependencies[dependency]));
-  }
-
-  /**
    * Return a object of root and leaf dependencies to install
    * @returns {Object}
    */
   getDependenciesToInstall(tracker) {
-    // find package by name
-    const findPackage = (name, version) => {
-      const node = this.packageGraph.get(name);
-
-      if (node && semver.satisfies(node.version, version)) {
-        return node.pkg;
-      }
-    };
-
     // Configuration for what packages to hoist may be in lerna.json or it may
     // come in as command line options.
     const { hoist, nohoist } = this.options;
+    const rootPkg = this.repository.package;
 
     if (hoist) {
       tracker.verbose("hoist", "enabled for %j", hoist);
     }
 
     // This will contain entries for each hoistable dependency.
-    const root = [];
+    const rootSet = new Set();
 
     // This will map packages to lists of unhoistable dependencies
-    const leaves = {};
+    const leaves = new Map();
 
     /**
      * Map of dependencies to install
-     * {
-     *   <name>: {
-     *     versions: {
-     *       <version>: <# of dependents>
-     *     },
-     *     dependents: {
-     *       <version>: [<dependent1>, <dependent2>, ...]
-     *     }
+     *
+     * Map {
+     *   "<externalName>": Map {
+     *     "<versionRange>": Set { "<dependent1>", "<dependent2>", ... }
      *   }
      * }
      *
      * Example:
      *
-     * {
-     *   react: {
-     *     versions: {
-     *       "15.x": 3,
-     *       "^0.14.0": 1
-     *     },
-     *     dependents: {
-     *       "15.x": ["my-component1", "my-component2", "my-component3"],
-     *       "^0.14.0": ["my-component4"],
-     *     }
+     * Map {
+     *   "react": Map {
+     *     "15.x": Set { "my-component1", "my-component2", "my-component3" },
+     *     "^0.14.0": Set { "my-component4" },
      *   }
      * }
      */
-    const depsToInstall = {};
+    const depsToInstall = new Map();
+    const filteredNodes = new Map(
+      this.filteredPackages.map(pkg => [pkg.name, this.packageGraph.get(pkg.name)])
+    );
 
-    Object.keys(this.repository.package.allDependencies).forEach(name => {
-      const version = this.repository.package.allDependencies[name];
-      depsToInstall[name] = {
-        versions: { [version]: 0 },
-        dependents: { [version]: [] },
-      };
+    // collect root dependency versions
+    const mergedRootDeps = Object.assign({}, rootPkg.devDependencies, rootPkg.dependencies);
+    const rootExternalVersions = new Map(
+      Object.keys(mergedRootDeps).map(externalName => [externalName, mergedRootDeps[externalName]])
+    );
+
+    // seed the root dependencies
+    rootExternalVersions.forEach((version, externalName) => {
+      const externalDependents = new Set();
+      const record = new Map();
+
+      record.set(version, externalDependents);
+      depsToInstall.set(externalName, record);
     });
 
-    // get the map of external dependencies to install
-    this.filteredPackages.forEach(pkg => {
-      // for all package dependencies
-      Object.keys(pkg.allDependencies)
+    // build a map of external dependencies to install
+    for (const [leafName, leafNode] of filteredNodes) {
+      for (const [externalName, resolved] of leafNode.externalDependencies) {
+        // rawSpec is something like "^1.2.3"
+        const version = resolved.rawSpec;
+        const record =
+          depsToInstall.get(externalName) || depsToInstall.set(externalName, new Map()).get(externalName);
+        const externalDependents = record.get(version) || record.set(version, new Set()).get(version);
 
-        // map to package or normalized external dependency
-        .map(
-          name => findPackage(name, pkg.allDependencies[name]) || { name, version: pkg.allDependencies[name] }
-        )
-
-        // match external and version mismatched local packages
-        .filter(dep => !findPackage(dep.name, dep.version) || !hasMatchingDependency(pkg, dep))
-
-        .forEach(({ name, version }) => {
-          // Get the object for this package, auto-vivifying.
-          const dep =
-            depsToInstall[name] ||
-            (depsToInstall[name] = {
-              versions: {},
-              dependents: {},
-            });
-
-          // Add this version if it's the first time we've seen it.
-          if (!dep.versions[version]) {
-            dep.versions[version] = 0;
-            dep.dependents[version] = [];
-          }
-
-          // Record the dependency on this version.
-          dep.versions[version] += 1;
-          dep.dependents[version].push(pkg.name);
-        });
-    });
+        externalDependents.add(leafName);
+      }
+    }
 
     // determine where each dependency will be installed
-    Object.keys(depsToInstall).forEach(name => {
-      const { versions, dependents } = depsToInstall[name];
-
+    for (const [externalName, externalDependents] of depsToInstall) {
       let rootVersion;
 
-      if (hoist && isHoistedPackage(name, hoist, nohoist)) {
-        // Get the most common version.
-        const commonVersion = Object.keys(versions).reduce((a, b) => (versions[a] > versions[b] ? a : b));
+      if (hoist && isHoistedPackage(externalName, hoist, nohoist)) {
+        const commonVersion = Array.from(externalDependents.keys()).reduce(
+          (a, b) => (externalDependents.get(a).size > externalDependents.get(b).size ? a : b)
+        );
 
         // Get the version required by the repo root (if any).
         // If the root doesn't have a dependency on this package then we'll
         // install the most common dependency there.
-        rootVersion = this.repository.package.allDependencies[name] || commonVersion;
+        rootVersion = rootExternalVersions.get(externalName) || commonVersion;
 
         if (rootVersion !== commonVersion) {
           tracker.warn(
             "EHOIST_ROOT_VERSION",
-            `The repository root depends on ${name}@${rootVersion}, ` +
-              `which differs from the more common ${name}@${commonVersion}.`
+            `The repository root depends on ${externalName}@${rootVersion}, ` +
+              `which differs from the more common ${externalName}@${commonVersion}.`
           );
         }
+
+        const dependents = Array.from(externalDependents.get(rootVersion)).map(
+          leafName => this.packageGraph.get(leafName).pkg
+        );
+
+        // remove collection so leaves don't repeat it
+        externalDependents.delete(rootVersion);
 
         // Install the best version we can in the repo root.
         // Even if it's already installed there we still need to make sure any
         // binaries are linked to the packages that depend on them.
-        root.push({
-          name,
-          dependents: (dependents[rootVersion] || []).map(dep => this.packageGraph.get(dep).pkg),
-          dependency: `${name}@${rootVersion}`,
-          isSatisfied: hasDependencyInstalled(this.repository.package, name, rootVersion),
+        rootSet.add({
+          name: externalName,
+          dependents,
+          dependency: `${externalName}@${rootVersion}`,
+          isSatisfied: hasDependencyInstalled(rootPkg, externalName, rootVersion),
         });
       }
 
       // Add less common versions to package installs.
-      Object.keys(versions).forEach(version => {
-        // Only install deps that can't be hoisted in the leaves.
-        if (version === rootVersion) {
-          return;
-        }
-
-        dependents[version].forEach(pkgName => {
+      for (const [leafVersion, leafDependents] of externalDependents) {
+        for (const leafName of leafDependents) {
           if (rootVersion) {
             tracker.warn(
               "EHOIST_PKG_VERSION",
-              `"${pkgName}" package depends on ${name}@${version}, ` +
-                `which differs from the hoisted ${name}@${rootVersion}.`
+              `"${leafName}" package depends on ${externalName}@${leafVersion}, ` +
+                `which differs from the hoisted ${externalName}@${rootVersion}.`
             );
           }
 
-          // only install dependency if it's not already installed
-          (leaves[pkgName] || (leaves[pkgName] = [])).push({
-            dependency: `${name}@${version}`,
-            isSatisfied: hasDependencyInstalled(this.packageGraph.get(pkgName).pkg, name),
-          });
-        });
-      });
-    });
+          const leafNode = this.packageGraph.get(leafName);
+          const leafRecord = leaves.get(leafNode) || leaves.set(leafNode, new Set()).get(leafNode);
 
-    tracker.silly("root dependencies", JSON.stringify(root, null, 2));
+          // only install dependency if it's not already installed
+          leafRecord.add({
+            dependency: `${externalName}@${leafVersion}`,
+            isSatisfied: hasDependencyInstalled(leafNode.pkg, externalName, leafVersion),
+          });
+        }
+      }
+    }
+
+    tracker.silly("root dependencies", JSON.stringify(rootSet, null, 2));
     tracker.silly("leaf dependencies", JSON.stringify(leaves, null, 2));
 
-    return { root, leaves };
+    return { rootSet, leaves };
   }
 
   /**
@@ -473,14 +435,16 @@ class BootstrapCommand extends Command {
   installExternalDependencies(callback) {
     const tracker = this.logger.newItem("install dependencies");
 
-    const { leaves, root } = this.getDependenciesToInstall(tracker);
+    const { leaves, rootSet } = this.getDependenciesToInstall(tracker);
+    const rootPkg = this.repository.package;
     const actions = [];
 
     // Start root install first, if any, since it's likely to take the longest.
-    if (Object.keys(root).length) {
+    if (rootSet.size) {
       // If we have anything to install in the root then we'll install
       // _everything_ that needs to go there.  This is important for
       // consistent behavior across npm clients.
+      const root = Array.from(rootSet);
       const depsToInstallInRoot = root.some(({ isSatisfied }) => !isSatisfied)
         ? root.map(({ dependency }) => dependency)
         : [];
@@ -490,50 +454,46 @@ class BootstrapCommand extends Command {
           tracker.info("hoist", "Installing hoisted dependencies into root");
         }
 
-        npmInstall.dependencies(
-          this.repository.rootPath,
-          depsToInstallInRoot,
-          this.npmConfig,
-          installError => {
-            if (installError) {
-              return actionDone(installError);
-            }
-
-            // Link binaries into dependent packages so npm scripts will have
-            // access to them.
-            async.series(
-              root.map(({ name, dependents }) => itemDone => {
-                const { bin } = this.hoistedPackageJson(name) || {};
-                if (bin) {
-                  async.series(
-                    dependents.map(pkg => linkDone => {
-                      const src = this.hoistedDirectory(name);
-
-                      symlinkBinary(src, pkg, linkDone);
-                    }),
-                    itemDone
-                  );
-                } else {
-                  itemDone();
-                }
-              }),
-              err => {
-                tracker.info("hoist", "Finished installing in root");
-                tracker.completeWork(1);
-                actionDone(err);
-              }
-            );
+        npmInstall.dependencies(rootPkg.location, depsToInstallInRoot, this.npmConfig, installError => {
+          if (installError) {
+            return actionDone(installError);
           }
-        );
+
+          // Link binaries into dependent packages so npm scripts will have
+          // access to them.
+          async.series(
+            root.map(({ name, dependents }) => itemDone => {
+              const { bin } = this.hoistedPackageJson(name) || {};
+
+              if (bin) {
+                async.series(
+                  dependents.map(pkg => linkDone => {
+                    const src = this.hoistedDirectory(name);
+
+                    symlinkBinary(src, pkg, linkDone);
+                  }),
+                  itemDone
+                );
+              } else {
+                itemDone();
+              }
+            }),
+            err => {
+              tracker.info("hoist", "Finished installing in root");
+              tracker.completeWork(1);
+              actionDone(err);
+            }
+          );
+        });
       });
 
       // Remove any hoisted dependencies that may have previously been
       // installed in package directories.
       actions.push(actionDone => {
         // Compute the list of candidate directories synchronously
-        const candidates = root.filter(pkg => pkg.dependents.length).reduce((list, { name, dependents }) => {
+        const candidates = root.filter(dep => dep.dependents.length).reduce((list, { name, dependents }) => {
           const dirs = dependents
-            .filter(pkg => pkg.nodeModulesLocation !== this.repository.nodeModulesLocation)
+            .filter(pkg => pkg.nodeModulesLocation !== rootPkg.nodeModulesLocation)
             .map(pkg => path.join(pkg.nodeModulesLocation, name));
 
           return list.concat(dirs);
@@ -572,26 +532,26 @@ class BootstrapCommand extends Command {
     });
 
     // Install anything that needs to go into the leaves.
-    Object.keys(leaves)
-      .map(pkgName => ({ pkg: this.packageGraph.get(pkgName).pkg, deps: leaves[pkgName] }))
-      .forEach(({ pkg, deps }) => {
-        // If we have any unsatisfied deps then we need to install everything.
-        // This is important for consistent behavior across npm clients.
-        if (deps.some(({ isSatisfied }) => !isSatisfied)) {
-          actions.push(cb => {
-            npmInstall.dependencies(
-              pkg.location,
-              deps.map(({ dependency }) => dependency),
-              leafNpmConfig,
-              err => {
-                tracker.verbose("installed leaf", pkg.name);
-                tracker.completeWork(1);
-                cb(err);
-              }
-            );
-          });
-        }
-      });
+    leaves.forEach((leafRecord, leafNode) => {
+      const deps = Array.from(leafRecord);
+
+      // If we have any unsatisfied deps then we need to install everything.
+      // This is important for consistent behavior across npm clients.
+      if (deps.some(({ isSatisfied }) => !isSatisfied)) {
+        actions.push(cb => {
+          npmInstall.dependencies(
+            leafNode.location,
+            deps.map(({ dependency }) => dependency),
+            leafNpmConfig,
+            err => {
+              tracker.verbose("installed leaf", leafNode.name);
+              tracker.completeWork(1);
+              cb(err);
+            }
+          );
+        });
+      }
+    });
 
     if (actions.length) {
       tracker.info("", "Installing external dependencies");
