@@ -79,9 +79,7 @@ class ExecCommand extends Command {
 
     try {
       this.batchedPackages = this.toposort
-        ? batchPackages(filteredPackages, {
-            rejectCycles: this.options.rejectCycles,
-          })
+        ? batchPackages(filteredPackages, this.options.rejectCycles)
         : [filteredPackages];
     } catch (e) {
       return callback(e);

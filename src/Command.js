@@ -270,7 +270,7 @@ class Command {
 
     try {
       this.packages = collectPackages({ rootPath, packageConfigs });
-      this.packageGraph = new PackageGraph(this.packages, { graphType: "allDependencies" });
+      this.packageGraph = new PackageGraph(this.packages);
       this.filteredPackages = filterPackages(this.packages, { scope, ignore });
 
       // The UpdatedPackagesCollector requires that filteredPackages be present prior to checking for

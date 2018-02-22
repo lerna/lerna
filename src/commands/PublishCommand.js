@@ -223,12 +223,13 @@ class PublishCommand extends Command {
     this.packagesToPublish = this.updates.map(({ package: pkg }) => pkg).filter(pkg => !pkg.private);
 
     this.batchedPackagesToPublish = this.toposort
-      ? batchPackages(this.packagesToPublish, {
+      ? batchPackages(
+          this.packagesToPublish,
+          this.options.rejectCycles,
           // Don't sort based on devDependencies because that would increase the chance of dependency cycles
           // causing less-than-ideal a publishing order.
-          graphType: "dependencies",
-          rejectCycles: this.options.rejectCycles,
-        })
+          "dependencies"
+        )
       : [this.packagesToPublish];
 
     const tasks = [

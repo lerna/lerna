@@ -89,9 +89,7 @@ class RunCommand extends Command {
 
     try {
       this.batchedPackages = this.toposort
-        ? batchPackages(this.packagesWithScript, {
-            rejectCycles: this.options.rejectCycles,
-          })
+        ? batchPackages(this.packagesWithScript, this.options.rejectCycles)
         : [this.packagesWithScript];
     } catch (e) {
       return callback(e);

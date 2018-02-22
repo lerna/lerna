@@ -7,10 +7,9 @@ const semver = require("semver");
  * Represents a node in a PackageGraph.
  * @constructor
  * @param {!<Package>} pkg - A Package object to build the node from.
- * @param {!<String>} graphType - "allDependencies" or "dependencies"
  */
 class PackageGraphNode {
-  constructor(pkg, graphType) {
+  constructor(pkg) {
     Object.defineProperties(this, {
       // immutable properties
       name: {
@@ -24,11 +23,6 @@ class PackageGraphNode {
       version: {
         get() {
           return pkg.version;
-        },
-      },
-      graphDependencies: {
-        get() {
-          return pkg[graphType] || {};
         },
       },
       pkg: {
@@ -98,15 +92,14 @@ class PackageGraphNode {
  * A PackageGraph.
  * @constructor
  * @param {!Array.<Package>} packages An array of Packages to build the graph out of.
- * @param {!Object} config
- * @param {!String} config.graphType ("allDependencies" or "dependencies")
+ * @param {String} graphType ("allDependencies" or "dependencies")
  *    Pass "dependencies" to create a graph of only dependencies,
  *    excluding the devDependencies that would normally be included.
- * @param {Boolean} config.forceLocal Force all local dependencies to be linked.
+ * @param {Boolean} forceLocal Force all local dependencies to be linked.
  */
 class PackageGraph extends Map {
-  constructor(packages, { graphType, forceLocal }) {
-    super(packages.map(pkg => [pkg.name, new PackageGraphNode(pkg, graphType)]));
+  constructor(packages, graphType = "allDependencies", forceLocal) {
+    super(packages.map(pkg => [pkg.name, new PackageGraphNode(pkg)]));
 
     const satisfies = forceLocal
       ? () => true
@@ -114,7 +107,10 @@ class PackageGraph extends Map {
           semver.satisfies(version, resolved.gitCommittish || resolved.gitRange || resolved.fetchSpec);
 
     this.forEach((currentNode, currentName) => {
-      const { graphDependencies } = currentNode;
+      const graphDependencies =
+        graphType === "dependencies"
+          ? Object.assign({}, currentNode.pkg.dependencies)
+          : Object.assign({}, currentNode.pkg.devDependencies, currentNode.pkg.dependencies);
 
       Object.keys(graphDependencies).forEach(depName => {
         const depNode = this.get(depName);
@@ -178,21 +174,12 @@ class PackageGraph extends Map {
     const cycleNodes = new Set();
 
     this.forEach((currentNode, currentName) => {
-      // console.error("START %s\n%O", currentName, currentNode);
       const seen = new Set();
-
-      if (currentNode.localDependencies.has(currentName)) {
-        // utterly ridiculous self -> self
-        seen.add(currentNode);
-        cyclePaths.add([currentName, currentName]);
-      }
 
       const visits = walk => (dependentNode, dependentName, siblingDependents) => {
         const step = walk.concat(dependentName);
-        // console.warn("VISITS %O", step);
 
         if (seen.has(dependentNode)) {
-          // console.info("SEEN:: %O", [currentName, dependentName]);
           return;
         }
 
@@ -202,7 +189,6 @@ class PackageGraph extends Map {
           // a direct cycle
           cycleNodes.add(currentNode);
           cyclePaths.add(step);
-          // console.error("DIRECT", step);
 
           return;
         }
@@ -217,19 +203,13 @@ class PackageGraph extends Map {
             .reverse()
             .concat(cycleDependentName);
 
-          // console.error("TRANSITIVE", pathToCycle);
           cycleNodes.add(dependentNode);
           cyclePaths.add(pathToCycle);
         }
 
         dependentNode.localDependents.forEach(visits(step));
-        // console.warn("EXITED %O", step);
       };
 
-      // currentNode.localDependents.forEach((topLevelNode, topLevelName, sibs) => {
-      //   console.log("TOPLVL %O\n%O", [currentName, topLevelName], topLevelNode);
-      //   visits([currentName])(topLevelNode, topLevelName, sibs);
-      // });
       currentNode.localDependents.forEach(visits([currentName]));
     });
 

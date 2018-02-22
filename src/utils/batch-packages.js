@@ -7,9 +7,9 @@ const ValidationError = require("./validation-error");
 
 module.exports = batchPackages;
 
-function batchPackages(packagesToBatch, { graphType = "allDependencies", rejectCycles }) {
+function batchPackages(packagesToBatch, rejectCycles, graphType) {
   // create a new graph because we will be mutating it
-  const graph = new PackageGraph(packagesToBatch, { graphType });
+  const graph = new PackageGraph(packagesToBatch, graphType);
   const [cyclePaths, cycleNodes] = graph.partitionCycles();
   const batches = [];
 

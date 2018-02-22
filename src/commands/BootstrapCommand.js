@@ -121,9 +121,7 @@ class BootstrapCommand extends Command {
 
     try {
       this.batchedPackages = this.toposort
-        ? batchPackages(this.filteredPackages, {
-            rejectCycles,
-          })
+        ? batchPackages(this.filteredPackages, rejectCycles)
         : [this.filteredPackages];
     } catch (e) {
       return callback(e);

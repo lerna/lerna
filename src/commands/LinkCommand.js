@@ -41,7 +41,7 @@ class LinkCommand extends Command {
     let graph = this.packageGraph;
 
     if (this.options.forceLocal) {
-      graph = new PackageGraph(this.packages, { graphType: "allDependencies", forceLocal: true });
+      graph = new PackageGraph(this.packages, "allDependencies", "forceLocal");
     }
 
     symlinkDependencies(this.packages, graph, this.logger, callback);

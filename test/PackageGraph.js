@@ -29,7 +29,7 @@ describe("PackageGraph", () => {
           "/path/to/package-2"
         ),
       ];
-      const graph = new PackageGraph(packages, { graphType: "allDependencies" });
+      const graph = new PackageGraph(packages, "allDependencies");
 
       expect(graph.get("my-package-1").localDependencies.size).toBe(0);
       expect(graph.get("my-package-2").localDependencies.has("my-package-1")).toBe(true);
@@ -58,7 +58,7 @@ describe("PackageGraph", () => {
           "/path/to/package-2"
         ),
       ];
-      const graph = new PackageGraph(packages, { graphType: "dependencies" });
+      const graph = new PackageGraph(packages, "dependencies");
 
       expect(graph.get("my-package-1").localDependencies.size).toBe(0);
       expect(graph.get("my-package-2").localDependencies.size).toBe(0);
@@ -87,7 +87,7 @@ describe("PackageGraph", () => {
           "/path/to/package-2"
         ),
       ];
-      const graph = new PackageGraph(packages, { graphType: "allDependencies" });
+      const graph = new PackageGraph(packages);
 
       expect(graph.get("my-package-2").localDependencies.has("my-package-1")).toBe(true);
     });
