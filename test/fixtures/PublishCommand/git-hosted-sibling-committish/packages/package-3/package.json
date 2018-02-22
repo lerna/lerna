@@ -2,6 +2,6 @@
   "name": "package-3",
   "version": "1.0.0",
   "devDependencies": {
-    "package-2": "1.0.0"
+    "package-2": "git@github.com:user/package-2#v1.0.0"
   }
 }

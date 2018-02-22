@@ -10,7 +10,6 @@ const PackageGraph = require("./PackageGraph");
 const Repository = require("./Repository");
 const writeLogFile = require("./utils/write-log-file");
 const UpdatedPackagesCollector = require("./UpdatedPackagesCollector");
-const VersionSerializer = require("./VersionSerializer");
 const collectPackages = require("./utils/collect-packages");
 const filterPackages = require("./utils/filter-packages");
 const ValidationError = require("./utils/validation-error");
@@ -255,7 +254,7 @@ class Command {
     }
 
     const { rootPath, packageConfigs } = this.repository;
-    const { scope, ignore, registry, since, useGitVersion, gitVersionPrefix } = this.options;
+    const { scope, ignore, registry, since } = this.options;
 
     if (scope) {
       log.info("scope", scope);
@@ -270,21 +269,9 @@ class Command {
     }
 
     try {
-      const packages = collectPackages({ rootPath, packageConfigs });
-      const packageGraph = new PackageGraph(packages, { graphType: "allDependencies" });
-
-      if (useGitVersion) {
-        packages.forEach(pkg => {
-          pkg.versionSerializer = new VersionSerializer({
-            localDependencies: packageGraph.get(pkg.name).localDependencies,
-            tagVersionPrefix: gitVersionPrefix,
-          });
-        });
-      }
-
-      this.packages = packages;
-      this.packageGraph = packageGraph;
-      this.filteredPackages = filterPackages(packages, { scope, ignore });
+      this.packages = collectPackages({ rootPath, packageConfigs });
+      this.packageGraph = new PackageGraph(this.packages, { graphType: "allDependencies" });
+      this.filteredPackages = filterPackages(this.packages, { scope, ignore });
 
       // The UpdatedPackagesCollector requires that filteredPackages be present prior to checking for
       // updates. That's okay because it further filters based on what's already been filtered.

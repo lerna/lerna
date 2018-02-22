@@ -172,17 +172,13 @@ class PublishCommand extends Command {
     this.gitRemote = this.options.gitRemote || "origin";
     this.gitEnabled = !(this.options.canary || this.options.skipGit);
 
+    // https://docs.npmjs.com/misc/config#save-prefix
+    this.savePrefix = this.options.exact ? "" : "^";
+
     this.npmConfig = {
       npmClient: this.options.npmClient || "npm",
       registry: this.options.registry,
     };
-
-    if (this.options.useGitVersion && !this.options.exact) {
-      throw new Error(dedent`
-        Using git version without 'exact' option is not recommended.
-        Please make sure you publish with --exact.
-      `);
-    }
 
     if (this.options.canary) {
       this.logger.info("canary", "enabled");
@@ -283,18 +279,15 @@ class PublishCommand extends Command {
       );
 
     return pMap(updatesWithLocalLinks, ({ pkg, localDependencies }) => {
-      // create a copy of the serialized JSON with resolved local links
-      const updated = Array.from(localDependencies.keys()).reduce((obj, linkedName) => {
+      for (const [depName, resolved] of localDependencies) {
         // regardless of where the version comes from, we can't publish "file:../sibling-pkg" specs
-        const version = this.updatesVersions.get(linkedName) || this.packageGraph.get(linkedName).pkg.version;
+        const depVersion = this.updatesVersions.get(depName) || this.packageGraph.get(depName).pkg.version;
 
-        // we only care about dependencies here, as devDependencies are ignored when installed
-        obj.dependencies[linkedName] = this.options.exact ? version : `^${version}`;
+        // it no longer matters if we mutate the shared Package instance
+        pkg.updateDependency(resolved, depVersion, this.savePrefix);
+      }
 
-        return obj;
-      }, pkg.toJSON()); // don't mutate shared Package instance
-
-      return writePkg(pkg.manifestLocation, updated).then(() => pkg);
+      return writePkg(pkg.manifestLocation, pkg.toJSON()).then(() => pkg);
     }).then(modifiedPkgs => {
       // a Set of modified Package instances is stored for resetting later
       this.locallyResolved = new Set(modifiedPkgs);
@@ -520,7 +513,7 @@ class PublishCommand extends Command {
   }
 
   updateUpdatedPackages() {
-    const { exact, conventionalCommits, changelogPreset } = this.options;
+    const { conventionalCommits, changelogPreset } = this.options;
     const independentVersions = this.repository.isIndependent();
     const rootPkg = this.repository.package;
     const changedFiles = new Set();
@@ -544,11 +537,17 @@ class PublishCommand extends Command {
             // write new package
             .then(() => {
               // set new version
-              pkg.version = this.updatesVersions.get(pkg.name) || pkg.version;
+              pkg.version = this.updatesVersions.get(pkg.name);
 
               // update pkg dependencies
-              this.updatePackageDepsObject(pkg, "dependencies", exact);
-              this.updatePackageDepsObject(pkg, "devDependencies", exact);
+              for (const [depName, resolved] of this.packageGraph.get(pkg.name).localDependencies) {
+                const depVersion = this.updatesVersions.get(depName);
+
+                if (depVersion && resolved.type !== "directory") {
+                  // don't overwrite local file: specifiers (yet)
+                  pkg.updateDependency(resolved, depVersion, this.savePrefix);
+                }
+              }
 
               // NOTE: Object.prototype.toJSON() is normally called when passed to
               // JSON.stringify(), but write-pkg iterates Object.keys() before serializing
@@ -602,27 +601,6 @@ class PublishCommand extends Command {
     }
 
     return chain;
-  }
-
-  updatePackageDepsObject(pkg, depsKey, exact) {
-    const deps = pkg[depsKey];
-
-    if (!deps) {
-      return;
-    }
-
-    this.packageGraph.get(pkg.name).localDependencies.forEach(({ type }, depName) => {
-      if (type === "directory") {
-        // don't overwrite local file: specifiers (yet)
-        return;
-      }
-
-      const version = this.updatesVersions.get(depName);
-
-      if (deps[depName] && version) {
-        deps[depName] = exact ? version : `^${version}`;
-      }
-    });
   }
 
   commitAndTagUpdates() {

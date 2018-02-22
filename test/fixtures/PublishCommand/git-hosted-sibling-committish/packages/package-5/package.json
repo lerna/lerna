@@ -1,0 +1,8 @@
+{
+  "name": "package-5",
+  "version": "1.0.0",
+  "dependencies": {
+    "package-1": "ssh://git@github.com:user/package-1.git#v1.0.0"
+  },
+  "private": true
+}

@@ -529,6 +529,36 @@ Object {
 }
 `;
 
+exports[`PublishCommand with git-hosted sibling dependencies updates gitCommittish versions as sshurls 1`] = `
+Object {
+  "packages/package-1": "1.1.0",
+  "packages/package-2": "1.1.0",
+  "packages/package-3": "1.1.0",
+  "packages/package-4": "1.1.0",
+  "packages/package-5": "1.1.0",
+}
+`;
+
+exports[`PublishCommand with git-hosted sibling dependencies updates gitRange versions as sshurls 1`] = `
+Object {
+  "packages/package-1": "1.0.1-beta.0",
+  "packages/package-2": "1.0.1-beta.0",
+  "packages/package-3": "1.0.1-beta.0",
+  "packages/package-4": "1.0.1-beta.0",
+  "packages/package-5": "1.0.1-beta.0",
+}
+`;
+
+exports[`PublishCommand with relative file: specifiers falls back to existing relative version when it is not updated 1`] = `
+Object {
+  "packages/package-1": "1.1.0",
+  "packages/package-2": "2.1.0",
+  "packages/package-3": "3.1.0",
+  "packages/package-4": "4.1.0",
+  "packages/package-5": "5.1.0",
+}
+`;
+
 exports[`PublishCommand with relative file: specifiers overwrites relative link with local version before npm publish but after git commit 1`] = `
 Object {
   "packages/package-1": "2.0.0",

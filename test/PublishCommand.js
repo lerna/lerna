@@ -9,8 +9,10 @@ jest.mock("../src/utils/npm-dist-tag");
 jest.mock("../src/utils/npm-publish");
 jest.mock("../src/utils/npm-run-script");
 
+const fs = require("fs-extra");
 const normalizeNewline = require("normalize-newline");
 const path = require("path");
+const semver = require("semver");
 
 // mocked or stubbed modules
 const writeJsonFile = require("write-json-file");
@@ -508,6 +510,24 @@ describe("PublishCommand", () => {
         "package-1": "1.0.1",
       });
     });
+
+    it("updates existing exact versions", async () => {
+      const testDir = await initFixture("PublishCommand/normal-exact");
+      await lernaPublish(testDir)();
+
+      expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+        "package-1": "1.0.1",
+      });
+      expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+        "package-2": "1.0.1",
+      });
+      expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+        "package-1": "0.1.0",
+      });
+      expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
+        "package-1": "1.0.1",
+      });
+    });
   });
 
   /** =========================================================================
@@ -832,6 +852,46 @@ describe("PublishCommand", () => {
         );
       });
     });
+
+    it("avoids duplicating previously-released version", async () => {
+      const testDir = await initFixture("PublishCommand/normal-no-inter-dependencies");
+
+      GitUtilities.hasTags.mockReturnValueOnce(true);
+      GitUtilities.getLastTag.mockReturnValueOnce("v1.0.0");
+      GitUtilities.diffSinceIn.mockReturnValueOnce(`packages/package-1/package.json`);
+
+      // feat(package-1): add thing
+      ConventionalCommitUtilities.recommendVersion.mockResolvedValueOnce("1.1.0");
+
+      await lernaPublish(testDir)("--conventional-commits");
+
+      expect(updatedPackageVersions(testDir)).toEqual({
+        "packages/package-1": "1.1.0",
+      });
+
+      // make subsequent publish start with the right globalVersion
+      await fs.writeJSON(path.join(testDir, "lerna.json"), { version: "1.1.0" });
+
+      // clear previous publish mock records
+      jest.clearAllMocks();
+
+      GitUtilities.hasTags.mockReturnValueOnce(true);
+      GitUtilities.getLastTag.mockReturnValueOnce("v1.1.0");
+      GitUtilities.diffSinceIn
+        .mockReturnValueOnce("") // package-1 has no changes
+        .mockReturnValueOnce(`packages/package-2/package.json`);
+
+      // fix(package-2): oops thing
+      ConventionalCommitUtilities.recommendVersion.mockImplementationOnce(pkg =>
+        Promise.resolve(semver.inc(pkg.version, "patch"))
+      );
+
+      await lernaPublish(testDir)("--conventional-commits", "--yes");
+
+      expect(updatedPackageVersions(testDir)).toEqual({
+        "packages/package-2": "1.1.1",
+      });
+    });
   });
 
   /** =========================================================================
@@ -985,6 +1045,52 @@ describe("PublishCommand", () => {
     expect(updatedPackageVersions(testDir)).toMatchSnapshot();
   });
 
+  describe("with git-hosted sibling dependencies", () => {
+    it("updates gitCommittish versions as sshurls", async () => {
+      const testDir = await initFixture("PublishCommand/git-hosted-sibling-committish");
+
+      await lernaPublish(testDir)("--cd-version", "minor");
+
+      expect(updatedPackageVersions(testDir)).toMatchSnapshot();
+
+      // package-1 doesn't have any dependencies
+      expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+        "package-1": "git+ssh://git@github.com/user/package-1.git#v1.1.0",
+      });
+      expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+        "package-2": "git+ssh://git@github.com/user/package-2.git#v1.1.0",
+      });
+      expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+        "package-1": "github:user/package-1#v0.0.0", // non-matching semver
+      });
+      expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
+        "package-1": "git+ssh://git@github.com/user/package-1.git#v1.1.0",
+      });
+    });
+
+    it("updates gitRange versions as sshurls", async () => {
+      const testDir = await initFixture("PublishCommand/git-hosted-sibling-semver");
+
+      await lernaPublish(testDir)("--cd-version", "prerelease", "--preid", "beta");
+
+      expect(updatedPackageVersions(testDir)).toMatchSnapshot();
+
+      // package-1 doesn't have any dependencies
+      expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+        "package-1": "git+ssh://git@github.com/user/package-1.git#semver:^1.0.1-beta.0",
+      });
+      expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
+        "package-2": "git+ssh://git@github.com/user/package-2.git#semver:^1.0.1-beta.0",
+      });
+      expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+        "package-1": "github:user/package-1#semver:^0.1.0", // non-matching semver
+      });
+      expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
+        "package-1": "git+ssh://git@github.com/user/package-1.git#semver:^1.0.1-beta.0",
+      });
+    });
+  });
+
   describe("with relative file: specifiers", () => {
     beforeEach(() => {
       GitUtilities.hasTags.mockReturnValueOnce(true);
@@ -1011,6 +1117,7 @@ describe("PublishCommand", () => {
       });
       expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
         "package-4": "^2.0.0",
+        "package-6": "^1.0.0", // FIXME: awkward... (_intentional_, for now)
       });
     });
 
@@ -1027,6 +1134,32 @@ describe("PublishCommand", () => {
             cwd: testDir,
           })
         );
+      });
+    });
+
+    it("falls back to existing relative version when it is not updated", async () => {
+      const testDir = await initFixture("PublishCommand/relative-independent");
+
+      await lernaPublish(testDir)("--cd-version", "minor", "--yes");
+
+      expect(updatedPackageVersions(testDir)).toMatchSnapshot();
+
+      // package-4 was updated, but package-6 was not
+      expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
+        "package-4": "^4.1.0",
+        "package-6": "^6.0.0",
+      });
+    });
+
+    it("respects --exact", async () => {
+      const testDir = await initFixture("PublishCommand/relative-independent");
+
+      await lernaPublish(testDir)("--cd-version", "patch", "--yes", "--exact");
+
+      // package-4 was updated, but package-6 was not
+      expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
+        "package-4": "4.0.1",
+        "package-6": "6.0.0",
       });
     });
   });

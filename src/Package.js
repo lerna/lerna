@@ -12,6 +12,7 @@ function shallowCopy(json) {
   return Object.keys(json).reduce((obj, key) => {
     const val = json[key];
 
+    /* istanbul ignore if */
     if (Array.isArray(val)) {
       obj[key] = val.slice();
     } else if (val && typeof val === "object") {
@@ -25,10 +26,7 @@ function shallowCopy(json) {
 }
 
 class Package {
-  constructor(json, location, rootPath = location) {
-    let pkg = json;
-    // TODO: less mutation by reference
-
+  constructor(pkg, location, rootPath = location) {
     Object.defineProperties(this, {
       // read-only
       name: {
@@ -97,28 +95,51 @@ class Package {
       binLocation: {
         value: path.join(location, "node_modules", ".bin"),
       },
-      // side-effects
-      versionSerializer: {
-        set(impl) {
-          this.serialize = impl.serialize;
-          pkg = impl.deserialize(pkg);
-        },
-      },
-      serialize: {
-        value: K => K,
-        writable: true,
-      },
       // "private"
       json: {
         get() {
-          return shallowCopy(pkg);
+          return pkg;
         },
       },
     });
   }
 
+  updateDependency(resolved, depVersion, savePrefix) {
+    const depName = resolved.name;
+
+    // first, try runtime dependencies
+    let depCollection = this.json.dependencies;
+
+    // fall back to devDependencies (it will always be one of these two)
+    if (!depCollection || !depCollection[depName]) {
+      depCollection = this.json.devDependencies;
+    }
+
+    if (resolved.registry || resolved.type === "directory") {
+      // a version (1.2.3) OR range (^1.2.3) OR directory (file:../foo-pkg)
+      depCollection[depName] = `${savePrefix}${depVersion}`;
+    } else if (resolved.gitCommittish) {
+      // a git url with matching committish (#v1.2.3 or #1.2.3)
+      const [tagPrefix] = /^\D*/.exec(resolved.gitCommittish);
+
+      // update committish
+      const { hosted } = resolved; // take that, lint!
+      hosted.committish = `${tagPrefix}${depVersion}`;
+
+      // always serialize the full git+ssh url (identical to previous resolved.saveSpec)
+      depCollection[depName] = hosted.sshurl({ noGitPlus: false, noCommittish: false });
+    } else if (resolved.gitRange) {
+      // a git url with matching gitRange (#semver:^1.2.3)
+      const { hosted } = resolved; // take that, lint!
+      hosted.committish = `semver:${savePrefix}${depVersion}`;
+
+      // always serialize the full git+ssh url (identical to previous resolved.saveSpec)
+      depCollection[depName] = hosted.sshurl({ noGitPlus: false, noCommittish: false });
+    }
+  }
+
   toJSON() {
-    return this.serialize(this.json);
+    return shallowCopy(this.json);
   }
 }
 
