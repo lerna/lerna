@@ -86,6 +86,17 @@ class PackageGraphNode {
         throw new Error(`unknown property "${degreeType}"`);
     }
   }
+
+  /**
+   * Determine if the Node satisfies a resolved semver range.
+   * @see https://github.com/npm/npm-package-arg#result-object
+   *
+   * @param {!Result} resolved npm-package-arg Result object
+   * @returns {Boolean}
+   */
+  satisfies({ gitCommittish, gitRange, fetchSpec }) {
+    return semver.satisfies(this.version, gitCommittish || gitRange || fetchSpec);
+  }
 }
 
 /**
@@ -100,11 +111,6 @@ class PackageGraphNode {
 class PackageGraph extends Map {
   constructor(packages, graphType = "allDependencies", forceLocal) {
     super(packages.map(pkg => [pkg.name, new PackageGraphNode(pkg)]));
-
-    const satisfies = forceLocal
-      ? () => true
-      : (version, resolved) =>
-          semver.satisfies(version, resolved.gitCommittish || resolved.gitRange || resolved.fetchSpec);
 
     this.forEach((currentNode, currentName) => {
       const graphDependencies =
@@ -121,7 +127,7 @@ class PackageGraph extends Map {
           return currentNode.externalDependencies.set(depName, resolved);
         }
 
-        if (resolved.fetchSpec === depNode.location || satisfies(depNode.version, resolved)) {
+        if (forceLocal || resolved.fetchSpec === depNode.location || depNode.satisfies(resolved)) {
           // a local file: specifier OR a matching semver
           currentNode.localDependencies.set(depName, resolved);
           depNode.localDependents.set(currentName, currentNode);
