@@ -105,20 +105,6 @@ describe("Package", () => {
     });
   });
 
-  describe("get .allDependencies", () => {
-    it("should return the combined dependencies", () => {
-      const pkg = factory({
-        dependencies: { "my-dependency": "^1.0.0" },
-        devDependencies: { "my-dev-dependency": "^1.0.0" },
-        peerDependencies: { "my-peer-dependency": ">=1.0.0" },
-      });
-      expect(pkg.allDependencies).toEqual({
-        "my-dependency": "^1.0.0",
-        "my-dev-dependency": "^1.0.0",
-      });
-    });
-  });
-
   describe("get .scripts", () => {
     it("should return the scripts", () => {
       const pkg = factory({

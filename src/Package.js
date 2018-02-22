@@ -69,11 +69,6 @@ class Package {
           return pkg.peerDependencies;
         },
       },
-      allDependencies: {
-        get() {
-          return Object.assign({}, pkg.devDependencies, pkg.dependencies);
-        },
-      },
       // immutable
       bin: {
         value:
