@@ -49,10 +49,6 @@ class Repository {
     return this.lernaJson.version;
   }
 
-  get nodeModulesLocation() {
-    return path.join(this.rootPath, "node_modules");
-  }
-
   get packageConfigs() {
     if (this.lernaJson.useWorkspaces) {
       if (!this.packageJson.workspaces) {

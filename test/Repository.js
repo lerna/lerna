@@ -105,13 +105,6 @@ describe("Repository", () => {
     });
   });
 
-  describe("get .nodeModulesLocation", () => {
-    it("returns the root node_modules location", () => {
-      const repo = new Repository(testDir);
-      expect(repo.nodeModulesLocation).toBe(path.join(testDir, "node_modules"));
-    });
-  });
-
   describe("get .packageConfigs", () => {
     it("returns the default packageConfigs", () => {
       const repo = new Repository(testDir);
