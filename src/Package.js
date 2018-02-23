@@ -27,6 +27,7 @@ function shallowCopy(json) {
 
 class Package {
   constructor(pkg, location, rootPath = location) {
+    // npa will throw an error if the name is invalid
     const resolved = npa.resolve(pkg.name, path.relative(rootPath, location), rootPath);
 
     Object.defineProperties(this, {
@@ -99,7 +100,7 @@ class Package {
     });
   }
 
-  updateDependency(resolved, depVersion, savePrefix) {
+  updateLocalDependency(resolved, depVersion, savePrefix) {
     const depName = resolved.name;
 
     // first, try runtime dependencies

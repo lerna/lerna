@@ -283,7 +283,7 @@ class PublishCommand extends Command {
         const depVersion = this.updatesVersions.get(depName) || this.packageGraph.get(depName).pkg.version;
 
         // it no longer matters if we mutate the shared Package instance
-        pkg.updateDependency(resolved, depVersion, this.savePrefix);
+        pkg.updateLocalDependency(resolved, depVersion, this.savePrefix);
       }
 
       return writePkg(pkg.manifestLocation, pkg.toJSON()).then(() => pkg);
@@ -544,7 +544,7 @@ class PublishCommand extends Command {
 
                 if (depVersion && resolved.type !== "directory") {
                   // don't overwrite local file: specifiers (yet)
-                  pkg.updateDependency(resolved, depVersion, this.savePrefix);
+                  pkg.updateLocalDependency(resolved, depVersion, this.savePrefix);
                 }
               }
 
