@@ -220,7 +220,7 @@ class PublishCommand extends Command {
       return callback(null, false);
     }
 
-    this.packagesToPublish = this.updates.map(({ package: pkg }) => pkg).filter(pkg => !pkg.private);
+    this.packagesToPublish = this.updates.map(({ pkg }) => pkg).filter(pkg => !pkg.private);
 
     this.batchedPackagesToPublish = this.toposort
       ? batchPackages(
@@ -271,13 +271,11 @@ class PublishCommand extends Command {
 
   resolveLocalDependencyLinks() {
     // resolve relative file: links to their actual version range
-    const updatesWithLocalLinks = this.updates
-      .map(({ package: pkg }) => this.packageGraph.get(pkg.name))
-      .filter(
-        ({ localDependencies }) =>
-          localDependencies.size &&
-          Array.from(localDependencies.values()).some(({ type }) => type === "directory")
-      );
+    const updatesWithLocalLinks = this.updates.filter(
+      ({ localDependencies }) =>
+        localDependencies.size &&
+        Array.from(localDependencies.values()).some(({ type }) => type === "directory")
+    );
 
     return pMap(updatesWithLocalLinks, ({ pkg, localDependencies }) => {
       for (const [depName, resolved] of localDependencies) {
@@ -364,7 +362,7 @@ class PublishCommand extends Command {
   }
 
   reduceVersions(getVersion) {
-    const iterator = (versionMap, { package: pkg }) =>
+    const iterator = (versionMap, { pkg }) =>
       Promise.resolve(getVersion(pkg)).then(version => versionMap.set(pkg.name, version));
 
     return pReduce(this.updates, iterator, new Map());
@@ -382,7 +380,7 @@ class PublishCommand extends Command {
       chain = chain.then(() => {
         const globalVersion = this.repository.version;
 
-        this.updates.forEach(({ package: pkg }) => {
+        this.updates.forEach(({ pkg }) => {
           if (semver.lt(pkg.version, globalVersion)) {
             this.logger.verbose(
               "publish",
@@ -468,7 +466,7 @@ class PublishCommand extends Command {
   }
 
   confirmVersions() {
-    const changes = this.updates.map(({ package: pkg }) => {
+    const changes = this.updates.map(({ pkg }) => {
       let line = ` - ${pkg.name}: ${pkg.version} => ${this.updatesVersions.get(pkg.name)}`;
       if (pkg.private) {
         line += ` (${chalk.red("private")})`;
@@ -528,7 +526,7 @@ class PublishCommand extends Command {
     chain = chain.then(() =>
       pMap(
         this.updates,
-        ({ package: pkg }) =>
+        ({ pkg, localDependencies }) =>
           // start the chain
           Promise.resolve()
 
@@ -541,7 +539,7 @@ class PublishCommand extends Command {
               pkg.version = this.updatesVersions.get(pkg.name);
 
               // update pkg dependencies
-              for (const [depName, resolved] of this.packageGraph.get(pkg.name).localDependencies) {
+              for (const [depName, resolved] of localDependencies) {
                 const depVersion = this.updatesVersions.get(depName);
 
                 if (depVersion && resolved.type !== "directory") {
@@ -619,7 +617,7 @@ class PublishCommand extends Command {
 
     // run the postversion script for each update
     chain = chain.then(() => {
-      this.updates.forEach(({ package: pkg }) => this.runLifecycle(pkg, "postversion"));
+      this.updates.forEach(({ pkg }) => this.runLifecycle(pkg, "postversion"));
     });
 
     // run postversion, if set, in the root directory
@@ -629,7 +627,7 @@ class PublishCommand extends Command {
   }
 
   gitCommitAndTagVersionForUpdates() {
-    const tags = this.updates.map(({ package: pkg }) => `${pkg.name}@${this.updatesVersions.get(pkg.name)}`);
+    const tags = this.updates.map(({ pkg }) => `${pkg.name}@${this.updatesVersions.get(pkg.name)}`);
     const subject = this.options.message || "Publish";
     const message = tags.reduce((msg, tag) => `${msg}${os.EOL} - ${tag}`, `${subject}${os.EOL}`);
 
@@ -677,7 +675,7 @@ class PublishCommand extends Command {
     // if we skip temp tags we should tag with the proper value immediately
     const distTag = this.options.tempTag ? "lerna-temp" : this.getDistTag();
 
-    this.updates.forEach(({ package: pkg }) => this.execScript(pkg, "prepublish"));
+    this.updates.forEach(({ pkg }) => this.execScript(pkg, "prepublish"));
 
     tracker.addWork(this.packagesToPublish.length);
 

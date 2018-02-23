@@ -7,12 +7,6 @@ const collectDependents = require("./utils/collect-dependents");
 const getForcedPackages = require("./utils/get-forced-packages");
 const makeDiffPredicate = require("./utils/make-diff-predicate");
 
-class Update {
-  constructor(pkg) {
-    this.package = pkg;
-  }
-}
-
 class UpdatedPackagesCollector {
   constructor(command) {
     this.execOpts = command.execOpts;
@@ -45,8 +39,7 @@ class UpdatedPackagesCollector {
     const mapper = (node, name) => {
       this.logger.verbose("has filtered update", name);
 
-      // TODO: stop re-wrapping with a silly Update class
-      updates.push(new Update(node.pkg));
+      updates.push(node);
     };
 
     if (this.options.canary) {

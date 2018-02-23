@@ -86,7 +86,7 @@ describe("RunCommand", () => {
 
       UpdatedPackagesCollector.prototype.getUpdates = jest.fn(() => [
         {
-          package: {
+          pkg: {
             name: "package-3",
             location: path.join(testDir, "packages/package-3"),
             scripts: { "my-script": "echo package-3" },

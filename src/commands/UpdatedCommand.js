@@ -52,7 +52,7 @@ class UpdatedCommand extends Command {
   }
 
   execute(callback) {
-    const updatedPackages = this.updates.map(update => update.package).map(pkg => ({
+    const updatedPackages = this.updates.map(({ pkg }) => ({
       name: pkg.name,
       version: pkg.version,
       private: pkg.private,

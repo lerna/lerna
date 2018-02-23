@@ -107,7 +107,7 @@ describe("ExecCommand", () => {
 
       UpdatedPackagesCollector.prototype.getUpdates = jest.fn(() => [
         {
-          package: {
+          pkg: {
             name: "package-2",
             location: path.join(testDir, "packages/package-2"),
           },

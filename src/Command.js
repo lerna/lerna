@@ -276,7 +276,7 @@ class Command {
       // The UpdatedPackagesCollector requires that filteredPackages be present prior to checking for
       // updates. That's okay because it further filters based on what's already been filtered.
       if (typeof since === "string") {
-        const updated = new UpdatedPackagesCollector(this).getUpdates().map(update => update.package.name);
+        const updated = new UpdatedPackagesCollector(this).getUpdates().map(({ pkg }) => pkg.name);
         this.filteredPackages = this.filteredPackages.filter(pkg => updated.indexOf(pkg.name) > -1);
       }
 
