@@ -1,41 +1,15 @@
 "use strict";
 
-const minimatch = require("minimatch");
-const path = require("path");
 const semver = require("semver");
 
 const GitUtilities = require("./GitUtilities");
 const getForcedPackages = require("./utils/get-forced-packages");
+const makeDiffPredicate = require("./utils/make-diff-predicate");
 
 class Update {
   constructor(pkg) {
     this.package = pkg;
   }
-}
-
-function makeDiffSince(rootPath, execOpts, ignorePatterns) {
-  const ignoreFilters = new Set(
-    Array.from(ignorePatterns || []).map(p => minimatch.filter(`!${p}`, { matchBase: true }))
-  );
-
-  return function hasDiffSinceThatIsntIgnored(pkg, commits) {
-    const folder = path.relative(rootPath, pkg.location);
-    const diff = GitUtilities.diffSinceIn(commits, pkg.location, execOpts);
-
-    if (diff === "") {
-      return false;
-    }
-
-    let changedFiles = diff.split("\n").map(file => file.replace(folder + path.sep, ""));
-
-    if (ignoreFilters.size) {
-      for (const ignored of ignoreFilters) {
-        changedFiles = changedFiles.filter(ignored);
-      }
-    }
-
-    return !!changedFiles.length;
-  };
 }
 
 class UpdatedPackagesCollector {
@@ -111,10 +85,10 @@ class UpdatedPackagesCollector {
     if (!since || forced.has("*")) {
       this.packages.forEach(node => this.candidates.add(node));
     } else {
-      const hasDiffSinceThatIsntIgnored = makeDiffSince(rootPath, execOpts, ignorePatterns);
+      const hasDiff = makeDiffPredicate(since, rootPath, execOpts, ignorePatterns);
 
       this.packages.forEach((node, name) => {
-        if (forced.has(name) || hasDiffSinceThatIsntIgnored(node, since)) {
+        if (forced.has(name) || hasDiff(node)) {
           this.candidates.add(node);
         }
       });
