@@ -133,14 +133,14 @@ function describeTag(ref, opts) {
   return description;
 }
 
-function diffSinceIn(since, location, opts) {
+function diffSinceIn(committish, location, opts) {
   const formattedLocation = slash(path.relative(opts.cwd, location));
 
-  log.silly("diffSinceIn", since, formattedLocation);
+  log.silly("diffSinceIn", committish, formattedLocation);
 
   const diff = ChildProcessUtilities.execSync(
     "git",
-    ["diff", "--name-only", since, "--", formattedLocation],
+    ["diff", "--name-only", committish, "--", formattedLocation],
     opts
   );
   log.silly("diff", diff);

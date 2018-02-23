@@ -252,10 +252,10 @@ describe("GitUtilities", () => {
 
       ChildProcessUtilities.execSync.mockReturnValueOnce("files");
 
-      expect(GitUtilities.diffSinceIn("foo@1.0.0", "packages/foo", opts)).toBe("files");
+      expect(GitUtilities.diffSinceIn("v1.0.0", "packages/foo", opts)).toBe("files");
       expect(ChildProcessUtilities.execSync).lastCalledWith(
         "git",
-        ["diff", "--name-only", "foo@1.0.0", "--", "packages/foo"],
+        ["diff", "--name-only", "v1.0.0", "--", "packages/foo"],
         opts
       );
     });
