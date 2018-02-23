@@ -3,6 +3,7 @@
 const semver = require("semver");
 
 const GitUtilities = require("./GitUtilities");
+const collectDependents = require("./utils/collect-dependents");
 const getForcedPackages = require("./utils/get-forced-packages");
 const makeDiffPredicate = require("./utils/make-diff-predicate");
 
@@ -35,7 +36,9 @@ class UpdatedPackagesCollector {
 
     this.collectUpdatedPackages();
     this.collectPrereleasedPackages();
-    this.collectTransitiveDependents();
+
+    const dependents = collectDependents(this.candidates);
+    dependents.forEach(node => this.candidates.add(node));
 
     const updates = [];
 
@@ -109,41 +112,6 @@ class UpdatedPackagesCollector {
         this.candidates.add(node);
       }
     });
-  }
-
-  collectTransitiveDependents() {
-    const collected = new Set();
-
-    this.candidates.forEach((currentNode, currentName) => {
-      if (currentNode.localDependents.size === 0) {
-        // no point diving into a non-existent tree
-        return;
-      }
-
-      // depth-first search, whee
-      const seen = new Set();
-
-      const visit = (dependentNode, dependentName, siblingDependents) => {
-        if (seen.has(dependentNode)) {
-          return;
-        }
-
-        seen.add(dependentNode);
-
-        if (dependentNode === currentNode || siblingDependents.has(currentName)) {
-          // a direct or transitive cycle, skip it
-          return;
-        }
-
-        collected.add(dependentNode);
-
-        dependentNode.localDependents.forEach(visit);
-      };
-
-      currentNode.localDependents.forEach(visit);
-    });
-
-    collected.forEach(node => this.candidates.add(node));
   }
 }
 
