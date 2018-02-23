@@ -134,7 +134,8 @@ function describeTag(ref, opts) {
 }
 
 function diffSinceIn(since, location, opts) {
-  const formattedLocation = path.relative(opts.cwd, location).replace(/\\/g, "/");
+  const formattedLocation = slash(path.relative(opts.cwd, location));
+
   log.silly("diffSinceIn", since, formattedLocation);
 
   const diff = ChildProcessUtilities.execSync(
