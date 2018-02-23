@@ -1,13 +1,13 @@
 "use strict";
 
 jest.mock("../src/ChildProcessUtilities");
-jest.mock("../src/UpdatedPackagesCollector");
+jest.mock("../src/utils/collect-updates");
 
 const path = require("path");
 
 // mocked modules
 const ChildProcessUtilities = require("../src/ChildProcessUtilities");
-const UpdatedPackagesCollector = require("../src/UpdatedPackagesCollector");
+const collectUpdates = require("../src/utils/collect-updates");
 
 // helpers
 const callsBack = require("./helpers/callsBack");
@@ -105,7 +105,7 @@ describe("ExecCommand", () => {
     it("should filter packages that are not updated with --since", async () => {
       const testDir = await initFixture("ExecCommand/basic");
 
-      UpdatedPackagesCollector.prototype.getUpdates = jest.fn(() => [
+      collectUpdates.mockReturnValueOnce([
         {
           pkg: {
             name: "package-2",

@@ -1,12 +1,13 @@
 "use strict";
 
 jest.mock("../src/utils/npm-run-script");
+jest.mock("../src/utils/collect-updates");
 
 const path = require("path");
 
 // mocked modules
 const npmRunScript = require("../src/utils/npm-run-script");
-const UpdatedPackagesCollector = require("../src/UpdatedPackagesCollector");
+const collectUpdates = require("../src/utils/collect-updates");
 
 // helpers
 const callsBack = require("./helpers/callsBack");
@@ -84,7 +85,7 @@ describe("RunCommand", () => {
     it("should filter packages that are not updated with --since", async () => {
       const testDir = await initFixture("RunCommand/basic");
 
-      UpdatedPackagesCollector.prototype.getUpdates = jest.fn(() => [
+      collectUpdates.mockReturnValueOnce([
         {
           pkg: {
             name: "package-3",

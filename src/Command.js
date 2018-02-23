@@ -9,8 +9,8 @@ const GitUtilities = require("./GitUtilities");
 const PackageGraph = require("./PackageGraph");
 const Repository = require("./Repository");
 const writeLogFile = require("./utils/write-log-file");
-const UpdatedPackagesCollector = require("./UpdatedPackagesCollector");
 const collectPackages = require("./utils/collect-packages");
+const collectUpdates = require("./utils/collect-updates");
 const filterPackages = require("./utils/filter-packages");
 const ValidationError = require("./utils/validation-error");
 
@@ -273,10 +273,10 @@ class Command {
       this.packageGraph = new PackageGraph(this.packages);
       this.filteredPackages = filterPackages(this.packages, { scope, ignore });
 
-      // The UpdatedPackagesCollector requires that filteredPackages be present prior to checking for
+      // collectUpdates requires that filteredPackages be present prior to checking for
       // updates. That's okay because it further filters based on what's already been filtered.
       if (typeof since === "string") {
-        const updated = new UpdatedPackagesCollector(this).getUpdates().map(({ pkg }) => pkg.name);
+        const updated = collectUpdates(this).map(({ pkg }) => pkg.name);
         this.filteredPackages = this.filteredPackages.filter(pkg => updated.indexOf(pkg.name) > -1);
       }
 

@@ -5,7 +5,7 @@ const chalk = require("chalk");
 const Command = require("../Command");
 const output = require("../utils/output");
 const publishOptions = require("./PublishCommand").builder;
-const UpdatedPackagesCollector = require("../UpdatedPackagesCollector");
+const collectUpdates = require("../utils/collect-updates");
 
 exports.handler = function handler(argv) {
   // eslint-disable-next-line no-use-before-define
@@ -40,7 +40,7 @@ class UpdatedCommand extends Command {
   }
 
   initialize(callback) {
-    this.updates = new UpdatedPackagesCollector(this).getUpdates();
+    this.updates = collectUpdates(this);
 
     const proceedWithUpdates = this.updates.length > 0;
 

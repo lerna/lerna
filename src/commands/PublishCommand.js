@@ -19,7 +19,7 @@ const ConventionalCommitUtilities = require("../ConventionalCommitUtilities");
 const GitUtilities = require("../GitUtilities");
 const PromptUtilities = require("../PromptUtilities");
 const output = require("../utils/output");
-const UpdatedPackagesCollector = require("../UpdatedPackagesCollector");
+const collectUpdates = require("../utils/collect-updates");
 const npmDistTag = require("../utils/npm-dist-tag");
 const npmPublish = require("../utils/npm-publish");
 const npmRunScript = require("../utils/npm-run-script");
@@ -213,7 +213,7 @@ class PublishCommand extends Command {
       }
     }
 
-    this.updates = new UpdatedPackagesCollector(this).getUpdates();
+    this.updates = collectUpdates(this);
 
     if (!this.updates.length) {
       this.logger.info("No updated packages to publish.");
