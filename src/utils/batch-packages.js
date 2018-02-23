@@ -27,13 +27,13 @@ function batchPackages(packagesToBatch, rejectCycles, graphType) {
 
   while (graph.size) {
     // pick the current set of nodes _without_ localDependencies (aka it is a "source" node)
-    const batch = Array.from(graph.values()).filter(node => node.is("source"));
+    const batch = Array.from(graph.values()).filter(node => node.localDependencies.size === 0);
 
     log.silly("batched", batch);
     // batches are composed of Package instances, not PackageGraphNodes
     batches.push(batch.map(node => node.pkg));
 
-    // pruning the graph changes the node.is("source") evaluation
+    // pruning the graph changes the node.localDependencies.size test
     graph.prune(...batch);
   }
 

@@ -30,61 +30,11 @@ class PackageGraphNode {
           return pkg;
         },
       },
-      // graph-specific computed properties
-      indegree: {
-        get() {
-          // https://en.wikipedia.org/wiki/Directed_graph#Indegree_and_outdegree
-          return this.localDependencies.size;
-        },
-      },
-      outdegree: {
-        get() {
-          // https://en.wikipedia.org/wiki/Directed_graph#Indegree_and_outdegree
-          return this.localDependents.size;
-        },
-      },
-      degree: {
-        get() {
-          // https://en.wikipedia.org/wiki/Degree_(graph_theory)
-          return this.indegree + this.outdegree;
-        },
-      },
     });
 
     this.externalDependencies = new Map();
     this.localDependencies = new Map();
     this.localDependents = new Map();
-  }
-
-  is(degreeType) {
-    // The mind-bending thing (just one?!) about dependency graphs
-    // is that the arrows ("edges") point in the reverse direction
-    // of the traditional implication of "has a dependency on" and
-    // "is a dependent of" relationship descriptions.
-    switch (degreeType) {
-      case "source":
-        // only local dependents
-        return this.indegree === 0;
-
-      case "sink":
-        // only local dependencies
-        return this.outdegree === 0;
-
-      case "isolated":
-        // no local dependencies or dependents
-        return this.degree === 0;
-
-      case "leaf":
-        // exactly one local dependency OR dependent
-        return this.degree === 1;
-
-      case "internal":
-        // more than one local dependency OR dependents
-        return !(this.indegree === 0 || this.outdegree === 0);
-
-      default:
-        throw new Error(`unknown property "${degreeType}"`);
-    }
   }
 
   /**
