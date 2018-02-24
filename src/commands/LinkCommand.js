@@ -33,17 +33,17 @@ class LinkCommand extends Command {
     });
   }
 
-  initialize(callback) {
-    callback(null, true);
-  }
-
-  execute(callback) {
+  initialize() {
     let graph = this.packageGraph;
 
     if (this.options.forceLocal) {
       graph = new PackageGraph(this.packages, "allDependencies", "forceLocal");
     }
 
-    symlinkDependencies(this.packages, graph, this.logger, callback);
+    this.targetGraph = graph;
+  }
+
+  execute() {
+    return symlinkDependencies(this.packages, this.targetGraph, this.logger);
   }
 }

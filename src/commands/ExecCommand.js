@@ -1,11 +1,11 @@
 "use strict";
 
-const async = require("async");
+const pMap = require("p-map");
+const pMapSeries = require("p-map-series");
 
 const ChildProcessUtilities = require("../ChildProcessUtilities");
 const Command = require("../Command");
 const batchPackages = require("../utils/batch-packages");
-const runParallelBatches = require("../utils/run-parallel-batches");
 const ValidationError = require("../utils/validation-error");
 
 exports.handler = function handler(argv) {
@@ -62,14 +62,15 @@ class ExecCommand extends Command {
     });
   }
 
-  initialize(callback) {
+  initialize() {
     const dashedArgs = this.options["--"] || [];
     const { cmd, args } = this.options;
+
     this.command = cmd || dashedArgs.shift();
     this.args = (args || []).concat(dashedArgs);
 
     if (!this.command) {
-      return callback(new ValidationError("exec", "A command to execute is required"));
+      throw new ValidationError("exec", "A command to execute is required");
     }
 
     // don't interrupt spawned or streaming stdio
@@ -77,30 +78,28 @@ class ExecCommand extends Command {
 
     const { filteredPackages } = this;
 
-    try {
-      this.batchedPackages = this.toposort
-        ? batchPackages(filteredPackages, this.options.rejectCycles)
-        : [filteredPackages];
-    } catch (e) {
-      return callback(e);
-    }
-
-    callback(null, true);
+    this.batchedPackages = this.toposort
+      ? batchPackages(filteredPackages, this.options.rejectCycles)
+      : [filteredPackages];
   }
 
-  execute(callback) {
+  execute() {
     if (this.options.parallel) {
-      this.runCommandInPackagesParallel(callback);
-    } else {
-      runParallelBatches(
-        this.batchedPackages,
-        pkg => done => {
-          this.runCommandInPackage(pkg, done);
-        },
-        this.concurrency,
-        callback
-      );
+      return this.runCommandInPackagesParallel();
     }
+
+    return pMapSeries(this.batchedPackages, batch =>
+      pMap(
+        batch,
+        pkg =>
+          this.runCommandInPackage(pkg).catch(err => {
+            if (err && err.code) {
+              this.logger.error("exec", `Errored while executing '${err.cmd}' in '${pkg.name}'`);
+            }
+          }),
+        { concurrency: this.concurrency }
+      )
+    );
   }
 
   getOpts(pkg) {
@@ -115,7 +114,7 @@ class ExecCommand extends Command {
     };
   }
 
-  runCommandInPackagesParallel(callback) {
+  runCommandInPackagesParallel() {
     this.logger.info(
       "exec",
       "in %d package(s): %s",
@@ -123,26 +122,18 @@ class ExecCommand extends Command {
       [this.command].concat(this.args).join(" ")
     );
 
-    async.parallel(
-      this.filteredPackages.map(pkg => done => {
-        ChildProcessUtilities.spawnStreaming(this.command, this.args, this.getOpts(pkg), pkg.name, done);
-      }),
-      callback
+    return Promise.all(
+      this.filteredPackages.map(pkg =>
+        ChildProcessUtilities.spawnStreaming(this.command, this.args, this.getOpts(pkg), pkg.name)
+      )
     );
   }
 
-  runCommandInPackage(pkg, callback) {
-    const done = err => {
-      if (err && err.code) {
-        this.logger.error("exec", `Errored while executing '${err.cmd}' in '${pkg.name}'`);
-      }
-      callback(err);
-    };
-
+  runCommandInPackage(pkg) {
     if (this.options.stream) {
-      ChildProcessUtilities.spawnStreaming(this.command, this.args, this.getOpts(pkg), pkg.name, done);
-    } else {
-      ChildProcessUtilities.spawn(this.command, this.args, this.getOpts(pkg), done);
+      return ChildProcessUtilities.spawnStreaming(this.command, this.args, this.getOpts(pkg), pkg.name);
     }
+
+    return ChildProcessUtilities.spawn(this.command, this.args, this.getOpts(pkg));
   }
 }

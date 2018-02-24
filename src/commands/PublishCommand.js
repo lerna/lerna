@@ -168,7 +168,7 @@ class PublishCommand extends Command {
     });
   }
 
-  initialize(callback) {
+  initialize() {
     this.gitRemote = this.options.gitRemote || "origin";
     this.gitEnabled = !(this.options.canary || this.options.skipGit);
 
@@ -216,8 +216,10 @@ class PublishCommand extends Command {
     this.updates = collectUpdates(this);
 
     if (!this.updates.length) {
-      this.logger.info("No updated packages to publish.");
-      return callback(null, false);
+      this.logger.success("No updated packages to publish");
+
+      // still exits zero, aka "ok"
+      return false;
     }
 
     this.packagesToPublish = this.updates.map(({ pkg }) => pkg).filter(pkg => !pkg.private);
@@ -240,12 +242,10 @@ class PublishCommand extends Command {
       () => this.confirmVersions(),
     ];
 
-    return pWaterfall(tasks)
-      .then(proceed => callback(null, proceed))
-      .catch(callback);
+    return pWaterfall(tasks);
   }
 
-  execute(callback) {
+  execute() {
     const tasks = [];
 
     if (!this.repository.isIndependent() && !this.options.canary) {
@@ -264,9 +264,7 @@ class PublishCommand extends Command {
       tasks.push(() => this.publishPackagesToNpm());
     }
 
-    pWaterfall(tasks)
-      .then(() => callback(null, true))
-      .catch(callback);
+    return pWaterfall(tasks);
   }
 
   resolveLocalDependencyLinks() {

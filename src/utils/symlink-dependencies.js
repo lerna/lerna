@@ -1,6 +1,7 @@
 "use strict";
 
-const async = require("async");
+const pFinally = require("p-finally");
+const pMapSeries = require("p-map-series");
 const path = require("path");
 
 const FileSystemUtilities = require("../FileSystemUtilities");
@@ -18,7 +19,7 @@ module.exports = symlinkDependencies;
  * @param {Object} logger
  * @param {Function} callback
  */
-function symlinkDependencies(packages, packageGraph, logger, callback) {
+function symlinkDependencies(packages, packageGraph, logger) {
   const tracker = logger.newItem("symlink packages");
 
   tracker.info("", "Symlinking packages and binaries");
@@ -29,11 +30,11 @@ function symlinkDependencies(packages, packageGraph, logger, callback) {
       ? packageGraph.values()
       : new Set(packages.map(({ name }) => packageGraph.get(name)));
 
-  const actions = Array.from(nodes).map(currentNode => {
+  const actions = pMapSeries(nodes, currentNode => {
     const { nodeModulesLocation } = currentNode.pkg;
 
     // actions to run for this package
-    const packageActions = [];
+    let packageActions = Promise.resolve();
 
     currentNode.localDependencies.forEach(({ type }, dependencyName) => {
       if (type === "directory") {
@@ -64,35 +65,27 @@ function symlinkDependencies(packages, packageGraph, logger, callback) {
           );
 
           // remove installed dependency
-          packageActions.push(next => FileSystemUtilities.rimraf(targetDirectory, next));
+          packageActions = packageActions.then(() => FileSystemUtilities.rimraf(targetDirectory));
         }
       } else {
         // ensure destination directory exists (dealing with scoped subdirs)
-        packageActions.push(next => FileSystemUtilities.mkdirp(path.dirname(targetDirectory), next));
+        packageActions = packageActions.then(FileSystemUtilities.mkdirp(path.dirname(targetDirectory)));
       }
 
       // create package symlink
-      packageActions.push(next => {
-        createSymlink(dependencyNode.location, targetDirectory, "junction", next);
-      });
+      packageActions = packageActions.then(() =>
+        createSymlink(dependencyNode.location, targetDirectory, "junction")
+      );
 
-      packageActions.push(next => {
-        // TODO: pass PackageGraphNodes directly instead of Packages
-        symlinkBinary(dependencyNode.pkg, currentNode.pkg, next);
-      });
+      // TODO: pass PackageGraphNodes directly instead of Packages
+      packageActions = packageActions.then(() => symlinkBinary(dependencyNode.pkg, currentNode.pkg));
     });
 
-    return finish => {
-      async.series(packageActions, err => {
-        tracker.silly("packageActions", "finished", currentNode.name);
-        tracker.completeWork(1);
-        finish(err);
-      });
-    };
+    return packageActions.then(() => {
+      tracker.silly("packageActions", "finished", currentNode.name);
+      tracker.completeWork(1);
+    });
   });
 
-  async.series(actions, err => {
-    tracker.finish();
-    callback(err);
-  });
+  return pFinally(actions, () => tracker.finish());
 }

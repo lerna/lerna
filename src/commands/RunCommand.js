@@ -1,11 +1,11 @@
 "use strict";
 
-const async = require("async");
+const pMap = require("p-map");
+const pMapSeries = require("p-map-series");
 
 const Command = require("../Command");
 const npmRunScript = require("../utils/npm-run-script");
 const batchPackages = require("../utils/batch-packages");
-const runParallelBatches = require("../utils/run-parallel-batches");
 const output = require("../utils/output");
 
 exports.handler = function handler(argv) {
@@ -57,14 +57,13 @@ class RunCommand extends Command {
     });
   }
 
-  initialize(callback) {
+  initialize() {
     const { script } = this.options;
     this.script = script;
     this.args = this.options["--"] || [];
 
     if (!script) {
-      callback(new Error("You must specify which npm script to run."));
-      return;
+      throw new Error("You must specify which npm script to run.");
     }
 
     const { parallel, stream, npmClient } = this.options;
@@ -87,57 +86,41 @@ class RunCommand extends Command {
       this.logger.disableProgress();
     }
 
-    try {
-      this.batchedPackages = this.toposort
-        ? batchPackages(this.packagesWithScript, this.options.rejectCycles)
-        : [this.packagesWithScript];
-    } catch (e) {
-      return callback(e);
-    }
-
-    callback(null, true);
+    this.batchedPackages = this.toposort
+      ? batchPackages(this.packagesWithScript, this.options.rejectCycles)
+      : [this.packagesWithScript];
   }
 
-  execute(callback) {
-    const finish = err => {
-      if (err) {
-        callback(err);
-      } else {
-        if (this.packagesWithScript.length) {
-          this.logger.success("run", `Ran npm script '${this.script}' in packages:`);
-          this.logger.success("", this.packagesWithScript.map(pkg => `- ${pkg.name}`).join("\n"));
-        }
-        callback(null, true);
-      }
-    };
+  execute() {
+    let chain = Promise.resolve();
 
     if (this.options.parallel) {
-      this.runScriptInPackagesParallel(finish);
+      chain = chain.then(() => this.runScriptInPackagesParallel());
     } else {
-      this.runScriptInPackagesBatched(finish);
+      chain = chain.then(() => this.runScriptInPackagesBatched());
     }
+
+    return chain.then(() => {
+      if (this.packagesWithScript.length) {
+        this.logger.success("run", `Ran npm script '${this.script}' in packages:`);
+        this.logger.success("", this.packagesWithScript.map(pkg => `- ${pkg.name}`).join("\n"));
+      }
+    });
   }
 
-  runScriptInPackagesBatched(callback) {
-    runParallelBatches(
-      this.batchedPackages,
-      pkg => done => {
-        this.runScriptInPackage(pkg, done);
-      },
-      this.concurrency,
-      callback
+  runScriptInPackagesBatched() {
+    const runner = this.options.stream
+      ? this.runScriptInPackageStreaming.bind(this)
+      : this.runScriptInPackageCapturing.bind(this);
+
+    pMapSeries(this.batchedPackages, batch =>
+      pMap(batch, pkg => runner(pkg), {
+        concurrency: this.concurrency,
+      })
     );
   }
 
-  runScriptInPackage(pkg, callback) {
-    if (this.options.stream) {
-      this.runScriptInPackageStreaming(pkg, callback);
-    } else {
-      this.runScriptInPackageCapturing(pkg, callback);
-    }
-  }
-
-  runScriptInPackagesParallel(callback) {
+  runScriptInPackagesParallel() {
     this.logger.info(
       "run",
       "in %d package(s): npm run %s",
@@ -145,42 +128,30 @@ class RunCommand extends Command {
       [this.script].concat(this.args).join(" ")
     );
 
-    async.parallel(
-      this.packagesWithScript.map(pkg => done => {
-        this.runScriptInPackageStreaming(pkg, done);
-      }),
-      callback
-    );
+    return pMap(this.packagesWithScript, pkg => this.runScriptInPackageStreaming(pkg));
   }
 
-  runScriptInPackageStreaming(pkg, callback) {
-    npmRunScript.stream(
-      this.script,
-      {
-        args: this.args,
-        npmClient: this.npmClient,
-        pkg,
-      },
-      callback
-    );
+  runScriptInPackageStreaming(pkg) {
+    return npmRunScript.stream(this.script, {
+      args: this.args,
+      npmClient: this.npmClient,
+      pkg,
+    });
   }
 
-  runScriptInPackageCapturing(pkg, callback) {
-    npmRunScript(
-      this.script,
-      {
-        args: this.args,
-        npmClient: this.npmClient,
-        pkg,
-      },
-      (err, stdout) => {
-        if (err) {
-          this.logger.error(this.script, `Errored while running script in '${pkg.name}'`);
-        } else {
-          output(stdout);
-        }
-        callback(err);
-      }
-    );
+  runScriptInPackageCapturing(pkg) {
+    return npmRunScript(this.script, {
+      args: this.args,
+      npmClient: this.npmClient,
+      pkg,
+    })
+      .then(result => {
+        output(result.stdout);
+      })
+      .catch(err => {
+        this.logger.error(this.script, `Errored while running script in '${pkg.name}'`);
+
+        throw err;
+      });
   }
 }

@@ -75,18 +75,16 @@ class BootstrapCommand extends Command {
     return false;
   }
 
-  initialize(callback) {
+  initialize() {
     const { registry, rejectCycles, npmClient = "npm", npmClientArgs, mutex, hoist } = this.options;
 
     if (npmClient === "yarn" && typeof hoist === "string") {
-      return callback(
-        new ValidationError(
-          "EWORKSPACES",
-          dedent`
+      throw new ValidationError(
+        "EWORKSPACES",
+        dedent`
             --hoist is not supported with --npm-client=yarn, use yarn workspaces instead
             A guide is available at https://yarnpkg.com/blog/2017/08/02/introducing-workspaces/
           `
-        )
       );
     }
 
@@ -95,14 +93,12 @@ class BootstrapCommand extends Command {
       this.repository.packageJson.workspaces &&
       this.options.useWorkspaces !== true
     ) {
-      return callback(
-        new ValidationError(
-          "EWORKSPACES",
-          dedent`
+      throw new ValidationError(
+        "EWORKSPACES",
+        dedent`
             Yarn workspaces are configured in package.json, but not enabled in lerna.json!
             Please choose one: useWorkspaces = true in lerna.json, or remove package.json workspaces config
           `
-        )
       );
     }
 
@@ -119,38 +115,32 @@ class BootstrapCommand extends Command {
       this.npmConfig.npmClientArgs = [...(npmClientArgs || []), ...doubleDashArgs];
     }
 
-    try {
-      this.batchedPackages = this.toposort
-        ? batchPackages(this.filteredPackages, rejectCycles)
-        : [this.filteredPackages];
-    } catch (e) {
-      return callback(e);
-    }
+    this.batchedPackages = this.toposort
+      ? batchPackages(this.filteredPackages, rejectCycles)
+      : [this.filteredPackages];
 
     if (npmClient === "yarn" && !mutex) {
-      return getPort({ port: 42424, host: "0.0.0.0" })
-        .then(port => {
-          this.npmConfig.mutex = `network:${port}`;
-          this.logger.silly("npmConfig", this.npmConfig);
-          callback(null, true);
-        })
-        .catch(callback);
+      return getPort({ port: 42424, host: "0.0.0.0" }).then(port => {
+        this.npmConfig.mutex = `network:${port}`;
+        this.logger.silly("npmConfig", this.npmConfig);
+      });
     }
 
     this.validatePackageNames();
 
     this.logger.silly("npmConfig", this.npmConfig);
-    callback(null, true);
   }
 
-  execute(callback) {
-    this.bootstrapPackages(err => {
-      if (err) {
-        callback(err);
-      } else {
-        this.logger.success("", `Bootstrapped ${this.filteredPackages.length} packages`);
-        callback(null, true);
-      }
+  execute() {
+    return new Promise((resolve, reject) => {
+      this.bootstrapPackages(err => {
+        if (err) {
+          reject(err);
+        } else {
+          this.logger.success("", `Bootstrapped ${this.filteredPackages.length} packages`);
+          resolve();
+        }
+      });
     });
   }
 
@@ -569,7 +559,10 @@ class BootstrapCommand extends Command {
    * @param {Function} callback
    */
   symlinkPackages(callback) {
-    symlinkDependencies(this.filteredPackages, this.packageGraph, this.logger, callback);
+    return symlinkDependencies(this.filteredPackages, this.packageGraph, this.logger).then(
+      callback,
+      callback
+    );
   }
 
   validatePackageNames() {

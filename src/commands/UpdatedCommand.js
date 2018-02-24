@@ -39,19 +39,21 @@ class UpdatedCommand extends Command {
     });
   }
 
-  initialize(callback) {
+  initialize() {
     this.updates = collectUpdates(this);
 
     const proceedWithUpdates = this.updates.length > 0;
 
     if (!proceedWithUpdates) {
       this.logger.info("No packages need updating");
+
+      process.exitCode = 1;
     }
 
-    callback(null, proceedWithUpdates, 1);
+    return proceedWithUpdates;
   }
 
-  execute(callback) {
+  execute() {
     const updatedPackages = this.updates.map(({ pkg }) => ({
       name: pkg.name,
       version: pkg.version,
@@ -65,7 +67,5 @@ class UpdatedCommand extends Command {
           .join("\n");
 
     output(formattedUpdates);
-
-    callback(null, true);
   }
 }

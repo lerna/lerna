@@ -87,7 +87,11 @@ function rimraf(dirPath, callback) {
 
   return pathExists(dirPath).then(exists => {
     if (!exists) {
-      return callback();
+      if (callback) {
+        callback();
+      }
+
+      return;
     }
 
     // globs only return directories with a trailing slash
