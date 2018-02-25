@@ -1,6 +1,8 @@
 "use strict";
 
+const fs = require("fs-extra");
 const pFinally = require("p-finally");
+const pMap = require("p-map");
 const pMapSeries = require("p-map-series");
 const path = require("path");
 
@@ -30,62 +32,65 @@ function symlinkDependencies(packages, packageGraph, logger) {
       ? packageGraph.values()
       : new Set(packages.map(({ name }) => packageGraph.get(name)));
 
-  const actions = pMapSeries(nodes, currentNode => {
-    const { nodeModulesLocation } = currentNode.pkg;
+  return pFinally(
+    pMapSeries(nodes, currentNode => {
+      const currentName = currentNode.name;
+      const currentNodeModules = currentNode.pkg.nodeModulesLocation;
 
-    // actions to run for this package
-    let packageActions = Promise.resolve();
-
-    currentNode.localDependencies.forEach(({ type }, dependencyName) => {
-      if (type === "directory") {
-        // a local file: specifier is already a symlink
-        return;
-      }
-
-      // get PackageGraphNode of dependency
-      const dependencyNode = packageGraph.get(dependencyName);
-      const targetDirectory = path.join(nodeModulesLocation, dependencyName);
-
-      // check if dependency is already installed
-      if (FileSystemUtilities.existsSync(targetDirectory)) {
-        const isDepSymlink = resolveSymlink(targetDirectory);
-
-        if (isDepSymlink !== false && isDepSymlink !== dependencyNode.location) {
-          // installed dependency is a symlink pointing to a different location
-          tracker.warn(
-            "EREPLACE_OTHER",
-            `Symlink already exists for ${dependencyName} dependency of ${currentNode.name}, ` +
-              "but links to different location. Replacing with updated symlink..."
-          );
-        } else if (isDepSymlink === false) {
-          // installed dependency is not a symlink
-          tracker.warn(
-            "EREPLACE_EXIST",
-            `${dependencyName} is already installed for ${currentNode.name}. Replacing with symlink...`
-          );
-
-          // remove installed dependency
-          packageActions = packageActions.then(() => FileSystemUtilities.rimraf(targetDirectory));
+      return pMap(currentNode.localDependencies, resolved => {
+        if (resolved.type === "directory") {
+          // a local file: specifier is already a symlink
+          return;
         }
-      } else {
-        // ensure destination directory exists (dealing with scoped subdirs)
-        packageActions = packageActions.then(FileSystemUtilities.mkdirp(path.dirname(targetDirectory)));
-      }
 
-      // create package symlink
-      packageActions = packageActions.then(() =>
-        createSymlink(dependencyNode.location, targetDirectory, "junction")
-      );
+        // get PackageGraphNode of dependency
+        const dependencyName = resolved.name;
+        const dependencyNode = packageGraph.get(dependencyName);
+        const targetDirectory = path.join(currentNodeModules, dependencyName);
 
-      // TODO: pass PackageGraphNodes directly instead of Packages
-      packageActions = packageActions.then(() => symlinkBinary(dependencyNode.pkg, currentNode.pkg));
-    });
+        let chain = Promise.resolve();
 
-    return packageActions.then(() => {
-      tracker.silly("packageActions", "finished", currentNode.name);
-      tracker.completeWork(1);
-    });
-  });
+        // check if dependency is already installed
+        chain = chain.then(() => fs.pathExists(targetDirectory));
+        chain = chain.then(dirExists => {
+          if (dirExists) {
+            const isDepSymlink = resolveSymlink(targetDirectory);
 
-  return pFinally(actions, () => tracker.finish());
+            if (isDepSymlink !== false && isDepSymlink !== dependencyNode.location) {
+              // installed dependency is a symlink pointing to a different location
+              tracker.warn(
+                "EREPLACE_OTHER",
+                `Symlink already exists for ${dependencyName} dependency of ${currentName}, ` +
+                  "but links to different location. Replacing with updated symlink..."
+              );
+            } else if (isDepSymlink === false) {
+              // installed dependency is not a symlink
+              tracker.warn(
+                "EREPLACE_EXIST",
+                `${dependencyName} is already installed for ${currentName}. Replacing with symlink...`
+              );
+
+              // remove installed dependency
+              return FileSystemUtilities.rimraf(targetDirectory);
+            }
+          } else {
+            // ensure destination directory exists (dealing with scoped subdirs)
+            return FileSystemUtilities.mkdirp(path.dirname(targetDirectory));
+          }
+        });
+
+        // create package symlink
+        chain = chain.then(() => createSymlink(dependencyNode.location, targetDirectory, "junction"));
+
+        // TODO: pass PackageGraphNodes directly instead of Packages
+        chain = chain.then(() => symlinkBinary(dependencyNode.pkg, currentNode.pkg));
+
+        return chain;
+      }).then(() => {
+        tracker.silly("actions", "finished", currentName);
+        tracker.completeWork(1);
+      });
+    }),
+    () => tracker.finish()
+  );
 }
