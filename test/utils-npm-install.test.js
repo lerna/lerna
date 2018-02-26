@@ -1,5 +1,6 @@
 "use strict";
 
+jest.mock("read-pkg");
 jest.mock("write-pkg");
 jest.mock("../src/ChildProcessUtilities");
 jest.mock("../src/FileSystemUtilities");
@@ -7,6 +8,7 @@ jest.mock("../src/FileSystemUtilities");
 const path = require("path");
 
 // mocked modules
+const readPkg = require("read-pkg");
 const writePkg = require("write-pkg");
 const ChildProcessUtilities = require("../src/ChildProcessUtilities");
 const FileSystemUtilities = require("../src/FileSystemUtilities");
@@ -20,6 +22,7 @@ const npmInstall = require("../src/utils/npm-install");
 describe("npm-install", () => {
   ChildProcessUtilities.exec.mockResolvedValue();
   FileSystemUtilities.rename.mockImplementation(callsBack());
+  readPkg.mockResolvedValue({ name: "foo-bar", version: "1.2.3" });
   writePkg.mockResolvedValue();
 
   describe("npmInstall()", () => {
@@ -86,6 +89,8 @@ describe("npm-install", () => {
             path.join(directory, "package.json")
           );
           expect(writePkg).lastCalledWith(path.join(directory, "package.json"), {
+            name: "foo-bar",
+            version: "1.2.3",
             dependencies: {
               "@scoped/caret": "^2.0.0",
               "@scoped/exact": "2.0.0",
@@ -119,6 +124,8 @@ describe("npm-install", () => {
 
         try {
           expect(writePkg).lastCalledWith(path.join(directory, "package.json"), {
+            name: "foo-bar",
+            version: "1.2.3",
             dependencies: {
               "@scoped/tagged": "next",
               tagged: "next",
@@ -152,6 +159,8 @@ describe("npm-install", () => {
 
         try {
           expect(writePkg).lastCalledWith(path.join(directory, "package.json"), {
+            name: "foo-bar",
+            version: "1.2.3",
             dependencies: {
               "@scoped/foo": "latest",
               foo: "latest",
@@ -183,6 +192,8 @@ describe("npm-install", () => {
 
         try {
           expect(writePkg).lastCalledWith(path.join(directory, "package.json"), {
+            name: "foo-bar",
+            version: "1.2.3",
             dependencies: {
               "@scoped/something": "github:foo/bar",
               something: "github:foo/foo",
@@ -215,6 +226,8 @@ describe("npm-install", () => {
 
         try {
           expect(writePkg).lastCalledWith(path.join(directory, "package.json"), {
+            name: "foo-bar",
+            version: "1.2.3",
             dependencies: {
               "@scoped/something": "github:foo/bar",
               something: "github:foo/foo",
@@ -249,6 +262,8 @@ describe("npm-install", () => {
 
         try {
           expect(writePkg).lastCalledWith(path.join(directory, "package.json"), {
+            name: "foo-bar",
+            version: "1.2.3",
             dependencies: {
               "@scoped/something": "github:foo/bar",
               something: "github:foo/foo",
@@ -298,6 +313,8 @@ describe("npm-install", () => {
 
         try {
           expect(writePkg).lastCalledWith(path.join(directory, "package.json"), {
+            name: "foo-bar",
+            version: "1.2.3",
             dependencies: {
               "@scoped/noversion": "*",
               noversion: "*",

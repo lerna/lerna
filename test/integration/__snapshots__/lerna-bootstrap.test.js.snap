@@ -20,6 +20,27 @@ package-3 cli1 OK
 package-3 cli2 package-2 OK
 `;
 
+exports[`lerna bootstrap bootstraps all packages: package1-lock.json 1`] = `
+Object {
+  name: @integration/package-1,
+  version: 1.0.0,
+}
+`;
+
+exports[`lerna bootstrap bootstraps all packages: package2-lock.json 1`] = `
+Object {
+  name: @integration/package-2,
+  version: 1.0.0,
+}
+`;
+
+exports[`lerna bootstrap bootstraps all packages: package3-lock.json 1`] = `
+Object {
+  name: @integration/package-3,
+  version: 1.0.0,
+}
+`;
+
 exports[`lerna bootstrap bootstraps all packages: stderr 1`] = `
 lerna info version __TEST_VERSION__
 lerna info Bootstrapping 4 packages
