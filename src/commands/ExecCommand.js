@@ -1,11 +1,9 @@
 "use strict";
 
-const pMap = require("p-map");
-const pMapSeries = require("p-map-series");
-
 const ChildProcessUtilities = require("../ChildProcessUtilities");
 const Command = require("../Command");
 const batchPackages = require("../utils/batch-packages");
+const runParallelBatches = require("../utils/run-parallel-batches");
 const ValidationError = require("../utils/validation-error");
 
 exports.handler = function handler(argv) {
@@ -88,19 +86,14 @@ class ExecCommand extends Command {
       return this.runCommandInPackagesParallel();
     }
 
-    return pMapSeries(this.batchedPackages, batch =>
-      pMap(
-        batch,
-        pkg =>
-          this.runCommandInPackage(pkg).catch(err => {
-            if (err.code) {
-              this.logger.error("exec", `Errored while executing '${err.cmd}' in '${pkg.name}'`);
-            }
+    return runParallelBatches(this.batchedPackages, this.concurrency, pkg =>
+      this.runCommandInPackage(pkg).catch(err => {
+        if (err.code) {
+          this.logger.error("exec", `Errored while executing '${err.cmd}' in '${pkg.name}'`);
+        }
 
-            throw err;
-          }),
-        { concurrency: this.concurrency }
-      )
+        throw err;
+      })
     );
   }
 

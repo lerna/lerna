@@ -13,6 +13,7 @@ const FileSystemUtilities = require("../FileSystemUtilities");
 const npmInstall = require("../utils/npm-install");
 const npmRunScript = require("../utils/npm-run-script");
 const batchPackages = require("../utils/batch-packages");
+const runParallelBatches = require("../utils/run-parallel-batches");
 const matchPackageName = require("../utils/match-package-name");
 const hasDependencyInstalled = require("../utils/has-dependency-installed");
 const symlinkBinary = require("../utils/symlink-binary");
@@ -197,11 +198,8 @@ class BootstrapCommand extends Command {
 
     tracker.addWork(packagesWithScript.size);
 
-    return pFinally(
-      pMapSeries(this.batchedPackages, batch =>
-        pMap(batch, mapPackageWithScript, { concurrency: this.concurrency })
-      ),
-      () => tracker.finish()
+    return pFinally(runParallelBatches(this.batchedPackages, this.concurrency, mapPackageWithScript), () =>
+      tracker.finish()
     );
   }
 

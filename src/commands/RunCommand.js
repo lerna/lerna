@@ -1,11 +1,11 @@
 "use strict";
 
 const pMap = require("p-map");
-const pMapSeries = require("p-map-series");
 
 const Command = require("../Command");
 const npmRunScript = require("../utils/npm-run-script");
 const batchPackages = require("../utils/batch-packages");
+const runParallelBatches = require("../utils/run-parallel-batches");
 const output = require("../utils/output");
 
 exports.handler = function handler(argv) {
@@ -113,11 +113,7 @@ class RunCommand extends Command {
       ? pkg => this.runScriptInPackageStreaming(pkg)
       : pkg => this.runScriptInPackageCapturing(pkg);
 
-    return pMapSeries(this.batchedPackages, batch =>
-      pMap(batch, pkg => runner(pkg), {
-        concurrency: this.concurrency,
-      })
-    );
+    return runParallelBatches(this.batchedPackages, this.concurrency, pkg => runner(pkg));
   }
 
   runScriptInPackagesParallel() {
