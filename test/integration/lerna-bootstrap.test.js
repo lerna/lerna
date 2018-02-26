@@ -2,6 +2,7 @@
 
 const fs = require("fs-extra");
 const globby = require("globby");
+const loadJsonFile = require("load-json-file");
 const normalizePath = require("normalize-path");
 const path = require("path");
 
@@ -9,6 +10,16 @@ const cliRunner = require("../helpers/cli-runner");
 const initFixture = require("../helpers/initFixture");
 
 describe("lerna bootstrap", () => {
+  const parsePackageLockJson = cwd => loadJsonFile(path.join(cwd, "package-lock.json"));
+
+  // there is no package-lock.json for package-4
+  const loadPackageLock = cwd =>
+    Promise.all([
+      parsePackageLockJson(path.join(cwd, "package-1")),
+      parsePackageLockJson(path.join(cwd, "package-2")),
+      parsePackageLockJson(path.join(cwd, "package-3")),
+    ]);
+
   test("bootstraps all packages", async () => {
     const cwd = await initFixture("BootstrapCommand/integration");
     const lerna = cliRunner(cwd);
@@ -19,6 +30,12 @@ describe("lerna bootstrap", () => {
     // the "--silent" flag is passed to `npm run`
     const { stdout } = await lerna("run", "test", "--", "--silent");
     expect(stdout).toMatchSnapshot("stdout");
+
+    // the "name" and "version" should be copied to "package-lock.json" by npm
+    const [package1Lock, package2Lock, package3Lock] = await loadPackageLock(cwd);
+    expect({ name: package1Lock.name, version: package1Lock.version }).toMatchSnapshot("package1-lock.json");
+    expect({ name: package2Lock.name, version: package2Lock.version }).toMatchSnapshot("package2-lock.json");
+    expect({ name: package3Lock.name, version: package3Lock.version }).toMatchSnapshot("package3-lock.json");
   });
 
   test("--npm-client yarn", async () => {

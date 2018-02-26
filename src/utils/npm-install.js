@@ -4,6 +4,7 @@ const log = require("npmlog");
 const npa = require("npm-package-arg");
 const onExit = require("signal-exit");
 const path = require("path");
+const readPkg = require("read-pkg");
 const writePkg = require("write-pkg");
 
 const ChildProcessUtilities = require("../ChildProcessUtilities");
@@ -38,6 +39,13 @@ function npmInstall(directory, { registry, npmClient, npmClientArgs, npmGlobalSt
 
   log.silly("npmInstall", [cmd, args]);
   return ChildProcessUtilities.exec(cmd, args, opts);
+}
+
+function readPackageNameAndVersion(packageJson) {
+  return readPkg(packageJson).then(
+    ({ name, version }) => ({ name, version }),
+    err => (err.code === "ENOENT" ? {} : Promise.reject(err))
+  );
 }
 
 function installInDir(directory, dependencies, config, callback) {
@@ -75,18 +83,29 @@ function installInDir(directory, dependencies, config, callback) {
       callback(finalError);
     };
 
-    // Construct a basic fake package.json with just the deps we need to install.
-    const tempJson = {
-      dependencies: dependencies.reduce((obj, dep) => {
-        const { name: pkg, rawSpec: version } = npa(dep);
-        obj[pkg] = version || "*";
-        return obj;
-      }, {}),
-    };
+    const tempDependencies = dependencies.reduce((obj, dep) => {
+      const { name: pkg, rawSpec: version } = npa(dep);
+      obj[pkg] = version || "*";
+      return obj;
+    }, {});
 
-    log.silly("installInDir", "writing tempJson", tempJson);
-    // Write out our temporary cooked up package.json and then install.
-    writePkg(packageJson, tempJson)
+    log.silly("installInDir", "reading package.json", packageJsonBkp);
+
+    return readPackageNameAndVersion(packageJsonBkp)
+      .then(({ name, version }) => {
+        // Construct a basic fake package.json with just the deps we need to install.
+        // We keep "name" and "version" to because npm will write them to "package-lock.json".
+        const tempJson = {
+          name,
+          version,
+          dependencies: tempDependencies,
+        };
+
+        log.silly("installInDir", "writing tempJson", tempJson);
+
+        // Write out our temporary cooked up package.json and then install.
+        return writePkg(packageJson, tempJson);
+      })
       .then(() => npmInstall(directory, config))
       .then(() => done(), done);
   });
