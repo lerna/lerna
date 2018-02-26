@@ -10,7 +10,6 @@ const npmRunScript = require("../src/utils/npm-run-script");
 const collectUpdates = require("../src/utils/collect-updates");
 
 // helpers
-const callsBack = require("./helpers/callsBack");
 const initFixture = require("./helpers/initFixture");
 const consoleOutput = require("./helpers/consoleOutput");
 const loggingOutput = require("./helpers/loggingOutput");
@@ -37,8 +36,8 @@ const ranInPackagesStreaming = testDir =>
   }, []);
 
 describe("RunCommand", () => {
-  npmRunScript.mockImplementation(callsBack(null, "stdout"));
-  npmRunScript.stream.mockImplementation(callsBack());
+  npmRunScript.mockResolvedValue({ stdout: "stdout" });
+  npmRunScript.stream.mockResolvedValue();
 
   describe("in a basic repo", () => {
     it("runs a script in packages", async () => {

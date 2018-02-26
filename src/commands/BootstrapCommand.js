@@ -422,36 +422,31 @@ class BootstrapCommand extends Command {
           ? root.map(({ dependency }) => dependency)
           : [];
 
-        let chain = Promise.resolve();
-
         if (depsToInstallInRoot.length) {
-          chain = chain.then(() => {
-            tracker.info("hoist", "Installing hoisted dependencies into root");
-
-            return npmInstall.dependencies(rootPkg.location, depsToInstallInRoot, this.npmConfig);
-          });
+          tracker.info("hoist", "Installing hoisted dependencies into root");
         }
 
-        // Link binaries into dependent packages so npm scripts will
-        // have access to them.
-        chain = chain.then(() =>
-          pMapSeries(root, ({ name, dependents }) => {
-            const { bin } = this.hoistedPackageJson(name);
+        return npmInstall
+          .dependencies(rootPkg.location, depsToInstallInRoot, this.npmConfig)
+          .then(() =>
+            // Link binaries into dependent packages so npm scripts will
+            // have access to them.
+            pMapSeries(root, ({ name, dependents }) => {
+              const { bin } = this.hoistedPackageJson(name);
 
-            if (bin) {
-              return pMap(dependents, pkg => {
-                const src = this.hoistedDirectory(name);
+              if (bin) {
+                return pMap(dependents, pkg => {
+                  const src = this.hoistedDirectory(name);
 
-                return symlinkBinary(src, pkg);
-              });
-            }
-          })
-        );
-
-        return chain.then(() => {
-          tracker.info("hoist", "Finished bootstrapping root");
-          tracker.completeWork(1);
-        });
+                  return symlinkBinary(src, pkg);
+                });
+              }
+            })
+          )
+          .then(() => {
+            tracker.info("hoist", "Finished bootstrapping root");
+            tracker.completeWork(1);
+          });
       });
 
       // Remove any hoisted dependencies that may have previously been

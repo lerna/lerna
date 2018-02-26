@@ -23,19 +23,32 @@ const matchBinaryLinks = () => (pkgRef, raw) => {
 
   const expectation = `expected ${pkg.name} to link to ${links.join(", ")}`;
 
-  const found = fs.readdirSync(pkg.binLocation);
+  let found;
+
+  try {
+    found = fs.readdirSync(pkg.binLocation);
+  } catch (err) {
+    if (links.length === 0 && err.code === "ENOENT") {
+      return { message: "expected no binary links", pass: true };
+    }
+
+    throw err;
+  }
+
   const missing = links.filter(link => found.indexOf(link) === -1);
   const superfluous = found.filter(link => links.indexOf(link) === -1);
 
   if (missing.length > 0 || superfluous.length > 0) {
+    const message = [
+      expectation,
+      missing.length > 0 ? `missing: ${missing.join(", ")}` : "",
+      superfluous.length > 0 ? `superfluous: ${superfluous.join(", ")}` : "",
+    ]
+      .filter(Boolean)
+      .join("\n");
+
     return {
-      message: [
-        expectation,
-        missing.length > 0 ? `missing: ${missing.join(", ")}` : "",
-        superfluous.length > 0 ? `superfluous: ${superfluous.join(", ")}` : "",
-      ]
-        .filter(Boolean)
-        .join(" "),
+      message,
       pass: false,
     };
   }

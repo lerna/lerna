@@ -57,7 +57,8 @@ describe("lerna exec", () => {
       "exec",
       EXEC_TEST_COMMAND,
       "--parallel",
-      // no --
+      // -- is required to pass args to command
+      "--",
       "-C",
     ];
 
@@ -73,13 +74,7 @@ describe("lerna exec", () => {
 
   test("--parallel <cmd>", async () => {
     const cwd = await initFixture("ExecCommand/basic");
-    const args = [
-      "exec",
-      "--parallel",
-      EXEC_TEST_COMMAND,
-      // no --
-      "-C",
-    ];
+    const args = ["exec", "--parallel", EXEC_TEST_COMMAND];
 
     const { stdout, stderr } = await cliRunner(cwd, env)(...args);
     expect(stderr).toMatch(EXEC_TEST_COMMAND);
@@ -93,7 +88,14 @@ describe("lerna exec", () => {
 
   test("<cmd> --stream", async () => {
     const cwd = await initFixture("ExecCommand/basic");
-    const args = ["exec", EXEC_TEST_COMMAND, "--stream", "-C"];
+    const args = [
+      "exec",
+      EXEC_TEST_COMMAND,
+      "--stream",
+      // -- is required to pass args to command
+      "--",
+      "-C",
+    ];
 
     const { stdout } = await cliRunner(cwd, env)(...args);
 
@@ -106,7 +108,7 @@ describe("lerna exec", () => {
 
   test("--stream <cmd>", async () => {
     const cwd = await initFixture("ExecCommand/basic");
-    const args = ["exec", "--stream", EXEC_TEST_COMMAND, "-C"];
+    const args = ["exec", "--stream", EXEC_TEST_COMMAND];
 
     const { stdout } = await cliRunner(cwd, env)(...args);
 

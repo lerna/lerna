@@ -34,8 +34,8 @@ function commandRunner(commandModule) {
         const context = {
           cwd,
           onResolved: result => {
-            Object.assign(result, yargsMeta);
-            resolve(result);
+            // success does not resolve anything, currently
+            resolve(Object.assign({}, result, yargsMeta));
           },
           onRejected: result => {
             Object.assign(result, yargsMeta);

@@ -105,13 +105,9 @@ class Command {
         () => {
           warnIfHanging();
 
-          // redundant, but makes tests easier
-          resolve({ exitCode: process.exitCode });
+          resolve();
         },
         err => {
-          // non-zero is bash for "error"
-          process.exitCode = 1;
-
           if (err.pkg) {
             // Cleanly log specific package error details
             logPackageError(err);
@@ -123,14 +119,12 @@ class Command {
 
           // ValidationError does not trigger a log dump
           if (err.name !== "ValidationError") {
-            console.log("err.name", err.name);
             writeLogFile(this.repository.rootPath);
           }
 
           warnIfHanging();
 
-          // redundant, but makes tests easier
-          err.exitCode = process.exitCode;
+          // error code is handled by cli.fail()
           reject(err);
         }
       );

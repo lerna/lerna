@@ -11,23 +11,20 @@ const fs = require("fs-extra");
 const pathExists = require("path-exists");
 const ChildProcessUtilities = require("../src/ChildProcessUtilities");
 
-// helpers
-const callsBack = require("./helpers/callsBack");
-
 // file under test
 const FileSystemUtilities = require("../src/FileSystemUtilities");
 
 describe("FileSystemUtilities", () => {
   describe(".mkdirp()", () => {
-    it("calls fs.ensureDir", done => {
+    it("calls fs.ensureDir", async () => {
       expect.assertions(1);
       const dirPath = "mkdirp/test";
 
-      fs.ensureDir.mockImplementationOnce(callsBack());
+      fs.ensureDir.mockResolvedValueOnce();
 
-      FileSystemUtilities.mkdirp(dirPath, done);
+      await FileSystemUtilities.mkdirp(dirPath);
 
-      expect(fs.ensureDir).lastCalledWith(dirPath, done);
+      expect(fs.ensureDir).lastCalledWith(dirPath);
     });
   });
 
@@ -63,14 +60,14 @@ describe("FileSystemUtilities", () => {
   });
 
   describe(".writeFile()", () => {
-    it("calls fs.writeFile", done => {
+    it("calls fs.writeFile", async () => {
       expect.assertions(1);
       const filePath = "writeFile-test";
 
-      fs.writeFile.mockImplementationOnce(callsBack());
+      fs.writeFile.mockResolvedValueOnce();
 
-      FileSystemUtilities.writeFile(filePath, "contents", done);
-      expect(fs.writeFile).lastCalledWith(filePath, "contents\n", done);
+      await FileSystemUtilities.writeFile(filePath, "contents");
+      expect(fs.writeFile).lastCalledWith(filePath, "contents\n");
     });
   });
 
@@ -95,48 +92,41 @@ describe("FileSystemUtilities", () => {
   });
 
   describe(".rimraf()", () => {
-    it("calls rimraf CLI with arguments", done => {
+    it("calls rimraf CLI with arguments", async () => {
       expect.assertions(1);
       const dirPath = "rimraf/test";
 
       pathExists.mockResolvedValueOnce(true);
-      ChildProcessUtilities.spawn.mockImplementationOnce(callsBack());
+      ChildProcessUtilities.spawn.mockResolvedValueOnce();
 
-      FileSystemUtilities.rimraf(dirPath, () => {
-        // a Promise gating a callback means we can't do the shorthand done()
-        try {
-          expect(ChildProcessUtilities.spawn).lastCalledWith(
-            process.execPath,
-            [require.resolve("rimraf/bin"), "--no-glob", path.normalize(`${dirPath}/`)],
-            {},
-            expect.any(Function)
-          );
-          done();
-        } catch (err) {
-          done.fail(err);
-        }
-      });
+      await FileSystemUtilities.rimraf(dirPath);
+
+      expect(ChildProcessUtilities.spawn).lastCalledWith(process.execPath, [
+        require.resolve("rimraf/bin"),
+        "--no-glob",
+        path.normalize(`${dirPath}/`),
+      ]);
     });
 
-    it("does not attempt to delete a non-existent directory", done => {
+    it("does not attempt to delete a non-existent directory", async () => {
       expect.assertions(1);
       pathExists.mockResolvedValueOnce(false);
 
-      FileSystemUtilities.rimraf("rimraf/non-existent", done);
+      await FileSystemUtilities.rimraf("rimraf/non-existent");
       expect(ChildProcessUtilities.spawn).not.toBeCalled();
     });
   });
 
   describe(".rename()", () => {
-    it("calls fs.rename", done => {
+    it("calls fs.rename", async () => {
       expect.assertions(1);
       const srcPath = "rename-src";
       const dstPath = "rename-dst";
 
-      fs.rename.mockImplementationOnce(callsBack());
+      fs.rename.mockResolvedValueOnce();
 
-      FileSystemUtilities.rename(srcPath, dstPath, done);
-      expect(fs.rename).lastCalledWith(srcPath, dstPath, done);
+      await FileSystemUtilities.rename(srcPath, dstPath);
+      expect(fs.rename).lastCalledWith(srcPath, dstPath);
     });
   });
 

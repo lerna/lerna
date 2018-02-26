@@ -19,7 +19,7 @@ module.exports = symlinkDependencies;
  * @param {Array.<Package>} packages
  * @param {Object} packageGraph
  * @param {Object} logger
- * @param {Function} callback
+ * @returns {Promise}
  */
 function symlinkDependencies(packages, packageGraph, logger) {
   const tracker = logger.newItem("symlink packages");
@@ -37,14 +37,14 @@ function symlinkDependencies(packages, packageGraph, logger) {
       const currentName = currentNode.name;
       const currentNodeModules = currentNode.pkg.nodeModulesLocation;
 
-      return pMap(currentNode.localDependencies, resolved => {
+      return pMap(currentNode.localDependencies, ([dependencyName, resolved]) => {
         if (resolved.type === "directory") {
           // a local file: specifier is already a symlink
           return;
         }
 
         // get PackageGraphNode of dependency
-        const dependencyName = resolved.name;
+        // const dependencyName = resolved.name;
         const dependencyNode = packageGraph.get(dependencyName);
         const targetDirectory = path.join(currentNodeModules, dependencyName);
 

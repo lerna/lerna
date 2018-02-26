@@ -6,7 +6,6 @@ jest.mock("../src/utils/create-symlink");
 const createSymlink = require("../src/utils/create-symlink");
 
 // helpers
-const callsBack = require("./helpers/callsBack");
 const initFixture = require("./helpers/initFixture");
 const normalizeRelativeDir = require("./helpers/normalizeRelativeDir");
 
@@ -23,7 +22,7 @@ const symlinkedDirectories = testDir =>
 
 describe("LinkCommand", () => {
   // the underlying implementation of symlinkDependencies
-  createSymlink.mockImplementation(callsBack());
+  createSymlink.mockResolvedValue();
 
   describe("with local package dependencies", () => {
     it("should symlink all packages", async () => {

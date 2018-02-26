@@ -11,7 +11,6 @@ const pathExists = require("path-exists");
 const PromptUtilities = require("../src/PromptUtilities");
 
 // helpers
-const callsBack = require("./helpers/callsBack");
 const initFixture = require("./helpers/initFixture");
 const updateLernaConfig = require("./helpers/updateLernaConfig");
 
@@ -22,7 +21,7 @@ const lernaImport = require("./helpers/command-runner")(require("../src/commands
 const lastCommitInDir = cwd => execa.stdout("git", ["log", "-1", "--format=%s"], { cwd });
 
 describe("ImportCommand", () => {
-  PromptUtilities.confirm.mockImplementation(callsBack(true));
+  PromptUtilities.confirm.mockResolvedValue(true);
 
   describe("import", () => {
     const initBasicFixtures = () =>
@@ -103,16 +102,15 @@ describe("ImportCommand", () => {
 
       await execa("git", ["commit", "--allow-empty", "-m", "Empty commit"], cwdExternalDir);
 
-      const { exitCode } = await lernaImport(testDir)(externalDir, "--flatten");
+      await lernaImport(testDir)(externalDir, "--flatten");
 
       expect(await lastCommitInDir(testDir)).toBe("Non-empty commit");
-      expect(exitCode).toBe(0);
     });
 
     it("exits early when confirmation is rejected", async () => {
       const [testDir, externalDir] = await initBasicFixtures();
 
-      PromptUtilities.confirm.mockImplementationOnce(callsBack(false));
+      PromptUtilities.confirm.mockResolvedValueOnce(false);
 
       await lernaImport(testDir)(externalDir);
 
@@ -121,9 +119,8 @@ describe("ImportCommand", () => {
 
     it("allows skipping confirmation prompt", async () => {
       const [testDir, externalDir] = await initBasicFixtures();
-      const { exitCode } = await lernaImport(testDir)(externalDir, "--yes");
+      await lernaImport(testDir)(externalDir, "--yes");
 
-      expect(exitCode).toBe(0);
       expect(PromptUtilities.confirm).not.toBeCalled();
     });
 
@@ -144,7 +141,6 @@ describe("ImportCommand", () => {
       try {
         await lernaImport(testDir)(missing);
       } catch (err) {
-        expect(err.exitCode).toBe(1);
         expect(err.message).toBe(`No repository found at "${missing}"`);
       }
     });
@@ -157,7 +153,6 @@ describe("ImportCommand", () => {
       try {
         await lernaImport(testDir)(externalDir);
       } catch (err) {
-        expect(err.exitCode).toBe(1);
         expect(err.message).toMatch("package.json");
         expect(err.code).toBe("MODULE_NOT_FOUND");
       }
@@ -172,7 +167,6 @@ describe("ImportCommand", () => {
       try {
         await lernaImport(testDir)(externalDir);
       } catch (err) {
-        expect(err.exitCode).toBe(1);
         expect(err.message).toBe(`No package name specified in "${packageJson}"`);
       }
     });
@@ -187,7 +181,6 @@ describe("ImportCommand", () => {
       try {
         await lernaImport(testDir)(externalDir);
       } catch (err) {
-        expect(err.exitCode).toBe(1);
         expect(err.message).toBe(`Target directory already exists "${relativePath}"`);
       }
     });
@@ -206,7 +199,6 @@ describe("ImportCommand", () => {
       try {
         await lernaImport(testDir)(externalDir);
       } catch (err) {
-        expect(err.exitCode).toBe(1);
         expect(err.message).toBe(`Target directory already exists "${relativePath}"`);
       }
     });
@@ -221,7 +213,6 @@ describe("ImportCommand", () => {
       try {
         await lernaImport(testDir)(externalDir);
       } catch (err) {
-        expect(err.exitCode).toBe(1);
         expect(err.message).toBe("Local repository has un-committed changes");
       }
     });

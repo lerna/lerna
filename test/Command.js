@@ -34,12 +34,10 @@ describe("Command", () => {
   const onRejected = () => {};
 
   class OkCommand extends Command {
-    initialize(callback) {
-      callback(null, true);
+    initialize() {
+      return true;
     }
-    execute(callback) {
-      callback(null, true);
-    }
+    execute() {}
   }
 
   // convenience to avoid silly "not implemented errors"
@@ -52,49 +50,74 @@ describe("Command", () => {
   });
 
   describe(".logger", () => {
-    it("should be added to the instance", () => {
-      expect(testFactory().logger).toBeDefined();
+    it("should be added to the instance", async () => {
+      const command = testFactory();
+      await command;
+
+      expect(command.logger).toBeDefined();
     });
   });
 
   describe(".concurrency", () => {
-    it("should be added to the instance", () => {
-      expect(testFactory({ concurrency: 6 }).concurrency).toBe(6);
+    it("should be added to the instance", async () => {
+      const command = testFactory({ concurrency: 6 });
+      await command;
+
+      expect(command.concurrency).toBe(6);
     });
 
-    it("should fall back to default if concurrency given is NaN", () => {
-      expect(testFactory({ concurrency: "bla" }).concurrency).toBe(4);
+    it("should fall back to default if concurrency given is NaN", async () => {
+      const command = testFactory({ concurrency: "bla" });
+      await command;
+
+      expect(command.concurrency).toBe(4);
     });
 
-    it("should fall back to default if concurrency given is 0", () => {
-      expect(testFactory({ concurrency: 0 }).concurrency).toBe(4);
+    it("should fall back to default if concurrency given is 0", async () => {
+      const command = testFactory({ concurrency: 0 });
+      await command;
+
+      expect(command.concurrency).toBe(4);
     });
 
-    it("should fall back to 1 if concurrency given is smaller than 1", () => {
-      expect(testFactory({ concurrency: -1 }).concurrency).toBe(1);
+    it("should fall back to 1 if concurrency given is smaller than 1", async () => {
+      const command = testFactory({ concurrency: -1 });
+      await command;
+
+      expect(command.concurrency).toBe(1);
     });
   });
 
   describe(".toposort", () => {
-    it("is enabled by default", () => {
-      expect(testFactory().toposort).toBe(true);
+    it("is enabled by default", async () => {
+      const command = testFactory();
+      await command;
+
+      expect(command.toposort).toBe(true);
     });
 
-    it("is disabled when sort config is explicitly false (--no-sort)", () => {
-      expect(testFactory({ sort: false }).toposort).toBe(false);
+    it("is disabled when sort config is explicitly false (--no-sort)", async () => {
+      const command = testFactory({ sort: false });
+      await command;
+
+      expect(command.toposort).toBe(false);
     });
   });
 
   describe(".execOpts", () => {
     const ONE_HUNDRED_MEGABYTES = 1000 * 1000 * 100;
 
-    it("has maxBuffer", () => {
+    it("has maxBuffer", async () => {
       const command = testFactory({ maxBuffer: ONE_HUNDRED_MEGABYTES });
+      await command;
+
       expect(command.execOpts.maxBuffer).toBe(ONE_HUNDRED_MEGABYTES);
     });
 
-    it("has repo path", () => {
+    it("has repo path", async () => {
       const command = testFactory();
+      await command;
+
       expect(command.execOpts.cwd).toBe(testDir);
     });
   });
@@ -105,8 +128,10 @@ describe("Command", () => {
 
   describe("when finished", () => {
     it("resolves immediately when no child processes active", async () => {
-      const { exitCode } = await testFactory();
-      expect(exitCode).toBe(0);
+      await testFactory();
+
+      const logMessages = loggingOutput("warn");
+      expect(logMessages).toHaveLength(0);
     });
 
     it("waits to resolve when 1 child process active", async () => {
@@ -140,21 +165,20 @@ describe("Command", () => {
 
     it("logs stdout and stderr of error from package", async () => {
       class PkgErrorCommand extends Command {
-        initialize(callback) {
-          callback(null, true);
+        initialize() {
+          return true;
         }
-        execute(callback) {
-          // construct the error
+        execute() {
           const err = new Error("message");
+
           err.cmd = "test-pkg-err";
           err.stdout = "pkg-err-stdout";
           err.stderr = "pkg-err-stderr";
-          // add pkg property with stub info
           err.pkg = {
             name: "pkg-err-name",
           };
-          // "throw" the error to reject command promise
-          callback(err);
+
+          throw err;
         }
       }
 
@@ -191,16 +215,20 @@ describe("Command", () => {
   });
 
   describe("get .packages", () => {
-    it("returns the list of packages", () => {
-      const { packages } = testFactory();
-      expect(packages).toEqual([]);
+    it("returns the list of packages", async () => {
+      const command = testFactory();
+      await command;
+
+      expect(command.packages).toEqual([]);
     });
   });
 
   describe("get .packageGraph", () => {
-    it("returns the graph of packages", () => {
-      const { packageGraph } = testFactory();
-      expect(packageGraph).toBeInstanceOf(Map);
+    it("returns the graph of packages", async () => {
+      const command = testFactory();
+      await command;
+
+      expect(command.packageGraph).toBeInstanceOf(Map);
     });
   });
 
@@ -208,20 +236,24 @@ describe("Command", () => {
     it("--scope should filter packages", async () => {
       const cwd = await initFixture("UpdatedCommand/basic");
 
-      const { filteredPackages } = testFactory({
+      const command = testFactory({
         cwd,
         scope: ["package-2", "package-4"],
       });
-      expect(filteredPackages).toHaveLength(2);
-      expect(filteredPackages[0].name).toEqual("package-2");
-      expect(filteredPackages[1].name).toEqual("package-4");
+      await command;
+
+      expect(command.filteredPackages).toHaveLength(2);
+      expect(command.filteredPackages[0].name).toEqual("package-2");
+      expect(command.filteredPackages[1].name).toEqual("package-4");
     });
 
     it("--since should return all packages if no tag is found", async () => {
       const cwd = await initFixture("UpdatedCommand/basic");
 
-      const { filteredPackages } = testFactory({ cwd, since: "" });
-      expect(filteredPackages).toHaveLength(5);
+      const command = testFactory({ cwd, since: "" });
+      await command;
+
+      expect(command.filteredPackages).toHaveLength(5);
     });
 
     it("--since should return packages updated since the last tag", async () => {
@@ -233,10 +265,12 @@ describe("Command", () => {
       await git("add", ".");
       await git("commit", "-m", "test");
 
-      const { filteredPackages } = testFactory({ cwd, since: "" });
-      expect(filteredPackages).toHaveLength(2);
-      expect(filteredPackages[0].name).toEqual("package-2");
-      expect(filteredPackages[1].name).toEqual("package-3");
+      const command = testFactory({ cwd, since: "" });
+      await command;
+
+      expect(command.filteredPackages).toHaveLength(2);
+      expect(command.filteredPackages[0].name).toEqual("package-2");
+      expect(command.filteredPackages[1].name).toEqual("package-3");
     });
 
     it('--since "ref" should return packages updated since the specified ref', async () => {
@@ -256,10 +290,12 @@ describe("Command", () => {
       await git("add", ".");
       await git("commit", "-m", "test");
 
-      const { filteredPackages } = testFactory({ cwd, since: "master" });
-      expect(filteredPackages).toHaveLength(2);
-      expect(filteredPackages[0].name).toEqual("package-2");
-      expect(filteredPackages[1].name).toEqual("package-3");
+      const command = testFactory({ cwd, since: "master" });
+      await command;
+
+      expect(command.filteredPackages).toHaveLength(2);
+      expect(command.filteredPackages[0].name).toEqual("package-2");
+      expect(command.filteredPackages[1].name).toEqual("package-3");
     });
 
     it("should respect --scope and --since when used together", async () => {
@@ -271,13 +307,15 @@ describe("Command", () => {
       await git("add", ".");
       await git("commit", "-m", "test");
 
-      const { filteredPackages } = testFactory({
+      const command = testFactory({
         cwd,
         scope: ["package-2", "package-3", "package-4"],
         since: "master",
       });
-      expect(filteredPackages).toHaveLength(1);
-      expect(filteredPackages[0].name).toEqual("package-4");
+      await command;
+
+      expect(command.filteredPackages).toHaveLength(1);
+      expect(command.filteredPackages[0].name).toEqual("package-4");
     });
   });
 
@@ -298,55 +336,71 @@ describe("Command", () => {
       }
     }
 
-    it("is a lazy getter", () => {
+    it("is a lazy getter", async () => {
       const instance = new TestACommand({ cwd: testDir, onRejected });
+      await instance;
+
       expect(instance.options).toBe(instance.options);
     });
 
-    it("should pick up global options", () => {
+    it("should pick up global options", async () => {
       const instance = new TestACommand({ cwd: testDir, onRejected });
+      await instance;
+
       expect(instance.options.testOption).toBe("default");
     });
 
-    it("should override global options with command-level options", () => {
+    it("should override global options with command-level options", async () => {
       const instance = new TestBCommand({ cwd: testDir, onRejected });
+      await instance;
+
       expect(instance.options.testOption).toBe("b");
     });
 
-    it("should override global options with inherited command-level options", () => {
+    it("should override global options with inherited command-level options", async () => {
       const instance = new TestCCommand({ cwd: testDir, onRejected });
+      await instance;
+
       expect(instance.options.testOption).toBe("b");
     });
 
-    it("should override inherited command-level options with local command-level options", () => {
+    it("should override inherited command-level options with local command-level options", async () => {
       const instance = new TestCCommand({ cwd: testDir, onRejected });
+      await instance;
+
       expect(instance.options.testOption2).toBe("c");
     });
 
-    it("should override everything with a CLI flag", () => {
+    it("should override everything with a CLI flag", async () => {
       const instance = new TestCCommand({
         cwd: testDir,
         onRejected,
         testOption2: "f",
       });
+      await instance;
+
       expect(instance.options.testOption2).toBe("f");
     });
 
-    it("should inherit durable options when a CLI flag is undefined", () => {
+    it("should inherit durable options when a CLI flag is undefined", async () => {
       const instance = new TestCCommand({
         cwd: testDir,
         onRejected,
         testOption: undefined, // yargs does this when --test-option is not passed
       });
+      await instance;
+
       expect(instance.options.testOption).toBe("b");
     });
 
-    it("should merge flags with defaultOptions", () => {
+    it("should merge flags with defaultOptions", async () => {
       const instance = new TestCCommand({
         cwd: testDir,
         onRejected,
         testOption: "b",
       });
+      await instance;
+
       expect(instance.options.testOption).toBe("b");
       expect(instance.options.testOption2).toBe("c");
       expect(instance.options.testOption3).toBe("a");
@@ -365,21 +419,26 @@ describe("Command", () => {
     describe("bootstrapConfig", () => {
       class BootstrapCommand extends Command {}
 
-      it("should provide a correct value", () => {
+      it("should provide a correct value", async () => {
         const instance = new BootstrapCommand({ onRejected, cwd });
+        await instance;
+
         expect(instance.options.ignore).toBe("package-a");
       });
 
-      it("should not warn with other commands", () => {
+      it("should not warn with other commands", async () => {
         const instance = new TestCommand({ onRejected, cwd });
+        await instance;
 
         instance.options; // eslint-disable-line no-unused-expressions
 
         expect(loggingOutput("warn")).toHaveLength(0);
       });
 
-      it("should not provide a value to other commands", () => {
+      it("should not provide a value to other commands", async () => {
         const instance = new TestCommand({ onRejected, cwd });
+        await instance;
+
         expect(instance.options.ignore).toBe(undefined);
       });
     });
@@ -387,21 +446,26 @@ describe("Command", () => {
     describe("publishConfig", () => {
       class PublishCommand extends Command {}
 
-      it("should provide a correct value", () => {
+      it("should provide a correct value", async () => {
         const instance = new PublishCommand({ onRejected, cwd });
+        await instance;
+
         expect(instance.options.ignore).toBe("package-b");
       });
 
-      it("should not warn with other commands", () => {
+      it("should not warn with other commands", async () => {
         const instance = new TestCommand({ onRejected, cwd });
+        await instance;
 
         instance.options; // eslint-disable-line no-unused-expressions
 
         expect(loggingOutput("warn")).toHaveLength(0);
       });
 
-      it("should not provide a value to other commands", () => {
+      it("should not provide a value to other commands", async () => {
         const instance = new TestCommand({ onRejected, cwd });
+        await instance;
+
         expect(instance.options.ignore).toBe(undefined);
       });
     });
@@ -418,20 +482,19 @@ describe("Command", () => {
 
   describe("validations", () => {
     it("throws ENOGIT when repository is not initialized", async () => {
-      expect.assertions(2);
+      expect.assertions(1);
 
       const cwd = tempy.directory();
 
       try {
         await testFactory({ cwd });
       } catch (err) {
-        expect(err.exitCode).toBe(1);
         expect(err.prefix).toBe("ENOGIT");
       }
     });
 
     it("throws ENOPKG when root package.json is not found", async () => {
-      expect.assertions(2);
+      expect.assertions(1);
 
       const cwd = await initFixture("Command/basic");
 
@@ -440,13 +503,12 @@ describe("Command", () => {
       try {
         await testFactory({ cwd });
       } catch (err) {
-        expect(err.exitCode).toBe(1);
         expect(err.prefix).toBe("ENOPKG");
       }
     });
 
     it("throws ENOLERNA when lerna.json is not found", async () => {
-      expect.assertions(2);
+      expect.assertions(1);
 
       const cwd = await initFixture("Command/basic");
 
@@ -455,7 +517,6 @@ describe("Command", () => {
       try {
         await testFactory({ cwd });
       } catch (err) {
-        expect(err.exitCode).toBe(1);
         expect(err.prefix).toBe("ENOLERNA");
       }
     });

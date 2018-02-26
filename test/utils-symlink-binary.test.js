@@ -1,6 +1,5 @@
 "use strict";
 
-const async = require("async");
 const path = require("path");
 const readPkg = require("read-pkg");
 
@@ -16,100 +15,60 @@ const symlinkBinary = require("../src/utils/symlink-binary");
 expect.extend(pkgMatchers);
 
 describe("symlink-binary", () => {
-  it("should work with references", async done => {
+  it("should work with references", async () => {
     const testDir = await initFixture("PackageUtilities/links");
-    const srcRef = path.join(testDir, "packages/package-2");
-    const destRef = path.join(testDir, "packages/package-3");
+    const srcPath = path.join(testDir, "packages/package-2");
+    const dstPath = path.join(testDir, "packages/package-3");
 
-    const cb = err => {
-      expect(err).toBe(null);
-      done();
-    };
+    await symlinkBinary(srcPath, dstPath);
 
-    symlinkBinary(srcRef, destRef, cb);
+    expect(dstPath).toHaveBinaryLink("links-2");
   });
 
-  it("should work with packages", async done => {
+  it("should work with packages", async () => {
     const testDir = await initFixture("PackageUtilities/links");
-    const srcRef = path.join(testDir, "packages/package-2");
-    const destRef = path.join(testDir, "packages/package-3");
-    const src = new Package(await readPkg(srcRef), srcRef);
-    const dest = new Package(await readPkg(destRef), destRef);
+    const srcPath = path.join(testDir, "packages/package-2");
+    const dstPath = path.join(testDir, "packages/package-3");
+    const [srcJson, dstJson] = await Promise.all([
+      readPkg(srcPath, { normalize: false }),
+      readPkg(dstPath, { normalize: false }),
+    ]);
 
-    const cb = err => {
-      expect(err).toBe(null);
-      done();
-    };
+    await symlinkBinary(new Package(srcJson, srcPath), new Package(dstJson, dstPath));
 
-    symlinkBinary(src, dest, cb);
+    expect(dstPath).toHaveBinaryLink("links-2");
   });
 
-  it("should work with missing bin files", async done => {
+  it("should skip missing bin config", async () => {
     const testDir = await initFixture("PackageUtilities/links");
-    const srcRef = path.join(testDir, "packages/package-3");
-    const destRef = path.join(testDir, "packages/package-4");
+    const srcPath = path.join(testDir, "packages/package-1");
+    const dstPath = path.join(testDir, "packages/package-2");
 
-    const cb = err => {
-      expect(err).toBe(null);
-      done();
-    };
+    await symlinkBinary(srcPath, dstPath);
 
-    symlinkBinary(srcRef, destRef, cb);
+    expect(dstPath).toHaveBinaryLink([]);
   });
 
-  it("should create a link string bin entry", async done => {
+  it("should skip missing bin files", async () => {
     const testDir = await initFixture("PackageUtilities/links");
-    const src = path.join(testDir, "packages/package-2");
-    const dest = path.join(testDir, "packages/package-3");
+    const srcPath = path.join(testDir, "packages/package-3");
+    const dstPath = path.join(testDir, "packages/package-4");
 
-    const cb = () => {
-      expect(dest).toHaveBinaryLink("links-2");
-      done();
-    };
+    await symlinkBinary(srcPath, dstPath);
 
-    symlinkBinary(src, dest, cb);
+    expect(srcPath).toHaveExecutable(["cli1.js", "cli2.js"]);
+    expect(dstPath).toHaveBinaryLink(["links3cli1", "links3cli2"]);
   });
 
-  it("should create links for object bin entry", async done => {
+  it("should preserve previous bin entries", async () => {
     const testDir = await initFixture("PackageUtilities/links");
-    const src = path.join(testDir, "packages/package-3");
-    const dest = path.join(testDir, "packages/package-4");
+    const pkg2Path = path.join(testDir, "packages/package-2");
+    const pkg3Path = path.join(testDir, "packages/package-3");
+    const destPath = path.join(testDir, "packages/package-4");
 
-    const cb = () => {
-      expect(dest).toHaveBinaryLink(["links3cli1", "links3cli2"]);
-      done();
-    };
+    await symlinkBinary(pkg2Path, destPath);
+    await symlinkBinary(pkg3Path, destPath);
 
-    symlinkBinary(src, dest, cb);
-  });
-
-  it("should make links targets executable", async done => {
-    const testDir = await initFixture("PackageUtilities/links");
-    const src = path.join(testDir, "packages/package-3");
-    const dest = path.join(testDir, "packages/package-4");
-
-    const cb = () => {
-      expect(src).toHaveExecutable(["cli1.js", "cli2.js"]);
-      done();
-    };
-
-    symlinkBinary(src, dest, cb);
-  });
-
-  it("should preserve previous bin entries", async done => {
-    const testDir = await initFixture("PackageUtilities/links");
-    const firstSrcRef = path.join(testDir, "packages/package-2");
-    const secondSrcRef = path.join(testDir, "packages/package-3");
-    const dest = path.join(testDir, "packages/package-4");
-
-    const finish = () => {
-      expect(dest).toHaveBinaryLink(["links-2", "links3cli1", "links3cli2"]);
-      done();
-    };
-
-    async.series(
-      [cb => symlinkBinary(firstSrcRef, dest, cb), cb => symlinkBinary(secondSrcRef, dest, cb)],
-      finish
-    );
+    expect(destPath).toHaveBinaryLink(["links-2", "links3cli1", "links3cli2"]);
   });
 });

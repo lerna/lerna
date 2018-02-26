@@ -10,14 +10,13 @@ const ChildProcessUtilities = require("../src/ChildProcessUtilities");
 const GitUtilities = require("../src/GitUtilities");
 
 // helpers
-const callsBack = require("./helpers/callsBack");
 const initFixture = require("./helpers/initFixture");
 
 // file under test
 const lernaDiff = require("./helpers/command-runner")(require("../src/commands/DiffCommand"));
 
 describe("DiffCommand", () => {
-  ChildProcessUtilities.spawn.mockImplementation(callsBack(null, true));
+  ChildProcessUtilities.spawn.mockResolvedValue();
   GitUtilities.isInitialized.mockReturnValue(true);
   GitUtilities.hasCommit.mockReturnValue(true);
 
@@ -31,8 +30,7 @@ describe("DiffCommand", () => {
     expect(ChildProcessUtilities.spawn).lastCalledWith(
       "git",
       ["diff", "beefcafe", "--color=auto", "--", path.join(testDir, "packages")],
-      expect.objectContaining({ cwd: testDir }),
-      expect.any(Function)
+      expect.objectContaining({ cwd: testDir })
     );
   });
 
@@ -47,8 +45,7 @@ describe("DiffCommand", () => {
     expect(ChildProcessUtilities.spawn).lastCalledWith(
       "git",
       ["diff", "cafedead", "--color=auto", "--", path.join(testDir, "packages")],
-      expect.objectContaining({ cwd: testDir }),
-      expect.any(Function)
+      expect.objectContaining({ cwd: testDir })
     );
   });
 
@@ -62,8 +59,7 @@ describe("DiffCommand", () => {
     expect(ChildProcessUtilities.spawn).lastCalledWith(
       "git",
       ["diff", "deadbeef", "--color=auto", "--", path.join(testDir, "packages/package-1")],
-      expect.objectContaining({ cwd: testDir }),
-      expect.any(Function)
+      expect.objectContaining({ cwd: testDir })
     );
   });
 
@@ -73,7 +69,6 @@ describe("DiffCommand", () => {
     try {
       await lernaDiff(testDir)("missing");
     } catch (err) {
-      expect(err.exitCode).toBe(1);
       expect(err.message).toBe("Cannot diff, the package 'missing' does not exist.");
     }
   });
@@ -86,7 +81,6 @@ describe("DiffCommand", () => {
     try {
       await lernaDiff(testDir)("package-1");
     } catch (err) {
-      expect(err.exitCode).toBe(1);
       expect(err.message).toBe("Cannot diff, there are no commits in this repository yet.");
     }
   });
@@ -97,12 +91,11 @@ describe("DiffCommand", () => {
     const nonZero = new Error("An actual non-zero, not git diff pager SIGPIPE");
     nonZero.code = 1;
 
-    ChildProcessUtilities.spawn.mockImplementationOnce(callsBack(nonZero));
+    ChildProcessUtilities.spawn.mockRejectedValueOnce(nonZero);
 
     try {
       await lernaDiff(testDir)("package-1");
     } catch (err) {
-      expect(err.exitCode).toBe(1);
       expect(err.message).toBe("An actual non-zero, not git diff pager SIGPIPE");
     }
   });

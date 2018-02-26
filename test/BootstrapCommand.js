@@ -14,7 +14,6 @@ const npmRunScript = require("../src/utils/npm-run-script");
 const createSymlink = require("../src/utils/create-symlink");
 
 // helpers
-const callsBack = require("./helpers/callsBack");
 const initFixture = require("./helpers/initFixture");
 const normalizeRelativeDir = require("./helpers/normalizeRelativeDir");
 
@@ -53,14 +52,14 @@ describe("BootstrapCommand", () => {
   // we stub npmInstall in most tests because
   // we already have enough tests of npmInstall
   npmInstall.mockResolvedValue();
-  npmInstall.dependencies.mockImplementation(callsBack());
+  npmInstall.dependencies.mockResolvedValue();
 
   // stub runScriptInDir() because it is a huge source
   // of slowness when running tests for no good reason
-  npmRunScript.mockImplementation(callsBack());
+  npmRunScript.mockResolvedValue();
 
   // the underlying implementation of symlinkBinary and symlinkDependencies
-  createSymlink.mockImplementation(callsBack());
+  createSymlink.mockResolvedValue();
 
   describe("lifecycle scripts", () => {
     it("should run preinstall, postinstall and prepublish scripts", async () => {
@@ -86,7 +85,7 @@ describe("BootstrapCommand", () => {
     const fsRimraf = FileSystemUtilities.rimraf;
 
     beforeEach(() => {
-      FileSystemUtilities.rimraf = jest.fn(callsBack());
+      FileSystemUtilities.rimraf = jest.fn(() => Promise.resolve());
     });
 
     afterEach(() => {
@@ -114,8 +113,7 @@ describe("BootstrapCommand", () => {
           npmClientArgs: undefined,
           mutex: undefined,
           // npmGlobalStyle is not included at all
-        },
-        expect.any(Function)
+        }
       );
 
       // foo@0.1.2 differs from the more common foo@^1.0.0
@@ -124,8 +122,7 @@ describe("BootstrapCommand", () => {
         ["foo@0.1.12"],
         expect.objectContaining({
           npmGlobalStyle: true,
-        }),
-        expect.any(Function)
+        })
       );
     });
 
@@ -192,8 +189,7 @@ describe("BootstrapCommand", () => {
         expect.arrayContaining(["foo@^1.0.0"]),
         expect.objectContaining({
           npmGlobalStyle: false,
-        }),
-        expect.any(Function)
+        })
       );
     });
   });
@@ -352,8 +348,7 @@ describe("BootstrapCommand", () => {
           registry: "https://my-secure-registry/npm",
           npmClient: "npm",
           npmGlobalStyle: false,
-        }),
-        expect.any(Function)
+        })
       );
     });
   });
@@ -446,9 +441,10 @@ describe("BootstrapCommand", () => {
   it("succeeds in repositories with zero packages", async () => {
     const testDir = await initFixture("BootstrapCommand/zero-pkgs");
 
-    const { exitCode } = await lernaBootstrap(testDir)();
+    const result = await lernaBootstrap(testDir)();
 
-    expect(exitCode).toBe(0);
+    // cheesy workaround for jest's expectation of assertions
+    expect(result).toBeDefined();
   });
 
   it("does not require an initialized git repo", async () => {
@@ -456,8 +452,9 @@ describe("BootstrapCommand", () => {
 
     fs.remove(path.join(testDir, ".git"));
 
-    const { exitCode } = await lernaBootstrap(testDir)();
+    const result = await lernaBootstrap(testDir)();
 
-    expect(exitCode).toBe(0);
+    // cheesy workaround for jest's expectation of assertions
+    expect(result).toBeDefined();
   });
 });

@@ -1,7 +1,8 @@
 "use strict";
 
-const async = require("async");
+const fs = require("fs-extra");
 const path = require("path");
+const pMap = require("p-map");
 const readPkg = require("read-pkg");
 
 const Package = require("../Package");
@@ -14,33 +15,37 @@ module.exports = symlinkBinary;
  * Symlink bins of srcPackage to node_modules/.bin in destPackage
  * @param {Object|string} srcPackageRef
  * @param {Object|string} destPackageRef
- * @param {Function} callback
+ * @returns {Promise}
  */
-function symlinkBinary(srcPackageRef, destPackageRef, callback) {
-  const srcPackage = resolvePackageRef(srcPackageRef);
-  const destPackage = resolvePackageRef(destPackageRef);
+function symlinkBinary(srcPackageRef, destPackageRef) {
+  return Promise.all([resolvePackageRef(srcPackageRef), resolvePackageRef(destPackageRef)]).then(
+    ([srcPackage, destPackage]) => {
+      const actions = Object.keys(srcPackage.bin).map(name => {
+        const src = path.join(srcPackage.location, srcPackage.bin[name]);
+        const dst = path.join(destPackage.binLocation, name);
 
-  const actions = Object.keys(srcPackage.bin)
-    .map(name => ({
-      src: path.join(srcPackage.location, srcPackage.bin[name]),
-      dst: path.join(destPackage.binLocation, name),
-    }))
-    .filter(({ src }) => FileSystemUtilities.existsSync(src))
-    .map(({ src, dst }) => cb =>
-      async.series(
-        [next => createSymlink(src, dst, "exec", next), done => FileSystemUtilities.chmod(src, "755", done)],
-        cb
-      )
-    );
+        return fs.pathExists(src).then(exists => {
+          if (exists) {
+            return { src, dst };
+          }
+        });
+      });
 
-  if (actions.length === 0) {
-    return callback();
-  }
+      if (actions.length === 0) {
+        return Promise.resolve();
+      }
 
-  const ensureBin = cb => FileSystemUtilities.mkdirp(destPackage.binLocation, cb);
-  const linkEntries = cb => async.parallel(actions, cb);
-
-  async.series([ensureBin, linkEntries], callback);
+      return FileSystemUtilities.mkdirp(destPackage.binLocation).then(() =>
+        pMap(actions, meta => {
+          if (meta) {
+            return createSymlink(meta.src, meta.dst, "exec").then(() =>
+              FileSystemUtilities.chmod(meta.src, "755")
+            );
+          }
+        })
+      );
+    }
+  );
 }
 
 function resolvePackageRef(pkgRef) {
@@ -48,5 +53,5 @@ function resolvePackageRef(pkgRef) {
     return pkgRef;
   }
 
-  return new Package(readPkg.sync(pkgRef), pkgRef);
+  return readPkg(pkgRef, { normalize: false }).then(json => new Package(json, pkgRef));
 }

@@ -155,8 +155,8 @@ describe("PublishCommand", () => {
       const testDir = await initFixture("PublishCommand/normal");
       try {
         await lernaPublish(testDir)("--independent");
-      } catch (error) {
-        expect(error.exitCode).toBe(1);
+      } catch (err) {
+        expect(err.message).toMatch("independent");
       }
     });
   });
@@ -924,24 +924,27 @@ describe("PublishCommand", () => {
         GitUtilities.getCurrentBranch.mockReturnValueOnce("exact-match");
 
         const testDir = await initFixture("PublishCommand/normal");
-        const { exitCode } = await lernaPublish(testDir)("--allow-branch", "exact-match");
-        expect(exitCode).toBe(0);
+        await lernaPublish(testDir)("--allow-branch", "exact-match");
+
+        expect(publishedTagInDirectories(testDir)).toHaveLength(4);
       });
 
       it("should accept a branch that matches by wildcard", async () => {
         GitUtilities.getCurrentBranch.mockReturnValueOnce("feature/awesome");
 
         const testDir = await initFixture("PublishCommand/normal");
-        const { exitCode } = await lernaPublish(testDir)("--allow-branch", "feature/*");
-        expect(exitCode).toBe(0);
+        await lernaPublish(testDir)("--allow-branch", "feature/*");
+
+        expect(publishedTagInDirectories(testDir)).toHaveLength(4);
       });
 
       it("should accept a branch that matches one of the items passed", async () => {
         GitUtilities.getCurrentBranch.mockReturnValueOnce("feature/awesome");
 
         const testDir = await initFixture("PublishCommand/normal");
-        const { exitCode } = await lernaPublish(testDir)("--allow-branch", "master", "feature/*");
-        expect(exitCode).toBe(0);
+        await lernaPublish(testDir)("--allow-branch", "master", "feature/*");
+
+        expect(publishedTagInDirectories(testDir)).toHaveLength(4);
       });
     });
 
@@ -961,16 +964,18 @@ describe("PublishCommand", () => {
         GitUtilities.getCurrentBranch.mockReturnValueOnce("lerna");
 
         const testDir = await initFixture("PublishCommand/allow-branch-lerna");
-        const { exitCode } = await lernaPublish(testDir)();
-        expect(exitCode).toBe(0);
+        await lernaPublish(testDir)();
+
+        expect(publishedTagInDirectories(testDir)).toHaveLength(1);
       });
 
       it("should prioritize cli over defaults", async () => {
         GitUtilities.getCurrentBranch.mockReturnValueOnce("cli-override");
 
         const testDir = await initFixture("PublishCommand/allow-branch-lerna");
-        const { exitCode } = await lernaPublish(testDir)("--allow-branch", "cli-override");
-        expect(exitCode).toBe(0);
+        await lernaPublish(testDir)("--allow-branch", "cli-override");
+
+        expect(publishedTagInDirectories(testDir)).toHaveLength(1);
       });
     });
 
@@ -979,8 +984,7 @@ describe("PublishCommand", () => {
         const testDir = await initFixture("PublishCommand/normal");
         GitUtilities.getCurrentBranch.mockReturnValueOnce("other");
 
-        const { exitCode } = await lernaPublish(testDir)("--allow-branch", "master", "--canary");
-        expect(exitCode).toBe(0);
+        await lernaPublish(testDir)("--allow-branch", "master", "--canary");
         expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
       });
     });

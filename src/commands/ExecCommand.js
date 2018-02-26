@@ -93,9 +93,11 @@ class ExecCommand extends Command {
         batch,
         pkg =>
           this.runCommandInPackage(pkg).catch(err => {
-            if (err && err.code) {
+            if (err.code) {
               this.logger.error("exec", `Errored while executing '${err.cmd}' in '${pkg.name}'`);
             }
+
+            throw err;
           }),
         { concurrency: this.concurrency }
       )

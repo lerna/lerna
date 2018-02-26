@@ -110,10 +110,10 @@ class RunCommand extends Command {
 
   runScriptInPackagesBatched() {
     const runner = this.options.stream
-      ? this.runScriptInPackageStreaming.bind(this)
-      : this.runScriptInPackageCapturing.bind(this);
+      ? pkg => this.runScriptInPackageStreaming(pkg)
+      : pkg => this.runScriptInPackageCapturing(pkg);
 
-    pMapSeries(this.batchedPackages, batch =>
+    return pMapSeries(this.batchedPackages, batch =>
       pMap(batch, pkg => runner(pkg), {
         concurrency: this.concurrency,
       })

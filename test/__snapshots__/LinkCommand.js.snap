@@ -23,11 +23,6 @@ Array [
     "type": "exec",
   },
   Object {
-    "_src": "packages/package-1",
-    "dest": "packages/package-4/node_modules/@test/package-1",
-    "type": "junction",
-  },
-  Object {
     "_src": "packages/package-3",
     "dest": "packages/package-4/node_modules/package-3",
     "type": "junction",
@@ -41,6 +36,11 @@ Array [
     "_src": "packages/package-3/cli2.js",
     "dest": "packages/package-4/node_modules/.bin/package3cli2",
     "type": "exec",
+  },
+  Object {
+    "_src": "packages/package-1",
+    "dest": "packages/package-4/node_modules/@test/package-1",
+    "type": "junction",
   },
 ]
 `;
