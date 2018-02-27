@@ -270,7 +270,7 @@ class Command {
     }
 
     const { rootPath, packageConfigs } = this.repository;
-    const { scope, ignore, registry, since } = this.options;
+    const { scope, ignore } = this.options;
 
     if (scope) {
       log.info("scope", scope);
@@ -280,25 +280,33 @@ class Command {
       log.info("ignore", ignore);
     }
 
-    if (registry) {
-      this.npmRegistry = registry;
-    }
+    let chain = Promise.resolve();
 
-    this.packages = collectPackages({ rootPath, packageConfigs });
-    this.packageGraph = new PackageGraph(this.packages);
-    this.filteredPackages = filterPackages(this.packages, { scope, ignore });
+    chain = chain.then(() => collectPackages({ rootPath, packageConfigs }));
+    chain = chain.then(packages => {
+      this.packages = packages;
+      this.packageGraph = new PackageGraph(packages);
+      this.filteredPackages = filterPackages(packages, { scope, ignore });
+    });
 
     // collectUpdates requires that filteredPackages be present prior to checking for
     // updates. That's okay because it further filters based on what's already been filtered.
-    if (typeof since === "string") {
-      const updated = collectUpdates(this).map(({ pkg }) => pkg.name);
+    if (typeof this.options.since === "string") {
+      chain = chain.then(() => collectUpdates(this));
+      chain = chain.then(updates => {
+        const updated = new Set(updates.map(({ pkg }) => pkg.name));
 
-      this.filteredPackages = this.filteredPackages.filter(pkg => updated.indexOf(pkg.name) > -1);
+        this.filteredPackages = this.filteredPackages.filter(pkg => updated.has(pkg.name));
+      });
     }
 
     if (this.options.includeFilteredDependencies) {
-      this.filteredPackages = this.packageGraph.addDependencies(this.filteredPackages);
+      chain = chain.then(() => {
+        this.filteredPackages = this.packageGraph.addDependencies(this.filteredPackages);
+      });
     }
+
+    return chain;
   }
 
   runCommand() {
