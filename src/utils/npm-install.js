@@ -40,25 +40,21 @@ function npmInstall(directory, { registry, npmClient, npmClientArgs, npmGlobalSt
   return ChildProcessUtilities.exec(cmd, args, opts);
 }
 
-function installInDir(directory, dependencies, config, callback) {
+function installInDir(directory, dependencies, config) {
   log.silly("installInDir", path.basename(directory), dependencies);
 
   // Nothing to do if we weren't given any deps.
   if (!(dependencies && dependencies.length)) {
     log.verbose("installInDir", "no dependencies to install");
-    return callback();
+    return Promise.resolve();
   }
 
   const packageJson = path.join(directory, "package.json");
   const packageJsonBkp = `${packageJson}.lerna_backup`;
 
   log.silly("installInDir", "backup", packageJson);
-  FileSystemUtilities.rename(packageJson, packageJsonBkp, err => {
-    if (err) {
-      log.error("installInDir", "problem backing up package.json", err);
-      return callback(err);
-    }
 
+  return FileSystemUtilities.rename(packageJson, packageJsonBkp).then(() => {
     const cleanup = () => {
       log.silly("installInDir", "cleanup", packageJson);
       // Need to do this one synchronously because we might be doing it on exit.
@@ -72,7 +68,10 @@ function installInDir(directory, dependencies, config, callback) {
     const done = finalError => {
       cleanup();
       unregister();
-      callback(finalError);
+
+      if (finalError) {
+        throw finalError;
+      }
     };
 
     // Construct a basic fake package.json with just the deps we need to install.
@@ -85,8 +84,9 @@ function installInDir(directory, dependencies, config, callback) {
     };
 
     log.silly("installInDir", "writing tempJson", tempJson);
+
     // Write out our temporary cooked up package.json and then install.
-    writePkg(packageJson, tempJson)
+    return writePkg(packageJson, tempJson)
       .then(() => npmInstall(directory, config))
       .then(() => done(), done);
   });

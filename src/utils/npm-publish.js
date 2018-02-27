@@ -8,7 +8,7 @@ const getExecOpts = require("./get-npm-exec-opts");
 
 module.exports = npmPublish;
 
-function npmPublish(tag, pkg, { npmClient, registry }, callback) {
+function npmPublish(tag, pkg, { npmClient, registry }) {
   const directory = pkg.location;
 
   log.silly("npmPublish", tag, path.basename(directory));
@@ -22,5 +22,5 @@ function npmPublish(tag, pkg, { npmClient, registry }, callback) {
     args.push("--new-version", pkg.version);
   }
 
-  return ChildProcessUtilities.exec(npmClient, args, opts, callback);
+  return ChildProcessUtilities.exec(npmClient, args, opts);
 }

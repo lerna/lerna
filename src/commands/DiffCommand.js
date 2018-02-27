@@ -28,7 +28,7 @@ function getLastCommit(execOpts) {
 }
 
 class DiffCommand extends Command {
-  initialize(callback) {
+  initialize() {
     const packageName = this.options.pkgName;
 
     // don't interrupt spawned or streaming stdio
@@ -57,16 +57,13 @@ class DiffCommand extends Command {
     }
 
     this.args = args;
-
-    callback(null, true);
   }
 
-  execute(callback) {
-    ChildProcessUtilities.spawn("git", this.args, this.execOpts, err => {
-      if (err && err.code) {
-        callback(err);
-      } else {
-        callback(null, true);
+  execute() {
+    return ChildProcessUtilities.spawn("git", this.args, this.execOpts).catch(err => {
+      if (err.code) {
+        // quitting the diff viewer is not an error
+        throw err;
       }
     });
   }

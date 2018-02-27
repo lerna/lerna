@@ -12,95 +12,71 @@ const createSymlink = require("../src/utils/create-symlink");
 const linkRelative = (from, to) => path.relative(path.dirname(to), from);
 
 describe("create-symlink", () => {
-  fs.lstat.mockImplementation(callsBack("ENOENT"));
-  fs.unlink.mockImplementation(callsBack());
-  fs.symlink.mockImplementation(callsBack());
+  fs.lstat.mockRejectedValue("ENOENT");
+  fs.unlink.mockResolvedValue();
+  fs.symlink.mockResolvedValue();
 
   if (process.platform !== "win32") {
-    it("creates relative symlink to a directory", done => {
+    it("creates relative symlink to a directory", async () => {
       const src = path.resolve("./packages/package-2");
       const dst = path.resolve("./packages/package-1/node_modules/package-2");
       const type = "junction"; // even in posix environments :P
 
-      createSymlink(src, dst, type, () => {
-        try {
-          expect(fs.unlink).not.toBeCalled();
-          expect(fs.symlink).lastCalledWith(linkRelative(src, dst), dst, type, expect.any(Function));
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      });
+      await createSymlink(src, dst, type);
+
+      expect(fs.unlink).not.toBeCalled();
+      expect(fs.symlink).lastCalledWith(linkRelative(src, dst), dst, type);
     });
 
-    it("creates relative symlink to an executable file", done => {
+    it("creates relative symlink to an executable file", async () => {
       const src = path.resolve("./packages/package-2/cli.js");
       const dst = path.resolve("./packages/package-1/node_modules/.bin/package-2");
       const type = "exec";
 
-      createSymlink(src, dst, type, () => {
-        try {
-          expect(fs.unlink).not.toBeCalled();
-          expect(fs.symlink).lastCalledWith(linkRelative(src, dst), dst, "file", expect.any(Function));
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      });
+      await createSymlink(src, dst, type);
+
+      expect(fs.unlink).not.toBeCalled();
+      expect(fs.symlink).lastCalledWith(linkRelative(src, dst), dst, "file");
     });
 
-    it("overwrites an existing symlink", done => {
+    it("overwrites an existing symlink", async () => {
       const src = path.resolve("./packages/package-2");
       const dst = path.resolve("./packages/package-1/node_modules/package-2");
       const type = "junction"; // even in posix environments :P
 
-      fs.lstat.mockImplementationOnce(callsBack()); // something _does_ exist at destination
+      fs.lstat.mockResolvedValueOnce(); // something _does_ exist at destination
 
-      createSymlink(src, dst, type, () => {
-        try {
-          expect(fs.unlink).lastCalledWith(dst, expect.any(Function));
-          expect(fs.symlink).lastCalledWith(linkRelative(src, dst), dst, type, expect.any(Function));
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      });
+      await createSymlink(src, dst, type);
+
+      expect(fs.unlink).lastCalledWith(dst);
+      expect(fs.symlink).lastCalledWith(linkRelative(src, dst), dst, type);
     });
   } else {
-    it("creates command shim to an executable file", done => {
+    it("creates command shim to an executable file", async () => {
       const src = path.resolve("./packages/package-2/cli.js");
       const dst = path.resolve("./packages/package-1/node_modules/.bin/package-2");
       const type = "exec";
 
+      // cmdShim is a traditional errback
       cmdShim.mockImplementationOnce(callsBack());
 
-      createSymlink(src, dst, type, () => {
-        try {
-          expect(fs.lstat).not.toBeCalled();
-          expect(cmdShim).lastCalledWith(src, dst, expect.any(Function));
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      });
+      await createSymlink(src, dst, type);
+
+      expect(fs.lstat).not.toBeCalled();
+      expect(cmdShim).lastCalledWith(src, dst, expect.any(Function));
     });
 
-    it("always uses absolute paths when creating symlinks", done => {
+    it("always uses absolute paths when creating symlinks", async () => {
       const src = path.resolve("./packages/package-2");
       const dst = path.resolve("./packages/package-1/node_modules/package-2");
       const type = "junction"; // only _actually_ matters in windows
 
-      fs.lstat.mockImplementationOnce(callsBack()); // something _does_ exist at destination
+      fs.lstat.mockResolvedValueOnce(); // something _does_ exist at destination
 
-      createSymlink(src, dst, type, () => {
-        try {
-          expect(fs.unlink).lastCalledWith(dst, expect.any(Function));
-          expect(fs.symlink).lastCalledWith(src, dst, type, expect.any(Function));
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      });
+      await createSymlink(src, dst, type);
+
+      expect(fs.unlink).lastCalledWith(dst);
+      expect(fs.symlink).lastCalledWith(src, dst, type);
     });
   }
 });

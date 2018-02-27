@@ -7,7 +7,6 @@ const minimatch = require("minimatch");
 const path = require("path");
 const pFinally = require("p-finally");
 const pMap = require("p-map");
-const pMapSeries = require("p-map-series");
 const pReduce = require("p-reduce");
 const pWaterfall = require("p-waterfall");
 const semver = require("semver");
@@ -24,6 +23,7 @@ const npmDistTag = require("../utils/npm-dist-tag");
 const npmPublish = require("../utils/npm-publish");
 const npmRunScript = require("../utils/npm-run-script");
 const batchPackages = require("../utils/batch-packages");
+const runParallelBatches = require("../utils/run-parallel-batches");
 const ValidationError = require("../utils/validation-error");
 
 exports.handler = function handler(argv) {
@@ -168,7 +168,7 @@ class PublishCommand extends Command {
     });
   }
 
-  initialize(callback) {
+  initialize() {
     this.gitRemote = this.options.gitRemote || "origin";
     this.gitEnabled = !(this.options.canary || this.options.skipGit);
 
@@ -216,13 +216,15 @@ class PublishCommand extends Command {
     this.updates = collectUpdates(this);
 
     if (!this.updates.length) {
-      this.logger.info("No updated packages to publish.");
-      return callback(null, false);
+      this.logger.success("No updated packages to publish");
+
+      // still exits zero, aka "ok"
+      return false;
     }
 
     this.packagesToPublish = this.updates.map(({ pkg }) => pkg).filter(pkg => !pkg.private);
 
-    this.batchedPackagesToPublish = this.toposort
+    this.batchedPackages = this.toposort
       ? batchPackages(
           this.packagesToPublish,
           this.options.rejectCycles,
@@ -240,12 +242,10 @@ class PublishCommand extends Command {
       () => this.confirmVersions(),
     ];
 
-    return pWaterfall(tasks)
-      .then(proceed => callback(null, proceed))
-      .catch(callback);
+    return pWaterfall(tasks);
   }
 
-  execute(callback) {
+  execute() {
     const tasks = [];
 
     if (!this.repository.isIndependent() && !this.options.canary) {
@@ -264,9 +264,7 @@ class PublishCommand extends Command {
       tasks.push(() => this.publishPackagesToNpm());
     }
 
-    pWaterfall(tasks)
-      .then(() => callback(null, true))
-      .catch(callback);
+    return pWaterfall(tasks);
   }
 
   resolveLocalDependencyLinks() {
@@ -696,11 +694,8 @@ class PublishCommand extends Command {
       });
     };
 
-    return pFinally(
-      pMapSeries(this.batchedPackagesToPublish, batch =>
-        pMap(batch, mapPackage, { concurrency: this.concurrency })
-      ),
-      () => tracker.finish()
+    return pFinally(runParallelBatches(this.batchedPackages, this.concurrency, mapPackage), () =>
+      tracker.finish()
     );
   }
 
@@ -715,11 +710,8 @@ class PublishCommand extends Command {
         tracker.completeWork(1);
       });
 
-    return pFinally(
-      pMapSeries(this.batchedPackagesToPublish, batch =>
-        pMap(batch, mapPackage, { concurrency: this.concurrency })
-      ),
-      () => tracker.finish()
+    return pFinally(runParallelBatches(this.batchedPackages, this.concurrency, mapPackage), () =>
+      tracker.finish()
     );
   }
 

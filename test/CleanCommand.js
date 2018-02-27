@@ -7,7 +7,6 @@ const FileSystemUtilities = require("../src/FileSystemUtilities");
 const PromptUtilities = require("../src/PromptUtilities");
 
 // helpers
-const callsBack = require("./helpers/callsBack");
 const initFixture = require("./helpers/initFixture");
 const normalizeRelativeDir = require("./helpers/normalizeRelativeDir");
 
@@ -22,13 +21,13 @@ describe("CleanCommand", () => {
   // stub rimraf because we trust isaacs
   const fsRimraf = FileSystemUtilities.rimraf;
   beforeEach(() => {
-    FileSystemUtilities.rimraf = jest.fn(callsBack());
+    FileSystemUtilities.rimraf = jest.fn(() => Promise.resolve());
   });
   afterEach(() => {
     FileSystemUtilities.rimraf = fsRimraf;
   });
 
-  PromptUtilities.confirm.mockImplementation(callsBack(true));
+  PromptUtilities.confirm.mockResolvedValue(true);
 
   describe("basic tests", () => {
     it("should rm -rf the node_modules", async () => {
@@ -47,7 +46,7 @@ describe("CleanCommand", () => {
     it("exits early when confirmation is rejected", async () => {
       const testDir = await initFixture("CleanCommand/basic");
 
-      PromptUtilities.confirm.mockImplementationOnce(callsBack(false));
+      PromptUtilities.confirm.mockResolvedValueOnce(false);
 
       await lernaClean(testDir)();
 
@@ -79,16 +78,15 @@ describe("CleanCommand", () => {
     });
 
     it("exits non-zero when rimraf errors egregiously", async () => {
-      expect.assertions(2);
+      expect.assertions(1);
 
       const testDir = await initFixture("CleanCommand/basic");
 
-      FileSystemUtilities.rimraf.mockImplementationOnce(callsBack(new Error("whoops")));
+      FileSystemUtilities.rimraf.mockRejectedValueOnce(new Error("whoops"));
 
       try {
         await lernaClean(testDir)();
       } catch (err) {
-        expect(err.exitCode).toBe(1);
         expect(err.message).toMatch("whoops");
       }
     });

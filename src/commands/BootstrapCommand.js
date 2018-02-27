@@ -1,18 +1,21 @@
 "use strict";
 
-const async = require("async");
 const dedent = require("dedent");
 const getPort = require("get-port");
 const path = require("path");
+const pFinally = require("p-finally");
+const pMap = require("p-map");
+const pMapSeries = require("p-map-series");
+const pWaterfall = require("p-waterfall");
 
 const Command = require("../Command");
 const FileSystemUtilities = require("../FileSystemUtilities");
 const npmInstall = require("../utils/npm-install");
 const npmRunScript = require("../utils/npm-run-script");
 const batchPackages = require("../utils/batch-packages");
+const runParallelBatches = require("../utils/run-parallel-batches");
 const matchPackageName = require("../utils/match-package-name");
 const hasDependencyInstalled = require("../utils/has-dependency-installed");
-const runParallelBatches = require("../utils/run-parallel-batches");
 const symlinkBinary = require("../utils/symlink-binary");
 const symlinkDependencies = require("../utils/symlink-dependencies");
 const ValidationError = require("../utils/validation-error");
@@ -75,18 +78,16 @@ class BootstrapCommand extends Command {
     return false;
   }
 
-  initialize(callback) {
+  initialize() {
     const { registry, rejectCycles, npmClient = "npm", npmClientArgs, mutex, hoist } = this.options;
 
     if (npmClient === "yarn" && typeof hoist === "string") {
-      return callback(
-        new ValidationError(
-          "EWORKSPACES",
-          dedent`
+      throw new ValidationError(
+        "EWORKSPACES",
+        dedent`
             --hoist is not supported with --npm-client=yarn, use yarn workspaces instead
             A guide is available at https://yarnpkg.com/blog/2017/08/02/introducing-workspaces/
           `
-        )
       );
     }
 
@@ -95,14 +96,12 @@ class BootstrapCommand extends Command {
       this.repository.packageJson.workspaces &&
       this.options.useWorkspaces !== true
     ) {
-      return callback(
-        new ValidationError(
-          "EWORKSPACES",
-          dedent`
+      throw new ValidationError(
+        "EWORKSPACES",
+        dedent`
             Yarn workspaces are configured in package.json, but not enabled in lerna.json!
             Please choose one: useWorkspaces = true in lerna.json, or remove package.json workspaces config
           `
-        )
       );
     }
 
@@ -119,158 +118,129 @@ class BootstrapCommand extends Command {
       this.npmConfig.npmClientArgs = [...(npmClientArgs || []), ...doubleDashArgs];
     }
 
-    try {
-      this.batchedPackages = this.toposort
-        ? batchPackages(this.filteredPackages, rejectCycles)
-        : [this.filteredPackages];
-    } catch (e) {
-      return callback(e);
-    }
+    this.batchedPackages = this.toposort
+      ? batchPackages(this.filteredPackages, rejectCycles)
+      : [this.filteredPackages];
 
     if (npmClient === "yarn" && !mutex) {
-      return getPort({ port: 42424, host: "0.0.0.0" })
-        .then(port => {
-          this.npmConfig.mutex = `network:${port}`;
-          this.logger.silly("npmConfig", this.npmConfig);
-          callback(null, true);
-        })
-        .catch(callback);
+      return getPort({ port: 42424, host: "0.0.0.0" }).then(port => {
+        this.npmConfig.mutex = `network:${port}`;
+        this.logger.silly("npmConfig", this.npmConfig);
+      });
     }
 
     this.validatePackageNames();
 
     this.logger.silly("npmConfig", this.npmConfig);
-    callback(null, true);
   }
 
-  execute(callback) {
-    this.bootstrapPackages(err => {
-      if (err) {
-        callback(err);
-      } else {
-        this.logger.success("", `Bootstrapped ${this.filteredPackages.length} packages`);
-        callback(null, true);
-      }
-    });
-  }
-
-  /**
-   * Bootstrap packages
-   * @param {Function} callback
-   */
-  bootstrapPackages(callback) {
+  execute() {
     this.logger.info("", `Bootstrapping ${this.filteredPackages.length} packages`);
 
     if (this.options.useWorkspaces) {
-      this.installRootPackageOnly(callback);
-    } else {
-      const { ignoreScripts } = this.options;
-      async.series(
-        [
-          // preinstall bootstrapped packages
-          !ignoreScripts && (cb => this.preinstallPackages(cb)),
-          // install external dependencies
-          cb => this.installExternalDependencies(cb),
-          // symlink packages and their binaries
-          cb => this.symlinkPackages(cb),
-          // postinstall bootstrapped packages
-          !ignoreScripts && (cb => this.postinstallPackages(cb)),
-          // prepublish bootstrapped packages
-          !ignoreScripts && (cb => this.prepublishPackages(cb)),
-          // prepare bootstrapped packages
-          !ignoreScripts && (cb => this.preparePackages(cb)),
-        ].filter(Boolean),
-        callback
+      return this.installRootPackageOnly();
+    }
+
+    const tasks = [() => this.installExternalDependencies(), () => this.symlinkPackages()];
+
+    if (!this.options.ignoreScripts) {
+      tasks.unshift(() => this.preinstallPackages());
+      // then install
+      // then symlink
+      tasks.push(
+        () => this.postinstallPackages(),
+        () => this.prepublishPackages(),
+        () => this.preparePackages()
       );
     }
+
+    return pWaterfall(tasks).then(() => {
+      this.logger.success("", `Bootstrapped ${this.filteredPackages.length} packages`);
+    });
   }
 
-  installRootPackageOnly(callback) {
+  installRootPackageOnly() {
     const tracker = this.logger.newItem("install dependencies");
 
-    npmInstall(this.repository.rootPath, this.npmConfig)
-      .then(() => {
-        tracker.info("hoist", "Finished installing in root");
-        tracker.completeWork(1);
-
-        callback();
-      })
-      .catch(callback);
+    return npmInstall(this.repository.rootPath, this.npmConfig).then(() => {
+      tracker.info("hoist", "Finished installing in root");
+      tracker.completeWork(1);
+    });
   }
 
-  runScriptInPackages(scriptName, callback) {
+  runScriptInPackages(scriptName) {
     if (!this.filteredPackages.length) {
-      return callback(null, true);
+      return;
     }
 
     const packagesWithScript = new Set(this.filteredPackages.filter(pkg => pkg.scripts[scriptName]));
 
     if (!packagesWithScript.size) {
-      return callback(null, true);
+      return;
     }
 
     const { npmClient } = this.npmConfig;
     const tracker = this.logger.newItem(scriptName);
+
+    const mapPackageWithScript = pkg => {
+      if (packagesWithScript.has(pkg)) {
+        return npmRunScript(scriptName, { args: [], npmClient, pkg })
+          .then(() => {
+            tracker.silly("finished", pkg.name);
+            tracker.completeWork(1);
+          })
+          .catch(err => {
+            err.pkg = pkg;
+            throw err;
+          });
+      }
+    };
+
     tracker.addWork(packagesWithScript.size);
 
-    runParallelBatches(
-      this.batchedPackages,
-      pkg => done => {
-        if (!packagesWithScript.has(pkg)) {
-          return done();
-        }
-
-        npmRunScript(scriptName, { args: [], npmClient, pkg }, err => {
-          tracker.silly(pkg.name);
-          tracker.completeWork(1);
-          if (err) {
-            err.pkg = pkg;
-          }
-          done(err);
-        });
-      },
-      this.concurrency,
-      err => {
-        tracker.finish();
-        callback(err);
-      }
+    return pFinally(runParallelBatches(this.batchedPackages, this.concurrency, mapPackageWithScript), () =>
+      tracker.finish()
     );
   }
 
   /**
    * Run the "preinstall" NPM script in all bootstrapped packages
-   * @param callback
+   * @returns {Promise}
    */
-  preinstallPackages(callback) {
+  preinstallPackages() {
     this.logger.info("lifecycle", "preinstall");
-    this.runScriptInPackages("preinstall", callback);
+
+    return this.runScriptInPackages("preinstall");
   }
 
   /**
    * Run the "postinstall" NPM script in all bootstrapped packages
-   * @param callback
+   * @returns {Promise}
    */
-  postinstallPackages(callback) {
+  postinstallPackages() {
     this.logger.info("lifecycle", "postinstall");
-    this.runScriptInPackages("postinstall", callback);
+
+    return this.runScriptInPackages("postinstall");
   }
 
   /**
    * Run the "prepublish" NPM script in all bootstrapped packages
-   * @param callback
+   * @returns {Promise}
    */
-  prepublishPackages(callback) {
+  prepublishPackages() {
     this.logger.info("lifecycle", "prepublish");
-    this.runScriptInPackages("prepublish", callback);
+
+    return this.runScriptInPackages("prepublish");
   }
 
   /**
    * Run the "prepare" NPM script in all bootstrapped packages
-   * @param callback
+   * @returns {Promise}
    */
-  preparePackages(callback) {
+  preparePackages() {
     this.logger.info("lifecycle", "prepare");
-    this.runScriptInPackages("prepare", callback);
+
+    return this.runScriptInPackages("prepare");
   }
 
   hoistedDirectory(dependency) {
@@ -283,6 +253,7 @@ class BootstrapCommand extends Command {
       return require(path.join(this.hoistedDirectory(dependency), "package.json"));
     } catch (e) {
       // Pass.
+      return {};
     }
   }
 
@@ -428,9 +399,9 @@ class BootstrapCommand extends Command {
 
   /**
    * Install external dependencies for all packages
-   * @param {Function} callback
+   * @returns {Promise}
    */
-  installExternalDependencies(callback) {
+  installExternalDependencies() {
     const tracker = this.logger.newItem("install dependencies");
 
     const { leaves, rootSet } = this.getDependenciesToInstall(tracker);
@@ -443,51 +414,42 @@ class BootstrapCommand extends Command {
       // _everything_ that needs to go there.  This is important for
       // consistent behavior across npm clients.
       const root = Array.from(rootSet);
-      const depsToInstallInRoot = root.some(({ isSatisfied }) => !isSatisfied)
-        ? root.map(({ dependency }) => dependency)
-        : [];
 
-      actions.push(actionDone => {
+      actions.push(() => {
+        const depsToInstallInRoot = root.some(({ isSatisfied }) => !isSatisfied)
+          ? root.map(({ dependency }) => dependency)
+          : [];
+
         if (depsToInstallInRoot.length) {
           tracker.info("hoist", "Installing hoisted dependencies into root");
         }
 
-        npmInstall.dependencies(rootPkg.location, depsToInstallInRoot, this.npmConfig, installError => {
-          if (installError) {
-            return actionDone(installError);
-          }
-
-          // Link binaries into dependent packages so npm scripts will have
-          // access to them.
-          async.series(
-            root.map(({ name, dependents }) => itemDone => {
-              const { bin } = this.hoistedPackageJson(name) || {};
+        return npmInstall
+          .dependencies(rootPkg.location, depsToInstallInRoot, this.npmConfig)
+          .then(() =>
+            // Link binaries into dependent packages so npm scripts will
+            // have access to them.
+            pMapSeries(root, ({ name, dependents }) => {
+              const { bin } = this.hoistedPackageJson(name);
 
               if (bin) {
-                async.series(
-                  dependents.map(pkg => linkDone => {
-                    const src = this.hoistedDirectory(name);
+                return pMap(dependents, pkg => {
+                  const src = this.hoistedDirectory(name);
 
-                    symlinkBinary(src, pkg, linkDone);
-                  }),
-                  itemDone
-                );
-              } else {
-                itemDone();
+                  return symlinkBinary(src, pkg);
+                });
               }
-            }),
-            err => {
-              tracker.info("hoist", "Finished installing in root");
-              tracker.completeWork(1);
-              actionDone(err);
-            }
-          );
-        });
+            })
+          )
+          .then(() => {
+            tracker.info("hoist", "Finished bootstrapping root");
+            tracker.completeWork(1);
+          });
       });
 
       // Remove any hoisted dependencies that may have previously been
       // installed in package directories.
-      actions.push(actionDone => {
+      actions.push(() => {
         // Compute the list of candidate directories synchronously
         const candidates = root.filter(dep => dep.dependents.length).reduce((list, { name, dependents }) => {
           const dirs = dependents
@@ -500,27 +462,27 @@ class BootstrapCommand extends Command {
         if (!candidates.length) {
           tracker.verbose("hoist", "nothing to prune");
           tracker.completeWork(1); // the action "work"
-          return actionDone();
+
+          return;
         }
 
         tracker.info("hoist", "Pruning hoisted dependencies");
         tracker.silly("prune", candidates);
         tracker.addWork(candidates.length);
 
-        async.series(
-          candidates.map(dirPath => done => {
-            FileSystemUtilities.rimraf(dirPath, err => {
+        return pMap(
+          candidates,
+          dirPath =>
+            FileSystemUtilities.rimraf(dirPath).then(() => {
               tracker.verbose("prune", dirPath);
               tracker.completeWork(1);
-              done(err);
-            });
-          }),
-          err => {
-            tracker.info("hoist", "Finished pruning hoisted dependencies");
-            tracker.completeWork(1); // the action "work"
-            actionDone(err);
-          }
-        );
+            }),
+          // these are mostly no-ops in the vast majority of cases
+          { concurrency: this.concurrency }
+        ).then(() => {
+          tracker.info("hoist", "Finished pruning hoisted dependencies");
+          tracker.completeWork(1); // the action "work"
+        });
       });
     }
 
@@ -536,17 +498,13 @@ class BootstrapCommand extends Command {
       // If we have any unsatisfied deps then we need to install everything.
       // This is important for consistent behavior across npm clients.
       if (deps.some(({ isSatisfied }) => !isSatisfied)) {
-        actions.push(cb => {
-          npmInstall.dependencies(
-            leafNode.location,
-            deps.map(({ dependency }) => dependency),
-            leafNpmConfig,
-            err => {
-              tracker.verbose("installed leaf", leafNode.name);
-              tracker.completeWork(1);
-              cb(err);
-            }
-          );
+        actions.push(() => {
+          const dependencies = deps.map(({ dependency }) => dependency);
+
+          return npmInstall.dependencies(leafNode.location, dependencies, leafNpmConfig).then(() => {
+            tracker.verbose("installed leaf", leafNode.name);
+            tracker.completeWork(1);
+          });
         });
       }
     });
@@ -557,19 +515,16 @@ class BootstrapCommand extends Command {
       tracker.addWork(actions.length);
     }
 
-    async.parallelLimit(actions, this.concurrency, err => {
-      tracker.finish();
-      callback(err);
-    });
+    return pFinally(pMap(actions, act => act(), { concurrency: this.concurrency }), () => tracker.finish());
   }
 
   /**
    * Symlink all packages to the packages/node_modules directory
    * Symlink package binaries to dependent packages' node_modules/.bin directory
-   * @param {Function} callback
+   * @returns {Promise}
    */
-  symlinkPackages(callback) {
-    symlinkDependencies(this.filteredPackages, this.packageGraph, this.logger, callback);
+  symlinkPackages() {
+    return symlinkDependencies(this.filteredPackages, this.packageGraph, this.logger);
   }
 
   validatePackageNames() {

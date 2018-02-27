@@ -5,14 +5,11 @@ jest.mock("../src/ChildProcessUtilities");
 // mocked modules
 const ChildProcessUtilities = require("../src/ChildProcessUtilities");
 
-// helpers
-const callsBack = require("./helpers/callsBack");
-
 // file under test
 const npmPublish = require("../src/utils/npm-publish");
 
 describe("npm-publish", () => {
-  ChildProcessUtilities.exec.mockImplementation(callsBack());
+  ChildProcessUtilities.exec.mockResolvedValue();
 
   const pkg = {
     name: "test",
@@ -20,61 +17,45 @@ describe("npm-publish", () => {
     version: "1.10.100",
   };
 
-  it("runs npm publish in a directory with --tag support", done => {
-    npmPublish("published-tag", pkg, { npmClient: "npm" }, done);
+  it("runs npm publish in a directory with --tag support", async () => {
+    await npmPublish("published-tag", pkg, { npmClient: "npm" });
 
-    expect(ChildProcessUtilities.exec).lastCalledWith(
-      "npm",
-      ["publish", "--tag", "published-tag"],
-      {
-        cwd: pkg.location,
-      },
-      done
-    );
+    expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["publish", "--tag", "published-tag"], {
+      cwd: pkg.location,
+    });
   });
 
-  it("trims trailing whitespace in tag parameter", done => {
-    npmPublish("trailing-tag ", pkg, { npmClient: "npm" }, done);
+  it("trims trailing whitespace in tag parameter", async () => {
+    await npmPublish("trailing-tag ", pkg, { npmClient: "npm" });
 
-    expect(ChildProcessUtilities.exec).lastCalledWith(
-      "npm",
-      ["publish", "--tag", "trailing-tag"],
-      {
-        cwd: pkg.location,
-      },
-      done
-    );
+    expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["publish", "--tag", "trailing-tag"], {
+      cwd: pkg.location,
+    });
   });
 
-  it("supports custom registry", done => {
+  it("supports custom registry", async () => {
     const registry = "https://custom-registry/npmPublish";
 
-    npmPublish("custom-registry", pkg, { npmClient: "npm", registry }, done);
+    await npmPublish("custom-registry", pkg, { npmClient: "npm", registry });
 
-    expect(ChildProcessUtilities.exec).lastCalledWith(
-      "npm",
-      ["publish", "--tag", "custom-registry"],
-      {
-        cwd: pkg.location,
-        env: expect.objectContaining({
-          npm_config_registry: registry,
-        }),
-      },
-      done
-    );
+    expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["publish", "--tag", "custom-registry"], {
+      cwd: pkg.location,
+      env: expect.objectContaining({
+        npm_config_registry: registry,
+      }),
+    });
   });
 
   describe("with npmClient yarn", () => {
-    it("appends --new-version to avoid interactive prompt", done => {
-      npmPublish("yarn-publish", pkg, { npmClient: "yarn" }, done);
+    it("appends --new-version to avoid interactive prompt", async () => {
+      await npmPublish("yarn-publish", pkg, { npmClient: "yarn" });
 
       expect(ChildProcessUtilities.exec).lastCalledWith(
         "yarn",
         ["publish", "--tag", "yarn-publish", "--new-version", pkg.version],
         {
           cwd: pkg.location,
-        },
-        done
+        }
       );
     });
   });

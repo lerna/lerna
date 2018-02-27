@@ -105,9 +105,12 @@ describe("UpdatedCommand", () => {
       const testDir = await initFixture("UpdatedCommand/basic");
 
       await gitTag(testDir);
+      await lernaUpdated(testDir)();
 
-      const { exitCode } = await lernaUpdated(testDir)();
-      expect(exitCode).toBe(1);
+      expect(process.exitCode).toBe(1);
+
+      // reset exit code
+      process.exitCode = undefined;
     });
   });
 
@@ -165,9 +168,12 @@ describe("UpdatedCommand", () => {
       const testDir = await initFixture("UpdatedCommand/circular");
 
       await gitTag(testDir);
+      await lernaUpdated(testDir)();
 
-      const { exitCode } = await lernaUpdated(testDir)();
-      expect(exitCode).toBe(1);
+      expect(process.exitCode).toBe(1);
+
+      // reset exit code
+      process.exitCode = undefined;
     });
   });
 

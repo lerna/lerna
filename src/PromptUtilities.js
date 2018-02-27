@@ -7,7 +7,7 @@ exports.confirm = confirm;
 exports.select = select;
 exports.input = input;
 
-function confirm(message, callback) {
+function confirm(message) {
   log.pause();
 
   return inquirer
@@ -23,15 +23,11 @@ function confirm(message, callback) {
     .then(answers => {
       log.resume();
 
-      if (callback) {
-        callback(answers.confirm);
-      }
-
       return answers.confirm;
     });
 }
 
-function select(message, { choices, filter, validate } = {}, callback) {
+function select(message, { choices, filter, validate } = {}) {
   log.pause();
 
   return inquirer
@@ -49,15 +45,11 @@ function select(message, { choices, filter, validate } = {}, callback) {
     .then(answers => {
       log.resume();
 
-      if (callback) {
-        callback(answers.prompt);
-      }
-
       return answers.prompt;
     });
 }
 
-function input(message, { filter, validate } = {}, callback) {
+function input(message, { filter, validate } = {}) {
   log.pause();
 
   return inquirer
@@ -72,10 +64,6 @@ function input(message, { filter, validate } = {}, callback) {
     ])
     .then(answers => {
       log.resume();
-
-      if (callback) {
-        callback(answers.input);
-      }
 
       return answers.input;
     });

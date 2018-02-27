@@ -90,28 +90,44 @@ class Command {
 
     // launch the command
     let runner = new Promise((resolve, reject) => {
-      const onComplete = (err, exitCode) => {
-        if (err) {
-          if (typeof err === "string") {
-            err = { stack: err }; // eslint-disable-line no-param-reassign
-          }
-          err.exitCode = exitCode;
-          reject(err);
-        } else {
-          resolve({ exitCode });
-        }
-      };
+      // run everything inside a Promise chain
+      let chain = Promise.resolve();
 
-      try {
+      chain = chain.then(() => {
         this.repository = new Repository(argv.cwd);
-        this.configureLogging();
-        this.runValidations();
-        this.runPreparations();
-      } catch (err) {
-        return this._complete(err, 1, onComplete);
-      }
+      });
+      chain = chain.then(() => this.configureLogging());
+      chain = chain.then(() => this.runValidations());
+      chain = chain.then(() => this.runPreparations());
+      chain = chain.then(() => this.runCommand());
 
-      this.runCommand(onComplete);
+      chain.then(
+        () => {
+          warnIfHanging();
+
+          resolve();
+        },
+        err => {
+          if (err.pkg) {
+            // Cleanly log specific package error details
+            logPackageError(err);
+          } else if (err.name !== "ValidationError") {
+            // npmlog does some funny stuff to the stack by default,
+            // so pass it directly to avoid duplication.
+            log.error("", cleanStack(err, this.className));
+          }
+
+          // ValidationError does not trigger a log dump
+          if (err.name !== "ValidationError") {
+            writeLogFile(this.repository.rootPath);
+          }
+
+          warnIfHanging();
+
+          // error code is handled by cli.fail()
+          reject(err);
+        }
+      );
     });
 
     // passed via yargs context in tests, never actual CLI
@@ -268,101 +284,32 @@ class Command {
       this.npmRegistry = registry;
     }
 
-    try {
-      this.packages = collectPackages({ rootPath, packageConfigs });
-      this.packageGraph = new PackageGraph(this.packages);
-      this.filteredPackages = filterPackages(this.packages, { scope, ignore });
+    this.packages = collectPackages({ rootPath, packageConfigs });
+    this.packageGraph = new PackageGraph(this.packages);
+    this.filteredPackages = filterPackages(this.packages, { scope, ignore });
 
-      // collectUpdates requires that filteredPackages be present prior to checking for
-      // updates. That's okay because it further filters based on what's already been filtered.
-      if (typeof since === "string") {
-        const updated = collectUpdates(this).map(({ pkg }) => pkg.name);
-        this.filteredPackages = this.filteredPackages.filter(pkg => updated.indexOf(pkg.name) > -1);
-      }
+    // collectUpdates requires that filteredPackages be present prior to checking for
+    // updates. That's okay because it further filters based on what's already been filtered.
+    if (typeof since === "string") {
+      const updated = collectUpdates(this).map(({ pkg }) => pkg.name);
 
-      if (this.options.includeFilteredDependencies) {
-        this.filteredPackages = this.packageGraph.addDependencies(this.filteredPackages);
-      }
-    } catch (err) {
-      this._logError("EPACKAGES", "Errored while collecting packages and package graph", err);
-      throw err;
+      this.filteredPackages = this.filteredPackages.filter(pkg => updated.indexOf(pkg.name) > -1);
+    }
+
+    if (this.options.includeFilteredDependencies) {
+      this.filteredPackages = this.packageGraph.addDependencies(this.filteredPackages);
     }
   }
 
-  runCommand(callback) {
-    this._attempt(
-      "initialize",
-      () => {
-        this._attempt(
-          "execute",
-          () => {
-            this._complete(null, 0, callback);
-          },
-          callback
-        );
-      },
-      callback
-    );
-  }
-
-  _attempt(method, next, callback) {
-    try {
-      log.silly(method, "attempt");
-
-      this[method]((err, completed, code = 0) => {
-        if (err) {
-          // If we have package details we can direct the developers attention
-          // to that specific package.
-          if (err.pkg) {
-            this._logPackageError(method, err);
-          } else {
-            this._logError(method, "callback with error", err);
-          }
-          this._complete(err, 1, callback);
-        } else if (!completed) {
-          // an early exit is rarely an error
-          log.verbose(method, "exited early");
-          this._complete(null, code, callback);
-        } else {
-          log.silly(method, "success");
-          next();
+  runCommand() {
+    return Promise.resolve()
+      .then(() => this.initialize())
+      .then(proceed => {
+        if (proceed !== false) {
+          return this.execute();
         }
+        // early exits set their own exitCode (if non-zero)
       });
-    } catch (err) {
-      // ValidationError already logged appropriately
-      if (err.name !== "ValidationError") {
-        this._logError(method, "caught error", err);
-      }
-      this._complete(err, 1, callback);
-    }
-  }
-
-  _complete(err, code, callback) {
-    if (err && err.name !== "ValidationError") {
-      writeLogFile(this.repository.rootPath);
-    }
-
-    // process.exit() is an anti-pattern
-    process.exitCode = code;
-
-    const finish = () => {
-      if (callback) {
-        callback(err, code);
-      }
-    };
-
-    const childProcessCount = ChildProcessUtilities.getChildProcessCount();
-    if (childProcessCount > 0) {
-      log.warn(
-        "complete",
-        `Waiting for ${childProcessCount} child ` +
-          `process${childProcessCount === 1 ? "" : "es"} to exit. ` +
-          "CTRL-C to exit immediately."
-      );
-      ChildProcessUtilities.onAllExited(finish);
-    } else {
-      finish();
-    }
   }
 
   _legacyOptions() {
@@ -386,33 +333,6 @@ class Command {
   execute() {
     throw new Error("command.execute() needs to be implemented.");
   }
-
-  _logError(method, description, err) {
-    log.error(method, description);
-
-    // npmlog does some funny stuff to the stack by default,
-    // so pass it directly to avoid duplication.
-    log.error("", cleanStack(err, this.className));
-  }
-
-  _logPackageError(method, err) {
-    log.error(method, `Error occured with '${err.pkg.name}' while running '${err.cmd}'`);
-
-    const pkgPrefix = `${err.cmd} [${err.pkg.name}]`;
-    log.error(pkgPrefix, `Output from stdout:`);
-    log.pause();
-    console.error(err.stdout); // eslint-disable-line no-console
-
-    log.resume();
-    log.error(pkgPrefix, `Output from stderr:`);
-    log.pause();
-    console.error(err.stderr); // eslint-disable-line no-console
-
-    // Below is just to ensure something sensible is printed after the long
-    // stream of logs
-    log.resume();
-    log.error(method, `Error occured with '${err.pkg.name}' while running '${err.cmd}'`);
-  }
 }
 
 function commandNameFromClassName(className) {
@@ -421,9 +341,41 @@ function commandNameFromClassName(className) {
 
 function cleanStack(err, className) {
   const lines = err.stack ? err.stack.split("\n") : err.split("\n");
-  const cutoff = new RegExp(`^    at ${className}._attempt .*$`);
+  const cutoff = new RegExp(`^    at ${className}.runCommand .*$`);
   const relevantIndex = lines.findIndex(line => cutoff.test(line));
   return lines.slice(0, relevantIndex).join("\n");
+}
+
+function logPackageError(err) {
+  log.error(`Error occured in '${err.pkg.name}' while running '${err.cmd}'`);
+
+  const pkgPrefix = `${err.cmd} [${err.pkg.name}]`;
+  log.error(pkgPrefix, `Output from stdout:`);
+  log.pause();
+  console.error(err.stdout); // eslint-disable-line no-console
+
+  log.resume();
+  log.error(pkgPrefix, `Output from stderr:`);
+  log.pause();
+  console.error(err.stderr); // eslint-disable-line no-console
+
+  // Below is just to ensure something sensible is printed after the long
+  // stream of logs
+  log.resume();
+  log.error(`Error occured in '${err.pkg.name}' while running '${err.cmd}'`);
+}
+
+function warnIfHanging() {
+  const childProcessCount = ChildProcessUtilities.getChildProcessCount();
+
+  if (childProcessCount > 0) {
+    log.warn(
+      "complete",
+      `Waiting for ${childProcessCount} child ` +
+        `process${childProcessCount === 1 ? "" : "es"} to exit. ` +
+        "CTRL-C to exit immediately."
+    );
+  }
 }
 
 module.exports = Command;

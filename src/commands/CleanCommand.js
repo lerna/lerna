@@ -1,7 +1,7 @@
 "use strict";
 
-const async = require("async");
 const path = require("path");
+const pMap = require("p-map");
 
 const Command = require("../Command");
 const FileSystemUtilities = require("../FileSystemUtilities");
@@ -28,49 +28,37 @@ class CleanCommand extends Command {
     return false;
   }
 
-  initialize(callback) {
+  initialize() {
     this.directoriesToDelete = this.filteredPackages.map(pkg => pkg.nodeModulesLocation);
 
     if (this.options.yes) {
-      callback(null, true);
-    } else {
-      this.logger.info(
-        "",
-        `About to remove the following directories:\n${this.directoriesToDelete
-          .map(dir => path.relative(this.repository.rootPath, dir))
-          .join("\n")}`
-      );
-
-      PromptUtilities.confirm("Proceed?", confirmed => {
-        callback(null, confirmed);
-      });
+      return true;
     }
+
+    this.logger.info("", "Removing the following directories:");
+    this.logger.info(
+      "clean",
+      this.directoriesToDelete.map(dir => path.relative(this.repository.rootPath, dir)).join("\n")
+    );
+
+    return PromptUtilities.confirm("Proceed?");
   }
 
-  execute(callback) {
+  execute() {
     const tracker = this.logger.newItem("clean");
+    const mapper = dirPath => {
+      tracker.info("clean", "removing", dirPath);
+
+      return FileSystemUtilities.rimraf(dirPath).then(() => {
+        tracker.completeWork(1);
+      });
+    };
+
     tracker.addWork(this.directoriesToDelete.length);
 
-    async.parallelLimit(
-      this.directoriesToDelete.map(dirPath => cb => {
-        tracker.info("clean", "removing", dirPath);
-
-        FileSystemUtilities.rimraf(dirPath, err => {
-          tracker.completeWork(1);
-          cb(err);
-        });
-      }),
-      this.concurrency,
-      err => {
-        tracker.finish();
-
-        if (err) {
-          callback(err);
-        } else {
-          this.logger.success("clean", "finished");
-          callback(null, true);
-        }
-      }
-    );
+    return pMap(this.directoriesToDelete, mapper, { concurrency: this.concurrency }).then(() => {
+      tracker.finish();
+      this.logger.success("clean", "finished");
+    });
   }
 }

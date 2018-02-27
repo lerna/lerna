@@ -14,9 +14,10 @@ function ensureEndsWithNewLine(string) {
   return /\n$/.test(string) ? string : `${string}\n`;
 }
 
-function chmod(filePath, mode, cb) {
+function chmod(filePath, mode) {
   log.silly("chmod", filePath, mode);
-  fs.chmod(filePath, mode, cb);
+
+  return fs.chmod(filePath, mode);
 }
 
 function chmodSync(filePath, mode) {
@@ -29,9 +30,10 @@ function existsSync(filePath) {
   return pathExists.sync(filePath);
 }
 
-function mkdirp(filePath, callback) {
+function mkdirp(filePath) {
   log.silly("mkdirp", filePath);
-  fs.ensureDir(filePath, callback);
+
+  return fs.ensureDir(filePath);
 }
 
 function mkdirpSync(filePath) {
@@ -44,9 +46,10 @@ function readdirSync(filePath) {
   return fs.readdirSync(filePath);
 }
 
-function rename(from, to, callback) {
-  log.silly("rename", [from, to]);
-  fs.rename(from, to, callback);
+function rename(fromPath, toPath) {
+  log.silly("rename", [fromPath, toPath]);
+
+  return fs.rename(fromPath, toPath);
 }
 
 function renameSync(from, to) {
@@ -54,9 +57,10 @@ function renameSync(from, to) {
   fs.renameSync(from, to);
 }
 
-function writeFile(filePath, fileContents, callback) {
+function writeFile(filePath, fileContents) {
   log.silly("writeFile", [filePath, fileContents]);
-  return fs.writeFile(filePath, ensureEndsWithNewLine(fileContents), callback);
+
+  return fs.writeFile(filePath, ensureEndsWithNewLine(fileContents));
 }
 
 function writeFileSync(filePath, fileContents) {
@@ -79,7 +83,7 @@ function statSync(filePath) {
   return fs.statSync(filePath);
 }
 
-function rimraf(dirPath, callback) {
+function rimraf(dirPath) {
   log.silly("rimraf", dirPath);
   // Shelling out to a child process for a noop is expensive.
   // Checking if `dirPath` exists to be removed is cheap.
@@ -87,7 +91,7 @@ function rimraf(dirPath, callback) {
 
   return pathExists(dirPath).then(exists => {
     if (!exists) {
-      return callback();
+      return;
     }
 
     // globs only return directories with a trailing slash
@@ -96,9 +100,8 @@ function rimraf(dirPath, callback) {
 
     // We call this resolved CLI path in the "path/to/node path/to/cli <..args>"
     // pattern to avoid Windows hangups with shebangs (e.g., WSH can't handle it)
-    return ChildProcessUtilities.spawn(process.execPath, args, {}, err => {
+    return ChildProcessUtilities.spawn(process.execPath, args).then(() => {
       log.verbose("rimraf", "removed", dirPath);
-      callback(err);
     });
   });
 }

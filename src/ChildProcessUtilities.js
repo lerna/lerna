@@ -1,46 +1,42 @@
 "use strict";
 
 const chalk = require("chalk");
-const EventEmitter = require("events");
 const execa = require("execa");
 const logTransformer = require("strong-log-transformer");
-const pFinally = require("p-finally");
 
-// Keep track of how many live children we have.
+// bookkeeping for spawned processes
 let children = 0;
-
-// This is used to alert listeners when all children have exited.
-const emitter = new EventEmitter();
 
 // when streaming children are spawned, use this color for prefix
 const colorWheel = ["cyan", "magenta", "blue", "yellow", "green", "red"];
 const NUM_COLORS = colorWheel.length;
 
-function exec(command, args, opts, callback) {
+function exec(command, args, opts) {
   const options = Object.assign({}, opts);
   options.stdio = "pipe"; // node default
 
-  return _spawn(command, args, options, callback);
+  return _spawn(command, args, options);
 }
 
 function execSync(command, args, opts) {
   return execa.sync(command, args, opts).stdout;
 }
 
-function spawn(command, args, opts, callback) {
+function spawn(command, args, opts) {
   const options = Object.assign({}, opts);
   options.stdio = "inherit";
 
-  return _spawn(command, args, options, callback);
+  return _spawn(command, args, options);
 }
 
-function spawnStreaming(command, args, opts, prefix, callback) {
+// istanbul ignore next
+function spawnStreaming(command, args, opts, prefix) {
   const options = Object.assign({}, opts);
   options.stdio = ["ignore", "pipe", "pipe"];
 
   const colorName = colorWheel[children % NUM_COLORS];
   const color = chalk[colorName];
-  const spawned = _spawn(command, args, options, callback);
+  const spawned = _spawn(command, args, options);
 
   const prefixedStdout = logTransformer({ tag: `${color.bold(prefix)}:` });
   const prefixedStderr = logTransformer({ tag: `${color(prefix)}:`, mergeMultiline: true });
@@ -61,31 +57,22 @@ function getChildProcessCount() {
   return children;
 }
 
-function onAllExited(callback) {
-  emitter.on("empty", callback);
-}
-
-function registerChild(child) {
+// eslint-disable-next-line no-underscore-dangle
+function _spawn(command, args, opts) {
   children += 1;
 
-  pFinally(child, () => {
+  const child = execa(command, args, opts);
+  const drain = (code, signal) => {
     children -= 1;
 
-    if (children === 0) {
-      emitter.emit("empty");
+    // don't run repeatedly if this is the error event
+    if (signal === undefined) {
+      child.removeListener("exit", drain);
     }
-  }).catch(() => {});
-}
+  };
 
-// eslint-disable-next-line no-underscore-dangle
-function _spawn(command, args, opts, callback) {
-  const child = execa(command, args, opts);
-
-  registerChild(child);
-
-  if (callback) {
-    child.then(result => callback(null, result.stdout), err => callback(err));
-  }
+  child.once("exit", drain);
+  child.once("error", drain);
 
   return child;
 }
@@ -95,4 +82,3 @@ exports.execSync = execSync;
 exports.spawn = spawn;
 exports.spawnStreaming = spawnStreaming;
 exports.getChildProcessCount = getChildProcessCount;
-exports.onAllExited = onAllExited;

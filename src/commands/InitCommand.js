@@ -42,23 +42,21 @@ class InitCommand extends Command {
   runValidations() {}
   runPreparations() {}
 
-  initialize(callback) {
-    if (!GitUtilities.isInitialized(this.execOpts)) {
-      this.logger.info("", "Initializing Git repository");
-      GitUtilities.init(this.execOpts);
-    }
-
+  initialize() {
     this.exact = this.options.exact;
 
-    callback(null, true);
+    if (!GitUtilities.isInitialized(this.execOpts)) {
+      this.logger.info("", "Initializing Git repository");
+
+      GitUtilities.init(this.execOpts);
+    }
   }
 
-  execute(callback) {
+  execute() {
     this.ensurePackageJSON();
     this.ensureLernaJson();
     this.ensurePackagesDir();
     this.logger.success("", "Initialized Lerna files");
-    callback(null, true);
   }
 
   ensurePackageJSON() {

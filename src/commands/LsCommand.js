@@ -37,17 +37,15 @@ class LsCommand extends Command {
     });
   }
 
-  initialize(callback) {
+  initialize() {
     this.resultList = this.filteredPackages.map(pkg => ({
       name: pkg.name,
       version: pkg.version,
       private: pkg.private,
     }));
-
-    callback(null, true);
   }
 
-  execute(callback) {
+  execute() {
     let result;
 
     if (this.options.json) {
@@ -57,8 +55,6 @@ class LsCommand extends Command {
     }
 
     output(result);
-
-    callback(null, true);
   }
 
   formatJSON() {

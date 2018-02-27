@@ -7,40 +7,47 @@ const path = require("path");
 
 module.exports = createSymlink;
 
-function createSymlink(src, dest, type, callback) {
+function createSymlink(src, dest, type) {
   log.silly("createSymlink", [src, dest, type]);
 
   if (process.platform === "win32") {
-    createWindowsSymlink(src, dest, type, callback);
-  } else {
-    createPosixSymlink(src, dest, type, callback);
+    return createWindowsSymlink(src, dest, type);
   }
+
+  return createPosixSymlink(src, dest, type);
 }
 
-function createSymbolicLink(src, dest, type, callback) {
+function createSymbolicLink(src, dest, type) {
   log.silly("createSymbolicLink", [src, dest, type]);
 
-  fs.lstat(dest, err => {
-    if (!err) {
-      // Something exists at `dest`.  Need to remove it first.
-      fs.unlink(dest, () => fs.symlink(src, dest, type, callback));
-    } else {
-      fs.symlink(src, dest, type, callback);
-    }
-  });
+  return fs
+    .lstat(dest)
+    .then(() => fs.unlink(dest))
+    .catch(() => {
+      /* nothing exists at destination */
+    })
+    .then(() => fs.symlink(src, dest, type));
 }
 
-function createPosixSymlink(origin, dest, _type, callback) {
+function createPosixSymlink(origin, dest, _type) {
   const type = _type === "exec" ? "file" : _type;
   const src = path.relative(path.dirname(dest), origin);
 
-  createSymbolicLink(src, dest, type, callback);
+  return createSymbolicLink(src, dest, type);
 }
 
-function createWindowsSymlink(src, dest, type, callback) {
+function createWindowsSymlink(src, dest, type) {
   if (type === "exec") {
-    cmdShim(src, dest, callback);
-  } else {
-    createSymbolicLink(src, dest, type, callback);
+    return new Promise((resolve, reject) => {
+      cmdShim(src, dest, err => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
   }
+
+  return createSymbolicLink(src, dest, type);
 }

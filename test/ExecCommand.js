@@ -10,7 +10,6 @@ const ChildProcessUtilities = require("../src/ChildProcessUtilities");
 const collectUpdates = require("../src/utils/collect-updates");
 
 // helpers
-const callsBack = require("./helpers/callsBack");
 const initFixture = require("./helpers/initFixture");
 const loggingOutput = require("./helpers/loggingOutput");
 const normalizeRelativeDir = require("./helpers/normalizeRelativeDir");
@@ -30,8 +29,8 @@ const execInPackagesStreaming = testDir =>
   }, []);
 
 describe("ExecCommand", () => {
-  ChildProcessUtilities.spawn.mockImplementation(callsBack());
-  ChildProcessUtilities.spawnStreaming.mockImplementation(callsBack());
+  ChildProcessUtilities.spawn.mockResolvedValue();
+  ChildProcessUtilities.spawnStreaming.mockResolvedValue();
 
   describe("in a basic repo", () => {
     it("should complain if invoked without command", async () => {
@@ -46,7 +45,7 @@ describe("ExecCommand", () => {
       }
     });
 
-    it("passes execution error to callback", async () => {
+    it("rejects with execution error", async () => {
       expect.assertions(1);
 
       const testDir = await initFixture("ExecCommand/basic");
@@ -55,7 +54,7 @@ describe("ExecCommand", () => {
       boom.code = 1;
       boom.cmd = "boom";
 
-      ChildProcessUtilities.spawn.mockImplementationOnce(callsBack(boom));
+      ChildProcessUtilities.spawn.mockRejectedValueOnce(boom);
 
       try {
         await lernaExec(testDir)("boom");
@@ -67,17 +66,15 @@ describe("ExecCommand", () => {
     it("should ignore execution errors with --bail=false", async () => {
       const testDir = await initFixture("ExecCommand/basic");
 
-      const { exitCode } = await lernaExec(testDir)("boom", "--no-bail");
+      await lernaExec(testDir)("boom", "--no-bail");
 
-      expect(exitCode).toBe(0);
       expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(2);
       expect(ChildProcessUtilities.spawn).lastCalledWith(
         "boom",
         [],
         expect.objectContaining({
           reject: false,
-        }),
-        expect.any(Function)
+        })
       );
     });
 
@@ -87,19 +84,14 @@ describe("ExecCommand", () => {
       await lernaExec(testDir)("ls", "--ignore", "package-1");
 
       expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(1);
-      expect(ChildProcessUtilities.spawn).lastCalledWith(
-        "ls",
-        [],
-        {
-          cwd: path.join(testDir, "packages/package-2"),
-          env: expect.objectContaining({
-            LERNA_PACKAGE_NAME: "package-2",
-          }),
-          reject: true,
-          shell: true,
-        },
-        expect.any(Function)
-      );
+      expect(ChildProcessUtilities.spawn).lastCalledWith("ls", [], {
+        cwd: path.join(testDir, "packages/package-2"),
+        env: expect.objectContaining({
+          LERNA_PACKAGE_NAME: "package-2",
+        }),
+        reject: true,
+        shell: true,
+      });
     });
 
     it("should filter packages that are not updated with --since", async () => {
@@ -117,19 +109,14 @@ describe("ExecCommand", () => {
       await lernaExec(testDir)("ls", "--since");
 
       expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(1);
-      expect(ChildProcessUtilities.spawn).lastCalledWith(
-        "ls",
-        [],
-        {
-          cwd: path.join(testDir, "packages/package-2"),
-          env: expect.objectContaining({
-            LERNA_PACKAGE_NAME: "package-2",
-          }),
-          reject: true,
-          shell: true,
-        },
-        expect.any(Function)
-      );
+      expect(ChildProcessUtilities.spawn).lastCalledWith("ls", [], {
+        cwd: path.join(testDir, "packages/package-2"),
+        env: expect.objectContaining({
+          LERNA_PACKAGE_NAME: "package-2",
+        }),
+        reject: true,
+        shell: true,
+      });
     });
 
     it("should run a command", async () => {
@@ -147,12 +134,7 @@ describe("ExecCommand", () => {
       await lernaExec(testDir)("ls", "--", "-la");
 
       expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(2);
-      expect(ChildProcessUtilities.spawn).lastCalledWith(
-        "ls",
-        ["-la"],
-        expect.any(Object),
-        expect.any(Function)
-      );
+      expect(ChildProcessUtilities.spawn).lastCalledWith("ls", ["-la"], expect.any(Object));
     });
 
     it("runs a command for a given scope", async () => {
@@ -173,7 +155,7 @@ describe("ExecCommand", () => {
 
     it("executes a command in all packages with --parallel", async () => {
       const testDir = await initFixture("ExecCommand/basic");
-      ChildProcessUtilities.spawnStreaming = jest.fn(callsBack());
+      ChildProcessUtilities.spawnStreaming = jest.fn(() => Promise.resolve());
 
       await lernaExec(testDir)("--parallel", "ls");
 
@@ -182,7 +164,7 @@ describe("ExecCommand", () => {
 
     it("executes a command in all packages with --stream", async () => {
       const testDir = await initFixture("ExecCommand/basic");
-      ChildProcessUtilities.spawnStreaming = jest.fn(callsBack());
+      ChildProcessUtilities.spawnStreaming = jest.fn(() => Promise.resolve());
 
       await lernaExec(testDir)("--stream", "ls");
 
