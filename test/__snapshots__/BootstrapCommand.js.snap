@@ -297,11 +297,6 @@ Object {
 exports[`BootstrapCommand with multiple package locations hoists appropriately 2`] = `
 Array [
   Object {
-    "_src": "packages/package-1",
-    "dest": "packages/package-2/node_modules/@test/package-1",
-    "type": "junction",
-  },
-  Object {
     "_src": "package-3",
     "dest": "packages/package-4/node_modules/package-3",
     "type": "junction",
@@ -317,6 +312,16 @@ Array [
     "type": "exec",
   },
   Object {
+    "_src": "packages/package-1",
+    "dest": "package-3/node_modules/@test/package-1",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-1",
+    "dest": "packages/package-2/node_modules/@test/package-1",
+    "type": "junction",
+  },
+  Object {
     "_src": "packages/package-2",
     "dest": "package-3/node_modules/package-2",
     "type": "junction",
@@ -325,11 +330,6 @@ Array [
     "_src": "packages/package-2/cli.js",
     "dest": "package-3/node_modules/.bin/package-2",
     "type": "exec",
-  },
-  Object {
-    "_src": "packages/package-1",
-    "dest": "package-3/node_modules/@test/package-1",
-    "type": "junction",
   },
 ]
 `;
@@ -362,11 +362,6 @@ Object {
 exports[`BootstrapCommand with multiple package locations should bootstrap packages 3`] = `
 Array [
   Object {
-    "_src": "packages/package-1",
-    "dest": "packages/package-2/node_modules/@test/package-1",
-    "type": "junction",
-  },
-  Object {
     "_src": "package-3",
     "dest": "packages/package-4/node_modules/package-3",
     "type": "junction",
@@ -382,6 +377,16 @@ Array [
     "type": "exec",
   },
   Object {
+    "_src": "packages/package-1",
+    "dest": "package-3/node_modules/@test/package-1",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-1",
+    "dest": "packages/package-2/node_modules/@test/package-1",
+    "type": "junction",
+  },
+  Object {
     "_src": "packages/package-2",
     "dest": "package-3/node_modules/package-2",
     "type": "junction",
@@ -390,11 +395,6 @@ Array [
     "_src": "packages/package-2/cli.js",
     "dest": "package-3/node_modules/.bin/package-2",
     "type": "exec",
-  },
-  Object {
-    "_src": "packages/package-1",
-    "dest": "package-3/node_modules/@test/package-1",
-    "type": "junction",
   },
 ]
 `;

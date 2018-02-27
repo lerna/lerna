@@ -42,11 +42,15 @@ const ranScriptsInDirectories = testDir =>
   }, {});
 
 const symlinkedDirectories = testDir =>
-  createSymlink.mock.calls.map(([src, dest, type]) => ({
-    _src: normalizeRelativeDir(testDir, src),
-    dest: normalizeRelativeDir(testDir, dest),
-    type,
-  }));
+  createSymlink.mock.calls
+    .slice()
+    // ensure sort is always consistent, despite promise variability
+    .sort((a, b) => (b[0] === a[0] ? b[1] < a[1] : b[0] < a[0]))
+    .map(([src, dest, type]) => ({
+      _src: normalizeRelativeDir(testDir, src),
+      dest: normalizeRelativeDir(testDir, dest),
+      type,
+    }));
 
 describe("BootstrapCommand", () => {
   // we stub npmInstall in most tests because
