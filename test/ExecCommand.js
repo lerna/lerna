@@ -45,7 +45,7 @@ describe("ExecCommand", () => {
       }
     });
 
-    it("passes execution error to callback", async () => {
+    it("rejects with execution error", async () => {
       expect.assertions(1);
 
       const testDir = await initFixture("ExecCommand/basic");

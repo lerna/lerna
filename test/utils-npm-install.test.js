@@ -227,7 +227,7 @@ describe("npm-install", () => {
       });
     });
 
-    it("passes rename error to callback", async () => {
+    it("rejects with rename error", async () => {
       const directory = path.normalize("/test/npm-install-deps/renameError");
       const dependencies = ["I'm just here so we don't exit early"];
       const config = {};
