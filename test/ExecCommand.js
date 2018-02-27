@@ -29,7 +29,8 @@ const execInPackagesStreaming = testDir =>
   }, []);
 
 describe("ExecCommand", () => {
-  ChildProcessUtilities.spawn.mockResolvedValue();
+  // TODO: it's very suspicious that mockResolvedValue() doesn't work here
+  ChildProcessUtilities.spawn.mockImplementation(() => Promise.resolve());
   ChildProcessUtilities.spawnStreaming.mockResolvedValue();
 
   describe("in a basic repo", () => {
@@ -50,11 +51,13 @@ describe("ExecCommand", () => {
 
       const testDir = await initFixture("ExecCommand/basic");
 
-      const boom = new Error("execa error");
-      boom.code = 1;
-      boom.cmd = "boom";
+      ChildProcessUtilities.spawn.mockImplementationOnce(() => {
+        const boom = new Error("execa error");
+        boom.code = 1;
+        boom.cmd = "boom";
 
-      ChildProcessUtilities.spawn.mockRejectedValueOnce(boom);
+        throw boom;
+      });
 
       try {
         await lernaExec(testDir)("boom");

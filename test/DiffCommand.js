@@ -88,10 +88,12 @@ describe("DiffCommand", () => {
   it("should error when git diff exits non-zero", async () => {
     const testDir = await initFixture("DiffCommand/basic");
 
-    const nonZero = new Error("An actual non-zero, not git diff pager SIGPIPE");
-    nonZero.code = 1;
+    ChildProcessUtilities.spawn.mockImplementationOnce(() => {
+      const nonZero = new Error("An actual non-zero, not git diff pager SIGPIPE");
+      nonZero.code = 1;
 
-    ChildProcessUtilities.spawn.mockRejectedValueOnce(nonZero);
+      throw nonZero;
+    });
 
     try {
       await lernaDiff(testDir)("package-1");

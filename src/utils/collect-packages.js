@@ -3,6 +3,7 @@
 const globby = require("globby");
 const loadJsonFile = require("load-json-file");
 const path = require("path");
+const pMap = require("p-map");
 
 const Package = require("../Package");
 const ValidationError = require("./validation-error");
@@ -10,7 +11,6 @@ const ValidationError = require("./validation-error");
 module.exports = collectPackages;
 
 function collectPackages({ packageConfigs, rootPath }) {
-  const packages = [];
   const globOpts = {
     cwd: rootPath,
     strict: true,
@@ -35,18 +35,24 @@ function collectPackages({ packageConfigs, rootPath }) {
     ];
   }
 
-  packageConfigs.forEach(globPath => {
-    globby.sync(path.join(globPath, "package.json"), globOpts).forEach(globResult => {
-      // https://github.com/isaacs/node-glob/blob/master/common.js#L104
-      // glob always returns "\\" as "/" in windows, so everyone
-      // gets normalized because we can't have nice things.
-      const packageConfigPath = path.normalize(globResult);
-      const packageDir = path.dirname(packageConfigPath);
-      const packageJson = loadJsonFile.sync(packageConfigPath);
+  return pMap(
+    packageConfigs,
+    globPath =>
+      globby(path.join(globPath, "package.json"), globOpts).then(
+        globResults =>
+          pMap(globResults, globResult => {
+            // https://github.com/isaacs/node-glob/blob/master/common.js#L104
+            // glob always returns "\\" as "/" in windows, so everyone
+            // gets normalized because we can't have nice things.
+            const packageConfigPath = path.normalize(globResult);
+            const packageDir = path.dirname(packageConfigPath);
 
-      packages.push(new Package(packageJson, packageDir, rootPath));
-    });
-  });
-
-  return packages;
+            return loadJsonFile(packageConfigPath).then(
+              packageJson => new Package(packageJson, packageDir, rootPath)
+            );
+          }),
+        { concurrency: 50 }
+      ),
+    { concurrency: 4 }
+  ).then(results => results.reduce((packages, result) => packages.concat(result), []));
 }

@@ -82,7 +82,7 @@ describe("CleanCommand", () => {
 
       const testDir = await initFixture("CleanCommand/basic");
 
-      FileSystemUtilities.rimraf.mockRejectedValueOnce(new Error("whoops"));
+      FileSystemUtilities.rimraf.mockImplementationOnce(() => Promise.reject(new Error("whoops")));
 
       try {
         await lernaClean(testDir)();
