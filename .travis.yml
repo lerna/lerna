@@ -23,10 +23,9 @@ cache:
 
 before_install:
   - npm config set loglevel warn
-  - if [[ `node -v` == v6* ]]; then npm i -g npm@latest-5; fi
-  - if [[ `npm -v` != `npm v npm dist-tags.latest-5` ]]; then npm i -g npm@latest-5; fi
+  - npm install --global npm@latest
 
-install: npm i --prefer-offline
+install: npm install --prefer-offline
 
 before_script:
   - git config --global user.email test@example.com
