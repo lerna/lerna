@@ -39,3 +39,28 @@ cli package-2 OK
 package-3 cli1 OK
 package-3 cli2 package-2 OK
 `;
+
+exports[`lerna bootstrap hoists correctly: stderr 1`] = `
+lerna info version __TEST_VERSION__
+lerna info Bootstrapping 4 packages
+lerna info lifecycle preinstall
+lerna WARN EHOIST_PKG_VERSION "@integration/package-3" package depends on pify@^1.0.0, which differs from the hoisted pify@^2.0.0.
+lerna info Installing external dependencies
+lerna info hoist Installing hoisted dependencies into root
+lerna info hoist Pruning hoisted dependencies
+lerna info hoist Finished pruning hoisted dependencies
+lerna info hoist Finished bootstrapping root
+lerna info Symlinking packages and binaries
+lerna info lifecycle postinstall
+lerna info lifecycle prepublish
+lerna info lifecycle prepare
+lerna success Bootstrapped 4 packages
+`;
+
+exports[`lerna bootstrap hoists correctly: stdout 1`] = `
+package-1
+package-2
+cli package-2 OK
+package-3 cli1 OK
+package-3 cli2 package-2 OK
+`;

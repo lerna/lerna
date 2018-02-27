@@ -40,25 +40,25 @@ function npmInstall(directory, { registry, npmClient, npmClientArgs, npmGlobalSt
   return ChildProcessUtilities.exec(cmd, args, opts);
 }
 
-function installInDir(directory, dependencies, config) {
-  log.silly("installInDir", path.basename(directory), dependencies);
+function installInDir(pkg, dependencies, config) {
+  log.silly("installInDir", path.basename(pkg.location), dependencies);
 
   // Nothing to do if we weren't given any deps.
   if (!(dependencies && dependencies.length)) {
     log.verbose("installInDir", "no dependencies to install");
+
     return Promise.resolve();
   }
 
-  const packageJson = path.join(directory, "package.json");
-  const packageJsonBkp = `${packageJson}.lerna_backup`;
+  const packageJsonBkp = `${pkg.manifestLocation}.lerna_backup`;
 
-  log.silly("installInDir", "backup", packageJson);
+  log.silly("installInDir", "backup", pkg.manifestLocation);
 
-  return FileSystemUtilities.rename(packageJson, packageJsonBkp).then(() => {
+  return FileSystemUtilities.rename(pkg.manifestLocation, packageJsonBkp).then(() => {
     const cleanup = () => {
-      log.silly("installInDir", "cleanup", packageJson);
+      log.silly("installInDir", "cleanup", pkg.manifestLocation);
       // Need to do this one synchronously because we might be doing it on exit.
-      FileSystemUtilities.renameSync(packageJsonBkp, packageJson);
+      FileSystemUtilities.renameSync(packageJsonBkp, pkg.manifestLocation);
     };
 
     // If we die we need to be sure to put things back the way we found them.
@@ -74,20 +74,64 @@ function installInDir(directory, dependencies, config) {
       }
     };
 
-    // Construct a basic fake package.json with just the deps we need to install.
-    const tempJson = {
-      dependencies: dependencies.reduce((obj, dep) => {
-        const { name: pkg, rawSpec: version } = npa(dep);
-        obj[pkg] = version || "*";
-        return obj;
-      }, {}),
-    };
+    // mutate a clone of the manifest with our new versions
+    const tempJson = transformManifest(pkg, dependencies);
 
     log.silly("installInDir", "writing tempJson", tempJson);
 
     // Write out our temporary cooked up package.json and then install.
-    return writePkg(packageJson, tempJson)
-      .then(() => npmInstall(directory, config))
+    return writePkg(pkg.manifestLocation, tempJson)
+      .then(() => npmInstall(pkg.location, config))
       .then(() => done(), done);
   });
+}
+
+function transformManifest(pkg, dependencies) {
+  const json = pkg.toJSON();
+
+  // a map of depName => depVersion (resolved by npm-package-arg)
+  const depMap = new Map(
+    dependencies.map(dep => {
+      const result = npa(dep, pkg.location);
+
+      return [result.name, result.rawSpec || "*"];
+    })
+  );
+
+  // don't run lifecycle scripts
+  delete json.scripts;
+
+  // filter all types of dependencies
+  ["dependencies", "devDependencies", "optionalDependencies"].forEach(depType => {
+    const collection = json[depType];
+
+    if (collection) {
+      Object.keys(collection).forEach(depName => {
+        if (depMap.has(depName)) {
+          // overwrite version to ensure it's always present (and accurate)
+          collection[depName] = depMap.get(depName);
+
+          // only add to one collection, also keeps track of leftovers
+          depMap.delete(depName);
+        } else {
+          // filter out localDependencies and _duplicate_ external deps
+          delete collection[depName];
+        }
+      });
+    }
+  });
+
+  // add all leftovers (root hoisted)
+  if (depMap.size) {
+    if (!json.dependencies) {
+      // TODO: this should definitely be versioned, not blown away after install :/
+      json.dependencies = {};
+    }
+
+    depMap.forEach((depVersion, depName) => {
+      json.dependencies[depName] = depVersion;
+    });
+  }
+
+  return json;
 }

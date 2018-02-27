@@ -22,8 +22,8 @@ const lernaBootstrap = require("./helpers/command-runner")(require("../src/comma
 
 // assertion helpers
 const installedPackagesInDirectories = testDir =>
-  npmInstall.dependencies.mock.calls.reduce((obj, [location, dependencies]) => {
-    const relative = normalizeRelativeDir(testDir, location);
+  npmInstall.dependencies.mock.calls.reduce((obj, [pkg, dependencies]) => {
+    const relative = normalizeRelativeDir(testDir, pkg.location);
     obj[relative || "ROOT"] = dependencies;
     return obj;
   }, {});
@@ -109,7 +109,9 @@ describe("BootstrapCommand", () => {
 
       // root includes explicit dependencies and hoisted from leaves
       expect(npmInstall.dependencies).toBeCalledWith(
-        testDir,
+        expect.objectContaining({
+          name: "basic",
+        }),
         ["bar@^2.0.0", "foo@^1.0.0", "@test/package-1@^0.0.0"],
         {
           registry: undefined,
@@ -122,7 +124,9 @@ describe("BootstrapCommand", () => {
 
       // foo@0.1.2 differs from the more common foo@^1.0.0
       expect(npmInstall.dependencies).lastCalledWith(
-        expect.stringContaining("package-3"),
+        expect.objectContaining({
+          name: "package-3",
+        }),
         ["foo@0.1.12"],
         expect.objectContaining({
           npmGlobalStyle: true,
@@ -189,7 +193,9 @@ describe("BootstrapCommand", () => {
       await lernaBootstrap(testDir)();
 
       expect(npmInstall.dependencies).toBeCalledWith(
-        expect.any(String),
+        expect.objectContaining({
+          name: "@test/package-2",
+        }),
         expect.arrayContaining(["foo@^1.0.0"]),
         expect.objectContaining({
           npmGlobalStyle: false,
@@ -346,7 +352,9 @@ describe("BootstrapCommand", () => {
 
       expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
       expect(npmInstall.dependencies).lastCalledWith(
-        expect.any(String),
+        expect.objectContaining({
+          name: "@test/package-1",
+        }),
         expect.arrayContaining(["foo@^1.0.0"]),
         expect.objectContaining({
           registry: "https://my-secure-registry/npm",
