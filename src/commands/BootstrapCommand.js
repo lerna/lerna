@@ -425,7 +425,7 @@ class BootstrapCommand extends Command {
         }
 
         return npmInstall
-          .dependencies(rootPkg.location, depsToInstallInRoot, this.npmConfig)
+          .dependencies(rootPkg, depsToInstallInRoot, this.npmConfig)
           .then(() =>
             // Link binaries into dependent packages so npm scripts will
             // have access to them.
@@ -501,7 +501,7 @@ class BootstrapCommand extends Command {
         actions.push(() => {
           const dependencies = deps.map(({ dependency }) => dependency);
 
-          return npmInstall.dependencies(leafNode.location, dependencies, leafNpmConfig).then(() => {
+          return npmInstall.dependencies(leafNode.pkg, dependencies, leafNpmConfig).then(() => {
             tracker.verbose("installed leaf", leafNode.name);
             tracker.completeWork(1);
           });

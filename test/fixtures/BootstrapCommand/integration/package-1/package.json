@@ -4,12 +4,9 @@
   "private": true,
   "scripts": {
     "test": "echo package-1",
-    "prepublish": "cp index.src.js index.js"
+    "prepare": "node build.js"
   },
   "dependencies": {
     "pify": "^2.0.0"
-  },
-  "devDependencies": {
-    "cash-cp": "^0.2.0"
   }
 }

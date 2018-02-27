@@ -19,6 +19,52 @@ describe("lerna bootstrap", () => {
     // the "--silent" flag is passed to `npm run`
     const { stdout } = await lerna("run", "test", "--", "--silent");
     expect(stdout).toMatchSnapshot("stdout");
+
+    const lockfiles = await globby(["package-*/package-lock.json"], { cwd, absolute: true });
+    const [lock1, lock2, lock3] = await Promise.all(lockfiles.map(fp => fs.readJson(fp)));
+
+    expect(lock1).toMatchObject({
+      name: "@integration/package-1",
+      version: "1.0.0",
+      dependencies: { pify: expect.any(Object) },
+    });
+    expect(lock2).toMatchObject({
+      name: "@integration/package-2",
+      version: "1.0.0",
+      dependencies: { pify: expect.any(Object) },
+    });
+    expect(lock3).toMatchObject({
+      name: "@integration/package-3",
+      version: "1.0.0",
+      dependencies: { pify: expect.any(Object) },
+    });
+  });
+
+  test("hoists correctly", async () => {
+    const cwd = await initFixture("BootstrapCommand/integration");
+    const lerna = cliRunner(cwd);
+
+    const { stderr } = await lerna("bootstrap", "--hoist");
+    expect(stderr).toMatchSnapshot("stderr");
+
+    // the "--silent" flag is passed to `npm run`
+    const { stdout } = await lerna("run", "test", "--", "--silent");
+    expect(stdout).toMatchSnapshot("stdout");
+
+    // `realpath: true` avoids duplicate from package-4/node_modules/package-3 symlink
+    const lockfiles = await globby(["package-lock.json"], { cwd, matchBase: true, realpath: true });
+    const [lock3, rootLock] = await Promise.all(lockfiles.map(fp => fs.readJson(fp)));
+
+    expect(lock3).toMatchObject({
+      name: "@integration/package-3",
+      version: "1.0.0",
+      dependencies: { pify: expect.any(Object) },
+    });
+    expect(rootLock).toMatchObject({
+      name: "integration",
+      version: "0.0.0",
+      dependencies: { pify: expect.any(Object) },
+    });
   });
 
   test("--npm-client yarn", async () => {
