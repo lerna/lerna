@@ -1,7 +1,7 @@
 # don't build tags, it's redundant
 skip_tags: true
 
-clone_depth: 1
+shallow_clone: true
 
 environment:
   NO_UPDATE_NOTIFIER: "1"
@@ -19,8 +19,9 @@ cache:
 install:
   - ps: Install-Product node $env:nodejs_version
   - npm config set loglevel warn
-  - IF %nodejs_version% EQU 6 npm -g install npm@latest-5
-  - npm i --prefer-offline
+  - npm install --global npm@latest
+  - set PATH=%APPDATA%\npm;%PATH%
+  - npm install --prefer-offline
 
 before_test:
   - git config --global user.email test@example.com
