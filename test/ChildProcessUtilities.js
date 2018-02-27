@@ -15,61 +15,19 @@ describe("ChildProcessUtilities", () => {
   });
 
   describe(".exec()", () => {
-    afterEach(done => {
-      if (ChildProcessUtilities.getChildProcessCount()) {
-        ChildProcessUtilities.onAllExited(done);
-      } else {
-        done();
-      }
+    it("returns an execa Promise", async () => {
+      const { stderr, stdout } = await ChildProcessUtilities.exec("echo", ["foo"]);
+
+      expect(stderr).toBe("");
+      expect(stdout).toBe("foo");
     });
 
-    it("should execute a command in a child process and call the callback with the result", done => {
-      ChildProcessUtilities.exec("echo", ["foo"], null, (stderr, stdout) => {
-        try {
-          expect(stderr).toBe(null);
-          expect(stdout).toBe("foo");
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      });
-    });
-
-    it("passes an error object to callback when stdout maxBuffer exceeded", done => {
-      ChildProcessUtilities.exec("echo", ["wat"], { maxBuffer: 1 }, (stderr, stdout) => {
-        try {
-          expect(String(stderr)).toBe("Error: stdout maxBuffer exceeded");
-          expect(stdout).toBeUndefined();
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      });
-    });
-
-    it("does not require a callback, instead returning a Promise", async () => {
-      const { stdout } = await ChildProcessUtilities.exec("echo", ["Promise"]);
-      expect(stdout).toBe("Promise");
-    });
-
-    it("passes error object to callback", done => {
-      ChildProcessUtilities.exec("nowImTheModelOfAModernMajorGeneral", [], {}, err => {
-        try {
-          expect(err.message).toMatch(/\bnowImTheModelOfAModernMajorGeneral\b/);
-          done();
-        } catch (ex) {
-          done.fail(ex);
-        }
-      });
-    });
-
-    it("passes Promise rejection through", async () => {
-      expect.assertions(1);
-
+    it("rejects on undefined command", async () => {
       try {
-        await ChildProcessUtilities.exec("theVeneratedVirginianVeteranWhoseMenAreAll", []);
+        await ChildProcessUtilities.exec("nowImTheModelOfAModernMajorGeneral");
       } catch (err) {
-        expect(err.message).toMatch(/\btheVeneratedVirginianVeteranWhoseMenAreAll\b/);
+        expect(err.message).toMatch(/\bnowImTheModelOfAModernMajorGeneral\b/);
+        expect(ChildProcessUtilities.getChildProcessCount()).toBe(0);
       }
     });
 

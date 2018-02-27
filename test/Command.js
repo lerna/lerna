@@ -11,7 +11,6 @@ const touch = require("touch");
 const ChildProcessUtilities = require("../src/ChildProcessUtilities");
 
 // helpers
-const callsBack = require("./helpers/callsBack");
 const initFixture = require("./helpers/initFixture");
 const loggingOutput = require("./helpers/loggingOutput");
 const updateLernaConfig = require("./helpers/updateLernaConfig");
@@ -27,7 +26,6 @@ describe("Command", () => {
     testDir = await initFixture("Command/basic");
   });
 
-  ChildProcessUtilities.onAllExited = jest.fn(callsBack());
   ChildProcessUtilities.getChildProcessCount = jest.fn(() => 0);
 
   // swallow errors when passed in argv
