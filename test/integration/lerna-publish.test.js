@@ -145,8 +145,14 @@ describe("lerna publish", () => {
       const { stdout } = await cliRunner(cwd)(...args);
       expect(stdout).toMatchSnapshot();
 
-      const changelogFilePaths = await globby(["CHANGELOG.md"], { cwd, absolute: true, matchBase: true });
-      const changelogContents = await Promise.all(changelogFilePaths.map(fp => fs.readFile(fp, "utf8")));
+      const changelogFilePaths = await globby(["**/CHANGELOG.md"], {
+        cwd,
+        absolute: true,
+        followSymlinkedDirectories: false,
+      });
+      const changelogContents = await Promise.all(
+        changelogFilePaths.sort().map(fp => fs.readFile(fp, "utf8"))
+      );
 
       expect(changelogContents).toMatchSnapshot();
     })

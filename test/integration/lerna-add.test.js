@@ -18,7 +18,7 @@ describe("lerna add", () => {
     await cliRunner(cwd)("add", "@test/package-1");
 
     const filePaths = await globby("packages/*/package.json", { cwd });
-    const [pkg1, pkg2, pkg3, pkg4] = await pMap(filePaths, fp => loadJson(path.join(cwd, fp)));
+    const [pkg1, pkg2, pkg3, pkg4] = await pMap(filePaths.sort(), fp => loadJson(path.join(cwd, fp)));
 
     expect(pkg1).not.toDependOn("@test/package-1");
     expect(pkg2).toDependOn("@test/package-1");

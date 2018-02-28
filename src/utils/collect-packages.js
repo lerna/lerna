@@ -13,8 +13,8 @@ module.exports = collectPackages;
 function collectPackages({ packageConfigs, rootPath }) {
   const globOpts = {
     cwd: rootPath,
-    strict: true,
     absolute: true,
+    followSymlinkedDirectories: false,
   };
 
   const hasNodeModules = packageConfigs.some(cfg => cfg.indexOf("node_modules") > -1);
@@ -54,5 +54,10 @@ function collectPackages({ packageConfigs, rootPath }) {
         { concurrency: 50 }
       ),
     { concurrency: 4 }
-  ).then(results => results.reduce((packages, result) => packages.concat(result), []));
+  ).then(results => {
+    // fast-glob does not respect pattern order, so we re-sort by absolute path
+    const lexicalByLocation = (a, b) => b.location < a.location;
+
+    return results.reduce((pkgs, result) => pkgs.concat(result.sort(lexicalByLocation)), []);
+  });
 }

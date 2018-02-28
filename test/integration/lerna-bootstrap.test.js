@@ -21,7 +21,7 @@ describe("lerna bootstrap", () => {
     expect(stdout).toMatchSnapshot("stdout");
 
     const lockfiles = await globby(["package-*/package-lock.json"], { cwd, absolute: true });
-    const [lock1, lock2, lock3] = await Promise.all(lockfiles.map(fp => fs.readJson(fp)));
+    const [lock1, lock2, lock3] = await Promise.all(lockfiles.sort().map(fp => fs.readJson(fp)));
 
     expect(lock1).toMatchObject({
       name: "@integration/package-1",
@@ -51,9 +51,12 @@ describe("lerna bootstrap", () => {
     const { stdout } = await lerna("run", "test", "--", "--silent");
     expect(stdout).toMatchSnapshot("stdout");
 
-    // `realpath: true` avoids duplicate from package-4/node_modules/package-3 symlink
-    const lockfiles = await globby(["package-lock.json"], { cwd, matchBase: true, realpath: true });
-    const [lock3, rootLock] = await Promise.all(lockfiles.map(fp => fs.readJson(fp)));
+    const lockfiles = await globby(["**/package-lock.json"], {
+      cwd,
+      absolute: true,
+      followSymlinkedDirectories: false,
+    });
+    const [lock3, rootLock] = await Promise.all(lockfiles.sort().map(fp => fs.readJson(fp)));
 
     expect(lock3).toMatchObject({
       name: "@integration/package-3",
@@ -75,7 +78,7 @@ describe("lerna bootstrap", () => {
     expect(stderr).toMatchSnapshot("stderr");
 
     const lockfiles = await globby(["package-*/yarn.lock"], { cwd });
-    expect(lockfiles.map(fp => normalizePath(fp))).toEqual([
+    expect(lockfiles.sort().map(fp => normalizePath(fp))).toEqual([
       "package-1/yarn.lock",
       "package-2/yarn.lock",
       "package-3/yarn.lock",

@@ -18,8 +18,9 @@ async function loadPkgManifests(cwd) {
     {
       cwd,
       absolute: true,
+      followSymlinkedDirectories: false,
     }
   );
 
-  return Promise.all(files.map(fp => loadJsonFile(fp)));
+  return Promise.all(files.sort().map(fp => loadJsonFile(fp)));
 }

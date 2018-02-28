@@ -25,7 +25,7 @@ describe("lerna clean", () => {
     const { stderr } = await cliRunner(cwd)(...args);
     expect(normalizeLog(cwd)(stderr)).toMatchSnapshot("stderr");
 
-    const found = await globby(["package-*/node_modules"], { cwd });
+    const found = await globby(["package-*/node_modules"], { cwd, onlyDirectories: true });
     expect(found).toEqual([]);
   });
 });
