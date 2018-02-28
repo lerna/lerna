@@ -1,3 +1,21 @@
+## v3.0.0-alpha.1 (2018-02-28)
+
+#### :boom: Breaking Change
+
+* [#1278](https://github.com/lerna/lerna/pull/1278) Add universal hosted git URL support. ([@evocateur](https://github.com/evocateur))
+* [#1289](https://github.com/lerna/lerna/pull/1289) Convert command lifecycle from callbacks to Promises. ([@evocateur](https://github.com/evocateur))
+* [#1290](https://github.com/lerna/lerna/pull/1290) Preserve package.json structure during bootstrap mangling. ([@evocateur](https://github.com/evocateur))
+  Thanks to [@compulim](https://github.com/compulim) for the initial PR!
+
+#### :house: Internal
+
+* [#1271](https://github.com/lerna/lerna/pull/1271) Split symlink methods out of FileSystemUtilities. ([@evocateur](https://github.com/evocateur), [@compulim](https://github.com/compulim))
+* Tons of other refactoring afoot! Check out [this diff](https://github.com/lerna/lerna/compare/v3.0.0-alpha.0...v3.0.0-alpha.1).
+
+#### Committers: 1
+
+* Daniel Stockman ([evocateur](https://github.com/evocateur))
+
 ## v3.0.0-alpha.0 (2018-02-14)
 
 #### :boom: Breaking Change
