@@ -11,7 +11,7 @@ const pWaterfall = require("p-waterfall");
 const Command = require("../Command");
 const FileSystemUtilities = require("../FileSystemUtilities");
 const npmInstall = require("../utils/npm-install");
-const npmRunScript = require("../utils/npm-run-script");
+const npmLifecycle = require("../utils/npm-lifecycle");
 const batchPackages = require("../utils/batch-packages");
 const runParallelBatches = require("../utils/run-parallel-batches");
 const matchPackageName = require("../utils/match-package-name");
@@ -179,12 +179,11 @@ class BootstrapCommand extends Command {
       return;
     }
 
-    const { npmClient } = this.npmConfig;
     const tracker = this.logger.newItem(scriptName);
 
     const mapPackageWithScript = pkg => {
       if (packagesWithScript.has(pkg)) {
-        return npmRunScript(scriptName, { args: [], npmClient, pkg })
+        return npmLifecycle(pkg, scriptName, this.conf, tracker)
           .then(() => {
             tracker.silly("finished", pkg.name);
             tracker.completeWork(1);

@@ -223,6 +223,13 @@ exports[`PublishCommand independent mode with --message commits changes with a c
  - package-5@1.0.1"
 `;
 
+exports[`PublishCommand lifecycle scripts logs lifecycle errors but preserves chain: updated packages 1`] = `
+Object {
+  "packages/package-1": "1.0.1",
+  "packages/package-2": "1.0.1",
+}
+`;
+
 exports[`PublishCommand normal mode as canary should publish the changed packages: npm published 1`] = `
 Array [
   Object {

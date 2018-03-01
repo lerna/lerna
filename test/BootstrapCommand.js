@@ -1,7 +1,7 @@
 "use strict";
 
 jest.mock("../src/utils/npm-install");
-jest.mock("../src/utils/npm-run-script");
+jest.mock("../src/utils/npm-lifecycle");
 jest.mock("../src/utils/create-symlink");
 
 const fs = require("fs-extra");
@@ -10,7 +10,7 @@ const path = require("path");
 // mocked or stubbed modules
 const FileSystemUtilities = require("../src/FileSystemUtilities");
 const npmInstall = require("../src/utils/npm-install");
-const npmRunScript = require("../src/utils/npm-run-script");
+const npmLifecycle = require("../src/utils/npm-lifecycle");
 const createSymlink = require("../src/utils/create-symlink");
 
 // helpers
@@ -29,14 +29,14 @@ const installedPackagesInDirectories = testDir =>
   }, {});
 
 const ranScriptsInDirectories = testDir =>
-  npmRunScript.mock.calls.reduce((obj, [script, { npmClient, pkg }]) => {
+  npmLifecycle.mock.calls.reduce((obj, [pkg, script]) => {
     const location = normalizeRelativeDir(testDir, pkg.location);
 
     if (!obj[location]) {
       obj[location] = [];
     }
 
-    obj[location].push(`${npmClient} run ${script}`);
+    obj[location].push(`npm run ${script}`);
 
     return obj;
   }, {});
@@ -58,9 +58,9 @@ describe("BootstrapCommand", () => {
   npmInstall.mockResolvedValue();
   npmInstall.dependencies.mockResolvedValue();
 
-  // stub runScriptInDir() because it is a huge source
+  // stub npmLifecycle because it is a huge source
   // of slowness when running tests for no good reason
-  npmRunScript.mockResolvedValue();
+  npmLifecycle.mockResolvedValue();
 
   // the underlying implementation of symlinkBinary and symlinkDependencies
   createSymlink.mockResolvedValue();

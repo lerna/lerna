@@ -1,5 +1,43 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`lerna publish calls lifecycle scripts 1`] = `
+
+Changes:
+ - package-1: 1.0.0 => 1.1.0
+ - package-2: 1.0.0 => 1.1.0
+
+
+> lifecycle@0.0.0-monorepo preversion __TEST_ROOTDIR__
+> echo preversion-root
+
+preversion-root
+
+> package-1@1.0.0 preversion __TEST_ROOTDIR__/packages/package-1
+> echo preversion-package-1
+
+preversion-package-1
+
+> package-1@1.1.0 version __TEST_ROOTDIR__/packages/package-1
+> echo version-package-1
+
+version-package-1
+
+> lifecycle@0.0.0-monorepo version __TEST_ROOTDIR__
+> echo version-root
+
+version-root
+
+> package-1@1.1.0 postversion __TEST_ROOTDIR__/packages/package-1
+> echo postversion-package-1
+
+postversion-package-1
+
+> lifecycle@0.0.0-monorepo postversion __TEST_ROOTDIR__
+> echo postversion-root
+
+postversion-root
+`;
+
 exports[`lerna publish independent mode --conventional-commits changelog 1`] = `
 
 Changes:
@@ -307,6 +345,20 @@ index SHA..SHA 100644
 -    "package-6": "file:../package-6"
 +    "package-4": "^2.0.0",
 +    "package-6": "^1.0.0"
+`;
+
+exports[`lerna publish silences lifecycle scripts with --loglevel=silent 1`] = `
+
+Changes:
+ - package-1: 1.0.0 => 1.1.0
+ - package-2: 1.0.0 => 1.1.0
+
+preversion-root
+preversion-package-1
+version-package-1
+version-root
+postversion-package-1
+postversion-root
 `;
 
 exports[`lerna publish updates all transitive dependents 1`] = `
