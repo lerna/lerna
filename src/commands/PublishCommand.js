@@ -613,9 +613,7 @@ class PublishCommand extends Command {
     });
 
     // run the postversion script for each update
-    chain = chain.then(() => {
-      this.updates.forEach(({ pkg }) => this.runPackageLifecycle(pkg, "postversion"));
-    });
+    chain = chain.then(() => pMap(this.updates, ({ pkg }) => this.runPackageLifecycle(pkg, "postversion")));
 
     // run postversion, if set, in the root directory
     chain = chain.then(() => this.runPackageLifecycle(this.repository.package, "postversion"));
