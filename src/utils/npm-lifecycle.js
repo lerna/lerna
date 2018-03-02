@@ -11,7 +11,8 @@ function lifecycle(pkg, script, opts) {
   const config = {};
   const dir = pkg.location;
 
-  for (const key of opts.keys()) {
+  // https://github.com/isaacs/proto-list/blob/27764cd/proto-list.js#L29
+  for (const key of opts.keys) {
     const val = opts.get(key);
 
     if (val != null) {
