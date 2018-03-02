@@ -4,9 +4,9 @@ const log = require("npmlog");
 
 module.exports = getExecOpts;
 
-function getExecOpts(directory, registry) {
+function getExecOpts(pkg, registry) {
   const opts = {
-    cwd: directory,
+    cwd: pkg.location,
   };
 
   if (registry) {

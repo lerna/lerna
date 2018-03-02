@@ -3,7 +3,6 @@
 const log = require("npmlog");
 const npa = require("npm-package-arg");
 const onExit = require("signal-exit");
-const path = require("path");
 const writePkg = require("write-pkg");
 
 const ChildProcessUtilities = require("../ChildProcessUtilities");
@@ -15,7 +14,7 @@ module.exports.dependencies = installInDir;
 
 function npmInstall(pkg, { registry, npmClient, npmClientArgs, npmGlobalStyle, mutex }) {
   // build command, arguments, and options
-  const opts = getExecOpts(pkg.location, registry);
+  const opts = getExecOpts(pkg, registry);
   const args = ["install"];
   let cmd = npmClient || "npm";
 
@@ -41,7 +40,7 @@ function npmInstall(pkg, { registry, npmClient, npmClientArgs, npmGlobalStyle, m
 }
 
 function installInDir(pkg, dependencies, config) {
-  log.silly("installInDir", path.basename(pkg.location), dependencies);
+  log.silly("installInDir", pkg.name, dependencies);
 
   // Nothing to do if we weren't given any deps.
   if (!(dependencies && dependencies.length)) {

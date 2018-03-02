@@ -1,7 +1,6 @@
 "use strict";
 
 const log = require("npmlog");
-const path = require("path");
 
 const ChildProcessUtilities = require("../ChildProcessUtilities");
 const getExecOpts = require("./get-npm-exec-opts");
@@ -9,11 +8,9 @@ const getExecOpts = require("./get-npm-exec-opts");
 module.exports = npmPublish;
 
 function npmPublish(tag, pkg, { npmClient, registry }) {
-  const directory = pkg.location;
+  log.silly("npmPublish", tag, pkg.name);
 
-  log.silly("npmPublish", tag, path.basename(directory));
-
-  const opts = getExecOpts(directory, registry);
+  const opts = getExecOpts(pkg, registry);
   const args = ["publish", "--tag", tag.trim()];
 
   if (npmClient === "yarn") {

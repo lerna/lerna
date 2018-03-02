@@ -15,7 +15,7 @@ function add(pkg, version, tag, registry) {
   return ChildProcessUtilities.exec(
     "npm",
     ["dist-tag", "add", `${pkg.name}@${version}`, tag],
-    getExecOpts(pkg.location, registry)
+    getExecOpts(pkg, registry)
   );
 }
 
@@ -25,7 +25,7 @@ function check(pkg, tag, registry) {
   const result = ChildProcessUtilities.execSync(
     "npm",
     ["dist-tag", "ls", pkg.name],
-    getExecOpts(pkg.location, registry)
+    getExecOpts(pkg, registry)
   );
 
   return result.indexOf(tag) >= 0;
@@ -34,9 +34,5 @@ function check(pkg, tag, registry) {
 function remove(pkg, tag, registry) {
   log.silly("npmDistTag.remove", tag, pkg.name);
 
-  return ChildProcessUtilities.exec(
-    "npm",
-    ["dist-tag", "rm", pkg.name, tag],
-    getExecOpts(pkg.location, registry)
-  );
+  return ChildProcessUtilities.exec("npm", ["dist-tag", "rm", pkg.name, tag], getExecOpts(pkg, registry));
 }
