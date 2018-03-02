@@ -20,6 +20,9 @@ function lifecycle(pkg, script, opts) {
     }
   }
 
+  // env.npm_config_prefix should be the package directory
+  config.prefix = dir;
+
   // TODO: remove pkg._id when npm-lifecycle no longer relies on it
   pkg._id = `${pkg.name}@${pkg.version}`; // eslint-disable-line
 
