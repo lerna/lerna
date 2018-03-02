@@ -56,7 +56,7 @@ function collectPackages({ packageConfigs, rootPath }) {
     { concurrency: 4 }
   ).then(results => {
     // fast-glob does not respect pattern order, so we re-sort by absolute path
-    const lexicalByLocation = (a, b) => b.location < a.location;
+    const lexicalByLocation = (a, b) => a.location.localeCompare(b.location);
 
     return results.reduce((pkgs, result) => pkgs.concat(result.sort(lexicalByLocation)), []);
   });
