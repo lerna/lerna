@@ -10,7 +10,7 @@ const FileSystemUtilities = require("../FileSystemUtilities");
 const getExecOpts = require("./get-npm-exec-opts");
 
 module.exports = npmInstall;
-module.exports.dependencies = installInDir;
+module.exports.dependencies = npmInstallDependencies;
 
 function npmInstall(pkg, { registry, npmClient, npmClientArgs, npmGlobalStyle, mutex }) {
   // build command, arguments, and options
@@ -39,23 +39,23 @@ function npmInstall(pkg, { registry, npmClient, npmClientArgs, npmGlobalStyle, m
   return ChildProcessUtilities.exec(cmd, args, opts);
 }
 
-function installInDir(pkg, dependencies, config) {
-  log.silly("installInDir", pkg.name, dependencies);
+function npmInstallDependencies(pkg, dependencies, config) {
+  log.silly("npmInstallDependencies", pkg.name, dependencies);
 
   // Nothing to do if we weren't given any deps.
   if (!(dependencies && dependencies.length)) {
-    log.verbose("installInDir", "no dependencies to install");
+    log.verbose("npmInstallDependencies", "no dependencies to install");
 
     return Promise.resolve();
   }
 
   const packageJsonBkp = `${pkg.manifestLocation}.lerna_backup`;
 
-  log.silly("installInDir", "backup", pkg.manifestLocation);
+  log.silly("npmInstallDependencies", "backup", pkg.manifestLocation);
 
   return FileSystemUtilities.rename(pkg.manifestLocation, packageJsonBkp).then(() => {
     const cleanup = () => {
-      log.silly("installInDir", "cleanup", pkg.manifestLocation);
+      log.silly("npmInstallDependencies", "cleanup", pkg.manifestLocation);
       // Need to do this one synchronously because we might be doing it on exit.
       FileSystemUtilities.renameSync(packageJsonBkp, pkg.manifestLocation);
     };
@@ -76,7 +76,7 @@ function installInDir(pkg, dependencies, config) {
     // mutate a clone of the manifest with our new versions
     const tempJson = transformManifest(pkg, dependencies);
 
-    log.silly("installInDir", "writing tempJson", tempJson);
+    log.silly("npmInstallDependencies", "writing tempJson", tempJson);
 
     // Write out our temporary cooked up package.json and then install.
     return writePkg(pkg.manifestLocation, tempJson)
@@ -91,9 +91,9 @@ function transformManifest(pkg, dependencies) {
   // a map of depName => depVersion (resolved by npm-package-arg)
   const depMap = new Map(
     dependencies.map(dep => {
-      const result = npa(dep, pkg.location);
+      const { name, rawSpec } = npa(dep, pkg.location);
 
-      return [result.name, result.rawSpec || "*"];
+      return [name, rawSpec || "*"];
     })
   );
 
