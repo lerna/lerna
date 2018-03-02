@@ -7,6 +7,9 @@
     "bin",
     "src"
   ],
+  "publishConfig": {
+    "tag": "next"
+  },
   "scripts": {
     "ci": "npm test -- --ci --coverage --verbose && npm run integration -- --ci",
     "fix": "npm run lint -- --fix",
