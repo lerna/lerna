@@ -497,6 +497,10 @@ class PublishCommand extends Command {
     );
   }
 
+  get requiresGit() {
+    return !(this.options.canary || this.options.skipGit);
+  }
+
   runLifecycle(pkg, scriptName) {
     if (pkg.scripts[scriptName]) {
       return npmRunScript(scriptName, {
