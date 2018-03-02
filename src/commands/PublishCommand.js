@@ -500,10 +500,10 @@ class PublishCommand extends Command {
     );
   }
 
-  runLifecycle(pkg, scriptName) {
-    if (pkg.scripts[scriptName]) {
-      return runLifecycle(pkg, scriptName, this.conf).catch(err => {
-        this.logger.error("publish", `error running ${scriptName} in ${pkg.name}\n`, err.stack || err);
+  runPackageLifecycle(pkg, stage) {
+    if (pkg.scripts[stage]) {
+      return runLifecycle(pkg, stage, this.conf).catch(err => {
+        this.logger.error("lifecycle", `error running ${stage} in ${pkg.name}\n`, err.stack || err);
       });
     }
   }
@@ -518,7 +518,7 @@ class PublishCommand extends Command {
     let chain = Promise.resolve();
 
     // exec preversion lifecycle in root (before all updates)
-    chain = chain.then(() => this.runLifecycle(rootPkg, "preversion"));
+    chain = chain.then(() => this.runPackageLifecycle(rootPkg, "preversion"));
 
     chain = chain.then(() =>
       pMap(
@@ -528,7 +528,7 @@ class PublishCommand extends Command {
           Promise.resolve()
 
             // exec preversion script
-            .then(() => this.runLifecycle(pkg, "preversion"))
+            .then(() => this.runPackageLifecycle(pkg, "preversion"))
 
             // write new package
             .then(() => {
@@ -555,7 +555,7 @@ class PublishCommand extends Command {
             })
 
             // exec version script
-            .then(() => this.runLifecycle(pkg, "version"))
+            .then(() => this.runPackageLifecycle(pkg, "version"))
 
             .then(() => {
               if (conventionalCommits) {
@@ -589,7 +589,7 @@ class PublishCommand extends Command {
     }
 
     // exec version lifecycle in root (after all updates)
-    chain = chain.then(() => this.runLifecycle(rootPkg, "version"));
+    chain = chain.then(() => this.runPackageLifecycle(rootPkg, "version"));
 
     if (this.gitEnabled) {
       // chain = chain.then(() => GitUtilities.addFiles(changedFiles, this.execOpts));
@@ -614,11 +614,11 @@ class PublishCommand extends Command {
 
     // run the postversion script for each update
     chain = chain.then(() => {
-      this.updates.forEach(({ pkg }) => this.runLifecycle(pkg, "postversion"));
+      this.updates.forEach(({ pkg }) => this.runPackageLifecycle(pkg, "postversion"));
     });
 
     // run postversion, if set, in the root directory
-    chain = chain.then(() => this.runLifecycle(this.repository.package, "postversion"));
+    chain = chain.then(() => this.runPackageLifecycle(this.repository.package, "postversion"));
 
     return chain;
   }

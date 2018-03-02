@@ -170,26 +170,26 @@ class BootstrapCommand extends Command {
     });
   }
 
-  runScriptInPackages(scriptName) {
-    this.logger.verbose("lifecycle", scriptName);
+  runLifecycleInPackages(stage) {
+    this.logger.verbose("lifecycle", stage);
 
     if (!this.filteredPackages.length) {
       return;
     }
 
-    const packagesWithScript = new Set(this.filteredPackages.filter(pkg => pkg.scripts[scriptName]));
+    const packagesWithScript = new Set(this.filteredPackages.filter(pkg => pkg.scripts[stage]));
 
     if (!packagesWithScript.size) {
       return;
     }
 
-    const tracker = this.logger.newItem(scriptName);
+    const tracker = this.logger.newItem(stage);
 
     const mapPackageWithScript = pkg => {
       if (packagesWithScript.has(pkg)) {
-        return runLifecycle(pkg, scriptName, this.conf)
+        return runLifecycle(pkg, stage, this.conf)
           .then(() => {
-            tracker.silly("finished", pkg.name);
+            tracker.silly("lifecycle", "finished", pkg.name);
             tracker.completeWork(1);
           })
           .catch(err => {
@@ -211,7 +211,7 @@ class BootstrapCommand extends Command {
    * @returns {Promise}
    */
   preinstallPackages() {
-    return this.runScriptInPackages("preinstall");
+    return this.runLifecycleInPackages("preinstall");
   }
 
   /**
@@ -219,7 +219,7 @@ class BootstrapCommand extends Command {
    * @returns {Promise}
    */
   postinstallPackages() {
-    return this.runScriptInPackages("postinstall");
+    return this.runLifecycleInPackages("postinstall");
   }
 
   /**
@@ -227,7 +227,7 @@ class BootstrapCommand extends Command {
    * @returns {Promise}
    */
   prepublishPackages() {
-    return this.runScriptInPackages("prepublish");
+    return this.runLifecycleInPackages("prepublish");
   }
 
   /**
@@ -235,7 +235,7 @@ class BootstrapCommand extends Command {
    * @returns {Promise}
    */
   preparePackages() {
-    return this.runScriptInPackages("prepare");
+    return this.runLifecycleInPackages("prepare");
   }
 
   hoistedDirectory(dependency) {
