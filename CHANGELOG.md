@@ -1,3 +1,14 @@
+## v3.0.0-alpha.2 (2018-03-02)
+
+#### :bug: Bug Fix
+
+* Sort packages correctly ([2ead3107](https://github.com/lerna/lerna/commit/2ead3107))
+* Don't resolve relative links in private packages ([04760f38](https://github.com/lerna/lerna/commit/04760f38))
+
+#### :nail_care: Polish
+
+* Disable progress in commands that only output lists ([e91c9f2c](https://github.com/lerna/lerna/commit/e91c9f2c))
+
 ## v3.0.0-alpha.1 (2018-02-28)
 
 #### :boom: Breaking Change
