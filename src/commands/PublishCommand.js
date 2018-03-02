@@ -500,7 +500,7 @@ class PublishCommand extends Command {
 
   runLifecycle(pkg, scriptName) {
     if (pkg.scripts[scriptName]) {
-      return npmLifecycle(pkg, scriptName, this.conf, this.logger).catch(err => {
+      return npmLifecycle(pkg, scriptName, this.conf).catch(err => {
         this.logger.error("publish", `error running ${scriptName} in ${pkg.name}\n`, err.stack || err);
       });
     }

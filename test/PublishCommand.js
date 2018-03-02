@@ -1006,14 +1006,12 @@ describe("PublishCommand", () => {
         expect(npmLifecycle).toHaveBeenCalledWith(
           expect.objectContaining({ name: "lifecycle" }),
           script,
-          expect.any(Object), // conf
-          expect.any(Object) // logger
+          expect.any(Object) // conf
         );
         expect(npmLifecycle).toHaveBeenCalledWith(
           expect.objectContaining({ name: "package-1" }),
           script,
-          expect.any(Object), // conf
-          expect.any(Object) // logger
+          expect.any(Object) // conf
         );
       });
 
@@ -1021,8 +1019,7 @@ describe("PublishCommand", () => {
       expect(npmLifecycle).not.toHaveBeenCalledWith(
         expect.objectContaining({ name: "package-2" }),
         expect.any(String),
-        expect.any(Object), // conf
-        expect.any(Object) // logger
+        expect.any(Object) // conf
       );
 
       expect(npmLifecycle.mock.calls.map(([pkg, script]) => [pkg.name, script])).toEqual([

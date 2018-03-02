@@ -169,6 +169,8 @@ class BootstrapCommand extends Command {
   }
 
   runScriptInPackages(scriptName) {
+    this.logger.verbose("lifecycle", scriptName);
+
     if (!this.filteredPackages.length) {
       return;
     }
@@ -183,7 +185,7 @@ class BootstrapCommand extends Command {
 
     const mapPackageWithScript = pkg => {
       if (packagesWithScript.has(pkg)) {
-        return npmLifecycle(pkg, scriptName, this.conf, tracker)
+        return npmLifecycle(pkg, scriptName, this.conf)
           .then(() => {
             tracker.silly("finished", pkg.name);
             tracker.completeWork(1);
@@ -207,8 +209,6 @@ class BootstrapCommand extends Command {
    * @returns {Promise}
    */
   preinstallPackages() {
-    this.logger.info("lifecycle", "preinstall");
-
     return this.runScriptInPackages("preinstall");
   }
 
@@ -217,8 +217,6 @@ class BootstrapCommand extends Command {
    * @returns {Promise}
    */
   postinstallPackages() {
-    this.logger.info("lifecycle", "postinstall");
-
     return this.runScriptInPackages("postinstall");
   }
 
@@ -227,8 +225,6 @@ class BootstrapCommand extends Command {
    * @returns {Promise}
    */
   prepublishPackages() {
-    this.logger.info("lifecycle", "prepublish");
-
     return this.runScriptInPackages("prepublish");
   }
 
@@ -237,8 +233,6 @@ class BootstrapCommand extends Command {
    * @returns {Promise}
    */
   preparePackages() {
-    this.logger.info("lifecycle", "prepare");
-
     return this.runScriptInPackages("prepare");
   }
 
