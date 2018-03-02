@@ -38,6 +38,7 @@ describe("dist-tag", () => {
         env: expect.objectContaining({
           npm_config_registry: registry,
         }),
+        extendEnv: false,
       });
     });
   });
@@ -66,6 +67,7 @@ describe("dist-tag", () => {
         env: expect.objectContaining({
           npm_config_registry: registry,
         }),
+        extendEnv: false,
       });
     });
   });
@@ -99,6 +101,7 @@ describe("dist-tag", () => {
         env: expect.objectContaining({
           npm_config_registry: registry,
         }),
+        extendEnv: false,
       });
     });
   });

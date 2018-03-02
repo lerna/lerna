@@ -10,6 +10,7 @@ function getExecOpts(pkg, registry) {
   };
 
   if (registry) {
+    opts.extendEnv = false;
     opts.env = Object.assign({}, process.env, {
       npm_config_registry: registry,
     });

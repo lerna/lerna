@@ -169,6 +169,7 @@ describe("npm-install", () => {
         env: expect.objectContaining({
           npm_config_registry: registry,
         }),
+        extendEnv: false,
       });
     });
 
