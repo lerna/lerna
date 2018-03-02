@@ -12,7 +12,7 @@ const pWaterfall = require("p-waterfall");
 const Command = require("../Command");
 const FileSystemUtilities = require("../FileSystemUtilities");
 const npmInstall = require("../utils/npm-install");
-const npmLifecycle = require("../utils/npm-lifecycle");
+const runLifecycle = require("../utils/run-lifecycle");
 const batchPackages = require("../utils/batch-packages");
 const runParallelBatches = require("../utils/run-parallel-batches");
 const matchPackageName = require("../utils/match-package-name");
@@ -187,7 +187,7 @@ class BootstrapCommand extends Command {
 
     const mapPackageWithScript = pkg => {
       if (packagesWithScript.has(pkg)) {
-        return npmLifecycle(pkg, scriptName, this.conf)
+        return runLifecycle(pkg, scriptName, this.conf)
           .then(() => {
             tracker.silly("finished", pkg.name);
             tracker.completeWork(1);

@@ -22,7 +22,7 @@ const output = require("../utils/output");
 const collectUpdates = require("../utils/collect-updates");
 const npmDistTag = require("../utils/npm-dist-tag");
 const npmPublish = require("../utils/npm-publish");
-const npmLifecycle = require("../utils/npm-lifecycle");
+const runLifecycle = require("../utils/run-lifecycle");
 const batchPackages = require("../utils/batch-packages");
 const runParallelBatches = require("../utils/run-parallel-batches");
 const ValidationError = require("../utils/validation-error");
@@ -502,7 +502,7 @@ class PublishCommand extends Command {
 
   runLifecycle(pkg, scriptName) {
     if (pkg.scripts[scriptName]) {
-      return npmLifecycle(pkg, scriptName, this.conf).catch(err => {
+      return runLifecycle(pkg, scriptName, this.conf).catch(err => {
         this.logger.error("publish", `error running ${scriptName} in ${pkg.name}\n`, err.stack || err);
       });
     }

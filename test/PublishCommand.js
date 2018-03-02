@@ -7,7 +7,7 @@ jest.mock("../src/PromptUtilities");
 jest.mock("../src/ConventionalCommitUtilities");
 jest.mock("../src/utils/npm-dist-tag");
 jest.mock("../src/utils/npm-publish");
-jest.mock("../src/utils/npm-lifecycle");
+jest.mock("../src/utils/run-lifecycle");
 
 const fs = require("fs-extra");
 const normalizeNewline = require("normalize-newline");
@@ -22,7 +22,7 @@ const GitUtilities = require("../src/GitUtilities");
 const PromptUtilities = require("../src/PromptUtilities");
 const npmDistTag = require("../src/utils/npm-dist-tag");
 const npmPublish = require("../src/utils/npm-publish");
-const npmLifecycle = require("../src/utils/npm-lifecycle");
+const runLifecycle = require("../src/utils/run-lifecycle");
 
 // helpers
 const consoleOutput = require("./helpers/consoleOutput");
@@ -97,7 +97,7 @@ describe("PublishCommand", () => {
   GitUtilities.diffSinceIn.mockReturnValue("");
 
   npmPublish.mockResolvedValue();
-  npmLifecycle.mockImplementation(() => Promise.resolve());
+  runLifecycle.mockImplementation(() => Promise.resolve());
   npmDistTag.check.mockReturnValue(true);
 
   PromptUtilities.select.mockResolvedValue("1.0.1");
@@ -1000,15 +1000,15 @@ describe("PublishCommand", () => {
       const testDir = await initFixture("PublishCommand/lifecycle");
       await lernaPublish(testDir)();
 
-      expect(npmLifecycle).toHaveBeenCalledTimes(6);
+      expect(runLifecycle).toHaveBeenCalledTimes(6);
 
       ["preversion", "version", "postversion"].forEach(script => {
-        expect(npmLifecycle).toHaveBeenCalledWith(
+        expect(runLifecycle).toHaveBeenCalledWith(
           expect.objectContaining({ name: "lifecycle" }),
           script,
           expect.any(Object) // conf
         );
-        expect(npmLifecycle).toHaveBeenCalledWith(
+        expect(runLifecycle).toHaveBeenCalledWith(
           expect.objectContaining({ name: "package-1" }),
           script,
           expect.any(Object) // conf
@@ -1016,13 +1016,13 @@ describe("PublishCommand", () => {
       });
 
       // package-2 lacks version lifecycle scripts
-      expect(npmLifecycle).not.toHaveBeenCalledWith(
+      expect(runLifecycle).not.toHaveBeenCalledWith(
         expect.objectContaining({ name: "package-2" }),
         expect.any(String),
         expect.any(Object) // conf
       );
 
-      expect(npmLifecycle.mock.calls.map(([pkg, script]) => [pkg.name, script])).toEqual([
+      expect(runLifecycle.mock.calls.map(([pkg, script]) => [pkg.name, script])).toEqual([
         ["lifecycle", "preversion"],
         ["package-1", "preversion"],
         ["package-1", "version"],
@@ -1035,11 +1035,11 @@ describe("PublishCommand", () => {
     it("logs lifecycle errors but preserves chain", async () => {
       const testDir = await initFixture("PublishCommand/lifecycle");
 
-      npmLifecycle.mockImplementationOnce(() => Promise.reject(new Error("boom")));
+      runLifecycle.mockImplementationOnce(() => Promise.reject(new Error("boom")));
 
       await lernaPublish(testDir)();
 
-      expect(npmLifecycle).toHaveBeenCalledTimes(6);
+      expect(runLifecycle).toHaveBeenCalledTimes(6);
       expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
 
       const [errorLog] = loggingOutput("error");

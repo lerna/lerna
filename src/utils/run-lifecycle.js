@@ -3,10 +3,10 @@
 const log = require("npmlog");
 const npmLifecycle = require("npm-lifecycle");
 
-module.exports = lifecycle;
+module.exports = runLifecycle;
 
-function lifecycle(pkg, script, opts) {
-  log.silly("npm-lifecycle", script, pkg.name);
+function runLifecycle(pkg, stage, opts) {
+  log.silly("run-lifecycle", stage, pkg.name);
 
   const config = {};
   const dir = pkg.location;
@@ -26,7 +26,7 @@ function lifecycle(pkg, script, opts) {
   // TODO: remove pkg._id when npm-lifecycle no longer relies on it
   pkg._id = `${pkg.name}@${pkg.version}`; // eslint-disable-line
 
-  return npmLifecycle(pkg, script, dir, {
+  return npmLifecycle(pkg, stage, dir, {
     config,
     dir,
     failOk: false,
