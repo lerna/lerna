@@ -25,6 +25,17 @@ function CLI(argv, cwd) {
   if (isCI || !process.stderr.isTTY) {
     log.disableColor();
     log.disableProgress();
+  } else if (!process.stdout.isTTY) {
+    // stdout is being piped, don't log non-errors or progress bars
+    log.disableProgress();
+
+    cli.check(parsedArgv => {
+      // eslint-disable-next-line no-param-reassign
+      parsedArgv.loglevel = "error";
+
+      // return truthy or else it blows up
+      return parsedArgv;
+    });
   } else if (process.stderr.isTTY) {
     log.enableColor();
     log.enableUnicode();
