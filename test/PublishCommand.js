@@ -1123,6 +1123,10 @@ describe("PublishCommand", () => {
         "package-4": "^2.0.0",
         "package-6": "^1.0.0", // FIXME: awkward... (_intentional_, for now)
       });
+      // private packages do not need local version resolution
+      expect(updatedPackageJSON("package-7").dependencies).toMatchObject({
+        "package-1": "file:../package-1",
+      });
     });
 
     it("reverts overwritten link after publish", async () => {

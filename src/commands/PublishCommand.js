@@ -270,7 +270,8 @@ class PublishCommand extends Command {
   resolveLocalDependencyLinks() {
     // resolve relative file: links to their actual version range
     const updatesWithLocalLinks = this.updates.filter(
-      ({ localDependencies }) =>
+      ({ pkg, localDependencies }) =>
+        !pkg.private &&
         localDependencies.size &&
         Array.from(localDependencies.values()).some(({ type }) => type === "directory")
     );
