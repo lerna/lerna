@@ -9,7 +9,7 @@ const makeDiffPredicate = require("./make-diff-predicate");
 
 module.exports = collectUpdates;
 
-function collectUpdates({ filteredPackages, packageGraph, options, rootPath, execOpts, logger }) {
+function collectUpdates({ filteredPackages, packageGraph, options, rootPath, execOpts, logger, gitEnabled }) {
   const packages =
     filteredPackages.length === packageGraph.size
       ? packageGraph
@@ -19,7 +19,7 @@ function collectUpdates({ filteredPackages, packageGraph, options, rootPath, exe
 
   let { since: committish } = options;
 
-  if (GitUtilities.hasTags(execOpts)) {
+  if (gitEnabled && GitUtilities.hasTags(execOpts)) {
     if (options.canary) {
       const sha = GitUtilities.getShortSHA(execOpts);
 
