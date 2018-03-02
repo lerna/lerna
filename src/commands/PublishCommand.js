@@ -4,6 +4,7 @@ const os = require("os");
 const chalk = require("chalk");
 const dedent = require("dedent");
 const minimatch = require("minimatch");
+const npmConf = require("npm-conf");
 const path = require("path");
 const pFinally = require("p-finally");
 const pMap = require("p-map");
@@ -213,6 +214,7 @@ class PublishCommand extends Command {
       }
     }
 
+    this.conf = npmConf(this.options);
     this.updates = collectUpdates(this);
 
     if (!this.updates.length) {

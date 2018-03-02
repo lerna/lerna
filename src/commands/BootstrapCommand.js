@@ -2,6 +2,7 @@
 
 const dedent = require("dedent");
 const getPort = require("get-port");
+const npmConf = require("npm-conf");
 const path = require("path");
 const pFinally = require("p-finally");
 const pMap = require("p-map");
@@ -105,6 +106,7 @@ class BootstrapCommand extends Command {
       );
     }
 
+    this.conf = npmConf(this.options);
     this.npmConfig = {
       registry,
       npmClient,

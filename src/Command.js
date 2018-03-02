@@ -3,7 +3,6 @@
 const _ = require("lodash");
 const dedent = require("dedent");
 const log = require("npmlog");
-const npmConf = require("npm-conf");
 
 const ChildProcessUtilities = require("./ChildProcessUtilities");
 const GitUtilities = require("./GitUtilities");
@@ -283,9 +282,6 @@ class Command {
 
     let chain = Promise.resolve();
 
-    chain = chain.then(() => {
-      this.conf = npmConf(this.options);
-    });
     chain = chain.then(() => collectPackages({ rootPath, packageConfigs }));
     chain = chain.then(packages => {
       this.packages = packages;
