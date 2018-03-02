@@ -23,19 +23,23 @@ describe("npm-install", () => {
     it("returns a promise for a non-mangling install", async () => {
       expect.assertions(1);
 
-      const directory = path.normalize("/test/npm/install");
+      const location = path.normalize("/test/npm/install");
+      const pkg = {
+        name: "test-npm-install",
+        location,
+      };
       const config = {
         npmClient: "yarn",
         npmClientArgs: ["--no-optional"],
         mutex: "file:foo",
       };
 
-      await npmInstall(directory, config);
+      await npmInstall(pkg, config);
 
       expect(ChildProcessUtilities.exec).lastCalledWith(
         "yarn",
         ["install", "--mutex", "file:foo", "--non-interactive", "--no-optional"],
-        { cwd: directory }
+        { cwd: location }
       );
     });
 
@@ -44,18 +48,22 @@ describe("npm-install", () => {
 
       ChildProcessUtilities.exec.mockRejectedValueOnce(new Error("whoopsy-doodle"));
 
-      const directory = path.normalize("/test/npm/install/error");
+      const location = path.normalize("/test/npm/install/error");
+      const pkg = {
+        name: "test-npm-install-error",
+        location,
+      };
       const config = {
         npmClient: "yarn",
       };
 
       try {
-        await npmInstall(directory, config);
+        await npmInstall(pkg, config);
       } catch (err) {
         expect(err.message).toBe("whoopsy-doodle");
 
         expect(ChildProcessUtilities.exec).lastCalledWith("yarn", ["install", "--non-interactive"], {
-          cwd: directory,
+          cwd: location,
         });
       }
     });

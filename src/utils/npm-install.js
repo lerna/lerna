@@ -13,9 +13,9 @@ const getExecOpts = require("./get-npm-exec-opts");
 module.exports = npmInstall;
 module.exports.dependencies = installInDir;
 
-function npmInstall(directory, { registry, npmClient, npmClientArgs, npmGlobalStyle, mutex }) {
+function npmInstall(pkg, { registry, npmClient, npmClientArgs, npmGlobalStyle, mutex }) {
   // build command, arguments, and options
-  const opts = getExecOpts(directory, registry);
+  const opts = getExecOpts(pkg.location, registry);
   const args = ["install"];
   let cmd = npmClient || "npm";
 
@@ -81,7 +81,7 @@ function installInDir(pkg, dependencies, config) {
 
     // Write out our temporary cooked up package.json and then install.
     return writePkg(pkg.manifestLocation, tempJson)
-      .then(() => npmInstall(pkg.location, config))
+      .then(() => npmInstall(pkg, config))
       .then(() => done(), done);
   });
 }

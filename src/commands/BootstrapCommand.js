@@ -162,9 +162,9 @@ class BootstrapCommand extends Command {
   installRootPackageOnly() {
     const tracker = this.logger.newItem("install dependencies");
 
-    return npmInstall(this.repository.rootPath, this.npmConfig).then(() => {
+    return npmInstall(this.repository.package, this.npmConfig).then(() => {
       tracker.info("hoist", "Finished installing in root");
-      tracker.completeWork(1);
+      tracker.finish();
     });
   }
 

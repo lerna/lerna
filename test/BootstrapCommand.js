@@ -399,7 +399,7 @@ describe("BootstrapCommand", () => {
 
       expect(npmInstall.dependencies).not.toBeCalled();
       expect(npmInstall).lastCalledWith(
-        expect.any(String),
+        expect.objectContaining({ name: "root" }),
         expect.objectContaining({
           npmClient: "yarn",
           mutex: expect.stringMatching(/^network:\d+$/),
