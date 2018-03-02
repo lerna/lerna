@@ -381,7 +381,7 @@ class PublishCommand extends Command {
       chain = chain.then(() => {
         const globalVersion = this.repository.version;
 
-        this.updates.forEach(({ pkg }) => {
+        for (const { pkg } of this.updates) {
           if (semver.lt(pkg.version, globalVersion)) {
             this.logger.verbose(
               "publish",
@@ -390,7 +390,7 @@ class PublishCommand extends Command {
 
             pkg.version = globalVersion;
           }
-        });
+        }
       });
     }
 
