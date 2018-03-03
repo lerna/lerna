@@ -14,7 +14,6 @@ module.exports = commandRunner;
  */
 function commandRunner(commandModule) {
   const cmd = commandModule.command.split(" ")[0];
-  const hackDoubleDash = makeWorkAround();
 
   return cwd => {
     // create a _new_ yargs instance every time cwd changes to avoid singleton pollution
@@ -50,9 +49,6 @@ function commandRunner(commandModule) {
           Object.assign(yargsMeta, { parsedArgv, yargsOutput });
         };
 
-        // workaround wonky yargs-parser configuration not being read during tests
-        hackDoubleDash(args, context);
-
         cli
           .fail((msg, err) => {
             // since yargs 10.1.0, this is the only way to catch handler rejection
@@ -64,23 +60,5 @@ function commandRunner(commandModule) {
           })
           .parse([cmd, ...args], context, parseFn);
       });
-  };
-}
-
-function makeWorkAround() {
-  let hasWarned;
-
-  return (args, context) => {
-    const doubleDashed = args.indexOf("--");
-
-    if (doubleDashed > -1) {
-      if (!hasWarned) {
-        console.warn("TODO: remove yargs require.main workaround");
-        hasWarned = true;
-      }
-
-      // eslint-disable-next-line no-param-reassign
-      context["--"] = args.slice(doubleDashed + 1);
-    }
   };
 }
