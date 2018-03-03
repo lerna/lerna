@@ -7,6 +7,7 @@
     "package3-cli2": "cli2.js"
   },
   "scripts": {
+    "postinstall": "exit 0",
     "test": "package-2"
   },
   "dependencies": {

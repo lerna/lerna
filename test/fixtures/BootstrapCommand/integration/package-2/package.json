@@ -4,6 +4,7 @@
   "private": true,
   "bin": "cli.js",
   "scripts": {
+    "prepublish": "exit 0",
     "test": "echo package-2"
   },
   "dependencies": {

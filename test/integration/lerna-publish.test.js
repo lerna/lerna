@@ -13,6 +13,7 @@ const os = require("os");
 const cliRunner = require("../helpers/cli-runner");
 const initFixture = require("../helpers/initFixture");
 const loadPkgManifests = require("../helpers/loadPkgManifests");
+const normalizeTestRoot = require("../helpers/normalize-test-root");
 
 // stabilize changelog commit SHA and datestamp
 expect.addSnapshotSerializer({
@@ -173,5 +174,21 @@ describe("lerna publish", () => {
     expect(
       await execa.stdout("git", ["diff", "--unified=0", "--ignore-space-at-eol"], { cwd })
     ).toMatchSnapshot("unstaged");
+  });
+
+  test("calls lifecycle scripts", async () => {
+    const cwd = await initFixture("PublishCommand/lifecycle");
+    const args = ["publish", "--skip-npm", "--cd-version", "minor", "--yes"];
+
+    const { stdout } = await cliRunner(cwd)(...args);
+    expect(normalizeTestRoot(cwd)(stdout)).toMatchSnapshot();
+  });
+
+  test("silences lifecycle scripts with --loglevel=silent", async () => {
+    const cwd = await initFixture("PublishCommand/lifecycle");
+    const args = ["publish", "--skip-npm", "--cd-version", "minor", "--yes", "--loglevel", "silent"];
+
+    const { stdout } = await cliRunner(cwd)(...args);
+    expect(normalizeTestRoot(cwd)(stdout)).toMatchSnapshot();
   });
 });

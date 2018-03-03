@@ -1,3 +1,9 @@
 {
-  "name": "lifecycle"
+  "name": "lifecycle",
+  "version": "0.0.0-monorepo",
+  "scripts": {
+    "preversion": "echo preversion-root",
+    "version": "echo version-root",
+    "postversion": "echo postversion-root"
+  }
 }

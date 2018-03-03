@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "test": "echo package-1",
-    "prepare": "node build.js"
+    "prepare": "node build.js",
+    "test": "echo package-1"
   },
   "dependencies": {
     "pify": "^2.0.0"

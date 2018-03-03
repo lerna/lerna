@@ -2,6 +2,7 @@
 
 const dedent = require("dedent");
 const getPort = require("get-port");
+const npmConf = require("npm-conf");
 const path = require("path");
 const pFinally = require("p-finally");
 const pMap = require("p-map");
@@ -11,7 +12,7 @@ const pWaterfall = require("p-waterfall");
 const Command = require("../Command");
 const FileSystemUtilities = require("../FileSystemUtilities");
 const npmInstall = require("../utils/npm-install");
-const npmRunScript = require("../utils/npm-run-script");
+const runLifecycle = require("../utils/run-lifecycle");
 const batchPackages = require("../utils/batch-packages");
 const runParallelBatches = require("../utils/run-parallel-batches");
 const matchPackageName = require("../utils/match-package-name");
@@ -105,6 +106,7 @@ class BootstrapCommand extends Command {
       );
     }
 
+    this.conf = npmConf(this.options);
     this.npmConfig = {
       registry,
       npmClient,
@@ -168,25 +170,26 @@ class BootstrapCommand extends Command {
     });
   }
 
-  runScriptInPackages(scriptName) {
+  runLifecycleInPackages(stage) {
+    this.logger.verbose("lifecycle", stage);
+
     if (!this.filteredPackages.length) {
       return;
     }
 
-    const packagesWithScript = new Set(this.filteredPackages.filter(pkg => pkg.scripts[scriptName]));
+    const packagesWithScript = new Set(this.filteredPackages.filter(pkg => pkg.scripts[stage]));
 
     if (!packagesWithScript.size) {
       return;
     }
 
-    const { npmClient } = this.npmConfig;
-    const tracker = this.logger.newItem(scriptName);
+    const tracker = this.logger.newItem(stage);
 
     const mapPackageWithScript = pkg => {
       if (packagesWithScript.has(pkg)) {
-        return npmRunScript(scriptName, { args: [], npmClient, pkg })
+        return runLifecycle(pkg, stage, this.conf)
           .then(() => {
-            tracker.silly("finished", pkg.name);
+            tracker.silly("lifecycle", "finished", pkg.name);
             tracker.completeWork(1);
           })
           .catch(err => {
@@ -208,9 +211,7 @@ class BootstrapCommand extends Command {
    * @returns {Promise}
    */
   preinstallPackages() {
-    this.logger.info("lifecycle", "preinstall");
-
-    return this.runScriptInPackages("preinstall");
+    return this.runLifecycleInPackages("preinstall");
   }
 
   /**
@@ -218,9 +219,7 @@ class BootstrapCommand extends Command {
    * @returns {Promise}
    */
   postinstallPackages() {
-    this.logger.info("lifecycle", "postinstall");
-
-    return this.runScriptInPackages("postinstall");
+    return this.runLifecycleInPackages("postinstall");
   }
 
   /**
@@ -228,9 +227,7 @@ class BootstrapCommand extends Command {
    * @returns {Promise}
    */
   prepublishPackages() {
-    this.logger.info("lifecycle", "prepublish");
-
-    return this.runScriptInPackages("prepublish");
+    return this.runLifecycleInPackages("prepublish");
   }
 
   /**
@@ -238,9 +235,7 @@ class BootstrapCommand extends Command {
    * @returns {Promise}
    */
   preparePackages() {
-    this.logger.info("lifecycle", "prepare");
-
-    return this.runScriptInPackages("prepare");
+    return this.runLifecycleInPackages("prepare");
   }
 
   hoistedDirectory(dependency) {

@@ -4,6 +4,7 @@ const os = require("os");
 const chalk = require("chalk");
 const dedent = require("dedent");
 const minimatch = require("minimatch");
+const npmConf = require("npm-conf");
 const path = require("path");
 const pFinally = require("p-finally");
 const pMap = require("p-map");
@@ -21,7 +22,7 @@ const output = require("../utils/output");
 const collectUpdates = require("../utils/collect-updates");
 const npmDistTag = require("../utils/npm-dist-tag");
 const npmPublish = require("../utils/npm-publish");
-const npmRunScript = require("../utils/npm-run-script");
+const runLifecycle = require("../utils/run-lifecycle");
 const batchPackages = require("../utils/batch-packages");
 const runParallelBatches = require("../utils/run-parallel-batches");
 const ValidationError = require("../utils/validation-error");
@@ -213,6 +214,7 @@ class PublishCommand extends Command {
       }
     }
 
+    this.conf = npmConf(this.options);
     this.updates = collectUpdates(this);
 
     if (!this.updates.length) {
@@ -379,7 +381,7 @@ class PublishCommand extends Command {
       chain = chain.then(() => {
         const globalVersion = this.repository.version;
 
-        this.updates.forEach(({ pkg }) => {
+        for (const { pkg } of this.updates) {
           if (semver.lt(pkg.version, globalVersion)) {
             this.logger.verbose(
               "publish",
@@ -388,7 +390,7 @@ class PublishCommand extends Command {
 
             pkg.version = globalVersion;
           }
-        });
+        }
       });
     }
 
@@ -498,14 +500,10 @@ class PublishCommand extends Command {
     );
   }
 
-  runLifecycle(pkg, scriptName) {
-    if (pkg.scripts[scriptName]) {
-      return npmRunScript(scriptName, {
-        args: ["--silent"],
-        npmClient: this.npmConfig.npmClient,
-        pkg,
-      }).catch(err => {
-        this.logger.error("publish", `error running ${scriptName} in ${pkg.name}\n`, err.stack || err);
+  runPackageLifecycle(pkg, stage) {
+    if (pkg.scripts[stage]) {
+      return runLifecycle(pkg, stage, this.conf).catch(err => {
+        this.logger.error("lifecycle", `error running ${stage} in ${pkg.name}\n`, err.stack || err);
       });
     }
   }
@@ -520,7 +518,7 @@ class PublishCommand extends Command {
     let chain = Promise.resolve();
 
     // exec preversion lifecycle in root (before all updates)
-    chain = chain.then(() => this.runLifecycle(rootPkg, "preversion"));
+    chain = chain.then(() => this.runPackageLifecycle(rootPkg, "preversion"));
 
     chain = chain.then(() =>
       pMap(
@@ -530,7 +528,7 @@ class PublishCommand extends Command {
           Promise.resolve()
 
             // exec preversion script
-            .then(() => this.runLifecycle(pkg, "preversion"))
+            .then(() => this.runPackageLifecycle(pkg, "preversion"))
 
             // write new package
             .then(() => {
@@ -557,7 +555,7 @@ class PublishCommand extends Command {
             })
 
             // exec version script
-            .then(() => this.runLifecycle(pkg, "version"))
+            .then(() => this.runPackageLifecycle(pkg, "version"))
 
             .then(() => {
               if (conventionalCommits) {
@@ -591,7 +589,7 @@ class PublishCommand extends Command {
     }
 
     // exec version lifecycle in root (after all updates)
-    chain = chain.then(() => this.runLifecycle(rootPkg, "version"));
+    chain = chain.then(() => this.runPackageLifecycle(rootPkg, "version"));
 
     if (this.gitEnabled) {
       // chain = chain.then(() => GitUtilities.addFiles(changedFiles, this.execOpts));
@@ -615,12 +613,10 @@ class PublishCommand extends Command {
     });
 
     // run the postversion script for each update
-    chain = chain.then(() => {
-      this.updates.forEach(({ pkg }) => this.runLifecycle(pkg, "postversion"));
-    });
+    chain = chain.then(() => pMap(this.updates, ({ pkg }) => this.runPackageLifecycle(pkg, "postversion")));
 
     // run postversion, if set, in the root directory
-    chain = chain.then(() => this.runLifecycle(this.repository.package, "postversion"));
+    chain = chain.then(() => this.runPackageLifecycle(this.repository.package, "postversion"));
 
     return chain;
   }

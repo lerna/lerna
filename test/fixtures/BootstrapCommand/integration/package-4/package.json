@@ -2,6 +2,7 @@
   "name": "package-4",
   "version": "1.0.0",
   "scripts": {
+    "preinstall": "exit 0",
     "test": "package3-cli1",
     "posttest": "package3-cli2"
   },
