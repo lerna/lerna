@@ -1,3 +1,17 @@
+## v3.0.0-alpha.3 (2018-03-03)
+
+#### :bug: Bug Fix
+
+* [#1302](https://github.com/lerna/lerna/pull/1302) Use npm-lifecycle to run solitary lifecycle phases. ([@evocateur](https://github.com/evocateur))
+
+#### :nail_care: Polish
+
+* [#1300](https://github.com/lerna/lerna/pull/1300) Disable all non-error logging when stdout is piped. ([@evocateur](https://github.com/evocateur))
+
+#### Committers: 1
+
+* Daniel Stockman ([evocateur](https://github.com/evocateur))
+
 ## v3.0.0-alpha.2 (2018-03-02)
 
 #### :bug: Bug Fix
