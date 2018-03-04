@@ -20,7 +20,8 @@
     "node": ">= 6.9.0"
   },
   "publishConfig": {
-    "tag": "next"
+    "tag": "next",
+    "access": "public"
   },
   "repository": {
     "type": "git",
