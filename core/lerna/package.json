@@ -31,5 +31,10 @@
   },
   "scripts": {
     "test": "echo \"Run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@lerna/cli": "file:../cli",
+    "import-local": "^1.0.0",
+    "npmlog": "^4.1.2"
   }
 }
