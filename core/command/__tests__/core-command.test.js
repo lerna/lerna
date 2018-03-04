@@ -8,13 +8,14 @@ const tempy = require("tempy");
 const touch = require("touch");
 
 // partially mocked
-const ChildProcessUtilities = require("../src/ChildProcessUtilities");
+const ChildProcessUtilities = require("@lerna/child-process");
 
 // helpers
-const initFixture = require("./helpers/initFixture");
-const loggingOutput = require("./helpers/loggingOutput");
-const updateLernaConfig = require("./helpers/updateLernaConfig");
-const { LERNA_VERSION } = require("./helpers/constants");
+const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const loggingOutput = require("@lerna-test/logging-output");
+const updateLernaConfig = require("@lerna-test/update-lerna-config");
+
+const LERNA_VERSION = fs.readJsonSync(path.join(require.resolve("lerna"), "package.json"));
 
 // file under test
 const Command = require("..");
@@ -23,7 +24,7 @@ describe("core-command", () => {
   let testDir;
 
   beforeAll(async () => {
-    testDir = await initFixture("Command/basic");
+    testDir = await initFixture("basic");
   });
 
   ChildProcessUtilities.getChildProcessCount = jest.fn(() => 0);
@@ -203,7 +204,7 @@ describe("core-command", () => {
     });
 
     it("is set from lerna.json config", async () => {
-      const cwd = await initFixture("Command/basic");
+      const cwd = await initFixture("basic");
 
       await updateLernaConfig(cwd, { loglevel: "warn" });
       await testFactory({ cwd, onRejected });
@@ -232,7 +233,7 @@ describe("core-command", () => {
 
   describe(".filteredPackages", () => {
     it("--scope should filter packages", async () => {
-      const cwd = await initFixture("UpdatedCommand/basic");
+      const cwd = await initFixture("filtering");
 
       const command = testFactory({
         cwd,
@@ -246,7 +247,7 @@ describe("core-command", () => {
     });
 
     it("--since should return all packages if no tag is found", async () => {
-      const cwd = await initFixture("UpdatedCommand/basic");
+      const cwd = await initFixture("filtering");
 
       const command = testFactory({ cwd, since: "" });
       await command;
@@ -255,7 +256,7 @@ describe("core-command", () => {
     });
 
     it("--since should return packages updated since the last tag", async () => {
-      const cwd = await initFixture("UpdatedCommand/basic");
+      const cwd = await initFixture("filtering");
       const git = (...args) => execa("git", args, { cwd });
 
       await git("tag", "1.0.0");
@@ -272,7 +273,7 @@ describe("core-command", () => {
     });
 
     it('--since "ref" should return packages updated since the specified ref', async () => {
-      const cwd = await initFixture("UpdatedCommand/basic");
+      const cwd = await initFixture("filtering");
       const git = (...args) => execa("git", args, { cwd });
 
       // We first tag, then modify master to ensure that specifying --since will override checking against
@@ -297,7 +298,7 @@ describe("core-command", () => {
     });
 
     it("should respect --scope and --since when used together", async () => {
-      const cwd = await initFixture("UpdatedCommand/basic");
+      const cwd = await initFixture("filtering");
       const git = (...args) => execa("git", args, { cwd });
 
       await git("checkout", "-b", "test");
@@ -409,7 +410,7 @@ describe("core-command", () => {
     let cwd;
 
     beforeAll(async () => {
-      cwd = await initFixture("Command/legacy");
+      cwd = await initFixture("legacy");
     });
 
     class TestCommand extends Command {}
@@ -494,7 +495,7 @@ describe("core-command", () => {
     it("throws ENOPKG when root package.json is not found", async () => {
       expect.assertions(1);
 
-      const cwd = await initFixture("Command/basic");
+      const cwd = await initFixture("basic");
 
       await fs.remove(path.join(cwd, "package.json"));
 
@@ -508,7 +509,7 @@ describe("core-command", () => {
     it("throws ENOLERNA when lerna.json is not found", async () => {
       expect.assertions(1);
 
-      const cwd = await initFixture("Command/basic");
+      const cwd = await initFixture("basic");
 
       await fs.remove(path.join(cwd, "lerna.json"));
 
