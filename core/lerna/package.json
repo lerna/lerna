@@ -1,27 +1,29 @@
 {
-  "name": "@lerna/cli",
+  "name": "lerna",
   "version": "3.0.0-alpha.3",
-  "description": "TODO",
+  "description": "A tool for managing JavaScript projects with multiple packages.",
   "keywords": [
     "lerna",
-    "core"
+    "monorepo",
+    "multi-package"
   ],
-  "homepage": "https://github.com/lerna/lerna",
+  "homepage": "https://lernajs.io/",
   "license": "MIT",
   "author": {
-    "name": "Daniel Stockman",
-    "url": "https://github.com/evocateur"
+    "name": "Sebastian McKenzie",
+    "email": "sebmck@gmail.com"
+  },
+  "bin": {
+    "lerna": "cli.js"
   },
   "files": [
-    "index.js"
+    "cli.js"
   ],
-  "main": "index.js",
   "engines": {
     "node": ">= 6.9.0"
   },
   "publishConfig": {
-    "tag": "next",
-    "access": "public"
+    "tag": "next"
   },
   "repository": {
     "type": "git",
