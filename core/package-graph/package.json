@@ -29,5 +29,9 @@
   },
   "scripts": {
     "test": "echo \"Run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "npm-package-arg": "^6.0.0",
+    "semver": "^5.5.0"
   }
 }
