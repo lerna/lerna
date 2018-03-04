@@ -1,7 +1,5 @@
 {
-  "packages": [
-    "."
-  ],
+  "packages": ["commands/*", "core/*", "utils/*"],
   "changelog": {
     "repo": "lerna/lerna",
     "labels": {
@@ -14,5 +12,5 @@
     },
     "cacheDir": ".changelog"
   },
-  "version": "0.0.0"
+  "version": "3.0.0-alpha.3"
 }
