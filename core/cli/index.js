@@ -4,19 +4,19 @@ const dedent = require("dedent");
 const isCI = require("is-ci");
 const log = require("npmlog");
 const yargs = require("yargs/yargs");
-const globalOptions = require("./Command").builder;
+const globalOptions = require("@lerna/command").builder;
 
-module.exports = CLI;
+module.exports = lernaCLI;
 
 /**
  * Essentially a factory that returns a yargs() instance that can
- * be used to call parse() immediately (as in ../bin/lerna) or by
+ * be used to call parse() immediately (as in ../lerna) or by
  * unit tests to encapsulate instantiation with "real" arguments.
  *
  * @param {Array = []} argv
  * @param {String = process.cwd()} cwd
  */
-function CLI(argv, cwd) {
+function lernaCLI(argv, cwd) {
   const cli = yargs(argv, cwd);
 
   // the options grouped under "Global Options:" header
