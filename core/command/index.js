@@ -4,78 +4,21 @@ const _ = require("lodash");
 const dedent = require("dedent");
 const log = require("npmlog");
 
-const ChildProcessUtilities = require("./ChildProcessUtilities");
-const GitUtilities = require("./GitUtilities");
-const PackageGraph = require("./PackageGraph");
-const Repository = require("./Repository");
-const writeLogFile = require("./utils/write-log-file");
-const collectPackages = require("./utils/collect-packages");
-const collectUpdates = require("./utils/collect-updates");
-const filterPackages = require("./utils/filter-packages");
-const ValidationError = require("./utils/validation-error");
+const ChildProcessUtilities = require("@lerna/child-process");
+const GitUtilities = require("@lerna/git");
+const PackageGraph = require("@lerna/package-graph");
+const Project = require("@lerna/project");
+const writeLogFile = require("@lerna/write-log-file");
+const collectPackages = require("@lerna/collect-packages");
+const collectUpdates = require("@lerna/collect-updates");
+const filterPackages = require("@lerna/filter-packages");
+const ValidationError = require("@lerna/validation-error");
 
 // handle log.success()
 log.addLevel("success", 3001, { fg: "green", bold: true });
 
 const DEFAULT_CONCURRENCY = 4;
-const LERNA_VERSION = require("../package.json").version;
-
-const builder = {
-  loglevel: {
-    defaultDescription: "info",
-    describe: "What level of logs to report.",
-    type: "string",
-  },
-  concurrency: {
-    describe: "How many threads to use if lerna parallelises the tasks.",
-    type: "number",
-    requiresArg: true,
-  },
-  scope: {
-    describe: dedent`
-      Restricts the scope to package names matching the given glob.
-      (Only for 'run', 'exec', 'clean', 'ls', and 'bootstrap' commands)
-    `,
-    type: "string",
-    requiresArg: true,
-  },
-  since: {
-    describe: dedent`
-      Restricts the scope to the packages that have been updated since
-      the specified [ref], or if not specified, the latest tag.
-      (Only for 'run', 'exec', 'clean', 'ls', and 'bootstrap' commands)
-    `,
-    type: "string",
-  },
-  ignore: {
-    describe: dedent`
-      Ignore packages with names matching the given glob.
-      (Only for 'run', 'exec', 'clean', 'ls', and 'bootstrap' commands)
-    `,
-    type: "string",
-    requiresArg: true,
-  },
-  "include-filtered-dependencies": {
-    describe: dedent`
-      Include all transitive dependencies when running a command, regardless of --scope, --since or --ignore.
-    `,
-  },
-  "reject-cycles": {
-    describe: "Fail if a cycle is detected among dependencies",
-    type: "boolean",
-    default: undefined,
-  },
-  sort: {
-    describe: "Sort packages topologically (all dependencies before dependents)",
-    type: "boolean",
-    default: undefined,
-  },
-  "max-buffer": {
-    describe: "Set max-buffer(bytes) for Command execution",
-    type: "number",
-    requiresArg: true,
-  },
-};
+const LERNA_VERSION = require("./package.json").version;
 
 class Command {
   constructor(argv) {
@@ -94,7 +37,7 @@ class Command {
       let chain = Promise.resolve();
 
       chain = chain.then(() => {
-        this.repository = new Repository(argv.cwd);
+        this.repository = new Project(argv.cwd);
       });
       chain = chain.then(() => this.configureLogging());
       chain = chain.then(() => this.runValidations());
@@ -387,4 +330,3 @@ function warnIfHanging() {
 }
 
 module.exports = Command;
-module.exports.builder = builder;

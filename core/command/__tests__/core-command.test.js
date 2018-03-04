@@ -17,9 +17,9 @@ const updateLernaConfig = require("./helpers/updateLernaConfig");
 const { LERNA_VERSION } = require("./helpers/constants");
 
 // file under test
-const Command = require("../src/Command");
+const Command = require("..");
 
-describe("Command", () => {
+describe("core-command", () => {
   let testDir;
 
   beforeAll(async () => {
