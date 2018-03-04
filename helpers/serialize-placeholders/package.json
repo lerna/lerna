@@ -4,5 +4,8 @@
   "description": "A local test helper",
   "main": "index.js",
   "private": true,
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "normalize-newline": "^3.0.0"
+  }
 }

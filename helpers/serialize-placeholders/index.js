@@ -1,10 +1,11 @@
 "use strict";
 
 const normalizeNewline = require("normalize-newline");
-const constants = require("./constants");
+// eslint-disable-next-line node/no-unpublished-require
+const LERNA_VERSION = require("../../core/lerna/package.json").version;
 
-const VERSION_REGEX = new RegExp(`^(?:((?:.*?version )|\\^)|v?)${constants.LERNA_VERSION}`, "gm");
-const VERSION_REPLACEMENT = `$1${constants.__TEST_VERSION__}`;
+const VERSION_REGEX = new RegExp(`^(?:((?:.*?version )|\\^)|v?)${LERNA_VERSION}`, "gm");
+const VERSION_REPLACEMENT = "$1__TEST_VERSION__";
 // TODO: maybe even less naïve regex?
 
 function isObject(val) {
@@ -16,7 +17,7 @@ function isString(val) {
 }
 
 function needsReplacement(str) {
-  return str.indexOf(constants.__TEST_VERSION__) === -1;
+  return str.indexOf("__TEST_VERSION__") === -1;
 }
 
 function stableVersion(str) {

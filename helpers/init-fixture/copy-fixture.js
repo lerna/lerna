@@ -5,7 +5,8 @@ const path = require("path");
 
 module.exports = copyFixture;
 
-async function copyFixture(targetDir, fixturePath) {
+function copyFixture(targetDir, fixturePath) {
   const fixtureDir = path.resolve(__dirname, `../fixtures/${fixturePath}`);
-  await fs.copy(fixtureDir, targetDir);
+
+  return fs.copy(fixtureDir, targetDir);
 }

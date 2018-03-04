@@ -14,11 +14,11 @@ module.exports = updateLernaConfig;
  * @param {String} testDir where target lerna.json exists
  * @param {Object} updates mixed into existing JSON via Object.assign
  */
-async function updateLernaConfig(testDir, updates) {
+function updateLernaConfig(testDir, updates) {
   const lernaJsonLocation = path.join(testDir, "lerna.json");
-  const lernaJson = await fs.readJSON(lernaJsonLocation);
 
-  Object.assign(lernaJson, updates);
-
-  return fs.writeJSON(lernaJsonLocation, lernaJson, { spaces: 2 });
+  return Promise.resolve()
+    .then(() => fs.readJSON(lernaJsonLocation))
+    .then(lernaJson => Object.assign(lernaJson, updates))
+    .then(lernaJson => fs.writeJSON(lernaJsonLocation, lernaJson, { spaces: 2 }));
 }

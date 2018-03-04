@@ -6,7 +6,7 @@ const path = require("path");
 const readPkg = require("read-pkg");
 const semver = require("semver");
 
-const Package = require("../../src/Package");
+const Package = require("@lerna/package");
 
 const toPackage = ref =>
   ref instanceof Package ? ref : new Package(readPkg.sync(ref, { normalize: false }), ref);

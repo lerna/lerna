@@ -4,5 +4,9 @@
   "description": "A local test helper",
   "main": "index.js",
   "private": true,
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "globby": "^8.0.1",
+    "load-json-file": "^4.0.0"
+  }
 }

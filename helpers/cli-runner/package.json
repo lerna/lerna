@@ -4,5 +4,8 @@
   "description": "A local test helper",
   "main": "index.js",
   "private": true,
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "execa": "^0.9.0"
+  }
 }

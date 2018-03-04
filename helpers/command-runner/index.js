@@ -1,7 +1,7 @@
 "use strict";
 
 const yargs = require("yargs/yargs");
-const globalOptions = require("../../src/Command").builder;
+const globalOptions = require("@lerna/global-options");
 
 module.exports = commandRunner;
 

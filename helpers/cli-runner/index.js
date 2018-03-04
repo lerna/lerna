@@ -1,7 +1,8 @@
 "use strict";
 
 const execa = require("execa");
-const { LERNA_BIN } = require("./constants");
+
+const LERNA_BIN = require.resolve("../../core/lerna/cli");
 
 module.exports = runner;
 
