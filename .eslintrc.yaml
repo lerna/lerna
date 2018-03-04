@@ -2,9 +2,11 @@
   root: true
   extends:
     - airbnb-base
+    - plugin:jest/recommended
     - plugin:node/recommended
     - plugin:prettier/recommended
   plugins:
+    - jest
     - node
     - prettier
   rules:
@@ -39,3 +41,36 @@
       - error
       - nofunc
     strict: off
+  overrides:
+    - files:
+        - "test/**"
+        - "**/__tests__/**"
+      env:
+        jest: true
+      rules:
+        # dev dependencies are hoisted to the root
+        import/no-extraneous-dependencies: off
+        node/no-extraneous-require: off
+        node/no-unsupported-features:
+          - error
+          - ignores:
+              - asyncAwait
+              # jest transpiles fast-async
+        no-console: off
+        no-underscore-dangle:
+          - error
+          - allow:
+              - __TEST_VERSION__
+    - files:
+        - "test/fixtures/**"
+        - "**/__fixtures__/**"
+      rules:
+        global-require: off
+        import/no-unresolved: off
+        node/no-missing-require:
+          - error
+          - allowModules:
+            - "@integration/package-1"
+            - "@integration/package-2"
+        no-console: off
+        strict: off
