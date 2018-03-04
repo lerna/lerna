@@ -4,7 +4,7 @@ const path = require("path");
 
 const initFixture = require("./helpers/initFixture");
 
-const BIN = path.join(__dirname, "../bin/lerna.js");
+const BIN = path.join(__dirname, "../cli.js");
 const bin = (args, options) => execa(BIN, args, options);
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
@@ -36,7 +36,7 @@ describe("cli", () => {
   it("should prefer local installs", async () => {
     const cwd = await initFixture("cli/local-install");
     const result = await bin(["--verbose"], { cwd });
-    expect(result.stdout).toContain("fixtures/cli/local-instal/node_modules/lerna/bin/lerna.js");
-    expect(result.stdout).toContain("fixtures/cli/local-instal/node_modules/lerna/lib/cli.js");
+    expect(result.stdout).toContain("__fixtures__/local-install/node_modules/lerna/cli.js");
+    expect(result.stdout).toContain("__fixtures__/local-install/node_modules/@lerna/cli/index.js");
   });
 });
