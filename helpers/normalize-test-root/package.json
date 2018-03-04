@@ -1,6 +1,6 @@
 {
   "name": "@lerna-test/normalize-test-root",
-  "version": "test-only",
+  "version": "0.0.0-test-only",
   "description": "A local test helper",
   "main": "index.js",
   "private": true,
