@@ -1,7 +1,7 @@
 {
-  "name": "@lerna/cli",
+  "name": "@lerna/global-options",
   "version": "3.0.0-alpha.3",
-  "description": "TODO",
+  "description": "Global options applicable to _every_ lerna sub-command",
   "keywords": [
     "lerna",
     "core"
@@ -31,10 +31,6 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/global-options": "file:../global-options",
-    "dedent": "^0.7.0",
-    "is-ci": "^1.0.10",
-    "npmlog": "^4.1.2",
-    "yargs": "^11.0.0"
+    "dedent": "^0.7.0"
   }
 }

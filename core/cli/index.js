@@ -4,7 +4,7 @@ const dedent = require("dedent");
 const isCI = require("is-ci");
 const log = require("npmlog");
 const yargs = require("yargs/yargs");
-const globalOptions = require("@lerna/command").builder;
+const globalOptions = require("@lerna/global-options");
 
 module.exports = lernaCLI;
 
@@ -18,9 +18,6 @@ module.exports = lernaCLI;
  */
 function lernaCLI(argv, cwd) {
   const cli = yargs(argv, cwd);
-
-  // the options grouped under "Global Options:" header
-  const globalKeys = Object.keys(globalOptions).concat(["help", "version"]);
 
   if (isCI || !process.stderr.isTTY) {
     log.disableColor();
@@ -42,10 +39,8 @@ function lernaCLI(argv, cwd) {
     log.enableProgress();
   }
 
-  return cli
+  return globalOptions(cli)
     .usage("Usage: $0 <command> [options]")
-    .options(globalOptions)
-    .group(globalKeys, "Global Options:")
     .commandDir("./commands")
     .demandCommand(1, "A command is required. Pass --help to see all available commands and options.")
     .recommendCommands()
