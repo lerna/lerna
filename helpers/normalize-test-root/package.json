@@ -1,0 +1,8 @@
+{
+  "name": "@lerna-test/normalize-test-root",
+  "version": "test-only",
+  "description": "A local test helper",
+  "main": "index.js",
+  "private": true,
+  "license": "MIT"
+}

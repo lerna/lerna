@@ -43,6 +43,7 @@
     strict: off
   overrides:
     - files:
+        - "helpers/**"
         - "test/**"
         - "**/__tests__/**"
       env:
