@@ -4,7 +4,7 @@ const os = require("os");
 const path = require("path");
 
 // file under test
-const Package = require("../src/Package");
+const Package = require("..");
 
 describe("Package", () => {
   const factory = json =>
