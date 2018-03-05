@@ -1,7 +1,7 @@
 "use strict";
 
-const matchPackageName = require("./match-package-name");
-const ValidationError = require("./validation-error");
+const matchPackageName = require("@lerna/match-package-name");
+const ValidationError = require("@lerna/validation-error");
 
 module.exports = filterPackages;
 

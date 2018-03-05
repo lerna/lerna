@@ -29,5 +29,9 @@
   },
   "scripts": {
     "test": "echo \"Run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@lerna/match-package-name": "file:../match-package-name",
+    "@lerna/validation-error": "file:../validation-error"
   }
 }
