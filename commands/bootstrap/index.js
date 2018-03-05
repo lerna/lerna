@@ -9,70 +9,17 @@ const pMap = require("p-map");
 const pMapSeries = require("p-map-series");
 const pWaterfall = require("p-waterfall");
 
-const Command = require("../Command");
-const FileSystemUtilities = require("../FileSystemUtilities");
-const npmInstall = require("../utils/npm-install");
-const runLifecycle = require("../utils/run-lifecycle");
-const batchPackages = require("../utils/batch-packages");
-const runParallelBatches = require("../utils/run-parallel-batches");
-const matchPackageName = require("../utils/match-package-name");
-const hasDependencyInstalled = require("../utils/has-dependency-installed");
-const symlinkBinary = require("../utils/symlink-binary");
-const symlinkDependencies = require("../utils/symlink-dependencies");
-const ValidationError = require("../utils/validation-error");
-
-exports.handler = function handler(argv) {
-  // eslint-disable-next-line no-use-before-define
-  return new BootstrapCommand(argv);
-};
-
-exports.command = "bootstrap";
-
-exports.describe = "Link local packages together and install remaining package dependencies";
-
-exports.builder = yargs =>
-  yargs
-    .example(
-      "$0 bootstrap -- --no-optional",
-      "# execute `npm install --no-optional` in bootstrapped packages"
-    )
-    .options({
-      hoist: {
-        group: "Command Options:",
-        describe: "Install external dependencies matching [glob] to the repo root",
-        defaultDescription: "'**'",
-        coerce: arg =>
-          // `--hoist` is equivalent to `--hoist=**`.
-          arg === true ? "**" : arg,
-      },
-      nohoist: {
-        group: "Command Options:",
-        describe: "Don't hoist external dependencies matching [glob] to the repo root",
-        type: "string",
-      },
-      mutex: {
-        hidden: true,
-        // untyped and hidden on purpose
-      },
-      "ignore-scripts": {
-        group: "Command Options:",
-        describe: "Don't run lifecycle scripts in bootstrapped packages",
-        type: "boolean",
-        default: undefined,
-      },
-      "npm-client": {
-        group: "Command Options:",
-        describe: "Executable used to install dependencies (npm, yarn, pnpm, ...)",
-        type: "string",
-        requiresArg: true,
-      },
-      registry: {
-        group: "Command Options:",
-        describe: "Use the specified registry for all npm client operations.",
-        type: "string",
-        requiresArg: true,
-      },
-    });
+const Command = require("@lerna/command");
+const FileSystemUtilities = require("@lerna/fs-utils");
+const npmInstall = require("@lerna/npm-install");
+const runLifecycle = require("@lerna/run-lifecycle");
+const batchPackages = require("@lerna/batch-packages");
+const runParallelBatches = require("@lerna/run-parallel-batches");
+const hasDependencyInstalled = require("@lerna/has-dependency-installed");
+const symlinkBinary = require("@lerna/symlink-binary");
+const symlinkDependencies = require("@lerna/symlink-dependencies");
+const ValidationError = require("@lerna/validation-error");
+const isHoistedPackage = require("./lib/is-hoisted-package");
 
 class BootstrapCommand extends Command {
   get requiresGit() {
@@ -545,6 +492,4 @@ class BootstrapCommand extends Command {
   }
 }
 
-function isHoistedPackage(name, hoist, nohoist) {
-  return matchPackageName(name, hoist) && matchPackageName(name, nohoist, true);
-}
+module.exports = BootstrapCommand;
