@@ -13,9 +13,9 @@
     "url": "https://github.com/evocateur"
   },
   "files": [
-    "index.js"
+    "run-parallel-batches.js"
   ],
-  "main": "index.js",
+  "main": "run-parallel-batches.js",
   "engines": {
     "node": ">= 6.9.0"
   },
@@ -29,5 +29,9 @@
   },
   "scripts": {
     "test": "echo \"Run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "p-map": "^1.2.0",
+    "p-map-series": "^1.0.0"
   }
 }
