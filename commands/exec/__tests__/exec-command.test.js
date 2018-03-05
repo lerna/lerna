@@ -1,21 +1,21 @@
 "use strict";
 
-jest.mock("../src/ChildProcessUtilities");
-jest.mock("../src/utils/collect-updates");
+jest.mock("@lerna/child-process");
+jest.mock("@lerna/collect-updates");
 
 const path = require("path");
 
 // mocked modules
-const ChildProcessUtilities = require("../src/ChildProcessUtilities");
-const collectUpdates = require("../src/utils/collect-updates");
+const ChildProcessUtilities = require("@lerna/child-process");
+const collectUpdates = require("@lerna/collect-updates"); // FIXME: remove coupling to implementation detail
 
 // helpers
-const initFixture = require("./helpers/initFixture");
-const loggingOutput = require("./helpers/loggingOutput");
-const normalizeRelativeDir = require("./helpers/normalizeRelativeDir");
+const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const loggingOutput = require("@lerna-test/logging-output");
+const normalizeRelativeDir = require("@lerna-test/normalize-relative-dir");
 
 // file under test
-const lernaExec = require("./helpers/command-runner")(require("../src/commands/ExecCommand"));
+const lernaExec = require("@lerna-test/command-runner")(require("../command"));
 
 // assertion helpers
 const calledInPackages = () =>
@@ -37,7 +37,7 @@ describe("ExecCommand", () => {
     it("should complain if invoked without command", async () => {
       expect.assertions(1);
 
-      const testDir = await initFixture("ExecCommand/basic");
+      const testDir = await initFixture("basic");
 
       try {
         await lernaExec(testDir)("--parallel");
@@ -49,7 +49,7 @@ describe("ExecCommand", () => {
     it("rejects with execution error", async () => {
       expect.assertions(1);
 
-      const testDir = await initFixture("ExecCommand/basic");
+      const testDir = await initFixture("basic");
 
       ChildProcessUtilities.spawn.mockImplementationOnce(() => {
         const boom = new Error("execa error");
@@ -67,7 +67,7 @@ describe("ExecCommand", () => {
     });
 
     it("should ignore execution errors with --bail=false", async () => {
-      const testDir = await initFixture("ExecCommand/basic");
+      const testDir = await initFixture("basic");
 
       await lernaExec(testDir)("boom", "--no-bail");
 
@@ -82,7 +82,7 @@ describe("ExecCommand", () => {
     });
 
     it("should filter packages with `ignore`", async () => {
-      const testDir = await initFixture("ExecCommand/basic");
+      const testDir = await initFixture("basic");
 
       await lernaExec(testDir)("ls", "--ignore", "package-1");
 
@@ -98,7 +98,7 @@ describe("ExecCommand", () => {
     });
 
     it("should filter packages that are not updated with --since", async () => {
-      const testDir = await initFixture("ExecCommand/basic");
+      const testDir = await initFixture("basic");
 
       collectUpdates.mockReturnValueOnce([
         {
@@ -123,7 +123,7 @@ describe("ExecCommand", () => {
     });
 
     it("should run a command", async () => {
-      const testDir = await initFixture("ExecCommand/basic");
+      const testDir = await initFixture("basic");
 
       await lernaExec(testDir)("ls");
 
@@ -132,7 +132,7 @@ describe("ExecCommand", () => {
     });
 
     it("should run a command with parameters", async () => {
-      const testDir = await initFixture("ExecCommand/basic");
+      const testDir = await initFixture("basic");
 
       await lernaExec(testDir)("ls", "--", "-la");
 
@@ -141,7 +141,7 @@ describe("ExecCommand", () => {
     });
 
     it("runs a command for a given scope", async () => {
-      const testDir = await initFixture("ExecCommand/basic");
+      const testDir = await initFixture("basic");
 
       await lernaExec(testDir)("ls", "--scope", "package-1");
 
@@ -149,7 +149,7 @@ describe("ExecCommand", () => {
     });
 
     it("does not run a command for ignored packages", async () => {
-      const testDir = await initFixture("ExecCommand/basic");
+      const testDir = await initFixture("basic");
 
       await lernaExec(testDir)("ls", "--ignore", "package-@(2|3|4)");
 
@@ -157,7 +157,7 @@ describe("ExecCommand", () => {
     });
 
     it("executes a command in all packages with --parallel", async () => {
-      const testDir = await initFixture("ExecCommand/basic");
+      const testDir = await initFixture("basic");
       ChildProcessUtilities.spawnStreaming = jest.fn(() => Promise.resolve());
 
       await lernaExec(testDir)("--parallel", "ls");
@@ -166,7 +166,7 @@ describe("ExecCommand", () => {
     });
 
     it("executes a command in all packages with --stream", async () => {
-      const testDir = await initFixture("ExecCommand/basic");
+      const testDir = await initFixture("basic");
       ChildProcessUtilities.spawnStreaming = jest.fn(() => Promise.resolve());
 
       await lernaExec(testDir)("--stream", "ls");
@@ -177,7 +177,7 @@ describe("ExecCommand", () => {
 
   describe("in a cyclical repo", () => {
     it("warns when cycles are encountered", async () => {
-      const testDir = await initFixture("PackageUtilities/toposort");
+      const testDir = await initFixture("toposort");
 
       await lernaExec(testDir)("ls");
 
@@ -204,7 +204,7 @@ describe("ExecCommand", () => {
     it("should throw an error with --reject-cycles", async () => {
       expect.assertions(1);
 
-      const testDir = await initFixture("PackageUtilities/toposort");
+      const testDir = await initFixture("toposort");
 
       try {
         await lernaExec(testDir)("ls", "--reject-cycles");
