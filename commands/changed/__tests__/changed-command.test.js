@@ -5,12 +5,12 @@ const path = require("path");
 const touch = require("touch");
 
 // helpers
-const consoleOutput = require("./helpers/consoleOutput");
-const initFixture = require("./helpers/initFixture");
-const updateLernaConfig = require("./helpers/updateLernaConfig");
+const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const consoleOutput = require("@lerna-test/console-output");
+const updateLernaConfig = require("@lerna-test/update-lerna-config");
 
 // file under test
-const lernaUpdated = require("./helpers/command-runner")(require("../src/commands/UpdatedCommand"));
+const lernaChanged = require("@lerna-test/command-runner")(require("../command"));
 
 const gitTag = cwd => execa("git", ["tag", "v1.0.0"], { cwd });
 const gitAdd = cwd => execa("git", ["add", "-A"], { cwd });
@@ -24,58 +24,58 @@ const setupGitChanges = async (cwd, filePaths) => {
   await gitCommit(cwd);
 };
 
-describe("UpdatedCommand", () => {
+describe("ChangedCommand", () => {
   /** =========================================================================
    * Basic
    * ======================================================================= */
 
   describe("basic", () => {
     it("should list changes", async () => {
-      const testDir = await initFixture("UpdatedCommand/basic");
+      const testDir = await initFixture("basic");
 
       await setupGitChanges(testDir, ["packages/package-2/random-file"]);
-      await lernaUpdated(testDir)();
+      await lernaChanged(testDir)();
 
       expect(consoleOutput()).toMatchSnapshot();
     });
 
     it("should list all packages when no tag is found", async () => {
-      const testDir = await initFixture("UpdatedCommand/basic");
+      const testDir = await initFixture("basic");
 
-      await lernaUpdated(testDir)();
+      await lernaChanged(testDir)();
 
       expect(consoleOutput()).toMatchSnapshot();
     });
 
     it("should list changes with --force-publish", async () => {
-      const testDir = await initFixture("UpdatedCommand/basic");
+      const testDir = await initFixture("basic");
 
       await setupGitChanges(testDir, ["packages/package-2/random-file"]);
-      await lernaUpdated(testDir)("--force-publish");
+      await lernaChanged(testDir)("--force-publish");
 
       expect(consoleOutput()).toMatchSnapshot();
     });
 
     it("should list changes with --force-publish package-2,package-4", async () => {
-      const testDir = await initFixture("UpdatedCommand/basic");
+      const testDir = await initFixture("basic");
 
       await setupGitChanges(testDir, ["packages/package-3/random-file"]);
-      await lernaUpdated(testDir)("--force-publish", "package-2,package-4");
+      await lernaChanged(testDir)("--force-publish", "package-2,package-4");
 
       expect(consoleOutput()).toMatchSnapshot();
     });
 
     it("should list changes with --force-publish package-2 --force-publish package-4", async () => {
-      const testDir = await initFixture("UpdatedCommand/basic");
+      const testDir = await initFixture("basic");
 
       await setupGitChanges(testDir, ["packages/package-3/random-file"]);
-      await lernaUpdated(testDir)("--force-publish", "package-2", "--force-publish", "package-4");
+      await lernaChanged(testDir)("--force-publish", "package-2", "--force-publish", "package-4");
 
       expect(consoleOutput()).toMatchSnapshot();
     });
 
     it("should list changes without ignored files", async () => {
-      const testDir = await initFixture("UpdatedCommand/basic");
+      const testDir = await initFixture("basic");
 
       await updateLernaConfig(testDir, {
         commands: {
@@ -87,25 +87,25 @@ describe("UpdatedCommand", () => {
       });
 
       await setupGitChanges(testDir, ["packages/package-2/ignored-file", "packages/package-3/random-file"]);
-      await lernaUpdated(testDir)();
+      await lernaChanged(testDir)();
 
       expect(consoleOutput()).toMatchSnapshot();
     });
 
     it("should list changes in private packages", async () => {
-      const testDir = await initFixture("UpdatedCommand/basic");
+      const testDir = await initFixture("basic");
 
       await setupGitChanges(testDir, ["packages/package-5/random-file"]);
-      await lernaUpdated(testDir)();
+      await lernaChanged(testDir)();
 
       expect(consoleOutput()).toMatchSnapshot();
     });
 
     it("should return a non-zero exit code when there are no changes", async () => {
-      const testDir = await initFixture("UpdatedCommand/basic");
+      const testDir = await initFixture("basic");
 
       await gitTag(testDir);
-      await lernaUpdated(testDir)();
+      await lernaChanged(testDir)();
 
       expect(process.exitCode).toBe(1);
 
@@ -120,34 +120,34 @@ describe("UpdatedCommand", () => {
 
   describe("circular", () => {
     it("should list changes", async () => {
-      const testDir = await initFixture("UpdatedCommand/circular");
+      const testDir = await initFixture("circular");
 
       await setupGitChanges(testDir, ["packages/package-3/random-file"]);
-      await lernaUpdated(testDir)();
+      await lernaChanged(testDir)();
 
       expect(consoleOutput()).toMatchSnapshot();
     });
 
     it("should list changes with --force-publish *", async () => {
-      const testDir = await initFixture("UpdatedCommand/circular");
+      const testDir = await initFixture("circular");
 
       await setupGitChanges(testDir, ["packages/package-2/random-file"]);
-      await lernaUpdated(testDir)("--force-publish", "*");
+      await lernaChanged(testDir)("--force-publish", "*");
 
       expect(consoleOutput()).toMatchSnapshot();
     });
 
     it("should list changes with --force-publish package-2", async () => {
-      const testDir = await initFixture("UpdatedCommand/circular");
+      const testDir = await initFixture("circular");
 
       await setupGitChanges(testDir, ["packages/package-4/random-file"]);
-      await lernaUpdated(testDir)("--force-publish", "package-2");
+      await lernaChanged(testDir)("--force-publish", "package-2");
 
       expect(consoleOutput()).toMatchSnapshot();
     });
 
     it("should list changes without ignored files", async () => {
-      const testDir = await initFixture("UpdatedCommand/circular");
+      const testDir = await initFixture("circular");
 
       await updateLernaConfig(testDir, {
         command: {
@@ -159,16 +159,16 @@ describe("UpdatedCommand", () => {
       });
 
       await setupGitChanges(testDir, ["packages/package-2/ignored-file", "packages/package-3/random-file"]);
-      await lernaUpdated(testDir)();
+      await lernaChanged(testDir)();
 
       expect(consoleOutput()).toMatchSnapshot();
     });
 
     it("should return a non-zero exit code when there are no changes", async () => {
-      const testDir = await initFixture("UpdatedCommand/circular");
+      const testDir = await initFixture("circular");
 
       await gitTag(testDir);
-      await lernaUpdated(testDir)();
+      await lernaChanged(testDir)();
 
       expect(process.exitCode).toBe(1);
 
@@ -183,10 +183,10 @@ describe("UpdatedCommand", () => {
 
   describe("with --json", () => {
     it("should list changes as a json object", async () => {
-      const testDir = await initFixture("UpdatedCommand/basic");
+      const testDir = await initFixture("basic");
 
       await setupGitChanges(testDir, ["packages/package-2/random-file"]);
-      await lernaUpdated(testDir)("--json");
+      await lernaChanged(testDir)("--json");
 
       // Output should be a parseable string
       const jsonOutput = JSON.parse(consoleOutput());
