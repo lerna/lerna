@@ -13,9 +13,9 @@
     "url": "https://github.com/evocateur"
   },
   "files": [
-    "index.js"
+    "filter-packages.js"
   ],
-  "main": "index.js",
+  "main": "filter-packages.js",
   "engines": {
     "node": ">= 6.9.0"
   },
