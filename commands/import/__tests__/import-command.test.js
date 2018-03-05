@@ -25,10 +25,7 @@ describe("ImportCommand", () => {
 
   describe("import", () => {
     const initBasicFixtures = () =>
-      Promise.all([
-        initFixture("ImportCommand/basic"),
-        initFixture("ImportCommand/external", "Init external commit"),
-      ]);
+      Promise.all([initFixture("basic"), initFixture("external", "Init external commit")]);
 
     it("creates a module in packages location with imported commit history", async () => {
       const [testDir, externalDir] = await initBasicFixtures();
@@ -237,8 +234,8 @@ describe("ImportCommand", () => {
     // #1197
     it("creates a module in packages location with imported commit history", async () => {
       const [externalDir, rootDir] = await Promise.all([
-        initFixture("ImportCommand/external", "Init external commit"),
-        initFixture("ImportCommand/lerna-not-in-root"),
+        initFixture("external", "Init external commit"),
+        initFixture("lerna-not-in-root"),
       ]);
       const testDir = path.join(rootDir, "subdir");
       const packageJson = path.join(testDir, "packages", path.basename(externalDir), "package.json");

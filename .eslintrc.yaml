@@ -43,7 +43,7 @@
     strict: off
   overrides:
     - files:
-        - "test/**"
+        - "integration/**"
         - "**/__tests__/**"
       env:
         jest: true

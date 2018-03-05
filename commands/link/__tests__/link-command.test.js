@@ -30,7 +30,7 @@ describe("LinkCommand", () => {
 
   describe("with local package dependencies", () => {
     it("should symlink all packages", async () => {
-      const testDir = await initFixture("LinkCommand/basic");
+      const testDir = await initFixture("basic");
       await lernaLink(testDir)();
 
       expect(symlinkedDirectories(testDir)).toMatchSnapshot();
@@ -39,7 +39,7 @@ describe("LinkCommand", () => {
 
   describe("with --force-local", () => {
     it("should force symlink of all packages", async () => {
-      const testDir = await initFixture("LinkCommand/force-local");
+      const testDir = await initFixture("force-local");
       await lernaLink(testDir)();
 
       expect(symlinkedDirectories(testDir)).toMatchSnapshot();
