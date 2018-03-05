@@ -2,10 +2,10 @@
 
 const semver = require("semver");
 
-const GitUtilities = require("../GitUtilities");
-const collectDependents = require("./collect-dependents");
-const getForcedPackages = require("./get-forced-packages");
-const makeDiffPredicate = require("./make-diff-predicate");
+const GitUtilities = require("@lerna/git-utils");
+const collectDependents = require("./lib/collect-dependents");
+const getForcedPackages = require("./lib/get-forced-packages");
+const makeDiffPredicate = require("./lib/make-diff-predicate");
 
 module.exports = collectUpdates;
 

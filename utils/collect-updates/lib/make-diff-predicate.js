@@ -1,7 +1,7 @@
 "use strict";
 
 const minimatch = require("minimatch");
-const GitUtilities = require("../GitUtilities");
+const GitUtilities = require("@lerna/git-utils");
 
 module.exports = makeDiffPredicate;
 

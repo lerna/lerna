@@ -13,9 +13,10 @@
     "url": "https://github.com/evocateur"
   },
   "files": [
-    "index.js"
+    "collect-updates.js",
+    "lib"
   ],
-  "main": "index.js",
+  "main": "collect-updates.js",
   "engines": {
     "node": ">= 6.9.0"
   },
@@ -29,5 +30,10 @@
   },
   "scripts": {
     "test": "echo \"Run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@lerna/git-utils": "file:../../core/git-utils",
+    "minimatch": "^3.0.4",
+    "semver": "^5.5.0"
   }
 }
