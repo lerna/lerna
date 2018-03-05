@@ -3,23 +3,23 @@
 jest.mock("get-stream");
 jest.mock("conventional-changelog-core");
 jest.mock("conventional-recommended-bump");
-jest.mock("../src/FileSystemUtilities");
+jest.mock("@lerna/fs");
 
 const dedent = require("dedent");
 const path = require("path");
-const Package = require("../src/Package");
+const Package = require("@lerna/package");
 
 // mocked modules
 const getStream = require("get-stream");
 const conventionalChangelogCore = require("conventional-changelog-core");
 const conventionalRecommendedBump = require("conventional-recommended-bump");
-const FileSystemUtilities = require("../src/FileSystemUtilities");
+const FileSystemUtilities = require("@lerna/fs");
 
 // helpers
-const callsBack = require("./helpers/callsBack");
+const callsBack = require("@lerna-test/calls-back");
 
 // file under test
-const ConventionalCommitUtilities = require("../src/ConventionalCommitUtilities");
+const ConventionalCommitUtilities = require("..");
 
 describe("ConventionalCommitUtilities", () => {
   FileSystemUtilities.readFile.mockResolvedValue("");
