@@ -3,10 +3,10 @@
 const { EOL } = require("os");
 const log = require("npmlog");
 const path = require("path");
-const tempWrite = require("temp-write");
 const slash = require("slash");
+const tempWrite = require("temp-write");
 
-const ChildProcessUtilities = require("./ChildProcessUtilities");
+const ChildProcessUtilities = require("@lerna/child-process");
 
 function isDetachedHead(opts) {
   log.silly("isDetachedHead");

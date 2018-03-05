@@ -1,17 +1,17 @@
 "use strict";
 
 jest.mock("temp-write");
-jest.mock("../src/ChildProcessUtilities");
+jest.mock("@lerna/child-process");
 
 const { EOL } = require("os");
 const path = require("path");
 
 // mocked modules
 const tempWrite = require("temp-write");
-const ChildProcessUtilities = require("../src/ChildProcessUtilities");
+const ChildProcessUtilities = require("@lerna/child-process");
 
 // file under test
-const GitUtilities = require("../src/GitUtilities");
+const GitUtilities = require("..");
 
 describe("GitUtilities", () => {
   ChildProcessUtilities.exec.mockResolvedValue();

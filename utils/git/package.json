@@ -29,5 +29,11 @@
   },
   "scripts": {
     "test": "echo \"Run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@lerna/child-process": "file:../child-process",
+    "npmlog": "^4.1.2",
+    "slash": "^1.0.0",
+    "temp-write": "^3.4.0"
   }
 }
