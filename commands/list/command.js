@@ -5,9 +5,9 @@ const LsCommand = require(".");
 /**
  * @see https://github.com/yargs/yargs/blob/master/docs/advanced.md#providing-a-command-module
  */
-exports.command = "ls";
+exports.command = "list";
 
-exports.aliases = ["list"];
+exports.aliases = ["ls"];
 
 exports.describe = "List local packages";
 
