@@ -13,9 +13,9 @@
     "url": "https://github.com/evocateur"
   },
   "files": [
-    "index.js"
+    "npm-install.js"
   ],
-  "main": "index.js",
+  "main": "npm-install.js",
   "engines": {
     "node": ">= 6.9.0"
   },
@@ -29,5 +29,14 @@
   },
   "scripts": {
     "test": "echo \"Run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@lerna/child-process": "file:../../core/child-process",
+    "@lerna/fs-utils": "file:../../core/fs-utils",
+    "@lerna/get-npm-exec-opts": "file:../get-npm-exec-opts",
+    "npm-package-arg": "^6.0.0",
+    "npmlog": "^4.1.2",
+    "signal-exit": "^3.0.2",
+    "write-pkg": "^3.1.0"
   }
 }

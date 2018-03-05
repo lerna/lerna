@@ -1,18 +1,18 @@
 "use strict";
 
 jest.mock("write-pkg");
-jest.mock("../src/ChildProcessUtilities");
-jest.mock("../src/FileSystemUtilities");
+jest.mock("@lerna/child-process");
+jest.mock("@lerna/fs-utils");
 
 const path = require("path");
 
 // mocked modules
 const writePkg = require("write-pkg");
-const ChildProcessUtilities = require("../src/ChildProcessUtilities");
-const FileSystemUtilities = require("../src/FileSystemUtilities");
+const ChildProcessUtilities = require("@lerna/child-process");
+const FileSystemUtilities = require("@lerna/fs-utils");
 
 // file under test
-const npmInstall = require("../src/utils/npm-install");
+const npmInstall = require("..");
 
 describe("npm-install", () => {
   ChildProcessUtilities.exec.mockResolvedValue();
