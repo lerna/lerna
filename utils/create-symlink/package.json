@@ -13,9 +13,9 @@
     "url": "https://github.com/evocateur"
   },
   "files": [
-    "index.js"
+    "create-symlink.js"
   ],
-  "main": "index.js",
+  "main": "create-symlink.js",
   "engines": {
     "node": ">= 6.9.0"
   },
@@ -29,5 +29,10 @@
   },
   "scripts": {
     "test": "echo \"Run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "cmd-shim": "^2.0.2",
+    "fs-extra": "^5.0.0",
+    "npmlog": "^4.1.2"
   }
 }

@@ -6,8 +6,8 @@ jest.mock("fs-extra");
 const cmdShim = require("cmd-shim");
 const fs = require("fs-extra");
 const path = require("path");
-const callsBack = require("./helpers/callsBack");
-const createSymlink = require("../src/utils/create-symlink");
+const callsBack = require("@lerna-test/calls-back");
+const createSymlink = require("..");
 
 const linkRelative = (from, to) => path.relative(path.dirname(to), from);
 
