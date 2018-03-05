@@ -2,8 +2,8 @@
 
 const log = require("npmlog");
 
-const ChildProcessUtilities = require("../ChildProcessUtilities");
-const getOpts = require("./get-npm-exec-opts");
+const ChildProcessUtilities = require("@lerna/child-process");
+const getOpts = require("@lerna/get-npm-exec-opts");
 
 module.exports = runScript;
 module.exports.stream = stream;
