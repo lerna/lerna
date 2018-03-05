@@ -6,10 +6,10 @@ const pMap = require("p-map");
 const pMapSeries = require("p-map-series");
 const path = require("path");
 
-const FileSystemUtilities = require("../FileSystemUtilities");
-const createSymlink = require("./create-symlink");
-const resolveSymlink = require("./resolve-symlink");
-const symlinkBinary = require("./symlink-binary");
+const FileSystemUtilities = require("@lerna/fs-utils");
+const createSymlink = require("@lerna/create-symlink");
+const resolveSymlink = require("@lerna/resolve-symlink");
+const symlinkBinary = require("@lerna/symlink-binary");
 
 module.exports = symlinkDependencies;
 
