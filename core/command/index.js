@@ -5,7 +5,7 @@ const dedent = require("dedent");
 const log = require("npmlog");
 
 const ChildProcessUtilities = require("@lerna/child-process");
-const GitUtilities = require("@lerna/git");
+const GitUtilities = require("@lerna/git-utils");
 const PackageGraph = require("@lerna/package-graph");
 const Project = require("@lerna/project");
 const writeLogFile = require("@lerna/write-log-file");

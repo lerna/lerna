@@ -1,8 +1,7 @@
-# `@lerna/fs`
+# `@lerna/fs-utils`
 
 > description TODO
 
 ## Usage
 
 TODO
-

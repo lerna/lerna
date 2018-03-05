@@ -31,7 +31,7 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/fs": "file:../fs",
+    "@lerna/fs-utils": "file:../../core/fs-utils",
     "@lerna/validation-error": "file:../validation-error",
     "conventional-changelog-angular": "^1.6.6",
     "conventional-changelog-core": "^2.0.5",

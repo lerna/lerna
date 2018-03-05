@@ -31,15 +31,15 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/child-process": "file:../utils/child-process",
-    "@lerna/collect-packages": "file:../utils/collect-packages",
-    "@lerna/collect-updates": "file:../utils/collect-updates",
-    "@lerna/filter-packages": "file:../utils/filter-packages",
-    "@lerna/git": "file:../utils/git",
+    "@lerna/child-process": "file:../child-process",
+    "@lerna/collect-packages": "file:../../utils/collect-packages",
+    "@lerna/collect-updates": "file:../../utils/collect-updates",
+    "@lerna/filter-packages": "file:../../utils/filter-packages",
+    "@lerna/git-utils": "file:../git-utils",
     "@lerna/package-graph": "file:../package-graph",
     "@lerna/project": "file:../project",
-    "@lerna/validation-error": "file:../utils/validation-error",
-    "@lerna/write-log-file": "file:../utils/write-log-file",
+    "@lerna/validation-error": "file:../../utils/validation-error",
+    "@lerna/write-log-file": "file:../../utils/write-log-file",
     "dedent": "^0.7.0",
     "lodash": "^4.17.5",
     "npmlog": "^4.1.2"

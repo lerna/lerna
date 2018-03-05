@@ -13,7 +13,7 @@ const Package = require("@lerna/package");
 const getStream = require("get-stream");
 const conventionalChangelogCore = require("conventional-changelog-core");
 const conventionalRecommendedBump = require("conventional-recommended-bump");
-const FileSystemUtilities = require("@lerna/fs");
+const FileSystemUtilities = require("@lerna/fs-utils");
 
 // helpers
 const callsBack = require("@lerna-test/calls-back");

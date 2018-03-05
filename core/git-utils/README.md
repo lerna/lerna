@@ -1,8 +1,7 @@
-# `@lerna/git`
+# `@lerna/git-utils`
 
 > description TODO
 
 ## Usage
 
 TODO
-

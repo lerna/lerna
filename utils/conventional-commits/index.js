@@ -9,7 +9,7 @@ const npa = require("npm-package-arg");
 const path = require("path");
 const semver = require("semver");
 
-const FileSystemUtilities = require("@lerna/fs");
+const FileSystemUtilities = require("@lerna/fs-utils");
 const ValidationError = require("@lerna/validation-error");
 
 const cfgCache = new Map();
