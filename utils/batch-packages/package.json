@@ -13,9 +13,9 @@
     "url": "https://github.com/evocateur"
   },
   "files": [
-    "index.js"
+    "batch-packages.js"
   ],
-  "main": "index.js",
+  "main": "batch-packages.js",
   "engines": {
     "node": ">= 6.9.0"
   },
@@ -29,5 +29,10 @@
   },
   "scripts": {
     "test": "echo \"Run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@lerna/package-graph": "file:../../core/package-graph",
+    "@lerna/validation-error": "file:../validation-error",
+    "npmlog": "^4.1.2"
   }
 }
