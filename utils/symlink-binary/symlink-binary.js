@@ -5,9 +5,9 @@ const path = require("path");
 const pMap = require("p-map");
 const readPkg = require("read-pkg");
 
-const Package = require("../Package");
-const FileSystemUtilities = require("../FileSystemUtilities");
-const createSymlink = require("./create-symlink");
+const Package = require("@lerna/package");
+const FileSystemUtilities = require("@lerna/fs-utils");
+const createSymlink = require("@lerna/create-symlink");
 
 module.exports = symlinkBinary;
 

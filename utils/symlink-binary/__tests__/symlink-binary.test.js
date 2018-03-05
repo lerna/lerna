@@ -3,20 +3,20 @@
 const path = require("path");
 const readPkg = require("read-pkg");
 
-const Package = require("../src/Package");
+const Package = require("@lerna/package");
 
 // helpers
-const initFixture = require("./helpers/initFixture");
-const pkgMatchers = require("./helpers/pkgMatchers");
+const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const pkgMatchers = require("@lerna-test/pkg-matchers");
 
 // file under test
-const symlinkBinary = require("../src/utils/symlink-binary");
+const symlinkBinary = require("..");
 
 expect.extend(pkgMatchers);
 
 describe("symlink-binary", () => {
   it("should work with references", async () => {
-    const testDir = await initFixture("PackageUtilities/links");
+    const testDir = await initFixture("links");
     const srcPath = path.join(testDir, "packages/package-2");
     const dstPath = path.join(testDir, "packages/package-3");
 
@@ -26,7 +26,7 @@ describe("symlink-binary", () => {
   });
 
   it("should work with packages", async () => {
-    const testDir = await initFixture("PackageUtilities/links");
+    const testDir = await initFixture("links");
     const srcPath = path.join(testDir, "packages/package-2");
     const dstPath = path.join(testDir, "packages/package-3");
     const [srcJson, dstJson] = await Promise.all([
@@ -40,7 +40,7 @@ describe("symlink-binary", () => {
   });
 
   it("should skip missing bin config", async () => {
-    const testDir = await initFixture("PackageUtilities/links");
+    const testDir = await initFixture("links");
     const srcPath = path.join(testDir, "packages/package-1");
     const dstPath = path.join(testDir, "packages/package-2");
 
@@ -50,7 +50,7 @@ describe("symlink-binary", () => {
   });
 
   it("should skip missing bin files", async () => {
-    const testDir = await initFixture("PackageUtilities/links");
+    const testDir = await initFixture("links");
     const srcPath = path.join(testDir, "packages/package-3");
     const dstPath = path.join(testDir, "packages/package-4");
 
@@ -61,7 +61,7 @@ describe("symlink-binary", () => {
   });
 
   it("should preserve previous bin entries", async () => {
-    const testDir = await initFixture("PackageUtilities/links");
+    const testDir = await initFixture("links");
     const pkg2Path = path.join(testDir, "packages/package-2");
     const pkg3Path = path.join(testDir, "packages/package-3");
     const destPath = path.join(testDir, "packages/package-4");

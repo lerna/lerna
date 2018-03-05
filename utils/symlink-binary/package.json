@@ -13,9 +13,9 @@
     "url": "https://github.com/evocateur"
   },
   "files": [
-    "index.js"
+    "symlink-binary.js"
   ],
-  "main": "index.js",
+  "main": "symlink-binary.js",
   "engines": {
     "node": ">= 6.9.0"
   },
@@ -29,5 +29,13 @@
   },
   "scripts": {
     "test": "echo \"Run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@lerna/create-symlink": "file:../create-symlink",
+    "@lerna/fs-utils": "file:../../core/fs-utils",
+    "@lerna/package": "file:../../core/package",
+    "fs-extra": "^5.0.0",
+    "p-map": "^1.2.0",
+    "read-pkg": "^3.0.0"
   }
 }
