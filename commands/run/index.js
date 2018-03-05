@@ -2,48 +2,11 @@
 
 const pMap = require("p-map");
 
-const Command = require("../Command");
-const npmRunScript = require("../utils/npm-run-script");
-const batchPackages = require("../utils/batch-packages");
-const runParallelBatches = require("../utils/run-parallel-batches");
-const output = require("../utils/output");
-
-exports.handler = function handler(argv) {
-  // eslint-disable-next-line no-use-before-define
-  return new RunCommand(argv);
-};
-
-exports.command = "run <script>";
-
-exports.describe = "Run an npm script in each package that contains that script.";
-
-exports.builder = yargs =>
-  yargs
-    .example("$0 run build -- --silent", "# `npm run build --silent` in all packages with a build script")
-    .options({
-      stream: {
-        group: "Command Options:",
-        describe: "Stream output with lines prefixed by package.",
-        type: "boolean",
-        default: undefined,
-      },
-      parallel: {
-        group: "Command Options:",
-        describe: "Run script in all packages with unlimited concurrency, streaming prefixed output",
-        type: "boolean",
-        default: undefined,
-      },
-      "npm-client": {
-        group: "Command Options:",
-        describe: "Executable used to run scripts (npm, yarn, pnpm, ...)",
-        type: "string",
-        requiresArg: true,
-      },
-    })
-    .positional("script", {
-      describe: "The npm script to run. Pass flags to send to the npm client after --",
-      type: "string",
-    });
+const Command = require("@lerna/command");
+const npmRunScript = require("@lerna/npm-run-script");
+const batchPackages = require("@lerna/batch-packages");
+const runParallelBatches = require("@lerna/run-parallel-batches");
+const output = require("@lerna/output");
 
 class RunCommand extends Command {
   get requiresGit() {
@@ -151,3 +114,5 @@ class RunCommand extends Command {
       });
   }
 }
+
+module.exports = RunCommand;

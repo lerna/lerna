@@ -1,22 +1,22 @@
 "use strict";
 
-jest.mock("../src/utils/npm-run-script");
-jest.mock("../src/utils/collect-updates");
+jest.mock("@lerna/npm-run-script");
+jest.mock("@lerna/collect-updates");
 
 const path = require("path");
 
 // mocked modules
-const npmRunScript = require("../src/utils/npm-run-script");
-const collectUpdates = require("../src/utils/collect-updates");
+const npmRunScript = require("@lerna/npm-run-script");
+const collectUpdates = require("@lerna/collect-updates"); // FIXME: remove coupling to implementation detail
 
 // helpers
-const initFixture = require("./helpers/initFixture");
-const consoleOutput = require("./helpers/consoleOutput");
-const loggingOutput = require("./helpers/loggingOutput");
-const normalizeRelativeDir = require("./helpers/normalizeRelativeDir");
+const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const consoleOutput = require("@lerna-test/console-output");
+const loggingOutput = require("@lerna-test/logging-output");
+const normalizeRelativeDir = require("@lerna-test/normalize-relative-dir");
 
 // file under test
-const lernaRun = require("./helpers/command-runner")(require("../src/commands/RunCommand"));
+const lernaRun = require("@lerna-test/command-runner")(require("../command"));
 
 // assertion helpers
 const ranInPackages = testDir =>
@@ -41,7 +41,7 @@ describe("RunCommand", () => {
 
   describe("in a basic repo", () => {
     it("runs a script in packages", async () => {
-      const testDir = await initFixture("RunCommand/basic");
+      const testDir = await initFixture("basic");
 
       await lernaRun(testDir)("my-script");
 
@@ -50,7 +50,7 @@ describe("RunCommand", () => {
     });
 
     it("runs a script in packages with --stream", async () => {
-      const testDir = await initFixture("RunCommand/basic");
+      const testDir = await initFixture("basic");
 
       await lernaRun(testDir)("my-script", "--stream");
 
@@ -58,7 +58,7 @@ describe("RunCommand", () => {
     });
 
     it("always runs env script", async () => {
-      const testDir = await initFixture("RunCommand/basic");
+      const testDir = await initFixture("basic");
 
       await lernaRun(testDir)("env");
 
@@ -66,7 +66,7 @@ describe("RunCommand", () => {
     });
 
     it("runs a script only in scoped packages", async () => {
-      const testDir = await initFixture("RunCommand/basic");
+      const testDir = await initFixture("basic");
 
       await lernaRun(testDir)("my-script", "--scope", "package-1");
 
@@ -74,7 +74,7 @@ describe("RunCommand", () => {
     });
 
     it("does not run a script in ignored packages", async () => {
-      const testDir = await initFixture("RunCommand/basic");
+      const testDir = await initFixture("basic");
 
       await lernaRun(testDir)("my-script", "--ignore", "package-@(2|3|4)");
 
@@ -82,7 +82,7 @@ describe("RunCommand", () => {
     });
 
     it("should filter packages that are not updated with --since", async () => {
-      const testDir = await initFixture("RunCommand/basic");
+      const testDir = await initFixture("basic");
 
       collectUpdates.mockReturnValueOnce([
         {
@@ -100,7 +100,7 @@ describe("RunCommand", () => {
     });
 
     it("does not error when no packages match", async () => {
-      const testDir = await initFixture("RunCommand/basic");
+      const testDir = await initFixture("basic");
 
       await lernaRun(testDir)("missing-script");
 
@@ -109,7 +109,7 @@ describe("RunCommand", () => {
     });
 
     it("runs a script in all packages with --parallel", async () => {
-      const testDir = await initFixture("RunCommand/basic");
+      const testDir = await initFixture("basic");
 
       await lernaRun(testDir)("env", "--parallel");
 
@@ -117,7 +117,7 @@ describe("RunCommand", () => {
     });
 
     it("supports alternate npmClient configuration", async () => {
-      const testDir = await initFixture("RunCommand/basic");
+      const testDir = await initFixture("basic");
 
       await lernaRun(testDir)("env", "--npm-client", "yarn");
 
@@ -127,7 +127,7 @@ describe("RunCommand", () => {
 
   describe("with --include-filtered-dependencies", () => {
     it("runs scoped command including filtered deps", async () => {
-      const testDir = await initFixture("RunCommand/include-filtered-dependencies");
+      const testDir = await initFixture("include-filtered-dependencies");
       await lernaRun(testDir)("my-script", "--scope", "@test/package-2", "--include-filtered-dependencies");
 
       expect(ranInPackages(testDir)).toMatchSnapshot();
@@ -136,7 +136,7 @@ describe("RunCommand", () => {
 
   describe("in a cyclical repo", () => {
     it("warns when cycles are encountered", async () => {
-      const testDir = await initFixture("PackageUtilities/toposort");
+      const testDir = await initFixture("toposort");
 
       await lernaRun(testDir)("env");
 
@@ -154,7 +154,7 @@ describe("RunCommand", () => {
     it("should throw an error with --reject-cycles", async () => {
       expect.assertions(1);
 
-      const testDir = await initFixture("PackageUtilities/toposort");
+      const testDir = await initFixture("toposort");
 
       try {
         await lernaRun(testDir)("env", "--reject-cycles");
