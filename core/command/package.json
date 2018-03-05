@@ -38,7 +38,7 @@
     "@lerna/git-utils": "file:../git-utils",
     "@lerna/package-graph": "file:../package-graph",
     "@lerna/project": "file:../project",
-    "@lerna/validation-error": "file:../../utils/validation-error",
+    "@lerna/validation-error": "file:../validation-error",
     "@lerna/write-log-file": "file:../../utils/write-log-file",
     "dedent": "^0.7.0",
     "lodash": "^4.17.5",

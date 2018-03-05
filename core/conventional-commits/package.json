@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "@lerna/fs-utils": "file:../fs-utils",
-    "@lerna/validation-error": "file:../../utils/validation-error",
+    "@lerna/validation-error": "file:../validation-error",
     "conventional-changelog-angular": "^1.6.6",
     "conventional-changelog-core": "^2.0.5",
     "conventional-recommended-bump": "^2.0.6",

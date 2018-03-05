@@ -4,7 +4,7 @@
   "description": "TODO",
   "keywords": [
     "lerna",
-    "utils"
+    "core"
   ],
   "homepage": "https://github.com/lerna/lerna",
   "license": "MIT",

@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "@lerna/package": "file:../../core/package",
-    "@lerna/validation-error": "file:../validation-error",
+    "@lerna/validation-error": "file:../../core/validation-error",
     "globby": "^8.0.1",
     "load-json-file": "^4.0.0",
     "p-map": "^1.2.0"

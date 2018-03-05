@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "@lerna/package": "file:../package",
-    "@lerna/validation-error": "file:../../utils/validation-error",
+    "@lerna/validation-error": "file:../validation-error",
     "dedent": "^0.7.0",
     "find-up": "^2.1.0",
     "glob-parent": "^3.1.0",
