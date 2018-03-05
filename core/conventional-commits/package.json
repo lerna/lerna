@@ -4,7 +4,7 @@
   "description": "TODO",
   "keywords": [
     "lerna",
-    "utils"
+    "core"
   ],
   "homepage": "https://github.com/lerna/lerna",
   "license": "MIT",
@@ -31,8 +31,8 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/fs-utils": "file:../../core/fs-utils",
-    "@lerna/validation-error": "file:../validation-error",
+    "@lerna/fs-utils": "file:../fs-utils",
+    "@lerna/validation-error": "file:../../utils/validation-error",
     "conventional-changelog-angular": "^1.6.6",
     "conventional-changelog-core": "^2.0.5",
     "conventional-recommended-bump": "^2.0.6",
