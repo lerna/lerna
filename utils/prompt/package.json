@@ -29,5 +29,9 @@
   },
   "scripts": {
     "test": "echo \"Run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "inquirer": "^5.1.0",
+    "npmlog": "^4.1.2"
   }
 }
