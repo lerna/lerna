@@ -1,37 +1,17 @@
 "use strict";
 
 const path = require("path");
-const dedent = require("dedent");
 const npa = require("npm-package-arg");
 const packageJson = require("package-json");
 const readPkg = require("read-pkg");
 const semver = require("semver");
 const writePkg = require("write-pkg");
 
-const BootstrapCommand = require("./BootstrapCommand");
-const Command = require("../Command");
-const ValidationError = require("../utils/validation-error");
-
-exports.command = "add [pkgNames..]";
-
-exports.describe = "Add dependencies to matched packages";
-
-exports.builder = yargs =>
-  yargs
-    .options({
-      dev: {
-        describe: "Save to devDependencies",
-      },
-    })
-    .positional("pkgNames", {
-      describe: "One or more package names to add as a dependency",
-      type: "string",
-    });
-
-exports.handler = function handler(argv) {
-  // eslint-disable-next-line no-use-before-define
-  return new AddCommand(argv);
-};
+const BootstrapCommand = require("@lerna/bootstrap/command");
+const Command = require("@lerna/command");
+const ValidationError = require("@lerna/validation-error");
+const getRangeToReference = require("./lib/get-range-to-reference");
+const notSatisfiedMessage = require("./lib/not-satisfied-message");
 
 class AddCommand extends Command {
   get requireGit() {
@@ -215,19 +195,4 @@ class AddCommand extends Command {
   }
 }
 
-function notSatisfiedMessage(unsatisfied) {
-  return dedent`
-    Requested range not satisfiable:
-    ${unsatisfied.map(u => `${u.name}@${u.versionRange} (available: ${u.version})`).join(", ")}
-  `;
-}
-
-function getRangeToReference(current, available, requested) {
-  const resolved = requested === "latest" ? `^${available}` : requested;
-
-  if (current && semver.intersects(current, resolved)) {
-    return current;
-  }
-
-  return resolved;
-}
+module.exports = AddCommand;

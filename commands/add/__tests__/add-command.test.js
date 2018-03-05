@@ -1,19 +1,19 @@
 "use strict";
 
-jest.mock("../src/commands/BootstrapCommand");
+jest.mock("@lerna/bootstrap/command");
 
 const fs = require("fs-extra");
 const path = require("path");
 
 // mocked or stubbed modules
-const BootstrapCommand = require("../src/commands/BootstrapCommand");
+const BootstrapCommand = require("@lerna/bootstrap/command");
 
 // helpers
-const initFixture = require("./helpers/initFixture");
-const pkgMatchers = require("./helpers/pkgMatchers");
+const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const pkgMatchers = require("@lerna-test/pkg-matchers");
 
 // file under test
-const lernaAdd = require("./helpers/command-runner")(require("../src/commands/AddCommand"));
+const lernaAdd = require("@lerna-test/command-runner")(require("../command"));
 
 // assertion helpers
 expect.extend(pkgMatchers);
@@ -27,7 +27,7 @@ describe("AddCommand", () => {
   it("should throw without packages", async () => {
     expect.assertions(1);
 
-    const testDir = await initFixture("AddCommand/basic");
+    const testDir = await initFixture("basic");
 
     try {
       await lernaAdd(testDir)();
@@ -39,7 +39,7 @@ describe("AddCommand", () => {
   it("should throw for locally unsatisfiable version ranges", async () => {
     expect.assertions(1);
 
-    const testDir = await initFixture("AddCommand/basic");
+    const testDir = await initFixture("basic");
 
     try {
       await lernaAdd(testDir)("@test/package-1@2");
@@ -49,7 +49,7 @@ describe("AddCommand", () => {
   });
 
   it("should reference remote dependencies", async () => {
-    const testDir = await initFixture("AddCommand/basic");
+    const testDir = await initFixture("basic");
 
     await lernaAdd(testDir)("lerna");
 
@@ -60,7 +60,7 @@ describe("AddCommand", () => {
   });
 
   it("should reference local dependencies", async () => {
-    const testDir = await initFixture("AddCommand/basic");
+    const testDir = await initFixture("basic");
 
     await lernaAdd(testDir)("@test/package-1");
 
@@ -70,7 +70,7 @@ describe("AddCommand", () => {
   });
 
   it("should reference to multiple dependencies", async () => {
-    const testDir = await initFixture("AddCommand/basic");
+    const testDir = await initFixture("basic");
 
     await lernaAdd(testDir)("@test/package-1", "@test/package-2");
 
@@ -83,7 +83,7 @@ describe("AddCommand", () => {
   });
 
   it("should reference current caret range if unspecified", async () => {
-    const testDir = await initFixture("AddCommand/basic");
+    const testDir = await initFixture("basic");
 
     await lernaAdd(testDir)("@test/package-1", "@test/package-2");
 
@@ -92,7 +92,7 @@ describe("AddCommand", () => {
   });
 
   it("should reference specfied range", async () => {
-    const testDir = await initFixture("AddCommand/basic");
+    const testDir = await initFixture("basic");
 
     await lernaAdd(testDir)("@test/package-1@~1");
 
@@ -100,7 +100,7 @@ describe("AddCommand", () => {
   });
 
   it("should reference to devDepdendencies", async () => {
-    const testDir = await initFixture("AddCommand/basic");
+    const testDir = await initFixture("basic");
 
     await lernaAdd(testDir)("@test/package-1", "--dev");
 
@@ -110,7 +110,7 @@ describe("AddCommand", () => {
   });
 
   it("should not reference packages to themeselves", async () => {
-    const testDir = await initFixture("AddCommand/basic");
+    const testDir = await initFixture("basic");
 
     await lernaAdd(testDir)("@test/package-1");
 
@@ -118,7 +118,7 @@ describe("AddCommand", () => {
   });
 
   it("should respect scopes", async () => {
-    const testDir = await initFixture("AddCommand/basic");
+    const testDir = await initFixture("basic");
 
     await lernaAdd(testDir)("@test/package-1", "--scope=@test/package-2");
 
@@ -128,7 +128,7 @@ describe("AddCommand", () => {
   });
 
   it("should retain existing dependencies", async () => {
-    const testDir = await initFixture("AddCommand/existing");
+    const testDir = await initFixture("existing");
 
     await lernaAdd(testDir)("@test/package-2");
 
@@ -136,7 +136,7 @@ describe("AddCommand", () => {
   });
 
   it("should retain existing devDependencies", async () => {
-    const testDir = await initFixture("AddCommand/existing");
+    const testDir = await initFixture("existing");
 
     await lernaAdd(testDir)("@test/package-1", "--dev");
 
@@ -144,7 +144,7 @@ describe("AddCommand", () => {
   });
 
   it("should bootstrap changed packages", async () => {
-    const testDir = await initFixture("AddCommand/basic");
+    const testDir = await initFixture("basic");
 
     await lernaAdd(testDir)("@test/package-1");
 
@@ -156,7 +156,7 @@ describe("AddCommand", () => {
   });
 
   it("should only bootstrap scoped packages", async () => {
-    const testDir = await initFixture("AddCommand/basic");
+    const testDir = await initFixture("basic");
 
     await lernaAdd(testDir)("@test/package-1", "--scope", "@test/package-2", "--scope", "package-3");
 
@@ -168,7 +168,7 @@ describe("AddCommand", () => {
   });
 
   it("should not bootstrap ignored packages", async () => {
-    const testDir = await initFixture("AddCommand/basic");
+    const testDir = await initFixture("basic");
 
     await lernaAdd(testDir)("@test/package-1", "--ignore", "@test/package-2");
 
@@ -180,7 +180,7 @@ describe("AddCommand", () => {
   });
 
   it("should not bootstrap unchanged packages", async () => {
-    const testDir = await initFixture("AddCommand/unchanged");
+    const testDir = await initFixture("unchanged");
 
     await lernaAdd(testDir)("@test/package-1");
 
@@ -188,7 +188,7 @@ describe("AddCommand", () => {
   });
 
   it("bootstraps mixed local and external dependencies", async () => {
-    const testDir = await initFixture("AddCommand/existing");
+    const testDir = await initFixture("existing");
 
     await lernaAdd(testDir)("@test/package-2", "pify");
 
