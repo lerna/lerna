@@ -13,9 +13,9 @@
     "url": "https://github.com/evocateur"
   },
   "files": [
-    "index.js"
+    "match-package-name.js"
   ],
-  "main": "index.js",
+  "main": "match-package-name.js",
   "engines": {
     "node": ">= 6.9.0"
   },
@@ -29,5 +29,8 @@
   },
   "scripts": {
     "test": "echo \"Run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "minimatch": "^3.0.4"
   }
 }
