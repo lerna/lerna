@@ -1,5 +1,5 @@
 {
-  "name": "@lerna/config",
+  "name": "@lerna/project",
   "version": "3.0.0-alpha.3",
   "description": "TODO",
   "keywords": [
@@ -29,5 +29,14 @@
   },
   "scripts": {
     "test": "echo \"Run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@lerna/package": "file:../package",
+    "@lerna/validation-error": "file:../../utils/validation-error",
+    "dedent": "^0.7.0",
+    "find-up": "^2.1.0",
+    "glob-parent": "^3.1.0",
+    "load-json-file": "^4.0.0",
+    "npmlog": "^4.1.2"
   }
 }

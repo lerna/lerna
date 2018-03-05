@@ -1,8 +1,7 @@
-# `@lerna/config`
+# `@lerna/project`
 
 > description TODO
 
 ## Usage
 
 TODO
-

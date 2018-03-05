@@ -7,12 +7,12 @@ const loadJsonFile = require("load-json-file");
 const log = require("npmlog");
 const path = require("path");
 
-const ValidationError = require("./utils/validation-error");
-const Package = require("./Package");
+const ValidationError = require("@lerna/validation-error");
+const Package = require("@lerna/package");
 
 const DEFAULT_PACKAGE_GLOB = "packages/*";
 
-class Repository {
+class Project {
   constructor(cwd) {
     const lernaJsonLocation =
       // findUp returns null when not found
@@ -100,4 +100,4 @@ class Repository {
   }
 }
 
-module.exports = Repository;
+module.exports = Project;
