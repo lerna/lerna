@@ -2,12 +2,12 @@
 
 jest.mock("write-json-file");
 jest.mock("write-pkg");
-jest.mock("../src/GitUtilities");
-jest.mock("../src/PromptUtilities");
-jest.mock("../src/ConventionalCommitUtilities");
-jest.mock("../src/utils/npm-dist-tag");
-jest.mock("../src/utils/npm-publish");
-jest.mock("../src/utils/run-lifecycle");
+jest.mock("@lerna/git-utils");
+jest.mock("@lerna/prompt");
+jest.mock("@lerna/conventional-commits");
+jest.mock("@lerna/npm-dist-tag");
+jest.mock("@lerna/npm-publish");
+jest.mock("@lerna/run-lifecycle");
 
 const fs = require("fs-extra");
 const normalizeNewline = require("normalize-newline");
@@ -17,21 +17,21 @@ const semver = require("semver");
 // mocked or stubbed modules
 const writeJsonFile = require("write-json-file");
 const writePkg = require("write-pkg");
-const ConventionalCommitUtilities = require("../src/ConventionalCommitUtilities");
-const GitUtilities = require("../src/GitUtilities");
-const PromptUtilities = require("../src/PromptUtilities");
-const npmDistTag = require("../src/utils/npm-dist-tag");
-const npmPublish = require("../src/utils/npm-publish");
-const runLifecycle = require("../src/utils/run-lifecycle");
+const ConventionalCommitUtilities = require("@lerna/conventional-commits");
+const GitUtilities = require("@lerna/git-utils");
+const PromptUtilities = require("@lerna/prompt");
+const npmDistTag = require("@lerna/npm-dist-tag");
+const npmPublish = require("@lerna/npm-publish");
+const runLifecycle = require("@lerna/run-lifecycle");
 
 // helpers
-const consoleOutput = require("./helpers/consoleOutput");
-const loggingOutput = require("./helpers/loggingOutput");
-const initFixture = require("./helpers/initFixture");
-const normalizeRelativeDir = require("./helpers/normalizeRelativeDir");
+const consoleOutput = require("@lerna-test/console-output");
+const loggingOutput = require("@lerna-test/logging-output");
+const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const normalizeRelativeDir = require("@lerna-test/normalize-relative-dir");
 
 // file under test
-const lernaPublish = require("./helpers/command-runner")(require("../src/commands/PublishCommand"));
+const lernaPublish = require("@lerna-test/command-runner")(require("../command"));
 
 // assertion helpers
 const publishedTagInDirectories = testDir =>
@@ -109,7 +109,7 @@ describe("PublishCommand", () => {
 
   describe("normal mode", () => {
     it("should publish the changed packages", async () => {
-      const testDir = await initFixture("PublishCommand/normal");
+      const testDir = await initFixture("normal");
       await lernaPublish(testDir)();
 
       expect(PromptUtilities.select.mock.calls).toMatchSnapshot("prompt");
@@ -153,7 +153,7 @@ describe("PublishCommand", () => {
 
     it("throws an error when --independent is passed", async () => {
       expect.assertions(1);
-      const testDir = await initFixture("PublishCommand/normal");
+      const testDir = await initFixture("normal");
       try {
         await lernaPublish(testDir)("--independent");
       } catch (err) {
@@ -173,7 +173,7 @@ describe("PublishCommand", () => {
         PromptUtilities.select.mockResolvedValueOnce(chosenVersion)
       );
 
-      const testDir = await initFixture("PublishCommand/independent");
+      const testDir = await initFixture("independent");
       await lernaPublish(testDir)(); // --independent is only valid in InitCommand
 
       expect(PromptUtilities.confirm).toBeCalled();
@@ -218,7 +218,7 @@ describe("PublishCommand", () => {
 
   describe("normal mode as canary", () => {
     it("should publish the changed packages", async () => {
-      const testDir = await initFixture("PublishCommand/normal");
+      const testDir = await initFixture("normal");
       await lernaPublish(testDir)("--canary");
 
       expect(PromptUtilities.select).not.toBeCalled();
@@ -251,7 +251,7 @@ describe("PublishCommand", () => {
     });
 
     it("should use the provided value as the meta suffix", async () => {
-      const testDir = await initFixture("PublishCommand/normal");
+      const testDir = await initFixture("normal");
       await lernaPublish(testDir)("--canary", "beta");
 
       expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
@@ -268,7 +268,7 @@ describe("PublishCommand", () => {
     });
 
     it("should work with --canary and --cd-version=patch", async () => {
-      const testDir = await initFixture("PublishCommand/normal");
+      const testDir = await initFixture("normal");
       await lernaPublish(testDir)("--canary", "--cd-version", "patch");
 
       expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
@@ -291,7 +291,7 @@ describe("PublishCommand", () => {
 
   describe("independent mode as canary", () => {
     it("should publish the changed packages", async () => {
-      const testDir = await initFixture("PublishCommand/independent");
+      const testDir = await initFixture("independent");
       await lernaPublish(testDir)("--canary");
 
       expect(PromptUtilities.select).not.toBeCalled();
@@ -313,7 +313,7 @@ describe("PublishCommand", () => {
     });
 
     it("should use the provided value as the meta suffix", async () => {
-      const testDir = await initFixture("PublishCommand/independent");
+      const testDir = await initFixture("independent");
       await lernaPublish(testDir)("--canary", "beta");
 
       expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
@@ -334,7 +334,7 @@ describe("PublishCommand", () => {
 
   describe("normal mode with --skip-git", () => {
     it("should publish the changed packages", async () => {
-      const testDir = await initFixture("PublishCommand/normal");
+      const testDir = await initFixture("normal");
       await lernaPublish(testDir)("--skip-git");
 
       expect(GitUtilities.addFiles).not.toBeCalled();
@@ -352,7 +352,7 @@ describe("PublishCommand", () => {
 
   describe("normal mode with --skip-npm", () => {
     it("should update versions and push changes but not publish", async () => {
-      const testDir = await initFixture("PublishCommand/normal");
+      const testDir = await initFixture("normal");
       await lernaPublish(testDir)("--skip-npm");
 
       expect(npmPublish).not.toBeCalled();
@@ -372,7 +372,7 @@ describe("PublishCommand", () => {
 
   describe("normal mode with --skip-git and --skip-npm", () => {
     it("should update versions but not push changes or publish", async () => {
-      const testDir = await initFixture("PublishCommand/normal");
+      const testDir = await initFixture("normal");
       await lernaPublish(testDir)("--skip-git", "--skip-npm");
 
       expect(updatedLernaJson()).toMatchObject({ version: "1.0.1" });
@@ -409,7 +409,7 @@ describe("PublishCommand", () => {
 
   describe("normal mode with --temp-tag", () => {
     it("should publish the changed packages with a temp tag", async () => {
-      const testDir = await initFixture("PublishCommand/normal");
+      const testDir = await initFixture("normal");
       await lernaPublish(testDir)("--temp-tag");
 
       expect(publishedTagInDirectories(testDir)).toMatchSnapshot("npm published");
@@ -432,7 +432,7 @@ describe("PublishCommand", () => {
 
   describe("normal mode with --npm-tag", () => {
     it("should publish the changed packages with npm tag", async () => {
-      const testDir = await initFixture("PublishCommand/normal");
+      const testDir = await initFixture("normal");
       await lernaPublish(testDir)("--npm-tag", "custom");
 
       expect(publishedTagInDirectories(testDir)).toMatchSnapshot("npm published");
@@ -445,7 +445,7 @@ describe("PublishCommand", () => {
 
   describe("with --yes", () => {
     it("skips confirmation prompt", async () => {
-      const testDir = await initFixture("PublishCommand/normal");
+      const testDir = await initFixture("normal");
       await lernaPublish(testDir)("--yes", "--repo-version", "1.0.1-auto-confirm");
 
       expect(PromptUtilities.select).not.toBeCalled();
@@ -460,7 +460,7 @@ describe("PublishCommand", () => {
 
   describe("normal mode with --registry", () => {
     it("passes registry to npm commands", async () => {
-      const testDir = await initFixture("PublishCommand/normal");
+      const testDir = await initFixture("normal");
       const registry = "https://my-private-registry";
 
       await lernaPublish(testDir)("--registry", registry);
@@ -479,7 +479,7 @@ describe("PublishCommand", () => {
 
   describe("normal mode with --repo-version", () => {
     it("skips version prompt and publishes changed packages with designated version", async () => {
-      const testDir = await initFixture("PublishCommand/normal");
+      const testDir = await initFixture("normal");
       await lernaPublish(testDir)("--repo-version", "1.0.1-beta");
 
       expect(PromptUtilities.select).not.toBeCalled();
@@ -493,7 +493,7 @@ describe("PublishCommand", () => {
 
   describe("normal mode with --exact", () => {
     it("updates matching local dependencies of published packages with exact versions", async () => {
-      const testDir = await initFixture("PublishCommand/normal");
+      const testDir = await initFixture("normal");
       await lernaPublish(testDir)("--exact");
 
       expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
@@ -513,7 +513,7 @@ describe("PublishCommand", () => {
     });
 
     it("updates existing exact versions", async () => {
-      const testDir = await initFixture("PublishCommand/normal-exact");
+      const testDir = await initFixture("normal-exact");
       await lernaPublish(testDir)();
 
       expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
@@ -537,7 +537,7 @@ describe("PublishCommand", () => {
 
   describe("normal mode with --cd-version", () => {
     it("should use semver increments when passed to cdVersion flag", async () => {
-      const testDir = await initFixture("PublishCommand/normal");
+      const testDir = await initFixture("normal");
       await lernaPublish(testDir)("--cd-version", "minor");
 
       expect(PromptUtilities.select).not.toBeCalled();
@@ -547,7 +547,7 @@ describe("PublishCommand", () => {
     it("throws an error when an invalid semver keyword is used", async () => {
       expect.assertions(1);
 
-      const testDir = await initFixture("PublishCommand/normal");
+      const testDir = await initFixture("normal");
       try {
         await lernaPublish(testDir)("--cd-version", "poopypants");
       } catch (err) {
@@ -574,7 +574,7 @@ describe("PublishCommand", () => {
     });
 
     it("publishes changed & prereleased packages if --cd-version is non-prerelease", async () => {
-      const testDir = await initFixture("PublishCommand/republish-prereleased");
+      const testDir = await initFixture("republish-prereleased");
       // should republish 3, 4, and 5 because:
       // package 3 changed
       // package 5 has a prerelease version
@@ -589,7 +589,7 @@ describe("PublishCommand", () => {
     });
 
     it("should not publish prereleased packages if --cd-version is a pre-* increment", async () => {
-      const testDir = await initFixture("PublishCommand/republish-prereleased");
+      const testDir = await initFixture("republish-prereleased");
       // should republish only package 3, because it changed
       await lernaPublish(testDir)("--cd-version", "prerelease", "---preid", "beta");
 
@@ -604,7 +604,7 @@ describe("PublishCommand", () => {
 
   describe("indepdendent mode with --cd-version", () => {
     it("should use semver increments when passed to cdVersion flag", async () => {
-      const testDir = await initFixture("PublishCommand/independent");
+      const testDir = await initFixture("independent");
       await lernaPublish(testDir)("--cd-version", "patch");
 
       expect(PromptUtilities.select).not.toBeCalled();
@@ -616,7 +616,7 @@ describe("PublishCommand", () => {
      * ======================================================================= */
 
     it("should bump to prerelease versions with --cd-version=prerelease --preid=foo", async () => {
-      const testDir = await initFixture("PublishCommand/independent");
+      const testDir = await initFixture("independent");
       await lernaPublish(testDir)("--cd-version", "prerelease", "--preid", "foo");
 
       expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
@@ -633,7 +633,7 @@ describe("PublishCommand", () => {
     });
 
     it("should bump to prerelease versions with --cd-version prerelease (no --preid)", async () => {
-      const testDir = await initFixture("PublishCommand/independent");
+      const testDir = await initFixture("independent");
       await lernaPublish(testDir)("--cd-version", "prerelease");
 
       expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
@@ -656,7 +656,7 @@ describe("PublishCommand", () => {
 
   describe("normal mode with --git-remote", () => {
     it("pushes tags to specified remote", async () => {
-      const testDir = await initFixture("PublishCommand/normal");
+      const testDir = await initFixture("normal");
       await lernaPublish(testDir)("--git-remote", "upstream");
 
       expect(GitUtilities.pushWithTags).lastCalledWith(
@@ -675,7 +675,7 @@ describe("PublishCommand", () => {
 
   describe("normal mode with --ignore", () => {
     it("does not publish ignored packages", async () => {
-      const testDir = await initFixture("PublishCommand/normal");
+      const testDir = await initFixture("normal");
       await lernaPublish(testDir)("--ignore", "package-2", "--ignore", "package-3", "--ignore", "package-4");
 
       expect(gitAddedFiles(testDir)).toMatchSnapshot("git added files");
@@ -689,7 +689,7 @@ describe("PublishCommand", () => {
 
   describe("normal mode with --message", () => {
     it("commits changes with a custom message using %s", async () => {
-      const testDir = await initFixture("PublishCommand/normal");
+      const testDir = await initFixture("normal");
       await lernaPublish(testDir)("--message", "chore: Release %s :rocket:");
 
       expect(GitUtilities.commit).lastCalledWith(
@@ -701,7 +701,7 @@ describe("PublishCommand", () => {
     });
 
     it("commits changes with a custom message using %v", async () => {
-      const testDir = await initFixture("PublishCommand/normal");
+      const testDir = await initFixture("normal");
       await lernaPublish(testDir)("--message", "chore: Release %v :rocket:");
 
       expect(GitUtilities.commit).lastCalledWith(
@@ -719,7 +719,7 @@ describe("PublishCommand", () => {
 
   describe("independent mode with --message", () => {
     it("commits changes with a custom message", async () => {
-      const testDir = await initFixture("PublishCommand/independent");
+      const testDir = await initFixture("independent");
       await lernaPublish(testDir)("-m", "chore: Custom publish message");
 
       expect(GitUtilities.commit).lastCalledWith(
@@ -751,7 +751,7 @@ describe("PublishCommand", () => {
       });
 
       it("should use conventional-commits utility to guess version bump and generate CHANGELOG", async () => {
-        const testDir = await initFixture("PublishCommand/independent");
+        const testDir = await initFixture("independent");
 
         await lernaPublish(testDir)("--conventional-commits");
 
@@ -773,7 +773,7 @@ describe("PublishCommand", () => {
       });
 
       it("accepts --changelog-preset option", async () => {
-        const testDir = await initFixture("PublishCommand/independent");
+        const testDir = await initFixture("independent");
         const changelogOpts = { changelogPreset: "foo-bar" };
 
         await lernaPublish(testDir)("--conventional-commits", "--changelog-preset", "foo-bar");
@@ -802,7 +802,7 @@ describe("PublishCommand", () => {
       });
 
       it("should use conventional-commits utility to guess version bump and generate CHANGELOG", async () => {
-        const testDir = await initFixture("PublishCommand/normal");
+        const testDir = await initFixture("normal");
 
         await lernaPublish(testDir)("--conventional-commits");
 
@@ -836,7 +836,7 @@ describe("PublishCommand", () => {
       });
 
       it("accepts --changelog-preset option", async () => {
-        const testDir = await initFixture("PublishCommand/normal");
+        const testDir = await initFixture("normal");
         const changelogOpts = { changelogPreset: "baz-qux" };
 
         await lernaPublish(testDir)("--conventional-commits", "--changelog-preset", "baz-qux");
@@ -855,7 +855,7 @@ describe("PublishCommand", () => {
     });
 
     it("avoids duplicating previously-released version", async () => {
-      const testDir = await initFixture("PublishCommand/normal-no-inter-dependencies");
+      const testDir = await initFixture("normal-no-inter-dependencies");
 
       GitUtilities.hasTags.mockReturnValueOnce(true);
       GitUtilities.getLastTag.mockReturnValueOnce("v1.0.0");
@@ -901,7 +901,7 @@ describe("PublishCommand", () => {
 
   describe("independent mode --canary --npm-tag=next --yes --exact", () => {
     it("should publish the changed packages", async () => {
-      const testDir = await initFixture("PublishCommand/independent");
+      const testDir = await initFixture("independent");
       await lernaPublish(testDir)("--canary", "--npm-tag", "next", "--yes", "--exact");
 
       expect(publishedTagInDirectories(testDir)).toMatchSnapshot("npm published");
@@ -913,7 +913,7 @@ describe("PublishCommand", () => {
       it("should reject a non matching branch", async () => {
         GitUtilities.getCurrentBranch.mockReturnValueOnce("unmatched");
 
-        const testDir = await initFixture("PublishCommand/normal");
+        const testDir = await initFixture("normal");
         try {
           await lernaPublish(testDir)("--allow-branch", "master");
         } catch (err) {
@@ -924,7 +924,7 @@ describe("PublishCommand", () => {
       it("should accept an exactly matching branch", async () => {
         GitUtilities.getCurrentBranch.mockReturnValueOnce("exact-match");
 
-        const testDir = await initFixture("PublishCommand/normal");
+        const testDir = await initFixture("normal");
         await lernaPublish(testDir)("--allow-branch", "exact-match");
 
         expect(publishedTagInDirectories(testDir)).toHaveLength(4);
@@ -933,7 +933,7 @@ describe("PublishCommand", () => {
       it("should accept a branch that matches by wildcard", async () => {
         GitUtilities.getCurrentBranch.mockReturnValueOnce("feature/awesome");
 
-        const testDir = await initFixture("PublishCommand/normal");
+        const testDir = await initFixture("normal");
         await lernaPublish(testDir)("--allow-branch", "feature/*");
 
         expect(publishedTagInDirectories(testDir)).toHaveLength(4);
@@ -942,7 +942,7 @@ describe("PublishCommand", () => {
       it("should accept a branch that matches one of the items passed", async () => {
         GitUtilities.getCurrentBranch.mockReturnValueOnce("feature/awesome");
 
-        const testDir = await initFixture("PublishCommand/normal");
+        const testDir = await initFixture("normal");
         await lernaPublish(testDir)("--allow-branch", "master", "feature/*");
 
         expect(publishedTagInDirectories(testDir)).toHaveLength(4);
@@ -953,7 +953,7 @@ describe("PublishCommand", () => {
       it("should reject a non matching branch", async () => {
         GitUtilities.getCurrentBranch.mockReturnValueOnce("unmatched");
 
-        const testDir = await initFixture("PublishCommand/allow-branch-lerna");
+        const testDir = await initFixture("allow-branch-lerna");
         try {
           await lernaPublish(testDir)();
         } catch (err) {
@@ -964,7 +964,7 @@ describe("PublishCommand", () => {
       it("should accept a matching branch", async () => {
         GitUtilities.getCurrentBranch.mockReturnValueOnce("lerna");
 
-        const testDir = await initFixture("PublishCommand/allow-branch-lerna");
+        const testDir = await initFixture("allow-branch-lerna");
         await lernaPublish(testDir)();
 
         expect(publishedTagInDirectories(testDir)).toHaveLength(1);
@@ -973,7 +973,7 @@ describe("PublishCommand", () => {
       it("should prioritize cli over defaults", async () => {
         GitUtilities.getCurrentBranch.mockReturnValueOnce("cli-override");
 
-        const testDir = await initFixture("PublishCommand/allow-branch-lerna");
+        const testDir = await initFixture("allow-branch-lerna");
         await lernaPublish(testDir)("--allow-branch", "cli-override");
 
         expect(publishedTagInDirectories(testDir)).toHaveLength(1);
@@ -982,7 +982,7 @@ describe("PublishCommand", () => {
 
     describe("with --canary", () => {
       it("does not restrict publishing canary versions", async () => {
-        const testDir = await initFixture("PublishCommand/normal");
+        const testDir = await initFixture("normal");
         GitUtilities.getCurrentBranch.mockReturnValueOnce("other");
 
         await lernaPublish(testDir)("--allow-branch", "master", "--canary");
@@ -997,7 +997,7 @@ describe("PublishCommand", () => {
 
   describe("lifecycle scripts", () => {
     it("calls version lifecycle scripts for root and packages", async () => {
-      const testDir = await initFixture("PublishCommand/lifecycle");
+      const testDir = await initFixture("lifecycle");
       await lernaPublish(testDir)();
 
       expect(runLifecycle).toHaveBeenCalledTimes(6);
@@ -1033,7 +1033,7 @@ describe("PublishCommand", () => {
     });
 
     it("logs lifecycle errors but preserves chain", async () => {
-      const testDir = await initFixture("PublishCommand/lifecycle");
+      const testDir = await initFixture("lifecycle");
 
       runLifecycle.mockImplementationOnce(() => Promise.reject(new Error("boom")));
 
@@ -1048,7 +1048,7 @@ describe("PublishCommand", () => {
   });
 
   it("publishes all transitive dependents after change", async () => {
-    const testDir = await initFixture("PublishCommand/snake-graph");
+    const testDir = await initFixture("snake-graph");
 
     GitUtilities.hasTags.mockReturnValueOnce(true);
     GitUtilities.getLastTag.mockReturnValueOnce("v1.0.0");
@@ -1061,7 +1061,7 @@ describe("PublishCommand", () => {
 
   describe("with git-hosted sibling dependencies", () => {
     it("updates gitCommittish versions as sshurls", async () => {
-      const testDir = await initFixture("PublishCommand/git-hosted-sibling-committish");
+      const testDir = await initFixture("git-hosted-sibling-committish");
 
       await lernaPublish(testDir)("--cd-version", "minor");
 
@@ -1083,7 +1083,7 @@ describe("PublishCommand", () => {
     });
 
     it("updates gitRange versions as sshurls", async () => {
-      const testDir = await initFixture("PublishCommand/git-hosted-sibling-semver");
+      const testDir = await initFixture("git-hosted-sibling-semver");
 
       await lernaPublish(testDir)("--cd-version", "prerelease", "--preid", "beta");
 
@@ -1113,7 +1113,7 @@ describe("PublishCommand", () => {
     });
 
     it("overwrites relative link with local version before npm publish but after git commit", async () => {
-      const testDir = await initFixture("PublishCommand/relative-file-specs");
+      const testDir = await initFixture("relative-file-specs");
 
       await lernaPublish(testDir)("--cd-version", "major", "--yes");
 
@@ -1140,7 +1140,7 @@ describe("PublishCommand", () => {
     });
 
     it("reverts overwritten link after publish", async () => {
-      const testDir = await initFixture("PublishCommand/relative-file-specs");
+      const testDir = await initFixture("relative-file-specs");
 
       await lernaPublish(testDir)("--cd-version", "minor", "--yes");
 
@@ -1156,7 +1156,7 @@ describe("PublishCommand", () => {
     });
 
     it("falls back to existing relative version when it is not updated", async () => {
-      const testDir = await initFixture("PublishCommand/relative-independent");
+      const testDir = await initFixture("relative-independent");
 
       await lernaPublish(testDir)("--cd-version", "minor", "--yes");
 
@@ -1170,7 +1170,7 @@ describe("PublishCommand", () => {
     });
 
     it("respects --exact", async () => {
-      const testDir = await initFixture("PublishCommand/relative-independent");
+      const testDir = await initFixture("relative-independent");
 
       await lernaPublish(testDir)("--cd-version", "patch", "--yes", "--exact");
 
@@ -1187,7 +1187,7 @@ describe("PublishCommand", () => {
       expect.assertions(1);
 
       try {
-        const testDir = await initFixture("PackageUtilities/toposort");
+        const testDir = await initFixture("toposort");
 
         await lernaPublish(testDir)("--reject-cycles");
       } catch (err) {
