@@ -1,7 +1,7 @@
 {
   "name": "lerna-root",
   "version": "3.0.0-alpha.3",
-  "description": "Tool for managing JavaScript projects with multiple packages",
+  "description": "lerna dog-fooding lerna",
   "private": true,
   "scripts": {
     "ci": "npm test -- --ci --coverage --verbose && npm run integration -- --ci",
