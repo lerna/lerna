@@ -13,9 +13,9 @@
     "url": "https://github.com/evocateur"
   },
   "files": [
-    "index.js"
+    "has-dependency-installed.js"
   ],
-  "main": "index.js",
+  "main": "has-dependency-installed.js",
   "engines": {
     "node": ">= 6.9.0"
   },
@@ -29,5 +29,10 @@
   },
   "scripts": {
     "test": "echo \"Run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "load-json-file": "^4.0.0",
+    "npmlog": "^4.1.2",
+    "semver": "^5.5.0"
   }
 }
