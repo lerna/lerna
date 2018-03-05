@@ -32,6 +32,9 @@
   "scripts": {
     "test": "echo \"Run tests from root\" && exit 1"
   },
+  "yargs": {
+    "populate--": true
+  },
   "dependencies": {
     "@lerna/cli": "file:../cli",
     "import-local": "^1.0.0",

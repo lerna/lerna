@@ -30,6 +30,9 @@
   "scripts": {
     "test": "echo \"Run tests from root\" && exit 1"
   },
+  "yargs": {
+    "populate--": true
+  },
   "dependencies": {
     "@lerna/global-options": "file:../global-options",
     "dedent": "^0.7.0",

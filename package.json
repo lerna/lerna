@@ -114,9 +114,6 @@
     "tempy": "^0.2.1",
     "touch": "^3.1.0"
   },
-  "yargs": {
-    "populate--": true
-  },
   "jest": {
     "clearMocks": true,
     "collectCoverageFrom": [
