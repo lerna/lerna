@@ -1,31 +1,10 @@
 "use strict";
 
-const ChildProcessUtilities = require("../ChildProcessUtilities");
-const Command = require("../Command");
-const GitUtilities = require("../GitUtilities");
-const ValidationError = require("../utils/validation-error");
-
-exports.handler = function handler(argv) {
-  // eslint-disable-next-line no-use-before-define
-  return new DiffCommand(argv);
-};
-
-exports.command = "diff [pkgName]";
-
-exports.describe = "Diff all packages or a single package since the last release.";
-
-exports.builder = yargs =>
-  yargs.positional("pkgName", {
-    describe: "An optional package name to filter the diff output",
-  });
-
-function getLastCommit(execOpts) {
-  if (GitUtilities.hasTags(execOpts)) {
-    return GitUtilities.getLastTaggedCommit(execOpts);
-  }
-
-  return GitUtilities.getFirstCommit(execOpts);
-}
+const ChildProcessUtilities = require("@lerna/child-process");
+const Command = require("@lerna/command");
+const GitUtilities = require("@lerna/git-utils");
+const ValidationError = require("@lerna/validation-error");
+const getLastCommit = require("./lib/get-last-commit");
 
 class DiffCommand extends Command {
   initialize() {
@@ -68,3 +47,5 @@ class DiffCommand extends Command {
     });
   }
 }
+
+module.exports = DiffCommand;
