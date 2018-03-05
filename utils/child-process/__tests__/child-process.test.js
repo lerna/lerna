@@ -1,7 +1,7 @@
 "use strict";
 
 // file under test
-const ChildProcessUtilities = require("../src/ChildProcessUtilities");
+const ChildProcessUtilities = require("..");
 
 describe("ChildProcessUtilities", () => {
   describe(".execSync()", () => {
