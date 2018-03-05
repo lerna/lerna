@@ -4,37 +4,13 @@ const dedent = require("dedent");
 const path = require("path");
 const pMapSeries = require("p-map-series");
 
-const ChildProcessUtilities = require("../ChildProcessUtilities");
-const Command = require("../Command");
-const FileSystemUtilities = require("../FileSystemUtilities");
-const GitUtilities = require("../GitUtilities");
-const PromptUtilities = require("../PromptUtilities");
-const ValidationError = require("../utils/validation-error");
-
-exports.handler = function handler(argv) {
-  // eslint-disable-next-line no-use-before-define
-  return new ImportCommand(argv);
-};
-
-exports.command = "import <dir>";
-
-exports.describe = dedent`
-  Import the package in <dir> into packages/<dir> with commit history.
-`;
-
-exports.builder = yargs =>
-  yargs
-    .options({
-      yes: {
-        group: "Command Options:",
-        describe: "Skip all confirmation prompts",
-      },
-      flatten: {
-        group: "Command Options:",
-        describe: "Import each merge commit as a single change the merge introduced",
-      },
-    })
-    .positional("dir", { describe: "The path to an external git repository that contains an npm package" });
+const ChildProcessUtilities = require("@lerna/child-process");
+const Command = require("@lerna/command");
+const FileSystemUtilities = require("@lerna/fs-utils");
+const GitUtilities = require("@lerna/git-utils");
+const PromptUtilities = require("@lerna/prompt");
+const ValidationError = require("@lerna/validation-error");
+const getTargetBase = require("./lib/get-target-base");
 
 class ImportCommand extends Command {
   gitParamsForTargetCommits() {
@@ -230,10 +206,4 @@ class ImportCommand extends Command {
   }
 }
 
-function getTargetBase(packageConfigs) {
-  const straightPackageDirectories = packageConfigs
-    .filter(p => path.basename(p) === "*")
-    .map(p => path.dirname(p));
-
-  return straightPackageDirectories[0] || "packages";
-}
+module.exports = ImportCommand;

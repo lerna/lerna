@@ -1,6 +1,6 @@
 "use strict";
 
-jest.mock("../src/PromptUtilities");
+jest.mock("@lerna/prompt");
 
 const execa = require("execa");
 const fs = require("fs-extra");
@@ -8,14 +8,14 @@ const path = require("path");
 const pathExists = require("path-exists");
 
 // mocked or stubbed modules
-const PromptUtilities = require("../src/PromptUtilities");
+const PromptUtilities = require("@lerna/prompt");
 
 // helpers
-const initFixture = require("./helpers/initFixture");
-const updateLernaConfig = require("./helpers/updateLernaConfig");
+const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const updateLernaConfig = require("@lerna-test/update-lerna-config");
 
 // file under test
-const lernaImport = require("./helpers/command-runner")(require("../src/commands/ImportCommand"));
+const lernaImport = require("@lerna-test/command-runner")(require("../command"));
 
 // assertion helpers
 const lastCommitInDir = cwd => execa.stdout("git", ["log", "-1", "--format=%s"], { cwd });
