@@ -2,17 +2,17 @@
 
 jest.mock("fs-extra");
 jest.mock("path-exists");
-jest.mock("../src/ChildProcessUtilities");
+jest.mock("@lerna/child-process");
 
 const path = require("path");
 
 // mocked modules
 const fs = require("fs-extra");
 const pathExists = require("path-exists");
-const ChildProcessUtilities = require("../src/ChildProcessUtilities");
+const ChildProcessUtilities = require("@lerna/child-process");
 
 // file under test
-const FileSystemUtilities = require("../src/FileSystemUtilities");
+const FileSystemUtilities = require("..");
 
 describe("FileSystemUtilities", () => {
   describe(".mkdirp()", () => {

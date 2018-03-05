@@ -29,5 +29,11 @@
   },
   "scripts": {
     "test": "echo \"Run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@lerna/child-process": "file:../child-process",
+    "fs-extra": "^5.0.0",
+    "npmlog": "^4.1.2",
+    "path-exists": "^3.0.0"
   }
 }
