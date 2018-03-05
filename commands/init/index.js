@@ -3,32 +3,9 @@
 const writeJsonFile = require("write-json-file");
 const writePkg = require("write-pkg");
 
-const Command = require("../Command");
-const FileSystemUtilities = require("../FileSystemUtilities");
-const GitUtilities = require("../GitUtilities");
-
-exports.handler = function handler(argv) {
-  // eslint-disable-next-line no-use-before-define
-  return new InitCommand(argv);
-};
-
-exports.command = "init";
-
-exports.describe = "Create a new Lerna repo or upgrade an existing repo to the current version of Lerna.";
-
-exports.builder = {
-  exact: {
-    describe: "Specify lerna dependency version in package.json without a caret (^)",
-    type: "boolean",
-    default: undefined,
-  },
-  independent: {
-    describe: "Version packages independently",
-    alias: "i",
-    type: "boolean",
-    default: undefined,
-  },
-};
+const Command = require("@lerna/command");
+const FileSystemUtilities = require("@lerna/fs-utils");
+const GitUtilities = require("@lerna/git-utils");
 
 class InitCommand extends Command {
   get defaultOptions() {
@@ -129,3 +106,5 @@ class InitCommand extends Command {
     this.repository.packageParentDirs.map(dir => FileSystemUtilities.mkdirpSync(dir));
   }
 }
+
+module.exports = InitCommand;

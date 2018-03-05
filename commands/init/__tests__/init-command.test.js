@@ -5,11 +5,11 @@ const path = require("path");
 const tempy = require("tempy");
 
 // helpers
-const initFixture = require("./helpers/initFixture");
+const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const lernaVersion = require("../package.json").version;
 
 // file under test
-const lernaInit = require("./helpers/command-runner")(require("../src/commands/InitCommand"));
+const lernaInit = require("@lerna-test/command-runner")(require("../command"));
 
 describe("InitCommand", () => {
   describe("in an empty directory", () => {
@@ -77,7 +77,7 @@ describe("InitCommand", () => {
 
   describe("in a subdirectory of a git repo", () => {
     it("creates lerna files", async () => {
-      const dir = await initFixture("InitCommand/empty");
+      const dir = await initFixture("empty");
       const testDir = path.join(dir, "subdir");
 
       await fs.ensureDir(testDir);
@@ -104,7 +104,7 @@ describe("InitCommand", () => {
 
   describe("when package.json exists", () => {
     it("adds lerna to sorted devDependencies", async () => {
-      const testDir = await initFixture("InitCommand/has-package");
+      const testDir = await initFixture("has-package");
       const pkgJsonPath = path.join(testDir, "package.json");
 
       await fs.outputJSON(pkgJsonPath, {
@@ -126,7 +126,7 @@ describe("InitCommand", () => {
     });
 
     it("updates existing lerna in devDependencies", async () => {
-      const testDir = await initFixture("InitCommand/has-package");
+      const testDir = await initFixture("has-package");
       const pkgJsonPath = path.join(testDir, "package.json");
 
       await fs.outputJSON(pkgJsonPath, {
@@ -153,7 +153,7 @@ describe("InitCommand", () => {
     });
 
     it("updates existing lerna in sorted dependencies", async () => {
-      const testDir = await initFixture("InitCommand/has-package");
+      const testDir = await initFixture("has-package");
       const pkgJsonPath = path.join(testDir, "package.json");
 
       await fs.outputJSON(pkgJsonPath, {
@@ -178,7 +178,7 @@ describe("InitCommand", () => {
 
   describe("when lerna.json exists", () => {
     it("deletes lerna property if found", async () => {
-      const testDir = await initFixture("InitCommand/has-lerna");
+      const testDir = await initFixture("has-lerna");
       const lernaJsonPath = path.join(testDir, "lerna.json");
 
       await fs.outputJSON(lernaJsonPath, {
@@ -195,7 +195,7 @@ describe("InitCommand", () => {
     });
 
     it("creates package directories when glob is configured", async () => {
-      const testDir = await initFixture("InitCommand/has-lerna");
+      const testDir = await initFixture("has-lerna");
       const lernaJsonPath = path.join(testDir, "lerna.json");
 
       await fs.outputJSON(lernaJsonPath, {
@@ -210,7 +210,7 @@ describe("InitCommand", () => {
 
   describe("when re-initializing with --exact", () => {
     it("sets lerna.json commands.init.exact to true", async () => {
-      const testDir = await initFixture("InitCommand/updates");
+      const testDir = await initFixture("updates");
       const lernaJsonPath = path.join(testDir, "lerna.json");
       const pkgJsonPath = path.join(testDir, "package.json");
 
