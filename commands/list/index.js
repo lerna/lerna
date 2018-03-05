@@ -3,28 +3,8 @@
 const chalk = require("chalk");
 const columnify = require("columnify");
 
-const Command = require("../Command");
-const output = require("../utils/output");
-
-exports.handler = function handler(argv) {
-  // eslint-disable-next-line no-use-before-define
-  return new LsCommand(argv);
-};
-
-exports.command = "ls";
-
-exports.aliases = ["list"];
-
-exports.describe = "List local packages";
-
-exports.builder = {
-  json: {
-    describe: "Show information in JSON format",
-    group: "Command Options:",
-    type: "boolean",
-    default: undefined,
-  },
-};
+const Command = require("@lerna/command");
+const output = require("@lerna/output");
 
 class LsCommand extends Command {
   get requiresGit() {
@@ -93,3 +73,5 @@ class LsCommand extends Command {
     });
   }
 }
+
+module.exports = LsCommand;
