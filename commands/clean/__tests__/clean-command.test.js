@@ -1,17 +1,17 @@
 "use strict";
 
-jest.mock("../src/PromptUtilities");
+jest.mock("@lerna/prompt");
 
 // mocked or stubbed modules
-const FileSystemUtilities = require("../src/FileSystemUtilities");
-const PromptUtilities = require("../src/PromptUtilities");
+const FileSystemUtilities = require("@lerna/fs-utils");
+const PromptUtilities = require("@lerna/prompt");
 
 // helpers
-const initFixture = require("./helpers/initFixture");
-const normalizeRelativeDir = require("./helpers/normalizeRelativeDir");
+const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const normalizeRelativeDir = require("@lerna-test/normalize-relative-dir");
 
 // file under test
-const lernaClean = require("./helpers/command-runner")(require("../src/commands/CleanCommand"));
+const lernaClean = require("@lerna-test/command-runner")(require("../command"));
 
 // assertion helpers
 const removedDirectories = testDir =>
@@ -31,7 +31,7 @@ describe("CleanCommand", () => {
 
   describe("basic tests", () => {
     it("should rm -rf the node_modules", async () => {
-      const testDir = await initFixture("CleanCommand/basic");
+      const testDir = await initFixture("basic");
 
       await lernaClean(testDir)();
 
@@ -44,7 +44,7 @@ describe("CleanCommand", () => {
     });
 
     it("exits early when confirmation is rejected", async () => {
-      const testDir = await initFixture("CleanCommand/basic");
+      const testDir = await initFixture("basic");
 
       PromptUtilities.confirm.mockResolvedValueOnce(false);
 
@@ -54,7 +54,7 @@ describe("CleanCommand", () => {
     });
 
     it("should be possible to skip asking for confirmation", async () => {
-      const testDir = await initFixture("CleanCommand/basic");
+      const testDir = await initFixture("basic");
 
       await lernaClean(testDir)("--yes");
 
@@ -62,7 +62,7 @@ describe("CleanCommand", () => {
     });
 
     it("should only clean scoped packages", async () => {
-      const testDir = await initFixture("CleanCommand/basic");
+      const testDir = await initFixture("basic");
 
       await lernaClean(testDir)("--scope", "package-1");
 
@@ -70,7 +70,7 @@ describe("CleanCommand", () => {
     });
 
     it("should not clean ignored packages", async () => {
-      const testDir = await initFixture("CleanCommand/basic");
+      const testDir = await initFixture("basic");
 
       await lernaClean(testDir)("--ignore", "package-2", "--ignore", "@test/package-3");
 
@@ -80,7 +80,7 @@ describe("CleanCommand", () => {
     it("exits non-zero when rimraf errors egregiously", async () => {
       expect.assertions(1);
 
-      const testDir = await initFixture("CleanCommand/basic");
+      const testDir = await initFixture("basic");
 
       FileSystemUtilities.rimraf.mockImplementationOnce(() => Promise.reject(new Error("whoops")));
 
@@ -94,7 +94,7 @@ describe("CleanCommand", () => {
 
   describe("--include-filtered-dependencies", () => {
     it("should not remove node_modules from unaffiliated packages", async () => {
-      const testDir = await initFixture("CleanCommand/include-filtered-dependencies");
+      const testDir = await initFixture("include-filtered-dependencies");
 
       await lernaClean(testDir)("--scope", "@test/package-2", "--include-filtered-dependencies");
 

@@ -30,5 +30,13 @@
   },
   "scripts": {
     "test": "echo \"Run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@lerna/command": "file:../../core/command",
+    "@lerna/fs-utils": "file:../../core/fs-utils",
+    "@lerna/prompt": "file:../../core/prompt",
+    "p-map": "^1.2.0",
+    "p-map-series": "^1.0.0",
+    "p-waterfall": "^1.0.0"
   }
 }

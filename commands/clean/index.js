@@ -3,25 +3,9 @@
 const path = require("path");
 const pMap = require("p-map");
 
-const Command = require("../Command");
-const FileSystemUtilities = require("../FileSystemUtilities");
-const PromptUtilities = require("../PromptUtilities");
-
-exports.handler = function handler(argv) {
-  // eslint-disable-next-line no-use-before-define
-  return new CleanCommand(argv);
-};
-
-exports.command = "clean";
-
-exports.describe = "Remove the node_modules directory from all packages.";
-
-exports.builder = {
-  yes: {
-    group: "Command Options:",
-    describe: "Skip all confirmation prompts",
-  },
-};
+const Command = require("@lerna/command");
+const FileSystemUtilities = require("@lerna/fs-utils");
+const PromptUtilities = require("@lerna/prompt");
 
 class CleanCommand extends Command {
   get requiresGit() {
@@ -62,3 +46,5 @@ class CleanCommand extends Command {
     });
   }
 }
+
+module.exports = CleanCommand;
