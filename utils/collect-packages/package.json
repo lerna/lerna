@@ -13,9 +13,9 @@
     "url": "https://github.com/evocateur"
   },
   "files": [
-    "index.js"
+    "collect-packages.js"
   ],
-  "main": "index.js",
+  "main": "collect-packages.js",
   "engines": {
     "node": ">= 6.9.0"
   },
@@ -29,5 +29,12 @@
   },
   "scripts": {
     "test": "echo \"Run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@lerna/package": "file:../../core/package",
+    "@lerna/validation-error": "file:../validation-error",
+    "globby": "^8.0.1",
+    "load-json-file": "^4.0.0",
+    "p-map": "^1.2.0"
   }
 }

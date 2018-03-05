@@ -5,8 +5,8 @@ const loadJsonFile = require("load-json-file");
 const path = require("path");
 const pMap = require("p-map");
 
-const Package = require("../Package");
-const ValidationError = require("./validation-error");
+const Package = require("@lerna/package");
+const ValidationError = require("@lerna/validation-error");
 
 module.exports = collectPackages;
 
