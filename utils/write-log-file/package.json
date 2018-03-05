@@ -13,9 +13,9 @@
     "url": "https://github.com/evocateur"
   },
   "files": [
-    "index.js"
+    "write-log-file.js"
   ],
-  "main": "index.js",
+  "main": "write-log-file.js",
   "engines": {
     "node": ">= 6.9.0"
   },
@@ -29,5 +29,9 @@
   },
   "scripts": {
     "test": "echo \"Run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "npmlog": "^4.1.2",
+    "write-file-atomic": "^2.3.0"
   }
 }
