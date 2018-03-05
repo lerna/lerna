@@ -1,16 +1,16 @@
 "use strict";
 
-jest.mock("../src/utils/create-symlink");
+jest.mock("@lerna/create-symlink");
 
 // mocked or stubbed modules
-const createSymlink = require("../src/utils/create-symlink");
+const createSymlink = require("@lerna/create-symlink");
 
 // helpers
-const initFixture = require("./helpers/initFixture");
-const normalizeRelativeDir = require("./helpers/normalizeRelativeDir");
+const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const normalizeRelativeDir = require("@lerna-test/normalize-relative-dir");
 
 // file under test
-const lernaLink = require("./helpers/command-runner")(require("../src/commands/LinkCommand"));
+const lernaLink = require("@lerna-test/command-runner")(require("../command"));
 
 // assertion helpers
 const symlinkedDirectories = testDir =>

@@ -30,5 +30,10 @@
   },
   "scripts": {
     "test": "echo \"Run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@lerna/command": "file:../../core/command",
+    "@lerna/package-graph": "file:../../core/package-graph",
+    "@lerna/symlink-dependencies": "file:../../utils/symlink-dependencies"
   }
 }
