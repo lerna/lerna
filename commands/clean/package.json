@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@lerna/command": "file:../../core/command",
+    "@lerna/filter-options": "file:../../core/filter-options",
     "@lerna/fs-utils": "file:../../core/fs-utils",
     "@lerna/prompt": "file:../../core/prompt",
     "p-map": "^1.2.0",

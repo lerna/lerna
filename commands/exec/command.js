@@ -1,5 +1,6 @@
 "use strict";
 
+const filterable = require("@lerna/filter-options");
 const ExecCommand = require(".");
 
 /**
@@ -9,7 +10,7 @@ exports.command = "exec [cmd] [args..]";
 
 exports.describe = "Run an arbitrary command in each package.";
 
-exports.builder = yargs =>
+exports.builder = yargs => {
   yargs
     .example("$0 exec ls -- --la", "# execute `ls -la` in all packages")
     .example("$0 exec -- ls --la", "# execute `ls -la` in all packages, keeping cmd outside")
@@ -41,6 +42,9 @@ exports.builder = yargs =>
       describe: "Positional arguments (not recognized by lerna) to send to command",
       type: "string",
     });
+
+  return filterable(yargs);
+};
 
 exports.handler = function handler(argv) {
   return new ExecCommand(argv);

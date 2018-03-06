@@ -1,5 +1,6 @@
 "use strict";
 
+const filterable = require("@lerna/filter-options");
 const LsCommand = require(".");
 
 /**
@@ -11,13 +12,17 @@ exports.aliases = ["ls"];
 
 exports.describe = "List local packages";
 
-exports.builder = {
-  json: {
-    describe: "Show information in JSON format",
-    group: "Command Options:",
-    type: "boolean",
-    default: undefined,
-  },
+exports.builder = yargs => {
+  yargs.options({
+    json: {
+      group: "Command Options:",
+      describe: "Show information in JSON format",
+      type: "boolean",
+      default: undefined,
+    },
+  });
+
+  return filterable(yargs);
 };
 
 exports.handler = function handler(argv) {

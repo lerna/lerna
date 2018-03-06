@@ -1,5 +1,6 @@
 "use strict";
 
+const filterable = require("@lerna/filter-options");
 const CleanCommand = require(".");
 
 /**
@@ -9,11 +10,15 @@ exports.command = "clean";
 
 exports.describe = "Remove the node_modules directory from all packages.";
 
-exports.builder = {
-  yes: {
-    group: "Command Options:",
-    describe: "Skip all confirmation prompts",
-  },
+exports.builder = yargs => {
+  yargs.options({
+    yes: {
+      group: "Command Options:",
+      describe: "Skip all confirmation prompts",
+    },
+  });
+
+  return filterable(yargs);
 };
 
 exports.handler = function handler(argv) {

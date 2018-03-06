@@ -1,5 +1,6 @@
 "use strict";
 
+const filterable = require("@lerna/filter-options");
 const BootstrapCommand = require(".");
 
 /**
@@ -9,7 +10,7 @@ exports.command = "bootstrap";
 
 exports.describe = "Link local packages together and install remaining package dependencies";
 
-exports.builder = yargs =>
+exports.builder = yargs => {
   yargs
     .example(
       "$0 bootstrap -- --no-optional",
@@ -52,6 +53,9 @@ exports.builder = yargs =>
         requiresArg: true,
       },
     });
+
+  return filterable(yargs);
+};
 
 exports.handler = function handler(argv) {
   return new BootstrapCommand(argv);

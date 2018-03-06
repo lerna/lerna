@@ -28,8 +28,5 @@
   },
   "scripts": {
     "test": "echo \"Run tests from root\" && exit 1"
-  },
-  "dependencies": {
-    "dedent": "^0.7.0"
   }
 }
