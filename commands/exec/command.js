@@ -14,6 +14,14 @@ exports.builder = yargs => {
   yargs
     .example("$0 exec ls -- --la", "# execute `ls -la` in all packages")
     .example("$0 exec -- ls --la", "# execute `ls -la` in all packages, keeping cmd outside")
+    .positional("cmd", {
+      describe: "The command to execute. Any command flags must be passed after --",
+      type: "string",
+    })
+    .positional("args", {
+      describe: "Positional arguments (not recognized by lerna) to send to command",
+      type: "string",
+    })
     .options({
       bail: {
         group: "Command Options:",
@@ -33,14 +41,6 @@ exports.builder = yargs => {
         type: "boolean",
         default: undefined,
       },
-    })
-    .positional("cmd", {
-      describe: "The command to execute. Any command flags must be passed after --",
-      type: "string",
-    })
-    .positional("args", {
-      describe: "Positional arguments (not recognized by lerna) to send to command",
-      type: "string",
     });
 
   return filterable(yargs);

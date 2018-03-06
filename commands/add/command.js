@@ -11,14 +11,15 @@ exports.describe = "Add dependencies to matched packages";
 
 exports.builder = yargs =>
   yargs
-    .options({
-      dev: {
-        describe: "Save to devDependencies",
-      },
-    })
     .positional("pkgNames", {
       describe: "One or more package names to add as a dependency",
       type: "string",
+    })
+    .options({
+      dev: {
+        group: "Command Options:",
+        describe: "Save to devDependencies",
+      },
     });
 
 exports.handler = function handler(argv) {

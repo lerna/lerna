@@ -13,6 +13,10 @@ exports.describe = "Run an npm script in each package that contains that script.
 exports.builder = yargs => {
   yargs
     .example("$0 run build -- --silent", "# `npm run build --silent` in all packages with a build script")
+    .positional("script", {
+      describe: "The npm script to run. Pass flags to send to the npm client after --",
+      type: "string",
+    })
     .options({
       stream: {
         group: "Command Options:",
@@ -32,10 +36,6 @@ exports.builder = yargs => {
         type: "string",
         requiresArg: true,
       },
-    })
-    .positional("script", {
-      describe: "The npm script to run. Pass flags to send to the npm client after --",
-      type: "string",
     });
 
   return filterable(yargs);
