@@ -1,6 +1,6 @@
 {
-  "name": "lerna-root",
-  "version": "3.0.0-alpha.3",
+  "name": "lerna",
+  "version": "3.0.0-monorepo",
   "description": "lerna dog-fooding lerna",
   "private": true,
   "scripts": {
@@ -17,6 +17,9 @@
   },
   "license": "MIT",
   "homepage": "https://lernajs.io/",
+  "bin": {
+    "lerna": "core/lerna/cli.js"
+  },
   "dependencies": {
     "lerna": "file:core/lerna"
   },
