@@ -1,6 +1,7 @@
 {
   "name": "@lerna/remove",
   "version": "3.0.0-alpha.3",
+  "private": true,
   "description": "TODO",
   "keywords": [
     "lerna",
