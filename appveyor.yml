@@ -14,14 +14,14 @@ matrix:
 
 cache:
   - '%APPDATA%\npm-cache'
-  - node_modules -> package-lock.json
 
 install:
   - ps: Install-Product node $env:nodejs_version
   - npm config set loglevel warn
-  - npm install --global npm@latest
+  - npm install --global npm@latest cipm
   - set PATH=%APPDATA%\npm;%PATH%
-  - npm install --prefer-offline
+  - cipm
+  # use cipm until `npm ci` is fixed
 
 before_test:
   - git config --global user.email test@example.com
