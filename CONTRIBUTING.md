@@ -11,12 +11,12 @@ $ npm i
 
 ## Code Structure
 
-Currently, the [source](https://github.com/lerna/lerna/tree/master/src) is split up into a few categories:
+Currently, the [source](https://github.com/lerna/lerna/tree/master) is split up into a few categories:
 
-* Utilities: methods to run git, npm, fs, and more.
-* Abstractions for packages
-* [Lerna Commands](https://github.com/lerna/lerna/tree/master/src/commands): each command has an `initialize` and `execute` function.
-  * These commands are consumed as yargs subcommands in [src/cli.js](https://github.com/lerna/lerna/blob/master/src/cli.js), which is called from the executable [`bin/lerna.js`](https://github.com/lerna/lerna/blob/master/bin/lerna.js).
+* [utils](https://github.com/lerna/lerna/tree/master/utils): shared packages to run git, npm, fs, and more.
+* [core](https://github.com/lerna/lerna/tree/master/core): basic building blocks, including Package-related abstractions and the command superclass.
+* [commands](https://github.com/lerna/lerna/tree/master/commands): each command has an `initialize` and `execute` function.
+  * These commands are consumed as yargs subcommands in [core/cli/index.js](https://github.com/lerna/lerna/blob/master/core/cli/index.js), which is required from the executable [`core/lerna/cli.js`](https://github.com/lerna/lerna/blob/master/core/lerna/cli.js).
 
 ## Commands
 
@@ -26,10 +26,10 @@ Currently, the [source](https://github.com/lerna/lerna/tree/master/src) is split
 $ npm test
 
 # watch for changes
-$ npm run test:watch
+$ npm test -- --watch
 
-# For a specific file (e.g., in test/Command.js)
-$ npm run test:watch -- Command.js
+# For a specific file (e.g., in core/command/__tests__/command.test.js)
+$ npm test -- --watch core/command
 ```
 
 By default, `npm test` also runs the linter.
@@ -38,6 +38,7 @@ You can skip this by calling `jest` directly:
 ```sh
 $ npx jest
 $ npx jest --watch
+$ npx jest --config jest.integration.js
 # etc
 ```
 
@@ -46,11 +47,14 @@ $ npx jest --watch
 ```sh
 $ npm run integration
 
-# watch for changes
-$ npm run test:watch-integration
+# test a specific file
+$ npm run integration -- lerna-publish
 
-# For a specific file
-$ npm run test:watch-integration -- lerna-publish
+# watch for changes
+$ npm run integration -- --watch
+
+# watch a specific file
+$ npm run integration -- --watch lerna-publish
 ```
 
 ### Linting
