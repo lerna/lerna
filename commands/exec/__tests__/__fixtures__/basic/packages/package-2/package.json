@@ -1,0 +1,7 @@
+{
+  "name": "package-2",
+  "version": "1.0.0",
+  "scripts": {
+    "fail-or-succeed": "echo \"success!\""
+  }
+}

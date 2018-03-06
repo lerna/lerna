@@ -1,0 +1,38 @@
+{
+  "name": "@lerna/collect-updates",
+  "version": "3.0.0-alpha.3",
+  "description": "TODO",
+  "keywords": [
+    "lerna",
+    "utils"
+  ],
+  "homepage": "https://github.com/lerna/lerna",
+  "license": "MIT",
+  "author": {
+    "name": "Daniel Stockman",
+    "url": "https://github.com/evocateur"
+  },
+  "files": [
+    "collect-updates.js",
+    "lib"
+  ],
+  "main": "collect-updates.js",
+  "engines": {
+    "node": ">= 6.9.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lerna/lerna.git"
+  },
+  "scripts": {
+    "test": "echo \"Run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@lerna/git-utils": "file:../../core/git-utils",
+    "minimatch": "^3.0.4",
+    "semver": "^5.5.0"
+  }
+}

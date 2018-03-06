@@ -19,13 +19,13 @@ matrix:
 cache:
   directories:
   - $HOME/.npm
-  - node_modules
 
 before_install:
   - npm config set loglevel warn
-  - npm install --global npm@latest
+  - npm install --global npm@latest cipm
 
-install: npm install --prefer-offline
+install: cipm
+# use cipm until `npm ci` is fixed
 
 before_script:
   - git config --global user.email test@example.com

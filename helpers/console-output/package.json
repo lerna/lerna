@@ -1,0 +1,13 @@
+{
+  "name": "@lerna-test/console-output",
+  "version": "0.0.0-test-only",
+  "description": "A local test helper",
+  "main": "index.js",
+  "private": true,
+  "license": "MIT",
+  "dependencies": {
+    "@lerna/output": "file:../../utils/output",
+    "chalk": "^2.3.1",
+    "normalize-newline": "^3.0.0"
+  }
+}

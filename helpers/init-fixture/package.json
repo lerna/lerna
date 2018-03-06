@@ -1,0 +1,14 @@
+{
+  "name": "@lerna-test/init-fixture",
+  "version": "0.0.0-test-only",
+  "description": "A local test helper",
+  "main": "index.js",
+  "private": true,
+  "license": "MIT",
+  "dependencies": {
+    "execa": "^0.9.0",
+    "find-up": "^2.1.0",
+    "fs-extra": "^5.0.0",
+    "tempy": "^0.2.1"
+  }
+}

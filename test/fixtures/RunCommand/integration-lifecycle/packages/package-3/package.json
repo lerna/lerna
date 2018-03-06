@@ -1,7 +1,0 @@
-{
-  "name": "package-3",
-  "version": "1.0.0",
-  "scripts": {
-    "test": "echo package-3"
-  }
-}

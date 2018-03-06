@@ -1,0 +1,11 @@
+{
+  "name": "@lerna-test/update-lerna-config",
+  "version": "0.0.0-test-only",
+  "description": "A local test helper",
+  "main": "index.js",
+  "private": true,
+  "license": "MIT",
+  "dependencies": {
+    "fs-extra": "^5.0.0"
+  }
+}

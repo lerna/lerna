@@ -1,0 +1,8 @@
+{
+  "name": "@lerna-test/calls-back",
+  "version": "0.0.0-test-only",
+  "description": "A local test helper",
+  "main": "index.js",
+  "private": true,
+  "license": "MIT"
+}

@@ -1,6 +1,8 @@
 {
   "packages": [
-    "."
+    "commands/*",
+    "core/*",
+    "utils/*"
   ],
   "changelog": {
     "repo": "lerna/lerna",
@@ -14,5 +16,12 @@
     },
     "cacheDir": ".changelog"
   },
-  "version": "0.0.0"
+  "command": {
+    "publish": {
+      "allowBranch": "master",
+      "message": "chore(release): publish %s",
+      "npmTag": "next"
+    }
+  },
+  "version": "3.0.0-alpha.3"
 }
