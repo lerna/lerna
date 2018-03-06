@@ -26,6 +26,11 @@ function globalOptions(yargs) {
       type: "boolean",
       default: undefined,
     },
+    "max-buffer": {
+      describe: "Set max-buffer(bytes) for Command execution",
+      type: "number",
+      requiresArg: true,
+    },
   };
 
   // group options under "Global Options:" header

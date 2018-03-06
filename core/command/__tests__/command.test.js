@@ -104,11 +104,13 @@ describe("core-command", () => {
   });
 
   describe(".execOpts", () => {
-    it("has maxBuffer Infinity", async () => {
-      const command = testFactory();
+    const ONE_HUNDRED_MEGABYTES = 1000 * 1000 * 100;
+
+    it("has maxBuffer", async () => {
+      const command = testFactory({ maxBuffer: ONE_HUNDRED_MEGABYTES });
       await command;
 
-      expect(command.execOpts.maxBuffer).toBe(Infinity);
+      expect(command.execOpts.maxBuffer).toBe(ONE_HUNDRED_MEGABYTES);
     });
 
     it("has repo path", async () => {

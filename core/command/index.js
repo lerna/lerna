@@ -128,13 +128,13 @@ class Command {
   }
 
   configureProperties() {
-    const { concurrency, sort } = this.options;
+    const { concurrency, sort, maxBuffer } = this.options;
 
     this.concurrency = Math.max(1, +concurrency || DEFAULT_CONCURRENCY);
     this.toposort = sort === undefined || sort;
     this.execOpts = {
       cwd: this.repository.rootPath,
-      maxBuffer: Infinity,
+      maxBuffer,
     };
   }
 
