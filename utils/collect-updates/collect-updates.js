@@ -9,7 +9,7 @@ const makeDiffPredicate = require("./lib/make-diff-predicate");
 
 module.exports = collectUpdates;
 
-function collectUpdates({ filteredPackages, packageGraph, options, rootPath, execOpts, logger }) {
+function collectUpdates({ filteredPackages, packageGraph, options, execOpts, logger }) {
   const packages =
     filteredPackages.length === packageGraph.size
       ? packageGraph
@@ -41,7 +41,7 @@ function collectUpdates({ filteredPackages, packageGraph, options, rootPath, exe
   } else {
     candidates = new Set();
 
-    const hasDiff = makeDiffPredicate(committish, rootPath, execOpts, options.ignore);
+    const hasDiff = makeDiffPredicate(committish, execOpts, ignorePatterns);
     const needsBump = (options.cdVersion || "").startsWith("pre")
       ? () => false
       : /* skip packages that have not been previously prereleased */

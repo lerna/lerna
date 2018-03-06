@@ -5,7 +5,7 @@ const GitUtilities = require("@lerna/git-utils");
 
 module.exports = makeDiffPredicate;
 
-function makeDiffPredicate(committish, rootPath, execOpts, ignorePatterns = []) {
+function makeDiffPredicate(committish, execOpts, ignorePatterns = []) {
   const ignoreFilters = new Set(
     Array.from(ignorePatterns).map(p => minimatch.filter(`!${p}`, { matchBase: true }))
   );
