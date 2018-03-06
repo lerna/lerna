@@ -1,5 +1,6 @@
 "use strict";
 
+const filterable = require("@lerna/filter-options");
 const AddCommand = require(".");
 
 /**
@@ -9,7 +10,7 @@ exports.command = "add [pkgNames..]";
 
 exports.describe = "Add dependencies to matched packages";
 
-exports.builder = yargs =>
+exports.builder = yargs => {
   yargs
     .positional("pkgNames", {
       describe: "One or more package names to add as a dependency",
@@ -21,6 +22,9 @@ exports.builder = yargs =>
         describe: "Save to devDependencies",
       },
     });
+
+  return filterable(yargs);
+};
 
 exports.handler = function handler(argv) {
   return new AddCommand(argv);
