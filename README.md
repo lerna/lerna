@@ -942,13 +942,6 @@ What level of logs to report. On failure, all logs are written to lerna-debug.lo
 
 Any logs of a higher level than the setting are shown. The default is "info".
 
-#### --max-buffer [in-bytes]
-
-Set a max buffer length for each underlying process call. Useful for example
-when someone wants to import a repo with a larger amount of commits while
-running `lerna import`. In that case the built-in buffer length might not
-be sufficient.
-
 #### --no-sort
 
 By default, all tasks execute on packages in topologically sorted order as to respect the dependency relationships of the packages in question. Cycles are broken on a best-effort basis in a way not guaranteed to be consistent across Lerna invocations.

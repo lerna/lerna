@@ -25,27 +25,6 @@ If `lerna bootstrap` is failing because you have repositories on a private serve
 
 ## Import Command
 
-### Buffer problems during import
-
-When you try to import a repository which has many commits in it there is a 
-chance that you get an error such as:
-
-```
-DeprecationWarning: Unhandled promise rejections are deprecated
-```
-
-or 
-
-```
-Error: spawnSync /bin/sh ENOBUFS during ImportCommand.execute
-```
-
-#### Solution:
-
-Run `lerna import` with the `--max-buffer` flag and provide a large enough 
-number (in bytes). At the writing of this entry the underlying default is 
-10MB, so you should keep this in mind. 
-
 ### Merge conflict commits cannot be imported
 
 When you try to import a repository that contains merge commits that needed
