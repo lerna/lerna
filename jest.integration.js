@@ -2,7 +2,7 @@
 
 module.exports = {
   bail: true,
-  modulePathIgnorePatterns: ["<rootDir>/.*/__fixtures__"],
+  modulePathIgnorePatterns: ["/__fixtures__/"],
   roots: ["<rootDir>/integration"],
   setupTestFrameworkScriptFile: "<rootDir>/setup-integration-timeout.js",
   snapshotSerializers: ["@lerna-test/serialize-placeholders"],
