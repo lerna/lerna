@@ -17,6 +17,10 @@ exports.builder = yargs => {
 
   // TODO: share only relevant options with `lerna changed`
   const opts = {
+    "allow-branch": {
+      describe: "Specify which branches to allow publishing from.",
+      type: "array",
+    },
     canary: {
       defaultDescription: "alpha",
       describe: "Publish packages after every successful merge using the sha as part of the tag.",
@@ -55,11 +59,6 @@ exports.builder = yargs => {
       describe: "Push git changes to the specified remote instead of 'origin'.",
       type: "string",
       requiresArg: true,
-    },
-    yes: {
-      describe: "Skip all confirmation prompts.",
-      type: "boolean",
-      default: undefined,
     },
     message: {
       describe: "Use a custom commit message when creating the publish commit.",
@@ -107,9 +106,10 @@ exports.builder = yargs => {
       type: "boolean",
       default: undefined,
     },
-    "allow-branch": {
-      describe: "Specify which branches to allow publishing from.",
-      type: "array",
+    yes: {
+      describe: "Skip all confirmation prompts.",
+      type: "boolean",
+      default: undefined,
     },
   };
 
