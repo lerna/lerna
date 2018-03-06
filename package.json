@@ -9,9 +9,7 @@
     "integration": "cross-env LC_ALL=en-US NODE_ENV=test jest --config jest.integration.js",
     "lint": "eslint . --ignore-path .gitignore --cache",
     "pretest": "npm run lint",
-    "test": "cross-env LC_ALL=en-US NODE_ENV=test jest",
-    "test:watch": "cross-env LC_ALL=en-US NODE_ENV=test jest --watchAll --no-watchman",
-    "test:watch-integration": "npm run integration -- --watchAll --no-watchman"
+    "test": "cross-env LC_ALL=en-US NODE_ENV=test jest"
   },
   "repository": {
     "type": "git",
@@ -53,26 +51,6 @@
     "prettier": "^1.11.1",
     "tempy": "^0.2.1",
     "touch": "^3.1.0"
-  },
-  "jest": {
-    "clearMocks": true,
-    "collectCoverageFrom": [
-      "src/**/*.js"
-    ],
-    "modulePathIgnorePatterns": [
-      "<rootDir>/test/fixtures"
-    ],
-    "roots": [
-      "<rootDir>/src",
-      "<rootDir>/test"
-    ],
-    "setupFiles": [
-      "<rootDir>/test/helpers/silence-logging.js"
-    ],
-    "testEnvironment": "node",
-    "testMatch": [
-      "**/test/*.js"
-    ]
   },
   "engines": {
     "node": ">= 6.9.0"
