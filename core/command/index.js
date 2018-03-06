@@ -17,9 +17,6 @@ const cleanStack = require("./lib/clean-stack");
 const logPackageError = require("./lib/log-package-error");
 const warnIfHanging = require("./lib/warn-if-hanging");
 
-// handle log.success()
-log.addLevel("success", 3001, { fg: "green", bold: true });
-
 const DEFAULT_CONCURRENCY = 4;
 const LERNA_VERSION = require("./package.json").version; // FIXME: this is wrong now
 
@@ -34,6 +31,9 @@ class Command {
     this.lernaVersion = LERNA_VERSION;
     log.info("version", this.lernaVersion);
 
+    // "FooCommand" => "foo"
+    this.name = this.constructor.name.replace(/Command$/, "").toLowerCase();
+
     // launch the command
     let runner = new Promise((resolve, reject) => {
       // run everything inside a Promise chain
@@ -42,6 +42,8 @@ class Command {
       chain = chain.then(() => {
         this.repository = new Project(argv.cwd);
       });
+      chain = chain.then(() => this.configureOptions());
+      chain = chain.then(() => this.configureProperties());
       chain = chain.then(() => this.configureLogging());
       chain = chain.then(() => this.runValidations());
       chain = chain.then(() => this.runPreparations());
@@ -60,7 +62,7 @@ class Command {
           } else if (err.name !== "ValidationError") {
             // npmlog does some funny stuff to the stack by default,
             // so pass it directly to avoid duplication.
-            log.error("", cleanStack(err, this.className));
+            log.error("", cleanStack(err, this.constructor.name));
           }
 
           // ValidationError does not trigger a log dump
@@ -84,80 +86,14 @@ class Command {
     this.catch = onRejected => runner.catch(onRejected);
   }
 
-  get concurrency() {
-    if (!this._concurrency) {
-      const { concurrency } = this.options;
-      this._concurrency = Math.max(1, +concurrency || DEFAULT_CONCURRENCY);
-    }
-
-    return this._concurrency;
-  }
-
-  get toposort() {
-    const { sort } = this.options;
-    // If the option isn't present then the default is to sort.
-    return sort === undefined || sort;
-  }
-
-  get name() {
-    // For a class named "FooCommand" this returns "foo".
-    return this.className.replace(/Command$/, "").toLowerCase();
-  }
-
-  get className() {
-    return this.constructor.name;
-  }
-
-  get execOpts() {
-    if (!this._execOpts) {
-      this._execOpts = {
-        cwd: this.repository.rootPath,
-      };
-
-      if (this.options.maxBuffer) {
-        this._execOpts.maxBuffer = this.options.maxBuffer;
-      }
-    }
-
-    return this._execOpts;
-  }
-
   get requiresGit() {
     return true;
   }
 
   // Override this to inherit config from another command.
-  // For example `updated` inherits config from `publish`.
+  // For example `changed` inherits config from `publish`.
   get otherCommandConfigs() {
     return [];
-  }
-
-  get options() {
-    if (!this._options) {
-      // Command config object is either "commands" or "command".
-      const { commands, command } = this.repository.lernaJson;
-
-      // The current command always overrides otherCommandConfigs
-      const lernaCommandOverrides = [this.name, ...this.otherCommandConfigs].map(
-        name => (commands || command || {})[name]
-      );
-
-      this._options = _.defaults(
-        {},
-        // CLI flags, which if defined overrule subsequent values
-        this._argv,
-        // Namespaced command options from `lerna.json`
-        ...lernaCommandOverrides,
-        // Global options from `lerna.json`
-        this.repository.lernaJson,
-        // Command specific defaults
-        this.defaultOptions,
-        // Deprecated legacy options in `lerna.json`
-        this._legacyOptions()
-      );
-    }
-
-    return this._options;
   }
 
   get defaultOptions() {
@@ -167,13 +103,50 @@ class Command {
     };
   }
 
+  configureOptions() {
+    // Command config object is either "commands" or "command".
+    const { commands, command } = this.repository.lernaJson;
+
+    // The current command always overrides otherCommandConfigs
+    const lernaCommandOverrides = [this.name, ...this.otherCommandConfigs].map(
+      name => (commands || command || {})[name]
+    );
+
+    this.options = _.defaults(
+      {},
+      // CLI flags, which if defined overrule subsequent values
+      this._argv,
+      // Namespaced command options from `lerna.json`
+      ...lernaCommandOverrides,
+      // Global options from `lerna.json`
+      this.repository.lernaJson,
+      // Command specific defaults
+      this.defaultOptions,
+      // Deprecated legacy options in `lerna.json`
+      this._legacyOptions()
+    );
+  }
+
+  configureProperties() {
+    const { concurrency, sort, maxBuffer } = this.options;
+
+    this.concurrency = Math.max(1, +concurrency || DEFAULT_CONCURRENCY);
+    this.toposort = sort === undefined || sort;
+    this.execOpts = {
+      cwd: this.repository.rootPath,
+      maxBuffer,
+    };
+  }
+
   configureLogging() {
-    // this.options getter might throw (invalid JSON in lerna.json)
     const { loglevel } = this.options;
 
     if (loglevel) {
       log.level = loglevel;
     }
+
+    // handle log.success()
+    log.addLevel("success", 3001, { fg: "green", bold: true });
 
     // create logger that subclasses use
     this.logger = log.newGroup(this.name);

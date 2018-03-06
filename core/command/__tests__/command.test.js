@@ -213,7 +213,7 @@ describe("core-command", () => {
     });
   });
 
-  describe("get .packages", () => {
+  describe(".packages", () => {
     it("returns the list of packages", async () => {
       const command = testFactory();
       await command;
@@ -222,7 +222,7 @@ describe("core-command", () => {
     });
   });
 
-  describe("get .packageGraph", () => {
+  describe(".packageGraph", () => {
     it("returns the graph of packages", async () => {
       const command = testFactory();
       await command;
@@ -318,7 +318,7 @@ describe("core-command", () => {
     });
   });
 
-  describe("get .options", () => {
+  describe(".options", () => {
     class TestACommand extends Command {}
     class TestBCommand extends Command {}
     class TestCCommand extends Command {
@@ -334,13 +334,6 @@ describe("core-command", () => {
         return ["testb"];
       }
     }
-
-    it("is a lazy getter", async () => {
-      const instance = new TestACommand({ cwd: testDir, onRejected });
-      await instance;
-
-      expect(instance.options).toBe(instance.options);
-    });
 
     it("should pick up global options", async () => {
       const instance = new TestACommand({ cwd: testDir, onRejected });
