@@ -13,7 +13,8 @@
     "url": "https://github.com/evocateur"
   },
   "files": [
-    "index.js"
+    "index.js",
+    "lib"
   ],
   "main": "index.js",
   "engines": {

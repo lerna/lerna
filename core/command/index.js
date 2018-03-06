@@ -4,7 +4,6 @@ const _ = require("lodash");
 const dedent = require("dedent");
 const log = require("npmlog");
 
-const ChildProcessUtilities = require("@lerna/child-process");
 const GitUtilities = require("@lerna/git-utils");
 const PackageGraph = require("@lerna/package-graph");
 const Project = require("@lerna/project");
@@ -13,6 +12,10 @@ const collectPackages = require("@lerna/collect-packages");
 const collectUpdates = require("@lerna/collect-updates");
 const filterPackages = require("@lerna/filter-packages");
 const ValidationError = require("@lerna/validation-error");
+
+const cleanStack = require("./lib/clean-stack");
+const logPackageError = require("./lib/log-package-error");
+const warnIfHanging = require("./lib/warn-if-hanging");
 
 // handle log.success()
 log.addLevel("success", 3001, { fg: "green", bold: true });
@@ -98,7 +101,7 @@ class Command {
 
   get name() {
     // For a class named "FooCommand" this returns "foo".
-    return commandNameFromClassName(this.className);
+    return this.className.replace(/Command$/, "").toLowerCase();
   }
 
   get className() {
@@ -283,49 +286,6 @@ class Command {
 
   execute() {
     throw new Error("command.execute() needs to be implemented.");
-  }
-}
-
-function commandNameFromClassName(className) {
-  return className.replace(/Command$/, "").toLowerCase();
-}
-
-function cleanStack(err, className) {
-  const lines = err.stack ? err.stack.split("\n") : err.split("\n");
-  const cutoff = new RegExp(`^    at ${className}.runCommand .*$`);
-  const relevantIndex = lines.findIndex(line => cutoff.test(line));
-  return lines.slice(0, relevantIndex).join("\n");
-}
-
-function logPackageError(err) {
-  log.error(`Error occured in '${err.pkg.name}' while running '${err.cmd}'`);
-
-  const pkgPrefix = `${err.cmd} [${err.pkg.name}]`;
-  log.error(pkgPrefix, `Output from stdout:`);
-  log.pause();
-  console.error(err.stdout); // eslint-disable-line no-console
-
-  log.resume();
-  log.error(pkgPrefix, `Output from stderr:`);
-  log.pause();
-  console.error(err.stderr); // eslint-disable-line no-console
-
-  // Below is just to ensure something sensible is printed after the long
-  // stream of logs
-  log.resume();
-  log.error(`Error occured in '${err.pkg.name}' while running '${err.cmd}'`);
-}
-
-function warnIfHanging() {
-  const childProcessCount = ChildProcessUtilities.getChildProcessCount();
-
-  if (childProcessCount > 0) {
-    log.warn(
-      "complete",
-      `Waiting for ${childProcessCount} child ` +
-        `process${childProcessCount === 1 ? "" : "es"} to exit. ` +
-        "CTRL-C to exit immediately."
-    );
   }
 }
 
