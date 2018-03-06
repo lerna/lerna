@@ -20,7 +20,6 @@
     "node": ">= 6.9.0"
   },
   "publishConfig": {
-    "tag": "next",
     "access": "public"
   },
   "repository": {
