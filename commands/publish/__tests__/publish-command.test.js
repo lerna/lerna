@@ -670,13 +670,48 @@ describe("PublishCommand", () => {
   });
 
   /** =========================================================================
-   * NORMAL - IGNORE
+   * NORMAL - IGNORE CHANGES
    * ======================================================================= */
 
-  describe("normal mode with --ignore", () => {
-    it("does not publish ignored packages", async () => {
+  describe("normal mode with --ignore-changes", () => {
+    it("does not publish packages with ignored changes", async () => {
       const testDir = await initFixture("normal");
-      await lernaPublish(testDir)("--ignore", "package-2", "--ignore", "package-3", "--ignore", "package-4");
+
+      GitUtilities.hasTags.mockReturnValueOnce(true);
+      GitUtilities.getLastTag.mockReturnValueOnce("v1.0.0");
+      GitUtilities.diffSinceIn
+        .mockReturnValueOnce("")
+        .mockReturnValueOnce("packages/package-2/README.md")
+        .mockReturnValueOnce("packages/package-3/__tests__/pkg3.test.js")
+        .mockReturnValueOnce("packages/package-4/lib/foo.js");
+
+      await lernaPublish(testDir)(
+        "--ignore-changes",
+        "README.md",
+
+        "--ignore-changes",
+        "**/__tests__/**",
+
+        "--ignore-changes",
+        "package-4" // notably does NOT work, needs to be "**/package-4/**" to match
+      );
+
+      expect(gitAddedFiles(testDir)).toMatchSnapshot("git added files");
+      expect(publishedTagInDirectories(testDir)).toMatchSnapshot("npm published");
+    });
+
+    it("maps deprecated --ignore", async () => {
+      const testDir = await initFixture("normal");
+
+      GitUtilities.hasTags.mockReturnValueOnce(true);
+      GitUtilities.getLastTag.mockReturnValueOnce("v1.0.0");
+      GitUtilities.diffSinceIn
+        .mockReturnValueOnce("")
+        .mockReturnValueOnce("")
+        .mockReturnValueOnce("packages/package-3/README.md")
+        .mockReturnValueOnce("packages/package-4/lib/foo.js");
+
+      await lernaPublish(testDir)("--ignore", "*.md");
 
       expect(gitAddedFiles(testDir)).toMatchSnapshot("git added files");
       expect(publishedTagInDirectories(testDir)).toMatchSnapshot("npm published");

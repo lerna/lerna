@@ -6,9 +6,7 @@ const GitUtilities = require("@lerna/git-utils");
 module.exports = makeDiffPredicate;
 
 function makeDiffPredicate(committish, execOpts, ignorePatterns = []) {
-  const ignoreFilters = new Set(
-    Array.from(ignorePatterns).map(p => minimatch.filter(`!${p}`, { matchBase: true }))
-  );
+  const ignoreFilters = new Set(ignorePatterns.map(p => minimatch.filter(`!${p}`, { matchBase: true })));
 
   return function hasDiffSinceThatIsntIgnored(node) {
     const diff = GitUtilities.diffSinceIn(committish, node.location, execOpts);

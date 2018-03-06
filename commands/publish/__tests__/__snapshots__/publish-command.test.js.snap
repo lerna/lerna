@@ -383,18 +383,33 @@ Object {
 }
 `;
 
-exports[`PublishCommand normal mode with --ignore does not publish ignored packages: git added files 1`] = `
+exports[`PublishCommand normal mode with --ignore-changes does not publish packages with ignored changes: git added files 1`] = `
 Array [
   "lerna.json",
-  "packages/package-1/package.json",
-  "packages/package-5/package.json",
+  "packages/package-4/package.json",
 ]
 `;
 
-exports[`PublishCommand normal mode with --ignore does not publish ignored packages: npm published 1`] = `
+exports[`PublishCommand normal mode with --ignore-changes does not publish packages with ignored changes: npm published 1`] = `
 Array [
   Object {
-    "dir": "packages/package-1",
+    "dir": "packages/package-4",
+    "tag": "latest",
+  },
+]
+`;
+
+exports[`PublishCommand normal mode with --ignore-changes maps deprecated --ignore: git added files 1`] = `
+Array [
+  "lerna.json",
+  "packages/package-4/package.json",
+]
+`;
+
+exports[`PublishCommand normal mode with --ignore-changes maps deprecated --ignore: npm published 1`] = `
+Array [
+  Object {
+    "dir": "packages/package-4",
     "tag": "latest",
   },
 ]

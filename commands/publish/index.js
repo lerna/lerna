@@ -32,6 +32,7 @@ class PublishCommand extends Command {
     return Object.assign({}, super.defaultOptions, {
       conventionalCommits: false,
       exact: false,
+      ignoreChanges: [],
       skipGit: false,
       skipNpm: false,
       tempTag: false,

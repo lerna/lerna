@@ -41,6 +41,7 @@ function collectUpdates({ filteredPackages, packageGraph, options, execOpts, log
   } else {
     candidates = new Set();
 
+    const ignorePatterns = options.ignore || options.ignoreChanges; // "ignore" might be durable
     const hasDiff = makeDiffPredicate(committish, execOpts, ignorePatterns);
     const needsBump = (options.cdVersion || "").startsWith("pre")
       ? () => false

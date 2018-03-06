@@ -60,6 +60,10 @@ exports.builder = yargs => {
       type: "string",
       requiresArg: true,
     },
+    "ignore-changes": {
+      describe: "Ignore changes in files matched by glob(s).",
+      type: "array",
+    },
     message: {
       describe: "Use a custom commit message when creating the publish commit.",
       alias: "m",
@@ -113,7 +117,25 @@ exports.builder = yargs => {
     },
   };
 
-  return yargs.options(opts).group(Object.keys(opts), "Command Options:");
+  return yargs
+    .options(opts)
+    .group(Object.keys(opts), "Command Options:")
+    .option("ignore", {
+      // NOT the same as filter-options --ignore
+      hidden: true,
+      conflicts: "ignore-changes",
+      type: "array",
+    })
+    .check(argv => {
+      if (argv.ignore) {
+        /* eslint-disable no-param-reassign */
+        argv.ignoreChanges = argv.ignore;
+        delete argv.ignore;
+        /* eslint-enable no-param-reassign */
+      }
+
+      return argv;
+    });
 };
 
 exports.handler = function handler(argv) {
