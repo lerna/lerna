@@ -18,7 +18,7 @@ const ValidationError = require("@lerna/validation-error");
 log.addLevel("success", 3001, { fg: "green", bold: true });
 
 const DEFAULT_CONCURRENCY = 4;
-const LERNA_VERSION = require("./package.json").version;
+const LERNA_VERSION = require("./package.json").version; // FIXME: this is wrong now
 
 class Command {
   constructor(argv) {

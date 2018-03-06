@@ -31,6 +31,9 @@
   "scripts": {
     "test": "echo \"Run tests from root\" && exit 1"
   },
+  "yargs": {
+    "populate--": true
+  },
   "dependencies": {
     "@lerna/batch-packages": "file:../../utils/batch-packages",
     "@lerna/command": "file:../../core/command",

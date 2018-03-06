@@ -23,8 +23,9 @@ function commandRunner(commandModule) {
       .detectLocale(false)
       .showHelpOnFail(false)
       .wrap(null)
-      .options(globalOptions)
       .command(commandModule);
+
+    globalOptions(cli);
 
     return (...args) =>
       new Promise((resolve, reject) => {

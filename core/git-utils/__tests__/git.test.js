@@ -248,7 +248,7 @@ describe("GitUtilities", () => {
 
   describe(".diffSinceIn()", () => {
     it("returns list of files changed since commit at location", () => {
-      const opts = { cwd: path.resolve(__dirname, "./..") };
+      const opts = { cwd: process.cwd() };
 
       ChildProcessUtilities.execSync.mockReturnValueOnce("files");
 

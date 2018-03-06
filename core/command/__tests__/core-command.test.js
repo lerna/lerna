@@ -15,7 +15,7 @@ const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const loggingOutput = require("@lerna-test/logging-output");
 const updateLernaConfig = require("@lerna-test/update-lerna-config");
 
-const LERNA_VERSION = fs.readJsonSync(path.join(require.resolve("lerna"), "package.json"));
+const LERNA_VERSION = require("../package.json").version;
 
 // file under test
 const Command = require("..");

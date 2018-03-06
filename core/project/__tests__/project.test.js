@@ -42,7 +42,7 @@ describe("Project", () => {
       findUp.sync = jest.fn(() => null);
 
       const repo = new Project();
-      expect(repo.rootPath).toBe(path.resolve(__dirname, ".."));
+      expect(repo.rootPath).toBe(path.resolve(__dirname, "..", "..", ".."));
     });
   });
 

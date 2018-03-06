@@ -3,7 +3,7 @@
 jest.mock("get-stream");
 jest.mock("conventional-changelog-core");
 jest.mock("conventional-recommended-bump");
-jest.mock("@lerna/fs");
+jest.mock("@lerna/fs-utils");
 
 const dedent = require("dedent");
 const path = require("path");
