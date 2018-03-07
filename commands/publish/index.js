@@ -184,7 +184,7 @@ class PublishCommand extends Command {
 
     // reset since the package.json files are changed (by gitHead if not --canary)
     chain = chain.then(() =>
-      pMap(this.repository.packageConfigs, pkgGlob =>
+      pReduce(this.repository.packageConfigs, (_, pkgGlob) =>
         GitUtilities.checkoutChanges(`${pkgGlob}/package.json`, this.execOpts)
       )
     );
