@@ -315,36 +315,56 @@ index SHA..SHA 100644
 `;
 
 exports[`lerna publish replaces file: specifier with local version before npm publish but after git commit: unstaged 1`] = `
+diff --git a/packages/package-1/package.json b/packages/package-1/package.json
+index SHA..SHA 100644
+--- a/packages/package-1/package.json
++++ b/packages/package-1/package.json
+@@ -7 +7,2 @@
+-	}
++	},
++	"gitHead": "GIT_HEAD"
 diff --git a/packages/package-2/package.json b/packages/package-2/package.json
 index SHA..SHA 100644
 --- a/packages/package-2/package.json
 +++ b/packages/package-2/package.json
-@@ -5 +5 @@
+@@ -5,2 +5,3 @@
 -    "package-1": "file:../package-1"
+-  }
 +    "package-1": "^2.0.0"
++  },
++  "gitHead": "GIT_HEAD"
 diff --git a/packages/package-3/package.json b/packages/package-3/package.json
 index SHA..SHA 100644
 --- a/packages/package-3/package.json
 +++ b/packages/package-3/package.json
-@@ -5 +5 @@
+@@ -5,2 +5,3 @@
 -    "package-2": "file:../package-2"
+-  }
 +    "package-2": "^2.0.0"
++  },
++  "gitHead": "GIT_HEAD"
 diff --git a/packages/package-4/package.json b/packages/package-4/package.json
 index SHA..SHA 100644
 --- a/packages/package-4/package.json
 +++ b/packages/package-4/package.json
-@@ -5 +5 @@
+@@ -5,2 +5,3 @@
 -    "package-3": "file:../package-3"
+-  }
 +    "package-3": "^2.0.0"
++  },
++  "gitHead": "GIT_HEAD"
 diff --git a/packages/package-5/package.json b/packages/package-5/package.json
 index SHA..SHA 100644
 --- a/packages/package-5/package.json
 +++ b/packages/package-5/package.json
-@@ -5,2 +5,2 @@
+@@ -5,3 +5,4 @@
 -    "package-4": "file:../package-4",
 -    "package-6": "file:../package-6"
+-  }
 +    "package-4": "^2.0.0",
 +    "package-6": "^1.0.0"
++  },
++  "gitHead": "GIT_HEAD"
 `;
 
 exports[`lerna publish silences lifecycle scripts with --loglevel=silent 1`] = `
@@ -366,6 +386,7 @@ Array [
   Object {
     change: true,
     description: no local dependencies, four local dependents (three transitive),
+    gitHead: GIT_HEAD,
     name: package-1,
     version: 2.0.0,
   },
@@ -374,6 +395,7 @@ Array [
       package-1: ^2.0.0,
     },
     description: one local dependency, one direct dependent, no transitive dependencies,
+    gitHead: GIT_HEAD,
     name: package-2,
     version: 2.0.0,
   },
@@ -382,6 +404,7 @@ Array [
       package-2: ^2.0.0,
     },
     description: one local dependency, one direct dependent, one transitive dependency,
+    gitHead: GIT_HEAD,
     name: package-3,
     version: 2.0.0,
   },
@@ -390,6 +413,7 @@ Array [
       package-3: ^2.0.0,
     },
     description: one local dependency, one direct dependent, two transitive dependencies,
+    gitHead: GIT_HEAD,
     name: package-4,
     version: 2.0.0,
   },
@@ -398,6 +422,7 @@ Array [
       package-4: ^2.0.0,
     },
     description: one local dependency, no dependents, three transitive dependencies,
+    gitHead: GIT_HEAD,
     name: package-5,
     version: 2.0.0,
   },
@@ -412,6 +437,7 @@ v1.0.1
 exports[`lerna publish updates fixed versions: packages 1`] = `
 Array [
   Object {
+    gitHead: GIT_HEAD,
     name: package-1,
     version: 1.0.1,
   },
@@ -419,6 +445,7 @@ Array [
     dependencies: Object {
       package-1: ^1.0.1,
     },
+    gitHead: GIT_HEAD,
     name: package-2,
     version: 1.0.1,
   },
@@ -426,6 +453,7 @@ Array [
     devDependencies: Object {
       package-2: ^1.0.1,
     },
+    gitHead: GIT_HEAD,
     name: package-3,
     peerDependencies: Object {
       package-2: ^1.0.0,
@@ -436,6 +464,7 @@ Array [
     dependencies: Object {
       package-1: ^0.0.0,
     },
+    gitHead: GIT_HEAD,
     name: package-4,
     version: 1.0.1,
   },
@@ -475,6 +504,7 @@ Publish
 exports[`lerna publish updates independent versions: packages 1`] = `
 Array [
   Object {
+    gitHead: GIT_HEAD,
     name: package-1,
     version: 2.0.0,
   },
@@ -482,6 +512,7 @@ Array [
     dependencies: Object {
       package-1: ^2.0.0,
     },
+    gitHead: GIT_HEAD,
     name: package-2,
     version: 3.0.0,
   },
@@ -489,6 +520,7 @@ Array [
     devDependencies: Object {
       package-2: ^3.0.0,
     },
+    gitHead: GIT_HEAD,
     name: package-3,
     version: 4.0.0,
   },
@@ -496,6 +528,7 @@ Array [
     dependencies: Object {
       package-1: ^0.0.0,
     },
+    gitHead: GIT_HEAD,
     name: package-4,
     version: 5.0.0,
   },

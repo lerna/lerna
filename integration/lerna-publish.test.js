@@ -21,7 +21,8 @@ const normalizeTestRoot = require("@lerna-test/normalize-test-root");
 expect.addSnapshotSerializer({
   print(val) {
     return normalizeNewline(val)
-      .replace(/\b[a-f0-9]{7,8}\b/g, "SHA")
+      .replace(/\b[0-9a-f]{7,8}\b/g, "SHA")
+      .replace(/\b[0-9a-f]{40}\b/g, "GIT_HEAD")
       .replace(/\(\d{4}-\d{2}-\d{2}\)/g, "(YYYY-MM-DD)");
   },
   test(val) {
@@ -159,7 +160,7 @@ describe("lerna publish", () => {
     const cwd = await initFixture("relative-file-specs");
 
     await execa("git", ["tag", "v1.0.0", "-m", "v1.0.0"], { cwd });
-    await commitChangeToPackage(cwd, "package-1", "feat(package-1): Add foo", { foo: true });
+    await commitChangeToPackage(cwd, "package-1", "feat(package-1): changed", { changed: true });
 
     await cliRunner(cwd)("publish", "--cd-version=major", "--skip-npm", "--yes");
 
