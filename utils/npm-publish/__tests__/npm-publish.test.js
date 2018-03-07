@@ -53,7 +53,7 @@ describe("npm-publish", () => {
 
       expect(ChildProcessUtilities.exec).lastCalledWith(
         "yarn",
-        ["publish", "--tag", "yarn-publish", "--new-version", pkg.version],
+        ["publish", "--tag", "yarn-publish", "--new-version", pkg.version, "--non-interactive"],
         {
           cwd: pkg.location,
         }

@@ -16,7 +16,7 @@ function npmPublish(tag, pkg, { npmClient, registry }) {
   if (npmClient === "yarn") {
     // skip prompt for new version, use existing instead
     // https://yarnpkg.com/en/docs/cli/publish#toc-yarn-publish-new-version
-    args.push("--new-version", pkg.version);
+    args.push("--new-version", pkg.version, "--non-interactive");
   }
 
   return ChildProcessUtilities.exec(npmClient, args, opts);
