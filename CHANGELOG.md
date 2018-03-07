@@ -1,3 +1,27 @@
+## v3.0.0-beta.0 (2018-03-07)
+
+This is the first `lerna` release published by `lerna` itself. :tada:
+
+#### :boom: Breaking Change
+
+* [#1307](https://github.com/lerna/lerna/pull/1307) Convert `lerna/lerna` into a `lerna`-based monorepo. ([@evocateur](https://github.com/evocateur))
+
+* **Rename `lerna publish` flag `--ignore` to `--ignore-changes`** ([8c92956](https://github.com/lerna/lerna/commit/8c92956))
+
+  This resolves previous ambiguity as to what exactly was intended by the "ignore" config for lerna publish,
+  which was _not_ intended to be identical to the filtering option `--ignore`.
+
+  The old option will still work when found in `lerna.json` config, but it is recommended to migrate to the
+  new option name to ensure future compatibility.
+
+#### :rocket: Enhancement
+
+* [#1310](https://github.com/lerna/lerna/pull/1310) Add gitHead property to package.json before publish. ([@evocateur](https://github.com/evocateur))
+
+#### Committers: 1
+
+* Daniel Stockman ([evocateur](https://github.com/evocateur))
+
 ## v3.0.0-alpha.3 (2018-03-03)
 
 #### :bug: Bug Fix
