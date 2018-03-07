@@ -6,11 +6,20 @@ const dedent = require("dedent");
 const getStream = require("get-stream");
 const log = require("npmlog");
 const npa = require("npm-package-arg");
+const os = require("os");
 const path = require("path");
 const semver = require("semver");
 
 const FileSystemUtilities = require("@lerna/fs-utils");
 const ValidationError = require("@lerna/validation-error");
+
+const BLANK_LINE = os.EOL + os.EOL;
+const CHANGELOG_HEADER = dedent`
+  # Change Log
+
+  All notable changes to this project will be documented in this file.
+  See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+`;
 
 const cfgCache = new Map();
 
@@ -164,19 +173,11 @@ function updateChangelog(pkg, type, { changelogPreset, version }) {
     ]).then(([newEntry, [changelogFileLoc, changelogContents]]) => {
       log.silly(type, "writing new entry: %j", newEntry);
 
-      return FileSystemUtilities.writeFile(
-        changelogFileLoc,
-        dedent`
-        # Change Log
+      const content = [CHANGELOG_HEADER, newEntry, changelogContents].join(BLANK_LINE);
 
-        All notable changes to this project will be documented in this file.
-        See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
-
-        ${newEntry}
-
-        ${changelogContents}`
-      ).then(() => {
+      return FileSystemUtilities.writeFile(changelogFileLoc, content.trim()).then(() => {
         log.verbose(type, "wrote", changelogFileLoc);
+
         return changelogFileLoc;
       });
     });
