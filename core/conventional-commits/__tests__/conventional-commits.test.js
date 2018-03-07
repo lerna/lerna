@@ -85,7 +85,8 @@ describe("ConventionalCommitUtilities", () => {
 
             ### Features
 
-            * feat: I should be placed in the CHANGELOG`
+            * feat: I should be placed in the CHANGELOG
+          `
         )
       );
     });
@@ -112,7 +113,8 @@ describe("ConventionalCommitUtilities", () => {
 
           ### Features
 
-          * feat: I should be placed in the CHANGELOG`
+          * feat: I should be placed in the CHANGELOG
+        `
       );
     });
 
@@ -126,23 +128,25 @@ describe("ConventionalCommitUtilities", () => {
 
             ### Bug Fixes
 
-            * fix: a second commit for our CHANGELOG`
+            * fix: a second commit for our CHANGELOG
+          `
         )
       );
 
       FileSystemUtilities.readFile.mockReturnValueOnce(
         Promise.resolve(
           dedent`
-          # Change Log
+            # Change Log
 
-          All notable changes to this project will be documented in this file.
-          See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+            All notable changes to this project will be documented in this file.
+            See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-          <a name="1.0.0"></a>
+            <a name="1.0.0"></a>
 
-          ### Features
+            ### Features
 
-          * feat: I should be placed in the CHANGELOG`
+            * feat: I should be placed in the CHANGELOG
+          `
         )
       );
 
@@ -172,7 +176,8 @@ describe("ConventionalCommitUtilities", () => {
 
           ### Features
 
-          * feat: I should be placed in the CHANGELOG`
+          * feat: I should be placed in the CHANGELOG
+        `
       );
     });
 
@@ -181,22 +186,24 @@ describe("ConventionalCommitUtilities", () => {
         Promise.resolve(
           dedent`
             <a name="1.0.1"></a>
-            ## 1.0.1 (2017-08-11)(/compare/v1.0.1...v1.0.0) (2017-08-09)`
+            ## 1.0.1 (2017-08-11)(/compare/v1.0.1...v1.0.0) (2017-08-09)
+          `
         )
       );
       FileSystemUtilities.readFile.mockReturnValueOnce(
         Promise.resolve(
           dedent`
-          # Change Log
+            # Change Log
 
-          All notable changes to this project will be documented in this file.
-          See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+            All notable changes to this project will be documented in this file.
+            See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-          <a name="1.0.0"></a>
+            <a name="1.0.0"></a>
 
-          ### Features
+            ### Features
 
-          * add a feature aaa1111`
+            * add a feature aaa1111
+          `
         )
       );
 
@@ -223,7 +230,8 @@ describe("ConventionalCommitUtilities", () => {
 
           ### Features
 
-          * add a feature aaa1111`
+          * add a feature aaa1111
+        `
       );
     });
 
