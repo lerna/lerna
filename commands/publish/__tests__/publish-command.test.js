@@ -138,6 +138,12 @@ describe("PublishCommand", () => {
       expect(gitAddedFiles(testDir)).toMatchSnapshot("git added files");
       expect(gitCommitMessage()).toEqual("v1.0.1");
       expect(gitTagsAdded()).toEqual(["v1.0.1"]);
+      expect(GitUtilities.checkoutChanges).lastCalledWith(
+        expect.stringContaining("packages/*/package.json"),
+        expect.objectContaining({
+          cwd: testDir,
+        })
+      );
 
       expect(publishedTagInDirectories(testDir)).toMatchSnapshot("npm published");
 
@@ -197,7 +203,6 @@ describe("PublishCommand", () => {
       expect(gitAddedFiles(testDir)).toMatchSnapshot("git added files");
       expect(gitCommitMessage()).toMatchSnapshot("git commit message");
       expect(gitTagsAdded()).toMatchSnapshot("git tags added");
-      expect(GitUtilities.checkoutChanges).not.toBeCalled();
 
       expect(publishedTagInDirectories(testDir)).toMatchSnapshot("npm published");
 
@@ -1171,22 +1176,6 @@ describe("PublishCommand", () => {
       // private packages do not need local version resolution
       expect(updatedPackageJSON("package-7").dependencies).toMatchObject({
         "package-1": "file:../package-1",
-      });
-    });
-
-    it("reverts overwritten link after publish", async () => {
-      const testDir = await initFixture("relative-file-specs");
-
-      await lernaPublish(testDir)("--cd-version", "minor", "--yes");
-
-      // notably missing is package-1, which has no relative file: dependencies
-      ["package-2", "package-3", "package-4", "package-5"].forEach(pkgDir => {
-        expect(GitUtilities.checkoutChanges).toBeCalledWith(
-          path.join(testDir, "packages", pkgDir, "package.json"),
-          expect.objectContaining({
-            cwd: testDir,
-          })
-        );
       });
     });
 

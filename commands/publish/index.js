@@ -133,6 +133,7 @@ class PublishCommand extends Command {
     }
 
     tasks.push(() => this.resolveLocalDependencyLinks());
+    tasks.push(() => this.annotateGitHead());
 
     if (!this.options.skipNpm) {
       tasks.push(() => this.publishPackagesToNpm());
@@ -159,10 +160,20 @@ class PublishCommand extends Command {
         pkg.updateLocalDependency(resolved, depVersion, this.savePrefix);
       }
 
-      return writePkg(pkg.manifestLocation, pkg.toJSON()).then(() => pkg);
-    }).then(modifiedPkgs => {
-      // a Set of modified Package instances is stored for resetting later
-      this.locallyResolved = new Set(modifiedPkgs);
+      return writePkg(pkg.manifestLocation, pkg.toJSON());
+    });
+  }
+
+  annotateGitHead() {
+    const gitHead = GitUtilities.getCurrentSHA(this.execOpts);
+
+    return pMap(this.updates, ({ pkg }) => {
+      if (!pkg.private) {
+        // provide gitHead property that is normally added during npm publish
+        pkg.json.gitHead = gitHead;
+
+        return writePkg(pkg.manifestLocation, pkg.toJSON());
+      }
     });
   }
 
@@ -171,9 +182,12 @@ class PublishCommand extends Command {
 
     let chain = Promise.resolve().then(() => this.npmPublish());
 
-    if (this.options.canary) {
-      chain = chain.then(() => this.resetCanaryState());
-    }
+    // reset since the package.json files are changed (by gitHead if not --canary)
+    chain = chain.then(() =>
+      pMap(this.repository.packageConfigs, pkgGlob =>
+        GitUtilities.checkoutChanges(`${pkgGlob}/package.json`, this.execOpts)
+      )
+    );
 
     if (this.options.tempTag) {
       chain = chain.then(() => this.npmUpdateAsLatest());
@@ -517,15 +531,6 @@ class PublishCommand extends Command {
       .then(() => [tag]);
   }
 
-  resetCanaryState() {
-    this.logger.info("canary", "Resetting git state");
-
-    // reset since the package.json files are changed
-    return pMap(this.repository.packageConfigs, pkgGlob =>
-      GitUtilities.checkoutChanges(`${pkgGlob}/package.json`, this.execOpts)
-    );
-  }
-
   execScript(pkg, script) {
     const scriptLocation = path.join(pkg.location, "scripts", script);
 
@@ -554,12 +559,6 @@ class PublishCommand extends Command {
         tracker.completeWork(1);
 
         this.execScript(pkg, "postpublish");
-
-        // reset any local relative links (git commit has already happened)
-        if (this.locallyResolved.has(pkg)) {
-          // done one-by-one to leave publishable state in working directory on error
-          return GitUtilities.checkoutChanges(pkg.manifestLocation, this.execOpts);
-        }
       });
     };
 
