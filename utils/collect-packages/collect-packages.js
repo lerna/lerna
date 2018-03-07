@@ -10,7 +10,7 @@ const ValidationError = require("@lerna/validation-error");
 
 module.exports = collectPackages;
 
-function collectPackages({ packageConfigs, rootPath }) {
+function collectPackages(rootPath, packageConfigs = ["packages/*"]) {
   const globOpts = {
     cwd: rootPath,
     absolute: true,

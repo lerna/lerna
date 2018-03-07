@@ -201,7 +201,7 @@ class Command {
 
     let chain = Promise.resolve();
 
-    chain = chain.then(() => collectPackages({ rootPath, packageConfigs }));
+    chain = chain.then(() => collectPackages(rootPath, packageConfigs));
     chain = chain.then(packages => {
       this.packages = packages;
       this.packageGraph = new PackageGraph(packages);
