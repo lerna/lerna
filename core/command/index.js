@@ -205,7 +205,7 @@ class Command {
     chain = chain.then(packages => {
       this.packages = packages;
       this.packageGraph = new PackageGraph(packages);
-      this.filteredPackages = filterPackages(packages, { scope, ignore });
+      this.filteredPackages = filterPackages(packages, { scope, ignore }, this.options.private);
     });
 
     // collectUpdates requires that filteredPackages be present prior to checking for

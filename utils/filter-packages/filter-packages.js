@@ -13,11 +13,16 @@ module.exports = filterPackages;
  * @param {Object} filters The scope and ignore filters.
  * @param {String} filters.scope glob The glob to match the package name against
  * @param {String} filters.ignore glob The glob to filter the package name against
+ * @param {Boolean} showPrivate When false, filter out private packages
  * @return {Array.<Package>} The packages with a name matching the glob
  * @throws when a given glob would produce an empty list of packages
  */
-function filterPackages(packagesToFilter, { scope, ignore }) {
+function filterPackages(packagesToFilter, { scope, ignore }, showPrivate) {
   let packages = packagesToFilter.slice();
+
+  if (showPrivate === false) {
+    packages = packages.filter(pkg => !pkg.private);
+  }
 
   if (scope) {
     packages = packages.filter(pkg => matchPackageName(pkg.name, scope));

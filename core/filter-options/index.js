@@ -17,6 +17,11 @@ function filterOptions(yargs) {
       type: "string",
       requiresArg: true,
     },
+    private: {
+      describe: "Include private packages. Pass --no-private to exclude private packages.",
+      type: "boolean",
+      default: true,
+    },
     since: {
       describe: dedent`
         Only include packages that have been updated since the specified [ref].

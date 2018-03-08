@@ -26,6 +26,12 @@ describe("LsCommand", () => {
       await lernaLs(testDir)("--ignore", "package-@(2|3|4|5)");
       expect(consoleOutput()).toMatchSnapshot();
     });
+
+    it("does not list private packages with --no-private", async () => {
+      const testDir = await initFixture("basic");
+      await lernaLs(testDir)("--no-private");
+      expect(consoleOutput()).not.toMatch("package-5 v1.0.0 (private)");
+    });
   });
 
   describe("in a repo with packages outside of packages/", () => {
