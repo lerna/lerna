@@ -18,17 +18,7 @@ const loadManifests = require("@lerna-test/load-manifests");
 const normalizeTestRoot = require("@lerna-test/normalize-test-root");
 
 // stabilize changelog commit SHA and datestamp
-expect.addSnapshotSerializer({
-  print(val) {
-    return normalizeNewline(val)
-      .replace(/\b[0-9a-f]{7,8}\b/g, "SHA")
-      .replace(/\b[0-9a-f]{40}\b/g, "GIT_HEAD")
-      .replace(/\(\d{4}-\d{2}-\d{2}\)/g, "(YYYY-MM-DD)");
-  },
-  test(val) {
-    return val && typeof val === "string";
-  },
-});
+expect.addSnapshotSerializer(require("@lerna-test/serialize-changelog"));
 
 const lastCommitMessage = cwd =>
   execa.stdout("git", ["log", "-1", "--format=%B"], { cwd }).then(normalizeNewline);

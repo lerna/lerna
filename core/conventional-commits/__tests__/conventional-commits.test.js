@@ -2,7 +2,6 @@
 
 const execa = require("execa");
 const fs = require("fs-extra");
-const normalizeNewline = require("normalize-newline");
 const path = require("path");
 const collectPackages = require("@lerna/collect-packages");
 
@@ -13,17 +12,7 @@ const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const { recommendVersion, updateChangelog } = require("..");
 
 // stabilize changelog commit SHA and datestamp
-expect.addSnapshotSerializer({
-  print(val) {
-    return normalizeNewline(val)
-      .replace(/\b[0-9a-f]{7,8}\b/g, "SHA")
-      .replace(/\b[0-9a-f]{40}\b/g, "GIT_HEAD")
-      .replace(/\(\d{4}-\d{2}-\d{2}\)/g, "(YYYY-MM-DD)");
-  },
-  test(val) {
-    return val && typeof val === "string";
-  },
-});
+expect.addSnapshotSerializer(require("@lerna-test/serialize-changelog"));
 
 describe("conventional-commits", () => {
   const currentDirectory = process.cwd();
