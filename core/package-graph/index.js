@@ -70,7 +70,11 @@ class PackageGraph extends Map {
 
       Object.keys(graphDependencies).forEach(depName => {
         const depNode = this.get(depName);
-        const resolved = npa.resolve(depName, graphDependencies[depName], currentNode.location);
+        // Yarn decided to ignore https://github.com/npm/npm/pull/15900 and implemented "link:"
+        // As they apparently have no intention of being compatible, we have to do it for them.
+        // @see https://github.com/yarnpkg/yarn/issues/4212
+        const spec = graphDependencies[depName].replace(/^link:/, "file:");
+        const resolved = npa.resolve(depName, spec, currentNode.location);
 
         if (!depNode) {
           // it's an external dependency, store the resolution and bail

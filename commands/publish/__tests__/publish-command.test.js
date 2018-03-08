@@ -1204,6 +1204,16 @@ describe("PublishCommand", () => {
         "package-6": "6.0.0",
       });
     });
+
+    it("works around npm-incompatible link: specifiers", async () => {
+      const testDir = await initFixture("yarn-link-spec");
+
+      await lernaPublish(testDir)("--cd-version", "major", "--yes");
+
+      expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
+        "package-1": "^2.0.0",
+      });
+    });
   });
 
   describe("in a cyclical repo", () => {
