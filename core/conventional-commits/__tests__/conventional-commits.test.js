@@ -1,313 +1,208 @@
 "use strict";
 
-jest.mock("get-stream");
-jest.mock("conventional-changelog-core");
-jest.mock("conventional-recommended-bump");
-jest.mock("@lerna/fs-utils");
-
-const dedent = require("dedent");
+const execa = require("execa");
+const fs = require("fs-extra");
+const normalizeNewline = require("normalize-newline");
 const path = require("path");
-const Package = require("@lerna/package");
-
-// mocked modules
-const getStream = require("get-stream");
-const conventionalChangelogCore = require("conventional-changelog-core");
-const conventionalRecommendedBump = require("conventional-recommended-bump");
-const FileSystemUtilities = require("@lerna/fs-utils");
+const collectPackages = require("@lerna/collect-packages");
 
 // helpers
-const callsBack = require("@lerna-test/calls-back");
+const initFixture = require("@lerna-test/init-fixture")(__dirname);
 
 // file under test
-const ConventionalCommitUtilities = require("..");
+const { recommendVersion, updateChangelog } = require("..");
 
-describe("ConventionalCommitUtilities", () => {
-  FileSystemUtilities.readFile.mockResolvedValue("");
-  FileSystemUtilities.writeFile.mockResolvedValue();
+// stabilize changelog commit SHA and datestamp
+expect.addSnapshotSerializer({
+  print(val) {
+    return normalizeNewline(val)
+      .replace(/\b[0-9a-f]{7,8}\b/g, "SHA")
+      .replace(/\b[0-9a-f]{40}\b/g, "GIT_HEAD")
+      .replace(/\(\d{4}-\d{2}-\d{2}\)/g, "(YYYY-MM-DD)");
+  },
+  test(val) {
+    return val && typeof val === "string";
+  },
+});
 
-  describe(".recommendVersion()", () => {
-    it("invokes conventional-changelog-recommended bump to fetch next version", async () => {
-      conventionalRecommendedBump.mockImplementationOnce(callsBack(null, { releaseType: "major" }));
+describe("conventional-commits", () => {
+  const currentDirectory = process.cwd();
 
-      const bumpedVersion = await ConventionalCommitUtilities.recommendVersion(
-        new Package({ name: "bar", version: "1.0.0" }, "/foo/bar"),
-        "fixed",
-        {}
-      );
+  afterEach(() => {
+    // conventional-recommended-bump is incapable of accepting cwd config :P
+    if (process.cwd() !== currentDirectory) {
+      process.chdir(currentDirectory);
+    }
+  });
 
-      expect(bumpedVersion).toBe("2.0.0");
-      expect(conventionalRecommendedBump).lastCalledWith(
-        {
-          config: expect.objectContaining({
-            recommendedBumpOpts: {
-              parserOpts: expect.any(Object),
-              whatBump: expect.any(Function),
-            },
-          }),
-          path: "/foo/bar",
-        },
-        expect.any(Function)
-      );
+  describe("recommendVersion()", () => {
+    it("returns next version bump", async () => {
+      const cwd = await initFixture("fixed");
+      const [pkg1] = await collectPackages(cwd);
+
+      await fs.writeJSON(pkg1.manifestLocation, Object.assign(pkg1.toJSON(), { changed: 1 }));
+      await execa("git", ["commit", "-am", "feat: changed"], { cwd });
+
+      process.chdir(cwd);
+
+      await expect(recommendVersion(pkg1, "fixed", {})).resolves.toBe("1.1.0");
     });
 
-    it("passes package-specific arguments in independent mode", async () => {
-      conventionalRecommendedBump.mockImplementationOnce(callsBack(null, { releaseType: "minor" }));
+    it("returns package-specific bumps in independent mode", async () => {
+      const cwd = await initFixture("independent");
+      const [pkg1, pkg2] = await collectPackages(cwd);
+      const opts = { changelogPreset: "angular" };
 
-      const bumpedVersion = await ConventionalCommitUtilities.recommendVersion(
-        new Package({ name: "bar", version: "1.0.0" }, "/foo/bar"),
-        "independent",
-        { changelogPreset: "angular" }
-      );
+      await Promise.all([
+        fs.writeJSON(pkg1.manifestLocation, Object.assign(pkg1.toJSON(), { changed: 1 })),
+        fs.writeJSON(pkg2.manifestLocation, Object.assign(pkg2.toJSON(), { changed: 2 })),
+      ]);
 
-      expect(bumpedVersion).toBe("1.1.0");
-      expect(conventionalRecommendedBump).lastCalledWith(
-        {
-          config: expect.objectContaining({
-            recommendedBumpOpts: {
-              parserOpts: expect.any(Object),
-              whatBump: expect.any(Function),
-            },
-          }),
-          path: "/foo/bar",
-          lernaPackage: "bar",
-        },
-        expect.any(Function)
-      );
+      await execa("git", ["add", pkg1.manifestLocation], { cwd });
+      await execa("git", ["commit", "-m", "fix: changed 1"], { cwd });
+
+      await execa("git", ["add", pkg2.manifestLocation], { cwd });
+      await execa("git", ["commit", "-m", "feat: changed 2"], { cwd });
+
+      process.chdir(cwd);
+
+      await expect(recommendVersion(pkg1, "independent", opts)).resolves.toBe("1.0.1");
+      await expect(recommendVersion(pkg2, "independent", opts)).resolves.toBe("1.1.0");
     });
   });
 
-  describe(".updateChangelog()", () => {
-    beforeEach(() => {
-      getStream.mockReturnValue(
-        Promise.resolve(
-          dedent`
-            <a name="1.0.0"></a>
+  describe("updateChangelog()", () => {
+    const gitTag = (cwd, tag) => execa("git", ["tag", tag, "-m", tag], { cwd });
+    const getFileContent = fp => fs.readFile(fp, "utf8");
 
-            ### Features
+    it("creates files if they do not exist", async () => {
+      const cwd = await initFixture("changelog-missing");
 
-            * feat: I should be placed in the CHANGELOG
-          `
-        )
-      );
-    });
+      // conventional-changelog does not accept cwd config
+      process.chdir(cwd);
 
-    it("populates initial CHANGELOG.md if it does not exist", async () => {
-      const changelogLocation = await ConventionalCommitUtilities.updateChangelog(
-        new Package({ name: "bar", version: "1.0.0" }, "/foo/bar"),
-        "fixed",
-        { changelogPreset: "angular" }
-      );
+      const [pkg1] = await collectPackages(cwd);
+      const rootPkg = {
+        name: "root", // TODO: no name
+        location: cwd,
+      };
 
-      expect(changelogLocation).toBe(path.normalize("/foo/bar/CHANGELOG.md"));
+      // make a change in package-1
+      pkg1.json.changed = 1;
+      await fs.writeJSON(pkg1.manifestLocation, pkg1.toJSON());
+      await execa("git", ["commit", "-am", "feat: I should be placed in the CHANGELOG"], { cwd });
 
-      expect(FileSystemUtilities.readFile).lastCalledWith(changelogLocation);
-      expect(FileSystemUtilities.writeFile).lastCalledWith(
-        changelogLocation,
-        dedent`
-          # Change Log
+      // update version
+      pkg1.version = "1.1.0";
+      await fs.writeJSON(pkg1.manifestLocation, pkg1.toJSON());
 
-          All notable changes to this project will be documented in this file.
-          See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
-
-          <a name="1.0.0"></a>
-
-          ### Features
-
-          * feat: I should be placed in the CHANGELOG
-        `
-      );
-    });
-
-    it("appends to existing CHANGELOG.md", async () => {
-      getStream.mockReturnValueOnce(
-        Promise.resolve(
-          dedent`
-            <a name='change2' /></a>
-            ## 1.0.1 (2017-08-11)(/compare/v1.0.1...v1.0.0) (2017-08-09)
-
-
-            ### Bug Fixes
-
-            * fix: a second commit for our CHANGELOG
-          `
-        )
-      );
-
-      FileSystemUtilities.readFile.mockReturnValueOnce(
-        Promise.resolve(
-          dedent`
-            # Change Log
-
-            All notable changes to this project will be documented in this file.
-            See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
-
-            <a name="1.0.0"></a>
-
-            ### Features
-
-            * feat: I should be placed in the CHANGELOG
-          `
-        )
-      );
-
-      const changelogLocation = await ConventionalCommitUtilities.updateChangelog(
-        new Package({ name: "bar", version: "1.0.0" }, "/foo/bar"),
-        "fixed",
-        { changelogPreset: "angular" }
-      );
-
-      expect(FileSystemUtilities.writeFile).lastCalledWith(
-        changelogLocation,
-        dedent`
-          # Change Log
-
-          All notable changes to this project will be documented in this file.
-          See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
-
-          <a name='change2' /></a>
-          ## 1.0.1 (2017-08-11)(/compare/v1.0.1...v1.0.0) (2017-08-09)
-
-
-          ### Bug Fixes
-
-          * fix: a second commit for our CHANGELOG
-
-          <a name="1.0.0"></a>
-
-          ### Features
-
-          * feat: I should be placed in the CHANGELOG
-        `
-      );
-    });
-
-    it("appends version bump message if no commits have been recorded", async () => {
-      getStream.mockReturnValueOnce(
-        Promise.resolve(
-          dedent`
-            <a name="1.0.1"></a>
-            ## 1.0.1 (2017-08-11)(/compare/v1.0.1...v1.0.0) (2017-08-09)
-          `
-        )
-      );
-      FileSystemUtilities.readFile.mockReturnValueOnce(
-        Promise.resolve(
-          dedent`
-            # Change Log
-
-            All notable changes to this project will be documented in this file.
-            See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
-
-            <a name="1.0.0"></a>
-
-            ### Features
-
-            * add a feature aaa1111
-          `
-        )
-      );
-
-      const changelogLocation = await ConventionalCommitUtilities.updateChangelog(
-        new Package({ name: "bar", version: "1.0.0" }, "/foo/bar"),
-        "fixed",
-        { changelogPreset: "angular" }
-      );
-
-      expect(FileSystemUtilities.writeFile).lastCalledWith(
-        changelogLocation,
-        dedent`
-          # Change Log
-
-          All notable changes to this project will be documented in this file.
-          See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
-
-          <a name="1.0.1"></a>
-          ## 1.0.1 (2017-08-11)(/compare/v1.0.1...v1.0.0) (2017-08-09)
-
-          **Note:** Version bump only for package bar
-
-          <a name="1.0.0"></a>
-
-          ### Features
-
-          * add a feature aaa1111
-        `
-      );
-    });
-
-    it("passes package-specific arguments in independent mode", async () => {
-      const pkg = new Package({ name: "bar", version: "1.0.0" }, "/foo/bar");
-
-      await ConventionalCommitUtilities.updateChangelog(pkg, "independent", {
+      const changelogLocation = await updateChangelog(pkg1, "fixed", {
         changelogPreset: "angular",
       });
 
-      expect(conventionalChangelogCore).lastCalledWith(
-        {
-          config: {
-            parserOpts: expect.any(Object),
-            writerOpts: expect.any(Object),
-          },
-          pkg: {
-            path: pkg.manifestLocation,
-          },
-          lernaPackage: pkg.name,
-        },
-        undefined,
-        {
-          // gitRawCommitsOpts
-          path: pkg.location,
-        }
-      );
+      expect(changelogLocation).toBe(path.join(pkg1.location, "CHANGELOG.md"));
+      await expect(getFileContent(changelogLocation)).resolves.toMatchSnapshot("package-1");
+      await expect(
+        updateChangelog(rootPkg, "root", { version: "1.1.0" }).then(getFileContent)
+      ).resolves.toMatchSnapshot("root");
     });
 
-    it("passes package-specific arguments in fixed mode", async () => {
-      const pkg = new Package({ name: "bar", version: "1.0.0" }, "/foo/bar");
+    it("updates fixed changelogs", async () => {
+      const cwd = await initFixture("fixed");
+      const rootPkg = {
+        name: "root", // TODO: no name
+        location: cwd,
+      };
 
-      await ConventionalCommitUtilities.updateChangelog(pkg, "fixed", {
-        changelogPreset: "conventional-changelog-angular",
-      });
+      // conventional-changelog does not accept cwd config
+      process.chdir(cwd);
+      await gitTag(cwd, "v1.0.0");
 
-      expect(conventionalChangelogCore).lastCalledWith(
-        {
-          config: {
-            parserOpts: expect.any(Object),
-            writerOpts: expect.any(Object),
-          },
-          pkg: {
-            path: pkg.manifestLocation,
-          },
-        },
-        undefined,
-        {
-          // gitRawCommitsOpts
-          path: pkg.location,
-        }
-      );
+      const [pkg1] = await collectPackages(cwd);
+
+      // make a change in package-1
+      pkg1.json.changed = 1;
+      await fs.writeJSON(pkg1.manifestLocation, pkg1.toJSON());
+      await execa("git", ["commit", "-am", "fix: A second commit for our CHANGELOG"], { cwd });
+
+      // update version
+      pkg1.version = "1.0.1";
+      await fs.writeJSON(pkg1.manifestLocation, pkg1.toJSON());
+
+      await expect(
+        updateChangelog(pkg1, "fixed", /* default preset */ {}).then(getFileContent)
+      ).resolves.toMatchSnapshot();
+
+      await expect(
+        updateChangelog(rootPkg, "root", { version: "1.0.1" }).then(getFileContent)
+      ).resolves.toMatchSnapshot();
     });
 
-    it("passes custom context in fixed root mode", async () => {
-      await ConventionalCommitUtilities.updateChangelog(
-        {
-          name: "bar",
-          location: "/foo/bar",
-        },
-        "root",
-        { changelogPreset: undefined, version: "1.0.0" }
-      );
+    it("appends version bump message if no commits have been recorded", async () => {
+      const cwd = await initFixture("fixed");
 
-      expect(conventionalChangelogCore).lastCalledWith(
-        {
-          config: {
-            parserOpts: expect.any(Object),
-            writerOpts: expect.any(Object),
-          },
-        },
-        { version: "1.0.0" },
-        {
-          // gitRawCommitsOpts
-        }
-      );
+      // conventional-changelog does not accept cwd config
+      process.chdir(cwd);
+      await gitTag(cwd, "v1.0.0");
+
+      const [pkg1, pkg2] = await collectPackages(cwd);
+
+      // make a change in package-1
+      pkg1.json.changed = 1;
+      await fs.writeJSON(pkg1.manifestLocation, pkg1.toJSON());
+      await execa("git", ["commit", "-am", "fix(pkg1): A dependency-triggered bump"], { cwd });
+
+      // update version
+      pkg2.version = "1.0.1";
+      await fs.writeJSON(pkg2.manifestLocation, pkg2.toJSON());
+
+      await expect(
+        updateChangelog(pkg2, "fixed", { changelogPreset: "angular" }).then(getFileContent)
+      ).resolves.toMatchSnapshot();
+    });
+
+    it("updates independent changelogs", async () => {
+      const cwd = await initFixture("independent");
+
+      // conventional-changelog does not accept cwd config
+      process.chdir(cwd);
+
+      await Promise.all([gitTag(cwd, "package-1@1.0.0"), gitTag(cwd, "package-2@1.0.0")]);
+
+      const [pkg1, pkg2] = await collectPackages(cwd);
+
+      // make a change in package-1 and package-2
+      pkg1.json.changed = 1;
+      pkg2.json.changed = 2;
+      await Promise.all([
+        fs.writeJSON(pkg1.manifestLocation, pkg1.toJSON()),
+        fs.writeJSON(pkg2.manifestLocation, pkg2.toJSON()),
+      ]);
+
+      await execa("git", ["add", pkg1.manifestLocation], { cwd });
+      await execa("git", ["commit", "-m", "fix(stuff): changed"], { cwd });
+
+      await execa("git", ["add", pkg2.manifestLocation], { cwd });
+      await execa("git", ["commit", "-m", "feat(thing): added"], { cwd });
+
+      // update versions
+      pkg1.version = "1.0.1";
+      pkg2.version = "1.1.0";
+      await Promise.all([
+        fs.writeJSON(pkg1.manifestLocation, pkg1.toJSON()),
+        fs.writeJSON(pkg2.manifestLocation, pkg2.toJSON()),
+      ]);
+
+      const opts = {
+        changelogPreset: "angular",
+      };
+      const [changelogOne, changelogTwo] = await Promise.all([
+        updateChangelog(pkg1, "independent", opts).then(getFileContent),
+        updateChangelog(pkg2, "independent", opts).then(getFileContent),
+      ]);
+
+      expect(changelogOne).toMatchSnapshot();
+      expect(changelogTwo).toMatchSnapshot();
     });
   });
 });
