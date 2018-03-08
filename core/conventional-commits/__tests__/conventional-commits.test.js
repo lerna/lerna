@@ -29,7 +29,9 @@ describe("conventional-commits", () => {
       const cwd = await initFixture("fixed");
       const [pkg1] = await collectPackages(cwd);
 
-      await fs.writeJSON(pkg1.manifestLocation, Object.assign(pkg1.toJSON(), { changed: 1 }));
+      // make a change in package-1
+      pkg1.json.changed = 1;
+      await fs.writeJSON(pkg1.manifestLocation, pkg1);
       await execa("git", ["commit", "-am", "feat: changed"], { cwd });
 
       process.chdir(cwd);
@@ -42,9 +44,12 @@ describe("conventional-commits", () => {
       const [pkg1, pkg2] = await collectPackages(cwd);
       const opts = { changelogPreset: "angular" };
 
+      // make a change in package-1 and package-2
+      pkg1.json.changed = 1;
+      pkg2.json.changed = 2;
       await Promise.all([
-        fs.writeJSON(pkg1.manifestLocation, Object.assign(pkg1.toJSON(), { changed: 1 })),
-        fs.writeJSON(pkg2.manifestLocation, Object.assign(pkg2.toJSON(), { changed: 2 })),
+        fs.writeJSON(pkg1.manifestLocation, pkg1),
+        fs.writeJSON(pkg2.manifestLocation, pkg2),
       ]);
 
       await execa("git", ["add", pkg1.manifestLocation], { cwd });
@@ -78,12 +83,12 @@ describe("conventional-commits", () => {
 
       // make a change in package-1
       pkg1.json.changed = 1;
-      await fs.writeJSON(pkg1.manifestLocation, pkg1.toJSON());
+      await fs.writeJSON(pkg1.manifestLocation, pkg1);
       await execa("git", ["commit", "-am", "feat: I should be placed in the CHANGELOG"], { cwd });
 
       // update version
       pkg1.version = "1.1.0";
-      await fs.writeJSON(pkg1.manifestLocation, pkg1.toJSON());
+      await fs.writeJSON(pkg1.manifestLocation, pkg1);
 
       const changelogLocation = await updateChangelog(pkg1, "fixed", {
         changelogPreset: "angular",
@@ -111,12 +116,12 @@ describe("conventional-commits", () => {
 
       // make a change in package-1
       pkg1.json.changed = 1;
-      await fs.writeJSON(pkg1.manifestLocation, pkg1.toJSON());
+      await fs.writeJSON(pkg1.manifestLocation, pkg1);
       await execa("git", ["commit", "-am", "fix: A second commit for our CHANGELOG"], { cwd });
 
       // update version
       pkg1.version = "1.0.1";
-      await fs.writeJSON(pkg1.manifestLocation, pkg1.toJSON());
+      await fs.writeJSON(pkg1.manifestLocation, pkg1);
 
       await expect(
         updateChangelog(pkg1, "fixed", /* default preset */ {}).then(getFileContent)
@@ -138,12 +143,12 @@ describe("conventional-commits", () => {
 
       // make a change in package-1
       pkg1.json.changed = 1;
-      await fs.writeJSON(pkg1.manifestLocation, pkg1.toJSON());
+      await fs.writeJSON(pkg1.manifestLocation, pkg1);
       await execa("git", ["commit", "-am", "fix(pkg1): A dependency-triggered bump"], { cwd });
 
       // update version
       pkg2.version = "1.0.1";
-      await fs.writeJSON(pkg2.manifestLocation, pkg2.toJSON());
+      await fs.writeJSON(pkg2.manifestLocation, pkg2);
 
       await expect(
         updateChangelog(pkg2, "fixed", { changelogPreset: "angular" }).then(getFileContent)
@@ -164,8 +169,8 @@ describe("conventional-commits", () => {
       pkg1.json.changed = 1;
       pkg2.json.changed = 2;
       await Promise.all([
-        fs.writeJSON(pkg1.manifestLocation, pkg1.toJSON()),
-        fs.writeJSON(pkg2.manifestLocation, pkg2.toJSON()),
+        fs.writeJSON(pkg1.manifestLocation, pkg1),
+        fs.writeJSON(pkg2.manifestLocation, pkg2),
       ]);
 
       await execa("git", ["add", pkg1.manifestLocation], { cwd });
@@ -178,8 +183,8 @@ describe("conventional-commits", () => {
       pkg1.version = "1.0.1";
       pkg2.version = "1.1.0";
       await Promise.all([
-        fs.writeJSON(pkg1.manifestLocation, pkg1.toJSON()),
-        fs.writeJSON(pkg2.manifestLocation, pkg2.toJSON()),
+        fs.writeJSON(pkg1.manifestLocation, pkg1),
+        fs.writeJSON(pkg2.manifestLocation, pkg2),
       ]);
 
       const opts = {
