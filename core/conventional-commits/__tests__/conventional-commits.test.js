@@ -16,6 +16,11 @@ expect.addSnapshotSerializer(require("@lerna-test/serialize-changelog"));
 
 describe("conventional-commits", () => {
   const currentDirectory = process.cwd();
+  const gitCommitAll = (cwd, message) => execa("git", ["commit", "-am", message], { cwd });
+  const gitCommitPkg = (cwd, pkg, message) =>
+    Promise.resolve()
+      .then(() => execa("git", ["add", pkg.manifestLocation], { cwd }))
+      .then(() => execa("git", ["commit", "-m", message], { cwd }));
 
   afterEach(() => {
     // conventional-recommended-bump is incapable of accepting cwd config :P
@@ -32,8 +37,9 @@ describe("conventional-commits", () => {
       // make a change in package-1
       pkg1.json.changed = 1;
       await fs.writeJSON(pkg1.manifestLocation, pkg1);
-      await execa("git", ["commit", "-am", "feat: changed"], { cwd });
+      await gitCommitAll(cwd, "feat: changed 1");
 
+      // conventional-recommended-bump does not accept cwd config
       process.chdir(cwd);
 
       await expect(recommendVersion(pkg1, "fixed", {})).resolves.toBe("1.1.0");
@@ -52,12 +58,10 @@ describe("conventional-commits", () => {
         fs.writeJSON(pkg2.manifestLocation, pkg2),
       ]);
 
-      await execa("git", ["add", pkg1.manifestLocation], { cwd });
-      await execa("git", ["commit", "-m", "fix: changed 1"], { cwd });
+      await gitCommitPkg(cwd, pkg1, "fix: changed 1");
+      await gitCommitPkg(cwd, pkg2, "feat: changed 2");
 
-      await execa("git", ["add", pkg2.manifestLocation], { cwd });
-      await execa("git", ["commit", "-m", "feat: changed 2"], { cwd });
-
+      // conventional-recommended-bump does not accept cwd config
       process.chdir(cwd);
 
       await expect(recommendVersion(pkg1, "independent", opts)).resolves.toBe("1.0.1");
@@ -84,7 +88,7 @@ describe("conventional-commits", () => {
       // make a change in package-1
       pkg1.json.changed = 1;
       await fs.writeJSON(pkg1.manifestLocation, pkg1);
-      await execa("git", ["commit", "-am", "feat: I should be placed in the CHANGELOG"], { cwd });
+      await gitCommitAll(cwd, "feat: I should be placed in the CHANGELOG");
 
       // update version
       pkg1.version = "1.1.0";
@@ -117,7 +121,7 @@ describe("conventional-commits", () => {
       // make a change in package-1
       pkg1.json.changed = 1;
       await fs.writeJSON(pkg1.manifestLocation, pkg1);
-      await execa("git", ["commit", "-am", "fix: A second commit for our CHANGELOG"], { cwd });
+      await gitCommitAll(cwd, "fix: A second commit for our CHANGELOG");
 
       // update version
       pkg1.version = "1.0.1";
@@ -144,7 +148,7 @@ describe("conventional-commits", () => {
       // make a change in package-1
       pkg1.json.changed = 1;
       await fs.writeJSON(pkg1.manifestLocation, pkg1);
-      await execa("git", ["commit", "-am", "fix(pkg1): A dependency-triggered bump"], { cwd });
+      await gitCommitAll(cwd, "fix(pkg1): A dependency-triggered bump");
 
       // update version
       pkg2.version = "1.0.1";
@@ -173,11 +177,8 @@ describe("conventional-commits", () => {
         fs.writeJSON(pkg2.manifestLocation, pkg2),
       ]);
 
-      await execa("git", ["add", pkg1.manifestLocation], { cwd });
-      await execa("git", ["commit", "-m", "fix(stuff): changed"], { cwd });
-
-      await execa("git", ["add", pkg2.manifestLocation], { cwd });
-      await execa("git", ["commit", "-m", "feat(thing): added"], { cwd });
+      await gitCommitPkg(cwd, pkg1, "fix(stuff): changed");
+      await gitCommitPkg(cwd, pkg2, "feat(thing): added");
 
       // update versions
       pkg1.version = "1.0.1";
