@@ -15,6 +15,10 @@ class InitCommand extends Command {
     };
   }
 
+  get requiresGit() {
+    return false;
+  }
+
   // don't do any of this.
   runValidations() {}
   runPreparations() {}
