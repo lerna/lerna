@@ -20,6 +20,7 @@
     "publish": {
       "allowBranch": "master",
       "cdVersion": "prerelease",
+      "conventionalCommits": true,
       "preid": "beta",
       "message": "chore(release): publish %s"
     }
