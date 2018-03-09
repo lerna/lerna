@@ -462,11 +462,24 @@ describe("BootstrapCommand", () => {
   it("does not require an initialized git repo", async () => {
     const testDir = await initFixture("zero-pkgs");
 
-    fs.remove(path.join(testDir, ".git"));
+    await fs.remove(path.join(testDir, ".git"));
 
     const result = await lernaBootstrap(testDir)();
 
     // cheesy workaround for jest's expectation of assertions
     expect(result).toBeDefined();
+  });
+
+  it("requires a git repo when using --since", async () => {
+    expect.assertions(1);
+    const testDir = await initFixture("zero-pkgs");
+
+    await fs.remove(path.join(testDir, ".git"));
+
+    try {
+      await lernaBootstrap(testDir)("--since", "some-branch");
+    } catch (err) {
+      expect(err.message).toMatch("this is not a git repository");
+    }
   });
 });

@@ -1,13 +1,11 @@
 "use strict";
 
-jest.mock("@lerna/child-process");
-jest.mock("@lerna/collect-updates");
-
+const execa = require("execa");
+const fs = require("fs-extra");
 const path = require("path");
 
 // mocked modules
 const ChildProcessUtilities = require("@lerna/child-process");
-const collectUpdates = require("@lerna/collect-updates"); // FIXME: remove coupling to implementation detail
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
@@ -30,8 +28,8 @@ const execInPackagesStreaming = testDir =>
 
 describe("ExecCommand", () => {
   // TODO: it's very suspicious that mockResolvedValue() doesn't work here
-  ChildProcessUtilities.spawn.mockImplementation(() => Promise.resolve());
-  ChildProcessUtilities.spawnStreaming.mockResolvedValue();
+  ChildProcessUtilities.spawn = jest.fn(() => Promise.resolve());
+  ChildProcessUtilities.spawnStreaming = jest.fn(() => Promise.resolve());
 
   describe("in a basic repo", () => {
     it("should complain if invoked without command", async () => {
@@ -99,27 +97,47 @@ describe("ExecCommand", () => {
 
     it("should filter packages that are not updated with --since", async () => {
       const testDir = await initFixture("basic");
+      const file1 = path.join(testDir, "packages/package-1", "file-1.js");
+      const file2 = path.join(testDir, "packages/package-2", "file-2.js");
 
-      collectUpdates.mockReturnValueOnce([
-        {
-          pkg: {
-            name: "package-2",
-            location: path.join(testDir, "packages/package-2"),
-          },
-        },
-      ]);
+      // make change
+      await fs.appendFile(file2, "// package-2");
+      await execa("git", ["add", file2], { cwd: testDir });
+      await execa("git", ["commit", "-m", "skip change"], { cwd: testDir });
+
+      // tag a release
+      await execa("git", ["tag", "-m", "v1.0.1", "v1.0.1"], { cwd: testDir });
+
+      // make another change
+      await fs.appendFile(file1, "// package-1");
+      await execa("git", ["add", file1], { cwd: testDir });
+      await execa("git", ["commit", "-m", "show change"], { cwd: testDir });
 
       await lernaExec(testDir)("ls", "--since");
 
       expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(1);
       expect(ChildProcessUtilities.spawn).lastCalledWith("ls", [], {
-        cwd: path.join(testDir, "packages/package-2"),
+        cwd: path.join(testDir, "packages/package-1"),
         env: expect.objectContaining({
-          LERNA_PACKAGE_NAME: "package-2",
+          LERNA_PACKAGE_NAME: "package-1",
         }),
         reject: true,
         shell: true,
       });
+    });
+
+    it("requires a git repo when using --since", async () => {
+      expect.assertions(1);
+
+      const testDir = await initFixture("basic");
+
+      await fs.remove(path.join(testDir, ".git"));
+
+      try {
+        await lernaExec(testDir)("ls", "--since", "some-branch");
+      } catch (err) {
+        expect(err.message).toMatch("this is not a git repository");
+      }
     });
 
     it("should run a command", async () => {
@@ -158,7 +176,6 @@ describe("ExecCommand", () => {
 
     it("executes a command in all packages with --parallel", async () => {
       const testDir = await initFixture("basic");
-      ChildProcessUtilities.spawnStreaming = jest.fn(() => Promise.resolve());
 
       await lernaExec(testDir)("--parallel", "ls");
 
@@ -167,7 +184,6 @@ describe("ExecCommand", () => {
 
     it("executes a command in all packages with --stream", async () => {
       const testDir = await initFixture("basic");
-      ChildProcessUtilities.spawnStreaming = jest.fn(() => Promise.resolve());
 
       await lernaExec(testDir)("--stream", "ls");
 

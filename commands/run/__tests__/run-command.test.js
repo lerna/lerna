@@ -1,13 +1,13 @@
 "use strict";
 
 jest.mock("@lerna/npm-run-script");
-jest.mock("@lerna/collect-updates");
 
+const execa = require("execa");
+const fs = require("fs-extra");
 const path = require("path");
 
 // mocked modules
 const npmRunScript = require("@lerna/npm-run-script");
-const collectUpdates = require("@lerna/collect-updates"); // FIXME: remove coupling to implementation detail
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
@@ -83,20 +83,39 @@ describe("RunCommand", () => {
 
     it("should filter packages that are not updated with --since", async () => {
       const testDir = await initFixture("basic");
+      const pkgLocation = path.join(testDir, "packages/package-3");
+      const readmeFile = path.join(pkgLocation, "README.md");
 
-      collectUpdates.mockReturnValueOnce([
-        {
-          pkg: {
-            name: "package-3",
-            location: path.join(testDir, "packages/package-3"),
-            scripts: { "my-script": "echo package-3" },
-          },
-        },
-      ]);
+      // change in master
+      await fs.outputFile(readmeFile, "# package-3");
+      await execa("git", ["add", readmeFile], { cwd: testDir });
+      await execa("git", ["commit", "-m", "add readme"], { cwd: testDir });
 
-      await lernaRun(testDir)("my-script", "--since");
+      // branch
+      await execa("git", ["checkout", "-b", "feature/yay-docs"], { cwd: testDir });
+
+      // change in feature branch
+      await fs.appendFile(readmeFile, "yay docs");
+      await execa("git", ["add", readmeFile], { cwd: testDir });
+      await execa("git", ["commit", "-m", "yay docs"], { cwd: testDir });
+
+      await lernaRun(testDir)("my-script", "--since", "master");
 
       expect(ranInPackages(testDir)).toMatchSnapshot();
+    });
+
+    it("requires a git repo when using --since", async () => {
+      expect.assertions(1);
+
+      const testDir = await initFixture("basic");
+
+      await fs.remove(path.join(testDir, ".git"));
+
+      try {
+        await lernaRun(testDir)("my-script", "--since", "some-branch");
+      } catch (err) {
+        expect(err.message).toMatch("this is not a git repository");
+      }
     });
 
     it("does not error when no packages match", async () => {

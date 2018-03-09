@@ -2,6 +2,9 @@
 
 jest.mock("@lerna/prompt");
 
+const fs = require("fs-extra");
+const path = require("path");
+
 // mocked or stubbed modules
 const FileSystemUtilities = require("@lerna/fs-utils");
 const PromptUtilities = require("@lerna/prompt");
@@ -88,6 +91,20 @@ describe("CleanCommand", () => {
         await lernaClean(testDir)();
       } catch (err) {
         expect(err.message).toMatch("whoops");
+      }
+    });
+
+    it("requires a git repo when using --since", async () => {
+      expect.assertions(1);
+
+      const testDir = await initFixture("basic");
+
+      await fs.remove(path.join(testDir, ".git"));
+
+      try {
+        await lernaClean(testDir)("--since", "some-branch");
+      } catch (err) {
+        expect(err.message).toMatch("this is not a git repository");
       }
     });
   });

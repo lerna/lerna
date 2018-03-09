@@ -156,11 +156,11 @@ class Command {
   }
 
   runValidations() {
-    if (this.requiresGit && !GitUtilities.isInitialized(this.execOpts)) {
-      throw new ValidationError(
-        "ENOGIT",
-        "git binary missing, or this is not a git repository. Did you already run `git init` or `lerna init`?"
-      );
+    if (
+      (this.options.since !== undefined || this.requiresGit) &&
+      !GitUtilities.isInitialized(this.execOpts)
+    ) {
+      throw new ValidationError("ENOGIT", "The git binary was not found, or this is not a git repository.");
     }
 
     if (!this.repository.packageJson) {
@@ -210,7 +210,7 @@ class Command {
 
     // collectUpdates requires that filteredPackages be present prior to checking for
     // updates. That's okay because it further filters based on what's already been filtered.
-    if (typeof this.options.since === "string") {
+    if (this.options.since !== undefined) {
       chain = chain.then(() => collectUpdates(this));
       chain = chain.then(updates => {
         const updated = new Set(updates.map(({ pkg }) => pkg.name));
