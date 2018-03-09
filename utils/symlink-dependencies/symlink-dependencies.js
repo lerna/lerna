@@ -6,7 +6,6 @@ const pMap = require("p-map");
 const pMapSeries = require("p-map-series");
 const path = require("path");
 
-const FileSystemUtilities = require("@lerna/fs-utils");
 const createSymlink = require("@lerna/create-symlink");
 const resolveSymlink = require("@lerna/resolve-symlink");
 const symlinkBinary = require("@lerna/symlink-binary");
@@ -71,11 +70,11 @@ function symlinkDependencies(packages, packageGraph, logger) {
               );
 
               // remove installed dependency
-              return FileSystemUtilities.rimraf(targetDirectory);
+              return fs.remove(targetDirectory);
             }
           } else {
             // ensure destination directory exists (dealing with scoped subdirs)
-            return FileSystemUtilities.mkdirp(path.dirname(targetDirectory));
+            return fs.ensureDir(path.dirname(targetDirectory));
           }
         });
 

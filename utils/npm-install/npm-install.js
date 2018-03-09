@@ -1,12 +1,12 @@
 "use strict";
 
+const fs = require("fs-extra");
 const log = require("npmlog");
 const npa = require("npm-package-arg");
 const onExit = require("signal-exit");
 const writePkg = require("write-pkg");
 
 const ChildProcessUtilities = require("@lerna/child-process");
-const FileSystemUtilities = require("@lerna/fs-utils");
 const getExecOpts = require("@lerna/get-npm-exec-opts");
 
 module.exports = npmInstall;
@@ -53,11 +53,11 @@ function npmInstallDependencies(pkg, dependencies, config) {
 
   log.silly("npmInstallDependencies", "backup", pkg.manifestLocation);
 
-  return FileSystemUtilities.rename(pkg.manifestLocation, packageJsonBkp).then(() => {
+  return fs.rename(pkg.manifestLocation, packageJsonBkp).then(() => {
     const cleanup = () => {
       log.silly("npmInstallDependencies", "cleanup", pkg.manifestLocation);
       // Need to do this one synchronously because we might be doing it on exit.
-      FileSystemUtilities.renameSync(packageJsonBkp, pkg.manifestLocation);
+      fs.renameSync(packageJsonBkp, pkg.manifestLocation);
     };
 
     // If we die we need to be sure to put things back the way we found them.

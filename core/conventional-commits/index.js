@@ -3,6 +3,7 @@
 const conventionalChangelogCore = require("conventional-changelog-core");
 const conventionalRecommendedBump = require("conventional-recommended-bump");
 const dedent = require("dedent");
+const fs = require("fs-extra");
 const getStream = require("get-stream");
 const log = require("npmlog");
 const npa = require("npm-package-arg");
@@ -10,7 +11,6 @@ const os = require("os");
 const path = require("path");
 const semver = require("semver");
 
-const FileSystemUtilities = require("@lerna/fs-utils");
 const ValidationError = require("@lerna/validation-error");
 
 const BLANK_LINE = os.EOL + os.EOL;
@@ -117,7 +117,8 @@ function makeBumpOnlyFilter(pkg) {
 function readExistingChangelog({ location }) {
   const changelogFileLoc = path.join(location, "CHANGELOG.md");
 
-  return FileSystemUtilities.readFile(changelogFileLoc)
+  return Promise.resolve()
+    .then(() => fs.readFile(changelogFileLoc, "utf8"))
     .catch(() => "") // allow missing file
     .then(changelogContents => {
       // CHANGELOG entries start with <a name=, we remove
@@ -175,7 +176,7 @@ function updateChangelog(pkg, type, { changelogPreset, version }) {
 
       const content = [CHANGELOG_HEADER, newEntry, changelogContents].join(BLANK_LINE);
 
-      return FileSystemUtilities.writeFile(changelogFileLoc, content.trim()).then(() => {
+      return fs.writeFile(changelogFileLoc, content.trim() + os.EOL).then(() => {
         log.verbose(type, "wrote", changelogFileLoc);
 
         return changelogFileLoc;

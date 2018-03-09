@@ -6,7 +6,6 @@ const pMap = require("p-map");
 const readPkg = require("read-pkg");
 
 const Package = require("@lerna/package");
-const FileSystemUtilities = require("@lerna/fs-utils");
 const createSymlink = require("@lerna/create-symlink");
 
 module.exports = symlinkBinary;
@@ -35,12 +34,10 @@ function symlinkBinary(srcPackageRef, destPackageRef) {
         return Promise.resolve();
       }
 
-      return FileSystemUtilities.mkdirp(destPackage.binLocation).then(() =>
+      return fs.mkdirp(destPackage.binLocation).then(() =>
         pMap(actions, meta => {
           if (meta) {
-            return createSymlink(meta.src, meta.dst, "exec").then(() =>
-              FileSystemUtilities.chmod(meta.src, "755")
-            );
+            return createSymlink(meta.src, meta.dst, "exec").then(() => fs.chmod(meta.src, "755"));
           }
         })
       );

@@ -1,22 +1,22 @@
 "use strict";
 
+jest.mock("fs-extra");
 jest.mock("write-pkg");
 jest.mock("@lerna/child-process");
-jest.mock("@lerna/fs-utils");
 
 const path = require("path");
 
 // mocked modules
+const fs = require("fs-extra");
 const writePkg = require("write-pkg");
 const ChildProcessUtilities = require("@lerna/child-process");
-const FileSystemUtilities = require("@lerna/fs-utils");
 
 // file under test
 const npmInstall = require("..");
 
 describe("npm-install", () => {
   ChildProcessUtilities.exec.mockResolvedValue();
-  FileSystemUtilities.rename.mockResolvedValue();
+  fs.rename.mockResolvedValue();
   writePkg.mockResolvedValue();
 
   describe("npmInstall()", () => {
@@ -73,6 +73,7 @@ describe("npm-install", () => {
     it("installs dependencies in targeted directory", async () => {
       const location = path.normalize("/test/npm-install-deps");
       const manifestLocation = path.join(location, "package.json");
+      const backupManifest = `${manifestLocation}.lerna_backup`;
       const pkg = {
         location,
         manifestLocation,
@@ -100,14 +101,8 @@ describe("npm-install", () => {
 
       await npmInstall.dependencies(pkg, dependencies, config);
 
-      expect(FileSystemUtilities.rename).lastCalledWith(
-        manifestLocation,
-        path.join(location, "package.json.lerna_backup")
-      );
-      expect(FileSystemUtilities.renameSync).lastCalledWith(
-        path.join(location, "package.json.lerna_backup"),
-        manifestLocation
-      );
+      expect(fs.rename).lastCalledWith(manifestLocation, backupManifest);
+      expect(fs.renameSync).lastCalledWith(backupManifest, manifestLocation);
       expect(writePkg).lastCalledWith(manifestLocation, {
         name: "npm-install-deps",
         version: "1.0.0",
@@ -405,7 +400,7 @@ describe("npm-install", () => {
       const dependencies = ["I'm just here so we don't exit early"];
       const config = {};
 
-      FileSystemUtilities.rename.mockRejectedValueOnce(new Error("Unable to rename file"));
+      fs.rename.mockRejectedValueOnce(new Error("Unable to rename file"));
 
       try {
         await npmInstall.dependencies(pkg, dependencies, config);
@@ -417,6 +412,7 @@ describe("npm-install", () => {
     it("cleans up synchronously after writeFile error", async () => {
       const location = path.normalize("/test/npm-install-deps/writeError");
       const manifestLocation = path.join(location, "package.json");
+      const backupManifest = `${manifestLocation}.lerna_backup`;
       const pkg = {
         location,
         manifestLocation,
@@ -434,17 +430,14 @@ describe("npm-install", () => {
         await npmInstall.dependencies(pkg, dependencies, config);
       } catch (err) {
         expect(err.message).toBe("Unable to write file");
-
-        expect(FileSystemUtilities.renameSync).lastCalledWith(
-          path.join(location, "package.json.lerna_backup"),
-          manifestLocation
-        );
+        expect(fs.renameSync).lastCalledWith(backupManifest, manifestLocation);
       }
     });
 
     it("cleans up synchronously after client install error", async () => {
       const location = path.normalize("/test/npm-install-deps/clientError");
       const manifestLocation = path.join(location, "package.json");
+      const backupManifest = `${manifestLocation}.lerna_backup`;
       const pkg = {
         location,
         manifestLocation,
@@ -462,11 +455,7 @@ describe("npm-install", () => {
         await npmInstall.dependencies(pkg, dependencies, config);
       } catch (err) {
         expect(err.message).toBe("Unable to install dependency");
-
-        expect(FileSystemUtilities.renameSync).lastCalledWith(
-          path.join(location, "package.json.lerna_backup"),
-          manifestLocation
-        );
+        expect(fs.renameSync).lastCalledWith(backupManifest, manifestLocation);
       }
     });
   });

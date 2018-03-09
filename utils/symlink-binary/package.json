@@ -31,7 +31,6 @@
   },
   "dependencies": {
     "@lerna/create-symlink": "file:../create-symlink",
-    "@lerna/fs-utils": "file:../../core/fs-utils",
     "@lerna/package": "file:../../core/package",
     "fs-extra": "^5.0.0",
     "p-map": "^1.2.0",

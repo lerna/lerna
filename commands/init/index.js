@@ -1,10 +1,10 @@
 "use strict";
 
+const fs = require("fs-extra");
 const writeJsonFile = require("write-json-file");
 const writePkg = require("write-pkg");
 
 const Command = require("@lerna/command");
-const FileSystemUtilities = require("@lerna/fs-utils");
 const GitUtilities = require("@lerna/git-utils");
 
 class InitCommand extends Command {
@@ -107,7 +107,7 @@ class InitCommand extends Command {
 
   ensurePackagesDir() {
     this.logger.info("", "Creating packages directory");
-    this.repository.packageParentDirs.map(dir => FileSystemUtilities.mkdirpSync(dir));
+    this.repository.packageParentDirs.map(dir => fs.mkdirpSync(dir));
   }
 }
 

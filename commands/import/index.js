@@ -1,12 +1,12 @@
 "use strict";
 
 const dedent = require("dedent");
+const fs = require("fs-extra");
 const path = require("path");
 const pMapSeries = require("p-map-series");
 
 const ChildProcessUtilities = require("@lerna/child-process");
 const Command = require("@lerna/command");
-const FileSystemUtilities = require("@lerna/fs-utils");
 const GitUtilities = require("@lerna/git-utils");
 const PromptUtilities = require("@lerna/prompt");
 const ValidationError = require("@lerna/validation-error");
@@ -34,7 +34,7 @@ class ImportCommand extends Command {
     let stats;
 
     try {
-      stats = FileSystemUtilities.statSync(externalRepoPath);
+      stats = fs.statSync(externalRepoPath);
     } catch (e) {
       if (e.code === "ENOENT") {
         throw new Error(`No repository found at "${inputPath}"`);
@@ -65,7 +65,7 @@ class ImportCommand extends Command {
     const lernaRootRelativeToGitRoot = path.relative(gitRepoRoot, this.repository.rootPath);
     this.targetDirRelativeToGitRoot = path.join(lernaRootRelativeToGitRoot, targetDir);
 
-    if (FileSystemUtilities.existsSync(path.resolve(this.repository.rootPath, targetDir))) {
+    if (fs.existsSync(path.resolve(this.repository.rootPath, targetDir))) {
       throw new Error(`Target directory already exists "${targetDir}"`);
     }
 
