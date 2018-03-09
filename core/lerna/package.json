@@ -19,6 +19,9 @@
   "files": [
     "cli.js"
   ],
+  "publishConfig": {
+    "tag": "next"
+  },
   "engines": {
     "node": ">= 6.9.0"
   },

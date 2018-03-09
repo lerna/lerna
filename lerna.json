@@ -21,8 +21,7 @@
       "allowBranch": "master",
       "cdVersion": "prerelease",
       "preid": "beta",
-      "message": "chore(release): publish %s",
-      "npmTag": "next"
+      "message": "chore(release): publish %s"
     }
   },
   "ignoreChanges": [
