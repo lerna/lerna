@@ -1,3 +1,41 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+<a name="3.0.0-beta.1"></a>
+# [3.0.0-beta.1](https://github.com/lerna/lerna/compare/v3.0.0-beta.0...v3.0.0-beta.1) (2018-03-09)
+
+
+### Bug Fixes
+
+* **conventional-commits:** output version bump message closer to version heading ([64916d6](https://github.com/lerna/lerna/commit/64916d6))
+* **filter-options:** require a git repo when using --since ([d21b66e](https://github.com/lerna/lerna/commit/d21b66e)), closes [#822](https://github.com/lerna/lerna/issues/822)
+* **init:** lerna init does not, in fact, require git ([d1d69c7](https://github.com/lerna/lerna/commit/d1d69c7))
+* **publish:** Checkout manifest changes serially ([ce4a4b1](https://github.com/lerna/lerna/commit/ce4a4b1))
+* **publish:** default root manifest name when missing ([a504d7e](https://github.com/lerna/lerna/commit/a504d7e)), closes [#1305](https://github.com/lerna/lerna/issues/1305)
+* **publish:** guard against undefined tag ([d8ce253](https://github.com/lerna/lerna/commit/d8ce253)), closes [#1311](https://github.com/lerna/lerna/issues/1311)
+* **publish:** Respect pkg.publishConfig.tag ([04b256a](https://github.com/lerna/lerna/commit/04b256a)), closes [#1311](https://github.com/lerna/lerna/issues/1311)
+* **publish:** work around yarn "link:" intransigency ([ddfb517](https://github.com/lerna/lerna/commit/ddfb517)), closes [npm/npm#15900](https://github.com/npm/npm/issues/15900) [yarnpkg/yarn#4212](https://github.com/yarnpkg/yarn/issues/4212)
+
+
+### Features
+
+* **collect-packages:** simplify signature ([39170cf](https://github.com/lerna/lerna/commit/39170cf))
+* **diff:** filter diff output with --ignore-changes ([c27c2e0](https://github.com/lerna/lerna/commit/c27c2e0))
+* **filter-options:** Exclude private packages with --no-private ([6674d18](https://github.com/lerna/lerna/commit/6674d18))
+
+
+### BREAKING CHANGES
+
+* **collect-packages:** Formerly a config object, it is now two parameters, only the first of
+which (rootPath) is required. The second parameter is a list of package
+location globs, defaulting to lerna's default of `["packages/*"]`.
+
+
+
+
+
 ## v3.0.0-beta.0 (2018-03-07)
 
 This is the first `lerna` release published by `lerna` itself. :tada:
