@@ -1085,6 +1085,25 @@ describe("PublishCommand", () => {
       const [errorLog] = loggingOutput("error");
       expect(errorLog).toMatch("error running preversion in lifecycle");
     });
+
+    it("adapts to missing root package name", async () => {
+      const testDir = await initFixture("lifecycle-no-root-name");
+
+      await lernaPublish(testDir)();
+
+      expect(runLifecycle).toHaveBeenCalledTimes(6);
+
+      ["preversion", "version", "postversion"].forEach(script => {
+        expect(runLifecycle).toHaveBeenCalledWith(
+          expect.objectContaining({
+            // defaulted from dirname, like npm init
+            name: path.basename(testDir),
+          }),
+          script,
+          expect.any(Object) // conf
+        );
+      });
+    });
   });
 
   it("publishes all transitive dependents after change", async () => {

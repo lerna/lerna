@@ -1,0 +1,8 @@
+{
+  "version": "0.0.0-missing-name",
+  "scripts": {
+    "preversion": "echo preversion-root",
+    "version": "echo version-root",
+    "postversion": "echo postversion-root"
+  }
+}

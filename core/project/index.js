@@ -74,6 +74,11 @@ class Project {
     if (!this._packageJson) {
       try {
         this._packageJson = loadJsonFile.sync(this.packageJsonLocation);
+
+        if (!this._packageJson.name) {
+          // npm-lifecycle chokes if this is missing, so default like npm init does
+          this._packageJson.name = path.basename(path.dirname(this.packageJsonLocation));
+        }
       } catch (err) {
         // don't swallow syntax errors
         if (err.name === "JSONError") {
