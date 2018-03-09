@@ -10,7 +10,7 @@ module.exports = npmPublish;
 function npmPublish(pkg, tag, { npmClient, registry }) {
   log.silly("npmPublish", tag, pkg.name);
 
-  const distTag = tag.trim();
+  const distTag = tag && tag.trim();
   const opts = getExecOpts(pkg, registry);
   const args = ["publish"];
 

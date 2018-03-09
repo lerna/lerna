@@ -25,6 +25,14 @@ describe("npm-publish", () => {
     });
   });
 
+  it("does not pass --tag when none present (npm default)", async () => {
+    await npmPublish(pkg, undefined, { npmClient: "npm" });
+
+    expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["publish"], {
+      cwd: pkg.location,
+    });
+  });
+
   it("trims trailing whitespace in tag parameter", async () => {
     await npmPublish(pkg, "trailing-tag ", { npmClient: "npm" });
 
