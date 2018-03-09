@@ -76,6 +76,20 @@ describe("DiffCommand", () => {
     expect(stdout).toMatchSnapshot();
   });
 
+  it("passes diff exclude globs configured with --ignored-changes", async () => {
+    const cwd = await initFixture("basic");
+    const [pkg1] = await collectPackages(cwd);
+
+    pkg1.json.changed += 1;
+
+    await writeManifest(pkg1);
+    await fs.outputFile(path.join(pkg1.location, "README.md"), "ignored change");
+    await gitCommit(cwd, "changed");
+
+    const { stdout } = await lernaDiff(cwd)("--ignore-changes", "**/README.md");
+    expect(stdout).toMatchSnapshot();
+  });
+
   it("should error when attempting to diff a package that doesn't exist", async () => {
     const cwd = await initFixture("basic");
 

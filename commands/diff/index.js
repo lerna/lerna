@@ -35,6 +35,13 @@ class DiffCommand extends Command {
       args.push("--", ...this.repository.packageParentDirs);
     }
 
+    if (this.options.ignoreChanges) {
+      this.options.ignoreChanges.forEach(ignorePattern => {
+        // https://stackoverflow.com/a/21079437
+        args.push(`:(exclude,glob)${ignorePattern}`);
+      });
+    }
+
     this.args = args;
   }
 
