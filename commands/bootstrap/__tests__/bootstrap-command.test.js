@@ -1,5 +1,6 @@
 "use strict";
 
+jest.mock("@lerna/rimraf-dir");
 jest.mock("@lerna/npm-install");
 jest.mock("@lerna/run-lifecycle");
 jest.mock("@lerna/create-symlink");
@@ -8,7 +9,7 @@ const fs = require("fs-extra");
 const path = require("path");
 
 // mocked or stubbed modules
-const FileSystemUtilities = require("@lerna/fs-utils");
+const rimrafDir = require("@lerna/rimraf-dir");
 const npmInstall = require("@lerna/npm-install");
 const runLifecycle = require("@lerna/run-lifecycle");
 const createSymlink = require("@lerna/create-symlink");
@@ -41,6 +42,9 @@ const ranScriptsInDirectories = testDir =>
     return obj;
   }, {});
 
+const removedDirectories = testDir =>
+  rimrafDir.mock.calls.map(([directory]) => normalizeRelativeDir(testDir, directory));
+
 const symlinkedDirectories = testDir =>
   createSymlink.mock.calls
     .slice()
@@ -53,6 +57,9 @@ const symlinkedDirectories = testDir =>
     }));
 
 describe("BootstrapCommand", () => {
+  // stub rimraf because we trust isaacs
+  rimrafDir.mockResolvedValue();
+
   // we stub npmInstall in most tests because
   // we already have enough tests of npmInstall
   npmInstall.mockResolvedValue();
@@ -85,20 +92,6 @@ describe("BootstrapCommand", () => {
   });
 
   describe("with hoisting", () => {
-    // stub rimraf because we trust isaacs
-    const fsRimraf = FileSystemUtilities.rimraf;
-
-    beforeEach(() => {
-      FileSystemUtilities.rimraf = jest.fn(() => Promise.resolve());
-    });
-
-    afterEach(() => {
-      FileSystemUtilities.rimraf = fsRimraf;
-    });
-
-    const removedDirectories = testDir =>
-      FileSystemUtilities.rimraf.mock.calls.map(([directory]) => normalizeRelativeDir(testDir, directory));
-
     it("should hoist", async () => {
       const testDir = await initFixture("basic");
 

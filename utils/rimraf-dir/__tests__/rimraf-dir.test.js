@@ -10,18 +10,18 @@ const pathExists = require("path-exists");
 const ChildProcessUtilities = require("@lerna/child-process");
 
 // file under test
-const FileSystemUtilities = require("..");
+const rimrafDir = require("..");
 
-describe("FileSystemUtilities.rimraf()", () => {
+describe("rimrafDir()", () => {
   it("calls rimraf CLI with arguments", async () => {
-    expect.assertions(1);
     const dirPath = "rimraf/test";
 
     pathExists.mockResolvedValueOnce(true);
     ChildProcessUtilities.spawn.mockResolvedValueOnce();
 
-    await FileSystemUtilities.rimraf(dirPath);
+    const removedPath = await rimrafDir(dirPath);
 
+    expect(removedPath).toBe(dirPath);
     expect(ChildProcessUtilities.spawn).lastCalledWith(process.execPath, [
       require.resolve("rimraf/bin"),
       "--no-glob",
@@ -30,10 +30,11 @@ describe("FileSystemUtilities.rimraf()", () => {
   });
 
   it("does not attempt to delete a non-existent directory", async () => {
-    expect.assertions(1);
     pathExists.mockResolvedValueOnce(false);
 
-    await FileSystemUtilities.rimraf("rimraf/non-existent");
+    const removedPath = await rimrafDir("rimraf/non-existent");
+
+    expect(removedPath).toBe(undefined);
     expect(ChildProcessUtilities.spawn).not.toBeCalled();
   });
 });

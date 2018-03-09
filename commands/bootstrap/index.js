@@ -10,7 +10,7 @@ const pMapSeries = require("p-map-series");
 const pWaterfall = require("p-waterfall");
 
 const Command = require("@lerna/command");
-const FileSystemUtilities = require("@lerna/fs-utils");
+const rimrafDir = require("@lerna/rimraf-dir");
 const npmInstall = require("@lerna/npm-install");
 const runLifecycle = require("@lerna/run-lifecycle");
 const batchPackages = require("@lerna/batch-packages");
@@ -415,7 +415,7 @@ class BootstrapCommand extends Command {
         return pMap(
           candidates,
           dirPath =>
-            FileSystemUtilities.rimraf(dirPath).then(() => {
+            rimrafDir(dirPath).then(() => {
               tracker.verbose("prune", dirPath);
               tracker.completeWork(1);
             }),

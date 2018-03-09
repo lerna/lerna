@@ -1,12 +1,13 @@
 "use strict";
 
+jest.mock("@lerna/rimraf-dir");
 jest.mock("@lerna/prompt");
 
 const fs = require("fs-extra");
 const path = require("path");
 
 // mocked or stubbed modules
-const FileSystemUtilities = require("@lerna/fs-utils");
+const rimrafDir = require("@lerna/rimraf-dir");
 const PromptUtilities = require("@lerna/prompt");
 
 // helpers
@@ -18,17 +19,12 @@ const lernaClean = require("@lerna-test/command-runner")(require("../command"));
 
 // assertion helpers
 const removedDirectories = testDir =>
-  FileSystemUtilities.rimraf.mock.calls.map(([directory]) => normalizeRelativeDir(testDir, directory));
+  rimrafDir.mock.calls.map(([directory]) => normalizeRelativeDir(testDir, directory));
 
 describe("CleanCommand", () => {
   // stub rimraf because we trust isaacs
-  const fsRimraf = FileSystemUtilities.rimraf;
-  beforeEach(() => {
-    FileSystemUtilities.rimraf = jest.fn(() => Promise.resolve());
-  });
-  afterEach(() => {
-    FileSystemUtilities.rimraf = fsRimraf;
-  });
+  // .mockResolvedValue() doesn't work when you want to reject it later
+  rimrafDir.mockImplementation(() => Promise.resolve());
 
   PromptUtilities.confirm.mockResolvedValue(true);
 
@@ -85,7 +81,7 @@ describe("CleanCommand", () => {
 
       const testDir = await initFixture("basic");
 
-      FileSystemUtilities.rimraf.mockImplementationOnce(() => Promise.reject(new Error("whoops")));
+      rimrafDir.mockImplementationOnce(() => Promise.reject(new Error("whoops")));
 
       try {
         await lernaClean(testDir)();

@@ -4,7 +4,7 @@ const path = require("path");
 const pMap = require("p-map");
 
 const Command = require("@lerna/command");
-const FileSystemUtilities = require("@lerna/fs-utils");
+const rimrafDir = require("@lerna/rimraf-dir");
 const PromptUtilities = require("@lerna/prompt");
 
 class CleanCommand extends Command {
@@ -33,7 +33,7 @@ class CleanCommand extends Command {
     const mapper = dirPath => {
       tracker.info("clean", "removing", dirPath);
 
-      return FileSystemUtilities.rimraf(dirPath).then(() => {
+      return rimrafDir(dirPath).then(() => {
         tracker.completeWork(1);
       });
     };
