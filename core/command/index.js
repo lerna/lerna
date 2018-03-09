@@ -50,10 +50,10 @@ class Command {
       chain = chain.then(() => this.runCommand());
 
       chain.then(
-        () => {
+        result => {
           warnIfHanging();
 
-          resolve();
+          resolve(result);
         },
         err => {
           if (err.pkg) {
