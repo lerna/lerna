@@ -186,19 +186,19 @@ exports[`PublishCommand independent mode should publish the changed packages in 
 Array [
   Object {
     "dir": "packages/package-1",
-    "tag": "latest",
+    "tag": undefined,
   },
   Object {
     "dir": "packages/package-3",
-    "tag": "latest",
+    "tag": undefined,
   },
   Object {
     "dir": "packages/package-4",
-    "tag": "latest",
+    "tag": undefined,
   },
   Object {
     "dir": "packages/package-2",
-    "tag": "latest",
+    "tag": undefined,
   },
 ]
 `;
@@ -312,19 +312,19 @@ exports[`PublishCommand normal mode should publish the changed packages: npm pub
 Array [
   Object {
     "dir": "packages/package-1",
-    "tag": "latest",
+    "tag": undefined,
   },
   Object {
     "dir": "packages/package-3",
-    "tag": "latest",
+    "tag": undefined,
   },
   Object {
     "dir": "packages/package-4",
-    "tag": "latest",
+    "tag": undefined,
   },
   Object {
     "dir": "packages/package-2",
-    "tag": "latest",
+    "tag": undefined,
   },
 ]
 `;
@@ -394,7 +394,7 @@ exports[`PublishCommand normal mode with --ignore-changes does not publish packa
 Array [
   Object {
     "dir": "packages/package-4",
-    "tag": "latest",
+    "tag": undefined,
   },
 ]
 `;
@@ -410,7 +410,7 @@ exports[`PublishCommand normal mode with --ignore-changes maps deprecated --igno
 Array [
   Object {
     "dir": "packages/package-4",
-    "tag": "latest",
+    "tag": undefined,
   },
 ]
 `;
@@ -440,19 +440,19 @@ exports[`PublishCommand normal mode with --registry passes registry to npm comma
 Array [
   Object {
     "dir": "packages/package-1",
-    "tag": "latest",
+    "tag": undefined,
   },
   Object {
     "dir": "packages/package-3",
-    "tag": "latest",
+    "tag": undefined,
   },
   Object {
     "dir": "packages/package-4",
-    "tag": "latest",
+    "tag": undefined,
   },
   Object {
     "dir": "packages/package-2",
-    "tag": "latest",
+    "tag": undefined,
   },
 ]
 `;
@@ -471,19 +471,19 @@ exports[`PublishCommand normal mode with --skip-git should publish the changed p
 Array [
   Object {
     "dir": "packages/package-1",
-    "tag": "latest",
+    "tag": undefined,
   },
   Object {
     "dir": "packages/package-3",
-    "tag": "latest",
+    "tag": undefined,
   },
   Object {
     "dir": "packages/package-4",
-    "tag": "latest",
+    "tag": undefined,
   },
   Object {
     "dir": "packages/package-2",
-    "tag": "latest",
+    "tag": undefined,
   },
 ]
 `;

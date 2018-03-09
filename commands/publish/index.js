@@ -554,7 +554,7 @@ class PublishCommand extends Command {
     const mapPackage = pkg => {
       tracker.verbose("publishing", pkg.name);
 
-      return npmPublish(distTag, pkg, this.npmConfig).then(() => {
+      return npmPublish(pkg, distTag, this.npmConfig).then(() => {
         tracker.info("published", pkg.name);
         tracker.completeWork(1);
 
@@ -594,14 +594,22 @@ class PublishCommand extends Command {
   }
 
   updateTag(pkg) {
-    const distTag = this.getDistTag();
+    const distTag = this.getDistTag() || "latest";
     const version = this.options.canary ? pkg.version : this.updatesVersions.get(pkg.name);
 
     return this.removeTempTag(pkg).then(() => npmDistTag.add(pkg, version, distTag, this.npmConfig.registry));
   }
 
   getDistTag() {
-    return this.options.npmTag || (this.options.canary && "canary") || "latest";
+    if (this.options.npmTag) {
+      return this.options.npmTag;
+    }
+
+    if (this.options.canary) {
+      return "canary";
+    }
+
+    // undefined defaults to "latest" OR whatever is in pkg.publishConfig.tag
   }
 }
 

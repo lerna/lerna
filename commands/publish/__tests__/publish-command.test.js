@@ -35,9 +35,8 @@ const lernaPublish = require("@lerna-test/command-runner")(require("../command")
 
 // assertion helpers
 const publishedTagInDirectories = testDir =>
-  npmPublish.mock.calls.reduce((arr, args) => {
-    const tag = args[0];
-    const dir = normalizeRelativeDir(testDir, args[1].location);
+  npmPublish.mock.calls.reduce((arr, [pkg, tag]) => {
+    const dir = normalizeRelativeDir(testDir, pkg.location);
     arr.push({ dir, tag });
     return arr;
   }, []);

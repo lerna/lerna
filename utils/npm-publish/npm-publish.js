@@ -7,11 +7,16 @@ const getExecOpts = require("@lerna/get-npm-exec-opts");
 
 module.exports = npmPublish;
 
-function npmPublish(tag, pkg, { npmClient, registry }) {
+function npmPublish(pkg, tag, { npmClient, registry }) {
   log.silly("npmPublish", tag, pkg.name);
 
+  const distTag = tag.trim();
   const opts = getExecOpts(pkg, registry);
-  const args = ["publish", "--tag", tag.trim()];
+  const args = ["publish"];
+
+  if (distTag) {
+    args.push("--tag", distTag);
+  }
 
   if (npmClient === "yarn") {
     // skip prompt for new version, use existing instead

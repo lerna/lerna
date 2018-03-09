@@ -18,7 +18,7 @@ describe("npm-publish", () => {
   };
 
   it("runs npm publish in a directory with --tag support", async () => {
-    await npmPublish("published-tag", pkg, { npmClient: "npm" });
+    await npmPublish(pkg, "published-tag", { npmClient: "npm" });
 
     expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["publish", "--tag", "published-tag"], {
       cwd: pkg.location,
@@ -26,7 +26,7 @@ describe("npm-publish", () => {
   });
 
   it("trims trailing whitespace in tag parameter", async () => {
-    await npmPublish("trailing-tag ", pkg, { npmClient: "npm" });
+    await npmPublish(pkg, "trailing-tag ", { npmClient: "npm" });
 
     expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["publish", "--tag", "trailing-tag"], {
       cwd: pkg.location,
@@ -36,7 +36,7 @@ describe("npm-publish", () => {
   it("supports custom registry", async () => {
     const registry = "https://custom-registry/npmPublish";
 
-    await npmPublish("custom-registry", pkg, { npmClient: "npm", registry });
+    await npmPublish(pkg, "custom-registry", { npmClient: "npm", registry });
 
     expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["publish", "--tag", "custom-registry"], {
       cwd: pkg.location,
@@ -49,7 +49,7 @@ describe("npm-publish", () => {
 
   describe("with npmClient yarn", () => {
     it("appends --new-version to avoid interactive prompt", async () => {
-      await npmPublish("yarn-publish", pkg, { npmClient: "yarn" });
+      await npmPublish(pkg, "yarn-publish", { npmClient: "yarn" });
 
       expect(ChildProcessUtilities.exec).lastCalledWith(
         "yarn",
