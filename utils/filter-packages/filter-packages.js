@@ -13,14 +13,13 @@ module.exports = filterPackages;
  * and do not match the ignore glob
  *
  * @param {!Array.<Package>} packagesToFilter The packages to filter
- * @param {Object} filters The include and exclude filters.
- * @param {Array.<String>} filters.include A list of globs to match the package name against
- * @param {Array.<String>} filters.exclude A list of globs to filter the package name against
+ * @param {Array.<String>} include A list of globs to match the package name against
+ * @param {Array.<String>} exclude A list of globs to filter the package name against
  * @param {Boolean} showPrivate When false, filter out private packages
  * @return {Array.<Package>} The packages with a name matching the glob
  * @throws when a given glob would produce an empty list of packages
  */
-function filterPackages(packagesToFilter, { include = [], exclude = [] }, showPrivate) {
+function filterPackages(packagesToFilter, include = [], exclude = [], showPrivate) {
   const filtered = new Set(packagesToFilter);
   const patterns = [].concat(include, exclude);
 
