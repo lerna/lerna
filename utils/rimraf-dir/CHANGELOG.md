@@ -9,4 +9,4 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Features
 
-* Rename [@lerna](https://github.com/lerna)/fs-utils => [@lerna](https://github.com/lerna)/rimraf-dir ([30451ed](https://github.com/lerna/lerna/commit/30451ed))
+* Rename @lerna/fs-utils => @lerna/rimraf-dir ([30451ed](https://github.com/lerna/lerna/commit/30451ed))

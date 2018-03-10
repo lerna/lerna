@@ -9,13 +9,13 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* Move [@lerna](https://github.com/lerna)/has-dependency-installed into bootstrap/lib ([c09ccbd](https://github.com/lerna/lerna/commit/c09ccbd))
+* Move @lerna/has-dependency-installed into bootstrap/lib ([c09ccbd](https://github.com/lerna/lerna/commit/c09ccbd))
 
 
 ### Features
 
-* Rename [@lerna](https://github.com/lerna)/fs-utils => [@lerna](https://github.com/lerna)/rimraf-dir ([30451ed](https://github.com/lerna/lerna/commit/30451ed))
-* Replace [@lerna](https://github.com/lerna)/match-package-name with multimatch ([423f82c](https://github.com/lerna/lerna/commit/423f82c))
+* Rename @lerna/fs-utils => @lerna/rimraf-dir ([30451ed](https://github.com/lerna/lerna/commit/30451ed))
+* Replace @lerna/match-package-name with multimatch ([423f82c](https://github.com/lerna/lerna/commit/423f82c))
 
 
 
