@@ -6,16 +6,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 <a name="3.0.0-beta.2"></a>
 # [3.0.0-beta.2](https://github.com/lerna/lerna/compare/v3.0.0-beta.1...v3.0.0-beta.2) (2018-03-10)
 
-**Note:** Version bump only for package @lerna/diff
-
-
-
-
-
-<a name="3.0.0-beta.1"></a>
-# [3.0.0-beta.1](https://github.com/lerna/lerna/compare/v3.0.0-beta.0...v3.0.0-beta.1) (2018-03-09)
-
 
 ### Features
 
-* **diff:** filter diff output with --ignore-changes ([c27c2e0](https://github.com/lerna/lerna/commit/c27c2e0))
+* Rename [@lerna](https://github.com/lerna)/fs-utils => [@lerna](https://github.com/lerna)/rimraf-dir ([30451ed](https://github.com/lerna/lerna/commit/30451ed))
