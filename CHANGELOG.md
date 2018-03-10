@@ -9,21 +9,20 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* Move [@lerna](https://github.com/lerna)/has-dependency-installed into bootstrap/lib ([c09ccbd](https://github.com/lerna/lerna/commit/c09ccbd))
-
+* Move `@lerna/has-dependency-installed` into `commands/bootstrap/lib` ([c09ccbd](https://github.com/lerna/lerna/commit/c09ccbd))
 
 ### Features
 
-* Rename [@lerna](https://github.com/lerna)/fs-utils => [@lerna](https://github.com/lerna)/rimraf-dir ([30451ed](https://github.com/lerna/lerna/commit/30451ed))
-* Replace [@lerna](https://github.com/lerna)/fs-utils dependency with fs-extra ([9c35a86](https://github.com/lerna/lerna/commit/9c35a86))
-* Replace [@lerna](https://github.com/lerna)/match-package-name with multimatch ([423f82c](https://github.com/lerna/lerna/commit/423f82c))
+* Rename `@lerna/fs-utils` => `@lerna/rimraf-dir` ([30451ed](https://github.com/lerna/lerna/commit/30451ed))
+* Replace `@lerna/fs-utils` dependency with `fs-extra` ([9c35a86](https://github.com/lerna/lerna/commit/9c35a86))
+* Replace `@lerna/match-package-name` with `multimatch` ([423f82c](https://github.com/lerna/lerna/commit/423f82c))
 * **filter-packages:** Simplify method signature ([47e1c86](https://github.com/lerna/lerna/commit/47e1c86))
 
 
 ### BREAKING CHANGES
 
 * **filter-packages:** The parameters to `filterPackages()` have changed:
-  * Two lists (include, exclude) have replaced the destructured config object
+  * Two lists (`include`, `exclude`) have replaced the destructured config object
 
 
 
