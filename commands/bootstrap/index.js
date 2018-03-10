@@ -470,25 +470,26 @@ class BootstrapCommand extends Command {
   }
 
   validatePackageNames() {
-    const foundPackages = new Map();
+    const seen = new Map();
 
-    this.filteredPackages.forEach(({ name, location }) => {
-      if (foundPackages.has(name)) {
-        foundPackages.get(name).add(location);
+    for (const { name, location } of this.filteredPackages) {
+      if (seen.has(name)) {
+        seen.get(name).push(location);
       } else {
-        foundPackages.set(name, new Set([location]));
+        seen.set(name, [location]);
       }
-    });
+    }
 
-    foundPackages.forEach((locationsFound, pkgName) => {
-      if (locationsFound.size > 1) {
+    for (const [name, locations] of seen) {
+      if (locations.length > 1) {
         throw new ValidationError(
           "ENAME",
-          `Package name "${pkgName}" used in multiple packages:
-          \t${Array.from(locationsFound).join("\n\t")}`
+          [`Package name "${name}" used in multiple packages:`, ...locations].join("\n\t")
         );
       }
-    });
+    }
+
+    // hooray no duplicates
   }
 }
 
