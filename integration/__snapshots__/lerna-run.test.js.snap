@@ -10,14 +10,14 @@ lerna success - package-3
 
 exports[`lerna run my-script --scope: stderr 1`] = `
 lerna info version __TEST_VERSION__
-lerna info scope package-1
+lerna info filter [ 'package-1' ]
 lerna success run Ran npm script 'my-script' in packages:
 lerna success - package-1
 `;
 
 exports[`lerna run test --ignore: stderr 1`] = `
 lerna info version __TEST_VERSION__
-lerna info ignore package-@(1|2|3)
+lerna info filter [ '!package-@(1|2|3)' ]
 lerna success run Ran npm script 'test' in packages:
 lerna success - package-4
 `;

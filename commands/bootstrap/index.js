@@ -29,7 +29,7 @@ class BootstrapCommand extends Command {
   initialize() {
     const { registry, rejectCycles, npmClient = "npm", npmClientArgs, mutex, hoist } = this.options;
 
-    if (npmClient === "yarn" && typeof hoist === "string") {
+    if (npmClient === "yarn" && hoist) {
       throw new ValidationError(
         "EWORKSPACES",
         dedent`
@@ -209,8 +209,11 @@ class BootstrapCommand extends Command {
     const { hoist, nohoist } = this.options;
     const rootPkg = this.repository.package;
 
+    let hoisting;
+
     if (hoist) {
-      tracker.verbose("hoist", "enabled for %j", hoist);
+      hoisting = [].concat(hoist, nohoist || []);
+      tracker.verbose("hoist", "using globs %j", hoisting);
     }
 
     // This will contain entries for each hoistable dependency.
@@ -274,7 +277,7 @@ class BootstrapCommand extends Command {
     for (const [externalName, externalDependents] of depsToInstall) {
       let rootVersion;
 
-      if (hoist && isHoistedPackage(externalName, hoist, nohoist)) {
+      if (hoisting && isHoistedPackage(externalName, hoisting)) {
         const commonVersion = Array.from(externalDependents.keys()).reduce(
           (a, b) => (externalDependents.get(a).size > externalDependents.get(b).size ? a : b)
         );

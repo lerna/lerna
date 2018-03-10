@@ -1,9 +1,9 @@
 "use strict";
 
-const matchPackageName = require("@lerna/match-package-name");
+const multimatch = require("multimatch");
 
 module.exports = isHoistedPackage;
 
-function isHoistedPackage(name, hoist, nohoist) {
-  return matchPackageName(name, hoist) && matchPackageName(name, nohoist, true);
+function isHoistedPackage(name, hoisting) {
+  return multimatch([name], hoisting).length > 0;
 }

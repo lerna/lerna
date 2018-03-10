@@ -1,6 +1,9 @@
 "use strict";
 
-const matchPackageName = require("@lerna/match-package-name");
+const util = require("util");
+const multimatch = require("multimatch");
+const log = require("npmlog");
+
 const ValidationError = require("@lerna/validation-error");
 
 module.exports = filterPackages;
@@ -10,35 +13,47 @@ module.exports = filterPackages;
  * and do not match the ignore glob
  *
  * @param {!Array.<Package>} packagesToFilter The packages to filter
- * @param {Object} filters The scope and ignore filters.
- * @param {String} filters.scope glob The glob to match the package name against
- * @param {String} filters.ignore glob The glob to filter the package name against
+ * @param {Object} filters The include and exclude filters.
+ * @param {Array.<String>} filters.include A list of globs to match the package name against
+ * @param {Array.<String>} filters.exclude A list of globs to filter the package name against
  * @param {Boolean} showPrivate When false, filter out private packages
  * @return {Array.<Package>} The packages with a name matching the glob
  * @throws when a given glob would produce an empty list of packages
  */
-function filterPackages(packagesToFilter, { scope, ignore }, showPrivate) {
-  let packages = packagesToFilter.slice();
+function filterPackages(packagesToFilter, { include = [], exclude = [] }, showPrivate) {
+  const filtered = new Set(packagesToFilter);
+  const patterns = [].concat(include, exclude);
 
   if (showPrivate === false) {
-    packages = packages.filter(pkg => !pkg.private);
-  }
-
-  if (scope) {
-    packages = packages.filter(pkg => matchPackageName(pkg.name, scope));
-
-    if (!packages.length) {
-      throw new ValidationError("EFILTER", `No packages found that match scope '${scope}'`);
+    for (const pkg of filtered) {
+      if (pkg.private) {
+        filtered.delete(pkg);
+      }
     }
   }
 
-  if (ignore) {
-    packages = packages.filter(pkg => matchPackageName(pkg.name, ignore, true));
+  if (patterns.length) {
+    log.info("filter", patterns);
 
-    if (!packages.length) {
-      throw new ValidationError("EFILTER", `No packages remain after ignoring '${ignore}'`);
+    if (!include.length) {
+      // only excludes needs to select all items first
+      // globstar is for matching scoped packages
+      patterns.unshift("**");
+    }
+
+    const pnames = Array.from(filtered).map(pkg => pkg.name);
+    const chosen = new Set(multimatch(pnames, patterns));
+
+    for (const pkg of filtered) {
+      if (!chosen.has(pkg.name)) {
+        filtered.delete(pkg);
+      }
+    }
+
+    if (!filtered.size) {
+      throw new ValidationError("EFILTER", util.format("No packages remain after filtering", patterns));
     }
   }
 
-  return packages;
+  return Array.from(filtered);
 }

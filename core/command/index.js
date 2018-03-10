@@ -189,15 +189,7 @@ class Command {
     }
 
     const { rootPath, packageConfigs } = this.repository;
-    const { scope, ignore } = this.options;
-
-    if (scope) {
-      log.info("scope", scope);
-    }
-
-    if (ignore) {
-      log.info("ignore", ignore);
-    }
+    const { scope: include, ignore: exclude } = this.options;
 
     let chain = Promise.resolve();
 
@@ -205,7 +197,7 @@ class Command {
     chain = chain.then(packages => {
       this.packages = packages;
       this.packageGraph = new PackageGraph(packages);
-      this.filteredPackages = filterPackages(packages, { scope, ignore }, this.options.private);
+      this.filteredPackages = filterPackages(packages, { include, exclude }, this.options.private);
     });
 
     // collectUpdates requires that filteredPackages be present prior to checking for

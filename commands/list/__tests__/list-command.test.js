@@ -174,10 +174,7 @@ describe("LsCommand", () => {
       try {
         await lernaLs(testDir)("--scope", "no-package-*");
       } catch (err) {
-        expect(err).toHaveProperty(
-          "message",
-          expect.stringContaining("No packages found that match scope 'no-package-*'")
-        );
+        expect(err.message).toBe("No packages remain after filtering [ 'no-package-*' ]");
       }
     });
 
@@ -187,10 +184,7 @@ describe("LsCommand", () => {
       try {
         await lernaLs(testDir)("--ignore", "package-*");
       } catch (err) {
-        expect(err).toHaveProperty(
-          "message",
-          expect.stringContaining("No packages remain after ignoring 'package-*'")
-        );
+        expect(err.message).toBe("No packages remain after filtering [ '**', '!package-*' ]");
       }
     });
 
@@ -200,10 +194,7 @@ describe("LsCommand", () => {
       try {
         await lernaLs(testDir)("--scope", "package-a-*", "--ignore", "package-a-@(1|2)");
       } catch (err) {
-        expect(err).toHaveProperty(
-          "message",
-          expect.stringContaining("No packages remain after ignoring 'package-a-@(1|2)'")
-        );
+        expect(err.message).toBe("No packages remain after filtering [ 'package-a-*', '!package-a-@(1|2)' ]");
       }
     });
   });
