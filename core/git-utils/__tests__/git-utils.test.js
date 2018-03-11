@@ -347,4 +347,48 @@ describe("GitUtilities", () => {
       expect(GitUtilities.hasCommit()).toBe(false);
     });
   });
+
+  describe(".isBehindUpstream()", () => {
+    const aheadBehindCountOriginal = GitUtilities.aheadBehindCount;
+    afterEach(() => {
+      GitUtilities.aheadBehindCount = aheadBehindCountOriginal;
+    });
+
+    it("returns true when behind upstream", () => {
+      const opts = { cwd: "test" };
+      GitUtilities.aheadBehindCount = jest.fn(() => ({ ahead: 0, behind: 1 }));
+      expect(GitUtilities.isBehindUpstream("origin", opts)).toBe(true);
+    });
+
+    it("returns false when not behind upstream", () => {
+      const opts = { cwd: "test" };
+      GitUtilities.aheadBehindCount = jest.fn(() => ({ ahead: 0, behind: 0 }));
+      expect(GitUtilities.isBehindUpstream("origin", opts)).toBe(false);
+    });
+  });
+
+  describe(".aheadBehindCount()", () => {
+    const getCurrentBranchOriginal = GitUtilities.getCurrentBranch;
+    afterEach(() => {
+      GitUtilities.getCurrentBranch = getCurrentBranchOriginal;
+    });
+
+    it("returns the number of commits the local repo is behind upstream", () => {
+      const opts = { cwd: "test" };
+      GitUtilities.getCurrentBranch = jest.fn(() => "master");
+      ChildProcessUtilities.execSync.mockReturnValueOnce("5\t0");
+
+      const aheadBehindCount = GitUtilities.aheadBehindCount("origin", opts);
+      expect(aheadBehindCount.behind).toBe(5);
+    });
+
+    it("returns the number of commits the local repo is ahead upstream", () => {
+      const opts = { cwd: "test" };
+      GitUtilities.getCurrentBranch = jest.fn(() => "master");
+      ChildProcessUtilities.execSync.mockReturnValueOnce("0\t2");
+
+      const aheadBehindCount = GitUtilities.aheadBehindCount("origin", opts);
+      expect(aheadBehindCount.ahead).toBe(2);
+    });
+  });
 });

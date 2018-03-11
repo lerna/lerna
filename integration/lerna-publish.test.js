@@ -8,6 +8,7 @@ const writeJsonFile = require("write-json-file");
 const loadJsonFile = require("load-json-file");
 const path = require("path");
 const os = require("os");
+const tempy = require("tempy");
 
 const cliRunner = require("@lerna-test/cli-runner");
 const gitAdd = require("@lerna-test/git-add");
@@ -168,5 +169,19 @@ describe("lerna publish", () => {
 
     const { stdout } = await cliRunner(cwd)(...args);
     expect(normalizeTestRoot(cwd)(stdout)).toMatchSnapshot();
+  });
+
+  test("exits with EBEHIND when behind upstream remote", async () => {
+    const { cwd, repository } = await cloneFixture("normal");
+    const cloneDir = tempy.directory();
+
+    // simulate upstream change from another clone
+    await execa("git", ["clone", repository, cloneDir]);
+    await fs.outputFile(path.join(cloneDir, "README.md"), "upstream change");
+    await gitAdd(cloneDir, "-A");
+    await gitCommit(cloneDir, "upstream change");
+    await execa("git", ["push", "origin", "master"], { cwd: cloneDir });
+
+    await expect(cliRunner(cwd)("publish")).rejects.toThrowError(/EBEHIND/);
   });
 });
