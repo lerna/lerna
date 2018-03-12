@@ -12,13 +12,16 @@ function cloneFixture(startDir) {
   const initFixture = initFactory(startDir);
 
   return (...args) =>
-    initFixture(...args).then(workDir => {
+    initFixture(...args).then(cwd => {
       const repoDir = tempy.directory();
       const repoUrl = fileUrl(repoDir, { resolve: false });
 
       return gitInit(repoDir, "--bare")
-        .then(() => execa("git", ["remote", "add", "origin", repoUrl], { cwd: workDir }))
-        .then(() => execa("git", ["push", "-u", "origin", "master"], { cwd: workDir }))
-        .then(() => workDir);
+        .then(() => execa("git", ["remote", "add", "origin", repoUrl], { cwd }))
+        .then(() => execa("git", ["push", "-u", "origin", "master"], { cwd }))
+        .then(() => ({
+          cwd,
+          repository: repoUrl,
+        }));
     });
 }
