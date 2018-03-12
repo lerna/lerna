@@ -13,6 +13,9 @@ const ChildProcessUtilities = require("@lerna/child-process");
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const loggingOutput = require("@lerna-test/logging-output");
+const gitAdd = require("@lerna-test/git-add");
+const gitCommit = require("@lerna-test/git-commit");
+const gitTag = require("@lerna-test/git-tag");
 const updateLernaConfig = require("@lerna-test/update-lerna-config");
 
 const LERNA_VERSION = require("../package.json").version;
@@ -257,12 +260,11 @@ describe("core-command", () => {
 
     it("--since should return packages updated since the last tag", async () => {
       const cwd = await initFixture("filtering");
-      const git = (...args) => execa("git", args, { cwd });
 
-      await git("tag", "1.0.0");
+      await gitTag(cwd, "v1.0.0");
       await touch(path.join(cwd, "packages/package-2/random-file"));
-      await git("add", ".");
-      await git("commit", "-m", "test");
+      await gitAdd(cwd, "-A");
+      await gitCommit(cwd, "test");
 
       const command = testFactory({ cwd, since: "" });
       await command;
@@ -274,20 +276,21 @@ describe("core-command", () => {
 
     it('--since "ref" should return packages updated since the specified ref', async () => {
       const cwd = await initFixture("filtering");
-      const git = (...args) => execa("git", args, { cwd });
 
       // We first tag, then modify master to ensure that specifying --since will override checking against
       // the latest tag.
-      await git("tag", "1.0.0");
+      await gitTag(cwd, "v1.0.0");
+
       await touch(path.join(cwd, "packages/package-1/random-file"));
-      await git("add", ".");
-      await git("commit", "-m", "test");
+      await gitAdd(cwd, "-A");
+      await gitCommit(cwd, "test");
 
       // Then we can checkout a new branch, update and commit.
-      await git("checkout", "-b", "test");
+      await execa("git", ["checkout", "-b", "test"], { cwd });
+
       await touch(path.join(cwd, "packages/package-2/random-file"));
-      await git("add", ".");
-      await git("commit", "-m", "test");
+      await gitAdd(cwd, "-A");
+      await gitCommit(cwd, "test");
 
       const command = testFactory({ cwd, since: "master" });
       await command;
@@ -299,12 +302,11 @@ describe("core-command", () => {
 
     it("should respect --scope and --since when used together", async () => {
       const cwd = await initFixture("filtering");
-      const git = (...args) => execa("git", args, { cwd });
 
-      await git("checkout", "-b", "test");
+      await execa("git", ["checkout", "-b", "test"], { cwd });
       await touch(path.join(cwd, "packages/package-4/random-file"));
-      await git("add", ".");
-      await git("commit", "-m", "test");
+      await gitAdd(cwd, "-A");
+      await gitCommit(cwd, "test");
 
       const command = testFactory({
         cwd,

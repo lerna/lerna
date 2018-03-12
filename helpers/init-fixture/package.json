@@ -6,9 +6,10 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
-    "execa": "^0.9.0",
-    "find-up": "^2.1.0",
-    "fs-extra": "^5.0.0",
+    "@lerna-test/copy-fixture": "file:../copy-fixture",
+    "@lerna-test/git-add": "file:../git-add",
+    "@lerna-test/git-commit": "file:../git-commit",
+    "@lerna-test/git-init": "file:../git-init",
     "tempy": "^0.2.1"
   }
 }

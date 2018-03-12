@@ -12,6 +12,8 @@ const PromptUtilities = require("@lerna/prompt");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const gitAdd = require("@lerna-test/git-add");
+const gitCommit = require("@lerna-test/git-commit");
 const updateLernaConfig = require("@lerna-test/update-lerna-config");
 
 // file under test
@@ -39,33 +41,36 @@ describe("ImportCommand", () => {
 
     it("imports a repo with conflicted merge commits when run with --flatten", async () => {
       const [testDir, externalDir] = await initBasicFixtures();
-      const cwdExternalDir = { cwd: externalDir };
       const branchName = "conflict_branch";
       const conflictedFileName = "conflicted-file.txt";
       const conflictedFile = path.join(externalDir, conflictedFileName);
       const newFilePath = path.join(testDir, "packages", path.basename(externalDir), conflictedFileName);
 
       await fs.writeFile(conflictedFile, "initial content");
-      await execa("git", ["add", conflictedFileName], cwdExternalDir);
-      await execa("git", ["commit", "-m", "Initial content written"], cwdExternalDir);
-      await execa("git", ["checkout", "-b", branchName], cwdExternalDir);
+      await gitAdd(externalDir, conflictedFileName);
+      await gitCommit(externalDir, "Initial content written");
+
+      await execa("git", ["checkout", "-b", branchName], { cwd: externalDir });
 
       await fs.writeFile(conflictedFile, "branch content");
-      await execa("git", ["commit", "-am", "branch content written"], cwdExternalDir);
-      await execa("git", ["checkout", "master"], cwdExternalDir);
+      await gitAdd(externalDir, conflictedFileName);
+      await gitCommit(externalDir, "branch content written");
+
+      await execa("git", ["checkout", "master"], { cwd: externalDir });
 
       await fs.writeFile(conflictedFile, "master content");
-      await execa("git", ["commit", "-am", "master content written"], cwdExternalDir);
+      await gitAdd(externalDir, conflictedFileName);
+      await gitCommit(externalDir, "master content written");
 
       try {
-        await execa("git", ["merge", branchName], cwdExternalDir);
+        await execa("git", ["merge", branchName], { cwd: externalDir });
       } catch (e) {
         // skip
       }
 
       await fs.writeFile(conflictedFile, "merged content");
-      await execa("git", ["add", conflictedFileName], cwdExternalDir);
-      await execa("git", ["commit", "-m", "Branch merged"], cwdExternalDir);
+      await gitAdd(externalDir, conflictedFileName);
+      await gitCommit(externalDir, "Branch merged");
 
       await lernaImport(testDir)(externalDir, "--flatten");
 
@@ -78,9 +83,7 @@ describe("ImportCommand", () => {
       const newFilePath = path.join(testDir, "packages", path.basename(externalDir), "new-file");
 
       await execa("git", ["mv", "old-file", "new-file"], { cwd: externalDir });
-      await execa("git", ["commit", "-m", "Moved old-file to new-file"], {
-        cwd: externalDir,
-      });
+      await gitCommit(externalDir, "Moved old-file to new-file");
 
       await lernaImport(testDir)(externalDir);
 
@@ -90,14 +93,13 @@ describe("ImportCommand", () => {
 
     it("skips empty patches with --flatten", async () => {
       const [testDir, externalDir] = await initBasicFixtures();
-      const cwdExternalDir = { cwd: externalDir };
       const filePath = path.join(externalDir, "file.txt");
 
       await fs.writeFile(filePath, "non-empty content");
-      await execa("git", ["add", filePath], cwdExternalDir);
-      await execa("git", ["commit", "-m", "Non-empty commit"], cwdExternalDir);
+      await gitAdd(externalDir, filePath);
+      await gitCommit(externalDir, "Non-empty commit");
 
-      await execa("git", ["commit", "--allow-empty", "-m", "Empty commit"], cwdExternalDir);
+      await execa("git", ["commit", "--allow-empty", "-m", "Empty commit"], { cwd: externalDir });
 
       await lernaImport(testDir)(externalDir, "--flatten");
 
@@ -205,7 +207,7 @@ describe("ImportCommand", () => {
       const uncommittedFile = path.join(testDir, "uncommittedFile");
 
       await fs.writeFile(uncommittedFile, "stuff");
-      await execa("git", ["add", uncommittedFile], { cwd: testDir });
+      await gitAdd(testDir, uncommittedFile);
 
       try {
         await lernaImport(testDir)(externalDir);
@@ -219,9 +221,7 @@ describe("ImportCommand", () => {
       const newFilePath = path.join(testDir, "packages", path.basename(externalDir), "new-file");
 
       await execa("git", ["mv", "old-file", "new-file"], { cwd: externalDir });
-      await execa("git", ["commit", "-m", "[ISSUE-10] Moved old-file to new-file"], {
-        cwd: externalDir,
-      });
+      await gitCommit(externalDir, "[ISSUE-10] Moved old-file to new-file");
 
       await lernaImport(testDir)(externalDir);
 

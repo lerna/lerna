@@ -1,6 +1,5 @@
 "use strict";
 
-const execa = require("execa");
 const fs = require("fs-extra");
 const path = require("path");
 
@@ -9,6 +8,9 @@ const ChildProcessUtilities = require("@lerna/child-process");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const gitAdd = require("@lerna-test/git-add");
+const gitCommit = require("@lerna-test/git-commit");
+const gitTag = require("@lerna-test/git-tag");
 const loggingOutput = require("@lerna-test/logging-output");
 const normalizeRelativeDir = require("@lerna-test/normalize-relative-dir");
 
@@ -50,7 +52,7 @@ describe("ExecCommand", () => {
       const testDir = await initFixture("basic");
 
       ChildProcessUtilities.spawn.mockImplementationOnce(() => {
-        const boom = new Error("execa error");
+        const boom = new Error("execution error");
         boom.code = 1;
         boom.cmd = "boom";
 
@@ -60,7 +62,7 @@ describe("ExecCommand", () => {
       try {
         await lernaExec(testDir)("boom");
       } catch (err) {
-        expect(err.message).toBe("execa error");
+        expect(err.message).toBe("execution error");
       }
     });
 
@@ -102,16 +104,16 @@ describe("ExecCommand", () => {
 
       // make change
       await fs.appendFile(file2, "// package-2");
-      await execa("git", ["add", file2], { cwd: testDir });
-      await execa("git", ["commit", "-m", "skip change"], { cwd: testDir });
+      await gitAdd(testDir, file2);
+      await gitCommit(testDir, "skip change");
 
       // tag a release
-      await execa("git", ["tag", "-m", "v1.0.1", "v1.0.1"], { cwd: testDir });
+      await gitTag(testDir, "v1.0.1");
 
       // make another change
       await fs.appendFile(file1, "// package-1");
-      await execa("git", ["add", file1], { cwd: testDir });
-      await execa("git", ["commit", "-m", "show change"], { cwd: testDir });
+      await gitAdd(testDir, file1);
+      await gitCommit(testDir, "show change");
 
       await lernaExec(testDir)("ls", "--since");
 

@@ -1,12 +1,14 @@
 "use strict";
 
-const execa = require("execa");
 const fs = require("fs-extra");
 const path = require("path");
 const collectPackages = require("@lerna/collect-packages");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const gitAdd = require("@lerna-test/git-add");
+const gitCommit = require("@lerna-test/git-commit");
+const gitTag = require("@lerna-test/git-tag");
 
 // file under test
 const { recommendVersion, updateChangelog } = require("..");
@@ -16,11 +18,6 @@ expect.addSnapshotSerializer(require("@lerna-test/serialize-changelog"));
 
 describe("conventional-commits", () => {
   const currentDirectory = process.cwd();
-  const gitCommitAll = (cwd, message) => execa("git", ["commit", "-am", message], { cwd });
-  const gitCommitPkg = (cwd, pkg, message) =>
-    Promise.resolve()
-      .then(() => execa("git", ["add", pkg.manifestLocation], { cwd }))
-      .then(() => execa("git", ["commit", "-m", message], { cwd }));
 
   afterEach(() => {
     // conventional-recommended-bump is incapable of accepting cwd config :P
@@ -37,7 +34,8 @@ describe("conventional-commits", () => {
       // make a change in package-1
       pkg1.json.changed = 1;
       await fs.writeJSON(pkg1.manifestLocation, pkg1);
-      await gitCommitAll(cwd, "feat: changed 1");
+      await gitAdd(cwd, pkg1.manifestLocation);
+      await gitCommit(cwd, "feat: changed 1");
 
       // conventional-recommended-bump does not accept cwd config
       process.chdir(cwd);
@@ -58,8 +56,11 @@ describe("conventional-commits", () => {
         fs.writeJSON(pkg2.manifestLocation, pkg2),
       ]);
 
-      await gitCommitPkg(cwd, pkg1, "fix: changed 1");
-      await gitCommitPkg(cwd, pkg2, "feat: changed 2");
+      await gitAdd(cwd, pkg1.manifestLocation);
+      await gitCommit(cwd, "fix: changed 1");
+
+      await gitAdd(cwd, pkg2.manifestLocation);
+      await gitCommit(cwd, "feat: changed 2");
 
       // conventional-recommended-bump does not accept cwd config
       process.chdir(cwd);
@@ -70,7 +71,6 @@ describe("conventional-commits", () => {
   });
 
   describe("updateChangelog()", () => {
-    const gitTag = (cwd, tag) => execa("git", ["tag", tag, "-m", tag], { cwd });
     const getFileContent = fp => fs.readFile(fp, "utf8");
 
     it("creates files if they do not exist", async () => {
@@ -88,7 +88,8 @@ describe("conventional-commits", () => {
       // make a change in package-1
       pkg1.json.changed = 1;
       await fs.writeJSON(pkg1.manifestLocation, pkg1);
-      await gitCommitAll(cwd, "feat: I should be placed in the CHANGELOG");
+      await gitAdd(cwd, pkg1.manifestLocation);
+      await gitCommit(cwd, "feat: I should be placed in the CHANGELOG");
 
       // update version
       pkg1.version = "1.1.0";
@@ -121,7 +122,8 @@ describe("conventional-commits", () => {
       // make a change in package-1
       pkg1.json.changed = 1;
       await fs.writeJSON(pkg1.manifestLocation, pkg1);
-      await gitCommitAll(cwd, "fix: A second commit for our CHANGELOG");
+      await gitAdd(cwd, pkg1.manifestLocation);
+      await gitCommit(cwd, "fix: A second commit for our CHANGELOG");
 
       // update version
       pkg1.version = "1.0.1";
@@ -148,7 +150,8 @@ describe("conventional-commits", () => {
       // make a change in package-1
       pkg1.json.changed = 1;
       await fs.writeJSON(pkg1.manifestLocation, pkg1);
-      await gitCommitAll(cwd, "fix(pkg1): A dependency-triggered bump");
+      await gitAdd(cwd, pkg1.manifestLocation);
+      await gitCommit(cwd, "fix(pkg1): A dependency-triggered bump");
 
       // update version
       pkg2.version = "1.0.1";
@@ -177,8 +180,11 @@ describe("conventional-commits", () => {
         fs.writeJSON(pkg2.manifestLocation, pkg2),
       ]);
 
-      await gitCommitPkg(cwd, pkg1, "fix(stuff): changed");
-      await gitCommitPkg(cwd, pkg2, "feat(thing): added");
+      await gitAdd(cwd, pkg1.manifestLocation);
+      await gitCommit(cwd, "fix(stuff): changed");
+
+      await gitAdd(cwd, pkg2.manifestLocation);
+      await gitCommit(cwd, "feat(thing): added");
 
       // update versions
       pkg1.version = "1.0.1";

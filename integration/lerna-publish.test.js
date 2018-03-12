@@ -6,11 +6,13 @@ const globby = require("globby");
 const normalizeNewline = require("normalize-newline");
 const writeJsonFile = require("write-json-file");
 const loadJsonFile = require("load-json-file");
-const tempWrite = require("temp-write");
 const path = require("path");
 const os = require("os");
 
 const cliRunner = require("@lerna-test/cli-runner");
+const gitAdd = require("@lerna-test/git-add");
+const gitCommit = require("@lerna-test/git-commit");
+const gitTag = require("@lerna-test/git-tag");
 const initFixture = require("@lerna-test/init-fixture")(
   path.resolve(__dirname, "../commands/publish/__tests__")
 );
@@ -28,20 +30,9 @@ async function commitChangeToPackage(cwd, packageName, commitMsg, data) {
   const pkg = await loadJsonFile(packageJSONPath);
 
   await writeJsonFile(packageJSONPath, Object.assign(pkg, data));
-  await execa("git", ["add", "."], { cwd });
+  await gitAdd(cwd, packageJSONPath);
 
-  let gitCommit;
-
-  if (commitMsg.indexOf(os.EOL) > -1) {
-    // Use tempfile to allow multi\nline strings.
-    const tmpFilePath = await tempWrite(commitMsg);
-
-    gitCommit = execa("git", ["commit", "-F", tmpFilePath], { cwd });
-  } else {
-    gitCommit = execa("git", ["commit", "-m", commitMsg], { cwd });
-  }
-
-  return gitCommit;
+  return gitCommit(cwd, commitMsg);
 }
 
 describe("lerna publish", () => {
@@ -58,7 +49,7 @@ describe("lerna publish", () => {
     const cwd = await initFixture("normal");
     const args = ["publish"];
 
-    await execa("git", ["tag", "-a", "v1.0.0", "-m", "v1.0.0"], { cwd });
+    await gitTag(cwd, "v1.0.0");
 
     const { code, stdout } = await cliRunner(cwd)(...args);
 
@@ -83,7 +74,7 @@ describe("lerna publish", () => {
     const cwd = await initFixture("snake-graph");
     const args = ["publish", "--skip-npm", "--cd-version=major", "--yes"];
 
-    await execa("git", ["tag", "v1.0.0", "-m", "v1.0.0"], { cwd });
+    await gitTag(cwd, "v1.0.0");
     await commitChangeToPackage(cwd, "package-1", "change", { change: true });
 
     await cliRunner(cwd)(...args);
@@ -149,7 +140,7 @@ describe("lerna publish", () => {
   it("replaces file: specifier with local version before npm publish but after git commit", async () => {
     const cwd = await initFixture("relative-file-specs");
 
-    await execa("git", ["tag", "v1.0.0", "-m", "v1.0.0"], { cwd });
+    await gitTag(cwd, "v1.0.0");
     await commitChangeToPackage(cwd, "package-1", "feat(package-1): changed", { changed: true });
 
     await cliRunner(cwd)("publish", "--cd-version=major", "--skip-npm", "--yes");

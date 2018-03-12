@@ -13,6 +13,8 @@ const npmRunScript = require("@lerna/npm-run-script");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const consoleOutput = require("@lerna-test/console-output");
 const loggingOutput = require("@lerna-test/logging-output");
+const gitAdd = require("@lerna-test/git-add");
+const gitCommit = require("@lerna-test/git-commit");
 const normalizeRelativeDir = require("@lerna-test/normalize-relative-dir");
 
 // file under test
@@ -88,16 +90,16 @@ describe("RunCommand", () => {
 
       // change in master
       await fs.outputFile(readmeFile, "# package-3");
-      await execa("git", ["add", readmeFile], { cwd: testDir });
-      await execa("git", ["commit", "-m", "add readme"], { cwd: testDir });
+      await gitAdd(testDir, readmeFile);
+      await gitCommit(testDir, "add readme");
 
       // branch
       await execa("git", ["checkout", "-b", "feature/yay-docs"], { cwd: testDir });
 
       // change in feature branch
       await fs.appendFile(readmeFile, "yay docs");
-      await execa("git", ["add", readmeFile], { cwd: testDir });
-      await execa("git", ["commit", "-m", "yay docs"], { cwd: testDir });
+      await gitAdd(testDir, readmeFile);
+      await gitCommit(testDir, "yay docs");
 
       await lernaRun(testDir)("my-script", "--since", "master");
 

@@ -1,27 +1,26 @@
 "use strict";
 
-const execa = require("execa");
 const path = require("path");
 const touch = require("touch");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const consoleOutput = require("@lerna-test/console-output");
+const gitAdd = require("@lerna-test/git-add");
+const gitCommit = require("@lerna-test/git-commit");
+const gitTag = require("@lerna-test/git-tag");
 const updateLernaConfig = require("@lerna-test/update-lerna-config");
 
 // file under test
 const lernaChanged = require("@lerna-test/command-runner")(require("../command"));
 
-const gitTag = cwd => execa("git", ["tag", "v1.0.0"], { cwd });
-const gitAdd = cwd => execa("git", ["add", "-A"], { cwd });
-const gitCommit = cwd => execa("git", ["commit", "-m", "Commit"], { cwd });
 const touchFile = cwd => filePath => touch(path.join(cwd, filePath));
 
 const setupGitChanges = async (cwd, filePaths) => {
-  await gitTag(cwd);
+  await gitTag(cwd, "v1.0.0");
   await Promise.all(filePaths.map(touchFile(cwd)));
-  await gitAdd(cwd);
-  await gitCommit(cwd);
+  await gitAdd(cwd, "-A");
+  await gitCommit(cwd, "Commit");
 };
 
 describe("ChangedCommand", () => {
@@ -104,7 +103,7 @@ describe("ChangedCommand", () => {
     it("should return a non-zero exit code when there are no changes", async () => {
       const testDir = await initFixture("basic");
 
-      await gitTag(testDir);
+      await gitTag(testDir, "v1.0.0");
       await lernaChanged(testDir)();
 
       expect(process.exitCode).toBe(1);
@@ -167,7 +166,7 @@ describe("ChangedCommand", () => {
     it("should return a non-zero exit code when there are no changes", async () => {
       const testDir = await initFixture("circular");
 
-      await gitTag(testDir);
+      await gitTag(testDir, "v1.0.0");
       await lernaChanged(testDir)();
 
       expect(process.exitCode).toBe(1);
