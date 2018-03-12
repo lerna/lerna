@@ -13,7 +13,7 @@ const cliRunner = require("@lerna-test/cli-runner");
 const gitAdd = require("@lerna-test/git-add");
 const gitCommit = require("@lerna-test/git-commit");
 const gitTag = require("@lerna-test/git-tag");
-const initFixture = require("@lerna-test/init-fixture")(
+const cloneFixture = require("@lerna-test/clone-fixture")(
   path.resolve(__dirname, "../commands/publish/__tests__")
 );
 const loadManifests = require("@lerna-test/load-manifests");
@@ -46,7 +46,7 @@ describe("lerna publish", () => {
   });
 
   test("exit 0 when no updates", async () => {
-    const cwd = await initFixture("normal");
+    const cwd = await cloneFixture("normal");
     const args = ["publish"];
 
     await gitTag(cwd, "v1.0.0");
@@ -58,7 +58,7 @@ describe("lerna publish", () => {
   });
 
   test("updates fixed versions", async () => {
-    const cwd = await initFixture("normal");
+    const cwd = await cloneFixture("normal");
     const args = ["publish", "--skip-npm", "--cd-version=patch", "--yes"];
 
     const { stdout } = await cliRunner(cwd)(...args);
@@ -71,7 +71,7 @@ describe("lerna publish", () => {
   });
 
   test("updates all transitive dependents", async () => {
-    const cwd = await initFixture("snake-graph");
+    const cwd = await cloneFixture("snake-graph");
     const args = ["publish", "--skip-npm", "--cd-version=major", "--yes"];
 
     await gitTag(cwd, "v1.0.0");
@@ -83,7 +83,7 @@ describe("lerna publish", () => {
   });
 
   test("uses default suffix with canary flag", async () => {
-    const cwd = await initFixture("normal");
+    const cwd = await cloneFixture("normal");
     const args = ["publish", "--canary", "--skip-npm", "--yes"];
 
     const { stdout } = await cliRunner(cwd)(...args);
@@ -91,7 +91,7 @@ describe("lerna publish", () => {
   });
 
   test("updates independent versions", async () => {
-    const cwd = await initFixture("independent");
+    const cwd = await cloneFixture("independent");
     const args = ["publish", "--skip-npm", "--cd-version=major", "--yes"];
 
     const { stdout } = await cliRunner(cwd)(...args);
@@ -105,7 +105,7 @@ describe("lerna publish", () => {
 
   ["normal", "independent"].forEach(flavor =>
     test(`${flavor} mode --conventional-commits changelog`, async () => {
-      const cwd = await initFixture(`${flavor}`, "feat: init repo");
+      const cwd = await cloneFixture(`${flavor}`, "feat: init repo");
       const args = ["publish", "--conventional-commits", "--skip-git", "--skip-npm", "--yes"];
 
       await commitChangeToPackage(cwd, "package-1", "feat(package-1): Add foo", { foo: true });
@@ -138,7 +138,7 @@ describe("lerna publish", () => {
   );
 
   it("replaces file: specifier with local version before npm publish but after git commit", async () => {
-    const cwd = await initFixture("relative-file-specs");
+    const cwd = await cloneFixture("relative-file-specs");
 
     await gitTag(cwd, "v1.0.0");
     await commitChangeToPackage(cwd, "package-1", "feat(package-1): changed", { changed: true });
@@ -155,7 +155,7 @@ describe("lerna publish", () => {
   });
 
   test("calls lifecycle scripts", async () => {
-    const cwd = await initFixture("lifecycle");
+    const cwd = await cloneFixture("lifecycle");
     const args = ["publish", "--skip-npm", "--cd-version", "minor", "--yes"];
 
     const { stdout } = await cliRunner(cwd)(...args);
@@ -163,7 +163,7 @@ describe("lerna publish", () => {
   });
 
   test("silences lifecycle scripts with --loglevel=silent", async () => {
-    const cwd = await initFixture("lifecycle");
+    const cwd = await cloneFixture("lifecycle");
     const args = ["publish", "--skip-npm", "--cd-version", "minor", "--yes", "--loglevel", "silent"];
 
     const { stdout } = await cliRunner(cwd)(...args);

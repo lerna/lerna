@@ -62,13 +62,13 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* **package-1:** Fix foo SHA
+* **package-1:** Fix foo ([SHA](COMMIT_URL))
 
 
 ### Features
 
-* init repo SHA
-* **package-1:** Add foo SHA
+* init repo ([SHA](COMMIT_URL))
+* **package-1:** Add foo ([SHA](COMMIT_URL))
 ,
   # Change Log
 
@@ -81,12 +81,12 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* **package-2:** Fix bar SHA
+* **package-2:** Fix bar ([SHA](COMMIT_URL))
 
 
 ### Features
 
-* init repo SHA
+* init repo ([SHA](COMMIT_URL))
 ,
   # Change Log
 
@@ -99,8 +99,8 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Features
 
-* init repo SHA
-* **package-3:** Add baz feature SHA
+* init repo ([SHA](COMMIT_URL))
+* **package-3:** Add baz feature ([SHA](COMMIT_URL))
 
 
 ### BREAKING CHANGES
@@ -118,7 +118,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Features
 
-* init repo SHA
+* init repo ([SHA](COMMIT_URL))
 ,
   # Change Log
 
@@ -131,7 +131,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Features
 
-* init repo SHA
+* init repo ([SHA](COMMIT_URL))
 ,
 ]
 `;
@@ -160,15 +160,15 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* **package-1:** Fix foo SHA
-* **package-2:** Fix bar SHA
+* **package-1:** Fix foo ([SHA](COMMIT_URL))
+* **package-2:** Fix bar ([SHA](COMMIT_URL))
 
 
 ### Features
 
-* init repo SHA
-* **package-1:** Add foo SHA
-* **package-3:** Add baz feature SHA
+* init repo ([SHA](COMMIT_URL))
+* **package-1:** Add foo ([SHA](COMMIT_URL))
+* **package-3:** Add baz feature ([SHA](COMMIT_URL))
 
 
 ### BREAKING CHANGES
@@ -186,13 +186,13 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* **package-1:** Fix foo SHA
+* **package-1:** Fix foo ([SHA](COMMIT_URL))
 
 
 ### Features
 
-* init repo SHA
-* **package-1:** Add foo SHA
+* init repo ([SHA](COMMIT_URL))
+* **package-1:** Add foo ([SHA](COMMIT_URL))
 ,
   # Change Log
 
@@ -205,12 +205,12 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* **package-2:** Fix bar SHA
+* **package-2:** Fix bar ([SHA](COMMIT_URL))
 
 
 ### Features
 
-* init repo SHA
+* init repo ([SHA](COMMIT_URL))
 ,
   # Change Log
 
@@ -223,8 +223,8 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Features
 
-* init repo SHA
-* **package-3:** Add baz feature SHA
+* init repo ([SHA](COMMIT_URL))
+* **package-3:** Add baz feature ([SHA](COMMIT_URL))
 
 
 ### BREAKING CHANGES
@@ -242,7 +242,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Features
 
-* init repo SHA
+* init repo ([SHA](COMMIT_URL))
 ,
   # Change Log
 
@@ -255,7 +255,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Features
 
-* init repo SHA
+* init repo ([SHA](COMMIT_URL))
 ,
 ]
 `;
