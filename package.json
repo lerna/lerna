@@ -41,6 +41,7 @@
     "@lerna-test/normalize-test-root": "file:helpers/normalize-test-root",
     "@lerna-test/pkg-matchers": "file:helpers/pkg-matchers",
     "@lerna-test/serialize-changelog": "file:helpers/serialize-changelog",
+    "@lerna-test/serialize-git-sha": "file:helpers/serialize-git-sha",
     "@lerna-test/serialize-placeholders": "file:helpers/serialize-placeholders",
     "@lerna-test/silence-logging": "file:helpers/silence-logging",
     "@lerna-test/update-lerna-config": "file:helpers/update-lerna-config",

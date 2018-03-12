@@ -18,8 +18,8 @@ const gitTag = require("@lerna-test/git-tag");
 // file under test
 const lernaDiff = require("@lerna-test/command-runner")(require("../command"));
 
-// stabilize diff commit SHA and datestamp
-expect.addSnapshotSerializer(require("@lerna-test/serialize-changelog"));
+// stabilize commit SHA
+expect.addSnapshotSerializer(require("@lerna-test/serialize-git-sha"));
 
 const writeManifest = pkg => fs.writeJSON(pkg.manifestLocation, pkg, { spaces: 2 });
 
