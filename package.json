@@ -29,6 +29,7 @@
     "@lerna-test/command-runner": "file:helpers/command-runner",
     "@lerna-test/console-output": "file:helpers/console-output",
     "@lerna-test/copy-fixture": "file:helpers/copy-fixture",
+    "@lerna-test/find-fixture": "file:helpers/find-fixture",
     "@lerna-test/git-add": "file:helpers/git-add",
     "@lerna-test/git-commit": "file:helpers/git-commit",
     "@lerna-test/git-init": "file:helpers/git-init",
