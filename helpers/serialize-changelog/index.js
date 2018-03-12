@@ -8,7 +8,7 @@ module.exports = {
   print(val) {
     return serializeGitSHA
       .print(normalizeNewline(val))
-      .replace(/\(http.*\/commits\/SHA\)/g, "(COMMIT_URL)")
+      .replace(/(\[.*?\])\(.*\/commits\/SHA\)/g, "$1(COMMIT_URL)")
       .replace(/\(\d{4}-\d{2}-\d{2}\)/g, "(YYYY-MM-DD)");
   },
   test(val) {
