@@ -54,6 +54,7 @@ function lernaCLI(argv, cwd) {
 
   return globalOptions(cli)
     .usage("Usage: $0 <command> [options]")
+    .config({ ci: isCI })
     .command(addCmd)
     .command(bootstrapCmd)
     .command(changedCmd)
