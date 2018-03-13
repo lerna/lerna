@@ -348,6 +348,14 @@ describe("PublishCommand", () => {
 
       expect(publishedTagInDirectories(testDir)).toMatchSnapshot("npm published");
     });
+
+    it("should display a message that git is skipped", async () => {
+      const testDir = await initFixture("normal");
+      await lernaPublish(testDir)("--skip-git");
+
+      const info = loggingOutput("info");
+      expect(info).toContain("Skipping git...");
+    });
   });
 
   /** =========================================================================
@@ -367,6 +375,13 @@ describe("PublishCommand", () => {
       expect(gitCommitMessage()).toEqual("v1.0.1");
       // FIXME
       // expect(GitUtilities.pushWithTags).lastCalledWith("origin", ["v1.0.1"]);
+    });
+    it("should display a message that npm is skipped", async () => {
+      const testDir = await initFixture("normal");
+      await lernaPublish(testDir)("--skip-npm");
+
+      const info = loggingOutput("info");
+      expect(info).toContain("Skipping npm...");
     });
   });
 
@@ -404,6 +419,14 @@ describe("PublishCommand", () => {
       expect(npmDistTag.check).not.toBeCalled();
       expect(npmDistTag.remove).not.toBeCalled();
       expect(npmDistTag.add).not.toBeCalled();
+    });
+    it("should display a message that npm and git are skipped", async () => {
+      const testDir = await initFixture("normal");
+      await lernaPublish(testDir)("--skip-git", "--skip-npm");
+
+      const logMessages = loggingOutput("info");
+      expect(logMessages).toContain("Skipping git...");
+      expect(logMessages).toContain("Skipping npm...");
     });
   });
 
