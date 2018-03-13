@@ -5,6 +5,11 @@ module.exports = globalOptions;
 function globalOptions(yargs) {
   // the global options applicable to _every_ command
   const opts = {
+    ci: {
+      // set in core/cli via .config()
+      hidden: true,
+      type: "boolean",
+    },
     loglevel: {
       defaultDescription: "info",
       describe: "What level of logs to report.",
