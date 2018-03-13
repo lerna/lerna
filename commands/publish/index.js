@@ -72,6 +72,7 @@ class PublishCommand extends Command {
       }
 
       const currentBranch = GitUtilities.getCurrentBranch(this.execOpts);
+
       if (
         this.options.allowBranch &&
         ![].concat(this.options.allowBranch).some(x => minimatch(currentBranch, x))
@@ -86,15 +87,26 @@ class PublishCommand extends Command {
       }
 
       if (GitUtilities.isBehindUpstream(this.gitRemote, this.execOpts)) {
-        const remote = `${this.gitRemote}/${currentBranch} `;
-        throw new ValidationError(
-          "EBEHIND",
-          dedent`
-            Local branch '${currentBranch}' is behind remote upstream ${remote}
-            Please merge in remote changes into '${currentBranch}'. 
-            Remote changes can be fetched and merged with git pull 
-          `
-        );
+        const message = `Local branch '${currentBranch}' is behind remote upstream ${
+          this.gitRemote
+        }/${currentBranch}`;
+
+        if (!this.options.ci) {
+          // interrupt interactive publish
+          throw new ValidationError(
+            "EBEHIND",
+            dedent`
+              ${message}
+              Please merge remote changes into '${currentBranch}' with 'git pull'
+            `
+          );
+        }
+
+        // CI publish should not error, but warn & exit
+        this.logger.warn("EBEHIND", `${message}, exiting`);
+
+        // still exits zero, aka "ok"
+        return false;
       }
     }
 

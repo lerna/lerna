@@ -182,6 +182,11 @@ describe("lerna publish", () => {
     await gitCommit(cloneDir, "upstream change");
     await execa("git", ["push", "origin", "master"], { cwd: cloneDir });
 
-    await expect(cliRunner(cwd)("publish")).rejects.toThrowError(/EBEHIND/);
+    // throws during interactive publish (local)
+    await expect(cliRunner(cwd)("publish", "--no-ci")).rejects.toThrowError(/EBEHIND/);
+
+    // warns during non-interactive publish (CI)
+    const { stderr } = await cliRunner(cwd)("publish", "--ci");
+    expect(stderr).toMatch("EBEHIND");
   });
 });

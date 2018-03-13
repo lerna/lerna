@@ -1030,6 +1030,33 @@ describe("PublishCommand", () => {
     });
   });
 
+  describe("when local clone is behind upstream", () => {
+    it("throws an error during interactive publish", async () => {
+      const testDir = await initFixture("normal");
+
+      GitUtilities.isBehindUpstream.mockReturnValueOnce(true);
+
+      try {
+        await lernaPublish(testDir)();
+      } catch (err) {
+        expect(err.message).toMatch("behind remote upstream");
+        expect(err.message).toMatch("Please merge remote changes");
+      }
+    });
+
+    it("logs a warning and exits early during CI publish", async () => {
+      const testDir = await initFixture("normal");
+
+      GitUtilities.isBehindUpstream.mockReturnValueOnce(true);
+
+      await lernaPublish(testDir)("--ci");
+
+      const [warning] = loggingOutput("warn");
+      expect(warning).toMatch("behind remote upstream");
+      expect(warning).toMatch("exiting");
+    });
+  });
+
   /** =========================================================================
    * VERSION LIFECYCLE SCRIPTS
    * ======================================================================= */
