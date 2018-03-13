@@ -84,6 +84,18 @@ class PublishCommand extends Command {
           `
         );
       }
+
+      if (GitUtilities.isBehindUpstream(this.gitRemote, this.execOpts)) {
+        const remote = `${this.gitRemote}/${currentBranch} `;
+        throw new ValidationError(
+          "EBEHIND",
+          dedent`
+            Local branch '${currentBranch}' is behind remote upstream ${remote}
+            Please merge in remote changes into '${currentBranch}'. 
+            Remote changes can be fetched and merged with git pull 
+          `
+        );
+      }
     }
 
     this.conf = npmConf(this.options);

@@ -209,6 +209,42 @@ function hasCommit(opts) {
   return retVal;
 }
 
+function fetchGitRemote(opts) {
+  log.silly("fetchGitRemote");
+  ChildProcessUtilities.execSync("git", ["remote", "update"], opts);
+}
+
+function isBehindUpstream(gitRemote, opts) {
+  log.silly("isBehindUpstream");
+  exports.fetchGitRemote(opts);
+
+  const status = exports.aheadBehindCount(gitRemote, opts);
+  const behind = status.behind >= 1;
+
+  log.verbose("isBehindUpstream", behind);
+  return behind;
+}
+
+function aheadBehindCount(gitRemote, opts) {
+  const branchName = exports.getCurrentBranch(opts);
+  const branchComparator = `${gitRemote}/${branchName}...${branchName}`;
+  const rawAheadBehind = ChildProcessUtilities.execSync(
+    "git",
+    ["rev-list", "--left-right", "--count", branchComparator],
+    opts
+  );
+
+  const aheadBehind = rawAheadBehind.split("\t");
+  const behind = parseInt(aheadBehind[0], 10);
+  const ahead = parseInt(aheadBehind[1], 10);
+
+  log.silly(
+    "aheadBehindCount",
+    `behind ${gitRemote}/${branchName} by ${behind} commits; ${branchName} is ahead by ${ahead} commits`
+  );
+  return { ahead, behind };
+}
+
 exports.isDetachedHead = isDetachedHead;
 exports.isInitialized = isInitialized;
 exports.addFiles = addFiles;
@@ -229,3 +265,6 @@ exports.getShortSHA = getShortSHA;
 exports.checkoutChanges = checkoutChanges;
 exports.init = init;
 exports.hasCommit = hasCommit;
+exports.fetchGitRemote = fetchGitRemote;
+exports.isBehindUpstream = isBehindUpstream;
+exports.aheadBehindCount = aheadBehindCount;
