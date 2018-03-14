@@ -353,8 +353,8 @@ describe("PublishCommand", () => {
       const testDir = await initFixture("normal");
       await lernaPublish(testDir)("--skip-git");
 
-      const info = loggingOutput("info");
-      expect(info).toContain("Skipping git...");
+      const logMessages = loggingOutput("info");
+      expect(logMessages).toContain("Skipping git commit/push");
     });
   });
 
@@ -376,12 +376,13 @@ describe("PublishCommand", () => {
       // FIXME
       // expect(GitUtilities.pushWithTags).lastCalledWith("origin", ["v1.0.1"]);
     });
+
     it("should display a message that npm is skipped", async () => {
       const testDir = await initFixture("normal");
       await lernaPublish(testDir)("--skip-npm");
 
-      const info = loggingOutput("info");
-      expect(info).toContain("Skipping npm...");
+      const logMessages = loggingOutput("info");
+      expect(logMessages).toContain("Skipping publish to registry");
     });
   });
 
@@ -420,13 +421,14 @@ describe("PublishCommand", () => {
       expect(npmDistTag.remove).not.toBeCalled();
       expect(npmDistTag.add).not.toBeCalled();
     });
+
     it("should display a message that npm and git are skipped", async () => {
       const testDir = await initFixture("normal");
       await lernaPublish(testDir)("--skip-git", "--skip-npm");
 
       const logMessages = loggingOutput("info");
-      expect(logMessages).toContain("Skipping git...");
-      expect(logMessages).toContain("Skipping npm...");
+      expect(logMessages).toContain("Skipping git commit/push");
+      expect(logMessages).toContain("Skipping publish to registry");
     });
   });
 
