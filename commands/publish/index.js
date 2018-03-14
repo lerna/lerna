@@ -154,12 +154,16 @@ class PublishCommand extends Command {
 
     if (this.gitEnabled) {
       tasks.push(() => this.commitAndTagUpdates());
+    } else {
+      this.logger.info("execute", "Skipping git commit/push");
     }
 
     tasks.push(() => this.resolveLocalDependencyLinks());
     tasks.push(() => this.annotateGitHead());
 
-    if (!this.options.skipNpm) {
+    if (this.options.skipNpm) {
+      this.logger.info("execute", "Skipping publish to registry");
+    } else {
       tasks.push(() => this.publishPackagesToNpm());
     }
 
