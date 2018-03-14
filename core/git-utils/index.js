@@ -134,17 +134,17 @@ function describeTag(ref, opts) {
 }
 
 function diffSinceIn(committish, location, opts) {
-  const relativePath = path.relative(opts.cwd, location);
-  const nonEmptyRelativePath = relativePath === "" ? "." : relativePath;
-  const formattedLocation = slash(nonEmptyRelativePath);
+  const args = ["diff", "--name-only", committish];
+  const formattedLocation = slash(path.relative(opts.cwd, location));
+
+  if (formattedLocation) {
+    // avoid same-directory path.relative() === ""
+    args.push("--", formattedLocation);
+  }
 
   log.silly("diffSinceIn", committish, formattedLocation);
 
-  const diff = ChildProcessUtilities.execSync(
-    "git",
-    ["diff", "--name-only", committish, "--", formattedLocation],
-    opts
-  );
+  const diff = ChildProcessUtilities.execSync("git", args, opts);
   log.silly("diff", diff);
 
   return diff;

@@ -260,19 +260,12 @@ describe("GitUtilities", () => {
       );
     });
 
-    it("returns list of files changed since commit at location when location equals cwd", () => {
-      const cwd = process.cwd();
-      const opts = { cwd };
-      const testLocation = cwd;
+    it("omits location filter when location is current working directory", () => {
+      const opts = { cwd: process.cwd() };
 
-      ChildProcessUtilities.execSync.mockReturnValueOnce("files");
+      GitUtilities.diffSinceIn("v2.0.0", opts.cwd, opts);
 
-      expect(GitUtilities.diffSinceIn("v1.0.0", testLocation, opts)).toBe("files");
-      expect(ChildProcessUtilities.execSync).lastCalledWith(
-        "git",
-        ["diff", "--name-only", "v1.0.0", "--", "."],
-        opts
-      );
+      expect(ChildProcessUtilities.execSync).lastCalledWith("git", ["diff", "--name-only", "v2.0.0"], opts);
     });
   });
 
