@@ -259,6 +259,21 @@ describe("GitUtilities", () => {
         opts
       );
     });
+
+    it("returns list of files changed since commit at location when location equals cwd", () => {
+      const cwd = process.cwd();
+      const opts = { cwd };
+      const testLocation = cwd;
+
+      ChildProcessUtilities.execSync.mockReturnValueOnce("files");
+
+      expect(GitUtilities.diffSinceIn("v1.0.0", testLocation, opts)).toBe("files");
+      expect(ChildProcessUtilities.execSync).lastCalledWith(
+        "git",
+        ["diff", "--name-only", "v1.0.0", "--", "."],
+        opts
+      );
+    });
   });
 
   describe(".getWorkspaceRoot()", () => {

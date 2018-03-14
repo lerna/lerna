@@ -134,7 +134,9 @@ function describeTag(ref, opts) {
 }
 
 function diffSinceIn(committish, location, opts) {
-  const formattedLocation = slash(path.relative(opts.cwd, location));
+  const relativePath = path.relative(opts.cwd, location);
+  const nonEmptyRelativePath = relativePath === "" ? "." : relativePath;
+  const formattedLocation = slash(nonEmptyRelativePath);
 
   log.silly("diffSinceIn", committish, formattedLocation);
 
