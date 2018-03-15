@@ -105,7 +105,7 @@ class CreateCommand extends Command {
 
     this.setHomepage();
     this.setPublishConfig();
-    this.parseDependencies();
+    this.setDependencies();
   }
 
   execute() {
@@ -134,6 +134,93 @@ class CreateCommand extends Command {
           );
         }
       });
+  }
+
+  gitConfig(prop) {
+    return ChildProcessUtilities.execSync("git", ["config", "--get", prop], this.execOpts);
+  }
+
+  latestVersion(depName) {
+    return ChildProcessUtilities.execSync("npm", ["info", depName, "version"], this.execOpts);
+  }
+
+  collectExternalVersions() {
+    // collect all current externalDependencies
+    const extVersions = new Map();
+
+    for (const { externalDependencies } of this.packageGraph.values()) {
+      for (const [name, resolved] of externalDependencies) {
+        extVersions.set(name, resolved.fetchSpec);
+      }
+    }
+
+    return extVersions;
+  }
+
+  hasLocalRelativeFileSpec() {
+    // if any local dependencies are specified as `file:../dir`,
+    // all new local dependencies should be created thusly
+    for (const { localDependencies } of this.packageGraph.values()) {
+      for (const spec of localDependencies.values()) {
+        if (spec.type === "directory") {
+          return true;
+        }
+      }
+    }
+  }
+
+  setDependencies() {
+    const inputs = new Set(this.options.dependencies);
+
+    // add yargs if a bin is required
+    if (this.options.bin) {
+      inputs.add("yargs");
+    }
+
+    if (!inputs.size) {
+      return;
+    }
+
+    const dependencies = {};
+    const exts = this.collectExternalVersions();
+    const localRelative = this.hasLocalRelativeFileSpec();
+    const savePrefix = this.conf.get("save-exact") ? "" : this.conf.get("save-prefix");
+
+    for (const spec of [...inputs].sort().map(i => npa(i))) {
+      const depType = spec.type;
+      const depName = spec.name;
+
+      let version = spec.rawSpec;
+
+      if (this.packageGraph.has(depName)) {
+        // sibling dependency
+        const depNode = this.packageGraph.get(depName);
+
+        if (localRelative) {
+          // a local `file:../foo` specifier
+          const relPath = path.relative(this.targetDir, depNode.location);
+          version = npa.resolve(depName, relPath, this.targetDir).saveSpec;
+        } else {
+          // yarn workspace or lerna packages config
+          version = `${savePrefix}${depNode.version}`;
+        }
+      } else if (depType === "tag" && spec.fetchSpec === "latest") {
+        // resolve the latest version
+        if (exts.has(depName)) {
+          // from local external dependency
+          version = exts.get(depName);
+        } else {
+          // from registry
+          version = `${savePrefix}${this.latestVersion(depName)}`;
+        }
+      } else if (depType === "git" || depType === "hosted") {
+        throw new Error("Do not use git dependencies");
+      }
+
+      dependencies[depName] = version;
+    }
+
+    this.conf.set("dependencies", dependencies);
   }
 
   setHomepage() {
@@ -188,93 +275,6 @@ class CreateCommand extends Command {
     if (Object.keys(publishConfig).length) {
       this.conf.set("publishConfig", publishConfig);
     }
-  }
-
-  gitConfig(prop) {
-    return ChildProcessUtilities.execSync("git", ["config", "--get", prop], this.execOpts);
-  }
-
-  latestVersion(depName) {
-    return ChildProcessUtilities.execSync("npm", ["info", depName, "version"], this.execOpts);
-  }
-
-  collectExternalVersions() {
-    // collect all current externalDependencies
-    const extVersions = new Map();
-
-    for (const { externalDependencies } of this.packageGraph.values()) {
-      for (const [name, resolved] of externalDependencies) {
-        extVersions.set(name, resolved.fetchSpec);
-      }
-    }
-
-    return extVersions;
-  }
-
-  hasLocalRelativeFileSpec() {
-    // if any local dependencies are specified as `file:../dir`,
-    // all new local dependencies should be created thusly
-    for (const { localDependencies } of this.packageGraph.values()) {
-      for (const spec of localDependencies.values()) {
-        if (spec.type === "directory") {
-          return true;
-        }
-      }
-    }
-  }
-
-  parseDependencies() {
-    const inputs = new Set(this.options.dependencies);
-
-    // add yargs if a bin is required
-    if (this.options.bin) {
-      inputs.add("yargs");
-    }
-
-    if (!inputs.size) {
-      return;
-    }
-
-    const dependencies = {};
-    const exts = this.collectExternalVersions();
-    const localRelative = this.hasLocalRelativeFileSpec();
-    const savePrefix = this.conf.get("save-exact") ? "" : this.conf.get("save-prefix");
-
-    for (const spec of [...inputs].sort().map(i => npa(i))) {
-      const depType = spec.type;
-      const depName = spec.name;
-
-      let version = spec.rawSpec;
-
-      if (this.packageGraph.has(depName)) {
-        // sibling dependency
-        const depNode = this.packageGraph.get(depName);
-
-        if (localRelative) {
-          // a local `file:../foo` specifier
-          const relPath = path.relative(this.targetDir, depNode.location);
-          version = npa.resolve(depName, relPath, this.targetDir).saveSpec;
-        } else {
-          // yarn workspace or lerna packages config
-          version = `${savePrefix}${depNode.version}`;
-        }
-      } else if (depType === "tag" && spec.fetchSpec === "latest") {
-        // resolve the latest version
-        if (exts.has(depName)) {
-          // from local external dependency
-          version = exts.get(depName);
-        } else {
-          // from registry
-          version = `${savePrefix}${this.latestVersion(depName)}`;
-        }
-      } else if (depType === "git" || depType === "hosted") {
-        throw new Error("Do not use git dependencies");
-      }
-
-      dependencies[depName] = version;
-    }
-
-    this.conf.set("dependencies", dependencies);
   }
 
   writeReadme() {
