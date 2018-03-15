@@ -21,13 +21,14 @@ class CreateCommand extends Command {
   }
 
   initialize() {
-    const { description, esModule, keywords, outdir, pkgName, location, scope, yes } = this.options;
+    const { description, esModule, keywords, license, location, outdir, pkgName, scope, yes } = this.options;
 
     this.pkgName = pkgName;
     this.pkgsDir =
       this.repository.packageParentDirs.find(pd => pd.indexOf(location) > -1) ||
       this.repository.packageParentDirs[0];
 
+    this.outDir = outdir || "lib";
     this.targetDir = path.resolve(this.pkgsDir, this.pkgName);
 
     this.libFileName = `${pkgName}.js`;
@@ -73,6 +74,11 @@ class CreateCommand extends Command {
       this.conf.set("init-author-email", this.gitConfig("user.email"));
     }
 
+    // override npm_config_init_license if --license provided
+    if (license) {
+      this.conf.set("init-license", license);
+    }
+
     this.camelName = _.camelCase(pkgName);
     this.fullPackageName = scope ? `${scope}/${pkgName}` : pkgName;
 
@@ -82,7 +88,7 @@ class CreateCommand extends Command {
   }
 
   execute() {
-    const { bin, esModule, outdir } = this.options;
+    const { bin, esModule } = this.options;
     const actions = [this.writeReadme(), this.writeLibFile(), this.writeTestFile()];
 
     if (bin) {
@@ -101,7 +107,7 @@ class CreateCommand extends Command {
           this.logger.notice(
             "NOTE",
             dedent`
-              Ensure you have added '${this.pkgsDir}/*/${outdir}' to your root .gitignore
+              Ensure you have added '${this.pkgsDir}/*/${this.outDir}' to your root .gitignore
               and have the appropriate rollup or babel build scripts in the root.
             `
           );

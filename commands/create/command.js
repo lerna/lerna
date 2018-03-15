@@ -23,7 +23,8 @@ exports.builder = yargs => {
       access: {
         group: "Command Options:",
         defaultDescription: "public",
-        describe: "When using a scope, configure publishConfig.access ('public' or 'restricted')",
+        describe: "When using a scope, set publishConfig.access value",
+        choices: ["public", "restricted"],
         implies: "scope",
       },
       bin: {
@@ -40,15 +41,14 @@ exports.builder = yargs => {
         group: "Command Options:",
         describe: "A list of package dependencies",
         type: "array",
-        default: [],
       },
       "dev-dependencies": {
         group: "Command Options:",
         describe: "A list of package devDependencies",
         type: "array",
-        default: [],
       },
       "es-module": {
+        group: "Command Options:",
         describe: "Initialize a transpiled ES Module",
         type: "boolean",
       },
@@ -57,11 +57,18 @@ exports.builder = yargs => {
         describe: "A list of package keywords",
         type: "array",
       },
-      outdir: {
-        describe: "Transpile into this directory",
+      license: {
+        group: "Command Options:",
+        defaultDescription: "ISC",
+        describe: "The desired package license (SPDX identifier)",
         type: "string",
-        default: "lib",
+      },
+      outdir: {
+        group: "Command Options:",
+        defaultDescription: "lib",
+        describe: "Transpile into this directory",
         implies: "es-module",
+        type: "string",
       },
       private: {
         group: "Command Options:",
@@ -72,7 +79,6 @@ exports.builder = yargs => {
         group: "Command Options:",
         describe: "Configure the package's publishConfig.registry",
         type: "string",
-        requiresArg: true,
       },
       scope: {
         group: "Command Options:",
@@ -83,7 +89,6 @@ exports.builder = yargs => {
         group: "Command Options:",
         describe: "Configure the package's publishConfig.tag",
         type: "string",
-        requiresArg: true,
       },
       yes: {
         group: "Command Options:",

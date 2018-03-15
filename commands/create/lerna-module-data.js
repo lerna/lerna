@@ -255,6 +255,7 @@ if (!this.package.files) {
         .filter(dir => !/test|doc|example|man/.test(dir));
 
       if (this.config.get("esModule")) {
+        // don't publish src, only publish transpiled output
         files.splice(files.indexOf("src"), 1, path.dirname(this.config.get("init-main")));
       }
 
