@@ -1,6 +1,5 @@
 "use strict";
 
-const fs = require("fs-extra");
 const path = require("path");
 const { URL } = require("url");
 const camelCase = require("camelcase");
@@ -12,6 +11,7 @@ const pify = require("pify");
 
 const Command = require("@lerna/command");
 const ChildProcessUtilities = require("@lerna/child-process");
+const builtinNpmrc = require("./lib/builtin-npmrc");
 const catFile = require("./lib/cat-file");
 
 const LERNA_MODULE_DATA = path.join(__dirname, "lerna-module-data.js");
@@ -70,9 +70,7 @@ class CreateCommand extends Command {
     });
 
     // consume "builtin" npm config, if it exists (matches npm cli behaviour)
-    const globalNpmBin = path.resolve(path.dirname(process.execPath), "npm");
-    const builtinNpmrc = path.resolve(fs.realpathSync(globalNpmBin), "../../npmrc");
-    this.conf.addFile(builtinNpmrc, "builtin");
+    this.conf.addFile(builtinNpmrc(), "builtin");
 
     // always set init-main, it's half of the whole point of this module
     this.conf.set("init-main", this.mainFilePath);
