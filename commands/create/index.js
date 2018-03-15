@@ -222,6 +222,11 @@ class CreateCommand extends Command {
       return [depName, version];
     });
 
+    // add yargs if a bin is required
+    if (this.options.bin) {
+      tuples.push(["yargs", `^${this.latestVersion("yargs")}`]);
+    }
+
     // alpha sort just like npm does
     return _.fromPairs(_.sortBy(tuples, "0"));
   }
