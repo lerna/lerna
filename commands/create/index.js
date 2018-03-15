@@ -21,31 +21,33 @@ class CreateCommand extends Command {
   }
 
   initialize() {
-    const { description, esModule, keywords, license, loc, name, outdir, scope, yes } = this.options;
+    const { description, esModule, keywords, license, loc, name: pkgName, outdir, yes } = this.options;
+    const { name, scope } = npa(pkgName);
 
+    // disable progress so promzard doesn't get ganked
+    this.logger.disableProgress();
+
+    this.dirName = scope ? name.split("/").pop() : name;
     this.pkgName = name;
     this.pkgsDir =
       this.repository.packageParentDirs.find(pd => pd.indexOf(loc) > -1) ||
       this.repository.packageParentDirs[0];
 
     this.outDir = outdir || "lib";
-    this.targetDir = path.resolve(this.pkgsDir, this.pkgName);
+    this.targetDir = path.resolve(this.pkgsDir, this.dirName);
+    this.camelName = _.camelCase(this.dirName);
 
-    this.libFileName = `${this.pkgName}.js`;
-    this.testFileName = `${this.pkgName}.test.js`;
-    this.mainFilePath = path.join(outdir, this.libFileName);
+    this.libFileName = `${this.dirName}.js`;
+    this.testFileName = `${this.dirName}.test.js`;
+    this.mainFilePath = path.join(this.outDir, this.libFileName);
 
     const dependencies = this.parseDependencies();
-    const homepage = this.getHomepage();
-    const publishConfig = this.getPublishConfig();
 
     this.conf = npmConf({
       dependencies,
       description,
       esModule,
       keywords,
-      homepage,
-      publishConfig,
       scope,
       yes,
     });
@@ -77,8 +79,8 @@ class CreateCommand extends Command {
       this.conf.set("init-license", license);
     }
 
-    this.camelName = _.camelCase(this.pkgName);
-    this.fullPackageName = scope ? `${scope}/${this.pkgName}` : this.pkgName;
+    this.setHomepage();
+    this.setPublishConfig();
 
     this.binDir = path.join(this.targetDir, "bin");
     this.libDir = path.join(this.targetDir, esModule ? "src" : "lib");
@@ -117,8 +119,15 @@ class CreateCommand extends Command {
     return fs.outputFile(path.join(dir, name), `${data}\n`, opts);
   }
 
-  getHomepage() {
-    const hurl = new URL(this.repository.package.homepage);
+  setHomepage() {
+    const { homepage } = this.repository.package.json;
+
+    if (!homepage) {
+      // normalize-package-data will backfill from hosted-git-info, if possible
+      return;
+    }
+
+    const hurl = new URL(homepage);
     const relativeTarget = path.relative(this.repository.rootPath, this.targetDir);
 
     if (hurl.hostname.match("github")) {
@@ -131,27 +140,29 @@ class CreateCommand extends Command {
       hurl.pathname = path.posix.join(hurl.pathname, relativeTarget);
     }
 
-    return hurl.href;
+    this.conf.set("homepage", hurl.href);
   }
 
-  getPublishConfig() {
-    const { access, registry, scope, tag } = this.options;
+  setPublishConfig() {
+    const scope = this.conf.get("scope");
+    const registry = this.options.registry || this.conf.get(`${scope}:registry`) || this.conf.get("registry");
+    const isPublicRegistry = registry === this.conf.root.registry;
     const publishConfig = {};
 
-    if (scope) {
-      publishConfig.access = access || "public";
+    if (scope && isPublicRegistry) {
+      publishConfig.access = this.options.access || "public";
     }
 
-    if (registry) {
+    if (registry && !isPublicRegistry) {
       publishConfig.registry = registry;
     }
 
-    if (tag) {
-      publishConfig.tag = tag;
+    if (this.options.tag) {
+      publishConfig.tag = this.options.tag;
     }
 
     if (Object.keys(publishConfig).length) {
-      return publishConfig;
+      this.conf.set("publishConfig", publishConfig);
     }
   }
 
@@ -191,7 +202,7 @@ class CreateCommand extends Command {
 
   writeReadme() {
     const readmeContent = dedent`
-      # \`${this.fullPackageName}\`
+      # \`${this.pkgName}\`
 
       > ${this.options.description || "BRIEF DESCRIPTION"}
 
@@ -200,8 +211,8 @@ class CreateCommand extends Command {
       \`\`\`
       ${
         this.options.esModule
-          ? `import ${this.camelName} from '${this.fullPackageName}';`
-          : `const ${this.camelName} = require('${this.fullPackageName}');`
+          ? `import ${this.camelName} from '${this.pkgName}';`
+          : `const ${this.camelName} = require('${this.pkgName}');`
       }
 
       // DEMONSTRATE PUBLIC API
@@ -234,18 +245,18 @@ class CreateCommand extends Command {
   writeTestFile() {
     const testContent = this.options.esModule
       ? dedent`
-        import ${this.camelName} from '../src/${this.packageName}';
+        import ${this.camelName} from '../src/${this.pkgName}';
 
-        describe('${this.packageName}', () => {
+        describe('${this.pkgName}', () => {
             it('needs tests');
         });
       `
       : dedent`
         'use strict';
 
-        const ${this.camelName} = require('../');
+        const ${this.camelName} = require('..');
 
-        describe('${this.packageName}', () => {
+        describe('${this.pkgName}', () => {
             it('needs tests');
         });
       `;
@@ -292,7 +303,7 @@ class CreateCommand extends Command {
       ? dedent`
         import cli from '../src/cli';
 
-        describe('${this.packageName} cli', () => {
+        describe('${this.pkgName} cli', () => {
           // const argv = cli().parse(['args'], cb);
           it('needs tests');
         });
@@ -302,13 +313,13 @@ class CreateCommand extends Command {
 
         const cli = require('../lib/cli');
 
-        describe('${this.packageName} cli', () => {
+        describe('${this.pkgName} cli', () => {
           // const argv = cli().parse(['args'], cb);
           it('needs tests');
         });
       `;
 
-    const binFileName = bin === true ? this.packageName : bin;
+    const binFileName = bin === true ? this.pkgName : bin;
     const binContent = dedent`
       #!/usr/bin/env node
       'use strict';

@@ -12,7 +12,7 @@ exports.describe = "Create a new lerna-managed package";
 exports.builder = yargs => {
   yargs
     .positional("name", {
-      describe: "The package name, which must be locally unique _and_ publicly available",
+      describe: "The package name (including scope), which must be locally unique _and_ publicly available",
       type: "string",
     })
     .positional("loc", {
@@ -25,7 +25,6 @@ exports.builder = yargs => {
         defaultDescription: "public",
         describe: "When using a scope, set publishConfig.access value",
         choices: ["public", "restricted"],
-        implies: "scope",
       },
       bin: {
         group: "Command Options:",
@@ -40,11 +39,6 @@ exports.builder = yargs => {
       dependencies: {
         group: "Command Options:",
         describe: "A list of package dependencies",
-        type: "array",
-      },
-      "dev-dependencies": {
-        group: "Command Options:",
-        describe: "A list of package devDependencies",
         type: "array",
       },
       "es-module": {
@@ -78,11 +72,6 @@ exports.builder = yargs => {
       registry: {
         group: "Command Options:",
         describe: "Configure the package's publishConfig.registry",
-        type: "string",
-      },
-      scope: {
-        group: "Command Options:",
-        describe: "A scope to prefix the package name, such as '@lerna'",
         type: "string",
       },
       tag: {
