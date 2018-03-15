@@ -35,14 +35,12 @@ class CreateCommand extends Command {
     this.testFileName = `${pkgName}.test.js`;
     this.mainFilePath = path.join(outdir, this.libFileName);
 
-    const dependencies = this.parseDependencies(this.options.dependencies);
-    const devDependencies = this.parseDependencies(this.options.devDependencies);
+    const dependencies = this.parseDependencies();
     const homepage = this.getHomepage();
     const publishConfig = this.getPublishConfig();
 
     this.conf = npmConf({
       dependencies,
-      devDependencies,
       description,
       esModule,
       keywords,
@@ -84,7 +82,7 @@ class CreateCommand extends Command {
 
     this.binDir = path.join(this.targetDir, "bin");
     this.libDir = path.join(this.targetDir, esModule ? "src" : "lib");
-    this.testDir = path.join(this.targetDir, "test");
+    this.testDir = path.join(this.targetDir, "__tests__");
   }
 
   execute() {
@@ -165,7 +163,8 @@ class CreateCommand extends Command {
     return ChildProcessUtilities.execSync("npm", ["info", depName, "version"], this.execOpts);
   }
 
-  parseDependencies(inputs) {
+  parseDependencies() {
+    const inputs = this.options.dependencies;
     const tuples = _.map(inputs, input => {
       const parsed = npa(input);
       const depType = parsed.type;
