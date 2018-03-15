@@ -5,17 +5,17 @@ const CreateCommand = require(".");
 /**
  * @see https://github.com/yargs/yargs/blob/master/docs/advanced.md#providing-a-command-module
  */
-exports.command = "create <pkgName> [location]";
+exports.command = "create <name> [loc]";
 
 exports.describe = "Create a new lerna-managed package";
 
 exports.builder = yargs => {
   yargs
-    .positional("pkgName", {
+    .positional("name", {
       describe: "The package name, which must be locally unique _and_ publicly available",
       type: "string",
     })
-    .positional("location", {
+    .positional("loc", {
       describe: "A custom package location, defaulting to the first configured package location",
       type: "string",
     })
@@ -29,7 +29,7 @@ exports.builder = yargs => {
       },
       bin: {
         group: "Command Options:",
-        defaultDescription: "<pkgName>",
+        defaultDescription: "<name>",
         describe: "Package has an executable. Customize with --bin <executableName>",
       },
       description: {

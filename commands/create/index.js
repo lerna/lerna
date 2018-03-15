@@ -21,18 +21,18 @@ class CreateCommand extends Command {
   }
 
   initialize() {
-    const { description, esModule, keywords, license, location, outdir, pkgName, scope, yes } = this.options;
+    const { description, esModule, keywords, license, loc, name, outdir, scope, yes } = this.options;
 
-    this.pkgName = pkgName;
+    this.pkgName = name;
     this.pkgsDir =
-      this.repository.packageParentDirs.find(pd => pd.indexOf(location) > -1) ||
+      this.repository.packageParentDirs.find(pd => pd.indexOf(loc) > -1) ||
       this.repository.packageParentDirs[0];
 
     this.outDir = outdir || "lib";
     this.targetDir = path.resolve(this.pkgsDir, this.pkgName);
 
-    this.libFileName = `${pkgName}.js`;
-    this.testFileName = `${pkgName}.test.js`;
+    this.libFileName = `${this.pkgName}.js`;
+    this.testFileName = `${this.pkgName}.test.js`;
     this.mainFilePath = path.join(outdir, this.libFileName);
 
     const dependencies = this.parseDependencies();
@@ -77,8 +77,8 @@ class CreateCommand extends Command {
       this.conf.set("init-license", license);
     }
 
-    this.camelName = _.camelCase(pkgName);
-    this.fullPackageName = scope ? `${scope}/${pkgName}` : pkgName;
+    this.camelName = _.camelCase(this.pkgName);
+    this.fullPackageName = scope ? `${scope}/${this.pkgName}` : this.pkgName;
 
     this.binDir = path.join(this.targetDir, "bin");
     this.libDir = path.join(this.targetDir, esModule ? "src" : "lib");
