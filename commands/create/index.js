@@ -43,25 +43,32 @@ class CreateCommand extends Command {
       outdir,
       yes,
     } = this.options;
-    const { name, scope } = npa(pkgName);
 
     // disable progress so promzard doesn't get ganked
     this.logger.disableProgress();
 
+    // npm-package-arg handles all the edge-cases with scopes
+    const { name, scope } = npa(pkgName);
+
+    // optional scope is _not_ included in the directory name
     this.dirName = scope ? name.split("/").pop() : name;
     this.pkgName = name;
     this.pkgsDir =
       this.repository.packageParentDirs.find(pd => pd.indexOf(pkgLocation) > -1) ||
       this.repository.packageParentDirs[0];
 
+    this.camelName = camelCase(this.dirName);
     this.outDir = outdir || "lib";
     this.targetDir = path.resolve(this.pkgsDir, this.dirName);
-    this.camelName = camelCase(this.dirName);
 
+    this.binDir = path.join(this.targetDir, "bin");
     this.binFileName = bin === true ? this.dirName : bin;
+
+    this.libDir = path.join(this.targetDir, esModule ? "src" : "lib");
     this.libFileName = `${this.dirName}.js`;
+
     this.testFileName = `${this.dirName}.test.js`;
-    this.mainFilePath = path.join(this.outDir, this.libFileName);
+    this.testDir = path.join(this.targetDir, "__tests__");
 
     this.conf = npmConf({
       description,
@@ -75,7 +82,7 @@ class CreateCommand extends Command {
     this.conf.addFile(builtinNpmrc(), "builtin");
 
     // always set init-main, it's half of the whole point of this module
-    this.conf.set("init-main", this.mainFilePath);
+    this.conf.set("init-main", path.join(this.outDir, this.libFileName));
 
     // allow default init-version when independent versioning enabled
     if (!this.repository.isIndependent()) {
@@ -99,10 +106,6 @@ class CreateCommand extends Command {
     this.setHomepage();
     this.setPublishConfig();
     this.parseDependencies();
-
-    this.binDir = path.join(this.targetDir, "bin");
-    this.libDir = path.join(this.targetDir, esModule ? "src" : "lib");
-    this.testDir = path.join(this.targetDir, "__tests__");
   }
 
   execute() {
