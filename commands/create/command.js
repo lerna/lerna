@@ -46,6 +46,11 @@ exports.builder = yargs => {
         describe: "Initialize a transpiled ES Module",
         type: "boolean",
       },
+      homepage: {
+        group: "Command Options:",
+        describe: "The package homepage, defaulting to a subpath of the root pkg.homepage",
+        type: "string",
+      },
       keywords: {
         group: "Command Options:",
         describe: "A list of package keywords",

@@ -120,11 +120,17 @@ class CreateCommand extends Command {
   }
 
   setHomepage() {
-    const { homepage } = this.repository.package.json;
+    // allow --homepage override, but otherwise use root pkg.homepage, if it exists
+    let { homepage = this.repository.package.json.homepage } = this.options;
 
     if (!homepage) {
       // normalize-package-data will backfill from hosted-git-info, if possible
       return;
+    }
+
+    // allow schemeless URLs (but don't blow up in URL constructor)
+    if (homepage.indexOf("http") !== 0) {
+      homepage = `http://${homepage}`;
     }
 
     const hurl = new URL(homepage);
@@ -136,7 +142,8 @@ class CreateCommand extends Command {
       // current remote: git rev-parse --abbrev-ref --symbolic-full-name @{u}
       // upstream HEAD: git symbolic-ref --short refs/remotes/origin/HEAD
       hurl.hash = "readme";
-    } else {
+    } else if (!this.options.homepage) {
+      // don't mutate an explicit --homepage value
       hurl.pathname = path.posix.join(hurl.pathname, relativeTarget);
     }
 
