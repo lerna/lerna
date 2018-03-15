@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.0.0-beta.3"></a>
+# [3.0.0-beta.3](https://github.com/lerna/lerna/compare/v3.0.0-beta.2...v3.0.0-beta.3) (2018-03-15)
+
+
+### Bug Fixes
+
+* **utils:** Use safe relative path when calling git diff ([#1323](https://github.com/lerna/lerna/issues/1323)) ([619c477](https://github.com/lerna/lerna/commit/619c477))
+* ci option should not be visible in help output ([580b2d5](https://github.com/lerna/lerna/commit/580b2d5))
+* fs-extra dependency is a caret range, not exact ([81556d0](https://github.com/lerna/lerna/commit/81556d0))
+
+
+### Features
+
+* Check for upstream changes before attempting to publish ([#1317](https://github.com/lerna/lerna/issues/1317)) ([cef0a69](https://github.com/lerna/lerna/commit/cef0a69))
+* **cli:** Set config.ci from env var ([5452293](https://github.com/lerna/lerna/commit/5452293))
+* **global-options:** Add hidden `ci` option ([86a4d65](https://github.com/lerna/lerna/commit/86a4d65))
+* Upstream changes warn in CI, throw locally ([4de055d](https://github.com/lerna/lerna/commit/4de055d)), closes [#1177](https://github.com/lerna/lerna/issues/1177) [#1317](https://github.com/lerna/lerna/issues/1317)
+* **publish:** Add logging when `--skip-git` or `--skip-npm` are passed ([#1319](https://github.com/lerna/lerna/issues/1319)) ([8eef9ff](https://github.com/lerna/lerna/commit/8eef9ff))
+
+
+
+
+
 <a name="3.0.0-beta.2"></a>
 # [3.0.0-beta.2](https://github.com/lerna/lerna/compare/v3.0.0-beta.1...v3.0.0-beta.2) (2018-03-10)
 
