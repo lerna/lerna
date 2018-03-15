@@ -15,7 +15,8 @@
   },
   "files": [
     "command.js",
-    "index.js"
+    "index.js",
+    "lib"
   ],
   "main": "index.js",
   "engines": {

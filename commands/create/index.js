@@ -12,6 +12,7 @@ const pify = require("pify");
 
 const Command = require("@lerna/command");
 const ChildProcessUtilities = require("@lerna/child-process");
+const catFile = require("./lib/cat-file");
 
 const LERNA_MODULE_DATA = path.join(__dirname, "lerna-module-data.js");
 const DEFAULT_DESCRIPTION = [
@@ -130,10 +131,6 @@ class CreateCommand extends Command {
           );
         }
       });
-  }
-
-  catFile(dir, name, data, opts = "utf8") {
-    return fs.outputFile(path.join(dir, name), `${data}\n`, opts);
   }
 
   setHomepage() {
@@ -296,7 +293,7 @@ class CreateCommand extends Command {
       \`\`\`
     `;
 
-    return this.catFile(this.targetDir, "README.md", readmeContent);
+    return catFile(this.targetDir, "README.md", readmeContent);
   }
 
   writeLibFile() {
@@ -316,7 +313,7 @@ class CreateCommand extends Command {
         }
     `;
 
-    return this.catFile(this.libDir, this.libFileName, libContent);
+    return catFile(this.libDir, this.libFileName, libContent);
   }
 
   writeTestFile() {
@@ -338,7 +335,7 @@ class CreateCommand extends Command {
         });
       `;
 
-    return this.catFile(this.testDir, this.testFileName, testContent);
+    return catFile(this.testDir, this.testFileName, testContent);
   }
 
   writeBinFiles() {
@@ -406,9 +403,9 @@ class CreateCommand extends Command {
     `;
 
     return Promise.all([
-      this.catFile(this.binDir, binFileName, binContent, { mode: 0o755 }),
-      this.catFile(this.libDir, cliFileName, cliContent),
-      this.catFile(this.testDir, cliTestFileName, cliTestContent),
+      catFile(this.binDir, binFileName, binContent, { mode: 0o755 }),
+      catFile(this.libDir, cliFileName, cliContent),
+      catFile(this.testDir, cliTestFileName, cliTestContent),
     ]);
   }
 }
