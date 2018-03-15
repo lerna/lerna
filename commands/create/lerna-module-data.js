@@ -89,19 +89,7 @@ exports.version = this.yes
     });
 
 if (!this.package.description) {
-  exports.description = this.yes
-    ? this.config.get("description") ||
-      [
-        "Now I’m the model of a modern major general",
-        "The venerated Virginian veteran whose men are all",
-        "Lining up, to put me up on a pedestal",
-        "Writin’ letters to relatives",
-        "Embellishin’ my elegance and eloquence",
-        "But the elephant is in the room",
-        "The truth is in ya face when ya hear the British cannons go",
-        "BOOM",
-      ].join(" / ")
-    : this.prompt("description");
+  exports.description = this.yes ? this.config.get("description") : this.prompt("description");
 }
 
 if (!this.package.keywords) {

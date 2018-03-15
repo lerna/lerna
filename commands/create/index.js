@@ -14,6 +14,16 @@ const Command = require("@lerna/command");
 const ChildProcessUtilities = require("@lerna/child-process");
 
 const LERNA_MODULE_DATA = path.join(__dirname, "lerna-module-data.js");
+const DEFAULT_DESCRIPTION = [
+  "Now I’m the model of a modern major general",
+  "The venerated Virginian veteran whose men are all",
+  "Lining up, to put me up on a pedestal",
+  "Writin’ letters to relatives",
+  "Embellishin’ my elegance and eloquence",
+  "But the elephant is in the room",
+  "The truth is in ya face when ya hear the British cannons go",
+  "BOOM",
+].join(" / ");
 
 class CreateCommand extends Command {
   get requireGit() {
@@ -21,7 +31,16 @@ class CreateCommand extends Command {
   }
 
   initialize() {
-    const { description, esModule, keywords, license, loc, name: pkgName, outdir, yes } = this.options;
+    const {
+      description = DEFAULT_DESCRIPTION,
+      esModule,
+      keywords,
+      license,
+      loc: pkgLocation,
+      name: pkgName,
+      outdir,
+      yes,
+    } = this.options;
     const { name, scope } = npa(pkgName);
 
     // disable progress so promzard doesn't get ganked
@@ -30,7 +49,7 @@ class CreateCommand extends Command {
     this.dirName = scope ? name.split("/").pop() : name;
     this.pkgName = name;
     this.pkgsDir =
-      this.repository.packageParentDirs.find(pd => pd.indexOf(loc) > -1) ||
+      this.repository.packageParentDirs.find(pd => pd.indexOf(pkgLocation) > -1) ||
       this.repository.packageParentDirs[0];
 
     this.outDir = outdir || "lib";
