@@ -33,6 +33,7 @@ class CreateCommand extends Command {
 
   initialize() {
     const {
+      bin,
       description = DEFAULT_DESCRIPTION,
       esModule,
       keywords,
@@ -57,6 +58,7 @@ class CreateCommand extends Command {
     this.targetDir = path.resolve(this.pkgsDir, this.dirName);
     this.camelName = camelCase(this.dirName);
 
+    this.binFileName = bin === true ? this.dirName : bin;
     this.libFileName = `${this.dirName}.js`;
     this.testFileName = `${this.dirName}.test.js`;
     this.mainFilePath = path.join(this.outDir, this.libFileName);
@@ -273,21 +275,29 @@ class CreateCommand extends Command {
   }
 
   writeReadme() {
+    const { bin, description } = this.options;
     const readmeContent = dedent`
       # \`${this.pkgName}\`
 
-      > ${this.options.description || "BRIEF DESCRIPTION"}
+      > ${description || "TODO: description"}
 
       ## Usage
 
       \`\`\`
       ${
-        this.options.esModule
-          ? `import ${this.camelName} from '${this.pkgName}';`
-          : `const ${this.camelName} = require('${this.pkgName}');`
+        // eslint-disable-next-line no-nested-ternary
+        bin
+          ? dedent`
+            npm -g i ${this.pkgName}
+
+            ${this.binFileName} --help
+          `
+          : this.options.esModule
+            ? `import ${this.camelName} from '${this.pkgName}';`
+            : `const ${this.camelName} = require('${this.pkgName}');`
       }
 
-      // DEMONSTRATE PUBLIC API
+      // TODO: DEMONSTRATE API
       \`\`\`
     `;
 
@@ -337,7 +347,7 @@ class CreateCommand extends Command {
   }
 
   writeBinFiles() {
-    const { bin, esModule } = this.options;
+    const { esModule } = this.options;
 
     const cliFileName = "cli.js";
     const cliContent = esModule
@@ -346,9 +356,9 @@ class CreateCommand extends Command {
 
         export default function cli(argv, cwd) {
           return yargs(argv, cwd)
-            .usage('TODO')
+            .usage('TODO: usage')
             .options({
-              // TODO
+              // TODO: options
             })
             .alias('h', 'help')
             .alias('v', 'version');
@@ -361,9 +371,9 @@ class CreateCommand extends Command {
 
         module.exports = function cli(argv, cwd) {
           return yargs(argv, cwd)
-            .usage('TODO')
+            .usage('TODO: usage')
             .options({
-              // TODO
+              // TODO: options
             })
             .alias('h', 'help')
             .alias('v', 'version');
@@ -391,9 +401,9 @@ class CreateCommand extends Command {
         });
       `;
 
-    const binFileName = bin === true ? this.pkgName : bin;
     const binContent = dedent`
       #!/usr/bin/env node
+
       'use strict';
 
       // eslint-disable-next-line no-unused-expressions
@@ -401,7 +411,7 @@ class CreateCommand extends Command {
     `;
 
     return Promise.all([
-      catFile(this.binDir, binFileName, binContent, { mode: 0o755 }),
+      catFile(this.binDir, this.binFileName, binContent, { mode: 0o755 }),
       catFile(this.libDir, cliFileName, cliContent),
       catFile(this.testDir, cliTestFileName, cliTestContent),
     ]);
