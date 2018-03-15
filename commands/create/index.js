@@ -3,12 +3,12 @@
 const fs = require("fs-extra");
 const path = require("path");
 const { URL } = require("url");
+const camelCase = require("camelcase");
 const dedent = require("dedent");
 const init = require("init-package-json");
 const npa = require("npm-package-arg");
 const npmConf = require("npm-conf");
 const pify = require("pify");
-const _ = require("lodash");
 
 const Command = require("@lerna/command");
 const ChildProcessUtilities = require("@lerna/child-process");
@@ -54,16 +54,13 @@ class CreateCommand extends Command {
 
     this.outDir = outdir || "lib";
     this.targetDir = path.resolve(this.pkgsDir, this.dirName);
-    this.camelName = _.camelCase(this.dirName);
+    this.camelName = camelCase(this.dirName);
 
     this.libFileName = `${this.dirName}.js`;
     this.testFileName = `${this.dirName}.test.js`;
     this.mainFilePath = path.join(this.outDir, this.libFileName);
 
-    const dependencies = this.parseDependencies();
-
     this.conf = npmConf({
-      dependencies,
       description,
       esModule,
       keywords,
@@ -100,6 +97,7 @@ class CreateCommand extends Command {
 
     this.setHomepage();
     this.setPublishConfig();
+    this.parseDependencies();
 
     this.binDir = path.join(this.targetDir, "bin");
     this.libDir = path.join(this.targetDir, esModule ? "src" : "lib");
@@ -200,35 +198,83 @@ class CreateCommand extends Command {
     return ChildProcessUtilities.execSync("npm", ["info", depName, "version"], this.execOpts);
   }
 
-  parseDependencies() {
-    const inputs = this.options.dependencies;
-    const tuples = _.map(inputs, input => {
-      const parsed = npa(input);
-      const depType = parsed.type;
-      const depName = parsed.name;
+  collectExternalVersions() {
+    // collect all current externalDependencies
+    const extVersions = new Map();
 
-      let version = parsed.rawSpec;
+    for (const { externalDependencies } of this.packageGraph.values()) {
+      for (const [name, resolved] of externalDependencies) {
+        extVersions.set(name, resolved.fetchSpec);
+      }
+    }
+
+    return extVersions;
+  }
+
+  hasLocalRelativeFileSpec() {
+    // if any local dependencies are specified as `file:../dir`,
+    // all new local dependencies should be created thusly
+    for (const { localDependencies } of this.packageGraph.values()) {
+      for (const spec of localDependencies.values()) {
+        if (spec.type === "directory") {
+          return true;
+        }
+      }
+    }
+  }
+
+  parseDependencies() {
+    const inputs = new Set(this.options.dependencies);
+
+    // add yargs if a bin is required
+    if (this.options.bin) {
+      inputs.add("yargs");
+    }
+
+    if (!inputs.size) {
+      return;
+    }
+
+    const dependencies = {};
+    const exts = this.collectExternalVersions();
+    const localRelative = this.hasLocalRelativeFileSpec();
+    const savePrefix = this.conf.get("save-exact") ? "" : this.conf.get("save-prefix");
+
+    for (const spec of [...inputs].sort().map(i => npa(i))) {
+      const depType = spec.type;
+      const depName = spec.name;
+
+      let version = spec.rawSpec;
 
       if (this.packageGraph.has(depName)) {
         // sibling dependency
-        version = `^${this.packageGraph.get(depName).version}`;
-      } else if (depType === "tag" && parsed.fetchSpec === "latest") {
+        const depNode = this.packageGraph.get(depName);
+
+        if (localRelative) {
+          // a local `file:../foo` specifier
+          const relPath = path.relative(this.targetDir, depNode.location);
+          version = npa.resolve(depName, relPath, this.targetDir).saveSpec;
+        } else {
+          // yarn workspace or lerna packages config
+          version = `${savePrefix}${depNode.version}`;
+        }
+      } else if (depType === "tag" && spec.fetchSpec === "latest") {
         // resolve the latest version
-        version = `^${this.latestVersion(depName)}`;
+        if (exts.has(depName)) {
+          // from local external dependency
+          version = exts.get(depName);
+        } else {
+          // from registry
+          version = `${savePrefix}${this.latestVersion(depName)}`;
+        }
       } else if (depType === "git" || depType === "hosted") {
         throw new Error("Do not use git dependencies");
       }
 
-      return [depName, version];
-    });
-
-    // add yargs if a bin is required
-    if (this.options.bin) {
-      tuples.push(["yargs", `^${this.latestVersion("yargs")}`]);
+      dependencies[depName] = version;
     }
 
-    // alpha sort just like npm does
-    return _.fromPairs(_.sortBy(tuples, "0"));
+    this.conf.set("dependencies", dependencies);
   }
 
   writeReadme() {
