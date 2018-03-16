@@ -2,11 +2,13 @@
 
 const execa = require("execa");
 const path = require("path");
+const tempy = require("tempy");
 
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
+// git init is not necessary
+const copyFixture = require("@lerna-test/copy-fixture");
 
-const BIN = path.join(__dirname, "../cli.js");
-const bin = (args, options) => execa(BIN, args, options);
+const CLI = path.join(__dirname, "../cli.js");
+const bin = cwd => (...args) => execa(CLI, args, { cwd });
 
 /* global jasmine */
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
@@ -16,7 +18,7 @@ describe("cli", () => {
     expect.assertions(1);
 
     try {
-      await bin([]);
+      await bin()();
     } catch (err) {
       expect(err.message).toContain("Pass --help to see all available commands and options.");
     }
@@ -27,7 +29,7 @@ describe("cli", () => {
     let error = null;
 
     try {
-      await bin(["--help"]);
+      await bin()("--help");
     } catch (err) {
       error = err;
     }
@@ -36,9 +38,11 @@ describe("cli", () => {
   });
 
   it("should prefer local installs", async () => {
-    const cwd = await initFixture("local-install");
-    const result = await bin(["--verbose"], { cwd });
-    expect(result.stdout).toContain("__fixtures__/local-install/node_modules/lerna/cli.js");
-    expect(result.stdout).toContain("__fixtures__/local-install/node_modules/@lerna/cli/index.js");
+    const cwd = tempy.directory();
+    await copyFixture(cwd, "local-install", __dirname);
+
+    const { stdout } = await bin(cwd)("--verbose");
+    expect(stdout).toContain("__fixtures__/local-install/node_modules/lerna/cli.js");
+    expect(stdout).toContain("__fixtures__/local-install/node_modules/@lerna/cli/index.js");
   });
 });
