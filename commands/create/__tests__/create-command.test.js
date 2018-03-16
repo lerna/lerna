@@ -33,6 +33,17 @@ describe("CreateCommand", () => {
     const cwd = await initRemoteFixture("basic");
 
     await lernaCreate(cwd)("my-pkg");
-    await expect(diffStaged(cwd)).resolves.toMatchSnapshot();
+
+    const result = await diffStaged(cwd);
+    expect(result).toMatchSnapshot();
+  });
+
+  it("creates a stub cli", async () => {
+    const cwd = await initRemoteFixture("basic");
+
+    await lernaCreate(cwd)("my-cli", "--bin");
+
+    const result = await diffStaged(cwd);
+    expect(result).toMatchSnapshot();
   });
 });

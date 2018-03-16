@@ -1,6 +1,7 @@
 "use strict";
 
 const path = require("path");
+const os = require("os");
 const { URL } = require("url");
 const camelCase = require("camelcase");
 const dedent = require("dedent");
@@ -372,56 +373,65 @@ class CreateCommand extends Command {
     const { esModule } = this.options;
 
     const cliFileName = "cli.js";
-    const cliContent = esModule
-      ? dedent`
-        import yargs from 'yargs/yargs';
+    const cliContent = [
+      esModule
+        ? dedent`
+          import factory from 'yargs/yargs';
+          import ${this.camelName} from './${this.pkgName}';
 
-        export default function cli(argv, cwd) {
-          return yargs(argv, cwd)
-            .usage('TODO: usage')
-            .options({
-              // TODO: options
-            })
-            .alias('h', 'help')
-            .alias('v', 'version');
+          export default cli;
+        `
+        : dedent`
+          'use strict';
+
+          const yargs = require('yargs/yargs');
+          const ${this.camelName} = require('./${this.pkgName}');
+
+          module.exports = cli;
+        `,
+      "", // blank line
+      dedent`
+        function cli(cwd) {
+          const parser = factory(null, cwd);
+
+          parser.alias('h', 'help');
+          parser.alias('v', 'version');
+
+          parser.usage(
+            "$0",
+            "TODO: description",
+            yargs => {
+              yargs.options({
+                // TODO: options
+              });
+            },
+            argv => ${this.camelName}(argv)
+          );
+
+          return parser;
         }
-      `
-      : dedent`
-        'use strict';
-
-        const yargs = require('yargs/yargs');
-
-        module.exports = function cli(argv, cwd) {
-          return yargs(argv, cwd)
-            .usage('TODO: usage')
-            .options({
-              // TODO: options
-            })
-            .alias('h', 'help')
-            .alias('v', 'version');
-        };
-      `;
+      `,
+    ].join(os.EOL);
 
     const cliTestFileName = "cli.test.js";
-    const cliTestContent = esModule
-      ? dedent`
-        import cli from '../src/cli';
+    const cliTestContent = [
+      esModule
+        ? dedent`
+          import cli from '../src/cli';
+        `
+        : dedent`
+          'use strict';
 
+          const cli = require('../lib/cli');
+        `,
+      "", // blank line
+      dedent`
         describe('${this.pkgName} cli', () => {
-          // const argv = cli().parse(['args'], cb);
+          // const argv = cli(cwd).parse(['args']);
           it('needs tests');
         });
-      `
-      : dedent`
-        'use strict';
-
-        const cli = require('../lib/cli');
-
-        describe('${this.pkgName} cli', () => {
-          // const argv = cli().parse(['args'], cb);
-          it('needs tests');
-        });
-      `;
+      `,
+    ].join(os.EOL);
 
     const binContent = dedent`
       #!/usr/bin/env node
