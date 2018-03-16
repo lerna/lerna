@@ -1,5 +1,6 @@
 "use strict";
 
+const fs = require("fs-extra");
 const path = require("path");
 const os = require("os");
 const { URL } = require("url");
@@ -443,7 +444,9 @@ class CreateCommand extends Command {
     `;
 
     return [
-      catFile(this.binDir, this.binFileName, binContent, { encoding: "utf8", mode: 0o755 }),
+      catFile(this.binDir, this.binFileName, binContent).then(() =>
+        fs.chmod(path.join(this.binDir, this.binFileName), 0o755)
+      ),
       catFile(this.libDir, cliFileName, cliContent),
       catFile(this.testDir, cliTestFileName, cliTestContent),
     ];

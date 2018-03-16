@@ -53,6 +53,16 @@ describe("CreateCommand", () => {
     expect(result).toContain("packages/my-pkg/lib/my-pkg.js");
   });
 
+  it("creates a stub package with transpiled output", async () => {
+    const cwd = await initRemoteFixture("basic");
+
+    await lernaCreate(cwd)("my-pkg", "--es-module");
+    await gitAdd(cwd, ".");
+
+    const result = await diffStaged(cwd);
+    expect(result).toMatchSnapshot();
+  });
+
   it("creates a stub cli", async () => {
     const cwd = await initRemoteFixture("basic");
 
@@ -76,5 +86,15 @@ describe("CreateCommand", () => {
 
     const result = await listUntracked(cwd);
     expect(result).toContain("packages/my-cli/bin/yay");
+  });
+
+  it("creates a stub cli with transpiled output", async () => {
+    const cwd = await initRemoteFixture("basic");
+
+    await lernaCreate(cwd)("my-pkg", "--bin", "--es-module");
+    await gitAdd(cwd, ".");
+
+    const result = await diffStaged(cwd);
+    expect(result).toMatchSnapshot();
   });
 });
