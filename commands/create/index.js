@@ -40,7 +40,6 @@ class CreateCommand extends Command {
       license,
       loc: pkgLocation,
       name: pkgName,
-      outdir,
       yes,
     } = this.options;
 
@@ -58,7 +57,9 @@ class CreateCommand extends Command {
       this.repository.packageParentDirs[0];
 
     this.camelName = camelCase(this.dirName);
-    this.outDir = outdir || "lib";
+
+    // when transpiling, src => dist; otherwise everything in lib
+    this.outDir = esModule ? "dist" : "lib";
     this.targetDir = path.resolve(this.pkgsDir, this.dirName);
 
     this.binDir = path.join(this.targetDir, "bin");
@@ -119,20 +120,20 @@ class CreateCommand extends Command {
     return Promise.all(actions)
       .then(() => pify(init)(this.targetDir, LERNA_MODULE_DATA, this.conf))
       .then(data => {
+        if (esModule) {
+          this.logger.notice(
+            "✔",
+            dedent`
+              Ensure '${path.relative(".", this.pkgsDir)}/*/${this.outDir}' has been added to ./.gitignore
+              Ensure rollup or babel build scripts are in the root
+            `
+          );
+        }
+
         this.logger.success(
           "create",
           `New package ${data.name} created at ./${path.relative(".", this.targetDir)}`
         );
-
-        if (esModule) {
-          this.logger.notice(
-            "NOTE",
-            dedent`
-              Ensure you have added '${this.pkgsDir}/*/${this.outDir}' to your root .gitignore
-              and have the appropriate rollup or babel build scripts in the root.
-            `
-          );
-        }
       });
   }
 
@@ -410,7 +411,7 @@ class CreateCommand extends Command {
       'use strict';
 
       // eslint-disable-next-line no-unused-expressions
-      require('../lib/cli')${esModule ? ".default" : ""}().parse(process.argv.slice(2));
+      require('../${this.outDir}/cli')${esModule ? ".default" : ""}().parse(process.argv.slice(2));
     `;
 
     return Promise.all([

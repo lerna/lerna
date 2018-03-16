@@ -62,13 +62,6 @@ exports.builder = yargs => {
         describe: "The desired package license (SPDX identifier)",
         type: "string",
       },
-      outdir: {
-        group: "Command Options:",
-        defaultDescription: "lib",
-        describe: "Transpile into this directory",
-        implies: "es-module",
-        type: "string",
-      },
       private: {
         group: "Command Options:",
         describe: "Make the new package private, never published to any external registry",
