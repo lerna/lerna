@@ -264,39 +264,13 @@ if (!this.package.publishConfig && this.config.get("publishConfig")) {
 
 if (!this.package.repository) {
   exports.repository = cb => {
-    const repoRoot = execa.sync("git", ["rev-parse", "--show-toplevel"]).stdout;
-    const gitConfigFile = path.join(repoRoot, ".git/config");
+    let val = this.config.get("repository");
 
-    fs.readFile(gitConfigFile, "utf8", (er, gitConfig) => {
-      if (er || !gitConfig) {
-        return cb(null, this.yes ? "" : this.prompt("git repository"));
-      }
+    if (val && val.match(/^git@github.com:/)) {
+      val = val.replace(/^git@github.com:/, "https://github.com/");
+    }
 
-      const configLines = gitConfig.split(/\r?\n/);
-
-      let val;
-      const i = configLines.indexOf('[remote "origin"]');
-
-      if (i !== -1) {
-        val = configLines[i + 1];
-
-        if (!val.match(/^\s*url =/)) {
-          val = configLines[i + 2];
-        }
-
-        if (!val.match(/^\s*url =/)) {
-          val = null;
-        } else {
-          val = val.replace(/^\s*url = /, "");
-        }
-      }
-
-      if (val && val.match(/^git@github.com:/)) {
-        val = val.replace(/^git@github.com:/, "https://github.com/");
-      }
-
-      return cb(null, this.yes ? val : this.prompt("git repository", val));
-    });
+    return cb(null, this.yes ? val : this.prompt("git repository", val));
   };
 }
 

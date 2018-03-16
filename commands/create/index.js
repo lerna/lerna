@@ -4,7 +4,8 @@ const path = require("path");
 const { URL } = require("url");
 const camelCase = require("camelcase");
 const dedent = require("dedent");
-const init = require("init-package-json");
+const execa = require("execa");
+const initPackageJson = require("init-package-json");
 const npa = require("npm-package-arg");
 const npmConf = require("npm-conf");
 const pify = require("pify");
@@ -109,8 +110,14 @@ class CreateCommand extends Command {
       this.conf.set("private", true);
     }
 
+    // silence output if logging is silenced
+    if (this.options.loglevel === "silent") {
+      this.conf.set("silent", true);
+    }
+
     this.setHomepage();
     this.setPublishConfig();
+    this.setRepository();
     this.setDependencies();
   }
 
@@ -123,7 +130,7 @@ class CreateCommand extends Command {
     }
 
     return Promise.all(actions)
-      .then(() => pify(init)(this.targetDir, LERNA_MODULE_DATA, this.conf))
+      .then(() => pify(initPackageJson)(this.targetDir, LERNA_MODULE_DATA, this.conf))
       .then(data => {
         if (esModule) {
           this.logger.notice(
@@ -281,6 +288,10 @@ class CreateCommand extends Command {
     if (Object.keys(publishConfig).length) {
       this.conf.set("publishConfig", publishConfig);
     }
+  }
+
+  setRepository() {
+    this.conf.set("repository", execa.sync("git", ["remote", "get-url", "origin"], this.execOpts).stdout);
   }
 
   writeReadme() {

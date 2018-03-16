@@ -1,0 +1,7 @@
+{
+  "name": "sibling-pkg",
+  "version": "1.2.3",
+  "dependencies": {
+    "cousin-pkg": "file:../cousin-pkg"
+  }
+}

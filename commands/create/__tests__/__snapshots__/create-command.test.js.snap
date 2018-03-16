@@ -1,0 +1,79 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CreateCommand creates a stub package 1`] = `
+diff --git a/packages/my-pkg/README.md b/packages/my-pkg/README.md
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/my-pkg/README.md
+@@ -0,0 +1,11 @@
++# \`my-pkg\`
++
++> TODO: description
++
++## Usage
++
++\`\`\`
++const myPkg = require('my-pkg');
++
++// TODO: DEMONSTRATE API
++\`\`\`
+diff --git a/packages/my-pkg/__tests__/my-pkg.test.js b/packages/my-pkg/__tests__/my-pkg.test.js
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/my-pkg/__tests__/my-pkg.test.js
+@@ -0,0 +1,7 @@
++'use strict';
++
++const myPkg = require('..');
++
++describe('my-pkg', () => {
++    it('needs tests');
++});
+diff --git a/packages/my-pkg/lib/my-pkg.js b/packages/my-pkg/lib/my-pkg.js
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/my-pkg/lib/my-pkg.js
+@@ -0,0 +1,7 @@
++'use strict';
++
++module.exports = myPkg;
++
++function myPkg() {
++    // TODO
++}
+diff --git a/packages/my-pkg/package.json b/packages/my-pkg/package.json
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/my-pkg/package.json
+@@ -0,0 +1,26 @@
++{
++  "name": "my-pkg",
++  "version": "1.2.3",
++  "description": "Now I’m the model of a modern major general / The venerated Virginian veteran whose men are all / Lining up, to put me up on a pedestal / Writin’ letters to relatives / Embellishin’ my elegance and eloquence / But the elephant is in the room / The truth is in ya face when ya hear the British cannons go / BOOM",
++  "keywords": [],
++  "author": "Tester McPerson <test@example.com>",
++  "license": "ISC",
++  "main": "lib/my-pkg.js",
++  "directories": {
++    "lib": "lib"
++  },
++  "files": [
++    "lib"
++  ],
++  "repository": {
++    "type": "git",
++    "url": "git+https://github.com/test/test.git"
++  },
++  "scripts": {
++    "test": "echo \\"Error: run tests from root\\" && exit 1"
++  },
++  "bugs": {
++    "url": "https://github.com/test/test/issues"
++  },
++  "homepage": "https://github.com/test/test#readme"
++}
+`;
