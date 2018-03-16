@@ -19,11 +19,11 @@ The contents of this file are compiled into a function with this signature:
         exports
     ) {
 
-Because of the stupid `package` parameter, we can't "use strict",
+Because of the `package` parameter, we can't "use strict",
 as `package` is a reserved word in strict mode.
 
 Conveniently, all of these parameters are also available on `this`.
-We abuse this fact to avoid eslint kersploding on the reserved word.
+We exploit this fact to avoid eslint breaking on the reserved word.
 */
 
 const fs = require("fs");
@@ -33,7 +33,6 @@ const validateLicense = require("validate-npm-package-license");
 const validateName = require("validate-npm-package-name");
 const npa = require("npm-package-arg");
 const semver = require("semver");
-const execa = require("execa");
 
 const niceName = rudeName =>
   rudeName

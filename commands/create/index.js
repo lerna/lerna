@@ -4,7 +4,6 @@ const path = require("path");
 const { URL } = require("url");
 const camelCase = require("camelcase");
 const dedent = require("dedent");
-const execa = require("execa");
 const initPackageJson = require("init-package-json");
 const npa = require("npm-package-arg");
 const npmConf = require("npm-conf");
@@ -291,7 +290,10 @@ class CreateCommand extends Command {
   }
 
   setRepository() {
-    this.conf.set("repository", execa.sync("git", ["remote", "get-url", "origin"], this.execOpts).stdout);
+    this.conf.set(
+      "repository",
+      ChildProcessUtilities.execSync("git", ["remote", "get-url", "origin"], this.execOpts)
+    );
   }
 
   writeReadme() {
