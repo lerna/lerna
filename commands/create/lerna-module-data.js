@@ -169,9 +169,11 @@ if (!this.package.main) {
   };
 }
 
-if (this.config.get("esModule") && !this.package.module) {
-  const initMain = this.config.get("init-main");
-  const moduleEntry = path.join(path.dirname(initMain), `${path.basename(initMain, ".js")}.module.js`);
+if (!this.package.module && this.config.get("esModule") && this.config.get("init-main")) {
+  const moduleEntry = path.join(
+    path.dirname(this.config.get("init-main")),
+    `${path.basename(this.config.get("init-main"), ".js")}.module.js`
+  );
 
   exports.module = this.yes ? moduleEntry : this.prompt("module entry", moduleEntry);
 }
