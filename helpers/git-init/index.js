@@ -1,12 +1,13 @@
 "use strict";
 
+const path = require("path");
 const execa = require("execa");
+
+// Contains all relevant git config (user, commit.gpgSign, etc)
+const TEMPLATE = path.resolve(__dirname, "template");
 
 module.exports = gitInit;
 
 function gitInit(cwd, ...args) {
-  return execa("git", ["init", ...args], { cwd })
-    .then(() => execa("git", ["config", "commit.gpgSign", "false"], { cwd }))
-    .then(() => execa("git", ["config", "user.email", "test@example.com"], { cwd }))
-    .then(() => execa("git", ["config", "user.name", "Tester McPerson"], { cwd }));
+  return execa("git", ["init", "--template", TEMPLATE, ...args], { cwd });
 }
