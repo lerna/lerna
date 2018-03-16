@@ -13,8 +13,7 @@ const lernaCreate = require("@lerna-test/command-runner")(require("../command"))
 expect.addSnapshotSerializer(require("@lerna-test/serialize-git-sha"));
 
 // assertion helpers
-const diffStaged = (cwd, ...args) =>
-  gitAdd(cwd, ".").then(() => execa.stdout("git", ["diff", "--cached", ...args], { cwd }));
+const diffStaged = (cwd, ...args) => execa.stdout("git", ["diff", "--cached", ...args], { cwd });
 
 const initRemoteFixture = (name, remote = "origin", url = "git@github.com:test/test.git") =>
   initFixture(name).then(cwd => execa("git", ["remote", "add", remote, url], { cwd }).then(() => cwd));
@@ -39,6 +38,7 @@ describe("CreateCommand", () => {
     const cwd = await initRemoteFixture("basic");
 
     await lernaCreate(cwd)("my-pkg");
+    await gitAdd(cwd, ".");
 
     const result = await diffStaged(cwd);
     expect(result).toMatchSnapshot();
@@ -57,6 +57,13 @@ describe("CreateCommand", () => {
     const cwd = await initRemoteFixture("basic");
 
     await lernaCreate(cwd)("my-cli", "--bin");
+
+    // windows sucks at file permissions
+    if (process.platform === "win32") {
+      await gitAdd(cwd, "--chmod=+x", "--", "packages/my-cli/bin/my-cli");
+    }
+
+    await gitAdd(cwd, ".");
 
     const result = await diffStaged(cwd);
     expect(result).toMatchSnapshot();
