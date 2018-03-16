@@ -19,6 +19,11 @@ const diffStaged = (cwd, ...args) =>
 const initRemoteFixture = (name, remote = "origin", url = "git@github.com:test/test.git") =>
   initFixture(name).then(cwd => execa("git", ["remote", "add", remote, url], { cwd }).then(() => cwd));
 
+const listUntracked = cwd =>
+  execa
+    .stdout("git", ["ls-files", "--others", "--exclude-standard", "-z"], { cwd })
+    .then(list => list.split("\0"));
+
 describe("CreateCommand", () => {
   it("requires a name argument", async () => {
     const cwd = await initFixture("basic");
@@ -39,6 +44,15 @@ describe("CreateCommand", () => {
     expect(result).toMatchSnapshot();
   });
 
+  it("creates a stub package with a scoped name", async () => {
+    const cwd = await initRemoteFixture("basic");
+
+    await lernaCreate(cwd)("@my-org/my-pkg");
+
+    const result = await listUntracked(cwd);
+    expect(result).toContain("packages/my-pkg/lib/my-pkg.js");
+  });
+
   it("creates a stub cli", async () => {
     const cwd = await initRemoteFixture("basic");
 
@@ -53,7 +67,7 @@ describe("CreateCommand", () => {
 
     await lernaCreate(cwd)("my-cli", "--bin", "yay");
 
-    const result = await diffStaged(cwd, "--name-only", "-z");
-    expect(result.split("\0")).toContain("packages/my-cli/bin/yay");
+    const result = await listUntracked(cwd);
+    expect(result).toContain("packages/my-cli/bin/yay");
   });
 });
