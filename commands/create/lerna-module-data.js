@@ -173,9 +173,10 @@ if (!this.package.main) {
 }
 
 if (!this.package.module && this.config.get("esModule") && this.config.get("init-main")) {
-  const moduleEntry = path.join(
-    path.dirname(this.config.get("init-main")),
-    `${path.basename(this.config.get("init-main"), ".js")}.module.js`
+  const main = this.config.get("init-main");
+  const moduleEntry = path.posix.join(
+    path.posix.dirname(main),
+    `${path.posix.basename(main, ".js")}.module.js`
   );
 
   exports.module = this.yes ? moduleEntry : this.prompt("module entry", moduleEntry);
@@ -248,7 +249,7 @@ if (!this.package.files) {
     }).then(files => {
       if (this.config.get("esModule")) {
         // don't publish src, only publish transpiled output
-        files.splice(files.indexOf("src"), 1, path.dirname(this.config.get("init-main")));
+        files.splice(files.indexOf("src"), 1, path.posix.dirname(this.config.get("init-main")));
       }
 
       return cb(null, files.sort());

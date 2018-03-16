@@ -13,7 +13,8 @@ const lernaCreate = require("@lerna-test/command-runner")(require("../command"))
 expect.addSnapshotSerializer(require("@lerna-test/serialize-git-sha"));
 
 // assertion helpers
-const diffStaged = cwd => gitAdd(cwd, ".").then(() => execa.stdout("git", ["diff", "--cached"], { cwd }));
+const diffStaged = (cwd, ...args) =>
+  gitAdd(cwd, ".").then(() => execa.stdout("git", ["diff", "--cached", ...args], { cwd }));
 
 const initRemoteFixture = (name, remote = "origin", url = "git@github.com:test/test.git") =>
   initFixture(name).then(cwd => execa("git", ["remote", "add", remote, url], { cwd }).then(() => cwd));
@@ -45,5 +46,14 @@ describe("CreateCommand", () => {
 
     const result = await diffStaged(cwd);
     expect(result).toMatchSnapshot();
+  });
+
+  it("creates a stub cli with a custom name", async () => {
+    const cwd = await initRemoteFixture("basic");
+
+    await lernaCreate(cwd)("my-cli", "--bin", "yay");
+
+    const result = await diffStaged(cwd, "--name-only", "-z");
+    expect(result.split("\0")).toContain("packages/my-cli/bin/yay");
   });
 });

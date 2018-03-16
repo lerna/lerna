@@ -84,7 +84,7 @@ class CreateCommand extends Command {
     this.conf.addFile(builtinNpmrc(), "builtin");
 
     // always set init-main, it's half of the whole point of this module
-    this.conf.set("init-main", path.join(this.outDir, this.libFileName));
+    this.conf.set("init-main", path.posix.join(this.outDir, this.libFileName));
 
     // allow default init-version when independent versioning enabled
     if (!this.repository.isIndependent()) {
