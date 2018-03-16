@@ -104,6 +104,11 @@ class CreateCommand extends Command {
       this.conf.set("init-license", license);
     }
 
+    // pass --private into module data without aggravating eslint
+    if (this.options.private) {
+      this.conf.set("private", true);
+    }
+
     this.setHomepage();
     this.setPublishConfig();
     this.setDependencies();

@@ -88,6 +88,10 @@ exports.version = this.yes
       return er;
     });
 
+if (this.config.get("private")) {
+  exports.private = true;
+}
+
 if (!this.package.description) {
   exports.description = this.yes ? this.config.get("description") : this.prompt("description");
 }
