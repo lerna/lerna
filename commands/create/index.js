@@ -126,7 +126,7 @@ class CreateCommand extends Command {
     const actions = [this.writeReadme(), this.writeLibFile(), this.writeTestFile()];
 
     if (bin) {
-      actions.push(this.writeBinFiles());
+      actions.push(...this.writeBinFiles());
     }
 
     return Promise.all(actions)
@@ -442,11 +442,11 @@ class CreateCommand extends Command {
       require('../${this.outDir}/cli')${esModule ? ".default" : ""}().parse(process.argv.slice(2));
     `;
 
-    return Promise.all([
-      catFile(this.binDir, this.binFileName, binContent, { mode: 0o755 }),
+    return [
+      catFile(this.binDir, this.binFileName, binContent, { encoding: "utf8", mode: 0o755 }),
       catFile(this.libDir, cliFileName, cliContent),
       catFile(this.testDir, cliTestFileName, cliTestContent),
-    ]);
+    ];
   }
 }
 
