@@ -147,53 +147,53 @@ index SHA..SHA
 `;
 
 exports[`CreateCommand creates a stub cli with transpiled output 1`] = `
-diff --git a/packages/my-pkg/README.md b/packages/my-pkg/README.md
+diff --git a/packages/my-es-cli/README.md b/packages/my-es-cli/README.md
 new file mode 100644
 index SHA..SHA
 --- /dev/null
-+++ b/packages/my-pkg/README.md
++++ b/packages/my-es-cli/README.md
 @@ -0,0 +1,13 @@
-+# \`my-pkg\`
++# \`my-es-cli\`
 +
 +> TODO: description
 +
 +## Usage
 +
 +\`\`\`
-+npm -g i my-pkg
++npm -g i my-es-cli
 +
-+my-pkg --help
++my-es-cli --help
 +
 +// TODO: DEMONSTRATE API
 +\`\`\`
-diff --git a/packages/my-pkg/__tests__/cli.test.js b/packages/my-pkg/__tests__/cli.test.js
+diff --git a/packages/my-es-cli/__tests__/cli.test.js b/packages/my-es-cli/__tests__/cli.test.js
 new file mode 100644
 index SHA..SHA
 --- /dev/null
-+++ b/packages/my-pkg/__tests__/cli.test.js
++++ b/packages/my-es-cli/__tests__/cli.test.js
 @@ -0,0 +1,6 @@
 +import cli from '../src/cli';
 +
-+describe('my-pkg cli', () => {
++describe('my-es-cli cli', () => {
 +  // const argv = cli(cwd).parse(['args']);
 +  it('needs tests');
 +});
-diff --git a/packages/my-pkg/__tests__/my-pkg.test.js b/packages/my-pkg/__tests__/my-pkg.test.js
+diff --git a/packages/my-es-cli/__tests__/my-es-cli.test.js b/packages/my-es-cli/__tests__/my-es-cli.test.js
 new file mode 100644
 index SHA..SHA
 --- /dev/null
-+++ b/packages/my-pkg/__tests__/my-pkg.test.js
++++ b/packages/my-es-cli/__tests__/my-es-cli.test.js
 @@ -0,0 +1,5 @@
-+import myPkg from '../src/my-pkg';
++import myEsCli from '../src/my-es-cli';
 +
-+describe('my-pkg', () => {
++describe('my-es-cli', () => {
 +    it('needs tests');
 +});
-diff --git a/packages/my-pkg/bin/my-pkg b/packages/my-pkg/bin/my-pkg
+diff --git a/packages/my-es-cli/bin/my-es-cli b/packages/my-es-cli/bin/my-es-cli
 new file mode 100755
 index SHA..SHA
 --- /dev/null
-+++ b/packages/my-pkg/bin/my-pkg
++++ b/packages/my-es-cli/bin/my-es-cli
 @@ -0,0 +1,6 @@
 +#!/usr/bin/env node
 +
@@ -201,23 +201,23 @@ index SHA..SHA
 +
 +// eslint-disable-next-line no-unused-expressions
 +require('../dist/cli').default().parse(process.argv.slice(2));
-diff --git a/packages/my-pkg/package.json b/packages/my-pkg/package.json
+diff --git a/packages/my-es-cli/package.json b/packages/my-es-cli/package.json
 new file mode 100644
 index SHA..SHA
 --- /dev/null
-+++ b/packages/my-pkg/package.json
++++ b/packages/my-es-cli/package.json
 @@ -0,0 +1,34 @@
 +{
-+  "name": "my-pkg",
++  "name": "my-es-cli",
 +  "version": "1.2.3",
 +  "description": "Now I’m the model of a modern major general / The venerated Virginian veteran whose men are all / Lining up, to put me up on a pedestal / Writin’ letters to relatives / Embellishin’ my elegance and eloquence / But the elephant is in the room / The truth is in ya face when ya hear the British cannons go / BOOM",
 +  "keywords": [],
 +  "author": "Tester McPerson <test@example.com>",
 +  "license": "ISC",
-+  "main": "dist/my-pkg.js",
-+  "module": "dist/my-pkg.module.js",
++  "main": "dist/my-es-cli.js",
++  "module": "dist/my-es-cli.module.js",
 +  "bin": {
-+    "my-pkg": "bin/my-pkg"
++    "my-es-cli": "bin/my-es-cli"
 +  },
 +  "directories": {
 +    "bin": "bin"
@@ -241,14 +241,14 @@ index SHA..SHA
 +  },
 +  "homepage": "https://github.com/test/test#readme"
 +}
-diff --git a/packages/my-pkg/src/cli.js b/packages/my-pkg/src/cli.js
+diff --git a/packages/my-es-cli/src/cli.js b/packages/my-es-cli/src/cli.js
 new file mode 100644
 index SHA..SHA
 --- /dev/null
-+++ b/packages/my-pkg/src/cli.js
++++ b/packages/my-es-cli/src/cli.js
 @@ -0,0 +1,24 @@
 +import factory from 'yargs/yargs';
-+import myPkg from './my-pkg';
++import myEsCli from './my-es-cli';
 +
 +export default cli;
 +
@@ -266,18 +266,18 @@ index SHA..SHA
 +        // TODO: options
 +      });
 +    },
-+    argv => myPkg(argv)
++    argv => myEsCli(argv)
 +  );
 +
 +  return parser;
 +}
-diff --git a/packages/my-pkg/src/my-pkg.js b/packages/my-pkg/src/my-pkg.js
+diff --git a/packages/my-es-cli/src/my-es-cli.js b/packages/my-es-cli/src/my-es-cli.js
 new file mode 100644
 index SHA..SHA
 --- /dev/null
-+++ b/packages/my-pkg/src/my-pkg.js
++++ b/packages/my-es-cli/src/my-es-cli.js
 @@ -0,0 +1,3 @@
-+export default function myPkg() {
++export default function myEsCli() {
 +    // TODO
 +}
 `;
