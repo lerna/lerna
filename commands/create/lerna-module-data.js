@@ -151,32 +151,17 @@ exports.license = this.yes
       return er;
     });
 
-if (!this.package.main) {
-  exports.main = cb => {
-    fs.readdir(this.dirname, (er, filenames) => {
-      let [f] = er ? [] : filenames.filter(fn => fn.match(/\.js$/));
+if (!this.package.main && this.config.get("init-main")) {
+  const mainEntry = this.config.get("init-main");
 
-      if (this.config.get("init-main")) {
-        f = this.config.get("init-main");
-      } else if (f.indexOf("index.js") !== -1) {
-        f = "index.js";
-      } else if (f.indexOf("main.js") !== -1) {
-        f = "main.js";
-      } else if (f.indexOf(`${this.basename}.js`) !== -1) {
-        f = `${this.basename}.js`;
-      }
-
-      const index = f || "index.js";
-      return cb(null, this.yes ? index : this.prompt("entry point", index));
-    });
-  };
+  exports.main = this.yes ? mainEntry : this.prompt("entry point", mainEntry);
 }
 
 if (!this.package.module && this.config.get("esModule") && this.config.get("init-main")) {
-  const main = this.config.get("init-main");
+  const mainEntry = this.config.get("init-main");
   const moduleEntry = path.posix.join(
-    path.posix.dirname(main),
-    `${path.posix.basename(main, ".js")}.module.js`
+    path.posix.dirname(mainEntry),
+    `${path.posix.basename(mainEntry, ".js")}.module.js`
   );
 
   exports.module = this.yes ? moduleEntry : this.prompt("module entry", moduleEntry);
