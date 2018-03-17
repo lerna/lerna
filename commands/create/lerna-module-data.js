@@ -167,17 +167,8 @@ if (!this.package.module && this.config.get("esModule") && this.config.get("init
   exports.module = this.yes ? moduleEntry : this.prompt("module entry", moduleEntry);
 }
 
-if (!this.package.bin) {
-  exports.bin = cb => {
-    fs.readdir(path.resolve(this.dirname, "bin"), (er, d) => {
-      // no bins
-      if (er) {
-        return cb();
-      }
-      // pass everything found to read-json's extraSet('bins')
-      return cb(null, d);
-    });
-  };
+if (!this.package.bin && this.config.get("bin")) {
+  exports.bin = this.config.get("bin");
 }
 
 exports.directories = cb => {

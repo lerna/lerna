@@ -111,8 +111,15 @@ class CreateCommand extends Command {
     }
 
     // silence output if logging is silenced
+    // istanbul ignore else
     if (this.options.loglevel === "silent") {
       this.conf.set("silent", true);
+    }
+
+    if (this.binFileName) {
+      this.conf.set("bin", {
+        [this.binFileName]: path.posix.join("bin", this.binFileName),
+      });
     }
 
     this.setHomepage();
