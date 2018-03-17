@@ -26,7 +26,6 @@ Conveniently, all of these parameters are also available on `this`.
 We exploit this fact to avoid eslint breaking on the reserved word.
 */
 
-const path = require("path");
 const validateLicense = require("validate-npm-package-license");
 const validateName = require("validate-npm-package-name");
 const npa = require("npm-package-arg");
@@ -155,12 +154,8 @@ if (!this.package.main && this.config.get("init-main")) {
   exports.main = this.yes ? mainEntry : this.prompt("entry point", mainEntry);
 }
 
-if (!this.package.module && this.config.get("esModule") && this.config.get("init-main")) {
-  const mainEntry = this.config.get("init-main");
-  const moduleEntry = path.posix.join(
-    path.posix.dirname(mainEntry),
-    `${path.posix.basename(mainEntry, ".js")}.module.js`
-  );
+if (!this.package.module && this.config.get("init-es-module")) {
+  const moduleEntry = this.config.get("init-es-module");
 
   exports.module = this.yes ? moduleEntry : this.prompt("module entry", moduleEntry);
 }
