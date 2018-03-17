@@ -6,10 +6,9 @@ const os = require("os");
 const { URL } = require("url");
 const camelCase = require("camelcase");
 const dedent = require("dedent");
-const initPackageJson = require("init-package-json");
+const initPackageJson = require("pify")(require("init-package-json"));
 const npa = require("npm-package-arg");
 const npmConf = require("npm-conf");
-const pify = require("pify");
 
 const Command = require("@lerna/command");
 const ChildProcessUtilities = require("@lerna/child-process");
@@ -123,31 +122,35 @@ class CreateCommand extends Command {
   }
 
   execute() {
-    const { bin, esModule } = this.options;
-    const actions = [this.writeReadme(), this.writeLibFile(), this.writeTestFile()];
+    let chain = Promise.resolve();
 
-    if (bin) {
-      actions.push(...this.writeBinFiles());
+    chain = chain.then(() => fs.mkdirp(this.libDir));
+    chain = chain.then(() => fs.mkdirp(this.testDir));
+    chain = chain.then(() => Promise.all([this.writeReadme(), this.writeLibFile(), this.writeTestFile()]));
+
+    if (this.binFileName) {
+      chain = chain.then(() => fs.mkdirp(this.binDir));
+      chain = chain.then(() => Promise.all([this.writeBinFile(), this.writeCliFile(), this.writeCliTest()]));
     }
 
-    return Promise.all(actions)
-      .then(() => pify(initPackageJson)(this.targetDir, LERNA_MODULE_DATA, this.conf))
-      .then(data => {
-        if (esModule) {
-          this.logger.notice(
-            "✔",
-            dedent`
+    chain = chain.then(() => initPackageJson(this.targetDir, LERNA_MODULE_DATA, this.conf));
+
+    return chain.then(data => {
+      if (this.options.esModule) {
+        this.logger.notice(
+          "✔",
+          dedent`
               Ensure '${path.relative(".", this.pkgsDir)}/*/${this.outDir}' has been added to ./.gitignore
               Ensure rollup or babel build scripts are in the root
             `
-          );
-        }
-
-        this.logger.success(
-          "create",
-          `New package ${data.name} created at ./${path.relative(".", this.targetDir)}`
         );
-      });
+      }
+
+      this.logger.success(
+        "create",
+        `New package ${data.name} created at ./${path.relative(".", this.targetDir)}`
+      );
+    });
   }
 
   gitConfig(prop) {
@@ -370,12 +373,10 @@ class CreateCommand extends Command {
     return catFile(this.testDir, this.testFileName, testContent);
   }
 
-  writeBinFiles() {
-    const { esModule } = this.options;
-
+  writeCliFile() {
     const cliFileName = "cli.js";
     const cliContent = [
-      esModule
+      this.options.esModule
         ? dedent`
           import factory from 'yargs/yargs';
           import ${this.camelName} from './${this.pkgName}';
@@ -414,9 +415,13 @@ class CreateCommand extends Command {
       `,
     ].join(os.EOL);
 
+    return catFile(this.libDir, cliFileName, cliContent);
+  }
+
+  writeCliTest() {
     const cliTestFileName = "cli.test.js";
     const cliTestContent = [
-      esModule
+      this.options.esModule
         ? dedent`
           import cli from '../src/cli';
         `
@@ -434,22 +439,21 @@ class CreateCommand extends Command {
       `,
     ].join(os.EOL);
 
+    return catFile(this.testDir, cliTestFileName, cliTestContent);
+  }
+
+  writeBinFile() {
     const binContent = dedent`
       #!/usr/bin/env node
 
       'use strict';
 
       // eslint-disable-next-line no-unused-expressions
-      require('../${this.outDir}/cli')${esModule ? ".default" : ""}().parse(process.argv.slice(2));
-    `;
+      require('../${this.outDir}/cli')${
+      this.options.esModule ? ".default" : ""
+    }().parse(process.argv.slice(2));`;
 
-    return [
-      catFile(this.binDir, this.binFileName, binContent).then(() =>
-        fs.chmod(path.join(this.binDir, this.binFileName), 0o755)
-      ),
-      catFile(this.libDir, cliFileName, cliContent),
-      catFile(this.testDir, cliTestFileName, cliTestContent),
-    ];
+    return catFile(this.binDir, this.binFileName, binContent, { mode: 0o755 });
   }
 }
 

@@ -6,5 +6,5 @@ const path = require("path");
 module.exports = catFile;
 
 function catFile(baseDir, fileName, content, opts = "utf8") {
-  return fs.outputFile(path.join(baseDir, fileName), `${content}\n`, opts);
+  return fs.writeFile(path.join(baseDir, fileName), `${content}\n`, opts);
 }
