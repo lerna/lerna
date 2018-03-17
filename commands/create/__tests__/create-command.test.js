@@ -91,12 +91,12 @@ describe("CreateCommand", () => {
   it("creates a stub cli with transpiled output", async () => {
     const cwd = await initRemoteFixture("basic");
 
-    await lernaCreate(cwd)("my-pkg", "--bin", "--es-module");
+    await lernaCreate(cwd)("my-es-cli", "--bin", "--es-module");
     await gitAdd(cwd, ".");
 
     // windows sucks at file permissions
     if (process.platform === "win32") {
-      await gitAdd(cwd, "--chmod=+x", "--", "packages/my-cli/bin/my-cli");
+      await gitAdd(cwd, "--chmod=+x", "--", "packages/my-cli/bin/my-es-cli");
     }
 
     const result = await diffStaged(cwd);
