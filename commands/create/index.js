@@ -127,6 +127,7 @@ class CreateCommand extends Command {
       test: "__tests__",
     });
 
+    this.setFiles();
     this.setHomepage();
     this.setPublishConfig();
     this.setRepository();
@@ -250,6 +251,17 @@ class CreateCommand extends Command {
     }
 
     this.conf.set("dependencies", dependencies);
+  }
+
+  setFiles() {
+    // no need to glob for files we already know
+    const files = [this.outDir];
+
+    if (this.options.bin) {
+      files.unshift("bin");
+    }
+
+    this.conf.set("files", files);
   }
 
   setHomepage() {

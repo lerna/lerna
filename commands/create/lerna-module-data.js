@@ -27,7 +27,6 @@ We exploit this fact to avoid eslint breaking on the reserved word.
 */
 
 const path = require("path");
-const globby = require("globby");
 const validateLicense = require("validate-npm-package-license");
 const validateName = require("validate-npm-package-name");
 const npa = require("npm-package-arg");
@@ -174,21 +173,10 @@ if (!this.package.directories && this.config.get("directories")) {
   exports.directories = this.config.get("directories");
 }
 
-if (!this.package.files) {
+if (!this.package.files && this.config.get("files")) {
   exports.files = cb => {
-    globby("*/", {
-      cwd: this.dirname,
-      onlyDirectories: true,
-      // omit directories that should not be published
-      ignore: ["*test*", "doc*", "example*", "man"],
-    }).then(files => {
-      if (this.config.get("esModule")) {
-        // don't publish src, only publish transpiled output
-        files.splice(files.indexOf("src"), 1, path.posix.dirname(this.config.get("init-main")));
-      }
-
-      return cb(null, files.sort());
-    });
+    // callback MUST yield the thread for some inexplicable reason
+    process.nextTick(cb, null, this.config.get("files"));
   };
 }
 

@@ -38,6 +38,20 @@ describe("CreateCommand", () => {
     }
   });
 
+  it("throws when adding a git dependency", async () => {
+    const cwd = await initRemoteFixture("basic");
+
+    try {
+      await lernaCreate(cwd)(
+        "git-pkg",
+        "--dependencies",
+        "git+ssh://git@notgithub.com/user/foo#semver:^1.2.3"
+      );
+    } catch (err) {
+      expect(err.message).toMatch("Do not use git dependencies");
+    }
+  });
+
   it("creates a stub package", async () => {
     const cwd = await initRemoteFixture("basic");
 
@@ -100,19 +114,5 @@ describe("CreateCommand", () => {
 
     const result = await diffStaged(cwd);
     expect(result).toMatchSnapshot();
-  });
-
-  it("throws when adding a git dependency", async () => {
-    const cwd = await initRemoteFixture("basic");
-
-    try {
-      await lernaCreate(cwd)(
-        "git-pkg",
-        "--dependencies",
-        "git+ssh://git@notgithub.com/user/foo#semver:^1.2.3"
-      );
-    } catch (err) {
-      expect(err.message).toMatch("Do not use git dependencies");
-    }
   });
 });
