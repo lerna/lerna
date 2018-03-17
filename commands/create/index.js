@@ -12,6 +12,7 @@ const npmConf = require("npm-conf");
 
 const Command = require("@lerna/command");
 const ChildProcessUtilities = require("@lerna/child-process");
+const ValidationError = require("@lerna/validation-error");
 const builtinNpmrc = require("./lib/builtin-npmrc");
 const catFile = require("./lib/cat-file");
 
@@ -28,10 +29,6 @@ const DEFAULT_DESCRIPTION = [
 ].join(" / ");
 
 class CreateCommand extends Command {
-  get requireGit() {
-    return false;
-  }
-
   initialize() {
     const {
       bin,
@@ -237,8 +234,8 @@ class CreateCommand extends Command {
           // from registry
           version = `${savePrefix}${this.latestVersion(depName)}`;
         }
-      } else if (depType === "git" || depType === "hosted") {
-        throw new Error("Do not use git dependencies");
+      } else if (depType === "git") {
+        throw new ValidationError("EGIT", "Do not use git dependencies");
       }
 
       dependencies[depName] = version;
