@@ -1,6 +1,8 @@
 "use strict";
 
+const path = require("path");
 const execa = require("execa");
+const slash = require("slash");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
@@ -21,7 +23,7 @@ const initRemoteFixture = (name, remote = "origin", url = "git@github.com:test/t
 const listUntracked = cwd =>
   execa
     .stdout("git", ["ls-files", "--others", "--exclude-standard", "-z"], { cwd })
-    .then(list => list.split("\0"));
+    .then(list => list.split("\0").map(fp => slash(fp)));
 
 describe("CreateCommand", () => {
   it("requires a name argument", async () => {
@@ -96,7 +98,7 @@ describe("CreateCommand", () => {
 
     // windows sucks at file permissions
     if (process.platform === "win32") {
-      await gitAdd(cwd, "--chmod=+x", "--", "packages/my-cli/bin/my-es-cli");
+      await gitAdd(cwd, "--chmod=+x", "--", path.normalize("packages/my-cli/bin/my-es-cli"));
     }
 
     const result = await diffStaged(cwd);
