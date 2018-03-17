@@ -94,6 +94,11 @@ describe("CreateCommand", () => {
     await lernaCreate(cwd)("my-pkg", "--bin", "--es-module");
     await gitAdd(cwd, ".");
 
+    // windows sucks at file permissions
+    if (process.platform === "win32") {
+      await gitAdd(cwd, "--chmod=+x", "--", "packages/my-cli/bin/my-cli");
+    }
+
     const result = await diffStaged(cwd);
     expect(result).toMatchSnapshot();
   });
