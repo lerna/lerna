@@ -26,7 +26,6 @@ Conveniently, all of these parameters are also available on `this`.
 We exploit this fact to avoid eslint breaking on the reserved word.
 */
 
-const fs = require("fs");
 const path = require("path");
 const globby = require("globby");
 const validateLicense = require("validate-npm-package-license");
@@ -171,49 +170,9 @@ if (!this.package.bin && this.config.get("bin")) {
   exports.bin = this.config.get("bin");
 }
 
-exports.directories = cb => {
-  fs.readdir(this.dirname, (er, dirs) => {
-    if (er) {
-      return cb(er);
-    }
-
-    let res = {};
-
-    dirs.forEach(d => {
-      switch (d) {
-        case "example":
-        case "examples":
-          res.example = d;
-          break;
-        case "test":
-        case "tests":
-          res.test = d;
-          break;
-        case "doc":
-        case "docs":
-          res.doc = d;
-          break;
-        case "bin":
-          res.bin = d;
-          break;
-        case "man":
-          res.man = d;
-          break;
-        case "lib":
-          res.lib = d;
-          break;
-        default:
-          break;
-      }
-    });
-
-    if (Object.keys(res).length === 0) {
-      res = undefined;
-    }
-
-    return cb(null, res);
-  });
-};
+if (!this.package.directories && this.config.get("directories")) {
+  exports.directories = this.config.get("directories");
+}
 
 if (!this.package.files) {
   exports.files = cb => {

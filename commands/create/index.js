@@ -66,8 +66,8 @@ class CreateCommand extends Command {
     this.libDir = path.join(this.targetDir, esModule ? "src" : "lib");
     this.libFileName = `${this.dirName}.js`;
 
-    this.testFileName = `${this.dirName}.test.js`;
     this.testDir = path.join(this.targetDir, "__tests__");
+    this.testFileName = `${this.dirName}.test.js`;
 
     this.conf = npmConf({
       description,
@@ -113,11 +113,19 @@ class CreateCommand extends Command {
       this.conf.set("silent", true);
     }
 
+    // save read-package-json the trouble
     if (this.binFileName) {
       this.conf.set("bin", {
-        [this.binFileName]: path.posix.join("bin", this.binFileName),
+        [this.binFileName]: `bin/${this.binFileName}`,
       });
     }
+
+    // setting _both_ pkg.bin and pkg.directories.bin is an error
+    // https://docs.npmjs.com/files/package.json#directoriesbin
+    this.conf.set("directories", {
+      lib: this.outDir,
+      test: "__tests__",
+    });
 
     this.setHomepage();
     this.setPublishConfig();
