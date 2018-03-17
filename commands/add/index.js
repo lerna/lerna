@@ -14,7 +14,7 @@ const getRangeToReference = require("./lib/get-range-to-reference");
 const notSatisfiedMessage = require("./lib/not-satisfied-message");
 
 class AddCommand extends Command {
-  get requireGit() {
+  get requiresGit() {
     return false;
   }
 
