@@ -63,7 +63,7 @@ describe("CreateCommand", () => {
     expect(result).toMatchSnapshot();
   });
 
-  it("creates a stub cli", async () => {
+  it.skip("creates a stub cli", async () => {
     const cwd = await initRemoteFixture("basic");
 
     await lernaCreate(cwd)("my-cli", "--bin");
