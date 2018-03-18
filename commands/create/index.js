@@ -330,18 +330,17 @@ class CreateCommand extends Command {
   }
 
   writeReadme() {
-    const { bin, description } = this.options;
     const readmeContent = dedent`
       # \`${this.pkgName}\`
 
-      > ${description || "TODO: description"}
+      > ${this.options.description || "TODO: description"}
 
       ## Usage
 
       \`\`\`
       ${
         // eslint-disable-next-line no-nested-ternary
-        bin
+        this.options.bin
           ? dedent`
             npm -g i ${this.pkgName}
 
