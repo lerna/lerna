@@ -85,10 +85,12 @@ describe("CreateCommand", () => {
     const cwd = await initRemoteFixture("basic");
 
     await lernaCreate(cwd)("my-cli", "--bin");
-
     await gitAdd(cwd, ".");
-    // windows sucks at file permissions
-    await gitAdd(cwd, "--chmod", "+x", "--", path.normalize("packages/my-cli/bin/my-cli"));
+
+    if (process.platform === "win32") {
+      // windows sucks at file permissions
+      await gitAdd(cwd, "--chmod", "+x", "--", path.normalize("packages/my-cli/bin/my-cli"));
+    }
 
     const result = await diffStaged(cwd);
     expect(result).toMatchSnapshot();
@@ -107,10 +109,12 @@ describe("CreateCommand", () => {
     const cwd = await initRemoteFixture("basic");
 
     await lernaCreate(cwd)("my-es-cli", "--bin", "--es-module");
-
     await gitAdd(cwd, ".");
-    // windows sucks at file permissions
-    await gitAdd(cwd, "--chmod", "+x", "--", path.normalize("packages/my-es-cli/bin/my-es-cli"));
+
+    if (process.platform === "win32") {
+      // windows sucks at file permissions
+      await gitAdd(cwd, "--chmod", "+x", "--", path.normalize("packages/my-es-cli/bin/my-es-cli"));
+    }
 
     const result = await diffStaged(cwd);
     expect(result).toMatchSnapshot();
