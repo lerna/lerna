@@ -1,8 +1,13 @@
 "use strict";
 
+jest.mock("../lib/get-latest-version");
+
 const path = require("path");
 const execa = require("execa");
 const slash = require("slash");
+
+// mocked modules
+const getLatestVersion = require("../lib/get-latest-version");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
@@ -28,6 +33,8 @@ const listUntracked = cwd =>
     .then(list => list.split("\0").map(fp => slash(fp)));
 
 describe("CreateCommand", () => {
+  getLatestVersion.mockReturnValue("1.0.0-mocked");
+
   it("requires a name argument", async () => {
     const cwd = await initFixture("basic");
 
@@ -94,6 +101,9 @@ describe("CreateCommand", () => {
 
     const result = await diffStaged(cwd);
     expect(result).toMatchSnapshot();
+
+    // yargs is automatically added when CLI is stubbed
+    expect(getLatestVersion).lastCalledWith("yargs", expect.objectContaining({ cwd }));
   });
 
   it("creates a stub cli with a custom name", async () => {

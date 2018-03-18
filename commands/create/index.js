@@ -15,6 +15,7 @@ const ChildProcessUtilities = require("@lerna/child-process");
 const ValidationError = require("@lerna/validation-error");
 const builtinNpmrc = require("./lib/builtin-npmrc");
 const catFile = require("./lib/cat-file");
+const getLatestVersion = require("./lib/get-latest-version");
 
 const LERNA_MODULE_DATA = path.join(__dirname, "lerna-module-data.js");
 const DEFAULT_DESCRIPTION = [
@@ -175,7 +176,7 @@ class CreateCommand extends Command {
   }
 
   latestVersion(depName) {
-    return ChildProcessUtilities.execSync("npm", ["info", depName, "version"], this.execOpts);
+    return getLatestVersion(depName, this.execOpts);
   }
 
   collectExternalVersions() {

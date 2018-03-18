@@ -137,7 +137,7 @@ index SHA..SHA
 +    "test": "echo \\"Error: run tests from root\\" && exit 1"
 +  },
 +  "dependencies": {
-+    "yargs": "^11.0.0"
++    "yargs": "^1.0.0-mocked"
 +  },
 +  "bugs": {
 +    "url": "https://github.com/test/test/issues"
@@ -235,7 +235,7 @@ index SHA..SHA
 +    "test": "echo \\"Error: run tests from root\\" && exit 1"
 +  },
 +  "dependencies": {
-+    "yargs": "^11.0.0"
++    "yargs": "^1.0.0-mocked"
 +  },
 +  "bugs": {
 +    "url": "https://github.com/test/test/issues"
