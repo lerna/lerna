@@ -90,7 +90,11 @@ class BootstrapCommand extends Command {
       return this.installRootPackageOnly();
     }
 
-    const tasks = [() => this.installExternalDependencies(), () => this.symlinkPackages()];
+    const tasks = [
+      () => this.getDependenciesToInstall(),
+      result => this.installExternalDependencies(result),
+      () => this.symlinkPackages(),
+    ];
 
     if (!this.options.ignoreScripts) {
       tasks.unshift(() => this.preinstallPackages());
@@ -203,7 +207,7 @@ class BootstrapCommand extends Command {
    * Return a object of root and leaf dependencies to install
    * @returns {Object}
    */
-  getDependenciesToInstall(tracker) {
+  getDependenciesToInstall() {
     // Configuration for what packages to hoist may be in lerna.json or it may
     // come in as command line options.
     const { hoist, nohoist } = this.options;
@@ -230,7 +234,7 @@ class BootstrapCommand extends Command {
         }
       }
 
-      tracker.verbose("hoist", "using globs %j", hoisting);
+      this.logger.verbose("hoist", "using globs %j", hoisting);
     }
 
     // This will contain entries for each hoistable dependency.
@@ -290,6 +294,9 @@ class BootstrapCommand extends Command {
       }
     }
 
+    const rootActions = [];
+    const leafActions = [];
+
     // determine where each dependency will be installed
     for (const [externalName, externalDependents] of depsToInstall) {
       let rootVersion;
@@ -305,7 +312,7 @@ class BootstrapCommand extends Command {
         rootVersion = rootExternalVersions.get(externalName) || commonVersion;
 
         if (rootVersion !== commonVersion) {
-          tracker.warn(
+          this.logger.warn(
             "EHOIST_ROOT_VERSION",
             `The repository root depends on ${externalName}@${rootVersion}, ` +
               `which differs from the more common ${externalName}@${commonVersion}.`
@@ -322,19 +329,23 @@ class BootstrapCommand extends Command {
         // Install the best version we can in the repo root.
         // Even if it's already installed there we still need to make sure any
         // binaries are linked to the packages that depend on them.
-        rootSet.add({
-          name: externalName,
-          dependents,
-          dependency: `${externalName}@${rootVersion}`,
-          isSatisfied: hasDependencyInstalled(rootPkg, externalName, rootVersion),
-        });
+        rootActions.push(() =>
+          hasDependencyInstalled(rootPkg, externalName, rootVersion).then(isSatisfied => {
+            rootSet.add({
+              name: externalName,
+              dependents,
+              dependency: `${externalName}@${rootVersion}`,
+              isSatisfied,
+            });
+          })
+        );
       }
 
       // Add less common versions to package installs.
       for (const [leafVersion, leafDependents] of externalDependents) {
         for (const leafName of leafDependents) {
           if (rootVersion) {
-            tracker.warn(
+            this.logger.warn(
               "EHOIST_PKG_VERSION",
               `"${leafName}" package depends on ${externalName}@${leafVersion}, ` +
                 `which differs from the hoisted ${externalName}@${rootVersion}.`
@@ -345,28 +356,32 @@ class BootstrapCommand extends Command {
           const leafRecord = leaves.get(leafNode) || leaves.set(leafNode, new Set()).get(leafNode);
 
           // only install dependency if it's not already installed
-          leafRecord.add({
-            dependency: `${externalName}@${leafVersion}`,
-            isSatisfied: hasDependencyInstalled(leafNode.pkg, externalName, leafVersion),
-          });
+          leafActions.push(() =>
+            hasDependencyInstalled(leafNode.pkg, externalName, leafVersion).then(isSatisfied => {
+              leafRecord.add({
+                dependency: `${externalName}@${leafVersion}`,
+                isSatisfied,
+              });
+            })
+          );
         }
       }
     }
 
-    tracker.silly("root dependencies", JSON.stringify(rootSet, null, 2));
-    tracker.silly("leaf dependencies", JSON.stringify(leaves, null, 2));
+    return pMapSeries([...rootActions, ...leafActions], el => el()).then(() => {
+      this.logger.silly("root dependencies", JSON.stringify(rootSet, null, 2));
+      this.logger.silly("leaf dependencies", JSON.stringify(leaves, null, 2));
 
-    return { rootSet, leaves };
+      return { rootSet, leaves };
+    });
   }
 
   /**
    * Install external dependencies for all packages
    * @returns {Promise}
    */
-  installExternalDependencies() {
+  installExternalDependencies({ leaves, rootSet }) {
     const tracker = this.logger.newItem("install dependencies");
-
-    const { leaves, rootSet } = this.getDependenciesToInstall(tracker);
     const rootPkg = this.repository.package;
     const actions = [];
 
