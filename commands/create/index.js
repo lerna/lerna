@@ -9,6 +9,7 @@ const dedent = require("dedent");
 const initPackageJson = require("pify")(require("init-package-json"));
 const npa = require("npm-package-arg");
 const npmConf = require("npm-conf");
+const slash = require("slash");
 
 const Command = require("@lerna/command");
 const ChildProcessUtilities = require("@lerna/child-process");
@@ -205,12 +206,11 @@ class CreateCommand extends Command {
   }
 
   resolveRelative(depNode) {
-    // normalizing because windows :P
-    const posixTarget = path.posix.normalize(this.targetDir);
-    const depLocation = path.posix.normalize(depNode.location);
-    const relPath = path.posix.relative(posixTarget, depLocation);
+    // a relative file: specifier is _always_ posix
+    const relPath = path.relative(this.targetDir, depNode.location);
+    const spec = npa.resolve(depNode.name, relPath, this.targetDir);
 
-    return npa.resolve(depNode.name, relPath, posixTarget).saveSpec;
+    return slash(spec.saveSpec);
   }
 
   setDependencies() {
