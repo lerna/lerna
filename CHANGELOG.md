@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.0.0-beta.5"></a>
+# [3.0.0-beta.5](https://github.com/lerna/lerna/compare/v3.0.0-beta.4...v3.0.0-beta.5) (2018-03-19)
+
+
+### Bug Fixes
+
+* **bootstrap:** Move --hoist/--nohoist coerce into class ([8877aa0](https://github.com/lerna/lerna/commit/8877aa0)), closes [#1337](https://github.com/lerna/lerna/issues/1337)
+
+
+
+
+
 <a name="3.0.0-beta.4"></a>
 # [3.0.0-beta.4](https://github.com/lerna/lerna/compare/v3.0.0-beta.3...v3.0.0-beta.4) (2018-03-19)
 
