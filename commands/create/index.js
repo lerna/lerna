@@ -204,6 +204,15 @@ class CreateCommand extends Command {
     }
   }
 
+  resolveRelative(depNode) {
+    // normalizing because windows :P
+    const posixTarget = path.posix.normalize(this.targetDir);
+    const depLocation = path.posix.normalize(depNode.location);
+    const relPath = path.posix.relative(posixTarget, depLocation);
+
+    return npa.resolve(depNode.name, relPath, posixTarget).saveSpec;
+  }
+
   setDependencies() {
     const inputs = new Set(this.options.dependencies);
 
@@ -233,8 +242,7 @@ class CreateCommand extends Command {
 
         if (localRelative) {
           // a local `file:../foo` specifier
-          const relPath = path.posix.relative(this.targetDir, depNode.location);
-          version = npa.resolve(depName, relPath, this.targetDir).saveSpec;
+          version = this.resolveRelative(depNode);
         } else {
           // yarn workspace or lerna packages config
           version = `${savePrefix}${depNode.version}`;
