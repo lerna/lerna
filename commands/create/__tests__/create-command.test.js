@@ -158,4 +158,35 @@ describe("CreateCommand", () => {
     const pkg = await fs.readJSON(path.join(cwd, "packages/git-fallback/package.json"));
     expect(pkg.author).toBe(`${name} <${email}>`);
   });
+
+  it("overrides init-license with --license", async () => {
+    const cwd = await initRemoteFixture("basic");
+
+    await lernaCreate(cwd)("license-override", "--license", "MIT");
+
+    const pkg = await fs.readJSON(path.join(cwd, "packages/license-override/package.json"));
+    expect(pkg).toHaveProperty("license", "MIT");
+  });
+
+  it("sets private:true with --private", async () => {
+    const cwd = await initRemoteFixture("basic");
+
+    await lernaCreate(cwd)("private-pkg", "--private");
+
+    const pkg = await fs.readJSON(path.join(cwd, "packages/private-pkg/package.json"));
+    expect(pkg).toHaveProperty("private", true);
+  });
+
+  it("defaults to npm_config_init_version when independent", async () => {
+    const cwd = await initRemoteFixture("independent");
+
+    process.env.npm_config_init_version = "100.0.0";
+
+    await lernaCreate(cwd)("indy-pkg", "--private");
+
+    delete process.env.npm_config_init_version;
+
+    const pkg = await fs.readJSON(path.join(cwd, "packages/indy-pkg/package.json"));
+    expect(pkg).toHaveProperty("version", "100.0.0");
+  });
 });
