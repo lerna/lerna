@@ -1,0 +1,8 @@
+{
+  "name": "sibling-pkg",
+  "version": "2.0.0",
+  "dependencies": {
+    "cousin-pkg": "^1.2.3",
+    "pify": "^2.3.0"
+  }
+}

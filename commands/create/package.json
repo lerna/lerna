@@ -1,8 +1,7 @@
 {
   "name": "@lerna/create",
   "version": "3.0.0-beta.0",
-  "private": true,
-  "description": "TODO",
+  "description": "Create a new lerna-managed package",
   "keywords": [
     "lerna",
     "command"
@@ -15,7 +14,8 @@
   },
   "files": [
     "command.js",
-    "index.js"
+    "index.js",
+    "lib"
   ],
   "main": "index.js",
   "engines": {
@@ -30,5 +30,22 @@
   },
   "scripts": {
     "test": "echo \"Run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@lerna/child-process": "file:../../core/child-process",
+    "@lerna/command": "file:../../core/command",
+    "@lerna/validation-error": "file:../../core/validation-error",
+    "camelcase": "^4.1.0",
+    "dedent": "^0.7.0",
+    "fs-extra": "^5.0.0",
+    "globby": "^8.0.1",
+    "init-package-json": "^1.10.3",
+    "npm-conf": "^1.1.3",
+    "npm-package-arg": "^6.0.0",
+    "pify": "^3.0.0",
+    "semver": "^5.5.0",
+    "slash": "^1.0.0",
+    "validate-npm-package-license": "^3.0.3",
+    "validate-npm-package-name": "^3.0.0"
   }
 }

@@ -10,6 +10,7 @@ const addCmd = require("@lerna/add/command");
 const bootstrapCmd = require("@lerna/bootstrap/command");
 const changedCmd = require("@lerna/changed/command");
 const cleanCmd = require("@lerna/clean/command");
+const createCmd = require("@lerna/create/command");
 const diffCmd = require("@lerna/diff/command");
 const execCmd = require("@lerna/exec/command");
 const importCmd = require("@lerna/import/command");
@@ -59,6 +60,7 @@ function lernaCLI(argv, cwd) {
     .command(bootstrapCmd)
     .command(changedCmd)
     .command(cleanCmd)
+    .command(createCmd)
     .command(diffCmd)
     .command(execCmd)
     .command(importCmd)

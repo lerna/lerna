@@ -1,0 +1,9 @@
+{
+  "yes": true,
+  "loglevel": "silent",
+  "packages": [
+    "modules/*",
+    "packages/*"
+  ],
+  "version": "1.2.3"
+}

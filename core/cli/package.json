@@ -37,6 +37,7 @@
     "@lerna/bootstrap": "file:../../commands/bootstrap",
     "@lerna/changed": "file:../../commands/changed",
     "@lerna/clean": "file:../../commands/clean",
+    "@lerna/create": "file:../../commands/create",
     "@lerna/diff": "file:../../commands/diff",
     "@lerna/exec": "file:../../commands/exec",
     "@lerna/global-options": "file:../global-options",
