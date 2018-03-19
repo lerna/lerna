@@ -189,7 +189,7 @@ describe("CreateCommand", () => {
 
     process.env.npm_config_init_version = "100.0.0";
 
-    await lernaCreate(cwd)("indy-pkg", "--private");
+    await lernaCreate(cwd)("indy-pkg");
 
     delete process.env.npm_config_init_version;
 
@@ -203,5 +203,61 @@ describe("CreateCommand", () => {
 
     const result = await listUntracked(cwd);
     expect(result).toContain("modules/custom-pkg/package.json");
+  });
+
+  it("adds local dependencies", async () => {
+    const cwd = await initRemoteFixture("independent");
+
+    await lernaCreate(cwd)("foo-pkg", "--dependencies", "sibling-pkg");
+
+    expect(await manifestCreated(cwd)).toHaveProperty("dependencies", {
+      "sibling-pkg": "^2.0.0",
+    });
+  });
+
+  it("adds local dependency as relative file specifier when others exist", async () => {
+    const cwd = await initRemoteFixture("relative-file-spec");
+
+    await lernaCreate(cwd)("foo-pkg", "--dependencies", "sibling-pkg");
+
+    expect(await manifestCreated(cwd)).toHaveProperty("dependencies", {
+      "sibling-pkg": "file:../sibling-pkg",
+    });
+  });
+
+  it("reuses existing external dependency version", async () => {
+    const cwd = await initRemoteFixture("independent");
+
+    await lernaCreate(cwd)("foo-pkg", "--dependencies", "pify");
+
+    expect(await manifestCreated(cwd)).toHaveProperty("dependencies", {
+      pify: "^2.3.0",
+    });
+  });
+
+  it("supports external dependency version specifier", async () => {
+    const cwd = await initRemoteFixture("independent");
+
+    await lernaCreate(cwd)("foo-pkg", "--dependencies", "bar@1.0.0", "baz@^2.0.0", "qux@~3.0.0");
+
+    expect(await manifestCreated(cwd)).toHaveProperty("dependencies", {
+      bar: "1.0.0",
+      baz: "^2.0.0",
+      qux: "~3.0.0",
+    });
+  });
+
+  it("respects npm_config_save_exact", async () => {
+    const cwd = await initRemoteFixture("independent");
+
+    process.env.npm_config_save_exact = "true";
+
+    await lernaCreate(cwd)("foo-pkg", "--dependencies", "sibling-pkg");
+
+    delete process.env.npm_config_save_exact;
+
+    expect(await manifestCreated(cwd)).toHaveProperty("dependencies", {
+      "sibling-pkg": "2.0.0",
+    });
   });
 });

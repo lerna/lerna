@@ -225,7 +225,7 @@ class CreateCommand extends Command {
       const depType = spec.type;
       const depName = spec.name;
 
-      let version = spec.rawSpec;
+      let version;
 
       if (this.packageGraph.has(depName)) {
         // sibling dependency
@@ -250,6 +250,9 @@ class CreateCommand extends Command {
         }
       } else if (depType === "git") {
         throw new ValidationError("EGIT", "Do not use git dependencies");
+      } else {
+        // TODO: resolve this if it's weird? (foo@1, bar@^2, etc)
+        version = spec.rawSpec;
       }
 
       dependencies[depName] = version;
