@@ -233,7 +233,7 @@ class CreateCommand extends Command {
 
         if (localRelative) {
           // a local `file:../foo` specifier
-          const relPath = path.relative(this.targetDir, depNode.location);
+          const relPath = path.posix.relative(this.targetDir, depNode.location);
           version = npa.resolve(depName, relPath, this.targetDir).saveSpec;
         } else {
           // yarn workspace or lerna packages config
