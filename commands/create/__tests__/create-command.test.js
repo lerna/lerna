@@ -260,4 +260,53 @@ describe("CreateCommand", () => {
       "sibling-pkg": "2.0.0",
     });
   });
+
+  it("defaults homepage to a subpath of root homepage when it exists", async () => {
+    const cwd = await initRemoteFixture("independent");
+    const rootManifest = path.join(cwd, "package.json");
+    const json = await fs.readJSON(rootManifest);
+
+    json.homepage = "https://github.com/test/test";
+    await fs.writeJSON(rootManifest, json);
+
+    await lernaCreate(cwd)("foo-pkg");
+
+    expect(await manifestCreated(cwd)).toHaveProperty(
+      "homepage",
+      "https://github.com/test/test/tree/master/packages/foo-pkg#readme"
+    );
+  });
+
+  it("appends to pathname of non-github root homepage", async () => {
+    const cwd = await initRemoteFixture("independent");
+    const rootManifest = path.join(cwd, "package.json");
+    const json = await fs.readJSON(rootManifest);
+
+    json.homepage = "https://bitbucket.com/test/test";
+    await fs.writeJSON(rootManifest, json);
+
+    await lernaCreate(cwd)("foo-pkg");
+
+    expect(await manifestCreated(cwd)).toHaveProperty(
+      "homepage",
+      // no doubt wrong, but just illustrative of condition
+      "https://bitbucket.com/test/test/packages/foo-pkg"
+    );
+  });
+
+  it("does not mutate explicit --homepage pathname", async () => {
+    const cwd = await initRemoteFixture("basic");
+
+    await lernaCreate(cwd)("foo-pkg", "--homepage", "http://google.com/");
+
+    expect(await manifestCreated(cwd)).toHaveProperty("homepage", "http://google.com/");
+  });
+
+  it("defaults schemeless homepage to http://", async () => {
+    const cwd = await initRemoteFixture("basic");
+
+    await lernaCreate(cwd)("foo-pkg", "--homepage", "google.com");
+
+    expect(await manifestCreated(cwd)).toHaveProperty("homepage", "http://google.com/");
+  });
 });
