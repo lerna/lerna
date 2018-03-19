@@ -309,4 +309,35 @@ describe("CreateCommand", () => {
 
     expect(await manifestCreated(cwd)).toHaveProperty("homepage", "http://google.com/");
   });
+
+  it("overrides default publishConfig.access with --access=restricted", async () => {
+    const cwd = await initRemoteFixture("basic");
+
+    await lernaCreate(cwd)("@foo/pkg", "--access", "restricted");
+
+    expect(await manifestCreated(cwd)).toHaveProperty("publishConfig", {
+      access: "restricted",
+    });
+  });
+
+  it("sets non-public publishConfig.registry with --registry", async () => {
+    const cwd = await initRemoteFixture("basic");
+
+    await lernaCreate(cwd)("@foo/pkg", "--registry", "http://my-private-registry.com/");
+
+    expect(await manifestCreated(cwd)).toHaveProperty("publishConfig", {
+      registry: "http://my-private-registry.com/",
+    });
+  });
+
+  it("sets publishConfig.tag with --tag", async () => {
+    const cwd = await initRemoteFixture("basic");
+
+    await lernaCreate(cwd)("@foo/pkg", "--tag", "next");
+
+    expect(await manifestCreated(cwd)).toHaveProperty("publishConfig", {
+      access: "public",
+      tag: "next",
+    });
+  });
 });
