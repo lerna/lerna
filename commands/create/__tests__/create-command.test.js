@@ -2,6 +2,7 @@
 
 jest.mock("../lib/get-latest-version");
 
+const fs = require("fs-extra");
 const path = require("path");
 const execa = require("execa");
 const slash = require("slash");
@@ -34,6 +35,16 @@ const listUntracked = cwd =>
 
 describe("CreateCommand", () => {
   getLatestVersion.mockReturnValue("1.0.0-mocked");
+
+  // preserve value from @lerna-test/set-npm-userconfig
+  const userconfig = process.env.npm_config_userconfig;
+
+  afterEach(() => {
+    // some tests delete or mangle this
+    if (process.env.npm_config_userconfig !== userconfig) {
+      process.env.npm_config_userconfig = userconfig;
+    }
+  });
 
   it("requires a name argument", async () => {
     const cwd = await initFixture("basic");
@@ -128,5 +139,23 @@ describe("CreateCommand", () => {
 
     const result = await diffStaged(cwd);
     expect(result).toMatchSnapshot();
+  });
+
+  it("defaults user name and email to git config", async () => {
+    const cwd = await initRemoteFixture("basic");
+    const name = "Git McGitterson";
+    const email = "test@git-fallback.com";
+
+    // overwrite test defaults so it's really obvious
+    await execa("git", ["config", "user.name", name], { cwd });
+    await execa("git", ["config", "user.email", email], { cwd });
+
+    // ignore test defaults as well as ~/.npmrc
+    process.env.npm_config_userconfig = "/dev/null";
+
+    await lernaCreate(cwd)("git-fallback");
+
+    const pkg = await fs.readJSON(path.join(cwd, "packages/git-fallback/package.json"));
+    expect(pkg.author).toBe(`${name} <${email}>`);
   });
 });
