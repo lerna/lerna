@@ -21,6 +21,7 @@
       "allowBranch": "master",
       "cdVersion": "prerelease",
       "conventionalCommits": true,
+      "gitRemote": "upstream",
       "preid": "beta",
       "message": "chore(release): publish %s"
     }
