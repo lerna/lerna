@@ -136,6 +136,18 @@ describe("BootstrapCommand", () => {
       expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
       expect(removedDirectories(testDir)).toMatchSnapshot();
     });
+
+    it("should not hoist when disallowed from lerna.json", async () => {
+      const testDir = await initFixture("basic");
+
+      await updateLernaConfig(testDir, {
+        hoist: true,
+        nohoist: ["@test/package-1"],
+      });
+      await lernaBootstrap(testDir)();
+
+      expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
+    });
   });
 
   describe("with --npm-client and --hoist", () => {

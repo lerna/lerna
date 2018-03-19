@@ -21,32 +21,12 @@ exports.builder = yargs => {
         group: "Command Options:",
         describe: "Install external dependencies matching [glob] to the repo root",
         defaultDescription: "'**'",
-        coerce: arg => {
-          // `--hoist` is equivalent to `--hoist=**`.
-          if (arg === true) {
-            return ["**"];
-          }
-
-          if (arg && !Array.isArray(arg)) {
-            return [arg];
-          }
-
-          return arg;
-        },
       },
       nohoist: {
         group: "Command Options:",
         describe: "Don't hoist external dependencies matching [glob] to the repo root",
         type: "string",
         requiresArg: true,
-        coerce: arg => {
-          // negate any globs passed
-          if (!Array.isArray(arg)) {
-            return [`!${arg}`];
-          }
-
-          return arg.map(str => `!${str}`);
-        },
       },
       mutex: {
         hidden: true,

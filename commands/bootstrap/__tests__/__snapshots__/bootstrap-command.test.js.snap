@@ -144,6 +144,21 @@ Array [
 ]
 `;
 
+exports[`BootstrapCommand with hoisting should not hoist when disallowed from lerna.json 1`] = `
+Object {
+  "ROOT": Array [
+    "bar@^2.0.0",
+    "foo@^1.0.0",
+  ],
+  "packages/package-3": Array [
+    "foo@0.1.12",
+  ],
+  "packages/package-4": Array [
+    "@test/package-1@^0.0.0",
+  ],
+}
+`;
+
 exports[`BootstrapCommand with local package dependencies should bootstrap packages 1`] = `
 Object {
   "packages/package-1": Array [
