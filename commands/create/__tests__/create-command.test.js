@@ -189,4 +189,13 @@ describe("CreateCommand", () => {
     const pkg = await fs.readJSON(path.join(cwd, "packages/indy-pkg/package.json"));
     expect(pkg).toHaveProperty("version", "100.0.0");
   });
+
+  it("allows choice of package location", async () => {
+    const cwd = await initRemoteFixture("custom-location");
+
+    await lernaCreate(cwd)("custom-pkg", "modules");
+
+    const result = await listUntracked(cwd);
+    expect(result).toContain("modules/custom-pkg/package.json");
+  });
 });
