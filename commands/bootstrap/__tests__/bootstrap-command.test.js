@@ -17,6 +17,7 @@ const createSymlink = require("@lerna/create-symlink");
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const normalizeRelativeDir = require("@lerna-test/normalize-relative-dir");
+const updateLernaConfig = require("@lerna-test/update-lerna-config");
 
 // file under test
 const lernaBootstrap = require("@lerna-test/command-runner")(require("../command"));
@@ -282,7 +283,10 @@ describe("BootstrapCommand", () => {
     it("hoists appropriately", async () => {
       const testDir = await initFixture("cold");
 
-      await lernaBootstrap(testDir)("--hoist");
+      await updateLernaConfig(testDir, {
+        hoist: true,
+      });
+      await lernaBootstrap(testDir)();
 
       expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
       expect(symlinkedDirectories(testDir)).toMatchSnapshot();
@@ -301,7 +305,15 @@ describe("BootstrapCommand", () => {
     it("hoists appropriately", async () => {
       const testDir = await initFixture("warm");
 
-      await lernaBootstrap(testDir)("--hoist");
+      await updateLernaConfig(testDir, {
+        command: {
+          // "commands" also supported
+          bootstrap: {
+            hoist: true,
+          },
+        },
+      });
+      await lernaBootstrap(testDir)();
 
       expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
       expect(symlinkedDirectories(testDir)).toMatchSnapshot();

@@ -212,7 +212,19 @@ class BootstrapCommand extends Command {
     let hoisting;
 
     if (hoist) {
-      hoisting = [].concat(hoist, nohoist || []);
+      if (hoist === true) {
+        // lerna.json `hoist: true`
+        hoisting = ["**"];
+      } else {
+        // `--hoist ...` or lerna.json `hoist: [...]`
+        hoisting = [].concat(hoist);
+      }
+
+      if (nohoist) {
+        // `--nohoist ...` or lerna.json `nohoist: [...]`
+        hoisting = hoisting.concat(nohoist);
+      }
+
       tracker.verbose("hoist", "using globs %j", hoisting);
     }
 
