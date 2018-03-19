@@ -28,10 +28,20 @@ const diffStaged = (cwd, ...args) => execa.stdout("git", ["diff", "--cached", ..
 
 const initRemoteFixture = fixtureName => initFixture(fixtureName).then(cwd => addRemote(cwd).then(() => cwd));
 
-const listUntracked = cwd =>
-  execa
-    .stdout("git", ["ls-files", "--others", "--exclude-standard", "-z"], { cwd })
-    .then(list => list.split("\0").map(fp => slash(fp)));
+const gitLsOthers = (cwd, ...args) =>
+  execa.stdout("git", ["ls-files", "--others", "--exclude-standard", ...args], { cwd });
+
+const listUntracked = async cwd => {
+  const list = await gitLsOthers(cwd, "-z");
+
+  return list.split("\0").map(fp => slash(fp));
+};
+
+const manifestCreated = async cwd => {
+  const file = await gitLsOthers(cwd, "--", "**/package.json");
+
+  return fs.readJSON(path.join(cwd, file));
+};
 
 describe("CreateCommand", () => {
   getLatestVersion.mockReturnValue("1.0.0-mocked");
@@ -155,8 +165,7 @@ describe("CreateCommand", () => {
 
     await lernaCreate(cwd)("git-fallback");
 
-    const pkg = await fs.readJSON(path.join(cwd, "packages/git-fallback/package.json"));
-    expect(pkg.author).toBe(`${name} <${email}>`);
+    expect(await manifestCreated(cwd)).toHaveProperty("author", `${name} <${email}>`);
   });
 
   it("overrides init-license with --license", async () => {
@@ -164,8 +173,7 @@ describe("CreateCommand", () => {
 
     await lernaCreate(cwd)("license-override", "--license", "MIT");
 
-    const pkg = await fs.readJSON(path.join(cwd, "packages/license-override/package.json"));
-    expect(pkg).toHaveProperty("license", "MIT");
+    expect(await manifestCreated(cwd)).toHaveProperty("license", "MIT");
   });
 
   it("sets private:true with --private", async () => {
@@ -173,8 +181,7 @@ describe("CreateCommand", () => {
 
     await lernaCreate(cwd)("private-pkg", "--private");
 
-    const pkg = await fs.readJSON(path.join(cwd, "packages/private-pkg/package.json"));
-    expect(pkg).toHaveProperty("private", true);
+    expect(await manifestCreated(cwd)).toHaveProperty("private", true);
   });
 
   it("defaults to npm_config_init_version when independent", async () => {
@@ -186,8 +193,7 @@ describe("CreateCommand", () => {
 
     delete process.env.npm_config_init_version;
 
-    const pkg = await fs.readJSON(path.join(cwd, "packages/indy-pkg/package.json"));
-    expect(pkg).toHaveProperty("version", "100.0.0");
+    expect(await manifestCreated(cwd)).toHaveProperty("version", "100.0.0");
   });
 
   it("allows choice of package location", async () => {
