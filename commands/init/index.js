@@ -1,6 +1,7 @@
 "use strict";
 
 const fs = require("fs-extra");
+const pMap = require("p-map");
 const writeJsonFile = require("write-json-file");
 const writePkg = require("write-pkg");
 
@@ -34,23 +35,37 @@ class InitCommand extends Command {
   }
 
   execute() {
-    this.ensurePackageJSON();
-    this.ensureLernaJson();
-    this.ensurePackagesDir();
-    this.logger.success("", "Initialized Lerna files");
+    let chain = Promise.resolve();
+
+    chain = chain.then(() => this.ensurePackageJSON());
+    chain = chain.then(() => this.ensureLernaJson());
+    chain = chain.then(() => this.ensurePackagesDir());
+
+    return chain.then(() => {
+      this.logger.success("", "Initialized Lerna files");
+    });
   }
 
   ensurePackageJSON() {
+    const { packageJsonLocation } = this.repository;
     let { packageJson } = this.repository;
+    let chain = Promise.resolve();
 
     if (!packageJson) {
-      packageJson = {};
+      packageJson = {
+        name: "root",
+        private: true,
+      };
       this.logger.info("", "Creating package.json");
+
+      // initialize with default indentation so write-pkg doesn't screw it up with tabs
+      chain = chain.then(() => writeJsonFile(packageJsonLocation, packageJson, { indent: 2 }));
     } else {
       this.logger.info("", "Updating package.json");
     }
 
     let targetDependencies;
+
     if (packageJson.dependencies && packageJson.dependencies.lerna) {
       // lerna is a dependency in the current project
       targetDependencies = packageJson.dependencies;
@@ -59,17 +74,20 @@ class InitCommand extends Command {
       if (!packageJson.devDependencies) {
         packageJson.devDependencies = {};
       }
+
       targetDependencies = packageJson.devDependencies;
     }
 
     targetDependencies.lerna = this.exact ? this.lernaVersion : `^${this.lernaVersion}`;
 
-    writePkg.sync(this.repository.packageJsonLocation, packageJson);
+    chain = chain.then(() => writePkg(packageJsonLocation, packageJson));
+
+    return chain;
   }
 
   ensureLernaJson() {
     // lernaJson already defaulted to empty object in Repository constructor
-    const { lernaJson, version: repositoryVersion } = this.repository;
+    const { lernaJson, lernaJsonLocation, version: repositoryVersion } = this.repository;
 
     let version;
 
@@ -81,7 +99,7 @@ class InitCommand extends Command {
       version = "0.0.0";
     }
 
-    if (!this.repository.version) {
+    if (!repositoryVersion) {
       this.logger.info("", "Creating lerna.json");
     } else {
       this.logger.info("", "Updating lerna.json");
@@ -102,12 +120,13 @@ class InitCommand extends Command {
       initConfig.exact = true;
     }
 
-    writeJsonFile.sync(this.repository.lernaJsonLocation, lernaJson, { indent: 2 });
+    return writeJsonFile(lernaJsonLocation, lernaJson, { indent: 2, detectIndent: true });
   }
 
   ensurePackagesDir() {
     this.logger.info("", "Creating packages directory");
-    this.repository.packageParentDirs.map(dir => fs.mkdirpSync(dir));
+
+    return pMap(this.repository.packageParentDirs, dir => fs.mkdirp(dir));
   }
 }
 
