@@ -47,7 +47,7 @@ describe("core-command", () => {
 
   describe(".lernaVersion", () => {
     it("should be added to the instance", async () => {
-      expect(testFactory().lernaVersion).toEqual(LERNA_VERSION);
+      expect(testFactory({ lernaVersion: "__TEST__" }).lernaVersion).toBe("__TEST__");
     });
   });
 

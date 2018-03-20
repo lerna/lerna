@@ -18,7 +18,6 @@ const logPackageError = require("./lib/log-package-error");
 const warnIfHanging = require("./lib/warn-if-hanging");
 
 const DEFAULT_CONCURRENCY = 4;
-const LERNA_VERSION = require("./package.json").version; // FIXME: this is wrong now
 
 class Command {
   constructor(argv) {
@@ -28,7 +27,7 @@ class Command {
     this._argv = argv;
     log.silly("argv", argv);
 
-    this.lernaVersion = LERNA_VERSION;
+    this.lernaVersion = argv.lernaVersion;
     log.info("version", this.lernaVersion);
 
     // "FooCommand" => "foo"
