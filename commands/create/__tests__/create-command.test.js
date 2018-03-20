@@ -340,4 +340,12 @@ describe("CreateCommand", () => {
       tag: "next",
     });
   });
+
+  it("skips repository field when git remote is missing", async () => {
+    const cwd = await initFixture("basic");
+
+    await lernaCreate(cwd)("a-pkg");
+
+    expect(await manifestCreated(cwd)).not.toHaveProperty("repository");
+  });
 });

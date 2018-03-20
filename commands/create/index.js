@@ -335,10 +335,13 @@ class CreateCommand extends Command {
   }
 
   setRepository() {
-    this.conf.set(
-      "repository",
-      ChildProcessUtilities.execSync("git", ["remote", "get-url", "origin"], this.execOpts)
-    );
+    try {
+      const url = ChildProcessUtilities.execSync("git", ["remote", "get-url", "origin"], this.execOpts);
+
+      this.conf.set("repository", url);
+    } catch (err) {
+      this.logger.warn("ENOREMOTE", "No git remote found, skipping repository property");
+    }
   }
 
   writeReadme() {
