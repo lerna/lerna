@@ -2,7 +2,6 @@
 
 const dedent = require("dedent");
 const getPort = require("get-port");
-const npmConf = require("npm-conf");
 const path = require("path");
 const pFinally = require("p-finally");
 const pMap = require("p-map");
@@ -11,6 +10,7 @@ const pWaterfall = require("p-waterfall");
 
 const Command = require("@lerna/command");
 const rimrafDir = require("@lerna/rimraf-dir");
+const npmConf = require("@lerna/npm-conf");
 const npmInstall = require("@lerna/npm-install");
 const runLifecycle = require("@lerna/run-lifecycle");
 const batchPackages = require("@lerna/batch-packages");
