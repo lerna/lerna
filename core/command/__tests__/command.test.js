@@ -18,8 +18,6 @@ const gitCommit = require("@lerna-test/git-commit");
 const gitTag = require("@lerna-test/git-tag");
 const updateLernaConfig = require("@lerna-test/update-lerna-config");
 
-const LERNA_VERSION = require("../package.json").version;
-
 // file under test
 const Command = require("..");
 
