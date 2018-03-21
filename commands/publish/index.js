@@ -583,6 +583,11 @@ class PublishCommand extends Command {
     // if we skip temp tags we should tag with the proper value immediately
     const distTag = this.options.tempTag ? "lerna-temp" : this.getDistTag();
 
+    const rootPkg = this.repository.package;
+    this.runPackageLifecycle(rootPkg, "prepublish");
+    this.runPackageLifecycle(rootPkg, "prepare");
+    this.runPackageLifecycle(rootPkg, "prepublishOnly");
+
     this.updates.forEach(({ pkg }) => {
       this.execScript(pkg, "prepublish");
       this.runPackageLifecycle(pkg, "prepublish");
@@ -604,9 +609,10 @@ class PublishCommand extends Command {
       });
     };
 
-    return pFinally(runParallelBatches(this.batchedPackages, this.concurrency, mapPackage), () =>
-      tracker.finish()
-    );
+    return pFinally(runParallelBatches(this.batchedPackages, this.concurrency, mapPackage), () => {
+      this.runPackageLifecycle(rootPkg, "postpublish");
+      return tracker.finish();
+    });
   }
 
   npmUpdateAsLatest() {

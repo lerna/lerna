@@ -1114,7 +1114,7 @@ describe("PublishCommand", () => {
       const testDir = await initFixture("lifecycle");
       await lernaPublish(testDir)();
 
-      expect(runLifecycle).toHaveBeenCalledTimes(10);
+      expect(runLifecycle).toHaveBeenCalledTimes(14);
 
       ["preversion", "version", "postversion"].forEach(script => {
         expect(runLifecycle).toHaveBeenCalledWith(
@@ -1143,10 +1143,14 @@ describe("PublishCommand", () => {
         ["lifecycle", "version"],
         ["package-1", "postversion"],
         ["lifecycle", "postversion"],
+        ["lifecycle", "prepublish"],
+        ["lifecycle", "prepare"],
+        ["lifecycle", "prepublishOnly"],
         ["package-1", "prepublish"],
         ["package-1", "prepare"],
         ["package-1", "prepublishOnly"],
         ["package-1", "postpublish"],
+        ["lifecycle", "postpublish"],
       ]);
     });
 
@@ -1157,7 +1161,7 @@ describe("PublishCommand", () => {
 
       await lernaPublish(testDir)();
 
-      expect(runLifecycle).toHaveBeenCalledTimes(10);
+      expect(runLifecycle).toHaveBeenCalledTimes(14);
       expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
 
       const [errorLog] = loggingOutput("error");
