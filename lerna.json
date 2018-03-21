@@ -17,6 +17,10 @@
     "cacheDir": ".changelog"
   },
   "command": {
+    "create": {
+      "homepage": "https://github.com/lerna/lerna",
+      "license": "MIT"
+    },
     "publish": {
       "allowBranch": "master",
       "cdVersion": "prerelease",
