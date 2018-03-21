@@ -583,7 +583,12 @@ class PublishCommand extends Command {
     // if we skip temp tags we should tag with the proper value immediately
     const distTag = this.options.tempTag ? "lerna-temp" : this.getDistTag();
 
-    this.updates.forEach(({ pkg }) => this.execScript(pkg, "prepublish"));
+    this.updates.forEach(({ pkg }) => {
+      this.execScript(pkg, "prepublish");
+      this.runPackageLifecycle(pkg, "prepublish");
+      this.runPackageLifecycle(pkg, "prepare");
+      this.runPackageLifecycle(pkg, "prepublishOnly");
+    });
 
     tracker.addWork(this.packagesToPublish.length);
 
@@ -595,6 +600,7 @@ class PublishCommand extends Command {
         tracker.completeWork(1);
 
         this.execScript(pkg, "postpublish");
+        this.runPackageLifecycle(pkg, "postpublish");
       });
     };
 
