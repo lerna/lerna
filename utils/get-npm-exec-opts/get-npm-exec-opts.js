@@ -9,9 +9,15 @@ function getExecOpts(pkg, registry) {
     cwd: pkg.location,
   };
 
+  if (pkg.repositoryRootPath) {
+    opts.env = {
+      LERNA_ROOT_PATH: pkg.repositoryRootPath,
+    };
+  }
+
   if (registry) {
     opts.extendEnv = false;
-    opts.env = Object.assign({}, process.env, {
+    opts.env = Object.assign({}, process.env, opts.env, {
       npm_config_registry: registry,
     });
   }

@@ -96,4 +96,20 @@ describe("lerna run", () => {
     expect(stdout).toMatch("package-3: package-3");
     expect(stdout).not.toMatch("package-4");
   });
+
+  test("LERNA_ROOT_PATH", async () => {
+    const cwd = await initFixture("lerna-run");
+    const args = [
+      "run",
+      "dump-root",
+      // args below tell npm to be quiet
+      "--",
+      "--silent",
+    ];
+    const { stdout, stderr } = await cliRunner(cwd)(...args);
+    expect(stderr).toMatchSnapshot("stderr");
+
+    // order is non-deterministic, so assert each item seperately
+    expect(stdout).toMatch(cwd);
+  });
 });

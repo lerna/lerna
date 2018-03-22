@@ -39,6 +39,9 @@ class Package {
       location: {
         value: location,
       },
+      repositoryRootPath: {
+        value: rootPath,
+      },
       private: {
         value: Boolean(pkg.private),
       },
