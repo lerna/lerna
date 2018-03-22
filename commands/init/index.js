@@ -38,7 +38,7 @@ class InitCommand extends Command {
     let chain = Promise.resolve();
 
     chain = chain.then(() => this.ensurePackageJSON());
-    chain = chain.then(() => this.ensureLernaJson());
+    chain = chain.then(() => this.ensureLernaConfig());
     chain = chain.then(() => this.ensurePackagesDir());
 
     return chain.then(() => {
@@ -47,7 +47,6 @@ class InitCommand extends Command {
   }
 
   ensurePackageJSON() {
-    const { packageJsonLocation } = this.repository;
     let { packageJson } = this.repository;
     let chain = Promise.resolve();
 
@@ -59,7 +58,9 @@ class InitCommand extends Command {
       this.logger.info("", "Creating package.json");
 
       // initialize with default indentation so write-pkg doesn't screw it up with tabs
-      chain = chain.then(() => writeJsonFile(packageJsonLocation, packageJson, { indent: 2 }));
+      chain = chain.then(() =>
+        writeJsonFile(this.repository.packageJsonLocation, packageJson, { indent: 2 })
+      );
     } else {
       this.logger.info("", "Updating package.json");
     }
@@ -80,47 +81,47 @@ class InitCommand extends Command {
 
     targetDependencies.lerna = this.exact ? this.lernaVersion : `^${this.lernaVersion}`;
 
-    chain = chain.then(() => writePkg(packageJsonLocation, packageJson));
+    chain = chain.then(() => writePkg(this.repository.packageJsonLocation, packageJson));
 
     return chain;
   }
 
-  ensureLernaJson() {
-    // lernaJson already defaulted to empty object in Repository constructor
-    const { lernaJson, lernaJsonLocation, version: repositoryVersion } = this.repository;
+  ensureLernaConfig() {
+    // config already defaulted to empty object in Project constructor
+    const { config, version: projectVersion } = this.repository;
 
     let version;
 
     if (this.options.independent) {
       version = "independent";
-    } else if (repositoryVersion) {
-      version = repositoryVersion;
+    } else if (projectVersion) {
+      version = projectVersion;
     } else {
       version = "0.0.0";
     }
 
-    if (!repositoryVersion) {
+    if (!projectVersion) {
       this.logger.info("", "Creating lerna.json");
     } else {
       this.logger.info("", "Updating lerna.json");
     }
 
-    Object.assign(lernaJson, {
-      packages: this.repository.packageConfigs,
-      version,
-    });
-
-    delete lernaJson.lerna; // no longer relevant
+    delete config.lerna; // no longer relevant
 
     if (this.exact) {
       // ensure --exact is preserved for future init commands
-      const commandConfig = lernaJson.commands || lernaJson.command || (lernaJson.command = {});
+      const commandConfig = config.commands || config.command || (config.command = {});
       const initConfig = commandConfig.init || (commandConfig.init = {});
 
       initConfig.exact = true;
     }
 
-    return writeJsonFile(lernaJsonLocation, lernaJson, { indent: 2, detectIndent: true });
+    Object.assign(config, {
+      packages: this.repository.packageConfigs,
+      version,
+    });
+
+    return this.repository.serializeConfig();
   }
 
   ensurePackagesDir() {

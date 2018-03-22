@@ -232,7 +232,7 @@ describe("InitCommand", () => {
 
       await lernaInit(testDir)("--exact");
 
-      expect(await fs.readJSON(lernaJsonPath)).toMatchObject({
+      expect(await fs.readJSON(lernaJsonPath)).toEqual({
         commands: {
           bootstrap: {
             hoist: true,
@@ -241,6 +241,8 @@ describe("InitCommand", () => {
             exact: true,
           },
         },
+        packages: ["packages/*"],
+        version: "1.2.3",
       });
     });
   });

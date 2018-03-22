@@ -104,7 +104,7 @@ class Command {
 
   configureOptions() {
     // Command config object is either "commands" or "command".
-    const { commands, command } = this.repository.lernaJson;
+    const { commands, command } = this.repository.config;
 
     // The current command always overrides otherCommandConfigs
     const lernaCommandOverrides = [this.name, ...this.otherCommandConfigs].map(
@@ -118,7 +118,7 @@ class Command {
       // Namespaced command options from `lerna.json`
       ...lernaCommandOverrides,
       // Global options from `lerna.json`
-      this.repository.lernaJson,
+      this.repository.config,
       // Command specific defaults
       this.defaultOptions
     );

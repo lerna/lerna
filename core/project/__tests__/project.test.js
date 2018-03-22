@@ -3,7 +3,6 @@
 const path = require("path");
 
 // mocked or stubbed modules
-const findUp = require("find-up");
 const loadJsonFile = require("load-json-file");
 
 // helpers
@@ -20,36 +19,28 @@ describe("Project", () => {
   });
 
   describe(".rootPath", () => {
-    const findUpSync = findUp.sync;
-
-    afterEach(() => {
-      findUp.sync = findUpSync;
-    });
-
     it("should be added to the instance", () => {
       const repo = new Project(testDir);
       expect(repo.rootPath).toBe(testDir);
     });
 
-    it("resolves to CWD when lerna.json missing", () => {
-      findUp.sync = jest.fn(() => null);
+    it("resolves to CWD when lerna.json missing", async () => {
+      const cwd = await initFixture("no-lerna-config");
+      const repo = new Project(cwd);
 
-      const repo = new Project(testDir);
-      expect(repo.rootPath).toBe(testDir);
+      expect(repo.rootPath).toBe(cwd);
     });
 
     it("defaults CWD to '.' when constructor argument missing", () => {
-      findUp.sync = jest.fn(() => null);
-
       const repo = new Project();
       expect(repo.rootPath).toBe(path.resolve(__dirname, "..", "..", ".."));
     });
   });
 
-  describe(".lernaJsonLocation", () => {
+  describe(".lernaConfigLocation", () => {
     it("should be added to the instance", () => {
       const repo = new Project(testDir);
-      expect(repo.lernaJsonLocation).toBe(path.join(testDir, "lerna.json"));
+      expect(repo.lernaConfigLocation).toBe(path.join(testDir, "lerna.json"));
     });
   });
 
@@ -60,37 +51,28 @@ describe("Project", () => {
     });
   });
 
-  describe("get .lernaJson", () => {
-    const loadJsonFileSync = loadJsonFile.sync;
-
-    afterEach(() => {
-      loadJsonFile.sync = loadJsonFileSync;
-    });
-
+  describe(".config", () => {
     it("returns parsed lerna.json", () => {
       const repo = new Project(testDir);
-      expect(repo.lernaJson).toEqual({
+      expect(repo.config).toEqual({
         version: "1.0.0",
       });
     });
 
-    it("defaults to an empty object", () => {
-      loadJsonFile.sync = jest.fn(() => {
-        throw new Error("File not found");
-      });
+    it("defaults to an empty object", async () => {
+      const cwd = await initFixture("no-lerna-config");
+      const repo = new Project(cwd);
 
-      const repo = new Project(testDir);
-      expect(repo.lernaJson).toEqual({});
+      expect(repo.config).toEqual({});
     });
 
     it("errors when lerna.json is not valid JSON", async () => {
       expect.assertions(2);
 
       const cwd = await initFixture("invalid-json");
-      const repo = new Project(cwd);
 
       try {
-        repo.lernaJson; // eslint-disable-line no-unused-expressions
+        const repo = new Project(cwd); // eslint-disable-line no-unused-vars
       } catch (err) {
         expect(err.name).toBe("ValidationError");
         expect(err.prefix).toBe("JSONError");
@@ -99,9 +81,17 @@ describe("Project", () => {
   });
 
   describe("get .version", () => {
-    it("reads the `version` key from lerna.json", () => {
+    it("reads the `version` key from internal config", () => {
       const repo = new Project(testDir);
       expect(repo.version).toBe("1.0.0");
+    });
+  });
+
+  describe("set .version", () => {
+    it("sets the `version` key of internal config", () => {
+      const repo = new Project(testDir);
+      repo.version = "2.0.0";
+      expect(repo.config.version).toBe("2.0.0");
     });
   });
 
@@ -114,7 +104,7 @@ describe("Project", () => {
     it("returns custom packageConfigs", () => {
       const repo = new Project(testDir);
       const customPackages = [".", "my-packages/*"];
-      repo.lernaJson.packages = customPackages;
+      repo.config.packages = customPackages;
       expect(repo.packageConfigs).toBe(customPackages);
     });
 
@@ -126,7 +116,7 @@ describe("Project", () => {
 
     it("throws with friendly error if workspaces are not configured", () => {
       const repo = new Project(testDir);
-      repo.lernaJson.useWorkspaces = true;
+      repo.config.useWorkspaces = true;
       expect(() => repo.packageConfigs).toThrow(/workspaces need to be defined/);
     });
   });
@@ -134,7 +124,7 @@ describe("Project", () => {
   describe("get .packageParentDirs", () => {
     it("returns a list of package parent directories", () => {
       const repo = new Project(testDir);
-      repo.lernaJson.packages = [".", "packages/*", "dir/nested/*", "globstar/**"];
+      repo.config.packages = [".", "packages/*", "dir/nested/*", "globstar/**"];
       expect(repo.packageParentDirs).toEqual([
         testDir,
         path.join(testDir, "packages"),
@@ -183,10 +173,9 @@ describe("Project", () => {
       expect.assertions(2);
 
       const cwd = await initFixture("invalid-json");
-      const repo = new Project(cwd);
 
       try {
-        repo.packageJson; // eslint-disable-line no-unused-expressions
+        const repo = new Project(cwd); // eslint-disable-line no-unused-vars
       } catch (err) {
         expect(err.name).toBe("ValidationError");
         expect(err.prefix).toBe("JSONError");
@@ -213,7 +202,7 @@ describe("Project", () => {
       const repo = new Project(testDir);
       expect(repo.isIndependent()).toBe(false);
 
-      repo.lernaJson.version = "independent";
+      repo.version = "independent";
       expect(repo.isIndependent()).toBe(true);
     });
   });

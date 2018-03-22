@@ -10,7 +10,6 @@ const pMap = require("p-map");
 const pReduce = require("p-reduce");
 const pWaterfall = require("p-waterfall");
 const semver = require("semver");
-const writeJsonFile = require("write-json-file");
 const writePkg = require("write-pkg");
 
 const Command = require("@lerna/command");
@@ -403,15 +402,13 @@ class PublishCommand extends Command {
   }
 
   updateVersionInLernaJson() {
-    this.repository.lernaJson.version = this.globalVersion;
+    this.repository.version = this.globalVersion;
 
-    return writeJsonFile(this.repository.lernaJsonLocation, this.repository.lernaJson, { indent: 2 }).then(
-      () => {
-        if (!this.options.skipGit) {
-          return GitUtilities.addFiles([this.repository.lernaJsonLocation], this.execOpts);
-        }
+    return this.repository.serializeConfig().then(lernaConfigLocation => {
+      if (!this.options.skipGit) {
+        return GitUtilities.addFiles([lernaConfigLocation], this.execOpts);
       }
-    );
+    });
   }
 
   runPackageLifecycle(pkg, stage) {

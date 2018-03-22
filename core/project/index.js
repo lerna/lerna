@@ -1,11 +1,12 @@
 "use strict";
 
+const cosmiconfig = require("cosmiconfig");
 const dedent = require("dedent");
-const findUp = require("find-up");
 const globParent = require("glob-parent");
 const loadJsonFile = require("load-json-file");
 const log = require("npmlog");
 const path = require("path");
+const writeJsonFile = require("write-json-file");
 
 const ValidationError = require("@lerna/validation-error");
 const Package = require("@lerna/package");
@@ -14,43 +15,51 @@ const DEFAULT_PACKAGE_GLOB = "packages/*";
 
 class Project {
   constructor(cwd) {
-    const lernaJsonLocation =
-      // findUp returns null when not found
-      findUp.sync("lerna.json", { cwd }) ||
-      // path.resolve(".", ...) starts from process.cwd()
-      path.resolve(cwd || ".", "lerna.json");
+    const explorer = cosmiconfig("lerna", {
+      js: false, // not unless we store version somewhere else...
+      rc: "lerna.json",
+      rcStrictJson: true,
+      sync: true,
+    });
 
-    this.rootPath = path.dirname(lernaJsonLocation);
-    log.verbose("rootPath", this.rootPath);
+    let loaded;
 
-    this.lernaJsonLocation = lernaJsonLocation;
-    this.packageJsonLocation = path.join(this.rootPath, "package.json");
-  }
-
-  get lernaJson() {
-    if (!this._lernaJson) {
-      try {
-        this._lernaJson = loadJsonFile.sync(this.lernaJsonLocation);
-      } catch (err) {
-        // don't swallow syntax errors
-        if (err.name === "JSONError") {
-          throw new ValidationError(err.name, err.message);
-        }
-        // No need to distinguish between missing and empty,
-        // saves a lot of noisy guards elsewhere
-        this._lernaJson = {};
+    try {
+      loaded = explorer.load(cwd);
+    } catch (err) {
+      // don't swallow syntax errors
+      if (err.name === "JSONError") {
+        throw new ValidationError(err.name, err.message);
       }
     }
 
-    return this._lernaJson;
+    // cosmiconfig returns null when nothing is found
+    loaded = loaded || {
+      // No need to distinguish between missing and empty,
+      // saves a lot of noisy guards elsewhere
+      config: {},
+      // path.resolve(".", ...) starts from process.cwd()
+      filepath: path.resolve(cwd || ".", "lerna.json"),
+    };
+
+    this.config = loaded.config;
+    this.rootPath = path.dirname(loaded.filepath);
+    log.verbose("rootPath", this.rootPath);
+
+    this.lernaConfigLocation = loaded.filepath;
+    this.packageJsonLocation = path.join(this.rootPath, "package.json");
   }
 
   get version() {
-    return this.lernaJson.version;
+    return this.config.version;
+  }
+
+  set version(val) {
+    this.config.version = val;
   }
 
   get packageConfigs() {
-    if (this.lernaJson.useWorkspaces) {
+    if (this.config.useWorkspaces) {
       if (!this.packageJson.workspaces) {
         throw new ValidationError(
           "EWORKSPACES",
@@ -63,7 +72,8 @@ class Project {
 
       return this.packageJson.workspaces.packages || this.packageJson.workspaces;
     }
-    return this.lernaJson.packages || [DEFAULT_PACKAGE_GLOB];
+
+    return this.config.packages || [DEFAULT_PACKAGE_GLOB];
   }
 
   get packageParentDirs() {
@@ -102,6 +112,13 @@ class Project {
 
   isIndependent() {
     return this.version === "independent";
+  }
+
+  serializeConfig() {
+    // TODO: might be package.json prop
+    return writeJsonFile(this.lernaConfigLocation, this.config, { indent: 2, detectIndent: true }).then(
+      () => this.lernaConfigLocation
+    );
   }
 }
 
