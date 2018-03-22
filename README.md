@@ -300,10 +300,10 @@ More specifically, this command will:
 
 **Note:** to publish scoped packages, you need to add the following to each `package.json`:
 
-```js
-"publishConfig": {
-  "access": "public"
-}
+```json
+  "publishConfig": {
+    "access": "public"
+  }
 ```
 
 #### --exact
@@ -533,7 +533,7 @@ Check which `packages` have changed since the last release (the last git tag).
 Lerna determines the last git tag created and runs `git diff --name-only v6.8.1` to get all files changed since that tag. It then returns an array of packages that have an updated file.
 
 **Note that configuration for the `publish` command _also_ affects the
-`updated` command. For example `config.publish.ignore`**
+`updated` command. For example `command.publish.ignoreChanges`**
 
 #### --json
 
@@ -722,12 +722,12 @@ Running `lerna` without arguments will show all commands/options.
 
 ### lerna.json
 
-```js
+```json
 {
   "version": "1.1.3",
   "commands": {
     "publish": {
-      "ignore": [
+      "ignoreChanges": [
         "ignored-file",
         "*.md"
       ]
@@ -740,9 +740,8 @@ Running `lerna` without arguments will show all commands/options.
 }
 ```
 
-* `lerna`: the current version of Lerna being used.
 * `version`: the current version of the repository.
-* `commands.publish.ignore`: an array of globs that won't be included in `lerna updated/publish`. Use this to prevent publishing a new version unnecessarily for changes, such as fixing a `README.md` typo.
+* `commands.publish.ignoreChanges`: an array of globs that won't be included in `lerna changed/publish`. Use this to prevent publishing a new version unnecessarily for changes, such as fixing a `README.md` typo.
 * `commands.bootstrap.ignore`: an array of globs that won't be bootstrapped when running the `lerna bootstrap` command.
 * `commands.bootstrap.scope`: an array of globs that restricts which packages will be bootstrapped when running the `lerna bootstrap` command.
 * `packages`: Array of globs to use as package locations.
@@ -893,7 +892,7 @@ The `ignore` flag, when used with the `bootstrap` command, can also be set in `l
 
 **Example**
 
-```javascript
+```json
 {
   "version": "0.0.0",
   "commands": {

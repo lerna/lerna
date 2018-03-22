@@ -80,7 +80,7 @@ describe("ChangedCommand", () => {
         commands: {
           // "command" also supported
           publish: {
-            ignore: ["ignored-file"],
+            ignoreChanges: ["ignored-file"],
           },
         },
       });
