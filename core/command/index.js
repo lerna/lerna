@@ -120,9 +120,7 @@ class Command {
       // Global options from `lerna.json`
       this.repository.lernaJson,
       // Command specific defaults
-      this.defaultOptions,
-      // Deprecated legacy options in `lerna.json`
-      this._legacyOptions()
+      this.defaultOptions
     );
   }
 
@@ -228,20 +226,6 @@ class Command {
         }
         // early exits set their own exitCode (if non-zero)
       });
-  }
-
-  _legacyOptions() {
-    return ["bootstrap", "publish"].reduce((obj, command) => {
-      if (this.name === command && this.repository.lernaJson[`${command}Config`]) {
-        log.warn(
-          "deprecated",
-          `\`${command}Config.ignore\` has been replaced by \`command.${command}.ignore\`.`
-        );
-        obj.ignore = this.repository.lernaJson[`${command}Config`].ignore;
-      }
-
-      return obj;
-    }, {});
   }
 
   initialize() {
