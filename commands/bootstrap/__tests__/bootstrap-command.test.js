@@ -319,7 +319,6 @@ describe("BootstrapCommand", () => {
 
       await updateLernaConfig(testDir, {
         command: {
-          // "commands" also supported
           bootstrap: {
             hoist: true,
           },

@@ -172,7 +172,7 @@ It will configure `lerna.json` to enforce exact match for all subsequent executi
 
 ```json
 {
-  "commands": {
+  "command": {
     "init": {
       "exact": true
     }
@@ -482,7 +482,7 @@ This can be configured in lerna.json, as well:
 
 ```json
 {
-  "commands": {
+  "command": {
     "publish": {
       "message": "chore(release): publish %s"
     }
@@ -498,7 +498,7 @@ If your `lerna.json` contains something like this:
 
 ```json
 {
-  "commands": {
+  "command": {
     "publish": {
       "allowBranch": "master"
     }
@@ -725,7 +725,7 @@ Running `lerna` without arguments will show all commands/options.
 ```json
 {
   "version": "1.1.3",
-  "commands": {
+  "command": {
     "publish": {
       "ignoreChanges": [
         "ignored-file",
@@ -741,9 +741,9 @@ Running `lerna` without arguments will show all commands/options.
 ```
 
 * `version`: the current version of the repository.
-* `commands.publish.ignoreChanges`: an array of globs that won't be included in `lerna changed/publish`. Use this to prevent publishing a new version unnecessarily for changes, such as fixing a `README.md` typo.
-* `commands.bootstrap.ignore`: an array of globs that won't be bootstrapped when running the `lerna bootstrap` command.
-* `commands.bootstrap.scope`: an array of globs that restricts which packages will be bootstrapped when running the `lerna bootstrap` command.
+* `command.publish.ignoreChanges`: an array of globs that won't be included in `lerna changed/publish`. Use this to prevent publishing a new version unnecessarily for changes, such as fixing a `README.md` typo.
+* `command.bootstrap.ignore`: an array of globs that won't be bootstrapped when running the `lerna bootstrap` command.
+* `command.bootstrap.scope`: an array of globs that restricts which packages will be bootstrapped when running the `lerna bootstrap` command.
 * `packages`: Array of globs to use as package locations.
 
 ### Common `devDependencies`
@@ -816,7 +816,7 @@ Example:
 {
   "version": "1.2.0",
   "exampleOption": "foo",
-  "commands": {
+  "command": {
     "init": {
       "exampleOption": "bar"
     }
@@ -888,14 +888,14 @@ Excludes a subset of packages when running a command.
 $ lerna bootstrap --ignore component-*
 ```
 
-The `ignore` flag, when used with the `bootstrap` command, can also be set in `lerna.json` under the `commands.bootstrap` key. The command-line flag will take precedence over this option.
+The `ignore` flag, when used with the `bootstrap` command, can also be set in `lerna.json` under the `command.bootstrap` key. The command-line flag will take precedence over this option.
 
 **Example**
 
 ```json
 {
   "version": "0.0.0",
-  "commands": {
+  "command": {
     "bootstrap": {
       "ignore": "component-*"
     }

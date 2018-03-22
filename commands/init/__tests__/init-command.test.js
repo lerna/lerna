@@ -210,7 +210,7 @@ describe("InitCommand", () => {
   });
 
   describe("when re-initializing with --exact", () => {
-    it("sets lerna.json commands.init.exact to true", async () => {
+    it("sets lerna.json command.init.exact to true", async () => {
       const testDir = await initFixture("updates");
       const lernaJsonPath = path.join(testDir, "lerna.json");
       const pkgJsonPath = path.join(testDir, "package.json");
@@ -233,7 +233,7 @@ describe("InitCommand", () => {
       await lernaInit(testDir)("--exact");
 
       expect(await fs.readJSON(lernaJsonPath)).toEqual({
-        commands: {
+        command: {
           bootstrap: {
             hoist: true,
           },

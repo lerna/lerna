@@ -77,8 +77,7 @@ describe("ChangedCommand", () => {
       const testDir = await initFixture("basic");
 
       await updateLernaConfig(testDir, {
-        commands: {
-          // "command" also supported
+        command: {
           publish: {
             ignoreChanges: ["ignored-file"],
           },
@@ -150,7 +149,6 @@ describe("ChangedCommand", () => {
 
       await updateLernaConfig(testDir, {
         command: {
-          // "commands" also supported
           publish: {
             ignore: ["ignored-file"],
           },

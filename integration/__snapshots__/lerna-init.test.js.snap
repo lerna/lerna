@@ -30,7 +30,7 @@ lerna success Initialized Lerna files
 
 exports[`lerna init updates existing metadata: lerna.json 1`] = `
 Object {
-  commands: Object {
+  command: Object {
     bootstrap: Object {
       hoist: true,
     },

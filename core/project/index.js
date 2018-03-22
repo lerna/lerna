@@ -20,6 +20,15 @@ class Project {
       rc: "lerna.json",
       rcStrictJson: true,
       sync: true,
+      transform: obj => {
+        // normalize command-specific config namespace
+        if (obj.config.commands) {
+          obj.config.command = obj.config.commands;
+          delete obj.config.commands;
+        }
+
+        return obj;
+      },
     });
 
     let loaded;

@@ -110,7 +110,7 @@ class InitCommand extends Command {
 
     if (this.exact) {
       // ensure --exact is preserved for future init commands
-      const commandConfig = config.commands || config.command || (config.command = {});
+      const commandConfig = config.command || (config.command = {});
       const initConfig = commandConfig.init || (commandConfig.init = {});
 
       initConfig.exact = true;
