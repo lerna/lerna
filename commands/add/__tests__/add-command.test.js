@@ -51,12 +51,12 @@ describe("AddCommand", () => {
   it("should reference remote dependencies", async () => {
     const testDir = await initFixture("basic");
 
-    await lernaAdd(testDir)("lerna");
+    await lernaAdd(testDir)("tiny-tarball");
 
-    expect(await readPkg(testDir, "packages/package-1")).toDependOn("lerna");
-    expect(await readPkg(testDir, "packages/package-2")).toDependOn("lerna");
-    expect(await readPkg(testDir, "packages/package-3")).toDependOn("lerna");
-    expect(await readPkg(testDir, "packages/package-4")).toDependOn("lerna");
+    expect(await readPkg(testDir, "packages/package-1")).toDependOn("tiny-tarball");
+    expect(await readPkg(testDir, "packages/package-2")).toDependOn("tiny-tarball");
+    expect(await readPkg(testDir, "packages/package-3")).toDependOn("tiny-tarball");
+    expect(await readPkg(testDir, "packages/package-4")).toDependOn("tiny-tarball");
   });
 
   it("should reference local dependencies", async () => {
@@ -141,6 +141,23 @@ describe("AddCommand", () => {
     await lernaAdd(testDir)("@test/package-1", "--dev");
 
     expect(await readPkg(testDir, "packages/package-2")).toDevDependOn("file-url");
+  });
+
+  it("supports tag specifiers", async () => {
+    const testDir = await initFixture("basic");
+
+    // npm dist-tags for outdated versions _should_ stay stable
+    await lernaAdd(testDir)("npm@next-3");
+
+    expect(await readPkg(testDir, "packages/package-1")).toDependOn("npm", "^3.10.10");
+  });
+
+  it("supports version specifiers (exact)", async () => {
+    const testDir = await initFixture("basic");
+
+    await lernaAdd(testDir)("tiny-tarball@1.0.0");
+
+    expect(await readPkg(testDir, "packages/package-1")).toDependOn("tiny-tarball", "1.0.0");
   });
 
   it("should bootstrap changed packages", async () => {
