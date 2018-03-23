@@ -10,28 +10,10 @@ function filterOptions(yargs) {
     scope: {
       describe: "Include only packages with names matching the given glob.",
       type: "string",
-      requiresArg: true,
-      coerce: arg => {
-        // always return a list of globs
-        if (!Array.isArray(arg)) {
-          return [arg];
-        }
-
-        return arg;
-      },
     },
     ignore: {
       describe: "Exclude packages with names matching the given glob.",
       type: "string",
-      requiresArg: true,
-      coerce: arg => {
-        // negate any globs passed
-        if (!Array.isArray(arg)) {
-          return [`!${arg}`];
-        }
-
-        return arg.map(str => `!${str}`);
-      },
     },
     private: {
       describe: "Include private packages. Pass --no-private to exclude private packages.",

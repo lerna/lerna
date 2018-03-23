@@ -21,7 +21,7 @@ module.exports = filterPackages;
  */
 function filterPackages(packagesToFilter, include = [], exclude = [], showPrivate) {
   const filtered = new Set(packagesToFilter);
-  const patterns = [].concat(include, exclude);
+  const patterns = [].concat(arrify(include), negate(exclude));
 
   if (showPrivate === false) {
     for (const pkg of filtered) {
@@ -55,4 +55,20 @@ function filterPackages(packagesToFilter, include = [], exclude = [], showPrivat
   }
 
   return Array.from(filtered);
+}
+
+function arrify(thing) {
+  if (!thing) {
+    return [];
+  }
+
+  if (!Array.isArray(thing)) {
+    return [thing];
+  }
+
+  return thing;
+}
+
+function negate(patterns) {
+  return arrify(patterns).map(pattern => `!${pattern}`);
 }
