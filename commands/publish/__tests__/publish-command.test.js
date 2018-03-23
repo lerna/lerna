@@ -92,6 +92,7 @@ describe("PublishCommand", () => {
   // we've already tested these utilities elsewhere
   GitUtilities.isInitialized.mockReturnValue(true);
   GitUtilities.getCurrentBranch.mockReturnValue("master");
+  GitUtilities.getCurrentSHA.mockReturnValue("FULL_SHA");
   GitUtilities.getShortSHA.mockReturnValue("deadbeef");
   GitUtilities.diffSinceIn.mockReturnValue("");
 
@@ -117,6 +118,11 @@ describe("PublishCommand", () => {
       expect(updatedLernaJson()).toMatchObject({ version: "1.0.1" });
       expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
 
+      expect(updatedPackageJSON("package-1")).toEqual({
+        name: "package-1",
+        version: "1.0.1",
+        gitHead: "FULL_SHA", // not versioned
+      });
       expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
         "package-1": "^1.0.1",
       });
@@ -186,6 +192,11 @@ describe("PublishCommand", () => {
 
       expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
 
+      expect(updatedPackageJSON("package-1")).toEqual({
+        name: "package-1",
+        version: "1.0.1",
+        gitHead: "FULL_SHA", // not versioned
+      });
       expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
         "package-1": "^1.0.1",
       });
@@ -346,6 +357,11 @@ describe("PublishCommand", () => {
       expect(GitUtilities.addTag).not.toBeCalled();
       expect(GitUtilities.pushWithTags).not.toBeCalled();
 
+      expect(updatedPackageJSON("package-1")).toEqual({
+        name: "package-1",
+        version: "1.0.1",
+        gitHead: "FULL_SHA", // not versioned
+      });
       expect(publishedTagInDirectories(testDir)).toMatchSnapshot("npm published");
     });
 
@@ -368,13 +384,20 @@ describe("PublishCommand", () => {
       await lernaPublish(testDir)("--skip-npm");
 
       expect(npmPublish).not.toBeCalled();
-      expect(npmDistTag.check).not.toBeCalled();
-      expect(npmDistTag.remove).not.toBeCalled();
-      expect(npmDistTag.add).not.toBeCalled();
+      expect(updatedPackageJSON("package-1")).toEqual({
+        name: "package-1",
+        version: "1.0.1",
+        // gitHead not annotated
+      });
 
       expect(gitCommitMessage()).toEqual("v1.0.1");
-      // FIXME
-      // expect(GitUtilities.pushWithTags).lastCalledWith("origin", ["v1.0.1"]);
+      expect(GitUtilities.pushWithTags).lastCalledWith(
+        "origin",
+        ["v1.0.1"],
+        expect.objectContaining({
+          cwd: testDir,
+        })
+      );
     });
 
     it("should display a message that npm is skipped", async () => {

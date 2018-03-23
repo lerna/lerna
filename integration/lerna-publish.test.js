@@ -148,11 +148,7 @@ describe("lerna publish", () => {
 
     expect(
       await execa.stdout("git", ["show", "--unified=0", "--ignore-space-at-eol", "--format=%s"], { cwd })
-    ).toMatchSnapshot("committed");
-
-    expect(
-      await execa.stdout("git", ["diff", "--unified=0", "--ignore-space-at-eol"], { cwd })
-    ).toMatchSnapshot("unstaged");
+    ).toMatchSnapshot();
   });
 
   test("calls lifecycle scripts", async () => {

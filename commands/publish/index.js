@@ -156,16 +156,25 @@ class PublishCommand extends Command {
       this.logger.info("execute", "Skipping git commit/push");
     }
 
-    tasks.push(() => this.resolveLocalDependencyLinks());
-    tasks.push(() => this.annotateGitHead());
-
     if (this.options.skipNpm) {
       this.logger.info("execute", "Skipping publish to registry");
     } else {
       tasks.push(() => this.publishPackagesToNpm());
     }
 
-    return pWaterfall(tasks);
+    if (this.gitEnabled) {
+      tasks.push(() => this.pushToRemote());
+    }
+
+    return pWaterfall(tasks).then(() => {
+      this.logger.success("publish", "finished");
+    });
+  }
+
+  pushToRemote() {
+    this.logger.info("git", "Pushing tags...");
+
+    return GitUtilities.pushWithTags(this.gitRemote, this.tags, this.execOpts);
   }
 
   resolveLocalDependencyLinks() {
@@ -203,27 +212,26 @@ class PublishCommand extends Command {
     });
   }
 
+  resetManifestChanges() {
+    // the package.json files are changed (by gitHead if not --canary)
+    // and we should always leave the working tree clean
+    return pReduce(this.project.packageConfigs, (_, pkgGlob) =>
+      GitUtilities.checkoutChanges(`${pkgGlob}/package.json`, this.execOpts)
+    );
+  }
+
   publishPackagesToNpm() {
     this.logger.info("publish", "Publishing packages to npm...");
 
-    let chain = Promise.resolve().then(() => this.npmPublish());
+    let chain = Promise.resolve();
 
-    // reset since the package.json files are changed (by gitHead if not --canary)
-    chain = chain.then(() =>
-      pReduce(this.project.packageConfigs, (_, pkgGlob) =>
-        GitUtilities.checkoutChanges(`${pkgGlob}/package.json`, this.execOpts)
-      )
-    );
+    chain = chain.then(() => this.resolveLocalDependencyLinks());
+    chain = chain.then(() => this.annotateGitHead());
+    chain = chain.then(() => this.npmPublish());
+    chain = chain.then(() => this.resetManifestChanges());
 
     if (this.options.tempTag) {
       chain = chain.then(() => this.npmUpdateAsLatest());
-    }
-
-    if (this.gitEnabled) {
-      chain = chain.then(() => {
-        this.logger.info("git", "Pushing tags...");
-        return GitUtilities.pushWithTags(this.gitRemote, this.tags, this.execOpts);
-      });
     }
 
     return chain.then(() => {
@@ -231,8 +239,6 @@ class PublishCommand extends Command {
 
       output("Successfully published:");
       output(message.join(os.EOL));
-
-      this.logger.success("publish", "finished");
     });
   }
 
