@@ -86,16 +86,6 @@ function getLastTaggedCommit(opts) {
   return taggedCommit;
 }
 
-function getLastTaggedCommitInBranch(opts) {
-  log.silly("getLastTaggedCommitInBranch");
-
-  const tagName = exports.getLastTag(opts);
-  const commitInBranch = ChildProcessUtilities.execSync("git", ["rev-list", "-n", "1", tagName], opts);
-  log.verbose("getLastTaggedCommitInBranch", commitInBranch);
-
-  return commitInBranch;
-}
-
 function getFirstCommit(opts) {
   log.silly("getFirstCommit");
 
@@ -122,15 +112,6 @@ function getLastTag(opts) {
   log.verbose("getLastTag", lastTag);
 
   return lastTag;
-}
-
-function describeTag(ref, opts) {
-  log.silly("describeTag", ref);
-
-  const description = ChildProcessUtilities.execSync("git", ["describe", "--tags", ref], opts);
-  log.silly("describeTag", description);
-
-  return description;
 }
 
 function diffSinceIn(committish, location, opts) {
@@ -211,40 +192,26 @@ function hasCommit(opts) {
   return retVal;
 }
 
-function fetchGitRemote(opts) {
-  log.silly("fetchGitRemote");
-  ChildProcessUtilities.execSync("git", ["remote", "update"], opts);
-}
-
 function isBehindUpstream(gitRemote, opts) {
   log.silly("isBehindUpstream");
-  exports.fetchGitRemote(opts);
 
-  const status = exports.aheadBehindCount(gitRemote, opts);
-  const behind = status.behind >= 1;
+  // git fetch, but for everything
+  ChildProcessUtilities.execSync("git", ["remote", "update"], opts);
 
-  log.verbose("isBehindUpstream", behind);
-  return behind;
-}
-
-function aheadBehindCount(gitRemote, opts) {
-  const branchName = exports.getCurrentBranch(opts);
-  const branchComparator = `${gitRemote}/${branchName}...${branchName}`;
-  const rawAheadBehind = ChildProcessUtilities.execSync(
+  const branch = exports.getCurrentBranch(opts);
+  const countLeftRight = ChildProcessUtilities.execSync(
     "git",
-    ["rev-list", "--left-right", "--count", branchComparator],
+    ["rev-list", "--left-right", "--count", `${gitRemote}/${branch}...${branch}`],
     opts
   );
-
-  const aheadBehind = rawAheadBehind.split("\t");
-  const behind = parseInt(aheadBehind[0], 10);
-  const ahead = parseInt(aheadBehind[1], 10);
+  const [behind, ahead] = countLeftRight.split("\t").map(val => parseInt(val, 10));
 
   log.silly(
-    "aheadBehindCount",
-    `behind ${gitRemote}/${branchName} by ${behind} commits; ${branchName} is ahead by ${ahead} commits`
+    "isBehindUpstream",
+    `${branch} is behind ${gitRemote}/${branch} by ${behind} commit(s) and ahead by ${ahead}`
   );
-  return { ahead, behind };
+
+  return Boolean(behind);
 }
 
 exports.isDetachedHead = isDetachedHead;
@@ -254,11 +221,9 @@ exports.commit = commit;
 exports.addTag = addTag;
 exports.hasTags = hasTags;
 exports.getLastTaggedCommit = getLastTaggedCommit;
-exports.getLastTaggedCommitInBranch = getLastTaggedCommitInBranch;
 exports.getFirstCommit = getFirstCommit;
 exports.pushWithTags = pushWithTags;
 exports.getLastTag = getLastTag;
-exports.describeTag = describeTag;
 exports.diffSinceIn = diffSinceIn;
 exports.getWorkspaceRoot = getWorkspaceRoot;
 exports.getCurrentBranch = getCurrentBranch;
@@ -267,6 +232,4 @@ exports.getShortSHA = getShortSHA;
 exports.checkoutChanges = checkoutChanges;
 exports.init = init;
 exports.hasCommit = hasCommit;
-exports.fetchGitRemote = fetchGitRemote;
 exports.isBehindUpstream = isBehindUpstream;
-exports.aheadBehindCount = aheadBehindCount;
