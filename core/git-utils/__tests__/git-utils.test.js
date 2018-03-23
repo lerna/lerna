@@ -171,7 +171,7 @@ describe("GitUtilities", () => {
       const fileDiff = GitUtilities.diffSinceIn("v1.2.3", path.dirname(file), { cwd });
 
       expect(rootDiff).toMatch("package.json");
-      expect(fileDiff).toBe(path.relative(cwd, file));
+      expect(fileDiff).toBe("packages/pkg-5/index.js");
     });
   });
 
@@ -181,7 +181,7 @@ describe("GitUtilities", () => {
       const cwd = path.join(topLevel, "foo");
 
       await fs.mkdirp(cwd);
-      expect(GitUtilities.getWorkspaceRoot({ cwd })).toBe(topLevel);
+      expect(GitUtilities.getWorkspaceRoot({ cwd })).toBe(slash(topLevel));
     });
   });
 
