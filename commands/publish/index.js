@@ -54,7 +54,6 @@ class PublishCommand extends Command {
 
     if (this.options.canary) {
       this.logger.info("canary", "enabled");
-      this.shortHash = GitUtilities.getShortSHA(this.execOpts);
     }
 
     if (!this.project.isIndependent()) {
@@ -255,8 +254,9 @@ class PublishCommand extends Command {
       const release = cdVersion || "minor";
       // FIXME: this complicated defaulting should be done in yargs option.coerce()
       const keyword = typeof canary !== "string" ? preid || "alpha" : canary;
+      const shortHash = GitUtilities.getShortSHA(this.execOpts);
 
-      predicate = ({ version }) => `${semver.inc(version, release)}-${keyword}.${this.shortHash}`;
+      predicate = ({ version }) => `${semver.inc(version, release)}-${keyword}.${shortHash}`;
     } else if (cdVersion) {
       predicate = ({ version }) => semver.inc(version, cdVersion, preid);
     } else if (conventionalCommits) {
@@ -503,7 +503,6 @@ class PublishCommand extends Command {
     chain = chain.then(() => this.runPackageLifecycle(rootPkg, "version"));
 
     if (this.gitEnabled) {
-      // chain = chain.then(() => GitUtilities.addFiles(changedFiles, this.execOpts));
       chain = chain.then(() => GitUtilities.addFiles(Array.from(changedFiles), this.execOpts));
     }
 
