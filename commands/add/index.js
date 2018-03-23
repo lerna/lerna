@@ -80,7 +80,7 @@ class AddCommand extends Command {
       return BootstrapCommand.handler(
         Object.assign({}, this.options, {
           args: [],
-          cwd: this.repository.rootPath,
+          cwd: this.project.rootPath,
           scope: pkgs,
         })
       );

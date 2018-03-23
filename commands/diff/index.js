@@ -32,7 +32,7 @@ class DiffCommand extends Command {
     if (targetPackage) {
       args.push("--", targetPackage.location);
     } else {
-      args.push("--", ...this.repository.packageParentDirs);
+      args.push("--", ...this.project.packageParentDirs);
     }
 
     if (this.options.ignoreChanges) {

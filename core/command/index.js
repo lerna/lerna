@@ -39,7 +39,7 @@ class Command {
       let chain = Promise.resolve();
 
       chain = chain.then(() => {
-        this.repository = new Project(argv.cwd);
+        this.project = new Project(argv.cwd);
       });
       chain = chain.then(() => this.configureOptions());
       chain = chain.then(() => this.configureProperties());
@@ -66,7 +66,7 @@ class Command {
 
           // ValidationError does not trigger a log dump
           if (err.name !== "ValidationError") {
-            writeLogFile(this.repository.rootPath);
+            writeLogFile(this.project.rootPath);
           }
 
           warnIfHanging();
@@ -104,7 +104,7 @@ class Command {
 
   configureOptions() {
     // Command config object normalized to "command" namespace
-    const commandConfig = this.repository.config.command || {};
+    const commandConfig = this.project.config.command || {};
 
     // The current command always overrides otherCommandConfigs
     const overrides = [this.name, ...this.otherCommandConfigs].map(key => commandConfig[key]);
@@ -116,7 +116,7 @@ class Command {
       // Namespaced command options from `lerna.json`
       ...overrides,
       // Global options from `lerna.json`
-      this.repository.config,
+      this.project.config,
       // Command specific defaults
       this.defaultOptions
     );
@@ -128,7 +128,7 @@ class Command {
     this.concurrency = Math.max(1, +concurrency || DEFAULT_CONCURRENCY);
     this.toposort = sort === undefined || sort;
     this.execOpts = {
-      cwd: this.repository.rootPath,
+      cwd: this.project.rootPath,
       maxBuffer,
     };
   }
@@ -158,15 +158,15 @@ class Command {
       throw new ValidationError("ENOGIT", "The git binary was not found, or this is not a git repository.");
     }
 
-    if (!this.repository.packageJson) {
+    if (!this.project.packageJson) {
       throw new ValidationError("ENOPKG", "`package.json` does not exist, have you run `lerna init`?");
     }
 
-    if (!this.repository.version) {
+    if (!this.project.version) {
       throw new ValidationError("ENOLERNA", "`lerna.json` does not exist, have you run `lerna init`?");
     }
 
-    if (this.options.independent && !this.repository.isIndependent()) {
+    if (this.options.independent && !this.project.isIndependent()) {
       throw new ValidationError(
         "EVERSIONMODE",
         dedent`
@@ -179,11 +179,11 @@ class Command {
   }
 
   runPreparations() {
-    if (this.repository.isIndependent()) {
+    if (this.project.isIndependent()) {
       log.info("versioning", "independent");
     }
 
-    const { rootPath, packageConfigs } = this.repository;
+    const { rootPath, packageConfigs } = this.project;
     const { scope: include, ignore: exclude } = this.options;
 
     let chain = Promise.resolve();

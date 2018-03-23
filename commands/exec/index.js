@@ -61,7 +61,7 @@ class ExecCommand extends Command {
       shell: true,
       env: Object.assign({}, process.env, {
         LERNA_PACKAGE_NAME: pkg.name,
-        LERNA_ROOT_PATH: this.repository.rootPath,
+        LERNA_ROOT_PATH: this.project.rootPath,
       }),
       reject: this.options.bail,
     };

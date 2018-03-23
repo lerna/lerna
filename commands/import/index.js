@@ -55,17 +55,17 @@ class ImportCommand extends Command {
       throw new Error(`No package name specified in "${packageJson}"`);
     }
 
-    const targetBase = getTargetBase(this.repository.packageConfigs);
+    const targetBase = getTargetBase(this.project.packageConfigs);
 
     // Compute a target directory relative to the Lerna root
     const targetDir = path.join(targetBase, externalRepoBase);
 
     // Compute a target directory relative to the Git root
     const gitRepoRoot = GitUtilities.getWorkspaceRoot(this.execOpts);
-    const lernaRootRelativeToGitRoot = path.relative(gitRepoRoot, this.repository.rootPath);
+    const lernaRootRelativeToGitRoot = path.relative(gitRepoRoot, this.project.rootPath);
     this.targetDirRelativeToGitRoot = path.join(lernaRootRelativeToGitRoot, targetDir);
 
-    if (fs.existsSync(path.resolve(this.repository.rootPath, targetDir))) {
+    if (fs.existsSync(path.resolve(this.project.rootPath, targetDir))) {
       throw new Error(`Target directory already exists "${targetDir}"`);
     }
 

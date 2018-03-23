@@ -22,7 +22,7 @@ class CleanCommand extends Command {
     this.logger.info("", "Removing the following directories:");
     this.logger.info(
       "clean",
-      this.directoriesToDelete.map(dir => path.relative(this.repository.rootPath, dir)).join("\n")
+      this.directoriesToDelete.map(dir => path.relative(this.project.rootPath, dir)).join("\n")
     );
 
     return PromptUtilities.confirm("Proceed?");

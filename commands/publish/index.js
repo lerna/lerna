@@ -57,8 +57,8 @@ class PublishCommand extends Command {
       this.shortHash = GitUtilities.getShortSHA(this.execOpts);
     }
 
-    if (!this.repository.isIndependent()) {
-      this.logger.info("current version", this.repository.version);
+    if (!this.project.isIndependent()) {
+      this.logger.info("current version", this.project.version);
     }
 
     // git validation, if enabled, should happen before updates are calculated and versions picked
@@ -145,7 +145,7 @@ class PublishCommand extends Command {
   execute() {
     const tasks = [];
 
-    if (!this.repository.isIndependent() && !this.options.canary) {
+    if (!this.project.isIndependent() && !this.options.canary) {
       tasks.push(() => this.updateVersionInLernaJson());
     }
 
@@ -211,7 +211,7 @@ class PublishCommand extends Command {
 
     // reset since the package.json files are changed (by gitHead if not --canary)
     chain = chain.then(() =>
-      pReduce(this.repository.packageConfigs, (_, pkgGlob) =>
+      pReduce(this.project.packageConfigs, (_, pkgGlob) =>
         GitUtilities.checkoutChanges(`${pkgGlob}/package.json`, this.execOpts)
       )
     );
@@ -266,8 +266,8 @@ class PublishCommand extends Command {
       predicate = this.promptVersion;
     }
 
-    if (!this.repository.isIndependent()) {
-      predicate = Promise.resolve(predicate({ version: this.repository.version })).then(
+    if (!this.project.isIndependent()) {
+      predicate = Promise.resolve(predicate({ version: this.project.version })).then(
         makeGlobalVersionPredicate
       );
     }
@@ -283,7 +283,7 @@ class PublishCommand extends Command {
   }
 
   recommendVersions() {
-    const independentVersions = this.repository.isIndependent();
+    const independentVersions = this.project.isIndependent();
     const { changelogPreset } = this.options;
     const opts = { changelogPreset };
     const type = independentVersions ? "independent" : "fixed";
@@ -292,7 +292,7 @@ class PublishCommand extends Command {
 
     if (type === "fixed") {
       chain = chain.then(() => {
-        const globalVersion = this.repository.version;
+        const globalVersion = this.project.version;
 
         for (const { pkg } of this.updates) {
           if (semver.lt(pkg.version, globalVersion)) {
@@ -313,7 +313,7 @@ class PublishCommand extends Command {
 
     if (type === "fixed") {
       chain = chain.then(versions => {
-        let highestVersion = this.repository.version;
+        let highestVersion = this.project.version;
 
         versions.forEach(bump => {
           if (semver.gt(bump, highestVersion)) {
@@ -402,9 +402,9 @@ class PublishCommand extends Command {
   }
 
   updateVersionInLernaJson() {
-    this.repository.version = this.globalVersion;
+    this.project.version = this.globalVersion;
 
-    return this.repository.serializeConfig().then(lernaConfigLocation => {
+    return this.project.serializeConfig().then(lernaConfigLocation => {
       if (!this.options.skipGit) {
         return GitUtilities.addFiles([lernaConfigLocation], this.execOpts);
       }
@@ -421,8 +421,8 @@ class PublishCommand extends Command {
 
   updateUpdatedPackages() {
     const { conventionalCommits, changelogPreset } = this.options;
-    const independentVersions = this.repository.isIndependent();
-    const rootPkg = this.repository.package;
+    const independentVersions = this.project.isIndependent();
+    const rootPkg = this.project.package;
     const changedFiles = new Set();
 
     // my kingdom for async await :(
@@ -513,7 +513,7 @@ class PublishCommand extends Command {
   commitAndTagUpdates() {
     let chain = Promise.resolve();
 
-    if (this.repository.isIndependent()) {
+    if (this.project.isIndependent()) {
       chain = chain.then(() => this.gitCommitAndTagVersionForUpdates());
     } else {
       chain = chain.then(() => this.gitCommitAndTagVersion());
@@ -527,7 +527,7 @@ class PublishCommand extends Command {
     chain = chain.then(() => pMap(this.updates, ({ pkg }) => this.runPackageLifecycle(pkg, "postversion")));
 
     // run postversion, if set, in the root directory
-    chain = chain.then(() => this.runPackageLifecycle(this.repository.package, "postversion"));
+    chain = chain.then(() => this.runPackageLifecycle(this.project.package, "postversion"));
 
     return chain;
   }

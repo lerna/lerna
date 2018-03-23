@@ -53,8 +53,8 @@ class CreateCommand extends Command {
     this.dirName = scope ? name.split("/").pop() : name;
     this.pkgName = name;
     this.pkgsDir =
-      this.repository.packageParentDirs.find(pd => pd.indexOf(pkgLocation) > -1) ||
-      this.repository.packageParentDirs[0];
+      this.project.packageParentDirs.find(pd => pd.indexOf(pkgLocation) > -1) ||
+      this.project.packageParentDirs[0];
 
     this.camelName = camelCase(this.dirName);
 
@@ -90,8 +90,8 @@ class CreateCommand extends Command {
     }
 
     // allow default init-version when independent versioning enabled
-    if (!this.repository.isIndependent()) {
-      this.conf.set("init-version", this.repository.version);
+    if (!this.project.isIndependent()) {
+      this.conf.set("init-version", this.project.version);
     }
 
     // default author metadata with git config
@@ -282,7 +282,7 @@ class CreateCommand extends Command {
 
   setHomepage() {
     // allow --homepage override, but otherwise use root pkg.homepage, if it exists
-    let { homepage = this.repository.package.json.homepage } = this.options;
+    let { homepage = this.project.package.json.homepage } = this.options;
 
     if (!homepage) {
       // normalize-package-data will backfill from hosted-git-info, if possible
@@ -295,7 +295,7 @@ class CreateCommand extends Command {
     }
 
     const hurl = new URL(homepage);
-    const relativeTarget = path.relative(this.repository.rootPath, this.targetDir);
+    const relativeTarget = path.relative(this.project.rootPath, this.targetDir);
 
     if (hurl.hostname.match("github")) {
       hurl.pathname = path.posix.join(hurl.pathname, "tree/master", relativeTarget);

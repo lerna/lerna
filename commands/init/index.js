@@ -47,7 +47,7 @@ class InitCommand extends Command {
   }
 
   ensurePackageJSON() {
-    let { packageJson } = this.repository;
+    let { packageJson } = this.project;
     let chain = Promise.resolve();
 
     if (!packageJson) {
@@ -58,9 +58,7 @@ class InitCommand extends Command {
       this.logger.info("", "Creating package.json");
 
       // initialize with default indentation so write-pkg doesn't screw it up with tabs
-      chain = chain.then(() =>
-        writeJsonFile(this.repository.packageJsonLocation, packageJson, { indent: 2 })
-      );
+      chain = chain.then(() => writeJsonFile(this.project.packageJsonLocation, packageJson, { indent: 2 }));
     } else {
       this.logger.info("", "Updating package.json");
     }
@@ -81,14 +79,14 @@ class InitCommand extends Command {
 
     targetDependencies.lerna = this.exact ? this.lernaVersion : `^${this.lernaVersion}`;
 
-    chain = chain.then(() => writePkg(this.repository.packageJsonLocation, packageJson));
+    chain = chain.then(() => writePkg(this.project.packageJsonLocation, packageJson));
 
     return chain;
   }
 
   ensureLernaConfig() {
     // config already defaulted to empty object in Project constructor
-    const { config, version: projectVersion } = this.repository;
+    const { config, version: projectVersion } = this.project;
 
     let version;
 
@@ -117,17 +115,17 @@ class InitCommand extends Command {
     }
 
     Object.assign(config, {
-      packages: this.repository.packageConfigs,
+      packages: this.project.packageConfigs,
       version,
     });
 
-    return this.repository.serializeConfig();
+    return this.project.serializeConfig();
   }
 
   ensurePackagesDir() {
     this.logger.info("", "Creating packages directory");
 
-    return pMap(this.repository.packageParentDirs, dir => fs.mkdirp(dir));
+    return pMap(this.project.packageParentDirs, dir => fs.mkdirp(dir));
   }
 }
 
