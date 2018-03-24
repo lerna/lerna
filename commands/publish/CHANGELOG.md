@@ -3,6 +3,37 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.0.0-beta.9"></a>
+# [3.0.0-beta.9](https://github.com/lerna/lerna/compare/v3.0.0-beta.8...v3.0.0-beta.9) (2018-03-24)
+
+
+### Bug Fixes
+
+* **publish:** Split `--skip-*` properly, leave working tree clean ([5b4b2c9](https://github.com/lerna/lerna/commit/5b4b2c9))
+
+
+### Features
+
+* **command:** Rename this.repository -> this.project ([43e98a0](https://github.com/lerna/lerna/commit/43e98a0))
+* **project:** Use cosmiconfig to locate and read lerna.json ([b8c2789](https://github.com/lerna/lerna/commit/b8c2789))
+
+
+### BREAKING CHANGES
+
+* **publish:** Previously, gitHead annotations were leftover if `--skip-npm` was passed,
+despite no actual requirement for that property when no publishing is going on.
+
+Now, all publish-related operations are truly skipped with `--skip-npm`,
+and all git commit/push-related operations are skipped with `--skip-git`.
+Passing `--skip-npm` will now also always push to remote, which represents
+a breaking change from 2.x behavior.
+
+Thanks @KingScooty for raising the issue!
+
+
+
+
+
 <a name="3.0.0-beta.8"></a>
 # [3.0.0-beta.8](https://github.com/lerna/lerna/compare/v3.0.0-beta.7...v3.0.0-beta.8) (2018-03-22)
 

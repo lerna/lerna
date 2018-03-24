@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.0.0-beta.9"></a>
+# [3.0.0-beta.9](https://github.com/lerna/lerna/compare/v3.0.0-beta.8...v3.0.0-beta.9) (2018-03-24)
+
+
+### Features
+
+* **command:** Remove legacy config handling ([d305a38](https://github.com/lerna/lerna/commit/d305a38))
+* **command:** Rename this.repository -> this.project ([43e98a0](https://github.com/lerna/lerna/commit/43e98a0))
+* **project:** Normalize config.commands -> config.command ([24e55e3](https://github.com/lerna/lerna/commit/24e55e3))
+* **project:** Use cosmiconfig to locate and read lerna.json ([b8c2789](https://github.com/lerna/lerna/commit/b8c2789))
+
+
+### BREAKING CHANGES
+
+* **command:** lerna.json `bootstrapConfig` and `publishConfig` namespaces are no longer honored.
+These config blocks should be moved to `command.bootstrap` and `command.publish`, respectively.
+
+
+
+
+
 <a name="3.0.0-beta.7"></a>
 # [3.0.0-beta.7](https://github.com/lerna/lerna/compare/v3.0.0-beta.6...v3.0.0-beta.7) (2018-03-20)
 

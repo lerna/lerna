@@ -3,6 +3,43 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.0.0-beta.9"></a>
+# [3.0.0-beta.9](https://github.com/lerna/lerna/compare/v3.0.0-beta.8...v3.0.0-beta.9) (2018-03-24)
+
+
+### Bug Fixes
+
+* **filter-options:** Move include/exclude validation into filter-packages ([503251d](https://github.com/lerna/lerna/commit/503251d))
+* **git-utils:** Remove unused methods, stop mocking tests ([3e00d7a](https://github.com/lerna/lerna/commit/3e00d7a))
+* **publish:** Split `--skip-*` properly, leave working tree clean ([5b4b2c9](https://github.com/lerna/lerna/commit/5b4b2c9))
+
+
+### Features
+
+* **command:** Remove legacy config handling ([d305a38](https://github.com/lerna/lerna/commit/d305a38))
+* **command:** Rename this.repository -> this.project ([43e98a0](https://github.com/lerna/lerna/commit/43e98a0))
+* **project:** Normalize config.commands -> config.command ([24e55e3](https://github.com/lerna/lerna/commit/24e55e3))
+* **project:** Use cosmiconfig to locate and read lerna.json ([b8c2789](https://github.com/lerna/lerna/commit/b8c2789))
+
+
+### BREAKING CHANGES
+
+* **publish:** Previously, gitHead annotations were leftover if `--skip-npm` was passed,
+despite no actual requirement for that property when no publishing is going on.
+
+Now, all publish-related operations are truly skipped with `--skip-npm`,
+and all git commit/push-related operations are skipped with `--skip-git`.
+Passing `--skip-npm` will now also always push to remote, which represents
+a breaking change from 2.x behavior.
+
+Thanks @KingScooty for raising the issue!
+* **command:** lerna.json `bootstrapConfig` and `publishConfig` namespaces are no longer honored.
+These config blocks should be moved to `command.bootstrap` and `command.publish`, respectively.
+
+
+
+
+
 <a name="3.0.0-beta.8"></a>
 # [3.0.0-beta.8](https://github.com/lerna/lerna/compare/v3.0.0-beta.7...v3.0.0-beta.8) (2018-03-22)
 
