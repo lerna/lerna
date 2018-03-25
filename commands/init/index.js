@@ -8,6 +8,12 @@ const writePkg = require("write-pkg");
 const Command = require("@lerna/command");
 const GitUtilities = require("@lerna/git-utils");
 
+module.exports = factory;
+
+function factory(argv) {
+  return new InitCommand(argv);
+}
+
 class InitCommand extends Command {
   get defaultOptions() {
     return {
@@ -129,4 +135,4 @@ class InitCommand extends Command {
   }
 }
 
-module.exports = InitCommand;
+module.exports.InitCommand = InitCommand;

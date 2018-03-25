@@ -6,6 +6,12 @@ const Command = require("@lerna/command");
 const collectUpdates = require("@lerna/collect-updates");
 const output = require("@lerna/output");
 
+module.exports = factory;
+
+function factory(argv) {
+  return new ChangedCommand(argv);
+}
+
 class ChangedCommand extends Command {
   get otherCommandConfigs() {
     return ["publish"];
@@ -51,4 +57,4 @@ class ChangedCommand extends Command {
   }
 }
 
-module.exports = ChangedCommand;
+module.exports.ChangedCommand = ChangedCommand;

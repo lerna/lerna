@@ -21,6 +21,12 @@ const symlinkDependencies = require("@lerna/symlink-dependencies");
 const ValidationError = require("@lerna/validation-error");
 const isHoistedPackage = require("./lib/is-hoisted-package");
 
+module.exports = factory;
+
+function factory(argv) {
+  return new BootstrapCommand(argv);
+}
+
 class BootstrapCommand extends Command {
   get requiresGit() {
     return false;
@@ -524,4 +530,4 @@ class BootstrapCommand extends Command {
   }
 }
 
-module.exports = BootstrapCommand;
+module.exports.BootstrapCommand = BootstrapCommand;

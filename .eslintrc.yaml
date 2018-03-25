@@ -39,9 +39,13 @@
       - allowAfterThis: true
     no-use-before-define:
       - error
-      - nofunc
+      - functions: false
+        classes: false
     strict: off
   overrides:
+    - files: "commands/*/command.js"
+      rules:
+        global-require: off
     - files:
         - "integration/**"
         - "**/__tests__/**"

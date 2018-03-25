@@ -12,6 +12,12 @@ const PromptUtilities = require("@lerna/prompt");
 const ValidationError = require("@lerna/validation-error");
 const getTargetBase = require("./lib/get-target-base");
 
+module.exports = factory;
+
+function factory(argv) {
+  return new ImportCommand(argv);
+}
+
 class ImportCommand extends Command {
   gitParamsForTargetCommits() {
     const params = ["log", "--format=%h"];
@@ -206,4 +212,4 @@ class ImportCommand extends Command {
   }
 }
 
-module.exports = ImportCommand;
+module.exports.ImportCommand = ImportCommand;

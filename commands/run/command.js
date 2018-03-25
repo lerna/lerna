@@ -1,7 +1,6 @@
 "use strict";
 
 const filterable = require("@lerna/filter-options");
-const RunCommand = require(".");
 
 /**
  * @see https://github.com/yargs/yargs/blob/master/docs/advanced.md#providing-a-command-module
@@ -42,5 +41,5 @@ exports.builder = yargs => {
 };
 
 exports.handler = function handler(argv) {
-  return new RunCommand(argv);
+  return require(".")(argv);
 };

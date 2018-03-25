@@ -1,7 +1,5 @@
 "use strict";
 
-const CreateCommand = require(".");
-
 /**
  * @see https://github.com/yargs/yargs/blob/master/docs/advanced.md#providing-a-command-module
  */
@@ -88,5 +86,5 @@ exports.builder = yargs => {
 };
 
 exports.handler = function handler(argv) {
-  return new CreateCommand(argv);
+  return require(".")(argv);
 };

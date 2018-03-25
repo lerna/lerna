@@ -1,8 +1,10 @@
 "use strict";
 
 const publishOptions = require("@lerna/publish/command").builder;
-const ChangedCommand = require(".");
 
+/**
+ * @see https://github.com/yargs/yargs/blob/master/docs/advanced.md#providing-a-command-module
+ */
 exports.command = "changed";
 
 exports.aliases = ["updated"];
@@ -20,5 +22,5 @@ exports.builder = yargs =>
   });
 
 exports.handler = function handler(argv) {
-  return new ChangedCommand(argv);
+  return require(".")(argv);
 };

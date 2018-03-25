@@ -1,7 +1,5 @@
 "use strict";
 
-const PublishCommand = require(".");
-
 /**
  * @see https://github.com/yargs/yargs/blob/master/docs/advanced.md#providing-a-command-module
  */
@@ -139,6 +137,5 @@ exports.builder = yargs => {
 };
 
 exports.handler = function handler(argv) {
-  // eslint-disable-next-line no-use-before-define
-  return new PublishCommand(argv);
+  return require(".")(argv);
 };

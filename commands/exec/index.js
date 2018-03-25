@@ -6,6 +6,12 @@ const batchPackages = require("@lerna/batch-packages");
 const runParallelBatches = require("@lerna/run-parallel-batches");
 const ValidationError = require("@lerna/validation-error");
 
+module.exports = factory;
+
+function factory(argv) {
+  return new ExecCommand(argv);
+}
+
 class ExecCommand extends Command {
   get requiresGit() {
     return false;
@@ -91,4 +97,4 @@ class ExecCommand extends Command {
   }
 }
 
-module.exports = ExecCommand;
+module.exports.ExecCommand = ExecCommand;

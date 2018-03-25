@@ -6,7 +6,13 @@ const columnify = require("columnify");
 const Command = require("@lerna/command");
 const output = require("@lerna/output");
 
-class LsCommand extends Command {
+module.exports = factory;
+
+function factory(argv) {
+  return new ListCommand(argv);
+}
+
+class ListCommand extends Command {
   get requiresGit() {
     return false;
   }
@@ -74,4 +80,4 @@ class LsCommand extends Command {
   }
 }
 
-module.exports = LsCommand;
+module.exports.ListCommand = ListCommand;

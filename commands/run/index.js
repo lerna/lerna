@@ -8,6 +8,12 @@ const batchPackages = require("@lerna/batch-packages");
 const runParallelBatches = require("@lerna/run-parallel-batches");
 const output = require("@lerna/output");
 
+module.exports = factory;
+
+function factory(argv) {
+  return new RunCommand(argv);
+}
+
 class RunCommand extends Command {
   get requiresGit() {
     return false;
@@ -115,4 +121,4 @@ class RunCommand extends Command {
   }
 }
 
-module.exports = RunCommand;
+module.exports.RunCommand = RunCommand;

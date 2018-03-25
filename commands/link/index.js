@@ -4,6 +4,12 @@ const Command = require("@lerna/command");
 const PackageGraph = require("@lerna/package-graph");
 const symlinkDependencies = require("@lerna/symlink-dependencies");
 
+module.exports = factory;
+
+function factory(argv) {
+  return new LinkCommand(argv);
+}
+
 class LinkCommand extends Command {
   get requiresGit() {
     return false;
@@ -30,4 +36,4 @@ class LinkCommand extends Command {
   }
 }
 
-module.exports = LinkCommand;
+module.exports.LinkCommand = LinkCommand;

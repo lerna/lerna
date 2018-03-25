@@ -6,6 +6,12 @@ const GitUtilities = require("@lerna/git-utils");
 const ValidationError = require("@lerna/validation-error");
 const getLastCommit = require("./lib/get-last-commit");
 
+module.exports = factory;
+
+function factory(argv) {
+  return new DiffCommand(argv);
+}
+
 class DiffCommand extends Command {
   initialize() {
     const packageName = this.options.pkgName;
@@ -55,4 +61,4 @@ class DiffCommand extends Command {
   }
 }
 
-module.exports = DiffCommand;
+module.exports.DiffCommand = DiffCommand;

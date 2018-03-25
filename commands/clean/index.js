@@ -7,6 +7,12 @@ const Command = require("@lerna/command");
 const rimrafDir = require("@lerna/rimraf-dir");
 const PromptUtilities = require("@lerna/prompt");
 
+module.exports = factory;
+
+function factory(argv) {
+  return new CleanCommand(argv);
+}
+
 class CleanCommand extends Command {
   get requiresGit() {
     return false;
@@ -47,4 +53,4 @@ class CleanCommand extends Command {
   }
 }
 
-module.exports = CleanCommand;
+module.exports.CleanCommand = CleanCommand;

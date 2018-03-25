@@ -12,6 +12,12 @@ const Command = require("@lerna/command");
 const ValidationError = require("@lerna/validation-error");
 const getRangeToReference = require("./lib/get-range-to-reference");
 
+module.exports = factory;
+
+function factory(argv) {
+  return new AddCommand(argv);
+}
+
 class AddCommand extends Command {
   get requiresGit() {
     return false;
@@ -168,4 +174,4 @@ class AddCommand extends Command {
   }
 }
 
-module.exports = AddCommand;
+module.exports.AddCommand = AddCommand;

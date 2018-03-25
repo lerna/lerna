@@ -26,6 +26,12 @@ const batchPackages = require("@lerna/batch-packages");
 const runParallelBatches = require("@lerna/run-parallel-batches");
 const ValidationError = require("@lerna/validation-error");
 
+module.exports = factory;
+
+function factory(argv) {
+  return new PublishCommand(argv);
+}
+
 class PublishCommand extends Command {
   get defaultOptions() {
     return Object.assign({}, super.defaultOptions, {
@@ -643,4 +649,4 @@ class PublishCommand extends Command {
   }
 }
 
-module.exports = PublishCommand;
+module.exports.PublishCommand = PublishCommand;

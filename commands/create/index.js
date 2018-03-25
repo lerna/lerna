@@ -30,6 +30,12 @@ const DEFAULT_DESCRIPTION = [
   "BOOM",
 ].join(" / ");
 
+module.exports = factory;
+
+function factory(argv) {
+  return new CreateCommand(argv);
+}
+
 class CreateCommand extends Command {
   initialize() {
     const {
@@ -499,4 +505,4 @@ class CreateCommand extends Command {
   }
 }
 
-module.exports = CreateCommand;
+module.exports.CreateCommand = CreateCommand;
