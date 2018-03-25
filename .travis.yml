@@ -22,10 +22,9 @@ cache:
 
 before_install:
   - npm config set loglevel warn
-  - npm install --global npm@latest cipm
+  - npm install --global npm@latest
 
-install: cipm
-# use cipm until `npm ci` is fixed
+install: npm ci
 
 before_script:
   - git config --global user.email test@example.com

@@ -18,10 +18,9 @@ cache:
 install:
   - ps: Install-Product node $env:nodejs_version
   - npm config set loglevel warn
-  - npm install --global npm@latest cipm
+  - npm install --global npm@latest
   - set PATH=%APPDATA%\npm;%PATH%
-  - cipm
-  # use cipm until `npm ci` is fixed
+  - npm ci
 
 before_test:
   - git config --global user.email test@example.com
