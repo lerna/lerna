@@ -1,5 +1,6 @@
 "use strict";
 
+const path = require("path");
 const yargs = require("yargs/yargs");
 const globalOptions = require("@lerna/global-options");
 
@@ -13,7 +14,11 @@ module.exports = commandRunner;
  * @return {Function} with partially-applied yargs config
  */
 function commandRunner(commandModule) {
+  /* eslint-disable import/no-dynamic-require, global-require */
   const cmd = commandModule.command.split(" ")[0];
+
+  // prime the pump so slow-as-molasses CI doesn't fail with delayed require()
+  require(path.resolve(require.main.filename, "../.."));
 
   return cwd => {
     // create a _new_ yargs instance every time cwd changes to avoid singleton pollution
