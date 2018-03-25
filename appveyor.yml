@@ -22,10 +22,6 @@ install:
   - set PATH=%APPDATA%\npm;%PATH%
   - npm ci
 
-before_test:
-  - git config --global user.email test@example.com
-  - git config --global user.name "Tester McPerson"
-
 test_script:
   - npm run ci
 

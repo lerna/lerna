@@ -26,10 +26,6 @@ before_install:
 
 install: npm ci
 
-before_script:
-  - git config --global user.email test@example.com
-  - git config --global user.name "Tester McPerson"
-
 script: npm run ci
 
 notifications:
