@@ -1,12 +1,12 @@
 "use strict";
 
-jest.mock("@lerna/bootstrap/command");
+jest.mock("@lerna/bootstrap");
 
 const fs = require("fs-extra");
 const path = require("path");
 
 // mocked or stubbed modules
-const BootstrapCommand = require("@lerna/bootstrap/command");
+const bootstrap = require("@lerna/bootstrap");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
@@ -22,7 +22,7 @@ const readPkg = (testDir, pkg) => fs.readJSON(path.join(testDir, pkg, "package.j
 
 describe("AddCommand", () => {
   // we already have enough tests of BootstrapCommand
-  BootstrapCommand.handler.mockResolvedValue();
+  bootstrap.mockResolvedValue();
 
   it("should throw without packages", async () => {
     expect.assertions(1);
@@ -165,7 +165,7 @@ describe("AddCommand", () => {
 
     await lernaAdd(testDir)("@test/package-1");
 
-    expect(BootstrapCommand.handler).lastCalledWith(
+    expect(bootstrap).lastCalledWith(
       expect.objectContaining({
         scope: ["@test/package-2", "package-3", "package-4"],
       })
@@ -177,7 +177,7 @@ describe("AddCommand", () => {
 
     await lernaAdd(testDir)("@test/package-1", "--scope", "@test/package-2", "--scope", "package-3");
 
-    expect(BootstrapCommand.handler).lastCalledWith(
+    expect(bootstrap).lastCalledWith(
       expect.objectContaining({
         scope: ["@test/package-2", "package-3"],
       })
@@ -189,7 +189,7 @@ describe("AddCommand", () => {
 
     await lernaAdd(testDir)("@test/package-1", "--ignore", "@test/package-2");
 
-    expect(BootstrapCommand.handler).lastCalledWith(
+    expect(bootstrap).lastCalledWith(
       expect.objectContaining({
         scope: ["package-3", "package-4"],
       })
@@ -201,7 +201,7 @@ describe("AddCommand", () => {
 
     await lernaAdd(testDir)("@test/package-1");
 
-    expect(BootstrapCommand.handler).not.toHaveBeenCalled();
+    expect(bootstrap).not.toHaveBeenCalled();
   });
 
   it("bootstraps mixed local and external dependencies", async () => {
@@ -221,7 +221,7 @@ describe("AddCommand", () => {
     expect(pkg3).toDependOn("pify", "^3.0.0");
     expect(pkg3).toDependOn("@test/package-2"); // existing, but should stay
 
-    expect(BootstrapCommand.handler).lastCalledWith(
+    expect(bootstrap).lastCalledWith(
       expect.objectContaining({
         scope: ["@test/package-1", "@test/package-2", "@test/package-3"],
       })

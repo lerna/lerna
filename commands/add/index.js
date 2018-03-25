@@ -7,8 +7,8 @@ const pMap = require("p-map");
 const semver = require("semver");
 const writePkg = require("write-pkg");
 
-const BootstrapCommand = require("@lerna/bootstrap/command");
 const Command = require("@lerna/command");
+const bootstrap = require("@lerna/bootstrap");
 const ValidationError = require("@lerna/validation-error");
 const getRangeToReference = require("./lib/get-range-to-reference");
 
@@ -83,7 +83,7 @@ class AddCommand extends Command {
     return this.makeChanges().then(pkgs => {
       this.logger.info(`Changes require bootstrap in ${pkgs.length} packages`);
 
-      return BootstrapCommand.handler(
+      return bootstrap(
         Object.assign({}, this.options, {
           args: [],
           cwd: this.project.rootPath,
