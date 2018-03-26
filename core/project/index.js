@@ -11,8 +11,6 @@ const writeJsonFile = require("write-json-file");
 const ValidationError = require("@lerna/validation-error");
 const Package = require("@lerna/package");
 
-const DEFAULT_PACKAGE_GLOB = "packages/*";
-
 class Project {
   constructor(cwd) {
     const explorer = cosmiconfig("lerna", {
@@ -82,7 +80,7 @@ class Project {
       return this.packageJson.workspaces.packages || this.packageJson.workspaces;
     }
 
-    return this.config.packages || [DEFAULT_PACKAGE_GLOB];
+    return this.config.packages || [Project.DEFAULT_PACKAGE_GLOB];
   }
 
   get packageParentDirs() {
@@ -130,5 +128,7 @@ class Project {
     );
   }
 }
+
+Project.DEFAULT_PACKAGE_GLOB = "packages/*";
 
 module.exports = Project;
