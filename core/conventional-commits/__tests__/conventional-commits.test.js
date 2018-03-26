@@ -17,15 +17,6 @@ const { recommendVersion, updateChangelog } = require("..");
 expect.addSnapshotSerializer(require("@lerna-test/serialize-changelog"));
 
 describe("conventional-commits", () => {
-  const currentDirectory = process.cwd();
-
-  afterEach(() => {
-    // conventional-recommended-bump is incapable of accepting cwd config :P
-    if (process.cwd() !== currentDirectory) {
-      process.chdir(currentDirectory);
-    }
-  });
-
   describe("recommendVersion()", () => {
     it("returns next version bump", async () => {
       const cwd = await initFixture("fixed");
@@ -36,9 +27,6 @@ describe("conventional-commits", () => {
       await fs.writeJSON(pkg1.manifestLocation, pkg1);
       await gitAdd(cwd, pkg1.manifestLocation);
       await gitCommit(cwd, "feat: changed 1");
-
-      // conventional-recommended-bump does not accept cwd config
-      process.chdir(cwd);
 
       await expect(recommendVersion(pkg1, "fixed", {})).resolves.toBe("1.1.0");
     });
@@ -62,9 +50,6 @@ describe("conventional-commits", () => {
       await gitAdd(cwd, pkg2.manifestLocation);
       await gitCommit(cwd, "feat: changed 2");
 
-      // conventional-recommended-bump does not accept cwd config
-      process.chdir(cwd);
-
       await expect(recommendVersion(pkg1, "independent", opts)).resolves.toBe("1.0.1");
       await expect(recommendVersion(pkg2, "independent", opts)).resolves.toBe("1.1.0");
     });
@@ -75,9 +60,6 @@ describe("conventional-commits", () => {
 
     it("creates files if they do not exist", async () => {
       const cwd = await initFixture("changelog-missing");
-
-      // conventional-changelog does not accept cwd config
-      process.chdir(cwd);
 
       const [pkg1] = await collectPackages(cwd);
       const rootPkg = {
@@ -113,8 +95,6 @@ describe("conventional-commits", () => {
         location: cwd,
       };
 
-      // conventional-changelog does not accept cwd config
-      process.chdir(cwd);
       await gitTag(cwd, "v1.0.0");
 
       const [pkg1] = await collectPackages(cwd);
@@ -141,8 +121,6 @@ describe("conventional-commits", () => {
     it("appends version bump message if no commits have been recorded", async () => {
       const cwd = await initFixture("fixed");
 
-      // conventional-changelog does not accept cwd config
-      process.chdir(cwd);
       await gitTag(cwd, "v1.0.0");
 
       const [pkg1, pkg2] = await collectPackages(cwd);
@@ -164,9 +142,6 @@ describe("conventional-commits", () => {
 
     it("updates independent changelogs", async () => {
       const cwd = await initFixture("independent");
-
-      // conventional-changelog does not accept cwd config
-      process.chdir(cwd);
 
       await Promise.all([gitTag(cwd, "package-1@1.0.0"), gitTag(cwd, "package-2@1.0.0")]);
 

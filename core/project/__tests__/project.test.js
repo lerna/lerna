@@ -18,6 +18,14 @@ describe("Project", () => {
     testDir = await initFixture("basic");
   });
 
+  afterEach(() => {
+    // ensure common CWD is restored when individual tests
+    // initialize their own fixture (which changes CWD)
+    if (process.cwd() !== testDir) {
+      process.chdir(testDir);
+    }
+  });
+
   describe(".rootPath", () => {
     it("should be added to the instance", () => {
       const repo = new Project(testDir);
@@ -33,7 +41,7 @@ describe("Project", () => {
 
     it("defaults CWD to '.' when constructor argument missing", () => {
       const repo = new Project();
-      expect(repo.rootPath).toBe(path.resolve(__dirname, "..", "..", ".."));
+      expect(repo.rootPath).toBe(testDir);
     });
   });
 

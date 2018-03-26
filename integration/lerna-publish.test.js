@@ -37,15 +37,6 @@ async function commitChangeToPackage(cwd, packageName, commitMsg, data) {
 }
 
 describe("lerna publish", () => {
-  const currentDirectory = process.cwd();
-
-  afterEach(() => {
-    // conventional-recommended-bump is incapable of accepting cwd config :P
-    if (process.cwd() !== currentDirectory) {
-      process.chdir(currentDirectory);
-    }
-  });
-
   test("exit 0 when no updates", async () => {
     const { cwd } = await cloneFixture("normal");
     const args = ["publish"];
@@ -118,9 +109,6 @@ describe("lerna publish", () => {
         `feat(package-3): Add baz feature${os.EOL}${os.EOL}BREAKING CHANGE: yup`,
         { baz: true }
       );
-
-      // conventional-recommended-bump is incapable of accepting cwd config :P
-      process.chdir(cwd);
 
       const { stdout } = await cliRunner(cwd)(...args);
       expect(stdout).toMatchSnapshot();
