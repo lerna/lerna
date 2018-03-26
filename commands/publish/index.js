@@ -583,7 +583,7 @@ class PublishCommand extends Command {
     // if we skip temp tags we should tag with the proper value immediately
     const distTag = this.options.tempTag ? "lerna-temp" : this.getDistTag();
 
-    const rootPkg = this.repository.package;
+    const rootPkg = this.project.package;
     this.runPackageLifecycle(rootPkg, "prepublish");
     this.runPackageLifecycle(rootPkg, "prepare");
     this.runPackageLifecycle(rootPkg, "prepublishOnly");
