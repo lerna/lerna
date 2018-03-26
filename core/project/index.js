@@ -18,7 +18,18 @@ class Project {
       rc: "lerna.json",
       rcStrictJson: true,
       sync: true,
-      transform: obj => {
+      transform(obj) {
+        // cosmiconfig returns null when nothing is found
+        if (!obj) {
+          return {
+            // No need to distinguish between missing and empty,
+            // saves a lot of noisy guards elsewhere
+            config: {},
+            // path.resolve(".", ...) starts from process.cwd()
+            filepath: path.resolve(cwd || ".", "lerna.json"),
+          };
+        }
+
         // normalize command-specific config namespace
         if (obj.config.commands) {
           obj.config.command = obj.config.commands;
@@ -34,20 +45,14 @@ class Project {
     try {
       loaded = explorer.load(cwd);
     } catch (err) {
-      // don't swallow syntax errors
+      // redecorate JSON syntax errors, avoid debug dump
       if (err.name === "JSONError") {
         throw new ValidationError(err.name, err.message);
       }
-    }
 
-    // cosmiconfig returns null when nothing is found
-    loaded = loaded || {
-      // No need to distinguish between missing and empty,
-      // saves a lot of noisy guards elsewhere
-      config: {},
-      // path.resolve(".", ...) starts from process.cwd()
-      filepath: path.resolve(cwd || ".", "lerna.json"),
-    };
+      // re-throw other errors, could be ours or third-party
+      throw err;
+    }
 
     this.config = loaded.config;
     this.rootPath = path.dirname(loaded.filepath);
@@ -103,10 +108,7 @@ class Project {
         value: packageJson,
       });
     } catch (err) {
-      // don't swallow syntax errors
-      if (err.name === "JSONError") {
-        throw new ValidationError(err.name, err.message);
-      }
+      // syntax errors are already caught and reported by constructor
       // try again next time
     }
 
