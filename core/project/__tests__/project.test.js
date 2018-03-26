@@ -1,9 +1,7 @@
 "use strict";
 
+const fs = require("fs-extra");
 const path = require("path");
-
-// mocked or stubbed modules
-const loadJsonFile = require("load-json-file");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
@@ -143,12 +141,6 @@ describe("Project", () => {
   });
 
   describe("get .packageJson", () => {
-    const loadJsonFileSync = loadJsonFile.sync;
-
-    afterEach(() => {
-      loadJsonFile.sync = loadJsonFileSync;
-    });
-
     it("returns parsed package.json", () => {
       const repo = new Project(testDir);
       expect(repo.packageJson).toMatchObject({
@@ -165,15 +157,15 @@ describe("Project", () => {
       expect(repo.packageJson).toBe(repo.packageJson);
     });
 
-    it("does not cache failures", () => {
-      loadJsonFile.sync = jest.fn(() => {
-        throw new Error("File not found");
-      });
+    it("does not cache failures", async () => {
+      const cwd = await initFixture("basic");
 
-      const repo = new Project(testDir);
-      expect(repo.packageJson).toBe(null);
+      await fs.remove(path.join(cwd, "package.json"));
 
-      loadJsonFile.sync = loadJsonFileSync;
+      const repo = new Project(cwd);
+      expect(repo.packageJson).toBe(undefined);
+
+      await fs.writeJSON(repo.packageJsonLocation, { name: "test" }, { spaces: 2 });
       expect(repo.packageJson).toHaveProperty("name", "test");
     });
 
