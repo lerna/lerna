@@ -12,7 +12,7 @@ function npmPublish(pkg, tag, { npmClient, registry }) {
 
   const distTag = tag && tag.trim();
   const opts = getExecOpts(pkg, registry);
-  const args = ["publish"];
+  const args = ["publish", "--ignore-scripts"];
 
   if (distTag) {
     args.push("--tag", distTag);
