@@ -66,10 +66,9 @@ describe("Project", () => {
     });
 
     it("defaults to an empty object", async () => {
-      const cwd = await initFixture("no-lerna-config");
-      const repo = new Project(cwd);
+      await initFixture("no-lerna-config");
 
-      expect(repo.config).toEqual({});
+      expect(new Project().config).toEqual({});
     });
 
     it("errors when lerna.json is not valid JSON", async () => {
@@ -83,6 +82,91 @@ describe("Project", () => {
         expect(err.name).toBe("ValidationError");
         expect(err.prefix).toBe("JSONError");
       }
+    });
+
+    it("returns parsed rootPkg.lerna", async () => {
+      const cwd = await initFixture("pkg-prop");
+      const project = new Project(cwd);
+
+      expect(project.config).toEqual({
+        command: {
+          publish: {
+            loglevel: "verbose",
+          },
+        },
+        loglevel: "success",
+        version: "1.0.0",
+      });
+    });
+
+    it("extends local shared config", async () => {
+      const cwd = await initFixture("extends");
+      const project = new Project(cwd);
+
+      expect(project.config).toEqual({
+        packages: ["custom-local/*"],
+        version: "1.0.0",
+      });
+    });
+
+    it("extends local shared config subpath", async () => {
+      const cwd = await initFixture("extends");
+
+      await fs.writeJSON(path.resolve(cwd, "lerna.json"), {
+        extends: "local-package/subpath",
+        version: "1.0.0",
+      });
+
+      const project = new Project(cwd);
+
+      expect(project.config).toEqual({
+        packages: ["subpath-local/*"],
+        version: "1.0.0",
+      });
+    });
+
+    it("extends config recursively", async () => {
+      const cwd = await initFixture("extends-recursive");
+      const project = new Project(cwd);
+
+      expect(project.config).toEqual({
+        command: {
+          list: {
+            json: true,
+            private: false,
+          },
+        },
+        packages: ["recursive-pkgs/*"],
+        version: "1.0.0",
+      });
+    });
+
+    it("throws an error when extend target is unresolvable", async () => {
+      const cwd = await initFixture("extends-unresolved");
+
+      try {
+        // eslint-disable-next-line no-unused-vars
+        const project = new Project(cwd);
+        console.log(project);
+      } catch (err) {
+        expect(err.message).toMatch("must be locally-resolvable");
+      }
+
+      expect.assertions(1);
+    });
+
+    it("throws an error when extend target is circular", async () => {
+      const cwd = await initFixture("extends-circular");
+
+      try {
+        // eslint-disable-next-line no-unused-vars
+        const project = new Project(cwd);
+        console.log(project);
+      } catch (err) {
+        expect(err.message).toMatch("cannot be circular");
+      }
+
+      expect.assertions(1);
     });
   });
 

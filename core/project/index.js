@@ -10,6 +10,7 @@ const writeJsonFile = require("write-json-file");
 
 const ValidationError = require("@lerna/validation-error");
 const Package = require("@lerna/package");
+const applyExtends = require("./lib/apply-extends");
 
 class Project {
   constructor(cwd) {
@@ -35,6 +36,8 @@ class Project {
           obj.config.command = obj.config.commands;
           delete obj.config.commands;
         }
+
+        obj.config = applyExtends(obj.config, path.dirname(obj.filepath));
 
         return obj;
       },

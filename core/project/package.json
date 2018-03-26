@@ -13,7 +13,8 @@
     "url": "https://github.com/evocateur"
   },
   "files": [
-    "index.js"
+    "index.js",
+    "lib"
   ],
   "main": "index.js",
   "engines": {
@@ -37,6 +38,7 @@
     "glob-parent": "^3.1.0",
     "load-json-file": "^4.0.0",
     "npmlog": "^4.1.2",
+    "resolve-from": "^4.0.0",
     "write-json-file": "^2.3.0"
   }
 }
