@@ -88,33 +88,40 @@ class Project {
   }
 
   get packageJson() {
-    if (!this._packageJson) {
-      try {
-        this._packageJson = loadJsonFile.sync(this.packageJsonLocation);
+    let packageJson;
 
-        if (!this._packageJson.name) {
-          // npm-lifecycle chokes if this is missing, so default like npm init does
-          this._packageJson.name = path.basename(path.dirname(this.packageJsonLocation));
-        }
-      } catch (err) {
-        // don't swallow syntax errors
-        if (err.name === "JSONError") {
-          throw new ValidationError(err.name, err.message);
-        }
-        // try again next time
-        this._packageJson = null;
+    try {
+      packageJson = loadJsonFile.sync(this.packageJsonLocation);
+
+      if (!packageJson.name) {
+        // npm-lifecycle chokes if this is missing, so default like npm init does
+        packageJson.name = path.basename(path.dirname(this.packageJsonLocation));
       }
+
+      // redefine getter to lazy-loaded value
+      Object.defineProperty(this, "packageJson", {
+        value: packageJson,
+      });
+    } catch (err) {
+      // don't swallow syntax errors
+      if (err.name === "JSONError") {
+        throw new ValidationError(err.name, err.message);
+      }
+      // try again next time
     }
 
-    return this._packageJson;
+    return packageJson;
   }
 
   get package() {
-    if (!this._package) {
-      this._package = new Package(this.packageJson, this.rootPath);
-    }
+    const pkg = new Package(this.packageJson, this.rootPath);
 
-    return this._package;
+    // redefine getter to lazy-loaded value
+    Object.defineProperty(this, "package", {
+      value: pkg,
+    });
+
+    return pkg;
   }
 
   isIndependent() {
