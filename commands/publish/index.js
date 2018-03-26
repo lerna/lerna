@@ -578,22 +578,29 @@ class PublishCommand extends Command {
     }
   }
 
+  runPrepublishScripts(pkg) {
+    return Promise.resolve(this.runPackageLifecycle(pkg, "prepublish"))
+      .then(() => this.runPackageLifecycle(pkg, "prepare"))
+      .then(() => this.runPackageLifecycle(pkg, "prepublishOnly"));
+  }
+
   npmPublish() {
     const tracker = this.logger.newItem("npmPublish");
     // if we skip temp tags we should tag with the proper value immediately
     const distTag = this.options.tempTag ? "lerna-temp" : this.getDistTag();
 
     const rootPkg = this.project.package;
-    this.runPackageLifecycle(rootPkg, "prepublish");
-    this.runPackageLifecycle(rootPkg, "prepare");
-    this.runPackageLifecycle(rootPkg, "prepublishOnly");
 
-    this.updates.forEach(({ pkg }) => {
-      this.execScript(pkg, "prepublish");
-      this.runPackageLifecycle(pkg, "prepublish");
-      this.runPackageLifecycle(pkg, "prepare");
-      this.runPackageLifecycle(pkg, "prepublishOnly");
-    });
+    const promise = Promise.resolve()
+      .then(() => this.runPrepublishScripts(rootPkg))
+      .then(() =>
+        Promise.all(
+          this.updates.map(({ pkg }) => {
+            this.execScript(pkg, "prepublish");
+            return this.runPrepublishScripts(pkg);
+          })
+        )
+      );
 
     tracker.addWork(this.packagesToPublish.length);
 
@@ -609,10 +616,13 @@ class PublishCommand extends Command {
       });
     };
 
-    return pFinally(runParallelBatches(this.batchedPackages, this.concurrency, mapPackage), () => {
-      this.runPackageLifecycle(rootPkg, "postpublish");
-      return tracker.finish();
-    });
+    return pFinally(
+      promise.then(() => runParallelBatches(this.batchedPackages, this.concurrency, mapPackage)),
+      () => {
+        this.runPackageLifecycle(rootPkg, "postpublish");
+        return tracker.finish();
+      }
+    );
   }
 
   npmUpdateAsLatest() {
