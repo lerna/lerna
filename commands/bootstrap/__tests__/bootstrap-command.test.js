@@ -438,6 +438,23 @@ describe("BootstrapCommand", () => {
     });
   });
 
+  describe("with relative file: specifiers in root dependencies", () => {
+    it("only installs in the root", async () => {
+      const testDir = await initFixture("relative-file-specs");
+
+      await lernaBootstrap(testDir)();
+
+      expect(npmInstall.dependencies).not.toBeCalled();
+      expect(npmInstall).lastCalledWith(
+        expect.objectContaining({ name: "relative-file-specs" }),
+        expect.objectContaining({
+          npmClient: "npm",
+          stdio: "inherit",
+        })
+      );
+    });
+  });
+
   describe("with duplicate package names", () => {
     it("throws an error", async () => {
       expect.assertions(1);

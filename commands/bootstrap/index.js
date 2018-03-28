@@ -2,6 +2,7 @@
 
 const dedent = require("dedent");
 const getPort = require("get-port");
+const npa = require("npm-package-arg");
 const path = require("path");
 const pFinally = require("p-finally");
 const pMap = require("p-map");
@@ -86,7 +87,7 @@ class BootstrapCommand extends Command {
   }
 
   execute() {
-    if (this.options.useWorkspaces) {
+    if (this.options.useWorkspaces || this.rootHasLocalFileDependencies()) {
       return this.installRootPackageOnly();
     }
 
@@ -122,6 +123,22 @@ class BootstrapCommand extends Command {
     this.npmConfig.stdio = "inherit";
 
     return npmInstall(this.project.package, this.npmConfig);
+  }
+
+  /**
+   * If the root manifest has local dependencies with `file:` specifiers,
+   * all the complicated bootstrap logic should be skipped in favor of
+   * npm5's package-locked auto-hoisting.
+   * @returns {Boolean}
+   */
+  rootHasLocalFileDependencies() {
+    const rootDependencies = Object.assign({}, this.project.package.dependencies);
+
+    return Object.keys(rootDependencies).some(
+      name =>
+        this.packageGraph.has(name) &&
+        npa.resolve(name, rootDependencies[name], this.project.rootPath).type === "directory"
+    );
   }
 
   runLifecycleInPackages(stage) {

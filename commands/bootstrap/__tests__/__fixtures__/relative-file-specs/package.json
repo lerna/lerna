@@ -1,0 +1,9 @@
+{
+  "name": "relative-file-specs",
+  "description": "file: specifiers in dependencies should trigger root-only bootstrap",
+  "private": true,
+  "version": "0.0.0-lerna",
+  "dependencies": {
+    "package-2": "file:packages/package-2"
+  }
+}
