@@ -594,12 +594,10 @@ class PublishCommand extends Command {
     const promise = Promise.resolve()
       .then(() => this.runPrepublishScripts(rootPkg))
       .then(() =>
-        Promise.all(
-          this.updates.map(({ pkg }) => {
-            this.execScript(pkg, "prepublish");
-            return this.runPrepublishScripts(pkg);
-          })
-        )
+        pMap(this.updates, ({ pkg }) => {
+          this.execScript(pkg, "prepublish");
+          return this.runPrepublishScripts(pkg);
+        })
       );
 
     tracker.addWork(this.packagesToPublish.length);
