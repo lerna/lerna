@@ -1,0 +1,11 @@
+{
+  "extends": "./base.json",
+  "packages": [
+    "recursive-pkgs/*"
+  ],
+  "command": {
+    "list": {
+      "private": false
+    }
+  }
+}

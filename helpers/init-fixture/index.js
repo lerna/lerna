@@ -13,6 +13,7 @@ function initFixture(startDir) {
     const cwd = tempy.directory();
 
     return Promise.resolve()
+      .then(() => process.chdir(cwd))
       .then(() => copyFixture(cwd, fixtureName, startDir))
       .then(() => gitInit(cwd, "."))
       .then(() => gitAdd(cwd, "-A"))

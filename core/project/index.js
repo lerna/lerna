@@ -10,8 +10,7 @@ const writeJsonFile = require("write-json-file");
 
 const ValidationError = require("@lerna/validation-error");
 const Package = require("@lerna/package");
-
-const DEFAULT_PACKAGE_GLOB = "packages/*";
+const applyExtends = require("./lib/apply-extends");
 
 class Project {
   constructor(cwd) {
@@ -20,12 +19,25 @@ class Project {
       rc: "lerna.json",
       rcStrictJson: true,
       sync: true,
-      transform: obj => {
+      transform(obj) {
+        // cosmiconfig returns null when nothing is found
+        if (!obj) {
+          return {
+            // No need to distinguish between missing and empty,
+            // saves a lot of noisy guards elsewhere
+            config: {},
+            // path.resolve(".", ...) starts from process.cwd()
+            filepath: path.resolve(cwd || ".", "lerna.json"),
+          };
+        }
+
         // normalize command-specific config namespace
         if (obj.config.commands) {
           obj.config.command = obj.config.commands;
           delete obj.config.commands;
         }
+
+        obj.config = applyExtends(obj.config, path.dirname(obj.filepath));
 
         return obj;
       },
@@ -36,20 +48,14 @@ class Project {
     try {
       loaded = explorer.load(cwd);
     } catch (err) {
-      // don't swallow syntax errors
+      // redecorate JSON syntax errors, avoid debug dump
       if (err.name === "JSONError") {
         throw new ValidationError(err.name, err.message);
       }
-    }
 
-    // cosmiconfig returns null when nothing is found
-    loaded = loaded || {
-      // No need to distinguish between missing and empty,
-      // saves a lot of noisy guards elsewhere
-      config: {},
-      // path.resolve(".", ...) starts from process.cwd()
-      filepath: path.resolve(cwd || ".", "lerna.json"),
-    };
+      // re-throw other errors, could be ours or third-party
+      throw err;
+    }
 
     this.config = loaded.config;
     this.rootPath = path.dirname(loaded.filepath);
@@ -82,7 +88,7 @@ class Project {
       return this.packageJson.workspaces.packages || this.packageJson.workspaces;
     }
 
-    return this.config.packages || [DEFAULT_PACKAGE_GLOB];
+    return this.config.packages || [Project.DEFAULT_PACKAGE_GLOB];
   }
 
   get packageParentDirs() {
@@ -90,33 +96,37 @@ class Project {
   }
 
   get packageJson() {
-    if (!this._packageJson) {
-      try {
-        this._packageJson = loadJsonFile.sync(this.packageJsonLocation);
+    let packageJson;
 
-        if (!this._packageJson.name) {
-          // npm-lifecycle chokes if this is missing, so default like npm init does
-          this._packageJson.name = path.basename(path.dirname(this.packageJsonLocation));
-        }
-      } catch (err) {
-        // don't swallow syntax errors
-        if (err.name === "JSONError") {
-          throw new ValidationError(err.name, err.message);
-        }
-        // try again next time
-        this._packageJson = null;
+    try {
+      packageJson = loadJsonFile.sync(this.packageJsonLocation);
+
+      if (!packageJson.name) {
+        // npm-lifecycle chokes if this is missing, so default like npm init does
+        packageJson.name = path.basename(path.dirname(this.packageJsonLocation));
       }
+
+      // redefine getter to lazy-loaded value
+      Object.defineProperty(this, "packageJson", {
+        value: packageJson,
+      });
+    } catch (err) {
+      // syntax errors are already caught and reported by constructor
+      // try again next time
     }
 
-    return this._packageJson;
+    return packageJson;
   }
 
   get package() {
-    if (!this._package) {
-      this._package = new Package(this.packageJson, this.rootPath);
-    }
+    const pkg = new Package(this.packageJson, this.rootPath);
 
-    return this._package;
+    // redefine getter to lazy-loaded value
+    Object.defineProperty(this, "package", {
+      value: pkg,
+    });
+
+    return pkg;
   }
 
   isIndependent() {
@@ -130,5 +140,7 @@ class Project {
     );
   }
 }
+
+Project.DEFAULT_PACKAGE_GLOB = "packages/*";
 
 module.exports = Project;

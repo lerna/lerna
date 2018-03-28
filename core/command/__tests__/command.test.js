@@ -28,6 +28,14 @@ describe("core-command", () => {
     testDir = await initFixture("basic");
   });
 
+  afterEach(() => {
+    // ensure common CWD is restored when individual tests
+    // initialize their own fixture (which changes CWD)
+    if (process.cwd() !== testDir) {
+      process.chdir(testDir);
+    }
+  });
+
   ChildProcessUtilities.getChildProcessCount = jest.fn(() => 0);
 
   // swallow errors when passed in argv

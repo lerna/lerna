@@ -1,0 +1,8 @@
+{
+  "name": "extends",
+  "version": "0.0.0-root",
+  "private": true,
+  "devDependencies": {
+    "local-package": "2.0.0"
+  }
+}
