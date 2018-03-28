@@ -20,15 +20,19 @@ describe("npm-publish", () => {
   it("runs npm publish in a directory with --tag support", async () => {
     await npmPublish(pkg, "published-tag", { npmClient: "npm" });
 
-    expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["publish", "--tag", "published-tag"], {
-      cwd: pkg.location,
-    });
+    expect(ChildProcessUtilities.exec).lastCalledWith(
+      "npm",
+      ["publish", "--ignore-scripts", "--tag", "published-tag"],
+      {
+        cwd: pkg.location,
+      }
+    );
   });
 
   it("does not pass --tag when none present (npm default)", async () => {
     await npmPublish(pkg, undefined, { npmClient: "npm" });
 
-    expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["publish"], {
+    expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["publish", "--ignore-scripts"], {
       cwd: pkg.location,
     });
   });
@@ -36,9 +40,13 @@ describe("npm-publish", () => {
   it("trims trailing whitespace in tag parameter", async () => {
     await npmPublish(pkg, "trailing-tag ", { npmClient: "npm" });
 
-    expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["publish", "--tag", "trailing-tag"], {
-      cwd: pkg.location,
-    });
+    expect(ChildProcessUtilities.exec).lastCalledWith(
+      "npm",
+      ["publish", "--ignore-scripts", "--tag", "trailing-tag"],
+      {
+        cwd: pkg.location,
+      }
+    );
   });
 
   it("supports custom registry", async () => {
@@ -46,13 +54,17 @@ describe("npm-publish", () => {
 
     await npmPublish(pkg, "custom-registry", { npmClient: "npm", registry });
 
-    expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["publish", "--tag", "custom-registry"], {
-      cwd: pkg.location,
-      env: expect.objectContaining({
-        npm_config_registry: registry,
-      }),
-      extendEnv: false,
-    });
+    expect(ChildProcessUtilities.exec).lastCalledWith(
+      "npm",
+      ["publish", "--ignore-scripts", "--tag", "custom-registry"],
+      {
+        cwd: pkg.location,
+        env: expect.objectContaining({
+          npm_config_registry: registry,
+        }),
+        extendEnv: false,
+      }
+    );
   });
 
   describe("with npmClient yarn", () => {
@@ -61,7 +73,15 @@ describe("npm-publish", () => {
 
       expect(ChildProcessUtilities.exec).lastCalledWith(
         "yarn",
-        ["publish", "--tag", "yarn-publish", "--new-version", pkg.version, "--non-interactive"],
+        [
+          "publish",
+          "--ignore-scripts",
+          "--tag",
+          "yarn-publish",
+          "--new-version",
+          pkg.version,
+          "--non-interactive",
+        ],
         {
           cwd: pkg.location,
         }

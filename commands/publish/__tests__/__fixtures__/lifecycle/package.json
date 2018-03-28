@@ -4,6 +4,10 @@
   "scripts": {
     "preversion": "echo preversion-root",
     "version": "echo version-root",
-    "postversion": "echo postversion-root"
+    "postversion": "echo postversion-root",
+    "prepublish": "echo prepublish-root",
+    "prepare": "echo prepare-root",
+    "prepublishOnly": "echo prepublishOnly-root",
+    "postpublish": "echo postpublish-root"
   }
 }

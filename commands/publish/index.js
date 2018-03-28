@@ -578,12 +578,27 @@ class PublishCommand extends Command {
     }
   }
 
+  runPrepublishScripts(pkg) {
+    return Promise.resolve(this.runPackageLifecycle(pkg, "prepare")).then(() =>
+      this.runPackageLifecycle(pkg, "prepublishOnly")
+    );
+  }
+
   npmPublish() {
     const tracker = this.logger.newItem("npmPublish");
     // if we skip temp tags we should tag with the proper value immediately
     const distTag = this.options.tempTag ? "lerna-temp" : this.getDistTag();
 
-    this.updates.forEach(({ pkg }) => this.execScript(pkg, "prepublish"));
+    const rootPkg = this.project.package;
+
+    let chain = this.runPrepublishScripts(rootPkg);
+
+    chain = chain.then(() =>
+      pMap(this.updates, ({ pkg }) => {
+        this.execScript(pkg, "prepublish");
+        return this.runPrepublishScripts(pkg);
+      })
+    );
 
     tracker.addWork(this.packagesToPublish.length);
 
@@ -595,12 +610,14 @@ class PublishCommand extends Command {
         tracker.completeWork(1);
 
         this.execScript(pkg, "postpublish");
+        this.runPackageLifecycle(pkg, "postpublish");
       });
     };
 
-    return pFinally(runParallelBatches(this.batchedPackages, this.concurrency, mapPackage), () =>
-      tracker.finish()
-    );
+    chain = chain.then(() => runParallelBatches(this.batchedPackages, this.concurrency, mapPackage));
+    chain = chain.then(() => this.runPackageLifecycle(rootPkg, "postpublish"));
+
+    return pFinally(chain, () => tracker.finish());
   }
 
   npmUpdateAsLatest() {
