@@ -12,7 +12,7 @@ const getExecOpts = require("@lerna/get-npm-exec-opts");
 module.exports = npmInstall;
 module.exports.dependencies = npmInstallDependencies;
 
-function npmInstall(pkg, { registry, npmClient, npmClientArgs, npmGlobalStyle, mutex }) {
+function npmInstall(pkg, { registry, npmClient, npmClientArgs, npmGlobalStyle, mutex, stdio = "pipe" }) {
   // build command, arguments, and options
   const opts = getExecOpts(pkg, registry);
   const args = ["install"];
@@ -34,6 +34,9 @@ function npmInstall(pkg, { registry, npmClient, npmClientArgs, npmGlobalStyle, m
   if (npmClientArgs && npmClientArgs.length) {
     args.push(...npmClientArgs);
   }
+
+  // potential override, e.g. "inherit" in root-only bootstrap
+  opts.stdio = stdio;
 
   log.silly("npmInstall", [cmd, args]);
   return ChildProcessUtilities.exec(cmd, args, opts);
