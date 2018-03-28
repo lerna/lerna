@@ -1,5 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`lerna run LERNA_ROOT_PATH: stderr 1`] = `
+lerna info version __TEST_VERSION__
+lerna success run Ran npm script 'dump-root' in packages:
+lerna success - package-1
+`;
+
 exports[`lerna run my-script --parallel: stderr 1`] = `
 lerna info version __TEST_VERSION__
 lerna info run in 2 package(s): npm run my-script --silent

@@ -629,6 +629,10 @@ $ lerna run --scope my-component test
 > may be harmful to your shell's equanimity (or maximum file descriptor limit,
 > for example). YMMV
 
+You can detect presence of Lerna in your package npm scripts by checking
+for the environment variable `LERNA_ROOT_PATH`. This variable points
+to repository's root directory.
+
 ### exec
 
 ```sh

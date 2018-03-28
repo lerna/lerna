@@ -5,6 +5,7 @@
     "package-3": "^1.0.0"
   },
   "scripts": {
+    "dump-root": "echo $LERNA_ROOT_PATH",
     "my-script": "echo package-1",
     "test": "echo package-1"
   }
