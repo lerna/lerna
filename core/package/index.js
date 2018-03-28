@@ -65,6 +65,11 @@ class Package {
           return pkg.devDependencies;
         },
       },
+      optionalDependencies: {
+        get() {
+          return pkg.optionalDependencies;
+        },
+      },
       peerDependencies: {
         get() {
           return pkg.peerDependencies;
@@ -106,7 +111,12 @@ class Package {
     // first, try runtime dependencies
     let depCollection = this.json.dependencies;
 
-    // fall back to devDependencies (it will always be one of these two)
+    // try optionalDependencies if that didn't work
+    if (!depCollection || !depCollection[depName]) {
+      depCollection = this.json.optionalDependencies;
+    }
+
+    // fall back to devDependencies
     if (!depCollection || !depCollection[depName]) {
       depCollection = this.json.devDependencies;
     }

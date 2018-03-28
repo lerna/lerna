@@ -139,6 +139,9 @@ describe("PublishCommand", () => {
       expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
         "package-1": "^1.0.1",
       });
+      expect(updatedPackageJSON("package-5").optionalDependencies).toMatchObject({
+        "package-3": "^1.0.1",
+      });
 
       expect(gitAddedFiles(testDir)).toMatchSnapshot("git added files");
       expect(gitCommitMessage()).toEqual("v1.0.1");

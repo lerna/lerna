@@ -96,6 +96,15 @@ describe("Package", () => {
     });
   });
 
+  describe("get .optionalDependencies", () => {
+    it("should return the optionalDependencies", () => {
+      const pkg = factory({
+        optionalDependencies: { "my-optional-dependency": "^1.0.0" },
+      });
+      expect(pkg.optionalDependencies).toEqual({ "my-optional-dependency": "^1.0.0" });
+    });
+  });
+
   describe("get .peerDependencies", () => {
     it("should return the peerDependencies", () => {
       const pkg = factory({

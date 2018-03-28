@@ -8,5 +8,8 @@
   },
   "dependencies": {
     "pify": "^2.0.0"
+  },
+  "optionalDependencies": {
+    "tiny-tarball": "^1.0.0"
   }
 }

@@ -411,6 +411,9 @@ Array [
       package-1: ^1.0.1,
     },
     name: package-5,
+    optionalDependencies: Object {
+      package-3: ^1.0.1,
+    },
     private: true,
     version: 1.0.1,
   },

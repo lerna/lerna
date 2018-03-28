@@ -25,7 +25,13 @@ describe("lerna bootstrap", () => {
     expect(lock1).toMatchObject({
       name: "@integration/package-1",
       version: "1.0.0",
-      dependencies: { pify: expect.any(Object) },
+      dependencies: {
+        pify: expect.any(Object),
+        "tiny-tarball": {
+          version: "1.0.0",
+          optional: true,
+        },
+      },
     });
     expect(lock2).toMatchObject({
       name: "@integration/package-2",
@@ -65,8 +71,15 @@ describe("lerna bootstrap", () => {
     expect(rootLock).toMatchObject({
       name: "integration",
       version: "0.0.0",
-      dependencies: { pify: expect.any(Object) },
+      dependencies: {
+        pify: expect.any(Object),
+        "tiny-tarball": {
+          version: "1.0.0",
+          // root hoist does not preserve optional
+        },
+      },
     });
+    expect(rootLock).not.toHaveProperty("dependencies.tiny-tarball.optional");
   });
 
   test("--npm-client yarn", async () => {
