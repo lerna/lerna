@@ -12,8 +12,7 @@ const colorWheel = ["cyan", "magenta", "blue", "yellow", "green", "red"];
 const NUM_COLORS = colorWheel.length;
 
 function exec(command, args, opts) {
-  const options = Object.assign({}, opts);
-  options.stdio = "pipe"; // node default
+  const options = Object.assign({ stdio: "pipe" }, opts);
 
   return _spawn(command, args, options);
 }
