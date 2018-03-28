@@ -201,7 +201,7 @@ class PublishCommand extends Command {
         pkg.updateLocalDependency(resolved, depVersion, this.savePrefix);
       }
 
-      return writePkg(pkg.manifestLocation, pkg.toJSON());
+      // writing changes to disk handled in annotateGitHead()
     });
   }
 
