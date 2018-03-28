@@ -579,9 +579,9 @@ class PublishCommand extends Command {
   }
 
   runPrepublishScripts(pkg) {
-    return Promise.resolve(this.runPackageLifecycle(pkg, "prepublish"))
-      .then(() => this.runPackageLifecycle(pkg, "prepare"))
-      .then(() => this.runPackageLifecycle(pkg, "prepublishOnly"));
+    return Promise.resolve(this.runPackageLifecycle(pkg, "prepare")).then(() =>
+      this.runPackageLifecycle(pkg, "prepublishOnly")
+    );
   }
 
   npmPublish() {
