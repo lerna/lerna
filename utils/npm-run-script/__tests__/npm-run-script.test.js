@@ -27,6 +27,26 @@ describe("npm-run-script", () => {
 
       expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["run", script, "--bar", "baz"], {
         cwd: config.pkg.location,
+        reject: true,
+      });
+    });
+
+    it("accepts opts.reject", async () => {
+      const script = "foo";
+      const config = {
+        args: [],
+        pkg: {
+          location: "/test/npm/run/script",
+        },
+        npmClient: "npm",
+        reject: false,
+      };
+
+      await npmRunScript(script, config);
+
+      expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["run", script], {
+        cwd: config.pkg.location,
+        reject: false,
       });
     });
 
@@ -44,6 +64,7 @@ describe("npm-run-script", () => {
 
       expect(ChildProcessUtilities.exec).lastCalledWith("yarn", ["run", script, "--bar", "baz"], {
         cwd: config.pkg.location,
+        reject: true,
       });
     });
   });
@@ -67,6 +88,32 @@ describe("npm-run-script", () => {
         ["run", script, "--bar", "baz"],
         {
           cwd: config.pkg.location,
+          reject: true,
+        },
+        config.pkg.name
+      );
+    });
+
+    it("accepts opts.reject", async () => {
+      const script = "foo";
+      const config = {
+        args: [],
+        pkg: {
+          name: "qux",
+          location: "/test/npm/run/script/stream",
+        },
+        npmClient: "npm",
+        reject: false,
+      };
+
+      await npmRunScript.stream(script, config);
+
+      expect(ChildProcessUtilities.spawnStreaming).lastCalledWith(
+        "npm",
+        ["run", script],
+        {
+          cwd: config.pkg.location,
+          reject: false,
         },
         config.pkg.name
       );
