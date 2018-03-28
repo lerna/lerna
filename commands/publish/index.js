@@ -591,14 +591,14 @@ class PublishCommand extends Command {
 
     const rootPkg = this.project.package;
 
-    const promise = Promise.resolve()
-      .then(() => this.runPrepublishScripts(rootPkg))
-      .then(() =>
-        pMap(this.updates, ({ pkg }) => {
-          this.execScript(pkg, "prepublish");
-          return this.runPrepublishScripts(pkg);
-        })
-      );
+    let chain = this.runPrepublishScripts(rootPkg);
+
+    chain = chain.then(() =>
+      pMap(this.updates, ({ pkg }) => {
+        this.execScript(pkg, "prepublish");
+        return this.runPrepublishScripts(pkg);
+      })
+    );
 
     tracker.addWork(this.packagesToPublish.length);
 
@@ -614,13 +614,10 @@ class PublishCommand extends Command {
       });
     };
 
-    return pFinally(
-      promise.then(() => runParallelBatches(this.batchedPackages, this.concurrency, mapPackage)),
-      () => {
-        this.runPackageLifecycle(rootPkg, "postpublish");
-        return tracker.finish();
-      }
-    );
+    chain = chain.then(() => runParallelBatches(this.batchedPackages, this.concurrency, mapPackage));
+    chain = chain.then(() => this.runPackageLifecycle(rootPkg, "postpublish"));
+
+    return pFinally(chain, () => tracker.finish());
   }
 
   npmUpdateAsLatest() {
