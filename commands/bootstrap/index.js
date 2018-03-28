@@ -86,11 +86,11 @@ class BootstrapCommand extends Command {
   }
 
   execute() {
-    this.logger.info("", `Bootstrapping ${this.filteredPackages.length} packages`);
-
     if (this.options.useWorkspaces) {
       return this.installRootPackageOnly();
     }
+
+    this.logger.info("", `Bootstrapping ${this.filteredPackages.length} packages`);
 
     const tasks = [
       () => this.getDependenciesToInstall(),
@@ -115,12 +115,13 @@ class BootstrapCommand extends Command {
   }
 
   installRootPackageOnly() {
-    const tracker = this.logger.newItem("install dependencies");
+    this.logger.disableProgress();
+    this.logger.info("bootstrap", "root only");
 
-    return npmInstall(this.project.package, this.npmConfig).then(() => {
-      tracker.info("hoist", "Finished installing in root");
-      tracker.finish();
-    });
+    // don't hide yarn or npm output
+    this.npmConfig.stdio = "inherit";
+
+    return npmInstall(this.project.package, this.npmConfig);
   }
 
   runLifecycleInPackages(stage) {
