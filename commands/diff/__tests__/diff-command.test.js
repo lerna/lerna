@@ -21,8 +21,6 @@ const lernaDiff = require("@lerna-test/command-runner")(require("../command"));
 // stabilize commit SHA
 expect.addSnapshotSerializer(require("@lerna-test/serialize-git-sha"));
 
-const writeManifest = pkg => fs.writeJSON(pkg.manifestLocation, pkg, { spaces: 2 });
-
 describe("DiffCommand", () => {
   // overwrite spawn so we get piped stdout, not inherited
   ChildProcessUtilities.spawn = jest.fn((...args) => execa(...args));
@@ -32,7 +30,7 @@ describe("DiffCommand", () => {
     const [pkg1] = await collectPackages(cwd);
     const rootReadme = path.join(cwd, "README.md");
 
-    await writeManifest(pkg1.set("changed", 1));
+    await pkg1.set("changed", 1).serialize();
     await fs.outputFile(rootReadme, "change outside packages glob");
     await gitAdd(cwd, "-A");
     await gitCommit(cwd, "changed");
@@ -45,12 +43,12 @@ describe("DiffCommand", () => {
     const cwd = await initFixture("basic");
     const [pkg1] = await collectPackages(cwd);
 
-    await writeManifest(pkg1.set("changed", 1));
+    await pkg1.set("changed", 1).serialize();
     await gitAdd(cwd, "-A");
     await gitCommit(cwd, "changed");
     await gitTag(cwd, "v1.0.1");
 
-    await writeManifest(pkg1.set("sinceLastTag", true));
+    await pkg1.set("sinceLastTag", true).serialize();
     await gitAdd(cwd, "-A");
     await gitCommit(cwd, "changed");
 
@@ -62,7 +60,8 @@ describe("DiffCommand", () => {
     const cwd = await initFixture("basic");
     const [pkg1, pkg2] = await collectPackages(cwd);
 
-    await Promise.all([writeManifest(pkg1.set("changed", 1)), writeManifest(pkg2.set("changed", 1))]);
+    await pkg1.set("changed", 1).serialize();
+    await pkg2.set("changed", 1).serialize();
     await gitAdd(cwd, "-A");
     await gitCommit(cwd, "changed");
 
@@ -74,7 +73,7 @@ describe("DiffCommand", () => {
     const cwd = await initFixture("basic");
     const [pkg1] = await collectPackages(cwd);
 
-    await writeManifest(pkg1.set("changed", 1));
+    await pkg1.set("changed", 1).serialize();
     await fs.outputFile(path.join(pkg1.location, "README.md"), "ignored change");
     await gitAdd(cwd, "-A");
     await gitCommit(cwd, "changed");

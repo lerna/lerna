@@ -11,6 +11,9 @@ const fs = require("fs-extra");
 const writePkg = require("write-pkg");
 const ChildProcessUtilities = require("@lerna/child-process");
 
+// helpers
+const Package = require("@lerna/package");
+
 // file under test
 const npmInstall = require("..");
 
@@ -23,42 +26,42 @@ describe("npm-install", () => {
     it("returns a promise for a non-mangling install", async () => {
       expect.assertions(1);
 
-      const location = path.normalize("/test/npm/install");
-      const pkg = {
-        name: "test-npm-install",
-        location,
-      };
-      const config = {
+      const pkg = new Package(
+        {
+          name: "test-npm-install",
+        },
+        path.normalize("/test/npm-install-deps")
+      );
+
+      await npmInstall(pkg, {
         npmClient: "yarn",
         npmClientArgs: ["--no-optional"],
         mutex: "file:foo",
-      };
-
-      await npmInstall(pkg, config);
+      });
 
       expect(ChildProcessUtilities.exec).lastCalledWith(
         "yarn",
         ["install", "--mutex", "file:foo", "--non-interactive", "--no-optional"],
-        { cwd: location, stdio: "pipe" }
+        { cwd: pkg.location, stdio: "pipe" }
       );
     });
 
     it("allows override of opts.stdio", async () => {
       expect.assertions(1);
 
-      const location = path.normalize("/test/npm/install");
-      const pkg = {
-        name: "test-npm-install",
-        location,
-      };
-      const config = {
-        stdio: "inherit",
-      };
+      const pkg = new Package(
+        {
+          name: "test-npm-install",
+        },
+        path.normalize("/test/npm-install-deps")
+      );
 
-      await npmInstall(pkg, config);
+      await npmInstall(pkg, {
+        stdio: "inherit",
+      });
 
       expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["install"], {
-        cwd: location,
+        cwd: pkg.location,
         stdio: "inherit",
       });
     });
@@ -68,22 +71,22 @@ describe("npm-install", () => {
 
       ChildProcessUtilities.exec.mockRejectedValueOnce(new Error("whoopsy-doodle"));
 
-      const location = path.normalize("/test/npm/install/error");
-      const pkg = {
-        name: "test-npm-install-error",
-        location,
-      };
-      const config = {
-        npmClient: "yarn",
-      };
+      const pkg = new Package(
+        {
+          name: "test-npm-install-error",
+        },
+        path.normalize("/test/npm/install/error")
+      );
 
       try {
-        await npmInstall(pkg, config);
+        await npmInstall(pkg, {
+          npmClient: "yarn",
+        });
       } catch (err) {
         expect(err.message).toBe("whoopsy-doodle");
 
         expect(ChildProcessUtilities.exec).lastCalledWith("yarn", ["install", "--non-interactive"], {
-          cwd: location,
+          cwd: pkg.location,
           stdio: "pipe",
         });
       }
@@ -92,13 +95,8 @@ describe("npm-install", () => {
 
   describe("npmInstall.dependencies()", () => {
     it("installs dependencies in targeted directory", async () => {
-      const location = path.normalize("/test/npm-install-deps");
-      const manifestLocation = path.join(location, "package.json");
-      const backupManifest = `${manifestLocation}.lerna_backup`;
-      const pkg = {
-        location,
-        manifestLocation,
-        toJSON: () => ({
+      const pkg = new Package(
+        {
           name: "npm-install-deps",
           version: "1.0.0",
           scripts: {
@@ -115,16 +113,17 @@ describe("npm-install", () => {
             exact: "1.0.0", // will be removed
             "local-dev-dependency": "^1.0.0",
           },
-        }),
-      };
+        },
+        path.normalize("/test/npm-install-deps")
+      );
+      const backupManifest = `${pkg.manifestLocation}.lerna_backup`;
       const dependencies = ["@scoped/caret@^2.0.0", "@scoped/exact@2.0.0", "caret@^1.0.0", "exact@1.0.0"];
-      const config = {};
 
-      await npmInstall.dependencies(pkg, dependencies, config);
+      await npmInstall.dependencies(pkg, dependencies, {});
 
-      expect(fs.rename).lastCalledWith(manifestLocation, backupManifest);
-      expect(fs.renameSync).lastCalledWith(backupManifest, manifestLocation);
-      expect(writePkg).lastCalledWith(manifestLocation, {
+      expect(fs.rename).lastCalledWith(pkg.manifestLocation, backupManifest);
+      expect(fs.renameSync).lastCalledWith(backupManifest, pkg.manifestLocation);
+      expect(writePkg).lastCalledWith(pkg.manifestLocation, {
         name: "npm-install-deps",
         version: "1.0.0",
         dependencies: {
@@ -139,19 +138,14 @@ describe("npm-install", () => {
         },
       });
       expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["install"], {
-        cwd: location,
+        cwd: pkg.location,
         stdio: "pipe",
       });
     });
 
     it("supports custom registry", async () => {
-      const registry = "https://custom-registry/npm-install-deps";
-      const location = path.normalize("/test/npm-install-deps");
-      const manifestLocation = path.join(location, "package.json");
-      const pkg = {
-        location,
-        manifestLocation,
-        toJSON: () => ({
+      const pkg = new Package(
+        {
           name: "npm-install-deps",
           version: "1.0.0",
           dependencies: {
@@ -162,16 +156,17 @@ describe("npm-install", () => {
             tagged: "next",
             "local-dev-dependency": "file:../local-dev-dependency",
           },
-        }),
-      };
+        },
+        path.normalize("/test/npm-install-deps")
+      );
       const dependencies = ["@scoped/tagged@next", "tagged@next"];
       const config = {
-        registry,
+        registry: "https://custom-registry/npm-install-deps",
       };
 
       await npmInstall.dependencies(pkg, dependencies, config);
 
-      expect(writePkg).lastCalledWith(manifestLocation, {
+      expect(writePkg).lastCalledWith(pkg.manifestLocation, {
         name: "npm-install-deps",
         version: "1.0.0",
         dependencies: {
@@ -182,9 +177,9 @@ describe("npm-install", () => {
         },
       });
       expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["install"], {
-        cwd: location,
+        cwd: pkg.location,
         env: expect.objectContaining({
-          npm_config_registry: registry,
+          npm_config_registry: config.registry,
         }),
         extendEnv: false,
         stdio: "pipe",
@@ -192,12 +187,8 @@ describe("npm-install", () => {
     });
 
     it("supports npm install --global-style", async () => {
-      const location = path.normalize("/test/npm-install-deps");
-      const manifestLocation = path.join(location, "package.json");
-      const pkg = {
-        location,
-        manifestLocation,
-        toJSON: () => ({
+      const pkg = new Package(
+        {
           name: "npm-install-deps",
           version: "1.0.0",
           dependencies: {
@@ -207,16 +198,16 @@ describe("npm-install", () => {
             caret: "^1.0.0",
             "local-dev-dependency": "^1.0.0",
           },
-        }),
-      };
+        },
+        path.normalize("/test/npm-install-deps")
+      );
       const dependencies = ["@scoped/foo@latest", "foo@latest", "caret@^1.0.0"];
-      const config = {
+
+      await npmInstall.dependencies(pkg, dependencies, {
         npmGlobalStyle: true,
-      };
+      });
 
-      await npmInstall.dependencies(pkg, dependencies, config);
-
-      expect(writePkg).lastCalledWith(manifestLocation, {
+      expect(writePkg).lastCalledWith(pkg.manifestLocation, {
         name: "npm-install-deps",
         version: "1.0.0",
         dependencies: {
@@ -228,35 +219,31 @@ describe("npm-install", () => {
         },
       });
       expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["install", "--global-style"], {
-        cwd: location,
+        cwd: pkg.location,
         stdio: "pipe",
       });
     });
 
     it("supports custom npmClient", async () => {
-      const location = path.normalize("/test/npm-install-deps");
-      const manifestLocation = path.join(location, "package.json");
-      const pkg = {
-        location,
-        manifestLocation,
-        toJSON: () => ({
+      const pkg = new Package(
+        {
           name: "npm-install-deps",
           version: "1.0.0",
           dependencies: {
             "@scoped/something": "^2.0.0",
             "local-dependency": "^1.0.0",
           },
-        }),
-      };
+        },
+        path.normalize("/test/npm-install-deps")
+      );
       const dependencies = ["@scoped/something@^2.0.0", "something@^1.0.0"];
-      const config = {
+
+      await npmInstall.dependencies(pkg, dependencies, {
         npmClient: "yarn",
         mutex: "network:12345",
-      };
+      });
 
-      await npmInstall.dependencies(pkg, dependencies, config);
-
-      expect(writePkg).lastCalledWith(manifestLocation, {
+      expect(writePkg).lastCalledWith(pkg.manifestLocation, {
         name: "npm-install-deps",
         version: "1.0.0",
         dependencies: {
@@ -267,17 +254,13 @@ describe("npm-install", () => {
       expect(ChildProcessUtilities.exec).lastCalledWith(
         "yarn",
         ["install", "--mutex", "network:12345", "--non-interactive"],
-        { cwd: location, stdio: "pipe" }
+        { cwd: pkg.location, stdio: "pipe" }
       );
     });
 
     it("supports custom npmClientArgs", async () => {
-      const location = path.normalize("/test/npm-install-deps");
-      const manifestLocation = path.join(location, "package.json");
-      const pkg = {
-        location,
-        manifestLocation,
-        toJSON: () => ({
+      const pkg = new Package(
+        {
           name: "npm-install-deps",
           version: "1.0.0",
           optionalDependencies: {
@@ -288,16 +271,16 @@ describe("npm-install", () => {
             something: "github:foo/foo",
             "local-dev-dependency": "^1.0.0",
           },
-        }),
-      };
+        },
+        path.normalize("/test/npm-install-deps")
+      );
       const dependencies = ["@scoped/something@github:foo/bar", "something@github:foo/foo"];
-      const config = {
+
+      await npmInstall.dependencies(pkg, dependencies, {
         npmClientArgs: ["--production", "--no-optional"],
-      };
+      });
 
-      await npmInstall.dependencies(pkg, dependencies, config);
-
-      expect(writePkg).lastCalledWith(manifestLocation, {
+      expect(writePkg).lastCalledWith(pkg.manifestLocation, {
         name: "npm-install-deps",
         version: "1.0.0",
         optionalDependencies: {
@@ -308,18 +291,14 @@ describe("npm-install", () => {
         },
       });
       expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["install", "--production", "--no-optional"], {
-        cwd: location,
+        cwd: pkg.location,
         stdio: "pipe",
       });
     });
 
     it("overrides custom npmClient when using global style", async () => {
-      const location = path.normalize("/test/npm-install-deps");
-      const manifestLocation = path.join(location, "package.json");
-      const pkg = {
-        location,
-        manifestLocation,
-        toJSON: () => ({
+      const pkg = new Package(
+        {
           name: "npm-install-deps",
           version: "1.0.0",
           dependencies: {
@@ -330,18 +309,18 @@ describe("npm-install", () => {
             something: "github:foo/foo",
             "local-dev-dependency": "^1.0.0",
           },
-        }),
-      };
+        },
+        path.normalize("/test/npm-install-deps")
+      );
       const dependencies = ["@scoped/something@github:foo/bar", "something@github:foo/foo"];
-      const config = {
+
+      await npmInstall.dependencies(pkg, dependencies, {
         npmClient: "yarn",
         npmGlobalStyle: true,
         mutex: "network:12345",
-      };
+      });
 
-      await npmInstall.dependencies(pkg, dependencies, config);
-
-      expect(writePkg).lastCalledWith(manifestLocation, {
+      expect(writePkg).lastCalledWith(pkg.manifestLocation, {
         name: "npm-install-deps",
         version: "1.0.0",
         dependencies: {
@@ -352,37 +331,29 @@ describe("npm-install", () => {
         },
       });
       expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["install", "--global-style"], {
-        cwd: location,
+        cwd: pkg.location,
         stdio: "pipe",
       });
     });
 
     it("finishes early when no dependencies exist", async () => {
-      const location = path.normalize("/test/npm-install-deps");
-      const manifestLocation = path.join(location, "package.json");
-      const pkg = {
-        location,
-        manifestLocation,
-        toJSON: () => ({
+      const pkg = new Package(
+        {
           name: "npm-install-deps",
           version: "1.0.0",
-        }),
-      };
+        },
+        path.normalize("/test/npm-install-deps")
+      );
       const dependencies = [];
-      const config = {};
 
-      await npmInstall.dependencies(pkg, dependencies, config);
+      await npmInstall.dependencies(pkg, dependencies, {});
 
       expect(ChildProcessUtilities.exec).not.toBeCalled();
     });
 
     it("defaults temporary dependency versions to '*'", async () => {
-      const location = path.normalize("/test/npm-install-deps");
-      const manifestLocation = path.join(location, "package.json");
-      const pkg = {
-        location,
-        manifestLocation,
-        toJSON: () => ({
+      const pkg = new Package(
+        {
           name: "npm-install-deps",
           version: "1.0.0",
           dependencies: {
@@ -391,17 +362,17 @@ describe("npm-install", () => {
           devDependencies: {
             "local-dev-dependency": "^1.0.0",
           },
-        }),
-      };
+        },
+        path.normalize("/test/npm-install-deps")
+      );
       const dependencies = [
         "noversion",
         "@scoped/noversion", // sorted by write-pkg
       ];
-      const config = {};
 
-      await npmInstall.dependencies(pkg, dependencies, config);
+      await npmInstall.dependencies(pkg, dependencies, {});
 
-      expect(writePkg).lastCalledWith(manifestLocation, {
+      expect(writePkg).lastCalledWith(pkg.manifestLocation, {
         name: "npm-install-deps",
         version: "1.0.0",
         dependencies: {
@@ -413,75 +384,63 @@ describe("npm-install", () => {
     });
 
     it("rejects with rename error", async () => {
-      const location = path.normalize("/test/npm-install-deps/renameError");
-      const manifestLocation = path.join(location, "package.json");
-      const pkg = {
-        location,
-        manifestLocation,
-        toJSON: () => ({
-          name: "npm-install-deps/renameError",
+      const pkg = new Package(
+        {
+          name: "npm-install-deps-rename-error",
           version: "1.0.0",
-        }),
-      };
+        },
+        path.normalize("/test/npm-install-deps/renameError")
+      );
       const dependencies = ["I'm just here so we don't exit early"];
-      const config = {};
 
       fs.rename.mockRejectedValueOnce(new Error("Unable to rename file"));
 
       try {
-        await npmInstall.dependencies(pkg, dependencies, config);
+        await npmInstall.dependencies(pkg, dependencies, {});
       } catch (err) {
         expect(err.message).toBe("Unable to rename file");
       }
     });
 
     it("cleans up synchronously after writeFile error", async () => {
-      const location = path.normalize("/test/npm-install-deps/writeError");
-      const manifestLocation = path.join(location, "package.json");
-      const backupManifest = `${manifestLocation}.lerna_backup`;
-      const pkg = {
-        location,
-        manifestLocation,
-        toJSON: () => ({
-          name: "npm-install-deps/writeError",
+      const pkg = new Package(
+        {
+          name: "npm-install-deps-write-error",
           version: "1.0.0",
-        }),
-      };
+        },
+        path.normalize("/test/npm-install-deps/writeError")
+      );
+      const backupManifest = `${pkg.manifestLocation}.lerna_backup`;
       const dependencies = ["just-here-so-we-dont-exit-early"];
-      const config = {};
 
       writePkg.mockRejectedValueOnce(new Error("Unable to write file"));
 
       try {
-        await npmInstall.dependencies(pkg, dependencies, config);
+        await npmInstall.dependencies(pkg, dependencies, {});
       } catch (err) {
         expect(err.message).toBe("Unable to write file");
-        expect(fs.renameSync).lastCalledWith(backupManifest, manifestLocation);
+        expect(fs.renameSync).lastCalledWith(backupManifest, pkg.manifestLocation);
       }
     });
 
     it("cleans up synchronously after client install error", async () => {
-      const location = path.normalize("/test/npm-install-deps/clientError");
-      const manifestLocation = path.join(location, "package.json");
-      const backupManifest = `${manifestLocation}.lerna_backup`;
-      const pkg = {
-        location,
-        manifestLocation,
-        toJSON: () => ({
-          name: "npm-install-deps/clientError",
+      const pkg = new Package(
+        {
+          name: "npm-install-deps-client-error",
           version: "1.0.0",
-        }),
-      };
+        },
+        path.normalize("/test/npm-install-deps/clientError")
+      );
+      const backupManifest = `${pkg.manifestLocation}.lerna_backup`;
       const dependencies = ["just-here-so-we-dont-exit-early"];
-      const config = {};
 
       ChildProcessUtilities.exec.mockRejectedValueOnce(new Error("Unable to install dependency"));
 
       try {
-        await npmInstall.dependencies(pkg, dependencies, config);
+        await npmInstall.dependencies(pkg, dependencies, {});
       } catch (err) {
         expect(err.message).toBe("Unable to install dependency");
-        expect(fs.renameSync).lastCalledWith(backupManifest, manifestLocation);
+        expect(fs.renameSync).lastCalledWith(backupManifest, pkg.manifestLocation);
       }
     });
   });

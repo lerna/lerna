@@ -4,7 +4,6 @@ const fs = require("fs-extra");
 const path = require("path");
 const pMap = require("p-map");
 const writeJsonFile = require("write-json-file");
-const writePkg = require("write-pkg");
 
 const Command = require("@lerna/command");
 const GitUtilities = require("@lerna/git-utils");
@@ -94,7 +93,7 @@ class InitCommand extends Command {
 
       targetDependencies.lerna = this.exact ? this.lernaVersion : `^${this.lernaVersion}`;
 
-      return writePkg(rootPkg.manifestLocation, rootPkg.toJSON());
+      return rootPkg.serialize();
     });
 
     return chain;

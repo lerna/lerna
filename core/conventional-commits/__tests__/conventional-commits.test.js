@@ -16,8 +16,6 @@ const { recommendVersion, updateChangelog } = require("..");
 // stabilize changelog commit SHA and datestamp
 expect.addSnapshotSerializer(require("@lerna-test/serialize-changelog"));
 
-const writeManifest = pkg => fs.writeJSON(pkg.manifestLocation, pkg, { spaces: 2 });
-
 describe("conventional-commits", () => {
   describe("recommendVersion()", () => {
     it("returns next version bump", async () => {
@@ -25,7 +23,7 @@ describe("conventional-commits", () => {
       const [pkg1] = await collectPackages(cwd);
 
       // make a change in package-1
-      await writeManifest(pkg1.set("changed", 1));
+      await pkg1.set("changed", 1).serialize();
       await gitAdd(cwd, pkg1.manifestLocation);
       await gitCommit(cwd, "feat: changed 1");
 
@@ -38,7 +36,8 @@ describe("conventional-commits", () => {
       const opts = { changelogPreset: "angular" };
 
       // make a change in package-1 and package-2
-      await Promise.all([writeManifest(pkg1.set("changed", 1)), writeManifest(pkg2.set("changed", 2))]);
+      await pkg1.set("changed", 1).serialize();
+      await pkg2.set("changed", 2).serialize();
 
       await gitAdd(cwd, pkg1.manifestLocation);
       await gitCommit(cwd, "fix: changed 1");
@@ -59,18 +58,17 @@ describe("conventional-commits", () => {
 
       const [pkg1] = await collectPackages(cwd);
       const rootPkg = {
-        name: "root", // TODO: no name
+        name: "root",
         location: cwd,
       };
 
       // make a change in package-1
-      await writeManifest(pkg1.set("changed", 1));
+      await pkg1.set("changed", 1).serialize();
       await gitAdd(cwd, pkg1.manifestLocation);
       await gitCommit(cwd, "feat: I should be placed in the CHANGELOG");
 
       // update version
-      pkg1.version = "1.1.0";
-      await writeManifest(pkg1);
+      await pkg1.set("version", "1.1.0").serialize();
 
       const changelogLocation = await updateChangelog(pkg1, "fixed", {
         changelogPreset: "angular",
@@ -86,7 +84,7 @@ describe("conventional-commits", () => {
     it("updates fixed changelogs", async () => {
       const cwd = await initFixture("fixed");
       const rootPkg = {
-        name: "root", // TODO: no name
+        // no name
         location: cwd,
       };
 
@@ -95,13 +93,12 @@ describe("conventional-commits", () => {
       const [pkg1] = await collectPackages(cwd);
 
       // make a change in package-1
-      await writeManifest(pkg1.set("changed", 1));
+      await pkg1.set("changed", 1).serialize();
       await gitAdd(cwd, pkg1.manifestLocation);
       await gitCommit(cwd, "fix: A second commit for our CHANGELOG");
 
       // update version
-      pkg1.version = "1.0.1";
-      await writeManifest(pkg1);
+      await pkg1.set("version", "1.0.1").serialize();
 
       await expect(
         updateChangelog(pkg1, "fixed", /* default preset */ {}).then(getFileContent)
@@ -120,13 +117,12 @@ describe("conventional-commits", () => {
       const [pkg1, pkg2] = await collectPackages(cwd);
 
       // make a change in package-1
-      await writeManifest(pkg1.set("changed", 1));
+      await pkg1.set("changed", 1).serialize();
       await gitAdd(cwd, pkg1.manifestLocation);
       await gitCommit(cwd, "fix(pkg1): A dependency-triggered bump");
 
       // update version
-      pkg2.version = "1.0.1";
-      await writeManifest(pkg2);
+      await pkg2.set("version", "1.0.1").serialize();
 
       await expect(
         updateChangelog(pkg2, "fixed", { changelogPreset: "angular" }).then(getFileContent)
@@ -136,12 +132,14 @@ describe("conventional-commits", () => {
     it("updates independent changelogs", async () => {
       const cwd = await initFixture("independent");
 
-      await Promise.all([gitTag(cwd, "package-1@1.0.0"), gitTag(cwd, "package-2@1.0.0")]);
+      await gitTag(cwd, "package-1@1.0.0");
+      await gitTag(cwd, "package-2@1.0.0");
 
       const [pkg1, pkg2] = await collectPackages(cwd);
 
       // make a change in package-1 and package-2
-      await Promise.all([writeManifest(pkg1.set("changed", 1)), writeManifest(pkg2.set("changed", 2))]);
+      await pkg1.set("changed", 1).serialize();
+      await pkg2.set("changed", 2).serialize();
 
       await gitAdd(cwd, pkg1.manifestLocation);
       await gitCommit(cwd, "fix(stuff): changed");
@@ -150,9 +148,8 @@ describe("conventional-commits", () => {
       await gitCommit(cwd, "feat(thing): added");
 
       // update versions
-      pkg1.version = "1.0.1";
-      pkg2.version = "1.1.0";
-      await Promise.all([writeManifest(pkg1), writeManifest(pkg2)]);
+      await pkg1.set("version", "1.0.1").serialize();
+      await pkg2.set("version", "1.1.0").serialize();
 
       const opts = {
         changelogPreset: "angular",

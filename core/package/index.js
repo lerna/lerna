@@ -2,6 +2,7 @@
 
 const npa = require("npm-package-arg");
 const path = require("path");
+const writePkg = require("write-pkg");
 
 function binSafeName({ name, scope }) {
   return scope ? name.substring(scope.length + 1) : name;
@@ -107,9 +108,13 @@ class Package {
           return this;
         },
       },
-      // serialize
+      // provide copy of internal pkg for munging
       toJSON: {
         value: () => shallowCopy(pkg),
+      },
+      // write changes to disk
+      serialize: {
+        value: () => writePkg(this.manifestLocation, pkg),
       },
     });
   }

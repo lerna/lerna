@@ -10,7 +10,6 @@ const pMap = require("p-map");
 const pReduce = require("p-reduce");
 const pWaterfall = require("p-waterfall");
 const semver = require("semver");
-const writePkg = require("write-pkg");
 
 const Command = require("@lerna/command");
 const ConventionalCommitUtilities = require("@lerna/conventional-commits");
@@ -213,7 +212,7 @@ class PublishCommand extends Command {
         // provide gitHead property that is normally added during npm publish
         pkg.set("gitHead", gitHead);
 
-        return writePkg(pkg.manifestLocation, pkg.toJSON());
+        return pkg.serialize();
       }
     });
   }
@@ -468,10 +467,7 @@ class PublishCommand extends Command {
                 }
               }
 
-              // NOTE: Object.prototype.toJSON() is normally called when passed to
-              // JSON.stringify(), but write-pkg iterates Object.keys() before serializing
-              // so it has to be explicit here (otherwise it mangles the instance properties)
-              return writePkg(pkg.manifestLocation, pkg.toJSON()).then(() => {
+              return pkg.serialize().then(() => {
                 // commit the updated manifest
                 changedFiles.add(pkg.manifestLocation);
               });

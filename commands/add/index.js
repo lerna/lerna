@@ -5,7 +5,6 @@ const npa = require("npm-package-arg");
 const packageJson = require("package-json");
 const pMap = require("p-map");
 const semver = require("semver");
-const writePkg = require("write-pkg");
 
 const Command = require("@lerna/command");
 const bootstrap = require("@lerna/bootstrap");
@@ -137,7 +136,7 @@ class AddCommand extends Command {
         }
       }
 
-      return writePkg(pkg.manifestLocation, pkg.toJSON()).then(() => pkg.name);
+      return pkg.serialize().then(() => pkg.name);
     };
 
     return pMap(this.packagesToChange, mapper);

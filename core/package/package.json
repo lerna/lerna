@@ -30,6 +30,7 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "npm-package-arg": "^6.0.0"
+    "npm-package-arg": "^6.0.0",
+    "write-pkg": "^3.1.0"
   }
 }
