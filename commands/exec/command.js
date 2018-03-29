@@ -24,7 +24,8 @@ exports.builder = yargs => {
     .options({
       bail: {
         group: "Command Options:",
-        describe: "Bail on exec execution when the command fails within a package",
+        describe: "Stop when the command fails in a package.\nPass --no-bail to continue despite failure.",
+        defaultDescription: "true",
         type: "boolean",
         default: undefined,
       },
