@@ -17,6 +17,13 @@ exports.builder = yargs => {
       type: "string",
     })
     .options({
+      bail: {
+        group: "Command Options:",
+        describe: "Stop when the script fails in a package.\nPass --no-bail to continue despite failure.",
+        defaultDescription: "true",
+        type: "boolean",
+        default: undefined,
+      },
       stream: {
         group: "Command Options:",
         describe: "Stream output with lines prefixed by package.",

@@ -5,6 +5,8 @@
     "package-3": "^1.0.0"
   },
   "scripts": {
+    "prefail": "echo package-1",
+    "fail": "exit 1",
     "my-script": "echo package-1",
     "test": "echo package-1"
   }

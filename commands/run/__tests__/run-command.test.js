@@ -21,14 +21,6 @@ const normalizeRelativeDir = require("@lerna-test/normalize-relative-dir");
 const lernaRun = require("@lerna-test/command-runner")(require("../command"));
 
 // assertion helpers
-const ranInPackages = testDir =>
-  npmRunScript.mock.calls.reduce((arr, [script, { args, npmClient, pkg }]) => {
-    const dir = normalizeRelativeDir(testDir, pkg.location);
-    const record = [dir, npmClient, "run", script].concat(args);
-    arr.push(record.join(" "));
-    return arr;
-  }, []);
-
 const ranInPackagesStreaming = testDir =>
   npmRunScript.stream.mock.calls.reduce((arr, [script, { args, npmClient, pkg }]) => {
     const dir = normalizeRelativeDir(testDir, pkg.location);
@@ -38,8 +30,8 @@ const ranInPackagesStreaming = testDir =>
   }, []);
 
 describe("RunCommand", () => {
-  npmRunScript.mockResolvedValue({ stdout: "stdout" });
-  npmRunScript.stream.mockResolvedValue();
+  npmRunScript.mockImplementation((script, { pkg }) => Promise.resolve({ stdout: pkg.name }));
+  npmRunScript.stream.mockImplementation(() => Promise.resolve());
 
   describe("in a basic repo", () => {
     it("runs a script in packages", async () => {
@@ -47,8 +39,9 @@ describe("RunCommand", () => {
 
       await lernaRun(testDir)("my-script");
 
-      expect(ranInPackages(testDir)).toMatchSnapshot();
-      expect(consoleOutput()).toMatch("stdout\nstdout");
+      const output = consoleOutput().split("\n");
+      expect(output).toContain("package-1");
+      expect(output).toContain("package-3");
     });
 
     it("runs a script in packages with --stream", async () => {
@@ -64,7 +57,7 @@ describe("RunCommand", () => {
 
       await lernaRun(testDir)("env");
 
-      expect(ranInPackages(testDir)).toMatchSnapshot();
+      expect(consoleOutput().split("\n")).toEqual(["package-1", "package-4", "package-2", "package-3"]);
     });
 
     it("runs a script only in scoped packages", async () => {
@@ -72,7 +65,7 @@ describe("RunCommand", () => {
 
       await lernaRun(testDir)("my-script", "--scope", "package-1");
 
-      expect(ranInPackages(testDir)).toMatchSnapshot();
+      expect(consoleOutput()).toBe("package-1");
     });
 
     it("does not run a script in ignored packages", async () => {
@@ -80,7 +73,7 @@ describe("RunCommand", () => {
 
       await lernaRun(testDir)("my-script", "--ignore", "package-@(2|3|4)");
 
-      expect(ranInPackages(testDir)).toMatchSnapshot();
+      expect(consoleOutput()).toBe("package-1");
     });
 
     it("should filter packages that are not updated with --since", async () => {
@@ -103,7 +96,7 @@ describe("RunCommand", () => {
 
       await lernaRun(testDir)("my-script", "--since", "master");
 
-      expect(ranInPackages(testDir)).toMatchSnapshot();
+      expect(consoleOutput()).toBe("package-3");
     });
 
     it("requires a git repo when using --since", async () => {
@@ -125,7 +118,6 @@ describe("RunCommand", () => {
 
       await lernaRun(testDir)("missing-script");
 
-      expect(npmRunScript).not.toBeCalled();
       expect(consoleOutput()).toBe("");
     });
 
@@ -142,16 +134,39 @@ describe("RunCommand", () => {
 
       await lernaRun(testDir)("env", "--npm-client", "yarn");
 
-      expect(ranInPackages(testDir)).toMatchSnapshot();
+      expect(consoleOutput().split("\n")).toEqual(["package-1", "package-4", "package-2", "package-3"]);
+    });
+
+    it("reports script errors with early exit", async () => {
+      expect.assertions(2);
+      npmRunScript.mockImplementationOnce((script, { pkg }) => Promise.reject(new Error(pkg.name)));
+
+      const testDir = await initFixture("basic");
+
+      try {
+        await lernaRun(testDir)("fail");
+      } catch (err) {
+        expect(err.message).toMatch("package-1");
+        expect(err.message).not.toMatch("package-2");
+      }
     });
   });
 
   describe("with --include-filtered-dependencies", () => {
     it("runs scoped command including filtered deps", async () => {
       const testDir = await initFixture("include-filtered-dependencies");
-      await lernaRun(testDir)("my-script", "--scope", "@test/package-2", "--include-filtered-dependencies");
+      await lernaRun(testDir)(
+        "my-script",
+        "--scope",
+        "@test/package-2",
+        "--include-filtered-dependencies",
+        "--",
+        "--silent"
+      );
 
-      expect(ranInPackages(testDir)).toMatchSnapshot();
+      const output = consoleOutput().split("\n");
+      expect(output).toContain("@test/package-1");
+      expect(output).toContain("@test/package-2");
     });
   });
 
@@ -169,7 +184,16 @@ describe("RunCommand", () => {
         "package-cycle-extraneous -> package-cycle-1 -> package-cycle-2 -> package-cycle-1"
       );
 
-      expect(ranInPackages(testDir)).toMatchSnapshot();
+      expect(consoleOutput().split("\n")).toEqual([
+        "package-dag-1",
+        "package-standalone",
+        "package-dag-2a",
+        "package-dag-2b",
+        "package-dag-3",
+        "package-cycle-1",
+        "package-cycle-2",
+        "package-cycle-extraneous",
+      ]);
     });
 
     it("should throw an error with --reject-cycles", async () => {

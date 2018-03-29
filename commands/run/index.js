@@ -21,6 +21,7 @@ class RunCommand extends Command {
 
   get defaultOptions() {
     return Object.assign({}, super.defaultOptions, {
+      bail: true,
       parallel: false,
       stream: false,
     });
@@ -77,6 +78,15 @@ class RunCommand extends Command {
     });
   }
 
+  getOpts(pkg) {
+    return {
+      args: this.args,
+      npmClient: this.npmClient,
+      reject: this.options.bail,
+      pkg,
+    };
+  }
+
   runScriptInPackagesBatched() {
     const runner = this.options.stream
       ? pkg => this.runScriptInPackageStreaming(pkg)
@@ -97,19 +107,11 @@ class RunCommand extends Command {
   }
 
   runScriptInPackageStreaming(pkg) {
-    return npmRunScript.stream(this.script, {
-      args: this.args,
-      npmClient: this.npmClient,
-      pkg,
-    });
+    return npmRunScript.stream(this.script, this.getOpts(pkg));
   }
 
   runScriptInPackageCapturing(pkg) {
-    return npmRunScript(this.script, {
-      args: this.args,
-      npmClient: this.npmClient,
-      pkg,
-    })
+    return npmRunScript(this.script, this.getOpts(pkg))
       .then(result => {
         output(result.stdout);
       })
