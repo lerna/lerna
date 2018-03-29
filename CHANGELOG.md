@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.0.0-beta.11"></a>
+# [3.0.0-beta.11](https://github.com/lerna/lerna/compare/v3.0.0-beta.10...v3.0.0-beta.11) (2018-03-29)
+
+
+### Bug Fixes
+
+* **exec:** Clarify --no-bail option ([6e4c6fd](https://github.com/lerna/lerna/commit/6e4c6fd))
+* **publish:** Write temporary annotations once, not repeatedly ([6abae76](https://github.com/lerna/lerna/commit/6abae76))
+
+
+### Features
+
+* **bootstrap:** Inherit stdio during root-only install ([fd8c391](https://github.com/lerna/lerna/commit/fd8c391))
+* **bootstrap:** Short-circuit when local file: specifiers are detected in the root ([d8a8f03](https://github.com/lerna/lerna/commit/d8a8f03))
+* **child-process:** Allow exec() opts.stdio override ([fd84013](https://github.com/lerna/lerna/commit/fd84013))
+* **npm-install:** Allow opts.stdio override ([4ba5e74](https://github.com/lerna/lerna/commit/4ba5e74))
+* Execute atomic publish lifecycle during lerna publish ([#1348](https://github.com/lerna/lerna/issues/1348)) ([45efa24](https://github.com/lerna/lerna/commit/45efa24))
+* Support `optionalDependencies` ([b73e19d](https://github.com/lerna/lerna/commit/b73e19d)), closes [#121](https://github.com/lerna/lerna/issues/121)
+* **npm-run-script:** Accept opts.reject ([7c5a791](https://github.com/lerna/lerna/commit/7c5a791))
+* **run:** Add --no-bail option ([893fcc8](https://github.com/lerna/lerna/commit/893fcc8)), closes [#1351](https://github.com/lerna/lerna/issues/1351)
+
+
+
+
+
 <a name="3.0.0-beta.10"></a>
 # [3.0.0-beta.10](https://github.com/lerna/lerna/compare/v3.0.0-beta.9...v3.0.0-beta.10) (2018-03-27)
 
