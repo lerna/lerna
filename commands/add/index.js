@@ -144,11 +144,14 @@ class AddCommand extends Command {
   }
 
   getPackageDeps(pkg) {
-    if (!pkg.json[this.dependencyType]) {
-      pkg.json[this.dependencyType] = {};
+    let deps = pkg.get(this.dependencyType);
+
+    if (!deps) {
+      deps = {};
+      pkg.set(this.dependencyType, deps);
     }
 
-    return pkg.json[this.dependencyType];
+    return deps;
   }
 
   getPackageVersion(spec) {

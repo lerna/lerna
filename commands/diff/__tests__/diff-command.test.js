@@ -32,9 +32,7 @@ describe("DiffCommand", () => {
     const [pkg1] = await collectPackages(cwd);
     const rootReadme = path.join(cwd, "README.md");
 
-    pkg1.json.changed += 1;
-
-    await writeManifest(pkg1);
+    await writeManifest(pkg1.set("changed", 1));
     await fs.outputFile(rootReadme, "change outside packages glob");
     await gitAdd(cwd, "-A");
     await gitCommit(cwd, "changed");
@@ -47,16 +45,12 @@ describe("DiffCommand", () => {
     const cwd = await initFixture("basic");
     const [pkg1] = await collectPackages(cwd);
 
-    pkg1.json.changed += 1;
-
-    await writeManifest(pkg1);
+    await writeManifest(pkg1.set("changed", 1));
     await gitAdd(cwd, "-A");
     await gitCommit(cwd, "changed");
     await gitTag(cwd, "v1.0.1");
 
-    pkg1.json.sinceLastTag = true;
-
-    await writeManifest(pkg1);
+    await writeManifest(pkg1.set("sinceLastTag", true));
     await gitAdd(cwd, "-A");
     await gitCommit(cwd, "changed");
 
@@ -68,10 +62,7 @@ describe("DiffCommand", () => {
     const cwd = await initFixture("basic");
     const [pkg1, pkg2] = await collectPackages(cwd);
 
-    pkg1.json.changed += 1;
-    pkg2.json.changed += 1;
-
-    await Promise.all([writeManifest(pkg1), writeManifest(pkg2)]);
+    await Promise.all([writeManifest(pkg1.set("changed", 1)), writeManifest(pkg2.set("changed", 1))]);
     await gitAdd(cwd, "-A");
     await gitCommit(cwd, "changed");
 
@@ -83,9 +74,7 @@ describe("DiffCommand", () => {
     const cwd = await initFixture("basic");
     const [pkg1] = await collectPackages(cwd);
 
-    pkg1.json.changed += 1;
-
-    await writeManifest(pkg1);
+    await writeManifest(pkg1.set("changed", 1));
     await fs.outputFile(path.join(pkg1.location, "README.md"), "ignored change");
     await gitAdd(cwd, "-A");
     await gitCommit(cwd, "changed");

@@ -74,7 +74,7 @@ class Project {
 
   get packageConfigs() {
     if (this.config.useWorkspaces) {
-      const workspaces = this.manifest.json.workspaces;
+      const workspaces = this.manifest.get("workspaces");
 
       if (!workspaces) {
         throw new ValidationError(

@@ -96,11 +96,20 @@ class Package {
       binLocation: {
         value: path.join(location, "node_modules", ".bin"),
       },
-      // "private"
-      json: {
-        get() {
-          return pkg;
+      // Map-like retrieval and storage of arbitrary values
+      get: {
+        value: key => pkg[key],
+      },
+      set: {
+        value: (key, val) => {
+          pkg[key] = val;
+
+          return this;
         },
+      },
+      // serialize
+      toJSON: {
+        value: () => shallowCopy(pkg),
       },
     });
   }
@@ -109,16 +118,16 @@ class Package {
     const depName = resolved.name;
 
     // first, try runtime dependencies
-    let depCollection = this.json.dependencies;
+    let depCollection = this.dependencies;
 
     // try optionalDependencies if that didn't work
     if (!depCollection || !depCollection[depName]) {
-      depCollection = this.json.optionalDependencies;
+      depCollection = this.optionalDependencies;
     }
 
     // fall back to devDependencies
     if (!depCollection || !depCollection[depName]) {
-      depCollection = this.json.devDependencies;
+      depCollection = this.devDependencies;
     }
 
     if (resolved.registry || resolved.type === "directory") {
@@ -142,10 +151,6 @@ class Package {
       // always serialize the full git+ssh url (identical to previous resolved.saveSpec)
       depCollection[depName] = hosted.sshurl({ noGitPlus: false, noCommittish: false });
     }
-  }
-
-  toJSON() {
-    return shallowCopy(this.json);
   }
 }
 

@@ -146,15 +146,16 @@ describe("Package", () => {
 
   describe(".toJSON()", () => {
     it("should return clone of internal package for serialization", () => {
-      const pkg = factory({
+      const json = {
         name: "is-cloned",
-      });
+      };
+      const pkg = factory(json);
 
-      expect(pkg.toJSON()).not.toBe(pkg.json);
-      expect(pkg.toJSON()).toEqual(pkg.json);
+      expect(pkg.toJSON()).not.toBe(json);
+      expect(pkg.toJSON()).toEqual(json);
 
       const implicit = JSON.stringify(pkg, null, 2);
-      const explicit = JSON.stringify(pkg.json, null, 2);
+      const explicit = JSON.stringify(json, null, 2);
 
       expect(implicit).toBe(explicit);
     });

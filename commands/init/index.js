@@ -86,7 +86,7 @@ class InitCommand extends Command {
         // lerna is a devDependency or no dependency, yet
         if (!rootPkg.devDependencies) {
           // mutate raw JSON object
-          rootPkg.json.devDependencies = {};
+          rootPkg.set("devDependencies", {});
         }
 
         targetDependencies = rootPkg.devDependencies;

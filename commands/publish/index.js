@@ -211,7 +211,7 @@ class PublishCommand extends Command {
     return pMap(this.updates, ({ pkg }) => {
       if (!pkg.private) {
         // provide gitHead property that is normally added during npm publish
-        pkg.json.gitHead = gitHead;
+        pkg.set("gitHead", gitHead);
 
         return writePkg(pkg.manifestLocation, pkg.toJSON());
       }

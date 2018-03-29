@@ -48,7 +48,7 @@ class BootstrapCommand extends Command {
 
     if (
       npmClient === "yarn" &&
-      this.project.manifest.json.workspaces &&
+      this.project.manifest.get("workspaces") &&
       this.options.useWorkspaces !== true
     ) {
       throw new ValidationError(
