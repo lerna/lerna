@@ -79,14 +79,14 @@ class AddCommand extends Command {
   execute() {
     this.logger.info(`Add ${this.dependencyType} in ${this.packagesToChange.length} packages`);
 
-    return this.makeChanges().then(pkgs => {
-      this.logger.info(`Changes require bootstrap in ${pkgs.length} packages`);
+    return this.makeChanges().then(() => {
+      this.logger.info(`Changes require bootstrap in ${this.packagesToChange.length} packages`);
 
       return bootstrap(
         Object.assign({}, this.options, {
           args: [],
           cwd: this.project.rootPath,
-          scope: pkgs,
+          scope: this.packagesToChange.map(pkg => pkg.name),
         })
       );
     });
@@ -136,7 +136,7 @@ class AddCommand extends Command {
         }
       }
 
-      return pkg.serialize().then(() => pkg.name);
+      return pkg.serialize();
     };
 
     return pMap(this.packagesToChange, mapper);
