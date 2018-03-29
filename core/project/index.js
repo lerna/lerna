@@ -58,11 +58,10 @@ class Project {
     }
 
     this.config = loaded.config;
+    this.rootConfigLocation = loaded.filepath;
     this.rootPath = path.dirname(loaded.filepath);
-    log.verbose("rootPath", this.rootPath);
 
-    this.lernaConfigLocation = loaded.filepath;
-    this.packageJsonLocation = path.join(this.rootPath, "package.json");
+    log.verbose("rootPath", this.rootPath);
   }
 
   get version() {
@@ -75,7 +74,9 @@ class Project {
 
   get packageConfigs() {
     if (this.config.useWorkspaces) {
-      if (!this.packageJson.workspaces) {
+      const workspaces = this.manifest.json.workspaces;
+
+      if (!workspaces) {
         throw new ValidationError(
           "EWORKSPACES",
           dedent`
@@ -85,7 +86,7 @@ class Project {
         );
       }
 
-      return this.packageJson.workspaces.packages || this.packageJson.workspaces;
+      return workspaces.packages || workspaces;
     }
 
     return this.config.packages || [Project.DEFAULT_PACKAGE_GLOB];
@@ -95,38 +96,31 @@ class Project {
     return this.packageConfigs.map(globParent).map(parentDir => path.resolve(this.rootPath, parentDir));
   }
 
-  get packageJson() {
-    let packageJson;
+  get manifest() {
+    let manifest;
 
     try {
-      packageJson = loadJsonFile.sync(this.packageJsonLocation);
+      const manifestLocation = path.join(this.rootPath, "package.json");
+      const packageJson = loadJsonFile.sync(manifestLocation);
 
       if (!packageJson.name) {
         // npm-lifecycle chokes if this is missing, so default like npm init does
-        packageJson.name = path.basename(path.dirname(this.packageJsonLocation));
+        packageJson.name = path.basename(path.dirname(manifestLocation));
       }
 
+      // Encapsulate raw JSON in Package instance
+      manifest = new Package(packageJson, this.rootPath);
+
       // redefine getter to lazy-loaded value
-      Object.defineProperty(this, "packageJson", {
-        value: packageJson,
+      Object.defineProperty(this, "manifest", {
+        value: manifest,
       });
     } catch (err) {
       // syntax errors are already caught and reported by constructor
       // try again next time
     }
 
-    return packageJson;
-  }
-
-  get package() {
-    const pkg = new Package(this.packageJson, this.rootPath);
-
-    // redefine getter to lazy-loaded value
-    Object.defineProperty(this, "package", {
-      value: pkg,
-    });
-
-    return pkg;
+    return manifest;
   }
 
   isIndependent() {
@@ -135,8 +129,8 @@ class Project {
 
   serializeConfig() {
     // TODO: might be package.json prop
-    return writeJsonFile(this.lernaConfigLocation, this.config, { indent: 2, detectIndent: true }).then(
-      () => this.lernaConfigLocation
+    return writeJsonFile(this.rootConfigLocation, this.config, { indent: 2, detectIndent: true }).then(
+      () => this.rootConfigLocation
     );
   }
 }

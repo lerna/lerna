@@ -46,7 +46,11 @@ class BootstrapCommand extends Command {
       );
     }
 
-    if (npmClient === "yarn" && this.project.packageJson.workspaces && this.options.useWorkspaces !== true) {
+    if (
+      npmClient === "yarn" &&
+      this.project.manifest.json.workspaces &&
+      this.options.useWorkspaces !== true
+    ) {
       throw new ValidationError(
         "EWORKSPACES",
         dedent`
@@ -122,7 +126,7 @@ class BootstrapCommand extends Command {
     // don't hide yarn or npm output
     this.npmConfig.stdio = "inherit";
 
-    return npmInstall(this.project.package, this.npmConfig);
+    return npmInstall(this.project.manifest, this.npmConfig);
   }
 
   /**
@@ -132,7 +136,7 @@ class BootstrapCommand extends Command {
    * @returns {Boolean}
    */
   rootHasLocalFileDependencies() {
-    const rootDependencies = Object.assign({}, this.project.package.dependencies);
+    const rootDependencies = Object.assign({}, this.project.manifest.dependencies);
 
     return Object.keys(rootDependencies).some(
       name =>
@@ -231,7 +235,7 @@ class BootstrapCommand extends Command {
     // Configuration for what packages to hoist may be in lerna.json or it may
     // come in as command line options.
     const { hoist, nohoist } = this.options;
-    const rootPkg = this.project.package;
+    const rootPkg = this.project.manifest;
 
     let hoisting;
 
@@ -407,7 +411,7 @@ class BootstrapCommand extends Command {
    */
   installExternalDependencies({ leaves, rootSet }) {
     const tracker = this.logger.newItem("install dependencies");
-    const rootPkg = this.project.package;
+    const rootPkg = this.project.manifest;
     const actions = [];
 
     // Start root install first, if any, since it's likely to take the longest.

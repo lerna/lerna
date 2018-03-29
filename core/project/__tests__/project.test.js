@@ -43,20 +43,6 @@ describe("Project", () => {
     });
   });
 
-  describe(".lernaConfigLocation", () => {
-    it("should be added to the instance", () => {
-      const project = new Project(testDir);
-      expect(project.lernaConfigLocation).toBe(path.join(testDir, "lerna.json"));
-    });
-  });
-
-  describe(".packageJsonLocation", () => {
-    it("should be added to the instance", () => {
-      const project = new Project(testDir);
-      expect(project.packageJsonLocation).toBe(path.join(testDir, "package.json"));
-    });
-  });
-
   describe(".config", () => {
     it("returns parsed lerna.json", () => {
       const project = new Project(testDir);
@@ -224,32 +210,30 @@ describe("Project", () => {
     });
   });
 
-  describe("get .packageJson", () => {
-    it("returns parsed package.json", () => {
-      expect(new Project(testDir).packageJson).toMatchObject({
-        name: "test",
-        devDependencies: {
-          lerna: "500.0.0",
-          external: "^1.0.0",
-        },
-      });
+  describe("get .manifest", () => {
+    it("returns a Package instance", () => {
+      const project = new Project(testDir);
+      expect(project.manifest).toBeDefined();
+      expect(project.manifest.name).toBe("test");
+      expect(project.manifest.location).toBe(testDir);
     });
 
     it("caches the first successful value", () => {
       const project = new Project(testDir);
-      expect(project.packageJson).toBe(project.packageJson);
+      expect(project.manifest).toBe(project.manifest);
     });
 
     it("does not cache failures", async () => {
       const cwd = await initFixture("basic");
+      const manifestLocation = path.join(cwd, "package.json");
 
-      await fs.remove(path.join(cwd, "package.json"));
+      await fs.remove(manifestLocation);
 
       const project = new Project(cwd);
-      expect(project.packageJson).toBe(undefined);
+      expect(project.manifest).toBe(undefined);
 
-      await fs.writeJSON(project.packageJsonLocation, { name: "test" }, { spaces: 2 });
-      expect(project.packageJson).toHaveProperty("name", "test");
+      await fs.writeJSON(manifestLocation, { name: "test" }, { spaces: 2 });
+      expect(project.manifest).toHaveProperty("name", "test");
     });
 
     it("errors when root package.json is not valid JSON", async () => {
@@ -263,20 +247,6 @@ describe("Project", () => {
         expect(err.name).toBe("ValidationError");
         expect(err.prefix).toBe("JSONError");
       }
-    });
-  });
-
-  describe("get .package", () => {
-    it("returns a Package instance", () => {
-      const project = new Project(testDir);
-      expect(project.package).toBeDefined();
-      expect(project.package.name).toBe("test");
-      expect(project.package.location).toBe(testDir);
-    });
-
-    it("caches the initial value", () => {
-      const project = new Project(testDir);
-      expect(project.package).toBe(project.package);
     });
   });
 

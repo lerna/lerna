@@ -434,7 +434,7 @@ class PublishCommand extends Command {
   updateUpdatedPackages() {
     const { conventionalCommits, changelogPreset } = this.options;
     const independentVersions = this.project.isIndependent();
-    const rootPkg = this.project.package;
+    const rootPkg = this.project.manifest;
     const changedFiles = new Set();
 
     // my kingdom for async await :(
@@ -538,7 +538,7 @@ class PublishCommand extends Command {
     chain = chain.then(() => pMap(this.updates, ({ pkg }) => this.runPackageLifecycle(pkg, "postversion")));
 
     // run postversion, if set, in the root directory
-    chain = chain.then(() => this.runPackageLifecycle(this.project.package, "postversion"));
+    chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "postversion"));
 
     return chain;
   }
@@ -588,7 +588,7 @@ class PublishCommand extends Command {
     const tracker = this.logger.newItem("npmPublish");
     // if we skip temp tags we should tag with the proper value immediately
     const distTag = this.options.tempTag ? "lerna-temp" : this.getDistTag();
-    const rootPkg = this.project.package;
+    const rootPkg = this.project.manifest;
 
     let chain = Promise.resolve();
 

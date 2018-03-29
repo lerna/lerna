@@ -1,6 +1,7 @@
 "use strict";
 
 const fs = require("fs-extra");
+const path = require("path");
 const pMap = require("p-map");
 const writeJsonFile = require("write-json-file");
 const writePkg = require("write-pkg");
@@ -53,39 +54,48 @@ class InitCommand extends Command {
   }
 
   ensurePackageJSON() {
-    let { packageJson } = this.project;
     let chain = Promise.resolve();
 
-    if (!packageJson) {
-      packageJson = {
-        name: "root",
-        private: true,
-      };
+    if (!this.project.manifest) {
       this.logger.info("", "Creating package.json");
 
       // initialize with default indentation so write-pkg doesn't screw it up with tabs
-      chain = chain.then(() => writeJsonFile(this.project.packageJsonLocation, packageJson, { indent: 2 }));
+      chain = chain.then(() =>
+        writeJsonFile(
+          path.join(this.project.rootPath, "package.json"),
+          {
+            name: "root",
+            private: true,
+          },
+          { indent: 2 }
+        )
+      );
     } else {
       this.logger.info("", "Updating package.json");
     }
 
-    let targetDependencies;
+    chain = chain.then(() => {
+      const rootPkg = this.project.manifest;
 
-    if (packageJson.dependencies && packageJson.dependencies.lerna) {
-      // lerna is a dependency in the current project
-      targetDependencies = packageJson.dependencies;
-    } else {
-      // lerna is a devDependency or no dependency, yet
-      if (!packageJson.devDependencies) {
-        packageJson.devDependencies = {};
+      let targetDependencies;
+
+      if (rootPkg.dependencies && rootPkg.dependencies.lerna) {
+        // lerna is a dependency in the current project
+        targetDependencies = rootPkg.dependencies;
+      } else {
+        // lerna is a devDependency or no dependency, yet
+        if (!rootPkg.devDependencies) {
+          // mutate raw JSON object
+          rootPkg.json.devDependencies = {};
+        }
+
+        targetDependencies = rootPkg.devDependencies;
       }
 
-      targetDependencies = packageJson.devDependencies;
-    }
+      targetDependencies.lerna = this.exact ? this.lernaVersion : `^${this.lernaVersion}`;
 
-    targetDependencies.lerna = this.exact ? this.lernaVersion : `^${this.lernaVersion}`;
-
-    chain = chain.then(() => writePkg(this.project.packageJsonLocation, packageJson));
+      return writePkg(rootPkg.manifestLocation, rootPkg.toJSON());
+    });
 
     return chain;
   }

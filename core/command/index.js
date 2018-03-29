@@ -158,7 +158,7 @@ class Command {
       throw new ValidationError("ENOGIT", "The git binary was not found, or this is not a git repository.");
     }
 
-    if (!this.project.packageJson) {
+    if (!this.project.manifest) {
       throw new ValidationError("ENOPKG", "`package.json` does not exist, have you run `lerna init`?");
     }
 

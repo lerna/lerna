@@ -288,7 +288,7 @@ class CreateCommand extends Command {
 
   setHomepage() {
     // allow --homepage override, but otherwise use root pkg.homepage, if it exists
-    let { homepage = this.project.package.json.homepage } = this.options;
+    let { homepage = this.project.manifest.json.homepage } = this.options;
 
     if (!homepage) {
       // normalize-package-data will backfill from hosted-git-info, if possible
