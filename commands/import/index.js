@@ -10,7 +10,6 @@ const Command = require("@lerna/command");
 const GitUtilities = require("@lerna/git-utils");
 const PromptUtilities = require("@lerna/prompt");
 const ValidationError = require("@lerna/validation-error");
-const getTargetBase = require("./lib/get-target-base");
 
 module.exports = factory;
 
@@ -61,10 +60,8 @@ class ImportCommand extends Command {
       throw new Error(`No package name specified in "${packageJson}"`);
     }
 
-    const targetBase = getTargetBase(this.project.packageConfigs);
-
     // Compute a target directory relative to the Lerna root
-    const targetDir = path.join(targetBase, externalRepoBase);
+    const targetDir = path.join(this.getTargetBase(), externalRepoBase);
 
     // Compute a target directory relative to the Git root
     const gitRepoRoot = GitUtilities.getWorkspaceRoot(this.execOpts);
@@ -107,6 +104,15 @@ class ImportCommand extends Command {
     }
 
     return PromptUtilities.confirm("Are you sure you want to import these commits onto the current branch?");
+  }
+
+  getTargetBase() {
+    return (
+      this.project.packageConfigs
+        .filter(p => path.basename(p) === "*")
+        .map(p => path.dirname(p))
+        .shift() || "packages"
+    );
   }
 
   externalExecSync(cmd, args) {
