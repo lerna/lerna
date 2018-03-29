@@ -623,7 +623,7 @@ $ lerna run --parallel watch
 
 Run an [npm script](https://docs.npmjs.com/misc/scripts) in each package that contains that script. A double-dash (`--`) is necessary to pass dashed arguments to the script execution.
 
-`lerna run` respects the `--concurrency`, `--scope`, `--ignore`, `--stream`, and `--parallel` flags (see [Flags](#flags)).
+`lerna run` respects the `--concurrency`, `--scope`, `--ignore`, `--stream`, `--prefix` and `--parallel` flags (see [Flags](#flags)).
 
 ```sh
 $ lerna run --scope my-component test
@@ -645,7 +645,7 @@ $ lerna exec -- protractor conf.js
 Run an arbitrary command in each package.
 A double-dash (`--`) is necessary to pass dashed flags to the spawned command, but is not necessary when all the arguments are positional.
 
-`lerna exec` respects the `--concurrency`, `--scope`, `--ignore`, `--stream` and `--parallel` flags (see [Flags](#flags)).
+`lerna exec` respects the `--concurrency`, `--scope`, `--ignore`, `--stream`  `--prefix` and `--parallel` flags (see [Flags](#flags)).
 
 ```sh
 $ lerna exec --scope my-component -- ls -la
@@ -1082,6 +1082,16 @@ package name. This allows output from different packages to be interleaved.
 
 ```sh
 $ lerna run watch --stream
+```
+
+#### --prefix
+
+By default, stream output is prefixed with the originating package name. This flag can be turned off
+so that the output can be parsed by a tool such as Visual Studio Code can highlight the result by type
+for all packages in the same project.
+
+```sh
+$ lerna run build --stream --no-prefix
 ```
 
 #### --parallel

@@ -129,11 +129,13 @@ export default class NpmUtilities {
     ChildProcessUtilities.execSync(npmClient, ["run", script, ...args], opts, callback);
   }
 
-  static runScriptInPackageStreaming(script, { args, pkg, npmClient }, callback) {
+  static runScriptInPackageStreaming(script, { args, pkg, npmClient, prefix }, callback) {
     log.silly("runScriptInPackageStreaming", [script, args, pkg.name]);
 
     const opts = NpmUtilities.getExecOpts(pkg.location);
-    ChildProcessUtilities.spawnStreaming(npmClient, ["run", script, ...args], opts, pkg.name, callback);
+    // prefix is default to `true` if it's undefined
+    const prefixStr = prefix === false ? "" : pkg.name;
+    ChildProcessUtilities.spawnStreaming(npmClient, ["run", script, ...args], opts, prefixStr, callback);
   }
 
   static publishTaggedInDir(tag, pkg, { npmClient, registry }, callback) {

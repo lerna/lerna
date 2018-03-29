@@ -16,6 +16,8 @@ exports[`stderr: test --stream 1`] = `"lerna info version __TEST_VERSION__"`;
 
 exports[`stderr: test --stream 2`] = `"lerna info version __TEST_VERSION__"`;
 
+exports[`stderr: test --stream --no-prefix 1`] = `"lerna info version __TEST_VERSION__"`;
+
 exports[`stderr: without -- 1`] = `"lerna info version __TEST_VERSION__"`;
 
 exports[`stdout: echo LERNA_PACKAGE_NAME 1`] = `

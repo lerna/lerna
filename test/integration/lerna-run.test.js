@@ -60,6 +60,24 @@ describe("lerna run", () => {
     expect(stderr).toMatchSnapshot("stderr: test --stream");
   });
 
+  test.concurrent("test --stream --no-prefix", async () => {
+    const cwd = await initFixture("RunCommand/integration-lifecycle");
+    const args = [
+      "run",
+      "--stream",
+      "--no-prefix",
+      "test",
+      "--concurrency=1",
+      // args below tell npm to be quiet
+      "--",
+      "--silent",
+      "--onload-script=false",
+    ];
+    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
+    expect(stdout).toMatchSnapshot("stdout: test --stream --no-prefix");
+    expect(stderr).toMatchSnapshot("stderr: test --stream --no-prefix");
+  });
+
   test.concurrent("test --parallel", async () => {
     const cwd = await initFixture("RunCommand/integration-lifecycle");
     const args = [
@@ -74,7 +92,7 @@ describe("lerna run", () => {
     const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
     expect(stderr).toMatchSnapshot("stderr: test --parallel");
 
-    // order is non-deterministic, so assert each item seperately
+    // order is non-deterministic, so assert each item separately
     expect(stdout).toMatch("package-1: package-1");
     expect(stdout).toMatch("package-2: package-2");
     expect(stdout).toMatch("package-3: package-3");
@@ -95,10 +113,32 @@ describe("lerna run", () => {
     const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
     expect(stderr).toMatchSnapshot("stderr: my-script --parallel");
 
-    // order is non-deterministic, so assert each item seperately
+    // order is non-deterministic, so assert each item separately
     expect(stdout).toMatch("package-1: package-1");
     expect(stdout).not.toMatch("package-2");
     expect(stdout).toMatch("package-3: package-3");
+    expect(stdout).not.toMatch("package-4");
+  });
+
+  test.concurrent("my-script --parallel --no-prefix", async () => {
+    const cwd = await initFixture("RunCommand/basic");
+    const args = [
+      "run",
+      "--parallel",
+      "--no-prefix",
+      "my-script",
+      // args below tell npm to be quiet
+      "--",
+      "--silent",
+      "--onload-script=false",
+    ];
+    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd });
+    expect(stderr).toMatchSnapshot("stderr: my-script --parallel --no-prefix");
+
+    // order is non-deterministic, so assert each item separately
+    expect(stdout).toMatch("package-1");
+    expect(stdout).not.toMatch("package-2");
+    expect(stdout).toMatch("package-3");
     expect(stdout).not.toMatch("package-4");
   });
 });

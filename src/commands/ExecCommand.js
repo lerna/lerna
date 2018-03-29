@@ -27,6 +27,14 @@ export const builder = {
     type: "boolean",
     default: undefined,
   },
+  // This option controls prefix for stream output so that it can be disabled to be friendly
+  // to tools like Visual Studio Code to highlight the raw results
+  prefix: {
+    group: "Command Options:",
+    describe: "Enable prefix for stream output",
+    type: "boolean",
+    default: undefined,
+  },
   parallel: {
     group: "Command Options:",
     describe: "Run command in all packages with unlimited concurrency, streaming prefixed output",
@@ -44,6 +52,7 @@ export default class ExecCommand extends Command {
     return Object.assign({}, super.defaultOptions, {
       bail: true,
       parallel: false,
+      prefix: true,
     });
   }
 
@@ -107,7 +116,8 @@ export default class ExecCommand extends Command {
 
     async.parallel(
       this.filteredPackages.map(pkg => done => {
-        ChildProcessUtilities.spawnStreaming(this.command, this.args, this.getOpts(pkg), pkg.name, done);
+        const prefixStr = this.options.prefix ? pkg.name : "";
+        ChildProcessUtilities.spawnStreaming(this.command, this.args, this.getOpts(pkg), prefixStr, done);
       }),
       callback
     );
@@ -122,7 +132,8 @@ export default class ExecCommand extends Command {
     };
 
     if (this.options.stream) {
-      ChildProcessUtilities.spawnStreaming(this.command, this.args, this.getOpts(pkg), pkg.name, done);
+      const prefixStr = this.options.prefix ? pkg.name : "";
+      ChildProcessUtilities.spawnStreaming(this.command, this.args, this.getOpts(pkg), prefixStr, done);
     } else {
       ChildProcessUtilities.spawn(this.command, this.args, this.getOpts(pkg), done);
     }
