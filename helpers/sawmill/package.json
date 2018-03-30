@@ -1,0 +1,12 @@
+{
+  "name": "@lerna-test/sawmill",
+  "version": "0.0.0-test-only",
+  "description": "A local test helper",
+  "main": "index.js",
+  "private": true,
+  "license": "MIT",
+  "dependencies": {
+    "concat-stream": "^1.6.2",
+    "npmlog": "^4.1.2"
+  }
+}
