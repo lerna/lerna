@@ -37,11 +37,13 @@ function spawnStreaming(command, args, opts, prefix) {
   const color = chalk[colorName];
   const spawned = _spawn(command, args, options);
 
-  const stdoutTag = prefix ? `${color.bold(prefix)}:` : "";
-  const stderrTag = prefix ? `${color(prefix)}:` : "";
+  const stdoutOpts = {};
+  const stderrOpts = {}; // mergeMultiline causes escaped newlines :P
 
-  const prefixedStdout = logTransformer({ tag: stdoutTag });
-  const prefixedStderr = logTransformer({ tag: stderrTag, mergeMultiline: true });
+  if (prefix) {
+    stdoutOpts.tag = `${color.bold(prefix)}:`;
+    stderrOpts.tag = `${color(prefix)}:`;
+  }
 
   // Avoid "Possible EventEmitter memory leak detected" warning due to piped stdio
   if (children > process.stdout.listenerCount("close")) {
@@ -49,8 +51,8 @@ function spawnStreaming(command, args, opts, prefix) {
     process.stderr.setMaxListeners(children);
   }
 
-  spawned.stdout.pipe(prefixedStdout).pipe(process.stdout);
-  spawned.stderr.pipe(prefixedStderr).pipe(process.stderr);
+  spawned.stdout.pipe(logTransformer(stdoutOpts)).pipe(process.stdout);
+  spawned.stderr.pipe(logTransformer(stderrOpts)).pipe(process.stderr);
 
   return spawned;
 }
