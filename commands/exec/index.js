@@ -33,7 +33,7 @@ class ExecCommand extends Command {
     this.args = (args || []).concat(dashedArgs);
 
     if (!this.command) {
-      throw new ValidationError("exec", "A command to execute is required");
+      throw new ValidationError("ENOCOMMAND", "A command to execute is required");
     }
 
     // don't interrupt spawned or streaming stdio

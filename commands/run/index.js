@@ -7,6 +7,7 @@ const npmRunScript = require("@lerna/npm-run-script");
 const batchPackages = require("@lerna/batch-packages");
 const runParallelBatches = require("@lerna/run-parallel-batches");
 const output = require("@lerna/output");
+const ValidationError = require("@lerna/validation-error");
 
 module.exports = factory;
 
@@ -29,23 +30,20 @@ class RunCommand extends Command {
   }
 
   initialize() {
-    const { script } = this.options;
+    const { script, npmClient = "npm", parallel, stream } = this.options;
+
     this.script = script;
     this.args = this.options["--"] || [];
+    this.npmClient = npmClient;
 
     if (!script) {
-      throw new Error("You must specify which npm script to run.");
+      throw new ValidationError("ENOSCRIPT", "You must specify a lifecycle script to run");
     }
 
-    const { parallel, stream, npmClient } = this.options;
-    this.npmClient = npmClient || "npm";
-
-    const { filteredPackages } = this;
-
     if (script === "env") {
-      this.packagesWithScript = filteredPackages;
+      this.packagesWithScript = this.filteredPackages;
     } else {
-      this.packagesWithScript = filteredPackages.filter(pkg => pkg.scripts && pkg.scripts[script]);
+      this.packagesWithScript = this.filteredPackages.filter(pkg => pkg.scripts && pkg.scripts[script]);
     }
 
     if (!this.packagesWithScript.length) {

@@ -42,14 +42,14 @@ class ImportCommand extends Command {
       stats = fs.statSync(externalRepoPath);
     } catch (e) {
       if (e.code === "ENOENT") {
-        throw new Error(`No repository found at "${inputPath}"`);
+        throw new ValidationError("ENOENT", `No repository found at "${inputPath}"`);
       }
 
       throw e;
     }
 
     if (!stats.isDirectory()) {
-      throw new Error(`Input path "${inputPath}" is not a directory`);
+      throw new ValidationError("ENODIR", `Input path "${inputPath}" is not a directory`);
     }
 
     const packageJson = path.join(externalRepoPath, "package.json");
@@ -57,7 +57,7 @@ class ImportCommand extends Command {
     const packageName = require(packageJson).name;
 
     if (!packageName) {
-      throw new Error(`No package name specified in "${packageJson}"`);
+      throw new ValidationError("ENOPKG", `No package name specified in "${packageJson}"`);
     }
 
     // Compute a target directory relative to the Lerna root
@@ -69,7 +69,7 @@ class ImportCommand extends Command {
     this.targetDirRelativeToGitRoot = path.join(lernaRootRelativeToGitRoot, targetDir);
 
     if (fs.existsSync(path.resolve(this.project.rootPath, targetDir))) {
-      throw new Error(`Target directory already exists "${targetDir}"`);
+      throw new ValidationError("EEXISTS", `Target directory already exists "${targetDir}"`);
     }
 
     this.commits = this.externalExecSync("git", this.gitParamsForTargetCommits())
@@ -84,14 +84,14 @@ class ImportCommand extends Command {
     // ]).split("\n");
 
     if (!this.commits.length) {
-      throw new Error(`No git commits to import at "${inputPath}"`);
+      throw new ValidationError("NOCOMMITS", `No git commits to import at "${inputPath}"`);
     }
 
     // Stash the repo's pre-import head away in case something goes wrong.
     this.preImportHead = GitUtilities.getCurrentSHA(this.execOpts);
 
     if (ChildProcessUtilities.execSync("git", ["diff-index", "HEAD"], this.execOpts)) {
-      throw new Error("Local repository has un-committed changes");
+      throw new ValidationError("ECHANGES", "Local repository has un-committed changes");
     }
 
     this.logger.info(
