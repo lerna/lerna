@@ -47,7 +47,10 @@ class RunCommand extends Command {
     }
 
     if (!this.packagesWithScript.length) {
-      this.logger.warn(`No packages found with the npm script '${script}'`);
+      this.logger.success("run", `No packages found with the lifecycle script '${script}'`);
+
+      // still exits zero, aka "ok"
+      return false;
     }
 
     if (parallel || stream) {
@@ -70,10 +73,8 @@ class RunCommand extends Command {
     }
 
     return chain.then(() => {
-      if (this.packagesWithScript.length) {
-        this.logger.success("run", `Ran npm script '${this.script}' in packages:`);
-        this.logger.success("", this.packagesWithScript.map(pkg => `- ${pkg.name}`).join("\n"));
-      }
+      this.logger.success("run", `Ran npm script '${this.script}' in packages:`);
+      this.logger.success("", this.packagesWithScript.map(pkg => `- ${pkg.name}`).join("\n"));
     });
   }
 

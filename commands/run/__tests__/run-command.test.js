@@ -126,7 +126,9 @@ describe("RunCommand", () => {
 
       await lernaRun(testDir)("missing-script");
 
-      expect(consoleOutput()).toBe("");
+      expect(loggingOutput("success")).toContain(
+        "No packages found with the lifecycle script 'missing-script'"
+      );
     });
 
     it("runs a script in all packages with --parallel", async () => {
