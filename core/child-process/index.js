@@ -37,8 +37,11 @@ function spawnStreaming(command, args, opts, prefix) {
   const color = chalk[colorName];
   const spawned = _spawn(command, args, options);
 
-  const prefixedStdout = logTransformer({ tag: `${color.bold(prefix)}:` });
-  const prefixedStderr = logTransformer({ tag: `${color(prefix)}:`, mergeMultiline: true });
+  const stdoutTag = prefix ? `${color.bold(prefix)}:` : "";
+  const stderrTag = prefix ? `${color(prefix)}:` : "";
+
+  const prefixedStdout = logTransformer({ tag: stdoutTag });
+  const prefixedStderr = logTransformer({ tag: stderrTag, mergeMultiline: true });
 
   // Avoid "Possible EventEmitter memory leak detected" warning due to piped stdio
   if (children > process.stdout.listenerCount("close")) {

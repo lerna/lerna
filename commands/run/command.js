@@ -36,6 +36,15 @@ exports.builder = yargs => {
         type: "boolean",
         default: undefined,
       },
+      // This option controls prefix for stream output so that it can be disabled to be friendly
+      // to tools like Visual Studio Code to highlight the raw results
+      prefix: {
+        group: "Command Options:",
+        describe: "Pass --no-prefix to disable prefixing of streamed output.",
+        defaultDescription: "true",
+        type: "boolean",
+        default: undefined,
+      },
       "npm-client": {
         group: "Command Options:",
         describe: "Executable used to run scripts (npm, yarn, pnpm, ...).",

@@ -45,6 +45,23 @@ describe("lerna run", () => {
     expect(stderr).toMatchSnapshot("stderr");
   });
 
+  test("test --stream --no-prefix", async () => {
+    const cwd = await initFixture("lerna-run");
+    const args = [
+      "run",
+      "--stream",
+      "--no-prefix",
+      "test",
+      "--concurrency=1",
+      // args below tell npm to be quiet
+      "--",
+      "--silent",
+    ];
+    const { stdout, stderr } = await cliRunner(cwd)(...args);
+    expect(stdout).toMatchSnapshot("stdout");
+    expect(stderr).toMatchSnapshot("stderr");
+  });
+
   test("test --parallel", async () => {
     const cwd = await initFixture("lerna-run");
     const args = [

@@ -21,6 +21,7 @@ class ExecCommand extends Command {
     return Object.assign({}, super.defaultOptions, {
       bail: true,
       parallel: false,
+      prefix: true,
     });
   }
 
@@ -83,14 +84,24 @@ class ExecCommand extends Command {
 
     return Promise.all(
       this.filteredPackages.map(pkg =>
-        ChildProcessUtilities.spawnStreaming(this.command, this.args, this.getOpts(pkg), pkg.name)
+        ChildProcessUtilities.spawnStreaming(
+          this.command,
+          this.args,
+          this.getOpts(pkg),
+          this.options.prefix && pkg.name
+        )
       )
     );
   }
 
   runCommandInPackage(pkg) {
     if (this.options.stream) {
-      return ChildProcessUtilities.spawnStreaming(this.command, this.args, this.getOpts(pkg), pkg.name);
+      return ChildProcessUtilities.spawnStreaming(
+        this.command,
+        this.args,
+        this.getOpts(pkg),
+        this.options.prefix && pkg.name
+      );
     }
 
     return ChildProcessUtilities.spawn(this.command, this.args, this.getOpts(pkg));

@@ -22,9 +22,9 @@ const calledInPackages = () =>
   ChildProcessUtilities.spawn.mock.calls.map(([, , opts]) => path.basename(opts.cwd));
 
 const execInPackagesStreaming = testDir =>
-  ChildProcessUtilities.spawnStreaming.mock.calls.reduce((arr, [command, params, opts]) => {
+  ChildProcessUtilities.spawnStreaming.mock.calls.reduce((arr, [command, params, opts, prefix]) => {
     const dir = normalizeRelativeDir(testDir, opts.cwd);
-    arr.push([dir, command].concat(params).join(" "));
+    arr.push([dir, command, `(prefix: ${prefix})`].concat(params).join(" "));
     return arr;
   }, []);
 
@@ -181,7 +181,21 @@ describe("ExecCommand", () => {
 
       await lernaExec(testDir)("--parallel", "ls");
 
-      expect(execInPackagesStreaming(testDir)).toEqual(["packages/package-1 ls", "packages/package-2 ls"]);
+      expect(execInPackagesStreaming(testDir)).toEqual([
+        "packages/package-1 ls (prefix: package-1)",
+        "packages/package-2 ls (prefix: package-2)",
+      ]);
+    });
+
+    it("omits package prefix with --parallel --no-prefix", async () => {
+      const testDir = await initFixture("basic");
+
+      await lernaExec(testDir)("--parallel", "--no-prefix", "ls");
+
+      expect(execInPackagesStreaming(testDir)).toEqual([
+        "packages/package-1 ls (prefix: false)",
+        "packages/package-2 ls (prefix: false)",
+      ]);
     });
 
     it("executes a command in all packages with --stream", async () => {
@@ -189,7 +203,21 @@ describe("ExecCommand", () => {
 
       await lernaExec(testDir)("--stream", "ls");
 
-      expect(execInPackagesStreaming(testDir)).toEqual(["packages/package-1 ls", "packages/package-2 ls"]);
+      expect(execInPackagesStreaming(testDir)).toEqual([
+        "packages/package-1 ls (prefix: package-1)",
+        "packages/package-2 ls (prefix: package-2)",
+      ]);
+    });
+
+    it("omits package prefix with --stream --no-prefix", async () => {
+      const testDir = await initFixture("basic");
+
+      await lernaExec(testDir)("--stream", "--no-prefix", "ls");
+
+      expect(execInPackagesStreaming(testDir)).toEqual([
+        "packages/package-1 ls (prefix: false)",
+        "packages/package-2 ls (prefix: false)",
+      ]);
     });
   });
 

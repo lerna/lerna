@@ -78,6 +78,7 @@ describe("npm-run-script", () => {
           name: "qux",
           location: "/test/npm/run/script/stream",
         },
+        prefix: true,
         npmClient: "npm",
       };
 
@@ -115,7 +116,7 @@ describe("npm-run-script", () => {
           cwd: config.pkg.location,
           reject: false,
         },
-        config.pkg.name
+        undefined
       );
     });
   });

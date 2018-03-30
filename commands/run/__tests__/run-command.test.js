@@ -22,9 +22,9 @@ const lernaRun = require("@lerna-test/command-runner")(require("../command"));
 
 // assertion helpers
 const ranInPackagesStreaming = testDir =>
-  npmRunScript.stream.mock.calls.reduce((arr, [script, { args, npmClient, pkg }]) => {
+  npmRunScript.stream.mock.calls.reduce((arr, [script, { args, npmClient, pkg, prefix }]) => {
     const dir = normalizeRelativeDir(testDir, pkg.location);
-    const record = [dir, npmClient, "run", script].concat(args);
+    const record = [dir, npmClient, "run", script, `(prefixed: ${prefix})`].concat(args);
     arr.push(record.join(" "));
     return arr;
   }, []);
@@ -48,6 +48,14 @@ describe("RunCommand", () => {
       const testDir = await initFixture("basic");
 
       await lernaRun(testDir)("my-script", "--stream");
+
+      expect(ranInPackagesStreaming(testDir)).toMatchSnapshot();
+    });
+
+    it("omits package prefix with --stream --no-prefix", async () => {
+      const testDir = await initFixture("basic");
+
+      await lernaRun(testDir)("my-script", "--stream", "--no-prefix");
 
       expect(ranInPackagesStreaming(testDir)).toMatchSnapshot();
     });
@@ -125,6 +133,14 @@ describe("RunCommand", () => {
       const testDir = await initFixture("basic");
 
       await lernaRun(testDir)("env", "--parallel");
+
+      expect(ranInPackagesStreaming(testDir)).toMatchSnapshot();
+    });
+
+    it("omits package prefix with --parallel --no-prefix", async () => {
+      const testDir = await initFixture("basic");
+
+      await lernaRun(testDir)("env", "--parallel", "--no-prefix");
 
       expect(ranInPackagesStreaming(testDir)).toMatchSnapshot();
     });

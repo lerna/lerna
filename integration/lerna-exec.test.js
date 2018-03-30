@@ -59,7 +59,7 @@ describe("lerna exec", () => {
     expect(stdout).toMatchSnapshot();
   });
 
-  test("<cmd> --parallel", async () => {
+  test("--parallel", async () => {
     const cwd = await initFixture("lerna-exec");
     const args = [
       "exec",
@@ -80,21 +80,19 @@ describe("lerna exec", () => {
     expect(stdout).toMatch("package-2: package.json");
   });
 
-  test("--parallel <cmd>", async () => {
+  test("--parallel --no-prefix", async () => {
     const cwd = await initFixture("lerna-exec");
-    const args = ["exec", "--parallel", EXEC_TEST_COMMAND];
+    const args = ["exec", "--parallel", "--no-prefix", EXEC_TEST_COMMAND];
 
     const { stdout, stderr } = await cliRunner(cwd, env)(...args);
     expect(stderr).toMatch(EXEC_TEST_COMMAND);
 
     // order is non-deterministic, so assert individually
-    expect(stdout).toMatch("package-1: file-1.js");
-    expect(stdout).toMatch("package-1: package.json");
-    expect(stdout).toMatch("package-2: file-2.js");
-    expect(stdout).toMatch("package-2: package.json");
+    expect(stdout).toMatch("file-1.js");
+    expect(stdout).toMatch("file-2.js");
   });
 
-  test("<cmd> --stream", async () => {
+  test("--stream", async () => {
     const cwd = await initFixture("lerna-exec");
     const args = [
       "exec",
@@ -114,30 +112,18 @@ describe("lerna exec", () => {
     expect(stdout).toMatch("package-2: package.json");
   });
 
-  test("--stream <cmd>", async () => {
+  test("--stream --no-prefix", async () => {
     const cwd = await initFixture("lerna-exec");
-    const args = ["exec", "--stream", EXEC_TEST_COMMAND];
+    const args = ["exec", "--stream", "--no-prefix", EXEC_TEST_COMMAND];
 
     const { stdout } = await cliRunner(cwd, env)(...args);
 
     // order is non-deterministic, so assert individually
-    expect(stdout).toMatch("package-1: file-1.js");
-    expect(stdout).toMatch("package-1: package.json");
-    expect(stdout).toMatch("package-2: file-2.js");
-    expect(stdout).toMatch("package-2: package.json");
+    expect(stdout).toMatch("file-1.js");
+    expect(stdout).toMatch("file-2.js");
   });
 
-  test("--bail=false <cmd>", async () => {
-    const cwd = await initFixture("lerna-exec");
-    const args = ["exec", "--bail=false", "--concurrency=1", "--", "npm", "run", "fail-or-succeed"];
-
-    const { stdout, stderr } = await cliRunner(cwd)(...args);
-    expect(stderr).toMatch("Failed at the package-1@1.0.0 fail-or-succeed script");
-    expect(stdout).toMatch("failure!");
-    expect(stdout).toMatch("success!");
-  });
-
-  test("--no-bail <cmd>", async () => {
+  test("--no-bail", async () => {
     const cwd = await initFixture("lerna-exec");
     const args = ["exec", "--no-bail", "--concurrency=1", "--", "npm", "run", "fail-or-succeed"];
 

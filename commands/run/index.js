@@ -23,6 +23,7 @@ class RunCommand extends Command {
     return Object.assign({}, super.defaultOptions, {
       bail: true,
       parallel: false,
+      prefix: true,
       stream: false,
     });
   }
@@ -82,6 +83,7 @@ class RunCommand extends Command {
     return {
       args: this.args,
       npmClient: this.npmClient,
+      prefix: this.options.prefix,
       reject: this.options.bail,
       pkg,
     };
