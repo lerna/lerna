@@ -6,8 +6,17 @@ const path = require("path");
 module.exports = builtinNpmrc;
 
 function builtinNpmrc() {
-  const globalNpmBin = path.resolve(path.dirname(process.execPath), "npm");
+  let resolvedPath = "";
 
-  // e.g., /usr/local/lib/node_modules/npm/npmrc
-  return path.resolve(fs.realpathSync(globalNpmBin), "../../npmrc");
+  try {
+    // e.g., /usr/local/lib/node_modules/npm/npmrc
+    resolvedPath = path.resolve(
+      fs.realpathSync(path.join(path.dirname(process.execPath), "npm")),
+      "../../npmrc"
+    );
+  } catch (err) {
+    // ignore
+  }
+
+  return resolvedPath;
 }
