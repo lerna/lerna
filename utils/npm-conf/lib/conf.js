@@ -4,6 +4,7 @@ const assert = require("assert");
 const fs = require("fs");
 const path = require("path");
 const { ConfigChain } = require("config-chain");
+const envReplace = require("./env-replace");
 const findPrefix = require("./find-prefix");
 const parseField = require("./parse-field");
 const toNerfDart = require("./nerf-dart");
@@ -18,10 +19,16 @@ class Conf extends ConfigChain {
   // https://github.com/npm/npm/blob/latest/lib/config/core.js#L332-L342
   add(data, marker) {
     try {
+      /* eslint-disable no-param-reassign */
       for (const x of Object.keys(data)) {
-        // eslint-disable-next-line no-param-reassign
-        data[x] = parseField(data[x], x);
+        // https://github.com/npm/npm/commit/f0e998d
+        const newKey = envReplace(x);
+        const newField = parseField(data[x], newKey);
+
+        delete data[x];
+        data[newKey] = newField;
       }
+      /* eslint-enable no-param-reassign */
     } catch (err) {
       throw err;
     }
