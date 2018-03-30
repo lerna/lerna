@@ -206,6 +206,32 @@ describe("NpmUtilities", () => {
         expect.any(Function)
       );
     });
+
+    it("runs an npm script in a package with streaming without prefix", () => {
+      const script = "foo";
+      const config = {
+        args: ["--bar", "baz"],
+        pkg: {
+          name: "qux",
+          location: "/test/runScriptInPackageStreaming",
+        },
+        npmClient: "npm",
+        prefix: false,
+      };
+      const callback = () => {};
+
+      NpmUtilities.runScriptInPackageStreaming(script, config, callback);
+
+      expect(ChildProcessUtilities.spawnStreaming).lastCalledWith(
+        "npm",
+        ["run", "foo", "--bar", "baz"],
+        {
+          cwd: config.pkg.location,
+        },
+        "",
+        expect.any(Function)
+      );
+    });
   });
 
   describe(".publishTaggedInDir()", () => {

@@ -22,6 +22,14 @@ export const builder = {
     type: "boolean",
     default: undefined,
   },
+  // This option controls prefix for stream output so that it can be disabled to be friendly
+  // to tools like Visual Studio Code to highlight the raw results
+  prefix: {
+    group: "Command Options:",
+    describe: "Enable prefix for stream output",
+    type: "boolean",
+    default: undefined,
+  },
   parallel: {
     group: "Command Options:",
     describe: "Run script in all packages with unlimited concurrency, streaming prefixed output",
@@ -45,6 +53,7 @@ export default class RunCommand extends Command {
     return Object.assign({}, super.defaultOptions, {
       parallel: false,
       stream: false,
+      prefix: true,
     });
   }
 
@@ -153,6 +162,7 @@ export default class RunCommand extends Command {
         args: this.args,
         pkg,
         npmClient: this.npmClient,
+        prefix: this.options.prefix,
       },
       callback
     );

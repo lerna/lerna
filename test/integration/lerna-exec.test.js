@@ -137,6 +137,20 @@ describe("lerna exec", () => {
     expect(stdout).toMatch("package-2: package.json");
   });
 
+  test.concurrent("--stream --no-prefix <cmd>", async () => {
+    const cwd = await initFixture("ExecCommand/basic");
+    const args = ["exec", "--stream", EXEC_TEST_COMMAND, "-C"];
+
+    const { stdout, stderr } = await execa(LERNA_BIN, args, { cwd, env });
+    expect(stderr).toMatchSnapshot("stderr: test --stream --no-prefix");
+
+    // order is non-deterministic, so assert individually
+    expect(stdout).toMatch("file-1.js");
+    expect(stdout).toMatch("package.json");
+    expect(stdout).toMatch("file-2.js");
+    expect(stdout).toMatch("package.json");
+  });
+
   test.concurrent("--bail=false <cmd>", async () => {
     const cwd = await initFixture("ExecCommand/basic");
     const args = ["exec", "--bail=false", "--concurrency=1", "--", "npm run fail-or-succeed"];
