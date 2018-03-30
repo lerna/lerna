@@ -91,6 +91,7 @@
     "fast-async": "^6.3.0",
     "file-url": "^2.0.2",
     "jest": "^19.0.2",
+    "lerna-changelog": "^0.7.0",
     "normalize-newline": "^3.0.0",
     "normalize-path": "^2.1.1",
     "prettier": "^1.9.2",
