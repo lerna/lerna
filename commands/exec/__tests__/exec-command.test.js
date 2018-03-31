@@ -11,7 +11,6 @@ const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const gitAdd = require("@lerna-test/git-add");
 const gitCommit = require("@lerna-test/git-commit");
 const gitTag = require("@lerna-test/git-tag");
-const loggingOutput = require("@lerna-test/logging-output");
 const normalizeRelativeDir = require("@lerna-test/normalize-relative-dir");
 
 // file under test
@@ -225,16 +224,9 @@ describe("ExecCommand", () => {
     it("warns when cycles are encountered", async () => {
       const testDir = await initFixture("toposort");
 
-      await lernaExec(testDir)("ls");
+      const { logs } = await lernaExec(testDir)("ls", "--loglevel=warn");
 
-      const [logMessage] = loggingOutput("warn");
-      expect(logMessage).toMatch("Dependency cycles detected, you should fix these!");
-      expect(logMessage).toMatch("package-cycle-1 -> package-cycle-2 -> package-cycle-1");
-      expect(logMessage).toMatch("package-cycle-2 -> package-cycle-1 -> package-cycle-2");
-      expect(logMessage).toMatch(
-        "package-cycle-extraneous -> package-cycle-1 -> package-cycle-2 -> package-cycle-1"
-      );
-
+      expect(logs).toMatchSnapshot();
       expect(calledInPackages()).toEqual([
         "package-dag-1",
         "package-standalone",

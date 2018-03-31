@@ -26,7 +26,6 @@ const runLifecycle = require("@lerna/run-lifecycle");
 
 // helpers
 const consoleOutput = require("@lerna-test/console-output");
-const loggingOutput = require("@lerna-test/logging-output");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const normalizeRelativeDir = require("@lerna-test/normalize-relative-dir");
 
@@ -370,10 +369,9 @@ describe("PublishCommand", () => {
 
     it("should display a message that git is skipped", async () => {
       const testDir = await initFixture("normal");
-      await lernaPublish(testDir)("--skip-git");
+      const { logs } = await lernaPublish(testDir)("--skip-git");
 
-      const logMessages = loggingOutput("info");
-      expect(logMessages).toContain("Skipping git commit/push");
+      expect(logs).toMatch("Skipping git commit/push");
     });
   });
 
@@ -405,10 +403,9 @@ describe("PublishCommand", () => {
 
     it("should display a message that npm is skipped", async () => {
       const testDir = await initFixture("normal");
-      await lernaPublish(testDir)("--skip-npm");
+      const { logs } = await lernaPublish(testDir)("--skip-npm");
 
-      const logMessages = loggingOutput("info");
-      expect(logMessages).toContain("Skipping publish to registry");
+      expect(logs).toMatch("Skipping publish to registry");
     });
   });
 
@@ -450,11 +447,10 @@ describe("PublishCommand", () => {
 
     it("should display a message that npm and git are skipped", async () => {
       const testDir = await initFixture("normal");
-      await lernaPublish(testDir)("--skip-git", "--skip-npm");
+      const { logs } = await lernaPublish(testDir)("--skip-git", "--skip-npm");
 
-      const logMessages = loggingOutput("info");
-      expect(logMessages).toContain("Skipping git commit/push");
-      expect(logMessages).toContain("Skipping publish to registry");
+      expect(logs).toMatch("Skipping git commit/push");
+      expect(logs).toMatch("Skipping publish to registry");
     });
   });
 
@@ -1100,11 +1096,10 @@ describe("PublishCommand", () => {
 
       GitUtilities.isBehindUpstream.mockReturnValueOnce(true);
 
-      await lernaPublish(testDir)("--ci");
+      const { logs } = await lernaPublish(testDir)("--ci", "--loglevel", "warn");
 
-      const [warning] = loggingOutput("warn");
-      expect(warning).toMatch("behind remote upstream");
-      expect(warning).toMatch("exiting");
+      expect(logs).toMatch("behind remote upstream");
+      expect(logs).toMatch("exiting");
     });
   });
 
@@ -1160,13 +1155,12 @@ describe("PublishCommand", () => {
 
       runLifecycle.mockImplementationOnce(() => Promise.reject(new Error("boom")));
 
-      await lernaPublish(testDir)();
+      const { logs } = await lernaPublish(testDir)("--loglevel", "error");
 
       expect(runLifecycle).toHaveBeenCalledTimes(12);
       expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
 
-      const [errorLog] = loggingOutput("error");
-      expect(errorLog).toMatch("error running preversion in lifecycle");
+      expect(logs).toMatch("error running preversion in lifecycle");
     });
 
     it("adapts to missing root package name", async () => {

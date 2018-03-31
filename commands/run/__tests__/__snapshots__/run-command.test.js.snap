@@ -1,5 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`RunCommand in a basic repo does not error when no packages match 1`] = `
+"lerna success run No packages found with the lifecycle script 'missing-script'
+"
+`;
+
 exports[`RunCommand in a basic repo omits package prefix with --parallel --no-prefix 1`] = `
 Array [
   "packages/package-1 npm run env (prefixed: false)",
@@ -30,4 +35,12 @@ Array [
   "packages/package-1 npm run my-script (prefixed: true)",
   "packages/package-3 npm run my-script (prefixed: true)",
 ]
+`;
+
+exports[`RunCommand in a cyclical repo warns when cycles are encountered 1`] = `
+"lerna WARN ECYCLE Dependency cycles detected, you should fix these!
+lerna WARN ECYCLE package-cycle-1 -> package-cycle-2 -> package-cycle-1
+lerna WARN ECYCLE package-cycle-2 -> package-cycle-1 -> package-cycle-2
+lerna WARN ECYCLE package-cycle-extraneous -> package-cycle-1 -> package-cycle-2 -> package-cycle-1 -> package-cycle-1@1.0.0
+"
 `;

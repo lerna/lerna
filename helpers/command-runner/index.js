@@ -3,6 +3,7 @@
 const path = require("path");
 const yargs = require("yargs/yargs");
 const globalOptions = require("@lerna/global-options");
+const sawmill = require("@lerna-test/sawmill");
 
 module.exports = commandRunner;
 
@@ -35,19 +36,26 @@ function commandRunner(commandModule) {
     return (...args) =>
       new Promise((resolve, reject) => {
         const yargsMeta = {};
+        const sluice = sawmill();
 
         const context = {
           cwd,
           lernaVersion: "__TEST_VERSION__",
           onResolved: result => {
-            // success resolves the result, if any, returned from execute()
-            resolve(Object.assign({}, result, yargsMeta));
+            sluice().then(logs => {
+              // success resolves the result, if any, returned from execute()
+              resolve(Object.assign({ logs }, result, yargsMeta));
+            });
           },
           onRejected: result => {
-            Object.assign(result, yargsMeta);
-            // tests expect errors thrown to indicate failure,
-            // _not_ just non-zero exitCode
-            reject(result);
+            sluice().then(logs => {
+              // result must stay an Error, not arbitrary object
+              Object.assign(result, yargsMeta, { logs });
+
+              // tests expect errors thrown to indicate failure,
+              // _not_ just non-zero exitCode
+              reject(result);
+            });
           },
         };
 

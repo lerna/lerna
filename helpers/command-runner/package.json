@@ -6,6 +6,7 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
+    "@lerna-test/sawmill": "file:../sawmill",
     "@lerna/global-options": "file:../../core/global-options",
     "yargs": "^11.0.0"
   }
