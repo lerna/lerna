@@ -24,9 +24,6 @@ class ChangedCommand extends Command {
   }
 
   initialize() {
-    // don't interrupt stdio
-    this.logger.disableProgress();
-
     this.updates = collectUpdates(this);
 
     const proceedWithUpdates = this.updates.length > 0;

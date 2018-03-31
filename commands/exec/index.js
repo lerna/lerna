@@ -36,9 +36,6 @@ class ExecCommand extends Command {
       throw new ValidationError("ENOCOMMAND", "A command to execute is required");
     }
 
-    // don't interrupt spawned or streaming stdio
-    this.logger.disableProgress();
-
     const { filteredPackages } = this;
 
     this.batchedPackages = this.toposort

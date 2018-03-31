@@ -20,6 +20,12 @@ function globalOptions(yargs) {
       type: "boolean",
       default: undefined,
     },
+    progress: {
+      defaultDescription: "true",
+      describe: "Enable progress bars. Pass --no-progress to disable. (Always off in CI)",
+      type: "boolean",
+      default: undefined,
+    },
     sort: {
       defaultDescription: "true",
       describe: "Sort packages topologically (all dependencies before dependents).",

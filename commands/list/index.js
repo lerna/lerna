@@ -24,9 +24,6 @@ class ListCommand extends Command {
   }
 
   initialize() {
-    // don't interrupt stdio
-    this.logger.disableProgress();
-
     this.resultList = this.filteredPackages.map(pkg => ({
       name: pkg.name,
       version: pkg.version,

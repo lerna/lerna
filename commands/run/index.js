@@ -30,7 +30,7 @@ class RunCommand extends Command {
   }
 
   initialize() {
-    const { script, npmClient = "npm", parallel, stream } = this.options;
+    const { script, npmClient = "npm" } = this.options;
 
     this.script = script;
     this.args = this.options["--"] || [];
@@ -51,11 +51,6 @@ class RunCommand extends Command {
 
       // still exits zero, aka "ok"
       return false;
-    }
-
-    if (parallel || stream) {
-      // don't interrupt streaming stdio
-      this.logger.disableProgress();
     }
 
     this.batchedPackages = this.toposort

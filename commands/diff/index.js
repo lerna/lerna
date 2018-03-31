@@ -16,9 +16,6 @@ class DiffCommand extends Command {
   initialize() {
     const packageName = this.options.pkgName;
 
-    // don't interrupt spawned or streaming stdio
-    this.logger.disableProgress();
-
     let targetPackage;
 
     if (packageName) {

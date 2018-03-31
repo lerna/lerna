@@ -49,9 +49,6 @@ class CreateCommand extends Command {
       yes,
     } = this.options;
 
-    // disable progress so promzard doesn't get ganked
-    this.logger.disableProgress();
-
     // npm-package-arg handles all the edge-cases with scopes
     const { name, scope } = npa(pkgName);
 

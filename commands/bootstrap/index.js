@@ -95,6 +95,8 @@ class BootstrapCommand extends Command {
       return this.installRootPackageOnly();
     }
 
+    // root install does not need progress bar
+    this.enableProgressBar();
     this.logger.info("", `Bootstrapping ${this.filteredPackages.length} packages`);
 
     const tasks = [
@@ -120,7 +122,6 @@ class BootstrapCommand extends Command {
   }
 
   installRootPackageOnly() {
-    this.logger.disableProgress();
     this.logger.info("bootstrap", "root only");
 
     // don't hide yarn or npm output

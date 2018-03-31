@@ -32,13 +32,14 @@ module.exports = lernaCLI;
  */
 function lernaCLI(argv, cwd) {
   const cli = yargs(argv, cwd);
+  let progress; // --no-progress always disables
 
   if (isCI || !process.stderr.isTTY) {
     log.disableColor();
-    log.disableProgress();
+    progress = false;
   } else if (!process.stdout.isTTY) {
     // stdout is being piped, don't log non-errors or progress bars
-    log.disableProgress();
+    progress = false;
 
     cli.check(parsedArgv => {
       // eslint-disable-next-line no-param-reassign
@@ -50,12 +51,11 @@ function lernaCLI(argv, cwd) {
   } else if (process.stderr.isTTY) {
     log.enableColor();
     log.enableUnicode();
-    log.enableProgress();
   }
 
   return globalOptions(cli)
     .usage("Usage: $0 <command> [options]")
-    .config({ ci: isCI })
+    .config({ ci: isCI, progress })
     .command(addCmd)
     .command(bootstrapCmd)
     .command(changedCmd)

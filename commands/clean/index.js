@@ -35,6 +35,8 @@ class CleanCommand extends Command {
   }
 
   execute() {
+    this.enableProgressBar();
+
     const tracker = this.logger.newItem("clean");
     const mapper = dirPath => {
       tracker.info("clean", "removing", dirPath);

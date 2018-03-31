@@ -147,6 +147,8 @@ class PublishCommand extends Command {
   }
 
   execute() {
+    this.enableProgressBar();
+
     const tasks = [];
 
     if (!this.project.isIndependent() && !this.options.canary) {

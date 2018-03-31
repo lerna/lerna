@@ -98,6 +98,7 @@ class Command {
   get defaultOptions() {
     return {
       concurrency: DEFAULT_CONCURRENCY,
+      progress: true,
       sort: true,
     };
   }
@@ -148,6 +149,13 @@ class Command {
 
     // emit all buffered logs at configured level and higher
     log.resume();
+  }
+
+  enableProgressBar() {
+    // istanbul ignore else
+    if (this.options.progress) {
+      this.logger.enableProgress();
+    }
   }
 
   runValidations() {
