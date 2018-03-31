@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.0.0-beta.13"></a>
+# [3.0.0-beta.13](https://github.com/lerna/lerna/compare/v3.0.0-beta.12...v3.0.0-beta.13) (2018-03-31)
+
+
+### Bug Fixes
+
+* Use ValidationError instead of Error ([bea6bc3](https://github.com/lerna/lerna/commit/bea6bc3))
+* **run:** Exit early when no packages contain the targeted lifecycle ([c8a5526](https://github.com/lerna/lerna/commit/c8a5526))
+
+
+### Features
+
+* Enable progress bars only when necessary ([b766c83](https://github.com/lerna/lerna/commit/b766c83))
+
+
+
+
+
 <a name="3.0.0-beta.12"></a>
 # [3.0.0-beta.12](https://github.com/lerna/lerna/compare/v3.0.0-beta.11...v3.0.0-beta.12) (2018-03-30)
 
