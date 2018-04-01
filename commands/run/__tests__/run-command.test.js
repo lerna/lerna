@@ -12,6 +12,7 @@ const npmRunScript = require("@lerna/npm-run-script");
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const consoleOutput = require("@lerna-test/console-output");
+const loggingOutput = require("@lerna-test/logging-output");
 const gitAdd = require("@lerna-test/git-add");
 const gitCommit = require("@lerna-test/git-commit");
 const normalizeRelativeDir = require("@lerna-test/normalize-relative-dir");
@@ -123,9 +124,11 @@ describe("RunCommand", () => {
     it("does not error when no packages match", async () => {
       const testDir = await initFixture("basic");
 
-      const { logs } = await lernaRun(testDir)("missing-script", "--loglevel=success");
+      await lernaRun(testDir)("missing-script");
 
-      expect(logs).toMatchSnapshot();
+      expect(loggingOutput("success")).toContain(
+        "No packages found with the lifecycle script 'missing-script'"
+      );
     });
 
     it("runs a script in all packages with --parallel", async () => {
@@ -189,9 +192,16 @@ describe("RunCommand", () => {
     it("warns when cycles are encountered", async () => {
       const testDir = await initFixture("toposort");
 
-      const { logs } = await lernaRun(testDir)("env", "--loglevel=warn");
+      await lernaRun(testDir)("env");
 
-      expect(logs).toMatchSnapshot();
+      const [logMessage] = loggingOutput("warn");
+      expect(logMessage).toMatch("Dependency cycles detected, you should fix these!");
+      expect(logMessage).toMatch("package-cycle-1 -> package-cycle-2 -> package-cycle-1");
+      expect(logMessage).toMatch("package-cycle-2 -> package-cycle-1 -> package-cycle-2");
+      expect(logMessage).toMatch(
+        "package-cycle-extraneous -> package-cycle-1 -> package-cycle-2 -> package-cycle-1"
+      );
+
       expect(consoleOutput().split("\n")).toEqual([
         "package-dag-1",
         "package-standalone",

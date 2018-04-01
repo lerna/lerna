@@ -1,8 +1,5 @@
 "use strict";
 
-// silence logs outside of command runner
-require("@lerna-test/silence-logging");
-
 const fs = require("fs-extra");
 const path = require("path");
 

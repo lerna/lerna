@@ -1,9 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`ExecCommand in a cyclical repo warns when cycles are encountered 1`] = `
-"lerna WARN ECYCLE Dependency cycles detected, you should fix these!
-lerna WARN ECYCLE package-cycle-1 -> package-cycle-2 -> package-cycle-1
-lerna WARN ECYCLE package-cycle-2 -> package-cycle-1 -> package-cycle-2
-lerna WARN ECYCLE package-cycle-extraneous -> package-cycle-1 -> package-cycle-2 -> package-cycle-1 -> package-cycle-1@1.0.0
-"
-`;
