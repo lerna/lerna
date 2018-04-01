@@ -10,3 +10,6 @@ log.disableColor();
 
 // avoid corrupting test logging
 log.disableProgress();
+
+// never let anyone enable progress
+log.enableProgress = jest.fn();
