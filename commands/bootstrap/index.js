@@ -300,8 +300,8 @@ class BootstrapCommand extends Command {
     // collect root dependency versions
     const mergedRootDeps = Object.assign(
       {},
-      rootPkg.optionalDependencies,
       rootPkg.devDependencies,
+      rootPkg.optionalDependencies,
       rootPkg.dependencies
     );
     const rootExternalVersions = new Map(

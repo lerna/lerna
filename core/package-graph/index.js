@@ -68,8 +68,8 @@ class PackageGraph extends Map {
           ? Object.assign({}, currentNode.pkg.dependencies)
           : Object.assign(
               {},
-              currentNode.pkg.optionalDependencies,
               currentNode.pkg.devDependencies,
+              currentNode.pkg.optionalDependencies,
               currentNode.pkg.dependencies
             );
 
