@@ -1268,7 +1268,7 @@ describe("PublishCommand", () => {
       expect(updatedPackageJSON("package-3").dependencies).toMatchObject({
         "package-2": "^2.0.0",
       });
-      expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
+      expect(updatedPackageJSON("package-4").optionalDependencies).toMatchObject({
         "package-3": "^2.0.0",
       });
       expect(updatedPackageJSON("package-5").dependencies).toMatchObject({

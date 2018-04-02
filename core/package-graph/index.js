@@ -65,7 +65,7 @@ class PackageGraph extends Map {
     this.forEach((currentNode, currentName) => {
       const graphDependencies =
         graphType === "dependencies"
-          ? Object.assign({}, currentNode.pkg.dependencies)
+          ? Object.assign({}, currentNode.pkg.optionalDependencies, currentNode.pkg.dependencies)
           : Object.assign(
               {},
               currentNode.pkg.devDependencies,
