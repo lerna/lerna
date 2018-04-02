@@ -64,8 +64,8 @@ class Command {
             log.error("", cleanStack(err, this.constructor.name));
           }
 
-          // ValidationError does not trigger a log dump
-          if (err.name !== "ValidationError") {
+          // ValidationError does not trigger a log dump, nor do external package errors
+          if (err.name !== "ValidationError" && !err.pkg) {
             writeLogFile(this.project.rootPath);
           }
 

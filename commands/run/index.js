@@ -112,7 +112,12 @@ class RunCommand extends Command {
         output(result.stdout);
       })
       .catch(err => {
-        this.logger.error(this.script, `Errored while running script in '${pkg.name}'`);
+        this.logger.error("run", `'${this.script}' errored in '${pkg.name}'`);
+
+        if (err.code) {
+          // log non-lerna error cleanly
+          err.pkg = pkg;
+        }
 
         throw err;
       });

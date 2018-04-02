@@ -169,7 +169,13 @@ class BootstrapCommand extends Command {
             tracker.completeWork(1);
           })
           .catch(err => {
-            err.pkg = pkg;
+            this.logger.error("bootstrap", `lifecycle '${stage}' errored in '${pkg.name}'`);
+
+            if (err.code) {
+              // log non-lerna error cleanly
+              err.pkg = pkg;
+            }
+
             throw err;
           });
       }

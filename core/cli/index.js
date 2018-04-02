@@ -76,17 +76,18 @@ function lernaCLI(argv, cwd) {
       // certain yargs validations throw strings :P
       const actual = err || new Error(msg);
 
-      // ValidationErrors are already logged
-      if (actual.name !== "ValidationError") {
+      // ValidationErrors are already logged, as are package errors
+      if (actual.name !== "ValidationError" && !actual.pkg) {
         // the recommendCommands() message is too terse
         if (/Did you mean/.test(actual.message)) {
           log.error("lerna", `Unknown command "${cli.parsed.argv._[0]}"`);
         }
+
         log.error("lerna", actual.message);
       }
 
       // exit non-zero so the CLI can be usefully chained
-      process.exitCode = 1;
+      process.exitCode = actual.code || 1;
     })
     .alias("h", "help")
     .alias("v", "version")

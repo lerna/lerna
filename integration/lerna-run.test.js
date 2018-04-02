@@ -15,7 +15,7 @@ describe("lerna run", () => {
     try {
       await cliRunner(cwd)(...args);
     } catch (err) {
-      expect(err.message).toMatch("Errored while running script in 'package-3'");
+      expect(err.message).toMatch("run 'fail' errored in 'package-3'");
     }
   });
 

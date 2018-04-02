@@ -50,8 +50,11 @@ class ExecCommand extends Command {
 
     return runParallelBatches(this.batchedPackages, this.concurrency, pkg =>
       this.runCommandInPackage(pkg).catch(err => {
+        this.logger.error("exec", `'${err.cmd}' errored in '${pkg.name}'`);
+
         if (err.code) {
-          this.logger.error("exec", `Errored while executing '${err.cmd}' in '${pkg.name}'`);
+          // log non-lerna error cleanly
+          err.pkg = pkg;
         }
 
         throw err;
