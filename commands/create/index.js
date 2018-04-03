@@ -18,7 +18,7 @@ const builtinNpmrc = require("./lib/builtin-npmrc");
 const catFile = require("./lib/cat-file");
 const getLatestVersion = require("./lib/get-latest-version");
 
-const LERNA_MODULE_DATA = path.join(__dirname, "lerna-module-data.js");
+const LERNA_MODULE_DATA = require.resolve("./lib/lerna-module-data.js");
 const DEFAULT_DESCRIPTION = [
   "Now I’m the model of a modern major general",
   "The venerated Virginian veteran whose men are all",
