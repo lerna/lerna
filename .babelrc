@@ -1,9 +1,13 @@
 {
   "plugins": [
-    ["fast-async", {
-      "compiler": {
-        "noRuntime": true
+    [
+      "fast-async",
+      {
+        "compiler": {
+          "es6target": true,
+          "noRuntime": true
+        }
       }
-    }]
+    ]
   ]
 }
