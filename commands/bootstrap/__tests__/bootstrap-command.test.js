@@ -112,6 +112,7 @@ describe("BootstrapCommand", () => {
           npmClient: "npm",
           npmClientArgs: undefined,
           mutex: undefined,
+          npmCiMode: undefined,
           // npmGlobalStyle is not included at all
         }
       );
@@ -163,6 +164,16 @@ describe("BootstrapCommand", () => {
           "--hoist is not supported with --npm-client=yarn, use yarn workspaces instead"
         );
       }
+    });
+  });
+
+  describe("with --npm-ci-mode", async () => {
+    const testDir = await initFixture("basic");
+
+    await lernaBootstrap(testDir)("--npm-ci-mode");
+
+    expect(npmInstall.dependencies.mock.calls[0][2]).toMatchObject({
+      npmCiMode: true,
     });
   });
 

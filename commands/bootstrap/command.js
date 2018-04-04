@@ -43,6 +43,12 @@ exports.builder = yargs => {
         type: "string",
         requiresArg: true,
       },
+      "npm-ci-mode": {
+        group: "Command Options:",
+        describe: "Run npm ci instead of npm install when installing package dependencies",
+        type: "boolean",
+        default: undefined,
+      },
       registry: {
         group: "Command Options:",
         describe: "Use the specified registry for all npm client operations.",

@@ -34,7 +34,15 @@ class BootstrapCommand extends Command {
   }
 
   initialize() {
-    const { registry, rejectCycles, npmClient = "npm", npmClientArgs, mutex, hoist } = this.options;
+    const {
+      registry,
+      rejectCycles,
+      npmClient = "npm",
+      npmClientArgs,
+      mutex,
+      hoist,
+      npmCiMode,
+    } = this.options;
 
     if (npmClient === "yarn" && hoist) {
       throw new ValidationError(
@@ -66,6 +74,7 @@ class BootstrapCommand extends Command {
       npmClient,
       npmClientArgs,
       mutex,
+      npmCiMode,
     };
 
     // lerna bootstrap ... -- <input>
