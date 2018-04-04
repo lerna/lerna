@@ -70,8 +70,13 @@ function addTag(tag, opts) {
 
 function hasTags(opts) {
   log.silly("hasTags");
+  let yes = false;
 
-  const yes = !!ChildProcessUtilities.execSync("git", ["tag"], opts);
+  try {
+    yes = !!ChildProcessUtilities.execSync("git", ["tag"], opts);
+  } catch (err) {
+    log.verbose("hasTags error", err);
+  }
   log.verbose("hasTags", yes);
 
   return yes;
