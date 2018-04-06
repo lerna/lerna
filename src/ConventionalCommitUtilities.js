@@ -2,7 +2,6 @@ import dedent from "dedent";
 import log from "npmlog";
 import path from "path";
 import semver from "semver";
-import conventionalChangelogPresetLoader from "conventional-changelog-preset-loader";
 import resolveFrom from "resolve-from";
 
 import ChildProcessUtilities from "./ChildProcessUtilities";
@@ -65,8 +64,7 @@ export default class ConventionalCommitUtilities {
       pkg.location,
       "--pkg",
       pkgJsonLocation,
-      "-n",
-      ConventionalCommitUtilities.changelogConfigPath(pkg, opts),
+      ...ConventionalCommitUtilities.changelogConfigArgs(pkg, opts),
     ];
     ConventionalCommitUtilities.updateChangelog(pkg, opts, "updateIndependentChangelog", args);
   }
@@ -79,8 +77,7 @@ export default class ConventionalCommitUtilities {
       pkg.location,
       "--pkg",
       pkgJsonLocation,
-      "-n",
-      ConventionalCommitUtilities.changelogConfigPath(pkg, opts),
+      ...ConventionalCommitUtilities.changelogConfigArgs(pkg, opts),
     ];
     ConventionalCommitUtilities.updateChangelog(pkg, opts, "updateFixedChangelog", args);
   }
@@ -88,8 +85,7 @@ export default class ConventionalCommitUtilities {
   static updateFixedRootChangelog(pkg, opts) {
     const args = [
       CHANGELOG_CLI,
-      "-n",
-      ConventionalCommitUtilities.changelogConfigPath(pkg, opts),
+      ...ConventionalCommitUtilities.changelogConfigArgs(pkg, opts),
       "--context",
       path.resolve(__dirname, "..", "lib", "ConventionalChangelogContext.js"),
     ];
@@ -147,12 +143,11 @@ export default class ConventionalCommitUtilities {
     return path.join(pkg.location, CHANGELOG_NAME);
   }
 
-  static changelogConfigPath(pkg, opts) {
+  static changelogConfigArgs(pkg, opts) {
     const presetName = opts && opts.changelogPreset ? opts.changelogPreset : "angular";
-    const changelogPreset = allowedPresets.includes(presetName)
-      ? conventionalChangelogPresetLoader.presetLoader(str => str)(presetName)
-      : opts.changelogPreset;
 
-    return resolveFrom(opts && opts.cwd ? opts.cwd : process.cwd(), changelogPreset);
+    return allowedPresets.includes(presetName)
+      ? ["-p", presetName]
+      : ["-n", resolveFrom(opts && opts.cwd ? opts.cwd : process.cwd(), opts.changelogPreset)];
   }
 }

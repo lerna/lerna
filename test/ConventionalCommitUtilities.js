@@ -230,8 +230,8 @@ describe("ConventionalCommitUtilities", () => {
           "/foo/bar",
           "--pkg",
           path.normalize("/foo/bar/package.json"),
-          "-n",
-          require.resolve("conventional-changelog-angular"),
+          "-p",
+          "angular",
         ]
       );
     });
@@ -260,8 +260,8 @@ describe("ConventionalCommitUtilities", () => {
           "/foo/bar",
           "--pkg",
           path.normalize("/foo/bar/package.json"),
-          "-n",
-          require.resolve("conventional-changelog-angular"),
+          "-p",
+          "angular",
         ]
       );
     });
@@ -286,8 +286,8 @@ describe("ConventionalCommitUtilities", () => {
         "updateFixedRootChangelog",
         [
           require.resolve("conventional-changelog-cli/cli"),
-          "-n",
-          require.resolve("conventional-changelog-angular"),
+          "-p",
+          "angular",
           "--context",
           path.resolve(__dirname, "..", "lib", "ConventionalChangelogContext.js"),
         ]
