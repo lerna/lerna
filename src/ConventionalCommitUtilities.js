@@ -7,7 +7,7 @@ import resolveFrom from "resolve-from";
 import ChildProcessUtilities from "./ChildProcessUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
 
-const allowedPresets = [
+const allowedPresets = new Set([
   "angular",
   "atom",
   "codemirror",
@@ -17,7 +17,7 @@ const allowedPresets = [
   "jquery",
   "jscs",
   "jshint",
-];
+]);
 
 const CHANGELOG_NAME = "CHANGELOG.md";
 const CHANGELOG_HEADER = dedent(`# Change Log
@@ -146,7 +146,7 @@ export default class ConventionalCommitUtilities {
   static changelogConfigArgs(pkg, opts) {
     const presetName = opts && opts.changelogPreset ? opts.changelogPreset : "angular";
 
-    return allowedPresets.includes(presetName)
+    return allowedPresets.has(presetName)
       ? ["-p", presetName]
       : ["-n", resolveFrom(opts && opts.cwd ? opts.cwd : process.cwd(), opts.changelogPreset)];
   }
