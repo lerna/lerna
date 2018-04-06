@@ -2,9 +2,22 @@ import dedent from "dedent";
 import log from "npmlog";
 import path from "path";
 import semver from "semver";
+import resolveFrom from "resolve-from";
 
 import ChildProcessUtilities from "./ChildProcessUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
+
+const allowedPresets = new Set([
+  "angular",
+  "atom",
+  "codemirror",
+  "ember",
+  "eslint",
+  "express",
+  "jquery",
+  "jscs",
+  "jshint",
+]);
 
 const CHANGELOG_NAME = "CHANGELOG.md";
 const CHANGELOG_HEADER = dedent(`# Change Log
@@ -51,8 +64,7 @@ export default class ConventionalCommitUtilities {
       pkg.location,
       "--pkg",
       pkgJsonLocation,
-      "-p",
-      ConventionalCommitUtilities.changelogPreset(opts),
+      ...ConventionalCommitUtilities.changelogConfigArgs(pkg, opts),
     ];
     ConventionalCommitUtilities.updateChangelog(pkg, opts, "updateIndependentChangelog", args);
   }
@@ -65,8 +77,7 @@ export default class ConventionalCommitUtilities {
       pkg.location,
       "--pkg",
       pkgJsonLocation,
-      "-p",
-      ConventionalCommitUtilities.changelogPreset(opts),
+      ...ConventionalCommitUtilities.changelogConfigArgs(pkg, opts),
     ];
     ConventionalCommitUtilities.updateChangelog(pkg, opts, "updateFixedChangelog", args);
   }
@@ -74,8 +85,7 @@ export default class ConventionalCommitUtilities {
   static updateFixedRootChangelog(pkg, opts) {
     const args = [
       CHANGELOG_CLI,
-      "-p",
-      ConventionalCommitUtilities.changelogPreset(opts),
+      ...ConventionalCommitUtilities.changelogConfigArgs(pkg, opts),
       "--context",
       path.resolve(__dirname, "..", "lib", "ConventionalChangelogContext.js"),
     ];
@@ -84,7 +94,6 @@ export default class ConventionalCommitUtilities {
 
   static updateChangelog(pkg, opts, type, args) {
     log.silly(type, "for %s at %s", pkg.name, pkg.location);
-
     const changelogLocation = ConventionalCommitUtilities.changelogLocation(pkg);
 
     let changelogContents = "";
@@ -134,7 +143,11 @@ export default class ConventionalCommitUtilities {
     return path.join(pkg.location, CHANGELOG_NAME);
   }
 
-  static changelogPreset(opts) {
-    return opts && opts.changelogPreset ? opts.changelogPreset : "angular";
+  static changelogConfigArgs(pkg, opts) {
+    const presetName = opts && opts.changelogPreset ? opts.changelogPreset : "angular";
+
+    return allowedPresets.has(presetName)
+      ? ["-p", presetName]
+      : ["-n", resolveFrom(opts && opts.cwd ? opts.cwd : process.cwd(), opts.changelogPreset)];
   }
 }
