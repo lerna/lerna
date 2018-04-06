@@ -116,7 +116,6 @@ export default class ConventionalCommitUtilities {
       changelogLocation,
       // only allow 1 \n at end of content.
       [CHANGELOG_HEADER, newEntry, changelogContents].join(BLANK_LINE).trim()
-      )
     );
 
     log.verbose(type, "wrote", changelogLocation);
