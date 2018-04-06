@@ -1,4 +1,4 @@
-import os from 'os';
+import os from "os";
 import dedent from "dedent";
 import log from "npmlog";
 import path from "path";
@@ -101,7 +101,7 @@ export default class ConventionalCommitUtilities {
     // When force publishing, it is possible that there will be no actual changes, only a version bump.
     // Add a note to indicate that only a version bump has occurred.
     if (!newEntry.split("\n").some(line => line.startsWith("*"))) {
-      newEntry = [ newEntry.trim(), `**Note:** Version bump only for package ${pkg.name}` ].join(BLANK_LINE);
+      newEntry = [newEntry.trim(), `**Note:** Version bump only for package ${pkg.name}`].join(BLANK_LINE);
     }
 
     log.silly(type, "writing new entry: %j", newEntry);
