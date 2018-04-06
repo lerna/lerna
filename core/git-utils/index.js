@@ -70,16 +70,18 @@ function addTag(tag, opts) {
 
 function hasTags(opts) {
   log.silly("hasTags");
-  let yes = false;
+  let result = false;
 
   try {
-    yes = !!ChildProcessUtilities.execSync("git", ["tag"], opts);
+    result = !!ChildProcessUtilities.execSync("git", ["tag"], opts);
   } catch (err) {
+    log.warn("ENOTAGS", "No git tags were reachable from this branch!");
     log.verbose("hasTags error", err);
   }
-  log.verbose("hasTags", yes);
 
-  return yes;
+  log.verbose("hasTags", result);
+
+  return result;
 }
 
 function getLastTaggedCommit(opts) {
