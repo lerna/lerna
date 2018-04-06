@@ -67,8 +67,8 @@ describe("ConventionalCommitUtilities", () => {
         "/foo/bar",
         "--pkg",
         path.normalize("/foo/bar/package.json"),
-        "-n",
-        require.resolve("conventional-changelog-angular"),
+        "-p",
+        "angular",
       ];
 
       ConventionalCommitUtilities.updateChangelog(
