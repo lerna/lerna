@@ -336,7 +336,7 @@ describe("npm-install", () => {
       });
     });
 
-    it("calls npm ci instead of npm install when npmCiMode is true", async () => {
+    it("calls npm ci instead of npm install when subCommand is ci", async () => {
       const pkg = new Package(
         {
           name: "npm-install-deps",
@@ -355,7 +355,7 @@ describe("npm-install", () => {
       const dependencies = ["@scoped/something@github:foo/bar", "something@github:foo/foo"];
 
       await npmInstall.dependencies(pkg, dependencies, {
-        npmCiMode: true,
+        subCommand: "ci",
       });
 
       expect(writePkg).lastCalledWith(pkg.manifestLocation, {

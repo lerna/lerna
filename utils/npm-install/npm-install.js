@@ -14,18 +14,14 @@ module.exports.dependencies = npmInstallDependencies;
 
 function npmInstall(
   pkg,
-  { registry, npmClient, npmClientArgs, npmGlobalStyle, mutex, stdio = "pipe", npmCiMode = false }
+  { registry, npmClient, npmClientArgs, npmGlobalStyle, mutex, stdio = "pipe", subCommand = "install" }
 ) {
   // build command, arguments, and options
   const opts = getExecOpts(pkg, registry);
-  const args = npmCiMode ? ["ci"] : ["install"];
+  const args = [subCommand];
   let cmd = npmClient || "npm";
 
-  if (npmCiMode) {
-    cmd = "npm";
-  }
-
-  if (npmGlobalStyle && !npmCiMode) {
+  if (npmGlobalStyle) {
     cmd = "npm";
     args.push("--global-style");
   }

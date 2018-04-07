@@ -215,7 +215,7 @@ May also be configured in `lerna.json`:
 }
 ```
 
-#### --npm-ci-mode
+#### --ci
 
 This runs `lerna bootstrap` with `npm ci` as opposed to `npm install`.  The specifics of this command can be found in the NPM documentation [here](https://docs.npmjs.com/cli/ci)
 
