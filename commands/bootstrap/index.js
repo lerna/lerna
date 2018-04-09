@@ -21,6 +21,7 @@ const symlinkBinary = require("@lerna/symlink-binary");
 const symlinkDependencies = require("@lerna/symlink-dependencies");
 const ValidationError = require("@lerna/validation-error");
 const isHoistedPackage = require("./lib/is-hoisted-package");
+const makeNpmFeaturePredicate = require("./lib/make-npm-feature-predicate");
 
 module.exports = factory;
 
@@ -67,6 +68,12 @@ class BootstrapCommand extends Command {
       npmClientArgs,
       mutex,
     };
+
+    const hasNpmCI = makeNpmFeaturePredicate(">=5.7.0");
+
+    if (npmClient === "npm" && this.options.ci && hasNpmCI()) {
+      this.npmConfig.subCommand = "ci";
+    }
 
     // lerna bootstrap ... -- <input>
     const doubleDashArgs = this.options["--"] || [];
