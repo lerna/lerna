@@ -48,6 +48,107 @@ describe("conventional-commits", () => {
       await expect(recommendVersion(pkg1, "independent", opts)).resolves.toBe("1.0.1");
       await expect(recommendVersion(pkg2, "independent", opts)).resolves.toBe("1.1.0");
     });
+
+    it("supports local preset paths", async () => {
+      const cwd = await initFixture("fixed");
+      const [pkg1] = await collectPackages(cwd);
+
+      // make a change in package-1
+      await pkg1.set("changed", 1).serialize();
+      await gitAdd(cwd, pkg1.manifestLocation);
+      await gitCommit(cwd, "feat: changed 1");
+
+      const bump = await recommendVersion(pkg1, "fixed", {
+        changelogPreset: "./scripts/local-preset.js",
+      });
+      expect(bump).toBe("1.1.0");
+    });
+
+    it("propagates errors from callback", async () => {
+      const cwd = await initFixture("fixed");
+      const [pkg1] = await collectPackages(cwd);
+
+      try {
+        await recommendVersion(pkg1, "fixed", { changelogPreset: "./scripts/erroring-preset.js" });
+      } catch (err) {
+        expect(err.message).toBe("whatBump must be a function");
+      }
+
+      expect.hasAssertions();
+    });
+
+    it("throws an error when an implicit changelog preset cannot be loaded", async () => {
+      const cwd = await initFixture("fixed");
+      const [pkg1] = await collectPackages(cwd);
+
+      try {
+        await recommendVersion(pkg1, "fixed", { changelogPreset: "garbage" });
+      } catch (err) {
+        expect(err.message).toBe(
+          "Unable to load conventional-commits preset 'garbage' (conventional-changelog-garbage)"
+        );
+      }
+
+      expect.hasAssertions();
+    });
+
+    it("throws an error when an implicit changelog preset with scope cannot be loaded", async () => {
+      const cwd = await initFixture("fixed");
+      const [pkg1] = await collectPackages(cwd);
+
+      try {
+        await recommendVersion(pkg1, "fixed", { changelogPreset: "@scope/garbage" });
+      } catch (err) {
+        expect(err.message).toMatch("preset '@scope/garbage' (@scope/conventional-changelog-garbage)");
+      }
+
+      expect.hasAssertions();
+    });
+
+    it("throws an error when an implicit changelog preset with scoped subpath cannot be loaded", async () => {
+      const cwd = await initFixture("fixed");
+      const [pkg1] = await collectPackages(cwd);
+
+      try {
+        await recommendVersion(pkg1, "fixed", { changelogPreset: "@scope/garbage/pail" });
+      } catch (err) {
+        expect(err.message).toMatch(
+          "preset '@scope/garbage/pail' (@scope/conventional-changelog-garbage/pail)"
+        );
+      }
+
+      expect.hasAssertions();
+    });
+
+    it("throws an error when an explicit changelog preset cannot be loaded", async () => {
+      const cwd = await initFixture("fixed");
+      const [pkg1] = await collectPackages(cwd);
+
+      try {
+        await recommendVersion(pkg1, "fixed", { changelogPreset: "conventional-changelog-garbage" });
+      } catch (err) {
+        expect(err.message).toBe(
+          "Unable to load conventional-commits preset 'conventional-changelog-garbage'"
+        );
+      }
+
+      expect.hasAssertions();
+    });
+
+    it("throws an error when an explicit changelog preset with subpath cannot be loaded", async () => {
+      const cwd = await initFixture("fixed");
+      const [pkg1] = await collectPackages(cwd);
+
+      try {
+        await recommendVersion(pkg1, "fixed", { changelogPreset: "conventional-changelog-garbage/pail" });
+      } catch (err) {
+        expect(err.message).toMatch(
+          "Unable to load conventional-commits preset 'conventional-changelog-garbage/pail'"
+        );
+      }
+
+      expect.hasAssertions();
+    });
   });
 
   describe("updateChangelog()", () => {
@@ -125,7 +226,27 @@ describe("conventional-commits", () => {
       await pkg2.set("version", "1.0.1").serialize();
 
       await expect(
-        updateChangelog(pkg2, "fixed", { changelogPreset: "angular" }).then(getFileContent)
+        updateChangelog(pkg2, "fixed", { changelogPreset: "./scripts/local-preset" }).then(getFileContent)
+      ).resolves.toMatchSnapshot();
+    });
+
+    it("supports old preset API", async () => {
+      const cwd = await initFixture("fixed");
+
+      await gitTag(cwd, "v1.0.0");
+
+      const [pkg1] = await collectPackages(cwd);
+
+      // make a change in package-1
+      await pkg1.set("changed", 1).serialize();
+      await gitAdd(cwd, pkg1.manifestLocation);
+      await gitCommit(cwd, "fix(pkg1): A commit using the old preset API");
+
+      // update version
+      await pkg1.set("version", "1.0.1").serialize();
+
+      await expect(
+        updateChangelog(pkg1, "fixed", { changelogPreset: "./scripts/old-api-preset" }).then(getFileContent)
       ).resolves.toMatchSnapshot();
     });
 
@@ -152,7 +273,7 @@ describe("conventional-commits", () => {
       await pkg2.set("version", "1.1.0").serialize();
 
       const opts = {
-        changelogPreset: "angular",
+        changelogPreset: "conventional-changelog-angular",
       };
       const [changelogOne, changelogTwo] = await Promise.all([
         updateChangelog(pkg1, "independent", opts).then(getFileContent),

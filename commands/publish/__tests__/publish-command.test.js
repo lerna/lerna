@@ -852,19 +852,19 @@ describe("PublishCommand", () => {
           expect(ConventionalCommitUtilities.recommendVersion).toBeCalledWith(
             expect.objectContaining({ name }),
             "independent",
-            { changelogPreset: undefined }
+            { changelogPreset: undefined, rootPath: testDir }
           );
           expect(ConventionalCommitUtilities.updateChangelog).toBeCalledWith(
             expect.objectContaining({ name, version: versionBumps[idx] }),
             "independent",
-            { changelogPreset: undefined }
+            { changelogPreset: undefined, rootPath: testDir }
           );
         });
       });
 
       it("accepts --changelog-preset option", async () => {
         const testDir = await initFixture("independent");
-        const changelogOpts = { changelogPreset: "foo-bar" };
+        const changelogOpts = { changelogPreset: "foo-bar", rootPath: testDir };
 
         await lernaPublish(testDir)("--conventional-commits", "--changelog-preset", "foo-bar");
 
@@ -905,13 +905,13 @@ describe("PublishCommand", () => {
           expect(ConventionalCommitUtilities.recommendVersion).toBeCalledWith(
             expect.objectContaining({ name, location }),
             "fixed",
-            { changelogPreset: undefined }
+            { changelogPreset: undefined, rootPath: testDir }
           );
 
           expect(ConventionalCommitUtilities.updateChangelog).toBeCalledWith(
             expect.objectContaining({ name, version: "2.0.0" }),
             "fixed",
-            { changelogPreset: undefined }
+            { changelogPreset: undefined, rootPath: testDir }
           );
         });
 
@@ -921,13 +921,13 @@ describe("PublishCommand", () => {
             location: testDir,
           }),
           "root",
-          { changelogPreset: undefined, version: "2.0.0" }
+          { changelogPreset: undefined, rootPath: testDir, version: "2.0.0" }
         );
       });
 
       it("accepts --changelog-preset option", async () => {
         const testDir = await initFixture("normal");
-        const changelogOpts = { changelogPreset: "baz-qux" };
+        const changelogOpts = { changelogPreset: "baz-qux", rootPath: testDir };
 
         await lernaPublish(testDir)("--conventional-commits", "--changelog-preset", "baz-qux");
 

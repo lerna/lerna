@@ -23,25 +23,47 @@ const CHANGELOG_HEADER = dedent`
 
 const cfgCache = new Map();
 
-function getChangelogConfig(changelogPreset = "conventional-changelog-angular") {
+function getChangelogConfig(changelogPreset = "conventional-changelog-angular", rootPath) {
   let config = cfgCache.get(changelogPreset);
 
   if (!config) {
     let presetPackageName = changelogPreset;
 
-    if (presetPackageName.indexOf("conventional-changelog-") < 0) {
-      // https://github.com/npm/npm-package-arg#result-object
-      const parsed = npa(presetPackageName);
+    // https://github.com/npm/npm-package-arg#result-object
+    const parsed = npa(presetPackageName, rootPath);
 
-      if (!parsed.name && parsed.raw[0] === "@") {
-        // npa parses sub-path reference as a directory,
-        // which results in an undefined "name" property
-        throw new ValidationError(
-          "ESCOPE",
-          "A scoped conventional-changelog preset must use the full package name to reference subpaths"
-        );
+    if (parsed.type === "directory") {
+      if (parsed.raw[0] === "@") {
+        // npa parses scoped subpath reference as a directory
+        parsed.name = parsed.raw;
+        parsed.scope = parsed.raw.substring(0, parsed.raw.indexOf("/"));
+        // un-scoped subpath shorthand handled in first catch block
+      } else {
+        presetPackageName = parsed.fetchSpec;
       }
+    } else if (parsed.type === "git" && parsed.hosted && parsed.hosted.default === "shortcut") {
+      // probably a shorthand subpath, e.g. "foo/bar"
+      parsed.name = parsed.raw;
+    }
 
+    // Maybe it doesn't need an implicit 'conventional-changelog-' prefix?
+    try {
+      // eslint-disable-next-line global-require, import/no-dynamic-require
+      config = require(presetPackageName);
+
+      cfgCache.set(changelogPreset, config);
+
+      // early exit, yay
+      return Promise.resolve(config);
+    } catch (err) {
+      log.verbose("getChangelogConfig", err.message);
+      log.info("getChangelogConfig", `Auto-prefixing conventional-commits preset '${changelogPreset}'`);
+
+      // probably a deep shorthand subpath :P
+      parsed.name = parsed.raw;
+    }
+
+    if (parsed.name.indexOf("conventional-changelog-") < 0) {
       // implicit 'conventional-changelog-' prefix
       const parts = parsed.name.split("/");
       const start = parsed.scope ? 1 : 0;
@@ -60,9 +82,14 @@ function getChangelogConfig(changelogPreset = "conventional-changelog-angular") 
 
       cfgCache.set(changelogPreset, config);
     } catch (err) {
-      log.silly("getChangelogConfig", err);
+      log.warn("getChangelogConfig", err.message);
 
-      throw new ValidationError("EPRESET", `Unable to load conventional-commits preset '${changelogPreset}'`);
+      throw new ValidationError(
+        "EPRESET",
+        `Unable to load conventional-commits preset '${changelogPreset}'${
+          changelogPreset !== presetPackageName ? ` (${presetPackageName})` : ""
+        }`
+      );
     }
   }
 
@@ -70,7 +97,7 @@ function getChangelogConfig(changelogPreset = "conventional-changelog-angular") 
   return Promise.resolve(config);
 }
 
-function recommendVersion(pkg, type, { changelogPreset }) {
+function recommendVersion(pkg, type, { changelogPreset, rootPath }) {
   log.silly(type, "for %s at %s", pkg.name, pkg.location);
 
   const options = {
@@ -81,7 +108,7 @@ function recommendVersion(pkg, type, { changelogPreset }) {
     options.lernaPackage = pkg.name;
   }
 
-  return getChangelogConfig(changelogPreset).then(config => {
+  return getChangelogConfig(changelogPreset, rootPath).then(config => {
     // "new" preset API
     options.config = config;
 
@@ -134,10 +161,10 @@ function readExistingChangelog({ location }) {
     .then(changelogContents => [changelogFileLoc, changelogContents]);
 }
 
-function updateChangelog(pkg, type, { changelogPreset, version }) {
+function updateChangelog(pkg, type, { changelogPreset, rootPath, version }) {
   log.silly(type, "for %s at %s", pkg.name, pkg.location);
 
-  return getChangelogConfig(changelogPreset).then(config => {
+  return getChangelogConfig(changelogPreset, rootPath).then(config => {
     const options = {};
     let context; // pass as positional because cc-core's merge-config is wack
 

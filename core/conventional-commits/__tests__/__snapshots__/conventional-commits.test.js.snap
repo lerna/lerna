@@ -7,7 +7,7 @@ All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
 <a name="1.0.1"></a>
-## [1.0.1](https://github.com/lerna/conventional-commits-fixed/compare/v1.0.0...v1.0.1) (YYYY-MM-DD)
+## <small>1.0.1 (YYYY-MM-DD)</small>
 
 **Note:** Version bump only for package package-2
 
@@ -54,6 +54,27 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Features
 
 * I should be placed in the CHANGELOG ([SHA](https://github.com/lerna/changelog-missing/commit/SHA))
+
+`;
+
+exports[`conventional-commits updateChangelog() supports old preset API 1`] = `
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+<a name="1.0.1"></a>
+## <small>1.0.1 (YYYY-MM-DD)</small>
+* fix(pkg1): A commit using the old preset API
+
+
+<a name="1.0.0"></a>
+
+# 1.0.0 (YYYY-MM-DD)
+
+### Features
+
+* I should be placed in the CHANGELOG
 
 `;
 

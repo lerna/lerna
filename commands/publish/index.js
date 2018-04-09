@@ -298,7 +298,7 @@ class PublishCommand extends Command {
   recommendVersions() {
     const independentVersions = this.project.isIndependent();
     const { changelogPreset } = this.options;
-    const opts = { changelogPreset };
+    const rootPath = this.project.manifest.location;
     const type = independentVersions ? "independent" : "fixed";
 
     let chain = Promise.resolve();
@@ -321,7 +321,12 @@ class PublishCommand extends Command {
     }
 
     chain = chain.then(() =>
-      this.reduceVersions(pkg => ConventionalCommitUtilities.recommendVersion(pkg, type, opts))
+      this.reduceVersions(pkg =>
+        ConventionalCommitUtilities.recommendVersion(pkg, type, {
+          changelogPreset,
+          rootPath,
+        })
+      )
     );
 
     if (type === "fixed") {
@@ -436,6 +441,7 @@ class PublishCommand extends Command {
     const { conventionalCommits, changelogPreset } = this.options;
     const independentVersions = this.project.isIndependent();
     const rootPkg = this.project.manifest;
+    const rootPath = rootPkg.location;
     const changedFiles = new Set();
 
     // my kingdom for async await :(
@@ -484,12 +490,13 @@ class PublishCommand extends Command {
                 // the updated version that we're about to release.
                 const type = independentVersions ? "independent" : "fixed";
 
-                return ConventionalCommitUtilities.updateChangelog(pkg, type, { changelogPreset }).then(
-                  changelogLocation => {
-                    // commit the updated changelog
-                    changedFiles.add(changelogLocation);
-                  }
-                );
+                return ConventionalCommitUtilities.updateChangelog(pkg, type, {
+                  changelogPreset,
+                  rootPath,
+                }).then(changelogLocation => {
+                  // commit the updated changelog
+                  changedFiles.add(changelogLocation);
+                });
               }
             }),
         // TODO: tune the concurrency
@@ -501,6 +508,7 @@ class PublishCommand extends Command {
       chain = chain.then(() =>
         ConventionalCommitUtilities.updateChangelog(rootPkg, "root", {
           changelogPreset,
+          rootPath,
           version: this.globalVersion,
         }).then(changelogLocation => {
           // commit the updated changelog
