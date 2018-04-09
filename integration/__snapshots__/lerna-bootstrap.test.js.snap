@@ -1,5 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`lerna bootstrap --ci: stderr 1`] = `
+lerna info version __TEST_VERSION__
+lerna info Bootstrapping 1 packages
+lerna info Installing external dependencies
+lerna info Symlinking packages and binaries
+lerna success Bootstrapped 1 packages
+`;
+
+exports[`lerna bootstrap --ci: stdout 1`] = `package-1`;
+
 exports[`lerna bootstrap --npm-client yarn: stderr 1`] = `
 lerna info version __TEST_VERSION__
 lerna info Bootstrapping 4 packages

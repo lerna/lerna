@@ -174,7 +174,7 @@ describe("BootstrapCommand", () => {
     });
 
     it("should call npmInstall with ci subCommand if on npm 5.7.0 or later", async () => {
-      const testDir = await initFixture("basic");
+      const testDir = await initFixture("ci");
       process.env.npm_config_user_agent = "npm/5.7.0 node/v9.9.0 darwin x64";
 
       await lernaBootstrap(testDir)("--ci");
@@ -190,7 +190,7 @@ describe("BootstrapCommand", () => {
     });
 
     it("should not pass subCommand to npmInstall if on npm version earlier than 5.7.0", async () => {
-      const testDir = await initFixture("basic");
+      const testDir = await initFixture("ci");
       process.env.npm_config_user_agent = "npm/5.6.0 node/v9.9.0 darwin x64";
 
       await lernaBootstrap(testDir)("--ci");

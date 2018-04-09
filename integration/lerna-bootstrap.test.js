@@ -3,7 +3,11 @@
 const fs = require("fs-extra");
 const globby = require("globby");
 const normalizePath = require("normalize-path");
+const path = require("path");
 
+const cloneFixture = require("@lerna-test/clone-fixture")(
+  path.resolve(__dirname, "../commands/bootstrap/__tests__")
+);
 const cliRunner = require("@lerna-test/cli-runner");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 
@@ -12,7 +16,7 @@ describe("lerna bootstrap", () => {
     const cwd = await initFixture("lerna-bootstrap");
     const lerna = cliRunner(cwd);
 
-    const { stderr } = await lerna("bootstrap");
+    const { stderr } = await lerna("bootstrap", "--no-ci");
     expect(stderr).toMatchSnapshot("stderr");
 
     // the "--silent" flag is passed to `npm run`
@@ -49,7 +53,7 @@ describe("lerna bootstrap", () => {
     const cwd = await initFixture("lerna-bootstrap");
     const lerna = cliRunner(cwd);
 
-    const { stderr } = await lerna("bootstrap", "--hoist");
+    const { stderr } = await lerna("bootstrap", "--no-ci", "--hoist");
     expect(stderr).toMatchSnapshot("stderr");
 
     // the "--silent" flag is passed to `npm run`
@@ -95,6 +99,18 @@ describe("lerna bootstrap", () => {
       "package-2/yarn.lock",
       "package-3/yarn.lock",
     ]);
+
+    // the "--silent" flag is passed to `npm run`
+    const { stdout } = await lerna("run", "test", "--", "--silent");
+    expect(stdout).toMatchSnapshot("stdout");
+  });
+
+  test("--ci", async () => {
+    const { cwd } = await cloneFixture("ci");
+    const lerna = cliRunner(cwd);
+
+    const { stderr } = await lerna("bootstrap", "--ci");
+    expect(stderr).toMatchSnapshot("stderr");
 
     // the "--silent" flag is passed to `npm run`
     const { stdout } = await lerna("run", "test", "--", "--silent");
