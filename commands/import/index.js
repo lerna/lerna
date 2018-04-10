@@ -152,6 +152,7 @@ class ImportCommand extends Command {
       .replace(/^([-+]{3} [ab])/gm, replacement)
       .replace(/^(diff --git a)/gm, replacement)
       .replace(/^(diff --git \S+ b)/gm, replacement)
+      .replace(/^(copy (from|to)) /gm, `$1 ${formattedTarget}/`)
       .replace(/^(rename (from|to)) /gm, `$1 ${formattedTarget}/`);
   }
 
