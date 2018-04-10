@@ -1,0 +1,37 @@
+{
+  "name": "@lerna/resolve-symlink",
+  "version": "3.0.0-beta.0",
+  "description": "TODO",
+  "keywords": [
+    "lerna",
+    "utils"
+  ],
+  "homepage": "https://github.com/lerna/lerna",
+  "license": "MIT",
+  "author": {
+    "name": "Daniel Stockman",
+    "url": "https://github.com/evocateur"
+  },
+  "files": [
+    "resolve-symlink.js"
+  ],
+  "main": "resolve-symlink.js",
+  "engines": {
+    "node": ">= 6.9.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lerna/lerna.git"
+  },
+  "scripts": {
+    "test": "echo \"Run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "fs-extra": "^5.0.0",
+    "npmlog": "^4.1.2",
+    "read-cmd-shim": "^1.0.1"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "globstar",
+  "version": "1.0.0",
+  "dependencies": {
+    "package-3": "^1.0.0",
+    "package-4": "^1.0.0"
+  },
+  "devDependencies": {
+    "package-5": "^1.0.0"
+  }
+}

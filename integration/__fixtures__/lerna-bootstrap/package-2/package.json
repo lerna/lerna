@@ -1,0 +1,14 @@
+{
+  "name": "@integration/package-2",
+  "version": "1.0.0",
+  "private": true,
+  "bin": "cli.js",
+  "scripts": {
+    "prepublish": "exit 0",
+    "test": "echo package-2"
+  },
+  "dependencies": {
+    "@integration/package-1": "^1.0.0",
+    "pify": "^2.0.0"
+  }
+}

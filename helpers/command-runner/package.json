@@ -1,0 +1,12 @@
+{
+  "name": "@lerna-test/command-runner",
+  "version": "0.0.0-test-only",
+  "description": "A local test helper",
+  "main": "index.js",
+  "private": true,
+  "license": "MIT",
+  "dependencies": {
+    "@lerna/global-options": "file:../../core/global-options",
+    "yargs": "^11.0.0"
+  }
+}

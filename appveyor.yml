@@ -1,7 +1,7 @@
 # don't build tags, it's redundant
 skip_tags: true
 
-clone_depth: 1
+shallow_clone: true
 
 environment:
   NO_UPDATE_NOTIFIER: "1"
@@ -13,20 +13,20 @@ matrix:
   fast_finish: true
 
 cache:
-  # unpacking the yarn cache takes way too long
-  # - "%LOCALAPPDATA%\\Yarn"
-  - node_modules -> yarn.lock
+  - '%APPDATA%\npm-cache'
 
 install:
   - ps: Install-Product node $env:nodejs_version
-  - npm -g install npm@latest-5
-  - yarn --frozen-lockfile
+  - npm config set loglevel warn
+  - npm install --global npm@latest
+  - set PATH=%APPDATA%\npm;%PATH%
+  - npm ci
 
 before_test:
   - git config --global user.email test@example.com
   - git config --global user.name "Tester McPerson"
 
 test_script:
-  - yarn run ci -- --runInBand
+  - npm run ci
 
 build: off

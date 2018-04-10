@@ -1,0 +1,12 @@
+{
+  "name": "@lerna-test/copy-fixture",
+  "version": "0.0.0-test-only",
+  "description": "A local test helper",
+  "main": "index.js",
+  "private": true,
+  "license": "MIT",
+  "dependencies": {
+    "@lerna-test/find-fixture": "file:../find-fixture",
+    "fs-extra": "^5.0.0"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "package-7",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "package-1": "file:../package-1"
+  }
+}

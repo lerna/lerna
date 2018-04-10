@@ -1,0 +1,77 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ChangedCommand basic should list all packages when no tag is found 1`] = `
+"- package-1
+- package-2
+- package-3
+- package-4
+- package-5 (private)"
+`;
+
+exports[`ChangedCommand basic should list changes 1`] = `
+"- package-2
+- package-3"
+`;
+
+exports[`ChangedCommand basic should list changes in private packages 1`] = `"- package-5 (private)"`;
+
+exports[`ChangedCommand basic should list changes with --force-publish 1`] = `
+"- package-1
+- package-2
+- package-3
+- package-4
+- package-5 (private)"
+`;
+
+exports[`ChangedCommand basic should list changes with --force-publish package-2 --force-publish package-4 1`] = `
+"- package-2
+- package-3
+- package-4"
+`;
+
+exports[`ChangedCommand basic should list changes with --force-publish package-2,package-4 1`] = `
+"- package-2
+- package-3
+- package-4"
+`;
+
+exports[`ChangedCommand basic should list changes without ignored files 1`] = `"- package-3"`;
+
+exports[`ChangedCommand circular should list changes 1`] = `
+"- package-3
+- package-4"
+`;
+
+exports[`ChangedCommand circular should list changes with --force-publish * 1`] = `
+"- package-1
+- package-2
+- package-3
+- package-4
+- package-5 (private)"
+`;
+
+exports[`ChangedCommand circular should list changes with --force-publish package-2 1`] = `
+"- package-2
+- package-3
+- package-4"
+`;
+
+exports[`ChangedCommand circular should list changes without ignored files 1`] = `
+"- package-3
+- package-4"
+`;
+
+exports[`ChangedCommand with --json should list changes as a json object 1`] = `
+Array [
+  Object {
+    "name": "package-2",
+    "private": false,
+    "version": "1.0.0",
+  },
+  Object {
+    "name": "package-3",
+    "private": false,
+    "version": "1.0.0",
+  },
+]
+`;

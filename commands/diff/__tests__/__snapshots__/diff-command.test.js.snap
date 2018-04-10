@@ -1,0 +1,59 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DiffCommand passes diff exclude globs configured with --ignored-changes 1`] = `
+diff --git a/packages/package-1/package.json b/packages/package-1/package.json
+index SHA..SHA 100644
+--- a/packages/package-1/package.json
++++ b/packages/package-1/package.json
+@@ -1,5 +1,5 @@
+ {
+   "name": "package-1",
+-  "changed": 0,
++  "changed": 1,
+   "version": "1.0.0"
+ }
+`;
+
+exports[`DiffCommand should diff a specific package 1`] = `
+diff --git a/packages/package-2/package.json b/packages/package-2/package.json
+index SHA..SHA 100644
+--- a/packages/package-2/package.json
++++ b/packages/package-2/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "package-2",
+-  "changed": 0,
++  "changed": 1,
+   "version": "1.0.0",
+   "dependencies": {
+     "package-1": "^1.0.0"
+`;
+
+exports[`DiffCommand should diff packages from the first commit 1`] = `
+diff --git a/packages/package-1/package.json b/packages/package-1/package.json
+index SHA..SHA 100644
+--- a/packages/package-1/package.json
++++ b/packages/package-1/package.json
+@@ -1,5 +1,5 @@
+ {
+   "name": "package-1",
+-  "changed": 0,
++  "changed": 1,
+   "version": "1.0.0"
+ }
+`;
+
+exports[`DiffCommand should diff packages from the most recent tag 1`] = `
+diff --git a/packages/package-1/package.json b/packages/package-1/package.json
+index SHA..SHA 100644
+--- a/packages/package-1/package.json
++++ b/packages/package-1/package.json
+@@ -1,5 +1,6 @@
+ {
+   "name": "package-1",
+   "changed": 1,
+-  "version": "1.0.0"
++  "version": "1.0.0",
++  "sinceLastTag": true
+ }
+`;

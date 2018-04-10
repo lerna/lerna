@@ -1,0 +1,437 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CreateCommand creates a stub cli 1`] = `
+diff --git a/packages/my-cli/README.md b/packages/my-cli/README.md
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/my-cli/README.md
+@@ -0,0 +1,13 @@
++# \`my-cli\`
++
++> TODO: description
++
++## Usage
++
++\`\`\`
++npm -g i my-cli
++
++my-cli --help
++
++// TODO: DEMONSTRATE API
++\`\`\`
+diff --git a/packages/my-cli/__tests__/cli.test.js b/packages/my-cli/__tests__/cli.test.js
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/my-cli/__tests__/cli.test.js
+@@ -0,0 +1,8 @@
++'use strict';
++
++const cli = require('../lib/cli');
++
++describe('my-cli cli', () => {
++  // const argv = cli(cwd).parse(['args']);
++  it('needs tests');
++});
+diff --git a/packages/my-cli/__tests__/my-cli.test.js b/packages/my-cli/__tests__/my-cli.test.js
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/my-cli/__tests__/my-cli.test.js
+@@ -0,0 +1,7 @@
++'use strict';
++
++const myCli = require('..');
++
++describe('my-cli', () => {
++    it('needs tests');
++});
+diff --git a/packages/my-cli/bin/my-cli b/packages/my-cli/bin/my-cli
+new file mode 100755
+index SHA..SHA
+--- /dev/null
++++ b/packages/my-cli/bin/my-cli
+@@ -0,0 +1,6 @@
++#!/usr/bin/env node
++
++'use strict';
++
++// eslint-disable-next-line no-unused-expressions
++require('../lib/cli')().parse(process.argv.slice(2));
+diff --git a/packages/my-cli/lib/cli.js b/packages/my-cli/lib/cli.js
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/my-cli/lib/cli.js
+@@ -0,0 +1,26 @@
++'use strict';
++
++const yargs = require('yargs/yargs');
++const myCli = require('./my-cli');
++
++module.exports = cli;
++
++function cli(cwd) {
++  const parser = factory(null, cwd);
++
++  parser.alias('h', 'help');
++  parser.alias('v', 'version');
++
++  parser.usage(
++    "$0",
++    "TODO: description",
++    yargs => {
++      yargs.options({
++        // TODO: options
++      });
++    },
++    argv => myCli(argv)
++  );
++
++  return parser;
++}
+diff --git a/packages/my-cli/lib/my-cli.js b/packages/my-cli/lib/my-cli.js
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/my-cli/lib/my-cli.js
+@@ -0,0 +1,7 @@
++'use strict';
++
++module.exports = myCli;
++
++function myCli() {
++    // TODO
++}
+diff --git a/packages/my-cli/package.json b/packages/my-cli/package.json
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/my-cli/package.json
+@@ -0,0 +1,34 @@
++{
++  "name": "my-cli",
++  "version": "1.2.3",
++  "description": "Now I’m the model of a modern major general / The venerated Virginian veteran whose men are all / Lining up, to put me up on a pedestal / Writin’ letters to relatives / Embellishin’ my elegance and eloquence / But the elephant is in the room / The truth is in ya face when ya hear the British cannons go / BOOM",
++  "keywords": [],
++  "author": "Tester McPerson <test@example.com> (http://example.com)",
++  "license": "ISC",
++  "main": "lib/my-cli.js",
++  "bin": {
++    "my-cli": "bin/my-cli"
++  },
++  "directories": {
++    "lib": "lib",
++    "test": "__tests__"
++  },
++  "files": [
++    "bin",
++    "lib"
++  ],
++  "repository": {
++    "type": "git",
++    "url": "git+https://github.com/test/test.git"
++  },
++  "scripts": {
++    "test": "echo \\"Error: run tests from root\\" && exit 1"
++  },
++  "dependencies": {
++    "yargs": "^1.0.0-mocked"
++  },
++  "bugs": {
++    "url": "https://github.com/test/test/issues"
++  },
++  "homepage": "https://github.com/test/test#readme"
++}
+`;
+
+exports[`CreateCommand creates a stub cli with transpiled output 1`] = `
+diff --git a/packages/my-es-cli/README.md b/packages/my-es-cli/README.md
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/my-es-cli/README.md
+@@ -0,0 +1,13 @@
++# \`my-es-cli\`
++
++> TODO: description
++
++## Usage
++
++\`\`\`
++npm -g i my-es-cli
++
++my-es-cli --help
++
++// TODO: DEMONSTRATE API
++\`\`\`
+diff --git a/packages/my-es-cli/__tests__/cli.test.js b/packages/my-es-cli/__tests__/cli.test.js
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/my-es-cli/__tests__/cli.test.js
+@@ -0,0 +1,6 @@
++import cli from '../src/cli';
++
++describe('my-es-cli cli', () => {
++  // const argv = cli(cwd).parse(['args']);
++  it('needs tests');
++});
+diff --git a/packages/my-es-cli/__tests__/my-es-cli.test.js b/packages/my-es-cli/__tests__/my-es-cli.test.js
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/my-es-cli/__tests__/my-es-cli.test.js
+@@ -0,0 +1,5 @@
++import myEsCli from '../src/my-es-cli';
++
++describe('my-es-cli', () => {
++    it('needs tests');
++});
+diff --git a/packages/my-es-cli/bin/my-es-cli b/packages/my-es-cli/bin/my-es-cli
+new file mode 100755
+index SHA..SHA
+--- /dev/null
++++ b/packages/my-es-cli/bin/my-es-cli
+@@ -0,0 +1,6 @@
++#!/usr/bin/env node
++
++'use strict';
++
++// eslint-disable-next-line no-unused-expressions
++require('../dist/cli').default().parse(process.argv.slice(2));
+diff --git a/packages/my-es-cli/package.json b/packages/my-es-cli/package.json
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/my-es-cli/package.json
+@@ -0,0 +1,35 @@
++{
++  "name": "my-es-cli",
++  "version": "1.2.3",
++  "description": "Now I’m the model of a modern major general / The venerated Virginian veteran whose men are all / Lining up, to put me up on a pedestal / Writin’ letters to relatives / Embellishin’ my elegance and eloquence / But the elephant is in the room / The truth is in ya face when ya hear the British cannons go / BOOM",
++  "keywords": [],
++  "author": "Tester McPerson <test@example.com> (http://example.com)",
++  "license": "ISC",
++  "main": "dist/my-es-cli.js",
++  "module": "dist/my-es-cli.module.js",
++  "bin": {
++    "my-es-cli": "bin/my-es-cli"
++  },
++  "directories": {
++    "lib": "dist",
++    "test": "__tests__"
++  },
++  "files": [
++    "bin",
++    "dist"
++  ],
++  "repository": {
++    "type": "git",
++    "url": "git+https://github.com/test/test.git"
++  },
++  "scripts": {
++    "test": "echo \\"Error: run tests from root\\" && exit 1"
++  },
++  "dependencies": {
++    "yargs": "^1.0.0-mocked"
++  },
++  "bugs": {
++    "url": "https://github.com/test/test/issues"
++  },
++  "homepage": "https://github.com/test/test#readme"
++}
+diff --git a/packages/my-es-cli/src/cli.js b/packages/my-es-cli/src/cli.js
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/my-es-cli/src/cli.js
+@@ -0,0 +1,24 @@
++import factory from 'yargs/yargs';
++import myEsCli from './my-es-cli';
++
++export default cli;
++
++function cli(cwd) {
++  const parser = factory(null, cwd);
++
++  parser.alias('h', 'help');
++  parser.alias('v', 'version');
++
++  parser.usage(
++    "$0",
++    "TODO: description",
++    yargs => {
++      yargs.options({
++        // TODO: options
++      });
++    },
++    argv => myEsCli(argv)
++  );
++
++  return parser;
++}
+diff --git a/packages/my-es-cli/src/my-es-cli.js b/packages/my-es-cli/src/my-es-cli.js
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/my-es-cli/src/my-es-cli.js
+@@ -0,0 +1,3 @@
++export default function myEsCli() {
++    // TODO
++}
+`;
+
+exports[`CreateCommand creates a stub package 1`] = `
+diff --git a/packages/my-pkg/README.md b/packages/my-pkg/README.md
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/my-pkg/README.md
+@@ -0,0 +1,11 @@
++# \`my-pkg\`
++
++> TODO: description
++
++## Usage
++
++\`\`\`
++const myPkg = require('my-pkg');
++
++// TODO: DEMONSTRATE API
++\`\`\`
+diff --git a/packages/my-pkg/__tests__/my-pkg.test.js b/packages/my-pkg/__tests__/my-pkg.test.js
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/my-pkg/__tests__/my-pkg.test.js
+@@ -0,0 +1,7 @@
++'use strict';
++
++const myPkg = require('..');
++
++describe('my-pkg', () => {
++    it('needs tests');
++});
+diff --git a/packages/my-pkg/lib/my-pkg.js b/packages/my-pkg/lib/my-pkg.js
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/my-pkg/lib/my-pkg.js
+@@ -0,0 +1,7 @@
++'use strict';
++
++module.exports = myPkg;
++
++function myPkg() {
++    // TODO
++}
+diff --git a/packages/my-pkg/package.json b/packages/my-pkg/package.json
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/my-pkg/package.json
+@@ -0,0 +1,27 @@
++{
++  "name": "my-pkg",
++  "version": "1.2.3",
++  "description": "Now I’m the model of a modern major general / The venerated Virginian veteran whose men are all / Lining up, to put me up on a pedestal / Writin’ letters to relatives / Embellishin’ my elegance and eloquence / But the elephant is in the room / The truth is in ya face when ya hear the British cannons go / BOOM",
++  "keywords": [],
++  "author": "Tester McPerson <test@example.com> (http://example.com)",
++  "license": "ISC",
++  "main": "lib/my-pkg.js",
++  "directories": {
++    "lib": "lib",
++    "test": "__tests__"
++  },
++  "files": [
++    "lib"
++  ],
++  "repository": {
++    "type": "git",
++    "url": "git+https://github.com/test/test.git"
++  },
++  "scripts": {
++    "test": "echo \\"Error: run tests from root\\" && exit 1"
++  },
++  "bugs": {
++    "url": "https://github.com/test/test/issues"
++  },
++  "homepage": "https://github.com/test/test#readme"
++}
+`;
+
+exports[`CreateCommand creates a stub package with transpiled output 1`] = `
+diff --git a/packages/my-pkg/README.md b/packages/my-pkg/README.md
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/my-pkg/README.md
+@@ -0,0 +1,11 @@
++# \`my-pkg\`
++
++> TODO: description
++
++## Usage
++
++\`\`\`
++import myPkg from 'my-pkg';
++
++// TODO: DEMONSTRATE API
++\`\`\`
+diff --git a/packages/my-pkg/__tests__/my-pkg.test.js b/packages/my-pkg/__tests__/my-pkg.test.js
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/my-pkg/__tests__/my-pkg.test.js
+@@ -0,0 +1,5 @@
++import myPkg from '../src/my-pkg';
++
++describe('my-pkg', () => {
++    it('needs tests');
++});
+diff --git a/packages/my-pkg/package.json b/packages/my-pkg/package.json
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/my-pkg/package.json
+@@ -0,0 +1,28 @@
++{
++  "name": "my-pkg",
++  "version": "1.2.3",
++  "description": "Now I’m the model of a modern major general / The venerated Virginian veteran whose men are all / Lining up, to put me up on a pedestal / Writin’ letters to relatives / Embellishin’ my elegance and eloquence / But the elephant is in the room / The truth is in ya face when ya hear the British cannons go / BOOM",
++  "keywords": [],
++  "author": "Tester McPerson <test@example.com> (http://example.com)",
++  "license": "ISC",
++  "main": "dist/my-pkg.js",
++  "module": "dist/my-pkg.module.js",
++  "directories": {
++    "lib": "dist",
++    "test": "__tests__"
++  },
++  "files": [
++    "dist"
++  ],
++  "repository": {
++    "type": "git",
++    "url": "git+https://github.com/test/test.git"
++  },
++  "scripts": {
++    "test": "echo \\"Error: run tests from root\\" && exit 1"
++  },
++  "bugs": {
++    "url": "https://github.com/test/test/issues"
++  },
++  "homepage": "https://github.com/test/test#readme"
++}
+diff --git a/packages/my-pkg/src/my-pkg.js b/packages/my-pkg/src/my-pkg.js
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/my-pkg/src/my-pkg.js
+@@ -0,0 +1,3 @@
++export default function myPkg() {
++    // TODO
++}
+`;

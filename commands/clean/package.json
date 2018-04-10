@@ -1,0 +1,42 @@
+{
+  "name": "@lerna/clean",
+  "version": "3.0.0-beta.15",
+  "description": "TODO",
+  "keywords": [
+    "lerna",
+    "command"
+  ],
+  "homepage": "https://github.com/lerna/lerna",
+  "license": "MIT",
+  "author": {
+    "name": "Daniel Stockman",
+    "url": "https://github.com/evocateur"
+  },
+  "files": [
+    "command.js",
+    "index.js"
+  ],
+  "main": "index.js",
+  "engines": {
+    "node": ">= 6.9.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lerna/lerna.git"
+  },
+  "scripts": {
+    "test": "echo \"Run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@lerna/command": "file:../../core/command",
+    "@lerna/filter-options": "file:../../core/filter-options",
+    "@lerna/prompt": "file:../../core/prompt",
+    "@lerna/rimraf-dir": "file:../../utils/rimraf-dir",
+    "p-map": "^1.2.0",
+    "p-map-series": "^1.0.0",
+    "p-waterfall": "^1.0.0"
+  }
+}

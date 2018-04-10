@@ -1,0 +1,13 @@
+{
+  "name": "@lerna-test/pkg-matchers",
+  "version": "0.0.0-test-only",
+  "description": "A local test helper",
+  "main": "index.js",
+  "private": true,
+  "license": "MIT",
+  "dependencies": {
+    "@lerna/package": "file:../../core/package",
+    "read-pkg": "^3.0.0",
+    "semver": "^5.5.0"
+  }
+}

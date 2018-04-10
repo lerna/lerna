@@ -1,0 +1,42 @@
+{
+  "name": "@lerna/map-to-registry",
+  "version": "3.0.0-beta.8",
+  "description": "Produce registry uri and auth of package name from npm config",
+  "keywords": [
+    "lerna",
+    "npm",
+    "config",
+    "registry"
+  ],
+  "homepage": "https://github.com/lerna/lerna",
+  "license": "MIT",
+  "author": {
+    "name": "Daniel Stockman",
+    "url": "https://github.com/evocateur"
+  },
+  "main": "lib/map-to-registry.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "engines": {
+    "node": ">= 6.9.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lerna/lerna.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "npm-package-arg": "^6.0.0",
+    "npmlog": "^4.1.2"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "package-3",
+  "version": "1.0.0",
+  "scripts": {
+    "prefail": "echo package-3",
+    "fail": "exit 1",
+    "my-script": "echo package-3",
+    "test": "echo package-3"
+  }
+}

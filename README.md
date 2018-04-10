@@ -172,7 +172,7 @@ It will configure `lerna.json` to enforce exact match for all subsequent executi
 
 ```json
 {
-  "commands": {
+  "command": {
     "init": {
       "exact": true
     }
@@ -214,6 +214,10 @@ May also be configured in `lerna.json`:
   "npmClientArgs": ["--production", "--no-optional"]
 }
 ```
+
+#### --ci
+
+This runs `lerna bootstrap` with `npm ci` as opposed to `npm install`.  The specifics of this command can be found in the NPM documentation [here](https://docs.npmjs.com/cli/ci)
 
 #### How `bootstrap` works
 
@@ -300,10 +304,10 @@ More specifically, this command will:
 
 **Note:** to publish scoped packages, you need to add the following to each `package.json`:
 
-```js
-"publishConfig": {
-  "access": "public"
-}
+```json
+  "publishConfig": {
+    "access": "public"
+  }
 ```
 
 #### --exact
@@ -351,12 +355,15 @@ When run with this flag, `publish` will use the [Conventional Commits Specificat
 #### --changelog-preset
 
 ```sh
-$ lerna publish --conventional-commits --changelog-preset=angular-bitbucket
+$ lerna publish --conventional-commits --changelog-preset angular-bitbucket
 ```
 
-By default, the changelog preset is set to `angular`. In some cases you might want to change either use a another preset or a custom one.
+By default, the changelog preset is set to [`angular`](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-changelog-angular#angular-convention).
+In some cases you might want to change either use a another preset or a custom one.
 
 Presets are names of built-in or installable configuration for conventional changelog.
+Presets may be passed as the full name of the package, or the auto-expanded suffix
+(e.g., `angular` is expanded to `conventional-changelog-angular`).
 
 #### --git-remote [remote]
 
@@ -479,7 +486,7 @@ This can be configured in lerna.json, as well:
 
 ```json
 {
-  "commands": {
+  "command": {
     "publish": {
       "message": "chore(release): publish %s"
     }
@@ -495,7 +502,7 @@ If your `lerna.json` contains something like this:
 
 ```json
 {
-  "commands": {
+  "command": {
     "publish": {
       "allowBranch": "master"
     }
@@ -530,7 +537,7 @@ Check which `packages` have changed since the last release (the last git tag).
 Lerna determines the last git tag created and runs `git diff --name-only v6.8.1` to get all files changed since that tag. It then returns an array of packages that have an updated file.
 
 **Note that configuration for the `publish` command _also_ affects the
-`updated` command. For example `config.publish.ignore`**
+`updated` command. For example `command.publish.ignoreChanges`**
 
 #### --json
 
@@ -719,12 +726,12 @@ Running `lerna` without arguments will show all commands/options.
 
 ### lerna.json
 
-```js
+```json
 {
   "version": "1.1.3",
-  "commands": {
+  "command": {
     "publish": {
-      "ignore": [
+      "ignoreChanges": [
         "ignored-file",
         "*.md"
       ]
@@ -737,11 +744,10 @@ Running `lerna` without arguments will show all commands/options.
 }
 ```
 
-* `lerna`: the current version of Lerna being used.
 * `version`: the current version of the repository.
-* `commands.publish.ignore`: an array of globs that won't be included in `lerna updated/publish`. Use this to prevent publishing a new version unnecessarily for changes, such as fixing a `README.md` typo.
-* `commands.bootstrap.ignore`: an array of globs that won't be bootstrapped when running the `lerna bootstrap` command.
-* `commands.bootstrap.scope`: an array of globs that restricts which packages will be bootstrapped when running the `lerna bootstrap` command.
+* `command.publish.ignoreChanges`: an array of globs that won't be included in `lerna changed/publish`. Use this to prevent publishing a new version unnecessarily for changes, such as fixing a `README.md` typo.
+* `command.bootstrap.ignore`: an array of globs that won't be bootstrapped when running the `lerna bootstrap` command.
+* `command.bootstrap.scope`: an array of globs that restricts which packages will be bootstrapped when running the `lerna bootstrap` command.
 * `packages`: Array of globs to use as package locations.
 
 ### Common `devDependencies`
@@ -773,6 +779,35 @@ For example the `nsp` dependency is necessary in this case for `lerna run nsp`
 }
 ```
 
+### Git Hosted Dependencies
+
+Lerna allows target versions of local dependent packages to be written as a [git remote url](https://docs.npmjs.com/cli/install) with a `committish` (e.g., `#v1.0.0` or `#semver:^1.0.0`) instead of the normal numeric version range.
+This allows packages to be distributed via git repositories when packages must be private and a [private npm registry is not desired](https://www.dotconferences.com/2016/05/fabien-potencier-monolithic-repositories-vs-many-repositories).
+
+Please note that lerna does _not_ perform the actual splitting of git history into the separate read-only repositories. This is the responsibility of the user. (See [this comment](https://github.com/lerna/lerna/pull/1033#issuecomment-335894690) for implementation details)
+
+```
+// packages/pkg-1/package.json
+{
+  name: "pkg-1",
+  version: "1.0.0",
+  dependencies: {
+    "pkg-2": "github:example-user/pkg-2#v1.0.0"
+  }
+}
+
+// packages/pkg-2/package.json
+{
+  name: "pkg-2",
+  version: "1.0.0"
+}
+```
+
+In the example above,
+
+* `lerna bootstrap` will properly symlink `pkg-2` into `pkg-1`.
+* `lerna publish` will update the committish (`#v1.0.0`) in `pkg-1` when `pkg-2` changes.
+
 ### Flags
 
 Options to Lerna can come from configuration (`lerna.json`) or on the command
@@ -785,7 +820,7 @@ Example:
 {
   "version": "1.2.0",
   "exampleOption": "foo",
-  "commands": {
+  "command": {
     "init": {
       "exampleOption": "bar"
     }
@@ -857,14 +892,14 @@ Excludes a subset of packages when running a command.
 $ lerna bootstrap --ignore component-*
 ```
 
-The `ignore` flag, when used with the `bootstrap` command, can also be set in `lerna.json` under the `commands.bootstrap` key. The command-line flag will take precedence over this option.
+The `ignore` flag, when used with the `bootstrap` command, can also be set in `lerna.json` under the `command.bootstrap` key. The command-line flag will take precedence over this option.
 
 **Example**
 
-```javascript
+```json
 {
   "version": "0.0.0",
-  "commands": {
+  "command": {
     "bootstrap": {
       "ignore": "component-*"
     }
@@ -1007,67 +1042,6 @@ The root-level package.json must also include a `workspaces` array:
 
 This list is broadly similar to lerna's `packages` config (a list of globs matching directories with a package.json),
 except it does not support recursive globs (`"**"`, a.k.a. "globstars").
-
-#### --use-git-version
-
-Allow target versions of dependent packages to be written as [git hosted urls](https://github.com/npm/hosted-git-info) instead of a plain version number.
-If enabled, Lerna will attempt to extract and save the interpackage dependency versions from `package.json` files using git url-aware parser.
-
-Eg. assuming monorepo with 2 packages where `my-package-1` depends on `my-package-2`, `package.json` of `my-package-1` could be:
-
-```
-// packages/my-package-1/package.json
-{
-  name: "my-package-1",
-  version: "1.0.0",
-  bin: "bin.js",
-  dependencies: {
-    "my-package-2": "github:example-user/my-package-2#v1.0.0"
-  },
-  devDependencies: {
-    "my-dev-dependency": "^1.0.0"
-  },
-  peerDependencies: {
-    "my-peer-dependency": "^1.0.0"
-  }
-}
-```
-
-For the case above Lerna will read the version of `my-package-2` dependency as `1.0.0`.
-
-This allows packages to be distributed via git repos if eg. packages are private and [private npm repo is not an option](https://www.dotconferences.com/2016/05/fabien-potencier-monolithic-repositories-vs-many-repositories).
-
-Please note that using `--use-git-version`
-
-* is limited to urls with [`committish`](https://docs.npmjs.com/files/package.json#git-urls-as-dependencies) part present (ie. `github:example-user/my-package-2` is invalid)
-* requires `publish` command to be used with `--exact`
-
-May also be configured in `lerna.json`:
-
-```js
-{
-  ...
-  "useGitVersion": true
-}
-```
-
-#### --git-version-prefix
-
-Defines version prefix string (defaults to 'v') ignored when extracting version number from a commitish part of git url.
-Everything after the prefix will be considered a version.
-
-Eg. given `github:example-user/my-package-2#v1.0.0` and `gitVersionPrefix: 'v'` version will be read as `1.0.0`.
-
-Only used if `--use-git-version` is set to `true`.
-
-May also be configured in `lerna.json`:
-
-```js
-{
-  ...
-  "gitVersionPrefix": "v"
-}
-```
 
 #### --stream
 

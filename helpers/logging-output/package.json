@@ -1,0 +1,12 @@
+{
+  "name": "@lerna-test/logging-output",
+  "version": "0.0.0-test-only",
+  "description": "A local test helper",
+  "main": "index.js",
+  "private": true,
+  "license": "MIT",
+  "dependencies": {
+    "npmlog": "^4.1.2",
+    "normalize-newline": "^3.0.0"
+  }
+}

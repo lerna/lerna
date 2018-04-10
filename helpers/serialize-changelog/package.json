@@ -1,0 +1,12 @@
+{
+  "name": "@lerna-test/serialize-changelog",
+  "version": "0.0.0-test-only",
+  "description": "A local test helper",
+  "main": "index.js",
+  "private": true,
+  "license": "MIT",
+  "dependencies": {
+    "@lerna-test/serialize-git-sha": "file:../serialize-git-sha",
+    "normalize-newline": "^3.0.0"
+  }
+}

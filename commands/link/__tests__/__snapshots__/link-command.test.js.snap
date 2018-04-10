@@ -1,0 +1,86 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LinkCommand with --force-local should force symlink of all packages 1`] = `
+Array [
+  Object {
+    "_src": "packages/package-1",
+    "dest": "packages/package-2/node_modules/@test/package-1",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-1",
+    "dest": "packages/package-3/node_modules/@test/package-1",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-1",
+    "dest": "packages/package-4/node_modules/@test/package-1",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-2",
+    "dest": "packages/package-3/node_modules/@test/package-2",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-2/cli.js",
+    "dest": "packages/package-3/node_modules/.bin/package-2",
+    "type": "exec",
+  },
+  Object {
+    "_src": "packages/package-3",
+    "dest": "packages/package-4/node_modules/package-3",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-3/cli1.js",
+    "dest": "packages/package-4/node_modules/.bin/package3cli1",
+    "type": "exec",
+  },
+  Object {
+    "_src": "packages/package-3/cli2.js",
+    "dest": "packages/package-4/node_modules/.bin/package3cli2",
+    "type": "exec",
+  },
+]
+`;
+
+exports[`LinkCommand with local package dependencies should symlink all packages 1`] = `
+Array [
+  Object {
+    "_src": "packages/package-1",
+    "dest": "packages/package-2/node_modules/@test/package-1",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-1",
+    "dest": "packages/package-3/node_modules/@test/package-1",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-2",
+    "dest": "packages/package-3/node_modules/@test/package-2",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-2/cli.js",
+    "dest": "packages/package-3/node_modules/.bin/package-2",
+    "type": "exec",
+  },
+  Object {
+    "_src": "packages/package-3",
+    "dest": "packages/package-4/node_modules/package-3",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-3/cli1.js",
+    "dest": "packages/package-4/node_modules/.bin/package3cli1",
+    "type": "exec",
+  },
+  Object {
+    "_src": "packages/package-3/cli2.js",
+    "dest": "packages/package-4/node_modules/.bin/package3cli2",
+    "type": "exec",
+  },
+]
+`;

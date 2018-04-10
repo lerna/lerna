@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`RunCommand in a basic repo omits package prefix with --parallel --no-prefix 1`] = `
+Array [
+  "packages/package-1 npm run env (prefixed: false)",
+  "packages/package-2 npm run env (prefixed: false)",
+  "packages/package-3 npm run env (prefixed: false)",
+  "packages/package-4 npm run env (prefixed: false)",
+]
+`;
+
+exports[`RunCommand in a basic repo omits package prefix with --stream --no-prefix 1`] = `
+Array [
+  "packages/package-1 npm run my-script (prefixed: false)",
+  "packages/package-3 npm run my-script (prefixed: false)",
+]
+`;
+
+exports[`RunCommand in a basic repo runs a script in all packages with --parallel 1`] = `
+Array [
+  "packages/package-1 npm run env (prefixed: true)",
+  "packages/package-2 npm run env (prefixed: true)",
+  "packages/package-3 npm run env (prefixed: true)",
+  "packages/package-4 npm run env (prefixed: true)",
+]
+`;
+
+exports[`RunCommand in a basic repo runs a script in packages with --stream 1`] = `
+Array [
+  "packages/package-1 npm run my-script (prefixed: true)",
+  "packages/package-3 npm run my-script (prefixed: true)",
+]
+`;

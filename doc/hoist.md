@@ -20,7 +20,7 @@ directory instead.
 that ideally does not require any other modifications to a project.
 When the `--hoist` flag is used:
 
-* Common dependencies will be installed *only* to the top-level
+* Common dependencies will be installed _only_ to the top-level
   `node_modules`, and omitted from individual package `node_modules`.
 * Mostly-common dependencies are still hoisted, but outlier packages
   with different versions will get a normal, local `node_modules`

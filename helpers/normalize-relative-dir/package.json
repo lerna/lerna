@@ -1,0 +1,11 @@
+{
+  "name": "@lerna-test/normalize-relative-dir",
+  "version": "0.0.0-test-only",
+  "description": "A local test helper",
+  "main": "index.js",
+  "private": true,
+  "license": "MIT",
+  "dependencies": {
+    "normalize-path": "^2.1.1"
+  }
+}

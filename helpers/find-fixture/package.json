@@ -1,0 +1,11 @@
+{
+  "name": "@lerna-test/find-fixture",
+  "version": "0.0.0-test-only",
+  "description": "A local test helper",
+  "main": "index.js",
+  "private": true,
+  "license": "MIT",
+  "dependencies": {
+    "find-up": "^2.1.0"
+  }
+}

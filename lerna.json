@@ -1,6 +1,8 @@
 {
   "packages": [
-    "."
+    "commands/*",
+    "core/*",
+    "utils/*"
   ],
   "changelog": {
     "repo": "lerna/lerna",
@@ -14,5 +16,24 @@
     },
     "cacheDir": ".changelog"
   },
-  "version": "0.0.0"
+  "command": {
+    "create": {
+      "homepage": "https://github.com/lerna/lerna",
+      "license": "MIT"
+    },
+    "publish": {
+      "allowBranch": "master",
+      "cdVersion": "prerelease",
+      "conventionalCommits": true,
+      "gitRemote": "upstream",
+      "preid": "beta",
+      "message": "chore(release): publish %s"
+    }
+  },
+  "ignoreChanges": [
+    "**/__fixtures__/**",
+    "**/__tests__/**",
+    "**/*.md"
+  ],
+  "version": "3.0.0-beta.15"
 }

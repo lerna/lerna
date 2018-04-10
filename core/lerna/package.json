@@ -1,0 +1,43 @@
+{
+  "name": "lerna",
+  "version": "3.0.0-beta.15",
+  "description": "A tool for managing JavaScript projects with multiple packages.",
+  "keywords": [
+    "lerna",
+    "monorepo",
+    "multi-package"
+  ],
+  "homepage": "https://lernajs.io/",
+  "license": "MIT",
+  "author": {
+    "name": "Sebastian McKenzie",
+    "email": "sebmck@gmail.com"
+  },
+  "bin": {
+    "lerna": "cli.js"
+  },
+  "files": [
+    "cli.js"
+  ],
+  "publishConfig": {
+    "tag": "next"
+  },
+  "engines": {
+    "node": ">= 6.9.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lerna/lerna.git"
+  },
+  "scripts": {
+    "test": "echo \"Run tests from root\" && exit 1"
+  },
+  "yargs": {
+    "populate--": true
+  },
+  "dependencies": {
+    "@lerna/cli": "file:../cli",
+    "import-local": "^1.0.0",
+    "npmlog": "^4.1.2"
+  }
+}

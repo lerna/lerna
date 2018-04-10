@@ -1,0 +1,11 @@
+{
+  "name": "@lerna-test/silence-logging",
+  "version": "0.0.0-test-only",
+  "description": "A local test helper",
+  "main": "index.js",
+  "private": true,
+  "license": "MIT",
+  "dependencies": {
+    "npmlog": "^4.1.2"
+  }
+}

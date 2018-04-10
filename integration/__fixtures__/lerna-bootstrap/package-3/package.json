@@ -1,0 +1,20 @@
+{
+  "name": "@integration/package-3",
+  "version": "1.0.0",
+  "private": true,
+  "bin": {
+    "package3-cli1": "cli1.js",
+    "package3-cli2": "cli2.js"
+  },
+  "scripts": {
+    "postinstall": "exit 0",
+    "test": "package-2"
+  },
+  "dependencies": {
+    "@integration/package-1": "^1.0.0",
+    "@integration/package-2": "^1.0.0"
+  },
+  "devDependencies": {
+    "pify": "^1.0.0"
+  }
+}

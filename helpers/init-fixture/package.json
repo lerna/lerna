@@ -1,0 +1,15 @@
+{
+  "name": "@lerna-test/init-fixture",
+  "version": "0.0.0-test-only",
+  "description": "A local test helper",
+  "main": "index.js",
+  "private": true,
+  "license": "MIT",
+  "dependencies": {
+    "@lerna-test/copy-fixture": "file:../copy-fixture",
+    "@lerna-test/git-add": "file:../git-add",
+    "@lerna-test/git-commit": "file:../git-commit",
+    "@lerna-test/git-init": "file:../git-init",
+    "tempy": "^0.2.1"
+  }
+}

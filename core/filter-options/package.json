@@ -1,0 +1,35 @@
+{
+  "name": "@lerna/filter-options",
+  "version": "3.0.0-beta.9",
+  "description": "Options for lerna sub-commands that need filtering",
+  "keywords": [
+    "lerna",
+    "core"
+  ],
+  "homepage": "https://github.com/lerna/lerna",
+  "license": "MIT",
+  "author": {
+    "name": "Daniel Stockman",
+    "url": "https://github.com/evocateur"
+  },
+  "files": [
+    "index.js"
+  ],
+  "main": "index.js",
+  "engines": {
+    "node": ">= 6.9.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lerna/lerna.git"
+  },
+  "scripts": {
+    "test": "echo \"Run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "dedent": "^0.7.0"
+  }
+}

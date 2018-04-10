@@ -1,0 +1,503 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`lerna publish calls lifecycle scripts 1`] = `
+
+Changes:
+ - package-1: 1.0.0 => 1.1.0
+ - package-2: 1.0.0 => 1.1.0
+
+
+> lifecycle@0.0.0-monorepo preversion __TEST_ROOTDIR__
+> echo preversion-root
+
+preversion-root
+
+> package-1@1.0.0 preversion __TEST_ROOTDIR__/packages/package-1
+> echo preversion-package-1
+
+preversion-package-1
+
+> package-1@1.1.0 version __TEST_ROOTDIR__/packages/package-1
+> echo version-package-1
+
+version-package-1
+
+> lifecycle@0.0.0-monorepo version __TEST_ROOTDIR__
+> echo version-root
+
+version-root
+
+> package-1@1.1.0 postversion __TEST_ROOTDIR__/packages/package-1
+> echo postversion-package-1
+
+postversion-package-1
+
+> lifecycle@0.0.0-monorepo postversion __TEST_ROOTDIR__
+> echo postversion-root
+
+postversion-root
+`;
+
+exports[`lerna publish independent mode --conventional-commits changelog 1`] = `
+
+Changes:
+ - package-1: 1.0.0 => 1.1.0
+ - package-2: 2.0.0 => 2.1.0
+ - package-3: 3.0.0 => 4.0.0
+ - package-4: 4.0.0 => 4.1.0
+ - package-5: 5.0.0 => 5.1.0 (private)
+
+`;
+
+exports[`lerna publish independent mode --conventional-commits changelog 2`] = `
+Array [
+  # Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+<a name="1.1.0"></a>
+# 1.1.0 (YYYY-MM-DD)
+
+
+### Bug Fixes
+
+* **package-1:** Fix foo ([SHA](COMMIT_URL))
+
+
+### Features
+
+* init repo ([SHA](COMMIT_URL))
+* **package-1:** Add foo ([SHA](COMMIT_URL))
+,
+  # Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+<a name="2.1.0"></a>
+# 2.1.0 (YYYY-MM-DD)
+
+
+### Bug Fixes
+
+* **package-2:** Fix bar ([SHA](COMMIT_URL))
+
+
+### Features
+
+* init repo ([SHA](COMMIT_URL))
+,
+  # Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+<a name="4.0.0"></a>
+# 4.0.0 (YYYY-MM-DD)
+
+
+### Features
+
+* init repo ([SHA](COMMIT_URL))
+* **package-3:** Add baz feature ([SHA](COMMIT_URL))
+
+
+### BREAKING CHANGES
+
+* **package-3:** yup
+,
+  # Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+<a name="4.1.0"></a>
+# 4.1.0 (YYYY-MM-DD)
+
+
+### Features
+
+* init repo ([SHA](COMMIT_URL))
+,
+  # Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+<a name="5.1.0"></a>
+# 5.1.0 (YYYY-MM-DD)
+
+
+### Features
+
+* init repo ([SHA](COMMIT_URL))
+,
+]
+`;
+
+exports[`lerna publish normal mode --conventional-commits changelog 1`] = `
+
+Changes:
+ - package-1: 1.0.0 => 2.0.0
+ - package-2: 1.0.0 => 2.0.0
+ - package-3: 1.0.0 => 2.0.0
+ - package-4: 1.0.0 => 2.0.0
+ - package-5: 1.0.0 => 2.0.0 (private)
+
+`;
+
+exports[`lerna publish normal mode --conventional-commits changelog 2`] = `
+Array [
+  # Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+<a name="2.0.0"></a>
+# 2.0.0 (YYYY-MM-DD)
+
+
+### Bug Fixes
+
+* **package-1:** Fix foo ([SHA](COMMIT_URL))
+* **package-2:** Fix bar ([SHA](COMMIT_URL))
+
+
+### Features
+
+* init repo ([SHA](COMMIT_URL))
+* **package-1:** Add foo ([SHA](COMMIT_URL))
+* **package-3:** Add baz feature ([SHA](COMMIT_URL))
+
+
+### BREAKING CHANGES
+
+* **package-3:** yup
+,
+  # Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+<a name="2.0.0"></a>
+# 2.0.0 (YYYY-MM-DD)
+
+
+### Bug Fixes
+
+* **package-1:** Fix foo ([SHA](COMMIT_URL))
+
+
+### Features
+
+* init repo ([SHA](COMMIT_URL))
+* **package-1:** Add foo ([SHA](COMMIT_URL))
+,
+  # Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+<a name="2.0.0"></a>
+# 2.0.0 (YYYY-MM-DD)
+
+
+### Bug Fixes
+
+* **package-2:** Fix bar ([SHA](COMMIT_URL))
+
+
+### Features
+
+* init repo ([SHA](COMMIT_URL))
+,
+  # Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+<a name="2.0.0"></a>
+# 2.0.0 (YYYY-MM-DD)
+
+
+### Features
+
+* init repo ([SHA](COMMIT_URL))
+* **package-3:** Add baz feature ([SHA](COMMIT_URL))
+
+
+### BREAKING CHANGES
+
+* **package-3:** yup
+,
+  # Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+<a name="2.0.0"></a>
+# 2.0.0 (YYYY-MM-DD)
+
+
+### Features
+
+* init repo ([SHA](COMMIT_URL))
+,
+  # Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+<a name="2.0.0"></a>
+# 2.0.0 (YYYY-MM-DD)
+
+
+### Features
+
+* init repo ([SHA](COMMIT_URL))
+,
+]
+`;
+
+exports[`lerna publish replaces file: specifier with local version before npm publish but after git commit 1`] = `
+v2.0.0
+
+diff --git a/lerna.json b/lerna.json
+index SHA..SHA 100644
+--- a/lerna.json
++++ b/lerna.json
+@@ -2 +2 @@
+-  "version": "1.0.0"
++  "version": "2.0.0"
+diff --git a/packages/package-1/package.json b/packages/package-1/package.json
+index SHA..SHA 100644
+--- a/packages/package-1/package.json
++++ b/packages/package-1/package.json
+@@ -3 +3 @@
+-	"version": "1.0.0",
++	"version": "2.0.0",
+diff --git a/packages/package-2/package.json b/packages/package-2/package.json
+index SHA..SHA 100644
+--- a/packages/package-2/package.json
++++ b/packages/package-2/package.json
+@@ -3 +3 @@
+-  "version": "1.0.0",
++  "version": "2.0.0",
+diff --git a/packages/package-3/package.json b/packages/package-3/package.json
+index SHA..SHA 100644
+--- a/packages/package-3/package.json
++++ b/packages/package-3/package.json
+@@ -3 +3 @@
+-  "version": "1.0.0",
++  "version": "2.0.0",
+diff --git a/packages/package-4/package.json b/packages/package-4/package.json
+index SHA..SHA 100644
+--- a/packages/package-4/package.json
++++ b/packages/package-4/package.json
+@@ -3 +3 @@
+-  "version": "1.0.0",
++  "version": "2.0.0",
+diff --git a/packages/package-5/package.json b/packages/package-5/package.json
+index SHA..SHA 100644
+--- a/packages/package-5/package.json
++++ b/packages/package-5/package.json
+@@ -3 +3 @@
+-  "version": "1.0.0",
++  "version": "2.0.0",
+diff --git a/packages/package-7/package.json b/packages/package-7/package.json
+index SHA..SHA 100644
+--- a/packages/package-7/package.json
++++ b/packages/package-7/package.json
+@@ -3 +3 @@
+-  "version": "1.0.0",
++  "version": "2.0.0",
+`;
+
+exports[`lerna publish silences lifecycle scripts with --loglevel=silent 1`] = `
+
+Changes:
+ - package-1: 1.0.0 => 1.1.0
+ - package-2: 1.0.0 => 1.1.0
+
+preversion-root
+preversion-package-1
+version-package-1
+version-root
+postversion-package-1
+postversion-root
+`;
+
+exports[`lerna publish updates all transitive dependents 1`] = `
+Array [
+  Object {
+    change: true,
+    description: no local dependencies, four local dependents (three transitive),
+    name: package-1,
+    version: 2.0.0,
+  },
+  Object {
+    dependencies: Object {
+      package-1: ^2.0.0,
+    },
+    description: one local dependency, one direct dependent, no transitive dependencies,
+    name: package-2,
+    version: 2.0.0,
+  },
+  Object {
+    dependencies: Object {
+      package-2: ^2.0.0,
+    },
+    description: one local dependency, one direct dependent, one transitive dependency,
+    name: package-3,
+    version: 2.0.0,
+  },
+  Object {
+    dependencies: Object {
+      package-3: ^2.0.0,
+    },
+    description: one local dependency, one direct dependent, two transitive dependencies,
+    name: package-4,
+    version: 2.0.0,
+  },
+  Object {
+    dependencies: Object {
+      package-4: ^2.0.0,
+    },
+    description: one local dependency, no dependents, three transitive dependencies,
+    name: package-5,
+    version: 2.0.0,
+  },
+]
+`;
+
+exports[`lerna publish updates fixed versions: commit 1`] = `
+v1.0.1
+
+`;
+
+exports[`lerna publish updates fixed versions: packages 1`] = `
+Array [
+  Object {
+    name: package-1,
+    version: 1.0.1,
+  },
+  Object {
+    dependencies: Object {
+      package-1: ^1.0.1,
+    },
+    name: package-2,
+    version: 1.0.1,
+  },
+  Object {
+    devDependencies: Object {
+      package-2: ^1.0.1,
+    },
+    name: package-3,
+    peerDependencies: Object {
+      package-2: ^1.0.0,
+    },
+    version: 1.0.1,
+  },
+  Object {
+    dependencies: Object {
+      package-1: ^0.0.0,
+    },
+    name: package-4,
+    version: 1.0.1,
+  },
+  Object {
+    dependencies: Object {
+      package-1: ^1.0.1,
+    },
+    name: package-5,
+    optionalDependencies: Object {
+      package-3: ^1.0.1,
+    },
+    private: true,
+    version: 1.0.1,
+  },
+]
+`;
+
+exports[`lerna publish updates fixed versions: stdout 1`] = `
+
+Changes:
+ - package-1: 1.0.0 => 1.0.1
+ - package-2: 1.0.0 => 1.0.1
+ - package-3: 1.0.0 => 1.0.1
+ - package-4: 1.0.0 => 1.0.1
+ - package-5: 1.0.0 => 1.0.1 (private)
+
+`;
+
+exports[`lerna publish updates independent versions: commit 1`] = `
+Publish
+
+ - package-1@2.0.0
+ - package-2@3.0.0
+ - package-3@4.0.0
+ - package-4@5.0.0
+ - package-5@6.0.0
+
+`;
+
+exports[`lerna publish updates independent versions: packages 1`] = `
+Array [
+  Object {
+    name: package-1,
+    version: 2.0.0,
+  },
+  Object {
+    dependencies: Object {
+      package-1: ^2.0.0,
+    },
+    name: package-2,
+    version: 3.0.0,
+  },
+  Object {
+    devDependencies: Object {
+      package-2: ^3.0.0,
+    },
+    name: package-3,
+    version: 4.0.0,
+  },
+  Object {
+    dependencies: Object {
+      package-1: ^0.0.0,
+    },
+    name: package-4,
+    version: 5.0.0,
+  },
+  Object {
+    dependencies: Object {
+      package-3: ^4.0.0,
+    },
+    name: package-5,
+    private: true,
+    version: 6.0.0,
+  },
+]
+`;
+
+exports[`lerna publish updates independent versions: stdout 1`] = `
+
+Changes:
+ - package-1: 1.0.0 => 2.0.0
+ - package-2: 2.0.0 => 3.0.0
+ - package-3: 3.0.0 => 4.0.0
+ - package-4: 4.0.0 => 5.0.0
+ - package-5: 5.0.0 => 6.0.0 (private)
+
+`;
+
+exports[`lerna publish uses default suffix with canary flag: stdout 1`] = `
+
+Changes:
+ - package-1: 1.0.0 => 1.1.0-alpha.SHA
+ - package-2: 1.0.0 => 1.1.0-alpha.SHA
+ - package-3: 1.0.0 => 1.1.0-alpha.SHA
+ - package-4: 1.0.0 => 1.1.0-alpha.SHA
+ - package-5: 1.0.0 => 1.1.0-alpha.SHA (private)
+
+`;

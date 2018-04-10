@@ -1,0 +1,13 @@
+{
+  "name": "lifecycle",
+  "version": "0.0.0-monorepo",
+  "scripts": {
+    "preversion": "echo preversion-root",
+    "version": "echo version-root",
+    "postversion": "echo postversion-root",
+    "prepublish": "echo prepublish-root",
+    "prepare": "echo prepare-root",
+    "prepublishOnly": "echo prepublishOnly-root",
+    "postpublish": "echo postpublish-root"
+  }
+}

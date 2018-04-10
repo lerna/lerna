@@ -1,0 +1,593 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PublishCommand --allow-branch with --canary does not restrict publishing canary versions: updated packages 1`] = `
+Object {
+  "packages/package-1": "1.1.0-alpha.deadbeef",
+  "packages/package-2": "1.1.0-alpha.deadbeef",
+  "packages/package-3": "1.1.0-alpha.deadbeef",
+  "packages/package-4": "1.1.0-alpha.deadbeef",
+  "packages/package-5": "1.1.0-alpha.deadbeef",
+}
+`;
+
+exports[`PublishCommand --conventional-commits fixed mode should use conventional-commits utility to guess version bump and generate CHANGELOG: git added files 1`] = `
+Array [
+  "lerna.json",
+  "packages/package-1/package.json",
+  "packages/package-2/package.json",
+  "packages/package-3/package.json",
+  "packages/package-4/package.json",
+  "packages/package-5/package.json",
+  "packages/package-1/CHANGELOG.md",
+  "packages/package-2/CHANGELOG.md",
+  "packages/package-3/CHANGELOG.md",
+  "packages/package-4/CHANGELOG.md",
+  "packages/package-5/CHANGELOG.md",
+  "CHANGELOG.md",
+]
+`;
+
+exports[`PublishCommand --conventional-commits fixed mode should use conventional-commits utility to guess version bump and generate CHANGELOG: git commit message 1`] = `"v2.0.0"`;
+
+exports[`PublishCommand --conventional-commits independent mode should use conventional-commits utility to guess version bump and generate CHANGELOG: git added files 1`] = `
+Array [
+  "packages/package-1/package.json",
+  "packages/package-2/package.json",
+  "packages/package-3/package.json",
+  "packages/package-4/package.json",
+  "packages/package-5/package.json",
+  "packages/package-1/CHANGELOG.md",
+  "packages/package-2/CHANGELOG.md",
+  "packages/package-3/CHANGELOG.md",
+  "packages/package-4/CHANGELOG.md",
+  "packages/package-5/CHANGELOG.md",
+]
+`;
+
+exports[`PublishCommand --conventional-commits independent mode should use conventional-commits utility to guess version bump and generate CHANGELOG: git commit message 1`] = `
+"Publish
+
+ - package-1@1.0.1
+ - package-2@2.1.0
+ - package-3@4.0.0
+ - package-4@4.1.0
+ - package-5@5.0.1"
+`;
+
+exports[`PublishCommand indepdendent mode with --cd-version should bump to prerelease versions with --cd-version prerelease (no --preid): updated packages 1`] = `
+Object {
+  "packages/package-1": "1.0.1-0",
+  "packages/package-2": "2.0.1-0",
+  "packages/package-3": "3.0.1-0",
+  "packages/package-4": "4.0.1-0",
+  "packages/package-5": "5.0.1-0",
+}
+`;
+
+exports[`PublishCommand indepdendent mode with --cd-version should bump to prerelease versions with --cd-version=prerelease --preid=foo: updated packages 1`] = `
+Object {
+  "packages/package-1": "1.0.1-foo.0",
+  "packages/package-2": "2.0.1-foo.0",
+  "packages/package-3": "3.0.1-foo.0",
+  "packages/package-4": "4.0.1-foo.0",
+  "packages/package-5": "5.0.1-foo.0",
+}
+`;
+
+exports[`PublishCommand indepdendent mode with --cd-version should use semver increments when passed to cdVersion flag: git commit message 1`] = `
+"Publish
+
+ - package-1@1.0.1
+ - package-2@2.0.1
+ - package-3@3.0.1
+ - package-4@4.0.1
+ - package-5@5.0.1"
+`;
+
+exports[`PublishCommand independent mode --canary --npm-tag=next --yes --exact should publish the changed packages: npm published 1`] = `
+Array [
+  Object {
+    "dir": "packages/package-1",
+    "tag": "next",
+  },
+  Object {
+    "dir": "packages/package-3",
+    "tag": "next",
+  },
+  Object {
+    "dir": "packages/package-4",
+    "tag": "next",
+  },
+  Object {
+    "dir": "packages/package-2",
+    "tag": "next",
+  },
+]
+`;
+
+exports[`PublishCommand independent mode as canary should publish the changed packages: npm published 1`] = `
+Array [
+  Object {
+    "dir": "packages/package-1",
+    "tag": "canary",
+  },
+  Object {
+    "dir": "packages/package-3",
+    "tag": "canary",
+  },
+  Object {
+    "dir": "packages/package-4",
+    "tag": "canary",
+  },
+  Object {
+    "dir": "packages/package-2",
+    "tag": "canary",
+  },
+]
+`;
+
+exports[`PublishCommand independent mode as canary should publish the changed packages: updated packages 1`] = `
+Object {
+  "packages/package-1": "1.1.0-alpha.deadbeef",
+  "packages/package-2": "2.1.0-alpha.deadbeef",
+  "packages/package-3": "3.1.0-alpha.deadbeef",
+  "packages/package-4": "4.1.0-alpha.deadbeef",
+  "packages/package-5": "5.1.0-alpha.deadbeef",
+}
+`;
+
+exports[`PublishCommand independent mode should publish the changed packages in independent mode: console output 1`] = `
+"
+Changes:
+ - package-1: 1.0.0 => 1.0.1
+ - package-2: 2.0.0 => 1.1.0
+ - package-3: 3.0.0 => 2.0.0
+ - package-4: 4.0.0 => 1.1.0
+ - package-5: 5.0.0 => 1.0.1 (private)
+
+Successfully published:
+ - package-1@1.0.1
+ - package-2@1.1.0
+ - package-3@2.0.0
+ - package-4@1.1.0"
+`;
+
+exports[`PublishCommand independent mode should publish the changed packages in independent mode: git added files 1`] = `
+Array [
+  "packages/package-1/package.json",
+  "packages/package-2/package.json",
+  "packages/package-3/package.json",
+  "packages/package-4/package.json",
+  "packages/package-5/package.json",
+]
+`;
+
+exports[`PublishCommand independent mode should publish the changed packages in independent mode: git commit message 1`] = `
+"Publish
+
+ - package-1@1.0.1
+ - package-2@1.1.0
+ - package-3@2.0.0
+ - package-4@1.1.0
+ - package-5@1.0.1"
+`;
+
+exports[`PublishCommand independent mode should publish the changed packages in independent mode: git tags added 1`] = `
+Array [
+  "package-1@1.0.1",
+  "package-2@1.1.0",
+  "package-3@2.0.0",
+  "package-4@1.1.0",
+  "package-5@1.0.1",
+]
+`;
+
+exports[`PublishCommand independent mode should publish the changed packages in independent mode: npm published 1`] = `
+Array [
+  Object {
+    "dir": "packages/package-1",
+    "tag": undefined,
+  },
+  Object {
+    "dir": "packages/package-3",
+    "tag": undefined,
+  },
+  Object {
+    "dir": "packages/package-4",
+    "tag": undefined,
+  },
+  Object {
+    "dir": "packages/package-2",
+    "tag": undefined,
+  },
+]
+`;
+
+exports[`PublishCommand independent mode should publish the changed packages in independent mode: updated packages 1`] = `
+Object {
+  "packages/package-1": "1.0.1",
+  "packages/package-2": "1.1.0",
+  "packages/package-3": "2.0.0",
+  "packages/package-4": "1.1.0",
+  "packages/package-5": "1.0.1",
+}
+`;
+
+exports[`PublishCommand independent mode with --message commits changes with a custom message: git commit message 1`] = `
+"chore: Custom publish message
+
+ - package-1@1.0.1
+ - package-2@1.0.1
+ - package-3@1.0.1
+ - package-4@1.0.1
+ - package-5@1.0.1"
+`;
+
+exports[`PublishCommand lifecycle scripts logs lifecycle errors but preserves chain: updated packages 1`] = `
+Object {
+  "packages/package-1": "1.0.1",
+  "packages/package-2": "1.0.1",
+}
+`;
+
+exports[`PublishCommand normal mode as canary should publish the changed packages: npm published 1`] = `
+Array [
+  Object {
+    "dir": "packages/package-1",
+    "tag": "canary",
+  },
+  Object {
+    "dir": "packages/package-3",
+    "tag": "canary",
+  },
+  Object {
+    "dir": "packages/package-4",
+    "tag": "canary",
+  },
+  Object {
+    "dir": "packages/package-2",
+    "tag": "canary",
+  },
+]
+`;
+
+exports[`PublishCommand normal mode as canary should publish the changed packages: updated packages 1`] = `
+Object {
+  "packages/package-1": "1.1.0-alpha.deadbeef",
+  "packages/package-2": "1.1.0-alpha.deadbeef",
+  "packages/package-3": "1.1.0-alpha.deadbeef",
+  "packages/package-4": "1.1.0-alpha.deadbeef",
+  "packages/package-5": "1.1.0-alpha.deadbeef",
+}
+`;
+
+exports[`PublishCommand normal mode as canary should use the provided value as the meta suffix: updated packages 1`] = `
+Object {
+  "packages/package-1": "1.1.0-beta.deadbeef",
+  "packages/package-2": "1.1.0-beta.deadbeef",
+  "packages/package-3": "1.1.0-beta.deadbeef",
+  "packages/package-4": "1.1.0-beta.deadbeef",
+  "packages/package-5": "1.1.0-beta.deadbeef",
+}
+`;
+
+exports[`PublishCommand normal mode as canary should work with --canary and --cd-version=patch: updated packages 1`] = `
+Object {
+  "packages/package-1": "1.0.1-alpha.deadbeef",
+  "packages/package-2": "1.0.1-alpha.deadbeef",
+  "packages/package-3": "1.0.1-alpha.deadbeef",
+  "packages/package-4": "1.0.1-alpha.deadbeef",
+  "packages/package-5": "1.0.1-alpha.deadbeef",
+}
+`;
+
+exports[`PublishCommand normal mode should publish the changed packages: console output 1`] = `
+"
+Changes:
+ - package-1: 1.0.0 => 1.0.1
+ - package-2: 1.0.0 => 1.0.1
+ - package-3: 1.0.0 => 1.0.1
+ - package-4: 1.0.0 => 1.0.1
+ - package-5: 1.0.0 => 1.0.1 (private)
+
+Successfully published:
+ - package-1@1.0.1
+ - package-2@1.0.1
+ - package-3@1.0.1
+ - package-4@1.0.1"
+`;
+
+exports[`PublishCommand normal mode should publish the changed packages: git added files 1`] = `
+Array [
+  "lerna.json",
+  "packages/package-1/package.json",
+  "packages/package-2/package.json",
+  "packages/package-3/package.json",
+  "packages/package-4/package.json",
+  "packages/package-5/package.json",
+]
+`;
+
+exports[`PublishCommand normal mode should publish the changed packages: npm published 1`] = `
+Array [
+  Object {
+    "dir": "packages/package-1",
+    "tag": undefined,
+  },
+  Object {
+    "dir": "packages/package-3",
+    "tag": undefined,
+  },
+  Object {
+    "dir": "packages/package-4",
+    "tag": undefined,
+  },
+  Object {
+    "dir": "packages/package-2",
+    "tag": undefined,
+  },
+]
+`;
+
+exports[`PublishCommand normal mode should publish the changed packages: prompt 1`] = `
+Array [
+  Array [
+    "Select a new version (currently 1.0.0)",
+    Object {
+      "choices": Array [
+        Object {
+          "name": "Patch (1.0.1)",
+          "value": "1.0.1",
+        },
+        Object {
+          "name": "Minor (1.1.0)",
+          "value": "1.1.0",
+        },
+        Object {
+          "name": "Major (2.0.0)",
+          "value": "2.0.0",
+        },
+        Object {
+          "name": "Prepatch (1.0.1-0)",
+          "value": "1.0.1-0",
+        },
+        Object {
+          "name": "Preminor (1.1.0-0)",
+          "value": "1.1.0-0",
+        },
+        Object {
+          "name": "Premajor (2.0.0-0)",
+          "value": "2.0.0-0",
+        },
+        Object {
+          "name": "Prerelease",
+          "value": "PRERELEASE",
+        },
+        Object {
+          "name": "Custom",
+          "value": "CUSTOM",
+        },
+      ],
+    },
+  ],
+]
+`;
+
+exports[`PublishCommand normal mode should publish the changed packages: updated packages 1`] = `
+Object {
+  "packages/package-1": "1.0.1",
+  "packages/package-2": "1.0.1",
+  "packages/package-3": "1.0.1",
+  "packages/package-4": "1.0.1",
+  "packages/package-5": "1.0.1",
+}
+`;
+
+exports[`PublishCommand normal mode with --ignore-changes does not publish packages with ignored changes: git added files 1`] = `
+Array [
+  "lerna.json",
+  "packages/package-4/package.json",
+]
+`;
+
+exports[`PublishCommand normal mode with --ignore-changes does not publish packages with ignored changes: npm published 1`] = `
+Array [
+  Object {
+    "dir": "packages/package-4",
+    "tag": undefined,
+  },
+]
+`;
+
+exports[`PublishCommand normal mode with --ignore-changes maps deprecated --ignore: git added files 1`] = `
+Array [
+  "lerna.json",
+  "packages/package-4/package.json",
+]
+`;
+
+exports[`PublishCommand normal mode with --ignore-changes maps deprecated --ignore: npm published 1`] = `
+Array [
+  Object {
+    "dir": "packages/package-4",
+    "tag": undefined,
+  },
+]
+`;
+
+exports[`PublishCommand normal mode with --npm-tag should publish the changed packages with npm tag: npm published 1`] = `
+Array [
+  Object {
+    "dir": "packages/package-1",
+    "tag": "custom",
+  },
+  Object {
+    "dir": "packages/package-3",
+    "tag": "custom",
+  },
+  Object {
+    "dir": "packages/package-4",
+    "tag": "custom",
+  },
+  Object {
+    "dir": "packages/package-2",
+    "tag": "custom",
+  },
+]
+`;
+
+exports[`PublishCommand normal mode with --registry passes registry to npm commands: npm published 1`] = `
+Array [
+  Object {
+    "dir": "packages/package-1",
+    "tag": undefined,
+  },
+  Object {
+    "dir": "packages/package-3",
+    "tag": undefined,
+  },
+  Object {
+    "dir": "packages/package-4",
+    "tag": undefined,
+  },
+  Object {
+    "dir": "packages/package-2",
+    "tag": undefined,
+  },
+]
+`;
+
+exports[`PublishCommand normal mode with --skip-git and --skip-npm should update versions but not push changes or publish: updated packages 1`] = `
+Object {
+  "packages/package-1": "1.0.1",
+  "packages/package-2": "1.0.1",
+  "packages/package-3": "1.0.1",
+  "packages/package-4": "1.0.1",
+  "packages/package-5": "1.0.1",
+}
+`;
+
+exports[`PublishCommand normal mode with --skip-git should publish the changed packages: npm published 1`] = `
+Array [
+  Object {
+    "dir": "packages/package-1",
+    "tag": undefined,
+  },
+  Object {
+    "dir": "packages/package-3",
+    "tag": undefined,
+  },
+  Object {
+    "dir": "packages/package-4",
+    "tag": undefined,
+  },
+  Object {
+    "dir": "packages/package-2",
+    "tag": undefined,
+  },
+]
+`;
+
+exports[`PublishCommand normal mode with --temp-tag should publish the changed packages with a temp tag: npm dist-tag add 1`] = `
+Object {
+  "packages/package-1": "package-1@1.0.1 latest",
+  "packages/package-2": "package-2@1.0.1 latest",
+  "packages/package-3": "package-3@1.0.1 latest",
+  "packages/package-4": "package-4@1.0.1 latest",
+}
+`;
+
+exports[`PublishCommand normal mode with --temp-tag should publish the changed packages with a temp tag: npm dist-tag rm 1`] = `
+Object {
+  "packages/package-1": "lerna-temp",
+  "packages/package-2": "lerna-temp",
+  "packages/package-3": "lerna-temp",
+  "packages/package-4": "lerna-temp",
+}
+`;
+
+exports[`PublishCommand normal mode with --temp-tag should publish the changed packages with a temp tag: npm published 1`] = `
+Array [
+  Object {
+    "dir": "packages/package-1",
+    "tag": "lerna-temp",
+  },
+  Object {
+    "dir": "packages/package-3",
+    "tag": "lerna-temp",
+  },
+  Object {
+    "dir": "packages/package-4",
+    "tag": "lerna-temp",
+  },
+  Object {
+    "dir": "packages/package-2",
+    "tag": "lerna-temp",
+  },
+]
+`;
+
+exports[`PublishCommand normal mode with previous prerelease publishes changed & prereleased packages if --cd-version is non-prerelease: updated packages 1`] = `
+Object {
+  "packages/package-3": "1.0.1",
+  "packages/package-4": "1.0.1",
+  "packages/package-5": "1.0.1",
+}
+`;
+
+exports[`PublishCommand normal mode with previous prerelease should not publish prereleased packages if --cd-version is a pre-* increment: updated packages 1`] = `
+Object {
+  "packages/package-3": "1.0.1-beta.4",
+}
+`;
+
+exports[`PublishCommand publishes all transitive dependents after change 1`] = `
+Object {
+  "packages/package-1": "2.0.0",
+  "packages/package-2": "2.0.0",
+  "packages/package-3": "2.0.0",
+  "packages/package-4": "2.0.0",
+  "packages/package-5": "2.0.0",
+}
+`;
+
+exports[`PublishCommand with git-hosted sibling dependencies updates gitCommittish versions as sshurls 1`] = `
+Object {
+  "packages/package-1": "1.1.0",
+  "packages/package-2": "1.1.0",
+  "packages/package-3": "1.1.0",
+  "packages/package-4": "1.1.0",
+  "packages/package-5": "1.1.0",
+}
+`;
+
+exports[`PublishCommand with git-hosted sibling dependencies updates gitRange versions as sshurls 1`] = `
+Object {
+  "packages/package-1": "1.0.1-beta.0",
+  "packages/package-2": "1.0.1-beta.0",
+  "packages/package-3": "1.0.1-beta.0",
+  "packages/package-4": "1.0.1-beta.0",
+  "packages/package-5": "1.0.1-beta.0",
+}
+`;
+
+exports[`PublishCommand with relative file: specifiers falls back to existing relative version when it is not updated 1`] = `
+Object {
+  "packages/package-1": "1.1.0",
+  "packages/package-2": "2.1.0",
+  "packages/package-3": "3.1.0",
+  "packages/package-4": "4.1.0",
+  "packages/package-5": "5.1.0",
+}
+`;
+
+exports[`PublishCommand with relative file: specifiers overwrites relative link with local version before npm publish but after git commit 1`] = `
+Object {
+  "packages/package-1": "2.0.0",
+  "packages/package-2": "2.0.0",
+  "packages/package-3": "2.0.0",
+  "packages/package-4": "2.0.0",
+  "packages/package-5": "2.0.0",
+  "packages/package-7": "2.0.0",
+}
+`;

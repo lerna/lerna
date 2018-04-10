@@ -1,0 +1,12 @@
+{
+  "name": "@lerna-test/load-manifests",
+  "version": "0.0.0-test-only",
+  "description": "A local test helper",
+  "main": "index.js",
+  "private": true,
+  "license": "MIT",
+  "dependencies": {
+    "globby": "^8.0.1",
+    "load-json-file": "^4.0.0"
+  }
+}

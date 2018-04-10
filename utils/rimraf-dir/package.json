@@ -1,0 +1,38 @@
+{
+  "name": "@lerna/rimraf-dir",
+  "version": "3.0.0-beta.13",
+  "description": "Run rimraf on a directory in a subprocess to hack around slowness",
+  "keywords": [
+    "lerna",
+    "utils"
+  ],
+  "homepage": "https://github.com/lerna/lerna",
+  "license": "MIT",
+  "author": {
+    "name": "Daniel Stockman",
+    "url": "https://github.com/evocateur"
+  },
+  "files": [
+    "rimraf-dir.js"
+  ],
+  "main": "rimraf-dir.js",
+  "engines": {
+    "node": ">= 6.9.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lerna/lerna.git"
+  },
+  "scripts": {
+    "test": "echo \"Run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@lerna/child-process": "file:../../core/child-process",
+    "npmlog": "^4.1.2",
+    "path-exists": "^3.0.0",
+    "rimraf": "^2.6.2"
+  }
+}

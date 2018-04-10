@@ -1,3 +1,444 @@
+# Change Log
+
+All notable changes to this project will be documented in this file.
+See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
+
+<a name="3.0.0-beta.15"></a>
+# [3.0.0-beta.15](https://github.com/lerna/lerna/compare/v3.0.0-beta.14...v3.0.0-beta.15) (2018-04-09)
+
+
+### Bug Fixes
+
+* **project:** Pin --exact require-from-string v2.0.1 to avoid integrity error with v2.0.2 ([32a38ad](https://github.com/lerna/lerna/commit/32a38ad))
+* **publish:** Allow tag check to fail with strong warning ([#1355](https://github.com/lerna/lerna/issues/1355)) ([f5268cd](https://github.com/lerna/lerna/commit/f5268cd))
+
+
+### Features
+
+* **bootstrap:** Use `npm ci` with `--ci` option ([#1360](https://github.com/lerna/lerna/issues/1360)) ([d7e33c6](https://github.com/lerna/lerna/commit/d7e33c6))
+* **conventional-commits:** Support local file presets ([a1bff40](https://github.com/lerna/lerna/commit/a1bff40))
+
+
+
+
+
+<a name="3.0.0-beta.14"></a>
+# [3.0.0-beta.14](https://github.com/lerna/lerna/compare/v3.0.0-beta.13...v3.0.0-beta.14) (2018-04-03)
+
+
+### Bug Fixes
+
+* **create:** Actually publish the module data helper ([4775cc4](https://github.com/lerna/lerna/commit/4775cc4))
+* **logging:** Log failures from package scripts once, not twice ([436cfe1](https://github.com/lerna/lerna/commit/436cfe1))
+* **publish:** Ensure optionalDependencies are updated during publish to registry ([559b731](https://github.com/lerna/lerna/commit/559b731))
+
+
+
+
+
+<a name="3.0.0-beta.13"></a>
+# [3.0.0-beta.13](https://github.com/lerna/lerna/compare/v3.0.0-beta.12...v3.0.0-beta.13) (2018-03-31)
+
+
+### Bug Fixes
+
+* **child-process:** Do not merge lines of streaming stderr ([59dc2d4](https://github.com/lerna/lerna/commit/59dc2d4)), closes [#994](https://github.com/lerna/lerna/issues/994)
+* Use ValidationError instead of Error ([bea6bc3](https://github.com/lerna/lerna/commit/bea6bc3))
+* **run:** Exit early when no packages contain the targeted lifecycle ([c8a5526](https://github.com/lerna/lerna/commit/c8a5526))
+
+
+### Features
+
+* Enable progress bars only when necessary ([b766c83](https://github.com/lerna/lerna/commit/b766c83))
+
+
+
+
+
+<a name="3.0.0-beta.12"></a>
+# [3.0.0-beta.12](https://github.com/lerna/lerna/compare/v3.0.0-beta.11...v3.0.0-beta.12) (2018-03-30)
+
+
+### Bug Fixes
+
+* **create:** Silently ignore missing builtin npmrc ([1523520](https://github.com/lerna/lerna/commit/1523520)), closes [#1353](https://github.com/lerna/lerna/issues/1353)
+* **npm-conf:** Replace env vars even in config keys ([3c9a5de](https://github.com/lerna/lerna/commit/3c9a5de))
+
+
+### Features
+
+* **package:** Add `serialize()` method ([fdec3ac](https://github.com/lerna/lerna/commit/fdec3ac))
+* **package:** Add Map-like get/set methods, remove raw json getter ([707d1f0](https://github.com/lerna/lerna/commit/707d1f0))
+* **project:** Merge `package` and `packageJson` into `manifest` ([9a47ff7](https://github.com/lerna/lerna/commit/9a47ff7))
+* Add --no-prefix for streaming output ([#1352](https://github.com/lerna/lerna/issues/1352)) ([36c1fad](https://github.com/lerna/lerna/commit/36c1fad))
+
+
+### BREAKING CHANGES
+
+* **package:** The `Package` class no longer provides direct access to the JSON object
+used to construct the instance. Map-like `get()`/`set(val)` methods are
+available to modify the internal representation.
+
+
+
+
+
+<a name="3.0.0-beta.11"></a>
+# [3.0.0-beta.11](https://github.com/lerna/lerna/compare/v3.0.0-beta.10...v3.0.0-beta.11) (2018-03-29)
+
+
+### Bug Fixes
+
+* **exec:** Clarify --no-bail option ([6e4c6fd](https://github.com/lerna/lerna/commit/6e4c6fd))
+* **publish:** Write temporary annotations once, not repeatedly ([6abae76](https://github.com/lerna/lerna/commit/6abae76))
+
+
+### Features
+
+* **bootstrap:** Inherit stdio during root-only install ([fd8c391](https://github.com/lerna/lerna/commit/fd8c391))
+* **bootstrap:** Short-circuit when local file: specifiers are detected in the root ([d8a8f03](https://github.com/lerna/lerna/commit/d8a8f03))
+* **child-process:** Allow exec() opts.stdio override ([fd84013](https://github.com/lerna/lerna/commit/fd84013))
+* **npm-install:** Allow opts.stdio override ([4ba5e74](https://github.com/lerna/lerna/commit/4ba5e74))
+* Execute atomic publish lifecycle during lerna publish ([#1348](https://github.com/lerna/lerna/issues/1348)) ([45efa24](https://github.com/lerna/lerna/commit/45efa24))
+* Support `optionalDependencies` ([b73e19d](https://github.com/lerna/lerna/commit/b73e19d)), closes [#121](https://github.com/lerna/lerna/issues/121)
+* **npm-run-script:** Accept opts.reject ([7c5a791](https://github.com/lerna/lerna/commit/7c5a791))
+* **run:** Add --no-bail option ([893fcc8](https://github.com/lerna/lerna/commit/893fcc8)), closes [#1351](https://github.com/lerna/lerna/issues/1351)
+
+
+
+
+
+<a name="3.0.0-beta.10"></a>
+# [3.0.0-beta.10](https://github.com/lerna/lerna/compare/v3.0.0-beta.9...v3.0.0-beta.10) (2018-03-27)
+
+
+### Bug Fixes
+
+* **add:** Use bootstrap factory, not handler ([dbfc891](https://github.com/lerna/lerna/commit/dbfc891))
+
+
+### Features
+
+* **commands:** Delay require of command instantiation ([a1284f3](https://github.com/lerna/lerna/commit/a1284f3))
+* **project:** Inherit configuration with yargs-like "extends" ([0b28ef5](https://github.com/lerna/lerna/commit/0b28ef5)), closes [#1281](https://github.com/lerna/lerna/issues/1281)
+
+
+### BREAKING CHANGES
+
+* **commands:** The default export of command packages is now a factory, not the subclass (which is now a named export).
+
+
+
+
+
+<a name="3.0.0-beta.9"></a>
+# [3.0.0-beta.9](https://github.com/lerna/lerna/compare/v3.0.0-beta.8...v3.0.0-beta.9) (2018-03-24)
+
+
+### Bug Fixes
+
+* **filter-options:** Move include/exclude validation into filter-packages ([503251d](https://github.com/lerna/lerna/commit/503251d))
+* **git-utils:** Remove unused methods, stop mocking tests ([3e00d7a](https://github.com/lerna/lerna/commit/3e00d7a))
+* **publish:** Split `--skip-*` properly, leave working tree clean ([5b4b2c9](https://github.com/lerna/lerna/commit/5b4b2c9))
+
+
+### Features
+
+* **command:** Remove legacy config handling ([d305a38](https://github.com/lerna/lerna/commit/d305a38))
+* **command:** Rename this.repository -> this.project ([43e98a0](https://github.com/lerna/lerna/commit/43e98a0))
+* **project:** Normalize config.commands -> config.command ([24e55e3](https://github.com/lerna/lerna/commit/24e55e3))
+* **project:** Use cosmiconfig to locate and read lerna.json ([b8c2789](https://github.com/lerna/lerna/commit/b8c2789))
+
+
+### BREAKING CHANGES
+
+* **publish:** Previously, gitHead annotations were leftover if `--skip-npm` was passed,
+despite no actual requirement for that property when no publishing is going on.
+
+Now, all publish-related operations are truly skipped with `--skip-npm`,
+and all git commit/push-related operations are skipped with `--skip-git`.
+Passing `--skip-npm` will now also always push to remote, which represents
+a breaking change from 2.x behavior.
+
+Thanks @KingScooty for raising the issue!
+* **command:** lerna.json `bootstrapConfig` and `publishConfig` namespaces are no longer honored.
+These config blocks should be moved to `command.bootstrap` and `command.publish`, respectively.
+
+
+
+
+
+<a name="3.0.0-beta.8"></a>
+# [3.0.0-beta.8](https://github.com/lerna/lerna/compare/v3.0.0-beta.7...v3.0.0-beta.8) (2018-03-22)
+
+
+### Bug Fixes
+
+* **add:** Support tag and version specifiers ([5df0fc8](https://github.com/lerna/lerna/commit/5df0fc8)), closes [#1306](https://github.com/lerna/lerna/issues/1306)
+* **create:** Skip repository property when git remote is missing ([98c8be6](https://github.com/lerna/lerna/commit/98c8be6))
+
+
+### Features
+
+* **init:** Improve ex-nihilo output ([7b80e07](https://github.com/lerna/lerna/commit/7b80e07))
+* **npm-conf:** Add get/setCredentialsByURI() methods ([ad20d8a](https://github.com/lerna/lerna/commit/ad20d8a))
+* **utils:** Add "vendored" npm-conf ([9c24a25](https://github.com/lerna/lerna/commit/9c24a25))
+* **utils:** Add [@lerna](https://github.com/lerna)/map-to-registry ([ce72828](https://github.com/lerna/lerna/commit/ce72828))
+
+
+
+
+
+<a name="3.0.0-beta.7"></a>
+# [3.0.0-beta.7](https://github.com/lerna/lerna/compare/v3.0.0-beta.6...v3.0.0-beta.7) (2018-03-20)
+
+
+### Bug Fixes
+
+* **cli:** Retrieve correct version ([bb2c5e8](https://github.com/lerna/lerna/commit/bb2c5e8))
+
+
+
+
+
+<a name="3.0.0-beta.6"></a>
+# [3.0.0-beta.6](https://github.com/lerna/lerna/compare/v3.0.0-beta.5...v3.0.0-beta.6) (2018-03-19)
+
+**Note:** Version bump only for package lerna
+
+
+
+
+
+<a name="3.0.0-beta.5"></a>
+# [3.0.0-beta.5](https://github.com/lerna/lerna/compare/v3.0.0-beta.4...v3.0.0-beta.5) (2018-03-19)
+
+
+### Bug Fixes
+
+* **bootstrap:** Move --hoist/--nohoist coerce into class ([8877aa0](https://github.com/lerna/lerna/commit/8877aa0)), closes [#1337](https://github.com/lerna/lerna/issues/1337)
+
+
+
+
+
+<a name="3.0.0-beta.4"></a>
+# [3.0.0-beta.4](https://github.com/lerna/lerna/compare/v3.0.0-beta.3...v3.0.0-beta.4) (2018-03-19)
+
+
+### Bug Fixes
+
+* **clean-stack:** Try to avoid causing errors during error cleanup ([89f9d3b](https://github.com/lerna/lerna/commit/89f9d3b))
+* Respect durable hoist configuration ([2081640](https://github.com/lerna/lerna/commit/2081640)), closes [#1325](https://github.com/lerna/lerna/issues/1325)
+* Use correct instance property override ([9249221](https://github.com/lerna/lerna/commit/9249221))
+
+
+### Features
+
+* Add `lerna create` command ([#1326](https://github.com/lerna/lerna/issues/1326)) ([f15b224](https://github.com/lerna/lerna/commit/f15b224))
+
+
+
+
+
+<a name="3.0.0-beta.3"></a>
+# [3.0.0-beta.3](https://github.com/lerna/lerna/compare/v3.0.0-beta.2...v3.0.0-beta.3) (2018-03-15)
+
+
+### Bug Fixes
+
+* **utils:** Use safe relative path when calling git diff ([#1323](https://github.com/lerna/lerna/issues/1323)) ([619c477](https://github.com/lerna/lerna/commit/619c477))
+* ci option should not be visible in help output ([580b2d5](https://github.com/lerna/lerna/commit/580b2d5))
+* fs-extra dependency is a caret range, not exact ([81556d0](https://github.com/lerna/lerna/commit/81556d0))
+
+
+### Features
+
+* Check for upstream changes before attempting to publish ([#1317](https://github.com/lerna/lerna/issues/1317)) ([cef0a69](https://github.com/lerna/lerna/commit/cef0a69))
+* **cli:** Set config.ci from env var ([5452293](https://github.com/lerna/lerna/commit/5452293))
+* **global-options:** Add hidden `ci` option ([86a4d65](https://github.com/lerna/lerna/commit/86a4d65))
+* Upstream changes warn in CI, throw locally ([4de055d](https://github.com/lerna/lerna/commit/4de055d)), closes [#1177](https://github.com/lerna/lerna/issues/1177) [#1317](https://github.com/lerna/lerna/issues/1317)
+* **publish:** Add logging when `--skip-git` or `--skip-npm` are passed ([#1319](https://github.com/lerna/lerna/issues/1319)) ([8eef9ff](https://github.com/lerna/lerna/commit/8eef9ff))
+
+
+
+
+
+<a name="3.0.0-beta.2"></a>
+# [3.0.0-beta.2](https://github.com/lerna/lerna/compare/v3.0.0-beta.1...v3.0.0-beta.2) (2018-03-10)
+
+
+### Bug Fixes
+
+* Move `@lerna/has-dependency-installed` into `commands/bootstrap/lib` ([c09ccbd](https://github.com/lerna/lerna/commit/c09ccbd))
+
+### Features
+
+* Rename `@lerna/fs-utils` => `@lerna/rimraf-dir` ([30451ed](https://github.com/lerna/lerna/commit/30451ed))
+* Replace `@lerna/fs-utils` dependency with `fs-extra` ([9c35a86](https://github.com/lerna/lerna/commit/9c35a86))
+* Replace `@lerna/match-package-name` with `multimatch` ([423f82c](https://github.com/lerna/lerna/commit/423f82c))
+* **filter-packages:** Simplify method signature ([47e1c86](https://github.com/lerna/lerna/commit/47e1c86))
+
+
+### BREAKING CHANGES
+
+* **filter-packages:** The parameters to `filterPackages()` have changed:
+  * Two lists (`include`, `exclude`) have replaced the destructured config object
+
+
+
+
+
+<a name="3.0.0-beta.1"></a>
+# [3.0.0-beta.1](https://github.com/lerna/lerna/compare/v3.0.0-beta.0...v3.0.0-beta.1) (2018-03-09)
+
+
+### Bug Fixes
+
+* **conventional-commits:** output version bump message closer to version heading ([64916d6](https://github.com/lerna/lerna/commit/64916d6))
+* **filter-options:** require a git repo when using --since ([d21b66e](https://github.com/lerna/lerna/commit/d21b66e)), closes [#822](https://github.com/lerna/lerna/issues/822)
+* **init:** lerna init does not, in fact, require git ([d1d69c7](https://github.com/lerna/lerna/commit/d1d69c7))
+* **publish:** Checkout manifest changes serially ([ce4a4b1](https://github.com/lerna/lerna/commit/ce4a4b1))
+* **publish:** default root manifest name when missing ([a504d7e](https://github.com/lerna/lerna/commit/a504d7e)), closes [#1305](https://github.com/lerna/lerna/issues/1305)
+* **publish:** guard against undefined tag ([d8ce253](https://github.com/lerna/lerna/commit/d8ce253)), closes [#1311](https://github.com/lerna/lerna/issues/1311)
+* **publish:** Respect pkg.publishConfig.tag ([04b256a](https://github.com/lerna/lerna/commit/04b256a)), closes [#1311](https://github.com/lerna/lerna/issues/1311)
+* **publish:** work around yarn "link:" intransigency ([ddfb517](https://github.com/lerna/lerna/commit/ddfb517))
+
+### Features
+
+* **collect-packages:** simplify signature ([39170cf](https://github.com/lerna/lerna/commit/39170cf))
+* **diff:** filter diff output with --ignore-changes ([c27c2e0](https://github.com/lerna/lerna/commit/c27c2e0))
+* **filter-options:** Exclude private packages with --no-private ([6674d18](https://github.com/lerna/lerna/commit/6674d18))
+
+
+### BREAKING CHANGES
+
+* **collect-packages:** Formerly a config object, it is now two parameters, only the first of
+which (rootPath) is required. The second parameter is a list of package
+location globs, defaulting to lerna's default of `["packages/*"]`.
+
+
+
+
+
+## v3.0.0-beta.0 (2018-03-07)
+
+This is the first `lerna` release published by `lerna` itself. :tada:
+
+#### :boom: Breaking Change
+
+* [#1307](https://github.com/lerna/lerna/pull/1307) Convert `lerna/lerna` into a `lerna`-based monorepo. ([@evocateur](https://github.com/evocateur))
+
+* **Rename `lerna publish` flag `--ignore` to `--ignore-changes`** ([8c92956](https://github.com/lerna/lerna/commit/8c92956))
+
+  This resolves previous ambiguity as to what exactly was intended by the "ignore" config for lerna publish,
+  which was _not_ intended to be identical to the filtering option `--ignore`.
+
+  The old option will still work when found in `lerna.json` config, but it is recommended to migrate to the
+  new option name to ensure future compatibility.
+
+#### :rocket: Enhancement
+
+* [#1310](https://github.com/lerna/lerna/pull/1310) Add gitHead property to package.json before publish. ([@evocateur](https://github.com/evocateur))
+
+#### Committers: 1
+
+* Daniel Stockman ([evocateur](https://github.com/evocateur))
+
+## v3.0.0-alpha.3 (2018-03-03)
+
+#### :bug: Bug Fix
+
+* [#1302](https://github.com/lerna/lerna/pull/1302) Use npm-lifecycle to run solitary lifecycle phases. ([@evocateur](https://github.com/evocateur))
+
+#### :nail_care: Polish
+
+* [#1300](https://github.com/lerna/lerna/pull/1300) Disable all non-error logging when stdout is piped. ([@evocateur](https://github.com/evocateur))
+
+#### Committers: 1
+
+* Daniel Stockman ([evocateur](https://github.com/evocateur))
+
+## v3.0.0-alpha.2 (2018-03-02)
+
+#### :bug: Bug Fix
+
+* Sort packages correctly ([2ead3107](https://github.com/lerna/lerna/commit/2ead3107))
+* Don't resolve relative links in private packages ([04760f38](https://github.com/lerna/lerna/commit/04760f38))
+
+#### :nail_care: Polish
+
+* Disable progress in commands that only output lists ([e91c9f2c](https://github.com/lerna/lerna/commit/e91c9f2c))
+
+## v3.0.0-alpha.1 (2018-02-28)
+
+#### :boom: Breaking Change
+
+* [#1278](https://github.com/lerna/lerna/pull/1278) Add universal hosted git URL support. ([@evocateur](https://github.com/evocateur))
+* [#1289](https://github.com/lerna/lerna/pull/1289) Convert command lifecycle from callbacks to Promises. ([@evocateur](https://github.com/evocateur))
+* [#1290](https://github.com/lerna/lerna/pull/1290) Preserve package.json structure during bootstrap mangling. ([@evocateur](https://github.com/evocateur))
+  Thanks to [@compulim](https://github.com/compulim) for the initial PR!
+
+#### :house: Internal
+
+* [#1271](https://github.com/lerna/lerna/pull/1271) Split symlink methods out of FileSystemUtilities. ([@evocateur](https://github.com/evocateur), [@compulim](https://github.com/compulim))
+* Tons of other refactoring afoot! Check out [this diff](https://github.com/lerna/lerna/compare/v3.0.0-alpha.0...v3.0.0-alpha.1).
+
+#### Committers: 1
+
+* Daniel Stockman ([evocateur](https://github.com/evocateur))
+
+## v3.0.0-alpha.0 (2018-02-14)
+
+#### :boom: Breaking Change
+
+* [`#1122`](https://github.com/lerna/lerna/pull/1122) Use local lerna if available. ([@marionebl](https://github.com/marionebl))
+* [`#1207`](https://github.com/lerna/lerna/pull/1207) Refactor command superclass and yargs handlers. ([@evocateur](https://github.com/evocateur))
+* [`#1208`](https://github.com/lerna/lerna/pull/1208) Use CommonJS. ([@evocateur](https://github.com/evocateur))
+* [`#1209`](https://github.com/lerna/lerna/pull/1209) Drop support for node v4. ([@evocateur](https://github.com/evocateur))
+* [`#1211`](https://github.com/lerna/lerna/pull/1211) Bump major versions of dependencies. ([@evocateur](https://github.com/evocateur))
+* [`#1225`](https://github.com/lerna/lerna/pull/1225) Remove lerna.json compatibility check. ([@evocateur](https://github.com/evocateur))
+* [`#1226`](https://github.com/lerna/lerna/pull/1226) Remove all deprecated validations. ([@evocateur](https://github.com/evocateur))
+* [`#1234`](https://github.com/lerna/lerna/pull/1234) Upgrade to yargs 11. ([@evocateur](https://github.com/evocateur))
+
+#### :rocket: Enhancement
+
+* [`#1212`](https://github.com/lerna/lerna/pull/1212) Throw friendly error when workspaces are not configured correctly. ([@craigbilner](https://github.com/craigbilner))
+* [`#1227`](https://github.com/lerna/lerna/pull/1227) Add `--ignore-scripts` flag to bootstrap command. ([@Andarist](https://github.com/Andarist))
+* [`#1254`](https://github.com/lerna/lerna/pull/1254) Add support for new yarn workspaces config format. ([@detrohutt](https://github.com/detrohutt))
+* [`#1261`](https://github.com/lerna/lerna/pull/1261) Refactor publish command to be 98% async. ([@evocateur](https://github.com/evocateur))
+* [`#1262`](https://github.com/lerna/lerna/pull/1262) Rewrite npm5 `file:` links during publish. ([@evocateur](https://github.com/evocateur))
+
+#### :bug: Bug Fix
+
+* [`#1219`](https://github.com/lerna/lerna/pull/1219) Avoid triggering pre-commit and commitmsg hooks during publish. ([@alan-agius4](https://github.com/alan-agius4))
+* [`#1220`](https://github.com/lerna/lerna/pull/1220) Remove `--no-gpg-sign` from `git commit`. ([@evocateur](https://github.com/evocateur))
+
+#### :memo: Documentation
+
+* [`#1248`](https://github.com/lerna/lerna/pull/1248) Document another potential cause of git initialization failure. ([@fritz-c](https://github.com/fritz-c))
+* [`#1250`](https://github.com/lerna/lerna/pull/1250) Add guide for debugging Jest tests with VS Code. ([@millermatt](https://github.com/millermatt))
+
+#### :house: Internal
+
+* [`#1210`](https://github.com/lerna/lerna/pull/1210) Upgrade to Jest v22. ([@evocateur](https://github.com/evocateur))
+* [`#1224`](https://github.com/lerna/lerna/pull/1224) Remove explicit `glob` dependency in favor of `globby`. ([@wtgtybhertgeghgtwtg](https://github.com/wtgtybhertgeghgtwtg))
+* [`#1260`](https://github.com/lerna/lerna/pull/1260) `PackageGraph` is a `Map`, its nodes store relationships in a `Set`. ([@evocateur](https://github.com/evocateur))
+* [`#1266`](https://github.com/lerna/lerna/pull/1266) Split `PackageUtilities` into smaller files. ([@evocateur](https://github.com/evocateur))
+* [`#1267`](https://github.com/lerna/lerna/pull/1267) Split `NpmUtilities` into smaller files. ([@evocateur](https://github.com/evocateur))
+
+#### Committers: 9
+
+* Alan Agius ([alan-agius4](https://github.com/alan-agius4))
+* Alexander Roberts ([detrohutt](https://github.com/detrohutt))
+* Craig Bilner ([craigbilner](https://github.com/craigbilner))
+* Daniel Stockman ([evocateur](https://github.com/evocateur))
+* Fritz ([fritz-c](https://github.com/fritz-c))
+* Mario Nebl ([marionebl](https://github.com/marionebl))
+* Mateusz Burzyński ([Andarist](https://github.com/Andarist))
+* Matt Miller ([millermatt](https://github.com/millermatt))
+* [wtgtybhertgeghgtwtg](https://github.com/wtgtybhertgeghgtwtg)
+
 ## v2.7.2 (2018-01-16)
 
 #### :rocket: Enhancement

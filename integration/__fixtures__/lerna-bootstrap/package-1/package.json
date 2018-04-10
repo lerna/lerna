@@ -1,0 +1,15 @@
+{
+  "name": "@integration/package-1",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "prepare": "node build.js",
+    "test": "echo package-1"
+  },
+  "dependencies": {
+    "pify": "^2.0.0"
+  },
+  "optionalDependencies": {
+    "tiny-tarball": "^1.0.0"
+  }
+}
