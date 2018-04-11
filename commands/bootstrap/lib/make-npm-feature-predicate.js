@@ -5,11 +5,11 @@ const semver = require("semver");
 module.exports = makeNpmFeaturePredicate;
 
 function makeNpmFeaturePredicate(range) {
-  return () => Boolean(semver.satisfies(getNpmVersion(), range));
+  return conf => Boolean(semver.satisfies(getNpmVersion(conf), range));
 }
 
-function getNpmVersion() {
-  const userAgent = process.env.npm_config_user_agent;
+function getNpmVersion(conf) {
+  const userAgent = conf.get("user-agent");
 
   return (/npm\/(\d+\.\d+\.\d+)/.exec(userAgent) || [""]).pop();
 }

@@ -23,6 +23,8 @@ const ValidationError = require("@lerna/validation-error");
 const isHoistedPackage = require("./lib/is-hoisted-package");
 const makeNpmFeaturePredicate = require("./lib/make-npm-feature-predicate");
 
+const hasNpmCI = makeNpmFeaturePredicate(">=5.7.0");
+
 module.exports = factory;
 
 function factory(argv) {
@@ -69,9 +71,7 @@ class BootstrapCommand extends Command {
       mutex,
     };
 
-    const hasNpmCI = makeNpmFeaturePredicate(">=5.7.0");
-
-    if (npmClient === "npm" && this.options.ci && hasNpmCI()) {
+    if (npmClient === "npm" && this.options.ci && hasNpmCI(this.conf)) {
       this.npmConfig.subCommand = "ci";
     }
 
