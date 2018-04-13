@@ -5,17 +5,27 @@
  */
 exports.command = "link";
 
-exports.describe = "Symlink together all packages which are dependencies of each other";
+exports.describe = "Symlink together all packages that are dependencies of each other";
 
-exports.builder = {
-  "force-local": {
-    group: "Command Options:",
-    describe: "Force local",
-    type: "boolean",
-    default: undefined,
-  },
+exports.builder = yargs => {
+  yargs.options({
+    "force-local": {
+      group: "Command Options:",
+      describe: "Force local sibling links regardless of version range match",
+      type: "boolean",
+      default: undefined,
+    },
+  });
+
+  return yargs.command(
+    "convert",
+    "Replace local sibling version ranges with relative file: specifiers",
+    () => {},
+    handler
+  );
 };
 
-exports.handler = function handler(argv) {
+exports.handler = handler;
+function handler(argv) {
   return require(".")(argv);
-};
+}
