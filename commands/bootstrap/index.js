@@ -38,6 +38,8 @@ class BootstrapCommand extends Command {
 
   initialize() {
     const { registry, rejectCycles, npmClient = "npm", npmClientArgs, mutex, hoist } = this.options;
+    const filteredLength = this.filteredPackages.length;
+    this.packageCountLabel = `${filteredLength} package${filteredLength > 1 ? "s" : ""}`;
 
     if (npmClient === "yarn" && hoist) {
       throw new ValidationError(
@@ -104,7 +106,7 @@ class BootstrapCommand extends Command {
 
     // root install does not need progress bar
     this.enableProgressBar();
-    this.logger.info("", `Bootstrapping ${this.filteredPackages.length} packages`);
+    this.logger.info("", `Bootstrapping ${this.packageCountLabel}`);
 
     const tasks = [
       () => this.getDependenciesToInstall(),
@@ -124,7 +126,7 @@ class BootstrapCommand extends Command {
     }
 
     return pWaterfall(tasks).then(() => {
-      this.logger.success("", `Bootstrapped ${this.filteredPackages.length} packages`);
+      this.logger.success("", `Bootstrapped ${this.packageCountLabel}`);
     });
   }
 
