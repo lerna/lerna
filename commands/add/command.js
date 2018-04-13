@@ -5,15 +5,19 @@ const filterable = require("@lerna/filter-options");
 /**
  * @see https://github.com/yargs/yargs/blob/master/docs/advanced.md#providing-a-command-module
  */
-exports.command = "add [pkgNames..]";
+exports.command = "add <pkg> [globs..]";
 
-exports.describe = "Add dependencies to matched packages";
+exports.describe = "Add a dependency to matched packages";
 
 exports.builder = yargs => {
   yargs
-    .positional("pkgNames", {
-      describe: "One or more package names to add as a dependency",
+    .positional("pkg", {
+      describe: "Package name to add as a dependency",
       type: "string",
+    })
+    .positional("globs", {
+      describe: "Optional package directory globs to match",
+      type: "array",
     })
     .options({
       dev: {

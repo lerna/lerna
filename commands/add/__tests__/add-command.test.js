@@ -32,7 +32,7 @@ describe("AddCommand", () => {
     try {
       await lernaAdd(testDir)();
     } catch (err) {
-      expect(err.message).toMatch(/^Missing list of packages/);
+      expect(err.message).toMatch(/^Not enough non-option arguments/);
     }
   });
 
@@ -69,23 +69,11 @@ describe("AddCommand", () => {
     expect(await readPkg(testDir, "packages/package-4")).toDependOn("@test/package-1");
   });
 
-  it("should reference to multiple dependencies", async () => {
-    const testDir = await initFixture("basic");
-
-    await lernaAdd(testDir)("@test/package-1", "@test/package-2");
-
-    expect(await readPkg(testDir, "packages/package-1")).toDependOn("@test/package-2");
-    expect(await readPkg(testDir, "packages/package-2")).toDependOn("@test/package-1");
-    expect(await readPkg(testDir, "packages/package-3")).toDependOn("@test/package-1");
-    expect(await readPkg(testDir, "packages/package-3")).toDependOn("@test/package-2");
-    expect(await readPkg(testDir, "packages/package-4")).toDependOn("@test/package-1");
-    expect(await readPkg(testDir, "packages/package-4")).toDependOn("@test/package-2");
-  });
-
   it("should reference current caret range if unspecified", async () => {
     const testDir = await initFixture("basic");
 
-    await lernaAdd(testDir)("@test/package-1", "@test/package-2");
+    await lernaAdd(testDir)("@test/package-1");
+    await lernaAdd(testDir)("@test/package-2");
 
     expect(await readPkg(testDir, "packages/package-1")).toDependOn("@test/package-2", "^2.0.0");
     expect(await readPkg(testDir, "packages/package-2")).toDependOn("@test/package-1", "^1.0.0");
@@ -117,10 +105,10 @@ describe("AddCommand", () => {
     expect(await readPkg(testDir, "packages/package-1")).not.toDependOn("@test/package-1");
   });
 
-  it("should respect scopes", async () => {
+  it("filters targets by optional directory globs", async () => {
     const testDir = await initFixture("basic");
 
-    await lernaAdd(testDir)("@test/package-1", "--scope=@test/package-2");
+    await lernaAdd(testDir)("@test/package-1", "packages/package-2");
 
     expect(await readPkg(testDir, "packages/package-2")).toDependOn("@test/package-1");
     expect(await readPkg(testDir, "packages/package-3")).not.toDevDependOn("@test/package-1");
@@ -202,29 +190,5 @@ describe("AddCommand", () => {
     await lernaAdd(testDir)("@test/package-1");
 
     expect(bootstrap).not.toHaveBeenCalled();
-  });
-
-  it("bootstraps mixed local and external dependencies", async () => {
-    const testDir = await initFixture("existing");
-
-    await lernaAdd(testDir)("@test/package-2", "pify");
-
-    const pkg1 = await readPkg(testDir, "packages/package-1");
-    const pkg2 = await readPkg(testDir, "packages/package-2");
-    const pkg3 = await readPkg(testDir, "packages/package-3");
-
-    expect(pkg1).toDependOn("pify", "^3.0.0"); // overwrites ^2.0.0
-    expect(pkg1).toDependOn("@test/package-2");
-
-    expect(pkg2).toDependOn("pify", "^3.0.0");
-
-    expect(pkg3).toDependOn("pify", "^3.0.0");
-    expect(pkg3).toDependOn("@test/package-2"); // existing, but should stay
-
-    expect(bootstrap).lastCalledWith(
-      expect.objectContaining({
-        scope: ["@test/package-1", "@test/package-2", "@test/package-3"],
-      })
-    );
   });
 });
