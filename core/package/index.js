@@ -29,7 +29,7 @@ function shallowCopy(json) {
 class Package {
   constructor(pkg, location, rootPath = location) {
     // npa will throw an error if the name is invalid
-    const resolved = npa.resolve(pkg.name, path.relative(rootPath, location), rootPath);
+    const resolved = npa.resolve(pkg.name, `file:${path.relative(rootPath, location)}`, rootPath);
 
     Object.defineProperties(this, {
       // read-only
@@ -44,7 +44,7 @@ class Package {
         value: Boolean(pkg.private),
       },
       resolved: {
-        value: Object.assign({}, resolved),
+        value: resolved,
       },
       // mutable
       version: {
