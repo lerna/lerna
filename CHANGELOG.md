@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.0.0-beta.17"></a>
+# [3.0.0-beta.17](https://github.com/lerna/lerna/compare/v3.0.0-beta.16...v3.0.0-beta.17) (2018-04-13)
+
+
+### Bug Fixes
+
+* **bootstrap:** Pass npm-conf to feature predicate instead of directly reading process.env ([b4af3c9](https://github.com/lerna/lerna/commit/b4af3c9))
+* **bootstrap:** Pluralize log text ([#1232](https://github.com/lerna/lerna/issues/1232)) ([5c74760](https://github.com/lerna/lerna/commit/5c74760))
+* **package:** Resolve correct relative spec ([ec2b8f5](https://github.com/lerna/lerna/commit/ec2b8f5))
+
+
+### Features
+
+* **add:** Use directory globs to filter targeted packages ([39fa7b6](https://github.com/lerna/lerna/commit/39fa7b6))
+* **link:** Add 'convert' subcommand to aid migration to local file: specifiers ([f59bf3c](https://github.com/lerna/lerna/commit/f59bf3c))
+
+
+### BREAKING CHANGES
+
+* **add:** `lerna add` now only supports adding one dependency at a time. It is much more valuable to filter by directory globs, anyway.
+
+
+
+
+
 <a name="3.0.0-beta.16"></a>
 # [3.0.0-beta.16](https://github.com/lerna/lerna/compare/v3.0.0-beta.15...v3.0.0-beta.16) (2018-04-10)
 

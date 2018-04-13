@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.0.0-beta.17"></a>
+# [3.0.0-beta.17](https://github.com/lerna/lerna/compare/v3.0.0-beta.16...v3.0.0-beta.17) (2018-04-13)
+
+
+### Features
+
+* **add:** Use directory globs to filter targeted packages ([39fa7b6](https://github.com/lerna/lerna/commit/39fa7b6))
+
+
+### BREAKING CHANGES
+
+* **add:** `lerna add` now only supports adding one dependency at a time. It is much more valuable to filter by directory globs, anyway.
+
+
+
+
+
 <a name="3.0.0-beta.15"></a>
 # [3.0.0-beta.15](https://github.com/lerna/lerna/compare/v3.0.0-beta.14...v3.0.0-beta.15) (2018-04-09)
 
