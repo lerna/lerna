@@ -71,14 +71,6 @@ describe("GitUtilities", () => {
     });
   });
 
-  describe(".getCurrentSHA()", () => {
-    it("returns full SHA of current ref", async () => {
-      const cwd = await initFixture("basic");
-
-      expect(GitUtilities.getCurrentSHA({ cwd })).toMatch(/^[0-9a-f]{40}$/);
-    });
-  });
-
   describe(".getShortSHA()", () => {
     it("returns short SHA of current ref", async () => {
       const cwd = await initFixture("basic");

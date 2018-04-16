@@ -26,6 +26,7 @@ const runParallelBatches = require("@lerna/run-parallel-batches");
 const ValidationError = require("@lerna/validation-error");
 
 const getCurrentBranch = require("./lib/get-current-branch");
+const getCurrentSHA = require("./lib/get-current-sha");
 const gitAdd = require("./lib/git-add");
 const gitCheckout = require("./lib/git-checkout");
 const gitCommit = require("./lib/git-commit");
@@ -215,7 +216,7 @@ class PublishCommand extends Command {
   }
 
   annotateGitHead() {
-    const gitHead = GitUtilities.getCurrentSHA(this.execOpts);
+    const gitHead = getCurrentSHA(this.execOpts);
 
     return pMap(this.updates, ({ pkg }) => {
       if (!pkg.private) {

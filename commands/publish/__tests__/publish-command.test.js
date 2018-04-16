@@ -9,6 +9,7 @@ jest.mock("@lerna/npm-dist-tag");
 jest.mock("@lerna/npm-publish");
 jest.mock("@lerna/run-lifecycle");
 jest.mock("../lib/get-current-branch");
+jest.mock("../lib/get-current-sha");
 jest.mock("../lib/git-add");
 jest.mock("../lib/git-checkout");
 jest.mock("../lib/git-commit");
@@ -31,6 +32,7 @@ const npmDistTag = require("@lerna/npm-dist-tag");
 const npmPublish = require("@lerna/npm-publish");
 const runLifecycle = require("@lerna/run-lifecycle");
 const getCurrentBranch = require("../lib/get-current-branch");
+const getCurrentSHA = require("../lib/get-current-sha");
 const gitAdd = require("../lib/git-add");
 const gitCheckout = require("../lib/git-checkout");
 const gitCommit = require("../lib/git-commit");
@@ -105,7 +107,7 @@ describe("PublishCommand", () => {
 
   // we've already tested these utilities elsewhere
   getCurrentBranch.mockReturnValue("master");
-  GitUtilities.getCurrentSHA.mockReturnValue("FULL_SHA");
+  getCurrentSHA.mockReturnValue("FULL_SHA");
   GitUtilities.getShortSHA.mockReturnValue("deadbeef");
   GitUtilities.diffSinceIn.mockReturnValue("");
 
