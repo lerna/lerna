@@ -114,8 +114,7 @@ export default class GitUtilities {
     log.silly("pushWithTags", [remote, tags]);
 
     const branch = GitUtilities.getCurrentBranch(opts);
-    ChildProcessUtilities.execSync("git", ["push", remote, branch], opts);
-    ChildProcessUtilities.execSync("git", ["push", remote].concat(tags), opts);
+    ChildProcessUtilities.execSync("git", ["push", "--no-verify", remote, branch].concat(tags), opts);
   }
 
   static getLastTag(opts) {

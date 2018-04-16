@@ -192,10 +192,9 @@ describe("GitUtilities", () => {
       GitUtilities.getCurrentBranch = jest.fn(() => "master");
       const opts = { cwd: "test" };
       GitUtilities.pushWithTags("origin", ["foo@1.0.1", "foo-bar@1.0.0"], opts);
-      expect(ChildProcessUtilities.execSync).toBeCalledWith("git", ["push", "origin", "master"], opts);
       expect(ChildProcessUtilities.execSync).lastCalledWith(
         "git",
-        ["push", "origin", "foo@1.0.1", "foo-bar@1.0.0"],
+        ["push", "--no-verify", "origin", "master", "foo@1.0.1", "foo-bar@1.0.0"],
         opts
       );
     });
