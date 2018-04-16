@@ -157,7 +157,6 @@ describe("PublishCommand", () => {
 
       expect(GitUtilities.pushWithTags).lastCalledWith(
         "origin",
-        gitTagsAdded(),
         expect.objectContaining({
           cwd: testDir,
         })
@@ -221,7 +220,6 @@ describe("PublishCommand", () => {
 
       expect(GitUtilities.pushWithTags).lastCalledWith(
         "origin",
-        gitTagsAdded(),
         expect.objectContaining({
           cwd: testDir,
         })
@@ -396,7 +394,6 @@ describe("PublishCommand", () => {
       expect(gitCommitMessage()).toEqual("v1.0.1");
       expect(GitUtilities.pushWithTags).lastCalledWith(
         "origin",
-        ["v1.0.1"],
         expect.objectContaining({
           cwd: testDir,
         })
@@ -473,7 +470,6 @@ describe("PublishCommand", () => {
 
       expect(GitUtilities.pushWithTags).lastCalledWith(
         "origin",
-        ["v1.0.1"],
         expect.objectContaining({
           cwd: testDir,
         })
@@ -716,7 +712,6 @@ describe("PublishCommand", () => {
 
       expect(GitUtilities.pushWithTags).lastCalledWith(
         "upstream",
-        ["v1.0.1"],
         expect.objectContaining({
           cwd: testDir,
         })

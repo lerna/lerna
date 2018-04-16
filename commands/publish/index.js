@@ -181,7 +181,7 @@ class PublishCommand extends Command {
   pushToRemote() {
     this.logger.info("git", "Pushing tags...");
 
-    return GitUtilities.pushWithTags(this.gitRemote, this.tags, this.execOpts);
+    return GitUtilities.pushWithTags(this.gitRemote, this.execOpts);
   }
 
   resolveLocalDependencyLinks() {

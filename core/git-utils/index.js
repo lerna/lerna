@@ -102,11 +102,11 @@ function getFirstCommit(opts) {
   return firstCommit;
 }
 
-function pushWithTags(remote, tags, opts) {
-  log.silly("pushWithTags", [remote, tags]);
+function pushWithTags(remote, opts) {
+  log.silly("pushWithTags", remote);
 
   return Promise.resolve(exports.getCurrentBranch(opts)).then(branch =>
-    ChildProcessUtilities.exec("git", ["push", "--no-verify", remote, branch].concat(tags), opts)
+    ChildProcessUtilities.exec("git", ["push", "--follow-tags", "--no-verify", remote, branch], opts)
   );
 }
 
