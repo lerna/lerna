@@ -66,15 +66,6 @@ function diffSinceIn(committish, location, opts) {
   return diff;
 }
 
-function getShortSHA(opts) {
-  log.silly("getShortSHA");
-
-  const sha = ChildProcessUtilities.execSync("git", ["rev-parse", "--short", "HEAD"], opts);
-  log.verbose("getShortSHA", sha);
-
-  return sha;
-}
-
 function hasCommit(opts) {
   log.silly("hasCommit");
   let retVal;
@@ -95,5 +86,4 @@ exports.getLastTaggedCommit = getLastTaggedCommit;
 exports.getFirstCommit = getFirstCommit;
 exports.getLastTag = getLastTag;
 exports.diffSinceIn = diffSinceIn;
-exports.getShortSHA = getShortSHA;
 exports.hasCommit = hasCommit;

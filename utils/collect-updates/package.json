@@ -31,6 +31,7 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
+    "@lerna/child-process": "file:../../core/child-process",
     "@lerna/git-utils": "file:../../core/git-utils",
     "minimatch": "^3.0.4",
     "semver": "^5.5.0"

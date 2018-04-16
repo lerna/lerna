@@ -13,7 +13,6 @@ const semver = require("semver");
 
 const Command = require("@lerna/command");
 const ConventionalCommitUtilities = require("@lerna/conventional-commits");
-const GitUtilities = require("@lerna/git-utils");
 const PromptUtilities = require("@lerna/prompt");
 const output = require("@lerna/output");
 const collectUpdates = require("@lerna/collect-updates");
@@ -27,6 +26,7 @@ const ValidationError = require("@lerna/validation-error");
 
 const getCurrentBranch = require("./lib/get-current-branch");
 const getCurrentSHA = require("./lib/get-current-sha");
+const getShortSHA = require("./lib/get-short-sha");
 const gitAdd = require("./lib/git-add");
 const gitCheckout = require("./lib/git-checkout");
 const gitCommit = require("./lib/git-commit");
@@ -276,7 +276,7 @@ class PublishCommand extends Command {
       const release = cdVersion || "minor";
       // FIXME: this complicated defaulting should be done in yargs option.coerce()
       const keyword = typeof canary !== "string" ? preid || "alpha" : canary;
-      const shortHash = GitUtilities.getShortSHA(this.execOpts);
+      const shortHash = getShortSHA(this.execOpts);
 
       predicate = ({ version }) => `${semver.inc(version, release)}-${keyword}.${shortHash}`;
     } else if (cdVersion) {

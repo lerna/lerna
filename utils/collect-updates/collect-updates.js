@@ -2,6 +2,7 @@
 
 const semver = require("semver");
 
+const childProcess = require("@lerna/child-process");
 const GitUtilities = require("@lerna/git-utils");
 const collectDependents = require("./lib/collect-dependents");
 const getForcedPackages = require("./lib/get-forced-packages");
@@ -21,7 +22,7 @@ function collectUpdates({ filteredPackages, packageGraph, options, execOpts, log
 
   if (GitUtilities.hasTags(execOpts)) {
     if (options.canary) {
-      const sha = GitUtilities.getShortSHA(execOpts);
+      const sha = childProcess.execSync("git", ["rev-parse", "--short", "HEAD"], execOpts);
 
       // if it's a merge commit, it will return all the commits that were part of the merge
       // ex: If `ab7533e` had 2 commits, ab7533e^..ab7533e would contain 2 commits + the merge commit

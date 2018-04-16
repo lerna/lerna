@@ -71,14 +71,6 @@ describe("GitUtilities", () => {
     });
   });
 
-  describe(".getShortSHA()", () => {
-    it("returns short SHA of current ref", async () => {
-      const cwd = await initFixture("basic");
-
-      expect(GitUtilities.getShortSHA({ cwd })).toMatch(/^[0-9a-f]{7,8}$/);
-    });
-  });
-
   describe(".hasCommit()", () => {
     it("returns true when git command succeeds", async () => {
       const cwd = await initFixture("basic");
