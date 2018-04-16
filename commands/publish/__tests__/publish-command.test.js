@@ -104,7 +104,6 @@ describe("PublishCommand", () => {
   writeJsonFile.mockResolvedValue();
 
   // we've already tested these utilities elsewhere
-  GitUtilities.isInitialized.mockReturnValue(true);
   getCurrentBranch.mockReturnValue("master");
   GitUtilities.getCurrentSHA.mockReturnValue("FULL_SHA");
   GitUtilities.getShortSHA.mockReturnValue("deadbeef");

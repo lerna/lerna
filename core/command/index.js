@@ -2,9 +2,9 @@
 
 const _ = require("lodash");
 const dedent = require("dedent");
+const execa = require("execa");
 const log = require("npmlog");
 
-const GitUtilities = require("@lerna/git-utils");
 const PackageGraph = require("@lerna/package-graph");
 const Project = require("@lerna/project");
 const writeLogFile = require("@lerna/write-log-file");
@@ -158,11 +158,20 @@ class Command {
     }
   }
 
+  gitInitialized() {
+    const opts = {
+      cwd: this.project.rootPath,
+      // don't throw, just want boolean
+      reject: false,
+      // only return code, no stdio needed
+      stdio: "ignore",
+    };
+
+    return execa.sync("git", ["rev-parse"], opts).code === 0;
+  }
+
   runValidations() {
-    if (
-      (this.options.since !== undefined || this.requiresGit) &&
-      !GitUtilities.isInitialized(this.execOpts)
-    ) {
+    if ((this.options.since !== undefined || this.requiresGit) && !this.gitInitialized()) {
       throw new ValidationError("ENOGIT", "The git binary was not found, or this is not a git repository.");
     }
 

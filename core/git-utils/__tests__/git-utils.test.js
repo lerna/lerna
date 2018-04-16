@@ -13,17 +13,6 @@ const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const GitUtilities = require("..");
 
 describe("GitUtilities", () => {
-  describe(".isInitialized()", () => {
-    it("returns true when git command succeeds", async () => {
-      const cwd = await initFixture("basic");
-
-      expect(GitUtilities.isInitialized({ cwd })).toBe(true);
-
-      await fs.remove(path.join(cwd, ".git"));
-      expect(GitUtilities.isInitialized({ cwd })).toBe(false);
-    });
-  });
-
   describe(".hasTags()", () => {
     it("returns true when one or more git tags exist", async () => {
       const cwd = await initFixture("basic");

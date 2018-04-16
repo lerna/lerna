@@ -6,30 +6,6 @@ const slash = require("slash");
 
 const ChildProcessUtilities = require("@lerna/child-process");
 
-function isInitialized(opts) {
-  log.silly("isInitialized");
-  let initialized;
-
-  try {
-    // we only want the return code, so ignore stdout/stderr
-    ChildProcessUtilities.execSync(
-      "git",
-      ["rev-parse"],
-      Object.assign({}, opts, {
-        stdio: "ignore",
-      })
-    );
-    initialized = true;
-  } catch (err) {
-    log.verbose("isInitialized", "swallowed error", err);
-    initialized = false;
-  }
-
-  // this does not need to be verbose
-  log.silly("isInitialized", initialized);
-  return initialized;
-}
-
 function hasTags(opts) {
   log.silly("hasTags");
   let result = false;
@@ -137,7 +113,6 @@ function hasCommit(opts) {
   return retVal;
 }
 
-exports.isInitialized = isInitialized;
 exports.hasTags = hasTags;
 exports.getLastTaggedCommit = getLastTaggedCommit;
 exports.getFirstCommit = getFirstCommit;

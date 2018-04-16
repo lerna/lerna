@@ -33,7 +33,7 @@ class InitCommand extends Command {
   initialize() {
     this.exact = this.options.exact;
 
-    if (!GitUtilities.isInitialized(this.execOpts)) {
+    if (!this.gitInitialized()) {
       this.logger.info("", "Initializing Git repository");
 
       GitUtilities.init(this.execOpts);
