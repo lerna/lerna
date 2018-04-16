@@ -3,7 +3,6 @@
 const execa = require("execa");
 const fs = require("fs-extra");
 const path = require("path");
-const slash = require("slash");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
@@ -69,16 +68,6 @@ describe("GitUtilities", () => {
 
       expect(rootDiff).toMatch("package.json");
       expect(fileDiff).toBe("packages/pkg-5/index.js");
-    });
-  });
-
-  describe(".getWorkspaceRoot()", () => {
-    it("calls `git rev-parse --show-toplevel`", async () => {
-      const topLevel = await initFixture("basic");
-      const cwd = path.join(topLevel, "foo");
-
-      await fs.mkdirp(cwd);
-      expect(GitUtilities.getWorkspaceRoot({ cwd })).toBe(slash(topLevel));
     });
   });
 

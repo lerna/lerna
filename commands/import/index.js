@@ -64,7 +64,7 @@ class ImportCommand extends Command {
     const targetDir = path.join(this.getTargetBase(), externalRepoBase);
 
     // Compute a target directory relative to the Git root
-    const gitRepoRoot = GitUtilities.getWorkspaceRoot(this.execOpts);
+    const gitRepoRoot = this.getWorkspaceRoot();
     const lernaRootRelativeToGitRoot = path.relative(gitRepoRoot, this.project.rootPath);
     this.targetDirRelativeToGitRoot = path.join(lernaRootRelativeToGitRoot, targetDir);
 
@@ -113,6 +113,10 @@ class ImportCommand extends Command {
         .map(p => path.dirname(p))
         .shift() || "packages"
     );
+  }
+
+  getWorkspaceRoot() {
+    return ChildProcessUtilities.execSync("git", ["rev-parse", "--show-toplevel"], this.execOpts);
   }
 
   externalExecSync(cmd, args) {

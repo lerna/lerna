@@ -66,15 +66,6 @@ function diffSinceIn(committish, location, opts) {
   return diff;
 }
 
-function getWorkspaceRoot(opts) {
-  log.silly("getWorkspaceRoot");
-
-  const workRoot = ChildProcessUtilities.execSync("git", ["rev-parse", "--show-toplevel"], opts);
-  log.verbose("getWorkspaceRoot", workRoot);
-
-  return workRoot;
-}
-
 function getCurrentSHA(opts) {
   log.silly("getCurrentSHA");
 
@@ -113,7 +104,6 @@ exports.getLastTaggedCommit = getLastTaggedCommit;
 exports.getFirstCommit = getFirstCommit;
 exports.getLastTag = getLastTag;
 exports.diffSinceIn = diffSinceIn;
-exports.getWorkspaceRoot = getWorkspaceRoot;
 exports.getCurrentSHA = getCurrentSHA;
 exports.getShortSHA = getShortSHA;
 exports.hasCommit = hasCommit;
