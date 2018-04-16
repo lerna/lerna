@@ -93,11 +93,6 @@ function getShortSHA(opts) {
   return sha;
 }
 
-function init(opts) {
-  log.silly("git init");
-  ChildProcessUtilities.execSync("git", ["init"], opts);
-}
-
 function hasCommit(opts) {
   log.silly("hasCommit");
   let retVal;
@@ -121,5 +116,4 @@ exports.diffSinceIn = diffSinceIn;
 exports.getWorkspaceRoot = getWorkspaceRoot;
 exports.getCurrentSHA = getCurrentSHA;
 exports.getShortSHA = getShortSHA;
-exports.init = init;
 exports.hasCommit = hasCommit;

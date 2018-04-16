@@ -4,7 +4,6 @@ const execa = require("execa");
 const fs = require("fs-extra");
 const path = require("path");
 const slash = require("slash");
-const tempy = require("tempy");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
@@ -96,17 +95,6 @@ describe("GitUtilities", () => {
       const cwd = await initFixture("basic");
 
       expect(GitUtilities.getShortSHA({ cwd })).toMatch(/^[0-9a-f]{7,8}$/);
-    });
-  });
-
-  describe(".init()", () => {
-    it("calls git init", async () => {
-      const cwd = tempy.directory();
-
-      GitUtilities.init({ cwd });
-
-      const { code } = await execa("git", ["status"], { cwd });
-      expect(code).toBe(0);
     });
   });
 

@@ -6,7 +6,7 @@ const pMap = require("p-map");
 const writeJsonFile = require("write-json-file");
 
 const Command = require("@lerna/command");
-const GitUtilities = require("@lerna/git-utils");
+const childProcess = require("@lerna/child-process");
 
 module.exports = factory;
 
@@ -36,7 +36,7 @@ class InitCommand extends Command {
     if (!this.gitInitialized()) {
       this.logger.info("", "Initializing Git repository");
 
-      GitUtilities.init(this.execOpts);
+      return childProcess.exec("git", ["init"], this.execOpts);
     }
   }
 
