@@ -2,9 +2,9 @@
 
 const ChildProcessUtilities = require("@lerna/child-process");
 const Command = require("@lerna/command");
-const GitUtilities = require("@lerna/git-utils");
 const ValidationError = require("@lerna/validation-error");
 const getLastCommit = require("./lib/get-last-commit");
+const hasCommit = require("./lib/has-commit");
 
 module.exports = factory;
 
@@ -26,7 +26,7 @@ class DiffCommand extends Command {
       }
     }
 
-    if (!GitUtilities.hasCommit(this.execOpts)) {
+    if (!hasCommit(this.execOpts)) {
       throw new ValidationError("ENOCOMMITS", "Cannot diff, there are no commits in this repository yet.");
     }
 

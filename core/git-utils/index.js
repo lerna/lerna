@@ -22,24 +22,6 @@ function hasTags(opts) {
   return result;
 }
 
-function getLastTaggedCommit(opts) {
-  log.silly("getLastTaggedCommit");
-
-  const taggedCommit = ChildProcessUtilities.execSync("git", ["rev-list", "--tags", "--max-count=1"], opts);
-  log.verbose("getLastTaggedCommit", taggedCommit);
-
-  return taggedCommit;
-}
-
-function getFirstCommit(opts) {
-  log.silly("getFirstCommit");
-
-  const firstCommit = ChildProcessUtilities.execSync("git", ["rev-list", "--max-parents=0", "HEAD"], opts);
-  log.verbose("getFirstCommit", firstCommit);
-
-  return firstCommit;
-}
-
 function getLastTag(opts) {
   log.silly("getLastTag");
 
@@ -66,24 +48,6 @@ function diffSinceIn(committish, location, opts) {
   return diff;
 }
 
-function hasCommit(opts) {
-  log.silly("hasCommit");
-  let retVal;
-
-  try {
-    ChildProcessUtilities.execSync("git", ["log"], opts);
-    retVal = true;
-  } catch (e) {
-    retVal = false;
-  }
-
-  log.verbose("hasCommit", retVal);
-  return retVal;
-}
-
 exports.hasTags = hasTags;
-exports.getLastTaggedCommit = getLastTaggedCommit;
-exports.getFirstCommit = getFirstCommit;
 exports.getLastTag = getLastTag;
 exports.diffSinceIn = diffSinceIn;
-exports.hasCommit = hasCommit;

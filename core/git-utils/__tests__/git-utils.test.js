@@ -22,24 +22,6 @@ describe("GitUtilities", () => {
     });
   });
 
-  describe(".getLastTaggedCommit()", () => {
-    it("returns SHA of closest git tag", async () => {
-      const cwd = await initFixture("basic");
-
-      await execa("git", ["tag", "v1.2.3", "-m", "v1.2.3"], { cwd });
-
-      expect(GitUtilities.getLastTaggedCommit({ cwd })).toMatch(/^[0-9a-f]{40}$/);
-    });
-  });
-
-  describe(".getFirstCommit()", () => {
-    it("returns SHA of first commit", async () => {
-      const cwd = await initFixture("basic");
-
-      expect(GitUtilities.getFirstCommit({ cwd })).toMatch(/^[0-9a-f]{40}$/);
-    });
-  });
-
   describe(".getLastTag()", () => {
     it("returns the closest tag", async () => {
       const cwd = await initFixture("basic");
@@ -68,17 +50,6 @@ describe("GitUtilities", () => {
 
       expect(rootDiff).toMatch("package.json");
       expect(fileDiff).toBe("packages/pkg-5/index.js");
-    });
-  });
-
-  describe(".hasCommit()", () => {
-    it("returns true when git command succeeds", async () => {
-      const cwd = await initFixture("basic");
-
-      expect(GitUtilities.hasCommit({ cwd })).toBe(true);
-
-      await fs.remove(path.join(cwd, ".git"));
-      expect(GitUtilities.hasCommit({ cwd })).toBe(false);
     });
   });
 });
