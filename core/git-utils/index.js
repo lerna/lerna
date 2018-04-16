@@ -1,22 +1,10 @@
 "use strict";
 
-const { EOL } = require("os");
 const log = require("npmlog");
 const path = require("path");
 const slash = require("slash");
-const tempWrite = require("temp-write");
 
 const ChildProcessUtilities = require("@lerna/child-process");
-
-function isDetachedHead(opts) {
-  log.silly("isDetachedHead");
-
-  const branchName = exports.getCurrentBranch(opts);
-  const isDetached = branchName === "HEAD";
-  log.verbose("isDetachedHead", isDetached);
-
-  return isDetached;
-}
 
 function isInitialized(opts) {
   log.silly("isInitialized");
@@ -40,32 +28,6 @@ function isInitialized(opts) {
   // this does not need to be verbose
   log.silly("isInitialized", initialized);
   return initialized;
-}
-
-function addFiles(files, opts) {
-  log.silly("addFiles", files);
-  const filePaths = files.map(file => slash(path.relative(opts.cwd, path.resolve(opts.cwd, file))));
-  return ChildProcessUtilities.exec("git", ["add", "--", ...filePaths], opts);
-}
-
-function commit(message, opts) {
-  log.silly("commit", message);
-  const args = ["commit", "--no-verify"];
-
-  if (message.indexOf(EOL) > -1) {
-    // Use tempfile to allow multi\nline strings.
-    args.push("-F", tempWrite.sync(message, "lerna-commit.txt"));
-  } else {
-    args.push("-m", message);
-  }
-
-  log.verbose("commit", args);
-  return ChildProcessUtilities.exec("git", args, opts);
-}
-
-function addTag(tag, opts) {
-  log.silly("addTag", tag);
-  return ChildProcessUtilities.exec("git", ["tag", tag, "-m", tag], opts);
 }
 
 function hasTags(opts) {
@@ -100,14 +62,6 @@ function getFirstCommit(opts) {
   log.verbose("getFirstCommit", firstCommit);
 
   return firstCommit;
-}
-
-function pushWithTags(remote, opts) {
-  log.silly("pushWithTags", remote);
-
-  return Promise.resolve(exports.getCurrentBranch(opts)).then(branch =>
-    ChildProcessUtilities.exec("git", ["push", "--follow-tags", "--no-verify", remote, branch], opts)
-  );
 }
 
 function getLastTag(opts) {
@@ -145,15 +99,6 @@ function getWorkspaceRoot(opts) {
   return workRoot;
 }
 
-function getCurrentBranch(opts) {
-  log.silly("getCurrentBranch");
-
-  const currentBranch = ChildProcessUtilities.execSync("git", ["rev-parse", "--abbrev-ref", "HEAD"], opts);
-  log.verbose("getCurrentBranch", currentBranch);
-
-  return currentBranch;
-}
-
 function getCurrentSHA(opts) {
   log.silly("getCurrentSHA");
 
@@ -170,11 +115,6 @@ function getShortSHA(opts) {
   log.verbose("getShortSHA", sha);
 
   return sha;
-}
-
-function checkoutChanges(fileGlob, opts) {
-  log.silly("checkoutChanges", fileGlob);
-  return ChildProcessUtilities.exec("git", ["checkout", "--", fileGlob], opts);
 }
 
 function init(opts) {
@@ -197,44 +137,14 @@ function hasCommit(opts) {
   return retVal;
 }
 
-function isBehindUpstream(gitRemote, opts) {
-  log.silly("isBehindUpstream");
-
-  // git fetch, but for everything
-  ChildProcessUtilities.execSync("git", ["remote", "update"], opts);
-
-  const branch = exports.getCurrentBranch(opts);
-  const countLeftRight = ChildProcessUtilities.execSync(
-    "git",
-    ["rev-list", "--left-right", "--count", `${gitRemote}/${branch}...${branch}`],
-    opts
-  );
-  const [behind, ahead] = countLeftRight.split("\t").map(val => parseInt(val, 10));
-
-  log.silly(
-    "isBehindUpstream",
-    `${branch} is behind ${gitRemote}/${branch} by ${behind} commit(s) and ahead by ${ahead}`
-  );
-
-  return Boolean(behind);
-}
-
-exports.isDetachedHead = isDetachedHead;
 exports.isInitialized = isInitialized;
-exports.addFiles = addFiles;
-exports.commit = commit;
-exports.addTag = addTag;
 exports.hasTags = hasTags;
 exports.getLastTaggedCommit = getLastTaggedCommit;
 exports.getFirstCommit = getFirstCommit;
-exports.pushWithTags = pushWithTags;
 exports.getLastTag = getLastTag;
 exports.diffSinceIn = diffSinceIn;
 exports.getWorkspaceRoot = getWorkspaceRoot;
-exports.getCurrentBranch = getCurrentBranch;
 exports.getCurrentSHA = getCurrentSHA;
 exports.getShortSHA = getShortSHA;
-exports.checkoutChanges = checkoutChanges;
 exports.init = init;
 exports.hasCommit = hasCommit;
-exports.isBehindUpstream = isBehindUpstream;

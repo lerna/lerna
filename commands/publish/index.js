@@ -25,6 +25,14 @@ const batchPackages = require("@lerna/batch-packages");
 const runParallelBatches = require("@lerna/run-parallel-batches");
 const ValidationError = require("@lerna/validation-error");
 
+const getCurrentBranch = require("./lib/get-current-branch");
+const gitAdd = require("./lib/git-add");
+const gitCheckout = require("./lib/git-checkout");
+const gitCommit = require("./lib/git-commit");
+const gitPush = require("./lib/git-push");
+const gitTag = require("./lib/git-tag");
+const isBehindUpstream = require("./lib/is-behind-upstream");
+
 module.exports = factory;
 
 function factory(argv) {
@@ -67,32 +75,32 @@ class PublishCommand extends Command {
 
     // git validation, if enabled, should happen before updates are calculated and versions picked
     if (this.gitEnabled) {
-      if (GitUtilities.isDetachedHead(this.execOpts)) {
+      this.currentBranch = getCurrentBranch(this.execOpts);
+
+      if (this.currentBranch === "HEAD") {
         throw new ValidationError(
           "ENOGIT",
           "Detached git HEAD, please checkout a branch to publish changes."
         );
       }
 
-      const currentBranch = GitUtilities.getCurrentBranch(this.execOpts);
-
       if (
         this.options.allowBranch &&
-        ![].concat(this.options.allowBranch).some(x => minimatch(currentBranch, x))
+        ![].concat(this.options.allowBranch).some(x => minimatch(this.currentBranch, x))
       ) {
         throw new ValidationError(
           "ENOTALLOWED",
           dedent`
-            Branch '${currentBranch}' is restricted from publishing due to allowBranch config.
+            Branch '${this.currentBranch}' is restricted from publishing due to allowBranch config.
             Please consider the reasons for this restriction before overriding the option.
           `
         );
       }
 
-      if (GitUtilities.isBehindUpstream(this.gitRemote, this.execOpts)) {
-        const message = `Local branch '${currentBranch}' is behind remote upstream ${
-          this.gitRemote
-        }/${currentBranch}`;
+      if (isBehindUpstream(this.gitRemote, this.currentBranch, this.execOpts)) {
+        const message = `Local branch '${this.currentBranch}' is behind remote upstream ${this.gitRemote}/${
+          this.currentBranch
+        }`;
 
         if (!this.options.ci) {
           // interrupt interactive publish
@@ -100,7 +108,7 @@ class PublishCommand extends Command {
             "EBEHIND",
             dedent`
               ${message}
-              Please merge remote changes into '${currentBranch}' with 'git pull'
+              Please merge remote changes into '${this.currentBranch}' with 'git pull'
             `
           );
         }
@@ -181,7 +189,7 @@ class PublishCommand extends Command {
   pushToRemote() {
     this.logger.info("git", "Pushing tags...");
 
-    return GitUtilities.pushWithTags(this.gitRemote, this.execOpts);
+    return gitPush(this.gitRemote, this.currentBranch, this.execOpts);
   }
 
   resolveLocalDependencyLinks() {
@@ -223,7 +231,7 @@ class PublishCommand extends Command {
     // the package.json files are changed (by gitHead if not --canary)
     // and we should always leave the working tree clean
     return pReduce(this.project.packageConfigs, (_, pkgGlob) =>
-      GitUtilities.checkoutChanges(`${pkgGlob}/package.json`, this.execOpts)
+      gitCheckout(`${pkgGlob}/package.json`, this.execOpts)
     );
   }
 
@@ -424,7 +432,7 @@ class PublishCommand extends Command {
 
     return this.project.serializeConfig().then(lernaConfigLocation => {
       if (!this.options.skipGit) {
-        return GitUtilities.addFiles([lernaConfigLocation], this.execOpts);
+        return gitAdd([lernaConfigLocation], this.execOpts);
       }
     });
   }
@@ -521,7 +529,7 @@ class PublishCommand extends Command {
     chain = chain.then(() => this.runPackageLifecycle(rootPkg, "version"));
 
     if (this.gitEnabled) {
-      chain = chain.then(() => GitUtilities.addFiles(Array.from(changedFiles), this.execOpts));
+      chain = chain.then(() => gitAdd(Array.from(changedFiles), this.execOpts));
     }
 
     return chain;
@@ -555,8 +563,8 @@ class PublishCommand extends Command {
     const message = tags.reduce((msg, tag) => `${msg}${os.EOL} - ${tag}`, `${subject}${os.EOL}`);
 
     return Promise.resolve()
-      .then(() => GitUtilities.commit(message, this.execOpts))
-      .then(() => Promise.all(tags.map(tag => GitUtilities.addTag(tag, this.execOpts))))
+      .then(() => gitCommit(message, this.execOpts))
+      .then(() => Promise.all(tags.map(tag => gitTag(tag, this.execOpts))))
       .then(() => tags);
   }
 
@@ -568,8 +576,8 @@ class PublishCommand extends Command {
       : tag;
 
     return Promise.resolve()
-      .then(() => GitUtilities.commit(message, this.execOpts))
-      .then(() => GitUtilities.addTag(tag, this.execOpts))
+      .then(() => gitCommit(message, this.execOpts))
+      .then(() => gitTag(tag, this.execOpts))
       .then(() => [tag]);
   }
 

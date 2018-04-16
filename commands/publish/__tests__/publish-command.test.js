@@ -8,6 +8,13 @@ jest.mock("@lerna/conventional-commits");
 jest.mock("@lerna/npm-dist-tag");
 jest.mock("@lerna/npm-publish");
 jest.mock("@lerna/run-lifecycle");
+jest.mock("../lib/get-current-branch");
+jest.mock("../lib/git-add");
+jest.mock("../lib/git-checkout");
+jest.mock("../lib/git-commit");
+jest.mock("../lib/git-push");
+jest.mock("../lib/git-tag");
+jest.mock("../lib/is-behind-upstream");
 
 const fs = require("fs-extra");
 const normalizeNewline = require("normalize-newline");
@@ -23,6 +30,13 @@ const PromptUtilities = require("@lerna/prompt");
 const npmDistTag = require("@lerna/npm-dist-tag");
 const npmPublish = require("@lerna/npm-publish");
 const runLifecycle = require("@lerna/run-lifecycle");
+const getCurrentBranch = require("../lib/get-current-branch");
+const gitAdd = require("../lib/git-add");
+const gitCheckout = require("../lib/git-checkout");
+const gitCommit = require("../lib/git-commit");
+const gitPush = require("../lib/git-push");
+const gitTag = require("../lib/git-tag");
+const isBehindUpstream = require("../lib/is-behind-upstream");
 
 // helpers
 const consoleOutput = require("@lerna-test/console-output");
@@ -56,14 +70,14 @@ const addedDistTagInDirectories = testDir =>
   }, {});
 
 const gitAddedFiles = testDir =>
-  GitUtilities.addFiles.mock.calls.reduce(
+  gitAdd.mock.calls.reduce(
     (arr, [files]) => arr.concat(files.map(fp => normalizeRelativeDir(testDir, fp))),
     []
   );
 
-const gitCommitMessage = () => normalizeNewline(GitUtilities.commit.mock.calls[0][0]);
+const gitCommitMessage = () => normalizeNewline(gitCommit.mock.calls[0][0]);
 
-const gitTagsAdded = () => GitUtilities.addTag.mock.calls.map(args => args[0]);
+const gitTagsAdded = () => gitTag.mock.calls.map(args => args[0]);
 
 const updatedLernaJson = () => writeJsonFile.mock.calls[0][1];
 
@@ -91,7 +105,7 @@ describe("PublishCommand", () => {
 
   // we've already tested these utilities elsewhere
   GitUtilities.isInitialized.mockReturnValue(true);
-  GitUtilities.getCurrentBranch.mockReturnValue("master");
+  getCurrentBranch.mockReturnValue("master");
   GitUtilities.getCurrentSHA.mockReturnValue("FULL_SHA");
   GitUtilities.getShortSHA.mockReturnValue("deadbeef");
   GitUtilities.diffSinceIn.mockReturnValue("");
@@ -146,7 +160,7 @@ describe("PublishCommand", () => {
       expect(gitAddedFiles(testDir)).toMatchSnapshot("git added files");
       expect(gitCommitMessage()).toEqual("v1.0.1");
       expect(gitTagsAdded()).toEqual(["v1.0.1"]);
-      expect(GitUtilities.checkoutChanges).lastCalledWith(
+      expect(gitCheckout).lastCalledWith(
         expect.stringContaining("packages/*/package.json"),
         expect.objectContaining({
           cwd: testDir,
@@ -155,8 +169,9 @@ describe("PublishCommand", () => {
 
       expect(publishedTagInDirectories(testDir)).toMatchSnapshot("npm published");
 
-      expect(GitUtilities.pushWithTags).lastCalledWith(
+      expect(gitPush).lastCalledWith(
         "origin",
+        "master",
         expect.objectContaining({
           cwd: testDir,
         })
@@ -218,8 +233,9 @@ describe("PublishCommand", () => {
 
       expect(publishedTagInDirectories(testDir)).toMatchSnapshot("npm published");
 
-      expect(GitUtilities.pushWithTags).lastCalledWith(
+      expect(gitPush).lastCalledWith(
         "origin",
+        "master",
         expect.objectContaining({
           cwd: testDir,
         })
@@ -252,17 +268,17 @@ describe("PublishCommand", () => {
         "package-1": "^0.0.0",
       });
 
-      expect(GitUtilities.addFiles).not.toBeCalled();
-      expect(GitUtilities.commit).not.toBeCalled();
-      expect(GitUtilities.addTag).not.toBeCalled();
-      expect(GitUtilities.checkoutChanges).lastCalledWith(
+      expect(gitAdd).not.toBeCalled();
+      expect(gitCommit).not.toBeCalled();
+      expect(gitTag).not.toBeCalled();
+      expect(gitCheckout).lastCalledWith(
         expect.stringContaining("packages/*/package.json"),
         expect.objectContaining({
           cwd: testDir,
         })
       );
 
-      expect(GitUtilities.pushWithTags).not.toBeCalled();
+      expect(gitPush).not.toBeCalled();
       expect(publishedTagInDirectories(testDir)).toMatchSnapshot("npm published");
     });
 
@@ -353,10 +369,10 @@ describe("PublishCommand", () => {
       const testDir = await initFixture("normal");
       await lernaPublish(testDir)("--skip-git");
 
-      expect(GitUtilities.addFiles).not.toBeCalled();
-      expect(GitUtilities.commit).not.toBeCalled();
-      expect(GitUtilities.addTag).not.toBeCalled();
-      expect(GitUtilities.pushWithTags).not.toBeCalled();
+      expect(gitAdd).not.toBeCalled();
+      expect(gitCommit).not.toBeCalled();
+      expect(gitTag).not.toBeCalled();
+      expect(gitPush).not.toBeCalled();
 
       expect(updatedPackageJSON("package-1")).toEqual({
         name: "package-1",
@@ -392,8 +408,9 @@ describe("PublishCommand", () => {
       });
 
       expect(gitCommitMessage()).toEqual("v1.0.1");
-      expect(GitUtilities.pushWithTags).lastCalledWith(
+      expect(gitPush).lastCalledWith(
         "origin",
+        "master",
         expect.objectContaining({
           cwd: testDir,
         })
@@ -434,10 +451,10 @@ describe("PublishCommand", () => {
         "package-1": "^1.0.1",
       });
 
-      expect(GitUtilities.addFiles).not.toBeCalled();
-      expect(GitUtilities.commit).not.toBeCalled();
-      expect(GitUtilities.addTag).not.toBeCalled();
-      expect(GitUtilities.pushWithTags).not.toBeCalled();
+      expect(gitAdd).not.toBeCalled();
+      expect(gitCommit).not.toBeCalled();
+      expect(gitTag).not.toBeCalled();
+      expect(gitPush).not.toBeCalled();
 
       expect(npmPublish).not.toBeCalled();
       expect(npmDistTag.check).not.toBeCalled();
@@ -468,8 +485,9 @@ describe("PublishCommand", () => {
       expect(removedDistTagInDirectories(testDir)).toMatchSnapshot("npm dist-tag rm");
       expect(addedDistTagInDirectories(testDir)).toMatchSnapshot("npm dist-tag add");
 
-      expect(GitUtilities.pushWithTags).lastCalledWith(
+      expect(gitPush).lastCalledWith(
         "origin",
+        "master",
         expect.objectContaining({
           cwd: testDir,
         })
@@ -710,8 +728,9 @@ describe("PublishCommand", () => {
       const testDir = await initFixture("normal");
       await lernaPublish(testDir)("--git-remote", "upstream");
 
-      expect(GitUtilities.pushWithTags).lastCalledWith(
+      expect(gitPush).lastCalledWith(
         "upstream",
+        "master",
         expect.objectContaining({
           cwd: testDir,
         })
@@ -777,7 +796,7 @@ describe("PublishCommand", () => {
       const testDir = await initFixture("normal");
       await lernaPublish(testDir)("--message", "chore: Release %s :rocket:");
 
-      expect(GitUtilities.commit).lastCalledWith(
+      expect(gitCommit).lastCalledWith(
         "chore: Release v1.0.1 :rocket:",
         expect.objectContaining({
           cwd: testDir,
@@ -789,7 +808,7 @@ describe("PublishCommand", () => {
       const testDir = await initFixture("normal");
       await lernaPublish(testDir)("--message", "chore: Release %v :rocket:");
 
-      expect(GitUtilities.commit).lastCalledWith(
+      expect(gitCommit).lastCalledWith(
         "chore: Release 1.0.1 :rocket:",
         expect.objectContaining({
           cwd: testDir,
@@ -807,7 +826,7 @@ describe("PublishCommand", () => {
       const testDir = await initFixture("independent");
       await lernaPublish(testDir)("-m", "chore: Custom publish message");
 
-      expect(GitUtilities.commit).lastCalledWith(
+      expect(gitCommit).lastCalledWith(
         expect.stringContaining("chore: Custom publish message"),
         expect.objectContaining({
           cwd: testDir,
@@ -996,7 +1015,7 @@ describe("PublishCommand", () => {
   describe("--allow-branch", () => {
     describe("cli", () => {
       it("should reject a non matching branch", async () => {
-        GitUtilities.getCurrentBranch.mockReturnValueOnce("unmatched");
+        getCurrentBranch.mockReturnValueOnce("unmatched");
 
         const testDir = await initFixture("normal");
         try {
@@ -1007,7 +1026,7 @@ describe("PublishCommand", () => {
       });
 
       it("should accept an exactly matching branch", async () => {
-        GitUtilities.getCurrentBranch.mockReturnValueOnce("exact-match");
+        getCurrentBranch.mockReturnValueOnce("exact-match");
 
         const testDir = await initFixture("normal");
         await lernaPublish(testDir)("--allow-branch", "exact-match");
@@ -1016,7 +1035,7 @@ describe("PublishCommand", () => {
       });
 
       it("should accept a branch that matches by wildcard", async () => {
-        GitUtilities.getCurrentBranch.mockReturnValueOnce("feature/awesome");
+        getCurrentBranch.mockReturnValueOnce("feature/awesome");
 
         const testDir = await initFixture("normal");
         await lernaPublish(testDir)("--allow-branch", "feature/*");
@@ -1025,7 +1044,7 @@ describe("PublishCommand", () => {
       });
 
       it("should accept a branch that matches one of the items passed", async () => {
-        GitUtilities.getCurrentBranch.mockReturnValueOnce("feature/awesome");
+        getCurrentBranch.mockReturnValueOnce("feature/awesome");
 
         const testDir = await initFixture("normal");
         await lernaPublish(testDir)("--allow-branch", "master", "feature/*");
@@ -1036,7 +1055,7 @@ describe("PublishCommand", () => {
 
     describe("lerna.json", () => {
       it("should reject a non matching branch", async () => {
-        GitUtilities.getCurrentBranch.mockReturnValueOnce("unmatched");
+        getCurrentBranch.mockReturnValueOnce("unmatched");
 
         const testDir = await initFixture("allow-branch-lerna");
         try {
@@ -1047,7 +1066,7 @@ describe("PublishCommand", () => {
       });
 
       it("should accept a matching branch", async () => {
-        GitUtilities.getCurrentBranch.mockReturnValueOnce("lerna");
+        getCurrentBranch.mockReturnValueOnce("lerna");
 
         const testDir = await initFixture("allow-branch-lerna");
         await lernaPublish(testDir)();
@@ -1056,7 +1075,7 @@ describe("PublishCommand", () => {
       });
 
       it("should prioritize cli over defaults", async () => {
-        GitUtilities.getCurrentBranch.mockReturnValueOnce("cli-override");
+        getCurrentBranch.mockReturnValueOnce("cli-override");
 
         const testDir = await initFixture("allow-branch-lerna");
         await lernaPublish(testDir)("--allow-branch", "cli-override");
@@ -1068,7 +1087,7 @@ describe("PublishCommand", () => {
     describe("with --canary", () => {
       it("does not restrict publishing canary versions", async () => {
         const testDir = await initFixture("normal");
-        GitUtilities.getCurrentBranch.mockReturnValueOnce("other");
+        getCurrentBranch.mockReturnValueOnce("other");
 
         await lernaPublish(testDir)("--allow-branch", "master", "--canary");
         expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
@@ -1080,7 +1099,7 @@ describe("PublishCommand", () => {
     it("throws an error during interactive publish", async () => {
       const testDir = await initFixture("normal");
 
-      GitUtilities.isBehindUpstream.mockReturnValueOnce(true);
+      isBehindUpstream.mockReturnValueOnce(true);
 
       try {
         await lernaPublish(testDir)();
@@ -1093,7 +1112,7 @@ describe("PublishCommand", () => {
     it("logs a warning and exits early during CI publish", async () => {
       const testDir = await initFixture("normal");
 
-      GitUtilities.isBehindUpstream.mockReturnValueOnce(true);
+      isBehindUpstream.mockReturnValueOnce(true);
 
       await lernaPublish(testDir)("--ci");
 
@@ -1182,6 +1201,19 @@ describe("PublishCommand", () => {
         );
       });
     });
+  });
+
+  it("exits with an error when git HEAD is detached", async () => {
+    getCurrentBranch.mockReturnValueOnce("HEAD");
+
+    const testDir = await initFixture("normal-no-inter-dependencies");
+
+    try {
+      await lernaPublish(testDir)();
+    } catch (err) {
+      expect(err.prefix).toBe("ENOGIT");
+      expect(err.message).toBe("Detached git HEAD, please checkout a branch to publish changes.");
+    }
   });
 
   it("publishes all transitive dependents after change", async () => {
