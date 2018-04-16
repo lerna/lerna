@@ -106,9 +106,7 @@ function pushWithTags(remote, tags, opts) {
   log.silly("pushWithTags", [remote, tags]);
 
   return Promise.resolve(exports.getCurrentBranch(opts)).then(branch =>
-    ChildProcessUtilities.exec("git", ["push", remote, branch], opts).then(() =>
-      ChildProcessUtilities.exec("git", ["push", remote].concat(tags), opts)
-    )
+    ChildProcessUtilities.exec("git", ["push", "--no-verify", remote, branch].concat(tags), opts)
   );
 }
 
