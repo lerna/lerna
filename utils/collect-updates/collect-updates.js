@@ -1,9 +1,9 @@
 "use strict";
 
+const childProcess = require("@lerna/child-process");
 const semver = require("semver");
 
-const childProcess = require("@lerna/child-process");
-const GitUtilities = require("@lerna/git-utils");
+const hasTags = require("./lib/has-tags");
 const collectDependents = require("./lib/collect-dependents");
 const getForcedPackages = require("./lib/get-forced-packages");
 const makeDiffPredicate = require("./lib/make-diff-predicate");
@@ -20,7 +20,7 @@ function collectUpdates({ filteredPackages, packageGraph, options, execOpts, log
 
   let { since: committish } = options;
 
-  if (GitUtilities.hasTags(execOpts)) {
+  if (hasTags(execOpts)) {
     if (options.canary) {
       const sha = childProcess.execSync("git", ["rev-parse", "--short", "HEAD"], execOpts);
 
@@ -28,7 +28,7 @@ function collectUpdates({ filteredPackages, packageGraph, options, execOpts, log
       // ex: If `ab7533e` had 2 commits, ab7533e^..ab7533e would contain 2 commits + the merge commit
       committish = `${sha}^..${sha}`;
     } else if (!committish) {
-      committish = GitUtilities.getLastTag(execOpts);
+      committish = childProcess.execSync("git", ["describe", "--tags", "--abbrev=0"], execOpts);
     }
   }
 
