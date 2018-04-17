@@ -46,6 +46,7 @@
     "@lerna-test/serialize-git-sha": "file:helpers/serialize-git-sha",
     "@lerna-test/serialize-placeholders": "file:helpers/serialize-placeholders",
     "@lerna-test/set-npm-userconfig": "file:helpers/set-npm-userconfig",
+    "@lerna-test/show-commit": "file:helpers/show-commit",
     "@lerna-test/silence-logging": "file:helpers/silence-logging",
     "@lerna-test/update-lerna-config": "file:helpers/update-lerna-config",
     "cross-env": "^5.1.4",
