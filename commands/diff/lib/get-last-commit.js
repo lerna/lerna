@@ -7,14 +7,16 @@ module.exports = getLastCommit;
 
 function getLastCommit(execOpts) {
   if (hasTags(execOpts)) {
-    return getLastTaggedCommit(execOpts);
+    log.silly("getLastTagInBranch");
+
+    return childProcess.execSync("git", ["describe", "--tags", "--abbrev=0"], execOpts);
   }
 
-  return getFirstCommit(execOpts);
+  log.silly("getFirstCommit");
+  return childProcess.execSync("git", ["rev-list", "--max-parents=0", "HEAD"], execOpts);
 }
 
 function hasTags(opts) {
-  log.silly("hasTags");
   let result = false;
 
   try {
@@ -27,22 +29,4 @@ function hasTags(opts) {
   log.verbose("hasTags", result);
 
   return result;
-}
-
-function getLastTaggedCommit(opts) {
-  log.silly("getLastTaggedCommit");
-
-  const taggedCommit = childProcess.execSync("git", ["rev-list", "--tags", "--max-count=1"], opts);
-  log.verbose("getLastTaggedCommit", taggedCommit);
-
-  return taggedCommit;
-}
-
-function getFirstCommit(opts) {
-  log.silly("getFirstCommit");
-
-  const firstCommit = childProcess.execSync("git", ["rev-list", "--max-parents=0", "HEAD"], opts);
-  log.verbose("getFirstCommit", firstCommit);
-
-  return firstCommit;
 }
