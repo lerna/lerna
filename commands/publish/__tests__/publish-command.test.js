@@ -1,7 +1,7 @@
 "use strict";
 
 jest.mock("write-json-file");
-jest.mock("write-pkg");
+// write-pkg mocked manually
 jest.mock("@lerna/git-utils");
 jest.mock("@lerna/prompt");
 jest.mock("@lerna/conventional-commits");

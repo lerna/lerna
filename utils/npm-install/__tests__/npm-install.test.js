@@ -1,7 +1,7 @@
 "use strict";
 
 jest.mock("fs-extra");
-jest.mock("write-pkg");
+// write-pkg mocked manually
 jest.mock("@lerna/child-process");
 
 const path = require("path");
