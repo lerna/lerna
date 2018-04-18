@@ -1,57 +1,49 @@
 "use strict";
 
-jest.mock("write-json-file");
 // write-pkg mocked manually
-jest.mock("@lerna/git-utils");
 jest.mock("@lerna/prompt");
 jest.mock("@lerna/conventional-commits");
 jest.mock("@lerna/npm-dist-tag");
 jest.mock("@lerna/npm-publish");
 jest.mock("@lerna/run-lifecycle");
-jest.mock("../lib/get-current-branch");
-jest.mock("../lib/get-current-sha");
-jest.mock("../lib/get-short-sha");
-jest.mock("../lib/git-add");
-jest.mock("../lib/git-checkout");
-jest.mock("../lib/git-commit");
 jest.mock("../lib/git-push");
-jest.mock("../lib/git-tag");
 jest.mock("../lib/is-behind-upstream");
 
 const fs = require("fs-extra");
-const normalizeNewline = require("normalize-newline");
 const path = require("path");
+const execa = require("execa");
 const semver = require("semver");
 
 // mocked or stubbed modules
-const writeJsonFile = require("write-json-file");
 const writePkg = require("write-pkg");
 const ConventionalCommitUtilities = require("@lerna/conventional-commits");
-const GitUtilities = require("@lerna/git-utils");
 const PromptUtilities = require("@lerna/prompt");
 const npmDistTag = require("@lerna/npm-dist-tag");
 const npmPublish = require("@lerna/npm-publish");
 const runLifecycle = require("@lerna/run-lifecycle");
-const getCurrentBranch = require("../lib/get-current-branch");
-const getCurrentSHA = require("../lib/get-current-sha");
-const getShortSHA = require("../lib/get-short-sha");
-const gitAdd = require("../lib/git-add");
-const gitCheckout = require("../lib/git-checkout");
-const gitCommit = require("../lib/git-commit");
 const gitPush = require("../lib/git-push");
-const gitTag = require("../lib/git-tag");
 const isBehindUpstream = require("../lib/is-behind-upstream");
 
 // helpers
 const consoleOutput = require("@lerna-test/console-output");
 const loggingOutput = require("@lerna-test/logging-output");
+const gitAdd = require("@lerna-test/git-add");
+const gitTag = require("@lerna-test/git-tag");
+const gitCommit = require("@lerna-test/git-commit");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const normalizeRelativeDir = require("@lerna-test/normalize-relative-dir");
+const showCommit = require("@lerna-test/show-commit");
 
 // file under test
 const lernaPublish = require("@lerna-test/command-runner")(require("../command"));
 
 // assertion helpers
+const gitCommitMessage = cwd =>
+  execa("git", ["show", "--no-patch", "--pretty=%B"], { cwd }).then(result => result.stdout.trim());
+
+const listDirty = cwd =>
+  execa("git", ["diff", "--name-only"], { cwd }).then(result => result.stdout.split("\n").filter(Boolean));
+
 const publishedTagInDirectories = testDir =>
   npmPublish.mock.calls.reduce((arr, [pkg, tag]) => {
     const dir = normalizeRelativeDir(testDir, pkg.location);
@@ -59,60 +51,23 @@ const publishedTagInDirectories = testDir =>
     return arr;
   }, []);
 
-const removedDistTagInDirectories = testDir =>
-  npmDistTag.remove.mock.calls.reduce((obj, [pkg, tag]) => {
-    const location = normalizeRelativeDir(testDir, pkg.location);
-    obj[location] = tag;
-    return obj;
-  }, {});
+const updatedPackageVersions = () => {
+  const result = {};
 
-const addedDistTagInDirectories = testDir =>
-  npmDistTag.add.mock.calls.reduce((obj, [pkg, version, tag]) => {
-    const location = normalizeRelativeDir(testDir, pkg.location);
-    obj[location] = `${pkg.name}@${version} ${tag}`;
-    return obj;
-  }, {});
+  writePkg.registry.forEach((pkg, name) => {
+    result[name] = pkg.version;
+  });
 
-const gitAddedFiles = testDir =>
-  gitAdd.mock.calls.reduce(
-    (arr, [files]) => arr.concat(files.map(fp => normalizeRelativeDir(testDir, fp))),
-    []
-  );
+  return result;
+};
 
-const gitCommitMessage = () => normalizeNewline(gitCommit.mock.calls[0][0]);
+const updatedPackageJSON = name => writePkg.registry.get(name);
 
-const gitTagsAdded = () => gitTag.mock.calls.map(args => args[0]);
-
-const updatedLernaJson = () => writeJsonFile.mock.calls[0][1];
-
-const updatedPackageVersions = testDir =>
-  writePkg.mock.calls.reduce((obj, args) => {
-    const location = normalizeRelativeDir(testDir, path.dirname(args[0]));
-    obj[location] = args[1].version;
-    return obj;
-  }, {});
-
-const updatedPackageJSON = name =>
-  writePkg.mock.calls
-    .reduce((arr, args) => {
-      if (args[1].name === name) {
-        arr.push(args[1]);
-      }
-      return arr;
-    }, [])
-    .pop();
+// stabilize commit SHA
+expect.addSnapshotSerializer(require("@lerna-test/serialize-git-sha"));
 
 describe("PublishCommand", () => {
-  // default exports that return Promises
-  writePkg.mockResolvedValue();
-  writeJsonFile.mockResolvedValue();
-
   // we've already tested these utilities elsewhere
-  getCurrentBranch.mockReturnValue("master");
-  getCurrentSHA.mockReturnValue("FULL_SHA");
-  getShortSHA.mockReturnValue("deadbeef");
-  GitUtilities.diffSinceIn.mockReturnValue("");
-
   npmPublish.mockResolvedValue();
   runLifecycle.mockImplementation(() => Promise.resolve());
   npmDistTag.check.mockReturnValue(true);
@@ -132,43 +87,10 @@ describe("PublishCommand", () => {
       expect(PromptUtilities.select.mock.calls).toMatchSnapshot("prompt");
       expect(PromptUtilities.confirm).toBeCalled();
 
-      expect(updatedLernaJson()).toMatchObject({ version: "1.0.1" });
-      expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
+      expect(updatedPackageJSON("package-1")).toMatchSnapshot("gitHead");
 
-      expect(updatedPackageJSON("package-1")).toEqual({
-        name: "package-1",
-        version: "1.0.1",
-        gitHead: "FULL_SHA", // not versioned
-      });
-      expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-        "package-1": "^1.0.1",
-      });
-      expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-        "package-2": "^1.0.1",
-      });
-      // peerDependencies are _never_ modified automatically
-      expect(updatedPackageJSON("package-3").peerDependencies).toMatchObject({
-        "package-2": "^1.0.0",
-      });
-      expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-        "package-1": "^0.0.0",
-      });
-      expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
-        "package-1": "^1.0.1",
-      });
-      expect(updatedPackageJSON("package-5").optionalDependencies).toMatchObject({
-        "package-3": "^1.0.1",
-      });
-
-      expect(gitAddedFiles(testDir)).toMatchSnapshot("git added files");
-      expect(gitCommitMessage()).toEqual("v1.0.1");
-      expect(gitTagsAdded()).toEqual(["v1.0.1"]);
-      expect(gitCheckout).lastCalledWith(
-        expect.stringContaining("packages/*/package.json"),
-        expect.objectContaining({
-          cwd: testDir,
-        })
-      );
+      const patch = await showCommit(testDir);
+      expect(patch).toMatchSnapshot("commit");
 
       expect(publishedTagInDirectories(testDir)).toMatchSnapshot("npm published");
 
@@ -208,31 +130,11 @@ describe("PublishCommand", () => {
       await lernaPublish(testDir)(); // --independent is only valid in InitCommand
 
       expect(PromptUtilities.confirm).toBeCalled();
-      expect(writeJsonFile).not.toBeCalled();
 
-      expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
+      expect(updatedPackageJSON("package-1")).toMatchSnapshot("gitHead");
 
-      expect(updatedPackageJSON("package-1")).toEqual({
-        name: "package-1",
-        version: "1.0.1",
-        gitHead: "FULL_SHA", // not versioned
-      });
-      expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-        "package-1": "^1.0.1",
-      });
-      expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-        "package-2": "^1.1.0",
-      });
-      expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-        "package-1": "^0.0.0",
-      });
-      expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
-        "package-3": "^2.0.0",
-      });
-
-      expect(gitAddedFiles(testDir)).toMatchSnapshot("git added files");
-      expect(gitCommitMessage()).toMatchSnapshot("git commit message");
-      expect(gitTagsAdded()).toMatchSnapshot("git tags added");
+      const patch = await showCommit(testDir);
+      expect(patch).toMatchSnapshot("commit");
 
       expect(publishedTagInDirectories(testDir)).toMatchSnapshot("npm published");
 
@@ -258,28 +160,10 @@ describe("PublishCommand", () => {
 
       expect(PromptUtilities.select).not.toBeCalled();
 
-      expect(writeJsonFile).not.toBeCalled();
-      expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
+      expect(writePkg.registry).toMatchSnapshot("updated packages");
 
-      expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-        "package-1": "^1.1.0-alpha.deadbeef",
-      });
-      expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-        "package-2": "^1.1.0-alpha.deadbeef",
-      });
-      expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-        "package-1": "^0.0.0",
-      });
-
-      expect(gitAdd).not.toBeCalled();
-      expect(gitCommit).not.toBeCalled();
-      expect(gitTag).not.toBeCalled();
-      expect(gitCheckout).lastCalledWith(
-        expect.stringContaining("packages/*/package.json"),
-        expect.objectContaining({
-          cwd: testDir,
-        })
-      );
+      const unstaged = await listDirty(testDir);
+      expect(unstaged).toEqual([]);
 
       expect(gitPush).not.toBeCalled();
       expect(publishedTagInDirectories(testDir)).toMatchSnapshot("npm published");
@@ -289,34 +173,14 @@ describe("PublishCommand", () => {
       const testDir = await initFixture("normal");
       await lernaPublish(testDir)("--canary", "beta");
 
-      expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
-
-      expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-        "package-1": "^1.1.0-beta.deadbeef",
-      });
-      expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-        "package-2": "^1.1.0-beta.deadbeef",
-      });
-      expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-        "package-1": "^0.0.0",
-      });
+      expect(writePkg.registry).toMatchSnapshot("updated packages");
     });
 
     it("should work with --canary and --cd-version=patch", async () => {
       const testDir = await initFixture("normal");
       await lernaPublish(testDir)("--canary", "--cd-version", "patch");
 
-      expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
-
-      expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-        "package-1": "^1.0.1-alpha.deadbeef",
-      });
-      expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-        "package-2": "^1.0.1-alpha.deadbeef",
-      });
-      expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-        "package-1": "^0.0.0",
-      });
+      expect(writePkg.registry).toMatchSnapshot("updated packages");
     });
   });
 
@@ -331,18 +195,10 @@ describe("PublishCommand", () => {
 
       expect(PromptUtilities.select).not.toBeCalled();
 
-      expect(writeJsonFile).not.toBeCalled();
-      expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
+      expect(writePkg.registry).toMatchSnapshot("updated packages");
 
-      expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-        "package-1": "^1.1.0-alpha.deadbeef",
-      });
-      expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-        "package-2": "^2.1.0-alpha.deadbeef",
-      });
-      expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-        "package-1": "^0.0.0",
-      });
+      const unstaged = await listDirty(testDir);
+      expect(unstaged).toEqual([]);
 
       expect(publishedTagInDirectories(testDir)).toMatchSnapshot("npm published");
     });
@@ -351,15 +207,7 @@ describe("PublishCommand", () => {
       const testDir = await initFixture("independent");
       await lernaPublish(testDir)("--canary", "beta");
 
-      expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-        "package-1": "^1.1.0-beta.deadbeef",
-      });
-      expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-        "package-2": "^2.1.0-beta.deadbeef",
-      });
-      expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-        "package-1": "^0.0.0",
-      });
+      expect(writePkg.registry).toMatchSnapshot("updated packages");
     });
   });
 
@@ -372,17 +220,12 @@ describe("PublishCommand", () => {
       const testDir = await initFixture("normal");
       await lernaPublish(testDir)("--skip-git");
 
-      expect(gitAdd).not.toBeCalled();
-      expect(gitCommit).not.toBeCalled();
-      expect(gitTag).not.toBeCalled();
-      expect(gitPush).not.toBeCalled();
-
-      expect(updatedPackageJSON("package-1")).toEqual({
-        name: "package-1",
-        version: "1.0.1",
-        gitHead: "FULL_SHA", // not versioned
-      });
+      expect(updatedPackageJSON("package-1")).toMatchSnapshot("gitHead");
       expect(publishedTagInDirectories(testDir)).toMatchSnapshot("npm published");
+
+      const unstaged = await listDirty(testDir);
+      // FIXME: lerna.json should not have unstaged changes
+      expect(unstaged).toEqual(["lerna.json"]);
     });
 
     it("should display a message that git is skipped", async () => {
@@ -410,7 +253,6 @@ describe("PublishCommand", () => {
         // gitHead not annotated
       });
 
-      expect(gitCommitMessage()).toEqual("v1.0.1");
       expect(gitPush).lastCalledWith(
         "origin",
         "master",
@@ -438,7 +280,6 @@ describe("PublishCommand", () => {
       const testDir = await initFixture("normal");
       await lernaPublish(testDir)("--skip-git", "--skip-npm");
 
-      expect(updatedLernaJson()).toMatchObject({ version: "1.0.1" });
       expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
 
       expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
@@ -454,10 +295,10 @@ describe("PublishCommand", () => {
         "package-1": "^1.0.1",
       });
 
-      expect(gitAdd).not.toBeCalled();
-      expect(gitCommit).not.toBeCalled();
-      expect(gitTag).not.toBeCalled();
       expect(gitPush).not.toBeCalled();
+
+      const unstaged = await listDirty(testDir);
+      expect(unstaged).not.toEqual([]);
 
       expect(npmPublish).not.toBeCalled();
       expect(npmDistTag.check).not.toBeCalled();
@@ -480,6 +321,20 @@ describe("PublishCommand", () => {
    * ======================================================================= */
 
   describe("normal mode with --temp-tag", () => {
+    const removedDistTagInDirectories = testDir =>
+      npmDistTag.remove.mock.calls.reduce((obj, [pkg, tag]) => {
+        const location = normalizeRelativeDir(testDir, pkg.location);
+        obj[location] = tag;
+        return obj;
+      }, {});
+
+    const addedDistTagInDirectories = testDir =>
+      npmDistTag.add.mock.calls.reduce((obj, [pkg, version, tag]) => {
+        const location = normalizeRelativeDir(testDir, pkg.location);
+        obj[location] = `${pkg.name}@${version} ${tag}`;
+        return obj;
+      }, {});
+
     it("should publish the changed packages with a temp tag", async () => {
       const testDir = await initFixture("normal");
       await lernaPublish(testDir)("--temp-tag");
@@ -522,7 +377,7 @@ describe("PublishCommand", () => {
 
       expect(PromptUtilities.select).not.toBeCalled();
       expect(PromptUtilities.confirm).not.toBeCalled();
-      expect(updatedLernaJson()).toMatchObject({ version: "1.0.1-auto-confirm" });
+      await expect(gitCommitMessage(testDir)).resolves.toBe("v1.0.1-auto-confirm");
     });
   });
 
@@ -552,10 +407,10 @@ describe("PublishCommand", () => {
   describe("normal mode with --repo-version", () => {
     it("skips version prompt and publishes changed packages with designated version", async () => {
       const testDir = await initFixture("normal");
-      await lernaPublish(testDir)("--repo-version", "1.0.1-beta");
+      await lernaPublish(testDir)("--repo-version", "1.0.1-beta.25");
 
       expect(PromptUtilities.select).not.toBeCalled();
-      expect(updatedLernaJson()).toMatchObject({ version: "1.0.1-beta" });
+      await expect(gitCommitMessage(testDir)).resolves.toBe("v1.0.1-beta.25");
     });
   });
 
@@ -568,38 +423,16 @@ describe("PublishCommand", () => {
       const testDir = await initFixture("normal");
       await lernaPublish(testDir)("--exact");
 
-      expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-        "package-1": "1.0.1",
-      });
-      expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-        "package-2": "1.0.1",
-      });
-      // package-4's dependency on package-1 remains semver because
-      // it does not match the version of package-1 being published
-      expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-        "package-1": "^0.0.0",
-      });
-      expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
-        "package-1": "1.0.1",
-      });
+      const patch = await showCommit(testDir);
+      expect(patch).toMatchSnapshot("commit");
     });
 
     it("updates existing exact versions", async () => {
       const testDir = await initFixture("normal-exact");
       await lernaPublish(testDir)();
 
-      expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-        "package-1": "1.0.1",
-      });
-      expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-        "package-2": "1.0.1",
-      });
-      expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-        "package-1": "0.1.0",
-      });
-      expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
-        "package-1": "1.0.1",
-      });
+      const patch = await showCommit(testDir);
+      expect(patch).toMatchSnapshot("commit");
     });
   });
 
@@ -613,7 +446,7 @@ describe("PublishCommand", () => {
       await lernaPublish(testDir)("--cd-version", "minor");
 
       expect(PromptUtilities.select).not.toBeCalled();
-      expect(gitCommitMessage()).toBe("v1.1.0");
+      await expect(gitCommitMessage(testDir)).resolves.toBe("v1.1.0");
     });
 
     it("throws an error when an invalid semver keyword is used", async () => {
@@ -636,14 +469,12 @@ describe("PublishCommand", () => {
    * ======================================================================= */
 
   describe("normal mode with previous prerelease", () => {
-    beforeEach(() => {
-      GitUtilities.hasTags.mockReturnValueOnce(true);
-      GitUtilities.getLastTag.mockReturnValueOnce("v1.0.1-beta.3");
-      GitUtilities.diffSinceIn
-        .mockReturnValueOnce("")
-        .mockReturnValueOnce("")
-        .mockReturnValueOnce("packages/package-3/newfile.json");
-    });
+    const setupChanges = async cwd => {
+      await gitTag(cwd, "v1.0.0-beta.3");
+      await fs.outputFile(path.join(cwd, "packages/package-3/hello.js"), "world");
+      await gitAdd(cwd, ".");
+      await gitCommit(cwd, "setup");
+    };
 
     it("publishes changed & prereleased packages if --cd-version is non-prerelease", async () => {
       const testDir = await initFixture("republish-prereleased");
@@ -651,22 +482,21 @@ describe("PublishCommand", () => {
       // package 3 changed
       // package 5 has a prerelease version
       // package 4 depends on package 5
+      await setupChanges(testDir);
       await lernaPublish(testDir)("--cd-version", "patch");
 
-      expect(gitCommitMessage()).toBe("v1.0.1");
-      expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
-      expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-        "package-5": "^1.0.1",
-      });
+      const patch = await showCommit(testDir);
+      expect(patch).toMatchSnapshot("commit");
     });
 
     it("should not publish prereleased packages if --cd-version is a pre-* increment", async () => {
       const testDir = await initFixture("republish-prereleased");
-      // should republish only package 3, because it changed
+      // should republish only package 3, because only it changed
+      await setupChanges(testDir);
       await lernaPublish(testDir)("--cd-version", "prerelease", "---preid", "beta");
 
-      expect(gitCommitMessage()).toBe("v1.0.1-beta.4");
-      expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
+      const patch = await showCommit(testDir);
+      expect(patch).toMatchSnapshot("commit");
     });
   });
 
@@ -680,7 +510,7 @@ describe("PublishCommand", () => {
       await lernaPublish(testDir)("--cd-version", "patch");
 
       expect(PromptUtilities.select).not.toBeCalled();
-      expect(gitCommitMessage()).toMatchSnapshot("git commit message");
+      await expect(gitCommitMessage(testDir)).resolves.toMatchSnapshot();
     });
 
     /** =========================================================================
@@ -691,34 +521,16 @@ describe("PublishCommand", () => {
       const testDir = await initFixture("independent");
       await lernaPublish(testDir)("--cd-version", "prerelease", "--preid", "foo");
 
-      expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
-
-      expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-        "package-1": "^1.0.1-foo.0",
-      });
-      expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-        "package-2": "^2.0.1-foo.0",
-      });
-      expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-        "package-1": "^0.0.0",
-      });
+      const patch = await showCommit(testDir);
+      expect(patch).toMatchSnapshot("commit");
     });
 
     it("should bump to prerelease versions with --cd-version prerelease (no --preid)", async () => {
       const testDir = await initFixture("independent");
       await lernaPublish(testDir)("--cd-version", "prerelease");
 
-      expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
-
-      expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
-        "package-1": "^1.0.1-0",
-      });
-      expect(updatedPackageJSON("package-3").devDependencies).toMatchObject({
-        "package-2": "^2.0.1-0",
-      });
-      expect(updatedPackageJSON("package-4").dependencies).toMatchObject({
-        "package-1": "^0.0.0",
-      });
+      const patch = await showCommit(testDir);
+      expect(patch).toMatchSnapshot("commit");
     });
   });
 
@@ -746,16 +558,23 @@ describe("PublishCommand", () => {
    * ======================================================================= */
 
   describe("normal mode with --ignore-changes", () => {
+    const setupChanges = async (cwd, files) => {
+      await gitTag(cwd, "v1.0.0");
+      await Promise.all(
+        files.map(([filePath, content]) => fs.outputFile(path.join(cwd, filePath), content, "utf8"))
+      );
+      await gitAdd(cwd, ".");
+      await gitCommit(cwd, "setup");
+    };
+
     it("does not publish packages with ignored changes", async () => {
       const testDir = await initFixture("normal");
 
-      GitUtilities.hasTags.mockReturnValueOnce(true);
-      GitUtilities.getLastTag.mockReturnValueOnce("v1.0.0");
-      GitUtilities.diffSinceIn
-        .mockReturnValueOnce("")
-        .mockReturnValueOnce("packages/package-2/README.md")
-        .mockReturnValueOnce("packages/package-3/__tests__/pkg3.test.js")
-        .mockReturnValueOnce("packages/package-4/lib/foo.js");
+      await setupChanges(testDir, [
+        ["packages/package-2/README.md", "oh"],
+        ["packages/package-3/__tests__/pkg3.test.js", "hai"],
+        ["packages/package-4/lib/foo.js", "there"],
+      ]);
 
       await lernaPublish(testDir)(
         "--ignore-changes",
@@ -768,25 +587,20 @@ describe("PublishCommand", () => {
         "package-4" // notably does NOT work, needs to be "**/package-4/**" to match
       );
 
-      expect(gitAddedFiles(testDir)).toMatchSnapshot("git added files");
-      expect(publishedTagInDirectories(testDir)).toMatchSnapshot("npm published");
+      await expect(showCommit(testDir, "--name-only")).resolves.toMatchSnapshot();
     });
 
     it("maps deprecated --ignore", async () => {
       const testDir = await initFixture("normal");
 
-      GitUtilities.hasTags.mockReturnValueOnce(true);
-      GitUtilities.getLastTag.mockReturnValueOnce("v1.0.0");
-      GitUtilities.diffSinceIn
-        .mockReturnValueOnce("")
-        .mockReturnValueOnce("")
-        .mockReturnValueOnce("packages/package-3/README.md")
-        .mockReturnValueOnce("packages/package-4/lib/foo.js");
+      await setupChanges(testDir, [
+        ["packages/package-3/README.md", "wat"],
+        ["packages/package-4/lib/foo.js", "hey"],
+      ]);
 
       await lernaPublish(testDir)("--ignore", "*.md");
 
-      expect(gitAddedFiles(testDir)).toMatchSnapshot("git added files");
-      expect(publishedTagInDirectories(testDir)).toMatchSnapshot("npm published");
+      await expect(showCommit(testDir, "--name-only")).resolves.toMatchSnapshot();
     });
   });
 
@@ -799,24 +613,16 @@ describe("PublishCommand", () => {
       const testDir = await initFixture("normal");
       await lernaPublish(testDir)("--message", "chore: Release %s :rocket:");
 
-      expect(gitCommit).lastCalledWith(
-        "chore: Release v1.0.1 :rocket:",
-        expect.objectContaining({
-          cwd: testDir,
-        })
-      );
+      const message = await gitCommitMessage(testDir);
+      expect(message).toMatch("Release v1.0.1");
     });
 
     it("commits changes with a custom message using %v", async () => {
       const testDir = await initFixture("normal");
       await lernaPublish(testDir)("--message", "chore: Release %v :rocket:");
 
-      expect(gitCommit).lastCalledWith(
-        "chore: Release 1.0.1 :rocket:",
-        expect.objectContaining({
-          cwd: testDir,
-        })
-      );
+      const message = await gitCommitMessage(testDir);
+      expect(message).toMatch("Release 1.0.1");
     });
   });
 
@@ -829,13 +635,8 @@ describe("PublishCommand", () => {
       const testDir = await initFixture("independent");
       await lernaPublish(testDir)("-m", "chore: Custom publish message");
 
-      expect(gitCommit).lastCalledWith(
-        expect.stringContaining("chore: Custom publish message"),
-        expect.objectContaining({
-          cwd: testDir,
-        })
-      );
-      expect(gitCommitMessage()).toMatchSnapshot("git commit message");
+      const message = await gitCommitMessage(testDir);
+      expect(message).toMatch("chore: Custom publish message");
     });
   });
 
@@ -844,9 +645,12 @@ describe("PublishCommand", () => {
    * ======================================================================= */
 
   describe("--conventional-commits", () => {
-    ConventionalCommitUtilities.updateChangelog.mockImplementation(pkg =>
-      Promise.resolve(path.join(pkg.location, "CHANGELOG.md"))
-    );
+    ConventionalCommitUtilities.updateChangelog.mockImplementation(pkg => {
+      const filePath = path.join(pkg.location, "CHANGELOG.md");
+
+      // grumble grumble re-implementing the implementation
+      return fs.outputFile(filePath, "changelog", "utf8").then(() => filePath);
+    });
 
     describe("independent mode", () => {
       const versionBumps = ["1.0.1", "2.1.0", "4.0.0", "4.1.0", "5.0.1"];
@@ -862,8 +666,7 @@ describe("PublishCommand", () => {
 
         await lernaPublish(testDir)("--conventional-commits");
 
-        expect(gitAddedFiles(testDir)).toMatchSnapshot("git added files");
-        expect(gitCommitMessage()).toMatchSnapshot("git commit message");
+        await expect(showCommit(testDir, "--name-only")).resolves.toMatchSnapshot();
 
         ["package-1", "package-2", "package-3", "package-4", "package-5"].forEach((name, idx) => {
           expect(ConventionalCommitUtilities.recommendVersion).toBeCalledWith(
@@ -913,8 +716,7 @@ describe("PublishCommand", () => {
 
         await lernaPublish(testDir)("--conventional-commits");
 
-        expect(gitAddedFiles(testDir)).toMatchSnapshot("git added files");
-        expect(gitCommitMessage()).toMatchSnapshot("git commit message");
+        await expect(showCommit(testDir, "--name-only")).resolves.toMatchSnapshot();
 
         ["package-1", "package-2", "package-3", "package-4", "package-5"].forEach(name => {
           const location = path.join(testDir, "packages", name);
@@ -964,9 +766,10 @@ describe("PublishCommand", () => {
     it("avoids duplicating previously-released version", async () => {
       const testDir = await initFixture("normal-no-inter-dependencies");
 
-      GitUtilities.hasTags.mockReturnValueOnce(true);
-      GitUtilities.getLastTag.mockReturnValueOnce("v1.0.0");
-      GitUtilities.diffSinceIn.mockReturnValueOnce(`packages/package-1/package.json`);
+      await gitTag(testDir, "v1.0.0");
+      await fs.outputFile(path.join(testDir, "packages/package-1/index.js"), "one");
+      await gitAdd(testDir, ".");
+      await gitCommit(testDir, "feat(package-1): add thing");
 
       // feat(package-1): add thing
       ConventionalCommitUtilities.recommendVersion.mockResolvedValueOnce("1.1.0");
@@ -974,20 +777,16 @@ describe("PublishCommand", () => {
       await lernaPublish(testDir)("--conventional-commits");
 
       expect(updatedPackageVersions(testDir)).toEqual({
-        "packages/package-1": "1.1.0",
+        "package-1": "1.1.0",
       });
-
-      // make subsequent publish start with the right globalVersion
-      await fs.writeJSON(path.join(testDir, "lerna.json"), { version: "1.1.0" });
 
       // clear previous publish mock records
       jest.clearAllMocks();
+      writePkg.registry.clear();
 
-      GitUtilities.hasTags.mockReturnValueOnce(true);
-      GitUtilities.getLastTag.mockReturnValueOnce("v1.1.0");
-      GitUtilities.diffSinceIn
-        .mockReturnValueOnce("") // package-1 has no changes
-        .mockReturnValueOnce(`packages/package-2/package.json`);
+      await fs.outputFile(path.join(testDir, "packages/package-2/index.js"), "two");
+      await gitAdd(testDir, ".");
+      await gitCommit(testDir, "fix(package-2): oops thing");
 
       // fix(package-2): oops thing
       ConventionalCommitUtilities.recommendVersion.mockImplementationOnce(pkg =>
@@ -997,7 +796,7 @@ describe("PublishCommand", () => {
       await lernaPublish(testDir)("--conventional-commits", "--yes");
 
       expect(updatedPackageVersions(testDir)).toEqual({
-        "packages/package-2": "1.1.1",
+        "package-2": "1.1.1",
       });
     });
   });
@@ -1016,12 +815,14 @@ describe("PublishCommand", () => {
   });
 
   describe("--allow-branch", () => {
+    const changeBranch = (cwd, name) => execa("git", ["checkout", "-B", name], { cwd });
+
     describe("cli", () => {
       it("should reject a non matching branch", async () => {
-        getCurrentBranch.mockReturnValueOnce("unmatched");
-
         const testDir = await initFixture("normal");
+
         try {
+          await changeBranch(testDir, "unmatched");
           await lernaPublish(testDir)("--allow-branch", "master");
         } catch (err) {
           expect(err.message).toMatch("Branch 'unmatched' is restricted from publishing");
@@ -1029,27 +830,27 @@ describe("PublishCommand", () => {
       });
 
       it("should accept an exactly matching branch", async () => {
-        getCurrentBranch.mockReturnValueOnce("exact-match");
-
         const testDir = await initFixture("normal");
+
+        await changeBranch(testDir, "exact-match");
         await lernaPublish(testDir)("--allow-branch", "exact-match");
 
         expect(publishedTagInDirectories(testDir)).toHaveLength(4);
       });
 
       it("should accept a branch that matches by wildcard", async () => {
-        getCurrentBranch.mockReturnValueOnce("feature/awesome");
-
         const testDir = await initFixture("normal");
+
+        await changeBranch(testDir, "feature/awesome");
         await lernaPublish(testDir)("--allow-branch", "feature/*");
 
         expect(publishedTagInDirectories(testDir)).toHaveLength(4);
       });
 
       it("should accept a branch that matches one of the items passed", async () => {
-        getCurrentBranch.mockReturnValueOnce("feature/awesome");
-
         const testDir = await initFixture("normal");
+
+        await changeBranch(testDir, "feature/awesome");
         await lernaPublish(testDir)("--allow-branch", "master", "feature/*");
 
         expect(publishedTagInDirectories(testDir)).toHaveLength(4);
@@ -1058,10 +859,10 @@ describe("PublishCommand", () => {
 
     describe("lerna.json", () => {
       it("should reject a non matching branch", async () => {
-        getCurrentBranch.mockReturnValueOnce("unmatched");
-
         const testDir = await initFixture("allow-branch-lerna");
+
         try {
+          await changeBranch(testDir, "unmatched");
           await lernaPublish(testDir)();
         } catch (err) {
           expect(err.message).toMatch("Branch 'unmatched' is restricted from publishing");
@@ -1069,18 +870,18 @@ describe("PublishCommand", () => {
       });
 
       it("should accept a matching branch", async () => {
-        getCurrentBranch.mockReturnValueOnce("lerna");
-
         const testDir = await initFixture("allow-branch-lerna");
+
+        await changeBranch(testDir, "lerna");
         await lernaPublish(testDir)();
 
         expect(publishedTagInDirectories(testDir)).toHaveLength(1);
       });
 
       it("should prioritize cli over defaults", async () => {
-        getCurrentBranch.mockReturnValueOnce("cli-override");
-
         const testDir = await initFixture("allow-branch-lerna");
+
+        await changeBranch(testDir, "cli-override");
         await lernaPublish(testDir)("--allow-branch", "cli-override");
 
         expect(publishedTagInDirectories(testDir)).toHaveLength(1);
@@ -1090,9 +891,10 @@ describe("PublishCommand", () => {
     describe("with --canary", () => {
       it("does not restrict publishing canary versions", async () => {
         const testDir = await initFixture("normal");
-        getCurrentBranch.mockReturnValueOnce("other");
 
+        await changeBranch(testDir, "other");
         await lernaPublish(testDir)("--allow-branch", "master", "--canary");
+
         expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
       });
     });
@@ -1207,12 +1009,13 @@ describe("PublishCommand", () => {
   });
 
   it("exits with an error when git HEAD is detached", async () => {
-    getCurrentBranch.mockReturnValueOnce("HEAD");
-
-    const testDir = await initFixture("normal-no-inter-dependencies");
+    const cwd = await initFixture("normal-no-inter-dependencies");
 
     try {
-      await lernaPublish(testDir)();
+      const sha = await execa.stdout("git", ["rev-parse", "HEAD"], { cwd });
+      await execa("git", ["checkout", sha], { cwd }); // detach head
+
+      await lernaPublish(cwd)();
     } catch (err) {
       expect(err.prefix).toBe("ENOGIT");
       expect(err.message).toBe("Detached git HEAD, please checkout a branch to publish changes.");
@@ -1222,13 +1025,14 @@ describe("PublishCommand", () => {
   it("publishes all transitive dependents after change", async () => {
     const testDir = await initFixture("snake-graph");
 
-    GitUtilities.hasTags.mockReturnValueOnce(true);
-    GitUtilities.getLastTag.mockReturnValueOnce("v1.0.0");
-    GitUtilities.diffSinceIn.mockReturnValueOnce("packages/package-1/package.json");
+    await gitTag(testDir, "v1.0.0");
+    await fs.outputFile(path.join(testDir, "packages/package-1/hello.js"), "world");
+    await gitAdd(testDir, ".");
+    await gitCommit(testDir, "feat: hello");
 
     await lernaPublish(testDir)("--cd-version", "major", "--yes");
 
-    expect(updatedPackageVersions(testDir)).toMatchSnapshot();
+    expect(showCommit(testDir)).toMatchSnapshot("commit");
   });
 
   describe("with git-hosted sibling dependencies", () => {
@@ -1278,15 +1082,17 @@ describe("PublishCommand", () => {
   });
 
   describe("with relative file: specifiers", () => {
-    beforeEach(() => {
-      GitUtilities.hasTags.mockReturnValueOnce(true);
-      GitUtilities.getLastTag.mockReturnValueOnce("v1.0.0");
-      GitUtilities.diffSinceIn.mockReturnValueOnce("packages/package-1/package.json");
-    });
+    const setupChanges = async (cwd, pkgRoot = "packages") => {
+      await gitTag(cwd, "v1.0.0");
+      await fs.outputFile(path.join(cwd, `${pkgRoot}/package-1/hello.js`), "world");
+      await gitAdd(cwd, ".");
+      await gitCommit(cwd, "setup");
+    };
 
     it("overwrites relative link with local version before npm publish but after git commit", async () => {
       const testDir = await initFixture("relative-file-specs");
 
+      await setupChanges(testDir);
       await lernaPublish(testDir)("--cd-version", "major", "--yes");
 
       expect(updatedPackageVersions(testDir)).toMatchSnapshot();
@@ -1303,7 +1109,8 @@ describe("PublishCommand", () => {
       });
       expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
         "package-4": "^2.0.0",
-        "package-6": "^1.0.0", // FIXME: awkward... (_intentional_, for now)
+        // FIXME: awkward... (_intentional_, for now)
+        "package-6": "^1.0.0",
       });
       // private packages do not need local version resolution
       expect(updatedPackageJSON("package-7").dependencies).toMatchObject({
@@ -1314,6 +1121,7 @@ describe("PublishCommand", () => {
     it("falls back to existing relative version when it is not updated", async () => {
       const testDir = await initFixture("relative-independent");
 
+      await setupChanges(testDir);
       await lernaPublish(testDir)("--cd-version", "minor", "--yes");
 
       expect(updatedPackageVersions(testDir)).toMatchSnapshot();
@@ -1328,6 +1136,7 @@ describe("PublishCommand", () => {
     it("respects --exact", async () => {
       const testDir = await initFixture("relative-independent");
 
+      await setupChanges(testDir);
       await lernaPublish(testDir)("--cd-version", "patch", "--yes", "--exact");
 
       // package-4 was updated, but package-6 was not
@@ -1340,6 +1149,7 @@ describe("PublishCommand", () => {
     it("works around npm-incompatible link: specifiers", async () => {
       const testDir = await initFixture("yarn-link-spec");
 
+      await setupChanges(testDir, "workspaces");
       await lernaPublish(testDir)("--cd-version", "major", "--yes");
 
       expect(updatedPackageJSON("package-2").dependencies).toMatchObject({
