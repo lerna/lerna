@@ -141,7 +141,7 @@ export default class GitUtilities {
 
     const diff = ChildProcessUtilities.execSync(
       "git",
-      ["diff", "--name-only", since, "HEAD",  "--", formattedLocation],
+      ["diff", "--name-only", since, "HEAD", "--", formattedLocation],
       opts
     );
     log.silly("diff", diff);
