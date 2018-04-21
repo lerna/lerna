@@ -273,6 +273,12 @@ export default class PublishCommand extends Command {
     if (this.options.skipNpm) {
       callback(null, true);
     } else {
+      if (this.gitEnabled) {
+        this.logger.info("git", "Pushing tags...");
+        this.logger.silly(`new tags: ${this.tags}`);
+        GitUtilities.pushWithTags(this.gitRemote, this.tags, this.execOpts);
+        this.logger.info("git", "git push with tags finished.");
+      }
       this.publishPackagesToNpm(callback);
     }
   }
@@ -298,11 +304,6 @@ export default class PublishCommand extends Command {
         if (updateError) {
           callback(updateError);
           return;
-        }
-
-        if (this.gitEnabled) {
-          this.logger.info("git", "Pushing tags...");
-          GitUtilities.pushWithTags(this.gitRemote, this.tags, this.execOpts);
         }
 
         const message = this.packagesToPublish.map(pkg => ` - ${pkg.name}@${pkg.version}`);
