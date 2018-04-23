@@ -16,6 +16,8 @@ export const describe = "Add packages as dependency to matched packages";
 
 export const builder = {
   dev: {
+    type: "boolean",
+    alias: "D",
     describe: "Save as to devDependencies",
   },
 };
