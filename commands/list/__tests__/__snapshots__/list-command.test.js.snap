@@ -60,6 +60,11 @@ exports[`LsCommand with --include-filtered-dependencies should list packages, in
 @test/package-1 v1.0.0"
 `;
 
+exports[`LsCommand with --include-filtered-dependents should list packages, including filtered ones 1`] = `
+"@test/package-1 v1.0.0
+@test/package-2 v1.0.0"
+`;
+
 exports[`LsCommand with --json should list packages as json objects 1`] = `
 Array [
   Object {
