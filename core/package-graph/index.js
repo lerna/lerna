@@ -107,27 +107,7 @@ class PackageGraph extends Map {
    * @return {Array.<Package>} The packages with any dependencies that weren't already included.
    */
   addDependencies(filteredPackages) {
-    // the current list of packages we are expanding using breadth-first-search
-    const search = new Set(filteredPackages.map(({ name }) => this.get(name)));
-
-    // an intermediate list of matched PackageGraphNodes
-    const result = [];
-
-    search.forEach(currentNode => {
-      // anything searched for is always a result
-      result.push(currentNode);
-
-      currentNode.localDependencies.forEach((meta, depName) => {
-        const depNode = this.get(depName);
-
-        if (depNode !== currentNode && !search.has(depNode)) {
-          search.add(depNode);
-        }
-      });
-    });
-
-    // actual Package instances, not PackageGraphNodes
-    return result.map(node => node.pkg);
+    return this.extendList(filteredPackages, "localDependencies");
   }
 
   /**
@@ -139,8 +119,21 @@ class PackageGraph extends Map {
    * @return {Array.<Package>} The packages with any dependents that weren't already included.
    */
   addDependents(filteredPackages) {
+    return this.extendList(filteredPackages, "localDependents");
+  }
+
+  /**
+   * Extends a list of packages by traversing on a given property, which must refer to a
+   * `PackageGraphNode` property that is a collection of `PackageGraphNode`s
+   *
+   * @param {!Array.<Package>} packageList The list of packages to extend
+   * @param {!String} nodeProp The property on `PackageGraphNode` used to traverse
+   * @return {Array.<Package>} The packages with any additional packages found by traversing
+   *                           nodeProp
+   */
+  extendList(packageList, nodeProp) {
     // the current list of packages we are expanding using breadth-first-search
-    const search = new Set(filteredPackages.map(({ name }) => this.get(name)));
+    const search = new Set(packageList.map(({ name }) => this.get(name)));
 
     // an intermediate list of matched PackageGraphNodes
     const result = [];
@@ -149,7 +142,7 @@ class PackageGraph extends Map {
       // anything searched for is always a result
       result.push(currentNode);
 
-      currentNode.localDependents.forEach((meta, depName) => {
+      currentNode[nodeProp].forEach((meta, depName) => {
         const depNode = this.get(depName);
 
         if (depNode !== currentNode && !search.has(depNode)) {
