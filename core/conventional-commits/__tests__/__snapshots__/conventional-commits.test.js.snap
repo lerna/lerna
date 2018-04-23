@@ -25,7 +25,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 `;
 
-exports[`conventional-commits updateChangelog() creates files if they do not exist: package-1 1`] = `
+exports[`conventional-commits updateChangelog() creates files if they do not exist: leaf 1`] = `
 # Change Log
 
 All notable changes to this project will be documented in this file.
@@ -78,7 +78,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 `;
 
-exports[`conventional-commits updateChangelog() updates fixed changelogs 1`] = `
+exports[`conventional-commits updateChangelog() updates fixed changelogs: leaf 1`] = `
 # Change Log
 
 All notable changes to this project will be documented in this file.
@@ -106,7 +106,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 `;
 
-exports[`conventional-commits updateChangelog() updates fixed changelogs 2`] = `
+exports[`conventional-commits updateChangelog() updates fixed changelogs: root 1`] = `
 # Change Log
 
 All notable changes to this project will be documented in this file.

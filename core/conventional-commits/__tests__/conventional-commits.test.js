@@ -27,7 +27,8 @@ describe("conventional-commits", () => {
       await gitAdd(cwd, pkg1.manifestLocation);
       await gitCommit(cwd, "feat: changed 1");
 
-      await expect(recommendVersion(pkg1, "fixed", {})).resolves.toBe("1.1.0");
+      const bump = await recommendVersion(pkg1, "fixed", {});
+      expect(bump).toBe("1.1.0");
     });
 
     it("returns package-specific bumps in independent mode", async () => {
@@ -45,8 +46,12 @@ describe("conventional-commits", () => {
       await gitAdd(cwd, pkg2.manifestLocation);
       await gitCommit(cwd, "feat: changed 2");
 
-      await expect(recommendVersion(pkg1, "independent", opts)).resolves.toBe("1.0.1");
-      await expect(recommendVersion(pkg2, "independent", opts)).resolves.toBe("1.1.0");
+      const [bump1, bump2] = await Promise.all([
+        recommendVersion(pkg1, "independent", opts),
+        recommendVersion(pkg2, "independent", opts),
+      ]);
+      expect(bump1).toBe("1.0.1");
+      expect(bump2).toBe("1.1.0");
     });
 
     it("supports local preset paths", async () => {
@@ -171,15 +176,21 @@ describe("conventional-commits", () => {
       // update version
       await pkg1.set("version", "1.1.0").serialize();
 
-      const changelogLocation = await updateChangelog(pkg1, "fixed", {
-        changelogPreset: "angular",
-      });
+      const [leafChangelogFile, rootChangelogFile] = await Promise.all([
+        updateChangelog(pkg1, "fixed", { changelogPreset: "angular" }),
+        updateChangelog(rootPkg, "root", { version: "1.1.0" }),
+      ]);
 
-      expect(changelogLocation).toBe(path.join(pkg1.location, "CHANGELOG.md"));
-      await expect(getFileContent(changelogLocation)).resolves.toMatchSnapshot("package-1");
-      await expect(
-        updateChangelog(rootPkg, "root", { version: "1.1.0" }).then(getFileContent)
-      ).resolves.toMatchSnapshot("root");
+      expect(leafChangelogFile).toBe(path.join(pkg1.location, "CHANGELOG.md"));
+      expect(rootChangelogFile).toBe(path.join(rootPkg.location, "CHANGELOG.md"));
+
+      const [leafChangelogContent, rootChangelogContent] = await Promise.all([
+        getFileContent(leafChangelogFile),
+        getFileContent(rootChangelogFile),
+      ]);
+
+      expect(leafChangelogContent).toMatchSnapshot("leaf");
+      expect(rootChangelogContent).toMatchSnapshot("root");
     });
 
     it("updates fixed changelogs", async () => {
@@ -201,13 +212,13 @@ describe("conventional-commits", () => {
       // update version
       await pkg1.set("version", "1.0.1").serialize();
 
-      await expect(
-        updateChangelog(pkg1, "fixed", /* default preset */ {}).then(getFileContent)
-      ).resolves.toMatchSnapshot();
+      const [leafChangelogContent, rootChangelogContent] = await Promise.all([
+        updateChangelog(pkg1, "fixed", /* default preset */ {}).then(getFileContent),
+        updateChangelog(rootPkg, "root", { version: "1.0.1" }).then(getFileContent),
+      ]);
 
-      await expect(
-        updateChangelog(rootPkg, "root", { version: "1.0.1" }).then(getFileContent)
-      ).resolves.toMatchSnapshot();
+      expect(leafChangelogContent).toMatchSnapshot("leaf");
+      expect(rootChangelogContent).toMatchSnapshot("root");
     });
 
     it("appends version bump message if no commits have been recorded", async () => {
@@ -225,9 +236,11 @@ describe("conventional-commits", () => {
       // update version
       await pkg2.set("version", "1.0.1").serialize();
 
-      await expect(
-        updateChangelog(pkg2, "fixed", { changelogPreset: "./scripts/local-preset" }).then(getFileContent)
-      ).resolves.toMatchSnapshot();
+      const leafChangelogContent = await updateChangelog(pkg2, "fixed", {
+        changelogPreset: "./scripts/local-preset",
+      }).then(getFileContent);
+
+      expect(leafChangelogContent).toMatchSnapshot();
     });
 
     it("supports old preset API", async () => {
@@ -245,9 +258,11 @@ describe("conventional-commits", () => {
       // update version
       await pkg1.set("version", "1.0.1").serialize();
 
-      await expect(
-        updateChangelog(pkg1, "fixed", { changelogPreset: "./scripts/old-api-preset" }).then(getFileContent)
-      ).resolves.toMatchSnapshot();
+      const leafChangelogContent = await updateChangelog(pkg1, "fixed", {
+        changelogPreset: "./scripts/old-api-preset",
+      }).then(getFileContent);
+
+      expect(leafChangelogContent).toMatchSnapshot();
     });
 
     it("updates independent changelogs", async () => {

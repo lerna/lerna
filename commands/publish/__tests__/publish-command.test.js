@@ -377,7 +377,9 @@ describe("PublishCommand", () => {
 
       expect(PromptUtilities.select).not.toBeCalled();
       expect(PromptUtilities.confirm).not.toBeCalled();
-      await expect(gitCommitMessage(testDir)).resolves.toBe("v1.0.1-auto-confirm");
+
+      const message = await gitCommitMessage(testDir);
+      expect(message).toBe("v1.0.1-auto-confirm");
     });
   });
 
@@ -410,7 +412,9 @@ describe("PublishCommand", () => {
       await lernaPublish(testDir)("--repo-version", "1.0.1-beta.25");
 
       expect(PromptUtilities.select).not.toBeCalled();
-      await expect(gitCommitMessage(testDir)).resolves.toBe("v1.0.1-beta.25");
+
+      const message = await gitCommitMessage(testDir);
+      expect(message).toBe("v1.0.1-beta.25");
     });
   });
 
@@ -446,7 +450,9 @@ describe("PublishCommand", () => {
       await lernaPublish(testDir)("--cd-version", "minor");
 
       expect(PromptUtilities.select).not.toBeCalled();
-      await expect(gitCommitMessage(testDir)).resolves.toBe("v1.1.0");
+
+      const message = await gitCommitMessage(testDir);
+      expect(message).toBe("v1.1.0");
     });
 
     it("throws an error when an invalid semver keyword is used", async () => {
@@ -510,7 +516,9 @@ describe("PublishCommand", () => {
       await lernaPublish(testDir)("--cd-version", "patch");
 
       expect(PromptUtilities.select).not.toBeCalled();
-      await expect(gitCommitMessage(testDir)).resolves.toMatchSnapshot();
+
+      const message = await gitCommitMessage(testDir);
+      expect(message).toMatchSnapshot();
     });
 
     /** =========================================================================
@@ -587,7 +595,8 @@ describe("PublishCommand", () => {
         "package-4" // notably does NOT work, needs to be "**/package-4/**" to match
       );
 
-      await expect(showCommit(testDir, "--name-only")).resolves.toMatchSnapshot();
+      const changedFiles = await showCommit(testDir, "--name-only");
+      expect(changedFiles).toMatchSnapshot();
     });
 
     it("maps deprecated --ignore", async () => {
@@ -600,7 +609,8 @@ describe("PublishCommand", () => {
 
       await lernaPublish(testDir)("--ignore", "*.md");
 
-      await expect(showCommit(testDir, "--name-only")).resolves.toMatchSnapshot();
+      const changedFiles = await showCommit(testDir, "--name-only");
+      expect(changedFiles).toMatchSnapshot();
     });
   });
 
@@ -666,7 +676,8 @@ describe("PublishCommand", () => {
 
         await lernaPublish(testDir)("--conventional-commits");
 
-        await expect(showCommit(testDir, "--name-only")).resolves.toMatchSnapshot();
+        const changedFiles = await showCommit(testDir, "--name-only");
+        expect(changedFiles).toMatchSnapshot();
 
         ["package-1", "package-2", "package-3", "package-4", "package-5"].forEach((name, idx) => {
           expect(ConventionalCommitUtilities.recommendVersion).toBeCalledWith(
@@ -716,7 +727,8 @@ describe("PublishCommand", () => {
 
         await lernaPublish(testDir)("--conventional-commits");
 
-        await expect(showCommit(testDir, "--name-only")).resolves.toMatchSnapshot();
+        const changedFiles = await showCommit(testDir, "--name-only");
+        expect(changedFiles).toMatchSnapshot();
 
         ["package-1", "package-2", "package-3", "package-4", "package-5"].forEach(name => {
           const location = path.join(testDir, "packages", name);
