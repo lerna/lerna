@@ -27,6 +27,13 @@ function filterOptions(yargs) {
       `,
       type: "string",
     },
+    "include-filtered-dependents": {
+      describe: dedent`
+        Include all transitive dependents when running a command,
+        regardless of --include, --exclude or --since.
+      `,
+      boolean: true,
+    },
     "include-filtered-dependencies": {
       describe: dedent`
         Include all transitive dependencies when running a command,

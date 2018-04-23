@@ -223,6 +223,12 @@ class Command {
       });
     }
 
+    if (this.options.includeFilteredDependents) {
+      chain = chain.then(() => {
+        this.filteredPackages = this.packageGraph.addDependents(this.filteredPackages);
+      });
+    }
+
     if (this.options.includeFilteredDependencies) {
       chain = chain.then(() => {
         this.filteredPackages = this.packageGraph.addDependencies(this.filteredPackages);
