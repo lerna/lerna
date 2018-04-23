@@ -131,6 +131,38 @@ class PackageGraph extends Map {
   }
 
   /**
+   * Takes a list of Packages and returns a list of those same Packages with any Packages
+   * that depend on them. i.e if packageC depended on packageD `graph.addDependents([packageD])`
+   * would return [packageD, packageC].
+   *
+   * @param {!Array.<Package>} filteredPackages The packages to include dependents for.
+   * @return {Array.<Package>} The packages with any dependents that weren't already included.
+   */
+  addDependents(filteredPackages) {
+    // the current list of packages we are expanding using breadth-first-search
+    const search = new Set(filteredPackages.map(({ name }) => this.get(name)));
+
+    // an intermediate list of matched PackageGraphNodes
+    const result = [];
+
+    search.forEach(currentNode => {
+      // anything searched for is always a result
+      result.push(currentNode);
+
+      currentNode.localDependents.forEach((meta, depName) => {
+        const depNode = this.get(depName);
+
+        if (depNode !== currentNode && !search.has(depNode)) {
+          search.add(depNode);
+        }
+      });
+    });
+
+    // actual Package instances, not PackageGraphNodes
+    return result.map(node => node.pkg);
+  }
+
+  /**
    * Return a tuple of cycle paths and nodes, which have been removed from the graph.
    * @returns [Set<String[]>, Set<PackageGraphNode>]
    */
