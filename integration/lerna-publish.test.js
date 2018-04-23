@@ -50,6 +50,20 @@ describe("lerna publish", () => {
     expect(stdout).toBe("");
   });
 
+  test("exits with error when unknown options are passed", async () => {
+    const { cwd } = await cloneFixture("normal");
+    const args = ["publish", "--skip-npm", "--yes", "--scope", "package-1"];
+
+    try {
+      await cliRunner(cwd)(...args);
+    } catch (err) {
+      expect(err.code).toBe(1);
+      expect(err.stderr).toMatch("Unknown argument: scope");
+    }
+
+    expect.assertions(2);
+  });
+
   test("updates fixed versions", async () => {
     const { cwd } = await cloneFixture("normal");
     const args = ["publish", "--skip-npm", "--cd-version=patch", "--yes"];

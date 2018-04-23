@@ -87,7 +87,7 @@ function lernaCLI(argv, cwd) {
       }
 
       // exit non-zero so the CLI can be usefully chained
-      process.exitCode = actual.code || 1;
+      cli.exit(actual.code || 1, actual);
     })
     .alias("h", "help")
     .alias("v", "version")
