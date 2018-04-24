@@ -85,6 +85,10 @@ exports.builder = yargs => {
       type: "string",
       requiresArg: true,
     },
+    "require-scripts": {
+      describe: "Execute ./scripts/prepublish.js and ./scripts/postpublish.js, relative to package root.",
+      type: "boolean",
+    },
     preid: {
       describe: "Specify the prerelease identifier (major.minor.patch-pre).",
       type: "string",

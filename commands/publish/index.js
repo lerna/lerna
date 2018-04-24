@@ -56,6 +56,10 @@ class PublishCommand extends Command {
     // https://docs.npmjs.com/misc/config#save-prefix
     this.savePrefix = this.options.exact ? "" : "^";
 
+    if (this.options.requireScripts) {
+      this.logger.info("require-scripts", "enabled");
+    }
+
     this.npmConfig = {
       npmClient: this.options.npmClient || "npm",
       registry: this.options.registry,
@@ -680,7 +684,9 @@ class PublishCommand extends Command {
     chain = chain.then(() => this.runPrepublishScripts(rootPkg));
     chain = chain.then(() =>
       pMap(this.updates, ({ pkg }) => {
-        this.execScript(pkg, "prepublish");
+        if (this.options.requireScripts) {
+          this.execScript(pkg, "prepublish");
+        }
 
         return this.runPrepublishScripts(pkg);
       })
@@ -695,7 +701,9 @@ class PublishCommand extends Command {
         tracker.info("published", pkg.name);
         tracker.completeWork(1);
 
-        this.execScript(pkg, "postpublish");
+        if (this.options.requireScripts) {
+          this.execScript(pkg, "postpublish");
+        }
 
         return this.runPackageLifecycle(pkg, "postpublish");
       });
