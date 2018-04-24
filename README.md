@@ -683,7 +683,7 @@ $ lerna exec --concurrency 1 -- ls -la
 $ lerna exec --bail=<boolean> <command>
 ```
 
-This flag signifies whether or not the `exec` command should halt execution upon encountering an error thrown by one of the spawned subprocesses. Its default value is `true`.
+This flag signifies whether or not the `exec` command should halt execution upon encountering an error thrown by one of the spawned subprocesses. Its default value is `true`. Pass `--no-bail` to continue despite failure.
 
 ### import
 
