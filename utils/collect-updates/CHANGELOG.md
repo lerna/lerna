@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.0.0-beta.18"></a>
+# [3.0.0-beta.18](https://github.com/lerna/lerna/compare/v3.0.0-beta.17...v3.0.0-beta.18) (2018-04-24)
+
+
+### Features
+
+* **collect-updates:** Copy remaining git utilities into module ([cb9c19d](https://github.com/lerna/lerna/commit/cb9c19d))
+* **git-utils:** Devolve getShortSHA() to consumers ([95d179d](https://github.com/lerna/lerna/commit/95d179d))
+
+
+### BREAKING CHANGES
+
+* **collect-updates:** GitUtilities is going away soon.
+* **git-utils:** Don't use GitUtilities!
+
+
+
+
+
 <a name="3.0.0-beta.15"></a>
 # [3.0.0-beta.15](https://github.com/lerna/lerna/compare/v3.0.0-beta.14...v3.0.0-beta.15) (2018-04-09)
 

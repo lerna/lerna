@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.0.0-beta.18"></a>
+# [3.0.0-beta.18](https://github.com/lerna/lerna/compare/v3.0.0-beta.17...v3.0.0-beta.18) (2018-04-24)
+
+
+### Bug Fixes
+
+* **cli:** Exit immediately when error is caught ([5b01599](https://github.com/lerna/lerna/commit/5b01599)), closes [#1384](https://github.com/lerna/lerna/issues/1384)
+
+
+### BREAKING CHANGES
+
+* **cli:** Previously, lerna would accept `--scope` and `--ignore` options where they were not intended,
+despite logging the unexpected arguments correctly. This would result in the commands continuing to run with unexpected configuration.
+
+Going forward, lerna will exit non-zero _immediately_ upon encountering these errors.
+
+
+
+
+
 <a name="3.0.0-beta.17"></a>
 # [3.0.0-beta.17](https://github.com/lerna/lerna/compare/v3.0.0-beta.16...v3.0.0-beta.17) (2018-04-13)
 
