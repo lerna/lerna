@@ -100,7 +100,7 @@ export default class PackageUtilities {
    * @return {Array.<Package>} The packages with any dependencies that were't already included.
    */
   static addDependents(packages, packageGraph) {
-    return PackageUtilities.extendList(packages, packageGraph, 'localDependents');
+    return PackageUtilities.extendList(packages, packageGraph, "localDependents");
   }
 
   /**
@@ -113,13 +113,13 @@ export default class PackageUtilities {
    * @return {Array.<Package>} The packages with any dependencies that were't already included.
    */
   static addDependencies(packages, packageGraph) {
-    return PackageUtilities.extendList(packages, packageGraph, 'dependencies');
+    return PackageUtilities.extendList(packages, packageGraph, "dependencies");
   }
 
   static extendList(packages, packageGraph, propertyName) {
     const result = [];
 
-    const packageNodes = packages.map((pkg) => packageGraph.get(pkg.name));
+    const packageNodes = packages.map(pkg => packageGraph.get(pkg.name));
 
     // the current list of packages we are expanding using breadth-first-search
     const fringe = packageNodes.slice();
@@ -141,7 +141,7 @@ export default class PackageUtilities {
       }
     }
 
-    return result.map((node) => node.package);
+    return result.map(node => node.package);
   }
 
   /**
