@@ -63,6 +63,14 @@ describe("LsCommand", () => {
     });
   });
 
+  describe("with --include-filtered-dependents", () => {
+    it("should list packages, including filtered ones", async () => {
+      const lernaLs = run(await initFixture("LsCommand/include-filtered-dependencies"));
+      await lernaLs("--scope", "@test/package-1", "--include-filtered-dependents");
+      expect(consoleOutput()).toMatchSnapshot();
+    });
+  });
+
   describe("with an undefined version", () => {
     it("should list packages", async () => {
       const lernaLs = run(await initFixture("LsCommand/undefined-version"));
