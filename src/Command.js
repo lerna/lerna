@@ -56,6 +56,11 @@ export const builder = {
     type: "string",
     requiresArg: true,
   },
+  "include-filtered-dependents": {
+    describe: dedent`
+      Include all transitive dependents when running a command, regardless of --scope, --since or --ignore.
+    `,
+  },
   "include-filtered-dependencies": {
     describe: dedent`
       Include all transitive dependencies when running a command, regardless of --scope, --since or --ignore.
@@ -347,6 +352,10 @@ export default class Command {
       if (typeof since === "string") {
         const updated = new UpdatedPackagesCollector(this).getUpdates().map(update => update.package.name);
         this.filteredPackages = this.filteredPackages.filter(pkg => updated.indexOf(pkg.name) > -1);
+      }
+
+      if (this.options.includeFilteredDependents) {
+        this.filteredPackages = PackageUtilities.addDependents(this.filteredPackages, this.packageGraph);
       }
 
       if (this.options.includeFilteredDependencies) {
