@@ -9,6 +9,7 @@ export class PackageGraphNode {
   constructor(pkg) {
     this.package = pkg;
     this.dependencies = [];
+    this.localDependents = [];
   }
 
   satisfies(versionRange) {
@@ -51,6 +52,7 @@ export default class PackageGraph {
 
           if (packageNode.satisfies(depVersion)) {
             node.dependencies.push(depName);
+            packageNode.localDependents.push(node.package.name);
           }
         }
       }

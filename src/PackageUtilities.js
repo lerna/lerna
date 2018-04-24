@@ -92,6 +92,19 @@ export default class PackageUtilities {
 
   /**
    * Takes a list of Packages and returns a list of those same Packages with any Packages
+   * that depend on them. i.e if packageC depended on packageD
+   * `PackageUtilities.addDependents([packageD], this.packageGraph)`
+   * would return [packageC, packageD]
+   * @param {!Array.<Package>} packages The packages to include dependencies for.
+   * @param {!<PackageGraph>} packageGraph The package graph for the whole repository.
+   * @return {Array.<Package>} The packages with any dependencies that were't already included.
+   */
+  static addDependents(packages, packageGraph) {
+    return PackageUtilities.extendList(packages, packageGraph, "localDependents");
+  }
+
+  /**
+   * Takes a list of Packages and returns a list of those same Packages with any Packages
    * they depend on. i.e if packageA depended on packageB
    * `PackageUtilities.addDependencies([packageA], this.packageGraph)`
    * would return [packageA, packageB]
@@ -100,30 +113,35 @@ export default class PackageUtilities {
    * @return {Array.<Package>} The packages with any dependencies that were't already included.
    */
   static addDependencies(packages, packageGraph) {
-    const dependentPackages = [];
+    return PackageUtilities.extendList(packages, packageGraph, "dependencies");
+  }
+
+  static extendList(packages, packageGraph, propertyName) {
+    const result = [];
+
+    const packageNodes = packages.map(pkg => packageGraph.get(pkg.name));
 
     // the current list of packages we are expanding using breadth-first-search
-    const fringe = packages.slice();
+    const fringe = packageNodes.slice();
     const packageExistsInRepository = packageName => !!packageGraph.get(packageName);
-    const packageAlreadyFound = packageName => dependentPackages.some(pkg => pkg.name === packageName);
-    const packageInFringe = packageName => fringe.some(pkg => pkg.name === packageName);
+    const packageAlreadyFound = packageName => result.some(node => node.package.name === packageName);
+    const packageInFringe = packageName => fringe.some(node => node.package.name === packageName);
 
     while (fringe.length !== 0) {
-      const pkg = fringe.shift();
-      const pkgDeps = Object.assign({}, pkg.dependencies, pkg.devDependencies);
+      const node = fringe.shift();
 
-      Object.keys(pkgDeps).forEach(dep => {
+      node[propertyName].forEach(dep => {
         if (packageExistsInRepository(dep) && !packageAlreadyFound(dep) && !packageInFringe(dep)) {
-          fringe.push(packageGraph.get(dep).package);
+          fringe.push(packageGraph.get(dep));
         }
       });
 
-      if (!packageAlreadyFound(pkg.name)) {
-        dependentPackages.push(pkg);
+      if (!packageAlreadyFound(node.package.name)) {
+        result.push(node);
       }
     }
 
-    return dependentPackages;
+    return result.map(node => node.package);
   }
 
   /**
