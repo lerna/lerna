@@ -1,7 +1,7 @@
 {
-  "name": "@lerna/publish",
-  "version": "3.0.0-beta.21",
-  "description": "Publish packages in the current project",
+  "name": "@lerna/version",
+  "version": "3.0.0-beta.17",
+  "description": "Bump version of packages changed since the last release",
   "keywords": [
     "lerna",
     "command"
@@ -32,24 +32,23 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/batch-packages": "file:../../utils/batch-packages",
     "@lerna/child-process": "file:../../core/child-process",
     "@lerna/collect-updates": "file:../../utils/collect-updates",
     "@lerna/command": "file:../../core/command",
-    "@lerna/npm-dist-tag": "file:../../utils/npm-dist-tag",
-    "@lerna/npm-publish": "file:../../utils/npm-publish",
+    "@lerna/conventional-commits": "file:../../core/conventional-commits",
     "@lerna/output": "file:../../utils/output",
     "@lerna/prompt": "file:../../core/prompt",
     "@lerna/run-lifecycle": "file:../../utils/run-lifecycle",
-    "@lerna/run-parallel-batches": "file:../../utils/run-parallel-batches",
     "@lerna/validation-error": "file:../../core/validation-error",
-    "@lerna/version": "file:../version",
-    "fs-extra": "^6.0.1",
-    "npm-package-arg": "^6.0.0",
+    "chalk": "^2.3.1",
+    "dedent": "^0.7.0",
+    "minimatch": "^3.0.4",
     "npmlog": "^4.1.2",
-    "p-finally": "^1.0.0",
     "p-map": "^1.2.0",
     "p-reduce": "^1.0.0",
-    "semver": "^5.5.0"
+    "p-waterfall": "^1.0.0",
+    "semver": "^5.5.0",
+    "slash": "^1.0.0",
+    "temp-write": "^3.4.0"
   }
 }

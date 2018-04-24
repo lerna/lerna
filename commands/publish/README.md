@@ -5,7 +5,8 @@
 ## Usage
 
 ```sh
-$ lerna publish
+lerna publish          # publish packages that have changed since the last release
+lerna publish from-git # explicitly publish packages tagged in current commit
 ```
 
 Publish packages in the current Lerna project. When run, this command does the following:

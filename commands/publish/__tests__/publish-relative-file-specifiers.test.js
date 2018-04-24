@@ -5,9 +5,10 @@ jest.unmock("@lerna/collect-updates");
 
 // local modules _must_ be explicitly mocked
 jest.mock("../lib/get-packages-without-license");
-jest.mock("../lib/git-push");
-jest.mock("../lib/is-anything-committed");
-jest.mock("../lib/is-behind-upstream");
+// FIXME: better mock for version command
+jest.mock("../../version/lib/git-push");
+jest.mock("../../version/lib/is-anything-committed");
+jest.mock("../../version/lib/is-behind-upstream");
 
 const fs = require("fs-extra");
 const path = require("path");
@@ -36,7 +37,7 @@ describe("relative 'file:' specifiers", () => {
     const cwd = await initFixture("relative-file-specs");
 
     await setupChanges(cwd);
-    await lernaPublish(cwd)("--cd-version", "major", "--yes");
+    await lernaPublish(cwd)("major", "--yes");
 
     expect(writePkg.updatedVersions()).toEqual({
       "package-1": "2.0.0",
@@ -73,7 +74,7 @@ describe("relative 'file:' specifiers", () => {
     const cwd = await initFixture("relative-independent");
 
     await setupChanges(cwd);
-    await lernaPublish(cwd)("--cd-version", "minor", "--yes");
+    await lernaPublish(cwd)("minor", "--yes");
 
     expect(writePkg.updatedVersions()).toEqual({
       "package-1": "1.1.0",
@@ -94,7 +95,7 @@ describe("relative 'file:' specifiers", () => {
     const cwd = await initFixture("relative-independent");
 
     await setupChanges(cwd);
-    await lernaPublish(cwd)("--cd-version", "patch", "--yes", "--exact");
+    await lernaPublish(cwd)("patch", "--yes", "--exact");
 
     // package-4 was updated, but package-6 was not
     expect(writePkg.updatedManifest("package-5").dependencies).toMatchObject({
@@ -107,7 +108,7 @@ describe("relative 'file:' specifiers", () => {
     const cwd = await initFixture("yarn-link-spec");
 
     await setupChanges(cwd, "workspaces");
-    await lernaPublish(cwd)("--cd-version", "major", "--yes");
+    await lernaPublish(cwd)("major", "--yes");
 
     expect(writePkg.updatedManifest("package-2").dependencies).toMatchObject({
       "package-1": "^2.0.0",

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`publish --cd-version --independent bumps prerelease version with --preid 1`] = `
+exports[`version bump prerelease increments version with custom --preid 1`] = `
 "Publish
 
  - package-1@1.0.1-foo.0
@@ -57,7 +57,7 @@ index SHA..SHA 100644
 +  \\"version\\": \\"5.0.1-foo.0\\""
 `;
 
-exports[`publish --cd-version --independent bumps prerelease with default --preid 1`] = `
+exports[`version bump prerelease increments version with default --preid 1`] = `
 "Publish
 
  - package-1@1.0.1-0
@@ -112,14 +112,4 @@ index SHA..SHA 100644
 @@ -7 +7 @@
 -  \\"version\\": \\"5.0.0\\"
 +  \\"version\\": \\"5.0.1-0\\""
-`;
-
-exports[`publish --cd-version --independent increments published versions by semver keyword 1`] = `
-"Publish
-
- - package-1@1.0.1
- - package-2@2.0.1
- - package-3@3.0.1
- - package-4@4.0.1
- - package-5@5.0.1"
 `;

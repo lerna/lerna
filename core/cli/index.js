@@ -19,6 +19,7 @@ const linkCmd = require("@lerna/link/command");
 const listCmd = require("@lerna/list/command");
 const publishCmd = require("@lerna/publish/command");
 const runCmd = require("@lerna/run/command");
+const versionCmd = require("@lerna/version/command");
 
 module.exports = lernaCLI;
 
@@ -61,6 +62,7 @@ function lernaCLI(argv, cwd) {
     .command(listCmd)
     .command(publishCmd)
     .command(runCmd)
+    .command(versionCmd)
     .demandCommand(1, "A command is required. Pass --help to see all available commands and options.")
     .recommendCommands()
     .strict()

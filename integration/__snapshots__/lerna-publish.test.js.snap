@@ -36,6 +36,39 @@ postversion-package-1
 > echo postversion-root
 
 postversion-root
+
+> lifecycle@0.0.0-monorepo prepare __TEST_ROOTDIR__
+> echo prepare-root
+
+prepare-root
+
+> lifecycle@0.0.0-monorepo prepublishOnly __TEST_ROOTDIR__
+> echo prepublishOnly-root
+
+prepublishOnly-root
+
+> package-1@1.1.0 prepare __TEST_ROOTDIR__/packages/package-1
+> echo prepare-package-1
+
+prepare-package-1
+
+> package-1@1.1.0 prepublishOnly __TEST_ROOTDIR__/packages/package-1
+> echo prepublish-package-1
+
+prepublish-package-1
+
+> package-1@1.1.0 postpublish __TEST_ROOTDIR__/packages/package-1
+> echo postpublish-package-1
+
+postpublish-package-1
+
+> lifecycle@0.0.0-monorepo postpublish __TEST_ROOTDIR__
+> echo postpublish-root
+
+postpublish-root
+Successfully published:
+ - package-1@1.1.0
+ - package-2@1.1.0
 `;
 
 exports[`lerna publish independent mode --conventional-commits changelog 1`] = `
@@ -47,6 +80,11 @@ Changes:
  - package-4: 4.0.0 => 4.1.0
  - package-5: 5.0.0 => 5.1.0 (private)
 
+Successfully published:
+ - package-1@1.1.0
+ - package-2@2.1.0
+ - package-3@4.0.0
+ - package-4@4.1.0
 `;
 
 exports[`lerna publish independent mode --conventional-commits changelog 2`] = `
@@ -145,6 +183,11 @@ Changes:
  - package-4: 1.0.0 => 2.0.0
  - package-5: 1.0.0 => 2.0.0 (private)
 
+Successfully published:
+ - package-1@2.0.0
+ - package-2@2.0.0
+ - package-3@2.0.0
+ - package-4@2.0.0
 `;
 
 exports[`lerna publish normal mode --conventional-commits changelog 2`] = `
@@ -335,6 +378,15 @@ version-package-1
 version-root
 postversion-package-1
 postversion-root
+prepare-root
+prepublishOnly-root
+prepare-package-1
+prepublish-package-1
+postpublish-package-1
+postpublish-root
+Successfully published:
+ - package-1@1.1.0
+ - package-2@1.1.0
 `;
 
 exports[`lerna publish updates all transitive dependents 1`] = `
@@ -438,6 +490,11 @@ Changes:
  - package-4: 1.0.0 => 1.0.1
  - package-5: 1.0.0 => 1.0.1 (private)
 
+Successfully published:
+ - package-1@1.0.1
+ - package-2@1.0.1
+ - package-3@1.0.1
+ - package-4@1.0.1
 `;
 
 exports[`lerna publish updates independent versions: commit 1`] = `
@@ -498,15 +555,16 @@ Changes:
  - package-4: 4.0.0 => 5.0.0
  - package-5: 5.0.0 => 6.0.0 (private)
 
+Successfully published:
+ - package-1@2.0.0
+ - package-2@3.0.0
+ - package-3@4.0.0
+ - package-4@5.0.0
 `;
 
 exports[`lerna publish uses default suffix with canary flag: stdout 1`] = `
-
-Changes:
- - package-1: 1.0.0 => 1.1.0-alpha.SHA
- - package-2: 1.0.0 => 1.1.0-alpha.SHA
- - package-3: 1.0.0 => 1.1.0-alpha.SHA
- - package-4: 1.0.0 => 1.1.0-alpha.SHA
- - package-5: 1.0.0 => 1.1.0-alpha.SHA (private)
-
+Successfully published:
+ - package-1@1.0.1-alpha.0+SHA
+ - package-2@1.0.1-alpha.0+SHA
+ - package-3@1.0.1-alpha.0+SHA
 `;

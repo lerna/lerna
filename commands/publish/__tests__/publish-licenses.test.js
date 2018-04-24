@@ -1,12 +1,12 @@
 "use strict";
 
 // local modules _must_ be explicitly mocked
-jest.mock("../lib/git-push");
-jest.mock("../lib/is-anything-committed");
-jest.mock("../lib/is-behind-upstream");
-
 jest.mock("../lib/create-temp-licenses", () => jest.fn(() => Promise.resolve()));
 jest.mock("../lib/remove-temp-licenses", () => jest.fn(() => Promise.resolve()));
+// FIXME: better mock for version command
+jest.mock("../../version/lib/git-push");
+jest.mock("../../version/lib/is-anything-committed");
+jest.mock("../../version/lib/is-behind-upstream");
 
 const path = require("path");
 

@@ -38,13 +38,16 @@ async function commitChangeToPackage(cwd, packageName, commitMsg, data) {
 }
 
 describe("lerna publish", () => {
+  // never actually upload when calling `npm install`
+  const dryRun = { npm_config_dry_run: true };
+
   test("exit 0 when no updates", async () => {
     const { cwd } = await cloneFixture("normal");
     const args = ["publish"];
 
     await gitTag(cwd, "v1.0.0");
 
-    const { code, stdout } = await cliRunner(cwd)(...args);
+    const { code, stdout } = await cliRunner(cwd, dryRun)(...args);
 
     expect(code).toBe(0);
     expect(stdout).toBe("");
@@ -52,10 +55,10 @@ describe("lerna publish", () => {
 
   test("exits with error when unknown options are passed", async () => {
     const { cwd } = await cloneFixture("normal");
-    const args = ["publish", "--skip-npm", "--yes", "--scope", "package-1"];
+    const args = ["publish", "--yes", "--scope", "package-1"];
 
     try {
-      await cliRunner(cwd)(...args);
+      await cliRunner(cwd, dryRun)(...args);
     } catch (err) {
       expect(err.code).toBe(1);
       expect(err.stderr).toMatch("Unknown argument: scope");
@@ -66,9 +69,9 @@ describe("lerna publish", () => {
 
   test("updates fixed versions", async () => {
     const { cwd } = await cloneFixture("normal");
-    const args = ["publish", "--skip-npm", "--cd-version=patch", "--yes"];
+    const args = ["publish", "patch", "--yes"];
 
-    const { stdout } = await cliRunner(cwd)(...args);
+    const { stdout } = await cliRunner(cwd, dryRun)(...args);
     expect(stdout).toMatchSnapshot("stdout");
 
     const [allPackageJsons, commitMessage] = await Promise.all([loadManifests(cwd), lastCommitMessage(cwd)]);
@@ -79,29 +82,32 @@ describe("lerna publish", () => {
 
   test("updates all transitive dependents", async () => {
     const { cwd } = await cloneFixture("snake-graph");
-    const args = ["publish", "--skip-npm", "--cd-version=major", "--yes"];
+    const args = ["publish", "major", "--yes"];
 
     await gitTag(cwd, "v1.0.0");
     await commitChangeToPackage(cwd, "package-1", "change", { change: true });
 
-    await cliRunner(cwd)(...args);
+    await cliRunner(cwd, dryRun)(...args);
 
     expect(await loadManifests(cwd)).toMatchSnapshot();
   });
 
   test("uses default suffix with canary flag", async () => {
     const { cwd } = await cloneFixture("normal");
-    const args = ["publish", "--canary", "--skip-npm", "--yes"];
+    const args = ["publish", "--canary", "--yes"];
 
-    const { stdout } = await cliRunner(cwd)(...args);
+    await gitTag(cwd, "v1.0.0");
+    await commitChangeToPackage(cwd, "package-1", "change", { change: true });
+
+    const { stdout } = await cliRunner(cwd, dryRun)(...args);
     expect(stdout).toMatchSnapshot("stdout");
   });
 
   test("updates independent versions", async () => {
     const { cwd } = await cloneFixture("independent");
-    const args = ["publish", "--skip-npm", "--cd-version=major", "--yes"];
+    const args = ["publish", "major", "--yes"];
 
-    const { stdout } = await cliRunner(cwd)(...args);
+    const { stdout } = await cliRunner(cwd, dryRun)(...args);
     expect(stdout).toMatchSnapshot("stdout");
 
     const [allPackageJsons, commitMessage] = await Promise.all([loadManifests(cwd), lastCommitMessage(cwd)]);
@@ -113,7 +119,7 @@ describe("lerna publish", () => {
   ["normal", "independent"].forEach(flavor =>
     test(`${flavor} mode --conventional-commits changelog`, async () => {
       const { cwd } = await cloneFixture(`${flavor}`, "feat: init repo");
-      const args = ["publish", "--conventional-commits", "--skip-git", "--skip-npm", "--yes"];
+      const args = ["publish", "--conventional-commits", "--yes"];
 
       await commitChangeToPackage(cwd, "package-1", "feat(package-1): Add foo", { foo: true });
       await commitChangeToPackage(cwd, "package-1", "fix(package-1): Fix foo", { foo: false });
@@ -125,7 +131,7 @@ describe("lerna publish", () => {
         { baz: true }
       );
 
-      const { stdout } = await cliRunner(cwd)(...args);
+      const { stdout } = await cliRunner(cwd, dryRun)(...args);
       expect(stdout).toMatchSnapshot();
 
       const changelogFilePaths = await globby(["**/CHANGELOG.md"], {
@@ -147,24 +153,24 @@ describe("lerna publish", () => {
     await gitTag(cwd, "v1.0.0");
     await commitChangeToPackage(cwd, "package-1", "feat(package-1): changed", { changed: true });
 
-    await cliRunner(cwd)("publish", "--cd-version=major", "--skip-npm", "--yes");
+    await cliRunner(cwd, dryRun)("publish", "major", "--yes");
 
     expect(await showCommit(cwd)).toMatchSnapshot();
   });
 
   test("calls lifecycle scripts", async () => {
     const { cwd } = await cloneFixture("lifecycle");
-    const args = ["publish", "--skip-npm", "--cd-version", "minor", "--yes"];
+    const args = ["publish", "minor", "--yes"];
 
-    const { stdout } = await cliRunner(cwd)(...args);
+    const { stdout } = await cliRunner(cwd, dryRun)(...args);
     expect(normalizeTestRoot(cwd)(stdout)).toMatchSnapshot();
   });
 
   test("silences lifecycle scripts with --loglevel=silent", async () => {
     const { cwd } = await cloneFixture("lifecycle");
-    const args = ["publish", "--skip-npm", "--cd-version", "minor", "--yes", "--loglevel", "silent"];
+    const args = ["publish", "minor", "--yes", "--loglevel", "silent"];
 
-    const { stdout } = await cliRunner(cwd)(...args);
+    const { stdout } = await cliRunner(cwd, dryRun)(...args);
     expect(normalizeTestRoot(cwd)(stdout)).toMatchSnapshot();
   });
 
@@ -180,10 +186,10 @@ describe("lerna publish", () => {
     await execa("git", ["push", "origin", "master"], { cwd: cloneDir });
 
     // throws during interactive publish (local)
-    await expect(cliRunner(cwd)("publish", "--no-ci")).rejects.toThrowError(/EBEHIND/);
+    await expect(cliRunner(cwd, dryRun)("publish", "--no-ci")).rejects.toThrowError(/EBEHIND/);
 
     // warns during non-interactive publish (CI)
-    const { stderr } = await cliRunner(cwd)("publish", "--ci");
+    const { stderr } = await cliRunner(cwd, dryRun)("publish", "--ci");
     expect(stderr).toMatch("EBEHIND");
   });
 });
