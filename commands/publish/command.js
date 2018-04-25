@@ -75,6 +75,7 @@ exports.builder = yargs => {
       requiresArg: true,
     },
     "npm-client": {
+      defaultDescription: "npm",
       describe: "Executable used to publish dependencies (npm, yarn, pnpm, ...)",
       type: "string",
       requiresArg: true,
