@@ -229,7 +229,7 @@ describe("GitUtilities", () => {
       expect(GitUtilities.diffSinceIn("foo@1.0.0", "packages/foo", opts)).toBe("files");
       expect(ChildProcessUtilities.execSync).lastCalledWith(
         "git",
-        ["diff", "--name-only", "foo@1.0.0", "--", "packages/foo"],
+        ["diff", "--name-only", "foo@1.0.0", "HEAD", "--", "packages/foo"],
         opts
       );
     });
