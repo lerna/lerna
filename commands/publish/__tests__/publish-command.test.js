@@ -6,6 +6,7 @@ jest.mock("@lerna/conventional-commits");
 jest.mock("@lerna/npm-dist-tag");
 jest.mock("@lerna/npm-publish");
 jest.mock("@lerna/run-lifecycle");
+jest.mock("@lerna/collect-updates");
 jest.mock("../lib/git-push");
 jest.mock("../lib/is-behind-upstream");
 
@@ -17,10 +18,12 @@ const semver = require("semver");
 // mocked or stubbed modules
 const writePkg = require("write-pkg");
 const ConventionalCommitUtilities = require("@lerna/conventional-commits");
+const Package = require("@lerna/package");
 const PromptUtilities = require("@lerna/prompt");
 const npmDistTag = require("@lerna/npm-dist-tag");
 const npmPublish = require("@lerna/npm-publish");
 const runLifecycle = require("@lerna/run-lifecycle");
+const collectUpdates = require("@lerna/collect-updates");
 const gitPush = require("../lib/git-push");
 const isBehindUpstream = require("../lib/is-behind-upstream");
 
@@ -37,6 +40,7 @@ const showCommit = require("@lerna-test/show-commit");
 // file under test
 const lernaPublish = require("@lerna-test/command-runner")(require("../command"));
 
+const collectUpdatesActual = require.requireActual("@lerna/collect-updates");
 // assertion helpers
 const gitCommitMessage = cwd =>
   execa("git", ["show", "--no-patch", "--pretty=%B"], { cwd }).then(result => result.stdout.trim());
@@ -70,6 +74,7 @@ describe("PublishCommand", () => {
   // we've already tested these utilities elsewhere
   npmPublish.mockResolvedValue();
   runLifecycle.mockImplementation(() => Promise.resolve());
+  collectUpdates.mockImplementation(collectUpdatesActual);
   npmDistTag.check.mockReturnValue(true);
 
   PromptUtilities.select.mockResolvedValue("1.0.1");
@@ -112,6 +117,49 @@ describe("PublishCommand", () => {
       } catch (err) {
         expect(err.message).toMatch("independent");
       }
+    });
+  });
+
+  /** =========================================================================
+   * FIXED
+   * ======================================================================= */
+
+  describe("fixed mode", () => {
+    it("minor bump should only bump changed", async () => {
+      const testDir = await initFixture("normal");
+      const package1 = new Package(
+        {
+          name: "package-1",
+          version: "1.0.0",
+        },
+        `${testDir}/packages/package-1`
+      );
+      collectUpdates.mockImplementationOnce(() => [{ pkg: package1, localDependencies: [] }]);
+
+      await lernaPublish(testDir)();
+
+      const patch = await showCommit(testDir);
+      expect(patch).toMatchSnapshot("commit");
+      expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
+    });
+
+    it("major bump shoudl bump all packages", async () => {
+      const testDir = await initFixture("normal");
+      PromptUtilities.select.mockResolvedValueOnce("2.0.0");
+      const package1 = new Package(
+        {
+          name: "package-1",
+          version: "1.0.0",
+        },
+        `${testDir}/packages/package-1`
+      );
+      collectUpdates.mockImplementationOnce(() => [{ pkg: package1, localDependencies: [] }]);
+
+      await lernaPublish(testDir)();
+
+      const patch = await showCommit(testDir);
+      expect(patch).toMatchSnapshot("commit");
+      expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
     });
   });
 
@@ -1122,7 +1170,7 @@ describe("PublishCommand", () => {
       expect(updatedPackageJSON("package-5").dependencies).toMatchObject({
         "package-4": "^2.0.0",
         // FIXME: awkward... (_intentional_, for now)
-        "package-6": "^1.0.0",
+        "package-6": "^2.0.0",
       });
       // private packages do not need local version resolution
       expect(updatedPackageJSON("package-7").dependencies).toMatchObject({

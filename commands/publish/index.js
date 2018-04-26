@@ -144,10 +144,58 @@ class PublishCommand extends Command {
         )
       : [this.packagesToPublish];
 
+    const isBreakingChange = (currentVersion, nextVersion) => {
+      const releaseType = semver.diff(currentVersion, nextVersion);
+      switch (releaseType) {
+        case "major":
+          return true;
+        case "minor":
+          return semver.lt(currentVersion, "1.0.0");
+        case "patch":
+        case "prepatch":
+          return semver.lt(currentVersion, "0.1.0");
+        case "preminor":
+        case "premajor":
+        case "prerelease":
+          return false;
+        default: {
+          const err = { error: "not expected release type" };
+          throw err;
+        }
+      }
+    };
+
     const tasks = [
       () => this.getVersionsForUpdates(),
       versions => {
-        this.updatesVersions = versions;
+        const packages =
+          this.filteredPackages.length === this.packageGraph.size
+            ? this.packageGraph
+            : new Map(this.filteredPackages.map(({ name }) => [name, this.packageGraph.get(name)]));
+        if (versions.size === packages.size) {
+          // force-pulibsh=*, or carnary
+          this.updatesVersions = versions;
+        } else {
+          // fixed mode, versions are all highest version;
+          let nextVersion;
+          let hasBreakingChange = false;
+          versions.forEach((version, pkgName) => {
+            nextVersion = version;
+            const originVer = this.packages.find(p => p.name === pkgName).version;
+            if (isBreakingChange(originVer, version)) {
+              hasBreakingChange = true;
+            }
+          });
+          if (hasBreakingChange) {
+            this.updates = Array.from(packages.values());
+            this.updatesVersions = new Map();
+            this.updates.forEach(pkg => {
+              this.updatesVersions.set(pkg.name, nextVersion);
+            });
+          } else {
+            this.updatesVersions = versions;
+          }
+        }
       },
       () => this.confirmVersions(),
     ];
