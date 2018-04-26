@@ -22,6 +22,8 @@ exports.builder = yargs => {
     .options({
       dev: {
         group: "Command Options:",
+        type: "boolean",
+        alias: "D",
         describe: "Save to devDependencies",
       },
     });
