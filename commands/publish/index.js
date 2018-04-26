@@ -172,8 +172,8 @@ class PublishCommand extends Command {
           this.filteredPackages.length === this.packageGraph.size
             ? this.packageGraph
             : new Map(this.filteredPackages.map(({ name }) => [name, this.packageGraph.get(name)]));
-        if (versions.size === packages.size) {
-          // force-pulibsh=*, or carnary
+        if (this.project.isIndependent() || versions.size === packages.size) {
+          // independent, force-pulibsh=*, or carnary
           this.updatesVersions = versions;
         } else {
           // fixed mode, versions are all highest version;
