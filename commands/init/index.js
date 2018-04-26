@@ -26,9 +26,13 @@ class InitCommand extends Command {
     return false;
   }
 
-  // don't do any of this.
-  runValidations() {}
-  runPreparations() {}
+  runValidations() {
+    this.logger.verbose(this.name, "skipping validations");
+  }
+
+  runPreparations() {
+    this.logger.verbose(this.name, "skipping preparations");
+  }
 
   initialize() {
     this.exact = this.options.exact;

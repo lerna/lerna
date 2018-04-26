@@ -250,11 +250,11 @@ class Command {
   }
 
   initialize() {
-    throw new Error("command.initialize() needs to be implemented.");
+    throw new ValidationError(this.name, "initialize() needs to be implemented.");
   }
 
   execute() {
-    throw new Error("command.execute() needs to be implemented.");
+    throw new ValidationError(this.name, "execute() needs to be implemented.");
   }
 }
 

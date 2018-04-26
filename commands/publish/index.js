@@ -359,6 +359,8 @@ class PublishCommand extends Command {
     return chain;
   }
 
+  // TODO: extract out of class
+  // eslint-disable-next-line class-methods-use-this
   promptVersion({ version: currentVersion, name: pkgName }) {
     const patch = semver.inc(currentVersion, "patch");
     const minor = semver.inc(currentVersion, "minor");
