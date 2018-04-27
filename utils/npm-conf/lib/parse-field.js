@@ -32,7 +32,7 @@ function parseField(input, key) {
     return true;
   }
 
-  switch (field) { // eslint-disable-line default-case
+  switch (field) {
     case "true": {
       return true;
     }
@@ -48,6 +48,8 @@ function parseField(input, key) {
     case "undefined": {
       return undefined;
     }
+
+    // no default
   }
 
   field = envReplace(field);
