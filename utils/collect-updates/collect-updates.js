@@ -34,7 +34,8 @@ function collectUpdates({
       // ex: If `ab7533e` had 2 commits, ab7533e^..ab7533e would contain 2 commits + the merge commit
       committish = `${sha}^..${sha}`;
     } else if (!committish) {
-      committish = childProcess.execSync("git", ["describe", "--tags", "--abbrev=0"], execOpts);
+      // attempt to find the last annotated tag in the current branch
+      committish = childProcess.execSync("git", ["describe", "--abbrev=0"], execOpts);
     }
   }
 
