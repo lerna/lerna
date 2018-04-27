@@ -10,7 +10,13 @@ const makeDiffPredicate = require("./lib/make-diff-predicate");
 
 module.exports = collectUpdates;
 
-function collectUpdates({ filteredPackages, packageGraph, options, execOpts, logger }) {
+function collectUpdates({
+  filteredPackages,
+  packageGraph,
+  options: { canary, cdVersion, forcePublish, ignoreChanges, since },
+  execOpts,
+  logger,
+}) {
   const packages =
     filteredPackages.length === packageGraph.size
       ? packageGraph
@@ -18,10 +24,10 @@ function collectUpdates({ filteredPackages, packageGraph, options, execOpts, log
 
   logger.info("", "Checking for updated packages...");
 
-  let { since: committish } = options;
+  let committish = since;
 
   if (hasTags(execOpts)) {
-    if (options.canary) {
+    if (canary) {
       const sha = childProcess.execSync("git", ["rev-parse", "--short", "HEAD"], execOpts);
 
       // if it's a merge commit, it will return all the commits that were part of the merge
@@ -34,7 +40,7 @@ function collectUpdates({ filteredPackages, packageGraph, options, execOpts, log
 
   logger.info("", `Comparing with ${committish || "initial commit"}.`);
 
-  const forced = getForcedPackages(options.forcePublish);
+  const forced = getForcedPackages(forcePublish);
   let candidates;
 
   if (!committish || forced.has("*")) {
@@ -42,9 +48,8 @@ function collectUpdates({ filteredPackages, packageGraph, options, execOpts, log
   } else {
     candidates = new Set();
 
-    const ignorePatterns = options.ignore || options.ignoreChanges; // "ignore" might be durable
-    const hasDiff = makeDiffPredicate(committish, execOpts, ignorePatterns);
-    const needsBump = (options.cdVersion || "").startsWith("pre")
+    const hasDiff = makeDiffPredicate(committish, execOpts, ignoreChanges);
+    const needsBump = (cdVersion || "").startsWith("pre")
       ? () => false
       : /* skip packages that have not been previously prereleased */
         node => semver.prerelease(node.version);
@@ -59,7 +64,7 @@ function collectUpdates({ filteredPackages, packageGraph, options, execOpts, log
   const dependents = collectDependents(candidates);
   dependents.forEach(node => candidates.add(node));
 
-  if (options.canary || packages.size === candidates.size) {
+  if (canary || packages.size === candidates.size) {
     logger.verbose("updated", "(short-circuit)");
 
     return Array.from(candidates);
