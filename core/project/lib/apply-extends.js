@@ -3,6 +3,7 @@
 const path = require("path");
 const resolveFrom = require("resolve-from");
 const ValidationError = require("@lerna/validation-error");
+const deprecateConfig = require("./deprecate-config");
 const shallowExtend = require("./shallow-extend");
 
 module.exports = applyExtends;
@@ -28,6 +29,8 @@ function applyExtends(config, cwd, seen = new Set()) {
     // eslint-disable-next-line import/no-dynamic-require, global-require
     defaultConfig = require(pathToDefault);
     delete config.extends; // eslint-disable-line no-param-reassign
+
+    deprecateConfig(defaultConfig, pathToDefault);
 
     defaultConfig = applyExtends(defaultConfig, path.dirname(pathToDefault), seen);
   }
