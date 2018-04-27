@@ -1,3 +1,4 @@
+import os from "os";
 import dedent from "dedent";
 import log from "npmlog";
 import path from "path";
@@ -5,6 +6,8 @@ import semver from "semver";
 
 import ChildProcessUtilities from "./ChildProcessUtilities";
 import FileSystemUtilities from "./FileSystemUtilities";
+
+const BLANK_LINE = os.EOL + os.EOL;
 
 const CHANGELOG_NAME = "CHANGELOG.md";
 const CHANGELOG_HEADER = dedent(`# Change Log
@@ -98,13 +101,7 @@ export default class ConventionalCommitUtilities {
     // When force publishing, it is possible that there will be no actual changes, only a version bump.
     // Add a note to indicate that only a version bump has occurred.
     if (!newEntry.split("\n").some(line => line.startsWith("*"))) {
-      newEntry = dedent(
-        `
-        ${newEntry}
-        
-        **Note:** Version bump only for package ${pkg.name} 
-        `
-      );
+      newEntry = [newEntry.trim(), `**Note:** Version bump only for package ${pkg.name}`].join(BLANK_LINE);
     }
 
     log.silly(type, "writing new entry: %j", newEntry);
@@ -118,13 +115,7 @@ export default class ConventionalCommitUtilities {
     FileSystemUtilities.writeFileSync(
       changelogLocation,
       // only allow 1 \n at end of content.
-      dedent(
-        `${CHANGELOG_HEADER}
-
-        ${newEntry}
-
-        ${changelogContents}`.replace(/\n+$/, "\n")
-      )
+      [CHANGELOG_HEADER, newEntry, changelogContents].join(BLANK_LINE).trim()
     );
 
     log.verbose(type, "wrote", changelogLocation);
