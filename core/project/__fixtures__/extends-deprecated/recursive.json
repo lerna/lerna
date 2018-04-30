@@ -1,0 +1,13 @@
+{
+  "extends": "./base.json",
+  "packages": [
+    "recursive-pkgs/*"
+  ],
+  "commands": {
+    "publish": {
+      "ignore": [
+        "ignored-file"
+      ]
+    }
+  }
+}

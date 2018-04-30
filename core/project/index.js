@@ -11,6 +11,7 @@ const writeJsonFile = require("write-json-file");
 const ValidationError = require("@lerna/validation-error");
 const Package = require("@lerna/package");
 const applyExtends = require("./lib/apply-extends");
+const deprecateConfig = require("./lib/deprecate-config");
 
 class Project {
   constructor(cwd) {
@@ -31,11 +32,8 @@ class Project {
           };
         }
 
-        // normalize command-specific config namespace
-        if (obj.config.commands) {
-          obj.config.command = obj.config.commands;
-          delete obj.config.commands;
-        }
+        // rename deprecated durable config
+        deprecateConfig(obj.config, obj.filepath);
 
         obj.config = applyExtends(obj.config, path.dirname(obj.filepath));
 

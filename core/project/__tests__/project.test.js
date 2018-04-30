@@ -127,6 +127,17 @@ describe("Project", () => {
       });
     });
 
+    it("renames deprecated config recursively", async () => {
+      const cwd = await initFixture("extends-deprecated");
+      const project = new Project(cwd);
+
+      expect(project.config).not.toHaveProperty("commands");
+      expect(project.config).not.toHaveProperty("command.publish.ignore");
+      expect(project.config).toHaveProperty("command.publish.ignoreChanges", ["ignored-file"]);
+      expect(project.config).toHaveProperty("command.publish.loglevel", "success");
+      expect(project.config).toHaveProperty("command.bootstrap.hoist", true);
+    });
+
     it("throws an error when extend target is unresolvable", async () => {
       const cwd = await initFixture("extends-unresolved");
 
@@ -221,6 +232,16 @@ describe("Project", () => {
     it("caches the first successful value", () => {
       const project = new Project(testDir);
       expect(project.manifest).toBe(project.manifest);
+    });
+
+    it("defaults package.json name field when absent", async () => {
+      const cwd = await initFixture("basic");
+      const manifestLocation = path.join(cwd, "package.json");
+
+      await fs.writeJSON(manifestLocation, { private: true }, { spaces: 2 });
+
+      const project = new Project(cwd);
+      expect(project.manifest).toHaveProperty("name", path.basename(cwd));
     });
 
     it("does not cache failures", async () => {

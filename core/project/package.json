@@ -35,6 +35,7 @@
     "@lerna/validation-error": "file:../validation-error",
     "cosmiconfig": "^4.0.0",
     "dedent": "^0.7.0",
+    "dot-prop": "^4.2.0",
     "glob-parent": "^3.1.0",
     "load-json-file": "^4.0.0",
     "npmlog": "^4.1.2",
