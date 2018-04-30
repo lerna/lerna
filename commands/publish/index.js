@@ -152,10 +152,10 @@ class PublishCommand extends Command {
         case "minor":
           return semver.lt(currentVersion, "1.0.0");
         case "patch":
-        case "prepatch":
           return semver.lt(currentVersion, "0.1.0");
-        case "preminor":
         case "premajor":
+        case "preminor":
+        case "prepatch":
         case "prerelease":
           return false;
         default: {
@@ -172,11 +172,11 @@ class PublishCommand extends Command {
           this.filteredPackages.length === this.packageGraph.size
             ? this.packageGraph
             : new Map(this.filteredPackages.map(({ name }) => [name, this.packageGraph.get(name)]));
-        if (this.project.isIndependent() || versions.size === packages.size) {
-          // independent, force-publish=*, or canary
+        if (this.project.isIndependent() || versions.size === packages.size || this.options.canary) {
+          // independent, force-publish=*, or canary, we don't bump all
           this.updatesVersions = versions;
         } else {
-          // fixed mode, versions are all highest version;
+          // fixed mode, note that versions are now all set to highest version;
           let nextVersion;
           let hasBreakingChange = false;
           versions.forEach((version, pkgName) => {
