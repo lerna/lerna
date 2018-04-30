@@ -143,7 +143,7 @@ describe("PublishCommand", () => {
       expect(updatedPackageVersions(testDir)).toMatchSnapshot("updated packages");
     });
 
-    it("major bump shoudl bump all packages", async () => {
+    it("major bump should bump all packages", async () => {
       const testDir = await initFixture("normal");
       PromptUtilities.select.mockResolvedValueOnce("2.0.0");
       const package1 = new Package(

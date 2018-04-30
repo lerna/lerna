@@ -52,7 +52,7 @@ packages/package-5/CHANGELOG.md
 packages/package-5/package.json"
 `;
 
-exports[`PublishCommand fixed mode major bump shoudl bump all packages: commit 1`] = `
+exports[`PublishCommand fixed mode major bump should bump all packages: commit 1`] = `
 "v2.0.0
 
 HEAD -> master, tag: v2.0.0
@@ -113,7 +113,7 @@ index SHA..SHA 100644
 +  \\"version\\": \\"2.0.0\\""
 `;
 
-exports[`PublishCommand fixed mode major bump shoudl bump all packages: updated packages 1`] = `
+exports[`PublishCommand fixed mode major bump should bump all packages: updated packages 1`] = `
 Object {
   "package-1": "2.0.0",
   "package-2": "2.0.0",
