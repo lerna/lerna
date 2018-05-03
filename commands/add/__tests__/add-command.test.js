@@ -87,7 +87,7 @@ describe("AddCommand", () => {
     expect(await readPkg(testDir, "packages/package-2")).toDependOn("@test/package-1", "~1");
   });
 
-  it("should reference to devDepdendencies", async () => {
+  it("should add target package to devDependencies", async () => {
     const testDir = await initFixture("basic");
 
     await lernaAdd(testDir)("@test/package-1", "--dev");
@@ -95,6 +95,14 @@ describe("AddCommand", () => {
     expect(await readPkg(testDir, "packages/package-2")).toDevDependOn("@test/package-1");
     expect(await readPkg(testDir, "packages/package-3")).toDevDependOn("@test/package-1");
     expect(await readPkg(testDir, "packages/package-4")).toDevDependOn("@test/package-1");
+  });
+
+  it("should add target package to devDependencies with alias", async () => {
+    const testDir = await initFixture("basic");
+
+    await lernaAdd(testDir)("-D", "@test/package-1");
+
+    expect(await readPkg(testDir, "packages/package-2")).toDevDependOn("@test/package-1");
   });
 
   it("should not reference packages to themeselves", async () => {
