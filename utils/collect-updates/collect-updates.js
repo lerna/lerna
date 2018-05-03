@@ -65,12 +65,6 @@ function collectUpdates({
   const dependents = collectDependents(candidates);
   dependents.forEach(node => candidates.add(node));
 
-  if (canary || packages.size === candidates.size) {
-    logger.verbose("updated", "(short-circuit)");
-
-    return Array.from(candidates);
-  }
-
   const updates = [];
 
   packages.forEach((node, name) => {
