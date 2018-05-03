@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.0.0-beta.19"></a>
+# [3.0.0-beta.19](https://github.com/lerna/lerna/compare/v3.0.0-beta.18...v3.0.0-beta.19) (2018-05-03)
+
+
+### Bug Fixes
+
+* **add:** Configure `--dev` as boolean option ([#1390](https://github.com/lerna/lerna/issues/1390)) ([75b91bd](https://github.com/lerna/lerna/commit/75b91bd))
+* **collect-updates:** Derive most recent tag from annotated tags only ([90df646](https://github.com/lerna/lerna/commit/90df646))
+* **collect-updates:** Remove redundant short-circuit ([#1406](https://github.com/lerna/lerna/issues/1406)) ([2bcdd35](https://github.com/lerna/lerna/commit/2bcdd35))
+* **publish:** Include all packages during global major bump ([#1391](https://github.com/lerna/lerna/issues/1391)) ([9cebed1](https://github.com/lerna/lerna/commit/9cebed1)), closes [#1383](https://github.com/lerna/lerna/issues/1383)
+
+
+### Features
+
+* **project:** Map deprecated config to new namespaces ([4da6318](https://github.com/lerna/lerna/commit/4da6318))
+
+
+### BREAKING CHANGES
+
+* **collect-updates:** Lightweight tags are no longer included when detecting changes since the last release.
+
+
+
+
+
 <a name="3.0.0-beta.18"></a>
 # [3.0.0-beta.18](https://github.com/lerna/lerna/compare/v3.0.0-beta.17...v3.0.0-beta.18) (2018-04-24)
 
