@@ -40,6 +40,22 @@ function factory(argv) {
   return new PublishCommand(argv);
 }
 
+function isBreakingChange(currentVersion, nextVersion) {
+  const releaseType = semver.diff(currentVersion, nextVersion);
+  switch (releaseType) { //eslint-disable-line
+    case "major":
+      return true;
+    case "minor":
+      return semver.lt(currentVersion, "1.0.0");
+    case "patch":
+      return semver.lt(currentVersion, "0.1.0");
+    case "premajor":
+    case "preminor":
+    case "prepatch":
+    case "prerelease":
+      return false;
+  }
+}
 class PublishCommand extends Command {
   get defaultOptions() {
     return Object.assign({}, super.defaultOptions, {
@@ -144,53 +160,31 @@ class PublishCommand extends Command {
         )
       : [this.packagesToPublish];
 
-    const isBreakingChange = (currentVersion, nextVersion) => {
-      const releaseType = semver.diff(currentVersion, nextVersion);
-      switch (releaseType) {
-        case "major":
-          return true;
-        case "minor":
-          return semver.lt(currentVersion, "1.0.0");
-        case "patch":
-          return semver.lt(currentVersion, "0.1.0");
-        case "premajor":
-        case "preminor":
-        case "prepatch":
-        case "prerelease":
-          return false;
-        default: {
-          const err = { error: "not expected release type" };
-          throw err;
-        }
-      }
-    };
-
     const tasks = [
       () => this.getVersionsForUpdates(),
       versions => {
-        const packages =
-          this.filteredPackages.length === this.packageGraph.size
-            ? this.packageGraph
-            : new Map(this.filteredPackages.map(({ name }) => [name, this.packageGraph.get(name)]));
-        if (this.project.isIndependent() || versions.size === packages.size || this.options.canary) {
+        if (
+          this.project.isIndependent() ||
+          versions.size === this.filteredPackages.size ||
+          this.options.canary
+        ) {
           // independent, force-publish=*, or canary, we don't bump all
           this.updatesVersions = versions;
         } else {
-          // fixed mode, note that versions are now all set to highest version;
-          let nextVersion;
-          let hasBreakingChange = false;
-          versions.forEach((version, pkgName) => {
-            nextVersion = version;
-            const originVer = this.packages.find(p => p.name === pkgName).version;
-            if (isBreakingChange(originVer, version)) {
-              hasBreakingChange = true;
-            }
-          });
+          let hasBreakingChange;
+          for (const [name, bump] of versions) {
+            hasBreakingChange =
+              hasBreakingChange || isBreakingChange(this.packageGraph.get(name).version, bump);
+          }
           if (hasBreakingChange) {
+            const packages =
+              this.filteredPackages.length === this.packageGraph.size
+                ? this.packageGraph
+                : new Map(this.filteredPackages.map(({ name }) => [name, this.packageGraph.get(name)]));
             this.updates = Array.from(packages.values());
             this.updatesVersions = new Map();
             this.updates.forEach(pkg => {
-              this.updatesVersions.set(pkg.name, nextVersion);
+              this.updatesVersions.set(pkg.name, this.globalVersion);
             });
           } else {
             this.updatesVersions = versions;
