@@ -33,6 +33,7 @@ const gitCommit = require("./lib/git-commit");
 const gitPush = require("./lib/git-push");
 const gitTag = require("./lib/git-tag");
 const isBehindUpstream = require("./lib/is-behind-upstream");
+const isBreakingChange = require("./lib/is-breaking-change");
 
 module.exports = factory;
 
@@ -40,22 +41,6 @@ function factory(argv) {
   return new PublishCommand(argv);
 }
 
-function isBreakingChange(currentVersion, nextVersion) {
-  const releaseType = semver.diff(currentVersion, nextVersion);
-  switch (releaseType) { //eslint-disable-line
-    case "major":
-      return true;
-    case "minor":
-      return semver.lt(currentVersion, "1.0.0");
-    case "patch":
-      return semver.lt(currentVersion, "0.1.0");
-    case "premajor":
-    case "preminor":
-    case "prepatch":
-    case "prerelease":
-      return false;
-  }
-}
 class PublishCommand extends Command {
   get defaultOptions() {
     return Object.assign({}, super.defaultOptions, {
@@ -172,20 +157,20 @@ class PublishCommand extends Command {
           this.updatesVersions = versions;
         } else {
           let hasBreakingChange;
+
           for (const [name, bump] of versions) {
             hasBreakingChange =
               hasBreakingChange || isBreakingChange(this.packageGraph.get(name).version, bump);
           }
+
           if (hasBreakingChange) {
             const packages =
               this.filteredPackages.length === this.packageGraph.size
                 ? this.packageGraph
                 : new Map(this.filteredPackages.map(({ name }) => [name, this.packageGraph.get(name)]));
+
             this.updates = Array.from(packages.values());
-            this.updatesVersions = new Map();
-            this.updates.forEach(pkg => {
-              this.updatesVersions.set(pkg.name, this.globalVersion);
-            });
+            this.updatesVersions = new Map(this.updates.map(({ name }) => [name, this.globalVersion]));
           } else {
             this.updatesVersions = versions;
           }
