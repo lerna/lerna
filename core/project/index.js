@@ -16,10 +16,7 @@ const deprecateConfig = require("./lib/deprecate-config");
 class Project {
   constructor(cwd) {
     const explorer = cosmiconfig("lerna", {
-      js: false, // not unless we store version somewhere else...
-      rc: "lerna.json",
-      rcStrictJson: true,
-      sync: true,
+      searchPlaces: ["lerna.json", "package.json"],
       transform(obj) {
         // cosmiconfig returns null when nothing is found
         if (!obj) {
@@ -44,7 +41,7 @@ class Project {
     let loaded;
 
     try {
-      loaded = explorer.load(cwd);
+      loaded = explorer.searchSync(cwd);
     } catch (err) {
       // redecorate JSON syntax errors, avoid debug dump
       if (err.name === "JSONError") {
