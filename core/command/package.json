@@ -40,7 +40,7 @@
     "@lerna/validation-error": "file:../validation-error",
     "@lerna/write-log-file": "file:../../utils/write-log-file",
     "dedent": "^0.7.0",
-    "execa": "^0.9.0",
+    "execa": "^0.10.0",
     "lodash": "^4.17.5",
     "npmlog": "^4.1.2"
   }

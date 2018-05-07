@@ -6,6 +6,6 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
-    "execa": "^0.9.0"
+    "execa": "^0.10.0"
   }
 }

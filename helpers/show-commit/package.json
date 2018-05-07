@@ -7,6 +7,6 @@
   "license": "MIT",
   "dependencies": {
     "@lerna-test/serialize-git-sha": "file:../serialize-git-sha",
-    "execa": "^0.9.0"
+    "execa": "^0.10.0"
   }
 }
