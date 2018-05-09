@@ -750,6 +750,45 @@ Running `lerna` without arguments will show all commands/options.
 * `command.bootstrap.scope`: an array of globs that restricts which packages will be bootstrapped when running the `lerna bootstrap` command.
 * `packages`: Array of globs to use as package locations.
 
+The packages config in lerna.json is a list of globs that match directories containing a package.json, which is how lerna recognizes "leaf" packages (vs the "root" package.json, which is intended to manage the dev dependencies and scripts for the entire repo).
+
+By default, lerna initializes the packages list as ["packages/\*"], but you can also use another directory such as ["modules/\*"], pr ["package1", "package2"] (globs are relative to the directory that lerna.json lives in). The only restriction is that you can't directly nest them, but this is a restriction shared by "normal" npm packages as well.
+
+For example, ["packages/*", "src/**"] matches this tree
+
+```
+packages/
+├── foo-pkg
+│   └── package.json
+├── bar-pkg
+│   └── package.json
+├── baz-pkg
+│   └── package.json
+└── qux-pkg
+    └── package.json
+src/
+├── admin
+│   ├── my-app
+│   │   └── package.json
+│   ├── stuff
+│   │   └── package.json
+│   └── things
+│       └── package.json
+├── profile
+│   └── more-things
+│       └── package.json
+├── property
+│   ├── more-stuff
+│   │   └── package.json
+│   └── other-things
+│       └── package.json
+└── upload
+    └── other-stuff
+        └── package.json
+```
+
+`./packages/*` is considered a "best-practice", but is not a requirement for using lerna.
+
 ### Common `devDependencies`
 
 Most `devDependencies` can be pulled up to the root of a Lerna repo.
