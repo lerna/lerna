@@ -88,7 +88,7 @@ class RunCommand extends Command {
       ? pkg => this.runScriptInPackageStreaming(pkg)
       : pkg => this.runScriptInPackageCapturing(pkg);
 
-    return runParallelBatches(this.batchedPackages, this.concurrency, pkg => runner(pkg));
+    return runParallelBatches(this.batchedPackages, this.concurrency, runner);
   }
 
   runScriptInPackagesParallel() {
@@ -107,20 +107,9 @@ class RunCommand extends Command {
   }
 
   runScriptInPackageCapturing(pkg) {
-    return npmRunScript(this.script, this.getOpts(pkg))
-      .then(result => {
-        output(result.stdout);
-      })
-      .catch(err => {
-        this.logger.error("run", `'${this.script}' errored in '${pkg.name}'`);
-
-        if (err.code) {
-          // log non-lerna error cleanly
-          err.pkg = pkg;
-        }
-
-        throw err;
-      });
+    return npmRunScript(this.script, this.getOpts(pkg)).then(result => {
+      output(result.stdout);
+    });
   }
 }
 

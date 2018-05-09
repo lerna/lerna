@@ -42,7 +42,7 @@ describe("npm-install", () => {
       expect(ChildProcessUtilities.exec).lastCalledWith(
         "yarn",
         ["install", "--mutex", "file:foo", "--non-interactive", "--no-optional"],
-        { cwd: pkg.location, stdio: "pipe" }
+        { cwd: pkg.location, pkg, stdio: "pipe" }
       );
     });
 
@@ -62,6 +62,7 @@ describe("npm-install", () => {
 
       expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["install"], {
         cwd: pkg.location,
+        pkg,
         stdio: "inherit",
       });
     });
@@ -87,6 +88,7 @@ describe("npm-install", () => {
 
         expect(ChildProcessUtilities.exec).lastCalledWith("yarn", ["install", "--non-interactive"], {
           cwd: pkg.location,
+          pkg,
           stdio: "pipe",
         });
       }
@@ -139,6 +141,7 @@ describe("npm-install", () => {
       });
       expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["install"], {
         cwd: pkg.location,
+        pkg,
         stdio: "pipe",
       });
     });
@@ -182,6 +185,7 @@ describe("npm-install", () => {
           npm_config_registry: config.registry,
         }),
         extendEnv: false,
+        pkg,
         stdio: "pipe",
       });
     });
@@ -220,6 +224,7 @@ describe("npm-install", () => {
       });
       expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["install", "--global-style"], {
         cwd: pkg.location,
+        pkg,
         stdio: "pipe",
       });
     });
@@ -254,7 +259,7 @@ describe("npm-install", () => {
       expect(ChildProcessUtilities.exec).lastCalledWith(
         "yarn",
         ["install", "--mutex", "network:12345", "--non-interactive"],
-        { cwd: pkg.location, stdio: "pipe" }
+        { cwd: pkg.location, pkg, stdio: "pipe" }
       );
     });
 
@@ -292,6 +297,7 @@ describe("npm-install", () => {
       });
       expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["install", "--production", "--no-optional"], {
         cwd: pkg.location,
+        pkg,
         stdio: "pipe",
       });
     });
@@ -332,6 +338,7 @@ describe("npm-install", () => {
       });
       expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["install", "--global-style"], {
         cwd: pkg.location,
+        pkg,
         stdio: "pipe",
       });
     });
@@ -370,6 +377,7 @@ describe("npm-install", () => {
       });
       expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["ci"], {
         cwd: pkg.location,
+        pkg,
         stdio: "pipe",
       });
     });

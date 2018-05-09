@@ -27,20 +27,21 @@ class ExecCommand extends Command {
 
   initialize() {
     const dashedArgs = this.options["--"] || [];
-    const { cmd, args } = this.options;
 
-    this.command = cmd || dashedArgs.shift();
-    this.args = (args || []).concat(dashedArgs);
+    this.command = this.options.cmd || dashedArgs.shift();
+    this.args = (this.options.args || []).concat(dashedArgs);
 
     if (!this.command) {
       throw new ValidationError("ENOCOMMAND", "A command to execute is required");
     }
 
-    const { filteredPackages } = this;
+    // accessing properties of process.env can be expensive,
+    // so cache it here to reduce churn during tighter loops
+    this.env = Object.assign({}, process.env);
 
     this.batchedPackages = this.toposort
-      ? batchPackages(filteredPackages, this.options.rejectCycles)
-      : [filteredPackages];
+      ? batchPackages(this.filteredPackages, this.options.rejectCycles)
+      : [this.filteredPackages];
   }
 
   execute() {
@@ -48,29 +49,24 @@ class ExecCommand extends Command {
       return this.runCommandInPackagesParallel();
     }
 
-    return runParallelBatches(this.batchedPackages, this.concurrency, pkg =>
-      this.runCommandInPackage(pkg).catch(err => {
-        this.logger.error("exec", `'${err.cmd}' errored in '${pkg.name}'`);
+    const runner = this.options.stream
+      ? pkg => this.runCommandInPackageStreaming(pkg)
+      : pkg => this.runCommandInPackageCapturing(pkg);
 
-        if (err.code) {
-          // log non-lerna error cleanly
-          err.pkg = pkg;
-        }
-
-        throw err;
-      })
-    );
+    return runParallelBatches(this.batchedPackages, this.concurrency, runner);
   }
 
   getOpts(pkg) {
     return {
       cwd: pkg.location,
       shell: true,
-      env: Object.assign({}, process.env, {
+      extendEnv: false,
+      env: Object.assign({}, this.env, {
         LERNA_PACKAGE_NAME: pkg.name,
         LERNA_ROOT_PATH: this.project.rootPath,
       }),
       reject: this.options.bail,
+      pkg,
     };
   }
 
@@ -82,28 +78,19 @@ class ExecCommand extends Command {
       [this.command].concat(this.args).join(" ")
     );
 
-    return Promise.all(
-      this.filteredPackages.map(pkg =>
-        ChildProcessUtilities.spawnStreaming(
-          this.command,
-          this.args,
-          this.getOpts(pkg),
-          this.options.prefix && pkg.name
-        )
-      )
+    return Promise.all(this.filteredPackages.map(pkg => this.runCommandInPackageStreaming(pkg)));
+  }
+
+  runCommandInPackageStreaming(pkg) {
+    return ChildProcessUtilities.spawnStreaming(
+      this.command,
+      this.args,
+      this.getOpts(pkg),
+      this.options.prefix && pkg.name
     );
   }
 
-  runCommandInPackage(pkg) {
-    if (this.options.stream) {
-      return ChildProcessUtilities.spawnStreaming(
-        this.command,
-        this.args,
-        this.getOpts(pkg),
-        this.options.prefix && pkg.name
-      );
-    }
-
+  runCommandInPackageCapturing(pkg) {
     return ChildProcessUtilities.spawn(this.command, this.args, this.getOpts(pkg));
   }
 }

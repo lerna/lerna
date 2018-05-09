@@ -15,7 +15,7 @@ describe("lerna run", () => {
     try {
       await cliRunner(cwd)(...args);
     } catch (err) {
-      expect(err.message).toMatch("run 'fail' errored in 'package-3'");
+      expect(err.message).toMatch("npm run fail --silent exited 1 in 'package-3'");
     }
   });
 

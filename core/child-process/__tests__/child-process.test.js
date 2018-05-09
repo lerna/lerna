@@ -42,6 +42,19 @@ describe("ChildProcessUtilities", () => {
       expect(one.stdout).toBe("one");
       expect(two.stdout).toBe("two");
     });
+
+    it("decorates opts.pkg on error if caught", async () => {
+      try {
+        await ChildProcessUtilities.exec(
+          "theVeneratedVirginianVeteranWhoseMenAreAll",
+          ["liningUpToPutMeUpOnAPedestal"],
+          { pkg: { name: "hamilton" } }
+        );
+      } catch (err) {
+        expect(err.code).toBe("ENOENT");
+        expect(err.pkg).toEqual({ name: "hamilton" });
+      }
+    });
   });
 
   describe(".spawn()", () => {
