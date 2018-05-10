@@ -6,10 +6,10 @@
   "scripts": {
     "ci": "npm test -- --ci --coverage --verbose && npm run integration -- --ci",
     "fix": "npm run lint -- --fix",
-    "integration": "cross-env LC_ALL=en-US NODE_ENV=test jest --config jest.integration.js",
+    "integration": "cross-env LC_ALL=en_US.UTF-8 NODE_ENV=test jest --config jest.integration.js",
     "lint": "eslint . --ignore-path .gitignore --cache",
     "pretest": "npm run lint",
-    "test": "cross-env LC_ALL=en-US NODE_ENV=test jest"
+    "test": "cross-env LC_ALL=en_US.UTF-8 NODE_ENV=test jest"
   },
   "repository": {
     "type": "git",

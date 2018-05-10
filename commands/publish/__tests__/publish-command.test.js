@@ -699,6 +699,42 @@ describe("PublishCommand", () => {
   });
 
   /** =========================================================================
+   * NORMAL - AMEND
+   * ======================================================================= */
+
+  describe("normal mode with --amend", () => {
+    it("commits changes on the previous commit", async () => {
+      const testDir = await initFixture("normal");
+      await lernaPublish(testDir)("--amend");
+
+      const message = await gitCommitMessage(testDir);
+      expect(message).toMatch("Init commit");
+    });
+
+    it("ignores custom messages", async () => {
+      const testDir = await initFixture("normal");
+      await lernaPublish(testDir)("--message", "chore: Release %v :rocket:", "--amend");
+
+      const message = await gitCommitMessage(testDir);
+      expect(message).toMatch("Init commit");
+    });
+  });
+
+  /** =========================================================================
+   * INDEPENDENT - AMEND
+   * ======================================================================= */
+
+  describe("independent mode with --amend", () => {
+    it("commits changes with a custom message", async () => {
+      const testDir = await initFixture("independent");
+      await lernaPublish(testDir)("--amend");
+
+      const message = await gitCommitMessage(testDir);
+      expect(message).toMatch("Init commit");
+    });
+  });
+
+  /** =========================================================================
    * CONVENTIONAL COMMITS
    * ======================================================================= */
 

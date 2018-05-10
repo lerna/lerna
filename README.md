@@ -494,6 +494,19 @@ This can be configured in lerna.json, as well:
 }
 ```
 
+#### --amend
+
+```sh
+$ lerna publish --amend
+# commit message is retained, and `git push` is skipped.
+```
+
+When run with this flag, `publish` will perform all changes on the current commit, instead of adding a new one. This is
+useful during [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous_integration), to reduce the number
+of commits in the projects' history.
+
+In order to prevent unintended overwrites, this command will skip `git push`.
+
 #### --allow-branch [glob]
 
 Lerna allows you to specify a glob or an array of globs in your `lerna.json` that your current branch needs to match to be publishable.

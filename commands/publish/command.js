@@ -68,6 +68,11 @@ exports.builder = yargs => {
       type: "string",
       requiresArg: true,
     },
+    amend: {
+      describe: "Amend the existing commit, instead of generating a new one.",
+      type: "boolean",
+      default: false,
+    },
     "npm-tag": {
       describe: "Publish packages with the specified npm dist-tag",
       type: "string",
