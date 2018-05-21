@@ -62,6 +62,13 @@ lerna ERR! execute CONFLICT (content): Merge conflict in [file]
 Run `lerna import` with the `--flatten` flag to import the history in "flat"
 mode, i.e. with each merge commit as a single change the merge introduced.
 
+### Failing when git tree has uncommitted changes
+You will receive `fatal: ambiguous argument 'HEAD':` error, when the current project has **uncommitted changes**.
+
+#### Solution
+Make sure to commit all the changes you have in your lerna project, before importing any packages using `lerna import`.
+
+
 ## Publish Command
 
 ### Publish does not detect manually created tags in fixed mode with Github/Github Enterprise
