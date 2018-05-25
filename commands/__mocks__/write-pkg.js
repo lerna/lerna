@@ -1,6 +1,5 @@
 "use strict";
 
-// eslint-disable-next-line import/no-extraneous-dependencies, node/no-extraneous-require
 const writePkg = require.requireActual("write-pkg");
 const registry = new Map();
 
