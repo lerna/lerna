@@ -21,7 +21,7 @@ install:
   - ps: Install-Product node $env:nodejs_version
   - npm config set loglevel warn
   - npm install --global npm@latest
-  - set PATH=%APPDATA%\npm;%PATH%
+  - set PATH=%APPDATA%\npm;"C:\Program Files\Git\mingw64\bin";%PATH%
   - npm ci
 
 before_test:
