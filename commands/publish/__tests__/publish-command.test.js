@@ -25,6 +25,7 @@ const gitTag = require("@lerna-test/git-tag");
 const gitCommit = require("@lerna-test/git-commit");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const showCommit = require("@lerna-test/show-commit");
+const getCommitMessage = require("@lerna-test/get-commit-message");
 
 // file under test
 const lernaPublish = require("@lerna-test/command-runner")(require("../command"));
@@ -174,7 +175,7 @@ describe("PublishCommand", () => {
       const testDir = await initFixture("normal");
       await lernaPublish(testDir)("--amend");
 
-      const message = await gitCommitMessage(testDir);
+      const message = await getCommitMessage(testDir);
       expect(message).toMatch("Init commit");
     });
 
@@ -182,7 +183,7 @@ describe("PublishCommand", () => {
       const testDir = await initFixture("normal");
       await lernaPublish(testDir)("--message", "chore: Release %v :rocket:", "--amend");
 
-      const message = await gitCommitMessage(testDir);
+      const message = await getCommitMessage(testDir);
       expect(message).toMatch("Init commit");
     });
   });
@@ -192,7 +193,7 @@ describe("PublishCommand", () => {
       const testDir = await initFixture("independent");
       await lernaPublish(testDir)("--amend");
 
-      const message = await gitCommitMessage(testDir);
+      const message = await getCommitMessage(testDir);
       expect(message).toMatch("Init commit");
     });
   });
