@@ -54,6 +54,7 @@
     - files:
         - "integration/**"
         - "**/__tests__/**"
+        - "**/__mocks__/**"
       env:
         jest: true
       rules:

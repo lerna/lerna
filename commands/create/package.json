@@ -1,6 +1,6 @@
 {
   "name": "@lerna/create",
-  "version": "3.0.0-beta.20",
+  "version": "3.0.0-beta.21",
   "description": "Create a new lerna-managed package",
   "keywords": [
     "lerna",
@@ -38,7 +38,7 @@
     "@lerna/validation-error": "file:../../core/validation-error",
     "camelcase": "^4.1.0",
     "dedent": "^0.7.0",
-    "fs-extra": "^5.0.0",
+    "fs-extra": "^6.0.1",
     "globby": "^8.0.1",
     "init-package-json": "^1.10.3",
     "npm-package-arg": "^6.0.0",

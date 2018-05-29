@@ -1,18 +1,16 @@
 "use strict";
 
-jest.mock("@lerna/output");
-
 const chalk = require("chalk");
 const normalizeNewline = require("normalize-newline");
-const output = require("@lerna/output");
 
 // keep snapshots stable cross-platform
 chalk.enabled = false;
 
-module.exports = consoleOutput;
+// @lerna/output is just a wrapper around console.log
+const mockOutput = jest.fn();
 
-function consoleOutput() {
-  return output.mock.calls
+function logged() {
+  return mockOutput.mock.calls
     .map(args =>
       normalizeNewline(args[0])
         .split("\n")
@@ -21,3 +19,6 @@ function consoleOutput() {
     )
     .join("\n");
 }
+
+module.exports = mockOutput;
+module.exports.logged = logged;
