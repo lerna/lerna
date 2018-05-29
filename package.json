@@ -58,7 +58,7 @@
     "eslint-plugin-node": "^6.0.1",
     "eslint-plugin-prettier": "^2.6.0",
     "fast-async": "^6.3.7",
-    "jest": "^22.4.4",
+    "jest": "^23.0.1",
     "normalize-newline": "^3.0.0",
     "normalize-path": "^2.1.1",
     "path-key": "^2.0.1",
