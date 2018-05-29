@@ -13,6 +13,7 @@ node_js:
 env:
   global:
     - NO_UPDATE_NOTIFIER=1
+    - NODE_NO_WARNINGS=1
 
 matrix:
   fast_finish: true

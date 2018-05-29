@@ -5,6 +5,7 @@ shallow_clone: true
 
 environment:
   NO_UPDATE_NOTIFIER: "1"
+  NODE_NO_WARNINGS: "1"
   matrix:
     - nodejs_version: "10"
     - nodejs_version: "8"
@@ -20,7 +21,7 @@ install:
   - ps: Install-Product node $env:nodejs_version
   - npm config set loglevel warn
   - npm install --global npm@latest
-  - set PATH=%APPDATA%\npm;%PATH%
+  - set PATH=%APPDATA%\npm;"C:\Program Files\Git\mingw64\bin";%PATH%
   - npm ci
 
 before_test:
