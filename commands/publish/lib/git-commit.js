@@ -11,7 +11,9 @@ function gitCommit(message, opts) {
   log.silly("gitCommit", message);
   const args = ["commit", "--no-verify"];
 
-  if (message.indexOf(EOL) > -1) {
+  if (opts && opts.amend === true) {
+    args.push("--amend", "--no-edit");
+  } else if (message.indexOf(EOL) > -1) {
     // Use tempfile to allow multi\nline strings.
     args.push("-F", tempWrite.sync(message, "lerna-commit.txt"));
   } else {

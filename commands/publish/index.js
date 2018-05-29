@@ -52,12 +52,16 @@ class PublishCommand extends Command {
       tempTag: false,
       yes: false,
       allowBranch: false,
+      amend: false,
     });
   }
 
   initialize() {
     this.gitRemote = this.options.gitRemote || "origin";
     this.gitEnabled = !(this.options.canary || this.options.skipGit);
+
+    // Set the 'amend' flag so it can be passed to child commands.
+    this.execOpts.amend = this.options.amend === true;
 
     // https://docs.npmjs.com/misc/config#save-prefix
     this.savePrefix = this.options.exact ? "" : "^";
@@ -205,7 +209,7 @@ class PublishCommand extends Command {
       tasks.push(() => this.publishPackagesToNpm());
     }
 
-    if (this.gitEnabled) {
+    if (this.gitEnabled && !this.options.amend) {
       tasks.push(() => this.pushToRemote());
     }
 

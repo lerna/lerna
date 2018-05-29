@@ -25,6 +25,7 @@ const gitTag = require("@lerna-test/git-tag");
 const gitCommit = require("@lerna-test/git-commit");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const showCommit = require("@lerna-test/show-commit");
+const getCommitMessage = require("@lerna-test/get-commit-message");
 
 // file under test
 const lernaPublish = require("@lerna-test/command-runner")(require("../command"));
@@ -166,6 +167,34 @@ describe("PublishCommand", () => {
           cwd: testDir,
         })
       );
+    });
+  });
+
+  describe("--amend", () => {
+    it("commits changes on the previous commit", async () => {
+      const testDir = await initFixture("normal");
+      await lernaPublish(testDir)("--amend");
+
+      const message = await getCommitMessage(testDir);
+      expect(message).toMatch("Init commit");
+    });
+
+    it("ignores custom messages", async () => {
+      const testDir = await initFixture("normal");
+      await lernaPublish(testDir)("--message", "chore: Release %v :rocket:", "--amend");
+
+      const message = await getCommitMessage(testDir);
+      expect(message).toMatch("Init commit");
+    });
+  });
+
+  describe("--amend --independent", () => {
+    it("commits changes with a custom message", async () => {
+      const testDir = await initFixture("independent");
+      await lernaPublish(testDir)("--amend");
+
+      const message = await getCommitMessage(testDir);
+      expect(message).toMatch("Init commit");
     });
   });
 

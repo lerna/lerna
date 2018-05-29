@@ -31,3 +31,18 @@ test("multiline message", async () => {
   expect(subject).toBe("foo");
   expect(body).toBe("bar");
 });
+
+test("amend", async () => {
+  const cwd = await initFixture("root-manifest-only");
+
+  await fs.outputFile(path.join(cwd, "packages", "pkg-4", "index.js"), "hello");
+  await execa("git", ["add", "."], { cwd });
+  await gitCommit(`foo${EOL}${EOL}bar`, { cwd, amend: true });
+
+  const subject = await execa.stdout("git", ["log", "-1", "--pretty=format:%s"], { cwd });
+  const body = await execa.stdout("git", ["log", "-1", "--pretty=format:%b"], { cwd });
+
+  // It should ignore any message.
+  expect(subject).toBe("Init commit");
+  expect(body).toBe("");
+});
