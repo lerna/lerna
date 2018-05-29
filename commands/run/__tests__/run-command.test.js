@@ -1,5 +1,8 @@
 "use strict";
 
+// we're actually testing integration with git
+jest.unmock("@lerna/collect-updates");
+
 jest.mock("@lerna/npm-run-script");
 
 const execa = require("execa");

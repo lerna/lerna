@@ -1,5 +1,8 @@
 "use strict";
 
+// we're actually testing integration with git
+jest.unmock("@lerna/collect-updates");
+
 const fs = require("fs-extra");
 const path = require("path");
 
