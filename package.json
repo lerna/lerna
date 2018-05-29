@@ -28,7 +28,6 @@
     "@lerna-test/cli-runner": "file:helpers/cli-runner",
     "@lerna-test/clone-fixture": "file:helpers/clone-fixture",
     "@lerna-test/command-runner": "file:helpers/command-runner",
-    "@lerna-test/console-output": "file:helpers/console-output",
     "@lerna-test/copy-fixture": "file:helpers/copy-fixture",
     "@lerna-test/find-fixture": "file:helpers/find-fixture",
     "@lerna-test/get-commit-message": "file:helpers/get-commit-message",

@@ -11,10 +11,10 @@ const path = require("path");
 
 // mocked modules
 const npmRunScript = require("@lerna/npm-run-script");
+const output = require("@lerna/output");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const consoleOutput = require("@lerna-test/console-output");
 const loggingOutput = require("@lerna-test/logging-output");
 const gitAdd = require("@lerna-test/git-add");
 const gitCommit = require("@lerna-test/git-commit");
@@ -42,9 +42,9 @@ describe("RunCommand", () => {
 
       await lernaRun(testDir)("my-script");
 
-      const output = consoleOutput().split("\n");
-      expect(output).toContain("package-1");
-      expect(output).toContain("package-3");
+      const logLines = output.logged().split("\n");
+      expect(logLines).toContain("package-1");
+      expect(logLines).toContain("package-3");
     });
 
     it("runs a script in packages with --stream", async () => {
@@ -68,7 +68,7 @@ describe("RunCommand", () => {
 
       await lernaRun(testDir)("env");
 
-      expect(consoleOutput().split("\n")).toEqual(["package-1", "package-4", "package-2", "package-3"]);
+      expect(output.logged().split("\n")).toEqual(["package-1", "package-4", "package-2", "package-3"]);
     });
 
     it("runs a script only in scoped packages", async () => {
@@ -76,7 +76,7 @@ describe("RunCommand", () => {
 
       await lernaRun(testDir)("my-script", "--scope", "package-1");
 
-      expect(consoleOutput()).toBe("package-1");
+      expect(output.logged()).toBe("package-1");
     });
 
     it("does not run a script in ignored packages", async () => {
@@ -84,7 +84,7 @@ describe("RunCommand", () => {
 
       await lernaRun(testDir)("my-script", "--ignore", "package-@(2|3|4)");
 
-      expect(consoleOutput()).toBe("package-1");
+      expect(output.logged()).toBe("package-1");
     });
 
     it("should filter packages that are not updated with --since", async () => {
@@ -107,7 +107,7 @@ describe("RunCommand", () => {
 
       await lernaRun(testDir)("my-script", "--since", "master");
 
-      expect(consoleOutput()).toBe("package-3");
+      expect(output.logged()).toBe("package-3");
     });
 
     it("requires a git repo when using --since", async () => {
@@ -155,7 +155,7 @@ describe("RunCommand", () => {
 
       await lernaRun(testDir)("env", "--npm-client", "yarn");
 
-      expect(consoleOutput().split("\n")).toEqual(["package-1", "package-4", "package-2", "package-3"]);
+      expect(output.logged().split("\n")).toEqual(["package-1", "package-4", "package-2", "package-3"]);
     });
 
     it("reports script errors with early exit", async () => {
@@ -185,9 +185,9 @@ describe("RunCommand", () => {
         "--silent"
       );
 
-      const output = consoleOutput().split("\n");
-      expect(output).toContain("@test/package-1");
-      expect(output).toContain("@test/package-2");
+      const logLines = output.logged().split("\n");
+      expect(logLines).toContain("@test/package-1");
+      expect(logLines).toContain("@test/package-2");
     });
   });
 
@@ -205,7 +205,7 @@ describe("RunCommand", () => {
         "package-cycle-extraneous -> package-cycle-1 -> package-cycle-2 -> package-cycle-1"
       );
 
-      expect(consoleOutput().split("\n")).toEqual([
+      expect(output.logged().split("\n")).toEqual([
         "package-dag-1",
         "package-standalone",
         "package-dag-2a",
