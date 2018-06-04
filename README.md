@@ -1041,8 +1041,12 @@ $ lerna bootstrap --hoist --nohoist=babel-*
 
 #### --npm-client [client]
 
-Install external dependencies using `[client] install`. Must be an executable
-that knows how to install npm dependencies.
+This will apply to actions below:
+* Install external dependencies using `[client] install`
+* Publish packages with `[client] publish`
+* Run scripts with `[client] run [command]`
+
+Must be an executable that knows how to install npm dependencies, publish packages, and run scripts.
 
 ```sh
 $ lerna bootstrap --npm-client=yarn
