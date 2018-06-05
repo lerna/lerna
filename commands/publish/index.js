@@ -34,6 +34,7 @@ const gitPush = require("./lib/git-push");
 const gitTag = require("./lib/git-tag");
 const isBehindUpstream = require("./lib/is-behind-upstream");
 const isBreakingChange = require("./lib/is-breaking-change");
+const isAnythingCommited = require("./lib/is-anything-commited");
 
 module.exports = factory;
 
@@ -81,6 +82,13 @@ class PublishCommand extends Command {
 
     // git validation, if enabled, should happen before updates are calculated and versions picked
     if (this.gitEnabled) {
+      if (!isAnythingCommited(this.execOpts)) {
+        throw new ValidationError(
+          "ENOCOMMIT",
+          "No commits in this repository. Please commit something before using publish."
+        );
+      }
+
       this.currentBranch = getCurrentBranch(this.execOpts);
 
       if (this.currentBranch === "HEAD") {

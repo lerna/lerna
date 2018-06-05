@@ -24,6 +24,7 @@ const gitAdd = require("@lerna-test/git-add");
 const gitTag = require("@lerna-test/git-tag");
 const gitCommit = require("@lerna-test/git-commit");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const initFixtureWithoutCommits = require("@lerna-test/init-fixture")(__dirname, true);
 const showCommit = require("@lerna-test/show-commit");
 const getCommitMessage = require("@lerna-test/get-commit-message");
 
@@ -223,6 +224,19 @@ describe("PublishCommand", () => {
       expect(warning).toMatch("behind remote upstream");
       expect(warning).toMatch("exiting");
     });
+  });
+
+  it("exists with an error when no commits are present", async () => {
+    expect.assertions(2);
+    const testDir = await initFixtureWithoutCommits("normal");
+    try {
+      await lernaPublish(testDir)();
+    } catch (err) {
+      expect(err.prefix).toBe("ENOCOMMIT");
+      expect(err.message).toBe(
+        "No commits in this repository. Please commit something before using publish."
+      );
+    }
   });
 
   it("exits with an error when git HEAD is detached", async () => {
