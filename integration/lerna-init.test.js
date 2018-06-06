@@ -11,14 +11,12 @@ describe("lerna init", () => {
   const parsePackageJson = cwd => loadJsonFile(path.join(cwd, "package.json"));
   const parseLernaJson = cwd => loadJsonFile(path.join(cwd, "lerna.json"));
   const loadMetaData = cwd => Promise.all([parsePackageJson(cwd), parseLernaJson(cwd)]);
-  const fsPromisesExperimentalWarning =
-    "(node:7121) ExperimentalWarning: The fs.promises API is experimental\n";
 
   test("initializes empty directory", async () => {
     const cwd = tempy.directory();
 
     const { stderr } = await cliRunner(cwd)("init");
-    expect(stderr.replace(fsPromisesExperimentalWarning, "")).toMatchSnapshot("stderr");
+    expect(stderr).toMatchSnapshot("stderr");
 
     const [packageJson, lernaJson] = await loadMetaData(cwd);
     expect(packageJson).toMatchSnapshot("package.json");
@@ -29,7 +27,7 @@ describe("lerna init", () => {
     const cwd = await initFixture("lerna-init");
 
     const { stderr } = await cliRunner(cwd)("init", "--exact");
-    expect(stderr.replace(fsPromisesExperimentalWarning, "")).toMatchSnapshot("stderr");
+    expect(stderr).toMatchSnapshot("stderr");
 
     const [packageJson, lernaJson] = await loadMetaData(cwd);
     expect(packageJson).toMatchSnapshot("package.json");
