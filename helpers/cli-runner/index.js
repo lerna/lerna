@@ -12,5 +12,5 @@ function runner(cwd, env) {
     env: Object.assign({ CI: true }, env),
   };
 
-  return (...args) => execa(LERNA_BIN, args, opts);
+  return (...args) => execa("node", [LERNA_BIN].concat(args), opts);
 }
