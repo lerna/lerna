@@ -85,6 +85,19 @@ describe("Project", () => {
       });
     });
 
+    it("errors when root package.json is not valid JSON", async () => {
+      expect.assertions(2);
+
+      const cwd = await initFixture("pkg-prop-syntax-error");
+
+      try {
+        const project = new Project(cwd); // eslint-disable-line no-unused-vars
+      } catch (err) {
+        expect(err.name).toBe("ValidationError");
+        expect(err.prefix).toBe("JSONError");
+      }
+    });
+
     it("extends local shared config", async () => {
       const cwd = await initFixture("extends");
       const project = new Project(cwd);

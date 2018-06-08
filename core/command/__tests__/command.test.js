@@ -448,6 +448,23 @@ describe("core-command", () => {
       }
     });
 
+    it("throws JSONError when root package.json has syntax error", async () => {
+      expect.assertions(1);
+
+      const cwd = await initFixture("basic");
+
+      await fs.writeFile(
+        path.join(cwd, "package.json"), // trailing comma ...v
+        '{ "name": "invalid", "lerna": { "version": "1.0.0" }, }'
+      );
+
+      try {
+        await testFactory({ cwd });
+      } catch (err) {
+        expect(err.prefix).toBe("JSONError");
+      }
+    });
+
     it("throws ENOLERNA when lerna.json is not found", async () => {
       expect.assertions(1);
 

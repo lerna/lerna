@@ -111,7 +111,11 @@ class Project {
         value: manifest,
       });
     } catch (err) {
-      // syntax errors are already caught and reported by constructor
+      // redecorate JSON syntax errors, avoid debug dump
+      if (err.name === "JSONError") {
+        throw new ValidationError(err.name, err.message);
+      }
+
       // try again next time
     }
 
