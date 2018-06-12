@@ -8,12 +8,28 @@ const initFixture = require("@lerna-test/init-fixture")(__dirname);
 
 describe("lerna exec", () => {
   const EXEC_TEST_COMMAND = process.platform === "win32" ? "exec-test.cmd" : "exec-test";
-  const pathName = pathKey();
-  const existingEnv = process.env[pathName];
+
+  const pathName = pathKey(); // PATH (POSIX) or PATH/path/Path (Windows)
+  const existingPath = process.env[pathName];
   const fixturePath = path.resolve(__dirname, "__fixtures__");
+
+  // The Node docs (https://nodejs.org/api/process.html#process_process_env)
+  // explicitly say: "On Windows operating systems, environment variables
+  // are case-insensitive" However, this isn't entirely true, at least within
+  // AppVeyor. Following code sets three different variables:
+  //
+  // process.env.path = "foo";
+  // process.env.Path = "bar";
+  // process.env.PATH = "baz";
+  //
+  // Following lines consolidate the variables into one.
+  delete process.env.path;
+  delete process.env.Path;
+  process.env.PATH = existingPath;
+
+  // adds "__fixtures__" to PATH for child processes
   const env = {
-    // POSIX or Windows, depending on what was found by pathKey()
-    [pathName]: [fixturePath, existingEnv].join(path.delimiter),
+    PATH: [fixturePath, existingPath].join(path.delimiter),
   };
 
   test("--ignore <pkg> exec-test -- -1", async () => {
