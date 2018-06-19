@@ -88,7 +88,7 @@ class BootstrapCommand extends Command {
       : [this.filteredPackages];
 
     if (npmClient === "yarn" && !mutex) {
-      return getPort({ port: 42424, host: "0.0.0.0" }).then(port => {
+      return getPort({ port: 42444, host: "0.0.0.0" }).then(port => {
         this.npmConfig.mutex = `network:${port}`;
         this.logger.silly("npmConfig", this.npmConfig);
       });
