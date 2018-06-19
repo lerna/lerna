@@ -26,6 +26,12 @@ exports.builder = yargs => {
         alias: "D",
         describe: "Save to devDependencies",
       },
+      exact: {
+        group: "Command Options:",
+        type: "boolean",
+        alias: "E",
+        describe: "Save version exactly",
+      },
     });
 
   return filterable(yargs);

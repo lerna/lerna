@@ -64,10 +64,11 @@ const matchBinaryLinks = () => (pkgRef, raw) => {
   };
 };
 
-const matchDependency = dependencyType => (manifest, pkg, range) => {
+const matchDependency = dependencyType => (manifest, pkg, range, options) => {
   const noDeps = typeof manifest[dependencyType] !== "object";
   const id = [pkg, range].filter(Boolean).join("@");
   const verb = dependencyType === "dependencies" ? "depend" : "dev-depend";
+  const exact = options && options.exact;
 
   const expectedName = `expected ${manifest.name}`;
   const expectedAction = `to ${verb} on ${id}`;
@@ -98,6 +99,23 @@ const matchDependency = dependencyType => (manifest, pkg, range) => {
       message: () => `${expectation} but ${version} does not satisfy ${range}\n${json}`,
       pass: false,
     };
+  }
+
+  if (exact) {
+    if (!semver.valid(version)) {
+      return {
+        message: () => `${expectation} but ${version} is not an exact version\n${json}`,
+        pass: false,
+      };
+    }
+
+    // semver.eq will throw a TypeError if range is not a valid exact version
+    if (!semver.eq(version, range)) {
+      return {
+        message: () => `${expectation} but ${version} is not ${range}\n${json}`,
+        pass: false,
+      };
+    }
   }
 
   return {

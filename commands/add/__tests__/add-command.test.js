@@ -87,6 +87,16 @@ describe("AddCommand", () => {
     expect(await readPkg(testDir, "packages/package-2")).toDependOn("@test/package-1", "~1");
   });
 
+  it("should reference exact version if --exact", async () => {
+    const testDir = await initFixture("basic");
+
+    await lernaAdd(testDir)("@test/package-1", "--exact");
+
+    expect(await readPkg(testDir, "packages/package-2")).toDependOn("@test/package-1", "1.0.0", {
+      exact: true,
+    });
+  });
+
   it("should add target package to devDependencies", async () => {
     const testDir = await initFixture("basic");
 
@@ -153,7 +163,7 @@ describe("AddCommand", () => {
 
     await lernaAdd(testDir)("tiny-tarball@1.0.0");
 
-    expect(await readPkg(testDir, "packages/package-1")).toDependOn("tiny-tarball", "1.0.0");
+    expect(await readPkg(testDir, "packages/package-1")).toDependOn("tiny-tarball", "1.0.0", { exact: true });
   });
 
   it("should bootstrap changed packages", async () => {
@@ -198,5 +208,16 @@ describe("AddCommand", () => {
     await lernaAdd(testDir)("@test/package-1");
 
     expect(bootstrap).not.toHaveBeenCalled();
+  });
+
+  it("should reset a dependency from caret to exact", async () => {
+    const testDir = await initFixture("basic");
+
+    await lernaAdd(testDir)("@test/package-1");
+    await lernaAdd(testDir)("@test/package-1", "--exact");
+
+    expect(await readPkg(testDir, "packages/package-2")).toDependOn("@test/package-1", "1.0.0", {
+      exact: true,
+    });
   });
 });

@@ -29,6 +29,9 @@ class AddCommand extends Command {
     this.dirs = new Set(this.options.globs.map(fp => path.resolve(this.project.rootPath, fp)));
     this.selfSatisfied = this.packageSatisfied();
 
+    // https://docs.npmjs.com/misc/config#save-prefix
+    this.savePrefix = this.options.exact ? "" : "^";
+
     if (this.packageGraph.has(this.spec.name) && !this.selfSatisfied) {
       const available = this.packageGraph.get(this.spec.name).version;
 
@@ -107,7 +110,7 @@ class AddCommand extends Command {
         return true;
       }
 
-      return getRangeToReference(this.spec, deps) !== deps[targetName];
+      return getRangeToReference(this.spec, deps, this.savePrefix) !== deps[targetName];
     });
 
     return result;
@@ -118,7 +121,7 @@ class AddCommand extends Command {
 
     return pMap(this.packagesToChange, pkg => {
       const deps = this.getPackageDeps(pkg);
-      const range = getRangeToReference(this.spec, deps);
+      const range = getRangeToReference(this.spec, deps, this.savePrefix);
 
       this.logger.verbose("add", `${targetName}@${range} as ${this.dependencyType} in ${pkg.name}`);
       deps[targetName] = range;
