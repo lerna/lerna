@@ -486,7 +486,7 @@ This can be configured in lerna.json, as well:
 
 ```json
 {
-  "command": {
+  "commands": {
     "publish": {
       "message": "chore(release): publish %s"
     }
