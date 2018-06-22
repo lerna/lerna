@@ -46,6 +46,14 @@ function collectUpdates({
 
   if (!committish || forced.has("*")) {
     candidates = new Set(packages.values());
+  } else if (forced.size > 0) {
+    candidates = new Set();
+
+    packages.forEach((node, name) => {
+      if (forced.has(name)) {
+        candidates.add(node);
+      }
+    });
   } else {
     candidates = new Set();
 
@@ -60,10 +68,10 @@ function collectUpdates({
         candidates.add(node);
       }
     });
-  }
 
-  const dependents = collectDependents(candidates);
-  dependents.forEach(node => candidates.add(node));
+    const dependents = collectDependents(candidates);
+    dependents.forEach(node => candidates.add(node));
+  }
 
   // The result should always be in the same order as the input
   const updates = [];

@@ -25,13 +25,11 @@ exports[`ChangedCommand basic should list changes with --force-publish 1`] = `
 
 exports[`ChangedCommand basic should list changes with --force-publish package-2 --force-publish package-4 1`] = `
 "- package-2
-- package-3
 - package-4"
 `;
 
 exports[`ChangedCommand basic should list changes with --force-publish package-2,package-4 1`] = `
 "- package-2
-- package-3
 - package-4"
 `;
 
@@ -50,11 +48,7 @@ exports[`ChangedCommand circular should list changes with --force-publish * 1`] 
 - package-5 (private)"
 `;
 
-exports[`ChangedCommand circular should list changes with --force-publish package-2 1`] = `
-"- package-2
-- package-3
-- package-4"
-`;
+exports[`ChangedCommand circular should list changes with --force-publish package-2 1`] = `"- package-2"`;
 
 exports[`ChangedCommand circular should list changes without ignored files 1`] = `
 "- package-3
