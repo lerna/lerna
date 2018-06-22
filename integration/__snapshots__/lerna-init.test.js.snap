@@ -56,6 +56,8 @@ Object {
 
 exports[`lerna init updates existing metadata: stderr 1`] = `
 lerna info version __TEST_VERSION__
+lerna WARN project Deprecated key "commands" found in lerna.json
+lerna WARN project Please rename "commands" => "command"
 lerna info Updating package.json
 lerna info Updating lerna.json
 lerna info Creating packages directory

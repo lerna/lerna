@@ -1,7 +1,7 @@
 "use strict";
 
 jest.mock("fs-extra");
-jest.mock("write-pkg");
+// write-pkg mocked manually
 jest.mock("@lerna/child-process");
 
 const path = require("path");
@@ -42,7 +42,7 @@ describe("npm-install", () => {
       expect(ChildProcessUtilities.exec).lastCalledWith(
         "yarn",
         ["install", "--mutex", "file:foo", "--non-interactive", "--no-optional"],
-        { cwd: pkg.location, stdio: "pipe" }
+        { cwd: pkg.location, pkg, stdio: "pipe" }
       );
     });
 
@@ -62,6 +62,7 @@ describe("npm-install", () => {
 
       expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["install"], {
         cwd: pkg.location,
+        pkg,
         stdio: "inherit",
       });
     });
@@ -87,6 +88,7 @@ describe("npm-install", () => {
 
         expect(ChildProcessUtilities.exec).lastCalledWith("yarn", ["install", "--non-interactive"], {
           cwd: pkg.location,
+          pkg,
           stdio: "pipe",
         });
       }
@@ -139,6 +141,7 @@ describe("npm-install", () => {
       });
       expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["install"], {
         cwd: pkg.location,
+        pkg,
         stdio: "pipe",
       });
     });
@@ -182,6 +185,7 @@ describe("npm-install", () => {
           npm_config_registry: config.registry,
         }),
         extendEnv: false,
+        pkg,
         stdio: "pipe",
       });
     });
@@ -220,6 +224,7 @@ describe("npm-install", () => {
       });
       expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["install", "--global-style"], {
         cwd: pkg.location,
+        pkg,
         stdio: "pipe",
       });
     });
@@ -254,7 +259,7 @@ describe("npm-install", () => {
       expect(ChildProcessUtilities.exec).lastCalledWith(
         "yarn",
         ["install", "--mutex", "network:12345", "--non-interactive"],
-        { cwd: pkg.location, stdio: "pipe" }
+        { cwd: pkg.location, pkg, stdio: "pipe" }
       );
     });
 
@@ -292,6 +297,7 @@ describe("npm-install", () => {
       });
       expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["install", "--production", "--no-optional"], {
         cwd: pkg.location,
+        pkg,
         stdio: "pipe",
       });
     });
@@ -332,6 +338,46 @@ describe("npm-install", () => {
       });
       expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["install", "--global-style"], {
         cwd: pkg.location,
+        pkg,
+        stdio: "pipe",
+      });
+    });
+
+    it("calls npm ci instead of npm install when subCommand is ci", async () => {
+      const pkg = new Package(
+        {
+          name: "npm-install-deps",
+          version: "1.0.0",
+          dependencies: {
+            "@scoped/something": "github:foo/bar",
+            "local-dependency": "^1.0.0",
+          },
+          devDependencies: {
+            something: "github:foo/foo",
+            "local-dev-dependency": "^1.0.0",
+          },
+        },
+        path.normalize("/test/npm-install-deps")
+      );
+      const dependencies = ["@scoped/something@github:foo/bar", "something@github:foo/foo"];
+
+      await npmInstall.dependencies(pkg, dependencies, {
+        subCommand: "ci",
+      });
+
+      expect(writePkg).lastCalledWith(pkg.manifestLocation, {
+        name: "npm-install-deps",
+        version: "1.0.0",
+        dependencies: {
+          "@scoped/something": "github:foo/bar",
+        },
+        devDependencies: {
+          something: "github:foo/foo",
+        },
+      });
+      expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["ci"], {
+        cwd: pkg.location,
+        pkg,
         stdio: "pipe",
       });
     });

@@ -3,6 +3,82 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.0.0-beta.21"></a>
+# [3.0.0-beta.21](https://github.com/lerna/lerna/compare/v3.0.0-beta.20...v3.0.0-beta.21) (2018-05-12)
+
+**Note:** Version bump only for package @lerna/import
+
+
+
+
+
+<a name="3.0.0-beta.20"></a>
+# [3.0.0-beta.20](https://github.com/lerna/lerna/compare/v3.0.0-beta.19...v3.0.0-beta.20) (2018-05-07)
+
+**Note:** Version bump only for package @lerna/import
+
+
+
+
+
+<a name="3.0.0-beta.19"></a>
+# [3.0.0-beta.19](https://github.com/lerna/lerna/compare/v3.0.0-beta.18...v3.0.0-beta.19) (2018-05-03)
+
+**Note:** Version bump only for package @lerna/import
+
+
+
+
+
+<a name="3.0.0-beta.18"></a>
+# [3.0.0-beta.18](https://github.com/lerna/lerna/compare/v3.0.0-beta.17...v3.0.0-beta.18) (2018-04-24)
+
+
+### Features
+
+* **git-utils:** Devolve getCurrentSHA() to consumers ([ecbc1d3](https://github.com/lerna/lerna/commit/ecbc1d3))
+* **import:** Inline GitUtilities.getWorkspaceRoot() ([925080e](https://github.com/lerna/lerna/commit/925080e))
+
+
+### BREAKING CHANGES
+
+* **git-utils:** Don't use GitUtilities.
+* **import:** GitUtilities.getWorkspaceRoot no longer exists. You shouldn't be using GitUtilities.
+
+
+
+
+
+<a name="3.0.0-beta.17"></a>
+# [3.0.0-beta.17](https://github.com/lerna/lerna/compare/v3.0.0-beta.16...v3.0.0-beta.17) (2018-04-13)
+
+**Note:** Version bump only for package @lerna/import
+
+
+
+
+
+<a name="3.0.0-beta.16"></a>
+# [3.0.0-beta.16](https://github.com/lerna/lerna/compare/v3.0.0-beta.15...v3.0.0-beta.16) (2018-04-10)
+
+
+### Bug Fixes
+
+* **import:** Rebase patch copies, too ([f6bae80](https://github.com/lerna/lerna/commit/f6bae80))
+
+
+
+
+
+<a name="3.0.0-beta.15"></a>
+# [3.0.0-beta.15](https://github.com/lerna/lerna/compare/v3.0.0-beta.14...v3.0.0-beta.15) (2018-04-09)
+
+**Note:** Version bump only for package @lerna/import
+
+
+
+
+
 <a name="3.0.0-beta.14"></a>
 # [3.0.0-beta.14](https://github.com/lerna/lerna/compare/v3.0.0-beta.13...v3.0.0-beta.14) (2018-04-03)
 

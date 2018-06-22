@@ -1,5 +1,8 @@
 "use strict";
 
+// we're actually testing integration with git
+jest.unmock("@lerna/collect-updates");
+
 const fs = require("fs-extra");
 const path = require("path");
 
@@ -89,9 +92,14 @@ describe("ExecCommand", () => {
       expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(1);
       expect(ChildProcessUtilities.spawn).lastCalledWith("ls", [], {
         cwd: path.join(testDir, "packages/package-2"),
+        pkg: expect.objectContaining({
+          name: "package-2",
+        }),
         env: expect.objectContaining({
           LERNA_PACKAGE_NAME: "package-2",
+          LERNA_ROOT_PATH: testDir,
         }),
+        extendEnv: false,
         reject: true,
         shell: true,
       });
@@ -120,9 +128,13 @@ describe("ExecCommand", () => {
       expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(1);
       expect(ChildProcessUtilities.spawn).lastCalledWith("ls", [], {
         cwd: path.join(testDir, "packages/package-1"),
+        pkg: expect.objectContaining({
+          name: "package-1",
+        }),
         env: expect.objectContaining({
           LERNA_PACKAGE_NAME: "package-1",
         }),
+        extendEnv: false,
         reject: true,
         shell: true,
       });

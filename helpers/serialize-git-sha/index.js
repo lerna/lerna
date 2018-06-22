@@ -2,9 +2,9 @@
 
 // expect.addSnapshotSerializer(require("@lerna-test/serialize-git-sha"));
 module.exports = {
-  print(val) {
+  serialize(str) {
     return (
-      val
+      str
         // short SHA tends to be in the path diff comparisons
         .replace(/\b[0-9a-f]{7,8}\b/g, "SHA")
         // full SHA corresponds to gitHead property in package.json files
@@ -12,6 +12,6 @@ module.exports = {
     );
   },
   test(val) {
-    return val && typeof val === "string";
+    return val != null && typeof val === "string" && /[0-9a-f]{7,40}/.test(val);
   },
 };

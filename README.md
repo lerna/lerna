@@ -215,6 +215,10 @@ May also be configured in `lerna.json`:
 }
 ```
 
+#### --ci
+
+This runs `lerna bootstrap` with `npm ci` as opposed to `npm install`.  The specifics of this command can be found in the NPM documentation [here](https://docs.npmjs.com/cli/ci)
+
 #### How `bootstrap` works
 
 Let's use `babel` as an example.
@@ -490,6 +494,19 @@ This can be configured in lerna.json, as well:
 }
 ```
 
+#### --amend
+
+```sh
+$ lerna publish --amend
+# commit message is retained, and `git push` is skipped.
+```
+
+When run with this flag, `publish` will perform all changes on the current commit, instead of adding a new one. This is
+useful during [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous_integration), to reduce the number
+of commits in the projects' history.
+
+In order to prevent unintended overwrites, this command will skip `git push`.
+
 #### --allow-branch [glob]
 
 Lerna allows you to specify a glob or an array of globs in your `lerna.json` that your current branch needs to match to be publishable.
@@ -746,6 +763,45 @@ Running `lerna` without arguments will show all commands/options.
 * `command.bootstrap.scope`: an array of globs that restricts which packages will be bootstrapped when running the `lerna bootstrap` command.
 * `packages`: Array of globs to use as package locations.
 
+The packages config in lerna.json is a list of globs that match directories containing a package.json, which is how lerna recognizes "leaf" packages (vs the "root" package.json, which is intended to manage the dev dependencies and scripts for the entire repo).
+
+By default, lerna initializes the packages list as `["packages/*"]`, but you can also use another directory such as `["modules/*"]`, or `["package1", "package2"]`. The globs defined are relative to the directory that lerna.json lives in, which is usually the repository root. The only restriction is that you can't directly nest package locations, but this is a restriction shared by "normal" npm packages as well.
+
+For example, `["packages/*", "src/**"]` matches this tree:
+
+```
+packages/
+├── foo-pkg
+│   └── package.json
+├── bar-pkg
+│   └── package.json
+├── baz-pkg
+│   └── package.json
+└── qux-pkg
+    └── package.json
+src/
+├── admin
+│   ├── my-app
+│   │   └── package.json
+│   ├── stuff
+│   │   └── package.json
+│   └── things
+│       └── package.json
+├── profile
+│   └── more-things
+│       └── package.json
+├── property
+│   ├── more-stuff
+│   │   └── package.json
+│   └── other-things
+│       └── package.json
+└── upload
+    └── other-stuff
+        └── package.json
+```
+
+Locating leaf packages under `packages/*` is considered a "best-practice", but is not a requirement for using Lerna.
+
 ### Common `devDependencies`
 
 Most `devDependencies` can be pulled up to the root of a Lerna repo.
@@ -985,8 +1041,12 @@ $ lerna bootstrap --hoist --nohoist=babel-*
 
 #### --npm-client [client]
 
-Install external dependencies using `[client] install`. Must be an executable
-that knows how to install npm dependencies.
+This will apply to actions below:
+* Install external dependencies using `[client] install`
+* Publish packages with `[client] publish`
+* Run scripts with `[client] run [command]`
+
+Must be an executable that knows how to install npm dependencies, publish packages, and run scripts.
 
 ```sh
 $ lerna bootstrap --npm-client=yarn

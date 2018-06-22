@@ -10,7 +10,12 @@
     - node
     - prettier
   rules:
-    class-methods-use-this: off
+    class-methods-use-this:
+      - error
+      - exceptMethods:
+        - defaultOptions
+        - otherCommandConfigs
+        - requiresGit
     consistent-return: off
     curly:
       - error
@@ -49,6 +54,7 @@
     - files:
         - "integration/**"
         - "**/__tests__/**"
+        - "**/__mocks__/**"
       env:
         jest: true
       rules:

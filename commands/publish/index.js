@@ -13,7 +13,6 @@ const semver = require("semver");
 
 const Command = require("@lerna/command");
 const ConventionalCommitUtilities = require("@lerna/conventional-commits");
-const GitUtilities = require("@lerna/git-utils");
 const PromptUtilities = require("@lerna/prompt");
 const output = require("@lerna/output");
 const collectUpdates = require("@lerna/collect-updates");
@@ -24,6 +23,17 @@ const runLifecycle = require("@lerna/run-lifecycle");
 const batchPackages = require("@lerna/batch-packages");
 const runParallelBatches = require("@lerna/run-parallel-batches");
 const ValidationError = require("@lerna/validation-error");
+
+const getCurrentBranch = require("./lib/get-current-branch");
+const getCurrentSHA = require("./lib/get-current-sha");
+const getShortSHA = require("./lib/get-short-sha");
+const gitAdd = require("./lib/git-add");
+const gitCheckout = require("./lib/git-checkout");
+const gitCommit = require("./lib/git-commit");
+const gitPush = require("./lib/git-push");
+const gitTag = require("./lib/git-tag");
+const isBehindUpstream = require("./lib/is-behind-upstream");
+const isBreakingChange = require("./lib/is-breaking-change");
 
 module.exports = factory;
 
@@ -42,12 +52,16 @@ class PublishCommand extends Command {
       tempTag: false,
       yes: false,
       allowBranch: false,
+      amend: false,
     });
   }
 
   initialize() {
     this.gitRemote = this.options.gitRemote || "origin";
     this.gitEnabled = !(this.options.canary || this.options.skipGit);
+
+    // Set the 'amend' flag so it can be passed to child commands.
+    this.execOpts.amend = this.options.amend === true;
 
     // https://docs.npmjs.com/misc/config#save-prefix
     this.savePrefix = this.options.exact ? "" : "^";
@@ -67,32 +81,32 @@ class PublishCommand extends Command {
 
     // git validation, if enabled, should happen before updates are calculated and versions picked
     if (this.gitEnabled) {
-      if (GitUtilities.isDetachedHead(this.execOpts)) {
+      this.currentBranch = getCurrentBranch(this.execOpts);
+
+      if (this.currentBranch === "HEAD") {
         throw new ValidationError(
           "ENOGIT",
           "Detached git HEAD, please checkout a branch to publish changes."
         );
       }
 
-      const currentBranch = GitUtilities.getCurrentBranch(this.execOpts);
-
       if (
         this.options.allowBranch &&
-        ![].concat(this.options.allowBranch).some(x => minimatch(currentBranch, x))
+        ![].concat(this.options.allowBranch).some(x => minimatch(this.currentBranch, x))
       ) {
         throw new ValidationError(
           "ENOTALLOWED",
           dedent`
-            Branch '${currentBranch}' is restricted from publishing due to allowBranch config.
+            Branch '${this.currentBranch}' is restricted from publishing due to allowBranch config.
             Please consider the reasons for this restriction before overriding the option.
           `
         );
       }
 
-      if (GitUtilities.isBehindUpstream(this.gitRemote, this.execOpts)) {
-        const message = `Local branch '${currentBranch}' is behind remote upstream ${
-          this.gitRemote
-        }/${currentBranch}`;
+      if (isBehindUpstream(this.gitRemote, this.currentBranch, this.execOpts)) {
+        const message = `Local branch '${this.currentBranch}' is behind remote upstream ${this.gitRemote}/${
+          this.currentBranch
+        }`;
 
         if (!this.options.ci) {
           // interrupt interactive publish
@@ -100,7 +114,7 @@ class PublishCommand extends Command {
             "EBEHIND",
             dedent`
               ${message}
-              Please merge remote changes into '${currentBranch}' with 'git pull'
+              Please merge remote changes into '${this.currentBranch}' with 'git pull'
             `
           );
         }
@@ -138,7 +152,33 @@ class PublishCommand extends Command {
     const tasks = [
       () => this.getVersionsForUpdates(),
       versions => {
-        this.updatesVersions = versions;
+        if (
+          this.project.isIndependent() ||
+          versions.size === this.filteredPackages.size ||
+          this.options.canary
+        ) {
+          // independent, force-publish=*, or canary, we don't bump all
+          this.updatesVersions = versions;
+        } else {
+          let hasBreakingChange;
+
+          for (const [name, bump] of versions) {
+            hasBreakingChange =
+              hasBreakingChange || isBreakingChange(this.packageGraph.get(name).version, bump);
+          }
+
+          if (hasBreakingChange) {
+            const packages =
+              this.filteredPackages.length === this.packageGraph.size
+                ? this.packageGraph
+                : new Map(this.filteredPackages.map(({ name }) => [name, this.packageGraph.get(name)]));
+
+            this.updates = Array.from(packages.values());
+            this.updatesVersions = new Map(this.updates.map(({ name }) => [name, this.globalVersion]));
+          } else {
+            this.updatesVersions = versions;
+          }
+        }
       },
       () => this.confirmVersions(),
     ];
@@ -169,7 +209,7 @@ class PublishCommand extends Command {
       tasks.push(() => this.publishPackagesToNpm());
     }
 
-    if (this.gitEnabled) {
+    if (this.gitEnabled && !this.options.amend) {
       tasks.push(() => this.pushToRemote());
     }
 
@@ -181,7 +221,7 @@ class PublishCommand extends Command {
   pushToRemote() {
     this.logger.info("git", "Pushing tags...");
 
-    return GitUtilities.pushWithTags(this.gitRemote, this.tags, this.execOpts);
+    return gitPush(this.gitRemote, this.currentBranch, this.execOpts);
   }
 
   resolveLocalDependencyLinks() {
@@ -207,7 +247,7 @@ class PublishCommand extends Command {
   }
 
   annotateGitHead() {
-    const gitHead = GitUtilities.getCurrentSHA(this.execOpts);
+    const gitHead = getCurrentSHA(this.execOpts);
 
     return pMap(this.updates, ({ pkg }) => {
       if (!pkg.private) {
@@ -223,7 +263,7 @@ class PublishCommand extends Command {
     // the package.json files are changed (by gitHead if not --canary)
     // and we should always leave the working tree clean
     return pReduce(this.project.packageConfigs, (_, pkgGlob) =>
-      GitUtilities.checkoutChanges(`${pkgGlob}/package.json`, this.execOpts)
+      gitCheckout(`${pkgGlob}/package.json`, this.execOpts)
     );
   }
 
@@ -267,7 +307,7 @@ class PublishCommand extends Command {
       const release = cdVersion || "minor";
       // FIXME: this complicated defaulting should be done in yargs option.coerce()
       const keyword = typeof canary !== "string" ? preid || "alpha" : canary;
-      const shortHash = GitUtilities.getShortSHA(this.execOpts);
+      const shortHash = getShortSHA(this.execOpts);
 
       predicate = ({ version }) => `${semver.inc(version, release)}-${keyword}.${shortHash}`;
     } else if (cdVersion) {
@@ -298,7 +338,7 @@ class PublishCommand extends Command {
   recommendVersions() {
     const independentVersions = this.project.isIndependent();
     const { changelogPreset } = this.options;
-    const opts = { changelogPreset };
+    const rootPath = this.project.manifest.location;
     const type = independentVersions ? "independent" : "fixed";
 
     let chain = Promise.resolve();
@@ -321,7 +361,12 @@ class PublishCommand extends Command {
     }
 
     chain = chain.then(() =>
-      this.reduceVersions(pkg => ConventionalCommitUtilities.recommendVersion(pkg, type, opts))
+      this.reduceVersions(pkg =>
+        ConventionalCommitUtilities.recommendVersion(pkg, type, {
+          changelogPreset,
+          rootPath,
+        })
+      )
     );
 
     if (type === "fixed") {
@@ -345,6 +390,8 @@ class PublishCommand extends Command {
     return chain;
   }
 
+  // TODO: extract out of class
+  // eslint-disable-next-line class-methods-use-this
   promptVersion({ version: currentVersion, name: pkgName }) {
     const patch = semver.inc(currentVersion, "patch");
     const minor = semver.inc(currentVersion, "minor");
@@ -419,7 +466,7 @@ class PublishCommand extends Command {
 
     return this.project.serializeConfig().then(lernaConfigLocation => {
       if (!this.options.skipGit) {
-        return GitUtilities.addFiles([lernaConfigLocation], this.execOpts);
+        return gitAdd([lernaConfigLocation], this.execOpts);
       }
     });
   }
@@ -436,6 +483,7 @@ class PublishCommand extends Command {
     const { conventionalCommits, changelogPreset } = this.options;
     const independentVersions = this.project.isIndependent();
     const rootPkg = this.project.manifest;
+    const rootPath = rootPkg.location;
     const changedFiles = new Set();
 
     // my kingdom for async await :(
@@ -484,12 +532,13 @@ class PublishCommand extends Command {
                 // the updated version that we're about to release.
                 const type = independentVersions ? "independent" : "fixed";
 
-                return ConventionalCommitUtilities.updateChangelog(pkg, type, { changelogPreset }).then(
-                  changelogLocation => {
-                    // commit the updated changelog
-                    changedFiles.add(changelogLocation);
-                  }
-                );
+                return ConventionalCommitUtilities.updateChangelog(pkg, type, {
+                  changelogPreset,
+                  rootPath,
+                }).then(changelogLocation => {
+                  // commit the updated changelog
+                  changedFiles.add(changelogLocation);
+                });
               }
             }),
         // TODO: tune the concurrency
@@ -501,6 +550,7 @@ class PublishCommand extends Command {
       chain = chain.then(() =>
         ConventionalCommitUtilities.updateChangelog(rootPkg, "root", {
           changelogPreset,
+          rootPath,
           version: this.globalVersion,
         }).then(changelogLocation => {
           // commit the updated changelog
@@ -513,7 +563,7 @@ class PublishCommand extends Command {
     chain = chain.then(() => this.runPackageLifecycle(rootPkg, "version"));
 
     if (this.gitEnabled) {
-      chain = chain.then(() => GitUtilities.addFiles(Array.from(changedFiles), this.execOpts));
+      chain = chain.then(() => gitAdd(Array.from(changedFiles), this.execOpts));
     }
 
     return chain;
@@ -547,8 +597,8 @@ class PublishCommand extends Command {
     const message = tags.reduce((msg, tag) => `${msg}${os.EOL} - ${tag}`, `${subject}${os.EOL}`);
 
     return Promise.resolve()
-      .then(() => GitUtilities.commit(message, this.execOpts))
-      .then(() => Promise.all(tags.map(tag => GitUtilities.addTag(tag, this.execOpts))))
+      .then(() => gitCommit(message, this.execOpts))
+      .then(() => Promise.all(tags.map(tag => gitTag(tag, this.execOpts))))
       .then(() => tags);
   }
 
@@ -560,8 +610,8 @@ class PublishCommand extends Command {
       : tag;
 
     return Promise.resolve()
-      .then(() => GitUtilities.commit(message, this.execOpts))
-      .then(() => GitUtilities.addTag(tag, this.execOpts))
+      .then(() => gitCommit(message, this.execOpts))
+      .then(() => gitTag(tag, this.execOpts))
       .then(() => [tag]);
   }
 

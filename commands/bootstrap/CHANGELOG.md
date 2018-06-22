@@ -3,6 +3,67 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.0.0-beta.21"></a>
+# [3.0.0-beta.21](https://github.com/lerna/lerna/compare/v3.0.0-beta.20...v3.0.0-beta.21) (2018-05-12)
+
+**Note:** Version bump only for package @lerna/bootstrap
+
+
+
+
+
+<a name="3.0.0-beta.20"></a>
+# [3.0.0-beta.20](https://github.com/lerna/lerna/compare/v3.0.0-beta.19...v3.0.0-beta.20) (2018-05-07)
+
+**Note:** Version bump only for package @lerna/bootstrap
+
+
+
+
+
+<a name="3.0.0-beta.19"></a>
+# [3.0.0-beta.19](https://github.com/lerna/lerna/compare/v3.0.0-beta.18...v3.0.0-beta.19) (2018-05-03)
+
+**Note:** Version bump only for package @lerna/bootstrap
+
+
+
+
+
+<a name="3.0.0-beta.18"></a>
+# [3.0.0-beta.18](https://github.com/lerna/lerna/compare/v3.0.0-beta.17...v3.0.0-beta.18) (2018-04-24)
+
+**Note:** Version bump only for package @lerna/bootstrap
+
+
+
+
+
+<a name="3.0.0-beta.17"></a>
+# [3.0.0-beta.17](https://github.com/lerna/lerna/compare/v3.0.0-beta.16...v3.0.0-beta.17) (2018-04-13)
+
+
+### Bug Fixes
+
+* **bootstrap:** Pass npm-conf to feature predicate instead of directly reading process.env ([b4af3c9](https://github.com/lerna/lerna/commit/b4af3c9))
+* **bootstrap:** Pluralize log text ([#1232](https://github.com/lerna/lerna/issues/1232)) ([5c74760](https://github.com/lerna/lerna/commit/5c74760))
+
+
+
+
+
+<a name="3.0.0-beta.15"></a>
+# [3.0.0-beta.15](https://github.com/lerna/lerna/compare/v3.0.0-beta.14...v3.0.0-beta.15) (2018-04-09)
+
+
+### Features
+
+* **bootstrap:** Use `npm ci` with `--ci` option ([#1360](https://github.com/lerna/lerna/issues/1360)) ([d7e33c6](https://github.com/lerna/lerna/commit/d7e33c6))
+
+
+
+
+
 <a name="3.0.0-beta.14"></a>
 # [3.0.0-beta.14](https://github.com/lerna/lerna/compare/v3.0.0-beta.13...v3.0.0-beta.14) (2018-04-03)
 

@@ -3,6 +3,80 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.0.0-beta.21"></a>
+# [3.0.0-beta.21](https://github.com/lerna/lerna/compare/v3.0.0-beta.20...v3.0.0-beta.21) (2018-05-12)
+
+**Note:** Version bump only for package @lerna/cli
+
+
+
+
+
+<a name="3.0.0-beta.20"></a>
+# [3.0.0-beta.20](https://github.com/lerna/lerna/compare/v3.0.0-beta.19...v3.0.0-beta.20) (2018-05-07)
+
+**Note:** Version bump only for package @lerna/cli
+
+
+
+
+
+<a name="3.0.0-beta.19"></a>
+# [3.0.0-beta.19](https://github.com/lerna/lerna/compare/v3.0.0-beta.18...v3.0.0-beta.19) (2018-05-03)
+
+**Note:** Version bump only for package @lerna/cli
+
+
+
+
+
+<a name="3.0.0-beta.18"></a>
+# [3.0.0-beta.18](https://github.com/lerna/lerna/compare/v3.0.0-beta.17...v3.0.0-beta.18) (2018-04-24)
+
+
+### Bug Fixes
+
+* **cli:** Exit immediately when error is caught ([5b01599](https://github.com/lerna/lerna/commit/5b01599)), closes [#1384](https://github.com/lerna/lerna/issues/1384)
+
+
+### BREAKING CHANGES
+
+* **cli:** Previously, lerna would accept `--scope` and `--ignore` options where they were not intended,
+despite logging the unexpected arguments correctly. This would result in the commands continuing to run with unexpected configuration.
+
+Going forward, lerna will exit non-zero _immediately_ upon encountering these errors.
+
+
+
+
+
+<a name="3.0.0-beta.17"></a>
+# [3.0.0-beta.17](https://github.com/lerna/lerna/compare/v3.0.0-beta.16...v3.0.0-beta.17) (2018-04-13)
+
+**Note:** Version bump only for package @lerna/cli
+
+
+
+
+
+<a name="3.0.0-beta.16"></a>
+# [3.0.0-beta.16](https://github.com/lerna/lerna/compare/v3.0.0-beta.15...v3.0.0-beta.16) (2018-04-10)
+
+**Note:** Version bump only for package @lerna/cli
+
+
+
+
+
+<a name="3.0.0-beta.15"></a>
+# [3.0.0-beta.15](https://github.com/lerna/lerna/compare/v3.0.0-beta.14...v3.0.0-beta.15) (2018-04-09)
+
+**Note:** Version bump only for package @lerna/cli
+
+
+
+
+
 <a name="3.0.0-beta.14"></a>
 # [3.0.0-beta.14](https://github.com/lerna/lerna/compare/v3.0.0-beta.13...v3.0.0-beta.14) (2018-04-03)
 

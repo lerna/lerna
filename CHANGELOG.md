@@ -3,6 +3,158 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.0.0-beta.21"></a>
+# [3.0.0-beta.21](https://github.com/lerna/lerna/compare/v3.0.0-beta.20...v3.0.0-beta.21) (2018-05-12)
+
+
+### Bug Fixes
+
+* **child-process:** Prevent duplicate logs when any package-oriented execution fails ([d3a8128](https://github.com/lerna/lerna/commit/d3a8128))
+
+
+
+
+
+<a name="3.0.0-beta.20"></a>
+# [3.0.0-beta.20](https://github.com/lerna/lerna/compare/v3.0.0-beta.19...v3.0.0-beta.20) (2018-05-07)
+
+
+### Features
+
+* **project:** Upgrade cosmiconfig ([9acde7d](https://github.com/lerna/lerna/commit/9acde7d))
+* Upgrade execa ([393b501](https://github.com/lerna/lerna/commit/393b501))
+
+
+
+
+
+<a name="3.0.0-beta.19"></a>
+# [3.0.0-beta.19](https://github.com/lerna/lerna/compare/v3.0.0-beta.18...v3.0.0-beta.19) (2018-05-03)
+
+
+### Bug Fixes
+
+* **add:** Configure `--dev` as boolean option ([#1390](https://github.com/lerna/lerna/issues/1390)) ([75b91bd](https://github.com/lerna/lerna/commit/75b91bd))
+* **collect-updates:** Derive most recent tag from annotated tags only ([90df646](https://github.com/lerna/lerna/commit/90df646))
+* **collect-updates:** Remove redundant short-circuit ([#1406](https://github.com/lerna/lerna/issues/1406)) ([2bcdd35](https://github.com/lerna/lerna/commit/2bcdd35))
+* **publish:** Include all packages during global major bump ([#1391](https://github.com/lerna/lerna/issues/1391)) ([9cebed1](https://github.com/lerna/lerna/commit/9cebed1)), closes [#1383](https://github.com/lerna/lerna/issues/1383)
+
+
+### Features
+
+* **project:** Map deprecated config to new namespaces ([4da6318](https://github.com/lerna/lerna/commit/4da6318))
+
+
+### BREAKING CHANGES
+
+* **collect-updates:** Lightweight tags are no longer included when detecting changes since the last release.
+
+
+
+
+
+<a name="3.0.0-beta.18"></a>
+# [3.0.0-beta.18](https://github.com/lerna/lerna/compare/v3.0.0-beta.17...v3.0.0-beta.18) (2018-04-24)
+
+
+### Bug Fixes
+
+* **cli:** Exit immediately when error is caught ([5b01599](https://github.com/lerna/lerna/commit/5b01599)), closes [#1384](https://github.com/lerna/lerna/issues/1384)
+* **diff:** Diff since last release in branch, _not_ most recent global tag ([9879fef](https://github.com/lerna/lerna/commit/9879fef))
+* **git-utils:** Pass --no-verify to `git push` ([#1376](https://github.com/lerna/lerna/issues/1376)) ([0b88ffb](https://github.com/lerna/lerna/commit/0b88ffb)), closes [#1366](https://github.com/lerna/lerna/issues/1366)
+* **git-utils:** Pass `--follow-tags` to `git push` ([6907e90](https://github.com/lerna/lerna/commit/6907e90))
+
+
+### Features
+
+* **collect-updates:** Copy remaining git utilities into module ([cb9c19d](https://github.com/lerna/lerna/commit/cb9c19d))
+* **command:** Move GitUtilities.isInitialized into class method ([abecfcc](https://github.com/lerna/lerna/commit/abecfcc))
+* **diff:** Move diff-only git utilities ([47dc0e2](https://github.com/lerna/lerna/commit/47dc0e2))
+* Remove core/git-utils package ([48096c4](https://github.com/lerna/lerna/commit/48096c4))
+* **filters:** Add `--include-filtered-dependents` flag ([#1393](https://github.com/lerna/lerna/issues/1393)) ([2838260](https://github.com/lerna/lerna/commit/2838260))
+* **git-utils:** Devolve getCurrentSHA() to consumers ([ecbc1d3](https://github.com/lerna/lerna/commit/ecbc1d3))
+* **git-utils:** Devolve getShortSHA() to consumers ([95d179d](https://github.com/lerna/lerna/commit/95d179d))
+* **import:** Inline GitUtilities.getWorkspaceRoot() ([925080e](https://github.com/lerna/lerna/commit/925080e))
+* **init:** Inline GitUtilities.init() ([6e401e1](https://github.com/lerna/lerna/commit/6e401e1))
+* **publish:** Move publish-only git utilities ([5594749](https://github.com/lerna/lerna/commit/5594749))
+
+
+### BREAKING CHANGES
+
+* **cli:** Previously, lerna would accept `--scope` and `--ignore` options where they were not intended,
+despite logging the unexpected arguments correctly. This would result in the commands continuing to run with unexpected configuration.
+
+Going forward, lerna will exit non-zero _immediately_ upon encountering these errors.
+* `@lerna/git-utils` is gone. Don't use it.
+* **collect-updates:** GitUtilities is going away soon.
+* **diff:** Don't use GitUtilities.
+* **git-utils:** Don't use GitUtilities!
+* **git-utils:** Don't use GitUtilities.
+* **import:** GitUtilities.getWorkspaceRoot no longer exists. You shouldn't be using GitUtilities.
+* **init:** GitUtilities.init() no longer exists. You shouldn't be using GitUtilities.
+* **command:** GitUtilities.isInitialized no longer exists. You shouldn't be using GitUtilities.
+* **publish:** Many named exports of GitUtilities are no longer provided. Don't use GitUtilities, it's a bad pattern.
+
+
+
+
+
+<a name="3.0.0-beta.17"></a>
+# [3.0.0-beta.17](https://github.com/lerna/lerna/compare/v3.0.0-beta.16...v3.0.0-beta.17) (2018-04-13)
+
+
+### Bug Fixes
+
+* **bootstrap:** Pass npm-conf to feature predicate instead of directly reading process.env ([b4af3c9](https://github.com/lerna/lerna/commit/b4af3c9))
+* **bootstrap:** Pluralize log text ([#1232](https://github.com/lerna/lerna/issues/1232)) ([5c74760](https://github.com/lerna/lerna/commit/5c74760))
+* **package:** Resolve correct relative spec ([ec2b8f5](https://github.com/lerna/lerna/commit/ec2b8f5))
+
+
+### Features
+
+* **add:** Use directory globs to filter targeted packages ([39fa7b6](https://github.com/lerna/lerna/commit/39fa7b6))
+* **link:** Add 'convert' subcommand to aid migration to local file: specifiers ([f59bf3c](https://github.com/lerna/lerna/commit/f59bf3c))
+
+
+### BREAKING CHANGES
+
+* **add:** `lerna add` now only supports adding one dependency at a time. It is much more valuable to filter by directory globs, anyway.
+
+
+
+
+
+<a name="3.0.0-beta.16"></a>
+# [3.0.0-beta.16](https://github.com/lerna/lerna/compare/v3.0.0-beta.15...v3.0.0-beta.16) (2018-04-10)
+
+
+### Bug Fixes
+
+* **import:** Rebase patch copies, too ([f6bae80](https://github.com/lerna/lerna/commit/f6bae80))
+
+
+
+
+
+<a name="3.0.0-beta.15"></a>
+# [3.0.0-beta.15](https://github.com/lerna/lerna/compare/v3.0.0-beta.14...v3.0.0-beta.15) (2018-04-09)
+
+
+### Bug Fixes
+
+* **project:** Pin --exact require-from-string v2.0.1 to avoid integrity error with v2.0.2 ([32a38ad](https://github.com/lerna/lerna/commit/32a38ad))
+* **publish:** Allow tag check to fail with strong warning ([#1355](https://github.com/lerna/lerna/issues/1355)) ([f5268cd](https://github.com/lerna/lerna/commit/f5268cd))
+
+
+### Features
+
+* **bootstrap:** Use `npm ci` with `--ci` option ([#1360](https://github.com/lerna/lerna/issues/1360)) ([d7e33c6](https://github.com/lerna/lerna/commit/d7e33c6))
+* **conventional-commits:** Support local file presets ([a1bff40](https://github.com/lerna/lerna/commit/a1bff40))
+
+
+
+
+
 <a name="3.0.0-beta.14"></a>
 # [3.0.0-beta.14](https://github.com/lerna/lerna/compare/v3.0.0-beta.13...v3.0.0-beta.14) (2018-04-03)
 

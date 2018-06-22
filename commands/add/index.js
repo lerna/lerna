@@ -4,6 +4,7 @@ const dedent = require("dedent");
 const npa = require("npm-package-arg");
 const packageJson = require("package-json");
 const pMap = require("p-map");
+const path = require("path");
 const semver = require("semver");
 
 const Command = require("@lerna/command");
@@ -24,36 +25,27 @@ class AddCommand extends Command {
 
   initialize() {
     this.dependencyType = this.options.dev ? "devDependencies" : "dependencies";
-    this.specs = this.options.pkgNames.map(input => npa(input));
+    this.spec = npa(this.options.pkg);
+    this.dirs = new Set(this.options.globs.map(fp => path.resolve(this.project.rootPath, fp)));
+    this.selfSatisfied = this.packageSatisfied();
 
-    if (this.specs.length === 0) {
-      throw new ValidationError("EINPUT", "Missing list of packages to add to your project.");
-    }
+    if (this.packageGraph.has(this.spec.name) && !this.selfSatisfied) {
+      const available = this.packageGraph.get(this.spec.name).version;
 
-    const unsatisfied = this.specs
-      .filter(spec => this.packageGraph.has(spec.name))
-      .filter(spec => !this.packageSatisfied(spec))
-      .map(({ name, fetchSpec }) => ({
-        name,
-        fetchSpec,
-        version: this.packageGraph.get(name).version,
-      }));
-
-    if (unsatisfied.length > 0) {
       throw new ValidationError(
         "ENOTSATISFIED",
         dedent`
           Requested range not satisfiable:
-          ${unsatisfied.map(u => `${u.name}@${u.versionRange} (available: ${u.version})`).join(", ")}
+          ${this.spec.name}@${this.spec.fetchSpec} (available: ${available})
         `
       );
     }
 
     let chain = Promise.resolve();
 
-    chain = chain.then(() => this.collectInstallSpecs());
-    chain = chain.then(installSpecs => {
-      this.installSpecs = installSpecs;
+    chain = chain.then(() => this.getPackageVersion());
+    chain = chain.then(version => {
+      this.spec.version = version;
     });
 
     chain = chain.then(() => this.collectPackagesToChange());
@@ -65,11 +57,7 @@ class AddCommand extends Command {
       const proceed = this.packagesToChange.length > 0;
 
       if (!proceed) {
-        this.logger.warn(
-          `No packages found in scope where ${this.installSpecs
-            .map(spec => spec.name)
-            .join(", ")} can be added.`
-        );
+        this.logger.warn(`No packages found where ${this.spec.name} can be added.`);
       }
 
       return proceed;
@@ -77,10 +65,14 @@ class AddCommand extends Command {
   }
 
   execute() {
-    this.logger.info(`Add ${this.dependencyType} in ${this.packagesToChange.length} packages`);
+    const numberOfPackages = `${this.packagesToChange.length} package${
+      this.packagesToChange.length > 1 ? "s" : ""
+    }`;
+
+    this.logger.info("add", `adding ${this.spec.name} in ${numberOfPackages}`);
 
     return this.makeChanges().then(() => {
-      this.logger.info(`Changes require bootstrap in ${this.packagesToChange.length} packages`);
+      this.logger.info("add", `Bootstrapping ${numberOfPackages}`);
 
       return bootstrap(
         Object.assign({}, this.options, {
@@ -92,54 +84,47 @@ class AddCommand extends Command {
     });
   }
 
-  collectInstallSpecs() {
-    return pMap(
-      this.specs,
-      spec => this.getPackageVersion(spec).then(version => Object.assign(spec, { version })),
-      { concurrency: this.concurrency }
-    );
-  }
-
   collectPackagesToChange() {
+    const { name: targetName } = this.spec;
     let result = this.filteredPackages;
 
     // Skip packages that only would install themselves
-    result = result.filter(pkg => this.installSpecs.some(spec => spec.name !== pkg.name));
+    if (this.packageGraph.has(targetName)) {
+      result = result.filter(pkg => pkg.name !== targetName);
+    }
+
+    // Skip packages that are not selected by dir globs
+    if (this.dirs.size) {
+      result = result.filter(pkg => this.dirs.has(pkg.location));
+    }
 
     // Skip packages without actual changes to manifest
     result = result.filter(pkg => {
       const deps = this.getPackageDeps(pkg);
 
       // Check if one of the packages to install necessitates a change to pkg's manifest
-      return this.installSpecs.filter(spec => spec.name !== pkg.name).some(spec => {
-        if (!(spec.name in deps)) {
-          return true;
-        }
+      if (!(targetName in deps)) {
+        return true;
+      }
 
-        return getRangeToReference(spec, deps) !== deps[spec.name];
-      });
+      return getRangeToReference(this.spec, deps) !== deps[targetName];
     });
 
     return result;
   }
 
   makeChanges() {
-    const mapper = pkg => {
+    const { name: targetName } = this.spec;
+
+    return pMap(this.packagesToChange, pkg => {
       const deps = this.getPackageDeps(pkg);
+      const range = getRangeToReference(this.spec, deps);
 
-      for (const spec of this.installSpecs) {
-        if (spec.name !== pkg.name) {
-          const range = getRangeToReference(spec, deps);
-
-          this.logger.verbose(`Add ${spec.name}@${range} as ${this.dependencyType} in ${pkg.name}`);
-          deps[spec.name] = range;
-        }
-      }
+      this.logger.verbose("add", `${targetName}@${range} as ${this.dependencyType} in ${pkg.name}`);
+      deps[targetName] = range;
 
       return pkg.serialize();
-    };
-
-    return pMap(this.packagesToChange, mapper);
+    });
   }
 
   getPackageDeps(pkg) {
@@ -153,26 +138,29 @@ class AddCommand extends Command {
     return deps;
   }
 
-  getPackageVersion(spec) {
-    if (this.packageSatisfied(spec)) {
-      return Promise.resolve(this.packageGraph.get(spec.name).version);
+  getPackageVersion() {
+    const { name, fetchSpec } = this.spec;
+
+    if (this.selfSatisfied) {
+      return Promise.resolve(this.packageGraph.get(name).version);
     }
 
-    return packageJson(spec.name, { version: spec.fetchSpec }).then(pkg => pkg.version);
+    return packageJson(name, { version: fetchSpec }).then(pkg => pkg.version);
   }
 
-  packageSatisfied(spec) {
-    const pkg = this.packageGraph.get(spec.name);
+  packageSatisfied() {
+    const { name, fetchSpec } = this.spec;
+    const pkg = this.packageGraph.get(name);
 
     if (!pkg) {
       return false;
     }
 
-    if (spec.fetchSpec === "latest") {
+    if (fetchSpec === "latest") {
       return true;
     }
 
-    return semver.intersects(pkg.version, spec.fetchSpec);
+    return semver.intersects(pkg.version, fetchSpec);
   }
 }
 

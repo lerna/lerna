@@ -1,11 +1,16 @@
 "use strict";
 
+// we're actually testing integration with git
+jest.unmock("@lerna/collect-updates");
+
 const path = require("path");
 const touch = require("touch");
 
+// mocked modules
+const output = require("@lerna/output");
+
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const consoleOutput = require("@lerna-test/console-output");
 const gitAdd = require("@lerna-test/git-add");
 const gitCommit = require("@lerna-test/git-commit");
 const gitTag = require("@lerna-test/git-tag");
@@ -35,7 +40,7 @@ describe("ChangedCommand", () => {
       await setupGitChanges(testDir, ["packages/package-2/random-file"]);
       await lernaChanged(testDir)();
 
-      expect(consoleOutput()).toMatchSnapshot();
+      expect(output.logged()).toMatchSnapshot();
     });
 
     it("should list all packages when no tag is found", async () => {
@@ -43,7 +48,7 @@ describe("ChangedCommand", () => {
 
       await lernaChanged(testDir)();
 
-      expect(consoleOutput()).toMatchSnapshot();
+      expect(output.logged()).toMatchSnapshot();
     });
 
     it("should list changes with --force-publish", async () => {
@@ -52,7 +57,7 @@ describe("ChangedCommand", () => {
       await setupGitChanges(testDir, ["packages/package-2/random-file"]);
       await lernaChanged(testDir)("--force-publish");
 
-      expect(consoleOutput()).toMatchSnapshot();
+      expect(output.logged()).toMatchSnapshot();
     });
 
     it("should list changes with --force-publish package-2,package-4", async () => {
@@ -61,7 +66,7 @@ describe("ChangedCommand", () => {
       await setupGitChanges(testDir, ["packages/package-3/random-file"]);
       await lernaChanged(testDir)("--force-publish", "package-2,package-4");
 
-      expect(consoleOutput()).toMatchSnapshot();
+      expect(output.logged()).toMatchSnapshot();
     });
 
     it("should list changes with --force-publish package-2 --force-publish package-4", async () => {
@@ -70,7 +75,7 @@ describe("ChangedCommand", () => {
       await setupGitChanges(testDir, ["packages/package-3/random-file"]);
       await lernaChanged(testDir)("--force-publish", "package-2", "--force-publish", "package-4");
 
-      expect(consoleOutput()).toMatchSnapshot();
+      expect(output.logged()).toMatchSnapshot();
     });
 
     it("should list changes without ignored files", async () => {
@@ -87,7 +92,7 @@ describe("ChangedCommand", () => {
       await setupGitChanges(testDir, ["packages/package-2/ignored-file", "packages/package-3/random-file"]);
       await lernaChanged(testDir)();
 
-      expect(consoleOutput()).toMatchSnapshot();
+      expect(output.logged()).toMatchSnapshot();
     });
 
     it("should list changes in private packages", async () => {
@@ -96,7 +101,7 @@ describe("ChangedCommand", () => {
       await setupGitChanges(testDir, ["packages/package-5/random-file"]);
       await lernaChanged(testDir)();
 
-      expect(consoleOutput()).toMatchSnapshot();
+      expect(output.logged()).toMatchSnapshot();
     });
 
     it("should return a non-zero exit code when there are no changes", async () => {
@@ -123,7 +128,7 @@ describe("ChangedCommand", () => {
       await setupGitChanges(testDir, ["packages/package-3/random-file"]);
       await lernaChanged(testDir)();
 
-      expect(consoleOutput()).toMatchSnapshot();
+      expect(output.logged()).toMatchSnapshot();
     });
 
     it("should list changes with --force-publish *", async () => {
@@ -132,7 +137,7 @@ describe("ChangedCommand", () => {
       await setupGitChanges(testDir, ["packages/package-2/random-file"]);
       await lernaChanged(testDir)("--force-publish", "*");
 
-      expect(consoleOutput()).toMatchSnapshot();
+      expect(output.logged()).toMatchSnapshot();
     });
 
     it("should list changes with --force-publish package-2", async () => {
@@ -141,7 +146,7 @@ describe("ChangedCommand", () => {
       await setupGitChanges(testDir, ["packages/package-4/random-file"]);
       await lernaChanged(testDir)("--force-publish", "package-2");
 
-      expect(consoleOutput()).toMatchSnapshot();
+      expect(output.logged()).toMatchSnapshot();
     });
 
     it("should list changes without ignored files", async () => {
@@ -158,7 +163,7 @@ describe("ChangedCommand", () => {
       await setupGitChanges(testDir, ["packages/package-2/ignored-file", "packages/package-3/random-file"]);
       await lernaChanged(testDir)();
 
-      expect(consoleOutput()).toMatchSnapshot();
+      expect(output.logged()).toMatchSnapshot();
     });
 
     it("should return a non-zero exit code when there are no changes", async () => {
@@ -186,7 +191,7 @@ describe("ChangedCommand", () => {
       await lernaChanged(testDir)("--json");
 
       // Output should be a parseable string
-      const jsonOutput = JSON.parse(consoleOutput());
+      const jsonOutput = JSON.parse(output.logged());
       expect(jsonOutput).toMatchSnapshot();
     });
   });

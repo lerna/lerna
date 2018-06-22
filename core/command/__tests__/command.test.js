@@ -1,4 +1,9 @@
+/* eslint-disable class-methods-use-this */
+
 "use strict";
+
+// we're actually testing integration with git
+jest.unmock("@lerna/collect-updates");
 
 const fs = require("fs-extra");
 const execa = require("execa");
@@ -440,6 +445,23 @@ describe("core-command", () => {
         await testFactory({ cwd });
       } catch (err) {
         expect(err.prefix).toBe("ENOPKG");
+      }
+    });
+
+    it("throws JSONError when root package.json has syntax error", async () => {
+      expect.assertions(1);
+
+      const cwd = await initFixture("basic");
+
+      await fs.writeFile(
+        path.join(cwd, "package.json"), // trailing comma ...v
+        '{ "name": "invalid", "lerna": { "version": "1.0.0" }, }'
+      );
+
+      try {
+        await testFactory({ cwd });
+      } catch (err) {
+        expect(err.prefix).toBe("JSONError");
       }
     });
 

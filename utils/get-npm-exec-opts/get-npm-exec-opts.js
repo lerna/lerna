@@ -7,6 +7,7 @@ module.exports = getExecOpts;
 function getExecOpts(pkg, registry) {
   const opts = {
     cwd: pkg.location,
+    pkg,
   };
 
   if (registry) {

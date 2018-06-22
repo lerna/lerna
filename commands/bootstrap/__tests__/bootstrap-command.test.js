@@ -166,6 +166,44 @@ describe("BootstrapCommand", () => {
     });
   });
 
+  describe("with --ci", async () => {
+    const originalNpmUserAgent = process.env.npm_config_user_agent;
+
+    afterEach(() => {
+      process.env.npm_config_user_agent = originalNpmUserAgent;
+    });
+
+    it("should call npmInstall with ci subCommand if on npm 5.7.0 or later", async () => {
+      const testDir = await initFixture("ci");
+      process.env.npm_config_user_agent = "npm/5.7.0 node/v9.9.0 darwin x64";
+
+      await lernaBootstrap(testDir)("--ci");
+
+      expect(npmInstall.dependencies.mock.calls[0][2]).toMatchObject({
+        subCommand: "ci",
+        registry: undefined,
+        npmClient: "npm",
+        npmGlobalStyle: false,
+        npmClientArgs: undefined,
+        mutex: undefined,
+      });
+    });
+
+    it("should not pass subCommand to npmInstall if on npm version earlier than 5.7.0", async () => {
+      const testDir = await initFixture("ci");
+      process.env.npm_config_user_agent = "npm/5.6.0 node/v9.9.0 darwin x64";
+
+      await lernaBootstrap(testDir)("--ci");
+
+      expect(npmInstall.dependencies.mock.calls[0][2]).toMatchObject({
+        registry: undefined,
+        npmClient: "npm",
+        npmClientArgs: undefined,
+        mutex: undefined,
+      });
+    });
+  });
+
   describe("with local package dependencies", () => {
     it("should bootstrap packages", async () => {
       const testDir = await initFixture("basic");

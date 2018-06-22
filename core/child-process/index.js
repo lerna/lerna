@@ -13,8 +13,9 @@ const NUM_COLORS = colorWheel.length;
 
 function exec(command, args, opts) {
   const options = Object.assign({ stdio: "pipe" }, opts);
+  const spawned = spawnProcess(command, args, options);
 
-  return _spawn(command, args, options);
+  return wrapError(spawned);
 }
 
 function execSync(command, args, opts) {
@@ -22,10 +23,10 @@ function execSync(command, args, opts) {
 }
 
 function spawn(command, args, opts) {
-  const options = Object.assign({}, opts);
-  options.stdio = "inherit";
+  const options = Object.assign({}, opts, { stdio: "inherit" });
+  const spawned = spawnProcess(command, args, options);
 
-  return _spawn(command, args, options);
+  return wrapError(spawned);
 }
 
 // istanbul ignore next
@@ -35,7 +36,7 @@ function spawnStreaming(command, args, opts, prefix) {
 
   const colorName = colorWheel[children % NUM_COLORS];
   const color = chalk[colorName];
-  const spawned = _spawn(command, args, options);
+  const spawned = spawnProcess(command, args, options);
 
   const stdoutOpts = {};
   const stderrOpts = {}; // mergeMultiline causes escaped newlines :P
@@ -54,15 +55,14 @@ function spawnStreaming(command, args, opts, prefix) {
   spawned.stdout.pipe(logTransformer(stdoutOpts)).pipe(process.stdout);
   spawned.stderr.pipe(logTransformer(stderrOpts)).pipe(process.stderr);
 
-  return spawned;
+  return wrapError(spawned);
 }
 
 function getChildProcessCount() {
   return children;
 }
 
-// eslint-disable-next-line no-underscore-dangle
-function _spawn(command, args, opts) {
+function spawnProcess(command, args, opts) {
   children += 1;
 
   const child = execa(command, args, opts);
@@ -78,7 +78,27 @@ function _spawn(command, args, opts) {
   child.once("exit", drain);
   child.once("error", drain);
 
+  if (opts.pkg) {
+    child.pkg = opts.pkg;
+  }
+
   return child;
+}
+
+function wrapError(spawned) {
+  if (spawned.pkg) {
+    return spawned.catch(err => {
+      // istanbul ignore else
+      if (err.code) {
+        // log non-lerna error cleanly
+        err.pkg = spawned.pkg;
+      }
+
+      throw err;
+    });
+  }
+
+  return spawned;
 }
 
 exports.exec = exec;

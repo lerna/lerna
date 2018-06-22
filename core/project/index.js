@@ -11,14 +11,12 @@ const writeJsonFile = require("write-json-file");
 const ValidationError = require("@lerna/validation-error");
 const Package = require("@lerna/package");
 const applyExtends = require("./lib/apply-extends");
+const deprecateConfig = require("./lib/deprecate-config");
 
 class Project {
   constructor(cwd) {
     const explorer = cosmiconfig("lerna", {
-      js: false, // not unless we store version somewhere else...
-      rc: "lerna.json",
-      rcStrictJson: true,
-      sync: true,
+      searchPlaces: ["lerna.json", "package.json"],
       transform(obj) {
         // cosmiconfig returns null when nothing is found
         if (!obj) {
@@ -31,11 +29,8 @@ class Project {
           };
         }
 
-        // normalize command-specific config namespace
-        if (obj.config.commands) {
-          obj.config.command = obj.config.commands;
-          delete obj.config.commands;
-        }
+        // rename deprecated durable config
+        deprecateConfig(obj.config, obj.filepath);
 
         obj.config = applyExtends(obj.config, path.dirname(obj.filepath));
 
@@ -46,7 +41,7 @@ class Project {
     let loaded;
 
     try {
-      loaded = explorer.load(cwd);
+      loaded = explorer.searchSync(cwd);
     } catch (err) {
       // redecorate JSON syntax errors, avoid debug dump
       if (err.name === "JSONError") {
@@ -116,7 +111,11 @@ class Project {
         value: manifest,
       });
     } catch (err) {
-      // syntax errors are already caught and reported by constructor
+      // redecorate JSON syntax errors, avoid debug dump
+      if (err.name === "JSONError") {
+        throw new ValidationError(err.name, err.message);
+      }
+
       // try again next time
     }
 

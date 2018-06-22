@@ -7,7 +7,6 @@ const pMapSeries = require("p-map-series");
 
 const ChildProcessUtilities = require("@lerna/child-process");
 const Command = require("@lerna/command");
-const GitUtilities = require("@lerna/git-utils");
 const PromptUtilities = require("@lerna/prompt");
 const ValidationError = require("@lerna/validation-error");
 
@@ -64,7 +63,7 @@ class ImportCommand extends Command {
     const targetDir = path.join(this.getTargetBase(), externalRepoBase);
 
     // Compute a target directory relative to the Git root
-    const gitRepoRoot = GitUtilities.getWorkspaceRoot(this.execOpts);
+    const gitRepoRoot = this.getWorkspaceRoot();
     const lernaRootRelativeToGitRoot = path.relative(gitRepoRoot, this.project.rootPath);
     this.targetDirRelativeToGitRoot = path.join(lernaRootRelativeToGitRoot, targetDir);
 
@@ -88,7 +87,7 @@ class ImportCommand extends Command {
     }
 
     // Stash the repo's pre-import head away in case something goes wrong.
-    this.preImportHead = GitUtilities.getCurrentSHA(this.execOpts);
+    this.preImportHead = this.getCurrentSHA();
 
     if (ChildProcessUtilities.execSync("git", ["diff-index", "HEAD"], this.execOpts)) {
       throw new ValidationError("ECHANGES", "Local repository has un-committed changes");
@@ -113,6 +112,14 @@ class ImportCommand extends Command {
         .map(p => path.dirname(p))
         .shift() || "packages"
     );
+  }
+
+  getCurrentSHA() {
+    return ChildProcessUtilities.execSync("git", ["rev-parse", "HEAD"], this.execOpts);
+  }
+
+  getWorkspaceRoot() {
+    return ChildProcessUtilities.execSync("git", ["rev-parse", "--show-toplevel"], this.execOpts);
   }
 
   externalExecSync(cmd, args) {
@@ -152,6 +159,7 @@ class ImportCommand extends Command {
       .replace(/^([-+]{3} [ab])/gm, replacement)
       .replace(/^(diff --git a)/gm, replacement)
       .replace(/^(diff --git \S+ b)/gm, replacement)
+      .replace(/^(copy (from|to)) /gm, `$1 ${formattedTarget}/`)
       .replace(/^(rename (from|to)) /gm, `$1 ${formattedTarget}/`);
   }
 

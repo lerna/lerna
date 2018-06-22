@@ -27,6 +27,7 @@ describe("dist-tag", () => {
 
       expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["dist-tag", "add", "foo-pkg@1.0.0", tag], {
         cwd: pkg.location,
+        pkg,
       });
     });
 
@@ -39,6 +40,7 @@ describe("dist-tag", () => {
           npm_config_registry: registry,
         }),
         extendEnv: false,
+        pkg,
       });
     });
   });
@@ -56,6 +58,7 @@ describe("dist-tag", () => {
 
       expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["dist-tag", "rm", pkg.name, tag], {
         cwd: pkg.location,
+        pkg,
       });
     });
 
@@ -68,6 +71,7 @@ describe("dist-tag", () => {
           npm_config_registry: registry,
         }),
         extendEnv: false,
+        pkg,
       });
     });
   });
@@ -88,6 +92,7 @@ describe("dist-tag", () => {
 
       expect(ChildProcessUtilities.execSync).lastCalledWith("npm", ["dist-tag", "ls", pkg.name], {
         cwd: pkg.location,
+        pkg,
       });
     });
 
@@ -102,6 +107,7 @@ describe("dist-tag", () => {
           npm_config_registry: registry,
         }),
         extendEnv: false,
+        pkg,
       });
     });
   });

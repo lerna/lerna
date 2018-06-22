@@ -85,6 +85,19 @@ describe("Project", () => {
       });
     });
 
+    it("errors when root package.json is not valid JSON", async () => {
+      expect.assertions(2);
+
+      const cwd = await initFixture("pkg-prop-syntax-error");
+
+      try {
+        const project = new Project(cwd); // eslint-disable-line no-unused-vars
+      } catch (err) {
+        expect(err.name).toBe("ValidationError");
+        expect(err.prefix).toBe("JSONError");
+      }
+    });
+
     it("extends local shared config", async () => {
       const cwd = await initFixture("extends");
       const project = new Project(cwd);
@@ -125,6 +138,17 @@ describe("Project", () => {
         packages: ["recursive-pkgs/*"],
         version: "1.0.0",
       });
+    });
+
+    it("renames deprecated config recursively", async () => {
+      const cwd = await initFixture("extends-deprecated");
+      const project = new Project(cwd);
+
+      expect(project.config).not.toHaveProperty("commands");
+      expect(project.config).not.toHaveProperty("command.publish.ignore");
+      expect(project.config).toHaveProperty("command.publish.ignoreChanges", ["ignored-file"]);
+      expect(project.config).toHaveProperty("command.publish.loglevel", "success");
+      expect(project.config).toHaveProperty("command.bootstrap.hoist", true);
     });
 
     it("throws an error when extend target is unresolvable", async () => {
@@ -221,6 +245,16 @@ describe("Project", () => {
     it("caches the first successful value", () => {
       const project = new Project(testDir);
       expect(project.manifest).toBe(project.manifest);
+    });
+
+    it("defaults package.json name field when absent", async () => {
+      const cwd = await initFixture("basic");
+      const manifestLocation = path.join(cwd, "package.json");
+
+      await fs.writeJSON(manifestLocation, { private: true }, { spaces: 2 });
+
+      const project = new Project(cwd);
+      expect(project.manifest).toHaveProperty("name", path.basename(cwd));
     });
 
     it("does not cache failures", async () => {

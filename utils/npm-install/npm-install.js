@@ -12,10 +12,13 @@ const getExecOpts = require("@lerna/get-npm-exec-opts");
 module.exports = npmInstall;
 module.exports.dependencies = npmInstallDependencies;
 
-function npmInstall(pkg, { registry, npmClient, npmClientArgs, npmGlobalStyle, mutex, stdio = "pipe" }) {
+function npmInstall(
+  pkg,
+  { registry, npmClient, npmClientArgs, npmGlobalStyle, mutex, stdio = "pipe", subCommand = "install" }
+) {
   // build command, arguments, and options
   const opts = getExecOpts(pkg, registry);
-  const args = ["install"];
+  const args = [subCommand];
   let cmd = npmClient || "npm";
 
   if (npmGlobalStyle) {

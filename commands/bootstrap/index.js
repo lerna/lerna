@@ -21,6 +21,9 @@ const symlinkBinary = require("@lerna/symlink-binary");
 const symlinkDependencies = require("@lerna/symlink-dependencies");
 const ValidationError = require("@lerna/validation-error");
 const isHoistedPackage = require("./lib/is-hoisted-package");
+const makeNpmFeaturePredicate = require("./lib/make-npm-feature-predicate");
+
+const hasNpmCI = makeNpmFeaturePredicate(">=5.7.0");
 
 module.exports = factory;
 
@@ -35,6 +38,8 @@ class BootstrapCommand extends Command {
 
   initialize() {
     const { registry, rejectCycles, npmClient = "npm", npmClientArgs, mutex, hoist } = this.options;
+    const filteredLength = this.filteredPackages.length;
+    this.packageCountLabel = `${filteredLength} package${filteredLength > 1 ? "s" : ""}`;
 
     if (npmClient === "yarn" && hoist) {
       throw new ValidationError(
@@ -68,6 +73,10 @@ class BootstrapCommand extends Command {
       mutex,
     };
 
+    if (npmClient === "npm" && this.options.ci && hasNpmCI(this.conf)) {
+      this.npmConfig.subCommand = "ci";
+    }
+
     // lerna bootstrap ... -- <input>
     const doubleDashArgs = this.options["--"] || [];
     if (doubleDashArgs.length) {
@@ -97,7 +106,7 @@ class BootstrapCommand extends Command {
 
     // root install does not need progress bar
     this.enableProgressBar();
-    this.logger.info("", `Bootstrapping ${this.filteredPackages.length} packages`);
+    this.logger.info("", `Bootstrapping ${this.packageCountLabel}`);
 
     const tasks = [
       () => this.getDependenciesToInstall(),
@@ -117,7 +126,7 @@ class BootstrapCommand extends Command {
     }
 
     return pWaterfall(tasks).then(() => {
-      this.logger.success("", `Bootstrapped ${this.filteredPackages.length} packages`);
+      this.logger.success("", `Bootstrapped ${this.packageCountLabel}`);
     });
   }
 

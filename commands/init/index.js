@@ -6,7 +6,7 @@ const pMap = require("p-map");
 const writeJsonFile = require("write-json-file");
 
 const Command = require("@lerna/command");
-const GitUtilities = require("@lerna/git-utils");
+const childProcess = require("@lerna/child-process");
 
 module.exports = factory;
 
@@ -26,17 +26,21 @@ class InitCommand extends Command {
     return false;
   }
 
-  // don't do any of this.
-  runValidations() {}
-  runPreparations() {}
+  runValidations() {
+    this.logger.verbose(this.name, "skipping validations");
+  }
+
+  runPreparations() {
+    this.logger.verbose(this.name, "skipping preparations");
+  }
 
   initialize() {
     this.exact = this.options.exact;
 
-    if (!GitUtilities.isInitialized(this.execOpts)) {
+    if (!this.gitInitialized()) {
       this.logger.info("", "Initializing Git repository");
 
-      GitUtilities.init(this.execOpts);
+      return childProcess.exec("git", ["init"], this.execOpts);
     }
   }
 

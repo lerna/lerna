@@ -14,6 +14,7 @@ const cliRunner = require("@lerna-test/cli-runner");
 const gitAdd = require("@lerna-test/git-add");
 const gitCommit = require("@lerna-test/git-commit");
 const gitTag = require("@lerna-test/git-tag");
+const showCommit = require("@lerna-test/show-commit");
 const cloneFixture = require("@lerna-test/clone-fixture")(
   path.resolve(__dirname, "../commands/publish/__tests__")
 );
@@ -47,6 +48,20 @@ describe("lerna publish", () => {
 
     expect(code).toBe(0);
     expect(stdout).toBe("");
+  });
+
+  test("exits with error when unknown options are passed", async () => {
+    const { cwd } = await cloneFixture("normal");
+    const args = ["publish", "--skip-npm", "--yes", "--scope", "package-1"];
+
+    try {
+      await cliRunner(cwd)(...args);
+    } catch (err) {
+      expect(err.code).toBe(1);
+      expect(err.stderr).toMatch("Unknown argument: scope");
+    }
+
+    expect.assertions(2);
   });
 
   test("updates fixed versions", async () => {
@@ -134,9 +149,7 @@ describe("lerna publish", () => {
 
     await cliRunner(cwd)("publish", "--cd-version=major", "--skip-npm", "--yes");
 
-    expect(
-      await execa.stdout("git", ["show", "--unified=0", "--ignore-space-at-eol", "--format=%s"], { cwd })
-    ).toMatchSnapshot();
+    expect(await showCommit(cwd)).toMatchSnapshot();
   });
 
   test("calls lifecycle scripts", async () => {

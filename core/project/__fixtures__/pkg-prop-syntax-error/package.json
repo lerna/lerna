@@ -1,0 +1,14 @@
+{
+  "name": "pkg-prop-syntax-error",
+  "version": "0.0.0-root",
+  "private": true,
+  "lerna": {
+    "loglevel": "success",
+    "command": {
+      "publish": {
+        "loglevel": "verbose"
+      }
+    },
+    "version": "1.0.0"
+  },,
+}

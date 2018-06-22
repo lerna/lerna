@@ -25,6 +25,7 @@ describe("npm-publish", () => {
       ["publish", "--ignore-scripts", "--tag", "published-tag"],
       {
         cwd: pkg.location,
+        pkg,
       }
     );
   });
@@ -34,6 +35,7 @@ describe("npm-publish", () => {
 
     expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["publish", "--ignore-scripts"], {
       cwd: pkg.location,
+      pkg,
     });
   });
 
@@ -45,6 +47,7 @@ describe("npm-publish", () => {
       ["publish", "--ignore-scripts", "--tag", "trailing-tag"],
       {
         cwd: pkg.location,
+        pkg,
       }
     );
   });
@@ -63,6 +66,7 @@ describe("npm-publish", () => {
           npm_config_registry: registry,
         }),
         extendEnv: false,
+        pkg,
       }
     );
   });
@@ -84,6 +88,7 @@ describe("npm-publish", () => {
         ],
         {
           cwd: pkg.location,
+          pkg,
         }
       );
     });
