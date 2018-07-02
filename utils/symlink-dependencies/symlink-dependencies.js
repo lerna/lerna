@@ -47,6 +47,11 @@ function symlinkDependencies(packages, packageGraph, logger) {
         const dependencyNode = packageGraph.get(dependencyName);
         const targetDirectory = path.join(currentNodeModules, dependencyName);
 
+        let actualLocation = dependencyNode.location;
+        if (dependencyNode.linkTarget !== undefined) {
+          actualLocation = path.join(actualLocation, dependencyNode.linkTarget);
+        }
+
         let chain = Promise.resolve();
 
         // check if dependency is already installed
@@ -55,7 +60,7 @@ function symlinkDependencies(packages, packageGraph, logger) {
           if (dirExists) {
             const isDepSymlink = resolveSymlink(targetDirectory);
 
-            if (isDepSymlink !== false && isDepSymlink !== dependencyNode.location) {
+            if (isDepSymlink !== false && isDepSymlink !== actualLocation) {
               // installed dependency is a symlink pointing to a different location
               tracker.warn(
                 "EREPLACE_OTHER",
@@ -79,7 +84,7 @@ function symlinkDependencies(packages, packageGraph, logger) {
         });
 
         // create package symlink
-        chain = chain.then(() => createSymlink(dependencyNode.location, targetDirectory, "junction"));
+        chain = chain.then(() => createSymlink(actualLocation, targetDirectory, "junction"));
 
         // TODO: pass PackageGraphNodes directly instead of Packages
         chain = chain.then(() => symlinkBinary(dependencyNode.pkg, currentNode.pkg));

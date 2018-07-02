@@ -19,6 +19,9 @@ class PackageGraphNode {
       location: {
         value: pkg.location,
       },
+      linkTarget: {
+        value: pkg.linkTarget,
+      },
       // properties that might change over time
       version: {
         get() {

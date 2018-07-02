@@ -10,7 +10,7 @@ const ValidationError = require("@lerna/validation-error");
 
 module.exports = collectPackages;
 
-function collectPackages(rootPath, packageConfigs = ["packages/*"]) {
+function collectPackages(rootPath, packageConfigs = ["packages/*"], linkTarget = undefined) {
   const globOpts = {
     cwd: rootPath,
     absolute: true,
@@ -48,7 +48,7 @@ function collectPackages(rootPath, packageConfigs = ["packages/*"]) {
             const packageDir = path.dirname(packageConfigPath);
 
             return loadJsonFile(packageConfigPath).then(
-              packageJson => new Package(packageJson, packageDir, rootPath)
+              packageJson => new Package(packageJson, packageDir, rootPath, linkTarget)
             );
           }),
         { concurrency: 50 }

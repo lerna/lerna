@@ -201,11 +201,11 @@ class Command {
     }
 
     const { rootPath, packageConfigs } = this.project;
-    const { scope: include, ignore: exclude } = this.options;
+    const { scope: include, ignore: exclude, linkTarget } = this.options;
 
     let chain = Promise.resolve();
 
-    chain = chain.then(() => collectPackages(rootPath, packageConfigs));
+    chain = chain.then(() => collectPackages(rootPath, packageConfigs, linkTarget));
     chain = chain.then(packages => {
       this.packages = packages;
       this.packageGraph = new PackageGraph(packages);

@@ -49,6 +49,12 @@ exports.builder = yargs => {
         type: "string",
         requiresArg: true,
       },
+      "link-target": {
+        group: "Command Options:",
+        describe: "Force local links to package/link-target instead of just package",
+        type: "string",
+        default: undefined,
+      },
     });
 
   return filterable(yargs);
