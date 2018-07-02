@@ -27,7 +27,7 @@ function shallowCopy(json) {
 }
 
 class Package {
-  constructor(pkg, location, rootPath = location) {
+  constructor(pkg, location, rootPath = location, linkTarget = undefined) {
     // npa will throw an error if the name is invalid
     const resolved = npa.resolve(pkg.name, `file:${path.relative(rootPath, location)}`, rootPath);
 
@@ -39,6 +39,9 @@ class Package {
       },
       location: {
         value: location,
+      },
+      linkTarget: {
+        value: linkTarget,
       },
       private: {
         value: Boolean(pkg.private),

@@ -15,6 +15,12 @@ exports.builder = yargs => {
       type: "boolean",
       default: undefined,
     },
+    "link-target": {
+      group: "Command Options:",
+      describe: "Force local links to package/link-target instead of just package",
+      type: "string",
+      default: undefined,
+    },
   });
 
   return yargs.command(
