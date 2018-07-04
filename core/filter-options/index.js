@@ -29,15 +29,15 @@ function filterOptions(yargs) {
     },
     "include-filtered-dependents": {
       describe: dedent`
-        Include all transitive dependents when running a command,
-        regardless of --include, --exclude or --since.
+        Include all transitive dependents when running a command
+        regardless of --scope, --ignore, or --since.
       `,
       boolean: true,
     },
     "include-filtered-dependencies": {
       describe: dedent`
-        Include all transitive dependencies when running a command,
-        regardless of --include, --exclude or --since.
+        Include all transitive dependencies when running a command
+        regardless of --scope, --ignore, or --since.
       `,
       boolean: true,
     },
