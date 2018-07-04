@@ -16,10 +16,10 @@ const npmInstall = require("@lerna/npm-install");
 const runLifecycle = require("@lerna/run-lifecycle");
 const batchPackages = require("@lerna/batch-packages");
 const runParallelBatches = require("@lerna/run-parallel-batches");
-const hasDependencyInstalled = require("./lib/has-dependency-installed");
 const symlinkBinary = require("@lerna/symlink-binary");
 const symlinkDependencies = require("@lerna/symlink-dependencies");
 const ValidationError = require("@lerna/validation-error");
+const hasDependencyInstalled = require("./lib/has-dependency-installed");
 const isHoistedPackage = require("./lib/is-hoisted-package");
 const makeNpmFeaturePredicate = require("./lib/make-npm-feature-predicate");
 

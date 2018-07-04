@@ -50,6 +50,7 @@ describe("core-command", () => {
     initialize() {
       return true;
     }
+
     execute() {}
   }
 
@@ -181,6 +182,7 @@ describe("core-command", () => {
         initialize() {
           return true;
         }
+
         execute() {
           const err = new Error("message");
 
