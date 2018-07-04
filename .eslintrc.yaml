@@ -60,6 +60,8 @@
       rules:
         # dev dependencies are hoisted to the root
         import/no-extraneous-dependencies: off
+        # mocked modules are imported before helpers
+        import/order: off
         node/no-extraneous-require: off
         node/no-unpublished-require: off
         node/no-unsupported-features:
