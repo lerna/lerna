@@ -5,7 +5,7 @@
  */
 exports.command = "publish";
 
-exports.describe = "Publish packages in the current project.";
+exports.describe = "Publish packages in the current project";
 
 exports.builder = yargs => {
   const cdVersionOptions = ["major", "minor", "patch", "premajor", "preminor", "prepatch", "prerelease"];

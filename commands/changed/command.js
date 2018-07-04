@@ -9,7 +9,7 @@ exports.command = "changed";
 
 exports.aliases = ["updated"];
 
-exports.describe = "Check which packages have changed since the last publish.";
+exports.describe = "Check which packages have changed since the last publish";
 
 exports.builder = yargs =>
   publishOptions(yargs).options({

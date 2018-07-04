@@ -1,8 +1,7 @@
 # `@lerna/run`
 
-> description TODO
+> Run an npm script in each package that contains that script
 
 ## Usage
 
 TODO
-

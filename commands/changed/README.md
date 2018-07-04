@@ -1,8 +1,7 @@
 # `@lerna/changed`
 
-> description TODO
+> Check which packages have changed since the last publish
 
 ## Usage
 
 TODO
-

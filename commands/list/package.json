@@ -1,7 +1,7 @@
 {
   "name": "@lerna/list",
   "version": "3.0.0-beta.21",
-  "description": "TODO",
+  "description": "List local packages",
   "keywords": [
     "lerna",
     "command"

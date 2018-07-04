@@ -7,7 +7,7 @@ const filterable = require("@lerna/filter-options");
  */
 exports.command = "clean";
 
-exports.describe = "Remove the node_modules directory from all packages.";
+exports.describe = "Remove the node_modules directory from all packages";
 
 exports.builder = yargs => {
   yargs.options({

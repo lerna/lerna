@@ -5,7 +5,7 @@
  */
 exports.command = "import <dir>";
 
-exports.describe = "Import the package in <dir> into packages/<dir> with commit history.";
+exports.describe = "Import a package into the monorepo with commit history";
 
 exports.builder = yargs =>
   yargs

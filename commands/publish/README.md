@@ -1,8 +1,7 @@
 # `@lerna/publish`
 
-> description TODO
+> Publish packages in the current project
 
 ## Usage
 
 TODO
-

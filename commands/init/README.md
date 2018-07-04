@@ -1,8 +1,7 @@
 # `@lerna/init`
 
-> description TODO
+> Create a new Lerna repo or upgrade an existing repo to the current version of Lerna
 
 ## Usage
 
 TODO
-

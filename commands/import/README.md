@@ -1,8 +1,7 @@
 # `@lerna/import`
 
-> description TODO
+> Import a package into the monorepo with commit history
 
 ## Usage
 
 TODO
-

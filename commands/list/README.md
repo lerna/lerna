@@ -1,8 +1,7 @@
 # `@lerna/list`
 
-> description TODO
+> List local packages
 
 ## Usage
 
 TODO
-

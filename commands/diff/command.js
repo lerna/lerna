@@ -5,7 +5,7 @@
  */
 exports.command = "diff [pkgName]";
 
-exports.describe = "Diff all packages or a single package since the last release.";
+exports.describe = "Diff all packages or a single package since the last release";
 
 exports.builder = yargs =>
   yargs

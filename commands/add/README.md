@@ -1,8 +1,7 @@
 # `@lerna/add`
 
-> description TODO
+> Add a dependency to matched packages
 
 ## Usage
 
 TODO
-

@@ -1,8 +1,7 @@
 # `@lerna/bootstrap`
 
-> description TODO
+> Link local packages together and install remaining package dependencies
 
 ## Usage
 
 TODO
-

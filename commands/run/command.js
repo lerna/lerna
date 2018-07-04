@@ -7,7 +7,7 @@ const filterable = require("@lerna/filter-options");
  */
 exports.command = "run <script>";
 
-exports.describe = "Run an npm script in each package that contains that script.";
+exports.describe = "Run an npm script in each package that contains that script";
 
 exports.builder = yargs => {
   yargs
