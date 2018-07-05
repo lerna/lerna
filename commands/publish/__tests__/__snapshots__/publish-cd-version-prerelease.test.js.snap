@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`publish --cd-version with previous prerelease publishes changed & prereleased packages if --cd-version is non-prerelease 1`] = `
-"v1.0.1
+exports[`publish --cd-version patch with previous prerelease also graduates prereleased 1`] = `
+v1.0.1
 
 HEAD -> master, tag: v1.0.1
 
@@ -10,59 +10,36 @@ index SHA..SHA 100644
 --- a/lerna.json
 +++ b/lerna.json
 @@ -2 +2 @@
--  \\"version\\": \\"1.0.1-beta.3\\"
-+  \\"version\\": \\"1.0.1\\"
-diff --git a/packages/package-1/package.json b/packages/package-1/package.json
-index SHA..SHA 100644
---- a/packages/package-1/package.json
-+++ b/packages/package-1/package.json
-@@ -3 +3 @@
--  \\"version\\": \\"1.0.0\\"
-+  \\"version\\": \\"1.0.1\\"
-diff --git a/packages/package-2/package.json b/packages/package-2/package.json
-index SHA..SHA 100644
---- a/packages/package-2/package.json
-+++ b/packages/package-2/package.json
-@@ -3 +3 @@
--  \\"version\\": \\"1.0.0\\",
-+  \\"version\\": \\"1.0.1\\",
-@@ -5 +5 @@
--    \\"package-1\\": \\"^1.0.0\\"
-+    \\"package-1\\": \\"^1.0.1\\"
+-  "version": "1.0.1-beta.3"
++  "version": "1.0.1"
 diff --git a/packages/package-3/package.json b/packages/package-3/package.json
 index SHA..SHA 100644
 --- a/packages/package-3/package.json
 +++ b/packages/package-3/package.json
 @@ -3 +3 @@
--  \\"version\\": \\"1.0.0\\",
-+  \\"version\\": \\"1.0.1\\",
-@@ -5 +5 @@
--    \\"package-2\\": \\"^1.0.0\\"
-+    \\"package-2\\": \\"^1.0.1\\"
+-  "version": "1.0.0",
++  "version": "1.0.1",
 diff --git a/packages/package-4/package.json b/packages/package-4/package.json
 index SHA..SHA 100644
 --- a/packages/package-4/package.json
 +++ b/packages/package-4/package.json
 @@ -3 +3 @@
--  \\"version\\": \\"1.0.0\\",
-+  \\"version\\": \\"1.0.1\\",
+-  "version": "1.0.1-beta.3",
++  "version": "1.0.1",
 @@ -5 +5 @@
--    \\"package-5\\": \\"^1.0.1-beta.3\\"
-+    \\"package-5\\": \\"^1.0.1\\"
+-    "package-5": "^1.0.1-beta.3"
++    "package-5": "^1.0.1"
 diff --git a/packages/package-5/package.json b/packages/package-5/package.json
 index SHA..SHA 100644
 --- a/packages/package-5/package.json
 +++ b/packages/package-5/package.json
-@@ -4 +4 @@
--    \\"package-1\\": \\"1.0.0\\"
-+    \\"package-1\\": \\"^1.0.1\\"
-@@ -7 +7 @@
--  \\"version\\": \\"1.0.1-beta.3\\"
-+  \\"version\\": \\"1.0.1\\""
+@@ -3 +3 @@
+-  "version": "1.0.1-beta.3",
++  "version": "1.0.1",
 `;
 
-exports[`publish --cd-version with previous prerelease should not publish prereleased packages if --cd-version is a pre-* increment 1`] = `
-"v1.0.1-beta.4
+exports[`publish --cd-version prerelease with previous prerelease bumps changed only 1`] = `
+v1.0.1-beta.4
 
 HEAD -> master, tag: v1.0.1-beta.4
 
@@ -71,53 +48,13 @@ index SHA..SHA 100644
 --- a/lerna.json
 +++ b/lerna.json
 @@ -2 +2 @@
--  \\"version\\": \\"1.0.1-beta.3\\"
-+  \\"version\\": \\"1.0.1-beta.4\\"
-diff --git a/packages/package-1/package.json b/packages/package-1/package.json
-index SHA..SHA 100644
---- a/packages/package-1/package.json
-+++ b/packages/package-1/package.json
-@@ -3 +3 @@
--  \\"version\\": \\"1.0.0\\"
-+  \\"version\\": \\"1.0.1-beta.4\\"
-diff --git a/packages/package-2/package.json b/packages/package-2/package.json
-index SHA..SHA 100644
---- a/packages/package-2/package.json
-+++ b/packages/package-2/package.json
-@@ -3 +3 @@
--  \\"version\\": \\"1.0.0\\",
-+  \\"version\\": \\"1.0.1-beta.4\\",
-@@ -5 +5 @@
--    \\"package-1\\": \\"^1.0.0\\"
-+    \\"package-1\\": \\"^1.0.1-beta.4\\"
+-  "version": "1.0.1-beta.3"
++  "version": "1.0.1-beta.4"
 diff --git a/packages/package-3/package.json b/packages/package-3/package.json
 index SHA..SHA 100644
 --- a/packages/package-3/package.json
 +++ b/packages/package-3/package.json
 @@ -3 +3 @@
--  \\"version\\": \\"1.0.0\\",
-+  \\"version\\": \\"1.0.1-beta.4\\",
-@@ -5 +5 @@
--    \\"package-2\\": \\"^1.0.0\\"
-+    \\"package-2\\": \\"^1.0.1-beta.4\\"
-diff --git a/packages/package-4/package.json b/packages/package-4/package.json
-index SHA..SHA 100644
---- a/packages/package-4/package.json
-+++ b/packages/package-4/package.json
-@@ -3 +3 @@
--  \\"version\\": \\"1.0.0\\",
-+  \\"version\\": \\"1.0.1-beta.4\\",
-@@ -5 +5 @@
--    \\"package-5\\": \\"^1.0.1-beta.3\\"
-+    \\"package-5\\": \\"^1.0.1-beta.4\\"
-diff --git a/packages/package-5/package.json b/packages/package-5/package.json
-index SHA..SHA 100644
---- a/packages/package-5/package.json
-+++ b/packages/package-5/package.json
-@@ -4 +4 @@
--    \\"package-1\\": \\"1.0.0\\"
-+    \\"package-1\\": \\"^1.0.1-beta.4\\"
-@@ -7 +7 @@
--  \\"version\\": \\"1.0.1-beta.3\\"
-+  \\"version\\": \\"1.0.1-beta.4\\""
+-  "version": "1.0.0",
++  "version": "1.0.1-beta.4",
 `;

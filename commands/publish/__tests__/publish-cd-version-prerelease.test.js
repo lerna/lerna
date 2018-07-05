@@ -1,17 +1,14 @@
 "use strict";
 
+// we're actually testing integration with git
+jest.unmock("@lerna/collect-updates");
+
 // local modules _must_ be explicitly mocked
 jest.mock("../lib/git-push");
 jest.mock("../lib/is-behind-upstream");
 
 const fs = require("fs-extra");
 const path = require("path");
-
-// mocked modules
-const collectUpdates = require("@lerna/collect-updates");
-
-// certain tests need to use the real thing
-const collectUpdatesActual = require.requireActual("@lerna/collect-updates");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
@@ -26,38 +23,40 @@ const lernaPublish = require("@lerna-test/command-runner")(require("../command")
 // stabilize commit SHA
 expect.addSnapshotSerializer(require("@lerna-test/serialize-git-sha"));
 
-describe("publish --cd-version with previous prerelease", () => {
-  const setupChanges = async cwd => {
-    await gitTag(cwd, "v1.0.0-beta.3");
-    await fs.outputFile(path.join(cwd, "packages/package-3/hello.js"), "world");
-    await gitAdd(cwd, ".");
-    await gitCommit(cwd, "setup");
-  };
+// remove quotes around strings
+expect.addSnapshotSerializer({
+  print: val => val,
+  test: val => typeof val === "string",
+});
 
-  it("publishes changed & prereleased packages if --cd-version is non-prerelease", async () => {
-    const testDir = await initFixture("republish-prereleased");
-    // should republish 3, 4, and 5 because:
-    // package 3 changed
-    // package 5 has a prerelease version
-    // package 4 depends on package 5
-    collectUpdates.mockImplementationOnce(collectUpdatesActual);
+const setupChanges = async cwd => {
+  await gitTag(cwd, "v1.0.0-beta.3");
+  await fs.outputFile(path.join(cwd, "packages/package-3/hello.js"), "world");
+  await gitAdd(cwd, ".");
+  await gitCommit(cwd, "setup");
+};
 
-    await setupChanges(testDir);
-    await lernaPublish(testDir)("--cd-version", "patch");
+test("publish --cd-version patch with previous prerelease also graduates prereleased", async () => {
+  const testDir = await initFixture("republish-prereleased");
+  // should republish 3, 4, and 5 because:
+  // package 3 changed
+  // package 5 has a prerelease version
+  // package 4 depends on package 5
 
-    const patch = await showCommit(testDir);
-    expect(patch).toMatchSnapshot();
-  });
+  await setupChanges(testDir);
+  await lernaPublish(testDir)("--cd-version", "patch");
 
-  it("should not publish prereleased packages if --cd-version is a pre-* increment", async () => {
-    const testDir = await initFixture("republish-prereleased");
-    // should republish only package 3, because only it changed
-    collectUpdates.mockImplementationOnce(collectUpdatesActual);
+  const patch = await showCommit(testDir);
+  expect(patch).toMatchSnapshot();
+});
 
-    await setupChanges(testDir);
-    await lernaPublish(testDir)("--cd-version", "prerelease", "---preid", "beta");
+test("publish --cd-version prerelease with previous prerelease bumps changed only", async () => {
+  const testDir = await initFixture("republish-prereleased");
+  // should republish only package 3, because only it changed
 
-    const patch = await showCommit(testDir);
-    expect(patch).toMatchSnapshot();
-  });
+  await setupChanges(testDir);
+  await lernaPublish(testDir)("--cd-version", "prerelease");
+
+  const patch = await showCommit(testDir);
+  expect(patch).toMatchSnapshot();
 });
