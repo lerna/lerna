@@ -99,6 +99,99 @@ Map {
 }
 `;
 
+exports[`publish --canary differential internal 1`] = `
+Map {
+  "package-3" => Object {
+    "dependencies": Object {
+      "package-2": "^1.0.0",
+    },
+    "description": "one local dependency, one direct dependent, one transitive dependency",
+    "gitHead": GIT_HEAD,
+    "name": "package-3",
+    "version": 1.1.0-alpha.SHA,
+  },
+  "package-4" => Object {
+    "dependencies": Object {
+      "package-3": ^1.1.0-alpha.SHA,
+    },
+    "description": "one local dependency, one direct dependent, two transitive dependencies",
+    "gitHead": GIT_HEAD,
+    "name": "package-4",
+    "version": 1.1.0-alpha.SHA,
+  },
+  "package-5" => Object {
+    "dependencies": Object {
+      "package-4": ^1.1.0-alpha.SHA,
+    },
+    "description": "one local dependency, no dependents, three transitive dependencies",
+    "gitHead": GIT_HEAD,
+    "name": "package-5",
+    "version": 1.1.0-alpha.SHA,
+  },
+}
+`;
+
+exports[`publish --canary differential pendant 1`] = `
+Map {
+  "package-5" => Object {
+    "dependencies": Object {
+      "package-4": "^1.0.0",
+    },
+    "description": "one local dependency, no dependents, three transitive dependencies",
+    "gitHead": GIT_HEAD,
+    "name": "package-5",
+    "version": 1.1.0-alpha.SHA,
+  },
+}
+`;
+
+exports[`publish --canary differential source 1`] = `
+Map {
+  "package-1" => Object {
+    "description": "no local dependencies, four local dependents (three transitive)",
+    "gitHead": GIT_HEAD,
+    "name": "package-1",
+    "version": 1.1.0-alpha.SHA,
+  },
+  "package-2" => Object {
+    "dependencies": Object {
+      "package-1": ^1.1.0-alpha.SHA,
+    },
+    "description": "one local dependency, one direct dependent, no transitive dependencies",
+    "gitHead": GIT_HEAD,
+    "name": "package-2",
+    "version": 1.1.0-alpha.SHA,
+  },
+  "package-3" => Object {
+    "dependencies": Object {
+      "package-2": ^1.1.0-alpha.SHA,
+    },
+    "description": "one local dependency, one direct dependent, one transitive dependency",
+    "gitHead": GIT_HEAD,
+    "name": "package-3",
+    "version": 1.1.0-alpha.SHA,
+  },
+  "package-4" => Object {
+    "dependencies": Object {
+      "package-3": ^1.1.0-alpha.SHA,
+    },
+    "description": "one local dependency, one direct dependent, two transitive dependencies",
+    "gitHead": GIT_HEAD,
+    "name": "package-4",
+    "version": 1.1.0-alpha.SHA,
+  },
+  "package-5" => Object {
+    "dependencies": Object {
+      "package-4": ^1.1.0-alpha.SHA,
+    },
+    "description": "one local dependency, no dependents, three transitive dependencies",
+    "gitHead": GIT_HEAD,
+    "name": "package-5",
+    "version": 1.1.0-alpha.SHA,
+  },
+}
+`;
+
 exports[`publish --canary: npm published 1`] = `
 Map {
   "package-1" => "canary",
