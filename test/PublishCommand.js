@@ -804,6 +804,57 @@ describe("PublishCommand", () => {
   });
 
   /** =========================================================================
+   * NORMAL - GIT-VERIFY
+   * ======================================================================= */
+
+  describe("normal mode with --git-verify", () => {
+    let testDir;
+
+    beforeEach(() =>
+      initFixture("PublishCommand/normal").then(dir => {
+        testDir = dir;
+      })
+    );
+
+    it("commits changes running commit hooks (no --no-verify option)", () =>
+      run(testDir)("-m", "message", "--git-verify").then(() => {
+        expect(GitUtilities.commit).lastCalledWith("message", { cwd: testDir, noVerify: false });
+      }));
+
+    it("commits changes without running commit hooks", () =>
+      run(testDir)("-m", "message").then(() => {
+        expect(GitUtilities.commit).lastCalledWith("message", execOpts(testDir));
+      }));
+  });
+
+  /** =========================================================================
+   * INDEPENDENT - GIT-VERIFY
+   * ======================================================================= */
+
+  describe("independent mode with --git-verify", () => {
+    let testDir;
+
+    beforeEach(() =>
+      initFixture("PublishCommand/independent").then(dir => {
+        testDir = dir;
+      })
+    );
+
+    it("commits changes running commit hooks (no --no-verify option)", () =>
+      run(testDir)("-m", "message", "--git-verify").then(() => {
+        expect(GitUtilities.commit).lastCalledWith(expect.stringContaining("message"), {
+          cwd: testDir,
+          noVerify: false,
+        });
+      }));
+
+    it("commits changes without running commit hooks", () =>
+      run(testDir)("-m", "message").then(() => {
+        expect(GitUtilities.commit).lastCalledWith(expect.stringContaining("message"), execOpts(testDir));
+      }));
+  });
+
+  /** =========================================================================
    * CONVENTIONAL COMMITS
    * ======================================================================= */
 

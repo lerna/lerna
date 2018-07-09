@@ -141,6 +141,12 @@ export const builder = {
     describe: "Specify which branches to allow publishing from.",
     type: "array",
   },
+  "git-verify": {
+    group: "Command Options:",
+    describe: "Run git commit without --no-verify flag",
+    type: "boolean",
+    default: false,
+  },
 };
 
 export default class PublishCommand extends Command {
@@ -153,6 +159,7 @@ export default class PublishCommand extends Command {
       tempTag: false,
       yes: false,
       allowBranch: false,
+      gitVerify: false,
     });
   }
 
@@ -169,6 +176,7 @@ export default class PublishCommand extends Command {
   }
 
   initialize(callback) {
+    this.execOpts.noVerify = this.options.gitVerify !== true;
     this.gitRemote = this.options.gitRemote || "origin";
     this.gitEnabled = !(this.options.canary || this.options.skipGit);
 

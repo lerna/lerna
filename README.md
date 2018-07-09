@@ -526,6 +526,14 @@ and you are not on the branch `master` lerna will prevent you from publishing. T
 $ lerna publish --allow-branch my-new-feature
 ```
 
+#### --verify
+
+```sh
+$ lerna publish --git-verify
+```
+
+When run with this flag, `publish` will run the git command without `--no-verify`, which means all commit hooks will run.
+
 ### updated
 
 ```sh
