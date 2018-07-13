@@ -1,0 +1,7 @@
+{
+  "name": "package-3",
+  "version": "1.0.0",
+  "devDependencies": {
+    "package-2": "git@gitlab.com:user/package-2#v1.0.0"
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "name": "git-hosted-sibling-gitlab",
+  "description": "Recognizing sibling dependencies from gitlab",
+  "version": "0.0.0-lerna"
+}

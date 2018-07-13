@@ -1,0 +1,7 @@
+{
+  "name": "package-4",
+  "version": "1.0.0",
+  "dependencies": {
+    "package-1": "git+https://user:token@gitlab.com/user/package-1.git#v1.0.0"
+  }
+}

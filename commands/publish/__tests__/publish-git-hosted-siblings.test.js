@@ -29,7 +29,7 @@ describe("git-hosted sibling specifiers", () => {
 
     // package-1 doesn't have any dependencies
     expect(writePkg.updatedManifest("package-2").dependencies).toMatchObject({
-      "package-1": "git+ssh://git@github.com/user/package-1.git#v1.1.0",
+      "package-1": "github:user/package-1#v1.1.0",
     });
     expect(writePkg.updatedManifest("package-3").devDependencies).toMatchObject({
       "package-2": "git+ssh://git@github.com/user/package-2.git#v1.1.0",
@@ -57,7 +57,7 @@ describe("git-hosted sibling specifiers", () => {
 
     // package-1 doesn't have any dependencies
     expect(writePkg.updatedManifest("package-2").dependencies).toMatchObject({
-      "package-1": "git+ssh://git@github.com/user/package-1.git#semver:^1.0.1-beta.0",
+      "package-1": "github:user/package-1#semver:^1.0.1-beta.0",
     });
     expect(writePkg.updatedManifest("package-3").devDependencies).toMatchObject({
       "package-2": "git+ssh://git@github.com/user/package-2.git#semver:^1.0.1-beta.0",
@@ -67,6 +67,34 @@ describe("git-hosted sibling specifiers", () => {
     });
     expect(writePkg.updatedManifest("package-5").dependencies).toMatchObject({
       "package-1": "git+ssh://git@github.com/user/package-1.git#semver:^1.0.1-beta.0",
+    });
+  });
+
+  test("gitlab", async () => {
+    const cwd = await initFixture("git-hosted-sibling-gitlab");
+
+    await lernaPublish(cwd)("--cd-version", "premajor", "--preid", "rc");
+
+    expect(writePkg.updatedVersions()).toEqual({
+      "package-1": "2.0.0-rc.0",
+      "package-2": "2.0.0-rc.0",
+      "package-3": "2.0.0-rc.0",
+      "package-4": "2.0.0-rc.0",
+      "package-5": "2.0.0-rc.0",
+    });
+
+    // package-1 doesn't have any dependencies
+    expect(writePkg.updatedManifest("package-2").dependencies).toMatchObject({
+      "package-1": "gitlab:user/package-1#v2.0.0-rc.0",
+    });
+    expect(writePkg.updatedManifest("package-3").devDependencies).toMatchObject({
+      "package-2": "git+ssh://git@gitlab.com/user/package-2.git#v2.0.0-rc.0",
+    });
+    expect(writePkg.updatedManifest("package-4").dependencies).toMatchObject({
+      "package-1": "git+https://user:token@gitlab.com/user/package-1.git#v2.0.0-rc.0",
+    });
+    expect(writePkg.updatedManifest("package-5").dependencies).toMatchObject({
+      "package-1": "git+ssh://git@gitlab.com/user/package-1.git#v2.0.0-rc.0",
     });
   });
 });

@@ -146,15 +146,15 @@ class Package {
       const { hosted } = resolved; // take that, lint!
       hosted.committish = `${tagPrefix}${depVersion}`;
 
-      // always serialize the full git+ssh url (identical to previous resolved.saveSpec)
-      depCollection[depName] = hosted.sshurl({ noGitPlus: false, noCommittish: false });
+      // always serialize the full url (identical to previous resolved.saveSpec)
+      depCollection[depName] = hosted.toString({ noGitPlus: false, noCommittish: false });
     } else if (resolved.gitRange) {
       // a git url with matching gitRange (#semver:^1.2.3)
       const { hosted } = resolved; // take that, lint!
       hosted.committish = `semver:${savePrefix}${depVersion}`;
 
-      // always serialize the full git+ssh url (identical to previous resolved.saveSpec)
-      depCollection[depName] = hosted.sshurl({ noGitPlus: false, noCommittish: false });
+      // always serialize the full url (identical to previous resolved.saveSpec)
+      depCollection[depName] = hosted.toString({ noGitPlus: false, noCommittish: false });
     }
   }
 }

@@ -1,0 +1,7 @@
+{
+  "name": "package-2",
+  "version": "1.0.0",
+  "dependencies": {
+    "package-1": "gitlab:user/package-1#v1.0.0"
+  }
+}
