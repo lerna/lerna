@@ -255,11 +255,14 @@ class PublishCommand extends Command {
     });
   }
 
-  resetManifestChanges() {
+  resetChanges() {
     // the package.json files are changed (by gitHead if not --canary)
     // and we should always leave the working tree clean
     return pReduce(this.project.packageConfigs, (_, pkgGlob) =>
       gitCheckout(`${pkgGlob}/package.json`, this.execOpts)
+    ).then(() =>
+      // --skip-git should not leave unstaged changes behind
+      gitCheckout(this.project.manifest.location, this.execOpts)
     );
   }
 
@@ -271,7 +274,7 @@ class PublishCommand extends Command {
     chain = chain.then(() => this.resolveLocalDependencyLinks());
     chain = chain.then(() => this.annotateGitHead());
     chain = chain.then(() => this.npmPublish());
-    chain = chain.then(() => this.resetManifestChanges());
+    chain = chain.then(() => this.resetChanges());
 
     if (this.options.tempTag) {
       chain = chain.then(() => this.npmUpdateAsLatest());

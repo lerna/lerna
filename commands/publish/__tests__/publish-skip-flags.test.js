@@ -46,8 +46,7 @@ test("publish --skip-git", async () => {
   ]);
 
   const unstaged = await listDirty(cwd);
-  // FIXME: lerna.json should not have unstaged changes
-  expect(unstaged).toEqual(["lerna.json"]);
+  expect(unstaged).toEqual([]);
 
   const logMessages = loggingOutput("info");
   expect(logMessages).toContain("Skipping git commit/push");
