@@ -191,10 +191,6 @@ class PublishCommand extends Command {
 
     const tasks = [];
 
-    if (!this.project.isIndependent() && !this.options.canary) {
-      tasks.push(() => this.updateVersionInLernaJson());
-    }
-
     tasks.push(() => this.updateUpdatedPackages());
 
     if (this.gitEnabled) {
@@ -461,16 +457,6 @@ class PublishCommand extends Command {
     return PromptUtilities.confirm("Are you sure you want to publish the above changes?");
   }
 
-  updateVersionInLernaJson() {
-    this.project.version = this.globalVersion;
-
-    return this.project.serializeConfig().then(lernaConfigLocation => {
-      if (!this.options.skipGit) {
-        return gitAdd([lernaConfigLocation], this.execOpts);
-      }
-    });
-  }
-
   runPackageLifecycle(pkg, stage) {
     if (pkg.scripts[stage]) {
       return runLifecycle(pkg, stage, this.conf).catch(err => {
@@ -488,6 +474,11 @@ class PublishCommand extends Command {
 
     // my kingdom for async await :(
     let chain = Promise.resolve();
+
+    // preversion:  Run BEFORE bumping the package version.
+    // version:     Run AFTER bumping the package version, but BEFORE commit.
+    // postversion: Run AFTER bumping the package version, and AFTER commit.
+    // @see https://docs.npmjs.com/misc/scripts
 
     // exec preversion lifecycle in root (before all updates)
     chain = chain.then(() => this.runPackageLifecycle(rootPkg, "preversion"));
@@ -555,6 +546,17 @@ class PublishCommand extends Command {
         }).then(changelogLocation => {
           // commit the updated changelog
           changedFiles.add(changelogLocation);
+        })
+      );
+    }
+
+    if (!independentVersions && !this.options.canary) {
+      this.project.version = this.globalVersion;
+
+      chain = chain.then(() =>
+        this.project.serializeConfig().then(lernaConfigLocation => {
+          // commit the version update
+          changedFiles.add(lernaConfigLocation);
         })
       );
     }
