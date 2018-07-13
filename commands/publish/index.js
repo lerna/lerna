@@ -301,7 +301,7 @@ class PublishCommand extends Command {
     let predicate;
 
     if (repoVersion) {
-      predicate = makeGlobalVersionPredicate(repoVersion);
+      predicate = makeGlobalVersionPredicate(semver.valid(repoVersion));
     } else if (canary) {
       const release = cdVersion || "minor";
       // FIXME: this complicated defaulting should be done in yargs option.coerce()

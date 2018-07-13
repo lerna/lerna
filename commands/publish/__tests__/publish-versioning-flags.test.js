@@ -6,6 +6,7 @@ jest.mock("../lib/is-behind-upstream");
 
 // mocked modules
 const PromptUtilities = require("@lerna/prompt");
+const collectUpdates = require("@lerna/collect-updates");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
@@ -28,6 +29,17 @@ describe("publish --repo-version", () => {
 
     const message = await getCommitMessage(testDir);
     expect(message).toBe("v1.0.1-beta.25");
+  });
+
+  it("strips invalid semver information from option value", async () => {
+    const testDir = await initFixture("normal");
+
+    collectUpdates.setUpdated(testDir, "package-3", "package-5");
+
+    await lernaPublish(testDir)("--repo-version", "v1.2.0-beta.1+deadbeef");
+
+    const patch = await showCommit(testDir);
+    expect(patch).toMatchSnapshot();
   });
 });
 
