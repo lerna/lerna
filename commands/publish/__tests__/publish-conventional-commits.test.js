@@ -21,10 +21,16 @@ const lernaPublish = require("@lerna-test/command-runner")(require("../command")
 
 describe("--conventional-commits", () => {
   describe("independent", () => {
-    const versionBumps = ["1.0.1", "2.1.0", "4.0.0", "4.1.0", "5.0.1"];
+    const versionBumps = new Map([
+      ["package-1", "1.0.1"],
+      ["package-2", "2.1.0"],
+      ["package-3", "4.0.0"],
+      ["package-4", "4.1.0"],
+      ["package-5", "5.0.1"],
+    ]);
 
     beforeEach(() => {
-      ConventionalCommitUtilities.mockBumps(...versionBumps);
+      ConventionalCommitUtilities.mockBumps(...versionBumps.values());
     });
 
     it("should use conventional-commits utility to guess version bump and generate CHANGELOG", async () => {
@@ -35,14 +41,14 @@ describe("--conventional-commits", () => {
       const changedFiles = await showCommit(cwd, "--name-only");
       expect(changedFiles).toMatchSnapshot();
 
-      ["package-1", "package-2", "package-3", "package-4", "package-5"].forEach((name, idx) => {
+      versionBumps.forEach((version, name) => {
         expect(ConventionalCommitUtilities.recommendVersion).toBeCalledWith(
           expect.objectContaining({ name }),
           "independent",
           { changelogPreset: undefined, rootPath: cwd }
         );
         expect(ConventionalCommitUtilities.updateChangelog).toBeCalledWith(
-          expect.objectContaining({ name, version: versionBumps[idx] }),
+          expect.objectContaining({ name, version }),
           "independent",
           { changelogPreset: undefined, rootPath: cwd }
         );
