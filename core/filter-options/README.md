@@ -2,28 +2,65 @@
 
 > Options for lerna sub-commands that need filtering
 
-## Usage
-
-`--scope`
+### `--scope <glob>`
 
 Include only packages with names matching the given glob.
 
-`--ignore`
+```sh
+$ lerna exec --scope my-component -- ls -la
+$ lerna run --scope toolbar-* test
+```
+
+### `--ignore <glob>`
 
 Exclude packages with names matching the given glob.
 
-`--no-private`
+### `--no-private`
 
 Exclude private packages. They are included by default.
 
-`--since [ref]`
+### `--since [ref]`
 
 Only include packages that have been updated since the specified `ref`. If no ref is passed, it defaults to the most-recent tag.
 
-`--include-filtered-dependents`
+
+```sh
+# List the contents of packages that have changed since the latest tag
+$ lerna exec --since -- ls -la
+
+# Run the tests for all packages that have changed since `master`
+$ lerna run test --since master
+
+# List all packages that have changed since `some-branch`
+$ lerna ls --since some-branch
+```
+
+_This can be particularly useful when used in CI, if you can obtain the target branch a PR will be going into, because you can use that as the `ref` to the `--since` option. This works well for PRs going into master as well as feature branches._
+
+### `--include-filtered-dependents`
 
 Include all transitive dependents when running a command regardless of `--scope`, `--ignore`, or `--since`.
 
-`--include-filtered-dependencies`
+### `--include-filtered-dependencies`
 
 Include all transitive dependencies when running a command regardless of `--scope`, `--ignore`, or `--since`.
+
+Used in combination with any command that accepts `--scope` (`bootstrap`, `clean`, `ls`, `run`, `exec`).
+Ensures that all dependencies (and dev dependencies) of any scoped packages (either through `--scope` or `--ignore`) are operated on as well.
+
+> Note: This will override the `--scope` and `--ignore` flags.
+>
+> > i.e. A package matched by the `--ignore` flag will still be bootstrapped if it is depended on by another package that is being bootstrapped.
+
+This is useful for situations where you want to "set up" a single package that relies on other packages being set up.
+
+```sh
+$ lerna bootstrap --scope my-component --include-filtered-dependencies
+# my-component and all of its dependencies will be bootstrapped
+```
+
+```sh
+$ lerna bootstrap --scope "package-*" --ignore "package-util-*" --include-filtered-dependencies
+# all package-util's will be ignored unless they are depended upon by a
+# package matched by "package-*"
+```
