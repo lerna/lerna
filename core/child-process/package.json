@@ -1,7 +1,7 @@
 {
   "name": "@lerna/child-process",
   "version": "3.0.0-beta.21",
-  "description": "TODO",
+  "description": "Lerna's internal child_process wrapper",
   "keywords": [
     "lerna",
     "utils"

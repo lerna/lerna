@@ -1,8 +1,9 @@
 # `@lerna/conventional-commits`
 
-> description TODO
+> Lerna's internal interface to conventional-changelog and friends
 
 ## Usage
 
-TODO
+You probably shouldn't, at least directly.
 
+Install [lerna](https://www.npmjs.com/package/lerna) for access to the `lerna` CLI.

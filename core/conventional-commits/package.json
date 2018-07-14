@@ -1,7 +1,7 @@
 {
   "name": "@lerna/conventional-commits",
   "version": "3.0.0-beta.15",
-  "description": "TODO",
+  "description": "Lerna's internal interface to conventional-changelog and friends",
   "keywords": [
     "lerna",
     "core"

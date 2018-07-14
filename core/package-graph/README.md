@@ -1,8 +1,9 @@
 # `@lerna/package-graph`
 
-> description TODO
+> Lerna's internal representation of a package graph
 
 ## Usage
 
-TODO
+You probably shouldn't, at least directly.
 
+Install [lerna](https://www.npmjs.com/package/lerna) for access to the `lerna` CLI.

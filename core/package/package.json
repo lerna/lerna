@@ -1,7 +1,7 @@
 {
   "name": "@lerna/package",
   "version": "3.0.0-beta.17",
-  "description": "TODO",
+  "description": "Lerna's internal representation of a package",
   "keywords": [
     "lerna",
     "core"

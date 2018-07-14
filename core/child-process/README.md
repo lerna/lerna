@@ -1,8 +1,7 @@
 # `@lerna/child-process`
 
-> description TODO
+> Lerna's internal child_process wrapper
 
 ## Usage
 
-TODO
-
+You probably shouldn't.
