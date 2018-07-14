@@ -1,7 +1,7 @@
 {
   "name": "@lerna/symlink-dependencies",
   "version": "3.0.0-beta.17",
-  "description": "TODO",
+  "description": "Lerna's internal symlinking tool",
   "keywords": [
     "lerna",
     "utils"

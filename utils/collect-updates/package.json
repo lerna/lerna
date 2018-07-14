@@ -1,7 +1,7 @@
 {
   "name": "@lerna/collect-updates",
   "version": "3.0.0-beta.21",
-  "description": "TODO",
+  "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
     "utils"
