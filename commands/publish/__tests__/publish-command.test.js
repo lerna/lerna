@@ -24,6 +24,7 @@ const gitAdd = require("@lerna-test/git-add");
 const gitTag = require("@lerna-test/git-tag");
 const gitCommit = require("@lerna-test/git-commit");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
+
 const showCommit = require("@lerna-test/show-commit");
 const getCommitMessage = require("@lerna-test/get-commit-message");
 
