@@ -1,9 +1,8 @@
 "use strict";
 
 const execa = require("execa");
-const isAnythingCommited = require("../lib/is-anything-commited");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const initFixtureWithoutCommits = require("@lerna-test/init-fixture")(__dirname, true);
+const isAnythingCommited = require("../lib/is-anything-commited");
 
 test("isAnythingCommited", async () => {
   const cwd = await initFixture("root-manifest-only");
@@ -12,7 +11,7 @@ test("isAnythingCommited", async () => {
 });
 
 test("isAnythingCommited without and with a commit", async () => {
-  const cwd = await initFixtureWithoutCommits("root-manifest-only");
+  const cwd = await initFixture("root-manifest-only", false);
 
   expect(isAnythingCommited({ cwd })).toBe(false);
 
