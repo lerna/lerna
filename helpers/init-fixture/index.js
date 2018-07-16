@@ -8,24 +8,19 @@ const gitInit = require("@lerna-test/git-init");
 
 module.exports = initFixture;
 
-function initFixture(startDir, skipCommit) {
+function initFixture(startDir) {
   return (fixtureName, commitMessage = "Init commit") => {
     const cwd = tempy.directory();
+    let chain = Promise.resolve();
 
-    if (skipCommit) {
-      return Promise.resolve()
-        .then(() => process.chdir(cwd))
-        .then(() => copyFixture(cwd, fixtureName, startDir))
-        .then(() => gitInit(cwd, "."))
-        .then(() => cwd);
+    chain = chain.then(() => process.chdir(cwd));
+    chain = chain.then(() => copyFixture(cwd, fixtureName, startDir));
+    chain = chain.then(() => gitInit(cwd, "."));
+
+    if (commitMessage) {
+      chain = chain.then(() => gitAdd(cwd, "-A"));
+      chain = chain.then(() => gitCommit(cwd, commitMessage));
     }
 
-    return Promise.resolve()
-      .then(() => process.chdir(cwd))
-      .then(() => copyFixture(cwd, fixtureName, startDir))
-      .then(() => gitInit(cwd, "."))
-      .then(() => gitAdd(cwd, "-A"))
-      .then(() => gitCommit(cwd, commitMessage))
-      .then(() => cwd);
-  };
+    return chain.then(() => cwd);
 }
