@@ -1,7 +1,7 @@
 "use strict";
 
-const getCurrentBranch = require("../lib/get-current-branch");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const getCurrentBranch = require("../lib/get-current-branch");
 
 test("getCurrentBranch", async () => {
   const cwd = await initFixture("root-manifest-only");
