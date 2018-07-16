@@ -2,15 +2,16 @@
 
 module.exports = globalOptions;
 
-function globalOptions(yargs) {
+function globalOptions(yargs, { ci = false, loglevel = "info", progress = true }) {
   // the global options applicable to _every_ command
   const opts = {
     loglevel: {
-      defaultDescription: "info",
+      default: loglevel,
       describe: "What level of logs to report.",
       type: "string",
     },
     concurrency: {
+      defaultDescription: "4",
       describe: "How many processes to use when lerna parallelizes tasks.",
       type: "number",
       requiresArg: true,
@@ -20,12 +21,12 @@ function globalOptions(yargs) {
       type: "boolean",
     },
     progress: {
-      defaultDescription: "true",
+      default: !ci && progress,
       describe: "Enable progress bars. Pass --no-progress to disable. (Always off in CI)",
       type: "boolean",
     },
     sort: {
-      defaultDescription: "true",
+      default: true,
       describe: "Sort packages topologically (all dependencies before dependents).",
       type: "boolean",
     },
@@ -43,7 +44,7 @@ function globalOptions(yargs) {
     .options(opts)
     .group(globalKeys, "Global Options:")
     .option("ci", {
-      // set in core/cli via .config()
+      default: ci,
       hidden: true,
       type: "boolean",
     });

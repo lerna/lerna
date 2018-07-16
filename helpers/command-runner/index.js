@@ -30,7 +30,7 @@ function commandRunner(commandModule) {
       .wrap(null)
       .command(commandModule);
 
-    globalOptions(cli);
+    globalOptions(cli, { loglevel: "silent", progress: false });
 
     return (...args) =>
       new Promise((resolve, reject) => {
