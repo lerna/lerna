@@ -21,7 +21,8 @@ const matchBinaryLinks = () => (pkgRef, raw) => {
       ? inputs.reduce((acc, input) => [...acc, input, [input, "cmd"].join(".")], [])
       : inputs;
 
-  const expectation = `expected ${pkg.name} to link to ${links.join(", ")}`;
+  const expectedName = `expected ${pkg.name}`;
+  const expectedAction = `to link to ${links.join(", ")}`;
 
   let found;
 
@@ -29,7 +30,10 @@ const matchBinaryLinks = () => (pkgRef, raw) => {
     found = fs.readdirSync(pkg.binLocation);
   } catch (err) {
     if (links.length === 0 && err.code === "ENOENT") {
-      return { message: "expected no binary links", pass: true };
+      return {
+        message: () => `${expectedName} to have binary links`,
+        pass: true,
+      };
     }
 
     throw err;
@@ -40,7 +44,8 @@ const matchBinaryLinks = () => (pkgRef, raw) => {
 
   if (missing.length > 0 || superfluous.length > 0) {
     const message = [
-      expectation,
+      expectedName,
+      expectedAction,
       missing.length > 0 ? `missing: ${missing.join(", ")}` : "",
       superfluous.length > 0 ? `superfluous: ${superfluous.join(", ")}` : "",
     ]
@@ -48,28 +53,31 @@ const matchBinaryLinks = () => (pkgRef, raw) => {
       .join("\n");
 
     return {
-      message,
+      message: () => message,
       pass: false,
     };
   }
 
   return {
-    message: expectation,
+    message: () => `${expectedName} not ${expectedAction}`,
     pass: true,
   };
 };
 
-const matchDependency = dependencyType => (manifest, pkg, range) => {
+const matchDependency = dependencyType => (manifest, pkg, range, options) => {
   const noDeps = typeof manifest[dependencyType] !== "object";
   const id = [pkg, range].filter(Boolean).join("@");
   const verb = dependencyType === "dependencies" ? "depend" : "dev-depend";
+  const exact = options && options.exact;
 
-  const expectation = `expected ${manifest.name} to ${verb} on ${id}`;
+  const expectedName = `expected ${manifest.name}`;
+  const expectedAction = `to ${verb} on ${id}`;
+  const expectation = `${expectedName} ${expectedAction}`;
   const json = JSON.stringify(manifest[dependencyType], null, "  ");
 
   if (noDeps) {
     return {
-      message: `${expectation} but no .${dependencyType} specified`,
+      message: () => `${expectation} but no .${dependencyType} specified`,
       pass: false,
     };
   }
@@ -78,7 +86,7 @@ const matchDependency = dependencyType => (manifest, pkg, range) => {
 
   if (missingDep) {
     return {
-      message: `${expectation} but it is missing from .${dependencyType}\n${json}`,
+      message: () => `${expectation} but it is missing from .${dependencyType}\n${json}`,
       pass: false,
     };
   }
@@ -88,13 +96,30 @@ const matchDependency = dependencyType => (manifest, pkg, range) => {
 
   if (mismatchedDep) {
     return {
-      message: `${expectation} but ${version} does not satisfy ${range}\n${json}`,
+      message: () => `${expectation} but ${version} does not satisfy ${range}\n${json}`,
       pass: false,
     };
   }
 
+  if (exact) {
+    if (!semver.valid(version)) {
+      return {
+        message: () => `${expectation} but ${version} is not an exact version\n${json}`,
+        pass: false,
+      };
+    }
+
+    // semver.eq will throw a TypeError if range is not a valid exact version
+    if (!semver.eq(version, range)) {
+      return {
+        message: () => `${expectation} but ${version} is not ${range}\n${json}`,
+        pass: false,
+      };
+    }
+  }
+
   return {
-    message: expectation,
+    message: () => `${expectedName} not ${expectedAction}`,
     pass: true,
   };
 };
@@ -104,8 +129,9 @@ const X_OK = (fs.constants || fs).X_OK;
 
 const matchExecutableFile = () => (pkgRef, raw) => {
   const files = Array.isArray(raw) ? raw : [raw];
-  const expectation = `expected ${files.join(", ")} to be executable`;
-
+  const expectedFiles = `expected ${files.join(", ")}`;
+  const expectedAction = "to be executable";
+  const expectation = `${expectedFiles} ${expectedAction}`;
   const pkg = toPackage(pkgRef);
 
   const failed = files.filter(file => {
@@ -120,11 +146,11 @@ const matchExecutableFile = () => (pkgRef, raw) => {
   const verb = failed.length > 1 ? "were" : "was";
 
   const message = pass
-    ? expectation
+    ? `${expectedFiles} not ${expectedAction}`
     : `${expectation} while ${failed.join(", ")} ${verb} found to be not executable.`;
 
   return {
-    message,
+    message: () => message,
     pass,
   };
 };

@@ -5,7 +5,7 @@
 ## Usage
 
 ```sh
-$ lerna add <package>[@version] [--dev]
+$ lerna add <package>[@version] [--dev] [--exact]
 ```
 
 Add local or remote `package` as dependency to packages in the current Lerna repo.
@@ -24,6 +24,14 @@ If no `version` specifier is provided, it defaults to the `latest` dist-tag, jus
 ### `--dev`
 
 Add the new package to `devDependencies` instead of `dependencies`.
+
+### --exact
+
+```sh
+$ lerna add --exact
+```
+
+Add the new package with an exact version (e.g., `1.0.1`) rather than the default `^` semver range (e.g., `^1.0.1`).
 
 ## Examples
 
