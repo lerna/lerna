@@ -50,10 +50,26 @@ Map {
 
 exports[`publish --canary --independent: npm published 1`] = `
 Map {
-  "package-1" => "canary",
-  "package-3" => "canary",
-  "package-4" => "canary",
-  "package-2" => "canary",
+  "package-1" => Object {
+    "licenseBasename": undefined,
+    "licenseText": undefined,
+    "tag": "canary",
+  },
+  "package-3" => Object {
+    "licenseBasename": undefined,
+    "licenseText": undefined,
+    "tag": "canary",
+  },
+  "package-4" => Object {
+    "licenseBasename": undefined,
+    "licenseText": undefined,
+    "tag": "canary",
+  },
+  "package-2" => Object {
+    "licenseBasename": undefined,
+    "licenseText": undefined,
+    "tag": "canary",
+  },
 }
 `;
 
@@ -194,10 +210,26 @@ Map {
 
 exports[`publish --canary: npm published 1`] = `
 Map {
-  "package-1" => "canary",
-  "package-3" => "canary",
-  "package-4" => "canary",
-  "package-2" => "canary",
+  "package-1" => Object {
+    "licenseBasename": undefined,
+    "licenseText": undefined,
+    "tag": "canary",
+  },
+  "package-3" => Object {
+    "licenseBasename": undefined,
+    "licenseText": undefined,
+    "tag": "canary",
+  },
+  "package-4" => Object {
+    "licenseBasename": undefined,
+    "licenseText": undefined,
+    "tag": "canary",
+  },
+  "package-2" => Object {
+    "licenseBasename": undefined,
+    "licenseText": undefined,
+    "tag": "canary",
+  },
 }
 `;
 

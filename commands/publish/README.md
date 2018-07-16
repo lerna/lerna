@@ -21,7 +21,8 @@ More specifically, this command will:
 3. Update the `package.json` of all updated packages to their new versions.
 4. Update all dependencies of the updated packages with the new versions, specified with a [caret (^)](https://docs.npmjs.com/files/package.json#dependencies).
 5. Create a new git commit and tag for the new version.
-6. Publish updated packages to npm.
+6. Make sure the updated packages contain license files before publishing. Use root license file if the packages do not contain their own.
+7. Publish updated packages to npm.
 
 > Lerna won't publish packages which are marked as private (`"private": true` in the `package.json`).
 

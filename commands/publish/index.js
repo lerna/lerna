@@ -24,8 +24,11 @@ const batchPackages = require("@lerna/batch-packages");
 const runParallelBatches = require("@lerna/run-parallel-batches");
 const ValidationError = require("@lerna/validation-error");
 
+const createTempLicenses = require("./lib/create-temp-licenses");
 const getCurrentBranch = require("./lib/get-current-branch");
 const getCurrentSHA = require("./lib/get-current-sha");
+const getLicensePath = require("./lib/get-license-path");
+const getPackagesWithoutLicense = require("./lib/get-packages-without-license");
 const getShortSHA = require("./lib/get-short-sha");
 const gitAdd = require("./lib/git-add");
 const gitCheckout = require("./lib/git-checkout");
@@ -35,6 +38,8 @@ const gitTag = require("./lib/git-tag");
 const isBehindUpstream = require("./lib/is-behind-upstream");
 const isBreakingChange = require("./lib/is-breaking-change");
 const isAnythingCommited = require("./lib/is-anything-committed");
+const removeTempLicenses = require("./lib/remove-temp-licenses");
+const removeTempLicensesSync = require("./lib/remove-temp-licenses-sync");
 
 module.exports = factory;
 
@@ -144,6 +149,7 @@ class PublishCommand extends Command {
       : [this.packagesToPublish];
 
     const tasks = [
+      // versions
       () => this.getVersionsForUpdates(),
       versions => {
         if (
@@ -175,6 +181,26 @@ class PublishCommand extends Command {
         }
       },
       () => this.confirmVersions(),
+
+      // licenses
+      () => getLicensePath(this.project.manifest.location),
+      licensePath => {
+        this.licensePath = licensePath;
+      },
+      () => getPackagesWithoutLicense(this.updates.map(({ pkg }) => pkg)),
+      packagesWithoutLicense => {
+        if (packagesWithoutLicense.length && !this.licensePath) {
+          this.packagesToBeLicensed = [];
+          this.logger.warn(
+            "ENOLICENSE",
+            `Packages ${packagesWithoutLicense
+              .map(pkg => pkg.name)
+              .join(", ")} are missing a LICENSE file with full license text`
+          );
+        } else {
+          this.packagesToBeLicensed = packagesWithoutLicense;
+        }
+      },
     ];
 
     return pWaterfall(tasks);
@@ -631,6 +657,19 @@ class PublishCommand extends Command {
       .then(() => this.runPackageLifecycle(pkg, "prepublishOnly"));
   }
 
+  removeTempLicensesOnError(error) {
+    try {
+      removeTempLicensesSync(this.packagesToBeLicensed);
+    } catch (removeError) {
+      this.logger.error(
+        "licenses",
+        "error removing temporary license files",
+        removeError.stack || removeError
+      );
+    }
+    throw error;
+  }
+
   npmPublish() {
     const tracker = this.logger.newItem("npmPublish");
     // if we skip temp tags we should tag with the proper value immediately
@@ -639,6 +678,7 @@ class PublishCommand extends Command {
 
     let chain = Promise.resolve();
 
+    chain = chain.then(() => createTempLicenses(this.licensePath, this.packagesToBeLicensed));
     chain = chain.then(() => this.runPrepublishScripts(rootPkg));
     chain = chain.then(() =>
       pMap(this.updates, ({ pkg }) => {
@@ -665,7 +705,9 @@ class PublishCommand extends Command {
 
     chain = chain.then(() => runParallelBatches(this.batchedPackages, this.concurrency, mapPackage));
     chain = chain.then(() => this.runPackageLifecycle(rootPkg, "postpublish"));
+    chain = chain.then(() => removeTempLicenses(this.packagesToBeLicensed));
 
+    chain = chain.catch(error => this.removeTempLicensesOnError(error));
     return pFinally(chain, () => tracker.finish());
   }
 
