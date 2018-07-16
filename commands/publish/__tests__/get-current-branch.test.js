@@ -2,7 +2,6 @@
 
 const getCurrentBranch = require("../lib/get-current-branch");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const initFixtureWithoutCommits = require("@lerna-test/init-fixture")(__dirname, true);
 
 test("getCurrentBranch", async () => {
   const cwd = await initFixture("root-manifest-only");
@@ -11,7 +10,7 @@ test("getCurrentBranch", async () => {
 });
 
 test("getCurrentBranch without commit", async () => {
-  const cwd = await initFixtureWithoutCommits("root-manifest-only");
+  const cwd = await initFixture("root-manifest-only", false);
   expect.assertions(1);
   try {
     await getCurrentBranch({ cwd });
