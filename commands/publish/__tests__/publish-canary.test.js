@@ -5,6 +5,7 @@ jest.unmock("@lerna/collect-updates");
 
 // local modules _must_ be explicitly mocked
 jest.mock("../lib/git-push");
+jest.mock("../lib/is-anything-committed");
 jest.mock("../lib/is-behind-upstream");
 
 const fs = require("fs-extra");

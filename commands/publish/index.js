@@ -34,7 +34,7 @@ const gitPush = require("./lib/git-push");
 const gitTag = require("./lib/git-tag");
 const isBehindUpstream = require("./lib/is-behind-upstream");
 const isBreakingChange = require("./lib/is-breaking-change");
-const isAnythingCommited = require("./lib/is-anything-commited");
+const isAnythingCommited = require("./lib/is-anything-committed");
 
 module.exports = factory;
 

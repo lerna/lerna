@@ -2,6 +2,7 @@
 
 // local modules _must_ be explicitly mocked
 jest.mock("../lib/git-push");
+jest.mock("../lib/is-anything-committed");
 jest.mock("../lib/is-behind-upstream");
 
 const fs = require("fs-extra");
@@ -16,6 +17,7 @@ const npmPublish = require("@lerna/npm-publish");
 const collectUpdates = require("@lerna/collect-updates");
 const output = require("@lerna/output");
 const gitPush = require("../lib/git-push");
+const isAnythingCommitted = require("../lib/is-anything-committed");
 const isBehindUpstream = require("../lib/is-behind-upstream");
 
 // helpers
@@ -228,6 +230,9 @@ describe("PublishCommand", () => {
   it("exists with an error when no commits are present", async () => {
     expect.assertions(2);
     const testDir = await initFixture("normal", false);
+
+    isAnythingCommitted.mockReturnValueOnce(false);
+
     try {
       await lernaPublish(testDir)();
     } catch (err) {
