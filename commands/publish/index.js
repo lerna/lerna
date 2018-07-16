@@ -43,20 +43,6 @@ function factory(argv) {
 }
 
 class PublishCommand extends Command {
-  get defaultOptions() {
-    return Object.assign({}, super.defaultOptions, {
-      conventionalCommits: false,
-      exact: false,
-      ignoreChanges: [],
-      skipGit: false,
-      skipNpm: false,
-      tempTag: false,
-      yes: false,
-      allowBranch: false,
-      amend: false,
-    });
-  }
-
   initialize() {
     this.gitRemote = this.options.gitRemote || "origin";
     this.gitEnabled = !(this.options.canary || this.options.skipGit);

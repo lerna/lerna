@@ -337,14 +337,6 @@ describe("core-command", () => {
     class TestACommand extends Command {}
     class TestBCommand extends Command {}
     class TestCCommand extends Command {
-      get defaultOptions() {
-        return {
-          testOption: "a",
-          testOption2: "a",
-          testOption3: "a",
-        };
-      }
-
       get otherCommandConfigs() {
         return ["testb"];
       }
@@ -398,19 +390,6 @@ describe("core-command", () => {
       await instance;
 
       expect(instance.options.testOption).toBe("b");
-    });
-
-    it("should merge flags with defaultOptions", async () => {
-      const instance = new TestCCommand({
-        cwd: testDir,
-        onRejected,
-        testOption: "b",
-      });
-      await instance;
-
-      expect(instance.options.testOption).toBe("b");
-      expect(instance.options.testOption2).toBe("c");
-      expect(instance.options.testOption3).toBe("a");
     });
   });
 

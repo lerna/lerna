@@ -95,14 +95,6 @@ class Command {
     return [];
   }
 
-  get defaultOptions() {
-    return {
-      concurrency: DEFAULT_CONCURRENCY,
-      progress: true,
-      sort: true,
-    };
-  }
-
   configureOptions() {
     // Command config object normalized to "command" namespace
     const commandConfig = this.project.config.command || {};
@@ -117,9 +109,7 @@ class Command {
       // Namespaced command options from `lerna.json`
       ...overrides,
       // Global options from `lerna.json`
-      this.project.config,
-      // Command specific defaults
-      this.defaultOptions
+      this.project.config
     );
   }
 

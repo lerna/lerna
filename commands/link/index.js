@@ -18,12 +18,6 @@ class LinkCommand extends Command {
     return false;
   }
 
-  get defaultOptions() {
-    return Object.assign({}, super.defaultOptions, {
-      forceLocal: false,
-    });
-  }
-
   initialize() {
     let graph = this.packageGraph;
 

@@ -17,14 +17,6 @@ class ExecCommand extends Command {
     return false;
   }
 
-  get defaultOptions() {
-    return Object.assign({}, super.defaultOptions, {
-      bail: true,
-      parallel: false,
-      prefix: true,
-    });
-  }
-
   initialize() {
     const dashedArgs = this.options["--"] || [];
 
@@ -34,6 +26,10 @@ class ExecCommand extends Command {
     if (!this.command) {
       throw new ValidationError("ENOCOMMAND", "A command to execute is required");
     }
+
+    // inverted boolean options
+    this.bail = this.options.bail !== false;
+    this.prefix = this.options.prefix !== false;
 
     // accessing properties of process.env can be expensive,
     // so cache it here to reduce churn during tighter loops
@@ -65,7 +61,7 @@ class ExecCommand extends Command {
         LERNA_PACKAGE_NAME: pkg.name,
         LERNA_ROOT_PATH: this.project.rootPath,
       }),
-      reject: this.options.bail,
+      reject: this.bail,
       pkg,
     };
   }
@@ -86,7 +82,7 @@ class ExecCommand extends Command {
       this.command,
       this.args,
       this.getOpts(pkg),
-      this.options.prefix && pkg.name
+      this.prefix && pkg.name
     );
   }
 

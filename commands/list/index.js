@@ -17,12 +17,6 @@ class ListCommand extends Command {
     return false;
   }
 
-  get defaultOptions() {
-    return Object.assign({}, super.defaultOptions, {
-      json: false,
-    });
-  }
-
   initialize() {
     this.resultList = this.filteredPackages.map(pkg => ({
       name: pkg.name,

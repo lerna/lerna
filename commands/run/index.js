@@ -20,15 +20,6 @@ class RunCommand extends Command {
     return false;
   }
 
-  get defaultOptions() {
-    return Object.assign({}, super.defaultOptions, {
-      bail: true,
-      parallel: false,
-      prefix: true,
-      stream: false,
-    });
-  }
-
   initialize() {
     const { script, npmClient = "npm" } = this.options;
 
@@ -39,6 +30,10 @@ class RunCommand extends Command {
     if (!script) {
       throw new ValidationError("ENOSCRIPT", "You must specify a lifecycle script to run");
     }
+
+    // inverted boolean options
+    this.bail = this.options.bail !== false;
+    this.prefix = this.options.prefix !== false;
 
     if (script === "env") {
       this.packagesWithScript = this.filteredPackages;
@@ -77,8 +72,8 @@ class RunCommand extends Command {
     return {
       args: this.args,
       npmClient: this.npmClient,
-      prefix: this.options.prefix,
-      reject: this.options.bail,
+      prefix: this.prefix,
+      reject: this.bail,
       pkg,
     };
   }

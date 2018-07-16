@@ -17,12 +17,6 @@ class ChangedCommand extends Command {
     return ["publish"];
   }
 
-  get defaultOptions() {
-    return Object.assign({}, super.defaultOptions, {
-      json: false,
-    });
-  }
-
   initialize() {
     this.updates = collectUpdates(this);
 

@@ -15,13 +15,6 @@ function factory(argv) {
 }
 
 class InitCommand extends Command {
-  get defaultOptions() {
-    return {
-      exact: false,
-      independent: false,
-    };
-  }
-
   get requiresGit() {
     return false;
   }
