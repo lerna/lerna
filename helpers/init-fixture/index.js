@@ -23,4 +23,5 @@ function initFixture(startDir) {
     }
 
     return chain.then(() => cwd);
+  };
 }
