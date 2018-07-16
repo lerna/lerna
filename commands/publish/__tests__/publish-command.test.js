@@ -24,7 +24,6 @@ const gitAdd = require("@lerna-test/git-add");
 const gitTag = require("@lerna-test/git-tag");
 const gitCommit = require("@lerna-test/git-commit");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const initFixtureWithoutCommits = require("@lerna-test/init-fixture")(__dirname, true);
 const showCommit = require("@lerna-test/show-commit");
 const getCommitMessage = require("@lerna-test/get-commit-message");
 
@@ -228,7 +227,7 @@ describe("PublishCommand", () => {
 
   it("exists with an error when no commits are present", async () => {
     expect.assertions(2);
-    const testDir = await initFixtureWithoutCommits("normal");
+    const testDir = await initFixture("normal", false);
     try {
       await lernaPublish(testDir)();
     } catch (err) {
