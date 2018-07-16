@@ -2,6 +2,8 @@
 
 > Options for lerna sub-commands that need filtering
 
+## Options
+
 ### `--scope <glob>`
 
 Include only packages with names matching the given glob.
@@ -61,6 +63,6 @@ $ lerna bootstrap --scope my-component --include-filtered-dependencies
 
 ```sh
 $ lerna bootstrap --scope "package-*" --ignore "package-util-*" --include-filtered-dependencies
-# all package-util's will be ignored unless they are depended upon by a
-# package matched by "package-*"
+# all packages matching "package-util-*" will be ignored unless they are
+# depended upon by a package whose name matches "package-*"
 ```

@@ -2,7 +2,9 @@
 
 > Global options applicable to _every_ lerna sub-command
 
-### --concurrency
+## Options
+
+### `--concurrency`
 
 How many threads to use when Lerna parallelizes the tasks (defaults to `4`)
 
@@ -10,20 +12,20 @@ How many threads to use when Lerna parallelizes the tasks (defaults to `4`)
 $ lerna publish --concurrency 1
 ```
 
-### --loglevel [silent|error|warn|success|info|verbose|silly]
+### `--loglevel <silent|error|warn|success|info|verbose|silly>`
 
 What level of logs to report. On failure, all logs are written to lerna-debug.log in the current working directory.
 
 Any logs of a higher level than the setting are shown. The default is "info".
 
-### --max-buffer [in-bytes]
+### `--max-buffer <bytes>`
 
 Set a max buffer length for each underlying process call. Useful for example
 when someone wants to import a repo with a larger amount of commits while
 running `lerna import`. In that case the built-in buffer length might not
 be sufficient.
 
-### --no-sort
+### `--no-sort`
 
 By default, all tasks execute on packages in topologically sorted order as to respect the dependency relationships of the packages in question. Cycles are broken on a best-effort basis in a way not guaranteed to be consistent across Lerna invocations.
 
@@ -31,7 +33,7 @@ Topological sorting can cause concurrency bottlenecks if there are a small numbe
 
 This option can also help if you run multiple "watch" commands. Since `lerna run` will execute commands in topologically sorted order, it can end up waiting for a command before moving on. This will block execution when you run "watch" commands, since they typically never end. An example of a "watch" command is [running `babel` with the `--watch` CLI flag](https://babeljs.io/docs/usage/cli/#babel-compile-files).
 
-### --reject-cycles
+### `--reject-cycles`
 
 Fail immediately if a cycle is found (in `bootstrap`, `exec`, `publish` or `run`).
 

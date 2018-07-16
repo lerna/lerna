@@ -12,6 +12,8 @@ $ lerna ls
 
 List all of the public packages in the current Lerna repo.
 
+## Options
+
 `lerna ls` respects the `--ignore` and `--scope` flags (see [Filter Flags](https://www.npmjs.com/package/@lerna/filter-options)).
 
 ### --json

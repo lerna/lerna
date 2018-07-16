@@ -15,7 +15,9 @@ Lerna determines the last git tag created and runs `git diff --name-only v6.8.1`
 **Note that configuration for the `publish` command _also_ affects the
 `changed` command. For example `command.publish.ignoreChanges`**
 
-#### --json
+## Options
+
+### `--json`
 
 ```sh
 $ lerna changed --json

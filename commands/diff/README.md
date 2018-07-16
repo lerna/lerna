@@ -5,7 +5,7 @@
 ## Usage
 
 ```sh
-$ lerna diff [package?]
+$ lerna diff [package]
 
 $ lerna diff
 # diff a specific package

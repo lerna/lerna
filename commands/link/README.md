@@ -10,7 +10,9 @@ $ lerna link
 
 Symlink together all Lerna `packages` that are dependencies of each other in the current Lerna repo.
 
-### --force-local
+## Options
+
+### `--force-local`
 
 ```sh
 $ lerna link --force-local

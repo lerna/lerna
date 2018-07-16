@@ -27,7 +27,9 @@ lerna info Creating lerna.json
 lerna success Initialized Lerna files
 ```
 
-### --independent, -i
+## Options
+
+### `--independent`
 
 ```sh
 $ lerna init --independent
@@ -35,7 +37,7 @@ $ lerna init --independent
 
 This flag tells Lerna to use independent versioning mode.
 
-### --exact
+### `--exact`
 
 ```sh
 $ lerna init --exact

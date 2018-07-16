@@ -87,7 +87,9 @@ The `--ignore` flag, when used with the `bootstrap` command, can also be set in 
 > Hint: The glob is matched against the package name defined in `package.json`,
 > not the directory name the package lives in.
 
-### --ignore-scripts
+## Options
+
+### `--ignore-scripts`
 
 Skip any lifecycle scripts normally run (`prepare`, etc) in bootstrapped packages.
 
@@ -95,7 +97,7 @@ Skip any lifecycle scripts normally run (`prepare`, etc) in bootstrapped package
 $ lerna bootstrap --ignore-scripts
 ```
 
-#### --registry [registry]
+### `--registry <url>`
 
 When run with this flag, forwarded npm commands will use the specified registry for your package(s).
 
@@ -103,9 +105,10 @@ This is useful if you do not want to explicitly set up your registry
 configuration in all of your package.json files individually when e.g. using
 private registries.
 
-### --npm-client [client]
+### `--npm-client <client>`
 
 Must be an executable that knows how to install npm package dependencies.
+The default `--npm-client` is `npm`.
 
 ```sh
 $ lerna bootstrap --npm-client=yarn
@@ -120,7 +123,7 @@ May also be configured in `lerna.json`:
 }
 ```
 
-### --use-workspaces
+### `--use-workspaces`
 
 Enables integration with [Yarn Workspaces](https://github.com/yarnpkg/rfcs/blob/master/implemented/0000-workspaces-install-phase-1.md) (available since yarn@0.27+).
 The values in the array are the commands in which Lerna will delegate operation to Yarn (currently only bootstrapping).
@@ -150,9 +153,21 @@ The root-level package.json must also include a `workspaces` array:
 This list is broadly similar to lerna's `packages` config (a list of globs matching directories with a package.json),
 except it does not support recursive globs (`"**"`, a.k.a. "globstars").
 
-### --ci
+### `--no-ci`
 
-This runs `lerna bootstrap` with `npm ci` as opposed to `npm install`.  The specifics of this command can be found in the NPM documentation [here](https://docs.npmjs.com/cli/ci)
+When using the default `--npm-client`, `lerna bootstrap` will call [`npm ci`](https://docs.npmjs.com/cli/ci) instead of `npm install` in CI environments.
+To disable this behavior, pass `--no-ci`:
+
+```sh
+$ lerna bootstrap --no-ci
+```
+
+To _force_ it during a local install (where it is not automatically enabled), pass `--ci`:
+```sh
+$ lerna bootstrap --ci
+```
+
+This can be useful for "clean" re-installs, or initial installations after fresh cloning.
 
 ## How It Works
 

@@ -16,7 +16,7 @@ Creates a new git commit/tag in the process of publishing to npm.
 
 More specifically, this command will:
 
-1. Run the equivalent of `lerna updated` to determine which packages need to be published.
+1. Run the equivalent of `lerna changed` to determine which packages need to be published.
 2. If necessary, increment the `version` key in `lerna.json`.
 3. Update the `package.json` of all updated packages to their new versions.
 4. Update all dependencies of the updated packages with the new versions, specified with a [caret (^)](https://docs.npmjs.com/files/package.json#dependencies).
@@ -33,7 +33,9 @@ More specifically, this command will:
   }
 ```
 
-### --exact
+## Options
+
+### `--exact`
 
 ```sh
 $ lerna publish --exact
@@ -43,7 +45,7 @@ When run with this flag, `publish` will specify updated dependencies in updated 
 
 For more information, see the package.json [dependencies](https://docs.npmjs.com/files/package.json#dependencies) documentation.
 
-#### --registry [registry]
+### `--registry <url>`
 
 When run with this flag, forwarded npm commands will use the specified registry for your package(s).
 
@@ -51,9 +53,10 @@ This is useful if you do not want to explicitly set up your registry
 configuration in all of your package.json files individually when e.g. using
 private registries.
 
-### --npm-client [client]
+### `--npm-client <client>`
 
 Must be an executable that knows how to publish packages to an npm registry.
+The default `--npm-client` is `npm`.
 
 ```sh
 $ lerna publish --npm-client=yarn
@@ -71,7 +74,7 @@ May also be configured in `lerna.json`:
 }
 ```
 
-### --npm-tag [tagname]
+### `--npm-tag <dist-tag>`
 
 ```sh
 $ lerna publish --npm-tag=next
@@ -84,7 +87,7 @@ This option can be used to publish a [`prerelease`](http://carrot.is/coding/npm_
 > Note: the `latest` tag is the one that is used when a user runs `npm install my-package`.
 > To install a different tag, a user can run `npm install my-package@prerelease`.
 
-### --temp-tag
+### `--temp-tag`
 
 When passed, this flag will alter the default publish process by first publishing
 all changed packages to a temporary dist-tag (`lerna-temp`) and then moving the
@@ -93,7 +96,7 @@ new version(s) to the default [dist-tag](https://docs.npmjs.com/cli/dist-tag) (`
 This is not generally necessary, as Lerna will publish packages in topological
 order (all dependencies before dependents) by default.
 
-### --canary, -c
+### `--canary`
 
 ```sh
 $ lerna publish --canary
@@ -104,7 +107,7 @@ When run with this flag, `publish` publishes packages in a more granular way (pe
 
 > The intended use case for this flag is a per commit level release or nightly release.
 
-### --conventional-commits
+### `--conventional-commits`
 
 ```sh
 $ lerna publish --conventional-commits
@@ -112,7 +115,7 @@ $ lerna publish --conventional-commits
 
 When run with this flag, `publish` will use the [Conventional Commits Specification](https://conventionalcommits.org/) to [determine the version bump](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-recommended-bump) and [generate CHANGELOG](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-changelog-cli)
 
-### --changelog-preset
+### `--changelog-preset`
 
 ```sh
 $ lerna publish --conventional-commits --changelog-preset angular-bitbucket
@@ -125,7 +128,7 @@ Presets are names of built-in or installable configuration for conventional chan
 Presets may be passed as the full name of the package, or the auto-expanded suffix
 (e.g., `angular` is expanded to `conventional-changelog-angular`).
 
-### --git-remote [remote]
+### `--git-remote <name>`
 
 ```sh
 $ lerna publish --git-remote upstream
@@ -133,17 +136,17 @@ $ lerna publish --git-remote upstream
 
 When run with this flag, `publish` will push the git changes to the specified remote instead of `origin`.
 
-### --skip-git
+### `--skip-git`
 
 ```sh
 $ lerna publish --skip-git
 ```
 
-When run with this flag, `publish` will publish to npm without running any of the git commands.
+When run with this flag, `publish` will publish to npm without generating a git commit, tag, or pushing changes to a remote.
 
-> Only publish to npm; skip committing, tagging, and pushing git changes (this only affects publish).
+> NOTE: This option **does not** restrict _all_ git commands from being executed. `git` is still required by `lerna publish`.
 
-### --skip-npm
+### `--skip-npm`
 
 ```sh
 $ lerna publish --skip-npm
@@ -156,21 +159,21 @@ packages to npm.
 This flag can be combined with `--skip-git` to _just_ update versions and
 dependencies, without committing, tagging, pushing or publishing.
 
-> Only update versions and dependencies; don't actually publish (this only affects publish).
-
-### --force-publish [packages]
+### `--force-publish [package-names-or-globs]`
 
 ```sh
 $ lerna publish --force-publish=package-2,package-4
 # force publish all packages
 $ lerna publish --force-publish=*
+# same as previous
+$ lerna publish --force-publish
 ```
 
 When run with this flag, `publish` will force publish the specified packages (comma-separated) or all packages using `*`.
 
-> This will skip the `lerna updated` check for changed packages and forces a package that didn't have a `git diff` change to be updated.
+> This will skip the `lerna changed` check for changed packages and forces a package that didn't have a `git diff` change to be updated.
 
-### --yes
+### `--yes`
 
 ```sh
 $ lerna publish --canary --yes
@@ -180,7 +183,7 @@ $ lerna publish --canary --yes
 When run with this flag, `publish` will skip all confirmation prompts.
 Useful in [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous_integration) to automatically answer the publish confirmation prompt.
 
-### --cd-version
+### `--cd-version`
 
 ```sh
 $ lerna publish --cd-version (major | minor | patch | premajor | preminor | prepatch | prerelease)
@@ -192,7 +195,7 @@ You must still use the `--yes` flag to avoid all prompts. This is useful when bu
 
 If you have any packages with a prerelease version number (e.g. `2.0.0-beta.3`) and you run `lerna publish` with `--cd-version` and a non-prerelease version increment (major / minor / patch), it will publish those packages in addition to the packages that have changed since the last release.
 
-### --preid
+### `--preid`
 
 ```sh
 $ lerna publish --cd-version=prerelease
@@ -208,7 +211,7 @@ When run with this flag, `lerna publish --cd-version` will
 increment `premajor`, `preminor`, `prepatch`, or `prerelease`
 versions using the specified [prerelease identifier](http://semver.org/#spec-item-9).
 
-### --repo-version
+### `--repo-version`
 
 ```sh
 $ lerna publish --repo-version 1.0.1
@@ -218,7 +221,9 @@ $ lerna publish --repo-version 1.0.1
 When run with this flag, `publish` will skip the version selection prompt and use the specified version.
 Useful for bypassing the user input prompt if you already know which version to publish.
 
-### --message, -m [msg]
+### `--message <msg>`
+
+This option is aliased to `-m` for parity with `git commit`.
 
 ```sh
 $ lerna publish -m "chore(release): publish %s"
@@ -254,24 +259,22 @@ This can be configured in lerna.json, as well:
 }
 ```
 
-### --amend
+### `--amend`
 
 ```sh
 $ lerna publish --amend
 # commit message is retained, and `git push` is skipped.
 ```
 
-When run with this flag, `publish` will perform all changes on the current commit, instead of adding a new one. This is
-useful during [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous_integration), to reduce the number
-of commits in the projects' history.
+When run with this flag, `publish` will perform all changes on the current commit, instead of adding a new one.
+This is useful during [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous_integration) to reduce the number of commits in the project's history.
 
 In order to prevent unintended overwrites, this command will skip `git push`.
 
-### --allow-branch [glob]
+### `--allow-branch <glob>`
 
-Lerna allows you to specify a glob or an array of globs in your `lerna.json` that your current branch needs to match to be publishable.
-You can use this flag to override this setting.
-If your `lerna.json` contains something like this:
+A whitelist of globs that match git branches where `lerna publish` is enabled.
+It is easiest (and recommended) to configure in `lerna.json`, but it is possible to pass as a CLI option as well.
 
 ```json
 {
@@ -283,6 +286,9 @@ If your `lerna.json` contains something like this:
 }
 ```
 
+With the configuration above, the `lerna publish` will fail when run from any branch other than `master`.
+It is considered a best-practice to limit `lerna publish` to the primary branch alone.
+
 ```json
 {
   "command": {
@@ -293,9 +299,13 @@ If your `lerna.json` contains something like this:
 }
 ```
 
-and you are not on the branch `master` lerna will prevent you from publishing. To force a publish despite this config, pass the `--allow-branch` flag:
+With the preceding configuration, `lerna publish` will be allowed in any branch prefixed with `feature/`.
+Please be aware that generating git tags in feature branches is fraught with potential errors as the branches are merged into the primary branch. If the tags are "detached" from their original context (perhaps through a squash merge or a conflicted merge commit), future `lerna publish` executions will have difficulty determining the correct "diff since last release."
+
+It is always possible to override this "durable" config on the command-line.
+Please use with caution.
 
 ```sh
-$ lerna publish --allow-branch my-new-feature
+$ lerna publish --allow-branch hotfix/oops-fix-the-thing
 ```
 

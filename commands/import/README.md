@@ -17,7 +17,9 @@ repo. Each commit is modified to make changes relative to the package
 directory. So, for example, the commit that added `package.json` will
 instead add `packages/<directory-name>/package.json`.
 
-### --flatten
+## Options
+
+### `--flatten`
 
 When importing repositories with merge commits with conflicts, the import command will fail trying to apply all commits. The user can use this flag to ask for import of "flat" history, i.e. with each merge commit as a single change the merge introduced.
 
