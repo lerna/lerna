@@ -225,6 +225,19 @@ describe("PublishCommand", () => {
     });
   });
 
+  it("exists with an error when no commits are present", async () => {
+    expect.assertions(2);
+    const testDir = await initFixture("normal", false);
+    try {
+      await lernaPublish(testDir)();
+    } catch (err) {
+      expect(err.prefix).toBe("ENOCOMMIT");
+      expect(err.message).toBe(
+        "No commits in this repository. Please commit something before using publish."
+      );
+    }
+  });
+
   it("exits with an error when git HEAD is detached", async () => {
     const cwd = await initFixture("normal-no-inter-dependencies");
 

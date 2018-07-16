@@ -8,3 +8,13 @@ test("getCurrentBranch", async () => {
 
   expect(getCurrentBranch({ cwd })).toBe("master");
 });
+
+test("getCurrentBranch without commit", async () => {
+  const cwd = await initFixture("root-manifest-only", false);
+  expect.assertions(1);
+  try {
+    await getCurrentBranch({ cwd });
+  } catch (err) {
+    expect(err.message).toMatch(/Command failed: git rev-parse --abbrev-ref HEAD.*/);
+  }
+});
