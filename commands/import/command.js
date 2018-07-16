@@ -14,10 +14,12 @@ exports.builder = yargs =>
       flatten: {
         group: "Command Options:",
         describe: "Import each merge commit as a single change the merge introduced",
+        type: "boolean",
       },
       yes: {
         group: "Command Options:",
         describe: "Skip all confirmation prompts",
+        type: "boolean",
       },
     });
 

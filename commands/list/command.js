@@ -17,7 +17,6 @@ exports.builder = yargs => {
       group: "Command Options:",
       describe: "Show information in JSON format",
       type: "boolean",
-      default: undefined,
     },
   });
 

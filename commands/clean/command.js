@@ -14,6 +14,7 @@ exports.builder = yargs => {
     yes: {
       group: "Command Options:",
       describe: "Skip all confirmation prompts",
+      type: "boolean",
     },
   });
 

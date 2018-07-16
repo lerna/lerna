@@ -42,7 +42,7 @@ exports.builder = yargs => {
       "es-module": {
         group: "Command Options:",
         describe: "Initialize a transpiled ES Module",
-        // type: "boolean",
+        type: "boolean",
       },
       homepage: {
         group: "Command Options:",
@@ -63,7 +63,7 @@ exports.builder = yargs => {
       private: {
         group: "Command Options:",
         describe: "Make the new package private, never published to any external registry",
-        // type: "boolean",
+        type: "boolean",
       },
       registry: {
         group: "Command Options:",
@@ -78,7 +78,7 @@ exports.builder = yargs => {
       yes: {
         group: "Command Options:",
         describe: "Skip all prompts, accepting default values",
-        // type: "boolean",
+        type: "boolean",
       },
     });
 

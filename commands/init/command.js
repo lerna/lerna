@@ -11,13 +11,11 @@ exports.builder = {
   exact: {
     describe: "Specify lerna dependency version in package.json without a caret (^)",
     type: "boolean",
-    default: undefined,
   },
   independent: {
     describe: "Version packages independently",
     alias: "i",
     type: "boolean",
-    default: undefined,
   },
 };
 

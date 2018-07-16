@@ -40,17 +40,14 @@ exports.builder = yargs => {
     "conventional-commits": {
       describe: "Use angular conventional-commit format to determine version bump and generate CHANGELOG.",
       type: "boolean",
-      default: undefined,
     },
     "changelog-preset": {
       describe: "Use another conventional-changelog preset rather than angular.",
       type: "string",
-      default: undefined,
     },
     exact: {
       describe: "Specify cross-dependency version numbers exactly rather than with a caret (^).",
       type: "boolean",
-      default: undefined,
     },
     "git-remote": {
       defaultDescription: "origin",
@@ -71,7 +68,6 @@ exports.builder = yargs => {
     amend: {
       describe: "Amend the existing commit, instead of generating a new one.",
       type: "boolean",
-      default: false,
     },
     "npm-tag": {
       describe: "Publish packages with the specified npm dist-tag",
@@ -101,22 +97,18 @@ exports.builder = yargs => {
     "skip-git": {
       describe: "Skip commiting, tagging, and pushing git changes.",
       type: "boolean",
-      default: undefined,
     },
     "skip-npm": {
       describe: "Stop before actually publishing change to npm.",
       type: "boolean",
-      default: undefined,
     },
     "temp-tag": {
       describe: "Create a temporary tag while publishing.",
       type: "boolean",
-      default: undefined,
     },
     yes: {
       describe: "Skip all confirmation prompts.",
       type: "boolean",
-      default: undefined,
     },
   };
 

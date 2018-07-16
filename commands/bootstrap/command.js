@@ -35,7 +35,6 @@ exports.builder = yargs => {
         group: "Command Options:",
         describe: "Don't run lifecycle scripts in bootstrapped packages",
         type: "boolean",
-        default: undefined,
       },
       "npm-client": {
         group: "Command Options:",

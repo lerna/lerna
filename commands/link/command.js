@@ -13,7 +13,6 @@ exports.builder = yargs => {
       group: "Command Options:",
       describe: "Force local sibling links regardless of version range match",
       type: "boolean",
-      default: undefined,
     },
   });
 
