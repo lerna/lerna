@@ -23,6 +23,9 @@ class ListCommand extends Command {
       version: pkg.version,
       private: pkg.private,
     }));
+
+    // logged after output
+    this.length = this.resultList.length;
   }
 
   execute() {
@@ -35,6 +38,8 @@ class ListCommand extends Command {
     }
 
     output(result);
+
+    this.logger.info("list", `found ${this.length} package${this.length === 1 ? "" : "s"}`);
   }
 
   formatJSON() {
