@@ -8,4 +8,5 @@ module.exports = {
   setupFiles: ["@lerna-test/silence-logging", "@lerna-test/set-npm-userconfig"],
   setupTestFrameworkScriptFile: "<rootDir>/setup-unit-test-timeout.js",
   testEnvironment: "node",
+  testRunner: "jest-circus/runner",
 };

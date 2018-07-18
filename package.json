@@ -60,6 +60,7 @@
     "eslint-plugin-prettier": "^2.6.2",
     "fast-async": "^6.3.7",
     "jest": "^23.4.1",
+    "jest-circus": "^23.4.1",
     "normalize-newline": "^3.0.0",
     "normalize-path": "^2.1.1",
     "path-key": "^2.0.1",
