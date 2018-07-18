@@ -341,12 +341,12 @@ describe("Project", () => {
       const licensePaths = await project.getPackageLicensePaths();
 
       expect(licensePaths).toEqual([
-        expect.stringMatching(/packages\/package-1\/LICENSE$/),
-        expect.stringMatching(/packages\/package-2\/licence$/),
-        expect.stringMatching(/packages\/package-3\/LiCeNSe$/),
-        expect.stringMatching(/packages\/package-5\/LICENCE$/),
-        // Ultimately, we do not care about duplicates, as they are weeded out elsewhere
-        expect.stringMatching(/packages\/package-5\/license$/),
+        path.join(cwd, "packages", "package-1", "LICENSE"),
+        path.join(cwd, "packages", "package-2", "licence"),
+        path.join(cwd, "packages", "package-3", "LiCeNSe"),
+        path.join(cwd, "packages", "package-5", "LICENCE"),
+        // We do not care about duplicates, they are weeded out elsewhere
+        path.join(cwd, "packages", "package-5", "license"),
       ]);
     });
   });
