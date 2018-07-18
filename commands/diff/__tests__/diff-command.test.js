@@ -3,7 +3,7 @@
 const execa = require("execa");
 const fs = require("fs-extra");
 const path = require("path");
-const collectPackages = require("@lerna/collect-packages");
+const { getPackages } = require("@lerna/project");
 
 // mocked modules
 const ChildProcessUtilities = require("@lerna/child-process");
@@ -27,7 +27,7 @@ describe("DiffCommand", () => {
 
   it("should diff packages from the first commit", async () => {
     const cwd = await initFixture("basic");
-    const [pkg1] = await collectPackages(cwd);
+    const [pkg1] = await getPackages(cwd);
     const rootReadme = path.join(cwd, "README.md");
 
     await pkg1.set("changed", 1).serialize();
@@ -41,7 +41,7 @@ describe("DiffCommand", () => {
 
   it("should diff packages from the most recent tag", async () => {
     const cwd = await initFixture("basic");
-    const [pkg1] = await collectPackages(cwd);
+    const [pkg1] = await getPackages(cwd);
 
     await pkg1.set("changed", 1).serialize();
     await gitAdd(cwd, "-A");
@@ -58,7 +58,7 @@ describe("DiffCommand", () => {
 
   it("should diff a specific package", async () => {
     const cwd = await initFixture("basic");
-    const [pkg1, pkg2] = await collectPackages(cwd);
+    const [pkg1, pkg2] = await getPackages(cwd);
 
     await pkg1.set("changed", 1).serialize();
     await pkg2.set("changed", 1).serialize();
@@ -71,7 +71,7 @@ describe("DiffCommand", () => {
 
   it("passes diff exclude globs configured with --ignored-changes", async () => {
     const cwd = await initFixture("basic");
-    const [pkg1] = await collectPackages(cwd);
+    const [pkg1] = await getPackages(cwd);
 
     await pkg1.set("changed", 1).serialize();
     await fs.outputFile(path.join(pkg1.location, "README.md"), "ignored change");

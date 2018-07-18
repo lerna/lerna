@@ -32,7 +32,6 @@
   },
   "dependencies": {
     "@lerna/child-process": "file:../child-process",
-    "@lerna/collect-packages": "file:../../utils/collect-packages",
     "@lerna/collect-updates": "file:../../utils/collect-updates",
     "@lerna/filter-packages": "file:../../utils/filter-packages",
     "@lerna/package-graph": "file:../package-graph",

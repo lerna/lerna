@@ -8,7 +8,6 @@ const log = require("npmlog");
 const PackageGraph = require("@lerna/package-graph");
 const Project = require("@lerna/project");
 const writeLogFile = require("@lerna/write-log-file");
-const collectPackages = require("@lerna/collect-packages");
 const collectUpdates = require("@lerna/collect-updates");
 const filterPackages = require("@lerna/filter-packages");
 const ValidationError = require("@lerna/validation-error");
@@ -190,16 +189,18 @@ class Command {
       log.info("versioning", "independent");
     }
 
-    const { rootPath, packageConfigs } = this.project;
-    const { scope: include, ignore: exclude } = this.options;
-
     let chain = Promise.resolve();
 
-    chain = chain.then(() => collectPackages(rootPath, packageConfigs));
+    chain = chain.then(() => this.project.getPackages());
     chain = chain.then(packages => {
       this.packages = packages;
       this.packageGraph = new PackageGraph(packages);
-      this.filteredPackages = filterPackages(packages, include, exclude, this.options.private);
+      this.filteredPackages = filterPackages(
+        packages,
+        this.options.scope,
+        this.options.ignore,
+        this.options.private
+      );
     });
 
     // collectUpdates requires that filteredPackages be present prior to checking for

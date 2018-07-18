@@ -50,9 +50,9 @@ package-5 v1.0.0 (private)"
 `;
 
 exports[`LsCommand in a repo with packages outside of packages/ should list packages 1`] = `
-"package-1 v1.0.0
-package-2 v1.0.0
-package-3 v1.0.0"
+"package-3 v1.0.0
+package-1 v1.0.0
+package-2 v1.0.0"
 `;
 
 exports[`LsCommand with --include-filtered-dependencies should list packages, including filtered ones 1`] = `
