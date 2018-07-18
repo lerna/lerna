@@ -10,8 +10,7 @@ const copyFixture = require("@lerna-test/copy-fixture");
 const CLI = path.join(__dirname, "../cli.js");
 const bin = cwd => (...args) => execa(CLI, args, { cwd });
 
-/* global jasmine */
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 30000;
+jest.setTimeout(30e3);
 
 describe("cli", () => {
   it("should throw without command", async () => {
