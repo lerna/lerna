@@ -15,7 +15,8 @@ function createTempLicenses(srcLicensePath, packagesToBeLicensed) {
   const licenseFileName = path.basename(srcLicensePath);
   const options = {
     // make an effort to keep package contents stable over time
-    preserveTimestamps: true,
+    preserveTimestamps: process.arch !== "ia32",
+    // (give up on 32-bit architecture to avoid fs-extra warning)
   };
 
   // store target path for removal later
