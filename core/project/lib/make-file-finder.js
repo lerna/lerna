@@ -4,7 +4,6 @@ const globby = require("globby");
 const pMap = require("p-map");
 const path = require("path");
 const ValidationError = require("@lerna/validation-error");
-const pathSort = require("./path-sort");
 
 module.exports = makeFileFinder;
 
@@ -33,7 +32,7 @@ function makeFileFinder(rootPath, packageConfigs) {
   return (fileName, fileMapper, customGlobOpts) => {
     const options = Object.assign({}, customGlobOpts, globOpts);
     const promise = pMap(
-      pathSort(packageConfigs),
+      packageConfigs.sort(),
       globPath => {
         let chain = globby(path.join(globPath, fileName), options);
 
@@ -56,7 +55,7 @@ function makeFileFinder(rootPath, packageConfigs) {
 }
 
 function sortNormalized(results) {
-  return pathSort(results.map(fp => path.normalize(fp)));
+  return results.sort().map(fp => path.normalize(fp));
 }
 
 function flattenResults(results) {
