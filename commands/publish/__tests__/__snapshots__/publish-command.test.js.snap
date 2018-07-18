@@ -75,26 +75,10 @@ Successfully published:
 
 exports[`PublishCommand independent mode publishes changed packages: npm published 1`] = `
 Map {
-  "package-1" => Object {
-    "licenseBasename": undefined,
-    "licenseText": undefined,
-    "tag": undefined,
-  },
-  "package-3" => Object {
-    "licenseBasename": undefined,
-    "licenseText": undefined,
-    "tag": undefined,
-  },
-  "package-4" => Object {
-    "licenseBasename": undefined,
-    "licenseText": undefined,
-    "tag": undefined,
-  },
-  "package-2" => Object {
-    "licenseBasename": undefined,
-    "licenseText": undefined,
-    "tag": undefined,
-  },
+  "package-1" => undefined,
+  "package-3" => undefined,
+  "package-4" => undefined,
+  "package-2" => undefined,
 }
 `;
 
@@ -259,26 +243,10 @@ Successfully published:
 
 exports[`PublishCommand normal mode publishes changed packages: npm published 1`] = `
 Map {
-  "package-1" => Object {
-    "licenseBasename": undefined,
-    "licenseText": undefined,
-    "tag": undefined,
-  },
-  "package-3" => Object {
-    "licenseBasename": undefined,
-    "licenseText": undefined,
-    "tag": undefined,
-  },
-  "package-4" => Object {
-    "licenseBasename": undefined,
-    "licenseText": undefined,
-    "tag": undefined,
-  },
-  "package-2" => Object {
-    "licenseBasename": undefined,
-    "licenseText": undefined,
-    "tag": undefined,
-  },
+  "package-1" => undefined,
+  "package-3" => undefined,
+  "package-4" => undefined,
+  "package-2" => undefined,
 }
 `;
 

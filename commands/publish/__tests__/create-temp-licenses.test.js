@@ -2,32 +2,53 @@
 
 const fs = require("fs-extra");
 const path = require("path");
-
+const Project = require("@lerna/project");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const createTempLicenses = require("../lib/create-temp-licenses");
 
-test("creates temporary copy of the source license", async () => {
-  const cwd = await initFixture("licenses");
+describe("createTempLicenses", () => {
+  it("copies root license into package location", async () => {
+    const cwd = await initFixture("licenses");
+    const project = new Project(cwd);
+    const [pkg] = await project.getPackages();
 
-  const pkg = { name: "package-1", location: path.join(cwd, "packages", "package-1") };
-  await createTempLicenses(path.join(cwd, "LICENSE"), [pkg]);
+    await createTempLicenses(project.licensePath, [pkg]);
 
-  expect(fs.exists(path.join(pkg.location, "LICENSE"))).resolves.toBe(true);
-});
+    const licenseWritten = await fs.pathExists(path.join(pkg.location, "LICENSE"));
+    expect(licenseWritten).toBe(true);
+  });
 
-test("resolves when source license path is missing", async () => {
-  const cwd = await initFixture("licenses");
+  it("copies root license with extension into package location", async () => {
+    const cwd = await initFixture("licenses");
+    const project = new Project(cwd);
+    const [pkg] = await project.getPackages();
 
-  const pkg = { name: "package-1", location: path.join(cwd, "packages", "package-1") };
-  await createTempLicenses(null, [pkg]);
+    await fs.move(path.join(cwd, "LICENSE"), path.join(cwd, "LICENSE.md"));
+    await createTempLicenses(project.licensePath, [pkg]);
 
-  expect(fs.exists(path.join(pkg.location, "LICENSE"))).resolves.toBe(false);
-});
+    const licenseWritten = await fs.pathExists(path.join(pkg.location, "LICENSE.md"));
+    expect(licenseWritten).toBe(true);
+  });
 
-test("resolves when there are no packages", async () => {
-  const cwd = await initFixture("licenses");
+  it("skips copying when root license is missing", async () => {
+    const cwd = await initFixture("licenses");
+    const project = new Project(cwd);
+    const [pkg] = await project.getPackages();
 
-  await createTempLicenses(path.join(cwd, "LICENSE"), []);
+    await createTempLicenses(undefined, [pkg]);
 
-  expect(fs.exists(path.join(cwd, "packages", "package-1", "LICENSE"))).resolves.toBe(false);
+    const licenseWritten = await fs.pathExists(path.join(pkg.location, "LICENSE"));
+    expect(licenseWritten).toBe(false);
+  });
+
+  it("skips copying when there are no packages to be licensed", async () => {
+    const cwd = await initFixture("licenses");
+    const project = new Project(cwd);
+    const [pkg] = await project.getPackages();
+
+    await createTempLicenses(project.licensePath, []);
+
+    const licenseWritten = await fs.pathExists(path.join(pkg.location, "LICENSE"));
+    expect(licenseWritten).toBe(false);
+  });
 });

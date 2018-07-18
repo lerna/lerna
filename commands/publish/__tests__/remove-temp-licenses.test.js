@@ -2,15 +2,36 @@
 
 const fs = require("fs-extra");
 const path = require("path");
-
+const Project = require("@lerna/project");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const removeTempLicenses = require("../lib/remove-temp-licenses");
 
-test("removeTempLicenses", async () => {
-  const cwd = await initFixture("licenses-names");
+describe("removeTempLicenses", () => {
+  it("removes license file from target packages", async () => {
+    const cwd = await initFixture("licenses-names");
+    const project = new Project(cwd);
+    const [pkg] = await project.getPackages();
 
-  const pkg = { name: "package-1", location: path.join(cwd, "packages", "package-1") };
-  await removeTempLicenses([pkg]);
+    // mimic decoration in createTempLicenses()
+    pkg.licensePath = path.join(pkg.location, "LICENSE");
 
-  expect(fs.exists(path.join(pkg.location, "LICENSE"))).resolves.toBe(false);
+    await removeTempLicenses([pkg]);
+
+    const tempLicensePresent = await fs.pathExists(pkg.licensePath);
+    expect(tempLicensePresent).toBe(false);
+  });
+
+  it("skips removal when no target packages exist", async () => {
+    const cwd = await initFixture("licenses-names");
+    const project = new Project(cwd);
+    const [pkg] = await project.getPackages();
+
+    // mimic decoration in createTempLicenses()
+    pkg.licensePath = path.join(pkg.location, "LICENSE");
+
+    await removeTempLicenses([]);
+
+    const licensePresent = await fs.pathExists(pkg.licensePath);
+    expect(licensePresent).toBe(true);
+  });
 });

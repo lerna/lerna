@@ -6,13 +6,22 @@ const pMap = require("p-map");
 
 module.exports = createTempLicenses;
 
-function createTempLicenses(srcLicensePath, packages) {
-  if (!srcLicensePath || !packages.length) {
+function createTempLicenses(srcLicensePath, packagesToBeLicensed) {
+  if (!srcLicensePath || !packagesToBeLicensed.length) {
     return Promise.resolve();
   }
-  return Promise.resolve()
-    .then(() => fs.readFile(srcLicensePath, { encoding: "utf8" }))
-    .then(srcLicenseText =>
-      pMap(packages, pkg => fs.writeFile(path.join(pkg.location, "LICENSE"), srcLicenseText))
-    );
+
+  // license file might have an extension, so let's allow it
+  const licenseFileName = path.basename(srcLicensePath);
+  const options = {
+    // make an effort to keep package contents stable over time
+    preserveTimestamps: true,
+  };
+
+  // store target path for removal later
+  packagesToBeLicensed.forEach(pkg => {
+    pkg.licensePath = path.join(pkg.location, licenseFileName);
+  });
+
+  return pMap(packagesToBeLicensed, pkg => fs.copy(srcLicensePath, pkg.licensePath, options));
 }

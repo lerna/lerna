@@ -1,13 +1,15 @@
 "use strict";
 
-const pMap = require("p-map");
-
-const getLicensePath = require("./get-license-path");
+const path = require("path");
 
 module.exports = getPackagesWithoutLicense;
 
-function getPackagesWithoutLicense(packages) {
-  return Promise.resolve()
-    .then(() => pMap(packages, pkg => getLicensePath(pkg.location)))
-    .then(licensePaths => packages.filter((pkg, i) => !licensePaths[i]));
+function getPackagesWithoutLicense(project, packagesToPublish) {
+  return project.getPackageLicensePaths().then(licensePaths => {
+    // this assumes any existing license is a sibling of package.json, which is pretty safe
+    // it also dedupes package locations, since we don't care about duplicate license files
+    const licensed = new Set(licensePaths.map(lp => path.dirname(lp)));
+
+    return packagesToPublish.filter(pkg => !licensed.has(pkg.location));
+  });
 }

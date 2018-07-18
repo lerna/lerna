@@ -27,7 +27,6 @@ const ValidationError = require("@lerna/validation-error");
 const createTempLicenses = require("./lib/create-temp-licenses");
 const getCurrentBranch = require("./lib/get-current-branch");
 const getCurrentSHA = require("./lib/get-current-sha");
-const getLicensePath = require("./lib/get-license-path");
 const getPackagesWithoutLicense = require("./lib/get-packages-without-license");
 const getShortSHA = require("./lib/get-short-sha");
 const gitAdd = require("./lib/git-add");
@@ -39,7 +38,6 @@ const isBehindUpstream = require("./lib/is-behind-upstream");
 const isBreakingChange = require("./lib/is-breaking-change");
 const isAnythingCommited = require("./lib/is-anything-committed");
 const removeTempLicenses = require("./lib/remove-temp-licenses");
-const removeTempLicensesSync = require("./lib/remove-temp-licenses-sync");
 
 module.exports = factory;
 
@@ -183,19 +181,13 @@ class PublishCommand extends Command {
       () => this.confirmVersions(),
 
       // licenses
-      () => getLicensePath(this.project.manifest.location),
-      licensePath => {
-        this.licensePath = licensePath;
-      },
-      () => getPackagesWithoutLicense(this.updates.map(({ pkg }) => pkg)),
+      () => getPackagesWithoutLicense(this.project, this.packagesToPublish),
       packagesWithoutLicense => {
-        if (packagesWithoutLicense.length && !this.licensePath) {
+        if (packagesWithoutLicense.length && !this.project.licensePath) {
           this.packagesToBeLicensed = [];
           this.logger.warn(
             "ENOLICENSE",
-            `Packages ${packagesWithoutLicense
-              .map(pkg => pkg.name)
-              .join(", ")} are missing a LICENSE file with full license text`
+            `Packages ${packagesWithoutLicense.map(pkg => pkg.name).join(", ")} are missing a license`
           );
         } else {
           this.packagesToBeLicensed = packagesWithoutLicense;
@@ -658,16 +650,20 @@ class PublishCommand extends Command {
   }
 
   removeTempLicensesOnError(error) {
-    try {
-      removeTempLicensesSync(this.packagesToBeLicensed);
-    } catch (removeError) {
-      this.logger.error(
-        "licenses",
-        "error removing temporary license files",
-        removeError.stack || removeError
-      );
-    }
-    throw error;
+    return Promise.resolve()
+      .then(() =>
+        removeTempLicenses(this.packagesToBeLicensed).catch(removeError => {
+          this.logger.error(
+            "licenses",
+            "error removing temporary license files",
+            removeError.stack || removeError
+          );
+        })
+      )
+      .then(() => {
+        // restore original error into promise chain
+        throw error;
+      });
   }
 
   npmPublish() {
@@ -678,7 +674,8 @@ class PublishCommand extends Command {
 
     let chain = Promise.resolve();
 
-    chain = chain.then(() => createTempLicenses(this.licensePath, this.packagesToBeLicensed));
+    chain = chain.then(() => createTempLicenses(this.project.licensePath, this.packagesToBeLicensed));
+
     chain = chain.then(() => this.runPrepublishScripts(rootPkg));
     chain = chain.then(() =>
       pMap(this.updates, ({ pkg }) => {
@@ -707,7 +704,9 @@ class PublishCommand extends Command {
     chain = chain.then(() => this.runPackageLifecycle(rootPkg, "postpublish"));
     chain = chain.then(() => removeTempLicenses(this.packagesToBeLicensed));
 
+    // remove temporary license files if _any_ error occurs _anywhere_ in the promise chain
     chain = chain.catch(error => this.removeTempLicensesOnError(error));
+
     return pFinally(chain, () => tracker.finish());
   }
 

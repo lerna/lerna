@@ -2,6 +2,7 @@
 
 const cosmiconfig = require("cosmiconfig");
 const dedent = require("dedent");
+const globby = require("globby");
 const globParent = require("glob-parent");
 const loadJsonFile = require("load-json-file");
 const log = require("npmlog");
@@ -124,6 +125,34 @@ class Project {
     return manifest;
   }
 
+  get licensePath() {
+    let licensePath;
+
+    try {
+      const search = globby.sync(Project.LICENSE_GLOB, {
+        cwd: this.rootPath,
+        absolute: true,
+        case: false,
+        // Project license is always a sibling of the root manifest
+        deep: false,
+      });
+
+      licensePath = search.shift();
+
+      if (licensePath) {
+        // redefine getter to lazy-loaded value
+        Object.defineProperty(this, "licensePath", {
+          value: licensePath,
+        });
+      }
+    } catch (err) {
+      /* istanbul ignore next */
+      throw new ValidationError(err.name, err.message);
+    }
+
+    return licensePath;
+  }
+
   get fileFinder() {
     const finder = makeFileFinder(this.rootPath, this.packageConfigs);
 
@@ -136,19 +165,16 @@ class Project {
   }
 
   getPackages() {
-    const mapper = filePath => {
-      // https://github.com/isaacs/node-glob/blob/master/common.js#L104
-      // glob always returns "\\" as "/" in windows, so everyone
-      // gets normalized because we can't have nice things.
-      const packageConfigPath = path.normalize(filePath);
-      const packageDir = path.dirname(packageConfigPath);
-
-      return loadJsonFile(packageConfigPath).then(
-        packageJson => new Package(packageJson, packageDir, this.rootPath)
+    const mapper = packageConfigPath =>
+      loadJsonFile(packageConfigPath).then(
+        packageJson => new Package(packageJson, path.dirname(packageConfigPath), this.rootPath)
       );
-    };
 
     return this.fileFinder("package.json", filePaths => pMap(filePaths, mapper, { concurrency: 50 }));
+  }
+
+  getPackageLicensePaths() {
+    return this.fileFinder(Project.LICENSE_GLOB, null, { case: false });
   }
 
   isIndependent() {
@@ -164,6 +190,7 @@ class Project {
 }
 
 Project.PACKAGE_GLOB = "packages/*";
+Project.LICENSE_GLOB = "LICEN{S,C}E{,.*}";
 
 module.exports = Project;
 module.exports.getPackages = cwd => new Project(cwd).getPackages();

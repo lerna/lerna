@@ -1,6 +1,7 @@
 "use strict";
 
 // local modules _must_ be explicitly mocked
+jest.mock("../lib/get-packages-without-license");
 jest.mock("../lib/git-push");
 jest.mock("../lib/is-anything-committed");
 jest.mock("../lib/is-behind-upstream");

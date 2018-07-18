@@ -1,6 +1,7 @@
 "use strict";
 
 // local modules _must_ be explicitly mocked
+jest.mock("../lib/get-packages-without-license");
 jest.mock("../lib/git-push");
 jest.mock("../lib/is-anything-committed");
 jest.mock("../lib/is-behind-upstream");
@@ -24,7 +25,7 @@ test("publish --npm-tag", async () => {
   await lernaPublish(cwd)("--npm-tag", "custom");
 
   expect(npmPublish.registry.size).toBe(1);
-  expect(npmPublish.registry.get("package-3").tag).toBe("custom");
+  expect(npmPublish.registry.get("package-3")).toBe("custom");
 });
 
 test("publish --temp-tag", async () => {
@@ -35,7 +36,7 @@ test("publish --temp-tag", async () => {
   await lernaPublish(cwd)("--temp-tag", "--registry", "test-registry");
 
   expect(npmPublish.registry.size).toBe(1);
-  expect(npmPublish.registry.get("package-4").tag).toBe("lerna-temp");
+  expect(npmPublish.registry.get("package-4")).toBe("lerna-temp");
 
   expect(npmDistTag.remove).lastCalledWith(
     expect.objectContaining({ name: "package-4" }),

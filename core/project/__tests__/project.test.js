@@ -284,6 +284,73 @@ describe("Project", () => {
     });
   });
 
+  describe("get .licensePath", () => {
+    it("returns path to root LICENSE", async () => {
+      const cwd = await initFixture("licenses");
+      const project = new Project(cwd);
+
+      expect(project.licensePath).toMatch(/LICENSE$/);
+    });
+
+    it("returns path to root LICENSE.md", async () => {
+      const cwd = await initFixture("licenses-missing");
+      const project = new Project(cwd);
+
+      await fs.outputFile(path.join(cwd, "LICENSE.md"), "copyright, yo", "utf8");
+
+      expect(project.licensePath).toMatch(/LICENSE\.md$/);
+    });
+
+    it("returns path to root licence.txt", async () => {
+      const cwd = await initFixture("licenses-missing");
+      const project = new Project(cwd);
+
+      await fs.outputFile(path.join(cwd, "licence.txt"), "copyright, yo", "utf8");
+
+      expect(project.licensePath).toMatch(/licence\.txt$/);
+    });
+
+    it("returns undefined when root license does not exist", async () => {
+      const cwd = await initFixture("licenses-missing");
+      const project = new Project(cwd);
+
+      expect(project.licensePath).toBeUndefined();
+    });
+
+    it("caches the first successful value", async () => {
+      const cwd = await initFixture("licenses-missing");
+      const project = new Project(cwd);
+
+      expect(project.licensePath).toBeUndefined();
+
+      await fs.outputFile(path.join(cwd, "LiCeNsE"), "copyright, yo", "utf8");
+
+      const foundPath = project.licensePath;
+      expect(foundPath).toMatch(/LiCeNsE$/);
+
+      await fs.remove(project.licensePath);
+
+      expect(project.licensePath).toBe(foundPath);
+    });
+  });
+
+  describe("getPackageLicensePaths()", () => {
+    it("returns a list of existing package license files", async () => {
+      const cwd = await initFixture("licenses-names");
+      const project = new Project(cwd);
+      const licensePaths = await project.getPackageLicensePaths();
+
+      expect(licensePaths).toEqual([
+        expect.stringMatching(/packages\/package-1\/LICENSE$/),
+        expect.stringMatching(/packages\/package-2\/licence$/),
+        expect.stringMatching(/packages\/package-3\/LiCeNSe$/),
+        expect.stringMatching(/packages\/package-5\/LICENCE$/),
+        // Ultimately, we do not care about duplicates, as they are weeded out elsewhere
+        expect.stringMatching(/packages\/package-5\/license$/),
+      ]);
+    });
+  });
+
   describe("isIndependent()", () => {
     it("returns if the repository versioning is independent", () => {
       const project = new Project(testDir);

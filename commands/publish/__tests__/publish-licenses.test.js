@@ -2,13 +2,18 @@
 
 // local modules _must_ be explicitly mocked
 jest.mock("../lib/git-push");
+jest.mock("../lib/is-anything-committed");
 jest.mock("../lib/is-behind-upstream");
 
-const fs = require("fs-extra");
+jest.mock("../lib/create-temp-licenses", () => jest.fn(() => Promise.resolve()));
+jest.mock("../lib/remove-temp-licenses", () => jest.fn(() => Promise.resolve()));
+
 const path = require("path");
 
 // mocked modules
 const npmPublish = require("@lerna/npm-publish");
+const createTempLicenses = require("../lib/create-temp-licenses");
+const removeTempLicenses = require("../lib/remove-temp-licenses");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
@@ -20,51 +25,51 @@ const lernaPublish = require("@lerna-test/command-runner")(require("../command")
 describe("licenses", () => {
   it("makes a temporary copy of the root license text if package has none", async () => {
     const cwd = await initFixture("licenses");
+    const packagesToBeLicensed = [expect.objectContaining({ name: "package-1" })];
 
     await lernaPublish(cwd)();
 
-    expect(npmPublish.registry.get("package-1").licenseBasename).toBe("LICENSE");
-    expect(npmPublish.registry.get("package-1").licenseText).toMatch("ABC License");
-    expect(fs.exists(path.join(cwd, "packages", "package-1", "LICENSE"))).resolves.toBe(false);
+    expect(createTempLicenses).lastCalledWith(path.join(cwd, "LICENSE"), packagesToBeLicensed);
+    expect(removeTempLicenses).lastCalledWith(packagesToBeLicensed);
   });
 
-  it("keeps the package license text if already present", async () => {
-    const cwd = await initFixture("licenses");
-
-    await lernaPublish(cwd)();
-
-    expect(npmPublish.registry.get("package-2").licenseBasename).toBe("licence");
-    expect(npmPublish.registry.get("package-2").licenseText).toMatch("XYZ License");
-    expect(fs.exists(path.join(cwd, "packages", "package-2", "licence"))).resolves.toBe(true);
-  });
-
-  it("is able to clean up temporary licenses on error", async () => {
+  it("removes all temporary licenses on error", async () => {
     const cwd = await initFixture("licenses");
 
     npmPublish.mockImplementationOnce(() => Promise.reject(new Error("boom")));
 
     try {
       await lernaPublish(cwd)();
-    } catch (e) {
-      expect(e).toBeInstanceOf(Error);
-      expect(e.message).toBe("boom");
+    } catch (err) {
+      expect(err.message).toBe("boom");
     }
 
-    expect(fs.exists(path.join(cwd, "packages", "package-1", "LICENSE"))).resolves.toBe(false);
+    expect(removeTempLicenses).toHaveBeenCalledTimes(1);
+    expect(removeTempLicenses).lastCalledWith([expect.objectContaining({ name: "package-1" })]);
   });
 
-  it("warns in case the packages have no license text and there is no root license file", async () => {
+  it("does not override original error when removal rejects", async () => {
+    const cwd = await initFixture("licenses");
+
+    npmPublish.mockImplementationOnce(() => Promise.reject(new Error("boom")));
+    removeTempLicenses.mockImplementationOnce(() => Promise.reject(new Error("shaka-lakka")));
+
+    try {
+      await lernaPublish(cwd)();
+    } catch (err) {
+      expect(err.message).toBe("boom");
+    }
+  });
+
+  it("warns when packages need a license and the root license file is missing", async () => {
     const cwd = await initFixture("licenses-missing");
 
     await lernaPublish(cwd)();
 
     const [warning] = loggingOutput("warn");
-    expect(warning).toMatch(
-      "Packages package-1, package-3 are missing a LICENSE file with full license text"
-    );
+    expect(warning).toMatch("Packages package-1, package-3 are missing a license");
 
-    expect(fs.exists(path.join(cwd, "packages", "package-1", "LICENSE"))).resolves.toBe(false);
-    expect(fs.exists(path.join(cwd, "packages", "package-2", "LICENSE"))).resolves.toBe(true);
-    expect(fs.exists(path.join(cwd, "packages", "package-3", "LICENSE"))).resolves.toBe(false);
+    expect(createTempLicenses).lastCalledWith(undefined, []);
+    expect(removeTempLicenses).lastCalledWith([]);
   });
 });
