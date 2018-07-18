@@ -41,7 +41,9 @@ class RunCommand extends Command {
       this.packagesWithScript = this.filteredPackages.filter(pkg => pkg.scripts && pkg.scripts[script]);
     }
 
-    if (!this.packagesWithScript.length) {
+    this.count = this.packagesWithScript.length;
+
+    if (!this.count) {
       this.logger.success("run", `No packages found with the lifecycle script '${script}'`);
 
       // still exits zero, aka "ok"
@@ -63,7 +65,13 @@ class RunCommand extends Command {
     }
 
     return chain.then(() => {
-      this.logger.success("run", `Ran npm script '${this.script}' in packages:`);
+      this.logger.success(
+        "run",
+        "Ran npm script '%s' in %d %s:",
+        this.script,
+        this.count,
+        this.count === 1 ? "package" : "packages"
+      );
       this.logger.success("", this.packagesWithScript.map(pkg => `- ${pkg.name}`).join("\n"));
     });
   }
@@ -89,8 +97,10 @@ class RunCommand extends Command {
   runScriptInPackagesParallel() {
     this.logger.info(
       "run",
-      "in %d package(s): npm run %s",
-      this.packagesWithScript.length,
+      "in %d %s: %s run %s",
+      this.count,
+      this.count === 1 ? "package" : "packages",
+      this.npmClient,
       [this.script].concat(this.args).join(" ")
     );
 

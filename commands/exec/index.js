@@ -27,6 +27,8 @@ class ExecCommand extends Command {
       throw new ValidationError("ENOCOMMAND", "A command to execute is required");
     }
 
+    this.count = this.filteredPackages.length;
+
     // inverted boolean options
     this.bail = this.options.bail !== false;
     this.prefix = this.options.prefix !== false;
@@ -49,7 +51,15 @@ class ExecCommand extends Command {
       ? pkg => this.runCommandInPackageStreaming(pkg)
       : pkg => this.runCommandInPackageCapturing(pkg);
 
-    return runParallelBatches(this.batchedPackages, this.concurrency, runner);
+    return runParallelBatches(this.batchedPackages, this.concurrency, runner).then(() => {
+      this.logger.success(
+        "exec",
+        "Executed command in %d %s: %j",
+        this.count,
+        this.count === 1 ? "package" : "packages",
+        [this.command].concat(this.args).join(" ")
+      );
+    });
   }
 
   getOpts(pkg) {
@@ -69,8 +79,9 @@ class ExecCommand extends Command {
   runCommandInPackagesParallel() {
     this.logger.info(
       "exec",
-      "in %d package(s): %s",
-      this.filteredPackages.length,
+      "in %d %s: %j",
+      this.count,
+      this.count === 1 ? "package" : "packages",
       [this.command].concat(this.args).join(" ")
     );
 

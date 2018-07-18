@@ -2,8 +2,8 @@
 
 exports[`lerna run test --parallel: stderr 1`] = `
 lerna info version __TEST_VERSION__
-lerna info run in 4 package(s): npm run test --silent
-lerna success run Ran npm script 'test' in packages:
+lerna info run in 4 packages: npm run test --silent
+lerna success run Ran npm script 'test' in 4 packages:
 lerna success - package-1
 lerna success - package-2
 lerna success - package-3
@@ -12,7 +12,7 @@ lerna success - package-4
 
 exports[`lerna run test --stream --no-prefix: stderr 1`] = `
 lerna info version __TEST_VERSION__
-lerna success run Ran npm script 'test' in packages:
+lerna success run Ran npm script 'test' in 4 packages:
 lerna success - package-1
 lerna success - package-2
 lerna success - package-3
@@ -28,7 +28,7 @@ package-2
 
 exports[`lerna run test --stream: stderr 1`] = `
 lerna info version __TEST_VERSION__
-lerna success run Ran npm script 'test' in packages:
+lerna success run Ran npm script 'test' in 4 packages:
 lerna success - package-1
 lerna success - package-2
 lerna success - package-3

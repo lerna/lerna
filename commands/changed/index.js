@@ -19,8 +19,9 @@ class ChangedCommand extends Command {
 
   initialize() {
     this.updates = collectUpdates(this);
+    this.count = this.updates.length;
 
-    const proceedWithUpdates = this.updates.length > 0;
+    const proceedWithUpdates = this.count > 0;
 
     if (!proceedWithUpdates) {
       this.logger.info("No packages need updating");
@@ -45,6 +46,13 @@ class ChangedCommand extends Command {
           .join("\n");
 
     output(formattedUpdates);
+
+    this.logger.success(
+      "found",
+      "%d %s ready to publish",
+      this.count,
+      this.count === 1 ? "package" : "packages"
+    );
   }
 }
 

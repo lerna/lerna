@@ -25,7 +25,7 @@ class ListCommand extends Command {
     }));
 
     // logged after output
-    this.length = this.resultList.length;
+    this.count = this.resultList.length;
   }
 
   execute() {
@@ -39,7 +39,7 @@ class ListCommand extends Command {
 
     output(result);
 
-    this.logger.info("list", `found ${this.length} package${this.length === 1 ? "" : "s"}`);
+    this.logger.success("found", "%d %s", this.count, this.count === 1 ? "package" : "packages");
   }
 
   formatJSON() {

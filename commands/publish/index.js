@@ -293,10 +293,13 @@ class PublishCommand extends Command {
     }
 
     return chain.then(() => {
+      const count = this.packagesToPublish.length;
       const message = this.packagesToPublish.map(pkg => ` - ${pkg.name}@${pkg.version}`);
 
       output("Successfully published:");
       output(message.join(os.EOL));
+
+      this.logger.success("published", "%d %s", count, count === 1 ? "package" : "packages");
     });
   }
 
