@@ -29,6 +29,7 @@ before_test:
   - git config --global user.name "Tester McPerson"
 
 test_script:
-  - npm run ci
+  - npm test -- --ci --coverage --maxWorkers=2 --verbose
+  - npm run integration -- --ci --runInBand
 
 build: off
