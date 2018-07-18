@@ -135,6 +135,8 @@ class Project {
         case: false,
         // Project license is always a sibling of the root manifest
         deep: false,
+        // POSIX results always need to be normalized
+        transform: fp => path.normalize(fp),
       });
 
       licensePath = search.shift();

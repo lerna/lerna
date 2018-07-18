@@ -12,6 +12,8 @@ function makeFileFinder(rootPath, packageConfigs) {
     cwd: rootPath,
     absolute: true,
     followSymlinkedDirectories: false,
+    // POSIX results always need to be normalized
+    transform: fp => path.normalize(fp),
   };
 
   if (packageConfigs.some(cfg => cfg.indexOf("**") > -1)) {
@@ -36,9 +38,8 @@ function makeFileFinder(rootPath, packageConfigs) {
       globPath => {
         let chain = globby(path.join(globPath, fileName), options);
 
-        // fast-glob does not respect pattern order, so we re-sort by normalized absolute path
-        // (glob results are always returned with POSIX paths, even on Windows)
-        chain = chain.then(sortNormalized);
+        // fast-glob does not respect pattern order, so we re-sort by absolute path
+        chain = chain.then(results => results.sort());
 
         if (fileMapper) {
           chain = chain.then(fileMapper);
@@ -52,10 +53,6 @@ function makeFileFinder(rootPath, packageConfigs) {
     // always flatten the results
     return promise.then(flattenResults);
   };
-}
-
-function sortNormalized(results) {
-  return results.sort().map(fp => path.normalize(fp));
 }
 
 function flattenResults(results) {
