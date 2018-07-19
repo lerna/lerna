@@ -257,13 +257,11 @@ class PublishCommand extends Command {
   annotateGitHead() {
     const gitHead = getCurrentSHA(this.execOpts);
 
-    return pMap(this.updates, ({ pkg }) => {
-      if (!pkg.private) {
-        // provide gitHead property that is normally added during npm publish
-        pkg.set("gitHead", gitHead);
+    return pMap(this.packagesToPublish, pkg => {
+      // provide gitHead property that is normally added during npm publish
+      pkg.set("gitHead", gitHead);
 
-        return pkg.serialize();
-      }
+      return pkg.serialize();
     });
   }
 
