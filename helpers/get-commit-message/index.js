@@ -4,6 +4,6 @@ const execa = require("execa");
 
 module.exports = getCommitMessage;
 
-function getCommitMessage(cwd) {
-  return execa("git", ["show", "--no-patch", "--pretty=%B"], { cwd }).then(result => result.stdout.trim());
+function getCommitMessage(cwd, format = "%B") {
+  return execa.stdout("git", ["log", "-1", `--pretty=format:${format}`], { cwd });
 }
