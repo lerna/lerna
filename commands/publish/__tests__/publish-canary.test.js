@@ -45,6 +45,13 @@ test("publish --canary=beta", async () => {
   expect(writePkg.registry).toMatchSnapshot("updated packages");
 });
 
+test("publish --canary=beta.0", async () => {
+  const cwd = await initFixture("normal");
+  await lernaPublish(cwd)("--canary", "beta.0");
+
+  expect(writePkg.registry).toMatchSnapshot("updated packages");
+});
+
 test("publish --canary --cd-version=patch", async () => {
   const cwd = await initFixture("normal");
   await lernaPublish(cwd)("--canary", "--cd-version", "patch");

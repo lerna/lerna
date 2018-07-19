@@ -320,10 +320,22 @@ class PublishCommand extends Command {
     } else if (canary) {
       const release = cdVersion || "minor";
       // FIXME: this complicated defaulting should be done in yargs option.coerce()
-      const keyword = typeof canary !== "string" ? preid || "alpha" : canary;
+      const prerelease = typeof canary !== "string" ? preid || "alpha" : canary;
+
+      if (semver.valid(`0.0.0-${prerelease}`) === null) {
+        throw new ValidationError(
+          "EINVALIDCANARY",
+          dedent`
+            Canary value '${prerelease}' is not valid for a pre-release version. Please read item 9 of
+            the Semantic Versioning Specification (https://semver.org/#spec-item-9) for guidance on what
+            is a valid pre-release version.
+          `
+        );
+      }
+
       const shortHash = getShortSHA(this.execOpts);
 
-      predicate = ({ version }) => `${semver.inc(version, release)}-${keyword}.${shortHash}`;
+      predicate = ({ version }) => `${semver.inc(version, release)}-${prerelease}+${shortHash}`;
     } else if (cdVersion) {
       predicate = ({ version }) => semver.inc(version, cdVersion, preid);
     } else if (conventionalCommits) {

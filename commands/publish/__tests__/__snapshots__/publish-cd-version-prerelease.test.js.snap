@@ -2,8 +2,7 @@
 
 exports[`publish --cd-version patch with previous prerelease also graduates prereleased 1`] = `
 v1.0.1
-
-HEAD -> master, tag: v1.0.1
+D
 
 diff --git a/lerna.json b/lerna.json
 index SHA..SHA 100644
@@ -40,8 +39,7 @@ index SHA..SHA 100644
 
 exports[`publish --cd-version prerelease with previous prerelease bumps changed only 1`] = `
 v1.0.1-beta.4
-
-HEAD -> master, tag: v1.0.1-beta.4
+D
 
 diff --git a/lerna.json b/lerna.json
 index SHA..SHA 100644

@@ -102,9 +102,10 @@ order (all dependencies before dependents) by default.
 ```sh
 $ lerna publish --canary
 $ lerna publish --canary=beta
+$ lerna publish --canary=beta.0
 ```
 
-When run with this flag, `publish` publishes packages in a more granular way (per commit). Before publishing to npm, it creates the new `version` tag by taking the current `version`, bumping it to the next _minor_ version, adding the provided meta suffix (defaults to `alpha`) and appending the current git sha (ex: `1.0.0` becomes `1.1.0-alpha.81e3b443`).
+When run with this flag, `publish` will publish packages in a more granular way (per commit). Before publishing to npm, it creates the new `version` tag by taking the current `version`, bumping it to the next _minor_ version (use `--cd-version` to change this), adding the provided meta suffix (defaults to `alpha`) and appends the current [git sha short form](https://git-scm.com/docs/git-rev-parse#git-rev-parse---shortlength) as [build metadata](https://semver.org/#spec-item-10) (ex: `1.0.0` becomes `1.1.0-alpha+81e3b443`).
 
 > The intended use case for this flag is a per commit level release or nightly release.
 
