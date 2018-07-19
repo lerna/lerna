@@ -2,8 +2,7 @@
 
 exports[`publish --exact updates existing exact versions 1`] = `
 "v1.0.1
-
-HEAD -> master, tag: v1.0.1
+D
 
 diff --git a/lerna.json b/lerna.json
 index SHA..SHA 100644
@@ -60,8 +59,7 @@ index SHA..SHA 100644
 
 exports[`publish --exact updates matching local dependencies of published packages with exact versions 1`] = `
 "v1.0.1
-
-HEAD -> master, tag: v1.0.1
+D
 
 diff --git a/lerna.json b/lerna.json
 index SHA..SHA 100644
@@ -121,8 +119,7 @@ index SHA..SHA 100644
 
 exports[`publish --repo-version strips invalid semver information from option value 1`] = `
 "v1.2.0-beta.1
-
-HEAD -> master, tag: v1.2.0-beta.1
+D
 
 diff --git a/lerna.json b/lerna.json
 index SHA..SHA 100644

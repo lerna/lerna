@@ -5,26 +5,26 @@ Map {
   "package-1" => Object {
     "gitHead": GIT_HEAD,
     "name": "package-1",
-    "version": 1.0.1-alpha.SHA,
+    "version": 1.0.1-alpha+SHA,
   },
   "package-2" => Object {
     "dependencies": Object {
-      "package-1": ^1.0.1-alpha.SHA,
+      "package-1": ^1.0.1-alpha+SHA,
     },
     "gitHead": GIT_HEAD,
     "name": "package-2",
-    "version": 1.0.1-alpha.SHA,
+    "version": 1.0.1-alpha+SHA,
   },
   "package-3" => Object {
     "devDependencies": Object {
-      "package-2": ^1.0.1-alpha.SHA,
+      "package-2": ^1.0.1-alpha+SHA,
     },
     "gitHead": GIT_HEAD,
     "name": "package-3",
     "peerDependencies": Object {
       "package-2": "^1.0.0",
     },
-    "version": 1.0.1-alpha.SHA,
+    "version": 1.0.1-alpha+SHA,
   },
   "package-4" => Object {
     "dependencies": Object {
@@ -32,18 +32,18 @@ Map {
     },
     "gitHead": GIT_HEAD,
     "name": "package-4",
-    "version": 1.0.1-alpha.SHA,
+    "version": 1.0.1-alpha+SHA,
   },
   "package-5" => Object {
     "dependencies": Object {
-      "package-1": ^1.0.1-alpha.SHA,
+      "package-1": ^1.0.1-alpha+SHA,
     },
     "name": "package-5",
     "optionalDependencies": Object {
-      "package-3": ^1.0.1-alpha.SHA,
+      "package-3": ^1.0.1-alpha+SHA,
     },
     "private": true,
-    "version": 1.0.1-alpha.SHA,
+    "version": 1.0.1-alpha+SHA,
   },
 }
 `;
@@ -62,23 +62,23 @@ Map {
   "package-1" => Object {
     "gitHead": GIT_HEAD,
     "name": "package-1",
-    "version": 1.1.0-alpha.SHA,
+    "version": 1.1.0-alpha+SHA,
   },
   "package-2" => Object {
     "dependencies": Object {
-      "package-1": ^1.1.0-alpha.SHA,
+      "package-1": ^1.1.0-alpha+SHA,
     },
     "gitHead": GIT_HEAD,
     "name": "package-2",
-    "version": 2.1.0-alpha.SHA,
+    "version": 2.1.0-alpha+SHA,
   },
   "package-3" => Object {
     "devDependencies": Object {
-      "package-2": ^2.1.0-alpha.SHA,
+      "package-2": ^2.1.0-alpha+SHA,
     },
     "gitHead": GIT_HEAD,
     "name": "package-3",
-    "version": 3.1.0-alpha.SHA,
+    "version": 3.1.0-alpha+SHA,
   },
   "package-4" => Object {
     "dependencies": Object {
@@ -86,15 +86,15 @@ Map {
     },
     "gitHead": GIT_HEAD,
     "name": "package-4",
-    "version": 4.1.0-alpha.SHA,
+    "version": 4.1.0-alpha+SHA,
   },
   "package-5" => Object {
     "dependencies": Object {
-      "package-3": ^3.1.0-alpha.SHA,
+      "package-3": ^3.1.0-alpha+SHA,
     },
     "name": "package-5",
     "private": true,
-    "version": 5.1.0-alpha.SHA,
+    "version": 5.1.0-alpha+SHA,
   },
 }
 `;
@@ -108,25 +108,25 @@ Map {
     "description": "one local dependency, one direct dependent, one transitive dependency",
     "gitHead": GIT_HEAD,
     "name": "package-3",
-    "version": 1.1.0-alpha.SHA,
+    "version": 1.1.0-alpha+SHA,
   },
   "package-4" => Object {
     "dependencies": Object {
-      "package-3": ^1.1.0-alpha.SHA,
+      "package-3": ^1.1.0-alpha+SHA,
     },
     "description": "one local dependency, one direct dependent, two transitive dependencies",
     "gitHead": GIT_HEAD,
     "name": "package-4",
-    "version": 1.1.0-alpha.SHA,
+    "version": 1.1.0-alpha+SHA,
   },
   "package-5" => Object {
     "dependencies": Object {
-      "package-4": ^1.1.0-alpha.SHA,
+      "package-4": ^1.1.0-alpha+SHA,
     },
     "description": "one local dependency, no dependents, three transitive dependencies",
     "gitHead": GIT_HEAD,
     "name": "package-5",
-    "version": 1.1.0-alpha.SHA,
+    "version": 1.1.0-alpha+SHA,
   },
 }
 `;
@@ -140,7 +140,7 @@ Map {
     "description": "one local dependency, no dependents, three transitive dependencies",
     "gitHead": GIT_HEAD,
     "name": "package-5",
-    "version": 1.1.0-alpha.SHA,
+    "version": 1.1.0-alpha+SHA,
   },
 }
 `;
@@ -151,43 +151,43 @@ Map {
     "description": "no local dependencies, four local dependents (three transitive)",
     "gitHead": GIT_HEAD,
     "name": "package-1",
-    "version": 1.1.0-alpha.SHA,
+    "version": 1.1.0-alpha+SHA,
   },
   "package-2" => Object {
     "dependencies": Object {
-      "package-1": ^1.1.0-alpha.SHA,
+      "package-1": ^1.1.0-alpha+SHA,
     },
     "description": "one local dependency, one direct dependent, no transitive dependencies",
     "gitHead": GIT_HEAD,
     "name": "package-2",
-    "version": 1.1.0-alpha.SHA,
+    "version": 1.1.0-alpha+SHA,
   },
   "package-3" => Object {
     "dependencies": Object {
-      "package-2": ^1.1.0-alpha.SHA,
+      "package-2": ^1.1.0-alpha+SHA,
     },
     "description": "one local dependency, one direct dependent, one transitive dependency",
     "gitHead": GIT_HEAD,
     "name": "package-3",
-    "version": 1.1.0-alpha.SHA,
+    "version": 1.1.0-alpha+SHA,
   },
   "package-4" => Object {
     "dependencies": Object {
-      "package-3": ^1.1.0-alpha.SHA,
+      "package-3": ^1.1.0-alpha+SHA,
     },
     "description": "one local dependency, one direct dependent, two transitive dependencies",
     "gitHead": GIT_HEAD,
     "name": "package-4",
-    "version": 1.1.0-alpha.SHA,
+    "version": 1.1.0-alpha+SHA,
   },
   "package-5" => Object {
     "dependencies": Object {
-      "package-4": ^1.1.0-alpha.SHA,
+      "package-4": ^1.1.0-alpha+SHA,
     },
     "description": "one local dependency, no dependents, three transitive dependencies",
     "gitHead": GIT_HEAD,
     "name": "package-5",
-    "version": 1.1.0-alpha.SHA,
+    "version": 1.1.0-alpha+SHA,
   },
 }
 `;
@@ -206,26 +206,26 @@ Map {
   "package-1" => Object {
     "gitHead": GIT_HEAD,
     "name": "package-1",
-    "version": 1.1.0-alpha.SHA,
+    "version": 1.1.0-alpha+SHA,
   },
   "package-2" => Object {
     "dependencies": Object {
-      "package-1": ^1.1.0-alpha.SHA,
+      "package-1": ^1.1.0-alpha+SHA,
     },
     "gitHead": GIT_HEAD,
     "name": "package-2",
-    "version": 1.1.0-alpha.SHA,
+    "version": 1.1.0-alpha+SHA,
   },
   "package-3" => Object {
     "devDependencies": Object {
-      "package-2": ^1.1.0-alpha.SHA,
+      "package-2": ^1.1.0-alpha+SHA,
     },
     "gitHead": GIT_HEAD,
     "name": "package-3",
     "peerDependencies": Object {
       "package-2": "^1.0.0",
     },
-    "version": 1.1.0-alpha.SHA,
+    "version": 1.1.0-alpha+SHA,
   },
   "package-4" => Object {
     "dependencies": Object {
@@ -233,18 +233,66 @@ Map {
     },
     "gitHead": GIT_HEAD,
     "name": "package-4",
-    "version": 1.1.0-alpha.SHA,
+    "version": 1.1.0-alpha+SHA,
   },
   "package-5" => Object {
     "dependencies": Object {
-      "package-1": ^1.1.0-alpha.SHA,
+      "package-1": ^1.1.0-alpha+SHA,
     },
     "name": "package-5",
     "optionalDependencies": Object {
-      "package-3": ^1.1.0-alpha.SHA,
+      "package-3": ^1.1.0-alpha+SHA,
     },
     "private": true,
-    "version": 1.1.0-alpha.SHA,
+    "version": 1.1.0-alpha+SHA,
+  },
+}
+`;
+
+exports[`publish --canary=beta.0: updated packages 1`] = `
+Map {
+  "package-1" => Object {
+    "gitHead": GIT_HEAD,
+    "name": "package-1",
+    "version": 1.1.0-beta.0+SHA,
+  },
+  "package-2" => Object {
+    "dependencies": Object {
+      "package-1": ^1.1.0-beta.0+SHA,
+    },
+    "gitHead": GIT_HEAD,
+    "name": "package-2",
+    "version": 1.1.0-beta.0+SHA,
+  },
+  "package-3" => Object {
+    "devDependencies": Object {
+      "package-2": ^1.1.0-beta.0+SHA,
+    },
+    "gitHead": GIT_HEAD,
+    "name": "package-3",
+    "peerDependencies": Object {
+      "package-2": "^1.0.0",
+    },
+    "version": 1.1.0-beta.0+SHA,
+  },
+  "package-4" => Object {
+    "dependencies": Object {
+      "package-1": "^0.0.0",
+    },
+    "gitHead": GIT_HEAD,
+    "name": "package-4",
+    "version": 1.1.0-beta.0+SHA,
+  },
+  "package-5" => Object {
+    "dependencies": Object {
+      "package-1": ^1.1.0-beta.0+SHA,
+    },
+    "name": "package-5",
+    "optionalDependencies": Object {
+      "package-3": ^1.1.0-beta.0+SHA,
+    },
+    "private": true,
+    "version": 1.1.0-beta.0+SHA,
   },
 }
 `;
@@ -254,26 +302,26 @@ Map {
   "package-1" => Object {
     "gitHead": GIT_HEAD,
     "name": "package-1",
-    "version": 1.1.0-beta.SHA,
+    "version": 1.1.0-beta+SHA,
   },
   "package-2" => Object {
     "dependencies": Object {
-      "package-1": ^1.1.0-beta.SHA,
+      "package-1": ^1.1.0-beta+SHA,
     },
     "gitHead": GIT_HEAD,
     "name": "package-2",
-    "version": 1.1.0-beta.SHA,
+    "version": 1.1.0-beta+SHA,
   },
   "package-3" => Object {
     "devDependencies": Object {
-      "package-2": ^1.1.0-beta.SHA,
+      "package-2": ^1.1.0-beta+SHA,
     },
     "gitHead": GIT_HEAD,
     "name": "package-3",
     "peerDependencies": Object {
       "package-2": "^1.0.0",
     },
-    "version": 1.1.0-beta.SHA,
+    "version": 1.1.0-beta+SHA,
   },
   "package-4" => Object {
     "dependencies": Object {
@@ -281,18 +329,18 @@ Map {
     },
     "gitHead": GIT_HEAD,
     "name": "package-4",
-    "version": 1.1.0-beta.SHA,
+    "version": 1.1.0-beta+SHA,
   },
   "package-5" => Object {
     "dependencies": Object {
-      "package-1": ^1.1.0-beta.SHA,
+      "package-1": ^1.1.0-beta+SHA,
     },
     "name": "package-5",
     "optionalDependencies": Object {
-      "package-3": ^1.1.0-beta.SHA,
+      "package-3": ^1.1.0-beta+SHA,
     },
     "private": true,
-    "version": 1.1.0-beta.SHA,
+    "version": 1.1.0-beta+SHA,
   },
 }
 `;

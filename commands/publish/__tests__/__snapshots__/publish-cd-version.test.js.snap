@@ -8,8 +8,7 @@ exports[`publish --cd-version --independent bumps prerelease version with --prei
  - package-3@3.0.1-foo.0
  - package-4@4.0.1-foo.0
  - package-5@5.0.1-foo.0
-
-HEAD -> master, tag: package-5@5.0.1-foo.0, tag: package-4@4.0.1-foo.0, tag: package-3@3.0.1-foo.0, tag: package-2@2.0.1-foo.0, tag: package-1@1.0.1-foo.0
+D
 
 diff --git a/packages/package-1/package.json b/packages/package-1/package.json
 index SHA..SHA 100644
@@ -65,8 +64,7 @@ exports[`publish --cd-version --independent bumps prerelease with default --prei
  - package-3@3.0.1-0
  - package-4@4.0.1-0
  - package-5@5.0.1-0
-
-HEAD -> master, tag: package-5@5.0.1-0, tag: package-4@4.0.1-0, tag: package-3@3.0.1-0, tag: package-2@2.0.1-0, tag: package-1@1.0.1-0
+D
 
 diff --git a/packages/package-1/package.json b/packages/package-1/package.json
 index SHA..SHA 100644

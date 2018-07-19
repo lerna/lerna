@@ -109,7 +109,7 @@ new file mode 100644
 index SHA..SHA
 --- /dev/null
 +++ b/packages/my-cli/package.json
-@@ -0,0 +1,34 @@
+@@ -0,0 +1,26 @@
 +{
 +  "name": "my-cli",
 +  "version": "1.2.3",
@@ -129,20 +129,12 @@ index SHA..SHA
 +    "bin",
 +    "lib"
 +  ],
-+  "repository": {
-+    "type": "git",
-+    "url": "git+https://github.com/test/test.git"
-+  },
 +  "scripts": {
 +    "test": "echo \\"Error: run tests from root\\" && exit 1"
 +  },
 +  "dependencies": {
 +    "yargs": "^1.0.0-mocked"
-+  },
-+  "bugs": {
-+    "url": "https://github.com/test/test/issues"
-+  },
-+  "homepage": "https://github.com/test/test#readme"
++  }
 +}
 `;
 
@@ -206,7 +198,7 @@ new file mode 100644
 index SHA..SHA
 --- /dev/null
 +++ b/packages/my-es-cli/package.json
-@@ -0,0 +1,35 @@
+@@ -0,0 +1,27 @@
 +{
 +  "name": "my-es-cli",
 +  "version": "1.2.3",
@@ -227,20 +219,12 @@ index SHA..SHA
 +    "bin",
 +    "dist"
 +  ],
-+  "repository": {
-+    "type": "git",
-+    "url": "git+https://github.com/test/test.git"
-+  },
 +  "scripts": {
 +    "test": "echo \\"Error: run tests from root\\" && exit 1"
 +  },
 +  "dependencies": {
 +    "yargs": "^1.0.0-mocked"
-+  },
-+  "bugs": {
-+    "url": "https://github.com/test/test/issues"
-+  },
-+  "homepage": "https://github.com/test/test#readme"
++  }
 +}
 diff --git a/packages/my-es-cli/src/cli.js b/packages/my-es-cli/src/cli.js
 new file mode 100644
@@ -332,7 +316,7 @@ new file mode 100644
 index SHA..SHA
 --- /dev/null
 +++ b/packages/my-pkg/package.json
-@@ -0,0 +1,27 @@
+@@ -0,0 +1,19 @@
 +{
 +  "name": "my-pkg",
 +  "version": "1.2.3",
@@ -348,17 +332,9 @@ index SHA..SHA
 +  "files": [
 +    "lib"
 +  ],
-+  "repository": {
-+    "type": "git",
-+    "url": "git+https://github.com/test/test.git"
-+  },
 +  "scripts": {
 +    "test": "echo \\"Error: run tests from root\\" && exit 1"
-+  },
-+  "bugs": {
-+    "url": "https://github.com/test/test/issues"
-+  },
-+  "homepage": "https://github.com/test/test#readme"
++  }
 +}
 `;
 
@@ -396,7 +372,7 @@ new file mode 100644
 index SHA..SHA
 --- /dev/null
 +++ b/packages/my-pkg/package.json
-@@ -0,0 +1,28 @@
+@@ -0,0 +1,20 @@
 +{
 +  "name": "my-pkg",
 +  "version": "1.2.3",
@@ -413,17 +389,9 @@ index SHA..SHA
 +  "files": [
 +    "dist"
 +  ],
-+  "repository": {
-+    "type": "git",
-+    "url": "git+https://github.com/test/test.git"
-+  },
 +  "scripts": {
 +    "test": "echo \\"Error: run tests from root\\" && exit 1"
-+  },
-+  "bugs": {
-+    "url": "https://github.com/test/test/issues"
-+  },
-+  "homepage": "https://github.com/test/test#readme"
++  }
 +}
 diff --git a/packages/my-pkg/src/my-pkg.js b/packages/my-pkg/src/my-pkg.js
 new file mode 100644
