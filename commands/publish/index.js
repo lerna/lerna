@@ -125,7 +125,7 @@ class PublishCommand extends Command {
     }
 
     this.conf = npmConf(this.options);
-    this.updates = collectUpdates(this);
+    this.updates = collectUpdates(this.filteredPackages, this.packageGraph, this.execOpts, this.options);
 
     if (!this.updates.length) {
       this.logger.success("No updated packages to publish");

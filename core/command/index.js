@@ -212,7 +212,9 @@ class Command {
     // collectUpdates requires that filteredPackages be present prior to checking for
     // updates. That's okay because it further filters based on what's already been filtered.
     if (this.options.since !== undefined) {
-      chain = chain.then(() => collectUpdates(this));
+      chain = chain.then(() =>
+        collectUpdates(this.filteredPackages, this.packageGraph, this.execOpts, this.options)
+      );
       chain = chain.then(updates => {
         const updated = new Set(updates.map(({ pkg }) => pkg.name));
 

@@ -4,7 +4,7 @@
 // otherwise, enables everything
 const updated = new Map();
 
-const mockCollectUpdates = jest.fn(({ packageGraph, execOpts: { cwd } }) => {
+const mockCollectUpdates = jest.fn((filteredPackages, packageGraph, { cwd }) => {
   const targets = updated.get(cwd);
   const updates = targets ? new Map(targets.map(name => [name, packageGraph.get(name)])) : packageGraph;
 

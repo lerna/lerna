@@ -18,7 +18,7 @@ class ChangedCommand extends Command {
   }
 
   initialize() {
-    this.updates = collectUpdates(this);
+    this.updates = collectUpdates(this.filteredPackages, this.packageGraph, this.execOpts, this.options);
     this.count = this.updates.length;
 
     const proceedWithUpdates = this.count > 0;

@@ -1,5 +1,6 @@
 "use strict";
 
+const log = require("npmlog");
 const childProcess = require("@lerna/child-process");
 const semver = require("semver");
 
@@ -10,24 +11,16 @@ const makeDiffPredicate = require("./lib/make-diff-predicate");
 
 module.exports = collectUpdates;
 
-function collectUpdates({
-  filteredPackages,
-  packageGraph,
-  options: { canary, cdVersion, forcePublish, ignoreChanges, since },
-  execOpts,
-  logger,
-}) {
+function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions) {
   const packages =
     filteredPackages.length === packageGraph.size
       ? packageGraph
       : new Map(filteredPackages.map(({ name }) => [name, packageGraph.get(name)]));
 
-  logger.info("", "Checking for updated packages...");
-
-  let committish = since;
+  let committish = commandOptions.since;
 
   if (hasTags(execOpts)) {
-    if (canary) {
+    if (commandOptions.canary) {
       const sha = childProcess.execSync("git", ["rev-parse", "--short", "HEAD"], execOpts);
 
       // if it's a merge commit, it will return all the commits that were part of the merge
@@ -39,9 +32,9 @@ function collectUpdates({
     }
   }
 
-  logger.info("", `Comparing with ${committish || "initial commit"}.`);
+  log.info("", `Looking for changed packages since ${committish || "initial commit"}.`);
 
-  const forced = getForcedPackages(forcePublish);
+  const forced = getForcedPackages(commandOptions.forcePublish);
   let candidates;
 
   if (!committish || forced.has("*")) {
@@ -49,8 +42,8 @@ function collectUpdates({
   } else {
     candidates = new Set();
 
-    const hasDiff = makeDiffPredicate(committish, execOpts, ignoreChanges);
-    const needsBump = (cdVersion || "").startsWith("pre")
+    const hasDiff = makeDiffPredicate(committish, execOpts, commandOptions.ignoreChanges);
+    const needsBump = (commandOptions.cdVersion || "").startsWith("pre")
       ? () => false
       : /* skip packages that have not been previously prereleased */
         node => semver.prerelease(node.version);
@@ -70,7 +63,7 @@ function collectUpdates({
 
   packages.forEach((node, name) => {
     if (candidates.has(node)) {
-      logger.verbose("updated", name);
+      log.verbose("updated", name);
 
       updates.push(node);
     }
