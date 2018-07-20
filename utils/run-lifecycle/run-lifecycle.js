@@ -2,8 +2,10 @@
 
 const log = require("npmlog");
 const npmLifecycle = require("npm-lifecycle");
+const npmConf = require("@lerna/npm-conf");
 
 module.exports = runLifecycle;
+module.exports.createRunner = createRunner;
 
 function runLifecycle(pkg, stage, opts) {
   log.silly("run-lifecycle", stage, pkg.name);
@@ -33,4 +35,18 @@ function runLifecycle(pkg, stage, opts) {
     log,
     unsafePerm: true,
   });
+}
+
+function createRunner(commandOptions) {
+  const cfg = npmConf(commandOptions);
+
+  return (pkg, stage) => {
+    if (pkg.scripts && pkg.scripts[stage]) {
+      return runLifecycle(pkg, stage, cfg).catch(err => {
+        log.error("lifecycle", `error running ${stage} in ${pkg.name}\n`, err.stack || err);
+      });
+    }
+
+    return Promise.resolve();
+  };
 }
