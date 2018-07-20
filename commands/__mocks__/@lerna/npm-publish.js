@@ -9,10 +9,16 @@ const mockNpmPublish = jest.fn((pkg, tag) => {
   return Promise.resolve();
 });
 
+// a convenient format for assertions
+function order() {
+  return Array.from(registry.keys());
+}
+
 // keep test data isolated
 afterEach(() => {
   registry.clear();
 });
 
 module.exports = mockNpmPublish;
+module.exports.order = order;
 module.exports.registry = registry;
