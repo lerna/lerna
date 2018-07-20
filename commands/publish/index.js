@@ -675,13 +675,12 @@ class PublishCommand extends Command {
     const tracker = this.logger.newItem("npmPublish");
     // if we skip temp tags we should tag with the proper value immediately
     const distTag = this.options.tempTag ? "lerna-temp" : this.getDistTag();
-    const rootPkg = this.project.manifest;
 
     let chain = Promise.resolve();
 
     chain = chain.then(() => createTempLicenses(this.project.licensePath, this.packagesToBeLicensed));
 
-    chain = chain.then(() => this.runPrepublishScripts(rootPkg));
+    chain = chain.then(() => this.runPrepublishScripts(this.project.manifest));
     chain = chain.then(() =>
       pMap(this.updates, ({ pkg }) => {
         if (this.options.requireScripts) {
@@ -710,7 +709,7 @@ class PublishCommand extends Command {
     };
 
     chain = chain.then(() => runParallelBatches(this.batchedPackages, this.concurrency, mapPackage));
-    chain = chain.then(() => this.runPackageLifecycle(rootPkg, "postpublish"));
+    chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "postpublish"));
     chain = chain.then(() => removeTempLicenses(this.packagesToBeLicensed));
 
     // remove temporary license files if _any_ error occurs _anywhere_ in the promise chain
