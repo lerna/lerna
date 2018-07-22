@@ -98,6 +98,10 @@ class PackageGraph extends Map {
     });
   }
 
+  get rawPackageList() {
+    return Array.from(this.values()).map(node => node.pkg);
+  }
+
   /**
    * Takes a list of Packages and returns a list of those same Packages with any Packages
    * they depend on. i.e if packageA depended on packageB `graph.addDependencies([packageA])`
