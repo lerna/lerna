@@ -24,7 +24,7 @@ class ChangedCommand extends Command {
     const proceedWithUpdates = this.count > 0;
 
     if (!proceedWithUpdates) {
-      this.logger.info("No packages need updating");
+      this.logger.info("", "No changed packages found");
 
       process.exitCode = 1;
     }
