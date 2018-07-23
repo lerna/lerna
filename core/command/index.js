@@ -77,7 +77,14 @@ class Command {
     });
 
     // passed via yargs context in tests, never actual CLI
-    runner = runner.then(argv.onResolved, argv.onRejected);
+    /* istanbul ignore else */
+    if (argv.onResolved || argv.onRejected) {
+      runner = runner.then(argv.onResolved, argv.onRejected);
+
+      // when nested, never resolve inner with outer callbacks
+      delete argv.onResolved; // eslint-disable-line no-param-reassign
+      delete argv.onRejected; // eslint-disable-line no-param-reassign
+    }
 
     // proxy "Promise" methods to "private" instance
     this.then = (onResolved, onRejected) => runner.then(onResolved, onRejected);
