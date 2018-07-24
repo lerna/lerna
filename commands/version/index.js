@@ -25,6 +25,7 @@ const gitTag = require("./lib/git-tag");
 const isBehindUpstream = require("./lib/is-behind-upstream");
 const isBreakingChange = require("./lib/is-breaking-change");
 const isAnythingCommited = require("./lib/is-anything-committed");
+const promptVersion = require("./lib/prompt-version");
 
 module.exports = factory;
 
@@ -201,7 +202,7 @@ class VersionCommand extends Command {
     } else if (increment) {
       predicate = ({ version }) => semver.inc(version, increment, preid);
     } else {
-      predicate = this.promptVersion;
+      predicate = promptVersion;
     }
 
     if (!this.project.isIndependent()) {
@@ -273,55 +274,6 @@ class VersionCommand extends Command {
     }
 
     return chain;
-  }
-
-  // TODO: extract out of class
-  // eslint-disable-next-line class-methods-use-this
-  promptVersion({ version: currentVersion, name: pkgName }) {
-    const patch = semver.inc(currentVersion, "patch");
-    const minor = semver.inc(currentVersion, "minor");
-    const major = semver.inc(currentVersion, "major");
-    const prepatch = semver.inc(currentVersion, "prepatch");
-    const preminor = semver.inc(currentVersion, "preminor");
-    const premajor = semver.inc(currentVersion, "premajor");
-
-    const message = `Select a new version ${pkgName ? `for ${pkgName} ` : ""}(currently ${currentVersion})`;
-
-    return PromptUtilities.select(message, {
-      choices: [
-        { value: patch, name: `Patch (${patch})` },
-        { value: minor, name: `Minor (${minor})` },
-        { value: major, name: `Major (${major})` },
-        { value: prepatch, name: `Prepatch (${prepatch})` },
-        { value: preminor, name: `Preminor (${preminor})` },
-        { value: premajor, name: `Premajor (${premajor})` },
-        { value: "PRERELEASE", name: "Prerelease" },
-        { value: "CUSTOM", name: "Custom" },
-      ],
-    }).then(choice => {
-      if (choice === "CUSTOM") {
-        return PromptUtilities.input("Enter a custom version", {
-          filter: semver.valid,
-          validate: v => v !== null || "Must be a valid semver version",
-        });
-      }
-
-      if (choice === "PRERELEASE") {
-        const [existingId] = semver.prerelease(currentVersion) || [];
-        const defaultVersion = semver.inc(currentVersion, "prerelease", existingId);
-        const prompt = `(default: ${existingId ? `"${existingId}"` : "none"}, yielding ${defaultVersion})`;
-
-        // TODO: allow specifying prerelease identifier as CLI option to skip the prompt
-        return PromptUtilities.input(`Enter a prerelease identifier ${prompt}`, {
-          filter: v => {
-            const preid = v || existingId;
-            return semver.inc(currentVersion, "prerelease", preid);
-          },
-        });
-      }
-
-      return choice;
-    });
   }
 
   confirmVersions() {
