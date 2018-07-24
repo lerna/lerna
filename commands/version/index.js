@@ -321,75 +321,76 @@ class VersionCommand extends Command {
     // exec preversion lifecycle in root (before all updates)
     chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "preversion"));
 
-    chain = chain.then(() =>
-      pMap(
-        this.updates,
-        ({ pkg, localDependencies }) =>
-          // start the chain
-          Promise.resolve()
+    chain = chain.then(() => {
+      const mapUpdate = ({ pkg, localDependencies }) => {
+        // start the chain
+        let tasks = Promise.resolve();
 
-            // exec preversion script
-            .then(() => this.runPackageLifecycle(pkg, "preversion"))
+        // exec preversion script
+        tasks = tasks.then(() => this.runPackageLifecycle(pkg, "preversion"));
 
-            // write new package
-            .then(() => {
-              // set new version
-              pkg.version = this.updatesVersions.get(pkg.name);
+        // write new package
+        tasks = tasks.then(() => {
+          // set new version
+          pkg.version = this.updatesVersions.get(pkg.name);
 
-              // update pkg dependencies
-              for (const [depName, resolved] of localDependencies) {
-                const depVersion = this.updatesVersions.get(depName);
+          // update pkg dependencies
+          for (const [depName, resolved] of localDependencies) {
+            const depVersion = this.updatesVersions.get(depName);
 
-                if (depVersion && resolved.type !== "directory") {
-                  // don't overwrite local file: specifiers, they only change during publish
-                  pkg.updateLocalDependency(resolved, depVersion, this.savePrefix);
-                }
-              }
+            if (depVersion && resolved.type !== "directory") {
+              // don't overwrite local file: specifiers, they only change during publish
+              pkg.updateLocalDependency(resolved, depVersion, this.savePrefix);
+            }
+          }
 
-              return pkg.serialize().then(() => {
-                // commit the updated manifest
-                changedFiles.add(pkg.manifestLocation);
-              });
-            })
+          return pkg.serialize().then(() => {
+            // commit the updated manifest
+            changedFiles.add(pkg.manifestLocation);
+          });
+        });
 
-            // exec version script
-            .then(() => this.runPackageLifecycle(pkg, "version"))
+        // exec version script
+        tasks = tasks.then(() => this.runPackageLifecycle(pkg, "version"));
 
-            .then(() => {
-              if (conventionalCommits) {
-                // we can now generate the Changelog, based on the
-                // the updated version that we're about to release.
-                const type = independentVersions ? "independent" : "fixed";
+        if (conventionalCommits) {
+          tasks = tasks.then(() => {
+            // we can now generate the Changelog, based on the
+            // the updated version that we're about to release.
+            const type = independentVersions ? "independent" : "fixed";
 
-                return ConventionalCommitUtilities.updateChangelog(pkg, type, {
-                  changelogPreset,
-                  rootPath,
-                }).then(changelogLocation => {
-                  // commit the updated changelog
-                  changedFiles.add(changelogLocation);
-                });
-              }
-            }),
-        // TODO: tune the concurrency
-        { concurrency: 100 }
-      )
-    );
+            return ConventionalCommitUtilities.updateChangelog(pkg, type, {
+              changelogPreset,
+              rootPath,
+            }).then(changelogLocation => {
+              // commit the updated changelog
+              changedFiles.add(changelogLocation);
+            });
+          });
+        }
 
-    if (conventionalCommits && !independentVersions) {
-      chain = chain.then(() =>
-        ConventionalCommitUtilities.updateChangelog(this.project.manifest, "root", {
-          changelogPreset,
-          rootPath,
-          version: this.globalVersion,
-        }).then(changelogLocation => {
-          // commit the updated changelog
-          changedFiles.add(changelogLocation);
-        })
-      );
-    }
+        return tasks;
+      };
+
+      // TODO: tune the concurrency?
+      return pMap(this.updates, mapUpdate, { concurrency: 100 });
+    });
 
     if (!independentVersions) {
       this.project.version = this.globalVersion;
+
+      if (conventionalCommits) {
+        chain = chain.then(() =>
+          ConventionalCommitUtilities.updateChangelog(this.project.manifest, "root", {
+            changelogPreset,
+            rootPath,
+            version: this.globalVersion,
+          }).then(changelogLocation => {
+            // commit the updated changelog
+            changedFiles.add(changelogLocation);
+          })
+        );
+      }
 
       chain = chain.then(() =>
         this.project.serializeConfig().then(lernaConfigLocation => {
