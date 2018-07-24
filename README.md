@@ -145,7 +145,7 @@ Running `lerna` without arguments will show all commands/options.
       ]
     },
     "bootstrap": {
-      "ignore": "component-*"
+      "ignore": "component-*",
       "npmClientArgs": ["--no-package-lock"]      
     }
   },
