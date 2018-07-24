@@ -230,20 +230,7 @@ class VersionCommand extends Command {
     let chain = Promise.resolve();
 
     if (type === "fixed") {
-      chain = chain.then(() => {
-        const globalVersion = this.project.version;
-
-        for (const { pkg } of this.updates) {
-          if (semver.lt(pkg.version, globalVersion)) {
-            this.logger.verbose(
-              "version",
-              `Overriding version of ${pkg.name} from ${pkg.version} to ${globalVersion}`
-            );
-
-            pkg.version = globalVersion;
-          }
-        }
-      });
+      chain = chain.then(() => this.setGlobalVersionFloor());
     }
 
     chain = chain.then(() =>
@@ -257,23 +244,42 @@ class VersionCommand extends Command {
 
     if (type === "fixed") {
       chain = chain.then(versions => {
-        let highestVersion = this.project.version;
-
-        versions.forEach(bump => {
-          if (semver.gt(bump, highestVersion)) {
-            highestVersion = bump;
-          }
-        });
-
-        this.globalVersion = highestVersion;
-
-        versions.forEach((_, name) => versions.set(name, highestVersion));
+        this.globalVersion = this.setGlobalVersionCeiling(versions);
 
         return versions;
       });
     }
 
     return chain;
+  }
+
+  setGlobalVersionFloor() {
+    const globalVersion = this.project.version;
+
+    for (const { pkg } of this.updates) {
+      if (semver.lt(pkg.version, globalVersion)) {
+        this.logger.verbose(
+          "version",
+          `Overriding version of ${pkg.name} from ${pkg.version} to ${globalVersion}`
+        );
+
+        pkg.version = globalVersion;
+      }
+    }
+  }
+
+  setGlobalVersionCeiling(versions) {
+    let highestVersion = this.project.version;
+
+    versions.forEach(bump => {
+      if (semver.gt(bump, highestVersion)) {
+        highestVersion = bump;
+      }
+    });
+
+    versions.forEach((_, name) => versions.set(name, highestVersion));
+
+    return highestVersion;
   }
 
   confirmVersions() {
