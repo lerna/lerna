@@ -37,7 +37,6 @@
     "@lerna/collect-updates": "file:../../utils/collect-updates",
     "@lerna/command": "file:../../core/command",
     "@lerna/conventional-commits": "file:../../core/conventional-commits",
-    "@lerna/npm-conf": "file:../../utils/npm-conf",
     "@lerna/npm-dist-tag": "file:../../utils/npm-dist-tag",
     "@lerna/npm-publish": "file:../../utils/npm-publish",
     "@lerna/output": "file:../../utils/output",

@@ -16,10 +16,9 @@ const ConventionalCommitUtilities = require("@lerna/conventional-commits");
 const PromptUtilities = require("@lerna/prompt");
 const output = require("@lerna/output");
 const collectUpdates = require("@lerna/collect-updates");
-const npmConf = require("@lerna/npm-conf");
 const npmDistTag = require("@lerna/npm-dist-tag");
 const npmPublish = require("@lerna/npm-publish");
-const runLifecycle = require("@lerna/run-lifecycle");
+const { createRunner } = require("@lerna/run-lifecycle");
 const batchPackages = require("@lerna/batch-packages");
 const runParallelBatches = require("@lerna/run-parallel-batches");
 const ValidationError = require("@lerna/validation-error");
@@ -128,7 +127,6 @@ class PublishCommand extends Command {
       }
     }
 
-    this.conf = npmConf(this.options);
     this.updates = collectUpdates(this.filteredPackages, this.packageGraph, this.execOpts, this.options);
 
     if (!this.updates.length) {
@@ -137,6 +135,8 @@ class PublishCommand extends Command {
       // still exits zero, aka "ok"
       return false;
     }
+
+    this.runPackageLifecycle = createRunner(this.options);
 
     this.packagesToPublish = this.updates.map(({ pkg }) => pkg).filter(pkg => !pkg.private);
 
@@ -475,14 +475,6 @@ class PublishCommand extends Command {
     }
 
     return PromptUtilities.confirm("Are you sure you want to publish the above changes?");
-  }
-
-  runPackageLifecycle(pkg, stage) {
-    if (pkg.scripts[stage]) {
-      return runLifecycle(pkg, stage, this.conf).catch(err => {
-        this.logger.error("lifecycle", `error running ${stage} in ${pkg.name}\n`, err.stack || err);
-      });
-    }
   }
 
   updateUpdatedPackages() {

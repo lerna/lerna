@@ -9,12 +9,10 @@ jest.mock("../lib/is-behind-upstream");
 const path = require("path");
 
 // mocked modules
-const writePkg = require("write-pkg");
 const runLifecycle = require("@lerna/run-lifecycle");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const loggingOutput = require("@lerna-test/logging-output");
 
 // test command
 const lernaPublish = require("@lerna-test/command-runner")(require("../command"));
@@ -29,23 +27,14 @@ describe("lifecycle scripts", () => {
 
     ["preversion", "version", "postversion"].forEach(script => {
       // "lifecycle" is the root manifest name
-      expect(runLifecycle).toHaveBeenCalledWith(
-        expect.objectContaining({ name: "lifecycle" }),
-        script,
-        expect.any(Object) // conf
-      );
-      expect(runLifecycle).toHaveBeenCalledWith(
-        expect.objectContaining({ name: "package-1" }),
-        script,
-        expect.any(Object) // conf
-      );
+      expect(runLifecycle).toHaveBeenCalledWith(expect.objectContaining({ name: "lifecycle" }), script);
+      expect(runLifecycle).toHaveBeenCalledWith(expect.objectContaining({ name: "package-1" }), script);
     });
 
     // package-2 lacks version lifecycle scripts
     expect(runLifecycle).not.toHaveBeenCalledWith(
       expect.objectContaining({ name: "package-2" }),
-      expect.any(String),
-      expect.any(Object) // conf
+      expect.any(String)
     );
 
     expect(runLifecycle.getOrderedCalls()).toEqual([
@@ -64,23 +53,6 @@ describe("lifecycle scripts", () => {
     ]);
   });
 
-  it("logs lifecycle errors but preserves chain", async () => {
-    const cwd = await initFixture("lifecycle");
-
-    runLifecycle.mockImplementationOnce(() => Promise.reject(new Error("boom")));
-
-    await lernaPublish(cwd)();
-
-    expect(runLifecycle).toHaveBeenCalledTimes(12);
-    expect(writePkg.updatedVersions()).toEqual({
-      "package-1": "1.0.1",
-      "package-2": "1.0.1",
-    });
-
-    const [errorLog] = loggingOutput("error");
-    expect(errorLog).toMatch("error running preversion in lifecycle");
-  });
-
   it("defaults missing root package name", async () => {
     const cwd = await initFixture("lifecycle-no-root-name");
 
@@ -94,8 +66,7 @@ describe("lifecycle scripts", () => {
           // defaulted from dirname, like npm init
           name: path.basename(cwd),
         }),
-        script,
-        expect.any(Object) // conf
+        script
       );
     });
   });
