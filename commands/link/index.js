@@ -19,13 +19,10 @@ class LinkCommand extends Command {
   }
 
   initialize() {
-    let graph = this.packageGraph;
-
-    if (this.options.forceLocal) {
-      graph = new PackageGraph(this.packages, "allDependencies", "forceLocal");
-    }
-
-    this.targetGraph = graph;
+    this.allPackages = this.packageGraph.rawPackageList;
+    this.targetGraph = this.options.forceLocal
+      ? new PackageGraph(this.allPackages, "allDependencies", "forceLocal")
+      : this.packageGraph;
   }
 
   execute() {
@@ -33,7 +30,7 @@ class LinkCommand extends Command {
       return this.convertLinksToFileSpecs();
     }
 
-    return symlinkDependencies(this.packages, this.targetGraph, this.logger);
+    return symlinkDependencies(this.allPackages, this.targetGraph, this.logger);
   }
 
   convertLinksToFileSpecs() {
