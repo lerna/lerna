@@ -50,7 +50,11 @@ export default class GitUtilities {
 
   static commit(message, opts) {
     log.silly("commit", message);
-    const args = ["commit", "--no-verify"];
+    const args = ["commit"];
+
+    if (opts && opts.noVerify) {
+      args.push("--no-verify");
+    }
 
     if (message.indexOf(EOL) > -1) {
       // Use tempfile to allow multi\nline strings.

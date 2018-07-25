@@ -88,11 +88,27 @@ describe("GitUtilities", () => {
       const opts = { cwd: "oneline" };
       GitUtilities.commit("foo", opts);
 
+      expect(ChildProcessUtilities.execSync).lastCalledWith("git", ["commit", "-m", "foo"], opts);
+      expect(tempWrite.sync).not.toBeCalled();
+    });
+
+    it("calls git commit with no-verify", () => {
+      const opts = { cwd: "oneline", noVerify: true };
+      GitUtilities.commit("foo", opts);
+
       expect(ChildProcessUtilities.execSync).lastCalledWith(
         "git",
         ["commit", "--no-verify", "-m", "foo"],
         opts
       );
+      expect(tempWrite.sync).not.toBeCalled();
+    });
+
+    it("calls git commit without no-verify", () => {
+      const opts = { cwd: "oneline", noVerify: false };
+      GitUtilities.commit("foo", opts);
+
+      expect(ChildProcessUtilities.execSync).lastCalledWith("git", ["commit", "-m", "foo"], opts);
       expect(tempWrite.sync).not.toBeCalled();
     });
 
@@ -102,11 +118,7 @@ describe("GitUtilities", () => {
       const opts = { cwd: "multiline" };
       GitUtilities.commit(`foo${EOL}bar`, opts);
 
-      expect(ChildProcessUtilities.execSync).lastCalledWith(
-        "git",
-        ["commit", "--no-verify", "-F", "TEMPFILE"],
-        opts
-      );
+      expect(ChildProcessUtilities.execSync).lastCalledWith("git", ["commit", "-F", "TEMPFILE"], opts);
       expect(tempWrite.sync).lastCalledWith(`foo${EOL}bar`, "lerna-commit.txt");
     });
   });
