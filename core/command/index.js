@@ -200,7 +200,6 @@ class Command {
 
     chain = chain.then(() => this.project.getPackages());
     chain = chain.then(packages => {
-      this.packages = packages;
       this.packageGraph = new PackageGraph(packages);
       this.filteredPackages = filterPackages(
         packages,

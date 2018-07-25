@@ -229,15 +229,6 @@ describe("core-command", () => {
     });
   });
 
-  describe(".packages", () => {
-    it("returns the list of packages", async () => {
-      const command = testFactory();
-      await command;
-
-      expect(command.packages).toEqual([]);
-    });
-  });
-
   describe(".packageGraph", () => {
     it("returns the graph of packages", async () => {
       const command = testFactory();
