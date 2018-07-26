@@ -84,7 +84,7 @@ The two primary commands in Lerna are `lerna bootstrap` and `lerna publish`.
 Let's start by installing Lerna as a dev dependency of your project with [npm](https://www.npmjs.com/).
 
 ```sh
-$ mkdir lerna-repo && cd !$
+$ mkdir lerna-repo && cd $_
 $ npx lerna init
 ```
 
