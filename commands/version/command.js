@@ -59,7 +59,7 @@ exports.builder = (yargs, composed) => {
     },
     // preid is copied into ../publish/command because a whitelist for one option isn't worth it
     preid: {
-      describe: "Specify the prerelease identifier when publishing a prerelease",
+      describe: "Specify the prerelease identifier when versioning a prerelease",
       type: "string",
       requiresArg: true,
       defaultDescription: "alpha",
