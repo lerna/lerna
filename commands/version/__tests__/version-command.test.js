@@ -149,10 +149,10 @@ describe("VersionCommand", () => {
     });
   });
 
-  describe("--no-push-to-remote", () => {
+  describe("--no-push", () => {
     it("versions changed packages without git push", async () => {
       const testDir = await initFixture("normal");
-      await lernaVersion(testDir)("--no-push-to-remote");
+      await lernaVersion(testDir)("--no-push");
 
       const patch = await showCommit(testDir);
       expect(patch).toMatchSnapshot();

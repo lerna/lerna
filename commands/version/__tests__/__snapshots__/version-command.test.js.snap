@@ -126,7 +126,7 @@ Object {
 }
 `;
 
-exports[`VersionCommand --no-push-to-remote versions changed packages without git push 1`] = `
+exports[`VersionCommand --no-push versions changed packages without git push 1`] = `
 "v1.0.1
 
 HEAD -> master, tag: v1.0.1

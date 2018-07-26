@@ -88,7 +88,7 @@ class VersionCommand extends Command {
 
     if (
       this.options.gitTagVersion &&
-      this.options.pushToRemote &&
+      this.options.push &&
       isBehindUpstream(this.gitRemote, this.currentBranch, this.execOpts)
     ) {
       const message = `Local branch '${this.currentBranch}' is behind remote upstream ${this.gitRemote}/${
@@ -164,7 +164,7 @@ class VersionCommand extends Command {
       this.logger.info("execute", "Skipping git tag/commit");
     }
 
-    if (this.options.gitTagVersion && !this.options.amend && this.options.pushToRemote) {
+    if (this.options.gitTagVersion && !this.options.amend && this.options.push) {
       tasks.push(() => this.pushToRemote());
     } else {
       this.logger.info("execute", "Skipping git push");
