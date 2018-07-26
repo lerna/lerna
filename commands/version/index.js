@@ -24,7 +24,7 @@ const gitPush = require("./lib/git-push");
 const gitTag = require("./lib/git-tag");
 const isBehindUpstream = require("./lib/is-behind-upstream");
 const isBreakingChange = require("./lib/is-breaking-change");
-const isAnythingCommited = require("./lib/is-anything-committed");
+const isAnythingCommitted = require("./lib/is-anything-committed");
 const promptVersion = require("./lib/prompt-version");
 
 module.exports = factory;
@@ -60,7 +60,7 @@ class VersionCommand extends Command {
     }
 
     // git validation, if enabled, should happen before updates are calculated and versions picked
-    if (!isAnythingCommited(this.execOpts)) {
+    if (!isAnythingCommitted(this.execOpts)) {
       throw new ValidationError(
         "ENOCOMMIT",
         "No commits in this repository. Please commit something before using version."
