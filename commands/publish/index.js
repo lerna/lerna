@@ -39,8 +39,11 @@ class PublishCommand extends Command {
   }
 
   initialize() {
-    // https://docs.npmjs.com/misc/config#save-prefix
-    this.savePrefix = this.options.exact ? "" : "^";
+    if (this.options.skipNpm) {
+      this.logger.warn("deprecated", "Instead of --skip-npm, call `lerna version` directly");
+
+      return versionCommand(this._argv).then(() => false);
+    }
 
     if (this.options.canary) {
       this.logger.info("canary", "enabled");
@@ -49,6 +52,9 @@ class PublishCommand extends Command {
     if (this.options.requireScripts) {
       this.logger.info("require-scripts", "enabled");
     }
+
+    // https://docs.npmjs.com/misc/config#save-prefix
+    this.savePrefix = this.options.exact ? "" : "^";
 
     this.npmConfig = {
       npmClient: this.options.npmClient || "npm",

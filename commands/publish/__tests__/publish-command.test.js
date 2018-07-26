@@ -52,6 +52,17 @@ describe("PublishCommand", () => {
       ]);
     });
 
+    it("--skip-npm yields immediately to VersionCommand with warning", async () => {
+      const cwd = await initFixture("normal");
+
+      await lernaPublish(cwd)("--skip-npm");
+
+      expect(npmPublish.order()).toHaveLength(0);
+
+      const logMessages = loggingOutput("warn");
+      expect(logMessages).toContain("Instead of --skip-npm, call `lerna version` directly");
+    });
+
     it("throws an error in fixed mode when --independent is passed", async () => {
       const testDir = await initFixture("normal");
 
