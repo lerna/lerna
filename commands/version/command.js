@@ -128,6 +128,11 @@ exports.builder = (yargs, composed) => {
       type: "string",
       requiresArg: true,
     })
+    .option("skip-git", {
+      // TODO: remove in next major release
+      hidden: true,
+      type: "boolean",
+    })
     .check(argv => {
       /* eslint-disable no-param-reassign */
       if (argv.ignore) {
@@ -148,6 +153,15 @@ exports.builder = (yargs, composed) => {
         delete argv.repoVersion;
         delete argv["repo-version"];
         log.warn("deprecated", "--repo-version has been replaced by positional [bump]");
+      }
+
+      if (argv.skipGit) {
+        argv.gitTagVersion = false;
+        argv["git-tag-version"] = false;
+        argv.push = false;
+        delete argv.skipGit;
+        delete argv["skip-git"];
+        log.warn("deprecated", "--skip-git has been replaced by --no-git-tag-version --no-push");
       }
       /* eslint-enable no-param-reassign */
 

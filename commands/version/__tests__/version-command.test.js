@@ -147,6 +147,15 @@ describe("VersionCommand", () => {
         "packages/package-5/package.json",
       ]);
     });
+
+    it("is implied by --skip-git", async () => {
+      const testDir = await initFixture("normal");
+      await lernaVersion(testDir)("--skip-git");
+
+      const logMessages = loggingOutput();
+      expect(logMessages).toContain("Skipping git tag/commit");
+      expect(logMessages).toContain("--skip-git has been replaced by --no-git-tag-version --no-push");
+    });
   });
 
   describe("--no-push", () => {
@@ -164,6 +173,15 @@ describe("VersionCommand", () => {
 
       const unstaged = await listDirty(testDir);
       expect(unstaged).toEqual([]);
+    });
+
+    it("is implied by --skip-git", async () => {
+      const testDir = await initFixture("normal");
+      await lernaVersion(testDir)("--skip-git");
+
+      const logMessages = loggingOutput();
+      expect(logMessages).toContain("Skipping git push");
+      expect(logMessages).toContain("--skip-git has been replaced by --no-git-tag-version --no-push");
     });
   });
 
