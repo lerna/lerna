@@ -121,6 +121,13 @@ exports.builder = (yargs, composed) => {
       type: "string",
       requiresArg: true,
     })
+    .option("repo-version", {
+      // TODO: remove in next major release
+      hidden: true,
+      conflicts: "bump",
+      type: "string",
+      requiresArg: true,
+    })
     .check(argv => {
       /* eslint-disable no-param-reassign */
       if (argv.ignore) {
@@ -134,6 +141,13 @@ exports.builder = (yargs, composed) => {
         delete argv.cdVersion;
         delete argv["cd-version"];
         log.warn("deprecated", "--cd-version has been replaced by positional [bump]");
+      }
+
+      if (argv.repoVersion && !argv.bump) {
+        argv.bump = argv.repoVersion;
+        delete argv.repoVersion;
+        delete argv["repo-version"];
+        log.warn("deprecated", "--repo-version has been replaced by positional [bump]");
       }
       /* eslint-enable no-param-reassign */
 

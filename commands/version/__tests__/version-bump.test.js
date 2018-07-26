@@ -32,6 +32,26 @@ describe("version bump", () => {
     expect(message).toBe("v1.0.1-beta.25");
   });
 
+  it("receives --repo-version <value> as explicit [bump]", async () => {
+    const testDir = await initFixture("normal");
+    await lernaVersion(testDir)("--repo-version", "1.0.1-beta.25");
+
+    const message = await getCommitMessage(testDir);
+    expect(message).toBe("v1.0.1-beta.25");
+  });
+
+  it("errors when --repo-version and [bump] positional passed", async () => {
+    const testDir = await initFixture("normal");
+
+    try {
+      await lernaVersion(testDir)("v1.0.1-beta.25", "--repo-version", "v1.0.1-beta.25");
+    } catch (err) {
+      expect(err.message).toBe("Arguments repo-version and bump are mutually exclusive");
+    }
+
+    expect.assertions(1);
+  });
+
   it("strips invalid semver information from explicit value", async () => {
     const testDir = await initFixture("normal");
     await lernaVersion(testDir)("v1.2.0-beta.1+deadbeef");
