@@ -16,11 +16,12 @@ exports.builder = yargs => {
       alias: "canary",
       type: "boolean",
     },
+    // preid is copied from ../version/command because a whitelist for one option isn't worth it
     preid: {
       describe: "Specify the prerelease identifier when publishing a prerelease",
       type: "string",
       requiresArg: true,
-      default: "alpha",
+      defaultDescription: "alpha",
     },
     "npm-tag": {
       describe: "Publish packages with the specified npm dist-tag",

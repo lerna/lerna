@@ -181,9 +181,13 @@ class VersionCommand extends Command {
   }
 
   getVersionsForUpdates() {
+    const independentVersions = this.project.isIndependent();
     const { bump, conventionalCommits, preid } = this.options;
-    const repoVersion = bump ? semver.clean(bump) : null;
-    const increment = bump && !semver.valid(bump) ? bump : null;
+    const repoVersion = bump ? semver.clean(bump) : "";
+    const increment = bump && !semver.valid(bump) ? bump : "";
+    const isPrerelease = increment.startsWith("pre");
+
+    const resolvePrereleaseId = existingPreid => (isPrerelease && existingPreid) || preid || "alpha";
 
     const makeGlobalVersionPredicate = nextVersion => {
       this.globalVersion = nextVersion;
@@ -199,24 +203,27 @@ class VersionCommand extends Command {
     } else if (conventionalCommits) {
       // it's a bit weird to have a return here, true
       return this.recommendVersions();
+    } else if (increment && independentVersions) {
+      // compute potential prerelease ID for each independent update
+      predicate = node => semver.inc(node.version, increment, resolvePrereleaseId(node.prereleaseId));
     } else if (increment) {
-      predicate = ({ version }) => semver.inc(version, increment, preid);
-    } else {
-      predicate = promptVersion;
-    }
+      // compute potential prerelease ID once for all fixed updates
+      const prereleaseId = (semver.prerelease(this.project.version) || []).shift();
+      const nextVersion = semver.inc(this.project.version, increment, resolvePrereleaseId(prereleaseId));
 
-    if (!this.project.isIndependent()) {
-      predicate = Promise.resolve(predicate({ version: this.project.version })).then(
-        makeGlobalVersionPredicate
-      );
+      predicate = makeGlobalVersionPredicate(nextVersion);
+    } else if (independentVersions) {
+      predicate = promptVersion;
+    } else {
+      predicate = promptVersion(this.project).then(makeGlobalVersionPredicate);
     }
 
     return Promise.resolve(predicate).then(getVersion => this.reduceVersions(getVersion));
   }
 
   reduceVersions(getVersion) {
-    const iterator = (versionMap, { pkg }) =>
-      Promise.resolve(getVersion(pkg)).then(version => versionMap.set(pkg.name, version));
+    const iterator = (versionMap, node) =>
+      Promise.resolve(getVersion(node)).then(version => versionMap.set(node.name, version));
 
     return pReduce(this.updates, iterator, new Map());
   }
@@ -234,8 +241,8 @@ class VersionCommand extends Command {
     }
 
     chain = chain.then(() =>
-      this.reduceVersions(pkg =>
-        ConventionalCommitUtilities.recommendVersion(pkg, type, {
+      this.reduceVersions(node =>
+        ConventionalCommitUtilities.recommendVersion(node, type, {
           changelogPreset,
           rootPath,
         })

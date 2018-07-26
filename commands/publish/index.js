@@ -172,7 +172,7 @@ class PublishCommand extends Command {
   }
 
   detectCanaryVersions() {
-    const { bump = "prepatch", preid } = this.options;
+    const { bump = "prepatch", preid = "alpha" } = this.options;
     // "prerelease" and "prepatch" are identical, for our purposes
     const release = bump.startsWith("pre") ? bump.replace("release", "patch") : `pre${bump}`;
 

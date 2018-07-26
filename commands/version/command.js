@@ -57,10 +57,12 @@ exports.builder = (yargs, composed) => {
       type: "string",
       requiresArg: true,
     },
+    // preid is copied into ../publish/command because a whitelist for one option isn't worth it
     preid: {
-      describe: "Specify the prerelease identifier (major.minor.patch-pre).",
+      describe: "Specify the prerelease identifier when publishing a prerelease",
       type: "string",
       requiresArg: true,
+      defaultDescription: "alpha",
     },
     "push-to-remote": {
       describe: "Push tagged commit to git remote.",
