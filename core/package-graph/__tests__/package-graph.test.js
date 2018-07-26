@@ -6,6 +6,39 @@ const Package = require("@lerna/package");
 const PackageGraph = require("..");
 
 describe("PackageGraph", () => {
+  describe("Node", () => {
+    it("proxies Package properties", () => {
+      const pkg = new Package({ name: "my-pkg", version: "1.2.3" }, "/path/to/my-pkg");
+      const graph = new PackageGraph([pkg]);
+      const node = graph.get("my-pkg");
+
+      // most of these properties are non-enumerable, so a snapshot doesn't work
+      expect(node.name).toBe("my-pkg");
+      expect(node.location).toBe("/path/to/my-pkg");
+      expect(node.prereleaseId).toBeUndefined();
+      expect(node.version).toBe("1.2.3");
+      expect(node.pkg).toBe(pkg);
+    });
+
+    it("exposes graph-specific Map properties", () => {
+      const node = new PackageGraph([
+        new Package({ name: "my-pkg", version: "4.5.6" }, "/path/to/my-pkg"),
+      ]).get("my-pkg");
+
+      expect(node).toHaveProperty("externalDependencies", expect.any(Map));
+      expect(node).toHaveProperty("localDependencies", expect.any(Map));
+      expect(node).toHaveProperty("localDependents", expect.any(Map));
+    });
+
+    it("computes prereleaseId from prerelease version", () => {
+      const node = new PackageGraph([
+        new Package({ name: "my-pkg", version: "1.2.3-rc.4" }, "/path/to/my-pkg"),
+      ]).get("my-pkg");
+
+      expect(node.prereleaseId).toBe("rc");
+    });
+  });
+
   describe(".get()", () => {
     it("should return a node with localDependencies", () => {
       const packages = [
