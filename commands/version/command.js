@@ -1,5 +1,6 @@
 "use strict";
 
+const log = require("npmlog");
 const semver = require("semver");
 
 /**
@@ -107,18 +108,34 @@ exports.builder = (yargs, composed) => {
 
   return yargs
     .option("ignore", {
+      // TODO: remove in next major release
       // NOT the same as filter-options --ignore
       hidden: true,
       conflicts: "ignore-changes",
       type: "array",
     })
+    .option("cd-version", {
+      // TODO: remove in next major release
+      hidden: true,
+      conflicts: "bump",
+      type: "string",
+      requiresArg: true,
+    })
     .check(argv => {
+      /* eslint-disable no-param-reassign */
       if (argv.ignore) {
-        /* eslint-disable no-param-reassign */
         argv.ignoreChanges = argv.ignore;
         delete argv.ignore;
-        /* eslint-enable no-param-reassign */
+        log.warn("deprecated", "--ignore has been renamed --ignore-changes");
       }
+
+      if (argv.cdVersion && !argv.bump) {
+        argv.bump = argv.cdVersion;
+        delete argv.cdVersion;
+        delete argv["cd-version"];
+        log.warn("deprecated", "--cd-version has been replaced by positional [bump]");
+      }
+      /* eslint-enable no-param-reassign */
 
       return argv;
     });

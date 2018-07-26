@@ -50,6 +50,26 @@ describe("version bump", () => {
     expect(message).toBe("v1.1.0");
   });
 
+  it("receives --cd-version <bump>", async () => {
+    const testDir = await initFixture("normal");
+    await lernaVersion(testDir)("--cd-version", "premajor");
+
+    const message = await getCommitMessage(testDir);
+    expect(message).toBe("v2.0.0-alpha.0");
+  });
+
+  it("errors when --cd-version and [bump] positional passed", async () => {
+    const testDir = await initFixture("normal");
+
+    try {
+      await lernaVersion(testDir)("minor", "--cd-version", "minor");
+    } catch (err) {
+      expect(err.message).toBe("Arguments cd-version and bump are mutually exclusive");
+    }
+
+    expect.assertions(1);
+  });
+
   it("throws an error when an invalid semver keyword is used", async () => {
     const testDir = await initFixture("normal");
 

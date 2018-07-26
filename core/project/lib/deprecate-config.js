@@ -6,6 +6,7 @@ const path = require("path");
 
 module.exports = compose(
   // add new predicates HERE
+  remap("command.publish.cdVersion", "command.publish.bump"),
   remap("command.publish.ignore", "command.publish.ignoreChanges"),
   remap("commands", "command"),
   (config, filepath) => ({ config, filepath })
