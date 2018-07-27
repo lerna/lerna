@@ -49,7 +49,7 @@ the default is `**` (hoist everything). This option only affects the
 $ lerna bootstrap --hoist
 ```
 
-For background on `--hoist`, see the [hoist documentation](../../doc/hoist.md).
+For background on `--hoist`, see the [hoist documentation](https://github.com/lerna/lerna/blob/master/doc/hoist.md).
 
 Note: If packages depend on different _versions_ of an external dependency,
 the most commonly used version will be hoisted, and a warning will be emitted.
