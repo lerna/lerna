@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.0.0-rc.0"></a>
+# [3.0.0-rc.0](https://github.com/lerna/lerna/compare/v3.0.0-beta.21...v3.0.0-rc.0) (2018-07-27)
+
+
+### Features
+
+* Add description from --help summary [skip ci] ([9b65d8e](https://github.com/lerna/lerna/commit/9b65d8e))
+* **add:** Add `--exact` option to `lerna add` ([#1478](https://github.com/lerna/lerna/issues/1478)) ([346d156](https://github.com/lerna/lerna/commit/346d156)), closes [#1470](https://github.com/lerna/lerna/issues/1470)
+
+
+
+
+
 <a name="3.0.0-beta.21"></a>
 # [3.0.0-beta.21](https://github.com/lerna/lerna/compare/v3.0.0-beta.20...v3.0.0-beta.21) (2018-05-12)
 

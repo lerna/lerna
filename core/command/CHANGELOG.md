@@ -3,6 +3,37 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.0.0-rc.0"></a>
+# [3.0.0-rc.0](https://github.com/lerna/lerna/compare/v3.0.0-beta.21...v3.0.0-rc.0) (2018-07-27)
+
+
+### Bug Fixes
+
+* **command:** Prevent premature resolution during tests from nested commands ([151363f](https://github.com/lerna/lerna/commit/151363f))
+* **project:** Report syntax errors in root package.json ([f674f35](https://github.com/lerna/lerna/commit/f674f35)), closes [#1452](https://github.com/lerna/lerna/issues/1452)
+
+
+### Code Refactoring
+
+* **collect-updates:** Make argument signature explicit ([e6ba19f](https://github.com/lerna/lerna/commit/e6ba19f))
+* **command:** Do not store raw packages list as instance property ([32a211a](https://github.com/lerna/lerna/commit/32a211a))
+
+
+### Features
+
+* **command:** Remove .defaultOptions() from option resolution stack ([2b27a54](https://github.com/lerna/lerna/commit/2b27a54))
+* **project:** Move collect-packages into getPackages() method ([06b88d4](https://github.com/lerna/lerna/commit/06b88d4))
+
+
+### BREAKING CHANGES
+
+* **collect-updates:** Instead of an opaque command instance, distinct positional arguments are required.
+* **command:** `this.packages` no longer exists in Command subclasses, use `this.packageGraph.rawPackageList`
+
+
+
+
+
 <a name="3.0.0-beta.21"></a>
 # [3.0.0-beta.21](https://github.com/lerna/lerna/compare/v3.0.0-beta.20...v3.0.0-beta.21) (2018-05-12)
 

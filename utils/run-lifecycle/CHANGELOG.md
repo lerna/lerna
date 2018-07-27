@@ -6,13 +6,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 <a name="3.0.0-rc.0"></a>
 # [3.0.0-rc.0](https://github.com/lerna/lerna/compare/v3.0.0-beta.21...v3.0.0-rc.0) (2018-07-27)
 
-**Note:** Version bump only for package @lerna/validation-error
 
+### Features
 
-
-
-
-<a name="3.0.0-beta.10"></a>
-# [3.0.0-beta.10](https://github.com/lerna/lerna/compare/v3.0.0-beta.9...v3.0.0-beta.10) (2018-03-27)
-
-**Note:** Version bump only for package @lerna/validation-error
+* **run-lifecycle:** Encapsulate npm-conf with createRunner() factory ([488f98d](https://github.com/lerna/lerna/commit/488f98d))

@@ -1,6 +1,6 @@
 {
   "name": "@lerna/run",
-  "version": "3.0.0-beta.21",
+  "version": "3.0.0-rc.0",
   "description": "Run an npm script in each package that contains that script",
   "keywords": [
     "lerna",
@@ -40,7 +40,7 @@
     "@lerna/npm-run-script": "file:../../utils/npm-run-script",
     "@lerna/output": "file:../../utils/output",
     "@lerna/run-parallel-batches": "file:../../utils/run-parallel-batches",
-    "@lerna/validation-error": "^3.0.0-beta.10",
+    "@lerna/validation-error": "^3.0.0-rc.0",
     "p-map": "^1.2.0"
   }
 }
