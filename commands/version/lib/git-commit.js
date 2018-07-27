@@ -7,11 +7,19 @@ const childProcess = require("@lerna/child-process");
 
 module.exports = gitCommit;
 
-function gitCommit(message, opts) {
+function gitCommit(message, { amend, commitHooks, signGitCommit }, opts) {
   log.silly("gitCommit", message);
-  const args = ["commit", "--no-verify"];
+  const args = ["commit"];
 
-  if (opts && opts.amend === true) {
+  if (commitHooks === false) {
+    args.push("--no-verify");
+  }
+
+  if (signGitCommit) {
+    args.push("--gpg-sign");
+  }
+
+  if (amend) {
     args.push("--amend", "--no-edit");
   } else if (message.indexOf(EOL) > -1) {
     // Use tempfile to allow multi\nline strings.
@@ -20,6 +28,6 @@ function gitCommit(message, opts) {
     args.push("-m", message);
   }
 
-  log.verbose("commit", args);
+  log.verbose("git", args);
   return childProcess.exec("git", args, opts);
 }

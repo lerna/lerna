@@ -1,0 +1,4 @@
+{
+  "name": "snake-independent",
+  "description": "when a change in the head (package-1) occurs, the tail (package-5) should be bumped as well"
+}

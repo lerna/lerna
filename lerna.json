@@ -11,7 +11,7 @@
     },
     "publish": {
       "allowBranch": "master",
-      "cdVersion": "prerelease",
+      "bump": "prerelease",
       "conventionalCommits": true,
       "gitRemote": "upstream",
       "preid": "rc",

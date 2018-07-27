@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`publish --cd-version patch with previous prerelease also graduates prereleased 1`] = `
+exports[`version patch with previous prerelease also graduates prereleased 1`] = `
 v1.0.1
 
 HEAD -> master, tag: v1.0.1
@@ -38,7 +38,7 @@ index SHA..SHA 100644
 +  "version": "1.0.1",
 `;
 
-exports[`publish --cd-version prerelease with previous prerelease bumps changed only 1`] = `
+exports[`version prerelease with previous prerelease bumps changed only 1`] = `
 v1.0.1-beta.4
 
 HEAD -> master, tag: v1.0.1-beta.4

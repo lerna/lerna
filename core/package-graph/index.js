@@ -19,6 +19,10 @@ class PackageGraphNode {
       location: {
         value: pkg.location,
       },
+      prereleaseId: {
+        // an existing prerelease ID only matters at the beginning
+        value: (semver.prerelease(pkg.version) || []).shift(),
+      },
       // properties that might change over time
       version: {
         get() {

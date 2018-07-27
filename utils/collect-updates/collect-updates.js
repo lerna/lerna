@@ -2,7 +2,6 @@
 
 const log = require("npmlog");
 const childProcess = require("@lerna/child-process");
-const semver = require("semver");
 
 const hasTags = require("./lib/has-tags");
 const collectDependents = require("./lib/collect-dependents");
@@ -43,10 +42,10 @@ function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions
     candidates = new Set();
 
     const hasDiff = makeDiffPredicate(committish, execOpts, commandOptions.ignoreChanges);
-    const needsBump = (commandOptions.cdVersion || "").startsWith("pre")
+    const needsBump = (commandOptions.bump || "").startsWith("pre")
       ? () => false
       : /* skip packages that have not been previously prereleased */
-        node => semver.prerelease(node.version);
+        node => node.prereleaseId;
 
     packages.forEach((node, name) => {
       if (forced.has(name) || needsBump(node) || hasDiff(node)) {

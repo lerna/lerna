@@ -14,7 +14,8 @@ function factory(argv) {
 
 class ChangedCommand extends Command {
   get otherCommandConfigs() {
-    return ["publish"];
+    // back-compat
+    return ["version", "publish"];
   }
 
   initialize() {

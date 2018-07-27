@@ -1,7 +1,6 @@
 "use strict";
 
 // local modules _must_ be explicitly mocked
-jest.mock("../lib/get-packages-without-license");
 jest.mock("../lib/git-push");
 jest.mock("../lib/is-anything-committed");
 jest.mock("../lib/is-behind-upstream");
@@ -15,11 +14,11 @@ const collectUpdates = require("@lerna/collect-updates");
 const ConventionalCommitUtilities = require("@lerna/conventional-commits");
 
 // helpers
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const initFixture = require("@lerna-test/init-fixture")(path.resolve(__dirname, "../../publish/__tests__"));
 const showCommit = require("@lerna-test/show-commit");
 
 // test command
-const lernaPublish = require("@lerna-test/command-runner")(require("../command"));
+const lernaVersion = require("@lerna-test/command-runner")(require("../command"));
 
 describe("--conventional-commits", () => {
   describe("independent", () => {
@@ -38,7 +37,7 @@ describe("--conventional-commits", () => {
     it("should use conventional-commits utility to guess version bump and generate CHANGELOG", async () => {
       const cwd = await initFixture("independent");
 
-      await lernaPublish(cwd)("--conventional-commits");
+      await lernaVersion(cwd)("--conventional-commits");
 
       const changedFiles = await showCommit(cwd, "--name-only");
       expect(changedFiles).toMatchSnapshot();
@@ -61,7 +60,7 @@ describe("--conventional-commits", () => {
       const cwd = await initFixture("independent");
       const changelogOpts = { changelogPreset: "foo-bar", rootPath: cwd };
 
-      await lernaPublish(cwd)("--conventional-commits", "--changelog-preset", "foo-bar");
+      await lernaVersion(cwd)("--conventional-commits", "--changelog-preset", "foo-bar");
 
       expect(ConventionalCommitUtilities.recommendVersion).toBeCalledWith(
         expect.any(Object),
@@ -84,7 +83,7 @@ describe("--conventional-commits", () => {
     it("should use conventional-commits utility to guess version bump and generate CHANGELOG", async () => {
       const cwd = await initFixture("normal");
 
-      await lernaPublish(cwd)("--conventional-commits");
+      await lernaVersion(cwd)("--conventional-commits");
 
       const changedFiles = await showCommit(cwd, "--name-only");
       expect(changedFiles).toMatchSnapshot();
@@ -119,7 +118,7 @@ describe("--conventional-commits", () => {
       const cwd = await initFixture("normal");
       const changelogOpts = { changelogPreset: "baz-qux", rootPath: cwd };
 
-      await lernaPublish(cwd)("--conventional-commits", "--changelog-preset", "baz-qux");
+      await lernaVersion(cwd)("--conventional-commits", "--changelog-preset", "baz-qux");
 
       expect(ConventionalCommitUtilities.recommendVersion).toBeCalledWith(
         expect.any(Object),
@@ -140,7 +139,7 @@ describe("--conventional-commits", () => {
     collectUpdates.setUpdated(cwd, "package-1");
     ConventionalCommitUtilities.recommendVersion.mockResolvedValueOnce("1.1.0");
 
-    await lernaPublish(cwd)("--conventional-commits");
+    await lernaVersion(cwd)("--conventional-commits");
 
     expect(writePkg.updatedVersions()).toEqual({
       "package-1": "1.1.0",
@@ -155,7 +154,7 @@ describe("--conventional-commits", () => {
       Promise.resolve(semver.inc(pkg.version, "patch"))
     );
 
-    await lernaPublish(cwd)("--conventional-commits");
+    await lernaVersion(cwd)("--conventional-commits");
 
     expect(writePkg.updatedVersions()).toEqual({
       "package-2": "1.1.1",

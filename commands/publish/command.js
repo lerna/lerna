@@ -1,73 +1,27 @@
 "use strict";
 
+const versionCommand = require("@lerna/version/command");
+
 /**
  * @see https://github.com/yargs/yargs/blob/master/docs/advanced.md#providing-a-command-module
  */
-exports.command = "publish";
+exports.command = "publish [bump]";
 
-exports.describe = "Publish packages in the current project";
+exports.describe = "Publish packages in the current project.";
 
 exports.builder = yargs => {
-  const cdVersionOptions = ["major", "minor", "patch", "premajor", "preminor", "prepatch", "prerelease"];
-  const cdVersionOptionString = `'${cdVersionOptions.slice(0, -1).join("', '")}', or '${
-    cdVersionOptions[cdVersionOptions.length - 1]
-  }'.`;
-
-  // TODO: share only relevant options with `lerna changed`
   const opts = {
-    "allow-branch": {
-      describe: "Specify which branches to allow publishing from.",
-      type: "array",
-    },
-    canary: {
-      defaultDescription: "alpha",
+    c: {
       describe: "Publish packages after every successful merge using the sha as part of the tag.",
-      alias: "c",
-      // NOTE: this type must remain undefined, as it is too overloaded to make sense
-      // type: "string",
-    },
-    "cd-version": {
-      describe: `Skip the version selection prompt and increment semver: ${cdVersionOptionString}`,
-      type: "string",
-      requiresArg: true,
-      coerce: choice => {
-        if (cdVersionOptions.indexOf(choice) === -1) {
-          throw new Error(`--cd-version must be one of: ${cdVersionOptionString}`);
-        }
-        return choice;
-      },
-    },
-    "conventional-commits": {
-      describe: "Use angular conventional-commit format to determine version bump and generate CHANGELOG.",
+      alias: "canary",
       type: "boolean",
     },
-    "changelog-preset": {
-      describe: "Use another conventional-changelog preset rather than angular.",
-      type: "string",
-    },
-    exact: {
-      describe: "Specify cross-dependency version numbers exactly rather than with a caret (^).",
-      type: "boolean",
-    },
-    "git-remote": {
-      defaultDescription: "origin",
-      describe: "Push git changes to the specified remote instead of 'origin'.",
+    // preid is copied from ../version/command because a whitelist for one option isn't worth it
+    preid: {
+      describe: "Specify the prerelease identifier when publishing a prerelease",
       type: "string",
       requiresArg: true,
-    },
-    "ignore-changes": {
-      describe: "Ignore changes in files matched by glob(s).",
-      type: "array",
-    },
-    message: {
-      describe: "Use a custom commit message when creating the publish commit.",
-      alias: "m",
-      type: "string",
-      requiresArg: true,
-    },
-    amend: {
-      describe: "Amend the existing commit, instead of generating a new one.",
-      type: "boolean",
+      defaultDescription: "alpha",
     },
     "npm-tag": {
       describe: "Publish packages with the specified npm dist-tag",
@@ -89,24 +43,6 @@ exports.builder = yargs => {
       describe: "Execute ./scripts/prepublish.js and ./scripts/postpublish.js, relative to package root.",
       type: "boolean",
     },
-    preid: {
-      describe: "Specify the prerelease identifier (major.minor.patch-pre).",
-      type: "string",
-      requiresArg: true,
-    },
-    "repo-version": {
-      describe: "Specify repo version to publish.",
-      type: "string",
-      requiresArg: true,
-    },
-    "skip-git": {
-      describe: "Skip commiting, tagging, and pushing git changes.",
-      type: "boolean",
-    },
-    "skip-npm": {
-      describe: "Stop before actually publishing change to npm.",
-      type: "boolean",
-    },
     "temp-tag": {
       describe: "Create a temporary tag while publishing.",
       type: "boolean",
@@ -117,27 +53,18 @@ exports.builder = yargs => {
     },
   };
 
-  return yargs
+  return composeVersionOptions(yargs)
     .options(opts)
-    .group(Object.keys(opts), "Command Options:")
-    .option("ignore", {
-      // NOT the same as filter-options --ignore
-      hidden: true,
-      conflicts: "ignore-changes",
-      type: "array",
-    })
-    .check(argv => {
-      if (argv.ignore) {
-        /* eslint-disable no-param-reassign */
-        argv.ignoreChanges = argv.ignore;
-        delete argv.ignore;
-        /* eslint-enable no-param-reassign */
-      }
-
-      return argv;
-    });
+    .group(Object.keys(opts), "Command Options:");
 };
 
 exports.handler = function handler(argv) {
   return require(".")(argv);
 };
+
+function composeVersionOptions(yargs) {
+  versionCommand.addBumpPositional(yargs, ["from-git"]);
+  versionCommand.builder(yargs, true);
+
+  return yargs;
+}

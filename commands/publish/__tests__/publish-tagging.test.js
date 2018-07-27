@@ -2,9 +2,10 @@
 
 // local modules _must_ be explicitly mocked
 jest.mock("../lib/get-packages-without-license");
-jest.mock("../lib/git-push");
-jest.mock("../lib/is-anything-committed");
-jest.mock("../lib/is-behind-upstream");
+// FIXME: better mock for version command
+jest.mock("../../version/lib/git-push");
+jest.mock("../../version/lib/is-anything-committed");
+jest.mock("../../version/lib/is-behind-upstream");
 
 // mocked modules
 const collectUpdates = require("@lerna/collect-updates");

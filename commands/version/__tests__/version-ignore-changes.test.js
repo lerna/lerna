@@ -4,7 +4,6 @@
 jest.unmock("@lerna/collect-updates");
 
 // local modules _must_ be explicitly mocked
-jest.mock("../lib/get-packages-without-license");
 jest.mock("../lib/git-push");
 jest.mock("../lib/is-anything-committed");
 jest.mock("../lib/is-behind-upstream");
@@ -13,19 +12,19 @@ const fs = require("fs-extra");
 const path = require("path");
 
 // helpers
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const initFixture = require("@lerna-test/init-fixture")(path.resolve(__dirname, "../../publish/__tests__"));
 const gitAdd = require("@lerna-test/git-add");
 const gitTag = require("@lerna-test/git-tag");
 const gitCommit = require("@lerna-test/git-commit");
 const showCommit = require("@lerna-test/show-commit");
 
 // test command
-const lernaPublish = require("@lerna-test/command-runner")(require("../command"));
+const lernaVersion = require("@lerna-test/command-runner")(require("../command"));
 
 // stabilize commit SHA
 expect.addSnapshotSerializer(require("@lerna-test/serialize-git-sha"));
 
-describe("publish --ignore-changes", () => {
+describe("version --ignore-changes", () => {
   const setupChanges = async (cwd, tuples) => {
     await gitTag(cwd, "v1.0.0");
     await Promise.all(
@@ -35,7 +34,7 @@ describe("publish --ignore-changes", () => {
     await gitCommit(cwd, "setup");
   };
 
-  it("does not publish packages with ignored changes", async () => {
+  it("does not version packages with ignored changes", async () => {
     const cwd = await initFixture("normal");
 
     await setupChanges(cwd, [
@@ -44,7 +43,7 @@ describe("publish --ignore-changes", () => {
       ["packages/package-4/lib/foo.js", "there"],
     ]);
 
-    await lernaPublish(cwd)(
+    await lernaVersion(cwd)(
       "--ignore-changes",
       "README.md",
 
@@ -67,7 +66,7 @@ describe("publish --ignore-changes", () => {
       ["packages/package-4/lib/foo.js", "hey"],
     ]);
 
-    await lernaPublish(cwd)("--ignore", "*.md");
+    await lernaVersion(cwd)("--ignore", "*.md");
 
     const changedFiles = await showCommit(cwd, "--name-only");
     expect(changedFiles).toMatchSnapshot();

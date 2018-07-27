@@ -1,0 +1,8 @@
+{
+  "name": "package-4",
+  "description": "one local dependency, one direct dependent, two transitive dependencies",
+  "version": "4.0.0",
+  "dependencies": {
+    "package-3": "^3.0.0"
+  }
+}

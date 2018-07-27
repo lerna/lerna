@@ -1,19 +1,14 @@
 "use strict";
 
 const os = require("os");
-const chalk = require("chalk");
-const dedent = require("dedent");
-const minimatch = require("minimatch");
 const path = require("path");
 const pFinally = require("p-finally");
 const pMap = require("p-map");
 const pReduce = require("p-reduce");
-const pWaterfall = require("p-waterfall");
 const semver = require("semver");
 
 const Command = require("@lerna/command");
-const ConventionalCommitUtilities = require("@lerna/conventional-commits");
-const PromptUtilities = require("@lerna/prompt");
+const childProcess = require("@lerna/child-process");
 const output = require("@lerna/output");
 const collectUpdates = require("@lerna/collect-updates");
 const npmDistTag = require("@lerna/npm-dist-tag");
@@ -21,21 +16,14 @@ const npmPublish = require("@lerna/npm-publish");
 const { createRunner } = require("@lerna/run-lifecycle");
 const batchPackages = require("@lerna/batch-packages");
 const runParallelBatches = require("@lerna/run-parallel-batches");
-const ValidationError = require("@lerna/validation-error");
+const versionCommand = require("@lerna/version");
 
 const createTempLicenses = require("./lib/create-temp-licenses");
-const getCurrentBranch = require("./lib/get-current-branch");
 const getCurrentSHA = require("./lib/get-current-sha");
+const getCurrentTags = require("./lib/get-current-tags");
+const getTaggedPackages = require("./lib/get-tagged-packages");
 const getPackagesWithoutLicense = require("./lib/get-packages-without-license");
-const getShortSHA = require("./lib/get-short-sha");
-const gitAdd = require("./lib/git-add");
 const gitCheckout = require("./lib/git-checkout");
-const gitCommit = require("./lib/git-commit");
-const gitPush = require("./lib/git-push");
-const gitTag = require("./lib/git-tag");
-const isBehindUpstream = require("./lib/is-behind-upstream");
-const isBreakingChange = require("./lib/is-breaking-change");
-const isAnythingCommited = require("./lib/is-anything-committed");
 const removeTempLicenses = require("./lib/remove-temp-licenses");
 
 module.exports = factory;
@@ -45,148 +33,67 @@ function factory(argv) {
 }
 
 class PublishCommand extends Command {
+  get otherCommandConfigs() {
+    // back-compat
+    return ["version"];
+  }
+
   initialize() {
-    this.gitRemote = this.options.gitRemote || "origin";
-    this.gitEnabled = !(this.options.canary || this.options.skipGit);
+    if (this.options.skipNpm) {
+      this.logger.warn("deprecated", "Instead of --skip-npm, call `lerna version` directly");
 
-    // Set the 'amend' flag so it can be passed to child commands.
-    this.execOpts.amend = this.options.amend === true;
+      return versionCommand(this._argv).then(() => false);
+    }
 
-    // https://docs.npmjs.com/misc/config#save-prefix
-    this.savePrefix = this.options.exact ? "" : "^";
+    if (this.options.canary) {
+      this.logger.info("canary", "enabled");
+    }
 
     if (this.options.requireScripts) {
       this.logger.info("require-scripts", "enabled");
     }
+
+    // https://docs.npmjs.com/misc/config#save-prefix
+    this.savePrefix = this.options.exact ? "" : "^";
 
     this.npmConfig = {
       npmClient: this.options.npmClient || "npm",
       registry: this.options.registry,
     };
 
-    if (this.options.canary) {
-      this.logger.info("canary", "enabled");
-    }
-
-    if (!this.project.isIndependent()) {
-      this.logger.info("current version", this.project.version);
-    }
-
-    // git validation, if enabled, should happen before updates are calculated and versions picked
-    if (this.gitEnabled) {
-      if (!isAnythingCommited(this.execOpts)) {
-        throw new ValidationError(
-          "ENOCOMMIT",
-          "No commits in this repository. Please commit something before using publish."
-        );
+    return Promise.resolve(this.findVersionedUpdates()).then(result => {
+      if (!result) {
+        // early return from nested VersionCommand
+        return false;
       }
 
-      this.currentBranch = getCurrentBranch(this.execOpts);
-
-      if (this.currentBranch === "HEAD") {
-        throw new ValidationError(
-          "ENOGIT",
-          "Detached git HEAD, please checkout a branch to publish changes."
-        );
-      }
-
-      if (
-        this.options.allowBranch &&
-        ![].concat(this.options.allowBranch).some(x => minimatch(this.currentBranch, x))
-      ) {
-        throw new ValidationError(
-          "ENOTALLOWED",
-          dedent`
-            Branch '${this.currentBranch}' is restricted from publishing due to allowBranch config.
-            Please consider the reasons for this restriction before overriding the option.
-          `
-        );
-      }
-
-      if (isBehindUpstream(this.gitRemote, this.currentBranch, this.execOpts)) {
-        const message = `Local branch '${this.currentBranch}' is behind remote upstream ${this.gitRemote}/${
-          this.currentBranch
-        }`;
-
-        if (!this.options.ci) {
-          // interrupt interactive publish
-          throw new ValidationError(
-            "EBEHIND",
-            dedent`
-              ${message}
-              Please merge remote changes into '${this.currentBranch}' with 'git pull'
-            `
-          );
-        }
-
-        // CI publish should not error, but warn & exit
-        this.logger.warn("EBEHIND", `${message}, exiting`);
+      if (!result.updates.length) {
+        this.logger.success("No updated packages to publish");
 
         // still exits zero, aka "ok"
         return false;
       }
-    }
 
-    this.updates = collectUpdates(this.filteredPackages, this.packageGraph, this.execOpts, this.options);
+      this.updates = result.updates;
+      this.updatesVersions = new Map(result.updatesVersions);
 
-    if (!this.updates.length) {
-      this.logger.success("No updated packages to publish");
+      this.runPackageLifecycle = createRunner(this.options);
+      this.packagesToPublish = this.updates.map(({ pkg }) => pkg).filter(pkg => !pkg.private);
+      this.batchedPackages = this.toposort
+        ? batchPackages(
+            this.packagesToPublish,
+            this.options.rejectCycles,
+            // Don't sort based on devDependencies because that would increase the chance of dependency cycles
+            // causing less-than-ideal a publishing order.
+            "dependencies"
+          )
+        : [this.packagesToPublish];
 
-      // still exits zero, aka "ok"
-      return false;
-    }
+      let chain = Promise.resolve();
 
-    this.runPackageLifecycle = createRunner(this.options);
-
-    this.packagesToPublish = this.updates.map(({ pkg }) => pkg).filter(pkg => !pkg.private);
-
-    this.batchedPackages = this.toposort
-      ? batchPackages(
-          this.packagesToPublish,
-          this.options.rejectCycles,
-          // Don't sort based on devDependencies because that would increase the chance of dependency cycles
-          // causing less-than-ideal a publishing order.
-          "dependencies"
-        )
-      : [this.packagesToPublish];
-
-    const tasks = [
-      // versions
-      () => this.getVersionsForUpdates(),
-      versions => {
-        if (
-          this.project.isIndependent() ||
-          versions.size === this.filteredPackages.size ||
-          this.options.canary
-        ) {
-          // independent, force-publish=*, or canary, we don't bump all
-          this.updatesVersions = versions;
-        } else {
-          let hasBreakingChange;
-
-          for (const [name, bump] of versions) {
-            hasBreakingChange =
-              hasBreakingChange || isBreakingChange(this.packageGraph.get(name).version, bump);
-          }
-
-          if (hasBreakingChange) {
-            const packages =
-              this.filteredPackages.length === this.packageGraph.size
-                ? this.packageGraph
-                : new Map(this.filteredPackages.map(({ name }) => [name, this.packageGraph.get(name)]));
-
-            this.updates = Array.from(packages.values());
-            this.updatesVersions = new Map(this.updates.map(({ name }) => [name, this.globalVersion]));
-          } else {
-            this.updatesVersions = versions;
-          }
-        }
-      },
-      () => this.confirmVersions(),
-
-      // licenses
-      () => getPackagesWithoutLicense(this.project, this.packagesToPublish),
-      packagesWithoutLicense => {
+      // prepare for license management
+      chain = chain.then(() => getPackagesWithoutLicense(this.project, this.packagesToPublish));
+      chain = chain.then(packagesWithoutLicense => {
         if (packagesWithoutLicense.length && !this.project.licensePath) {
           this.packagesToBeLicensed = [];
           this.logger.warn(
@@ -196,44 +103,151 @@ class PublishCommand extends Command {
         } else {
           this.packagesToBeLicensed = packagesWithoutLicense;
         }
-      },
-    ];
+      });
 
-    return pWaterfall(tasks);
+      return chain;
+    });
   }
 
   execute() {
     this.enableProgressBar();
+    this.logger.info("publish", "Publishing packages to npm...");
 
-    const tasks = [];
+    let chain = Promise.resolve();
 
-    tasks.push(() => this.updateUpdatedPackages());
-
-    if (this.gitEnabled) {
-      tasks.push(() => this.commitAndTagUpdates());
-    } else {
-      this.logger.info("execute", "Skipping git commit/push");
+    if (this.options.canary) {
+      chain = chain.then(() => this.updateCanaryVersions());
     }
 
-    if (this.options.skipNpm) {
-      this.logger.info("execute", "Skipping publish to registry");
-    } else {
-      tasks.push(() => this.publishPackagesToNpm());
+    chain = chain.then(() => this.resolveLocalDependencyLinks());
+    chain = chain.then(() => this.annotateGitHead());
+    chain = chain.then(() => this.npmPublish());
+    chain = chain.then(() => this.resetChanges());
+
+    if (this.options.tempTag) {
+      chain = chain.then(() => this.npmUpdateAsLatest());
     }
 
-    if (this.gitEnabled && !this.options.amend) {
-      tasks.push(() => this.pushToRemote());
-    }
+    return chain.then(() => {
+      const count = this.packagesToPublish.length;
+      const message = this.packagesToPublish.map(pkg => ` - ${pkg.name}@${pkg.version}`);
 
-    return pWaterfall(tasks).then(() => {
-      this.logger.success("publish", "finished");
+      output("Successfully published:");
+      output(message.join(os.EOL));
+
+      this.logger.success("published", "%d %s", count, count === 1 ? "package" : "packages");
     });
   }
 
-  pushToRemote() {
-    this.logger.info("git", "Pushing tags...");
+  findVersionedUpdates() {
+    if (this.options.bump === "from-git") {
+      return this.detectFromGit();
+    }
 
-    return gitPush(this.gitRemote, this.currentBranch, this.execOpts);
+    if (this.options.canary) {
+      // TODO: throw useful error when canary attempted on tagged release?
+      return this.detectCanaryVersions();
+    }
+
+    return versionCommand(this._argv);
+  }
+
+  detectFromGit() {
+    let chain = Promise.resolve();
+
+    chain = chain.then(() => getCurrentTags(this.execOpts));
+    chain = chain.then(taggedPackageNames => {
+      if (!taggedPackageNames.length) {
+        this.logger.notice("from-git", "No tagged release found");
+
+        return [];
+      }
+
+      if (this.project.isIndependent()) {
+        return taggedPackageNames.map(name => this.packageGraph.get(name));
+      }
+
+      return getTaggedPackages(this.packageGraph, this.project.rootPath, this.execOpts);
+    });
+
+    return chain.then(updates => {
+      const updatesVersions = updates.map(({ pkg }) => [pkg.name, pkg.version]);
+
+      return { updates, updatesVersions };
+    });
+  }
+
+  detectCanaryVersions() {
+    const { bump = "prepatch", preid = "alpha" } = this.options;
+    // "prerelease" and "prepatch" are identical, for our purposes
+    const release = bump.startsWith("pre") ? bump.replace("release", "patch") : `pre${bump}`;
+
+    let chain = Promise.resolve();
+
+    // find changed packages since last release, if any
+    chain = chain.then(() =>
+      collectUpdates(this.filteredPackages, this.packageGraph, this.execOpts, {
+        bump: "prerelease",
+        canary: true,
+        ignoreChanges: this.options.ignoreChanges,
+      })
+    );
+
+    const makeVersion = described => {
+      // FIXME: this will blow up when `described` doesn't match the regex (returns null)
+      const [, baseVersion, refCount, buildMeta] = /^(?:.*@)?(.*)-(\d+)-g([0-9a-f]+)$/.exec(described);
+
+      // the next version is bumped without concern for preid or current index
+      const nextVersion = semver.inc(baseVersion, release.replace("pre", ""));
+
+      // semver.inc() starts a new prerelease at .0, git describe starts at .1
+      // and build metadata is always ignored when comparing dependency ranges
+      return `${nextVersion}-${preid}.${refCount - 1}+${buildMeta}`;
+    };
+
+    const gitDescribeMatching = globFilter =>
+      childProcess.execSync("git", ["describe", "--match", globFilter], this.execOpts);
+
+    if (this.project.isIndependent()) {
+      // each package is described against its tags only
+      chain = chain.then(updates =>
+        pMap(updates, ({ pkg }) => {
+          const described = gitDescribeMatching(`${pkg.name}@*`);
+          const version = makeVersion(described);
+
+          return [pkg.name, version];
+        }).then(updatesVersions => ({ updates, updatesVersions }))
+      );
+    } else {
+      // all packages are described against the last tag
+      chain = chain.then(updates => {
+        const described = gitDescribeMatching(`${this.options.tagVersionPrefix}*.*.*`);
+        const version = makeVersion(described);
+        const updatesVersions = updates.map(({ pkg }) => [pkg.name, version]);
+
+        return { updates, updatesVersions };
+      });
+    }
+
+    return chain;
+  }
+
+  updateCanaryVersions() {
+    const publishableUpdates = this.updates.filter(node => !node.pkg.private);
+
+    return pMap(publishableUpdates, ({ pkg, localDependencies }) => {
+      pkg.version = this.updatesVersions.get(pkg.name);
+
+      for (const [depName, resolved] of localDependencies) {
+        // other canary versions need to be updated, non-canary is a no-op
+        const depVersion = this.updatesVersions.get(depName) || this.packageGraph.get(depName).pkg.version;
+
+        // it no longer matters if we mutate the shared Package instance
+        pkg.updateLocalDependency(resolved, depVersion, this.savePrefix);
+      }
+
+      // writing changes to disk handled in annotateGitHead()
+    });
   }
 
   resolveLocalDependencyLinks() {
@@ -278,355 +292,6 @@ class PublishCommand extends Command {
       // --skip-git should not leave unstaged changes behind
       gitCheckout(this.project.manifest.location, this.execOpts)
     );
-  }
-
-  publishPackagesToNpm() {
-    this.logger.info("publish", "Publishing packages to npm...");
-
-    let chain = Promise.resolve();
-
-    chain = chain.then(() => this.resolveLocalDependencyLinks());
-    chain = chain.then(() => this.annotateGitHead());
-    chain = chain.then(() => this.npmPublish());
-    chain = chain.then(() => this.resetChanges());
-
-    if (this.options.tempTag) {
-      chain = chain.then(() => this.npmUpdateAsLatest());
-    }
-
-    return chain.then(() => {
-      const count = this.packagesToPublish.length;
-      const message = this.packagesToPublish.map(pkg => ` - ${pkg.name}@${pkg.version}`);
-
-      output("Successfully published:");
-      output(message.join(os.EOL));
-
-      this.logger.success("published", "%d %s", count, count === 1 ? "package" : "packages");
-    });
-  }
-
-  getVersionsForUpdates() {
-    const { canary, cdVersion, conventionalCommits, preid, repoVersion } = this.options;
-
-    const makeGlobalVersionPredicate = nextVersion => {
-      this.globalVersion = nextVersion;
-
-      return () => nextVersion;
-    };
-
-    // decide the predicate in the conditionals below
-    let predicate;
-
-    if (repoVersion) {
-      predicate = makeGlobalVersionPredicate(semver.valid(repoVersion));
-    } else if (canary) {
-      const release = cdVersion || "minor";
-      // FIXME: this complicated defaulting should be done in yargs option.coerce()
-      const keyword = typeof canary !== "string" ? preid || "alpha" : canary;
-      const shortHash = getShortSHA(this.execOpts);
-
-      predicate = ({ version }) => `${semver.inc(version, release)}-${keyword}.${shortHash}`;
-    } else if (cdVersion) {
-      predicate = ({ version }) => semver.inc(version, cdVersion, preid);
-    } else if (conventionalCommits) {
-      // it's a bit weird to have a return here, true
-      return this.recommendVersions();
-    } else {
-      predicate = this.promptVersion;
-    }
-
-    if (!this.project.isIndependent()) {
-      predicate = Promise.resolve(predicate({ version: this.project.version })).then(
-        makeGlobalVersionPredicate
-      );
-    }
-
-    return Promise.resolve(predicate).then(getVersion => this.reduceVersions(getVersion));
-  }
-
-  reduceVersions(getVersion) {
-    const iterator = (versionMap, { pkg }) =>
-      Promise.resolve(getVersion(pkg)).then(version => versionMap.set(pkg.name, version));
-
-    return pReduce(this.updates, iterator, new Map());
-  }
-
-  recommendVersions() {
-    const independentVersions = this.project.isIndependent();
-    const { changelogPreset } = this.options;
-    const rootPath = this.project.manifest.location;
-    const type = independentVersions ? "independent" : "fixed";
-
-    let chain = Promise.resolve();
-
-    if (type === "fixed") {
-      chain = chain.then(() => {
-        const globalVersion = this.project.version;
-
-        for (const { pkg } of this.updates) {
-          if (semver.lt(pkg.version, globalVersion)) {
-            this.logger.verbose(
-              "publish",
-              `Overriding version of ${pkg.name} from ${pkg.version} to ${globalVersion}`
-            );
-
-            pkg.version = globalVersion;
-          }
-        }
-      });
-    }
-
-    chain = chain.then(() =>
-      this.reduceVersions(pkg =>
-        ConventionalCommitUtilities.recommendVersion(pkg, type, {
-          changelogPreset,
-          rootPath,
-        })
-      )
-    );
-
-    if (type === "fixed") {
-      chain = chain.then(versions => {
-        let highestVersion = this.project.version;
-
-        versions.forEach(bump => {
-          if (semver.gt(bump, highestVersion)) {
-            highestVersion = bump;
-          }
-        });
-
-        this.globalVersion = highestVersion;
-
-        versions.forEach((_, name) => versions.set(name, highestVersion));
-
-        return versions;
-      });
-    }
-
-    return chain;
-  }
-
-  // TODO: extract out of class
-  // eslint-disable-next-line class-methods-use-this
-  promptVersion({ version: currentVersion, name: pkgName }) {
-    const patch = semver.inc(currentVersion, "patch");
-    const minor = semver.inc(currentVersion, "minor");
-    const major = semver.inc(currentVersion, "major");
-    const prepatch = semver.inc(currentVersion, "prepatch");
-    const preminor = semver.inc(currentVersion, "preminor");
-    const premajor = semver.inc(currentVersion, "premajor");
-
-    const message = `Select a new version ${pkgName ? `for ${pkgName} ` : ""}(currently ${currentVersion})`;
-
-    return PromptUtilities.select(message, {
-      choices: [
-        { value: patch, name: `Patch (${patch})` },
-        { value: minor, name: `Minor (${minor})` },
-        { value: major, name: `Major (${major})` },
-        { value: prepatch, name: `Prepatch (${prepatch})` },
-        { value: preminor, name: `Preminor (${preminor})` },
-        { value: premajor, name: `Premajor (${premajor})` },
-        { value: "PRERELEASE", name: "Prerelease" },
-        { value: "CUSTOM", name: "Custom" },
-      ],
-    }).then(choice => {
-      if (choice === "CUSTOM") {
-        return PromptUtilities.input("Enter a custom version", {
-          filter: semver.valid,
-          validate: v => v !== null || "Must be a valid semver version",
-        });
-      }
-
-      if (choice === "PRERELEASE") {
-        const [existingId] = semver.prerelease(currentVersion) || [];
-        const defaultVersion = semver.inc(currentVersion, "prerelease", existingId);
-        const prompt = `(default: ${existingId ? `"${existingId}"` : "none"}, yielding ${defaultVersion})`;
-
-        // TODO: allow specifying prerelease identifier as CLI option to skip the prompt
-        return PromptUtilities.input(`Enter a prerelease identifier ${prompt}`, {
-          filter: v => {
-            const preid = v || existingId;
-            return semver.inc(currentVersion, "prerelease", preid);
-          },
-        });
-      }
-
-      return choice;
-    });
-  }
-
-  confirmVersions() {
-    const changes = this.updates.map(({ pkg }) => {
-      let line = ` - ${pkg.name}: ${pkg.version} => ${this.updatesVersions.get(pkg.name)}`;
-      if (pkg.private) {
-        line += ` (${chalk.red("private")})`;
-      }
-      return line;
-    });
-
-    output("");
-    output("Changes:");
-    output(changes.join(os.EOL));
-    output("");
-
-    if (this.options.yes) {
-      this.logger.info("auto-confirmed");
-      return true;
-    }
-
-    return PromptUtilities.confirm("Are you sure you want to publish the above changes?");
-  }
-
-  updateUpdatedPackages() {
-    const { conventionalCommits, changelogPreset } = this.options;
-    const independentVersions = this.project.isIndependent();
-    const rootPkg = this.project.manifest;
-    const rootPath = rootPkg.location;
-    const changedFiles = new Set();
-
-    // my kingdom for async await :(
-    let chain = Promise.resolve();
-
-    // preversion:  Run BEFORE bumping the package version.
-    // version:     Run AFTER bumping the package version, but BEFORE commit.
-    // postversion: Run AFTER bumping the package version, and AFTER commit.
-    // @see https://docs.npmjs.com/misc/scripts
-
-    // exec preversion lifecycle in root (before all updates)
-    chain = chain.then(() => this.runPackageLifecycle(rootPkg, "preversion"));
-
-    chain = chain.then(() =>
-      pMap(
-        this.updates,
-        ({ pkg, localDependencies }) =>
-          // start the chain
-          Promise.resolve()
-
-            // exec preversion script
-            .then(() => this.runPackageLifecycle(pkg, "preversion"))
-
-            // write new package
-            .then(() => {
-              // set new version
-              pkg.version = this.updatesVersions.get(pkg.name);
-
-              // update pkg dependencies
-              for (const [depName, resolved] of localDependencies) {
-                const depVersion = this.updatesVersions.get(depName);
-
-                if (depVersion && resolved.type !== "directory") {
-                  // don't overwrite local file: specifiers (yet)
-                  pkg.updateLocalDependency(resolved, depVersion, this.savePrefix);
-                }
-              }
-
-              return pkg.serialize().then(() => {
-                // commit the updated manifest
-                changedFiles.add(pkg.manifestLocation);
-              });
-            })
-
-            // exec version script
-            .then(() => this.runPackageLifecycle(pkg, "version"))
-
-            .then(() => {
-              if (conventionalCommits) {
-                // we can now generate the Changelog, based on the
-                // the updated version that we're about to release.
-                const type = independentVersions ? "independent" : "fixed";
-
-                return ConventionalCommitUtilities.updateChangelog(pkg, type, {
-                  changelogPreset,
-                  rootPath,
-                }).then(changelogLocation => {
-                  // commit the updated changelog
-                  changedFiles.add(changelogLocation);
-                });
-              }
-            }),
-        // TODO: tune the concurrency
-        { concurrency: 100 }
-      )
-    );
-
-    if (conventionalCommits && !independentVersions) {
-      chain = chain.then(() =>
-        ConventionalCommitUtilities.updateChangelog(rootPkg, "root", {
-          changelogPreset,
-          rootPath,
-          version: this.globalVersion,
-        }).then(changelogLocation => {
-          // commit the updated changelog
-          changedFiles.add(changelogLocation);
-        })
-      );
-    }
-
-    if (!independentVersions && !this.options.canary) {
-      this.project.version = this.globalVersion;
-
-      chain = chain.then(() =>
-        this.project.serializeConfig().then(lernaConfigLocation => {
-          // commit the version update
-          changedFiles.add(lernaConfigLocation);
-        })
-      );
-    }
-
-    // exec version lifecycle in root (after all updates)
-    chain = chain.then(() => this.runPackageLifecycle(rootPkg, "version"));
-
-    if (this.gitEnabled) {
-      chain = chain.then(() => gitAdd(Array.from(changedFiles), this.execOpts));
-    }
-
-    return chain;
-  }
-
-  commitAndTagUpdates() {
-    let chain = Promise.resolve();
-
-    if (this.project.isIndependent()) {
-      chain = chain.then(() => this.gitCommitAndTagVersionForUpdates());
-    } else {
-      chain = chain.then(() => this.gitCommitAndTagVersion());
-    }
-
-    chain = chain.then(tags => {
-      this.tags = tags;
-    });
-
-    // run the postversion script for each update
-    chain = chain.then(() => pMap(this.updates, ({ pkg }) => this.runPackageLifecycle(pkg, "postversion")));
-
-    // run postversion, if set, in the root directory
-    chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "postversion"));
-
-    return chain;
-  }
-
-  gitCommitAndTagVersionForUpdates() {
-    const tags = this.updates.map(({ pkg }) => `${pkg.name}@${this.updatesVersions.get(pkg.name)}`);
-    const subject = this.options.message || "Publish";
-    const message = tags.reduce((msg, tag) => `${msg}${os.EOL} - ${tag}`, `${subject}${os.EOL}`);
-
-    return Promise.resolve()
-      .then(() => gitCommit(message, this.execOpts))
-      .then(() => Promise.all(tags.map(tag => gitTag(tag, this.execOpts))))
-      .then(() => tags);
-  }
-
-  gitCommitAndTagVersion() {
-    const version = this.globalVersion;
-    const tag = `v${version}`;
-    const message = this.options.message
-      ? this.options.message.replace(/%s/g, tag).replace(/%v/g, version)
-      : tag;
-
-    return Promise.resolve()
-      .then(() => gitCommit(message, this.execOpts))
-      .then(() => gitTag(tag, this.execOpts))
-      .then(() => [tag]);
   }
 
   execScript(pkg, script) {

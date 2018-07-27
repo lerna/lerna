@@ -1,25 +1,26 @@
 "use strict";
 
 // local modules _must_ be explicitly mocked
-jest.mock("../lib/get-packages-without-license");
 jest.mock("../lib/git-push");
 jest.mock("../lib/is-anything-committed");
 jest.mock("../lib/is-behind-upstream");
+
+const path = require("path");
 
 // mocked module(s)
 const writePkg = require("write-pkg");
 
 // helpers
-const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const initFixture = require("@lerna-test/init-fixture")(path.resolve(__dirname, "../../publish/__tests__"));
 
 // test command
-const lernaPublish = require("@lerna-test/command-runner")(require("../command"));
+const lernaVersion = require("@lerna-test/command-runner")(require("../command"));
 
 describe("git-hosted sibling specifiers", () => {
   test("gitCommittish", async () => {
     const cwd = await initFixture("git-hosted-sibling-committish");
 
-    await lernaPublish(cwd)("--cd-version", "minor");
+    await lernaVersion(cwd)("minor");
 
     expect(writePkg.updatedVersions()).toEqual({
       "package-1": "1.1.0",
@@ -47,7 +48,7 @@ describe("git-hosted sibling specifiers", () => {
   test("gitRange", async () => {
     const cwd = await initFixture("git-hosted-sibling-semver");
 
-    await lernaPublish(cwd)("--cd-version", "prerelease", "--preid", "beta");
+    await lernaVersion(cwd)("prerelease", "--preid", "beta");
 
     expect(writePkg.updatedVersions()).toEqual({
       "package-1": "1.0.1-beta.0",
@@ -75,7 +76,7 @@ describe("git-hosted sibling specifiers", () => {
   test("gitlab", async () => {
     const cwd = await initFixture("git-hosted-sibling-gitlab");
 
-    await lernaPublish(cwd)("--cd-version", "premajor", "--preid", "rc");
+    await lernaVersion(cwd)("premajor", "--preid", "rc");
 
     expect(writePkg.updatedVersions()).toEqual({
       "package-1": "2.0.0-rc.0",
