@@ -14,7 +14,7 @@
       "cdVersion": "prerelease",
       "conventionalCommits": true,
       "gitRemote": "upstream",
-      "preid": "beta",
+      "preid": "rc",
       "message": "chore(release): publish %s"
     }
   },
