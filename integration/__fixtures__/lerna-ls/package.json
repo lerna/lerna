@@ -1,0 +1,6 @@
+{
+  "name": "list-integration",
+  "description": "fodder for lerna ls integration tests",
+  "version": "0.0.0-monorepo",
+  "private": true
+}

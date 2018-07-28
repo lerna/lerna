@@ -1,0 +1,6 @@
+{
+  "name": "package-4",
+  "description": "a private package",
+  "version": "4.0.0",
+  "private": true
+}
