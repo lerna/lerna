@@ -2,7 +2,7 @@
 
 const cliRunner = require("@lerna-test/cli-runner");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const normalizeNewline = require("normalize-newline");
+const multiLineTrimRight = require("@lerna-test/multi-line-trim-right");
 
 // normalize temp directory paths in snapshots
 expect.addSnapshotSerializer(require("@lerna-test/serialize-tempdir"));
@@ -15,14 +15,7 @@ beforeAll(async () => {
   const run = cliRunner(cwd);
 
   // wrap runner to remove trailing whitespace added by columnify
-  // and normalize temp directory roots
-  lerna = (...args) =>
-    run(...args).then(result =>
-      normalizeNewline(result.stdout)
-        .split("\n")
-        .map(line => line.trimRight())
-        .join("\n")
-    );
+  lerna = (...args) => run(...args).then(result => multiLineTrimRight(result.stdout));
 });
 
 test("lerna list", async () => {

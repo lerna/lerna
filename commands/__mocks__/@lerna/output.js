@@ -1,7 +1,7 @@
 "use strict";
 
 const chalk = require("chalk");
-const normalizeNewline = require("normalize-newline");
+const multiLineTrimRight = require("@lerna-test/multi-line-trim-right");
 
 // keep snapshots stable cross-platform
 chalk.enabled = false;
@@ -10,14 +10,7 @@ chalk.enabled = false;
 const mockOutput = jest.fn();
 
 function logged() {
-  return mockOutput.mock.calls
-    .map(args =>
-      normalizeNewline(args[0])
-        .split("\n")
-        .map(line => line.trimRight())
-        .join("\n")
-    )
-    .join("\n");
+  return mockOutput.mock.calls.map(args => multiLineTrimRight(args[0])).join("\n");
 }
 
 module.exports = mockOutput;

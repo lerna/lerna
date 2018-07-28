@@ -1,7 +1,7 @@
 "use strict";
 
 const log = require("npmlog");
-const normalizeNewline = require("normalize-newline");
+const multiLineTrimRight = require("@lerna-test/multi-line-trim-right");
 
 module.exports = loggingOutput;
 
@@ -17,11 +17,6 @@ function loggingOutput(minLevel = "info") {
       // select all non-empty info, warn, or error logs
       .filter(m => log.levels[m.level] >= log.levels[minLevel] && m.message)
       // return just the normalized message content
-      .map(m =>
-        normalizeNewline(m.message)
-          .split("\n")
-          .map(line => line.trimRight())
-          .join("\n")
-      )
+      .map(m => multiLineTrimRight(m.message))
   );
 }

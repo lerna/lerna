@@ -38,6 +38,7 @@
     "@lerna-test/init-fixture": "file:helpers/init-fixture",
     "@lerna-test/load-manifests": "file:helpers/load-manifests",
     "@lerna-test/logging-output": "file:helpers/logging-output",
+    "@lerna-test/multi-line-trim-right": "file:helpers/multi-line-trim-right",
     "@lerna-test/normalize-relative-dir": "file:helpers/normalize-relative-dir",
     "@lerna-test/normalize-test-root": "file:helpers/normalize-test-root",
     "@lerna-test/pkg-matchers": "file:helpers/pkg-matchers",
