@@ -4,8 +4,8 @@ const cliRunner = require("@lerna-test/cli-runner");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const normalizeNewline = require("normalize-newline");
 
-// remove quotes around strings
-expect.addSnapshotSerializer({ test: val => typeof val === "string", print: val => val });
+// normalize temp directory paths in snapshots
+expect.addSnapshotSerializer(require("@lerna-test/serialize-tempdir"));
 
 // ls never makes changes to repo, so we only need one fixture + runner
 let lerna;
@@ -20,7 +20,7 @@ beforeAll(async () => {
     run(...args).then(result =>
       normalizeNewline(result.stdout)
         .split("\n")
-        .map(line => line.trimRight().replace(cwd, "<PROJECT_ROOT>"))
+        .map(line => line.trimRight())
         .join("\n")
     );
 });

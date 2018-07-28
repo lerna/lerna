@@ -1,10 +1,5 @@
 "use strict";
 
-const fs = require("fs");
-const os = require("os");
-const path = require("path");
-const normalizePath = require("normalize-path");
-
 // mocked modules
 const output = require("@lerna/output");
 
@@ -17,15 +12,8 @@ const lernaLs = require("@lerna-test/command-runner")(require("../command"));
 // remove quotes around strings
 expect.addSnapshotSerializer({ test: val => typeof val === "string", print: val => val });
 
-// TODO: extract root dir serializer?
-const TEMP_DIR = fs.realpathSync(os.tmpdir());
-const ROOT_DIR = new RegExp(path.join(TEMP_DIR, "[0-9a-f]+"), "g");
-
 // normalize temp directory paths in snapshots
-expect.addSnapshotSerializer({
-  test: val => typeof val === "string" && ROOT_DIR.test(val),
-  print: val => normalizePath(val.replace(ROOT_DIR, "<PROJECT_ROOT>")),
-});
+expect.addSnapshotSerializer(require("@lerna-test/serialize-tempdir"));
 
 describe("lerna ls", () => {
   describe("in a basic repo", () => {
