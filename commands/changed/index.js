@@ -1,9 +1,8 @@
 "use strict";
 
-const chalk = require("chalk");
-
 const Command = require("@lerna/command");
 const collectUpdates = require("@lerna/collect-updates");
+const listable = require("@lerna/listable");
 const output = require("@lerna/output");
 
 module.exports = factory;
@@ -19,40 +18,28 @@ class ChangedCommand extends Command {
   }
 
   initialize() {
-    this.updates = collectUpdates(this.filteredPackages, this.packageGraph, this.execOpts, this.options);
-    this.count = this.updates.length;
+    const updates = collectUpdates(this.filteredPackages, this.packageGraph, this.execOpts, this.options);
 
-    const proceedWithUpdates = this.count > 0;
+    this.result = listable.format(updates.map(node => node.pkg), this.options);
 
-    if (!proceedWithUpdates) {
+    if (this.result.count === 0) {
       this.logger.info("", "No changed packages found");
 
       process.exitCode = 1;
-    }
 
-    return proceedWithUpdates;
+      // prevents execute()
+      return false;
+    }
   }
 
   execute() {
-    const updatedPackages = this.updates.map(({ pkg }) => ({
-      name: pkg.name,
-      version: pkg.version,
-      private: pkg.private,
-    }));
-
-    const formattedUpdates = this.options.json
-      ? JSON.stringify(updatedPackages, null, 2)
-      : updatedPackages
-          .map(pkg => `- ${pkg.name}${pkg.private ? ` (${chalk.red("private")})` : ""}`)
-          .join("\n");
-
-    output(formattedUpdates);
+    output(this.result.text);
 
     this.logger.success(
       "found",
       "%d %s ready to publish",
-      this.count,
-      this.count === 1 ? "package" : "packages"
+      this.result.count,
+      this.result.count === 1 ? "package" : "packages"
     );
   }
 }

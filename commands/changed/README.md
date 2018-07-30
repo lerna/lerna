@@ -1,37 +1,29 @@
 # `@lerna/changed`
 
-> Check which packages have changed since the last publish
+> List local packages that have changed since the last tagged release
 
 ## Usage
 
+The output of `lerna changed` is a list of packages that would be the subjects of the next `lerna version` or `lerna publish` execution.
+
 ```sh
 $ lerna changed
+package-1
+package-2
 ```
 
-Check which `packages` have changed since the last release (the last git tag).
-
-Lerna determines the last git tag created and runs `git diff --name-only v6.8.1` to get all files changed since that tag. It then returns an array of packages that have an updated file.
-
-**Note that configuration for the `publish` command _also_ affects the
-`changed` command. For example `command.publish.ignoreChanges`**
+**Note:** `lerna.json` configuration for `lerna publish` _and_ `lerna version` also affects
+`lerna changed`, e.g. `command.publish.ignoreChanges`.
 
 ## Options
 
-### `--json`
+`lerna changed` supports all of the flags supported by [`lerna ls`](https://github.com/lerna/lerna/tree/master/commands/list#options):
 
-```sh
-$ lerna changed --json
-```
+* [`--json`](https://github.com/lerna/lerna/tree/master/commands/list#--json)
+* [`-a`, `--all`](https://github.com/lerna/lerna/tree/master/commands/list#--all)
+* [`-l`, `--long`](https://github.com/lerna/lerna/tree/master/commands/list#--long)
+* [`-p`, `--parseable`](https://github.com/lerna/lerna/tree/master/commands/list#--parseable)
 
-When run with this flag, `changed` will return an array of objects in the following format:
+Unlike `lerna ls`, however, `lerna changed` **does not** support [filter options](https://www.npmjs.com/package/@lerna/filter-options), as filtering is not supported by `lerna version` or `lerna publish`.
 
-```json
-[
-  {
-    "name": "package",
-    "version": "1.0.0",
-    "private": false
-  }
-]
-```
-
+`lerna changed` also supports all the flags supported by [`lerna version`](https://github.com/lerna/lerna/tree/master/commands/version#options), but the only relevant one is [`--ignore-changes`](https://github.com/lerna/lerna/tree/master/commands/version#--ignore-changes).

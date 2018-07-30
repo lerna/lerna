@@ -19,11 +19,15 @@ const updateLernaConfig = require("@lerna-test/update-lerna-config");
 // file under test
 const lernaChanged = require("@lerna-test/command-runner")(require("../command"));
 
-const touchFile = cwd => filePath => touch(path.join(cwd, filePath));
+// remove quotes around strings
+expect.addSnapshotSerializer({ test: val => typeof val === "string", print: val => val });
+
+// normalize temp directory paths in snapshots
+expect.addSnapshotSerializer(require("@lerna-test/serialize-tempdir"));
 
 const setupGitChanges = async (cwd, filePaths) => {
   await gitTag(cwd, "v1.0.0");
-  await Promise.all(filePaths.map(touchFile(cwd)));
+  await Promise.all(filePaths.map(fp => touch(path.join(cwd, fp))));
   await gitAdd(cwd, "-A");
   await gitCommit(cwd, "Commit");
 };
@@ -40,7 +44,10 @@ describe("ChangedCommand", () => {
       await setupGitChanges(testDir, ["packages/package-2/random-file"]);
       await lernaChanged(testDir)();
 
-      expect(output.logged()).toMatchSnapshot();
+      expect(output.logged()).toMatchInlineSnapshot(`
+package-2
+package-3
+`);
     });
 
     it("should list all packages when no tag is found", async () => {
@@ -48,7 +55,12 @@ describe("ChangedCommand", () => {
 
       await lernaChanged(testDir)();
 
-      expect(output.logged()).toMatchSnapshot();
+      expect(output.logged()).toMatchInlineSnapshot(`
+package-1
+package-2
+package-3
+package-4
+`);
     });
 
     it("should list changes with --force-publish", async () => {
@@ -57,7 +69,12 @@ describe("ChangedCommand", () => {
       await setupGitChanges(testDir, ["packages/package-2/random-file"]);
       await lernaChanged(testDir)("--force-publish");
 
-      expect(output.logged()).toMatchSnapshot();
+      expect(output.logged()).toMatchInlineSnapshot(`
+package-1
+package-2
+package-3
+package-4
+`);
     });
 
     it("should list changes with --force-publish package-2,package-4", async () => {
@@ -66,7 +83,11 @@ describe("ChangedCommand", () => {
       await setupGitChanges(testDir, ["packages/package-3/random-file"]);
       await lernaChanged(testDir)("--force-publish", "package-2,package-4");
 
-      expect(output.logged()).toMatchSnapshot();
+      expect(output.logged()).toMatchInlineSnapshot(`
+package-2
+package-3
+package-4
+`);
     });
 
     it("should list changes with --force-publish package-2 --force-publish package-4", async () => {
@@ -75,7 +96,11 @@ describe("ChangedCommand", () => {
       await setupGitChanges(testDir, ["packages/package-3/random-file"]);
       await lernaChanged(testDir)("--force-publish", "package-2", "--force-publish", "package-4");
 
-      expect(output.logged()).toMatchSnapshot();
+      expect(output.logged()).toMatchInlineSnapshot(`
+package-2
+package-3
+package-4
+`);
     });
 
     it("should list changes without ignored files", async () => {
@@ -92,16 +117,16 @@ describe("ChangedCommand", () => {
       await setupGitChanges(testDir, ["packages/package-2/ignored-file", "packages/package-3/random-file"]);
       await lernaChanged(testDir)();
 
-      expect(output.logged()).toMatchSnapshot();
+      expect(output.logged()).toMatchInlineSnapshot(`package-3`);
     });
 
-    it("should list changes in private packages", async () => {
+    it("should list changes in private packages with --all", async () => {
       const testDir = await initFixture("basic");
 
       await setupGitChanges(testDir, ["packages/package-5/random-file"]);
-      await lernaChanged(testDir)();
+      await lernaChanged(testDir)("--all");
 
-      expect(output.logged()).toMatchSnapshot();
+      expect(output.logged()).toMatchInlineSnapshot(`package-5 (PRIVATE)`);
     });
 
     it("should return a non-zero exit code when there are no changes", async () => {
@@ -114,6 +139,20 @@ describe("ChangedCommand", () => {
 
       // reset exit code
       process.exitCode = undefined;
+    });
+
+    it("supports all listable flags", async () => {
+      const testDir = await initFixture("basic");
+
+      await lernaChanged(testDir)("-alp");
+
+      expect(output.logged()).toMatchInlineSnapshot(`
+<PROJECT_ROOT>/packages/package-1:package-1:1.0.0
+<PROJECT_ROOT>/packages/package-2:package-2:1.0.0
+<PROJECT_ROOT>/packages/package-3:package-3:1.0.0
+<PROJECT_ROOT>/packages/package-4:package-4:1.0.0
+<PROJECT_ROOT>/packages/package-5:package-5:1.0.0:PRIVATE
+`);
     });
   });
 
@@ -128,7 +167,10 @@ describe("ChangedCommand", () => {
       await setupGitChanges(testDir, ["packages/package-3/random-file"]);
       await lernaChanged(testDir)();
 
-      expect(output.logged()).toMatchSnapshot();
+      expect(output.logged()).toMatchInlineSnapshot(`
+package-3
+package-4
+`);
     });
 
     it("should list changes with --force-publish *", async () => {
@@ -137,7 +179,12 @@ describe("ChangedCommand", () => {
       await setupGitChanges(testDir, ["packages/package-2/random-file"]);
       await lernaChanged(testDir)("--force-publish", "*");
 
-      expect(output.logged()).toMatchSnapshot();
+      expect(output.logged()).toMatchInlineSnapshot(`
+package-1
+package-2
+package-3
+package-4
+`);
     });
 
     it("should list changes with --force-publish package-2", async () => {
@@ -146,7 +193,11 @@ describe("ChangedCommand", () => {
       await setupGitChanges(testDir, ["packages/package-4/random-file"]);
       await lernaChanged(testDir)("--force-publish", "package-2");
 
-      expect(output.logged()).toMatchSnapshot();
+      expect(output.logged()).toMatchInlineSnapshot(`
+package-2
+package-3
+package-4
+`);
     });
 
     it("should list changes without ignored files", async () => {
@@ -163,7 +214,10 @@ describe("ChangedCommand", () => {
       await setupGitChanges(testDir, ["packages/package-2/ignored-file", "packages/package-3/random-file"]);
       await lernaChanged(testDir)();
 
-      expect(output.logged()).toMatchSnapshot();
+      expect(output.logged()).toMatchInlineSnapshot(`
+package-3
+package-4
+`);
     });
 
     it("should return a non-zero exit code when there are no changes", async () => {
@@ -192,7 +246,22 @@ describe("ChangedCommand", () => {
 
       // Output should be a parseable string
       const jsonOutput = JSON.parse(output.logged());
-      expect(jsonOutput).toMatchSnapshot();
+      expect(jsonOutput).toMatchInlineSnapshot(`
+Array [
+  Object {
+    location: <PROJECT_ROOT>/packages/package-2,
+    name: package-2,
+    private: false,
+    version: 1.0.0,
+  },
+  Object {
+    location: <PROJECT_ROOT>/packages/package-3,
+    name: package-3,
+    private: false,
+    version: 1.0.0,
+  },
+]
+`);
     });
   });
 });
