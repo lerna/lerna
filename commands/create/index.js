@@ -399,7 +399,7 @@ class CreateCommand extends Command {
   writeTestFile() {
     const testContent = this.options.esModule
       ? dedent`
-        import ${this.camelName} from '../src/${this.pkgName}';
+        import ${this.camelName} from '../src/${this.dirName}';
 
         describe('${this.pkgName}', () => {
             it('needs tests');
@@ -424,7 +424,7 @@ class CreateCommand extends Command {
       this.options.esModule
         ? dedent`
           import factory from 'yargs/yargs';
-          import ${this.camelName} from './${this.pkgName}';
+          import ${this.camelName} from './${this.dirName}';
 
           export default cli;
         `
@@ -432,7 +432,7 @@ class CreateCommand extends Command {
           'use strict';
 
           const yargs = require('yargs/yargs');
-          const ${this.camelName} = require('./${this.pkgName}');
+          const ${this.camelName} = require('./${this.dirName}');
 
           module.exports = cli;
         `,
