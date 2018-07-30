@@ -19,6 +19,7 @@
 * [Troubleshooting](#troubleshooting)
 * Commands
   - [`lerna publish`](./commands/publish#readme)
+  - [`lerna version`](./commands/version#readme)
   - [`lerna bootstrap`](./commands/bootstrap#readme)
   - [`lerna list`](./commands/list#readme)
   - [`lerna changed`](./commands/changed#readme)
