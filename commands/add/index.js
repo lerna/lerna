@@ -110,7 +110,7 @@ class AddCommand extends Command {
         return true;
       }
 
-      return getRangeToReference(this.spec, deps, this.savePrefix) !== deps[targetName];
+      return getRangeToReference(this.spec, deps, pkg.location, this.savePrefix) !== deps[targetName];
     });
 
     return result;
@@ -121,9 +121,9 @@ class AddCommand extends Command {
 
     return pMap(this.packagesToChange, pkg => {
       const deps = this.getPackageDeps(pkg);
-      const range = getRangeToReference(this.spec, deps, this.savePrefix);
+      const range = getRangeToReference(this.spec, deps, pkg.location, this.savePrefix);
 
-      this.logger.verbose("add", `${targetName}@${range} as ${this.dependencyType} in ${pkg.name}`);
+      this.logger.verbose("add", `${targetName}@${range} to ${this.dependencyType} in ${pkg.name}`);
       deps[targetName] = range;
 
       return pkg.serialize();
@@ -145,7 +145,9 @@ class AddCommand extends Command {
     const { name, fetchSpec } = this.spec;
 
     if (this.selfSatisfied) {
-      return Promise.resolve(this.packageGraph.get(name).version);
+      const node = this.packageGraph.get(name);
+
+      return Promise.resolve(this.spec.saveRelativeFileSpec ? node.location : node.version);
     }
 
     return packageJson(name, { version: fetchSpec }).then(pkg => pkg.version);
@@ -158,6 +160,20 @@ class AddCommand extends Command {
     if (!pkg) {
       return false;
     }
+
+    // an explicit "file:packages/foo" always saves as a relative "file:../foo"
+    if (this.spec.type === "directory" && fetchSpec === pkg.location) {
+      this.spec.saveRelativeFileSpec = true;
+
+      return true;
+    }
+
+    // existing relative file spec means local dep should be added the same way
+    this.spec.saveRelativeFileSpec = Array.from(this.packageGraph.values()).some(
+      node =>
+        node.localDependencies.size &&
+        Array.from(node.localDependencies.values()).some(resolved => resolved.type === "directory")
+    );
 
     if (fetchSpec === "latest") {
       return true;

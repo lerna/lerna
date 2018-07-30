@@ -92,7 +92,8 @@ const matchDependency = dependencyType => (manifest, pkg, range, options) => {
   }
 
   const version = manifest[dependencyType][pkg];
-  const mismatchedDep = range ? !semver.intersects(version, range) : false;
+  // we don't care about semver intersection, it's not always a semver range
+  const mismatchedDep = range && version !== range;
 
   if (mismatchedDep) {
     return {

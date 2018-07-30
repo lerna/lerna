@@ -11,6 +11,7 @@ const bootstrap = require("@lerna/bootstrap");
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const pkgMatchers = require("@lerna-test/pkg-matchers");
+const { getPackages } = require("@lerna/project");
 
 // file under test
 const lernaAdd = require("@lerna-test/command-runner")(require("../command"));
@@ -79,7 +80,7 @@ describe("AddCommand", () => {
     expect(await readPkg(testDir, "packages/package-2")).toDependOn("@test/package-1", "^1.0.0");
   });
 
-  it("should reference specfied range", async () => {
+  it("should reference specified range", async () => {
     const testDir = await initFixture("basic");
 
     await lernaAdd(testDir)("@test/package-1@~1");
@@ -95,6 +96,26 @@ describe("AddCommand", () => {
     expect(await readPkg(testDir, "packages/package-2")).toDependOn("@test/package-1", "1.0.0", {
       exact: true,
     });
+  });
+
+  it("adds explicit local file: specifier as file: specifier", async () => {
+    const testDir = await initFixture("basic");
+
+    await lernaAdd(testDir)("@test/package-1@file:packages/package-1");
+
+    expect(await readPkg(testDir, "packages/package-2")).toDependOn("@test/package-1", "file:../package-1");
+  });
+
+  it("adds local dep as file: specifier when existing relationships are file: specifiers", async () => {
+    const testDir = await initFixture("existing");
+    const [, , pkg3] = await getPackages(testDir);
+
+    pkg3.updateLocalDependency({ name: "@test/package-2", type: "directory" }, "file:../package-2", "");
+    await pkg3.serialize();
+
+    await lernaAdd(testDir)("@test/package-1");
+
+    expect(await readPkg(testDir, "packages/package-2")).toDependOn("@test/package-1", "file:../package-1");
   });
 
   it("should add target package to devDependencies", async () => {
