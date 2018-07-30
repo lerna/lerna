@@ -24,9 +24,14 @@ In any case, you can always pass `--loglevel silent` to create pristine chains o
 
 ## Options
 
+* [`--json`](#--json)
+* [`-a`, `--all`](#--all)
+* [`-l`, `--long`](#--long)
+* [`-p`, `--parseable`](#--parseable)
+
 `lerna ls` respects the `--ignore` and `--scope` flags (see [Filter Flags](https://www.npmjs.com/package/@lerna/filter-options)).
 
-### --json
+### `--json`
 
 Show information as a JSON array.
 
@@ -37,13 +42,13 @@ $ lerna ls --json
     "name": "package-1",
     "version": "1.0.0",
     "private": false,
-    "location": "/path/to/packages/pkg-1/"
+    "location": "/path/to/packages/pkg-1"
   },
   {
     "name": "package-2",
     "version": "1.0.0",
     "private": false,
-    "location": "/path/to/packages/pkg-2/"
+    "location": "/path/to/packages/pkg-2"
   }
 ]
 ```
@@ -55,7 +60,7 @@ $ lerna ls --json --all | json -a -c 'this.private === true' name
 package-3
 ```
 
-### --all
+### `--all`
 
 Alias: `-a`
 
@@ -68,7 +73,7 @@ package-2
 package-3 (private)
 ```
 
-### --long
+### `--long`
 
 Alias: `-l`
 
@@ -85,7 +90,7 @@ package-2 v1.0.2 packages/pkg-2
 package-3 v1.0.3 packages/pkg-3 (private)
 ```
 
-### --parseable
+### `--parseable`
 
 Alias: `-p`
 
