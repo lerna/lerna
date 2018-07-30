@@ -33,8 +33,7 @@
   "dependencies": {
     "@lerna/command": "file:../../core/command",
     "@lerna/filter-options": "file:../../core/filter-options",
-    "@lerna/output": "file:../../utils/output",
-    "chalk": "^2.3.1",
-    "columnify": "^1.5.4"
+    "@lerna/listable": "file:../../utils/listable",
+    "@lerna/output": "file:../../utils/output"
   }
 }

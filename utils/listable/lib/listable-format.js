@@ -1,0 +1,129 @@
+"use strict";
+
+const chalk = require("chalk");
+const columnify = require("columnify");
+const path = require("path");
+
+module.exports = listableFormat;
+
+function listableFormat(pkgList, options) {
+  const viewOptions = parseViewOptions(options);
+  const resultList = filterResultList(pkgList, viewOptions);
+  const count = resultList.length;
+
+  let text;
+
+  if (viewOptions.showJSON) {
+    text = formatJSON(resultList);
+  } else if (viewOptions.showParseable) {
+    text = formatParseable(resultList, viewOptions);
+  } else {
+    text = formatColumns(resultList, viewOptions);
+  }
+
+  return { text, count };
+}
+
+function parseViewOptions(options) {
+  const alias = options._[0];
+
+  return {
+    showAll: alias === "la" || options.all,
+    showLong: alias === "la" || alias === "ll" || options.long,
+    showJSON: options.json,
+    showParseable: options.parseable,
+  };
+}
+
+function filterResultList(pkgList, viewOptions) {
+  return viewOptions.showAll ? pkgList.slice() : pkgList.filter(pkg => !pkg.private);
+}
+
+function formatJSON(resultList) {
+  // explicit re-mapping exposes non-enumerable properties
+  const data = resultList.map(pkg => ({
+    name: pkg.name,
+    version: pkg.version,
+    private: pkg.private,
+    location: pkg.location,
+  }));
+
+  return JSON.stringify(data, null, 2);
+}
+
+function makeParseable(pkg) {
+  const result = [pkg.location, pkg.name];
+
+  // sometimes the version is inexplicably missing?
+  if (pkg.version) {
+    result.push(pkg.version);
+  } else {
+    result.push("MISSING");
+  }
+
+  if (pkg.private) {
+    result.push("PRIVATE");
+  }
+
+  return result.join(":");
+}
+
+function formatParseable(resultList, viewOptions) {
+  return resultList.map(viewOptions.showLong ? makeParseable : pkg => pkg.location).join("\n");
+}
+
+function getColumnOrder(viewOptions) {
+  const columns = ["name"];
+
+  if (viewOptions.showLong) {
+    columns.push("version", "location");
+  }
+
+  if (viewOptions.showAll) {
+    columns.push("private");
+  }
+
+  return columns;
+}
+
+function trimmedColumns(formattedResults, viewOptions) {
+  const str = columnify(formattedResults, {
+    showHeaders: false,
+    columns: getColumnOrder(viewOptions),
+    config: {
+      version: {
+        align: "right",
+      },
+    },
+  });
+
+  // columnify leaves a lot of trailing space in the last column, remove that here
+  return str
+    .split("\n")
+    .map(line => line.trimRight())
+    .join("\n");
+}
+
+function formatColumns(resultList, viewOptions) {
+  const formattedResults = resultList.map(result => {
+    const formatted = {
+      name: result.name,
+    };
+
+    if (result.version) {
+      formatted.version = chalk.green(`v${result.version}`);
+    } else {
+      formatted.version = chalk.yellow("MISSING");
+    }
+
+    if (result.private) {
+      formatted.private = `(${chalk.red("PRIVATE")})`;
+    }
+
+    formatted.location = chalk.grey(path.relative(".", result.location));
+
+    return formatted;
+  });
+
+  return trimmedColumns(formattedResults, viewOptions);
+}
