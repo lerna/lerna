@@ -43,6 +43,7 @@ If you have any packages with a prerelease version number (e.g. `2.0.0-beta.3`) 
 * [`--changelog-preset`](#--changelog-preset)
 * [`--exact`](#--exact)
 * [`--force-publish`](#--force-publish)
+* [`--ignore-changes`](#--ignore-changes)
 * [`--git-remote`](#--git-remote-name)
 * [`--git-tag-version`](#--git-tag-version)
 * [`--message`](#--message-msg)
@@ -152,6 +153,28 @@ lerna version --force-publish
 When run with this flag, `lerna version` will force publish the specified packages (comma-separated) or all packages using `*`.
 
 > This will skip the `lerna changed` check for changed packages and forces a package that didn't have a `git diff` change to be updated.
+
+### `--ignore-changes`
+
+Ignore changes in files matched by glob(s) when detecting changed packages.
+
+```sh
+lerna version --ignore-changes '**/*.md' '**/__tests__/**'
+```
+
+This option is best specified as root `lerna.json` configuration, both to avoid premature shell evaluation of the globs and to share the config with `lerna diff` and `lerna changed`:
+
+```json
+{
+  "ignoreChanges": [
+    "**/__fixtures__/**",
+    "**/__tests__/**",
+    "**/*.md"
+  ]
+}
+```
+
+Pass `--no-ignore-changes` to disable any existing durable configuration.
 
 ### `--git-remote <name>`
 
