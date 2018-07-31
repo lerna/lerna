@@ -1,0 +1,11 @@
+{
+  "name": "@lerna-test/serialize-windows-paths",
+  "version": "0.0.0-test-only",
+  "description": "A local test helper",
+  "main": "index.js",
+  "private": true,
+  "license": "MIT",
+  "dependencies": {
+    "normalize-path": "^3.0.0"
+  }
+}
