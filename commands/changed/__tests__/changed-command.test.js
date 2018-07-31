@@ -32,6 +32,7 @@ expect.addSnapshotSerializer({
 
 // normalize temp directory paths in snapshots
 expect.addSnapshotSerializer(require("@lerna-test/serialize-tempdir"));
+expect.addSnapshotSerializer(require("@lerna-test/serialize-windows-paths"));
 
 const setupGitChanges = async (cwd, filePaths) => {
   await gitTag(cwd, "v1.0.0");

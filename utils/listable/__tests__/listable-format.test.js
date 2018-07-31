@@ -18,6 +18,7 @@ expect.addSnapshotSerializer({
 
 // normalize temp directory paths in snapshots
 expect.addSnapshotSerializer(require("@lerna-test/serialize-tempdir"));
+expect.addSnapshotSerializer(require("@lerna-test/serialize-windows-paths"));
 
 describe("listable.format()", () => {
   let packages;

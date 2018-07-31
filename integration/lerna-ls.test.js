@@ -5,6 +5,7 @@ const initFixture = require("@lerna-test/init-fixture")(__dirname);
 
 // normalize temp directory paths in snapshots
 expect.addSnapshotSerializer(require("@lerna-test/serialize-tempdir"));
+expect.addSnapshotSerializer(require("@lerna-test/serialize-windows-paths"));
 
 // ls never makes changes to repo, so we only need one fixture + runner
 let lerna;
