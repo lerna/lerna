@@ -6,6 +6,6 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
-    "normalize-path": "^2.1.1"
+    "normalize-path": "^3.0.0"
   }
 }

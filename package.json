@@ -64,7 +64,7 @@
     "jest": "^23.4.1",
     "jest-circus": "^23.4.1",
     "normalize-newline": "^3.0.0",
-    "normalize-path": "^2.1.1",
+    "normalize-path": "^3.0.0",
     "path-key": "^2.0.1",
     "prettier": "^1.13.7",
     "tempy": "^0.2.1",
