@@ -9,8 +9,16 @@ const initFixture = require("@lerna-test/init-fixture")(__dirname);
 // file under test
 const lernaLs = require("@lerna-test/command-runner")(require("../command"));
 
-// remove quotes around strings
-expect.addSnapshotSerializer({ test: val => typeof val === "string", print: val => val });
+// remove quotes around top-level strings
+expect.addSnapshotSerializer({
+  test(val) {
+    return typeof val === "string";
+  },
+  serialize(val, config, indentation, depth) {
+    // top-level strings don't need quotes, but nested ones do (object properties, etc)
+    return depth ? `"${val}"` : val;
+  },
+});
 
 // normalize temp directory paths in snapshots
 expect.addSnapshotSerializer(require("@lerna-test/serialize-tempdir"));

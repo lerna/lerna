@@ -21,14 +21,19 @@ const gitCommit = require("@lerna-test/git-commit");
 // test command
 const lernaVersion = require("@lerna-test/command-runner")(require("../command"));
 
+// remove quotes around top-level strings
+expect.addSnapshotSerializer({
+  test(val) {
+    return typeof val === "string";
+  },
+  serialize(val, config, indentation, depth) {
+    // top-level strings don't need quotes, but nested ones do (object properties, etc)
+    return depth ? `"${val}"` : val;
+  },
+});
+
 // stabilize commit SHA
 expect.addSnapshotSerializer(require("@lerna-test/serialize-git-sha"));
-
-// remove quotes around strings
-expect.addSnapshotSerializer({
-  print: val => val,
-  test: val => typeof val === "string",
-});
 
 const setupChanges = async cwd => {
   await gitTag(cwd, "v1.0.1-beta.3");

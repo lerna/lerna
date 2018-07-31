@@ -13,7 +13,10 @@ module.exports = {
   test(val) {
     return typeof val === "string" && ROOT_DIR.test(val);
   },
-  print(val) {
-    return normalizePath(val.replace(ROOT_DIR, "<PROJECT_ROOT>"));
+  serialize(val, config, indentation, depth) {
+    const str = normalizePath(val.replace(ROOT_DIR, "<PROJECT_ROOT>"));
+
+    // top-level strings don't need quotes, but nested ones do (object properties, etc)
+    return depth ? `"${str}"` : str;
   },
 };

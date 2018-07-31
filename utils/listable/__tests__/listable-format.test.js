@@ -5,6 +5,17 @@ const tempy = require("tempy");
 const Package = require("@lerna/package");
 const listable = require("..");
 
+// remove quotes around top-level strings
+expect.addSnapshotSerializer({
+  test(val) {
+    return typeof val === "string";
+  },
+  serialize(val, config, indentation, depth) {
+    // top-level strings don't need quotes, but nested ones do (object properties, etc)
+    return depth ? `"${val}"` : val;
+  },
+});
+
 // normalize temp directory paths in snapshots
 expect.addSnapshotSerializer(require("@lerna-test/serialize-tempdir"));
 
@@ -30,9 +41,9 @@ describe("listable.format()", () => {
 
       expect(count).toBe(3);
       expect(text).toMatchInlineSnapshot(`
-"pkg-1
+pkg-1
 pkg-2
-pkg-3 ([31mPRIVATE[39m)"
+pkg-3 ([31mPRIVATE[39m)
 `);
     });
 
@@ -41,8 +52,8 @@ pkg-3 ([31mPRIVATE[39m)"
 
       expect(count).toBe(2);
       expect(text).toMatchInlineSnapshot(`
-"pkg-1  [32mv1.0.0[39m [90mpkgs/pkg-1[39m
-pkg-2 [33mMISSING[39m [90mpkgs/pkg-2[39m"
+pkg-1  [32mv1.0.0[39m [90mpkgs/pkg-1[39m
+pkg-2 [33mMISSING[39m [90mpkgs/pkg-2[39m
 `);
     });
 
@@ -50,9 +61,9 @@ pkg-2 [33mMISSING[39m [90mpkgs/pkg-2[39m"
       const { text } = formatWithOptions({ long: true, all: true });
 
       expect(text).toMatchInlineSnapshot(`
-"pkg-1  [32mv1.0.0[39m [90mpkgs/pkg-1[39m
+pkg-1  [32mv1.0.0[39m [90mpkgs/pkg-1[39m
 pkg-2 [33mMISSING[39m [90mpkgs/pkg-2[39m
-pkg-3  [32mv3.0.0[39m [90mpkgs/pkg-3[39m ([31mPRIVATE[39m)"
+pkg-3  [32mv3.0.0[39m [90mpkgs/pkg-3[39m ([31mPRIVATE[39m)
 `);
     });
 
@@ -146,9 +157,9 @@ pkg-3  [32mv3.0.0[39m [90mpkgs/pkg-3[39m ([31mPRIVATE[39m)"
       const { text } = formatWithOptions({ _: ["la"] });
 
       expect(text).toMatchInlineSnapshot(`
-"pkg-1  [32mv1.0.0[39m [90mpkgs/pkg-1[39m
+pkg-1  [32mv1.0.0[39m [90mpkgs/pkg-1[39m
 pkg-2 [33mMISSING[39m [90mpkgs/pkg-2[39m
-pkg-3  [32mv3.0.0[39m [90mpkgs/pkg-3[39m ([31mPRIVATE[39m)"
+pkg-3  [32mv3.0.0[39m [90mpkgs/pkg-3[39m ([31mPRIVATE[39m)
 `);
     });
 
@@ -156,8 +167,8 @@ pkg-3  [32mv3.0.0[39m [90mpkgs/pkg-3[39m ([31mPRIVATE[39m)"
       const { text } = formatWithOptions({ _: ["ll"] });
 
       expect(text).toMatchInlineSnapshot(`
-"pkg-1  [32mv1.0.0[39m [90mpkgs/pkg-1[39m
-pkg-2 [33mMISSING[39m [90mpkgs/pkg-2[39m"
+pkg-1  [32mv1.0.0[39m [90mpkgs/pkg-1[39m
+pkg-2 [33mMISSING[39m [90mpkgs/pkg-2[39m
 `);
     });
   });

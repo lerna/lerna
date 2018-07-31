@@ -19,8 +19,16 @@ const updateLernaConfig = require("@lerna-test/update-lerna-config");
 // file under test
 const lernaChanged = require("@lerna-test/command-runner")(require("../command"));
 
-// remove quotes around strings
-expect.addSnapshotSerializer({ test: val => typeof val === "string", print: val => val });
+// remove quotes around top-level strings
+expect.addSnapshotSerializer({
+  test(val) {
+    return typeof val === "string";
+  },
+  serialize(val, config, indentation, depth) {
+    // top-level strings don't need quotes, but nested ones do (object properties, etc)
+    return depth ? `"${val}"` : val;
+  },
+});
 
 // normalize temp directory paths in snapshots
 expect.addSnapshotSerializer(require("@lerna-test/serialize-tempdir"));
@@ -249,16 +257,16 @@ package-4
       expect(jsonOutput).toMatchInlineSnapshot(`
 Array [
   Object {
-    location: <PROJECT_ROOT>/packages/package-2,
-    name: package-2,
-    private: false,
-    version: 1.0.0,
+    "location": "<PROJECT_ROOT>/packages/package-2",
+    "name": "package-2",
+    "private": false,
+    "version": "1.0.0",
   },
   Object {
-    location: <PROJECT_ROOT>/packages/package-3,
-    name: package-3,
-    private: false,
-    version: 1.0.0,
+    "location": "<PROJECT_ROOT>/packages/package-3",
+    "name": "package-3",
+    "private": false,
+    "version": "1.0.0",
   },
 ]
 `);
