@@ -91,7 +91,9 @@ const matchDependency = dependencyType => (manifest, pkg, range, options) => {
     };
   }
 
-  const version = manifest[dependencyType][pkg];
+  // replace backslashes because windows sucks
+  const version = manifest[dependencyType][pkg].replace(/[\\]/g, "/");
+
   // we don't care about semver intersection, it's not always a semver range
   const mismatchedDep = range && version !== range;
 
