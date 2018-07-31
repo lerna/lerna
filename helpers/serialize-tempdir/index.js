@@ -21,7 +21,5 @@ module.exports = {
 };
 
 function serializeProjectRoot(match, cwd, subPath) {
-  console.warn("  match %j", match);
-  console.info("    cwd %j\nsubPath %j", cwd, subPath);
   return normalizePath(path.join("<PROJECT_ROOT>", subPath));
 }
