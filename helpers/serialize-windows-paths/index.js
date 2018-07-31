@@ -1,8 +1,9 @@
 "use strict";
 
+const path = require("path");
 const normalizePath = require("normalize-path");
 
-const WHACK_WACK = /\\([\S]*)/g;
+const WHACK_WACK = /(\\)([\S]*)/g;
 
 // expect.addSnapshotSerializer(require("@lerna-test/serialize-windows-paths"));
 module.exports = {
@@ -17,6 +18,6 @@ module.exports = {
   },
 };
 
-function serializeWindowsPath(match, wackPath) {
-  return normalizePath(wackPath);
+function serializeWindowsPath(match, wack, wackPath) {
+  return normalizePath(path.join(wack, wackPath));
 }
