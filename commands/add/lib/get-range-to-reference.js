@@ -11,13 +11,8 @@ function getRangeToReference(spec, deps, loc, prefix) {
   const resolved = spec.type === "tag" ? `${prefix}${spec.version}` : spec.fetchSpec;
 
   if (spec.saveRelativeFileSpec) {
-    // ALWAYS render a POSIX file: spec, Windows can deal with it
-    const where = path.posix.normalize(loc);
-
-    // "spec.version" has been resolved to pkg.location in getPackageVersion()
-    const relativeFileSpec = `file:${path.posix.relative(where, spec.version)}`;
-
-    return npa.resolve(spec.name, relativeFileSpec, where).saveSpec;
+    // "version" has been resolved to pkg.location in getPackageVersion()
+    return npa.resolve(spec.name, path.relative(loc, spec.version), loc).saveSpec;
   }
 
   if (prefix && current && semver.intersects(current, resolved)) {

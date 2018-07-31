@@ -147,10 +147,7 @@ class AddCommand extends Command {
     if (this.selfSatisfied) {
       const node = this.packageGraph.get(name);
 
-      // ALWAYS use POSIX path for relative file: specifiers
-      return Promise.resolve(
-        this.spec.saveRelativeFileSpec ? path.posix.normalize(node.location) : node.version
-      );
+      return Promise.resolve(this.spec.saveRelativeFileSpec ? node.location : node.version);
     }
 
     return packageJson(name, { version: fetchSpec }).then(pkg => pkg.version);
