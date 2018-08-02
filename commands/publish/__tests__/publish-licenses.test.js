@@ -1,6 +1,8 @@
 "use strict";
 
 // local modules _must_ be explicitly mocked
+jest.mock("../lib/verify-npm-package-access");
+jest.mock("../lib/verify-npm-registry");
 jest.mock("../lib/create-temp-licenses", () => jest.fn(() => Promise.resolve()));
 jest.mock("../lib/remove-temp-licenses", () => jest.fn(() => Promise.resolve()));
 // FIXME: better mock for version command

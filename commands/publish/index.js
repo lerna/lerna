@@ -25,6 +25,8 @@ const getTaggedPackages = require("./lib/get-tagged-packages");
 const getPackagesWithoutLicense = require("./lib/get-packages-without-license");
 const gitCheckout = require("./lib/git-checkout");
 const removeTempLicenses = require("./lib/remove-temp-licenses");
+const verifyNpmRegistry = require("./lib/verify-npm-registry");
+const verifyNpmPackageAccess = require("./lib/verify-npm-package-access");
 
 module.exports = factory;
 
@@ -89,7 +91,9 @@ class PublishCommand extends Command {
           )
         : [this.packagesToPublish];
 
-      return Promise.resolve().then(() => this.prepareLicenseActions());
+      return Promise.resolve()
+        .then(() => this.prepareRegistryActions())
+        .then(() => this.prepareLicenseActions());
     });
   }
 
@@ -230,6 +234,12 @@ class PublishCommand extends Command {
           this.packagesToBeLicensed = packagesWithoutLicense;
         }
       });
+  }
+
+  prepareRegistryActions() {
+    return Promise.resolve()
+      .then(() => verifyNpmRegistry(this.project.rootPath, this.npmConfig))
+      .then(() => verifyNpmPackageAccess(this.packagesToPublish, this.project.rootPath, this.npmConfig));
   }
 
   updateCanaryVersions() {
