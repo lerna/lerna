@@ -89,23 +89,7 @@ class PublishCommand extends Command {
           )
         : [this.packagesToPublish];
 
-      let chain = Promise.resolve();
-
-      // prepare for license management
-      chain = chain.then(() => getPackagesWithoutLicense(this.project, this.packagesToPublish));
-      chain = chain.then(packagesWithoutLicense => {
-        if (packagesWithoutLicense.length && !this.project.licensePath) {
-          this.packagesToBeLicensed = [];
-          this.logger.warn(
-            "ENOLICENSE",
-            `Packages ${packagesWithoutLicense.map(pkg => pkg.name).join(", ")} are missing a license`
-          );
-        } else {
-          this.packagesToBeLicensed = packagesWithoutLicense;
-        }
-      });
-
-      return chain;
+      return Promise.resolve().then(() => this.prepareLicenseActions());
     });
   }
 
@@ -230,6 +214,22 @@ class PublishCommand extends Command {
     }
 
     return chain;
+  }
+
+  prepareLicenseActions() {
+    return Promise.resolve()
+      .then(() => getPackagesWithoutLicense(this.project, this.packagesToPublish))
+      .then(packagesWithoutLicense => {
+        if (packagesWithoutLicense.length && !this.project.licensePath) {
+          this.packagesToBeLicensed = [];
+          this.logger.warn(
+            "ENOLICENSE",
+            `Packages ${packagesWithoutLicense.map(pkg => pkg.name).join(", ")} are missing a license`
+          );
+        } else {
+          this.packagesToBeLicensed = packagesWithoutLicense;
+        }
+      });
   }
 
   updateCanaryVersions() {
