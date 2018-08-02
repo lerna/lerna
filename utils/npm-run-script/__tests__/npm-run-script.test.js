@@ -27,6 +27,7 @@ describe("npm-run-script", () => {
 
       expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["run", script, "--bar", "baz"], {
         cwd: config.pkg.location,
+        env: {},
         pkg: config.pkg,
         reject: true,
       });
@@ -47,6 +48,7 @@ describe("npm-run-script", () => {
 
       expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["run", script], {
         cwd: config.pkg.location,
+        env: {},
         pkg: config.pkg,
         reject: false,
       });
@@ -66,6 +68,7 @@ describe("npm-run-script", () => {
 
       expect(ChildProcessUtilities.exec).lastCalledWith("yarn", ["run", script, "--bar", "baz"], {
         cwd: config.pkg.location,
+        env: {},
         pkg: config.pkg,
         reject: true,
       });
@@ -92,6 +95,7 @@ describe("npm-run-script", () => {
         ["run", script, "--bar", "baz"],
         {
           cwd: config.pkg.location,
+          env: {},
           pkg: config.pkg,
           reject: true,
         },
@@ -118,6 +122,7 @@ describe("npm-run-script", () => {
         ["run", script],
         {
           cwd: config.pkg.location,
+          env: {},
           pkg: config.pkg,
           reject: false,
         },

@@ -5,18 +5,17 @@ const log = require("npmlog");
 module.exports = getExecOpts;
 
 function getExecOpts(pkg, registry) {
-  const opts = {
-    cwd: pkg.location,
-    pkg,
-  };
+  // execa automatically extends process.env
+  const env = {};
 
   if (registry) {
-    opts.extendEnv = false;
-    opts.env = Object.assign({}, process.env, {
-      npm_config_registry: registry,
-    });
+    env.npm_config_registry = registry;
   }
 
-  log.silly("getExecOpts", opts);
-  return opts;
+  log.silly("getExecOpts", pkg.location, registry);
+  return {
+    cwd: pkg.location,
+    env,
+    pkg,
+  };
 }
