@@ -6,6 +6,7 @@ const ChildProcessUtilities = require("@lerna/child-process");
 const getExecOpts = require("@lerna/get-npm-exec-opts");
 
 module.exports = npmPublish;
+module.exports.npmPack = npmPack;
 
 function npmPublish(pkg, tag, { npmClient, registry }) {
   log.silly("npmPublish", tag, pkg.name);
@@ -25,4 +26,13 @@ function npmPublish(pkg, tag, { npmClient, registry }) {
   }
 
   return ChildProcessUtilities.exec(npmClient, args, opts);
+}
+
+function npmPack(pkg) {
+  log.verbose("pack", pkg.name);
+
+  const opts = getExecOpts(pkg);
+  const args = ["pack"];
+
+  return ChildProcessUtilities.exec("npm", args, opts);
 }

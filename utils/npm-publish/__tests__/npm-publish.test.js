@@ -95,4 +95,16 @@ describe("npm-publish", () => {
       );
     });
   });
+
+  describe("npmPack", () => {
+    it("runs npm pack in a package directory", async () => {
+      await npmPublish.npmPack(pkg);
+
+      expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["pack"], {
+        cwd: pkg.location,
+        env: {},
+        pkg,
+      });
+    });
+  });
 });
