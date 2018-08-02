@@ -8,6 +8,17 @@ function binSafeName({ name, scope }) {
   return scope ? name.substring(scope.length + 1) : name;
 }
 
+function packedFileName(pkg) {
+  // copied almost verbatim from https://git.io/fNobb
+  const name =
+    pkg.name[0] === "@"
+      ? // scoped packages get special treatment
+        pkg.name.substr(1).replace(/\//g, "-")
+      : pkg.name;
+
+  return `${name}-${pkg.version}.tgz`;
+}
+
 // package.json files are not that complicated, so this is intentionally naïve
 function shallowCopy(json) {
   return Object.keys(json).reduce((obj, key) => {
@@ -115,6 +126,12 @@ class Package {
       // write changes to disk
       serialize: {
         value: () => writePkg(this.manifestLocation, pkg),
+      },
+      // compute result of `npm pack` filename
+      tarball: {
+        get() {
+          return packedFileName(pkg);
+        },
       },
     });
   }

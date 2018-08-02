@@ -144,6 +144,18 @@ describe("Package", () => {
     });
   });
 
+  describe("get .tarball", () => {
+    it("generates the destination filename of npm pack output", () => {
+      const pkg = factory({ name: "pack-me", version: "1.2.3" });
+      expect(pkg.tarball).toBe("pack-me-1.2.3.tgz");
+    });
+
+    it("normalizes package scopes", () => {
+      const pkg = factory({ name: "@scoped/pack-me", version: "4.5.6" });
+      expect(pkg.tarball).toBe("scoped-pack-me-4.5.6.tgz");
+    });
+  });
+
   describe(".toJSON()", () => {
     it("should return clone of internal package for serialization", () => {
       const json = {
