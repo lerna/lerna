@@ -27,7 +27,7 @@ function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions
       committish = `${sha}^..${sha}`;
     } else if (!committish) {
       // attempt to find the last annotated tag in the current branch
-      committish = childProcess.execSync("git", ["describe", "--abbrev=0"], execOpts);
+      committish = childProcess.execSync("git", ["describe", "--tags", "--abbrev=0"], execOpts);
     }
   }
 
