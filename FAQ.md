@@ -9,12 +9,12 @@ For any packages that you add to your Lerna repository, instead of running
 account the existing projects in the `packages` folder as well as
 external dependencies.
 
-### New packages
+## New packages
 
 Create a directory for your package in the `packages` folder, and run `npm init`
 as normal to create the `package.json` for your new package.
 
-### Existing packages
+## Existing packages
 
 You can use [`lerna import <package>`][import] to transfer an existing package
 into your Lerna repository; this command will preserve the commit history.
@@ -84,3 +84,27 @@ dependencies:
   post:
     - npm run bootstrap
 ```
+
+## CLI usage
+
+If you'd prefer to run `lerna` from the local installation (i.e. not installed globally with `-g`) then you can add an npm script to your `package.json` that allows you to call lerna locally.
+
+In your root `package.json`:
+```javascript
+{
+  ...
+  "scripts": {
+    "lerna": "lerna"
+  }
+}
+```
+
+Which can then be used to call lerna locally with NPM:
+
+    npm run lerna -- init
+
+or 
+    
+    npm run lerna -- --help boostrap
+
+NPM will pass any arguments after `--` to lerna.
