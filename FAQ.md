@@ -9,12 +9,12 @@ For any packages that you add to your Lerna repository, instead of running
 account the existing projects in the `packages` folder as well as
 external dependencies.
 
-## New packages
+### New packages
 
 Create a directory for your package in the `packages` folder, and run `npm init`
 as normal to create the `package.json` for your new package.
 
-## Existing packages
+### Existing packages
 
 You can use [`lerna import <package>`][import] to transfer an existing package
 into your Lerna repository; this command will preserve the commit history.
