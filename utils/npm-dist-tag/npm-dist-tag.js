@@ -9,17 +9,17 @@ exports.add = add;
 exports.check = check;
 exports.remove = remove;
 
-function add(pkg, version, tag, registry) {
-  log.silly("npmDistTag.add", tag, version, pkg.name);
+function add(pkg, tag, { registry }) {
+  log.silly("npmDistTag.add", tag, pkg.version, pkg.name);
 
   return ChildProcessUtilities.exec(
     "npm",
-    ["dist-tag", "add", `${pkg.name}@${version}`, tag],
+    ["dist-tag", "add", `${pkg.name}@${pkg.version}`, tag],
     getExecOpts(pkg, registry)
   );
 }
 
-function check(pkg, tag, registry) {
+function check(pkg, tag, { registry }) {
   log.silly("npmDistTag.check", tag, pkg.name);
 
   const result = ChildProcessUtilities.execSync(
@@ -31,7 +31,7 @@ function check(pkg, tag, registry) {
   return result.indexOf(tag) >= 0;
 }
 
-function remove(pkg, tag, registry) {
+function remove(pkg, tag, { registry }) {
   log.silly("npmDistTag.remove", tag, pkg.name);
 
   return ChildProcessUtilities.exec("npm", ["dist-tag", "rm", pkg.name, tag], getExecOpts(pkg, registry));

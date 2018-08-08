@@ -376,36 +376,34 @@ class PublishCommand extends Command {
   }
 
   npmUpdateAsLatest() {
+    const distTag = this.getDistTag() || "latest";
     const tracker = this.logger.newItem("npmUpdateAsLatest");
 
     tracker.addWork(this.packagesToPublish.length);
 
-    const mapPackage = pkg =>
-      this.updateTag(pkg).then(() => {
-        tracker.info("latest", pkg.name);
-        tracker.completeWork(1);
-      });
+    let chain = Promise.resolve();
 
-    return pFinally(runParallelBatches(this.batchedPackages, this.concurrency, mapPackage), () =>
-      tracker.finish()
+    chain = chain.then(() =>
+      runParallelBatches(this.batchedPackages, this.concurrency, pkg =>
+        this.updateTag(pkg, distTag).then(() => {
+          tracker.info("dist-tag", "%s@%s => %j", pkg.name, pkg.version, distTag);
+          tracker.completeWork(1);
+        })
+      )
     );
+
+    return pFinally(chain, () => tracker.finish());
   }
 
-  removeTempTag(pkg) {
+  updateTag(pkg, distTag) {
     return Promise.resolve()
-      .then(() => npmDistTag.check(pkg, "lerna-temp", this.npmConfig.registry))
+      .then(() => npmDistTag.check(pkg, "lerna-temp", this.npmConfig))
       .then(exists => {
         if (exists) {
-          return npmDistTag.remove(pkg, "lerna-temp", this.npmConfig.registry);
+          return npmDistTag.remove(pkg, "lerna-temp", this.npmConfig);
         }
-      });
-  }
-
-  updateTag(pkg) {
-    const distTag = this.getDistTag() || "latest";
-    const version = this.options.canary ? pkg.version : this.updatesVersions.get(pkg.name);
-
-    return this.removeTempTag(pkg).then(() => npmDistTag.add(pkg, version, distTag, this.npmConfig.registry));
+      })
+      .then(() => npmDistTag.add(pkg, distTag, this.npmConfig));
   }
 
   getDistTag() {
