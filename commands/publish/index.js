@@ -36,6 +36,8 @@ const getPackagesWithoutLicense = require("./lib/get-packages-without-license");
 const gitCheckout = require("./lib/git-checkout");
 const removeTempLicenses = require("./lib/remove-temp-licenses");
 const verifyNpmPackageAccess = require("./lib/verify-npm-package-access");
+const getTwoFactorAuthRequired = require("./lib/get-two-factor-auth-required");
+const promptOneTimePassword = require("./lib/prompt-one-time-password");
 
 module.exports = factory;
 
@@ -416,6 +418,13 @@ class PublishCommand extends Command {
           return verifyNpmPackageAccess(this.packagesToPublish, username, this.conf.snapshot);
         }
       });
+
+      // read profile metadata to determine if account-level 2FA is enabled
+      chain = chain.then(() => getTwoFactorAuthRequired(this.conf.snapshot));
+      chain = chain.then(isRequired => {
+        // notably, this still doesn't handle package-level 2FA requirements
+        this.twoFactorAuthRequired = isRequired;
+      });
     }
 
     return chain;
@@ -517,6 +526,14 @@ class PublishCommand extends Command {
       });
   }
 
+  requestOneTimePassword() {
+    return Promise.resolve()
+      .then(() => promptOneTimePassword())
+      .then(otp => {
+        this.conf.set("otp", otp);
+      });
+  }
+
   packUpdated() {
     const tracker = this.logger.newItem("npm pack");
 
@@ -577,6 +594,10 @@ class PublishCommand extends Command {
 
     let chain = Promise.resolve();
 
+    if (this.twoFactorAuthRequired) {
+      chain = chain.then(() => this.requestOneTimePassword());
+    }
+
     const opts = Object.assign(this.conf.snapshot, {
       // distTag defaults to "latest" OR whatever is in pkg.publishConfig.tag
       // if we skip temp tags we should tag with the proper value immediately
@@ -615,6 +636,12 @@ class PublishCommand extends Command {
     tracker.showProgress();
 
     let chain = Promise.resolve();
+
+    // there's no reasonable way to guess if the OTP has expired already,
+    // so we have to ask for it every time
+    if (this.twoFactorAuthRequired) {
+      chain = chain.then(() => this.requestOneTimePassword());
+    }
 
     const opts = this.conf.snapshot;
     const getDistTag = publishConfig => {

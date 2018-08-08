@@ -1,6 +1,7 @@
 "use strict";
 
 // local modules _must_ be explicitly mocked
+jest.mock("../lib/get-two-factor-auth-required");
 jest.mock("../lib/verify-npm-package-access");
 jest.mock("../lib/get-npm-username");
 jest.mock("../lib/create-temp-licenses", () => jest.fn(() => Promise.resolve()));
