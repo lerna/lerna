@@ -21,7 +21,7 @@ describe("npm-publish", () => {
 
     expect(ChildProcessUtilities.exec).lastCalledWith(
       "npm",
-      ["publish", "--ignore-scripts", "--tag", "published-tag"],
+      ["publish", "--ignore-scripts", "--tag", "published-tag", "test-1.10.100.tgz"],
       {
         cwd: pkg.location,
         env: {},
@@ -33,11 +33,15 @@ describe("npm-publish", () => {
   it("does not pass --tag when none present (npm default)", async () => {
     await npmPublish(pkg, undefined, { npmClient: "npm" });
 
-    expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["publish", "--ignore-scripts"], {
-      cwd: pkg.location,
-      env: {},
-      pkg,
-    });
+    expect(ChildProcessUtilities.exec).lastCalledWith(
+      "npm",
+      ["publish", "--ignore-scripts", "test-1.10.100.tgz"],
+      {
+        cwd: pkg.location,
+        env: {},
+        pkg,
+      }
+    );
   });
 
   it("trims trailing whitespace in tag parameter", async () => {
@@ -45,7 +49,7 @@ describe("npm-publish", () => {
 
     expect(ChildProcessUtilities.exec).lastCalledWith(
       "npm",
-      ["publish", "--ignore-scripts", "--tag", "trailing-tag"],
+      ["publish", "--ignore-scripts", "--tag", "trailing-tag", "test-1.10.100.tgz"],
       {
         cwd: pkg.location,
         env: {},
@@ -61,7 +65,7 @@ describe("npm-publish", () => {
 
     expect(ChildProcessUtilities.exec).lastCalledWith(
       "npm",
-      ["publish", "--ignore-scripts", "--tag", "custom-registry"],
+      ["publish", "--ignore-scripts", "--tag", "custom-registry", "test-1.10.100.tgz"],
       {
         cwd: pkg.location,
         env: {
@@ -86,6 +90,7 @@ describe("npm-publish", () => {
           "--new-version",
           pkg.version,
           "--non-interactive",
+          "test-1.10.100.tgz",
         ],
         {
           cwd: pkg.location,

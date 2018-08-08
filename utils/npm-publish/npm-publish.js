@@ -9,7 +9,7 @@ module.exports = npmPublish;
 module.exports.npmPack = npmPack;
 
 function npmPublish(pkg, tag, { npmClient, registry }) {
-  log.silly("npmPublish", tag, pkg.name);
+  log.verbose("publish", pkg.name);
 
   const distTag = tag && tag.trim();
   const opts = getExecOpts(pkg, registry);
@@ -25,6 +25,10 @@ function npmPublish(pkg, tag, { npmClient, registry }) {
     args.push("--new-version", pkg.version, "--non-interactive");
   }
 
+  // always add tarball file, created by npmPack()
+  args.push(pkg.tarball);
+
+  log.silly("exec", npmClient, ...args);
   return ChildProcessUtilities.exec(npmClient, args, opts);
 }
 

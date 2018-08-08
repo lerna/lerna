@@ -38,7 +38,7 @@ describe("licenses", () => {
   it("removes all temporary licenses on error", async () => {
     const cwd = await initFixture("licenses");
 
-    npmPublish.mockImplementationOnce(() => Promise.reject(new Error("boom")));
+    npmPublish.npmPack.mockImplementationOnce(() => Promise.reject(new Error("boom")));
 
     try {
       await lernaPublish(cwd)();
@@ -53,7 +53,7 @@ describe("licenses", () => {
   it("does not override original error when removal rejects", async () => {
     const cwd = await initFixture("licenses");
 
-    npmPublish.mockImplementationOnce(() => Promise.reject(new Error("boom")));
+    npmPublish.npmPack.mockImplementationOnce(() => Promise.reject(new Error("boom")));
     removeTempLicenses.mockImplementationOnce(() => Promise.reject(new Error("shaka-lakka")));
 
     try {

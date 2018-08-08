@@ -109,7 +109,8 @@ class PublishCommand extends Command {
 
     chain = chain.then(() => this.resolveLocalDependencyLinks());
     chain = chain.then(() => this.annotateGitHead());
-    chain = chain.then(() => this.npmPublish());
+    chain = chain.then(() => this.packUpdated());
+    chain = chain.then(() => this.publishPacked());
     chain = chain.then(() => this.resetChanges());
 
     if (this.options.tempTag) {
@@ -338,49 +339,70 @@ class PublishCommand extends Command {
       });
   }
 
-  npmPublish() {
-    const tracker = this.logger.newItem("npmPublish");
-    // if we skip temp tags we should tag with the proper value immediately
-    const distTag = this.options.tempTag ? "lerna-temp" : this.getDistTag();
+  packUpdated() {
+    const tracker = this.logger.newItem("npm pack");
+
+    tracker.addWork(
+      this.options.requireScripts
+        ? // track completion of prepublish.js on updates as well
+          this.packagesToPublish.length + this.updates.length
+        : this.packagesToPublish.length
+    );
 
     let chain = Promise.resolve();
 
     chain = chain.then(() => createTempLicenses(this.project.licensePath, this.packagesToBeLicensed));
-
     chain = chain.then(() => this.runPrepublishScripts(this.project.manifest));
-    chain = chain.then(() =>
-      pMap(this.updates, ({ pkg }) => {
-        if (this.options.requireScripts) {
-          this.execScript(pkg, "prepublish");
-        }
 
-        return this.runPrepublishScripts(pkg);
-      })
+    if (this.options.requireScripts) {
+      chain = chain.then(() =>
+        pMap(this.updates, ({ pkg }) => {
+          this.execScript(pkg, "prepublish");
+          tracker.completeWork(1);
+        })
+      );
+    }
+
+    chain = chain.then(() =>
+      runParallelBatches(this.batchedPackages, this.concurrency, pkg =>
+        npmPublish.npmPack(pkg).then(() => {
+          tracker.completeWork(1);
+        })
+      )
     );
 
-    tracker.addWork(this.packagesToPublish.length);
-
-    const mapPackage = pkg => {
-      tracker.verbose("publishing", pkg.name);
-
-      return npmPublish(pkg, distTag, this.npmConfig).then(() => {
-        tracker.info("published", pkg.name);
-        tracker.completeWork(1);
-
-        if (this.options.requireScripts) {
-          this.execScript(pkg, "postpublish");
-        }
-
-        return this.runPackageLifecycle(pkg, "postpublish");
-      });
-    };
-
-    chain = chain.then(() => runParallelBatches(this.batchedPackages, this.concurrency, mapPackage));
-    chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "postpublish"));
     chain = chain.then(() => removeTempLicenses(this.packagesToBeLicensed));
 
     // remove temporary license files if _any_ error occurs _anywhere_ in the promise chain
     chain = chain.catch(error => this.removeTempLicensesOnError(error));
+
+    return pFinally(chain, () => tracker.finish());
+  }
+
+  publishPacked() {
+    // if we skip temp tags we should tag with the proper value immediately
+    const distTag = this.options.tempTag ? "lerna-temp" : this.getDistTag();
+    const tracker = this.logger.newItem(`${this.npmConfig.npmClient} publish`);
+
+    tracker.addWork(this.packagesToPublish.length);
+
+    let chain = Promise.resolve();
+
+    chain = chain.then(() =>
+      runParallelBatches(this.batchedPackages, this.concurrency, pkg =>
+        npmPublish(pkg, distTag, this.npmConfig).then(() => {
+          tracker.info("published", pkg.name);
+
+          if (this.options.requireScripts) {
+            this.execScript(pkg, "postpublish");
+          }
+
+          tracker.completeWork(1);
+        })
+      )
+    );
+
+    chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "postpublish"));
 
     return pFinally(chain, () => tracker.finish());
   }
