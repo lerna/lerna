@@ -39,7 +39,7 @@
     "dedent": "^0.7.0",
     "npm-package-arg": "^6.0.0",
     "p-map": "^1.2.0",
-    "package-json": "^4.0.1",
+    "package-metadata": "^1.1.2",
     "semver": "^5.5.0"
   }
 }

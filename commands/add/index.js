@@ -2,7 +2,7 @@
 
 const dedent = require("dedent");
 const npa = require("npm-package-arg");
-const packageJson = require("package-json");
+const { RegistryClient } = require("package-metadata");
 const pMap = require("p-map");
 const path = require("path");
 const semver = require("semver");
@@ -150,7 +150,11 @@ class AddCommand extends Command {
       return Promise.resolve(this.spec.saveRelativeFileSpec ? node.location : node.version);
     }
 
-    return packageJson(name, { version: fetchSpec }).then(pkg => pkg.version);
+    return RegistryClient.getMetadata(name, { version: fetchSpec }).then(pkg => {
+      const version = fetchSpec || "latest";
+      const metadata = pkg.versions[version];
+      return metadata.version;
+    });
   }
 
   packageSatisfied() {
