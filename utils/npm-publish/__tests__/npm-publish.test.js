@@ -5,17 +5,16 @@ jest.mock("@lerna/child-process");
 // mocked modules
 const ChildProcessUtilities = require("@lerna/child-process");
 
+// helpers
+const Package = require("@lerna/package");
+
 // file under test
 const npmPublish = require("..");
 
 describe("npm-publish", () => {
   ChildProcessUtilities.exec.mockResolvedValue();
 
-  const pkg = {
-    name: "test",
-    location: "/test/npmPublish",
-    version: "1.10.100",
-  };
+  const pkg = new Package({ name: "test", version: "1.10.100" }, "/test/npmPublish");
 
   it("runs npm publish in a directory with --tag support", async () => {
     await npmPublish(pkg, "published-tag", { npmClient: "npm" });
