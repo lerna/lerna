@@ -38,8 +38,12 @@ async function commitChangeToPackage(cwd, packageName, commitMsg, data) {
 }
 
 describe("lerna publish", () => {
-  // never actually upload when calling `npm install`
-  const dryRun = { npm_config_dry_run: true };
+  const env = {
+    // never actually upload when calling `npm install`
+    npm_config_dry_run: true,
+    // skip npm package validation, none of the stubs are real
+    LERNA_INTEGRATION: "SKIP",
+  };
 
   test("exit 0 when no updates", async () => {
     const { cwd } = await cloneFixture("normal");
@@ -47,7 +51,7 @@ describe("lerna publish", () => {
 
     await gitTag(cwd, "v1.0.0");
 
-    const { code, stdout } = await cliRunner(cwd, dryRun)(...args);
+    const { code, stdout } = await cliRunner(cwd, env)(...args);
 
     expect(code).toBe(0);
     expect(stdout).toBe("");
@@ -58,10 +62,24 @@ describe("lerna publish", () => {
     const args = ["publish", "--yes", "--scope", "package-1"];
 
     try {
-      await cliRunner(cwd, dryRun)(...args);
+      await cliRunner(cwd, env)(...args);
     } catch (err) {
       expect(err.code).toBe(1);
       expect(err.stderr).toMatch("Unknown argument: scope");
+    }
+
+    expect.assertions(2);
+  });
+
+  test("exits with error when package access validation fails", async () => {
+    const { cwd } = await cloneFixture("normal");
+    const args = ["publish", "prerelease", "--yes"];
+
+    try {
+      await cliRunner(cwd, { LERNA_INTEGRATION: "ALLOW" })(...args);
+    } catch (err) {
+      expect(err.code).toBe(1);
+      expect(err.stderr).toMatch("ENEEDAUTH");
     }
 
     expect.assertions(2);
@@ -71,7 +89,7 @@ describe("lerna publish", () => {
     const { cwd } = await cloneFixture("normal");
     const args = ["publish", "patch", "--yes"];
 
-    const { stdout } = await cliRunner(cwd, dryRun)(...args);
+    const { stdout } = await cliRunner(cwd, env)(...args);
     expect(stdout).toMatchSnapshot("stdout");
 
     const [allPackageJsons, commitMessage] = await Promise.all([loadManifests(cwd), lastCommitMessage(cwd)]);
@@ -87,7 +105,7 @@ describe("lerna publish", () => {
     await gitTag(cwd, "v1.0.0");
     await commitChangeToPackage(cwd, "package-1", "change", { change: true });
 
-    await cliRunner(cwd, dryRun)(...args);
+    await cliRunner(cwd, env)(...args);
 
     expect(await loadManifests(cwd)).toMatchSnapshot();
   });
@@ -99,7 +117,7 @@ describe("lerna publish", () => {
     await gitTag(cwd, "v1.0.0");
     await commitChangeToPackage(cwd, "package-1", "change", { change: true });
 
-    const { stdout } = await cliRunner(cwd, dryRun)(...args);
+    const { stdout } = await cliRunner(cwd, env)(...args);
     expect(stdout).toMatchSnapshot("stdout");
   });
 
@@ -107,7 +125,7 @@ describe("lerna publish", () => {
     const { cwd } = await cloneFixture("independent");
     const args = ["publish", "major", "--yes"];
 
-    const { stdout } = await cliRunner(cwd, dryRun)(...args);
+    const { stdout } = await cliRunner(cwd, env)(...args);
     expect(stdout).toMatchSnapshot("stdout");
 
     const [allPackageJsons, commitMessage] = await Promise.all([loadManifests(cwd), lastCommitMessage(cwd)]);
@@ -131,7 +149,7 @@ describe("lerna publish", () => {
         { baz: true }
       );
 
-      const { stdout } = await cliRunner(cwd, dryRun)(...args);
+      const { stdout } = await cliRunner(cwd, env)(...args);
       expect(stdout).toMatchSnapshot();
 
       const changelogFilePaths = await globby(["**/CHANGELOG.md"], {
@@ -147,13 +165,13 @@ describe("lerna publish", () => {
     })
   );
 
-  it("replaces file: specifier with local version before npm publish but after git commit", async () => {
+  test("replaces file: specifier with local version before npm publish but after git commit", async () => {
     const { cwd } = await cloneFixture("relative-file-specs");
 
     await gitTag(cwd, "v1.0.0");
     await commitChangeToPackage(cwd, "package-1", "feat(package-1): changed", { changed: true });
 
-    await cliRunner(cwd, dryRun)("publish", "major", "--yes");
+    await cliRunner(cwd, env)("publish", "major", "--yes");
 
     expect(await showCommit(cwd)).toMatchSnapshot();
   });
@@ -162,7 +180,7 @@ describe("lerna publish", () => {
     const { cwd } = await cloneFixture("lifecycle");
     const args = ["publish", "minor", "--yes"];
 
-    const { stdout } = await cliRunner(cwd, dryRun)(...args);
+    const { stdout } = await cliRunner(cwd, env)(...args);
     expect(normalizeTestRoot(cwd)(stdout)).toMatchSnapshot();
   });
 
@@ -170,7 +188,7 @@ describe("lerna publish", () => {
     const { cwd } = await cloneFixture("lifecycle");
     const args = ["publish", "minor", "--yes", "--loglevel", "silent"];
 
-    const { stdout } = await cliRunner(cwd, dryRun)(...args);
+    const { stdout } = await cliRunner(cwd, env)(...args);
     expect(normalizeTestRoot(cwd)(stdout)).toMatchSnapshot();
   });
 
@@ -186,10 +204,10 @@ describe("lerna publish", () => {
     await execa("git", ["push", "origin", "master"], { cwd: cloneDir });
 
     // throws during interactive publish (local)
-    await expect(cliRunner(cwd, dryRun)("publish", "--no-ci")).rejects.toThrowError(/EBEHIND/);
+    await expect(cliRunner(cwd, env)("publish", "--no-ci")).rejects.toThrowError(/EBEHIND/);
 
     // warns during non-interactive publish (CI)
-    const { stderr } = await cliRunner(cwd, dryRun)("publish", "--ci");
+    const { stderr } = await cliRunner(cwd, env)("publish", "--ci");
     expect(stderr).toMatch("EBEHIND");
   });
 });

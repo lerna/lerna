@@ -38,5 +38,10 @@ function npmPack(pkg) {
   const opts = getExecOpts(pkg);
   const args = ["pack"];
 
+  if (process.env.LERNA_INTEGRATION) {
+    // override process.env.npm_config_dry_run from integration tests
+    args.push("--no-dry-run");
+  }
+
   return ChildProcessUtilities.exec("npm", args, opts);
 }

@@ -238,9 +238,18 @@ class PublishCommand extends Command {
   }
 
   prepareRegistryActions() {
-    return Promise.resolve()
-      .then(() => verifyNpmRegistry(this.project.rootPath, this.npmConfig))
-      .then(() => verifyNpmPackageAccess(this.packagesToPublish, this.project.rootPath, this.npmConfig));
+    let chain = Promise.resolve();
+
+    chain = chain.then(() => verifyNpmRegistry(this.project.rootPath, this.npmConfig));
+
+    /* istanbul ignore else */
+    if (process.env.LERNA_INTEGRATION !== "SKIP") {
+      chain = chain.then(() =>
+        verifyNpmPackageAccess(this.packagesToPublish, this.project.rootPath, this.npmConfig)
+      );
+    }
+
+    return chain;
   }
 
   updateCanaryVersions() {
