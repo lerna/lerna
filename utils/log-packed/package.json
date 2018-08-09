@@ -1,0 +1,37 @@
+{
+  "name": "@lerna/log-packed",
+  "version": "3.0.0-rc.0",
+  "description": "Log the result of npm pack --json",
+  "keywords": [
+    "lerna",
+    "npm",
+    "log",
+    "pack"
+  ],
+  "author": "Daniel Stockman <daniel.stockman@gmail.com>",
+  "homepage": "https://github.com/lerna/lerna/tree/master/utils/log-packed#readme",
+  "license": "MIT",
+  "main": "lib/log-packed.js",
+  "files": [
+    "lib"
+  ],
+  "engines": {
+    "node": ">= 6.9.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lerna/lerna.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "byte-size": "^4.0.3",
+    "columnify": "^1.5.4",
+    "has-unicode": "^2.0.1",
+    "npmlog": "^4.1.2"
+  }
+}
