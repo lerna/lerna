@@ -37,6 +37,13 @@ describe("Package", () => {
     });
   });
 
+  describe("get .rootPath", () => {
+    it("should return the rootPath", () => {
+      const pkg = factory({ name: "get-rootPath" });
+      expect(pkg.rootPath).toBe(path.normalize("/root"));
+    });
+  });
+
   describe("get .version", () => {
     it("should return the version", () => {
       const pkg = factory({ version: "1.0.0" });
@@ -141,18 +148,6 @@ describe("Package", () => {
     it("should indicate if the package is private", () => {
       const pkg = factory({ name: "not-private" });
       expect(pkg.private).toBe(false);
-    });
-  });
-
-  describe("get .tarball", () => {
-    it("generates the destination filename of npm pack output", () => {
-      const pkg = factory({ name: "pack-me", version: "1.2.3" });
-      expect(pkg.tarball).toBe("pack-me-1.2.3.tgz");
-    });
-
-    it("normalizes package scopes", () => {
-      const pkg = factory({ name: "@scoped/pack-me", version: "4.5.6" });
-      expect(pkg.tarball).toBe("scoped-pack-me-4.5.6.tgz");
     });
   });
 

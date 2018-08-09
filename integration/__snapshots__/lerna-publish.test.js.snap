@@ -47,15 +47,15 @@ prepare-root
 
 prepublishOnly-root
 
+> package-1@1.1.0 prepublish __TEST_ROOTDIR__/packages/package-1
+> echo prepublish-package-1
+
+prepublish-package-1
+
 > package-1@1.1.0 prepare __TEST_ROOTDIR__/packages/package-1
 > echo prepare-package-1
 
 prepare-package-1
-
-> package-1@1.1.0 prepublishOnly __TEST_ROOTDIR__/packages/package-1
-> echo prepublish-package-1
-
-prepublish-package-1
 
 > package-1@1.1.0 postpublish __TEST_ROOTDIR__/packages/package-1
 > echo postpublish-package-1
@@ -380,8 +380,8 @@ postversion-package-1
 postversion-root
 prepare-root
 prepublishOnly-root
-prepare-package-1
 prepublish-package-1
+prepare-package-1
 postpublish-package-1
 postpublish-root
 Successfully published:

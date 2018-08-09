@@ -1,6 +1,7 @@
 "use strict";
 
 const os = require("os");
+const fs = require("fs-extra");
 const path = require("path");
 const pFinally = require("p-finally");
 const pMap = require("p-map");
@@ -373,9 +374,9 @@ class PublishCommand extends Command {
     }
 
     chain = chain.then(() =>
-      runParallelBatches(this.batchedPackages, this.concurrency, pkg =>
-        npmPublish.npmPack(pkg).then(() => {
-          tracker.completeWork(1);
+      pReduce(this.batchedPackages, (_, batch) =>
+        npmPublish.npmPack(this.project.manifest, batch).then(() => {
+          tracker.completeWork(batch.length);
         })
       )
     );
@@ -399,15 +400,20 @@ class PublishCommand extends Command {
 
     chain = chain.then(() =>
       runParallelBatches(this.batchedPackages, this.concurrency, pkg =>
-        npmPublish(pkg, distTag, this.npmConfig).then(() => {
-          tracker.info("published", pkg.name);
+        npmPublish(pkg, distTag, this.npmConfig)
+          // postpublish is _not_ run when publishing a tarball
+          .then(() => this.runPackageLifecycle(pkg, "postpublish"))
+          // don't leave the generated tarball hanging around
+          .then(() => fs.remove(path.join(pkg.rootPath, pkg.tarball)))
+          .then(() => {
+            tracker.info("published", pkg.name);
 
-          if (this.options.requireScripts) {
-            this.execScript(pkg, "postpublish");
-          }
+            if (this.options.requireScripts) {
+              this.execScript(pkg, "postpublish");
+            }
 
-          tracker.completeWork(1);
-        })
+            tracker.completeWork(1);
+          })
       )
     );
 

@@ -28,6 +28,14 @@ describe("PublishCommand", () => {
 
       await lernaPublish(testDir)();
 
+      expect(npmPublish.packed).toMatchInlineSnapshot(`
+Set {
+  "package-1",
+  "package-3",
+  "package-4",
+  "package-2",
+}
+`);
       expect(npmPublish.order()).toEqual([
         "package-1",
         "package-3",

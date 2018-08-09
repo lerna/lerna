@@ -32,6 +32,7 @@
   "dependencies": {
     "@lerna/child-process": "file:../../core/child-process",
     "@lerna/get-npm-exec-opts": "file:../get-npm-exec-opts",
+    "@lerna/log-packed": "file:../log-packed",
     "npmlog": "^4.1.2"
   }
 }

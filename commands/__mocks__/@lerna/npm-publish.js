@@ -10,10 +10,15 @@ const mockNpmPublish = jest.fn((pkg, tag) => {
   return Promise.resolve();
 });
 
-const mockNpmPack = jest.fn(pkg => {
-  packed.add(pkg.name);
+const mockNpmPack = jest.fn((rootManifest, packages) => {
+  packages.forEach(pkg => {
+    packed.add(pkg.name);
 
-  return Promise.resolve(pkg.tarball);
+    // simulate decoration after npm pack
+    pkg.tarball = `${pkg.name}-MOCKED.tgz`;
+  });
+
+  return Promise.resolve();
 });
 
 // a convenient format for assertions

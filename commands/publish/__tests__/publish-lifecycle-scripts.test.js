@@ -29,10 +29,14 @@ describe("lifecycle scripts", () => {
       expect(runLifecycle).toHaveBeenCalledWith(expect.objectContaining({ name: "lifecycle" }), script);
     });
 
-    // all leaf package lifecycles are called by npm pack
+    // all leaf package lifecycles _EXCEPT_ postpublish are called by npm pack
     expect(runLifecycle).not.toHaveBeenCalledWith(
       expect.objectContaining({ name: "package-1" }),
-      expect.stringMatching(/(prepare|prepublishOnly|postpublish)/)
+      expect.stringMatching(/(prepare|prepublishOnly)/)
+    );
+    expect(runLifecycle).toHaveBeenCalledWith(
+      expect.objectContaining({ name: "package-1" }),
+      expect.stringMatching("postpublish")
     );
 
     // package-2 lacks version lifecycle scripts
@@ -52,6 +56,7 @@ describe("lifecycle scripts", () => {
       // publish-specific
       ["lifecycle", "prepare"],
       ["lifecycle", "prepublishOnly"],
+      ["package-1", "postpublish"],
       ["lifecycle", "postpublish"],
     ]);
   });

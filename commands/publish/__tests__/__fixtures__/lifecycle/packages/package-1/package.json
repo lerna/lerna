@@ -7,7 +7,7 @@
     "postversion": "echo postversion-package-1",
     "prepublish": "echo prepublish-package-1",
     "prepare": "echo prepare-package-1",
-    "prepublishOnly": "echo prepublish-package-1",
+    "prepublishOnly": "echo prepublishOnly-package-1",
     "postpublish": "echo postpublish-package-1"
   }
 }
