@@ -138,6 +138,8 @@ Running `lerna` without arguments will show all commands/options.
 ```json
 {
   "version": "1.1.3",
+  "useWorkspaces": true,
+  "npmClient": "yarn",
   "command": {
     "publish": {
       "ignoreChanges": [
@@ -160,6 +162,8 @@ Running `lerna` without arguments will show all commands/options.
 * `command.bootstrap.npmClientArgs`: array of strings that will be passed as arguments directly to `npm install` during the `lerna bootstrap` command.
 * `command.bootstrap.scope`: an array of globs that restricts which packages will be bootstrapped when running the `lerna bootstrap` command.
 * `packages`: Array of globs to use as package locations.
+* `useWorkspaces`: A boolean that specificies whether to use yarn's workspaces or not. Require `workspace` key in `package.json`, see the [example project](https://github.com/Quramy/lerna-yarn-workspaces-example).
+* `npmClient`: specifies npm client (default npm).
 
 The packages config in lerna.json is a list of globs that match directories containing a package.json, which is how lerna recognizes "leaf" packages (vs the "root" package.json, which is intended to manage the dev dependencies and scripts for the entire repo).
 
