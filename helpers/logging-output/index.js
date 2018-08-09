@@ -15,8 +15,8 @@ function loggingOutput(minLevel = "info") {
   return (
     log.record
       // select all non-empty info, warn, or error logs
-      .filter(m => log.levels[m.level] >= log.levels[minLevel] && m.message)
+      .filter(m => log.levels[m.level] >= log.levels[minLevel])
       // return just the normalized message content
-      .map(m => multiLineTrimRight(m.message))
+      .map(m => multiLineTrimRight(m.message || m.prefix))
   );
 }

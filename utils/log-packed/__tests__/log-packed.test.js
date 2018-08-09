@@ -1,5 +1,8 @@
 "use strict";
 
+// windows sucks
+jest.mock("has-unicode", () => () => false);
+
 const loggingOutput = require("@lerna-test/logging-output");
 const logPacked = require("../lib/log-packed");
 
@@ -62,8 +65,11 @@ describe("@lerna/log-packed", () => {
     fixture.forEach(logPacked);
 
     expect(loggingOutput().join("\n")).toMatchInlineSnapshot(`
-📦  package-1@1.1.0
+
+package: package-1@1.1.0
+=== Tarball Contents ===
 396B package.json
+=== Tarball Details ===
 name:          package-1
 version:       1.1.0
 filename:      package-1-1.1.0.tgz
@@ -72,8 +78,12 @@ unpacked size: 396 B
 shasum:        8f339308bfabffcddd89e379ab76c8fbbc5c429a
 integrity:     sha512-s+D+5+Kovk2mi[...]XqcwFATxxUGVw==
 total files:   1
-📦  package-2@1.1.0
+
+
+package: package-2@1.1.0
+=== Tarball Contents ===
 99B package.json
+=== Tarball Details ===
 name:          package-2
 version:       1.1.0
 filename:      package-2-1.1.0.tgz
@@ -82,6 +92,7 @@ unpacked size: 99 B
 shasum:        9a868dcbaa1812afb10ae2366909d6bf3a1c6f95
 integrity:     sha512-k9Ao8IyLZUq2f[...]bMINb3uj3wxkw==
 total files:   1
+
 `);
   });
 });
