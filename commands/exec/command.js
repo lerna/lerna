@@ -25,7 +25,7 @@ exports.builder = yargs => {
       bail: {
         group: "Command Options:",
         describe: "Stop when the command fails in a package.\nPass --no-bail to continue despite failure.",
-        default: true,
+        defaultDescription: "true",
         type: "boolean",
       },
       stream: {
@@ -43,7 +43,7 @@ exports.builder = yargs => {
       prefix: {
         group: "Command Options:",
         describe: "Pass --no-prefix to disable prefixing of streamed output.",
-        default: true,
+        defaultDescription: "true",
         type: "boolean",
       },
     });
