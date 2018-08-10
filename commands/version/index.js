@@ -40,10 +40,24 @@ class VersionCommand extends Command {
   }
 
   initialize() {
-    this.gitRemote = this.options.gitRemote;
-    this.tagPrefix = this.options.tagVersionPrefix;
+    // Defaults are necessary here because yargs defaults
+    // override durable options provided by a config file
+    const {
+      amend,
+      commitHooks = true,
+      gitRemote = "origin",
+      gitTagVersion = true,
+      push = true,
+      signGitCommit,
+      signGitTag,
+      tagVersionPrefix = "v",
+    } = this.options;
 
-    const { amend, commitHooks, signGitCommit, signGitTag } = this.options;
+    this.gitRemote = gitRemote;
+    this.tagPrefix = tagVersionPrefix;
+    this.commitAndTag = gitTagVersion;
+    this.pushToRemote = gitTagVersion && amend !== true && push;
+    // never automatically push to remote when amending a commit
 
     this.gitOpts = {
       amend,
@@ -87,8 +101,8 @@ class VersionCommand extends Command {
     }
 
     if (
-      this.options.gitTagVersion &&
-      this.options.push &&
+      this.commitAndTag &&
+      this.pushToRemote &&
       isBehindUpstream(this.gitRemote, this.currentBranch, this.execOpts)
     ) {
       const message = `Local branch '${this.currentBranch}' is behind remote upstream ${this.gitRemote}/${
@@ -158,14 +172,14 @@ class VersionCommand extends Command {
   execute() {
     const tasks = [() => this.updatePackageVersions()];
 
-    if (this.options.gitTagVersion) {
+    if (this.commitAndTag) {
       tasks.push(() => this.commitAndTagUpdates());
     } else {
       this.logger.info("execute", "Skipping git tag/commit");
     }
 
-    if (this.options.gitTagVersion && !this.options.amend && this.options.push) {
-      tasks.push(() => this.pushToRemote());
+    if (this.pushToRemote) {
+      tasks.push(() => this.gitPushToRemote());
     } else {
       this.logger.info("execute", "Skipping git push");
     }
@@ -410,7 +424,7 @@ class VersionCommand extends Command {
     // exec version lifecycle in root (after all updates)
     chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "version"));
 
-    if (this.options.gitTagVersion) {
+    if (this.commitAndTag) {
       chain = chain.then(() => gitAdd(Array.from(changedFiles), this.execOpts));
     }
 
@@ -463,7 +477,7 @@ class VersionCommand extends Command {
       .then(() => [tag]);
   }
 
-  pushToRemote() {
+  gitPushToRemote() {
     this.logger.info("git", "Pushing tags...");
 
     return gitPush(this.gitRemote, this.currentBranch, this.execOpts);

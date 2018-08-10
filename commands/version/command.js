@@ -23,7 +23,7 @@ exports.builder = (yargs, composed) => {
     "commit-hooks": {
       describe: "Run git commit hooks when committing the version changes.",
       type: "boolean",
-      default: true,
+      defaultDescription: "true",
     },
     "conventional-commits": {
       describe: "Use angular conventional-commit format to determine version bump and generate CHANGELOG.",
@@ -41,12 +41,12 @@ exports.builder = (yargs, composed) => {
       describe: "Push git changes to the specified remote instead of 'origin'.",
       type: "string",
       requiresArg: true,
-      default: "origin",
+      defaultDescription: "origin",
     },
     "git-tag-version": {
       describe: "Commit and tag the version changes.",
       type: "boolean",
-      default: true,
+      defaultDescription: "true",
     },
     "ignore-changes": {
       describe: "Ignore changes in files matched by glob(s) when detecting changed packages.",
@@ -68,7 +68,7 @@ exports.builder = (yargs, composed) => {
     push: {
       describe: "Push tagged commit to git remote. Pass --no-push to disable.",
       type: "boolean",
-      default: true,
+      defaultDescription: "true",
     },
     "sign-git-commit": {
       describe: "Pass the `--gpg-sign` flag to `git commit`.",
@@ -82,7 +82,7 @@ exports.builder = (yargs, composed) => {
       describe: "Customize the tag prefix. To remove entirely, pass an empty string.",
       type: "string",
       requiresArg: true,
-      default: "v",
+      defaultDescription: "v",
     },
     yes: {
       describe: "Skip all confirmation prompts.",

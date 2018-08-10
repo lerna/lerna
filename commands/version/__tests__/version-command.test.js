@@ -125,6 +125,39 @@ describe("VersionCommand", () => {
     });
   });
 
+  describe("--no-commit-hooks", () => {
+    const setupPreCommitHook = cwd =>
+      fs.outputFile(path.join(cwd, ".git/hooks/pre-commit"), "#!/bin/sh\nexit 1\n", { mode: 0o755 });
+
+    it("passes --no-verify to git commit execution", async () => {
+      const cwd = await initFixture("normal");
+
+      await setupPreCommitHook(cwd);
+      await lernaVersion(cwd)("--no-commit-hooks");
+
+      const message = await getCommitMessage(cwd);
+      expect(message).toBe("v1.0.1");
+    });
+
+    it("consumes configuration from lerna.json", async () => {
+      const cwd = await initFixture("normal");
+
+      await setupPreCommitHook(cwd);
+      await fs.outputJSON(path.join(cwd, "lerna.json"), {
+        version: "1.0.0",
+        command: {
+          publish: {
+            commitHooks: false,
+          },
+        },
+      });
+      await lernaVersion(cwd)();
+
+      const message = await getCommitMessage(cwd);
+      expect(message).toBe("v1.0.1");
+    });
+  });
+
   describe("--no-git-tag-version", () => {
     it("versions changed packages without git commit or push", async () => {
       const testDir = await initFixture("normal");
@@ -146,6 +179,23 @@ describe("VersionCommand", () => {
         "packages/package-4/package.json",
         "packages/package-5/package.json",
       ]);
+    });
+
+    it("consumes configuration from lerna.json", async () => {
+      const testDir = await initFixture("normal");
+
+      await fs.outputJSON(path.join(testDir, "lerna.json"), {
+        version: "1.0.0",
+        command: {
+          publish: {
+            gitTagVersion: false,
+          },
+        },
+      });
+      await lernaVersion(testDir)();
+
+      const logMessages = loggingOutput("info");
+      expect(logMessages).toContain("Skipping git tag/commit");
     });
 
     it("is implied by --skip-git", async () => {
@@ -175,6 +225,23 @@ describe("VersionCommand", () => {
       expect(unstaged).toEqual([]);
     });
 
+    it("consumes configuration from lerna.json", async () => {
+      const testDir = await initFixture("normal");
+
+      await fs.outputJSON(path.join(testDir, "lerna.json"), {
+        version: "1.0.0",
+        command: {
+          publish: {
+            push: false,
+          },
+        },
+      });
+      await lernaVersion(testDir)();
+
+      const logMessages = loggingOutput("info");
+      expect(logMessages).toContain("Skipping git push");
+    });
+
     it("is implied by --skip-git", async () => {
       const testDir = await initFixture("normal");
       await lernaVersion(testDir)("--skip-git");
@@ -192,6 +259,23 @@ describe("VersionCommand", () => {
 
       const patch = await showCommit(testDir);
       expect(patch).toContain("tag: rev1.0.1");
+    });
+
+    it("consumes configuration from lerna.json", async () => {
+      const testDir = await initFixture("normal");
+
+      await fs.outputJSON(path.join(testDir, "lerna.json"), {
+        version: "1.0.0",
+        command: {
+          publish: {
+            tagVersionPrefix: "durable",
+          },
+        },
+      });
+      await lernaVersion(testDir)();
+
+      const patch = await showCommit(testDir);
+      expect(patch).toContain("tag: durable1.0.1");
     });
 
     it("omits tag prefix when passed empty string", async () => {
@@ -241,6 +325,28 @@ describe("VersionCommand", () => {
 
       expect(libPush).lastCalledWith(
         "upstream",
+        "master",
+        expect.objectContaining({
+          cwd: testDir,
+        })
+      );
+    });
+
+    it("consumes configuration from lerna.json", async () => {
+      const testDir = await initFixture("normal");
+
+      await fs.outputJSON(path.join(testDir, "lerna.json"), {
+        version: "1.0.0",
+        command: {
+          publish: {
+            gitRemote: "durable",
+          },
+        },
+      });
+      await lernaVersion(testDir)();
+
+      expect(libPush).lastCalledWith(
+        "durable",
         "master",
         expect.objectContaining({
           cwd: testDir,
