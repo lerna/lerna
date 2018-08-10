@@ -11,10 +11,8 @@
     },
     "publish": {
       "allowBranch": "master",
-      "bump": "prerelease",
       "conventionalCommits": true,
       "gitRemote": "upstream",
-      "preid": "rc",
       "message": "chore(release): publish %s"
     }
   },
