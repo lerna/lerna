@@ -12,6 +12,8 @@ jest.mock("../../version/lib/is-behind-upstream");
 // mocked or stubbed modules
 const npmDistTag = require("@lerna/npm-dist-tag");
 const npmPublish = require("@lerna/npm-publish");
+const verifyNpmRegistry = require("../lib/verify-npm-registry");
+const verifyNpmPackageAccess = require("../lib/verify-npm-package-access");
 
 // helpers
 const loggingOutput = require("@lerna-test/logging-output");
@@ -46,6 +48,20 @@ Set {
       expect(npmDistTag.check).not.toBeCalled();
       expect(npmDistTag.remove).not.toBeCalled();
       expect(npmDistTag.add).not.toBeCalled();
+
+      expect(verifyNpmRegistry).toBeCalled();
+      expect(verifyNpmRegistry.registry.get(testDir)).toBe("default registry");
+
+      expect(verifyNpmPackageAccess).toBeCalled();
+      expect(verifyNpmPackageAccess.registry.get(testDir)).toMatchInlineSnapshot(`
+Set {
+  "package-1",
+  "package-2",
+  "package-3",
+  "package-4",
+  "registry: default",
+}
+`);
     });
 
     it("publishes changed independent packages", async () => {
@@ -156,6 +172,26 @@ Set {
         undefined, // dist-tag
         expect.objectContaining({ registry })
       );
+    });
+  });
+
+  describe("--no-verify-registry", () => {
+    it("skips npm registry ping", async () => {
+      const cwd = await initFixture("normal");
+
+      await lernaPublish(cwd)("--no-verify-registry");
+
+      expect(verifyNpmRegistry).not.toBeCalled();
+    });
+  });
+
+  describe("--no-verify-access", () => {
+    it("skips package access verification", async () => {
+      const cwd = await initFixture("normal");
+
+      await lernaPublish(cwd)("--no-verify-access");
+
+      expect(verifyNpmPackageAccess).not.toBeCalled();
     });
   });
 

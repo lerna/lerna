@@ -47,6 +47,16 @@ exports.builder = yargs => {
       describe: "Create a temporary tag while publishing.",
       type: "boolean",
     },
+    "verify-access": {
+      describe: "Verify package read-write access for current npm user. Pass --no-verify-access to disable.",
+      type: "boolean",
+      defaultDescription: "true",
+    },
+    "verify-registry": {
+      describe: "Verify registry authentication for current npm user. Pass --no-verify-registry to disable.",
+      type: "boolean",
+      defaultDescription: "true",
+    },
     yes: {
       describe: "Skip all confirmation prompts.",
       type: "boolean",

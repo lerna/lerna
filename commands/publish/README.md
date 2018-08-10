@@ -43,6 +43,8 @@ but have the package contents themselves consistently published by an automated 
 * [`--canary`](#--canary)
 * [`--npm-client <client>`](#--npm-client-client)
 * [`--npm-tag <dist-tag>`](#--npm-tag-dist-tag)
+* [`--no-verify-access`](#--no-verify-access)
+* [`--no-verify-registry`](#--no-verify-registry)
 * [`--registry <url>`](#--registry-url)
 * [`--temp-tag`](#--temp-tag)
 * [`--yes`](#--yes)
@@ -100,6 +102,18 @@ This option can be used to publish a [`prerelease`](http://carrot.is/coding/npm_
 
 > Note: the `latest` tag is the one that is used when a user runs `npm install my-package`.
 > To install a different tag, a user can run `npm install my-package@prerelease`.
+
+### `--no-verify-access`
+
+By default, `lerna` will verify the logged-in npm user's access to the packages about to be published. Passing this flag will disable that check.
+
+> Please use with caution
+
+### `--no-verify-registry`
+
+By default, `lerna` will verify that the npm registry is reachable and the current npm user is authenticated. Passing this flag will disable that check.
+
+> Please use with caution
 
 ### `--registry <url>`
 

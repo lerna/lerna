@@ -47,7 +47,7 @@ describe("lerna publish", () => {
 
   test("exit 0 when no updates", async () => {
     const { cwd } = await cloneFixture("normal");
-    const args = ["publish"];
+    const args = ["publish", "--no-verify-registry"];
 
     await gitTag(cwd, "v1.0.0");
 
@@ -59,7 +59,7 @@ describe("lerna publish", () => {
 
   test("exits with error when unknown options are passed", async () => {
     const { cwd } = await cloneFixture("normal");
-    const args = ["publish", "--yes", "--scope", "package-1"];
+    const args = ["publish", "--yes", "--scope", "package-1", "--no-verify-registry"];
 
     try {
       await cliRunner(cwd, env)(...args);
@@ -73,10 +73,11 @@ describe("lerna publish", () => {
 
   test("exits with error when package access validation fails", async () => {
     const { cwd } = await cloneFixture("normal");
-    const args = ["publish", "prerelease", "--yes"];
+    const args = ["publish", "prerelease", "--yes", "--no-verify-registry"];
 
     try {
-      await cliRunner(cwd, { LERNA_INTEGRATION: "ALLOW" })(...args);
+      // no env override enables --verify-access
+      await cliRunner(cwd)(...args);
     } catch (err) {
       expect(err.code).toBe(1);
       expect(err.stderr).toMatch("ENEEDAUTH");
@@ -87,7 +88,7 @@ describe("lerna publish", () => {
 
   test("updates fixed versions", async () => {
     const { cwd } = await cloneFixture("normal");
-    const args = ["publish", "patch", "--yes"];
+    const args = ["publish", "patch", "--yes", "--no-verify-registry"];
 
     const { stdout } = await cliRunner(cwd, env)(...args);
     expect(stdout).toMatchSnapshot("stdout");
@@ -100,7 +101,7 @@ describe("lerna publish", () => {
 
   test("updates all transitive dependents", async () => {
     const { cwd } = await cloneFixture("snake-graph");
-    const args = ["publish", "major", "--yes"];
+    const args = ["publish", "major", "--yes", "--no-verify-registry"];
 
     await gitTag(cwd, "v1.0.0");
     await commitChangeToPackage(cwd, "package-1", "change", { change: true });
@@ -112,7 +113,7 @@ describe("lerna publish", () => {
 
   test("uses default suffix with canary flag", async () => {
     const { cwd } = await cloneFixture("normal");
-    const args = ["publish", "--canary", "--yes"];
+    const args = ["publish", "--canary", "--yes", "--no-verify-registry"];
 
     await gitTag(cwd, "v1.0.0");
     await commitChangeToPackage(cwd, "package-1", "change", { change: true });
@@ -123,7 +124,7 @@ describe("lerna publish", () => {
 
   test("updates independent versions", async () => {
     const { cwd } = await cloneFixture("independent");
-    const args = ["publish", "major", "--yes"];
+    const args = ["publish", "major", "--yes", "--no-verify-registry"];
 
     const { stdout } = await cliRunner(cwd, env)(...args);
     expect(stdout).toMatchSnapshot("stdout");
@@ -137,7 +138,7 @@ describe("lerna publish", () => {
   ["normal", "independent"].forEach(flavor =>
     test(`${flavor} mode --conventional-commits changelog`, async () => {
       const { cwd } = await cloneFixture(`${flavor}`, "feat: init repo");
-      const args = ["publish", "--conventional-commits", "--yes"];
+      const args = ["publish", "--conventional-commits", "--yes", "--no-verify-registry"];
 
       await commitChangeToPackage(cwd, "package-1", "feat(package-1): Add foo", { foo: true });
       await commitChangeToPackage(cwd, "package-1", "fix(package-1): Fix foo", { foo: false });
@@ -171,7 +172,7 @@ describe("lerna publish", () => {
     await gitTag(cwd, "v1.0.0");
     await commitChangeToPackage(cwd, "package-1", "feat(package-1): changed", { changed: true });
 
-    await cliRunner(cwd, env)("publish", "major", "--yes");
+    await cliRunner(cwd, env)("publish", "major", "--yes", "--no-verify-registry");
 
     expect(await showCommit(cwd)).toMatchSnapshot();
   });
@@ -186,7 +187,7 @@ describe("lerna publish", () => {
 
   test("silences lifecycle scripts with --loglevel=silent", async () => {
     const { cwd } = await cloneFixture("lifecycle");
-    const args = ["publish", "minor", "--yes", "--loglevel", "silent"];
+    const args = ["publish", "minor", "--yes", "--loglevel", "silent", "--no-verify-registry"];
 
     const { stdout } = await cliRunner(cwd, env)(...args);
     expect(normalizeTestRoot(stdout)).toMatchSnapshot();
@@ -204,10 +205,14 @@ describe("lerna publish", () => {
     await execa("git", ["push", "origin", "master"], { cwd: cloneDir });
 
     // throws during interactive publish (local)
-    await expect(cliRunner(cwd, env)("publish", "--no-ci")).rejects.toThrowError(/EBEHIND/);
+    try {
+      await cliRunner(cwd, env)("publish", "--no-verify-registry", "--no-ci");
+    } catch (err) {
+      expect(err.message).toMatch(/EBEHIND/);
+    }
 
     // warns during non-interactive publish (CI)
-    const { stderr } = await cliRunner(cwd, env)("publish", "--ci");
+    const { stderr } = await cliRunner(cwd, env)("publish", "--no-verify-registry", "--ci");
     expect(stderr).toMatch("EBEHIND");
   });
 });

@@ -56,6 +56,10 @@ class PublishCommand extends Command {
       this.logger.info("require-scripts", "enabled");
     }
 
+    // inverted boolean options
+    this.verifyAccess = this.options.verifyAccess !== false;
+    this.verifyRegistry = this.options.verifyRegistry !== false;
+
     // https://docs.npmjs.com/misc/config#save-prefix
     this.savePrefix = this.options.exact ? "" : "^";
 
@@ -242,10 +246,16 @@ class PublishCommand extends Command {
   prepareRegistryActions() {
     let chain = Promise.resolve();
 
-    chain = chain.then(() => verifyNpmRegistry(this.project.rootPath, this.npmConfig));
+    if (this.verifyRegistry) {
+      chain = chain.then(() => verifyNpmRegistry(this.project.rootPath, this.npmConfig));
+    }
 
     /* istanbul ignore else */
-    if (process.env.LERNA_INTEGRATION !== "SKIP") {
+    if (process.env.LERNA_INTEGRATION) {
+      return chain;
+    }
+
+    if (this.verifyAccess) {
       chain = chain.then(() =>
         verifyNpmPackageAccess(this.packagesToPublish, this.project.rootPath, this.npmConfig)
       );
