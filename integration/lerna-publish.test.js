@@ -181,7 +181,7 @@ describe("lerna publish", () => {
     const args = ["publish", "minor", "--yes"];
 
     const { stdout } = await cliRunner(cwd, env)(...args);
-    expect(normalizeTestRoot(cwd)(stdout)).toMatchSnapshot();
+    expect(normalizeTestRoot(stdout)).toMatchSnapshot();
   });
 
   test("silences lifecycle scripts with --loglevel=silent", async () => {
@@ -189,7 +189,7 @@ describe("lerna publish", () => {
     const args = ["publish", "minor", "--yes", "--loglevel", "silent"];
 
     const { stdout } = await cliRunner(cwd, env)(...args);
-    expect(normalizeTestRoot(cwd)(stdout)).toMatchSnapshot();
+    expect(normalizeTestRoot(stdout)).toMatchSnapshot();
   });
 
   test("exits with EBEHIND when behind upstream remote", async () => {

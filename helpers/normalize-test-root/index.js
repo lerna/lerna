@@ -5,11 +5,12 @@ const path = require("path");
 
 module.exports = normalizeTestRoot;
 
-function normalizeTestRoot(cwd) {
-  // lol windows paths often look like escaped slashes, so re-re-escape them :P
-  const dirPath = new RegExp(`(${cwd.replace(/\\/g, "\\\\")})([\\S]*)`, "g");
+// tempy creates subdirectories with hexadecimal names that are 32 characters long
+const TEMP_DIR_REGEXP = /([^\s"]*[\\/][0-9a-f]{32})([^\s"]*)/g;
+// the excluded quotes are due to other snapshot serializers mutating the raw input
 
-  return str => str.replace(dirPath, serializeTestRoot);
+function normalizeTestRoot(str) {
+  return str.replace(TEMP_DIR_REGEXP, serializeTestRoot);
 }
 
 function serializeTestRoot(match, cwd, subPath) {
