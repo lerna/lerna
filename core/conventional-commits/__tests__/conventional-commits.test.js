@@ -69,6 +69,24 @@ describe("conventional-commits", () => {
       expect(bump).toBe("1.1.0");
     });
 
+    it("supports custom tagPrefix in fixed mode", async () => {
+      const cwd = await initFixture("fixed");
+
+      await gitTag(cwd, "dragons-are-awesome1.0.0");
+
+      const [pkg1] = await getPackages(cwd);
+
+      // make a change in package-1
+      await pkg1.set("changed", 1).serialize();
+      await gitAdd(cwd, pkg1.manifestLocation);
+      await gitCommit(cwd, "fix: changed 1");
+
+      const bump = await recommendVersion(pkg1, "fixed", {
+        tagPrefix: "dragons-are-awesome",
+      });
+      expect(bump).toBe("1.0.1");
+    });
+
     it("propagates errors from callback", async () => {
       const cwd = await initFixture("fixed");
       const [pkg1] = await getPackages(cwd);
@@ -219,6 +237,28 @@ describe("conventional-commits", () => {
 
       expect(leafChangelogContent).toMatchSnapshot("leaf");
       expect(rootChangelogContent).toMatchSnapshot("root");
+    });
+
+    it("supports custom tagPrefix in fixed mode", async () => {
+      const cwd = await initFixture("fixed");
+
+      await gitTag(cwd, "dragons-are-awesome1.0.0");
+
+      const [pkg1] = await getPackages(cwd);
+
+      // make a change in package-1
+      await pkg1.set("changed", 1).serialize();
+      await gitAdd(cwd, pkg1.manifestLocation);
+      await gitCommit(cwd, "fix: A second commit for our CHANGELOG");
+
+      // update version
+      await pkg1.set("version", "1.0.1").serialize();
+
+      const leafChangelogContent = await updateChangelog(pkg1, "fixed", {
+        tagPrefix: "dragons-are-awesome",
+      }).then(getFileContent);
+
+      expect(leafChangelogContent).toMatch("A second commit for our CHANGELOG");
     });
 
     it("appends version bump message if no commits have been recorded", async () => {

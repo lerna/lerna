@@ -7,7 +7,7 @@ const getChangelogConfig = require("./get-changelog-config");
 
 module.exports = recommendVersion;
 
-function recommendVersion(pkg, type, { changelogPreset, rootPath }) {
+function recommendVersion(pkg, type, { changelogPreset, rootPath, tagPrefix }) {
   log.silly(type, "for %s at %s", pkg.name, pkg.location);
 
   const options = {
@@ -16,6 +16,9 @@ function recommendVersion(pkg, type, { changelogPreset, rootPath }) {
 
   if (type === "independent") {
     options.lernaPackage = pkg.name;
+  } else {
+    // only fixed mode can have a custom tag prefix
+    options.tagPrefix = tagPrefix;
   }
 
   return getChangelogConfig(changelogPreset, rootPath).then(config => {

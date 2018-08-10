@@ -259,6 +259,7 @@ class VersionCommand extends Command {
         ConventionalCommitUtilities.recommendVersion(node, type, {
           changelogPreset,
           rootPath,
+          tagPrefix: this.tagPrefix,
         })
       )
     );
@@ -383,6 +384,7 @@ class VersionCommand extends Command {
             return ConventionalCommitUtilities.updateChangelog(pkg, type, {
               changelogPreset,
               rootPath,
+              tagPrefix: this.tagPrefix,
             }).then(changelogLocation => {
               // commit the updated changelog
               changedFiles.add(changelogLocation);
@@ -405,6 +407,7 @@ class VersionCommand extends Command {
           ConventionalCommitUtilities.updateChangelog(this.project.manifest, "root", {
             changelogPreset,
             rootPath,
+            tagPrefix: this.tagPrefix,
             version: this.globalVersion,
           }).then(changelogLocation => {
             // commit the updated changelog

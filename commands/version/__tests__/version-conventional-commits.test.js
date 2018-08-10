@@ -46,19 +46,19 @@ describe("--conventional-commits", () => {
         expect(ConventionalCommitUtilities.recommendVersion).toBeCalledWith(
           expect.objectContaining({ name }),
           "independent",
-          { changelogPreset: undefined, rootPath: cwd }
+          { changelogPreset: undefined, rootPath: cwd, tagPrefix: "v" }
         );
         expect(ConventionalCommitUtilities.updateChangelog).toBeCalledWith(
           expect.objectContaining({ name, version }),
           "independent",
-          { changelogPreset: undefined, rootPath: cwd }
+          { changelogPreset: undefined, rootPath: cwd, tagPrefix: "v" }
         );
       });
     });
 
     it("accepts --changelog-preset option", async () => {
       const cwd = await initFixture("independent");
-      const changelogOpts = { changelogPreset: "foo-bar", rootPath: cwd };
+      const changelogOpts = { changelogPreset: "foo-bar", rootPath: cwd, tagPrefix: "v" };
 
       await lernaVersion(cwd)("--conventional-commits", "--changelog-preset", "foo-bar");
 
@@ -94,13 +94,13 @@ describe("--conventional-commits", () => {
         expect(ConventionalCommitUtilities.recommendVersion).toBeCalledWith(
           expect.objectContaining({ name, location }),
           "fixed",
-          { changelogPreset: undefined, rootPath: cwd }
+          { changelogPreset: undefined, rootPath: cwd, tagPrefix: "v" }
         );
 
         expect(ConventionalCommitUtilities.updateChangelog).toBeCalledWith(
           expect.objectContaining({ name, version: "2.0.0" }),
           "fixed",
-          { changelogPreset: undefined, rootPath: cwd }
+          { changelogPreset: undefined, rootPath: cwd, tagPrefix: "v" }
         );
       });
 
@@ -110,15 +110,25 @@ describe("--conventional-commits", () => {
           location: cwd,
         }),
         "root",
-        { changelogPreset: undefined, rootPath: cwd, version: "2.0.0" }
+        { changelogPreset: undefined, rootPath: cwd, tagPrefix: "v", version: "2.0.0" }
       );
     });
 
     it("accepts --changelog-preset option", async () => {
       const cwd = await initFixture("normal");
-      const changelogOpts = { changelogPreset: "baz-qux", rootPath: cwd };
+      const changelogOpts = {
+        changelogPreset: "baz-qux",
+        rootPath: cwd,
+        tagPrefix: "dragons-are-awesome",
+      };
 
-      await lernaVersion(cwd)("--conventional-commits", "--changelog-preset", "baz-qux");
+      await lernaVersion(cwd)(
+        "--conventional-commits",
+        "--changelog-preset",
+        "baz-qux",
+        "--tag-version-prefix",
+        "dragons-are-awesome"
+      );
 
       expect(ConventionalCommitUtilities.recommendVersion).toBeCalledWith(
         expect.any(Object),

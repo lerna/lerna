@@ -20,7 +20,7 @@ const CHANGELOG_HEADER = dedent`
   See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 `;
 
-function updateChangelog(pkg, type, { changelogPreset, rootPath, version }) {
+function updateChangelog(pkg, type, { changelogPreset, rootPath, tagPrefix, version }) {
   log.silly(type, "for %s at %s", pkg.name, pkg.location);
 
   return getChangelogConfig(changelogPreset, rootPath).then(config => {
@@ -48,6 +48,9 @@ function updateChangelog(pkg, type, { changelogPreset, rootPath, version }) {
 
       if (type === "independent") {
         options.lernaPackage = pkg.name;
+      } else {
+        // only fixed mode can have a custom tag prefix
+        options.tagPrefix = tagPrefix;
       }
     }
 
