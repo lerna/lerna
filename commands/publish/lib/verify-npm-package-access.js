@@ -29,7 +29,7 @@ function verifyNpmPackageAccess(packages, location, { registry }) {
       const permission = JSON.parse(result.stdout);
 
       for (const pkg of packages) {
-        if (permission[pkg.name] !== "read-write") {
+        if (pkg.name in permission && permission[pkg.name] !== "read-write") {
           throw new ValidationError(
             "EACCESS",
             "You do not have write permission required to publish %j",
