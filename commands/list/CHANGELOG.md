@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.0.0"></a>
+# [3.0.0](https://github.com/lerna/lerna/compare/v3.0.0-rc.0...v3.0.0) (2018-08-10)
+
+
+### Features
+
+* **list:** Extract [@lerna](https://github.com/lerna)/listable utility ([bf56018](https://github.com/lerna/lerna/commit/bf56018))
+* **list:** Improve scriptability with several new options ([2e204af](https://github.com/lerna/lerna/commit/2e204af))
+
+
+### BREAKING CHANGES
+
+* **list:** The default output of `lerna ls` no longer shows version strings or private packages.
+
+ * The new alias `lerna la` resembles the old output, with the addition of relative path to the package
+ * The new alias `lerna ll` is a shortcut for the new `--long` option
+ * A new `--parseable` option has been added to aid magical piping incantations
+
+
+
+
+
 <a name="3.0.0-rc.0"></a>
 # [3.0.0-rc.0](https://github.com/lerna/lerna/compare/v3.0.0-beta.21...v3.0.0-rc.0) (2018-07-27)
 

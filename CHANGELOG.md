@@ -3,6 +3,55 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.0.0"></a>
+# [3.0.0](https://github.com/lerna/lerna/compare/v3.0.0-rc.0...v3.0.0) (2018-08-10)
+
+
+### Bug Fixes
+
+* **add:** Always use POSIX paths when computing relative file: specifiers ([ffe354f](https://github.com/lerna/lerna/commit/ffe354f))
+* **add:** Support explicit & implicit relative file: specifiers ([41f231f](https://github.com/lerna/lerna/commit/41f231f))
+* **create:** Use filename without scope when generating imports from test file ([acfd48b](https://github.com/lerna/lerna/commit/acfd48b))
+* **publish:** Improve `npm pack` experience ([627cfc2](https://github.com/lerna/lerna/commit/627cfc2))
+
+
+### Features
+
+* **changed:** Support list output options ([6ecdd83](https://github.com/lerna/lerna/commit/6ecdd83))
+* **list:** Extract [@lerna](https://github.com/lerna)/listable utility ([bf56018](https://github.com/lerna/lerna/commit/bf56018))
+* **list:** Improve scriptability with several new options ([2e204af](https://github.com/lerna/lerna/commit/2e204af))
+* **npm-publish:** Add npmPack export ([088ea54](https://github.com/lerna/lerna/commit/088ea54))
+* **package:** Add tarball property ([be453cd](https://github.com/lerna/lerna/commit/be453cd))
+* **publish:** Run `npm pack` before `npm publish` ([8d80b2c](https://github.com/lerna/lerna/commit/8d80b2c))
+* **publish:** Validate npm registry and package access prerequisites ([ebc8ba6](https://github.com/lerna/lerna/commit/ebc8ba6)), closes [#55](https://github.com/lerna/lerna/issues/55) [#1045](https://github.com/lerna/lerna/issues/1045) [#1347](https://github.com/lerna/lerna/issues/1347)
+* Add [@lerna](https://github.com/lerna)/log-packed module, extracted from npm ([9c767ac](https://github.com/lerna/lerna/commit/9c767ac))
+* Split `lerna version` from of `lerna publish` ([#1522](https://github.com/lerna/lerna/issues/1522)) ([8b97394](https://github.com/lerna/lerna/commit/8b97394)), closes [#277](https://github.com/lerna/lerna/issues/277) [#936](https://github.com/lerna/lerna/issues/936) [#956](https://github.com/lerna/lerna/issues/956) [#961](https://github.com/lerna/lerna/issues/961) [#1056](https://github.com/lerna/lerna/issues/1056) [#1118](https://github.com/lerna/lerna/issues/1118) [#1385](https://github.com/lerna/lerna/issues/1385) [#1483](https://github.com/lerna/lerna/issues/1483) [#1494](https://github.com/lerna/lerna/issues/1494)
+
+
+### BREAKING CHANGES
+
+* **changed:** The package names emitted to stdout are no longer prefixed by a "- ", and private packages are no longer displayed by default.
+* **list:** The default output of `lerna ls` no longer shows version strings or private packages.
+
+ * The new alias `lerna la` resembles the old output, with the addition of relative path to the package
+ * The new alias `lerna ll` is a shortcut for the new `--long` option
+ * A new `--parseable` option has been added to aid magical piping incantations
+* * `--preid` now defaults to "alpha" during prereleases:
+
+  The previous default for this option was undefined, which led to an awkward "1.0.1-0" result when passed to `semver.inc()`.
+
+  The new default "alpha" yields a much more useful "1.0.1-alpha.0" result. Any previous prerelease ID will be preserved, just as it was before.
+
+* `--no-verify` is no longer passed to `git commit` by default, but controlled by the new `--commit-hooks` option:
+
+  The previous behavior was too overzealous, and the new option operates exactly like the corresponding [npm version](https://docs.npmjs.com/cli/version#commit-hooks) option of the same name.
+
+  As long as your pre-commit hooks are properly scoped to ignore changes in package.json files, this change should not affect you. If that is not the case, you may pass `--no-commit-hooks` to restore the previous behavior.
+
+
+
+
+
 <a name="3.0.0-rc.0"></a>
 # [3.0.0-rc.0](https://github.com/lerna/lerna/compare/v3.0.0-beta.21...v3.0.0-rc.0) (2018-07-27)
 

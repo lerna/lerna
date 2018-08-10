@@ -1,6 +1,6 @@
 {
   "name": "lerna",
-  "version": "3.0.0-rc.0",
+  "version": "3.0.0",
   "description": "A tool for managing JavaScript projects with multiple packages.",
   "keywords": [
     "lerna",
