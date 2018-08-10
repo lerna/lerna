@@ -211,7 +211,8 @@ class PublishCommand extends Command {
     } else {
       // all packages are described against the last tag
       chain = chain.then(updates => {
-        const described = gitDescribeMatching(`${this.options.tagVersionPrefix}*.*.*`);
+        const tagPrefix = this.options.tagVersionPrefix || "v";
+        const described = gitDescribeMatching(`${tagPrefix}*.*.*`);
         const version = makeVersion(described);
         const updatesVersions = updates.map(({ pkg }) => [pkg.name, version]);
 
