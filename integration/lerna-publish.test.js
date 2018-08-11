@@ -166,6 +166,25 @@ describe("lerna publish", () => {
     })
   );
 
+  test("--skip-npm aliases to lerna version immediately", async () => {
+    const { cwd } = await cloneFixture("normal", "feat: init repo");
+    const args = ["publish", "--skip-npm", "--conventional-commits", "--yes"];
+
+    await gitTag(cwd, "v1.0.0");
+    await commitChangeToPackage(cwd, "package-3", "feat(package-3): Add foo", { foo: true });
+
+    const { stdout, stderr } = await cliRunner(cwd, env)(...args);
+
+    expect(stdout).toMatchInlineSnapshot(`
+
+Changes:
+ - package-3: 1.0.0 => 1.1.0
+ - package-5: 1.0.0 => 1.1.0 (private)
+
+`);
+    expect(stderr).toMatch("Instead of --skip-npm, call `lerna version` directly");
+  });
+
   test("replaces file: specifier with local version before npm publish but after git commit", async () => {
     const { cwd } = await cloneFixture("relative-file-specs");
 

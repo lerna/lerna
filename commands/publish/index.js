@@ -43,6 +43,7 @@ class PublishCommand extends Command {
 
   initialize() {
     if (this.options.skipNpm) {
+      // TODO: remove in next major release
       this.logger.warn("deprecated", "Instead of --skip-npm, call `lerna version` directly");
 
       return versionCommand(this._argv).then(() => false);

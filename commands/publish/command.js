@@ -65,7 +65,13 @@ exports.builder = yargs => {
 
   return composeVersionOptions(yargs)
     .options(opts)
-    .group(Object.keys(opts), "Command Options:");
+    .group(Object.keys(opts), "Command Options:")
+    .option("skip-npm", {
+      // TODO: remove in next major release
+      // deprecation notice handled in initialize()
+      hidden: true,
+      type: "boolean",
+    });
 };
 
 exports.handler = function handler(argv) {
