@@ -2,6 +2,7 @@
 
 // we're actually testing integration with git
 jest.unmock("@lerna/collect-updates");
+jest.unmock("@lerna/conventional-commits");
 
 // local modules _must_ be explicitly mocked
 jest.mock("../lib/git-push");
@@ -39,7 +40,7 @@ const setupChanges = async cwd => {
   await gitTag(cwd, "v1.0.1-beta.3");
   await fs.outputFile(path.join(cwd, "packages/package-3/hello.js"), "world");
   await gitAdd(cwd, ".");
-  await gitCommit(cwd, "setup");
+  await gitCommit(cwd, "feat: setup");
 };
 
 test("version patch with previous prerelease also graduates prereleased", async () => {
@@ -62,6 +63,17 @@ test("version prerelease with previous prerelease bumps changed only", async () 
 
   await setupChanges(testDir);
   await lernaVersion(testDir)("prerelease");
+
+  const patch = await showCommit(testDir);
+  expect(patch).toMatchSnapshot();
+});
+
+test("version prerelease with previous prerelease supersedes --conventional-commits", async () => {
+  const testDir = await initFixture("republish-prereleased");
+  // version bump should stay prepatch --preid beta because ---conventional-commits is ignored
+
+  await setupChanges(testDir);
+  await lernaVersion(testDir)("prerelease", "--conventional-commits");
 
   const patch = await showCommit(testDir);
   expect(patch).toMatchSnapshot();

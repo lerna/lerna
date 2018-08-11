@@ -214,9 +214,6 @@ class VersionCommand extends Command {
 
     if (repoVersion) {
       predicate = makeGlobalVersionPredicate(repoVersion);
-    } else if (conventionalCommits) {
-      // it's a bit weird to have a return here, true
-      return this.recommendVersions();
     } else if (increment && independentVersions) {
       // compute potential prerelease ID for each independent update
       predicate = node => semver.inc(node.version, increment, resolvePrereleaseId(node.prereleaseId));
@@ -226,6 +223,9 @@ class VersionCommand extends Command {
       const nextVersion = semver.inc(this.project.version, increment, resolvePrereleaseId(prereleaseId));
 
       predicate = makeGlobalVersionPredicate(nextVersion);
+    } else if (conventionalCommits) {
+      // it's a bit weird to have a return here, true
+      return this.recommendVersions();
     } else if (independentVersions) {
       predicate = promptVersion;
     } else {
