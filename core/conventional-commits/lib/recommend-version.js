@@ -31,8 +31,12 @@ function recommendVersion(pkg, type, { changelogPreset, rootPath, tagPrefix }) {
           return reject(err);
         }
 
-        log.verbose(type, "increment %s by %s", pkg.version, data.releaseType);
-        resolve(semver.inc(pkg.version, data.releaseType));
+        // result might be undefined because some presets are not consistent with angular
+        // we still need to bump _something_ because lerna saw a change here
+        const releaseType = data.releaseType || "patch";
+
+        log.verbose(type, "increment %s by %s", pkg.version, releaseType);
+        resolve(semver.inc(pkg.version, releaseType));
       });
     });
   });
