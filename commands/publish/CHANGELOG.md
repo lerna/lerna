@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.0.3"></a>
+## [3.0.3](https://github.com/lerna/lerna/compare/v3.0.2...v3.0.3) (2018-08-11)
+
+
+### Bug Fixes
+
+* **publish:** Restore deprecated `--skip-npm` functionality ([cb47cb6](https://github.com/lerna/lerna/commit/cb47cb6)), closes [#1553](https://github.com/lerna/lerna/issues/1553)
+
+
+
+
+
 <a name="3.0.2"></a>
 ## [3.0.2](https://github.com/lerna/lerna/compare/v3.0.1...v3.0.2) (2018-08-11)
 
