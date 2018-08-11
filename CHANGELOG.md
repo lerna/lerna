@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.0.2"></a>
+## [3.0.2](https://github.com/lerna/lerna/compare/v3.0.1...v3.0.2) (2018-08-11)
+
+
+### Bug Fixes
+
+* **conventional-commits:** Pass --tag-version-prefix to changelog utilities ([8ed7d83](https://github.com/lerna/lerna/commit/8ed7d83))
+* **conventional-commits:** Provide fallback bump when releaseType is missing ([e330f6f](https://github.com/lerna/lerna/commit/e330f6f)), closes [#1551](https://github.com/lerna/lerna/issues/1551)
+* **exec:** Allow config files to override defaults ([2335149](https://github.com/lerna/lerna/commit/2335149))
+* **publish:** Add default for --tag-version-prefix ([f159442](https://github.com/lerna/lerna/commit/f159442))
+* **publish:** Allow disabling of registry and package verification ([0bfdff5](https://github.com/lerna/lerna/commit/0bfdff5)), closes [#1552](https://github.com/lerna/lerna/issues/1552)
+* **run:** Allow config files to override defaults ([f15b6fb](https://github.com/lerna/lerna/commit/f15b6fb))
+* **version:** Allow config files to override defaults ([bb1cfb5](https://github.com/lerna/lerna/commit/bb1cfb5))
+* **version:** Positional bump supersedes `--conventional-commits` when choosing version ([a74c866](https://github.com/lerna/lerna/commit/a74c866))
+
+
+
+
+
 <a name="3.0.1"></a>
 ## [3.0.1](https://github.com/lerna/lerna/compare/v3.0.0...v3.0.1) (2018-08-10)
 
