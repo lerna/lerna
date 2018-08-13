@@ -1,0 +1,33 @@
+{
+  "name": "@lerna/has-npm-version",
+  "version": "3.0.3",
+  "description": "Test if the current version of npm satisfies a given semver range",
+  "keywords": [
+    "lerna",
+    "utils"
+  ],
+  "author": "Daniel Stockman <daniel.stockman@gmail.com>",
+  "homepage": "https://github.com/lerna/lerna/tree/master/utils/has-npm-version#readme",
+  "license": "MIT",
+  "main": "lib/has-npm-version.js",
+  "files": [
+    "lib"
+  ],
+  "engines": {
+    "node": ">= 6.9.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lerna/lerna.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@lerna/child-process": "file:../../core/child-process",
+    "semver": "^5.5.0"
+  }
+}

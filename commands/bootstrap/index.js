@@ -11,6 +11,7 @@ const pWaterfall = require("p-waterfall");
 
 const Command = require("@lerna/command");
 const rimrafDir = require("@lerna/rimraf-dir");
+const hasNpmVersion = require("@lerna/has-npm-version");
 const npmConf = require("@lerna/npm-conf");
 const npmInstall = require("@lerna/npm-install");
 const runLifecycle = require("@lerna/run-lifecycle");
@@ -21,9 +22,6 @@ const symlinkDependencies = require("@lerna/symlink-dependencies");
 const ValidationError = require("@lerna/validation-error");
 const hasDependencyInstalled = require("./lib/has-dependency-installed");
 const isHoistedPackage = require("./lib/is-hoisted-package");
-const makeNpmFeaturePredicate = require("./lib/make-npm-feature-predicate");
-
-const hasNpmCI = makeNpmFeaturePredicate(">=5.7.0");
 
 module.exports = factory;
 
@@ -73,7 +71,7 @@ class BootstrapCommand extends Command {
       mutex,
     };
 
-    if (npmClient === "npm" && this.options.ci && hasNpmCI(this.conf)) {
+    if (npmClient === "npm" && this.options.ci && hasNpmVersion(">=5.7.0")) {
       this.npmConfig.subCommand = "ci";
     }
 

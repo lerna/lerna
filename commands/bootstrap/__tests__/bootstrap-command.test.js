@@ -13,6 +13,7 @@ const rimrafDir = require("@lerna/rimraf-dir");
 const npmInstall = require("@lerna/npm-install");
 const runLifecycle = require("@lerna/run-lifecycle");
 const createSymlink = require("@lerna/create-symlink");
+const hasNpmVersion = require("@lerna/has-npm-version");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
@@ -166,39 +167,35 @@ describe("BootstrapCommand", () => {
     });
   });
 
-  describe("with --ci", async () => {
-    const originalNpmUserAgent = process.env.npm_config_user_agent;
-
-    afterEach(() => {
-      process.env.npm_config_user_agent = originalNpmUserAgent;
-    });
-
+  describe("with --ci", () => {
     it("should call npmInstall with ci subCommand if on npm 5.7.0 or later", async () => {
       const testDir = await initFixture("ci");
-      process.env.npm_config_user_agent = "npm/5.7.0 node/v9.9.0 darwin x64";
 
       await lernaBootstrap(testDir)("--ci");
 
-      expect(npmInstall.dependencies.mock.calls[0][2]).toMatchObject({
+      expect(hasNpmVersion).lastCalledWith(">=5.7.0");
+      expect(npmInstall.dependencies.mock.calls[0][2]).toEqual({
         subCommand: "ci",
         registry: undefined,
         npmClient: "npm",
-        npmGlobalStyle: false,
         npmClientArgs: undefined,
+        npmGlobalStyle: false,
         mutex: undefined,
       });
     });
 
     it("should not pass subCommand to npmInstall if on npm version earlier than 5.7.0", async () => {
       const testDir = await initFixture("ci");
-      process.env.npm_config_user_agent = "npm/5.6.0 node/v9.9.0 darwin x64";
+
+      hasNpmVersion.mockReturnValue(false);
 
       await lernaBootstrap(testDir)("--ci");
 
-      expect(npmInstall.dependencies.mock.calls[0][2]).toMatchObject({
+      expect(npmInstall.dependencies.mock.calls[0][2]).toEqual({
         registry: undefined,
         npmClient: "npm",
         npmClientArgs: undefined,
+        npmGlobalStyle: false,
         mutex: undefined,
       });
     });
