@@ -32,8 +32,7 @@ function verifyNpmPackageAccess(packages, location, { registry }) {
         if (pkg.name in permission && permission[pkg.name] !== "read-write") {
           throw new ValidationError(
             "EACCESS",
-            "You do not have write permission required to publish %j",
-            pkg.name
+            `You do not have write permission required to publish "${pkg.name}"`
           );
         }
       }
