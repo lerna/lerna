@@ -373,6 +373,10 @@ class PublishCommand extends Command {
 
     let chain = Promise.resolve();
 
+    chain = chain.then(() => {
+      this.npmPack = npmPublish.makePacker(this.project.manifest);
+    });
+
     chain = chain.then(() => createTempLicenses(this.project.licensePath, this.packagesToBeLicensed));
     chain = chain.then(() => this.runPrepublishScripts(this.project.manifest));
 
@@ -387,7 +391,7 @@ class PublishCommand extends Command {
 
     chain = chain.then(() =>
       pReduce(this.batchedPackages, (_, batch) =>
-        npmPublish.npmPack(this.project.manifest, batch).then(() => {
+        this.npmPack(batch).then(() => {
           tracker.completeWork(batch.length);
         })
       )

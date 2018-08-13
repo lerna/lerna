@@ -4,10 +4,12 @@ const log = require("npmlog");
 
 const ChildProcessUtilities = require("@lerna/child-process");
 const getExecOpts = require("@lerna/get-npm-exec-opts");
+const hasNpmVersion = require("@lerna/has-npm-version");
 const logPacked = require("@lerna/log-packed");
 
 module.exports = npmPublish;
 module.exports.npmPack = npmPack;
+module.exports.makePacker = makePacker;
 
 function npmPublish(pkg, tag, { npmClient, registry }) {
   log.verbose("publish", pkg.name);
@@ -33,12 +35,8 @@ function npmPublish(pkg, tag, { npmClient, registry }) {
   return ChildProcessUtilities.exec(npmClient, args, opts);
 }
 
-function npmPack(rootManifest, packages) {
-  // NOTE: All of the istanbul-ignored branches are covered in integration tests
-  log.verbose("pack", packages.map(p => p.name));
-
+function makePackOptions(rootManifest) {
   const opts = getExecOpts(rootManifest);
-  const args = ["pack"].concat(packages.map(p => p.location));
 
   // let that juicy npm logging have its day in the sun
   opts.stdio = ["ignore", "pipe", "inherit"];
@@ -46,14 +44,26 @@ function npmPack(rootManifest, packages) {
   // no need for fancy error wrapping
   delete opts.pkg;
 
-  // always request JSON output for easier parsing of filenames
-  args.push("--json");
+  if (hasNpmVersion(">=5.10.0")) {
+    // request JSON output for easier parsing of filenames
+    opts.env.npm_config_json = true;
+  }
 
   /* istanbul ignore if */
   if (process.env.LERNA_INTEGRATION) {
     // override process.env.npm_config_dry_run from integration tests
-    args.push("--no-dry-run");
+    opts.env.npm_config_dry_run = false;
   }
+
+  log.silly("exec", "npm options", opts);
+  return opts;
+}
+
+function npmPack(rootManifest, packages, opts = makePackOptions(rootManifest)) {
+  // NOTE: All of the istanbul-ignored branches are covered in integration tests
+  log.verbose("pack", packages.map(p => p.name));
+
+  const args = ["pack"].concat(packages.map(p => p.location));
 
   log.silly("exec", "npm", args);
   const proc = ChildProcessUtilities.exec("npm", args, opts);
@@ -77,7 +87,6 @@ function npmPack(rootManifest, packages) {
   // stop piping when we reach the start of --json output
   proc.stdout.setEncoding("utf8");
   proc.stdout.on("data", chunk => {
-    /* istanbul ignore else */
     if (jsonBegan) {
       // it could be larger than a single chunk
       jsonString += chunk;
@@ -92,8 +101,8 @@ function npmPack(rootManifest, packages) {
     }
   });
 
-  return proc.then(() => {
-    const tarballs = JSON.parse(jsonString);
+  return proc.then(result => {
+    const tarballs = jsonString ? JSON.parse(jsonString) : parseLegacyTarballs(result, packages);
 
     tarballs.forEach(logPacked);
 
@@ -105,5 +114,32 @@ function npmPack(rootManifest, packages) {
     }
 
     return proc;
+  });
+}
+
+function makePacker(rootManifest) {
+  const opts = makePackOptions(rootManifest);
+
+  return packages => npmPack(rootManifest, packages, opts);
+}
+
+function parseLegacyTarballs(result, packages) {
+  // legacy `npm pack` outputs the generated tarball names
+  // at the end of stdout in the order of package input(s)
+  const isTgz = /^[\S]+\.tgz$/;
+  const lines = result.stdout.split("\n");
+  const files = lines.filter(line => isTgz.test(line));
+
+  // each result is passed to log-packed, so it needs decoration
+  return files.map((filename, idx) => {
+    const pkg = packages[idx];
+
+    return {
+      // the important part
+      filename,
+      // make log-packed show _something_ useful
+      name: pkg.name,
+      version: pkg.version,
+    };
   });
 }

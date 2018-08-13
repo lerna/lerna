@@ -10,9 +10,9 @@ module.exports = logContents;
 function logContents(tarball) {
   log.notice("");
   log.notice("", `${hasUnicode ? "📦 " : "package:"} ${tarball.name}@${tarball.version}`);
-  log.notice("=== Tarball Contents ===");
 
-  if (tarball.files.length) {
+  if (tarball.files && tarball.files.length) {
+    log.notice("=== Tarball Contents ===");
     log.notice(
       "",
       columnify(
@@ -31,7 +31,7 @@ function logContents(tarball) {
     );
   }
 
-  if (tarball.bundled.length) {
+  if (tarball.bundled && tarball.bundled.length) {
     log.notice("=== Bundled Dependencies ===");
     tarball.bundled.forEach(name => log.notice("", name));
   }
@@ -44,23 +44,26 @@ function logContents(tarball) {
         { name: "name:", value: tarball.name },
         { name: "version:", value: tarball.version },
         tarball.filename && { name: "filename:", value: tarball.filename },
-        { name: "package size:", value: byteSize(tarball.size) },
-        { name: "unpacked size:", value: byteSize(tarball.unpackedSize) },
-        { name: "shasum:", value: tarball.shasum },
-        { name: "integrity:", value: elideIntegrity(tarball) },
-        tarball.bundled.length && {
-          name: "bundled deps:",
-          value: tarball.bundled.length,
-        },
-        tarball.bundled.length && {
-          name: "bundled files:",
-          value: tarball.entryCount - tarball.files.length,
-        },
-        tarball.bundled.length && {
-          name: "own files:",
-          value: tarball.files.length,
-        },
-        { name: "total files:", value: tarball.entryCount },
+        tarball.size && { name: "package size:", value: byteSize(tarball.size) },
+        tarball.unpackedSize && { name: "unpacked size:", value: byteSize(tarball.unpackedSize) },
+        tarball.shasum && { name: "shasum:", value: tarball.shasum },
+        tarball.integrity && { name: "integrity:", value: elideIntegrity(tarball.integrity) },
+        tarball.bundled &&
+          tarball.bundled.length && {
+            name: "bundled deps:",
+            value: tarball.bundled.length,
+          },
+        tarball.bundled &&
+          tarball.bundled.length && {
+            name: "bundled files:",
+            value: tarball.entryCount - tarball.files.length,
+          },
+        tarball.bundled &&
+          tarball.bundled.length && {
+            name: "own files:",
+            value: tarball.files.length,
+          },
+        tarball.entryCount && { name: "total files:", value: tarball.entryCount },
       ].filter(x => x),
       {
         include: ["name", "value"],
@@ -73,8 +76,8 @@ function logContents(tarball) {
   log.notice("", "");
 }
 
-function elideIntegrity(tarball) {
-  const str = tarball.integrity.toString();
+function elideIntegrity(integrity) {
+  const str = integrity.toString();
 
   return `${str.substr(0, 20)}[...]${str.substr(80)}`;
 }

@@ -95,4 +95,23 @@ total files:   1
 
 `);
   });
+
+  it("safely ignores missing fields from incomplete json", () => {
+    // this is the output of the legacy npm pack (no --json) call
+    logPacked({
+      name: "package-3",
+      version: "3.1.0",
+      filename: "package-3-3.1.0.tgz",
+    });
+
+    expect(loggingOutput().join("\n")).toMatchInlineSnapshot(`
+
+package: package-3@3.1.0
+=== Tarball Details ===
+name:     package-3
+version:  3.1.0
+filename: package-3-3.1.0.tgz
+
+`);
+  });
 });

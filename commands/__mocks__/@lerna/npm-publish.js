@@ -21,6 +21,8 @@ const mockNpmPack = jest.fn((rootManifest, packages) => {
   return Promise.resolve();
 });
 
+const mockMakePacker = jest.fn(rootManifest => batch => mockNpmPack(rootManifest, batch));
+
 // a convenient format for assertions
 function order() {
   return Array.from(registry.keys());
@@ -34,6 +36,7 @@ afterEach(() => {
 
 module.exports = mockNpmPublish;
 module.exports.npmPack = mockNpmPack;
+module.exports.makePacker = mockMakePacker;
 module.exports.order = order;
 module.exports.packed = packed;
 module.exports.registry = registry;
