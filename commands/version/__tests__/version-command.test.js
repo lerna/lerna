@@ -440,6 +440,17 @@ describe("VersionCommand", () => {
     }
   });
 
+  it("exits early when no changes found", async () => {
+    const cwd = await initFixture("normal");
+
+    collectUpdates.setUpdated(cwd);
+
+    await lernaVersion(cwd)();
+
+    const [logMessage] = loggingOutput("success");
+    expect(logMessage).toBe("No changed packages to version");
+  });
+
   it("versions all transitive dependents after change", async () => {
     const testDir = await initFixture("snake-graph");
 

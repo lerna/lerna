@@ -45,18 +45,6 @@ describe("lerna publish", () => {
     LERNA_INTEGRATION: "SKIP",
   };
 
-  test("exit 0 when no updates", async () => {
-    const { cwd } = await cloneFixture("normal");
-    const args = ["publish", "--no-verify-registry"];
-
-    await gitTag(cwd, "v1.0.0");
-
-    const { code, stdout } = await cliRunner(cwd, env)(...args);
-
-    expect(code).toBe(0);
-    expect(stdout).toBe("");
-  });
-
   test("exits with error when unknown options are passed", async () => {
     const { cwd } = await cloneFixture("normal");
     const args = ["publish", "--yes", "--scope", "package-1", "--no-verify-registry"];

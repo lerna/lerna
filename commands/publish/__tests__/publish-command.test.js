@@ -13,6 +13,7 @@ jest.mock("../../version/lib/is-behind-upstream");
 const npmDistTag = require("@lerna/npm-dist-tag");
 const npmPublish = require("@lerna/npm-publish");
 const PromptUtilities = require("@lerna/prompt");
+const collectUpdates = require("@lerna/collect-updates");
 const output = require("@lerna/output");
 const verifyNpmRegistry = require("../lib/verify-npm-registry");
 const verifyNpmPackageAccess = require("../lib/verify-npm-package-access");
@@ -26,6 +27,34 @@ const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const lernaPublish = require("@lerna-test/command-runner")(require("../command"));
 
 describe("PublishCommand", () => {
+  describe("cli validation", () => {
+    let cwd;
+
+    beforeAll(async () => {
+      cwd = await initFixture("normal");
+    });
+
+    it("exits early when no changes found", async () => {
+      collectUpdates.setUpdated(cwd);
+
+      await lernaPublish(cwd)();
+
+      const [logMessage] = loggingOutput("success");
+      expect(logMessage).toBe("No changed packages to publish");
+      expect(verifyNpmRegistry).not.toBeCalled();
+    });
+
+    it("exits early when no changes found from-git", async () => {
+      collectUpdates.setUpdated(cwd);
+
+      await lernaPublish(cwd)("from-git");
+
+      const logMessages = loggingOutput("success");
+      expect(logMessages).toContain("No changed packages to publish");
+      expect(verifyNpmRegistry).not.toBeCalled();
+    });
+  });
+
   describe("with implied versioning", () => {
     it("publishes changed packages", async () => {
       const testDir = await initFixture("normal");

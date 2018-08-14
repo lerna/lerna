@@ -130,7 +130,11 @@ class VersionCommand extends Command {
     this.updates = collectUpdates(this.filteredPackages, this.packageGraph, this.execOpts, this.options);
 
     if (!this.updates.length) {
-      this.logger.success("No updated packages to version");
+      const message = this.options.composed
+        ? "No changed packages to publish"
+        : "No changed packages to version";
+
+      this.logger.success(message);
 
       // still exits zero, aka "ok"
       return false;
