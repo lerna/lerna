@@ -11,9 +11,10 @@ exports.describe = "Remove the node_modules directory from all packages";
 
 exports.builder = yargs => {
   yargs.options({
-    yes: {
+    y: {
       group: "Command Options:",
       describe: "Skip all confirmation prompts",
+      alias: "yes",
       type: "boolean",
     },
   });

@@ -57,8 +57,9 @@ exports.builder = yargs => {
       type: "boolean",
       defaultDescription: "true",
     },
-    yes: {
+    y: {
       describe: "Skip all confirmation prompts.",
+      alias: "yes",
       type: "boolean",
     },
   };

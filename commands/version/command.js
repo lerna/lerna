@@ -84,8 +84,9 @@ exports.builder = (yargs, composed) => {
       requiresArg: true,
       defaultDescription: "v",
     },
-    yes: {
+    y: {
       describe: "Skip all confirmation prompts.",
+      alias: "yes",
       type: "boolean",
     },
   };

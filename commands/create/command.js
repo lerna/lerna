@@ -75,9 +75,10 @@ exports.builder = yargs => {
         describe: "Configure the package's publishConfig.tag",
         type: "string",
       },
-      yes: {
+      y: {
         group: "Command Options:",
         describe: "Skip all prompts, accepting default values",
+        alias: "yes",
         type: "boolean",
       },
     });
