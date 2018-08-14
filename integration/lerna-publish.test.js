@@ -45,20 +45,6 @@ describe("lerna publish", () => {
     LERNA_INTEGRATION: "SKIP",
   };
 
-  test("exits with error when unknown options are passed", async () => {
-    const { cwd } = await cloneFixture("normal");
-    const args = ["publish", "--yes", "--scope", "package-1", "--no-verify-registry"];
-
-    try {
-      await cliRunner(cwd, env)(...args);
-    } catch (err) {
-      expect(err.code).toBe(1);
-      expect(err.stderr).toMatch("Unknown argument: scope");
-    }
-
-    expect.assertions(2);
-  });
-
   test("exits with error when package access validation fails", async () => {
     const { cwd } = await cloneFixture("normal");
     const args = ["publish", "prerelease", "--yes", "--no-verify-registry"];

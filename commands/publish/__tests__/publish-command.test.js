@@ -53,6 +53,28 @@ describe("PublishCommand", () => {
       expect(logMessages).toContain("No changed packages to publish");
       expect(verifyNpmRegistry).not.toBeCalled();
     });
+
+    it("exits non-zero with --scope", async () => {
+      try {
+        await lernaPublish(cwd)("--scope", "package-1");
+      } catch (err) {
+        expect(err.exitCode).toBe(1);
+        expect(err.message).toBe("Unknown argument: scope");
+      }
+
+      expect.assertions(2);
+    });
+
+    it("exits non-zero with --since", async () => {
+      try {
+        await lernaPublish(cwd)("--since", "master");
+      } catch (err) {
+        expect(err.exitCode).toBe(1);
+        expect(err.message).toBe("Unknown argument: since");
+      }
+
+      expect.assertions(2);
+    });
   });
 
   describe("with implied versioning", () => {
