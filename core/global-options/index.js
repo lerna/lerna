@@ -26,7 +26,7 @@ function globalOptions(yargs, { ci = false, loglevel = "info", progress = true }
       type: "boolean",
     },
     sort: {
-      default: true,
+      defaultDescription: "true",
       describe: "Sort packages topologically (dependencies before dependents).\nPass --no-sort to disable.",
       type: "boolean",
     },
