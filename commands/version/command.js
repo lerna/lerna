@@ -66,7 +66,7 @@ exports.builder = (yargs, composed) => {
       defaultDescription: "alpha",
     },
     push: {
-      describe: "Push tagged commit to git remote. Pass --no-push to disable.",
+      describe: "Push tagged commit to git remote.\nPass --no-push to disable.",
       type: "boolean",
       defaultDescription: "true",
     },

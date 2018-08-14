@@ -16,7 +16,7 @@ function filterOptions(yargs) {
       type: "string",
     },
     private: {
-      describe: "Include private packages. Pass --no-private to exclude private packages.",
+      describe: "Include private packages.\nPass --no-private to exclude private packages.",
       type: "boolean",
       default: true,
     },

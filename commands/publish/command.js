@@ -48,12 +48,12 @@ exports.builder = yargs => {
       type: "boolean",
     },
     "verify-access": {
-      describe: "Verify package read-write access for current npm user. Pass --no-verify-access to disable.",
+      describe: "Verify package read-write access for current npm user.\nPass --no-verify-access to disable.",
       type: "boolean",
       defaultDescription: "true",
     },
     "verify-registry": {
-      describe: "Verify registry authentication for current npm user. Pass --no-verify-registry to disable.",
+      describe: "Verify registry authentication for current npm user.\nPass --no-verify-registry to disable.",
       type: "boolean",
       defaultDescription: "true",
     },

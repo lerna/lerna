@@ -22,12 +22,12 @@ function globalOptions(yargs, { ci = false, loglevel = "info", progress = true }
     },
     progress: {
       default: !ci && progress,
-      describe: "Enable progress bars. Pass --no-progress to disable. (Always off in CI)",
+      describe: "Enable progress bars. (Always off in CI)\nPass --no-progress to disable.",
       type: "boolean",
     },
     sort: {
       default: true,
-      describe: "Sort packages topologically (all dependencies before dependents).",
+      describe: "Sort packages topologically (dependencies before dependents).\nPass --no-sort to disable.",
       type: "boolean",
     },
     "max-buffer": {
