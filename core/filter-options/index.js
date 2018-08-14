@@ -18,7 +18,7 @@ function filterOptions(yargs) {
     private: {
       describe: "Include private packages.\nPass --no-private to exclude private packages.",
       type: "boolean",
-      default: true,
+      defaultDescription: "true",
     },
     since: {
       describe: dedent`
