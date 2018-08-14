@@ -3,11 +3,13 @@
 jest.mock("@lerna/child-process");
 jest.mock("@lerna/has-npm-version");
 jest.mock("@lerna/log-packed");
+jest.mock("fs-extra");
 
 // mocked modules
 const ChildProcessUtilities = require("@lerna/child-process");
 const hasNpmVersion = require("@lerna/has-npm-version");
 const logPacked = require("@lerna/log-packed");
+const fs = require("fs-extra");
 
 // helpers
 const EE = require("events");
@@ -18,6 +20,7 @@ const Package = require("@lerna/package");
 const npmPublish = require("..");
 
 describe("npm-publish", () => {
+  fs.remove.mockResolvedValue();
   ChildProcessUtilities.exec.mockResolvedValue();
 
   const rootPath = path.normalize("/test");
@@ -37,11 +40,12 @@ describe("npm-publish", () => {
       "npm",
       ["publish", "--ignore-scripts", "--tag", "published-tag", "test-1.10.100.tgz"],
       {
-        cwd: rootPath,
+        cwd: pkg.location,
         env: {},
-        pkg: { location: rootPath },
+        pkg,
       }
     );
+    expect(fs.remove).lastCalledWith(path.join(pkg.location, pkg.tarball));
   });
 
   it("does not pass --tag when none present (npm default)", async () => {
@@ -51,9 +55,9 @@ describe("npm-publish", () => {
       "npm",
       ["publish", "--ignore-scripts", "test-1.10.100.tgz"],
       {
-        cwd: rootPath,
+        cwd: pkg.location,
         env: {},
-        pkg: { location: rootPath },
+        pkg,
       }
     );
   });
@@ -65,9 +69,9 @@ describe("npm-publish", () => {
       "npm",
       ["publish", "--ignore-scripts", "--tag", "trailing-tag", "test-1.10.100.tgz"],
       {
-        cwd: rootPath,
+        cwd: pkg.location,
         env: {},
-        pkg: { location: rootPath },
+        pkg,
       }
     );
   });
@@ -81,11 +85,11 @@ describe("npm-publish", () => {
       "npm",
       ["publish", "--ignore-scripts", "--tag", "custom-registry", "test-1.10.100.tgz"],
       {
-        cwd: rootPath,
+        cwd: pkg.location,
         env: {
           npm_config_registry: registry,
         },
-        pkg: { location: rootPath },
+        pkg,
       }
     );
   });
@@ -107,9 +111,9 @@ describe("npm-publish", () => {
           "test-1.10.100.tgz",
         ],
         {
-          cwd: rootPath,
+          cwd: pkg.location,
           env: {},
-          pkg: { location: rootPath },
+          pkg,
         }
       );
     });
@@ -117,6 +121,7 @@ describe("npm-publish", () => {
 });
 
 describe("npmPack", () => {
+  fs.move.mockResolvedValue();
   hasNpmVersion.mockReturnValueOnce(true);
 
   const origStdoutWrite = process.stdout.write;
@@ -201,10 +206,24 @@ describe("npmPack", () => {
       env: {},
       stdio: ["ignore", "pipe", "inherit"],
     });
+
+    // post-hoc moving from root to leaf
+    expect(fs.move).toBeCalledWith(
+      path.join(pkg3.rootPath, pkg3.tarball),
+      path.join(pkg3.location, pkg3.tarball),
+      { overwrite: true }
+    );
+    expect(fs.move).toBeCalledWith(
+      path.join(pkg4.rootPath, pkg4.tarball),
+      path.join(pkg4.location, pkg4.tarball),
+      { overwrite: true }
+    );
   });
 });
 
 describe("makePacker", () => {
+  fs.move.mockResolvedValue();
+
   it("returns memoized npmPack", async () => {
     const [rootManifest, ...packages] = setupPackages("pkg-5", "pkg-6", "pkg-7", "pkg-8");
     const expectedJSON = setupRecords(...packages);

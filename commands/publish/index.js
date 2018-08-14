@@ -1,7 +1,6 @@
 "use strict";
 
 const os = require("os");
-const fs = require("fs-extra");
 const path = require("path");
 const pFinally = require("p-finally");
 const pMap = require("p-map");
@@ -419,8 +418,6 @@ class PublishCommand extends Command {
         npmPublish(pkg, distTag, this.npmConfig)
           // postpublish is _not_ run when publishing a tarball
           .then(() => this.runPackageLifecycle(pkg, "postpublish"))
-          // don't leave the generated tarball hanging around
-          .then(() => fs.remove(path.join(pkg.rootPath, pkg.tarball)))
           .then(() => {
             tracker.info("published", pkg.name);
 

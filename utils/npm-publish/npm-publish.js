@@ -1,6 +1,9 @@
 "use strict";
 
+const fs = require("fs-extra");
 const log = require("npmlog");
+const path = require("path");
+const pMap = require("p-map");
 
 const ChildProcessUtilities = require("@lerna/child-process");
 const getExecOpts = require("@lerna/get-npm-exec-opts");
@@ -15,7 +18,7 @@ function npmPublish(pkg, tag, { npmClient, registry }) {
   log.verbose("publish", pkg.name);
 
   const distTag = tag && tag.trim();
-  const opts = getExecOpts({ location: pkg.rootPath }, registry);
+  const opts = getExecOpts(pkg, registry);
   const args = ["publish", "--ignore-scripts"];
 
   if (distTag) {
@@ -32,7 +35,10 @@ function npmPublish(pkg, tag, { npmClient, registry }) {
   args.push(pkg.tarball);
 
   log.silly("exec", npmClient, args);
-  return ChildProcessUtilities.exec(npmClient, args, opts);
+  return ChildProcessUtilities.exec(npmClient, args, opts).then(() =>
+    // don't leave the generated tarball hanging around after success
+    fs.remove(path.join(pkg.location, pkg.tarball))
+  );
 }
 
 function makePackOptions(rootManifest) {
@@ -113,7 +119,16 @@ function npmPack(rootManifest, packages, opts = makePackOptions(rootManifest)) {
       pkg.tarball = tarballs[i].filename;
     }
 
-    return proc;
+    return pMap(
+      packages,
+      pkg => {
+        const inRoot = path.join(pkg.rootPath, pkg.tarball);
+        const toLeaf = path.join(pkg.location, pkg.tarball);
+
+        return fs.move(inRoot, toLeaf, { overwrite: true });
+      },
+      { concurrency: 10 }
+    );
   });
 }
 
