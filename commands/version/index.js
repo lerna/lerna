@@ -201,7 +201,7 @@ class VersionCommand extends Command {
     const increment = bump && !semver.valid(bump) ? bump : "";
     const isPrerelease = increment.startsWith("pre");
 
-    const resolvePrereleaseId = existingPreid => (isPrerelease && existingPreid) || preid || "alpha";
+    const resolvePrereleaseId = existingPreid => preid || (isPrerelease && existingPreid) || "alpha";
 
     const makeGlobalVersionPredicate = nextVersion => {
       this.globalVersion = nextVersion;
