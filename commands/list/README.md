@@ -29,7 +29,7 @@ In any case, you can always pass `--loglevel silent` to create pristine chains o
 * [`-l`, `--long`](#--long)
 * [`-p`, `--parseable`](#--parseable)
 
-`lerna ls` respects the `--ignore` and `--scope` flags (see [Filter Flags](https://www.npmjs.com/package/@lerna/filter-options)).
+`lerna ls` also respects all available [Filter Flags](https://www.npmjs.com/package/@lerna/filter-options).
 
 ### `--json`
 
