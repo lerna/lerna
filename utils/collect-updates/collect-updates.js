@@ -31,7 +31,7 @@ function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions
     }
   }
 
-  log.info("", `Looking for changed packages since ${committish || "initial commit"}.`);
+  log.info("", `Looking for changed packages since ${committish || "initial commit."}`);
 
   const forced = getForcedPackages(commandOptions.forcePublish);
   let candidates;
