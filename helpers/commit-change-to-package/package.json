@@ -1,0 +1,14 @@
+{
+  "name": "@lerna-test/commit-change-to-package",
+  "version": "0.0.0-test-only",
+  "description": "A local test helper",
+  "main": "index.js",
+  "private": true,
+  "license": "MIT",
+  "dependencies": {
+    "@lerna-test/git-add": "file:../git-add",
+    "@lerna-test/git-commit": "file:../git-commit",
+    "load-json-file": "^4.0.0",
+    "write-json-file": "^2.3.0"
+  }
+}

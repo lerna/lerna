@@ -1,12 +1,9 @@
 "use strict";
 
-const writeJsonFile = require("write-json-file");
-const loadJsonFile = require("load-json-file");
 const path = require("path");
 
 const cliRunner = require("@lerna-test/cli-runner");
-const gitAdd = require("@lerna-test/git-add");
-const gitCommit = require("@lerna-test/git-commit");
+const commitChangeToPackage = require("@lerna-test/commit-change-to-package");
 const gitTag = require("@lerna-test/git-tag");
 const cloneFixture = require("@lerna-test/clone-fixture")(
   path.resolve(__dirname, "../commands/publish/__tests__")
@@ -14,16 +11,6 @@ const cloneFixture = require("@lerna-test/clone-fixture")(
 
 // stabilize changelog commit SHA and datestamp
 expect.addSnapshotSerializer(require("@lerna-test/serialize-changelog"));
-
-async function commitChangeToPackage(cwd, packageName, commitMsg, data) {
-  const packageJSONPath = path.join(cwd, "packages", packageName, "package.json");
-  const pkg = await loadJsonFile(packageJSONPath);
-
-  await writeJsonFile(packageJSONPath, Object.assign(pkg, data));
-  await gitAdd(cwd, packageJSONPath);
-
-  return gitCommit(cwd, commitMsg);
-}
 
 const env = {
   // never actually upload when calling `npm install`
