@@ -563,6 +563,12 @@ Successfully published:
 `;
 
 exports[`lerna publish uses default suffix with canary flag: stdout 1`] = `
+
+Found 3 packages to publish:
+ - package-1 => 1.0.1-alpha.0+SHA
+ - package-2 => 1.0.1-alpha.0+SHA
+ - package-3 => 1.0.1-alpha.0+SHA
+
 Successfully published:
  - package-1@1.0.1-alpha.0+SHA
  - package-2@1.0.1-alpha.0+SHA

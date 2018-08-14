@@ -47,7 +47,7 @@ describe("VersionCommand", () => {
       await lernaVersion(testDir)();
 
       expect(PromptUtilities.select.mock.calls).toMatchSnapshot("prompt");
-      expect(PromptUtilities.confirm).toBeCalled();
+      expect(PromptUtilities.confirm).lastCalledWith("Are you sure you want to create these versions?");
 
       expect(writePkg.updatedManifest("package-1")).toMatchSnapshot("gitHead");
 

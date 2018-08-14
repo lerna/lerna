@@ -323,7 +323,12 @@ class VersionCommand extends Command {
       return true;
     }
 
-    return PromptUtilities.confirm("Are you sure you want to create these versions?");
+    // When composed from `lerna publish`, use this opportunity to confirm publishing
+    const message = this.options.composed
+      ? "Are you sure you want to publish these packages?"
+      : "Are you sure you want to create these versions?";
+
+    return PromptUtilities.confirm(message);
   }
 
   updatePackageVersions() {

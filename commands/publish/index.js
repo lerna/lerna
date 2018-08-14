@@ -9,6 +9,7 @@ const semver = require("semver");
 
 const Command = require("@lerna/command");
 const childProcess = require("@lerna/child-process");
+const PromptUtilities = require("@lerna/prompt");
 const output = require("@lerna/output");
 const collectUpdates = require("@lerna/collect-updates");
 const npmDistTag = require("@lerna/npm-dist-tag");
@@ -75,7 +76,7 @@ class PublishCommand extends Command {
       }
 
       if (!result.updates.length) {
-        this.logger.success("No updated packages to publish");
+        this.logger.success("No changed packages to publish");
 
         // still exits zero, aka "ok"
         return false;
@@ -90,15 +91,20 @@ class PublishCommand extends Command {
         ? batchPackages(
             this.packagesToPublish,
             this.options.rejectCycles,
-            // Don't sort based on devDependencies because that would increase the chance of dependency cycles
+            // Don't sort based on devDependencies because that
+            // would increase the chance of dependency cycles
             // causing less-than-ideal a publishing order.
             "dependencies"
           )
         : [this.packagesToPublish];
 
-      return Promise.resolve()
-        .then(() => this.prepareRegistryActions())
-        .then(() => this.prepareLicenseActions());
+      if (result.needsConfirmation) {
+        // only confirm for --canary or bump === "from-git",
+        // as VersionCommand has its own confirmation prompt
+        return this.confirmPublish();
+      }
+
+      return true;
     });
   }
 
@@ -107,6 +113,9 @@ class PublishCommand extends Command {
     this.logger.info("publish", "Publishing packages to npm...");
 
     let chain = Promise.resolve();
+
+    chain = chain.then(() => this.prepareRegistryActions());
+    chain = chain.then(() => this.prepareLicenseActions());
 
     if (this.options.canary) {
       chain = chain.then(() => this.updateCanaryVersions());
@@ -167,7 +176,11 @@ class PublishCommand extends Command {
     return chain.then(updates => {
       const updatesVersions = updates.map(({ pkg }) => [pkg.name, pkg.version]);
 
-      return { updates, updatesVersions };
+      return {
+        updates,
+        updatesVersions,
+        needsConfirmation: true,
+      };
     });
   }
 
@@ -224,7 +237,30 @@ class PublishCommand extends Command {
       });
     }
 
-    return chain;
+    return chain.then(({ updates, updatesVersions }) => ({
+      updates,
+      updatesVersions,
+      needsConfirmation: true,
+    }));
+  }
+
+  confirmPublish() {
+    const count = this.packagesToPublish.length;
+    const message = this.packagesToPublish.map(
+      pkg => ` - ${pkg.name} => ${this.updatesVersions.get(pkg.name)}`
+    );
+
+    output("");
+    output(`Found ${count} ${count === 1 ? "package" : "packages"} to publish:`);
+    output(message.join(os.EOL));
+    output("");
+
+    if (this.options.yes) {
+      this.logger.info("auto-confirmed");
+      return true;
+    }
+
+    return PromptUtilities.confirm("Are you sure you want to publish these packages?");
   }
 
   prepareLicenseActions() {

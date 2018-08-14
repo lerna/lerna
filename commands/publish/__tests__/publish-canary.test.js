@@ -14,6 +14,7 @@ const path = require("path");
 // mocked modules
 const writePkg = require("write-pkg");
 const npmPublish = require("@lerna/npm-publish");
+const PromptUtilities = require("@lerna/prompt");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
@@ -70,6 +71,7 @@ test("publish --canary", async () => {
   );
   await lernaPublish(cwd)("--canary");
 
+  expect(PromptUtilities.confirm).lastCalledWith("Are you sure you want to publish these packages?");
   expect(npmPublish.registry).toMatchInlineSnapshot(`
 Map {
   "package-1" => "canary",

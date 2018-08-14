@@ -12,6 +12,8 @@ jest.mock("../../version/lib/is-behind-upstream");
 // mocked or stubbed modules
 const npmDistTag = require("@lerna/npm-dist-tag");
 const npmPublish = require("@lerna/npm-publish");
+const PromptUtilities = require("@lerna/prompt");
+const output = require("@lerna/output");
 const verifyNpmRegistry = require("../lib/verify-npm-registry");
 const verifyNpmPackageAccess = require("../lib/verify-npm-package-access");
 
@@ -30,6 +32,7 @@ describe("PublishCommand", () => {
 
       await lernaPublish(testDir)();
 
+      expect(PromptUtilities.confirm).lastCalledWith("Are you sure you want to publish these packages?");
       expect(npmPublish.packed).toMatchInlineSnapshot(`
 Set {
   "package-1",
@@ -109,6 +112,8 @@ Set {
       await gitTag(testDir, "v1.0.0");
       await lernaPublish(testDir)("from-git");
 
+      expect(PromptUtilities.confirm).lastCalledWith("Are you sure you want to publish these packages?");
+      expect(output.logged()).toMatch("Found 4 packages to publish:");
       expect(npmPublish.order()).toEqual([
         "package-1",
         "package-3",
@@ -145,6 +150,7 @@ Set {
       await gitTag(testDir, "package-3@3.0.0");
       await lernaPublish(testDir)("from-git");
 
+      expect(output.logged()).toMatch("Found 1 package to publish:");
       expect(npmPublish.order()).toEqual(["package-3"]);
     });
 

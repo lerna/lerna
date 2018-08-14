@@ -95,6 +95,9 @@ exports.builder = (yargs, composed) => {
     Object.keys(opts).forEach(key => {
       opts[key].hidden = true;
     });
+
+    // set argv.composed for wrapped execution logic
+    yargs.default("composed", composed).hide("composed");
   } else {
     exports.addBumpPositional(yargs);
   }
