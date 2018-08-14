@@ -12,7 +12,7 @@ function getTaggedPackages(packageGraph, rootPath, opts) {
   // @see https://stackoverflow.com/a/424142/5707
   // FIXME: --root is only necessary for tests :P
   return childProcess
-    .exec("git", ["diff-tree", "--name-only", "--no-commit-id", "--root", "-r", "HEAD"], opts)
+    .exec("git", ["diff-tree", "--name-only", "--no-commit-id", "--root", "-r", "-c", "HEAD"], opts)
     .then(({ stdout }) => {
       const manifests = stdout.split("\n").filter(fp => path.basename(fp) === "package.json");
       const locations = new Set(manifests.map(fp => path.join(rootPath, path.dirname(fp))));
