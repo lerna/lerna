@@ -251,7 +251,7 @@ class PublishCommand extends Command {
       chain = chain.then(() => verifyNpmRegistry(this.project.rootPath, this.npmConfig));
     }
 
-    /* istanbul ignore else */
+    /* istanbul ignore if */
     if (process.env.LERNA_INTEGRATION) {
       return chain;
     }
