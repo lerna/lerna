@@ -14,6 +14,7 @@ const collectUpdates = require("@lerna/collect-updates");
 const npmDistTag = require("@lerna/npm-dist-tag");
 const npmPublish = require("@lerna/npm-publish");
 const { createRunner } = require("@lerna/run-lifecycle");
+const PromptUtilities = require("@lerna/prompt");
 const batchPackages = require("@lerna/batch-packages");
 const runParallelBatches = require("@lerna/run-parallel-batches");
 const versionCommand = require("@lerna/version");
@@ -68,38 +69,50 @@ class PublishCommand extends Command {
       registry: this.options.registry,
     };
 
-    return Promise.resolve(this.findVersionedUpdates()).then(result => {
+    // findVersionedUpdates will execute the VersionCommand which will
+    // create a new version, add to files git, commit files and create a new tag
+    const versionedUpdatesPromise = Promise.resolve(this.findVersionedUpdates());
+
+    // If a version can be published ask the user for confirmation
+    const confirmedVersionedUpdatesPromise = versionedUpdatesPromise.then(result => {
       if (!result) {
         // early return from nested VersionCommand
         return false;
       }
-
       if (!result.updates.length) {
         this.logger.success("No updated packages to publish");
 
         // still exits zero, aka "ok"
         return false;
       }
-
-      this.updates = result.updates;
-      this.updatesVersions = new Map(result.updatesVersions);
-
-      this.runPackageLifecycle = createRunner(this.options);
-      this.packagesToPublish = this.updates.map(({ pkg }) => pkg).filter(pkg => !pkg.private);
-      this.batchedPackages = this.toposort
-        ? batchPackages(
-            this.packagesToPublish,
-            this.options.rejectCycles,
-            // Don't sort based on devDependencies because that would increase the chance of dependency cycles
-            // causing less-than-ideal a publishing order.
-            "dependencies"
-          )
-        : [this.packagesToPublish];
-
-      return Promise.resolve()
-        .then(() => this.prepareRegistryActions())
-        .then(() => this.prepareLicenseActions());
+      return this.confirmPublish();
     });
+
+    return Promise.all([confirmedVersionedUpdatesPromise, versionedUpdatesPromise]).then(
+      ([confirmed, result]) => {
+        if (!confirmed) {
+          return;
+        }
+        this.updates = result.updates;
+        this.updatesVersions = new Map(result.updatesVersions);
+
+        this.runPackageLifecycle = createRunner(this.options);
+        this.packagesToPublish = this.updates.map(({ pkg }) => pkg).filter(pkg => !pkg.private);
+        this.batchedPackages = this.toposort
+          ? batchPackages(
+              this.packagesToPublish,
+              this.options.rejectCycles,
+              // Don't sort based on devDependencies because that would increase the chance of dependency
+              // cycles causing less-than-ideal a publishing order.
+              "dependencies"
+            )
+          : [this.packagesToPublish];
+
+        return Promise.resolve()
+          .then(() => this.prepareRegistryActions())
+          .then(() => this.prepareLicenseActions());
+      }
+    );
   }
 
   execute() {
@@ -131,6 +144,14 @@ class PublishCommand extends Command {
 
       this.logger.success("published", "%d %s", count, count === 1 ? "package" : "packages");
     });
+  }
+
+  confirmPublish() {
+    if (this.options.yes) {
+      this.logger.info("auto-confirmed");
+      return true;
+    }
+    return PromptUtilities.confirm("Are you sure you want to publish these changes to npm?");
   }
 
   findVersionedUpdates() {
