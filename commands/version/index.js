@@ -170,21 +170,47 @@ class VersionCommand extends Command {
   }
 
   execute() {
-    const tasks = [() => this.updatePackageVersions()];
+    let chain = Promise.resolve();
+    const changedFilesPromise = this.updatePackageVersions();
+    chain = chain.then(() => changedFilesPromise);
+
+    // Ask for confirmation to commit
+    const confirmedGitCommitPromise = chain
+      .then(() => changedFilesPromise)
+      .then(changedFiles => (this.commitAndTag ? this.confirmGitCommit(changedFiles) : false));
 
     if (this.commitAndTag) {
-      tasks.push(() => this.commitAndTagUpdates());
+      // If user aggreed - add files
+      const addFilesToGitPromise = Promise.all([confirmedGitCommitPromise, changedFilesPromise, chain]).then(
+        ([confimredCommit, changedFiles]) => {
+          if (confimredCommit) {
+            gitAdd(changedFiles, this.execOpts);
+          }
+        }
+      );
+      // If user aggreed commit and tag files
+      const commitAndTagFilesPromise = addFilesToGitPromise
+        .then(() => confirmedGitCommitPromise)
+        .then(confimredCommit => confimredCommit && this.commitAndTagUpdates());
+      chain = chain.then(() => commitAndTagFilesPromise);
     } else {
       this.logger.info("execute", "Skipping git tag/commit");
     }
 
     if (this.pushToRemote) {
-      tasks.push(() => this.gitPushToRemote());
+      // Ask for confirmation to push (if the user aggreed to commit)
+      const confirmedGitPushPromise = chain
+        .then(() => confirmedGitCommitPromise)
+        .then(confimredCommit => confimredCommit && this.confirmGitPush());
+      // If user aggreed push changes
+      chain = chain
+        .then(() => confirmedGitPushPromise)
+        .then(comfirmedPush => comfirmedPush && this.gitPushToRemote());
     } else {
       this.logger.info("execute", "Skipping git push");
     }
 
-    return pWaterfall(tasks).then(() => {
+    return chain.then(() => {
       this.logger.success("version", "finished");
 
       return {
@@ -326,6 +352,39 @@ class VersionCommand extends Command {
     return PromptUtilities.confirm("Are you sure you want to create these versions?");
   }
 
+  confirmGitCommit(changedFiles) {
+    const changes = changedFiles.map(filename => ` - ${filename}`);
+
+    output("");
+    output("Changed files:");
+    output(changes.join(os.EOL));
+    output("");
+
+    if (this.options.yes) {
+      this.logger.info("auto-confirmed");
+      return true;
+    }
+    return PromptUtilities.confirm(
+      "Are you sure you want to create a commit out of the above version updates?"
+    );
+  }
+
+  confirmGitPush() {
+    if (this.options.yes) {
+      this.logger.info("auto-confirmed");
+      return true;
+    }
+    return PromptUtilities.confirm("Are you sure you want to push your git changes?");
+  }
+
+  confirmNpmPublish() {
+    if (this.options.yes) {
+      this.logger.info("auto-confirmed");
+      return true;
+    }
+    return PromptUtilities.confirm("Are you sure you want to publish your changes on npm?");
+  }
+
   updatePackageVersions() {
     const { conventionalCommits, changelogPreset } = this.options;
     const independentVersions = this.project.isIndependent();
@@ -427,11 +486,7 @@ class VersionCommand extends Command {
     // exec version lifecycle in root (after all updates)
     chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "version"));
 
-    if (this.commitAndTag) {
-      chain = chain.then(() => gitAdd(Array.from(changedFiles), this.execOpts));
-    }
-
-    return chain;
+    return chain.then(() => Array.from(changedFiles));
   }
 
   commitAndTagUpdates() {
