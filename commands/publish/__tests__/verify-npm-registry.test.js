@@ -36,6 +36,17 @@ describe("verifyNpmRegistry", () => {
     });
   });
 
+  test("does not ping private registry", async () => {
+    const registry = "https://my-own-private-idaho.com/";
+
+    await verifyNpmRegistry(cwd, { registry });
+
+    expect(childProcess.exec).not.toBeCalled();
+
+    const [logMessage] = loggingOutput("warn");
+    expect(logMessage).toMatch("Skipping ping of https://my-own-private-idaho.com/");
+  });
+
   test("logs failure stderr before throwing validation error", async () => {
     childProcess.exec.mockImplementationOnce(() => {
       const err = new Error("whoops");

@@ -10,6 +10,15 @@ module.exports = verifyNpmRegistry;
 function verifyNpmRegistry(location, { registry }) {
   log.silly("verifyNpmRegistry");
 
+  if (registry && registry !== "https://registry.npmjs.org/") {
+    log.warn(
+      "ETHIRDPARTY",
+      `Skipping ping of ${registry} as most third-party registries do not support advanced npm functionality`
+    );
+
+    return Promise.resolve();
+  }
+
   const args = [
     "ping",
     // immediate feedback from request errors, not excruciatingly slow retries
