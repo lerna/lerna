@@ -6,9 +6,9 @@ git:
 sudo: false
 language: node_js
 node_js:
- - '10'
- - '8'
- - '6'
+  - "10"
+  - "8"
+  - "6"
 
 env:
   global:
@@ -20,7 +20,7 @@ matrix:
 
 cache:
   directories:
-  - $HOME/.npm
+    - $HOME/.npm
 
 before_install:
   - npm config set loglevel warn
