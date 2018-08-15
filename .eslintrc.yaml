@@ -23,9 +23,6 @@ rules:
     - error
     - 110 # keep in sync with .prettierrc.yaml printWidth
     - 2
-  node/no-unsupported-features:
-    - error
-    - version: 6.9.0
   no-param-reassign:
     - error
     - props: true
@@ -63,10 +60,10 @@ overrides:
       import/order: off
       node/no-extraneous-require: off
       node/no-unpublished-require: off
-      node/no-unsupported-features:
+      node/no-unsupported-features/es-syntax:
         - error
         - ignores:
-            - asyncAwait
+            - asyncFunctions
             # jest transpiles fast-async
       no-console: off
   - files:
