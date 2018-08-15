@@ -33,8 +33,7 @@ before_script:
   - git config --global user.name "Tester McPerson"
 
 script:
-  - npm test -- --ci --coverage --maxWorkers=2 --verbose
-  - npm run integration -- --ci --runInBand
+  - npm run ci
 
 notifications:
   slack: lernajs:qHyrojRoqBBu7OhDyX1OMiHQ
