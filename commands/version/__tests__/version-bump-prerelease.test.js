@@ -18,6 +18,7 @@ const showCommit = require("@lerna-test/show-commit");
 const gitAdd = require("@lerna-test/git-add");
 const gitTag = require("@lerna-test/git-tag");
 const gitCommit = require("@lerna-test/git-commit");
+const getCommitMessage = require("@lerna-test/get-commit-message");
 
 // test command
 const lernaVersion = require("@lerna-test/command-runner")(require("../command"));
@@ -77,4 +78,14 @@ test("version prerelease with previous prerelease supersedes --conventional-comm
 
   const patch = await showCommit(testDir);
   expect(patch).toMatchSnapshot();
+});
+
+test("version prerelease with existing preid bumps with the preid provide as argument", async () => {
+  const testDir = await initFixture("republish-prereleased");
+  // Version bump should have the new rc preid
+  await setupChanges(testDir);
+  await lernaVersion(testDir)("prerelease", "--preid", "rc");
+
+  const message = await getCommitMessage(testDir);
+  expect(message).toBe("v1.0.1-rc.0");
 });
