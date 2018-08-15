@@ -189,7 +189,9 @@ class VersionCommand extends Command {
     }
 
     return pWaterfall(tasks).then(() => {
-      this.logger.success("version", "finished");
+      if (!this.options.composed) {
+        this.logger.success("version", "finished");
+      }
 
       return {
         updates: this.updates,

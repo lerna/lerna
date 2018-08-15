@@ -27,7 +27,10 @@ class Command {
     log.silly("argv", argv);
 
     this.lernaVersion = argv.lernaVersion;
-    log.info("version", this.lernaVersion);
+    if (!argv.composed) {
+      // composed commands have already logged the lerna version
+      log.info("version", this.lernaVersion);
+    }
 
     // "FooCommand" => "foo"
     this.name = this.constructor.name.replace(/Command$/, "").toLowerCase();
@@ -192,7 +195,8 @@ class Command {
   }
 
   runPreparations() {
-    if (this.project.isIndependent()) {
+    if (!this.options.composed && this.project.isIndependent()) {
+      // composed commands have already logged the independent status
       log.info("versioning", "independent");
     }
 
