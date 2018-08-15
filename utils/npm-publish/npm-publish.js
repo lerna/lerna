@@ -103,7 +103,9 @@ function npmPack(rootManifest, packages, opts = makePackOptions(rootManifest)) {
       jsonBegan = true;
     } else {
       // maybe write non-json chunk to stdout
+      log.pause();
       output(chunk);
+      log.resume();
     }
   });
 
