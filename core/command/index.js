@@ -26,10 +26,9 @@ class Command {
     this._argv = argv;
     log.silly("argv", argv);
 
-    this.lernaVersion = argv.lernaVersion;
     if (!argv.composed) {
       // composed commands have already logged the lerna version
-      log.info("version", this.lernaVersion);
+      log.info("version", argv.lernaVersion);
     }
 
     // "FooCommand" => "foo"

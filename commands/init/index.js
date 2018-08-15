@@ -29,6 +29,7 @@ class InitCommand extends Command {
 
   initialize() {
     this.exact = this.options.exact;
+    this.lernaVersion = this.options.lernaVersion;
 
     if (!this.gitInitialized()) {
       this.logger.info("", "Initializing Git repository");

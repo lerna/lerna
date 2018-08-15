@@ -57,12 +57,6 @@ describe("core-command", () => {
   // convenience to avoid silly "not implemented errors"
   const testFactory = (argv = {}) => new OkCommand(Object.assign({ cwd: testDir }, argv));
 
-  describe(".lernaVersion", () => {
-    it("should be added to the instance", async () => {
-      expect(testFactory({ lernaVersion: "__TEST__" }).lernaVersion).toBe("__TEST__");
-    });
-  });
-
   describe(".logger", () => {
     it("should be added to the instance", async () => {
       const command = testFactory();
