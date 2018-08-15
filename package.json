@@ -4,9 +4,9 @@
   "description": "lerna dog-fooding lerna",
   "private": true,
   "scripts": {
-    "ci": "npm test -- --ci --coverage --maxWorkers=2 --verbose && npm run integration -- --ci --runInBand",
+    "ci": "npm test -- --ci --coverage --maxWorkers=2 --verbose && npm run integration -- --ci",
     "fix": "npm run lint -- --fix",
-    "integration": "cross-env LC_ALL=en_US.UTF-8 NODE_ENV=test jest --config jest.integration.js",
+    "integration": "cross-env LC_ALL=en_US.UTF-8 NODE_ENV=test jest --config jest.integration.js --maxWorkers=2",
     "lint": "eslint . --ignore-path .gitignore --cache",
     "pretest": "npm run lint",
     "test": "cross-env LC_ALL=en_US.UTF-8 NODE_ENV=test jest"
