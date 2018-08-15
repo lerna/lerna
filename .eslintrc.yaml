@@ -1,87 +1,86 @@
----
-  root: true
-  extends:
-    - airbnb-base
-    - plugin:jest/recommended
-    - plugin:node/recommended
-    - plugin:prettier/recommended
-  plugins:
-    - jest
-    - node
-    - prettier
-  rules:
-    class-methods-use-this:
-      - error
-      - exceptMethods:
+root: true
+extends:
+  - airbnb-base
+  - plugin:jest/recommended
+  - plugin:node/recommended
+  - plugin:prettier/recommended
+plugins:
+  - jest
+  - node
+  - prettier
+rules:
+  class-methods-use-this:
+    - error
+    - exceptMethods:
         - defaultOptions
         - otherCommandConfigs
         - requiresGit
-    consistent-return: off
-    curly:
-      - error
-      - all
-    max-len:
-      - error
-      - 110   # keep in sync with .prettierrc.yaml printWidth
-      - 2
-    node/no-unsupported-features:
-      - error
-      - version: 6.9.0
-    no-param-reassign:
-      - error
-      - props: true
-        ignorePropertyModificationsFor:
-          - err # Error decoration
-          - obj # .reduce() object
-          - pkg # Package instance
-    no-restricted-syntax:
-      - error
-      - ForInStatement
-      - LabeledStatement
-      - WithStatement
-    no-underscore-dangle:
-      - error
-      - allowAfterThis: true
-    no-use-before-define:
-      - error
-      - functions: false
-        classes: false
-    strict: off
-  overrides:
-    - files: "commands/*/command.js"
-      rules:
-        global-require: off
-    - files:
-        - "integration/**"
-        - "**/__tests__/**"
-        - "**/__mocks__/**"
-      env:
-        jest: true
-      rules:
-        # dev dependencies are hoisted to the root
-        import/no-extraneous-dependencies: off
-        # mocked modules are imported before helpers
-        import/order: off
-        node/no-extraneous-require: off
-        node/no-unpublished-require: off
-        node/no-unsupported-features:
-          - error
-          - ignores:
-              - asyncAwait
-              # jest transpiles fast-async
-        no-console: off
-    - files:
-        - "test/fixtures/**"
-        - "**/__fixtures__/**"
-      rules:
-        global-require: off
-        import/no-extraneous-dependencies: off
-        import/no-unresolved: off
-        node/no-extraneous-require: off
-        node/no-missing-require:
-          - error
-          - allowModules:
+  consistent-return: off
+  curly:
+    - error
+    - all
+  max-len:
+    - error
+    - 110 # keep in sync with .prettierrc.yaml printWidth
+    - 2
+  node/no-unsupported-features:
+    - error
+    - version: 6.9.0
+  no-param-reassign:
+    - error
+    - props: true
+      ignorePropertyModificationsFor:
+        - err # Error decoration
+        - obj # .reduce() object
+        - pkg # Package instance
+  no-restricted-syntax:
+    - error
+    - ForInStatement
+    - LabeledStatement
+    - WithStatement
+  no-underscore-dangle:
+    - error
+    - allowAfterThis: true
+  no-use-before-define:
+    - error
+    - functions: false
+      classes: false
+  strict: off
+overrides:
+  - files: "commands/*/command.js"
+    rules:
+      global-require: off
+  - files:
+      - "integration/**"
+      - "**/__tests__/**"
+      - "**/__mocks__/**"
+    env:
+      jest: true
+    rules:
+      # dev dependencies are hoisted to the root
+      import/no-extraneous-dependencies: off
+      # mocked modules are imported before helpers
+      import/order: off
+      node/no-extraneous-require: off
+      node/no-unpublished-require: off
+      node/no-unsupported-features:
+        - error
+        - ignores:
+            - asyncAwait
+            # jest transpiles fast-async
+      no-console: off
+  - files:
+      - "test/fixtures/**"
+      - "**/__fixtures__/**"
+    rules:
+      global-require: off
+      import/no-extraneous-dependencies: off
+      import/no-unresolved: off
+      node/no-extraneous-require: off
+      node/no-missing-require:
+        - error
+        - allowModules:
             - "@integration/package-1"
             - "@integration/package-2"
-        no-console: off
-        strict: off
+      no-console: off
+      strict: off
