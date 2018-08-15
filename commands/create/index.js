@@ -3,7 +3,7 @@
 const fs = require("fs-extra");
 const path = require("path");
 const os = require("os");
-const { URL } = require("url");
+const { URL } = require("whatwg-url");
 const camelCase = require("camelcase");
 const dedent = require("dedent");
 const initPackageJson = require("pify")(require("init-package-json"));
