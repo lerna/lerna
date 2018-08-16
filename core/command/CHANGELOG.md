@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.0.6"></a>
+## [3.0.6](https://github.com/lerna/lerna/compare/v3.0.5...v3.0.6) (2018-08-16)
+
+
+### Bug Fixes
+
+* **command:** Silence goalpost logging when running a composed command ([12b4280](https://github.com/lerna/lerna/commit/12b4280))
+* **init:** Consume lernaVersion from options, not instance property ([89e31d2](https://github.com/lerna/lerna/commit/89e31d2))
+
+
+
+
+
 <a name="3.0.5"></a>
 ## [3.0.5](https://github.com/lerna/lerna/compare/v3.0.4...v3.0.5) (2018-08-15)
 

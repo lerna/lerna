@@ -1,6 +1,6 @@
 {
   "name": "@lerna/init",
-  "version": "3.0.5",
+  "version": "3.0.6",
   "description": "Create a new Lerna repo or upgrade an existing repo to the current version of Lerna",
   "keywords": [
     "lerna",

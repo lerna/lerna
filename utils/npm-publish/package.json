@@ -1,6 +1,6 @@
 {
   "name": "@lerna/npm-publish",
-  "version": "3.0.4",
+  "version": "3.0.6",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
