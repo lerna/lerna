@@ -442,23 +442,23 @@ Array [
           "value": "2.0.0",
         },
         Object {
-          "name": "Prepatch (1.0.1-0)",
-          "value": "1.0.1-0",
+          "name": "Prepatch (1.0.1-alpha.0)",
+          "value": "1.0.1-alpha.0",
         },
         Object {
-          "name": "Preminor (1.1.0-0)",
-          "value": "1.1.0-0",
+          "name": "Preminor (1.1.0-alpha.0)",
+          "value": "1.1.0-alpha.0",
         },
         Object {
-          "name": "Premajor (2.0.0-0)",
-          "value": "2.0.0-0",
+          "name": "Premajor (2.0.0-alpha.0)",
+          "value": "2.0.0-alpha.0",
         },
         Object {
-          "name": "Prerelease",
+          "name": "Custom Prerelease",
           "value": "PRERELEASE",
         },
         Object {
-          "name": "Custom",
+          "name": "Custom Version",
           "value": "CUSTOM",
         },
       ],

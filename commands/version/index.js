@@ -25,7 +25,7 @@ const gitTag = require("./lib/git-tag");
 const isBehindUpstream = require("./lib/is-behind-upstream");
 const isBreakingChange = require("./lib/is-breaking-change");
 const isAnythingCommitted = require("./lib/is-anything-committed");
-const promptVersion = require("./lib/prompt-version");
+const makePromptVersion = require("./lib/prompt-version");
 
 module.exports = factory;
 
@@ -207,6 +207,7 @@ class VersionCommand extends Command {
     const increment = bump && !semver.valid(bump) ? bump : "";
     const isPrerelease = increment.startsWith("pre");
 
+    const getExistingPreId = version => (semver.prerelease(version) || []).shift();
     const resolvePrereleaseId = existingPreid => preid || (isPrerelease && existingPreid) || "alpha";
 
     const makeGlobalVersionPredicate = nextVersion => {
@@ -225,7 +226,7 @@ class VersionCommand extends Command {
       predicate = node => semver.inc(node.version, increment, resolvePrereleaseId(node.prereleaseId));
     } else if (increment) {
       // compute potential prerelease ID once for all fixed updates
-      const prereleaseId = (semver.prerelease(this.project.version) || []).shift();
+      const prereleaseId = getExistingPreId(this.project.version);
       const nextVersion = semver.inc(this.project.version, increment, resolvePrereleaseId(prereleaseId));
 
       predicate = makeGlobalVersionPredicate(nextVersion);
@@ -233,9 +234,15 @@ class VersionCommand extends Command {
       // it's a bit weird to have a return here, true
       return this.recommendVersions();
     } else if (independentVersions) {
-      predicate = promptVersion;
+      // prompt for each independent update with potential prerelease ID
+      predicate = makePromptVersion(resolvePrereleaseId);
     } else {
-      predicate = promptVersion(this.project).then(makeGlobalVersionPredicate);
+      // prompt once with potential prerelease ID
+      const prereleaseId = getExistingPreId(this.project.version);
+      const node = { version: this.project.version, prereleaseId };
+
+      predicate = makePromptVersion(resolvePrereleaseId);
+      predicate = predicate(node).then(makeGlobalVersionPredicate);
     }
 
     return Promise.resolve(predicate).then(getVersion => this.reduceVersions(getVersion));

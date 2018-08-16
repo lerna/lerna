@@ -3,27 +3,30 @@
 const semver = require("semver");
 const PromptUtilities = require("@lerna/prompt");
 
-module.exports = promptVersion;
+module.exports = makePromptVersion;
+
+function makePromptVersion(resolvePrereleaseId) {
+  return node => promptVersion(node.version, node.name, resolvePrereleaseId(node.prereleaseId));
+}
 
 /**
  * A predicate that prompts user to select/construct a version bump.
  * It can be run per-package (independent) or globally (fixed).
  *
- * @param {Package|Object} pkg The metadata to process
- * @property {String} pkg.version
- * @property {String} [pkg.name] (Only used in independent mode)
+ * @param {PackageGraphNode|Object} node The metadata to process
+ * @property {String} currentVersion
+ * @property {String} name (Only used in independent mode)
+ * @property {String} prereleaseId
  */
-function promptVersion(pkg) {
-  const currentVersion = pkg.version;
-
+function promptVersion(currentVersion, name, prereleaseId) {
   const patch = semver.inc(currentVersion, "patch");
   const minor = semver.inc(currentVersion, "minor");
   const major = semver.inc(currentVersion, "major");
-  const prepatch = semver.inc(currentVersion, "prepatch");
-  const preminor = semver.inc(currentVersion, "preminor");
-  const premajor = semver.inc(currentVersion, "premajor");
+  const prepatch = semver.inc(currentVersion, "prepatch", prereleaseId);
+  const preminor = semver.inc(currentVersion, "preminor", prereleaseId);
+  const premajor = semver.inc(currentVersion, "premajor", prereleaseId);
 
-  const message = `Select a new version ${pkg.name ? `for ${pkg.name} ` : ""}(currently ${currentVersion})`;
+  const message = `Select a new version ${name ? `for ${name} ` : ""}(currently ${currentVersion})`;
 
   return PromptUtilities.select(message, {
     choices: [
@@ -33,28 +36,24 @@ function promptVersion(pkg) {
       { value: prepatch, name: `Prepatch (${prepatch})` },
       { value: preminor, name: `Preminor (${preminor})` },
       { value: premajor, name: `Premajor (${premajor})` },
-      { value: "PRERELEASE", name: "Prerelease" },
-      { value: "CUSTOM", name: "Custom" },
+      { value: "PRERELEASE", name: "Custom Prerelease" },
+      { value: "CUSTOM", name: "Custom Version" },
     ],
   }).then(choice => {
     if (choice === "CUSTOM") {
       return PromptUtilities.input("Enter a custom version", {
         filter: semver.valid,
+        // semver.valid() always returns null with invalid input
         validate: v => v !== null || "Must be a valid semver version",
       });
     }
 
     if (choice === "PRERELEASE") {
-      const [existingId] = semver.prerelease(currentVersion) || [];
-      const defaultVersion = semver.inc(currentVersion, "prerelease", existingId);
-      const prompt = `(default: ${existingId ? `"${existingId}"` : "none"}, yielding ${defaultVersion})`;
+      const defaultVersion = semver.inc(currentVersion, "prerelease", prereleaseId);
+      const prompt = `(default: "${prereleaseId}", yielding ${defaultVersion})`;
 
-      // TODO: allow specifying prerelease identifier as CLI option to skip the prompt
       return PromptUtilities.input(`Enter a prerelease identifier ${prompt}`, {
-        filter: v => {
-          const preid = v || existingId;
-          return semver.inc(currentVersion, "prerelease", preid);
-        },
+        filter: v => semver.inc(currentVersion, "prerelease", v || prereleaseId),
       });
     }
 
