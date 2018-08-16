@@ -15,7 +15,7 @@ exports.describe = "List local packages that have changed since the last tagged 
 exports.builder = yargs => {
   listable.options(yargs);
 
-  return versionOptions(yargs, true);
+  return versionOptions(yargs, "changed");
 };
 
 exports.handler = function handler(argv) {

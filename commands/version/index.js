@@ -130,11 +130,7 @@ class VersionCommand extends Command {
     this.updates = collectUpdates(this.filteredPackages, this.packageGraph, this.execOpts, this.options);
 
     if (!this.updates.length) {
-      const message = this.options.composed
-        ? "No changed packages to publish"
-        : "No changed packages to version";
-
-      this.logger.success(message);
+      this.logger.success(`No changed packages to ${this.composed ? "publish" : "version"}`);
 
       // still exits zero, aka "ok"
       return false;
@@ -189,7 +185,7 @@ class VersionCommand extends Command {
     }
 
     return pWaterfall(tasks).then(() => {
-      if (!this.options.composed) {
+      if (!this.composed) {
         this.logger.success("version", "finished");
       }
 
@@ -337,7 +333,7 @@ class VersionCommand extends Command {
     }
 
     // When composed from `lerna publish`, use this opportunity to confirm publishing
-    const message = this.options.composed
+    const message = this.composed
       ? "Are you sure you want to publish these packages?"
       : "Are you sure you want to create these versions?";
 

@@ -26,13 +26,16 @@ class Command {
     this._argv = argv;
     log.silly("argv", argv);
 
-    if (!argv.composed) {
+    // "FooCommand" => "foo"
+    this.name = this.constructor.name.replace(/Command$/, "").toLowerCase();
+
+    // composed commands are called from other commands, like publish -> version
+    this.composed = typeof argv.composed === "string" && argv.composed !== this.name;
+
+    if (!this.composed) {
       // composed commands have already logged the lerna version
       log.info("version", argv.lernaVersion);
     }
-
-    // "FooCommand" => "foo"
-    this.name = this.constructor.name.replace(/Command$/, "").toLowerCase();
 
     // launch the command
     let runner = new Promise((resolve, reject) => {
@@ -194,7 +197,7 @@ class Command {
   }
 
   runPreparations() {
-    if (!this.options.composed && this.project.isIndependent()) {
+    if (!this.composed && this.project.isIndependent()) {
       // composed commands have already logged the independent status
       log.info("versioning", "independent");
     }
