@@ -16,7 +16,7 @@ describe("describeRef()", () => {
 
     expect(childProcess.exec).lastCalledWith("git", DEFAULT_ARGS, undefined);
     expect(result).toEqual({
-      isDirty: undefined,
+      isDirty: false,
       lastTag: "v1.2.3",
       lastVersion: "v1.2.3",
       refCount: "4",
@@ -45,7 +45,7 @@ describe("describeRef.sync()", () => {
 
     expect(childProcess.execSync).lastCalledWith("git", DEFAULT_ARGS, undefined);
     expect(result).toEqual({
-      isDirty: undefined,
+      isDirty: false,
       lastTag: "v1.2.3",
       lastVersion: "v1.2.3",
       refCount: "4",
@@ -86,14 +86,14 @@ describe("describeRef.parse()", () => {
   it("matches dirty annotations", () => {
     const result = describeRef.parse("pkg-name@1.2.3-4-g567890a-dirty");
 
-    expect(Boolean(result.isDirty)).toBe(true);
+    expect(result.isDirty).toBe(true);
   });
 
   it("handles non-matching strings safely", () => {
     const result = describeRef.parse("poopy-pants");
 
     expect(result).toEqual({
-      isDirty: undefined,
+      isDirty: false,
       lastTag: undefined,
       lastVersion: undefined,
       refCount: undefined,
@@ -105,10 +105,6 @@ describe("describeRef.parse()", () => {
     const result = describeRef.parse("a1b2c3d");
 
     expect(result).toEqual({
-      isDirty: undefined,
-      lastTag: undefined,
-      lastVersion: undefined,
-      refCount: undefined,
       sha: "a1b2c3d",
     });
   });

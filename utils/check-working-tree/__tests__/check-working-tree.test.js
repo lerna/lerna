@@ -28,7 +28,7 @@ describe("check-working-tree", () => {
   });
 
   it("rejects when working tree has uncommitted changes", async () => {
-    describeRef.mockResolvedValueOnce({ isDirty: "-dirty" });
+    describeRef.mockResolvedValueOnce({ isDirty: true });
 
     try {
       await checkWorkingTree();
