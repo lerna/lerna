@@ -194,7 +194,10 @@ describe("AddCommand", () => {
 
     expect(bootstrap).lastCalledWith(
       expect.objectContaining({
+        args: [],
+        cwd: testDir,
         scope: ["@test/package-2", "package-3", "package-4"],
+        composed: "add",
       })
     );
   });
