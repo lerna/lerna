@@ -1,5 +1,6 @@
 "use strict";
 
+const log = require("npmlog");
 const childProcess = require("@lerna/child-process");
 
 module.exports = describeRef;
@@ -29,13 +30,24 @@ function getArgs(options = {}) {
 function describeRef(options) {
   const promise = childProcess.exec("git", getArgs(options), options);
 
-  return promise.then(({ stdout }) => parse(stdout));
+  return promise.then(({ stdout }) => {
+    const result = parse(stdout);
+
+    log.verbose("git-describe", "%j => %j", options && options.match, stdout);
+    log.silly("git-describe", "parsed => %j", result);
+
+    return result;
+  });
 }
 
 function sync(options) {
   const stdout = childProcess.execSync("git", getArgs(options), options);
+  const result = parse(stdout);
 
-  return parse(stdout);
+  // only called by collect-updates with no matcher
+  log.silly("git-describe.sync", "%j => %j", stdout, result);
+
+  return result;
 }
 
 function parse(stdout) {

@@ -29,6 +29,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/child-process": "file:../../core/child-process"
+    "@lerna/child-process": "file:../../core/child-process",
+    "npmlog": "^4.1.2"
   }
 }
