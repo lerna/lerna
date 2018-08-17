@@ -45,7 +45,11 @@ describe("lerna exec", () => {
     ];
 
     const { stdout } = await cliRunner(cwd, env)(...args);
-    expect(stdout).toMatchSnapshot();
+    expect(stdout).toMatchInlineSnapshot(`
+--> in "package-2" with extra args "-1"
+file-2.js
+package.json
+`);
   });
 
   test("exec-test --scope <pkg>", async () => {
@@ -59,7 +63,11 @@ describe("lerna exec", () => {
     ];
 
     const { stdout } = await cliRunner(cwd, env)(...args);
-    expect(stdout).toMatchSnapshot();
+    expect(stdout).toMatchInlineSnapshot(`
+--> in "package-1" with extra args ""
+file-1.js
+package.json
+`);
   });
 
   test("echo $LERNA_PACKAGE_NAME", async () => {
@@ -72,7 +80,10 @@ describe("lerna exec", () => {
     ];
 
     const { stdout } = await cliRunner(cwd)(...args);
-    expect(stdout).toMatchSnapshot();
+    expect(stdout).toMatchInlineSnapshot(`
+package-1
+package-2
+`);
   });
 
   test("--parallel", async () => {

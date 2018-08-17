@@ -14,6 +14,13 @@ describe("lerna import", () => {
     await cliRunner(cwd)("import", externalPath, "--yes");
 
     const allPackageJsons = await loadManifests(cwd);
-    expect(allPackageJsons).toMatchSnapshot();
+    expect(allPackageJsons).toMatchInlineSnapshot(`
+Array [
+  Object {
+    "//": "Import should use _directory_ name, not package name",
+    "name": "external-name",
+  },
+]
+`);
   });
 });

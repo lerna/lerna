@@ -41,8 +41,20 @@ describe("lerna run", () => {
       "--silent",
     ];
     const { stdout, stderr } = await cliRunner(cwd)(...args);
-    expect(stdout).toMatchSnapshot("stdout");
-    expect(stderr).toMatchSnapshot("stderr");
+    expect(stdout).toMatchInlineSnapshot(`
+package-3: package-3
+package-4: package-4
+package-1: package-1
+package-2: package-2
+`);
+    expect(stderr).toMatchInlineSnapshot(`
+lerna notice cli __TEST_VERSION__
+lerna success run Ran npm script 'test' in 4 packages:
+lerna success - package-1
+lerna success - package-2
+lerna success - package-3
+lerna success - package-4
+`);
   });
 
   test("test --stream --no-prefix", async () => {
@@ -58,8 +70,20 @@ describe("lerna run", () => {
       "--silent",
     ];
     const { stdout, stderr } = await cliRunner(cwd)(...args);
-    expect(stdout).toMatchSnapshot("stdout");
-    expect(stderr).toMatchSnapshot("stderr");
+    expect(stdout).toMatchInlineSnapshot(`
+package-3
+package-4
+package-1
+package-2
+`);
+    expect(stderr).toMatchInlineSnapshot(`
+lerna notice cli __TEST_VERSION__
+lerna success run Ran npm script 'test' in 4 packages:
+lerna success - package-1
+lerna success - package-2
+lerna success - package-3
+lerna success - package-4
+`);
   });
 
   test("test --parallel", async () => {
@@ -73,7 +97,15 @@ describe("lerna run", () => {
       "--silent",
     ];
     const { stdout, stderr } = await cliRunner(cwd)(...args);
-    expect(stderr).toMatchSnapshot("stderr");
+    expect(stderr).toMatchInlineSnapshot(`
+lerna notice cli __TEST_VERSION__
+lerna info run in 4 packages: npm run test --silent
+lerna success run Ran npm script 'test' in 4 packages:
+lerna success - package-1
+lerna success - package-2
+lerna success - package-3
+lerna success - package-4
+`);
 
     // order is non-deterministic, so assert each item seperately
     expect(stdout).toMatch("package-1: package-1");

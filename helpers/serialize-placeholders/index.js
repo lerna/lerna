@@ -4,8 +4,7 @@ const normalizeNewline = require("normalize-newline");
 // eslint-disable-next-line node/no-unpublished-require
 const LERNA_VERSION = require("../../core/lerna/package.json").version;
 
-const VERSION_REGEX = new RegExp(`^((?:.*?notice cli )|\\^)v${LERNA_VERSION}`, "gm");
-const VERSION_REPLACEMENT = "$1__TEST_VERSION__";
+const VERSION_REGEX = new RegExp(`^((?:.*?notice cli )|\\^?)v?${LERNA_VERSION}`, "g");
 // TODO: maybe even less naïve regex?
 
 function isObject(val) {
@@ -16,12 +15,8 @@ function isString(val) {
   return val && typeof val === "string";
 }
 
-function needsReplacement(str) {
-  return str.indexOf("__TEST_VERSION__") === -1;
-}
-
 function stableVersion(str) {
-  return str.replace(VERSION_REGEX, VERSION_REPLACEMENT);
+  return str.replace(VERSION_REGEX, "$1__TEST_VERSION__");
 }
 
 function stabilizeString(str) {
@@ -37,20 +32,21 @@ function stabilizeString(str) {
 module.exports = {
   test(thing) {
     if (isObject(thing) && isString(thing.lerna)) {
-      return needsReplacement(thing.lerna);
+      return VERSION_REGEX.test(thing.lerna);
     }
 
-    return isString(thing) && needsReplacement(thing);
+    // also let through multiline strings so we can always remove redundant quotes
+    return isString(thing) && (VERSION_REGEX.test(thing) || /\n/.test(thing));
   },
-
-  print(thing, serialize) {
+  serialize(thing, config, indentation, depth, refs, printer) {
     if (isString(thing)) {
+      // this always removes redundant quotes for multiline strings
       return stabilizeString(thing);
     }
 
     // eslint-disable-next-line no-param-reassign
     thing.lerna = stableVersion(thing.lerna);
 
-    return serialize(thing);
+    return printer(thing, config, indentation, depth, refs);
   },
 };

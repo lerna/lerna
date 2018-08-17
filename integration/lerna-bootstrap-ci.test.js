@@ -21,5 +21,5 @@ lerna success Bootstrapped 1 package
 
   // the "--silent" flag is passed to `npm run`
   const { stdout } = await lerna("run", "test", "--", "--silent");
-  expect(stdout).toMatchInlineSnapshot(`package-1`);
+  expect(stdout).toBe("package-1");
 });
