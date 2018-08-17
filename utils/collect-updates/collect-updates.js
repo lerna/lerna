@@ -1,7 +1,7 @@
 "use strict";
 
 const log = require("npmlog");
-const childProcess = require("@lerna/child-process");
+const describeRef = require("@lerna/describe-ref");
 
 const hasTags = require("./lib/has-tags");
 const collectDependents = require("./lib/collect-dependents");
@@ -19,15 +19,25 @@ function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions
   let committish = commandOptions.since;
 
   if (hasTags(execOpts)) {
-    if (commandOptions.canary) {
-      const sha = childProcess.execSync("git", ["rev-parse", "--short", "HEAD"], execOpts);
+    // describe the last annotated tag in the current branch
+    const { sha, refCount, lastTag } = describeRef.sync(execOpts);
 
+    if (commandOptions.canary) {
       // if it's a merge commit, it will return all the commits that were part of the merge
       // ex: If `ab7533e` had 2 commits, ab7533e^..ab7533e would contain 2 commits + the merge commit
       committish = `${sha}^..${sha}`;
     } else if (!committish) {
-      // attempt to find the last annotated tag in the current branch
-      committish = childProcess.execSync("git", ["describe", "--abbrev=0"], execOpts);
+      // TODO: warn about dirty tree?
+
+      if (refCount === "0") {
+        // no commits since previous release
+        log.notice("", "Current HEAD is already released, no changes possible.");
+
+        return [];
+      }
+
+      // if no tags found, this will be undefined and we'll use the initial commit
+      committish = lastTag;
     }
   }
 
