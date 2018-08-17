@@ -9,6 +9,7 @@ const semver = require("semver");
 
 const Command = require("@lerna/command");
 const describeRef = require("@lerna/describe-ref");
+const checkWorkingTree = require("@lerna/check-working-tree");
 const PromptUtilities = require("@lerna/prompt");
 const output = require("@lerna/output");
 const collectUpdates = require("@lerna/collect-updates");
@@ -143,16 +144,18 @@ class PublishCommand extends Command {
   }
 
   findVersionedUpdates() {
+    let chain = Promise.resolve();
+
     if (this.options.bump === "from-git") {
-      return this.detectFromGit();
+      chain = chain.then(() => this.detectFromGit());
+    } else if (this.options.canary) {
+      chain = chain.then(() => checkWorkingTree(this.execOpts));
+      chain = chain.then(() => this.detectCanaryVersions());
+    } else {
+      chain = chain.then(() => versionCommand(this._argv));
     }
 
-    if (this.options.canary) {
-      // TODO: throw useful error when canary attempted on tagged release?
-      return this.detectCanaryVersions();
-    }
-
-    return versionCommand(this._argv);
+    return chain;
   }
 
   detectFromGit() {
