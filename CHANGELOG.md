@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.1.1"></a>
+## [3.1.1](https://github.com/lerna/lerna/compare/v3.1.0...v3.1.1) (2018-08-17)
+
+
+### Bug Fixes
+
+* **add:** Compose bootstrap to avoid extra logs ([3c534eb](https://github.com/lerna/lerna/commit/3c534eb))
+* **add:** Use `pacote` to resolve third-party registry authentication woes ([a0fbf46](https://github.com/lerna/lerna/commit/a0fbf46)), closes [#1572](https://github.com/lerna/lerna/issues/1572) [#1539](https://github.com/lerna/lerna/issues/1539)
+
+
+
+
+
 <a name="3.1.0"></a>
 # [3.1.0](https://github.com/lerna/lerna/compare/v3.0.6...v3.1.0) (2018-08-17)
 
