@@ -20,7 +20,7 @@ function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions
 
   if (hasTags(execOpts)) {
     // describe the last annotated tag in the current branch
-    const { sha, refCount, lastTag } = describeRef.sync(execOpts);
+    const { sha, refCount, lastTagName } = describeRef.sync(execOpts);
     // TODO: warn about dirty tree?
 
     if (refCount === "0") {
@@ -36,7 +36,7 @@ function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions
       committish = `${sha}^..${sha}`;
     } else if (!committish) {
       // if no tags found, this will be undefined and we'll use the initial commit
-      committish = lastTag;
+      committish = lastTagName;
     }
   }
 

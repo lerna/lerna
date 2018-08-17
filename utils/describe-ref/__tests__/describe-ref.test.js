@@ -17,7 +17,7 @@ describe("describeRef()", () => {
     expect(childProcess.exec).lastCalledWith("git", DEFAULT_ARGS, undefined);
     expect(result).toEqual({
       isDirty: false,
-      lastTag: "v1.2.3",
+      lastTagName: "v1.2.3",
       lastVersion: "v1.2.3",
       refCount: "4",
       sha: "567890a",
@@ -46,7 +46,7 @@ describe("describeRef.sync()", () => {
     expect(childProcess.execSync).lastCalledWith("git", DEFAULT_ARGS, undefined);
     expect(result).toEqual({
       isDirty: false,
-      lastTag: "v1.2.3",
+      lastTagName: "v1.2.3",
       lastVersion: "v1.2.3",
       refCount: "4",
       sha: "567890a",
@@ -72,14 +72,14 @@ describe("describeRef.parse()", () => {
   it("matches independent tags", () => {
     const result = describeRef.parse("pkg-name@1.2.3-4-g567890a");
 
-    expect(result.lastTag).toBe("pkg-name@1.2.3");
+    expect(result.lastTagName).toBe("pkg-name@1.2.3");
     expect(result.lastVersion).toBe("1.2.3");
   });
 
   it("matches independent tags for scoped packages", () => {
     const result = describeRef.parse("@scope/pkg-name@1.2.3-4-g567890a");
 
-    expect(result.lastTag).toBe("@scope/pkg-name@1.2.3");
+    expect(result.lastTagName).toBe("@scope/pkg-name@1.2.3");
     expect(result.lastVersion).toBe("1.2.3");
   });
 
@@ -94,7 +94,7 @@ describe("describeRef.parse()", () => {
 
     expect(result).toEqual({
       isDirty: false,
-      lastTag: undefined,
+      lastTagName: undefined,
       lastVersion: undefined,
       refCount: undefined,
       sha: undefined,

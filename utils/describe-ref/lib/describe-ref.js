@@ -56,8 +56,8 @@ function parse(stdout) {
     return { sha: stdout };
   }
 
-  const [, lastTag, lastVersion, refCount, sha, isDirty] =
+  const [, lastTagName, lastVersion, refCount, sha, isDirty] =
     /^((?:.*@)?(.*))-(\d+)-g([0-9a-f]+)(-dirty)?$/.exec(stdout) || [];
 
-  return { lastTag, lastVersion, refCount, sha, isDirty: Boolean(isDirty) };
+  return { lastTagName, lastVersion, refCount, sha, isDirty: Boolean(isDirty) };
 }
