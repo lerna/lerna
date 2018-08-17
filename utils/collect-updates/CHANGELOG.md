@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.1.0"></a>
+# [3.1.0](https://github.com/lerna/lerna/compare/v3.0.6...v3.1.0) (2018-08-17)
+
+
+### Bug Fixes
+
+* **collect-updates:** Report no changes when on a release commit ([082d876](https://github.com/lerna/lerna/commit/082d876)), closes [#1548](https://github.com/lerna/lerna/issues/1548)
+
+
+
+
+
 <a name="3.0.5"></a>
 ## [3.0.5](https://github.com/lerna/lerna/compare/v3.0.4...v3.0.5) (2018-08-15)
 
