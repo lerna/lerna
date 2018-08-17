@@ -138,35 +138,13 @@ class VersionCommand extends Command {
 
     this.runPackageLifecycle = createRunner(this.options);
 
-    return pWaterfall([
+    const tasks = [
       () => this.getVersionsForUpdates(),
-      versions => {
-        if (this.project.isIndependent() || versions.size === this.filteredPackages.size) {
-          // only partial fixed versions need to be checked
-          this.updatesVersions = versions;
-        } else {
-          let hasBreakingChange;
-
-          for (const [name, bump] of versions) {
-            hasBreakingChange =
-              hasBreakingChange || isBreakingChange(this.packageGraph.get(name).version, bump);
-          }
-
-          if (hasBreakingChange) {
-            const packages =
-              this.filteredPackages.length === this.packageGraph.size
-                ? this.packageGraph
-                : new Map(this.filteredPackages.map(({ name }) => [name, this.packageGraph.get(name)]));
-
-            this.updates = Array.from(packages.values());
-            this.updatesVersions = new Map(this.updates.map(({ name }) => [name, this.globalVersion]));
-          } else {
-            this.updatesVersions = versions;
-          }
-        }
-      },
+      versions => this.setUpdatesForVersions(versions),
       () => this.confirmVersions(),
-    ]);
+    ];
+
+    return pWaterfall(tasks);
   }
 
   execute() {
@@ -311,6 +289,31 @@ class VersionCommand extends Command {
     versions.forEach((_, name) => versions.set(name, highestVersion));
 
     return highestVersion;
+  }
+
+  setUpdatesForVersions(versions) {
+    if (this.project.isIndependent() || versions.size === this.filteredPackages.size) {
+      // only partial fixed versions need to be checked
+      this.updatesVersions = versions;
+    } else {
+      let hasBreakingChange;
+
+      for (const [name, bump] of versions) {
+        hasBreakingChange = hasBreakingChange || isBreakingChange(this.packageGraph.get(name).version, bump);
+      }
+
+      if (hasBreakingChange) {
+        const packages =
+          this.filteredPackages.length === this.packageGraph.size
+            ? this.packageGraph
+            : new Map(this.filteredPackages.map(({ name }) => [name, this.packageGraph.get(name)]));
+
+        this.updates = Array.from(packages.values());
+        this.updatesVersions = new Map(this.updates.map(({ name }) => [name, this.globalVersion]));
+      } else {
+        this.updatesVersions = versions;
+      }
+    }
   }
 
   confirmVersions() {
