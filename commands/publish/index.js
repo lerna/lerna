@@ -8,7 +8,7 @@ const pReduce = require("p-reduce");
 const semver = require("semver");
 
 const Command = require("@lerna/command");
-const childProcess = require("@lerna/child-process");
+const describeRef = require("@lerna/describe-ref");
 const PromptUtilities = require("@lerna/prompt");
 const output = require("@lerna/output");
 const collectUpdates = require("@lerna/collect-updates");
@@ -185,7 +185,7 @@ class PublishCommand extends Command {
   }
 
   detectCanaryVersions() {
-    const { bump = "prepatch", preid = "alpha" } = this.options;
+    const { bump = "prepatch", preid = "alpha", tagVersionPrefix = "v", ignoreChanges } = this.options;
     // "prerelease" and "prepatch" are identical, for our purposes
     const release = bump.startsWith("pre") ? bump.replace("release", "patch") : `pre${bump}`;
 
@@ -196,45 +196,48 @@ class PublishCommand extends Command {
       collectUpdates(this.filteredPackages, this.packageGraph, this.execOpts, {
         bump: "prerelease",
         canary: true,
-        ignoreChanges: this.options.ignoreChanges,
+        ignoreChanges,
       })
     );
 
-    const makeVersion = described => {
-      // FIXME: this will blow up when `described` doesn't match the regex (returns null)
-      const [, baseVersion, refCount, buildMeta] = /^(?:.*@)?(.*)-(\d+)-g([0-9a-f]+)$/.exec(described);
-
+    const makeVersion = ({ lastVersion, refCount, sha }) => {
       // the next version is bumped without concern for preid or current index
-      const nextVersion = semver.inc(baseVersion, release.replace("pre", ""));
+      const nextVersion = semver.inc(lastVersion, release.replace("pre", ""));
 
       // semver.inc() starts a new prerelease at .0, git describe starts at .1
       // and build metadata is always ignored when comparing dependency ranges
-      return `${nextVersion}-${preid}.${refCount - 1}+${buildMeta}`;
+      return `${nextVersion}-${preid}.${refCount - 1}+${sha}`;
     };
-
-    const gitDescribeMatching = globFilter =>
-      childProcess.execSync("git", ["describe", "--match", globFilter], this.execOpts);
 
     if (this.project.isIndependent()) {
       // each package is described against its tags only
       chain = chain.then(updates =>
-        pMap(updates, ({ pkg }) => {
-          const described = gitDescribeMatching(`${pkg.name}@*`);
-          const version = makeVersion(described);
-
-          return [pkg.name, version];
-        }).then(updatesVersions => ({ updates, updatesVersions }))
+        pMap(updates, ({ pkg }) =>
+          describeRef({
+            match: `${pkg.name}@*`,
+            cwd: this.execOpts.cwd,
+          })
+            .then(makeVersion)
+            .then(version => [pkg.name, version])
+        ).then(updatesVersions => ({
+          updates,
+          updatesVersions,
+        }))
       );
     } else {
       // all packages are described against the last tag
-      chain = chain.then(updates => {
-        const tagPrefix = this.options.tagVersionPrefix || "v";
-        const described = gitDescribeMatching(`${tagPrefix}*.*.*`);
-        const version = makeVersion(described);
-        const updatesVersions = updates.map(({ pkg }) => [pkg.name, version]);
-
-        return { updates, updatesVersions };
-      });
+      chain = chain.then(updates =>
+        describeRef({
+          match: `${tagVersionPrefix}*.*.*`,
+          cwd: this.execOpts.cwd,
+        })
+          .then(makeVersion)
+          .then(version => updates.map(({ pkg }) => [pkg.name, version]))
+          .then(updatesVersions => ({
+            updates,
+            updatesVersions,
+          }))
+      );
     }
 
     return chain.then(({ updates, updatesVersions }) => ({
