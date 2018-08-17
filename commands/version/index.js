@@ -11,6 +11,7 @@ const semver = require("semver");
 
 const Command = require("@lerna/command");
 const ConventionalCommitUtilities = require("@lerna/conventional-commits");
+const checkWorkingTree = require("@lerna/check-working-tree");
 const PromptUtilities = require("@lerna/prompt");
 const output = require("@lerna/output");
 const collectUpdates = require("@lerna/collect-updates");
@@ -143,6 +144,11 @@ class VersionCommand extends Command {
       versions => this.setUpdatesForVersions(versions),
       () => this.confirmVersions(),
     ];
+
+    // amending a commit probably means the working tree is dirty
+    if (amend !== true) {
+      tasks.unshift(() => checkWorkingTree(this.execOpts));
+    }
 
     return pWaterfall(tasks);
   }

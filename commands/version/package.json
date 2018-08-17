@@ -32,6 +32,7 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
+    "@lerna/check-working-tree": "file:../../utils/check-working-tree",
     "@lerna/child-process": "file:../../core/child-process",
     "@lerna/collect-updates": "file:../../utils/collect-updates",
     "@lerna/command": "file:../../core/command",
