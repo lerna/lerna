@@ -447,8 +447,8 @@ describe("VersionCommand", () => {
 
     await lernaVersion(cwd)();
 
-    const [logMessage] = loggingOutput("success");
-    expect(logMessage).toBe("No changed packages to version");
+    const logMessages = loggingOutput("success");
+    expect(logMessages).toContain("No changed packages to version");
   });
 
   it("versions all transitive dependents after change", async () => {

@@ -12,7 +12,7 @@ test("lerna bootstrap links all packages", async () => {
 
   const { stderr } = await lerna("bootstrap", "--no-ci");
   expect(stderr).toMatchInlineSnapshot(`
-lerna info version __TEST_VERSION__
+lerna notice cli __TEST_VERSION__
 lerna info Bootstrapping 4 packages
 lerna info lifecycle package-4@1.0.0~preinstall: package-4@1.0.0
 lerna info Installing external dependencies

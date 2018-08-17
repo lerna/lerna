@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`lerna run test --parallel: stderr 1`] = `
-lerna info version __TEST_VERSION__
+lerna notice cli __TEST_VERSION__
 lerna info run in 4 packages: npm run test --silent
 lerna success run Ran npm script 'test' in 4 packages:
 lerna success - package-1
@@ -11,7 +11,7 @@ lerna success - package-4
 `;
 
 exports[`lerna run test --stream --no-prefix: stderr 1`] = `
-lerna info version __TEST_VERSION__
+lerna notice cli __TEST_VERSION__
 lerna success run Ran npm script 'test' in 4 packages:
 lerna success - package-1
 lerna success - package-2
@@ -27,7 +27,7 @@ package-2
 `;
 
 exports[`lerna run test --stream: stderr 1`] = `
-lerna info version __TEST_VERSION__
+lerna notice cli __TEST_VERSION__
 lerna success run Ran npm script 'test' in 4 packages:
 lerna success - package-1
 lerna success - package-2

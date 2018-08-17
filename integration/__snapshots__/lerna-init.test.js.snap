@@ -20,7 +20,7 @@ Object {
 `;
 
 exports[`lerna init initializes empty directory: stderr 1`] = `
-lerna info version __TEST_VERSION__
+lerna notice cli __TEST_VERSION__
 lerna info Initializing Git repository
 lerna info Creating package.json
 lerna info Creating lerna.json
@@ -55,7 +55,7 @@ Object {
 `;
 
 exports[`lerna init updates existing metadata: stderr 1`] = `
-lerna info version __TEST_VERSION__
+lerna notice cli __TEST_VERSION__
 lerna WARN project Deprecated key "commands" found in lerna.json
 lerna WARN project Please rename "commands" => "command"
 lerna info Updating package.json

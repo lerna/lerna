@@ -13,7 +13,7 @@ test("lerna bootstrap --hoist", async () => {
   /* eslint-disable max-len */
   const { stderr } = await lerna("bootstrap", "--no-ci", "--hoist");
   expect(stderr).toMatchInlineSnapshot(`
-lerna info version __TEST_VERSION__
+lerna notice cli __TEST_VERSION__
 lerna info Bootstrapping 4 packages
 lerna info lifecycle package-4@1.0.0~preinstall: package-4@1.0.0
 lerna WARN EHOIST_PKG_VERSION "@integration/package-3" package depends on pify@^1.0.0, which differs from the hoisted pify@^2.0.0.

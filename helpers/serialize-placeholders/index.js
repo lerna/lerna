@@ -4,7 +4,7 @@ const normalizeNewline = require("normalize-newline");
 // eslint-disable-next-line node/no-unpublished-require
 const LERNA_VERSION = require("../../core/lerna/package.json").version;
 
-const VERSION_REGEX = new RegExp(`^(?:((?:.*?version )|\\^)|v?)${LERNA_VERSION}`, "gm");
+const VERSION_REGEX = new RegExp(`^((?:.*?notice cli )|\\^)v${LERNA_VERSION}`, "gm");
 const VERSION_REPLACEMENT = "$1__TEST_VERSION__";
 // TODO: maybe even less naïve regex?
 

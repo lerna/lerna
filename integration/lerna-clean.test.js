@@ -13,7 +13,7 @@ describe("lerna clean", () => {
 
     const { stderr } = await cliRunner(cwd)(...args);
     expect(normalizeTestRoot(stderr)).toMatchInlineSnapshot(`
-lerna info version __TEST_VERSION__
+lerna notice cli __TEST_VERSION__
 lerna info clean removing __TEST_ROOTDIR__/packages/package-1/node_modules
 lerna info clean removing __TEST_ROOTDIR__/packages/package-2/node_modules
 lerna info clean removing __TEST_ROOTDIR__/packages/package-3/node_modules

@@ -34,7 +34,7 @@ class Command {
 
     if (!this.composed) {
       // composed commands have already logged the lerna version
-      log.info("version", argv.lernaVersion);
+      log.notice("cli", `v${argv.lernaVersion}`);
     }
 
     // launch the command

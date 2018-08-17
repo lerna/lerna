@@ -39,8 +39,8 @@ describe("PublishCommand", () => {
 
       await lernaPublish(cwd)();
 
-      const [logMessage] = loggingOutput("success");
-      expect(logMessage).toBe("No changed packages to publish");
+      const logMessages = loggingOutput("success");
+      expect(logMessages).toContain("No changed packages to publish");
       expect(verifyNpmRegistry).not.toBeCalled();
     });
 
