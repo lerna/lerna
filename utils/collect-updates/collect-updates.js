@@ -21,21 +21,20 @@ function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions
   if (hasTags(execOpts)) {
     // describe the last annotated tag in the current branch
     const { sha, refCount, lastTag } = describeRef.sync(execOpts);
+    // TODO: warn about dirty tree?
+
+    if (refCount === "0") {
+      // no commits since previous release
+      log.notice("", "Current HEAD is already released, skipping change detection.");
+
+      return [];
+    }
 
     if (commandOptions.canary) {
       // if it's a merge commit, it will return all the commits that were part of the merge
       // ex: If `ab7533e` had 2 commits, ab7533e^..ab7533e would contain 2 commits + the merge commit
       committish = `${sha}^..${sha}`;
     } else if (!committish) {
-      // TODO: warn about dirty tree?
-
-      if (refCount === "0") {
-        // no commits since previous release
-        log.notice("", "Current HEAD is already released, no changes possible.");
-
-        return [];
-      }
-
       // if no tags found, this will be undefined and we'll use the initial commit
       committish = lastTag;
     }

@@ -15,12 +15,14 @@ const path = require("path");
 const writePkg = require("write-pkg");
 const npmPublish = require("@lerna/npm-publish");
 const PromptUtilities = require("@lerna/prompt");
+const checkWorkingTree = require("@lerna/check-working-tree");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const gitAdd = require("@lerna-test/git-add");
 const gitTag = require("@lerna-test/git-tag");
 const gitCommit = require("@lerna-test/git-commit");
+const loggingOutput = require("@lerna-test/logging-output");
 
 // test command
 const lernaPublish = require("@lerna-test/command-runner")(require("../command"));
@@ -259,4 +261,31 @@ Object {
 }
 `);
   });
+});
+
+test("publish --canary on tagged release exits early", async () => {
+  const cwd = await initTaggedFixture("normal");
+
+  await lernaPublish(cwd)("--canary");
+
+  const logMessages = loggingOutput("success");
+  expect(logMessages).toContain("Current HEAD is already released, skipping change detection.");
+  expect(logMessages).toContain("No changed packages to publish");
+});
+
+test("publish --canary with dirty tree throws error", async () => {
+  checkWorkingTree.throwIfUncommitted.mockImplementationOnce(() => {
+    throw new Error("uncommitted");
+  });
+
+  const cwd = await initTaggedFixture("normal");
+
+  try {
+    await lernaPublish(cwd)("--canary");
+  } catch (err) {
+    expect(err.message).toBe("uncommitted");
+    // notably different than the actual message, but good enough here
+  }
+
+  expect.assertions(1);
 });

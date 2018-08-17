@@ -146,16 +146,21 @@ class PublishCommand extends Command {
   findVersionedUpdates() {
     let chain = Promise.resolve();
 
+    chain = chain.then(() => this.verifyWorkingTreeClean());
+
     if (this.options.bump === "from-git") {
       chain = chain.then(() => this.detectFromGit());
     } else if (this.options.canary) {
-      chain = chain.then(() => checkWorkingTree(this.execOpts));
       chain = chain.then(() => this.detectCanaryVersions());
     } else {
       chain = chain.then(() => versionCommand(this._argv));
     }
 
     return chain;
+  }
+
+  verifyWorkingTreeClean() {
+    return describeRef(this.execOpts).then(checkWorkingTree.throwIfUncommitted);
   }
 
   detectFromGit() {

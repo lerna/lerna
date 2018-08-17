@@ -14,6 +14,7 @@ const writePkg = require("write-pkg");
 const PromptUtilities = require("@lerna/prompt");
 const collectUpdates = require("@lerna/collect-updates");
 const output = require("@lerna/output");
+const checkWorkingTree = require("@lerna/check-working-tree");
 const libPush = require("../lib/git-push");
 const isAnythingCommitted = require("../lib/is-anything-committed");
 const isBehindUpstream = require("../lib/is-behind-upstream");
@@ -46,6 +47,8 @@ describe("VersionCommand", () => {
       const testDir = await initFixture("normal");
       await lernaVersion(testDir)();
 
+      expect(checkWorkingTree).toBeCalled();
+
       expect(PromptUtilities.select.mock.calls).toMatchSnapshot("prompt");
       expect(PromptUtilities.confirm).lastCalledWith("Are you sure you want to create these versions?");
 
@@ -72,6 +75,40 @@ describe("VersionCommand", () => {
       } catch (err) {
         expect(err.message).toMatch("independent");
       }
+    });
+
+    it("throws an error when uncommitted changes are present", async () => {
+      checkWorkingTree.mockImplementationOnce(() => {
+        throw new Error("uncommitted");
+      });
+
+      const testDir = await initFixture("normal");
+
+      try {
+        await lernaVersion(testDir)();
+      } catch (err) {
+        expect(err.message).toBe("uncommitted");
+        // notably different than the actual message, but good enough here
+      }
+
+      expect.assertions(1);
+    });
+
+    it("throws an error when current ref is already tagged", async () => {
+      checkWorkingTree.mockImplementationOnce(() => {
+        throw new Error("released");
+      });
+
+      const testDir = await initFixture("normal");
+
+      try {
+        await lernaVersion(testDir)();
+      } catch (err) {
+        expect(err.message).toBe("released");
+        // notably different than the actual message, but good enough here
+      }
+
+      expect.assertions(1);
     });
 
     it("only bumps changed packages when non-major version selected", async () => {
@@ -362,6 +399,8 @@ describe("VersionCommand", () => {
 
       const message = await getCommitMessage(testDir);
       expect(message).toBe("previous");
+
+      expect(checkWorkingTree).not.toBeCalled();
     });
 
     it("ignores custom messages", async () => {

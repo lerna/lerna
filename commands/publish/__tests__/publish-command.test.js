@@ -15,6 +15,7 @@ const npmPublish = require("@lerna/npm-publish");
 const PromptUtilities = require("@lerna/prompt");
 const collectUpdates = require("@lerna/collect-updates");
 const output = require("@lerna/output");
+const checkWorkingTree = require("@lerna/check-working-tree");
 const verifyNpmRegistry = require("../lib/verify-npm-registry");
 const verifyNpmPackageAccess = require("../lib/verify-npm-package-access");
 
@@ -163,6 +164,9 @@ Set {
       await gitTag(testDir, "v1.0.0");
       await lernaPublish(testDir)("from-git");
 
+      // called from chained describeRef()
+      expect(checkWorkingTree.throwIfUncommitted).toBeCalled();
+
       expect(PromptUtilities.confirm).lastCalledWith("Are you sure you want to publish these packages?");
       expect(output.logged()).toMatch("Found 4 packages to publish:");
       expect(npmPublish.order()).toEqual([
@@ -214,6 +218,23 @@ Set {
 
       const logMessages = loggingOutput("info");
       expect(logMessages).toContain("No tagged release found");
+    });
+
+    it("throws an error when uncommitted changes are present", async () => {
+      checkWorkingTree.throwIfUncommitted.mockImplementationOnce(() => {
+        throw new Error("uncommitted");
+      });
+
+      const testDir = await initFixture("normal");
+
+      try {
+        await lernaPublish(testDir)("from-git");
+      } catch (err) {
+        expect(err.message).toBe("uncommitted");
+        // notably different than the actual message, but good enough here
+      }
+
+      expect.assertions(1);
     });
   });
 
