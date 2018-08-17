@@ -2,12 +2,13 @@
 
 const dedent = require("dedent");
 const npa = require("npm-package-arg");
-const packageJson = require("package-json");
 const pMap = require("p-map");
 const path = require("path");
+const pacote = require("pacote");
 const semver = require("semver");
 
 const Command = require("@lerna/command");
+const npmConf = require("@lerna/npm-conf");
 const bootstrap = require("@lerna/bootstrap");
 const ValidationError = require("@lerna/validation-error");
 const getRangeToReference = require("./lib/get-range-to-reference");
@@ -142,15 +143,16 @@ class AddCommand extends Command {
   }
 
   getPackageVersion() {
-    const { name, fetchSpec } = this.spec;
-
     if (this.selfSatisfied) {
-      const node = this.packageGraph.get(name);
+      const node = this.packageGraph.get(this.spec.name);
 
       return Promise.resolve(this.spec.saveRelativeFileSpec ? node.location : node.version);
     }
 
-    return packageJson(name, { version: fetchSpec }).then(pkg => pkg.version);
+    // @see https://github.com/zkat/pacote/blob/latest/lib/util/opt-check.js
+    const opts = npmConf(this.options);
+
+    return pacote.manifest(this.spec, opts).then(pkg => pkg.version);
   }
 
   packageSatisfied() {
