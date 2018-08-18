@@ -22,8 +22,8 @@ into your Lerna repository; this command will preserve the commit history.
 [`lerna import <package>`][import] takes a local path rather than a URL. In this 
 case you will need to have the repo you wish to link to on your file system.
 
-[bootstrap]: https://github.com/lerna/lerna#bootstrap
-[import]: https://github.com/lerna/lerna#import
+[bootstrap]: https://github.com/lerna/lerna/blob/master/commands/bootstrap/README.md
+[import]: https://github.com/lerna/lerna/blob/master/commands/import/README.md
 
 ## How do I retry publishing if `publish` fails?
 
