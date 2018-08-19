@@ -53,10 +53,13 @@ export default class UpdatedPackagesCollector {
 
   getUpdates() {
     this.logger.silly("getUpdates");
+    const { noDependentsUpdate } = this.options;
 
     this.updatedPackages = this.collectUpdatedPackages();
     this.prereleasedPackages = this.collectPrereleasedPackages();
-    this.dependents = this.collectDependents();
+    if (!noDependentsUpdate) {
+      this.dependents = this.collectDependents();
+    }
     return this.collectUpdates();
   }
 
@@ -64,7 +67,7 @@ export default class UpdatedPackagesCollector {
     this.logger.info("", "Checking for updated packages...");
 
     const { execOpts, options } = this;
-    const { canary } = options;
+    const { canary, noDependentsUpdate } = options;
     let { since } = options;
 
     if (GitUtilities.hasTags(execOpts)) {
@@ -182,15 +185,18 @@ export default class UpdatedPackagesCollector {
 
   collectUpdates() {
     this.logger.silly("collectUpdates");
+    const { noDependentsUpdate } = this.options;
 
     return this.packages
-      .filter(
-        pkg =>
+      .filter(pkg => {
+        const dependent = noDependentsUpdate ? false : this.dependents[pkg.name];
+        return (
           this.updatedPackages[pkg.name] ||
           this.prereleasedPackages[pkg.name] ||
-          (this.options[SECRET_FLAG] ? false : this.dependents[pkg.name]) ||
+          (this.options[SECRET_FLAG] ? false : dependent) ||
           this.options.canary
-      )
+        );
+      })
       .map(pkg => {
         this.logger.verbose("has filtered update", pkg.name);
         return new Update(pkg);
