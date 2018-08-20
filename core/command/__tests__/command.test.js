@@ -2,15 +2,10 @@
 
 "use strict";
 
-// we're actually testing integration with git
-jest.unmock("@lerna/collect-updates");
-
 const fs = require("fs-extra");
-const execa = require("execa");
 const log = require("npmlog");
 const path = require("path");
 const tempy = require("tempy");
-const touch = require("touch");
 
 // partially mocked
 const ChildProcessUtilities = require("@lerna/child-process");
@@ -18,9 +13,6 @@ const ChildProcessUtilities = require("@lerna/child-process");
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const loggingOutput = require("@lerna-test/logging-output");
-const gitAdd = require("@lerna-test/git-add");
-const gitCommit = require("@lerna-test/git-commit");
-const gitTag = require("@lerna-test/git-tag");
 const updateLernaConfig = require("@lerna-test/update-lerna-config");
 
 // file under test
@@ -229,92 +221,6 @@ describe("core-command", () => {
       await command;
 
       expect(command.packageGraph).toBeInstanceOf(Map);
-    });
-  });
-
-  describe(".filteredPackages", () => {
-    it("--scope should filter packages", async () => {
-      const cwd = await initFixture("filtering");
-
-      const command = testFactory({
-        cwd,
-        scope: ["package-2", "package-4"],
-      });
-      await command;
-
-      expect(command.filteredPackages).toHaveLength(2);
-      expect(command.filteredPackages[0].name).toEqual("package-2");
-      expect(command.filteredPackages[1].name).toEqual("package-4");
-    });
-
-    it("--since should return all packages if no tag is found", async () => {
-      const cwd = await initFixture("filtering");
-
-      const command = testFactory({ cwd, since: "" });
-      await command;
-
-      expect(command.filteredPackages).toHaveLength(5);
-    });
-
-    it("--since should return packages updated since the last tag", async () => {
-      const cwd = await initFixture("filtering");
-
-      await gitTag(cwd, "v1.0.0");
-      await touch(path.join(cwd, "packages/package-2/random-file"));
-      await gitAdd(cwd, "-A");
-      await gitCommit(cwd, "test");
-
-      const command = testFactory({ cwd, since: "" });
-      await command;
-
-      expect(command.filteredPackages).toHaveLength(2);
-      expect(command.filteredPackages[0].name).toEqual("package-2");
-      expect(command.filteredPackages[1].name).toEqual("package-3");
-    });
-
-    it('--since "ref" should return packages updated since the specified ref', async () => {
-      const cwd = await initFixture("filtering");
-
-      // We first tag, then modify master to ensure that specifying --since will override checking against
-      // the latest tag.
-      await gitTag(cwd, "v1.0.0");
-
-      await touch(path.join(cwd, "packages/package-1/random-file"));
-      await gitAdd(cwd, "-A");
-      await gitCommit(cwd, "test");
-
-      // Then we can checkout a new branch, update and commit.
-      await execa("git", ["checkout", "-b", "test"], { cwd });
-
-      await touch(path.join(cwd, "packages/package-2/random-file"));
-      await gitAdd(cwd, "-A");
-      await gitCommit(cwd, "test");
-
-      const command = testFactory({ cwd, since: "master" });
-      await command;
-
-      expect(command.filteredPackages).toHaveLength(2);
-      expect(command.filteredPackages[0].name).toEqual("package-2");
-      expect(command.filteredPackages[1].name).toEqual("package-3");
-    });
-
-    it("should respect --scope and --since when used together", async () => {
-      const cwd = await initFixture("filtering");
-
-      await execa("git", ["checkout", "-b", "test"], { cwd });
-      await touch(path.join(cwd, "packages/package-4/random-file"));
-      await gitAdd(cwd, "-A");
-      await gitCommit(cwd, "test");
-
-      const command = testFactory({
-        cwd,
-        scope: ["package-2", "package-3", "package-4"],
-        since: "master",
-      });
-      await command;
-
-      expect(command.filteredPackages).toHaveLength(1);
-      expect(command.filteredPackages[0].name).toEqual("package-4");
     });
   });
 

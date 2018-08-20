@@ -8,8 +8,6 @@ const log = require("npmlog");
 const PackageGraph = require("@lerna/package-graph");
 const Project = require("@lerna/project");
 const writeLogFile = require("@lerna/write-log-file");
-const collectUpdates = require("@lerna/collect-updates");
-const filterPackages = require("@lerna/filter-packages");
 const ValidationError = require("@lerna/validation-error");
 
 const cleanStack = require("./lib/clean-stack");
@@ -207,38 +205,7 @@ class Command {
     chain = chain.then(() => this.project.getPackages());
     chain = chain.then(packages => {
       this.packageGraph = new PackageGraph(packages);
-      this.filteredPackages = filterPackages(
-        packages,
-        this.options.scope,
-        this.options.ignore,
-        this.options.private
-      );
     });
-
-    // collectUpdates requires that filteredPackages be present prior to checking for
-    // updates. That's okay because it further filters based on what's already been filtered.
-    if (this.options.since !== undefined) {
-      chain = chain.then(() =>
-        collectUpdates(this.filteredPackages, this.packageGraph, this.execOpts, this.options)
-      );
-      chain = chain.then(updates => {
-        const updated = new Set(updates.map(({ pkg }) => pkg.name));
-
-        this.filteredPackages = this.filteredPackages.filter(pkg => updated.has(pkg.name));
-      });
-    }
-
-    if (this.options.includeFilteredDependents) {
-      chain = chain.then(() => {
-        this.filteredPackages = this.packageGraph.addDependents(this.filteredPackages);
-      });
-    }
-
-    if (this.options.includeFilteredDependencies) {
-      chain = chain.then(() => {
-        this.filteredPackages = this.packageGraph.addDependencies(this.filteredPackages);
-      });
-    }
 
     return chain;
   }
