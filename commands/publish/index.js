@@ -146,8 +146,6 @@ class PublishCommand extends Command {
   findVersionedUpdates() {
     let chain = Promise.resolve();
 
-    chain = chain.then(() => this.verifyWorkingTreeClean());
-
     if (this.options.bump === "from-git") {
       chain = chain.then(() => this.detectFromGit());
     } else if (this.options.canary) {
@@ -165,6 +163,9 @@ class PublishCommand extends Command {
 
   detectFromGit() {
     let chain = Promise.resolve();
+
+    // attempting to publish a tagged release with local changes is not allowed
+    chain = chain.then(() => this.verifyWorkingTreeClean());
 
     chain = chain.then(() => getCurrentTags(this.execOpts));
     chain = chain.then(taggedPackageNames => {
@@ -198,6 +199,9 @@ class PublishCommand extends Command {
     const release = bump.startsWith("pre") ? bump.replace("release", "patch") : `pre${bump}`;
 
     let chain = Promise.resolve();
+
+    // attempting to publish a canary release with local changes is not allowed
+    chain = chain.then(() => this.verifyWorkingTreeClean());
 
     // find changed packages since last release, if any
     chain = chain.then(() =>
