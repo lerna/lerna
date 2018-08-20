@@ -205,7 +205,7 @@ class PublishCommand extends Command {
 
     // find changed packages since last release, if any
     chain = chain.then(() =>
-      collectUpdates(this.filteredPackages, this.packageGraph, this.execOpts, {
+      collectUpdates(this.packageGraph.rawPackageList, this.packageGraph, this.execOpts, {
         bump: "prerelease",
         canary: true,
         ignoreChanges,

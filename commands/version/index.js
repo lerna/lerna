@@ -128,7 +128,12 @@ class VersionCommand extends Command {
       return false;
     }
 
-    this.updates = collectUpdates(this.filteredPackages, this.packageGraph, this.execOpts, this.options);
+    this.updates = collectUpdates(
+      this.packageGraph.rawPackageList,
+      this.packageGraph,
+      this.execOpts,
+      this.options
+    );
 
     if (!this.updates.length) {
       this.logger.success(`No changed packages to ${this.composed ? "publish" : "version"}`);
@@ -298,7 +303,7 @@ class VersionCommand extends Command {
   }
 
   setUpdatesForVersions(versions) {
-    if (this.project.isIndependent() || versions.size === this.filteredPackages.size) {
+    if (this.project.isIndependent() || versions.size === this.packageGraph.size) {
       // only partial fixed versions need to be checked
       this.updatesVersions = versions;
     } else {
@@ -309,12 +314,8 @@ class VersionCommand extends Command {
       }
 
       if (hasBreakingChange) {
-        const packages =
-          this.filteredPackages.length === this.packageGraph.size
-            ? this.packageGraph
-            : new Map(this.filteredPackages.map(({ name }) => [name, this.packageGraph.get(name)]));
-
-        this.updates = Array.from(packages.values());
+        // _all_ packages need a major version bump whenever _any_ package does
+        this.updates = Array.from(this.packageGraph.values());
         this.updatesVersions = new Map(this.updates.map(({ name }) => [name, this.globalVersion]));
       } else {
         this.updatesVersions = versions;

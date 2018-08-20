@@ -18,7 +18,12 @@ class ChangedCommand extends Command {
   }
 
   initialize() {
-    const updates = collectUpdates(this.filteredPackages, this.packageGraph, this.execOpts, this.options);
+    const updates = collectUpdates(
+      this.packageGraph.rawPackageList,
+      this.packageGraph,
+      this.execOpts,
+      this.options
+    );
 
     this.result = listable.format(updates.map(node => node.pkg), this.options);
 
