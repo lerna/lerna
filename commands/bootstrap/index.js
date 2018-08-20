@@ -87,8 +87,6 @@ class BootstrapCommand extends Command {
       this.filteredPackages = filteredPackages;
     });
 
-    chain = chain.then(() => this.validatePackageNames());
-
     chain = chain.then(() => {
       this.batchedPackages = this.toposort
         ? batchPackages(this.filteredPackages, this.options.rejectCycles)
@@ -558,29 +556,6 @@ class BootstrapCommand extends Command {
    */
   symlinkPackages() {
     return symlinkDependencies(this.filteredPackages, this.packageGraph, this.logger);
-  }
-
-  validatePackageNames() {
-    const seen = new Map();
-
-    for (const { name, location } of this.filteredPackages) {
-      if (seen.has(name)) {
-        seen.get(name).push(location);
-      } else {
-        seen.set(name, [location]);
-      }
-    }
-
-    for (const [name, locations] of seen) {
-      if (locations.length > 1) {
-        throw new ValidationError(
-          "ENAME",
-          [`Package name "${name}" used in multiple packages:`, ...locations].join("\n\t")
-        );
-      }
-    }
-
-    // hooray no duplicates
   }
 }
 
