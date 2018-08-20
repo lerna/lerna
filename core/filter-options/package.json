@@ -13,6 +13,7 @@
     "url": "https://github.com/evocateur"
   },
   "files": [
+    "lib",
     "index.js"
   ],
   "main": "index.js",
@@ -30,6 +31,8 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
+    "@lerna/collect-updates": "file:../../utils/collect-updates",
+    "@lerna/filter-packages": "file:../../utils/filter-packages",
     "dedent": "^0.7.0"
   }
 }
