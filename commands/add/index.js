@@ -11,6 +11,7 @@ const Command = require("@lerna/command");
 const npmConf = require("@lerna/npm-conf");
 const bootstrap = require("@lerna/bootstrap");
 const ValidationError = require("@lerna/validation-error");
+const { getFilteredPackages } = require("@lerna/filter-options");
 const getRangeToReference = require("./lib/get-range-to-reference");
 
 module.exports = factory;
@@ -50,6 +51,11 @@ class AddCommand extends Command {
     chain = chain.then(() => this.getPackageVersion());
     chain = chain.then(version => {
       this.spec.version = version;
+    });
+
+    chain = chain.then(() => getFilteredPackages(this.packageGraph, this.execOpts, this.options));
+    chain = chain.then(filteredPackages => {
+      this.filteredPackages = filteredPackages;
     });
 
     chain = chain.then(() => this.collectPackagesToChange());

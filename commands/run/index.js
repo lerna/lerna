@@ -8,6 +8,7 @@ const batchPackages = require("@lerna/batch-packages");
 const runParallelBatches = require("@lerna/run-parallel-batches");
 const output = require("@lerna/output");
 const ValidationError = require("@lerna/validation-error");
+const { getFilteredPackages } = require("@lerna/filter-options");
 
 module.exports = factory;
 
@@ -35,24 +36,30 @@ class RunCommand extends Command {
     this.bail = this.options.bail !== false;
     this.prefix = this.options.prefix !== false;
 
-    if (script === "env") {
-      this.packagesWithScript = this.filteredPackages;
-    } else {
-      this.packagesWithScript = this.filteredPackages.filter(pkg => pkg.scripts && pkg.scripts[script]);
-    }
+    let chain = Promise.resolve();
 
-    this.count = this.packagesWithScript.length;
+    chain = chain.then(() => getFilteredPackages(this.packageGraph, this.execOpts, this.options));
+    chain = chain.then(filteredPackages => {
+      this.packagesWithScript =
+        script === "env"
+          ? filteredPackages
+          : filteredPackages.filter(pkg => pkg.scripts && pkg.scripts[script]);
+    });
 
-    if (!this.count) {
-      this.logger.success("run", `No packages found with the lifecycle script '${script}'`);
+    return chain.then(() => {
+      this.count = this.packagesWithScript.length;
 
-      // still exits zero, aka "ok"
-      return false;
-    }
+      if (!this.count) {
+        this.logger.success("run", `No packages found with the lifecycle script '${script}'`);
 
-    this.batchedPackages = this.toposort
-      ? batchPackages(this.packagesWithScript, this.options.rejectCycles)
-      : [this.packagesWithScript];
+        // still exits zero, aka "ok"
+        return false;
+      }
+
+      this.batchedPackages = this.toposort
+        ? batchPackages(this.packagesWithScript, this.options.rejectCycles)
+        : [this.packagesWithScript];
+    });
   }
 
   execute() {

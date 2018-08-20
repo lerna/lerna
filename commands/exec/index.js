@@ -5,6 +5,7 @@ const Command = require("@lerna/command");
 const batchPackages = require("@lerna/batch-packages");
 const runParallelBatches = require("@lerna/run-parallel-batches");
 const ValidationError = require("@lerna/validation-error");
+const { getFilteredPackages } = require("@lerna/filter-options");
 
 module.exports = factory;
 
@@ -27,8 +28,6 @@ class ExecCommand extends Command {
       throw new ValidationError("ENOCOMMAND", "A command to execute is required");
     }
 
-    this.count = this.filteredPackages.length;
-
     // inverted boolean options
     this.bail = this.options.bail !== false;
     this.prefix = this.options.prefix !== false;
@@ -37,9 +36,19 @@ class ExecCommand extends Command {
     // so cache it here to reduce churn during tighter loops
     this.env = Object.assign({}, process.env);
 
-    this.batchedPackages = this.toposort
-      ? batchPackages(this.filteredPackages, this.options.rejectCycles)
-      : [this.filteredPackages];
+    let chain = Promise.resolve();
+
+    chain = chain.then(() => getFilteredPackages(this.packageGraph, this.execOpts, this.options));
+    chain = chain.then(filteredPackages => {
+      this.filteredPackages = filteredPackages;
+    });
+
+    return chain.then(() => {
+      this.count = this.filteredPackages.length;
+      this.batchedPackages = this.toposort
+        ? batchPackages(this.filteredPackages, this.options.rejectCycles)
+        : [this.filteredPackages];
+    });
   }
 
   execute() {

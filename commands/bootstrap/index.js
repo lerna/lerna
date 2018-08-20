@@ -20,6 +20,7 @@ const runParallelBatches = require("@lerna/run-parallel-batches");
 const symlinkBinary = require("@lerna/symlink-binary");
 const symlinkDependencies = require("@lerna/symlink-dependencies");
 const ValidationError = require("@lerna/validation-error");
+const { getFilteredPackages } = require("@lerna/filter-options");
 const hasDependencyInstalled = require("./lib/has-dependency-installed");
 const isHoistedPackage = require("./lib/is-hoisted-package");
 
@@ -35,9 +36,7 @@ class BootstrapCommand extends Command {
   }
 
   initialize() {
-    const { registry, rejectCycles, npmClient = "npm", npmClientArgs, mutex, hoist } = this.options;
-    const filteredLength = this.filteredPackages.length;
-    this.packageCountLabel = `${filteredLength} package${filteredLength > 1 ? "s" : ""}`;
+    const { registry, npmClient = "npm", npmClientArgs, mutex, hoist } = this.options;
 
     if (npmClient === "yarn" && hoist) {
       throw new ValidationError(
@@ -81,20 +80,31 @@ class BootstrapCommand extends Command {
       this.npmConfig.npmClientArgs = [...(npmClientArgs || []), ...doubleDashArgs];
     }
 
-    this.batchedPackages = this.toposort
-      ? batchPackages(this.filteredPackages, rejectCycles)
-      : [this.filteredPackages];
+    let chain = Promise.resolve();
 
-    if (npmClient === "yarn" && !mutex) {
-      return getPort({ port: 42424, host: "0.0.0.0" }).then(port => {
-        this.npmConfig.mutex = `network:${port}`;
-        this.logger.silly("npmConfig", this.npmConfig);
-      });
-    }
+    chain = chain.then(() => getFilteredPackages(this.packageGraph, this.execOpts, this.options));
+    chain = chain.then(filteredPackages => {
+      this.filteredPackages = filteredPackages;
+    });
 
-    this.validatePackageNames();
+    chain = chain.then(() => this.validatePackageNames());
 
-    this.logger.silly("npmConfig", this.npmConfig);
+    chain = chain.then(() => {
+      this.batchedPackages = this.toposort
+        ? batchPackages(this.filteredPackages, this.options.rejectCycles)
+        : [this.filteredPackages];
+
+      if (npmClient === "yarn" && !mutex) {
+        return getPort({ port: 42424, host: "0.0.0.0" }).then(port => {
+          this.npmConfig.mutex = `network:${port}`;
+          this.logger.silly("npmConfig", this.npmConfig);
+        });
+      }
+
+      this.logger.silly("npmConfig", this.npmConfig);
+    });
+
+    return chain;
   }
 
   execute() {
@@ -102,9 +112,12 @@ class BootstrapCommand extends Command {
       return this.installRootPackageOnly();
     }
 
+    const filteredLength = this.filteredPackages.length;
+    const packageCountLabel = `${filteredLength} package${filteredLength > 1 ? "s" : ""}`;
+
     // root install does not need progress bar
     this.enableProgressBar();
-    this.logger.info("", `Bootstrapping ${this.packageCountLabel}`);
+    this.logger.info("", `Bootstrapping ${packageCountLabel}`);
 
     const tasks = [
       () => this.getDependenciesToInstall(),
@@ -124,7 +137,7 @@ class BootstrapCommand extends Command {
     }
 
     return pWaterfall(tasks).then(() => {
-      this.logger.success("", `Bootstrapped ${this.packageCountLabel}`);
+      this.logger.success("", `Bootstrapped ${packageCountLabel}`);
     });
   }
 

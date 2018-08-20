@@ -6,6 +6,7 @@ const pMap = require("p-map");
 const Command = require("@lerna/command");
 const rimrafDir = require("@lerna/rimraf-dir");
 const PromptUtilities = require("@lerna/prompt");
+const { getFilteredPackages } = require("@lerna/filter-options");
 
 module.exports = factory;
 
@@ -19,19 +20,26 @@ class CleanCommand extends Command {
   }
 
   initialize() {
-    this.directoriesToDelete = this.filteredPackages.map(pkg => pkg.nodeModulesLocation);
+    let chain = Promise.resolve();
 
-    if (this.options.yes) {
-      return true;
-    }
+    chain = chain.then(() => getFilteredPackages(this.packageGraph, this.execOpts, this.options));
+    chain = chain.then(filteredPackages => {
+      this.directoriesToDelete = filteredPackages.map(pkg => pkg.nodeModulesLocation);
+    });
 
-    this.logger.info("", "Removing the following directories:");
-    this.logger.info(
-      "clean",
-      this.directoriesToDelete.map(dir => path.relative(this.project.rootPath, dir)).join("\n")
-    );
+    return chain.then(() => {
+      if (this.options.yes) {
+        return true;
+      }
 
-    return PromptUtilities.confirm("Proceed?");
+      this.logger.info("", "Removing the following directories:");
+      this.logger.info(
+        "clean",
+        this.directoriesToDelete.map(dir => path.relative(this.project.rootPath, dir)).join("\n")
+      );
+
+      return PromptUtilities.confirm("Proceed?");
+    });
   }
 
   execute() {
