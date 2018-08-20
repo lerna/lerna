@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.1.2"></a>
+## [3.1.2](https://github.com/lerna/lerna/compare/v3.1.1...v3.1.2) (2018-08-20)
+
+
+### Bug Fixes
+
+* Setup instance.filteredPackages explicitly ([32357f8](https://github.com/lerna/lerna/commit/32357f8))
+* Use packageGraph.rawPackageList instead of misleading instance.filteredPackages ([2e2abdc](https://github.com/lerna/lerna/commit/2e2abdc))
+* **bootstrap:** Remove redundant duplicate name check ([c2405a1](https://github.com/lerna/lerna/commit/c2405a1))
+* **command:** Remove redundant filteredPackages calculation ([e0a361f](https://github.com/lerna/lerna/commit/e0a361f))
+* **filter-options:** Move filterPackages logic into named export ([e863c28](https://github.com/lerna/lerna/commit/e863c28))
+* **package-graph:** Throw errors when package names are not unique ([387df2b](https://github.com/lerna/lerna/commit/387df2b))
+* **publish:** Allow composed version command to decide when to verify working tree ([e61aa67](https://github.com/lerna/lerna/commit/e61aa67))
+
+
+
+
+
 <a name="3.1.1"></a>
 ## [3.1.1](https://github.com/lerna/lerna/compare/v3.1.0...v3.1.1) (2018-08-17)
 
