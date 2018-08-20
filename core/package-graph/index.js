@@ -2,6 +2,7 @@
 
 const npa = require("npm-package-arg");
 const semver = require("semver");
+const ValidationError = require("@lerna/validation-error");
 
 /**
  * Represents a node in a PackageGraph.
@@ -65,6 +66,28 @@ class PackageGraphNode {
 class PackageGraph extends Map {
   constructor(packages, graphType = "allDependencies", forceLocal) {
     super(packages.map(pkg => [pkg.name, new PackageGraphNode(pkg)]));
+
+    if (packages.size !== this.size) {
+      // weed out the duplicates
+      const seen = new Map();
+
+      for (const { name, location } of packages) {
+        if (seen.has(name)) {
+          seen.get(name).push(location);
+        } else {
+          seen.set(name, [location]);
+        }
+      }
+
+      for (const [name, locations] of seen) {
+        if (locations.length > 1) {
+          throw new ValidationError(
+            "ENAME",
+            [`Package name "${name}" used in multiple packages:`, ...locations].join("\n\t")
+          );
+        }
+      }
+    }
 
     this.forEach((currentNode, currentName) => {
       const graphDependencies =
