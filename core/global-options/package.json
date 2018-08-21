@@ -1,6 +1,6 @@
 {
   "name": "@lerna/global-options",
-  "version": "3.0.5",
+  "version": "3.1.3",
   "description": "Global options applicable to _every_ lerna sub-command",
   "keywords": [
     "lerna",

@@ -1,6 +1,6 @@
 {
   "name": "@lerna/command",
-  "version": "3.1.2",
+  "version": "3.1.3",
   "description": "Lerna's internal base class for commands",
   "keywords": [
     "lerna",
