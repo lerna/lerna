@@ -92,6 +92,7 @@ class Command {
 
     // proxy "Promise" methods to "private" instance
     this.then = (onResolved, onRejected) => runner.then(onResolved, onRejected);
+    /* istanbul ignore next */
     this.catch = onRejected => runner.catch(onRejected);
   }
 
@@ -111,6 +112,7 @@ class Command {
     let loglevel;
     let progress;
 
+    /* istanbul ignore next */
     if (ci || !process.stderr.isTTY) {
       log.disableColor();
       progress = false;
@@ -179,7 +181,7 @@ class Command {
   }
 
   enableProgressBar() {
-    // istanbul ignore else
+    /* istanbul ignore next */
     if (this.options.progress) {
       this.logger.enableProgress();
     }
