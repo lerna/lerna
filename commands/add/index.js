@@ -156,7 +156,11 @@ class AddCommand extends Command {
     }
 
     // @see https://github.com/zkat/pacote/blob/latest/lib/util/opt-check.js
-    const opts = npmConf(this.options);
+    const opts = npmConf({
+      includeDeprecated: false,
+      // we can't pass everything, as our --scope conflicts with pacote's --scope
+      registry: this.options.registry,
+    });
 
     return pacote.manifest(this.spec, opts).then(pkg => pkg.version);
   }

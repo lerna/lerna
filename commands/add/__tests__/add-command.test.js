@@ -205,7 +205,7 @@ describe("AddCommand", () => {
   it("should only bootstrap scoped packages", async () => {
     const testDir = await initFixture("basic");
 
-    await lernaAdd(testDir)("@test/package-1", "--scope", "@test/package-2", "--scope", "package-3");
+    await lernaAdd(testDir)("tiny-tarball", "--scope", "@test/package-2", "--scope", "package-3");
 
     expect(bootstrap).lastCalledWith(
       expect.objectContaining({
