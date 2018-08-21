@@ -199,6 +199,28 @@ describe("BootstrapCommand", () => {
         mutex: undefined,
       });
     });
+
+    it("respects config file { ci: false }", async () => {
+      const testDir = await initFixture("ci");
+
+      await updateLernaConfig(testDir, {
+        command: {
+          bootstrap: {
+            ci: false,
+          },
+        },
+      });
+      await lernaBootstrap(testDir)();
+
+      expect(hasNpmVersion).not.toBeCalled();
+      expect(npmInstall.dependencies.mock.calls[0][2]).toEqual({
+        registry: undefined,
+        npmClient: "npm",
+        npmClientArgs: undefined,
+        npmGlobalStyle: false,
+        mutex: undefined,
+      });
+    });
   });
 
   describe("with local package dependencies", () => {

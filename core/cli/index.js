@@ -1,7 +1,6 @@
 "use strict";
 
 const dedent = require("dedent");
-const isCI = require("is-ci");
 const log = require("npmlog");
 const yargs = require("yargs/yargs");
 const globalOptions = require("@lerna/global-options");
@@ -33,21 +32,8 @@ module.exports = lernaCLI;
  */
 function lernaCLI(argv, cwd) {
   const cli = yargs(argv, cwd);
-  const defaults = { ci: isCI };
 
-  if (defaults.ci || !process.stderr.isTTY) {
-    log.disableColor();
-    defaults.progress = false;
-  } else if (!process.stdout.isTTY) {
-    // stdout is being piped, don't log non-errors or progress bars
-    defaults.progress = false;
-    defaults.loglevel = "error";
-  } else if (process.stderr.isTTY) {
-    log.enableColor();
-    log.enableUnicode();
-  }
-
-  return globalOptions(cli, defaults)
+  return globalOptions(cli)
     .usage("Usage: $0 <command> [options]")
     .command(addCmd)
     .command(bootstrapCmd)

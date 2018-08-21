@@ -2,11 +2,11 @@
 
 module.exports = globalOptions;
 
-function globalOptions(yargs, { ci = false, loglevel = "info", progress = true }) {
+function globalOptions(yargs) {
   // the global options applicable to _every_ command
   const opts = {
     loglevel: {
-      default: loglevel,
+      defaultDescription: "info",
       describe: "What level of logs to report.",
       type: "string",
     },
@@ -21,7 +21,7 @@ function globalOptions(yargs, { ci = false, loglevel = "info", progress = true }
       type: "boolean",
     },
     progress: {
-      default: !ci && progress,
+      defaultDescription: "true",
       describe: "Enable progress bars. (Always off in CI)\nPass --no-progress to disable.",
       type: "boolean",
     },
@@ -44,7 +44,6 @@ function globalOptions(yargs, { ci = false, loglevel = "info", progress = true }
     .options(opts)
     .group(globalKeys, "Global Options:")
     .option("ci", {
-      default: ci,
       hidden: true,
       type: "boolean",
     });

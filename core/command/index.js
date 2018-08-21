@@ -43,6 +43,7 @@ class Command {
       chain = chain.then(() => {
         this.project = new Project(argv.cwd);
       });
+      chain = chain.then(() => this.configureEnvironment());
       chain = chain.then(() => this.configureOptions());
       chain = chain.then(() => this.configureProperties());
       chain = chain.then(() => this.configureLogging());
@@ -104,6 +105,31 @@ class Command {
     return [];
   }
 
+  configureEnvironment() {
+    // eslint-disable-next-line global-require
+    const ci = require("is-ci");
+    let loglevel;
+    let progress;
+
+    if (ci || !process.stderr.isTTY) {
+      log.disableColor();
+      progress = false;
+    } else if (!process.stdout.isTTY) {
+      // stdout is being piped, don't log non-errors or progress bars
+      progress = false;
+      loglevel = "error";
+    } else if (process.stderr.isTTY) {
+      log.enableColor();
+      log.enableUnicode();
+    }
+
+    this._env = {
+      ci,
+      progress,
+      loglevel,
+    };
+  }
+
   configureOptions() {
     // Command config object normalized to "command" namespace
     const commandConfig = this.project.config.command || {};
@@ -118,7 +144,9 @@ class Command {
       // Namespaced command options from `lerna.json`
       ...overrides,
       // Global options from `lerna.json`
-      this.project.config
+      this.project.config,
+      // Environmental defaults prepared in previous step
+      this._env
     );
   }
 
