@@ -46,7 +46,8 @@ function symlinkBinary(srcPackageRef, destPackageRef) {
 }
 
 function resolvePackageRef(pkgRef) {
-  if (pkgRef instanceof Package) {
+  // don't use instanceof because it fails across nested module boundaries
+  if (typeof pkgRef !== "string" && pkgRef.location) {
     return pkgRef;
   }
 

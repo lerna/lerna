@@ -8,8 +8,11 @@ const semver = require("semver");
 
 const Package = require("@lerna/package");
 
-const toPackage = ref =>
-  ref instanceof Package ? ref : new Package(readPkg.sync(ref, { normalize: false }), ref);
+const toPackage = pkgRef =>
+  // don't use instanceof because it fails across nested module boundaries
+  typeof pkgRef !== "string" && pkgRef.location
+    ? pkgRef
+    : new Package(readPkg.sync(pkgRef, { normalize: false }), pkgRef);
 
 const matchBinaryLinks = () => (pkgRef, raw) => {
   const pkg = toPackage(pkgRef);
