@@ -5,27 +5,11 @@ const log = require("npmlog");
 const yargs = require("yargs/yargs");
 const globalOptions = require("@lerna/global-options");
 
-const addCmd = require("@lerna/add/command");
-const bootstrapCmd = require("@lerna/bootstrap/command");
-const changedCmd = require("@lerna/changed/command");
-const cleanCmd = require("@lerna/clean/command");
-const createCmd = require("@lerna/create/command");
-const diffCmd = require("@lerna/diff/command");
-const execCmd = require("@lerna/exec/command");
-const importCmd = require("@lerna/import/command");
-const initCmd = require("@lerna/init/command");
-const linkCmd = require("@lerna/link/command");
-const listCmd = require("@lerna/list/command");
-const publishCmd = require("@lerna/publish/command");
-const runCmd = require("@lerna/run/command");
-const versionCmd = require("@lerna/version/command");
-
 module.exports = lernaCLI;
 
 /**
- * Essentially a factory that returns a yargs() instance that can
- * be used to call parse() immediately (as in ../lerna) or by
- * unit tests to encapsulate instantiation with "real" arguments.
+ * A factory that returns a yargs() instance configured with everything except commands.
+ * Chain .parse() from this method to invoke.
  *
  * @param {Array = []} argv
  * @param {String = process.cwd()} cwd
@@ -35,20 +19,6 @@ function lernaCLI(argv, cwd) {
 
   return globalOptions(cli)
     .usage("Usage: $0 <command> [options]")
-    .command(addCmd)
-    .command(bootstrapCmd)
-    .command(changedCmd)
-    .command(cleanCmd)
-    .command(createCmd)
-    .command(diffCmd)
-    .command(execCmd)
-    .command(importCmd)
-    .command(initCmd)
-    .command(linkCmd)
-    .command(listCmd)
-    .command(publishCmd)
-    .command(runCmd)
-    .command(versionCmd)
     .demandCommand(1, "A command is required. Pass --help to see all available commands and options.")
     .recommendCommands()
     .strict()

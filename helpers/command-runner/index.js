@@ -1,8 +1,7 @@
 "use strict";
 
 const path = require("path");
-const yargs = require("yargs/yargs");
-const globalOptions = require("@lerna/global-options");
+const lernaCLI = require("@lerna/cli");
 
 module.exports = commandRunner;
 
@@ -22,15 +21,12 @@ function commandRunner(commandModule) {
 
   return cwd => {
     // create a _new_ yargs instance every time cwd changes to avoid singleton pollution
-    const cli = yargs([], cwd)
-      .strict()
+    const cli = lernaCLI([], cwd)
       .exitProcess(false)
       .detectLocale(false)
       .showHelpOnFail(false)
       .wrap(null)
       .command(commandModule);
-
-    globalOptions(cli, { loglevel: "silent", progress: false });
 
     return (...args) =>
       new Promise((resolve, reject) => {
@@ -39,6 +35,8 @@ function commandRunner(commandModule) {
         const context = {
           cwd,
           lernaVersion: "__TEST_VERSION__",
+          loglevel: "silent",
+          progress: false,
           onResolved: result => {
             // success resolves the result, if any, returned from execute()
             resolve(Object.assign({}, result, yargsMeta));
