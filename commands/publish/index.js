@@ -423,6 +423,7 @@ class PublishCommand extends Command {
 
     chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "prepare"));
     chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "prepublishOnly"));
+    chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "prepack"));
 
     const actions = [
       pkg =>
@@ -452,6 +453,8 @@ class PublishCommand extends Command {
 
     // remove temporary license files if _any_ error occurs _anywhere_ in the promise chain
     chain = chain.catch(error => this.removeTempLicensesOnError(error));
+
+    chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "postpack"));
 
     return pFinally(chain, () => tracker.finish());
   }

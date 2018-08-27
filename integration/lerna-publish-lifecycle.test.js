@@ -70,6 +70,11 @@ prepare-root
 
 prepublishOnly-root
 
+> lifecycle@0.0.0-monorepo prepack __TEST_ROOTDIR__
+> echo prepack-root
+
+prepack-root
+
 > package-1@1.1.0 prepublishOnly __TEST_ROOTDIR__/packages/package-1
 > echo prepublishOnly-package-1
 
@@ -84,6 +89,11 @@ prepublish-package-1
 > echo prepare-package-1
 
 prepare-package-1
+
+> lifecycle@0.0.0-monorepo postpack __TEST_ROOTDIR__
+> echo postpack-root
+
+postpack-root
 
 > package-1@1.1.0 postpublish __TEST_ROOTDIR__/packages/package-1
 > echo postpublish-package-1

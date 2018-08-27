@@ -24,7 +24,7 @@ describe("lifecycle scripts", () => {
 
     await lernaPublish(cwd)();
 
-    ["prepare", "prepublishOnly", "postpublish"].forEach(script => {
+    ["prepare", "prepublishOnly", "prepack", "postpack", "postpublish"].forEach(script => {
       // "lifecycle" is the root manifest name
       expect(runLifecycle).toHaveBeenCalledWith(expect.objectContaining({ name: "lifecycle" }), script);
     });
@@ -60,7 +60,9 @@ describe("lifecycle scripts", () => {
       // publish-specific
       ["lifecycle", "prepare"],
       ["lifecycle", "prepublishOnly"],
+      ["lifecycle", "prepack"],
       ["package-1", "prepublishOnly"],
+      ["lifecycle", "postpack"],
       ["package-1", "postpublish"],
       ["lifecycle", "postpublish"],
     ]);

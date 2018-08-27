@@ -8,6 +8,8 @@
     "prepublish": "echo prepublish-root",
     "prepare": "echo prepare-root",
     "prepublishOnly": "echo prepublishOnly-root",
+    "prepack": "echo prepack-root",
+    "postpack": "echo postpack-root",
     "postpublish": "echo postpublish-root"
   }
 }
