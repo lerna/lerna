@@ -332,7 +332,7 @@ class VersionCommand extends Command {
   }
 
   confirmVersions() {
-    const changes = this.updates.map(({ pkg }) => {
+    const changes = this.packagesToVersion.map(pkg => {
       let line = ` - ${pkg.name}: ${pkg.version} => ${this.updatesVersions.get(pkg.name)}`;
       if (pkg.private) {
         line += ` (${chalk.red("private")})`;
@@ -478,7 +478,9 @@ class VersionCommand extends Command {
     });
 
     // run the postversion script for each update
-    chain = chain.then(() => pMap(this.updates, ({ pkg }) => this.runPackageLifecycle(pkg, "postversion")));
+    chain = chain.then(() =>
+      pMap(this.packagesToVersion, pkg => this.runPackageLifecycle(pkg, "postversion"))
+    );
 
     // run postversion, if set, in the root directory
     chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "postversion"));
@@ -487,7 +489,7 @@ class VersionCommand extends Command {
   }
 
   gitCommitAndTagVersionForUpdates() {
-    const tags = this.updates.map(({ pkg }) => `${pkg.name}@${this.updatesVersions.get(pkg.name)}`);
+    const tags = this.packagesToVersion.map(pkg => `${pkg.name}@${this.updatesVersions.get(pkg.name)}`);
     const subject = this.options.message || "Publish";
     const message = tags.reduce((msg, tag) => `${msg}${os.EOL} - ${tag}`, `${subject}${os.EOL}`);
 
