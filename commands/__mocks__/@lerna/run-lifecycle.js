@@ -1,12 +1,12 @@
 "use strict";
 
-const mockRunLifecycle = jest.fn(() => Promise.resolve());
+const mockRunLifecycle = jest.fn(pkg => Promise.resolve(pkg));
 const mockCreateRunner = jest.fn(() => (pkg, stage) => {
   if (pkg.scripts[stage]) {
     return mockRunLifecycle(pkg, stage);
   }
 
-  return Promise.resolve();
+  return Promise.resolve(pkg);
 });
 
 function getOrderedCalls() {

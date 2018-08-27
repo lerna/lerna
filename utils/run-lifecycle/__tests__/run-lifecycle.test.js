@@ -17,8 +17,9 @@ describe("default export", () => {
     const stage = "preversion";
     const config = npmConf({ "custom-cli-flag": true });
 
-    await runLifecycle(pkg, stage, config);
+    const result = await runLifecycle(pkg, stage, config);
 
+    expect(result).toBe(pkg);
     expect(npmLifecycle).lastCalledWith(
       expect.objectContaining({
         name: pkg.name,
@@ -54,8 +55,9 @@ describe("createRunner", () => {
     };
     const stage = "version";
 
-    await runPackageLifecycle(pkg, stage);
+    const result = await runPackageLifecycle(pkg, stage);
 
+    expect(result).toBe(pkg);
     expect(npmLifecycle).lastCalledWith(
       expect.any(Object),
       stage,

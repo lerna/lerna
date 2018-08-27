@@ -34,7 +34,7 @@ function runLifecycle(pkg, stage, opts) {
     failOk: false,
     log,
     unsafePerm: true,
-  });
+  }).then(() => pkg);
 }
 
 function createRunner(commandOptions) {
@@ -47,6 +47,6 @@ function createRunner(commandOptions) {
       });
     }
 
-    return Promise.resolve();
+    return Promise.resolve(pkg);
   };
 }
