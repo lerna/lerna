@@ -70,6 +70,11 @@ prepare-root
 
 prepublishOnly-root
 
+> package-1@1.1.0 prepublishOnly __TEST_ROOTDIR__/packages/package-1
+> echo prepublishOnly-package-1
+
+prepublishOnly-package-1
+
 > package-1@1.1.0 prepublish __TEST_ROOTDIR__/packages/package-1
 > echo prepublish-package-1
 

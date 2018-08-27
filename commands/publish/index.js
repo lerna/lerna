@@ -424,7 +424,13 @@ class PublishCommand extends Command {
     chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "prepare"));
     chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "prepublishOnly"));
 
-    const actions = [];
+    const actions = [
+      pkg =>
+        // npm pack already runs prepare and prepublish
+        // prepublishOnly is _not_ run when publishing a tarball
+        // TECHNICALLY out of order, but not much we can do about that
+        this.runPackageLifecycle(pkg, "prepublishOnly"),
+    ];
 
     if (this.options.requireScripts) {
       actions.push(pkg => this.execScript(pkg, "prepublish"));
