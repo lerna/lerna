@@ -15,7 +15,9 @@ const mockNpmPack = jest.fn((rootManifest, packages) => {
     packed.add(pkg.name);
 
     // simulate decoration after npm pack
-    pkg.tarball = `${pkg.name}-MOCKED.tgz`;
+    pkg.tarball = {
+      filename: `${pkg.name}-MOCKED.tgz`,
+    };
   });
 
   return Promise.resolve();

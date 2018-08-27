@@ -32,12 +32,12 @@ function npmPublish(pkg, tag, { npmClient, registry }) {
   }
 
   // always add tarball file, created by npmPack()
-  args.push(pkg.tarball);
+  args.push(pkg.tarball.filename);
 
   log.silly("exec", npmClient, args);
   return ChildProcessUtilities.exec(npmClient, args, opts).then(() =>
     // don't leave the generated tarball hanging around after success
-    fs.remove(path.join(pkg.location, pkg.tarball))
+    fs.remove(path.join(pkg.location, pkg.tarball.filename))
   );
 }
 
@@ -116,16 +116,18 @@ function npmPack(rootManifest, packages, opts = makePackOptions(rootManifest)) {
 
     // npm pack --json list is in the same order as the packages input
     for (let i = 0; i < packages.length; i += 1) {
+      // could do this inside the mapper, but we need this metadata regardless of p-map success
       const pkg = packages[i];
+
       // instead of complicated copypasta, use literally what npm did
-      pkg.tarball = tarballs[i].filename;
+      pkg.tarball = tarballs[i];
     }
 
     return pMap(
       packages,
       pkg => {
-        const inRoot = path.join(pkg.rootPath, pkg.tarball);
-        const toLeaf = path.join(pkg.location, pkg.tarball);
+        const inRoot = path.join(pkg.rootPath, pkg.tarball.filename);
+        const toLeaf = path.join(pkg.location, pkg.tarball.filename);
 
         return fs.move(inRoot, toLeaf, { overwrite: true });
       },

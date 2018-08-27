@@ -31,7 +31,9 @@ describe("npm-publish", () => {
   );
 
   // technically decorated in npmPack, stubbed here
-  pkg.tarball = "test-1.10.100.tgz";
+  pkg.tarball = {
+    filename: "test-1.10.100.tgz",
+  };
 
   it("runs npm publish in a directory with --tag support", async () => {
     await npmPublish(pkg, "published-tag", { npmClient: "npm" });
@@ -45,7 +47,7 @@ describe("npm-publish", () => {
         pkg,
       }
     );
-    expect(fs.remove).lastCalledWith(path.join(pkg.location, pkg.tarball));
+    expect(fs.remove).lastCalledWith(path.join(pkg.location, pkg.tarball.filename));
   });
 
   it("does not pass --tag when none present (npm default)", async () => {
@@ -153,8 +155,8 @@ describe("npmPack", () => {
     // resolve promise
     await cmd;
 
-    expect(pkg1.tarball).toBe("mocked-pkg-1-pack.tgz");
-    expect(pkg2.tarball).toBe("mocked-pkg-2-pack.tgz");
+    expect(pkg1.tarball.filename).toBe("mocked-pkg-1-pack.tgz");
+    expect(pkg2.tarball.filename).toBe("mocked-pkg-2-pack.tgz");
 
     expect(hasNpmVersion).lastCalledWith(">=5.10.0");
     expect(logPacked.mock.calls.map(call => call[0])).toEqual(expectedJSON);
@@ -195,8 +197,8 @@ describe("npmPack", () => {
     // resolve promise
     await cmd;
 
-    expect(pkg3.tarball).toBe("mocked-pkg-3-pack.tgz");
-    expect(pkg4.tarball).toBe("mocked-pkg-4-pack.tgz");
+    expect(pkg3.tarball.filename).toBe("mocked-pkg-3-pack.tgz");
+    expect(pkg4.tarball.filename).toBe("mocked-pkg-4-pack.tgz");
 
     expect(logPacked.mock.calls.map(call => call[0])).toEqual(expectedJSON);
     expect(process.stdout.write.mock.calls.map(call => call[0])).toEqual(chunks);
@@ -209,13 +211,13 @@ describe("npmPack", () => {
 
     // post-hoc moving from root to leaf
     expect(fs.move).toBeCalledWith(
-      path.join(pkg3.rootPath, pkg3.tarball),
-      path.join(pkg3.location, pkg3.tarball),
+      path.join(pkg3.rootPath, pkg3.tarball.filename),
+      path.join(pkg3.location, pkg3.tarball.filename),
       { overwrite: true }
     );
     expect(fs.move).toBeCalledWith(
-      path.join(pkg4.rootPath, pkg4.tarball),
-      path.join(pkg4.location, pkg4.tarball),
+      path.join(pkg4.rootPath, pkg4.tarball.filename),
+      path.join(pkg4.location, pkg4.tarball.filename),
       { overwrite: true }
     );
   });
@@ -250,10 +252,10 @@ describe("makePacker", () => {
     // resolve all promises
     await Promise.all(commands);
 
-    expect(packages[0].tarball).toBe("mocked-pkg-5-pack.tgz");
-    expect(packages[1].tarball).toBe("mocked-pkg-6-pack.tgz");
-    expect(packages[2].tarball).toBe("mocked-pkg-7-pack.tgz");
-    expect(packages[3].tarball).toBe("mocked-pkg-8-pack.tgz");
+    expect(packages[0].tarball.filename).toBe("mocked-pkg-5-pack.tgz");
+    expect(packages[1].tarball.filename).toBe("mocked-pkg-6-pack.tgz");
+    expect(packages[2].tarball.filename).toBe("mocked-pkg-7-pack.tgz");
+    expect(packages[3].tarball.filename).toBe("mocked-pkg-8-pack.tgz");
 
     expect(hasNpmVersion).toHaveBeenCalledTimes(1);
     expect(logPacked.mock.calls.map(call => call[0])).toEqual(expectedJSON);
