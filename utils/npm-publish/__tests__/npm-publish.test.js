@@ -36,8 +36,9 @@ describe("npm-publish", () => {
   };
 
   it("runs npm publish in a directory with --tag support", async () => {
-    await npmPublish(pkg, "published-tag", { npmClient: "npm" });
+    const result = await npmPublish(pkg, "published-tag", { npmClient: "npm" });
 
+    expect(result).toBe(pkg);
     expect(ChildProcessUtilities.exec).lastCalledWith(
       "npm",
       ["publish", "--ignore-scripts", "--tag", "published-tag", "test-1.10.100.tgz"],
@@ -153,7 +154,9 @@ describe("npmPack", () => {
     mockStream.emit("data", chunk2);
 
     // resolve promise
-    await cmd;
+    const result = await cmd;
+
+    expect(result).toEqual([pkg1, pkg2]);
 
     expect(pkg1.tarball.filename).toBe("mocked-pkg-1-pack.tgz");
     expect(pkg2.tarball.filename).toBe("mocked-pkg-2-pack.tgz");
@@ -250,7 +253,10 @@ describe("makePacker", () => {
     });
 
     // resolve all promises
-    await Promise.all(commands);
+    const results = await Promise.all(commands);
+
+    expect(results[0]).toEqual(batches[0]);
+    expect(results[1]).toEqual(batches[1]);
 
     expect(packages[0].tarball.filename).toBe("mocked-pkg-5-pack.tgz");
     expect(packages[1].tarball.filename).toBe("mocked-pkg-6-pack.tgz");

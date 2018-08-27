@@ -37,7 +37,7 @@ function npmPublish(pkg, tag, { npmClient, registry }) {
   log.silly("exec", npmClient, args);
   return ChildProcessUtilities.exec(npmClient, args, opts).then(() =>
     // don't leave the generated tarball hanging around after success
-    fs.remove(path.join(pkg.location, pkg.tarball.filename))
+    fs.remove(path.join(pkg.location, pkg.tarball.filename)).then(() => pkg)
   );
 }
 
@@ -129,7 +129,7 @@ function npmPack(rootManifest, packages, opts = makePackOptions(rootManifest)) {
         const inRoot = path.join(pkg.rootPath, pkg.tarball.filename);
         const toLeaf = path.join(pkg.location, pkg.tarball.filename);
 
-        return fs.move(inRoot, toLeaf, { overwrite: true });
+        return fs.move(inRoot, toLeaf, { overwrite: true }).then(() => pkg);
       },
       { concurrency: 10 }
     );

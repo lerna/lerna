@@ -7,7 +7,7 @@ const registry = new Map();
 const mockNpmPublish = jest.fn((pkg, tag) => {
   registry.set(pkg.name, tag);
 
-  return Promise.resolve();
+  return Promise.resolve(pkg);
 });
 
 const mockNpmPack = jest.fn((rootManifest, packages) => {
@@ -20,7 +20,7 @@ const mockNpmPack = jest.fn((rootManifest, packages) => {
     };
   });
 
-  return Promise.resolve();
+  return Promise.resolve(packages.slice());
 });
 
 const mockMakePacker = jest.fn(rootManifest => batch => mockNpmPack(rootManifest, batch));
