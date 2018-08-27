@@ -17,6 +17,7 @@ const PromptUtilities = require("@lerna/prompt");
 const output = require("@lerna/output");
 const collectUpdates = require("@lerna/collect-updates");
 const { createRunner } = require("@lerna/run-lifecycle");
+const batchPackages = require("@lerna/batch-packages");
 const ValidationError = require("@lerna/validation-error");
 
 const getCurrentBranch = require("./lib/get-current-branch");
@@ -148,6 +149,7 @@ class VersionCommand extends Command {
     const tasks = [
       () => this.getVersionsForUpdates(),
       versions => this.setUpdatesForVersions(versions),
+      () => this.setBatchUpdates(),
       () => this.confirmVersions(),
     ];
 
@@ -324,6 +326,11 @@ class VersionCommand extends Command {
     }
   }
 
+  setBatchUpdates() {
+    this.packagesToVersion = this.updates.map(({ pkg }) => pkg);
+    this.batchedPackages = batchPackages(this.packagesToVersion, this.options.rejectCycles);
+  }
+
   confirmVersions() {
     const changes = this.updates.map(({ pkg }) => {
       let line = ` - ${pkg.name}: ${pkg.version} => ${this.updatesVersions.get(pkg.name)}`;
@@ -416,8 +423,10 @@ class VersionCommand extends Command {
     const mapUpdate = pPipe(actions);
 
     chain = chain.then(() =>
-      // TODO: tune the concurrency?
-      pMap(this.updates, mapUpdate, { concurrency: 100 })
+      pReduce(this.batchedPackages, (_, batch) =>
+        // TODO: tune the concurrency?
+        pMap(batch, mapUpdate, { concurrency: 100 })
+      )
     );
 
     if (!independentVersions) {
