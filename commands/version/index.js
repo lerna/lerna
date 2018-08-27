@@ -5,6 +5,7 @@ const chalk = require("chalk");
 const dedent = require("dedent");
 const minimatch = require("minimatch");
 const pMap = require("p-map");
+const pPipe = require("p-pipe");
 const pReduce = require("p-reduce");
 const pWaterfall = require("p-waterfall");
 const semver = require("semver");
@@ -367,61 +368,57 @@ class VersionCommand extends Command {
     // exec preversion lifecycle in root (before all updates)
     chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "preversion"));
 
-    chain = chain.then(() => {
-      const mapUpdate = ({ pkg, localDependencies }) => {
-        // start the chain
-        let tasks = Promise.resolve();
+    const actions = [
+      pkg => this.runPackageLifecycle(pkg, "preversion"),
+      pkg => {
+        // set new version
+        pkg.version = this.updatesVersions.get(pkg.name);
 
-        // exec preversion script
-        tasks = tasks.then(() => this.runPackageLifecycle(pkg, "preversion"));
+        // update pkg dependencies
+        for (const [depName, resolved] of this.packageGraph.get(pkg.name).localDependencies) {
+          const depVersion = this.updatesVersions.get(depName);
 
-        // write new package
-        tasks = tasks.then(() => {
-          // set new version
-          pkg.version = this.updatesVersions.get(pkg.name);
-
-          // update pkg dependencies
-          for (const [depName, resolved] of localDependencies) {
-            const depVersion = this.updatesVersions.get(depName);
-
-            if (depVersion && resolved.type !== "directory") {
-              // don't overwrite local file: specifiers, they only change during publish
-              pkg.updateLocalDependency(resolved, depVersion, this.savePrefix);
-            }
+          if (depVersion && resolved.type !== "directory") {
+            // don't overwrite local file: specifiers, they only change during publish
+            pkg.updateLocalDependency(resolved, depVersion, this.savePrefix);
           }
-
-          return pkg.serialize().then(() => {
-            // commit the updated manifest
-            changedFiles.add(pkg.manifestLocation);
-          });
-        });
-
-        // exec version script
-        tasks = tasks.then(() => this.runPackageLifecycle(pkg, "version"));
-
-        if (conventionalCommits) {
-          tasks = tasks.then(() => {
-            // we can now generate the Changelog, based on the
-            // the updated version that we're about to release.
-            const type = independentVersions ? "independent" : "fixed";
-
-            return ConventionalCommitUtilities.updateChangelog(pkg, type, {
-              changelogPreset,
-              rootPath,
-              tagPrefix: this.tagPrefix,
-            }).then(changelogLocation => {
-              // commit the updated changelog
-              changedFiles.add(changelogLocation);
-            });
-          });
         }
 
-        return tasks;
-      };
+        return pkg.serialize().then(() => {
+          // commit the updated manifest
+          changedFiles.add(pkg.manifestLocation);
 
+          return pkg;
+        });
+      },
+      pkg => this.runPackageLifecycle(pkg, "version"),
+    ];
+
+    if (conventionalCommits) {
+      // we can now generate the Changelog, based on the
+      // the updated version that we're about to release.
+      const type = independentVersions ? "independent" : "fixed";
+
+      actions.push(pkg =>
+        ConventionalCommitUtilities.updateChangelog(pkg, type, {
+          changelogPreset,
+          rootPath,
+          tagPrefix: this.tagPrefix,
+        }).then(changelogLocation => {
+          // commit the updated changelog
+          changedFiles.add(changelogLocation);
+
+          return pkg;
+        })
+      );
+    }
+
+    const mapUpdate = pPipe(actions);
+
+    chain = chain.then(() =>
       // TODO: tune the concurrency?
-      return pMap(this.updates, mapUpdate, { concurrency: 100 });
-    });
+      pMap(this.updates, mapUpdate, { concurrency: 100 })
+    );
 
     if (!independentVersions) {
       this.project.version = this.globalVersion;

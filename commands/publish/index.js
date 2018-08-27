@@ -4,6 +4,7 @@ const os = require("os");
 const path = require("path");
 const pFinally = require("p-finally");
 const pMap = require("p-map");
+const pPipe = require("p-pipe");
 const pReduce = require("p-reduce");
 const semver = require("semver");
 
@@ -386,12 +387,8 @@ class PublishCommand extends Command {
     } catch (ex) {
       this.logger.silly("execScript", `No ${script} script found at ${scriptLocation}`);
     }
-  }
 
-  runPrepublishScripts(pkg) {
-    return Promise.resolve()
-      .then(() => this.runPackageLifecycle(pkg, "prepare"))
-      .then(() => this.runPackageLifecycle(pkg, "prepublishOnly"));
+    return pkg;
   }
 
   removeTempLicensesOnError(error) {
@@ -414,12 +411,7 @@ class PublishCommand extends Command {
   packUpdated() {
     const tracker = this.logger.newItem("npm pack");
 
-    tracker.addWork(
-      this.options.requireScripts
-        ? // track completion of prepublish.js on updates as well
-          this.packagesToPublish.length + this.updates.length
-        : this.packagesToPublish.length
-    );
+    tracker.addWork(this.packagesToPublish.length);
 
     let chain = Promise.resolve();
 
@@ -428,22 +420,25 @@ class PublishCommand extends Command {
     });
 
     chain = chain.then(() => createTempLicenses(this.project.licensePath, this.packagesToBeLicensed));
-    chain = chain.then(() => this.runPrepublishScripts(this.project.manifest));
+
+    chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "prepare"));
+    chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "prepublishOnly"));
+
+    const actions = [];
 
     if (this.options.requireScripts) {
-      chain = chain.then(() =>
-        pMap(this.updates, ({ pkg }) => {
-          this.execScript(pkg, "prepublish");
-          tracker.completeWork(1);
-        })
-      );
+      actions.push(pkg => this.execScript(pkg, "prepublish"));
     }
+
+    const mapper = pPipe(actions);
 
     chain = chain.then(() =>
       pReduce(this.batchedPackages, (_, batch) =>
-        this.npmPack(batch).then(() => {
-          tracker.completeWork(batch.length);
-        })
+        pMap(batch, mapper)
+          .then(() => this.npmPack(batch))
+          .then(() => {
+            tracker.completeWork(batch.length);
+          })
       )
     );
 
@@ -464,22 +459,26 @@ class PublishCommand extends Command {
 
     let chain = Promise.resolve();
 
-    chain = chain.then(() =>
-      runParallelBatches(this.batchedPackages, this.concurrency, pkg =>
-        npmPublish(pkg, distTag, this.npmConfig)
-          // postpublish is _not_ run when publishing a tarball
-          .then(() => this.runPackageLifecycle(pkg, "postpublish"))
-          .then(() => {
-            tracker.info("published", pkg.name);
+    const actions = [
+      pkg => npmPublish(pkg, distTag, this.npmConfig),
+      // postpublish is _not_ run when publishing a tarball
+      pkg => this.runPackageLifecycle(pkg, "postpublish"),
+    ];
 
-            if (this.options.requireScripts) {
-              this.execScript(pkg, "postpublish");
-            }
+    if (this.options.requireScripts) {
+      actions.push(pkg => this.execScript(pkg, "postpublish"));
+    }
 
-            tracker.completeWork(1);
-          })
-      )
-    );
+    actions.push(pkg => {
+      tracker.info("published", pkg.name, pkg.version);
+      tracker.completeWork(1);
+
+      return pkg;
+    });
+
+    const mapper = pPipe(actions);
+
+    chain = chain.then(() => runParallelBatches(this.batchedPackages, this.concurrency, mapper));
 
     chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "postpublish"));
 
@@ -494,27 +493,30 @@ class PublishCommand extends Command {
 
     let chain = Promise.resolve();
 
-    chain = chain.then(() =>
-      runParallelBatches(this.batchedPackages, this.concurrency, pkg =>
-        this.updateTag(pkg, distTag).then(() => {
-          tracker.info("dist-tag", "%s@%s => %j", pkg.name, pkg.version, distTag);
-          tracker.completeWork(1);
-        })
-      )
-    );
+    const actions = [
+      pkg =>
+        Promise.resolve()
+          .then(() => npmDistTag.check(pkg, "lerna-temp", this.npmConfig))
+          .then(exists => {
+            if (exists) {
+              return npmDistTag.remove(pkg, "lerna-temp", this.npmConfig);
+            }
+          })
+          .then(() => npmDistTag.add(pkg, distTag, this.npmConfig))
+          .then(() => pkg),
+      pkg => {
+        tracker.info("dist-tag", "%s@%s => %j", pkg.name, pkg.version, distTag);
+        tracker.completeWork(1);
+
+        return pkg;
+      },
+    ];
+
+    const mapper = pPipe(actions);
+
+    chain = chain.then(() => runParallelBatches(this.batchedPackages, this.concurrency, mapper));
 
     return pFinally(chain, () => tracker.finish());
-  }
-
-  updateTag(pkg, distTag) {
-    return Promise.resolve()
-      .then(() => npmDistTag.check(pkg, "lerna-temp", this.npmConfig))
-      .then(exists => {
-        if (exists) {
-          return npmDistTag.remove(pkg, "lerna-temp", this.npmConfig);
-        }
-      })
-      .then(() => npmDistTag.add(pkg, distTag, this.npmConfig));
   }
 
   getDistTag() {
