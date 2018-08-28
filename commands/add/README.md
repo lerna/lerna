@@ -36,6 +36,9 @@ Add the new package with an exact version (e.g., `1.0.1`) rather than the defaul
 ## Examples
 
 ```sh
+# Adds the module-1 package to the packages in the 'prefix-' prefixed folders
+lerna add module-1 packages/prefix-*
+
 # Install module-1 to module-2
 lerna add module-1 --scope=module-2
 
