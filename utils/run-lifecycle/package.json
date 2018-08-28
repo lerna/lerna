@@ -1,6 +1,6 @@
 {
   "name": "@lerna/run-lifecycle",
-  "version": "3.0.0",
+  "version": "3.2.0",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",

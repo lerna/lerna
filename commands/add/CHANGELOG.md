@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.2.0"></a>
+# [3.2.0](https://github.com/lerna/lerna/compare/v3.1.4...v3.2.0) (2018-08-28)
+
+
+### Bug Fixes
+
+* **add:** Order short flags first in help output, clarify description ([8efb549](https://github.com/lerna/lerna/commit/8efb549))
+
+
+### Features
+
+* **add:** Add examples to `--help` output ([#1612](https://github.com/lerna/lerna/issues/1612)) ([2ab62c1](https://github.com/lerna/lerna/commit/2ab62c1)), closes [#1608](https://github.com/lerna/lerna/issues/1608)
+
+
+
+
+
 <a name="3.1.4"></a>
 ## [3.1.4](https://github.com/lerna/lerna/compare/v3.1.3...v3.1.4) (2018-08-21)
 

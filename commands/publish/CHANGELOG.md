@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.2.0"></a>
+# [3.2.0](https://github.com/lerna/lerna/compare/v3.1.4...v3.2.0) (2018-08-28)
+
+
+### Bug Fixes
+
+* **publish:** Call synthetic prepublishOnly lifecycle before packing ([dda9812](https://github.com/lerna/lerna/commit/dda9812)), closes [#1169](https://github.com/lerna/lerna/issues/1169)
+
+
+### Features
+
+* **publish:** Support prepack/postpack lifecycle in root manifest ([9df88a4](https://github.com/lerna/lerna/commit/9df88a4))
+
+
+
+
+
 <a name="3.1.3"></a>
 ## [3.1.3](https://github.com/lerna/lerna/compare/v3.1.2...v3.1.3) (2018-08-21)
 
