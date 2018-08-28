@@ -36,7 +36,10 @@ const collectUpdatesActual = require.requireActual("@lerna/collect-updates");
 
 // assertion helpers
 const listDirty = cwd =>
-  execa("git", ["diff", "--name-only"], { cwd }).then(result => result.stdout.split("\n").filter(Boolean));
+  // git ls-files --exclude-standard --modified --others
+  execa("git", ["ls-files", "--exclude-standard", "--modified", "--others"], { cwd }).then(result =>
+    result.stdout.split("\n").filter(Boolean)
+  );
 
 // stabilize commit SHA
 expect.addSnapshotSerializer(require("@lerna-test/serialize-git-sha"));
@@ -242,6 +245,20 @@ describe("VersionCommand", () => {
       const logMessages = loggingOutput();
       expect(logMessages).toContain("Skipping git tag/commit");
       expect(logMessages).toContain("--skip-git has been replaced by --no-git-tag-version --no-push");
+    });
+
+    it("skips dirty working tree validation", async () => {
+      const testDir = await initFixture("normal");
+      await fs.outputFile(path.join(testDir, "packages/package-1/hello.js"), "world");
+      await lernaVersion(testDir)("--no-git-tag-version");
+
+      expect(checkWorkingTree).not.toBeCalled();
+
+      const logMessages = loggingOutput("warn");
+      expect(logMessages).toContain("Skipping working tree validation, proceed at your own risk");
+
+      const unstaged = await listDirty(testDir);
+      expect(unstaged).toContain("packages/package-1/hello.js");
     });
   });
 
