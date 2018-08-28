@@ -7,7 +7,7 @@ const filterable = require("@lerna/filter-options");
  */
 exports.command = "add <pkg> [globs..]";
 
-exports.describe = "Add a dependency to matched packages";
+exports.describe = "Add a single dependency to matched packages";
 
 exports.builder = yargs => {
   yargs
@@ -20,16 +20,16 @@ exports.builder = yargs => {
       type: "array",
     })
     .options({
-      dev: {
+      D: {
         group: "Command Options:",
         type: "boolean",
-        alias: "D",
+        alias: "dev",
         describe: "Save to devDependencies",
       },
-      exact: {
+      E: {
         group: "Command Options:",
         type: "boolean",
-        alias: "E",
+        alias: "exact",
         describe: "Save version exactly",
       },
     })
