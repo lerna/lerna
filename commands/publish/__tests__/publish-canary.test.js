@@ -145,6 +145,31 @@ Object {
 `);
 });
 
+test("publish --canary addresses unpublished package", async () => {
+  const cwd = await initTaggedFixture("independent");
+
+  await setupChanges(
+    cwd,
+    [
+      "packages/package-6/package.json",
+      JSON.stringify({
+        name: "package-6",
+        // npm init starts at 1.0.0,
+        // but an unpublished 1.0.0 should be 1.0.0-alpha.0, n'est-ce pas?
+        version: "0.1.0",
+      }),
+    ],
+    ["packages/package-6/new-kids.js", "on the block"]
+  );
+  await lernaPublish(cwd)("--canary", "premajor");
+
+  expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
+Object {
+  "package-6": 1.0.0-alpha.0+SHA,
+}
+`);
+});
+
 describe("publish --canary differential", () => {
   test("source", async () => {
     const cwd = await initTaggedFixture("snake-graph");

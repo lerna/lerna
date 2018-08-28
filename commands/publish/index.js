@@ -230,7 +230,10 @@ class PublishCommand extends Command {
             match: `${pkg.name}@*`,
             cwd: this.execOpts.cwd,
           })
-            .then(makeVersion)
+            .then(({ lastVersion = pkg.version, refCount = 1, sha }) =>
+              // an unpublished package will have no reachable git tag
+              makeVersion({ lastVersion, refCount, sha })
+            )
             .then(version => [pkg.name, version])
         ).then(updatesVersions => ({
           updates,
