@@ -32,7 +32,15 @@ exports.builder = yargs => {
         alias: "E",
         describe: "Save version exactly",
       },
-    });
+    })
+    .example(
+      "$0 add module-1 packages/prefix-*",
+      "Adds the module-1 package to the packages in the 'prefix-' prefixed folders"
+    )
+    .example("$0 add module-1 --scope=module-2", "Install module-1 to module-2")
+    .example("$0 add module-1 --scope=module-2 --dev", "Install module-1 to module-2 in devDependencies")
+    .example("$0 add module-1", "Install module-1 in all modules except module-1")
+    .example("$0 add babel-core", "Install babel-core in all modules");
 
   return filterable(yargs);
 };
