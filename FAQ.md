@@ -84,3 +84,27 @@ dependencies:
   post:
     - npm run bootstrap
 ```
+
+## CLI usage
+
+If you'd prefer to run `lerna` from the local installation (i.e. not installed globally with `-g`) then you can add an npm script to your `package.json` that allows you to call lerna locally.
+
+In your root `package.json`:
+```javascript
+{
+  ...
+  "scripts": {
+    "lerna": "lerna"
+  }
+}
+```
+
+Which can then be used to call lerna locally with NPM:
+
+    npm run lerna -- init
+
+or 
+    
+    npm run lerna -- --help boostrap
+
+NPM will pass any arguments after `--` to lerna.
