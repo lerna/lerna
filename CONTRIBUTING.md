@@ -1,5 +1,8 @@
 # Contributing to Lerna
 
+> Please note that this project is released with a [Contributor Code of Conduct](./CODE_OF_CONDUCT.md).
+> By participating in this project you agree to abide by its terms.
+
 First, ensure you have the [latest `npm`](https://docs.npmjs.com/).
 
 To get started with the repo:
