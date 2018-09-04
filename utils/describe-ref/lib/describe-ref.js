@@ -7,7 +7,7 @@ module.exports = describeRef;
 module.exports.parse = parse;
 module.exports.sync = sync;
 
-function getArgs(options = {}) {
+function getArgs(options) {
   const args = [
     "describe",
     // fallback to short sha if no tags located
@@ -27,11 +27,11 @@ function getArgs(options = {}) {
   return args;
 }
 
-function describeRef(options) {
+function describeRef(options = {}) {
   const promise = childProcess.exec("git", getArgs(options), options);
 
   return promise.then(({ stdout }) => {
-    const result = parse(stdout);
+    const result = parse(stdout, options);
 
     log.verbose("git-describe", "%j => %j", options && options.match, stdout);
     log.silly("git-describe", "parsed => %j", result);
@@ -40,9 +40,9 @@ function describeRef(options) {
   });
 }
 
-function sync(options) {
+function sync(options = {}) {
   const stdout = childProcess.execSync("git", getArgs(options), options);
-  const result = parse(stdout);
+  const result = parse(stdout, options);
 
   // only called by collect-updates with no matcher
   log.silly("git-describe.sync", "%j => %j", stdout, result);
@@ -50,10 +50,16 @@ function sync(options) {
   return result;
 }
 
-function parse(stdout) {
-  if (/^[0-9a-f]{7,40}$/.test(stdout)) {
-    // fallback received, can't provide full metadata
-    return { sha: stdout };
+function parse(stdout, options = {}) {
+  // when git describe fails to locate tags, it returns only the minimal sha
+  if (/^[0-9a-f]{7,40}/.test(stdout)) {
+    // repo might still be dirty
+    const [, sha, isDirty] = /^([0-9a-f]{7,40})(-dirty)?/.exec(stdout);
+
+    // count number of commits since beginning of time
+    const refCount = childProcess.execSync("git", ["rev-list", "--count", sha], options);
+
+    return { refCount, sha, isDirty: Boolean(isDirty) };
   }
 
   const [, lastTagName, lastVersion, refCount, sha, isDirty] =

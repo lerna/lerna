@@ -163,9 +163,10 @@ test("publish --canary addresses unpublished package", async () => {
   );
   await lernaPublish(cwd)("--canary", "premajor");
 
+  // there have been two commits since the beginning of the repo
   expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
 Object {
-  "package-6": 1.0.0-alpha.0+SHA,
+  "package-6": 1.0.0-alpha.1+SHA,
 }
 `);
 });

@@ -14,7 +14,7 @@ describe("describeRef()", () => {
   it("resolves parsed metadata", async () => {
     const result = await describeRef();
 
-    expect(childProcess.exec).lastCalledWith("git", DEFAULT_ARGS, undefined);
+    expect(childProcess.exec).lastCalledWith("git", DEFAULT_ARGS, {});
     expect(result).toEqual({
       isDirty: false,
       lastTagName: "v1.2.3",
@@ -43,7 +43,7 @@ describe("describeRef.sync()", () => {
   it("returns parsed metadata", () => {
     const result = describeRef.sync();
 
-    expect(childProcess.execSync).lastCalledWith("git", DEFAULT_ARGS, undefined);
+    expect(childProcess.execSync).lastCalledWith("git", DEFAULT_ARGS, {});
     expect(result).toEqual({
       isDirty: false,
       lastTagName: "v1.2.3",
@@ -102,9 +102,28 @@ describe("describeRef.parse()", () => {
   });
 
   it("detects fallback and returns partial metadata", () => {
-    const result = describeRef.parse("a1b2c3d");
+    childProcess.execSync.mockReturnValueOnce("123");
 
+    const options = { cwd: "bar" };
+    const result = describeRef.parse("a1b2c3d", options);
+
+    expect(childProcess.execSync).lastCalledWith("git", ["rev-list", "--count", "a1b2c3d"], options);
     expect(result).toEqual({
+      isDirty: false,
+      refCount: "123",
+      sha: "a1b2c3d",
+    });
+  });
+
+  it("detects dirty fallback and returns partial metadata", () => {
+    childProcess.execSync.mockReturnValueOnce("456");
+
+    const result = describeRef.parse("a1b2c3d-dirty");
+
+    expect(childProcess.execSync).lastCalledWith("git", ["rev-list", "--count", "a1b2c3d"], {});
+    expect(result).toEqual({
+      isDirty: true,
+      refCount: "456",
       sha: "a1b2c3d",
     });
   });
