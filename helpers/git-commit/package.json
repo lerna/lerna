@@ -6,7 +6,7 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
-    "execa": "^0.10.0",
+    "execa": "^1.0.0",
     "temp-write": "^3.4.0"
   }
 }
