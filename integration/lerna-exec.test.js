@@ -152,11 +152,24 @@ package-2
 
   test("--no-bail", async () => {
     const cwd = await initFixture("lerna-exec");
-    const args = ["exec", "--no-bail", "--concurrency=1", "--", "npm", "run", "fail-or-succeed"];
+    const args = ["exec", "--no-bail", "--concurrency=1", "--", "npm", "run", "fail-or-succeed", "--silent"];
 
-    const { stdout, stderr } = await cliRunner(cwd)(...args);
-    expect(stderr).toMatch("Failed at the package-1@1.0.0 fail-or-succeed script");
-    expect(stdout).toMatch("failure!");
-    expect(stdout).toMatch("success!");
+    try {
+      await cliRunner(cwd)(...args);
+    } catch (err) {
+      expect(err.stderr).toMatchInlineSnapshot(`
+lerna notice cli __TEST_VERSION__
+lerna info Executing command in 2 packages: "npm run fail-or-succeed --silent"
+lerna ERR! Received non-zero exit code 1 during execution
+lerna success exec Executed command in 2 packages: "npm run fail-or-succeed --silent"
+
+`);
+      expect(err.stdout).toMatchInlineSnapshot(`
+failure!
+success!
+
+`);
+      expect(err.code).toBe(1);
+    }
   });
 });

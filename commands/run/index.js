@@ -48,6 +48,8 @@ class RunCommand extends Command {
 
     return chain.then(() => {
       this.count = this.packagesWithScript.length;
+      this.packagePlural = this.count === 1 ? "package" : "packages";
+      this.joinedCommand = [this.npmClient, "run", this.script].concat(this.args).join(" ");
 
       if (!this.count) {
         this.logger.success("run", `No packages found with the lifecycle script '${script}'`);
@@ -63,6 +65,14 @@ class RunCommand extends Command {
   }
 
   execute() {
+    this.logger.info(
+      "",
+      "Executing command in %d %s: %j",
+      this.count,
+      this.packagePlural,
+      this.joinedCommand
+    );
+
     let chain = Promise.resolve();
 
     if (this.options.parallel) {
@@ -71,19 +81,43 @@ class RunCommand extends Command {
       chain = chain.then(() => this.runScriptInPackagesBatched());
     }
 
+    if (this.bail) {
+      // only the first error is caught
+      chain = chain.catch(err => {
+        process.exitCode = err.code;
+
+        // rethrow to halt chain and log properly
+        throw err;
+      });
+    } else {
+      // detect error (if any) from collected results
+      chain = chain.then(results => {
+        /* istanbul ignore else */
+        if (results.some(result => result.failed)) {
+          // propagate "highest" error code, it's probably the most useful
+          const codes = results.filter(result => result.failed).map(result => result.code);
+          const exitCode = Math.max(...codes, 1);
+
+          this.logger.error("", "Received non-zero exit code %d during execution", exitCode);
+          process.exitCode = exitCode;
+        }
+      });
+    }
+
     return chain.then(() => {
       this.logger.success(
         "run",
         "Ran npm script '%s' in %d %s:",
         this.script,
         this.count,
-        this.count === 1 ? "package" : "packages"
+        this.packagePlural
       );
       this.logger.success("", this.packagesWithScript.map(pkg => `- ${pkg.name}`).join("\n"));
     });
   }
 
   getOpts(pkg) {
+    // these options are NOT passed directly to execa, they are composed in npm-run-script
     return {
       args: this.args,
       npmClient: this.npmClient,
@@ -98,19 +132,12 @@ class RunCommand extends Command {
       ? pkg => this.runScriptInPackageStreaming(pkg)
       : pkg => this.runScriptInPackageCapturing(pkg);
 
-    return runParallelBatches(this.batchedPackages, this.concurrency, runner);
+    return runParallelBatches(this.batchedPackages, this.concurrency, runner).then(batchedResults =>
+      batchedResults.reduce((arr, batch) => arr.concat(batch), [])
+    );
   }
 
   runScriptInPackagesParallel() {
-    this.logger.info(
-      "run",
-      "in %d %s: %s run %s",
-      this.count,
-      this.count === 1 ? "package" : "packages",
-      this.npmClient,
-      [this.script].concat(this.args).join(" ")
-    );
-
     return pMap(this.packagesWithScript, pkg => this.runScriptInPackageStreaming(pkg));
   }
 
@@ -121,6 +148,8 @@ class RunCommand extends Command {
   runScriptInPackageCapturing(pkg) {
     return npmRunScript(this.script, this.getOpts(pkg)).then(result => {
       output(result.stdout);
+
+      return result;
     });
   }
 }

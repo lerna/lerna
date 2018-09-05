@@ -16,17 +16,31 @@ describe("lerna run", () => {
       await cliRunner(cwd)(...args);
     } catch (err) {
       expect(err.message).toMatch("npm run fail --silent exited 1 in 'package-3'");
+      expect(err.code).toBe(1);
     }
   });
 
   test("fail --no-bail", async () => {
     const cwd = await initFixture("lerna-run");
-    const args = ["run", "fail", "--no-bail", "--", "--silent"];
+    const args = ["run", "fail", "--no-bail", "--concurrency", "1", "--", "--silent"];
 
-    const { stdout } = await cliRunner(cwd)(...args);
+    try {
+      await cliRunner(cwd)(...args);
+    } catch (err) {
+      expect(err.stderr).toMatchInlineSnapshot(`
+lerna notice cli __TEST_VERSION__
+lerna info Executing command in 2 packages: "npm run fail --silent"
+lerna ERR! Received non-zero exit code 100 during execution
+lerna success run Ran npm script 'fail' in 2 packages:
+lerna success - package-1
+lerna success - package-3
 
-    expect(stdout).toMatch("package-3");
-    expect(stdout).toMatch("package-1");
+`);
+      expect(err.stdout).toMatch("package-3");
+      expect(err.stdout).toMatch("package-1");
+      // it should pick the highest exit code (100), not the first (1)
+      expect(err.code).toBe(100);
+    }
   });
 
   test("test --stream", async () => {
@@ -49,6 +63,7 @@ package-2: package-2
 `);
     expect(stderr).toMatchInlineSnapshot(`
 lerna notice cli __TEST_VERSION__
+lerna info Executing command in 4 packages: "npm run test --silent"
 lerna success run Ran npm script 'test' in 4 packages:
 lerna success - package-1
 lerna success - package-2
@@ -78,6 +93,7 @@ package-2
 `);
     expect(stderr).toMatchInlineSnapshot(`
 lerna notice cli __TEST_VERSION__
+lerna info Executing command in 4 packages: "npm run test --silent"
 lerna success run Ran npm script 'test' in 4 packages:
 lerna success - package-1
 lerna success - package-2
@@ -99,7 +115,7 @@ lerna success - package-4
     const { stdout, stderr } = await cliRunner(cwd)(...args);
     expect(stderr).toMatchInlineSnapshot(`
 lerna notice cli __TEST_VERSION__
-lerna info run in 4 packages: npm run test --silent
+lerna info Executing command in 4 packages: "npm run test --silent"
 lerna success run Ran npm script 'test' in 4 packages:
 lerna success - package-1
 lerna success - package-2

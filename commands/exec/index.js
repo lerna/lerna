@@ -45,6 +45,9 @@ class ExecCommand extends Command {
 
     return chain.then(() => {
       this.count = this.filteredPackages.length;
+      this.packagePlural = this.count === 1 ? "package" : "packages";
+      this.joinedCommand = [this.command].concat(this.args).join(" ");
+
       this.batchedPackages = this.toposort
         ? batchPackages(this.filteredPackages, this.options.rejectCycles)
         : [this.filteredPackages];
@@ -52,26 +55,58 @@ class ExecCommand extends Command {
   }
 
   execute() {
+    this.logger.info(
+      "",
+      "Executing command in %d %s: %j",
+      this.count,
+      this.packagePlural,
+      this.joinedCommand
+    );
+
+    let chain = Promise.resolve();
+
     if (this.options.parallel) {
-      return this.runCommandInPackagesParallel();
+      chain = chain.then(() => this.runCommandInPackagesParallel());
+    } else {
+      chain = chain.then(() => this.runCommandInPackagesBatched());
     }
 
-    const runner = this.options.stream
-      ? pkg => this.runCommandInPackageStreaming(pkg)
-      : pkg => this.runCommandInPackageCapturing(pkg);
+    if (this.bail) {
+      // only the first error is caught
+      chain = chain.catch(err => {
+        process.exitCode = err.code;
 
-    return runParallelBatches(this.batchedPackages, this.concurrency, runner).then(() => {
+        // rethrow to halt chain and log properly
+        throw err;
+      });
+    } else {
+      // detect error (if any) from collected results
+      chain = chain.then(results => {
+        /* istanbul ignore else */
+        if (results.some(result => result.failed)) {
+          // propagate "highest" error code, it's probably the most useful
+          const codes = results.filter(result => result.failed).map(result => result.code);
+          const exitCode = Math.max(...codes, 1);
+
+          this.logger.error("", "Received non-zero exit code %d during execution", exitCode);
+          process.exitCode = exitCode;
+        }
+      });
+    }
+
+    return chain.then(() => {
       this.logger.success(
         "exec",
         "Executed command in %d %s: %j",
         this.count,
-        this.count === 1 ? "package" : "packages",
-        [this.command].concat(this.args).join(" ")
+        this.packagePlural,
+        this.joinedCommand
       );
     });
   }
 
   getOpts(pkg) {
+    // these options are passed _directly_ to execa
     return {
       cwd: pkg.location,
       shell: true,
@@ -85,15 +120,17 @@ class ExecCommand extends Command {
     };
   }
 
-  runCommandInPackagesParallel() {
-    this.logger.info(
-      "exec",
-      "in %d %s: %j",
-      this.count,
-      this.count === 1 ? "package" : "packages",
-      [this.command].concat(this.args).join(" ")
-    );
+  runCommandInPackagesBatched() {
+    const runner = this.options.stream
+      ? pkg => this.runCommandInPackageStreaming(pkg)
+      : pkg => this.runCommandInPackageCapturing(pkg);
 
+    return runParallelBatches(this.batchedPackages, this.concurrency, runner).then(batchedResults =>
+      batchedResults.reduce((arr, batch) => arr.concat(batch), [])
+    );
+  }
+
+  runCommandInPackagesParallel() {
     return Promise.all(this.filteredPackages.map(pkg => this.runCommandInPackageStreaming(pkg)));
   }
 

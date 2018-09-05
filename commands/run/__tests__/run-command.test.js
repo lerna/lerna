@@ -33,8 +33,12 @@ const ranInPackagesStreaming = testDir =>
   }, []);
 
 describe("RunCommand", () => {
-  npmRunScript.mockImplementation((script, { pkg }) => Promise.resolve({ stdout: pkg.name }));
-  npmRunScript.stream.mockImplementation(() => Promise.resolve());
+  npmRunScript.mockImplementation((script, { pkg }) => Promise.resolve({ code: 0, stdout: pkg.name }));
+  npmRunScript.stream.mockImplementation(() => Promise.resolve({ code: 0 }));
+
+  afterEach(() => {
+    process.exitCode = undefined;
+  });
 
   describe("in a basic repo", () => {
     it("should complain if invoked with an empty script", async () => {
@@ -171,8 +175,16 @@ describe("RunCommand", () => {
     });
 
     it("reports script errors with early exit", async () => {
-      expect.assertions(2);
-      npmRunScript.mockImplementationOnce((script, { pkg }) => Promise.reject(new Error(pkg.name)));
+      expect.assertions(3);
+
+      npmRunScript.mockImplementationOnce((script, { pkg }) => {
+        const err = new Error(pkg.name);
+
+        err.failed = true;
+        err.code = 123;
+
+        return Promise.reject(err);
+      });
 
       const testDir = await initFixture("basic");
 
@@ -181,7 +193,27 @@ describe("RunCommand", () => {
       } catch (err) {
         expect(err.message).toMatch("package-1");
         expect(err.message).not.toMatch("package-2");
+        expect(process.exitCode).toBe(123);
       }
+    });
+
+    it("propagates non-zero exit codes with --no-bail", async () => {
+      npmRunScript.mockImplementationOnce((script, { pkg }) => {
+        const err = new Error(pkg.name);
+
+        err.failed = true;
+        err.code = 456;
+        err.stdout = pkg.name;
+
+        return Promise.resolve(err);
+      });
+
+      const testDir = await initFixture("basic");
+
+      await lernaRun(testDir)("my-script", "--no-bail");
+
+      expect(process.exitCode).toBe(456);
+      expect(output.logged().split("\n")).toEqual(["package-1", "package-3"]);
     });
   });
 

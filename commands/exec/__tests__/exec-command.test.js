@@ -33,8 +33,12 @@ const execInPackagesStreaming = testDir =>
 
 describe("ExecCommand", () => {
   // TODO: it's very suspicious that mockResolvedValue() doesn't work here
-  ChildProcessUtilities.spawn = jest.fn(() => Promise.resolve());
-  ChildProcessUtilities.spawnStreaming = jest.fn(() => Promise.resolve());
+  ChildProcessUtilities.spawn = jest.fn(() => Promise.resolve({ code: 0 }));
+  ChildProcessUtilities.spawnStreaming = jest.fn(() => Promise.resolve({ code: 0 }));
+
+  afterEach(() => {
+    process.exitCode = undefined;
+  });
 
   describe("in a basic repo", () => {
     it("should complain if invoked without command", async () => {
@@ -50,14 +54,14 @@ describe("ExecCommand", () => {
     });
 
     it("rejects with execution error", async () => {
-      expect.assertions(1);
-
       const testDir = await initFixture("basic");
 
-      ChildProcessUtilities.spawn.mockImplementationOnce(() => {
+      ChildProcessUtilities.spawn.mockImplementationOnce((cmd, args) => {
         const boom = new Error("execution error");
-        boom.code = 1;
-        boom.cmd = "boom";
+
+        boom.failed = true;
+        boom.code = 123;
+        boom.cmd = [cmd].concat(args).join(" ");
 
         throw boom;
       });
@@ -66,18 +70,37 @@ describe("ExecCommand", () => {
         await lernaExec(testDir)("boom");
       } catch (err) {
         expect(err.message).toBe("execution error");
+        expect(err.cmd).toBe("boom");
+        expect(process.exitCode).toBe(123);
       }
     });
 
-    it("should ignore execution errors with --bail=false", async () => {
+    it("should ignore execution errors with --no-bail", async () => {
       const testDir = await initFixture("basic");
 
-      await lernaExec(testDir)("boom", "--no-bail");
+      ChildProcessUtilities.spawn.mockImplementationOnce((cmd, args, { pkg }) => {
+        const boom = new Error(pkg.name);
+
+        boom.failed = true;
+        boom.code = 456;
+        boom.cmd = [cmd].concat(args).join(" ");
+
+        // --no-bail passes { reject: false } to execa, so throwing is inappropriate
+        return Promise.resolve(boom);
+      });
+
+      try {
+        await lernaExec(testDir)("boom", "--no-bail", "--", "--shaka", "--lakka");
+      } catch (err) {
+        expect(err.message).toBe("package-1");
+        expect(err.cmd).toBe("boom --shaka --lakka");
+        expect(process.exitCode).toBe(456);
+      }
 
       expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(2);
       expect(ChildProcessUtilities.spawn).lastCalledWith(
         "boom",
-        [],
+        ["--shaka", "--lakka"],
         expect.objectContaining({
           reject: false,
         })

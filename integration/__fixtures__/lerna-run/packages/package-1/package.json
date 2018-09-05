@@ -6,7 +6,7 @@
   },
   "scripts": {
     "prefail": "echo package-1",
-    "fail": "exit 1",
+    "fail": "exit 100",
     "my-script": "echo package-1",
     "test": "echo package-1"
   }
