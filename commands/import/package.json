@@ -36,7 +36,7 @@
     "@lerna/prompt": "file:../../core/prompt",
     "@lerna/validation-error": "file:../../core/validation-error",
     "dedent": "^0.7.0",
-    "fs-extra": "^6.0.1",
+    "fs-extra": "^7.0.0",
     "p-map-series": "^1.0.0"
   }
 }
