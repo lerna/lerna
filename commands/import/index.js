@@ -158,7 +158,7 @@ class ImportCommand extends Command {
     return patch
       .replace(/^([-+]{3} [ab])/gm, replacement)
       .replace(/^(diff --git a)/gm, replacement)
-      .replace(/^(diff --git \S+ b)/gm, replacement)
+      .replace(/^(diff --git (?! b\/).+ b)/gm, replacement)
       .replace(/^(copy (from|to)) /gm, `$1 ${formattedTarget}/`)
       .replace(/^(rename (from|to)) /gm, `$1 ${formattedTarget}/`);
   }
