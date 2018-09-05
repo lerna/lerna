@@ -37,6 +37,18 @@ describe("RunCommand", () => {
   npmRunScript.stream.mockImplementation(() => Promise.resolve());
 
   describe("in a basic repo", () => {
+    it("should complain if invoked with an empty script", async () => {
+      expect.assertions(1);
+
+      const testDir = await initFixture("basic");
+
+      try {
+        await lernaRun(testDir)("");
+      } catch (err) {
+        expect(err.message).toBe("You must specify a lifecycle script to run");
+      }
+    });
+
     it("runs a script in packages", async () => {
       const testDir = await initFixture("basic");
 
