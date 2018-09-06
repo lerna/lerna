@@ -141,12 +141,23 @@ class ImportCommand extends Command {
         "--binary",
         "-1",
         sha,
+        // custom git prefixes for accurate parsing of filepaths (#1655)
+        `--src-prefix=COMPARE_A/`,
+        `--dst-prefix=COMPARE_B/`,
       ]);
       const version = this.externalExecSync("git", ["--version"]).replace(/git version /g, "");
 
       patch = `${diff}\n--\n${version}`;
     } else {
-      patch = this.externalExecSync("git", ["format-patch", "-1", sha, "--stdout"]);
+      patch = this.externalExecSync("git", [
+        "format-patch",
+        "-1",
+        sha,
+        "--stdout",
+        // custom git prefixes for accurate parsing of filepaths (#1655)
+        `--src-prefix=COMPARE_A/`,
+        `--dst-prefix=COMPARE_B/`,
+      ]);
     }
 
     const formattedTarget = this.targetDirRelativeToGitRoot.replace(/\\/g, "/");
@@ -156,9 +167,9 @@ class ImportCommand extends Command {
     // to all affected files.  This moves the git history for the entire
     // external repository into the package subdirectory, commit by commit.
     return patch
-      .replace(/^([-+]{3} [ab])/gm, replacement)
-      .replace(/^(diff --git a)/gm, replacement)
-      .replace(/^(diff --git (?! b\/).+ b)/gm, replacement)
+      .replace(/^([-+]{3} COMPARE_[AB])/gm, replacement)
+      .replace(/^(diff --git COMPARE_A)/gm, replacement)
+      .replace(/^(diff --git (?! COMPARE_B\/).+ COMPARE_B)/gm, replacement)
       .replace(/^(copy (from|to)) /gm, `$1 ${formattedTarget}/`)
       .replace(/^(rename (from|to)) /gm, `$1 ${formattedTarget}/`);
   }
