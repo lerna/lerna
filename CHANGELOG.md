@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.3.0"></a>
+# [3.3.0](https://github.com/lerna/lerna/compare/v3.2.1...v3.3.0) (2018-09-06)
+
+
+### Bug Fixes
+
+* **describe-ref:** Fallback refCount is the number of commits since beginning of repository ([6dfea52](https://github.com/lerna/lerna/commit/6dfea52))
+* Propagate exit codes from failed executions ([af9c70b](https://github.com/lerna/lerna/commit/af9c70b)), closes [#1374](https://github.com/lerna/lerna/issues/1374) [#1653](https://github.com/lerna/lerna/issues/1653)
+* **run-lifecycle:** Propagate exit code when execution fails ([4763f95](https://github.com/lerna/lerna/commit/4763f95)), closes [#1495](https://github.com/lerna/lerna/issues/1495)
+
+
+### Features
+
+* **deps:** Upgrade execa to ^1.0.0 ([748ae4e](https://github.com/lerna/lerna/commit/748ae4e))
+* **deps:** Upgrade fs-extra to ^7.0.0 ([042b1a3](https://github.com/lerna/lerna/commit/042b1a3))
+* **deps:** Upgrade get-stream to ^4.0.0 ([e280d1d](https://github.com/lerna/lerna/commit/e280d1d))
+* **deps:** Upgrade strong-log-transformer to ^2.0.0 ([42b18a1](https://github.com/lerna/lerna/commit/42b18a1))
+
+
+
+
+
 <a name="3.2.1"></a>
 ## [3.2.1](https://github.com/lerna/lerna/compare/v3.2.0...v3.2.1) (2018-08-28)
 

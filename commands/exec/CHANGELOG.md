@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.3.0"></a>
+# [3.3.0](https://github.com/lerna/lerna/compare/v3.2.1...v3.3.0) (2018-09-06)
+
+
+### Bug Fixes
+
+* Propagate exit codes from failed executions ([af9c70b](https://github.com/lerna/lerna/commit/af9c70b)), closes [#1374](https://github.com/lerna/lerna/issues/1374) [#1653](https://github.com/lerna/lerna/issues/1653)
+
+
+
+
+
 <a name="3.1.3"></a>
 ## [3.1.3](https://github.com/lerna/lerna/compare/v3.1.2...v3.1.3) (2018-08-21)
 

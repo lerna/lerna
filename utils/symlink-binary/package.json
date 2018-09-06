@@ -1,6 +1,6 @@
 {
   "name": "@lerna/symlink-binary",
-  "version": "3.1.4",
+  "version": "3.3.0",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
