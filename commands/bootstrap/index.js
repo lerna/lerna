@@ -181,21 +181,10 @@ class BootstrapCommand extends Command {
 
     const mapPackageWithScript = pkg => {
       if (packagesWithScript.has(pkg)) {
-        return runLifecycle(pkg, stage, this.conf)
-          .then(() => {
-            tracker.silly("lifecycle", "finished", pkg.name);
-            tracker.completeWork(1);
-          })
-          .catch(err => {
-            this.logger.error("bootstrap", `lifecycle '${stage}' errored in '${pkg.name}'`);
-
-            if (err.code) {
-              // log non-lerna error cleanly
-              err.pkg = pkg;
-            }
-
-            throw err;
-          });
+        return runLifecycle(pkg, stage, this.conf).then(() => {
+          tracker.silly("lifecycle", "finished", pkg.name);
+          tracker.completeWork(1);
+        });
       }
     };
 

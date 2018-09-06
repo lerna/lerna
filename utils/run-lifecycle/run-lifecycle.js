@@ -34,7 +34,26 @@ function runLifecycle(pkg, stage, opts) {
     failOk: false,
     log,
     unsafePerm: true,
-  }).then(() => pkg);
+  }).then(
+    () => pkg,
+    err => {
+      // error logging has already occurred on stderr, but we need to stop the chain
+      log.error("lifecycle", "%j errored in %j, ejecting", stage, pkg.name);
+
+      // ensure clean logging...
+      err.pkg = pkg;
+
+      // ...propagate the exit code...
+      const exitCode = err.errno;
+
+      // (using the property our yargs.fail() handler expects :P)
+      err.code = exitCode;
+      process.exitCode = exitCode;
+
+      // ...and send it on its merry way
+      throw err;
+    }
+  );
 }
 
 function createRunner(commandOptions) {
@@ -42,9 +61,7 @@ function createRunner(commandOptions) {
 
   return (pkg, stage) => {
     if (pkg.scripts && pkg.scripts[stage]) {
-      return runLifecycle(pkg, stage, cfg).catch(err => {
-        log.error("lifecycle", `error running ${stage} in ${pkg.name}\n`, err.stack || err);
-      });
+      return runLifecycle(pkg, stage, cfg);
     }
 
     return Promise.resolve(pkg);

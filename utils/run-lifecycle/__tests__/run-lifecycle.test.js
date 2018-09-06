@@ -93,8 +93,15 @@ describe("createRunner", () => {
     expect(npmLifecycle).not.toBeCalled();
   });
 
-  it("logs script error instead of rejecting", async () => {
-    npmLifecycle.mockImplementationOnce(() => Promise.reject(new Error("boom")));
+  it("logs script error and re-throws", async () => {
+    npmLifecycle.mockImplementationOnce(() => {
+      const err = new Error("boom");
+
+      // https://git.io/fAE3f
+      err.errno = 123;
+
+      return Promise.reject(err);
+    });
 
     const pkg = {
       name: "has-script-error",
@@ -103,10 +110,14 @@ describe("createRunner", () => {
       scripts: { prepublishOnly: "exit 1" },
     };
 
-    await runPackageLifecycle(pkg, "prepublishOnly");
+    try {
+      await runPackageLifecycle(pkg, "prepublishOnly");
+    } catch (err) {
+      expect(err.pkg).toBe(pkg);
+      expect(process.exitCode).toBe(123);
+    }
 
     const [errorLog] = loggingOutput("error");
-    expect(errorLog).toMatch("error running prepublishOnly in has-script-error");
-    expect(errorLog).toMatch("boom");
+    expect(errorLog).toMatch('"prepublishOnly" errored in "has-script-error", ejecting');
   });
 });
