@@ -91,6 +91,30 @@ describe("ImportCommand", () => {
       expect(await pathExists(newFilePath)).toBe(true);
     });
 
+    it("supports filepaths that have spaces within the external repo", async () =>
+      Promise.all(
+        // running the same test with and without --flatten
+        [true, false].map(async shouldFlatten => {
+          const [testDir, externalDir] = await Promise.all([
+            initFixture("basic"),
+            initFixture("files-with-spaces", "Init external commit"),
+          ]);
+          const newPackagePath = path.join(testDir, "packages", path.basename(externalDir));
+          const newFilePath = path.join(newPackagePath, "file with spaces");
+          const newDeepFilePath = path.resolve(newPackagePath, "subfolder b/file");
+
+          if (shouldFlatten) {
+            await lernaImport(testDir)(externalDir, "--flatten");
+          } else {
+            await lernaImport(testDir)(externalDir);
+          }
+
+          expect(await lastCommitInDir(testDir)).toBe("Init external commit");
+          expect(await pathExists(newFilePath)).toBe(true);
+          expect(await pathExists(newDeepFilePath)).toBe(true);
+        })
+      ));
+
     it("skips empty patches with --flatten", async () => {
       const [testDir, externalDir] = await initBasicFixtures();
       const filePath = path.join(externalDir, "file.txt");
