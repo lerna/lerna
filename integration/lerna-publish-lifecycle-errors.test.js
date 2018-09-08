@@ -25,7 +25,7 @@ test("lerna publish lifecycle scripts stop on non-zero exit", async () => {
   const rootManifest = path.join(cwd, "package.json");
   const json = await fs.readJson(rootManifest);
 
-  json.scripts.preversion = "echo 'bombs away' && exit 123";
+  json.scripts.preversion = "echo boom && exit 123";
   // console.log(json);
 
   await fs.writeJson(rootManifest, json);
@@ -44,9 +44,9 @@ Changes:
 
 
 > lifecycle@0.0.0-monorepo preversion __TEST_ROOTDIR__
-> echo 'bombs away' && exit 123
+> echo boom && exit 123
 
-bombs away
+boom
 
 `);
     expect(err.stderr).toMatchInlineSnapshot(`
