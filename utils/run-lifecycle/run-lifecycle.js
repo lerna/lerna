@@ -37,20 +37,20 @@ function runLifecycle(pkg, stage, opts) {
   }).then(
     () => pkg,
     err => {
+      // propagate the exit code
+      const exitCode = err.errno || 1;
+
       // error logging has already occurred on stderr, but we need to stop the chain
-      log.error("lifecycle", "%j errored in %j, ejecting", stage, pkg.name);
+      log.error("lifecycle", "%j errored in %j, exiting %d", stage, pkg.name, exitCode);
 
-      // ensure clean logging...
-      err.pkg = pkg;
+      // ensure clean logging, avoiding spurious log dump
+      err.name = "ValidationError";
 
-      // ...propagate the exit code...
-      const exitCode = err.errno;
-
-      // (using the property our yargs.fail() handler expects :P)
+      // our yargs.fail() handler expects a numeric .code, not .errno
       err.code = exitCode;
       process.exitCode = exitCode;
 
-      // ...and send it on its merry way
+      // stop the chain
       throw err;
     }
   );

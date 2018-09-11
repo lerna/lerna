@@ -94,11 +94,12 @@ describe("createRunner", () => {
   });
 
   it("logs script error and re-throws", async () => {
-    npmLifecycle.mockImplementationOnce(() => {
+    npmLifecycle.mockImplementationOnce(({ scripts }, stage) => {
       const err = new Error("boom");
 
       // https://git.io/fAE3f
       err.errno = 123;
+      err.script = scripts[stage];
 
       return Promise.reject(err);
     });
@@ -107,17 +108,46 @@ describe("createRunner", () => {
       name: "has-script-error",
       version: "1.0.0",
       location: "test",
-      scripts: { prepublishOnly: "exit 1" },
+      scripts: { prepublishOnly: "exit 123" },
     };
 
     try {
       await runPackageLifecycle(pkg, "prepublishOnly");
     } catch (err) {
-      expect(err.pkg).toBe(pkg);
+      expect(err.code).toBe(123);
+      expect(err.script).toBe("exit 123");
       expect(process.exitCode).toBe(123);
     }
 
     const [errorLog] = loggingOutput("error");
-    expect(errorLog).toMatch('"prepublishOnly" errored in "has-script-error", ejecting');
+    expect(errorLog).toBe('"prepublishOnly" errored in "has-script-error", exiting 123');
+  });
+
+  it("defaults error exit code to 1", async () => {
+    npmLifecycle.mockImplementationOnce(({ scripts }, stage) => {
+      const err = new Error("kersplode");
+
+      // errno only gets added when a proc closes, not from error
+      err.script = scripts[stage];
+
+      return Promise.reject(err);
+    });
+
+    const pkg = {
+      name: "has-execution-error",
+      version: "1.0.0",
+      location: "test",
+      scripts: { prepack: "a-thing-that-ends-poorly" },
+    };
+
+    try {
+      await runPackageLifecycle(pkg, "prepack");
+    } catch (err) {
+      expect(err.code).toBe(1);
+      expect(err.script).toBe("a-thing-that-ends-poorly");
+    }
+
+    const [errorLog] = loggingOutput("error");
+    expect(errorLog).toBe('"prepack" errored in "has-execution-error", exiting 1');
   });
 });

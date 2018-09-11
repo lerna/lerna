@@ -26,7 +26,6 @@ test("lerna publish lifecycle scripts stop on non-zero exit", async () => {
   const json = await fs.readJson(rootManifest);
 
   json.scripts.preversion = "echo boom && exit 123";
-  // console.log(json);
 
   await fs.writeJson(rootManifest, json);
   await gitAdd(cwd, rootManifest);
@@ -56,11 +55,7 @@ lerna info Looking for changed packages since initial commit.
 lerna info auto-confirmed 
 lerna info lifecycle lifecycle@0.0.0-monorepo~preversion: lifecycle@0.0.0-monorepo
 lerna info lifecycle lifecycle@0.0.0-monorepo~preversion: Failed to exec preversion script
-lerna ERR! lifecycle "preversion" errored in "lifecycle", ejecting
-lerna ERR! exited 123 in 'lifecycle'
-lerna ERR! exited 123 in 'lifecycle'
-lerna ERR! exited 123 in 'lifecycle'
-lerna ERR! exited 123 in 'lifecycle'
+lerna ERR! lifecycle "preversion" errored in "lifecycle", exiting 123
 
 `);
   }
