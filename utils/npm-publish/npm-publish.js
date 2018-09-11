@@ -28,7 +28,8 @@ function npmPublish(pkg, tag, { npmClient, registry }) {
   if (npmClient === "yarn") {
     // skip prompt for new version, use existing instead
     // https://yarnpkg.com/en/docs/cli/publish#toc-yarn-publish-new-version
-    args.push("--new-version", pkg.version, "--non-interactive");
+    args.push("--new-version", pkg.version, "--non-interactive", "--no-git-tag-version");
+    // yarn also needs to be told to stop creating git tags: https://git.io/fAr1P
   }
 
   // always add tarball file, created by npmPack()

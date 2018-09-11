@@ -111,6 +111,7 @@ describe("npm-publish", () => {
           "--new-version",
           pkg.version,
           "--non-interactive",
+          "--no-git-tag-version",
           "test-1.10.100.tgz",
         ],
         {
