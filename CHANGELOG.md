@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="3.3.1"></a>
+## [3.3.1](https://github.com/lerna/lerna/compare/v3.3.0...v3.3.1) (2018-09-11)
+
+
+### Bug Fixes
+
+* **create:** Upgrade whatwg-url to ^7.0.0 ([00842d6](https://github.com/lerna/lerna/commit/00842d6))
+* **import:** Handle filepaths with spaces more robustly ([#1655](https://github.com/lerna/lerna/issues/1655)) ([b084293](https://github.com/lerna/lerna/commit/b084293))
+* **prompt:** Upgrade inquirer to ^6.2.0 ([ebb7ee4](https://github.com/lerna/lerna/commit/ebb7ee4))
+* **publish:** Tell yarn to stop creating git tags ([2a6f0a4](https://github.com/lerna/lerna/commit/2a6f0a4)), closes [#1662](https://github.com/lerna/lerna/issues/1662)
+* **run-lifecycle:** Remove repetitive error logging ([b8915e7](https://github.com/lerna/lerna/commit/b8915e7))
+
+
+
+
+
 <a name="3.3.0"></a>
 # [3.3.0](https://github.com/lerna/lerna/compare/v3.2.1...v3.3.0) (2018-09-06)
 
