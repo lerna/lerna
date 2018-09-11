@@ -9,7 +9,6 @@ const gitCommit = require("@lerna-test/git-commit");
 const cloneFixture = require("@lerna-test/clone-fixture")(
   path.resolve(__dirname, "../commands/publish/__tests__")
 );
-const normalizeTestRoot = require("@lerna-test/normalize-test-root");
 
 const env = {
   // never actually upload when calling `npm install`
@@ -35,7 +34,7 @@ test("lerna publish lifecycle scripts stop on non-zero exit", async () => {
     await cliRunner(cwd, env)(...args);
   } catch (err) {
     expect(err.code).toBe(123);
-    expect(normalizeTestRoot(err.stdout)).toMatchInlineSnapshot(`
+    expect(err.stdout).toMatchInlineSnapshot(`
 
 Changes:
  - package-1: 1.0.0 => 1.1.0

@@ -41,7 +41,6 @@
     "@lerna-test/logging-output": "file:helpers/logging-output",
     "@lerna-test/multi-line-trim-right": "file:helpers/multi-line-trim-right",
     "@lerna-test/normalize-relative-dir": "file:helpers/normalize-relative-dir",
-    "@lerna-test/normalize-test-root": "file:helpers/normalize-test-root",
     "@lerna-test/pkg-matchers": "file:helpers/pkg-matchers",
     "@lerna-test/sawmill": "file:helpers/sawmill",
     "@lerna-test/serialize-changelog": "file:helpers/serialize-changelog",

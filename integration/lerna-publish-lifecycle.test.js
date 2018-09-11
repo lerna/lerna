@@ -6,10 +6,6 @@ const cliRunner = require("@lerna-test/cli-runner");
 const cloneFixture = require("@lerna-test/clone-fixture")(
   path.resolve(__dirname, "../commands/publish/__tests__")
 );
-const normalizeTestRoot = require("@lerna-test/normalize-test-root");
-
-// stabilize changelog commit SHA and datestamp
-expect.addSnapshotSerializer(require("@lerna-test/serialize-changelog"));
 
 const env = {
   // never actually upload when calling `npm install`
@@ -23,7 +19,7 @@ test("lerna publish lifecycle scripts", async () => {
   const args = ["publish", "minor", "--yes"];
 
   const { stdout } = await cliRunner(cwd, env)(...args);
-  expect(normalizeTestRoot(stdout)).toMatchInlineSnapshot(`
+  expect(stdout).toMatchInlineSnapshot(`
 
 Changes:
  - package-1: 1.0.0 => 1.1.0

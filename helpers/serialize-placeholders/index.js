@@ -1,6 +1,8 @@
 "use strict";
 
 const normalizeNewline = require("normalize-newline");
+const serializeTempdir = require("@lerna-test/serialize-tempdir");
+const serializeWindowsPaths = require("@lerna-test/serialize-windows-paths");
 // eslint-disable-next-line node/no-unpublished-require
 const LERNA_VERSION = require("../../core/lerna/package.json").version;
 
@@ -32,18 +34,31 @@ function stabilizeString(str) {
 module.exports = {
   test(thing) {
     if (isObject(thing) && isString(thing.lerna)) {
+      // object properties only contain versions
       return VERSION_REGEX.test(thing.lerna);
     }
 
-    // also let through multiline strings so we can always remove redundant quotes
-    return isString(thing) && (VERSION_REGEX.test(thing) || /\n/.test(thing));
+    return (
+      isString(thing) &&
+      (serializeWindowsPaths.test(thing) ||
+        serializeTempdir.test(thing) ||
+        VERSION_REGEX.test(thing) ||
+        // always remove redundant quotes from multiline strings
+        /\n/.test(thing))
+    );
   },
   serialize(thing, config, indentation, depth, refs, printer) {
     if (isString(thing)) {
       // this always removes redundant quotes for multiline strings
-      return stabilizeString(thing);
+      let val = stabilizeString(thing);
+
+      val = serializeWindowsPaths.serialize(val, config, indentation, depth);
+      val = serializeTempdir.serialize(val, config, indentation, depth);
+
+      return val;
     }
 
+    // object properties only contain versions
     // eslint-disable-next-line no-param-reassign
     thing.lerna = stableVersion(thing.lerna);
 
