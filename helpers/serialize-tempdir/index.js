@@ -21,5 +21,5 @@ module.exports = {
 };
 
 function serializeProjectRoot(match, cwd, subPath) {
-  return normalizePath(path.join("<PROJECT_ROOT>", subPath));
+  return normalizePath(path.join("__TEST_ROOTDIR__", subPath));
 }

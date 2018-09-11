@@ -56,19 +56,19 @@ package-3       MISSING packages/pkg-3
 test("lerna ls --parseable", async () => {
   const { stdout } = await lerna("ls", "--parseable");
   expect(stdout).toMatchInlineSnapshot(`
-<PROJECT_ROOT>/packages/pkg-1
-<PROJECT_ROOT>/packages/pkg-2
-<PROJECT_ROOT>/packages/pkg-3
+__TEST_ROOTDIR__/packages/pkg-1
+__TEST_ROOTDIR__/packages/pkg-2
+__TEST_ROOTDIR__/packages/pkg-3
 `);
 });
 
 test("lerna ls --all --long --parseable", async () => {
   const { stdout } = await lerna("ls", "-alp");
   expect(stdout).toMatchInlineSnapshot(`
-<PROJECT_ROOT>/packages/pkg-1:package-1:1.0.0
-<PROJECT_ROOT>/packages/pkg-2:@test/package-2:2.0.0
-<PROJECT_ROOT>/packages/pkg-3:package-3:MISSING
-<PROJECT_ROOT>/packages/pkg-4:package-4:4.0.0:PRIVATE
+__TEST_ROOTDIR__/packages/pkg-1:package-1:1.0.0
+__TEST_ROOTDIR__/packages/pkg-2:@test/package-2:2.0.0
+__TEST_ROOTDIR__/packages/pkg-3:package-3:MISSING
+__TEST_ROOTDIR__/packages/pkg-4:package-4:4.0.0:PRIVATE
 `);
 });
 

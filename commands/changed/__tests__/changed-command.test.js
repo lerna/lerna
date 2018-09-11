@@ -156,11 +156,11 @@ package-4
       await lernaChanged(testDir)("-alp");
 
       expect(output.logged()).toMatchInlineSnapshot(`
-<PROJECT_ROOT>/packages/package-1:package-1:1.0.0
-<PROJECT_ROOT>/packages/package-2:package-2:1.0.0
-<PROJECT_ROOT>/packages/package-3:package-3:1.0.0
-<PROJECT_ROOT>/packages/package-4:package-4:1.0.0
-<PROJECT_ROOT>/packages/package-5:package-5:1.0.0:PRIVATE
+__TEST_ROOTDIR__/packages/package-1:package-1:1.0.0
+__TEST_ROOTDIR__/packages/package-2:package-2:1.0.0
+__TEST_ROOTDIR__/packages/package-3:package-3:1.0.0
+__TEST_ROOTDIR__/packages/package-4:package-4:1.0.0
+__TEST_ROOTDIR__/packages/package-5:package-5:1.0.0:PRIVATE
 `);
     });
   });
@@ -258,13 +258,13 @@ package-4
       expect(jsonOutput).toMatchInlineSnapshot(`
 Array [
   Object {
-    "location": "<PROJECT_ROOT>/packages/package-2",
+    "location": "__TEST_ROOTDIR__/packages/package-2",
     "name": "package-2",
     "private": false,
     "version": "1.0.0",
   },
   Object {
-    "location": "<PROJECT_ROOT>/packages/package-3",
+    "location": "__TEST_ROOTDIR__/packages/package-3",
     "name": "package-3",
     "private": false,
     "version": "1.0.0",

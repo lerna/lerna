@@ -77,42 +77,42 @@ package-5 v1.0.0 packages/package-5 (PRIVATE)
     it("lists public package locations with --parseable", async () => {
       await lernaLs(testDir)("--parseable");
       expect(output.logged()).toMatchInlineSnapshot(`
-<PROJECT_ROOT>/packages/package-1
-<PROJECT_ROOT>/packages/package-2
-<PROJECT_ROOT>/packages/package-3
-<PROJECT_ROOT>/packages/package-4
+__TEST_ROOTDIR__/packages/package-1
+__TEST_ROOTDIR__/packages/package-2
+__TEST_ROOTDIR__/packages/package-3
+__TEST_ROOTDIR__/packages/package-4
 `);
     });
 
     it("lists all package locations with --parseable --all", async () => {
       await lernaLs(testDir)("-pa");
       expect(output.logged()).toMatchInlineSnapshot(`
-<PROJECT_ROOT>/packages/package-1
-<PROJECT_ROOT>/packages/package-2
-<PROJECT_ROOT>/packages/package-3
-<PROJECT_ROOT>/packages/package-4
-<PROJECT_ROOT>/packages/package-5
+__TEST_ROOTDIR__/packages/package-1
+__TEST_ROOTDIR__/packages/package-2
+__TEST_ROOTDIR__/packages/package-3
+__TEST_ROOTDIR__/packages/package-4
+__TEST_ROOTDIR__/packages/package-5
 `);
     });
 
     it("lists public package locations with --parseable --long", async () => {
       await lernaLs(testDir)("--parseable", "--long");
       expect(output.logged()).toMatchInlineSnapshot(`
-<PROJECT_ROOT>/packages/package-1:package-1:1.0.0
-<PROJECT_ROOT>/packages/package-2:package-2:1.0.0
-<PROJECT_ROOT>/packages/package-3:package-3:1.0.0
-<PROJECT_ROOT>/packages/package-4:package-4:1.0.0
+__TEST_ROOTDIR__/packages/package-1:package-1:1.0.0
+__TEST_ROOTDIR__/packages/package-2:package-2:1.0.0
+__TEST_ROOTDIR__/packages/package-3:package-3:1.0.0
+__TEST_ROOTDIR__/packages/package-4:package-4:1.0.0
 `);
     });
 
     it("lists all package locations with --parseable --long --all", async () => {
       await lernaLs(testDir)("-pal");
       expect(output.logged()).toMatchInlineSnapshot(`
-<PROJECT_ROOT>/packages/package-1:package-1:1.0.0
-<PROJECT_ROOT>/packages/package-2:package-2:1.0.0
-<PROJECT_ROOT>/packages/package-3:package-3:1.0.0
-<PROJECT_ROOT>/packages/package-4:package-4:1.0.0
-<PROJECT_ROOT>/packages/package-5:package-5:1.0.0:PRIVATE
+__TEST_ROOTDIR__/packages/package-1:package-1:1.0.0
+__TEST_ROOTDIR__/packages/package-2:package-2:1.0.0
+__TEST_ROOTDIR__/packages/package-3:package-3:1.0.0
+__TEST_ROOTDIR__/packages/package-4:package-4:1.0.0
+__TEST_ROOTDIR__/packages/package-5:package-5:1.0.0:PRIVATE
 `);
     });
 
@@ -176,7 +176,7 @@ package-2
     it("appends MISSING flag to long parseable output", async () => {
       const testDir = await initFixture("undefined-version");
       await lernaLs(testDir)("--long", "--parseable");
-      expect(output.logged()).toMatchInlineSnapshot(`<PROJECT_ROOT>/packages/package-1:package-1:MISSING`);
+      expect(output.logged()).toMatchInlineSnapshot(`__TEST_ROOTDIR__/packages/package-1:package-1:MISSING`);
     });
   });
 

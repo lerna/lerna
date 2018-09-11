@@ -81,12 +81,12 @@ pkg-3  v3.0.0 pkgs/pkg-3 (PRIVATE)
     "name": "pkg-1",
     "version": "1.0.0",
     "private": false,
-    "location": "<PROJECT_ROOT>/pkgs/pkg-1"
+    "location": "__TEST_ROOTDIR__/pkgs/pkg-1"
   },
   {
     "name": "pkg-2",
     "private": false,
-    "location": "<PROJECT_ROOT>/pkgs/pkg-2"
+    "location": "__TEST_ROOTDIR__/pkgs/pkg-2"
   }
 ]
 `);
@@ -101,18 +101,18 @@ pkg-3  v3.0.0 pkgs/pkg-3 (PRIVATE)
     "name": "pkg-1",
     "version": "1.0.0",
     "private": false,
-    "location": "<PROJECT_ROOT>/pkgs/pkg-1"
+    "location": "__TEST_ROOTDIR__/pkgs/pkg-1"
   },
   {
     "name": "pkg-2",
     "private": false,
-    "location": "<PROJECT_ROOT>/pkgs/pkg-2"
+    "location": "__TEST_ROOTDIR__/pkgs/pkg-2"
   },
   {
     "name": "pkg-3",
     "version": "3.0.0",
     "private": true,
-    "location": "<PROJECT_ROOT>/pkgs/pkg-3"
+    "location": "__TEST_ROOTDIR__/pkgs/pkg-3"
   }
 ]
 `);
@@ -122,8 +122,8 @@ pkg-3  v3.0.0 pkgs/pkg-3 (PRIVATE)
       const { text } = formatWithOptions({ parseable: true });
 
       expect(text).toMatchInlineSnapshot(`
-<PROJECT_ROOT>/pkgs/pkg-1
-<PROJECT_ROOT>/pkgs/pkg-2
+__TEST_ROOTDIR__/pkgs/pkg-1
+__TEST_ROOTDIR__/pkgs/pkg-2
 `);
     });
 
@@ -131,9 +131,9 @@ pkg-3  v3.0.0 pkgs/pkg-3 (PRIVATE)
       const { text } = formatWithOptions({ parseable: true, all: true });
 
       expect(text).toMatchInlineSnapshot(`
-<PROJECT_ROOT>/pkgs/pkg-1
-<PROJECT_ROOT>/pkgs/pkg-2
-<PROJECT_ROOT>/pkgs/pkg-3
+__TEST_ROOTDIR__/pkgs/pkg-1
+__TEST_ROOTDIR__/pkgs/pkg-2
+__TEST_ROOTDIR__/pkgs/pkg-3
 `);
     });
 
@@ -141,8 +141,8 @@ pkg-3  v3.0.0 pkgs/pkg-3 (PRIVATE)
       const { text } = formatWithOptions({ parseable: true, long: true });
 
       expect(text).toMatchInlineSnapshot(`
-<PROJECT_ROOT>/pkgs/pkg-1:pkg-1:1.0.0
-<PROJECT_ROOT>/pkgs/pkg-2:pkg-2:MISSING
+__TEST_ROOTDIR__/pkgs/pkg-1:pkg-1:1.0.0
+__TEST_ROOTDIR__/pkgs/pkg-2:pkg-2:MISSING
 `);
     });
 
@@ -150,9 +150,9 @@ pkg-3  v3.0.0 pkgs/pkg-3 (PRIVATE)
       const { text } = formatWithOptions({ parseable: true, all: true, long: true });
 
       expect(text).toMatchInlineSnapshot(`
-<PROJECT_ROOT>/pkgs/pkg-1:pkg-1:1.0.0
-<PROJECT_ROOT>/pkgs/pkg-2:pkg-2:MISSING
-<PROJECT_ROOT>/pkgs/pkg-3:pkg-3:3.0.0:PRIVATE
+__TEST_ROOTDIR__/pkgs/pkg-1:pkg-1:1.0.0
+__TEST_ROOTDIR__/pkgs/pkg-2:pkg-2:MISSING
+__TEST_ROOTDIR__/pkgs/pkg-3:pkg-3:3.0.0:PRIVATE
 `);
     });
   });
