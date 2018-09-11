@@ -11,7 +11,10 @@ const TEMP_DIR_REGEXP = /([^\s"]*[\\/][0-9a-f]{32})([^\s"]*)/g;
 // the excluded quotes are due to other snapshot serializers mutating the raw input
 
 function normalizeTestRoot(str) {
-  return normalizeNewline(str).replace(TEMP_DIR_REGEXP, serializeTestRoot);
+  const ret = normalizeNewline(str).replace(TEMP_DIR_REGEXP, serializeTestRoot);
+
+  // desperately trying to avoid "Compared values have no visual difference" garbage in Windows CI
+  return JSON.parse(JSON.stringify(ret));
 }
 
 function serializeTestRoot(match, cwd, subPath) {
