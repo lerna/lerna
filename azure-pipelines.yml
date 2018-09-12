@@ -1,0 +1,27 @@
+# Node.js
+# Build a general Node.js application with npm.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/vsts/pipelines/languages/javascript
+
+pool:
+  vmImage: 'Ubuntu 16.04'
+
+strategy:
+  matrix:
+    node_10_x:
+      node_version: 10.x
+    node_8_x:
+      node_version: 8.x
+    node_6_x:
+      node_version: 6.x
+
+steps:
+- task: NodeTool@0
+  inputs:
+    version: $(node_version)
+  displayName: 'Install Node.js'
+
+- script: |
+    npm ci
+    npm run ci
+  displayName: 'npm install and test'
