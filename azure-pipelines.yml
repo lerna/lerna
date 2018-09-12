@@ -4,9 +4,10 @@
 # https://docs.microsoft.com/vsts/pipelines/languages/javascript
 
 pool:
-  vmImage: 'Ubuntu 16.04'
+  vmImage: "Ubuntu 16.04"
 
 strategy:
+  maxParallel: 3
   matrix:
     node_10_x:
       node_version: 10.x
@@ -16,12 +17,14 @@ strategy:
       node_version: 6.x
 
 steps:
-- task: NodeTool@0
-  inputs:
-    version: $(node_version)
-  displayName: 'Install Node.js'
+  - task: NodeTool@0
+    inputs:
+      version: $(node_version)
+    displayName: "Install Node.js"
 
-- script: |
-    npm ci
-    npm run ci
-  displayName: 'npm install and test'
+  - script: |
+      npm config set loglevel warn
+      npm -g i npm@latest
+      npm ci
+      npm run ci
+    displayName: "npm install and test"
