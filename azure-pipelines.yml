@@ -1,10 +1,7 @@
-# Node.js
-# Build a general Node.js application with npm.
-# Add steps that analyze code, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/vsts/pipelines/languages/javascript
 
 pool:
-  vmImage: "Ubuntu 16.04"
+  vmImage: "vs2017-win2016"
 
 strategy:
   maxParallel: 3
