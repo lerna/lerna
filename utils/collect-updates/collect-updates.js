@@ -11,6 +11,7 @@ const makeDiffPredicate = require("./lib/make-diff-predicate");
 module.exports = collectUpdates;
 
 function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions) {
+  const forced = getForcedPackages(commandOptions.forcePublish);
   const packages =
     filteredPackages.length === packageGraph.size
       ? packageGraph
@@ -23,7 +24,7 @@ function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions
     const { sha, refCount, lastTagName } = describeRef.sync(execOpts);
     // TODO: warn about dirty tree?
 
-    if (refCount === "0") {
+    if (refCount === "0" && forced.size === 0) {
       // no commits since previous release
       log.notice("", "Current HEAD is already released, skipping change detection.");
 
@@ -42,7 +43,6 @@ function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions
 
   log.info("", `Looking for changed packages since ${committish || "initial commit."}`);
 
-  const forced = getForcedPackages(commandOptions.forcePublish);
   let candidates;
 
   if (!committish || forced.has("*")) {

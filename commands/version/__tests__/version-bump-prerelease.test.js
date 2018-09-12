@@ -89,3 +89,20 @@ test("version prerelease with existing preid bumps with the preid provide as arg
   const message = await getCommitMessage(testDir);
   expect(message).toBe("v1.0.1-rc.0");
 });
+
+test("version prerelease with immediate graduation", async () => {
+  const testDir = await initFixture("republish-prereleased");
+
+  await setupChanges(testDir);
+  await lernaVersion(testDir)("prerelease", "--force-publish", "package-4");
+  // package-4 had no changes, but should still be included for some mysterious reason
+
+  const firstDiff = await showCommit(testDir);
+  expect(firstDiff).toMatchSnapshot();
+
+  // no changes, but force everything because the previous prerelease passed QA
+  await lernaVersion(testDir)("patch", "--force-publish");
+
+  const secondDiff = await showCommit(testDir);
+  expect(secondDiff).toMatchSnapshot();
+});
