@@ -30,9 +30,10 @@ steps:
   - script: |
       npm config set loglevel warn
       npm -g i npm@latest
-    displayName: "configure + update npm"
+      npm -g i yarn@latest
+    displayName: "configure package managers"
 
   - script: |
       npm ci
       npm run ci
-    displayName: "npm install and test"
+    displayName: "npm ci && npm run ci"
