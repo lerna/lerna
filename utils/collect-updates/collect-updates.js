@@ -43,6 +43,11 @@ function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions
 
   log.info("", `Looking for changed packages since ${committish || "initial commit."}`);
 
+  if (forced.size) {
+    // "warn" might seem a bit loud, but it is appropriate for logging anything _forced_
+    log.warn("force-publish", forced.has("*") ? "all packages" : Array.from(forced.values()).join("\n"));
+  }
+
   let candidates;
 
   if (!committish || forced.has("*")) {

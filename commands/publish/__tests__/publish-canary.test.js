@@ -299,6 +299,47 @@ test("publish --canary on tagged release exits early", async () => {
   expect(logMessages).toContain("No changed packages to publish");
 });
 
+test("publish --canary --force-publish on tagged release avoids early exit", async () => {
+  const cwd = await initTaggedFixture("normal");
+
+  await lernaPublish(cwd)("--canary", "--force-publish");
+
+  const logMessages = loggingOutput("warn");
+  expect(logMessages).toContain("all packages");
+  // lerna WARN force-publish all packages
+
+  expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
+Object {
+  "package-1": 1.0.1-alpha.0+SHA,
+  "package-2": 1.0.1-alpha.0+SHA,
+  "package-3": 1.0.1-alpha.0+SHA,
+  "package-4": 1.0.1-alpha.0+SHA,
+}
+`);
+});
+
+test("publish --canary --force-publish <arg> on tagged release avoids early exit", async () => {
+  const cwd = await initTaggedFixture("independent");
+
+  // canary committish needs to have a parent, but still tagged on same revision
+  await setupChanges(cwd, ["packages/package-5/arbitrary.js", "change"]);
+  await gitTag(cwd, "package-5@5.0.1");
+
+  // there are no _actual_ changes to package-2 or any of its dependencies
+  await lernaPublish(cwd)("--canary", "--force-publish", "package-2");
+
+  const logMessages = loggingOutput("warn");
+  expect(logMessages).toContain("package-2");
+  // lerna WARN force-publish package-2
+
+  expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
+Object {
+  "package-2": 2.0.1-alpha.0+SHA,
+  "package-3": 3.0.1-alpha.0+SHA,
+}
+`);
+});
+
 test("publish --canary with dirty tree throws error", async () => {
   checkWorkingTree.throwIfUncommitted.mockImplementationOnce(() => {
     throw new Error("uncommitted");

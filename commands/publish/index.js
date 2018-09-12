@@ -195,7 +195,13 @@ class PublishCommand extends Command {
   }
 
   detectCanaryVersions() {
-    const { bump = "prepatch", preid = "alpha", tagVersionPrefix = "v", ignoreChanges } = this.options;
+    const {
+      bump = "prepatch",
+      preid = "alpha",
+      tagVersionPrefix = "v",
+      ignoreChanges,
+      forcePublish,
+    } = this.options;
     // "prerelease" and "prepatch" are identical, for our purposes
     const release = bump.startsWith("pre") ? bump.replace("release", "patch") : `pre${bump}`;
 
@@ -210,6 +216,7 @@ class PublishCommand extends Command {
         bump: "prerelease",
         canary: true,
         ignoreChanges,
+        forcePublish,
       })
     );
 
@@ -219,7 +226,7 @@ class PublishCommand extends Command {
 
       // semver.inc() starts a new prerelease at .0, git describe starts at .1
       // and build metadata is always ignored when comparing dependency ranges
-      return `${nextVersion}-${preid}.${refCount - 1}+${sha}`;
+      return `${nextVersion}-${preid}.${Math.max(0, refCount - 1)}+${sha}`;
     };
 
     if (this.project.isIndependent()) {
