@@ -19,18 +19,9 @@ steps:
       versionSpec: $(node_version)
     displayName: "Install Node.js"
 
-  - script: |
-      git config --global user.email test@example.com
-      git config --global user.name "Tester McPerson"
-    displayName: "configure git user"
-
-  - script: |
-      npm config set loglevel warn
-      npm -g i npm@latest
-      npm -g i yarn@latest
-    displayName: "configure package managers"
-
-  - script: |
-      npm ci
-      npm run ci
-    displayName: "npm ci && npm run ci"
+  - script: git config --global user.email test@example.com
+  - script: git config --global user.name "Tester McPerson"
+  - script: npm -g i npm@latest --loglevel warn
+  - script: npm -g i yarn@latest
+  - script: npm ci
+  - script: npm run ci
