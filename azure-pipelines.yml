@@ -10,21 +10,29 @@ strategy:
   maxParallel: 3
   matrix:
     node_10_x:
-      node_version: 10.x
+      node_version: "10.x"
     node_8_x:
-      node_version: 8.x
+      node_version: "8.x"
     node_6_x:
-      node_version: 6.x
+      node_version: "6.x"
 
 steps:
   - task: NodeTool@0
     inputs:
-      version: $(node_version)
+      versionSpec: $(node_version)
     displayName: "Install Node.js"
+
+  - script: |
+      git config --global user.email test@example.com
+      git config --global user.name "Tester McPerson"
+    displayName: "configure git user"
 
   - script: |
       npm config set loglevel warn
       npm -g i npm@latest
+    displayName: "configure + update npm"
+
+  - script: |
       npm ci
       npm run ci
     displayName: "npm install and test"
