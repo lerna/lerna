@@ -44,7 +44,6 @@ but have the package contents themselves consistently published by an automated 
 * [`--npm-client <client>`](#--npm-client-client)
 * [`--npm-tag <dist-tag>`](#--npm-tag-dist-tag)
 * [`--no-verify-access`](#--no-verify-access)
-* [`--no-verify-registry`](#--no-verify-registry)
 * [`--registry <url>`](#--registry-url)
 * [`--temp-tag`](#--temp-tag)
 * [`--yes`](#--yes)
@@ -107,11 +106,7 @@ This option can be used to publish a [`prerelease`](http://carrot.is/coding/npm_
 
 By default, `lerna` will verify the logged-in npm user's access to the packages about to be published. Passing this flag will disable that check.
 
-> Please use with caution
-
-### `--no-verify-registry`
-
-By default, `lerna` will verify that the npm registry is reachable and the current npm user is authenticated. Passing this flag will disable that check.
+If you are using a third-party registry that does not support `npm access ls-packages`, you will need to pass this flag (or set `command.publish.verifyAccess` to `false` in lerna.json).
 
 > Please use with caution
 

@@ -13,7 +13,7 @@ const cloneFixture = require("@lerna-test/clone-fixture")(
 expect.addSnapshotSerializer(require("@lerna-test/serialize-changelog"));
 
 const env = {
-  // never actually upload when calling `npm install`
+  // never actually upload when calling `npm publish`
   npm_config_dry_run: true,
   // skip npm package validation, none of the stubs are real
   LERNA_INTEGRATION: "SKIP",
@@ -21,7 +21,7 @@ const env = {
 
 test("lerna publish --canary uses default prerelease id", async () => {
   const { cwd } = await cloneFixture("normal");
-  const args = ["publish", "--canary", "--yes", "--no-verify-registry"];
+  const args = ["publish", "--canary", "--yes"];
 
   await gitTag(cwd, "v1.0.0");
   await commitChangeToPackage(cwd, "package-1", "change", { change: true });

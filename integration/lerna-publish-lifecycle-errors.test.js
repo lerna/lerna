@@ -11,7 +11,7 @@ const cloneFixture = require("@lerna-test/clone-fixture")(
 );
 
 const env = {
-  // never actually upload when calling `npm install`
+  // never actually upload when calling `npm publish`
   npm_config_dry_run: true,
   // skip npm package validation, none of the stubs are real
   LERNA_INTEGRATION: "SKIP",
@@ -19,7 +19,7 @@ const env = {
 
 test("lerna publish lifecycle scripts stop on non-zero exit", async () => {
   const { cwd } = await cloneFixture("lifecycle");
-  const args = ["publish", "minor", "--yes", "--no-verify-registry"];
+  const args = ["publish", "minor", "--yes"];
 
   const rootManifest = path.join(cwd, "package.json");
   const json = await fs.readJson(rootManifest);
@@ -52,6 +52,7 @@ boom
 `);
       expect(err.stderr).toMatchInlineSnapshot(`
 lerna notice cli __TEST_VERSION__
+lerna info Verifying npm credentials
 lerna info current version 1.0.0
 lerna info Looking for changed packages since initial commit.
 lerna info auto-confirmed 

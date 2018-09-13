@@ -14,6 +14,7 @@ const checkWorkingTree = require("@lerna/check-working-tree");
 const PromptUtilities = require("@lerna/prompt");
 const output = require("@lerna/output");
 const collectUpdates = require("@lerna/collect-updates");
+const npmConf = require("@lerna/npm-conf");
 const npmDistTag = require("@lerna/npm-dist-tag");
 const npmPublish = require("@lerna/npm-publish");
 const { createRunner } = require("@lerna/run-lifecycle");
@@ -24,11 +25,11 @@ const versionCommand = require("@lerna/version");
 const createTempLicenses = require("./lib/create-temp-licenses");
 const getCurrentSHA = require("./lib/get-current-sha");
 const getCurrentTags = require("./lib/get-current-tags");
+const getNpmUsername = require("./lib/get-npm-username");
 const getTaggedPackages = require("./lib/get-tagged-packages");
 const getPackagesWithoutLicense = require("./lib/get-packages-without-license");
 const gitCheckout = require("./lib/git-checkout");
 const removeTempLicenses = require("./lib/remove-temp-licenses");
-const verifyNpmRegistry = require("./lib/verify-npm-registry");
 const verifyNpmPackageAccess = require("./lib/verify-npm-package-access");
 
 module.exports = factory;
@@ -61,17 +62,28 @@ class PublishCommand extends Command {
 
     // inverted boolean options
     this.verifyAccess = this.options.verifyAccess !== false;
-    this.verifyRegistry = this.options.verifyRegistry !== false;
 
     // https://docs.npmjs.com/misc/config#save-prefix
     this.savePrefix = this.options.exact ? "" : "^";
 
+    this.conf = npmConf(this.options);
     this.npmConfig = {
       npmClient: this.options.npmClient || "npm",
       registry: this.options.registry,
     };
 
-    return Promise.resolve(this.findVersionedUpdates()).then(result => {
+    let chain = Promise.resolve();
+
+    // validate user has valid npm credentials first,
+    // by far the most common form of failed execution
+    chain = chain.then(() => getNpmUsername(this.conf));
+    chain = chain.then(username => {
+      // username is necessary for subsequent access check
+      this.conf.add({ username }, "cmd");
+    });
+    chain = chain.then(() => this.findVersionedUpdates());
+
+    return chain.then(result => {
       if (!result) {
         // early return from nested VersionCommand
         return false;
@@ -308,19 +320,13 @@ class PublishCommand extends Command {
   prepareRegistryActions() {
     let chain = Promise.resolve();
 
-    if (this.verifyRegistry) {
-      chain = chain.then(() => verifyNpmRegistry(this.project.rootPath, this.npmConfig));
-    }
-
     /* istanbul ignore if */
     if (process.env.LERNA_INTEGRATION) {
       return chain;
     }
 
     if (this.verifyAccess) {
-      chain = chain.then(() =>
-        verifyNpmPackageAccess(this.packagesToPublish, this.project.rootPath, this.npmConfig)
-      );
+      chain = chain.then(() => verifyNpmPackageAccess(this.packagesToPublish, this.conf));
     }
 
     return chain;

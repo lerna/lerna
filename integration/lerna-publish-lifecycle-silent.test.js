@@ -8,7 +8,7 @@ const cloneFixture = require("@lerna-test/clone-fixture")(
 );
 
 const env = {
-  // never actually upload when calling `npm install`
+  // never actually upload when calling `npm publish`
   npm_config_dry_run: true,
   // skip npm package validation, none of the stubs are real
   LERNA_INTEGRATION: "SKIP",
@@ -16,7 +16,7 @@ const env = {
 
 test("lerna publish lifecycle scripts --loglevel=silent", async () => {
   const { cwd } = await cloneFixture("lifecycle");
-  const args = ["publish", "minor", "--yes", "--loglevel", "silent", "--no-verify-registry"];
+  const args = ["publish", "minor", "--yes", "--loglevel", "silent"];
 
   const { stdout } = await cliRunner(cwd, env)(...args);
   expect(stdout).toMatchInlineSnapshot(`

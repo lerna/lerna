@@ -12,13 +12,6 @@ const cloneFixture = require("@lerna-test/clone-fixture")(
 // stabilize changelog commit SHA and datestamp
 expect.addSnapshotSerializer(require("@lerna-test/serialize-changelog"));
 
-const env = {
-  // never actually upload when calling `npm install`
-  npm_config_dry_run: true,
-  // skip npm package validation, none of the stubs are real
-  LERNA_INTEGRATION: "SKIP",
-};
-
 test("lerna publish --skip-npm aliases to lerna version immediately", async () => {
   const { cwd } = await cloneFixture("normal", "feat: init repo");
   const args = ["publish", "--skip-npm", "--conventional-commits", "--yes"];
@@ -26,7 +19,7 @@ test("lerna publish --skip-npm aliases to lerna version immediately", async () =
   await gitTag(cwd, "v1.0.0");
   await commitChangeToPackage(cwd, "package-3", "feat(package-3): Add foo", { foo: true });
 
-  const { stdout, stderr } = await cliRunner(cwd, env)(...args);
+  const { stdout, stderr } = await cliRunner(cwd)(...args);
 
   expect(stdout).toMatchInlineSnapshot(`
 

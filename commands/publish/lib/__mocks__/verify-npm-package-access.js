@@ -3,12 +3,12 @@
 const registry = new Map();
 
 // to mock user modules, you _must_ call `jest.mock('./path/to/module')`
-const mockVerifyNpmPackageAccess = jest.fn((packages, location, npmConfig) => {
+const mockVerifyNpmPackageAccess = jest.fn((packages, opts) => {
   const result = new Set(packages.map(pkg => pkg.name));
 
-  result.add(`registry: ${npmConfig.registry || "default"}`);
+  result.add(`username: ${opts.get("username")}`);
 
-  registry.set(location, result);
+  registry.set(opts.get("cwd"), result);
 
   return Promise.resolve();
 });

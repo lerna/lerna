@@ -16,26 +16,11 @@ const cloneFixture = require("@lerna-test/clone-fixture")(
 expect.addSnapshotSerializer(require("@lerna-test/serialize-changelog"));
 
 const env = {
-  // never actually upload when calling `npm install`
+  // never actually upload when calling `npm publish`
   npm_config_dry_run: true,
   // skip npm package validation, none of the stubs are real
   LERNA_INTEGRATION: "SKIP",
 };
-
-test("lerna publish exits with error when package access validation fails", async () => {
-  const { cwd } = await cloneFixture("normal");
-  const args = ["publish", "prerelease", "--yes", "--no-verify-registry"];
-
-  try {
-    // no env override enables --verify-access
-    await cliRunner(cwd)(...args);
-  } catch (err) {
-    expect(err.code).toBe(1);
-    expect(err.stderr).toMatch("ENEEDAUTH");
-  }
-
-  expect.assertions(2);
-});
 
 test("lerna publish exits with EBEHIND when behind upstream remote", async () => {
   const { cwd, repository } = await cloneFixture("normal");
@@ -50,12 +35,12 @@ test("lerna publish exits with EBEHIND when behind upstream remote", async () =>
 
   // throws during interactive publish (local)
   try {
-    await cliRunner(cwd, env)("publish", "--no-verify-registry", "--no-ci");
+    await cliRunner(cwd, env)("publish", "--no-ci");
   } catch (err) {
     expect(err.message).toMatch(/EBEHIND/);
   }
 
   // warns during non-interactive publish (CI)
-  const { stderr } = await cliRunner(cwd, env)("publish", "--no-verify-registry", "--ci");
+  const { stderr } = await cliRunner(cwd, env)("publish", "--ci");
   expect(stderr).toMatch("EBEHIND");
 });

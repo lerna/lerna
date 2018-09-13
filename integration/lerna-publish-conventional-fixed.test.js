@@ -15,7 +15,7 @@ const cloneFixture = require("@lerna-test/clone-fixture")(
 expect.addSnapshotSerializer(require("@lerna-test/serialize-changelog"));
 
 const env = {
-  // never actually upload when calling `npm install`
+  // never actually upload when calling `npm publish`
   npm_config_dry_run: true,
   // skip npm package validation, none of the stubs are real
   LERNA_INTEGRATION: "SKIP",
@@ -23,7 +23,7 @@ const env = {
 
 test(`lerna publish --conventional-commits fixed changelog`, async () => {
   const { cwd } = await cloneFixture("normal", "feat: init repo");
-  const args = ["publish", "--conventional-commits", "--yes", "--no-verify-registry"];
+  const args = ["publish", "--conventional-commits", "--yes"];
 
   await commitChangeToPackage(cwd, "package-1", "feat(package-1): Add foo", { foo: true });
   await commitChangeToPackage(cwd, "package-1", "fix(package-1): Fix foo", { foo: false });

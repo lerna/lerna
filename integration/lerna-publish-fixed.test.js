@@ -12,7 +12,7 @@ const cloneFixture = require("@lerna-test/clone-fixture")(
 expect.addSnapshotSerializer(require("@lerna-test/serialize-changelog"));
 
 const env = {
-  // never actually upload when calling `npm install`
+  // never actually upload when calling `npm publish`
   npm_config_dry_run: true,
   // skip npm package validation, none of the stubs are real
   LERNA_INTEGRATION: "SKIP",
@@ -20,7 +20,7 @@ const env = {
 
 test("lerna publish updates fixed versions", async () => {
   const { cwd } = await cloneFixture("normal");
-  const args = ["publish", "patch", "--yes", "--no-verify-registry"];
+  const args = ["publish", "patch", "--yes"];
 
   const { stdout } = await cliRunner(cwd, env)(...args);
   expect(stdout).toMatchInlineSnapshot(`

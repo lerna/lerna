@@ -3,7 +3,7 @@
 // local modules _must_ be explicitly mocked
 jest.mock("../lib/get-packages-without-license");
 jest.mock("../lib/verify-npm-package-access");
-jest.mock("../lib/verify-npm-registry");
+jest.mock("../lib/get-npm-username");
 // FIXME: better mock for version command
 jest.mock("../../version/lib/git-push");
 jest.mock("../../version/lib/is-anything-committed");

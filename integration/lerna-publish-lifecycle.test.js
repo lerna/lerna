@@ -8,7 +8,7 @@ const cloneFixture = require("@lerna-test/clone-fixture")(
 );
 
 const env = {
-  // never actually upload when calling `npm install`
+  // never actually upload when calling `npm publish`
   npm_config_dry_run: true,
   // skip npm package validation, none of the stubs are real
   LERNA_INTEGRATION: "SKIP",

@@ -52,11 +52,6 @@ exports.builder = yargs => {
       type: "boolean",
       defaultDescription: "true",
     },
-    "verify-registry": {
-      describe: "Verify registry authentication for current npm user.\nPass --no-verify-registry to disable.",
-      type: "boolean",
-      defaultDescription: "true",
-    },
     y: {
       describe: "Skip all confirmation prompts.",
       alias: "yes",
@@ -67,6 +62,11 @@ exports.builder = yargs => {
   return composeVersionOptions(yargs)
     .options(opts)
     .group(Object.keys(opts), "Command Options:")
+    .option("verify-registry", {
+      // TODO: remove in next major release
+      hidden: true,
+      type: "boolean",
+    })
     .option("skip-npm", {
       // TODO: remove in next major release
       // deprecation notice handled in initialize()
