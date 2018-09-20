@@ -266,7 +266,7 @@ class PublishCommand extends Command {
           match: `${tagVersionPrefix}*.*.*`,
           cwd: this.execOpts.cwd,
         })
-          .then(makeVersion)
+          .then(({ lastVersion = '0.0.1', refCount, sha }) => makeVersion({ lastVersion, refCount, sha }))
           .then(version => updates.map(({ pkg }) => [pkg.name, version]))
           .then(updatesVersions => ({
             updates,
