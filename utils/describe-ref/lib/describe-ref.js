@@ -7,15 +7,16 @@ module.exports = describeRef;
 module.exports.parse = parse;
 module.exports.sync = sync;
 
-function getArgs(options) {
+function getArgs(options, lastRev) {
   const args = [
     "describe",
+    // fetch it from the latest tag, no matter in which branch
+    "--tags",
+    lastRev,
     // fallback to short sha if no tags located
     "--always",
     // always return full result, helps identify existing release
     "--long",
-    // annotate if uncommitted changes present
-    "--dirty",
     // prefer tags originating on upstream branch
     "--first-parent",
   ];
@@ -27,8 +28,18 @@ function getArgs(options) {
   return args;
 }
 
+function getRevOfLastTag(syncCall = false, options = {}) {
+  const args = ["rev-list", "--tags", "--max-count=1"];
+  if (syncCall) {
+    return childProcess.execSync("git", args, options);
+  }
+  return childProcess.exec("git", args, options);
+}
+
 function describeRef(options = {}) {
-  const promise = childProcess.exec("git", getArgs(options), options);
+  const promise = getRevOfLastTag(false, options).then(({ stdout }) =>
+    childProcess.exec("git", getArgs(options, stdout), options)
+  );
 
   return promise.then(({ stdout }) => {
     const result = parse(stdout, options);
@@ -41,7 +52,7 @@ function describeRef(options = {}) {
 }
 
 function sync(options = {}) {
-  const stdout = childProcess.execSync("git", getArgs(options), options);
+  const stdout = childProcess.execSync("git", getArgs(options, getRevOfLastTag(true, options)), options);
   const result = parse(stdout, options);
 
   // only called by collect-updates with no matcher
