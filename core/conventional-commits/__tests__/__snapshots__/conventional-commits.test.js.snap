@@ -31,7 +31,6 @@ exports[`conventional-commits updateChangelog() creates files if they do not exi
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-<a name="1.1.0"></a>
 # 1.1.0 (YYYY-MM-DD)
 
 
@@ -47,7 +46,6 @@ exports[`conventional-commits updateChangelog() creates files if they do not exi
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-<a name="1.1.0"></a>
 # 1.1.0 (YYYY-MM-DD)
 
 
@@ -84,8 +82,7 @@ exports[`conventional-commits updateChangelog() updates fixed changelogs: leaf 1
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-<a name="1.0.1"></a>
-## [1.0.1](https://github.com/lerna/conventional-commits-fixed/compare/v1.0.0...v1.0.1) (YYYY-MM-DD)
+## [1.0.1](/compare/v1.0.0...v1.0.1) (YYYY-MM-DD)
 
 
 ### Bug Fixes
@@ -112,8 +109,7 @@ exports[`conventional-commits updateChangelog() updates fixed changelogs: root 1
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-<a name="1.0.1"></a>
-## [1.0.1](https://github.com/lerna/conventional-commits-fixed/compare/v1.0.0...v1.0.1) (YYYY-MM-DD)
+## [1.0.1](/compare/v1.0.0...v1.0.1) (YYYY-MM-DD)
 
 
 ### Bug Fixes
@@ -140,8 +136,7 @@ exports[`conventional-commits updateChangelog() updates independent changelogs 1
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-<a name="1.0.1"></a>
-## [1.0.1](https://github.com/lerna/conventional-commits-independent/compare/package-1@1.0.0...package-1@1.0.1) (YYYY-MM-DD)
+## [1.0.1](/compare/package-1@1.0.0...package-1@1.0.1) (YYYY-MM-DD)
 
 
 ### Bug Fixes
@@ -156,8 +151,7 @@ exports[`conventional-commits updateChangelog() updates independent changelogs 2
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-<a name="1.1.0"></a>
-# [1.1.0](https://github.com/lerna/conventional-commits-independent/compare/package-2@1.0.0...package-2@1.1.0) (YYYY-MM-DD)
+# [1.1.0](/compare/package-2@1.0.0...package-2@1.1.0) (YYYY-MM-DD)
 
 
 ### Features

@@ -158,13 +158,12 @@ new file mode 100644
 index SHA..SHA
 --- /dev/null
 +++ b/CHANGELOG.md
-@@ -0,0 +1,12 @@
+@@ -0,0 +1,11 @@
 +# Change Log
 +
 +All notable changes to this project will be documented in this file.
 +See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 +
-+<a name="1.0.1-beta.4"></a>
 +## [1.0.1-beta.4](/compare/v1.0.1-beta.3...v1.0.1-beta.4) (YYYY-MM-DD)
 +
 +
@@ -183,13 +182,12 @@ new file mode 100644
 index SHA..SHA
 --- /dev/null
 +++ b/packages/package-3/CHANGELOG.md
-@@ -0,0 +1,12 @@
+@@ -0,0 +1,11 @@
 +# Change Log
 +
 +All notable changes to this project will be documented in this file.
 +See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 +
-+<a name="1.0.1-beta.4"></a>
 +## [1.0.1-beta.4](/compare/v1.0.1-beta.3...v1.0.1-beta.4) (YYYY-MM-DD)
 +
 +

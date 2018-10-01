@@ -1,24 +1,15 @@
 "use strict";
 
 const conventionalChangelogCore = require("conventional-changelog-core");
-const dedent = require("dedent");
 const fs = require("fs-extra");
 const getStream = require("get-stream");
 const log = require("npmlog");
-const os = require("os");
+const { BLANK_LINE, CHANGELOG_HEADER, EOL } = require("./constants");
 const getChangelogConfig = require("./get-changelog-config");
 const makeBumpOnlyFilter = require("./make-bump-only-filter");
 const readExistingChangelog = require("./read-existing-changelog");
 
 module.exports = updateChangelog;
-
-const BLANK_LINE = os.EOL + os.EOL;
-const CHANGELOG_HEADER = dedent`
-  # Change Log
-
-  All notable changes to this project will be documented in this file.
-  See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
-`;
 
 function updateChangelog(pkg, type, { changelogPreset, rootPath, tagPrefix, version }) {
   log.silly(type, "for %s at %s", pkg.name, pkg.location);
@@ -65,7 +56,7 @@ function updateChangelog(pkg, type, { changelogPreset, rootPath, tagPrefix, vers
 
       const content = [CHANGELOG_HEADER, newEntry, changelogContents].join(BLANK_LINE);
 
-      return fs.writeFile(changelogFileLoc, content.trim() + os.EOL).then(() => {
+      return fs.writeFile(changelogFileLoc, content.trim() + EOL).then(() => {
         log.verbose(type, "wrote", changelogFileLoc);
 
         return changelogFileLoc;

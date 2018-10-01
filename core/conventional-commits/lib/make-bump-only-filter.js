@@ -1,10 +1,8 @@
 "use strict";
 
-const os = require("os");
+const { BLANK_LINE } = require("./constants");
 
 module.exports = makeBumpOnlyFilter;
-
-const BLANK_LINE = os.EOL + os.EOL;
 
 function makeBumpOnlyFilter(pkg) {
   return newEntry => {

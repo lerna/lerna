@@ -2,6 +2,7 @@
 
 const fs = require("fs-extra");
 const path = require("path");
+const { BLANK_LINE, COMMIT_GUIDELINE } = require("./constants");
 
 module.exports = readExistingChangelog;
 
@@ -14,12 +15,11 @@ function readExistingChangelog(pkg) {
   chain = chain.then(() => fs.readFile(changelogFileLoc, "utf8").catch(() => ""));
 
   chain = chain.then(changelogContents => {
-    // CHANGELOG entries start with <a name=, we remove
-    // the header if it exists by starting at the first entry.
-    const firstEntryIndex = changelogContents.indexOf("<a name=");
+    // Remove the header if it exists, thus starting at the first entry.
+    const headerIndex = changelogContents.indexOf(COMMIT_GUIDELINE);
 
-    if (firstEntryIndex !== -1) {
-      return changelogContents.substring(firstEntryIndex);
+    if (headerIndex !== -1) {
+      return changelogContents.substring(headerIndex + COMMIT_GUIDELINE.length + BLANK_LINE.length);
     }
 
     return changelogContents;
