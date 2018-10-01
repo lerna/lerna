@@ -108,13 +108,15 @@ Fixed mode Lerna projects operate on a single version line. The version is kept 
 
 This is the mode that [Babel](https://github.com/babel/babel) is currently using. Use this if you want to automatically tie all package versions together. One issue with this approach is that a major change in any package will result in all packages having a new major version.
 
-### Independent mode (`--independent`)
+### Independent mode
+
+`lerna init --independent`
 
 Independent mode Lerna projects allows maintainers to increment package versions independently of each other. Each time you publish, you will get a prompt for each package that has changed to specify if it's a patch, minor, major or custom change.
 
 Independent mode allows you to more specifically update versions for each package and makes sense for a group of components. Combining this mode with something like [semantic-release](https://github.com/semantic-release/semantic-release) would make it less painful. (There is work on this already at [atlassian/lerna-semantic-release](https://github.com/atlassian/lerna-semantic-release)).
 
-> The `version` key in `lerna.json` is ignored in independent mode.
+> Set the `version` key in `lerna.json` to `independent` to run in independent mode.
 
 ## Troubleshooting
 
