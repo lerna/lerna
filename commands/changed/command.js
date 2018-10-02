@@ -15,7 +15,13 @@ exports.describe = "List local packages that have changed since the last tagged 
 exports.builder = yargs => {
   listable.options(yargs);
 
-  return versionOptions(yargs, "changed");
+  const newYargs = versionOptions(yargs, "changed");
+  newYargs.option("include-merged-tags", {
+    describe: "Also include tags from merged branches",
+    type: "boolean",
+    defaultDescription: "false",
+  });
+  return newYargs;
 };
 
 exports.handler = function handler(argv) {
