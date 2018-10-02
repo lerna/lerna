@@ -85,7 +85,7 @@ exports.handler = function handler(argv) {
 };
 
 function composeVersionOptions(yargs) {
-  versionCommand.addBumpPositional(yargs, ["from-git"]);
+  versionCommand.addBumpPositional(yargs, ["from-git", "from-package"]);
   versionCommand.builder(yargs, "publish");
 
   return yargs;
