@@ -329,7 +329,11 @@ class VersionCommand extends Command {
   }
 
   setBatchUpdates() {
-    this.packagesToVersion = this.updates.map(({ pkg }) => pkg);
+    // Skip the package, if the version set to null
+    this.packagesToVersion = this.updates
+      .filter(({ pkg }) => this.updatesVersions.get(pkg.name) === null)
+      .map(({ pkg }) => pkg);
+
     this.batchedPackages = batchPackages(this.packagesToVersion, this.options.rejectCycles);
   }
 

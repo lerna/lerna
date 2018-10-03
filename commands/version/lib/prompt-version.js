@@ -38,6 +38,7 @@ function promptVersion(currentVersion, name, prereleaseId) {
       { value: premajor, name: `Premajor (${premajor})` },
       { value: "PRERELEASE", name: "Custom Prerelease" },
       { value: "CUSTOM", name: "Custom Version" },
+      { value: "SKIP", name: "Skip The Package" },
     ],
   }).then(choice => {
     if (choice === "CUSTOM") {
@@ -55,6 +56,11 @@ function promptVersion(currentVersion, name, prereleaseId) {
       return PromptUtilities.input(`Enter a prerelease identifier ${prompt}`, {
         filter: v => semver.inc(currentVersion, "prerelease", v || prereleaseId),
       });
+    }
+
+    // If the user do not want to publish the package, then can choose "SKIP" option.
+    if (choice === "SKIP") {
+      return null;
     }
 
     return choice;
