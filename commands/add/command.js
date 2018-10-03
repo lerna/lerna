@@ -32,6 +32,12 @@ exports.builder = yargs => {
         alias: "exact",
         describe: "Save version exactly",
       },
+      registry: {
+        group: "Command Options:",
+        describe: "Use the specified registry for all npm client operations.",
+        type: "string",
+        requiresArg: true,
+      },
     })
     .example(
       "$0 add module-1 packages/prefix-*",

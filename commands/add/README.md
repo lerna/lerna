@@ -33,6 +33,10 @@ $ lerna add --exact
 
 Add the new package with an exact version (e.g., `1.0.1`) rather than the default `^` semver range (e.g., `^1.0.1`).
 
+### `--registry <url>`
+
+Use a custom registry to install the targeted package.
+
 ## Examples
 
 ```sh

@@ -187,6 +187,23 @@ describe("AddCommand", () => {
     expect(await readPkg(testDir, "packages/package-1")).toDependOn("tiny-tarball", "1.0.0", { exact: true });
   });
 
+  it("accepts --registry option", async () => {
+    const testDir = await initFixture("basic");
+
+    try {
+      await lernaAdd(testDir)(
+        "@my-own/private-idaho",
+        "--registry",
+        "http://registry.cuckoo-banana-pants.com/"
+      );
+    } catch (err) {
+      // obviously this registry doesn't exist, thus it will always error
+      expect(err.message).toMatch("ENOTFOUND");
+    }
+
+    expect.assertions(1);
+  });
+
   it("should bootstrap changed packages", async () => {
     const testDir = await initFixture("basic");
 
