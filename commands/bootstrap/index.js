@@ -62,7 +62,7 @@ class BootstrapCommand extends Command {
       );
     }
 
-    this.conf = npmConf(this.options);
+    this.conf = npmConf({ registry });
     this.npmConfig = {
       registry,
       npmClient,
