@@ -29,4 +29,22 @@ describe("@lerna/npm-conf", () => {
       "//npm.example.com/some-api/npm-virtual/"
     );
   });
+
+  it("defaults cli parameter to empty object", () => {
+    const conf = npmConf();
+
+    expect(conf.sources.cli.data).toEqual({});
+  });
+
+  it("overwrites default with cli key", () => {
+    const conf = npmConf({ registry: "https://npm.example.com" });
+
+    expect(conf.get("registry")).toBe("https://npm.example.com");
+  });
+
+  it("does not overwrite default with undefined cli key", () => {
+    const conf = npmConf({ registry: undefined });
+
+    expect(conf.get("registry")).toBe("https://registry.npmjs.org/");
+  });
 });

@@ -14,7 +14,19 @@ module.exports.toNerfDart = toNerfDart;
 function npmConf(opts) {
   const conf = new Conf(Object.assign({}, defaults.defaults));
 
-  conf.add(Object.assign({}, opts), "cli");
+  // prevent keys with undefined values from obscuring defaults
+  const cleanOpts = opts
+    ? Object.keys(opts).reduce((acc, key) => {
+        if (opts && opts[key] !== undefined) {
+          // eslint-disable-next-line no-param-reassign
+          acc[key] = opts[key];
+        }
+
+        return acc;
+      }, {})
+    : {};
+
+  conf.add(cleanOpts, "cli");
   conf.addEnv();
   conf.loadPrefix();
 
