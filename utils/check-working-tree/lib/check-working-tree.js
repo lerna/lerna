@@ -14,8 +14,6 @@ function checkWorkingTree({ cwd } = {}) {
 
   // wrap each test separately to allow all applicable errors to be reported
   const tests = [
-    // prevent duplicate versioning
-    chain.then(throwIfReleased),
     // prevent publish of uncommitted changes
     chain.then(throwIfUncommitted),
   ];

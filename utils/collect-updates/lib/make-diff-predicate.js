@@ -12,7 +12,21 @@ function makeDiffPredicate(committish, execOpts, ignorePatterns = []) {
   const ignoreFilters = new Set(ignorePatterns.map(p => minimatch.filter(`!${p}`, { matchBase: true })));
 
   return function hasDiffSinceThatIsntIgnored(node) {
-    const diff = diffSinceIn(committish, node.location, execOpts);
+    const { lastTagCommittish, lastCommittish } = lastCommitInfo(node.location, execOpts);
+
+    // No updates for this package. The last commit tag is the version tag.
+    if (lastTagCommittish === lastCommittish) {
+      return false;
+    }
+
+    // There is no tag for this package, and the since committish is not set
+    if (lastTagCommittish === "" && !committish) {
+      return true;
+    }
+
+    const since = committish || lastTagCommittish;
+
+    const diff = diffSinceIn(since, node.location, execOpts);
 
     if (diff === "") {
       return false;
@@ -45,4 +59,25 @@ function diffSinceIn(committish, location, opts) {
   log.silly("diff", diff);
 
   return diff;
+}
+
+// Get the last one commit, and the last one commit which contains a version tag.
+function lastCommitInfo(location, opts) {
+  const getTagsArg = ["log", "-1", "--no-walk", "--tags", '--pretty="%h"'];
+  const lastArg = ["log", "-1", '--pretty="%h"'];
+  const formattedLocation = slash(path.relative(opts.cwd, location));
+
+  if (formattedLocation) {
+    // avoid same-directory path.relative() === ""
+    getTagsArg.push(formattedLocation);
+    lastArg.push(formattedLocation);
+  }
+  log.silly("lastCommitInfo", formattedLocation);
+  const lastTagCommittish = childProcess.execSync("git", getTagsArg, opts).replace(/"/g, "");
+  const lastCommittish = childProcess.execSync("git", lastArg, opts).replace(/"/g, "");
+
+  return {
+    lastTagCommittish,
+    lastCommittish,
+  };
 }

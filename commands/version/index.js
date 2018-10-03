@@ -308,6 +308,13 @@ class VersionCommand extends Command {
   }
 
   setUpdatesForVersions(versions) {
+    // Get rid of the package, if it set to 'SKIP'
+    versions.forEach((value, key) => {
+      if (value === null) {
+        versions.delete(key);
+      }
+    });
+
     if (this.project.isIndependent() || versions.size === this.packageGraph.size) {
       // only partial fixed versions need to be checked
       this.updatesVersions = versions;
@@ -331,13 +338,18 @@ class VersionCommand extends Command {
   setBatchUpdates() {
     // Skip the package, if the version set to null
     this.packagesToVersion = this.updates
-      .filter(({ pkg }) => this.updatesVersions.get(pkg.name) === null)
+      .filter(({ pkg }) => this.updatesVersions.get(pkg.name)) // Make sure it's in the updateVersions
       .map(({ pkg }) => pkg);
 
     this.batchedPackages = batchPackages(this.packagesToVersion, this.options.rejectCycles);
   }
 
   confirmVersions() {
+    if (this.packagesToVersion.length === 0) {
+      this.logger.success(`No packages need to be updated`);
+      return false;
+    }
+
     const changes = this.packagesToVersion.map(pkg => {
       let line = ` - ${pkg.name}: ${pkg.version} => ${this.updatesVersions.get(pkg.name)}`;
       if (pkg.private) {

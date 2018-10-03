@@ -1,9 +1,7 @@
 "use strict";
 
 const log = require("npmlog");
-const describeRef = require("@lerna/describe-ref");
 
-const hasTags = require("./lib/has-tags");
 const collectDependents = require("./lib/collect-dependents");
 const getForcedPackages = require("./lib/get-forced-packages");
 const makeDiffPredicate = require("./lib/make-diff-predicate");
@@ -17,31 +15,15 @@ function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions
       ? packageGraph
       : new Map(filteredPackages.map(({ name }) => [name, packageGraph.get(name)]));
 
-  let committish = commandOptions.since;
+  const committish = commandOptions.since;
 
-  if (hasTags(execOpts)) {
-    // describe the last annotated tag in the current branch
-    const { sha, refCount, lastTagName } = describeRef.sync(execOpts);
-    // TODO: warn about dirty tree?
-
-    if (refCount === "0" && forced.size === 0) {
-      // no commits since previous release
-      log.notice("", "Current HEAD is already released, skipping change detection.");
-
-      return [];
-    }
-
-    if (commandOptions.canary) {
-      // if it's a merge commit, it will return all the commits that were part of the merge
-      // ex: If `ab7533e` had 2 commits, ab7533e^..ab7533e would contain 2 commits + the merge commit
-      committish = `${sha}^..${sha}`;
-    } else if (!committish) {
-      // if no tags found, this will be undefined and we'll use the initial commit
-      committish = lastTagName;
-    }
+  // If committish is set, then looking for changes since the committish
+  // If it's not set, then looking for the changes in every package, since last commit they tagged.
+  if (committish) {
+    log.info("", `Looking for changed packages since ${committish || "initial commit."}`);
+  } else {
+    log.info("", "Looking for changed packages");
   }
-
-  log.info("", `Looking for changed packages since ${committish || "initial commit."}`);
 
   if (forced.size) {
     // "warn" might seem a bit loud, but it is appropriate for logging anything _forced_

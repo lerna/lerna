@@ -100,7 +100,9 @@ class PublishCommand extends Command {
       this.updatesVersions = new Map(result.updatesVersions);
 
       this.runPackageLifecycle = createRunner(this.options);
-      this.packagesToPublish = this.updates.map(({ pkg }) => pkg).filter(pkg => !pkg.private);
+      this.packagesToPublish = this.updates
+        .map(({ pkg }) => pkg)
+        .filter(pkg => this.updateVersions.get(pkg.name) && !pkg.private);
       this.batchedPackages = this.toposort
         ? batchPackages(
             this.packagesToPublish,
