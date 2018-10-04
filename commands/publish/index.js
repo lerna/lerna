@@ -73,6 +73,13 @@ class PublishCommand extends Command {
       registry,
     });
 
+    if (this.conf.get("registry") === "https://registry.yarnpkg.com") {
+      this.logger.warn("", "Yarn's registry proxy is broken, replacing with public npm registry");
+      this.logger.warn("", "If you don't have an npm token, you should exit and run `npm login`");
+
+      this.conf.set("registry", "https://registry.npmjs.org/", "cli");
+    }
+
     // all consumers need a token
     const auth = this.conf.getCredentialsByURI(this.conf.get("registry"));
 

@@ -251,6 +251,23 @@ Set {
         expect.objectContaining({ registry })
       );
     });
+
+    it("overwrites yarn registry proxy with https://registry.npmjs.org/", async () => {
+      const testDir = await initFixture("normal");
+      const registry = "https://registry.yarnpkg.com";
+
+      await lernaPublish(testDir)("--registry", registry);
+
+      expect(npmPublish).toBeCalledWith(
+        expect.objectContaining({ name: "package-1" }),
+        undefined, // dist-tag
+        expect.objectContaining({ registry: "https://registry.npmjs.org/" })
+      );
+
+      const logMessages = loggingOutput("warn");
+      expect(logMessages).toContain("Yarn's registry proxy is broken, replacing with public npm registry");
+      expect(logMessages).toContain("If you don't have an npm token, you should exit and run `npm login`");
+    });
   });
 
   describe("--no-verify-access", () => {
