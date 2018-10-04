@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.4.1](https://github.com/lerna/lerna/compare/v3.4.0...v3.4.1) (2018-10-04)
+
+
+### Bug Fixes
+
+* **npm-conf:** Do not overwrite defaults with undefined cli keys ([25af71d](https://github.com/lerna/lerna/commit/25af71d))
+
+
+
+
+
 <a name="3.0.0"></a>
 # [3.0.0](https://github.com/lerna/lerna/compare/v3.0.0-rc.0...v3.0.0) (2018-08-10)
 

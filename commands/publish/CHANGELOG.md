@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.4.1](https://github.com/lerna/lerna/compare/v3.4.0...v3.4.1) (2018-10-04)
+
+
+### Bug Fixes
+
+* **publish:** Overwrite Yarn registry proxy when encountered ([f7fdc77](https://github.com/lerna/lerna/commit/f7fdc77))
+* **publish:** Set token on npm config, allow third-party registries to remain non-compliant ([06a9479](https://github.com/lerna/lerna/commit/06a9479))
+
+
+
+
+
 <a name="3.4.0"></a>
 # [3.4.0](https://github.com/lerna/lerna/compare/v3.3.2...v3.4.0) (2018-09-14)
 

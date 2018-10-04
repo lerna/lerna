@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.4.1](https://github.com/lerna/lerna/compare/v3.4.0...v3.4.1) (2018-10-04)
+
+
+### Bug Fixes
+
+* **add:** Allow --registry option ([597606c](https://github.com/lerna/lerna/commit/597606c))
+
+
+
+
+
 <a name="3.3.2"></a>
 ## [3.3.2](https://github.com/lerna/lerna/compare/v3.3.1...v3.3.2) (2018-09-12)
 
