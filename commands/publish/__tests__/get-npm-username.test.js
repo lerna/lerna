@@ -3,6 +3,7 @@
 jest.mock("npm-registry-fetch");
 
 const fetch = require("npm-registry-fetch");
+const loggingOutput = require("@lerna-test/logging-output");
 const getNpmUsername = require("../lib/get-npm-username");
 
 fetch.json.mockImplementation(() => Promise.resolve({ username: "lerna-test" }));
@@ -50,8 +51,11 @@ describe("getNpmUsername", () => {
       return Promise.reject(err);
     });
 
+    const opts = new Map();
+    opts.set("registry", "https://registry.npmjs.org/");
+
     try {
-      await getNpmUsername({ stub: true });
+      await getNpmUsername(opts);
     } catch (err) {
       expect(err.prefix).toBe("EWHOAMI");
       expect(err.message).toBe("Authentication error. Use `npm whoami` to troubleshoot.");
@@ -59,5 +63,25 @@ describe("getNpmUsername", () => {
     }
 
     expect.assertions(3);
+  });
+
+  test("allows third-party registries to fail with a stern warning", async () => {
+    fetch.json.mockImplementationOnce(() => {
+      const err = new Error("many third-party registries do not support npm whoami");
+
+      err.code = "E401";
+
+      return Promise.reject(err);
+    });
+
+    const opts = new Map();
+    opts.set("registry", "http://my-own-private-idaho.com");
+
+    const username = await getNpmUsername(opts);
+
+    expect(username).toBeUndefined();
+    expect(loggingOutput("warn")).toContain(
+      "Unable to determine npm username from third-party registry, this command will likely fail soon!"
+    );
   });
 });

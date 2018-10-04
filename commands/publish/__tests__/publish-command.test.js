@@ -261,6 +261,16 @@ Set {
 
       expect(verifyNpmPackageAccess).not.toBeCalled();
     });
+
+    it("is implied when npm username is undefined", async () => {
+      getNpmUsername.mockImplementationOnce(() => Promise.resolve());
+
+      const cwd = await initFixture("normal");
+
+      await lernaPublish(cwd)("--registry", "https://my-private-registry");
+
+      expect(verifyNpmPackageAccess).not.toBeCalled();
+    });
   });
 
   describe("in a cyclical repo", () => {

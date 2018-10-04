@@ -66,10 +66,23 @@ class PublishCommand extends Command {
     // https://docs.npmjs.com/misc/config#save-prefix
     this.savePrefix = this.options.exact ? "" : "^";
 
-    this.conf = npmConf(this.options);
+    const { registry, npmClient = "npm" } = this.options;
+
+    this.conf = npmConf({
+      log: this.logger,
+      registry,
+    });
+
+    // all consumers need a token
+    const auth = this.conf.getCredentialsByURI(this.conf.get("registry"));
+
+    if (auth.token) {
+      this.conf.set("token", auth.token, "cli");
+    }
+
     this.npmConfig = {
-      npmClient: this.options.npmClient || "npm",
-      registry: this.options.registry,
+      npmClient,
+      registry: this.conf.get("registry"),
     };
 
     let chain = Promise.resolve();
@@ -325,7 +338,8 @@ class PublishCommand extends Command {
       return chain;
     }
 
-    if (this.verifyAccess) {
+    // if no username was retrieved, don't bother validating
+    if (this.conf.get("username") && this.verifyAccess) {
       chain = chain.then(() => verifyNpmPackageAccess(this.packagesToPublish, this.conf));
     }
 

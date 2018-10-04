@@ -8,7 +8,7 @@ const mockVerifyNpmPackageAccess = jest.fn((packages, opts) => {
 
   result.add(`username: ${opts.get("username")}`);
 
-  registry.set(opts.get("cwd"), result);
+  registry.set(opts.prefix, result);
 
   return Promise.resolve();
 });

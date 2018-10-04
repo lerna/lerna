@@ -19,7 +19,7 @@ const env = {
 
 test("lerna publish lifecycle scripts stop on non-zero exit", async () => {
   const { cwd } = await cloneFixture("lifecycle");
-  const args = ["publish", "minor", "--yes"];
+  const args = ["publish", "minor", "--loglevel", "error", "--yes"];
 
   const rootManifest = path.join(cwd, "package.json");
   const json = await fs.readJson(rootManifest);
@@ -51,13 +51,6 @@ boom
 
 `);
       expect(err.stderr).toMatchInlineSnapshot(`
-lerna notice cli __TEST_VERSION__
-lerna info Verifying npm credentials
-lerna info current version 1.0.0
-lerna info Looking for changed packages since initial commit.
-lerna info auto-confirmed 
-lerna info lifecycle lifecycle@0.0.0-monorepo~preversion: lifecycle@0.0.0-monorepo
-lerna info lifecycle lifecycle@0.0.0-monorepo~preversion: Failed to exec preversion script
 lerna ERR! lifecycle "preversion" errored in "lifecycle", exiting 123
 
 `);

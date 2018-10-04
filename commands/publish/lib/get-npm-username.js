@@ -31,6 +31,13 @@ function getNpmUsername(opts) {
     console.error(err.message); // eslint-disable-line no-console
     log.resume();
 
-    throw new ValidationError("EWHOAMI", "Authentication error. Use `npm whoami` to troubleshoot.");
+    if (opts.get("registry") === "https://registry.npmjs.org/") {
+      throw new ValidationError("EWHOAMI", "Authentication error. Use `npm whoami` to troubleshoot.");
+    }
+
+    log.warn(
+      "EWHOAMI",
+      "Unable to determine npm username from third-party registry, this command will likely fail soon!"
+    );
   }
 }
