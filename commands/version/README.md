@@ -51,6 +51,7 @@ If you have any packages with a prerelease version number (e.g. `2.0.0-beta.3`) 
 * [`--push`](#--push)
 * [`--sign-git-commit`](#--sign-git-commit)
 * [`--sign-git-tag`](#--sign-git-tag)
+* [`--yes`](#--yes)
 
 ### `--allow-branch <glob>`
 
@@ -257,6 +258,16 @@ This option is analogous to the `npm version` [option](https://docs.npmjs.com/mi
 ### `--sign-git-tag`
 
 This option is analogous to the `npm version` [option](https://docs.npmjs.com/misc/config#sign-git-tag) of the same name.
+
+### `--yes`
+
+```sh
+lerna version --yes
+# skips `Are you sure you want to publish these packages?`
+```
+
+When run with this flag, `lerna version` will skip all confirmation prompts.
+Useful in [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous_integration) to automatically answer the publish confirmation prompt.
 
 ## Deprecated Options
 
