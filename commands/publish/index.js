@@ -7,6 +7,7 @@ const pMap = require("p-map");
 const pPipe = require("p-pipe");
 const pReduce = require("p-reduce");
 const semver = require("semver");
+const getAuth = require("npm-registry-fetch/auth");
 
 const Command = require("@lerna/command");
 const describeRef = require("@lerna/describe-ref");
@@ -66,11 +67,9 @@ class PublishCommand extends Command {
     // https://docs.npmjs.com/misc/config#save-prefix
     this.savePrefix = this.options.exact ? "" : "^";
 
-    const { registry, npmClient = "npm" } = this.options;
-
     this.conf = npmConf({
       log: this.logger,
-      registry,
+      registry: this.options.registry,
     });
 
     if (this.conf.get("registry") === "https://registry.yarnpkg.com") {
@@ -81,14 +80,15 @@ class PublishCommand extends Command {
     }
 
     // all consumers need a token
-    const auth = this.conf.getCredentialsByURI(this.conf.get("registry"));
+    const registry = this.conf.get("registry");
+    const auth = getAuth(registry, this.conf);
 
     if (auth.token) {
       this.conf.set("token", auth.token, "cli");
     }
 
     this.npmConfig = {
-      npmClient,
+      npmClient: this.options.npmClient || "npm",
       registry: this.conf.get("registry"),
     };
 
