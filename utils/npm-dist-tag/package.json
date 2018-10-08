@@ -10,6 +10,7 @@
   "license": "MIT",
   "author": {
     "name": "Daniel Stockman",
+    "email": "daniel.stockman@gmail.com",
     "url": "https://github.com/evocateur"
   },
   "files": [
@@ -30,8 +31,7 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/child-process": "file:../../core/child-process",
-    "@lerna/get-npm-exec-opts": "file:../get-npm-exec-opts",
-    "libnpm": "^2.0.1"
+    "libnpm": "^2.0.1",
+    "npm-registry-fetch": "^3.8.0"
   }
 }

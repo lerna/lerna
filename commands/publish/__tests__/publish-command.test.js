@@ -108,7 +108,6 @@ Set {
         "package-2",
         // package-5 is private
       ]);
-      expect(npmDistTag.check).not.toHaveBeenCalled();
       expect(npmDistTag.remove).not.toHaveBeenCalled();
       expect(npmDistTag.add).not.toHaveBeenCalled();
 

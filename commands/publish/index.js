@@ -576,16 +576,14 @@ class PublishCommand extends Command {
     let chain = Promise.resolve();
 
     const actions = [
-      pkg =>
-        Promise.resolve()
-          .then(() => npmDistTag.check(pkg, "lerna-temp", this.npmConfig))
-          .then(exists => {
-            if (exists) {
-              return npmDistTag.remove(pkg, "lerna-temp", this.npmConfig);
-            }
-          })
-          .then(() => npmDistTag.add(pkg, distTag, this.npmConfig))
-          .then(() => pkg),
+      pkg => {
+        const spec = `${pkg.name}@${pkg.version}`;
+
+        return Promise.resolve()
+          .then(() => npmDistTag.remove(spec, "lerna-temp", this.conf))
+          .then(() => npmDistTag.add(spec, distTag, this.conf))
+          .then(() => pkg);
+      },
       pkg => {
         tracker.info("dist-tag", "%s@%s => %j", pkg.name, pkg.version, distTag);
         tracker.completeWork(1);

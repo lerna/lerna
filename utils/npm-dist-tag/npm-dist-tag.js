@@ -1,38 +1,96 @@
 "use strict";
 
-const log = require("libnpm/log");
-
-const ChildProcessUtilities = require("@lerna/child-process");
-const getExecOpts = require("@lerna/get-npm-exec-opts");
+const npa = require("libnpm/parse-arg");
+const fetch = require("libnpm/fetch");
+const RegistryConfig = require("npm-registry-fetch/config");
 
 exports.add = add;
-exports.check = check;
 exports.remove = remove;
+exports.list = list;
 
-function add(pkg, tag, { registry }) {
-  log.silly("npmDistTag.add", tag, pkg.version, pkg.name);
+function add(spec, tag, _opts) {
+  // tag is not in the pudding spec, handle separately
+  const cleanTag = (tag || _opts.get("tag")).trim();
 
-  return ChildProcessUtilities.exec(
-    "npm",
-    ["dist-tag", "add", `${pkg.name}@${pkg.version}`, tag],
-    getExecOpts(pkg, registry)
-  );
+  const opts = RegistryConfig(_opts, {
+    spec: npa(spec),
+  });
+
+  const { name, rawSpec: version } = opts.spec;
+
+  opts.log.verbose("dist-tag", `adding "${cleanTag}" to ${name}@${version}`);
+
+  return fetchTags(opts).then(tags => {
+    if (tags[cleanTag] === version) {
+      opts.log.warn("dist-tag", `${name}@${cleanTag} already set to ${version}`);
+      return tags;
+    }
+
+    const uri = `-/package/${opts.spec.escapedName}/dist-tags/${cleanTag}`;
+    const payload = opts.concat({
+      method: "PUT",
+      body: JSON.stringify(version),
+      headers: {
+        // cannot use fetch.json() due to HTTP 204 response,
+        // so we manually set the required content-type
+        "content-type": "application/json",
+      },
+    });
+
+    // success returns HTTP 204, thus no JSON to parse
+    return fetch(uri, payload.toJSON()).then(() => {
+      opts.log.verbose("dist-tag", `added "${cleanTag}" to ${name}@${version}`);
+
+      // eslint-disable-next-line no-param-reassign
+      tags[cleanTag] = version;
+
+      return tags;
+    });
+  });
 }
 
-function check(pkg, tag, { registry }) {
-  log.silly("npmDistTag.check", tag, pkg.name);
+function remove(spec, tag, _opts) {
+  const opts = RegistryConfig(_opts, {
+    spec: npa(spec),
+  });
 
-  const result = ChildProcessUtilities.execSync(
-    "npm",
-    ["dist-tag", "ls", pkg.name],
-    getExecOpts(pkg, registry)
-  );
+  opts.log.verbose("dist-tag", `removing "${tag}" from ${opts.spec.name}`);
 
-  return result.indexOf(tag) >= 0;
+  return fetchTags(opts).then(tags => {
+    const version = tags[tag];
+
+    if (!version) {
+      opts.log.info("dist-tag", `"${tag}" is not a dist-tag on ${opts.spec.name}`);
+      return tags;
+    }
+
+    const uri = `-/package/${opts.spec.escapedName}/dist-tags/${tag}`;
+    const payload = opts.concat({
+      method: "DELETE",
+    });
+
+    // the delete properly returns a 204, so no json to parse
+    return fetch(uri, payload.toJSON()).then(() => {
+      opts.log.verbose("dist-tag", `removed "${tag}" from ${opts.spec.name}@${version}`);
+
+      // eslint-disable-next-line no-param-reassign
+      delete tags[tag];
+
+      return tags;
+    });
+  });
 }
 
-function remove(pkg, tag, { registry }) {
-  log.silly("npmDistTag.remove", tag, pkg.name);
+function list(spec, _opts) {
+  const opts = RegistryConfig(_opts, {
+    spec: npa(spec),
+  });
 
-  return ChildProcessUtilities.exec("npm", ["dist-tag", "rm", pkg.name, tag], getExecOpts(pkg, registry));
+  return fetchTags(opts);
+}
+
+function fetchTags(opts) {
+  const uri = `-/package/${opts.spec.escapedName}/dist-tags`;
+
+  return fetch.json(uri, opts.toJSON());
 }
