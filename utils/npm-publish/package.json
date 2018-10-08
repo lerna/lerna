@@ -36,6 +36,7 @@
     "@lerna/log-packed": "file:../log-packed",
     "fs-extra": "^7.0.0",
     "npmlog": "^4.1.2",
-    "p-map": "^1.2.0"
+    "p-map": "^1.2.0",
+    "strip-ansi": "^5.0.0"
   }
 }
