@@ -24,7 +24,7 @@ function getArgs(options, commandOptions = {}) {
     args.push("--match", options.match);
   }
 
-  if (commandOptions["include-merged-tags"]) {
+  if (commandOptions.includeMergedTags) {
     // we want to consider all tags, also from merged branches
     args = args.filter(arg => arg !== "--first-parent");
     // also include lightweight tags

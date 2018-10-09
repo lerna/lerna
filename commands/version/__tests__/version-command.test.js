@@ -599,4 +599,17 @@ describe("VersionCommand", () => {
       });
     });
   });
+
+  describe("--include-merged-tags", () => {
+    it("accepts --include-merged-tags", async () => {
+      const testDir = await initFixture("normal");
+      await lernaVersion(testDir)("--include-merged-tags", "--yes", "patch");
+
+      expect(PromptUtilities.select).not.toBeCalled();
+      expect(PromptUtilities.confirm).not.toBeCalled();
+
+      const message = await getCommitMessage(testDir);
+      expect(message).toBe("v1.0.1");
+    });
+  });
 });

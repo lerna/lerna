@@ -27,3 +27,12 @@ package-2
 Unlike `lerna ls`, however, `lerna changed` **does not** support [filter options](https://www.npmjs.com/package/@lerna/filter-options), as filtering is not supported by `lerna version` or `lerna publish`.
 
 `lerna changed` also supports all the flags supported by [`lerna version`](https://github.com/lerna/lerna/tree/master/commands/version#options), but the only relevant one is [`--ignore-changes`](https://github.com/lerna/lerna/tree/master/commands/version#--ignore-changes).
+
+### `--include-merged-tags`
+
+```sh
+lerna changed --include-merged-tags
+```
+
+When run with this flag, `lerna changed` will also consider tags of merged branches
+while fetching changes for packages to update.
