@@ -38,7 +38,14 @@ describe("verifyNpmPackageAccess", () => {
 
     await verifyNpmPackageAccess(packages, opts);
 
-    expect(access.lsPackages).lastCalledWith("lerna-test", opts);
+    expect(access.lsPackages).lastCalledWith(
+      "lerna-test",
+      expect.objectContaining({
+        username: "lerna-test",
+        registry: "https://registry.npmjs.org/",
+        retry: 0,
+      })
+    );
   });
 
   test("allows unpublished packages to pass", async () => {

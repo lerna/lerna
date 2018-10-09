@@ -2,6 +2,7 @@
 
 const log = require("npmlog");
 const access = require("libnpmaccess");
+const RegistryConfig = require("npm-registry-fetch/config");
 const ValidationError = require("@lerna/validation-error");
 
 module.exports = verifyNpmPackageAccess;
@@ -9,7 +10,13 @@ module.exports = verifyNpmPackageAccess;
 function verifyNpmPackageAccess(packages, opts) {
   log.silly("verifyNpmPackageAccess");
 
-  return access.lsPackages(opts.get("username"), opts).then(success, failure);
+  // eslint-disable-next-line no-param-reassign
+  opts = RegistryConfig(opts, {
+    // don't wait forever for third-party failures to be dealt with
+    retry: 0,
+  });
+
+  return access.lsPackages(opts.username, opts.toJSON()).then(success, failure);
 
   function success(result) {
     // when _no_ results received, access.lsPackages returns null
@@ -39,7 +46,7 @@ function verifyNpmPackageAccess(packages, opts) {
         "EREGISTRY",
         "Registry %j does not support `npm access ls-packages`, skipping permission checks...",
         // registry
-        opts.get("registry")
+        opts.registry
       );
 
       // don't log redundant errors
