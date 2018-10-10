@@ -43,7 +43,7 @@ describe("verifyNpmPackageAccess", () => {
       expect.objectContaining({
         username: "lerna-test",
         registry: "https://registry.npmjs.org/",
-        retry: 0,
+        "fetch-retries": 0,
       })
     );
   });

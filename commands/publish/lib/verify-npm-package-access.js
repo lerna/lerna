@@ -13,7 +13,7 @@ function verifyNpmPackageAccess(packages, opts) {
   // eslint-disable-next-line no-param-reassign
   opts = RegistryConfig(opts, {
     // don't wait forever for third-party failures to be dealt with
-    retry: 0,
+    "fetch-retries": 0,
   });
 
   return access.lsPackages(opts.username, opts.toJSON()).then(success, failure);
