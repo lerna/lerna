@@ -36,6 +36,7 @@ install: npm ci
 before_script:
   - git config --global user.email test@example.com
   - git config --global user.name "Tester McPerson"
+  - if [[ "$TRAVIS_OS_NAME" = "windows" ]]; then npm i -g yarn; fi
 
 script:
   - npm run ci
