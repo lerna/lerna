@@ -2,13 +2,18 @@
 if: tag IS blank
 
 git:
-  depth: 1
-sudo: false
+  depth: 3
+
 language: node_js
+
 node_js:
   - "10"
   - "8"
   - "6"
+
+os:
+  - linux
+  - windows
 
 env:
   global:
@@ -21,10 +26,12 @@ matrix:
 cache:
   directories:
     - $HOME/.npm
+    # - '%APPDATA%\npm-cache'
 
 before_install:
   - npm config set loglevel warn
   - npm install --global npm@latest
+  # - set PATH=%APPDATA%\npm;"C:\Program Files\Git\mingw64\bin";%PATH%
 
 install: npm ci
 
