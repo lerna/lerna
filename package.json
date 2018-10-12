@@ -6,10 +6,10 @@
   "scripts": {
     "ci": "npm test -- --ci --maxWorkers=2 && npm run integration -- --ci",
     "fix": "npm run lint -- --fix",
-    "integration": "cross-env LC_ALL=en_US.UTF-8 jest --config jest.integration.js --maxWorkers=2",
+    "integration": "jest --config jest.integration.js --maxWorkers=2",
     "lint": "eslint . --ignore-path .gitignore --cache",
     "pretest": "npm run lint",
-    "test": "cross-env LC_ALL=en_US.UTF-8 jest"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -53,7 +53,6 @@
     "@lerna-test/silence-logging": "file:helpers/silence-logging",
     "@lerna-test/update-lerna-config": "file:helpers/update-lerna-config",
     "camelcase": "^4.1.0",
-    "cross-env": "^5.2.0",
     "eslint": "^5.6.1",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-config-prettier": "^3.1.0",
