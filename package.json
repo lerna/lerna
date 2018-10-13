@@ -59,7 +59,7 @@
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jest": "^21.24.1",
     "eslint-plugin-node": "^7.0.1",
-    "eslint-plugin-prettier": "^2.7.0",
+    "eslint-plugin-prettier": "^3.0.0",
     "fast-async": "^6.3.8",
     "jest": "^23.6.0",
     "jest-circus": "^23.6.0",
