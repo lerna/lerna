@@ -4,6 +4,7 @@ const fs = require("fs-extra");
 const log = require("npmlog");
 const path = require("path");
 const pMap = require("p-map");
+const stripAnsi = require("strip-ansi");
 
 const ChildProcessUtilities = require("@lerna/child-process");
 const getExecOpts = require("@lerna/get-npm-exec-opts");
@@ -148,7 +149,7 @@ function parseLegacyTarballs(result, packages) {
   // at the end of stdout in the order of package input(s)
   const isTgz = /^[\S]+\.tgz$/;
   const lines = result.stdout.split("\n");
-  const files = lines.filter(line => isTgz.test(line));
+  const files = lines.filter(line => isTgz.test(line)).map(stripAnsi);
 
   // each result is passed to log-packed, so it needs decoration
   return files.map((filename, idx) => {
