@@ -20,7 +20,7 @@ function getUnpublishedPackages(project, opts) {
   let chain = Promise.resolve();
 
   const mapper = (unpublished, pkg) =>
-    fetch.json(`-/${pkg.name}`, Object.assign({}, opts, registryOptions)).then(
+    fetch.json(`/${pkg.name}`, Object.assign({}, opts, registryOptions)).then(
       packument => {
         if (packument.versions[pkg.version] === undefined) {
           unpublished.push(pkg);

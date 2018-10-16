@@ -8,13 +8,13 @@ const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const getUnpublishedPackages = require("../lib/get-unpublished-packages");
 
 fetch.json.mockImplementation(async pkg => {
-  if (pkg === "-/package-1") {
+  if (pkg === "/package-1") {
     return {
       versions: {},
     };
   }
 
-  if (pkg === "-/package-2") {
+  if (pkg === "/package-2") {
     return {
       versions: {
         "1.0.0": {},
