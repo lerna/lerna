@@ -7,6 +7,7 @@
 ```sh
 lerna publish          # publish packages that have changed since the last release
 lerna publish from-git # explicitly publish packages tagged in current commit
+lerna publish from-package # explicitly publish packages where the latest version is not present in the registry
 ```
 
 When run, this command does one of the following things:
@@ -14,6 +15,7 @@ When run, this command does one of the following things:
 * Publish packages updated since the last release (calling [`lerna version`](https://github.com/lerna/lerna/tree/master/commands/version#readme) behind the scenes).
   * This is the legacy behavior of lerna 2.x
 * Publish packages tagged in the current commit (`from-git`).
+* Publish packages in the latest commit where the version is not present in the registry (`from-package`).
 * Publish an unversioned "canary" release of packages (and their dependents) updated in the previous commit.
 
 > Lerna will never publish packages which are marked as private (`"private": true` in the `package.json`).
@@ -35,6 +37,13 @@ In addition to the semver keywords supported by [`lerna version`](https://github
 This will identify packages tagged by `lerna version` and publish them to npm.
 This is useful in CI scenarios where you wish to manually increment versions,
 but have the package contents themselves consistently published by an automated process.
+
+### bump `from-package`
+
+Similar to the `from-git` keyword except the list of packages to publish is determined by inspecting each `package.json`
+and determining if any package version is not present in the registry. Any versions not present in the registry will
+be published.
+This is useful when a previous `lerna publish` failed to publish all packages to the registry.
 
 ## Options
 
