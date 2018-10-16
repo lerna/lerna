@@ -157,11 +157,6 @@ class PublishCommand extends Command {
       chain = chain.then(() => this.updateCanaryVersions());
     }
 
-    // TODO need to create git tags
-    // if (this.options.bump === "from-package") {
-
-    // }
-
     chain = chain.then(() => this.resolveLocalDependencyLinks());
     chain = chain.then(() => this.annotateGitHead());
     chain = chain.then(() => this.packUpdated());
@@ -253,7 +248,7 @@ class PublishCommand extends Command {
         this.logger.notice("from-package", "No unpublished release found");
       }
 
-      return unpublishedPackages;
+      return unpublishedPackages.map(({ name }) => this.packageGraph.get(name));
     });
 
     return chain.then(updates => {
