@@ -4,6 +4,7 @@
 jest.mock("../lib/git-push");
 jest.mock("../lib/is-anything-committed");
 jest.mock("../lib/is-behind-upstream");
+jest.mock("../lib/remote-branch-exists");
 
 const fs = require("fs-extra");
 const path = require("path");
@@ -18,6 +19,7 @@ const checkWorkingTree = require("@lerna/check-working-tree");
 const libPush = require("../lib/git-push");
 const isAnythingCommitted = require("../lib/is-anything-committed");
 const isBehindUpstream = require("../lib/is-behind-upstream");
+const remoteBranchExists = require("../lib/remote-branch-exists");
 
 // helpers
 const loggingOutput = require("@lerna-test/logging-output");
@@ -78,6 +80,20 @@ describe("VersionCommand", () => {
       } catch (err) {
         expect(err.message).toMatch("independent");
       }
+    });
+
+    it("throws an error when remote branch doesn't exist", async () => {
+      remoteBranchExists.mockReturnValueOnce(false);
+
+      const testDir = await initFixture("normal");
+
+      try {
+        await lernaVersion(testDir)();
+      } catch (err) {
+        expect(err.message).toMatch("doesn't exist in remote");
+      }
+
+      expect.assertions(1);
     });
 
     it("throws an error when uncommitted changes are present", async () => {

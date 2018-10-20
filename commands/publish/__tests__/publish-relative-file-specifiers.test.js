@@ -11,6 +11,7 @@ jest.mock("../lib/get-npm-username");
 jest.mock("../../version/lib/git-push");
 jest.mock("../../version/lib/is-anything-committed");
 jest.mock("../../version/lib/is-behind-upstream");
+jest.mock("../../version/lib/remote-branch-exists");
 
 const fs = require("fs-extra");
 const path = require("path");

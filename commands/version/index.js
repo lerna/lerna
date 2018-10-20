@@ -26,6 +26,7 @@ const gitCommit = require("./lib/git-commit");
 const gitPush = require("./lib/git-push");
 const gitTag = require("./lib/git-tag");
 const isBehindUpstream = require("./lib/is-behind-upstream");
+const remoteBranchExists = require("./lib/remote-branch-exists");
 const isBreakingChange = require("./lib/is-breaking-change");
 const isAnythingCommitted = require("./lib/is-anything-committed");
 const makePromptVersion = require("./lib/prompt-version");
@@ -88,6 +89,16 @@ class VersionCommand extends Command {
 
     if (this.currentBranch === "HEAD") {
       throw new ValidationError("ENOGIT", "Detached git HEAD, please checkout a branch to choose versions.");
+    }
+
+    if (this.pushToRemote && !remoteBranchExists(this.gitRemote, this.currentBranch, this.execOpts)) {
+      throw new ValidationError(
+        "EMISSREMOTEBRANCH",
+        dedent`
+          Branch '${this.currentBranch}' doesn't exist in remote '${this.gitRemote}'.
+          If this is a new branch, please make sure you push it to the remote first.
+        `
+      );
     }
 
     if (

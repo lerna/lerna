@@ -8,6 +8,7 @@ jest.mock("../lib/get-npm-username");
 jest.mock("../../version/lib/git-push");
 jest.mock("../../version/lib/is-anything-committed");
 jest.mock("../../version/lib/is-behind-upstream");
+jest.mock("../../version/lib/remote-branch-exists");
 
 // mocked or stubbed modules
 const npmDistTag = require("@lerna/npm-dist-tag");

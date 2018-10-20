@@ -8,6 +8,7 @@ jest.unmock("@lerna/conventional-commits");
 jest.mock("../lib/git-push");
 jest.mock("../lib/is-anything-committed");
 jest.mock("../lib/is-behind-upstream");
+jest.mock("../lib/remote-branch-exists");
 
 const fs = require("fs-extra");
 const path = require("path");
