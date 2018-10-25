@@ -21,6 +21,10 @@ env:
 
 matrix:
   fast_finish: true
+  exclude:
+    # only run windows CI on LTS (v10)
+    - node_js: "8"
+      os: windows
 
 cache: npm
 
