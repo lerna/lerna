@@ -22,10 +22,7 @@ env:
 matrix:
   fast_finish: true
 
-cache:
-  directories:
-    - $HOME/.npm
-    # - '%APPDATA%\npm-cache'
+cache: npm
 
 before_install:
   - npm config set loglevel warn
