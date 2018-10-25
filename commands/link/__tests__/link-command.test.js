@@ -45,7 +45,45 @@ describe("LinkCommand", () => {
       const testDir = await initFixture("basic");
       await lernaLink(testDir)();
 
-      expect(symlinkedDirectories(testDir)).toMatchSnapshot();
+      expect(symlinkedDirectories(testDir)).toMatchInlineSnapshot(`
+Array [
+  Object {
+    "_src": "packages/package-1",
+    "dest": "packages/package-2/node_modules/@test/package-1",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-1",
+    "dest": "packages/package-3/node_modules/@test/package-1",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-2",
+    "dest": "packages/package-3/node_modules/@test/package-2",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-2/cli.js",
+    "dest": "packages/package-3/node_modules/.bin/package-2",
+    "type": "exec",
+  },
+  Object {
+    "_src": "packages/package-3",
+    "dest": "packages/package-4/node_modules/package-3",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-3/cli1.js",
+    "dest": "packages/package-4/node_modules/.bin/package3cli1",
+    "type": "exec",
+  },
+  Object {
+    "_src": "packages/package-3/cli2.js",
+    "dest": "packages/package-4/node_modules/.bin/package3cli2",
+    "type": "exec",
+  },
+]
+`);
     });
   });
 
@@ -54,7 +92,50 @@ describe("LinkCommand", () => {
       const testDir = await initFixture("force-local");
       await lernaLink(testDir)();
 
-      expect(symlinkedDirectories(testDir)).toMatchSnapshot();
+      expect(symlinkedDirectories(testDir)).toMatchInlineSnapshot(`
+Array [
+  Object {
+    "_src": "packages/package-1",
+    "dest": "packages/package-2/node_modules/@test/package-1",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-1",
+    "dest": "packages/package-3/node_modules/@test/package-1",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-1",
+    "dest": "packages/package-4/node_modules/@test/package-1",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-2",
+    "dest": "packages/package-3/node_modules/@test/package-2",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-2/cli.js",
+    "dest": "packages/package-3/node_modules/.bin/package-2",
+    "type": "exec",
+  },
+  Object {
+    "_src": "packages/package-3",
+    "dest": "packages/package-4/node_modules/package-3",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-3/cli1.js",
+    "dest": "packages/package-4/node_modules/.bin/package3cli1",
+    "type": "exec",
+  },
+  Object {
+    "_src": "packages/package-3/cli2.js",
+    "dest": "packages/package-4/node_modules/.bin/package3cli2",
+    "type": "exec",
+  },
+]
+`);
     });
   });
 });
