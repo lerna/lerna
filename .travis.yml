@@ -25,6 +25,7 @@ matrix:
 cache: npm
 
 before_install:
+  - if [[ "$(npm -v)" != "$(npm v npm dist-tags.latest)" ]]; then npm i -g npm@latest; fi
   # - set PATH=%APPDATA%\npm;"C:\Program Files\Git\mingw64\bin";%PATH%
 
 install: npm ci
