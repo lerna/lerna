@@ -134,7 +134,7 @@ Lerna will log to a `lerna-debug.log` file (same as `npm-debug.log`) when it enc
 
 Lerna also has support for [scoped packages](https://docs.npmjs.com/misc/scope).
 
-Running `lerna` without arguments will show all commands/options.
+Running `lerna --help` will show all commands/options.
 
 ### lerna.json
 
