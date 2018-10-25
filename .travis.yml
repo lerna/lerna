@@ -38,6 +38,3 @@ before_script:
 
 script:
   - npm run ci
-
-notifications:
-  slack: lernajs:qHyrojRoqBBu7OhDyX1OMiHQ
