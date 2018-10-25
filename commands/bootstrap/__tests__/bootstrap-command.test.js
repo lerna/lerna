@@ -51,7 +51,19 @@ const symlinkedDirectories = testDir =>
   createSymlink.mock.calls
     .slice()
     // ensure sort is always consistent, despite promise variability
-    .sort((a, b) => (b[0] === a[0] ? b[1] < a[1] : b[0] < a[0]))
+    .sort((a, b) => {
+      // two-dimensional path sort
+      if (b[0] === a[0]) {
+        if (b[1] === a[1]) {
+          // ignore third field
+          return 0;
+        }
+
+        return b[1] < a[1] ? 1 : -1;
+      }
+
+      return b[0] < a[0] ? 1 : -1;
+    })
     .map(([src, dest, type]) => ({
       _src: normalizeRelativeDir(testDir, src),
       dest: normalizeRelativeDir(testDir, dest),
