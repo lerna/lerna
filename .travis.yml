@@ -7,6 +7,7 @@ git:
 language: node_js
 
 node_js:
+  - "11"
   - "10"
   - "8"
 
@@ -23,6 +24,8 @@ matrix:
   fast_finish: true
   exclude:
     # only run windows CI on LTS (v10)
+    - node_js: "11"
+      os: windows
     - node_js: "8"
       os: windows
 
