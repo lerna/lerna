@@ -41,7 +41,7 @@ You can significantly reduce the time spent in `lerna bootstrap` if you turn
 on hoisting, see the [hoisting docs](./doc/hoist.md) for more information.
 
 In combination with that you may increase the bootstrap performance even more by
-[using yarn as an npm client](https://github.com/lerna/lerna#--npm-client-client) instead of `npm`.
+[using yarn as an npm client](https://github.com/lerna/lerna/blob/master/commands/bootstrap/README.md#usage) instead of `npm`.
 
 ## Root `package.json`
 
