@@ -65,9 +65,12 @@ Tests will pass fine, and you may not realise until later, when you
 try to use this package outside of the monorepo, that some of its
 dependencies are missing.
 
-(This problem is not specific to lerna.  It can also occur as a result
+(This problem is not specific to lerna. It can also occur as a result
 of [`npm`'s flattening](https://medium.com/pnpm/pnpms-strictness-helps-to-avoid-silly-bugs-9a15fb306308).)
 
-To avoid this problem, when using `require()` or `import` on an
-external module, always check that the dependency is specified in
+To avoid this problem, we can use the [eslint-plugin-import](https://github.com/benmosher/eslint-plugin-import)
+package, which has a rule `no-extraneous-dependencies` that can warn
+when an import is made from an unspecified package. It is enabled by
+default in the 'recommended' config. Otherwise, we should check by
+hand that all new imports come from packages specified in
 `package.json`.
