@@ -79,7 +79,7 @@ class Project {
           "EWORKSPACES",
           dedent`
             Yarn workspaces need to be defined in the root package.json.
-            See: https://github.com/lerna/lerna#--use-workspaces
+            See: https://github.com/lerna/lerna/blob/master/commands/bootstrap/README.md#--use-workspaces
           `
         );
       }
