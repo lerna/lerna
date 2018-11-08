@@ -16,6 +16,11 @@ exports.builder = yargs =>
         describe: "Import each merge commit as a single change the merge introduced",
         type: "boolean",
       },
+      dest: {
+        group: "Command Options:",
+        describe: "Import destination directory for the external git repository",
+        type: "string",
+      },
       y: {
         group: "Command Options:",
         describe: "Skip all confirmation prompts",
