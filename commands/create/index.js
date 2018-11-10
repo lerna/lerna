@@ -365,8 +365,8 @@ class CreateCommand extends Command {
             ${this.binFileName} --help
           `
           : this.options.esModule
-            ? `import ${this.camelName} from '${this.pkgName}';`
-            : `const ${this.camelName} = require('${this.pkgName}');`
+          ? `import ${this.camelName} from '${this.pkgName}';`
+          : `const ${this.camelName} = require('${this.pkgName}');`
       }
 
       // TODO: DEMONSTRATE API

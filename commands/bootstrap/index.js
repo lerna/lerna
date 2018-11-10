@@ -345,8 +345,8 @@ class BootstrapCommand extends Command {
       let rootVersion;
 
       if (hoisting && isHoistedPackage(externalName, hoisting)) {
-        const commonVersion = Array.from(externalDependents.keys()).reduce(
-          (a, b) => (externalDependents.get(a).size > externalDependents.get(b).size ? a : b)
+        const commonVersion = Array.from(externalDependents.keys()).reduce((a, b) =>
+          externalDependents.get(a).size > externalDependents.get(b).size ? a : b
         );
 
         // Get the version required by the repo root (if any).
@@ -471,13 +471,15 @@ class BootstrapCommand extends Command {
       // installed in package directories.
       actions.push(() => {
         // Compute the list of candidate directories synchronously
-        const candidates = root.filter(dep => dep.dependents.length).reduce((list, { name, dependents }) => {
-          const dirs = dependents
-            .filter(pkg => pkg.nodeModulesLocation !== rootPkg.nodeModulesLocation)
-            .map(pkg => path.join(pkg.nodeModulesLocation, name));
+        const candidates = root
+          .filter(dep => dep.dependents.length)
+          .reduce((list, { name, dependents }) => {
+            const dirs = dependents
+              .filter(pkg => pkg.nodeModulesLocation !== rootPkg.nodeModulesLocation)
+              .map(pkg => path.join(pkg.nodeModulesLocation, name));
 
-          return list.concat(dirs);
-        }, []);
+            return list.concat(dirs);
+          }, []);
 
         if (!candidates.length) {
           tracker.verbose("hoist", "nothing to prune");
