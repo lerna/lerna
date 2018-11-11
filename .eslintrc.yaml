@@ -81,3 +81,9 @@ overrides:
             - "@integration/package-2"
       no-console: off
       strict: off
+  - files:
+      - "utils/map-to-registry/lib/map-to-registry.js"
+      - "utils/npm-conf/lib/nerf-dart.js"
+    rules:
+      # Allow legacy url API
+      node/no-deprecated-api: off
