@@ -73,7 +73,9 @@ test("publish --canary", async () => {
   );
   await lernaPublish(cwd)("--canary");
 
-  expect(PromptUtilities.confirm).lastCalledWith("Are you sure you want to publish these packages?");
+  expect(PromptUtilities.confirm).toHaveBeenLastCalledWith(
+    "Are you sure you want to publish these packages?"
+  );
   expect(npmPublish.registry).toMatchInlineSnapshot(`
 Map {
   "package-1" => "canary",

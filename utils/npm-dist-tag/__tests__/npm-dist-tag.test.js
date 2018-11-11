@@ -25,23 +25,31 @@ describe("dist-tag", () => {
     it("adds a dist-tag for a given package@version", async () => {
       await npmDistTag.add(pkg, tag, {});
 
-      expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["dist-tag", "add", "foo-pkg@1.0.0", tag], {
-        cwd: pkg.location,
-        env: {},
-        pkg,
-      });
+      expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith(
+        "npm",
+        ["dist-tag", "add", "foo-pkg@1.0.0", tag],
+        {
+          cwd: pkg.location,
+          env: {},
+          pkg,
+        }
+      );
     });
 
     it("supports custom registry", async () => {
       await npmDistTag.add(pkg, tag, { registry });
 
-      expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["dist-tag", "add", "foo-pkg@1.0.0", tag], {
-        cwd: pkg.location,
-        env: {
-          npm_config_registry: registry,
-        },
-        pkg,
-      });
+      expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith(
+        "npm",
+        ["dist-tag", "add", "foo-pkg@1.0.0", tag],
+        {
+          cwd: pkg.location,
+          env: {
+            npm_config_registry: registry,
+          },
+          pkg,
+        }
+      );
     });
   });
 
@@ -56,7 +64,7 @@ describe("dist-tag", () => {
     it("removes a dist-tag for a given package", async () => {
       await npmDistTag.remove(pkg, tag, {});
 
-      expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["dist-tag", "rm", pkg.name, tag], {
+      expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith("npm", ["dist-tag", "rm", pkg.name, tag], {
         cwd: pkg.location,
         env: {},
         pkg,
@@ -66,7 +74,7 @@ describe("dist-tag", () => {
     it("supports custom registry", async () => {
       await npmDistTag.remove(pkg, tag, { registry });
 
-      expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["dist-tag", "rm", pkg.name, tag], {
+      expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith("npm", ["dist-tag", "rm", pkg.name, tag], {
         cwd: pkg.location,
         env: {
           npm_config_registry: registry,
@@ -90,7 +98,7 @@ describe("dist-tag", () => {
       expect(npmDistTag.check(pkg, "latest", {})).toBe(true);
       expect(npmDistTag.check(pkg, "missing", {})).toBe(false);
 
-      expect(ChildProcessUtilities.execSync).lastCalledWith("npm", ["dist-tag", "ls", pkg.name], {
+      expect(ChildProcessUtilities.execSync).toHaveBeenLastCalledWith("npm", ["dist-tag", "ls", pkg.name], {
         cwd: pkg.location,
         env: {},
         pkg,
@@ -102,7 +110,7 @@ describe("dist-tag", () => {
 
       expect(npmDistTag.check(pkg, "target-tag", { registry })).toBe(true);
 
-      expect(ChildProcessUtilities.execSync).lastCalledWith("npm", ["dist-tag", "ls", pkg.name], {
+      expect(ChildProcessUtilities.execSync).toHaveBeenLastCalledWith("npm", ["dist-tag", "ls", pkg.name], {
         cwd: pkg.location,
         env: {
           npm_config_registry: registry,

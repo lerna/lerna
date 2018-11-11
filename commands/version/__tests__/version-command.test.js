@@ -50,17 +50,19 @@ describe("VersionCommand", () => {
       const testDir = await initFixture("normal");
       await lernaVersion(testDir)();
 
-      expect(checkWorkingTree).toBeCalled();
+      expect(checkWorkingTree).toHaveBeenCalled();
 
       expect(PromptUtilities.select.mock.calls).toMatchSnapshot("prompt");
-      expect(PromptUtilities.confirm).lastCalledWith("Are you sure you want to create these versions?");
+      expect(PromptUtilities.confirm).toHaveBeenLastCalledWith(
+        "Are you sure you want to create these versions?"
+      );
 
       expect(writePkg.updatedManifest("package-1")).toMatchSnapshot("gitHead");
 
       const patch = await showCommit(testDir);
       expect(patch).toMatchSnapshot("commit");
 
-      expect(libPush).lastCalledWith(
+      expect(libPush).toHaveBeenLastCalledWith(
         "origin",
         "master",
         expect.objectContaining({
@@ -147,14 +149,14 @@ describe("VersionCommand", () => {
       const testDir = await initFixture("independent");
       await lernaVersion(testDir)(); // --independent is only valid in InitCommand
 
-      expect(PromptUtilities.confirm).toBeCalled();
+      expect(PromptUtilities.confirm).toHaveBeenCalled();
 
       expect(writePkg.updatedManifest("package-1")).toMatchSnapshot("gitHead");
 
       const patch = await showCommit(testDir);
       expect(patch).toMatchSnapshot("commit");
 
-      expect(libPush).lastCalledWith(
+      expect(libPush).toHaveBeenLastCalledWith(
         "origin",
         "master",
         expect.objectContaining({
@@ -377,7 +379,7 @@ describe("VersionCommand", () => {
       const testDir = await initFixture("normal");
       await lernaVersion(testDir)("--git-remote", "upstream");
 
-      expect(libPush).lastCalledWith(
+      expect(libPush).toHaveBeenLastCalledWith(
         "upstream",
         "master",
         expect.objectContaining({
@@ -399,7 +401,7 @@ describe("VersionCommand", () => {
       });
       await lernaVersion(testDir)();
 
-      expect(libPush).lastCalledWith(
+      expect(libPush).toHaveBeenLastCalledWith(
         "durable",
         "master",
         expect.objectContaining({

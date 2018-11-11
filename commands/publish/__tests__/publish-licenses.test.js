@@ -31,8 +31,8 @@ describe("licenses", () => {
 
     await lernaPublish(cwd)();
 
-    expect(createTempLicenses).lastCalledWith(path.join(cwd, "LICENSE"), packagesToBeLicensed);
-    expect(removeTempLicenses).lastCalledWith(packagesToBeLicensed);
+    expect(createTempLicenses).toHaveBeenLastCalledWith(path.join(cwd, "LICENSE"), packagesToBeLicensed);
+    expect(removeTempLicenses).toHaveBeenLastCalledWith(packagesToBeLicensed);
   });
 
   it("removes all temporary licenses on error", async () => {
@@ -47,7 +47,7 @@ describe("licenses", () => {
     }
 
     expect(removeTempLicenses).toHaveBeenCalledTimes(1);
-    expect(removeTempLicenses).lastCalledWith([expect.objectContaining({ name: "package-1" })]);
+    expect(removeTempLicenses).toHaveBeenLastCalledWith([expect.objectContaining({ name: "package-1" })]);
   });
 
   it("does not override original error when removal rejects", async () => {
@@ -71,7 +71,7 @@ describe("licenses", () => {
     const [warning] = loggingOutput("warn");
     expect(warning).toMatch("Packages package-1, package-3 are missing a license");
 
-    expect(createTempLicenses).lastCalledWith(undefined, []);
-    expect(removeTempLicenses).lastCalledWith([]);
+    expect(createTempLicenses).toHaveBeenLastCalledWith(undefined, []);
+    expect(removeTempLicenses).toHaveBeenLastCalledWith([]);
   });
 });

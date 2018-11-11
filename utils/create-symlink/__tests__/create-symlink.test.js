@@ -27,7 +27,7 @@ describe("create-symlink", () => {
       await createSymlink(src, dst, type);
 
       expect(fs.unlink).not.toBeCalled();
-      expect(fs.symlink).lastCalledWith(linkRelative(src, dst), dst, type);
+      expect(fs.symlink).toHaveBeenLastCalledWith(linkRelative(src, dst), dst, type);
     });
 
     it("creates relative symlink to an executable file", async () => {
@@ -38,7 +38,7 @@ describe("create-symlink", () => {
       await createSymlink(src, dst, type);
 
       expect(fs.unlink).not.toBeCalled();
-      expect(fs.symlink).lastCalledWith(linkRelative(src, dst), dst, "file");
+      expect(fs.symlink).toHaveBeenLastCalledWith(linkRelative(src, dst), dst, "file");
     });
 
     it("overwrites an existing symlink", async () => {
@@ -50,8 +50,8 @@ describe("create-symlink", () => {
 
       await createSymlink(src, dst, type);
 
-      expect(fs.unlink).lastCalledWith(dst);
-      expect(fs.symlink).lastCalledWith(linkRelative(src, dst), dst, type);
+      expect(fs.unlink).toHaveBeenLastCalledWith(dst);
+      expect(fs.symlink).toHaveBeenLastCalledWith(linkRelative(src, dst), dst, type);
     });
   } else {
     it("creates command shim to an executable file", async () => {
@@ -62,7 +62,7 @@ describe("create-symlink", () => {
       await createSymlink(src, dst, type);
 
       expect(fs.lstat).not.toBeCalled();
-      expect(cmdShim).lastCalledWith(src, dst, expect.any(Function));
+      expect(cmdShim).toHaveBeenLastCalledWith(src, dst, expect.any(Function));
     });
 
     it("rejects when cmd-shim errors", async () => {
@@ -84,8 +84,8 @@ describe("create-symlink", () => {
 
       await createSymlink(src, dst, type);
 
-      expect(fs.unlink).lastCalledWith(dst);
-      expect(fs.symlink).lastCalledWith(src, dst, type);
+      expect(fs.unlink).toHaveBeenLastCalledWith(dst);
+      expect(fs.symlink).toHaveBeenLastCalledWith(src, dst, type);
     });
   }
 });

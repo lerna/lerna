@@ -39,7 +39,7 @@ describe("npm-install", () => {
         mutex: "file:foo",
       });
 
-      expect(ChildProcessUtilities.exec).lastCalledWith(
+      expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith(
         "yarn",
         ["install", "--mutex", "file:foo", "--non-interactive", "--no-optional"],
         { cwd: pkg.location, env: {}, pkg, stdio: "pipe" }
@@ -60,7 +60,7 @@ describe("npm-install", () => {
         stdio: "inherit",
       });
 
-      expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["install"], {
+      expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith("npm", ["install"], {
         cwd: pkg.location,
         env: {},
         pkg,
@@ -87,12 +87,16 @@ describe("npm-install", () => {
       } catch (err) {
         expect(err.message).toBe("whoopsy-doodle");
 
-        expect(ChildProcessUtilities.exec).lastCalledWith("yarn", ["install", "--non-interactive"], {
-          cwd: pkg.location,
-          env: {},
-          pkg,
-          stdio: "pipe",
-        });
+        expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith(
+          "yarn",
+          ["install", "--non-interactive"],
+          {
+            cwd: pkg.location,
+            env: {},
+            pkg,
+            stdio: "pipe",
+          }
+        );
       }
     });
   });
@@ -125,9 +129,9 @@ describe("npm-install", () => {
 
       await npmInstall.dependencies(pkg, dependencies, {});
 
-      expect(fs.rename).lastCalledWith(pkg.manifestLocation, backupManifest);
-      expect(fs.renameSync).lastCalledWith(backupManifest, pkg.manifestLocation);
-      expect(writePkg).lastCalledWith(pkg.manifestLocation, {
+      expect(fs.rename).toHaveBeenLastCalledWith(pkg.manifestLocation, backupManifest);
+      expect(fs.renameSync).toHaveBeenLastCalledWith(backupManifest, pkg.manifestLocation);
+      expect(writePkg).toHaveBeenLastCalledWith(pkg.manifestLocation, {
         name: "npm-install-deps",
         version: "1.0.0",
         dependencies: {
@@ -141,7 +145,7 @@ describe("npm-install", () => {
           // removed local-dev-dependency
         },
       });
-      expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["install"], {
+      expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith("npm", ["install"], {
         cwd: pkg.location,
         env: {},
         pkg,
@@ -172,7 +176,7 @@ describe("npm-install", () => {
 
       await npmInstall.dependencies(pkg, dependencies, config);
 
-      expect(writePkg).lastCalledWith(pkg.manifestLocation, {
+      expect(writePkg).toHaveBeenLastCalledWith(pkg.manifestLocation, {
         name: "npm-install-deps",
         version: "1.0.0",
         dependencies: {
@@ -182,7 +186,7 @@ describe("npm-install", () => {
           tagged: "next",
         },
       });
-      expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["install"], {
+      expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith("npm", ["install"], {
         cwd: pkg.location,
         env: {
           npm_config_registry: config.registry,
@@ -213,7 +217,7 @@ describe("npm-install", () => {
         npmGlobalStyle: true,
       });
 
-      expect(writePkg).lastCalledWith(pkg.manifestLocation, {
+      expect(writePkg).toHaveBeenLastCalledWith(pkg.manifestLocation, {
         name: "npm-install-deps",
         version: "1.0.0",
         dependencies: {
@@ -224,7 +228,7 @@ describe("npm-install", () => {
           caret: "^1.0.0",
         },
       });
-      expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["install", "--global-style"], {
+      expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith("npm", ["install", "--global-style"], {
         cwd: pkg.location,
         env: {},
         pkg,
@@ -251,7 +255,7 @@ describe("npm-install", () => {
         mutex: "network:12345",
       });
 
-      expect(writePkg).lastCalledWith(pkg.manifestLocation, {
+      expect(writePkg).toHaveBeenLastCalledWith(pkg.manifestLocation, {
         name: "npm-install-deps",
         version: "1.0.0",
         dependencies: {
@@ -259,7 +263,7 @@ describe("npm-install", () => {
           something: "^1.0.0",
         },
       });
-      expect(ChildProcessUtilities.exec).lastCalledWith(
+      expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith(
         "yarn",
         ["install", "--mutex", "network:12345", "--non-interactive"],
         { cwd: pkg.location, env: {}, pkg, stdio: "pipe" }
@@ -288,7 +292,7 @@ describe("npm-install", () => {
         npmClientArgs: ["--production", "--no-optional"],
       });
 
-      expect(writePkg).lastCalledWith(pkg.manifestLocation, {
+      expect(writePkg).toHaveBeenLastCalledWith(pkg.manifestLocation, {
         name: "npm-install-deps",
         version: "1.0.0",
         optionalDependencies: {
@@ -298,12 +302,16 @@ describe("npm-install", () => {
           something: "github:foo/foo",
         },
       });
-      expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["install", "--production", "--no-optional"], {
-        cwd: pkg.location,
-        env: {},
-        pkg,
-        stdio: "pipe",
-      });
+      expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith(
+        "npm",
+        ["install", "--production", "--no-optional"],
+        {
+          cwd: pkg.location,
+          env: {},
+          pkg,
+          stdio: "pipe",
+        }
+      );
     });
 
     it("overrides custom npmClient when using global style", async () => {
@@ -330,7 +338,7 @@ describe("npm-install", () => {
         mutex: "network:12345",
       });
 
-      expect(writePkg).lastCalledWith(pkg.manifestLocation, {
+      expect(writePkg).toHaveBeenLastCalledWith(pkg.manifestLocation, {
         name: "npm-install-deps",
         version: "1.0.0",
         dependencies: {
@@ -340,7 +348,7 @@ describe("npm-install", () => {
           something: "github:foo/foo",
         },
       });
-      expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["install", "--global-style"], {
+      expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith("npm", ["install", "--global-style"], {
         cwd: pkg.location,
         env: {},
         pkg,
@@ -370,7 +378,7 @@ describe("npm-install", () => {
         subCommand: "ci",
       });
 
-      expect(writePkg).lastCalledWith(pkg.manifestLocation, {
+      expect(writePkg).toHaveBeenLastCalledWith(pkg.manifestLocation, {
         name: "npm-install-deps",
         version: "1.0.0",
         dependencies: {
@@ -380,7 +388,7 @@ describe("npm-install", () => {
           something: "github:foo/foo",
         },
       });
-      expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["ci"], {
+      expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith("npm", ["ci"], {
         cwd: pkg.location,
         env: {},
         pkg,
@@ -424,7 +432,7 @@ describe("npm-install", () => {
 
       await npmInstall.dependencies(pkg, dependencies, {});
 
-      expect(writePkg).lastCalledWith(pkg.manifestLocation, {
+      expect(writePkg).toHaveBeenLastCalledWith(pkg.manifestLocation, {
         name: "npm-install-deps",
         version: "1.0.0",
         dependencies: {
@@ -471,7 +479,7 @@ describe("npm-install", () => {
         await npmInstall.dependencies(pkg, dependencies, {});
       } catch (err) {
         expect(err.message).toBe("Unable to write file");
-        expect(fs.renameSync).lastCalledWith(backupManifest, pkg.manifestLocation);
+        expect(fs.renameSync).toHaveBeenLastCalledWith(backupManifest, pkg.manifestLocation);
       }
     });
 
@@ -492,7 +500,7 @@ describe("npm-install", () => {
         await npmInstall.dependencies(pkg, dependencies, {});
       } catch (err) {
         expect(err.message).toBe("Unable to install dependency");
-        expect(fs.renameSync).lastCalledWith(backupManifest, pkg.manifestLocation);
+        expect(fs.renameSync).toHaveBeenLastCalledWith(backupManifest, pkg.manifestLocation);
       }
     });
   });

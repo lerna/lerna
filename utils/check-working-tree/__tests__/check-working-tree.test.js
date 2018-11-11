@@ -12,7 +12,7 @@ describe("check-working-tree", () => {
     const result = await checkWorkingTree({ cwd: "foo" });
 
     expect(result).toEqual({ refCount: "1" });
-    expect(describeRef).lastCalledWith({ cwd: "foo" });
+    expect(describeRef).toHaveBeenLastCalledWith({ cwd: "foo" });
   });
 
   it("rejects when current commit has already been released", async () => {

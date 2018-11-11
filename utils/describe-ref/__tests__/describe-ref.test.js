@@ -14,7 +14,7 @@ describe("describeRef()", () => {
   it("resolves parsed metadata", async () => {
     const result = await describeRef();
 
-    expect(childProcess.exec).lastCalledWith("git", DEFAULT_ARGS, {});
+    expect(childProcess.exec).toHaveBeenLastCalledWith("git", DEFAULT_ARGS, {});
     expect(result).toEqual({
       isDirty: false,
       lastTagName: "v1.2.3",
@@ -28,14 +28,18 @@ describe("describeRef()", () => {
     const options = { cwd: "foo" };
     await describeRef(options);
 
-    expect(childProcess.exec).lastCalledWith("git", DEFAULT_ARGS, options);
+    expect(childProcess.exec).toHaveBeenLastCalledWith("git", DEFAULT_ARGS, options);
   });
 
   it("accepts options.match", async () => {
     const options = { match: "v*.*.*" };
     await describeRef(options);
 
-    expect(childProcess.exec).lastCalledWith("git", DEFAULT_ARGS.concat(["--match", "v*.*.*"]), options);
+    expect(childProcess.exec).toHaveBeenLastCalledWith(
+      "git",
+      DEFAULT_ARGS.concat(["--match", "v*.*.*"]),
+      options
+    );
   });
 });
 
@@ -43,7 +47,7 @@ describe("describeRef.sync()", () => {
   it("returns parsed metadata", () => {
     const result = describeRef.sync();
 
-    expect(childProcess.execSync).lastCalledWith("git", DEFAULT_ARGS, {});
+    expect(childProcess.execSync).toHaveBeenLastCalledWith("git", DEFAULT_ARGS, {});
     expect(result).toEqual({
       isDirty: false,
       lastTagName: "v1.2.3",
@@ -57,14 +61,18 @@ describe("describeRef.sync()", () => {
     const options = { cwd: "foo" };
     describeRef.sync(options);
 
-    expect(childProcess.execSync).lastCalledWith("git", DEFAULT_ARGS, options);
+    expect(childProcess.execSync).toHaveBeenLastCalledWith("git", DEFAULT_ARGS, options);
   });
 
   it("accepts options.match", () => {
     const options = { match: "v*.*.*" };
     describeRef.sync(options);
 
-    expect(childProcess.execSync).lastCalledWith("git", DEFAULT_ARGS.concat(["--match", "v*.*.*"]), options);
+    expect(childProcess.execSync).toHaveBeenLastCalledWith(
+      "git",
+      DEFAULT_ARGS.concat(["--match", "v*.*.*"]),
+      options
+    );
   });
 });
 
@@ -107,7 +115,11 @@ describe("describeRef.parse()", () => {
     const options = { cwd: "bar" };
     const result = describeRef.parse("a1b2c3d", options);
 
-    expect(childProcess.execSync).lastCalledWith("git", ["rev-list", "--count", "a1b2c3d"], options);
+    expect(childProcess.execSync).toHaveBeenLastCalledWith(
+      "git",
+      ["rev-list", "--count", "a1b2c3d"],
+      options
+    );
     expect(result).toEqual({
       isDirty: false,
       refCount: "123",
@@ -120,7 +132,7 @@ describe("describeRef.parse()", () => {
 
     const result = describeRef.parse("a1b2c3d-dirty");
 
-    expect(childProcess.execSync).lastCalledWith("git", ["rev-list", "--count", "a1b2c3d"], {});
+    expect(childProcess.execSync).toHaveBeenLastCalledWith("git", ["rev-list", "--count", "a1b2c3d"], {});
     expect(result).toEqual({
       isDirty: true,
       refCount: "456",

@@ -14,7 +14,7 @@ describe("gitTag", () => {
 
     await gitTag(tag, {}, opts);
 
-    expect(mockExec).lastCalledWith("git", ["tag", tag, "-m", tag], opts);
+    expect(mockExec).toHaveBeenLastCalledWith("git", ["tag", tag, "-m", tag], opts);
   });
 
   it("signs the tag when configured", async () => {
@@ -23,6 +23,6 @@ describe("gitTag", () => {
 
     await gitTag(tag, { signGitTag: true }, opts);
 
-    expect(mockExec).lastCalledWith("git", ["tag", tag, "-m", tag, "--sign"], opts);
+    expect(mockExec).toHaveBeenLastCalledWith("git", ["tag", tag, "-m", tag, "--sign"], opts);
   });
 });

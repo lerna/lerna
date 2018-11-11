@@ -17,7 +17,7 @@ describe("select", () => {
         version: "1.2.3",
       });
 
-      expect(prompt.select).lastCalledWith(
+      expect(prompt.select).toHaveBeenLastCalledWith(
         "Select a new version (currently 1.2.3)",
         expect.objectContaining({
           choices: expect.any(Array),
@@ -31,7 +31,7 @@ describe("select", () => {
         name: "my-package",
       });
 
-      expect(prompt.select).lastCalledWith(
+      expect(prompt.select).toHaveBeenLastCalledWith(
         "Select a new version for my-package (currently 3.2.1)",
         expect.any(Object)
       );

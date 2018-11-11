@@ -25,7 +25,7 @@ describe("getNpmUsername", () => {
     const username = await getNpmUsername(opts);
 
     expect(username).toBe("lerna-test");
-    expect(fetch.json).lastCalledWith("-/whoami", opts);
+    expect(fetch.json).toHaveBeenLastCalledWith("-/whoami", opts);
   });
 
   test("throws an error when successful fetch yields empty username", async () => {
@@ -59,7 +59,7 @@ describe("getNpmUsername", () => {
     } catch (err) {
       expect(err.prefix).toBe("EWHOAMI");
       expect(err.message).toBe("Authentication error. Use `npm whoami` to troubleshoot.");
-      expect(console.error).toBeCalledWith("whoops");
+      expect(console.error).toHaveBeenCalledWith("whoops");
     }
 
     expect.assertions(3);

@@ -20,7 +20,7 @@ describe("default export", () => {
     const result = await runLifecycle(pkg, stage, config);
 
     expect(result).toBe(pkg);
-    expect(npmLifecycle).lastCalledWith(
+    expect(npmLifecycle).toHaveBeenLastCalledWith(
       expect.objectContaining({
         name: pkg.name,
         version: pkg.version,
@@ -58,7 +58,7 @@ describe("createRunner", () => {
     const result = await runPackageLifecycle(pkg, stage);
 
     expect(result).toBe(pkg);
-    expect(npmLifecycle).lastCalledWith(
+    expect(npmLifecycle).toHaveBeenLastCalledWith(
       expect.any(Object),
       stage,
       pkg.location,

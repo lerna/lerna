@@ -209,7 +209,7 @@ describe("AddCommand", () => {
 
     await lernaAdd(testDir)("@test/package-1");
 
-    expect(bootstrap).lastCalledWith(
+    expect(bootstrap).toHaveBeenLastCalledWith(
       expect.objectContaining({
         args: [],
         cwd: testDir,
@@ -224,7 +224,7 @@ describe("AddCommand", () => {
 
     await lernaAdd(testDir)("tiny-tarball", "--scope", "@test/package-2", "--scope", "package-3");
 
-    expect(bootstrap).lastCalledWith(
+    expect(bootstrap).toHaveBeenLastCalledWith(
       expect.objectContaining({
         scope: ["@test/package-2", "package-3"],
       })
@@ -236,7 +236,7 @@ describe("AddCommand", () => {
 
     await lernaAdd(testDir)("@test/package-1", "--ignore", "@test/package-2");
 
-    expect(bootstrap).lastCalledWith(
+    expect(bootstrap).toHaveBeenLastCalledWith(
       expect.objectContaining({
         scope: ["package-3", "package-4"],
       })

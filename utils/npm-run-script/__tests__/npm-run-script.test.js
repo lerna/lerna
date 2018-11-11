@@ -25,7 +25,7 @@ describe("npm-run-script", () => {
 
       await npmRunScript(script, config);
 
-      expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["run", script, "--bar", "baz"], {
+      expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith("npm", ["run", script, "--bar", "baz"], {
         cwd: config.pkg.location,
         env: {},
         pkg: config.pkg,
@@ -46,7 +46,7 @@ describe("npm-run-script", () => {
 
       await npmRunScript(script, config);
 
-      expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["run", script], {
+      expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith("npm", ["run", script], {
         cwd: config.pkg.location,
         env: {},
         pkg: config.pkg,
@@ -66,7 +66,7 @@ describe("npm-run-script", () => {
 
       await npmRunScript(script, config);
 
-      expect(ChildProcessUtilities.exec).lastCalledWith("yarn", ["run", script, "--bar", "baz"], {
+      expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith("yarn", ["run", script, "--bar", "baz"], {
         cwd: config.pkg.location,
         env: {},
         pkg: config.pkg,
@@ -90,7 +90,7 @@ describe("npm-run-script", () => {
 
       await npmRunScript.stream(script, config);
 
-      expect(ChildProcessUtilities.spawnStreaming).lastCalledWith(
+      expect(ChildProcessUtilities.spawnStreaming).toHaveBeenLastCalledWith(
         "npm",
         ["run", script, "--bar", "baz"],
         {
@@ -117,7 +117,7 @@ describe("npm-run-script", () => {
 
       await npmRunScript.stream(script, config);
 
-      expect(ChildProcessUtilities.spawnStreaming).lastCalledWith(
+      expect(ChildProcessUtilities.spawnStreaming).toHaveBeenLastCalledWith(
         "npm",
         ["run", script],
         {

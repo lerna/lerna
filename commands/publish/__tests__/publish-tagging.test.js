@@ -40,12 +40,12 @@ test("publish --temp-tag", async () => {
 
   expect(npmPublish.registry.get("package-4")).toBe("lerna-temp");
 
-  expect(npmDistTag.remove).lastCalledWith(
+  expect(npmDistTag.remove).toHaveBeenLastCalledWith(
     expect.objectContaining({ name: "package-4" }),
     "lerna-temp",
     expect.objectContaining({ registry: "test-registry" })
   );
-  expect(npmDistTag.add).lastCalledWith(
+  expect(npmDistTag.add).toHaveBeenLastCalledWith(
     expect.objectContaining({ name: "package-4", version: "1.0.1" }),
     "latest",
     expect.objectContaining({ registry: "test-registry" })

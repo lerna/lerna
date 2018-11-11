@@ -124,7 +124,7 @@ describe("CreateCommand", () => {
     expect(result).toMatchSnapshot();
 
     // yargs is automatically added when CLI is stubbed
-    expect(getLatestVersion).lastCalledWith("yargs", expect.objectContaining({ cwd }));
+    expect(getLatestVersion).toHaveBeenLastCalledWith("yargs", expect.objectContaining({ cwd }));
   });
 
   it("creates a stub cli with a custom name", async () => {

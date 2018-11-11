@@ -38,7 +38,7 @@ describe("verifyNpmPackageAccess", () => {
 
     await verifyNpmPackageAccess(packages, opts);
 
-    expect(access.lsPackages).lastCalledWith(
+    expect(access.lsPackages).toHaveBeenLastCalledWith(
       "lerna-test",
       expect.objectContaining({
         username: "lerna-test",
@@ -62,7 +62,7 @@ describe("verifyNpmPackageAccess", () => {
 
     await verifyNpmPackageAccess(packages, opts);
 
-    expect(access.lsPackages).toBeCalled();
+    expect(access.lsPackages).toHaveBeenCalled();
   });
 
   test("allows null result to pass with warning", async () => {
@@ -159,7 +159,7 @@ describe("verifyNpmPackageAccess", () => {
     } catch (err) {
       expect(err.prefix).toBe("EWHOAMI");
       expect(err.message).toBe("Authentication error. Use `npm whoami` to troubleshoot.");
-      expect(console.error).toBeCalledWith("gonna-need-a-bigger-boat");
+      expect(console.error).toHaveBeenCalledWith("gonna-need-a-bigger-boat");
     }
 
     expect.assertions(3);

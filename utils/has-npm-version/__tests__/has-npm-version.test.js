@@ -11,7 +11,7 @@ test("hasNpmVersion() returns boolean if range is satisfied by npm --version", (
   expect(hasNpmVersion(">=5")).toBe(true);
   expect(hasNpmVersion(">=6")).toBe(false);
 
-  expect(childProcess.execSync).lastCalledWith("npm", ["--version"]);
+  expect(childProcess.execSync).toHaveBeenLastCalledWith("npm", ["--version"]);
 });
 
 test("hasNpmVersion.makePredicate() returns a predicate with cached version", () => {

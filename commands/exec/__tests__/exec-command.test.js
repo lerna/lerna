@@ -98,7 +98,7 @@ describe("ExecCommand", () => {
       }
 
       expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(2);
-      expect(ChildProcessUtilities.spawn).lastCalledWith(
+      expect(ChildProcessUtilities.spawn).toHaveBeenLastCalledWith(
         "boom",
         ["--shaka", "--lakka"],
         expect.objectContaining({
@@ -113,7 +113,7 @@ describe("ExecCommand", () => {
       await lernaExec(testDir)("ls", "--ignore", "package-1");
 
       expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(1);
-      expect(ChildProcessUtilities.spawn).lastCalledWith("ls", [], {
+      expect(ChildProcessUtilities.spawn).toHaveBeenLastCalledWith("ls", [], {
         cwd: path.join(testDir, "packages/package-2"),
         pkg: expect.objectContaining({
           name: "package-2",
@@ -149,7 +149,7 @@ describe("ExecCommand", () => {
       await lernaExec(testDir)("ls", "--since");
 
       expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(1);
-      expect(ChildProcessUtilities.spawn).lastCalledWith("ls", [], {
+      expect(ChildProcessUtilities.spawn).toHaveBeenLastCalledWith("ls", [], {
         cwd: path.join(testDir, "packages/package-1"),
         pkg: expect.objectContaining({
           name: "package-1",
@@ -192,7 +192,7 @@ describe("ExecCommand", () => {
       await lernaExec(testDir)("ls", "--", "-la");
 
       expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(2);
-      expect(ChildProcessUtilities.spawn).lastCalledWith("ls", ["-la"], expect.any(Object));
+      expect(ChildProcessUtilities.spawn).toHaveBeenLastCalledWith("ls", ["-la"], expect.any(Object));
     });
 
     it("runs a command for a given scope", async () => {

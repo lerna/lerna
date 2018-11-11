@@ -43,12 +43,12 @@ describe("--conventional-commits", () => {
       expect(changedFiles).toMatchSnapshot();
 
       versionBumps.forEach((version, name) => {
-        expect(ConventionalCommitUtilities.recommendVersion).toBeCalledWith(
+        expect(ConventionalCommitUtilities.recommendVersion).toHaveBeenCalledWith(
           expect.objectContaining({ name }),
           "independent",
           { changelogPreset: undefined, rootPath: cwd, tagPrefix: "v" }
         );
-        expect(ConventionalCommitUtilities.updateChangelog).toBeCalledWith(
+        expect(ConventionalCommitUtilities.updateChangelog).toHaveBeenCalledWith(
           expect.objectContaining({ name, version }),
           "independent",
           { changelogPreset: undefined, rootPath: cwd, tagPrefix: "v" }
@@ -62,12 +62,12 @@ describe("--conventional-commits", () => {
 
       await lernaVersion(cwd)("--conventional-commits", "--changelog-preset", "foo-bar");
 
-      expect(ConventionalCommitUtilities.recommendVersion).toBeCalledWith(
+      expect(ConventionalCommitUtilities.recommendVersion).toHaveBeenCalledWith(
         expect.any(Object),
         "independent",
         changelogOpts
       );
-      expect(ConventionalCommitUtilities.updateChangelog).toBeCalledWith(
+      expect(ConventionalCommitUtilities.updateChangelog).toHaveBeenCalledWith(
         expect.any(Object),
         "independent",
         changelogOpts
@@ -91,20 +91,20 @@ describe("--conventional-commits", () => {
       ["package-1", "package-2", "package-3", "package-4", "package-5"].forEach(name => {
         const location = path.join(cwd, "packages", name);
 
-        expect(ConventionalCommitUtilities.recommendVersion).toBeCalledWith(
+        expect(ConventionalCommitUtilities.recommendVersion).toHaveBeenCalledWith(
           expect.objectContaining({ name, location }),
           "fixed",
           { changelogPreset: undefined, rootPath: cwd, tagPrefix: "v" }
         );
 
-        expect(ConventionalCommitUtilities.updateChangelog).toBeCalledWith(
+        expect(ConventionalCommitUtilities.updateChangelog).toHaveBeenCalledWith(
           expect.objectContaining({ name, version: "2.0.0" }),
           "fixed",
           { changelogPreset: undefined, rootPath: cwd, tagPrefix: "v" }
         );
       });
 
-      expect(ConventionalCommitUtilities.updateChangelog).lastCalledWith(
+      expect(ConventionalCommitUtilities.updateChangelog).toHaveBeenLastCalledWith(
         expect.objectContaining({
           name: "normal",
           location: cwd,
@@ -130,12 +130,12 @@ describe("--conventional-commits", () => {
         "dragons-are-awesome"
       );
 
-      expect(ConventionalCommitUtilities.recommendVersion).toBeCalledWith(
+      expect(ConventionalCommitUtilities.recommendVersion).toHaveBeenCalledWith(
         expect.any(Object),
         "fixed",
         changelogOpts
       );
-      expect(ConventionalCommitUtilities.updateChangelog).toBeCalledWith(
+      expect(ConventionalCommitUtilities.updateChangelog).toHaveBeenCalledWith(
         expect.any(Object),
         "fixed",
         changelogOpts

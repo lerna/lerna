@@ -22,7 +22,7 @@ describe("rimrafDir()", () => {
     const removedPath = await rimrafDir(dirPath);
 
     expect(removedPath).toBe(dirPath);
-    expect(ChildProcessUtilities.spawn).lastCalledWith(process.execPath, [
+    expect(ChildProcessUtilities.spawn).toHaveBeenLastCalledWith(process.execPath, [
       require.resolve("rimraf/bin"),
       "--no-glob",
       path.normalize(`${dirPath}/`),

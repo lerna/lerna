@@ -34,7 +34,7 @@ describe("CleanCommand", () => {
 
       await lernaClean(testDir)();
 
-      expect(PromptUtilities.confirm).toBeCalled();
+      expect(PromptUtilities.confirm).toHaveBeenCalled();
       expect(removedDirectories(testDir)).toEqual([
         "packages/package-1/node_modules",
         "packages/package-2/node_modules",

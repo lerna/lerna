@@ -39,7 +39,7 @@ describe("npm-publish", () => {
     const result = await npmPublish(pkg, "published-tag", { npmClient: "npm" });
 
     expect(result).toBe(pkg);
-    expect(ChildProcessUtilities.exec).lastCalledWith(
+    expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith(
       "npm",
       ["publish", "--ignore-scripts", "--tag", "published-tag", "test-1.10.100.tgz"],
       {
@@ -48,13 +48,13 @@ describe("npm-publish", () => {
         pkg,
       }
     );
-    expect(fs.remove).lastCalledWith(path.join(pkg.location, pkg.tarball.filename));
+    expect(fs.remove).toHaveBeenLastCalledWith(path.join(pkg.location, pkg.tarball.filename));
   });
 
   it("does not pass --tag when none present (npm default)", async () => {
     await npmPublish(pkg, undefined, { npmClient: "npm" });
 
-    expect(ChildProcessUtilities.exec).lastCalledWith(
+    expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith(
       "npm",
       ["publish", "--ignore-scripts", "test-1.10.100.tgz"],
       {
@@ -68,7 +68,7 @@ describe("npm-publish", () => {
   it("trims trailing whitespace in tag parameter", async () => {
     await npmPublish(pkg, "trailing-tag ", { npmClient: "npm" });
 
-    expect(ChildProcessUtilities.exec).lastCalledWith(
+    expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith(
       "npm",
       ["publish", "--ignore-scripts", "--tag", "trailing-tag", "test-1.10.100.tgz"],
       {
@@ -84,7 +84,7 @@ describe("npm-publish", () => {
 
     await npmPublish(pkg, "custom-registry", { npmClient: "npm", registry });
 
-    expect(ChildProcessUtilities.exec).lastCalledWith(
+    expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith(
       "npm",
       ["publish", "--ignore-scripts", "--tag", "custom-registry", "test-1.10.100.tgz"],
       {
@@ -101,7 +101,7 @@ describe("npm-publish", () => {
     it("appends --new-version to avoid interactive prompt", async () => {
       await npmPublish(pkg, "yarn-publish", { npmClient: "yarn" });
 
-      expect(ChildProcessUtilities.exec).lastCalledWith(
+      expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith(
         "yarn",
         [
           "publish",
@@ -162,16 +162,20 @@ describe("npmPack", () => {
     expect(pkg1.tarball.filename).toBe("mocked-pkg-1-pack.tgz");
     expect(pkg2.tarball.filename).toBe("mocked-pkg-2-pack.tgz");
 
-    expect(hasNpmVersion).lastCalledWith(">=5.10.0");
+    expect(hasNpmVersion).toHaveBeenLastCalledWith(">=5.10.0");
     expect(logPacked.mock.calls.map(call => call[0])).toEqual(expectedJSON);
 
-    expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["pack", pkg1.location, pkg2.location], {
-      cwd: rootManifest.location,
-      env: {
-        npm_config_json: true,
-      },
-      stdio: ["ignore", "pipe", "inherit"],
-    });
+    expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith(
+      "npm",
+      ["pack", pkg1.location, pkg2.location],
+      {
+        cwd: rootManifest.location,
+        env: {
+          npm_config_json: true,
+        },
+        stdio: ["ignore", "pipe", "inherit"],
+      }
+    );
   });
 
   it("adapts to legacy npm pack without --json option", async () => {
@@ -207,19 +211,23 @@ describe("npmPack", () => {
     expect(logPacked.mock.calls.map(call => call[0])).toEqual(expectedJSON);
     expect(process.stdout.write.mock.calls.map(call => call[0])).toEqual(chunks);
 
-    expect(ChildProcessUtilities.exec).lastCalledWith("npm", ["pack", pkg3.location, pkg4.location], {
-      cwd: rootManifest.location,
-      env: {},
-      stdio: ["ignore", "pipe", "inherit"],
-    });
+    expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith(
+      "npm",
+      ["pack", pkg3.location, pkg4.location],
+      {
+        cwd: rootManifest.location,
+        env: {},
+        stdio: ["ignore", "pipe", "inherit"],
+      }
+    );
 
     // post-hoc moving from root to leaf
-    expect(fs.move).toBeCalledWith(
+    expect(fs.move).toHaveBeenCalledWith(
       path.join(pkg3.rootPath, pkg3.tarball.filename),
       path.join(pkg3.location, pkg3.tarball.filename),
       { overwrite: true }
     );
-    expect(fs.move).toBeCalledWith(
+    expect(fs.move).toHaveBeenCalledWith(
       path.join(pkg4.rootPath, pkg4.tarball.filename),
       path.join(pkg4.location, pkg4.tarball.filename),
       { overwrite: true }
@@ -267,12 +275,12 @@ describe("makePacker", () => {
     expect(hasNpmVersion).toHaveBeenCalledTimes(1);
     expect(logPacked.mock.calls.map(call => call[0])).toEqual(expectedJSON);
 
-    expect(ChildProcessUtilities.exec).toBeCalledWith(
+    expect(ChildProcessUtilities.exec).toHaveBeenCalledWith(
       "npm",
       ["pack", ...batches[0].map(pkg => pkg.location)],
       expect.any(Object)
     );
-    expect(ChildProcessUtilities.exec).lastCalledWith(
+    expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith(
       "npm",
       ["pack", ...batches[1].map(pkg => pkg.location)],
       {
