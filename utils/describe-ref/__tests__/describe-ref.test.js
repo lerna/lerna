@@ -5,7 +5,7 @@ jest.mock("@lerna/child-process");
 const childProcess = require("@lerna/child-process");
 const describeRef = require("../lib/describe-ref");
 
-const DEFAULT_ARGS = ["describe", "--always", "--long", "--dirty", "--first-parent"];
+const DEFAULT_ARGS = ["describe", "--tags", "--always", "--long", "--dirty", "--first-parent"];
 
 childProcess.exec.mockResolvedValue({ stdout: "v1.2.3-4-g567890a" });
 childProcess.execSync.mockReturnValue("v1.2.3-4-g567890a");
