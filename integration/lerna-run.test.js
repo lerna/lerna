@@ -30,6 +30,8 @@ describe("lerna run", () => {
       expect(err.stderr).toMatchInlineSnapshot(`
 lerna notice cli __TEST_VERSION__
 lerna info Executing command in 2 packages: "npm run fail --silent"
+lerna info run Ran npm script 'fail' in 'package-3':
+lerna info run Ran npm script 'fail' in 'package-1':
 lerna ERR! Received non-zero exit code 100 during execution
 lerna success run Ran npm script 'fail' in 2 packages:
 lerna success - package-1
