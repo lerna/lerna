@@ -147,6 +147,7 @@ class RunCommand extends Command {
 
   runScriptInPackageCapturing(pkg) {
     return npmRunScript(this.script, this.getOpts(pkg)).then(result => {
+      this.logger.info("run", "Ran npm script '%s' in '%s':", this.script, pkg.name);
       output(result.stdout);
 
       return result;
