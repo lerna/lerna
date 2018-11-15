@@ -3,6 +3,11 @@
 const cliRunner = require("@lerna-test/cli-runner");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 
+const env = {
+  // Hush timing information
+  LERNA_INTEGRATION: "SKIP",
+};
+
 /**
  * NOTE: We do not test the "missing test script" case here
  * because Windows makes the snapshots impossible to stabilize.
@@ -13,7 +18,7 @@ describe("lerna run", () => {
     const args = ["run", "fail", "--", "--silent"];
 
     try {
-      await cliRunner(cwd)(...args);
+      await cliRunner(cwd, env)(...args);
     } catch (err) {
       expect(err.message).toMatch("npm run fail --silent exited 1 in 'package-3'");
       expect(err.code).toBe(1);
@@ -25,15 +30,15 @@ describe("lerna run", () => {
     const args = ["run", "fail", "--no-bail", "--concurrency", "1", "--", "--silent"];
 
     try {
-      await cliRunner(cwd)(...args);
+      await cliRunner(cwd, env)(...args);
     } catch (err) {
       expect(err.stderr).toMatchInlineSnapshot(`
 lerna notice cli __TEST_VERSION__
 lerna info Executing command in 2 packages: "npm run fail --silent"
-lerna info run Ran npm script 'fail' in 'package-3':
-lerna info run Ran npm script 'fail' in 'package-1':
+lerna info run Ran npm script 'fail' in 'package-3' in 0.0s:
+lerna info run Ran npm script 'fail' in 'package-1' in 0.0s:
 lerna ERR! Received non-zero exit code 100 during execution
-lerna success run Ran npm script 'fail' in 2 packages:
+lerna success run Ran npm script 'fail' in 2 packages in 0.0s:
 lerna success - package-1
 lerna success - package-3
 
@@ -56,7 +61,7 @@ lerna success - package-3
       "--",
       "--silent",
     ];
-    const { stdout, stderr } = await cliRunner(cwd)(...args);
+    const { stdout, stderr } = await cliRunner(cwd, env)(...args);
     expect(stdout).toMatchInlineSnapshot(`
 package-3: package-3
 package-4: package-4
@@ -66,7 +71,7 @@ package-2: package-2
     expect(stderr).toMatchInlineSnapshot(`
 lerna notice cli __TEST_VERSION__
 lerna info Executing command in 4 packages: "npm run test --silent"
-lerna success run Ran npm script 'test' in 4 packages:
+lerna success run Ran npm script 'test' in 4 packages in 0.0s:
 lerna success - package-1
 lerna success - package-2
 lerna success - package-3
@@ -86,7 +91,7 @@ lerna success - package-4
       "--",
       "--silent",
     ];
-    const { stdout, stderr } = await cliRunner(cwd)(...args);
+    const { stdout, stderr } = await cliRunner(cwd, env)(...args);
     expect(stdout).toMatchInlineSnapshot(`
 package-3
 package-4
@@ -96,7 +101,7 @@ package-2
     expect(stderr).toMatchInlineSnapshot(`
 lerna notice cli __TEST_VERSION__
 lerna info Executing command in 4 packages: "npm run test --silent"
-lerna success run Ran npm script 'test' in 4 packages:
+lerna success run Ran npm script 'test' in 4 packages in 0.0s:
 lerna success - package-1
 lerna success - package-2
 lerna success - package-3
@@ -114,11 +119,11 @@ lerna success - package-4
       "--",
       "--silent",
     ];
-    const { stdout, stderr } = await cliRunner(cwd)(...args);
+    const { stdout, stderr } = await cliRunner(cwd, env)(...args);
     expect(stderr).toMatchInlineSnapshot(`
 lerna notice cli __TEST_VERSION__
 lerna info Executing command in 4 packages: "npm run test --silent"
-lerna success run Ran npm script 'test' in 4 packages:
+lerna success run Ran npm script 'test' in 4 packages in 0.0s:
 lerna success - package-1
 lerna success - package-2
 lerna success - package-3
