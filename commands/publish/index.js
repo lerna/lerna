@@ -209,7 +209,7 @@ class PublishCommand extends Command {
       }
 
       if (this.project.isIndependent()) {
-        return taggedPackageNames.map(name => this.packageGraph.get(name));
+        return taggedPackageNames.map(name => this.packageGraph.get(name)).filter(name => name !== undefined);
       }
 
       return getTaggedPackages(this.packageGraph, this.project.rootPath, this.execOpts);
