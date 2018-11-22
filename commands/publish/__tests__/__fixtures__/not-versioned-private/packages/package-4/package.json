@@ -1,0 +1,7 @@
+{
+  "name": "package-4",
+  "private": true,
+  "dependencies": {
+    "package-1": "^0.0.0"
+  }
+}

@@ -135,7 +135,24 @@ class VersionCommand extends Command {
       this.packageGraph,
       this.execOpts,
       this.options
-    );
+    ).filter(node => {
+      if (!node.version) {
+        // a package may be unversioned only if it is private
+        if (node.pkg.private) {
+          this.logger.info("version", "Skipping unversioned private package %j", node.name);
+        } else {
+          throw new ValidationError(
+            "ENOVERSION",
+            dedent`
+              A version field is required in ${node.name}'s package.json file.
+              If you wish to keep the package unversioned, it must be made private.
+            `
+          );
+        }
+      }
+
+      return !!node.version;
+    });
 
     if (!this.updates.length) {
       this.logger.success(`No changed packages to ${this.composed ? "publish" : "version"}`);

@@ -468,6 +468,24 @@ describe("VersionCommand", () => {
     });
   });
 
+  describe("unversioned packages", () => {
+    it("exits with an error for non-private packages with no version", async () => {
+      const testDir = await initFixture("not-versioned");
+      try {
+        await lernaVersion(testDir)();
+      } catch (err) {
+        expect(err.prefix).toBe("ENOVERSION");
+        expect(err.message).toMatch("A version field is required in package-3's package.json file.");
+      }
+    });
+
+    it("ignores private packages with no version", async () => {
+      const testDir = await initFixture("not-versioned-private");
+      await lernaVersion(testDir)();
+      expect(Object.keys(writePkg.updatedVersions())).not.toContain("package-4");
+    });
+  });
+
   it("exits with an error when no commits are present", async () => {
     expect.assertions(2);
     const testDir = await initFixture("normal", false);
