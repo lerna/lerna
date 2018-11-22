@@ -46,7 +46,7 @@ dependencies which have been hoisted.
 
 Unfortunately, some tooling does not follow the module resolution spec
 closely, and instead assumes or requires that dependencies are present
-specificially in the local `node_modules` directory. To work around
+specifically in the local `node_modules` directory. To work around
 this, it is possible to symlink packages from their hoisted top-level
 location, to individual package `node_modules` directory. Lerna does
 not yet do this automatically, and it is recommended instead to work
