@@ -57,6 +57,11 @@ exports.builder = yargs => {
       alias: "yes",
       type: "boolean",
     },
+    "git-reset": {
+      describe: "Reset the git working tree.\nPass --no-git-reset to disable.",
+      type: "boolean",
+      default: true,
+    },
   };
 
   return composeVersionOptions(yargs)

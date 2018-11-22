@@ -35,6 +35,7 @@
     "@lerna-test/git-add": "file:helpers/git-add",
     "@lerna-test/git-commit": "file:helpers/git-commit",
     "@lerna-test/git-init": "file:helpers/git-init",
+    "@lerna-test/git-status": "file:helpers/git-status",
     "@lerna-test/git-tag": "file:helpers/git-tag",
     "@lerna-test/init-fixture": "file:helpers/init-fixture",
     "@lerna-test/load-manifests": "file:helpers/load-manifests",
