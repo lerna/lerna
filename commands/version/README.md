@@ -177,6 +177,10 @@ This option is best specified as root `lerna.json` configuration, both to avoid 
 
 Pass `--no-ignore-changes` to disable any existing durable configuration.
 
+> In the following cases, a package will always be published, regardless of this option:
+> 1. The latest release of the package is a `prerelease` version (i.e. `1.0.0-alpha`, `1.0.0–0.3.7`, etc.).
+> 2. One or more linked dependencies of the package have changed.
+
 ### `--git-remote <name>`
 
 ```sh
