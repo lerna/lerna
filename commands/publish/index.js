@@ -159,7 +159,10 @@ class PublishCommand extends Command {
     chain = chain.then(() => this.annotateGitHead());
     chain = chain.then(() => this.packUpdated());
     chain = chain.then(() => this.publishPacked());
-    chain = chain.then(() => this.resetChanges());
+
+    if (this.options.gitReset) {
+      chain = chain.then(() => this.resetChanges());
+    }
 
     if (this.options.tempTag) {
       chain = chain.then(() => this.npmUpdateAsLatest());

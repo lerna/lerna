@@ -42,6 +42,7 @@ but have the package contents themselves consistently published by an automated 
 
 * [`--canary`](#--canary)
 * [`--npm-client <client>`](#--npm-client-client)
+* [`--git-reset`](#--git-reset)
 * [`--npm-tag <dist-tag>`](#--npm-tag-dist-tag)
 * [`--no-verify-access`](#--no-verify-access)
 * [`--registry <url>`](#--registry-url)
@@ -67,6 +68,18 @@ lerna publish --canary preminor
 When run with this flag, `lerna publish` publishes packages in a more granular way (per commit). Before publishing to npm, it creates the new `version` tag by taking the current `version`, bumping it to the next _minor_ version, adding the provided meta suffix (defaults to `alpha`) and appending the current git sha (ex: `1.0.0` becomes `1.1.0-alpha.81e3b443`).
 
 > The intended use case for this flag is a per commit level release or nightly release.
+
+### `--git-reset`
+
+Ensures the working tree is reset by any changes the `publish` command makes.
+
+To not reset the working tree, specify `--no-git-reset`. This is especially useful when used as part of a CI pipeline in conjunction with the `--canary` flag. For instance, the `package.json` version numbers which have been bumped may need to be used in subsequent CI pipeline steps (such as Docker builds).
+
+The default `--git-reset` is `true`.
+
+```sh
+lerna publish --git-reset
+```
 
 ### `--npm-client <client>`
 
