@@ -27,3 +27,10 @@ When importing repositories with merge commits with conflicts, the import comman
 $ lerna import ~/Product --flatten
 ```
 
+### `--dest`
+
+When importing repositories, you can specify the destination directory by the directory listed in lerna.json.
+
+```
+$ lerna import ~/Product --dest=utilities
+```

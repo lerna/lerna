@@ -270,4 +270,33 @@ describe("ImportCommand", () => {
       expect(await pathExists(packageJson)).toBe(true);
     });
   });
+
+  describe("with multi-packages Lerna dir", () => {
+    it("creates a module in specified package directory", async () => {
+      const [testDir, externalDir] = await Promise.all([
+        initFixture("multi-packages"),
+        initFixture("external", "Init external commit"),
+      ]);
+
+      const packageJson = path.join(testDir, "packages", path.basename(externalDir), "package.json");
+
+      await lernaImport(testDir)(externalDir, "--dest=packages");
+
+      expect(await lastCommitInDir(testDir)).toBe("Init external commit");
+      expect(await pathExists(packageJson)).toBe(true);
+    });
+
+    it("throws error when the package directory does not match with config", async () => {
+      const [testDir, externalDir] = await Promise.all([
+        initFixture("multi-packages"),
+        initFixture("external", "Init external commit"),
+      ]);
+
+      try {
+        await lernaImport(testDir)(externalDir, "--dest=components");
+      } catch (err) {
+        expect(err.message).toBe("--dest does not match with the package directories: core,packages");
+      }
+    });
+  });
 });
