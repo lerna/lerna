@@ -7,6 +7,7 @@ const npmRunScript = require("@lerna/npm-run-script");
 const batchPackages = require("@lerna/batch-packages");
 const runParallelBatches = require("@lerna/run-parallel-batches");
 const output = require("@lerna/output");
+const timer = require("@lerna/timer");
 const ValidationError = require("@lerna/validation-error");
 const { getFilteredPackages } = require("@lerna/filter-options");
 
@@ -74,6 +75,7 @@ class RunCommand extends Command {
     );
 
     let chain = Promise.resolve();
+    const getElapsed = timer();
 
     if (this.options.parallel) {
       chain = chain.then(() => this.runScriptInPackagesParallel());
@@ -107,10 +109,11 @@ class RunCommand extends Command {
     return chain.then(() => {
       this.logger.success(
         "run",
-        "Ran npm script '%s' in %d %s:",
+        "Ran npm script '%s' in %d %s in %ss:",
         this.script,
         this.count,
-        this.packagePlural
+        this.packagePlural,
+        (getElapsed() / 1000).toFixed(1)
       );
       this.logger.success("", this.packagesWithScript.map(pkg => `- ${pkg.name}`).join("\n"));
     });
@@ -146,7 +149,15 @@ class RunCommand extends Command {
   }
 
   runScriptInPackageCapturing(pkg) {
+    const getElapsed = timer();
     return npmRunScript(this.script, this.getOpts(pkg)).then(result => {
+      this.logger.info(
+        "run",
+        "Ran npm script '%s' in '%s' in %ss:",
+        this.script,
+        pkg.name,
+        (getElapsed() / 1000).toFixed(1)
+      );
       output(result.stdout);
 
       return result;
