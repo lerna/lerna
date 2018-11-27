@@ -1,6 +1,6 @@
 {
   "name": "@lerna/publish",
-  "version": "3.4.3",
+  "version": "3.5.0",
   "description": "Publish packages in the current project",
   "keywords": [
     "lerna",

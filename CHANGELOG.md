@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.5.0](https://github.com/lerna/lerna/compare/v3.4.3...v3.5.0) (2018-11-27)
+
+
+### Bug Fixes
+
+* **conventional-commits:** Bump minimum dependency ranges for node v11 compat ([76fad65](https://github.com/lerna/lerna/commit/76fad65))
+* prettier ([001a6df](https://github.com/lerna/lerna/commit/001a6df))
+* Update yarn workspaces error prompt link ([#1756](https://github.com/lerna/lerna/issues/1756)) ([d6e6a42](https://github.com/lerna/lerna/commit/d6e6a42))
+* **publish:** Ignore non-release tags when detecting `from-git` ([#1782](https://github.com/lerna/lerna/issues/1782)) ([3cb7465](https://github.com/lerna/lerna/commit/3cb7465))
+* **version:** Add friendly error message when remote branch doesn't exist ([#1741](https://github.com/lerna/lerna/issues/1741)) ([cd34b48](https://github.com/lerna/lerna/commit/cd34b48))
+* **version:** Don't version private packages lacking a version field ([#1654](https://github.com/lerna/lerna/issues/1654)) ([578bb19](https://github.com/lerna/lerna/commit/578bb19))
+
+
+### Features
+
+* **publish:** Add option `--no-git-reset` to leave unstaged changes in working tree ([#1791](https://github.com/lerna/lerna/issues/1791)) ([eae5619](https://github.com/lerna/lerna/commit/eae5619))
+* **run:** Log package name and timing in runScriptInPackageCapturing ([#1781](https://github.com/lerna/lerna/issues/1781)) ([b69a728](https://github.com/lerna/lerna/commit/b69a728))
+* **version:** Add `--include-merged-tags` option ([#1712](https://github.com/lerna/lerna/issues/1712)) ([7ee05d7](https://github.com/lerna/lerna/commit/7ee05d7))
+
+
+
+
+
 ## [3.4.3](https://github.com/lerna/lerna/compare/v3.4.2...v3.4.3) (2018-10-10)
 
 
