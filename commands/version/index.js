@@ -93,7 +93,7 @@ class VersionCommand extends Command {
 
     if (this.pushToRemote && !remoteBranchExists(this.gitRemote, this.currentBranch, this.execOpts)) {
       throw new ValidationError(
-        "EMISSREMOTEBRANCH",
+        "ENOREMOTEBRANCH",
         dedent`
           Branch '${this.currentBranch}' doesn't exist in remote '${this.gitRemote}'.
           If this is a new branch, please make sure you push it to the remote first.
