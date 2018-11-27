@@ -48,7 +48,6 @@ describe("describeRef()", () => {
 
     const newArgs = [...DEFAULT_ARGS];
     newArgs.pop();
-    newArgs.push("--tags");
     expect(childProcess.exec).toHaveBeenLastCalledWith("git", newArgs, {});
   });
 });
