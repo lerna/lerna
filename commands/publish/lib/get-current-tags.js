@@ -6,7 +6,7 @@ const childProcess = require("@lerna/child-process");
 
 module.exports = getCurrentTags;
 
-function getCurrentTags(execOpts) {
+function getCurrentTags(execOpts, matchingPattern) {
   log.silly("getCurrentTags");
 
   const opts = Object.assign({}, execOpts, {
@@ -15,7 +15,7 @@ function getCurrentTags(execOpts) {
   });
 
   return childProcess
-    .exec("git", ["tag", "--sort", "version:refname", "--points-at", "HEAD"], opts)
+    .exec("git", ["tag", "--sort", "version:refname", "--points-at", "HEAD", "--list", matchingPattern], opts)
     .then(listPackageNames);
 }
 

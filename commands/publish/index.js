@@ -198,12 +198,15 @@ class PublishCommand extends Command {
   }
 
   detectFromGit() {
+    const { tagVersionPrefix = "v" } = this.options;
+    const matchingPattern = this.project.isIndependent() ? "*@*" : `${tagVersionPrefix}*.*.*`;
+
     let chain = Promise.resolve();
 
     // attempting to publish a tagged release with local changes is not allowed
     chain = chain.then(() => this.verifyWorkingTreeClean());
 
-    chain = chain.then(() => getCurrentTags(this.execOpts));
+    chain = chain.then(() => getCurrentTags(this.execOpts, matchingPattern));
     chain = chain.then(taggedPackageNames => {
       if (!taggedPackageNames.length) {
         this.logger.notice("from-git", "No tagged release found");
@@ -212,7 +215,7 @@ class PublishCommand extends Command {
       }
 
       if (this.project.isIndependent()) {
-        return taggedPackageNames.map(name => this.packageGraph.get(name)).filter(name => name !== undefined);
+        return taggedPackageNames.map(name => this.packageGraph.get(name));
       }
 
       return getTaggedPackages(this.packageGraph, this.project.rootPath, this.execOpts);

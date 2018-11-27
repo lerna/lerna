@@ -25,6 +25,6 @@ test("lerna publish from-git handles custom tags", async () => {
 
   const args = ["publish", "--yes", "from-git"];
 
-  const { stdout } = await cliRunner(cwd, env)(...args);
-  expect(stdout).toMatchInlineSnapshot("", ``);
+  const { stderr } = await cliRunner(cwd, env)(...args);
+  expect(stderr).toMatch("lerna notice from-git No tagged release found");
 });
