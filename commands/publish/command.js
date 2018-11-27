@@ -60,7 +60,7 @@ exports.builder = yargs => {
     "git-reset": {
       describe: "Reset the git working tree.\nPass --no-git-reset to disable.",
       type: "boolean",
-      default: true,
+      defaultDescription: "true",
     },
   };
 

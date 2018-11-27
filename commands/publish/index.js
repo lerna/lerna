@@ -160,7 +160,7 @@ class PublishCommand extends Command {
     chain = chain.then(() => this.packUpdated());
     chain = chain.then(() => this.publishPacked());
 
-    if (this.options.gitReset) {
+    if (this.options.gitReset !== false) {
       chain = chain.then(() => this.resetChanges());
     }
 
