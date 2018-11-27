@@ -52,6 +52,7 @@ If you have any packages with a prerelease version number (e.g. `2.0.0-beta.3`) 
 * [`--sign-git-commit`](#--sign-git-commit)
 * [`--sign-git-tag`](#--sign-git-tag)
 * [`--yes`](#--yes)
+* [`--include-merged-tags`](#--include-merged-tags)
 
 ### `--allow-branch <glob>`
 
@@ -272,6 +273,15 @@ lerna version --yes
 
 When run with this flag, `lerna version` will skip all confirmation prompts.
 Useful in [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous_integration) to automatically answer the publish confirmation prompt.
+
+### `--include-merged-tags`
+
+```sh
+lerna version --include-merged-tags
+```
+
+When run with this flag, `lerna version` will also consider tags of merged branches
+while fetching changes for packages to update.
 
 ## Deprecated Options
 

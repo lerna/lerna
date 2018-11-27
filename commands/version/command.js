@@ -84,6 +84,11 @@ exports.builder = (yargs, composed) => {
       requiresArg: true,
       defaultDescription: "v",
     },
+    "include-merged-tags": {
+      describe: "Also include tags from merged branches",
+      type: "boolean",
+      defaultDescription: "false",
+    },
     y: {
       describe: "Skip all confirmation prompts.",
       alias: "yes",

@@ -41,6 +41,15 @@ describe("describeRef()", () => {
       options
     );
   });
+
+  it("accepts commandOptions.include-merged-tags", async () => {
+    const commandOptions = { "include-merged-tags": true, includeMergedTags: true };
+    await describeRef({}, commandOptions);
+
+    const newArgs = [...DEFAULT_ARGS];
+    newArgs.pop();
+    expect(childProcess.exec).toHaveBeenLastCalledWith("git", newArgs, {});
+  });
 });
 
 describe("describeRef.sync()", () => {
