@@ -1,18 +1,10 @@
 "use strict";
 
-const fetch = require("npm-registry-fetch");
 const log = require("npmlog");
 const pReduce = require("p-reduce");
+const pacote = require("pacote");
 
 module.exports = getUnpublishedPackages;
-
-// Only the abbreviated package metadata is needed to
-// determine which versions have been published. This
-// saves transfer time for packages with a lot of
-// history.
-const registryOptions = {
-  Accept: "application/vnd.npm.install-v1+json",
-};
 
 function getUnpublishedPackages(project, opts) {
   log.silly("getPackageVersions");
@@ -20,7 +12,7 @@ function getUnpublishedPackages(project, opts) {
   let chain = Promise.resolve();
 
   const mapper = (unpublished, pkg) =>
-    fetch.json(`/${pkg.name}`, Object.assign({}, opts, registryOptions)).then(
+    pacote.packument(pkg.name, opts.snapshot).then(
       packument => {
         if (packument.versions[pkg.version] === undefined) {
           unpublished.push(pkg);
