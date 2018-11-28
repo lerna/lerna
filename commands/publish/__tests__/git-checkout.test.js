@@ -6,11 +6,12 @@ const path = require("path");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const gitCheckout = require("../lib/git-checkout");
 
-test("gitCheckout", async () => {
+test("gitCheckout files", async () => {
   const cwd = await initFixture("normal-no-inter-dependencies");
+  const files = ["package-1", "package-2"].map(name => path.join("packages", name, "package.json"));
 
-  await fs.writeJSON(path.join(cwd, "packages", "package-1", "package.json"), { foo: "bar" });
-  await gitCheckout("packages/*/package.json", { cwd });
+  await Promise.all(files.map(fp => fs.writeJSON(path.join(cwd, fp), { foo: "bar" })));
+  await gitCheckout(files, { cwd });
 
   const modified = await execa.stdout("git", ["ls-files", "--modified"], { cwd });
   expect(modified).toBe("");

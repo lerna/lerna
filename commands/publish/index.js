@@ -413,12 +413,12 @@ class PublishCommand extends Command {
   resetChanges() {
     // the package.json files are changed (by gitHead if not --canary)
     // and we should always leave the working tree clean
-    return pReduce(this.project.packageConfigs, (_, pkgGlob) =>
-      gitCheckout(`${pkgGlob}/package.json`, this.execOpts)
-    ).then(() =>
-      // --skip-git should not leave unstaged changes behind
-      gitCheckout(this.project.manifest.location, this.execOpts)
-    );
+    const { cwd } = this.execOpts;
+    const dirtyManifests = [this.project.manifest]
+      .concat(this.packagesToPublish)
+      .map(pkg => path.relative(cwd, pkg.manifestLocation));
+
+    return gitCheckout(dirtyManifests, this.execOpts);
   }
 
   execScript(pkg, script) {
