@@ -26,6 +26,7 @@ const versionCommand = require("@lerna/version");
 const createTempLicenses = require("./lib/create-temp-licenses");
 const getCurrentSHA = require("./lib/get-current-sha");
 const getCurrentTags = require("./lib/get-current-tags");
+const getUnpublishedPackages = require("./lib/get-unpublished-packages");
 const getNpmUsername = require("./lib/get-npm-username");
 const getTaggedPackages = require("./lib/get-tagged-packages");
 const getPackagesWithoutLicense = require("./lib/get-packages-without-license");
@@ -133,8 +134,9 @@ class PublishCommand extends Command {
         : [this.packagesToPublish];
 
       if (result.needsConfirmation) {
-        // only confirm for --canary or bump === "from-git",
-        // as VersionCommand has its own confirmation prompt
+        // only confirm for --canary, bump === "from-git",
+        // or bump === "from-package", as VersionCommand
+        // has its own confirmation prompt
         return this.confirmPublish();
       }
 
@@ -184,6 +186,8 @@ class PublishCommand extends Command {
 
     if (this.options.bump === "from-git") {
       chain = chain.then(() => this.detectFromGit());
+    } else if (this.options.bump === "from-package") {
+      chain = chain.then(() => this.detectFromPackage());
     } else if (this.options.canary) {
       chain = chain.then(() => this.detectCanaryVersions());
     } else {
@@ -219,6 +223,32 @@ class PublishCommand extends Command {
       }
 
       return getTaggedPackages(this.packageGraph, this.project.rootPath, this.execOpts);
+    });
+
+    return chain.then(updates => {
+      const updatesVersions = updates.map(({ pkg }) => [pkg.name, pkg.version]);
+
+      return {
+        updates,
+        updatesVersions,
+        needsConfirmation: true,
+      };
+    });
+  }
+
+  detectFromPackage() {
+    let chain = Promise.resolve();
+
+    // attempting to publish a release with local changes is not allowed
+    chain = chain.then(() => this.verifyWorkingTreeClean());
+
+    chain = chain.then(() => getUnpublishedPackages(this.project, this.conf));
+    chain = chain.then(unpublishedPackages => {
+      if (!unpublishedPackages.length) {
+        this.logger.notice("from-package", "No unpublished release found");
+      }
+
+      return unpublishedPackages.map(({ name }) => this.packageGraph.get(name));
     });
 
     return chain.then(updates => {

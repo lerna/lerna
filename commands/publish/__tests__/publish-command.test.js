@@ -4,6 +4,7 @@
 jest.mock("../lib/get-packages-without-license");
 jest.mock("../lib/verify-npm-package-access");
 jest.mock("../lib/get-npm-username");
+jest.mock("../lib/get-unpublished-packages");
 // FIXME: better mock for version command
 jest.mock("../../version/lib/git-push");
 jest.mock("../../version/lib/is-anything-committed");
@@ -19,6 +20,8 @@ const output = require("@lerna/output");
 const checkWorkingTree = require("@lerna/check-working-tree");
 const getNpmUsername = require("../lib/get-npm-username");
 const verifyNpmPackageAccess = require("../lib/verify-npm-package-access");
+const getUnpublishedPackages = require("../lib/get-unpublished-packages");
+const Project = require("@lerna/project");
 
 // helpers
 const loggingOutput = require("@lerna-test/logging-output");
@@ -46,14 +49,16 @@ describe("PublishCommand", () => {
       expect(verifyNpmPackageAccess).not.toBeCalled();
     });
 
-    it("exits early when no changes found from-git", async () => {
-      collectUpdates.setUpdated(cwd);
+    ["from-git", "from-package"].forEach(fromArg => {
+      it(`exits early when no changes found ${fromArg}`, async () => {
+        collectUpdates.setUpdated(cwd);
 
-      await lernaPublish(cwd)("from-git");
+        await lernaPublish(cwd)(fromArg);
 
-      const logMessages = loggingOutput("success");
-      expect(logMessages).toContain("No changed packages to publish");
-      expect(verifyNpmPackageAccess).not.toBeCalled();
+        const logMessages = loggingOutput("success");
+        expect(logMessages).toContain("No changed packages to publish");
+        expect(verifyNpmPackageAccess).not.toBeCalled();
+      });
     });
 
     it("exits non-zero with --scope", async () => {
@@ -234,6 +239,69 @@ Set {
 
       try {
         await lernaPublish(testDir)("from-git");
+      } catch (err) {
+        expect(err.message).toBe("uncommitted");
+        // notably different than the actual message, but good enough here
+      }
+
+      expect.assertions(1);
+    });
+  });
+
+  describe("from-package", () => {
+    it("publishes unpublished packages", async () => {
+      const testDir = await initFixture("normal");
+      const project = new Project(testDir);
+
+      getUnpublishedPackages.mockImplementationOnce(async () => {
+        const pkgs = await project.getPackages();
+        return pkgs.slice(1, 3);
+      });
+
+      await lernaPublish(testDir)("from-package");
+
+      expect(PromptUtilities.confirm).lastCalledWith("Are you sure you want to publish these packages?");
+      expect(output.logged()).toMatch("Found 2 packages to publish:");
+      expect(npmPublish.order()).toEqual(["package-2", "package-3"]);
+    });
+
+    it("publishes unpublished independent packages", async () => {
+      const testDir = await initFixture("independent");
+      const project = new Project(testDir);
+
+      getUnpublishedPackages.mockImplementationOnce(() => project.getPackages());
+
+      await lernaPublish(testDir)("from-package");
+
+      expect(npmPublish.order()).toEqual([
+        "package-1",
+        "package-3",
+        "package-4",
+        "package-2",
+        // package-5 is private
+      ]);
+    });
+
+    it("exits early when all packages are published", async () => {
+      const testDir = await initFixture("normal");
+
+      await lernaPublish(testDir)("from-package");
+
+      expect(npmPublish).not.toBeCalled();
+
+      const logMessages = loggingOutput("info");
+      expect(logMessages).toContain("No unpublished release found");
+    });
+
+    it("throws an error when uncommitted changes are present", async () => {
+      checkWorkingTree.throwIfUncommitted.mockImplementationOnce(() => {
+        throw new Error("uncommitted");
+      });
+
+      const testDir = await initFixture("normal");
+
+      try {
+        await lernaPublish(testDir)("from-package");
       } catch (err) {
         expect(err.message).toBe("uncommitted");
         // notably different than the actual message, but good enough here
