@@ -130,6 +130,10 @@ class AddCommand extends Command {
       const deps = this.getPackageDeps(pkg);
       const range = getRangeToReference(this.spec, deps, pkg.location, this.savePrefix);
 
+      if (range === "^undefined") {
+        throw new Error("When adding a dependency, it must have a version.");
+      }
+
       this.logger.verbose("add", `${targetName}@${range} to ${this.dependencyType} in ${pkg.name}`);
       deps[targetName] = range;
 

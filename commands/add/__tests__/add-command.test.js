@@ -261,4 +261,14 @@ describe("AddCommand", () => {
       exact: true,
     });
   });
+
+  it("should validate version presence when adding", async () => {
+    const testDir = await initFixture("missing-version");
+
+    try {
+      await lernaAdd(testDir)("@test/package-1");
+    } catch (e) {
+      expect(e.message).toMatch("When adding a dependency, it must have a version.");
+    }
+  });
 });
