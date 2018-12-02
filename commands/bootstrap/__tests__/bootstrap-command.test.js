@@ -584,4 +584,14 @@ describe("BootstrapCommand", () => {
       expect(err.message).toMatch("this is not a git repository");
     }
   });
+
+  describe("with force-local", () => {
+    it("links all packages", async () => {
+      const testDir = await initFixture("force-local");
+
+      await lernaBootstrap(testDir)("--force-local");
+
+      expect(symlinkedDirectories(testDir)).toMatchSnapshot();
+    });
+  });
 });

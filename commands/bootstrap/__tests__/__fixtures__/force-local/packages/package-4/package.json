@@ -1,0 +1,8 @@
+{
+  "name": "package-4",
+  "version": "1.0.0",
+  "dependencies": {
+    "@test/package-1": "^10.0.0",
+    "@test/package-3": "^10.0.0"
+  }
+}
