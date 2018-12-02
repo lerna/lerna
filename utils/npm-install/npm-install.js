@@ -126,6 +126,20 @@ function transformManifest(pkg, dependencies) {
     }
   });
 
+  ["bundledDependencies", "bundleDependencies"].forEach(depType => {
+    const collection = json[depType];
+    if (collection) {
+      const newCollection = [];
+      for (const depName of collection) {
+        if (depMap.has(depName)) {
+          newCollection.push(depName);
+          depMap.delete(depName);
+        }
+      }
+      json[depType] = newCollection;
+    }
+  });
+
   // add all leftovers (root hoisted)
   if (depMap.size) {
     if (!json.dependencies) {
