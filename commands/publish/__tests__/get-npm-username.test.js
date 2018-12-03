@@ -19,13 +19,20 @@ describe("getNpmUsername", () => {
     console.error = origConsoleError;
   });
 
-  test("fetches whoami endpoint", async () => {
+  test("fetches whoami endpoint after profile 404", async () => {
+    fetch.json.mockImplementationOnce(() => {
+      const err = new Error("third-party profile fail");
+
+      err.code = "E404";
+
+      return Promise.reject(err);
+    });
     const opts = { such: "npm-conf", wow: true };
 
     const username = await getNpmUsername(opts);
 
     expect(username).toBe("lerna-test");
-    expect(fetch.json).toHaveBeenLastCalledWith("-/whoami", opts);
+    expect(fetch.json).toHaveBeenLastCalledWith("/-/whoami", opts);
   });
 
   test("throws an error when successful fetch yields empty username", async () => {
@@ -44,9 +51,16 @@ describe("getNpmUsername", () => {
 
   test("logs failure message before throwing validation error", async () => {
     fetch.json.mockImplementationOnce(() => {
-      const err = new Error("whoops");
+      const err = new Error("legacy npm Enterprise profile fail");
 
       err.code = "E500";
+
+      return Promise.reject(err);
+    });
+    fetch.json.mockImplementationOnce(() => {
+      const err = new Error("third-party whoami fail");
+
+      err.code = "E404";
 
       return Promise.reject(err);
     });
@@ -59,7 +73,7 @@ describe("getNpmUsername", () => {
     } catch (err) {
       expect(err.prefix).toBe("EWHOAMI");
       expect(err.message).toBe("Authentication error. Use `npm whoami` to troubleshoot.");
-      expect(console.error).toHaveBeenCalledWith("whoops");
+      expect(console.error).toHaveBeenCalledWith("third-party whoami fail");
     }
 
     expect.assertions(3);
