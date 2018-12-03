@@ -37,6 +37,10 @@ Add the new package with an exact version (e.g., `1.0.1`) rather than the defaul
 
 Use a custom registry to install the targeted package.
 
+### `--no-bootstrap`
+
+Skip the chained `lerna bootstrap`.
+
 ## Examples
 
 ```sh

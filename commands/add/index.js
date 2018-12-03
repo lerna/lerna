@@ -81,17 +81,25 @@ class AddCommand extends Command {
 
     this.logger.info("", `Adding ${this.spec.name} in ${numberOfPackages}`);
 
-    return this.makeChanges().then(() => {
-      const argv = Object.assign({}, this.options, {
-        args: [],
-        cwd: this.project.rootPath,
-        scope: this.packagesToChange.map(pkg => pkg.name),
-        // silence initial cli version logging, etc
-        composed: "add",
-      });
+    let chain = Promise.resolve();
 
-      return bootstrap(argv);
-    });
+    chain = chain.then(() => this.makeChanges());
+
+    if (this.options.bootstrap !== false) {
+      chain = chain.then(() => {
+        const argv = Object.assign({}, this.options, {
+          args: [],
+          cwd: this.project.rootPath,
+          scope: this.packagesToChange.map(pkg => pkg.name),
+          // silence initial cli version logging, etc
+          composed: "add",
+        });
+
+        return bootstrap(argv);
+      });
+    }
+
+    return chain;
   }
 
   collectPackagesToChange() {

@@ -38,6 +38,12 @@ exports.builder = yargs => {
         type: "string",
         requiresArg: true,
       },
+      bootstrap: {
+        group: "Command Options:",
+        describe: "Automatically chain `lerna bootstrap`.\nPass --no-bootstrap to avoid this.",
+        type: "boolean",
+        defaultDescription: "true",
+      },
     })
     .example(
       "$0 add module-1 packages/prefix-*",
@@ -46,6 +52,7 @@ exports.builder = yargs => {
     .example("$0 add module-1 --scope=module-2", "Install module-1 to module-2")
     .example("$0 add module-1 --scope=module-2 --dev", "Install module-1 to module-2 in devDependencies")
     .example("$0 add module-1", "Install module-1 in all modules except module-1")
+    .example("$0 add module-1 --no-bootstrap", "Skip automatic `lerna bootstrap`")
     .example("$0 add babel-core", "Install babel-core in all modules");
 
   return filterable(yargs);

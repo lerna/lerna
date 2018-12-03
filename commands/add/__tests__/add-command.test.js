@@ -251,6 +251,15 @@ describe("AddCommand", () => {
     expect(bootstrap).not.toHaveBeenCalled();
   });
 
+  it("skips bootstrap with --no-bootstrap", async () => {
+    const testDir = await initFixture("basic");
+
+    await lernaAdd(testDir)("@test/package-1", "--no-bootstrap");
+
+    expect(bootstrap).not.toHaveBeenCalled();
+    expect(await readPkg(testDir, "packages/package-2")).toDependOn("@test/package-1", "^1.0.0");
+  });
+
   it("should reset a dependency from caret to exact", async () => {
     const testDir = await initFixture("basic");
 
