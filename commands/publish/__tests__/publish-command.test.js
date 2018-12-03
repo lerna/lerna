@@ -260,7 +260,9 @@ Set {
 
       await lernaPublish(testDir)("from-package");
 
-      expect(PromptUtilities.confirm).lastCalledWith("Are you sure you want to publish these packages?");
+      expect(PromptUtilities.confirm).toHaveBeenLastCalledWith(
+        "Are you sure you want to publish these packages?"
+      );
       expect(output.logged()).toMatch("Found 2 packages to publish:");
       expect(npmPublish.order()).toEqual(["package-2", "package-3"]);
     });
