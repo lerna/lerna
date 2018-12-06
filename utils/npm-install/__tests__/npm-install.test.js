@@ -121,11 +121,25 @@ describe("npm-install", () => {
             exact: "1.0.0", // will be removed
             "local-dev-dependency": "^1.0.0",
           },
+          optionalDependencies: {
+            "@scoped/others": "1.0.0", // will be removed
+            caret: "^1.0.0",
+            "local-dependency": "^1.0.0",
+          },
+          bundledDependencies: ["local-dependency", "@scoped/exact", "others"],
+          bundleDependencies: ["local-dependency", "@scoped/exact", "others"],
         },
         path.normalize("/test/npm-install-deps")
       );
       const backupManifest = `${pkg.manifestLocation}.lerna_backup`;
-      const dependencies = ["@scoped/caret@^2.0.0", "@scoped/exact@2.0.0", "caret@^1.0.0", "exact@1.0.0"];
+      const dependencies = [
+        "@scoped/caret@^2.0.0",
+        "@scoped/exact@2.0.0",
+        "caret@^1.0.0",
+        "exact@1.0.0",
+        "@scoped/others@1.0.0",
+        "others@1.0.0",
+      ];
 
       await npmInstall.dependencies(pkg, dependencies, {});
 
@@ -144,6 +158,14 @@ describe("npm-install", () => {
           caret: "^1.0.0",
           // removed local-dev-dependency
         },
+        optionalDependencies: {
+          "@scoped/others": "1.0.0",
+          // removed caret, local-dependency
+        },
+        bundledDependencies: [/* removed local-dependency */ "others"],
+        bundleDependencies: [
+          /* removed  */
+        ],
       });
       expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith("npm", ["install"], {
         cwd: pkg.location,
