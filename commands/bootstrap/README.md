@@ -169,6 +169,14 @@ $ lerna bootstrap --ci
 
 This can be useful for "clean" re-installs, or initial installations after fresh cloning.
 
+### `--force-local`
+
+```sh
+$ lerna bootstrap --force-local
+```
+
+When passed, this flag causes the `bootstrap` command to always symlink local dependencies regardless of matching version range.
+
 ## How It Works
 
 Let's use `babel` as an example.

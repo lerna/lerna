@@ -21,6 +21,7 @@ const symlinkBinary = require("@lerna/symlink-binary");
 const symlinkDependencies = require("@lerna/symlink-dependencies");
 const ValidationError = require("@lerna/validation-error");
 const { getFilteredPackages } = require("@lerna/filter-options");
+const PackageGraph = require("@lerna/package-graph");
 const hasDependencyInstalled = require("./lib/has-dependency-installed");
 const isHoistedPackage = require("./lib/is-hoisted-package");
 
@@ -80,9 +81,13 @@ class BootstrapCommand extends Command {
       this.npmConfig.npmClientArgs = [...(npmClientArgs || []), ...doubleDashArgs];
     }
 
+    this.targetGraph = this.options.forceLocal
+      ? new PackageGraph(this.packageGraph.rawPackageList, "allDependencies", "forceLocal")
+      : this.packageGraph;
+
     let chain = Promise.resolve();
 
-    chain = chain.then(() => getFilteredPackages(this.packageGraph, this.execOpts, this.options));
+    chain = chain.then(() => getFilteredPackages(this.targetGraph, this.execOpts, this.options));
     chain = chain.then(filteredPackages => {
       this.filteredPackages = filteredPackages;
     });
@@ -159,7 +164,7 @@ class BootstrapCommand extends Command {
 
     return Object.keys(rootDependencies).some(
       name =>
-        this.packageGraph.has(name) &&
+        this.targetGraph.has(name) &&
         npa.resolve(name, rootDependencies[name], this.project.rootPath).type === "directory"
     );
   }
@@ -301,7 +306,7 @@ class BootstrapCommand extends Command {
      */
     const depsToInstall = new Map();
     const filteredNodes = new Map(
-      this.filteredPackages.map(pkg => [pkg.name, this.packageGraph.get(pkg.name)])
+      this.filteredPackages.map(pkg => [pkg.name, this.targetGraph.get(pkg.name)])
     );
 
     // collect root dependency versions
@@ -363,7 +368,7 @@ class BootstrapCommand extends Command {
         }
 
         const dependents = Array.from(externalDependents.get(rootVersion)).map(
-          leafName => this.packageGraph.get(leafName).pkg
+          leafName => this.targetGraph.get(leafName).pkg
         );
 
         // remove collection so leaves don't repeat it
@@ -395,7 +400,7 @@ class BootstrapCommand extends Command {
             );
           }
 
-          const leafNode = this.packageGraph.get(leafName);
+          const leafNode = this.targetGraph.get(leafName);
           const leafRecord = leaves.get(leafNode) || leaves.set(leafNode, new Set()).get(leafNode);
 
           // only install dependency if it's not already installed
@@ -546,7 +551,7 @@ class BootstrapCommand extends Command {
    * @returns {Promise}
    */
   symlinkPackages() {
-    return symlinkDependencies(this.filteredPackages, this.packageGraph, this.logger);
+    return symlinkDependencies(this.filteredPackages, this.targetGraph, this.logger);
   }
 }
 
