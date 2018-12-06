@@ -172,7 +172,7 @@ This can be useful for "clean" re-installs, or initial installations after fresh
 ### `--force-local`
 
 ```sh
-$ lerna link --force-local
+$ lerna bootstrap --force-local
 ```
 
 When passed, this flag causes the `bootstrap` command to always symlink local dependencies regardless of matching version range.
