@@ -50,6 +50,14 @@ class AddCommand extends Command {
 
     chain = chain.then(() => this.getPackageVersion());
     chain = chain.then(version => {
+      if (version == null) {
+        throw new ValidationError(
+          "ENOTSATISFIED",
+          dedent`
+            Requested package has no version: ${this.spec.name}
+          `
+        );
+      }
       this.spec.version = version;
     });
 

@@ -49,6 +49,18 @@ describe("AddCommand", () => {
     }
   });
 
+  it("should throw for adding local package without specified version", async () => {
+    expect.assertions(1);
+
+    const testDir = await initFixture("unspecified-version");
+
+    try {
+      await lernaAdd(testDir)("@test/package-1");
+    } catch (err) {
+      expect(err.message).toMatch(/Requested package has no version:/);
+    }
+  });
+
   it("should reference remote dependencies", async () => {
     const testDir = await initFixture("basic");
 
