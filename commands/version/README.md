@@ -223,7 +223,7 @@ to certain guidelines, such as projects which use [commitizen](https://github.co
 
 If the message contains `%s`, it will be replaced with the new global version version number prefixed with a "v".
 If the message contains `%v`, it will be replaced with the new global version version number without the leading "v".
-Note that this only applies when using the default "fixed" versioning mode, as there is no "global" version when versioning independently.
+Note that this placeholder interpolation only applies when using the default "fixed" versioning mode, as there is no "global" version to interpolate when versioning independently.
 
 This can be configured in lerna.json, as well:
 
