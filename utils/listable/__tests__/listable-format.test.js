@@ -4,6 +4,7 @@ const chalk = require("chalk");
 const path = require("path");
 const tempy = require("tempy");
 const Package = require("@lerna/package");
+const loggingOutput = require("@lerna-test/logging-output");
 const listable = require("..");
 
 // keep snapshots stable cross-platform
@@ -34,9 +35,18 @@ describe("listable.format()", () => {
     process.chdir(cwd);
 
     packages = [
-      new Package({ name: "pkg-1", version: "1.0.0" }, path.join(cwd, "/pkgs/pkg-1")),
-      new Package({ name: "pkg-2" }, path.join(cwd, "/pkgs/pkg-2")),
-      new Package({ name: "pkg-3", version: "3.0.0", private: true }, path.join(cwd, "/pkgs/pkg-3")),
+      new Package(
+        { name: "pkg-1", version: "1.0.0", dependencies: { "pkg-2": "file:../pkg-2" } },
+        path.join(cwd, "/pkgs/pkg-1")
+      ),
+      new Package(
+        { name: "pkg-2", devDependencies: { "pkg-3": "file:../pkg-3" } },
+        path.join(cwd, "/pkgs/pkg-2")
+      ),
+      new Package(
+        { name: "pkg-3", version: "3.0.0", dependencies: { "pkg-2": "file:../pkg-2" }, private: true },
+        path.join(cwd, "/pkgs/pkg-3")
+      ),
     ];
   });
 
@@ -174,6 +184,28 @@ pkg-3  v3.0.0 pkgs/pkg-3 (PRIVATE)
       expect(text).toMatchInlineSnapshot(`
 pkg-1  v1.0.0 pkgs/pkg-1
 pkg-2 MISSING pkgs/pkg-2
+`);
+    });
+  });
+
+  describe("toposort", () => {
+    test("output", () => {
+      const { text } = formatWithOptions({ toposort: true });
+
+      expect(text).toMatchInlineSnapshot(`
+pkg-2
+pkg-1
+`);
+    });
+
+    test("cycles", () => {
+      const { text } = formatWithOptions({ toposort: true, all: true });
+
+      expect(loggingOutput("warn")).toContainEqual(expect.stringContaining("pkg-2 -> pkg-3 -> pkg-2"));
+      expect(text).toMatchInlineSnapshot(`
+pkg-2
+pkg-3 (PRIVATE)
+pkg-1
 `);
     });
   });

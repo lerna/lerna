@@ -33,4 +33,8 @@ describe("listable.options()", () => {
   it("provides --parseable alias -p", () => {
     expect(parsed("-p")).toHaveProperty("parseable", true);
   });
+
+  it("provides --toposort", () => {
+    expect(parsed("--toposort")).toHaveProperty("toposort", true);
+  });
 });

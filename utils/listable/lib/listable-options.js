@@ -27,5 +27,10 @@ function listableOptions(yargs) {
       type: "boolean",
       alias: "parseable",
     },
+    toposort: {
+      group: "Command Options:",
+      describe: "Sort packages in topological order instead of lexical by directory",
+      type: "boolean",
+    },
   });
 }
