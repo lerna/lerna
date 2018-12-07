@@ -14,10 +14,10 @@ strategy:
   matrix:
     node-10:
       node_version: ^10.14.1
-    node-8:
-      node_version: ^8.14.0
-    node-6:
-      node_version: ^6.15.1
+    # node-8:
+    #   node_version: ^8.14.0
+    # node-6:
+    #   node_version: ^6.15.1
 
 steps:
   - task: NodeTool@0
@@ -28,8 +28,16 @@ steps:
       npm install -g npm@latest
     displayName: "Install npm"
   - script: |
+      npm install -g yarn@latest
+    displayName: "Install yarn"
+  - script: |
       npm ci
     displayName: "Install dependencies"
+  - script: |
+      npm config set loglevel warn
+      git config --global user.email test@example.com
+      git config --global user.name "Tester McPerson"
+    displayName: "Configure test environment"
   - script: |
       npm run ci
     displayName: "Run tests"
