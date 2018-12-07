@@ -13,7 +13,6 @@ node_js:
 
 os:
   - linux
-  - windows
 
 env:
   global:
@@ -24,18 +23,11 @@ matrix:
   fast_finish: true
   allow_failures:
     - node_js: "11"
-  exclude:
-    # only run windows CI on LTS (v10)
-    - node_js: "11"
-      os: windows
-    - node_js: "8"
-      os: windows
 
 cache: npm
 
 before_install:
   - if [[ "$(npm -v)" != "$(npm v npm dist-tags.latest)" ]]; then npm i -g npm@latest; fi
-  # - set PATH=%APPDATA%\npm;"C:\Program Files\Git\mingw64\bin";%PATH%
 
 install: npm ci
 
@@ -43,7 +35,6 @@ before_script:
   - npm config set loglevel warn
   - git config --global user.email test@example.com
   - git config --global user.name "Tester McPerson"
-  - if [[ "$TRAVIS_OS_NAME" = "windows" ]]; then npm i -g yarn; fi
 
 script:
   - npm run ci
