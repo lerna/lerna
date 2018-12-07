@@ -430,7 +430,7 @@ describe("npm-install", () => {
 
       await npmInstall.dependencies(pkg, dependencies, {});
 
-      expect(ChildProcessUtilities.exec).not.toBeCalled();
+      expect(ChildProcessUtilities.exec).not.toHaveBeenCalled();
     });
 
     it("defaults temporary dependency versions to '*'", async () => {

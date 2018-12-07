@@ -144,7 +144,7 @@ describe("ImportCommand", () => {
       const [testDir, externalDir] = await initBasicFixtures();
       await lernaImport(testDir)(externalDir, "--yes");
 
-      expect(PromptUtilities.confirm).not.toBeCalled();
+      expect(PromptUtilities.confirm).not.toHaveBeenCalled();
     });
 
     it("errors without an argument", async () => {

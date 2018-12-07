@@ -223,7 +223,7 @@ describe("VersionCommand", () => {
 
       expect(writePkg.updatedManifest("package-1")).toMatchSnapshot("gitHead");
 
-      expect(libPush).not.toBeCalled();
+      expect(libPush).not.toHaveBeenCalled();
 
       const logMessages = loggingOutput("info");
       expect(logMessages).toContain("Skipping git tag/commit");
@@ -270,7 +270,7 @@ describe("VersionCommand", () => {
       await fs.outputFile(path.join(testDir, "packages/package-1/hello.js"), "world");
       await lernaVersion(testDir)("--no-git-tag-version");
 
-      expect(checkWorkingTree).not.toBeCalled();
+      expect(checkWorkingTree).not.toHaveBeenCalled();
 
       const logMessages = loggingOutput("warn");
       expect(logMessages).toContain("Skipping working tree validation, proceed at your own risk");
@@ -288,7 +288,7 @@ describe("VersionCommand", () => {
       const patch = await showCommit(testDir);
       expect(patch).toMatchSnapshot();
 
-      expect(libPush).not.toBeCalled();
+      expect(libPush).not.toHaveBeenCalled();
 
       const logMessages = loggingOutput("info");
       expect(logMessages).toContain("Skipping git push");
@@ -364,8 +364,8 @@ describe("VersionCommand", () => {
       const testDir = await initFixture("normal");
       await lernaVersion(testDir)("--yes", "patch");
 
-      expect(PromptUtilities.select).not.toBeCalled();
-      expect(PromptUtilities.confirm).not.toBeCalled();
+      expect(PromptUtilities.select).not.toHaveBeenCalled();
+      expect(PromptUtilities.confirm).not.toHaveBeenCalled();
 
       const message = await getCommitMessage(testDir);
       expect(message).toBe("v1.0.1");
@@ -435,7 +435,7 @@ describe("VersionCommand", () => {
       const message = await getCommitMessage(testDir);
       expect(message).toBe("previous");
 
-      expect(checkWorkingTree).not.toBeCalled();
+      expect(checkWorkingTree).not.toHaveBeenCalled();
     });
 
     it("ignores custom messages", async () => {
@@ -605,8 +605,8 @@ describe("VersionCommand", () => {
       const testDir = await initFixture("normal");
       await lernaVersion(testDir)("--include-merged-tags", "--yes", "patch");
 
-      expect(PromptUtilities.select).not.toBeCalled();
-      expect(PromptUtilities.confirm).not.toBeCalled();
+      expect(PromptUtilities.select).not.toHaveBeenCalled();
+      expect(PromptUtilities.confirm).not.toHaveBeenCalled();
 
       const message = await getCommitMessage(testDir);
       expect(message).toBe("v1.0.1");

@@ -98,7 +98,7 @@ describe("verifyNpmPackageAccess", () => {
     } catch (err) {
       expect(err.prefix).toBe("EACCESS");
       expect(err.message).toBe(`You do not have write permission required to publish "package-2"`);
-      expect(console.error).not.toBeCalled();
+      expect(console.error).not.toHaveBeenCalled();
     }
 
     expect.assertions(3);
@@ -121,7 +121,7 @@ describe("verifyNpmPackageAccess", () => {
     expect(logMessage).toMatch(
       `Registry "${registry}" does not support \`npm access ls-packages\`, skipping permission checks...`
     );
-    expect(console.error).not.toBeCalled();
+    expect(console.error).not.toHaveBeenCalled();
   });
 
   test("passes when Artifactory registry returns E404", async () => {
@@ -141,7 +141,7 @@ describe("verifyNpmPackageAccess", () => {
     expect(logMessage).toMatch(
       `Registry "${registry}" does not support \`npm access ls-packages\`, skipping permission checks...`
     );
-    expect(console.error).not.toBeCalled();
+    expect(console.error).not.toHaveBeenCalled();
   });
 
   test("logs unexpected failure message before throwing EWHOAMI", async () => {

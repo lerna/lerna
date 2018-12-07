@@ -43,7 +43,7 @@ describe("getNpmUsername", () => {
     } catch (err) {
       expect(err.prefix).toBe("ENEEDAUTH");
       expect(err.message).toBe("You must be logged in to publish packages. Use `npm login` and try again.");
-      expect(console.error).not.toBeCalled();
+      expect(console.error).not.toHaveBeenCalled();
     }
 
     expect.assertions(3);

@@ -57,7 +57,7 @@ describe("CleanCommand", () => {
 
       await lernaClean(testDir)("--yes");
 
-      expect(PromptUtilities.confirm).not.toBeCalled();
+      expect(PromptUtilities.confirm).not.toHaveBeenCalled();
     });
 
     it("should only clean scoped packages", async () => {

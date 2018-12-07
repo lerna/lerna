@@ -92,7 +92,7 @@ describe("BootstrapCommand", () => {
 
       await lernaBootstrap(testDir)();
 
-      expect(npmInstall.dependencies).not.toBeCalled();
+      expect(npmInstall.dependencies).not.toHaveBeenCalled();
       expect(ranScriptsInDirectories(testDir)).toMatchSnapshot();
     });
 
@@ -224,7 +224,7 @@ describe("BootstrapCommand", () => {
       });
       await lernaBootstrap(testDir)();
 
-      expect(hasNpmVersion).not.toBeCalled();
+      expect(hasNpmVersion).not.toHaveBeenCalled();
       expect(npmInstall.dependencies.mock.calls[0][2]).toEqual({
         registry: undefined,
         npmClient: "npm",
@@ -380,7 +380,7 @@ describe("BootstrapCommand", () => {
 
       await lernaBootstrap(testDir)();
 
-      expect(npmInstall.dependencies).not.toBeCalled();
+      expect(npmInstall.dependencies).not.toHaveBeenCalled();
     });
 
     it("hoists appropriately", async () => {
@@ -425,7 +425,7 @@ describe("BootstrapCommand", () => {
 
       await lernaBootstrap(testDir)();
 
-      expect(npmInstall.dependencies).not.toBeCalled();
+      expect(npmInstall.dependencies).not.toHaveBeenCalled();
     });
   });
 
@@ -482,7 +482,7 @@ describe("BootstrapCommand", () => {
 
       await lernaBootstrap(testDir)();
 
-      expect(npmInstall.dependencies).not.toBeCalled();
+      expect(npmInstall.dependencies).not.toHaveBeenCalled();
       expect(npmInstall).toHaveBeenLastCalledWith(
         expect.objectContaining({ name: "root" }),
         expect.objectContaining({
@@ -513,7 +513,7 @@ describe("BootstrapCommand", () => {
 
       await lernaBootstrap(testDir)();
 
-      expect(npmInstall.dependencies).not.toBeCalled();
+      expect(npmInstall.dependencies).not.toHaveBeenCalled();
       expect(npmInstall).toHaveBeenLastCalledWith(
         expect.objectContaining({ name: "relative-file-specs" }),
         expect.objectContaining({

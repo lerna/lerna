@@ -29,7 +29,7 @@ test("publish --npm-tag", async () => {
   await lernaPublish(cwd)("--npm-tag", "custom");
 
   expect(npmPublish.registry.get("package-3")).toBe("custom");
-  expect(npmDistTag.check).not.toBeCalled();
+  expect(npmDistTag.check).not.toHaveBeenCalled();
 });
 
 test("publish --temp-tag", async () => {

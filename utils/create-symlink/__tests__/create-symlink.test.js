@@ -26,7 +26,7 @@ describe("create-symlink", () => {
 
       await createSymlink(src, dst, type);
 
-      expect(fs.unlink).not.toBeCalled();
+      expect(fs.unlink).not.toHaveBeenCalled();
       expect(fs.symlink).toHaveBeenLastCalledWith(linkRelative(src, dst), dst, type);
     });
 
@@ -37,7 +37,7 @@ describe("create-symlink", () => {
 
       await createSymlink(src, dst, type);
 
-      expect(fs.unlink).not.toBeCalled();
+      expect(fs.unlink).not.toHaveBeenCalled();
       expect(fs.symlink).toHaveBeenLastCalledWith(linkRelative(src, dst), dst, "file");
     });
 
@@ -61,7 +61,7 @@ describe("create-symlink", () => {
 
       await createSymlink(src, dst, type);
 
-      expect(fs.lstat).not.toBeCalled();
+      expect(fs.lstat).not.toHaveBeenCalled();
       expect(cmdShim).toHaveBeenLastCalledWith(src, dst, expect.any(Function));
     });
 

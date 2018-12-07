@@ -46,7 +46,7 @@ describe("PublishCommand", () => {
 
       const logMessages = loggingOutput("success");
       expect(logMessages).toContain("No changed packages to publish");
-      expect(verifyNpmPackageAccess).not.toBeCalled();
+      expect(verifyNpmPackageAccess).not.toHaveBeenCalled();
     });
 
     ["from-git", "from-package"].forEach(fromArg => {
@@ -57,7 +57,7 @@ describe("PublishCommand", () => {
 
         const logMessages = loggingOutput("success");
         expect(logMessages).toContain("No changed packages to publish");
-        expect(verifyNpmPackageAccess).not.toBeCalled();
+        expect(verifyNpmPackageAccess).not.toHaveBeenCalled();
       });
     });
 
@@ -108,9 +108,9 @@ Set {
         "package-2",
         // package-5 is private
       ]);
-      expect(npmDistTag.check).not.toBeCalled();
-      expect(npmDistTag.remove).not.toBeCalled();
-      expect(npmDistTag.add).not.toBeCalled();
+      expect(npmDistTag.check).not.toHaveBeenCalled();
+      expect(npmDistTag.remove).not.toHaveBeenCalled();
+      expect(npmDistTag.add).not.toHaveBeenCalled();
 
       expect(getNpmUsername).toHaveBeenCalled();
       expect(getNpmUsername.registry.get(testDir).get("registry")).toBe("https://registry.npmjs.org/");
@@ -224,7 +224,7 @@ Set {
 
       await lernaPublish(testDir)("from-git");
 
-      expect(npmPublish).not.toBeCalled();
+      expect(npmPublish).not.toHaveBeenCalled();
 
       const logMessages = loggingOutput("info");
       expect(logMessages).toContain("No tagged release found");
@@ -289,7 +289,7 @@ Set {
 
       await lernaPublish(testDir)("from-package");
 
-      expect(npmPublish).not.toBeCalled();
+      expect(npmPublish).not.toHaveBeenCalled();
 
       const logMessages = loggingOutput("info");
       expect(logMessages).toContain("No unpublished release found");
@@ -351,7 +351,7 @@ Set {
 
       await lernaPublish(cwd)("--no-verify-access");
 
-      expect(verifyNpmPackageAccess).not.toBeCalled();
+      expect(verifyNpmPackageAccess).not.toHaveBeenCalled();
     });
 
     it("is implied when npm username is undefined", async () => {
@@ -361,7 +361,7 @@ Set {
 
       await lernaPublish(cwd)("--registry", "https://my-private-registry");
 
-      expect(verifyNpmPackageAccess).not.toBeCalled();
+      expect(verifyNpmPackageAccess).not.toHaveBeenCalled();
     });
   });
 

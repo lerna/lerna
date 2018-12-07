@@ -78,7 +78,7 @@ describe("createRunner", () => {
     };
 
     await runPackageLifecycle(pkg, "prepare");
-    expect(runScript).not.toBeCalled();
+    expect(runScript).not.toHaveBeenCalled();
   });
 
   it("skips missing script", async () => {
@@ -90,7 +90,7 @@ describe("createRunner", () => {
     };
 
     await runPackageLifecycle(pkg, "prepare");
-    expect(runScript).not.toBeCalled();
+    expect(runScript).not.toHaveBeenCalled();
   });
 
   it("logs script error and re-throws", async () => {

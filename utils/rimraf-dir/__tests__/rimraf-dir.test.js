@@ -35,6 +35,6 @@ describe("rimrafDir()", () => {
     const removedPath = await rimrafDir("rimraf/non-existent");
 
     expect(removedPath).toBe(undefined);
-    expect(ChildProcessUtilities.spawn).not.toBeCalled();
+    expect(ChildProcessUtilities.spawn).not.toHaveBeenCalled();
   });
 });
