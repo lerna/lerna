@@ -1,14 +1,15 @@
 "use strict";
 
-jest.mock("../lib/get-latest-version");
+jest.mock("libnpm/manifest");
 
 const fs = require("fs-extra");
 const path = require("path");
 const execa = require("execa");
 const slash = require("slash");
+const { Conf } = require("@lerna/npm-conf");
 
 // mocked modules
-const getLatestVersion = require("../lib/get-latest-version");
+const getManifest = require("libnpm/manifest");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
@@ -44,7 +45,7 @@ const manifestCreated = async cwd => {
 };
 
 describe("CreateCommand", () => {
-  getLatestVersion.mockReturnValue("1.0.0-mocked");
+  getManifest.mockImplementation(() => Promise.resolve({ version: "1.0.0-mocked" }));
 
   // preserve value from @lerna-test/set-npm-userconfig
   const userconfig = process.env.npm_config_userconfig;
@@ -124,7 +125,14 @@ describe("CreateCommand", () => {
     expect(result).toMatchSnapshot();
 
     // yargs is automatically added when CLI is stubbed
-    expect(getLatestVersion).toHaveBeenLastCalledWith("yargs", expect.objectContaining({ cwd }));
+    expect(getManifest).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        name: "yargs",
+        type: "tag",
+        fetchSpec: "latest",
+      }),
+      expect.any(Conf)
+    );
   });
 
   it("creates a stub cli with a custom name", async () => {

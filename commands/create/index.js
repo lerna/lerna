@@ -7,7 +7,9 @@ const { URL } = require("whatwg-url");
 const camelCase = require("camelcase");
 const dedent = require("dedent");
 const initPackageJson = require("pify")(require("init-package-json"));
+const getManifest = require("libnpm/manifest");
 const npa = require("libnpm/parse-arg");
+const pReduce = require("p-reduce");
 const slash = require("slash");
 
 const Command = require("@lerna/command");
@@ -16,7 +18,6 @@ const npmConf = require("@lerna/npm-conf");
 const ValidationError = require("@lerna/validation-error");
 const builtinNpmrc = require("./lib/builtin-npmrc");
 const catFile = require("./lib/cat-file");
-const getLatestVersion = require("./lib/get-latest-version");
 
 const LERNA_MODULE_DATA = require.resolve("./lib/lerna-module-data.js");
 const DEFAULT_DESCRIPTION = [
@@ -140,7 +141,8 @@ class CreateCommand extends Command {
     this.setHomepage();
     this.setPublishConfig();
     this.setRepository();
-    this.setDependencies();
+
+    return Promise.resolve(this.setDependencies());
   }
 
   execute() {
@@ -179,10 +181,6 @@ class CreateCommand extends Command {
     return ChildProcessUtilities.execSync("git", ["config", "--get", prop], this.execOpts);
   }
 
-  latestVersion(depName) {
-    return getLatestVersion(depName, this.execOpts);
-  }
-
   collectExternalVersions() {
     // collect all current externalDependencies
     const extVersions = new Map();
@@ -217,7 +215,7 @@ class CreateCommand extends Command {
   }
 
   setDependencies() {
-    const inputs = new Set(this.options.dependencies);
+    const inputs = new Set((this.options.dependencies || []).sort());
 
     // add yargs if a bin is required
     if (this.options.bin) {
@@ -228,48 +226,68 @@ class CreateCommand extends Command {
       return;
     }
 
-    const dependencies = {};
     const exts = this.collectExternalVersions();
     const localRelative = this.hasLocalRelativeFileSpec();
     const savePrefix = this.conf.get("save-exact") ? "" : this.conf.get("save-prefix");
 
-    for (const spec of [...inputs].sort().map(i => npa(i))) {
-      const depType = spec.type;
-      const depName = spec.name;
-
-      let version;
-
-      if (this.packageGraph.has(depName)) {
+    const decideVersion = spec => {
+      if (this.packageGraph.has(spec.name)) {
         // sibling dependency
-        const depNode = this.packageGraph.get(depName);
+        const depNode = this.packageGraph.get(spec.name);
 
         if (localRelative) {
           // a local `file:../foo` specifier
-          version = this.resolveRelative(depNode);
-        } else {
-          // yarn workspace or lerna packages config
-          version = `${savePrefix}${depNode.version}`;
+          return this.resolveRelative(depNode);
         }
-      } else if (depType === "tag" && spec.fetchSpec === "latest") {
-        // resolve the latest version
-        if (exts.has(depName)) {
-          // from local external dependency
-          version = exts.get(depName);
-        } else {
-          // from registry
-          version = `${savePrefix}${this.latestVersion(depName)}`;
-        }
-      } else if (depType === "git") {
-        throw new ValidationError("EGIT", "Do not use git dependencies");
-      } else {
-        // TODO: resolve this if it's weird? (foo@1, bar@^2, etc)
-        version = spec.rawSpec;
+
+        // yarn workspace or lerna packages config
+        return `${savePrefix}${depNode.version}`;
       }
 
-      dependencies[depName] = version;
-    }
+      if (spec.type === "tag" && spec.fetchSpec === "latest") {
+        // resolve the latest version
+        if (exts.has(spec.name)) {
+          // from local external dependency
+          return exts.get(spec.name);
+        }
 
-    this.conf.set("dependencies", dependencies);
+        // from registry
+        return getManifest(spec, this.conf).then(pkg => `${savePrefix}${pkg.version}`);
+      }
+
+      if (spec.type === "git") {
+        throw new ValidationError("EGIT", "Do not use git dependencies");
+      }
+
+      // TODO: resolve this if it's weird? (foo@1, bar@^2, etc)
+      return spec.rawSpec;
+    };
+
+    let chain = Promise.resolve();
+
+    chain = chain.then(() =>
+      pReduce(
+        inputs,
+        (obj, input) => {
+          const spec = npa(input);
+
+          return Promise.resolve(spec)
+            .then(decideVersion)
+            .then(version => {
+              obj[spec.name] = version;
+
+              return obj;
+            });
+        },
+        {}
+      )
+    );
+
+    chain = chain.then(dependencies => {
+      this.conf.set("dependencies", dependencies);
+    });
+
+    return chain;
   }
 
   setFiles() {
