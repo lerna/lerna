@@ -69,7 +69,7 @@
     "normalize-newline": "^3.0.0",
     "normalize-path": "^3.0.0",
     "path-key": "^2.0.1",
-    "prettier": "^1.14.3",
+    "prettier": "^1.15.3",
     "tempy": "^0.2.1",
     "touch": "^3.1.0"
   },
