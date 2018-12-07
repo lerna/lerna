@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.6.0](https://github.com/lerna/lerna/compare/v3.5.1...v3.6.0) (2018-12-07)
+
+
+### Bug Fixes
+
+* **add:** Validate local package version ([#1804](https://github.com/lerna/lerna/issues/1804)) ([ed6e2db](https://github.com/lerna/lerna/commit/ed6e2db)), closes [#1799](https://github.com/lerna/lerna/issues/1799)
+* **bootstrap:** Omit local bundled dependencies ([#1805](https://github.com/lerna/lerna/issues/1805)) ([8f5bdbb](https://github.com/lerna/lerna/commit/8f5bdbb)), closes [#1775](https://github.com/lerna/lerna/issues/1775)
+* **pkg:** Exclude __mocks__ from package tarball ([4017f37](https://github.com/lerna/lerna/commit/4017f37))
+
+
+### Features
+
+* **add:** Add --no-bootstrap option ([89bb928](https://github.com/lerna/lerna/commit/89bb928))
+* **bootstrap:** Support `--force-local` option ([#1807](https://github.com/lerna/lerna/issues/1807)) ([25572af](https://github.com/lerna/lerna/commit/25572af)), closes [#1763](https://github.com/lerna/lerna/issues/1763)
+* Migrate existing usage to libnpm ([0d3a786](https://github.com/lerna/lerna/commit/0d3a786)), closes [#1767](https://github.com/lerna/lerna/issues/1767)
+* **create:** Migrate `npm info` subprocess to libnpm.manifest ([65a1d1b](https://github.com/lerna/lerna/commit/65a1d1b))
+* **listable:** Add --toposort option ([b387881](https://github.com/lerna/lerna/commit/b387881)), closes [#1652](https://github.com/lerna/lerna/issues/1652)
+* **npm-dist-tag:** Use fetch API instead of CLI to make changes ([54008c6](https://github.com/lerna/lerna/commit/54008c6))
+* **publish:** Add a "from-package" positional argument ([#1708](https://github.com/lerna/lerna/issues/1708)) ([16611be](https://github.com/lerna/lerna/commit/16611be)), closes [#1648](https://github.com/lerna/lerna/issues/1648)
+* **publish:** Attempt profile retrieval before whoami endpoint during user validation ([38097d8](https://github.com/lerna/lerna/commit/38097d8))
+
+
+
+
+
 ## [3.5.1](https://github.com/lerna/lerna/compare/v3.5.0...v3.5.1) (2018-11-29)
 
 

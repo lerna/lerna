@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.6.0](https://github.com/lerna/lerna/compare/v3.5.1...v3.6.0) (2018-12-07)
+
+
+### Bug Fixes
+
+* **pkg:** Exclude __mocks__ from package tarball ([4017f37](https://github.com/lerna/lerna/commit/4017f37))
+
+
+### Features
+
+* Migrate existing usage to libnpm ([0d3a786](https://github.com/lerna/lerna/commit/0d3a786)), closes [#1767](https://github.com/lerna/lerna/issues/1767)
+* **npm-dist-tag:** Use fetch API instead of CLI to make changes ([54008c6](https://github.com/lerna/lerna/commit/54008c6))
+* **publish:** Add a "from-package" positional argument ([#1708](https://github.com/lerna/lerna/issues/1708)) ([16611be](https://github.com/lerna/lerna/commit/16611be)), closes [#1648](https://github.com/lerna/lerna/issues/1648)
+* **publish:** Attempt profile retrieval before whoami endpoint during user validation ([38097d8](https://github.com/lerna/lerna/commit/38097d8))
+
+
+
+
+
 ## [3.5.1](https://github.com/lerna/lerna/compare/v3.5.0...v3.5.1) (2018-11-29)
 
 

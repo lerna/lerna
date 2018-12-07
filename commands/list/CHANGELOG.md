@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.6.0](https://github.com/lerna/lerna/compare/v3.5.1...v3.6.0) (2018-12-07)
+
+
+### Features
+
+* **listable:** Add --toposort option ([b387881](https://github.com/lerna/lerna/commit/b387881)), closes [#1652](https://github.com/lerna/lerna/issues/1652)
+
+
+
+
+
 # [3.5.0](https://github.com/lerna/lerna/compare/v3.4.3...v3.5.0) (2018-11-27)
 
 **Note:** Version bump only for package @lerna/list
