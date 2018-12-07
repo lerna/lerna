@@ -1,7 +1,7 @@
 "use strict";
 
 const conventionalRecommendedBump = require("conventional-recommended-bump");
-const log = require("npmlog");
+const log = require("libnpm/log");
 const semver = require("semver");
 const getChangelogConfig = require("./get-changelog-config");
 

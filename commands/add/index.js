@@ -1,10 +1,10 @@
 "use strict";
 
 const dedent = require("dedent");
-const npa = require("npm-package-arg");
+const npa = require("libnpm/parse-arg");
 const pMap = require("p-map");
 const path = require("path");
-const pacote = require("pacote");
+const getManifest = require("libnpm/manifest");
 const semver = require("semver");
 
 const Command = require("@lerna/command");
@@ -178,7 +178,7 @@ class AddCommand extends Command {
       registry: this.options.registry,
     });
 
-    return pacote.manifest(this.spec, opts).then(pkg => pkg.version);
+    return getManifest(this.spec, opts).then(pkg => pkg.version);
   }
 
   packageSatisfied() {

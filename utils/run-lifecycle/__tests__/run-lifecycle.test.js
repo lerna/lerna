@@ -1,9 +1,9 @@
 "use strict";
 
-jest.mock("npm-lifecycle", () => jest.fn(() => Promise.resolve()));
+jest.mock("libnpm/run-script", () => jest.fn(() => Promise.resolve()));
 
 const loggingOutput = require("@lerna-test/logging-output");
-const npmLifecycle = require("npm-lifecycle");
+const runScript = require("libnpm/run-script");
 const npmConf = require("@lerna/npm-conf");
 const runLifecycle = require("../run-lifecycle");
 
@@ -20,7 +20,7 @@ describe("default export", () => {
     const result = await runLifecycle(pkg, stage, config);
 
     expect(result).toBe(pkg);
-    expect(npmLifecycle).toHaveBeenLastCalledWith(
+    expect(runScript).toHaveBeenLastCalledWith(
       expect.objectContaining({
         name: pkg.name,
         version: pkg.version,
@@ -58,7 +58,7 @@ describe("createRunner", () => {
     const result = await runPackageLifecycle(pkg, stage);
 
     expect(result).toBe(pkg);
-    expect(npmLifecycle).toHaveBeenLastCalledWith(
+    expect(runScript).toHaveBeenLastCalledWith(
       expect.any(Object),
       stage,
       pkg.location,
@@ -78,7 +78,7 @@ describe("createRunner", () => {
     };
 
     await runPackageLifecycle(pkg, "prepare");
-    expect(npmLifecycle).not.toBeCalled();
+    expect(runScript).not.toBeCalled();
   });
 
   it("skips missing script", async () => {
@@ -90,11 +90,11 @@ describe("createRunner", () => {
     };
 
     await runPackageLifecycle(pkg, "prepare");
-    expect(npmLifecycle).not.toBeCalled();
+    expect(runScript).not.toBeCalled();
   });
 
   it("logs script error and re-throws", async () => {
-    npmLifecycle.mockImplementationOnce(({ scripts }, stage) => {
+    runScript.mockImplementationOnce(({ scripts }, stage) => {
       const err = new Error("boom");
 
       // https://git.io/fAE3f
@@ -124,7 +124,7 @@ describe("createRunner", () => {
   });
 
   it("defaults error exit code to 1", async () => {
-    npmLifecycle.mockImplementationOnce(({ scripts }, stage) => {
+    runScript.mockImplementationOnce(({ scripts }, stage) => {
       const err = new Error("kersplode");
 
       // errno only gets added when a proc closes, not from error

@@ -1,7 +1,7 @@
 "use strict";
 
-const log = require("npmlog");
-const npa = require("npm-package-arg");
+const log = require("libnpm/log");
+const npa = require("libnpm/parse-arg");
 const ValidationError = require("@lerna/validation-error");
 
 module.exports = getChangelogConfig;

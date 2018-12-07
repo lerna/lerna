@@ -1,7 +1,7 @@
 "use strict";
 
 const childProcess = require("@lerna/child-process");
-const log = require("npmlog");
+const log = require("libnpm/log");
 
 module.exports = hasTags;
 

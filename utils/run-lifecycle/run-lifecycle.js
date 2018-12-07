@@ -1,7 +1,7 @@
 "use strict";
 
-const log = require("npmlog");
-const npmLifecycle = require("npm-lifecycle");
+const log = require("libnpm/log");
+const runScript = require("libnpm/run-script");
 const npmConf = require("@lerna/npm-conf");
 
 module.exports = runLifecycle;
@@ -28,7 +28,7 @@ function runLifecycle(pkg, stage, opts) {
   // TODO: remove pkg._id when npm-lifecycle no longer relies on it
   pkg._id = `${pkg.name}@${pkg.version}`; // eslint-disable-line
 
-  return npmLifecycle(pkg, stage, dir, {
+  return runScript(pkg, stage, dir, {
     config,
     dir,
     failOk: false,

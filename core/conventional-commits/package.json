@@ -37,8 +37,7 @@
     "conventional-recommended-bump": "^4.0.4",
     "fs-extra": "^7.0.0",
     "get-stream": "^4.0.0",
-    "npm-package-arg": "^6.0.0",
-    "npmlog": "^4.1.2",
+    "libnpm": "^2.0.1",
     "semver": "^5.5.0"
   }
 }

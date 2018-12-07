@@ -35,7 +35,7 @@
     "@lerna/has-npm-version": "file:../has-npm-version",
     "@lerna/log-packed": "file:../log-packed",
     "fs-extra": "^7.0.0",
-    "npmlog": "^4.1.2",
+    "libnpm": "^2.0.1",
     "p-map": "^1.2.0"
   }
 }

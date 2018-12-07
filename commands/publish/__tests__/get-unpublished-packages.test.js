@@ -1,13 +1,13 @@
 "use strict";
 
-jest.mock("pacote");
+jest.mock("libnpm/packument");
 
-const pacote = require("pacote");
+const getPackument = require("libnpm/packument");
 const Project = require("@lerna/project");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const getUnpublishedPackages = require("../lib/get-unpublished-packages");
 
-pacote.packument.mockImplementation(async pkg => {
+getPackument.mockImplementation(async pkg => {
   if (pkg === "package-1") {
     return {
       versions: {},

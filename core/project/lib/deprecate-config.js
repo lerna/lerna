@@ -1,7 +1,7 @@
 "use strict";
 
 const dotProp = require("dot-prop");
-const log = require("npmlog");
+const log = require("libnpm/log");
 const path = require("path");
 
 module.exports = compose(

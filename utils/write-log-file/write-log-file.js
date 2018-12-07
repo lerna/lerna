@@ -2,7 +2,7 @@
 
 const os = require("os");
 const path = require("path");
-const log = require("npmlog");
+const log = require("libnpm/log");
 const writeFileAtomic = require("write-file-atomic");
 
 module.exports = writeLogFile;

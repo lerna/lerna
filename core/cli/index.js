@@ -1,7 +1,7 @@
 "use strict";
 
 const dedent = require("dedent");
-const log = require("npmlog");
+const log = require("libnpm/log");
 const yargs = require("yargs/yargs");
 const globalOptions = require("@lerna/global-options");
 

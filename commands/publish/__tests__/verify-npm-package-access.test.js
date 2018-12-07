@@ -1,8 +1,8 @@
 "use strict";
 
-jest.mock("libnpmaccess");
+jest.mock("libnpm/access");
 
-const access = require("libnpmaccess");
+const access = require("libnpm/access");
 const { getPackages } = require("@lerna/project");
 const loggingOutput = require("@lerna-test/logging-output");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);

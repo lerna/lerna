@@ -1,7 +1,7 @@
 "use strict";
 
 const { EOL } = require("os");
-const log = require("npmlog");
+const log = require("libnpm/log");
 const tempWrite = require("temp-write");
 const childProcess = require("@lerna/child-process");
 

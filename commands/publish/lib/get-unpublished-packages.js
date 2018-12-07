@@ -1,8 +1,8 @@
 "use strict";
 
-const log = require("npmlog");
+const log = require("libnpm/log");
 const pReduce = require("p-reduce");
-const pacote = require("pacote");
+const getPackument = require("libnpm/packument");
 
 module.exports = getUnpublishedPackages;
 
@@ -12,7 +12,7 @@ function getUnpublishedPackages(project, opts) {
   let chain = Promise.resolve();
 
   const mapper = (unpublished, pkg) =>
-    pacote.packument(pkg.name, opts.snapshot).then(
+    getPackument(pkg.name, opts.snapshot).then(
       packument => {
         if (packument.versions[pkg.version] === undefined) {
           unpublished.push(pkg);

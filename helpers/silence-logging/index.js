@@ -1,6 +1,6 @@
 "use strict";
 
-const log = require("npmlog");
+const log = require("libnpm/log");
 
 // silence logs
 log.level = "silent";

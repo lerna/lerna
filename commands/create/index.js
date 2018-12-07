@@ -7,7 +7,7 @@ const { URL } = require("whatwg-url");
 const camelCase = require("camelcase");
 const dedent = require("dedent");
 const initPackageJson = require("pify")(require("init-package-json"));
-const npa = require("npm-package-arg");
+const npa = require("libnpm/parse-arg");
 const slash = require("slash");
 
 const Command = require("@lerna/command");
@@ -49,7 +49,7 @@ class CreateCommand extends Command {
       yes,
     } = this.options;
 
-    // npm-package-arg handles all the edge-cases with scopes
+    // libnpm/parse-arg handles all the edge-cases with scopes
     const { name, scope } = npa(pkgName);
 
     // optional scope is _not_ included in the directory name

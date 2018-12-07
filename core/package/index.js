@@ -1,6 +1,6 @@
 "use strict";
 
-const npa = require("npm-package-arg");
+const npa = require("libnpm/parse-arg");
 const path = require("path");
 const writePkg = require("write-pkg");
 

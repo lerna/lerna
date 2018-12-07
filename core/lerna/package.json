@@ -50,6 +50,6 @@
     "@lerna/run": "file:../../commands/run",
     "@lerna/version": "file:../../commands/version",
     "import-local": "^1.0.0",
-    "npmlog": "^4.1.2"
+    "libnpm": "^2.0.1"
   }
 }

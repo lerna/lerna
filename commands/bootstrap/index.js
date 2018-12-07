@@ -2,7 +2,7 @@
 
 const dedent = require("dedent");
 const getPort = require("get-port");
-const npa = require("npm-package-arg");
+const npa = require("libnpm/parse-arg");
 const path = require("path");
 const pFinally = require("p-finally");
 const pMap = require("p-map");

@@ -1,7 +1,7 @@
 "use strict";
 
 const concat = require("concat-stream");
-const log = require("npmlog");
+const log = require("libnpm/log");
 
 module.exports = sawmill;
 

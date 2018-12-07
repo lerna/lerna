@@ -1,6 +1,6 @@
 "use strict";
 
-const log = require("npmlog");
+const log = require("libnpm/log");
 
 const ChildProcessUtilities = require("@lerna/child-process");
 const getExecOpts = require("@lerna/get-npm-exec-opts");

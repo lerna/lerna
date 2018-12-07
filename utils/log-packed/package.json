@@ -32,6 +32,6 @@
     "byte-size": "^4.0.3",
     "columnify": "^1.5.4",
     "has-unicode": "^2.0.1",
-    "npmlog": "^4.1.2"
+    "libnpm": "^2.0.1"
   }
 }

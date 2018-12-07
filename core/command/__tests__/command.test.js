@@ -3,7 +3,7 @@
 "use strict";
 
 const fs = require("fs-extra");
-const log = require("npmlog");
+const log = require("libnpm/log");
 const path = require("path");
 const tempy = require("tempy");
 

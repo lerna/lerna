@@ -49,15 +49,12 @@
     "@lerna/validation-error": "file:../../core/validation-error",
     "@lerna/version": "file:../version",
     "fs-extra": "^7.0.0",
-    "libnpmaccess": "^3.0.0",
-    "npm-package-arg": "^6.0.0",
+    "libnpm": "^2.0.1",
     "npm-registry-fetch": "^3.8.0",
-    "npmlog": "^4.1.2",
     "p-finally": "^1.0.0",
     "p-map": "^1.2.0",
     "p-pipe": "^1.2.0",
     "p-reduce": "^1.0.0",
-    "pacote": "^9.1.0",
     "semver": "^5.5.0"
   }
 }

@@ -1,7 +1,7 @@
 "use strict";
 
-const log = require("npmlog");
-const access = require("libnpmaccess");
+const log = require("libnpm/log");
+const access = require("libnpm/access");
 const RegistryConfig = require("npm-registry-fetch/config");
 const ValidationError = require("@lerna/validation-error");
 

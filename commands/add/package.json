@@ -38,9 +38,8 @@
     "@lerna/npm-conf": "file:../../utils/npm-conf",
     "@lerna/validation-error": "file:../../core/validation-error",
     "dedent": "^0.7.0",
-    "npm-package-arg": "^6.0.0",
+    "libnpm": "^2.0.1",
     "p-map": "^1.2.0",
-    "pacote": "^9.1.0",
     "semver": "^5.5.0"
   }
 }

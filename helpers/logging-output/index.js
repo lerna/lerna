@@ -1,6 +1,6 @@
 "use strict";
 
-const log = require("npmlog");
+const log = require("libnpm/log");
 const multiLineTrimRight = require("@lerna-test/multi-line-trim-right");
 
 module.exports = loggingOutput;

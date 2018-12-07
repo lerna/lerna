@@ -28,7 +28,7 @@ We exploit this fact to avoid eslint breaking on the reserved word.
 
 const validateLicense = require("validate-npm-package-license");
 const validateName = require("validate-npm-package-name");
-const npa = require("npm-package-arg");
+const npa = require("libnpm/parse-arg");
 const semver = require("semver");
 
 const niceName = rudeName =>

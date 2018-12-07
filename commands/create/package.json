@@ -41,7 +41,7 @@
     "fs-extra": "^7.0.0",
     "globby": "^8.0.1",
     "init-package-json": "^1.10.3",
-    "npm-package-arg": "^6.0.0",
+    "libnpm": "^2.0.1",
     "pify": "^3.0.0",
     "semver": "^5.5.0",
     "slash": "^1.0.0",

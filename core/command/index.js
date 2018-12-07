@@ -3,7 +3,7 @@
 const _ = require("lodash");
 const dedent = require("dedent");
 const execa = require("execa");
-const log = require("npmlog");
+const log = require("libnpm/log");
 
 const PackageGraph = require("@lerna/package-graph");
 const Project = require("@lerna/project");
