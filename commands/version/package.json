@@ -15,7 +15,8 @@
   "files": [
     "command.js",
     "index.js",
-    "lib"
+    "lib",
+    "!lib/__mocks__"
   ],
   "main": "index.js",
   "engines": {
