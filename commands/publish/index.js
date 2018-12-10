@@ -506,6 +506,9 @@ class PublishCommand extends Command {
         pkg => this.runPackageLifecycle(pkg, "prepublishOnly"),
 
         this.options.requireScripts && (pkg => this.execScript(pkg, "prepublish")),
+
+        // manifest may be mutated by any previous lifecycle
+        pkg => pkg.refresh(),
       ].filter(Boolean)
     );
 
