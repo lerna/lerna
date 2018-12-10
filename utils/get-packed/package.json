@@ -1,0 +1,33 @@
+{
+  "name": "@lerna/get-packed",
+  "version": "3.6.0",
+  "description": "Read contents of package tarball created by npm pack",
+  "keywords": [
+    "lerna",
+    "npm",
+    "pack",
+    "tarball"
+  ],
+  "author": "Daniel Stockman <daniel.stockman@gmail.com>",
+  "homepage": "https://github.com/lerna/lerna/tree/master/utils/get-packed#readme",
+  "license": "MIT",
+  "main": "lib/get-packed.js",
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lerna/lerna.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "fs-extra": "^7.0.0",
+    "ssri": "^6.0.1",
+    "tar": "^4.4.8"
+  }
+}
