@@ -1,7 +1,10 @@
 "use strict";
 
+jest.mock("write-pkg");
+
 const os = require("os");
 const path = require("path");
+const writePkg = require("write-pkg");
 
 // file under test
 const Package = require("..");
@@ -151,6 +154,39 @@ describe("Package", () => {
     });
   });
 
+  describe(".get()", () => {
+    it("retrieves arbitrary values from manifest", () => {
+      const pkg = factory({ name: "gettable", "my-value": "foo" });
+
+      expect(pkg.get("missing")).toBe(undefined);
+      expect(pkg.get("my-value")).toBe("foo");
+    });
+  });
+
+  describe(".set()", () => {
+    it("stores arbitrary values on manifest", () => {
+      const pkg = factory({ name: "settable" });
+
+      pkg.set("foo", "bar");
+
+      expect(pkg.toJSON()).toEqual({
+        name: "settable",
+        foo: "bar",
+      });
+    });
+
+    it("is chainable", () => {
+      const pkg = factory({ name: "chainable" });
+
+      expect(
+        pkg
+          .set("foo", true)
+          .set("bar", false)
+          .get("foo")
+      ).toBe(true);
+    });
+  });
+
   describe(".toJSON()", () => {
     it("should return clone of internal package for serialization", () => {
       const json = {
@@ -165,6 +201,24 @@ describe("Package", () => {
       const explicit = JSON.stringify(json, null, 2);
 
       expect(implicit).toBe(explicit);
+    });
+  });
+
+  describe(".serialize()", () => {
+    it("writes changes to disk", async () => {
+      writePkg.mockImplementation(() => Promise.resolve());
+
+      const pkg = factory({ name: "serialize-me" });
+
+      await pkg.set("woo", "hoo").serialize();
+
+      expect(writePkg).toHaveBeenLastCalledWith(
+        pkg.manifestLocation,
+        expect.objectContaining({
+          name: "serialize-me",
+          woo: "hoo",
+        })
+      );
     });
   });
 });
