@@ -1,9 +1,11 @@
 "use strict";
 
+jest.mock("load-json-file");
 jest.mock("write-pkg");
 
 const os = require("os");
 const path = require("path");
+const loadJsonFile = require("load-json-file");
 const writePkg = require("write-pkg");
 
 // file under test
@@ -201,6 +203,21 @@ describe("Package", () => {
       const explicit = JSON.stringify(json, null, 2);
 
       expect(implicit).toBe(explicit);
+    });
+  });
+
+  describe(".refresh()", () => {
+    it("reloads private state from disk", async () => {
+      loadJsonFile.mockImplementationOnce(() => Promise.resolve({ name: "ignored", mutated: true }));
+
+      const pkg = factory({ name: "refresh" });
+
+      await pkg.refresh();
+
+      // a package's name never changes
+      expect(pkg.name).toBe("refresh");
+      expect(pkg.get("mutated")).toBe(true);
+      expect(loadJsonFile).toHaveBeenLastCalledWith(pkg.manifestLocation);
     });
   });
 

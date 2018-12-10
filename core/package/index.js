@@ -2,6 +2,7 @@
 
 const npa = require("libnpm/parse-arg");
 const path = require("path");
+const loadJsonFile = require("load-json-file");
 const writePkg = require("write-pkg");
 
 // symbol used to "hide" internal state
@@ -134,6 +135,20 @@ class Package {
    */
   toJSON() {
     return shallowCopy(this[PKG]);
+  }
+
+  /**
+   * Refresh internal state from disk (e.g., changed by external lifecycles)
+   */
+  refresh() {
+    return loadJsonFile(this.manifestLocation).then(pkg => {
+      // overwrite configurable property
+      Object.defineProperty(this, PKG, {
+        value: pkg,
+      });
+
+      return this;
+    });
   }
 
   /**
