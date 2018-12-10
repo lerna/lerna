@@ -407,6 +407,8 @@ class VersionCommand extends Command {
 
     const actions = [
       pkg => this.runPackageLifecycle(pkg, "preversion"),
+      // manifest may be mutated by any previous lifecycle
+      pkg => pkg.refresh(),
       pkg => {
         // set new version
         pkg.version = this.updatesVersions.get(pkg.name);
