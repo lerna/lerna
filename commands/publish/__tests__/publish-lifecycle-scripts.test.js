@@ -12,6 +12,7 @@ jest.mock("../../version/lib/remote-branch-exists");
 
 // mocked modules
 const runLifecycle = require("@lerna/run-lifecycle");
+const loadJsonFile = require("load-json-file");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
@@ -67,5 +68,12 @@ describe("lifecycle scripts", () => {
       ["package-1", "postpublish"],
       ["lifecycle", "postpublish"],
     ]);
+
+    expect(loadJsonFile.registry).toMatchInlineSnapshot(`
+Map {
+  "/packages/package-1" => 2,
+  "/packages/package-2" => 2,
+}
+`);
   });
 });

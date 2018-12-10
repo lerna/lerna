@@ -10,6 +10,7 @@ const path = require("path");
 
 // mocked modules
 const runLifecycle = require("@lerna/run-lifecycle");
+const loadJsonFile = require("load-json-file");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(path.resolve(__dirname, "../../publish/__tests__"));
@@ -45,5 +46,12 @@ describe("lifecycle scripts", () => {
       ["package-1", "postversion"],
       ["lifecycle", "postversion"],
     ]);
+
+    expect(loadJsonFile.registry).toMatchInlineSnapshot(`
+Map {
+  "/packages/package-1" => 1,
+  "/packages/package-2" => 1,
+}
+`);
   });
 });
