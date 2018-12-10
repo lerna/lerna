@@ -498,19 +498,16 @@ class PublishCommand extends Command {
     chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "prepublishOnly"));
     chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "prepack"));
 
-    const actions = [
-      pkg =>
+    const mapper = pPipe(
+      [
         // npm pack already runs prepare and prepublish
         // prepublishOnly is _not_ run when publishing a tarball
         // TECHNICALLY out of order, but not much we can do about that
-        this.runPackageLifecycle(pkg, "prepublishOnly"),
-    ];
+        pkg => this.runPackageLifecycle(pkg, "prepublishOnly"),
 
-    if (this.options.requireScripts) {
-      actions.push(pkg => this.execScript(pkg, "prepublish"));
-    }
-
-    const mapper = pPipe(actions);
+        this.options.requireScripts && (pkg => this.execScript(pkg, "prepublish")),
+      ].filter(Boolean)
+    );
 
     chain = chain.then(() =>
       pReduce(this.batchedPackages, (_, batch) =>
@@ -541,24 +538,23 @@ class PublishCommand extends Command {
 
     let chain = Promise.resolve();
 
-    const actions = [
-      pkg => npmPublish(pkg, distTag, this.npmConfig),
-      // postpublish is _not_ run when publishing a tarball
-      pkg => this.runPackageLifecycle(pkg, "postpublish"),
-    ];
+    const mapper = pPipe(
+      [
+        pkg => npmPublish(pkg, distTag, this.npmConfig),
 
-    if (this.options.requireScripts) {
-      actions.push(pkg => this.execScript(pkg, "postpublish"));
-    }
+        // postpublish is _not_ run when publishing a tarball
+        pkg => this.runPackageLifecycle(pkg, "postpublish"),
 
-    actions.push(pkg => {
-      tracker.info("published", pkg.name, pkg.version);
-      tracker.completeWork(1);
+        this.options.requireScripts && (pkg => this.execScript(pkg, "postpublish")),
 
-      return pkg;
-    });
+        pkg => {
+          tracker.info("published", pkg.name, pkg.version);
+          tracker.completeWork(1);
 
-    const mapper = pPipe(actions);
+          return pkg;
+        },
+      ].filter(Boolean)
+    );
 
     chain = chain.then(() => runParallelBatches(this.batchedPackages, this.concurrency, mapper));
 
@@ -575,7 +571,7 @@ class PublishCommand extends Command {
 
     let chain = Promise.resolve();
 
-    const actions = [
+    const mapper = pPipe([
       pkg => {
         const spec = `${pkg.name}@${pkg.version}`;
 
@@ -584,15 +580,14 @@ class PublishCommand extends Command {
           .then(() => npmDistTag.add(spec, distTag, this.conf))
           .then(() => pkg);
       },
+
       pkg => {
         tracker.info("dist-tag", "%s@%s => %j", pkg.name, pkg.version, distTag);
         tracker.completeWork(1);
 
         return pkg;
       },
-    ];
-
-    const mapper = pPipe(actions);
+    ]);
 
     chain = chain.then(() => runParallelBatches(this.batchedPackages, this.concurrency, mapper));
 
