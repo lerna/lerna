@@ -21,6 +21,7 @@
     "lerna": "core/lerna/cli.js"
   },
   "dependencies": {
+    "@lerna/pack-directory": "file:utils/pack-directory",
     "lerna": "file:core/lerna"
   },
   "devDependencies": {
