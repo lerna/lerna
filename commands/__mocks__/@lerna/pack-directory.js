@@ -1,0 +1,19 @@
+"use strict";
+
+const registry = new Set();
+
+const mockPackDirectory = jest.fn(pkg => {
+  registry.add(pkg.name);
+
+  return Promise.resolve({
+    filename: `${pkg.name}-MOCKED.tgz`,
+  });
+});
+
+// keep test data isolated
+afterEach(() => {
+  registry.clear();
+});
+
+module.exports = mockPackDirectory;
+module.exports.registry = registry;
