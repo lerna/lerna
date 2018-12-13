@@ -18,6 +18,8 @@ const collectUpdates = require("@lerna/collect-updates");
 const npmConf = require("@lerna/npm-conf");
 const npmDistTag = require("@lerna/npm-dist-tag");
 const npmPublish = require("@lerna/npm-publish");
+const packDirectory = require("@lerna/pack-directory");
+const logPacked = require("@lerna/log-packed");
 const { createRunner } = require("@lerna/run-lifecycle");
 const batchPackages = require("@lerna/batch-packages");
 const runParallelBatches = require("@lerna/run-parallel-batches");
@@ -69,6 +71,7 @@ class PublishCommand extends Command {
     this.savePrefix = this.options.exact ? "" : "^";
 
     this.conf = npmConf({
+      command: "publish",
       log: this.logger,
       registry: this.options.registry,
     });
@@ -488,10 +491,6 @@ class PublishCommand extends Command {
 
     let chain = Promise.resolve();
 
-    chain = chain.then(() => {
-      this.npmPack = npmPublish.makePacker(this.project.manifest);
-    });
-
     chain = chain.then(() => createTempLicenses(this.project.licensePath, this.packagesToBeLicensed));
 
     chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "prepare"));
@@ -500,12 +499,16 @@ class PublishCommand extends Command {
 
     const mapper = pPipe(
       [
-        // npm pack already runs prepare and prepublish
-        // prepublishOnly is _not_ run when publishing a tarball
-        // TECHNICALLY out of order, but not much we can do about that
-        pkg => this.runPackageLifecycle(pkg, "prepublishOnly"),
-
         this.options.requireScripts && (pkg => this.execScript(pkg, "prepublish")),
+
+        pkg =>
+          packDirectory(pkg, this.conf).then(packed => {
+            pkg.tarball = packed;
+
+            logPacked(packed);
+
+            return pkg;
+          }),
 
         // manifest may be mutated by any previous lifecycle
         pkg => pkg.refresh(),
@@ -514,11 +517,9 @@ class PublishCommand extends Command {
 
     chain = chain.then(() =>
       pReduce(this.batchedPackages, (_, batch) =>
-        pMap(batch, mapper)
-          .then(() => this.npmPack(batch))
-          .then(() => {
-            tracker.completeWork(batch.length);
-          })
+        pMap(batch, mapper, { concurrency: 10 }).then(() => {
+          tracker.completeWork(batch.length);
+        })
       )
     );
 

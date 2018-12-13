@@ -14,6 +14,7 @@ jest.mock("../../version/lib/remote-branch-exists");
 // mocked or stubbed modules
 const npmDistTag = require("@lerna/npm-dist-tag");
 const npmPublish = require("@lerna/npm-publish");
+const packDirectory = require("@lerna/pack-directory");
 const PromptUtilities = require("@lerna/prompt");
 const collectUpdates = require("@lerna/collect-updates");
 const output = require("@lerna/output");
@@ -93,7 +94,7 @@ describe("PublishCommand", () => {
       expect(PromptUtilities.confirm).toHaveBeenLastCalledWith(
         "Are you sure you want to publish these packages?"
       );
-      expect(npmPublish.packed).toMatchInlineSnapshot(`
+      expect(packDirectory.registry).toMatchInlineSnapshot(`
 Set {
   "package-1",
   "package-3",

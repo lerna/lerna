@@ -14,7 +14,7 @@ jest.mock("../../version/lib/remote-branch-exists");
 const path = require("path");
 
 // mocked modules
-const npmPublish = require("@lerna/npm-publish");
+const packDirectory = require("@lerna/pack-directory");
 const createTempLicenses = require("../lib/create-temp-licenses");
 const removeTempLicenses = require("../lib/remove-temp-licenses");
 
@@ -39,7 +39,7 @@ describe("licenses", () => {
   it("removes all temporary licenses on error", async () => {
     const cwd = await initFixture("licenses");
 
-    npmPublish.npmPack.mockImplementationOnce(() => Promise.reject(new Error("boom")));
+    packDirectory.mockImplementationOnce(() => Promise.reject(new Error("boom")));
 
     try {
       await lernaPublish(cwd)();
@@ -54,7 +54,7 @@ describe("licenses", () => {
   it("does not override original error when removal rejects", async () => {
     const cwd = await initFixture("licenses");
 
-    npmPublish.npmPack.mockImplementationOnce(() => Promise.reject(new Error("boom")));
+    packDirectory.mockImplementationOnce(() => Promise.reject(new Error("boom")));
     removeTempLicenses.mockImplementationOnce(() => Promise.reject(new Error("shaka-lakka")));
 
     try {
