@@ -17,7 +17,8 @@ function runLifecycle(pkg, stage, opts) {
   for (const key of opts.keys) {
     const val = opts.get(key);
 
-    if (val != null) {
+    // omit falsy and Stream-based (circular) values
+    if (val != null && key !== "logstream" && key !== "log") {
       config[key] = val;
     }
   }
