@@ -97,6 +97,13 @@ class PublishCommand extends Command {
       this.conf.set("registry", "https://registry.npmjs.org/", "cli");
     }
 
+    // inject --npm-tag into opts, if present
+    const distTag = this.getDistTag();
+
+    if (distTag) {
+      this.conf.set("tag", distTag.trim(), "cli");
+    }
+
     // all consumers need a token
     const registry = this.conf.get("registry");
     const auth = getAuth(registry, this.conf);
@@ -549,7 +556,7 @@ class PublishCommand extends Command {
 
   publishPacked() {
     // if we skip temp tags we should tag with the proper value immediately
-    const distTag = this.options.tempTag ? "lerna-temp" : this.getDistTag();
+    const distTag = this.options.tempTag ? "lerna-temp" : this.conf.get("tag");
     const tracker = this.logger.newItem(`${this.npmConfig.npmClient} publish`);
 
     tracker.addWork(this.packagesToPublish.length);
@@ -582,7 +589,7 @@ class PublishCommand extends Command {
   }
 
   npmUpdateAsLatest() {
-    const distTag = this.getDistTag() || "latest";
+    const distTag = this.conf.get("tag");
     const tracker = this.logger.newItem("npmUpdateAsLatest");
 
     tracker.addWork(this.packagesToPublish.length);
