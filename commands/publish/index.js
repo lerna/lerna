@@ -2,6 +2,7 @@
 
 const os = require("os");
 const path = require("path");
+const crypto = require("crypto");
 const pFinally = require("p-finally");
 const pMap = require("p-map");
 const pPipe = require("p-pipe");
@@ -70,11 +71,24 @@ class PublishCommand extends Command {
     // https://docs.npmjs.com/misc/config#save-prefix
     this.savePrefix = this.options.exact ? "" : "^";
 
+    // npmSession and user-agent are consumed by libnpm/fetch (via libnpm/publish)
+    const npmSession = crypto.randomBytes(8).toString("hex");
+    const userAgent = `lerna/${this.options.lernaVersion}/node@${process.version}+${process.arch} (${
+      process.platform
+    })`;
+
+    this.logger.verbose("session", npmSession);
+    this.logger.verbose("user-agent", userAgent);
+
     this.conf = npmConf({
       command: "publish",
       log: this.logger,
+      npmSession,
+      npmVersion: userAgent,
       registry: this.options.registry,
     });
+
+    this.conf.set("user-agent", userAgent, "cli");
 
     if (this.conf.get("registry") === "https://registry.yarnpkg.com") {
       this.logger.warn("", "Yarn's registry proxy is broken, replacing with public npm registry");
