@@ -48,10 +48,15 @@ describe("npm-publish", () => {
 
     await npmPublish(pkg, "published-tag", opts);
 
-    expect(publish).toHaveBeenCalledWith({ name: "test", version: "1.10.100" }, mockTarData, {
-      projectScope: "test",
-      tag: "published-tag",
-    });
+    expect(publish).toHaveBeenCalledWith(
+      { name: "test", version: "1.10.100" },
+      mockTarData,
+      expect.objectContaining({
+        dryRun: false,
+        projectScope: "test",
+        tag: "published-tag",
+      })
+    );
   });
 
   it("falls back to opts.tag for dist-tag", async () => {

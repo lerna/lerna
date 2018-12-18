@@ -112,11 +112,6 @@ class PublishCommand extends Command {
       this.conf.set("token", auth.token, "cli");
     }
 
-    this.npmConfig = {
-      npmClient: this.options.npmClient || "npm",
-      registry: this.conf.get("registry"),
-    };
-
     let chain = Promise.resolve();
 
     // validate user has valid npm credentials first,
@@ -526,8 +521,6 @@ class PublishCommand extends Command {
           packDirectory(pkg, this.conf).then(packed => {
             pkg.tarball = packed;
 
-            logPacked(packed);
-
             // manifest may be mutated by any previous lifecycle
             return pkg.refresh();
           }),
@@ -555,7 +548,7 @@ class PublishCommand extends Command {
   publishPacked() {
     // if we skip temp tags we should tag with the proper value immediately
     const distTag = this.options.tempTag ? "lerna-temp" : this.conf.get("tag");
-    const tracker = this.logger.newItem(`${this.npmConfig.npmClient} publish`);
+    const tracker = this.logger.newItem("publish");
 
     tracker.addWork(this.packagesToPublish.length);
 
@@ -563,10 +556,11 @@ class PublishCommand extends Command {
 
     const mapper = pPipe(
       [
-        pkg => npmPublish(pkg, distTag, this.npmConfig),
+        pkg => {
+          logPacked(pkg.tarball);
 
-        // postpublish is _not_ run when publishing a tarball
-        pkg => this.runPackageLifecycle(pkg, "postpublish"),
+          return npmPublish(pkg, distTag, this.conf);
+        },
 
         this.options.requireScripts && (pkg => this.execScript(pkg, "postpublish")),
 
