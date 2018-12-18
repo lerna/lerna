@@ -12,12 +12,14 @@ const PublishConfig = figgyPudding(
   {
     "dry-run": { default: false },
     dryRun: "dry-run",
+    "project-scope": {},
+    projectScope: "project-scope",
     tag: { default: "latest" },
   },
   {
-    other(key) {
-      // allow any other keys _except_ circular objects
-      return key !== "log" && key !== "logstream";
+    other() {
+      // open it up for the sake of tests
+      return true;
     },
   }
 );
@@ -25,19 +27,16 @@ const PublishConfig = figgyPudding(
 function npmPublish(pkg, tag, tarFilePath, _opts) {
   log.verbose("publish", pkg.name);
 
-  const deets = { projectScope: pkg.name };
-
-  if (tag) {
-    deets.tag = tag;
-  }
-
-  const opts = PublishConfig(_opts, deets);
+  const opts = PublishConfig(_opts, {
+    projectScope: pkg.name,
+    tag,
+  });
 
   let chain = Promise.resolve();
 
   if (!opts.dryRun) {
     chain = chain.then(() => fs.readFile(tarFilePath));
-    chain = chain.then(tarData => publish(pkg.toJSON(), tarData, opts.toJSON()));
+    chain = chain.then(tarData => publish(pkg.toJSON(), tarData, opts));
   }
 
   chain = chain.then(() => runLifecycle(pkg, "publish", opts));

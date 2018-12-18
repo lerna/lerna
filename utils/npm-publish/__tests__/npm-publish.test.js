@@ -16,13 +16,16 @@ const Package = require("@lerna/package");
 // file under test
 const npmPublish = require("..");
 
+expect.extend(require("@lerna-test/figgy-pudding-matchers"));
+
 describe("npm-publish", () => {
   const mockTarData = Buffer.from("MOCK");
 
-  fs.readFile.mockImplementation(() => Promise.resolve(mockTarData));
-  publish.mockResolvedValue();
-  runLifecycle.mockResolvedValue();
+  fs.readFile.mockName("fs.readFile").mockResolvedValue(mockTarData);
+  publish.mockName("libnpm/publish").mockResolvedValue();
+  runLifecycle.mockName("@lerna/run-lifecycle").mockResolvedValue();
 
+  const tarFilePath = "/tmp/test-1.10.100.tgz";
   const rootPath = path.normalize("/test");
   const pkg = new Package(
     { name: "test", version: "1.10.100" },
@@ -30,15 +33,9 @@ describe("npm-publish", () => {
     rootPath
   );
 
-  // technically decorated in ../../commands/publish, stubbed here
-  pkg.packed = {
-    filename: "test-1.10.100.tgz",
-    tarFilePath: "/tmp/test-1.10.100.tgz",
-  };
-
   it("pipelines input package", async () => {
     const opts = new Map();
-    const result = await npmPublish(pkg, "latest", opts);
+    const result = await npmPublish(pkg, "latest", tarFilePath, opts);
 
     expect(result).toBe(pkg);
   });
@@ -46,13 +43,13 @@ describe("npm-publish", () => {
   it("calls libnpm/publish with correct arguments", async () => {
     const opts = new Map();
 
-    await npmPublish(pkg, "published-tag", opts);
+    await npmPublish(pkg, "published-tag", tarFilePath, opts);
 
-    expect(fs.readFile).toHaveBeenCalledWith(pkg.packed.tarFilePath);
+    expect(fs.readFile).toHaveBeenCalledWith(tarFilePath);
     expect(publish).toHaveBeenCalledWith(
       { name: "test", version: "1.10.100" },
       mockTarData,
-      expect.objectContaining({
+      expect.figgyPudding({
         dryRun: false,
         projectScope: "test",
         tag: "published-tag",
@@ -63,51 +60,40 @@ describe("npm-publish", () => {
   it("falls back to opts.tag for dist-tag", async () => {
     const opts = new Map([["tag", "custom-default"]]);
 
-    await npmPublish(pkg, undefined, opts);
+    await npmPublish(pkg, undefined, tarFilePath, opts);
 
     expect(publish).toHaveBeenCalledWith(
       { name: "test", version: "1.10.100" },
       mockTarData,
-      expect.objectContaining({ tag: "custom-default" })
+      expect.figgyPudding({ tag: "custom-default" })
     );
   });
 
   it("falls back to default tag", async () => {
-    await npmPublish(pkg);
+    await npmPublish(pkg, undefined, tarFilePath);
 
     expect(publish).toHaveBeenCalledWith(
       { name: "test", version: "1.10.100" },
       mockTarData,
-      expect.objectContaining({ tag: "latest" })
+      expect.figgyPudding({ tag: "latest" })
     );
   });
 
-  it("calls publish lifecycles", async () => {
-    await npmPublish(pkg, "lifecycles");
+  it("respects opts.dry-run", async () => {
+    const opts = new Map([["dry-run", true]]);
 
-    // figgy-pudding Proxy hanky-panky defeats jest wizardry
-    const aFiggyPudding = expect.objectContaining({ __isFiggyPudding: true });
+    await npmPublish(pkg, undefined, tarFilePath, opts);
 
-    expect(runLifecycle).toHaveBeenCalledWith(pkg, "publish", aFiggyPudding);
-    expect(runLifecycle).toHaveBeenCalledWith(pkg, "postpublish", aFiggyPudding);
-
-    runLifecycle.mock.calls.forEach(args => {
-      const pud = args.slice().pop();
-
-      expect(pud.toJSON()).toMatchObject({
-        projectScope: "test",
-        tag: "lifecycles",
-      });
-    });
+    expect(publish).not.toHaveBeenCalled();
+    expect(runLifecycle).toHaveBeenCalledTimes(2);
   });
 
-  it("omits opts.logstream", async () => {
-    const opts = new Map([["logstream", "SKIPPED"]]);
+  it("calls publish lifecycles", async () => {
+    const aFiggyPudding = expect.figgyPudding({ tag: "lifecycles" });
 
-    await npmPublish(pkg, "canary", opts);
+    await npmPublish(pkg, "lifecycles", tarFilePath);
 
-    const pud = runLifecycle.mock.calls.pop().pop();
-
-    expect(pud.toJSON()).not.toHaveProperty("logstream");
+    expect(runLifecycle).toHaveBeenCalledWith(pkg, "publish", aFiggyPudding);
+    expect(runLifecycle).toHaveBeenLastCalledWith(pkg, "postpublish", aFiggyPudding);
   });
 });
