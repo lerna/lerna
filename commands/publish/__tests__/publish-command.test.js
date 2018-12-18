@@ -334,6 +334,7 @@ Set {
       expect(npmPublish).toHaveBeenCalledWith(
         expect.objectContaining({ name: "package-1" }),
         "latest", // dist-tag
+        "/TEMP_DIR/package-1-MOCKED.tgz",
         confWithRegistry(registry)
       );
     });
@@ -347,6 +348,7 @@ Set {
       expect(npmPublish).toHaveBeenCalledWith(
         expect.objectContaining({ name: "package-1" }),
         "latest", // dist-tag
+        "/TEMP_DIR/package-1-MOCKED.tgz",
         confWithRegistry("https://registry.npmjs.org/")
       );
 

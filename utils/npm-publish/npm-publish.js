@@ -1,7 +1,6 @@
 "use strict";
 
 const fs = require("fs-extra");
-const path = require("path");
 const log = require("libnpm/log");
 const publish = require("libnpm/publish");
 const figgyPudding = require("figgy-pudding");
@@ -23,7 +22,7 @@ const PublishConfig = figgyPudding(
   }
 );
 
-function npmPublish(pkg, tag, _opts) {
+function npmPublish(pkg, tag, tarFilePath, _opts) {
   log.verbose("publish", pkg.name);
 
   const deets = { projectScope: pkg.name };
@@ -33,7 +32,6 @@ function npmPublish(pkg, tag, _opts) {
   }
 
   const opts = PublishConfig(_opts, deets);
-  const tarFilePath = path.join(pkg.location, pkg.tarball.filename);
 
   let chain = Promise.resolve();
 
@@ -44,9 +42,6 @@ function npmPublish(pkg, tag, _opts) {
 
   chain = chain.then(() => runLifecycle(pkg, "publish", opts));
   chain = chain.then(() => runLifecycle(pkg, "postpublish", opts));
-
-  // don't leave the generated tarball hanging around after success
-  chain = chain.then(() => fs.remove(tarFilePath));
 
   // pipelined Package instance
   return chain.then(() => pkg);

@@ -519,7 +519,7 @@ class PublishCommand extends Command {
 
         pkg =>
           packDirectory(pkg, this.conf).then(packed => {
-            pkg.tarball = packed;
+            pkg.packed = packed;
 
             // manifest may be mutated by any previous lifecycle
             return pkg.refresh();
@@ -557,9 +557,9 @@ class PublishCommand extends Command {
     const mapper = pPipe(
       [
         pkg => {
-          logPacked(pkg.tarball);
+          logPacked(pkg.packed);
 
-          return npmPublish(pkg, distTag, this.conf);
+          return npmPublish(pkg, distTag, pkg.packed.tarFilePath, this.conf);
         },
 
         this.options.requireScripts && (pkg => this.execScript(pkg, "postpublish")),

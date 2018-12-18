@@ -7,6 +7,7 @@ const mockPackDirectory = jest.fn(pkg => {
 
   return Promise.resolve({
     filename: `${pkg.name}-MOCKED.tgz`,
+    tarFilePath: `/TEMP_DIR/${pkg.name}-MOCKED.tgz`,
   });
 });
 

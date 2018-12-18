@@ -20,7 +20,6 @@ describe("npm-publish", () => {
   const mockTarData = Buffer.from("MOCK");
 
   fs.readFile.mockImplementation(() => Promise.resolve(mockTarData));
-  fs.remove.mockResolvedValue();
   publish.mockResolvedValue();
   runLifecycle.mockResolvedValue();
 
@@ -32,8 +31,9 @@ describe("npm-publish", () => {
   );
 
   // technically decorated in ../../commands/publish, stubbed here
-  pkg.tarball = {
+  pkg.packed = {
     filename: "test-1.10.100.tgz",
+    tarFilePath: "/tmp/test-1.10.100.tgz",
   };
 
   it("pipelines input package", async () => {
@@ -48,6 +48,7 @@ describe("npm-publish", () => {
 
     await npmPublish(pkg, "published-tag", opts);
 
+    expect(fs.readFile).toHaveBeenCalledWith(pkg.packed.tarFilePath);
     expect(publish).toHaveBeenCalledWith(
       { name: "test", version: "1.10.100" },
       mockTarData,
@@ -108,12 +109,5 @@ describe("npm-publish", () => {
     const pud = runLifecycle.mock.calls.pop().pop();
 
     expect(pud.toJSON()).not.toHaveProperty("logstream");
-  });
-
-  it("removes tarball after success", async () => {
-    const opts = new Map();
-    await npmPublish(pkg, "latest", opts);
-
-    expect(fs.remove).toHaveBeenLastCalledWith(path.join(pkg.location, pkg.tarball.filename));
   });
 });

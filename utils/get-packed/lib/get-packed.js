@@ -24,6 +24,7 @@ function getPacked(pkg, tarFilePath) {
 
         const p = entry.path;
 
+        /* istanbul ignore if */
         if (p.startsWith("package/node_modules/")) {
           const name = p.match(/^package\/node_modules\/((?:@[^/]+\/)?[^/]+)/)[1];
 
@@ -63,6 +64,7 @@ function getPacked(pkg, tarFilePath) {
         files,
         entryCount: totalEntries,
         bundled: Array.from(bundled),
+        tarFilePath,
       };
     });
 }

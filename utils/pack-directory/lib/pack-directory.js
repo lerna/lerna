@@ -1,7 +1,5 @@
 "use strict";
 
-const fs = require("fs-extra");
-const path = require("path");
 const packlist = require("npm-packlist");
 const tar = require("tar");
 const tempWrite = require("temp-write");
@@ -57,7 +55,6 @@ function packDirectory(pkg, opts) {
   chain = chain.then(tarFilePath =>
     getPacked(pkg, tarFilePath).then(packed =>
       Promise.resolve()
-        .then(() => fs.move(tarFilePath, path.join(dir, outputFileName), { overwrite: true }))
         .then(() => runLifecycle(pkg, "postpack", opts))
         .then(() => packed)
     )

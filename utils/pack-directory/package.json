@@ -28,7 +28,6 @@
   "dependencies": {
     "@lerna/get-packed": "file:../get-packed",
     "@lerna/run-lifecycle": "file:../run-lifecycle",
-    "fs-extra": "^7.0.0",
     "npm-packlist": "^1.1.12",
     "tar": "^4.4.8",
     "temp-write": "^3.4.0"
