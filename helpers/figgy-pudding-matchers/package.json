@@ -1,0 +1,12 @@
+{
+  "name": "@lerna-test/figgy-pudding-matchers",
+  "version": "0.0.0-test-only",
+  "description": "A local test helper",
+  "main": "index.js",
+  "private": true,
+  "license": "MIT",
+  "dependencies": {
+    "jest-diff": "*",
+    "jest-matcher-utils": "*"
+  }
+}

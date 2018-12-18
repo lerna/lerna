@@ -31,6 +31,7 @@
     "@lerna-test/command-runner": "file:helpers/command-runner",
     "@lerna-test/commit-change-to-package": "file:helpers/commit-change-to-package",
     "@lerna-test/copy-fixture": "file:helpers/copy-fixture",
+    "@lerna-test/figgy-pudding-matchers": "file:helpers/figgy-pudding-matchers",
     "@lerna-test/find-fixture": "file:helpers/find-fixture",
     "@lerna-test/get-commit-message": "file:helpers/get-commit-message",
     "@lerna-test/git-add": "file:helpers/git-add",
