@@ -1,13 +1,13 @@
 "use strict";
 
-jest.mock("@lerna/child-process");
-jest.mock("@lerna/has-npm-version");
-jest.mock("@lerna/log-packed");
+jest.mock("@lerna/run-lifecycle");
+jest.mock("libnpm/publish");
 jest.mock("fs-extra");
 
 // mocked modules
-const ChildProcessUtilities = require("@lerna/child-process");
 const fs = require("fs-extra");
+const publish = require("libnpm/publish");
+const runLifecycle = require("@lerna/run-lifecycle");
 
 // helpers
 const path = require("path");
@@ -17,8 +17,12 @@ const Package = require("@lerna/package");
 const npmPublish = require("..");
 
 describe("npm-publish", () => {
+  const mockTarData = Buffer.from("MOCK");
+
+  fs.readFile.mockImplementation(() => Promise.resolve(mockTarData));
   fs.remove.mockResolvedValue();
-  ChildProcessUtilities.exec.mockResolvedValue();
+  publish.mockResolvedValue();
+  runLifecycle.mockResolvedValue();
 
   const rootPath = path.normalize("/test");
   const pkg = new Package(
@@ -27,96 +31,84 @@ describe("npm-publish", () => {
     rootPath
   );
 
-  // technically decorated in npmPack, stubbed here
+  // technically decorated in ../../commands/publish, stubbed here
   pkg.tarball = {
     filename: "test-1.10.100.tgz",
   };
 
-  it("runs npm publish in a directory with --tag support", async () => {
-    const result = await npmPublish(pkg, "published-tag", { npmClient: "npm" });
+  it("pipelines input package", async () => {
+    const opts = new Map();
+    const result = await npmPublish(pkg, "latest", opts);
 
     expect(result).toBe(pkg);
-    expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith(
-      "npm",
-      ["publish", "--ignore-scripts", "--tag", "published-tag", "test-1.10.100.tgz"],
-      {
-        cwd: pkg.location,
-        env: {},
-        pkg,
-      }
-    );
-    expect(fs.remove).toHaveBeenLastCalledWith(path.join(pkg.location, pkg.tarball.filename));
   });
 
-  it("does not pass --tag when none present (npm default)", async () => {
-    await npmPublish(pkg, undefined, { npmClient: "npm" });
+  it("calls libnpm/publish with correct arguments", async () => {
+    const opts = new Map();
 
-    expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith(
-      "npm",
-      ["publish", "--ignore-scripts", "test-1.10.100.tgz"],
-      {
-        cwd: pkg.location,
-        env: {},
-        pkg,
-      }
-    );
-  });
+    await npmPublish(pkg, "published-tag", opts);
 
-  it("trims trailing whitespace in tag parameter", async () => {
-    await npmPublish(pkg, "trailing-tag ", { npmClient: "npm" });
-
-    expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith(
-      "npm",
-      ["publish", "--ignore-scripts", "--tag", "trailing-tag", "test-1.10.100.tgz"],
-      {
-        cwd: pkg.location,
-        env: {},
-        pkg,
-      }
-    );
-  });
-
-  it("supports custom registry", async () => {
-    const registry = "https://custom-registry/npmPublish";
-
-    await npmPublish(pkg, "custom-registry", { npmClient: "npm", registry });
-
-    expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith(
-      "npm",
-      ["publish", "--ignore-scripts", "--tag", "custom-registry", "test-1.10.100.tgz"],
-      {
-        cwd: pkg.location,
-        env: {
-          npm_config_registry: registry,
-        },
-        pkg,
-      }
-    );
-  });
-
-  describe("with npmClient yarn", () => {
-    it("appends --new-version to avoid interactive prompt", async () => {
-      await npmPublish(pkg, "yarn-publish", { npmClient: "yarn" });
-
-      expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith(
-        "yarn",
-        [
-          "publish",
-          "--ignore-scripts",
-          "--tag",
-          "yarn-publish",
-          "--new-version",
-          pkg.version,
-          "--non-interactive",
-          "--no-git-tag-version",
-          "test-1.10.100.tgz",
-        ],
-        {
-          cwd: pkg.location,
-          env: {},
-          pkg,
-        }
-      );
+    expect(publish).toHaveBeenCalledWith({ name: "test", version: "1.10.100" }, mockTarData, {
+      projectScope: "test",
+      tag: "published-tag",
     });
+  });
+
+  it("falls back to opts.tag for dist-tag", async () => {
+    const opts = new Map([["tag", "custom-default"]]);
+
+    await npmPublish(pkg, undefined, opts);
+
+    expect(publish).toHaveBeenCalledWith(
+      { name: "test", version: "1.10.100" },
+      mockTarData,
+      expect.objectContaining({ tag: "custom-default" })
+    );
+  });
+
+  it("falls back to default tag", async () => {
+    await npmPublish(pkg);
+
+    expect(publish).toHaveBeenCalledWith(
+      { name: "test", version: "1.10.100" },
+      mockTarData,
+      expect.objectContaining({ tag: "latest" })
+    );
+  });
+
+  it("calls publish lifecycles", async () => {
+    await npmPublish(pkg, "lifecycles");
+
+    // figgy-pudding Proxy hanky-panky defeats jest wizardry
+    const aFiggyPudding = expect.objectContaining({ __isFiggyPudding: true });
+
+    expect(runLifecycle).toHaveBeenCalledWith(pkg, "publish", aFiggyPudding);
+    expect(runLifecycle).toHaveBeenCalledWith(pkg, "postpublish", aFiggyPudding);
+
+    runLifecycle.mock.calls.forEach(args => {
+      const pud = args.slice().pop();
+
+      expect(pud.toJSON()).toMatchObject({
+        projectScope: "test",
+        tag: "lifecycles",
+      });
+    });
+  });
+
+  it("omits opts.logstream", async () => {
+    const opts = new Map([["logstream", "SKIPPED"]]);
+
+    await npmPublish(pkg, "canary", opts);
+
+    const pud = runLifecycle.mock.calls.pop().pop();
+
+    expect(pud.toJSON()).not.toHaveProperty("logstream");
+  });
+
+  it("removes tarball after success", async () => {
+    const opts = new Map();
+    await npmPublish(pkg, "latest", opts);
+
+    expect(fs.remove).toHaveBeenLastCalledWith(path.join(pkg.location, pkg.tarball.filename));
   });
 });

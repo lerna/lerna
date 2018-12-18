@@ -1,38 +1,53 @@
 "use strict";
 
 const fs = require("fs-extra");
-const log = require("libnpm/log");
 const path = require("path");
-
-const ChildProcessUtilities = require("@lerna/child-process");
-const getExecOpts = require("@lerna/get-npm-exec-opts");
+const log = require("libnpm/log");
+const publish = require("libnpm/publish");
+const figgyPudding = require("figgy-pudding");
+const runLifecycle = require("@lerna/run-lifecycle");
 
 module.exports = npmPublish;
 
-function npmPublish(pkg, tag, { npmClient, registry }) {
+const PublishConfig = figgyPudding(
+  {
+    "dry-run": { default: false },
+    dryRun: "dry-run",
+    tag: { default: "latest" },
+  },
+  {
+    other(key) {
+      // allow any other keys _except_ circular objects
+      return key !== "log" && key !== "logstream";
+    },
+  }
+);
+
+function npmPublish(pkg, tag, _opts) {
   log.verbose("publish", pkg.name);
 
-  const distTag = tag && tag.trim();
-  const opts = getExecOpts(pkg, registry);
-  const args = ["publish", "--ignore-scripts"];
+  const deets = { projectScope: pkg.name };
 
-  if (distTag) {
-    args.push("--tag", distTag);
+  if (tag) {
+    deets.tag = tag;
   }
 
-  if (npmClient === "yarn") {
-    // skip prompt for new version, use existing instead
-    // https://yarnpkg.com/en/docs/cli/publish#toc-yarn-publish-new-version
-    args.push("--new-version", pkg.version, "--non-interactive", "--no-git-tag-version");
-    // yarn also needs to be told to stop creating git tags: https://git.io/fAr1P
+  const opts = PublishConfig(_opts, deets);
+  const tarFilePath = path.join(pkg.location, pkg.tarball.filename);
+
+  let chain = Promise.resolve();
+
+  if (!opts.dryRun) {
+    chain = chain.then(() => fs.readFile(tarFilePath));
+    chain = chain.then(tarData => publish(pkg.toJSON(), tarData, opts.toJSON()));
   }
 
-  // always add tarball file, created by npmPack()
-  args.push(pkg.tarball.filename);
+  chain = chain.then(() => runLifecycle(pkg, "publish", opts));
+  chain = chain.then(() => runLifecycle(pkg, "postpublish", opts));
 
-  log.silly("exec", npmClient, args);
-  return ChildProcessUtilities.exec(npmClient, args, opts).then(() =>
-    // don't leave the generated tarball hanging around after success
-    fs.remove(path.join(pkg.location, pkg.tarball.filename)).then(() => pkg)
-  );
+  // don't leave the generated tarball hanging around after success
+  chain = chain.then(() => fs.remove(tarFilePath));
+
+  // pipelined Package instance
+  return chain.then(() => pkg);
 }

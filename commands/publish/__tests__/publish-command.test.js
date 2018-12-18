@@ -314,6 +314,17 @@ Set {
   });
 
   describe("--registry", () => {
+    const confWithRegistry = registry =>
+      expect.objectContaining({
+        sources: expect.objectContaining({
+          cli: {
+            data: expect.objectContaining({
+              registry,
+            }),
+          },
+        }),
+      });
+
     it("passes registry to npm commands", async () => {
       const testDir = await initFixture("normal");
       const registry = "https://my-private-registry";
@@ -322,8 +333,8 @@ Set {
 
       expect(npmPublish).toHaveBeenCalledWith(
         expect.objectContaining({ name: "package-1" }),
-        undefined, // dist-tag
-        expect.objectContaining({ registry })
+        "latest", // dist-tag
+        confWithRegistry(registry)
       );
     });
 
@@ -335,8 +346,8 @@ Set {
 
       expect(npmPublish).toHaveBeenCalledWith(
         expect.objectContaining({ name: "package-1" }),
-        undefined, // dist-tag
-        expect.objectContaining({ registry: "https://registry.npmjs.org/" })
+        "latest", // dist-tag
+        confWithRegistry("https://registry.npmjs.org/")
       );
 
       const logMessages = loggingOutput("warn");
