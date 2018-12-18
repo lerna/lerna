@@ -7,7 +7,7 @@ const runScript = require("libnpm/run-script");
 const npmConf = require("@lerna/npm-conf");
 const runLifecycle = require("../run-lifecycle");
 
-describe("default export", () => {
+describe("runLifecycle()", () => {
   it("calls npm-lifecycle with prepared arguments", async () => {
     const pkg = {
       name: "test-name",
@@ -15,9 +15,9 @@ describe("default export", () => {
       location: "test-location",
     };
     const stage = "preversion";
-    const config = npmConf({ "custom-cli-flag": true });
+    const opts = npmConf({ "custom-cli-flag": true });
 
-    const result = await runLifecycle(pkg, stage, config);
+    const result = await runLifecycle(pkg, stage, opts);
 
     expect(result).toBe(pkg);
     expect(runScript).toHaveBeenLastCalledWith(
@@ -40,6 +40,58 @@ describe("default export", () => {
         unsafePerm: true,
       })
     );
+  });
+
+  it("camelCases dashed-options", async () => {
+    const pkg = {
+      name: "dashed-name",
+      version: "1.0.0-dashed",
+      location: "dashed-location",
+    };
+    const dir = pkg.location;
+    const stage = "prepublish";
+    const opts = new Map([
+      ["ignore-prepublish", true],
+      ["ignore-scripts", true],
+      ["node-options", true],
+      ["script-shell", true],
+      ["scripts-prepend-node-path", true],
+      ["unsafe-perm", true],
+    ]);
+
+    await runLifecycle(pkg, stage, opts);
+
+    expect(runScript).toHaveBeenLastCalledWith(expect.objectContaining(pkg), stage, dir, {
+      config: expect.objectContaining({
+        prefix: dir,
+      }),
+      dir,
+      failOk: false,
+      log: expect.any(Object),
+      ignorePrepublish: true,
+      ignoreScripts: true,
+      nodeOptions: true,
+      scriptShell: true,
+      scriptsPrependNodePath: true,
+      unsafePerm: true,
+    });
+  });
+
+  it("omits circular opts", async () => {
+    const pkg = {
+      name: "circular-name",
+      version: "1.0.0-circular",
+      location: "circular-location",
+    };
+    const stage = "prepack";
+    const opts = new Map([["logstream", "SKIPPED"], ["log", "SKIPPED"]]);
+
+    await runLifecycle(pkg, stage, opts);
+
+    const callOpts = runScript.mock.calls.pop().pop();
+
+    expect(callOpts).not.toHaveProperty("config.log");
+    expect(callOpts).not.toHaveProperty("config.logstream");
   });
 });
 

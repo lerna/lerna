@@ -2,23 +2,54 @@
 
 const log = require("libnpm/log");
 const runScript = require("libnpm/run-script");
+const figgyPudding = require("figgy-pudding");
 const npmConf = require("@lerna/npm-conf");
 
 module.exports = runLifecycle;
 module.exports.createRunner = createRunner;
 
-function runLifecycle(pkg, stage, opts) {
+const LifecycleConfig = figgyPudding(
+  {
+    // provide aliases for some dash-cased props
+    "ignore-prepublish": {},
+    ignorePrepublish: "ignore-prepublish",
+    "ignore-scripts": {},
+    ignoreScripts: "ignore-scripts",
+    "node-options": {},
+    nodeOptions: "node-options",
+    "script-shell": {},
+    scriptShell: "script-shell",
+    "scripts-prepend-node-path": {},
+    scriptsPrependNodePath: "scripts-prepend-node-path",
+    "unsafe-perm": {},
+    unsafePerm: "unsafe-perm",
+  },
+  {
+    other(key) {
+      // allow any other keys _except_ circular objects
+      return key !== "log" && key !== "logstream";
+    },
+  }
+);
+
+function runLifecycle(pkg, stage, _opts) {
   log.silly("run-lifecycle", stage, pkg.name);
 
-  const config = {};
+  // back-compat for @lerna/npm-conf instances
+  // https://github.com/isaacs/proto-list/blob/27764cd/proto-list.js#L14
+  if ("root" in _opts) {
+    // eslint-disable-next-line no-param-reassign
+    _opts = _opts.snapshot;
+  }
+
+  const opts = LifecycleConfig(_opts);
   const dir = pkg.location;
+  const config = {};
 
-  // https://github.com/isaacs/proto-list/blob/27764cd/proto-list.js#L29
-  for (const key of opts.keys) {
-    const val = opts.get(key);
-
-    // omit falsy and Stream-based (circular) values
-    if (val != null && key !== "logstream" && key !== "log") {
+  // https://github.com/zkat/figgy-pudding/blob/7d68bd3/index.js#L42-L64
+  for (const [key, val] of opts) {
+    // omit falsy values
+    if (val != null) {
       config[key] = val;
     }
   }
@@ -29,12 +60,27 @@ function runLifecycle(pkg, stage, opts) {
   // TODO: remove pkg._id when npm-lifecycle no longer relies on it
   pkg._id = `${pkg.name}@${pkg.version}`; // eslint-disable-line
 
+  // bring along camelCased aliases
+  const {
+    ignorePrepublish,
+    ignoreScripts,
+    nodeOptions,
+    scriptShell,
+    scriptsPrependNodePath,
+    unsafePerm,
+  } = opts;
+
   return runScript(pkg, stage, dir, {
     config,
     dir,
     failOk: false,
     log,
-    unsafePerm: true,
+    ignorePrepublish,
+    ignoreScripts,
+    nodeOptions,
+    scriptShell,
+    scriptsPrependNodePath,
+    unsafePerm,
   }).then(
     () => pkg,
     err => {
@@ -58,7 +104,7 @@ function runLifecycle(pkg, stage, opts) {
 }
 
 function createRunner(commandOptions) {
-  const cfg = npmConf(commandOptions);
+  const cfg = npmConf(commandOptions).snapshot;
 
   return (pkg, stage) => {
     if (pkg.scripts && pkg.scripts[stage]) {
