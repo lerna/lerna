@@ -528,11 +528,9 @@ class PublishCommand extends Command {
 
             logPacked(packed);
 
-            return pkg;
+            // manifest may be mutated by any previous lifecycle
+            return pkg.refresh();
           }),
-
-        // manifest may be mutated by any previous lifecycle
-        pkg => pkg.refresh(),
       ].filter(Boolean)
     );
 
