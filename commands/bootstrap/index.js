@@ -12,9 +12,8 @@ const pWaterfall = require("p-waterfall");
 const Command = require("@lerna/command");
 const rimrafDir = require("@lerna/rimraf-dir");
 const hasNpmVersion = require("@lerna/has-npm-version");
-const npmConf = require("@lerna/npm-conf");
 const npmInstall = require("@lerna/npm-install");
-const runLifecycle = require("@lerna/run-lifecycle");
+const { createRunner } = require("@lerna/run-lifecycle");
 const batchPackages = require("@lerna/batch-packages");
 const runParallelBatches = require("@lerna/run-parallel-batches");
 const symlinkBinary = require("@lerna/symlink-binary");
@@ -63,7 +62,7 @@ class BootstrapCommand extends Command {
       );
     }
 
-    this.conf = npmConf({ registry });
+    this.runPackageLifecycle = createRunner({ registry });
     this.npmConfig = {
       registry,
       npmClient,
@@ -176,24 +175,15 @@ class BootstrapCommand extends Command {
       return;
     }
 
-    const packagesWithScript = new Set(this.filteredPackages.filter(pkg => pkg.scripts[stage]));
-
-    if (!packagesWithScript.size) {
-      return;
-    }
-
     const tracker = this.logger.newItem(stage);
 
-    const mapPackageWithScript = pkg => {
-      if (packagesWithScript.has(pkg)) {
-        return runLifecycle(pkg, stage, this.conf).then(() => {
-          tracker.silly("lifecycle", "finished", pkg.name);
-          tracker.completeWork(1);
-        });
-      }
-    };
+    const mapPackageWithScript = pkg =>
+      this.runPackageLifecycle(pkg, stage).then(() => {
+        tracker.silly("lifecycle", "finished %j in %s", stage, pkg.name);
+        tracker.completeWork(1);
+      });
 
-    tracker.addWork(packagesWithScript.size);
+    tracker.addWork(this.filteredPackages.length);
 
     return pFinally(runParallelBatches(this.batchedPackages, this.concurrency, mapPackageWithScript), () =>
       tracker.finish()
