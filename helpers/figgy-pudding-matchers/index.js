@@ -10,6 +10,7 @@ const {
   printReceived,
   printWithType,
 } = require("jest-matcher-utils");
+const { equals } = require("expect/build/jasmine_utils");
 
 /**
  * Jest matchers for figgy-pudding instances
@@ -133,9 +134,7 @@ function isObjectWithKeys(obj) {
 }
 
 function hasEveryMatchingProperty(received, expected) {
-  return Object.keys(expected).every(
-    property => property in received && received[property] === expected[property]
-  );
+  return Object.keys(expected).every(property => equals(received[property], expected[property]));
 }
 
 function isFiggyInstance(received) {
