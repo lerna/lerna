@@ -106,7 +106,7 @@ class PublishCommand extends Command {
 
     // all consumers need a token
     const registry = this.conf.get("registry");
-    const auth = getAuth(registry, this.conf);
+    const auth = getAuth(registry, this.conf.snapshot);
 
     if (auth.token) {
       this.conf.set("token", auth.token, "cli");
