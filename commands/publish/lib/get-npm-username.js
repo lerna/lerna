@@ -1,18 +1,23 @@
 "use strict";
 
-const log = require("libnpm/log");
-const fetch = require("npm-registry-fetch");
+const fetch = require("libnpm/fetch");
 const ValidationError = require("@lerna/validation-error");
+const FetchConfig = require("./fetch-config");
 
 module.exports = getNpmUsername;
 
-function getNpmUsername(opts) {
-  log.info("", "Verifying npm credentials");
+function getNpmUsername(_opts) {
+  const opts = FetchConfig(_opts, {
+    // don't wait forever for third-party failures to be dealt with
+    "fetch-retries": 0,
+  });
+
+  opts.log.info("", "Verifying npm credentials");
 
   return getProfileData(opts).then(success, failure);
 
   function success(result) {
-    log.silly("npm whoami", "received %j", result);
+    opts.log.silly("npm whoami", "received %j", result);
 
     if (!result.username) {
       throw new ValidationError(
@@ -27,15 +32,15 @@ function getNpmUsername(opts) {
   // catch request errors, not auth expired errors
   function failure(err) {
     // Log the error cleanly to stderr
-    log.pause();
+    opts.log.pause();
     console.error(err.message); // eslint-disable-line no-console
-    log.resume();
+    opts.log.resume();
 
-    if (opts.get("registry") === "https://registry.npmjs.org/") {
+    if (opts.registry === "https://registry.npmjs.org/") {
       throw new ValidationError("EWHOAMI", "Authentication error. Use `npm whoami` to troubleshoot.");
     }
 
-    log.warn(
+    opts.log.warn(
       "EWHOAMI",
       "Unable to determine npm username from third-party registry, this command will likely fail soon!"
     );
@@ -43,12 +48,12 @@ function getNpmUsername(opts) {
 }
 
 function getProfileData(opts) {
-  log.verbose("", "Retrieving npm user profile");
+  opts.log.verbose("", "Retrieving npm user profile");
 
   return fetch
     .json("/-/npm/v1/user", opts)
     .then(data => {
-      log.silly("npm profile get", "received %j", data);
+      opts.log.silly("npm profile get", "received %j", data);
 
       const result = {
         // remap to match legacy whoami format
@@ -70,10 +75,10 @@ function getProfileData(opts) {
 }
 
 function getWhoAmI(opts) {
-  log.verbose("", "Retrieving npm username");
+  opts.log.verbose("", "Retrieving npm username");
 
   return fetch.json("/-/whoami", opts).then(data => {
-    log.silly("npm whoami", "received %j", data);
+    opts.log.silly("npm whoami", "received %j", data);
 
     // { username: String }
     return data;

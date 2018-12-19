@@ -116,7 +116,7 @@ class PublishCommand extends Command {
 
     // validate user has valid npm credentials first,
     // by far the most common form of failed execution
-    chain = chain.then(() => getNpmUsername(this.conf));
+    chain = chain.then(() => getNpmUsername(this.conf.snapshot));
     chain = chain.then(username => {
       // username is necessary for subsequent access check
       this.conf.add({ username }, "cmd");

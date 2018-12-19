@@ -115,7 +115,9 @@ Set {
       expect(npmDistTag.add).not.toHaveBeenCalled();
 
       expect(getNpmUsername).toHaveBeenCalled();
-      expect(getNpmUsername.registry.get(testDir).get("registry")).toBe("https://registry.npmjs.org/");
+      expect(getNpmUsername).toHaveBeenLastCalledWith(
+        expect.figgyPudding({ registry: "https://registry.npmjs.org/" })
+      );
 
       expect(verifyNpmPackageAccess).toHaveBeenCalled();
       expect(verifyNpmPackageAccess).toHaveBeenLastCalledWith(
