@@ -9,6 +9,7 @@ const ChildProcessUtilities = require("@lerna/child-process");
 const Command = require("@lerna/command");
 const PromptUtilities = require("@lerna/prompt");
 const ValidationError = require("@lerna/validation-error");
+const pulseTillDone = require("@lerna/pulse-till-done");
 
 module.exports = factory;
 
@@ -202,7 +203,7 @@ class ImportCommand extends Command {
 
       proc.stdin.end(patch);
 
-      return proc
+      return pulseTillDone(proc)
         .then(() => {
           tracker.completeWork(1);
         })
