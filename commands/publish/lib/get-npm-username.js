@@ -1,6 +1,7 @@
 "use strict";
 
 const fetch = require("libnpm/fetch");
+const pulseTillDone = require("@lerna/pulse-till-done");
 const ValidationError = require("@lerna/validation-error");
 const FetchConfig = require("./fetch-config");
 
@@ -50,8 +51,7 @@ function getNpmUsername(_opts) {
 function getProfileData(opts) {
   opts.log.verbose("", "Retrieving npm user profile");
 
-  return fetch
-    .json("/-/npm/v1/user", opts)
+  return pulseTillDone(fetch.json("/-/npm/v1/user", opts))
     .then(data => {
       opts.log.silly("npm profile get", "received %j", data);
 
@@ -77,7 +77,7 @@ function getProfileData(opts) {
 function getWhoAmI(opts) {
   opts.log.verbose("", "Retrieving npm username");
 
-  return fetch.json("/-/whoami", opts).then(data => {
+  return pulseTillDone(fetch.json("/-/whoami", opts)).then(data => {
     opts.log.silly("npm whoami", "received %j", data);
 
     // { username: String }

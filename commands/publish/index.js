@@ -24,6 +24,7 @@ const logPacked = require("@lerna/log-packed");
 const { createRunner } = require("@lerna/run-lifecycle");
 const batchPackages = require("@lerna/batch-packages");
 const runParallelBatches = require("@lerna/run-parallel-batches");
+const pulseTillDone = require("@lerna/pulse-till-done");
 const versionCommand = require("@lerna/version");
 
 const createTempLicenses = require("./lib/create-temp-licenses");
@@ -503,7 +504,7 @@ class PublishCommand extends Command {
   packUpdated() {
     const tracker = this.logger.newItem("npm pack");
 
-    tracker.addWork(this.packagesToPublish.length);
+    tracker.addWork(this.packagesToPublish.length + 1);
 
     let chain = Promise.resolve();
 
@@ -519,7 +520,10 @@ class PublishCommand extends Command {
         this.options.requireScripts && (pkg => this.execScript(pkg, "prepublish")),
 
         pkg =>
-          packDirectory(pkg, opts).then(packed => {
+          pulseTillDone(packDirectory(pkg, opts)).then(packed => {
+            tracker.completeWork(1);
+
+            // store metadata for use in this.publishPacked()
             pkg.packed = packed;
 
             // manifest may be mutated by any previous lifecycle
@@ -529,11 +533,7 @@ class PublishCommand extends Command {
     );
 
     chain = chain.then(() =>
-      pReduce(this.batchedPackages, (_, batch) =>
-        pMap(batch, mapper, { concurrency: 10 }).then(() => {
-          tracker.completeWork(batch.length);
-        })
-      )
+      pReduce(this.batchedPackages, (_, batch) => pMap(batch, mapper, { concurrency: 10 }))
     );
 
     chain = chain.then(() => removeTempLicenses(this.packagesToBeLicensed));
@@ -558,20 +558,17 @@ class PublishCommand extends Command {
     const opts = this.conf.snapshot;
     const mapper = pPipe(
       [
-        pkg => {
-          logPacked(pkg.packed);
+        pkg =>
+          pulseTillDone(npmPublish(pkg, distTag, pkg.packed.tarFilePath, opts)).then(() => {
+            tracker.completeWork(1);
+            tracker.success("published", pkg.name, pkg.version);
 
-          return npmPublish(pkg, distTag, pkg.packed.tarFilePath, opts);
-        },
+            logPacked(pkg.packed);
+
+            return pkg;
+          }),
 
         this.options.requireScripts && (pkg => this.execScript(pkg, "postpublish")),
-
-        pkg => {
-          tracker.info("published", pkg.name, pkg.version);
-          tracker.completeWork(1);
-
-          return pkg;
-        },
       ].filter(Boolean)
     );
 
@@ -591,23 +588,19 @@ class PublishCommand extends Command {
     let chain = Promise.resolve();
 
     const opts = this.conf.snapshot;
-    const mapper = pPipe([
-      pkg => {
-        const spec = `${pkg.name}@${pkg.version}`;
+    const mapper = pkg => {
+      const spec = `${pkg.name}@${pkg.version}`;
 
-        return Promise.resolve()
-          .then(() => npmDistTag.remove(spec, "lerna-temp", opts))
-          .then(() => npmDistTag.add(spec, distTag, opts))
-          .then(() => pkg);
-      },
+      return Promise.resolve()
+        .then(() => pulseTillDone(npmDistTag.remove(spec, "lerna-temp", opts)))
+        .then(() => pulseTillDone(npmDistTag.add(spec, distTag, opts)))
+        .then(() => {
+          tracker.info("dist-tag", "%s@%s => %j", pkg.name, pkg.version, distTag);
+          tracker.completeWork(1);
 
-      pkg => {
-        tracker.info("dist-tag", "%s@%s => %j", pkg.name, pkg.version, distTag);
-        tracker.completeWork(1);
-
-        return pkg;
-      },
-    ]);
+          return pkg;
+        });
+    };
 
     chain = chain.then(() => runParallelBatches(this.batchedPackages, this.concurrency, mapper));
 

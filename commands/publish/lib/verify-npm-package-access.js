@@ -1,6 +1,7 @@
 "use strict";
 
 const access = require("libnpm/access");
+const pulseTillDone = require("@lerna/pulse-till-done");
 const ValidationError = require("@lerna/validation-error");
 const FetchConfig = require("./fetch-config");
 
@@ -14,7 +15,7 @@ function verifyNpmPackageAccess(packages, _opts) {
 
   opts.log.silly("verifyNpmPackageAccess");
 
-  return access.lsPackages(opts.username, opts).then(success, failure);
+  return pulseTillDone(access.lsPackages(opts.username, opts)).then(success, failure);
 
   function success(result) {
     // when _no_ results received, access.lsPackages returns null
