@@ -402,7 +402,7 @@ class PublishCommand extends Command {
 
     // if no username was retrieved, don't bother validating
     if (this.conf.get("username") && this.verifyAccess) {
-      chain = chain.then(() => verifyNpmPackageAccess(this.packagesToPublish, this.conf));
+      chain = chain.then(() => verifyNpmPackageAccess(this.packagesToPublish, this.conf.snapshot));
     }
 
     return chain;

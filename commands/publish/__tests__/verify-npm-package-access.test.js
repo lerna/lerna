@@ -15,6 +15,8 @@ access.lsPackages.mockImplementation(() =>
   })
 );
 
+expect.extend(require("@lerna-test/figgy-pudding-matchers"));
+
 describe("verifyNpmPackageAccess", () => {
   const origConsoleError = console.error;
 
@@ -40,7 +42,7 @@ describe("verifyNpmPackageAccess", () => {
 
     expect(access.lsPackages).toHaveBeenLastCalledWith(
       "lerna-test",
-      expect.objectContaining({
+      expect.figgyPudding({
         username: "lerna-test",
         registry: "https://registry.npmjs.org/",
         "fetch-retries": 0,

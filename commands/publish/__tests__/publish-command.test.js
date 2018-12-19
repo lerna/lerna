@@ -32,6 +32,8 @@ const initFixture = require("@lerna-test/init-fixture")(__dirname);
 // file under test
 const lernaPublish = require("@lerna-test/command-runner")(require("../command"));
 
+expect.extend(require("@lerna-test/figgy-pudding-matchers"));
+
 describe("PublishCommand", () => {
   describe("cli validation", () => {
     let cwd;
@@ -116,15 +118,10 @@ Set {
       expect(getNpmUsername.registry.get(testDir).get("registry")).toBe("https://registry.npmjs.org/");
 
       expect(verifyNpmPackageAccess).toHaveBeenCalled();
-      expect(verifyNpmPackageAccess.registry.get(testDir)).toMatchInlineSnapshot(`
-Set {
-  "package-1",
-  "package-2",
-  "package-3",
-  "package-4",
-  "username: lerna-test",
-}
-`);
+      expect(verifyNpmPackageAccess).toHaveBeenLastCalledWith(
+        expect.any(Array),
+        expect.figgyPudding({ registry: "https://registry.npmjs.org/" })
+      );
     });
 
     it("publishes changed independent packages", async () => {

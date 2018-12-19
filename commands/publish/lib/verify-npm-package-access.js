@@ -1,28 +1,26 @@
 "use strict";
 
-const log = require("libnpm/log");
 const access = require("libnpm/access");
-const RegistryConfig = require("npm-registry-fetch/config");
 const ValidationError = require("@lerna/validation-error");
+const FetchConfig = require("./fetch-config");
 
 module.exports = verifyNpmPackageAccess;
 
-function verifyNpmPackageAccess(packages, opts) {
-  log.silly("verifyNpmPackageAccess");
-
-  // eslint-disable-next-line no-param-reassign
-  opts = RegistryConfig(opts, {
+function verifyNpmPackageAccess(packages, _opts) {
+  const opts = FetchConfig(_opts, {
     // don't wait forever for third-party failures to be dealt with
     "fetch-retries": 0,
   });
 
-  return access.lsPackages(opts.username, opts.toJSON()).then(success, failure);
+  opts.log.silly("verifyNpmPackageAccess");
+
+  return access.lsPackages(opts.username, opts).then(success, failure);
 
   function success(result) {
     // when _no_ results received, access.lsPackages returns null
     // we can only assume that the packages in question have never been published
     if (result === null) {
-      log.warn(
+      opts.log.warn(
         "",
         "The logged-in user does not have any previously-published packages, skipping permission checks..."
       );
@@ -42,7 +40,7 @@ function verifyNpmPackageAccess(packages, opts) {
     // pass if registry does not support ls-packages endpoint
     if (err.code === "E500" || err.code === "E404") {
       // most likely a private registry (npm Enterprise, verdaccio, etc)
-      log.warn(
+      opts.log.warn(
         "EREGISTRY",
         "Registry %j does not support `npm access ls-packages`, skipping permission checks...",
         // registry
@@ -54,9 +52,9 @@ function verifyNpmPackageAccess(packages, opts) {
     }
 
     // Log the error cleanly to stderr
-    log.pause();
+    opts.log.pause();
     console.error(err.message); // eslint-disable-line no-console
-    log.resume();
+    opts.log.resume();
 
     throw new ValidationError("EWHOAMI", "Authentication error. Use `npm whoami` to troubleshoot.");
   }
