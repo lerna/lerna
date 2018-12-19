@@ -60,6 +60,8 @@ Object.defineProperty(exports, "defaults", {
       "allow-same-version": false,
       "always-auth": false,
       also: null,
+      audit: true,
+      "audit-level": "low",
       "auth-type": "legacy",
       "bin-links": true,
       browser: null,
@@ -128,11 +130,12 @@ Object.defineProperty(exports, "defaults", {
       "prefer-offline": false,
       "prefer-online": false,
       prefix: globalPrefix,
+      preid: "",
       production: process.env.NODE_ENV === "production",
       progress: !process.env.TRAVIS && !process.env.CI,
       proxy: null,
       "https-proxy": null,
-      "no-proxy": null,
+      noproxy: null,
       "user-agent": "npm/{npm-version} " + "node/{node-version} " + "{platform} " + "{arch}",
       "read-only": false,
       "rebuild-bundle": true,
@@ -155,6 +158,7 @@ Object.defineProperty(exports, "defaults", {
       "send-metrics": false,
       shell: osenv.shell(),
       shrinkwrap: true,
+      "sign-git-commit": false,
       "sign-git-tag": false,
       "sso-poll-frequency": 500,
       "sso-type": "oauth",
@@ -169,8 +173,9 @@ Object.defineProperty(exports, "defaults", {
         process.platform === "cygwin" ||
         !(process.getuid && process.setuid && process.getgid && process.setgid) ||
         process.getuid() !== 0,
+      "update-notifier": true,
       usage: false,
-      user: process.platform === "win32" ? 0 : "nobody",
+      user: process.platform === "win32" || os.type() === "OS400" ? 0 : "nobody",
       userconfig: path.resolve(home, ".npmrc"),
       umask: process.umask ? process.umask() : umask.fromString("022"),
       version: false,
@@ -178,6 +183,7 @@ Object.defineProperty(exports, "defaults", {
       viewer: process.platform === "win32" ? "browser" : "man",
       _exit: true,
     };
+
     return defaults;
   },
 });
