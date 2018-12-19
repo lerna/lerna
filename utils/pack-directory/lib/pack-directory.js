@@ -1,5 +1,6 @@
 "use strict";
 
+const figgyPudding = require("figgy-pudding");
 const packlist = require("npm-packlist");
 const tar = require("tar");
 const tempWrite = require("temp-write");
@@ -8,7 +9,15 @@ const runLifecycle = require("@lerna/run-lifecycle");
 
 module.exports = packDirectory;
 
-function packDirectory(pkg, opts) {
+const PackConfig = figgyPudding({
+  "lerna-command": { default: "pack" },
+  lernaCommand: "lerna-command",
+  "ignore-prepublish": {},
+  ignorePrepublish: "ignore-prepublish",
+});
+
+function packDirectory(pkg, _opts) {
+  const opts = PackConfig(_opts);
   const dir = pkg.location;
   const name =
     pkg.name[0] === "@"
@@ -19,13 +28,13 @@ function packDirectory(pkg, opts) {
 
   let chain = Promise.resolve();
 
-  if (opts.get("ignore-prepublish") !== false) {
+  if (opts.ignorePrepublish !== false) {
     chain = chain.then(() => runLifecycle(pkg, "prepublish", opts));
   }
 
   chain = chain.then(() => runLifecycle(pkg, "prepare", opts));
 
-  if (opts.get("command") === "publish") {
+  if (opts.lernaCommand === "publish") {
     chain = chain.then(() => pkg.refresh());
     chain = chain.then(() => runLifecycle(pkg, "prepublishOnly", opts));
     chain = chain.then(() => pkg.refresh());

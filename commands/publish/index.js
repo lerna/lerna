@@ -81,7 +81,7 @@ class PublishCommand extends Command {
     this.logger.verbose("user-agent", userAgent);
 
     this.conf = npmConf({
-      command: "publish",
+      lernaCommand: "publish",
       log: this.logger,
       npmSession,
       npmVersion: userAgent,

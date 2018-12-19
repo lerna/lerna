@@ -72,7 +72,7 @@ describe("pack-directory", () => {
     jest.spyOn(fs, "move");
 
     const cwd = await initFixture("lerna-bootstrap");
-    const conf = npmConf({ prefix: cwd });
+    const conf = npmConf({ prefix: cwd }).snapshot;
     const pkgs = await getPackages(cwd);
 
     // choose first and last package since the middle two are repetitive
