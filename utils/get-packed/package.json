@@ -1,6 +1,6 @@
 {
   "name": "@lerna/get-packed",
-  "version": "3.6.0",
+  "version": "3.7.0",
   "description": "Read contents of package tarball created by npm pack",
   "keywords": [
     "lerna",

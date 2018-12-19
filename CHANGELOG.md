@@ -3,6 +3,38 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.7.0](https://github.com/lerna/lerna/compare/v3.6.0...v3.7.0) (2018-12-19)
+
+
+### Bug Fixes
+
+* **add:** Snapshot opts passed to pacote.manifest() ([d0f0dbc](https://github.com/lerna/lerna/commit/d0f0dbc))
+* **bootstrap:** Use run-lifecycle factory instead of manual filtering ([d32feaa](https://github.com/lerna/lerna/commit/d32feaa))
+* **create:** Pass options snapshot to pacote.manifest() ([6116680](https://github.com/lerna/lerna/commit/6116680))
+* **npm-conf:** Port kevva/npm-conf/pull/12 ([@zkochan](https://github.com/zkochan)) ([d58b741](https://github.com/lerna/lerna/commit/d58b741))
+* **npm-conf:** Update defaults & types to npm v6.5.0+ ([6a8aa83](https://github.com/lerna/lerna/commit/6a8aa83))
+* **publish:** Remove unused dependency ([d4ab6c4](https://github.com/lerna/lerna/commit/d4ab6c4))
+* **publish:** Short-circuit retries for npm username validation ([ca4dd95](https://github.com/lerna/lerna/commit/ca4dd95))
+* **run-lifecycle:** Omit circular options from config ([00eb5bd](https://github.com/lerna/lerna/commit/00eb5bd))
+
+
+### Features
+
+* Add [@lerna](https://github.com/lerna)/get-packed ([8675c8f](https://github.com/lerna/lerna/commit/8675c8f))
+* Add [@lerna](https://github.com/lerna)/pack-directory ([be1aeaf](https://github.com/lerna/lerna/commit/be1aeaf))
+* **dist-tag:** Wrap options in figgy-pudding ([2713ab8](https://github.com/lerna/lerna/commit/2713ab8))
+* **npm-publish:** Use libnpm/publish instead of subprocess execution ([433275e](https://github.com/lerna/lerna/commit/433275e))
+* **package:** Add .refresh() method to update internal state when external changes have occurred ([905ba10](https://github.com/lerna/lerna/commit/905ba10))
+* **publish:** Add npm-session, npm-version, and user-agent fields to libnpm/fetch config ([5edb27d](https://github.com/lerna/lerna/commit/5edb27d))
+* **publish:** Refresh package manifests after prepare/prepublishOnly lifecycle ([e6b31f8](https://github.com/lerna/lerna/commit/e6b31f8))
+* **publish:** Use [@lerna](https://github.com/lerna)/pack-directory instead of subprocess npm pack ([fd7299f](https://github.com/lerna/lerna/commit/fd7299f))
+* **publish:** Use libnpm/publish instead of subprocess execution ([58fda8d](https://github.com/lerna/lerna/commit/58fda8d))
+* **version:** Refresh package manifests after preversion lifecycle ([7c7bf9a](https://github.com/lerna/lerna/commit/7c7bf9a))
+
+
+
+
+
 # [3.6.0](https://github.com/lerna/lerna/compare/v3.5.1...v3.6.0) (2018-12-07)
 
 

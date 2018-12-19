@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.7.0](https://github.com/lerna/lerna/compare/v3.6.0...v3.7.0) (2018-12-19)
+
+
+### Bug Fixes
+
+* **npm-conf:** Port kevva/npm-conf/pull/12 ([@zkochan](https://github.com/zkochan)) ([d58b741](https://github.com/lerna/lerna/commit/d58b741))
+* **npm-conf:** Update defaults & types to npm v6.5.0+ ([6a8aa83](https://github.com/lerna/lerna/commit/6a8aa83))
+
+
+
+
+
 ## [3.4.1](https://github.com/lerna/lerna/compare/v3.4.0...v3.4.1) (2018-10-04)
 
 

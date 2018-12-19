@@ -1,6 +1,6 @@
 {
   "name": "@lerna/symlink-dependencies",
-  "version": "3.6.0",
+  "version": "3.7.0",
   "description": "Lerna's internal symlinking tool",
   "keywords": [
     "lerna",
