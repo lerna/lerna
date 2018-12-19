@@ -261,7 +261,7 @@ class PublishCommand extends Command {
     // attempting to publish a release with local changes is not allowed
     chain = chain.then(() => this.verifyWorkingTreeClean());
 
-    chain = chain.then(() => getUnpublishedPackages(this.project, this.conf));
+    chain = chain.then(() => getUnpublishedPackages(this.project, this.conf.snapshot));
     chain = chain.then(unpublishedPackages => {
       if (!unpublishedPackages.length) {
         this.logger.notice("from-package", "No unpublished release found");
