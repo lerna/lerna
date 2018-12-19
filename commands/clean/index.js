@@ -7,6 +7,7 @@ const Command = require("@lerna/command");
 const rimrafDir = require("@lerna/rimraf-dir");
 const PromptUtilities = require("@lerna/prompt");
 const { getFilteredPackages } = require("@lerna/filter-options");
+const pulseTillDone = require("@lerna/pulse-till-done");
 
 module.exports = factory;
 
@@ -49,7 +50,7 @@ class CleanCommand extends Command {
     const mapper = dirPath => {
       tracker.info("clean", "removing", dirPath);
 
-      return rimrafDir(dirPath).then(() => {
+      return pulseTillDone(rimrafDir(dirPath)).then(() => {
         tracker.completeWork(1);
       });
     };
