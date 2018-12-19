@@ -6,7 +6,6 @@ const fs = require("fs-extra");
 const path = require("path");
 const execa = require("execa");
 const slash = require("slash");
-const { Conf } = require("@lerna/npm-conf");
 
 // mocked modules
 const getManifest = require("libnpm/manifest");
@@ -131,7 +130,10 @@ describe("CreateCommand", () => {
         type: "tag",
         fetchSpec: "latest",
       }),
-      expect.any(Conf)
+      expect.objectContaining({
+        // an npm-conf snapshot
+        registry: "https://registry.npmjs.org/",
+      })
     );
   });
 

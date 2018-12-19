@@ -229,6 +229,7 @@ class CreateCommand extends Command {
     const exts = this.collectExternalVersions();
     const localRelative = this.hasLocalRelativeFileSpec();
     const savePrefix = this.conf.get("save-exact") ? "" : this.conf.get("save-prefix");
+    const pacoteOpts = this.conf.snapshot;
 
     const decideVersion = spec => {
       if (this.packageGraph.has(spec.name)) {
@@ -252,7 +253,7 @@ class CreateCommand extends Command {
         }
 
         // from registry
-        return getManifest(spec, this.conf).then(pkg => `${savePrefix}${pkg.version}`);
+        return getManifest(spec, pacoteOpts).then(pkg => `${savePrefix}${pkg.version}`);
       }
 
       if (spec.type === "git") {
