@@ -17,7 +17,7 @@ function npmConf(opts) {
   // prevent keys with undefined values from obscuring defaults
   const cleanOpts = opts
     ? Object.keys(opts).reduce((acc, key) => {
-        if (opts && opts[key] !== undefined) {
+        if (opts[key] !== undefined) {
           // eslint-disable-next-line no-param-reassign
           acc[key] = opts[key];
         }
@@ -33,6 +33,7 @@ function npmConf(opts) {
   const projectConf = path.resolve(conf.localPrefix, ".npmrc");
   const userConf = conf.get("userconfig");
 
+  /* istanbul ignore else */
   if (!conf.get("global") && projectConf !== userConf) {
     conf.addFile(projectConf, "project");
   } else {
@@ -41,6 +42,7 @@ function npmConf(opts) {
 
   conf.addFile(conf.get("userconfig"), "user");
 
+  /* istanbul ignore else */
   if (conf.get("prefix")) {
     const etc = path.resolve(conf.get("prefix"), "etc");
     conf.root.globalconfig = path.resolve(etc, "npmrc");
@@ -52,6 +54,7 @@ function npmConf(opts) {
 
   const caFile = conf.get("cafile");
 
+  /* istanbul ignore if */
   if (caFile) {
     conf.loadCAFile(caFile);
   }
