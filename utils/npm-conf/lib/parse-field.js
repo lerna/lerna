@@ -64,7 +64,8 @@ function parseField(input, key) {
     field = path.resolve(field);
   }
 
-  if (isNumber && !field.isNan()) {
+  // eslint-disable-next-line no-restricted-globals
+  if (isNumber && !isNaN(field)) {
     field = Number(field);
   }
 
