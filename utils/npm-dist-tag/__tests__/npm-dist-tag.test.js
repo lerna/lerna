@@ -8,6 +8,8 @@ const fetch = require("libnpm/fetch");
 // file under test
 const npmDistTag = require("..");
 
+expect.extend(require("@lerna-test/figgy-pudding-matchers"));
+
 const stubLog = {
   verbose: jest.fn(),
   info: jest.fn(),
@@ -28,7 +30,7 @@ describe("npmDistTag.add()", () => {
     });
     expect(fetch).toHaveBeenLastCalledWith(
       "-/package/@scope%2fsome-pkg/dist-tags/added-tag",
-      expect.objectContaining({
+      expect.figgyPudding({
         method: "PUT",
         body: JSON.stringify("1.0.1"),
         headers: {
@@ -91,7 +93,7 @@ describe("npmDistTag.remove()", () => {
     expect(tags).not.toHaveProperty("removed-tag");
     expect(fetch).toHaveBeenLastCalledWith(
       "-/package/@scope%2fsome-pkg/dist-tags/removed-tag",
-      expect.objectContaining({
+      expect.figgyPudding({
         method: "DELETE",
       })
     );
@@ -128,7 +130,7 @@ describe("npmDistTag.list()", () => {
     });
     expect(fetch.json).toHaveBeenLastCalledWith(
       "-/package/@scope%2fsome-pkg/dist-tags",
-      expect.objectContaining({
+      expect.figgyPudding({
         spec: expect.objectContaining({
           name: "@scope/some-pkg",
         }),

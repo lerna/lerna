@@ -31,7 +31,7 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "libnpm": "^2.0.1",
-    "npm-registry-fetch": "^3.8.0"
+    "figgy-pudding": "^3.5.1",
+    "libnpm": "^2.0.1"
   }
 }

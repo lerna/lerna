@@ -2,19 +2,32 @@
 
 const npa = require("libnpm/parse-arg");
 const fetch = require("libnpm/fetch");
-const RegistryConfig = require("npm-registry-fetch/config");
+const figgyPudding = require("figgy-pudding");
 
 exports.add = add;
 exports.remove = remove;
 exports.list = list;
 
-function add(spec, tag, _opts) {
-  // tag is not in the pudding spec, handle separately
-  const cleanTag = (tag || _opts.get("tag")).trim();
+const DistTagConfig = figgyPudding(
+  {
+    log: {},
+    spec: {},
+    tag: {},
+  },
+  {
+    other() {
+      // open it up for the sake of tests
+      return true;
+    },
+  }
+);
 
-  const opts = RegistryConfig(_opts, {
+function add(spec, tag, _opts) {
+  const opts = DistTagConfig(_opts, {
     spec: npa(spec),
+    tag,
   });
+  const cleanTag = opts.tag.trim();
 
   const { name, rawSpec: version } = opts.spec;
 
@@ -38,7 +51,7 @@ function add(spec, tag, _opts) {
     });
 
     // success returns HTTP 204, thus no JSON to parse
-    return fetch(uri, payload.toJSON()).then(() => {
+    return fetch(uri, payload).then(() => {
       opts.log.verbose("dist-tag", `added "${cleanTag}" to ${name}@${version}`);
 
       // eslint-disable-next-line no-param-reassign
@@ -50,7 +63,7 @@ function add(spec, tag, _opts) {
 }
 
 function remove(spec, tag, _opts) {
-  const opts = RegistryConfig(_opts, {
+  const opts = DistTagConfig(_opts, {
     spec: npa(spec),
   });
 
@@ -70,7 +83,7 @@ function remove(spec, tag, _opts) {
     });
 
     // the delete properly returns a 204, so no json to parse
-    return fetch(uri, payload.toJSON()).then(() => {
+    return fetch(uri, payload).then(() => {
       opts.log.verbose("dist-tag", `removed "${tag}" from ${opts.spec.name}@${version}`);
 
       // eslint-disable-next-line no-param-reassign
@@ -82,7 +95,7 @@ function remove(spec, tag, _opts) {
 }
 
 function list(spec, _opts) {
-  const opts = RegistryConfig(_opts, {
+  const opts = DistTagConfig(_opts, {
     spec: npa(spec),
   });
 
@@ -92,5 +105,5 @@ function list(spec, _opts) {
 function fetchTags(opts) {
   const uri = `-/package/${opts.spec.escapedName}/dist-tags`;
 
-  return fetch.json(uri, opts.toJSON());
+  return fetch.json(uri, opts);
 }
