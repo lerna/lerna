@@ -183,7 +183,7 @@ class Command {
   enableProgressBar() {
     /* istanbul ignore next */
     if (this.options.progress) {
-      this.logger.enableProgress();
+      log.enableProgress();
     }
   }
 
