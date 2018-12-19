@@ -178,7 +178,7 @@ class AddCommand extends Command {
       registry: this.options.registry,
     });
 
-    return getManifest(this.spec, opts).then(pkg => pkg.version);
+    return getManifest(this.spec, opts.snapshot).then(pkg => pkg.version);
   }
 
   packageSatisfied() {
