@@ -513,12 +513,13 @@ class PublishCommand extends Command {
     chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "prepublishOnly"));
     chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "prepack"));
 
+    const opts = this.conf.snapshot;
     const mapper = pPipe(
       [
         this.options.requireScripts && (pkg => this.execScript(pkg, "prepublish")),
 
         pkg =>
-          packDirectory(pkg, this.conf).then(packed => {
+          packDirectory(pkg, opts).then(packed => {
             pkg.packed = packed;
 
             // manifest may be mutated by any previous lifecycle
@@ -554,12 +555,13 @@ class PublishCommand extends Command {
 
     let chain = Promise.resolve();
 
+    const opts = this.conf.snapshot;
     const mapper = pPipe(
       [
         pkg => {
           logPacked(pkg.packed);
 
-          return npmPublish(pkg, distTag, pkg.packed.tarFilePath, this.conf);
+          return npmPublish(pkg, distTag, pkg.packed.tarFilePath, opts);
         },
 
         this.options.requireScripts && (pkg => this.execScript(pkg, "postpublish")),
@@ -588,13 +590,14 @@ class PublishCommand extends Command {
 
     let chain = Promise.resolve();
 
+    const opts = this.conf.snapshot;
     const mapper = pPipe([
       pkg => {
         const spec = `${pkg.name}@${pkg.version}`;
 
         return Promise.resolve()
-          .then(() => npmDistTag.remove(spec, "lerna-temp", this.conf))
-          .then(() => npmDistTag.add(spec, distTag, this.conf))
+          .then(() => npmDistTag.remove(spec, "lerna-temp", opts))
+          .then(() => npmDistTag.add(spec, distTag, opts))
           .then(() => pkg);
       },
 
