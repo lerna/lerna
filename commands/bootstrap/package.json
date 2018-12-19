@@ -41,6 +41,7 @@
     "@lerna/has-npm-version": "file:../../utils/has-npm-version",
     "@lerna/npm-install": "file:../../utils/npm-install",
     "@lerna/package-graph": "file:../../core/package-graph",
+    "@lerna/pulse-till-done": "file:../../utils/pulse-till-done",
     "@lerna/rimraf-dir": "file:../../utils/rimraf-dir",
     "@lerna/run-lifecycle": "file:../../utils/run-lifecycle",
     "@lerna/run-parallel-batches": "file:../../utils/run-parallel-batches",

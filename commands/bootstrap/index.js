@@ -21,6 +21,8 @@ const symlinkDependencies = require("@lerna/symlink-dependencies");
 const ValidationError = require("@lerna/validation-error");
 const { getFilteredPackages } = require("@lerna/filter-options");
 const PackageGraph = require("@lerna/package-graph");
+const pulseTillDone = require("@lerna/pulse-till-done");
+
 const hasDependencyInstalled = require("./lib/has-dependency-installed");
 const isHoistedPackage = require("./lib/is-hoisted-package");
 
@@ -439,8 +441,9 @@ class BootstrapCommand extends Command {
           tracker.info("hoist", "Installing hoisted dependencies into root");
         }
 
-        return npmInstall
-          .dependencies(rootPkg, depsToInstallInRoot, this.npmConfig)
+        const promise = npmInstall.dependencies(rootPkg, depsToInstallInRoot, this.npmConfig);
+
+        return pulseTillDone(promise)
           .then(() =>
             // Link binaries into dependent packages so npm scripts will
             // have access to them.
@@ -490,7 +493,7 @@ class BootstrapCommand extends Command {
         return pMap(
           candidates,
           dirPath =>
-            rimrafDir(dirPath).then(() => {
+            pulseTillDone(rimrafDir(dirPath)).then(() => {
               tracker.verbose("prune", dirPath);
               tracker.completeWork(1);
             }),
@@ -517,8 +520,9 @@ class BootstrapCommand extends Command {
       if (deps.some(({ isSatisfied }) => !isSatisfied)) {
         actions.push(() => {
           const dependencies = deps.map(({ dependency }) => dependency);
+          const promise = npmInstall.dependencies(leafNode.pkg, dependencies, leafNpmConfig);
 
-          return npmInstall.dependencies(leafNode.pkg, dependencies, leafNpmConfig).then(() => {
+          return pulseTillDone(promise).then(() => {
             tracker.verbose("installed leaf", leafNode.name);
             tracker.completeWork(1);
           });
