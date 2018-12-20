@@ -239,3 +239,35 @@ describe("Package", () => {
     });
   });
 });
+
+describe("Package.lazy()", () => {
+  loadJsonFile.sync.mockImplementation(() => ({ name: "bar", version: "1.0.0" }));
+
+  it("returns package instance from string directory argument", () => {
+    const pkg = Package.lazy("/foo/bar");
+
+    expect(pkg).toBeInstanceOf(Package);
+    expect(pkg.location).toBe("/foo/bar");
+  });
+
+  it("returns package instance from package.json file argument", () => {
+    const pkg = Package.lazy("/foo/bar/package.json");
+
+    expect(pkg).toBeInstanceOf(Package);
+    expect(pkg.location).toBe("/foo/bar");
+  });
+
+  it("returns package instance from json and dir arguments", () => {
+    const pkg = Package.lazy({ name: "bar", version: "1.2.3" }, "/foo/bar");
+
+    expect(pkg).toBeInstanceOf(Package);
+    expect(pkg.version).toBe("1.2.3");
+  });
+
+  it("returns existing package instance", () => {
+    const existing = new Package({ name: "existing" }, "/foo/bar", "/foo");
+    const pkg = Package.lazy(existing);
+
+    expect(pkg).toBe(existing);
+  });
+});

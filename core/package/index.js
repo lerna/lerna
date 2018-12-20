@@ -58,6 +58,10 @@ class Package {
         configurable: true,
         value: pkg,
       },
+      // safer than instanceof across module boundaries
+      __isLernaPackage: {
+        value: true,
+      },
       // immutable
       bin: {
         value:
@@ -205,4 +209,22 @@ class Package {
   }
 }
 
+function lazy(ref, dir = ".") {
+  if (typeof ref === "string") {
+    const location = path.resolve(path.basename(ref) === "package.json" ? path.dirname(ref) : ref);
+    const manifest = loadJsonFile.sync(path.join(location, "package.json"));
+
+    return new Package(manifest, location);
+  }
+
+  // don't use instanceof because it fails across nested module boundaries
+  if ("__isLernaPackage" in ref) {
+    return ref;
+  }
+
+  // assume ref is a json object
+  return new Package(ref, dir);
+}
+
 module.exports = Package;
+module.exports.lazy = lazy;
