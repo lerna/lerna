@@ -55,7 +55,7 @@ class PublishCommand extends Command {
       // TODO: remove in next major release
       this.logger.warn("deprecated", "Instead of --skip-npm, call `lerna version` directly");
 
-      return versionCommand(this._argv).then(() => false);
+      return versionCommand(this.argv).then(() => false);
     }
 
     if (this.options.canary) {
@@ -210,7 +210,7 @@ class PublishCommand extends Command {
     } else if (this.options.canary) {
       chain = chain.then(() => this.detectCanaryVersions());
     } else {
-      chain = chain.then(() => versionCommand(this._argv));
+      chain = chain.then(() => versionCommand(this.argv));
     }
 
     return chain;
