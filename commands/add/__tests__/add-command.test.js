@@ -2,24 +2,18 @@
 
 jest.mock("@lerna/bootstrap");
 
-const fs = require("fs-extra");
-const path = require("path");
-
 // mocked or stubbed modules
 const bootstrap = require("@lerna/bootstrap");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const pkgMatchers = require("@lerna-test/pkg-matchers");
 const { getPackages } = require("@lerna/project");
 
 // file under test
 const lernaAdd = require("@lerna-test/command-runner")(require("../command"));
 
 // assertion helpers
-expect.extend(pkgMatchers);
-
-const readPkg = (testDir, pkg) => fs.readJSON(path.join(testDir, pkg, "package.json"));
+expect.extend(require("@lerna-test/pkg-matchers"));
 
 describe("AddCommand", () => {
   // we already have enough tests of BootstrapCommand
@@ -65,21 +59,23 @@ describe("AddCommand", () => {
     const testDir = await initFixture("basic");
 
     await lernaAdd(testDir)("tiny-tarball");
+    const [pkg1, pkg2, pkg3, pkg4] = await getPackages(testDir);
 
-    expect(await readPkg(testDir, "packages/package-1")).toDependOn("tiny-tarball");
-    expect(await readPkg(testDir, "packages/package-2")).toDependOn("tiny-tarball");
-    expect(await readPkg(testDir, "packages/package-3")).toDependOn("tiny-tarball");
-    expect(await readPkg(testDir, "packages/package-4")).toDependOn("tiny-tarball");
+    expect(pkg1).toDependOn("tiny-tarball");
+    expect(pkg2).toDependOn("tiny-tarball");
+    expect(pkg3).toDependOn("tiny-tarball");
+    expect(pkg4).toDependOn("tiny-tarball");
   });
 
   it("should reference local dependencies", async () => {
     const testDir = await initFixture("basic");
 
     await lernaAdd(testDir)("@test/package-1");
+    const [, pkg2, pkg3, pkg4] = await getPackages(testDir);
 
-    expect(await readPkg(testDir, "packages/package-2")).toDependOn("@test/package-1");
-    expect(await readPkg(testDir, "packages/package-3")).toDependOn("@test/package-1");
-    expect(await readPkg(testDir, "packages/package-4")).toDependOn("@test/package-1");
+    expect(pkg2).toDependOn("@test/package-1");
+    expect(pkg3).toDependOn("@test/package-1");
+    expect(pkg4).toDependOn("@test/package-1");
   });
 
   it("should reference current caret range if unspecified", async () => {
@@ -87,25 +83,28 @@ describe("AddCommand", () => {
 
     await lernaAdd(testDir)("@test/package-1");
     await lernaAdd(testDir)("@test/package-2");
+    const [pkg1, pkg2] = await getPackages(testDir);
 
-    expect(await readPkg(testDir, "packages/package-1")).toDependOn("@test/package-2", "^2.0.0");
-    expect(await readPkg(testDir, "packages/package-2")).toDependOn("@test/package-1", "^1.0.0");
+    expect(pkg1).toDependOn("@test/package-2", "^2.0.0");
+    expect(pkg2).toDependOn("@test/package-1", "^1.0.0");
   });
 
   it("should reference specified range", async () => {
     const testDir = await initFixture("basic");
 
     await lernaAdd(testDir)("@test/package-1@~1");
+    const [, pkg2] = await getPackages(testDir);
 
-    expect(await readPkg(testDir, "packages/package-2")).toDependOn("@test/package-1", "~1");
+    expect(pkg2).toDependOn("@test/package-1", "~1");
   });
 
   it("should reference exact version if --exact", async () => {
     const testDir = await initFixture("basic");
 
     await lernaAdd(testDir)("@test/package-1", "--exact");
+    const [, pkg2] = await getPackages(testDir);
 
-    expect(await readPkg(testDir, "packages/package-2")).toDependOn("@test/package-1", "1.0.0", {
+    expect(pkg2).toDependOn("@test/package-1", "1.0.0", {
       exact: true,
     });
   });
@@ -114,8 +113,9 @@ describe("AddCommand", () => {
     const testDir = await initFixture("basic");
 
     await lernaAdd(testDir)("@test/package-1@file:packages/package-1");
+    const [, pkg2] = await getPackages(testDir);
 
-    expect(await readPkg(testDir, "packages/package-2")).toDependOn("@test/package-1", "file:../package-1");
+    expect(pkg2).toDependOn("@test/package-1", "file:../package-1");
   });
 
   it("adds local dep as file: specifier when existing relationships are file: specifiers", async () => {
@@ -126,60 +126,67 @@ describe("AddCommand", () => {
     await pkg3.serialize();
 
     await lernaAdd(testDir)("@test/package-1");
+    const [, pkg2] = await getPackages(testDir);
 
-    expect(await readPkg(testDir, "packages/package-2")).toDependOn("@test/package-1", "file:../package-1");
+    expect(pkg2).toDependOn("@test/package-1", "file:../package-1");
   });
 
   it("should add target package to devDependencies", async () => {
     const testDir = await initFixture("basic");
 
     await lernaAdd(testDir)("@test/package-1", "--dev");
+    const [, pkg2, pkg3, pkg4] = await getPackages(testDir);
 
-    expect(await readPkg(testDir, "packages/package-2")).toDevDependOn("@test/package-1");
-    expect(await readPkg(testDir, "packages/package-3")).toDevDependOn("@test/package-1");
-    expect(await readPkg(testDir, "packages/package-4")).toDevDependOn("@test/package-1");
+    expect(pkg2).toDevDependOn("@test/package-1");
+    expect(pkg3).toDevDependOn("@test/package-1");
+    expect(pkg4).toDevDependOn("@test/package-1");
   });
 
   it("should add target package to devDependencies with alias", async () => {
     const testDir = await initFixture("basic");
 
     await lernaAdd(testDir)("-D", "@test/package-1");
+    const [, pkg2] = await getPackages(testDir);
 
-    expect(await readPkg(testDir, "packages/package-2")).toDevDependOn("@test/package-1");
+    expect(pkg2).toDevDependOn("@test/package-1");
   });
 
   it("should not reference packages to themeselves", async () => {
     const testDir = await initFixture("basic");
 
     await lernaAdd(testDir)("@test/package-1");
+    const [pkg1] = await getPackages(testDir);
 
-    expect(await readPkg(testDir, "packages/package-1")).not.toDependOn("@test/package-1");
+    expect(pkg1).not.toDependOn("@test/package-1");
   });
 
   it("filters targets by optional directory globs", async () => {
     const testDir = await initFixture("basic");
 
     await lernaAdd(testDir)("@test/package-1", "packages/package-2");
+    const [, pkg2, pkg3, pkg4] = await getPackages(testDir);
 
-    expect(await readPkg(testDir, "packages/package-2")).toDependOn("@test/package-1");
-    expect(await readPkg(testDir, "packages/package-3")).not.toDevDependOn("@test/package-1");
-    expect(await readPkg(testDir, "packages/package-4")).not.toDevDependOn("@test/package-1");
+    expect(pkg2).toDependOn("@test/package-1");
+    expect(pkg3).not.toDevDependOn("@test/package-1");
+    expect(pkg4).not.toDevDependOn("@test/package-1");
   });
 
   it("should retain existing dependencies", async () => {
     const testDir = await initFixture("existing");
 
     await lernaAdd(testDir)("@test/package-2");
+    const [pkg1] = await getPackages(testDir);
 
-    expect(await readPkg(testDir, "packages/package-1")).toDependOn("pify");
+    expect(pkg1).toDependOn("pify");
   });
 
   it("should retain existing devDependencies", async () => {
     const testDir = await initFixture("existing");
 
     await lernaAdd(testDir)("@test/package-1", "--dev");
+    const [, pkg2] = await getPackages(testDir);
 
-    expect(await readPkg(testDir, "packages/package-2")).toDevDependOn("file-url");
+    expect(pkg2).toDevDependOn("file-url");
   });
 
   it("supports tag specifiers", async () => {
@@ -187,16 +194,18 @@ describe("AddCommand", () => {
 
     // npm dist-tags for outdated versions _should_ stay stable
     await lernaAdd(testDir)("npm@next-3");
+    const [pkg1] = await getPackages(testDir);
 
-    expect(await readPkg(testDir, "packages/package-1")).toDependOn("npm", "^3.10.10");
+    expect(pkg1).toDependOn("npm", "^3.10.10");
   });
 
   it("supports version specifiers (exact)", async () => {
     const testDir = await initFixture("basic");
 
     await lernaAdd(testDir)("tiny-tarball@1.0.0");
+    const [pkg1] = await getPackages(testDir);
 
-    expect(await readPkg(testDir, "packages/package-1")).toDependOn("tiny-tarball", "1.0.0", { exact: true });
+    expect(pkg1).toDependOn("tiny-tarball", "1.0.0", { exact: true });
   });
 
   it("accepts --registry option", async () => {
@@ -267,9 +276,10 @@ describe("AddCommand", () => {
     const testDir = await initFixture("basic");
 
     await lernaAdd(testDir)("@test/package-1", "--no-bootstrap");
+    const [, pkg2] = await getPackages(testDir);
 
     expect(bootstrap).not.toHaveBeenCalled();
-    expect(await readPkg(testDir, "packages/package-2")).toDependOn("@test/package-1", "^1.0.0");
+    expect(pkg2).toDependOn("@test/package-1", "^1.0.0");
   });
 
   it("should reset a dependency from caret to exact", async () => {
@@ -277,8 +287,9 @@ describe("AddCommand", () => {
 
     await lernaAdd(testDir)("@test/package-1");
     await lernaAdd(testDir)("@test/package-1", "--exact");
+    const [, pkg2] = await getPackages(testDir);
 
-    expect(await readPkg(testDir, "packages/package-2")).toDependOn("@test/package-1", "1.0.0", {
+    expect(pkg2).toDependOn("@test/package-1", "1.0.0", {
       exact: true,
     });
   });
