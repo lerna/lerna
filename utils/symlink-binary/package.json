@@ -33,7 +33,6 @@
     "@lerna/create-symlink": "file:../create-symlink",
     "@lerna/package": "file:../../core/package",
     "fs-extra": "^7.0.0",
-    "p-map": "^1.2.0",
-    "read-pkg": "^3.0.0"
+    "p-map": "^1.2.0"
   }
 }

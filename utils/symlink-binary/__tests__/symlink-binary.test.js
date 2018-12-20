@@ -1,21 +1,18 @@
 "use strict";
 
 const path = require("path");
-const readPkg = require("read-pkg");
-
 const Package = require("@lerna/package");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const pkgMatchers = require("@lerna-test/pkg-matchers");
 
 // file under test
 const symlinkBinary = require("..");
 
-expect.extend(pkgMatchers);
+expect.extend(require("@lerna-test/pkg-matchers"));
 
 describe("symlink-binary", () => {
-  it("should work with references", async () => {
+  it("should work with path references", async () => {
     const testDir = await initFixture("links");
     const srcPath = path.join(testDir, "packages/package-2");
     const dstPath = path.join(testDir, "packages/package-3");
@@ -25,16 +22,12 @@ describe("symlink-binary", () => {
     expect(dstPath).toHaveBinaryLinks("links-2");
   });
 
-  it("should work with packages", async () => {
+  it("should work with Package instances", async () => {
     const testDir = await initFixture("links");
     const srcPath = path.join(testDir, "packages/package-2");
     const dstPath = path.join(testDir, "packages/package-3");
-    const [srcJson, dstJson] = await Promise.all([
-      readPkg(srcPath, { normalize: false }),
-      readPkg(dstPath, { normalize: false }),
-    ]);
 
-    await symlinkBinary(new Package(srcJson, srcPath), new Package(dstJson, dstPath));
+    await symlinkBinary(Package.lazy(srcPath), Package.lazy(dstPath));
 
     expect(dstPath).toHaveBinaryLinks("links-2");
   });

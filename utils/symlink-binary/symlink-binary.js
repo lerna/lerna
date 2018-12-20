@@ -3,7 +3,6 @@
 const fs = require("fs-extra");
 const path = require("path");
 const pMap = require("p-map");
-const readPkg = require("read-pkg");
 
 const Package = require("@lerna/package");
 const createSymlink = require("@lerna/create-symlink");
@@ -17,7 +16,7 @@ module.exports = symlinkBinary;
  * @returns {Promise}
  */
 function symlinkBinary(srcPackageRef, destPackageRef) {
-  return Promise.all([resolvePackageRef(srcPackageRef), resolvePackageRef(destPackageRef)]).then(
+  return Promise.all([Package.lazy(srcPackageRef), Package.lazy(destPackageRef)]).then(
     ([srcPackage, destPackage]) => {
       const actions = Object.keys(srcPackage.bin).map(name => {
         const src = path.join(srcPackage.location, srcPackage.bin[name]);
@@ -43,13 +42,4 @@ function symlinkBinary(srcPackageRef, destPackageRef) {
       );
     }
   );
-}
-
-function resolvePackageRef(pkgRef) {
-  // don't use instanceof because it fails across nested module boundaries
-  if (typeof pkgRef !== "string" && pkgRef.location) {
-    return pkgRef;
-  }
-
-  return readPkg(pkgRef, { normalize: false }).then(json => new Package(json, pkgRef));
 }
