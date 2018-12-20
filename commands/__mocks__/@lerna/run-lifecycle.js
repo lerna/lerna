@@ -2,6 +2,7 @@
 
 const mockRunLifecycle = jest.fn(pkg => Promise.resolve(pkg));
 const mockCreateRunner = jest.fn(() => (pkg, stage) => {
+  // no longer the actual API, but approximates inner logic of default export
   if (pkg.scripts[stage]) {
     return mockRunLifecycle(pkg, stage);
   }

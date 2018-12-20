@@ -45,6 +45,12 @@ function runLifecycle(pkg, stage, _opts) {
   const dir = pkg.location;
   const config = {};
 
+  if (!pkg.scripts || !pkg.scripts[stage]) {
+    opts.log.silly("run-lifecycle", "No script for %j in %j, continuing", stage, pkg.name);
+
+    return Promise.resolve(pkg);
+  }
+
   // https://github.com/zkat/figgy-pudding/blob/7d68bd3/index.js#L42-L64
   for (const [key, val] of opts) {
     // omit falsy values and circular objects
@@ -107,11 +113,5 @@ function runLifecycle(pkg, stage, _opts) {
 function createRunner(commandOptions) {
   const cfg = npmConf(commandOptions).snapshot;
 
-  return (pkg, stage) => {
-    if (pkg.scripts && pkg.scripts[stage]) {
-      return runLifecycle(pkg, stage, cfg);
-    }
-
-    return Promise.resolve(pkg);
-  };
+  return (pkg, stage) => runLifecycle(pkg, stage, cfg);
 }

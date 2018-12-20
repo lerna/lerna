@@ -8,11 +8,39 @@ const npmConf = require("@lerna/npm-conf");
 const runLifecycle = require("../run-lifecycle");
 
 describe("runLifecycle()", () => {
+  it("skips packages without scripts", async () => {
+    const pkg = {
+      name: "no-scripts",
+    };
+
+    const result = await runLifecycle(pkg, "foo", new Map());
+
+    expect(result).toBe(pkg);
+    expect(runScript).not.toHaveBeenCalled();
+  });
+
+  it("skips packages without matching script", async () => {
+    const pkg = {
+      name: "missing-script",
+      scripts: {
+        test: "foo",
+      },
+    };
+
+    const result = await runLifecycle(pkg, "bar", new Map());
+
+    expect(result).toBe(pkg);
+    expect(runScript).not.toHaveBeenCalled();
+  });
+
   it("calls npm-lifecycle with prepared arguments", async () => {
     const pkg = {
       name: "test-name",
       version: "1.0.0-test",
       location: "test-location",
+      scripts: {
+        preversion: "test",
+      },
     };
     const stage = "preversion";
     const opts = npmConf({ "custom-cli-flag": true });
@@ -47,6 +75,9 @@ describe("runLifecycle()", () => {
       name: "dashed-name",
       version: "1.0.0-dashed",
       location: "dashed-location",
+      scripts: {
+        prepublish: "test",
+      },
     };
     const dir = pkg.location;
     const stage = "prepublish";
@@ -82,6 +113,9 @@ describe("runLifecycle()", () => {
       name: "circular-name",
       version: "1.0.0-circular",
       location: "circular-location",
+      scripts: {
+        prepack: "test",
+      },
     };
     const stage = "prepack";
     const opts = new Map();
