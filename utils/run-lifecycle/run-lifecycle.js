@@ -10,6 +10,7 @@ module.exports.createRunner = createRunner;
 
 const LifecycleConfig = figgyPudding(
   {
+    log: { default: log },
     // provide aliases for some dash-cased props
     "ignore-prepublish": {},
     ignorePrepublish: "ignore-prepublish",
@@ -25,16 +26,14 @@ const LifecycleConfig = figgyPudding(
     unsafePerm: "unsafe-perm",
   },
   {
-    other(key) {
-      // allow any other keys _except_ circular objects
-      return key !== "log" && key !== "logstream";
+    other() {
+      // open up the pudding
+      return true;
     },
   }
 );
 
 function runLifecycle(pkg, stage, _opts) {
-  log.silly("run-lifecycle", stage, pkg.name);
-
   // back-compat for @lerna/npm-conf instances
   // https://github.com/isaacs/proto-list/blob/27764cd/proto-list.js#L14
   if ("root" in _opts) {
@@ -48,8 +47,8 @@ function runLifecycle(pkg, stage, _opts) {
 
   // https://github.com/zkat/figgy-pudding/blob/7d68bd3/index.js#L42-L64
   for (const [key, val] of opts) {
-    // omit falsy values
-    if (val != null) {
+    // omit falsy values and circular objects
+    if (val != null && key !== "log" && key !== "logstream") {
       config[key] = val;
     }
   }
@@ -70,11 +69,13 @@ function runLifecycle(pkg, stage, _opts) {
     unsafePerm,
   } = opts;
 
+  opts.log.silly("run-lifecycle", stage, pkg.name);
+
   return runScript(pkg, stage, dir, {
     config,
     dir,
     failOk: false,
-    log,
+    log: opts.log,
     ignorePrepublish,
     ignoreScripts,
     nodeOptions,

@@ -84,7 +84,7 @@ describe("runLifecycle()", () => {
       location: "circular-location",
     };
     const stage = "prepack";
-    const opts = new Map([["logstream", "SKIPPED"], ["log", "SKIPPED"]]);
+    const opts = new Map();
 
     await runLifecycle(pkg, stage, opts);
 
