@@ -83,7 +83,6 @@ class PublishCommand extends Command {
 
     this.conf = npmConf({
       lernaCommand: "publish",
-      log: this.logger,
       npmSession,
       npmVersion: userAgent,
       registry: this.options.registry,
