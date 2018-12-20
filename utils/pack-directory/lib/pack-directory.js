@@ -2,6 +2,7 @@
 
 const figgyPudding = require("figgy-pudding");
 const packlist = require("npm-packlist");
+const log = require("libnpm/log");
 const tar = require("tar");
 const tempWrite = require("temp-write");
 const getPacked = require("@lerna/get-packed");
@@ -10,6 +11,7 @@ const runLifecycle = require("@lerna/run-lifecycle");
 module.exports = packDirectory;
 
 const PackConfig = figgyPudding({
+  log: { default: log },
   "lerna-command": { default: "pack" },
   lernaCommand: "lerna-command",
   "ignore-prepublish": {},
@@ -25,6 +27,8 @@ function packDirectory(pkg, _opts) {
         pkg.name.substr(1).replace(/\//g, "-")
       : pkg.name;
   const outputFileName = `${name}-${pkg.version}.tgz`;
+
+  opts.log.verbose("packDirectory", dir);
 
   let chain = Promise.resolve();
 

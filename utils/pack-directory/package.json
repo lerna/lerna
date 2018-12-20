@@ -29,6 +29,7 @@
     "@lerna/get-packed": "file:../get-packed",
     "@lerna/run-lifecycle": "file:../run-lifecycle",
     "figgy-pudding": "^3.5.1",
+    "libnpm": "^2.0.1",
     "npm-packlist": "^1.1.12",
     "tar": "^4.4.8",
     "temp-write": "^3.4.0"
