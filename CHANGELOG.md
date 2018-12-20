@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.7.1](https://github.com/lerna/lerna/compare/v3.7.0...v3.7.1) (2018-12-20)
+
+
+### Bug Fixes
+
+* **bootstrap:** Pulse progress bar during execution ([b38a151](https://github.com/lerna/lerna/commit/b38a151))
+* **clean:** Pulse progress bar during execution ([f1202de](https://github.com/lerna/lerna/commit/f1202de))
+* **command:** Enable progress from top-level log object ([95e88f0](https://github.com/lerna/lerna/commit/95e88f0))
+* **import:** Pulse progress bar during execution ([b552e22](https://github.com/lerna/lerna/commit/b552e22))
+* **npm-dist-tag:** Accept opts.log, defaulting to libnpm/log ([97edc7e](https://github.com/lerna/lerna/commit/97edc7e))
+* **npm-publish:** Accept opts.log, defaulting to libnpm/log ([a1d61f6](https://github.com/lerna/lerna/commit/a1d61f6))
+* **pack-directory:** Accept opts.log, defaulting to libnpm/log ([d099d13](https://github.com/lerna/lerna/commit/d099d13))
+* **publish:** Do not pass this.logger into conf, it does not respect log.level ([9bcd503](https://github.com/lerna/lerna/commit/9bcd503))
+* **publish:** Pulse progress bar during execution ([49b8771](https://github.com/lerna/lerna/commit/49b8771))
+* Add pulse-till-done utility ([3359c63](https://github.com/lerna/lerna/commit/3359c63))
+* **run-lifecycle:** Accept opts.log, defaulting to libnpm/log ([dde588a](https://github.com/lerna/lerna/commit/dde588a))
+* **run-lifecycle:** Do not execute on packages that lack the target script, avoiding spurious logs ([c0ad316](https://github.com/lerna/lerna/commit/c0ad316))
+
+
+
+
+
 # [3.7.0](https://github.com/lerna/lerna/compare/v3.6.0...v3.7.0) (2018-12-19)
 
 
