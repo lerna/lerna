@@ -12,6 +12,7 @@ const PublishConfig = figgyPudding(
   {
     "dry-run": { default: false },
     dryRun: "dry-run",
+    log: { default: log },
     "project-scope": {},
     projectScope: "project-scope",
     tag: { default: "latest" },
@@ -25,12 +26,12 @@ const PublishConfig = figgyPudding(
 );
 
 function npmPublish(pkg, tag, tarFilePath, _opts) {
-  log.verbose("publish", pkg.name);
-
   const opts = PublishConfig(_opts, {
     projectScope: pkg.name,
     tag,
   });
+
+  opts.log.verbose("publish", pkg.name);
 
   let chain = Promise.resolve();
 
