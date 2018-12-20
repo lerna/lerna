@@ -22,7 +22,7 @@ describe("symlink-binary", () => {
 
     await symlinkBinary(srcPath, dstPath);
 
-    expect(dstPath).toHaveBinaryLink("links-2");
+    expect(dstPath).toHaveBinaryLinks("links-2");
   });
 
   it("should work with packages", async () => {
@@ -36,7 +36,7 @@ describe("symlink-binary", () => {
 
     await symlinkBinary(new Package(srcJson, srcPath), new Package(dstJson, dstPath));
 
-    expect(dstPath).toHaveBinaryLink("links-2");
+    expect(dstPath).toHaveBinaryLinks("links-2");
   });
 
   it("should skip missing bin config", async () => {
@@ -46,7 +46,7 @@ describe("symlink-binary", () => {
 
     await symlinkBinary(srcPath, dstPath);
 
-    expect(dstPath).toHaveBinaryLink([]);
+    expect(dstPath).not.toHaveBinaryLinks();
   });
 
   it("should skip missing bin files", async () => {
@@ -56,8 +56,8 @@ describe("symlink-binary", () => {
 
     await symlinkBinary(srcPath, dstPath);
 
-    expect(srcPath).toHaveExecutable(["cli1.js", "cli2.js"]);
-    expect(dstPath).toHaveBinaryLink(["links3cli1", "links3cli2"]);
+    expect(srcPath).toHaveExecutables("cli1.js", "cli2.js");
+    expect(dstPath).toHaveBinaryLinks("links3cli1", "links3cli2");
   });
 
   it("should preserve previous bin entries", async () => {
@@ -69,6 +69,6 @@ describe("symlink-binary", () => {
     await symlinkBinary(pkg2Path, destPath);
     await symlinkBinary(pkg3Path, destPath);
 
-    expect(destPath).toHaveBinaryLink(["links-2", "links3cli1", "links3cli2"]);
+    expect(destPath).toHaveBinaryLinks("links-2", "links3cli1", "links3cli2");
   });
 });
