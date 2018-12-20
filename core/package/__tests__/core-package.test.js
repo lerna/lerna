@@ -211,9 +211,9 @@ describe("Package", () => {
       loadJsonFile.mockImplementationOnce(() => Promise.resolve({ name: "ignored", mutated: true }));
 
       const pkg = factory({ name: "refresh" });
+      const result = await pkg.refresh();
 
-      await pkg.refresh();
-
+      expect(result).toBe(pkg);
       // a package's name never changes
       expect(pkg.name).toBe("refresh");
       expect(pkg.get("mutated")).toBe(true);
@@ -226,9 +226,9 @@ describe("Package", () => {
       writePkg.mockImplementation(() => Promise.resolve());
 
       const pkg = factory({ name: "serialize-me" });
+      const result = await pkg.set("woo", "hoo").serialize();
 
-      await pkg.set("woo", "hoo").serialize();
-
+      expect(result).toBe(pkg);
       expect(writePkg).toHaveBeenLastCalledWith(
         pkg.manifestLocation,
         expect.objectContaining({

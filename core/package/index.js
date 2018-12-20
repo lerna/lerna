@@ -156,7 +156,7 @@ class Package {
    * @returns {Promise} resolves when write finished
    */
   serialize() {
-    return writePkg(this.manifestLocation, this[PKG]);
+    return writePkg(this.manifestLocation, this[PKG]).then(() => this);
   }
 
   /**
