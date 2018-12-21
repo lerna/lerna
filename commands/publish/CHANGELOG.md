@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.7.2](https://github.com/lerna/lerna/compare/v3.7.1...v3.7.2) (2018-12-21)
+
+
+### Bug Fixes
+
+* **pack-directory:** Accept lazy Package, passing directory as second parameter ([c6819c0](https://github.com/lerna/lerna/commit/c6819c0))
+* **publish:** Re-order --git-reset flag in options ([0653af9](https://github.com/lerna/lerna/commit/0653af9))
+* **publish:** Remove unused --npm-client option ([4e7eaef](https://github.com/lerna/lerna/commit/4e7eaef))
+
+
+
+
+
 ## [3.7.1](https://github.com/lerna/lerna/compare/v3.7.0...v3.7.1) (2018-12-20)
 
 

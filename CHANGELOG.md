@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.7.2](https://github.com/lerna/lerna/compare/v3.7.1...v3.7.2) (2018-12-21)
+
+
+### Bug Fixes
+
+* **pack-directory:** Accept lazy Package, passing directory as second parameter ([c6819c0](https://github.com/lerna/lerna/commit/c6819c0))
+* **package:** Add Package.lazy() helper ([4aa9d37](https://github.com/lerna/lerna/commit/4aa9d37))
+* **package:** Chain self from serialize() method for parity with refresh() ([98c812c](https://github.com/lerna/lerna/commit/98c812c))
+* **publish:** Re-order --git-reset flag in options ([0653af9](https://github.com/lerna/lerna/commit/0653af9))
+* **publish:** Remove unused --npm-client option ([4e7eaef](https://github.com/lerna/lerna/commit/4e7eaef))
+* **symlink-binary:** Use Package.lazy() instead of private resolver ([83fe3ef](https://github.com/lerna/lerna/commit/83fe3ef))
+* **version:** Prevent clobbering composed --yes option ([f3816be](https://github.com/lerna/lerna/commit/f3816be))
+
+
+
+
+
 ## [3.7.1](https://github.com/lerna/lerna/compare/v3.7.0...v3.7.1) (2018-12-20)
 
 
