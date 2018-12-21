@@ -1,5 +1,8 @@
 "use strict";
 
+// actually _run_ the lifecycles, gorrammit
+jest.unmock("@lerna/run-lifecycle");
+
 const fs = require("fs-extra");
 const path = require("path");
 const normalizePath = require("normalize-path");
@@ -76,7 +79,9 @@ describe("pack-directory", () => {
     const pkgs = await getPackages(cwd);
 
     // choose first and last package since the middle two are repetitive
-    const [head, tail] = await Promise.all([pkgs.shift(), pkgs.pop()].map(pkg => packDirectory(pkg, conf)));
+    const [head, tail] = await Promise.all(
+      [pkgs.shift(), pkgs.pop()].map(pkg => packDirectory(pkg, pkg.location, conf))
+    );
 
     // the generated tarball is _not_ moved into the package directory
     expect(fs.move).not.toHaveBeenCalled();
@@ -145,5 +150,61 @@ Object {
 `);
     expect(tail.integrity.toString()).toMatch(INTEGRITY_PATTERN);
     expect(tail.shasum).toMatch(SHASUM_PATTERN);
+
+    const lazy = await packDirectory(
+      {
+        name: "package-3",
+        // scripts are only read once, effectively ignoring pkg.refresh()
+        scripts: {
+          prepublish: "exit 1",
+          prepublishOnly: "echo badgerbadgerbadgerbadger > index.js",
+        },
+        // pkg.version is "live", thus this custom value is overwritten by pkg.refresh()
+        version: "1.2.3",
+      },
+      path.join(cwd, "package-3"),
+      Object.assign({}, conf, {
+        "ignore-prepublish": true,
+        "lerna-command": "publish",
+      })
+    );
+
+    expect(lazy).toMatchInlineSnapshot(`
+Object {
+  "bundled": Array [],
+  "entryCount": 4,
+  "filename": "package-3-1.0.0.tgz",
+  "files": Array [
+    {
+      "mode": "MODE",
+      "path": "package.json",
+      "size": 385,
+    },
+    {
+      "mode": "MODE",
+      "path": "cli1.js",
+      "size": 108,
+    },
+    {
+      "mode": "MODE",
+      "path": "cli2.js",
+      "size": 108,
+    },
+    {
+      "mode": "MODE",
+      "path": "index.js",
+      "size": 25,
+    },
+  ],
+  "id": "package-3@1.0.0",
+  "integrity": "INTEGRITY",
+  "name": "package-3",
+  "shasum": "SHASUM",
+  "size": 413,
+  "tarFilePath": "__TAR_DIR__/package-3-1.0.0.tgz",
+  "unpackedSize": 626,
+  "version": "1.0.0",
+}
+`);
   });
 });

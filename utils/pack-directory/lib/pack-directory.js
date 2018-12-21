@@ -1,11 +1,13 @@
 "use strict";
 
+const path = require("path");
 const figgyPudding = require("figgy-pudding");
 const packlist = require("npm-packlist");
 const log = require("libnpm/log");
 const tar = require("tar");
 const tempWrite = require("temp-write");
 const getPacked = require("@lerna/get-packed");
+const Package = require("@lerna/package");
 const runLifecycle = require("@lerna/run-lifecycle");
 
 module.exports = packDirectory;
@@ -18,21 +20,15 @@ const PackConfig = figgyPudding({
   ignorePrepublish: "ignore-prepublish",
 });
 
-function packDirectory(pkg, _opts) {
+function packDirectory(_pkg, dir, _opts) {
+  const pkg = Package.lazy(_pkg, dir);
   const opts = PackConfig(_opts);
-  const dir = pkg.location;
-  const name =
-    pkg.name[0] === "@"
-      ? // scoped packages get special treatment
-        pkg.name.substr(1).replace(/\//g, "-")
-      : pkg.name;
-  const outputFileName = `${name}-${pkg.version}.tgz`;
 
-  opts.log.verbose("packDirectory", dir);
+  opts.log.verbose("pack-directory", path.relative(".", dir));
 
   let chain = Promise.resolve();
 
-  if (opts.ignorePrepublish !== false) {
+  if (opts.ignorePrepublish !== true) {
     chain = chain.then(() => runLifecycle(pkg, "prepublish", opts));
   }
 
@@ -64,7 +60,7 @@ function packDirectory(pkg, _opts) {
       files.map(f => `./${f}`)
     )
   );
-  chain = chain.then(stream => tempWrite(stream, outputFileName));
+  chain = chain.then(stream => tempWrite(stream, getTarballName(pkg)));
   chain = chain.then(tarFilePath =>
     getPacked(pkg, tarFilePath).then(packed =>
       Promise.resolve()
@@ -74,4 +70,14 @@ function packDirectory(pkg, _opts) {
   );
 
   return chain;
+}
+
+function getTarballName(pkg) {
+  const name =
+    pkg.name[0] === "@"
+      ? // scoped packages get special treatment
+        pkg.name.substr(1).replace(/\//g, "-")
+      : pkg.name;
+
+  return `${name}-${pkg.version}.tgz`;
 }

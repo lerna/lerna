@@ -519,7 +519,7 @@ class PublishCommand extends Command {
         this.options.requireScripts && (pkg => this.execScript(pkg, "prepublish")),
 
         pkg =>
-          pulseTillDone(packDirectory(pkg, opts)).then(packed => {
+          pulseTillDone(packDirectory(pkg, pkg.location, opts)).then(packed => {
             tracker.completeWork(1);
 
             // store metadata for use in this.publishPacked()
@@ -573,6 +573,7 @@ class PublishCommand extends Command {
 
     chain = chain.then(() => runParallelBatches(this.batchedPackages, this.concurrency, mapper));
 
+    // we do not run root "publish" lifecycle because it has a great chance of being cyclical
     chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "postpublish"));
 
     return pFinally(chain, () => tracker.finish());

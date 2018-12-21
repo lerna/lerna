@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@lerna/get-packed": "file:../get-packed",
+    "@lerna/package": "file:../../core/package",
     "@lerna/run-lifecycle": "file:../run-lifecycle",
     "figgy-pudding": "^3.5.1",
     "libnpm": "^2.0.1",
