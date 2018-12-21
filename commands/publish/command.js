@@ -51,16 +51,28 @@ exports.builder = yargs => {
       type: "boolean",
       defaultDescription: "true",
     },
-    y: {
-      describe: "Skip all confirmation prompts.",
-      alias: "yes",
-      type: "boolean",
-    },
+    // y: {
+    //   describe: "Skip all confirmation prompts.",
+    //   alias: "yes",
+    //   type: "boolean",
+    // },
   };
 
-  return composeVersionOptions(yargs)
-    .options(opts)
-    .group(Object.keys(opts), "Command Options:")
+  composeVersionOptions(yargs);
+
+  yargs.options(opts);
+
+  // "unhide" duplicate options
+  const { hiddenOptions } = yargs.getOptions();
+  const sharedKeys = ["preid", "y"];
+
+  for (const sharedKey of sharedKeys) {
+    hiddenOptions.splice(hiddenOptions.findIndex(k => k === sharedKey), 1);
+  }
+
+  yargs.group(Object.keys(opts).concat(sharedKeys), "Command Options:");
+
+  return yargs
     .option("verify-registry", {
       // TODO: remove in next major release
       hidden: true,
