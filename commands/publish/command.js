@@ -37,6 +37,11 @@ exports.builder = yargs => {
       describe: "Execute ./scripts/prepublish.js and ./scripts/postpublish.js, relative to package root.",
       type: "boolean",
     },
+    "git-reset": {
+      describe: "Reset the git working tree.\nPass --no-git-reset to disable.",
+      type: "boolean",
+      defaultDescription: "true",
+    },
     "temp-tag": {
       describe: "Create a temporary tag while publishing.",
       type: "boolean",
@@ -50,11 +55,6 @@ exports.builder = yargs => {
       describe: "Skip all confirmation prompts.",
       alias: "yes",
       type: "boolean",
-    },
-    "git-reset": {
-      describe: "Reset the git working tree.\nPass --no-git-reset to disable.",
-      type: "boolean",
-      defaultDescription: "true",
     },
   };
 
