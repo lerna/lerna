@@ -7,7 +7,7 @@ module.exports = describeRef;
 module.exports.parse = parse;
 module.exports.sync = sync;
 
-function getArgs(options, commandOptions = {}) {
+function getArgs(options, includeMergedTags) {
   let args = [
     "describe",
     // fallback to short sha if no tags located
@@ -24,7 +24,7 @@ function getArgs(options, commandOptions = {}) {
     args.push("--match", options.match);
   }
 
-  if (commandOptions.includeMergedTags) {
+  if (includeMergedTags) {
     // we want to consider all tags, also from merged branches
     args = args.filter(arg => arg !== "--first-parent");
   }
@@ -32,8 +32,8 @@ function getArgs(options, commandOptions = {}) {
   return args;
 }
 
-function describeRef(options = {}, commandOptions = {}) {
-  const promise = childProcess.exec("git", getArgs(options, commandOptions), options);
+function describeRef(options = {}, includeMergedTags) {
+  const promise = childProcess.exec("git", getArgs(options, includeMergedTags), options);
 
   return promise.then(({ stdout }) => {
     const result = parse(stdout, options);
@@ -45,8 +45,8 @@ function describeRef(options = {}, commandOptions = {}) {
   });
 }
 
-function sync(options = {}, commandOptions = {}) {
-  const stdout = childProcess.execSync("git", getArgs(options, commandOptions), options);
+function sync(options = {}, includeMergedTags) {
+  const stdout = childProcess.execSync("git", getArgs(options, includeMergedTags), options);
   const result = parse(stdout, options);
 
   // only called by collect-updates with no matcher

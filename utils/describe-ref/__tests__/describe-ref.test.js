@@ -42,9 +42,10 @@ describe("describeRef()", () => {
     );
   });
 
-  it("accepts commandOptions.include-merged-tags", async () => {
-    const commandOptions = { "include-merged-tags": true, includeMergedTags: true };
-    await describeRef({}, commandOptions);
+  it("accepts includeMergedTags argument", async () => {
+    const includeMergedTags = true;
+
+    await describeRef({}, includeMergedTags);
 
     const newArgs = [...DEFAULT_ARGS];
     newArgs.pop();

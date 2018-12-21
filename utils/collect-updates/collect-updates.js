@@ -21,7 +21,7 @@ function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions
 
   if (hasTags(execOpts)) {
     // describe the last annotated tag in the current branch
-    const { sha, refCount, lastTagName } = describeRef.sync(execOpts, commandOptions);
+    const { sha, refCount, lastTagName } = describeRef.sync(execOpts, commandOptions.includeMergedTags);
     // TODO: warn about dirty tree?
 
     if (refCount === "0" && forced.size === 0) {

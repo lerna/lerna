@@ -288,6 +288,7 @@ class PublishCommand extends Command {
       tagVersionPrefix = "v",
       ignoreChanges,
       forcePublish,
+      includeMergedTags,
     } = this.options;
     // "prerelease" and "prepatch" are identical, for our purposes
     const release = bump.startsWith("pre") ? bump.replace("release", "patch") : `pre${bump}`;
@@ -304,6 +305,7 @@ class PublishCommand extends Command {
         canary: true,
         ignoreChanges,
         forcePublish,
+        includeMergedTags,
       })
     );
 
@@ -323,6 +325,7 @@ class PublishCommand extends Command {
           describeRef({
             match: `${pkg.name}@*`,
             cwd: this.execOpts.cwd,
+            includeMergedTags,
           })
             .then(({ lastVersion = pkg.version, refCount, sha }) =>
               // an unpublished package will have no reachable git tag
@@ -340,6 +343,7 @@ class PublishCommand extends Command {
         describeRef({
           match: `${tagVersionPrefix}*.*.*`,
           cwd: this.execOpts.cwd,
+          includeMergedTags,
         })
           .then(makeVersion)
           .then(version => updates.map(({ pkg }) => [pkg.name, version]))

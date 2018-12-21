@@ -16,6 +16,8 @@ const options = {
   cwd: process.cwd(),
   // pass a glob to match tag name, e.g. "v*.*.*"
   match: undefined,
+  // if true, omit --first-parent option
+  includeMergedTags: false,
 };
 
 const { lastTagName, lastVersion, refCount, sha, isDirty } = describe.sync(options);
