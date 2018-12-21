@@ -50,6 +50,7 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 `lerna publish` supports all of the options provided by [`lerna version`](https://github.com/lerna/lerna/tree/master/commands/version#options) in addition to the following:
 
 - [`--canary`](#--canary)
+- [`--contents`](#--contents)
 - [`--git-reset`](#--git-reset)
 - [`--npm-tag <dist-tag>`](#--npm-tag-dist-tag)
 - [`--no-verify-access`](#--no-verify-access)
@@ -76,6 +77,19 @@ lerna publish --canary preminor
 When run with this flag, `lerna publish` publishes packages in a more granular way (per commit). Before publishing to npm, it creates the new `version` tag by taking the current `version`, bumping it to the next _minor_ version, adding the provided meta suffix (defaults to `alpha`) and appending the current git sha (ex: `1.0.0` becomes `1.1.0-alpha.81e3b443`).
 
 > The intended use case for this flag is a per commit level release or nightly release.
+
+### `--contents`
+
+Subdirectory to publish. Must apply to ALL packages, and MUST contain a package.json file.
+Package lifecycles will still be run in the original leaf directory.
+You should probably use one of those lifecycles (`prepare`, `prepublishOnly`, or `prepack`) to _create_ the subdirectory and whatnot.
+
+If you're into unnecessarily complicated publishing, this will give you joy.
+
+```sh
+lerna publish --contents dist
+# publish the "dist" subfolder of every Lerna-managed leaf package
+```
 
 ### `--git-reset`
 

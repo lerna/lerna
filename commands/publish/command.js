@@ -23,6 +23,12 @@ exports.builder = yargs => {
       requiresArg: true,
       defaultDescription: "alpha",
     },
+    contents: {
+      describe: "Subdirectory to publish. Must apply to ALL packages.",
+      type: "string",
+      requiresArg: true,
+      defaultDescription: ".",
+    },
     "npm-tag": {
       describe: "Publish packages with the specified npm dist-tag",
       type: "string",

@@ -366,6 +366,22 @@ Set {
     });
   });
 
+  describe("--contents", () => {
+    it("allows you to do fancy angular crap", async () => {
+      const cwd = await initFixture("lifecycle");
+
+      await lernaPublish(cwd)("--contents", "dist");
+
+      for (const name of ["package-1", "package-2"]) {
+        expect(packDirectory).toHaveBeenCalledWith(
+          expect.objectContaining({ name }),
+          expect.stringContaining(`packages/${name}/dist`),
+          expect.any(Object)
+        );
+      }
+    });
+  });
+
   describe("in a cyclical repo", () => {
     it("should throw an error with --reject-cycles", async () => {
       expect.assertions(1);

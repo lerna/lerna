@@ -513,13 +513,16 @@ class PublishCommand extends Command {
     chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "prepublishOnly"));
     chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "prepack"));
 
+    const { contents } = this.options;
+    const getLocation = contents ? pkg => path.resolve(pkg.location, contents) : pkg => pkg.location;
+
     const opts = this.conf.snapshot;
     const mapper = pPipe(
       [
         this.options.requireScripts && (pkg => this.execScript(pkg, "prepublish")),
 
         pkg =>
-          pulseTillDone(packDirectory(pkg, pkg.location, opts)).then(packed => {
+          pulseTillDone(packDirectory(pkg, getLocation(pkg), opts)).then(packed => {
             tracker.completeWork(1);
 
             // store metadata for use in this.publishPacked()
