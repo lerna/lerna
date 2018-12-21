@@ -50,7 +50,6 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 `lerna publish` supports all of the options provided by [`lerna version`](https://github.com/lerna/lerna/tree/master/commands/version#options) in addition to the following:
 
 * [`--canary`](#--canary)
-* [`--npm-client <client>`](#--npm-client-client)
 * [`--git-reset`](#--git-reset)
 * [`--npm-tag <dist-tag>`](#--npm-tag-dist-tag)
 * [`--no-verify-access`](#--no-verify-access)
@@ -88,27 +87,6 @@ The default `--git-reset` is `true`.
 
 ```sh
 lerna publish --git-reset
-```
-
-### `--npm-client <client>`
-
-Must be an executable that knows how to publish packages to an npm registry.
-The default `--npm-client` is `npm`.
-
-```sh
-lerna publish --npm-client yarn
-```
-
-May also be configured in `lerna.json`:
-
-```json
-{
-  "command": {
-    "publish": {
-      "npmClient": "yarn"
-    }
-  }
-}
 ```
 
 ### `--npm-tag <dist-tag>`

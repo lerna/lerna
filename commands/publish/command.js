@@ -28,12 +28,6 @@ exports.builder = yargs => {
       type: "string",
       requiresArg: true,
     },
-    "npm-client": {
-      defaultDescription: "npm",
-      describe: "Executable used to publish dependencies (npm, yarn, pnpm, ...)",
-      type: "string",
-      requiresArg: true,
-    },
     registry: {
       describe: "Use the specified registry for all npm client operations.",
       type: "string",
