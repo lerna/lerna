@@ -587,6 +587,7 @@ class PublishCommand extends Command {
     const tracker = this.logger.newItem("npmUpdateAsLatest");
 
     tracker.addWork(this.packagesToPublish.length);
+    tracker.showProgress();
 
     let chain = Promise.resolve();
 
@@ -598,7 +599,7 @@ class PublishCommand extends Command {
         .then(() => pulseTillDone(npmDistTag.remove(spec, "lerna-temp", opts)))
         .then(() => pulseTillDone(npmDistTag.add(spec, distTag, opts)))
         .then(() => {
-          tracker.info("dist-tag", "%s@%s => %j", pkg.name, pkg.version, distTag);
+          tracker.success("dist-tag", "%s@%s => %j", pkg.name, pkg.version, distTag);
           tracker.completeWork(1);
 
           return pkg;
