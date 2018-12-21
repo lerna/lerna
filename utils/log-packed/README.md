@@ -7,10 +7,10 @@ Extracted from the [npm source](https://github.com/npm/cli/blob/4f801d8a476f7ca5
 ## Usage
 
 ```js
-const execa = require('execa');
-const logPacked = require('@lerna/log-packed');
+const execa = require("execa");
+const logPacked = require("@lerna/log-packed");
 
-execa('npm', ['pack', '--json']).then(result => {
+execa("npm", ["pack", "--json"]).then(result => {
   const tarballs = JSON.parse(result.stdout);
   tarballs.forEach(logPacked);
 });

@@ -13,6 +13,7 @@ A minimum-viable configuration only needs a `version` property; the following ex
   "version": "1.2.3"
 }
 ```
+
 ```json
 {
   "name": "my-monorepo",

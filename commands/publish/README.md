@@ -12,11 +12,11 @@ lerna publish from-package # explicitly publish packages where the latest versio
 
 When run, this command does one of the following things:
 
-* Publish packages updated since the last release (calling [`lerna version`](https://github.com/lerna/lerna/tree/master/commands/version#readme) behind the scenes).
-  * This is the legacy behavior of lerna 2.x
-* Publish packages tagged in the current commit (`from-git`).
-* Publish packages in the latest commit where the version is not present in the registry (`from-package`).
-* Publish an unversioned "canary" release of packages (and their dependents) updated in the previous commit.
+- Publish packages updated since the last release (calling [`lerna version`](https://github.com/lerna/lerna/tree/master/commands/version#readme) behind the scenes).
+  - This is the legacy behavior of lerna 2.x
+- Publish packages tagged in the current commit (`from-git`).
+- Publish packages in the latest commit where the version is not present in the registry (`from-package`).
+- Publish an unversioned "canary" release of packages (and their dependents) updated in the previous commit.
 
 > Lerna will never publish packages which are marked as private (`"private": true` in the `package.json`).
 
@@ -49,13 +49,13 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 
 `lerna publish` supports all of the options provided by [`lerna version`](https://github.com/lerna/lerna/tree/master/commands/version#options) in addition to the following:
 
-* [`--canary`](#--canary)
-* [`--git-reset`](#--git-reset)
-* [`--npm-tag <dist-tag>`](#--npm-tag-dist-tag)
-* [`--no-verify-access`](#--no-verify-access)
-* [`--registry <url>`](#--registry-url)
-* [`--temp-tag`](#--temp-tag)
-* [`--yes`](#--yes)
+- [`--canary`](#--canary)
+- [`--git-reset`](#--git-reset)
+- [`--npm-tag <dist-tag>`](#--npm-tag-dist-tag)
+- [`--no-verify-access`](#--no-verify-access)
+- [`--registry <url>`](#--registry-url)
+- [`--temp-tag`](#--temp-tag)
+- [`--yes`](#--yes)
 
 ### `--canary`
 

@@ -9,7 +9,7 @@ This is an internal package for [Lerna](https://github.com/lerna/lerna/#readme),
 ### `listable.format()`
 
 ```js
-const listable = require('@lerna/listable');
+const listable = require("@lerna/listable");
 
 const { text, count } = listable.format(packages, options);
 ```
@@ -17,7 +17,7 @@ const { text, count } = listable.format(packages, options);
 ### `listable.options()`
 
 ```js
-const listable = require('@lerna/listable');
+const listable = require("@lerna/listable");
 
 exports.builder = yargs => {
   listable.options(yargs);

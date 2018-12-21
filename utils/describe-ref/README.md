@@ -5,7 +5,7 @@
 ## Usage
 
 ```js
-const describe = require('@lerna/describe-ref');
+const describe = require("@lerna/describe-ref");
 
 (async () => {
   const { lastTagName, lastVersion, refCount, sha, isDirty } = await describe();
@@ -18,13 +18,7 @@ const options = {
   match: undefined,
 };
 
-const {
-  lastTagName,
-  lastVersion,
-  refCount,
-  sha,
-  isDirty,
-} = describe.sync(options);
+const { lastTagName, lastVersion, refCount, sha, isDirty } = describe.sync(options);
 
 const result = describe.parse("v1.0.0-5-gdeadbeef");
 // { lastTagName, lastVersion, refCount, sha, isDirty }

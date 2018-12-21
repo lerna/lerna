@@ -36,23 +36,23 @@ If you have any packages with a prerelease version number (e.g. `2.0.0-beta.3`) 
 
 ## Options
 
-* [`--allow-branch`](#--allow-branch-glob)
-* [`--amend`](#--amend)
-* [`--commit-hooks`](#--commit-hooks)
-* [`--conventional-commits`](#--conventional-commits)
-* [`--changelog-preset`](#--changelog-preset)
-* [`--exact`](#--exact)
-* [`--force-publish`](#--force-publish)
-* [`--ignore-changes`](#--ignore-changes)
-* [`--git-remote`](#--git-remote-name)
-* [`--git-tag-version`](#--git-tag-version)
-* [`--message`](#--message-msg)
-* [`--preid`](#--preid)
-* [`--push`](#--push)
-* [`--sign-git-commit`](#--sign-git-commit)
-* [`--sign-git-tag`](#--sign-git-tag)
-* [`--yes`](#--yes)
-* [`--include-merged-tags`](#--include-merged-tags)
+- [`--allow-branch`](#--allow-branch-glob)
+- [`--amend`](#--amend)
+- [`--commit-hooks`](#--commit-hooks)
+- [`--conventional-commits`](#--conventional-commits)
+- [`--changelog-preset`](#--changelog-preset)
+- [`--exact`](#--exact)
+- [`--force-publish`](#--force-publish)
+- [`--ignore-changes`](#--ignore-changes)
+- [`--git-remote`](#--git-remote-name)
+- [`--git-tag-version`](#--git-tag-version)
+- [`--message`](#--message-msg)
+- [`--preid`](#--preid)
+- [`--push`](#--push)
+- [`--sign-git-commit`](#--sign-git-commit)
+- [`--sign-git-tag`](#--sign-git-tag)
+- [`--yes`](#--yes)
+- [`--include-merged-tags`](#--include-merged-tags)
 
 ### `--allow-branch <glob>`
 
@@ -168,17 +168,14 @@ This option is best specified as root `lerna.json` configuration, both to avoid 
 
 ```json
 {
-  "ignoreChanges": [
-    "**/__fixtures__/**",
-    "**/__tests__/**",
-    "**/*.md"
-  ]
+  "ignoreChanges": ["**/__fixtures__/**", "**/__tests__/**", "**/*.md"]
 }
 ```
 
 Pass `--no-ignore-changes` to disable any existing durable configuration.
 
 > In the following cases, a package will always be published, regardless of this option:
+>
 > 1. The latest release of the package is a `prerelease` version (i.e. `1.0.0-alpha`, `1.0.0–0.3.7`, etc.).
 > 2. One or more linked dependencies of the package have changed.
 

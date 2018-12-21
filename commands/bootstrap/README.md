@@ -163,6 +163,7 @@ $ lerna bootstrap --no-ci
 ```
 
 To _force_ it during a local install (where it is not automatically enabled), pass `--ci`:
+
 ```sh
 $ lerna bootstrap --ci
 ```
@@ -181,8 +182,8 @@ When passed, this flag causes the `bootstrap` command to always symlink local de
 
 Let's use `babel` as an example.
 
-* `babel-generator` and `source-map` (among others) are dependencies of `babel-core`.
-* `babel-core`'s [`package.json`](https://github.com/babel/babel/blob/13c961d29d76ccd38b1fc61333a874072e9a8d6a/packages/babel-core/package.json#L28-L47) lists both these packages as keys in `dependencies`, as shown below.
+- `babel-generator` and `source-map` (among others) are dependencies of `babel-core`.
+- `babel-core`'s [`package.json`](https://github.com/babel/babel/blob/13c961d29d76ccd38b1fc61333a874072e9a8d6a/packages/babel-core/package.json#L28-L47) lists both these packages as keys in `dependencies`, as shown below.
 
 ```js
 // babel-core package.json
@@ -198,17 +199,17 @@ Let's use `babel` as an example.
 }
 ```
 
-* Lerna checks if each dependency is also part of the Lerna repo.
-  * In this example, `babel-generator` can be an internal dependency, while `source-map` is always an external dependency.
-  * The version of `babel-generator` in the `package.json` of `babel-core` is satisfied by `packages/babel-generator`, passing for an internal dependency.
-  * `source-map` is `npm install`ed (or `yarn`ed) like normal.
-* `packages/babel-core/node_modules/babel-generator` symlinks to `packages/babel-generator`
-* This allows nested directory imports
+- Lerna checks if each dependency is also part of the Lerna repo.
+  - In this example, `babel-generator` can be an internal dependency, while `source-map` is always an external dependency.
+  - The version of `babel-generator` in the `package.json` of `babel-core` is satisfied by `packages/babel-generator`, passing for an internal dependency.
+  - `source-map` is `npm install`ed (or `yarn`ed) like normal.
+- `packages/babel-core/node_modules/babel-generator` symlinks to `packages/babel-generator`
+- This allows nested directory imports
 
 ## Notes
 
-* When a dependency version in a package is not satisfied by a package of the same name in the repo, it will be `npm install`ed (or `yarn`ed) like normal.
-* Dist-tags, like `latest`, do not satisfy [semver](https://semver.npmjs.com/) ranges.
-* Circular dependencies result in circular symlinks which _may_ impact your editor/IDE.
+- When a dependency version in a package is not satisfied by a package of the same name in the repo, it will be `npm install`ed (or `yarn`ed) like normal.
+- Dist-tags, like `latest`, do not satisfy [semver](https://semver.npmjs.com/) ranges.
+- Circular dependencies result in circular symlinks which _may_ impact your editor/IDE.
 
 [Webstorm](https://www.jetbrains.com/webstorm/) locks up when circular symlinks are present. To prevent this, add `node_modules` to the list of ignored files and folders in `Preferences | Editor | File Types | Ignored files and folders`.

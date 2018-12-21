@@ -4,7 +4,6 @@
 
 ## Usage
 
-
 ```sh
 $ lerna exec -- <command> [..args] # runs the command in all packages
 $ lerna exec -- rm -rf ./node_modules

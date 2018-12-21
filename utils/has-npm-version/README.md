@@ -5,7 +5,7 @@
 ## Usage
 
 ```js
-const hasNpmVersion = require('@lerna/has-npm-version');
+const hasNpmVersion = require("@lerna/has-npm-version");
 
 // `npm --version` === 6.3.0
 hasNpmVersion(">=6"); // => true

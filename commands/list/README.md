@@ -6,9 +6,9 @@
 
 The `list` subcommand is aliased to several convenient shorthands (similar to [`npm ls`](https://docs.npmjs.com/cli/ls)):
 
- * `lerna ls`: Identical to `lerna list`, which is itself analogous to the `ls` command
- * `lerna ll`: Equivalent to `lerna ls -l`, showing [long](#--long) output
- * `lerna la`: Equivalent to `lerna ls -la`, showing [all](#--all) packages (including private ones)
+- `lerna ls`: Identical to `lerna list`, which is itself analogous to the `ls` command
+- `lerna ll`: Equivalent to `lerna ls -l`, showing [long](#--long) output
+- `lerna la`: Equivalent to `lerna ls -la`, showing [all](#--all) packages (including private ones)
 
 ```sh
 $ lerna ls
@@ -24,11 +24,11 @@ In any case, you can always pass `--loglevel silent` to create pristine chains o
 
 ## Options
 
-* [`--json`](#--json)
-* [`-a`, `--all`](#--all)
-* [`-l`, `--long`](#--long)
-* [`-p`, `--parseable`](#--parseable)
-* [`--toposort`](#--toposort)
+- [`--json`](#--json)
+- [`-a`, `--all`](#--all)
+- [`-l`, `--long`](#--long)
+- [`-p`, `--parseable`](#--parseable)
+- [`--toposort`](#--toposort)
 
 `lerna ls` also respects all available [Filter Flags](https://www.npmjs.com/package/@lerna/filter-options).
 

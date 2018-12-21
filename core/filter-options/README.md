@@ -25,7 +25,6 @@ Exclude private packages. They are included by default.
 
 Only include packages that have been updated since the specified `ref`. If no ref is passed, it defaults to the most-recent tag.
 
-
 ```sh
 # List the contents of packages that have changed since the latest tag
 $ lerna exec --since -- ls -la
