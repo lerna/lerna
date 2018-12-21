@@ -89,11 +89,7 @@ exports.builder = (yargs, composed) => {
       type: "boolean",
       defaultDescription: "false",
     },
-    y: {
-      describe: "Skip all confirmation prompts.",
-      alias: "yes",
-      type: "boolean",
-    },
+    // --yes is set later to avoid clobbering composers
   };
 
   if (composed) {
@@ -106,6 +102,12 @@ exports.builder = (yargs, composed) => {
     yargs.default("composed", composed).hide("composed");
   } else {
     exports.addBumpPositional(yargs);
+
+    opts.y = {
+      describe: "Skip all confirmation prompts.",
+      alias: "yes",
+      type: "boolean",
+    };
   }
 
   yargs.options(opts);
