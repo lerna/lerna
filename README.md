@@ -202,10 +202,11 @@ Locating leaf packages under `packages/*` is considered a "best-practice", but i
 
 ### Common `devDependencies`
 
-Most `devDependencies` can be pulled up to the root of a Lerna repo.
+Most `devDependencies` can be pulled up to the root of a Lerna repo with `lerna link convert`
 
-This has a few benefits:
+The above command will automatically hoist things and use relative `file:` specifiers.
 
+Hoisting has a few benefits:
 - All packages use the same version of a given dependency
 - Can keep dependencies at the root up-to-date with an automated tool such as [GreenKeeper](https://greenkeeper.io/)
 - Dependency installation time is reduced
