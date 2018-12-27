@@ -59,7 +59,7 @@ class Command {
         err => {
           if (err.pkg) {
             // Cleanly log specific package error details
-            logPackageError(err);
+            logPackageError(err, this.options.stream);
           } else if (err.name !== "ValidationError") {
             // npmlog does some funny stuff to the stack by default,
             // so pass it directly to avoid duplication.

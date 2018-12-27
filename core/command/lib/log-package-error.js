@@ -4,8 +4,13 @@ const log = require("libnpm/log");
 
 module.exports = logPackageError;
 
-function logPackageError(err) {
+function logPackageError(err, stream = false) {
   log.error(err.cmd, `exited ${err.code} in '${err.pkg.name}'`);
+
+  if (stream) {
+    // Streaming has already printed all stdout/stderr
+    return;
+  }
 
   if (err.stdout) {
     log.error(err.cmd, "stdout:");

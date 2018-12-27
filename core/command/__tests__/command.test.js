@@ -198,6 +198,33 @@ describe("core-command", () => {
         });
       }
     });
+
+    it("does not log stdout/stderr after streaming ends", async () => {
+      class PkgErrorCommand extends Command {
+        initialize() {
+          return true;
+        }
+
+        execute() {
+          const err = new Error("message");
+
+          err.cmd = "test-pkg-err";
+          err.stdout = "pkg-err-stdout";
+          err.stderr = "pkg-err-stderr";
+          err.pkg = {
+            name: "pkg-err-name",
+          };
+
+          throw err;
+        }
+      }
+
+      try {
+        await new PkgErrorCommand({ cwd: testDir, stream: true });
+      } catch (err) {
+        expect(console.error.mock.calls).toHaveLength(0);
+      }
+    });
   });
 
   describe("loglevel", () => {
