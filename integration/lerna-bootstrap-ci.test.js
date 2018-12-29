@@ -13,6 +13,7 @@ test("lerna bootstrap --ci", async () => {
   const { stderr } = await lerna("bootstrap", "--ci");
   expect(stderr).toMatchInlineSnapshot(`
 lerna notice cli __TEST_VERSION__
+lerna info ci enabled
 lerna info Bootstrapping 1 package
 lerna info Installing external dependencies
 lerna info Symlinking packages and binaries

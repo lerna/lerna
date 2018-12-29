@@ -159,6 +159,7 @@ package-2
     } catch (err) {
       expect(err.stderr).toMatchInlineSnapshot(`
 lerna notice cli __TEST_VERSION__
+lerna info ci enabled
 lerna info Executing command in 2 packages: "npm run fail-or-succeed --silent"
 lerna ERR! Received non-zero exit code 1 during execution
 lerna success exec Executed command in 2 packages: "npm run fail-or-succeed --silent"

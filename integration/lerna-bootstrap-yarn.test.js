@@ -13,6 +13,7 @@ test("lerna bootstrap --npm-client yarn", async () => {
   const { stderr } = await lerna("bootstrap", "--npm-client", "yarn");
   expect(stderr).toMatchInlineSnapshot(`
 lerna notice cli __TEST_VERSION__
+lerna info ci enabled
 lerna info Bootstrapping 4 packages
 lerna info lifecycle package-4@1.0.0~preinstall: package-4@1.0.0
 lerna info Installing external dependencies
