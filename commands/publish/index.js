@@ -164,6 +164,7 @@ class PublishCommand extends Command {
   }
 
   execute() {
+    this.enableProgressBar();
     this.logger.info("publish", "Publishing packages to npm...");
 
     let chain = Promise.resolve();

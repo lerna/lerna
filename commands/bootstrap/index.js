@@ -119,6 +119,8 @@ class BootstrapCommand extends Command {
     const filteredLength = this.filteredPackages.length;
     const packageCountLabel = `${filteredLength} package${filteredLength > 1 ? "s" : ""}`;
 
+    // root install does not need progress bar
+    this.enableProgressBar();
     this.logger.info("", `Bootstrapping ${packageCountLabel}`);
 
     const tasks = [
