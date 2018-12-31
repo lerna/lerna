@@ -543,7 +543,11 @@ class BootstrapCommand extends Command {
    * @returns {Promise}
    */
   symlinkPackages() {
-    return symlinkDependencies(this.filteredPackages, this.targetGraph, this.logger);
+    return symlinkDependencies(
+      this.filteredPackages,
+      this.targetGraph,
+      this.logger.newItem("bootstrap dependencies")
+    );
   }
 }
 

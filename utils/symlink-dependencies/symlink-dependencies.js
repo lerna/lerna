@@ -17,12 +17,10 @@ module.exports = symlinkDependencies;
  * Symlink package binaries to dependent packages' node_modules/.bin directory
  * @param {Array.<Package>} packages
  * @param {Object} packageGraph
- * @param {Object} logger
+ * @param {Tracker} tracker
  * @returns {Promise}
  */
-function symlinkDependencies(packages, packageGraph, logger) {
-  const tracker = logger.newItem("symlink packages");
-
+function symlinkDependencies(packages, packageGraph, tracker) {
   tracker.info("", "Symlinking packages and binaries");
   tracker.addWork(packages.length);
 

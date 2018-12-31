@@ -30,7 +30,7 @@ class LinkCommand extends Command {
       return this.convertLinksToFileSpecs();
     }
 
-    return symlinkDependencies(this.allPackages, this.targetGraph, this.logger);
+    return symlinkDependencies(this.allPackages, this.targetGraph, this.logger.newItem("link dependencies"));
   }
 
   convertLinksToFileSpecs() {
