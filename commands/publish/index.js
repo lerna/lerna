@@ -178,6 +178,7 @@ class PublishCommand extends Command {
 
     chain = chain.then(() => this.resolveLocalDependencyLinks());
     chain = chain.then(() => this.annotateGitHead());
+    chain = chain.then(() => this.serializeChanges());
     chain = chain.then(() => this.packUpdated());
     chain = chain.then(() => this.publishPacked());
 
@@ -426,7 +427,7 @@ class PublishCommand extends Command {
         pkg.updateLocalDependency(resolved, depVersion, this.savePrefix);
       }
 
-      // writing changes to disk handled in annotateGitHead()
+      // writing changes to disk handled in serializeChanges()
     });
   }
 
@@ -448,19 +449,23 @@ class PublishCommand extends Command {
         pkg.updateLocalDependency(resolved, depVersion, this.savePrefix);
       }
 
-      // writing changes to disk handled in annotateGitHead()
+      // writing changes to disk handled in serializeChanges()
     });
   }
 
   annotateGitHead() {
     const gitHead = getCurrentSHA(this.execOpts);
 
-    return pMap(this.packagesToPublish, pkg => {
+    for (const pkg of this.packagesToPublish) {
       // provide gitHead property that is normally added during npm publish
       pkg.set("gitHead", gitHead);
+    }
 
-      return pkg.serialize();
-    });
+    // writing changes to disk handled in serializeChanges()
+  }
+
+  serializeChanges() {
+    return pMap(this.packagesToPublish, pkg => pkg.serialize());
   }
 
   resetChanges() {
