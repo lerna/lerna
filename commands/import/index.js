@@ -186,8 +186,6 @@ class ImportCommand extends Command {
   }
 
   execute() {
-    this.enableProgressBar();
-
     const tracker = this.logger.newItem("execute");
     const mapper = sha => {
       tracker.info(sha);

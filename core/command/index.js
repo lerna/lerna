@@ -183,7 +183,7 @@ class Command {
   }
 
   configureLogging() {
-    const { loglevel } = this.options;
+    const { loglevel, progress = true } = this.options;
 
     if (loglevel) {
       log.level = loglevel;
@@ -192,6 +192,11 @@ class Command {
     // handle log.success()
     log.addLevel("success", 3001, { fg: "green", bold: true });
 
+    /* istanbul ignore next */
+    if (progress) {
+      log.enableProgress();
+    }
+
     // create logger that subclasses use
     Object.defineProperty(this, "logger", {
       value: log.newGroup(this.name),
@@ -199,13 +204,6 @@ class Command {
 
     // emit all buffered logs at configured level and higher
     log.resume();
-  }
-
-  enableProgressBar() {
-    /* istanbul ignore next */
-    if (this.options.progress) {
-      log.enableProgress();
-    }
   }
 
   gitInitialized() {
