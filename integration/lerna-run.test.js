@@ -34,6 +34,7 @@ describe("lerna run", () => {
     } catch (err) {
       expect(err.stderr).toMatchInlineSnapshot(`
 lerna notice cli __TEST_VERSION__
+lerna info ci enabled
 lerna info Executing command in 2 packages: "npm run fail --silent"
 lerna info run Ran npm script 'fail' in 'package-3' in 0.0s:
 lerna info run Ran npm script 'fail' in 'package-1' in 0.0s:
@@ -70,6 +71,7 @@ package-2: package-2
 `);
     expect(stderr).toMatchInlineSnapshot(`
 lerna notice cli __TEST_VERSION__
+lerna info ci enabled
 lerna info Executing command in 4 packages: "npm run test --silent"
 lerna success run Ran npm script 'test' in 4 packages in 0.0s:
 lerna success - package-1
@@ -100,6 +102,7 @@ package-2
 `);
     expect(stderr).toMatchInlineSnapshot(`
 lerna notice cli __TEST_VERSION__
+lerna info ci enabled
 lerna info Executing command in 4 packages: "npm run test --silent"
 lerna success run Ran npm script 'test' in 4 packages in 0.0s:
 lerna success - package-1
@@ -122,6 +125,7 @@ lerna success - package-4
     const { stdout, stderr } = await cliRunner(cwd, env)(...args);
     expect(stderr).toMatchInlineSnapshot(`
 lerna notice cli __TEST_VERSION__
+lerna info ci enabled
 lerna info Executing command in 4 packages: "npm run test --silent"
 lerna success run Ran npm script 'test' in 4 packages in 0.0s:
 lerna success - package-1

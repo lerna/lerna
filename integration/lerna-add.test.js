@@ -18,6 +18,7 @@ describe("lerna add", () => {
     const { stderr } = await cliRunner(cwd)("add", "@test/package-1");
     expect(stderr).toMatchInlineSnapshot(`
 lerna notice cli __TEST_VERSION__
+lerna info ci enabled
 lerna info Adding @test/package-1 in 3 packages
 lerna info filter [ '@test/package-2', 'package-3', 'package-4' ]
 lerna info Bootstrapping 3 packages

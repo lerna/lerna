@@ -251,6 +251,10 @@ class Command {
       log.info("versioning", "independent");
     }
 
+    if (!this.composed && this.options.ci) {
+      log.info("ci", "enabled");
+    }
+
     let chain = Promise.resolve();
 
     chain = chain.then(() => this.project.getPackages());
