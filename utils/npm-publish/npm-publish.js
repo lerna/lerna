@@ -3,6 +3,7 @@
 const fs = require("fs-extra");
 const log = require("libnpm/log");
 const publish = require("libnpm/publish");
+const readJSON = require("libnpm/read-json");
 const figgyPudding = require("figgy-pudding");
 const runLifecycle = require("@lerna/run-lifecycle");
 
@@ -36,8 +37,8 @@ function npmPublish(pkg, tag, tarFilePath, _opts) {
   let chain = Promise.resolve();
 
   if (!opts.dryRun) {
-    chain = chain.then(() => fs.readFile(tarFilePath));
-    chain = chain.then(tarData => publish(pkg.toJSON(), tarData, opts));
+    chain = chain.then(() => Promise.all([fs.readFile(tarFilePath), readJSON(pkg.manifestLocation)]));
+    chain = chain.then(([tarData, manifest]) => publish(manifest, tarData, opts));
   }
 
   chain = chain.then(() => runLifecycle(pkg, "publish", opts));

@@ -1,12 +1,14 @@
 "use strict";
 
 jest.mock("@lerna/run-lifecycle");
+jest.mock("libnpm/read-json");
 jest.mock("libnpm/publish");
 jest.mock("fs-extra");
 
 // mocked modules
 const fs = require("fs-extra");
 const publish = require("libnpm/publish");
+const readJSON = require("libnpm/read-json");
 const runLifecycle = require("@lerna/run-lifecycle");
 
 // helpers
@@ -20,9 +22,11 @@ expect.extend(require("@lerna-test/figgy-pudding-matchers"));
 
 describe("npm-publish", () => {
   const mockTarData = Buffer.from("MOCK");
+  const mockManifest = { _normalized: true };
 
   fs.readFile.mockName("fs.readFile").mockResolvedValue(mockTarData);
   publish.mockName("libnpm/publish").mockResolvedValue();
+  readJSON.mockName("libnpm/read-json").mockResolvedValue(mockManifest);
   runLifecycle.mockName("@lerna/run-lifecycle").mockResolvedValue();
 
   const tarFilePath = "/tmp/test-1.10.100.tgz";
@@ -40,14 +44,15 @@ describe("npm-publish", () => {
     expect(result).toBe(pkg);
   });
 
-  it("calls libnpm/publish with correct arguments", async () => {
+  it("calls external libraries with correct arguments", async () => {
     const opts = new Map();
 
     await npmPublish(pkg, "published-tag", tarFilePath, opts);
 
     expect(fs.readFile).toHaveBeenCalledWith(tarFilePath);
+    expect(readJSON).toHaveBeenCalledWith(pkg.manifestLocation);
     expect(publish).toHaveBeenCalledWith(
-      { name: "test", version: "1.10.100" },
+      mockManifest,
       mockTarData,
       expect.figgyPudding({
         dryRun: false,
@@ -63,7 +68,7 @@ describe("npm-publish", () => {
     await npmPublish(pkg, undefined, tarFilePath, opts);
 
     expect(publish).toHaveBeenCalledWith(
-      { name: "test", version: "1.10.100" },
+      mockManifest,
       mockTarData,
       expect.figgyPudding({ tag: "custom-default" })
     );
@@ -73,9 +78,11 @@ describe("npm-publish", () => {
     await npmPublish(pkg, undefined, tarFilePath);
 
     expect(publish).toHaveBeenCalledWith(
-      { name: "test", version: "1.10.100" },
+      mockManifest,
       mockTarData,
-      expect.figgyPudding({ tag: "latest" })
+      expect.figgyPudding({
+        tag: "latest",
+      })
     );
   });
 
@@ -89,7 +96,9 @@ describe("npm-publish", () => {
   });
 
   it("calls publish lifecycles", async () => {
-    const aFiggyPudding = expect.figgyPudding({ tag: "lifecycles" });
+    const aFiggyPudding = expect.figgyPudding({
+      tag: "lifecycles",
+    });
 
     await npmPublish(pkg, "lifecycles", tarFilePath);
 
