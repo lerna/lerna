@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.8.1](https://github.com/lerna/lerna/compare/v3.8.0...v3.8.1) (2018-12-31)
+
+
+### Bug Fixes
+
+* **progress:** Correctly avoid progress where we don't want it ([0de3df9](https://github.com/lerna/lerna/commit/0de3df9))
+* **progress:** Enable progress during logging setup, correcting default ([da81e60](https://github.com/lerna/lerna/commit/da81e60))
+* **publish:** --canary should also respect --include-merged-tags ([462b15c](https://github.com/lerna/lerna/commit/462b15c)), closes [#1820](https://github.com/lerna/lerna/issues/1820)
+
+
+
+
+
 # [3.8.0](https://github.com/lerna/lerna/compare/v3.7.2...v3.8.0) (2018-12-21)
 
 

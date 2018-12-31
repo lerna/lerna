@@ -1,6 +1,6 @@
 {
   "name": "@lerna/collect-updates",
-  "version": "3.6.0",
+  "version": "3.8.1",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",

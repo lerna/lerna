@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.8.1](https://github.com/lerna/lerna/compare/v3.8.0...v3.8.1) (2018-12-31)
+
+
+### Bug Fixes
+
+* **npm-publish:** Pass normalized manifest to libnpm/publish ([8e59950](https://github.com/lerna/lerna/commit/8e59950)), closes [#1843](https://github.com/lerna/lerna/issues/1843)
+
+
+
+
+
 ## [3.7.1](https://github.com/lerna/lerna/compare/v3.7.0...v3.7.1) (2018-12-20)
 
 
