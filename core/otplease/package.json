@@ -1,0 +1,32 @@
+{
+  "name": "@lerna/otplease",
+  "version": "3.8.1",
+  "description": "Prompt for OTP when wrapped Promise fails",
+  "keywords": [
+    "lerna",
+    "core",
+    "otp"
+  ],
+  "author": "Daniel Stockman <daniel.stockman@gmail.com>",
+  "homepage": "https://github.com/lerna/lerna/tree/master/core/otplease#readme",
+  "license": "MIT",
+  "main": "lib/otplease.js",
+  "files": [
+    "lib"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lerna/lerna.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@lerna/prompt": "file:../prompt",
+    "figgy-pudding": "^3.5.1",
+    "p-try": "^2.0.0"
+  }
+}
