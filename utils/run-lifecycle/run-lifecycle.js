@@ -46,7 +46,7 @@ function runLifecycle(pkg, stage, _opts) {
   const config = {};
 
   if (!pkg.scripts || !pkg.scripts[stage]) {
-    opts.log.silly("run-lifecycle", "No script for %j in %j, continuing", stage, pkg.name);
+    opts.log.silly("lifecycle", "No script for %j in %j, continuing", stage, pkg.name);
 
     return Promise.resolve();
   }
@@ -75,7 +75,7 @@ function runLifecycle(pkg, stage, _opts) {
     unsafePerm,
   } = opts;
 
-  opts.log.silly("run-lifecycle", stage, pkg.name);
+  opts.log.silly("lifecycle", "%j starting in %j", stage, pkg.name);
 
   return runScript(pkg, stage, dir, {
     config,
@@ -89,7 +89,9 @@ function runLifecycle(pkg, stage, _opts) {
     scriptsPrependNodePath,
     unsafePerm,
   }).then(
-    null,
+    () => {
+      opts.log.silly("lifecycle", "%j finished in %j", stage, pkg.name);
+    },
     err => {
       // propagate the exit code
       const exitCode = err.errno || 1;
