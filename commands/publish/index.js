@@ -526,6 +526,9 @@ class PublishCommand extends Command {
 
     chain = chain.then(() => createTempLicenses(this.project.licensePath, this.packagesToBeLicensed));
 
+    // despite being deprecated for years...
+    chain = chain.then(() => this.runRootLifecycle("prepublish"));
+
     // these lifecycles _should_ never be employed to run `lerna publish`...
     chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "prepare"));
     chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "prepublishOnly"));

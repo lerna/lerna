@@ -56,6 +56,11 @@ postversion-package-1
 
 postversion-root
 
+> lifecycle@0.0.0-monorepo prepublish __TEST_ROOTDIR__
+> echo prepublish-root
+
+prepublish-root
+
 > lifecycle@0.0.0-monorepo prepare __TEST_ROOTDIR__
 > echo prepare-root
 

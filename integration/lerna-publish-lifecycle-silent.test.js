@@ -31,6 +31,7 @@ version-package-1
 version-root
 postversion-package-1
 postversion-root
+prepublish-root
 prepare-root
 prepublishOnly-root
 prepack-root

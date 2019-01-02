@@ -52,6 +52,7 @@ describe("lifecycle scripts", () => {
       ["package-1", "postversion"],
       ["lifecycle", "postversion"],
       // publish-specific
+      ["lifecycle", "prepublish"],
       ["lifecycle", "prepare"],
       ["lifecycle", "prepublishOnly"],
       ["lifecycle", "prepack"],
@@ -70,7 +71,7 @@ Map {
   it("does not execute recursive root scripts", async () => {
     const cwd = await initFixture("lifecycle");
 
-    process.env.npm_lifecycle_event = "publish";
+    process.env.npm_lifecycle_event = "prepublish";
 
     await lernaPublish(cwd)();
 
