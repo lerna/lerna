@@ -22,7 +22,10 @@ const LifecycleConfig = figgyPudding(
     scriptShell: "script-shell",
     "scripts-prepend-node-path": {},
     scriptsPrependNodePath: "scripts-prepend-node-path",
-    "unsafe-perm": {},
+    "unsafe-perm": {
+      // when running scripts explicitly, assume that they're trusted
+      default: true,
+    },
     unsafePerm: "unsafe-perm",
   },
   {

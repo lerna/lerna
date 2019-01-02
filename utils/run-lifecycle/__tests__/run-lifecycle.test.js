@@ -84,7 +84,7 @@ describe("runLifecycle()", () => {
       ["node-options", true],
       ["script-shell", true],
       ["scripts-prepend-node-path", true],
-      ["unsafe-perm", true],
+      ["unsafe-perm", false],
     ]);
 
     await runLifecycle(pkg, stage, opts);
@@ -99,7 +99,7 @@ describe("runLifecycle()", () => {
       nodeOptions: true,
       scriptShell: true,
       scriptsPrependNodePath: true,
-      unsafePerm: true,
+      unsafePerm: false,
     });
   });
 
