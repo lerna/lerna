@@ -174,6 +174,13 @@ class VersionCommand extends Command {
 
     this.runPackageLifecycle = createRunner(this.options);
 
+    // don't execute recursively if run from a poorly-named script
+    this.runRootLifecycle = /^(pre|post)?version$/.test(process.env.npm_lifecycle_event)
+      ? stage => {
+          this.logger.warn("lifecycle", "Skipping root %j because it has already been called", stage);
+        }
+      : stage => this.runPackageLifecycle(this.project.manifest, stage);
+
     const tasks = [
       () => this.getVersionsForUpdates(),
       versions => this.setUpdatesForVersions(versions),
@@ -403,7 +410,7 @@ class VersionCommand extends Command {
     // @see https://docs.npmjs.com/misc/scripts
 
     // exec preversion lifecycle in root (before all updates)
-    chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "preversion"));
+    chain = chain.then(() => this.runRootLifecycle("preversion"));
 
     const actions = [
       pkg => this.runPackageLifecycle(pkg, "preversion").then(() => pkg),
@@ -487,7 +494,7 @@ class VersionCommand extends Command {
     }
 
     // exec version lifecycle in root (after all updates)
-    chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "version"));
+    chain = chain.then(() => this.runRootLifecycle("version"));
 
     if (this.commitAndTag) {
       chain = chain.then(() => gitAdd(Array.from(changedFiles), this.execOpts));
@@ -515,7 +522,7 @@ class VersionCommand extends Command {
     );
 
     // run postversion, if set, in the root directory
-    chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "postversion"));
+    chain = chain.then(() => this.runRootLifecycle("postversion"));
 
     return chain;
   }
