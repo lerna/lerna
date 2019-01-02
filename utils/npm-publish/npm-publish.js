@@ -44,6 +44,5 @@ function npmPublish(pkg, tag, tarFilePath, _opts) {
   chain = chain.then(() => runLifecycle(pkg, "publish", opts));
   chain = chain.then(() => runLifecycle(pkg, "postpublish", opts));
 
-  // pipelined Package instance
-  return chain.then(() => pkg);
+  return chain;
 }

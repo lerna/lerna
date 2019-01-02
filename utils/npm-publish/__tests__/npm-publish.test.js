@@ -37,13 +37,6 @@ describe("npm-publish", () => {
     rootPath
   );
 
-  it("pipelines input package", async () => {
-    const opts = new Map();
-    const result = await npmPublish(pkg, "latest", tarFilePath, opts);
-
-    expect(result).toBe(pkg);
-  });
-
   it("calls external libraries with correct arguments", async () => {
     const opts = new Map();
 

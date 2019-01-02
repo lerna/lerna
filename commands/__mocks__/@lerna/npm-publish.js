@@ -6,7 +6,7 @@ const registry = new Map();
 const mockNpmPublish = jest.fn((pkg, tag) => {
   registry.set(pkg.name, tag);
 
-  return Promise.resolve(pkg);
+  return Promise.resolve();
 });
 
 // a convenient format for assertions
