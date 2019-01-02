@@ -64,6 +64,16 @@ class BootstrapCommand extends Command {
       );
     }
 
+    // postinstall and prepare are commonly used to call `lerna bootstrap`,
+    // but we need to avoid recursive execution when `--hoist` is enabled
+    const { LERNA_EXEC_PATH = "leaf", LERNA_ROOT_PATH = "root" } = process.env;
+
+    if (LERNA_EXEC_PATH === LERNA_ROOT_PATH) {
+      this.logger.warn("bootstrap", "Skipping recursive execution");
+
+      return false;
+    }
+
     this.runPackageLifecycle = createRunner({ registry });
     this.npmConfig = {
       registry,
@@ -181,7 +191,6 @@ class BootstrapCommand extends Command {
 
     const mapPackageWithScript = pkg =>
       this.runPackageLifecycle(pkg, stage).then(() => {
-        tracker.silly("lifecycle", "finished %j in %s", stage, pkg.name);
         tracker.completeWork(1);
       });
 

@@ -65,3 +65,17 @@ package-3 cli2 package-2 OK
   });
   expect(rootLock).not.toHaveProperty("dependencies.tiny-tarball.optional");
 });
+
+test("postinstall does not recurse", async () => {
+  const cwd = await initFixture("lerna-bootstrap");
+  const lerna = cliRunner(cwd, {
+    LERNA_EXEC_PATH: cwd,
+    LERNA_ROOT_PATH: cwd,
+  });
+
+  const { stderr } = await lerna("bootstrap", "--no-ci", "--hoist");
+  expect(stderr).toMatchInlineSnapshot(`
+lerna notice cli __TEST_VERSION__
+lerna WARN bootstrap Skipping recursive execution
+`);
+});

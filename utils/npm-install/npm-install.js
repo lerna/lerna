@@ -41,6 +41,10 @@ function npmInstall(
   // potential override, e.g. "inherit" in root-only bootstrap
   opts.stdio = stdio;
 
+  // provide env sentinels to avoid recursive execution from scripts
+  opts.env.LERNA_EXEC_PATH = pkg.location;
+  opts.env.LERNA_ROOT_PATH = pkg.rootPath;
+
   log.silly("npmInstall", [cmd, args]);
   return ChildProcessUtilities.exec(cmd, args, opts);
 }

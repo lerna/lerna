@@ -87,6 +87,11 @@ describe("BootstrapCommand", () => {
   createSymlink.mockResolvedValue();
 
   describe("lifecycle scripts", () => {
+    afterEach(() => {
+      delete process.env.LERNA_EXEC_PATH;
+      delete process.env.LERNA_ROOT_PATH;
+    });
+
     it("should run preinstall, postinstall and prepublish scripts", async () => {
       const testDir = await initFixture("lifecycle-scripts");
 
@@ -102,6 +107,17 @@ describe("BootstrapCommand", () => {
       await lernaBootstrap(testDir)("--ignore-scripts");
 
       expect(ranScriptsInDirectories(testDir)).toMatchSnapshot();
+    });
+
+    it("should not recurse from hoisted root postinstall", async () => {
+      const testDir = await initFixture("lifecycle-scripts");
+
+      process.env.LERNA_EXEC_PATH = testDir;
+      process.env.LERNA_ROOT_PATH = testDir;
+
+      await lernaBootstrap(testDir)();
+
+      expect(runLifecycle).not.toHaveBeenCalled();
     });
   });
 
