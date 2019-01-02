@@ -406,7 +406,7 @@ class VersionCommand extends Command {
     chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "preversion"));
 
     const actions = [
-      pkg => this.runPackageLifecycle(pkg, "preversion"),
+      pkg => this.runPackageLifecycle(pkg, "preversion").then(() => pkg),
       // manifest may be mutated by any previous lifecycle
       pkg => pkg.refresh(),
       pkg => {
@@ -430,7 +430,7 @@ class VersionCommand extends Command {
           return pkg;
         });
       },
-      pkg => this.runPackageLifecycle(pkg, "version"),
+      pkg => this.runPackageLifecycle(pkg, "version").then(() => pkg),
     ];
 
     if (conventionalCommits) {

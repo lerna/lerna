@@ -48,7 +48,7 @@ function runLifecycle(pkg, stage, _opts) {
   if (!pkg.scripts || !pkg.scripts[stage]) {
     opts.log.silly("run-lifecycle", "No script for %j in %j, continuing", stage, pkg.name);
 
-    return Promise.resolve(pkg);
+    return Promise.resolve();
   }
 
   // https://github.com/zkat/figgy-pudding/blob/7d68bd3/index.js#L42-L64
@@ -89,7 +89,7 @@ function runLifecycle(pkg, stage, _opts) {
     scriptsPrependNodePath,
     unsafePerm,
   }).then(
-    () => pkg,
+    null,
     err => {
       // propagate the exit code
       const exitCode = err.errno || 1;

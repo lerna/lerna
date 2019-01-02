@@ -7,7 +7,7 @@ const mockCreateRunner = jest.fn(() => (pkg, stage) => {
     return mockRunLifecycle(pkg, stage);
   }
 
-  return Promise.resolve(pkg);
+  return Promise.resolve();
 });
 
 function getOrderedCalls() {

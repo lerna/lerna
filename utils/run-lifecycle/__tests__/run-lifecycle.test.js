@@ -13,9 +13,8 @@ describe("runLifecycle()", () => {
       name: "no-scripts",
     };
 
-    const result = await runLifecycle(pkg, "foo", new Map());
+    await runLifecycle(pkg, "foo", new Map());
 
-    expect(result).toBe(pkg);
     expect(runScript).not.toHaveBeenCalled();
   });
 
@@ -27,9 +26,8 @@ describe("runLifecycle()", () => {
       },
     };
 
-    const result = await runLifecycle(pkg, "bar", new Map());
+    await runLifecycle(pkg, "bar", new Map());
 
-    expect(result).toBe(pkg);
     expect(runScript).not.toHaveBeenCalled();
   });
 
@@ -45,9 +43,8 @@ describe("runLifecycle()", () => {
     const stage = "preversion";
     const opts = npmConf({ "custom-cli-flag": true });
 
-    const result = await runLifecycle(pkg, stage, opts);
+    await runLifecycle(pkg, stage, opts);
 
-    expect(result).toBe(pkg);
     expect(runScript).toHaveBeenLastCalledWith(
       expect.objectContaining({
         name: pkg.name,
@@ -141,9 +138,8 @@ describe("createRunner", () => {
     };
     const stage = "version";
 
-    const result = await runPackageLifecycle(pkg, stage);
+    await runPackageLifecycle(pkg, stage);
 
-    expect(result).toBe(pkg);
     expect(runScript).toHaveBeenLastCalledWith(
       expect.any(Object),
       stage,
