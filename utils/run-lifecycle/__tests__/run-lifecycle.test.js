@@ -73,14 +73,14 @@ describe("runLifecycle()", () => {
       version: "1.0.0-dashed",
       location: "dashed-location",
       scripts: {
-        prepublish: "test",
+        "dashed-options": "test",
       },
     };
     const dir = pkg.location;
-    const stage = "prepublish";
+    const stage = "dashed-options";
     const opts = new Map([
       ["ignore-prepublish", true],
-      ["ignore-scripts", true],
+      ["ignore-scripts", false],
       ["node-options", true],
       ["script-shell", true],
       ["scripts-prepend-node-path", true],
@@ -96,13 +96,41 @@ describe("runLifecycle()", () => {
       dir,
       failOk: false,
       log: expect.any(Object),
-      ignorePrepublish: true,
-      ignoreScripts: true,
       nodeOptions: true,
       scriptShell: true,
       scriptsPrependNodePath: true,
       unsafePerm: true,
     });
+  });
+
+  it("ignores prepublish when configured", async () => {
+    const pkg = {
+      name: "ignore-prepublish",
+      scripts: {
+        prepublish: "test",
+      },
+    };
+    const stage = "prepublish";
+    const opts = new Map().set("ignore-prepublish", true);
+
+    await runLifecycle(pkg, stage, opts);
+
+    expect(runScript).not.toHaveBeenCalled();
+  });
+
+  it("ignores scripts when configured", async () => {
+    const pkg = {
+      name: "ignore-scripts",
+      scripts: {
+        ignored: "test",
+      },
+    };
+    const stage = "ignored";
+    const opts = new Map().set("ignore-scripts", true);
+
+    await runLifecycle(pkg, stage, opts);
+
+    expect(runScript).not.toHaveBeenCalled();
   });
 
   it("omits circular opts", async () => {

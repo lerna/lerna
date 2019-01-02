@@ -45,8 +45,20 @@ function runLifecycle(pkg, stage, _opts) {
   const dir = pkg.location;
   const config = {};
 
+  if (opts.ignoreScripts) {
+    opts.log.verbose("lifecycle", "%j ignored in %j", stage, pkg.name);
+
+    return Promise.resolve();
+  }
+
   if (!pkg.scripts || !pkg.scripts[stage]) {
     opts.log.silly("lifecycle", "No script for %j in %j, continuing", stage, pkg.name);
+
+    return Promise.resolve();
+  }
+
+  if (stage === "prepublish" && opts.ignorePrepublish) {
+    opts.log.verbose("lifecycle", "%j ignored in %j", stage, pkg.name);
 
     return Promise.resolve();
   }
@@ -65,16 +77,6 @@ function runLifecycle(pkg, stage, _opts) {
   // TODO: remove pkg._id when npm-lifecycle no longer relies on it
   pkg._id = `${pkg.name}@${pkg.version}`; // eslint-disable-line
 
-  // bring along camelCased aliases
-  const {
-    ignorePrepublish,
-    ignoreScripts,
-    nodeOptions,
-    scriptShell,
-    scriptsPrependNodePath,
-    unsafePerm,
-  } = opts;
-
   opts.log.silly("lifecycle", "%j starting in %j", stage, pkg.name);
 
   return runScript(pkg, stage, dir, {
@@ -82,12 +84,11 @@ function runLifecycle(pkg, stage, _opts) {
     dir,
     failOk: false,
     log: opts.log,
-    ignorePrepublish,
-    ignoreScripts,
-    nodeOptions,
-    scriptShell,
-    scriptsPrependNodePath,
-    unsafePerm,
+    // bring along camelCased aliases
+    nodeOptions: opts.nodeOptions,
+    scriptShell: opts.scriptShell,
+    scriptsPrependNodePath: opts.scriptsPrependNodePath,
+    unsafePerm: opts.unsafePerm,
   }).then(
     () => {
       opts.log.silly("lifecycle", "%j finished in %j", stage, pkg.name);
