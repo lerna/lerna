@@ -21,6 +21,12 @@ const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const lernaPublish = require("@lerna-test/command-runner")(require("../command"));
 
 describe("lifecycle scripts", () => {
+  const npmLifecycleEvent = process.env.npm_lifecycle_event;
+
+  afterEach(() => {
+    process.env.npm_lifecycle_event = npmLifecycleEvent;
+  });
+
   it("calls publish lifecycle scripts for root and packages", async () => {
     const cwd = await initFixture("lifecycle");
 
@@ -59,5 +65,28 @@ Map {
   "/packages/package-2" => 4,
 }
 `);
+  });
+
+  it("does not execute recursive root scripts", async () => {
+    const cwd = await initFixture("lifecycle");
+
+    process.env.npm_lifecycle_event = "publish";
+
+    await lernaPublish(cwd)();
+
+    expect(runLifecycle.getOrderedCalls()).toEqual([
+      // TODO: separate from VersionCommand details
+      ["lifecycle", "preversion"],
+      ["package-1", "preversion"],
+      ["package-1", "version"],
+      ["lifecycle", "version"],
+      ["package-1", "postversion"],
+      ["lifecycle", "postversion"],
+      // publish-specific
+      ["lifecycle", "prepare"],
+      ["lifecycle", "prepublishOnly"],
+      ["lifecycle", "prepack"],
+      ["lifecycle", "postpack"],
+    ]);
   });
 });

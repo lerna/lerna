@@ -112,6 +112,15 @@ class PublishCommand extends Command {
       this.conf.set("token", auth.token, "cli");
     }
 
+    this.runPackageLifecycle = createRunner(this.options);
+
+    // don't execute recursively if run from a poorly-named script
+    this.runRootLifecycle = /^(pre|post)?publish$/.test(process.env.npm_lifecycle_event)
+      ? stage => {
+          this.logger.warn("lifecycle", "Skipping root %j because it has already been called", stage);
+        }
+      : stage => this.runPackageLifecycle(this.project.manifest, stage);
+
     let chain = Promise.resolve();
 
     // validate user has valid npm credentials first,
@@ -139,7 +148,6 @@ class PublishCommand extends Command {
       this.updates = result.updates;
       this.updatesVersions = new Map(result.updatesVersions);
 
-      this.runPackageLifecycle = createRunner(this.options);
       this.packagesToPublish = this.updates.map(({ pkg }) => pkg).filter(pkg => !pkg.private);
       this.batchedPackages = this.toposort
         ? batchPackages(
@@ -518,6 +526,7 @@ class PublishCommand extends Command {
 
     chain = chain.then(() => createTempLicenses(this.project.licensePath, this.packagesToBeLicensed));
 
+    // these lifecycles _should_ never be employed to run `lerna publish`...
     chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "prepare"));
     chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "prepublishOnly"));
     chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "prepack"));
@@ -585,8 +594,9 @@ class PublishCommand extends Command {
 
     chain = chain.then(() => runParallelBatches(this.batchedPackages, this.concurrency, mapper));
 
-    // we do not run root "publish" lifecycle because it has a great chance of being cyclical
-    chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "postpublish"));
+    // cyclical "publish" lifecycles are automatically skipped
+    chain = chain.then(() => this.runRootLifecycle("publish"));
+    chain = chain.then(() => this.runRootLifecycle("postpublish"));
 
     return pFinally(chain, () => tracker.finish());
   }
