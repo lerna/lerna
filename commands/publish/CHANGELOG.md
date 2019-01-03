@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.8.3](https://github.com/lerna/lerna/compare/v3.8.2...v3.8.3) (2019-01-03)
+
+
+### Bug Fixes
+
+* **publish:** Give up trying to validate third-party registries ([b44f2f9](https://github.com/lerna/lerna/commit/b44f2f9)), closes [#1685](https://github.com/lerna/lerna/issues/1685) [#1687](https://github.com/lerna/lerna/issues/1687)
+
+
+
+
+
 ## [3.8.2](https://github.com/lerna/lerna/compare/v3.8.1...v3.8.2) (2019-01-03)
 
 
