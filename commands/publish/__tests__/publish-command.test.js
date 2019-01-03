@@ -122,6 +122,7 @@ Set {
       expect(verifyNpmPackageAccess).toHaveBeenCalled();
       expect(verifyNpmPackageAccess).toHaveBeenLastCalledWith(
         expect.any(Array),
+        "lerna-test",
         expect.figgyPudding({ registry: "https://registry.npmjs.org/" })
       );
     });

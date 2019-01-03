@@ -7,7 +7,7 @@ const FetchConfig = require("./fetch-config");
 
 module.exports = verifyNpmPackageAccess;
 
-function verifyNpmPackageAccess(packages, _opts) {
+function verifyNpmPackageAccess(packages, username, _opts) {
   const opts = FetchConfig(_opts, {
     // don't wait forever for third-party failures to be dealt with
     "fetch-retries": 0,
@@ -15,7 +15,7 @@ function verifyNpmPackageAccess(packages, _opts) {
 
   opts.log.silly("verifyNpmPackageAccess");
 
-  return pulseTillDone(access.lsPackages(opts.username, opts)).then(success, failure);
+  return pulseTillDone(access.lsPackages(username, opts)).then(success, failure);
 
   function success(result) {
     // when _no_ results received, access.lsPackages returns null
