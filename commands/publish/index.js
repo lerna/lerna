@@ -8,7 +8,6 @@ const pMap = require("p-map");
 const pPipe = require("p-pipe");
 const pReduce = require("p-reduce");
 const semver = require("semver");
-const getAuth = require("npm-registry-fetch/auth");
 
 const Command = require("@lerna/command");
 const describeRef = require("@lerna/describe-ref");
@@ -66,9 +65,6 @@ class PublishCommand extends Command {
       this.logger.info("require-scripts", "enabled");
     }
 
-    // inverted boolean options
-    this.verifyAccess = this.options.verifyAccess !== false;
-
     // https://docs.npmjs.com/misc/config#save-prefix
     this.savePrefix = this.options.exact ? "" : "^";
 
@@ -104,14 +100,6 @@ class PublishCommand extends Command {
       this.conf.set("tag", distTag.trim(), "cli");
     }
 
-    // all consumers need a token
-    const registry = this.conf.get("registry");
-    const auth = getAuth(registry, this.conf.snapshot);
-
-    if (auth.token) {
-      this.conf.set("token", auth.token, "cli");
-    }
-
     this.runPackageLifecycle = createRunner(this.options);
 
     // don't execute recursively if run from a poorly-named script
@@ -123,13 +111,6 @@ class PublishCommand extends Command {
 
     let chain = Promise.resolve();
 
-    // validate user has valid npm credentials first,
-    // by far the most common form of failed execution
-    chain = chain.then(() => getNpmUsername(this.conf.snapshot));
-    chain = chain.then(username => {
-      // username is necessary for subsequent access check
-      this.conf.add({ username }, "cmd");
-    });
     chain = chain.then(() => this.findVersionedUpdates());
 
     return chain.then(result => {
@@ -408,14 +389,28 @@ class PublishCommand extends Command {
   prepareRegistryActions() {
     let chain = Promise.resolve();
 
+    if (this.conf.get("registry") !== "https://registry.npmjs.org/") {
+      this.logger.notice("", "Skipping all user and access validation due to third-party registry");
+      this.logger.notice("", "Make sure you're authenticated properly ¯\\_(ツ)_/¯");
+
+      return chain;
+    }
+
     /* istanbul ignore if */
     if (process.env.LERNA_INTEGRATION) {
       return chain;
     }
 
-    // if no username was retrieved, don't bother validating
-    if (this.conf.get("username") && this.verifyAccess) {
-      chain = chain.then(() => verifyNpmPackageAccess(this.packagesToPublish, this.conf.snapshot));
+    if (this.options.verifyAccess !== false) {
+      // validate user has valid npm credentials first,
+      // by far the most common form of failed execution
+      chain = chain.then(() => getNpmUsername(this.conf.snapshot));
+      chain = chain.then(username => {
+        // if no username was retrieved, don't bother validating
+        if (username) {
+          return verifyNpmPackageAccess(this.packagesToPublish, this.conf.snapshot);
+        }
+      });
     }
 
     return chain;

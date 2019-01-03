@@ -344,6 +344,16 @@ Set {
       expect(logMessages).toContain("Yarn's registry proxy is broken, replacing with public npm registry");
       expect(logMessages).toContain("If you don't have an npm token, you should exit and run `npm login`");
     });
+
+    it("skips validation on any other third-party registry", async () => {
+      const testDir = await initFixture("normal");
+      const registry = "https://my-incompatible-registry.com";
+
+      await lernaPublish(testDir)("--registry", registry);
+
+      const logMessages = loggingOutput("notice");
+      expect(logMessages).toContain("Skipping all user and access validation due to third-party registry");
+    });
   });
 
   describe("--no-verify-access", () => {
