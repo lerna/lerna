@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.8.4](https://github.com/lerna/lerna/compare/v3.8.3...v3.8.4) (2019-01-03)
+
+
+### Bug Fixes
+
+* **publish:** Pass username to access.lsPackages() ([31982a1](https://github.com/lerna/lerna/commit/31982a1))
+
+
+
+
+
 ## [3.8.3](https://github.com/lerna/lerna/compare/v3.8.2...v3.8.3) (2019-01-03)
 
 
