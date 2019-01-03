@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.8.2](https://github.com/lerna/lerna/compare/v3.8.1...v3.8.2) (2019-01-03)
+
+
+### Bug Fixes
+
+* **bootstrap:** Bail out of hoisted recursive lifecycles ([169c943](https://github.com/lerna/lerna/commit/169c943)), closes [#1125](https://github.com/lerna/lerna/issues/1125)
+* **publish:** Avoid recursive root lifecycle execution ([e133134](https://github.com/lerna/lerna/commit/e133134))
+* **publish:** Run root prepublish lifecycle if it exists ([c5676bb](https://github.com/lerna/lerna/commit/c5676bb))
+* **run-lifecycle:** Short-circuit ignore options ([ae29097](https://github.com/lerna/lerna/commit/ae29097))
+* **version:** Avoid recursive root lifecycle execution ([089392d](https://github.com/lerna/lerna/commit/089392d)), closes [#1844](https://github.com/lerna/lerna/issues/1844)
+
+
+
+
+
 ## [3.8.1](https://github.com/lerna/lerna/compare/v3.8.0...v3.8.1) (2018-12-31)
 
 

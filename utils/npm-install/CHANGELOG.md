@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.8.2](https://github.com/lerna/lerna/compare/v3.8.1...v3.8.2) (2019-01-03)
+
+
+### Bug Fixes
+
+* **bootstrap:** Bail out of hoisted recursive lifecycles ([169c943](https://github.com/lerna/lerna/commit/169c943)), closes [#1125](https://github.com/lerna/lerna/issues/1125)
+
+
+
+
+
 # [3.6.0](https://github.com/lerna/lerna/compare/v3.5.1...v3.6.0) (2018-12-07)
 
 

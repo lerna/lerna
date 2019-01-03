@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.8.2](https://github.com/lerna/lerna/compare/v3.8.1...v3.8.2) (2019-01-03)
+
+
+### Bug Fixes
+
+* **publish:** Avoid recursive root lifecycle execution ([e133134](https://github.com/lerna/lerna/commit/e133134))
+* **publish:** Run root prepublish lifecycle if it exists ([c5676bb](https://github.com/lerna/lerna/commit/c5676bb))
+
+
+
+
+
 ## [3.8.1](https://github.com/lerna/lerna/compare/v3.8.0...v3.8.1) (2018-12-31)
 
 
