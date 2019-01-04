@@ -5,8 +5,8 @@
 ## Usage
 
 ```sh
-lerna publish          # publish packages that have changed since the last release
-lerna publish from-git # explicitly publish packages tagged in current commit
+lerna publish              # publish packages that have changed since the last release
+lerna publish from-git     # explicitly publish packages tagged in the current commit
 lerna publish from-package # explicitly publish packages where the latest version is not present in the registry
 ```
 
@@ -50,9 +50,9 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 `lerna publish` supports all of the options provided by [`lerna version`](https://github.com/lerna/lerna/tree/master/commands/version#options) in addition to the following:
 
 - [`--canary`](#--canary)
-- [`--contents`](#--contents)
-- [`--git-reset`](#--git-reset)
+- [`--contents <dir>`](#--contents-dir)
 - [`--npm-tag <dist-tag>`](#--npm-tag-dist-tag)
+- [`--no-git-reset`](#--no-git-reset)
 - [`--no-verify-access`](#--no-verify-access)
 - [`--registry <url>`](#--registry-url)
 - [`--temp-tag`](#--temp-tag)
@@ -78,7 +78,7 @@ When run with this flag, `lerna publish` publishes packages in a more granular w
 
 > The intended use case for this flag is a per commit level release or nightly release.
 
-### `--contents`
+### `--contents <dir>`
 
 Subdirectory to publish. Must apply to ALL packages, and MUST contain a package.json file.
 Package lifecycles will still be run in the original leaf directory.
@@ -89,18 +89,6 @@ If you're into unnecessarily complicated publishing, this will give you joy.
 ```sh
 lerna publish --contents dist
 # publish the "dist" subfolder of every Lerna-managed leaf package
-```
-
-### `--git-reset`
-
-Ensures the working tree is reset by any changes the `publish` command makes.
-
-To not reset the working tree, specify `--no-git-reset`. This is especially useful when used as part of a CI pipeline in conjunction with the `--canary` flag. For instance, the `package.json` version numbers which have been bumped may need to be used in subsequent CI pipeline steps (such as Docker builds).
-
-The default `--git-reset` is `true`.
-
-```sh
-lerna publish --git-reset
 ```
 
 ### `--npm-tag <dist-tag>`
@@ -115,6 +103,16 @@ This option can be used to publish a [`prerelease`](http://carrot.is/coding/npm_
 
 > Note: the `latest` tag is the one that is used when a user runs `npm install my-package`.
 > To install a different tag, a user can run `npm install my-package@prerelease`.
+
+### `--no-git-reset`
+
+By default, `lerna publish` ensures any changes to the working tree have been reset.
+
+To avoid this, pass `--no-git-reset`. This can be especially useful when used as part of a CI pipeline in conjunction with the `--canary` flag. For instance, the `package.json` version numbers which have been bumped may need to be used in subsequent CI pipeline steps (such as Docker builds).
+
+```sh
+lerna publish --no-git-reset
+```
 
 ### `--no-verify-access`
 
@@ -136,7 +134,7 @@ private registries.
 
 When passed, this flag will alter the default publish process by first publishing
 all changed packages to a temporary dist-tag (`lerna-temp`) and then moving the
-new version(s) to the default [dist-tag](https://docs.npmjs.com/cli/dist-tag) (`latest`).
+new version(s) to the dist-tag configured by [`--npm-tag`](#--npm-tag-dist-tag) (default `latest`).
 
 This is not generally necessary, as Lerna will publish packages in topological
 order (all dependencies before dependents) by default.
