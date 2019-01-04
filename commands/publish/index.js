@@ -515,7 +515,7 @@ class PublishCommand extends Command {
   packUpdated() {
     const tracker = this.logger.newItem("npm pack");
 
-    tracker.addWork(this.packagesToPublish.length + 1);
+    tracker.addWork(this.packagesToPublish.length);
 
     let chain = Promise.resolve();
 
@@ -539,6 +539,7 @@ class PublishCommand extends Command {
 
         pkg =>
           pulseTillDone(packDirectory(pkg, getLocation(pkg), opts)).then(packed => {
+            tracker.verbose("packed", pkg.name, path.relative(this.project.rootPath, getLocation(pkg)));
             tracker.completeWork(1);
 
             // store metadata for use in this.publishPacked()
@@ -581,8 +582,8 @@ class PublishCommand extends Command {
       [
         pkg =>
           pulseTillDone(npmPublish(pkg, pkg.packed.tarFilePath, opts)).then(() => {
-            tracker.completeWork(1);
             tracker.success("published", pkg.name, pkg.version);
+            tracker.completeWork(1);
 
             logPacked(pkg.packed);
 
