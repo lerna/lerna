@@ -104,6 +104,14 @@ Set {
   "package-2",
 }
 `);
+      expect(npmPublish.registry).toMatchInlineSnapshot(`
+Map {
+  "package-1" => "latest",
+  "package-3" => "latest",
+  "package-4" => "latest",
+  "package-2" => "latest",
+}
+`);
       expect(npmPublish.order()).toEqual([
         "package-1",
         "package-3",
@@ -322,7 +330,6 @@ Set {
 
       expect(npmPublish).toHaveBeenCalledWith(
         expect.objectContaining({ name: "package-1" }),
-        "latest", // dist-tag
         "/TEMP_DIR/package-1-MOCKED.tgz",
         expect.objectContaining({ registry })
       );
@@ -336,7 +343,6 @@ Set {
 
       expect(npmPublish).toHaveBeenCalledWith(
         expect.objectContaining({ name: "package-1" }),
-        "latest", // dist-tag
         "/TEMP_DIR/package-1-MOCKED.tgz",
         expect.objectContaining({ registry: "https://registry.npmjs.org/" })
       );

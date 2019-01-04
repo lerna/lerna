@@ -565,19 +565,22 @@ class PublishCommand extends Command {
   }
 
   publishPacked() {
-    // if we skip temp tags we should tag with the proper value immediately
-    const distTag = this.options.tempTag ? "lerna-temp" : this.conf.get("tag");
     const tracker = this.logger.newItem("publish");
 
     tracker.addWork(this.packagesToPublish.length);
 
     let chain = Promise.resolve();
 
-    const opts = this.conf.snapshot;
+    const opts = Object.assign(this.conf.snapshot, {
+      // distTag defaults to "latest" OR whatever is in pkg.publishConfig.tag
+      // if we skip temp tags we should tag with the proper value immediately
+      tag: this.options.tempTag ? "lerna-temp" : this.conf.get("tag"),
+    });
+
     const mapper = pPipe(
       [
         pkg =>
-          pulseTillDone(npmPublish(pkg, distTag, pkg.packed.tarFilePath, opts)).then(() => {
+          pulseTillDone(npmPublish(pkg, pkg.packed.tarFilePath, opts)).then(() => {
             tracker.completeWork(1);
             tracker.success("published", pkg.name, pkg.version);
 

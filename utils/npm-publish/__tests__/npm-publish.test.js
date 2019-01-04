@@ -38,9 +38,9 @@ describe("npm-publish", () => {
   );
 
   it("calls external libraries with correct arguments", async () => {
-    const opts = new Map();
+    const opts = new Map().set("tag", "published-tag");
 
-    await npmPublish(pkg, "published-tag", tarFilePath, opts);
+    await npmPublish(pkg, tarFilePath, opts);
 
     expect(fs.readFile).toHaveBeenCalledWith(tarFilePath);
     expect(readJSON).toHaveBeenCalledWith(pkg.manifestLocation);
@@ -55,20 +55,8 @@ describe("npm-publish", () => {
     );
   });
 
-  it("falls back to opts.tag for dist-tag", async () => {
-    const opts = new Map([["tag", "custom-default"]]);
-
-    await npmPublish(pkg, undefined, tarFilePath, opts);
-
-    expect(publish).toHaveBeenCalledWith(
-      mockManifest,
-      mockTarData,
-      expect.figgyPudding({ tag: "custom-default" })
-    );
-  });
-
-  it("falls back to default tag", async () => {
-    await npmPublish(pkg, undefined, tarFilePath);
+  it("defaults opts.tag to 'latest'", async () => {
+    await npmPublish(pkg, tarFilePath);
 
     expect(publish).toHaveBeenCalledWith(
       mockManifest,
@@ -79,10 +67,10 @@ describe("npm-publish", () => {
     );
   });
 
-  it("respects opts.dry-run", async () => {
-    const opts = new Map([["dry-run", true]]);
+  it("respects opts.dryRun", async () => {
+    const opts = new Map().set("dryRun", true);
 
-    await npmPublish(pkg, undefined, tarFilePath, opts);
+    await npmPublish(pkg, tarFilePath, opts);
 
     expect(publish).not.toHaveBeenCalled();
     expect(runLifecycle).toHaveBeenCalledTimes(2);
@@ -90,10 +78,10 @@ describe("npm-publish", () => {
 
   it("calls publish lifecycles", async () => {
     const aFiggyPudding = expect.figgyPudding({
-      tag: "lifecycles",
+      projectScope: "test",
     });
 
-    await npmPublish(pkg, "lifecycles", tarFilePath);
+    await npmPublish(pkg, tarFilePath);
 
     expect(runLifecycle).toHaveBeenCalledWith(pkg, "publish", aFiggyPudding);
     expect(runLifecycle).toHaveBeenLastCalledWith(pkg, "postpublish", aFiggyPudding);

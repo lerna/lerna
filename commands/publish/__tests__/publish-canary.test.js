@@ -116,13 +116,6 @@ test("publish --canary <semver>", async () => {
   await lernaPublish(cwd)("--canary", "prerelease");
   // prerelease === prepatch, which is the default
 
-  expect(npmPublish.registry).toMatchInlineSnapshot(`
-Map {
-  "package-1" => "canary",
-  "package-3" => "canary",
-  "package-2" => "canary",
-}
-`);
   expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
 Object {
   "package-1": 1.0.1-alpha.0+SHA,

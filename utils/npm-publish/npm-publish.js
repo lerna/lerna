@@ -26,10 +26,9 @@ const PublishConfig = figgyPudding(
   }
 );
 
-function npmPublish(pkg, tag, tarFilePath, _opts) {
+function npmPublish(pkg, tarFilePath, _opts) {
   const opts = PublishConfig(_opts, {
     projectScope: pkg.name,
-    tag,
   });
 
   opts.log.verbose("publish", pkg.name);

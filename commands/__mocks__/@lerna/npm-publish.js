@@ -3,8 +3,8 @@
 const registry = new Map();
 
 // by default, act like a spy that populates registry
-const mockNpmPublish = jest.fn((pkg, tag) => {
-  registry.set(pkg.name, tag);
+const mockNpmPublish = jest.fn((pkg, tarData, opts) => {
+  registry.set(pkg.name, opts.tag);
 
   return Promise.resolve();
 });
