@@ -1,5 +1,6 @@
 "use strict";
 
+const log = require("libnpm/log");
 const versionCommand = require("@lerna/version/command");
 
 /**
@@ -29,7 +30,7 @@ exports.builder = yargs => {
       requiresArg: true,
       defaultDescription: ".",
     },
-    "npm-tag": {
+    "dist-tag": {
       describe: "Publish packages with the specified npm dist-tag",
       type: "string",
       requiresArg: true,
@@ -79,6 +80,13 @@ exports.builder = yargs => {
   yargs.group(Object.keys(opts).concat(sharedKeys), "Command Options:");
 
   return yargs
+    .option("npm-tag", {
+      // TODO: remove in next major release
+      hidden: true,
+      conflicts: "dist-tag",
+      type: "string",
+      requiresArg: true,
+    })
     .option("verify-registry", {
       // TODO: remove in next major release
       hidden: true,
@@ -89,6 +97,19 @@ exports.builder = yargs => {
       // deprecation notice handled in initialize()
       hidden: true,
       type: "boolean",
+    })
+    .check(argv => {
+      /* eslint-disable no-param-reassign */
+      if (argv.npmTag) {
+        argv.distTag = argv.npmTag;
+        argv["dist-tag"] = argv.npmTag;
+        delete argv.npmTag;
+        delete argv["npm-tag"];
+        log.warn("deprecated", "--npm-tag has been renamed --dist-tag");
+      }
+      /* eslint-enable no-param-reassign */
+
+      return argv;
     });
 };
 

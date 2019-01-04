@@ -5,6 +5,7 @@
   "command": {
     "publish": {
       "cdVersion": "major",
+      "npmTag": "ignored",
       "loglevel": "success"
     }
   },

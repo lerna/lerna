@@ -152,6 +152,7 @@ Object {
     },
     "publish": Object {
       "bump": "prerelease",
+      "distTag": "next",
       "ignoreChanges": Array [
         "ignored-file",
       ],

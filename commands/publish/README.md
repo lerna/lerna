@@ -51,7 +51,7 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 
 - [`--canary`](#--canary)
 - [`--contents <dir>`](#--contents-dir)
-- [`--npm-tag <dist-tag>`](#--npm-tag-dist-tag)
+- [`--dist-tag <tag>`](#--dist-tag-tag)
 - [`--no-git-reset`](#--no-git-reset)
 - [`--no-verify-access`](#--no-verify-access)
 - [`--registry <url>`](#--registry-url)
@@ -91,10 +91,10 @@ lerna publish --contents dist
 # publish the "dist" subfolder of every Lerna-managed leaf package
 ```
 
-### `--npm-tag <dist-tag>`
+### `--dist-tag <tag>`
 
 ```sh
-lerna publish --npm-tag next
+lerna publish --dist-tag next
 ```
 
 When run with this flag, `lerna publish` will publish to npm with the given npm [dist-tag](https://docs.npmjs.com/cli/dist-tag) (defaults to `latest`).
@@ -134,7 +134,7 @@ private registries.
 
 When passed, this flag will alter the default publish process by first publishing
 all changed packages to a temporary dist-tag (`lerna-temp`) and then moving the
-new version(s) to the dist-tag configured by [`--npm-tag`](#--npm-tag-dist-tag) (default `latest`).
+new version(s) to the dist-tag configured by [`--dist-tag`](#--dist-tag-tag) (default `latest`).
 
 This is not generally necessary, as Lerna will publish packages in topological
 order (all dependencies before dependents) by default.

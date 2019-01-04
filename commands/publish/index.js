@@ -93,7 +93,7 @@ class PublishCommand extends Command {
       this.conf.set("registry", "https://registry.npmjs.org/", "cli");
     }
 
-    // inject --npm-tag into opts, if present
+    // inject --dist-tag into opts, if present
     const distTag = this.getDistTag();
 
     if (distTag) {
@@ -629,8 +629,8 @@ class PublishCommand extends Command {
   }
 
   getDistTag() {
-    if (this.options.npmTag) {
-      return this.options.npmTag;
+    if (this.options.distTag) {
+      return this.options.distTag;
     }
 
     if (this.options.canary) {
