@@ -4,6 +4,7 @@
   ],
   "command": {
     "publish": {
+      "cdVersion": "major",
       "loglevel": "success"
     }
   },

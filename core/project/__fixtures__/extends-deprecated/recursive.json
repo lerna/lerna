@@ -3,6 +3,7 @@
   "packages": [
     "recursive-pkgs/*"
   ],
+  "cdVersion": "prerelease",
   "commands": {
     "publish": {
       "ignore": [

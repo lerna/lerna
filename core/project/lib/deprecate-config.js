@@ -6,7 +6,7 @@ const path = require("path");
 
 module.exports = compose(
   // add new predicates HERE
-  remap("command.publish.cdVersion", "command.publish.bump"),
+  remap("command.publish.cdVersion", "command.publish.bump", { alsoRoot: true }),
   remap("command.publish.ignore", "command.publish.ignoreChanges"),
   remap("commands", "command"),
   (config, filepath) => ({ config, filepath })
@@ -17,21 +17,32 @@ module.exports = compose(
  * The returned predicate mutates the `config` parameter.
  *
  * @param {String} search Path to deprecated option
- * @param {String} replace Path of renamed option
+ * @param {String} target Path of renamed option
+ * @param {Object} opts Optional configuration object
+ * @param {Boolean} opts.alsoRoot Whether to check root config as well
  * @return {Function} predicate accepting (config, filepath)
  */
-function remap(search, replace) {
+function remap(search, target, { alsoRoot } = {}) {
+  const pathsToSearch = [search];
+
+  if (alsoRoot) {
+    // root config is overwritten by "more specific" nested config
+    pathsToSearch.unshift(search.split(".").pop());
+  }
+
   return obj => {
-    if (dotProp.has(obj.config, search)) {
-      const localPath = path.relative(".", obj.filepath);
+    for (const searchPath of pathsToSearch) {
+      if (dotProp.has(obj.config, searchPath)) {
+        const localPath = path.relative(".", obj.filepath);
 
-      log.warn(
-        "project",
-        `Deprecated key "${search}" found in ${localPath}\nPlease rename "${search}" => "${replace}"`
-      );
+        log.warn(
+          "project",
+          `Deprecated key "${searchPath}" found in ${localPath}\nPlease rename "${searchPath}" => "${target}"`
+        );
 
-      dotProp.set(obj.config, replace, dotProp.get(obj.config, search));
-      dotProp.delete(obj.config, search);
+        dotProp.set(obj.config, target, dotProp.get(obj.config, searchPath));
+        dotProp.delete(obj.config, searchPath);
+      }
     }
 
     return obj;

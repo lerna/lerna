@@ -144,11 +144,26 @@ describe("Project", () => {
       const cwd = await initFixture("extends-deprecated");
       const project = new Project(cwd);
 
-      expect(project.config).not.toHaveProperty("commands");
-      expect(project.config).not.toHaveProperty("command.publish.ignore");
-      expect(project.config).toHaveProperty("command.publish.ignoreChanges", ["ignored-file"]);
-      expect(project.config).toHaveProperty("command.publish.loglevel", "success");
-      expect(project.config).toHaveProperty("command.bootstrap.hoist", true);
+      expect(project.config).toMatchInlineSnapshot(`
+Object {
+  "command": Object {
+    "bootstrap": Object {
+      "hoist": true,
+    },
+    "publish": Object {
+      "bump": "prerelease",
+      "ignoreChanges": Array [
+        "ignored-file",
+      ],
+      "loglevel": "success",
+    },
+  },
+  "packages": Array [
+    "recursive-pkgs/*",
+  ],
+  "version": "1.0.0",
+}
+`);
     });
 
     it("throws an error when extend target is unresolvable", async () => {
