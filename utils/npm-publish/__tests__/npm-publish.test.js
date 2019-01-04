@@ -67,6 +67,51 @@ describe("npm-publish", () => {
     );
   });
 
+  it("overrides pkg.publishConfig.tag when opts.tag is not defaulted", async () => {
+    readJSON.mockResolvedValueOnce({
+      publishConfig: {
+        tag: "beta",
+      },
+    });
+    const opts = new Map().set("tag", "temp-tag");
+
+    await npmPublish(pkg, tarFilePath, opts);
+
+    expect(publish).toHaveBeenCalledWith(
+      expect.objectContaining({
+        publishConfig: {
+          tag: "temp-tag",
+        },
+      }),
+      mockTarData,
+      expect.figgyPudding({
+        tag: "temp-tag",
+      })
+    );
+  });
+
+  it("respects pkg.publishConfig.tag when opts.tag matches default", async () => {
+    readJSON.mockResolvedValueOnce({
+      publishConfig: {
+        tag: "beta",
+      },
+    });
+
+    await npmPublish(pkg, tarFilePath);
+
+    expect(publish).toHaveBeenCalledWith(
+      expect.objectContaining({
+        publishConfig: {
+          tag: "beta",
+        },
+      }),
+      mockTarData,
+      expect.figgyPudding({
+        tag: "latest",
+      })
+    );
+  });
+
   it("respects opts.dryRun", async () => {
     const opts = new Map().set("dryRun", true);
 

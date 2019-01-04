@@ -37,7 +37,21 @@ function npmPublish(pkg, tarFilePath, _opts) {
 
   if (!opts.dryRun) {
     chain = chain.then(() => Promise.all([fs.readFile(tarFilePath), readJSON(pkg.manifestLocation)]));
-    chain = chain.then(([tarData, manifest]) => publish(manifest, tarData, opts));
+    chain = chain.then(([tarData, manifest]) => {
+      // non-default tag needs to override publishConfig.tag,
+      // which is merged over opts.tag in libnpm/publish
+      if (
+        opts.tag !== "latest" &&
+        manifest.publishConfig &&
+        manifest.publishConfig.tag &&
+        manifest.publishConfig.tag !== opts.tag
+      ) {
+        // eslint-disable-next-line no-param-reassign
+        manifest.publishConfig.tag = opts.tag;
+      }
+
+      return publish(manifest, tarData, opts);
+    });
   }
 
   chain = chain.then(() => runLifecycle(pkg, "publish", opts));
