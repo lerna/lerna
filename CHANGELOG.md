@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.8.5](https://github.com/lerna/lerna/compare/v3.8.4...v3.8.5) (2019-01-05)
+
+
+### Bug Fixes
+
+* **npm-dist-tag:** Improve robustness ([63a7a89](https://github.com/lerna/lerna/commit/63a7a89))
+* **npm-publish:** Ensure pkg.publishConfig is handled correctly ([1877def](https://github.com/lerna/lerna/commit/1877def)), closes [#1498](https://github.com/lerna/lerna/issues/1498)
+* **project:** Deprecate root-level config keys as well, prioritizing nested ([7a65a87](https://github.com/lerna/lerna/commit/7a65a87))
+* **publish:** Deprecate `--npm-tag`, replaced by `--dist-tag` ([196d663](https://github.com/lerna/lerna/commit/196d663))
+* **publish:** Ensure pkg.publishConfig is handled correctly when promoting dist-tags ([af1c2ad](https://github.com/lerna/lerna/commit/af1c2ad))
+* **publish:** Tweak progress logging ([5a04145](https://github.com/lerna/lerna/commit/5a04145))
+
+
+
+
+
 ## [3.8.4](https://github.com/lerna/lerna/compare/v3.8.3...v3.8.4) (2019-01-03)
 
 

@@ -1,6 +1,6 @@
 {
   "name": "@lerna/npm-dist-tag",
-  "version": "3.7.1",
+  "version": "3.8.5",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",

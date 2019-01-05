@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.8.5](https://github.com/lerna/lerna/compare/v3.8.4...v3.8.5) (2019-01-05)
+
+
+### Bug Fixes
+
+* **npm-dist-tag:** Improve robustness ([63a7a89](https://github.com/lerna/lerna/commit/63a7a89))
+
+
+
+
+
 ## [3.7.1](https://github.com/lerna/lerna/compare/v3.7.0...v3.7.1) (2018-12-20)
 
 
