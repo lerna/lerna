@@ -604,7 +604,6 @@ class PublishCommand extends Command {
   }
 
   npmUpdateAsLatest() {
-    const distTag = this.conf.get("tag");
     const tracker = this.logger.newItem("npmUpdateAsLatest");
 
     tracker.addWork(this.packagesToPublish.length);
@@ -613,8 +612,16 @@ class PublishCommand extends Command {
     let chain = Promise.resolve();
 
     const opts = this.conf.snapshot;
+    const getDistTag = publishConfig => {
+      if (opts.tag === "latest" && publishConfig && publishConfig.tag) {
+        return publishConfig.tag;
+      }
+
+      return opts.tag;
+    };
     const mapper = pkg => {
       const spec = `${pkg.name}@${pkg.version}`;
+      const distTag = getDistTag(pkg.get("publishConfig"));
 
       return Promise.resolve()
         .then(() => pulseTillDone(npmDistTag.remove(spec, "lerna-temp", opts)))

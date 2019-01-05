@@ -1,6 +1,9 @@
 {
   "name": "@integration/package-2",
   "version": "1.0.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@integration/package-1": "^1.0.0"
   }

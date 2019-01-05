@@ -55,33 +55,44 @@ test("publish --npm-tag deprecated", async () => {
 });
 
 test("publish --temp-tag", async () => {
-  const cwd = await initFixture("normal");
+  const cwd = await initFixture("integration");
 
-  collectUpdates.setUpdated(cwd, "package-4");
+  await lernaPublish(cwd)("--temp-tag");
 
-  await lernaPublish(cwd)("--temp-tag", "--registry", "test-registry");
-
-  expect(npmPublish.registry.get("package-4")).toBe("lerna-temp");
+  expect(npmPublish.registry).toMatchInlineSnapshot(`
+Map {
+  "@integration/package-1" => "lerna-temp",
+  "@integration/package-2" => "lerna-temp",
+}
+`);
 
   const conf = expect.objectContaining({
-    registry: "test-registry",
+    tag: "latest",
   });
-  expect(npmDistTag.remove).toHaveBeenCalledWith("package-4@1.0.1", "lerna-temp", conf);
-  expect(npmDistTag.add).toHaveBeenCalledWith("package-4@1.0.1", "latest", conf);
+
+  expect(npmDistTag.remove).toHaveBeenCalledWith("@integration/package-1@1.0.1", "lerna-temp", conf);
+  expect(npmDistTag.remove).toHaveBeenCalledWith("@integration/package-2@1.0.1", "lerna-temp", conf);
+
+  expect(npmDistTag.add).toHaveBeenCalledWith("@integration/package-1@1.0.1", "CUSTOM", conf); // <--
+  expect(npmDistTag.add).toHaveBeenCalledWith("@integration/package-2@1.0.1", "latest", conf);
 });
 
 test("publish --dist-tag beta --temp-tag", async () => {
-  const cwd = await initFixture("normal");
-
-  collectUpdates.setUpdated(cwd, "package-1");
+  const cwd = await initFixture("integration");
 
   await lernaPublish(cwd)("--dist-tag", "beta", "--temp-tag");
 
-  expect(npmPublish.registry.get("package-1")).toBe("lerna-temp");
+  expect(npmPublish.registry).toMatchInlineSnapshot(`
+Map {
+  "@integration/package-1" => "lerna-temp",
+  "@integration/package-2" => "lerna-temp",
+}
+`);
 
   const conf = expect.objectContaining({
     tag: "beta",
   });
-  expect(npmDistTag.remove).toHaveBeenCalledWith("package-1@1.0.1", "lerna-temp", conf);
-  expect(npmDistTag.add).toHaveBeenCalledWith("package-1@1.0.1", "beta", conf);
+
+  expect(npmDistTag.add).toHaveBeenCalledWith("@integration/package-1@1.0.1", "beta", conf); // <--
+  expect(npmDistTag.add).toHaveBeenCalledWith("@integration/package-2@1.0.1", "beta", conf);
 });
