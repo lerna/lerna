@@ -20,13 +20,7 @@ When run, this command does one of the following things:
 
 > Lerna will never publish packages which are marked as private (`"private": true` in the `package.json`).
 
-**Note:** to publish scoped packages, you need to add the following to each `package.json`:
-
-```json
-  "publishConfig": {
-    "access": "public"
-  }
-```
+Check out [Per-Package Configuration](#per-package-configuration) for more details about publishing scoped packages, custom registries, and custom dist-tags.
 
 ## Positionals
 
@@ -154,3 +148,47 @@ Useful in [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous
 ### `--skip-npm`
 
 Call [`lerna version`](https://github.com/lerna/lerna/tree/master/commands/version#readme) directly, instead.
+
+## Per-Package Configuration
+
+A leaf package can be configured with special [`publishConfig`](https://docs.npmjs.com/files/package.json#publishconfig) that in _certain_ circumstances changes the behavior of `lerna publish`.
+
+### `publishConfig.access`
+
+To publish packages with a scope (e.g., `@mycompany/rocks`), you must set [`access`](https://docs.npmjs.com/misc/config#access):
+
+```json
+  "publishConfig": {
+    "access": "public"
+  }
+```
+
+- If this field is set for a package _without_ a scope, it **will** fail.
+- If you _want_ your scoped package to remain private (i.e., `"restricted"`), there is no need to set this value.
+
+  Note that this is **not** the same as setting `"private": true` in a leaf package; if the `private` field is set, that package will _never_ be published under any circumstances.
+
+### `publishConfig.registry`
+
+You can customize the registry on a per-package basis by setting [`registry`](https://docs.npmjs.com/misc/config#registry):
+
+```json
+  "publishConfig": {
+    "registry": "http://my-awesome-registry.com/"
+  }
+```
+
+- Passing [`--registry`](#--registry-url) applies globally, and in some cases isn't what you want.
+
+### `publishConfig.tag`
+
+You can customize the dist-tag on a per-package basis by setting [`tag`](https://docs.npmjs.com/misc/config#tag):
+
+```json
+  "publishConfig": {
+    "tag": "flippin-sweet"
+  }
+```
+
+- Passing [`--dist-tag`](#--dist-tag-tag) will _overwrite_ this value.
+- This value is _always_ ignored when [`--canary`](#--canary) is passed.
