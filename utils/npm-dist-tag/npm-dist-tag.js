@@ -40,7 +40,7 @@ function add(spec, tag, _opts) {
       return tags;
     }
 
-    const uri = `-/package/${opts.spec.escapedName}/dist-tags/${cleanTag}`;
+    const uri = `/-/package/${opts.spec.escapedName}/dist-tags/${encodeURIComponent(cleanTag)}`;
     const payload = opts.concat({
       method: "PUT",
       body: JSON.stringify(version),
@@ -49,6 +49,7 @@ function add(spec, tag, _opts) {
         // so we manually set the required content-type
         "content-type": "application/json",
       },
+      spec: opts.spec,
     });
 
     // success returns HTTP 204, thus no JSON to parse
@@ -78,7 +79,7 @@ function remove(spec, tag, _opts) {
       return tags;
     }
 
-    const uri = `-/package/${opts.spec.escapedName}/dist-tags/${tag}`;
+    const uri = `/-/package/${opts.spec.escapedName}/dist-tags/${encodeURIComponent(tag)}`;
     const payload = opts.concat({
       method: "DELETE",
     });
@@ -104,7 +105,20 @@ function list(spec, _opts) {
 }
 
 function fetchTags(opts) {
-  const uri = `-/package/${opts.spec.escapedName}/dist-tags`;
+  return fetch
+    .json(
+      `/-/package/${opts.spec.escapedName}/dist-tags`,
+      opts.concat({
+        "prefer-online": true,
+        spec: opts.spec,
+      })
+    )
+    .then(data => {
+      if (data && typeof data === "object") {
+        // eslint-disable-next-line no-param-reassign, no-underscore-dangle
+        delete data._etag;
+      }
 
-  return fetch.json(uri, opts);
+      return data || {};
+    });
 }

@@ -29,7 +29,7 @@ describe("npmDistTag.add()", () => {
       "added-tag": "1.0.1",
     });
     expect(fetch).toHaveBeenLastCalledWith(
-      "-/package/@scope%2fsome-pkg/dist-tags/added-tag",
+      "/-/package/@scope%2fsome-pkg/dist-tags/added-tag",
       expect.figgyPudding({
         method: "PUT",
         body: JSON.stringify("1.0.1"),
@@ -92,7 +92,7 @@ describe("npmDistTag.remove()", () => {
 
     expect(tags).not.toHaveProperty("removed-tag");
     expect(fetch).toHaveBeenLastCalledWith(
-      "-/package/@scope%2fsome-pkg/dist-tags/removed-tag",
+      "/-/package/@scope%2fsome-pkg/dist-tags/removed-tag",
       expect.figgyPudding({
         method: "DELETE",
       })
@@ -118,6 +118,7 @@ describe("npmDistTag.list()", () => {
       Promise.resolve({
         latest: "1.0.0",
         "other-tag": "1.0.1",
+        _etag: "should-be-removed",
       })
     );
 
@@ -129,12 +130,25 @@ describe("npmDistTag.list()", () => {
       "other-tag": "1.0.1",
     });
     expect(fetch.json).toHaveBeenLastCalledWith(
-      "-/package/@scope%2fsome-pkg/dist-tags",
+      "/-/package/@scope%2fsome-pkg/dist-tags",
       expect.figgyPudding({
+        "prefer-online": true,
         spec: expect.objectContaining({
           name: "@scope/some-pkg",
         }),
       })
     );
+  });
+
+  it("handles disastrous results gracefully", async () => {
+    fetch.json.mockImplementationOnce(() =>
+      // i mean, wut
+      Promise.resolve(null)
+    );
+
+    const opts = new Map(baseOptions);
+    const tags = await npmDistTag.list("@scope/some-pkg", opts);
+
+    expect(tags).toEqual({});
   });
 });
