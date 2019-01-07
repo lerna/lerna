@@ -52,6 +52,7 @@ pulls:
 
 issues:
   exemptLabels:
+    - bug
     - question
     - discussion
 
