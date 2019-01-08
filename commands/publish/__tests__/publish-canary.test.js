@@ -10,6 +10,7 @@ jest.mock("../lib/get-npm-username");
 
 const fs = require("fs-extra");
 const path = require("path");
+const childProcess = require("@lerna/child-process");
 
 // mocked modules
 const writePkg = require("write-pkg");
@@ -350,4 +351,18 @@ test("publish --canary with dirty tree throws error", async () => {
   }
 
   expect.assertions(1);
+});
+
+test("publish --canary --include-merged-tags calls git describe correctly", async () => {
+  const spy = jest.spyOn(childProcess, "exec");
+  const cwd = await initTaggedFixture("normal");
+
+  await lernaPublish(cwd)("--canary", "--include-merged-tags");
+
+  expect(spy).toHaveBeenCalledWith(
+    "git",
+    // notably lacking "--first-parent"
+    ["describe", "--always", "--long", "--dirty", "--match", "v*.*.*"],
+    expect.objectContaining({ cwd })
+  );
 });

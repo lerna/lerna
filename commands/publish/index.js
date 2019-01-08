@@ -272,6 +272,7 @@ class PublishCommand extends Command {
   }
 
   detectCanaryVersions() {
+    const { cwd } = this.execOpts;
     const {
       bump = "prepatch",
       preid = "alpha",
@@ -312,11 +313,13 @@ class PublishCommand extends Command {
       // each package is described against its tags only
       chain = chain.then(updates =>
         pMap(updates, ({ pkg }) =>
-          describeRef({
-            match: `${pkg.name}@*`,
-            cwd: this.execOpts.cwd,
-            includeMergedTags,
-          })
+          describeRef(
+            {
+              match: `${pkg.name}@*`,
+              cwd,
+            },
+            includeMergedTags
+          )
             .then(({ lastVersion = pkg.version, refCount, sha }) =>
               // an unpublished package will have no reachable git tag
               makeVersion({ lastVersion, refCount, sha })
@@ -330,11 +333,13 @@ class PublishCommand extends Command {
     } else {
       // all packages are described against the last tag
       chain = chain.then(updates =>
-        describeRef({
-          match: `${tagVersionPrefix}*.*.*`,
-          cwd: this.execOpts.cwd,
-          includeMergedTags,
-        })
+        describeRef(
+          {
+            match: `${tagVersionPrefix}*.*.*`,
+            cwd,
+          },
+          includeMergedTags
+        )
           .then(makeVersion)
           .then(version => updates.map(({ pkg }) => [pkg.name, version]))
           .then(updatesVersions => ({
