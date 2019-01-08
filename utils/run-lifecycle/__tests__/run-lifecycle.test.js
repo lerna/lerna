@@ -5,6 +5,7 @@ jest.mock("libnpm/run-script", () => jest.fn(() => Promise.resolve()));
 const loggingOutput = require("@lerna-test/logging-output");
 const runScript = require("libnpm/run-script");
 const npmConf = require("@lerna/npm-conf");
+const Package = require("@lerna/package");
 const runLifecycle = require("../run-lifecycle");
 
 describe("runLifecycle()", () => {
@@ -32,14 +33,16 @@ describe("runLifecycle()", () => {
   });
 
   it("calls npm-lifecycle with prepared arguments", async () => {
-    const pkg = {
-      name: "test-name",
-      version: "1.0.0-test",
-      location: "test-location",
-      scripts: {
-        preversion: "test",
+    const pkg = new Package(
+      {
+        name: "test-name",
+        version: "1.0.0-test",
+        scripts: {
+          preversion: "test",
+        },
       },
-    };
+      "/test/location"
+    );
     const stage = "preversion";
     const opts = npmConf({ "custom-cli-flag": true });
 
