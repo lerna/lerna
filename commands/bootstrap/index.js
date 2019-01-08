@@ -98,9 +98,9 @@ class BootstrapCommand extends Command {
     }
 
     // don't execute recursively if run from a poorly-named script
-    this.runRootLifecycle = /^(pre|post)?install$/.test(process.env.npm_lifecycle_event)
+    this.runRootLifecycle = /^(prepare|prepublish|(pre|post)?install)$/.test(process.env.npm_lifecycle_event)
       ? stage => {
-          this.logger.warn("lifecycle", "Skipping root %j because it has already been called", stage);
+          this.logger.info("lifecycle", "Skipping root %j because it has already been called", stage);
         }
       : stage => this.runPackageLifecycle(this.project.manifest, stage);
 

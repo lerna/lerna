@@ -134,10 +134,17 @@ describe("BootstrapCommand", () => {
       expect(runLifecycle).not.toHaveBeenCalled();
     });
 
-    it("should not recurse from root install lifecycle", async () => {
+    test.each`
+      event
+      ${"preinstall"}
+      ${"install"}
+      ${"postinstall"}
+      ${"prepublish"}
+      ${"prepare"}
+    `("should not recurse from root $event lifecycle", async ({ event }) => {
       const testDir = await initFixture("lifecycle-scripts");
 
-      process.env.npm_lifecycle_event = "install";
+      process.env.npm_lifecycle_event = event;
 
       await lernaBootstrap(testDir)();
 
