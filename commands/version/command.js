@@ -33,6 +33,11 @@ exports.builder = (yargs, composed) => {
       describe: "Use another conventional-changelog preset rather than angular.",
       type: "string",
     },
+    changelog: {
+      describe: "When using conventional-commits, generate CHANGELOG.md files.",
+      type: "boolean",
+      defaultDescription: "true",
+    },
     exact: {
       describe: "Specify cross-dependency version numbers exactly rather than with a caret (^).",
       type: "boolean",

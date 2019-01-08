@@ -74,6 +74,13 @@ describe("--conventional-commits", () => {
         changelogOpts
       );
     });
+
+    it("should not update changelogs with --no-changelog option", async () => {
+      const cwd = await initFixture("independent");
+      await lernaVersion(cwd)("--conventional-commits", "--no-changelog");
+
+      expect(ConventionalCommitUtilities.updateChangelog).not.toHaveBeenCalled();
+    });
   });
 
   describe("fixed mode", () => {
@@ -141,6 +148,13 @@ describe("--conventional-commits", () => {
         "fixed",
         changelogOpts
       );
+    });
+
+    it("should not update changelogs with --no-changelog option", async () => {
+      const cwd = await initFixture("normal");
+      await lernaVersion(cwd)("--conventional-commits", "--no-changelog");
+
+      expect(ConventionalCommitUtilities.updateChangelog).not.toHaveBeenCalled();
     });
   });
 
