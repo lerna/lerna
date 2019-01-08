@@ -98,6 +98,14 @@ describe("BootstrapCommand", () => {
       ]);
     });
 
+    it("does not run prepublish scripts with --ignore-prepublish", async () => {
+      const testDir = await initFixture("lifecycle-scripts");
+
+      await lernaBootstrap(testDir)("--ignore-prepublish");
+
+      expect(runLifecycle.getOrderedCalls()).not.toContainEqual(["package-prepublish", "prepublish"]);
+    });
+
     it("shouldn't run lifecycle scripts with --ignore-scripts", async () => {
       const testDir = await initFixture("ignored-scripts");
 

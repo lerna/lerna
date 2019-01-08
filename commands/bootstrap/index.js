@@ -168,10 +168,16 @@ class BootstrapCommand extends Command {
         () => this.runLifecycleInPackages("postinstall"),
         () => this.runRootLifecycle("install"),
         () => this.runRootLifecycle("postinstall")
+      );
 
-        () => this.runLifecycleInPackages("prepublish"),
-        () => this.runRootLifecycle("prepublish"),
+      if (!this.options.ignorePrepublish) {
+        tasks.push(
+          () => this.runLifecycleInPackages("prepublish"),
+          () => this.runRootLifecycle("prepublish")
+        );
+      }
 
+      tasks.push(
         // "run on local npm install without any arguments", AFTER prepublish
         () => this.runLifecycleInPackages("prepare"),
         () => this.runRootLifecycle("prepare")

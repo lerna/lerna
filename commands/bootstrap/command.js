@@ -31,9 +31,14 @@ exports.builder = yargs => {
         hidden: true,
         // untyped and hidden on purpose
       },
+      "ignore-prepublish": {
+        group: "Command Options:",
+        describe: "Don't run prepublish lifecycle scripts in bootstrapped packages.",
+        type: "boolean",
+      },
       "ignore-scripts": {
         group: "Command Options:",
-        describe: "Don't run lifecycle scripts in bootstrapped packages",
+        describe: "Don't run _any_ lifecycle scripts in bootstrapped packages",
         type: "boolean",
       },
       "npm-client": {

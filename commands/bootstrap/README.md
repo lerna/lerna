@@ -15,10 +15,10 @@ When run, this command will:
 
 1. `npm install` all external dependencies of each package.
 2. Symlink together all Lerna `packages` that are dependencies of each other.
-3. `npm run prepublish` in all bootstrapped packages.
+3. `npm run prepublish` in all bootstrapped packages (unless `--ignore-prepublish` is passed).
 4. `npm run prepare` in all bootstrapped packages.
 
-`lerna bootstrap` respects the `--ignore`, `--ignore-scripts`, `--scope` and `--include-filtered-dependencies` flags (see [Filter Flags](https://www.npmjs.com/package/@lerna/filter-options)).
+`lerna bootstrap` respects the `--ignore`, `--scope` and `--include-filtered-dependencies` flags (see [Filter Flags](https://www.npmjs.com/package/@lerna/filter-options)).
 
 Pass extra arguments to npm client by placing them after `--`:
 
@@ -88,6 +88,16 @@ The `--ignore` flag, when used with the `bootstrap` command, can also be set in 
 > not the directory name the package lives in.
 
 ## Options
+
+### `--ignore-prepublish`
+
+Skip prepublish lifecycle scripts run by default in bootstrapped packages.
+Note, this lifecycle is [deprecated](https://docs.npmjs.com/misc/scripts#deprecation-note),
+and will likely be removed in the next major version of Lerna.
+
+```sh
+$ lerna bootstrap --ignore-prepublish
+```
 
 ### `--ignore-scripts`
 
