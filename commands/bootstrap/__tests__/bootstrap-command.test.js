@@ -112,6 +112,15 @@ describe("BootstrapCommand", () => {
       await lernaBootstrap(testDir)("--ignore-scripts");
 
       expect(runLifecycle).not.toHaveBeenCalled();
+      expect(npmInstall.dependencies).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: "package-prepare",
+        }),
+        ["tiny-tarball@^1.0.0"],
+        expect.objectContaining({
+          npmClientArgs: ["--ignore-scripts"],
+        })
+      );
     });
 
     it("should not recurse from hoisted root lifecycle", async () => {
@@ -158,7 +167,7 @@ describe("BootstrapCommand", () => {
         {
           registry: undefined,
           npmClient: "npm",
-          npmClientArgs: ["--ignore-scripts"],
+          npmClientArgs: [],
           mutex: undefined,
           // npmGlobalStyle is not included at all
         }
@@ -225,7 +234,7 @@ describe("BootstrapCommand", () => {
         subCommand: "ci",
         registry: undefined,
         npmClient: "npm",
-        npmClientArgs: ["--ignore-scripts"],
+        npmClientArgs: [],
         npmGlobalStyle: false,
         mutex: undefined,
       });
@@ -241,7 +250,7 @@ describe("BootstrapCommand", () => {
       expect(npmInstall.dependencies.mock.calls[0][2]).toEqual({
         registry: undefined,
         npmClient: "npm",
-        npmClientArgs: ["--ignore-scripts"],
+        npmClientArgs: [],
         npmGlobalStyle: false,
         mutex: undefined,
       });
@@ -263,7 +272,7 @@ describe("BootstrapCommand", () => {
       expect(npmInstall.dependencies.mock.calls[0][2]).toEqual({
         registry: undefined,
         npmClient: "npm",
-        npmClientArgs: ["--ignore-scripts"],
+        npmClientArgs: [],
         npmGlobalStyle: false,
         mutex: undefined,
       });
@@ -493,7 +502,7 @@ describe("BootstrapCommand", () => {
         await lernaBootstrap(testDir)("--", "--no-optional", "--production");
 
         expect(npmInstall.dependencies.mock.calls[0][2]).toMatchObject({
-          npmClientArgs: ["--ignore-scripts", "--no-optional", "--production"],
+          npmClientArgs: ["--no-optional", "--production"],
         });
       });
     });
@@ -505,7 +514,7 @@ describe("BootstrapCommand", () => {
         await lernaBootstrap(testDir)("--", "--no-optional");
 
         expect(npmInstall.dependencies.mock.calls[0][2]).toMatchObject({
-          npmClientArgs: ["--ignore-scripts", "--production", "--no-optional"],
+          npmClientArgs: ["--production", "--no-optional"],
         });
       });
     });

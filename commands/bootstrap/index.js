@@ -92,8 +92,10 @@ class BootstrapCommand extends Command {
       this.npmConfig.npmClientArgs = [...npmClientArgs, ...doubleDashArgs];
     }
 
-    // lifecycles are always run independently of install subprocess
-    this.npmConfig.npmClientArgs.unshift("--ignore-scripts");
+    // do not run any lifecycle scripts (if configured)
+    if (this.options.ignoreScripts) {
+      this.npmConfig.npmClientArgs.unshift("--ignore-scripts");
+    }
 
     // don't execute recursively if run from a poorly-named script
     this.runRootLifecycle = /^(pre|post)?install$/.test(process.env.npm_lifecycle_event)
