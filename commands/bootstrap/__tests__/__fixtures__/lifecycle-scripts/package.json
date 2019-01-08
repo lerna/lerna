@@ -1,3 +1,11 @@
 {
-  "name": "independent"
+  "name": "root",
+  "version": "0.0.0-root",
+  "private": true,
+  "scripts": {
+    "preinstall": "echo preinstall",
+    "install": "echo install",
+    "postinstall": "echo postinstall",
+    "prepare": "echo prepare"
+  }
 }

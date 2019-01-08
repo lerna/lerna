@@ -74,7 +74,10 @@ describe("BootstrapCommand", () => {
   createSymlink.mockResolvedValue();
 
   describe("lifecycle scripts", () => {
+    const npmLifecycleEvent = process.env.npm_lifecycle_event;
+
     afterEach(() => {
+      process.env.npm_lifecycle_event = npmLifecycleEvent;
       delete process.env.LERNA_EXEC_PATH;
       delete process.env.LERNA_ROOT_PATH;
     });
@@ -85,9 +88,13 @@ describe("BootstrapCommand", () => {
       await lernaBootstrap(testDir)();
 
       expect(runLifecycle.getOrderedCalls()).toEqual([
+        ["root", "preinstall"],
         ["package-preinstall", "preinstall"],
         ["package-postinstall", "postinstall"],
+        ["root", "install"],
+        ["root", "postinstall"],
         ["package-prepublish", "prepublish"],
+        ["root", "prepare"],
       ]);
     });
 
@@ -108,6 +115,20 @@ describe("BootstrapCommand", () => {
       await lernaBootstrap(testDir)();
 
       expect(runLifecycle).not.toHaveBeenCalled();
+    });
+
+    it("should not recurse from root install lifecycle", async () => {
+      const testDir = await initFixture("lifecycle-scripts");
+
+      process.env.npm_lifecycle_event = "install";
+
+      await lernaBootstrap(testDir)();
+
+      expect(runLifecycle.getOrderedCalls()).toEqual([
+        ["package-preinstall", "preinstall"],
+        ["package-postinstall", "postinstall"],
+        ["package-prepublish", "prepublish"],
+      ]);
     });
   });
 

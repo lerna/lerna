@@ -95,6 +95,13 @@ class BootstrapCommand extends Command {
     // lifecycles are always run independently of install subprocess
     this.npmConfig.npmClientArgs.unshift("--ignore-scripts");
 
+    // don't execute recursively if run from a poorly-named script
+    this.runRootLifecycle = /^(pre|post)?install$/.test(process.env.npm_lifecycle_event)
+      ? stage => {
+          this.logger.warn("lifecycle", "Skipping root %j because it has already been called", stage);
+        }
+      : stage => this.runPackageLifecycle(this.project.manifest, stage);
+
     this.targetGraph = this.options.forceLocal
       ? new PackageGraph(this.packageGraph.rawPackageList, "allDependencies", "forceLocal")
       : this.packageGraph;
@@ -142,6 +149,8 @@ class BootstrapCommand extends Command {
 
     if (scriptsEnabled) {
       tasks.push(
+        // preinstall scripts run in root before all leaves
+        () => this.runRootLifecycle("preinstall"),
         () => this.runLifecycleInPackages("preinstall")
       );
     }
@@ -154,11 +163,18 @@ class BootstrapCommand extends Command {
 
     if (scriptsEnabled) {
       tasks.push(
+        // {,post}install scripts run in all leaves before root
         () => this.runLifecycleInPackages("install"),
         () => this.runLifecycleInPackages("postinstall"),
+        () => this.runRootLifecycle("install"),
+        () => this.runRootLifecycle("postinstall")
+
         () => this.runLifecycleInPackages("prepublish"),
-        () => this.runRootLifecycle("prepublish")
-        () => this.runLifecycleInPackages("prepare")
+        () => this.runRootLifecycle("prepublish"),
+
+        // "run on local npm install without any arguments", AFTER prepublish
+        () => this.runLifecycleInPackages("prepare"),
+        () => this.runRootLifecycle("prepare")
       );
     }
 
