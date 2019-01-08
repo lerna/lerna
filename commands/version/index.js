@@ -396,7 +396,7 @@ class VersionCommand extends Command {
   }
 
   updatePackageVersions() {
-    const { conventionalCommits, changelogPreset } = this.options;
+    const { conventionalCommits, changelogPreset, changelog = true } = this.options;
     const independentVersions = this.project.isIndependent();
     const rootPath = this.project.manifest.location;
     const changedFiles = new Set();
@@ -440,7 +440,7 @@ class VersionCommand extends Command {
       pkg => this.runPackageLifecycle(pkg, "version").then(() => pkg),
     ];
 
-    if (conventionalCommits) {
+    if (conventionalCommits && changelog) {
       // we can now generate the Changelog, based on the
       // the updated version that we're about to release.
       const type = independentVersions ? "independent" : "fixed";
@@ -468,7 +468,7 @@ class VersionCommand extends Command {
       )
     );
 
-    if (!independentVersions) {
+    if (!independentVersions && changelog) {
       this.project.version = this.globalVersion;
 
       if (conventionalCommits) {

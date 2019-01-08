@@ -41,6 +41,7 @@ If you have any packages with a prerelease version number (e.g. `2.0.0-beta.3`) 
 - [`--commit-hooks`](#--commit-hooks)
 - [`--conventional-commits`](#--conventional-commits)
 - [`--changelog-preset`](#--changelog-preset)
+- [`--no-changelog`](#--no-changelog)
 - [`--exact`](#--exact)
 - [`--force-publish`](#--force-publish)
 - [`--ignore-changes`](#--ignore-changes)
@@ -132,6 +133,14 @@ In some cases you might want to change either use a another preset or a custom o
 Presets are names of built-in or installable configuration for conventional changelog.
 Presets may be passed as the full name of the package, or the auto-expanded suffix
 (e.g., `angular` is expanded to `conventional-changelog-angular`).
+
+### `--no-changelog`
+
+```sh
+lerna version --conventional-commits --no-changelog
+```
+
+When using `conventional-commits`, do not generate any `CHANGELOG.md` files.
 
 ### `--exact`
 
