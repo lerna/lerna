@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.9.1](https://github.com/lerna/lerna/compare/v3.9.0...v3.9.1) (2019-01-08)
+
+
+### Bug Fixes
+
+* **bootstrap:** Don't pass `--ignore-scripts` to `npm install` ([e602838](https://github.com/lerna/lerna/commit/e602838)), closes [#1855](https://github.com/lerna/lerna/issues/1855)
+* **bootstrap:** Prevent recursive execution from all install lifecycles ([ea9dbbe](https://github.com/lerna/lerna/commit/ea9dbbe))
+
+
+
+
+
 # [3.9.0](https://github.com/lerna/lerna/compare/v3.8.5...v3.9.0) (2019-01-08)
 
 
