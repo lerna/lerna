@@ -31,19 +31,6 @@ const installedPackagesInDirectories = testDir =>
     return obj;
   }, {});
 
-const ranScriptsInDirectories = testDir =>
-  runLifecycle.mock.calls.reduce((obj, [pkg, script]) => {
-    const location = normalizeRelativeDir(testDir, pkg.location);
-
-    if (!obj[location]) {
-      obj[location] = [];
-    }
-
-    obj[location].push(`npm run ${script}`);
-
-    return obj;
-  }, {});
-
 const removedDirectories = testDir =>
   rimrafDir.mock.calls.map(([directory]) => normalizeRelativeDir(testDir, directory));
 
@@ -97,8 +84,11 @@ describe("BootstrapCommand", () => {
 
       await lernaBootstrap(testDir)();
 
-      expect(npmInstall.dependencies).not.toHaveBeenCalled();
-      expect(ranScriptsInDirectories(testDir)).toMatchSnapshot();
+      expect(runLifecycle.getOrderedCalls()).toEqual([
+        ["package-preinstall", "preinstall"],
+        ["package-postinstall", "postinstall"],
+        ["package-prepublish", "prepublish"],
+      ]);
     });
 
     it("shouldn't run lifecycle scripts with --ignore-scripts", async () => {
@@ -106,10 +96,10 @@ describe("BootstrapCommand", () => {
 
       await lernaBootstrap(testDir)("--ignore-scripts");
 
-      expect(ranScriptsInDirectories(testDir)).toMatchSnapshot();
+      expect(runLifecycle).not.toHaveBeenCalled();
     });
 
-    it("should not recurse from hoisted root postinstall", async () => {
+    it("should not recurse from hoisted root lifecycle", async () => {
       const testDir = await initFixture("lifecycle-scripts");
 
       process.env.LERNA_EXEC_PATH = testDir;
@@ -139,7 +129,7 @@ describe("BootstrapCommand", () => {
         {
           registry: undefined,
           npmClient: "npm",
-          npmClientArgs: undefined,
+          npmClientArgs: ["--ignore-scripts"],
           mutex: undefined,
           // npmGlobalStyle is not included at all
         }
@@ -206,7 +196,7 @@ describe("BootstrapCommand", () => {
         subCommand: "ci",
         registry: undefined,
         npmClient: "npm",
-        npmClientArgs: undefined,
+        npmClientArgs: ["--ignore-scripts"],
         npmGlobalStyle: false,
         mutex: undefined,
       });
@@ -222,7 +212,7 @@ describe("BootstrapCommand", () => {
       expect(npmInstall.dependencies.mock.calls[0][2]).toEqual({
         registry: undefined,
         npmClient: "npm",
-        npmClientArgs: undefined,
+        npmClientArgs: ["--ignore-scripts"],
         npmGlobalStyle: false,
         mutex: undefined,
       });
@@ -244,7 +234,7 @@ describe("BootstrapCommand", () => {
       expect(npmInstall.dependencies.mock.calls[0][2]).toEqual({
         registry: undefined,
         npmClient: "npm",
-        npmClientArgs: undefined,
+        npmClientArgs: ["--ignore-scripts"],
         npmGlobalStyle: false,
         mutex: undefined,
       });
@@ -302,8 +292,8 @@ describe("BootstrapCommand", () => {
       await lernaBootstrap(testDir)();
 
       expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
-      expect(ranScriptsInDirectories(testDir)).toMatchSnapshot();
       expect(symlinkedDirectories(testDir)).toMatchSnapshot();
+      expect(runLifecycle.getOrderedCalls()).toEqual([["@test/package-1", "prepublish"]]);
     });
 
     it("should not bootstrap ignored packages", async () => {
@@ -474,7 +464,7 @@ describe("BootstrapCommand", () => {
         await lernaBootstrap(testDir)("--", "--no-optional", "--production");
 
         expect(npmInstall.dependencies.mock.calls[0][2]).toMatchObject({
-          npmClientArgs: ["--no-optional", "--production"],
+          npmClientArgs: ["--ignore-scripts", "--no-optional", "--production"],
         });
       });
     });
@@ -486,7 +476,7 @@ describe("BootstrapCommand", () => {
         await lernaBootstrap(testDir)("--", "--no-optional");
 
         expect(npmInstall.dependencies.mock.calls[0][2]).toMatchObject({
-          npmClientArgs: ["--production", "--no-optional"],
+          npmClientArgs: ["--ignore-scripts", "--production", "--no-optional"],
         });
       });
     });

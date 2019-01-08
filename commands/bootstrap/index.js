@@ -38,7 +38,7 @@ class BootstrapCommand extends Command {
   }
 
   initialize() {
-    const { registry, npmClient = "npm", npmClientArgs, mutex, hoist } = this.options;
+    const { registry, npmClient = "npm", npmClientArgs = [], mutex, hoist } = this.options;
 
     if (npmClient === "yarn" && hoist) {
       throw new ValidationError(
@@ -89,8 +89,11 @@ class BootstrapCommand extends Command {
     // lerna bootstrap ... -- <input>
     const doubleDashArgs = this.options["--"] || [];
     if (doubleDashArgs.length) {
-      this.npmConfig.npmClientArgs = [...(npmClientArgs || []), ...doubleDashArgs];
+      this.npmConfig.npmClientArgs = [...npmClientArgs, ...doubleDashArgs];
     }
+
+    // lifecycles are always run independently of install subprocess
+    this.npmConfig.npmClientArgs.unshift("--ignore-scripts");
 
     this.targetGraph = this.options.forceLocal
       ? new PackageGraph(this.packageGraph.rawPackageList, "allDependencies", "forceLocal")
@@ -128,25 +131,34 @@ class BootstrapCommand extends Command {
 
     const filteredLength = this.filteredPackages.length;
     const packageCountLabel = `${filteredLength} package${filteredLength > 1 ? "s" : ""}`;
+    const scriptsEnabled = this.options.ignoreScripts !== true;
 
     // root install does not need progress bar
     this.enableProgressBar();
     this.logger.info("", `Bootstrapping ${packageCountLabel}`);
 
-    const tasks = [
+    // conditional task queue
+    const tasks = [];
+
+    if (scriptsEnabled) {
+      tasks.push(
+        () => this.runLifecycleInPackages("preinstall")
+      );
+    }
+
+    tasks.push(
       () => this.getDependenciesToInstall(),
       result => this.installExternalDependencies(result),
-      () => this.symlinkPackages(),
-    ];
+      () => this.symlinkPackages()
+    );
 
-    if (!this.options.ignoreScripts) {
-      tasks.unshift(() => this.preinstallPackages());
-      // then install
-      // then symlink
+    if (scriptsEnabled) {
       tasks.push(
-        () => this.postinstallPackages(),
-        () => this.prepublishPackages(),
-        () => this.preparePackages()
+        () => this.runLifecycleInPackages("install"),
+        () => this.runLifecycleInPackages("postinstall"),
+        () => this.runLifecycleInPackages("prepublish"),
+        () => this.runRootLifecycle("prepublish")
+        () => this.runLifecycleInPackages("prepare")
       );
     }
 
@@ -199,38 +211,6 @@ class BootstrapCommand extends Command {
     return pFinally(runParallelBatches(this.batchedPackages, this.concurrency, mapPackageWithScript), () =>
       tracker.finish()
     );
-  }
-
-  /**
-   * Run the "preinstall" NPM script in all bootstrapped packages
-   * @returns {Promise}
-   */
-  preinstallPackages() {
-    return this.runLifecycleInPackages("preinstall");
-  }
-
-  /**
-   * Run the "postinstall" NPM script in all bootstrapped packages
-   * @returns {Promise}
-   */
-  postinstallPackages() {
-    return this.runLifecycleInPackages("postinstall");
-  }
-
-  /**
-   * Run the "prepublish" NPM script in all bootstrapped packages
-   * @returns {Promise}
-   */
-  prepublishPackages() {
-    return this.runLifecycleInPackages("prepublish");
-  }
-
-  /**
-   * Run the "prepare" NPM script in all bootstrapped packages
-   * @returns {Promise}
-   */
-  preparePackages() {
-    return this.runLifecycleInPackages("prepare");
   }
 
   hoistedDirectory(dependency) {

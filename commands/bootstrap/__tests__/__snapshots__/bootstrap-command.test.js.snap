@@ -1,21 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`BootstrapCommand lifecycle scripts should run preinstall, postinstall and prepublish scripts 1`] = `
-Object {
-  "packages/package-postinstall": Array [
-    "npm run postinstall",
-  ],
-  "packages/package-preinstall": Array [
-    "npm run preinstall",
-  ],
-  "packages/package-prepublish": Array [
-    "npm run prepublish",
-  ],
-}
-`;
-
-exports[`BootstrapCommand lifecycle scripts shouldn't run lifecycle scripts with --ignore-scripts 1`] = `Object {}`;
-
 exports[`BootstrapCommand with at least one external dependency to install hoists appropriately 1`] = `
 Object {
   "ROOT": Array [
@@ -412,14 +396,6 @@ Object {
 `;
 
 exports[`BootstrapCommand with multiple package locations should bootstrap packages 2`] = `
-Object {
-  "packages/package-1": Array [
-    "npm run prepublish",
-  ],
-}
-`;
-
-exports[`BootstrapCommand with multiple package locations should bootstrap packages 3`] = `
 Array [
   Object {
     "_src": "package-3",
