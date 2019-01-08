@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.10.0](https://github.com/lerna/lerna/compare/v3.9.1...v3.10.0) (2019-01-08)
+
+
+### Bug Fixes
+
+* **publish:** Correctly determine canary version when `--include-merged-tags` present ([fb2a1b2](https://github.com/lerna/lerna/commit/fb2a1b2)), closes [#1820](https://github.com/lerna/lerna/issues/1820)
+
+
+### Features
+
+* **lerna:** Use --exact version ranges between sibling dependencies ([02a067f](https://github.com/lerna/lerna/commit/02a067f))
+* **version:** Add `--no-changelog` option ([#1854](https://github.com/lerna/lerna/issues/1854)) ([d73d823](https://github.com/lerna/lerna/commit/d73d823)), closes [#1852](https://github.com/lerna/lerna/issues/1852)
+
+
+
+
+
 ## [3.9.1](https://github.com/lerna/lerna/compare/v3.9.0...v3.9.1) (2019-01-08)
 
 

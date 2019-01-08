@@ -1,6 +1,6 @@
 {
   "name": "@lerna/clean",
-  "version": "3.9.0",
+  "version": "3.10.0",
   "description": "Remove the node_modules directory from all packages",
   "keywords": [
     "lerna",
