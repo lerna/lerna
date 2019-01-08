@@ -77,6 +77,15 @@ function runLifecycle(pkg, stage, _opts) {
   // env.npm_config_prefix should be the package directory
   config.prefix = dir;
 
+  /* istanbul ignore else */
+  // eslint-disable-next-line no-underscore-dangle
+  if (pkg.__isLernaPackage) {
+    // To ensure npm-lifecycle creates the correct npm_package_* env vars,
+    // we must pass the _actual_ JSON instead of our fancy Package thingy
+    // eslint-disable-next-line no-param-reassign
+    pkg = pkg.toJSON();
+  }
+
   // TODO: remove pkg._id when npm-lifecycle no longer relies on it
   pkg._id = `${pkg.name}@${pkg.version}`; // eslint-disable-line
 

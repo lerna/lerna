@@ -6,8 +6,11 @@
     "package3-cli1": "cli1.js",
     "package3-cli2": "cli2.js"
   },
+  "engines": {
+    "node": ">= 8.9.0"
+  },
   "scripts": {
-    "postinstall": "exit 0",
+    "postinstall": "echo $npm_package_engines_node",
     "test": "package-2"
   },
   "dependencies": {

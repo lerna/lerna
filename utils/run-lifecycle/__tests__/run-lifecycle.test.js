@@ -40,6 +40,9 @@ describe("runLifecycle()", () => {
         scripts: {
           preversion: "test",
         },
+        engines: {
+          node: ">= 8.9.0",
+        },
       },
       "/test/location"
     );
@@ -52,7 +55,9 @@ describe("runLifecycle()", () => {
       expect.objectContaining({
         name: pkg.name,
         version: pkg.version,
-        location: pkg.location,
+        engines: {
+          node: ">= 8.9.0",
+        },
         _id: `${pkg.name}@${pkg.version}`,
       }),
       stage,

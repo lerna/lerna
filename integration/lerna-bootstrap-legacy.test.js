@@ -10,7 +10,7 @@ test("lerna bootstrap links all packages", async () => {
   const cwd = await initFixture("lerna-bootstrap");
   const lerna = cliRunner(cwd);
 
-  const { stderr } = await lerna("bootstrap", "--no-ci");
+  const { stdout: scriptOutput, stderr } = await lerna("bootstrap", "--no-ci");
   expect(stderr).toMatchInlineSnapshot(`
 lerna notice cli __TEST_VERSION__
 lerna info Bootstrapping 4 packages
@@ -22,10 +22,13 @@ lerna info lifecycle @integration/package-2@1.0.0~prepublish: @integration/packa
 lerna info lifecycle @integration/package-1@1.0.0~prepare: @integration/package-1@1.0.0
 lerna success Bootstrapped 4 packages
 `);
+  // there is a whole bunch of noise around lifecycle stdout, so match minimally
+  expect(scriptOutput).toMatch(/^> echo \$npm_package_engines_node$/m);
+  expect(scriptOutput).toMatch(/^>= 8\.9\.0$/m);
 
   // the "--silent" flag is passed to `npm run`
-  const { stdout } = await lerna("run", "test", "--", "--silent");
-  expect(stdout).toMatchInlineSnapshot(`
+  const { stdout: testOutput } = await lerna("run", "test", "--", "--silent");
+  expect(testOutput).toMatchInlineSnapshot(`
 package-1
 package-2
 cli package-2 OK

@@ -183,7 +183,7 @@ Object {
     {
       "mode": "MODE",
       "path": "package.json",
-      "size": 412,
+      "size": 455,
     },
     {
       "mode": "MODE",
@@ -205,9 +205,9 @@ Object {
   "integrity": "INTEGRITY",
   "name": "package-3",
   "shasum": "SHASUM",
-  "size": 423,
+  "size": 446,
   "tarFilePath": "__TAR_DIR__/package-3-1.0.0.tgz",
-  "unpackedSize": 653,
+  "unpackedSize": 696,
   "version": "1.0.0",
 }
 `);
