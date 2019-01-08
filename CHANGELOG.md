@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.9.0](https://github.com/lerna/lerna/compare/v3.8.5...v3.9.0) (2019-01-08)
+
+
+### Bug Fixes
+
+* **bootstrap:** Only run install lifecycles once-per-package, in topological order ([929ae22](https://github.com/lerna/lerna/commit/929ae22))
+* **describe-ref:** Properly handle sha-like tag names ([#1853](https://github.com/lerna/lerna/issues/1853)) ([094a1cb](https://github.com/lerna/lerna/commit/094a1cb))
+* **run-lifecycle:** Ensure all npm_package_* env vars are created ([bab8e58](https://github.com/lerna/lerna/commit/bab8e58)), closes [#1752](https://github.com/lerna/lerna/issues/1752)
+
+
+### Features
+
+* **bootstrap:** Add `--ignore-prepublish` option ([f14fc06](https://github.com/lerna/lerna/commit/f14fc06))
+* **bootstrap:** Run root install lifecycles where appropriate ([944e36f](https://github.com/lerna/lerna/commit/944e36f))
+
+
+
+
+
 ## [3.8.5](https://github.com/lerna/lerna/compare/v3.8.4...v3.8.5) (2019-01-05)
 
 
