@@ -9,11 +9,11 @@
       "homepage": "https://github.com/lerna/lerna",
       "license": "MIT"
     },
-    "publish": {
+    "version": {
       "allowBranch": "master",
       "conventionalCommits": true,
       "gitRemote": "upstream",
-      "message": "chore(release): publish %s"
+      "message": "chore(release): %s"
     }
   },
   "ignoreChanges": [
