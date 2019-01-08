@@ -8,6 +8,7 @@ const path = require("path");
 const normalizePath = require("normalize-path");
 const { printObjectProperties } = require("pretty-format/build/collections");
 const npmConf = require("@lerna/npm-conf");
+const Package = require("@lerna/package");
 const { getPackages } = require("@lerna/project");
 const initFixture = require("@lerna-test/init-fixture")(path.resolve(__dirname, "../../../integration"));
 
@@ -151,18 +152,22 @@ Object {
     expect(tail.integrity.toString()).toMatch(INTEGRITY_PATTERN);
     expect(tail.shasum).toMatch(SHASUM_PATTERN);
 
-    const lazy = await packDirectory(
-      {
-        name: "package-3",
-        // scripts are only read once, effectively ignoring pkg.refresh()
-        scripts: {
-          prepublish: "exit 1",
-          prepublishOnly: "echo badgerbadgerbadgerbadger > index.js",
-        },
-        // pkg.version is "live", thus this custom value is overwritten by pkg.refresh()
-        version: "1.2.3",
+    const mid = pkgs.pop();
+    const json = Object.assign(mid.toJSON(), {
+      name: "package-3",
+      // overwrite existing postinstall + test
+      scripts: {
+        prepublish: "exit 1",
+        prepublishOnly: "echo badgerbadgerbadgerbadger > index.js",
       },
-      path.join(cwd, "package-3"),
+    });
+
+    await fs.writeJSON(mid.manifestLocation, json, { spaces: 2 });
+
+    const mushroom = new Package(json, mid.location, mid.rootPath);
+    const lazy = await packDirectory(
+      mushroom,
+      mushroom.location,
       Object.assign({}, conf, {
         "ignore-prepublish": true,
         "lerna-command": "publish",
@@ -178,7 +183,7 @@ Object {
     {
       "mode": "MODE",
       "path": "package.json",
-      "size": 385,
+      "size": 412,
     },
     {
       "mode": "MODE",
@@ -200,9 +205,9 @@ Object {
   "integrity": "INTEGRITY",
   "name": "package-3",
   "shasum": "SHASUM",
-  "size": 413,
+  "size": 423,
   "tarFilePath": "__TAR_DIR__/package-3-1.0.0.tgz",
-  "unpackedSize": 626,
+  "unpackedSize": 653,
   "version": "1.0.0",
 }
 `);
