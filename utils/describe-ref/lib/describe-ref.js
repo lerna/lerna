@@ -56,10 +56,11 @@ function sync(options = {}, includeMergedTags) {
 }
 
 function parse(stdout, options = {}) {
+  const minimalShaRegex = /^([0-9a-f]{7,40})(-dirty)?$/;
   // when git describe fails to locate tags, it returns only the minimal sha
-  if (/^[0-9a-f]{7,40}/.test(stdout)) {
+  if (minimalShaRegex.test(stdout)) {
     // repo might still be dirty
-    const [, sha, isDirty] = /^([0-9a-f]{7,40})(-dirty)?/.exec(stdout);
+    const [, sha, isDirty] = minimalShaRegex.exec(stdout);
 
     // count number of commits since beginning of time
     const refCount = childProcess.execSync("git", ["rev-list", "--count", sha], options);
