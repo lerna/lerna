@@ -69,10 +69,6 @@ exports.builder = yargs => {
       type: "string",
       requiresArg: true,
     },
-    "require-scripts": {
-      describe: "Execute ./scripts/prepublish.js and ./scripts/postpublish.js, relative to package root.",
-      type: "boolean",
-    },
     "no-git-reset": {
       describe: "Do not reset changes to working tree after publishing is complete.",
       type: "boolean",
@@ -135,6 +131,11 @@ exports.builder = yargs => {
     .option("skip-npm", {
       // TODO: remove in next major release
       // deprecation notice handled in initialize()
+      hidden: true,
+      type: "boolean",
+    })
+    .option("require-scripts", {
+      // avoid unhelpful yargs error, throw our own in initialize()
       hidden: true,
       type: "boolean",
     })

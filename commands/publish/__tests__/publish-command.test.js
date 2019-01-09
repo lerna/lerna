@@ -58,6 +58,12 @@ describe("PublishCommand", () => {
       expect(verifyNpmPackageAccess).not.toHaveBeenCalled();
     });
 
+    it("exits non-zero with --require-scripts", async () => {
+      const command = lernaPublish(cwd)("--require-scripts");
+
+      await expect(command).rejects.toThrow("--require-scripts has been removed.");
+    });
+
     it("exits non-zero with --scope", async () => {
       const command = lernaPublish(cwd)("--scope", "package-1");
 

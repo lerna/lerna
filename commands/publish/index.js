@@ -107,7 +107,14 @@ class PublishCommand extends Command {
     }
 
     if (this.options.requireScripts) {
-      this.logger.info("require-scripts", "enabled");
+      throw new ValidationError(
+        "removed",
+        [
+          "--require-scripts has been removed.",
+          "Execute these scripts from the appropriate package lifecycle.",
+          "See https://docs.npmjs.com/misc/scripts for documentation.",
+        ].join("\n")
+      );
     }
 
     // npmSession and user-agent are consumed by npm-registry-fetch (via libnpmpublish)
@@ -571,19 +578,6 @@ class PublishCommand extends Command {
     });
   }
 
-  execScript(pkg, script) {
-    const scriptLocation = path.join(pkg.location, "scripts", script);
-
-    try {
-      // eslint-disable-next-line import/no-dynamic-require, global-require
-      require(scriptLocation);
-    } catch (ex) {
-      this.logger.silly("execScript", `No ${script} script found at ${scriptLocation}`);
-    }
-
-    return pkg;
-  }
-
   removeTempLicensesOnError(error) {
     return Promise.resolve()
       .then(() =>
@@ -649,8 +643,6 @@ class PublishCommand extends Command {
     const opts = this.conf.snapshot;
     const mapper = pPipe(
       [
-        this.options.requireScripts && (pkg => this.execScript(pkg, "prepublish")),
-
         pkg =>
           pulseTillDone(packDirectory(pkg, pkg.location, opts)).then(packed => {
             tracker.verbose("packed", path.relative(this.project.rootPath, pkg.contents));
@@ -713,8 +705,6 @@ class PublishCommand extends Command {
             return pkg;
           });
         },
-
-        this.options.requireScripts && (pkg => this.execScript(pkg, "postpublish")),
       ].filter(Boolean)
     );
 
