@@ -450,9 +450,9 @@ class VersionCommand extends Command {
           changelogPreset,
           rootPath,
           tagPrefix: this.tagPrefix,
-        }).then(changelogLocation => {
+        }).then(({ logPath }) => {
           // commit the updated changelog
-          changedFiles.add(changelogLocation);
+          changedFiles.add(logPath);
 
           return pkg;
         })
@@ -478,9 +478,9 @@ class VersionCommand extends Command {
             rootPath,
             tagPrefix: this.tagPrefix,
             version: this.globalVersion,
-          }).then(changelogLocation => {
+          }).then(({ logPath }) => {
             // commit the updated changelog
-            changedFiles.add(changelogLocation);
+            changedFiles.add(logPath);
           })
         );
       }

@@ -201,7 +201,7 @@ describe("conventional-commits", () => {
   });
 
   describe("updateChangelog()", () => {
-    const getFileContent = fp => fs.readFile(fp, "utf8");
+    const getFileContent = fp => fs.readFile(fp.logPath, "utf8");
 
     it("creates files if they do not exist", async () => {
       const cwd = await initFixture("changelog-missing");
@@ -225,8 +225,8 @@ describe("conventional-commits", () => {
         updateChangelog(rootPkg, "root", { version: "1.1.0" }),
       ]);
 
-      expect(leafChangelogFile).toBe(path.join(pkg1.location, "CHANGELOG.md"));
-      expect(rootChangelogFile).toBe(path.join(rootPkg.location, "CHANGELOG.md"));
+      expect(leafChangelogFile.logPath).toBe(path.join(pkg1.location, "CHANGELOG.md"));
+      expect(rootChangelogFile.logPath).toBe(path.join(rootPkg.location, "CHANGELOG.md"));
 
       const [leafChangelogContent, rootChangelogContent] = await Promise.all([
         getFileContent(leafChangelogFile),

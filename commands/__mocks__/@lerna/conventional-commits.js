@@ -9,7 +9,10 @@ mockConventionalCommits.updateChangelog.mockImplementation(pkg => {
   const filePath = path.join(pkg.location, "CHANGELOG.md");
 
   // grumble grumble re-implementing the implementation
-  return fs.outputFile(filePath, "changelog", "utf8").then(() => filePath);
+  return fs.outputFile(filePath, "changelog", "utf8").then(() => ({
+    logPath: filePath,
+    newEntry: "",
+  }));
 });
 
 function mockBumps(...bumps) {
