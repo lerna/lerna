@@ -21,16 +21,16 @@ instead add `packages/<directory-name>/package.json`.
 
 ```bash
 # Getting started with Lerna
-$ npm install --global lerna
 $ git init lerna-repo && cd lerna-repo
-$ lerna init
+$ npx lerna init
+$ npm install
 
 # Adding a commit
 $ git add .
 $ git commit -m "Initial lerna commit" # Without a commit, import command would fail
 
 # Importing other repository
-$ lerna import <path-to-external-repository>
+$ npx lerna import <path-to-external-repository>
 ```
 
 ## Options
