@@ -68,6 +68,10 @@ class PublishCommand extends Command {
     // https://docs.npmjs.com/misc/config#save-prefix
     this.savePrefix = this.options.exact ? "" : "^";
 
+    // inverted boolean options are only respected if prefixed with `--no-`, e.g. `--no-verify-access`
+    this.gitReset = this.options.gitReset !== false;
+    this.verifyAccess = this.options.verifyAccess !== false;
+
     // npmSession and user-agent are consumed by libnpm/fetch (via libnpm/publish)
     const npmSession = crypto.randomBytes(8).toString("hex");
     const userAgent = `lerna/${this.options.lernaVersion}/node@${process.version}+${process.arch} (${
@@ -173,7 +177,7 @@ class PublishCommand extends Command {
     chain = chain.then(() => this.packUpdated());
     chain = chain.then(() => this.publishPacked());
 
-    if (this.options.gitReset !== false) {
+    if (this.gitReset) {
       chain = chain.then(() => this.resetChanges());
     }
 
@@ -399,7 +403,7 @@ class PublishCommand extends Command {
       return chain;
     }
 
-    if (this.options.verifyAccess !== false) {
+    if (this.verifyAccess) {
       // validate user has valid npm credentials first,
       // by far the most common form of failed execution
       chain = chain.then(() => getNpmUsername(this.conf.snapshot));
