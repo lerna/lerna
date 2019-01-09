@@ -13,13 +13,21 @@ jest.mock("../lib/remote-branch-exists");
 const fs = require("fs-extra");
 const path = require("path");
 
+// mocked modules
+const prompt = require("@lerna/prompt");
+
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(path.resolve(__dirname, "../../publish/__tests__"));
 const showCommit = require("@lerna-test/show-commit");
+const gitInit = require("@lerna-test/git-init");
 const gitAdd = require("@lerna-test/git-add");
 const gitTag = require("@lerna-test/git-tag");
 const gitCommit = require("@lerna-test/git-commit");
 const getCommitMessage = require("@lerna-test/get-commit-message");
+const Tacks = require("tacks");
+const tempy = require("tempy");
+
+const { File, Dir } = Tacks;
 
 // test command
 const lernaVersion = require("@lerna-test/command-runner")(require("../command"));
@@ -106,4 +114,69 @@ test("version prerelease with immediate graduation", async () => {
 
   const secondDiff = await showCommit(testDir);
   expect(secondDiff).toMatchSnapshot();
+});
+
+test("independent version prerelease does not bump on every unrelated change", async () => {
+  const cwd = tempy.directory();
+  const fixture = new Tacks(
+    Dir({
+      "lerna.json": File({
+        version: "independent",
+      }),
+      "package.json": File({
+        name: "unrelated-bumps",
+      }),
+      packages: Dir({
+        "pkg-a": Dir({
+          "package.json": File({
+            name: "pkg-a",
+            version: "1.0.0",
+          }),
+        }),
+        "pkg-b": Dir({
+          "package.json": File({
+            name: "pkg-b",
+            version: "1.0.0-bumps.1",
+          }),
+        }),
+      }),
+    })
+  );
+
+  fixture.create(cwd);
+
+  await gitInit(cwd, ".");
+  await gitAdd(cwd, "-A");
+  await gitCommit(cwd, "init");
+
+  // simulate choices for pkg-a then pkg-b
+  prompt.mockChoices("patch", "PRERELEASE");
+  prompt.input.mockImplementationOnce((msg, cfg) =>
+    // a convoluted way of entering "bumps" at the prompt
+    Promise.resolve(cfg.filter("bumps"))
+  );
+
+  await lernaVersion(cwd)();
+
+  const first = await getCommitMessage(cwd);
+  expect(first).toMatchInlineSnapshot(`
+Publish
+
+ - pkg-a@1.0.1
+ - pkg-b@1.0.0-bumps.2
+`);
+
+  await fs.outputFile(path.join(cwd, "packages/pkg-a/hello.js"), "world");
+  await gitAdd(cwd, ".");
+  await gitCommit(cwd, "feat: hello world");
+
+  // all of this just to say...
+  await lernaVersion(cwd)();
+
+  const second = await getCommitMessage(cwd);
+  expect(second).toMatchInlineSnapshot(`
+Publish
+
+ - pkg-a@1.0.2
+`);
 });
