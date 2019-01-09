@@ -17,6 +17,22 @@ repo. Each commit is modified to make changes relative to the package
 directory. So, for example, the commit that added `package.json` will
 instead add `packages/<directory-name>/package.json`.
 
+*Note*: If you're importing an external repository on a new lerna repository, then do remember to have at least one commit.
+
+```bash
+# Getting started with Lerna
+$ git init lerna-repo && cd lerna-repo
+$ npx lerna init
+$ npm install
+
+# Adding a commit
+$ git add .
+$ git commit -m "Initial lerna commit" # Without a commit, import command would fail
+
+# Importing other repository
+$ npx lerna import <path-to-external-repository>
+```
+
 ## Options
 
 ### `--flatten`
