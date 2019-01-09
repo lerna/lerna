@@ -88,13 +88,9 @@ describe("BootstrapCommand", () => {
       await lernaBootstrap(testDir)();
 
       expect(runLifecycle.getOrderedCalls()).toEqual([
-        ["root", "preinstall"],
         ["package-preinstall", "preinstall"],
         ["package-postinstall", "postinstall"],
-        ["root", "install"],
-        ["root", "postinstall"],
         ["package-prepublish", "prepublish"],
-        ["root", "prepare"],
       ]);
     });
 
@@ -103,7 +99,10 @@ describe("BootstrapCommand", () => {
 
       await lernaBootstrap(testDir)("--ignore-prepublish");
 
-      expect(runLifecycle.getOrderedCalls()).not.toContainEqual(["package-prepublish", "prepublish"]);
+      expect(runLifecycle.getOrderedCalls()).toEqual([
+        ["package-preinstall", "preinstall"],
+        ["package-postinstall", "postinstall"],
+      ]);
     });
 
     it("shouldn't run lifecycle scripts with --ignore-scripts", async () => {
@@ -132,27 +131,6 @@ describe("BootstrapCommand", () => {
       await lernaBootstrap(testDir)();
 
       expect(runLifecycle).not.toHaveBeenCalled();
-    });
-
-    test.each`
-      event
-      ${"preinstall"}
-      ${"install"}
-      ${"postinstall"}
-      ${"prepublish"}
-      ${"prepare"}
-    `("should not recurse from root $event lifecycle", async ({ event }) => {
-      const testDir = await initFixture("lifecycle-scripts");
-
-      process.env.npm_lifecycle_event = event;
-
-      await lernaBootstrap(testDir)();
-
-      expect(runLifecycle.getOrderedCalls()).toEqual([
-        ["package-preinstall", "preinstall"],
-        ["package-postinstall", "postinstall"],
-        ["package-prepublish", "prepublish"],
-      ]);
     });
   });
 

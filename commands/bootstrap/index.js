@@ -97,13 +97,6 @@ class BootstrapCommand extends Command {
       this.npmConfig.npmClientArgs.unshift("--ignore-scripts");
     }
 
-    // don't execute recursively if run from a poorly-named script
-    this.runRootLifecycle = /^(prepare|prepublish|(pre|post)?install)$/.test(process.env.npm_lifecycle_event)
-      ? stage => {
-          this.logger.info("lifecycle", "Skipping root %j because it has already been called", stage);
-        }
-      : stage => this.runPackageLifecycle(this.project.manifest, stage);
-
     this.targetGraph = this.options.forceLocal
       ? new PackageGraph(this.packageGraph.rawPackageList, "allDependencies", "forceLocal")
       : this.packageGraph;
@@ -150,11 +143,7 @@ class BootstrapCommand extends Command {
     const tasks = [];
 
     if (scriptsEnabled) {
-      tasks.push(
-        // preinstall scripts run in root before all leaves
-        () => this.runRootLifecycle("preinstall"),
-        () => this.runLifecycleInPackages("preinstall")
-      );
+      tasks.push(() => this.runLifecycleInPackages("preinstall"));
     }
 
     tasks.push(
@@ -165,25 +154,16 @@ class BootstrapCommand extends Command {
 
     if (scriptsEnabled) {
       tasks.push(
-        // {,post}install scripts run in all leaves before root
         () => this.runLifecycleInPackages("install"),
-        () => this.runLifecycleInPackages("postinstall"),
-        () => this.runRootLifecycle("install"),
-        () => this.runRootLifecycle("postinstall")
+        () => this.runLifecycleInPackages("postinstall")
       );
 
       if (!this.options.ignorePrepublish) {
-        tasks.push(
-          () => this.runLifecycleInPackages("prepublish"),
-          () => this.runRootLifecycle("prepublish")
-        );
+        tasks.push(() => this.runLifecycleInPackages("prepublish"));
       }
 
-      tasks.push(
-        // "run on local npm install without any arguments", AFTER prepublish
-        () => this.runLifecycleInPackages("prepare"),
-        () => this.runRootLifecycle("prepare")
-      );
+      // "run on local npm install without any arguments", AFTER prepublish
+      tasks.push(() => this.runLifecycleInPackages("prepare"));
     }
 
     return pWaterfall(tasks).then(() => {
