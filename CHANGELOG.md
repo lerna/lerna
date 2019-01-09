@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.10.2](https://github.com/lerna/lerna/compare/v3.10.1...v3.10.2) (2019-01-09)
+
+
+### Bug Fixes
+
+* **bootstrap:** Remove fancy root lifecycle execution, it was foolish ([9f80722](https://github.com/lerna/lerna/commit/9f80722)), closes [#1857](https://github.com/lerna/lerna/issues/1857)
+
+
+
+
+
 ## [3.10.1](https://github.com/lerna/lerna/compare/v3.10.0...v3.10.1) (2019-01-09)
 
 

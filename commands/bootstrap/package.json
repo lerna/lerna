@@ -1,6 +1,6 @@
 {
   "name": "@lerna/bootstrap",
-  "version": "3.10.1",
+  "version": "3.10.2",
   "description": "Link local packages together and install remaining package dependencies",
   "keywords": [
     "lerna",
