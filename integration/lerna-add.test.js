@@ -20,10 +20,9 @@ describe("lerna add", () => {
 lerna notice cli __TEST_VERSION__
 lerna info ci enabled
 lerna info Adding @test/package-1 in 3 packages
-lerna info filter [ '@test/package-2', 'package-3', 'package-4' ]
-lerna info Bootstrapping 3 packages
+lerna info Bootstrapping 4 packages
 lerna info Symlinking packages and binaries
-lerna success Bootstrapped 3 packages
+lerna success Bootstrapped 4 packages
 `);
 
     const filePaths = await globby("packages/*/package.json", { cwd });

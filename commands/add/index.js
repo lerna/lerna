@@ -98,7 +98,6 @@ class AddCommand extends Command {
         const argv = Object.assign({}, this.options, {
           args: [],
           cwd: this.project.rootPath,
-          scope: this.packagesToChange.map(pkg => pkg.name),
           // silence initial cli version logging, etc
           composed: "add",
         });

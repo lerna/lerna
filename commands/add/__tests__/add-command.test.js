@@ -234,32 +234,7 @@ describe("AddCommand", () => {
       expect.objectContaining({
         args: [],
         cwd: testDir,
-        scope: ["@test/package-2", "package-3", "package-4"],
         composed: "add",
-      })
-    );
-  });
-
-  it("should only bootstrap scoped packages", async () => {
-    const testDir = await initFixture("basic");
-
-    await lernaAdd(testDir)("tiny-tarball", "--scope", "@test/package-2", "--scope", "package-3");
-
-    expect(bootstrap).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        scope: ["@test/package-2", "package-3"],
-      })
-    );
-  });
-
-  it("should not bootstrap ignored packages", async () => {
-    const testDir = await initFixture("basic");
-
-    await lernaAdd(testDir)("@test/package-1", "--ignore", "@test/package-2");
-
-    expect(bootstrap).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        scope: ["package-3", "package-4"],
       })
     );
   });
