@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.10.3](https://github.com/lerna/lerna/compare/v3.10.2...v3.10.3) (2019-01-10)
+
+
+### Bug Fixes
+
+* **bootstrap:** When filtering, only bootstrap filtered packages ([71174e4](https://github.com/lerna/lerna/commit/71174e4)), closes [#1421](https://github.com/lerna/lerna/issues/1421) [#1766](https://github.com/lerna/lerna/issues/1766)
+
+
+
+
+
 ## [3.10.2](https://github.com/lerna/lerna/compare/v3.10.1...v3.10.2) (2019-01-09)
 
 
