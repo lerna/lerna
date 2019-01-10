@@ -241,6 +241,18 @@ describe("BootstrapCommand", () => {
       });
     });
 
+    it("should not run npm ci when hoisting", async () => {
+      const testDir = await initFixture("basic");
+
+      await lernaBootstrap(testDir)("--hoist", "package-*", "--ci");
+
+      expect(npmInstall.dependencies.mock.calls[0][2]).toMatchObject({
+        subCommand: "install", // not "ci"
+        npmClient: "npm",
+        npmClientArgs: ["--no-save"],
+      });
+    });
+
     it("respects config file { ci: false }", async () => {
       const testDir = await initFixture("ci");
 

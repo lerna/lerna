@@ -38,7 +38,7 @@ class BootstrapCommand extends Command {
   }
 
   initialize() {
-    const { registry, npmClient = "npm", npmClientArgs = [], mutex, hoist } = this.options;
+    const { registry, npmClient = "npm", npmClientArgs = [], mutex, hoist, nohoist } = this.options;
 
     if (npmClient === "yarn" && hoist) {
       throw new ValidationError(
@@ -74,6 +74,31 @@ class BootstrapCommand extends Command {
       return false;
     }
 
+    if (hoist) {
+      let hoisting;
+
+      if (hoist === true) {
+        // lerna.json `hoist: true`
+        hoisting = ["**"];
+      } else {
+        // `--hoist ...` or lerna.json `hoist: [...]`
+        hoisting = [].concat(hoist);
+      }
+
+      if (nohoist) {
+        if (!Array.isArray(nohoist)) {
+          // `--nohoist` single
+          hoisting = hoisting.concat(`!${nohoist}`);
+        } else {
+          // `--nohoist` multiple or lerna.json `nohoist: [...]`
+          hoisting = hoisting.concat(nohoist.map(str => `!${str}`));
+        }
+      }
+
+      this.logger.verbose("hoist", "using globs %j", hoisting);
+      this.hoisting = hoisting;
+    }
+
     this.runPackageLifecycle = createRunner({ registry });
     this.npmConfig = {
       registry,
@@ -83,7 +108,13 @@ class BootstrapCommand extends Command {
     };
 
     if (npmClient === "npm" && this.options.ci && hasNpmVersion(">=5.7.0")) {
-      this.npmConfig.subCommand = "ci";
+      // never `npm ci` when hoisting
+      this.npmConfig.subCommand = this.hoisting ? "install" : "ci";
+
+      if (this.hoisting) {
+        // don't mutate lockfiles in CI
+        this.npmConfig.npmClientArgs.unshift("--no-save");
+      }
     }
 
     // lerna bootstrap ... -- <input>
@@ -276,32 +307,7 @@ class BootstrapCommand extends Command {
   getDependenciesToInstall() {
     // Configuration for what packages to hoist may be in lerna.json or it may
     // come in as command line options.
-    const { hoist, nohoist } = this.options;
     const rootPkg = this.project.manifest;
-
-    let hoisting;
-
-    if (hoist) {
-      if (hoist === true) {
-        // lerna.json `hoist: true`
-        hoisting = ["**"];
-      } else {
-        // `--hoist ...` or lerna.json `hoist: [...]`
-        hoisting = [].concat(hoist);
-      }
-
-      if (nohoist) {
-        if (!Array.isArray(nohoist)) {
-          // `--nohoist` single
-          hoisting = hoisting.concat(`!${nohoist}`);
-        } else {
-          // `--nohoist` multiple or lerna.json `nohoist: [...]`
-          hoisting = hoisting.concat(nohoist.map(str => `!${str}`));
-        }
-      }
-
-      this.logger.verbose("hoist", "using globs %j", hoisting);
-    }
 
     // This will contain entries for each hoistable dependency.
     const rootSet = new Set();
@@ -372,7 +378,7 @@ class BootstrapCommand extends Command {
     for (const [externalName, externalDependents] of depsToInstall) {
       let rootVersion;
 
-      if (hoisting && isHoistedPackage(externalName, hoisting)) {
+      if (this.hoisting && isHoistedPackage(externalName, this.hoisting)) {
         const commonVersion = Array.from(externalDependents.keys()).reduce((a, b) =>
           externalDependents.get(a).size > externalDependents.get(b).size ? a : b
         );
