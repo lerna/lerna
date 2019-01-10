@@ -103,9 +103,47 @@ class BootstrapCommand extends Command {
 
     let chain = Promise.resolve();
 
-    chain = chain.then(() => getFilteredPackages(this.targetGraph, this.execOpts, this.options));
+    chain = chain.then(() => {
+      if (this.options.scope) {
+        this.logger.notice("filter", "including %j", this.options.scope);
+      }
+
+      if (this.options.ignore) {
+        this.logger.notice("filter", "excluding %j", this.options.ignore);
+      }
+
+      if (this.options.since) {
+        this.logger.notice("filter", "changed since %j", this.options.since);
+      }
+
+      if (this.options.includeFilteredDependents) {
+        this.logger.notice("filter", "including filtered dependents");
+      }
+
+      if (this.options.includeFilteredDependencies) {
+        this.logger.notice("filter", "including filtered dependencies");
+      }
+
+      return getFilteredPackages(this.targetGraph, this.execOpts, this.options);
+    });
+
     chain = chain.then(filteredPackages => {
       this.filteredPackages = filteredPackages;
+
+      if (filteredPackages.length !== this.targetGraph.size) {
+        this.logger.warn("bootstrap", "Installing local packages that do not match filters from registry");
+
+        // an explicit --scope, --ignore, or --since should only symlink the targeted packages, no others
+        this.targetGraph = new PackageGraph(filteredPackages, "allDependencies", this.options.forceLocal);
+
+        // never automatically --save or modify lockfiles
+        this.npmConfig.npmClientArgs.unshift(npmClient === "yarn" ? "--pure-lockfile" : "--no-save");
+
+        // never attempt `npm ci`, it would always fail
+        if (this.npmConfig.subCommand === "ci") {
+          this.npmConfig.subCommand = "install";
+        }
+      }
     });
 
     chain = chain.then(() => {

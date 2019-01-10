@@ -228,7 +228,7 @@ describe("BootstrapCommand", () => {
     it("should not pass subCommand to npmInstall if on npm version earlier than 5.7.0", async () => {
       const testDir = await initFixture("ci");
 
-      hasNpmVersion.mockReturnValue(false);
+      hasNpmVersion.mockReturnValueOnce(false);
 
       await lernaBootstrap(testDir)("--ci");
 
@@ -277,9 +277,10 @@ describe("BootstrapCommand", () => {
     it("should not bootstrap ignored packages", async () => {
       const testDir = await initFixture("basic");
 
-      await lernaBootstrap(testDir)("--ignore", "package-@(3|4)");
+      await lernaBootstrap(testDir)("--ignore", "{@test/package-2,package-4}");
 
       expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
+      expect(symlinkedDirectories(testDir)).toMatchSnapshot();
     });
 
     it("should only bootstrap scoped packages", async () => {
@@ -289,6 +290,40 @@ describe("BootstrapCommand", () => {
 
       expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
       expect(symlinkedDirectories(testDir)).toMatchSnapshot();
+    });
+
+    it("should respect --force-local", async () => {
+      const testDir = await initFixture("basic");
+
+      await lernaBootstrap(testDir)("--scope", "@test/package-1", "--scope", "package-4", "--force-local");
+
+      expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
+      expect(symlinkedDirectories(testDir)).toMatchSnapshot();
+    });
+
+    it("should not update package.json when filtering", async () => {
+      const testDir = await initFixture("basic");
+
+      await lernaBootstrap(testDir)("--scope", "@test/package-2", "--ci");
+
+      expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
+      expect(symlinkedDirectories(testDir)).toMatchSnapshot();
+      expect(npmInstall.dependencies.mock.calls[0][2]).toMatchObject({
+        subCommand: "install", // not "ci"
+        npmClient: "npm",
+        npmClientArgs: ["--no-save"],
+      });
+    });
+
+    it("should not update yarn.lock when filtering", async () => {
+      const testDir = await initFixture("basic");
+
+      await lernaBootstrap(testDir)("--scope", "@test/package-2", "--npm-client", "yarn", "--ci");
+
+      expect(npmInstall.dependencies.mock.calls[0][2]).toMatchObject({
+        npmClient: "yarn",
+        npmClientArgs: ["--pure-lockfile"],
+      });
     });
 
     it("never installs with global style", async () => {

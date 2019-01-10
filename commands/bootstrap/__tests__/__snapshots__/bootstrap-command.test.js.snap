@@ -252,15 +252,39 @@ Object {
     "bar@^2.0.0",
     "foo@^1.0.0",
   ],
+  "packages/package-3": Array [
+    "foo@0.1.12",
+    "@test/package-2@^1.0.0",
+  ],
+}
+`;
+
+exports[`BootstrapCommand with local package dependencies should not bootstrap ignored packages 2`] = `
+Array [
+  Object {
+    "_src": "packages/package-1",
+    "dest": "packages/package-3/node_modules/@test/package-1",
+    "type": "junction",
+  },
+]
+`;
+
+exports[`BootstrapCommand with local package dependencies should not update package.json when filtering 1`] = `
+Object {
   "packages/package-2": Array [
+    "@test/package-1@^1.0.0",
     "foo@^1.0.0",
   ],
 }
 `;
 
+exports[`BootstrapCommand with local package dependencies should not update package.json when filtering 2`] = `Array []`;
+
 exports[`BootstrapCommand with local package dependencies should only bootstrap scoped packages 1`] = `
 Object {
   "packages/package-3": Array [
+    "@test/package-1@^1.0.0",
+    "@test/package-2@^1.0.0",
     "foo@0.1.12",
   ],
   "packages/package-4": Array [
@@ -271,21 +295,6 @@ Object {
 
 exports[`BootstrapCommand with local package dependencies should only bootstrap scoped packages 2`] = `
 Array [
-  Object {
-    "_src": "packages/package-1",
-    "dest": "packages/package-3/node_modules/@test/package-1",
-    "type": "junction",
-  },
-  Object {
-    "_src": "packages/package-2",
-    "dest": "packages/package-3/node_modules/@test/package-2",
-    "type": "junction",
-  },
-  Object {
-    "_src": "packages/package-2/cli.js",
-    "dest": "packages/package-3/node_modules/.bin/package-2",
-    "type": "exec",
-  },
   Object {
     "_src": "packages/package-3",
     "dest": "packages/package-4/node_modules/package-3",
@@ -300,6 +309,28 @@ Array [
     "_src": "packages/package-3/cli2.js",
     "dest": "packages/package-4/node_modules/.bin/package3cli2",
     "type": "exec",
+  },
+]
+`;
+
+exports[`BootstrapCommand with local package dependencies should respect --force-local 1`] = `
+Object {
+  "packages/package-1": Array [
+    "bar@^2.0.0",
+    "foo@^1.0.0",
+  ],
+  "packages/package-4": Array [
+    "package-3@^1.0.0",
+  ],
+}
+`;
+
+exports[`BootstrapCommand with local package dependencies should respect --force-local 2`] = `
+Array [
+  Object {
+    "_src": "packages/package-1",
+    "dest": "packages/package-4/node_modules/@test/package-1",
+    "type": "junction",
   },
 ]
 `;
