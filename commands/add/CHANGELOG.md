@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.10.4](https://github.com/lerna/lerna/compare/v3.10.3...v3.10.4) (2019-01-10)
+
+
+### Bug Fixes
+
+* **add:** Do not scope chained bootstrap ([d9d4bc4](https://github.com/lerna/lerna/commit/d9d4bc4))
+
+
+
+
+
 ## [3.10.3](https://github.com/lerna/lerna/compare/v3.10.2...v3.10.3) (2019-01-10)
 
 **Note:** Version bump only for package @lerna/add
