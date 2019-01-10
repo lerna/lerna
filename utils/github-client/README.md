@@ -1,4 +1,4 @@
-# `@lerna/npm-run-script`
+# `@lerna/github-client`
 
 > An internal Lerna tool
 
