@@ -19,6 +19,7 @@ const collectUpdates = require("@lerna/collect-updates");
 const { createRunner } = require("@lerna/run-lifecycle");
 const batchPackages = require("@lerna/batch-packages");
 const ValidationError = require("@lerna/validation-error");
+const createGitHubClient = require("@lerna/github-client");
 
 const getCurrentBranch = require("./lib/get-current-branch");
 const gitAdd = require("./lib/git-add");
@@ -49,6 +50,7 @@ class VersionCommand extends Command {
     const {
       amend,
       commitHooks = true,
+      github = false,
       gitRemote = "origin",
       gitTagVersion = true,
       push = true,
@@ -61,6 +63,8 @@ class VersionCommand extends Command {
     this.tagPrefix = tagVersionPrefix;
     this.commitAndTag = gitTagVersion;
     this.pushToRemote = gitTagVersion && amend !== true && push;
+    this.createReleases = this.pushToRemote && github;
+    this.releaseNotes = [];
     // never automatically push to remote when amending a commit
 
     this.gitOpts = {
@@ -211,6 +215,12 @@ class VersionCommand extends Command {
       tasks.push(() => this.gitPushToRemote());
     } else {
       this.logger.info("execute", "Skipping git push");
+    }
+
+    if (this.createReleases) {
+      tasks.push(() => this.createGitHubReleases());
+    } else {
+      this.logger.info("execute", "Skipping GitHub releases");
     }
 
     return pWaterfall(tasks).then(() => {
@@ -450,9 +460,15 @@ class VersionCommand extends Command {
           changelogPreset,
           rootPath,
           tagPrefix: this.tagPrefix,
-        }).then(({ logPath }) => {
+        }).then(({ logPath, newEntry }) => {
           // commit the updated changelog
           changedFiles.add(logPath);
+
+          // add release notes
+          this.releaseNotes.push({
+            name: pkg.name,
+            notes: newEntry,
+          });
 
           return pkg;
         })
@@ -478,9 +494,15 @@ class VersionCommand extends Command {
             rootPath,
             tagPrefix: this.tagPrefix,
             version: this.globalVersion,
-          }).then(({ logPath }) => {
+          }).then(({ logPath, newEntry }) => {
             // commit the updated changelog
             changedFiles.add(logPath);
+
+            // add release notes
+            this.releaseNotes.push({
+              name: "root",
+              notes: newEntry,
+            });
           })
         );
       }
@@ -555,6 +577,32 @@ class VersionCommand extends Command {
     this.logger.info("git", "Pushing tags...");
 
     return gitPush(this.gitRemote, this.currentBranch, this.execOpts);
+  }
+
+  createGitHubReleases() {
+    this.logger.info("github", "Creating releases...");
+
+    const client = createGitHubClient();
+
+    return Promise.all(
+      this.releaseNotes.map(({ notes, name }) => {
+        const tag = name === "root" ? this.tags[0] : this.tags.find(t => t.startsWith(name));
+
+        if (!tag) {
+          return Promise.resolve();
+        }
+
+        return client.repos.createRelease({
+          owner: "", // TODO
+          repo: "", // TODO
+          tag_name: tag,
+          name: tag,
+          body: notes,
+          draft: false,
+          prerelease: false,
+        });
+      })
+    );
   }
 }
 
