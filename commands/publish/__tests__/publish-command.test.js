@@ -22,7 +22,6 @@ const checkWorkingTree = require("@lerna/check-working-tree");
 const getNpmUsername = require("../lib/get-npm-username");
 const verifyNpmPackageAccess = require("../lib/verify-npm-package-access");
 const getUnpublishedPackages = require("../lib/get-unpublished-packages");
-const Project = require("@lerna/project");
 
 // helpers
 const loggingOutput = require("@lerna-test/logging-output");
@@ -259,11 +258,10 @@ Map {
   describe("from-package", () => {
     it("publishes unpublished packages", async () => {
       const testDir = await initFixture("normal");
-      const project = new Project(testDir);
 
-      getUnpublishedPackages.mockImplementationOnce(async () => {
-        const pkgs = await project.getPackages();
-        return pkgs.slice(1, 3);
+      getUnpublishedPackages.mockImplementationOnce(packageGraph => {
+        const pkgs = packageGraph.rawPackageList.slice(1, 3);
+        return pkgs.map(pkg => packageGraph.get(pkg.name));
       });
 
       await lernaPublish(testDir)("from-package");
@@ -277,9 +275,8 @@ Map {
 
     it("publishes unpublished independent packages", async () => {
       const testDir = await initFixture("independent");
-      const project = new Project(testDir);
 
-      getUnpublishedPackages.mockImplementationOnce(() => project.getPackages());
+      getUnpublishedPackages.mockImplementationOnce(packageGraph => Array.from(packageGraph.values()));
 
       await lernaPublish(testDir)("from-package");
 

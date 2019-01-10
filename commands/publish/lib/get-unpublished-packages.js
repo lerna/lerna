@@ -1,33 +1,30 @@
 "use strict";
 
 const log = require("libnpm/log");
-const pReduce = require("p-reduce");
+const pMap = require("p-map");
 const getPackument = require("libnpm/packument");
 
 module.exports = getUnpublishedPackages;
 
-function getUnpublishedPackages(project, opts) {
-  log.silly("getPackageVersions");
+function getUnpublishedPackages(packageGraph, opts) {
+  log.silly("getUnpublishedPackages");
 
   let chain = Promise.resolve();
 
-  const mapper = (unpublished, pkg) =>
+  const mapper = pkg =>
     getPackument(pkg.name, opts).then(
       packument => {
         if (packument.versions[pkg.version] === undefined) {
-          unpublished.push(pkg);
+          return pkg;
         }
-
-        return unpublished;
       },
       () => {
-        log.warn("", "Unable to determine published versions, assuming unpublished.");
-        return unpublished.concat([pkg]);
+        log.warn("", "Unable to determine published version, assuming %j unpublished.", pkg.name);
+        return pkg;
       }
     );
 
-  chain = chain.then(() => project.getPackages());
-  chain = chain.then(packages => pReduce(packages, mapper, []));
+  chain = chain.then(() => pMap(packageGraph.values(), mapper, { concurrency: 4 }));
 
-  return chain;
+  return chain.then(results => results.filter(Boolean));
 }

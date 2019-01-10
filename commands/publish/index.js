@@ -251,13 +251,13 @@ class PublishCommand extends Command {
   detectFromPackage() {
     let chain = Promise.resolve();
 
-    chain = chain.then(() => getUnpublishedPackages(this.project, this.conf.snapshot));
-    chain = chain.then(unpublishedPackages => {
-      if (!unpublishedPackages.length) {
+    chain = chain.then(() => getUnpublishedPackages(this.packageGraph, this.conf.snapshot));
+    chain = chain.then(unpublished => {
+      if (!unpublished.length) {
         this.logger.notice("from-package", "No unpublished release found");
       }
 
-      return unpublishedPackages.map(({ name }) => this.packageGraph.get(name));
+      return unpublished;
     });
 
     return chain.then(updates => {
