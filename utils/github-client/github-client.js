@@ -1,12 +1,17 @@
 "use strict";
 
-const log = require("libnpm/log");
+const log = require("npmlog");
 const Octokit = require("@octokit/rest");
+const parseGitUrl = require("git-url-parse");
 
-module.exports = function createGitHubClient() {
+exports.createGitHubClient = createGitHubClient;
+exports.parseGitUrl = parseGitUrl;
+
+function createGitHubClient() {
   log.silly("createGitHubClient");
 
   const { GH_TOKEN, GHE_API_URL, GHE_VERSION } = process.env;
+  const options = {};
 
   if (!GH_TOKEN) {
     throw new Error("A GH_TOKEN environment variable is required.");
@@ -17,10 +22,11 @@ module.exports = function createGitHubClient() {
     Octokit.plugin(require(`@octokit/plugin-enterprise-rest/ghe-${GHE_VERSION}`));
   }
 
-  const client = new Octokit({
-    agent: undefined,
-    baseUrl: GHE_API_URL,
-  });
+  if (GHE_API_URL) {
+    options.baseUrl = GHE_API_URL;
+  }
+
+  const client = new Octokit(options);
 
   client.authenticate({
     type: "token",
@@ -28,4 +34,4 @@ module.exports = function createGitHubClient() {
   });
 
   return client;
-};
+}

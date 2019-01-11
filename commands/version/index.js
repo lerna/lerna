@@ -19,12 +19,13 @@ const collectUpdates = require("@lerna/collect-updates");
 const { createRunner } = require("@lerna/run-lifecycle");
 const batchPackages = require("@lerna/batch-packages");
 const ValidationError = require("@lerna/validation-error");
-const createGitHubClient = require("@lerna/github-client");
+const { createGitHubClient, parseGitUrl } = require("@lerna/github-client");
 
 const getCurrentBranch = require("./lib/get-current-branch");
 const gitAdd = require("./lib/git-add");
 const gitCommit = require("./lib/git-commit");
 const gitPush = require("./lib/git-push");
+const gitRepoUrl = require("./lib/git-repo-url");
 const gitTag = require("./lib/git-tag");
 const isBehindUpstream = require("./lib/is-behind-upstream");
 const remoteBranchExists = require("./lib/remote-branch-exists");
@@ -500,7 +501,7 @@ class VersionCommand extends Command {
 
             // add release notes
             this.releaseNotes.push({
-              name: "root",
+              name: "fixed",
               notes: newEntry,
             });
           })
@@ -580,26 +581,29 @@ class VersionCommand extends Command {
   }
 
   createGitHubReleases() {
-    this.logger.info("github", "Creating releases...");
+    this.logger.info("github", "Creating GitHub releases...");
 
     const client = createGitHubClient();
+    const repo = parseGitUrl(gitRepoUrl());
 
     return Promise.all(
       this.releaseNotes.map(({ notes, name }) => {
-        const tag = name === "root" ? this.tags[0] : this.tags.find(t => t.startsWith(name));
+        const tag = name === "fixed" ? this.tags[0] : this.tags.find(t => t.startsWith(name));
 
         if (!tag) {
           return Promise.resolve();
         }
 
+        const prereleaseParts = semver.prerelease(tag.replace(`${name}@`, ""));
+
         return client.repos.createRelease({
-          owner: "", // TODO
-          repo: "", // TODO
+          owner: repo.owner,
+          repo: repo.name,
           tag_name: tag,
           name: tag,
           body: notes,
           draft: false,
-          prerelease: false,
+          prerelease: prereleaseParts && prereleaseParts.length > 0,
         });
       })
     );
