@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.10.5](https://github.com/lerna/lerna/compare/v3.10.4...v3.10.5) (2019-01-11)
+
+
+### Bug Fixes
+
+* **run-lifecycle:** Do not customize npm_config_prefix during execution ([79549c1](https://github.com/lerna/lerna/commit/79549c1)), closes [#1866](https://github.com/lerna/lerna/issues/1866)
+
+
+
+
+
 ## [3.10.4](https://github.com/lerna/lerna/compare/v3.10.3...v3.10.4) (2019-01-10)
 
 
