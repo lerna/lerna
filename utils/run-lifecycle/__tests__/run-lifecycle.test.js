@@ -2,6 +2,7 @@
 
 jest.mock("libnpm/run-script", () => jest.fn(() => Promise.resolve()));
 
+const log = require("libnpm/log");
 const loggingOutput = require("@lerna-test/logging-output");
 const runScript = require("libnpm/run-script");
 const npmConf = require("@lerna/npm-conf");
@@ -64,7 +65,6 @@ describe("runLifecycle()", () => {
       pkg.location,
       expect.objectContaining({
         config: expect.objectContaining({
-          prefix: pkg.location,
           "custom-cli-flag": true,
         }),
         dir: pkg.location,
@@ -89,8 +89,8 @@ describe("runLifecycle()", () => {
     const opts = new Map([
       ["ignore-prepublish", true],
       ["ignore-scripts", false],
-      ["node-options", true],
-      ["script-shell", true],
+      ["node-options", "--a-thing"],
+      ["script-shell", "fish"],
       ["scripts-prepend-node-path", true],
       ["unsafe-perm", false],
     ]);
@@ -99,13 +99,14 @@ describe("runLifecycle()", () => {
 
     expect(runScript).toHaveBeenLastCalledWith(expect.objectContaining(pkg), stage, dir, {
       config: expect.objectContaining({
-        prefix: dir,
+        "node-options": "--a-thing",
+        "script-shell": "fish",
       }),
       dir,
       failOk: false,
-      log: expect.any(Object),
-      nodeOptions: true,
-      scriptShell: true,
+      log,
+      nodeOptions: "--a-thing",
+      scriptShell: "fish",
       scriptsPrependNodePath: true,
       unsafePerm: false,
     });

@@ -74,9 +74,6 @@ function runLifecycle(pkg, stage, _opts) {
     }
   }
 
-  // env.npm_config_prefix should be the package directory
-  config.prefix = dir;
-
   /* istanbul ignore else */
   // eslint-disable-next-line no-underscore-dangle
   if (pkg.__isLernaPackage) {
