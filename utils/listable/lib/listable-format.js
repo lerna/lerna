@@ -38,7 +38,8 @@ function parseViewOptions(options) {
 }
 
 function flatBatched(pkgList) {
-  const batches = batchPackages(pkgList);
+  // allow cycles, output needs to be usable for debugging circularity
+  const batches = batchPackages(pkgList, false, "allDependencies");
 
   return batches.reduce((acc, batch) => acc.concat(batch), []);
 }
