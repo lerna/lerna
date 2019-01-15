@@ -7,7 +7,7 @@ const filterable = require("@lerna/filter-options");
  */
 exports.command = "exec [cmd] [args..]";
 
-exports.describe = "Run an arbitrary command in each package";
+exports.describe = "Execute an arbitrary command in each package";
 
 exports.builder = yargs => {
   yargs
