@@ -38,11 +38,15 @@ exports.builder = yargs => {
         type: "string",
         requiresArg: true,
       },
-      bootstrap: {
+      "no-bootstrap": {
         group: "Command Options:",
-        describe: "Automatically chain `lerna bootstrap`.\nPass --no-bootstrap to avoid this.",
+        describe: "Do not automatically chain `lerna bootstrap` after changes are made.",
         type: "boolean",
-        defaultDescription: "true",
+      },
+      bootstrap: {
+        // proxy for --no-bootstrap
+        hidden: true,
+        type: "boolean",
       },
     })
     .example(

@@ -17,12 +17,6 @@ exports.builder = yargs => {
       type: "string",
     })
     .options({
-      bail: {
-        group: "Command Options:",
-        describe: "Stop when the script fails in a package.\nPass --no-bail to continue despite failure.",
-        defaultDescription: "true",
-        type: "boolean",
-      },
       stream: {
         group: "Command Options:",
         describe: "Stream output with lines prefixed by package.",
@@ -30,15 +24,7 @@ exports.builder = yargs => {
       },
       parallel: {
         group: "Command Options:",
-        describe: "Run script in all packages with unlimited concurrency, streaming prefixed output.",
-        type: "boolean",
-      },
-      // This option controls prefix for stream output so that it can be disabled to be friendly
-      // to tools like Visual Studio Code to highlight the raw results
-      prefix: {
-        group: "Command Options:",
-        describe: "Pass --no-prefix to disable prefixing of streamed output.",
-        defaultDescription: "true",
+        describe: "Run script with unlimited concurrency, streaming prefixed output.",
         type: "boolean",
       },
       "npm-client": {
@@ -47,6 +33,28 @@ exports.builder = yargs => {
         defaultDescription: "npm",
         type: "string",
         requiresArg: true,
+      },
+      "no-bail": {
+        group: "Command Options:",
+        describe: "Continue running script despite non-zero exit in a given package.",
+        type: "boolean",
+      },
+      bail: {
+        // proxy for --no-bail
+        hidden: true,
+        type: "boolean",
+      },
+      // This option controls prefix for stream output so that it can be disabled to be friendly
+      // to tools like Visual Studio Code to highlight the raw results
+      "no-prefix": {
+        group: "Command Options:",
+        describe: "Do not prefix streaming output.",
+        type: "boolean",
+      },
+      prefix: {
+        // proxy for --no-prefix
+        hidden: true,
+        type: "boolean",
       },
     });
 

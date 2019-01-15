@@ -44,19 +44,27 @@ exports.builder = yargs => {
       describe: "Execute ./scripts/prepublish.js and ./scripts/postpublish.js, relative to package root.",
       type: "boolean",
     },
-    "git-reset": {
-      describe: "Reset the git working tree.\nPass --no-git-reset to disable.",
+    "no-git-reset": {
+      describe: "Do not reset changes to working tree after publishing is complete.",
       type: "boolean",
-      defaultDescription: "true",
+    },
+    "git-reset": {
+      // proxy for --no-git-reset
+      hidden: true,
+      type: "boolean",
     },
     "temp-tag": {
       describe: "Create a temporary tag while publishing.",
       type: "boolean",
     },
-    "verify-access": {
-      describe: "Verify package read-write access for current npm user.\nPass --no-verify-access to disable.",
+    "no-verify-access": {
+      describe: "Do not verify package read-write access for current npm user.",
       type: "boolean",
-      defaultDescription: "true",
+    },
+    "verify-access": {
+      // proxy for --no-verify-access
+      hidden: true,
+      type: "boolean",
     },
     // y: {
     //   describe: "Skip all confirmation prompts.",

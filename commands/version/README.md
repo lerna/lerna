@@ -27,7 +27,7 @@ lerna version [major | minor | patch | premajor | preminor | prepatch | prerelea
 # uses the next semantic version(s) value and this skips `Select a new version for...` prompt
 ```
 
-When run with this flag, `lerna version` will skip the version selection prompt and [increment](https://github.com/npm/node-semver#functions) the version by that keyword.
+When this positional parameter is passed, `lerna version` will skip the version selection prompt and [increment](https://github.com/npm/node-semver#functions) the version by that keyword.
 You must still use the `--yes` flag to avoid all prompts.
 
 #### "Graduating" prereleases
@@ -38,22 +38,22 @@ If you have any packages with a prerelease version number (e.g. `2.0.0-beta.3`) 
 
 - [`--allow-branch`](#--allow-branch-glob)
 - [`--amend`](#--amend)
-- [`--commit-hooks`](#--commit-hooks)
 - [`--conventional-commits`](#--conventional-commits)
 - [`--changelog-preset`](#--changelog-preset)
-- [`--no-changelog`](#--no-changelog)
 - [`--exact`](#--exact)
 - [`--force-publish`](#--force-publish)
-- [`--ignore-changes`](#--ignore-changes)
 - [`--git-remote`](#--git-remote-name)
-- [`--git-tag-version`](#--git-tag-version)
+- [`--ignore-changes`](#--ignore-changes)
+- [`--include-merged-tags`](#--include-merged-tags)
 - [`--message`](#--message-msg)
+- [`--no-changelog`](#--no-changelog)
+- [`--no-commit-hooks`](#--no-commit-hooks)
+- [`--no-git-tag-version`](#--no-git-tag-version)
+- [`--no-push`](#--no-push)
 - [`--preid`](#--preid)
-- [`--push`](#--push)
 - [`--sign-git-commit`](#--sign-git-commit)
 - [`--sign-git-tag`](#--sign-git-tag)
 - [`--yes`](#--yes)
-- [`--include-merged-tags`](#--include-merged-tags)
 
 ### `--allow-branch <glob>`
 
@@ -105,21 +105,15 @@ This is useful during [Continuous integration (CI)](https://en.wikipedia.org/wik
 
 In order to prevent unintended overwrites, this command will skip `git push` (i.e., it implies `--no-push`).
 
-### `--commit-hooks`
-
-Run git commit hooks when committing the version changes.
-
-Defaults to `true`. Pass `--no-commit-hooks` to disable.
-
-This option is analogous to the `npm version` [option](https://docs.npmjs.com/misc/config#commit-hooks) of the same name.
-
 ### `--conventional-commits`
 
 ```sh
 lerna version --conventional-commits
 ```
 
-When run with this flag, `lerna version` will use the [Conventional Commits Specification](https://conventionalcommits.org/) to [determine the version bump](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-recommended-bump) and [generate CHANGELOG](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-changelog-cli)
+When run with this flag, `lerna version` will use the [Conventional Commits Specification](https://conventionalcommits.org/) to [determine the version bump](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-recommended-bump) and [generate CHANGELOG.md files](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-changelog-cli).
+
+Passing [`--no-changelog`](#--no-changelog) will disable the generation (or updating) of `CHANGELOG.md` files.
 
 ### `--changelog-preset`
 
@@ -133,14 +127,6 @@ In some cases you might want to change either use a another preset or a custom o
 Presets are names of built-in or installable configuration for conventional changelog.
 Presets may be passed as the full name of the package, or the auto-expanded suffix
 (e.g., `angular` is expanded to `conventional-changelog-angular`).
-
-### `--no-changelog`
-
-```sh
-lerna version --conventional-commits --no-changelog
-```
-
-When using `conventional-commits`, do not generate any `CHANGELOG.md` files.
 
 ### `--exact`
 
@@ -165,6 +151,14 @@ When run with this flag, `lerna version` will force publish the specified packag
 
 > This will skip the `lerna changed` check for changed packages and forces a package that didn't have a `git diff` change to be updated.
 
+### `--git-remote <name>`
+
+```sh
+lerna version --git-remote upstream
+```
+
+When run with this flag, `lerna version` will push the git changes to the specified remote instead of `origin`.
+
 ### `--ignore-changes`
 
 Ignore changes in files matched by glob(s) when detecting changed packages.
@@ -188,21 +182,13 @@ Pass `--no-ignore-changes` to disable any existing durable configuration.
 > 1. The latest release of the package is a `prerelease` version (i.e. `1.0.0-alpha`, `1.0.0–0.3.7`, etc.).
 > 2. One or more linked dependencies of the package have changed.
 
-### `--git-remote <name>`
+### `--include-merged-tags`
 
 ```sh
-lerna version --git-remote upstream
+lerna version --include-merged-tags
 ```
 
-When run with this flag, `lerna version` will push the git changes to the specified remote instead of `origin`.
-
-### `--git-tag-version`
-
-Commit and tag versioned changes.
-
-Defaults to `true`. Pass `--no-git-tag-version` to disable.
-
-This option is analogous to the `npm version` [option](https://docs.npmjs.com/misc/config#git-tag-version) of the same name.
+When run with this flag, `lerna version` will also consider tags of merged branches during package change detection.
 
 ### `--message <msg>`
 
@@ -243,6 +229,33 @@ This can be configured in lerna.json, as well:
 }
 ```
 
+### `--no-changelog`
+
+```sh
+lerna version --conventional-commits --no-changelog
+```
+
+When using `conventional-commits`, do not generate any `CHANGELOG.md` files.
+
+### `--no-commit-hooks`
+
+By default, `lerna version` will allow git commit hooks to run when committing version changes.
+Pass `--no-commit-hooks` to disable this behavior.
+
+This option is analogous to the `npm version` option [`--commit-hooks`](https://docs.npmjs.com/misc/config#commit-hooks), just inverted.
+
+### `--no-git-tag-version`
+
+By default, `lerna version` will commit changes to package.json files and tag the release.
+Pass `--no-git-tag-version` to disable the behavior.
+
+This option is analogous to the `npm version` option [`--git-tag-version`](https://docs.npmjs.com/misc/config#git-tag-version), just inverted.
+
+### `--no-push`
+
+By default, `lerna version` will push the committed and tagged changes to the configured [git remote](#--git-remote-name).
+Pass `--no-push` to disable this behavior.
+
 ### `--preid`
 
 ```sh
@@ -257,12 +270,6 @@ lerna version prepatch --preid next
 
 When run with this flag, `lerna version` will increment `premajor`, `preminor`, `prepatch`, or `prerelease` semver
 bumps using the specified [prerelease identifier](http://semver.org/#spec-item-9).
-
-### `--push`
-
-Push the committed and tagged changes to the configured [git remote](https://github.com/lerna/lerna/tree/master/commands/version#--git-remote-name)
-
-Pass `--no-push` to disable.
 
 ### `--sign-git-commit`
 
@@ -281,15 +288,6 @@ lerna version --yes
 
 When run with this flag, `lerna version` will skip all confirmation prompts.
 Useful in [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous_integration) to automatically answer the publish confirmation prompt.
-
-### `--include-merged-tags`
-
-```sh
-lerna version --include-merged-tags
-```
-
-When run with this flag, `lerna version` will also consider tags of merged branches
-while fetching changes for packages to update.
 
 ## Deprecated Options
 

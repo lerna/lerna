@@ -20,14 +20,22 @@ function globalOptions(yargs) {
       describe: "Fail if a cycle is detected among dependencies.",
       type: "boolean",
     },
+    "no-progress": {
+      describe: "Disable progress bars. (Always off in CI)",
+      type: "boolean",
+    },
     progress: {
-      defaultDescription: "true",
-      describe: "Enable progress bars. (Always off in CI)\nPass --no-progress to disable.",
+      // proxy for --no-progress
+      hidden: true,
+      type: "boolean",
+    },
+    "no-sort": {
+      describe: "Do not sort packages topologically (dependencies before dependents).",
       type: "boolean",
     },
     sort: {
-      defaultDescription: "true",
-      describe: "Sort packages topologically (dependencies before dependents).\nPass --no-sort to disable.",
+      // proxy for --no-sort
+      hidden: true,
       type: "boolean",
     },
     "max-buffer": {

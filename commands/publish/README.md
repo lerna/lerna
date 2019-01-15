@@ -48,6 +48,7 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 - [`--dist-tag <tag>`](#--dist-tag-tag)
 - [`--no-git-reset`](#--no-git-reset)
 - [`--no-verify-access`](#--no-verify-access)
+- [`--preid`](#--preid)
 - [`--registry <url>`](#--registry-url)
 - [`--temp-tag`](#--temp-tag)
 - [`--yes`](#--yes)
@@ -115,6 +116,23 @@ By default, `lerna` will verify the logged-in npm user's access to the packages 
 If you are using a third-party registry that does not support `npm access ls-packages`, you will need to pass this flag (or set `command.publish.verifyAccess` to `false` in lerna.json).
 
 > Please use with caution
+
+### `--preid`
+
+Unlike the `lerna version` option of the same name, this option only applies to [`--canary`](#--canary) version calculation.
+
+```sh
+lerna publish --canary
+# uses the next semantic prerelease version, e.g.
+# 1.0.0 => 1.0.1-alpha.0
+
+lerna publish --canary --preid next
+# uses the next semantic prerelease version with a specific prerelease identifier, e.g.
+# 1.0.0 => 1.0.1-next.0
+```
+
+When run with this flag, `lerna publish --canary` will increment `premajor`, `preminor`, `prepatch`, or `prerelease` semver
+bumps using the specified [prerelease identifier](http://semver.org/#spec-item-9).
 
 ### `--registry <url>`
 

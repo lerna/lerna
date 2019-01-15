@@ -75,3 +75,8 @@ $ lerna run --no-bail test
 
 By default, `lerna run` will exit with an error if _any_ script run returns a non-zero exit code.
 Pass `--no-bail` to disable this behavior, running the script in _all_ packages that contain it regardless of exit code.
+
+### `--no-prefix`
+
+Disable package name prefixing when output is streaming (`--stream` _or_ `--parallel`).
+This option can be useful when piping results to other processes, such as editor plugins.

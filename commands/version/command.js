@@ -20,42 +20,36 @@ exports.builder = (yargs, composed) => {
       describe: "Amend the existing commit, instead of generating a new one.",
       type: "boolean",
     },
-    "commit-hooks": {
-      describe: "Run git commit hooks when committing the version changes.",
-      type: "boolean",
-      defaultDescription: "true",
-    },
     "conventional-commits": {
-      describe: "Use angular conventional-commit format to determine version bump and generate CHANGELOG.",
+      describe: "Use conventional-changelog to determine version bump and generate CHANGELOG.",
       type: "boolean",
     },
     "changelog-preset": {
-      describe: "Use another conventional-changelog preset rather than angular.",
+      describe: "Custom conventional-changelog preset.",
       type: "string",
-    },
-    changelog: {
-      describe: "When using conventional-commits, generate CHANGELOG.md files.",
-      type: "boolean",
-      defaultDescription: "true",
+      requiresArg: true,
+      defaultDescription: "angular",
     },
     exact: {
       describe: "Specify cross-dependency version numbers exactly rather than with a caret (^).",
       type: "boolean",
     },
     "git-remote": {
-      describe: "Push git changes to the specified remote instead of 'origin'.",
+      describe: "Push git changes to the specified remote.",
       type: "string",
       requiresArg: true,
       defaultDescription: "origin",
     },
-    "git-tag-version": {
-      describe: "Commit and tag the version changes.",
-      type: "boolean",
-      defaultDescription: "true",
-    },
     "ignore-changes": {
-      describe: "Ignore changes in files matched by glob(s) when detecting changed packages.",
+      describe: [
+        "Ignore changes in files matched by glob(s) when detecting changed packages.",
+        "Pass --no-ignore-changes to completely disable.",
+      ].join("\n"),
       type: "array",
+    },
+    "include-merged-tags": {
+      describe: "Also include tags from merged branches",
+      type: "boolean",
     },
     m: {
       describe: "Use a custom commit message when creating the version commit.",
@@ -63,17 +57,48 @@ exports.builder = (yargs, composed) => {
       type: "string",
       requiresArg: true,
     },
+    "no-changelog": {
+      describe: "Do not generate CHANGELOG.md files when using --conventional-commits.",
+      type: "boolean",
+    },
+    changelog: {
+      // proxy for --no-changelog
+      hidden: true,
+      type: "boolean",
+    },
+    "no-commit-hooks": {
+      describe: "Do not run git commit hooks when committing version changes.",
+      type: "boolean",
+    },
+    "commit-hooks": {
+      // proxy for --no-commit-hooks
+      hidden: true,
+      type: "boolean",
+    },
+    "no-git-tag-version": {
+      describe: "Do not commit or tag version changes.",
+      type: "boolean",
+    },
+    "git-tag-version": {
+      // proxy for --no-git-tag-version
+      hidden: true,
+      type: "boolean",
+    },
+    "no-push": {
+      describe: "Do not push tagged commit to git remote.",
+      type: "boolean",
+    },
+    push: {
+      // proxy for --no-push
+      hidden: true,
+      type: "boolean",
+    },
     // preid is copied into ../publish/command because a whitelist for one option isn't worth it
     preid: {
       describe: "Specify the prerelease identifier when versioning a prerelease",
       type: "string",
       requiresArg: true,
       defaultDescription: "alpha",
-    },
-    push: {
-      describe: "Push tagged commit to git remote.\nPass --no-push to disable.",
-      type: "boolean",
-      defaultDescription: "true",
     },
     "sign-git-commit": {
       describe: "Pass the `--gpg-sign` flag to `git commit`.",
@@ -88,11 +113,6 @@ exports.builder = (yargs, composed) => {
       type: "string",
       requiresArg: true,
       defaultDescription: "v",
-    },
-    "include-merged-tags": {
-      describe: "Also include tags from merged branches",
-      type: "boolean",
-      defaultDescription: "false",
     },
     y: {
       describe: "Skip all confirmation prompts.",

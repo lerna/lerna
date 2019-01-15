@@ -17,10 +17,14 @@ function filterOptions(yargs) {
       describe: "Exclude packages with names matching the given glob.",
       type: "string",
     },
-    private: {
-      describe: "Include private packages.\nPass --no-private to exclude private packages.",
+    "no-private": {
+      describe: 'Exclude packages with { "private": true } in their package.json.',
       type: "boolean",
-      defaultDescription: "true",
+    },
+    private: {
+      // proxy for --no-private
+      hidden: true,
+      type: "boolean",
     },
     since: {
       describe: dedent`
