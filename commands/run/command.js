@@ -17,6 +17,13 @@ exports.builder = yargs => {
       type: "string",
     })
     .options({
+      "npm-client": {
+        group: "Command Options:",
+        describe: "Executable used to run scripts (npm, yarn, pnpm, ...).",
+        defaultDescription: "npm",
+        type: "string",
+        requiresArg: true,
+      },
       stream: {
         group: "Command Options:",
         describe: "Stream output with lines prefixed by package.",
@@ -26,13 +33,6 @@ exports.builder = yargs => {
         group: "Command Options:",
         describe: "Run script with unlimited concurrency, streaming prefixed output.",
         type: "boolean",
-      },
-      "npm-client": {
-        group: "Command Options:",
-        describe: "Executable used to run scripts (npm, yarn, pnpm, ...).",
-        defaultDescription: "npm",
-        type: "string",
-        requiresArg: true,
       },
       "no-bail": {
         group: "Command Options:",
