@@ -30,6 +30,7 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
+    "@lerna/child-process": "file:../../core/child-process",
     "@octokit/plugin-enterprise-rest": "^2.1.0",
     "@octokit/rest": "^16.15.0",
     "git-url-parse": "^11.1.2",

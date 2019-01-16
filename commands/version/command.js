@@ -34,15 +34,15 @@ exports.builder = (yargs, composed) => {
       describe: "Specify cross-dependency version numbers exactly rather than with a caret (^).",
       type: "boolean",
     },
-    github: {
-      describe: "Create an official GitHub release for every version.",
-      type: "boolean",
-    },
     "git-remote": {
       describe: "Push git changes to the specified remote.",
       type: "string",
       requiresArg: true,
       defaultDescription: "origin",
+    },
+    "github-release": {
+      describe: "Create an official GitHub release for every version.",
+      type: "boolean",
     },
     "ignore-changes": {
       describe: [

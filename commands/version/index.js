@@ -19,13 +19,12 @@ const collectUpdates = require("@lerna/collect-updates");
 const { createRunner } = require("@lerna/run-lifecycle");
 const batchPackages = require("@lerna/batch-packages");
 const ValidationError = require("@lerna/validation-error");
-const { createGitHubClient, parseGitUrl } = require("@lerna/github-client");
+const { createGitHubClient, parseGitRepo } = require("@lerna/github-client");
 
 const getCurrentBranch = require("./lib/get-current-branch");
 const gitAdd = require("./lib/git-add");
 const gitCommit = require("./lib/git-commit");
 const gitPush = require("./lib/git-push");
-const gitRepoUrl = require("./lib/git-repo-url");
 const gitTag = require("./lib/git-tag");
 const isBehindUpstream = require("./lib/is-behind-upstream");
 const remoteBranchExists = require("./lib/remote-branch-exists");
@@ -51,7 +50,7 @@ class VersionCommand extends Command {
     const {
       amend,
       commitHooks = true,
-      github = false,
+      githubRelease = false,
       gitRemote = "origin",
       gitTagVersion = true,
       push = true,
@@ -64,7 +63,7 @@ class VersionCommand extends Command {
     this.tagPrefix = tagVersionPrefix;
     this.commitAndTag = gitTagVersion;
     this.pushToRemote = gitTagVersion && amend !== true && push;
-    this.createReleases = this.pushToRemote && github;
+    this.createReleases = this.pushToRemote && githubRelease;
     this.releaseNotes = [];
     // never automatically push to remote when amending a commit
 
@@ -466,10 +465,12 @@ class VersionCommand extends Command {
           changedFiles.add(logPath);
 
           // add release notes
-          this.releaseNotes.push({
-            name: pkg.name,
-            notes: newEntry,
-          });
+          if (independentVersions) {
+            this.releaseNotes.push({
+              name: pkg.name,
+              notes: newEntry,
+            });
+          }
 
           return pkg;
         })
@@ -584,7 +585,7 @@ class VersionCommand extends Command {
     this.logger.info("github", "Creating GitHub releases...");
 
     const client = createGitHubClient();
-    const repo = parseGitUrl(gitRepoUrl());
+    const repo = parseGitRepo(this.options.gitRemote, this.execOpts);
 
     return Promise.all(
       this.releaseNotes.map(({ notes, name }) => {
