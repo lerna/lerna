@@ -114,7 +114,7 @@ class ImportCommand extends Command {
   }
 
   getPackageDirectories() {
-    return this.project.packageConfigs.filter(p => path.basename(p) === "*").map(p => path.dirname(p));
+    return this.project.packageConfigs.filter(p => p.endsWith("*")).map(p => path.dirname(p));
   }
 
   getTargetBase() {
