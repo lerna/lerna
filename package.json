@@ -42,6 +42,7 @@
     "@lerna-test/git-status": "file:helpers/git-status",
     "@lerna-test/git-tag": "file:helpers/git-tag",
     "@lerna-test/init-fixture": "file:helpers/init-fixture",
+    "@lerna-test/init-named-fixture": "file:helpers/init-named-fixture",
     "@lerna-test/load-manifests": "file:helpers/load-manifests",
     "@lerna-test/logging-output": "file:helpers/logging-output",
     "@lerna-test/multi-line-trim-right": "file:helpers/multi-line-trim-right",

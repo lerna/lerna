@@ -11,6 +11,7 @@ const pathExists = require("path-exists");
 const PromptUtilities = require("@lerna/prompt");
 
 // helpers
+const initNamedFixture = require("@lerna-test/init-named-fixture")(__dirname);
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const gitAdd = require("@lerna-test/git-add");
 const gitCommit = require("@lerna-test/git-commit");
@@ -76,6 +77,19 @@ describe("ImportCommand", () => {
 
       expect(await lastCommitInDir(testDir)).toBe("Branch merged");
       expect(await pathExists(newFilePath)).toBe(true);
+    });
+
+    it("imports a repo into the root directory when packages are located there", async () => {
+      const [testDir, externalDir] = await Promise.all([
+        initFixture("root-packages"),
+        initNamedFixture("myapp-foo", "external", "myapp-foo init commit"),
+      ]);
+
+      await lernaImport(testDir)(externalDir);
+
+      expect(await lastCommitInDir(testDir)).toBe("myapp-foo init commit");
+      expect(await pathExists(path.join(testDir, "myapp-foo/old-file"))).toBe(true);
+      expect(await pathExists(path.join(testDir, "myapp-foo/package.json"))).toBe(true);
     });
 
     it("supports moved files within the external repo", async () => {
