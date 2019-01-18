@@ -150,6 +150,129 @@ describe("PackageGraph", () => {
       expect(graph.get("my-package-2").localDependencies.has("my-package-1")).toBe(true);
     });
   });
+
+  describe(".partitionCycles()", () => {
+    it("does not mutate a graph with no cycles", () => {
+      const pkgs = [
+        new Package(
+          {
+            name: "pkg-1",
+            version: "1.0.0",
+          },
+          "/test/pkg-1"
+        ),
+        new Package(
+          {
+            name: "pkg-2",
+            version: "2.0.0",
+            dependencies: {
+              "pkg-1": "^1.0.0",
+            },
+          },
+          "/test/pkg-2"
+        ),
+      ];
+      const graph = new PackageGraph(pkgs);
+      // deepInspect(graph);
+      const [paths, nodes] = graph.partitionCycles();
+
+      expect(graph.size).toBe(2);
+      expect(paths.size).toBe(0);
+      expect(nodes.size).toBe(0);
+    });
+
+    it("prunes direct cycles from the graph", () => {
+      const pkgs = [
+        new Package(
+          {
+            name: "pkg-1",
+            version: "1.0.0",
+            dependencies: {
+              "pkg-2": "^2.0.0",
+            },
+          },
+          "/test/pkg-1"
+        ),
+        new Package(
+          {
+            name: "pkg-2",
+            version: "2.0.0",
+            dependencies: {
+              "pkg-1": "^1.0.0",
+            },
+          },
+          "/test/pkg-2"
+        ),
+      ];
+      const graph = new PackageGraph(pkgs);
+      // deepInspect(graph);
+      const [paths, nodes] = graph.partitionCycles();
+      // deepInspect(nodes);
+
+      expect(graph.size).toBe(0);
+      expect(nodes.size).toBe(2);
+      expect(paths).toMatchInlineSnapshot(`
+Set {
+  Array [
+    "pkg-1",
+    "pkg-2",
+    "pkg-1",
+  ],
+  Array [
+    "pkg-2",
+    "pkg-1",
+    "pkg-2",
+  ],
+}
+`);
+    });
+
+    it("prunes all cycles from the graph, retaining non-cycles", () => {
+      const pkgs = topoPackages();
+      const graph = new PackageGraph(pkgs);
+      // deepInspect(graph);
+      const [paths, nodes] = graph.partitionCycles();
+      // deepInspect(graph);
+      // deepInspect(nodes);
+
+      expect(Array.from(graph.keys())).toMatchInlineSnapshot(`
+Array [
+  "dag-1",
+  "dag-2a",
+  "dag-2b",
+  "dag-3",
+  "standalone",
+]
+`);
+      expect(Array.from(nodes.keys()).map(node => node.name)).toMatchInlineSnapshot(`
+Array [
+  "cycle-1",
+  "cycle-2",
+  "cycle-tiebreaker",
+]
+`);
+      expect(paths).toMatchInlineSnapshot(`
+Set {
+  Array [
+    "cycle-1",
+    "cycle-2",
+    "cycle-1",
+  ],
+  Array [
+    "cycle-2",
+    "cycle-1",
+    "cycle-2",
+  ],
+  Array [
+    "cycle-tiebreaker",
+    "cycle-1",
+    "cycle-2",
+    "cycle-1",
+  ],
+}
+`);
+    });
+  });
 });
 
 // eslint-disable-next-line no-unused-vars
@@ -158,4 +281,61 @@ function deepInspect(obj) {
   // so sidestep it by requiring the non-shimmed method directly.
   // eslint-disable-next-line global-require
   require("console").dir(obj, { depth: 10, compact: false });
+}
+
+function topoPackages() {
+  return [
+    {
+      name: "cycle-1",
+      version: "1.0.0",
+      dependencies: {
+        "cycle-2": "1.0.0",
+      },
+    },
+    {
+      name: "cycle-2",
+      version: "1.0.0",
+      dependencies: {
+        "cycle-1": "1.0.0",
+      },
+    },
+    {
+      name: "cycle-tiebreaker",
+      version: "1.0.0",
+      description: "Breaks ties between cycle-{1,2} when batching.",
+      dependencies: {
+        "cycle-1": "1.0.0",
+      },
+    },
+    {
+      name: "dag-1",
+      version: "1.0.0",
+    },
+    {
+      name: "dag-2a",
+      version: "1.0.0",
+      dependencies: {
+        "dag-1": "1.0.0",
+      },
+    },
+    {
+      name: "dag-2b",
+      version: "1.0.0",
+      dependencies: {
+        "dag-1": "1.0.0",
+      },
+    },
+    {
+      name: "dag-3",
+      version: "1.0.0",
+      dependencies: {
+        "dag-2a": "1.0.0",
+        "dag-1": "1.0.0",
+      },
+    },
+    {
+      name: "standalone",
+      version: "1.0.0",
+    },
+  ].map(json => new Package(json, `/test/${json.name}`, "/test"));
 }

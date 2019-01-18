@@ -216,7 +216,7 @@ class PackageGraph extends Map {
 
         if (siblingDependents.has(currentName)) {
           // a transitive cycle
-          const cycleDependentName = Array.from(dependentNode.localDependencies).find(([key]) =>
+          const cycleDependentName = Array.from(dependentNode.localDependencies.keys()).find(key =>
             currentNode.localDependents.has(key)
           );
           const pathToCycle = step
