@@ -6,6 +6,30 @@ const Package = require("@lerna/package");
 const PackageGraph = require("..");
 
 describe("PackageGraph", () => {
+  describe("constructor", () => {
+    it("throws an error when duplicate package names are present", () => {
+      const pkgs = [
+        new Package({ name: "pkg-1", version: "1.0.0" }, "/test/pkg-1", "/test"),
+        new Package({ name: "pkg-2", version: "2.0.0" }, "/test/pkg-2", "/test"),
+        new Package({ name: "pkg-2", version: "3.0.0" }, "/test/pkg-3", "/test"),
+      ];
+
+      try {
+        // eslint-disable-next-line no-unused-vars
+        const graph = new PackageGraph(pkgs);
+      } catch (err) {
+        expect(err.prefix).toBe("ENAME");
+        expect(err.message).toMatchInlineSnapshot(`
+"Package name \\"pkg-2\\" used in multiple packages:
+	/test/pkg-2
+	/test/pkg-3"
+`);
+      }
+
+      expect.assertions(2);
+    });
+  });
+
   describe("Node", () => {
     it("proxies Package properties", () => {
       const pkg = new Package({ name: "my-pkg", version: "1.2.3" }, "/path/to/my-pkg");

@@ -67,7 +67,7 @@ class PackageGraph extends Map {
   constructor(packages, graphType = "allDependencies", forceLocal) {
     super(packages.map(pkg => [pkg.name, new PackageGraphNode(pkg)]));
 
-    if (packages.size !== this.size) {
+    if (packages.length !== this.size) {
       // weed out the duplicates
       const seen = new Map();
 
