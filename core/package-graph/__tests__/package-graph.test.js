@@ -28,6 +28,78 @@ describe("PackageGraph", () => {
 
       expect.assertions(2);
     });
+
+    it("externalizes non-satisfied semver of local sibling", () => {
+      const pkgs = [
+        new Package(
+          {
+            name: "pkg-1",
+            version: "1.0.0",
+            optionalDependencies: {
+              // non-circular external
+              "pkg-2": "^1.0.0",
+            },
+          },
+          "/test/pkg-1"
+        ),
+        new Package(
+          {
+            name: "pkg-2",
+            version: "2.0.0",
+            devDependencies: {
+              "pkg-1": "^1.0.0",
+            },
+          },
+          "/test/pkg-2"
+        ),
+        new Package(
+          {
+            name: "pkg-3",
+            version: "3.0.0",
+            dependencies: {
+              "pkg-2": "^2.0.0",
+            },
+          },
+          "/test/pkg-3"
+        ),
+      ];
+      const graph = new PackageGraph(pkgs);
+
+      // deepInspect(graph);
+      expect(graph.get("pkg-1").externalDependencies.has("pkg-2")).toBe(true);
+      expect(graph.get("pkg-2").localDependents.has("pkg-1")).toBe(false);
+      expect(graph.get("pkg-2").localDependencies.has("pkg-1")).toBe(true);
+      expect(graph.get("pkg-3").localDependencies.has("pkg-2")).toBe(true);
+    });
+
+    it("localizes all non-satisfied siblings when forced", () => {
+      const pkgs = [
+        new Package(
+          {
+            name: "pkg-1",
+            version: "1.0.0",
+          },
+          "/test/pkg-1"
+        ),
+        new Package(
+          {
+            name: "pkg-2",
+            version: "2.0.0",
+            dependencies: {
+              // non-circular external
+              "pkg-1": "^2.0.0",
+            },
+          },
+          "/test/pkg-2"
+        ),
+      ];
+      const graph = new PackageGraph(pkgs, "allDependencies", true);
+      // deepInspect(graph);
+      const [pkg1, pkg2] = graph.values();
+
+      expect(pkg1.localDependents.has("pkg-2")).toBe(true);
+      expect(pkg2.localDependencies.has("pkg-1")).toBe(true);
+    });
   });
 
   describe("Node", () => {
@@ -148,6 +220,40 @@ describe("PackageGraph", () => {
       const graph = new PackageGraph(packages);
 
       expect(graph.get("my-package-2").localDependencies.has("my-package-1")).toBe(true);
+    });
+  });
+
+  describe(".rawPackageList", () => {
+    it("retuns an array of Package instances", () => {
+      const pkgs = [
+        new Package({ name: "pkg-1", version: "1.0.0" }, "/test/pkg-1", "/test"),
+        new Package({ name: "pkg-2", version: "2.0.0" }, "/test/pkg-2", "/test"),
+      ];
+      const graph = new PackageGraph(pkgs);
+
+      expect(graph.rawPackageList).toEqual(pkgs);
+    });
+  });
+
+  describe.each`
+    method               | filtered     | expected
+    ${"addDependencies"} | ${["pkg-a"]} | ${["pkg-a", "pkg-b"]}
+    ${"addDependents"}   | ${["pkg-d"]} | ${["pkg-d", "pkg-c"]}
+  `(".$method()", ({ method, filtered, expected }) => {
+    it(`extends ${filtered} to ${expected}`, () => {
+      const pkgs = [
+        { name: "pkg-a", version: "1.0.0", dependencies: { "pkg-b": "1.0.0" } },
+        { name: "pkg-b", version: "1.0.0", dependencies: {} },
+        { name: "pkg-c", version: "1.0.0", dependencies: { "pkg-d": "1.0.0" } },
+        { name: "pkg-d", version: "1.0.0", dependencies: { "pkg-c": "1.0.0" } },
+        // cycle c <-> d catches nested search.add()
+      ].map(json => new Package(json, `/test/${json.name}`, "/test"));
+      const graph = new PackageGraph(pkgs);
+
+      const search = filtered.map(name => graph.get(name).pkg);
+      const result = graph[method](search);
+
+      expect(result.map(pkg => pkg.name)).toEqual(expected);
     });
   });
 
