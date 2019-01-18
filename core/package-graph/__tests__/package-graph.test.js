@@ -151,3 +151,11 @@ describe("PackageGraph", () => {
     });
   });
 });
+
+// eslint-disable-next-line no-unused-vars
+function deepInspect(obj) {
+  // jest console mutilates console.dir() options argument,
+  // so sidestep it by requiring the non-shimmed method directly.
+  // eslint-disable-next-line global-require
+  require("console").dir(obj, { depth: 10, compact: false });
+}
