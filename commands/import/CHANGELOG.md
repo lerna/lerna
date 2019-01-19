@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.10.6](https://github.com/lerna/lerna/compare/v3.10.5...v3.10.6) (2019-01-19)
+
+
+### Bug Fixes
+
+* **import:** Ensure compatibility with root-level package globs ([#1875](https://github.com/lerna/lerna/issues/1875)) ([16ab98d](https://github.com/lerna/lerna/commit/16ab98d)), closes [#1872](https://github.com/lerna/lerna/issues/1872)
+
+
+
+
+
 # [3.10.0](https://github.com/lerna/lerna/compare/v3.9.1...v3.10.0) (2019-01-08)
 
 **Note:** Version bump only for package @lerna/import

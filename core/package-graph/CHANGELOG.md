@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.10.6](https://github.com/lerna/lerna/compare/v3.10.5...v3.10.6) (2019-01-19)
+
+
+### Bug Fixes
+
+* **package-graph:** Ensure cycle paths are always names, not objects ([ae81a76](https://github.com/lerna/lerna/commit/ae81a76))
+* **package-graph:** Use correct property when testing for duplicates ([ef33cb7](https://github.com/lerna/lerna/commit/ef33cb7))
+
+
+
+
+
 # [3.10.0](https://github.com/lerna/lerna/compare/v3.9.1...v3.10.0) (2019-01-08)
 
 **Note:** Version bump only for package @lerna/package-graph

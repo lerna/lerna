@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.10.6](https://github.com/lerna/lerna/compare/v3.10.5...v3.10.6) (2019-01-19)
+
+
+### Bug Fixes
+
+* **exec:** Tweak description ([68a0685](https://github.com/lerna/lerna/commit/68a0685))
+* **import:** Ensure compatibility with root-level package globs ([#1875](https://github.com/lerna/lerna/issues/1875)) ([16ab98d](https://github.com/lerna/lerna/commit/16ab98d)), closes [#1872](https://github.com/lerna/lerna/issues/1872)
+* **options:** Document negated boolean options explicitly ([8bc9669](https://github.com/lerna/lerna/commit/8bc9669))
+* **package-graph:** Ensure cycle paths are always names, not objects ([ae81a76](https://github.com/lerna/lerna/commit/ae81a76))
+* **package-graph:** Use correct property when testing for duplicates ([ef33cb7](https://github.com/lerna/lerna/commit/ef33cb7))
+* **publish:** Map packument requests concurrently directly from package graph ([c79a827](https://github.com/lerna/lerna/commit/c79a827))
+* **run:** Re-order --npm-client in help output ([bfa89bf](https://github.com/lerna/lerna/commit/bfa89bf))
+
+
+
+
+
 ## [3.10.5](https://github.com/lerna/lerna/compare/v3.10.4...v3.10.5) (2019-01-11)
 
 

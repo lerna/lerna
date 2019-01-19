@@ -1,6 +1,6 @@
 {
   "name": "@lerna/changed",
-  "version": "3.10.5",
+  "version": "3.10.6",
   "description": "List local packages that have changed since the last tagged release",
   "keywords": [
     "lerna",
