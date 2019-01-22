@@ -470,9 +470,10 @@ class BootstrapCommand extends Command {
       const root = Array.from(rootSet);
 
       actions.push(() => {
-        const depsToInstallInRoot = root.some(({ isSatisfied }) => !isSatisfied)
-          ? root.map(({ dependency }) => dependency)
-          : [];
+        const depsToInstallInRoot =
+          !this.options.noUpdateLockfile || root.some(({ isSatisfied }) => !isSatisfied)
+            ? root.map(({ dependency }) => dependency)
+            : [];
 
         if (depsToInstallInRoot.length) {
           tracker.info("hoist", "Installing hoisted dependencies into root");
@@ -554,7 +555,7 @@ class BootstrapCommand extends Command {
 
       // If we have any unsatisfied deps then we need to install everything.
       // This is important for consistent behavior across npm clients.
-      if (deps.some(({ isSatisfied }) => !isSatisfied)) {
+      if (!this.options.noUpdateLockfile || deps.some(({ isSatisfied }) => !isSatisfied)) {
         actions.push(() => {
           const dependencies = deps.map(({ dependency }) => dependency);
           const promise = npmInstall.dependencies(leafNode.pkg, dependencies, leafNpmConfig);

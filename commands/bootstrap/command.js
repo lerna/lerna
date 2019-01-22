@@ -53,6 +53,12 @@ exports.builder = yargs => {
         type: "string",
         requiresArg: true,
       },
+      "no-update-lockfile": {
+        group: "Command Options:",
+        describe: "Do not update lock file.",
+        type: "boolean",
+        default: true,
+      },
     });
 
   return filterable(yargs);

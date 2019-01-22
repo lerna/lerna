@@ -476,6 +476,16 @@ describe("BootstrapCommand", () => {
     });
   });
 
+  describe(".no-update-lockfile", () => {
+    it("should still get called", async () => {
+      const testDir = await initFixture("warm");
+
+      await lernaBootstrap(testDir)("--no-update-lockfile=false");
+
+      expect(npmInstall.dependencies).toHaveBeenCalled();
+    });
+  });
+
   describe("with at least one external dependency to install", () => {
     it("should install all dependencies", async () => {
       const testDir = await initFixture("tepid");
