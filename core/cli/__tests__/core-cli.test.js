@@ -159,6 +159,27 @@ describe("core-cli", () => {
     );
   });
 
+  it("coerces string exit codes to 1", async () => {
+    const cli = prepare(cwd);
+    const spy = jest.spyOn(cli, "exit");
+
+    cli.command("errname", "a string code", {}, async () => {
+      const err = new Error("npm-registry-fetch");
+      err.code = "E401";
+      throw err;
+    });
+
+    // paradoxically, this does NOT reject...
+    await parse(cli, ["errname"]);
+
+    expect(spy).toHaveBeenLastCalledWith(
+      1,
+      expect.objectContaining({
+        message: "npm-registry-fetch",
+      })
+    );
+  });
+
   it("preserves exotic exit codes", async () => {
     const cli = prepare(cwd);
     const spy = jest.spyOn(cli, "exit");
