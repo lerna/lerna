@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.10.7](https://github.com/lerna/lerna/compare/v3.10.6...v3.10.7) (2019-01-22)
+
+
+### Bug Fixes
+
+* **cli:** Ensure exit code is always numeric ([a2362b8](https://github.com/lerna/lerna/commit/a2362b8))
+
+
+
+
+
 ## [3.10.6](https://github.com/lerna/lerna/compare/v3.10.5...v3.10.6) (2019-01-19)
 
 **Note:** Version bump only for package @lerna/cli
