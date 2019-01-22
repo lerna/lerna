@@ -131,4 +131,48 @@ describe("npm-publish", () => {
     expect(runLifecycle).toHaveBeenCalledWith(pkg, "publish", aFiggyPudding);
     expect(runLifecycle).toHaveBeenLastCalledWith(pkg, "postpublish", aFiggyPudding);
   });
+
+  it("catches libnpm errors", async () => {
+    publish.mockImplementationOnce(() => {
+      const err = new Error("whoopsy");
+      err.code = "E401";
+      err.body = {
+        error: "doodle",
+      };
+      return Promise.reject(err);
+    });
+
+    const log = {
+      verbose: jest.fn(),
+      silly: jest.fn(),
+      error: jest.fn(),
+    };
+    const opts = new Map().set("log", log);
+
+    try {
+      await npmPublish(pkg, tarFilePath, opts);
+    } catch (err) {
+      expect(err.message).toBe("whoopsy");
+      expect(err.name).toBe("ValidationError");
+      expect(log.error).toHaveBeenLastCalledWith("E401", "doodle");
+      expect(process.exitCode).toBe(1);
+    }
+
+    publish.mockImplementationOnce(() => {
+      const err = new Error("lolwut");
+      err.code = "E404";
+      err.errno = 9001;
+      return Promise.reject(err);
+    });
+
+    try {
+      await npmPublish(pkg, tarFilePath, opts);
+    } catch (err) {
+      expect(err.message).toBe("lolwut");
+      expect(log.error).toHaveBeenLastCalledWith("E404", "lolwut");
+      expect(process.exitCode).toBe(9001);
+    }
+
+    expect.hasAssertions();
+  });
 });
