@@ -14,6 +14,7 @@ const initCmd = require("@lerna/init/command");
 const linkCmd = require("@lerna/link/command");
 const listCmd = require("@lerna/list/command");
 const publishCmd = require("@lerna/publish/command");
+const removeCmd = require("@lerna/remove/command");
 const runCmd = require("@lerna/run/command");
 const versionCmd = require("@lerna/version/command");
 
@@ -39,6 +40,7 @@ function main(argv) {
     .command(linkCmd)
     .command(listCmd)
     .command(publishCmd)
+    .command(removeCmd)
     .command(runCmd)
     .command(versionCmd)
     .parse(argv, context);

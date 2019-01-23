@@ -1,0 +1,41 @@
+{
+  "name": "@lerna/remove",
+  "version": "3.10.6",
+  "description": "Remove dependency from matched packages",
+  "keywords": [
+    "lerna",
+    "command"
+  ],
+  "homepage": "https://github.com/lerna/lerna",
+  "license": "MIT",
+  "author": {
+    "name": "Daniel Stockman",
+    "url": "https://github.com/evocateur"
+  },
+  "files": [
+    "command.js",
+    "index.js",
+    "lib"
+  ],
+  "main": "index.js",
+  "engines": {
+    "node": ">= 6.9.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lerna/lerna.git"
+  },
+  "scripts": {
+    "test": "echo \"Run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@lerna/command": "file:../../core/command",
+    "@lerna/filter-options": "file:../../core/filter-options",
+    "@lerna/npm-uninstall": "file:../../utils/npm-uninstall",
+    "fs-extra": "^7.0.0",
+    "p-map": "^1.2.0"
+  }
+}
