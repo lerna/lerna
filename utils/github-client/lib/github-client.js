@@ -12,7 +12,6 @@ function createGitHubClient() {
   log.silly("createGitHubClient");
 
   const { GH_TOKEN, GHE_API_URL, GHE_VERSION } = process.env;
-  const options = {};
 
   if (!GH_TOKEN) {
     throw new Error("A GH_TOKEN environment variable is required.");
@@ -23,18 +22,15 @@ function createGitHubClient() {
     Octokit.plugin(require(`@octokit/plugin-enterprise-rest/ghe-${GHE_VERSION}`));
   }
 
+  const options = {
+    auth: `token ${GH_TOKEN}`,
+  };
+
   if (GHE_API_URL) {
     options.baseUrl = GHE_API_URL;
   }
 
-  const client = new Octokit(options);
-
-  client.authenticate({
-    type: "token",
-    token: GH_TOKEN,
-  });
-
-  return client;
+  return new Octokit(options);
 }
 
 function parseGitRepo(remote = "origin", opts) {

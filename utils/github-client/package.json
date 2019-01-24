@@ -13,9 +13,9 @@
     "url": "https://github.com/milesj"
   },
   "files": [
-    "github-client.js"
+    "lib"
   ],
-  "main": "github-client.js",
+  "main": "lib/github-client.js",
   "engines": {
     "node": ">= 6.9.0"
   },
