@@ -63,7 +63,7 @@ It is easiest (and recommended) to configure in `lerna.json`, but it is possible
 ```json
 {
   "command": {
-    "publish": {
+    "version": {
       "allowBranch": "master"
     }
   }
@@ -76,7 +76,7 @@ It is considered a best-practice to limit `lerna version` to the primary branch 
 ```json
 {
   "command": {
-    "publish": {
+    "version": {
       "allowBranch": ["master", "feature/*"]
     }
   }
@@ -222,7 +222,7 @@ This can be configured in lerna.json, as well:
 ```json
 {
   "command": {
-    "publish": {
+    "version": {
       "message": "chore(release): publish %s"
     }
   }
