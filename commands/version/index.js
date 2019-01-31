@@ -87,7 +87,10 @@ class VersionCommand extends Command {
 
     this.currentBranch = getCurrentBranch(this.execOpts);
 
-    if ((this.pushToRemote || this.options.allowBranch || this.commitAndTag) && this.currentBranch === "HEAD") {
+    if (
+      (this.pushToRemote || this.options.allowBranch || this.commitAndTag) &&
+      this.currentBranch === "HEAD"
+    ) {
       throw new ValidationError("ENOGIT", "Detached git HEAD, please checkout a branch to choose versions.");
     }
 
