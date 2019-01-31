@@ -11,6 +11,9 @@ function getUnpublishedPackages(packageGraph, opts) {
 
   let chain = Promise.resolve();
 
+  // don't bother attempting to get the packument for private packages
+  const graphNodesToCheck = Array.from(packageGraph.values()).filter(({ pkg }) => !pkg.private);
+
   const mapper = pkg =>
     getPackument(pkg.name, opts).then(
       packument => {
@@ -24,7 +27,7 @@ function getUnpublishedPackages(packageGraph, opts) {
       }
     );
 
-  chain = chain.then(() => pMap(packageGraph.values(), mapper, { concurrency: 4 }));
+  chain = chain.then(() => pMap(graphNodesToCheck, mapper, { concurrency: 4 }));
 
   return chain.then(results => results.filter(Boolean));
 }

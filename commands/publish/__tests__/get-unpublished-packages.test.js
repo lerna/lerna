@@ -68,3 +68,23 @@ Array [
 ]
 `);
 });
+
+test("getUnpublishedPackages with private package", async () => {
+  const cwd = await initFixture("public-private");
+  const packages = await getPackages(cwd);
+  const packageGraph = new PackageGraph(packages);
+
+  const opts = new Map();
+  const pkgs = await getUnpublishedPackages(packageGraph, opts);
+
+  expect(pkgs).toMatchInlineSnapshot(`
+Array [
+  PackageGraphNode {
+    "externalDependencies": Map {},
+    "localDependencies": Map {},
+    "localDependents": Map {},
+    "name": "package-1",
+  },
+]
+`);
+});
