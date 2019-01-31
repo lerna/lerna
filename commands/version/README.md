@@ -301,6 +301,6 @@ Pass an explicit version number to the [`bump`](#bump) positional instead.
 
 ### `--skip-git`
 
-Use [`--no-git-tag-version`](https://github.com/lerna/lerna/tree/master/commands/version#--git-tag-version) and [`--no-push`](https://github.com/lerna/lerna/tree/master/commands/version#--push) instead.
+Use [`--no-git-tag-version`](#--no-git-tag-version) and [`--no-push`](#--no-push) instead.
 
 > NOTE: This option **does not** restrict _all_ git commands from being executed. `git` is still required by `lerna version`.
