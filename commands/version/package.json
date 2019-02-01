@@ -1,6 +1,6 @@
 {
   "name": "@lerna/version",
-  "version": "3.10.6",
+  "version": "3.10.8",
   "description": "Bump version of packages changed since the last release",
   "keywords": [
     "lerna",

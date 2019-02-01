@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.10.8](https://github.com/lerna/lerna/compare/v3.10.7...v3.10.8) (2019-02-01)
+
+
+### Bug Fixes
+
+* **publish:** Skip private package lookup ([#1905](https://github.com/lerna/lerna/issues/1905)) ([f9e18fa](https://github.com/lerna/lerna/commit/f9e18fa))
+
+
+
+
+
 ## [3.10.7](https://github.com/lerna/lerna/compare/v3.10.6...v3.10.7) (2019-01-22)
 
 **Note:** Version bump only for package @lerna/publish
