@@ -43,6 +43,16 @@ class VersionCommand extends Command {
     return ["publish"];
   }
 
+  get requiresGit() {
+    return (
+      this.project.isIndependent() ||
+      this.commitAndTag ||
+      this.pushToRemote ||
+      this.options.allowBranch ||
+      this.options.changelog
+    );
+  }
+
   initialize() {
     // Defaults are necessary here because yargs defaults
     // override durable options provided by a config file
@@ -77,71 +87,76 @@ class VersionCommand extends Command {
       this.logger.info("current version", this.project.version);
     }
 
-    // git validation, if enabled, should happen before updates are calculated and versions picked
-    if (!isAnythingCommitted(this.execOpts)) {
-      throw new ValidationError(
-        "ENOCOMMIT",
-        "No commits in this repository. Please commit something before using version."
-      );
-    }
-
-    this.currentBranch = getCurrentBranch(this.execOpts);
-
-    if (
-      (this.pushToRemote || this.options.allowBranch || this.commitAndTag) &&
-      this.currentBranch === "HEAD"
-    ) {
-      throw new ValidationError("ENOGIT", "Detached git HEAD, please checkout a branch to choose versions.");
-    }
-
-    if (this.pushToRemote && !remoteBranchExists(this.gitRemote, this.currentBranch, this.execOpts)) {
-      throw new ValidationError(
-        "ENOREMOTEBRANCH",
-        dedent`
-          Branch '${this.currentBranch}' doesn't exist in remote '${this.gitRemote}'.
-          If this is a new branch, please make sure you push it to the remote first.
-        `
-      );
-    }
-
-    if (
-      this.options.allowBranch &&
-      ![].concat(this.options.allowBranch).some(x => minimatch(this.currentBranch, x))
-    ) {
-      throw new ValidationError(
-        "ENOTALLOWED",
-        dedent`
-          Branch '${this.currentBranch}' is restricted from versioning due to allowBranch config.
-          Please consider the reasons for this restriction before overriding the option.
-        `
-      );
-    }
-
-    if (
-      this.commitAndTag &&
-      this.pushToRemote &&
-      isBehindUpstream(this.gitRemote, this.currentBranch, this.execOpts)
-    ) {
-      const message = `Local branch '${this.currentBranch}' is behind remote upstream ${this.gitRemote}/${
-        this.currentBranch
-      }`;
-
-      if (!this.options.ci) {
-        // interrupt interactive execution
+    if (this.requiresGit) {
+      // git validation, if enabled, should happen before updates are calculated and versions picked
+      if (!isAnythingCommitted(this.execOpts)) {
         throw new ValidationError(
-          "EBEHIND",
+          "ENOCOMMIT",
+          "No commits in this repository. Please commit something before using version."
+        );
+      }
+
+      this.currentBranch = getCurrentBranch(this.execOpts);
+
+      if (
+        (this.pushToRemote || this.options.allowBranch || this.commitAndTag) &&
+        this.currentBranch === "HEAD"
+      ) {
+        throw new ValidationError(
+          "ENOGIT",
+          "Detached git HEAD, please checkout a branch to choose versions."
+        );
+      }
+
+      if (this.pushToRemote && !remoteBranchExists(this.gitRemote, this.currentBranch, this.execOpts)) {
+        throw new ValidationError(
+          "ENOREMOTEBRANCH",
           dedent`
-            ${message}
-            Please merge remote changes into '${this.currentBranch}' with 'git pull'
+            Branch '${this.currentBranch}' doesn't exist in remote '${this.gitRemote}'.
+            If this is a new branch, please make sure you push it to the remote first.
           `
         );
       }
 
-      // CI execution should not error, but warn & exit
-      this.logger.warn("EBEHIND", `${message}, exiting`);
+      if (
+        this.options.allowBranch &&
+        ![].concat(this.options.allowBranch).some(x => minimatch(this.currentBranch, x))
+      ) {
+        throw new ValidationError(
+          "ENOTALLOWED",
+          dedent`
+            Branch '${this.currentBranch}' is restricted from versioning due to allowBranch config.
+            Please consider the reasons for this restriction before overriding the option.
+          `
+        );
+      }
 
-      // still exits zero, aka "ok"
-      return false;
+      if (
+        this.commitAndTag &&
+        this.pushToRemote &&
+        isBehindUpstream(this.gitRemote, this.currentBranch, this.execOpts)
+      ) {
+        const message = `Local branch '${this.currentBranch}' is behind remote upstream ${this.gitRemote}/${
+          this.currentBranch
+        }`;
+
+        if (!this.options.ci) {
+          // interrupt interactive execution
+          throw new ValidationError(
+            "EBEHIND",
+            dedent`
+              ${message}
+              Please merge remote changes into '${this.currentBranch}' with 'git pull'
+            `
+          );
+        }
+
+        // CI execution should not error, but warn & exit
+        this.logger.warn("EBEHIND", `${message}, exiting`);
+
+        // still exits zero, aka "ok"
+        return false;
+      }
     }
 
     this.updates = collectUpdates(
