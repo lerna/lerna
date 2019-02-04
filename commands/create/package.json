@@ -36,7 +36,7 @@
     "@lerna/command": "file:../../core/command",
     "@lerna/npm-conf": "file:../../utils/npm-conf",
     "@lerna/validation-error": "file:../../core/validation-error",
-    "camelcase": "^4.1.0",
+    "camelcase": "^5.0.0",
     "dedent": "^0.7.0",
     "fs-extra": "^7.0.0",
     "globby": "^8.0.1",

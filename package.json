@@ -58,7 +58,7 @@
     "@lerna-test/show-commit": "file:helpers/show-commit",
     "@lerna-test/silence-logging": "file:helpers/silence-logging",
     "@lerna-test/update-lerna-config": "file:helpers/update-lerna-config",
-    "camelcase": "^4.1.0",
+    "camelcase": "^5.0.0",
     "debug": "^4.1.1",
     "eslint": "^5.13.0",
     "eslint-config-airbnb-base": "^13.1.0",
