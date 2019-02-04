@@ -1,6 +1,6 @@
 "use strict";
 
-const log = require("libnpm/log");
+const log = require("npmlog");
 const pMap = require("p-map");
 const getPackument = require("pacote/packument");
 

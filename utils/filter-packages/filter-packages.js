@@ -2,7 +2,7 @@
 
 const util = require("util");
 const multimatch = require("multimatch");
-const log = require("libnpm/log");
+const log = require("npmlog");
 
 const ValidationError = require("@lerna/validation-error");
 

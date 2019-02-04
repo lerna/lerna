@@ -1,7 +1,7 @@
 "use strict";
 
 const inquirer = require("inquirer");
-const log = require("libnpm/log");
+const log = require("npmlog");
 
 exports.confirm = confirm;
 exports.select = select;

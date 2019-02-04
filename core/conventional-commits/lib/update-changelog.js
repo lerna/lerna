@@ -3,7 +3,7 @@
 const conventionalChangelogCore = require("conventional-changelog-core");
 const fs = require("fs-extra");
 const getStream = require("get-stream");
-const log = require("libnpm/log");
+const log = require("npmlog");
 const { BLANK_LINE, CHANGELOG_HEADER, EOL } = require("./constants");
 const getChangelogConfig = require("./get-changelog-config");
 const makeBumpOnlyFilter = require("./make-bump-only-filter");

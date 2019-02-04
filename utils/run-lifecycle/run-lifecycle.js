@@ -1,6 +1,6 @@
 "use strict";
 
-const log = require("libnpm/log");
+const log = require("npmlog");
 const runScript = require("npm-lifecycle");
 const figgyPudding = require("figgy-pudding");
 const npmConf = require("@lerna/npm-conf");

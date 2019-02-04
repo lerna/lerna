@@ -1,6 +1,6 @@
 "use strict";
 
-const log = require("libnpm/log");
+const log = require("npmlog");
 const path = require("path");
 const pathExists = require("path-exists");
 

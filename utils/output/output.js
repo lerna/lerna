@@ -1,7 +1,7 @@
 "use strict";
 
 /* eslint-disable no-console */
-const log = require("libnpm/log");
+const log = require("npmlog");
 
 module.exports = output;
 

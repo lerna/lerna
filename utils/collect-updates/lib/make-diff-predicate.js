@@ -1,7 +1,7 @@
 "use strict";
 
 const childProcess = require("@lerna/child-process");
-const log = require("libnpm/log");
+const log = require("npmlog");
 const minimatch = require("minimatch");
 const path = require("path");
 const slash = require("slash");

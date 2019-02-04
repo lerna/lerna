@@ -57,6 +57,7 @@
     "libnpmaccess": "^3.0.1",
     "npm-package-arg": "^6.1.0",
     "npm-registry-fetch": "^3.9.0",
+    "npmlog": "^4.1.2",
     "p-finally": "^1.0.0",
     "p-map": "^1.2.0",
     "p-pipe": "^1.2.0",

@@ -1,6 +1,6 @@
 "use strict";
 
-const log = require("libnpm/log");
+const log = require("npmlog");
 const figgyPudding = require("figgy-pudding");
 
 module.exports = figgyPudding(

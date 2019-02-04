@@ -34,6 +34,7 @@
     "figgy-pudding": "^3.5.1",
     "libnpm": "^2.0.1",
     "npm-package-arg": "^6.1.0",
-    "npm-registry-fetch": "^3.9.0"
+    "npm-registry-fetch": "^3.9.0",
+    "npmlog": "^4.1.2"
   }
 }

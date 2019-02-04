@@ -1,7 +1,7 @@
 "use strict";
 
 const fs = require("fs-extra");
-const log = require("libnpm/log");
+const log = require("npmlog");
 const npa = require("npm-package-arg");
 const onExit = require("signal-exit");
 const writePkg = require("write-pkg");

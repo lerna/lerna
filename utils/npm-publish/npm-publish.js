@@ -1,7 +1,7 @@
 "use strict";
 
 const fs = require("fs-extra");
-const log = require("libnpm/log");
+const log = require("npmlog");
 const { publish } = require("libnpmpublish");
 const pify = require("pify");
 const readJSON = require("read-package-json");

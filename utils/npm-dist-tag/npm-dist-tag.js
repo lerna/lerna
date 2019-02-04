@@ -1,6 +1,6 @@
 "use strict";
 
-const log = require("libnpm/log");
+const log = require("npmlog");
 const npa = require("npm-package-arg");
 const fetch = require("npm-registry-fetch");
 const figgyPudding = require("figgy-pudding");
