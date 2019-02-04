@@ -6,8 +6,8 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
-    "expect": "*",
-    "jest-diff": "*",
-    "jest-matcher-utils": "*"
+    "expect": "^23.6.0",
+    "jest-diff": "^23.6.0",
+    "jest-matcher-utils": "^23.6.0"
   }
 }
