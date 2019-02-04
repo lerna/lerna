@@ -18,7 +18,7 @@ function getNpmUsername(_opts) {
   return getProfileData(opts).then(success, failure);
 
   function success(result) {
-    opts.log.silly("npm whoami", "received %j", result);
+    opts.log.silly("npm profile get", "received %j", result);
 
     if (!result.username) {
       throw new ValidationError(
