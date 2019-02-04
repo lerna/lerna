@@ -3,11 +3,14 @@
 const fs = require("fs-extra");
 const log = require("libnpm/log");
 const publish = require("libnpm/publish");
-const readJSON = require("libnpm/read-json");
+const pify = require("pify");
+const readJSON = require("read-package-json");
 const figgyPudding = require("figgy-pudding");
 const runLifecycle = require("@lerna/run-lifecycle");
 
 module.exports = npmPublish;
+
+const readJSONAsync = pify(readJSON);
 
 const PublishConfig = figgyPudding(
   {
@@ -36,7 +39,7 @@ function npmPublish(pkg, tarFilePath, _opts) {
   let chain = Promise.resolve();
 
   if (!opts.dryRun) {
-    chain = chain.then(() => Promise.all([fs.readFile(tarFilePath), readJSON(pkg.manifestLocation)]));
+    chain = chain.then(() => Promise.all([fs.readFile(tarFilePath), readJSONAsync(pkg.manifestLocation)]));
     chain = chain.then(([tarData, manifest]) => {
       // non-default tag needs to override publishConfig.tag,
       // which is merged over opts.tag in libnpm/publish

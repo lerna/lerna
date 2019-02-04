@@ -1,14 +1,14 @@
 "use strict";
 
 jest.mock("@lerna/run-lifecycle");
-jest.mock("libnpm/read-json");
+jest.mock("read-package-json");
 jest.mock("libnpm/publish");
 jest.mock("fs-extra");
 
 // mocked modules
 const fs = require("fs-extra");
 const publish = require("libnpm/publish");
-const readJSON = require("libnpm/read-json");
+const readJSON = require("read-package-json");
 const runLifecycle = require("@lerna/run-lifecycle");
 
 // helpers
@@ -26,7 +26,7 @@ describe("npm-publish", () => {
 
   fs.readFile.mockName("fs.readFile").mockResolvedValue(mockTarData);
   publish.mockName("libnpm/publish").mockResolvedValue();
-  readJSON.mockName("libnpm/read-json").mockResolvedValue(mockManifest);
+  readJSON.mockName("read-package-json").mockImplementation((file, cb) => cb(null, mockManifest));
   runLifecycle.mockName("@lerna/run-lifecycle").mockResolvedValue();
 
   const tarFilePath = "/tmp/test-1.10.100.tgz";
@@ -43,7 +43,7 @@ describe("npm-publish", () => {
     await npmPublish(pkg, tarFilePath, opts);
 
     expect(fs.readFile).toHaveBeenCalledWith(tarFilePath);
-    expect(readJSON).toHaveBeenCalledWith(pkg.manifestLocation);
+    expect(readJSON).toHaveBeenCalledWith(pkg.manifestLocation, expect.any(Function));
     expect(publish).toHaveBeenCalledWith(
       mockManifest,
       mockTarData,
@@ -68,11 +68,13 @@ describe("npm-publish", () => {
   });
 
   it("overrides pkg.publishConfig.tag when opts.tag is not defaulted", async () => {
-    readJSON.mockResolvedValueOnce({
-      publishConfig: {
-        tag: "beta",
-      },
-    });
+    readJSON.mockImplementationOnce((file, cb) =>
+      cb(null, {
+        publishConfig: {
+          tag: "beta",
+        },
+      })
+    );
     const opts = new Map().set("tag", "temp-tag");
 
     await npmPublish(pkg, tarFilePath, opts);
@@ -91,11 +93,13 @@ describe("npm-publish", () => {
   });
 
   it("respects pkg.publishConfig.tag when opts.tag matches default", async () => {
-    readJSON.mockResolvedValueOnce({
-      publishConfig: {
-        tag: "beta",
-      },
-    });
+    readJSON.mockImplementationOnce((file, cb) =>
+      cb(null, {
+        publishConfig: {
+          tag: "beta",
+        },
+      })
+    );
 
     await npmPublish(pkg, tarFilePath);
 
