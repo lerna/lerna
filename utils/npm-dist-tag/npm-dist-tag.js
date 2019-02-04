@@ -2,7 +2,7 @@
 
 const log = require("libnpm/log");
 const npa = require("libnpm/parse-arg");
-const fetch = require("libnpm/fetch");
+const fetch = require("npm-registry-fetch");
 const figgyPudding = require("figgy-pudding");
 
 exports.add = add;

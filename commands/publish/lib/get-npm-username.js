@@ -1,6 +1,6 @@
 "use strict";
 
-const fetch = require("libnpm/fetch");
+const fetch = require("npm-registry-fetch");
 const pulseTillDone = require("@lerna/pulse-till-done");
 const ValidationError = require("@lerna/validation-error");
 const FetchConfig = require("./fetch-config");
