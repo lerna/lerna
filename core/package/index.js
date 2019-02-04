@@ -1,6 +1,6 @@
 "use strict";
 
-const npa = require("libnpm/parse-arg");
+const npa = require("npm-package-arg");
 const path = require("path");
 const loadJsonFile = require("load-json-file");
 const writePkg = require("write-pkg");

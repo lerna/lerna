@@ -38,6 +38,7 @@
     "fs-extra": "^7.0.0",
     "get-stream": "^4.0.0",
     "libnpm": "^2.0.1",
+    "npm-package-arg": "^6.1.0",
     "pify": "^3.0.0",
     "semver": "^5.5.0"
   }

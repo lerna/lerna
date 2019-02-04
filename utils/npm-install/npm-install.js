@@ -2,7 +2,7 @@
 
 const fs = require("fs-extra");
 const log = require("libnpm/log");
-const npa = require("libnpm/parse-arg");
+const npa = require("npm-package-arg");
 const onExit = require("signal-exit");
 const writePkg = require("write-pkg");
 
@@ -98,7 +98,7 @@ function npmInstallDependencies(pkg, dependencies, config) {
 function transformManifest(pkg, dependencies) {
   const json = pkg.toJSON();
 
-  // a map of depName => depVersion (resolved by libnpm/parse-arg)
+  // a map of depName => depVersion (resolved by npm-package-arg)
   const depMap = new Map(
     dependencies.map(dep => {
       const { name, rawSpec } = npa(dep, pkg.location);

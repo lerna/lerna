@@ -52,6 +52,7 @@
     "get-port": "^3.2.0",
     "libnpm": "^2.0.1",
     "multimatch": "^2.1.0",
+    "npm-package-arg": "^6.1.0",
     "p-finally": "^1.0.0",
     "p-map": "^1.2.0",
     "p-map-series": "^1.0.0",

@@ -1,6 +1,6 @@
 "use strict";
 
-const npa = require("libnpm/parse-arg");
+const npa = require("npm-package-arg");
 const semver = require("semver");
 const ValidationError = require("@lerna/validation-error");
 

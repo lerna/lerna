@@ -8,7 +8,7 @@ const camelCase = require("camelcase");
 const dedent = require("dedent");
 const initPackageJson = require("pify")(require("init-package-json"));
 const getManifest = require("libnpm/manifest");
-const npa = require("libnpm/parse-arg");
+const npa = require("npm-package-arg");
 const pReduce = require("p-reduce");
 const slash = require("slash");
 
@@ -50,7 +50,7 @@ class CreateCommand extends Command {
       yes,
     } = this.options;
 
-    // libnpm/parse-arg handles all the edge-cases with scopes
+    // npm-package-arg handles all the edge-cases with scopes
     const { name, scope } = npa(pkgName);
 
     // optional scope is _not_ included in the directory name

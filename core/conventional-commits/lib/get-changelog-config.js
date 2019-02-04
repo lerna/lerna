@@ -1,7 +1,7 @@
 "use strict";
 
 const log = require("libnpm/log");
-const npa = require("libnpm/parse-arg");
+const npa = require("npm-package-arg");
 const pify = require("pify");
 const ValidationError = require("@lerna/validation-error");
 
