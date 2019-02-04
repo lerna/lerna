@@ -32,7 +32,6 @@
   "dependencies": {
     "@lerna/npm-conf": "file:../npm-conf",
     "figgy-pudding": "^3.5.1",
-    "libnpm": "^2.0.1",
     "npm-lifecycle": "^2.1.0",
     "npmlog": "^4.1.2"
   }
