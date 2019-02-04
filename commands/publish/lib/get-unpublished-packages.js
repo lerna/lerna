@@ -2,7 +2,7 @@
 
 const log = require("libnpm/log");
 const pMap = require("p-map");
-const getPackument = require("libnpm/packument");
+const getPackument = require("pacote/packument");
 
 module.exports = getUnpublishedPackages;
 

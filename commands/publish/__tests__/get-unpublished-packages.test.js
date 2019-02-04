@@ -1,9 +1,9 @@
 "use strict";
 
-jest.mock("libnpm/packument");
+jest.mock("pacote/packument");
 
 // mocked module(s)
-const getPackument = require("libnpm/packument");
+const getPackument = require("pacote/packument");
 
 // helpers
 const PackageGraph = require("@lerna/package-graph");
