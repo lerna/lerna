@@ -1,6 +1,8 @@
 "use strict";
 
 module.exports = {
+  // workaround https://github.com/facebook/jest/pull/5862
+  name: "lerna-integration",
   bail: true,
   modulePathIgnorePatterns: ["/__fixtures__/"],
   roots: ["<rootDir>/integration"],

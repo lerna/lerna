@@ -1,6 +1,8 @@
 "use strict";
 
 module.exports = {
+  // workaround https://github.com/facebook/jest/pull/5862
+  name: "lerna-unit",
   clearMocks: true,
   // windows ci is terribly slow, so let's not burden it with coverage
   collectCoverage: process.env.CI && process.env.TRAVIS_OS_NAME !== "windows",
