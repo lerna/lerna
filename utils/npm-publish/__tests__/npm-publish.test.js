@@ -2,12 +2,12 @@
 
 jest.mock("@lerna/run-lifecycle");
 jest.mock("read-package-json");
-jest.mock("libnpm/publish");
+jest.mock("libnpmpublish");
 jest.mock("fs-extra");
 
 // mocked modules
 const fs = require("fs-extra");
-const publish = require("libnpm/publish");
+const { publish } = require("libnpmpublish");
 const readJSON = require("read-package-json");
 const runLifecycle = require("@lerna/run-lifecycle");
 
@@ -25,7 +25,7 @@ describe("npm-publish", () => {
   const mockManifest = { _normalized: true };
 
   fs.readFile.mockName("fs.readFile").mockResolvedValue(mockTarData);
-  publish.mockName("libnpm/publish").mockResolvedValue();
+  publish.mockName("libnpmpublish").mockResolvedValue();
   readJSON.mockName("read-package-json").mockImplementation((file, cb) => cb(null, mockManifest));
   runLifecycle.mockName("@lerna/run-lifecycle").mockResolvedValue();
 

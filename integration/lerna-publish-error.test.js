@@ -7,7 +7,7 @@ const cloneFixture = require("@lerna-test/clone-fixture")(
   path.resolve(__dirname, "../commands/publish/__tests__")
 );
 
-test("lerna publish sets correct exit code when libnpm/publish fails", async () => {
+test("lerna publish sets correct exit code when libnpmpublish fails", async () => {
   const { cwd } = await cloneFixture("normal");
 
   try {

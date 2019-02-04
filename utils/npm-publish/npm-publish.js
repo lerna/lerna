@@ -2,7 +2,7 @@
 
 const fs = require("fs-extra");
 const log = require("libnpm/log");
-const publish = require("libnpm/publish");
+const { publish } = require("libnpmpublish");
 const pify = require("pify");
 const readJSON = require("read-package-json");
 const figgyPudding = require("figgy-pudding");
@@ -42,7 +42,7 @@ function npmPublish(pkg, tarFilePath, _opts) {
     chain = chain.then(() => Promise.all([fs.readFile(tarFilePath), readJSONAsync(pkg.manifestLocation)]));
     chain = chain.then(([tarData, manifest]) => {
       // non-default tag needs to override publishConfig.tag,
-      // which is merged over opts.tag in libnpm/publish
+      // which is merged over opts.tag in libnpmpublish
       if (
         opts.tag !== "latest" &&
         manifest.publishConfig &&
