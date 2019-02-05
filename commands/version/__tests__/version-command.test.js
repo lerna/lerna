@@ -519,7 +519,7 @@ describe("VersionCommand", () => {
   });
 
   it("exits with an error when git HEAD is detached", async () => {
-    const cwd = await initFixture("normal-no-inter-dependencies");
+    const cwd = await initFixture("no-interdependencies");
 
     try {
       const sha = await execa.stdout("git", ["rev-parse", "HEAD"], { cwd });
