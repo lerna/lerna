@@ -51,6 +51,7 @@ overrides:
       - "integration/**"
       - "**/__tests__/**"
       - "**/__mocks__/**"
+      - "**/__helpers__/**"
     env:
       jest: true
     rules:
