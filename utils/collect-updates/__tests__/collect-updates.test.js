@@ -1,0 +1,271 @@
+"use strict";
+
+jest.mock("@lerna/describe-ref");
+jest.mock("../lib/has-tags");
+jest.mock("../lib/make-diff-predicate");
+
+// mocked modules
+const describeRef = require("@lerna/describe-ref");
+const hasTags = require("../lib/has-tags");
+const makeDiffPredicate = require("../lib/make-diff-predicate");
+
+// helpers
+const buildGraph = require("../__helpers__/build-graph");
+
+// file under test
+const collectUpdates = require("..");
+
+// default mock implementations
+describeRef.sync.mockReturnValue({
+  lastTagName: "v1.0.0",
+  lastVersion: "1.0.0",
+  refCount: "1",
+  sha: "deadbeef",
+  isDirty: false,
+});
+
+hasTags.mockReturnValue(true);
+
+const changedPackages = new Set();
+const hasDiff = jest
+  .fn()
+  .mockName("hasDiff")
+  .mockImplementation(node => changedPackages.has(node.name));
+
+makeDiffPredicate.mockImplementation(() => hasDiff);
+
+// matcher constants
+const ALL_NODES = Object.freeze([
+  expect.objectContaining({ name: "package-cycle-1" }),
+  expect.objectContaining({ name: "package-cycle-2" }),
+  expect.objectContaining({ name: "package-cycle-extraneous" }),
+  expect.objectContaining({ name: "package-dag-1" }),
+  expect.objectContaining({ name: "package-dag-2a" }),
+  expect.objectContaining({ name: "package-dag-2b" }),
+  expect.objectContaining({ name: "package-dag-3" }),
+  expect.objectContaining({ name: "package-standalone" }),
+]);
+
+describe("collectUpdates()", () => {
+  beforeEach(() => {
+    // isolate each test
+    changedPackages.clear();
+  });
+
+  it("returns node with changes", () => {
+    changedPackages.add("package-standalone");
+
+    const graph = buildGraph();
+    const pkgs = graph.rawPackageList;
+    const execOpts = { cwd: "/test" };
+    // require("console").dir(graph, { compact: false });
+
+    const updates = collectUpdates(pkgs, graph, execOpts, {});
+
+    expect(updates).toEqual([
+      expect.objectContaining({
+        name: "package-standalone",
+      }),
+    ]);
+    expect(hasTags).toHaveBeenLastCalledWith(execOpts);
+    expect(describeRef.sync).toHaveBeenLastCalledWith(execOpts, undefined);
+    expect(makeDiffPredicate).toHaveBeenLastCalledWith("v1.0.0", execOpts, undefined);
+  });
+
+  it("returns changed node and their dependents", () => {
+    changedPackages.add("package-dag-1");
+
+    const graph = buildGraph();
+    const pkgs = graph.rawPackageList;
+    const execOpts = { cwd: "/test" };
+
+    const updates = collectUpdates(pkgs, graph, execOpts, {});
+
+    expect(updates).toEqual([
+      expect.objectContaining({ name: "package-dag-1" }),
+      expect.objectContaining({ name: "package-dag-2a" }),
+      expect.objectContaining({ name: "package-dag-2b" }),
+      expect.objectContaining({ name: "package-dag-3" }),
+    ]);
+  });
+
+  it("constrains results by filtered packages", () => {
+    changedPackages.add("package-dag-2a");
+    changedPackages.add("package-dag-3");
+
+    const graph = buildGraph();
+    const pkgs = graph.rawPackageList.filter(pkg => pkg.name !== "package-dag-3");
+    const execOpts = { cwd: "/test" };
+
+    const updates = collectUpdates(pkgs, graph, execOpts, {});
+
+    expect(updates).toEqual([
+      expect.objectContaining({ name: "package-dag-2a" }),
+      // despite having changed, package-dag-3 was ignored
+    ]);
+  });
+
+  it("overrules dependents with filtered packages", () => {
+    changedPackages.add("package-dag-1");
+
+    const graph = buildGraph();
+    const pkgs = graph.rawPackageList.filter(pkg => pkg.name !== "package-dag-2a");
+    const execOpts = { cwd: "/test" };
+
+    const updates = collectUpdates(pkgs, graph, execOpts, {});
+
+    expect(updates).toEqual([
+      expect.objectContaining({ name: "package-dag-1" }),
+      // despite having a changed dependency, package-dag-2a was ignored
+      expect.objectContaining({ name: "package-dag-2b" }),
+      expect.objectContaining({ name: "package-dag-3" }),
+    ]);
+  });
+
+  it("skips change detection when current revison is already released", () => {
+    changedPackages.add("package-dag-1");
+
+    describeRef.sync.mockReturnValueOnce({
+      refCount: "0",
+    });
+
+    const graph = buildGraph();
+    const pkgs = graph.rawPackageList;
+    const execOpts = { cwd: "/test" };
+
+    const updates = collectUpdates(pkgs, graph, execOpts, {});
+
+    expect(updates).toEqual([]);
+  });
+
+  it("returns all nodes when no tag is found", () => {
+    hasTags.mockReturnValueOnce(false);
+
+    const graph = buildGraph();
+    const pkgs = graph.rawPackageList;
+    const execOpts = { cwd: "/test" };
+
+    const updates = collectUpdates(pkgs, graph, execOpts, {});
+
+    expect(updates).toEqual(ALL_NODES);
+  });
+
+  it("returns all nodes with --force-publish", () => {
+    const graph = buildGraph();
+    const pkgs = graph.rawPackageList;
+    const execOpts = { cwd: "/test" };
+
+    const updates = collectUpdates(pkgs, graph, execOpts, {
+      forcePublish: true,
+    });
+
+    expect(updates).toEqual(ALL_NODES);
+  });
+
+  it("returns all nodes with --force-publish *", () => {
+    const graph = buildGraph();
+    const pkgs = graph.rawPackageList;
+    const execOpts = { cwd: "/test" };
+
+    const updates = collectUpdates(pkgs, graph, execOpts, {
+      forcePublish: "*",
+    });
+
+    expect(updates).toEqual(ALL_NODES);
+  });
+
+  it("always includes nodes targeted by --force-publish <pkg>", () => {
+    changedPackages.add("package-dag-3");
+
+    const graph = buildGraph();
+    const pkgs = graph.rawPackageList;
+    const execOpts = { cwd: "/test" };
+
+    const updates = collectUpdates(pkgs, graph, execOpts, {
+      forcePublish: "package-standalone",
+    });
+
+    expect(updates).toEqual([
+      expect.objectContaining({ name: "package-dag-3" }),
+      expect.objectContaining({ name: "package-standalone" }),
+    ]);
+  });
+
+  it("always includes nodes targeted by --force-publish <pkg>,<pkg>", () => {
+    changedPackages.add("package-dag-3");
+
+    const graph = buildGraph();
+    const pkgs = graph.rawPackageList;
+    const execOpts = { cwd: "/test" };
+
+    const updates = collectUpdates(pkgs, graph, execOpts, {
+      forcePublish: "package-standalone,package-dag-2b",
+    });
+
+    expect(updates).toEqual([
+      expect.objectContaining({ name: "package-dag-2b" }),
+      expect.objectContaining({ name: "package-dag-3" }),
+      expect.objectContaining({ name: "package-standalone" }),
+    ]);
+  });
+
+  it("always includes nodes targeted by --force-publish <pkg> --force-publish <pkg>", () => {
+    changedPackages.add("package-dag-3");
+
+    const graph = buildGraph();
+    const pkgs = graph.rawPackageList;
+    const execOpts = { cwd: "/test" };
+
+    const updates = collectUpdates(pkgs, graph, execOpts, {
+      forcePublish: ["package-standalone", "package-dag-2b"],
+    });
+
+    expect(updates).toEqual([
+      expect.objectContaining({ name: "package-dag-2b" }),
+      expect.objectContaining({ name: "package-dag-3" }),
+      expect.objectContaining({ name: "package-standalone" }),
+    ]);
+  });
+
+  it("uses revision range with --canary", () => {
+    changedPackages.add("package-dag-2a");
+
+    const graph = buildGraph();
+    const pkgs = graph.rawPackageList;
+    const execOpts = { cwd: "/test" };
+
+    const updates = collectUpdates(pkgs, graph, execOpts, {
+      canary: true,
+    });
+
+    expect(updates).toEqual([
+      expect.objectContaining({ name: "package-dag-2a" }),
+      expect.objectContaining({ name: "package-dag-3" }),
+    ]);
+    expect(makeDiffPredicate).toHaveBeenLastCalledWith("deadbeef^..deadbeef", execOpts, undefined);
+  });
+
+  it("uses revision provided by --since <ref>", () => {
+    const graph = buildGraph();
+    const pkgs = graph.rawPackageList;
+    const execOpts = { cwd: "/test" };
+
+    collectUpdates(pkgs, graph, execOpts, {
+      since: "beefcafe",
+    });
+
+    expect(makeDiffPredicate).toHaveBeenLastCalledWith("beefcafe", execOpts, undefined);
+  });
+
+  it("ignores changes matched by --ignore-changes", () => {
+    const graph = buildGraph();
+    const pkgs = graph.rawPackageList;
+    const execOpts = { cwd: "/test" };
+
+    collectUpdates(pkgs, graph, execOpts, {
+      ignoreChanges: ["**/README.md"],
+    });
+
+    expect(makeDiffPredicate).toHaveBeenLastCalledWith("v1.0.0", execOpts, ["**/README.md"]);
+  });
+});
