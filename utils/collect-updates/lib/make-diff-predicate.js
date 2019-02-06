@@ -13,6 +13,8 @@ function makeDiffPredicate(committish, execOpts, ignorePatterns = []) {
     ignorePatterns.map(p =>
       minimatch.filter(`!${p}`, {
         matchBase: true,
+        // dotfiles inside ignored directories should also match
+        dot: true,
       })
     )
   );

@@ -60,6 +60,7 @@ test("rooted package", () => {
 
 test("ignore changes (globstars)", () => {
   setup([
+    "packages/pkg-2/examples/.eslintrc.yaml",
     "packages/pkg-2/examples/do-a-thing/index.js",
     "packages/pkg-2/examples/and-another-thing/package.json",
   ]);
