@@ -4,7 +4,11 @@ module.exports = {
   clearMocks: true,
   // windows ci is terribly slow, so let's not burden it with coverage
   collectCoverage: process.env.CI && process.env.TRAVIS_OS_NAME !== "windows",
-  collectCoverageFrom: ["{commands,core,utils}/**/*.js", "!commands/create/lerna-module-data.js"],
+  collectCoverageFrom: [
+    "{commands,core,utils}/**/*.js",
+    "!commands/create/lerna-module-data.js",
+    "!**/__helpers__/**",
+  ],
   modulePathIgnorePatterns: ["/__fixtures__/"],
   roots: ["<rootDir>/commands", "<rootDir>/core", "<rootDir>/utils"],
   setupFiles: ["@lerna-test/silence-logging", "@lerna-test/set-npm-userconfig"],
