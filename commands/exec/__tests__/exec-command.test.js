@@ -1,9 +1,5 @@
 "use strict";
 
-// we're actually testing integration with git
-jest.unmock("@lerna/collect-updates");
-
-const fs = require("fs-extra");
 const path = require("path");
 
 // mocked modules
@@ -11,9 +7,6 @@ const ChildProcessUtilities = require("@lerna/child-process");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const gitAdd = require("@lerna-test/git-add");
-const gitCommit = require("@lerna-test/git-commit");
-const gitTag = require("@lerna-test/git-tag");
 const loggingOutput = require("@lerna-test/logging-output");
 const normalizeRelativeDir = require("@lerna-test/normalize-relative-dir");
 
@@ -41,21 +34,24 @@ describe("ExecCommand", () => {
   });
 
   describe("in a basic repo", () => {
+    // working dir is never mutated
+    let testDir;
+
+    beforeAll(async () => {
+      testDir = await initFixture("basic");
+    });
+
     it("should complain if invoked without command", async () => {
-      expect.assertions(1);
-
-      const testDir = await initFixture("basic");
-
       try {
         await lernaExec(testDir)("--parallel");
       } catch (err) {
         expect(err.message).toBe("A command to execute is required");
       }
+
+      expect.hasAssertions();
     });
 
     it("rejects with execution error", async () => {
-      const testDir = await initFixture("basic");
-
       ChildProcessUtilities.spawn.mockImplementationOnce((cmd, args) => {
         const boom = new Error("execution error");
 
@@ -76,8 +72,6 @@ describe("ExecCommand", () => {
     });
 
     it("should ignore execution errors with --no-bail", async () => {
-      const testDir = await initFixture("basic");
-
       ChildProcessUtilities.spawn.mockImplementationOnce((cmd, args, { pkg }) => {
         const boom = new Error(pkg.name);
 
@@ -108,8 +102,6 @@ describe("ExecCommand", () => {
     });
 
     it("should filter packages with `ignore`", async () => {
-      const testDir = await initFixture("basic");
-
       await lernaExec(testDir)("ls", "--ignore", "package-1");
 
       expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(1);
@@ -128,58 +120,7 @@ describe("ExecCommand", () => {
       });
     });
 
-    it("should filter packages that are not updated with --since", async () => {
-      const testDir = await initFixture("basic");
-      const file1 = path.join(testDir, "packages/package-1", "file-1.js");
-      const file2 = path.join(testDir, "packages/package-2", "file-2.js");
-
-      // make change
-      await fs.appendFile(file2, "// package-2");
-      await gitAdd(testDir, file2);
-      await gitCommit(testDir, "skip change");
-
-      // tag a release
-      await gitTag(testDir, "v1.0.1");
-
-      // make another change
-      await fs.appendFile(file1, "// package-1");
-      await gitAdd(testDir, file1);
-      await gitCommit(testDir, "show change");
-
-      await lernaExec(testDir)("ls", "--since");
-
-      expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(1);
-      expect(ChildProcessUtilities.spawn).toHaveBeenLastCalledWith("ls", [], {
-        cwd: path.join(testDir, "packages/package-1"),
-        pkg: expect.objectContaining({
-          name: "package-1",
-        }),
-        env: expect.objectContaining({
-          LERNA_PACKAGE_NAME: "package-1",
-        }),
-        extendEnv: false,
-        reject: true,
-        shell: true,
-      });
-    });
-
-    it("requires a git repo when using --since", async () => {
-      expect.assertions(1);
-
-      const testDir = await initFixture("basic");
-
-      await fs.remove(path.join(testDir, ".git"));
-
-      try {
-        await lernaExec(testDir)("ls", "--since", "some-branch");
-      } catch (err) {
-        expect(err.message).toMatch("this is not a git repository");
-      }
-    });
-
     it("should run a command", async () => {
-      const testDir = await initFixture("basic");
-
       await lernaExec(testDir)("ls");
 
       expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(2);
@@ -187,8 +128,6 @@ describe("ExecCommand", () => {
     });
 
     it("should run a command with parameters", async () => {
-      const testDir = await initFixture("basic");
-
       await lernaExec(testDir)("ls", "--", "-la");
 
       expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(2);
@@ -196,24 +135,18 @@ describe("ExecCommand", () => {
     });
 
     it("runs a command for a given scope", async () => {
-      const testDir = await initFixture("basic");
-
       await lernaExec(testDir)("ls", "--scope", "package-1");
 
       expect(calledInPackages()).toEqual(["package-1"]);
     });
 
     it("does not run a command for ignored packages", async () => {
-      const testDir = await initFixture("basic");
-
       await lernaExec(testDir)("ls", "--ignore", "package-@(2|3|4)");
 
       expect(calledInPackages()).toEqual(["package-1"]);
     });
 
     it("executes a command in all packages with --parallel", async () => {
-      const testDir = await initFixture("basic");
-
       await lernaExec(testDir)("--parallel", "ls");
 
       expect(execInPackagesStreaming(testDir)).toEqual([
@@ -223,8 +156,6 @@ describe("ExecCommand", () => {
     });
 
     it("omits package prefix with --parallel --no-prefix", async () => {
-      const testDir = await initFixture("basic");
-
       await lernaExec(testDir)("--parallel", "--no-prefix", "ls");
 
       expect(execInPackagesStreaming(testDir)).toEqual([
@@ -234,8 +165,6 @@ describe("ExecCommand", () => {
     });
 
     it("executes a command in all packages with --stream", async () => {
-      const testDir = await initFixture("basic");
-
       await lernaExec(testDir)("--stream", "ls");
 
       expect(execInPackagesStreaming(testDir)).toEqual([
@@ -245,8 +174,6 @@ describe("ExecCommand", () => {
     });
 
     it("omits package prefix with --stream --no-prefix", async () => {
-      const testDir = await initFixture("basic");
-
       await lernaExec(testDir)("--stream", "--no-prefix", "ls");
 
       expect(execInPackagesStreaming(testDir)).toEqual([
@@ -282,9 +209,7 @@ describe("ExecCommand", () => {
       ]);
     });
 
-    it("should throw an error with --reject-cycles", async () => {
-      expect.assertions(1);
-
+    it("throws an error with --reject-cycles", async () => {
       const testDir = await initFixture("toposort");
 
       try {
@@ -292,6 +217,8 @@ describe("ExecCommand", () => {
       } catch (err) {
         expect(err.message).toMatch("Dependency cycles detected, you should fix these!");
       }
+
+      expect.hasAssertions();
     });
   });
 });

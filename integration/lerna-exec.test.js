@@ -172,5 +172,7 @@ success!
 `);
       expect(err.code).toBe(1);
     }
+
+    expect.hasAssertions();
   });
 });
