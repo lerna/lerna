@@ -23,6 +23,8 @@ describe("lerna run", () => {
       expect(err.message).toMatch("npm run fail --silent exited 1 in 'package-3'");
       expect(err.code).toBe(1);
     }
+
+    expect.hasAssertions();
   });
 
   test("fail --no-bail", async () => {
@@ -49,6 +51,8 @@ lerna success - package-3
       // it should pick the highest exit code (100), not the first (1)
       expect(err.code).toBe(100);
     }
+
+    expect.hasAssertions();
   });
 
   test("test --stream", async () => {
