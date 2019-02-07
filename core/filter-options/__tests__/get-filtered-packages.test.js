@@ -35,6 +35,23 @@ beforeAll(async () => {
 });
 
 test.each`
+  flag
+  ${"--scope"}
+  ${"--ignore"}
+`("$flag requires an argument", async ({ flag }) => {
+  // swallow stderr during yargs execution
+  jest.spyOn(console, "error").mockImplementation(() => {});
+
+  try {
+    parseOptions(flag);
+  } catch (err) {
+    expect(err.message).toMatch("Not enough arguments");
+  }
+
+  expect.hasAssertions();
+});
+
+test.each`
   argv                                                      | matched
   ${["--scope", "package-3"]}                               | ${[3]}
   ${["--scope", "package-@(1|2)"]}                          | ${[1, 2]}
