@@ -67,6 +67,13 @@ class VersionCommand extends Command {
     this.createReleases = this.pushToRemote && this.options.githubRelease;
     this.releaseNotes = [];
 
+    if (this.createReleases && this.options.conventionalCommits !== true) {
+      throw new ValidationError(
+        "ERELEASE",
+        "To create a Github Release, you must enable --conventional-commits"
+      );
+    }
+
     this.gitOpts = {
       amend,
       commitHooks,

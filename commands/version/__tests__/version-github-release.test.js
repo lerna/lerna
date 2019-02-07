@@ -27,12 +27,17 @@ test("--github-release does not create a release if --no-push is passed", async 
   expect(client.repos.createRelease).not.toHaveBeenCalled();
 });
 
-test("--github-release does not create a release if --conventional-commits is not passed", async () => {
+test("--github-release throws an error if --conventional-commits is not passed", async () => {
   const cwd = await initFixture("independent");
 
-  await lernaVersion(cwd)("--github-release");
+  try {
+    await lernaVersion(cwd)("--github-release");
+  } catch (err) {
+    expect(err.message).toBe("To create a Github Release, you must enable --conventional-commits");
+    expect(client.repos.createRelease).not.toHaveBeenCalled();
+  }
 
-  expect(client.repos.createRelease).not.toHaveBeenCalled();
+  expect.hasAssertions();
 });
 
 test("--github-release marks a version as a pre-release if it contains a valid part", async () => {
