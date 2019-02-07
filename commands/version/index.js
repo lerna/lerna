@@ -50,7 +50,6 @@ class VersionCommand extends Command {
     const {
       amend,
       commitHooks = true,
-      githubRelease = false,
       gitRemote = "origin",
       gitTagVersion = true,
       push = true,
@@ -63,9 +62,10 @@ class VersionCommand extends Command {
     this.tagPrefix = tagVersionPrefix;
     this.commitAndTag = gitTagVersion;
     this.pushToRemote = gitTagVersion && amend !== true && push;
-    this.createReleases = this.pushToRemote && githubRelease;
-    this.releaseNotes = [];
     // never automatically push to remote when amending a commit
+
+    this.createReleases = this.pushToRemote && this.options.githubRelease;
+    this.releaseNotes = [];
 
     this.gitOpts = {
       amend,
@@ -595,7 +595,7 @@ class VersionCommand extends Command {
           return Promise.resolve();
         }
 
-        const prereleaseParts = semver.prerelease(tag.replace(`${name}@`, ""));
+        const prereleaseParts = semver.prerelease(tag.replace(`${name}@`, "")) || [];
 
         return client.repos.createRelease({
           owner: repo.owner,
@@ -604,7 +604,7 @@ class VersionCommand extends Command {
           name: tag,
           body: notes,
           draft: false,
-          prerelease: !!prereleaseParts && prereleaseParts.length > 0,
+          prerelease: prereleaseParts.length > 0,
         });
       })
     );
