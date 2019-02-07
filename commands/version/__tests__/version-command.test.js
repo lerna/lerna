@@ -571,6 +571,18 @@ describe("VersionCommand", () => {
 
       expect.assertions(2);
     });
+
+    it("throws for version --force-publish --no-git-tag-version --no-changelog if independent", async () => {
+      try {
+        const cwd = await detachedHEAD("independent");
+        await lernaVersion(cwd)("--force-publish", "--no-git-tag-version", "--no-changelog");
+      } catch (err) {
+        expect(err.prefix).toBe("ENOGIT");
+        expect(err.message).toBe("Detached git HEAD, please checkout a branch to choose versions.");
+      }
+
+      expect.assertions(2);
+    });
   });
 
   it("exits with an error when no commits are present", async () => {
