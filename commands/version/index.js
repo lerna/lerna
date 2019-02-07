@@ -342,7 +342,7 @@ class VersionCommand extends Command {
     let highestVersion = this.project.version;
 
     versions.forEach(bump => {
-      if (semver.gt(bump, highestVersion)) {
+      if (bump && semver.gt(bump, highestVersion)) {
         highestVersion = bump;
       }
     });
@@ -604,7 +604,7 @@ class VersionCommand extends Command {
           name: tag,
           body: notes,
           draft: false,
-          prerelease: prereleaseParts && prereleaseParts.length > 0,
+          prerelease: !!prereleaseParts && prereleaseParts.length > 0,
         });
       })
     );

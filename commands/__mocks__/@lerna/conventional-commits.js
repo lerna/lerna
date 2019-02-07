@@ -11,7 +11,7 @@ mockConventionalCommits.updateChangelog.mockImplementation(pkg => {
   // grumble grumble re-implementing the implementation
   return fs.outputFile(filePath, "changelog", "utf8").then(() => ({
     logPath: filePath,
-    newEntry: "",
+    newEntry: pkg.version ? `${pkg.name} - ${pkg.version}` : pkg.name,
   }));
 });
 

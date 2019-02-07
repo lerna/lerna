@@ -1,0 +1,207 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`--github-release fixed should create a single release 1`] = `
+"v2.0.0
+
+HEAD -> refs/heads/master, tag: refs/tags/v2.0.0
+
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/CHANGELOG.md
+@@ -0,0 +1 @@
++changelog
+\\\\ No newline at end of file
+diff --git a/lerna.json b/lerna.json
+index SHA..SHA 100644
+--- a/lerna.json
++++ b/lerna.json
+@@ -2 +2 @@
+-  \\"version\\": \\"1.0.0\\"
++  \\"version\\": \\"2.0.0\\"
+diff --git a/packages/package-1/CHANGELOG.md b/packages/package-1/CHANGELOG.md
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/package-1/CHANGELOG.md
+@@ -0,0 +1 @@
++changelog
+\\\\ No newline at end of file
+diff --git a/packages/package-1/package.json b/packages/package-1/package.json
+index SHA..SHA 100644
+--- a/packages/package-1/package.json
++++ b/packages/package-1/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0\\"
++  \\"version\\": \\"2.0.0\\"
+diff --git a/packages/package-2/CHANGELOG.md b/packages/package-2/CHANGELOG.md
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/package-2/CHANGELOG.md
+@@ -0,0 +1 @@
++changelog
+\\\\ No newline at end of file
+diff --git a/packages/package-2/package.json b/packages/package-2/package.json
+index SHA..SHA 100644
+--- a/packages/package-2/package.json
++++ b/packages/package-2/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"2.0.0\\",
+@@ -5 +5 @@
+-    \\"package-1\\": \\"^1.0.0\\"
++    \\"package-1\\": \\"^2.0.0\\"
+diff --git a/packages/package-3/CHANGELOG.md b/packages/package-3/CHANGELOG.md
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/package-3/CHANGELOG.md
+@@ -0,0 +1 @@
++changelog
+\\\\ No newline at end of file
+diff --git a/packages/package-3/package.json b/packages/package-3/package.json
+index SHA..SHA 100644
+--- a/packages/package-3/package.json
++++ b/packages/package-3/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"2.0.0\\",
+@@ -8 +8 @@
+-    \\"package-2\\": \\"^1.0.0\\"
++    \\"package-2\\": \\"^2.0.0\\"
+diff --git a/packages/package-4/CHANGELOG.md b/packages/package-4/CHANGELOG.md
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/package-4/CHANGELOG.md
+@@ -0,0 +1 @@
++changelog
+\\\\ No newline at end of file
+diff --git a/packages/package-4/package.json b/packages/package-4/package.json
+index SHA..SHA 100644
+--- a/packages/package-4/package.json
++++ b/packages/package-4/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0\\",
++  \\"version\\": \\"2.0.0\\",
+diff --git a/packages/package-5/CHANGELOG.md b/packages/package-5/CHANGELOG.md
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/package-5/CHANGELOG.md
+@@ -0,0 +1 @@
++changelog
+\\\\ No newline at end of file
+diff --git a/packages/package-5/package.json b/packages/package-5/package.json
+index SHA..SHA 100644
+--- a/packages/package-5/package.json
++++ b/packages/package-5/package.json
+@@ -4 +4 @@
+-    \\"package-1\\": \\"^1.0.0\\"
++    \\"package-1\\": \\"^2.0.0\\"
+@@ -7 +7 @@
+-    \\"package-3\\": \\"^1.0.0\\"
++    \\"package-3\\": \\"^2.0.0\\"
+@@ -10 +10 @@
+-  \\"version\\": \\"1.0.0\\"
++  \\"version\\": \\"2.0.0\\""
+`;
+
+exports[`--github-release independent should create a release for every package version 1`] = `
+"Publish
+
+ - package-1@1.0.1
+ - package-2@2.1.0
+ - package-3@4.0.0
+ - package-4@4.1.0
+ - package-5@5.0.1
+
+HEAD -> refs/heads/master, tag: refs/tags/package-5@5.0.1, tag: refs/tags/package-4@4.1.0, tag: refs/tags/package-3@4.0.0, tag: refs/tags/package-2@2.1.0, tag: refs/tags/package-1@1.0.1
+
+diff --git a/packages/package-1/CHANGELOG.md b/packages/package-1/CHANGELOG.md
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/package-1/CHANGELOG.md
+@@ -0,0 +1 @@
++changelog
+\\\\ No newline at end of file
+diff --git a/packages/package-1/package.json b/packages/package-1/package.json
+index SHA..SHA 100644
+--- a/packages/package-1/package.json
++++ b/packages/package-1/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"1.0.0\\"
++  \\"version\\": \\"1.0.1\\"
+diff --git a/packages/package-2/CHANGELOG.md b/packages/package-2/CHANGELOG.md
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/package-2/CHANGELOG.md
+@@ -0,0 +1 @@
++changelog
+\\\\ No newline at end of file
+diff --git a/packages/package-2/package.json b/packages/package-2/package.json
+index SHA..SHA 100644
+--- a/packages/package-2/package.json
++++ b/packages/package-2/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"2.0.0\\",
++  \\"version\\": \\"2.1.0\\",
+@@ -5 +5 @@
+-    \\"package-1\\": \\"^1.0.0\\"
++    \\"package-1\\": \\"^1.0.1\\"
+diff --git a/packages/package-3/CHANGELOG.md b/packages/package-3/CHANGELOG.md
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/package-3/CHANGELOG.md
+@@ -0,0 +1 @@
++changelog
+\\\\ No newline at end of file
+diff --git a/packages/package-3/package.json b/packages/package-3/package.json
+index SHA..SHA 100644
+--- a/packages/package-3/package.json
++++ b/packages/package-3/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"3.0.0\\",
++  \\"version\\": \\"4.0.0\\",
+@@ -5 +5 @@
+-    \\"package-2\\": \\"^2.0.0\\"
++    \\"package-2\\": \\"^2.1.0\\"
+diff --git a/packages/package-4/CHANGELOG.md b/packages/package-4/CHANGELOG.md
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/package-4/CHANGELOG.md
+@@ -0,0 +1 @@
++changelog
+\\\\ No newline at end of file
+diff --git a/packages/package-4/package.json b/packages/package-4/package.json
+index SHA..SHA 100644
+--- a/packages/package-4/package.json
++++ b/packages/package-4/package.json
+@@ -3 +3 @@
+-  \\"version\\": \\"4.0.0\\",
++  \\"version\\": \\"4.1.0\\",
+diff --git a/packages/package-5/CHANGELOG.md b/packages/package-5/CHANGELOG.md
+new file mode 100644
+index SHA..SHA
+--- /dev/null
++++ b/packages/package-5/CHANGELOG.md
+@@ -0,0 +1 @@
++changelog
+\\\\ No newline at end of file
+diff --git a/packages/package-5/package.json b/packages/package-5/package.json
+index SHA..SHA 100644
+--- a/packages/package-5/package.json
++++ b/packages/package-5/package.json
+@@ -4 +4 @@
+-    \\"package-3\\": \\"^3.0.0\\"
++    \\"package-3\\": \\"^4.0.0\\"
+@@ -7 +7 @@
+-  \\"version\\": \\"5.0.0\\"
++  \\"version\\": \\"5.0.1\\""
+`;
