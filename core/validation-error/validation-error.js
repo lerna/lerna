@@ -1,6 +1,6 @@
 "use strict";
 
-const log = require("libnpm/log");
+const log = require("npmlog");
 
 class ValidationError extends Error {
   constructor(prefix, message, ...rest) {

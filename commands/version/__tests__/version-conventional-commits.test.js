@@ -159,7 +159,7 @@ describe("--conventional-commits", () => {
   });
 
   it("avoids duplicating previously-released version", async () => {
-    const cwd = await initFixture("normal-no-inter-dependencies");
+    const cwd = await initFixture("no-interdependencies");
 
     collectUpdates.setUpdated(cwd, "package-1");
     ConventionalCommitUtilities.recommendVersion.mockResolvedValueOnce("1.1.0");

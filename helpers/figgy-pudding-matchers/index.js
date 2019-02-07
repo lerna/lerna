@@ -10,7 +10,7 @@ const {
   printReceived,
   printWithType,
 } = require("jest-matcher-utils");
-const { equals } = require("expect/build/jasmine_utils");
+const { equals } = require("expect/build/jasmineUtils.js");
 
 /**
  * Jest matchers for figgy-pudding instances

@@ -1,6 +1,6 @@
 "use strict";
 
-const fetch = require("libnpm/fetch");
+const fetch = require("npm-registry-fetch");
 const pulseTillDone = require("@lerna/pulse-till-done");
 const ValidationError = require("@lerna/validation-error");
 const FetchConfig = require("./fetch-config");
@@ -18,7 +18,7 @@ function getNpmUsername(_opts) {
   return getProfileData(opts).then(success, failure);
 
   function success(result) {
-    opts.log.silly("npm whoami", "received %j", result);
+    opts.log.silly("npm profile get", "received %j", result);
 
     if (!result.username) {
       throw new ValidationError(

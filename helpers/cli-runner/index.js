@@ -9,7 +9,14 @@ module.exports = runner;
 function runner(cwd, env) {
   const opts = {
     cwd,
-    env: Object.assign({ CI: "true" }, env),
+    env: Object.assign(
+      {
+        CI: "true",
+        // always turn off chalk
+        FORCE_COLOR: "0",
+      },
+      env
+    ),
     // when debugging integration test snapshots, uncomment next line
     // stdio: ["ignore", "inherit", "inherit"],
   };

@@ -1,12 +1,29 @@
 "use strict";
 
-const log = require("libnpm/log");
-const npa = require("libnpm/parse-arg");
+const log = require("npmlog");
+const npa = require("npm-package-arg");
+const pify = require("pify");
 const ValidationError = require("@lerna/validation-error");
 
 module.exports = getChangelogConfig;
 
 const cfgCache = new Map();
+
+function isFunction(config) {
+  return Object.prototype.toString.call(config) === "[object Function]";
+}
+
+function resolveConfigPromise(presetPackageName) {
+  // eslint-disable-next-line global-require, import/no-dynamic-require
+  let config = require(presetPackageName);
+
+  // legacy presets export an errback function instead of Q.all()
+  if (isFunction(config)) {
+    config = pify(config)();
+  }
+
+  return config;
+}
 
 function getChangelogConfig(changelogPreset = "conventional-changelog-angular", rootPath) {
   let config = cfgCache.get(changelogPreset);
@@ -33,8 +50,7 @@ function getChangelogConfig(changelogPreset = "conventional-changelog-angular", 
 
     // Maybe it doesn't need an implicit 'conventional-changelog-' prefix?
     try {
-      // eslint-disable-next-line global-require, import/no-dynamic-require
-      config = require(presetPackageName);
+      config = resolveConfigPromise(presetPackageName);
 
       cfgCache.set(changelogPreset, config);
 
@@ -62,8 +78,7 @@ function getChangelogConfig(changelogPreset = "conventional-changelog-angular", 
     }
 
     try {
-      // eslint-disable-next-line global-require, import/no-dynamic-require
-      config = require(presetPackageName);
+      config = resolveConfigPromise(presetPackageName);
 
       cfgCache.set(changelogPreset, config);
     } catch (err) {

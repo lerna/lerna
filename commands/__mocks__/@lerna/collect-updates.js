@@ -13,5 +13,10 @@ const mockCollectUpdates = jest.fn((filteredPackages, packageGraph, { cwd }) => 
 
 const setUpdated = (cwd, ...names) => updated.set(cwd, names);
 
+// isolate tests
+afterEach(() => {
+  updated.clear();
+});
+
 module.exports = mockCollectUpdates;
 module.exports.setUpdated = setUpdated;

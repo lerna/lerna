@@ -1,6 +1,6 @@
 "use strict";
 
-const log = require("libnpm/log");
+const log = require("npmlog");
 
 let pulsers = 0;
 let pulse;

@@ -331,6 +331,28 @@ describe("conventional-commits", () => {
       expect(leafChangelogContent).toMatchSnapshot();
     });
 
+    it("supports legacy callback presets", async () => {
+      const cwd = await initFixture("fixed");
+
+      await gitTag(cwd, "v1.0.0");
+
+      const [, pkg2] = await getPackages(cwd);
+
+      // make a change in package-2
+      await pkg2.set("changed", 1).serialize();
+      await gitAdd(cwd, pkg2.manifestLocation);
+      await gitCommit(cwd, "fix(pkg2): A commit using a legacy callback preset");
+
+      // update version
+      await pkg2.set("version", "1.0.1").serialize();
+
+      const leafChangelogContent = await updateChangelog(pkg2, "fixed", {
+        changelogPreset: "./scripts/legacy-callback-preset",
+      }).then(getFileContent);
+
+      expect(leafChangelogContent).toContain("fix(pkg2): A commit using a legacy callback preset");
+    });
+
     it("updates independent changelogs", async () => {
       const cwd = await initFixture("independent");
 

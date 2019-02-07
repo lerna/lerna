@@ -3,7 +3,7 @@
 const byteSize = require("byte-size");
 const columnify = require("columnify");
 const hasUnicode = require("has-unicode")();
-const log = require("libnpm/log");
+const log = require("npmlog");
 
 module.exports = logContents;
 

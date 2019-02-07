@@ -1,8 +1,8 @@
 "use strict";
 
-const log = require("libnpm/log");
+const log = require("npmlog");
 const pMap = require("p-map");
-const getPackument = require("libnpm/packument");
+const getPackument = require("pacote/packument");
 
 module.exports = getUnpublishedPackages;
 
@@ -10,6 +10,9 @@ function getUnpublishedPackages(packageGraph, opts) {
   log.silly("getUnpublishedPackages");
 
   let chain = Promise.resolve();
+
+  // don't bother attempting to get the packument for private packages
+  const graphNodesToCheck = Array.from(packageGraph.values()).filter(({ pkg }) => !pkg.private);
 
   const mapper = pkg =>
     getPackument(pkg.name, opts).then(
@@ -24,7 +27,7 @@ function getUnpublishedPackages(packageGraph, opts) {
       }
     );
 
-  chain = chain.then(() => pMap(packageGraph.values(), mapper, { concurrency: 4 }));
+  chain = chain.then(() => pMap(graphNodesToCheck, mapper, { concurrency: 4 }));
 
   return chain.then(results => results.filter(Boolean));
 }

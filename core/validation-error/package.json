@@ -30,6 +30,6 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "libnpm": "^2.0.1"
+    "npmlog": "^4.1.2"
   }
 }

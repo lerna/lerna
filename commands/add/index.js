@@ -1,10 +1,10 @@
 "use strict";
 
 const dedent = require("dedent");
-const npa = require("libnpm/parse-arg");
+const npa = require("npm-package-arg");
 const pMap = require("p-map");
 const path = require("path");
-const getManifest = require("libnpm/manifest");
+const getManifest = require("pacote/manifest");
 const semver = require("semver");
 
 const Command = require("@lerna/command");

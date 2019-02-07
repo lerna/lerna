@@ -1,9 +1,9 @@
 "use strict";
 
-jest.mock("libnpm/fetch");
+jest.mock("npm-registry-fetch");
 
 // mocked modules
-const fetch = require("libnpm/fetch");
+const fetch = require("npm-registry-fetch");
 
 // file under test
 const npmDistTag = require("..");

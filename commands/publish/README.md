@@ -69,7 +69,11 @@ lerna publish --canary preminor
 # 1.0.0 => 1.1.0-alpha.0+${SHA}
 ```
 
-When run with this flag, `lerna publish` publishes packages in a more granular way (per commit). Before publishing to npm, it creates the new `version` tag by taking the current `version`, bumping it to the next _minor_ version, adding the provided meta suffix (defaults to `alpha`) and appending the current git sha (ex: `1.0.0` becomes `1.1.0-alpha.81e3b443`).
+When run with this flag, `lerna publish` publishes packages in a more granular way (per commit).
+Before publishing to npm, it creates the new `version` tag by taking the current `version`, bumping it to the next _minor_ version, adding the provided meta suffix (defaults to `alpha`) and appending the current git sha (ex: `1.0.0` becomes `1.1.0-alpha.0+81e3b443`).
+
+If you have publish canary releases from multiple active development branches in CI,
+it is recommended to customize the [`--preid`](#--preid) and [`--dist-tag <tag>`](#--dist-tag-tag) on a per-branch basis to avoid clashing versions.
 
 > The intended use case for this flag is a per commit level release or nightly release.
 

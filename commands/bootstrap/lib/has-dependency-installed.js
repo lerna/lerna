@@ -1,6 +1,6 @@
 "use strict";
 
-const log = require("libnpm/log");
+const log = require("npmlog");
 const readPackageTree = require("read-package-tree");
 const semver = require("semver");
 

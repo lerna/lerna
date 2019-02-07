@@ -1,10 +1,10 @@
 "use strict";
 
-jest.mock("libnpm/run-script", () => jest.fn(() => Promise.resolve()));
+jest.mock("npm-lifecycle", () => jest.fn(() => Promise.resolve()));
 
-const log = require("libnpm/log");
+const log = require("npmlog");
 const loggingOutput = require("@lerna-test/logging-output");
-const runScript = require("libnpm/run-script");
+const runScript = require("npm-lifecycle");
 const npmConf = require("@lerna/npm-conf");
 const Package = require("@lerna/package");
 const runLifecycle = require("../run-lifecycle");

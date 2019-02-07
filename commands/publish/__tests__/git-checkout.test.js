@@ -7,7 +7,7 @@ const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const gitCheckout = require("../lib/git-checkout");
 
 test("gitCheckout files", async () => {
-  const cwd = await initFixture("normal-no-inter-dependencies");
+  const cwd = await initFixture("no-interdependencies");
   const files = ["package-1", "package-2"].map(name => path.join("packages", name, "package.json"));
 
   await Promise.all(files.map(fp => fs.writeJSON(path.join(cwd, fp), { foo: "bar" })));

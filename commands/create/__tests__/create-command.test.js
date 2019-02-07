@@ -1,6 +1,6 @@
 "use strict";
 
-jest.mock("libnpm/manifest");
+jest.mock("pacote/manifest");
 
 const fs = require("fs-extra");
 const path = require("path");
@@ -8,7 +8,7 @@ const execa = require("execa");
 const slash = require("slash");
 
 // mocked modules
-const getManifest = require("libnpm/manifest");
+const getManifest = require("pacote/manifest");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);

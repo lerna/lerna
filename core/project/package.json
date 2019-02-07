@@ -38,8 +38,8 @@
     "dot-prop": "^4.2.0",
     "glob-parent": "^3.1.0",
     "globby": "^8.0.1",
-    "libnpm": "^2.0.1",
     "load-json-file": "^4.0.0",
+    "npmlog": "^4.1.2",
     "p-map": "^1.2.0",
     "resolve-from": "^4.0.0",
     "write-json-file": "^2.3.0"

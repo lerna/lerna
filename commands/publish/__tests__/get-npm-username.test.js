@@ -1,8 +1,8 @@
 "use strict";
 
-jest.mock("libnpm/fetch");
+jest.mock("npm-registry-fetch");
 
-const fetch = require("libnpm/fetch");
+const fetch = require("npm-registry-fetch");
 const loggingOutput = require("@lerna-test/logging-output");
 const getNpmUsername = require("../lib/get-npm-username");
 

@@ -1,6 +1,6 @@
 {
   "name": "lerna",
-  "version": "3.10.7",
+  "version": "3.10.8",
   "description": "A tool for managing JavaScript projects with multiple packages.",
   "keywords": [
     "lerna",
@@ -50,6 +50,6 @@
     "@lerna/run": "file:../../commands/run",
     "@lerna/version": "file:../../commands/version",
     "import-local": "^1.0.0",
-    "libnpm": "^2.0.1"
+    "npmlog": "^4.1.2"
   }
 }

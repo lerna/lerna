@@ -301,6 +301,29 @@ Pass an explicit version number to the [`bump`](#bump) positional instead.
 
 ### `--skip-git`
 
-Use [`--no-git-tag-version`](https://github.com/lerna/lerna/tree/master/commands/version#--git-tag-version) and [`--no-push`](https://github.com/lerna/lerna/tree/master/commands/version#--push) instead.
+Use [`--no-git-tag-version`](#--no-git-tag-version) and [`--no-push`](#--no-push) instead.
 
 > NOTE: This option **does not** restrict _all_ git commands from being executed. `git` is still required by `lerna version`.
+
+## Tips
+
+### Generating Initial Changelogs
+
+If you start using the [`--conventional-commits`](#--conventional-commits) option _after_ the monorepo has been active for awhile, you can still generate changelogs for previous releases using [`conventional-changelog-cli`](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-changelog-cli#readme) and [`lerna exec`](https://github.com/lerna/lerna/tree/master/commands/exec#readme):
+
+```bash
+# Lerna does not actually use conventional-changelog-cli, so you need to install it temporarily
+npm i -D conventional-changelog-cli
+# Documentation: `npx conventional-changelog --help`
+
+# fixed versioning (default)
+# run in root, then leaves
+npx conventional-changelog --preset angular --release-count 0 --outfile ./CHANGELOG.md --verbose
+npx lerna exec --concurrency 1 --stream -- 'conventional-changelog --preset angular --release-count 0 --commit-path $PWD --pkg $PWD/package.json --outfile $PWD/CHANGELOG.md --verbose'
+
+# independent versioning
+# (no root changelog)
+npx lerna exec --concurrency 1 --stream -- 'conventional-changelog --preset angular --release-count 0 --commit-path $PWD --pkg $PWD/package.json --outfile $PWD/CHANGELOG.md --verbose --lerna-package $LERNA_PACKAGE_NAME'
+```
+
+If you use a custom [`--changelog-preset`](#--changelog-preset), you should change `--preset` value accordingly in the example above.

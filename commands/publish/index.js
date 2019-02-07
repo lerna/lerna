@@ -72,7 +72,7 @@ class PublishCommand extends Command {
     this.gitReset = this.options.gitReset !== false;
     this.verifyAccess = this.options.verifyAccess !== false;
 
-    // npmSession and user-agent are consumed by libnpm/fetch (via libnpm/publish)
+    // npmSession and user-agent are consumed by npm-registry-fetch (via libnpmpublish)
     const npmSession = crypto.randomBytes(8).toString("hex");
     const userAgent = `lerna/${this.options.lernaVersion}/node@${process.version}+${process.arch} (${
       process.platform

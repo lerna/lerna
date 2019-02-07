@@ -1,6 +1,6 @@
 "use strict";
 
-const access = require("libnpm/access");
+const access = require("libnpmaccess");
 const pulseTillDone = require("@lerna/pulse-till-done");
 const ValidationError = require("@lerna/validation-error");
 const FetchConfig = require("./fetch-config");
