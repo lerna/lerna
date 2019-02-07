@@ -502,6 +502,77 @@ describe("VersionCommand", () => {
     });
   });
 
+  describe("working on a detached HEAD", () => {
+    const detachedHEAD = async (fixture = "normal") => {
+      const cwd = await initFixture(fixture);
+      const sha = await execa.stdout("git", ["rev-parse", "HEAD"], { cwd });
+      await execa("git", ["checkout", sha], { cwd });
+      return cwd;
+    };
+
+    it("throws for version", async () => {
+      try {
+        const cwd = await detachedHEAD();
+        await lernaVersion(cwd)();
+      } catch (err) {
+        expect(err.prefix).toBe("ENOGIT");
+        expect(err.message).toBe("Detached git HEAD, please checkout a branch to choose versions.");
+      }
+
+      expect.assertions(2);
+    });
+
+    it("does not throw for version --force-publish --no-git-tag-version --no-changelog", async () => {
+      const cwd = await detachedHEAD();
+      await lernaVersion(cwd)("--force-publish", "--no-git-tag-version", "--no-changelog");
+      const unstaged = await listDirty(cwd);
+      expect(unstaged).toEqual([
+        "lerna.json",
+        "packages/package-1/package.json",
+        "packages/package-2/package.json",
+        "packages/package-3/package.json",
+        "packages/package-4/package.json",
+        "packages/package-5/package.json",
+      ]);
+    });
+
+    it("throws for version with changelog", async () => {
+      try {
+        const cwd = await detachedHEAD();
+        await lernaVersion(cwd)("--force-publish", "--no-git-tag-version", "--no-push");
+      } catch (err) {
+        expect(err.prefix).toBe("ENOGIT");
+        expect(err.message).toBe("Detached git HEAD, please checkout a branch to choose versions.");
+      }
+
+      expect.assertions(2);
+    });
+
+    it("throws for version without force-publish", async () => {
+      try {
+        const cwd = await detachedHEAD();
+        await lernaVersion(cwd)("--no-git-tag-version", "--no-push", "--no-changelog");
+      } catch (err) {
+        expect(err.prefix).toBe("ENOGIT");
+        expect(err.message).toBe("Detached git HEAD, please checkout a branch to choose versions.");
+      }
+
+      expect.assertions(2);
+    });
+
+    it("throws for version when creating tag without pushing", async () => {
+      try {
+        const cwd = await detachedHEAD();
+        await lernaVersion(cwd)("--force-publish", "--no-push", "--no-changelog");
+      } catch (err) {
+        expect(err.prefix).toBe("ENOGIT");
+        expect(err.message).toBe("Detached git HEAD, please checkout a branch to choose versions.");
+      }
+
+      expect.assertions(2);
+    });
+  });
+
   it("exits with an error when no commits are present", async () => {
     expect.assertions(2);
     const testDir = await initFixture("normal", false);
