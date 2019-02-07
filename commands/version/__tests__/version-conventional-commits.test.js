@@ -32,7 +32,7 @@ describe("--conventional-commits", () => {
     ]);
 
     beforeEach(() => {
-      ConventionalCommitUtilities.mockBumps(...versionBumps.values());
+      versionBumps.forEach(bump => ConventionalCommitUtilities.recommendVersion.mockResolvedValueOnce(bump));
     });
 
     it("should use conventional-commits utility to guess version bump and generate CHANGELOG", async () => {
@@ -85,7 +85,12 @@ describe("--conventional-commits", () => {
 
   describe("fixed mode", () => {
     beforeEach(() => {
-      ConventionalCommitUtilities.mockBumps("1.0.1", "1.1.0", "2.0.0", "1.1.0", "1.0.0");
+      ConventionalCommitUtilities.recommendVersion
+        .mockResolvedValueOnce("1.0.1")
+        .mockResolvedValueOnce("1.1.0")
+        .mockResolvedValueOnce("2.0.0")
+        .mockResolvedValueOnce("1.1.0")
+        .mockResolvedValueOnce("1.0.0");
     });
 
     it("should use conventional-commits utility to guess version bump and generate CHANGELOG", async () => {
