@@ -96,7 +96,7 @@ test("version prerelease with existing preid bumps with the preid provide as arg
   await lernaVersion(testDir)("prerelease", "--preid", "rc");
 
   const message = await getCommitMessage(testDir);
-  expect(message).toBe("v1.0.1-rc.0");
+  expect(message).toBe("v1.0.1-rc.0\n\n[ci skip]");
 });
 
 test("version prerelease with immediate graduation", async () => {

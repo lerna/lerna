@@ -30,7 +30,7 @@ describe("version bump", () => {
     expect(PromptUtilities.select).not.toHaveBeenCalled();
 
     const message = await getCommitMessage(testDir);
-    expect(message).toBe("v1.0.1-beta.25");
+    expect(message).toBe("v1.0.1-beta.25\n\n[ci skip]");
   });
 
   it("receives --repo-version <value> as explicit [bump]", async () => {
@@ -38,7 +38,7 @@ describe("version bump", () => {
     await lernaVersion(testDir)("--repo-version", "1.0.1-beta.25");
 
     const message = await getCommitMessage(testDir);
-    expect(message).toBe("v1.0.1-beta.25");
+    expect(message).toBe("v1.0.1-beta.25\n\n[ci skip]");
   });
 
   it("errors when --repo-version and [bump] positional passed", async () => {
@@ -58,7 +58,7 @@ describe("version bump", () => {
     await lernaVersion(testDir)("v1.2.0-beta.1+deadbeef");
 
     const message = await getCommitMessage(testDir);
-    expect(message).toBe("v1.2.0-beta.1");
+    expect(message).toBe("v1.2.0-beta.1\n\n[ci skip]");
   });
 
   it("accepts semver keywords", async () => {
@@ -68,7 +68,7 @@ describe("version bump", () => {
     expect(PromptUtilities.select).not.toHaveBeenCalled();
 
     const message = await getCommitMessage(testDir);
-    expect(message).toBe("v1.1.0");
+    expect(message).toBe("v1.1.0\n\n[ci skip]");
   });
 
   it("receives --cd-version <bump>", async () => {
@@ -76,7 +76,7 @@ describe("version bump", () => {
     await lernaVersion(testDir)("--cd-version", "premajor");
 
     const message = await getCommitMessage(testDir);
-    expect(message).toBe("v2.0.0-alpha.0");
+    expect(message).toBe("v2.0.0-alpha.0\n\n[ci skip]");
   });
 
   it("errors when --cd-version and [bump] positional passed", async () => {

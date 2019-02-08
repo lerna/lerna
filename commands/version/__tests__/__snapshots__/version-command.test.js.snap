@@ -3,6 +3,8 @@
 exports[`VersionCommand --exact updates existing exact versions 1`] = `
 "v1.0.1
 
+[ci skip]
+
 HEAD -> master, tag: v1.0.1
 
 diff --git a/lerna.json b/lerna.json
@@ -60,6 +62,8 @@ index SHA..SHA 100644
 
 exports[`VersionCommand --exact updates matching local dependencies of published packages with exact versions 1`] = `
 "v1.0.1
+
+[ci skip]
 
 HEAD -> master, tag: v1.0.1
 
@@ -129,6 +133,8 @@ Object {
 exports[`VersionCommand --no-push versions changed packages without git push 1`] = `
 "v1.0.1
 
+[ci skip]
+
 HEAD -> master, tag: v1.0.1
 
 diff --git a/lerna.json b/lerna.json
@@ -195,6 +201,8 @@ exports[`VersionCommand independent mode versions changed packages: commit 1`] =
  - package-3@4.0.0
  - package-4@4.1.0
  - package-5@5.0.1
+
+[ci skip]
 
 HEAD -> master, tag: package-5@5.0.1, tag: package-4@4.1.0, tag: package-3@4.0.0, tag: package-2@2.1.0, tag: package-1@1.0.1
 
@@ -265,6 +273,8 @@ Object {
 exports[`VersionCommand normal mode bumps all packages when major version selected 1`] = `
 "v2.0.0
 
+[ci skip]
+
 HEAD -> master, tag: v2.0.0
 
 diff --git a/lerna.json b/lerna.json
@@ -325,6 +335,8 @@ index SHA..SHA 100644
 
 exports[`VersionCommand normal mode only bumps changed packages when non-major version selected 1`] = `
 "v1.1.0
+
+[ci skip]
 
 HEAD -> master, tag: v1.1.0
 
@@ -469,6 +481,8 @@ Array [
 
 exports[`VersionCommand versions all transitive dependents after change 1`] = `
 "v2.0.0
+
+[ci skip]
 
 HEAD -> master, tag: v2.0.0
 

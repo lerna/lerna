@@ -561,7 +561,9 @@ class VersionCommand extends Command {
   gitCommitAndTagVersionForUpdates() {
     const tags = this.packagesToVersion.map(pkg => `${pkg.name}@${this.updatesVersions.get(pkg.name)}`);
     const subject = this.options.message || "Publish";
-    const message = tags.reduce((msg, tag) => `${msg}${os.EOL} - ${tag}`, `${subject}${os.EOL}`);
+    let message = tags.reduce((msg, tag) => `${msg}${os.EOL} - ${tag}`, `${subject}${os.EOL}`);
+
+    message += "\n\n[ci skip]";
 
     return Promise.resolve()
       .then(() => gitCommit(message, this.gitOpts, this.execOpts))
@@ -572,9 +574,11 @@ class VersionCommand extends Command {
   gitCommitAndTagVersion() {
     const version = this.globalVersion;
     const tag = `${this.tagPrefix}${version}`;
-    const message = this.options.message
+    let message = this.options.message
       ? this.options.message.replace(/%s/g, tag).replace(/%v/g, version)
       : tag;
+
+    message += "\n\n[ci skip]";
 
     return Promise.resolve()
       .then(() => gitCommit(message, this.gitOpts, this.execOpts))

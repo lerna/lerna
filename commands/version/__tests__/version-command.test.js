@@ -194,7 +194,7 @@ describe("VersionCommand", () => {
       await lernaVersion(cwd)("--no-commit-hooks");
 
       const message = await getCommitMessage(cwd);
-      expect(message).toBe("v1.0.1");
+      expect(message).toBe("v1.0.1\n\n[ci skip]");
     });
 
     it("consumes configuration from lerna.json", async () => {
@@ -212,7 +212,7 @@ describe("VersionCommand", () => {
       await lernaVersion(cwd)();
 
       const message = await getCommitMessage(cwd);
-      expect(message).toBe("v1.0.1");
+      expect(message).toBe("v1.0.1\n\n[ci skip]");
     });
   });
 
@@ -368,7 +368,7 @@ describe("VersionCommand", () => {
       expect(PromptUtilities.confirm).not.toHaveBeenCalled();
 
       const message = await getCommitMessage(testDir);
-      expect(message).toBe("v1.0.1");
+      expect(message).toBe("v1.0.1\n\n[ci skip]");
     });
   });
 
@@ -609,7 +609,7 @@ describe("VersionCommand", () => {
       expect(PromptUtilities.confirm).not.toHaveBeenCalled();
 
       const message = await getCommitMessage(testDir);
-      expect(message).toBe("v1.0.1");
+      expect(message).toBe("v1.0.1\n\n[ci skip]");
     });
   });
 });
