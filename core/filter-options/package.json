@@ -1,6 +1,6 @@
 {
   "name": "@lerna/filter-options",
-  "version": "3.10.6",
+  "version": "3.11.0",
   "description": "Options for lerna sub-commands that need filtering",
   "keywords": [
     "lerna",
