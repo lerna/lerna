@@ -45,12 +45,7 @@ class VersionCommand extends Command {
 
   get requiresGit() {
     return (
-      !this.options.forcePublish ||
-      this.project.isIndependent() ||
-      this.commitAndTag ||
-      this.pushToRemote ||
-      this.options.allowBranch ||
-      this.options.changelog !== false
+      this.commitAndTag || this.pushToRemote || this.options.allowBranch || this.options.conventionalCommits
     );
   }
 
