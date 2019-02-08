@@ -204,7 +204,7 @@ class VersionCommand extends Command {
     ];
 
     // amending a commit probably means the working tree is dirty
-    if (this.commitAndTag && amend !== true) {
+    if (this.commitAndTag && this.gitOpts.amend !== true) {
       tasks.unshift(() => checkWorkingTree(this.execOpts));
     } else {
       this.logger.warn("version", "Skipping working tree validation, proceed at your own risk");
