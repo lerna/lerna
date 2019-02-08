@@ -49,7 +49,9 @@ class VersionCommand extends Command {
     );
   }
 
-  initialize() {
+  configureProperties() {
+    super.configureProperties();
+
     // Defaults are necessary here because yargs defaults
     // override durable options provided by a config file
     const {
@@ -78,7 +80,9 @@ class VersionCommand extends Command {
 
     // https://docs.npmjs.com/misc/config#save-prefix
     this.savePrefix = this.options.exact ? "" : "^";
+  }
 
+  initialize() {
     if (!this.project.isIndependent()) {
       this.logger.info("current version", this.project.version);
     }
