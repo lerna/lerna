@@ -70,7 +70,7 @@ describe("licenses", () => {
     await lernaPublish(cwd)();
 
     const [warning] = loggingOutput("warn");
-    expect(warning).toMatch("Packages package-1, package-3 are missing a license");
+    expect(warning).toMatch("Packages package-1, package-3 are missing a root LICENSE file");
 
     expect(createTempLicenses).toHaveBeenLastCalledWith(undefined, []);
     expect(removeTempLicenses).toHaveBeenLastCalledWith([]);
