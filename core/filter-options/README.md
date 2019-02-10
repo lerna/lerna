@@ -11,11 +11,20 @@ Include only packages with names matching the given glob.
 ```sh
 $ lerna exec --scope my-component -- ls -la
 $ lerna run --scope toolbar-* test
+$ lerna run --scope package-1 --scope *-2 lint
 ```
 
 ### `--ignore <glob>`
 
 Exclude packages with names matching the given glob.
+
+```sh
+$ lerna exec --ignore package-{1,2,5}  -- ls -la
+$ lerna run --ignore package-1  test
+$ lerna run --ignore package-@(1|2) --ignore package-3 lint
+```
+
+More examples of filtering/scoping combinations can be found at [here](https://github.com/lerna/lerna/blob/c0a750e0f482c16dda2f922f235861283efbe94d/commands/list/__tests__/list-command.test.js#L305-L356)
 
 ### `--no-private`
 
