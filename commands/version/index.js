@@ -74,6 +74,10 @@ class VersionCommand extends Command {
       );
     }
 
+    if (this.createReleases && this.options.changelog === false) {
+      throw new ValidationError("ERELEASE", "To create a Github Release, you cannot pass --no-changelog");
+    }
+
     this.gitOpts = {
       amend,
       commitHooks,

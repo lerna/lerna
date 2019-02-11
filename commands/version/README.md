@@ -174,6 +174,8 @@ To authenticate with GitHub, the following environment variables can be defined.
 - `GHE_API_URL` - When using GitHub Enterprise, an absolute URL to the API.
 - `GHE_VERSION` - When using GitHub Enterprise, the currently installed GHE version. [Supports the following versions](https://github.com/octokit/plugin-enterprise-rest.js).
 
+> NOTE: When using this option, you cannot pass [`--no-changelog`](#--no-changelog).
+
 ### `--ignore-changes`
 
 Ignore changes in files matched by glob(s) when detecting changed packages.
@@ -251,6 +253,8 @@ lerna version --conventional-commits --no-changelog
 ```
 
 When using `conventional-commits`, do not generate any `CHANGELOG.md` files.
+
+> NOTE: When using this option, you cannot pass [`--github-release`](#--github-release).
 
 ### `--no-commit-hooks`
 

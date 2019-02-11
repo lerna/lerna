@@ -40,6 +40,19 @@ test("--github-release throws an error if --conventional-commits is not passed",
   expect.hasAssertions();
 });
 
+test("--github-release throws an error if --no-changelog also passed", async () => {
+  const cwd = await initFixture("independent");
+
+  try {
+    await lernaVersion(cwd)("--github-release", "--conventional-commits", "--no-changelog");
+  } catch (err) {
+    expect(err.message).toBe("To create a Github Release, you cannot pass --no-changelog");
+    expect(client.repos.createRelease).not.toHaveBeenCalled();
+  }
+
+  expect.hasAssertions();
+});
+
 test("--github-release marks a version as a pre-release if it contains a valid part", async () => {
   const cwd = await initFixture("normal");
 
