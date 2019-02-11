@@ -493,10 +493,10 @@ class VersionCommand extends Command {
       )
     );
 
-    if (!independentVersions && changelog) {
+    if (!independentVersions) {
       this.project.version = this.globalVersion;
 
-      if (conventionalCommits) {
+      if (conventionalCommits && changelog) {
         chain = chain.then(() =>
           ConventionalCommitUtilities.updateChangelog(this.project.manifest, "root", {
             changelogPreset,
@@ -598,6 +598,7 @@ class VersionCommand extends Command {
       this.releaseNotes.map(({ notes, name }) => {
         const tag = name === "fixed" ? this.tags[0] : this.tags.find(t => t.startsWith(name));
 
+        /* istanbul ignore if */
         if (!tag) {
           return Promise.resolve();
         }
