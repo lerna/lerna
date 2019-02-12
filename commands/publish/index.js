@@ -380,7 +380,11 @@ class PublishCommand extends Command {
           this.packagesToBeLicensed = [];
           this.logger.warn(
             "ENOLICENSE",
-            `Packages ${packagesWithoutLicense.map(pkg => pkg.name).join(", ")} are missing a root LICENSE file`
+            `Packages ${packagesWithoutLicense
+              .map(pkg => pkg.name)
+              .join(", ")} are missing a root LICENSE file \n` +
+              "To fix this, add a LICENSE.md file in the root of this repository. " +
+              "See https://choosealicense.com for additional guidance."
           );
         } else {
           this.packagesToBeLicensed = packagesWithoutLicense;

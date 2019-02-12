@@ -70,7 +70,11 @@ describe("licenses", () => {
     await lernaPublish(cwd)();
 
     const [warning] = loggingOutput("warn");
-    expect(warning).toMatch("Packages package-1, package-3 are missing a root LICENSE file");
+    expect(warning).toMatch(
+      "Packages package-1, package-3 are missing a root LICENSE file \n" +
+        "To fix this, add a LICENSE.md file in the root of this repository." +
+        "See https://choosealicense.com for additional guidance."
+    );
 
     expect(createTempLicenses).toHaveBeenLastCalledWith(undefined, []);
     expect(removeTempLicenses).toHaveBeenLastCalledWith([]);
