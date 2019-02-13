@@ -115,7 +115,15 @@ class PublishCommand extends Command {
 
     let chain = Promise.resolve();
 
-    chain = chain.then(() => this.findVersionedUpdates());
+    if (this.options.bump === "from-git") {
+      chain = chain.then(() => this.detectFromGit());
+    } else if (this.options.bump === "from-package") {
+      chain = chain.then(() => this.detectFromPackage());
+    } else if (this.options.canary) {
+      chain = chain.then(() => this.detectCanaryVersions());
+    } else {
+      chain = chain.then(() => versionCommand(this.argv));
+    }
 
     return chain.then(result => {
       if (!result) {
@@ -192,22 +200,6 @@ class PublishCommand extends Command {
 
       this.logger.success("published", "%d %s", count, count === 1 ? "package" : "packages");
     });
-  }
-
-  findVersionedUpdates() {
-    let chain = Promise.resolve();
-
-    if (this.options.bump === "from-git") {
-      chain = chain.then(() => this.detectFromGit());
-    } else if (this.options.bump === "from-package") {
-      chain = chain.then(() => this.detectFromPackage());
-    } else if (this.options.canary) {
-      chain = chain.then(() => this.detectCanaryVersions());
-    } else {
-      chain = chain.then(() => versionCommand(this.argv));
-    }
-
-    return chain;
   }
 
   verifyWorkingTreeClean() {
