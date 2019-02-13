@@ -378,9 +378,25 @@ class PublishCommand extends Command {
       .then(packagesWithoutLicense => {
         if (packagesWithoutLicense.length && !this.project.licensePath) {
           this.packagesToBeLicensed = [];
+
+          const names = packagesWithoutLicense.map(pkg => pkg.name);
+          const noun = names.length > 1 ? "Packages" : "Package";
+          const verb = names.length > 1 ? "are" : "is";
+          const list =
+            names.length > 1
+              ? `${names.slice(0, -1).join(", ")}${names.length > 2 ? "," : ""} and ${
+                  names[names.length - 1] /* oxford commas _are_ that important */
+                }`
+              : names[0];
+
           this.logger.warn(
             "ENOLICENSE",
-            `Packages ${packagesWithoutLicense.map(pkg => pkg.name).join(", ")} are missing a license`
+            "%s %s %s missing a license.\n%s\n%s",
+            noun,
+            list,
+            verb,
+            "One way to fix this is to add a LICENSE.md file to the root of this repository.",
+            "See https://choosealicense.com for additional guidance."
           );
         } else {
           this.packagesToBeLicensed = packagesWithoutLicense;
