@@ -112,4 +112,15 @@ describe("publish from-package", () => {
     );
     expect(logMessages).toContain("Unable to reset working tree changes, this probably isn't a git repo.");
   });
+
+  it("accepts --git-head override", async () => {
+    getUnpublishedPackages.mockImplementationOnce(packageGraph => [packageGraph.get("package-1")]);
+
+    const cwd = await initFixture("independent");
+
+    await lernaPublish(cwd)("from-package", "--git-head", "deadbeef");
+
+    expect(npmPublish).toHaveBeenCalled();
+    expect(writePkg.updatedManifest("package-1").gitHead).toBe("deadbeef");
+  });
 });

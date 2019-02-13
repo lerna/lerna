@@ -68,6 +68,16 @@ describe("PublishCommand", () => {
 
       expect.assertions(2);
     });
+
+    it("errors when --git-head is passed without from-package positional", async () => {
+      try {
+        await lernaPublish(cwd)("--git-head", "deadbeef");
+      } catch (err) {
+        expect(err.message).toBe("--git-head is only allowed with 'from-package' positional");
+      }
+
+      expect.hasAssertions();
+    });
   });
 
   describe("with implied versioning", () => {

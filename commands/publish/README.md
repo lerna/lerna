@@ -46,6 +46,7 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 - [`--canary`](#--canary)
 - [`--contents <dir>`](#--contents-dir)
 - [`--dist-tag <tag>`](#--dist-tag-tag)
+- [`--git-head <sha>`](#--git-head-sha)
 - [`--no-git-reset`](#--no-git-reset)
 - [`--no-verify-access`](#--no-verify-access)
 - [`--preid`](#--preid)
@@ -102,6 +103,19 @@ This option can be used to publish a [`prerelease`](http://carrot.is/coding/npm_
 
 > Note: the `latest` tag is the one that is used when a user runs `npm install my-package`.
 > To install a different tag, a user can run `npm install my-package@prerelease`.
+
+### `--git-head <sha>`
+
+Explicit SHA to set as [`gitHead`](https://git.io/fh7np) on manifests when packing tarballs, only allowed with [`from-package`](#bump-from-package) positional.
+
+For example, when publishing from AWS CodeBuild (where `git` is not available),
+you could use this option to pass the appropriate [environment variable](https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-env-vars.html) to use for this package metadata:
+
+```sh
+lerna publish from-package --git-head ${CODEBUILD_RESOLVED_SOURCE_VERSION}
+```
+
+Under all other circumstances, this value is derived from a local `git` command.
 
 ### `--no-git-reset`
 

@@ -108,4 +108,16 @@ describe("publish from-git", () => {
 
     expect.assertions(1);
   });
+
+  it("throws an error when --git-head is passed", async () => {
+    const cwd = await initFixture("normal");
+
+    try {
+      await lernaPublish(cwd)("from-git", "--git-head", "deadbeef");
+    } catch (err) {
+      expect(err.prefix).toBe("EGITHEAD");
+    }
+
+    expect.hasAssertions();
+  });
 });

@@ -35,6 +35,12 @@ exports.builder = yargs => {
       type: "string",
       requiresArg: true,
     },
+    "git-head": {
+      describe:
+        "Explicit SHA to set as gitHead when packing tarballs, only allowed with 'from-package' positional.",
+      type: "string",
+      requiresArg: true,
+    },
     registry: {
       describe: "Use the specified registry for all npm client operations.",
       type: "string",

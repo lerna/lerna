@@ -10,6 +10,7 @@ const pReduce = require("p-reduce");
 const semver = require("semver");
 
 const Command = require("@lerna/command");
+const ValidationError = require("@lerna/validation-error");
 const describeRef = require("@lerna/describe-ref");
 const checkWorkingTree = require("@lerna/check-working-tree");
 const PromptUtilities = require("@lerna/prompt");
@@ -68,6 +69,10 @@ class PublishCommand extends Command {
 
     if (this.options.requireScripts) {
       this.logger.info("require-scripts", "enabled");
+    }
+
+    if (this.requiresGit && this.options.gitHead) {
+      throw new ValidationError("EGITHEAD", "--git-head is only allowed with 'from-package' positional");
     }
 
     // https://docs.npmjs.com/misc/config#save-prefix
@@ -492,7 +497,7 @@ class PublishCommand extends Command {
 
   annotateGitHead() {
     try {
-      const gitHead = getCurrentSHA(this.execOpts);
+      const gitHead = this.options.gitHead || getCurrentSHA(this.execOpts);
 
       for (const pkg of this.packagesToPublish) {
         // provide gitHead property that is normally added during npm publish

@@ -353,6 +353,18 @@ test("publish --canary with dirty tree throws error", async () => {
   expect.assertions(1);
 });
 
+test("publish --canary --git-head <sha> throws an error", async () => {
+  const cwd = await initFixture("normal");
+
+  try {
+    await lernaPublish(cwd)("--canary", "--git-head", "deadbeef");
+  } catch (err) {
+    expect(err.prefix).toBe("EGITHEAD");
+  }
+
+  expect.hasAssertions();
+});
+
 test("publish --canary --include-merged-tags calls git describe correctly", async () => {
   const spy = jest.spyOn(childProcess, "exec");
   const cwd = await initTaggedFixture("normal");
