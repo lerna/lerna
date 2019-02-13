@@ -17,15 +17,11 @@ const npmPublish = require("@lerna/npm-publish");
 const packDirectory = require("@lerna/pack-directory");
 const PromptUtilities = require("@lerna/prompt");
 const collectUpdates = require("@lerna/collect-updates");
-const output = require("@lerna/output");
-const checkWorkingTree = require("@lerna/check-working-tree");
 const getNpmUsername = require("../lib/get-npm-username");
 const verifyNpmPackageAccess = require("../lib/verify-npm-package-access");
-const getUnpublishedPackages = require("../lib/get-unpublished-packages");
 
 // helpers
 const loggingOutput = require("@lerna-test/logging-output");
-const gitTag = require("@lerna-test/git-tag");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 
 // file under test
@@ -49,18 +45,6 @@ describe("PublishCommand", () => {
       const logMessages = loggingOutput("success");
       expect(logMessages).toContain("No changed packages to publish");
       expect(verifyNpmPackageAccess).not.toHaveBeenCalled();
-    });
-
-    ["from-git", "from-package"].forEach(fromArg => {
-      it(`exits early when no changes found ${fromArg}`, async () => {
-        collectUpdates.setUpdated(cwd);
-
-        await lernaPublish(cwd)(fromArg);
-
-        const logMessages = loggingOutput("success");
-        expect(logMessages).toContain("No changed packages to publish");
-        expect(verifyNpmPackageAccess).not.toHaveBeenCalled();
-      });
     });
 
     it("exits non-zero with --scope", async () => {
@@ -166,152 +150,6 @@ Map {
         await lernaPublish(testDir)("--independent");
       } catch (err) {
         expect(err.message).toMatch("independent");
-      }
-
-      expect.assertions(1);
-    });
-  });
-
-  describe("from-git", () => {
-    it("publishes tagged packages", async () => {
-      const testDir = await initFixture("normal");
-
-      await gitTag(testDir, "v1.0.0");
-      await lernaPublish(testDir)("from-git");
-
-      // called from chained describeRef()
-      expect(checkWorkingTree.throwIfUncommitted).toHaveBeenCalled();
-
-      expect(PromptUtilities.confirm).toHaveBeenLastCalledWith(
-        "Are you sure you want to publish these packages?"
-      );
-      expect(output.logged()).toMatch("Found 4 packages to publish:");
-      expect(npmPublish.order()).toEqual([
-        "package-1",
-        "package-3",
-        "package-4",
-        "package-2",
-        // package-5 is private
-      ]);
-    });
-
-    it("publishes tagged independent packages", async () => {
-      const testDir = await initFixture("independent");
-
-      await Promise.all([
-        gitTag(testDir, "package-1@1.0.0"),
-        gitTag(testDir, "package-2@2.0.0"),
-        gitTag(testDir, "package-3@3.0.0"),
-        gitTag(testDir, "package-4@4.0.0"),
-        gitTag(testDir, "package-5@5.0.0"),
-      ]);
-      await lernaPublish(testDir)("from-git");
-
-      expect(npmPublish.order()).toEqual([
-        "package-1",
-        "package-3",
-        "package-4",
-        "package-2",
-        // package-5 is private
-      ]);
-    });
-
-    it("only publishes independent packages with matching tags", async () => {
-      const testDir = await initFixture("independent");
-
-      await gitTag(testDir, "package-3@3.0.0");
-      await lernaPublish(testDir)("from-git");
-
-      expect(output.logged()).toMatch("Found 1 package to publish:");
-      expect(npmPublish.order()).toEqual(["package-3"]);
-    });
-
-    it("exits early when the current commit is not tagged", async () => {
-      const testDir = await initFixture("normal");
-
-      await lernaPublish(testDir)("from-git");
-
-      expect(npmPublish).not.toHaveBeenCalled();
-
-      const logMessages = loggingOutput("info");
-      expect(logMessages).toContain("No tagged release found");
-    });
-
-    it("throws an error when uncommitted changes are present", async () => {
-      checkWorkingTree.throwIfUncommitted.mockImplementationOnce(() => {
-        throw new Error("uncommitted");
-      });
-
-      const testDir = await initFixture("normal");
-
-      try {
-        await lernaPublish(testDir)("from-git");
-      } catch (err) {
-        expect(err.message).toBe("uncommitted");
-        // notably different than the actual message, but good enough here
-      }
-
-      expect.assertions(1);
-    });
-  });
-
-  describe("from-package", () => {
-    it("publishes unpublished packages", async () => {
-      const testDir = await initFixture("normal");
-
-      getUnpublishedPackages.mockImplementationOnce(packageGraph => {
-        const pkgs = packageGraph.rawPackageList.slice(1, 3);
-        return pkgs.map(pkg => packageGraph.get(pkg.name));
-      });
-
-      await lernaPublish(testDir)("from-package");
-
-      expect(PromptUtilities.confirm).toHaveBeenLastCalledWith(
-        "Are you sure you want to publish these packages?"
-      );
-      expect(output.logged()).toMatch("Found 2 packages to publish:");
-      expect(npmPublish.order()).toEqual(["package-2", "package-3"]);
-    });
-
-    it("publishes unpublished independent packages", async () => {
-      const testDir = await initFixture("independent");
-
-      getUnpublishedPackages.mockImplementationOnce(packageGraph => Array.from(packageGraph.values()));
-
-      await lernaPublish(testDir)("from-package");
-
-      expect(npmPublish.order()).toEqual([
-        "package-1",
-        "package-3",
-        "package-4",
-        "package-2",
-        // package-5 is private
-      ]);
-    });
-
-    it("exits early when all packages are published", async () => {
-      const testDir = await initFixture("normal");
-
-      await lernaPublish(testDir)("from-package");
-
-      expect(npmPublish).not.toHaveBeenCalled();
-
-      const logMessages = loggingOutput("info");
-      expect(logMessages).toContain("No unpublished release found");
-    });
-
-    it("throws an error when uncommitted changes are present", async () => {
-      checkWorkingTree.throwIfUncommitted.mockImplementationOnce(() => {
-        throw new Error("uncommitted");
-      });
-
-      const testDir = await initFixture("normal");
-
-      try {
-        await lernaPublish(testDir)("from-package");
-      } catch (err) {
-        expect(err.message).toBe("uncommitted");
-        // notably different than the actual message, but good enough here
       }
 
       expect.assertions(1);
