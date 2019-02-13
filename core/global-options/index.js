@@ -1,5 +1,7 @@
 "use strict";
 
+const os = require("os");
+
 module.exports = globalOptions;
 
 function globalOptions(yargs) {
@@ -11,7 +13,7 @@ function globalOptions(yargs) {
       type: "string",
     },
     concurrency: {
-      defaultDescription: "4",
+      defaultDescription: `count of logical CPU cores (${os.cpus().length})`,
       describe: "How many processes to use when lerna parallelizes tasks.",
       type: "number",
       requiresArg: true,

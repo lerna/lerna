@@ -4,6 +4,7 @@ const _ = require("lodash");
 const dedent = require("dedent");
 const execa = require("execa");
 const log = require("npmlog");
+const os = require("os");
 
 const PackageGraph = require("@lerna/package-graph");
 const Project = require("@lerna/project");
@@ -14,7 +15,7 @@ const cleanStack = require("./lib/clean-stack");
 const logPackageError = require("./lib/log-package-error");
 const warnIfHanging = require("./lib/warn-if-hanging");
 
-const DEFAULT_CONCURRENCY = 4;
+const DEFAULT_CONCURRENCY = os.cpus().length;
 
 class Command {
   constructor(argv) {
