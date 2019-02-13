@@ -29,10 +29,10 @@ expect.extend(require("@lerna-test/figgy-pudding-matchers"));
 
 describe("publish from-git", () => {
   it("publishes tagged packages", async () => {
-    const testDir = await initFixture("normal");
+    const cwd = await initFixture("normal");
 
-    await gitTag(testDir, "v1.0.0");
-    await lernaPublish(testDir)("from-git");
+    await gitTag(cwd, "v1.0.0");
+    await lernaPublish(cwd)("from-git");
 
     // called from chained describeRef()
     expect(checkWorkingTree.throwIfUncommitted).toHaveBeenCalled();
@@ -51,16 +51,16 @@ describe("publish from-git", () => {
   });
 
   it("publishes tagged independent packages", async () => {
-    const testDir = await initFixture("independent");
+    const cwd = await initFixture("independent");
 
     await Promise.all([
-      gitTag(testDir, "package-1@1.0.0"),
-      gitTag(testDir, "package-2@2.0.0"),
-      gitTag(testDir, "package-3@3.0.0"),
-      gitTag(testDir, "package-4@4.0.0"),
-      gitTag(testDir, "package-5@5.0.0"),
+      gitTag(cwd, "package-1@1.0.0"),
+      gitTag(cwd, "package-2@2.0.0"),
+      gitTag(cwd, "package-3@3.0.0"),
+      gitTag(cwd, "package-4@4.0.0"),
+      gitTag(cwd, "package-5@5.0.0"),
     ]);
-    await lernaPublish(testDir)("from-git");
+    await lernaPublish(cwd)("from-git");
 
     expect(npmPublish.order()).toEqual([
       "package-1",
@@ -72,19 +72,19 @@ describe("publish from-git", () => {
   });
 
   it("only publishes independent packages with matching tags", async () => {
-    const testDir = await initFixture("independent");
+    const cwd = await initFixture("independent");
 
-    await gitTag(testDir, "package-3@3.0.0");
-    await lernaPublish(testDir)("from-git");
+    await gitTag(cwd, "package-3@3.0.0");
+    await lernaPublish(cwd)("from-git");
 
     expect(output.logged()).toMatch("Found 1 package to publish:");
     expect(npmPublish.order()).toEqual(["package-3"]);
   });
 
   it("exits early when the current commit is not tagged", async () => {
-    const testDir = await initFixture("normal");
+    const cwd = await initFixture("normal");
 
-    await lernaPublish(testDir)("from-git");
+    await lernaPublish(cwd)("from-git");
 
     expect(npmPublish).not.toHaveBeenCalled();
 
@@ -97,10 +97,10 @@ describe("publish from-git", () => {
       throw new Error("uncommitted");
     });
 
-    const testDir = await initFixture("normal");
+    const cwd = await initFixture("normal");
 
     try {
-      await lernaPublish(testDir)("from-git");
+      await lernaPublish(cwd)("from-git");
     } catch (err) {
       expect(err.message).toBe("uncommitted");
       // notably different than the actual message, but good enough here

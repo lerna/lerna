@@ -29,14 +29,14 @@ expect.extend(require("@lerna-test/figgy-pudding-matchers"));
 
 describe("publish from-package", () => {
   it("publishes unpublished packages", async () => {
-    const testDir = await initFixture("normal");
+    const cwd = await initFixture("normal");
 
     getUnpublishedPackages.mockImplementationOnce(packageGraph => {
       const pkgs = packageGraph.rawPackageList.slice(1, 3);
       return pkgs.map(pkg => packageGraph.get(pkg.name));
     });
 
-    await lernaPublish(testDir)("from-package");
+    await lernaPublish(cwd)("from-package");
 
     expect(PromptUtilities.confirm).toHaveBeenLastCalledWith(
       "Are you sure you want to publish these packages?"
@@ -46,11 +46,11 @@ describe("publish from-package", () => {
   });
 
   it("publishes unpublished independent packages", async () => {
-    const testDir = await initFixture("independent");
+    const cwd = await initFixture("independent");
 
     getUnpublishedPackages.mockImplementationOnce(packageGraph => Array.from(packageGraph.values()));
 
-    await lernaPublish(testDir)("from-package");
+    await lernaPublish(cwd)("from-package");
 
     expect(npmPublish.order()).toEqual([
       "package-1",
@@ -62,9 +62,9 @@ describe("publish from-package", () => {
   });
 
   it("exits early when all packages are published", async () => {
-    const testDir = await initFixture("normal");
+    const cwd = await initFixture("normal");
 
-    await lernaPublish(testDir)("from-package");
+    await lernaPublish(cwd)("from-package");
 
     expect(npmPublish).not.toHaveBeenCalled();
 
@@ -77,10 +77,10 @@ describe("publish from-package", () => {
       throw new Error("uncommitted");
     });
 
-    const testDir = await initFixture("normal");
+    const cwd = await initFixture("normal");
 
     try {
-      await lernaPublish(testDir)("from-package");
+      await lernaPublish(cwd)("from-package");
     } catch (err) {
       expect(err.message).toBe("uncommitted");
       // notably different than the actual message, but good enough here
