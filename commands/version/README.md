@@ -43,6 +43,7 @@ If you have any packages with a prerelease version number (e.g. `2.0.0-beta.3`) 
 - [`--exact`](#--exact)
 - [`--force-publish`](#--force-publish)
 - [`--git-remote`](#--git-remote-name)
+- [`--github-release`](#--github-release)
 - [`--ignore-changes`](#--ignore-changes)
 - [`--include-merged-tags`](#--include-merged-tags)
 - [`--message`](#--message-msg)
@@ -159,6 +160,22 @@ lerna version --git-remote upstream
 
 When run with this flag, `lerna version` will push the git changes to the specified remote instead of `origin`.
 
+### `--github-release`
+
+```sh
+lerna version --github-release --conventional-commits
+```
+
+When run with this flag, `lerna version` will create an official GitHub release based on the changed packages. Requires `--conventional-commits` to be passed so that changelogs can be generated.
+
+To authenticate with GitHub, the following environment variables can be defined.
+
+- `GH_TOKEN` (required) - Your GitHub authentication token (under Settings > Developer settings > Personal access tokens).
+- `GHE_API_URL` - When using GitHub Enterprise, an absolute URL to the API.
+- `GHE_VERSION` - When using GitHub Enterprise, the currently installed GHE version. [Supports the following versions](https://github.com/octokit/plugin-enterprise-rest.js).
+
+> NOTE: When using this option, you cannot pass [`--no-changelog`](#--no-changelog).
+
 ### `--ignore-changes`
 
 Ignore changes in files matched by glob(s) when detecting changed packages.
@@ -236,6 +253,8 @@ lerna version --conventional-commits --no-changelog
 ```
 
 When using `conventional-commits`, do not generate any `CHANGELOG.md` files.
+
+> NOTE: When using this option, you cannot pass [`--github-release`](#--github-release).
 
 ### `--no-commit-hooks`
 

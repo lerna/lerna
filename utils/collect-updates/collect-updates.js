@@ -49,7 +49,7 @@ function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions
   let candidates;
 
   if (!committish || forced.has("*")) {
-    log.info("", `Assuming all packages changed`);
+    log.info("", "Assuming all packages changed");
     candidates = new Set(packages.values());
   } else {
     log.info("", `Looking for changed packages since ${committish}`);

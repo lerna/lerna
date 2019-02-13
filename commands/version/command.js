@@ -40,6 +40,10 @@ exports.builder = (yargs, composed) => {
       requiresArg: true,
       defaultDescription: "origin",
     },
+    "github-release": {
+      describe: "Create an official GitHub release for every version.",
+      type: "boolean",
+    },
     "ignore-changes": {
       describe: [
         "Ignore changes in files matched by glob(s) when detecting changed packages.",

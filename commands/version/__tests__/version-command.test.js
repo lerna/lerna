@@ -50,7 +50,9 @@ describe("VersionCommand", () => {
   describe("normal mode", () => {
     it("versions changed packages", async () => {
       const testDir = await initFixture("normal");
-      await lernaVersion(testDir)();
+      // when --conventional-commits is absent,
+      // --no-changelog should have _no_ effect
+      await lernaVersion(testDir)("--no-changelog");
 
       expect(checkWorkingTree).toHaveBeenCalled();
 

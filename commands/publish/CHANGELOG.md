@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.11.1](https://github.com/lerna/lerna/compare/v3.11.0...v3.11.1) (2019-02-11)
+
+**Note:** Version bump only for package @lerna/publish
+
+
+
+
+
+# [3.11.0](https://github.com/lerna/lerna/compare/v3.10.8...v3.11.0) (2019-02-08)
+
+
+### Bug Fixes
+
+* **deps:** Explicit libnpmaccess ^3.0.1 ([6ba3d1d](https://github.com/lerna/lerna/commit/6ba3d1d))
+* **deps:** Explicit libnpmpublish ^1.1.1 ([a506d96](https://github.com/lerna/lerna/commit/a506d96))
+* **deps:** Explicit npm-package-arg ^6.1.0 ([4b20791](https://github.com/lerna/lerna/commit/4b20791))
+* **deps:** Explicit npm-registry-fetch ^3.9.0 ([a83c487](https://github.com/lerna/lerna/commit/a83c487))
+* **deps:** Explicit npmlog ^4.1.2 ([571c2e2](https://github.com/lerna/lerna/commit/571c2e2))
+* **deps:** Explicit pacote ^9.4.1 ([44d05bf](https://github.com/lerna/lerna/commit/44d05bf))
+* **deps:** Remove unused libnpm (replaced by direct sub-packages) ([1caeb28](https://github.com/lerna/lerna/commit/1caeb28))
+* **publish:** Correct silly log heading ([f1dc3fc](https://github.com/lerna/lerna/commit/f1dc3fc))
+
+
+
+
+
 ## [3.10.8](https://github.com/lerna/lerna/compare/v3.10.7...v3.10.8) (2019-02-01)
 
 

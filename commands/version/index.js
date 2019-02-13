@@ -19,6 +19,7 @@ const collectUpdates = require("@lerna/collect-updates");
 const { createRunner } = require("@lerna/run-lifecycle");
 const batchPackages = require("@lerna/batch-packages");
 const ValidationError = require("@lerna/validation-error");
+const { createGitHubClient, parseGitRepo } = require("@lerna/github-client");
 
 const getCurrentBranch = require("./lib/get-current-branch");
 const gitAdd = require("./lib/git-add");
@@ -70,6 +71,20 @@ class VersionCommand extends Command {
     this.commitAndTag = gitTagVersion;
     this.pushToRemote = gitTagVersion && amend !== true && push;
     // never automatically push to remote when amending a commit
+
+    this.createReleases = this.pushToRemote && this.options.githubRelease;
+    this.releaseNotes = [];
+
+    if (this.createReleases && this.options.conventionalCommits !== true) {
+      throw new ValidationError(
+        "ERELEASE",
+        "To create a Github Release, you must enable --conventional-commits"
+      );
+    }
+
+    if (this.createReleases && this.options.changelog === false) {
+      throw new ValidationError("ERELEASE", "To create a Github Release, you cannot pass --no-changelog");
+    }
 
     this.gitOpts = {
       amend,
@@ -228,6 +243,12 @@ class VersionCommand extends Command {
       this.logger.info("execute", "Skipping git push");
     }
 
+    if (this.createReleases) {
+      tasks.push(() => this.createGitHubReleases());
+    } else {
+      this.logger.info("execute", "Skipping GitHub releases");
+    }
+
     return pWaterfall(tasks).then(() => {
       if (!this.composed) {
         this.logger.success("version", "finished");
@@ -347,7 +368,7 @@ class VersionCommand extends Command {
     let highestVersion = this.project.version;
 
     versions.forEach(bump => {
-      if (semver.gt(bump, highestVersion)) {
+      if (bump && semver.gt(bump, highestVersion)) {
         highestVersion = bump;
       }
     });
@@ -465,9 +486,17 @@ class VersionCommand extends Command {
           changelogPreset,
           rootPath,
           tagPrefix: this.tagPrefix,
-        }).then(changelogLocation => {
+        }).then(({ logPath, newEntry }) => {
           // commit the updated changelog
-          changedFiles.add(changelogLocation);
+          changedFiles.add(logPath);
+
+          // add release notes
+          if (independentVersions) {
+            this.releaseNotes.push({
+              name: pkg.name,
+              notes: newEntry,
+            });
+          }
 
           return pkg;
         })
@@ -483,19 +512,25 @@ class VersionCommand extends Command {
       )
     );
 
-    if (!independentVersions && changelog) {
+    if (!independentVersions) {
       this.project.version = this.globalVersion;
 
-      if (conventionalCommits) {
+      if (conventionalCommits && changelog) {
         chain = chain.then(() =>
           ConventionalCommitUtilities.updateChangelog(this.project.manifest, "root", {
             changelogPreset,
             rootPath,
             tagPrefix: this.tagPrefix,
             version: this.globalVersion,
-          }).then(changelogLocation => {
+          }).then(({ logPath, newEntry }) => {
             // commit the updated changelog
-            changedFiles.add(changelogLocation);
+            changedFiles.add(logPath);
+
+            // add release notes
+            this.releaseNotes.push({
+              name: "fixed",
+              notes: newEntry,
+            });
           })
         );
       }
@@ -570,6 +605,36 @@ class VersionCommand extends Command {
     this.logger.info("git", "Pushing tags...");
 
     return gitPush(this.gitRemote, this.currentBranch, this.execOpts);
+  }
+
+  createGitHubReleases() {
+    this.logger.info("github", "Creating GitHub releases...");
+
+    const client = createGitHubClient();
+    const repo = parseGitRepo(this.options.gitRemote, this.execOpts);
+
+    return Promise.all(
+      this.releaseNotes.map(({ notes, name }) => {
+        const tag = name === "fixed" ? this.tags[0] : this.tags.find(t => t.startsWith(name));
+
+        /* istanbul ignore if */
+        if (!tag) {
+          return Promise.resolve();
+        }
+
+        const prereleaseParts = semver.prerelease(tag.replace(`${name}@`, "")) || [];
+
+        return client.repos.createRelease({
+          owner: repo.owner,
+          repo: repo.name,
+          tag_name: tag,
+          name: tag,
+          body: notes,
+          draft: false,
+          prerelease: prereleaseParts.length > 0,
+        });
+      })
+    );
   }
 }
 

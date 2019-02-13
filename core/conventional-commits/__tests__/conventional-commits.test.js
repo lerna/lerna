@@ -201,7 +201,7 @@ describe("conventional-commits", () => {
   });
 
   describe("updateChangelog()", () => {
-    const getFileContent = fp => fs.readFile(fp, "utf8");
+    const getFileContent = ({ logPath }) => fs.readFile(logPath, "utf8");
 
     it("creates files if they do not exist", async () => {
       const cwd = await initFixture("changelog-missing");
@@ -220,17 +220,17 @@ describe("conventional-commits", () => {
       // update version
       await pkg1.set("version", "1.1.0").serialize();
 
-      const [leafChangelogFile, rootChangelogFile] = await Promise.all([
+      const [leafChangelog, rootChangelog] = await Promise.all([
         updateChangelog(pkg1, "fixed", { changelogPreset: "angular" }),
         updateChangelog(rootPkg, "root", { version: "1.1.0" }),
       ]);
 
-      expect(leafChangelogFile).toBe(path.join(pkg1.location, "CHANGELOG.md"));
-      expect(rootChangelogFile).toBe(path.join(rootPkg.location, "CHANGELOG.md"));
+      expect(leafChangelog.logPath).toBe(path.join(pkg1.location, "CHANGELOG.md"));
+      expect(rootChangelog.logPath).toBe(path.join(rootPkg.location, "CHANGELOG.md"));
 
       const [leafChangelogContent, rootChangelogContent] = await Promise.all([
-        getFileContent(leafChangelogFile),
-        getFileContent(rootChangelogFile),
+        getFileContent(leafChangelog),
+        getFileContent(rootChangelog),
       ]);
 
       expect(leafChangelogContent).toMatchSnapshot("leaf");
@@ -280,11 +280,18 @@ describe("conventional-commits", () => {
       // update version
       await pkg1.set("version", "1.0.1").serialize();
 
-      const leafChangelogContent = await updateChangelog(pkg1, "fixed", {
+      const leafChangelog = await updateChangelog(pkg1, "fixed", {
         tagPrefix: "dragons-are-awesome",
-      }).then(getFileContent);
+      });
 
-      expect(leafChangelogContent).toMatch("A second commit for our CHANGELOG");
+      expect(leafChangelog.newEntry.trimRight()).toMatchInlineSnapshot(`
+## [1.0.1](/compare/dragons-are-awesome1.0.0...1.0.1) (YYYY-MM-DD)
+
+
+### Bug Fixes
+
+* A second commit for our CHANGELOG ([SHA](https://github.com/lerna/conventional-commits-fixed/commit/SHA))
+`);
     });
 
     it("appends version bump message if no commits have been recorded", async () => {
@@ -302,11 +309,16 @@ describe("conventional-commits", () => {
       // update version
       await pkg2.set("version", "1.0.1").serialize();
 
-      const leafChangelogContent = await updateChangelog(pkg2, "fixed", {
+      const leafChangelog = await updateChangelog(pkg2, "fixed", {
         changelogPreset: "./scripts/local-preset",
-      }).then(getFileContent);
+      });
 
-      expect(leafChangelogContent).toMatchSnapshot();
+      expect(leafChangelog.newEntry.trimRight()).toMatchInlineSnapshot(`
+<a name="1.0.1"></a>
+## <small>1.0.1 (YYYY-MM-DD)</small>
+
+**Note:** Version bump only for package package-2
+`);
     });
 
     it("supports old preset API", async () => {
@@ -324,11 +336,16 @@ describe("conventional-commits", () => {
       // update version
       await pkg1.set("version", "1.0.1").serialize();
 
-      const leafChangelogContent = await updateChangelog(pkg1, "fixed", {
+      const leafChangelog = await updateChangelog(pkg1, "fixed", {
         changelogPreset: "./scripts/old-api-preset",
-      }).then(getFileContent);
+      });
 
-      expect(leafChangelogContent).toMatchSnapshot();
+      expect(leafChangelog.newEntry).toMatchInlineSnapshot(`
+<a name="1.0.1"></a>
+## <small>1.0.1 (YYYY-MM-DD)</small>
+* fix(pkg1): A commit using the old preset API
+
+`);
     });
 
     it("supports legacy callback presets", async () => {
@@ -346,11 +363,16 @@ describe("conventional-commits", () => {
       // update version
       await pkg2.set("version", "1.0.1").serialize();
 
-      const leafChangelogContent = await updateChangelog(pkg2, "fixed", {
+      const leafChangelog = await updateChangelog(pkg2, "fixed", {
         changelogPreset: "./scripts/legacy-callback-preset",
-      }).then(getFileContent);
+      });
 
-      expect(leafChangelogContent).toContain("fix(pkg2): A commit using a legacy callback preset");
+      expect(leafChangelog.newEntry).toMatchInlineSnapshot(`
+<a name="1.0.1"></a>
+## <small>1.0.1 (YYYY-MM-DD)</small>
+* fix(pkg2): A commit using a legacy callback preset
+
+`);
     });
 
     it("updates independent changelogs", async () => {
@@ -379,12 +401,26 @@ describe("conventional-commits", () => {
         changelogPreset: "conventional-changelog-angular",
       };
       const [changelogOne, changelogTwo] = await Promise.all([
-        updateChangelog(pkg1, "independent", opts).then(getFileContent),
-        updateChangelog(pkg2, "independent", opts).then(getFileContent),
+        updateChangelog(pkg1, "independent", opts),
+        updateChangelog(pkg2, "independent", opts),
       ]);
 
-      expect(changelogOne).toMatchSnapshot();
-      expect(changelogTwo).toMatchSnapshot();
+      expect(changelogOne.newEntry.trimRight()).toMatchInlineSnapshot(`
+## [1.0.1](/compare/package-1@1.0.0...package-1@1.0.1) (YYYY-MM-DD)
+
+
+### Bug Fixes
+
+* **stuff:** changed ([SHA](https://github.com/lerna/conventional-commits-independent/commit/SHA))
+`);
+      expect(changelogTwo.newEntry.trimRight()).toMatchInlineSnapshot(`
+# [1.1.0](/compare/package-2@1.0.0...package-2@1.1.0) (YYYY-MM-DD)
+
+
+### Features
+
+* **thing:** added ([SHA](https://github.com/lerna/conventional-commits-independent/commit/SHA))
+`);
     });
   });
 });

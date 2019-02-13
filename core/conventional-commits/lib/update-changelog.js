@@ -59,7 +59,10 @@ function updateChangelog(pkg, type, { changelogPreset, rootPath, tagPrefix, vers
       return fs.writeFile(changelogFileLoc, content.trim() + EOL).then(() => {
         log.verbose(type, "wrote", changelogFileLoc);
 
-        return changelogFileLoc;
+        return {
+          logPath: changelogFileLoc,
+          newEntry,
+        };
       });
     });
   });
