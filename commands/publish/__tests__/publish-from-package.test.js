@@ -11,7 +11,11 @@ jest.mock("../../version/lib/is-anything-committed");
 jest.mock("../../version/lib/is-behind-upstream");
 jest.mock("../../version/lib/remote-branch-exists");
 
+const fs = require("fs-extra");
+const path = require("path");
+
 // mocked or stubbed modules
+const writePkg = require("write-pkg");
 const npmPublish = require("@lerna/npm-publish");
 const PromptUtilities = require("@lerna/prompt");
 const output = require("@lerna/output");
@@ -87,5 +91,25 @@ describe("publish from-package", () => {
     }
 
     expect.assertions(1);
+  });
+
+  it("does not require a git repo", async () => {
+    getUnpublishedPackages.mockImplementationOnce(packageGraph => [packageGraph.get("package-1")]);
+
+    const cwd = await initFixture("independent");
+
+    // nuke the git repo first
+    await fs.remove(path.join(cwd, ".git"));
+    await lernaPublish(cwd)("from-package");
+
+    expect(npmPublish).toHaveBeenCalled();
+    expect(writePkg.updatedManifest("package-1")).not.toHaveProperty("gitHead");
+
+    const logMessages = loggingOutput("info");
+    expect(logMessages).toContain("Unable to verify working tree, proceed at your own risk");
+    expect(logMessages).toContain(
+      "Unable to set temporary gitHead property, it will be missing from registry metadata"
+    );
+    expect(logMessages).toContain("Unable to reset working tree changes, this probably isn't a git repo.");
   });
 });

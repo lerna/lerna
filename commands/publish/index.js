@@ -49,6 +49,11 @@ class PublishCommand extends Command {
     return ["version"];
   }
 
+  get requiresGit() {
+    // `lerna publish from-package` doesn't _need_ git, per se
+    return this.options.bump !== "from-package";
+  }
+
   initialize() {
     if (this.options.skipNpm) {
       // TODO: remove in next major release
@@ -245,7 +250,19 @@ class PublishCommand extends Command {
     let chain = Promise.resolve();
 
     // attempting to publish a release with local changes is not allowed
-    chain = chain.then(() => this.verifyWorkingTreeClean());
+    chain = chain
+      .then(() => this.verifyWorkingTreeClean())
+      .catch(err => {
+        // an execa error is thrown when git suffers a fatal error (such as no git repository present)
+        if (err.failed && err.code === 128 && err.stderr && /not a git repository/.test(err.stderr)) {
+          // (we tried)
+          this.logger.silly("EWORKINGTREE", err.message);
+          this.logger.info("FYI", "Unable to verify working tree, proceed at your own risk");
+        } else {
+          // validation errors should be preserved
+          throw err;
+        }
+      });
 
     chain = chain.then(() => getUnpublishedPackages(this.packageGraph, this.conf.snapshot));
     chain = chain.then(unpublished => {
@@ -474,11 +491,20 @@ class PublishCommand extends Command {
   }
 
   annotateGitHead() {
-    const gitHead = getCurrentSHA(this.execOpts);
+    try {
+      const gitHead = getCurrentSHA(this.execOpts);
 
-    for (const pkg of this.packagesToPublish) {
-      // provide gitHead property that is normally added during npm publish
-      pkg.set("gitHead", gitHead);
+      for (const pkg of this.packagesToPublish) {
+        // provide gitHead property that is normally added during npm publish
+        pkg.set("gitHead", gitHead);
+      }
+    } catch (err) {
+      // from-package should be _able_ to run without git, but at least we tried
+      this.logger.silly("EGITHEAD", err.message);
+      this.logger.info(
+        "FYI",
+        "Unable to set temporary gitHead property, it will be missing from registry metadata"
+      );
     }
 
     // writing changes to disk handled in serializeChanges()
@@ -490,13 +516,16 @@ class PublishCommand extends Command {
 
   resetChanges() {
     // the package.json files are changed (by gitHead if not --canary)
-    // and we should always leave the working tree clean
+    // and we should always __attempt_ to leave the working tree clean
     const { cwd } = this.execOpts;
     const dirtyManifests = [this.project.manifest]
       .concat(this.packagesToPublish)
       .map(pkg => path.relative(cwd, pkg.manifestLocation));
 
-    return gitCheckout(dirtyManifests, this.execOpts);
+    return gitCheckout(dirtyManifests, this.execOpts).catch(err => {
+      this.logger.silly("EGITCHECKOUT", err.message);
+      this.logger.info("FYI", "Unable to reset working tree changes, this probably isn't a git repo.");
+    });
   }
 
   execScript(pkg, script) {
