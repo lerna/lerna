@@ -11,6 +11,7 @@ jest.mock("../../version/lib/is-anything-committed");
 jest.mock("../../version/lib/is-behind-upstream");
 jest.mock("../../version/lib/remote-branch-exists");
 
+const fs = require("fs-extra");
 const path = require("path");
 
 // mocked modules
@@ -70,13 +71,37 @@ describe("licenses", () => {
     await lernaPublish(cwd)();
 
     const [warning] = loggingOutput("warn");
-    expect(warning).toMatch(
-      "Packages package-1, package-3 are missing a root LICENSE file \n" +
-        "To fix this, add a LICENSE.md file in the root of this repository. " +
-        "See https://choosealicense.com for additional guidance."
-    );
+    expect(warning).toMatchInlineSnapshot(`
+"Packages package-1 and package-3 are missing a license.
+One way to fix this is to add a LICENSE.md file to the root of this repository.
+See https://choosealicense.com for additional guidance."
+`);
 
     expect(createTempLicenses).toHaveBeenLastCalledWith(undefined, []);
     expect(removeTempLicenses).toHaveBeenLastCalledWith([]);
+  });
+
+  it("warns when one package needs a license", async () => {
+    const cwd = await initFixture("licenses");
+
+    // remove root license so warning is triggered
+    await fs.remove(path.join(cwd, "LICENSE"));
+
+    await lernaPublish(cwd)();
+
+    const [warning] = loggingOutput("warn");
+    expect(warning).toMatch("Package package-1 is missing a license.");
+  });
+
+  it("warns when multiple packages need a license", async () => {
+    const cwd = await initFixture("licenses-missing");
+
+    // simulate _all_ packages missing a license
+    await fs.remove(path.join(cwd, "packages/package-2/LICENSE"));
+
+    await lernaPublish(cwd)();
+
+    const [warning] = loggingOutput("warn");
+    expect(warning).toMatch("Packages package-1, package-2, and package-3 are missing a license.");
   });
 });
