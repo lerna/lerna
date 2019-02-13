@@ -115,8 +115,6 @@ class PublishCommand extends Command {
 
     let chain = Promise.resolve();
 
-    // attempting to publish a release with local changes is not allowed
-    chain = chain.then(() => this.verifyWorkingTreeClean());
     chain = chain.then(() => this.findVersionedUpdates());
 
     return chain.then(result => {
@@ -196,10 +194,6 @@ class PublishCommand extends Command {
     });
   }
 
-  verifyWorkingTreeClean() {
-    return describeRef(this.execOpts).then(checkWorkingTree.throwIfUncommitted);
-  }
-
   findVersionedUpdates() {
     let chain = Promise.resolve();
 
@@ -216,11 +210,18 @@ class PublishCommand extends Command {
     return chain;
   }
 
+  verifyWorkingTreeClean() {
+    return describeRef(this.execOpts).then(checkWorkingTree.throwIfUncommitted);
+  }
+
   detectFromGit() {
     const { tagVersionPrefix = "v" } = this.options;
     const matchingPattern = this.project.isIndependent() ? "*@*" : `${tagVersionPrefix}*.*.*`;
 
     let chain = Promise.resolve();
+
+    // attempting to publish a tagged release with local changes is not allowed
+    chain = chain.then(() => this.verifyWorkingTreeClean());
 
     chain = chain.then(() => getCurrentTags(this.execOpts, matchingPattern));
     chain = chain.then(taggedPackageNames => {
@@ -250,6 +251,9 @@ class PublishCommand extends Command {
 
   detectFromPackage() {
     let chain = Promise.resolve();
+
+    // attempting to publish a release with local changes is not allowed
+    chain = chain.then(() => this.verifyWorkingTreeClean());
 
     chain = chain.then(() => getUnpublishedPackages(this.packageGraph, this.conf.snapshot));
     chain = chain.then(unpublished => {
@@ -285,6 +289,9 @@ class PublishCommand extends Command {
     const release = bump.startsWith("pre") ? bump.replace("release", "patch") : `pre${bump}`;
 
     let chain = Promise.resolve();
+
+    // attempting to publish a canary release with local changes is not allowed
+    chain = chain.then(() => this.verifyWorkingTreeClean());
 
     // find changed packages since last release, if any
     chain = chain.then(() =>
