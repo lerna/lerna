@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.12.0](https://github.com/lerna/lerna/compare/v3.11.1...v3.12.0) (2019-02-14)
+
+
+### Features
+
+* **global-options:** Default concurrency to logical CPU count ([#1931](https://github.com/lerna/lerna/issues/1931)) ([2c487fe](https://github.com/lerna/lerna/commit/2c487fe))
+
+
+
+
+
 ## [3.10.6](https://github.com/lerna/lerna/compare/v3.10.5...v3.10.6) (2019-01-19)
 
 

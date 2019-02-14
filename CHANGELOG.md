@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.12.0](https://github.com/lerna/lerna/compare/v3.11.1...v3.12.0) (2019-02-14)
+
+
+### Bug Fixes
+
+* **collect-updates:** Clarify logging in context ([9b8dd9c](https://github.com/lerna/lerna/commit/9b8dd9c))
+* **conventional-commits:** Improve logging during preset resolution ([d4a16a5](https://github.com/lerna/lerna/commit/d4a16a5))
+* **publish:** Check for git describe error explicitly ([237d1c5](https://github.com/lerna/lerna/commit/237d1c5))
+* **publish:** Make the missing license warning clearer and more actionable ([#1921](https://github.com/lerna/lerna/issues/1921)) ([8a71ac4](https://github.com/lerna/lerna/commit/8a71ac4))
+* **publish:** Revert foolhardy refactoring (5e975e0) ([a6733a2](https://github.com/lerna/lerna/commit/a6733a2))
+* **version:** Log message when git repository validation is skipped ([2c40ffd](https://github.com/lerna/lerna/commit/2c40ffd))
+
+
+### Features
+
+* **global-options:** Default concurrency to logical CPU count ([#1931](https://github.com/lerna/lerna/issues/1931)) ([2c487fe](https://github.com/lerna/lerna/commit/2c487fe))
+* **publish:** Add `--git-head` option to preserve gitless `from-package` metadata ([3d18f2f](https://github.com/lerna/lerna/commit/3d18f2f)), closes [#1933](https://github.com/lerna/lerna/issues/1933)
+* **publish:** Allow `from-package` positional to run without a git repo ([df49bfc](https://github.com/lerna/lerna/commit/df49bfc)), closes [#1933](https://github.com/lerna/lerna/issues/1933)
+* **version:** Skip repository validation when git is unused ([#1908](https://github.com/lerna/lerna/issues/1908)) ([b9e887e](https://github.com/lerna/lerna/commit/b9e887e)), closes [#1869](https://github.com/lerna/lerna/issues/1869)
+
+
+
+
+
 ## [3.11.1](https://github.com/lerna/lerna/compare/v3.11.0...v3.11.1) (2019-02-11)
 
 

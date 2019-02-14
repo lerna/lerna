@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.12.0](https://github.com/lerna/lerna/compare/v3.11.1...v3.12.0) (2019-02-14)
+
+
+### Bug Fixes
+
+* **publish:** Check for git describe error explicitly ([237d1c5](https://github.com/lerna/lerna/commit/237d1c5))
+* **publish:** Make the missing license warning clearer and more actionable ([#1921](https://github.com/lerna/lerna/issues/1921)) ([8a71ac4](https://github.com/lerna/lerna/commit/8a71ac4))
+* **publish:** Revert foolhardy refactoring (5e975e0) ([a6733a2](https://github.com/lerna/lerna/commit/a6733a2))
+
+
+### Features
+
+* **publish:** Add `--git-head` option to preserve gitless `from-package` metadata ([3d18f2f](https://github.com/lerna/lerna/commit/3d18f2f)), closes [#1933](https://github.com/lerna/lerna/issues/1933)
+* **publish:** Allow `from-package` positional to run without a git repo ([df49bfc](https://github.com/lerna/lerna/commit/df49bfc)), closes [#1933](https://github.com/lerna/lerna/issues/1933)
+
+
+
+
+
 ## [3.11.1](https://github.com/lerna/lerna/compare/v3.11.0...v3.11.1) (2019-02-11)
 
 **Note:** Version bump only for package @lerna/publish
