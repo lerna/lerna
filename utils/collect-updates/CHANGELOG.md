@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.12.1](https://github.com/lerna/lerna/compare/v3.12.0...v3.12.1) (2019-02-14)
+
+
+### Bug Fixes
+
+* **collect-updates:** Do not skip change detection when `--since` provided ([6ff53d6](https://github.com/lerna/lerna/commit/6ff53d6)), closes [#1927](https://github.com/lerna/lerna/issues/1927)
+
+
+
+
+
 # [3.12.0](https://github.com/lerna/lerna/compare/v3.11.1...v3.12.0) (2019-02-14)
 
 
