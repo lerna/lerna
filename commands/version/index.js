@@ -169,6 +169,11 @@ class VersionCommand extends Command {
         // still exits zero, aka "ok"
         return false;
       }
+    } else {
+      this.logger.notice(
+        "FYI",
+        "git repository validation has been skipped, please ensure your version bumps are correct"
+      );
     }
 
     this.updates = collectUpdates(
