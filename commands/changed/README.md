@@ -20,6 +20,7 @@ package-2
 `lerna changed` supports all of the flags supported by [`lerna ls`](https://github.com/lerna/lerna/tree/master/commands/list#options):
 
 - [`--json`](https://github.com/lerna/lerna/tree/master/commands/list#--json)
+- [`--ndjson`](https://github.com/lerna/lerna/tree/master/commands/list#--ndjson)
 - [`-a`, `--all`](https://github.com/lerna/lerna/tree/master/commands/list#--all)
 - [`-l`, `--long`](https://github.com/lerna/lerna/tree/master/commands/list#--long)
 - [`-p`, `--parseable`](https://github.com/lerna/lerna/tree/master/commands/list#--parseable)

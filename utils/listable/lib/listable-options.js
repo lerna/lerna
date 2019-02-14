@@ -9,6 +9,11 @@ function listableOptions(yargs) {
       describe: "Show information as a JSON array",
       type: "boolean",
     },
+    ndjson: {
+      group: "Command Options:",
+      describe: "Show information as newline-delimited JSON",
+      type: "boolean",
+    },
     a: {
       group: "Command Options:",
       describe: "Show private packages that are normally hidden",

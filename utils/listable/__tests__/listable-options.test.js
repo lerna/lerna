@@ -10,6 +10,10 @@ describe("listable.options()", () => {
     expect(parsed("--json")).toHaveProperty("json", true);
   });
 
+  it("provides --ndjson", () => {
+    expect(parsed("--ndjson")).toHaveProperty("ndjson", true);
+  });
+
   it("provides --all", () => {
     expect(parsed("--all")).toHaveProperty("all", true);
   });

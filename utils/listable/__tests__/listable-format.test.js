@@ -128,6 +128,16 @@ pkg-3  v3.0.0 pkgs/pkg-3 (PRIVATE)
 `);
     });
 
+    test("NDJSON output", () => {
+      const { text } = formatWithOptions({ ndjson: true, all: true });
+
+      expect(text).toMatchInlineSnapshot(`
+{"name":"pkg-1","version":"1.0.0","private":false,"location":"__TEST_ROOTDIR__/pkgs/pkg-1"}
+{"name":"pkg-2","private":false,"location":"__TEST_ROOTDIR__/pkgs/pkg-2"}
+{"name":"pkg-3","version":"3.0.0","private":true,"location":"__TEST_ROOTDIR__/pkgs/pkg-3"}
+`);
+    });
+
     test("parseable output", () => {
       const { text } = formatWithOptions({ parseable: true });
 

@@ -16,6 +16,8 @@ function listableFormat(pkgList, options) {
 
   if (viewOptions.showJSON) {
     text = formatJSON(resultList);
+  } else if (viewOptions.showNDJSON) {
+    text = formatNDJSON(resultList);
   } else if (viewOptions.showParseable) {
     text = formatParseable(resultList, viewOptions);
   } else {
@@ -32,6 +34,7 @@ function parseViewOptions(options) {
     showAll: alias === "la" || options.all,
     showLong: alias === "la" || alias === "ll" || options.long,
     showJSON: options.json,
+    showNDJSON: options.ndjson,
     showParseable: options.parseable,
     isTopological: options.toposort,
   };
@@ -54,16 +57,24 @@ function filterResultList(pkgList, viewOptions) {
   return result;
 }
 
-function formatJSON(resultList) {
+function toJSONList(resultList) {
   // explicit re-mapping exposes non-enumerable properties
-  const data = resultList.map(pkg => ({
+  return resultList.map(pkg => ({
     name: pkg.name,
     version: pkg.version,
     private: pkg.private,
     location: pkg.location,
   }));
+}
 
-  return JSON.stringify(data, null, 2);
+function formatJSON(resultList) {
+  return JSON.stringify(toJSONList(resultList), null, 2);
+}
+
+function formatNDJSON(resultList) {
+  return toJSONList(resultList)
+    .map(data => JSON.stringify(data))
+    .join("\n");
 }
 
 function makeParseable(pkg) {

@@ -25,6 +25,7 @@ In any case, you can always pass `--loglevel silent` to create pristine chains o
 ## Options
 
 - [`--json`](#--json)
+- [`--ndjson`](#--ndjson)
 - [`-a`, `--all`](#--all)
 - [`-l`, `--long`](#--long)
 - [`-p`, `--parseable`](#--parseable)
@@ -59,6 +60,16 @@ $ lerna ls --json
 ```sh
 $ lerna ls --json --all | json -a -c 'this.private === true' name
 package-3
+```
+
+### `--ndjson`
+
+Show information as [newline-delimited JSON](http://ndjson.org).
+
+```sh
+$ lerna ls --ndjson
+{"name":"package-1","version":"1.0.0","private":false,"location":"/path/to/packages/pkg-1"}
+{"name":"package-2","version":"1.0.0","private":false,"location":"/path/to/packages/pkg-2"}
 ```
 
 ### `--all`
