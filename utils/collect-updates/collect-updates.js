@@ -24,7 +24,7 @@ function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions
     const { sha, refCount, lastTagName } = describeRef.sync(execOpts, commandOptions.includeMergedTags);
     // TODO: warn about dirty tree?
 
-    if (refCount === "0" && forced.size === 0) {
+    if (refCount === "0" && forced.size === 0 && !committish) {
       // no commits since previous release
       log.notice("", "Current HEAD is already released, skipping change detection.");
 

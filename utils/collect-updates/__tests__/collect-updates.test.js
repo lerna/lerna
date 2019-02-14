@@ -257,6 +257,29 @@ describe("collectUpdates()", () => {
     expect(makeDiffPredicate).toHaveBeenLastCalledWith("beefcafe", execOpts, undefined);
   });
 
+  it("does not exit early on tagged release when --since <ref> is passed", () => {
+    changedPackages.add("package-dag-1");
+
+    describeRef.sync.mockReturnValueOnce({
+      refCount: "0",
+    });
+
+    const graph = buildGraph();
+    const pkgs = graph.rawPackageList;
+    const execOpts = { cwd: "/test" };
+
+    const updates = collectUpdates(pkgs, graph, execOpts, {
+      since: "deadbeef",
+    });
+
+    expect(updates).toEqual([
+      expect.objectContaining({ name: "package-dag-1" }),
+      expect.objectContaining({ name: "package-dag-2a" }),
+      expect.objectContaining({ name: "package-dag-2b" }),
+      expect.objectContaining({ name: "package-dag-3" }),
+    ]);
+  });
+
   it("ignores changes matched by --ignore-changes", () => {
     const graph = buildGraph();
     const pkgs = graph.rawPackageList;
