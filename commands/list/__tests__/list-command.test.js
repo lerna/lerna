@@ -2,6 +2,7 @@
 
 // mocked modules
 const output = require("@lerna/output");
+const collectUpdates = require("@lerna/collect-updates");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
@@ -129,6 +130,18 @@ __TEST_ROOTDIR__/packages/package-5:package-5:1.0.0:PRIVATE
     it("does not list private packages with --no-private", async () => {
       await lernaLs(testDir)("--no-private");
       expect(output.logged()).not.toMatch("package-5 v1.0.0 (private)");
+    });
+
+    it("does not emit empty stdout", async () => {
+      collectUpdates.setUpdated(testDir);
+      await lernaLs(testDir)("--since", "deadbeef");
+      expect(output).not.toHaveBeenCalled();
+      expect(collectUpdates).toHaveBeenLastCalledWith(
+        expect.any(Array),
+        expect.any(Map),
+        expect.any(Object),
+        expect.objectContaining({ since: "deadbeef" })
+      );
     });
   });
 

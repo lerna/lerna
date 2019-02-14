@@ -28,7 +28,10 @@ class ListCommand extends Command {
   }
 
   execute() {
-    output(this.result.text);
+    // piping to `wc -l` should not yield 1 when no packages matched
+    if (this.result.count) {
+      output(this.result.text);
+    }
 
     this.logger.success(
       "found",
