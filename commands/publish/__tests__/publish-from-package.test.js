@@ -72,7 +72,7 @@ describe("publish from-package", () => {
 
     expect(npmPublish).not.toHaveBeenCalled();
 
-    const logMessages = loggingOutput("info");
+    const logMessages = loggingOutput("notice");
     expect(logMessages).toContain("No unpublished release found");
   });
 
@@ -105,7 +105,7 @@ describe("publish from-package", () => {
     expect(npmPublish).toHaveBeenCalled();
     expect(writePkg.updatedManifest("package-1")).not.toHaveProperty("gitHead");
 
-    const logMessages = loggingOutput("info");
+    const logMessages = loggingOutput("notice");
     expect(logMessages).toContain("Unable to verify working tree, proceed at your own risk");
     expect(logMessages).toContain(
       "Unable to set temporary gitHead property, it will be missing from registry metadata"

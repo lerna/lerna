@@ -262,7 +262,7 @@ class PublishCommand extends Command {
         if (err.failed && err.code === 128 && err.stderr && /not a git repository/.test(err.stderr)) {
           // (we tried)
           this.logger.silly("EWORKINGTREE", err.message);
-          this.logger.info("FYI", "Unable to verify working tree, proceed at your own risk");
+          this.logger.notice("FYI", "Unable to verify working tree, proceed at your own risk");
         } else {
           // validation errors should be preserved
           throw err;
@@ -506,7 +506,7 @@ class PublishCommand extends Command {
     } catch (err) {
       // from-package should be _able_ to run without git, but at least we tried
       this.logger.silly("EGITHEAD", err.message);
-      this.logger.info(
+      this.logger.notice(
         "FYI",
         "Unable to set temporary gitHead property, it will be missing from registry metadata"
       );
@@ -529,7 +529,7 @@ class PublishCommand extends Command {
 
     return gitCheckout(dirtyManifests, this.execOpts).catch(err => {
       this.logger.silly("EGITCHECKOUT", err.message);
-      this.logger.info("FYI", "Unable to reset working tree changes, this probably isn't a git repo.");
+      this.logger.notice("FYI", "Unable to reset working tree changes, this probably isn't a git repo.");
     });
   }
 
