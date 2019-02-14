@@ -134,7 +134,7 @@ describe("conventional-commits", () => {
         await recommendVersion(pkg1, "fixed", { changelogPreset: "garbage" });
       } catch (err) {
         expect(err.message).toBe(
-          "Unable to load conventional-commits preset 'garbage' (conventional-changelog-garbage)"
+          "Unable to load conventional-changelog preset 'garbage' (conventional-changelog-garbage)"
         );
       }
 
@@ -177,7 +177,7 @@ describe("conventional-commits", () => {
         await recommendVersion(pkg1, "fixed", { changelogPreset: "conventional-changelog-garbage" });
       } catch (err) {
         expect(err.message).toBe(
-          "Unable to load conventional-commits preset 'conventional-changelog-garbage'"
+          "Unable to load conventional-changelog preset 'conventional-changelog-garbage'"
         );
       }
 
@@ -192,7 +192,7 @@ describe("conventional-commits", () => {
         await recommendVersion(pkg1, "fixed", { changelogPreset: "conventional-changelog-garbage/pail" });
       } catch (err) {
         expect(err.message).toMatch(
-          "Unable to load conventional-commits preset 'conventional-changelog-garbage/pail'"
+          "Unable to load conventional-changelog preset 'conventional-changelog-garbage/pail'"
         );
       }
 

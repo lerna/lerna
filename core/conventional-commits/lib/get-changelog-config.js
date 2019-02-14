@@ -14,8 +14,12 @@ function isFunction(config) {
 }
 
 function resolveConfigPromise(presetPackageName) {
+  log.verbose("getChangelogConfig", "Attempting to resolve preset %j", presetPackageName);
+
   // eslint-disable-next-line global-require, import/no-dynamic-require
   let config = require(presetPackageName);
+
+  log.info("getChangelogConfig", "Successfully resolved preset %j", presetPackageName);
 
   // legacy presets export an errback function instead of Q.all()
   if (isFunction(config)) {
@@ -33,6 +37,9 @@ function getChangelogConfig(changelogPreset = "conventional-changelog-angular", 
 
     // https://github.com/npm/npm-package-arg#result-object
     const parsed = npa(presetPackageName, rootPath);
+
+    log.verbose("getChangelogConfig", "using preset %j", presetPackageName);
+    log.silly("npa", parsed);
 
     if (parsed.type === "directory") {
       if (parsed.raw[0] === "@") {
@@ -58,7 +65,7 @@ function getChangelogConfig(changelogPreset = "conventional-changelog-angular", 
       return Promise.resolve(config);
     } catch (err) {
       log.verbose("getChangelogConfig", err.message);
-      log.info("getChangelogConfig", `Auto-prefixing conventional-commits preset '${changelogPreset}'`);
+      log.info("getChangelogConfig", "Auto-prefixing conventional-changelog preset %j", changelogPreset);
 
       // probably a deep shorthand subpath :P
       parsed.name = parsed.raw;
@@ -86,7 +93,7 @@ function getChangelogConfig(changelogPreset = "conventional-changelog-angular", 
 
       throw new ValidationError(
         "EPRESET",
-        `Unable to load conventional-commits preset '${changelogPreset}'${
+        `Unable to load conventional-changelog preset '${changelogPreset}'${
           changelogPreset !== presetPackageName ? ` (${presetPackageName})` : ""
         }`
       );
