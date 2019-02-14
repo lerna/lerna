@@ -9,6 +9,10 @@ const tempy = require("tempy");
 
 // partially mocked
 const ChildProcessUtilities = require("@lerna/child-process");
+const os = require("os");
+
+// normalize concurrency across different environments (localhost, CI, etc)
+jest.spyOn(os, "cpus").mockImplementation(() => new Array(42));
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
@@ -70,14 +74,14 @@ describe("core-command", () => {
       const command = testFactory({ concurrency: "bla" });
       await command;
 
-      expect(command.concurrency).toBe(4);
+      expect(command.concurrency).toBe(42);
     });
 
     it("should fall back to default if concurrency given is 0", async () => {
       const command = testFactory({ concurrency: 0 });
       await command;
 
-      expect(command.concurrency).toBe(4);
+      expect(command.concurrency).toBe(42);
     });
 
     it("should fall back to 1 if concurrency given is smaller than 1", async () => {

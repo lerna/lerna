@@ -6,7 +6,7 @@
 
 ### `--concurrency`
 
-How many threads to use when Lerna parallelizes the tasks (defaults to `4`)
+How many threads to use when Lerna parallelizes the tasks (defaults to count of logical CPU cores)
 
 ```sh
 $ lerna publish --concurrency 1
