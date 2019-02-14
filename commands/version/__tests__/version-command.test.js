@@ -504,6 +504,65 @@ describe("VersionCommand", () => {
     });
   });
 
+  describe("working on a detached HEAD", () => {
+    const detachedHEAD = async (fixture = "normal") => {
+      const cwd = await initFixture(fixture);
+      const sha = await execa.stdout("git", ["rev-parse", "HEAD"], { cwd });
+      await execa("git", ["checkout", sha], { cwd });
+      return cwd;
+    };
+
+    it("throws for version", async () => {
+      try {
+        const cwd = await detachedHEAD();
+        await lernaVersion(cwd)();
+      } catch (err) {
+        expect(err.prefix).toBe("ENOGIT");
+        expect(err.message).toBe("Detached git HEAD, please checkout a branch to choose versions.");
+      }
+
+      expect.assertions(2);
+    });
+
+    it("does not throw for version --no-git-tag-version", async () => {
+      const cwd = await detachedHEAD();
+      await lernaVersion(cwd)("--no-git-tag-version");
+      const unstaged = await listDirty(cwd);
+      expect(unstaged).toEqual([
+        "lerna.json",
+        "packages/package-1/package.json",
+        "packages/package-2/package.json",
+        "packages/package-3/package.json",
+        "packages/package-4/package.json",
+        "packages/package-5/package.json",
+      ]);
+    });
+
+    it("throws for version --conventional-commits", async () => {
+      try {
+        const cwd = await detachedHEAD();
+        await lernaVersion(cwd)("--no-git-tag-version", "--conventional-commits");
+      } catch (err) {
+        expect(err.prefix).toBe("ENOGIT");
+        expect(err.message).toBe("Detached git HEAD, please checkout a branch to choose versions.");
+      }
+
+      expect.assertions(2);
+    });
+
+    it("throws for version --allow-branch", async () => {
+      try {
+        const cwd = await detachedHEAD();
+        await lernaVersion(cwd)("--no-git-tag-version", "--allow-branch", "master");
+      } catch (err) {
+        expect(err.prefix).toBe("ENOGIT");
+        expect(err.message).toBe("Detached git HEAD, please checkout a branch to choose versions.");
+      }
+
+      expect.assertions(2);
+    });
+  });
+
   it("exits with an error when no commits are present", async () => {
     expect.assertions(2);
     const testDir = await initFixture("normal", false);
