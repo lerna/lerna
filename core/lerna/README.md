@@ -1,10 +1,8 @@
-# `lerna`
-
 > A tool for managing JavaScript projects with multiple packages.
 
-<p align="center">
+<h2 align="center">
   <img alt="Lerna" src="https://cloud.githubusercontent.com/assets/952783/15271604/6da94f96-1a06-11e6-8b04-dc3171f79a90.png" width="480">
-</p>
+</h2>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/lerna"><img alt="NPM Status" src="https://img.shields.io/npm/v/lerna.svg?style=flat"></a>
