@@ -2,6 +2,8 @@
 
 > Run an npm script in each package that contains that script
 
+Install [lerna](https://www.npmjs.com/package/lerna) for access to the `lerna` CLI.
+
 ## Usage
 
 ```sh

@@ -2,6 +2,8 @@
 
 > Symlink together all packages that are dependencies of each other
 
+Install [lerna](https://www.npmjs.com/package/lerna) for access to the `lerna` CLI.
+
 ## Usage
 
 ```sh

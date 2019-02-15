@@ -21,3 +21,5 @@ const options = {
   }
 })();
 ```
+
+Install [lerna](https://www.npmjs.com/package/lerna) for access to the `lerna` CLI.

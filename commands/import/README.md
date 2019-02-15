@@ -2,6 +2,8 @@
 
 > Import a package into the monorepo with commit history
 
+Install [lerna](https://www.npmjs.com/package/lerna) for access to the `lerna` CLI.
+
 ## Usage
 
 ```sh
@@ -17,7 +19,7 @@ repo. Each commit is modified to make changes relative to the package
 directory. So, for example, the commit that added `package.json` will
 instead add `packages/<directory-name>/package.json`.
 
-*Note*: If you're importing an external repository on a new lerna repository, then do remember to have at least one commit.
+_Note_: If you're importing an external repository on a new lerna repository, then do remember to have at least one commit.
 
 ```bash
 # Getting started with Lerna

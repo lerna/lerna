@@ -23,3 +23,5 @@ exports.builder = yargs => {
   listable.options(yargs);
 };
 ```
+
+Install [lerna](https://www.npmjs.com/package/lerna) for access to the `lerna` CLI.

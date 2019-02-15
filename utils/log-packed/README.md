@@ -15,3 +15,5 @@ execa("npm", ["pack", "--json"]).then(result => {
   tarballs.forEach(logPacked);
 });
 ```
+
+Install [lerna](https://www.npmjs.com/package/lerna) for access to the `lerna` CLI.

@@ -17,3 +17,5 @@ const { uri, auth } = mapToRegistry("my-package", config);
 ```
 
 `uri` and `auth` are suitable for arguments to [npm-registry-client](https://www.npmjs.com/package/npm-registry-client) instance method parameters.
+
+Install [lerna](https://www.npmjs.com/package/lerna) for access to the `lerna` CLI.

@@ -11,3 +11,5 @@ rimrafDir("/path/to/directory").then(removedDir => {
   console.log("removed", removedDir);
 });
 ```
+
+Install [lerna](https://www.npmjs.com/package/lerna) for access to the `lerna` CLI.

@@ -2,6 +2,8 @@
 
 > List local packages that have changed since the last tagged release
 
+Install [lerna](https://www.npmjs.com/package/lerna) for access to the `lerna` CLI.
+
 ## Usage
 
 The output of `lerna changed` is a list of packages that would be the subjects of the next `lerna version` or `lerna publish` execution.

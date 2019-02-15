@@ -2,6 +2,8 @@
 
 > List local packages
 
+Install [lerna](https://www.npmjs.com/package/lerna) for access to the `lerna` CLI.
+
 ## Usage
 
 The `list` subcommand is aliased to several convenient shorthands (similar to [`npm ls`](https://docs.npmjs.com/cli/ls)):

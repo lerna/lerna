@@ -20,3 +20,5 @@ const predicate = hasNpmVersion.makePredicate();
 // `npm --version` === 6.3.0
 hasNpmVersion(">=5"); // => true
 ```
+
+Install [lerna](https://www.npmjs.com/package/lerna) for access to the `lerna` CLI.

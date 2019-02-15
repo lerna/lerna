@@ -26,4 +26,6 @@ const result = describe.parse("v1.0.0-5-gdeadbeef");
 // { lastTagName, lastVersion, refCount, sha, isDirty }
 ```
 
+Install [lerna](https://www.npmjs.com/package/lerna) for access to the `lerna` CLI.
+
 [git describe]: https://git-scm.com/docs/git-describe

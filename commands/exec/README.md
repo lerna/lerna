@@ -2,6 +2,8 @@
 
 > Execute an arbitrary command in each package
 
+Install [lerna](https://www.npmjs.com/package/lerna) for access to the `lerna` CLI.
+
 ## Usage
 
 ```sh

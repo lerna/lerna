@@ -2,6 +2,8 @@
 
 > Diff all packages or a single package since the last release
 
+Install [lerna](https://www.npmjs.com/package/lerna) for access to the `lerna` CLI.
+
 ## Usage
 
 ```sh

@@ -4,8 +4,6 @@
 
 ## Usage
 
-```
-const getPacked = require('@lerna/get-packed');
+You probably shouldn't, at least directly.
 
-// TODO: DEMONSTRATE API
-```
+Install [lerna](https://www.npmjs.com/package/lerna) for access to the `lerna` CLI.

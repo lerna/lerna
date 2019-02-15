@@ -2,6 +2,8 @@
 
 > Create a new Lerna repo or upgrade an existing repo to the current version of Lerna
 
+Install [lerna](https://www.npmjs.com/package/lerna) for access to the `lerna` CLI.
+
 ## Usage
 
 ```sh

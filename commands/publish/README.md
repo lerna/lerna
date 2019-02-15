@@ -2,6 +2,8 @@
 
 > Publish packages in the current project
 
+Install [lerna](https://www.npmjs.com/package/lerna) for access to the `lerna` CLI.
+
 ## Usage
 
 ```sh

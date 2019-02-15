@@ -5,3 +5,5 @@
 ## Usage
 
 You probably shouldn't.
+
+Install [lerna](https://www.npmjs.com/package/lerna) for access to the `lerna` CLI.

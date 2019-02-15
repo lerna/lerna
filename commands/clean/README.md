@@ -2,6 +2,8 @@
 
 > Remove the node_modules directory from all packages
 
+Install [lerna](https://www.npmjs.com/package/lerna) for access to the `lerna` CLI.
+
 ## Usage
 
 ```sh

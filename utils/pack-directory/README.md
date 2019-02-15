@@ -6,4 +6,6 @@ This package owes an immense debt of gratitude to [Kat Marchán](https://github.
 
 ## Usage
 
-Maybe don't use it, just yet. Here be dragons.
+You probably shouldn't, at least directly.
+
+Install [lerna](https://www.npmjs.com/package/lerna) for access to the `lerna` CLI.

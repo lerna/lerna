@@ -15,3 +15,7 @@
 ## Usage
 
 Check out our documentation [here](https://github.com/lerna/lerna#readme).
+
+```sh
+npm i -D lerna
+```

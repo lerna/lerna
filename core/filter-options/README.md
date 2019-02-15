@@ -2,6 +2,8 @@
 
 > Options for lerna sub-commands that need filtering
 
+Install [lerna](https://www.npmjs.com/package/lerna) for access to the `lerna` CLI.
+
 ## Options
 
 ### `--scope <glob>`

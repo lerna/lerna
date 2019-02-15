@@ -2,6 +2,8 @@
 
 > Link local packages together and install remaining package dependencies
 
+Install [lerna](https://www.npmjs.com/package/lerna) for access to the `lerna` CLI.
+
 ## Usage
 
 ```sh
