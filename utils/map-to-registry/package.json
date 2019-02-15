@@ -8,7 +8,7 @@
     "config",
     "registry"
   ],
-  "homepage": "https://github.com/lerna/lerna",
+  "homepage": "https://github.com/lerna/lerna/tree/master/utils/map-to-registry#readme",
   "license": "MIT",
   "author": {
     "name": "Daniel Stockman",

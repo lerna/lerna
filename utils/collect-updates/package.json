@@ -6,7 +6,7 @@
     "lerna",
     "utils"
   ],
-  "homepage": "https://github.com/lerna/lerna",
+  "homepage": "https://github.com/lerna/lerna/tree/master/utils/collect-updates#readme",
   "license": "MIT",
   "author": {
     "name": "Daniel Stockman",

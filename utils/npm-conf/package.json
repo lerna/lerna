@@ -7,7 +7,7 @@
     "npm",
     "config"
   ],
-  "homepage": "https://github.com/lerna/lerna",
+  "homepage": "https://github.com/lerna/lerna/tree/master/utils/npm-conf#readme",
   "license": "MIT",
   "author": {
     "name": "Daniel Stockman",
