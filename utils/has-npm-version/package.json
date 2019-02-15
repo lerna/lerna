@@ -21,7 +21,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lerna/lerna.git"
+    "url": "git+https://github.com/lerna/lerna.git",
+    "directory": "utils/has-npm-version"
   },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"

@@ -23,7 +23,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lerna/lerna.git"
+    "url": "git+https://github.com/lerna/lerna.git",
+    "directory": "utils/log-packed"
   },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"

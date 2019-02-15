@@ -24,7 +24,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lerna/lerna.git"
+    "url": "git+https://github.com/lerna/lerna.git",
+    "directory": "utils/rimraf-dir"
   },
   "scripts": {
     "test": "echo \"Run tests from root\" && exit 1"
