@@ -1,6 +1,6 @@
 {
   "name": "@lerna/package-graph",
-  "version": "3.11.0",
+  "version": "3.13.0",
   "description": "Lerna's internal representation of a package graph",
   "keywords": [
     "lerna",

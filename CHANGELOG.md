@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.13.0](https://github.com/lerna/lerna/compare/v3.12.1...v3.13.0) (2019-02-15)
+
+
+### Features
+
+* **conventional-commits:** Bump conventional-changelog dependencies to pick up security fixes ([d632d1b](https://github.com/lerna/lerna/commit/d632d1b))
+* **listable:** Output newline-delimited JSON with `--ndjson` ([742781b](https://github.com/lerna/lerna/commit/742781b))
+* **meta:** Add `repository.directory` field to package.json ([aec5023](https://github.com/lerna/lerna/commit/aec5023))
+* **meta:** Normalize package.json `homepage` field ([abeb4dc](https://github.com/lerna/lerna/commit/abeb4dc))
+
+
+
+
+
 ## [3.12.1](https://github.com/lerna/lerna/compare/v3.12.0...v3.12.1) (2019-02-14)
 
 
