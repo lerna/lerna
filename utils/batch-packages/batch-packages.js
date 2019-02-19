@@ -7,9 +7,9 @@ const ValidationError = require("@lerna/validation-error");
 
 module.exports = batchPackages;
 
-function batchPackages(packagesToBatch, rejectCycles, graphType) {
+function batchPackages(packagesToBatch, rejectCycles, graphType, forceLocal) {
   // create a new graph because we will be mutating it
-  const graph = new PackageGraph(packagesToBatch, graphType);
+  const graph = new PackageGraph(packagesToBatch, graphType, forceLocal)
   const [cyclePaths, cycleNodes] = graph.partitionCycles();
   const batches = [];
 

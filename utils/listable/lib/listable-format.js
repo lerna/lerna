@@ -37,12 +37,13 @@ function parseViewOptions(options) {
     showNDJSON: options.ndjson,
     showParseable: options.parseable,
     isTopological: options.toposort,
+    forceLocal: options.forceLocal,
   };
 }
 
-function flatBatched(pkgList) {
+function flatBatched(pkgList, forceLocal) {
   // allow cycles, output needs to be usable for debugging circularity
-  const batches = batchPackages(pkgList, false, "allDependencies");
+  const batches = batchPackages(pkgList, false, "allDependencies", forceLocal);
 
   return batches.reduce((acc, batch) => acc.concat(batch), []);
 }
@@ -51,7 +52,7 @@ function filterResultList(pkgList, viewOptions) {
   let result = viewOptions.showAll ? pkgList.slice() : pkgList.filter(pkg => !pkg.private);
 
   if (viewOptions.isTopological) {
-    result = flatBatched(result);
+    result = flatBatched(result, viewOptions.forceLocal);
   }
 
   return result;
