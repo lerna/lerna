@@ -60,7 +60,12 @@ class RunCommand extends Command {
       }
 
       this.batchedPackages = this.toposort
-        ? batchPackages(this.packagesWithScript, this.options.rejectCycles, this.options.forceLocal)
+        ? batchPackages(
+            this.packagesWithScript,
+            this.options.rejectCycles,
+            "allDependencies",
+            this.options.forceLocal
+          )
         : [this.packagesWithScript];
     });
   }

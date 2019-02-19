@@ -170,6 +170,21 @@ describe("RunCommand", () => {
     });
   });
 
+  describe("with force-local", () => {
+    it("runs command in correct order", async () => {
+      const testDir = await initFixture("force-local");
+
+      await lernaRun(testDir)("my-script", "--force-local");
+
+      const logLines = output.logged().split("\n");
+
+      expect(logLines[0]).toEqual("package-2");
+      expect(logLines[1]).toEqual("package-3");
+      expect(logLines[2]).toEqual("package-1");
+      expect(logLines[3]).toEqual("package-4");
+    });
+  });
+
   describe("in a cyclical repo", () => {
     it("warns when cycles are encountered", async () => {
       const testDir = await initFixture("toposort");
