@@ -49,7 +49,12 @@ class ExecCommand extends Command {
       this.joinedCommand = [this.command].concat(this.args).join(" ");
 
       this.batchedPackages = this.toposort
-        ? batchPackages(this.filteredPackages, this.options.rejectCycles, this.options.forceLocal)
+        ? batchPackages(
+            this.filteredPackages,
+            this.options.rejectCycles,
+            "allDependencies",
+            this.options.forceLocal
+          )
         : [this.filteredPackages];
     });
   }

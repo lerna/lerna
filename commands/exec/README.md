@@ -79,3 +79,11 @@ Pass `--no-bail` to disable this behavior, executing in _all_ packages regardles
 
 Disable package name prefixing when output is streaming (`--stream` _or_ `--parallel`).
 This option can be useful when piping results to other processes, such as editor plugins.
+
+### `--force-local`
+
+```sh
+$ lerna exec --force-local <command>
+```
+
+When passed, this flag causes the `exec` command to always execute in topological order regardless of matching version range.

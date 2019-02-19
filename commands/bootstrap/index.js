@@ -179,7 +179,12 @@ class BootstrapCommand extends Command {
 
     chain = chain.then(() => {
       this.batchedPackages = this.toposort
-        ? batchPackages(this.filteredPackages, this.options.rejectCycles, this.options.forceLocal)
+        ? batchPackages(
+            this.filteredPackages,
+            this.options.rejectCycles,
+            "allDependencies",
+            this.options.forceLocal
+          )
         : [this.filteredPackages];
 
       if (npmClient === "yarn" && !mutex) {
