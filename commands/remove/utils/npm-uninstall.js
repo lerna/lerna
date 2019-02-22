@@ -3,11 +3,11 @@
 const fs = require("fs-extra");
 const log = require("npmlog");
 const npa = require("npm-package-arg");
-const onExit = require("signal-exit");
-const writePkg = require("write-pkg");
 
 const ChildProcessUtilities = require("@lerna/child-process");
 const getExecOpts = require("@lerna/get-npm-exec-opts");
+
+const useTemporaryManifest = require("@lerna/use-temporary-manifest");
 
 module.exports = npmUninstallWithDeps;
 
@@ -57,6 +57,7 @@ function npmUninstall(
   opts.env.LERNA_ROOT_PATH = pkg.rootPath;
 
   log.silly("npmUninstall", [cmd, args]);
+
   return ChildProcessUtilities.exec(cmd, args, opts);
 }
 
@@ -70,40 +71,8 @@ function npmUninstallWithDeps(pkg, nonHoistedDependencies, toRemove, config) {
     return Promise.resolve();
   }
 
-  const packageJsonBkp = `${pkg.manifestLocation}.lerna_backup`;
-
-  log.silly("npmUninstallWithDeps", "backup", pkg.manifestLocation);
-
-  return fs.rename(pkg.manifestLocation, packageJsonBkp).then(() => {
-    const cleanup = () => {
-      log.silly("npmUninstallWithDeps", "cleanup", pkg.manifestLocation);
-      // Need to do this one synchronously because we might be doing it on exit.
-      fs.renameSync(packageJsonBkp, pkg.manifestLocation);
-    };
-
-    // If we die we need to be sure to put things back the way we found them.
-    const unregister = onExit(cleanup);
-
-    // We have a few housekeeping tasks to take care of whether we succeed or fail.
-    const done = finalError => {
-      cleanup();
-      unregister();
-
-      if (finalError) {
-        throw finalError;
-      }
-    };
-
-    // mutate a clone of the manifest with our new versions
-    const tempJson = transformManifest(pkg, nonHoistedDependencies);
-
-    log.silly("npmUninstallWithDeps", "writing tempJson", tempJson);
-
-    // Write out our temporary cooked up package.json and then install.
-    return writePkg(pkg.manifestLocation, tempJson)
-      .then(() => npmUninstall(pkg, toRemove, config))
-      .then(() => done(), done);
-  });
+  const tempJson = transformManifest(pkg, nonHoistedDependencies);
+  return useTemporaryManifest(pkg, tempJson, () => npmUninstall(pkg, toRemove, config));
 }
 
 function transformManifest(pkg, dependencies) {

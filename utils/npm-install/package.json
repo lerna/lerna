@@ -33,10 +33,10 @@
   "dependencies": {
     "@lerna/child-process": "file:../../core/child-process",
     "@lerna/get-npm-exec-opts": "file:../get-npm-exec-opts",
+    "@lerna/use-temporary-manifest": "file:../use-temporary-manifest",
     "fs-extra": "^7.0.0",
     "npm-package-arg": "^6.1.0",
     "npmlog": "^4.1.2",
-    "signal-exit": "^3.0.2",
     "write-pkg": "^3.1.0"
   }
 }

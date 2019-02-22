@@ -10,6 +10,7 @@ exports.toDependOn = createDependencyMatcher("dependencies");
 exports.toDevDependOn = createDependencyMatcher("devDependencies");
 exports.toHaveBinaryLinks = toHaveBinaryLinks;
 exports.toHaveExecutables = toHaveExecutables;
+exports.toHaveInNodeModules = toHaveInNodeModules;
 
 function createDependencyMatcher(dependencyType) {
   const verb = dependencyType === "dependencies" ? "depend" : "dev-depend";
@@ -93,9 +94,9 @@ function toHaveBinaryLinks(received, ...inputs) {
   try {
     found = fs.readdirSync(pkg.binLocation);
   } catch (err) {
-    if (links.length === 0 && err.code === "ENOENT") {
+    if (err.code === "ENOENT") {
       return {
-        message: () => `${expectedName} not to have binary links`,
+        message: () => `${expectedName} ${this.isNot ? "not" : ""} to have binary links`,
         pass: !this.isNot,
       };
     }
@@ -152,6 +153,32 @@ function toHaveExecutables(received, ...files) {
       pass
         ? `${expectedFiles} not ${expectedAction}`
         : `${expectation} while ${failed.join(", ")} ${verb} found to be not executable.`,
+    pass,
+  };
+}
+
+function toHaveInNodeModules(received, ...files) {
+  const pkg = Package.lazy(received);
+
+  const expectedFiles = `expected ${files.join(", ")}`;
+  const expectedAction = 'to be present in "node_modules"';
+
+  const failed = files.filter(file => {
+    try {
+      return fs.accessSync(path.join(pkg.nodeModulesLocation, file));
+    } catch (_) {
+      return true;
+    }
+  });
+
+  const pass = failed.length === 0;
+  const verb = failed.length > 1 ? "were" : "was";
+
+  return {
+    message: () =>
+      pass
+        ? `${expectedFiles} not ${expectedAction}`
+        : `${expectedFiles} ${expectedAction}, however ${failed.join(", ")} ${verb} not found`,
     pass,
   };
 }

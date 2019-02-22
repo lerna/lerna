@@ -1,13 +1,11 @@
 "use strict";
 
-const fs = require("fs-extra");
 const log = require("npmlog");
 const npa = require("npm-package-arg");
-const onExit = require("signal-exit");
-const writePkg = require("write-pkg");
 
 const ChildProcessUtilities = require("@lerna/child-process");
 const getExecOpts = require("@lerna/get-npm-exec-opts");
+const useTemporaryManifest = require("@lerna/use-temporary-manifest");
 
 module.exports = npmInstall;
 module.exports.dependencies = npmInstallDependencies;
@@ -59,40 +57,10 @@ function npmInstallDependencies(pkg, dependencies, config) {
     return Promise.resolve();
   }
 
-  const packageJsonBkp = `${pkg.manifestLocation}.lerna_backup`;
+  // mutate a clone of the manifest with our new versions
+  const tempJson = transformManifest(pkg, dependencies);
 
-  log.silly("npmInstallDependencies", "backup", pkg.manifestLocation);
-
-  return fs.rename(pkg.manifestLocation, packageJsonBkp).then(() => {
-    const cleanup = () => {
-      log.silly("npmInstallDependencies", "cleanup", pkg.manifestLocation);
-      // Need to do this one synchronously because we might be doing it on exit.
-      fs.renameSync(packageJsonBkp, pkg.manifestLocation);
-    };
-
-    // If we die we need to be sure to put things back the way we found them.
-    const unregister = onExit(cleanup);
-
-    // We have a few housekeeping tasks to take care of whether we succeed or fail.
-    const done = finalError => {
-      cleanup();
-      unregister();
-
-      if (finalError) {
-        throw finalError;
-      }
-    };
-
-    // mutate a clone of the manifest with our new versions
-    const tempJson = transformManifest(pkg, dependencies);
-
-    log.silly("npmInstallDependencies", "writing tempJson", tempJson);
-
-    // Write out our temporary cooked up package.json and then install.
-    return writePkg(pkg.manifestLocation, tempJson)
-      .then(() => npmInstall(pkg, config))
-      .then(() => done(), done);
-  });
+  return useTemporaryManifest(pkg, tempJson, () => npmInstall(pkg, config));
 }
 
 function transformManifest(pkg, dependencies) {

@@ -24,7 +24,6 @@ function useTemporaryManifest(pkg, temporaryPkgJson, doSomething) {
 
     // We have a few housekeeping tasks to take care of whether we succeed or fail.
     const done = finalError => {
-      console.log("cleanup", finalError);
       cleanup();
       unregister();
 

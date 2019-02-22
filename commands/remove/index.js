@@ -6,7 +6,7 @@ const fs = require("fs-extra");
 
 const Command = require("@lerna/command");
 const { getFilteredPackages } = require("@lerna/filter-options");
-const npmUninstall = require("@lerna/npm-uninstall");
+const npmUninstall = require("./utils/npm-uninstall");
 
 module.exports = factory;
 
@@ -102,10 +102,9 @@ class RemoveCommand extends Command {
     chain = chain.then(() => {
       const isDependencyToRemoveExternal = !this.packageGraph.has(this.dependencyToRemove);
       if (isDependencyToRemoveExternal) {
-        this.removeExternal();
-      } else {
-        this.removeSymlink();
+        return this.removeExternal();
       }
+      return this.removeSymlink();
     });
 
     return chain;
@@ -127,6 +126,7 @@ class RemoveCommand extends Command {
   }
 
   removeSymlink() {
+    this.logger.info("remove", `remove symlink`);
     return pMap(this.packagesToChange, pkg => {
       const dep = path.join(pkg.nodeModulesLocation, this.dependencyToRemove);
       if (fs.pathExists(dep)) {
@@ -137,6 +137,7 @@ class RemoveCommand extends Command {
   }
 
   removeExternal() {
+    this.logger.info("remove", `remove external`);
     return pMap(this.packagesToChange, pkg => {
       const dependencies = Array.from(this.packageGraph.get(pkg.name).externalDependencies.values()).map(
         res => res.toString()
