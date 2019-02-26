@@ -59,7 +59,7 @@
     "@lerna-test/update-lerna-config": "file:helpers/update-lerna-config",
     "camelcase": "^5.0.0",
     "debug": "^4.1.1",
-    "eslint": "^5.13.0",
+    "eslint": "^5.14.1",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-config-prettier": "^4.1.0",
     "eslint-plugin-import": "^2.16.0",
