@@ -233,6 +233,15 @@ package-2
         },
       ]);
     });
+
+    it("emits empty array with no results", async () => {
+      const testDir = await initFixture("basic");
+
+      collectUpdates.setUpdated(testDir);
+      await lernaLs(testDir)("--since", "deadbeef", "--json");
+
+      expect(JSON.parse(output.logged())).toEqual([]);
+    });
   });
 
   describe("in a Yarn workspace", () => {

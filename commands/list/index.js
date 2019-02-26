@@ -29,7 +29,7 @@ class ListCommand extends Command {
 
   execute() {
     // piping to `wc -l` should not yield 1 when no packages matched
-    if (this.result.count) {
+    if (this.result.text.length) {
       output(this.result.text);
     }
 
