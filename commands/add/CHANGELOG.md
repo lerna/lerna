@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.13.1](https://github.com/lerna/lerna/compare/v3.13.0...v3.13.1) (2019-02-26)
+
+
+### Bug Fixes
+
+* **deps:** pacote ^9.5.0 ([cdc2e17](https://github.com/lerna/lerna/commit/cdc2e17))
+
+
+
+
+
 # [3.13.0](https://github.com/lerna/lerna/compare/v3.12.1...v3.13.0) (2019-02-15)
 
 
