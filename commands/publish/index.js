@@ -114,6 +114,13 @@ class PublishCommand extends Command {
       this.conf.set("tag", distTag.trim(), "cli");
     }
 
+    // a "rooted leaf" is the regrettable pattern of adding "." to the "packages" config in lerna.json
+    this.hasRootedLeaf = this.packageGraph.has(this.project.manifest.name);
+
+    if (this.hasRootedLeaf) {
+      this.logger.info("publish", "rooted leaf detected, skipping synthetic root lifecycles");
+    }
+
     this.runPackageLifecycle = createRunner(this.options);
 
     // don't execute recursively if run from a poorly-named script
@@ -572,13 +579,15 @@ class PublishCommand extends Command {
 
     chain = chain.then(() => createTempLicenses(this.project.licensePath, this.packagesToBeLicensed));
 
-    // despite being deprecated for years...
-    chain = chain.then(() => this.runRootLifecycle("prepublish"));
+    if (!this.hasRootedLeaf) {
+      // despite being deprecated for years...
+      chain = chain.then(() => this.runRootLifecycle("prepublish"));
 
-    // these lifecycles _should_ never be employed to run `lerna publish`...
-    chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "prepare"));
-    chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "prepublishOnly"));
-    chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "prepack"));
+      // these lifecycles _should_ never be employed to run `lerna publish`...
+      chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "prepare"));
+      chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "prepublishOnly"));
+      chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "prepack"));
+    }
 
     const { contents } = this.options;
     const getLocation = contents ? pkg => path.resolve(pkg.location, contents) : pkg => pkg.location;
@@ -611,7 +620,9 @@ class PublishCommand extends Command {
     // remove temporary license files if _any_ error occurs _anywhere_ in the promise chain
     chain = chain.catch(error => this.removeTempLicensesOnError(error));
 
-    chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "postpack"));
+    if (!this.hasRootedLeaf) {
+      chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "postpack"));
+    }
 
     return pFinally(chain, () => tracker.finish());
   }
@@ -647,9 +658,11 @@ class PublishCommand extends Command {
 
     chain = chain.then(() => runParallelBatches(this.batchedPackages, this.concurrency, mapper));
 
-    // cyclical "publish" lifecycles are automatically skipped
-    chain = chain.then(() => this.runRootLifecycle("publish"));
-    chain = chain.then(() => this.runRootLifecycle("postpublish"));
+    if (!this.hasRootedLeaf) {
+      // cyclical "publish" lifecycles are automatically skipped
+      chain = chain.then(() => this.runRootLifecycle("publish"));
+      chain = chain.then(() => this.runRootLifecycle("postpublish"));
+    }
 
     return pFinally(chain, () => tracker.finish());
   }

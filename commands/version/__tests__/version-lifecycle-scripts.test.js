@@ -6,14 +6,12 @@ jest.mock("../lib/is-anything-committed");
 jest.mock("../lib/is-behind-upstream");
 jest.mock("../lib/remote-branch-exists");
 
-const path = require("path");
-
 // mocked modules
 const runLifecycle = require("@lerna/run-lifecycle");
 const loadJsonFile = require("load-json-file");
 
 // helpers
-const initFixture = require("@lerna-test/init-fixture")(path.resolve(__dirname, "../../publish/__tests__"));
+const initFixture = require("@lerna-test/init-fixture")(__dirname);
 
 // test command
 const lernaVersion = require("@lerna-test/command-runner")(require("../command"));
@@ -71,6 +69,21 @@ Map {
     expect(runLifecycle.getOrderedCalls()).toEqual([
       ["package-1", "preversion"],
       ["package-1", "version"],
+      ["package-1", "postversion"],
+    ]);
+  });
+
+  it("does not duplicate rooted leaf scripts", async () => {
+    const cwd = await initFixture("lifecycle-rooted-leaf");
+
+    await lernaVersion(cwd)();
+
+    expect(runLifecycle.getOrderedCalls()).toEqual([
+      ["package-1", "preversion"],
+      ["package-1", "version"],
+      ["lifecycle-rooted-leaf", "preversion"],
+      ["lifecycle-rooted-leaf", "version"],
+      ["lifecycle-rooted-leaf", "postversion"],
       ["package-1", "postversion"],
     ]);
   });

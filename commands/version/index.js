@@ -207,6 +207,13 @@ class VersionCommand extends Command {
       return false;
     }
 
+    // a "rooted leaf" is the regrettable pattern of adding "." to the "packages" config in lerna.json
+    this.hasRootedLeaf = this.packageGraph.has(this.project.manifest.name);
+
+    if (this.hasRootedLeaf && !this.composed) {
+      this.logger.info("version", "rooted leaf detected, skipping synthetic root lifecycles");
+    }
+
     this.runPackageLifecycle = createRunner(this.options);
 
     // don't execute recursively if run from a poorly-named script
@@ -450,8 +457,10 @@ class VersionCommand extends Command {
     // postversion: Run AFTER bumping the package version, and AFTER commit.
     // @see https://docs.npmjs.com/misc/scripts
 
-    // exec preversion lifecycle in root (before all updates)
-    chain = chain.then(() => this.runRootLifecycle("preversion"));
+    if (!this.hasRootedLeaf) {
+      // exec preversion lifecycle in root (before all updates)
+      chain = chain.then(() => this.runRootLifecycle("preversion"));
+    }
 
     const actions = [
       pkg => this.runPackageLifecycle(pkg, "preversion").then(() => pkg),
@@ -548,8 +557,10 @@ class VersionCommand extends Command {
       );
     }
 
-    // exec version lifecycle in root (after all updates)
-    chain = chain.then(() => this.runRootLifecycle("version"));
+    if (!this.hasRootedLeaf) {
+      // exec version lifecycle in root (after all updates)
+      chain = chain.then(() => this.runRootLifecycle("version"));
+    }
 
     if (this.commitAndTag) {
       chain = chain.then(() => gitAdd(Array.from(changedFiles), this.execOpts));
@@ -576,8 +587,10 @@ class VersionCommand extends Command {
       pMap(this.packagesToVersion, pkg => this.runPackageLifecycle(pkg, "postversion"))
     );
 
-    // run postversion, if set, in the root directory
-    chain = chain.then(() => this.runRootLifecycle("postversion"));
+    if (!this.hasRootedLeaf) {
+      // run postversion, if set, in the root directory
+      chain = chain.then(() => this.runRootLifecycle("postversion"));
+    }
 
     return chain;
   }

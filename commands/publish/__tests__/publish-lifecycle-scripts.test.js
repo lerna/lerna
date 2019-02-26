@@ -90,4 +90,22 @@ Map {
       ["lifecycle", "postpack"],
     ]);
   });
+
+  it("does not duplicate rooted leaf scripts", async () => {
+    const cwd = await initFixture("lifecycle-rooted-leaf");
+
+    await lernaPublish(cwd)();
+
+    expect(runLifecycle.getOrderedCalls()).toEqual([
+      // TODO: separate from VersionCommand details
+      ["package-1", "preversion"],
+      ["package-1", "version"],
+      ["lifecycle-rooted-leaf", "preversion"],
+      ["lifecycle-rooted-leaf", "version"],
+      ["lifecycle-rooted-leaf", "postversion"],
+      ["package-1", "postversion"],
+      // NO publish-specific root lifecycles should be duplicated
+      // (they are all run by pack-directory and npm-publish)
+    ]);
+  });
 });

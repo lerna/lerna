@@ -1,0 +1,18 @@
+{
+  "name": "lifecycle-rooted-leaf",
+  "version": "1.0.0",
+  "dependencies": {
+    "package-1": "file:packages/package-1"
+  },
+  "scripts": {
+    "preversion": "echo preversion-rooted-leaf",
+    "version": "echo version-rooted-leaf",
+    "postversion": "echo postversion-rooted-leaf",
+    "prepublish": "echo prepublish-rooted-leaf",
+    "prepare": "echo prepare-rooted-leaf",
+    "prepublishOnly": "echo prepublishOnly-rooted-leaf",
+    "prepack": "echo prepack-rooted-leaf",
+    "postpack": "echo postpack-rooted-leaf",
+    "postpublish": "echo postpublish-rooted-leaf"
+  }
+}

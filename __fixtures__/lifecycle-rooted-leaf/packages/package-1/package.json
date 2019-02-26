@@ -1,0 +1,13 @@
+{
+  "name": "package-1",
+  "version": "1.0.0",
+  "scripts": {
+    "preversion": "echo preversion-package-1",
+    "version": "echo version-package-1",
+    "postversion": "echo postversion-package-1",
+    "prepare": "echo prepare-package-1",
+    "prepublishOnly": "echo prepublishOnly-package-1",
+    "prepack": "echo prepack-package-1",
+    "postpublish": "echo postpublish-package-1"
+  }
+}
