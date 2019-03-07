@@ -38,6 +38,7 @@ function promptVersion(currentVersion, name, prereleaseId) {
       { value: premajor, name: `Premajor (${premajor})` },
       { value: "PRERELEASE", name: "Custom Prerelease" },
       { value: "CUSTOM", name: "Custom Version" },
+      { value: currentVersion, name: "Unchanged" },
     ],
   }).then(choice => {
     if (choice === "CUSTOM") {

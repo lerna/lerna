@@ -461,6 +461,10 @@ Array [
           "name": "Custom Version",
           "value": "CUSTOM",
         },
+        Object {
+          "name": "Unchanged",
+          "value": "1.0.0",
+        },
       ],
     },
   ],
