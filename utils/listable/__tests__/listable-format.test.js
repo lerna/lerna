@@ -76,8 +76,13 @@ pkg-2 MISSING pkgs/pkg-2
       const { count, text } = formatWithOptions({ graph: true });
 
       expect(count).toBe(2);
-      expect(text).toMatch(`
-      {"pkg-1":["pkg-2"],"pkg-2":[]}
+      expect(text).toMatchInlineSnapshot(`
+{
+  "pkg-1": [
+    "pkg-2"
+  ],
+  "pkg-2": []
+}
 `);
     });
 

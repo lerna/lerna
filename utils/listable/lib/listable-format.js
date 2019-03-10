@@ -79,7 +79,7 @@ function formatJsonGraph(resultList) {
   for (const pkg of resultList) {
     graph[pkg.name] = Object.keys(pkg.dependencies || []);
   }
-  return JSON.stringify(graph);
+  return JSON.stringify(graph, null, 2);
 }
 
 function formatNDJSON(resultList) {
