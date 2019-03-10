@@ -32,6 +32,7 @@ In any case, you can always pass `--loglevel silent` to create pristine chains o
 - [`-l`, `--long`](#--long)
 - [`-p`, `--parseable`](#--parseable)
 - [`--toposort`](#--toposort)
+- [`--graph`](#--graph)
 
 `lerna ls` also respects all available [Filter Flags](https://www.npmjs.com/package/@lerna/filter-options).
 
@@ -142,4 +143,18 @@ $ json dependencies <packages/pkg-1/package.json
 $ lerna ls --toposort
 package-2
 package-1
+```
+
+### `--graph`
+
+Prints packages with an array of dependencies for each one as a JSON.
+
+```sh
+$ lerna ls --graph
+{
+  "pkg-1": [
+    "pkg-2"
+  ],
+  "pkg-2": []
+}
 ```
