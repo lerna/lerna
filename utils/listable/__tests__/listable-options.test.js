@@ -41,4 +41,8 @@ describe("listable.options()", () => {
   it("provides --toposort", () => {
     expect(parsed("--toposort")).toHaveProperty("toposort", true);
   });
+
+  it("provides --graph", () => {
+    expect(parsed("--graph")).toHaveProperty("graph", true);
+  });
 });

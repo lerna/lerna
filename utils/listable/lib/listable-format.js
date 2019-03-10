@@ -20,6 +20,8 @@ function listableFormat(pkgList, options) {
     text = formatNDJSON(resultList);
   } else if (viewOptions.showParseable) {
     text = formatParseable(resultList, viewOptions);
+  } else if (viewOptions.showGraph) {
+    text = formatJsonGraph(resultList, viewOptions);
   } else {
     text = formatColumns(resultList, viewOptions);
   }
@@ -37,6 +39,7 @@ function parseViewOptions(options) {
     showNDJSON: options.ndjson,
     showParseable: options.parseable,
     isTopological: options.toposort,
+    showGraph: options.graph,
   };
 }
 
@@ -69,6 +72,14 @@ function toJSONList(resultList) {
 
 function formatJSON(resultList) {
   return JSON.stringify(toJSONList(resultList), null, 2);
+}
+
+function formatJsonGraph(resultList) {
+  const graph = {};
+  for (const pkg of resultList) {
+    graph[pkg.name] = Object.keys(pkg.dependencies || []);
+  }
+  return JSON.stringify(graph);
 }
 
 function formatNDJSON(resultList) {
