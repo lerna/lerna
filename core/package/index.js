@@ -64,12 +64,18 @@ class Package {
       },
       // immutable
       bin: {
+        // name to path, e.g. { "filename": "bin/filename" }
         value:
-          typeof pkg.bin === "string"
+          typeof pkg.bin === "undefined"
+            ? {}
+            : typeof pkg.bin === "string"
             ? {
                 [binSafeName(resolved)]: pkg.bin,
               }
-            : Object.assign({}, pkg.bin),
+            : pkg.bin.reduce((acc, name) => {
+                acc[name.substr(name.lastIndexOf("/") + 1)] = name;
+                return acc;
+              }, {}),
       },
       scripts: {
         value: Object.assign({}, pkg.scripts),
