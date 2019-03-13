@@ -54,6 +54,8 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 - [`--preid`](#--preid)
 - [`--registry <url>`](#--registry-url)
 - [`--temp-tag`](#--temp-tag)
+- [`--ignore-scripts`](#--ignore-scripts)
+- [`--ignore-prepublish`](#--ignore-prepublish)
 - [`--yes`](#--yes)
 
 ### `--canary`
@@ -171,6 +173,14 @@ new version(s) to the dist-tag configured by [`--dist-tag`](#--dist-tag-tag) (de
 This is not generally necessary, as Lerna will publish packages in topological
 order (all dependencies before dependents) by default.
 
+### `--ignore-scripts`
+
+When passed, this flag will disable running [lifecycle scripts](#lifecycle-events) during `lerna publish`.
+
+### `--ignore-prepublish`
+
+When passed, this lfag will disable [`prepublish`](#lifecycle-events) script being executed.
+
 ### `--yes`
 
 ```sh
@@ -230,3 +240,43 @@ You can customize the dist-tag on a per-package basis by setting [`tag`](https:/
 
 - Passing [`--dist-tag`](#--dist-tag-tag) will _overwrite_ this value.
 - This value is _always_ ignored when [`--canary`](#--canary) is passed.
+
+## LifeCycle Events
+
+Lerna will run [npm lifecycle scripts](https://docs.npmjs.com/misc/scripts#description) during `lerna publish` in the following order:
+
+### Pre Publish
+
+- In root package:
+  - `prepublish`
+  - `prepare`
+  - `prepublishOnly`
+  - `prepack`
+
+- In each subpackage:
+  - `prepublish`
+  - `prepare`
+  - `prepublishOnly`
+  - `prepack`
+
+### Packing each subpackage
+
+- In each subpackage:
+  - `postpack`
+
+### After all subpackages packed
+
+- In root package:
+  - `postpack`
+
+### Publishing each subpackage
+
+- In each subpackage:
+  - `publish`
+  - `postpublish`
+
+### After all subpackages published
+
+- In root package:
+  - `publish`
+  - `postpublish`
