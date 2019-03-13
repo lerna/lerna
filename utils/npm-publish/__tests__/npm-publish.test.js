@@ -32,7 +32,7 @@ describe("npm-publish", () => {
   const tarFilePath = "/tmp/test-1.10.100.tgz";
   const rootPath = path.normalize("/test");
   const pkg = new Package(
-    { name: "test", version: "1.10.100" },
+    { name: "@scope/test", version: "1.10.100" },
     path.join(rootPath, "npmPublish/test"),
     rootPath
   );
@@ -49,8 +49,8 @@ describe("npm-publish", () => {
       mockTarData,
       expect.figgyPudding({
         dryRun: false,
-        projectScope: "test",
         tag: "published-tag",
+        projectScope: "@scope",
       })
     );
   });
@@ -127,7 +127,7 @@ describe("npm-publish", () => {
 
   it("calls publish lifecycles", async () => {
     const aFiggyPudding = expect.figgyPudding({
-      projectScope: "test",
+      projectScope: "@scope",
     });
 
     await npmPublish(pkg, tarFilePath);
