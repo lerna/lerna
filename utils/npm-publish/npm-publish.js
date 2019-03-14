@@ -31,13 +31,13 @@ const PublishConfig = figgyPudding(
 );
 
 function npmPublish(pkg, tarFilePath, _opts) {
-  const { scope, name } = npa(pkg.name);
+  const { scope } = npa(pkg.name);
   // pass only the package scope to libnpmpublish
   const opts = PublishConfig(_opts, {
     projectScope: scope,
   });
 
-  opts.log.verbose("publish", name);
+  opts.log.verbose("publish", pkg.name);
 
   let chain = Promise.resolve();
 
