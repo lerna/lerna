@@ -32,6 +32,8 @@ const isBreakingChange = require("./lib/is-breaking-change");
 const isAnythingCommitted = require("./lib/is-anything-committed");
 const makePromptVersion = require("./lib/prompt-version");
 
+const { collectPackages, getPackagesForOption } = collectUpdates;
+
 module.exports = factory;
 
 function factory(argv) {
@@ -176,6 +178,15 @@ class VersionCommand extends Command {
       );
     }
 
+    if (this.options.conventionalPrerelease && this.options.conventionalGraduate) {
+      throw new ValidationError(
+        "ENOTALLOWED",
+        dedent`
+          --conventional-prerelease cannot be combined with --conventional-graduate.
+        `
+      );
+    }
+
     this.updates = collectUpdates(
       this.packageGraph.rawPackageList,
       this.packageGraph,
@@ -232,7 +243,10 @@ class VersionCommand extends Command {
 
     // amending a commit probably means the working tree is dirty
     if (this.commitAndTag && this.gitOpts.amend !== true) {
-      tasks.unshift(() => checkWorkingTree(this.execOpts));
+      const { forcePublish, conventionalCommits, conventionalGraduate } = this.options;
+      const checkUncommittedOnly = forcePublish || (conventionalCommits && conventionalGraduate);
+      const check = checkUncommittedOnly ? checkWorkingTree.throwIfUncommitted : checkWorkingTree;
+      tasks.unshift(() => check(this.execOpts));
     } else {
       this.logger.warn("version", "Skipping working tree validation, proceed at your own risk");
     }
@@ -304,7 +318,7 @@ class VersionCommand extends Command {
       predicate = makeGlobalVersionPredicate(nextVersion);
     } else if (conventionalCommits) {
       // it's a bit weird to have a return here, true
-      return this.recommendVersions();
+      return this.recommendVersions(resolvePrereleaseId);
     } else if (independentVersions) {
       // prompt for each independent update with potential prerelease ID
       predicate = makePromptVersion(resolvePrereleaseId);
@@ -327,11 +341,29 @@ class VersionCommand extends Command {
     return pReduce(this.updates, iterator, new Map());
   }
 
-  recommendVersions() {
+  getPrereleasePackageNames() {
+    const prereleasePackageNames = getPackagesForOption(this.options.conventionalPrerelease);
+    const isCandidate = prereleasePackageNames.has("*")
+      ? () => true
+      : (node, name) => prereleasePackageNames.has(name);
+
+    return collectPackages(this.packageGraph, { isCandidate }).map(pkg => pkg.name);
+  }
+
+  recommendVersions(resolvePrereleaseId) {
     const independentVersions = this.project.isIndependent();
-    const { changelogPreset } = this.options;
+    const { changelogPreset, conventionalGraduate } = this.options;
     const rootPath = this.project.manifest.location;
     const type = independentVersions ? "independent" : "fixed";
+    const prereleasePackageNames = this.getPrereleasePackageNames();
+    const graduatePackageNames = Array.from(getPackagesForOption(conventionalGraduate));
+    const shouldPrerelease = name => prereleasePackageNames && prereleasePackageNames.includes(name);
+    const shouldGraduate = name => graduatePackageNames.includes("*") || graduatePackageNames.includes(name);
+    const getPrereleaseId = node => {
+      if (!shouldGraduate(node.name) && (shouldPrerelease(node.name) || node.prereleaseId)) {
+        return resolvePrereleaseId(node.prereleaseId);
+      }
+    };
 
     let chain = Promise.resolve();
 
@@ -345,6 +377,7 @@ class VersionCommand extends Command {
           changelogPreset,
           rootPath,
           tagPrefix: this.tagPrefix,
+          prereleaseId: getPrereleaseId(node),
         })
       )
     );

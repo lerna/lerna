@@ -1,5 +1,7 @@
 "use strict";
 
+const dedent = require("dedent");
+
 jest.mock("@lerna/describe-ref");
 jest.mock("../lib/has-tags");
 jest.mock("../lib/make-diff-predicate");
@@ -45,6 +47,10 @@ const ALL_NODES = Object.freeze([
   expect.objectContaining({ name: "package-dag-3" }),
   expect.objectContaining({ name: "package-standalone" }),
 ]);
+
+const toPrereleaseMapper = names => pkg => {
+  return !names || names.includes(pkg.name) ? Object.assign(pkg, { version: `${pkg.version}-alpha.0` }) : pkg;
+};
 
 describe("collectUpdates()", () => {
   beforeEach(() => {
@@ -226,6 +232,91 @@ describe("collectUpdates()", () => {
       expect.objectContaining({ name: "package-standalone" }),
     ]);
   });
+
+  it("returns all prereleased nodes with --conventional-graduate", () => {
+    const graph = buildGraph(toPrereleaseMapper());
+    const pkgs = graph.rawPackageList;
+    const execOpts = { cwd: "/test" };
+
+    const updates = collectUpdates(pkgs, graph, execOpts, {
+      conventionalCommits: true,
+      conventionalGraduate: true,
+    });
+
+    expect(updates).toEqual(ALL_NODES);
+  });
+
+  it("returns all prereleased nodes with --conventional-graduate *", () => {
+    const graph = buildGraph(toPrereleaseMapper());
+    const pkgs = graph.rawPackageList;
+    const execOpts = { cwd: "/test" };
+
+    const updates = collectUpdates(pkgs, graph, execOpts, {
+      conventionalCommits: true,
+      conventionalGraduate: "*",
+    });
+
+    expect(updates).toEqual(ALL_NODES);
+  });
+
+  it("always includes prereleased nodes targeted by --conventional-graduate <pkg>", () => {
+    changedPackages.add("package-dag-3");
+
+    const graph = buildGraph(toPrereleaseMapper(["package-dag-3", "package-standalone"]));
+    const pkgs = graph.rawPackageList;
+    const execOpts = { cwd: "/test" };
+
+    const updates = collectUpdates(pkgs, graph, execOpts, {
+      conventionalCommits: true,
+      conventionalGraduate: "package-standalone",
+    });
+
+    expect(updates).toEqual([
+      expect.objectContaining({ name: "package-dag-3" }),
+      expect.objectContaining({ name: "package-standalone" }),
+    ]);
+  });
+
+  it("always includes prereleased nodes targeted by --conventional-graduate <pkg>,<pkg>", () => {
+    changedPackages.add("package-dag-3");
+
+    const graph = buildGraph(toPrereleaseMapper(["package-dag-3", "package-standalone", "package-dag-2b"]));
+    const pkgs = graph.rawPackageList;
+    const execOpts = { cwd: "/test" };
+
+    const updates = collectUpdates(pkgs, graph, execOpts, {
+      forcePublish: "package-standalone,package-dag-2b",
+    });
+
+    expect(updates).toEqual([
+      expect.objectContaining({ name: "package-dag-2b" }),
+      expect.objectContaining({ name: "package-dag-3" }),
+      expect.objectContaining({ name: "package-standalone" }),
+    ]);
+  });
+
+  it(
+    dedent`
+    always includes prereleased nodes targeted by --conventional-graduate <pkg> --conventional-graduate <pkg>
+  `,
+    () => {
+      changedPackages.add("package-dag-3");
+
+      const graph = buildGraph(toPrereleaseMapper(["package-dag-3", "package-standalone", "package-dag-2b"]));
+      const pkgs = graph.rawPackageList;
+      const execOpts = { cwd: "/test" };
+
+      const updates = collectUpdates(pkgs, graph, execOpts, {
+        forcePublish: ["package-standalone", "package-dag-2b"],
+      });
+
+      expect(updates).toEqual([
+        expect.objectContaining({ name: "package-dag-2b" }),
+        expect.objectContaining({ name: "package-dag-3" }),
+        expect.objectContaining({ name: "package-standalone" }),
+      ]);
+    }
+  );
 
   it("uses revision range with --canary", () => {
     changedPackages.add("package-dag-2a");

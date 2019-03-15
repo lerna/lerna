@@ -31,11 +31,17 @@ describe("--conventional-commits", () => {
       ["package-5", "5.0.1"],
     ]);
 
-    beforeEach(() => {
-      versionBumps.forEach(bump => ConventionalCommitUtilities.recommendVersion.mockResolvedValueOnce(bump));
-    });
+    const prereleaseVersionBumps = new Map([
+      ["package-1", "1.0.1-alpha.0"],
+      ["package-2", "2.1.0-alpha.0"],
+      ["package-3", "4.0.0-beta.0"],
+      ["package-4", "4.1.0-alpha.0"],
+      ["package-5", "5.0.1-alpha.0"],
+    ]);
 
     it("should use conventional-commits utility to guess version bump and generate CHANGELOG", async () => {
+      versionBumps.forEach(bump => ConventionalCommitUtilities.recommendVersion.mockResolvedValueOnce(bump));
+
       const cwd = await initFixture("independent");
 
       await lernaVersion(cwd)("--conventional-commits");
@@ -47,7 +53,56 @@ describe("--conventional-commits", () => {
         expect(ConventionalCommitUtilities.recommendVersion).toHaveBeenCalledWith(
           expect.objectContaining({ name }),
           "independent",
+          { changelogPreset: undefined, rootPath: cwd, tagPrefix: "v", prereleaseId: undefined }
+        );
+        expect(ConventionalCommitUtilities.updateChangelog).toHaveBeenCalledWith(
+          expect.objectContaining({ name, version }),
+          "independent",
+          { changelogPreset: undefined, rootPath: cwd, tagPrefix: "v", prereleaseId: undefined }
+        );
+      });
+    });
+
+    it("should guess prerelease version bumps and generate CHANGELOG", async () => {
+      prereleaseVersionBumps.forEach(bump =>
+        ConventionalCommitUtilities.recommendVersion.mockResolvedValueOnce(bump)
+      );
+      const cwd = await initFixture("prerelease-independent");
+
+      await lernaVersion(cwd)("--conventional-commits", "--conventional-prerelease");
+
+      const changedFiles = await showCommit(cwd, "--name-only");
+      expect(changedFiles).toMatchSnapshot();
+
+      prereleaseVersionBumps.forEach((version, name) => {
+        const prereleaseId = semver.prerelease(version)[0];
+        expect(ConventionalCommitUtilities.recommendVersion).toHaveBeenCalledWith(
+          expect.objectContaining({ name }),
+          "independent",
+          { changelogPreset: undefined, rootPath: cwd, tagPrefix: "v", prereleaseId }
+        );
+        expect(ConventionalCommitUtilities.updateChangelog).toHaveBeenCalledWith(
+          expect.objectContaining({ name, version }),
+          "independent",
           { changelogPreset: undefined, rootPath: cwd, tagPrefix: "v" }
+        );
+      });
+    });
+
+    it("should graduate prerelease version bumps and generate CHANGELOG", async () => {
+      versionBumps.forEach(bump => ConventionalCommitUtilities.recommendVersion.mockResolvedValueOnce(bump));
+      const cwd = await initFixture("prerelease-independent");
+
+      await lernaVersion(cwd)("--conventional-commits", "--conventional-graduate");
+
+      const changedFiles = await showCommit(cwd, "--name-only");
+      expect(changedFiles).toMatchSnapshot();
+
+      versionBumps.forEach((version, name) => {
+        expect(ConventionalCommitUtilities.recommendVersion).toHaveBeenCalledWith(
+          expect.objectContaining({ name }),
+          "independent",
+          { changelogPreset: undefined, rootPath: cwd, tagPrefix: "v", prerelease: undefined }
         );
         expect(ConventionalCommitUtilities.updateChangelog).toHaveBeenCalledWith(
           expect.objectContaining({ name, version }),
@@ -59,7 +114,12 @@ describe("--conventional-commits", () => {
 
     it("accepts --changelog-preset option", async () => {
       const cwd = await initFixture("independent");
-      const changelogOpts = { changelogPreset: "foo-bar", rootPath: cwd, tagPrefix: "v" };
+      const changelogOpts = {
+        changelogPreset: "foo-bar",
+        rootPath: cwd,
+        tagPrefix: "v",
+        prereleaseId: undefined,
+      };
 
       await lernaVersion(cwd)("--conventional-commits", "--changelog-preset", "foo-bar");
 
@@ -84,16 +144,14 @@ describe("--conventional-commits", () => {
   });
 
   describe("fixed mode", () => {
-    beforeEach(() => {
+    it("should use conventional-commits utility to guess version bump and generate CHANGELOG", async () => {
       ConventionalCommitUtilities.recommendVersion
         .mockResolvedValueOnce("1.0.1")
         .mockResolvedValueOnce("1.1.0")
         .mockResolvedValueOnce("2.0.0")
         .mockResolvedValueOnce("1.1.0")
         .mockResolvedValueOnce("1.0.0");
-    });
 
-    it("should use conventional-commits utility to guess version bump and generate CHANGELOG", async () => {
       const cwd = await initFixture("normal");
 
       await lernaVersion(cwd)("--conventional-commits");
@@ -107,11 +165,58 @@ describe("--conventional-commits", () => {
         expect(ConventionalCommitUtilities.recommendVersion).toHaveBeenCalledWith(
           expect.objectContaining({ name, location }),
           "fixed",
-          { changelogPreset: undefined, rootPath: cwd, tagPrefix: "v" }
+          { changelogPreset: undefined, rootPath: cwd, tagPrefix: "v", prereleaseId: undefined }
         );
 
         expect(ConventionalCommitUtilities.updateChangelog).toHaveBeenCalledWith(
           expect.objectContaining({ name, version: "2.0.0" }),
+          "fixed",
+          { changelogPreset: undefined, rootPath: cwd, tagPrefix: "v", prereleaseId: undefined }
+        );
+      });
+
+      expect(ConventionalCommitUtilities.updateChangelog).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          name: "normal",
+          location: cwd,
+        }),
+        "root",
+        {
+          changelogPreset: undefined,
+          rootPath: cwd,
+          tagPrefix: "v",
+          version: "2.0.0",
+          prereleaseId: undefined,
+        }
+      );
+    });
+
+    it("should guess prerelease version bumps and generate CHANGELOG", async () => {
+      ConventionalCommitUtilities.recommendVersion
+        .mockResolvedValueOnce("1.0.1-alpha.0")
+        .mockResolvedValueOnce("1.1.0-alpha.0")
+        .mockResolvedValueOnce("2.0.0-alpha.0")
+        .mockResolvedValueOnce("1.1.0-alpha.0")
+        .mockResolvedValueOnce("1.0.0-alpha.0");
+
+      const cwd = await initFixture("normal");
+
+      await lernaVersion(cwd)("--conventional-commits", "--conventional-prerelease");
+
+      const changedFiles = await showCommit(cwd, "--name-only");
+      expect(changedFiles).toMatchSnapshot();
+
+      ["package-1", "package-2", "package-3", "package-4", "package-5"].forEach(name => {
+        const location = path.join(cwd, "packages", name);
+
+        expect(ConventionalCommitUtilities.recommendVersion).toHaveBeenCalledWith(
+          expect.objectContaining({ name, location }),
+          "fixed",
+          { changelogPreset: undefined, rootPath: cwd, tagPrefix: "v", prereleaseId: "alpha" }
+        );
+
+        expect(ConventionalCommitUtilities.updateChangelog).toHaveBeenCalledWith(
+          expect.objectContaining({ name, version: "2.0.0-alpha.0" }),
           "fixed",
           { changelogPreset: undefined, rootPath: cwd, tagPrefix: "v" }
         );
@@ -123,7 +228,13 @@ describe("--conventional-commits", () => {
           location: cwd,
         }),
         "root",
-        { changelogPreset: undefined, rootPath: cwd, tagPrefix: "v", version: "2.0.0" }
+        {
+          changelogPreset: undefined,
+          rootPath: cwd,
+          tagPrefix: "v",
+          version: "2.0.0-alpha.0",
+          prereleaseId: undefined,
+        }
       );
     });
 
@@ -133,6 +244,7 @@ describe("--conventional-commits", () => {
         changelogPreset: "baz-qux",
         rootPath: cwd,
         tagPrefix: "dragons-are-awesome",
+        prereleaseId: undefined,
       };
 
       await lernaVersion(cwd)(

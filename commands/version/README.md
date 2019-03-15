@@ -30,15 +30,23 @@ lerna version [major | minor | patch | premajor | preminor | prepatch | prerelea
 When this positional parameter is passed, `lerna version` will skip the version selection prompt and [increment](https://github.com/npm/node-semver#functions) the version by that keyword.
 You must still use the `--yes` flag to avoid all prompts.
 
-#### "Graduating" prereleases
+## Prerelease
 
 If you have any packages with a prerelease version number (e.g. `2.0.0-beta.3`) and you run `lerna version` with and a non-prerelease bump (`major`, `minor`, or `patch`), it will publish those previously pre-released packages _as well as_ the packages that have changed since the last release.
+
+For projects using conventional commits, use the following flags for prerelease management:
+**[`--conventional-prerelease`](#--conventional-prerelease):** release current changes as prerelease versions.
+**[`--conventional-graduate`](#--conventional-graduate):** graduate prerelease versioned packages to stable versions.
+
+Running `lerna version --conventional-commits` without the above flags will release current changes as prerelease only if the version is already in prerelease.
 
 ## Options
 
 - [`--allow-branch`](#--allow-branch-glob)
 - [`--amend`](#--amend)
 - [`--conventional-commits`](#--conventional-commits)
+- [`--conventional-graduate`](#--conventional-graduate)
+- [`--conventional-prerelease`](#--conventional-prerelease)
 - [`--changelog-preset`](#--changelog-preset)
 - [`--exact`](#--exact)
 - [`--force-publish`](#--force-publish)
@@ -116,6 +124,31 @@ lerna version --conventional-commits
 When run with this flag, `lerna version` will use the [Conventional Commits Specification](https://conventionalcommits.org/) to [determine the version bump](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-recommended-bump) and [generate CHANGELOG.md files](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-changelog-cli).
 
 Passing [`--no-changelog`](#--no-changelog) will disable the generation (or updating) of `CHANGELOG.md` files.
+
+### `--conventional-graduate`
+
+```sh
+lerna version --conventional-commits --conventional-graduate=package-2,package-4
+
+# force all prerelease packages to be graduated
+lerna version --conventional-commits --conventional-graduate
+```
+When run with this flag, `lerna version` will graduate the specified packages (comma-separated) or all packages using `*`. This command works regardless of whether the current HEAD has been released, similar to `--force-publish`, except that any non-prerelease packages are ignored. If changes are present for packages that are not specified (if specifying packages), or for packages that are not in prerelease, those packages will be versioned as they normally would using `--conventional-commits`.
+
+"Graduating" a package means bumping to the non-prerelease variant of a prerelease version, eg. `package-1@1.0.0-alpha.0 => package-1@1.0.0`.
+
+> NOTE: when specifying packages, dependents of specified packages will be released, but will not be graduated.
+
+### `--conventional-prerelease`
+
+```sh
+lerna version --conventional-commits --conventional-prerelease=package-2,package-4
+
+# force all prerelease packages to be graduated
+lerna version --conventional-commits --conventional-graduate
+```
+
+When run with this flag, `lerna version` will release with prerelease versions the specified packages (comma-separated) or all packages using `*`. Releases all unreleased changes as pre(patch/minor/major/release) by prefixing the version recommendation from `conventional-commits` with `pre`, eg. if present changes include a feature commit, the recommended bump will be `minor`, so this flag will result in a `preminor` release. If changes are present for packages that are not specified (if specifying packages), or for packages that are already in prerelease, those packages will be versioned as they normally would using `--conventional-commits`.
 
 ### `--changelog-preset`
 

@@ -7,7 +7,7 @@ const getChangelogConfig = require("./get-changelog-config");
 
 module.exports = recommendVersion;
 
-function recommendVersion(pkg, type, { changelogPreset, rootPath, tagPrefix }) {
+function recommendVersion(pkg, type, { changelogPreset, rootPath, tagPrefix, prereleaseId }) {
   log.silly(type, "for %s at %s", pkg.name, pkg.location);
 
   const options = {
@@ -20,6 +20,20 @@ function recommendVersion(pkg, type, { changelogPreset, rootPath, tagPrefix }) {
     // only fixed mode can have a custom tag prefix
     options.tagPrefix = tagPrefix;
   }
+
+  const shouldBumpPrerelease = (releaseType, version) => {
+    if (!semver.prerelease(version)) {
+      return true;
+    }
+    switch (releaseType) {
+      case "major":
+        return semver.minor(version) !== 0;
+      case "minor":
+        return semver.patch(version) !== 0;
+      default:
+        return false;
+    }
+  };
 
   return getChangelogConfig(changelogPreset, rootPath).then(config => {
     // "new" preset API
@@ -35,8 +49,15 @@ function recommendVersion(pkg, type, { changelogPreset, rootPath, tagPrefix }) {
         // we still need to bump _something_ because lerna saw a change here
         const releaseType = data.releaseType || "patch";
 
-        log.verbose(type, "increment %s by %s", pkg.version, releaseType);
-        resolve(semver.inc(pkg.version, releaseType));
+        if (prereleaseId) {
+          const shouldBump = shouldBumpPrerelease(releaseType, pkg.version);
+          const prereleaseType = shouldBump ? `pre${releaseType}` : "prerelease";
+          log.verbose(type, "increment %s by %s", pkg.version, prereleaseType);
+          resolve(semver.inc(pkg.version, prereleaseType, prereleaseId));
+        } else {
+          log.verbose(type, "increment %s by %s", pkg.version, releaseType);
+          resolve(semver.inc(pkg.version, releaseType));
+        }
       });
     });
   });

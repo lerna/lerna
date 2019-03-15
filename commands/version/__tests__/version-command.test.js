@@ -48,6 +48,9 @@ expect.addSnapshotSerializer(require("@lerna-test/serialize-git-sha"));
 
 describe("VersionCommand", () => {
   describe("normal mode", () => {
+    beforeEach(() => {
+      checkWorkingTree.mockReset();
+    });
     it("versions changed packages", async () => {
       const testDir = await initFixture("normal");
       // when --conventional-commits is absent,
@@ -84,6 +87,20 @@ describe("VersionCommand", () => {
       } catch (err) {
         expect(err.message).toMatch("independent");
       }
+    });
+
+    it("throws an error if conventional prerelease and graduate flags are both passed", async () => {
+      const testDir = await initFixture("normal");
+
+      try {
+        await lernaVersion(testDir)("--conventional-prerelease", "--conventional-graduate");
+      } catch (err) {
+        expect(err.message).toMatchInlineSnapshot(
+          `"--conventional-prerelease cannot be combined with --conventional-graduate."`
+        );
+      }
+
+      expect.assertions(1);
     });
 
     it("throws an error when remote branch doesn't exist", async () => {
@@ -132,6 +149,17 @@ describe("VersionCommand", () => {
       }
 
       expect.assertions(1);
+    });
+
+    it("does not throw if current ref is already tagged when using --force-publish", async () => {
+      checkWorkingTree.mockImplementationOnce(() => {
+        throw new Error("released");
+      });
+
+      const testDir = await initFixture("normal");
+      await lernaVersion(testDir)("--force-publish");
+
+      expect.assertions(0);
     });
 
     it("only bumps changed packages when non-major version selected", async () => {

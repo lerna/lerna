@@ -31,6 +31,19 @@ describe("conventional-commits", () => {
       expect(bump).toBe("1.1.0");
     });
 
+    it("returns next version prerelease bump with prereleaseId", async () => {
+      const cwd = await initFixture("fixed");
+      const [pkg1] = await getPackages(cwd);
+
+      // make a change in package-1
+      await pkg1.set("changed", 1).serialize();
+      await gitAdd(cwd, pkg1.manifestLocation);
+      await gitCommit(cwd, "feat: changed 1");
+
+      const bump = await recommendVersion(pkg1, "fixed", { prereleaseId: "alpha" });
+      expect(bump).toBe("1.1.0-alpha.0");
+    });
+
     it("returns package-specific bumps in independent mode", async () => {
       const cwd = await initFixture("independent");
       const [pkg1, pkg2] = await getPackages(cwd);
@@ -52,6 +65,29 @@ describe("conventional-commits", () => {
       ]);
       expect(bump1).toBe("1.0.1");
       expect(bump2).toBe("1.1.0");
+    });
+
+    it("returns package-specific prerelease bumps in independent mode with prereleaseId", async () => {
+      const cwd = await initFixture("independent");
+      const [pkg1, pkg2] = await getPackages(cwd);
+      const opts = { changelogPreset: "angular" };
+
+      // make a change in package-1 and package-2
+      await pkg1.set("changed", 1).serialize();
+      await pkg2.set("changed", 2).serialize();
+
+      await gitAdd(cwd, pkg1.manifestLocation);
+      await gitCommit(cwd, "fix: changed 1");
+
+      await gitAdd(cwd, pkg2.manifestLocation);
+      await gitCommit(cwd, "feat: changed 2");
+
+      const [bump1, bump2] = await Promise.all([
+        recommendVersion(pkg1, "independent", Object.assign(opts, { prereleaseId: "alpha" })),
+        recommendVersion(pkg2, "independent", Object.assign(opts, { prereleaseId: "beta" })),
+      ]);
+      expect(bump1).toBe("1.0.1-alpha.0");
+      expect(bump2).toBe("1.1.0-beta.0");
     });
 
     it("falls back to patch bumps for non-bumping commit types", async () => {
