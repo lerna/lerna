@@ -96,3 +96,56 @@ Map {
   expect(npmDistTag.add).toHaveBeenCalledWith("@integration/package-1@1.0.1", "beta", conf); // <--
   expect(npmDistTag.add).toHaveBeenCalledWith("@integration/package-2@1.0.1", "beta", conf);
 });
+
+test("publish prerelease --pre-dist-tag beta", async () => {
+  const cwd = await initFixture("normal");
+
+  collectUpdates.setUpdated(cwd, "package-1");
+
+  await lernaPublish(cwd)("prerelease", "--pre-dist-tag", "beta");
+
+  expect(npmPublish.registry.get("package-1")).toBe("beta");
+  expect(npmDistTag.remove).not.toHaveBeenCalled();
+});
+
+test("publish non-prerelease --pre-dist-tag beta", async () => {
+  const cwd = await initFixture("normal");
+
+  collectUpdates.setUpdated(cwd, "package-1");
+
+  await lernaPublish(cwd)("--pre-dist-tag", "beta");
+
+  expect(npmPublish.registry.get("package-1")).toBe("latest");
+  expect(npmDistTag.remove).not.toHaveBeenCalled();
+});
+
+test("publish non-prerelease --dist-tag next --pre-dist-tag beta", async () => {
+  const cwd = await initFixture("normal");
+
+  collectUpdates.setUpdated(cwd, "package-1");
+
+  await lernaPublish(cwd)("--dist-tag", "next", "--pre-dist-tag", "beta");
+
+  expect(npmPublish.registry.get("package-1")).toBe("next");
+  expect(npmDistTag.remove).not.toHaveBeenCalled();
+});
+
+test("publish --pre-dist-tag beta --temp-tag", async () => {
+  const cwd = await initFixture("integration");
+
+  await lernaPublish(cwd)("prerelease", "--preid", "beta", "--pre-dist-tag", "beta", "--temp-tag");
+
+  expect(npmPublish.registry).toMatchInlineSnapshot(`
+Map {
+  "@integration/package-1" => "lerna-temp",
+  "@integration/package-2" => "lerna-temp",
+}
+`);
+
+  const conf = expect.objectContaining({
+    tag: "beta",
+  });
+
+  expect(npmDistTag.add).toHaveBeenCalledWith("@integration/package-1@1.0.1-beta.0", "beta", conf); // <--
+  expect(npmDistTag.add).toHaveBeenCalledWith("@integration/package-2@1.0.1-beta.0", "beta", conf);
+});

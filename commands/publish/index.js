@@ -642,15 +642,19 @@ class PublishCommand extends Command {
 
     const mapper = pPipe(
       [
-        pkg =>
-          pulseTillDone(npmPublish(pkg, pkg.packed.tarFilePath, opts)).then(() => {
+        pkg => {
+          const preDistTag = this.getPreDistTag(pkg);
+          const tag = !this.options.tempTag && preDistTag ? preDistTag : opts.tag;
+          const pkgOpts = Object.assign({}, opts, { tag });
+          return pulseTillDone(npmPublish(pkg, pkg.packed.tarFilePath, pkgOpts)).then(() => {
             tracker.success("published", pkg.name, pkg.version);
             tracker.completeWork(1);
 
             logPacked(pkg.packed);
 
             return pkg;
-          }),
+          });
+        },
 
         this.options.requireScripts && (pkg => this.execScript(pkg, "postpublish")),
       ].filter(Boolean)
@@ -685,7 +689,9 @@ class PublishCommand extends Command {
     };
     const mapper = pkg => {
       const spec = `${pkg.name}@${pkg.version}`;
-      const distTag = getDistTag(pkg.get("publishConfig"));
+      const preDistTag = this.getPreDistTag(pkg);
+      const distTag = preDistTag || getDistTag(pkg.get("publishConfig"));
+      opts.tag = preDistTag || opts.tag;
 
       return Promise.resolve()
         .then(() => pulseTillDone(npmDistTag.remove(spec, "lerna-temp", opts)))
@@ -713,6 +719,16 @@ class PublishCommand extends Command {
     }
 
     // undefined defaults to "latest" OR whatever is in pkg.publishConfig.tag
+  }
+
+  getPreDistTag(pkg) {
+    if (!this.options.preDistTag) {
+      return;
+    }
+    const isPrerelease = (semver.prerelease(pkg.version) || []).shift();
+    if (isPrerelease) {
+      return this.options.preDistTag;
+    }
   }
 }
 
