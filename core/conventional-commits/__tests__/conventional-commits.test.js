@@ -234,6 +234,56 @@ describe("conventional-commits", () => {
 
       expect.hasAssertions();
     });
+
+    describe("prerelease bumps", () => {
+      let cwd;
+      let pkg;
+      let opts;
+      let recommend;
+
+      beforeEach(async () => {
+        let value = 0;
+        cwd = await initFixture("independent");
+        [pkg] = await getPackages(cwd);
+        opts = { changelogPreset: "angular" };
+        recommend = async (commitMessage, { initVersion } = {}) => {
+          if (initVersion) {
+            await pkg.set("version", initVersion).serialize();
+            await gitAdd(cwd, pkg.manifestLocation);
+            await gitCommit(cwd, commitMessage);
+          }
+          await pkg.set("changed", (value += 1)).serialize();
+          await gitAdd(cwd, pkg.manifestLocation);
+          await gitCommit(cwd, commitMessage);
+          return recommendVersion(pkg, "independent", Object.assign(opts, { prereleaseId: "beta" }));
+        };
+      });
+
+      it("stable + fix/minor/major => prepatch/preminor/premajor", async () => {
+        // default initial version is "1.0.0"
+        expect(await recommend("fix: changed")).toBe("1.0.1-beta.0");
+        expect(await recommend("feat: changed")).toBe("1.1.0-beta.0");
+        expect(await recommend("feat: changed\n\nBREAKING CHANGE: changed")).toBe("2.0.0-beta.0");
+      });
+
+      it("prepatch + fix/minor/major => prerelease/preminor/premajor", async () => {
+        expect(await recommend("fix: changed", { initVersion: "1.0.1-beta.0" })).toBe("1.0.1-beta.1");
+        expect(await recommend("feat: changed")).toBe("1.1.0-beta.0");
+        expect(await recommend("feat: changed\n\nBREAKING CHANGE: changed")).toBe("2.0.0-beta.0");
+      });
+
+      it("preminor + fix/minor/major => prerelease/prerelease/premajor", async () => {
+        expect(await recommend("fix: changed", { initVersion: "1.1.0-beta.0" })).toBe("1.1.0-beta.1");
+        expect(await recommend("feat: changed")).toBe("1.1.0-beta.1");
+        expect(await recommend("feat: changed\n\nBREAKING CHANGE: changed")).toBe("2.0.0-beta.0");
+      });
+
+      it("premajor + fix/minor/major => prerelease", async () => {
+        expect(await recommend("fix: changed", { initVersion: "2.0.0-beta.0" })).toBe("2.0.0-beta.1");
+        expect(await recommend("feat: changed")).toBe("2.0.0-beta.1");
+        expect(await recommend("feat: changed\n\nBREAKING CHANGE: changed")).toBe("2.0.0-beta.1");
+      });
+    });
   });
 
   describe("updateChangelog()", () => {

@@ -27,7 +27,7 @@ function recommendVersion(pkg, type, { changelogPreset, rootPath, tagPrefix, pre
     }
     switch (releaseType) {
       case "major":
-        return semver.minor(version) !== 0;
+        return semver.minor(version) !== 0 || semver.patch(version) !== 0;
       case "minor":
         return semver.patch(version) !== 0;
       default:
