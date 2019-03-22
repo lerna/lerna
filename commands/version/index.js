@@ -632,7 +632,7 @@ class VersionCommand extends Command {
 
     return Promise.all(
       this.releaseNotes.map(({ notes, name }) => {
-        const tag = name === "fixed" ? this.tags[0] : this.tags.find(t => t.startsWith(name));
+        const tag = name === "fixed" ? this.tags[0] : this.tags.find(t => t.startsWith(`${name}@`));
 
         /* istanbul ignore if */
         if (!tag) {
