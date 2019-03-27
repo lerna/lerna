@@ -69,7 +69,7 @@ dependencies are missing.
 of [`npm`'s flattening](https://medium.com/pnpm/pnpms-strictness-helps-to-avoid-silly-bugs-9a15fb306308).)
 
 To avoid this problem, we can use the [eslint-plugin-import](https://github.com/benmosher/eslint-plugin-import)
-package, which has a rule `no-extraneous-dependencies` that can warn
+package, which has a rule `no-extraneous-dependencies` or `no-implicit-dependencies` in [tslint](https://palantir.github.io/tslint) that can warn
 when an import is made from an unspecified package. It is enabled by
 default in the 'recommended' config. Otherwise, we should check by
 hand that all new imports come from packages specified in
