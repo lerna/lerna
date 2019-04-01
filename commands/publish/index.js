@@ -26,6 +26,7 @@ const batchPackages = require("@lerna/batch-packages");
 const runParallelBatches = require("@lerna/run-parallel-batches");
 const pulseTillDone = require("@lerna/pulse-till-done");
 const versionCommand = require("@lerna/version");
+const prereleaseIdFromVersion = require("@lerna/prerelease-id-from-version");
 
 const createTempLicenses = require("./lib/create-temp-licenses");
 const getCurrentSHA = require("./lib/get-current-sha");
@@ -724,7 +725,7 @@ class PublishCommand extends Command {
     if (!this.options.preDistTag) {
       return;
     }
-    const isPrerelease = (semver.prerelease(pkg.version) || []).shift();
+    const isPrerelease = prereleaseIdFromVersion(pkg.version);
     if (isPrerelease) {
       return this.options.preDistTag;
     }

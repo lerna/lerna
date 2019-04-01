@@ -20,6 +20,7 @@ const { createRunner } = require("@lerna/run-lifecycle");
 const batchPackages = require("@lerna/batch-packages");
 const ValidationError = require("@lerna/validation-error");
 const { createGitHubClient, parseGitRepo } = require("@lerna/github-client");
+const prereleaseIdFromVersion = require("@lerna/prerelease-id-from-version");
 
 const getCurrentBranch = require("./lib/get-current-branch");
 const gitAdd = require("./lib/git-add");
@@ -293,7 +294,6 @@ class VersionCommand extends Command {
     const repoVersion = bump ? semver.clean(bump) : "";
     const increment = bump && !semver.valid(bump) ? bump : "";
 
-    const getExistingPreId = version => (semver.prerelease(version) || []).shift();
     const resolvePrereleaseId = existingPreid => preid || existingPreid || "alpha";
 
     const makeGlobalVersionPredicate = nextVersion => {
@@ -312,7 +312,7 @@ class VersionCommand extends Command {
       predicate = node => semver.inc(node.version, increment, resolvePrereleaseId(node.prereleaseId));
     } else if (increment) {
       // compute potential prerelease ID once for all fixed updates
-      const prereleaseId = getExistingPreId(this.project.version);
+      const prereleaseId = prereleaseIdFromVersion(this.project.version);
       const nextVersion = semver.inc(this.project.version, increment, resolvePrereleaseId(prereleaseId));
 
       predicate = makeGlobalVersionPredicate(nextVersion);
@@ -324,7 +324,7 @@ class VersionCommand extends Command {
       predicate = makePromptVersion(resolvePrereleaseId);
     } else {
       // prompt once with potential prerelease ID
-      const prereleaseId = getExistingPreId(this.project.version);
+      const prereleaseId = prereleaseIdFromVersion(this.project.version);
       const node = { version: this.project.version, prereleaseId };
 
       predicate = makePromptVersion(resolvePrereleaseId);

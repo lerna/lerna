@@ -46,6 +46,7 @@
     "@lerna/npm-publish": "file:../../utils/npm-publish",
     "@lerna/output": "file:../../utils/output",
     "@lerna/pack-directory": "file:../../utils/pack-directory",
+    "@lerna/prerelease-id-from-version": "file:../../utils/prerelease-id-from-version",
     "@lerna/prompt": "file:../../core/prompt",
     "@lerna/pulse-till-done": "file:../../utils/pulse-till-done",
     "@lerna/run-lifecycle": "file:../../utils/run-lifecycle",

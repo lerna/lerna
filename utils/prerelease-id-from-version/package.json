@@ -1,0 +1,33 @@
+{
+  "name": "@lerna/prerelease-id-from-version",
+  "version": "3.13.0",
+  "description": "Get the prerelease ID from a version string",
+  "keywords": [
+    "lerna",
+    "utils"
+  ],
+  "author": "Daniel Stockman <daniel.stockman@gmail.com>",
+  "homepage": "https://github.com/lerna/lerna/tree/master/utils/prerelease-id-from-version#readme",
+  "license": "MIT",
+  "main": "lib/prerelease-id-from-version.js",
+  "files": [
+    "lib"
+  ],
+  "engines": {
+    "node": ">= 6.9.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lerna/lerna.git",
+    "directory": "utils/prerelease-id-from-version"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "semver": "^5.5.0"
+  }
+}
