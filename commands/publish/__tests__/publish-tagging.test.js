@@ -133,7 +133,16 @@ test("publish non-prerelease --dist-tag next --pre-dist-tag beta", async () => {
 test("publish --pre-dist-tag beta --temp-tag", async () => {
   const cwd = await initFixture("integration");
 
-  await lernaPublish(cwd)("prerelease", "--preid", "beta", "--pre-dist-tag", "beta", "--temp-tag");
+  await lernaPublish(cwd)(
+    "prerelease",
+    "--dist-tag",
+    "next",
+    "--preid",
+    "beta",
+    "--pre-dist-tag",
+    "beta",
+    "--temp-tag"
+  );
 
   expect(npmPublish.registry).toMatchInlineSnapshot(`
 Map {
@@ -143,9 +152,9 @@ Map {
 `);
 
   const conf = expect.objectContaining({
-    tag: "beta",
+    tag: "next",
   });
 
-  expect(npmDistTag.add).toHaveBeenCalledWith("@integration/package-1@1.0.1-beta.0", "beta", conf); // <--
+  expect(npmDistTag.add).toHaveBeenCalledWith("@integration/package-1@1.0.1-beta.0", "beta", conf);
   expect(npmDistTag.add).toHaveBeenCalledWith("@integration/package-2@1.0.1-beta.0", "beta", conf);
 });

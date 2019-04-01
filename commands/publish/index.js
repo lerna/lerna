@@ -691,7 +691,6 @@ class PublishCommand extends Command {
       const spec = `${pkg.name}@${pkg.version}`;
       const preDistTag = this.getPreDistTag(pkg);
       const distTag = preDistTag || getDistTag(pkg.get("publishConfig"));
-      opts.tag = preDistTag || opts.tag;
 
       return Promise.resolve()
         .then(() => pulseTillDone(npmDistTag.remove(spec, "lerna-temp", opts)))
