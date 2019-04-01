@@ -10,6 +10,8 @@ Install [lerna](https://www.npmjs.com/package/lerna) for access to the `lerna` C
 $ lerna add <package>[@version] [--dev] [--exact]
 ```
 
+The `add` command is aliased to `install` as well to mirror `npm` semantics, ie. `lerna install <package>[@version] [--dev] [--exact]`
+
 Add local or remote `package` as dependency to packages in the current Lerna repo.
 
 When run, this command will:
