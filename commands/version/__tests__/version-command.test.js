@@ -48,9 +48,6 @@ expect.addSnapshotSerializer(require("@lerna-test/serialize-git-sha"));
 
 describe("VersionCommand", () => {
   describe("normal mode", () => {
-    beforeEach(() => {
-      checkWorkingTree.mockReset();
-    });
     it("versions changed packages", async () => {
       const testDir = await initFixture("normal");
       // when --conventional-commits is absent,
@@ -151,15 +148,12 @@ describe("VersionCommand", () => {
       expect.assertions(1);
     });
 
-    it("does not throw if current ref is already tagged when using --force-publish", async () => {
-      checkWorkingTree.mockImplementationOnce(() => {
-        throw new Error("released");
-      });
-
+    it("calls `checkWorkingTree.throwIfUncommitted` when using --force-publish", async () => {
       const testDir = await initFixture("normal");
+
       await lernaVersion(testDir)("--force-publish");
 
-      expect.assertions(0);
+      expect(checkWorkingTree.throwIfUncommitted).toHaveBeenCalled();
     });
 
     it("only bumps changed packages when non-major version selected", async () => {
