@@ -71,17 +71,6 @@ package-4
     );
   });
 
-  it("passes --since to update collector", async () => {
-    await lernaChanged(cwd)("--since", "commitish");
-
-    expect(collectUpdates).toHaveBeenLastCalledWith(
-      expect.any(Array),
-      expect.any(Object),
-      expect.objectContaining({ cwd }),
-      expect.objectContaining({ since: "commitish" })
-    );
-  });
-
   it("reads durable ignoreChanges config from version namespace", async () => {
     await updateLernaConfig(cwd, {
       command: {

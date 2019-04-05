@@ -673,4 +673,18 @@ describe("VersionCommand", () => {
       expect(message).toBe("v1.0.1");
     });
   });
+
+  describe("--since", () => {
+    it("accepts --since to collect updates from", async () => {
+      const testDir = await initFixture("normal");
+      await lernaVersion(testDir)("--since", "commitish", "--yes", "patch");
+
+      expect(collectUpdates).toHaveBeenLastCalledWith(
+        expect.any(Array),
+        expect.any(Object),
+        expect.objectContaining({ cwd: testDir }),
+        expect.objectContaining({ since: "commitish" })
+      );
+    });
+  });
 });

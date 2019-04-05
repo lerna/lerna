@@ -15,14 +15,6 @@ exports.describe = "List local packages that have changed since the last tagged 
 exports.builder = yargs => {
   listable.options(yargs);
 
-  yargs.options({
-    since: {
-      group: "Command Options:",
-      describe: "Look for changes since specified commit instead of last tagged release",
-      type: "string",
-    },
-  });
-
   return versionOptions(yargs, "changed");
 };
 

@@ -104,6 +104,11 @@ exports.builder = (yargs, composed) => {
       requiresArg: true,
       defaultDescription: "alpha",
     },
+    since: {
+      describe: "Look for changes since specified commit instead of last tagged release",
+      type: "string",
+      requiresArg: true,
+    },
     "sign-git-commit": {
       describe: "Pass the `--gpg-sign` flag to `git commit`.",
       type: "boolean",
