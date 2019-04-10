@@ -179,7 +179,7 @@ When passed, this flag will disable running [lifecycle scripts](#lifecycle-event
 
 ### `--ignore-prepublish`
 
-When passed, this lfag will disable [`prepublish`](#lifecycle-events) script being executed.
+When passed, this flag will disable [`prepublish`](#lifecycle-events) script being executed.
 
 ### `--yes`
 
