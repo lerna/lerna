@@ -188,9 +188,10 @@ class PackageGraph extends Map {
 
   /**
    * Return a tuple of cycle paths and nodes, which have been removed from the graph.
+   * @param {!boolean} pruneCycles Prune graph of cycle nodes
    * @returns [Set<String[]>, Set<PackageGraphNode>]
    */
-  partitionCycles() {
+  partitionCycles(pruneCycles = true) {
     const cyclePaths = new Set();
     const cycleNodes = new Set();
 
@@ -234,7 +235,7 @@ class PackageGraph extends Map {
       currentNode.localDependents.forEach(visits([currentName]));
     });
 
-    if (cycleNodes.size) {
+    if (cycleNodes.size && pruneCycles) {
       this.prune(...cycleNodes);
     }
 
