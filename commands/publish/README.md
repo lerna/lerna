@@ -57,6 +57,7 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 - [`--ignore-scripts`](#--ignore-scripts)
 - [`--ignore-prepublish`](#--ignore-prepublish)
 - [`--yes`](#--yes)
+- [`--tag-version-prefix`](#--tag-version-prefix)
 
 ### `--canary`
 
@@ -190,6 +191,19 @@ lerna publish --canary --yes
 
 When run with this flag, `lerna publish` will skip all confirmation prompts.
 Useful in [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous_integration) to automatically answer the publish confirmation prompt.
+
+### `---tag-version-prefix`
+
+This option allows to provide custom prefix instead of the default one: `v`.
+
+Keep in mind that currently you have to supply it twice: for `version` command and for `publish` command:
+
+```bash
+# locally
+lerna version --tag-version-prefix=''
+# on ci
+lerna publish from-git --tag-version-prefix='' 
+```
 
 ## Deprecated Options
 
