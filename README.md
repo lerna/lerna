@@ -57,7 +57,7 @@ downside of dividing a project into many separate NPM package. See the
 
 ### What does a Lerna repo look like?
 
-There's actually very little to it. You have a file system that looks like this:
+There's actually very little to it. You have a file structure that looks like this:
 
 ```
 my-lerna-repo/
