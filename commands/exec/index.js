@@ -1,5 +1,7 @@
 "use strict";
 
+const os = require("os");
+
 const ChildProcessUtilities = require("@lerna/child-process");
 const Command = require("@lerna/command");
 const batchPackages = require("@lerna/batch-packages");
@@ -85,7 +87,18 @@ class ExecCommand extends Command {
         /* istanbul ignore else */
         if (results.some(result => result.failed)) {
           // propagate "highest" error code, it's probably the most useful
-          const codes = results.filter(result => result.failed).map(result => result.code);
+          const codes = results
+            .filter(result => result.failed)
+            .map(result => {
+              switch (typeof result.code) {
+                case "number":
+                  return result.code;
+                case "string":
+                  return os.constants.errno[result.code];
+                default:
+                  throw new TypeError("Received unexpected exit code value");
+              }
+            });
           const exitCode = Math.max(...codes, 1);
 
           this.logger.error("", "Received non-zero exit code %d during execution", exitCode);
