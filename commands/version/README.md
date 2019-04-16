@@ -55,6 +55,7 @@ If you have any packages with a prerelease version number (e.g. `2.0.0-beta.3`) 
 - [`--sign-git-commit`](#--sign-git-commit)
 - [`--sign-git-tag`](#--sign-git-tag)
 - [`--yes`](#--yes)
+- [`--tag-version-prefix`](#--tag-version-prefix)
 
 ### `--allow-branch <glob>`
 
@@ -307,6 +308,19 @@ lerna version --yes
 
 When run with this flag, `lerna version` will skip all confirmation prompts.
 Useful in [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous_integration) to automatically answer the publish confirmation prompt.
+
+### `---tag-version-prefix`
+
+This option allows to provide custom prefix instead of the default one: `v`.
+
+Keep in mind that currently you have to supply it twice: for `version` command and for `publish` command:
+
+```bash
+# locally
+lerna version --tag-version-prefix=''
+# on ci
+lerna publish from-git --tag-version-prefix='' 
+```
 
 ## Deprecated Options
 
