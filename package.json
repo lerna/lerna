@@ -16,7 +16,7 @@
     "url": "git+https://github.com/lerna/lerna.git"
   },
   "license": "MIT",
-  "homepage": "https://lernajs.io/",
+  "homepage": "https://lerna.js.org/",
   "bin": {
     "lerna": "core/lerna/cli.js"
   },
