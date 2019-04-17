@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.13.3](https://github.com/lerna/lerna/compare/v3.13.2...v3.13.3) (2019-04-17)
+
+
+### Bug Fixes
+
+* **child-process:** Centralize `exitCode` translation from string codes into numbers ([09c0103](https://github.com/lerna/lerna/commit/09c0103)), closes [#2031](https://github.com/lerna/lerna/issues/2031)
+* **docs:** Add missing docs for `--tag-version-prefix` ([#2035](https://github.com/lerna/lerna/issues/2035)) ([ff9c476](https://github.com/lerna/lerna/commit/ff9c476)), closes [#1924](https://github.com/lerna/lerna/issues/1924)
+* **exec:** Handle node string error codes before setting process.exitCode ([#2031](https://github.com/lerna/lerna/issues/2031)) ([c599c64](https://github.com/lerna/lerna/commit/c599c64))
+
+
+
+
+
 ## [3.13.2](https://github.com/lerna/lerna/compare/v3.13.1...v3.13.2) (2019-04-08)
 
 

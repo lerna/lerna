@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.13.3](https://github.com/lerna/lerna/compare/v3.13.2...v3.13.3) (2019-04-17)
+
+
+### Bug Fixes
+
+* **child-process:** Centralize `exitCode` translation from string codes into numbers ([09c0103](https://github.com/lerna/lerna/commit/09c0103)), closes [#2031](https://github.com/lerna/lerna/issues/2031)
+
+
+
+
+
 # [3.13.0](https://github.com/lerna/lerna/compare/v3.12.1...v3.13.0) (2019-02-15)
 
 
