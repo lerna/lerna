@@ -152,8 +152,8 @@ test("independent version prerelease does not bump on every unrelated change", a
   // simulate choices for pkg-a then pkg-b
   prompt.mockChoices("patch", "PRERELEASE");
   prompt.input.mockImplementationOnce((msg, cfg) =>
-    // a convoluted way of entering "bumps" at the prompt
-    Promise.resolve(cfg.filter("bumps"))
+    // the _existing_ "bumps" prerelease ID should be preserved
+    Promise.resolve(cfg.filter())
   );
 
   await lernaVersion(cwd)();
