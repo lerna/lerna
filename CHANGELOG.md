@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.13.4](https://github.com/lerna/lerna/compare/v3.13.3...v3.13.4) (2019-04-24)
+
+
+### Bug Fixes
+
+* **import:** Avoid "unrecognized input" error from colors when using `--flatten` ([#2037](https://github.com/lerna/lerna/issues/2037)) ([51625fa](https://github.com/lerna/lerna/commit/51625fa)), closes [#1644](https://github.com/lerna/lerna/issues/1644)
+* **version:** Resolve prerelease for version without bump ([#2041](https://github.com/lerna/lerna/issues/2041)) ([aa11325](https://github.com/lerna/lerna/commit/aa11325))
+* **version:** Search for complete tag prefix when composing GitHub releases ([024a6ab](https://github.com/lerna/lerna/commit/024a6ab)), closes [#2038](https://github.com/lerna/lerna/issues/2038)
+
+
+
+
+
 ## [3.13.3](https://github.com/lerna/lerna/compare/v3.13.2...v3.13.3) (2019-04-17)
 
 
