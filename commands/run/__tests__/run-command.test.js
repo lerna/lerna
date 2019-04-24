@@ -170,6 +170,25 @@ describe("RunCommand", () => {
     });
   });
 
+  describe("with --no-sort", () => {
+    it("runs scripts in lexical (not topological) order", async () => {
+      const testDir = await initFixture("toposort");
+
+      await lernaRun(testDir)("env", "--no-sort");
+
+      expect(output.logged().split("\n")).toEqual([
+        "package-cycle-1",
+        "package-cycle-2",
+        "package-cycle-extraneous",
+        "package-dag-1",
+        "package-dag-2a",
+        "package-dag-2b",
+        "package-dag-3",
+        "package-standalone",
+      ]);
+    });
+  });
+
   describe("in a cyclical repo", () => {
     it("warns when cycles are encountered", async () => {
       const testDir = await initFixture("toposort");

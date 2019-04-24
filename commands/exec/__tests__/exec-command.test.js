@@ -183,6 +183,25 @@ describe("ExecCommand", () => {
     });
   });
 
+  describe("with --no-sort", () => {
+    it("runs commands in lexical (not topological) order", async () => {
+      const testDir = await initFixture("toposort");
+
+      await lernaExec(testDir)("ls", "--no-sort");
+
+      expect(calledInPackages()).toEqual([
+        "package-cycle-1",
+        "package-cycle-2",
+        "package-cycle-extraneous",
+        "package-dag-1",
+        "package-dag-2a",
+        "package-dag-2b",
+        "package-dag-3",
+        "package-standalone",
+      ]);
+    });
+  });
+
   describe("in a cyclical repo", () => {
     it("warns when cycles are encountered", async () => {
       const testDir = await initFixture("toposort");
