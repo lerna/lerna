@@ -1,9 +1,6 @@
 "use strict";
 
-const log = require("npmlog");
-
 const PackageGraph = require("@lerna/package-graph");
-const ValidationError = require("@lerna/validation-error");
 
 /**
  * A mutable PackageGraph used to query for next available packages

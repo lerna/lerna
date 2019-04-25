@@ -1,9 +1,7 @@
 "use strict";
 
 const log = require("npmlog");
-
 const PackageGraph = require("@lerna/package-graph");
-const ValidationError = require("@lerna/validation-error");
 
 module.exports = batchPackages;
 

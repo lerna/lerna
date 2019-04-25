@@ -31,8 +31,6 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/package-graph": "file:../../core/package-graph",
-    "@lerna/validation-error": "file:../../core/validation-error",
-    "npmlog": "^4.1.2"
+    "@lerna/package-graph": "file:../../core/package-graph"
   }
 }

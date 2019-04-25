@@ -2,6 +2,8 @@
 
 const npa = require("npm-package-arg");
 const semver = require("semver");
+const log = require("npmlog");
+
 const ValidationError = require("@lerna/validation-error");
 
 /**
