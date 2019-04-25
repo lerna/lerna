@@ -188,10 +188,10 @@ class PackageGraph extends Map {
 
   /**
    * Return a tuple of cycle paths and nodes, which have been removed from the graph.
-   * @param {!boolean} pruneCycles Prune graph of cycle nodes
+   * @param {!boolean} rejectCycles Whether or not to reject cycles
    * @returns [Set<String[]>, Set<PackageGraphNode>]
    */
-  partitionCycles(pruneCycles = true) {
+  partitionCycles(rejectCycles) {
     const cyclePaths = new Set();
     const cycleNodes = new Set();
 
@@ -235,8 +235,16 @@ class PackageGraph extends Map {
       currentNode.localDependents.forEach(visits([currentName]));
     });
 
-    if (cycleNodes.size && pruneCycles) {
-      this.prune(...cycleNodes);
+    if (cyclePaths.size) {
+      const cycleMessage = ["Dependency cycles detected, you should fix these!"]
+        .concat(Array.from(cyclePaths).map(cycle => cycle.join(" -> ")))
+        .join("\n");
+
+      if (rejectCycles) {
+        throw new ValidationError("ECYCLE", cycleMessage);
+      }
+
+      log.warn("ECYCLE", cycleMessage);
     }
 
     return [cyclePaths, cycleNodes];

@@ -18,19 +18,9 @@ class QueryGraph {
     this.graph = new PackageGraph(packages);
 
     // Evaluate cycles
-    [this.cyclePaths, this.cycleNodes] = this.graph.partitionCycles(false);
+    [this.cyclePaths, this.cycleNodes] = this.graph.partitionCycles(rejectCycles);
 
     if (this.cyclePaths.size) {
-      const cycleMessage = ["Dependency cycles detected, you should fix these!"]
-        .concat(Array.from(this.cyclePaths).map(cycle => cycle.join(" -> ")))
-        .join("\n");
-
-      if (rejectCycles) {
-        throw new ValidationError("ECYCLE", cycleMessage);
-      }
-
-      log.warn("ECYCLE", cycleMessage);
-
       // Find the cyclical package with the most dependents. Will be evaluated before other cyclical packages
       this.cyclicalPackageWithMostDependents = Array.from(this.cycleNodes)
         .sort((a, b) => b.localDependents.size - a.localDependents.size)
