@@ -151,6 +151,7 @@ class ImportCommand extends Command {
         "--stat",
         "--binary",
         "-1",
+        "--color=never",
         sha,
         // custom git prefixes for accurate parsing of filepaths (#1655)
         `--src-prefix=COMPARE_A/`,

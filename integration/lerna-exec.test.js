@@ -175,4 +175,17 @@ success!
 
     expect.hasAssertions();
   });
+
+  test("string node error code is not swallowed", async () => {
+    const cwd = await initFixture("lerna-exec");
+    const args = ["exec", "--no-bail", "--concurrency=1", "--", "thing-that-is-missing"];
+
+    try {
+      await cliRunner(cwd)(...args);
+    } catch (err) {
+      expect(err.code).toBeGreaterThan(0);
+    }
+
+    expect.hasAssertions();
+  });
 });

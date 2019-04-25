@@ -14,13 +14,9 @@ const PromptUtilities = require("@lerna/prompt");
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(path.resolve(__dirname, "../../publish/__tests__"));
 const getCommitMessage = require("@lerna-test/get-commit-message");
-const showCommit = require("@lerna-test/show-commit");
 
 // test command
 const lernaVersion = require("@lerna-test/command-runner")(require("../command"));
-
-// stabilize commit SHA
-expect.addSnapshotSerializer(require("@lerna-test/serialize-git-sha"));
 
 describe("version bump", () => {
   it("accepts explicit versions", async () => {
@@ -111,8 +107,8 @@ describe("version bump", () => {
 
     await lernaVersion(testDir)("prerelease");
 
-    const patch = await showCommit(testDir);
-    expect(patch).toMatchSnapshot();
+    const message = await getCommitMessage(testDir);
+    expect(message).toContain("package-1@1.0.1-alpha.0");
   });
 
   test("prerelease increments version with custom --preid", async () => {
@@ -120,7 +116,7 @@ describe("version bump", () => {
 
     await lernaVersion(testDir)("prerelease", "--preid", "foo");
 
-    const patch = await showCommit(testDir);
-    expect(patch).toMatchSnapshot();
+    const message = await getCommitMessage(testDir);
+    expect(message).toContain("package-1@1.0.1-foo.0");
   });
 });

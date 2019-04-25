@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.13.4](https://github.com/lerna/lerna/compare/v3.13.3...v3.13.4) (2019-04-24)
+
+
+### Bug Fixes
+
+* **import:** Avoid "unrecognized input" error from colors when using `--flatten` ([#2037](https://github.com/lerna/lerna/issues/2037)) ([51625fa](https://github.com/lerna/lerna/commit/51625fa)), closes [#1644](https://github.com/lerna/lerna/issues/1644)
+
+
+
+
+
+## [3.13.3](https://github.com/lerna/lerna/compare/v3.13.2...v3.13.3) (2019-04-17)
+
+**Note:** Version bump only for package @lerna/import
+
+
+
+
+
 ## [3.13.1](https://github.com/lerna/lerna/compare/v3.13.0...v3.13.1) (2019-02-26)
 
 **Note:** Version bump only for package @lerna/import

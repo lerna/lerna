@@ -1,6 +1,6 @@
 {
   "name": "@lerna/run",
-  "version": "3.13.1",
+  "version": "3.13.3",
   "description": "Run an npm script in each package that contains that script",
   "keywords": [
     "lerna",

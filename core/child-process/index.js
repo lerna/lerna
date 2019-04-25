@@ -1,5 +1,6 @@
 "use strict";
 
+const os = require("os");
 const chalk = require("chalk");
 const execa = require("execa");
 const logTransformer = require("strong-log-transformer");
@@ -62,6 +63,22 @@ function getChildProcessCount() {
   return children;
 }
 
+function getExitCode(result) {
+  // https://nodejs.org/docs/latest-v6.x/api/child_process.html#child_process_event_close
+  if (typeof result.code === "number") {
+    return result.code;
+  }
+
+  // https://nodejs.org/docs/latest-v6.x/api/errors.html#errors_error_code
+  // istanbul ignore else
+  if (typeof result.code === "string") {
+    return os.constants.errno[result.code];
+  }
+
+  // istanbul ignore next: extremely weird
+  throw new TypeError(`Received unexpected exit code value ${JSON.stringify(result.code)}`);
+}
+
 function spawnProcess(command, args, opts) {
   children += 1;
 
@@ -90,6 +107,9 @@ function wrapError(spawned) {
     return spawned.catch(err => {
       // istanbul ignore else
       if (err.code) {
+        // ensure code is always a number
+        err.code = getExitCode(err);
+
         // log non-lerna error cleanly
         err.pkg = spawned.pkg;
       }
@@ -106,3 +126,4 @@ exports.execSync = execSync;
 exports.spawn = spawn;
 exports.spawnStreaming = spawnStreaming;
 exports.getChildProcessCount = getChildProcessCount;
+exports.getExitCode = getExitCode;

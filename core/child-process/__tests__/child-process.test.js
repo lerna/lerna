@@ -1,5 +1,7 @@
 "use strict";
 
+const os = require("os");
+
 // file under test
 const ChildProcessUtilities = require("..");
 
@@ -51,7 +53,7 @@ describe("ChildProcessUtilities", () => {
           { pkg: { name: "hamilton" } }
         );
       } catch (err) {
-        expect(err.code).toBe("ENOENT");
+        expect(err.code).toBe(os.constants.errno.ENOENT);
         expect(err.pkg).toEqual({ name: "hamilton" });
       }
     });
@@ -65,6 +67,18 @@ describe("ChildProcessUtilities", () => {
       const { code, signal } = await child;
       expect(code).toBe(0);
       expect(signal).toBe(null);
+    });
+
+    it("decorates opts.pkg on error if caught", async () => {
+      try {
+        await ChildProcessUtilities.spawn("exit", ["123"], {
+          pkg: { name: "shelled" },
+          shell: true,
+        });
+      } catch (err) {
+        expect(err.code).toBe(123);
+        expect(err.pkg).toEqual({ name: "shelled" });
+      }
     });
   });
 });

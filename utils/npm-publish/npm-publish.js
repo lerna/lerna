@@ -7,6 +7,7 @@ const pify = require("pify");
 const readJSON = require("read-package-json");
 const figgyPudding = require("figgy-pudding");
 const runLifecycle = require("@lerna/run-lifecycle");
+const npa = require("npm-package-arg");
 
 module.exports = npmPublish;
 
@@ -30,8 +31,10 @@ const PublishConfig = figgyPudding(
 );
 
 function npmPublish(pkg, tarFilePath, _opts) {
+  const { scope } = npa(pkg.name);
+  // pass only the package scope to libnpmpublish
   const opts = PublishConfig(_opts, {
-    projectScope: pkg.name,
+    projectScope: scope,
   });
 
   opts.log.verbose("publish", pkg.name);

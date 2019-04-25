@@ -57,7 +57,7 @@ downside of dividing a project into many separate NPM package. See the
 
 ### What does a Lerna repo look like?
 
-There's actually very little to it. You have a file system that looks like this:
+There's actually very little to it. You have a file structure that looks like this:
 
 ```
 my-lerna-repo/
@@ -263,10 +263,10 @@ In the example above,
 
 ### README Badge
 
-Using Lerna? Add a README badge to show it off: [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lernajs.io/)
+Using Lerna? Add a README badge to show it off: [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
 
 ```
-[![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lernajs.io/)
+[![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
 ```
 
 ### Wizard

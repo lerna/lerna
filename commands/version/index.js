@@ -278,10 +278,9 @@ class VersionCommand extends Command {
     const { bump, conventionalCommits, preid } = this.options;
     const repoVersion = bump ? semver.clean(bump) : "";
     const increment = bump && !semver.valid(bump) ? bump : "";
-    const isPrerelease = increment.startsWith("pre");
 
     const getExistingPreId = version => (semver.prerelease(version) || []).shift();
-    const resolvePrereleaseId = existingPreid => preid || (isPrerelease && existingPreid) || "alpha";
+    const resolvePrereleaseId = existingPreid => preid || existingPreid || "alpha";
 
     const makeGlobalVersionPredicate = nextVersion => {
       this.globalVersion = nextVersion;
@@ -633,7 +632,7 @@ class VersionCommand extends Command {
 
     return Promise.all(
       this.releaseNotes.map(({ notes, name }) => {
-        const tag = name === "fixed" ? this.tags[0] : this.tags.find(t => t.startsWith(name));
+        const tag = name === "fixed" ? this.tags[0] : this.tags.find(t => t.startsWith(`${name}@`));
 
         /* istanbul ignore if */
         if (!tag) {

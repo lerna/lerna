@@ -1,6 +1,6 @@
 {
   "name": "@lerna/npm-run-script",
-  "version": "3.13.0",
+  "version": "3.13.3",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
