@@ -9,8 +9,8 @@
   "homepage": "https://github.com/lerna/lerna/tree/master/utils/query-graph#readme",
   "license": "MIT",
   "author": {
-    "name": "Daniel Stockman",
-    "url": "https://github.com/evocateur"
+    "name": "Benjamin Weggersen",
+    "url": "https://github.com/bweggersen"
   },
   "files": [
     "query-graph.js"
