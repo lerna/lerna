@@ -12,8 +12,7 @@ function batchPackages(packagesToBatch, rejectCycles, graphType) {
   const batches = [];
 
   if (cyclePaths.size) {
-    // Prune cycles from graph
-    graph.prune(...cycleNodes);
+    graph.pruneCycleNodes(cycleNodes);
   }
 
   while (graph.size) {

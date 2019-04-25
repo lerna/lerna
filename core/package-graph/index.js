@@ -253,6 +253,14 @@ class PackageGraph extends Map {
   }
 
   /**
+   * Remove cycle nodes.
+   * @param {Set<PackageGraphNode>} cycleNodes
+   */
+  pruneCycleNodes(cycleNodes) {
+    return this.prune(...cycleNodes);
+  }
+
+  /**
    * Remove all candidate nodes.
    * @param {PackageGraphNode[]} candidates
    */

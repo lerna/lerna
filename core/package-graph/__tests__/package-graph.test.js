@@ -286,7 +286,9 @@ describe("PackageGraph", () => {
       expect(paths.size).toBe(0);
       expect(nodes.size).toBe(0);
     });
+  });
 
+  describe(".pruneCycleNodes()", () => {
     it("prunes direct cycles from the graph", () => {
       const pkgs = [
         new Package(
@@ -313,6 +315,7 @@ describe("PackageGraph", () => {
       const graph = new PackageGraph(pkgs);
       // deepInspect(graph);
       const [paths, nodes] = graph.partitionCycles();
+      graph.pruneCycleNodes(nodes);
       // deepInspect(nodes);
 
       expect(graph.size).toBe(0);
@@ -338,6 +341,7 @@ Set {
       const graph = new PackageGraph(pkgs);
       // deepInspect(graph);
       const [paths, nodes] = graph.partitionCycles();
+      graph.pruneCycleNodes(nodes);
       // deepInspect(graph);
       // deepInspect(nodes);
 
