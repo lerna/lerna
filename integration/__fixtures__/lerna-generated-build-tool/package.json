@@ -1,0 +1,7 @@
+{
+  "name": "basic",
+  "version": "monorepo",
+  "private": true,
+  "dependencies": {
+  }
+}
