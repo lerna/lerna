@@ -1,7 +1,7 @@
 {
-  "name": "@lerna/check-working-tree",
+  "name": "@lerna/collect-uncommitted",
   "version": "3.13.3",
-  "description": "Check git working tree status and error appropriately",
+  "description": "Collect uncommitted changes to working tree for display in error messages",
   "keywords": [
     "lerna",
     "utils",
@@ -9,9 +9,12 @@
     "tree"
   ],
   "author": "Daniel Stockman <daniel.stockman@gmail.com>",
-  "homepage": "https://github.com/lerna/lerna/tree/master/utils/check-working-tree#readme",
+  "contributors": [
+    "Pedro De Ona <p.deona001@gmail.com>"
+  ],
+  "homepage": "https://github.com/lerna/lerna/tree/master/utils/collect-uncommitted#readme",
   "license": "MIT",
-  "main": "lib/check-working-tree.js",
+  "main": "lib/collect-uncommitted.js",
   "files": [
     "lib"
   ],
@@ -24,14 +27,13 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lerna/lerna.git",
-    "directory": "utils/check-working-tree"
+    "directory": "utils/collect-uncommitted"
   },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/describe-ref": "file:../describe-ref",
-    "@lerna/validation-error": "file:../../core/validation-error",
-    "@lerna/collect-uncommitted": "file:../collect-uncommitted"
+    "@lerna/child-process": "file:../../core/child-process",
+    "chalk": "^2.3.1"
   }
 }
