@@ -31,20 +31,20 @@ function createSymbolicLink(src, dest, type) {
 
 function createPosixSymlink(origin, dest, _type) {
   const type = _type === "exec" ? "file" : _type;
-  const src = path.relative(path.dirname(dest), origin);
+  const relativeSymlink = path.relative(path.dirname(dest), origin);
 
   if (_type === "exec") {
     // If the target exists, create real symlink. If the target doesn't exist yet,
     // create a shim shell script.
-    return fs.pathExists(src).then(exists => {
+    return fs.pathExists(origin).then(exists => {
       if (exists) {
-        return createSymbolicLink(src, dest, type).then(() => fs.chmod(src, "755"));
+        return createSymbolicLink(relativeSymlink, dest, type).then(() => fs.chmod(origin, "755"));
       }
-      return shShim(src, dest, type).then(() => fs.chmod(dest, "755"));
+      return shShim(origin, dest, type).then(() => fs.chmod(dest, "755"));
     });
   }
 
-  return createSymbolicLink(src, dest, type);
+  return createSymbolicLink(relativeSymlink, dest, type);
 }
 
 function createWindowsSymlink(src, dest, type) {

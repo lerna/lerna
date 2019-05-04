@@ -42,7 +42,7 @@ describe("symlink-binary", () => {
     expect(dstPath).not.toHaveBinaryLinks();
   });
 
-  it("should skip missing bin files", async () => {
+  it("should create shims for all declared binaries", async () => {
     const testDir = await initFixture("links");
     const srcPath = path.join(testDir, "packages/package-3");
     const dstPath = path.join(testDir, "packages/package-4");
@@ -50,7 +50,7 @@ describe("symlink-binary", () => {
     await symlinkBinary(srcPath, dstPath);
 
     expect(srcPath).toHaveExecutables("cli1.js", "cli2.js");
-    expect(dstPath).toHaveBinaryLinks("links3cli1", "links3cli2");
+    expect(dstPath).toHaveBinaryLinks("links3cli1", "links3cli2", "links3cli3");
   });
 
   it("should preserve previous bin entries", async () => {
@@ -62,6 +62,6 @@ describe("symlink-binary", () => {
     await symlinkBinary(pkg2Path, destPath);
     await symlinkBinary(pkg3Path, destPath);
 
-    expect(destPath).toHaveBinaryLinks("links-2", "links3cli1", "links3cli2");
+    expect(destPath).toHaveBinaryLinks("links-2", "links3cli1", "links3cli2", "links3cli3");
   });
 });
