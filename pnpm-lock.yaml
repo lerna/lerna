@@ -632,7 +632,10 @@ importers:
       npm-package-arg: 6.1.0
       npmlog: 4.1.2
       semver: 6.2.0
+    devDependencies:
+      '@lerna/package': 'link:../package'
     specifiers:
+      '@lerna/package': 'link:../package'
       '@lerna/prerelease-id-from-version': 'file:../../utils/prerelease-id-from-version'
       '@lerna/validation-error': 'file:../validation-error'
       npm-package-arg: ^6.1.0
@@ -916,9 +919,12 @@ importers:
       minimatch: 3.0.4
       npmlog: 4.1.2
       slash: 2.0.0
+    devDependencies:
+      '@lerna/package': 'link:../../core/package'
     specifiers:
       '@lerna/child-process': 'file:../../core/child-process'
       '@lerna/describe-ref': 'file:../describe-ref'
+      '@lerna/package': 'link:../../core/package'
       minimatch: ^3.0.4
       npmlog: ^4.1.2
       slash: ^2.0.0
@@ -995,7 +1001,10 @@ importers:
       '@lerna/query-graph': 'link:../query-graph'
       chalk: 2.4.2
       columnify: 1.5.4
+    devDependencies:
+      '@lerna/package': 'link:../../core/package'
     specifiers:
+      '@lerna/package': 'link:../../core/package'
       '@lerna/query-graph': 'file:../query-graph'
       chalk: ^2.3.1
       columnify: ^1.5.4
@@ -1046,9 +1055,12 @@ importers:
       npmlog: 4.1.2
       signal-exit: 3.0.2
       write-pkg: 3.2.0
+    devDependencies:
+      '@lerna/package': 'link:../../core/package'
     specifiers:
       '@lerna/child-process': 'file:../../core/child-process'
       '@lerna/get-npm-exec-opts': 'file:../get-npm-exec-opts'
+      '@lerna/package': 'link:../../core/package'
       fs-extra: ^8.1.0
       npm-package-arg: ^6.1.0
       npmlog: ^4.1.2
@@ -1065,9 +1077,12 @@ importers:
       npmlog: 4.1.2
       pify: 4.0.1
       read-package-json: 2.0.13
+    devDependencies:
+      '@lerna/package': 'link:../../core/package'
     specifiers:
       '@evocateur/libnpmpublish': ^1.2.2
       '@lerna/otplease': 'file:../../core/otplease'
+      '@lerna/package': 'link:../../core/package'
       '@lerna/run-lifecycle': 'file:../run-lifecycle'
       figgy-pudding: ^3.5.1
       fs-extra: ^8.1.0
@@ -1151,8 +1166,11 @@ importers:
       figgy-pudding: 3.5.1
       npm-lifecycle: 3.1.0
       npmlog: 4.1.2
+    devDependencies:
+      '@lerna/package': 'link:../../core/package'
     specifiers:
       '@lerna/npm-conf': 'file:../npm-conf'
+      '@lerna/package': 'link:../../core/package'
       figgy-pudding: ^3.5.1
       npm-lifecycle: ^3.1.0
       npmlog: ^4.1.2

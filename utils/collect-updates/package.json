@@ -37,5 +37,8 @@
     "minimatch": "^3.0.4",
     "npmlog": "^4.1.2",
     "slash": "^2.0.0"
+  },
+  "devDependencies": {
+    "@lerna/package": "link:../../core/package"
   }
 }

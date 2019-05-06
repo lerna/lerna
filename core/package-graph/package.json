@@ -37,5 +37,8 @@
     "npm-package-arg": "^6.1.0",
     "npmlog": "^4.1.2",
     "semver": "^6.2.0"
+  },
+  "devDependencies": {
+    "@lerna/package": "link:../package"
   }
 }

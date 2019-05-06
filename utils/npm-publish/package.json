@@ -40,5 +40,8 @@
     "npmlog": "^4.1.2",
     "pify": "^4.0.1",
     "read-package-json": "^2.0.13"
+  },
+  "devDependencies": {
+    "@lerna/package": "link:../../core/package"
   }
 }

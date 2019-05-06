@@ -38,5 +38,8 @@
     "npmlog": "^4.1.2",
     "signal-exit": "^3.0.2",
     "write-pkg": "^3.1.0"
+  },
+  "devDependencies": {
+    "@lerna/package": "link:../../core/package"
   }
 }

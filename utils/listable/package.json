@@ -32,5 +32,8 @@
     "@lerna/query-graph": "file:../query-graph",
     "chalk": "^2.3.1",
     "columnify": "^1.5.4"
+  },
+  "devDependencies": {
+    "@lerna/package": "link:../../core/package"
   }
 }
