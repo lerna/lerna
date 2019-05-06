@@ -323,6 +323,8 @@ importers:
       dedent: 0.7.0
       fs-extra: 8.1.0
       p-map-series: 1.0.0
+    devDependencies:
+      path-exists: 3.0.0
     specifiers:
       '@lerna/child-process': 'file:../../core/child-process'
       '@lerna/command': 'file:../../core/command'
@@ -332,6 +334,7 @@ importers:
       dedent: ^0.7.0
       fs-extra: ^8.1.0
       p-map-series: ^1.0.0
+      path-exists: ^3.0.0
   commands/init:
     dependencies:
       '@lerna/child-process': 'link:../../core/child-process'

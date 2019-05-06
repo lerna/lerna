@@ -40,5 +40,8 @@
     "dedent": "^0.7.0",
     "fs-extra": "^8.1.0",
     "p-map-series": "^1.0.0"
+  },
+  "devDependencies": {
+    "path-exists": "^3.0.0"
   }
 }
