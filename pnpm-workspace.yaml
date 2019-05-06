@@ -1,4 +1,7 @@
 packages:
+  # monorepo root
+  - '.'
+  # leaf packages
   - 'commands/*'
   - 'core/*'
   - 'utils/*'
