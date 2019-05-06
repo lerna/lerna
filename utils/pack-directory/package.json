@@ -35,5 +35,8 @@
     "npmlog": "^4.1.2",
     "tar": "^4.4.10",
     "temp-write": "^3.4.0"
+  },
+  "devDependencies": {
+    "@lerna/project": "link:../../core/project"
   }
 }

@@ -64,5 +64,8 @@
     "p-map": "^2.1.0",
     "p-pipe": "^1.2.0",
     "semver": "^6.2.0"
+  },
+  "devDependencies": {
+    "@lerna/project": "link:../../core/project"
   }
 }

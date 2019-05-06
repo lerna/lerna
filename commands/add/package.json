@@ -43,5 +43,8 @@
     "npm-package-arg": "^6.1.0",
     "p-map": "^2.1.0",
     "semver": "^6.2.0"
+  },
+  "devDependencies": {
+    "@lerna/project": "link:../../core/project"
   }
 }

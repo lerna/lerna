@@ -43,5 +43,8 @@
     "npmlog": "^4.1.2",
     "pify": "^4.0.1",
     "semver": "^6.2.0"
+  },
+  "devDependencies": {
+    "@lerna/project": "link:../project"
   }
 }

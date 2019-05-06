@@ -145,12 +145,15 @@ importers:
       npm-package-arg: 6.1.0
       p-map: 2.1.0
       semver: 6.2.0
+    devDependencies:
+      '@lerna/project': 'link:../../core/project'
     specifiers:
       '@evocateur/pacote': ^9.6.3
       '@lerna/bootstrap': 'file:../bootstrap'
       '@lerna/command': 'file:../../core/command'
       '@lerna/filter-options': 'file:../../core/filter-options'
       '@lerna/npm-conf': 'file:../../utils/npm-conf'
+      '@lerna/project': 'link:../../core/project'
       '@lerna/validation-error': 'file:../../core/validation-error'
       dedent: ^0.7.0
       npm-package-arg: ^6.1.0
@@ -284,9 +287,12 @@ importers:
       '@lerna/command': 'link:../../core/command'
       '@lerna/validation-error': 'link:../../core/validation-error'
       npmlog: 4.1.2
+    devDependencies:
+      '@lerna/project': 'link:../../core/project'
     specifiers:
       '@lerna/child-process': 'file:../../core/child-process'
       '@lerna/command': 'file:../../core/command'
+      '@lerna/project': 'link:../../core/project'
       '@lerna/validation-error': 'file:../../core/validation-error'
       npmlog: ^4.1.2
   commands/exec:
@@ -392,6 +398,8 @@ importers:
       p-map: 2.1.0
       p-pipe: 1.2.0
       semver: 6.2.0
+    devDependencies:
+      '@lerna/project': 'link:../../core/project'
     specifiers:
       '@evocateur/libnpmaccess': ^3.1.2
       '@evocateur/npm-registry-fetch': ^4.0.0
@@ -409,6 +417,7 @@ importers:
       '@lerna/output': 'file:../../utils/output'
       '@lerna/pack-directory': 'file:../../utils/pack-directory'
       '@lerna/prerelease-id-from-version': 'file:../../utils/prerelease-id-from-version'
+      '@lerna/project': 'link:../../core/project'
       '@lerna/prompt': 'file:../../core/prompt'
       '@lerna/pulse-till-done': 'file:../../utils/pulse-till-done'
       '@lerna/run-lifecycle': 'file:../../utils/run-lifecycle'
@@ -549,7 +558,10 @@ importers:
       npmlog: 4.1.2
       pify: 4.0.1
       semver: 6.2.0
+    devDependencies:
+      '@lerna/project': 'link:../project'
     specifiers:
+      '@lerna/project': 'link:../project'
       '@lerna/validation-error': 'file:../validation-error'
       conventional-changelog-angular: ^5.0.3
       conventional-changelog-core: ^3.1.6
@@ -566,9 +578,12 @@ importers:
       '@lerna/collect-updates': 'link:../../utils/collect-updates'
       '@lerna/filter-packages': 'link:../../utils/filter-packages'
       dedent: 0.7.0
+    devDependencies:
+      '@lerna/project': 'link:../project'
     specifiers:
       '@lerna/collect-updates': 'file:../../utils/collect-updates'
       '@lerna/filter-packages': 'file:../../utils/filter-packages'
+      '@lerna/project': 'link:../project'
       dedent: ^0.7.0
   core/global-options:
     specifiers: {}
@@ -882,8 +897,10 @@ importers:
       npmlog: ^4.1.2
   helpers/update-lerna-config:
     dependencies:
+      '@lerna/project': 'link:../../core/project'
       fs-extra: 8.1.0
     specifiers:
+      '@lerna/project': 'link:../../core/project'
       fs-extra: ^8.1.0
   utils/batch-packages:
     dependencies:
@@ -1114,9 +1131,12 @@ importers:
       npmlog: 4.1.2
       tar: 4.4.10
       temp-write: 3.4.0
+    devDependencies:
+      '@lerna/project': 'link:../../core/project'
     specifiers:
       '@lerna/get-packed': 'file:../get-packed'
       '@lerna/package': 'file:../../core/package'
+      '@lerna/project': 'link:../../core/project'
       '@lerna/run-lifecycle': 'file:../run-lifecycle'
       figgy-pudding: ^3.5.1
       npm-packlist: ^1.4.4

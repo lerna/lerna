@@ -37,5 +37,8 @@
     "dedent": "^0.7.0",
     "figgy-pudding": "^3.5.1",
     "npmlog": "^4.1.2"
+  },
+  "devDependencies": {
+    "@lerna/project": "link:../project"
   }
 }

@@ -6,6 +6,7 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
+    "@lerna/project": "link:../../core/project",
     "fs-extra": "^8.1.0"
   }
 }

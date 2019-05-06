@@ -37,5 +37,8 @@
     "@lerna/command": "file:../../core/command",
     "@lerna/validation-error": "file:../../core/validation-error",
     "npmlog": "^4.1.2"
+  },
+  "devDependencies": {
+    "@lerna/project": "link:../../core/project"
   }
 }
