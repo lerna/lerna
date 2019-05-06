@@ -67,6 +67,7 @@ importers:
       tempy: 0.2.1
       touch: 3.1.0
       write-json-file: 3.2.0
+      write-pkg: 3.2.0
     specifiers:
       '@lerna-test/calls-back': 'link:helpers/calls-back'
       '@lerna-test/cli-runner': 'link:helpers/cli-runner'
@@ -133,6 +134,7 @@ importers:
       tempy: ^0.2.1
       touch: ^3.1.0
       write-json-file: ^3.2.0
+      write-pkg: ^3.1.0
   commands/add:
     dependencies:
       '@evocateur/pacote': 9.6.3

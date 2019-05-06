@@ -90,6 +90,7 @@
     "tempy": "^0.2.1",
     "touch": "^3.1.0",
     "write-json-file": "^3.2.0",
+    "write-pkg": "^3.1.0",
     "yargs": "^14.2.2"
   },
   "engines": {
