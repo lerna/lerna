@@ -533,8 +533,11 @@ importers:
       dedent: 0.7.0
       npmlog: 4.1.2
       yargs: 12.0.5
+    devDependencies:
+      '@lerna/validation-error': 'link:../validation-error'
     specifiers:
       '@lerna/global-options': 'file:../global-options'
+      '@lerna/validation-error': 'link:../validation-error'
       dedent: ^0.7.0
       npmlog: ^4.1.2
       yargs: ^12.0.1

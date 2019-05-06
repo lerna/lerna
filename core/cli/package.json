@@ -35,5 +35,8 @@
     "dedent": "^0.7.0",
     "npmlog": "^4.1.2",
     "yargs": "^14.2.2"
+  },
+  "devDependencies": {
+    "@lerna/validation-error": "link:../validation-error"
   }
 }
