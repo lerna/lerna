@@ -36,5 +36,8 @@
     "@lerna/filter-options": "file:../../core/filter-options",
     "@lerna/listable": "file:../../utils/listable",
     "@lerna/output": "file:../../utils/output"
+  },
+  "devDependencies": {
+    "@lerna/collect-updates": "link:../../utils/collect-updates"
   }
 }

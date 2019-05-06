@@ -367,7 +367,10 @@ importers:
       '@lerna/filter-options': 'link:../../core/filter-options'
       '@lerna/listable': 'link:../../utils/listable'
       '@lerna/output': 'link:../../utils/output'
+    devDependencies:
+      '@lerna/collect-updates': 'link:../../utils/collect-updates'
     specifiers:
+      '@lerna/collect-updates': 'link:../../utils/collect-updates'
       '@lerna/command': 'file:../../core/command'
       '@lerna/filter-options': 'file:../../core/filter-options'
       '@lerna/listable': 'file:../../utils/listable'
