@@ -41,6 +41,7 @@ importers:
       eslint: 5.16.0
       eslint-config-airbnb-base: 13.1.0
       eslint-config-prettier: 4.2.0
+      eslint-import-resolver-node: 0.3.2
       eslint-plugin-import: 2.17.2
       eslint-plugin-jest: 22.5.1
       eslint-plugin-node: 8.0.1
@@ -96,6 +97,7 @@ importers:
       eslint: ^5.16.0
       eslint-config-airbnb-base: ^13.1.0
       eslint-config-prettier: ^4.1.0
+      eslint-import-resolver-node: ^0.3.2
       eslint-plugin-import: ^2.17.2
       eslint-plugin-jest: ^22.5.0
       eslint-plugin-node: ^8.0.1
