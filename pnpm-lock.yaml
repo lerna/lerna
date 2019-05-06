@@ -600,12 +600,14 @@ importers:
     devDependencies:
       '@lerna/package-graph': 'link:../package-graph'
       '@lerna/project': 'link:../project'
+      yargs: 12.0.5
     specifiers:
       '@lerna/collect-updates': 'file:../../utils/collect-updates'
       '@lerna/filter-packages': 'file:../../utils/filter-packages'
       '@lerna/package-graph': 'link:../package-graph'
       '@lerna/project': 'link:../project'
       dedent: ^0.7.0
+      yargs: ^12.0.1
   core/global-options:
     specifiers: {}
   core/lerna:
@@ -1043,11 +1045,13 @@ importers:
       columnify: 1.5.4
     devDependencies:
       '@lerna/package': 'link:../../core/package'
+      yargs: 12.0.5
     specifiers:
       '@lerna/package': 'link:../../core/package'
       '@lerna/query-graph': 'file:../query-graph'
       chalk: ^2.3.1
       columnify: ^1.5.4
+      yargs: ^12.0.1
   utils/log-packed:
     dependencies:
       byte-size: 5.0.1
