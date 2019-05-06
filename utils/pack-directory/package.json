@@ -37,6 +37,7 @@
     "temp-write": "^3.4.0"
   },
   "devDependencies": {
+    "@lerna/npm-conf": "link:../npm-conf",
     "@lerna/project": "link:../../core/project"
   }
 }

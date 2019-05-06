@@ -39,5 +39,8 @@
   "dependencies": {
     "npm-package-arg": "^6.0.0",
     "npmlog": "^4.1.2"
+  },
+  "devDependencies": {
+    "@lerna/npm-conf": "link:../npm-conf"
   }
 }
