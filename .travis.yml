@@ -52,8 +52,9 @@ before_install:
         export PATH="/c/Program Files/Git/mingw64/bin:/c/Program Files/Git/mingw64/usr/bin:/c/Program Files/Git/mingw64/libexec/git-core:$PATH"
       ;;
     esac
+  - curl -L https://unpkg.com/@pnpm/self-installer | node
 
-install: npm ci
+install: pnpm recursive install
 
 before_script:
   - npm config set loglevel warn
@@ -62,4 +63,4 @@ before_script:
   - yarn --version
 
 script:
-  - npm run $LERNA_CI_SCRIPT
+  - pnpm run $LERNA_CI_SCRIPT
