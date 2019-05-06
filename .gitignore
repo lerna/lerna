@@ -22,6 +22,9 @@ composer.lock
 
 # Project Specific
 /node_modules
+/commands/*/node_modules
+/core/*/node_modules
+/utils/*/node_modules
 *.log
 /lib
 tmp
