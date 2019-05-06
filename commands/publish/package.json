@@ -67,6 +67,7 @@
   },
   "devDependencies": {
     "@lerna/package-graph": "link:../../core/package-graph",
-    "@lerna/project": "link:../../core/project"
+    "@lerna/project": "link:../../core/project",
+    "write-pkg": "^3.1.0"
   }
 }

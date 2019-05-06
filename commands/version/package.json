@@ -60,5 +60,8 @@
     "slash": "^2.0.0",
     "temp-write": "^3.4.0",
     "write-json-file": "^3.2.0"
+  },
+  "devDependencies": {
+    "write-pkg": "^3.1.0"
   }
 }
