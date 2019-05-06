@@ -68,6 +68,7 @@
     "eslint-plugin-jest": "^23.0.4",
     "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-prettier": "^3.1.1",
+    "execa": "^1.0.0",
     "fast-async": "^7.0.6",
     "find-up": "^3.0.0",
     "fs-extra": "^8.1.0",

@@ -80,6 +80,7 @@ overrides:
         - allowModules:
             - "@integration/package-1"
             - "@integration/package-2"
+            - "pify"
       no-console: "off"
       strict: "off"
   - files:
