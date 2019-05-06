@@ -19,7 +19,6 @@ const collectUpdates = require("@lerna/collect-updates");
 const { createRunner } = require("@lerna/run-lifecycle");
 const runTopologically = require("@lerna/run-topologically");
 const ValidationError = require("@lerna/validation-error");
-const { createGitHubClient, parseGitRepo } = require("@lerna/github-client");
 const prereleaseIdFromVersion = require("@lerna/prerelease-id-from-version");
 
 const getCurrentBranch = require("./lib/get-current-branch");
@@ -32,6 +31,7 @@ const remoteBranchExists = require("./lib/remote-branch-exists");
 const isBreakingChange = require("./lib/is-breaking-change");
 const isAnythingCommitted = require("./lib/is-anything-committed");
 const makePromptVersion = require("./lib/prompt-version");
+const createRelease = require("./lib/create-release");
 
 const { collectPackages, getPackagesForOption } = collectUpdates;
 
@@ -75,18 +75,15 @@ class VersionCommand extends Command {
     this.pushToRemote = gitTagVersion && amend !== true && push;
     // never automatically push to remote when amending a commit
 
-    this.createReleases = this.pushToRemote && this.options.githubRelease;
+    this.createRelease = this.pushToRemote && this.options.createRelease;
     this.releaseNotes = [];
 
-    if (this.createReleases && this.options.conventionalCommits !== true) {
-      throw new ValidationError(
-        "ERELEASE",
-        "To create a Github Release, you must enable --conventional-commits"
-      );
+    if (this.createRelease && this.options.conventionalCommits !== true) {
+      throw new ValidationError("ERELEASE", "To create a release, you must enable --conventional-commits");
     }
 
-    if (this.createReleases && this.options.changelog === false) {
-      throw new ValidationError("ERELEASE", "To create a Github Release, you cannot pass --no-changelog");
+    if (this.createRelease && this.options.changelog === false) {
+      throw new ValidationError("ERELEASE", "To create a release, you cannot pass --no-changelog");
     }
 
     this.gitOpts = {
@@ -269,10 +266,17 @@ class VersionCommand extends Command {
       this.logger.info("execute", "Skipping git push");
     }
 
-    if (this.createReleases) {
-      tasks.push(() => this.createGitHubReleases());
+    if (this.createRelease) {
+      this.logger.info("execute", "Creating releases...");
+      tasks.push(() =>
+        createRelease(
+          this.options.createRelease,
+          { tags: this.tags, releaseNotes: this.releaseNotes },
+          { gitRemote: this.options.gitRemote, execOpts: this.execOpts }
+        )
+      );
     } else {
-      this.logger.info("execute", "Skipping GitHub releases");
+      this.logger.info("execute", "Skipping releases");
     }
 
     return pWaterfall(tasks).then(() => {
@@ -651,36 +655,6 @@ class VersionCommand extends Command {
     this.logger.info("git", "Pushing tags...");
 
     return gitPush(this.gitRemote, this.currentBranch, this.execOpts);
-  }
-
-  createGitHubReleases() {
-    this.logger.info("github", "Creating GitHub releases...");
-
-    const client = createGitHubClient();
-    const repo = parseGitRepo(this.options.gitRemote, this.execOpts);
-
-    return Promise.all(
-      this.releaseNotes.map(({ notes, name }) => {
-        const tag = name === "fixed" ? this.tags[0] : this.tags.find(t => t.startsWith(`${name}@`));
-
-        /* istanbul ignore if */
-        if (!tag) {
-          return Promise.resolve();
-        }
-
-        const prereleaseParts = semver.prerelease(tag.replace(`${name}@`, "")) || [];
-
-        return client.repos.createRelease({
-          owner: repo.owner,
-          repo: repo.name,
-          tag_name: tag,
-          name: tag,
-          body: notes,
-          draft: false,
-          prerelease: prereleaseParts.length > 0,
-        });
-      })
-    );
   }
 }
 

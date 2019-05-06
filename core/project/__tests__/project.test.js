@@ -140,7 +140,7 @@ describe("Project", () => {
       });
     });
 
-    it("renames deprecated config recursively", async () => {
+    it("updates deprecated config recursively", async () => {
       const cwd = await initFixture("extends-deprecated");
       const project = new Project(cwd);
 
@@ -157,6 +157,9 @@ Object {
         "ignored-file",
       ],
       "loglevel": "success",
+    },
+    "version": Object {
+      "createRelease": "github",
     },
   },
   "packages": Array [

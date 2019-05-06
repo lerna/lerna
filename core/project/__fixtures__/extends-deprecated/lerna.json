@@ -3,6 +3,9 @@
   "commands": {
     "bootstrap": {
       "hoist": true
+    },
+    "version": {
+      "githubRelease": true
     }
   },
   "npmTag": "next",
