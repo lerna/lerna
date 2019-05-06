@@ -26,7 +26,6 @@ importers:
       '@lerna-test/multi-line-trim-right': 'link:helpers/multi-line-trim-right'
       '@lerna-test/normalize-relative-dir': 'link:helpers/normalize-relative-dir'
       '@lerna-test/pkg-matchers': 'link:helpers/pkg-matchers'
-      '@lerna-test/sawmill': 'link:helpers/sawmill'
       '@lerna-test/serialize-changelog': 'link:helpers/serialize-changelog'
       '@lerna-test/serialize-git-sha': 'link:helpers/serialize-git-sha'
       '@lerna-test/serialize-placeholders': 'link:helpers/serialize-placeholders'
@@ -59,39 +58,38 @@ importers:
       tempy: 0.2.1
       touch: 3.1.0
     specifiers:
-      '@lerna-test/calls-back': 'file:helpers/calls-back'
-      '@lerna-test/cli-runner': 'file:helpers/cli-runner'
-      '@lerna-test/clone-fixture': 'file:helpers/clone-fixture'
-      '@lerna-test/command-runner': 'file:helpers/command-runner'
-      '@lerna-test/commit-change-to-package': 'file:helpers/commit-change-to-package'
-      '@lerna-test/copy-fixture': 'file:helpers/copy-fixture'
-      '@lerna-test/figgy-pudding-matchers': 'file:helpers/figgy-pudding-matchers'
-      '@lerna-test/find-fixture': 'file:helpers/find-fixture'
-      '@lerna-test/get-commit-message': 'file:helpers/get-commit-message'
-      '@lerna-test/git-add': 'file:helpers/git-add'
-      '@lerna-test/git-checkout': 'file:helpers/git-checkout'
-      '@lerna-test/git-commit': 'file:helpers/git-commit'
-      '@lerna-test/git-init': 'file:helpers/git-init'
-      '@lerna-test/git-merge': 'file:helpers/git-merge'
-      '@lerna-test/git-status': 'file:helpers/git-status'
-      '@lerna-test/git-tag': 'file:helpers/git-tag'
-      '@lerna-test/init-fixture': 'file:helpers/init-fixture'
-      '@lerna-test/init-named-fixture': 'file:helpers/init-named-fixture'
-      '@lerna-test/load-manifests': 'file:helpers/load-manifests'
-      '@lerna-test/logging-output': 'file:helpers/logging-output'
-      '@lerna-test/multi-line-trim-right': 'file:helpers/multi-line-trim-right'
-      '@lerna-test/normalize-relative-dir': 'file:helpers/normalize-relative-dir'
-      '@lerna-test/pkg-matchers': 'file:helpers/pkg-matchers'
-      '@lerna-test/sawmill': 'file:helpers/sawmill'
-      '@lerna-test/serialize-changelog': 'file:helpers/serialize-changelog'
-      '@lerna-test/serialize-git-sha': 'file:helpers/serialize-git-sha'
-      '@lerna-test/serialize-placeholders': 'file:helpers/serialize-placeholders'
-      '@lerna-test/serialize-tempdir': 'file:helpers/serialize-tempdir'
-      '@lerna-test/serialize-windows-paths': 'file:helpers/serialize-windows-paths'
-      '@lerna-test/set-npm-userconfig': 'file:helpers/set-npm-userconfig'
-      '@lerna-test/show-commit': 'file:helpers/show-commit'
-      '@lerna-test/silence-logging': 'file:helpers/silence-logging'
-      '@lerna-test/update-lerna-config': 'file:helpers/update-lerna-config'
+      '@lerna-test/calls-back': 'link:helpers/calls-back'
+      '@lerna-test/cli-runner': 'link:helpers/cli-runner'
+      '@lerna-test/clone-fixture': 'link:helpers/clone-fixture'
+      '@lerna-test/command-runner': 'link:helpers/command-runner'
+      '@lerna-test/commit-change-to-package': 'link:helpers/commit-change-to-package'
+      '@lerna-test/copy-fixture': 'link:helpers/copy-fixture'
+      '@lerna-test/figgy-pudding-matchers': 'link:helpers/figgy-pudding-matchers'
+      '@lerna-test/find-fixture': 'link:helpers/find-fixture'
+      '@lerna-test/get-commit-message': 'link:helpers/get-commit-message'
+      '@lerna-test/git-add': 'link:helpers/git-add'
+      '@lerna-test/git-checkout': 'link:helpers/git-checkout'
+      '@lerna-test/git-commit': 'link:helpers/git-commit'
+      '@lerna-test/git-init': 'link:helpers/git-init'
+      '@lerna-test/git-merge': 'link:helpers/git-merge'
+      '@lerna-test/git-status': 'link:helpers/git-status'
+      '@lerna-test/git-tag': 'link:helpers/git-tag'
+      '@lerna-test/init-fixture': 'link:helpers/init-fixture'
+      '@lerna-test/init-named-fixture': 'link:helpers/init-named-fixture'
+      '@lerna-test/load-manifests': 'link:helpers/load-manifests'
+      '@lerna-test/logging-output': 'link:helpers/logging-output'
+      '@lerna-test/multi-line-trim-right': 'link:helpers/multi-line-trim-right'
+      '@lerna-test/normalize-relative-dir': 'link:helpers/normalize-relative-dir'
+      '@lerna-test/pkg-matchers': 'link:helpers/pkg-matchers'
+      '@lerna-test/serialize-changelog': 'link:helpers/serialize-changelog'
+      '@lerna-test/serialize-git-sha': 'link:helpers/serialize-git-sha'
+      '@lerna-test/serialize-placeholders': 'link:helpers/serialize-placeholders'
+      '@lerna-test/serialize-tempdir': 'link:helpers/serialize-tempdir'
+      '@lerna-test/serialize-windows-paths': 'link:helpers/serialize-windows-paths'
+      '@lerna-test/set-npm-userconfig': 'link:helpers/set-npm-userconfig'
+      '@lerna-test/show-commit': 'link:helpers/show-commit'
+      '@lerna-test/silence-logging': 'link:helpers/silence-logging'
+      '@lerna-test/update-lerna-config': 'link:helpers/update-lerna-config'
       camelcase: ^5.3.1
       debug: ^4.1.1
       eslint: ^5.16.0
@@ -644,6 +642,213 @@ importers:
       npmlog: 4.1.2
     specifiers:
       npmlog: ^4.1.2
+  helpers/calls-back:
+    specifiers: {}
+  helpers/cli-runner:
+    dependencies:
+      execa: 1.0.0
+    specifiers:
+      execa: ^1.0.0
+  helpers/clone-fixture:
+    dependencies:
+      '@lerna-test/git-init': 'link:../git-init'
+      '@lerna-test/init-fixture': 'link:../init-fixture'
+      execa: 1.0.0
+      file-url: 2.0.2
+      tempy: 0.2.1
+    specifiers:
+      '@lerna-test/git-init': 'file:../git-init'
+      '@lerna-test/init-fixture': 'file:../init-fixture'
+      execa: ^1.0.0
+      file-url: ^2.0.2
+      tempy: ^0.2.1
+  helpers/command-runner:
+    dependencies:
+      '@lerna/cli': 'link:../../core/cli'
+    specifiers:
+      '@lerna/cli': 'file:../../core/cli'
+  helpers/commit-change-to-package:
+    dependencies:
+      '@lerna-test/git-add': 'link:../git-add'
+      '@lerna-test/git-commit': 'link:../git-commit'
+      load-json-file: 4.0.0
+      write-json-file: 2.3.0
+    specifiers:
+      '@lerna-test/git-add': 'file:../git-add'
+      '@lerna-test/git-commit': 'file:../git-commit'
+      load-json-file: ^4.0.0
+      write-json-file: ^2.3.0
+  helpers/copy-fixture:
+    dependencies:
+      '@lerna-test/find-fixture': 'link:../find-fixture'
+      fs-extra: 7.0.1
+    specifiers:
+      '@lerna-test/find-fixture': 'file:../find-fixture'
+      fs-extra: ^7.0.0
+  helpers/figgy-pudding-matchers:
+    dependencies:
+      expect: 24.8.0
+      jest-diff: 24.8.0
+      jest-matcher-utils: 24.8.0
+    specifiers:
+      expect: ^24.0.0
+      jest-diff: ^24.0.0
+      jest-matcher-utils: ^24.0.0
+  helpers/find-fixture:
+    dependencies:
+      find-up: 3.0.0
+    specifiers:
+      find-up: ^3.0.0
+  helpers/get-commit-message:
+    dependencies:
+      execa: 1.0.0
+    specifiers:
+      execa: ^1.0.0
+  helpers/git-add:
+    dependencies:
+      execa: 1.0.0
+    specifiers:
+      execa: ^1.0.0
+  helpers/git-checkout:
+    dependencies:
+      execa: 1.0.0
+    specifiers:
+      execa: ^1.0.0
+  helpers/git-commit:
+    dependencies:
+      execa: 1.0.0
+      temp-write: 3.4.0
+    specifiers:
+      execa: ^1.0.0
+      temp-write: ^3.4.0
+  helpers/git-init:
+    dependencies:
+      execa: 1.0.0
+    specifiers:
+      execa: ^1.0.0
+  helpers/git-merge:
+    dependencies:
+      execa: 1.0.0
+    specifiers:
+      execa: ^1.0.0
+  helpers/git-status:
+    dependencies:
+      execa: 1.0.0
+    specifiers:
+      execa: ^1.0.0
+  helpers/git-tag:
+    dependencies:
+      execa: 1.0.0
+    specifiers:
+      execa: ^1.0.0
+  helpers/init-fixture:
+    dependencies:
+      '@lerna-test/copy-fixture': 'link:../copy-fixture'
+      '@lerna-test/git-add': 'link:../git-add'
+      '@lerna-test/git-commit': 'link:../git-commit'
+      '@lerna-test/git-init': 'link:../git-init'
+      tempy: 0.2.1
+    specifiers:
+      '@lerna-test/copy-fixture': 'file:../copy-fixture'
+      '@lerna-test/git-add': 'file:../git-add'
+      '@lerna-test/git-commit': 'file:../git-commit'
+      '@lerna-test/git-init': 'file:../git-init'
+      tempy: ^0.2.1
+  helpers/init-named-fixture:
+    dependencies:
+      '@lerna-test/copy-fixture': 'link:../copy-fixture'
+      '@lerna-test/git-add': 'link:../git-add'
+      '@lerna-test/git-commit': 'link:../git-commit'
+      '@lerna-test/git-init': 'link:../git-init'
+      fs-extra: 7.0.1
+      tempy: 0.2.1
+    specifiers:
+      '@lerna-test/copy-fixture': 'file:../copy-fixture'
+      '@lerna-test/git-add': 'file:../git-add'
+      '@lerna-test/git-commit': 'file:../git-commit'
+      '@lerna-test/git-init': 'file:../git-init'
+      fs-extra: ^7.0.0
+      tempy: ^0.2.1
+  helpers/load-manifests:
+    dependencies:
+      globby: 8.0.2
+      load-json-file: 4.0.0
+    specifiers:
+      globby: ^8.0.1
+      load-json-file: ^4.0.0
+  helpers/logging-output:
+    dependencies:
+      '@lerna-test/multi-line-trim-right': 'link:../multi-line-trim-right'
+      npmlog: 4.1.2
+    specifiers:
+      '@lerna-test/multi-line-trim-right': 'file:../multi-line-trim-right'
+      npmlog: ^4.1.2
+  helpers/multi-line-trim-right:
+    dependencies:
+      normalize-newline: 3.0.0
+    specifiers:
+      normalize-newline: ^3.0.0
+  helpers/normalize-relative-dir:
+    dependencies:
+      normalize-path: 3.0.0
+    specifiers:
+      normalize-path: ^3.0.0
+  helpers/pkg-matchers:
+    dependencies:
+      '@lerna/package': 'link:../../core/package'
+      read-pkg: 3.0.0
+      semver: 5.7.0
+    specifiers:
+      '@lerna/package': 'file:../../core/package'
+      read-pkg: ^3.0.0
+      semver: ^5.5.0
+  helpers/serialize-changelog:
+    dependencies:
+      '@lerna-test/serialize-git-sha': 'link:../serialize-git-sha'
+      normalize-newline: 3.0.0
+    specifiers:
+      '@lerna-test/serialize-git-sha': 'file:../serialize-git-sha'
+      normalize-newline: ^3.0.0
+  helpers/serialize-git-sha:
+    specifiers: {}
+  helpers/serialize-placeholders:
+    dependencies:
+      '@lerna-test/serialize-tempdir': 'link:../serialize-tempdir'
+      '@lerna-test/serialize-windows-paths': 'link:../serialize-windows-paths'
+      normalize-newline: 3.0.0
+    specifiers:
+      '@lerna-test/serialize-tempdir': 'file:../serialize-tempdir'
+      '@lerna-test/serialize-windows-paths': 'file:../serialize-windows-paths'
+      normalize-newline: ^3.0.0
+  helpers/serialize-tempdir:
+    dependencies:
+      normalize-path: 3.0.0
+    specifiers:
+      normalize-path: ^3.0.0
+  helpers/serialize-windows-paths:
+    dependencies:
+      normalize-path: 3.0.0
+    specifiers:
+      normalize-path: ^3.0.0
+  helpers/set-npm-userconfig:
+    specifiers: {}
+  helpers/show-commit:
+    dependencies:
+      '@lerna-test/serialize-git-sha': 'link:../serialize-git-sha'
+      execa: 1.0.0
+    specifiers:
+      '@lerna-test/serialize-git-sha': 'file:../serialize-git-sha'
+      execa: ^1.0.0
+  helpers/silence-logging:
+    dependencies:
+      npmlog: 4.1.2
+    specifiers:
+      npmlog: ^4.1.2
+  helpers/update-lerna-config:
+    dependencies:
+      fs-extra: 7.0.1
+    specifiers:
+      fs-extra: ^7.0.0
   utils/batch-packages:
     dependencies:
       '@lerna/package-graph': 'link:../../core/package-graph'
@@ -931,7 +1136,6 @@ packages:
   /@babel/code-frame/7.0.0:
     dependencies:
       '@babel/highlight': 7.0.0
-    dev: true
     resolution:
       integrity: sha512-OfC2uemaknXr87bdLUkWog7nYuliM9Ij5HUcajsVcMCpQrcLmtxRbVFTIqmcSkSeYRBFBRxs2FiUqFJDLdiebA==
   /@babel/core/7.4.4:
@@ -1008,7 +1212,6 @@ packages:
       chalk: 2.4.2
       esutils: 2.0.2
       js-tokens: 4.0.0
-    dev: true
     resolution:
       integrity: sha512-UFMC4ZeFC48Tpvj7C8UgLvtkaUuovQX+5xNWrsIoMG8o2z+XFKjKaN9iVmS84dPwVN00W4wPmqvYoZF3EGAsfw==
   /@babel/parser/7.4.4:
@@ -1072,7 +1275,6 @@ packages:
       '@jest/source-map': 24.3.0
       chalk: 2.4.2
       slash: 2.0.0
-    dev: true
     engines:
       node: '>= 6'
     resolution:
@@ -1165,7 +1367,6 @@ packages:
       callsites: 3.1.0
       graceful-fs: 4.1.15
       source-map: 0.6.1
-    dev: true
     engines:
       node: '>= 6'
     resolution:
@@ -1175,7 +1376,6 @@ packages:
       '@jest/console': 24.7.1
       '@jest/types': 24.8.0
       '@types/istanbul-lib-coverage': 2.0.1
-    dev: true
     engines:
       node: '>= 6'
     resolution:
@@ -1218,7 +1418,6 @@ packages:
       '@types/istanbul-lib-coverage': 2.0.1
       '@types/istanbul-reports': 1.1.1
       '@types/yargs': 12.0.12
-    dev: true
     engines:
       node: '>= 6'
     resolution:
@@ -1227,13 +1426,11 @@ packages:
     dependencies:
       call-me-maybe: 1.0.1
       glob-to-regexp: 0.3.0
-    dev: false
     engines:
       node: '>=4'
     resolution:
       integrity: sha512-bPHp6Ji8b41szTOcaP63VlnbbO5Ny6dwAATtY6JTjh5N2OLrb5Qk/Th5cRkRQhkWCt+EJsYrNB0MiL+Gpn6e3g==
   /@nodelib/fs.stat/1.1.3:
-    dev: false
     engines:
       node: '>= 6'
     resolution:
@@ -1309,28 +1506,23 @@ packages:
     resolution:
       integrity: sha512-XYVgHF2sQ0YblLRMLNPB3CkFMewzFmlDsH/TneZFHUXDlABQgh88uOxuez7ZcXxayLFrqLwtDH1t+FmlFwNZxw==
   /@types/istanbul-lib-coverage/2.0.1:
-    dev: true
     resolution:
       integrity: sha512-hRJD2ahnnpLgsj6KWMYSrmXkM3rm2Dl1qkx6IOFD5FnuNPXJIG5L0dhgKXCYTRMGzU4n0wImQ/xfmRc4POUFlg==
   /@types/istanbul-lib-report/1.1.1:
     dependencies:
       '@types/istanbul-lib-coverage': 2.0.1
-    dev: true
     resolution:
       integrity: sha512-3BUTyMzbZa2DtDI2BkERNC6jJw2Mr2Y0oGI7mRxYNBPxppbtEK1F66u3bKwU2g+wxwWI7PAoRpJnOY1grJqzHg==
   /@types/istanbul-reports/1.1.1:
     dependencies:
       '@types/istanbul-lib-coverage': 2.0.1
       '@types/istanbul-lib-report': 1.1.1
-    dev: true
     resolution:
       integrity: sha512-UpYjBi8xefVChsCoBpKShdxTllC9pwISirfoZsUa2AAdQg/Jd2KQGtSbw+ya7GPo7x/wAPlH6JBhKhAsXUEZNA==
   /@types/stack-utils/1.0.1:
-    dev: true
     resolution:
       integrity: sha512-l42BggppR6zLmpfU6fq9HEa2oGPEI8yrSPL3GITjfRInppYFahObbIQOQK3UGxEnyQpltZLaPe75046NOZQikw==
   /@types/yargs/12.0.12:
-    dev: true
     resolution:
       integrity: sha512-SOhuU4wNBxhhTHxYaiG5NY4HBhDIDnJF60GU+2LqHAdKKer86//e4yg69aENCtQ04n0ovz+tq2YPME5t5yp4pw==
   /JSONStream/1.3.5:
@@ -1508,13 +1700,11 @@ packages:
   /array-union/1.0.2:
     dependencies:
       array-uniq: 1.0.3
-    dev: false
     engines:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-mjRBDk9OPaI96jdb5b5w8kd47Dk=
   /array-uniq/1.0.3:
-    dev: false
     engines:
       node: '>=0.10.0'
     resolution:
@@ -1525,7 +1715,6 @@ packages:
     resolution:
       integrity: sha1-qJS3XUvE9s1nnvMkSp/Y9Gri1Cg=
   /arrify/1.0.1:
-    dev: false
     engines:
       node: '>=0.10.0'
     resolution:
@@ -1765,7 +1954,6 @@ packages:
     resolution:
       integrity: sha512-AKcdTnFSWATd5/GCPRxr2ChwIJ85CeyrEyjRHlKxQ56d4XJMGym0uAiKn0xbLOGOl3+yRpOTi484dVCEc5AUzQ==
   /call-me-maybe/1.0.1:
-    dev: false
     resolution:
       integrity: sha1-JtII6onje1y95gJQoV8DHBak1ms=
   /caller-callsite/2.0.0:
@@ -1791,7 +1979,6 @@ packages:
     resolution:
       integrity: sha1-BuuE8A7qQT2oav/vrL/7Ngk7PFA=
   /callsites/3.1.0:
-    dev: true
     engines:
       node: '>=6'
     resolution:
@@ -2145,7 +2332,6 @@ packages:
     resolution:
       integrity: sha512-eTVLrBSt7fjbDygz805pMnstIs2VTBNkRm0qxZd+M7A5XDdxVRWO5MxGBXZhjY4cqLYLdtrGqRf8mBPmzwSpWQ==
   /crypto-random-string/1.0.0:
-    dev: true
     engines:
       node: '>=4'
     resolution:
@@ -2328,7 +2514,6 @@ packages:
     resolution:
       integrity: sha1-f3Qt4Gb8dIvI24IFad3c5Jvw1FY=
   /diff-sequences/24.3.0:
-    dev: true
     engines:
       node: '>= 6'
     resolution:
@@ -2337,7 +2522,6 @@ packages:
     dependencies:
       arrify: 1.0.1
       path-type: 3.0.0
-    dev: false
     engines:
       node: '>=4'
     resolution:
@@ -2694,7 +2878,6 @@ packages:
     resolution:
       integrity: sha1-De4/7TH81GlhjOc0IJn8GvoL2xM=
   /esutils/2.0.2:
-    dev: true
     engines:
       node: '>=0.10.0'
     resolution:
@@ -2743,7 +2926,6 @@ packages:
       jest-matcher-utils: 24.8.0
       jest-message-util: 24.8.0
       jest-regex-util: 24.3.0
-    dev: true
     engines:
       node: '>= 6'
     resolution:
@@ -2824,7 +3006,6 @@ packages:
       is-glob: 4.0.1
       merge2: 1.2.3
       micromatch: 3.1.10
-    dev: false
     engines:
       node: '>=4.0.0'
     resolution:
@@ -2951,7 +3132,6 @@ packages:
       graceful-fs: 4.1.15
       jsonfile: 4.0.0
       universalify: 0.1.2
-    dev: false
     engines:
       node: '>=6 <7 || >=8'
     resolution:
@@ -3125,11 +3305,9 @@ packages:
     dependencies:
       is-glob: 3.1.0
       path-dirname: 1.0.2
-    dev: false
     resolution:
       integrity: sha1-nmr2KZ2NO9K9QEMIMr0RPfkGxa4=
   /glob-to-regexp/0.3.0:
-    dev: false
     resolution:
       integrity: sha1-jFoUlNIGbFcMw7/kSWF1rMTVAqs=
   /glob/7.1.3:
@@ -3157,7 +3335,6 @@ packages:
       ignore: 3.3.10
       pify: 3.0.0
       slash: 1.0.0
-    dev: false
     engines:
       node: '>=4'
     resolution:
@@ -3313,7 +3490,6 @@ packages:
     resolution:
       integrity: sha512-DTVlMx3IYPe0/JJcYP7Gxg7ttZZu3IInhuEhbchuqneY9wWe5Ojy2mXLBaQFUQmo0AW2r3qG7m1mg86js+gnlQ==
   /ignore/3.3.10:
-    dev: false
     resolution:
       integrity: sha512-Pgs951kaMm5GXP7MOvxERINe3gsaVjUWFm+UZPSq9xYriQAksyhg0csnS0KXSNRD5NmNdapXEpjxG49+AKh/ug==
   /ignore/4.0.6:
@@ -3542,7 +3718,6 @@ packages:
     resolution:
       integrity: sha512-arnXMxT1hhoKo9k1LZdmlNyJdDDfy2v0fXjFlmok4+i8ul/6WlbVge9bhM74OpNPQPMGUToDtz+KXa1PneJxOA==
   /is-extglob/2.1.1:
-    dev: false
     engines:
       node: '>=0.10.0'
     resolution:
@@ -3576,7 +3751,6 @@ packages:
   /is-glob/3.1.0:
     dependencies:
       is-extglob: 2.1.1
-    dev: false
     engines:
       node: '>=0.10.0'
     resolution:
@@ -3584,7 +3758,6 @@ packages:
   /is-glob/4.0.1:
     dependencies:
       is-extglob: 2.1.1
-    dev: false
     engines:
       node: '>=0.10.0'
     resolution:
@@ -3840,7 +4013,6 @@ packages:
       diff-sequences: 24.3.0
       jest-get-type: 24.8.0
       pretty-format: 24.8.0
-    dev: true
     engines:
       node: '>= 6'
     resolution:
@@ -3891,7 +4063,6 @@ packages:
     resolution:
       integrity: sha512-vIGUEScd1cdDgR6sqn2M08sJTRLQp6Dk/eIkCeO4PFHxZMOgy+uYLPMC4ix3PEfM5Au/x3uQ/5Tl0DpXXZsJ/Q==
   /jest-get-type/24.8.0:
-    dev: true
     engines:
       node: '>= 6'
     resolution:
@@ -3953,7 +4124,6 @@ packages:
       jest-diff: 24.8.0
       jest-get-type: 24.8.0
       pretty-format: 24.8.0
-    dev: true
     engines:
       node: '>= 6'
     resolution:
@@ -3968,7 +4138,6 @@ packages:
       micromatch: 3.1.10
       slash: 2.0.0
       stack-utils: 1.0.2
-    dev: true
     engines:
       node: '>= 6'
     resolution:
@@ -3992,7 +4161,6 @@ packages:
     resolution:
       integrity: sha512-pgFw2tm54fzgYvc/OHrnysABEObZCUNFnhjoRjaVOCN8NYc032/gVjPaHD4Aq6ApkSieWtfKAFQtmDKAmhupnQ==
   /jest-regex-util/24.3.0:
-    dev: true
     engines:
       node: '>= 6'
     resolution:
@@ -4169,7 +4337,6 @@ packages:
     resolution:
       integrity: sha512-o0HM90RKFRNWmAWvlyV8i5jGZ97pFwkeVoGvPW1EtLTgJc2+jcuqcbbqcSZLE/3f2S5pt0y2ZBETuhpWNl1Reg==
   /js-tokens/4.0.0:
-    dev: true
     resolution:
       integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==
   /js-yaml/3.13.1:
@@ -4246,7 +4413,6 @@ packages:
     resolution:
       integrity: sha512-8Mh9h6xViijj36g7Dxi+Y4S6hNGV96vcJZr/SrlHh1LR/pEn/8j/+qIBbs44YKl69Lrfctp4QD+AdWLTMqEZAQ==
   /jsonfile/4.0.0:
-    dev: false
     optionalDependencies:
       graceful-fs: 4.1.15
     resolution:
@@ -4592,7 +4758,6 @@ packages:
     resolution:
       integrity: sha1-QEEgLVCKNCugAXQAjfDCUbjBNeE=
   /merge2/1.2.3:
-    dev: false
     engines:
       node: '>= 4.5.0'
     resolution:
@@ -4856,7 +5021,6 @@ packages:
     resolution:
       integrity: sha1-xkZdvwirzU2zWTF/eaxopkayj/k=
   /normalize-newline/3.0.0:
-    dev: true
     engines:
       node: '>=4'
     resolution:
@@ -4878,7 +5042,6 @@ packages:
     resolution:
       integrity: sha1-GrKLVW4Zg2Oowab35vogE3/mrtk=
   /normalize-path/3.0.0:
-    dev: true
     engines:
       node: '>=0.10.0'
     resolution:
@@ -5166,7 +5329,6 @@ packages:
     resolution:
       integrity: sha1-v5j+V1cFZYqeE1G++4WuTB8Hvco=
   /p-map/1.2.0:
-    dev: false
     engines:
       node: '>=4'
     resolution:
@@ -5293,7 +5455,6 @@ packages:
     resolution:
       integrity: sha1-s2PlXoAGym/iF4TS2yK9FdeRfxQ=
   /path-dirname/1.0.2:
-    dev: false
     resolution:
       integrity: sha1-zDPSTVJeCZpTiMAzbG4yuRYGCeA=
   /path-exists/2.1.0:
@@ -5443,7 +5604,6 @@ packages:
       ansi-regex: 4.1.0
       ansi-styles: 3.2.1
       react-is: 16.8.6
-    dev: true
     engines:
       node: '>= 6'
     resolution:
@@ -5554,7 +5714,6 @@ packages:
     resolution:
       integrity: sha1-Q2CxfGETatOAeDl/8RQW4Ybc+7g=
   /react-is/16.8.6:
-    dev: true
     resolution:
       integrity: sha512-aUk3bHfZ2bRSVFFbbeVS4i+lNPZr3/WM5jT2J5omUVV1zzcs1nAaf3l51ctA5FFvCRbhrH0bdAsRRQddFJZPtA==
   /read-cmd-shim/1.0.1:
@@ -5982,13 +6141,11 @@ packages:
     resolution:
       integrity: sha512-N+z4pHB4AmUv0SjveWRd6q1Nj5w62m5jodv+GD8lvmbY/83T/rpbJGZOnK5T149OldDj4Db07BSv9xY4K6NTPQ==
   /slash/1.0.0:
-    dev: false
     engines:
       node: '>=0.10.0'
     resolution:
       integrity: sha1-xB8vbDn8FtHNF61LXYlhFK5HDVU=
   /slash/2.0.0:
-    dev: true
     engines:
       node: '>=6'
     resolution:
@@ -6163,7 +6320,6 @@ packages:
     resolution:
       integrity: sha512-3Wge10hNcT1Kur4PDFwEieXSCMCJs/7WvSACcrMYrNp+b8kDL1/0wJch5Ni2WrtwEa2IO8OsVfeKIciKCDx/QA==
   /stack-utils/1.0.2:
-    dev: true
     engines:
       node: '>=0.10.0'
     resolution:
@@ -6393,7 +6549,6 @@ packages:
     dependencies:
       temp-dir: 1.0.0
       unique-string: 1.0.0
-    dev: true
     engines:
       node: '>=4'
     resolution:
@@ -6600,7 +6755,6 @@ packages:
   /unique-string/1.0.0:
     dependencies:
       crypto-random-string: 1.0.0
-    dev: true
     engines:
       node: '>=4'
     resolution:
@@ -6612,7 +6766,6 @@ packages:
     resolution:
       integrity: sha512-eRHEHhChCBHrZsA4WEhdgiOKgdvgrMIHwnwnqD0r5C6AO8kwKcG7qSku3iXdhvHL3YvsS9ZkSGN8h/hIpoFC8g==
   /universalify/0.1.2:
-    dev: false
     engines:
       node: '>= 4.0.0'
     resolution:

@@ -24,6 +24,7 @@ composer.lock
 /node_modules
 /commands/*/node_modules
 /core/*/node_modules
+/helpers/*/node_modules
 /utils/*/node_modules
 *.log
 /lib

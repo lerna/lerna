@@ -2,3 +2,5 @@ packages:
   - 'commands/*'
   - 'core/*'
   - 'utils/*'
+  # private modules
+  - 'helpers/*'
