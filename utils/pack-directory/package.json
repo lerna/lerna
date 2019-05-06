@@ -38,6 +38,7 @@
   },
   "devDependencies": {
     "@lerna/npm-conf": "link:../npm-conf",
-    "@lerna/project": "link:../../core/project"
+    "@lerna/project": "link:../../core/project",
+    "pretty-format": "^24.8.0"
   }
 }

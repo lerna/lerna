@@ -1164,6 +1164,7 @@ importers:
     devDependencies:
       '@lerna/npm-conf': 'link:../npm-conf'
       '@lerna/project': 'link:../../core/project'
+      pretty-format: 24.8.0
     specifiers:
       '@lerna/get-packed': 'file:../get-packed'
       '@lerna/npm-conf': 'link:../npm-conf'
@@ -1173,6 +1174,7 @@ importers:
       figgy-pudding: ^3.5.1
       npm-packlist: ^1.4.4
       npmlog: ^4.1.2
+      pretty-format: ^24.8.0
       tar: ^4.4.10
       temp-write: ^3.4.0
   utils/prerelease-id-from-version:
