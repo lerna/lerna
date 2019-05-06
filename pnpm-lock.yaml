@@ -399,6 +399,7 @@ importers:
       p-pipe: 1.2.0
       semver: 6.2.0
     devDependencies:
+      '@lerna/package-graph': 'link:../../core/package-graph'
       '@lerna/project': 'link:../../core/project'
     specifiers:
       '@evocateur/libnpmaccess': ^3.1.2
@@ -416,6 +417,7 @@ importers:
       '@lerna/otplease': 'file:../../core/otplease'
       '@lerna/output': 'file:../../utils/output'
       '@lerna/pack-directory': 'file:../../utils/pack-directory'
+      '@lerna/package-graph': 'link:../../core/package-graph'
       '@lerna/prerelease-id-from-version': 'file:../../utils/prerelease-id-from-version'
       '@lerna/project': 'link:../../core/project'
       '@lerna/prompt': 'file:../../core/prompt'
@@ -579,10 +581,12 @@ importers:
       '@lerna/filter-packages': 'link:../../utils/filter-packages'
       dedent: 0.7.0
     devDependencies:
+      '@lerna/package-graph': 'link:../package-graph'
       '@lerna/project': 'link:../project'
     specifiers:
       '@lerna/collect-updates': 'file:../../utils/collect-updates'
       '@lerna/filter-packages': 'file:../../utils/filter-packages'
+      '@lerna/package-graph': 'link:../package-graph'
       '@lerna/project': 'link:../project'
       dedent: ^0.7.0
   core/global-options:
@@ -938,10 +942,12 @@ importers:
       slash: 2.0.0
     devDependencies:
       '@lerna/package': 'link:../../core/package'
+      '@lerna/package-graph': 'link:../../core/package-graph'
     specifiers:
       '@lerna/child-process': 'file:../../core/child-process'
       '@lerna/describe-ref': 'file:../describe-ref'
       '@lerna/package': 'link:../../core/package'
+      '@lerna/package-graph': 'link:../../core/package-graph'
       minimatch: ^3.0.4
       npmlog: ^4.1.2
       slash: ^2.0.0

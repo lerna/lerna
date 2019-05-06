@@ -39,6 +39,7 @@
     "slash": "^2.0.0"
   },
   "devDependencies": {
-    "@lerna/package": "link:../../core/package"
+    "@lerna/package": "link:../../core/package",
+    "@lerna/package-graph": "link:../../core/package-graph"
   }
 }

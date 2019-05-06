@@ -39,6 +39,7 @@
     "npmlog": "^4.1.2"
   },
   "devDependencies": {
+    "@lerna/package-graph": "link:../package-graph",
     "@lerna/project": "link:../project"
   }
 }
