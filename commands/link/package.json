@@ -37,5 +37,8 @@
     "@lerna/symlink-dependencies": "file:../../utils/symlink-dependencies",
     "p-map": "^2.1.0",
     "slash": "^2.0.0"
+  },
+  "devDependencies": {
+    "@lerna/create-symlink": "link:../../utils/create-symlink"
   }
 }

@@ -185,9 +185,12 @@ importers:
       p-waterfall: 1.0.0
       read-package-tree: 5.2.2
       semver: 6.2.0
+    devDependencies:
+      '@lerna/create-symlink': 'link:../../utils/create-symlink'
     specifiers:
       '@lerna/batch-packages': 'file:../../utils/batch-packages'
       '@lerna/command': 'file:../../core/command'
+      '@lerna/create-symlink': 'link:../../utils/create-symlink'
       '@lerna/filter-options': 'file:../../core/filter-options'
       '@lerna/has-npm-version': 'file:../../utils/has-npm-version'
       '@lerna/npm-install': 'file:../../utils/npm-install'
@@ -349,8 +352,11 @@ importers:
       '@lerna/symlink-dependencies': 'link:../../utils/symlink-dependencies'
       p-map: 2.1.0
       slash: 2.0.0
+    devDependencies:
+      '@lerna/create-symlink': 'link:../../utils/create-symlink'
     specifiers:
       '@lerna/command': 'file:../../core/command'
+      '@lerna/create-symlink': 'link:../../utils/create-symlink'
       '@lerna/package-graph': 'file:../../core/package-graph'
       '@lerna/symlink-dependencies': 'file:../../utils/symlink-dependencies'
       p-map: ^2.1.0
