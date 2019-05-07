@@ -185,6 +185,11 @@ class Package {
       depCollection = this.devDependencies;
     }
 
+    // fall back to peerDependencies
+    if (!depCollection || !depCollection[depName]) {
+      depCollection = this.peerDependencies;
+    }
+
     if (resolved.registry || resolved.type === "directory") {
       // a version (1.2.3) OR range (^1.2.3) OR directory (file:../foo-pkg)
       depCollection[depName] = `${savePrefix}${depVersion}`;
