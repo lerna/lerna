@@ -77,6 +77,11 @@ exports.builder = yargs => {
     //   alias: "yes",
     //   type: "boolean",
     // },
+    otp: {
+      describe: "Supply a one-time password for publishing with two-factor authentication.",
+      type: "string",
+      requiresArg: true,
+    },
   };
 
   composeVersionOptions(yargs);

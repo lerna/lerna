@@ -257,4 +257,17 @@ Map {
       }
     });
   });
+
+  describe("--otp", () => {
+    it("passes one-time password to npm commands", async () => {
+      const testDir = await initFixture("normal");
+      const otp = "123456";
+      await lernaPublish(testDir)("--otp", otp);
+      expect(npmPublish).toHaveBeenCalledWith(
+        expect.objectContaining({ name: "package-1" }),
+        "/TEMP_DIR/package-1-MOCKED.tgz",
+        expect.objectContaining({ otp })
+      );
+    });
+  });
 });

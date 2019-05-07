@@ -51,6 +51,7 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 - [`--git-head <sha>`](#--git-head-sha)
 - [`--no-git-reset`](#--no-git-reset)
 - [`--no-verify-access`](#--no-verify-access)
+- [`--otp`](#--otp)
 - [`--preid`](#--preid)
 - [`--registry <url>`](#--registry-url)
 - [`--temp-tag`](#--temp-tag)
@@ -139,6 +140,16 @@ By default, `lerna` will verify the logged-in npm user's access to the packages 
 If you are using a third-party registry that does not support `npm access ls-packages`, you will need to pass this flag (or set `command.publish.verifyAccess` to `false` in lerna.json).
 
 > Please use with caution
+
+### `--otp`
+
+When publishing to a registry that requires two-factor authentication, you can specify a "one-time password" using `--otp`:
+
+```sh
+lerna publish --otp 123456
+```
+
+> Please keep in mind that one-time passwords often expire within a few minutes of their generation. Please ensure adequate time for the publish process to complete.
 
 ### `--preid`
 

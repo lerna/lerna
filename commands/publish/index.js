@@ -96,6 +96,7 @@ class PublishCommand extends Command {
       npmSession,
       npmVersion: userAgent,
       registry: this.options.registry,
+      otp: this.options.otp,
     });
 
     this.conf.set("user-agent", userAgent, "cli");
