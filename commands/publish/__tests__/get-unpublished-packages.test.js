@@ -1,9 +1,9 @@
 "use strict";
 
-jest.mock("pacote/packument");
+jest.mock("@evocateur/pacote/packument");
 
 // mocked module(s)
-const getPackument = require("pacote/packument");
+const getPackument = require("@evocateur/pacote/packument");
 
 // helpers
 const PackageGraph = require("@lerna/package-graph");

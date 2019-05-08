@@ -1,6 +1,6 @@
 "use strict";
 
-jest.mock("pacote/manifest");
+jest.mock("@evocateur/pacote/manifest");
 
 const fs = require("fs-extra");
 const path = require("path");
@@ -8,7 +8,7 @@ const execa = require("execa");
 const slash = require("slash");
 
 // mocked modules
-const getManifest = require("pacote/manifest");
+const getManifest = require("@evocateur/pacote/manifest");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);

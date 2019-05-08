@@ -4,7 +4,7 @@ const dedent = require("dedent");
 const npa = require("npm-package-arg");
 const pMap = require("p-map");
 const path = require("path");
-const getManifest = require("pacote/manifest");
+const getManifest = require("@evocateur/pacote/manifest");
 const semver = require("semver");
 
 const Command = require("@lerna/command");

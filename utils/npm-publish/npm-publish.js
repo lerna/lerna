@@ -3,7 +3,7 @@
 const fs = require("fs-extra");
 const path = require("path");
 const log = require("npmlog");
-const { publish } = require("libnpmpublish");
+const { publish } = require("@evocateur/libnpmpublish");
 const pify = require("pify");
 const readJSON = require("read-package-json");
 const figgyPudding = require("figgy-pudding");
