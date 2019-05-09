@@ -103,7 +103,7 @@ class ImportCommand extends Command {
     // Stash the repo's pre-import head away in case something goes wrong.
     this.preImportHead = this.getCurrentSHA();
 
-    if (ChildProcessUtilities.execSync("git", ["diff-index", "HEAD"], this.execOpts)) {
+    if (this.execSync("git", ["diff-index", "HEAD"])) {
       throw new ValidationError("ECHANGES", "Local repository has un-committed changes");
     }
 
@@ -132,11 +132,11 @@ class ImportCommand extends Command {
   }
 
   getCurrentSHA() {
-    return ChildProcessUtilities.execSync("git", ["rev-parse", "HEAD"], this.execOpts);
+    return this.execSync("git", ["rev-parse", "HEAD"]);
   }
 
   getWorkspaceRoot() {
-    return ChildProcessUtilities.execSync("git", ["rev-parse", "--show-toplevel"], this.execOpts);
+    return this.execSync("git", ["rev-parse", "--show-toplevel"]);
   }
 
   execSync(cmd, args) {
@@ -277,8 +277,8 @@ class ImportCommand extends Command {
         this.logger.error("import", `Rolling back to previous HEAD (commit ${this.preImportHead})`);
 
         // Abort the failed `git am` and roll back to previous HEAD.
-        ChildProcessUtilities.execSync("git", ["am", "--abort"], this.execOpts);
-        ChildProcessUtilities.execSync("git", ["reset", "--hard", this.preImportHead], this.execOpts);
+        this.execSync("git", ["am", "--abort"]);
+        this.execSync("git", ["reset", "--hard", this.preImportHead]);
 
         throw new ValidationError(
           "EIMPORT",
