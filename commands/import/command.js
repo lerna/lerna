@@ -21,6 +21,11 @@ exports.builder = yargs =>
         describe: "Import destination directory for the external git repository",
         type: "string",
       },
+      "preserve-commit": {
+        group: "Command Options:",
+        describe: "Preserve original committer in addition to original author",
+        type: "boolean",
+      },
       y: {
         group: "Command Options:",
         describe: "Skip all confirmation prompts",
