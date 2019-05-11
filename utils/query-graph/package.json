@@ -1,21 +1,21 @@
 {
-  "name": "@lerna/batch-packages",
+  "name": "@lerna/query-graph",
   "version": "3.13.0",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
     "utils"
   ],
-  "homepage": "https://github.com/lerna/lerna/tree/master/utils/batch-packages#readme",
+  "homepage": "https://github.com/lerna/lerna/tree/master/utils/query-graph#readme",
   "license": "MIT",
   "author": {
-    "name": "Daniel Stockman",
-    "url": "https://github.com/evocateur"
+    "name": "Benjamin Weggersen",
+    "url": "https://github.com/bweggersen"
   },
   "files": [
-    "batch-packages.js"
+    "query-graph.js"
   ],
-  "main": "batch-packages.js",
+  "main": "query-graph.js",
   "engines": {
     "node": ">= 6.9.0"
   },
@@ -25,13 +25,12 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lerna/lerna.git",
-    "directory": "utils/batch-packages"
+    "directory": "utils/query-graph"
   },
   "scripts": {
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/package-graph": "file:../../core/package-graph",
-    "npmlog": "^4.1.2"
+    "@lerna/package-graph": "file:../../core/package-graph"
   }
 }

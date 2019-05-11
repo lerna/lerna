@@ -2,6 +2,8 @@
 
 const npa = require("npm-package-arg");
 const semver = require("semver");
+const log = require("npmlog");
+
 const ValidationError = require("@lerna/validation-error");
 const prereleaseIdFromVersion = require("@lerna/prerelease-id-from-version");
 
@@ -189,9 +191,10 @@ class PackageGraph extends Map {
 
   /**
    * Return a tuple of cycle paths and nodes, which have been removed from the graph.
+   * @param {!boolean} rejectCycles Whether or not to reject cycles
    * @returns [Set<String[]>, Set<PackageGraphNode>]
    */
-  partitionCycles() {
+  partitionCycles(rejectCycles) {
     const cyclePaths = new Set();
     const cycleNodes = new Set();
 
@@ -235,11 +238,27 @@ class PackageGraph extends Map {
       currentNode.localDependents.forEach(visits([currentName]));
     });
 
-    if (cycleNodes.size) {
-      this.prune(...cycleNodes);
+    if (cyclePaths.size) {
+      const cycleMessage = ["Dependency cycles detected, you should fix these!"]
+        .concat(Array.from(cyclePaths).map(cycle => cycle.join(" -> ")))
+        .join("\n");
+
+      if (rejectCycles) {
+        throw new ValidationError("ECYCLE", cycleMessage);
+      }
+
+      log.warn("ECYCLE", cycleMessage);
     }
 
     return [cyclePaths, cycleNodes];
+  }
+
+  /**
+   * Remove cycle nodes.
+   * @param {Set<PackageGraphNode>} cycleNodes
+   */
+  pruneCycleNodes(cycleNodes) {
+    return this.prune(...cycleNodes);
   }
 
   /**

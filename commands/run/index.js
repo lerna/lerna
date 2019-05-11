@@ -1,13 +1,13 @@
 "use strict";
 
 const pMap = require("p-map");
+const PQueue = require("p-queue");
 
 const Command = require("@lerna/command");
 const npmRunScript = require("@lerna/npm-run-script");
-const batchPackages = require("@lerna/batch-packages");
-const runParallelBatches = require("@lerna/run-parallel-batches");
 const output = require("@lerna/output");
 const timer = require("@lerna/timer");
+const QueryGraph = require("@lerna/query-graph");
 const ValidationError = require("@lerna/validation-error");
 const { getFilteredPackages } = require("@lerna/filter-options");
 
@@ -58,10 +58,6 @@ class RunCommand extends Command {
         // still exits zero, aka "ok"
         return false;
       }
-
-      this.batchedPackages = this.toposort
-        ? batchPackages(this.packagesWithScript, this.options.rejectCycles)
-        : [this.packagesWithScript];
     });
   }
 
@@ -77,10 +73,10 @@ class RunCommand extends Command {
     let chain = Promise.resolve();
     const getElapsed = timer();
 
-    if (this.options.parallel) {
+    if (this.options.parallel || !this.toposort) {
       chain = chain.then(() => this.runScriptInPackagesParallel());
     } else {
-      chain = chain.then(() => this.runScriptInPackagesBatched());
+      chain = chain.then(() => this.runScriptInPackagesTopological());
     }
 
     if (this.bail) {
@@ -130,18 +126,44 @@ class RunCommand extends Command {
     };
   }
 
-  runScriptInPackagesBatched() {
+  runScriptInPackagesTopological() {
+    const queue = new PQueue({ concurrency: this.concurrency });
+    const graph = new QueryGraph(this.packagesWithScript, this.options.rejectCycles);
+
     const runner = this.options.stream
       ? pkg => this.runScriptInPackageStreaming(pkg)
       : pkg => this.runScriptInPackageCapturing(pkg);
 
-    return runParallelBatches(this.batchedPackages, this.concurrency, runner).then(batchedResults =>
-      batchedResults.reduce((arr, batch) => arr.concat(batch), [])
-    );
+    return new Promise((resolve, reject) => {
+      const returnValues = [];
+
+      const queueNextAvailablePackages = () =>
+        graph.getAvailablePackages().forEach(({ pkg, name }) => {
+          graph.markAsTaken(name);
+
+          queue
+            .add(() =>
+              runner(pkg)
+                .then(value => returnValues.push(value))
+                .then(() => graph.markAsDone(pkg))
+                .then(() => queueNextAvailablePackages())
+            )
+            .catch(reject);
+        });
+
+      queueNextAvailablePackages();
+
+      return queue.onIdle().then(() => resolve(returnValues));
+    });
   }
 
   runScriptInPackagesParallel() {
-    return pMap(this.packagesWithScript, pkg => this.runScriptInPackageStreaming(pkg));
+    const runner =
+      this.options.parallel || this.options.stream
+        ? pkg => this.runScriptInPackageStreaming(pkg)
+        : pkg => this.runScriptInPackageCapturing(pkg);
+
+    return pMap(this.packagesWithScript, runner);
   }
 
   runScriptInPackageStreaming(pkg) {

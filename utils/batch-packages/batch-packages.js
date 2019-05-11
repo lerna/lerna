@@ -1,28 +1,18 @@
 "use strict";
 
 const log = require("npmlog");
-
 const PackageGraph = require("@lerna/package-graph");
-const ValidationError = require("@lerna/validation-error");
 
 module.exports = batchPackages;
 
 function batchPackages(packagesToBatch, rejectCycles, graphType) {
   // create a new graph because we will be mutating it
   const graph = new PackageGraph(packagesToBatch, graphType);
-  const [cyclePaths, cycleNodes] = graph.partitionCycles();
+  const [cyclePaths, cycleNodes] = graph.partitionCycles(rejectCycles);
   const batches = [];
 
   if (cyclePaths.size) {
-    const cycleMessage = ["Dependency cycles detected, you should fix these!"]
-      .concat(Array.from(cyclePaths).map(cycle => cycle.join(" -> ")))
-      .join("\n");
-
-    if (rejectCycles) {
-      throw new ValidationError("ECYCLE", cycleMessage);
-    }
-
-    log.warn("ECYCLE", cycleMessage);
+    graph.pruneCycleNodes(cycleNodes);
   }
 
   while (graph.size) {
