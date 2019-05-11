@@ -15,6 +15,7 @@ describe("create-symlink", () => {
   fs.lstat.mockImplementation(() => Promise.reject(new Error("MOCK")));
   fs.unlink.mockResolvedValue();
   fs.symlink.mockResolvedValue();
+  fs.pathExists.mockResolvedValue(true);
   // cmdShim is a traditional errback
   cmdShim.mockImplementation(callsBack());
 

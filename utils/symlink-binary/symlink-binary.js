@@ -22,11 +22,11 @@ function symlinkBinary(srcPackageRef, destPackageRef) {
         const src = path.join(srcPackage.location, srcPackage.bin[name]);
         const dst = path.join(destPackage.binLocation, name);
 
-        return fs.pathExists(src).then(exists => {
-          if (exists) {
-            return { src, dst };
-          }
-        });
+        // Symlink all declared binaries, even if they don't exist (yet). We will
+        // assume the package author knows what they're doing and that the binaries
+        // will be generated during a later build phase (potentially source compiled from
+        // another language).
+        return { src, dst };
       });
 
       if (actions.length === 0) {
@@ -36,7 +36,7 @@ function symlinkBinary(srcPackageRef, destPackageRef) {
       return fs.mkdirp(destPackage.binLocation).then(() =>
         pMap(actions, meta => {
           if (meta) {
-            return createSymlink(meta.src, meta.dst, "exec").then(() => fs.chmod(meta.src, "755"));
+            return createSymlink(meta.src, meta.dst, "exec");
           }
         })
       );

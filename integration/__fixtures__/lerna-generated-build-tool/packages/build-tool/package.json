@@ -1,0 +1,10 @@
+{
+  "name": "@test/build-tool",
+  "version": "1.0.0",
+  "bin": {
+    "a-build-tool": "a-build-tool.js"
+  },
+  "scripts": {
+    "build": "echo \"#!/usr/bin/env node\nconsole.log('build tool executed')\" > a-build-tool.js"
+  }
+}
