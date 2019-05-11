@@ -26,6 +26,7 @@ const batchPackages = require("@lerna/batch-packages");
 const runParallelBatches = require("@lerna/run-parallel-batches");
 const pulseTillDone = require("@lerna/pulse-till-done");
 const versionCommand = require("@lerna/version");
+const prereleaseIdFromVersion = require("@lerna/prerelease-id-from-version");
 
 const createTempLicenses = require("./lib/create-temp-licenses");
 const getCurrentSHA = require("./lib/get-current-sha");
@@ -642,15 +643,19 @@ class PublishCommand extends Command {
 
     const mapper = pPipe(
       [
-        pkg =>
-          pulseTillDone(npmPublish(pkg, pkg.packed.tarFilePath, opts)).then(() => {
+        pkg => {
+          const preDistTag = this.getPreDistTag(pkg);
+          const tag = !this.options.tempTag && preDistTag ? preDistTag : opts.tag;
+          const pkgOpts = Object.assign({}, opts, { tag });
+          return pulseTillDone(npmPublish(pkg, pkg.packed.tarFilePath, pkgOpts)).then(() => {
             tracker.success("published", pkg.name, pkg.version);
             tracker.completeWork(1);
 
             logPacked(pkg.packed);
 
             return pkg;
-          }),
+          });
+        },
 
         this.options.requireScripts && (pkg => this.execScript(pkg, "postpublish")),
       ].filter(Boolean)
@@ -685,7 +690,8 @@ class PublishCommand extends Command {
     };
     const mapper = pkg => {
       const spec = `${pkg.name}@${pkg.version}`;
-      const distTag = getDistTag(pkg.get("publishConfig"));
+      const preDistTag = this.getPreDistTag(pkg);
+      const distTag = preDistTag || getDistTag(pkg.get("publishConfig"));
 
       return Promise.resolve()
         .then(() => pulseTillDone(npmDistTag.remove(spec, "lerna-temp", opts)))
@@ -713,6 +719,16 @@ class PublishCommand extends Command {
     }
 
     // undefined defaults to "latest" OR whatever is in pkg.publishConfig.tag
+  }
+
+  getPreDistTag(pkg) {
+    if (!this.options.preDistTag) {
+      return;
+    }
+    const isPrerelease = prereleaseIdFromVersion(pkg.version);
+    if (isPrerelease) {
+      return this.options.preDistTag;
+    }
   }
 }
 

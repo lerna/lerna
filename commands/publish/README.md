@@ -52,6 +52,7 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 - [`--no-git-reset`](#--no-git-reset)
 - [`--no-verify-access`](#--no-verify-access)
 - [`--preid`](#--preid)
+- [`--pre-dist-tag <tag>`](#--pre-dist-tag-tag)
 - [`--registry <url>`](#--registry-url)
 - [`--temp-tag`](#--temp-tag)
 - [`--ignore-scripts`](#--ignore-scripts)
@@ -156,6 +157,14 @@ lerna publish --canary --preid next
 
 When run with this flag, `lerna publish --canary` will increment `premajor`, `preminor`, `prepatch`, or `prerelease` semver
 bumps using the specified [prerelease identifier](http://semver.org/#spec-item-9).
+
+### `--pre-dist-tag <tag>`
+
+```sh
+lerna publish --pre-dist-tag next
+```
+
+Works the same as [`--dist-tag`](#--dist-tag-tag), except only applies to packages being released with a prerelease version.
 
 ### `--registry <url>`
 

@@ -6,7 +6,7 @@ const PackageGraph = require("@lerna/package-graph");
 
 module.exports = buildGraph;
 
-function buildGraph() {
+function buildGraph(mapPackages = pkg => pkg) {
   // cat __fixtures__/toposort/packages/*/package.json
   const packages = [
     {
@@ -61,7 +61,9 @@ function buildGraph() {
       name: "package-standalone",
       version: "1.0.0",
     },
-  ].map(json => new Package(json, `/test/packages/${json.name}`, "/test"));
+  ]
+    .map(mapPackages)
+    .map(json => new Package(json, `/test/packages/${json.name}`, "/test"));
 
   return new PackageGraph(packages);
   // require("console").dir(graph, { compact: false })

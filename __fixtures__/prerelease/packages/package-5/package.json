@@ -1,0 +1,11 @@
+{
+  "name": "package-5",
+  "dependencies": {
+    "package-1": "^1.0.0-alpha.0"
+  },
+  "optionalDependencies": {
+    "package-3": "^1.0.0-alpha.0"
+  },
+  "private": true,
+  "version": "1.0.0-alpha.0"
+}

@@ -1,5 +1,7 @@
 "use strict";
 
+const { collectPackages, getPackagesForOption } = jest.requireActual("@lerna/collect-updates");
+
 // collectUpdates.setUpdated(cwd, packageNames...)
 // otherwise, enables everything
 const updated = new Map();
@@ -20,3 +22,5 @@ afterEach(() => {
 
 module.exports = mockCollectUpdates;
 module.exports.setUpdated = setUpdated;
+module.exports.collectPackages = collectPackages;
+module.exports.getPackagesForOption = getPackagesForOption;
