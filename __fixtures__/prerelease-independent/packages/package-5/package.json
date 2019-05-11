@@ -1,0 +1,8 @@
+{
+  "name": "package-5",
+  "dependencies": {
+    "package-3": "^3.0.0-beta.3"
+  },
+  "private": true,
+  "version": "5.0.0-alpha.0"
+}

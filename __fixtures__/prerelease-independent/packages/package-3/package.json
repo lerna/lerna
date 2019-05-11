@@ -1,0 +1,7 @@
+{
+  "name": "package-3",
+  "version": "3.0.0-beta.3",
+  "devDependencies": {
+    "package-2": "^2.0.0-alpha.0"
+  }
+}

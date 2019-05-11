@@ -86,6 +86,20 @@ describe("VersionCommand", () => {
       }
     });
 
+    it("throws an error if conventional prerelease and graduate flags are both passed", async () => {
+      const testDir = await initFixture("normal");
+
+      try {
+        await lernaVersion(testDir)("--conventional-prerelease", "--conventional-graduate");
+      } catch (err) {
+        expect(err.message).toMatchInlineSnapshot(
+          `"--conventional-prerelease cannot be combined with --conventional-graduate."`
+        );
+      }
+
+      expect.assertions(1);
+    });
+
     it("throws an error when remote branch doesn't exist", async () => {
       remoteBranchExists.mockReturnValueOnce(false);
 
@@ -132,6 +146,14 @@ describe("VersionCommand", () => {
       }
 
       expect.assertions(1);
+    });
+
+    it("calls `checkWorkingTree.throwIfUncommitted` when using --force-publish", async () => {
+      const testDir = await initFixture("normal");
+
+      await lernaVersion(testDir)("--force-publish");
+
+      expect(checkWorkingTree.throwIfUncommitted).toHaveBeenCalled();
     });
 
     it("only bumps changed packages when non-major version selected", async () => {

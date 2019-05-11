@@ -4,9 +4,9 @@ jest.mock("@lerna/prompt");
 
 const semver = require("semver");
 const prompt = require("@lerna/prompt");
+const prereleaseIdFromVersion = require("@lerna/prerelease-id-from-version");
 const makePromptVersion = require("../lib/prompt-version");
 
-const getExistingPreId = version => (semver.prerelease(version) || []).shift();
 const resolvePrereleaseId = jest.fn(() => "alpha");
 const versionPrompt = makePromptVersion(resolvePrereleaseId);
 
@@ -130,7 +130,7 @@ describe("custom prerelease", () => {
       const version = "1.0.0";
       const node = {
         version,
-        prereleaseId: getExistingPreId(version),
+        prereleaseId: prereleaseIdFromVersion(version),
       };
       const defaultIdentifier = scopedResolveId(node.prereleaseId);
       const message = await versionPrompt(node);
@@ -147,7 +147,7 @@ describe("custom prerelease", () => {
       const version = "1.0.1-beta.1";
       const node = {
         version,
-        prereleaseId: getExistingPreId(version),
+        prereleaseId: prereleaseIdFromVersion(version),
       };
       const defaultIdentifier = scopedResolveId(node.prereleaseId);
       const message = await versionPrompt(node);

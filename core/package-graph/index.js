@@ -5,6 +5,7 @@ const semver = require("semver");
 const log = require("npmlog");
 
 const ValidationError = require("@lerna/validation-error");
+const prereleaseIdFromVersion = require("@lerna/prerelease-id-from-version");
 
 /**
  * Represents a node in a PackageGraph.
@@ -24,7 +25,7 @@ class PackageGraphNode {
       },
       prereleaseId: {
         // an existing prerelease ID only matters at the beginning
-        value: (semver.prerelease(pkg.version) || []).shift(),
+        value: prereleaseIdFromVersion(pkg.version),
       },
       // properties that might change over time
       version: {
