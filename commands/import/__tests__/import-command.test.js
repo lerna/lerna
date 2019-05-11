@@ -154,6 +154,39 @@ describe("ImportCommand", () => {
       expect(await lastCommitInDir(testDir)).toBe("Init commit");
     });
 
+    it("preserves original committer and date with --preserve-commit", async () =>
+      Promise.all(
+        // running the same test with and without --preserve-commit
+        [true, false].map(async shouldPreserve => {
+          const [testDir, externalDir] = await initBasicFixtures();
+          const filePath = path.join(externalDir, "old-file");
+          let expectedEmail;
+          let expectedName;
+
+          await execa("git", ["config", "user.name", "'test-name'"], { cwd: externalDir });
+          await execa("git", ["config", "user.email", "'test-email@foo.bar'"], { cwd: externalDir });
+          await fs.writeFile(filePath, "non-empty content");
+          await gitAdd(externalDir, filePath);
+          await gitCommit(externalDir, "Non-empty commit");
+
+          if (shouldPreserve) {
+            await lernaImport(testDir)(externalDir, "--preserve-commit");
+            // original committer
+            expectedEmail = "test-email@foo.bar";
+            expectedName = "test-name";
+          } else {
+            await lernaImport(testDir)(externalDir);
+            // whatever the current git user is
+            expectedEmail = execa.sync("git", ["config", "user.email"], { cwd: testDir }).stdout;
+            expectedName = execa.sync("git", ["config", "user.name"], { cwd: testDir }).stdout;
+          }
+
+          expect(execa.sync("git", ["log", "-1", "--format=%cn <%ce>"], { cwd: testDir }).stdout).toBe(
+            `${expectedName} <${expectedEmail}>`
+          );
+        })
+      ));
+
     it("allows skipping confirmation prompt", async () => {
       const [testDir, externalDir] = await initBasicFixtures();
       await lernaImport(testDir)(externalDir, "--yes");

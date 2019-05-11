@@ -94,10 +94,16 @@ class ImportCommand extends Command {
       throw new ValidationError("NOCOMMITS", `No git commits to import at "${inputPath}"`);
     }
 
+    if (this.options.preserveCommit) {
+      // Back these up since they'll change for each commit
+      this.origGitEmail = this.execSync("git", ["config", "user.email"]);
+      this.origGitName = this.execSync("git", ["config", "user.name"]);
+    }
+
     // Stash the repo's pre-import head away in case something goes wrong.
     this.preImportHead = this.getCurrentSHA();
 
-    if (ChildProcessUtilities.execSync("git", ["diff-index", "HEAD"], this.execOpts)) {
+    if (this.execSync("git", ["diff-index", "HEAD"])) {
       throw new ValidationError("ECHANGES", "Local repository has un-committed changes");
     }
 
@@ -126,11 +132,15 @@ class ImportCommand extends Command {
   }
 
   getCurrentSHA() {
-    return ChildProcessUtilities.execSync("git", ["rev-parse", "HEAD"], this.execOpts);
+    return this.execSync("git", ["rev-parse", "HEAD"]);
   }
 
   getWorkspaceRoot() {
-    return ChildProcessUtilities.execSync("git", ["rev-parse", "--show-toplevel"], this.execOpts);
+    return this.execSync("git", ["rev-parse", "--show-toplevel"]);
+  }
+
+  execSync(cmd, args) {
+    return ChildProcessUtilities.execSync(cmd, args, this.execOpts);
   }
 
   externalExecSync(cmd, args) {
@@ -186,6 +196,18 @@ class ImportCommand extends Command {
       .replace(/^(rename (from|to)) /gm, `$1 ${formattedTarget}/`);
   }
 
+  getGitUserFromSha(sha) {
+    return {
+      email: this.externalExecSync("git", ["show", "-s", "--format='%ae'", sha]),
+      name: this.externalExecSync("git", ["show", "-s", "--format='%an'", sha]),
+    };
+  }
+
+  configureGitUser({ email, name }) {
+    this.execSync("git", ["config", "user.email", `"${email}"`]);
+    this.execSync("git", ["config", "user.name", `"${name}"`]);
+  }
+
   execute() {
     this.enableProgressBar();
 
@@ -194,13 +216,19 @@ class ImportCommand extends Command {
       tracker.info(sha);
 
       const patch = this.createPatchForCommit(sha);
+      const procArgs = ["am", "-3", "--keep-non-patch"];
+
+      if (this.options.preserveCommit) {
+        this.configureGitUser(this.getGitUserFromSha(sha));
+        procArgs.push("--committer-date-is-author-date");
+      }
 
       // Apply the modified patch to the current lerna repository, preserving
       // original commit date, author and message.
       //
       // Fall back to three-way merge, which can help with duplicate commits
       // due to merge history.
-      const proc = ChildProcessUtilities.exec("git", ["am", "-3", "--keep-non-patch"], this.execOpts);
+      const proc = ChildProcessUtilities.exec("git", procArgs, this.execOpts);
 
       proc.stdin.end(patch);
 
@@ -227,16 +255,30 @@ class ImportCommand extends Command {
       .then(() => {
         tracker.finish();
 
+        if (this.options.preserveCommit) {
+          this.configureGitUser({
+            email: this.origGitEmail,
+            name: this.origGitName,
+          });
+        }
+
         this.logger.success("import", "finished");
       })
       .catch(err => {
         tracker.finish();
 
+        if (this.options.preserveCommit) {
+          this.configureGitUser({
+            email: this.origGitEmail,
+            name: this.origGitName,
+          });
+        }
+
         this.logger.error("import", `Rolling back to previous HEAD (commit ${this.preImportHead})`);
 
         // Abort the failed `git am` and roll back to previous HEAD.
-        ChildProcessUtilities.execSync("git", ["am", "--abort"], this.execOpts);
-        ChildProcessUtilities.execSync("git", ["reset", "--hard", this.preImportHead], this.execOpts);
+        this.execSync("git", ["am", "--abort"]);
+        this.execSync("git", ["reset", "--hard", this.preImportHead]);
 
         throw new ValidationError(
           "EIMPORT",
