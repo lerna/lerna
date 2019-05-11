@@ -73,10 +73,12 @@ class RunCommand extends Command {
     let chain = Promise.resolve();
     const getElapsed = timer();
 
-    if (this.options.parallel || !this.toposort) {
+    if (this.options.parallel) {
       chain = chain.then(() => this.runScriptInPackagesParallel());
-    } else {
+    } else if (this.toposort) {
       chain = chain.then(() => this.runScriptInPackagesTopological());
+    } else {
+      chain = chain.then(() => this.runScriptInPackagesLexical());
     }
 
     if (this.bail) {
@@ -158,12 +160,15 @@ class RunCommand extends Command {
   }
 
   runScriptInPackagesParallel() {
-    const runner =
-      this.options.parallel || this.options.stream
-        ? pkg => this.runScriptInPackageStreaming(pkg)
-        : pkg => this.runScriptInPackageCapturing(pkg);
+    return pMap(this.packagesWithScript, pkg => this.runScriptInPackageStreaming(pkg));
+  }
 
-    return pMap(this.packagesWithScript, runner);
+  runScriptInPackagesLexical() {
+    const runner = this.options.stream
+      ? pkg => this.runScriptInPackageStreaming(pkg)
+      : pkg => this.runScriptInPackageCapturing(pkg);
+
+    return pMap(this.packagesWithScript, runner, { concurrency: this.concurrency });
   }
 
   runScriptInPackageStreaming(pkg) {
