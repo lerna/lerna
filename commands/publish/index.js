@@ -92,6 +92,8 @@ class PublishCommand extends Command {
     this.logger.verbose("session", npmSession);
     this.logger.verbose("user-agent", userAgent);
 
+    // cache to hold a one-time-password across publishes
+    this.otpCache = { otp: undefined };
     this.conf = npmConf({
       lernaCommand: "publish",
       npmSession,
@@ -647,7 +649,8 @@ class PublishCommand extends Command {
           const preDistTag = this.getPreDistTag(pkg);
           const tag = !this.options.tempTag && preDistTag ? preDistTag : opts.tag;
           const pkgOpts = Object.assign({}, opts, { tag });
-          return pulseTillDone(npmPublish(pkg, pkg.packed.tarFilePath, pkgOpts)).then(() => {
+
+          return pulseTillDone(npmPublish(pkg, pkg.packed.tarFilePath, pkgOpts, this.otpCache)).then(() => {
             tracker.success("published", pkg.name, pkg.version);
             tracker.completeWork(1);
 
