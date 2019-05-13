@@ -93,11 +93,13 @@ class PublishCommand extends Command {
     this.logger.verbose("user-agent", userAgent);
 
     // cache to hold a one-time-password across publishes
-    this.otpCache = { otp: undefined };
+    this.otpCache = { otp: this.options.otp };
+
     this.conf = npmConf({
       lernaCommand: "publish",
       npmSession,
       npmVersion: userAgent,
+      otp: this.options.otp,
       registry: this.options.registry,
     });
 

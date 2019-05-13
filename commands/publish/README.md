@@ -51,6 +51,7 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 - [`--git-head <sha>`](#--git-head-sha)
 - [`--no-git-reset`](#--no-git-reset)
 - [`--no-verify-access`](#--no-verify-access)
+- [`--otp`](#--otp)
 - [`--preid`](#--preid)
 - [`--pre-dist-tag <tag>`](#--pre-dist-tag-tag)
 - [`--registry <url>`](#--registry-url)
@@ -141,6 +142,16 @@ If you are using a third-party registry that does not support `npm access ls-pac
 
 > Please use with caution
 
+### `--otp`
+
+When publishing packages that require two-factor authentication, you can specify a [one-time password](https://docs.npmjs.com/about-two-factor-authentication) using `--otp`:
+
+```sh
+lerna publish --otp 123456
+```
+
+> Please keep in mind that one-time passwords expire within 30 seconds of their generation. If it expires during publish operations, a prompt will request a refreshed value before continuing.
+
 ### `--preid`
 
 Unlike the `lerna version` option of the same name, this option only applies to [`--canary`](#--canary) version calculation.
@@ -211,7 +222,7 @@ Keep in mind that currently you have to supply it twice: for `version` command a
 # locally
 lerna version --tag-version-prefix=''
 # on ci
-lerna publish from-git --tag-version-prefix='' 
+lerna publish from-git --tag-version-prefix=''
 ```
 
 ## Deprecated Options
@@ -271,6 +282,7 @@ Lerna will run [npm lifecycle scripts](https://docs.npmjs.com/misc/scripts#descr
 ### Pre Publish
 
 - In root package:
+
   - `prepublish`
   - `prepare`
   - `prepublishOnly`

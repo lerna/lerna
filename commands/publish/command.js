@@ -41,6 +41,11 @@ exports.builder = yargs => {
       type: "string",
       requiresArg: true,
     },
+    otp: {
+      describe: "Supply a one-time password for publishing with two-factor authentication.",
+      type: "string",
+      requiresArg: true,
+    },
     registry: {
       describe: "Use the specified registry for all npm client operations.",
       type: "string",
