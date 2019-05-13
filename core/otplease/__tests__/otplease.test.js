@@ -1,118 +1,228 @@
+"use strict";
+
 jest.mock("@lerna/prompt");
-const otplease = require("..")
+
+// mocked modules
 const prompt = require("@lerna/prompt");
 
+// file under test
+const otplease = require("..");
+
+// global mock setup
+prompt.input.mockResolvedValue("123456");
+
 describe("@lerna/otplease", () => {
-    let savedIsTTY;
-    beforeAll(() => {
-        savedIsTTY = [process.stdin.isTTY, process.stdout.isTTY];
-        process.stdin.isTTY = true;
-        process.stdout.isTTY = true;
-    })
-    afterAll(() => {
-        process.stdin.isTTY = savedIsTTY[0];
-        process.stdout.isTTY = savedIsTTY[1];
+  const stdinIsTTY = process.stdin.isTTY;
+  const stdoutIsTTY = process.stdout.isTTY;
+
+  beforeEach(() => {
+    process.stdin.isTTY = true;
+    process.stdout.isTTY = true;
+  });
+
+  afterEach(() => {
+    process.stdin.isTTY = stdinIsTTY;
+    process.stdout.isTTY = stdoutIsTTY;
+  });
+
+  it("no error", async () => {
+    const obj = {};
+    const fn = jest.fn(() => obj);
+    const result = await otplease(fn, {});
+
+    expect(fn).toHaveBeenCalled();
+    expect(prompt.input).not.toHaveBeenCalled();
+    expect(result).toBe(obj);
+  });
+
+  it("request otp", async () => {
+    const obj = {};
+    const fn = jest.fn(makeTestCallback("123456", obj));
+    const result = await otplease(fn, {});
+
+    expect(fn).toHaveBeenCalledTimes(2);
+    expect(prompt.input).toHaveBeenCalled();
+    expect(result).toBe(obj);
+  });
+
+  it("request otp updates cache", async () => {
+    const otpCache = { otp: undefined };
+    const obj = {};
+    const fn = jest.fn(makeTestCallback("123456", obj));
+
+    const result = await otplease(fn, {}, otpCache);
+    expect(fn).toHaveBeenCalledTimes(2);
+    expect(prompt.input).toHaveBeenCalled();
+    expect(result).toBe(obj);
+    expect(otpCache.otp).toBe("123456");
+  });
+
+  it("uses cache if opts does not have own otp", async () => {
+    const otpCache = { otp: "654321" };
+    const obj = {};
+    const fn = jest.fn(makeTestCallback("654321", obj));
+    const result = await otplease(fn, {}, otpCache);
+
+    expect(fn).toHaveBeenCalledTimes(1);
+    expect(prompt.input).not.toHaveBeenCalled();
+    expect(result).toBe(obj);
+    expect(otpCache.otp).toBe("654321");
+  });
+
+  it("uses explicit otp regardless of cache value", async () => {
+    const otpCache = { otp: "654321" };
+    const obj = {};
+    const fn = jest.fn(makeTestCallback("987654", obj));
+    const result = await otplease(fn, { otp: "987654" }, otpCache);
+
+    expect(fn).toHaveBeenCalledTimes(1);
+    expect(prompt.input).not.toHaveBeenCalled();
+    expect(result).toBe(obj);
+    // do not replace cache
+    expect(otpCache.otp).toBe("654321");
+  });
+
+  it("using cache updated in a different task", async () => {
+    const otpCache = { otp: undefined };
+    const obj = {};
+    const fn = jest.fn(makeTestCallback("654321", obj));
+
+    // enqueue a promise resolution to update the otp at the start of the next turn.
+    Promise.resolve().then(() => {
+      otpCache.otp = "654321";
     });
 
-    it("no error", () => {
-        const obj = {};
-        const fn = jest.fn(() => obj);
-        prompt.input.mockResolvedValue("123456");
-        return otplease(fn, {}).then(result => {
-            expect(fn).toBeCalled();
-            expect(prompt.input).not.toBeCalled();
-            expect(result).toBe(obj);
-        });
-    });
-    it("request otp", () => {
-        const obj = {};
-        const fn = jest.fn(makeTestCallback("123456", obj));
-        prompt.input.mockResolvedValue("123456");
-        return otplease(fn, {}).then(result => {
-            expect(fn).toBeCalledTimes(2);
-            expect(prompt.input).toBeCalled();
-            expect(result).toBe(obj);
-        });
-    });
-    it("request otp updates cache", () => {
-        const otpCache = { otp: undefined };
-        const obj = {};
-        const fn = jest.fn(makeTestCallback("123456", obj));
-        prompt.input.mockResolvedValue("123456");
-        return otplease(fn, {}, otpCache).then(result => {
-            expect(fn).toBeCalledTimes(2);
-            expect(prompt.input).toBeCalled();
-            expect(result).toBe(obj);
-            expect(otpCache.otp).toBe("123456");
-        });
-    });
-    it("uses cache if opts does not have own otp", () => {
-        const otpCache = { otp: "654321" };
-        const obj = {};
-        const fn = jest.fn(makeTestCallback("654321", obj));
-        prompt.input.mockResolvedValue("123456");
-        return otplease(fn, {}, otpCache).then(result => {
-            expect(fn).toBeCalledTimes(1);
-            expect(prompt.input).not.toBeCalled();
-            expect(result).toBe(obj);
-            expect(otpCache.otp).toBe("654321");
-        });
-    });
-    it("uses explicit otp regardless of cache value", () => {
-        const otpCache = { otp: "654321" };
-        const obj = {};
-        const fn = jest.fn(makeTestCallback("987654", obj));
-        prompt.input.mockResolvedValue("123456");
-        return otplease(fn, { otp: "987654" }, otpCache).then(result => {
-            expect(fn).toBeCalledTimes(1);
-            expect(prompt.input).not.toBeCalled();
-            expect(result).toBe(obj);
-            expect(otpCache.otp).toBe("654321"); // do not replace cache
-        });
-    });
-    it("using cache updated in a different task", () => {
-        const otpCache = { otp: undefined };
-        const obj = {};
-        const fn = jest.fn(makeTestCallback("654321", obj));
-        prompt.input.mockResolvedValue("123456");
+    // start intial otplease call, 'catch' will happen in next turn *after* the cache is set.
+    const result = await otplease(fn, {}, otpCache);
+    expect(fn).toHaveBeenCalledTimes(2);
+    expect(prompt.input).not.toHaveBeenCalled();
+    expect(result).toBe(obj);
+  });
 
-        // enqueue a promise resolution to update the otp at the start of the next turn.
-        Promise.resolve().then(() => { otpCache.otp = "654321"; });
+  it("semaphore prevents overlapping requests for OTP", async () => {
+    const otpCache = { otp: undefined };
 
-        // start intial otplease call, 'catch' will happen in next turn *after* the cache is set.
-        return otplease(fn, {}, otpCache).then(result => {
-            expect(fn).toBeCalledTimes(2);
-            expect(prompt.input).not.toBeCalled();
-            expect(result).toBe(obj);
-        });
+    // overlapped calls to otplease that share an otpCache should
+    // result in the user only being prompted *once* for an OTP.
+    const obj1 = {};
+    const fn1 = jest.fn(makeTestCallback("123456", obj1));
+    const p1 = otplease(fn1, {}, otpCache);
+
+    const obj2 = {};
+    const fn2 = jest.fn(makeTestCallback("123456", obj2));
+    const p2 = otplease(fn2, {}, otpCache);
+
+    const [res1, res2] = await Promise.all([p1, p2]);
+
+    expect(fn1).toHaveBeenCalledTimes(2);
+    expect(fn2).toHaveBeenCalledTimes(2);
+    // only prompt once for the two concurrent requests
+    expect(prompt.input).toHaveBeenCalledTimes(1);
+    expect(res1).toBe(obj1);
+    expect(res2).toBe(obj2);
+  });
+
+  it("strips whitespace from OTP prompt value", async () => {
+    prompt.input.mockImplementationOnce((msg, opts) => Promise.resolve(opts.filter(" 121212 ")));
+
+    const obj = {};
+    const fn = jest.fn(makeTestCallback("121212", obj));
+    const result = await otplease(fn, {});
+
+    expect(result).toBe(obj);
+  });
+
+  it("validates OTP prompt response", async () => {
+    prompt.input.mockImplementationOnce((msg, opts) =>
+      Promise.resolve(opts.validate("i am the very model of a modern major general"))
+    );
+
+    const obj = {};
+    const fn = jest.fn(makeTestCallback("343434", obj));
+
+    try {
+      await otplease(fn, {});
+    } catch (err) {
+      expect(err.message).toMatch("Must be a valid one-time-password");
+    }
+
+    expect.hasAssertions();
+  });
+
+  it("rejects prompt errors", async () => {
+    prompt.input.mockImplementationOnce(() => Promise.reject(new Error("poopypants")));
+
+    const obj = {};
+    const fn = jest.fn(makeTestCallback("343434", obj));
+
+    try {
+      await otplease(fn, {});
+    } catch (err) {
+      expect(err.message).toMatch("poopypants");
+    }
+
+    expect.hasAssertions();
+  });
+
+  it("re-throws non-EOTP errors", async () => {
+    const fn = jest.fn(() => {
+      const err = new Error("not found");
+      err.code = "E404";
+      throw err;
     });
-    it("semaphore prevents overlapping requests for OTP", () => {
-        const otpCache = { otp: undefined };
-        prompt.input.mockResolvedValue("123456");
 
-        // overlapped calls to otplease that share an otpCache should
-        // result in the user only being prompted *once* for an OTP.
-        const obj1 = {};
-        const fn1 = jest.fn(makeTestCallback("123456", obj1));
-        const p1 = otplease(fn1, {}, otpCache);
+    try {
+      await otplease(fn, {});
+    } catch (err) {
+      expect(err.message).toMatch("not found");
+    }
 
-        const obj2 = {};
-        const fn2 = jest.fn(makeTestCallback("123456", obj2));
-        const p2 = otplease(fn2, {}, otpCache);
+    expect.hasAssertions();
+  });
 
-        return Promise.all([p1, p2]).then(res => {
-            expect(fn1).toBeCalledTimes(2);
-            expect(fn2).toBeCalledTimes(2);
-            expect(prompt.input).toBeCalledTimes(1); // only called once for the two concurrent requests
-            expect(res[0]).toBe(obj1);
-            expect(res[1]).toBe(obj2);
-        });
+  it("re-throws E401 errors that do not contain 'one-time pass' in the body", async () => {
+    const fn = jest.fn(() => {
+      const err = new Error("auth required");
+      err.body = "random arbitrary noise";
+      err.code = "E401";
+      throw err;
     });
-})
+
+    try {
+      await otplease(fn, {});
+    } catch (err) {
+      expect(err.message).toMatch("auth required");
+    }
+
+    expect.hasAssertions();
+  });
+
+  it.each([["stdin"], ["stdout"]])("re-throws EOTP error when %s is not a TTY", async pipe => {
+    const fn = jest.fn(() => {
+      const err = new Error(`non-interactive ${pipe}`);
+      err.code = "EOTP";
+      throw err;
+    });
+
+    process[pipe].isTTY = false;
+
+    try {
+      await otplease(fn);
+    } catch (err) {
+      expect(err.message).toBe(`non-interactive ${pipe}`);
+    }
+
+    expect.hasAssertions();
+  });
+});
 
 function makeTestCallback(otp, result) {
-    return opts => {
-        if (opts.otp !== otp) throw { code: "EOTP" };
-        return result;
-    };
+  return opts => {
+    if (opts.otp !== otp) {
+      const err = new Error(`oops, received otp ${opts.otp}`);
+      err.code = "EOTP";
+      throw err;
+    }
+    return result;
+  };
 }

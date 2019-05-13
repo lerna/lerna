@@ -176,7 +176,8 @@ Map {
       expect(npmPublish).toHaveBeenCalledWith(
         expect.objectContaining({ name: "package-1" }),
         "/TEMP_DIR/package-1-MOCKED.tgz",
-        expect.objectContaining({ registry })
+        expect.objectContaining({ registry }),
+        expect.objectContaining({ otp: undefined })
       );
     });
 
@@ -189,7 +190,8 @@ Map {
       expect(npmPublish).toHaveBeenCalledWith(
         expect.objectContaining({ name: "package-1" }),
         "/TEMP_DIR/package-1-MOCKED.tgz",
-        expect.objectContaining({ registry: "https://registry.npmjs.org/" })
+        expect.objectContaining({ registry: "https://registry.npmjs.org/" }),
+        expect.objectContaining({ otp: undefined })
       );
 
       const logMessages = loggingOutput("warn");
