@@ -1,0 +1,38 @@
+{
+  "name": "@lerna/run-topologically",
+  "version": "3.13.4",
+  "description": "An internal Lerna tool",
+  "keywords": [
+    "lerna",
+    "utils"
+  ],
+  "homepage": "https://github.com/lerna/lerna/tree/master/utils/run-topologically#readme",
+  "license": "MIT",
+  "author": {
+    "name": "Daniel Stockman",
+    "url": "https://github.com/evocateur"
+  },
+  "files": [
+    "run-topologically.js"
+  ],
+  "main": "run-topologically.js",
+  "engines": {
+    "node": ">= 6.9.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lerna/lerna.git",
+    "directory": "utils/run-topologically"
+  },
+  "scripts": {
+    "test": "echo \"Run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@lerna/query-graph": "file:../query-graph",
+    "figgy-pudding": "^3.5.1",
+    "p-queue": "^4.0.0"
+  }
+}

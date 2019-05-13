@@ -1,13 +1,12 @@
 "use strict";
 
 const pMap = require("p-map");
-const PQueue = require("p-queue");
 
 const Command = require("@lerna/command");
 const npmRunScript = require("@lerna/npm-run-script");
 const output = require("@lerna/output");
 const timer = require("@lerna/timer");
-const QueryGraph = require("@lerna/query-graph");
+const runTopologically = require("@lerna/run-topologically");
 const ValidationError = require("@lerna/validation-error");
 const { getFilteredPackages } = require("@lerna/filter-options");
 
@@ -129,33 +128,15 @@ class RunCommand extends Command {
   }
 
   runScriptInPackagesTopological() {
-    const queue = new PQueue({ concurrency: this.concurrency });
-    const graph = new QueryGraph(this.packagesWithScript, this.options.rejectCycles);
-
     const runner = this.options.stream
       ? pkg => this.runScriptInPackageStreaming(pkg)
       : pkg => this.runScriptInPackageCapturing(pkg);
 
-    return new Promise((resolve, reject) => {
-      const returnValues = [];
-
-      const queueNextAvailablePackages = () =>
-        graph.getAvailablePackages().forEach(({ pkg, name }) => {
-          graph.markAsTaken(name);
-
-          queue
-            .add(() =>
-              runner(pkg)
-                .then(value => returnValues.push(value))
-                .then(() => graph.markAsDone(pkg))
-                .then(() => queueNextAvailablePackages())
-            )
-            .catch(reject);
-        });
-
-      queueNextAvailablePackages();
-
-      return queue.onIdle().then(() => resolve(returnValues));
+    return runTopologically({
+      packages: this.packagesWithScript,
+      concurrency: this.concurrency,
+      rejectCycles: this.options.rejectCycles,
+      runner,
     });
   }
 

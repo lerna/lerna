@@ -39,10 +39,9 @@
     "@lerna/filter-options": "file:../../core/filter-options",
     "@lerna/npm-run-script": "file:../../utils/npm-run-script",
     "@lerna/output": "file:../../utils/output",
-    "@lerna/query-graph": "file:../../utils/query-graph",
+    "@lerna/run-topologically": "file:../../utils/run-topologically",
     "@lerna/timer": "file:../../utils/timer",
     "@lerna/validation-error": "file:../../core/validation-error",
-    "p-map": "^1.2.0",
-    "p-queue": "^4.0.0"
+    "p-map": "^1.2.0"
   }
 }
