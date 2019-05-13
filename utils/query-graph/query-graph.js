@@ -42,7 +42,7 @@ class QueryGraph {
   }
 
   _onlyCyclesLeft() {
-    // Check if every remaining package is a pacakge from the cycleNodes graph
+    // Check if every remaining package is a package from the cycleNodes graph
     return Array.from(this.graph.values()).every(node =>
       Array.from(this.cycleNodes).some(cycleNode => cycleNode.name === node.name)
     );
