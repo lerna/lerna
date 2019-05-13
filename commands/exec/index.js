@@ -1,9 +1,10 @@
 "use strict";
 
+const pMap = require("p-map");
+
 const ChildProcessUtilities = require("@lerna/child-process");
 const Command = require("@lerna/command");
-const batchPackages = require("@lerna/batch-packages");
-const runParallelBatches = require("@lerna/run-parallel-batches");
+const runTopologically = require("@lerna/run-topologically");
 const ValidationError = require("@lerna/validation-error");
 const { getFilteredPackages } = require("@lerna/filter-options");
 
@@ -47,10 +48,6 @@ class ExecCommand extends Command {
       this.count = this.filteredPackages.length;
       this.packagePlural = this.count === 1 ? "package" : "packages";
       this.joinedCommand = [this.command].concat(this.args).join(" ");
-
-      this.batchedPackages = this.toposort
-        ? batchPackages(this.filteredPackages, this.options.rejectCycles)
-        : [this.filteredPackages];
     });
   }
 
@@ -67,8 +64,10 @@ class ExecCommand extends Command {
 
     if (this.options.parallel) {
       chain = chain.then(() => this.runCommandInPackagesParallel());
+    } else if (this.toposort) {
+      chain = chain.then(() => this.runCommandInPackagesTopological());
     } else {
-      chain = chain.then(() => this.runCommandInPackagesBatched());
+      chain = chain.then(() => this.runCommandInPackagesLexical());
     }
 
     if (this.bail) {
@@ -120,18 +119,29 @@ class ExecCommand extends Command {
     };
   }
 
-  runCommandInPackagesBatched() {
+  runCommandInPackagesTopological() {
     const runner = this.options.stream
       ? pkg => this.runCommandInPackageStreaming(pkg)
       : pkg => this.runCommandInPackageCapturing(pkg);
 
-    return runParallelBatches(this.batchedPackages, this.concurrency, runner).then(batchedResults =>
-      batchedResults.reduce((arr, batch) => arr.concat(batch), [])
-    );
+    return runTopologically({
+      packages: this.filteredPackages,
+      concurrency: this.concurrency,
+      rejectCycles: this.options.rejectCycles,
+      runner,
+    });
   }
 
   runCommandInPackagesParallel() {
-    return Promise.all(this.filteredPackages.map(pkg => this.runCommandInPackageStreaming(pkg)));
+    return pMap(this.filteredPackages, pkg => this.runCommandInPackageStreaming(pkg));
+  }
+
+  runCommandInPackagesLexical() {
+    const runner = this.options.stream
+      ? pkg => this.runCommandInPackageStreaming(pkg)
+      : pkg => this.runCommandInPackageCapturing(pkg);
+
+    return pMap(this.filteredPackages, runner, { concurrency: this.concurrency });
   }
 
   runCommandInPackageStreaming(pkg) {
