@@ -8,6 +8,7 @@ const readJSON = require("read-package-json");
 const figgyPudding = require("figgy-pudding");
 const runLifecycle = require("@lerna/run-lifecycle");
 const npa = require("npm-package-arg");
+const otplease = require("@lerna/otplease");
 
 module.exports = npmPublish;
 
@@ -30,7 +31,7 @@ const PublishConfig = figgyPudding(
   }
 );
 
-function npmPublish(pkg, tarFilePath, _opts) {
+function npmPublish(pkg, tarFilePath, _opts, otpCache) {
   const { scope } = npa(pkg.name);
   // pass only the package scope to libnpmpublish
   const opts = PublishConfig(_opts, {
@@ -56,7 +57,7 @@ function npmPublish(pkg, tarFilePath, _opts) {
         manifest.publishConfig.tag = opts.tag;
       }
 
-      return publish(manifest, tarData, opts).catch(err => {
+      return otplease(innerOpts => publish(manifest, tarData, innerOpts), opts, otpCache).catch(err => {
         opts.log.silly("", err);
         opts.log.error(err.code, (err.body && err.body.error) || err.message);
 
