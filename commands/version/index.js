@@ -17,7 +17,7 @@ const PromptUtilities = require("@lerna/prompt");
 const output = require("@lerna/output");
 const collectUpdates = require("@lerna/collect-updates");
 const { createRunner } = require("@lerna/run-lifecycle");
-const batchPackages = require("@lerna/batch-packages");
+const runTopologically = require("@lerna/run-topologically");
 const ValidationError = require("@lerna/validation-error");
 const { createGitHubClient, parseGitRepo } = require("@lerna/github-client");
 const prereleaseIdFromVersion = require("@lerna/prerelease-id-from-version");
@@ -238,7 +238,6 @@ class VersionCommand extends Command {
     const tasks = [
       () => this.getVersionsForUpdates(),
       versions => this.setUpdatesForVersions(versions),
-      () => this.setBatchUpdates(),
       () => this.confirmVersions(),
     ];
 
@@ -441,11 +440,8 @@ class VersionCommand extends Command {
         this.updatesVersions = versions;
       }
     }
-  }
 
-  setBatchUpdates() {
     this.packagesToVersion = this.updates.map(({ pkg }) => pkg);
-    this.batchedPackages = batchPackages(this.packagesToVersion, this.options.rejectCycles);
   }
 
   confirmVersions() {
@@ -552,10 +548,12 @@ class VersionCommand extends Command {
     const mapUpdate = pPipe(actions);
 
     chain = chain.then(() =>
-      pReduce(this.batchedPackages, (_, batch) =>
-        // TODO: tune the concurrency?
-        pMap(batch, mapUpdate, { concurrency: 100 })
-      )
+      runTopologically({
+        packages: this.packagesToVersion,
+        concurrency: this.concurrency,
+        rejectCycles: this.options.rejectCycles,
+        runner: mapUpdate,
+      })
     );
 
     if (!independentVersions) {

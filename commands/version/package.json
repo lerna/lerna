@@ -45,6 +45,7 @@
     "@lerna/prerelease-id-from-version": "file:../../utils/prerelease-id-from-version",
     "@lerna/prompt": "file:../../core/prompt",
     "@lerna/run-lifecycle": "file:../../utils/run-lifecycle",
+    "@lerna/run-topologically": "file:../../utils/run-topologically",
     "@lerna/validation-error": "file:../../core/validation-error",
     "chalk": "^2.3.1",
     "dedent": "^0.7.0",
