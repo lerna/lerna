@@ -239,6 +239,33 @@ describe("AddCommand", () => {
     );
   });
 
+  it("should not pass filter options to bootstrap", async () => {
+    const testDir = await initFixture("existing");
+
+    await lernaAdd(testDir)(
+      "@test/package-2",
+      "--scope=@test/package-1",
+      "--ignore=@test/package-3",
+      "--no-private",
+      "--since=deadbeef",
+      "--include-filtered-dependents",
+      "--include-filtered-dependencies"
+    );
+    const [pkg1] = await getPackages(testDir);
+
+    expect(pkg1).toDependOn("@test/package-2");
+    expect(bootstrap).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        scope: undefined,
+        ignore: undefined,
+        private: undefined,
+        since: undefined,
+        includeFilteredDependents: undefined,
+        includeFilteredDependencies: undefined,
+      })
+    );
+  });
+
   it("should not bootstrap unchanged packages", async () => {
     const testDir = await initFixture("unchanged");
 

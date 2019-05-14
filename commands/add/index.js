@@ -100,6 +100,13 @@ class AddCommand extends Command {
           cwd: this.project.rootPath,
           // silence initial cli version logging, etc
           composed: "add",
+          // NEVER pass filter-options, it is very bad
+          scope: undefined,
+          ignore: undefined,
+          private: undefined,
+          since: undefined,
+          includeFilteredDependents: undefined,
+          includeFilteredDependencies: undefined,
         });
 
         return bootstrap(argv);
