@@ -8,7 +8,6 @@ const PackageGraph = require("@lerna/package-graph");
  * @param {!Array.<Package>} packages An array of Packages to build the graph out of
  * @param {!boolean} rejectCycles Whether or not to reject cycles
  */
-
 class QueryGraph {
   constructor(packages, rejectCycles) {
     // Create dependency graph
@@ -35,7 +34,7 @@ class QueryGraph {
       return [this.graph.get(this.cyclicalPackageWithMostDependents.name)];
     }
 
-    // Otherwise, return any package that does not depend on the pacakge referenced above
+    // Otherwise, return any package that does not depend on the package referenced above
     return Array.from(this.graph.values()).filter(
       node => !node.localDependencies.has(this.cyclicalPackageWithMostDependents)
     );
@@ -56,7 +55,7 @@ class QueryGraph {
       return availablePackages;
     }
 
-    // Or, get the next cylical packages
+    // Or, get the next cyclical packages
     if (this.cyclePaths.size && this._onlyCyclesLeft()) {
       return this._getNextCycle();
     }
@@ -74,3 +73,31 @@ class QueryGraph {
 }
 
 module.exports = QueryGraph;
+module.exports.toposort = toposort;
+
+/**
+ * Sort the input list topologically.
+ *
+ * @param {!Array.<Package>} packages An array of Packages to build the list out of
+ * @param {!boolean} rejectCycles Whether or not to reject cycles
+ *
+ * @returns {Array<Package>} a list of Package instances in topological order
+ */
+function toposort(packages, rejectCycles) {
+  const graph = new QueryGraph(packages, rejectCycles);
+  const result = [];
+
+  let batch = graph.getAvailablePackages();
+
+  while (batch.length) {
+    for (const node of batch) {
+      // no need to take() in synchronous loop
+      result.push(node.pkg);
+      graph.markAsDone(node);
+    }
+
+    batch = graph.getAvailablePackages();
+  }
+
+  return result;
+}
