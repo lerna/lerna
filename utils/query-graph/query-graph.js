@@ -1,20 +1,32 @@
 "use strict";
 
+const figgyPudding = require("figgy-pudding");
 const PackageGraph = require("@lerna/package-graph");
 
-/**
- * A mutable PackageGraph used to query for next available packages
- * @constructor
- * @param {!Array.<Package>} packages An array of Packages to build the graph out of
- * @param {!boolean} rejectCycles Whether or not to reject cycles
- */
+const QueryGraphConfig = figgyPudding({
+  "graph-type": {},
+  graphType: "graph-type",
+  "reject-cycles": {},
+  rejectCycles: "reject-cycles",
+});
+
 class QueryGraph {
-  constructor(packages, rejectCycles) {
+  /**
+   * A mutable PackageGraph used to query for next available packages.
+   *
+   * @param {Array<Package>} packages An array of Packages to build the graph out of
+   * @param {String} [opts.graphType="allDependencies"] "dependencies" excludes devDependencies from graph
+   * @param {Boolean} [opts.rejectCycles] Whether or not to reject cycles
+   * @constructor
+   */
+  constructor(packages, opts) {
+    const options = QueryGraphConfig(opts);
+
     // Create dependency graph
-    this.graph = new PackageGraph(packages);
+    this.graph = new PackageGraph(packages, options.graphType);
 
     // Evaluate cycles
-    [this.cyclePaths, this.cycleNodes] = this.graph.partitionCycles(rejectCycles);
+    [this.cyclePaths, this.cycleNodes] = this.graph.partitionCycles(options.rejectCycles);
 
     if (this.cyclePaths.size) {
       // Find the cyclical package with the most dependents. Will be evaluated before other cyclical packages
@@ -79,12 +91,14 @@ module.exports.toposort = toposort;
  * Sort the input list topologically.
  *
  * @param {!Array.<Package>} packages An array of Packages to build the list out of
- * @param {!boolean} rejectCycles Whether or not to reject cycles
+ * @param {Object} [options]
+ * @param {Boolean} options.graphType "allDependencies" or "dependencies", which excludes devDependencies
+ * @param {Boolean} options.rejectCycles Whether or not to reject cycles
  *
  * @returns {Array<Package>} a list of Package instances in topological order
  */
-function toposort(packages, rejectCycles) {
-  const graph = new QueryGraph(packages, rejectCycles);
+function toposort(packages, opts) {
+  const graph = new QueryGraph(packages, opts);
   const result = [];
 
   let batch = graph.getAvailablePackages();

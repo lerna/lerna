@@ -19,7 +19,7 @@ function runTopologically(_opts) {
   const { packages, concurrency, rejectCycles, runner } = opts;
 
   const queue = new PQueue({ concurrency });
-  const graph = new QueryGraph(packages, rejectCycles);
+  const graph = new QueryGraph(packages, { rejectCycles });
 
   return new Promise((resolve, reject) => {
     const returnValues = [];
