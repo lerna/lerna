@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.14.0](https://github.com/lerna/lerna/compare/v3.13.4...v3.14.0) (2019-05-14)
+
+
+### Bug Fixes
+
+* **run-lifecycle:** Bump `npm-lifecycle` dependency to avoid noisy audit warning ([ea7c20d](https://github.com/lerna/lerna/commit/ea7c20d))
+
+
+
+
+
 # [3.13.0](https://github.com/lerna/lerna/compare/v3.12.1...v3.13.0) (2019-02-15)
 
 

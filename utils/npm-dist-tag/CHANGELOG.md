@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.14.0](https://github.com/lerna/lerna/compare/v3.13.4...v3.14.0) (2019-05-14)
+
+
+### Features
+
+* **dist-tag:** Prompt for OTP when required ([af870bb](https://github.com/lerna/lerna/commit/af870bb))
+
+
+
+
+
 # [3.13.0](https://github.com/lerna/lerna/compare/v3.12.1...v3.13.0) (2019-02-15)
 
 

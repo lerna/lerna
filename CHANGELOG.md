@@ -3,6 +3,36 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.14.0](https://github.com/lerna/lerna/compare/v3.13.4...v3.14.0) (2019-05-14)
+
+
+### Bug Fixes
+
+* **add:** Never pass filter options to nested bootstrap ([9a5a29c](https://github.com/lerna/lerna/commit/9a5a29c)), closes [#1989](https://github.com/lerna/lerna/issues/1989)
+* **run-lifecycle:** Bump `npm-lifecycle` dependency to avoid noisy audit warning ([ea7c20d](https://github.com/lerna/lerna/commit/ea7c20d))
+
+
+### Features
+
+* **conventional-commits:** Add conventional prerelease/graduation ([#1991](https://github.com/lerna/lerna/issues/1991)) ([5d84b61](https://github.com/lerna/lerna/commit/5d84b61)), closes [#1433](https://github.com/lerna/lerna/issues/1433) [#1675](https://github.com/lerna/lerna/issues/1675)
+* **dist-tag:** Prompt for OTP when required ([af870bb](https://github.com/lerna/lerna/commit/af870bb))
+* **exec:** Add just-in-time queue management ([23736e5](https://github.com/lerna/lerna/commit/23736e5))
+* **import:** Add `--preserve-commit` option ([#2079](https://github.com/lerna/lerna/issues/2079)) ([6a7448d](https://github.com/lerna/lerna/commit/6a7448d))
+* **link:** generate shims for missing 'bin' scripts ([#2059](https://github.com/lerna/lerna/issues/2059)) ([90acdde](https://github.com/lerna/lerna/commit/90acdde)), closes [#1444](https://github.com/lerna/lerna/issues/1444)
+* **listable:** Use QueryGraph.toposort() helper ([84ce674](https://github.com/lerna/lerna/commit/84ce674))
+* **publish:** Add `--otp` option ([6fcbc36](https://github.com/lerna/lerna/commit/6fcbc36)), closes [#2076](https://github.com/lerna/lerna/issues/2076)
+* **publish:** Add just-in-time queue management ([ae6471c](https://github.com/lerna/lerna/commit/ae6471c))
+* **publish:** Add OTP prompt during publish ([#2084](https://github.com/lerna/lerna/issues/2084)) ([c56bda1](https://github.com/lerna/lerna/commit/c56bda1)), closes [#1091](https://github.com/lerna/lerna/issues/1091)
+* **publish:** Display uncommitted changes when validation fails ([#2066](https://github.com/lerna/lerna/issues/2066)) ([ea41fe9](https://github.com/lerna/lerna/commit/ea41fe9))
+* **query-graph:** Add toposort() helper ([90759c2](https://github.com/lerna/lerna/commit/90759c2))
+* **run:** Add just-in-time queue management ([#2045](https://github.com/lerna/lerna/issues/2045)) ([6eca172](https://github.com/lerna/lerna/commit/6eca172))
+* **run:** Extract `@lerna/run-topologically` ([3a8b175](https://github.com/lerna/lerna/commit/3a8b175))
+* **version:** Add just-in-time queue management ([290539b](https://github.com/lerna/lerna/commit/290539b))
+
+
+
+
+
 ## [3.13.4](https://github.com/lerna/lerna/compare/v3.13.3...v3.13.4) (2019-04-24)
 
 

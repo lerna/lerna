@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.14.0](https://github.com/lerna/lerna/compare/v3.13.4...v3.14.0) (2019-05-14)
+
+
+### Features
+
+* **import:** Add `--preserve-commit` option ([#2079](https://github.com/lerna/lerna/issues/2079)) ([6a7448d](https://github.com/lerna/lerna/commit/6a7448d))
+
+
+
+
+
 ## [3.13.4](https://github.com/lerna/lerna/compare/v3.13.3...v3.13.4) (2019-04-24)
 
 
