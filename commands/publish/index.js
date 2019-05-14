@@ -6,7 +6,6 @@ const crypto = require("crypto");
 const pFinally = require("p-finally");
 const pMap = require("p-map");
 const pPipe = require("p-pipe");
-const pReduce = require("p-reduce");
 const semver = require("semver");
 
 const Command = require("@lerna/command");
@@ -22,8 +21,7 @@ const npmPublish = require("@lerna/npm-publish");
 const packDirectory = require("@lerna/pack-directory");
 const logPacked = require("@lerna/log-packed");
 const { createRunner } = require("@lerna/run-lifecycle");
-const batchPackages = require("@lerna/batch-packages");
-const runParallelBatches = require("@lerna/run-parallel-batches");
+const runTopologically = require("@lerna/run-topologically");
 const pulseTillDone = require("@lerna/pulse-till-done");
 const versionCommand = require("@lerna/version");
 const prereleaseIdFromVersion = require("@lerna/prerelease-id-from-version");
@@ -164,16 +162,6 @@ class PublishCommand extends Command {
       this.updatesVersions = new Map(result.updatesVersions);
 
       this.packagesToPublish = this.updates.map(({ pkg }) => pkg).filter(pkg => !pkg.private);
-      this.batchedPackages = this.toposort
-        ? batchPackages(
-            this.packagesToPublish,
-            this.options.rejectCycles,
-            // Don't sort based on devDependencies because that
-            // would increase the chance of dependency cycles
-            // causing less-than-ideal a publishing order.
-            "dependencies"
-          )
-        : [this.packagesToPublish];
 
       if (result.needsConfirmation) {
         // only confirm for --canary, bump === "from-git",
@@ -575,6 +563,18 @@ class PublishCommand extends Command {
       });
   }
 
+  topoMapPackages(mapper) {
+    // we don't respect --no-sort here, sorry
+    return runTopologically(this.packagesToPublish, mapper, {
+      concurrency: this.concurrency,
+      rejectCycles: this.options.rejectCycles,
+      // Don't sort based on devDependencies because that
+      // would increase the chance of dependency cycles
+      // causing less-than-ideal a publishing order.
+      graphType: "dependencies",
+    });
+  }
+
   packUpdated() {
     const tracker = this.logger.newItem("npm pack");
 
@@ -616,9 +616,7 @@ class PublishCommand extends Command {
       ].filter(Boolean)
     );
 
-    chain = chain.then(() =>
-      pReduce(this.batchedPackages, (_, batch) => pMap(batch, mapper, { concurrency: 10 }))
-    );
+    chain = chain.then(() => this.topoMapPackages(mapper));
 
     chain = chain.then(() => removeTempLicenses(this.packagesToBeLicensed));
 
@@ -666,7 +664,7 @@ class PublishCommand extends Command {
       ].filter(Boolean)
     );
 
-    chain = chain.then(() => runParallelBatches(this.batchedPackages, this.concurrency, mapper));
+    chain = chain.then(() => this.topoMapPackages(mapper));
 
     if (!this.hasRootedLeaf) {
       // cyclical "publish" lifecycles are automatically skipped
@@ -709,7 +707,7 @@ class PublishCommand extends Command {
         });
     };
 
-    chain = chain.then(() => runParallelBatches(this.batchedPackages, this.concurrency, mapper));
+    chain = chain.then(() => this.topoMapPackages(mapper));
 
     return pFinally(chain, () => tracker.finish());
   }

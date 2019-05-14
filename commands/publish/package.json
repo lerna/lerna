@@ -34,7 +34,6 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/batch-packages": "file:../../utils/batch-packages",
     "@lerna/check-working-tree": "file:../../utils/check-working-tree",
     "@lerna/child-process": "file:../../core/child-process",
     "@lerna/collect-updates": "file:../../utils/collect-updates",
@@ -50,7 +49,7 @@
     "@lerna/prompt": "file:../../core/prompt",
     "@lerna/pulse-till-done": "file:../../utils/pulse-till-done",
     "@lerna/run-lifecycle": "file:../../utils/run-lifecycle",
-    "@lerna/run-parallel-batches": "file:../../utils/run-parallel-batches",
+    "@lerna/run-topologically": "file:../../utils/run-topologically",
     "@lerna/validation-error": "file:../../core/validation-error",
     "@lerna/version": "file:../version",
     "figgy-pudding": "^3.5.1",
@@ -62,7 +61,6 @@
     "p-finally": "^1.0.0",
     "p-map": "^1.2.0",
     "p-pipe": "^1.2.0",
-    "p-reduce": "^1.0.0",
     "pacote": "^9.5.0",
     "semver": "^5.5.0"
   }
