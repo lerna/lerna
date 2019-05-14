@@ -9,7 +9,11 @@ module.exports = runTopologically;
 const TopologicalConfig = figgyPudding({
   // p-queue options
   concurrency: {},
-  // query-graph options handled elsewhere
+  // query-graph options
+  "graph-type": {},
+  graphType: "graph-type",
+  "reject-cycles": {},
+  rejectCycles: "reject-cycles",
 });
 
 /**
@@ -23,10 +27,10 @@ const TopologicalConfig = figgyPudding({
  * @returns {Promise<Array<*>>} when all executions complete
  */
 function runTopologically(packages, runner, opts) {
-  const options = TopologicalConfig(opts);
+  const { concurrency, graphType, rejectCycles } = TopologicalConfig(opts);
 
-  const queue = new PQueue(options);
-  const graph = new QueryGraph(packages, options);
+  const queue = new PQueue({ concurrency });
+  const graph = new QueryGraph(packages, { graphType, rejectCycles });
 
   return new Promise((resolve, reject) => {
     const returnValues = [];
