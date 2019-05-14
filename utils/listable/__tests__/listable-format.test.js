@@ -1,11 +1,14 @@
 "use strict";
 
 const chalk = require("chalk");
-const path = require("path");
 const tempy = require("tempy");
-const Package = require("@lerna/package");
+const Tacks = require("tacks");
+
+const Project = require("@lerna/project");
 const loggingOutput = require("@lerna-test/logging-output");
 const listable = require("..");
+
+const { File, Dir } = Tacks;
 
 // keep snapshots stable cross-platform
 chalk.enabled = false;
@@ -30,24 +33,49 @@ describe("listable.format()", () => {
 
   const formatWithOptions = opts => listable.format(packages, Object.assign({ _: ["ls"] }, opts));
 
-  beforeAll(() => {
+  const fixture = new Tacks(
+    Dir({
+      "lerna.json": File({
+        version: "independent",
+        packages: ["pkgs/*"],
+      }),
+      "package.json": File({
+        name: "listable-format-test",
+      }),
+      pkgs: Dir({
+        "pkg-1": Dir({
+          "package.json": File({
+            name: "pkg-1",
+            version: "1.0.0",
+            dependencies: { "pkg-2": "file:../pkg-2" },
+          }),
+        }),
+        "pkg-2": Dir({
+          "package.json": File({
+            name: "pkg-2",
+            // version: "2.0.0",
+            devDependencies: { "pkg-3": "file:../pkg-3" },
+          }),
+        }),
+        "pkg-3": Dir({
+          "package.json": File({
+            name: "pkg-3",
+            version: "3.0.0",
+            dependencies: { "pkg-2": "file:../pkg-2" },
+            private: true,
+          }),
+        }),
+      }),
+    })
+  );
+
+  beforeAll(async () => {
     const cwd = tempy.directory();
+
+    fixture.create(cwd);
     process.chdir(cwd);
 
-    packages = [
-      new Package(
-        { name: "pkg-1", version: "1.0.0", dependencies: { "pkg-2": "file:../pkg-2" } },
-        path.join(cwd, "/pkgs/pkg-1")
-      ),
-      new Package(
-        { name: "pkg-2", devDependencies: { "pkg-3": "file:../pkg-3" } },
-        path.join(cwd, "/pkgs/pkg-2")
-      ),
-      new Package(
-        { name: "pkg-3", version: "3.0.0", dependencies: { "pkg-2": "file:../pkg-2" }, private: true },
-        path.join(cwd, "/pkgs/pkg-3")
-      ),
-    ];
+    packages = await Project.getPackages(cwd);
   });
 
   describe("renders", () => {
@@ -214,8 +242,8 @@ pkg-1
       expect(loggingOutput("warn")).toContainEqual(expect.stringContaining("pkg-2 -> pkg-3 -> pkg-2"));
       expect(text).toMatchInlineSnapshot(`
 pkg-2
-pkg-3 (PRIVATE)
 pkg-1
+pkg-3 (PRIVATE)
 `);
     });
   });
