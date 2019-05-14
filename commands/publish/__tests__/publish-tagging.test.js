@@ -69,12 +69,15 @@ Map {
   const conf = expect.objectContaining({
     tag: "latest",
   });
+  const cache = expect.objectContaining({
+    otp: undefined,
+  });
 
-  expect(npmDistTag.remove).toHaveBeenCalledWith("@integration/package-1@1.0.1", "lerna-temp", conf);
-  expect(npmDistTag.remove).toHaveBeenCalledWith("@integration/package-2@1.0.1", "lerna-temp", conf);
+  expect(npmDistTag.remove).toHaveBeenCalledWith("@integration/package-1@1.0.1", "lerna-temp", conf, cache);
+  expect(npmDistTag.remove).toHaveBeenCalledWith("@integration/package-2@1.0.1", "lerna-temp", conf, cache);
 
-  expect(npmDistTag.add).toHaveBeenCalledWith("@integration/package-1@1.0.1", "CUSTOM", conf); // <--
-  expect(npmDistTag.add).toHaveBeenCalledWith("@integration/package-2@1.0.1", "latest", conf);
+  expect(npmDistTag.add).toHaveBeenCalledWith("@integration/package-1@1.0.1", "CUSTOM", conf, cache); // <--
+  expect(npmDistTag.add).toHaveBeenCalledWith("@integration/package-2@1.0.1", "latest", conf, cache);
 });
 
 test("publish --dist-tag beta --temp-tag", async () => {
@@ -92,9 +95,12 @@ Map {
   const conf = expect.objectContaining({
     tag: "beta",
   });
+  const cache = expect.objectContaining({
+    otp: undefined,
+  });
 
-  expect(npmDistTag.add).toHaveBeenCalledWith("@integration/package-1@1.0.1", "beta", conf); // <--
-  expect(npmDistTag.add).toHaveBeenCalledWith("@integration/package-2@1.0.1", "beta", conf);
+  expect(npmDistTag.add).toHaveBeenCalledWith("@integration/package-1@1.0.1", "beta", conf, cache); // <--
+  expect(npmDistTag.add).toHaveBeenCalledWith("@integration/package-2@1.0.1", "beta", conf, cache);
 });
 
 test("publish prerelease --pre-dist-tag beta", async () => {
@@ -154,7 +160,10 @@ Map {
   const conf = expect.objectContaining({
     tag: "next",
   });
+  const cache = expect.objectContaining({
+    otp: undefined,
+  });
 
-  expect(npmDistTag.add).toHaveBeenCalledWith("@integration/package-1@1.0.1-beta.0", "beta", conf);
-  expect(npmDistTag.add).toHaveBeenCalledWith("@integration/package-2@1.0.1-beta.0", "beta", conf);
+  expect(npmDistTag.add).toHaveBeenCalledWith("@integration/package-1@1.0.1-beta.0", "beta", conf, cache);
+  expect(npmDistTag.add).toHaveBeenCalledWith("@integration/package-2@1.0.1-beta.0", "beta", conf, cache);
 });

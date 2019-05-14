@@ -32,6 +32,7 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
+    "@lerna/otplease": "file:../../core/otplease",
     "figgy-pudding": "^3.5.1",
     "npm-package-arg": "^6.1.0",
     "npm-registry-fetch": "^3.9.0",

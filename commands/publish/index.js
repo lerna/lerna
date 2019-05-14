@@ -697,8 +697,8 @@ class PublishCommand extends Command {
       const distTag = preDistTag || getDistTag(pkg.get("publishConfig"));
 
       return Promise.resolve()
-        .then(() => pulseTillDone(npmDistTag.remove(spec, "lerna-temp", opts)))
-        .then(() => pulseTillDone(npmDistTag.add(spec, distTag, opts)))
+        .then(() => pulseTillDone(npmDistTag.remove(spec, "lerna-temp", opts, this.otpCache)))
+        .then(() => pulseTillDone(npmDistTag.add(spec, distTag, opts, this.otpCache)))
         .then(() => {
           tracker.success("dist-tag", "%s@%s => %j", pkg.name, pkg.version, distTag);
           tracker.completeWork(1);

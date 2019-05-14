@@ -1,6 +1,7 @@
 "use strict";
 
 jest.mock("npm-registry-fetch");
+jest.mock("@lerna/otplease", () => (cb, opts) => Promise.resolve(cb(opts)));
 
 // mocked modules
 const fetch = require("npm-registry-fetch");

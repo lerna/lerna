@@ -4,6 +4,7 @@ const log = require("npmlog");
 const npa = require("npm-package-arg");
 const fetch = require("npm-registry-fetch");
 const figgyPudding = require("figgy-pudding");
+const otplease = require("@lerna/otplease");
 
 exports.add = add;
 exports.remove = remove;
@@ -23,7 +24,7 @@ const DistTagConfig = figgyPudding(
   }
 );
 
-function add(spec, tag, _opts) {
+function add(spec, tag, _opts, otpCache) {
   const opts = DistTagConfig(_opts, {
     spec: npa(spec),
     tag,
@@ -53,7 +54,7 @@ function add(spec, tag, _opts) {
     });
 
     // success returns HTTP 204, thus no JSON to parse
-    return fetch(uri, payload).then(() => {
+    return otplease(wrappedPayload => fetch(uri, wrappedPayload), payload, otpCache).then(() => {
       opts.log.verbose("dist-tag", `added "${cleanTag}" to ${name}@${version}`);
 
       // eslint-disable-next-line no-param-reassign
@@ -64,7 +65,7 @@ function add(spec, tag, _opts) {
   });
 }
 
-function remove(spec, tag, _opts) {
+function remove(spec, tag, _opts, otpCache) {
   const opts = DistTagConfig(_opts, {
     spec: npa(spec),
   });
@@ -85,7 +86,7 @@ function remove(spec, tag, _opts) {
     });
 
     // the delete properly returns a 204, so no json to parse
-    return fetch(uri, payload).then(() => {
+    return otplease(wrappedPayload => fetch(uri, wrappedPayload), payload, otpCache).then(() => {
       opts.log.verbose("dist-tag", `removed "${tag}" from ${opts.spec.name}@${version}`);
 
       // eslint-disable-next-line no-param-reassign
