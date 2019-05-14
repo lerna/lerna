@@ -1,6 +1,8 @@
 "use strict";
 
 module.exports = {
+  // ensure `npm cit` uses clean cache
+  cacheDirectory: "./node_modules/.cache/jest",
   clearMocks: true,
   // windows ci is terribly slow, so let's not burden it with coverage
   collectCoverage: process.env.CI && process.env.TRAVIS_OS_NAME !== "windows",
