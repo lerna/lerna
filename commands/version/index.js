@@ -548,11 +548,9 @@ class VersionCommand extends Command {
     const mapUpdate = pPipe(actions);
 
     chain = chain.then(() =>
-      runTopologically({
-        packages: this.packagesToVersion,
+      runTopologically(this.packagesToVersion, mapUpdate, {
         concurrency: this.concurrency,
         rejectCycles: this.options.rejectCycles,
-        runner: mapUpdate,
       })
     );
 

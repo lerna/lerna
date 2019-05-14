@@ -7,19 +7,26 @@ const QueryGraph = require("@lerna/query-graph");
 module.exports = runTopologically;
 
 const TopologicalConfig = figgyPudding({
-  packages: {},
+  // p-queue options
   concurrency: {},
-  "reject-cycles": {},
-  rejectCycles: "reject-cycles",
-  runner: {},
+  // query-graph options handled elsewhere
 });
 
-function runTopologically(_opts) {
-  const opts = TopologicalConfig(_opts);
-  const { packages, concurrency, rejectCycles, runner } = opts;
+/**
+ * Run callback in maximally-saturated topological order.
+ *
+ * @param {Array<Package>} packages List of `Package` instances
+ * @param {Function} runner Callback to map each `Package` with
+ * @param {Number} [opts.concurrency] Concurrency of execution
+ * @param {String} [opts.graphType] "allDependencies" or "dependencies"
+ * @param {Boolean} [opts.rejectCycles] Whether or not to reject cycles
+ * @returns {Promise<Array<*>>} when all executions complete
+ */
+function runTopologically(packages, runner, opts) {
+  const options = TopologicalConfig(opts);
 
-  const queue = new PQueue({ concurrency });
-  const graph = new QueryGraph(packages, { rejectCycles });
+  const queue = new PQueue(options);
+  const graph = new QueryGraph(packages, options);
 
   return new Promise((resolve, reject) => {
     const returnValues = [];

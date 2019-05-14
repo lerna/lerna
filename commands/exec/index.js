@@ -124,11 +124,9 @@ class ExecCommand extends Command {
       ? pkg => this.runCommandInPackageStreaming(pkg)
       : pkg => this.runCommandInPackageCapturing(pkg);
 
-    return runTopologically({
-      packages: this.filteredPackages,
+    return runTopologically(this.filteredPackages, runner, {
       concurrency: this.concurrency,
       rejectCycles: this.options.rejectCycles,
-      runner,
     });
   }
 

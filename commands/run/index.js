@@ -132,11 +132,9 @@ class RunCommand extends Command {
       ? pkg => this.runScriptInPackageStreaming(pkg)
       : pkg => this.runScriptInPackageCapturing(pkg);
 
-    return runTopologically({
-      packages: this.packagesWithScript,
+    return runTopologically(this.packagesWithScript, runner, {
       concurrency: this.concurrency,
       rejectCycles: this.options.rejectCycles,
-      runner,
     });
   }
 
