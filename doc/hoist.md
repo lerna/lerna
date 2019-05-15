@@ -12,7 +12,7 @@ exacerbate this problem.
 
 Fortunately, Lerna also offers a feature to improve the situation -
 Lerna can reduce the time and space requirements for numerous copies of
-packages in development and build environments, by "hoisting" shared
+packages in development and build environments, by "hoisting"
 dependencies up to the topmost, Lerna-project-level `node_modules`
 directory instead.
 
