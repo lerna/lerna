@@ -76,6 +76,10 @@ The two primary commands in Lerna are `lerna bootstrap` and `lerna publish`.
 `bootstrap` will link dependencies in the repo together.
 `publish` will help publish any updated packages.
 
+### What can't Lerna do?
+
+Lerna is not a deployment tool for serverless monorepos. Hoisting might be incompatible with traditional serverless monorepo deployment techniques.
+
 ## Getting Started
 
 > The instructions below are for Lerna 3.x.
