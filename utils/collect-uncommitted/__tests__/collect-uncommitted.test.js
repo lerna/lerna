@@ -1,78 +1,144 @@
 "use strict";
 
-jest.mock("@lerna/child-process");
-
+const fs = require("fs-extra");
+const path = require("path");
 const chalk = require("chalk");
-const childProcess = require("@lerna/child-process");
+
+// helpers
+const { getPackages } = require("@lerna/project");
+const gitAdd = require("@lerna-test/git-add");
+const initFixture = require("@lerna-test/init-fixture")(__dirname);
+
+// file under test
 const collectUncommitted = require("../lib/collect-uncommitted");
 
-const stats = `AD file1
- D file2
- M path/to/file3
-AM path/file4
-MM path/file5
-M  file6
-D  file7
-UU file8
-?? file9`;
-
+// primary assertion setup
 const GREEN_A = chalk.green("A");
 const GREEN_M = chalk.green("M");
 const GREEN_D = chalk.green("D");
 const RED_D = chalk.red("D");
 const RED_M = chalk.red("M");
-const RED_UU = chalk.red("UU");
 const RED_QQ = chalk.red("??");
 
 const colorizedAry = [
-  `${GREEN_A}${RED_D} file1`,
-  ` ${RED_D} file2`,
-  ` ${RED_M} path/to/file3`,
-  `${GREEN_A}${RED_M} path/file4`,
-  `${GREEN_M}${RED_M} path/file5`,
-  `${GREEN_M}  file6`,
-  `${GREEN_D}  file7`,
-  `${RED_UU} file8`,
-  `${RED_QQ} file9`,
+  `${GREEN_D}  package.json`,
+  `${GREEN_A}${RED_D} packages/package-1/file-1.js`,
+  ` ${RED_D} packages/package-1/package.json`,
+  `${GREEN_A}${RED_M} packages/package-2/file-2.js`,
+  ` ${RED_M} packages/package-2/package.json`,
+  `${GREEN_M}${RED_M} packages/package-3/package.json`,
+  `${GREEN_M}  packages/package-4/package.json`,
+  // no UU assertion, only for merge conflicts
+  `${RED_QQ} poopy.txt`,
 ];
 
-childProcess.exec.mockResolvedValue(stats);
-childProcess.execSync.mockReturnValue(stats);
+// D  package.json
+// AD packages/package-1/file-1.js
+//  D packages/package-1/package.json
+// AM packages/package-2/file-2.js
+//  M packages/package-2/package.json
+// MM packages/package-3/package.json
+// M  packages/package-4/package.json
+// ?? poopy.txt
+
+const setupChanges = async cwd => {
+  const [pkg1, pkg2, pkg3, pkg4] = await getPackages(cwd);
+
+  // "AD": (added to index, deleted in working tree)
+  const file1 = path.join(pkg1.location, "file-1.js");
+  await fs.outputFile(file1, "yay");
+  await gitAdd(cwd, file1);
+  await fs.remove(file1);
+
+  // " D": (deleted in working tree)
+  await fs.remove(pkg1.manifestLocation);
+
+  // " M": (modified in working tree)
+  pkg2.set("modified", true);
+  await pkg2.serialize();
+
+  // "AM": (added to index, modified in working tree)
+  const file2 = path.join(pkg2.location, "file-2.js");
+  await fs.outputFile(file2, "woo");
+  await gitAdd(cwd, file2);
+  await fs.outputFile(file2, "hoo");
+
+  // "MM": (updated in index, modified in working tree)
+  pkg3.set("updated", true);
+  await pkg3.serialize();
+  await gitAdd(cwd, pkg3.manifestLocation);
+  pkg3.set("modified", true);
+  await pkg3.serialize();
+
+  // "M ": (updated in index)
+  pkg4.set("updated", true);
+  await pkg4.serialize();
+  await gitAdd(cwd, pkg4.manifestLocation);
+
+  // "D ": (deleted in index)
+  const rootManifest = path.join(cwd, "package.json");
+  await fs.remove(rootManifest);
+  await gitAdd(cwd, rootManifest);
+
+  // "??": (untracked)
+  const poopy = path.join(cwd, "poopy.txt");
+  await fs.outputFile(poopy, "pants");
+};
 
 describe("collectUncommitted()", () => {
-  it("resolves an array of uncommitted changes", async () => {
-    const result = await collectUncommitted();
-    expect(childProcess.exec).toHaveBeenLastCalledWith("git", "status -s", {});
-    expect(result).toEqual(colorizedAry);
-  });
+  it("resolves empty array on clean repo", async () => {
+    const cwd = await initFixture("normal");
+    const result = await collectUncommitted({ cwd });
 
-  it("empty array on clean repo", async () => {
-    childProcess.exec.mockResolvedValueOnce("");
-    const result = await collectUncommitted();
-    expect(childProcess.exec).toHaveBeenLastCalledWith("git", "status -s", {});
     expect(result).toEqual([]);
   });
 
-  it("accepts options.cwd", async () => {
-    const options = { cwd: "foo" };
-    await collectUncommitted(options);
+  it("resolves an array of uncommitted changes", async () => {
+    const cwd = await initFixture("normal");
 
-    expect(childProcess.exec).toHaveBeenLastCalledWith("git", "status -s", options);
+    await setupChanges(cwd);
+
+    const result = await collectUncommitted({ cwd });
+
+    expect(result).toEqual(colorizedAry);
   });
 
-  describe("collectUncommitted.sync()", () => {
-    it("returns an array of uncommitted changes", async () => {
-      const result = collectUncommitted.sync();
+  it("accepts options.log", async () => {
+    // re-uses previous cwd
+    const log = { silly: jest.fn() };
 
-      expect(childProcess.execSync).toHaveBeenLastCalledWith("git", "status -s", {});
-      expect(result).toEqual(colorizedAry);
-    });
+    const result = await collectUncommitted({ log });
 
-    it("accepts options.cwd", async () => {
-      const options = { cwd: "foo" };
-      collectUncommitted.sync(options);
+    expect(log.silly).toHaveBeenCalled();
+    expect(result).toEqual(colorizedAry);
+  });
+});
 
-      expect(childProcess.execSync).toHaveBeenLastCalledWith("git", "status -s", options);
-    });
+describe("collectUncommitted.sync()", () => {
+  it("resolves empty array on clean repo", async () => {
+    const cwd = await initFixture("normal");
+    const result = collectUncommitted.sync({ cwd });
+
+    expect(result).toEqual([]);
+  });
+
+  it("returns an array of uncommitted changes", async () => {
+    const cwd = await initFixture("normal");
+
+    await setupChanges(cwd);
+
+    const result = collectUncommitted.sync({ cwd });
+
+    expect(result).toEqual(colorizedAry);
+  });
+
+  it("accepts options.log", async () => {
+    // re-uses previous cwd
+    const log = { silly: jest.fn() };
+
+    const result = collectUncommitted.sync({ log });
+
+    expect(log.silly).toHaveBeenCalled();
+    expect(result).toEqual(colorizedAry);
   });
 });

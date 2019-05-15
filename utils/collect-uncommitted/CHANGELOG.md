@@ -9,13 +9,4 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Features
 
 * **publish:** Display uncommitted changes when validation fails ([#2066](https://github.com/lerna/lerna/issues/2066)) ([ea41fe9](https://github.com/lerna/lerna/commit/ea41fe9))
-
-
-
-
-
-## Unpublished
-
-### Features
-
-* Create `[@lerna](https://github.com/lerna)/collect-uncommitted`
+* Create `@lerna/collect-uncommitted`

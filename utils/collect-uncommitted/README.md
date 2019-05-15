@@ -10,6 +10,7 @@ const collectUncommitted = require("@lerna/collect-uncommitted");
 // values listed here are their defaults
 const options = {
   cwd: process.cwd(),
+  log: require("npmlog"),
 };
 
 (async () => {
