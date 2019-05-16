@@ -12,6 +12,9 @@ let children = 0;
 const colorWheel = ["cyan", "magenta", "blue", "yellow", "green", "red"];
 const NUM_COLORS = colorWheel.length;
 
+// ever-increasing index ensures colors are always sequential
+let currentColor = 0;
+
 function exec(command, args, opts) {
   const options = Object.assign({ stdio: "pipe" }, opts);
   const spawned = spawnProcess(command, args, options);
@@ -35,14 +38,17 @@ function spawnStreaming(command, args, opts, prefix) {
   const options = Object.assign({}, opts);
   options.stdio = ["ignore", "pipe", "pipe"];
 
-  const colorName = colorWheel[children % NUM_COLORS];
-  const color = chalk[colorName];
   const spawned = spawnProcess(command, args, options);
 
   const stdoutOpts = {};
   const stderrOpts = {}; // mergeMultiline causes escaped newlines :P
 
   if (prefix) {
+    const colorName = colorWheel[currentColor % NUM_COLORS];
+    const color = chalk[colorName];
+
+    currentColor += 1;
+
     stdoutOpts.tag = `${color.bold(prefix)}:`;
     stderrOpts.tag = `${color(prefix)}:`;
   }
