@@ -952,8 +952,11 @@ importers:
       chalk: 2.4.2
       figgy-pudding: 3.5.1
       npmlog: 4.1.2
+    devDependencies:
+      '@lerna/project': 'link:../../core/project'
     specifiers:
       '@lerna/child-process': 'file:../../core/child-process'
+      '@lerna/project': 'file:../../core/project'
       chalk: ^2.3.1
       figgy-pudding: ^3.5.1
       npmlog: ^4.1.2
@@ -967,11 +970,13 @@ importers:
     devDependencies:
       '@lerna/package': 'link:../../core/package'
       '@lerna/package-graph': 'link:../../core/package-graph'
+      dedent: 0.7.0
     specifiers:
       '@lerna/child-process': 'file:../../core/child-process'
       '@lerna/describe-ref': 'file:../describe-ref'
       '@lerna/package': 'link:../../core/package'
       '@lerna/package-graph': 'link:../../core/package-graph'
+      dedent: ^0.7.0
       minimatch: ^3.0.4
       npmlog: ^4.1.2
       slash: ^2.0.0
@@ -1049,10 +1054,10 @@ importers:
       chalk: 2.4.2
       columnify: 1.5.4
     devDependencies:
-      '@lerna/package': 'link:../../core/package'
+      '@lerna/project': 'link:../../core/project'
       yargs: 12.0.5
     specifiers:
-      '@lerna/package': 'link:../../core/package'
+      '@lerna/project': 'file:../../core/project'
       '@lerna/query-graph': 'file:../query-graph'
       chalk: ^2.3.1
       columnify: ^1.5.4
@@ -2699,7 +2704,6 @@ packages:
     resolution:
       integrity: sha1-6zkTMzRYd1y4TNGh+uBiEGu4dUU=
   /dedent/0.7.0:
-    dev: false
     resolution:
       integrity: sha1-JJXduvbrh0q7Dhvp3yLS5aVEMmw=
   /deep-is/0.1.3:

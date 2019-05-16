@@ -34,7 +34,7 @@
     "columnify": "^1.5.4"
   },
   "devDependencies": {
-    "@lerna/package": "link:../../core/package",
+    "@lerna/project": "file:../../core/project",
     "yargs": "^12.0.1"
   }
 }

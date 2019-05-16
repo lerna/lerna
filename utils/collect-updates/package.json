@@ -40,6 +40,7 @@
   },
   "devDependencies": {
     "@lerna/package": "link:../../core/package",
-    "@lerna/package-graph": "link:../../core/package-graph"
+    "@lerna/package-graph": "link:../../core/package-graph",
+    "dedent": "^0.7.0"
   }
 }
