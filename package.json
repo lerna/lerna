@@ -57,6 +57,7 @@
     "@lerna-test/show-commit": "link:helpers/show-commit",
     "@lerna-test/silence-logging": "link:helpers/silence-logging",
     "@lerna-test/update-lerna-config": "link:helpers/update-lerna-config",
+    "@lerna/collect-updates": "link:utils/collect-updates",
     "@zkochan/cmd-shim": "^3.1.0",
     "camelcase": "^5.3.1",
     "chalk": "^2.4.2",
