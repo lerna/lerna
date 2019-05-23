@@ -30,6 +30,7 @@
   - [`lerna import`](./commands/import#readme)
   - [`lerna link`](./commands/link#readme)
   - [`lerna create`](./commands/create#readme)
+  - [`lerna info`](./commands/info#readme)
 - [Concepts](#concepts)
 - [Lerna.json](#lernajson)
 - [Global Flags](./core/global-options)

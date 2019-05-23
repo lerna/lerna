@@ -1,4 +1,4 @@
-# `@lerna/list`
+# `@lerna/info`
 
 > Print local environment information
 

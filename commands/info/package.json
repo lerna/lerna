@@ -1,5 +1,6 @@
+
 {
-    "name": "@lerna/list",
+    "name": "@lerna/info",
     "version": "1.0.0",
     "description": "Prints local environnment information",
     "keywords": [
