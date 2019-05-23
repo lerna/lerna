@@ -319,9 +319,6 @@ Object {
     "bar@^2.0.0",
     "foo@^1.0.0",
   ],
-  "packages/package-4": Array [
-    "package-3@^1.0.0",
-  ],
 }
 `;
 
@@ -331,6 +328,21 @@ Array [
     "_src": "packages/package-1",
     "dest": "packages/package-4/node_modules/@test/package-1",
     "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-3",
+    "dest": "packages/package-4/node_modules/package-3",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-3/cli1.js",
+    "dest": "packages/package-4/node_modules/.bin/package3cli1",
+    "type": "exec",
+  },
+  Object {
+    "_src": "packages/package-3/cli2.js",
+    "dest": "packages/package-4/node_modules/.bin/package3cli2",
+    "type": "exec",
   },
 ]
 `;
