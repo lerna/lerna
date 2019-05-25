@@ -206,6 +206,11 @@ src/
 
 Locating leaf packages under `packages/*` is considered a "best-practice", but is not a requirement for using Lerna.
 
+#### Legacy Fields
+
+Some `lerna.json` fields are no longer in use. Those of note include:
+* `lerna`: originally used to indicate the current version of Lerna. [Made obsolete](https://github.com/lerna/lerna/pull/1122) and [removed](https://github.com/lerna/lerna/pull/1225) in v3
+
 ### Common `devDependencies`
 
 Most `devDependencies` can be pulled up to the root of a Lerna repo with `lerna link convert`
