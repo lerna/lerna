@@ -262,6 +262,29 @@ Map {
     });
   });
 
+  describe("packageDir property", () => {
+    it("allows you to do even more fancy crap", async () => {
+      const cwd = await initFixture("package-dir");
+
+      await lernaPublish(cwd)();
+
+      for (const name of ["package-1"]) {
+        expect(packDirectory).toHaveBeenCalledWith(
+          expect.objectContaining({ name }),
+          expect.stringContaining(`packages/${name}/dist`),
+          expect.any(Object)
+        );
+      }
+      for (const name of ["package-2"]) {
+        expect(packDirectory).toHaveBeenCalledWith(
+          expect.objectContaining({ name }),
+          expect.stringContaining(`packages/${name}`),
+          expect.any(Object)
+        );
+      }
+    });
+  });
+
   describe("in a cyclical repo", () => {
     it("should throw an error with --reject-cycles", async () => {
       expect.assertions(1);
