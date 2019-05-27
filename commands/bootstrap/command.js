@@ -55,11 +55,12 @@ exports.builder = yargs => {
       },
       ci: {
         group: "Command Options:",
-        describe: "Run `npm ci` to install dependencies."
+        describe: "Run `npm ci` to install dependencies.",
       },
       "no-ci": {
         group: "Command Options:",
-        describe: "Run `npm install` to install dependencies."
+        describe: "Run `npm install` to install dependencies.",
+      },
     });
 
   return filterable(yargs);
