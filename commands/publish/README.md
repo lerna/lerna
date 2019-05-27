@@ -275,6 +275,26 @@ You can customize the dist-tag on a per-package basis by setting [`tag`](https:/
 - Passing [`--dist-tag`](#--dist-tag-tag) will _overwrite_ this value.
 - This value is _always_ ignored when [`--canary`](#--canary) is passed.
 
+
+### `packageDir` key in `package.json`
+
+You can specify a relative folder where `lerna` should run `pack`.  This will enable publishing the contents of e.g. a `dist` folder 
+vs. the root of the package.  
+
+Here's an example snippet of package.json that takes advantage: 
+```javascript
+{
+  "name": "@your-org/your-project",
+  "main": "index.js",
+  "packageDir": "dist",
+  "scripts" : {
+    "build": "babel source --presets env,react-app --out-dir dist --copy-files && cp package.json dist && cp README.md dist",
+    "prepare": "npm run build"
+  },
+  ...
+}
+```
+
 ## LifeCycle Events
 
 Lerna will run [npm lifecycle scripts](https://docs.npmjs.com/misc/scripts#description) during `lerna publish` in the following order:
