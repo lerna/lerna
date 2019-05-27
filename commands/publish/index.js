@@ -595,7 +595,12 @@ class PublishCommand extends Command {
     }
 
     const { contents } = this.options;
-    const getLocation = contents ? pkg => path.resolve(pkg.location, contents) : pkg => pkg.location;
+    const getLocation = contents
+      ? pkg => path.resolve(pkg.location, contents)
+      : pkg => {
+          const packageDir = pkg.get("packageDir");
+          return packageDir ? path.resolve(pkg.location, packageDir) : pkg.location;
+        };
 
     const opts = this.conf.snapshot;
     const mapper = pPipe(
