@@ -173,20 +173,12 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 **Note:** Version bump only for package package-1
 
-
-
-
-
 # [1.2.0-alpha.0](/compare/package-1@1.1.2-alpha.0...package-1@1.2.0-alpha.0) (YYYY-MM-DD)
 
 
 ### Features
 
 * **package-1:** Add baz ([SHA](COMMIT_URL))
-
-
-
-
 
 ## [1.1.2-alpha.0](/compare/package-1@1.1.1...package-1@1.1.2-alpha.0) (YYYY-MM-DD)
 
@@ -195,20 +187,12 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 * **package-1:** Unfix foo ([SHA](COMMIT_URL))
 
-
-
-
-
 ## [1.1.1](/compare/package-1@1.1.0...package-1@1.1.1) (YYYY-MM-DD)
 
 
 ### Bug Fixes
 
 * **package-1:** Fix foo ([SHA](COMMIT_URL))
-
-
-
-
 
 # 1.1.0 (YYYY-MM-DD)
 
@@ -236,25 +220,13 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 **Note:** Version bump only for package package-2
 
-
-
-
-
 # [2.1.0](/compare/package-2@2.1.0-alpha.1...package-2@2.1.0) (YYYY-MM-DD)
 
 **Note:** Version bump only for package package-2
 
-
-
-
-
 # [2.1.0-alpha.1](/compare/package-2@2.1.0-alpha.0...package-2@2.1.0-alpha.1) (YYYY-MM-DD)
 
 **Note:** Version bump only for package package-2
-
-
-
-
 
 # [2.1.0-alpha.0](/compare/package-2@2.0.1-alpha.0...package-2@2.1.0-alpha.0) (YYYY-MM-DD)
 
@@ -262,10 +234,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Features
 
 * **package-2:** Add baz ([SHA](COMMIT_URL))
-
-
-
-
 
 ## 2.0.1-alpha.0 (YYYY-MM-DD)
 
@@ -293,33 +261,17 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 **Note:** Version bump only for package package-3
 
-
-
-
-
 # [4.0.0-alpha.3](/compare/package-3@4.0.0-alpha.2...package-3@4.0.0-alpha.3) (YYYY-MM-DD)
 
 **Note:** Version bump only for package package-3
-
-
-
-
 
 # [4.0.0-alpha.2](/compare/package-3@4.0.0-alpha.1...package-3@4.0.0-alpha.2) (YYYY-MM-DD)
 
 **Note:** Version bump only for package package-3
 
-
-
-
-
 # [4.0.0-alpha.1](/compare/package-3@4.0.0-alpha.0...package-3@4.0.0-alpha.1) (YYYY-MM-DD)
 
 **Note:** Version bump only for package package-3
-
-
-
-
 
 # 4.0.0-alpha.0 (YYYY-MM-DD)
 
@@ -352,33 +304,17 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 **Note:** Version bump only for package package-5
 
-
-
-
-
 ## [5.0.1-alpha.3](/compare/package-5@5.0.1-alpha.2...package-5@5.0.1-alpha.3) (YYYY-MM-DD)
 
 **Note:** Version bump only for package package-5
-
-
-
-
 
 ## [5.0.1-alpha.2](/compare/package-5@5.0.1-alpha.1...package-5@5.0.1-alpha.2) (YYYY-MM-DD)
 
 **Note:** Version bump only for package package-5
 
-
-
-
-
 ## [5.0.1-alpha.1](/compare/package-5@5.0.1-alpha.0...package-5@5.0.1-alpha.1) (YYYY-MM-DD)
 
 **Note:** Version bump only for package package-5
-
-
-
-
 
 ## 5.0.1-alpha.0 (YYYY-MM-DD)
 

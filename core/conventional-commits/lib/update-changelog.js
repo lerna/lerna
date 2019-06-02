@@ -54,7 +54,7 @@ function updateChangelog(pkg, type, { changelogPreset, rootPath, tagPrefix, vers
     ]).then(([newEntry, [changelogFileLoc, changelogContents]]) => {
       log.silly(type, "writing new entry: %j", newEntry);
 
-      const content = [CHANGELOG_HEADER, newEntry, changelogContents].join(BLANK_LINE);
+      const content = [CHANGELOG_HEADER, newEntry.trim(), changelogContents.trim()].join(BLANK_LINE);
 
       return fs.writeFile(changelogFileLoc, content.trim() + EOL).then(() => {
         log.verbose(type, "wrote", changelogFileLoc);

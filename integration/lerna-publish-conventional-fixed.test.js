@@ -86,10 +86,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 * **package-2:** And another thing ([SHA](COMMIT_URL))
 
-
-
-
-
 # 2.0.0 (YYYY-MM-DD)
 
 
@@ -152,10 +148,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 * **package-2:** And another thing ([SHA](COMMIT_URL))
 
-
-
-
-
 # 2.0.0 (YYYY-MM-DD)
 
 
@@ -182,10 +174,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ## [2.0.1](/compare/v2.0.0...v2.0.1) (YYYY-MM-DD)
 
 **Note:** Version bump only for package package-3
-
-
-
-
 
 # 2.0.0 (YYYY-MM-DD)
 
@@ -232,10 +220,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ## [2.0.1](/compare/v2.0.0...v2.0.1) (YYYY-MM-DD)
 
 **Note:** Version bump only for package package-5
-
-
-
-
 
 # 2.0.0 (YYYY-MM-DD)
 
