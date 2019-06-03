@@ -54,6 +54,16 @@ class PublishCommand extends Command {
     return this.options.bump !== "from-package";
   }
 
+  constructor(argv) {
+    super(argv);
+    this.redirectPackages = configPath => {
+      const { contents } = this.options;
+      return contents
+        ? configPath.replace(/package\.json$/, path.join(contents, "package.json"))
+        : configPath;
+    };
+  }
+
   initialize() {
     if (this.options.skipNpm) {
       // TODO: remove in next major release
@@ -516,7 +526,9 @@ class PublishCommand extends Command {
   }
 
   serializeChanges() {
-    return pMap(this.packagesToPublish, pkg => pkg.serialize());
+    return this.getPackages().then(pkgs => {
+      return pMap(pkgs, pkg => pkg.serialize());
+    });
   }
 
   resetChanges() {
@@ -594,17 +606,14 @@ class PublishCommand extends Command {
       chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "prepack"));
     }
 
-    const { contents } = this.options;
-    const getLocation = contents ? pkg => path.resolve(pkg.location, contents) : pkg => pkg.location;
-
     const opts = this.conf.snapshot;
     const mapper = pPipe(
       [
         this.options.requireScripts && (pkg => this.execScript(pkg, "prepublish")),
 
         pkg =>
-          pulseTillDone(packDirectory(pkg, getLocation(pkg), opts)).then(packed => {
-            tracker.verbose("packed", pkg.name, path.relative(this.project.rootPath, getLocation(pkg)));
+          pulseTillDone(packDirectory(pkg, pkg.location, opts)).then(packed => {
+            tracker.verbose("packed", pkg.name, path.relative(this.project.rootPath, pkg.location));
             tracker.completeWork(1);
 
             // store metadata for use in this.publishPacked()

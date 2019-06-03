@@ -166,11 +166,13 @@ class Project {
     return finder;
   }
 
-  getPackages() {
-    const mapper = packageConfigPath =>
-      loadJsonFile(packageConfigPath).then(
-        packageJson => new Package(packageJson, path.dirname(packageConfigPath), this.rootPath)
+  getPackages(redirect = arg => arg) {
+    const mapper = packageJsonPath => {
+      const redirectedPath = redirect(packageJsonPath);
+      return loadJsonFile(redirectedPath).then(
+        packageJson => new Package(packageJson, path.dirname(redirectedPath), this.rootPath)
       );
+    };
 
     return this.fileFinder("package.json", filePaths => pMap(filePaths, mapper, { concurrency: 50 }));
   }

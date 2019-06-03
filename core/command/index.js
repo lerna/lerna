@@ -30,6 +30,9 @@ class Command {
     // composed commands are called from other commands, like publish -> version
     this.composed = typeof argv.composed === "string" && argv.composed !== this.name;
 
+    // callers of "getPackages" use this to map their "package.json" paths
+    this.redirectPackages = path => path;
+
     if (!this.composed) {
       // composed commands have already logged the lerna version
       log.notice("cli", `v${argv.lernaVersion}`);
@@ -246,6 +249,12 @@ class Command {
     }
   }
 
+  getPackages(redirect = path => path) {
+    return this.project.getPackages(path => {
+      return this.redirectPackages(redirect(path));
+    });
+  }
+
   runPreparations() {
     if (!this.composed && this.project.isIndependent()) {
       // composed commands have already logged the independent status
@@ -258,7 +267,7 @@ class Command {
 
     let chain = Promise.resolve();
 
-    chain = chain.then(() => this.project.getPackages());
+    chain = chain.then(() => this.getPackages());
     chain = chain.then(packages => {
       this.packageGraph = new PackageGraph(packages);
     });
