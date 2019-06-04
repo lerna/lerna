@@ -1,7 +1,7 @@
 {
   "name": "lerna-monorepo",
   "version": "3.0.0-monorepo",
-  "description": "lerna dog-fooding lerna",
+  "description": "Lerna is a tool that optimizes the workflow around managing multi-package repositories with Git and NPM.",
   "private": true,
   "scripts": {
     "ci": "npm test -- --ci --maxWorkers=2 && npm run integration -- --ci",
@@ -81,5 +81,23 @@
   },
   "engines": {
     "node": ">= 6.9.0"
-  }
+  },
+  "keywords": [
+    "lerna",
+    "lernajs",
+    "npm",
+    "npmjs",
+    "managing",
+    "multi",
+    "package",
+    "packages",
+    "multi-package",
+    "multi-packages",
+    "repository",
+    "repositories",
+    "git",
+    "monorepo",
+    "monorepos",
+    "package.json"
+  ]
 }
