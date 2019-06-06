@@ -25,6 +25,12 @@ function collectDependents(nodes) {
         return;
       }
 
+      const version = dependentNode.localDependencies.get(currentNode.name);
+      if (version && version.rawSpec && version.rawSpec.endsWith("x")) {
+        // dependency was defined with an x range, so we want to skip here
+        return;
+      }
+
       collected.add(dependentNode);
 
       dependentNode.localDependents.forEach(visit);
