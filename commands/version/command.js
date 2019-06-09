@@ -40,9 +40,10 @@ exports.builder = (yargs, composed) => {
       requiresArg: true,
       defaultDescription: "origin",
     },
-    "github-release": {
-      describe: "Create an official GitHub release for every version.",
-      type: "boolean",
+    "create-release": {
+      describe: "Create an official GitHub or GitLab release for every version.",
+      type: "string",
+      choices: ["gitlab", "github"],
     },
     "ignore-changes": {
       describe: [
@@ -171,6 +172,11 @@ exports.builder = (yargs, composed) => {
       hidden: true,
       type: "boolean",
     })
+    .option("github-release", {
+      // TODO: remove in next major release
+      hidden: true,
+      type: "boolean",
+    })
     .check(argv => {
       /* eslint-disable no-param-reassign */
       if (argv.ignore) {
@@ -200,6 +206,12 @@ exports.builder = (yargs, composed) => {
         delete argv.skipGit;
         delete argv["skip-git"];
         log.warn("deprecated", "--skip-git has been replaced by --no-git-tag-version --no-push");
+      }
+
+      if (argv.githubRelease) {
+        argv.createRelease = "github";
+        delete argv.githubRelease;
+        log.warn("deprecated", "--release has been replaced by --create-release=github");
       }
       /* eslint-enable no-param-reassign */
 
