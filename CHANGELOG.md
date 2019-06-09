@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.14.2](https://github.com/lerna/lerna/compare/v3.14.1...v3.14.2) (2019-06-09)
+
+
+### Bug Fixes
+
+* **bootstrap:** Respect `--force-local` option ([#2104](https://github.com/lerna/lerna/issues/2104)) ([c2fb639](https://github.com/lerna/lerna/commit/c2fb639))
+* **child-process:** Ensure adjacent prefixes are always a different color ([5a10146](https://github.com/lerna/lerna/commit/5a10146))
+* **npm-publish:** Use generated manifest when publishing subdirectory ([b922766](https://github.com/lerna/lerna/commit/b922766)), closes [#2113](https://github.com/lerna/lerna/issues/2113)
+* **publish:** Allow per-leaf subdirectory publishing ([ea861d9](https://github.com/lerna/lerna/commit/ea861d9)), closes [#2109](https://github.com/lerna/lerna/issues/2109)
+* **version:** Remove unused dependency ([285bd7e](https://github.com/lerna/lerna/commit/285bd7e))
+
+
+
+
+
 ## [3.14.1](https://github.com/lerna/lerna/compare/v3.14.0...v3.14.1) (2019-05-15)
 
 

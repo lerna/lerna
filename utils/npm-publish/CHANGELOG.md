@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.14.2](https://github.com/lerna/lerna/compare/v3.14.1...v3.14.2) (2019-06-09)
+
+
+### Bug Fixes
+
+* **npm-publish:** Use generated manifest when publishing subdirectory ([b922766](https://github.com/lerna/lerna/commit/b922766)), closes [#2113](https://github.com/lerna/lerna/issues/2113)
+
+
+
+
+
 # [3.14.0](https://github.com/lerna/lerna/compare/v3.13.4...v3.14.0) (2019-05-14)
 
 
