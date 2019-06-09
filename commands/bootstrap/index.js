@@ -161,7 +161,7 @@ class BootstrapCommand extends Command {
     chain = chain.then(filteredPackages => {
       this.filteredPackages = filteredPackages;
 
-      if (filteredPackages.length !== this.targetGraph.size) {
+      if (filteredPackages.length !== this.targetGraph.size && !this.options.forceLocal) {
         this.logger.warn("bootstrap", "Installing local packages that do not match filters from registry");
 
         // an explicit --scope, --ignore, or --since should only symlink the targeted packages, no others

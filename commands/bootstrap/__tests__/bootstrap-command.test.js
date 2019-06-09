@@ -313,6 +313,24 @@ describe("BootstrapCommand", () => {
       expect(symlinkedDirectories(testDir)).toMatchSnapshot();
     });
 
+    it("should respect --force-local when a single package is in scope", async () => {
+      const testDir = await initFixture("basic");
+
+      await lernaBootstrap(testDir)("--scope", "package-4", "--force-local");
+
+      // no packages were installed from the registry
+      const installed = installedPackagesInDirectories(testDir);
+      expect(installed["packages/package-4"] || []).toEqual([]);
+
+      // package-3 was resolved as a local symlink
+      const symlinked = symlinkedDirectories(testDir);
+      expect(symlinked).toContainEqual({
+        _src: "packages/package-3",
+        dest: "packages/package-4/node_modules/package-3",
+        type: "junction",
+      });
+    });
+
     it("should not update package.json when filtering", async () => {
       const testDir = await initFixture("basic");
 
