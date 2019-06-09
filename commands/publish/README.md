@@ -98,6 +98,9 @@ lerna publish --contents dist
 # publish the "dist" subfolder of every Lerna-managed leaf package
 ```
 
+**NOTE:** You should wait until the `postpublish` lifecycle phase (root or leaf) to clean up this generated subdirectory,
+as the generated package.json is used during package upload (_after_ `postpack`).
+
 ### `--dist-tag <tag>`
 
 ```sh
@@ -274,6 +277,16 @@ You can customize the dist-tag on a per-package basis by setting [`tag`](https:/
 
 - Passing [`--dist-tag`](#--dist-tag-tag) will _overwrite_ this value.
 - This value is _always_ ignored when [`--canary`](#--canary) is passed.
+
+### `publishConfig.directory`
+
+This _non-standard_ field allows you to customize the published subdirectory just like [`--contents`](#--contents-dir), but on a per-package basis. All other caveats of `--contents` still apply.
+
+```json
+  "publishConfig": {
+    "directory": "dist"
+  }
+```
 
 ## LifeCycle Events
 

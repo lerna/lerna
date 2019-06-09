@@ -595,7 +595,13 @@ class PublishCommand extends Command {
     }
 
     const { contents } = this.options;
-    const getLocation = contents ? pkg => path.resolve(pkg.location, contents) : pkg => pkg.location;
+
+    if (contents) {
+      // globally override directory to publish
+      for (const pkg of this.packagesToPublish) {
+        pkg.contents = contents;
+      }
+    }
 
     const opts = this.conf.snapshot;
     const mapper = pPipe(
@@ -603,8 +609,8 @@ class PublishCommand extends Command {
         this.options.requireScripts && (pkg => this.execScript(pkg, "prepublish")),
 
         pkg =>
-          pulseTillDone(packDirectory(pkg, getLocation(pkg), opts)).then(packed => {
-            tracker.verbose("packed", pkg.name, path.relative(this.project.rootPath, getLocation(pkg)));
+          pulseTillDone(packDirectory(pkg, pkg.contents, opts)).then(packed => {
+            tracker.verbose("packed", pkg.name, path.relative(this.project.rootPath, pkg.contents));
             tracker.completeWork(1);
 
             // store metadata for use in this.publishPacked()

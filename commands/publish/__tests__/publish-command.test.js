@@ -21,6 +21,7 @@ const getNpmUsername = require("../lib/get-npm-username");
 const verifyNpmPackageAccess = require("../lib/verify-npm-package-access");
 
 // helpers
+const commitChangeToPackage = require("@lerna-test/commit-change-to-package");
 const loggingOutput = require("@lerna-test/logging-output");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 
@@ -262,6 +263,30 @@ Map {
     });
   });
 
+  describe("publishConfig.directory", () => {
+    it("mimics effect of --contents, but per-package", async () => {
+      const cwd = await initFixture("lifecycle");
+
+      await commitChangeToPackage(cwd, "package-1", "chore: setup", {
+        publishConfig: {
+          directory: "dist",
+        },
+      });
+
+      await lernaPublish(cwd)();
+
+      expect(packDirectory).toHaveBeenCalledWith(
+        expect.objectContaining({ name: "package-1" }),
+        expect.stringMatching(/packages\/package-1\/dist$/),
+        expect.any(Object)
+      );
+      expect(packDirectory).toHaveBeenCalledWith(
+        expect.objectContaining({ name: "package-2" }),
+        expect.stringMatching(/packages\/package-2$/),
+        expect.any(Object)
+      );
+    });
+  });
   describe("in a cyclical repo", () => {
     it("should throw an error with --reject-cycles", async () => {
       expect.assertions(1);

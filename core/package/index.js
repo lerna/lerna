@@ -95,6 +95,27 @@ class Package {
     this[PKG].version = version;
   }
 
+  get contents() {
+    // if modified with setter, use that value
+    if (this._contents) {
+      return this._contents;
+    }
+
+    // if provided by pkg.publishConfig.directory value
+    if (this[PKG].publishConfig && this[PKG].publishConfig.directory) {
+      return path.join(this.location, this[PKG].publishConfig.directory);
+    }
+
+    // default to package root
+    return this.location;
+  }
+
+  set contents(subDirectory) {
+    Object.defineProperty(this, "_contents", {
+      value: path.join(this.location, subDirectory),
+    });
+  }
+
   // "live" collections
   get dependencies() {
     return this[PKG].dependencies;
