@@ -1,6 +1,7 @@
 "use strict";
 
 const fs = require("fs-extra");
+const path = require("path");
 const log = require("npmlog");
 const { publish } = require("libnpmpublish");
 const pify = require("pify");
@@ -43,7 +44,16 @@ function npmPublish(pkg, tarFilePath, _opts, otpCache) {
   let chain = Promise.resolve();
 
   if (!opts.dryRun) {
-    chain = chain.then(() => Promise.all([fs.readFile(tarFilePath), readJSONAsync(pkg.manifestLocation)]));
+    chain = chain.then(() => {
+      let { manifestLocation } = pkg;
+
+      if (pkg.contents !== pkg.location) {
+        // "rebase" manifest used to generated directory
+        manifestLocation = path.join(pkg.contents, "package.json");
+      }
+
+      return Promise.all([fs.readFile(tarFilePath), readJSONAsync(manifestLocation)]);
+    });
     chain = chain.then(([tarData, manifest]) => {
       // non-default tag needs to override publishConfig.tag,
       // which is merged over opts.tag in libnpmpublish

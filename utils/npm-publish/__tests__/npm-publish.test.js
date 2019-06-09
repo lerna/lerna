@@ -119,6 +119,43 @@ describe("npm-publish", () => {
     );
   });
 
+  it("uses pkg.contents manifest when pkg.publishConfig.directory is defined", async () => {
+    const fancyPkg = new Package(
+      {
+        name: "fancy",
+        version: "1.10.100",
+        publishConfig: {
+          directory: "dist",
+        },
+      },
+      path.join(rootPath, "npmPublish/fancy"),
+      rootPath
+    );
+
+    readJSON.mockImplementationOnce((file, cb) =>
+      cb(null, {
+        name: "fancy-fancy",
+        version: "1.10.100",
+      })
+    );
+
+    await npmPublish(fancyPkg, tarFilePath);
+
+    expect(readJSON).toHaveBeenCalledWith(
+      path.join(fancyPkg.location, "dist/package.json"),
+      expect.any(Function)
+    );
+    expect(publish).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: "fancy-fancy",
+      }),
+      mockTarData,
+      expect.figgyPudding({
+        tag: "latest",
+      })
+    );
+  });
+
   it("respects opts.dryRun", async () => {
     const opts = new Map().set("dryRun", true);
 
