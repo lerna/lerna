@@ -12,7 +12,7 @@ function getUnpublishedPackages(packageGraph, opts) {
   let chain = Promise.resolve();
 
   // don't bother attempting to get the packument for private packages
-  const graphNodesToCheck = Array.from(packageGraph.values()).filter(({ pkg }) => !pkg.private);
+  const graphNodesToCheck = Array.from(packageGraph.values()).filter(pkg => !pkg.private);
 
   const mapper = pkg =>
     getPackument(pkg.name, opts).then(

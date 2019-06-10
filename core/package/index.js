@@ -1,5 +1,6 @@
 "use strict";
 
+const fs = require("fs-extra");
 const npa = require("npm-package-arg");
 const path = require("path");
 const loadJsonFile = require("load-json-file");
@@ -43,9 +44,6 @@ class Package {
       },
       location: {
         value: location,
-      },
-      private: {
-        value: Boolean(pkg.private),
       },
       resolved: {
         value: resolved,
@@ -93,6 +91,21 @@ class Package {
 
   set version(version) {
     this[PKG].version = version;
+  }
+
+  get private() {
+    if (this._private !== undefined) {
+      return this._private;
+    }
+    let isPrivate = this[PKG].private;
+    if (this.contents !== this.location) {
+      const manifestLocation = path.join(this.contents, "package.json");
+      isPrivate = fs.readJsonSync(manifestLocation).private;
+    }
+    Object.defineProperty(this, "_private", {
+      value: Boolean(isPrivate),
+    });
+    return isPrivate;
   }
 
   get contents() {
