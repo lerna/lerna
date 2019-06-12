@@ -44,6 +44,7 @@
     "@lerna/diff": "file:../../commands/diff",
     "@lerna/exec": "file:../../commands/exec",
     "@lerna/import": "file:../../commands/import",
+    "@lerna/info": "file:../../commands/info",
     "@lerna/init": "file:../../commands/init",
     "@lerna/link": "file:../../commands/link",
     "@lerna/list": "file:../../commands/list",
