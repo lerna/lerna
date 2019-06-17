@@ -53,6 +53,11 @@ exports.builder = yargs => {
         type: "string",
         requiresArg: true,
       },
+      strict: {
+        group: "Command Options:",
+        describe: "Don't allow warnings when hoisting as it causes longer bootstrap times and other issues.",
+        type: "boolean",
+      },
     });
 
   return filterable(yargs);
