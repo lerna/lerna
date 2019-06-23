@@ -585,14 +585,18 @@ class PublishCommand extends Command {
   }
 
   topoMapPackages(mapper) {
+    // Default behavior
+    // Originally, Lerna didn't sort based on devDependencies because that would increase the
+    // chance of dependency cycles, causing less-than-ideal a publishing order.
+    let graphType = "dependencies";
+    if (this.options.graphType && this.options.graphType === "all") {
+      graphType = "allDependencies"; // Use the entire package graph for sorting topologically
+    }
     // we don't respect --no-sort here, sorry
     return runTopologically(this.packagesToPublish, mapper, {
       concurrency: this.concurrency,
       rejectCycles: this.options.rejectCycles,
-      // Don't sort based on devDependencies because that
-      // would increase the chance of dependency cycles
-      // causing less-than-ideal a publishing order.
-      graphType: "dependencies",
+      graphType,
     });
   }
 

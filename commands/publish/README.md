@@ -49,6 +49,7 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 - [`--contents <dir>`](#--contents-dir)
 - [`--dist-tag <tag>`](#--dist-tag-tag)
 - [`--git-head <sha>`](#--git-head-sha)
+- [`--graph-type <all|dependencies>`](#--graph-type)
 - [`--no-git-reset`](#--no-git-reset)
 - [`--no-verify-access`](#--no-verify-access)
 - [`--otp`](#--otp)
@@ -126,6 +127,10 @@ lerna publish from-package --git-head ${CODEBUILD_RESOLVED_SOURCE_VERSION}
 ```
 
 Under all other circumstances, this value is derived from a local `git` command.
+
+### `--graph-type <all|dependencies>`
+
+Set which set of dependencies to use when building a package graph. The default value is `dependencies`, whereby only packages listed in the `dependencies` section of your package's `package.json` are included. Pass `all` to include both your `dependencies` and `devDependencies` when constructing the package graph and determining topological order.
 
 ### `--no-git-reset`
 
