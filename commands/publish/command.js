@@ -51,6 +51,11 @@ exports.builder = yargs => {
       type: "string",
       requiresArg: true,
     },
+    "registry-scope": {
+      describe: "Use the specified registry for all npm client operations.",
+      type: "string",
+      requiresArg: true,
+    },
     "require-scripts": {
       describe: "Execute ./scripts/prepublish.js and ./scripts/postpublish.js, relative to package root.",
       type: "boolean",
