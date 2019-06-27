@@ -101,6 +101,20 @@ class PublishCommand extends Command {
       registry: this.options.registry,
     });
 
+    if (this.options["registry-scope"]) {
+      const registryScope = Array.isArray(this.options["registry-scope"])
+        ? this.options["registry-scope"]
+        : [this.options["registry-scope"]];
+
+      registryScope.forEach(scope => {
+        const registryScopeParts = scope.split(/(^@.*?):/);
+
+        if (registryScopeParts && registryScopeParts.length === 3) {
+          this.conf.set(`${registryScopeParts[1]}:registry`, registryScopeParts[2], "cli");
+        }
+      });
+    }
+
     this.conf.set("user-agent", userAgent, "cli");
 
     if (this.conf.get("registry") === "https://registry.yarnpkg.com") {
