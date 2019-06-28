@@ -4,6 +4,9 @@ const npa = require("npm-package-arg");
 const path = require("path");
 const loadJsonFile = require("load-json-file");
 const writePkg = require("write-pkg");
+const fs = require("fs");
+const writeJsonFile = require("write-json-file");
+const pWaterfall = require("p-waterfall");
 
 // symbol used to "hide" internal state
 const PKG = Symbol("pkg");
@@ -28,6 +31,12 @@ function shallowCopy(json) {
 
     return obj;
   }, {});
+}
+
+// determine if a package-lock.json file exists
+function hasPackageLock(location) {
+  const packageLock = path.resolve(location);
+  return fs.existsSync(packageLock);
 }
 
 class Package {
@@ -76,6 +85,9 @@ class Package {
       },
       manifestLocation: {
         value: path.join(location, "package.json"),
+      },
+      lockFileLocation: {
+        value: path.join(location, "package-lock.json"),
       },
       nodeModulesLocation: {
         value: path.join(location, "node_modules"),
@@ -181,7 +193,27 @@ class Package {
    * @returns {Promise} resolves when write finished
    */
   serialize() {
-    return writePkg(this.manifestLocation, this[PKG]).then(() => this);
+    return writePkg(this.manifestLocation, this[PKG])
+      .then(() => this.writePkgLock())
+      .then(() => this);
+  }
+
+  /**
+   * Write package-lock changes to disk
+   * @returns {Promise} resolves when write finished
+   */
+  writePkgLock() {
+    // We only care about version in the lock file; a package's name never changes
+    const lockChanges = { version: this[PKG].version };
+
+    const tasks = [
+      () => loadJsonFile(this.lockFileLocation),
+      lockFileData => Promise.resolve(Object.assign({}, lockFileData, lockChanges)),
+      updatedLockFileData =>
+        writeJsonFile(this.lockFileLocation, updatedLockFileData, { detectIndent: true }),
+    ];
+
+    return hasPackageLock(this.lockFileLocation) ? pWaterfall(tasks) : Promise.resolve();
   }
 
   /**

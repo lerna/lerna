@@ -2,11 +2,15 @@
 
 jest.mock("load-json-file");
 jest.mock("write-pkg");
+jest.mock("write-json-file");
+jest.mock("fs");
 
 const os = require("os");
 const path = require("path");
 const loadJsonFile = require("load-json-file");
 const writePkg = require("write-pkg");
+const writeJsonFile = require("write-json-file");
+const fs = require("fs");
 
 // file under test
 const Package = require("..");
@@ -26,6 +30,13 @@ describe("Package", () => {
     it("should return the location", () => {
       const pkg = factory({ name: "get-location" });
       expect(pkg.location).toBe(path.normalize("/root/path/to/get-location"));
+    });
+  });
+
+  describe("get .lockFileLocation", () => {
+    it("should return the package-lock location", () => {
+      const pkg = factory({ name: "lock-file-location" });
+      expect(pkg.lockFileLocation).toBe(path.normalize("/root/path/to/lock-file-location/package-lock.json"));
     });
   });
 
@@ -257,8 +268,11 @@ describe("Package", () => {
   });
 
   describe(".serialize()", () => {
-    it("writes changes to disk", async () => {
-      writePkg.mockImplementation(() => Promise.resolve());
+    it("writes changes to package.json to disk", async () => {
+      writePkg.mockImplementationOnce(() => Promise.resolve());
+      fs.existsSync.mockImplementationOnce(() => false);
+      writeJsonFile.mockImplementationOnce(() => Promise.resolve());
+      loadJsonFile.mockImplementationOnce(() => Promise.resolve());
 
       const pkg = factory({ name: "serialize-me" });
       const result = await pkg.set("woo", "hoo").serialize();
@@ -270,6 +284,40 @@ describe("Package", () => {
           name: "serialize-me",
           woo: "hoo",
         })
+      );
+      expect(fs.existsSync).toHaveBeenCalledWith("/root/path/to/serialize-me/package-lock.json");
+      expect(loadJsonFile).not.toHaveBeenCalled();
+      expect(writeJsonFile).not.toHaveBeenCalled();
+    });
+
+    it("writes changes to package-lock to disk", async () => {
+      writePkg.mockImplementationOnce(() => Promise.resolve());
+      fs.existsSync.mockImplementationOnce(() => true);
+      writeJsonFile.mockImplementationOnce(() => Promise.resolve());
+      loadJsonFile.mockImplementationOnce(() => Promise.resolve({ name: "something" }));
+
+      const pkg = factory({ name: "serialize-me-lock", version: "1.0.0" });
+      expect(pkg.version).toBe("1.0.0");
+
+      const result = await pkg.set("version", "2.0.0").serialize();
+      expect(result).toBe(pkg);
+      expect(result.version).toBe("2.0.0");
+
+      expect(writePkg).toHaveBeenLastCalledWith(
+        pkg.manifestLocation,
+        expect.objectContaining({
+          name: "serialize-me-lock",
+          version: "2.0.0",
+        })
+      );
+      expect(fs.existsSync).toHaveBeenCalledWith("/root/path/to/serialize-me-lock/package-lock.json");
+      expect(loadJsonFile).toHaveBeenCalledWith("/root/path/to/serialize-me-lock/package-lock.json");
+      expect(writeJsonFile).toHaveBeenCalledWith(
+        "/root/path/to/serialize-me-lock/package-lock.json",
+        expect.objectContaining({
+          version: "2.0.0",
+        }),
+        { detectIndent: true }
       );
     });
   });
