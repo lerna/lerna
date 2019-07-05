@@ -208,7 +208,7 @@ To authenticate with GitHub, the following environment variables can be defined.
 - `GH_TOKEN` (required) - Your GitHub authentication token (under Settings > Developer settings > Personal access tokens).
 - `GHE_API_URL` - When using GitHub Enterprise, an absolute URL to the API.
 - `GHE_VERSION` - When using GitHub Enterprise, the currently installed GHE version. [Supports the following versions](https://github.com/octokit/plugin-enterprise-rest.js).
--
+
 To authenticate with GitLab, the following environment variables can be defined.
 
 - `GL_TOKEN` (required) - Your GitLab authentication token (under User Settings > Access Tokens).
