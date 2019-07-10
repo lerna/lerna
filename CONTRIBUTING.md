@@ -9,7 +9,7 @@ To get started with the repo:
 
 ```sh
 $ git clone git@github.com:lerna/lerna.git && cd lerna
-$ npm i
+$ npm ci
 ```
 
 ## Code Structure
