@@ -34,9 +34,9 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@evocateur/libnpmaccess": "^3.1.0",
-    "@evocateur/npm-registry-fetch": "^3.9.1",
-    "@evocateur/pacote": "^9.6.0",
+    "@evocateur/libnpmaccess": "^3.1.2",
+    "@evocateur/npm-registry-fetch": "^4.0.0",
+    "@evocateur/pacote": "^9.6.2",
     "@lerna/check-working-tree": "file:../../utils/check-working-tree",
     "@lerna/child-process": "file:../../core/child-process",
     "@lerna/collect-updates": "file:../../utils/collect-updates",

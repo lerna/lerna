@@ -32,7 +32,7 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@evocateur/npm-registry-fetch": "^3.9.1",
+    "@evocateur/npm-registry-fetch": "^4.0.0",
     "@lerna/otplease": "file:../../core/otplease",
     "figgy-pudding": "^3.5.1",
     "npm-package-arg": "^6.1.0",

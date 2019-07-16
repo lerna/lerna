@@ -31,7 +31,7 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@evocateur/libnpmpublish": "^1.2.0",
+    "@evocateur/libnpmpublish": "^1.2.2",
     "@lerna/otplease": "file:../../core/otplease",
     "@lerna/run-lifecycle": "file:../run-lifecycle",
     "figgy-pudding": "^3.5.1",
