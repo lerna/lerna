@@ -452,14 +452,14 @@ class PublishCommand extends Command {
           return verifyNpmPackageAccess(this.packagesToPublish, username, this.conf.snapshot);
         }
       });
-    }
 
-    // read profile metadata to determine if account-level 2FA is enabled
-    chain = chain.then(() => getTwoFactorAuthRequired(this.conf.snapshot));
-    chain = chain.then(isRequired => {
-      // notably, this still doesn't handle package-level 2FA requirements
-      this.twoFactorAuthRequired = isRequired;
-    });
+      // read profile metadata to determine if account-level 2FA is enabled
+      chain = chain.then(() => getTwoFactorAuthRequired(this.conf.snapshot));
+      chain = chain.then(isRequired => {
+        // notably, this still doesn't handle package-level 2FA requirements
+        this.twoFactorAuthRequired = isRequired;
+      });
+    }
 
     return chain;
   }
