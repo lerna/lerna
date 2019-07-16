@@ -626,20 +626,48 @@ describe("VersionCommand", () => {
     expect(logMessages).toContain("No changed packages to version");
   });
 
-  it("versions all transitive dependents after change", async () => {
-    const testDir = await initFixture("snake-graph");
+  describe("version ordering", () => {
+    it("versions all transitive dependents after change", async () => {
+      const testDir = await initFixture("snake-graph");
 
-    await gitTag(testDir, "v1.0.0");
-    await fs.outputFile(path.join(testDir, "packages/package-1/hello.js"), "world");
-    await gitAdd(testDir, ".");
-    await gitCommit(testDir, "feat: hello");
+      await gitTag(testDir, "v1.0.0");
+      await fs.outputFile(path.join(testDir, "packages/package-1/hello.js"), "world");
+      await gitAdd(testDir, ".");
+      await gitCommit(testDir, "feat: hello");
 
-    collectUpdates.mockImplementationOnce(collectUpdatesActual);
+      collectUpdates.mockImplementationOnce(collectUpdatesActual);
 
-    await lernaVersion(testDir)("major", "--yes");
+      await lernaVersion(testDir)("major", "--yes");
 
-    const patch = await showCommit(testDir);
-    expect(patch).toMatchSnapshot();
+      const patch = await showCommit(testDir);
+      expect(patch).toMatchSnapshot();
+    });
+
+    it("handles cycles in topological order", async () => {
+      const testDir = await initFixture("cycle-parent");
+
+      await gitTag(testDir, "v1.0.0");
+
+      await Promise.all(
+        ["a", "b", "c", "d"].map(n => fs.outputFile(path.join(testDir, "packages", n, "index.js"), "hello"))
+      );
+      await gitAdd(testDir, ".");
+      await gitCommit(testDir, "feat: hello");
+
+      collectUpdates.mockImplementationOnce(collectUpdatesActual);
+
+      await lernaVersion(testDir)("major", "--yes");
+
+      const patch = await showCommit(testDir, "--name-only");
+      expect(patch).toMatchInlineSnapshot(`
+        "v2.0.0
+
+        HEAD -> master, tag: v2.0.0
+
+        lerna.json
+        packages/b/package.json"
+      `);
+    });
   });
 
   describe("with relative file: specifiers", () => {
