@@ -38,6 +38,7 @@
     "conventional-recommended-bump": "^4.0.4",
     "fs-extra": "^7.0.0",
     "get-stream": "^4.0.0",
+    "lodash.template": "^4.5.0",
     "npm-package-arg": "^6.1.0",
     "npmlog": "^4.1.2",
     "pify": "^3.0.0",
