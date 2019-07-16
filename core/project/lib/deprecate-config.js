@@ -7,6 +7,9 @@ const path = require("path");
 module.exports = compose(
   // add new predicates HERE
   remap("command.version.githubRelease", "command.version.createRelease", {
+    toValue: value => value && "github",
+  }),
+  remap("command.publish.githubRelease", "command.version.createRelease", {
     alsoRoot: true,
     toValue: value => value && "github",
   }),

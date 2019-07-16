@@ -170,6 +170,31 @@ Object {
 `);
     });
 
+    it("updates command.publish.githubRelease to command.version.createRelease", async () => {
+      const cwd = await initFixture("basic");
+
+      await fs.writeJSON(path.resolve(cwd, "lerna.json"), {
+        command: {
+          publish: {
+            githubRelease: true,
+          },
+        },
+        version: "1.0.0",
+      });
+
+      const project = new Project(cwd);
+
+      expect(project.config).toEqual({
+        command: {
+          publish: {},
+          version: {
+            createRelease: "github",
+          },
+        },
+        version: "1.0.0",
+      });
+    });
+
     it("throws an error when extend target is unresolvable", async () => {
       const cwd = await initFixture("extends-unresolved");
 
