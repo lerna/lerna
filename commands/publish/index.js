@@ -25,6 +25,7 @@ const runTopologically = require("@lerna/run-topologically");
 const pulseTillDone = require("@lerna/pulse-till-done");
 const versionCommand = require("@lerna/version");
 const prereleaseIdFromVersion = require("@lerna/prerelease-id-from-version");
+const otplease = require("@lerna/otplease");
 
 const createTempLicenses = require("./lib/create-temp-licenses");
 const getCurrentSHA = require("./lib/get-current-sha");
@@ -36,6 +37,7 @@ const getPackagesWithoutLicense = require("./lib/get-packages-without-license");
 const gitCheckout = require("./lib/git-checkout");
 const removeTempLicenses = require("./lib/remove-temp-licenses");
 const verifyNpmPackageAccess = require("./lib/verify-npm-package-access");
+const getTwoFactorAuthRequired = require("./lib/get-two-factor-auth-required");
 
 module.exports = factory;
 
@@ -452,6 +454,13 @@ class PublishCommand extends Command {
       });
     }
 
+    // read profile metadata to determine if account-level 2FA is enabled
+    chain = chain.then(() => getTwoFactorAuthRequired(this.conf.snapshot));
+    chain = chain.then(isRequired => {
+      // notably, this still doesn't handle package-level 2FA requirements
+      this.twoFactorAuthRequired = isRequired;
+    });
+
     return chain;
   }
 
@@ -563,6 +572,19 @@ class PublishCommand extends Command {
       });
   }
 
+  requestOneTimePassword() {
+    // if OTP has already been provided, skip prompt
+    if (this.otpCache.otp) {
+      return;
+    }
+
+    return Promise.resolve()
+      .then(() => otplease.getOneTimePassword("Enter OTP:"))
+      .then(otp => {
+        this.otpCache.otp = otp;
+      });
+  }
+
   topoMapPackages(mapper) {
     // we don't respect --no-sort here, sorry
     return runTopologically(this.packagesToPublish, mapper, {
@@ -642,6 +664,11 @@ class PublishCommand extends Command {
     tracker.addWork(this.packagesToPublish.length);
 
     let chain = Promise.resolve();
+
+    // if account-level 2FA is enabled, prime the OTP cache
+    if (this.twoFactorAuthRequired) {
+      chain = chain.then(() => this.requestOneTimePassword());
+    }
 
     const opts = Object.assign(this.conf.snapshot, {
       // distTag defaults to "latest" OR whatever is in pkg.publishConfig.tag

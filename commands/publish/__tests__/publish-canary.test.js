@@ -7,6 +7,7 @@ jest.unmock("@lerna/collect-updates");
 jest.mock("../lib/get-packages-without-license");
 jest.mock("../lib/verify-npm-package-access");
 jest.mock("../lib/get-npm-username");
+jest.mock("../lib/get-two-factor-auth-required");
 
 const fs = require("fs-extra");
 const path = require("path");
