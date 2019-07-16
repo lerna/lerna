@@ -98,11 +98,6 @@ Object {
   "files": Array [
     {
       "mode": "MODE",
-      "path": "package.json",
-      "size": 269,
-    },
-    {
-      "mode": "MODE",
       "path": "build.js",
       "size": 329,
     },
@@ -111,12 +106,17 @@ Object {
       "path": "index.src.js",
       "size": 141,
     },
+    {
+      "mode": "MODE",
+      "path": "package.json",
+      "size": 269,
+    },
   ],
   "id": "@integration/package-1@1.0.0",
   "integrity": "INTEGRITY",
   "name": "@integration/package-1",
   "shasum": "SHASUM",
-  "size": 539,
+  "size": 540,
   "tarFilePath": "__TAR_DIR__/integration-package-1-1.0.0.tgz",
   "unpackedSize": 739,
   "version": "1.0.0",
@@ -182,11 +182,6 @@ Object {
   "files": Array [
     {
       "mode": "MODE",
-      "path": "package.json",
-      "size": 455,
-    },
-    {
-      "mode": "MODE",
       "path": "cli1.js",
       "size": 108,
     },
@@ -200,12 +195,17 @@ Object {
       "path": "index.js",
       "size": 25,
     },
+    {
+      "mode": "MODE",
+      "path": "package.json",
+      "size": 455,
+    },
   ],
   "id": "package-3@1.0.0",
   "integrity": "INTEGRITY",
   "name": "package-3",
   "shasum": "SHASUM",
-  "size": 446,
+  "size": 453,
   "tarFilePath": "__TAR_DIR__/package-3-1.0.0.tgz",
   "unpackedSize": 696,
   "version": "1.0.0",
