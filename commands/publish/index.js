@@ -85,9 +85,8 @@ class PublishCommand extends Command {
 
     // npmSession and user-agent are consumed by npm-registry-fetch (via libnpmpublish)
     const npmSession = crypto.randomBytes(8).toString("hex");
-    const userAgent = `lerna/${this.options.lernaVersion}/node@${process.version}+${process.arch} (${
-      process.platform
-    })`;
+    // eslint-disable-next-line max-len
+    const userAgent = `lerna/${this.options.lernaVersion}/node@${process.version}+${process.arch} (${process.platform})`;
 
     this.logger.verbose("session", npmSession);
     this.logger.verbose("user-agent", userAgent);

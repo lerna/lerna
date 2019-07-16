@@ -148,9 +148,8 @@ class VersionCommand extends Command {
         this.pushToRemote &&
         isBehindUpstream(this.gitRemote, this.currentBranch, this.execOpts)
       ) {
-        const message = `Local branch '${this.currentBranch}' is behind remote upstream ${this.gitRemote}/${
-          this.currentBranch
-        }`;
+        // eslint-disable-next-line max-len
+        const message = `Local branch '${this.currentBranch}' is behind remote upstream ${this.gitRemote}/${this.currentBranch}`;
 
         if (!this.options.ci) {
           // interrupt interactive execution
