@@ -217,21 +217,43 @@ describe("RunCommand", () => {
       const [logMessage] = loggingOutput("warn");
       expect(logMessage).toMatch("Dependency cycles detected, you should fix these!");
       expect(logMessage).toMatch("package-cycle-1 -> package-cycle-2 -> package-cycle-1");
-      expect(logMessage).toMatch("package-cycle-2 -> package-cycle-1 -> package-cycle-2");
-      expect(logMessage).toMatch(
-        "package-cycle-extraneous -> package-cycle-1 -> package-cycle-2 -> package-cycle-1"
-      );
 
       expect(output.logged().split("\n")).toEqual([
         "package-dag-1",
         "package-standalone",
         "package-dag-2a",
         "package-dag-2b",
-        "package-dag-3",
         "package-cycle-1",
         "package-cycle-2",
         "package-cycle-extraneous",
+        "package-dag-3",
       ]);
+    });
+
+    it("works with intersected cycles", async () => {
+      const testDir = await initFixture("cycle-intersection");
+
+      await lernaRun(testDir)("env");
+
+      const [logMessage] = loggingOutput("warn");
+      expect(logMessage).toMatch("Dependency cycles detected, you should fix these!");
+      expect(logMessage).toMatch("b -> c -> d -> e -> b");
+      expect(logMessage).toMatch("f -> g -> (nested cycle: b -> c -> d -> e -> b) -> f");
+
+      expect(output.logged().split("\n")).toEqual(["f", "b", "e", "d", "c", "g", "a"]);
+    });
+
+    it("works with separate cycles", async () => {
+      const testDir = await initFixture("cycle-separate");
+
+      await lernaRun(testDir)("env");
+
+      const [logMessage] = loggingOutput("warn");
+      expect(logMessage).toMatch("Dependency cycles detected, you should fix these!");
+      expect(logMessage).toMatch("b -> c -> d -> b");
+      expect(logMessage).toMatch("e -> f -> g -> e");
+
+      expect(output.logged().split("\n")).toEqual(["e", "g", "f", "h", "b", "d", "c", "a"]);
     });
 
     it("should throw an error with --reject-cycles", async () => {

@@ -242,8 +242,8 @@ pkg-1
       expect(loggingOutput("warn")).toContainEqual(expect.stringContaining("pkg-2 -> pkg-3 -> pkg-2"));
       expect(text).toMatchInlineSnapshot(`
 pkg-2
-pkg-1
 pkg-3 (PRIVATE)
+pkg-1
 `);
     });
   });
