@@ -33,7 +33,7 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@evocateur/pacote": "^9.6.2",
+    "@evocateur/pacote": "^9.6.3",
     "@lerna/child-process": "file:../../core/child-process",
     "@lerna/command": "file:../../core/command",
     "@lerna/npm-conf": "file:../../utils/npm-conf",

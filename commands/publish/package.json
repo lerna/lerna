@@ -36,7 +36,7 @@
   "dependencies": {
     "@evocateur/libnpmaccess": "^3.1.2",
     "@evocateur/npm-registry-fetch": "^4.0.0",
-    "@evocateur/pacote": "^9.6.2",
+    "@evocateur/pacote": "^9.6.3",
     "@lerna/check-working-tree": "file:../../utils/check-working-tree",
     "@lerna/child-process": "file:../../core/child-process",
     "@lerna/collect-updates": "file:../../utils/collect-updates",
