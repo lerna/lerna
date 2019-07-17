@@ -36,6 +36,6 @@
     "@lerna/package-graph": "file:../../core/package-graph",
     "@lerna/symlink-dependencies": "file:../../utils/symlink-dependencies",
     "p-map": "^1.2.0",
-    "slash": "^1.0.0"
+    "slash": "^2.0.0"
   }
 }
