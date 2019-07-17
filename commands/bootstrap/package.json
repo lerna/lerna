@@ -59,6 +59,6 @@
     "p-map-series": "^1.0.0",
     "p-waterfall": "^1.0.0",
     "read-package-tree": "^5.1.6",
-    "semver": "^5.5.0"
+    "semver": "^6.2.0"
   }
 }

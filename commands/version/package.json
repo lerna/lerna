@@ -55,7 +55,7 @@
     "p-pipe": "^1.2.0",
     "p-reduce": "^1.0.0",
     "p-waterfall": "^1.0.0",
-    "semver": "^5.5.0",
+    "semver": "^6.2.0",
     "slash": "^2.0.0",
     "temp-write": "^3.4.0"
   }

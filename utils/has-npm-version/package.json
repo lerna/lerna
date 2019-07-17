@@ -29,6 +29,6 @@
   },
   "dependencies": {
     "@lerna/child-process": "file:../../core/child-process",
-    "semver": "^5.5.0"
+    "semver": "^6.2.0"
   }
 }
