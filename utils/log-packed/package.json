@@ -30,7 +30,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "byte-size": "^4.0.3",
+    "byte-size": "^5.0.1",
     "columnify": "^1.5.4",
     "has-unicode": "^2.0.1",
     "npmlog": "^4.1.2"
