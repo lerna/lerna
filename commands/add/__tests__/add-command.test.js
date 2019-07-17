@@ -1,9 +1,11 @@
 "use strict";
 
 jest.mock("@lerna/bootstrap");
+jest.mock("@evocateur/pacote/manifest");
 
 // mocked or stubbed modules
 const bootstrap = require("@lerna/bootstrap");
+const getManifest = require("@evocateur/pacote/manifest");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
@@ -18,6 +20,8 @@ expect.extend(require("@lerna-test/pkg-matchers"));
 describe("AddCommand", () => {
   // we already have enough tests of BootstrapCommand
   bootstrap.mockResolvedValue();
+  // we don't need network requests during unit tests
+  getManifest.mockResolvedValue({ version: "1.0.0" });
 
   it("should throw without packages", async () => {
     expect.assertions(1);
@@ -65,6 +69,20 @@ describe("AddCommand", () => {
     expect(pkg2).toDependOn("tiny-tarball");
     expect(pkg3).toDependOn("tiny-tarball");
     expect(pkg4).toDependOn("tiny-tarball");
+
+    expect(getManifest).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        // an npm-package-arg Result
+        name: "tiny-tarball",
+        fetchSpec: "latest",
+        registry: true,
+        type: "tag",
+      }),
+      expect.objectContaining({
+        // an npm-conf snapshot
+        registry: "https://registry.npmjs.org/",
+      })
+    );
   });
 
   it("should reference local dependencies", async () => {
@@ -192,11 +210,10 @@ describe("AddCommand", () => {
   it("supports tag specifiers", async () => {
     const testDir = await initFixture("basic");
 
-    // npm dist-tags for outdated versions _should_ stay stable
-    await lernaAdd(testDir)("npm@next-3");
+    await lernaAdd(testDir)("tiny-tarball@latest");
     const [pkg1] = await getPackages(testDir);
 
-    expect(pkg1).toDependOn("npm", "^3.10.10");
+    expect(pkg1).toDependOn("tiny-tarball", "^1.0.0");
   });
 
   it("supports version specifiers (exact)", async () => {
@@ -211,6 +228,11 @@ describe("AddCommand", () => {
   it("accepts --registry option", async () => {
     const testDir = await initFixture("basic");
 
+    getManifest.mockImplementationOnce(() => {
+      const err = new Error("ENOTFOUND");
+      return Promise.reject(err);
+    });
+
     try {
       await lernaAdd(testDir)(
         "@my-own/private-idaho",
@@ -220,9 +242,17 @@ describe("AddCommand", () => {
     } catch (err) {
       // obviously this registry doesn't exist, thus it will always error
       expect(err.message).toMatch("ENOTFOUND");
+      expect(getManifest).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          name: "@my-own/private-idaho",
+        }),
+        expect.objectContaining({
+          registry: "http://registry.cuckoo-banana-pants.com/",
+        })
+      );
     }
 
-    expect.assertions(1);
+    expect.hasAssertions();
   });
 
   it("should bootstrap changed packages", async () => {
