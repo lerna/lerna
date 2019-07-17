@@ -27,7 +27,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "fs-extra": "^7.0.0",
+    "fs-extra": "^8.1.0",
     "ssri": "^6.0.1",
     "tar": "^4.4.8"
   }
