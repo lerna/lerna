@@ -233,6 +233,8 @@ class PackageGraph extends Map {
         }
 
         dependentNode.localDependents.forEach(visits(step));
+
+        seen.delete(dependentNode);
       };
 
       currentNode.localDependents.forEach(visits([currentName]));

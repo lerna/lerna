@@ -467,7 +467,7 @@ Array [
 ]
 `;
 
-exports[`VersionCommand version ordering versions all transitive dependents after change 1`] = `
+exports[`VersionCommand versions all transitive dependents after change 1`] = `
 "v2.0.0
 
 HEAD -> master, tag: v2.0.0

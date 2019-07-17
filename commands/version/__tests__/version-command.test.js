@@ -626,8 +626,8 @@ describe("VersionCommand", () => {
     expect(logMessages).toContain("No changed packages to version");
   });
 
-  describe("version ordering", () => {
-    it("versions all transitive dependents after change", async () => {
+  describe("versions all", () => {
+    it("transitive dependents after change", async () => {
       const testDir = await initFixture("snake-graph");
 
       await gitTag(testDir, "v1.0.0");
@@ -643,7 +643,7 @@ describe("VersionCommand", () => {
       expect(patch).toMatchSnapshot();
     });
 
-    it("handles cycles in topological order", async () => {
+    it("packages with cycles", async () => {
       const testDir = await initFixture("cycle-parent");
 
       await gitTag(testDir, "v1.0.0");
@@ -665,7 +665,10 @@ describe("VersionCommand", () => {
         HEAD -> master, tag: v2.0.0
 
         lerna.json
-        packages/b/package.json"
+        packages/a/package.json
+        packages/b/package.json
+        packages/c/package.json
+        packages/d/package.json"
       `);
     });
   });
