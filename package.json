@@ -68,6 +68,7 @@
     "fast-async": "^7.0.6",
     "find-up": "^3.0.0",
     "fs-extra": "^8.1.0",
+    "glob-parent": "^5.0.0",
     "globby": "^9.2.0",
     "jest": "^24.8.0",
     "jest-circus": "^24.8.0",
