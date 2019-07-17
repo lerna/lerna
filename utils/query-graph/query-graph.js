@@ -26,14 +26,7 @@ class QueryGraph {
     this.graph = new PackageGraph(packages, options.graphType);
 
     // Evaluate cycles
-    [this.cyclePaths, this.cycleNodes] = this.graph.partitionCycles(options.rejectCycles);
-
-    if (this.cyclePaths.size) {
-      // Find the cyclical package with the most dependents. Will be evaluated before other cyclical packages
-      this.cyclicalPackageWithMostDependents = Array.from(this.cycleNodes)
-        .sort((a, b) => b.localDependents.size - a.localDependents.size)
-        .shift();
-    }
+    this.cycles = this.graph.collapseCycles(options.rejectCycles);
   }
 
   _getNextLeaf() {
@@ -41,22 +34,14 @@ class QueryGraph {
   }
 
   _getNextCycle() {
-    // If the cyclical package with the most dependents is still in the graph, we return it
-    if (this.graph.has(this.cyclicalPackageWithMostDependents.name)) {
-      return [this.graph.get(this.cyclicalPackageWithMostDependents.name)];
+    const cycle = Array.from(this.cycles).find(currentCycle => {
+      return currentCycle.localDependencies.size === 0;
+    });
+    if (!cycle) {
+      return [];
     }
-
-    // Otherwise, return any package that does not depend on the package referenced above
-    return Array.from(this.graph.values()).filter(
-      node => !node.localDependencies.has(this.cyclicalPackageWithMostDependents)
-    );
-  }
-
-  _onlyCyclesLeft() {
-    // Check if every remaining package is a package from the cycleNodes graph
-    return Array.from(this.graph.values()).every(node =>
-      Array.from(this.cycleNodes).some(cycleNode => cycleNode.name === node.name)
-    );
+    this.cycles.delete(cycle);
+    return cycle.flatten();
   }
 
   getAvailablePackages() {
@@ -67,12 +52,7 @@ class QueryGraph {
       return availablePackages;
     }
 
-    // Or, get the next cyclical packages
-    if (this.cyclePaths.size && this._onlyCyclesLeft()) {
-      return this._getNextCycle();
-    }
-
-    return [];
+    return this._getNextCycle();
   }
 
   markAsTaken(name) {
@@ -81,6 +61,10 @@ class QueryGraph {
 
   markAsDone(candidateNode) {
     this.graph.remove(candidateNode);
+    this.cycles.forEach(cycle => {
+      cycle.localDependencies.delete(candidateNode.name);
+      cycle.localDependents.delete(candidateNode.name);
+    });
   }
 }
 
