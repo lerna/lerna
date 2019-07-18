@@ -369,7 +369,7 @@ class PackageGraph extends Map {
 
     const walkStack = [];
 
-    const visits = (baseNode, dependentNode) => {
+    function visits(baseNode, dependentNode) {
       if (nodeToCycle.has(baseNode)) {
         return;
       }
@@ -401,13 +401,13 @@ class PackageGraph extends Map {
         // eslint-disable-next-line no-use-before-define
         visitWithStack(baseNode, topLevelDependent);
       }
-    };
+    }
 
-    const visitWithStack = (baseNode, currentNode = baseNode) => {
+    function visitWithStack(baseNode, currentNode = baseNode) {
       walkStack.push(currentNode);
       currentNode.localDependents.forEach(visits.bind(null, baseNode));
       walkStack.pop();
-    };
+    }
 
     this.forEach(currentNode => visitWithStack(currentNode));
     cycles.forEach(collapsedNode => visitWithStack(collapsedNode));
