@@ -56,6 +56,14 @@ For background on `--hoist`, see the [hoist documentation](https://github.com/le
 Note: If packages depend on different _versions_ of an external dependency,
 the most commonly used version will be hoisted, and a warning will be emitted.
 
+### --strict
+
+When used in conjunction with hoist will throw an error and stop bootstrapping after emitting the version warnings. Has no effect if you aren't hoisting, or if there are no version warnings.
+
+```sh
+$ lerna bootstrap --hoist --strict
+```
+
 ### --nohoist [glob]
 
 Do _not_ install external dependencies matching `glob` at the repo root. This

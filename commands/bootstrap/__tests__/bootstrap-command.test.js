@@ -208,6 +208,20 @@ describe("BootstrapCommand", () => {
     });
   });
 
+  describe("with --hoist and --strict", () => {
+    it("should throw if there's a hoist warning", async () => {
+      expect.assertions(1);
+
+      const testDir = await initFixture("basic");
+
+      try {
+        await lernaBootstrap(testDir)("--hoist", "--strict");
+      } catch (err) {
+        expect(err.message).toMatch("Package version inconsistencies found");
+      }
+    });
+  });
+
   describe("with --ci", () => {
     it("should call npmInstall with ci subCommand if on npm 5.7.0 or later", async () => {
       const testDir = await initFixture("ci");
