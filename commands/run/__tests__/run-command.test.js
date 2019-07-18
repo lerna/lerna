@@ -225,8 +225,8 @@ describe("RunCommand", () => {
         "package-dag-2b",
         "package-cycle-1",
         "package-cycle-2",
-        "package-cycle-extraneous",
         "package-dag-3",
+        "package-cycle-extraneous",
       ]);
     });
 
