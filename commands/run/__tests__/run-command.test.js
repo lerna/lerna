@@ -174,7 +174,7 @@ describe("RunCommand", () => {
     it("runs scripts in lexical (not topological) order", async () => {
       const testDir = await initFixture("toposort");
 
-      await lernaRun(testDir)("env", "--no-sort");
+      await lernaRun(testDir)("env", "--concurrency", "1", "--no-sort");
 
       expect(output.logged().split("\n")).toEqual([
         "package-cycle-1",
@@ -191,7 +191,7 @@ describe("RunCommand", () => {
     it("optionally streams output", async () => {
       const testDir = await initFixture("toposort");
 
-      await lernaRun(testDir)("env", "--no-sort", "--stream");
+      await lernaRun(testDir)("env", "--concurrency", "1", "--no-sort", "--stream");
 
       expect(ranInPackagesStreaming(testDir)).toMatchInlineSnapshot(`
         Array [
@@ -212,7 +212,7 @@ describe("RunCommand", () => {
     it("warns when cycles are encountered", async () => {
       const testDir = await initFixture("toposort");
 
-      await lernaRun(testDir)("env");
+      await lernaRun(testDir)("env", "--concurrency", "1");
 
       const [logMessage] = loggingOutput("warn");
       expect(logMessage).toMatch("Dependency cycles detected, you should fix these!");
@@ -233,7 +233,7 @@ describe("RunCommand", () => {
     it("works with intersected cycles", async () => {
       const testDir = await initFixture("cycle-intersection");
 
-      await lernaRun(testDir)("env");
+      await lernaRun(testDir)("env", "--concurrency", "1");
 
       const [logMessage] = loggingOutput("warn");
       expect(logMessage).toMatch("Dependency cycles detected, you should fix these!");
@@ -246,7 +246,7 @@ describe("RunCommand", () => {
     it("works with separate cycles", async () => {
       const testDir = await initFixture("cycle-separate");
 
-      await lernaRun(testDir)("env");
+      await lernaRun(testDir)("env", "--concurrency", "1");
 
       const [logMessage] = loggingOutput("warn");
       expect(logMessage).toMatch("Dependency cycles detected, you should fix these!");

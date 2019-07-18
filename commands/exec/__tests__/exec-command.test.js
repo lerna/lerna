@@ -206,7 +206,7 @@ describe("ExecCommand", () => {
     it("warns when cycles are encountered", async () => {
       const testDir = await initFixture("toposort");
 
-      await lernaExec(testDir)("ls");
+      await lernaExec(testDir)("ls", "--concurrency", "1");
 
       const [logMessage] = loggingOutput("warn");
       expect(logMessage).toMatch("Dependency cycles detected, you should fix these!");
