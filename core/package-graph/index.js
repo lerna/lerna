@@ -72,9 +72,9 @@ let lastCollapsedNodeId = 0;
  * Represents a cyclic collection of nodes in a PackageGraph.
  * It is meant to be used as a black box, where the only exposed
  * information are the connections to the other nodes of the graph.
- * It can contains either `PackageGraphNode`s or other `PackageGraphCollapsedNode`s.
+ * It can contains either `PackageGraphNode`s or other `CyclicPackageGraphNode`s.
  */
-class PackageGraphCollapsedNode extends Map {
+class CyclicPackageGraphNode extends Map {
   constructor() {
     super();
 
@@ -105,7 +105,7 @@ class PackageGraphCollapsedNode extends Map {
   }
 
   /**
-   * Flattens a PackageGraphCollapsedNode (which can have multiple level of cycles).
+   * Flattens a CyclicPackageGraphNode (which can have multiple level of cycles).
    *
    * @returns {PackageGraphNode[]}
    */
@@ -143,7 +143,7 @@ class PackageGraphCollapsedNode extends Map {
   /**
    * Adds a package, or a nested cycle, to this group.
    *
-   * @param {PackageGraphNode|PackageGraphCollapsedNode} pkg
+   * @param {PackageGraphNode|CyclicPackageGraphNode} pkg
    */
   addPackage(pkg) {
     const { name } = pkg;
@@ -359,7 +359,7 @@ class PackageGraph extends Map {
    * be returned as a single cycle.
    *
    * @param {!boolean} rejectCycles Whether or not to reject cycles
-   * @returns Set<PackageGraphCollapsedNode>
+   * @returns Set<CyclicPackageGraphNode>
    */
   collapseCycles(rejectCycles) {
     const cyclePaths = [];
@@ -382,7 +382,7 @@ class PackageGraph extends Map {
         topLevelDependent === baseNode ||
         (topLevelDependent.isCycle && topLevelDependent.has(baseNode.name))
       ) {
-        const cycle = new PackageGraphCollapsedNode();
+        const cycle = new CyclicPackageGraphNode();
 
         walkStack.forEach(nodeInCycle => {
           nodeToCycle.set(nodeInCycle, cycle);
