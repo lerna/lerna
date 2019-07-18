@@ -164,6 +164,13 @@ class PublishCommand extends Command {
 
       this.packagesToPublish = this.updates.map(({ pkg }) => pkg).filter(pkg => !pkg.private);
 
+      if (this.options.contents) {
+        // globally override directory to publish
+        for (const pkg of this.packagesToPublish) {
+          pkg.contents = this.options.contents;
+        }
+      }
+
       if (result.needsConfirmation) {
         // only confirm for --canary, bump === "from-git",
         // or bump === "from-package", as VersionCommand
@@ -614,15 +621,6 @@ class PublishCommand extends Command {
       chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "prepare"));
       chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "prepublishOnly"));
       chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "prepack"));
-    }
-
-    const { contents } = this.options;
-
-    if (contents) {
-      // globally override directory to publish
-      for (const pkg of this.packagesToPublish) {
-        pkg.contents = contents;
-      }
     }
 
     const opts = this.conf.snapshot;

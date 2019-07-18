@@ -18,6 +18,34 @@ describe("createTempLicenses", () => {
     expect(licenseWritten).toBe(true);
   });
 
+  it("copies root license into package contents", async () => {
+    const cwd = await initFixture("licenses");
+    const project = new Project(cwd);
+    const [pkg] = await project.getPackages();
+
+    // automagical "contents" setter creates absolute path
+    pkg.contents = "dist";
+
+    await createTempLicenses(project.licensePath, [pkg]);
+
+    const licenseWritten = await fs.pathExists(path.join(pkg.contents, "LICENSE"));
+    expect(licenseWritten).toBe(true);
+  });
+
+  it("copies root license into package publishConfig.directory", async () => {
+    const cwd = await initFixture("licenses");
+    const project = new Project(cwd);
+    const [pkg] = await project.getPackages();
+
+    // automagical "contents" getter creates absolute path
+    await pkg.set("publishConfig", { directory: "build" }).serialize();
+
+    await createTempLicenses(project.licensePath, [pkg]);
+
+    const licenseWritten = await fs.pathExists(path.join(pkg.contents, "LICENSE"));
+    expect(licenseWritten).toBe(true);
+  });
+
   it("copies root license with extension into package location", async () => {
     const cwd = await initFixture("licenses");
     const project = new Project(cwd);

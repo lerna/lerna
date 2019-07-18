@@ -21,7 +21,7 @@ function createTempLicenses(srcLicensePath, packagesToBeLicensed) {
 
   // store target path for removal later
   packagesToBeLicensed.forEach(pkg => {
-    pkg.licensePath = path.join(pkg.location, licenseFileName);
+    pkg.licensePath = path.join(pkg.contents, licenseFileName);
   });
 
   return pMap(packagesToBeLicensed, pkg => fs.copy(srcLicensePath, pkg.licensePath, options));
