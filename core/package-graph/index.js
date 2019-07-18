@@ -132,10 +132,10 @@ class CyclicPackageGraphNode extends Map {
    * @param {String} name The name of the package to search in this cycle
    * @returns {Boolean}
    */
-  hasPackageDeep(name) {
+  contains(name) {
     for (const [currentName, currentNode] of this) {
       if (currentNode.isCycle) {
-        if (currentNode.hasPackageDeep(name)) {
+        if (currentNode.contains(name)) {
           return true;
         }
       } else if (currentName === name) {
@@ -146,22 +146,22 @@ class CyclicPackageGraphNode extends Map {
   }
 
   /**
-   * Adds a package, or a nested cycle, to this group.
+   * Adds a graph node, or a nested cycle, to this group.
    *
-   * @param {PackageGraphNode|CyclicPackageGraphNode} pkg
+   * @param {PackageGraphNode|CyclicPackageGraphNode} node
    */
-  addPackage(pkg) {
-    this.set(pkg.name, pkg);
-    this.unlink(pkg);
+  add(node) {
+    this.set(node.name, node);
+    this.unlink(node);
 
-    for (const [dependencyName, dependencyNode] of pkg.localDependencies) {
-      if (!this.hasPackageDeep(dependencyName)) {
+    for (const [dependencyName, dependencyNode] of node.localDependencies) {
+      if (!this.contains(dependencyName)) {
         this.localDependencies.set(dependencyName, dependencyNode);
       }
     }
 
-    for (const [dependentName, dependentNode] of pkg.localDependents) {
-      if (!this.hasPackageDeep(dependentName)) {
+    for (const [dependentName, dependentNode] of node.localDependents) {
+      if (!this.contains(dependentName)) {
         this.localDependents.set(dependentName, dependentNode);
       }
     }
@@ -401,7 +401,7 @@ class PackageGraph extends Map {
 
         walkStack.forEach(nodeInCycle => {
           nodeToCycle.set(nodeInCycle, cycle);
-          cycle.addPackage(nodeInCycle);
+          cycle.add(nodeInCycle);
           cycles.delete(nodeInCycle);
         });
 
