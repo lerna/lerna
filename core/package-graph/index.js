@@ -128,13 +128,16 @@ class PackageGraphCollapsedNode extends Map {
    * @returns {Boolean}
    */
   hasPackageDeep(name) {
-    let found = false;
-    this.forEach((currentNode, currentName) => {
-      if (!found) {
-        found = currentNode.isCycle ? currentNode.hasPackageDeep(name) : currentName === name;
+    for (const [currentName, currentNode] of this) {
+      if (currentNode.isCycle) {
+        if (currentNode.hasPackageDeep(name)) {
+          return true;
+        }
+      } else if (currentName === name) {
+        return true;
       }
-    });
-    return found;
+    }
+    return false;
   }
 
   /**
