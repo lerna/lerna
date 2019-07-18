@@ -589,10 +589,11 @@ class PublishCommand extends Command {
     return runTopologically(this.packagesToPublish, mapper, {
       concurrency: this.concurrency,
       rejectCycles: this.options.rejectCycles,
-      // Don't sort based on devDependencies because that
-      // would increase the chance of dependency cycles
-      // causing less-than-ideal a publishing order.
-      graphType: "dependencies",
+      // By default, do not include devDependencies in the graph because it would
+      // increase the chance of dependency cycles, causing less-than-ideal order.
+      // If the user has opted-in to --graph-type=all (or "graphType": "all" in lerna.json),
+      // devDependencies _will_ be included in the graph construction.
+      graphType: this.options.graphType === "all" ? "allDependencies" : "dependencies",
     });
   }
 

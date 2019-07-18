@@ -49,6 +49,7 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 - [`--contents <dir>`](#--contents-dir)
 - [`--dist-tag <tag>`](#--dist-tag-tag)
 - [`--git-head <sha>`](#--git-head-sha)
+- [`--graph-type <all|dependencies>`](#--graph-type-alldependencies)
 - [`--no-git-reset`](#--no-git-reset)
 - [`--no-verify-access`](#--no-verify-access)
 - [`--otp`](#--otp)
@@ -126,6 +127,28 @@ lerna publish from-package --git-head ${CODEBUILD_RESOLVED_SOURCE_VERSION}
 ```
 
 Under all other circumstances, this value is derived from a local `git` command.
+
+### `--graph-type <all|dependencies>`
+
+Set which kind of dependencies to use when building a package graph. The default value is `dependencies`, whereby only packages listed in the `dependencies` section of a package's `package.json` are included. Pass `all` to include both `dependencies` _and_ `devDependencies` when constructing the package graph and determining topological order.
+
+When using traditional peer + dev dependency pairs, this option should be configured to `all` so the peers are always published before their dependents.
+
+```sh
+lerna publish --graph-type all
+```
+
+Configured via `lerna.json`:
+
+```json
+{
+  "command": {
+    "publish": {
+      "graphType": "all"
+    }
+  }
+}
+```
 
 ### `--no-git-reset`
 
