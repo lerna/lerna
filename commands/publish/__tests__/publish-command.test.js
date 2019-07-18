@@ -178,6 +178,35 @@ Map {
     });
   });
 
+  describe("--graph-type", () => {
+    it("produces a topological ordering that _includes_ devDependencies when value is 'all'", async () => {
+      const cwd = await initFixture("normal");
+
+      await lernaPublish(cwd)("--graph-type", "all");
+
+      expect(npmPublish.order()).toEqual([
+        "package-1",
+        "package-4",
+        "package-2",
+        // package-3 has a peer/devDependency on package-2
+        "package-3",
+        // package-5 is private
+      ]);
+    });
+
+    it("throws an error when value is _not_ 'all' or 'dependencies'", async () => {
+      const testDir = await initFixture("normal");
+
+      try {
+        await lernaPublish(testDir)("--graph-type", "poopy-pants");
+      } catch (err) {
+        expect(err.message).toMatch("poopy-pants");
+      }
+
+      expect.hasAssertions();
+    });
+  });
+
   describe("--otp", () => {
     otplease.getOneTimePassword.mockImplementation(() => Promise.resolve("654321"));
 

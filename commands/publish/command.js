@@ -42,9 +42,8 @@ exports.builder = yargs => {
       requiresArg: true,
     },
     "graph-type": {
-      describe: "Dependency graphs to use when determining package hierarchy.",
-      type: "string",
-      requiresArg: true,
+      describe: "Type of dependency to use when determining package hierarchy.",
+      choices: ["all", "dependencies"],
       defaultDescription: "dependencies",
     },
     otp: {
