@@ -64,8 +64,7 @@ class QueryGraph {
     this.graph.remove(candidateNode);
 
     for (const cycle of this.cycles) {
-      cycle.localDependencies.delete(candidateNode.name);
-      cycle.localDependents.delete(candidateNode.name);
+      cycle.unlink(candidateNode);
     }
   }
 }

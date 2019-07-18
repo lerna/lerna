@@ -151,11 +151,8 @@ class CyclicPackageGraphNode extends Map {
    * @param {PackageGraphNode|CyclicPackageGraphNode} pkg
    */
   addPackage(pkg) {
-    const { name } = pkg;
-
-    this.set(name, pkg);
-    this.localDependents.delete(name);
-    this.localDependencies.delete(name);
+    this.set(pkg.name, pkg);
+    this.unlink(pkg);
 
     pkg.localDependencies.forEach((dependencyNode, dependencyName) => {
       if (!this.hasPackageDeep(dependencyName)) {
@@ -167,6 +164,18 @@ class CyclicPackageGraphNode extends Map {
         this.localDependents.set(dependentName, dependentNode);
       }
     });
+  }
+
+  /**
+   * Remove pointers to candidate node from internal collections.
+   * @param {PackageGraphNode|CyclicPackageGraphNode} candidateNode instance to unlink
+   */
+  unlink(candidateNode) {
+    // remove incoming edges ("indegree")
+    this.localDependencies.delete(candidateNode.name);
+
+    // remove outgoing edges ("outdegree")
+    this.localDependents.delete(candidateNode.name);
   }
 }
 
