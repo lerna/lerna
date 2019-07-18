@@ -150,7 +150,7 @@ class CyclicPackageGraphNode extends Map {
    *
    * @param {PackageGraphNode|CyclicPackageGraphNode} node
    */
-  add(node) {
+  insert(node) {
     this.set(node.name, node);
     this.unlink(node);
 
@@ -401,7 +401,7 @@ class PackageGraph extends Map {
 
         walkStack.forEach(nodeInCycle => {
           nodeToCycle.set(nodeInCycle, cycle);
-          cycle.add(nodeInCycle);
+          cycle.insert(nodeInCycle);
           cycles.delete(nodeInCycle);
         });
 
