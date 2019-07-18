@@ -154,16 +154,17 @@ class CyclicPackageGraphNode extends Map {
     this.set(pkg.name, pkg);
     this.unlink(pkg);
 
-    pkg.localDependencies.forEach((dependencyNode, dependencyName) => {
+    for (const [dependencyName, dependencyNode] of pkg.localDependencies) {
       if (!this.hasPackageDeep(dependencyName)) {
         this.localDependencies.set(dependencyName, dependencyNode);
       }
-    });
-    pkg.localDependents.forEach((dependentNode, dependentName) => {
+    }
+
+    for (const [dependentName, dependentNode] of pkg.localDependents) {
       if (!this.hasPackageDeep(dependentName)) {
         this.localDependents.set(dependentName, dependentNode);
       }
-    });
+    }
   }
 
   /**
