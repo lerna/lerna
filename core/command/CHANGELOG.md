@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.16.0](https://github.com/lerna/lerna/compare/v3.15.0...v3.16.0) (2019-07-18)
+
+
+### Bug Fixes
+
+* **command:** Bump minimum range of lodash, silence dumb 'security' warning ([c405871](https://github.com/lerna/lerna/commit/c405871))
+
+
+### Features
+
+* **deps:** `is-ci@^2.0.0` ([ab2ad83](https://github.com/lerna/lerna/commit/ab2ad83))
+
+
+
+
+
 # [3.15.0](https://github.com/lerna/lerna/compare/v3.14.2...v3.15.0) (2019-06-09)
 
 **Note:** Version bump only for package @lerna/command

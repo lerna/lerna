@@ -3,6 +3,54 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.16.0](https://github.com/lerna/lerna/compare/v3.15.0...v3.16.0) (2019-07-18)
+
+
+### Bug Fixes
+
+* **command:** Bump minimum range of lodash, silence dumb 'security' warning ([c405871](https://github.com/lerna/lerna/commit/c405871))
+* **conventional-commits:** Hard-pin lodash.template dependency to silence 'helpful' security warning ([c54ad68](https://github.com/lerna/lerna/commit/c54ad68))
+* **deps:** Bump `@evocateur/pacote` ([03e4797](https://github.com/lerna/lerna/commit/03e4797))
+* **deps:** Update forked npm libs ([4d67426](https://github.com/lerna/lerna/commit/4d67426))
+* **npm-conf:** OTP should default to undefined, figgy pudding is very strict ([2fa02a8](https://github.com/lerna/lerna/commit/2fa02a8))
+* **pack-directory:** Bump npm-packlist + tar dependencies ([59ebd19](https://github.com/lerna/lerna/commit/59ebd19))
+* **package-graph:** Flatten cycles to avoid skipping packages ([#2185](https://github.com/lerna/lerna/issues/2185)) ([b335763](https://github.com/lerna/lerna/commit/b335763))
+* **project:** Ensure deprecated `githubRelease` config is also remapped from `command.publish` namespace ([a3d264e](https://github.com/lerna/lerna/commit/a3d264e)), closes [#2177](https://github.com/lerna/lerna/issues/2177)
+* **publish:** Add `--graph-type` option to control packages included in topological sort ([#2152](https://github.com/lerna/lerna/issues/2152)) ([ae87669](https://github.com/lerna/lerna/commit/ae87669)), closes [#1437](https://github.com/lerna/lerna/issues/1437)
+* **publish:** Allow `--no-verify-access` to prevent checking for account-level 2FA ([ce58d8f](https://github.com/lerna/lerna/commit/ce58d8f))
+* **publish:** OTP cache should be seeded from conf value, not CLI directly ([cf56622](https://github.com/lerna/lerna/commit/cf56622))
+* **publish:** Propagate root license into custom publish directories ([d410a58](https://github.com/lerna/lerna/commit/d410a58)), closes [#2157](https://github.com/lerna/lerna/issues/2157)
+
+
+### Features
+
+* **bootstrap:** Add `--strict` option to enable throwing when `--hoist` warns ([#2140](https://github.com/lerna/lerna/issues/2140)) ([91437b5](https://github.com/lerna/lerna/commit/91437b5))
+* **deps:** `@octokit/plugin-enterprise-rest@^3.6.1` ([74a3890](https://github.com/lerna/lerna/commit/74a3890))
+* **deps:** `@octokit/rest@^16.28.4` ([5f09f50](https://github.com/lerna/lerna/commit/5f09f50))
+* **deps:** `byte-size@^5.0.1` ([ed51ddd](https://github.com/lerna/lerna/commit/ed51ddd))
+* **deps:** `conventional-recommended-bump@^5.0.0` ([2a0ed60](https://github.com/lerna/lerna/commit/2a0ed60))
+* **deps:** `fs-extra@^8.1.0` ([313287f](https://github.com/lerna/lerna/commit/313287f))
+* **deps:** `get-port@^4.2.0` ([778ae6a](https://github.com/lerna/lerna/commit/778ae6a))
+* **deps:** `glob-parent@^5.0.0` ([c6bc218](https://github.com/lerna/lerna/commit/c6bc218))
+* **deps:** `globby@^9.2.0` ([d9aa249](https://github.com/lerna/lerna/commit/d9aa249))
+* **deps:** `import-local@^2.0.0` ([14d2c66](https://github.com/lerna/lerna/commit/14d2c66))
+* **deps:** `is-ci@^2.0.0` ([ab2ad83](https://github.com/lerna/lerna/commit/ab2ad83))
+* **deps:** `load-json-file@^5.3.0` ([3718cc9](https://github.com/lerna/lerna/commit/3718cc9))
+* **deps:** `multimatch@^3.0.0` ([968b0d7](https://github.com/lerna/lerna/commit/968b0d7))
+* **deps:** `p-map@^2.1.0` ([9e58394](https://github.com/lerna/lerna/commit/9e58394))
+* **deps:** `pify@^4.0.1` ([f8ee7e6](https://github.com/lerna/lerna/commit/f8ee7e6))
+* **deps:** `semver@^6.2.0` ([d8016d9](https://github.com/lerna/lerna/commit/d8016d9))
+* **deps:** `slash@^2.0.0` ([bedd6af](https://github.com/lerna/lerna/commit/bedd6af))
+* **deps:** `write-json-file@^3.2.0` ([4fa7dea](https://github.com/lerna/lerna/commit/4fa7dea))
+* **listable:** Output JSON adjacency list with `--graph` ([9457a21](https://github.com/lerna/lerna/commit/9457a21)), closes [#1970](https://github.com/lerna/lerna/issues/1970)
+* **otplease:** Expose getOneTimePassword() helper ([44b9f70](https://github.com/lerna/lerna/commit/44b9f70))
+* **publish:** Eager prompt for OTP when account-level 2FA is enabled ([4f893d1](https://github.com/lerna/lerna/commit/4f893d1))
+* **run-lifecycle:** Upgrade `npm-lifecycle@^3.1.0` ([e015a74](https://github.com/lerna/lerna/commit/e015a74))
+
+
+
+
+
 # [3.15.0](https://github.com/lerna/lerna/compare/v3.14.2...v3.15.0) (2019-06-09)
 
 

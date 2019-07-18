@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.16.0](https://github.com/lerna/lerna/compare/v3.15.0...v3.16.0) (2019-07-18)
+
+
+### Features
+
+* **deps:** `@octokit/plugin-enterprise-rest@^3.6.1` ([74a3890](https://github.com/lerna/lerna/commit/74a3890))
+* **deps:** `@octokit/rest@^16.28.4` ([5f09f50](https://github.com/lerna/lerna/commit/5f09f50))
+
+
+
+
+
 ## [3.14.2](https://github.com/lerna/lerna/compare/v3.14.1...v3.14.2) (2019-06-09)
 
 **Note:** Version bump only for package @lerna/github-client
