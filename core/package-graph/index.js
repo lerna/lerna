@@ -78,7 +78,6 @@ class PackageGraphCollapsedNode extends Map {
   constructor() {
     super();
 
-    this.externalDependencies = new Map();
     this.localDependencies = new Map();
     this.localDependents = new Map();
 
@@ -150,9 +149,6 @@ class PackageGraphCollapsedNode extends Map {
     this.localDependents.delete(name);
     this.localDependencies.delete(name);
 
-    pkg.externalDependencies.forEach((dependencyNode, dependencyName) => {
-      this.externalDependencies.set(dependencyName, dependencyNode);
-    });
     pkg.localDependencies.forEach((dependencyNode, dependencyName) => {
       if (!this.hasPackageDeep(dependencyName)) {
         this.localDependencies.set(dependencyName, dependencyNode);
