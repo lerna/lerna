@@ -100,7 +100,10 @@ class CyclicPackageGraphNode extends Map {
     const parts = Array.from(this, ([key, node]) =>
       node.isCycle ? `(nested cycle: ${node.toString()})` : key
     );
+
+    // start from the origin
     parts.push(parts[0]);
+
     return parts.reverse().join(" -> ");
   }
 
@@ -111,13 +114,15 @@ class CyclicPackageGraphNode extends Map {
    */
   flatten() {
     const result = [];
-    this.forEach(node => {
+
+    for (const node of this.values()) {
       if (node.isCycle) {
         result.push(...node.flatten());
       } else {
         result.push(node);
       }
-    });
+    }
+
     return result;
   }
 
