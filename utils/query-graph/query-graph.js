@@ -34,13 +34,14 @@ class QueryGraph {
   }
 
   _getNextCycle() {
-    const cycle = Array.from(this.cycles).find(currentCycle => {
-      return currentCycle.localDependencies.size === 0;
-    });
+    const cycle = Array.from(this.cycles).find(cycleNode => cycleNode.localDependencies.size === 0);
+
     if (!cycle) {
       return [];
     }
+
     this.cycles.delete(cycle);
+
     return cycle.flatten();
   }
 
@@ -61,10 +62,11 @@ class QueryGraph {
 
   markAsDone(candidateNode) {
     this.graph.remove(candidateNode);
-    this.cycles.forEach(cycle => {
+
+    for (const cycle of this.cycles) {
       cycle.localDependencies.delete(candidateNode.name);
       cycle.localDependents.delete(candidateNode.name);
-    });
+    }
   }
 }
 
