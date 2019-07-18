@@ -1,7 +1,7 @@
 {
-    "name": "h",
-    "version": "1.0.0",
-    "dependencies": {
-        "e": "^1.0.0"
-    }
+  "name": "h",
+  "version": "1.0.0",
+  "dependencies": {
+    "e": "^1.0.0"
+  }
 }
