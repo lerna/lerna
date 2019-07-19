@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.16.1](https://github.com/lerna/lerna/compare/v3.16.0...v3.16.1) (2019-07-19)
+
+
+### Bug Fixes
+
+* **deps:** Pin exact `npm-lifecycle@3.0.0` to avoid Windows regression in >=3.1.0 ([af0569d](https://github.com/lerna/lerna/commit/af0569d)), closes [#2189](https://github.com/lerna/lerna/issues/2189)
+
+
+
+
+
 # [3.16.0](https://github.com/lerna/lerna/compare/v3.15.0...v3.16.0) (2019-07-18)
 
 
