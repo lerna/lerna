@@ -33,7 +33,7 @@ test("--github-release throws an error if --conventional-commits is not passed",
   try {
     await lernaVersion(cwd)("--github-release");
   } catch (err) {
-    expect(err.message).toBe("To create a Github Release, you must enable --conventional-commits");
+    expect(err.message).toBe("To create a release, you must enable --conventional-commits");
     expect(client.repos.createRelease).not.toHaveBeenCalled();
   }
 
@@ -46,7 +46,7 @@ test("--github-release throws an error if --no-changelog also passed", async () 
   try {
     await lernaVersion(cwd)("--github-release", "--conventional-commits", "--no-changelog");
   } catch (err) {
-    expect(err.message).toBe("To create a Github Release, you cannot pass --no-changelog");
+    expect(err.message).toBe("To create a release, you cannot pass --no-changelog");
     expect(client.repos.createRelease).not.toHaveBeenCalled();
   }
 

@@ -1,8 +1,8 @@
 "use strict";
 
-jest.mock("npm-registry-fetch");
+jest.mock("@evocateur/npm-registry-fetch");
 
-const fetch = require("npm-registry-fetch");
+const fetch = require("@evocateur/npm-registry-fetch");
 const loggingOutput = require("@lerna-test/logging-output");
 const getNpmUsername = require("../lib/get-npm-username");
 

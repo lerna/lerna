@@ -1,6 +1,6 @@
 {
   "name": "@lerna/import",
-  "version": "3.14.0",
+  "version": "3.16.0",
   "description": "Import a package into the monorepo with commit history",
   "keywords": [
     "lerna",
@@ -38,7 +38,7 @@
     "@lerna/pulse-till-done": "file:../../utils/pulse-till-done",
     "@lerna/validation-error": "file:../../core/validation-error",
     "dedent": "^0.7.0",
-    "fs-extra": "^7.0.0",
+    "fs-extra": "^8.1.0",
     "p-map-series": "^1.0.0"
   }
 }

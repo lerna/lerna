@@ -37,5 +37,10 @@ function listableOptions(yargs) {
       describe: "Sort packages in topological order instead of lexical by directory",
       type: "boolean",
     },
+    graph: {
+      group: "Command Options:",
+      describe: "Show dependency graph as a JSON-formatted adjacency list",
+      type: "boolean",
+    },
   });
 }

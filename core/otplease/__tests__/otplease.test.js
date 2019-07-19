@@ -214,6 +214,23 @@ describe("@lerna/otplease", () => {
 
     expect.hasAssertions();
   });
+
+  describe("getOneTimePassword()", () => {
+    it("defaults message argument", async () => {
+      await otplease.getOneTimePassword();
+
+      expect(prompt.input).toHaveBeenCalledWith(
+        "This operation requires a one-time password:",
+        expect.any(Object)
+      );
+    });
+
+    it("accepts custom message", async () => {
+      await otplease.getOneTimePassword("foo bar");
+
+      expect(prompt.input).toHaveBeenCalledWith("foo bar", expect.any(Object));
+    });
+  });
 });
 
 function makeTestCallback(otp, result) {

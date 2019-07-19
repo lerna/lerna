@@ -2,7 +2,7 @@
 
 const log = require("npmlog");
 const pMap = require("p-map");
-const getPackument = require("pacote/packument");
+const getPackument = require("@evocateur/pacote/packument");
 
 module.exports = getUnpublishedPackages;
 

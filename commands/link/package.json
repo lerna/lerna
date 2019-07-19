@@ -1,6 +1,6 @@
 {
   "name": "@lerna/link",
-  "version": "3.14.0",
+  "version": "3.16.0",
   "description": "Symlink together all packages that are dependencies of each other",
   "keywords": [
     "lerna",
@@ -35,7 +35,7 @@
     "@lerna/command": "file:../../core/command",
     "@lerna/package-graph": "file:../../core/package-graph",
     "@lerna/symlink-dependencies": "file:../../utils/symlink-dependencies",
-    "p-map": "^1.2.0",
-    "slash": "^1.0.0"
+    "p-map": "^2.1.0",
+    "slash": "^2.0.0"
   }
 }

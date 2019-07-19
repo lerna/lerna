@@ -1,6 +1,6 @@
 {
   "name": "@lerna/npm-conf",
-  "version": "3.13.0",
+  "version": "3.16.0",
   "description": "Vendored npm-conf with updates",
   "keywords": [
     "lerna",
@@ -37,6 +37,6 @@
   },
   "dependencies": {
     "config-chain": "^1.1.11",
-    "pify": "^3.0.0"
+    "pify": "^4.0.1"
   }
 }

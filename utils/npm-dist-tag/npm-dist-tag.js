@@ -2,7 +2,7 @@
 
 const log = require("npmlog");
 const npa = require("npm-package-arg");
-const fetch = require("npm-registry-fetch");
+const fetch = require("@evocateur/npm-registry-fetch");
 const figgyPudding = require("figgy-pudding");
 const otplease = require("@lerna/otplease");
 

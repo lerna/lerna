@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.16.0](https://github.com/lerna/lerna/compare/v3.15.0...v3.16.0) (2019-07-18)
+
+
+### Features
+
+* **deps:** `load-json-file@^5.3.0` ([3718cc9](https://github.com/lerna/lerna/commit/3718cc9))
+
+
+
+
+
+## [3.14.2](https://github.com/lerna/lerna/compare/v3.14.1...v3.14.2) (2019-06-09)
+
+
+### Bug Fixes
+
+* **publish:** Allow per-leaf subdirectory publishing ([ea861d9](https://github.com/lerna/lerna/commit/ea861d9)), closes [#2109](https://github.com/lerna/lerna/issues/2109)
+
+
+
+
+
 # [3.13.0](https://github.com/lerna/lerna/compare/v3.12.1...v3.13.0) (2019-02-15)
 
 

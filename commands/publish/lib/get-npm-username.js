@@ -1,9 +1,9 @@
 "use strict";
 
-const fetch = require("npm-registry-fetch");
-const pulseTillDone = require("@lerna/pulse-till-done");
 const ValidationError = require("@lerna/validation-error");
 const FetchConfig = require("./fetch-config");
+const getProfileData = require("./get-profile-data");
+const getWhoAmI = require("./get-whoami");
 
 module.exports = getNpmUsername;
 
@@ -15,10 +15,21 @@ function getNpmUsername(_opts) {
 
   opts.log.info("", "Verifying npm credentials");
 
-  return getProfileData(opts).then(success, failure);
+  return getProfileData(opts)
+    .catch(err => {
+      // Many third-party registries do not implement the user endpoint
+      // Legacy npm Enterprise returns E500 instead of E404
+      if (err.code === "E500" || err.code === "E404") {
+        return getWhoAmI(opts);
+      }
+
+      // re-throw 401 Unauthorized (and all other unexpected errors)
+      throw err;
+    })
+    .then(success, failure);
 
   function success(result) {
-    opts.log.silly("npm profile get", "received %j", result);
+    opts.log.silly("get npm username", "received %j", result);
 
     if (!result.username) {
       throw new ValidationError(
@@ -46,41 +57,4 @@ function getNpmUsername(_opts) {
       "Unable to determine npm username from third-party registry, this command will likely fail soon!"
     );
   }
-}
-
-function getProfileData(opts) {
-  opts.log.verbose("", "Retrieving npm user profile");
-
-  return pulseTillDone(fetch.json("/-/npm/v1/user", opts))
-    .then(data => {
-      opts.log.silly("npm profile get", "received %j", data);
-
-      const result = {
-        // remap to match legacy whoami format
-        username: data.name,
-      };
-
-      return result;
-    })
-    .catch(err => {
-      // Many third-party registries do not implement the user endpoint
-      // Legacy npm Enterprise returns E500 instead of E404
-      if (err.code === "E500" || err.code === "E404") {
-        return getWhoAmI(opts);
-      }
-
-      // re-throw 401 Unauthorized (and all other unexpected errors)
-      throw err;
-    });
-}
-
-function getWhoAmI(opts) {
-  opts.log.verbose("", "Retrieving npm username");
-
-  return pulseTillDone(fetch.json("/-/whoami", opts)).then(data => {
-    opts.log.silly("npm whoami", "received %j", data);
-
-    // { username: String }
-    return data;
-  });
 }

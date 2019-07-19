@@ -206,24 +206,20 @@ describe("ExecCommand", () => {
     it("warns when cycles are encountered", async () => {
       const testDir = await initFixture("toposort");
 
-      await lernaExec(testDir)("ls");
+      await lernaExec(testDir)("ls", "--concurrency", "1");
 
       const [logMessage] = loggingOutput("warn");
       expect(logMessage).toMatch("Dependency cycles detected, you should fix these!");
       expect(logMessage).toMatch("package-cycle-1 -> package-cycle-2 -> package-cycle-1");
-      expect(logMessage).toMatch("package-cycle-2 -> package-cycle-1 -> package-cycle-2");
-      expect(logMessage).toMatch(
-        "package-cycle-extraneous -> package-cycle-1 -> package-cycle-2 -> package-cycle-1"
-      );
 
       expect(calledInPackages()).toEqual([
         "package-dag-1",
         "package-standalone",
         "package-dag-2a",
         "package-dag-2b",
-        "package-dag-3",
         "package-cycle-1",
         "package-cycle-2",
+        "package-dag-3",
         "package-cycle-extraneous",
       ]);
     });

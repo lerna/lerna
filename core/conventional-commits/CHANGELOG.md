@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.16.0](https://github.com/lerna/lerna/compare/v3.15.0...v3.16.0) (2019-07-18)
+
+
+### Bug Fixes
+
+* **conventional-commits:** Hard-pin lodash.template dependency to silence 'helpful' security warning ([c54ad68](https://github.com/lerna/lerna/commit/c54ad68))
+
+
+### Features
+
+* **deps:** `conventional-recommended-bump@^5.0.0` ([2a0ed60](https://github.com/lerna/lerna/commit/2a0ed60))
+* **deps:** `fs-extra@^8.1.0` ([313287f](https://github.com/lerna/lerna/commit/313287f))
+* **deps:** `pify@^4.0.1` ([f8ee7e6](https://github.com/lerna/lerna/commit/f8ee7e6))
+* **deps:** `semver@^6.2.0` ([d8016d9](https://github.com/lerna/lerna/commit/d8016d9))
+
+
+
+
+
 # [3.14.0](https://github.com/lerna/lerna/compare/v3.13.4...v3.14.0) (2019-05-14)
 
 

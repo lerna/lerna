@@ -3,12 +3,12 @@
 jest.mock("@lerna/run-lifecycle");
 jest.mock("@lerna/otplease");
 jest.mock("read-package-json");
-jest.mock("libnpmpublish");
+jest.mock("@evocateur/libnpmpublish");
 jest.mock("fs-extra");
 
 // mocked modules
 const fs = require("fs-extra");
-const { publish } = require("libnpmpublish");
+const { publish } = require("@evocateur/libnpmpublish");
 const readJSON = require("read-package-json");
 const runLifecycle = require("@lerna/run-lifecycle");
 const otplease = require("@lerna/otplease");
@@ -27,7 +27,7 @@ describe("npm-publish", () => {
   const mockManifest = { _normalized: true };
 
   fs.readFile.mockName("fs.readFile").mockResolvedValue(mockTarData);
-  publish.mockName("libnpmpublish").mockResolvedValue();
+  publish.mockName("@evocateur/libnpmpublish").mockResolvedValue();
   readJSON.mockName("read-package-json").mockImplementation((file, cb) => cb(null, mockManifest));
   runLifecycle.mockName("@lerna/run-lifecycle").mockResolvedValue();
   otplease.mockName("@lerna/otplease").mockImplementation((cb, opts) => Promise.resolve(cb(opts)));
@@ -111,6 +111,43 @@ describe("npm-publish", () => {
         publishConfig: {
           tag: "beta",
         },
+      }),
+      mockTarData,
+      expect.figgyPudding({
+        tag: "latest",
+      })
+    );
+  });
+
+  it("uses pkg.contents manifest when pkg.publishConfig.directory is defined", async () => {
+    const fancyPkg = new Package(
+      {
+        name: "fancy",
+        version: "1.10.100",
+        publishConfig: {
+          directory: "dist",
+        },
+      },
+      path.join(rootPath, "npmPublish/fancy"),
+      rootPath
+    );
+
+    readJSON.mockImplementationOnce((file, cb) =>
+      cb(null, {
+        name: "fancy-fancy",
+        version: "1.10.100",
+      })
+    );
+
+    await npmPublish(fancyPkg, tarFilePath);
+
+    expect(readJSON).toHaveBeenCalledWith(
+      path.join(fancyPkg.location, "dist/package.json"),
+      expect.any(Function)
+    );
+    expect(publish).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: "fancy-fancy",
       }),
       mockTarData,
       expect.figgyPudding({

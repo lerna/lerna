@@ -3,6 +3,52 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.16.0](https://github.com/lerna/lerna/compare/v3.15.0...v3.16.0) (2019-07-18)
+
+
+### Bug Fixes
+
+* **deps:** Bump `@evocateur/pacote` ([03e4797](https://github.com/lerna/lerna/commit/03e4797))
+* **deps:** Update forked npm libs ([4d67426](https://github.com/lerna/lerna/commit/4d67426))
+* **publish:** Add `--graph-type` option to control packages included in topological sort ([#2152](https://github.com/lerna/lerna/issues/2152)) ([ae87669](https://github.com/lerna/lerna/commit/ae87669)), closes [#1437](https://github.com/lerna/lerna/issues/1437)
+* **publish:** Allow `--no-verify-access` to prevent checking for account-level 2FA ([ce58d8f](https://github.com/lerna/lerna/commit/ce58d8f))
+* **publish:** OTP cache should be seeded from conf value, not CLI directly ([cf56622](https://github.com/lerna/lerna/commit/cf56622))
+* **publish:** Propagate root license into custom publish directories ([d410a58](https://github.com/lerna/lerna/commit/d410a58)), closes [#2157](https://github.com/lerna/lerna/issues/2157)
+
+
+### Features
+
+* **deps:** `fs-extra@^8.1.0` ([313287f](https://github.com/lerna/lerna/commit/313287f))
+* **deps:** `p-map@^2.1.0` ([9e58394](https://github.com/lerna/lerna/commit/9e58394))
+* **deps:** `semver@^6.2.0` ([d8016d9](https://github.com/lerna/lerna/commit/d8016d9))
+* **publish:** Eager prompt for OTP when account-level 2FA is enabled ([4f893d1](https://github.com/lerna/lerna/commit/4f893d1))
+
+
+
+
+
+# [3.15.0](https://github.com/lerna/lerna/compare/v3.14.2...v3.15.0) (2019-06-09)
+
+
+### Bug Fixes
+
+* **deps:** Consume forked npm libs ([bdd4fa1](https://github.com/lerna/lerna/commit/bdd4fa1))
+
+
+
+
+
+## [3.14.2](https://github.com/lerna/lerna/compare/v3.14.1...v3.14.2) (2019-06-09)
+
+
+### Bug Fixes
+
+* **publish:** Allow per-leaf subdirectory publishing ([ea861d9](https://github.com/lerna/lerna/commit/ea861d9)), closes [#2109](https://github.com/lerna/lerna/issues/2109)
+
+
+
+
+
 ## [3.14.1](https://github.com/lerna/lerna/compare/v3.14.0...v3.14.1) (2019-05-15)
 
 **Note:** Version bump only for package @lerna/publish

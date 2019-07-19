@@ -10,7 +10,7 @@ Install [lerna](https://www.npmjs.com/package/lerna) for access to the `lerna` C
 $ lerna add <package>[@version] [--dev] [--exact]
 ```
 
-Add local or remote `package` as dependency to packages in the current Lerna repo.
+Add local or remote `package` as dependency to packages in the current Lerna repo. Note that only a single package can be added at a time compared to `yarn add` or `npm install`.
 
 When run, this command will:
 

@@ -6,7 +6,7 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
-    "globby": "^8.0.1",
-    "load-json-file": "^4.0.0"
+    "globby": "^9.2.0",
+    "load-json-file": "^5.3.0"
   }
 }

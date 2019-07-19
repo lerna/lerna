@@ -25,6 +25,7 @@ const runTopologically = require("@lerna/run-topologically");
 const pulseTillDone = require("@lerna/pulse-till-done");
 const versionCommand = require("@lerna/version");
 const prereleaseIdFromVersion = require("@lerna/prerelease-id-from-version");
+const otplease = require("@lerna/otplease");
 
 const createTempLicenses = require("./lib/create-temp-licenses");
 const getCurrentSHA = require("./lib/get-current-sha");
@@ -36,6 +37,7 @@ const getPackagesWithoutLicense = require("./lib/get-packages-without-license");
 const gitCheckout = require("./lib/git-checkout");
 const removeTempLicenses = require("./lib/remove-temp-licenses");
 const verifyNpmPackageAccess = require("./lib/verify-npm-package-access");
+const getTwoFactorAuthRequired = require("./lib/get-two-factor-auth-required");
 
 module.exports = factory;
 
@@ -83,15 +85,11 @@ class PublishCommand extends Command {
 
     // npmSession and user-agent are consumed by npm-registry-fetch (via libnpmpublish)
     const npmSession = crypto.randomBytes(8).toString("hex");
-    const userAgent = `lerna/${this.options.lernaVersion}/node@${process.version}+${process.arch} (${
-      process.platform
-    })`;
+    // eslint-disable-next-line max-len
+    const userAgent = `lerna/${this.options.lernaVersion}/node@${process.version}+${process.arch} (${process.platform})`;
 
     this.logger.verbose("session", npmSession);
     this.logger.verbose("user-agent", userAgent);
-
-    // cache to hold a one-time-password across publishes
-    this.otpCache = { otp: this.options.otp };
 
     this.conf = npmConf({
       lernaCommand: "publish",
@@ -100,6 +98,9 @@ class PublishCommand extends Command {
       otp: this.options.otp,
       registry: this.options.registry,
     });
+
+    // cache to hold a one-time-password across publishes
+    this.otpCache = { otp: this.conf.get("otp") };
 
     this.conf.set("user-agent", userAgent, "cli");
 
@@ -162,6 +163,13 @@ class PublishCommand extends Command {
       this.updatesVersions = new Map(result.updatesVersions);
 
       this.packagesToPublish = this.updates.map(({ pkg }) => pkg).filter(pkg => !pkg.private);
+
+      if (this.options.contents) {
+        // globally override directory to publish
+        for (const pkg of this.packagesToPublish) {
+          pkg.contents = this.options.contents;
+        }
+      }
 
       if (result.needsConfirmation) {
         // only confirm for --canary, bump === "from-git",
@@ -450,6 +458,13 @@ class PublishCommand extends Command {
           return verifyNpmPackageAccess(this.packagesToPublish, username, this.conf.snapshot);
         }
       });
+
+      // read profile metadata to determine if account-level 2FA is enabled
+      chain = chain.then(() => getTwoFactorAuthRequired(this.conf.snapshot));
+      chain = chain.then(isRequired => {
+        // notably, this still doesn't handle package-level 2FA requirements
+        this.twoFactorAuthRequired = isRequired;
+      });
     }
 
     return chain;
@@ -563,15 +578,29 @@ class PublishCommand extends Command {
       });
   }
 
+  requestOneTimePassword() {
+    // if OTP has already been provided, skip prompt
+    if (this.otpCache.otp) {
+      return;
+    }
+
+    return Promise.resolve()
+      .then(() => otplease.getOneTimePassword("Enter OTP:"))
+      .then(otp => {
+        this.otpCache.otp = otp;
+      });
+  }
+
   topoMapPackages(mapper) {
     // we don't respect --no-sort here, sorry
     return runTopologically(this.packagesToPublish, mapper, {
       concurrency: this.concurrency,
       rejectCycles: this.options.rejectCycles,
-      // Don't sort based on devDependencies because that
-      // would increase the chance of dependency cycles
-      // causing less-than-ideal a publishing order.
-      graphType: "dependencies",
+      // By default, do not include devDependencies in the graph because it would
+      // increase the chance of dependency cycles, causing less-than-ideal order.
+      // If the user has opted-in to --graph-type=all (or "graphType": "all" in lerna.json),
+      // devDependencies _will_ be included in the graph construction.
+      graphType: this.options.graphType === "all" ? "allDependencies" : "dependencies",
     });
   }
 
@@ -594,17 +623,14 @@ class PublishCommand extends Command {
       chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "prepack"));
     }
 
-    const { contents } = this.options;
-    const getLocation = contents ? pkg => path.resolve(pkg.location, contents) : pkg => pkg.location;
-
     const opts = this.conf.snapshot;
     const mapper = pPipe(
       [
         this.options.requireScripts && (pkg => this.execScript(pkg, "prepublish")),
 
         pkg =>
-          pulseTillDone(packDirectory(pkg, getLocation(pkg), opts)).then(packed => {
-            tracker.verbose("packed", pkg.name, path.relative(this.project.rootPath, getLocation(pkg)));
+          pulseTillDone(packDirectory(pkg, pkg.contents, opts)).then(packed => {
+            tracker.verbose("packed", pkg.name, path.relative(this.project.rootPath, pkg.contents));
             tracker.completeWork(1);
 
             // store metadata for use in this.publishPacked()
@@ -636,6 +662,11 @@ class PublishCommand extends Command {
     tracker.addWork(this.packagesToPublish.length);
 
     let chain = Promise.resolve();
+
+    // if account-level 2FA is enabled, prime the OTP cache
+    if (this.twoFactorAuthRequired) {
+      chain = chain.then(() => this.requestOneTimePassword());
+    }
 
     const opts = Object.assign(this.conf.snapshot, {
       // distTag defaults to "latest" OR whatever is in pkg.publishConfig.tag

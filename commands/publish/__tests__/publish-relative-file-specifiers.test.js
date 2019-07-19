@@ -7,6 +7,7 @@ jest.unmock("@lerna/collect-updates");
 jest.mock("../lib/get-packages-without-license");
 jest.mock("../lib/verify-npm-package-access");
 jest.mock("../lib/get-npm-username");
+jest.mock("../lib/get-two-factor-auth-required");
 // FIXME: better mock for version command
 jest.mock("../../version/lib/git-push");
 jest.mock("../../version/lib/is-anything-committed");

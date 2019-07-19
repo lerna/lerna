@@ -3,6 +3,34 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.16.0](https://github.com/lerna/lerna/compare/v3.15.0...v3.16.0) (2019-07-18)
+
+
+### Features
+
+* **deps:** `p-map@^2.1.0` ([9e58394](https://github.com/lerna/lerna/commit/9e58394))
+* **deps:** `slash@^2.0.0` ([bedd6af](https://github.com/lerna/lerna/commit/bedd6af))
+
+
+
+
+
+# [3.15.0](https://github.com/lerna/lerna/compare/v3.14.2...v3.15.0) (2019-06-09)
+
+**Note:** Version bump only for package @lerna/link
+
+
+
+
+
+## [3.14.2](https://github.com/lerna/lerna/compare/v3.14.1...v3.14.2) (2019-06-09)
+
+**Note:** Version bump only for package @lerna/link
+
+
+
+
+
 # [3.14.0](https://github.com/lerna/lerna/compare/v3.13.4...v3.14.0) (2019-05-14)
 
 **Note:** Version bump only for package @lerna/link

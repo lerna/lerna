@@ -133,6 +133,16 @@ describe("PackageGraph", () => {
 
       expect(node.prereleaseId).toBe("rc");
     });
+
+    describe(".toString()", () => {
+      it("returns the node's name", () => {
+        const node = new PackageGraph([
+          new Package({ name: "pkg-name", version: "0.1.2" }, "/path/to/pkg-name"),
+        ]).get("pkg-name");
+
+        expect(node.toString()).toBe("pkg-name");
+      });
+    });
   });
 
   describe(".get()", () => {

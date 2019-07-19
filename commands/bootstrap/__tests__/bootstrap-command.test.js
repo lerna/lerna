@@ -208,6 +208,20 @@ describe("BootstrapCommand", () => {
     });
   });
 
+  describe("with --hoist and --strict", () => {
+    it("should throw if there's a hoist warning", async () => {
+      expect.assertions(1);
+
+      const testDir = await initFixture("basic");
+
+      try {
+        await lernaBootstrap(testDir)("--hoist", "--strict");
+      } catch (err) {
+        expect(err.message).toMatch("Package version inconsistencies found");
+      }
+    });
+  });
+
   describe("with --ci", () => {
     it("should call npmInstall with ci subCommand if on npm 5.7.0 or later", async () => {
       const testDir = await initFixture("ci");
@@ -311,6 +325,24 @@ describe("BootstrapCommand", () => {
 
       expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
       expect(symlinkedDirectories(testDir)).toMatchSnapshot();
+    });
+
+    it("should respect --force-local when a single package is in scope", async () => {
+      const testDir = await initFixture("basic");
+
+      await lernaBootstrap(testDir)("--scope", "package-4", "--force-local");
+
+      // no packages were installed from the registry
+      const installed = installedPackagesInDirectories(testDir);
+      expect(installed["packages/package-4"] || []).toEqual([]);
+
+      // package-3 was resolved as a local symlink
+      const symlinked = symlinkedDirectories(testDir);
+      expect(symlinked).toContainEqual({
+        _src: "packages/package-3",
+        dest: "packages/package-4/node_modules/package-3",
+        type: "junction",
+      });
     });
 
     it("should not update package.json when filtering", async () => {

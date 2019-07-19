@@ -64,6 +64,41 @@ describe("Package", () => {
     });
   });
 
+  describe("get .contents", () => {
+    it("returns pkg.location by default", () => {
+      const pkg = factory({ version: "1.0.0" });
+      expect(pkg.contents).toBe(path.normalize("/root/path/to/package"));
+    });
+
+    it("returns pkg.publishConfig.directory when present", () => {
+      const pkg = factory({
+        version: "1.0.0",
+        publishConfig: {
+          directory: "dist",
+        },
+      });
+      expect(pkg.contents).toBe(path.normalize("/root/path/to/package/dist"));
+    });
+
+    it("returns pkg.location when pkg.publishConfig.directory is not present", () => {
+      const pkg = factory({
+        version: "1.0.0",
+        publishConfig: {
+          tag: "next",
+        },
+      });
+      expect(pkg.contents).toBe(path.normalize("/root/path/to/package"));
+    });
+  });
+
+  describe("set .contents", () => {
+    it("sets pkg.contents to joined value", () => {
+      const pkg = factory({ version: "1.0.0" });
+      pkg.contents = "dist";
+      expect(pkg.contents).toBe(path.normalize("/root/path/to/package/dist"));
+    });
+  });
+
   describe("get .bin", () => {
     it("should return the bin object", () => {
       const pkg = factory({

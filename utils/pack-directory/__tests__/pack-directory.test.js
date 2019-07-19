@@ -36,7 +36,7 @@ expect.addSnapshotSerializer({
   test(val) {
     if (isObject(val)) {
       // 420 in macOS, 436 in Ubuntu
-      return hasOwn.call(val, "mode");
+      return hasOwn.call(val, "mode") || hasOwn.call(val, "size");
     }
 
     if (isString(val)) {
@@ -50,7 +50,8 @@ expect.addSnapshotSerializer({
         const str = val.replace(TAR_DIR_REGEXP, serializeTempDir);
 
         // top-level strings don't need quotes, but nested ones do (object properties, etc)
-        return depth ? `"${str}"` : str;
+        // ...and this is always an object property
+        return `"${str}"`;
       }
 
       if (val.indexOf("sha512") > -1) {
@@ -60,10 +61,17 @@ expect.addSnapshotSerializer({
       return '"SHASUM"';
     }
 
-    // eslint-disable-next-line no-param-reassign
-    val.mode = "MODE";
+    /* eslint-disable no-param-reassign */
+    if (depth) {
+      // nested file objects
+      val.mode = "MODE";
+    } else {
+      // bloody tar algorithms
+      val.size = "TAR_SIZE";
+    }
+    /* eslint-enable no-param-reassign */
 
-    let result = "{";
+    let result = "Object {";
     result += printObjectProperties(val, config, indentation, depth, refs, printer);
     result += "}";
 
@@ -96,27 +104,27 @@ Object {
   "entryCount": 3,
   "filename": "integration-package-1-1.0.0.tgz",
   "files": Array [
-    {
-      "mode": "MODE",
-      "path": "package.json",
-      "size": 269,
-    },
-    {
+    Object {
       "mode": "MODE",
       "path": "build.js",
       "size": 329,
     },
-    {
+    Object {
       "mode": "MODE",
       "path": "index.src.js",
       "size": 141,
+    },
+    Object {
+      "mode": "MODE",
+      "path": "package.json",
+      "size": 269,
     },
   ],
   "id": "@integration/package-1@1.0.0",
   "integrity": "INTEGRITY",
   "name": "@integration/package-1",
   "shasum": "SHASUM",
-  "size": 539,
+  "size": "TAR_SIZE",
   "tarFilePath": "__TAR_DIR__/integration-package-1-1.0.0.tgz",
   "unpackedSize": 739,
   "version": "1.0.0",
@@ -133,7 +141,7 @@ Object {
   "entryCount": 1,
   "filename": "package-4-1.0.0.tgz",
   "files": Array [
-    {
+    Object {
       "mode": "MODE",
       "path": "package.json",
       "size": 224,
@@ -143,7 +151,7 @@ Object {
   "integrity": "INTEGRITY",
   "name": "package-4",
   "shasum": "SHASUM",
-  "size": 230,
+  "size": "TAR_SIZE",
   "tarFilePath": "__TAR_DIR__/package-4-1.0.0.tgz",
   "unpackedSize": 224,
   "version": "1.0.0",
@@ -180,32 +188,32 @@ Object {
   "entryCount": 4,
   "filename": "package-3-1.0.0.tgz",
   "files": Array [
-    {
-      "mode": "MODE",
-      "path": "package.json",
-      "size": 455,
-    },
-    {
+    Object {
       "mode": "MODE",
       "path": "cli1.js",
       "size": 108,
     },
-    {
+    Object {
       "mode": "MODE",
       "path": "cli2.js",
       "size": 108,
     },
-    {
+    Object {
       "mode": "MODE",
       "path": "index.js",
       "size": 25,
+    },
+    Object {
+      "mode": "MODE",
+      "path": "package.json",
+      "size": 455,
     },
   ],
   "id": "package-3@1.0.0",
   "integrity": "INTEGRITY",
   "name": "package-3",
   "shasum": "SHASUM",
-  "size": 446,
+  "size": "TAR_SIZE",
   "tarFilePath": "__TAR_DIR__/package-3-1.0.0.tgz",
   "unpackedSize": 696,
   "version": "1.0.0",

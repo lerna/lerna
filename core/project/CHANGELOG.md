@@ -3,6 +3,45 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.16.0](https://github.com/lerna/lerna/compare/v3.15.0...v3.16.0) (2019-07-18)
+
+
+### Bug Fixes
+
+* **project:** Ensure deprecated `githubRelease` config is also remapped from `command.publish` namespace ([a3d264e](https://github.com/lerna/lerna/commit/a3d264e)), closes [#2177](https://github.com/lerna/lerna/issues/2177)
+
+
+### Features
+
+* **deps:** `glob-parent@^5.0.0` ([c6bc218](https://github.com/lerna/lerna/commit/c6bc218))
+* **deps:** `globby@^9.2.0` ([d9aa249](https://github.com/lerna/lerna/commit/d9aa249))
+* **deps:** `load-json-file@^5.3.0` ([3718cc9](https://github.com/lerna/lerna/commit/3718cc9))
+* **deps:** `p-map@^2.1.0` ([9e58394](https://github.com/lerna/lerna/commit/9e58394))
+* **deps:** `write-json-file@^3.2.0` ([4fa7dea](https://github.com/lerna/lerna/commit/4fa7dea))
+
+
+
+
+
+# [3.15.0](https://github.com/lerna/lerna/compare/v3.14.2...v3.15.0) (2019-06-09)
+
+
+### Features
+
+* **version:** Add `--create-release=[gitlab|github]` option ([#2073](https://github.com/lerna/lerna/issues/2073)) ([4974b78](https://github.com/lerna/lerna/commit/4974b78))
+
+
+
+
+
+## [3.14.2](https://github.com/lerna/lerna/compare/v3.14.1...v3.14.2) (2019-06-09)
+
+**Note:** Version bump only for package @lerna/project
+
+
+
+
+
 ## [3.13.1](https://github.com/lerna/lerna/compare/v3.13.0...v3.13.1) (2019-02-26)
 
 

@@ -164,7 +164,7 @@ describe("core-cli", () => {
     const spy = jest.spyOn(cli, "exit");
 
     cli.command("errname", "a string code", {}, async () => {
-      const err = new Error("npm-registry-fetch");
+      const err = new Error("kersplode");
       err.code = "E401";
       throw err;
     });
@@ -175,7 +175,7 @@ describe("core-cli", () => {
     expect(spy).toHaveBeenLastCalledWith(
       1,
       expect.objectContaining({
-        message: "npm-registry-fetch",
+        message: "kersplode",
       })
     );
   });

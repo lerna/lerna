@@ -20,6 +20,8 @@ function listableFormat(pkgList, options) {
     text = formatNDJSON(resultList);
   } else if (viewOptions.showParseable) {
     text = formatParseable(resultList, viewOptions);
+  } else if (viewOptions.showGraph) {
+    text = formatJSONGraph(resultList, viewOptions);
   } else {
     text = formatColumns(resultList, viewOptions);
   }
@@ -37,6 +39,7 @@ function parseViewOptions(options) {
     showNDJSON: options.ndjson,
     showParseable: options.parseable,
     isTopological: options.toposort,
+    showGraph: options.graph,
   };
 }
 
@@ -69,6 +72,38 @@ function formatNDJSON(resultList) {
   return toJSONList(resultList)
     .map(data => JSON.stringify(data))
     .join("\n");
+}
+
+function formatJSONGraph(resultList, viewOptions) {
+  // https://en.wikipedia.org/wiki/Adjacency_list
+  const graph = {};
+  const getNeighbors = viewOptions.showAll
+    ? pkg =>
+        Object.keys(
+          Object.assign(
+            {},
+            pkg.devDependencies,
+            pkg.peerDependencies,
+            pkg.optionalDependencies,
+            pkg.dependencies
+          )
+        ).sort()
+    : pkg =>
+        Object.keys(
+          Object.assign(
+            {},
+            // no devDependencies
+            // no peerDependencies
+            pkg.optionalDependencies,
+            pkg.dependencies
+          )
+        ).sort();
+
+  for (const pkg of resultList) {
+    graph[pkg.name] = getNeighbors(pkg);
+  }
+
+  return JSON.stringify(graph, null, 2);
 }
 
 function makeParseable(pkg) {

@@ -1,6 +1,6 @@
 {
   "name": "@lerna/prerelease-id-from-version",
-  "version": "3.14.0",
+  "version": "3.16.0",
   "description": "Get the prerelease ID from a version string",
   "keywords": [
     "lerna",
@@ -28,6 +28,6 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "semver": "^5.5.0"
+    "semver": "^6.2.0"
   }
 }

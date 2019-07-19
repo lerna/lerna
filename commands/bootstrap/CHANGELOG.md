@@ -3,6 +3,40 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.16.0](https://github.com/lerna/lerna/compare/v3.15.0...v3.16.0) (2019-07-18)
+
+
+### Features
+
+* **bootstrap:** Add `--strict` option to enable throwing when `--hoist` warns ([#2140](https://github.com/lerna/lerna/issues/2140)) ([91437b5](https://github.com/lerna/lerna/commit/91437b5))
+* **deps:** `get-port@^4.2.0` ([778ae6a](https://github.com/lerna/lerna/commit/778ae6a))
+* **deps:** `multimatch@^3.0.0` ([968b0d7](https://github.com/lerna/lerna/commit/968b0d7))
+* **deps:** `p-map@^2.1.0` ([9e58394](https://github.com/lerna/lerna/commit/9e58394))
+* **deps:** `semver@^6.2.0` ([d8016d9](https://github.com/lerna/lerna/commit/d8016d9))
+
+
+
+
+
+# [3.15.0](https://github.com/lerna/lerna/compare/v3.14.2...v3.15.0) (2019-06-09)
+
+**Note:** Version bump only for package @lerna/bootstrap
+
+
+
+
+
+## [3.14.2](https://github.com/lerna/lerna/compare/v3.14.1...v3.14.2) (2019-06-09)
+
+
+### Bug Fixes
+
+* **bootstrap:** Respect `--force-local` option ([#2104](https://github.com/lerna/lerna/issues/2104)) ([c2fb639](https://github.com/lerna/lerna/commit/c2fb639))
+
+
+
+
+
 # [3.14.0](https://github.com/lerna/lerna/compare/v3.13.4...v3.14.0) (2019-05-14)
 
 **Note:** Version bump only for package @lerna/bootstrap

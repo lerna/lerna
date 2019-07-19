@@ -1,6 +1,6 @@
 {
   "name": "@lerna/pack-directory",
-  "version": "3.14.0",
+  "version": "3.16.0",
   "description": "Pack a directory into an npm package tarball",
   "keywords": [
     "lerna",
@@ -31,9 +31,9 @@
     "@lerna/package": "file:../../core/package",
     "@lerna/run-lifecycle": "file:../run-lifecycle",
     "figgy-pudding": "^3.5.1",
-    "npm-packlist": "^1.4.1",
+    "npm-packlist": "^1.4.4",
     "npmlog": "^4.1.2",
-    "tar": "^4.4.8",
+    "tar": "^4.4.10",
     "temp-write": "^3.4.0"
   }
 }

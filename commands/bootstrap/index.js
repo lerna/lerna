@@ -161,7 +161,7 @@ class BootstrapCommand extends Command {
     chain = chain.then(filteredPackages => {
       this.filteredPackages = filteredPackages;
 
-      if (filteredPackages.length !== this.targetGraph.size) {
+      if (filteredPackages.length !== this.targetGraph.size && !this.options.forceLocal) {
         this.logger.warn("bootstrap", "Installing local packages that do not match filters from registry");
 
         // an explicit --scope, --ignore, or --since should only symlink the targeted packages, no others
@@ -373,6 +373,8 @@ class BootstrapCommand extends Command {
 
     const rootActions = [];
     const leafActions = [];
+    // We don't want to exit on the first hoist issue, but log them all and then exit
+    let strictExitOnWarning = false;
 
     // determine where each dependency will be installed
     for (const [externalName, externalDependents] of depsToInstall) {
@@ -394,6 +396,9 @@ class BootstrapCommand extends Command {
             `The repository root depends on ${externalName}@${rootVersion}, ` +
               `which differs from the more common ${externalName}@${commonVersion}.`
           );
+          if (this.options.strict) {
+            strictExitOnWarning = true;
+          }
         }
 
         const dependents = Array.from(externalDependents.get(rootVersion)).map(
@@ -427,6 +432,9 @@ class BootstrapCommand extends Command {
               `"${leafName}" package depends on ${externalName}@${leafVersion}, ` +
                 `which differs from the hoisted ${externalName}@${rootVersion}.`
             );
+            if (this.options.strict) {
+              strictExitOnWarning = true;
+            }
           }
 
           const leafNode = this.targetGraph.get(leafName);
@@ -443,6 +451,12 @@ class BootstrapCommand extends Command {
           );
         }
       }
+    }
+    if (this.options.strict && strictExitOnWarning) {
+      throw new ValidationError(
+        "EHOISTSTRICT",
+        "Package version inconsistencies found while hoisting. Fix the above warnings and retry."
+      );
     }
 
     return pMapSeries([...rootActions, ...leafActions], el => el()).then(() => {

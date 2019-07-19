@@ -166,6 +166,37 @@ pkg-3  v3.0.0 pkgs/pkg-3 (PRIVATE)
 `);
     });
 
+    test("graph output", () => {
+      const { text } = formatWithOptions({ graph: true });
+
+      expect(text).toMatchInlineSnapshot(`
+        {
+          "pkg-1": [
+            "pkg-2"
+          ],
+          "pkg-2": []
+        }
+      `);
+    });
+
+    test("all graph output", () => {
+      const { text } = formatWithOptions({ graph: true, all: true });
+
+      expect(text).toMatchInlineSnapshot(`
+        {
+          "pkg-1": [
+            "pkg-2"
+          ],
+          "pkg-2": [
+            "pkg-3"
+          ],
+          "pkg-3": [
+            "pkg-2"
+          ]
+        }
+      `);
+    });
+
     test("parseable output", () => {
       const { text } = formatWithOptions({ parseable: true });
 
@@ -242,8 +273,8 @@ pkg-1
       expect(loggingOutput("warn")).toContainEqual(expect.stringContaining("pkg-2 -> pkg-3 -> pkg-2"));
       expect(text).toMatchInlineSnapshot(`
 pkg-2
-pkg-1
 pkg-3 (PRIVATE)
+pkg-1
 `);
     });
   });

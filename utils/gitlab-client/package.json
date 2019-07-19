@@ -1,0 +1,38 @@
+{
+  "name": "@lerna/gitlab-client",
+  "version": "3.15.0",
+  "description": "An internal Lerna tool",
+  "keywords": [
+    "lerna",
+    "utils"
+  ],
+  "homepage": "https://github.com/lerna/lerna/tree/master/utils/gitlab-client#readme",
+  "license": "MIT",
+  "author": {
+    "name": "Luke Bennett",
+    "url": "https://gitlab.com/lbennett"
+  },
+  "files": [
+    "lib"
+  ],
+  "main": "index.js",
+  "engines": {
+    "node": ">= 6.9.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/lerna/lerna.git",
+    "directory": "utils/gitlab-client"
+  },
+  "scripts": {
+    "test": "echo \"Run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "node-fetch": "^2.5.0",
+    "npmlog": "^4.1.2",
+    "whatwg-url": "^7.0.0"
+  }
+}

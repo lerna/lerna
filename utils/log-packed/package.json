@@ -1,6 +1,6 @@
 {
   "name": "@lerna/log-packed",
-  "version": "3.13.0",
+  "version": "3.16.0",
   "description": "Log the result of npm pack --json",
   "keywords": [
     "lerna",
@@ -30,7 +30,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "byte-size": "^4.0.3",
+    "byte-size": "^5.0.1",
     "columnify": "^1.5.4",
     "has-unicode": "^2.0.1",
     "npmlog": "^4.1.2"

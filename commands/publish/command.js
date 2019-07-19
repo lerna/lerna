@@ -41,6 +41,11 @@ exports.builder = yargs => {
       type: "string",
       requiresArg: true,
     },
+    "graph-type": {
+      describe: "Type of dependency to use when determining package hierarchy.",
+      choices: ["all", "dependencies"],
+      defaultDescription: "dependencies",
+    },
     otp: {
       describe: "Supply a one-time password for publishing with two-factor authentication.",
       type: "string",

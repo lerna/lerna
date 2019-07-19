@@ -123,7 +123,7 @@ Object.defineProperty(exports, "defaults", {
       "onload-script": false,
       only: null,
       optional: true,
-      otp: null,
+      otp: undefined,
       "package-lock": true,
       "package-lock-only": false,
       parseable: false,
