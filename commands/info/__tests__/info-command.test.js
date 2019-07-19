@@ -1,12 +1,19 @@
 "use strict";
 
-// mocked modules
-// const output = require("@lerna/output");
-// const collectUpdates = require("@lerna/collect-updates");
+jest.mock("envinfo");
 
-// file under test
-// const lernaLs = require("@lerna-test/command-runner")(require("../command"));
+const envinfo = require("envinfo");
 
-describe("lerna info", () => {
-  // ToDo
+envinfo.run.mockResolvedValue("MOCK_ENVINFO");
+
+it("outputs result of envinfo()", async () => {
+    // project fixture is irrelevant, no actual changes are made
+    await lernaInfo(process.cwd())();
+
+    expect(envinfo.run).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        npmPackages: ["lerna"],
+      })
+    );
+    expect(output.logged()).toMatch("MOCK_ENVINFO");
 });
