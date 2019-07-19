@@ -163,14 +163,24 @@ Object {
     const mid = pkgs.pop();
     const json = Object.assign(mid.toJSON(), {
       name: "package-3",
+      // omit scripts directory
+      files: ["*.js"],
       // overwrite existing postinstall + test
       scripts: {
         prepublish: "exit 1",
-        prepublishOnly: "echo badgerbadgerbadgerbadger > index.js",
+        prepublishOnly: "node scripts/build.js",
       },
     });
 
-    await fs.writeJSON(mid.manifestLocation, json, { spaces: 2 });
+    await Promise.all([
+      fs.writeJSON(mid.manifestLocation, json, { spaces: 2 }),
+      fs.outputFile(
+        path.join(mid.location, "scripts", "build.js"),
+        // Windows requires this ridiculous workaround
+        // because echoing a file without CRLF garbage is apparently too hard :P
+        "require('fs').writeFileSync(require('path').resolve('index.js'), 'badgerbadgerbadgerbadger');"
+      ),
+    ]);
 
     const mushroom = new Package(json, mid.location, mid.rootPath);
     const lazy = await packDirectory(
@@ -201,12 +211,12 @@ Object {
     Object {
       "mode": "MODE",
       "path": "index.js",
-      "size": 25,
+      "size": 24,
     },
     Object {
       "mode": "MODE",
       "path": "package.json",
-      "size": 455,
+      "size": 465,
     },
   ],
   "id": "package-3@1.0.0",
@@ -215,7 +225,7 @@ Object {
   "shasum": "SHASUM",
   "size": "TAR_SIZE",
   "tarFilePath": "__TAR_DIR__/package-3-1.0.0.tgz",
-  "unpackedSize": 696,
+  "unpackedSize": 705,
   "version": "1.0.0",
 }
 `);
