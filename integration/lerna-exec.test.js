@@ -152,7 +152,7 @@ test("lerna exec --no-bail", async () => {
   const args = ["exec", "--no-bail", "--concurrency=1", "--", "npm", "run", "fail-or-succeed", "--silent"];
 
   try {
-    await cliRunner(cwd)(...args);
+    await cliRunner(cwd, env)(...args);
   } catch (err) {
     expect(err.stderr).toMatchInlineSnapshot(`
 lerna notice cli __TEST_VERSION__
@@ -177,7 +177,7 @@ test("lerna exec string node error code is not swallowed", async () => {
   const args = ["exec", "--no-bail", "--concurrency=1", "--", "thing-that-is-missing"];
 
   try {
-    await cliRunner(cwd)(...args);
+    await cliRunner(cwd, env)(...args);
   } catch (err) {
     expect(err.code).toBeGreaterThan(0);
   }
