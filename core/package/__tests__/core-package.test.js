@@ -282,14 +282,14 @@ describe("Package.lazy()", () => {
     const pkg = Package.lazy("/foo/bar");
 
     expect(pkg).toBeInstanceOf(Package);
-    expect(pkg.location).toBe("/foo/bar");
+    expect(pkg.location).toMatch(path.normalize("/foo/bar"));
   });
 
   it("returns package instance from package.json file argument", () => {
     const pkg = Package.lazy("/foo/bar/package.json");
 
     expect(pkg).toBeInstanceOf(Package);
-    expect(pkg.location).toBe("/foo/bar");
+    expect(pkg.location).toMatch(path.normalize("/foo/bar"));
   });
 
   it("returns package instance from json and dir arguments", () => {
