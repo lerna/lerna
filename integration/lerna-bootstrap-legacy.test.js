@@ -24,7 +24,11 @@ lerna success Bootstrapped 4 packages
 `);
   // there is a whole bunch of noise around lifecycle stdout, so match minimally
   expect(scriptOutput).toMatch(/^> echo \$npm_package_engines_node$/m);
-  expect(scriptOutput).toMatch(/^>= 8\.9\.0$/m);
+
+  // windows requires a different format, don't care
+  if (process.platform !== "win32") {
+    expect(scriptOutput).toMatch(/^>= 8\.9\.0$/m);
+  }
 
   // the "--silent" flag is passed to `npm run`
   const { stdout: testOutput } = await lerna("run", "test", "--", "--silent");
