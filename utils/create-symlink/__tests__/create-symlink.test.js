@@ -1,12 +1,11 @@
 "use strict";
 
-jest.mock("cmd-shim");
+jest.mock("@zkochan/cmd-shim");
 jest.mock("fs-extra");
 
-const cmdShim = require("cmd-shim");
+const cmdShim = require("@zkochan/cmd-shim");
 const fs = require("fs-extra");
 const path = require("path");
-const callsBack = require("@lerna-test/calls-back");
 const createSymlink = require("..");
 
 const linkRelative = (from, to) => path.relative(path.dirname(to), from);
@@ -16,8 +15,7 @@ describe("create-symlink", () => {
   fs.unlink.mockResolvedValue();
   fs.symlink.mockResolvedValue();
   fs.pathExists.mockResolvedValue(true);
-  // cmdShim is a traditional errback
-  cmdShim.mockImplementation(callsBack());
+  cmdShim.mockResolvedValue();
 
   if (process.platform !== "win32") {
     it("creates relative symlink to a directory", async () => {
@@ -63,11 +61,11 @@ describe("create-symlink", () => {
       await createSymlink(src, dst, type);
 
       expect(fs.lstat).not.toHaveBeenCalled();
-      expect(cmdShim).toHaveBeenLastCalledWith(src, dst, expect.any(Function));
+      expect(cmdShim).toHaveBeenLastCalledWith(src, dst);
     });
 
     it("rejects when cmd-shim errors", async () => {
-      cmdShim.mockImplementationOnce(callsBack(new Error("yikes")));
+      cmdShim.mockImplementationOnce(() => Promise.reject(new Error("yikes")));
 
       try {
         await createSymlink("src", "dst", "exec");

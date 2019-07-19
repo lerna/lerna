@@ -1,6 +1,6 @@
 "use strict";
 
-const cmdShim = require("cmd-shim");
+const cmdShim = require("@zkochan/cmd-shim");
 const fs = require("fs-extra");
 const log = require("npmlog");
 const path = require("path");
@@ -49,15 +49,7 @@ function createPosixSymlink(origin, dest, _type) {
 
 function createWindowsSymlink(src, dest, type) {
   if (type === "exec") {
-    return new Promise((resolve, reject) => {
-      cmdShim(src, dest, err => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      });
-    });
+    return cmdShim(src, dest);
   }
 
   return createSymbolicLink(src, dest, type);

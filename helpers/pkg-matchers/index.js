@@ -1,7 +1,6 @@
 "use strict";
 
 const fs = require("fs");
-const os = require("os");
 const path = require("path");
 const semver = require("semver");
 const Package = require("@lerna/package");
@@ -81,8 +80,18 @@ function createDependencyMatcher(dependencyType) {
 function toHaveBinaryLinks(received, ...inputs) {
   const pkg = Package.lazy(received);
   const links =
-    os.platform() === "win32"
-      ? inputs.reduce((acc, input) => [...acc, input, [input, "cmd"].join(".")], [])
+    process.platform === "win32"
+      ? inputs.reduce(
+          (acc, input) => [
+            ...acc,
+            input,
+            // cmd.exe
+            [input, "cmd"].join("."),
+            // powershell
+            [input, "ps1"].join("."),
+          ],
+          []
+        )
       : inputs;
 
   const expectedName = `expected ${pkg.name}`;
