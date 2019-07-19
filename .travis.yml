@@ -28,6 +28,15 @@ matrix:
 
 cache: npm
 
+before_install:
+- |
+  case "${TRAVIS_OS_NAME}" in
+    "windows")
+      # yarn isn't installed by default
+      npm install --global yarn
+    ;;
+  esac
+
 install: npm ci
 
 before_script:
