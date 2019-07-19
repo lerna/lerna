@@ -25,9 +25,6 @@ matrix:
 
 cache: npm
 
-before_install:
-  - if [[ "$(npm -v)" != "$(npm v npm dist-tags.latest)" ]]; then npm i -g npm@latest; fi
-
 install: npm ci
 
 before_script:
