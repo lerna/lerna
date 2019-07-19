@@ -34,6 +34,7 @@ before_script:
   - npm config set loglevel warn
   - git config --global user.email test@example.com
   - git config --global user.name "Tester McPerson"
+  - yarn --version
 
 script:
   - npm run ci
