@@ -50,7 +50,26 @@ function createPosixSymlink(src, dest, _type) {
 
 function createWindowsSymlink(src, dest, type) {
   if (type === "exec") {
-    return cmdShim(src, dest);
+    // If the src exists, shim directly.
+    // If the src doesn't exist yet, create a temp src so cmd-shim doesn't explode.
+    return fs.pathExists(src).then(exists => {
+      if (exists) {
+        return cmdShim(src, dest);
+      }
+
+      return fs
+        .outputFile(src, "")
+        .then(() => cmdShim(src, dest))
+        .then(
+          // fs.remove() never rejects
+          () => fs.remove(src),
+          err =>
+            fs.remove(src).then(() => {
+              // clean up, but don't swallow error
+              throw err;
+            })
+        );
+    });
   }
 
   return createSymbolicLink(src, dest, type);

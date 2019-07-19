@@ -15,6 +15,8 @@ describe("create-symlink", () => {
   fs.unlink.mockResolvedValue();
   fs.symlink.mockResolvedValue();
   fs.pathExists.mockResolvedValue(true);
+  fs.outputFile.mockResolvedValue();
+  fs.remove.mockResolvedValue();
   cmdShim.mockResolvedValue();
 
   if (process.platform !== "win32") {
@@ -85,6 +87,34 @@ describe("create-symlink", () => {
 
       expect(fs.unlink).toHaveBeenLastCalledWith(dst);
       expect(fs.symlink).toHaveBeenLastCalledWith(src, dst, type);
+    });
+
+    it("creates stub symlink to executable that doesn't exist yet", async () => {
+      const src = path.resolve("./packages/package-3/cli.js");
+      const dst = path.resolve("./packages/package-1/node_modules/.bin/package-3");
+      const type = "exec";
+
+      fs.pathExists.mockResolvedValueOnce(false);
+
+      await createSymlink(src, dst, type);
+
+      expect(fs.outputFile).toHaveBeenLastCalledWith(src, "");
+      expect(cmdShim).toHaveBeenLastCalledWith(src, dst);
+      expect(fs.remove).toHaveBeenLastCalledWith(src);
+    });
+
+    it("does not swallow cmd-shim errors when executable doesn't exist yet", async () => {
+      cmdShim.mockImplementationOnce(() => Promise.reject(new Error("oh no")));
+      fs.pathExists.mockResolvedValueOnce(false);
+
+      try {
+        await createSymlink("src", "dst", "exec");
+      } catch (err) {
+        expect(err.message).toBe("oh no");
+        expect(fs.remove).toHaveBeenLastCalledWith("src");
+      }
+
+      expect.hasAssertions();
     });
   }
 });
