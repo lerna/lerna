@@ -38,10 +38,10 @@ function createPosixSymlink(src, dest, _type) {
     // If the src doesn't exist yet, create a shim shell script.
     return fs.pathExists(src).then(exists => {
       if (exists) {
-        return createSymbolicLink(relativeSymlink, dest, type).then(() => fs.chmod(src, "755"));
+        return createSymbolicLink(relativeSymlink, dest, type).then(() => fs.chmod(src, 0o755));
       }
 
-      return shShim(src, dest, type).then(() => fs.chmod(dest, "755"));
+      return shShim(src, dest, type).then(() => fs.chmod(dest, 0o755));
     });
   }
 
