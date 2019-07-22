@@ -40,13 +40,13 @@ matrix:
       node_js: "12"
       name: "Windows Integration Tests (non-publish)"
       env:
-        - LERNA_CI_SCRIPT="integration -- --passWithNoTests"
+        - LERNA_CI_SCRIPT="integration"
         - LERNA_CI_TYPE="non-publish"
     - os: windows
       node_js: "12"
       name: "Windows Integration Tests (publish)"
       env:
-        - LERNA_CI_SCRIPT="integration -- --passWithNoTests"
+        - LERNA_CI_SCRIPT="integration"
         - LERNA_CI_TYPE="publish"
 
 cache: npm
