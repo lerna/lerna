@@ -27,19 +27,27 @@ matrix:
     - os: windows
       node_js: "12"
       name: "Windows Unit Tests (non-publish)"
-      env: LERNA_CI_SCRIPT="test -- --ci --maxWorkers=2 'commands[\\\/]+(?!publish|version)' core utils"
+      env:
+        - LERNA_CI_SCRIPT="test -- --ci --maxWorkers=2"
+        - LERNA_CI_TYPE="non-publish"
     - os: windows
       node_js: "12"
       name: "Windows Unit Tests (publish)"
-      env: LERNA_CI_SCRIPT="test -- --ci --maxWorkers=2 'commands[\\\/]+(?=publish|version)'"
+      env:
+        - LERNA_CI_SCRIPT="test -- --ci --maxWorkers=2"
+        - LERNA_CI_TYPE="publish"
     - os: windows
       node_js: "12"
       name: "Windows Integration Tests (non-publish)"
-      env: LERNA_CI_SCRIPT="integration -- --ci --passWithNoTests 'lerna-(?!publish)'"
+      env:
+        - LERNA_CI_SCRIPT="integration -- --ci --passWithNoTests"
+        - LERNA_CI_TYPE="non-publish"
     - os: windows
       node_js: "12"
       name: "Windows Integration Tests (publish)"
-      env: LERNA_CI_SCRIPT="integration -- --ci --passWithNoTests 'lerna-(?=publish)'"
+      env:
+        - LERNA_CI_SCRIPT="integration -- --ci --passWithNoTests"
+        - LERNA_CI_TYPE="publish"
 
 cache: npm
 

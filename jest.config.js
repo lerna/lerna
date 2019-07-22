@@ -19,3 +19,19 @@ module.exports = {
   testRunner: "jest-circus/runner",
   verbose: !!process.env.CI,
 };
+
+// split tests into smaller chunks because windows is agonizingly slow
+if (process.env.CI && process.env.TRAVIS_OS_NAME === "windows") {
+  module.exports.testMatch =
+    process.env.LERNA_CI_TYPE === "publish"
+      ? [
+          // these tests tend to be longer than any others
+          "<rootDir>/commands/publish/**/*.test.js",
+          "<rootDir>/commands/version/**/*.test.js",
+        ]
+      : [
+          "<rootDir>/commands/!(publish|version)/**/*.test.js",
+          "<rootDir>/core/**/*.test.js",
+          "<rootDir>/utils/**/*.test.js",
+        ];
+}
