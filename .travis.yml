@@ -30,8 +30,12 @@ matrix:
       env: LERNA_CI_SCRIPT="test -- --ci --maxWorkers=2"
     - os: windows
       node_js: "12"
-      name: "Windows Integration Tests"
-      env: LERNA_CI_SCRIPT="integration -- --ci --passWithNoTests"
+      name: "Windows Integration Tests (non-publish)"
+      env: LERNA_CI_SCRIPT="integration -- --ci --passWithNoTests 'lerna-(?!publish)'"
+    - os: windows
+      node_js: "12"
+      name: "Windows Integration Tests (publish)"
+      env: LERNA_CI_SCRIPT="integration -- --ci --passWithNoTests 'lerna-(?=publish)'"
 
 cache: npm
 
