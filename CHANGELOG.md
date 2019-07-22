@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.16.2](https://github.com/lerna/lerna/compare/v3.16.1...v3.16.2) (2019-07-22)
+
+
+### Bug Fixes
+
+* **create-symlink:** Generate shims for missing bin scripts for Windows ([c3f7998](https://github.com/lerna/lerna/commit/c3f7998))
+* **create-symlink:** Use octal notation for chmod values ([03f80b7](https://github.com/lerna/lerna/commit/03f80b7))
+* **deps:** `npm-lifecycle@^3.1.2` ([25edebf](https://github.com/lerna/lerna/commit/25edebf)), closes [#2189](https://github.com/lerna/lerna/issues/2189)
+* **deps:** Switch to actively-maintained `@zkochan/cmd-shim` ([60d1100](https://github.com/lerna/lerna/commit/60d1100))
+* **integration:** Limit concurrency of bootstrap --hoist test ([f25854d](https://github.com/lerna/lerna/commit/f25854d))
+
+
+
+
+
 ## [3.16.1](https://github.com/lerna/lerna/compare/v3.16.0...v3.16.1) (2019-07-19)
 
 
