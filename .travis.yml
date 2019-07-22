@@ -26,8 +26,12 @@ matrix:
   include:
     - os: windows
       node_js: "12"
-      name: "Windows Unit Tests"
-      env: LERNA_CI_SCRIPT="test -- --ci --maxWorkers=2"
+      name: "Windows Unit Tests (non-publish)"
+      env: LERNA_CI_SCRIPT="test -- --ci --maxWorkers=2 'commands[\\\/]+(?!publish|version)' core utils"
+    - os: windows
+      node_js: "12"
+      name: "Windows Unit Tests (publish)"
+      env: LERNA_CI_SCRIPT="test -- --ci --maxWorkers=2 'commands[\\\/]+(?=publish|version)'"
     - os: windows
       node_js: "12"
       name: "Windows Integration Tests (non-publish)"
