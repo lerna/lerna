@@ -31,7 +31,7 @@ matrix:
     - os: windows
       node_js: "12"
       name: "Windows Integration Tests"
-      env: LERNA_CI_SCRIPT="integration -- --ci"
+      env: LERNA_CI_SCRIPT="integration -- --ci --passWithNoTests"
 
 cache: npm
 
