@@ -11,7 +11,7 @@ test("lerna bootstrap --hoist", async () => {
   const lerna = cliRunner(cwd);
 
   /* eslint-disable max-len */
-  const { stderr } = await lerna("bootstrap", "--no-ci", "--hoist");
+  const { stderr } = await lerna("bootstrap", "--concurrency=1", "--no-ci", "--hoist");
   expect(stderr).toMatchInlineSnapshot(`
 lerna notice cli __TEST_VERSION__
 lerna info Bootstrapping 4 packages
@@ -19,9 +19,9 @@ lerna info lifecycle package-4@1.0.0~preinstall: package-4@1.0.0
 lerna WARN EHOIST_PKG_VERSION "@integration/package-3" package depends on pify@^1.0.0, which differs from the hoisted pify@^2.0.0.
 lerna info Installing external dependencies
 lerna info hoist Installing hoisted dependencies into root
+lerna info hoist Finished bootstrapping root
 lerna info hoist Pruning hoisted dependencies
 lerna info hoist Finished pruning hoisted dependencies
-lerna info hoist Finished bootstrapping root
 lerna info Symlinking packages and binaries
 lerna info lifecycle @integration/package-3@1.0.0~postinstall: @integration/package-3@1.0.0
 lerna info lifecycle @integration/package-2@1.0.0~prepublish: @integration/package-2@1.0.0
@@ -30,7 +30,7 @@ lerna success Bootstrapped 4 packages
 `);
 
   // the "--silent" flag is passed to `npm run`
-  const { stdout } = await lerna("run", "test", "--", "--silent");
+  const { stdout } = await lerna("run", "test", "--concurrency=1", "--", "--silent");
   expect(stdout).toMatchInlineSnapshot(`
 package-1
 package-2
