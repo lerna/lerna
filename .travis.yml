@@ -24,12 +24,7 @@ matrix:
   fast_finish: true
   # only run windows tests on latest node
   include:
-    - os: windows
-      node_js: "12"
-      name: "Windows Unit Tests (non-publish)"
-      env:
-        - LERNA_CI_SCRIPT="test -- --maxWorkers=2"
-        - LERNA_CI_TYPE="non-publish"
+    # run publish/version tests first (slower, higher priority)
     - os: windows
       node_js: "12"
       name: "Windows Unit Tests (publish)"
@@ -38,16 +33,24 @@ matrix:
         - LERNA_CI_TYPE="publish"
     - os: windows
       node_js: "12"
-      name: "Windows Integration Tests (non-publish)"
-      env:
-        - LERNA_CI_SCRIPT="integration"
-        - LERNA_CI_TYPE="non-publish"
-    - os: windows
-      node_js: "12"
       name: "Windows Integration Tests (publish)"
       env:
         - LERNA_CI_SCRIPT="integration"
         - LERNA_CI_TYPE="publish"
+
+    # and then the rest of the tests (quicker, lower priority)
+    - os: windows
+      node_js: "12"
+      name: "Windows Unit Tests (non-publish)"
+      env:
+        - LERNA_CI_SCRIPT="test -- --maxWorkers=2"
+        - LERNA_CI_TYPE="non-publish"
+    - os: windows
+      node_js: "12"
+      name: "Windows Integration Tests (non-publish)"
+      env:
+        - LERNA_CI_SCRIPT="integration"
+        - LERNA_CI_TYPE="non-publish"
 
 cache: npm
 
