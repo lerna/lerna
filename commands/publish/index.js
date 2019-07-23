@@ -56,6 +56,44 @@ class PublishCommand extends Command {
     return this.options.bump !== "from-package";
   }
 
+  configureProperties() {
+    super.configureProperties();
+
+    // Defaults are necessary here because yargs defaults
+    // override durable options provided by a config file
+    const {
+      // prettier-ignore
+      exact,
+      gitHead,
+      gitReset,
+      tagVersionPrefix = "v",
+      verifyAccess,
+    } = this.options;
+
+    if (this.requiresGit && gitHead) {
+      throw new ValidationError("EGITHEAD", "--git-head is only allowed with 'from-package' positional");
+    }
+
+    // https://docs.npmjs.com/misc/config#save-prefix
+    this.savePrefix = exact ? "" : "^";
+
+    // https://docs.npmjs.com/misc/config#tag-version-prefix
+    this.tagPrefix = tagVersionPrefix;
+    // TODO: properly inherit from npm-conf
+
+    // inverted boolean options are only respected if prefixed with `--no-`, e.g. `--no-verify-access`
+    this.gitReset = gitReset !== false;
+    this.verifyAccess = verifyAccess !== false;
+
+    // consumed by npm-registry-fetch (via libnpmpublish)
+    this.npmSession = crypto.randomBytes(8).toString("hex");
+  }
+
+  get userAgent() {
+    // consumed by npm-registry-fetch (via libnpmpublish)
+    return `lerna/${this.options.lernaVersion}/node@${process.version}+${process.arch} (${process.platform})`;
+  }
+
   initialize() {
     if (this.options.skipNpm) {
       // TODO: remove in next major release
@@ -72,29 +110,14 @@ class PublishCommand extends Command {
       this.logger.info("require-scripts", "enabled");
     }
 
-    if (this.requiresGit && this.options.gitHead) {
-      throw new ValidationError("EGITHEAD", "--git-head is only allowed with 'from-package' positional");
-    }
-
-    // https://docs.npmjs.com/misc/config#save-prefix
-    this.savePrefix = this.options.exact ? "" : "^";
-
-    // inverted boolean options are only respected if prefixed with `--no-`, e.g. `--no-verify-access`
-    this.gitReset = this.options.gitReset !== false;
-    this.verifyAccess = this.options.verifyAccess !== false;
-
     // npmSession and user-agent are consumed by npm-registry-fetch (via libnpmpublish)
-    const npmSession = crypto.randomBytes(8).toString("hex");
-    // eslint-disable-next-line max-len
-    const userAgent = `lerna/${this.options.lernaVersion}/node@${process.version}+${process.arch} (${process.platform})`;
-
-    this.logger.verbose("session", npmSession);
-    this.logger.verbose("user-agent", userAgent);
+    this.logger.verbose("session", this.npmSession);
+    this.logger.verbose("user-agent", this.userAgent);
 
     this.conf = npmConf({
       lernaCommand: "publish",
-      npmSession,
-      npmVersion: userAgent,
+      npmSession: this.npmSession,
+      npmVersion: this.userAgent,
       otp: this.options.otp,
       registry: this.options.registry,
     });
@@ -102,7 +125,7 @@ class PublishCommand extends Command {
     // cache to hold a one-time-password across publishes
     this.otpCache = { otp: this.conf.get("otp") };
 
-    this.conf.set("user-agent", userAgent, "cli");
+    this.conf.set("user-agent", this.userAgent, "cli");
 
     if (this.conf.get("registry") === "https://registry.yarnpkg.com") {
       this.logger.warn("", "Yarn's registry proxy is broken, replacing with public npm registry");
@@ -225,8 +248,7 @@ class PublishCommand extends Command {
   }
 
   detectFromGit() {
-    const { tagVersionPrefix = "v" } = this.options;
-    const matchingPattern = this.project.isIndependent() ? "*@*" : `${tagVersionPrefix}*.*.*`;
+    const matchingPattern = this.project.isIndependent() ? "*@*" : `${this.tagPrefix}*.*.*`;
 
     let chain = Promise.resolve();
 
@@ -302,7 +324,6 @@ class PublishCommand extends Command {
     const {
       bump = "prepatch",
       preid = "alpha",
-      tagVersionPrefix = "v",
       ignoreChanges,
       forcePublish,
       includeMergedTags,
@@ -361,7 +382,7 @@ class PublishCommand extends Command {
       chain = chain.then(updates =>
         describeRef(
           {
-            match: `${tagVersionPrefix}*.*.*`,
+            match: `${this.tagPrefix}*.*.*`,
             cwd,
           },
           includeMergedTags
