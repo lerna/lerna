@@ -1,0 +1,10 @@
+{
+  "name": "tail",
+  "version": "4.0.0",
+  "files": [
+    "index.js"
+  ],
+  "scripts": {
+    "postpack": "node postpack.js"
+  }
+}

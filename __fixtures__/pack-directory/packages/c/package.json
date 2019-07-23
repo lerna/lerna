@@ -1,0 +1,11 @@
+{
+  "name": "pubs",
+  "version": "3.0.0",
+  "files": [
+    "index.js"
+  ],
+  "scripts": {
+    "prepublish": "exit 1",
+    "prepublishOnly": "node prepublishOnly.js"
+  }
+}
