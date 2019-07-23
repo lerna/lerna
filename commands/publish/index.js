@@ -650,8 +650,8 @@ class PublishCommand extends Command {
         this.options.requireScripts && (pkg => this.execScript(pkg, "prepublish")),
 
         pkg =>
-          pulseTillDone(packDirectory(pkg, pkg.contents, opts)).then(packed => {
-            tracker.verbose("packed", pkg.name, path.relative(this.project.rootPath, pkg.contents));
+          pulseTillDone(packDirectory(pkg, pkg.location, opts)).then(packed => {
+            tracker.verbose("packed", path.relative(this.project.rootPath, pkg.contents));
             tracker.completeWork(1);
 
             // store metadata for use in this.publishPacked()

@@ -316,16 +316,18 @@ Map {
 
       await lernaPublish(cwd)("--contents", "dist");
 
-      expect(packDirectory).toHaveBeenCalledWith(
-        expect.objectContaining({ name: "package-1" }),
-        expect.stringContaining(path.normalize("packages/package-1/dist")),
-        expect.any(Object)
-      );
-      expect(packDirectory).toHaveBeenCalledWith(
-        expect.objectContaining({ name: "package-2" }),
-        expect.stringContaining(path.normalize("packages/package-2/dist")),
-        expect.any(Object)
-      );
+      const [[pkgOne, dirOne, opts], [pkgTwo, dirTwo]] = packDirectory.mock.calls;
+
+      // second argument to packDirectory() is the location, _not_ the contents
+      expect(dirOne).toBe(pkgOne.location);
+      expect(dirTwo).toBe(pkgTwo.location);
+
+      expect(pkgOne.contents).toBe(path.join(pkgOne.location, "dist"));
+      expect(pkgTwo.contents).toBe(path.join(pkgTwo.location, "dist"));
+
+      // opts is a snapshot of npm-conf instance
+      expect(packDirectory).toHaveBeenCalledWith(pkgOne, dirOne, opts);
+      expect(packDirectory).toHaveBeenCalledWith(pkgTwo, dirTwo, opts);
     });
   });
 
@@ -342,17 +344,24 @@ Map {
       await lernaPublish(cwd)();
 
       expect(packDirectory).toHaveBeenCalledWith(
-        expect.objectContaining({ name: "package-1" }),
-        expect.stringMatching(/packages[\\/]+package-1[\\/]+dist$/),
+        expect.objectContaining({
+          name: "package-1",
+          contents: path.join(cwd, "packages/package-1/dist"),
+        }),
+        path.join(cwd, "packages/package-1"),
         expect.any(Object)
       );
       expect(packDirectory).toHaveBeenCalledWith(
-        expect.objectContaining({ name: "package-2" }),
-        expect.stringMatching(/packages[\\/]+package-2$/),
+        expect.objectContaining({
+          name: "package-2",
+          contents: path.join(cwd, "packages/package-2"),
+        }),
+        path.join(cwd, "packages/package-2"),
         expect.any(Object)
       );
     });
   });
+
   describe("in a cyclical repo", () => {
     it("should throw an error with --reject-cycles", async () => {
       expect.assertions(1);
