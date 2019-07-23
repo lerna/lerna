@@ -81,8 +81,6 @@ expect.addSnapshotSerializer({
 
 describe("pack-directory", () => {
   it("resolves tarball metadata objects on success", async () => {
-    jest.spyOn(fs, "move");
-
     const cwd = await initFixture("lerna-bootstrap");
     const conf = npmConf({ prefix: cwd }).snapshot;
     const pkgs = await getPackages(cwd);
@@ -91,9 +89,6 @@ describe("pack-directory", () => {
     const [head, tail] = await Promise.all(
       [pkgs.shift(), pkgs.pop()].map(pkg => packDirectory(pkg, pkg.location, conf))
     );
-
-    // the generated tarball is _not_ moved into the package directory
-    expect(fs.move).not.toHaveBeenCalled();
 
     const INTEGRITY_PATTERN = /sha512-[\S]{88}/;
     const SHASUM_PATTERN = /[0-9a-f]{40}/;
