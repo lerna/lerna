@@ -72,6 +72,21 @@ describe("publish from-git", () => {
     ]);
   });
 
+  it("publishes packages matching custom --tag-version-prefix", async () => {
+    const cwd = await initFixture("normal");
+
+    await gitTag(cwd, "foo/1.0.0");
+    await lernaPublish(cwd)("from-git", "--tag-version-prefix", "foo/");
+
+    expect(npmPublish.order()).toEqual([
+      "package-1",
+      "package-3",
+      "package-4",
+      "package-2",
+      // package-5 is private
+    ]);
+  });
+
   it("only publishes independent packages with matching tags", async () => {
     const cwd = await initFixture("independent");
 

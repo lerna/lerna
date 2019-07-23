@@ -7,7 +7,7 @@ const childProcess = require("@lerna/child-process");
 module.exports = getCurrentTags;
 
 function getCurrentTags(execOpts, matchingPattern) {
-  log.silly("getCurrentTags");
+  log.silly("getCurrentTags", "matching %j", matchingPattern);
 
   const opts = Object.assign({}, execOpts, {
     // don't reject due to non-zero exit code when there are no results
@@ -16,12 +16,17 @@ function getCurrentTags(execOpts, matchingPattern) {
 
   return childProcess
     .exec("git", ["tag", "--sort", "version:refname", "--points-at", "HEAD", "--list", matchingPattern], opts)
-    .then(listPackageNames);
-}
+    .then(result => {
+      const lines = result.stdout.split("\n").filter(Boolean);
 
-function listPackageNames(result) {
-  return result.stdout
-    .split("\n")
-    .map(tag => tag && npa(tag).name)
-    .filter(Boolean);
+      if (matchingPattern === "*@*") {
+        // independent mode does not respect tagVersionPrefix,
+        // but embeds the package name in the tag "prefix"
+        return lines.map(tag => npa(tag).name);
+      }
+
+      // "fixed" mode can have a custom tagVersionPrefix,
+      // but it doesn't really matter as it is not used to extract package names
+      return lines;
+    });
 }
