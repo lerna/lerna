@@ -4,7 +4,9 @@ const fs = require("fs");
 const path = require("path");
 
 const indexSource = path.resolve("./index.src.js");
-const indexTarget = path.resolve("./index.js");
+const indexTarget = path.resolve("./dist/index.js");
+
+fs.mkdirSync(path.dirname(indexTarget));
 
 const reader = fs.createReadStream(indexSource);
 const writer = fs.createWriteStream(indexTarget);

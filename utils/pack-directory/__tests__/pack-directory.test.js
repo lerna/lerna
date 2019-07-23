@@ -101,23 +101,18 @@ describe("pack-directory", () => {
     expect(head).toMatchInlineSnapshot(`
 Object {
   "bundled": Array [],
-  "entryCount": 3,
+  "entryCount": 2,
   "filename": "integration-package-1-1.0.0.tgz",
   "files": Array [
     Object {
       "mode": "MODE",
-      "path": "build.js",
-      "size": 329,
-    },
-    Object {
-      "mode": "MODE",
-      "path": "index.src.js",
+      "path": "dist/index.js",
       "size": 141,
     },
     Object {
       "mode": "MODE",
       "path": "package.json",
-      "size": 269,
+      "size": 325,
     },
   ],
   "id": "@integration/package-1@1.0.0",
@@ -126,7 +121,7 @@ Object {
   "shasum": "SHASUM",
   "size": "TAR_SIZE",
   "tarFilePath": "__TMP_DIR__/integration-package-1-1.0.0.tgz",
-  "unpackedSize": 739,
+  "unpackedSize": 466,
   "version": "1.0.0",
 }
 `);

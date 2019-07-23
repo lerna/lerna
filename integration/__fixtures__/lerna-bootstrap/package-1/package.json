@@ -2,6 +2,10 @@
   "name": "@integration/package-1",
   "version": "1.0.0",
   "private": true,
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "prepare": "node build.js",
     "test": "echo package-1"
