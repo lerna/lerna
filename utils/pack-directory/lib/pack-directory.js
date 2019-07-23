@@ -24,7 +24,7 @@ function packDirectory(_pkg, dir, _opts) {
   const pkg = Package.lazy(_pkg, dir);
   const opts = PackConfig(_opts);
 
-  opts.log.verbose("pack-directory", path.relative(".", dir));
+  opts.log.verbose("pack-directory", path.relative(".", pkg.contents));
 
   let chain = Promise.resolve();
 
@@ -42,11 +42,11 @@ function packDirectory(_pkg, dir, _opts) {
 
   chain = chain.then(() => runLifecycle(pkg, "prepack", opts));
   chain = chain.then(() => pkg.refresh());
-  chain = chain.then(() => packlist({ path: dir }));
+  chain = chain.then(() => packlist({ path: pkg.contents }));
   chain = chain.then(files =>
     tar.create(
       {
-        cwd: dir,
+        cwd: pkg.contents,
         prefix: "package/",
         portable: true,
         // Provide a specific date in the 1980s for the benefit of zip,

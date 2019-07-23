@@ -194,8 +194,8 @@ describe("pack-directory", () => {
     const last = pkgs.pop();
     const subs = await packDirectory(
       last,
-      // TODO: use location
-      last.contents,
+      // a real package doesn't _actually_ need this argument
+      undefined,
       conf
     );
 
