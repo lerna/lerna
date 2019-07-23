@@ -27,7 +27,7 @@ function isString(val) {
 }
 
 function serializeTempDir(match, cwd, subPath) {
-  return normalizePath(path.join("__TAR_DIR__", subPath));
+  return normalizePath(path.join("__TMP_DIR__", subPath));
 }
 
 // process.umask() differs between macOS and Ubuntu,
@@ -125,7 +125,7 @@ Object {
   "name": "@integration/package-1",
   "shasum": "SHASUM",
   "size": "TAR_SIZE",
-  "tarFilePath": "__TAR_DIR__/integration-package-1-1.0.0.tgz",
+  "tarFilePath": "__TMP_DIR__/integration-package-1-1.0.0.tgz",
   "unpackedSize": 739,
   "version": "1.0.0",
 }
@@ -152,7 +152,7 @@ Object {
   "name": "package-4",
   "shasum": "SHASUM",
   "size": "TAR_SIZE",
-  "tarFilePath": "__TAR_DIR__/package-4-1.0.0.tgz",
+  "tarFilePath": "__TMP_DIR__/package-4-1.0.0.tgz",
   "unpackedSize": 224,
   "version": "1.0.0",
 }
@@ -224,7 +224,7 @@ Object {
   "name": "package-3",
   "shasum": "SHASUM",
   "size": "TAR_SIZE",
-  "tarFilePath": "__TAR_DIR__/package-3-1.0.0.tgz",
+  "tarFilePath": "__TMP_DIR__/package-3-1.0.0.tgz",
   "unpackedSize": 705,
   "version": "1.0.0",
 }
