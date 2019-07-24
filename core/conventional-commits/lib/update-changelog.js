@@ -11,12 +11,12 @@ const readExistingChangelog = require("./read-existing-changelog");
 
 module.exports = updateChangelog;
 
-function updateChangelog(pkg, type, { changelogPreset, rootPath, tagPrefix, version }) {
+function updateChangelog(pkg, type, { changelogPreset, rootPath, tagPrefix = "v", version }) {
   log.silly(type, "for %s at %s", pkg.name, pkg.location);
 
   return getChangelogConfig(changelogPreset, rootPath).then(config => {
     const options = {};
-    let context; // pass as positional because cc-core's merge-config is wack
+    const context = {}; // pass as positional because cc-core's merge-config is wack
 
     // cc-core mutates input :P
     if (config.conventionalChangelog) {
@@ -31,7 +31,10 @@ function updateChangelog(pkg, type, { changelogPreset, rootPath, tagPrefix, vers
     const gitRawCommitsOpts = Object.assign({}, options.config.gitRawCommitsOpts);
 
     if (type === "root") {
-      context = { version };
+      context.version = version;
+
+      // preserve tagPrefix because cc-core can't find the currentTag otherwise
+      context.currentTag = `${tagPrefix}${version}`;
 
       // root changelogs are only enabled in fixed mode, and need the proper tag prefix
       options.tagPrefix = tagPrefix;
@@ -45,6 +48,9 @@ function updateChangelog(pkg, type, { changelogPreset, rootPath, tagPrefix, vers
       } else {
         // only fixed mode can have a custom tag prefix
         options.tagPrefix = tagPrefix;
+
+        // preserve tagPrefix because cc-core can't find the currentTag otherwise
+        context.currentTag = `${tagPrefix}${pkg.version}`;
       }
     }
 
