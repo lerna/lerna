@@ -366,9 +366,15 @@ describe("conventional-commits", () => {
       // update version
       await pkg1.set("version", "1.0.1").serialize();
 
-      const leafChangelog = await updateChangelog(pkg1, "fixed", {
-        tagPrefix: "dragons-are-awesome",
-      });
+      const [leafChangelog, rootChangelog] = await Promise.all([
+        updateChangelog(pkg1, "fixed", {
+          tagPrefix: "dragons-are-awesome",
+        }),
+        updateChangelog({ location: cwd }, "root", {
+          tagPrefix: "dragons-are-awesome",
+          version: "1.0.1",
+        }),
+      ]);
 
       expect(leafChangelog.newEntry.trimRight()).toMatchInlineSnapshot(`
 ## [1.0.1](/compare/dragons-are-awesome1.0.0...1.0.1) (YYYY-MM-DD)
@@ -377,6 +383,39 @@ describe("conventional-commits", () => {
 ### Bug Fixes
 
 * A second commit for our CHANGELOG ([SHA](https://github.com/lerna/conventional-commits-fixed/commit/SHA))
+`);
+      expect(rootChangelog.newEntry.trimRight()).toMatchInlineSnapshot(`
+## 1.0.1 (YYYY-MM-DD)
+
+
+### Bug Fixes
+
+* A second commit for our CHANGELOG ([SHA](https://github.com/lerna/conventional-commits-fixed/commit/SHA))
+`);
+
+      await gitAdd(cwd, pkg1.manifestLocation);
+      await gitCommit(cwd, "chore(release): Publish v1.0.1");
+      await gitTag(cwd, "dragons-are-awesome1.0.1");
+
+      // subsequent change
+      await pkg1.set("changed", 2).serialize();
+      await gitAdd(cwd, pkg1.manifestLocation);
+      await gitCommit(cwd, "fix: A third commit for our CHANGELOG");
+
+      const lastRootChangelog = await updateChangelog({ location: cwd }, "root", {
+        tagPrefix: "dragons-are-awesome",
+        version: "1.0.2",
+      });
+
+      // second commit should not show up again
+      expect(lastRootChangelog.newEntry.trimRight()).toMatchInlineSnapshot(`
+## 1.0.2 (YYYY-MM-DD)
+
+
+### Bug Fixes
+
+* A second commit for our CHANGELOG ([SHA](https://github.com/lerna/conventional-commits-fixed/commit/SHA))
+* A third commit for our CHANGELOG ([SHA](https://github.com/lerna/conventional-commits-fixed/commit/SHA))
 `);
     });
 
