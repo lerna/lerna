@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.16.4](https://github.com/lerna/lerna/compare/v3.16.3...v3.16.4) (2019-07-24)
+
+
+### Bug Fixes
+
+* **publish:** Pass correct arguments to packDirectory() ([b1aade3](https://github.com/lerna/lerna/commit/b1aade3))
+
+
+
+
+
 ## [3.16.3](https://github.com/lerna/lerna/compare/v3.16.2...v3.16.3) (2019-07-23)
 
 

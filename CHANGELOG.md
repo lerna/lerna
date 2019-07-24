@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.16.4](https://github.com/lerna/lerna/compare/v3.16.3...v3.16.4) (2019-07-24)
+
+
+### Bug Fixes
+
+* **conventional-commits:** Avoid duplicate root changelog entries with custom `--tag-version-prefix` ([8adeac1](https://github.com/lerna/lerna/commit/8adeac1)), closes [#2197](https://github.com/lerna/lerna/issues/2197)
+* **conventional-commits:** Preserve tag prefix in fixed changelog comparison links ([11cf6d2](https://github.com/lerna/lerna/commit/11cf6d2)), closes [#2197](https://github.com/lerna/lerna/issues/2197)
+* **pack-directory:** Use correct property when packing subdirectories ([1575396](https://github.com/lerna/lerna/commit/1575396))
+* **publish:** Pass correct arguments to packDirectory() ([b1aade3](https://github.com/lerna/lerna/commit/b1aade3))
+
+
+
+
+
 ## [3.16.3](https://github.com/lerna/lerna/compare/v3.16.2...v3.16.3) (2019-07-23)
 
 

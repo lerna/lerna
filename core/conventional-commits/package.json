@@ -1,6 +1,6 @@
 {
   "name": "@lerna/conventional-commits",
-  "version": "3.16.0",
+  "version": "3.16.4",
   "description": "Lerna's internal interface to conventional-changelog and friends",
   "keywords": [
     "lerna",
