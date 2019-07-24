@@ -385,7 +385,7 @@ describe("conventional-commits", () => {
 * A second commit for our CHANGELOG ([SHA](https://github.com/lerna/conventional-commits-fixed/commit/SHA))
 `);
       expect(rootChangelog.newEntry.trimRight()).toMatchInlineSnapshot(`
-## 1.0.1 (YYYY-MM-DD)
+## [1.0.1](/compare/dragons-are-awesome1.0.0...1.0.1) (YYYY-MM-DD)
 
 
 ### Bug Fixes
@@ -409,12 +409,11 @@ describe("conventional-commits", () => {
 
       // second commit should not show up again
       expect(lastRootChangelog.newEntry.trimRight()).toMatchInlineSnapshot(`
-## 1.0.2 (YYYY-MM-DD)
+## [1.0.2](/compare/dragons-are-awesome1.0.1...1.0.2) (YYYY-MM-DD)
 
 
 ### Bug Fixes
 
-* A second commit for our CHANGELOG ([SHA](https://github.com/lerna/conventional-commits-fixed/commit/SHA))
 * A third commit for our CHANGELOG ([SHA](https://github.com/lerna/conventional-commits-fixed/commit/SHA))
 `);
     });

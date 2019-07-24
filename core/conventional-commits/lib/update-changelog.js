@@ -32,6 +32,9 @@ function updateChangelog(pkg, type, { changelogPreset, rootPath, tagPrefix, vers
 
     if (type === "root") {
       context = { version };
+
+      // root changelogs are only enabled in fixed mode, and need the proper tag prefix
+      options.tagPrefix = tagPrefix;
     } else {
       // "fixed" or "independent"
       gitRawCommitsOpts.path = pkg.location;
