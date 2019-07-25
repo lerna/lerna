@@ -165,6 +165,7 @@ class RunCommand extends Command {
         (getElapsed() / 1000).toFixed(1)
       );
       output(result.stdout);
+      output(result.stderr);
 
       return result;
     });
