@@ -76,6 +76,7 @@ Changes not staged for commit:
 	modified:   packages/package-1/package.json
 	modified:   packages/package-2/package.json
 	modified:   packages/package-3/package.json
+	modified:   packages/package-5/package.json
 
 no changes added to commit (use "git add" and/or "git commit -a")
 `);

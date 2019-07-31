@@ -492,9 +492,7 @@ class PublishCommand extends Command {
   }
 
   updateCanaryVersions() {
-    const publishableUpdates = this.updates.filter(node => !node.pkg.private);
-
-    return pMap(publishableUpdates, ({ pkg, localDependencies }) => {
+    return pMap(this.updates, ({ pkg, localDependencies }) => {
       pkg.version = this.updatesVersions.get(pkg.name);
 
       for (const [depName, resolved] of localDependencies) {
@@ -552,7 +550,7 @@ class PublishCommand extends Command {
   }
 
   serializeChanges() {
-    return pMap(this.packagesToPublish, pkg => pkg.serialize());
+    return pMap(this.updates, ({ pkg }) => pkg.serialize());
   }
 
   resetChanges() {
@@ -560,7 +558,7 @@ class PublishCommand extends Command {
     // and we should always __attempt_ to leave the working tree clean
     const { cwd } = this.execOpts;
     const dirtyManifests = [this.project.manifest]
-      .concat(this.packagesToPublish)
+      .concat(this.updates.map(({ pkg }) => pkg))
       .map(pkg => path.relative(cwd, pkg.manifestLocation));
 
     return gitCheckout(dirtyManifests, this.execOpts).catch(err => {

@@ -92,6 +92,7 @@ Object {
   "package-2": 1.0.1-alpha.0+SHA,
   "package-3": 1.0.1-alpha.0+SHA,
   "package-4": 1.0.1-alpha.0+SHA,
+  "package-5": 1.0.1-alpha.0+SHA,
 }
 `);
 });
@@ -107,6 +108,7 @@ Object {
   "package-1": 1.0.1-beta.0+SHA,
   "package-2": 1.0.1-beta.0+SHA,
   "package-3": 1.0.1-beta.0+SHA,
+  "package-5": 1.0.1-beta.0+SHA,
 }
 `);
 });
@@ -123,6 +125,7 @@ Object {
   "package-1": 1.0.1-alpha.0+SHA,
   "package-2": 1.0.1-alpha.0+SHA,
   "package-3": 1.0.1-alpha.0+SHA,
+  "package-5": 1.0.1-alpha.0+SHA,
 }
 `);
 });
@@ -138,6 +141,7 @@ Object {
   "package-1": 1.1.0-alpha.0+SHA,
   "package-2": 2.1.0-alpha.0+SHA,
   "package-3": 3.1.0-alpha.0+SHA,
+  "package-5": 5.1.0-alpha.0+SHA,
 }
 `);
 });
@@ -311,6 +315,7 @@ Object {
   "package-2": 1.0.1-alpha.0+SHA,
   "package-3": 1.0.1-alpha.0+SHA,
   "package-4": 1.0.1-alpha.0+SHA,
+  "package-5": 1.0.1-alpha.0+SHA,
 }
 `);
 });
@@ -333,6 +338,7 @@ test("publish --canary --force-publish <arg> on tagged release avoids early exit
 Object {
   "package-2": 2.0.1-alpha.0+SHA,
   "package-3": 3.0.1-alpha.0+SHA,
+  "package-5": 5.0.2-alpha.0+SHA,
 }
 `);
 });
