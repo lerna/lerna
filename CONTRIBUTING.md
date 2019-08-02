@@ -109,4 +109,4 @@ $ xdg-open coverage/lcov-report/index.html
 
 ### Submitting Pull Requests
 
-If you've cloned the project directly and are working on a feature branch, you'll need write permissions to be able to push that branch to the remote to open a pull request.
+This project follows GitHub's standard forking model. Please fork the project to submit pull requests. 
