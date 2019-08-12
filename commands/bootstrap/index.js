@@ -14,8 +14,7 @@ const rimrafDir = require("@lerna/rimraf-dir");
 const hasNpmVersion = require("@lerna/has-npm-version");
 const npmInstall = require("@lerna/npm-install");
 const { createRunner } = require("@lerna/run-lifecycle");
-const batchPackages = require("@lerna/batch-packages");
-const runParallelBatches = require("@lerna/run-parallel-batches");
+const runTopologically = require("@lerna/run-topologically");
 const symlinkBinary = require("@lerna/symlink-binary");
 const symlinkDependencies = require("@lerna/symlink-dependencies");
 const ValidationError = require("@lerna/validation-error");
@@ -178,10 +177,6 @@ class BootstrapCommand extends Command {
     });
 
     chain = chain.then(() => {
-      this.batchedPackages = this.toposort
-        ? batchPackages(this.filteredPackages, this.options.rejectCycles)
-        : [this.filteredPackages];
-
       if (npmClient === "yarn" && !mutex) {
         return getPort({ port: 42424, host: "0.0.0.0" }).then(port => {
           this.npmConfig.mutex = `network:${port}`;
@@ -281,9 +276,14 @@ class BootstrapCommand extends Command {
 
     tracker.addWork(this.filteredPackages.length);
 
-    return pFinally(runParallelBatches(this.batchedPackages, this.concurrency, mapPackageWithScript), () =>
-      tracker.finish()
-    );
+    const runner = this.toposort
+      ? runTopologically(this.filteredPackages, mapPackageWithScript, {
+          concurrency: this.concurrency,
+          rejectCycles: this.options.rejectCycles,
+        })
+      : pMap(this.filteredPackages, mapPackageWithScript, { concurrency: this.concurrency });
+
+    return pFinally(runner, () => tracker.finish());
   }
 
   hoistedDirectory(dependency) {
