@@ -32,6 +32,11 @@ exports.builder = yargs =>
         alias: "yes",
         type: "boolean",
       },
+      "dest-name": {
+        group: "Command Options:",
+        describe: "Custom name for the new directory created by the import",
+        type: "string",
+      },
     });
 
 exports.handler = function handler(argv) {

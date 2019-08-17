@@ -62,13 +62,16 @@ class ImportCommand extends Command {
 
     // Compute a target directory relative to the Lerna root
     const targetBase = this.getTargetBase();
-    if (this.getPackageDirectories().indexOf(targetBase) === -1) {
+    // Ensure target directory is inside one of the lerna package directories
+    const containsTarget = packageDir => targetBase.includes(packageDir);
+    if (!this.getPackageDirectories().some(containsTarget)) {
       throw new ValidationError(
         "EDESTDIR",
         `--dest does not match with the package directories: ${this.getPackageDirectories()}`
       );
     }
-    const targetDir = path.join(targetBase, externalRepoBase);
+
+    const targetDir = path.join(targetBase, this.options.destName || externalRepoBase);
 
     // Compute a target directory relative to the Git root
     const gitRepoRoot = this.getWorkspaceRoot();

@@ -47,10 +47,17 @@ $ lerna import ~/Product --flatten
 
 ### `--dest`
 
-When importing repositories, you can specify the destination directory by the directory listed in lerna.json.
+When importing repositories, you can specify the destination directory. It must be one of the package directories specified in the Lerna.json or a descendant of one of those directories.
 
 ```
 $ lerna import ~/Product --dest=utilities
+```
+
+### `--dest-name`
+When importing repositories, you can specify the name of the new directory created to store the imported repository. If this argument is not passed, by default lerna import will use the name of name of the directory from which the external repository was imported.   
+
+```
+$ lerna import ~/Product --dest-name=MyProduct
 ```
 
 ### `--preserve-commit`
@@ -58,6 +65,7 @@ $ lerna import ~/Product --dest=utilities
 Each git commit has an **author** and a **committer** (with a separate date for each). Usually they're the same person (and date), but since `lerna import` re-creates each commit from the external repository, the **committer** becomes the current git user (and date). This is *technically* correct, but may be undesireable, for example, on Github, which displays both the **author** and **committer** if they're different people, leading to potentially confusing history/blames on imported commits.
 
 Enabling this option preserves the original **committer** (and commit date) to avoid such issues.
+
 
 ```
 $ lerna import ~/Product --preserve-commit

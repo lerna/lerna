@@ -40,6 +40,30 @@ describe("ImportCommand", () => {
       expect(await pathExists(packageJson)).toBe(true);
     });
 
+    it("allows target base to be any descendant of a lerna package directory", async () => {
+      const [testDir, externalDir] = await initBasicFixtures();
+      const packageJson = path.join(
+        testDir,
+        "packages",
+        "bluePackages",
+        path.basename(externalDir),
+        "package.json"
+      );
+
+      await lernaImport(testDir)(externalDir, "--dest=packages/bluePackages");
+
+      expect(await pathExists(packageJson)).toBe(true);
+    });
+
+    it("creates a module in custom location when dest-name argument passed", async () => {
+      const [testDir, externalDir] = await initBasicFixtures();
+      const packageJson = path.join(testDir, "packages", "customDirectory", "package.json");
+
+      await lernaImport(testDir)(externalDir, "--dest-name=customDirectory");
+
+      expect(await pathExists(packageJson)).toBe(true);
+    });
+
     it("imports a repo with conflicted merge commits when run with --flatten", async () => {
       const [testDir, externalDir] = await initBasicFixtures();
       const branchName = "conflict_branch";
