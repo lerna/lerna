@@ -38,6 +38,8 @@ const gitCheckout = require("./lib/git-checkout");
 const removeTempLicenses = require("./lib/remove-temp-licenses");
 const verifyNpmPackageAccess = require("./lib/verify-npm-package-access");
 const getTwoFactorAuthRequired = require("./lib/get-two-factor-auth-required");
+const resetGit = require("./lib/git-reset");
+const gitRmTag = require("./lib/git-rm-tag");
 
 module.exports = factory;
 
@@ -146,7 +148,7 @@ class PublishCommand extends Command {
       chain = chain.then(() => versionCommand(this.argv));
     }
 
-    return chain.then(result => {
+    return chain.then(({ result }) => {
       if (!result) {
         // early return from nested VersionCommand
         return false;
@@ -170,6 +172,11 @@ class PublishCommand extends Command {
         // has its own confirmation prompt
         return this.confirmPublish();
       }
+      if (this.argv.delayPush) {
+        this.gitPushToRemote = result.gitPushToRemote.bind(result);
+        this.userCommitSha = result.options.userCommitSha;
+        this.tags = result.options.tags;
+      }
 
       return true;
     });
@@ -192,10 +199,25 @@ class PublishCommand extends Command {
     chain = chain.then(() => this.annotateGitHead());
     chain = chain.then(() => this.serializeChanges());
     chain = chain.then(() => this.packUpdated());
-    chain = chain.then(() => this.publishPacked());
+    chain = chain
+      .then(() => this.publishPacked())
+      .catch(err => {
+        return Promise.all([
+          gitRmTag(this.tags, this.execOpts),
+          resetGit(this.userCommitSha, this.execOpts),
+        ]).then(() => {
+          this.logger.silly("EWORKINGTREE", err.message);
+          // eslint-disable-next-line no-process-exit
+          process.exit(1);
+        });
+      });
 
     if (this.gitReset) {
       chain = chain.then(() => this.resetChanges());
+    }
+
+    if (this.gitPushToRemote) {
+      chain = chain.then(() => this.gitPushToRemote());
     }
 
     if (this.options.tempTag) {

@@ -30,7 +30,8 @@ function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions
     // describe the last annotated tag in the current branch
     const { sha, refCount, lastTagName } = describeRef.sync(execOpts, commandOptions.includeMergedTags);
     // TODO: warn about dirty tree?
-
+    // eslint-disable-next-line no-param-reassign
+    commandOptions.userCommitSha = sha;
     if (refCount === "0" && forced.size === 0 && !committish) {
       // no commits since previous release
       log.notice("", "Current HEAD is already released, skipping change detection.");

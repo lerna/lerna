@@ -67,12 +67,14 @@ class VersionCommand extends Command {
       signGitCommit,
       signGitTag,
       tagVersionPrefix = "v",
+      delayPush = false,
     } = this.options;
 
     this.gitRemote = gitRemote;
     this.tagPrefix = tagVersionPrefix;
     this.commitAndTag = gitTagVersion;
     this.pushToRemote = gitTagVersion && amend !== true && push;
+    this.delayPush = delayPush;
     // never automatically push to remote when amending a commit
 
     this.createRelease = this.pushToRemote && this.options.createRelease;
@@ -259,7 +261,7 @@ class VersionCommand extends Command {
       this.logger.info("execute", "Skipping git tag/commit");
     }
 
-    if (this.pushToRemote) {
+    if (this.pushToRemote && !this.delayPush) {
       tasks.push(() => this.gitPushToRemote());
     } else {
       this.logger.info("execute", "Skipping git push");
@@ -284,8 +286,7 @@ class VersionCommand extends Command {
       }
 
       return {
-        updates: this.updates,
-        updatesVersions: this.updatesVersions,
+        result: this,
       };
     });
   }
@@ -628,6 +629,7 @@ class VersionCommand extends Command {
 
   gitCommitAndTagVersionForUpdates() {
     const tags = this.packagesToVersion.map(pkg => `${pkg.name}@${this.updatesVersions.get(pkg.name)}`);
+    this.options.tags = tags;
     const subject = this.options.message || "Publish";
     const message = tags.reduce((msg, tag) => `${msg}${os.EOL} - ${tag}`, `${subject}${os.EOL}`);
 
