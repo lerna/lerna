@@ -35,8 +35,8 @@ You must still use the `--yes` flag to avoid all prompts.
 If you have any packages with a prerelease version number (e.g. `2.0.0-beta.3`) and you run `lerna version` with and a non-prerelease bump (`major`, `minor`, or `patch`), it will publish those previously pre-released packages _as well as_ the packages that have changed since the last release.
 
 For projects using conventional commits, use the following flags for prerelease management:
-**[`--conventional-prerelease`](#--conventional-prerelease):** release current changes as prerelease versions.
-**[`--conventional-graduate`](#--conventional-graduate):** graduate prerelease versioned packages to stable versions.
+- **[`--conventional-prerelease`](#--conventional-prerelease):** release current changes as prerelease versions.
+- **[`--conventional-graduate`](#--conventional-graduate):** graduate prerelease versioned packages to stable versions.
 
 Running `lerna version --conventional-commits` without the above flags will release current changes as prerelease only if the version is already in prerelease.
 
