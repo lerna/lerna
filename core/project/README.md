@@ -4,7 +4,7 @@
 
 ## Configuration Resolution
 
-Lerna's file-based configuration is located in `lerna.json` or the `lerna` property of `package.json`.
+Lerna's file-based configuration is located in `lerna.json`, a commonjs module exported from `lerna.config.js` or the `lerna` property of `package.json`.
 Wherever this configuration is found is considered the "root" of the lerna-managed multi-package repository.
 A minimum-viable configuration only needs a `version` property; the following examples are equivalent:
 

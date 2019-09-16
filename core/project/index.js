@@ -19,7 +19,7 @@ const makeFileFinder = require("./lib/make-file-finder");
 class Project {
   constructor(cwd) {
     const explorer = cosmiconfig("lerna", {
-      searchPlaces: ["lerna.json", "package.json"],
+      searchPlaces: ["lerna.json", "lerna.config.js", "package.json"],
       transform(obj) {
         // cosmiconfig returns null when nothing is found
         if (!obj) {

@@ -51,6 +51,13 @@ describe("Project", () => {
       });
     });
 
+    it("returns parsed lerna.config.js", async () => {
+      const project = new Project(await initFixture("basic-cjs"));
+      expect(project.config).toEqual({
+        version: "1.0.0",
+      });
+    });
+
     it("defaults to an empty object", async () => {
       await initFixture("no-lerna-config");
 
