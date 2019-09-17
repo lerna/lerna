@@ -77,8 +77,8 @@ function symlinkDependencies(packages, packageGraph, tracker) {
         });
 
         // create package symlink
-        const dependencyLocation = dependencyNode.pkg.symLinkDir
-          ? path.resolve(dependencyNode.location, dependencyNode.pkg.symLinkDir)
+        const dependencyLocation = dependencyNode.pkg.contents
+          ? path.resolve(dependencyNode.location, dependencyNode.pkg.contents)
           : dependencyNode.location;
         chain = chain.then(() => createSymlink(dependencyLocation, targetDirectory, "junction"));
 
