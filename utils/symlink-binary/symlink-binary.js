@@ -19,8 +19,8 @@ function symlinkBinary(srcPackageRef, destPackageRef) {
   return Promise.all([Package.lazy(srcPackageRef), Package.lazy(destPackageRef)]).then(
     ([srcPackage, destPackage]) => {
       const actions = Object.keys(srcPackage.bin).map(name => {
-        const srcLocation = srcPackage.pkg.contents
-          ? path.resolve(srcPackage.location, srcPackage.pkg.contents)
+        const srcLocation = srcPackage.contents
+          ? path.resolve(srcPackage.location, srcPackage.contents)
           : srcPackage.location;
         const src = path.join(srcLocation, srcPackage.bin[name]);
         const dst = path.join(destPackage.binLocation, name);
