@@ -53,6 +53,9 @@ class Package {
       rootPath: {
         value: rootPath,
       },
+      symLinkDir: {
+        value: pkg.symLinkDir,
+      },
       // internal state is "private"
       [PKG]: {
         configurable: true,
