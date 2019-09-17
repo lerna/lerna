@@ -19,7 +19,10 @@ function symlinkBinary(srcPackageRef, destPackageRef) {
   return Promise.all([Package.lazy(srcPackageRef), Package.lazy(destPackageRef)]).then(
     ([srcPackage, destPackage]) => {
       const actions = Object.keys(srcPackage.bin).map(name => {
-        const src = path.join(srcPackage.location, srcPackage.bin[name]);
+        const srcLocation = srcPackage.pkg.contents
+          ? path.resolve(srcPackage.location, srcPackage.pkg.contents)
+          : srcPackage.location;
+        const src = path.join(srcLocation, srcPackage.bin[name]);
         const dst = path.join(destPackage.binLocation, name);
 
         // Symlink all declared binaries, even if they don't exist (yet). We will
