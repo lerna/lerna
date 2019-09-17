@@ -87,6 +87,53 @@ Array [
     });
   });
 
+  describe("with contents", () => {
+    it("should symlink sub-directory of package folders and bin directories", async () => {
+      const testDir = await initFixture("with-contents");
+      await lernaLink(testDir)();
+
+      expect(symlinkedDirectories(testDir)).toMatchInlineSnapshot(`
+Array [
+  Object {
+    "_src": "packages/package-1/dist",
+    "dest": "packages/package-2/node_modules/@test/package-1",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-1/dist",
+    "dest": "packages/package-3/node_modules/@test/package-1",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-2/dist",
+    "dest": "packages/package-3/node_modules/@test/package-2",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-2/dist/cli.js",
+    "dest": "packages/package-3/node_modules/.bin/package-2",
+    "type": "exec",
+  },
+  Object {
+    "_src": "packages/package-3/dist",
+    "dest": "packages/package-4/node_modules/package-3",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-3/dist/cli1.js",
+    "dest": "packages/package-4/node_modules/.bin/package3cli1",
+    "type": "exec",
+  },
+  Object {
+    "_src": "packages/package-3/dist/cli2.js",
+    "dest": "packages/package-4/node_modules/.bin/package3cli2",
+    "type": "exec",
+  },
+]
+`);
+    });
+  });
+
   describe("with --force-local", () => {
     it("should force symlink of all packages", async () => {
       const testDir = await initFixture("force-local");
