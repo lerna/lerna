@@ -303,7 +303,7 @@ You can customize the dist-tag on a per-package basis by setting [`tag`](https:/
 
 ### `publishConfig.directory`
 
-This _non-standard_ field allows you to customize the published subdirectory just like [`--contents`](#--contents-dir), but on a per-package basis. All other caveats of `--contents` still apply.
+This _non-standard_ field allows you to customize the published subdirectory just like [`--contents`](#--contents-dir), but on a per-package basis. All other caveats of `--contents` still apply. When symlinking using `lerna link` or `lerna bootstrap`, this will be the _source_ directory of the symlink, just like how the published package would be consumed.
 
 ```json
   "publishConfig": {
