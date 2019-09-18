@@ -10,7 +10,7 @@ Install [lerna](https://www.npmjs.com/package/lerna) for access to the `lerna` C
 $ lerna link
 ```
 
-Symlink together all Lerna `packages` that are dependencies of each other in the current Lerna repo.
+Symlink together all Lerna `packages` that are dependencies of each other in the current Lerna repo. When using `publishConfig.directory`, that will be the source directory of the link (e.g. `package-1/dist => node_modules/package-1`).
 
 ## Options
 
