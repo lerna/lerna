@@ -90,6 +90,20 @@ test.each`
   expect.hasAssertions();
 });
 
+test.each`
+  argv
+  ${["--scope", "not-a-package", "--continue-if-no-match"]}
+  ${["--ignore", "package-*", "--continue-if-no-match"]}
+  ${["--scope", "package-@(1|2)", "--ignore", "package-{1,2}", "--continue-if-no-match"]}
+`("no errors and no packages $argv", async ({ argv }) => {
+  const packageGraph = await buildGraph(cwd);
+  const execOpts = { cwd };
+  const options = parseOptions(...argv);
+
+  const result = await getFilteredPackages(packageGraph, execOpts, options);
+  expect(result).toHaveLength(0);
+});
+
 test("--since returns all packages if no tag is found", async () => {
   const packageGraph = await buildGraph(cwd);
   const execOpts = { cwd };
