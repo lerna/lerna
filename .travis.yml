@@ -52,7 +52,7 @@ before_install:
         export PATH="/c/Program Files/Git/mingw64/bin:/c/Program Files/Git/mingw64/usr/bin:/c/Program Files/Git/mingw64/libexec/git-core:$PATH"
       ;;
     esac
-  - curl -L https://unpkg.com/@pnpm/self-installer | node
+  - npm install --global pnpm
 
 install: pnpm recursive install
 
