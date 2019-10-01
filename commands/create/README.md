@@ -34,3 +34,9 @@ Command Options:
   --tag           Configure the package's publishConfig.tag             [string]
   --yes           Skip all prompts, accepting default values
 ```
+
+## ex:
+```
+lerna create custome-hooks
+```
+```custome-hooks``` is name of package
