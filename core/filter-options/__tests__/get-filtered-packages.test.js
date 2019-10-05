@@ -169,6 +169,32 @@ test("--scope package-{2,3,4} --since master", async () => {
   );
 });
 
+test("--exclude-dependents", async () => {
+  const packageGraph = await buildGraph(cwd);
+  const execOpts = { cwd };
+  const options = parseOptions("--since", "foo", "--exclude-dependents");
+
+  await getFilteredPackages(packageGraph, execOpts, options);
+
+  expect(collectUpdates).toHaveBeenLastCalledWith(
+    expect.any(Array),
+    packageGraph,
+    execOpts,
+    expect.objectContaining({ excludeDependents: true })
+  );
+});
+
+test("--exclude-dependents conflicts with --include-filtered-dependents", async () => {
+  try {
+    parseOptions("--exclude-dependents", "--include-filtered-dependents");
+  } catch (err) {
+    expect(err.message).toMatch("exclude-dependents");
+    expect(err.message).toMatch("include-filtered-dependents");
+  }
+
+  expect.hasAssertions();
+});
+
 test("--include-filtered-dependents", async () => {
   const packageGraph = await buildGraph(cwd);
   const execOpts = { cwd };

@@ -35,11 +35,20 @@ function filterOptions(yargs) {
       `,
       type: "string",
     },
+    "exclude-dependents": {
+      describe: dedent`
+        Exclude all transitive dependents when running a command
+        with --since, overriding the default "changed" algorithm.
+      `,
+      conflicts: "include-filtered-dependents",
+      type: "boolean",
+    },
     "include-filtered-dependents": {
       describe: dedent`
         Include all transitive dependents when running a command
         regardless of --scope, --ignore, or --since.
       `,
+      conflicts: "exclude-dependents",
       type: "boolean",
     },
     "include-filtered-dependencies": {

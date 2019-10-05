@@ -4,7 +4,7 @@ const collectDependents = require("./collect-dependents");
 
 module.exports = collectPackages;
 
-function collectPackages(packages, { isCandidate = () => true, onInclude } = {}) {
+function collectPackages(packages, { isCandidate = () => true, onInclude, excludeDependents } = {}) {
   const candidates = new Set();
 
   packages.forEach((node, name) => {
@@ -13,8 +13,9 @@ function collectPackages(packages, { isCandidate = () => true, onInclude } = {})
     }
   });
 
-  const dependents = collectDependents(candidates);
-  dependents.forEach(node => candidates.add(node));
+  if (!excludeDependents) {
+    collectDependents(candidates).forEach(node => candidates.add(node));
+  }
 
   // The result should always be in the same order as the input
   const updates = [];

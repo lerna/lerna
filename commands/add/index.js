@@ -105,6 +105,7 @@ class AddCommand extends Command {
           ignore: undefined,
           private: undefined,
           since: undefined,
+          excludeDependents: undefined,
           includeFilteredDependents: undefined,
           includeFilteredDependencies: undefined,
         });

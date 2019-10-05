@@ -290,6 +290,7 @@ describe("AddCommand", () => {
         ignore: undefined,
         private: undefined,
         since: undefined,
+        excludeDependents: undefined,
         includeFilteredDependents: undefined,
         includeFilteredDependencies: undefined,
       })

@@ -51,6 +51,12 @@ $ lerna ls --since some-branch
 
 _This can be particularly useful when used in CI, if you can obtain the target branch a PR will be going into, because you can use that as the `ref` to the `--since` option. This works well for PRs going into master as well as feature branches._
 
+### `--exclude-dependents`
+
+Exclude all transitive dependents when running a command with `--since`, overriding the default "changed" algorithm.
+
+This flag has no effect without `--since`, and will throw an error in that case.
+
 ### `--include-filtered-dependents`
 
 Include all transitive dependents when running a command regardless of `--scope`, `--ignore`, or `--since`.

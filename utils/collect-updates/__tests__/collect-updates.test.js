@@ -95,6 +95,23 @@ describe("collectUpdates()", () => {
     ]);
   });
 
+  it("constrains results by excluded dependents", () => {
+    changedPackages.add("package-dag-1");
+
+    const graph = buildGraph();
+    const pkgs = graph.rawPackageList;
+    const execOpts = { cwd: "/test" };
+
+    const updates = collectUpdates(pkgs, graph, execOpts, {
+      excludeDependents: true,
+    });
+
+    expect(updates).toEqual([
+      expect.objectContaining({ name: "package-dag-1" }),
+      // collectDependents() is skipped
+    ]);
+  });
+
   it("constrains results by filtered packages", () => {
     changedPackages.add("package-dag-2a");
     changedPackages.add("package-dag-3");

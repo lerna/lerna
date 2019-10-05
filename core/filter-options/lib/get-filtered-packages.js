@@ -30,6 +30,10 @@ function getFilteredPackages(packageGraph, execOpts, options) {
   if (options.since !== undefined) {
     log.notice("filter", "changed since %j", options.since);
 
+    if (options.excludeDependents) {
+      log.notice("filter", "excluding dependents");
+    }
+
     chain = chain.then(filteredPackages =>
       Promise.resolve(collectUpdates(filteredPackages, packageGraph, execOpts, options)).then(updates => {
         const updated = new Set(updates.map(({ pkg }) => pkg.name));

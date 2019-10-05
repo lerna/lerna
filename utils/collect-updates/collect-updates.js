@@ -13,7 +13,7 @@ module.exports.collectPackages = collectPackages;
 module.exports.getPackagesForOption = getPackagesForOption;
 
 function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions) {
-  const { forcePublish, conventionalCommits, conventionalGraduate } = commandOptions;
+  const { forcePublish, conventionalCommits, conventionalGraduate, excludeDependents } = commandOptions;
 
   // If --conventional-commits and --conventional-graduate are both set, ignore --force-publish
   const useConventionalGraduate = conventionalCommits && conventionalGraduate;
@@ -69,6 +69,7 @@ function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions
 
     return collectPackages(packages, {
       onInclude: name => log.verbose("updated", name),
+      excludeDependents,
     });
   }
 
@@ -86,5 +87,6 @@ function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions
   return collectPackages(packages, {
     isCandidate: (node, name) => isForced(node, name) || needsBump(node) || hasDiff(node),
     onInclude: name => log.verbose("updated", name),
+    excludeDependents,
   });
 }
