@@ -1,18 +1,33 @@
 "use strict";
 
-const log = require("npmlog");
+const npmlog = require("npmlog");
+const figgyPudding = require("figgy-pudding");
 const collectUpdates = require("@lerna/collect-updates");
 const filterPackages = require("@lerna/filter-packages");
 
 module.exports = getFilteredPackages;
 
-function getFilteredPackages(packageGraph, execOpts, options) {
+const FilterConfig = figgyPudding({
+  scope: {},
+  ignore: {},
+  private: {},
+  since: {},
+  continueIfNoMatch: {},
+  excludeDependents: {},
+  includeFilteredDependents: {},
+  includeFilteredDependencies: {},
+  log: { default: npmlog },
+});
+
+function getFilteredPackages(packageGraph, execOpts, opts) {
+  const options = FilterConfig(opts);
+
   if (options.scope) {
-    log.notice("filter", "including %j", options.scope);
+    options.log.notice("filter", "including %j", options.scope);
   }
 
   if (options.ignore) {
-    log.notice("filter", "excluding %j", options.ignore);
+    options.log.notice("filter", "excluding %j", options.ignore);
   }
 
   let chain = Promise.resolve();
@@ -28,14 +43,14 @@ function getFilteredPackages(packageGraph, execOpts, options) {
   );
 
   if (options.since !== undefined) {
-    log.notice("filter", "changed since %j", options.since);
+    options.log.notice("filter", "changed since %j", options.since);
 
     if (options.excludeDependents) {
-      log.notice("filter", "excluding dependents");
+      options.log.notice("filter", "excluding dependents");
     }
 
     chain = chain.then(filteredPackages =>
-      Promise.resolve(collectUpdates(filteredPackages, packageGraph, execOpts, options)).then(updates => {
+      Promise.resolve(collectUpdates(filteredPackages, packageGraph, execOpts, opts)).then(updates => {
         const updated = new Set(updates.map(({ pkg }) => pkg.name));
 
         return filteredPackages.filter(pkg => updated.has(pkg.name));
@@ -44,13 +59,13 @@ function getFilteredPackages(packageGraph, execOpts, options) {
   }
 
   if (options.includeFilteredDependents) {
-    log.notice("filter", "including filtered dependents");
+    options.log.notice("filter", "including filtered dependents");
 
     chain = chain.then(filteredPackages => packageGraph.addDependents(filteredPackages));
   }
 
   if (options.includeFilteredDependencies) {
-    log.notice("filter", "including filtered dependencies");
+    options.log.notice("filter", "including filtered dependencies");
 
     chain = chain.then(filteredPackages => packageGraph.addDependencies(filteredPackages));
   }
