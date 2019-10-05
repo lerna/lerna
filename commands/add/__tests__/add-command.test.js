@@ -291,8 +291,8 @@ describe("AddCommand", () => {
         private: undefined,
         since: undefined,
         excludeDependents: undefined,
-        includeFilteredDependents: undefined,
-        includeFilteredDependencies: undefined,
+        includeDependents: undefined,
+        includeDependencies: undefined,
       })
     );
   });

@@ -184,21 +184,21 @@ test("--exclude-dependents", async () => {
   );
 });
 
-test("--exclude-dependents conflicts with --include-filtered-dependents", async () => {
+test("--exclude-dependents conflicts with --include-dependents", async () => {
   try {
-    parseOptions("--exclude-dependents", "--include-filtered-dependents");
+    parseOptions("--exclude-dependents", "--include-dependents");
   } catch (err) {
     expect(err.message).toMatch("exclude-dependents");
-    expect(err.message).toMatch("include-filtered-dependents");
+    expect(err.message).toMatch("include-dependents");
   }
 
   expect.hasAssertions();
 });
 
-test("--include-filtered-dependents", async () => {
+test("--include-dependents", async () => {
   const packageGraph = await buildGraph(cwd);
   const execOpts = { cwd };
-  const options = parseOptions("--scope", "package-1", "--include-filtered-dependents");
+  const options = parseOptions("--scope", "package-1", "--include-dependents");
 
   const result = await getFilteredPackages(packageGraph, execOpts, options);
 
@@ -206,10 +206,10 @@ test("--include-filtered-dependents", async () => {
   expect(collectUpdates).not.toHaveBeenCalled();
 });
 
-test("--include-filtered-dependencies", async () => {
+test("--include-dependencies", async () => {
   const packageGraph = await buildGraph(cwd);
   const execOpts = { cwd };
-  const options = parseOptions("--scope", "package-3", "--include-filtered-dependencies");
+  const options = parseOptions("--scope", "package-3", "--include-dependencies");
 
   const result = await getFilteredPackages(packageGraph, execOpts, options);
 

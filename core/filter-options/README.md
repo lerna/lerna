@@ -57,11 +57,11 @@ Exclude all transitive dependents when running a command with `--since`, overrid
 
 This flag has no effect without `--since`, and will throw an error in that case.
 
-### `--include-filtered-dependents`
+### `--include-dependents`
 
 Include all transitive dependents when running a command regardless of `--scope`, `--ignore`, or `--since`.
 
-### `--include-filtered-dependencies`
+### `--include-dependencies`
 
 Include all transitive dependencies when running a command regardless of `--scope`, `--ignore`, or `--since`.
 
@@ -75,12 +75,12 @@ Ensures that all dependencies (and dev dependencies) of any scoped packages (eit
 This is useful for situations where you want to "set up" a single package that relies on other packages being set up.
 
 ```sh
-$ lerna bootstrap --scope my-component --include-filtered-dependencies
+$ lerna bootstrap --scope my-component --include-dependencies
 # my-component and all of its dependencies will be bootstrapped
 ```
 
 ```sh
-$ lerna bootstrap --scope "package-*" --ignore "package-util-*" --include-filtered-dependencies
+$ lerna bootstrap --scope "package-*" --ignore "package-util-*" --include-dependencies
 # all packages matching "package-util-*" will be ignored unless they are
 # depended upon by a package whose name matches "package-*"
 ```

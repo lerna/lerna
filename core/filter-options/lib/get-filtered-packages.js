@@ -14,8 +14,10 @@ const FilterConfig = figgyPudding({
   since: {},
   continueIfNoMatch: {},
   excludeDependents: {},
-  includeFilteredDependents: {},
-  includeFilteredDependencies: {},
+  includeDependents: {},
+  includeDependencies: {},
+  includeFilteredDependents: "includeDependents",
+  includeFilteredDependencies: "includeDependencies",
   log: { default: npmlog },
 });
 
@@ -58,14 +60,14 @@ function getFilteredPackages(packageGraph, execOpts, opts) {
     );
   }
 
-  if (options.includeFilteredDependents) {
-    options.log.notice("filter", "including filtered dependents");
+  if (options.includeDependents) {
+    options.log.notice("filter", "including dependents");
 
     chain = chain.then(filteredPackages => packageGraph.addDependents(filteredPackages));
   }
 
-  if (options.includeFilteredDependencies) {
-    options.log.notice("filter", "including filtered dependencies");
+  if (options.includeDependencies) {
+    options.log.notice("filter", "including dependencies");
 
     chain = chain.then(filteredPackages => packageGraph.addDependencies(filteredPackages));
   }

@@ -6,6 +6,18 @@ const path = require("path");
 
 module.exports = compose(
   // add new predicates HERE
+  remap("command.add.includeFilteredDependencies", "command.add.includeDependencies", { alsoRoot: true }),
+  remap("command.add.includeFilteredDependents", "command.add.includeDependents", { alsoRoot: true }),
+  remap("command.bootstrap.includeFilteredDependencies", "command.bootstrap.includeDependencies"),
+  remap("command.bootstrap.includeFilteredDependents", "command.bootstrap.includeDependents"),
+  remap("command.clean.includeFilteredDependencies", "command.clean.includeDependencies"),
+  remap("command.clean.includeFilteredDependents", "command.clean.includeDependents"),
+  remap("command.exec.includeFilteredDependencies", "command.exec.includeDependencies"),
+  remap("command.exec.includeFilteredDependents", "command.exec.includeDependents"),
+  remap("command.list.includeFilteredDependencies", "command.list.includeDependencies"),
+  remap("command.list.includeFilteredDependents", "command.list.includeDependents"),
+  remap("command.run.includeFilteredDependencies", "command.run.includeDependencies"),
+  remap("command.run.includeFilteredDependents", "command.run.includeDependents"),
   remap("command.version.githubRelease", "command.version.createRelease", {
     toValue: value => value && "github",
   }),

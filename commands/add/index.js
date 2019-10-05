@@ -106,8 +106,8 @@ class AddCommand extends Command {
           private: undefined,
           since: undefined,
           excludeDependents: undefined,
-          includeFilteredDependents: undefined,
-          includeFilteredDependencies: undefined,
+          includeDependents: undefined,
+          includeDependencies: undefined,
         });
 
         return bootstrap(argv);
