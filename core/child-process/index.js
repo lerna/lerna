@@ -6,9 +6,9 @@ const execa = require("execa");
 const logTransformer = require("strong-log-transformer");
 
 // bookkeeping for spawned processes
-let children = 0;
+const children = new Set();
 
-// when streaming children are spawned, use this color for prefix
+// when streaming processes are spawned, use this color for prefix
 const colorWheel = ["cyan", "magenta", "blue", "yellow", "green", "red"];
 const NUM_COLORS = colorWheel.length;
 
@@ -54,9 +54,9 @@ function spawnStreaming(command, args, opts, prefix) {
   }
 
   // Avoid "Possible EventEmitter memory leak detected" warning due to piped stdio
-  if (children > process.stdout.listenerCount("close")) {
-    process.stdout.setMaxListeners(children);
-    process.stderr.setMaxListeners(children);
+  if (children.size > process.stdout.listenerCount("close")) {
+    process.stdout.setMaxListeners(children.size);
+    process.stderr.setMaxListeners(children.size);
   }
 
   spawned.stdout.pipe(logTransformer(stdoutOpts)).pipe(process.stdout);
@@ -66,7 +66,7 @@ function spawnStreaming(command, args, opts, prefix) {
 }
 
 function getChildProcessCount() {
-  return children;
+  return children.size;
 }
 
 function getExitCode(result) {
@@ -86,11 +86,9 @@ function getExitCode(result) {
 }
 
 function spawnProcess(command, args, opts) {
-  children += 1;
-
   const child = execa(command, args, opts);
   const drain = (code, signal) => {
-    children -= 1;
+    children.delete(child);
 
     // don't run repeatedly if this is the error event
     if (signal === undefined) {
@@ -104,6 +102,8 @@ function spawnProcess(command, args, opts) {
   if (opts.pkg) {
     child.pkg = opts.pkg;
   }
+
+  children.add(child);
 
   return child;
 }
