@@ -144,8 +144,8 @@ When run with this flag, `lerna version` will graduate the specified packages (c
 ```sh
 lerna version --conventional-commits --conventional-prerelease=package-2,package-4
 
-# force all prerelease packages to be graduated
-lerna version --conventional-commits --conventional-graduate
+# force all changed packages to be prereleased
+lerna version --conventional-commits --conventional-prerelease
 ```
 
 When run with this flag, `lerna version` will release with prerelease versions the specified packages (comma-separated) or all packages using `*`. Releases all unreleased changes as pre(patch/minor/major/release) by prefixing the version recommendation from `conventional-commits` with `pre`, eg. if present changes include a feature commit, the recommended bump will be `minor`, so this flag will result in a `preminor` release. If changes are present for packages that are not specified (if specifying packages), or for packages that are already in prerelease, those packages will be versioned as they normally would using `--conventional-commits`.
