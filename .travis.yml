@@ -60,6 +60,10 @@ before_install:
       "windows")
         # yarn isn't installed by default
         npm install --global yarn
+        # find out where git sub-programs are installed (e.g., git-receive-pack)
+        git --exec-path
+        # is it in the path?!
+        echo $PATH
       ;;
     esac
 
