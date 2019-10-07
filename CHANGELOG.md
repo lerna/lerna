@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.16.5](https://github.com/lerna/lerna/compare/v3.16.4...v3.16.5) (2019-10-07)
+
+
+### Bug Fixes
+
+* **bootstrap:** Run lifecycle scripts in topological queue instead of batches ([#2224](https://github.com/lerna/lerna/issues/2224)) ([d8d33f7](https://github.com/lerna/lerna/commit/d8d33f7))
+* **child-process:** Use Set to manage book-keeping instead of mutable integer ([5dbea32](https://github.com/lerna/lerna/commit/5dbea32))
+
+
+
+
+
 ## [3.16.4](https://github.com/lerna/lerna/compare/v3.16.3...v3.16.4) (2019-07-24)
 
 
