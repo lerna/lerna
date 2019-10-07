@@ -29,7 +29,7 @@ matrix:
       node_js: "12"
       name: "Windows Unit Tests (publish)"
       env:
-        - LERNA_CI_SCRIPT="test -- --maxWorkers=2"
+        - LERNA_CI_SCRIPT="test:windows"
         - LERNA_CI_TYPE="publish"
     - os: windows
       node_js: "12"
@@ -43,7 +43,7 @@ matrix:
       node_js: "12"
       name: "Windows Unit Tests (non-publish)"
       env:
-        - LERNA_CI_SCRIPT="test -- --maxWorkers=2"
+        - LERNA_CI_SCRIPT="test:windows"
         - LERNA_CI_TYPE="non-publish"
     - os: windows
       node_js: "12"
