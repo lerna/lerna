@@ -60,10 +60,8 @@ before_install:
       "windows")
         # yarn isn't installed by default
         npm install --global yarn
-        # find out where git sub-programs are installed (e.g., git-receive-pack)
-        git --exec-path
-        # is it in the path?!
-        echo $PATH
+        # make git subcommands work again
+        export PATH="/c/Program Files/Git/mingw64/bin:/c/Program Files/Git/mingw64/usr/bin:/c/Program Files/Git/mingw64/libexec/git-core:$PATH"
       ;;
     esac
 
