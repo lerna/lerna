@@ -36,7 +36,6 @@
     "populate--": true
   },
   "dependencies": {
-    "@lerna/batch-packages": "file:../../utils/batch-packages",
     "@lerna/command": "file:../../core/command",
     "@lerna/filter-options": "file:../../core/filter-options",
     "@lerna/has-npm-version": "file:../../utils/has-npm-version",
@@ -45,7 +44,7 @@
     "@lerna/pulse-till-done": "file:../../utils/pulse-till-done",
     "@lerna/rimraf-dir": "file:../../utils/rimraf-dir",
     "@lerna/run-lifecycle": "file:../../utils/run-lifecycle",
-    "@lerna/run-parallel-batches": "file:../../utils/run-parallel-batches",
+    "@lerna/run-topologically": "file:../../utils/run-topologically",
     "@lerna/symlink-binary": "file:../../utils/symlink-binary",
     "@lerna/symlink-dependencies": "file:../../utils/symlink-dependencies",
     "@lerna/validation-error": "file:../../core/validation-error",
