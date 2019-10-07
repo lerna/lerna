@@ -27,29 +27,17 @@ matrix:
     # run publish/version tests first (slower, higher priority)
     - os: windows
       node_js: "12"
-      name: "Windows Unit Tests (publish)"
+      name: "Windows Tests (publish)"
       env:
-        - LERNA_CI_SCRIPT="test:windows"
-        - LERNA_CI_TYPE="publish"
-    - os: windows
-      node_js: "12"
-      name: "Windows Integration Tests (publish)"
-      env:
-        - LERNA_CI_SCRIPT="integration"
+        - LERNA_CI_SCRIPT="ci:windows"
         - LERNA_CI_TYPE="publish"
 
     # and then the rest of the tests (quicker, lower priority)
     - os: windows
       node_js: "12"
-      name: "Windows Unit Tests (non-publish)"
+      name: "Windows Tests (non-publish)"
       env:
-        - LERNA_CI_SCRIPT="test:windows"
-        - LERNA_CI_TYPE="non-publish"
-    - os: windows
-      node_js: "12"
-      name: "Windows Integration Tests (non-publish)"
-      env:
-        - LERNA_CI_SCRIPT="integration"
+        - LERNA_CI_SCRIPT="ci:windows"
         - LERNA_CI_TYPE="non-publish"
 
 cache: npm
