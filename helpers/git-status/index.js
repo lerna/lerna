@@ -1,9 +1,9 @@
 "use strict";
 
-const execa = require("execa");
+const cp = require("child_process");
 
 module.exports = gitStatus;
 
 function gitStatus(cwd) {
-  return execa("git", ["status"], { cwd });
+  return cp.spawnSync("git", ["status", "--porcelain"], { cwd, encoding: "utf8" });
 }
