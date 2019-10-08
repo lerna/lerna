@@ -198,6 +198,18 @@ $ lerna bootstrap --force-local
 
 When passed, this flag causes the `bootstrap` command to always symlink local dependencies regardless of matching version range.
 
+### `publishConfig.directory`
+
+This _non-standard_ field allows you to customize the symlinked subdirectory that will be the _source_ directory of the symlink, just like how the published package would be consumed.
+
+```json
+  "publishConfig": {
+    "directory": "dist"
+  }
+```
+
+In this example, when this package is bootstrapped and linked, the `dist` directory will be the source directory (e.g. `package-1/dist => node_modules/package-1`).
+
 ## How It Works
 
 Let's use `babel` as an example.
