@@ -87,7 +87,7 @@ Array [
     });
   });
 
-  describe("with contents", () => {
+  describe("with publishConfig.directory", () => {
     it("should symlink sub-directory of package folders and bin directories", async () => {
       const testDir = await initFixture("with-contents");
       await lernaLink(testDir)();
@@ -178,6 +178,53 @@ Array [
   },
   Object {
     "_src": "packages/package-3/cli2.js",
+    "dest": "packages/package-4/node_modules/.bin/package3cli2",
+    "type": "exec",
+  },
+]
+`);
+    });
+  });
+
+  describe("with --contents", () => {
+    it("should symlink sub-directory of package folders and bin directories", async () => {
+      const testDir = await initFixture("with-contents");
+      await lernaLink(testDir)("--contents", "build");
+
+      expect(symlinkedDirectories(testDir)).toMatchInlineSnapshot(`
+Array [
+  Object {
+    "_src": "packages/package-1/build",
+    "dest": "packages/package-2/node_modules/@test/package-1",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-1/build",
+    "dest": "packages/package-3/node_modules/@test/package-1",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-2/build",
+    "dest": "packages/package-3/node_modules/@test/package-2",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-2/build/cli.js",
+    "dest": "packages/package-3/node_modules/.bin/package-2",
+    "type": "exec",
+  },
+  Object {
+    "_src": "packages/package-3/build",
+    "dest": "packages/package-4/node_modules/package-3",
+    "type": "junction",
+  },
+  Object {
+    "_src": "packages/package-3/build/cli1.js",
+    "dest": "packages/package-4/node_modules/.bin/package3cli1",
+    "type": "exec",
+  },
+  Object {
+    "_src": "packages/package-3/build/cli2.js",
     "dest": "packages/package-4/node_modules/.bin/package3cli2",
     "type": "exec",
   },
