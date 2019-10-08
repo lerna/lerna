@@ -14,6 +14,12 @@ exports.builder = yargs => {
       describe: "Force local sibling links regardless of version range match",
       type: "boolean",
     },
+    contents: {
+      group: "Command Options:",
+      describe: "Subdirectory to use as the source of the symlink. Must apply to ALL packages.",
+      type: "string",
+      defaultDescription: ".",
+    },
   });
 
   return yargs.command(
