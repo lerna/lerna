@@ -27,41 +27,31 @@ matrix:
     # run publish/version tests first (slower, higher priority)
     - os: windows
       node_js: "12"
-      name: "Windows Unit Tests (publish)"
+      name: "Windows Tests (publish)"
       env:
-        - LERNA_CI_SCRIPT="test -- --maxWorkers=2"
-        - LERNA_CI_TYPE="publish"
-    - os: windows
-      node_js: "12"
-      name: "Windows Integration Tests (publish)"
-      env:
-        - LERNA_CI_SCRIPT="integration"
+        - LERNA_CI_SCRIPT="ci:windows"
         - LERNA_CI_TYPE="publish"
 
     # and then the rest of the tests (quicker, lower priority)
     - os: windows
       node_js: "12"
-      name: "Windows Unit Tests (non-publish)"
+      name: "Windows Tests (non-publish)"
       env:
-        - LERNA_CI_SCRIPT="test -- --maxWorkers=2"
-        - LERNA_CI_TYPE="non-publish"
-    - os: windows
-      node_js: "12"
-      name: "Windows Integration Tests (non-publish)"
-      env:
-        - LERNA_CI_SCRIPT="integration"
+        - LERNA_CI_SCRIPT="ci:windows"
         - LERNA_CI_TYPE="non-publish"
 
 cache: npm
 
 before_install:
-- |
-  case "${TRAVIS_OS_NAME}" in
-    "windows")
-      # yarn isn't installed by default
-      npm install --global yarn
-    ;;
-  esac
+  - |
+    case "${TRAVIS_OS_NAME}" in
+      "windows")
+        # yarn isn't installed by default
+        npm install --global yarn
+        # make git subcommands work again
+        export PATH="/c/Program Files/Git/mingw64/bin:/c/Program Files/Git/mingw64/usr/bin:/c/Program Files/Git/mingw64/libexec/git-core:$PATH"
+      ;;
+    esac
 
 install: npm ci
 

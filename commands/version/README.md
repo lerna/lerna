@@ -35,8 +35,8 @@ You must still use the `--yes` flag to avoid all prompts.
 If you have any packages with a prerelease version number (e.g. `2.0.0-beta.3`) and you run `lerna version` with and a non-prerelease bump (`major`, `minor`, or `patch`), it will publish those previously pre-released packages _as well as_ the packages that have changed since the last release.
 
 For projects using conventional commits, use the following flags for prerelease management:
-**[`--conventional-prerelease`](#--conventional-prerelease):** release current changes as prerelease versions.
-**[`--conventional-graduate`](#--conventional-graduate):** graduate prerelease versioned packages to stable versions.
+- **[`--conventional-prerelease`](#--conventional-prerelease):** release current changes as prerelease versions.
+- **[`--conventional-graduate`](#--conventional-graduate):** graduate prerelease versioned packages to stable versions.
 
 Running `lerna version --conventional-commits` without the above flags will release current changes as prerelease only if the version is already in prerelease.
 
@@ -144,8 +144,8 @@ When run with this flag, `lerna version` will graduate the specified packages (c
 ```sh
 lerna version --conventional-commits --conventional-prerelease=package-2,package-4
 
-# force all prerelease packages to be graduated
-lerna version --conventional-commits --conventional-graduate
+# force all changed packages to be prereleased
+lerna version --conventional-commits --conventional-prerelease
 ```
 
 When run with this flag, `lerna version` will release with prerelease versions the specified packages (comma-separated) or all packages using `*`. Releases all unreleased changes as pre(patch/minor/major/release) by prefixing the version recommendation from `conventional-commits` with `pre`, eg. if present changes include a feature commit, the recommended bump will be `minor`, so this flag will result in a `preminor` release. If changes are present for packages that are not specified (if specifying packages), or for packages that are already in prerelease, those packages will be versioned as they normally would using `--conventional-commits`.

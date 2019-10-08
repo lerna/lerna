@@ -63,20 +63,11 @@ Successfully published:
  - package-3@1.0.1-alpha.0+SHA
 `);
 
-  const { stdout: statusStdOut } = await gitStatus();
-  expect(statusStdOut).toMatchInlineSnapshot(`
-On branch master
-Your branch is ahead of 'origin/master' by 1 commit.
-  (use "git push" to publish your local commits)
-
-Changes not staged for commit:
-  (use "git add <file>..." to update what will be committed)
-  (use "git checkout -- <file>..." to discard changes in working directory)
-
-	modified:   packages/package-1/package.json
-	modified:   packages/package-2/package.json
-	modified:   packages/package-3/package.json
-
-no changes added to commit (use "git add" and/or "git commit -a")
-`);
+  const result = gitStatus();
+  // snapshot is unstable because whitespace is trimmed from both sides
+  expect(result.stdout.trimRight().split("\n")).toStrictEqual([
+    " M packages/package-1/package.json",
+    " M packages/package-2/package.json",
+    " M packages/package-3/package.json",
+  ]);
 });

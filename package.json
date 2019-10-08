@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "ci": "npm test -- --ci --maxWorkers=2 && npm run integration -- --ci",
+    "ci:windows": "jest --ci --maxWorkers=2 && npm run integration -- --ci",
     "fix": "npm run lint -- --fix",
     "integration": "jest --config jest.integration.js --maxWorkers=2",
     "lint": "eslint . --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint",

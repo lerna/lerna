@@ -1,6 +1,6 @@
 {
   "name": "@lerna/github-client",
-  "version": "3.16.0",
+  "version": "3.16.5",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
