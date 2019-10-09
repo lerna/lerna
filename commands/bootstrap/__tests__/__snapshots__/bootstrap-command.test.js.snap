@@ -313,7 +313,7 @@ Array [
 ]
 `;
 
-exports[`BootstrapCommand with local package dependencies should respect --contents when linking directories 1`] = `
+exports[`BootstrapCommand with local package dependencies should respect --contents argument during linking step 1`] = `
 Array [
   Object {
     "_src": "packages/package-1/dist",

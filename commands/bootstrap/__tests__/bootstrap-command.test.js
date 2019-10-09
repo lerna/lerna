@@ -345,7 +345,7 @@ describe("BootstrapCommand", () => {
       });
     });
 
-    it("should respect --contents when linking directories", async () => {
+    it("should respect --contents argument during linking step", async () => {
       const testDir = await initFixture("basic");
 
       await lernaBootstrap(testDir)("--contents", "dist");
