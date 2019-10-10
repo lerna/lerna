@@ -20,6 +20,14 @@ class LinkCommand extends Command {
 
   initialize() {
     this.allPackages = this.packageGraph.rawPackageList;
+
+    if (this.options.contents) {
+      // globally override directory to link
+      for (const pkg of this.allPackages) {
+        pkg.contents = this.options.contents;
+      }
+    }
+
     this.targetGraph = this.options.forceLocal
       ? new PackageGraph(this.allPackages, "allDependencies", "forceLocal")
       : this.packageGraph;

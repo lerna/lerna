@@ -1,0 +1,11 @@
+{
+  "name": "@test/package-2",
+  "version": "1.0.0",
+  "publishConfig": {
+    "directory": "dist"
+  },
+  "bin": "cli.js",
+  "dependencies": {
+    "@test/package-1": "^1.0.0"
+  }
+}

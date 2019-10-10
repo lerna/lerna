@@ -160,6 +160,13 @@ class BootstrapCommand extends Command {
     chain = chain.then(filteredPackages => {
       this.filteredPackages = filteredPackages;
 
+      if (this.options.contents) {
+        // globally override directory to link
+        for (const pkg of filteredPackages) {
+          pkg.contents = this.options.contents;
+        }
+      }
+
       if (filteredPackages.length !== this.targetGraph.size && !this.options.forceLocal) {
         this.logger.warn("bootstrap", "Installing local packages that do not match filters from registry");
 

@@ -77,7 +77,10 @@ function symlinkDependencies(packages, packageGraph, tracker) {
         });
 
         // create package symlink
-        chain = chain.then(() => createSymlink(dependencyNode.location, targetDirectory, "junction"));
+        const dependencyLocation = dependencyNode.pkg.contents
+          ? path.resolve(dependencyNode.location, dependencyNode.pkg.contents)
+          : dependencyNode.location;
+        chain = chain.then(() => createSymlink(dependencyLocation, targetDirectory, "junction"));
 
         // TODO: pass PackageGraphNodes directly instead of Packages
         chain = chain.then(() => symlinkBinary(dependencyNode.pkg, currentNode.pkg));

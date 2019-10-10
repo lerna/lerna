@@ -345,6 +345,14 @@ describe("BootstrapCommand", () => {
       });
     });
 
+    it("should respect --contents argument during linking step", async () => {
+      const testDir = await initFixture("basic");
+
+      await lernaBootstrap(testDir)("--contents", "dist");
+
+      expect(symlinkedDirectories(testDir)).toMatchSnapshot();
+    });
+
     it("should not update package.json when filtering", async () => {
       const testDir = await initFixture("basic");
 
