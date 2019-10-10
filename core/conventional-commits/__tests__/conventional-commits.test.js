@@ -377,21 +377,21 @@ describe("conventional-commits", () => {
       ]);
 
       expect(leafChangelog.newEntry.trimRight()).toMatchInlineSnapshot(`
-## [1.0.1](/compare/dragons-are-awesome1.0.0...dragons-are-awesome1.0.1) (YYYY-MM-DD)
+        ## [1.0.1](/compare/dragons-are-awesome1.0.0...dragons-are-awesome1.0.1) (YYYY-MM-DD)
 
 
-### Bug Fixes
+        ### Bug Fixes
 
-* A second commit for our CHANGELOG ([SHA](https://github.com/lerna/conventional-commits-fixed/commit/SHA))
-`);
+        * A second commit for our CHANGELOG ([SHA](https://github.com/lerna/conventional-commits-fixed/commit/GIT_HEAD))
+      `);
       expect(rootChangelog.newEntry.trimRight()).toMatchInlineSnapshot(`
-## [1.0.1](/compare/dragons-are-awesome1.0.0...dragons-are-awesome1.0.1) (YYYY-MM-DD)
+        ## [1.0.1](/compare/dragons-are-awesome1.0.0...dragons-are-awesome1.0.1) (YYYY-MM-DD)
 
 
-### Bug Fixes
+        ### Bug Fixes
 
-* A second commit for our CHANGELOG ([SHA](https://github.com/lerna/conventional-commits-fixed/commit/SHA))
-`);
+        * A second commit for our CHANGELOG ([SHA](https://github.com/lerna/conventional-commits-fixed/commit/GIT_HEAD))
+      `);
 
       await gitAdd(cwd, pkg1.manifestLocation);
       await gitCommit(cwd, "chore(release): Publish v1.0.1");
@@ -409,13 +409,13 @@ describe("conventional-commits", () => {
 
       // second commit should not show up again
       expect(lastRootChangelog.newEntry.trimRight()).toMatchInlineSnapshot(`
-## [1.0.2](/compare/dragons-are-awesome1.0.1...dragons-are-awesome1.0.2) (YYYY-MM-DD)
+        ## [1.0.2](/compare/dragons-are-awesome1.0.1...dragons-are-awesome1.0.2) (YYYY-MM-DD)
 
 
-### Bug Fixes
+        ### Bug Fixes
 
-* A third commit for our CHANGELOG ([SHA](https://github.com/lerna/conventional-commits-fixed/commit/SHA))
-`);
+        * A third commit for our CHANGELOG ([SHA](https://github.com/lerna/conventional-commits-fixed/commit/GIT_HEAD))
+      `);
     });
 
     it("appends version bump message if no commits have been recorded", async () => {
@@ -438,11 +438,11 @@ describe("conventional-commits", () => {
       });
 
       expect(leafChangelog.newEntry.trimRight()).toMatchInlineSnapshot(`
-<a name="1.0.1"></a>
-## <small>1.0.1 (YYYY-MM-DD)</small>
+        <a name="1.0.1"></a>
+        ## <small>1.0.1 (YYYY-MM-DD)</small>
 
-**Note:** Version bump only for package package-2
-`);
+        **Note:** Version bump only for package package-2
+      `);
     });
 
     it("supports old preset API", async () => {
@@ -465,11 +465,11 @@ describe("conventional-commits", () => {
       });
 
       expect(leafChangelog.newEntry).toMatchInlineSnapshot(`
-<a name="1.0.1"></a>
-## <small>1.0.1 (YYYY-MM-DD)</small>
-* fix(pkg1): A commit using the old preset API
+        <a name="1.0.1"></a>
+        ## <small>1.0.1 (YYYY-MM-DD)</small>
+        * fix(pkg1): A commit using the old preset API
 
-`);
+      `);
     });
 
     it("supports legacy callback presets", async () => {
@@ -492,11 +492,11 @@ describe("conventional-commits", () => {
       });
 
       expect(leafChangelog.newEntry).toMatchInlineSnapshot(`
-<a name="1.0.1"></a>
-## <small>1.0.1 (YYYY-MM-DD)</small>
-* fix(pkg2): A commit using a legacy callback preset
+        <a name="1.0.1"></a>
+        ## <small>1.0.1 (YYYY-MM-DD)</small>
+        * fix(pkg2): A commit using a legacy callback preset
 
-`);
+      `);
     });
 
     it("updates independent changelogs", async () => {
@@ -530,21 +530,21 @@ describe("conventional-commits", () => {
       ]);
 
       expect(changelogOne.newEntry.trimRight()).toMatchInlineSnapshot(`
-## [1.0.1](/compare/package-1@1.0.0...package-1@1.0.1) (YYYY-MM-DD)
+        ## [1.0.1](/compare/package-1@1.0.0...package-1@1.0.1) (YYYY-MM-DD)
 
 
-### Bug Fixes
+        ### Bug Fixes
 
-* **stuff:** changed ([SHA](https://github.com/lerna/conventional-commits-independent/commit/SHA))
-`);
+        * **stuff:** changed ([SHA](https://github.com/lerna/conventional-commits-independent/commit/GIT_HEAD))
+      `);
       expect(changelogTwo.newEntry.trimRight()).toMatchInlineSnapshot(`
-# [1.1.0](/compare/package-2@1.0.0...package-2@1.1.0) (YYYY-MM-DD)
+        # [1.1.0](/compare/package-2@1.0.0...package-2@1.1.0) (YYYY-MM-DD)
 
 
-### Features
+        ### Features
 
-* **thing:** added ([SHA](https://github.com/lerna/conventional-commits-independent/commit/SHA))
-`);
+        * **thing:** added ([SHA](https://github.com/lerna/conventional-commits-independent/commit/GIT_HEAD))
+      `);
     });
   });
 });
