@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.17.0](https://github.com/lerna/lerna/compare/v3.16.5...v3.17.0) (2019-10-10)
+
+
+### Features
+
+* **link:** Use `publishConfig.directory` as symlink source if it exists to allow linking sub-directories ([#2274](https://github.com/lerna/lerna/issues/2274)) ([d04ce8e](https://github.com/lerna/lerna/commit/d04ce8e10503003e498c44d0db5ff455054d7d71))
+
+
+
+
+
 ## [3.16.2](https://github.com/lerna/lerna/compare/v3.16.1...v3.16.2) (2019-07-22)
 
 **Note:** Version bump only for package @lerna/symlink-binary
