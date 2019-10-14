@@ -35,6 +35,11 @@ exports.builder = yargs => {
       type: "string",
       requiresArg: true,
     },
+    "pre-dist-tag": {
+      describe: "Publish prerelease packages with the specified npm dist-tag",
+      type: "string",
+      requiresArg: true,
+    },
     "git-head": {
       describe:
         "Explicit SHA to set as gitHead when packing tarballs, only allowed with 'from-package' positional.",
