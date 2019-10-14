@@ -58,6 +58,11 @@ exports.builder = yargs => {
         describe: "Don't allow warnings when hoisting as it causes longer bootstrap times and other issues.",
         type: "boolean",
       },
+      "use-workspaces": {
+        group: "Command Options:",
+        describe: "Enable integration with Yarn workspaces.",
+        type: "boolean",
+      },
       "force-local": {
         group: "Command Options:",
         describe: "Force local sibling links regardless of version range match",
