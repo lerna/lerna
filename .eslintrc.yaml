@@ -19,10 +19,7 @@ rules:
   curly:
     - error
     - all
-  max-len:
-    - error
-    - 110 # keep in sync with .prettierrc.yaml printWidth
-    - 2
+  max-len: "off" # managed by .prettierrc.yaml printWidth
   no-param-reassign:
     - error
     - props: true
