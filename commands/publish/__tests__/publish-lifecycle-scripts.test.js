@@ -35,7 +35,11 @@ describe("lifecycle scripts", () => {
 
     ["prepare", "prepublishOnly", "prepack", "postpack", "postpublish"].forEach(script => {
       // "lifecycle" is the root manifest name
-      expect(runLifecycle).toHaveBeenCalledWith(expect.objectContaining({ name: "lifecycle" }), script);
+      expect(runLifecycle).toHaveBeenCalledWith(
+        expect.objectContaining({ name: "lifecycle" }),
+        script,
+        expect.any(Object)
+      );
     });
 
     // package-2 lacks version lifecycle scripts

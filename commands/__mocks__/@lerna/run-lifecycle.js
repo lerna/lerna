@@ -1,10 +1,10 @@
 "use strict";
 
 const mockRunLifecycle = jest.fn(pkg => Promise.resolve(pkg));
-const mockCreateRunner = jest.fn(() => (pkg, stage) => {
+const mockCreateRunner = jest.fn(opts => (pkg, stage) => {
   // no longer the actual API, but approximates inner logic of default export
   if (pkg.scripts[stage]) {
-    return mockRunLifecycle(pkg, stage);
+    return mockRunLifecycle(pkg, stage, opts);
   }
 
   return Promise.resolve();
