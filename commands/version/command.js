@@ -28,6 +28,10 @@ exports.builder = (yargs, composed) => {
       describe: "Version currently prereleased packages to a non-prerelease version.",
       // type must remain ambiguous because it is overloaded (boolean _or_ string _or_ array)
     },
+    "conventional-prerelease": {
+      describe: "Version changed packages as prereleases when using --conventional-commits.",
+      // type must remain ambiguous because it is overloaded (boolean _or_ string _or_ array)
+    },
     "changelog-preset": {
       describe: "Custom conventional-changelog preset.",
       type: "string",
