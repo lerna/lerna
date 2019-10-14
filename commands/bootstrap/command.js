@@ -15,6 +15,9 @@ exports.builder = yargs => {
       "$0 bootstrap -- --no-optional",
       "# execute `npm install --no-optional` in bootstrapped packages"
     )
+    .parserConfiguration({
+      "populate--": true,
+    })
     .options({
       hoist: {
         group: "Command Options:",

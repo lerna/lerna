@@ -32,9 +32,6 @@
   "scripts": {
     "test": "echo \"Run tests from root\" && exit 1"
   },
-  "yargs": {
-    "populate--": true
-  },
   "dependencies": {
     "@lerna/command": "file:../../core/command",
     "@lerna/filter-options": "file:../../core/filter-options",

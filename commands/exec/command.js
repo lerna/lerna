@@ -13,6 +13,9 @@ exports.builder = yargs => {
   yargs
     .example("$0 exec ls -- --la", "# execute `ls -la` in all packages")
     .example("$0 exec -- ls --la", "# execute `ls -la` in all packages, keeping cmd outside")
+    .parserConfiguration({
+      "populate--": true,
+    })
     .positional("cmd", {
       describe: "The command to execute. Any command flags must be passed after --",
       type: "string",

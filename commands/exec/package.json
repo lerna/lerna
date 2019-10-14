@@ -31,9 +31,6 @@
   "scripts": {
     "test": "echo \"Run tests from root\" && exit 1"
   },
-  "yargs": {
-    "populate--": true
-  },
   "dependencies": {
     "@lerna/child-process": "file:../../core/child-process",
     "@lerna/command": "file:../../core/command",
