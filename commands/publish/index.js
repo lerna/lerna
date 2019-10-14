@@ -120,6 +120,7 @@ class PublishCommand extends Command {
       npmVersion: this.userAgent,
       otp: this.options.otp,
       registry: this.options.registry,
+      "ignore-prepublish": this.options.ignorePrepublish,
     });
 
     // cache to hold a one-time-password across publishes

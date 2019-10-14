@@ -119,4 +119,21 @@ Map {
       // (they are all run by pack-directory and npm-publish)
     ]);
   });
+
+  it("respects --ignore-prepublish", async () => {
+    const cwd = await initFixture("lifecycle");
+
+    await lernaPublish(cwd)("--ignore-prepublish");
+
+    expect(packDirectory).toHaveBeenCalledWith(
+      expect.objectContaining({ name: "package-2" }),
+      path.join(cwd, "packages/package-2"),
+      expect.objectContaining({
+        "ignore-prepublish": true,
+      })
+    );
+
+    // runLifecycle() is _called_ with "prepublish" for root,
+    // but it does not actually execute, and is tested elsewhere
+  });
 });

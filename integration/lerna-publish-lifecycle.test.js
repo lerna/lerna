@@ -115,3 +115,12 @@ Successfully published:
  - package-2@1.1.0
 `);
 });
+
+test("lerna publish --ignore-prepublish", async () => {
+  const { cwd } = await cloneFixture("lifecycle");
+  const args = ["publish", "--ignore-prepublish", "patch", "--yes"];
+
+  const { stdout } = await cliRunner(cwd, env)(...args);
+  expect(stdout).not.toContain("prepublish-root");
+  expect(stdout).not.toContain("prepublish-package-2");
+});

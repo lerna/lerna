@@ -46,6 +46,10 @@ exports.builder = yargs => {
       choices: ["all", "dependencies"],
       defaultDescription: "dependencies",
     },
+    "ignore-prepublish": {
+      describe: "Disable deprecated 'prepublish' lifecycle script",
+      type: "boolean",
+    },
     otp: {
       describe: "Supply a one-time password for publishing with two-factor authentication.",
       type: "string",
