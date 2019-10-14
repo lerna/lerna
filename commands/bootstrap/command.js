@@ -58,6 +58,11 @@ exports.builder = yargs => {
         describe: "Don't allow warnings when hoisting as it causes longer bootstrap times and other issues.",
         type: "boolean",
       },
+      "force-local": {
+        group: "Command Options:",
+        describe: "Force local sibling links regardless of version range match",
+        type: "boolean",
+      },
       contents: {
         group: "Command Options:",
         describe: "Subdirectory to use as the source of any links. Must apply to ALL packages.",
