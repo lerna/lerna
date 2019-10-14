@@ -147,7 +147,8 @@ Run `lerna --help` to see all available commands and options.
   "command": {
     "publish": {
       "ignoreChanges": ["ignored-file", "*.md"],
-      "message": "chore(release): publish"
+      "message": "chore(release): publish",
+      "registry": "https://npm.pkg.github.com"
     },
     "bootstrap": {
       "ignore": "component-*",
@@ -162,6 +163,8 @@ Run `lerna --help` to see all available commands and options.
 - `npmClient`: an option to specify a specific client to run commands with (this can also be specified on a per command basis). Change to `"yarn"` to run all commands with yarn. Defaults to "npm".
 - `command.publish.ignoreChanges`: an array of globs that won't be included in `lerna changed/publish`. Use this to prevent publishing a new version unnecessarily for changes, such as fixing a `README.md` typo.
 - `command.publish.message`: a custom commit message when performing version updates for publication. See [@lerna/version](commands/version#--message-msg) for more details.
+- `command.publish.registry`: use it to set a custom registry url to publish to instead of
+npmjs.org, you must already be authenticated if required.
 - `command.bootstrap.ignore`: an array of globs that won't be bootstrapped when running the `lerna bootstrap` command.
 - `command.bootstrap.npmClientArgs`: array of strings that will be passed as arguments directly to `npm install` during the `lerna bootstrap` command.
 - `command.bootstrap.scope`: an array of globs that restricts which packages will be bootstrapped when running the `lerna bootstrap` command.
