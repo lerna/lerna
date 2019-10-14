@@ -95,4 +95,20 @@ Map {
       ["package-1", "postversion"],
     ]);
   });
+
+  it("respects --ignore-scripts", async () => {
+    const cwd = await initFixture("lifecycle");
+
+    await lernaVersion(cwd)("--ignore-scripts");
+
+    // despite all the scripts being passed to runLifecycle()
+    // none of them will actually execute as long as opts["ignore-scripts"] is provided
+    expect(runLifecycle).toHaveBeenCalledWith(
+      expect.objectContaining({ name: "lifecycle" }),
+      "version",
+      expect.objectContaining({
+        "ignore-scripts": true,
+      })
+    );
+  });
 });

@@ -52,6 +52,10 @@ exports.builder = (yargs, composed) => {
       ].join("\n"),
       type: "array",
     },
+    "ignore-scripts": {
+      describe: "Disable all lifecycle scripts",
+      type: "boolean",
+    },
     "include-merged-tags": {
       describe: "Also include tags from merged branches",
       type: "boolean",

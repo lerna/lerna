@@ -121,6 +121,7 @@ class PublishCommand extends Command {
       otp: this.options.otp,
       registry: this.options.registry,
       "ignore-prepublish": this.options.ignorePrepublish,
+      "ignore-scripts": this.options.ignoreScripts,
     });
 
     // cache to hold a one-time-password across publishes

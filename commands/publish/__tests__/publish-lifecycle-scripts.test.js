@@ -136,4 +136,27 @@ Map {
     // runLifecycle() is _called_ with "prepublish" for root,
     // but it does not actually execute, and is tested elsewhere
   });
+
+  it("respects --ignore-scripts", async () => {
+    const cwd = await initFixture("lifecycle");
+
+    await lernaPublish(cwd)("--ignore-scripts");
+
+    // despite all the scripts being passed to runLifecycle() (and implicitly, packDirectory()),
+    // none of them will actually execute as long as opts["ignore-scripts"] is provided
+    expect(runLifecycle).toHaveBeenCalledWith(
+      expect.objectContaining({ name: "lifecycle" }),
+      "prepare",
+      expect.objectContaining({
+        "ignore-scripts": true,
+      })
+    );
+    expect(packDirectory).toHaveBeenCalledWith(
+      expect.objectContaining({ name: "package-2" }),
+      path.join(cwd, "packages/package-2"),
+      expect.objectContaining({
+        "ignore-scripts": true,
+      })
+    );
+  });
 });

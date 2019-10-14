@@ -124,3 +124,20 @@ test("lerna publish --ignore-prepublish", async () => {
   expect(stdout).not.toContain("prepublish-root");
   expect(stdout).not.toContain("prepublish-package-2");
 });
+
+test("lerna publish --ignore-scripts", async () => {
+  const { cwd } = await cloneFixture("lifecycle");
+  const args = ["publish", "--ignore-scripts", "major", "--yes", "--loglevel=verbose"];
+
+  const { stdout } = await cliRunner(cwd, env)(...args);
+  expect(stdout).toMatchInlineSnapshot(`
+
+    Changes:
+     - package-1: 1.0.0 => 2.0.0
+     - package-2: 1.0.0 => 2.0.0
+
+    Successfully published:
+     - package-1@2.0.0
+     - package-2@2.0.0
+  `);
+});

@@ -50,6 +50,10 @@ exports.builder = yargs => {
       describe: "Disable deprecated 'prepublish' lifecycle script",
       type: "boolean",
     },
+    "ignore-scripts": {
+      describe: "Disable all lifecycle scripts",
+      type: "boolean",
+    },
     otp: {
       describe: "Supply a one-time password for publishing with two-factor authentication.",
       type: "string",
@@ -99,7 +103,7 @@ exports.builder = yargs => {
 
   // "unhide" duplicate options
   const { hiddenOptions } = yargs.getOptions();
-  const sharedKeys = ["preid", "y"];
+  const sharedKeys = ["preid", "y", "ignore-scripts"];
 
   for (const sharedKey of sharedKeys) {
     hiddenOptions.splice(hiddenOptions.findIndex(k => k === sharedKey), 1);
