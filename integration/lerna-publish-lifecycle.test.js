@@ -91,6 +91,11 @@ prepublishOnly-package-1
 
 prepack-package-1
 
+> package-2@1.1.0 prepublish __TEST_ROOTDIR__/packages/package-2
+> echo prepublish-package-2
+
+prepublish-package-2
+
 > lifecycle@0.0.0-monorepo postpack __TEST_ROOTDIR__
 > echo postpack-root
 

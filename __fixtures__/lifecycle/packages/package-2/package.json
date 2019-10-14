@@ -3,5 +3,8 @@
   "version": "1.0.0",
   "dependencies": {
     "package-1": "^1.0.0"
+  },
+  "scripts": {
+    "prepublish": "echo prepublish-package-2"
   }
 }

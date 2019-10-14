@@ -38,6 +38,7 @@ prepack-root
 prepare-package-1
 prepublishOnly-package-1
 prepack-package-1
+prepublish-package-2
 postpack-root
 postpublish-package-1
 postpublish-root
