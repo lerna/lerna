@@ -42,6 +42,10 @@ exports.builder = (yargs, composed) => {
       describe: "Specify cross-dependency version numbers exactly rather than with a caret (^).",
       type: "boolean",
     },
+    "force-publish": {
+      describe: "Always include targeted packages in versioning operations, skipping default logic.",
+      // type must remain ambiguous because it is overloaded (boolean _or_ string _or_ array)
+    },
     "git-remote": {
       describe: "Push git changes to the specified remote.",
       type: "string",
