@@ -24,6 +24,10 @@ exports.builder = (yargs, composed) => {
       describe: "Use conventional-changelog to determine version bump and generate CHANGELOG.",
       type: "boolean",
     },
+    "conventional-graduate": {
+      describe: "Version currently prereleased packages to a non-prerelease version.",
+      // type must remain ambiguous because it is overloaded (boolean _or_ string _or_ array)
+    },
     "changelog-preset": {
       describe: "Custom conventional-changelog preset.",
       type: "string",
