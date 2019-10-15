@@ -12,6 +12,8 @@ exports.list = list;
 
 const DistTagConfig = figgyPudding(
   {
+    "dry-run": { default: false },
+    dryRun: "dry-run",
     log: { default: log },
     spec: {},
     tag: {},
@@ -34,6 +36,12 @@ function add(spec, tag, _opts, otpCache) {
   const { name, rawSpec: version } = opts.spec;
 
   opts.log.verbose("dist-tag", `adding "${cleanTag}" to ${name}@${version}`);
+
+  // istanbul ignore next
+  if (opts.dryRun) {
+    opts.log.silly("dist-tag", "dry-run configured, bailing now");
+    return Promise.resolve();
+  }
 
   return fetchTags(opts).then(tags => {
     if (tags[cleanTag] === version) {
@@ -72,6 +80,12 @@ function remove(spec, tag, _opts, otpCache) {
 
   opts.log.verbose("dist-tag", `removing "${tag}" from ${opts.spec.name}`);
 
+  // istanbul ignore next
+  if (opts.dryRun) {
+    opts.log.silly("dist-tag", "dry-run configured, bailing now");
+    return Promise.resolve();
+  }
+
   return fetchTags(opts).then(tags => {
     const version = tags[tag];
 
@@ -102,6 +116,12 @@ function list(spec, _opts) {
   const opts = DistTagConfig(_opts, {
     spec: npa(spec),
   });
+
+  // istanbul ignore next
+  if (opts.dryRun) {
+    opts.log.silly("dist-tag", "dry-run configured, bailing now");
+    return Promise.resolve();
+  }
 
   return fetchTags(opts);
 }
