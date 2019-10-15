@@ -83,6 +83,7 @@ function remove(spec, tag, _opts, otpCache) {
     const uri = `/-/package/${opts.spec.escapedName}/dist-tags/${encodeURIComponent(tag)}`;
     const payload = opts.concat({
       method: "DELETE",
+      spec: opts.spec,
     });
 
     // the delete properly returns a 204, so no json to parse
