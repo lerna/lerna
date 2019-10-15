@@ -55,13 +55,13 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 - [`--ignore-scripts`](#--ignore-scripts)
 - [`--ignore-prepublish`](#--ignore-prepublish)
 - [`--no-git-reset`](#--no-git-reset)
+- [`--no-temp-tag`](#--no-temp-tag)
 - [`--no-verify-access`](#--no-verify-access)
 - [`--otp`](#--otp)
 - [`--preid`](#--preid)
 - [`--pre-dist-tag <tag>`](#--pre-dist-tag-tag)
 - [`--registry <url>`](#--registry-url)
 - [`--tag-version-prefix`](#--tag-version-prefix)
-- [`--temp-tag`](#--temp-tag)
 - [`--yes`](#--yes)
 
 ### `--canary`
@@ -170,6 +170,14 @@ To avoid this, pass `--no-git-reset`. This can be especially useful when used as
 lerna publish --no-git-reset
 ```
 
+### `--no-temp-tag`
+
+By default, `lerna publish` first publishes all changed packages to a temporary dist-tag (`lerna-temp`)
+and then after all are successful moves the new version(s) to the dist-tag configured by [`--dist-tag`](#--dist-tag-tag) (default `latest`).
+This is intended to help avoid "partial" releases (due to network, authentication, or other failure) corrupting consumer installs with conflicting metadata.
+
+If you do not need this insurance, pass `--no-temp-tag` (or set `command.publish.tempTag` to `false` in lerna.json) to disable this behavior.
+
 ### `--no-verify-access`
 
 By default, `lerna` will verify the logged-in npm user's access to the packages about to be published. Passing this flag will disable that check.
@@ -244,15 +252,6 @@ You could also configure this at the root level of lerna.json, applying to both 
   "version": "independent"
 }
 ```
-
-### `--temp-tag`
-
-When passed, this flag will alter the default publish process by first publishing
-all changed packages to a temporary dist-tag (`lerna-temp`) and then moving the
-new version(s) to the dist-tag configured by [`--dist-tag`](#--dist-tag-tag) (default `latest`).
-
-This is not generally necessary, as Lerna will publish packages in topological
-order (all dependencies before dependents) by default.
 
 ### `--yes`
 
@@ -360,4 +359,4 @@ Lerna will run [npm lifecycle scripts](https://docs.npmjs.com/misc/scripts#descr
 9. Run `publish` lifecycle in root
    - To avoid recursive calls, don't use this root lifecycle to run `lerna publish`
 10. Run `postpublish` lifecycle in root
-11. Update temporary dist-tag to latest, if [enabled](#--temp-tag)
+11. Update temporary dist-tag to latest, unless [disabled](#--no-temp-tag)

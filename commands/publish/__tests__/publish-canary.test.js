@@ -15,7 +15,7 @@ const childProcess = require("@lerna/child-process");
 
 // mocked modules
 const writePkg = require("write-pkg");
-const npmPublish = require("@lerna/npm-publish");
+const npmDistTag = require("@lerna/npm-dist-tag");
 const PromptUtilities = require("@lerna/prompt");
 const checkWorkingTree = require("@lerna/check-working-tree");
 
@@ -78,20 +78,12 @@ test("publish --canary", async () => {
   expect(PromptUtilities.confirm).toHaveBeenLastCalledWith(
     "Are you sure you want to publish these packages?"
   );
-  expect(npmPublish.registry).toMatchInlineSnapshot(`
+  expect(npmDistTag.add.registry).toMatchInlineSnapshot(`
 Map {
-  "package-1" => "canary",
-  "package-3" => "canary",
-  "package-4" => "canary",
-  "package-2" => "canary",
-}
-`);
-  expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
-Object {
-  "package-1": 1.0.1-alpha.0+SHA,
-  "package-2": 1.0.1-alpha.0+SHA,
-  "package-3": 1.0.1-alpha.0+SHA,
-  "package-4": 1.0.1-alpha.0+SHA,
+  package-1@1.0.1-alpha.0+SHA => "canary",
+  package-3@1.0.1-alpha.0+SHA => "canary",
+  package-4@1.0.1-alpha.0+SHA => "canary",
+  package-2@1.0.1-alpha.0+SHA => "canary",
 }
 `);
 });

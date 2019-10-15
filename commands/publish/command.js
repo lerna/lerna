@@ -82,8 +82,13 @@ exports.builder = yargs => {
       hidden: true,
       type: "boolean",
     },
-    "temp-tag": {
+    "no-temp-tag": {
       describe: "Create a temporary tag while publishing.",
+      type: "boolean",
+    },
+    "temp-tag": {
+      // proxy for --no-temp-tag
+      hidden: true,
       type: "boolean",
     },
     "no-verify-access": {

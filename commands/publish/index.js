@@ -67,6 +67,7 @@ class PublishCommand extends Command {
       gitHead,
       gitReset,
       tagVersionPrefix = "v",
+      tempTag,
       verifyAccess,
     } = this.options;
 
@@ -83,6 +84,7 @@ class PublishCommand extends Command {
 
     // inverted boolean options are only respected if prefixed with `--no-`, e.g. `--no-verify-access`
     this.gitReset = gitReset !== false;
+    this.tempTag = tempTag !== false;
     this.verifyAccess = verifyAccess !== false;
 
     // consumed by npm-registry-fetch (via libnpmpublish)
@@ -230,7 +232,7 @@ class PublishCommand extends Command {
       chain = chain.then(() => this.resetChanges());
     }
 
-    if (this.options.tempTag) {
+    if (this.tempTag) {
       chain = chain.then(() => this.npmUpdateAsLatest());
     }
 
@@ -694,14 +696,14 @@ class PublishCommand extends Command {
     const opts = Object.assign(this.conf.snapshot, {
       // distTag defaults to "latest" OR whatever is in pkg.publishConfig.tag
       // if we skip temp tags we should tag with the proper value immediately
-      tag: this.options.tempTag ? "lerna-temp" : this.conf.get("tag"),
+      tag: this.tempTag ? "lerna-temp" : this.conf.get("tag"),
     });
 
     const mapper = pPipe(
       [
         pkg => {
           const preDistTag = this.getPreDistTag(pkg);
-          const tag = !this.options.tempTag && preDistTag ? preDistTag : opts.tag;
+          const tag = !this.tempTag && preDistTag ? preDistTag : opts.tag;
           const pkgOpts = Object.assign({}, opts, { tag });
 
           return pulseTillDone(npmPublish(pkg, pkg.packed.tarFilePath, pkgOpts, this.otpCache)).then(() => {

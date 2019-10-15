@@ -29,8 +29,7 @@ test("publish --dist-tag next", async () => {
 
   await lernaPublish(cwd)("--dist-tag", "next");
 
-  expect(npmPublish.registry.get("package-1")).toBe("next");
-  expect(npmDistTag.remove).not.toHaveBeenCalled();
+  expect(npmDistTag.add.tagged()).toEqual(["next"]);
 });
 
 test("publish --dist-tag nightly --canary", async () => {
@@ -40,8 +39,7 @@ test("publish --dist-tag nightly --canary", async () => {
 
   await lernaPublish(cwd)("--dist-tag", "nightly", "--canary");
 
-  expect(npmPublish.registry.get("package-2")).toBe("nightly");
-  expect(npmDistTag.remove).not.toHaveBeenCalled();
+  expect(npmDistTag.add.tagged()).toEqual(["nightly"]);
 });
 
 test("publish --npm-tag deprecated", async () => {
@@ -51,57 +49,39 @@ test("publish --npm-tag deprecated", async () => {
 
   await lernaPublish(cwd)("--npm-tag", "deprecated");
 
-  expect(npmPublish.registry.get("package-3")).toBe("deprecated");
-  expect(npmDistTag.remove).not.toHaveBeenCalled();
+  expect(npmDistTag.add.tagged()).toEqual(["deprecated"]);
 });
 
-test("publish --temp-tag", async () => {
+test("publish (reads pkg.publishConfig.tag default)", async () => {
   const cwd = await initFixture("integration");
 
-  await lernaPublish(cwd)("--temp-tag");
+  await lernaPublish(cwd)();
 
   expect(npmPublish.registry).toMatchInlineSnapshot(`
-Map {
-  "@integration/package-1" => "lerna-temp",
-  "@integration/package-2" => "lerna-temp",
-}
-`);
-
-  const conf = expect.objectContaining({
-    tag: "latest",
-  });
-  const cache = expect.objectContaining({
-    otp: undefined,
-  });
-
-  expect(npmDistTag.remove).toHaveBeenCalledWith("@integration/package-1@1.0.1", "lerna-temp", conf, cache);
-  expect(npmDistTag.remove).toHaveBeenCalledWith("@integration/package-2@1.0.1", "lerna-temp", conf, cache);
-
-  expect(npmDistTag.add).toHaveBeenCalledWith("@integration/package-1@1.0.1", "CUSTOM", conf, cache); // <--
-  expect(npmDistTag.add).toHaveBeenCalledWith("@integration/package-2@1.0.1", "latest", conf, cache);
+    Map {
+      "@integration/package-1" => "lerna-temp",
+      "@integration/package-2" => "lerna-temp",
+    }
+  `);
+  expect(npmDistTag.add.registry).toMatchInlineSnapshot(`
+    Map {
+      "@integration/package-1@1.0.1" => "CUSTOM",
+      "@integration/package-2@1.0.1" => "latest",
+    }
+  `);
 });
 
-test("publish --dist-tag beta --temp-tag", async () => {
+test("publish --dist-tag omega (overrides pkg.publishConfig.tag)", async () => {
   const cwd = await initFixture("integration");
 
-  await lernaPublish(cwd)("--dist-tag", "beta", "--temp-tag");
+  await lernaPublish(cwd)("--dist-tag", "omega");
 
-  expect(npmPublish.registry).toMatchInlineSnapshot(`
-Map {
-  "@integration/package-1" => "lerna-temp",
-  "@integration/package-2" => "lerna-temp",
-}
-`);
-
-  const conf = expect.objectContaining({
-    tag: "beta",
-  });
-  const cache = expect.objectContaining({
-    otp: undefined,
-  });
-
-  expect(npmDistTag.add).toHaveBeenCalledWith("@integration/package-1@1.0.1", "beta", conf, cache); // <--
-  expect(npmDistTag.add).toHaveBeenCalledWith("@integration/package-2@1.0.1", "beta", conf, cache);
+  expect(npmDistTag.add.registry).toMatchInlineSnapshot(`
+    Map {
+      "@integration/package-1@1.0.1" => "omega",
+      "@integration/package-2@1.0.1" => "omega",
+    }
+  `);
 });
 
 test("publish prerelease --pre-dist-tag beta", async () => {
@@ -111,8 +91,16 @@ test("publish prerelease --pre-dist-tag beta", async () => {
 
   await lernaPublish(cwd)("prerelease", "--pre-dist-tag", "beta");
 
-  expect(npmPublish.registry.get("package-1")).toBe("beta");
-  expect(npmDistTag.remove).not.toHaveBeenCalled();
+  expect(npmPublish.registry).toMatchInlineSnapshot(`
+    Map {
+      "package-1" => "lerna-temp",
+    }
+  `);
+  expect(npmDistTag.add.registry).toMatchInlineSnapshot(`
+    Map {
+      "package-1@1.0.1-alpha.0" => "beta",
+    }
+  `);
 });
 
 test("publish non-prerelease --pre-dist-tag beta", async () => {
@@ -122,8 +110,11 @@ test("publish non-prerelease --pre-dist-tag beta", async () => {
 
   await lernaPublish(cwd)("--pre-dist-tag", "beta");
 
-  expect(npmPublish.registry.get("package-1")).toBe("latest");
-  expect(npmDistTag.remove).not.toHaveBeenCalled();
+  expect(npmDistTag.add.registry).toMatchInlineSnapshot(`
+    Map {
+      "package-1@1.0.1" => "latest",
+    }
+  `);
 });
 
 test("publish non-prerelease --dist-tag next --pre-dist-tag beta", async () => {
@@ -133,11 +124,14 @@ test("publish non-prerelease --dist-tag next --pre-dist-tag beta", async () => {
 
   await lernaPublish(cwd)("--dist-tag", "next", "--pre-dist-tag", "beta");
 
-  expect(npmPublish.registry.get("package-1")).toBe("next");
-  expect(npmDistTag.remove).not.toHaveBeenCalled();
+  expect(npmDistTag.add.registry).toMatchInlineSnapshot(`
+    Map {
+      "package-1@1.0.1" => "next",
+    }
+  `);
 });
 
-test("publish --pre-dist-tag beta --temp-tag", async () => {
+test("publish --pre-dist-tag beta --no-temp-tag", async () => {
   const cwd = await initFixture("integration");
 
   await lernaPublish(cwd)(
@@ -148,23 +142,14 @@ test("publish --pre-dist-tag beta --temp-tag", async () => {
     "beta",
     "--pre-dist-tag",
     "beta",
-    "--temp-tag"
+    "--no-temp-tag"
   );
 
+  expect(npmDistTag.add).not.toHaveBeenCalled();
   expect(npmPublish.registry).toMatchInlineSnapshot(`
-Map {
-  "@integration/package-1" => "lerna-temp",
-  "@integration/package-2" => "lerna-temp",
-}
-`);
-
-  const conf = expect.objectContaining({
-    tag: "next",
-  });
-  const cache = expect.objectContaining({
-    otp: undefined,
-  });
-
-  expect(npmDistTag.add).toHaveBeenCalledWith("@integration/package-1@1.0.1-beta.0", "beta", conf, cache);
-  expect(npmDistTag.add).toHaveBeenCalledWith("@integration/package-2@1.0.1-beta.0", "beta", conf, cache);
+    Map {
+      "@integration/package-1" => "beta",
+      "@integration/package-2" => "beta",
+    }
+  `);
 });
