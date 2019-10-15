@@ -8,6 +8,7 @@ jest.mock("../lib/verify-npm-package-access");
 jest.mock("../lib/get-npm-username");
 jest.mock("../lib/get-two-factor-auth-required");
 jest.mock("../lib/get-unpublished-packages");
+jest.mock("../lib/git-checkout");
 // FIXME: better mock for version command
 jest.mock("../../version/lib/git-push");
 jest.mock("../../version/lib/is-anything-committed");
@@ -24,6 +25,7 @@ const collectUpdates = require("@lerna/collect-updates");
 const getNpmUsername = require("../lib/get-npm-username");
 const verifyNpmPackageAccess = require("../lib/verify-npm-package-access");
 const getTwoFactorAuthRequired = require("../lib/get-two-factor-auth-required");
+const gitCheckout = require("../lib/git-checkout");
 
 // helpers
 const commitChangeToPackage = require("@lerna-test/commit-change-to-package");
@@ -33,6 +35,8 @@ const path = require("path");
 
 // file under test
 const lernaPublish = require("@lerna-test/command-runner")(require("../command"));
+
+gitCheckout.mockImplementation(() => Promise.resolve());
 
 expect.extend(require("@lerna-test/figgy-pudding-matchers"));
 
@@ -307,6 +311,16 @@ Map {
       await lernaPublish(cwd)("--registry", "https://my-private-registry");
 
       expect(verifyNpmPackageAccess).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("--no-git-reset", () => {
+    it("skips git checkout of package manifests", async () => {
+      const cwd = await initFixture("normal");
+
+      await lernaPublish(cwd)("--no-git-reset");
+
+      expect(gitCheckout).not.toHaveBeenCalled();
     });
   });
 
