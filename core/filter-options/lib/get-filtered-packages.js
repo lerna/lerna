@@ -9,7 +9,13 @@ function getFilteredPackages(packageGraph, execOpts, options) {
   let chain = Promise.resolve();
 
   chain = chain.then(() =>
-    filterPackages(packageGraph.rawPackageList, options.scope, options.ignore, options.private)
+    filterPackages(
+      packageGraph.rawPackageList,
+      options.scope,
+      options.ignore,
+      options.private,
+      options.continueIfNoMatch
+    )
   );
 
   if (options.since !== undefined) {

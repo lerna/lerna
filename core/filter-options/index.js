@@ -49,6 +49,11 @@ function filterOptions(yargs) {
       `,
       type: "boolean",
     },
+    "continue-if-no-match": {
+      describe: "Don't fail if no package is matched",
+      hidden: true,
+      type: "boolean",
+    },
   };
 
   return yargs.options(opts).group(Object.keys(opts), "Filter Options:");
