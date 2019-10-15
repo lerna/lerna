@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.18.1](https://github.com/lerna/lerna/compare/v3.18.0...v3.18.1) (2019-10-15)
+
+
+### Bug Fixes
+
+* **npm-dist-tag:** Port upstream npm/cli[#235](https://github.com/lerna/lerna/issues/235) ([5a1d229](https://github.com/lerna/lerna/commit/5a1d22902cf8d306a804543b568eef701f600fc5))
+* **npm-dist-tag:** Respect `npm_config_dry_run` env var ([1fd5e18](https://github.com/lerna/lerna/commit/1fd5e181edc898187ff1e1be4fd715fa87d43bf0))
+
+
+
+
+
 # [3.18.0](https://github.com/lerna/lerna/compare/v3.17.0...v3.18.0) (2019-10-15)
 
 
