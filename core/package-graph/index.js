@@ -259,6 +259,9 @@ class PackageGraph extends Map {
 
   /**
    * Remove cycle nodes.
+   *
+   * @deprecated Spread set into prune() instead.
+   *
    * @param {Set<PackageGraphNode>} cycleNodes
    */
   pruneCycleNodes(cycleNodes) {
