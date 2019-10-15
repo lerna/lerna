@@ -15,7 +15,7 @@ It is possible to debug [Jest](https://facebook.github.io/jest/) tests in a Lern
     "runtimeArgs": [
         "exec",
         "--scope",
-        "my-package",
+        "@my-project/my-package",
         "--",
         "node"
     ],
