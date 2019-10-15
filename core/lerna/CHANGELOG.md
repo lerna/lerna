@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.18.0](https://github.com/lerna/lerna/compare/v3.17.0...v3.18.0) (2019-10-15)
+
+
+### Features
+
+* Upgrade to yargs@14 ([5e60213](https://github.com/lerna/lerna/commit/5e60213e93e3ee229a9341a14e420ed2401001dd))
+
+
+
+
+
 # [3.17.0](https://github.com/lerna/lerna/compare/v3.16.5...v3.17.0) (2019-10-10)
 
 **Note:** Version bump only for package lerna

@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.18.0](https://github.com/lerna/lerna/compare/v3.17.0...v3.18.0) (2019-10-15)
+
+
+### Bug Fixes
+
+* **bootstrap:** Move all filter logging into get-filtered-packages method ([54dca56](https://github.com/lerna/lerna/commit/54dca563efb13ad88d478ac31668f6e13a1d99e7))
+* **options:** Explicit `--force-local` ([6948a11](https://github.com/lerna/lerna/commit/6948a11dbc2f845db78a2c666d0ea8160612e41e))
+* **options:** Explicit `--use-workspaces` ([ac8385d](https://github.com/lerna/lerna/commit/ac8385d77e931397b68b068ded7ac83dd1a19d68))
+
+
+### Features
+
+* Upgrade to yargs@14 ([5e60213](https://github.com/lerna/lerna/commit/5e60213e93e3ee229a9341a14e420ed2401001dd))
+* **filter-options:** Rename `--include-filtered-*` options ([f2c3a92](https://github.com/lerna/lerna/commit/f2c3a92fe41b6fdc5d11269f0f2c3e27761b4c85))
+
+
+
+
+
 # [3.17.0](https://github.com/lerna/lerna/compare/v3.16.5...v3.17.0) (2019-10-10)
 
 

@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.18.0](https://github.com/lerna/lerna/compare/v3.17.0...v3.18.0) (2019-10-15)
+
+
+### Bug Fixes
+
+* **bootstrap:** Move all filter logging into get-filtered-packages method ([54dca56](https://github.com/lerna/lerna/commit/54dca563efb13ad88d478ac31668f6e13a1d99e7))
+
+
+### Features
+
+* **filter-options:** Add `--exclude-dependents` option ([ff50e29](https://github.com/lerna/lerna/commit/ff50e299aa990b121e1bd987548252376177c68a)), closes [#2198](https://github.com/lerna/lerna/issues/2198)
+* **filter-options:** Allow command to continue if no packages are matched ([#2280](https://github.com/lerna/lerna/issues/2280)) ([a706023](https://github.com/lerna/lerna/commit/a706023b585846c8e43771657d65ba8797125504))
+* **filter-options:** Rename `--include-filtered-*` options ([f2c3a92](https://github.com/lerna/lerna/commit/f2c3a92fe41b6fdc5d11269f0f2c3e27761b4c85))
+* **filter-options:** Use figgy-pudding in getFilteredPackages() ([73badee](https://github.com/lerna/lerna/commit/73badee5da06745ff58ee96f762d7240e9b4d6f1))
+
+
+
+
+
 ## [3.16.5](https://github.com/lerna/lerna/compare/v3.16.4...v3.16.5) (2019-10-07)
 
 **Note:** Version bump only for package @lerna/filter-options

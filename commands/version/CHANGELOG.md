@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.18.0](https://github.com/lerna/lerna/compare/v3.17.0...v3.18.0) (2019-10-15)
+
+
+### Bug Fixes
+
+* **options:** Explicit `--conventional-graduate` ([f73e6ed](https://github.com/lerna/lerna/commit/f73e6ed8966b06c25de973f2c7f90eea2d4f2d3a))
+* **options:** Explicit `--conventional-prerelease` ([f3581ae](https://github.com/lerna/lerna/commit/f3581aede1d8c7613c0549fbe1bfbb2dfddf46f4))
+* **options:** Explicit `--force-publish` ([343a751](https://github.com/lerna/lerna/commit/343a751739eda514c047037cc3b3a4ebc40932ba))
+* **options:** Explicit `--ignore-scripts` ([efcb3bd](https://github.com/lerna/lerna/commit/efcb3bd2a9591f5380abb349a09ae1f1b802de29))
+
+
+
+
+
 ## [3.16.5](https://github.com/lerna/lerna/compare/v3.16.4...v3.16.5) (2019-10-07)
 
 **Note:** Version bump only for package @lerna/version

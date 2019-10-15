@@ -3,6 +3,37 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.18.0](https://github.com/lerna/lerna/compare/v3.17.0...v3.18.0) (2019-10-15)
+
+
+### Bug Fixes
+
+* **bootstrap:** Move all filter logging into get-filtered-packages method ([54dca56](https://github.com/lerna/lerna/commit/54dca563efb13ad88d478ac31668f6e13a1d99e7))
+* **options:** Explicit `--conventional-graduate` ([f73e6ed](https://github.com/lerna/lerna/commit/f73e6ed8966b06c25de973f2c7f90eea2d4f2d3a))
+* **options:** Explicit `--conventional-prerelease` ([f3581ae](https://github.com/lerna/lerna/commit/f3581aede1d8c7613c0549fbe1bfbb2dfddf46f4))
+* **options:** Explicit `--force-local` ([6948a11](https://github.com/lerna/lerna/commit/6948a11dbc2f845db78a2c666d0ea8160612e41e))
+* **options:** Explicit `--force-publish` ([343a751](https://github.com/lerna/lerna/commit/343a751739eda514c047037cc3b3a4ebc40932ba))
+* **options:** Explicit `--ignore-prepublish` ([fa21723](https://github.com/lerna/lerna/commit/fa217231c95d306bfdd3ffaf348c936a3232c998))
+* **options:** Explicit `--ignore-scripts` ([efcb3bd](https://github.com/lerna/lerna/commit/efcb3bd2a9591f5380abb349a09ae1f1b802de29))
+* **options:** Explicit `--pre-dist-tag` ([1d9552c](https://github.com/lerna/lerna/commit/1d9552c431ea78184ff51dc66f01de3314edb42e))
+* **options:** Explicit `--use-workspaces` ([ac8385d](https://github.com/lerna/lerna/commit/ac8385d77e931397b68b068ded7ac83dd1a19d68))
+
+
+### Features
+
+* **filter-options:** Add `--exclude-dependents` option ([ff50e29](https://github.com/lerna/lerna/commit/ff50e299aa990b121e1bd987548252376177c68a)), closes [#2198](https://github.com/lerna/lerna/issues/2198)
+* **filter-options:** Allow command to continue if no packages are matched ([#2280](https://github.com/lerna/lerna/issues/2280)) ([a706023](https://github.com/lerna/lerna/commit/a706023b585846c8e43771657d65ba8797125504))
+* **filter-options:** Rename `--include-filtered-*` options ([f2c3a92](https://github.com/lerna/lerna/commit/f2c3a92fe41b6fdc5d11269f0f2c3e27761b4c85))
+* **filter-options:** Use figgy-pudding in getFilteredPackages() ([73badee](https://github.com/lerna/lerna/commit/73badee5da06745ff58ee96f762d7240e9b4d6f1))
+* Remove unused @lerna/batch-packages ([d136fb5](https://github.com/lerna/lerna/commit/d136fb5fa98563ae6e9abdc51d1c6211a9e0c5bf))
+* Remove unused @lerna/run-parallel-batches ([ec95403](https://github.com/lerna/lerna/commit/ec95403d6b56ecd4b37a187874015505005a13fb))
+* Upgrade to yargs@14 ([5e60213](https://github.com/lerna/lerna/commit/5e60213e93e3ee229a9341a14e420ed2401001dd))
+* **package-graph:** Deprecate method `pruneCycleNodes()` ([ccf32e1](https://github.com/lerna/lerna/commit/ccf32e1d745e0ab2d633d8b72613d3c19ccdc0c7))
+
+
+
+
+
 # [3.17.0](https://github.com/lerna/lerna/compare/v3.16.5...v3.17.0) (2019-10-10)
 
 
