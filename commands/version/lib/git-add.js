@@ -12,5 +12,5 @@ function gitAdd(files, opts) {
 
   const filePaths = files.map(file => slash(path.relative(opts.cwd, path.resolve(opts.cwd, file))));
 
-  return childProcess.exec("git", ["add", "--", ...filePaths], opts);
+  return childProcess.exec("git", ["add", "-u","--", ...filePaths], opts);
 }
