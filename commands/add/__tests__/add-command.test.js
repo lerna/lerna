@@ -160,10 +160,10 @@ describe("AddCommand", () => {
     expect(pkg1).not.toDependOn("@test/package-1");
   });
 
-  it("filters targets by optional directory globs", async () => {
+  it("filters targets by optional directory destination globs", async () => {
     const testDir = await initFixture("basic");
 
-    await lernaAdd(testDir)("@test/package-1", "packages/package-2");
+    await lernaAdd(testDir)("@test/package-1", "--destination packages/package-2");
     const [, pkg2, pkg3, pkg4] = await getPackages(testDir);
 
     expect(pkg2).toDependOn("@test/package-1");

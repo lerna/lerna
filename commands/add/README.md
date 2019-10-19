@@ -43,11 +43,15 @@ Use a custom registry to install the targeted package.
 
 Skip the chained `lerna bootstrap`.
 
+### `--destination`
+
+Package destination to install to.
+
 ## Examples
 
 ```sh
 # Adds the module-1 package to the packages in the 'prefix-' prefixed folders
-lerna add module-1 packages/prefix-*
+lerna add module-1 --destination packages/prefix-*
 
 # Install module-1 to module-2
 lerna add module-1 --scope=module-2

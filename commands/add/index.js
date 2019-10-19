@@ -17,7 +17,25 @@ const getRangeToReference = require("./lib/get-range-to-reference");
 module.exports = factory;
 
 function factory(argv) {
-  return new AddCommand(argv);
+  const { pkg: pkgs = [] } = argv;
+  const result = [];
+
+  let chain = Promise.resolve();
+
+  pkgs.forEach(pkg => {
+    chain = chain.then(
+      () =>
+        new Promise((resolve, reject) => {
+          const pkgArgv = Object.assign({}, argv, {
+            pkg,
+            onResolved: resolve,
+            onRejected: reject,
+          });
+
+          result.push(new AddCommand(pkgArgv));
+        })
+    );
+  });
 }
 
 class AddCommand extends Command {
@@ -28,7 +46,11 @@ class AddCommand extends Command {
   initialize() {
     this.dependencyType = this.options.dev ? "devDependencies" : "dependencies";
     this.spec = npa(this.options.pkg);
-    this.dirs = new Set(this.options.globs.map(fp => path.resolve(this.project.rootPath, fp)));
+    this.dirs = new Set(
+      this.options.destination
+        ? this.options.destination.map(fp => path.resolve(this.project.rootPath, fp))
+        : []
+    );
     this.selfSatisfied = this.packageSatisfied();
 
     // https://docs.npmjs.com/misc/config#save-prefix

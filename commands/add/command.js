@@ -5,7 +5,7 @@ const filterable = require("@lerna/filter-options");
 /**
  * @see https://github.com/yargs/yargs/blob/master/docs/advanced.md#providing-a-command-module
  */
-exports.command = "add <pkg> [globs..]";
+exports.command = "add <pkg..>";
 
 exports.describe = "Add a single dependency to matched packages";
 
@@ -13,13 +13,16 @@ exports.builder = yargs => {
   yargs
     .positional("pkg", {
       describe: "Package name to add as a dependency",
-      type: "string",
-    })
-    .positional("globs", {
-      describe: "Optional package directory globs to match",
       type: "array",
     })
     .options({
+      d: {
+        group: "Command Options:",
+        describe: "Package directory globs to install to",
+        type: "array",
+        alias: "destination",
+        requiresArg: true,
+      },
       D: {
         group: "Command Options:",
         type: "boolean",
@@ -50,7 +53,7 @@ exports.builder = yargs => {
       },
     })
     .example(
-      "$0 add module-1 packages/prefix-*",
+      "$0 add module-1 --destination packages/prefix-*",
       "Adds the module-1 package to the packages in the 'prefix-' prefixed folders"
     )
     .example("$0 add module-1 --scope=module-2", "Install module-1 to module-2")
