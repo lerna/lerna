@@ -80,7 +80,7 @@ function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions
     !commandOptions.bump || commandOptions.bump.startsWith("pre")
       ? () => false
       : /* skip packages that have not been previously prereleased */
-        node => node.prereleaseId;
+      node => node.prereleaseId;
   const isForced = (node, name) =>
     (forced.has("*") || forced.has(name)) && (useConventionalGraduate ? node.prereleaseId : true);
 

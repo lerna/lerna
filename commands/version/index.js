@@ -20,6 +20,7 @@ const { createRunner } = require("@lerna/run-lifecycle");
 const runTopologically = require("@lerna/run-topologically");
 const ValidationError = require("@lerna/validation-error");
 const prereleaseIdFromVersion = require("@lerna/prerelease-id-from-version");
+const { getFilteredPackages } = require("@lerna/filter-options");
 
 const getCurrentBranch = require("./lib/get-current-branch");
 const gitAdd = require("./lib/git-add");
@@ -97,7 +98,7 @@ class VersionCommand extends Command {
     this.savePrefix = this.options.exact ? "" : "^";
   }
 
-  initialize() {
+  async initialize() {
     if (!this.project.isIndependent()) {
       this.logger.info("current version", this.project.version);
     }
@@ -184,8 +185,15 @@ class VersionCommand extends Command {
       );
     }
 
+    // save list of packages allowed to have versions incremented
+    const allowedToVersion = await getFilteredPackages(this.packageGraph, this.execOpts, this.options);
+    this.allowedToVersion = allowedToVersion.map(pkg => pkg.name);
+
+    // list of packages + dependents allowed to update
+    const filteredPackages = await getFilteredPackages(this.packageGraph, this.execOpts, { ...this.options, includeDependents: true });
+
     this.updates = collectUpdates(
-      this.packageGraph.rawPackageList,
+      filteredPackages,
       this.packageGraph,
       this.execOpts,
       this.options
@@ -215,6 +223,14 @@ class VersionCommand extends Command {
       return false;
     }
 
+    // updates list doesn't contain any packages allowed to be versioned
+    if (this.updates.every(node => !this.allowedToVersion.includes(node.name))) {
+      this.logger.success(`No changed packages are allowed to be ${this.composed ? "published" : "versioned"}`);
+
+      // still exits zero, aka "ok"
+      return false;
+    }
+
     // a "rooted leaf" is the regrettable pattern of adding "." to the "packages" config in lerna.json
     this.hasRootedLeaf = this.packageGraph.has(this.project.manifest.name);
 
@@ -227,8 +243,8 @@ class VersionCommand extends Command {
     // don't execute recursively if run from a poorly-named script
     this.runRootLifecycle = /^(pre|post)?version$/.test(process.env.npm_lifecycle_event)
       ? stage => {
-          this.logger.warn("lifecycle", "Skipping root %j because it has already been called", stage);
-        }
+        this.logger.warn("lifecycle", "Skipping root %j because it has already been called", stage);
+      }
       : stage => this.runPackageLifecycle(this.project.manifest, stage);
 
     const tasks = [
@@ -347,7 +363,7 @@ class VersionCommand extends Command {
     const prereleasePackageNames = getPackagesForOption(this.options.conventionalPrerelease);
     const isCandidate = prereleasePackageNames.has("*")
       ? () => true
-      : (node, name) => prereleasePackageNames.has(name);
+      : (node, name) => prereleasePackageNames.has(name) && this.allowedToVersion.includes(name);
 
     return collectPackages(this.packageGraph, { isCandidate }).map(pkg => pkg.name);
   }
@@ -360,7 +376,8 @@ class VersionCommand extends Command {
     const prereleasePackageNames = this.getPrereleasePackageNames();
     const graduatePackageNames = Array.from(getPackagesForOption(conventionalGraduate));
     const shouldPrerelease = name => prereleasePackageNames && prereleasePackageNames.includes(name);
-    const shouldGraduate = name => graduatePackageNames.includes("*") || graduatePackageNames.includes(name);
+    const shouldGraduate = name => (graduatePackageNames.includes("*") ||
+      graduatePackageNames.includes(name)) && this.allowedToVersion.includes(name);
     const getPrereleaseId = node => {
       if (!shouldGraduate(node.name) && (shouldPrerelease(node.name) || node.prereleaseId)) {
         return resolvePrereleaseId(node.prereleaseId);
@@ -444,12 +461,16 @@ class VersionCommand extends Command {
       }
     }
 
+    console.log('setUpdatesForVersions', versions)
+
     this.packagesToVersion = this.updates.map(({ pkg }) => pkg);
   }
 
   confirmVersions() {
     const changes = this.packagesToVersion.map(pkg => {
-      let line = ` - ${pkg.name}: ${pkg.version} => ${this.updatesVersions.get(pkg.name)}`;
+      const allowedToVer = !this.allowedToVersion.includes(pkg.name) ? 'only updating dependencies' :
+        `${pkg.version} => ${this.updatesVersions.get(pkg.name)}`;
+      let line = ` - ${pkg.name}: ${allowedToVer}`;
       if (pkg.private) {
         line += ` (${chalk.red("private")})`;
       }
@@ -498,15 +519,18 @@ class VersionCommand extends Command {
       // manifest may be mutated by any previous lifecycle
       pkg => pkg.refresh(),
       pkg => {
-        // set new version
-        pkg.version = this.updatesVersions.get(pkg.name);
+        // set new version only if allowed to
+        if (this.allowedToVersion.includes(pkg.name)) {
+          pkg.version = this.updatesVersions.get(pkg.name);
+        }
 
         // update pkg dependencies
         for (const [depName, resolved] of this.packageGraph.get(pkg.name).localDependencies) {
           const depVersion = this.updatesVersions.get(depName);
 
-          if (depVersion && resolved.type !== "directory") {
+          if (depVersion && resolved.type !== "directory" && this.allowedToVersion.includes(resolved.name)) {
             // don't overwrite local file: specifiers, they only change during publish
+            // also do not bump versions of dependecies that are not allowed to be bumped
             pkg.updateLocalDependency(resolved, depVersion, this.savePrefix);
           }
         }
@@ -627,7 +651,9 @@ class VersionCommand extends Command {
   }
 
   gitCommitAndTagVersionForUpdates() {
-    const tags = this.packagesToVersion.map(pkg => `${pkg.name}@${this.updatesVersions.get(pkg.name)}`);
+    const tags = this.packagesToVersion
+      .filter(pkg => this.allowedToVersion.includes(pkg.name))
+      .map(pkg => `${pkg.name}@${this.updatesVersions.get(pkg.name)}`);
     const subject = this.options.message || "Publish";
     const message = tags.reduce((msg, tag) => `${msg}${os.EOL} - ${tag}`, `${subject}${os.EOL}`);
 

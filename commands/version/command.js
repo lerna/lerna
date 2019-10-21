@@ -2,6 +2,7 @@
 
 const log = require("npmlog");
 const semver = require("semver");
+const filterable = require("@lerna/filter-options");
 
 /**
  * @see https://github.com/yargs/yargs/blob/master/docs/advanced.md#providing-a-command-module
@@ -161,7 +162,7 @@ exports.builder = (yargs, composed) => {
     yargs.group(Object.keys(opts), "Command Options:");
   }
 
-  return yargs
+  yargs
     .option("ignore", {
       // TODO: remove in next major release
       // NOT the same as filter-options --ignore
@@ -233,6 +234,8 @@ exports.builder = (yargs, composed) => {
 
       return argv;
     });
+
+  return filterable(yargs);
 };
 
 exports.handler = function handler(argv) {
@@ -245,7 +248,7 @@ exports.addBumpPositional = function addBumpPositional(yargs, additionalKeywords
   );
   const bumpOptionList = `'${semverKeywords.slice(0, -1).join("', '")}', or '${
     semverKeywords[semverKeywords.length - 1]
-  }'.`;
+    }'.`;
 
   yargs.positional("bump", {
     describe: `Increment version(s) by explicit version _or_ semver keyword,\n${bumpOptionList}`,

@@ -21,7 +21,7 @@ composer.lock
 *.swo
 
 # Project Specific
-/node_modules
+node_modules
 *.log
 /lib
 tmp

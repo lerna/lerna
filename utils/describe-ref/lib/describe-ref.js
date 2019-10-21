@@ -48,6 +48,7 @@ function describeRef(options = {}, includeMergedTags) {
 function sync(options = {}, includeMergedTags) {
   const stdout = childProcess.execSync("git", getArgs(options, includeMergedTags), options);
   const result = parse(stdout, options);
+  console.log(stdout,result)
 
   // only called by collect-updates with no matcher
   log.silly("git-describe.sync", "%j => %j", stdout, result);
