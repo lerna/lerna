@@ -14,6 +14,7 @@ function createClient(type) {
       return createGitLabClient();
     case "github":
       return createGitHubClient();
+    /* istanbul ignore next: guarded by yargs.choices() */
     default:
       throw new ValidationError("ERELEASE", "Invalid release client type");
   }
