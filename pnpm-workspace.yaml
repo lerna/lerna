@@ -1,9 +1,6 @@
 packages:
-  # monorepo root
-  - '.'
-  # leaf packages
-  - 'commands/*'
-  - 'core/*'
-  - 'utils/*'
+  - "commands/*"
+  - "core/*"
+  - "utils/*"
   # private modules
-  - 'helpers/*'
+  - "helpers/*"
