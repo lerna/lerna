@@ -724,4 +724,14 @@ describe("VersionCommand", () => {
       expect(message).toBe("v1.0.1");
     });
   });
+
+  describe("with leaf lockfiles", () => {
+    it("updates lockfile version to new package version", async () => {
+      const cwd = await initFixture("lockfile-leaf");
+      await lernaVersion(cwd)("--yes", "major");
+
+      const changedFiles = await showCommit(cwd, "--name-only");
+      expect(changedFiles).toContain("packages/package-1/package-lock.json");
+    });
+  });
 });

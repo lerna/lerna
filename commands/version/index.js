@@ -32,6 +32,7 @@ const isBreakingChange = require("./lib/is-breaking-change");
 const isAnythingCommitted = require("./lib/is-anything-committed");
 const makePromptVersion = require("./lib/prompt-version");
 const createRelease = require("./lib/create-release");
+const { updateLockfileVersion } = require("./lib/update-lockfile-version");
 
 const { collectPackages, getPackagesForOption } = collectUpdates;
 
@@ -511,9 +512,13 @@ class VersionCommand extends Command {
           }
         }
 
-        return pkg.serialize().then(() => {
+        return Promise.all([updateLockfileVersion(pkg), pkg.serialize()]).then(([lockfilePath]) => {
           // commit the updated manifest
           changedFiles.add(pkg.manifestLocation);
+
+          if (lockfilePath) {
+            changedFiles.add(lockfilePath);
+          }
 
           return pkg;
         });
