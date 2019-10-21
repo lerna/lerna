@@ -71,12 +71,10 @@ describe("lifecycle scripts", () => {
       ["lifecycle", "postpublish"],
     ]);
 
-    expect(loadJsonFile.registry).toMatchInlineSnapshot(`
-Map {
-  "/packages/package-1" => 4,
-  "/packages/package-2" => 4,
-}
-`);
+    expect(Array.from(loadJsonFile.registry.keys())).toStrictEqual([
+      "/packages/package-1",
+      "/packages/package-2",
+    ]);
   });
 
   it("does not execute recursive root scripts", async () => {
