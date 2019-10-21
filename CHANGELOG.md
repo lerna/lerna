@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.18.2](https://github.com/lerna/lerna/compare/v3.18.1...v3.18.2) (2019-10-21)
+
+
+### Bug Fixes
+
+* **version:** Update lockfile version, if present ([5b1b40b](https://github.com/lerna/lerna/commit/5b1b40b60ebd442d766236fad19bb6073ccb045b)), closes [#1998](https://github.com/lerna/lerna/issues/1998) [#2160](https://github.com/lerna/lerna/issues/2160) [#1415](https://github.com/lerna/lerna/issues/1415)
+
+
+
+
+
 ## [3.18.1](https://github.com/lerna/lerna/compare/v3.18.0...v3.18.1) (2019-10-15)
 
 
