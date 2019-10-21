@@ -62,6 +62,7 @@
     "write-json-file": "^3.2.0"
   },
   "devDependencies": {
+    "@lerna/project": "file:../../core/project",
     "write-pkg": "^3.1.0"
   }
 }

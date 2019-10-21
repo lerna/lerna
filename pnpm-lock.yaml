@@ -502,6 +502,7 @@ importers:
       temp-write: 3.4.0
       write-json-file: 3.2.0
     devDependencies:
+      '@lerna/project': 'link:../../core/project'
       write-pkg: 3.2.0
     specifiers:
       '@lerna/check-working-tree': 'file:../../utils/check-working-tree'
@@ -513,6 +514,7 @@ importers:
       '@lerna/gitlab-client': 'file:../../utils/gitlab-client'
       '@lerna/output': 'file:../../utils/output'
       '@lerna/prerelease-id-from-version': 'file:../../utils/prerelease-id-from-version'
+      '@lerna/project': 'file:../../core/project'
       '@lerna/prompt': 'file:../../core/prompt'
       '@lerna/run-lifecycle': 'file:../../utils/run-lifecycle'
       '@lerna/run-topologically': 'file:../../utils/run-topologically'
