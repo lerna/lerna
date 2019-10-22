@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.18.3](https://github.com/lerna/lerna/compare/v3.18.2...v3.18.3) (2019-10-22)
+
+
+### Bug Fixes
+
+* **version:** Correct warning message ([384cd15](https://github.com/lerna/lerna/commit/384cd15f7024201da530e8c47d2e6277f2a89f59))
+* **version:** Workaround yargs bug with spurious `--` arguments ([46be9dc](https://github.com/lerna/lerna/commit/46be9dc14999e0dbe933d562a0363fba6ff2f115)), closes [#2315](https://github.com/lerna/lerna/issues/2315)
+
+
+
+
+
 ## [3.18.2](https://github.com/lerna/lerna/compare/v3.18.1...v3.18.2) (2019-10-21)
 
 
