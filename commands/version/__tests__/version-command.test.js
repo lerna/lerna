@@ -734,4 +734,14 @@ describe("VersionCommand", () => {
       expect(changedFiles).toContain("packages/package-1/package-lock.json");
     });
   });
+
+  describe("with spurious -- arguments", () => {
+    it("ignores the extra arguments with cheesy parseConfiguration()", async () => {
+      const cwd = await initFixture("lifecycle");
+      await lernaVersion(cwd)("--yes", "--", "--loglevel", "ignored", "--blah");
+
+      const logMessages = loggingOutput("warn");
+      expect(logMessages).toContain("Arguments after -- are no longer passed to subprocess executions.");
+    });
+  });
 });

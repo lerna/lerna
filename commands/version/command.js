@@ -156,6 +156,11 @@ exports.builder = (yargs, composed) => {
 
   yargs.options(opts);
 
+  // workaround yargs bug that re-interprets unknown arguments in argv._
+  yargs.parserConfiguration({
+    "populate--": true,
+  });
+
   if (!composed) {
     // hide options from composed command's help output
     yargs.group(Object.keys(opts), "Command Options:");
@@ -230,6 +235,11 @@ exports.builder = (yargs, composed) => {
         log.warn("deprecated", "--github-release has been replaced by --create-release=github");
       }
       /* eslint-enable no-param-reassign */
+
+      if (argv["--"]) {
+        log.warn("EDOUBLEDASH", "Arguments after -- are no longer passed to subprocess executions.");
+        log.warn("EDOUBLEDASH", "This will cause an error in a future major version.");
+      }
 
       return argv;
     });
