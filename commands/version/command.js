@@ -227,7 +227,7 @@ exports.builder = (yargs, composed) => {
       if (argv.githubRelease) {
         argv.createRelease = "github";
         delete argv.githubRelease;
-        log.warn("deprecated", "--release has been replaced by --create-release=github");
+        log.warn("deprecated", "--github-release has been replaced by --create-release=github");
       }
       /* eslint-enable no-param-reassign */
 
