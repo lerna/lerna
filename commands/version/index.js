@@ -303,6 +303,13 @@ class VersionCommand extends Command {
         this.logger.success("version", "finished");
       }
 
+      // filter updatesVersions to only updated versions
+      this.updatesVersions.forEach((ver,pkg,map) => {
+        if(!this.allowedToVersion.includes(pkg)) {
+          map.delete(pkg);
+        }
+      })
+
       return {
         updates: this.updates,
         updatesVersions: this.updatesVersions,
@@ -464,8 +471,6 @@ class VersionCommand extends Command {
         this.updatesVersions = versions;
       }
     }
-
-    console.log('setUpdatesForVersions', versions)
 
     this.packagesToVersion = this.updates.map(({ pkg }) => pkg);
   }
