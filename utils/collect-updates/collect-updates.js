@@ -12,7 +12,7 @@ module.exports = collectUpdates;
 module.exports.collectPackages = collectPackages;
 module.exports.getPackagesForOption = getPackagesForOption;
 
-function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions) {
+async function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions) {
   const { forcePublish, conventionalCommits, conventionalGraduate, excludeDependents } = commandOptions;
 
   // If --conventional-commits and --conventional-graduate are both set, ignore --force-publish
@@ -28,15 +28,8 @@ function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions
 
   if (hasTags(execOpts)) {
     // describe the last annotated tag in the current branch
-    const { sha, refCount, lastTagName } = describeRef.sync(execOpts, commandOptions.includeMergedTags);
+    const { sha, refCount, lastTagName } = await describeRef(execOpts, commandOptions.includeMergedTags);
     // TODO: warn about dirty tree?
-
-    if (refCount === "0" && forced.size === 0 && !committish) {
-      // no commits since previous release
-      log.notice("", "Current HEAD is already released, skipping change detection.");
-
-      return [];
-    }
 
     if (commandOptions.canary) {
       // if it's a merge commit, it will return all the commits that were part of the merge
@@ -73,9 +66,51 @@ function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions
     });
   }
 
-  log.info("", `Looking for changed packages since ${committish}`);
+  log.info("", `At least one tag has been found, attempting to locate a tag for each package...`);
 
-  const hasDiff = makeDiffPredicate(committish, execOpts, commandOptions.ignoreChanges);
+  function hasDiff(node) {
+    const [committish,shouldNotRelease] = findDiffForPackage({...execOpts, match: `*${node.name}@*`}, commandOptions);
+    if (shouldNotRelease) {
+      return false;
+    }
+
+    if (committish) {
+      console.log('predicate', makeDiffPredicate(committish, execOpts, commandOptions.ignoreChanges)(node))
+      return makeDiffPredicate(committish, execOpts, commandOptions.ignoreChanges)(node);
+    }
+    console.log(`no commitish found for ${node.name}`)
+    // no commitish found, assume package changed
+    return true;
+  }
+
+  // todo: locate diff for package and use to determine hasDiff
+function findDiffForPackage(execOpts, commandOptions) {
+  let committish = commandOptions.since;
+  let shouldNotRelease = null;
+  if (hasTags(execOpts)) {
+    // describe the last annotated tag in the current branch
+    const { sha, refCount, lastTagName } = describeRef.sync(execOpts, commandOptions.includeMergedTags);
+    // TODO: warn about dirty tree?
+
+    if (refCount === "0" && forced.size === 0 && !committish) {
+      // no commits since previous release
+      log.notice("", "Current HEAD is already released, skipping change detection.");
+
+      return [null,true];
+    }
+
+    if (commandOptions.canary) {
+      // if it's a merge commit, it will return all the commits that were part of the merge
+      // ex: If `ab7533e` had 2 commits, ab7533e^..ab7533e would contain 2 commits + the merge commit
+      committish = `${sha}^..${sha}`;
+    } else if (!committish) {
+      // if no tags found, this will be undefined and we'll use the initial commit
+      committish = lastTagName;
+    }
+  }
+  return [committish,shouldNotRelease];
+}
+
   const needsBump =
     !commandOptions.bump || commandOptions.bump.startsWith("pre")
       ? () => false

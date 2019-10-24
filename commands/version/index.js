@@ -192,12 +192,14 @@ class VersionCommand extends Command {
     // list of packages + dependents allowed to update
     const filteredPackages = await getFilteredPackages(this.packageGraph, this.execOpts, { ...this.options, includeDependents: true });
 
-    this.updates = collectUpdates(
+    const updates = await collectUpdates(
       filteredPackages,
       this.packageGraph,
       this.execOpts,
       this.options
-    ).filter(node => {
+    );
+
+    this.updates = updates.filter(node => {
       if (!node.version) {
         // a package may be unversioned only if it is private
         if (node.pkg.private) {
@@ -215,6 +217,8 @@ class VersionCommand extends Command {
 
       return !!node.version;
     });
+
+    console.log('updates',this.updates.map(node => node.name));
 
     if (!this.updates.length) {
       this.logger.success(`No changed packages to ${this.composed ? "publish" : "version"}`);
