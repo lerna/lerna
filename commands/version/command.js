@@ -69,7 +69,7 @@ exports.builder = (yargs, composed) => {
       type: "boolean",
     },
     "include-merged-tags": {
-      describe: "Also include tags from merged branches",
+      describe: "Include tags from merged branches when detecting changed packages.",
       type: "boolean",
     },
     m: {

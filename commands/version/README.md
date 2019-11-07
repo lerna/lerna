@@ -245,7 +245,7 @@ Pass `--no-ignore-changes` to disable any existing durable configuration.
 lerna version --include-merged-tags
 ```
 
-When run with this flag, `lerna version` will also consider tags of merged branches during package change detection.
+Include tags from merged branches when detecting changed packages.
 
 ### `--message <msg>`
 
