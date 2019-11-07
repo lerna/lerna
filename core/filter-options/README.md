@@ -36,7 +36,7 @@ Exclude private packages. They are included by default.
 
 ### `--since [ref]`
 
-Only include packages that have been updated since the specified `ref`. If no ref is passed, it defaults to the most-recent tag.
+Only include packages that have been changed since the specified `ref`. If no ref is passed, it defaults to the most-recent tag.
 
 ```sh
 # List the contents of packages that have changed since the latest tag

@@ -31,7 +31,7 @@ function filterOptions(yargs) {
     },
     since: {
       describe: dedent`
-        Only include packages that have been updated since the specified [ref].
+        Only include packages that have been changed since the specified [ref].
         If no ref is passed, it defaults to the most-recent tag.
       `,
       type: "string",
