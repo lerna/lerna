@@ -51,6 +51,7 @@ Running `lerna version --conventional-commits` without the above flags will rele
 - [`--exact`](#--exact)
 - [`--force-publish`](#--force-publish)
 - [`--git-remote`](#--git-remote-name)
+- [`--git-add-include`](#--git-add-include-glob)
 - [`--create-release`](#--create-release-type)
 - [`--ignore-changes`](#--ignore-changes)
 - [`--include-merged-tags`](#--include-merged-tags)
@@ -193,6 +194,26 @@ lerna version --git-remote upstream
 ```
 
 When run with this flag, `lerna version` will push the git changes to the specified remote instead of `origin`.
+
+### `--git-add-include <glob>`
+
+```sh
+lerna version --git-add-include ".version"
+```
+
+When run with this flag, `lerna version` will stage additional files when `git add` is executed. [globby](https://www.npmjs.com/package/globby) is used to resolve the files and the package location is used as current working directory. [#2333](https://github.com/lerna/lerna/issues/2333)
+
+This can be configured in lerna.json, as well:
+
+```json
+{
+  "command": {
+    "version": {
+      "gitAddInclude": [".version"]
+    }
+  }
+}
+```
 
 ### `--create-release <type>`
 

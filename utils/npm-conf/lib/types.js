@@ -45,6 +45,7 @@ exports.types = {
   "fetch-retry-maxtimeout": Number,
   git: String,
   "git-tag-version": Boolean,
+  "git-add-include": String,
   "commit-hooks": Boolean,
   global: Boolean,
   globalconfig: path,

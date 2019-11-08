@@ -9,6 +9,8 @@ const pPipe = require("p-pipe");
 const pReduce = require("p-reduce");
 const pWaterfall = require("p-waterfall");
 const semver = require("semver");
+const globby = require("globby");
+const path = require("path");
 
 const Command = require("@lerna/command");
 const ConventionalCommitUtilities = require("@lerna/conventional-commits");
@@ -64,6 +66,7 @@ class VersionCommand extends Command {
       commitHooks = true,
       gitRemote = "origin",
       gitTagVersion = true,
+      gitAddInclude,
       push = true,
       signGitCommit,
       signGitTag,
@@ -73,6 +76,7 @@ class VersionCommand extends Command {
     this.gitRemote = gitRemote;
     this.tagPrefix = tagVersionPrefix;
     this.commitAndTag = gitTagVersion;
+    this.gitAddInclude = gitAddInclude;
     this.pushToRemote = gitTagVersion && amend !== true && push;
     // never automatically push to remote when amending a commit
 
@@ -476,7 +480,7 @@ class VersionCommand extends Command {
   }
 
   updatePackageVersions() {
-    const { conventionalCommits, changelogPreset, changelog = true } = this.options;
+    const { conventionalCommits, changelogPreset, changelog = true, gitAddInclude } = this.options;
     const independentVersions = this.project.isIndependent();
     const rootPath = this.project.manifest.location;
     const changedFiles = new Set();
@@ -525,6 +529,22 @@ class VersionCommand extends Command {
       },
       pkg => this.runPackageLifecycle(pkg, "version").then(() => pkg),
     ];
+
+    if (gitAddInclude) {
+      // additionally stage files via git add when
+      // modified while versioning process
+      actions.push(pkg => {
+        globby
+          .sync(gitAddInclude, {
+            cwd: pkg.location,
+            absolute: true,
+            followSymlinkedDirectories: false,
+            transform: fp => path.normalize(fp),
+          })
+          .forEach(file => changedFiles.add(file));
+        return pkg;
+      });
+    }
 
     if (conventionalCommits && changelog) {
       // we can now generate the Changelog, based on the

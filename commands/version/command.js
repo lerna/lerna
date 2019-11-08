@@ -105,6 +105,10 @@ exports.builder = (yargs, composed) => {
       hidden: true,
       type: "boolean",
     },
+    "git-add-include": {
+      describe: "Additionally stage files via git add when modified while versioning process",
+      type: "string",
+    },
     "no-push": {
       describe: "Do not push tagged commit to git remote.",
       type: "boolean",
