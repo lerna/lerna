@@ -18,6 +18,7 @@ const FilterConfig = figgyPudding({
   includeDependencies: {},
   includeFilteredDependents: "includeDependents",
   includeFilteredDependencies: "includeDependencies",
+  includeMergedTags: {},
   log: { default: npmlog },
 });
 
@@ -49,6 +50,10 @@ function getFilteredPackages(packageGraph, execOpts, opts) {
 
     if (options.excludeDependents) {
       options.log.notice("filter", "excluding dependents");
+    }
+
+    if (options.includeMergedTags) {
+      options.log.notice("filter", "including merged tags");
     }
 
     chain = chain.then(filteredPackages =>

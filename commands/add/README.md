@@ -21,7 +21,7 @@ If no `version` specifier is provided, it defaults to the `latest` dist-tag, jus
 
 ## Options
 
-`lerna add` respects the `--ignore`, `--scope`, and `--include-dependencies` flags (see [Filter Flags](https://www.npmjs.com/package/@lerna/filter-options)).
+`lerna add` accepts all [filter flags](https://www.npmjs.com/package/@lerna/filter-options).
 
 ### `--dev`
 

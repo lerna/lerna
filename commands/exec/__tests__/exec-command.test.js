@@ -181,6 +181,19 @@ describe("ExecCommand", () => {
         "packages/package-2 ls (prefix: false)",
       ]);
     });
+
+    it("does not explode with filter flags", async () => {
+      await lernaExec(testDir)(
+        "ls",
+        "--no-private",
+        "--since",
+        "--include-merged-tags",
+        "--exclude-dependents",
+        "--include-dependencies"
+      );
+
+      expect(calledInPackages()).toEqual(["package-1", "package-2"]);
+    });
   });
 
   describe("with --no-sort", () => {

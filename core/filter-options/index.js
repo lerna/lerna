@@ -59,6 +59,10 @@ function filterOptions(yargs) {
       `,
       type: "boolean",
     },
+    "include-merged-tags": {
+      describe: "Include tags from merged branches when running a command with --since.",
+      type: "boolean",
+    },
     "continue-if-no-match": {
       describe: "Don't fail if no package is matched",
       hidden: true,
