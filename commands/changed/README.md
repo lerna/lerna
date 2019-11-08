@@ -31,9 +31,9 @@ package-2
 
 Unlike `lerna ls`, however, `lerna changed` **does not** support [filter options](https://www.npmjs.com/package/@lerna/filter-options), as filtering is not supported by `lerna version` or `lerna publish`.
 
-`lerna changed` also supports all the flags supported by [`lerna version`](https://github.com/lerna/lerna/tree/master/commands/version#options).
+`lerna changed` supports the following options of [`lerna version`](https://github.com/lerna/lerna/tree/master/commands/version#options) (the others are irrelevant):
 
-Relevant ones are maybe:
-
+- [`--conventional-graduate`](https://github.com/lerna/lerna/tree/master/commands/version#--conventional-graduate).
+- [`--force-publish`](https://github.com/lerna/lerna/tree/master/commands/version#--force-publish).
 - [`--ignore-changes`](https://github.com/lerna/lerna/tree/master/commands/version#--ignore-changes).
 - [`--include-merged-tags`](https://github.com/lerna/lerna/tree/master/commands/version#--include-merged-tags).
