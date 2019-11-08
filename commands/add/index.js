@@ -25,8 +25,17 @@ class AddCommand extends Command {
     return false;
   }
 
+  get dependencyType() {
+    if (this.options.dev) {
+      return "devDependencies";
+    }
+    if (this.options.peer) {
+      return "peerDependencies";
+    }
+    return "dependencies";
+  }
+
   initialize() {
-    this.dependencyType = this.options.dev ? "devDependencies" : "dependencies";
     this.spec = npa(this.options.pkg);
     this.dirs = new Set(this.options.globs.map(fp => path.resolve(this.project.rootPath, fp)));
     this.selfSatisfied = this.packageSatisfied();

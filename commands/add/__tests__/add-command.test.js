@@ -169,6 +169,28 @@ describe("AddCommand", () => {
     expect(pkg2).toDevDependOn("@test/package-1");
   });
 
+  describe("peerDependencies", () => {
+    it("should add target package to peerDependencies", async () => {
+      const testDir = await initFixture("basic");
+
+      await lernaAdd(testDir)("@test/package-1", "--peer");
+      const [, pkg2, pkg3, pkg4] = await getPackages(testDir);
+
+      expect(pkg2).toPeerDependOn("@test/package-1");
+      expect(pkg3).toPeerDependOn("@test/package-1");
+      expect(pkg4).toPeerDependOn("@test/package-1");
+    });
+
+    it("should add target package to peerDependencies with alias", async () => {
+      const testDir = await initFixture("basic");
+
+      await lernaAdd(testDir)("-P", "@test/package-1");
+      const [, pkg2] = await getPackages(testDir);
+
+      expect(pkg2).toPeerDependOn("@test/package-1");
+    });
+  });
+
   it("should not reference packages to themeselves", async () => {
     const testDir = await initFixture("basic");
 
