@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.18.4](https://github.com/lerna/lerna/compare/v3.18.3...v3.18.4) (2019-11-08)
+
+
+### Bug Fixes
+
+* **changed:** Copy relevant options from version, do not inherit ([6bd77ba](https://github.com/lerna/lerna/commit/6bd77ba60afd496e0f612aca7a56b8a9c8270436))
+
+
+
+
+
 ## [3.18.3](https://github.com/lerna/lerna/compare/v3.18.2...v3.18.3) (2019-10-22)
 
 **Note:** Version bump only for package @lerna/changed

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.18.4](https://github.com/lerna/lerna/compare/v3.18.3...v3.18.4) (2019-11-08)
+
+
+### Bug Fixes
+
+* **version:** Clarify `--include-merged-tags` description ([b0bbfcf](https://github.com/lerna/lerna/commit/b0bbfcfa867fea420376232d2af0d80a97454c9e))
+
+
+
+
+
 ## [3.18.3](https://github.com/lerna/lerna/compare/v3.18.2...v3.18.3) (2019-10-22)
 
 
