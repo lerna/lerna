@@ -38,10 +38,10 @@ describe("lerna run", () => {
 lerna notice cli __TEST_VERSION__
 lerna info ci enabled
 lerna info Executing command in 2 packages: "npm run fail --silent"
-lerna info run Ran npm script 'fail' in 'package-3' in 0.0s:
-lerna info run Ran npm script 'fail' in 'package-1' in 0.0s:
+lerna info run Run npm script 'fail' in 'package-3' in 0.0s:
+lerna info run Run npm script 'fail' in 'package-1' in 0.0s:
 lerna ERR! Received non-zero exit code 100 during execution
-lerna success run Ran npm script 'fail' in 2 packages in 0.0s:
+lerna success run Run npm script 'fail' in 2 packages in 0.0s:
 lerna success - package-1
 lerna success - package-3
 
@@ -77,7 +77,7 @@ package-2: package-2
 lerna notice cli __TEST_VERSION__
 lerna info ci enabled
 lerna info Executing command in 4 packages: "npm run test --silent"
-lerna success run Ran npm script 'test' in 4 packages in 0.0s:
+lerna success run Run npm script 'test' in 4 packages in 0.0s:
 lerna success - package-1
 lerna success - package-2
 lerna success - package-3
@@ -108,7 +108,7 @@ package-2
 lerna notice cli __TEST_VERSION__
 lerna info ci enabled
 lerna info Executing command in 4 packages: "npm run test --silent"
-lerna success run Ran npm script 'test' in 4 packages in 0.0s:
+lerna success run Run npm script 'test' in 4 packages in 0.0s:
 lerna success - package-1
 lerna success - package-2
 lerna success - package-3
@@ -131,7 +131,7 @@ lerna success - package-4
 lerna notice cli __TEST_VERSION__
 lerna info ci enabled
 lerna info Executing command in 4 packages: "npm run test --silent"
-lerna success run Ran npm script 'test' in 4 packages in 0.0s:
+lerna success run Run npm script 'test' in 4 packages in 0.0s:
 lerna success - package-1
 lerna success - package-2
 lerna success - package-3
