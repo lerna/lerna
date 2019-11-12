@@ -16,7 +16,10 @@ const stubLog = {
   info: jest.fn(),
   warn: jest.fn(),
 };
-const baseOptions = new Map([["log", stubLog], ["tag", "latest"]]);
+const baseOptions = new Map([
+  ["log", stubLog],
+  ["tag", "latest"],
+]);
 
 fetch.mockImplementation(() => Promise.resolve());
 fetch.json.mockImplementation(() => Promise.resolve({}));

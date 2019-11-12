@@ -34,7 +34,10 @@ class ChangedCommand extends Command {
       this.options
     );
 
-    this.result = listable.format(updates.map(node => node.pkg), this.options);
+    this.result = listable.format(
+      updates.map(node => node.pkg),
+      this.options
+    );
 
     if (this.result.count === 0) {
       this.logger.info("", "No changed packages found");

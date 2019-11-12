@@ -20,9 +20,16 @@ exports.select = mockSelect;
 exports.input = mockInput;
 
 const semverIndex = new Map(
-  ["patch", "minor", "major", "prepatch", "preminor", "premajor", "PRERELEASE", "CUSTOM"].map(
-    (keyword, idx) => [keyword, idx]
-  )
+  [
+    "patch",
+    "minor",
+    "major",
+    "prepatch",
+    "preminor",
+    "premajor",
+    "PRERELEASE",
+    "CUSTOM",
+  ].map((keyword, idx) => [keyword, idx])
 );
 
 exports.mockChoices = (...keywords) => {

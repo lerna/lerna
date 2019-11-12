@@ -190,7 +190,10 @@ class PackageGraph extends Map {
       currentNode.localDependents.forEach(visits([currentName]));
     });
 
-    reportCycles(Array.from(cyclePaths, cycle => cycle.join(" -> ")), rejectCycles);
+    reportCycles(
+      Array.from(cyclePaths, cycle => cycle.join(" -> ")),
+      rejectCycles
+    );
 
     return [cyclePaths, cycleNodes];
   }

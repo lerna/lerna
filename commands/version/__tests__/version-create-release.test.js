@@ -20,7 +20,10 @@ const initFixture = require("@lerna-test/init-fixture")(__dirname);
 // test command
 const lernaVersion = require("@lerna-test/command-runner")(require("../command"));
 
-describe.each([["github", githubClient], ["gitlab", gitlabClient]])("--create-release %s", (type, client) => {
+describe.each([
+  ["github", githubClient],
+  ["gitlab", gitlabClient],
+])("--create-release %s", (type, client) => {
   it("does not create a release if --no-push is passed", async () => {
     const cwd = await initFixture("independent");
 

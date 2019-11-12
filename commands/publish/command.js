@@ -111,7 +111,10 @@ exports.builder = yargs => {
   const sharedKeys = ["preid", "y", "ignore-scripts"];
 
   for (const sharedKey of sharedKeys) {
-    hiddenOptions.splice(hiddenOptions.findIndex(k => k === sharedKey), 1);
+    hiddenOptions.splice(
+      hiddenOptions.findIndex(k => k === sharedKey),
+      1
+    );
   }
 
   yargs.group(Object.keys(opts).concat(sharedKeys), "Command Options:");
