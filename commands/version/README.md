@@ -125,6 +125,25 @@ When run with this flag, `lerna version` will use the [Conventional Commits Spec
 
 Passing [`--no-changelog`](#--no-changelog) will disable the generation (or updating) of `CHANGELOG.md` files.
 
+You can customize the changelog generation ([reference](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-changelog-core#conventionalchangelogcoreoptions-context-gitrawcommitsopts-parseropts-writeropts)) in your `lerna.json`:
+
+```json
+{
+  "command": {
+    "version": {
+      "conventionalCommits": true,
+      "conventionalChangelog": {
+        "options": {},
+        "context": {},
+        "gitRawCommitsOpts": {},
+        "parserOpts": {},
+        "writerOpts": {}
+      }
+    }
+  }
+},
+```
+
 ### `--conventional-graduate`
 
 ```sh

@@ -476,7 +476,7 @@ class VersionCommand extends Command {
   }
 
   updatePackageVersions() {
-    const { conventionalCommits, changelogPreset, changelog = true } = this.options;
+    const { conventionalCommits, changelogPreset, conventionalChangelog, changelog = true } = this.options;
     const independentVersions = this.project.isIndependent();
     const rootPath = this.project.manifest.location;
     const changedFiles = new Set();
@@ -534,6 +534,7 @@ class VersionCommand extends Command {
       actions.push(pkg =>
         ConventionalCommitUtilities.updateChangelog(pkg, type, {
           changelogPreset,
+          conventionalChangelog,
           rootPath,
           tagPrefix: this.tagPrefix,
         }).then(({ logPath, newEntry }) => {
@@ -569,6 +570,7 @@ class VersionCommand extends Command {
         chain = chain.then(() =>
           ConventionalCommitUtilities.updateChangelog(this.project.manifest, "root", {
             changelogPreset,
+            conventionalChangelog,
             rootPath,
             tagPrefix: this.tagPrefix,
             version: this.globalVersion,
