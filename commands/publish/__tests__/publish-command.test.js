@@ -261,7 +261,7 @@ Map {
       expect(npmPublish).toHaveBeenCalledWith(
         expect.objectContaining({ name: "package-1" }),
         "/TEMP_DIR/package-1-MOCKED.tgz",
-        expect.objectContaining({ _auth: auth }),
+        expect.objectContaining({ "auth-type": "legacy", _auth: auth }),
         expect.objectContaining({ otp: undefined })
       );
     });
@@ -276,7 +276,7 @@ Map {
       expect(npmPublish).toHaveBeenCalledWith(
         expect.objectContaining({ name: "package-1" }),
         "/TEMP_DIR/package-1-MOCKED.tgz",
-        expect.objectContaining({ _auth: auth }),
+        expect.objectContaining({ "auth-type": "legacy", _auth: auth }),
         expect.objectContaining({ otp: undefined })
       );
     });
