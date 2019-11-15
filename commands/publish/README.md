@@ -45,6 +45,7 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 
 `lerna publish` supports all of the options provided by [`lerna version`](https://github.com/lerna/lerna/tree/master/commands/version#options) in addition to the following:
 
+- [`--_auth`](#--_auth)
 - [`--canary`](#--canary)
 - [`--contents <dir>`](#--contents-dir)
 - [`--dist-tag <tag>`](#--dist-tag-tag)
@@ -61,6 +62,15 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 - [`--ignore-prepublish`](#--ignore-prepublish)
 - [`--yes`](#--yes)
 - [`--tag-version-prefix`](#--tag-version-prefix)
+
+### `--_auth`
+
+```sh
+lerna publish --_auth aGk6bW9t
+```
+
+When publishing packages that require authentication but you are working with an internally hosted NPM Registry that only uses the legacy Base64 version of username:password.
+
 
 ### `--canary`
 
