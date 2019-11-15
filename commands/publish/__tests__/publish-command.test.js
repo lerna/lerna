@@ -250,6 +250,38 @@ Map {
     });
   });
 
+  describe("--_auth", () => {
+    it("passes auth to npm commands", async () => {
+      const testDir = await initFixture("normal");
+      const data = "hi:mom";
+      const auth = Buffer.from(data).toString("base64");
+
+      await lernaPublish(testDir)("--_auth", auth);
+
+      expect(npmPublish).toHaveBeenCalledWith(
+        expect.objectContaining({ name: "package-1" }),
+        "/TEMP_DIR/package-1-MOCKED.tgz",
+        expect.objectContaining({ _auth: auth }),
+        expect.objectContaining({ otp: undefined })
+      );
+    });
+
+    it("passes auth to npm commands if using legacy-auth flag", async () => {
+      const testDir = await initFixture("normal");
+      const data = "hi:mom";
+      const auth = Buffer.from(data).toString("base64");
+
+      await lernaPublish(testDir)("--legacy-auth", auth);
+
+      expect(npmPublish).toHaveBeenCalledWith(
+        expect.objectContaining({ name: "package-1" }),
+        "/TEMP_DIR/package-1-MOCKED.tgz",
+        expect.objectContaining({ _auth: auth }),
+        expect.objectContaining({ otp: undefined })
+      );
+    });
+  });
+
   describe("--registry", () => {
     it("passes registry to npm commands", async () => {
       const testDir = await initFixture("normal");

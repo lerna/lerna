@@ -35,6 +35,11 @@ exports.builder = yargs => {
       type: "string",
       requiresArg: true,
     },
+    "legacy-auth": {
+      describe: "Legacy Base64 Encoded username and password.",
+      alias: "_auth",
+      type: "string",
+    },
     "pre-dist-tag": {
       describe: "Publish prerelease packages with the specified npm dist-tag",
       type: "string",
