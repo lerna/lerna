@@ -72,7 +72,7 @@ class VersionCommand extends Command {
 
     this.gitRemote = gitRemote;
     this.tagPrefix = tagVersionPrefix;
-    this.commitAndTag = gitTagVersion;
+    this.commitAndTag = this.options.gitTag && this.options.gitCommit && gitTagVersion;
     this.pushToRemote = gitTagVersion && amend !== true && push;
     // never automatically push to remote when amending a commit
 
@@ -277,6 +277,14 @@ class VersionCommand extends Command {
       );
     } else {
       this.logger.info("execute", "Skipping releases");
+    }
+
+    if (!this.options.gitTags) {
+      this.logger.info("execute", "Skipping tags");
+    }
+
+    if (!this.options.gitCommit) {
+      this.logger.info("execute", "Skipping commit");
     }
 
     return pWaterfall(tasks).then(() => {
@@ -637,8 +645,10 @@ class VersionCommand extends Command {
     const message = tags.reduce((msg, tag) => `${msg}${os.EOL} - ${tag}`, `${subject}${os.EOL}`);
 
     return Promise.resolve()
-      .then(() => gitCommit(message, this.gitOpts, this.execOpts))
-      .then(() => Promise.all(tags.map(tag => gitTag(tag, this.gitOpts, this.execOpts))))
+      .then(() => this.options.gitCommit && gitCommit(message, this.gitOpts, this.execOpts))
+      .then(
+        () => this.options.gitTag && Promise.all(tags.map(tag => gitTag(tag, this.gitOpts, this.execOpts)))
+      )
       .then(() => tags);
   }
 
@@ -650,13 +660,17 @@ class VersionCommand extends Command {
       : tag;
 
     return Promise.resolve()
-      .then(() => gitCommit(message, this.gitOpts, this.execOpts))
-      .then(() => gitTag(tag, this.gitOpts, this.execOpts))
+      .then(() => this.options.gitCommit && gitCommit(message, this.gitOpts, this.execOpts))
+      .then(() => this.options.gitTag && gitTag(tag, this.gitOpts, this.execOpts))
       .then(() => [tag]);
   }
 
   gitPushToRemote() {
-    this.logger.info("git", "Pushing tags...");
+    if (this.options.gitTag) {
+      this.logger.info("git", "Pushing tags...");
+    } else {
+      this.logger.info("git", "Pushing release commit...");
+    }
 
     return gitPush(this.gitRemote, this.currentBranch, this.execOpts);
   }
