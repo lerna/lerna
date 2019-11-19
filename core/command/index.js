@@ -1,6 +1,7 @@
 "use strict";
 
 const _ = require("lodash");
+const cloneDeep = require("clone-deep");
 const dedent = require("dedent");
 const execa = require("execa");
 const log = require("npmlog");
@@ -18,10 +19,11 @@ const warnIfHanging = require("./lib/warn-if-hanging");
 const DEFAULT_CONCURRENCY = os.cpus().length;
 
 class Command {
-  constructor(argv) {
+  constructor(_argv) {
     log.pause();
     log.heading = "lerna";
 
+    const argv = cloneDeep(_argv);
     log.silly("argv", argv);
 
     // "FooCommand" => "foo"

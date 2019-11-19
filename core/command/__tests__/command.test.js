@@ -264,6 +264,15 @@ describe("core-command", () => {
       }
     }
 
+    it("does not mutate argv parameter", async () => {
+      const argv = { cwd: testDir, onRejected };
+      const instance = new TestACommand(argv);
+      await instance;
+
+      expect(argv).toEqual({ cwd: testDir, onRejected });
+      expect(instance.argv).not.toEqual(argv);
+    });
+
     it("should pick up global options", async () => {
       const instance = new TestACommand({ cwd: testDir, onRejected });
       await instance;
