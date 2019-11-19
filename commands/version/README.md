@@ -57,6 +57,8 @@ Running `lerna version --conventional-commits` without the above flags will rele
 - [`--message`](#--message-msg)
 - [`--no-changelog`](#--no-changelog)
 - [`--no-commit-hooks`](#--no-commit-hooks)
+- [`--no-git-tag`](#--no-git-tag)
+- [`--no-git-commit`](#--no-git-commit)
 - [`--no-git-tag-version`](#--no-git-tag-version)
 - [`--no-push`](#--no-push)
 - [`--preid`](#--preid)
@@ -302,6 +304,18 @@ By default, `lerna version` will allow git commit hooks to run when committing v
 Pass `--no-commit-hooks` to disable this behavior.
 
 This option is analogous to the `npm version` option [`--commit-hooks`](https://docs.npmjs.com/misc/config#commit-hooks), just inverted.
+
+### `--no-git-tag`
+
+By default, `lerna version` will tag the release in Git. Pass `--no-git-tag` to disable the tagging.
+
+> Note that this preserves the release commit.
+
+### `--no-git-commit`
+
+By default, `lerna version` will create a release commit in Git. Pass `--no-git-commit` to disable the commit.
+
+> Note that this preserves tagging the release.
 
 ### `--no-git-tag-version`
 
