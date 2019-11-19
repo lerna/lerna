@@ -254,10 +254,16 @@ class VersionCommand extends Command {
   execute() {
     const tasks = [() => this.updatePackageVersions()];
 
-    if (this.commitAndTag) {
+    if (this.options.gitTag || this.options.gitCommit) {
       tasks.push(() => this.commitAndTagUpdates());
-    } else {
-      this.logger.info("execute", "Skipping git tag/commit");
+    }
+
+    if (!this.options.gitTag) {
+      this.logger.info("execute", "Skipping tags");
+    }
+
+    if (!this.options.gitCommit) {
+      this.logger.info("execute", "Skipping commit");
     }
 
     if (this.pushToRemote) {
@@ -277,14 +283,6 @@ class VersionCommand extends Command {
       );
     } else {
       this.logger.info("execute", "Skipping releases");
-    }
-
-    if (!this.options.gitTags) {
-      this.logger.info("execute", "Skipping tags");
-    }
-
-    if (!this.options.gitCommit) {
-      this.logger.info("execute", "Skipping commit");
     }
 
     return pWaterfall(tasks).then(() => {
@@ -606,7 +604,7 @@ class VersionCommand extends Command {
       chain = chain.then(() => this.runRootLifecycle("version"));
     }
 
-    if (this.commitAndTag) {
+    if (this.options.gitCommit) {
       chain = chain.then(() => gitAdd(Array.from(changedFiles), this.execOpts));
     }
 
