@@ -22,6 +22,8 @@ When run, this command does one of the following things:
 
 > Lerna will never publish packages which are marked as private (`"private": true` in the `package.json`).
 
+During all publish operations, appropriate [lifecycle scripts](#lifecycle-scripts) are called in the root and per-package (unless disabled by [`--ignore-scripts](#--ignore-scripts)).
+
 Check out [Per-Package Configuration](#per-package-configuration) for more details about publishing scoped packages, custom registries, and custom dist-tags.
 
 ## Positionals
@@ -152,11 +154,11 @@ Configured via `lerna.json`:
 
 ### `--ignore-scripts`
 
-When passed, this flag will disable running [lifecycle scripts](#lifecycle-events) during `lerna publish`.
+When passed, this flag will disable running [lifecycle scripts](#lifecycle-scripts) during `lerna publish`.
 
 ### `--ignore-prepublish`
 
-When passed, this flag will disable running [deprecated](https://docs.npmjs.com/misc/scripts#prepublish-and-prepare) [`prepublish` scripts](#lifecycle-events) during `lerna publish`.
+When passed, this flag will disable running [deprecated](https://docs.npmjs.com/misc/scripts#prepublish-and-prepare) [`prepublish` scripts](#lifecycle-scripts) during `lerna publish`.
 
 ### `--no-git-reset`
 
@@ -322,43 +324,40 @@ This _non-standard_ field allows you to customize the published subdirectory jus
   }
 ```
 
-## LifeCycle Events
+<a id="lifecycle-events"><!-- back-compat with previous heading --></a>
+
+## Lifecycle Scripts
+
+```js
+// prepublish:      Run BEFORE the package is packed and published.
+// prepare:         Run BEFORE the package is packed and published, AFTER prepublish, BEFORE prepublishOnly.
+// prepublishOnly:  Run BEFORE the package is packed and published, ONLY on npm publish.
+// prepack:     Run BEFORE a tarball is packed.
+// postpack:    Run AFTER the tarball has been generated and moved to its final destination.
+// publish:     Run AFTER the package is published.
+// postpublish: Run AFTER the package is published.
+```
 
 Lerna will run [npm lifecycle scripts](https://docs.npmjs.com/misc/scripts#description) during `lerna publish` in the following order:
 
-### Pre Publish
-
-- In root package:
-
-  - `prepublish`
-  - `prepare`
-  - `prepublishOnly`
-  - `prepack`
-
-- In each subpackage:
-  - `prepublish`
-  - `prepare`
-  - `prepublishOnly`
-  - `prepack`
-
-### Packing each subpackage
-
-- In each subpackage:
-  - `postpack`
-
-### After all subpackages packed
-
-- In root package:
-  - `postpack`
-
-### Publishing each subpackage
-
-- In each subpackage:
-  - `publish`
-  - `postpublish`
-
-### After all subpackages published
-
-- In root package:
-  - `publish`
-  - `postpublish`
+1. If versioning implicitly, run all [version lifecycle scripts](https://github.com/lerna/lerna/tree/master/commands/version#lifecycle-scripts)
+2. Run `prepublish` lifecycle in root, if [enabled](#--ignore-prepublish)
+3. Run `prepare` lifecycle in root
+4. Run `prepublishOnly` lifecycle in root
+5. Run `prepack` lifecycle in root
+6. For each changed package, in topological order (all dependencies before dependents):
+   1. Run `prepublish` lifecycle, if [enabled](#--ignore-prepublish)
+   2. Run `prepare` lifecycle
+   3. Run `prepublishOnly` lifecycle
+   4. Run `prepack` lifecycle
+   5. Create package tarball in temp directory via [JS API](https://github.com/lerna/lerna/tree/master/utils/pack-directory#readme)
+   6. Run `postpack` lifecycle
+7. Run `postpack` lifecycle in root
+8. For each changed package, in topological order (all dependencies before dependents):
+   1. Publish package to configured [registry](#--registry-url) via [JS API](https://github.com/lerna/lerna/tree/master/utils/npm-publish#readme)
+   2. Run `publish` lifecycle
+   3. Run `postpublish` lifecycle
+9. Run `publish` lifecycle in root
+   - To avoid recursive calls, don't use this root lifecycle to run `lerna publish`
+10. Run `postpublish` lifecycle in root
+11. Update temporary dist-tag to latest, if [enabled](#--temp-tag)
