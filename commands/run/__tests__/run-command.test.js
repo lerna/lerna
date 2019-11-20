@@ -40,13 +40,9 @@ describe("RunCommand", () => {
     });
 
     it("should complain if invoked with an empty script", async () => {
-      try {
-        await lernaRun(testDir)("");
-      } catch (err) {
-        expect(err.message).toBe("You must specify a lifecycle script to run");
-      }
+      const command = lernaRun(testDir)("");
 
-      expect.hasAssertions();
+      await expect(command).rejects.toThrow("You must specify a lifecycle script to run");
     });
 
     it("runs a script in packages", async () => {
@@ -123,15 +119,10 @@ describe("RunCommand", () => {
         return Promise.reject(err);
       });
 
-      try {
-        await lernaRun(testDir)("fail");
-      } catch (err) {
-        expect(err.message).toMatch("package-1");
-        expect(err.message).not.toMatch("package-2");
-        expect(process.exitCode).toBe(123);
-      }
+      const command = lernaRun(testDir)("fail");
 
-      expect.hasAssertions();
+      await expect(command).rejects.toThrow("package-1");
+      expect(process.exitCode).toBe(123);
     });
 
     it("propagates non-zero exit codes with --no-bail", async () => {
@@ -258,14 +249,9 @@ describe("RunCommand", () => {
 
     it("should throw an error with --reject-cycles", async () => {
       const testDir = await initFixture("toposort");
+      const command = lernaRun(testDir)("env", "--reject-cycles");
 
-      try {
-        await lernaRun(testDir)("env", "--reject-cycles");
-      } catch (err) {
-        expect(err.message).toMatch("Dependency cycles detected, you should fix these!");
-      }
-
-      expect.hasAssertions();
+      await expect(command).rejects.toThrow("Dependency cycles detected, you should fix these!");
     });
   });
 });

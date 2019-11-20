@@ -10,12 +10,12 @@ const cloneFixture = require("@lerna-test/clone-fixture")(
 test("lerna publish sets correct exit code when libnpmpublish fails", async () => {
   const { cwd } = await cloneFixture("normal");
 
-  try {
-    await cliRunner(cwd)("publish", "patch", "--yes", "--no-verify-access", "--loglevel", "error");
-  } catch (err) {
-    expect(err.stderr).toMatch("E401 You must be logged in to publish packages.");
-    expect(err.code).toBe(1);
-  }
-
-  expect.hasAssertions();
+  await expect(
+    cliRunner(cwd)("publish", "patch", "--yes", "--no-verify-access", "--loglevel", "error")
+  ).rejects.toThrow(
+    expect.objectContaining({
+      stderr: expect.stringContaining("E401 You must be logged in to publish packages."),
+      code: 1,
+    })
+  );
 });

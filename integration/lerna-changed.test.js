@@ -24,14 +24,7 @@ test("no changes since release", async () => {
 
   await gitTag(cwd, "v1.0.0");
 
-  try {
-    await cliRunner(cwd)("changed");
-  } catch (err) {
-    expect(err.message).toMatch("No changed packages found");
-    expect(err.code).toBe(1);
-  }
-
-  expect.hasAssertions();
+  await expect(cliRunner(cwd)("changed")).rejects.toThrow("No changed packages found");
 });
 
 test("no reachable tags", async () => {

@@ -25,12 +25,10 @@ describe("ChildProcessUtilities", () => {
     });
 
     it("rejects on undefined command", async () => {
-      try {
-        await ChildProcessUtilities.exec("nowImTheModelOfAModernMajorGeneral");
-      } catch (err) {
-        expect(err.message).toMatch(/\bnowImTheModelOfAModernMajorGeneral\b/);
-        expect(ChildProcessUtilities.getChildProcessCount()).toBe(0);
-      }
+      const result = ChildProcessUtilities.exec("nowImTheModelOfAModernMajorGeneral");
+
+      await expect(result).rejects.toThrow(/\bnowImTheModelOfAModernMajorGeneral\b/);
+      expect(ChildProcessUtilities.getChildProcessCount()).toBe(0);
     });
 
     it("registers child processes that are created", async () => {
@@ -46,16 +44,18 @@ describe("ChildProcessUtilities", () => {
     });
 
     it("decorates opts.pkg on error if caught", async () => {
-      try {
-        await ChildProcessUtilities.exec(
-          "theVeneratedVirginianVeteranWhoseMenAreAll",
-          ["liningUpToPutMeUpOnAPedestal"],
-          { pkg: { name: "hamilton" } }
-        );
-      } catch (err) {
-        expect(err.code).toBe(os.constants.errno.ENOENT);
-        expect(err.pkg).toEqual({ name: "hamilton" });
-      }
+      const result = ChildProcessUtilities.exec(
+        "theVeneratedVirginianVeteranWhoseMenAreAll",
+        ["liningUpToPutMeUpOnAPedestal"],
+        { pkg: { name: "hamilton" } }
+      );
+
+      await expect(result).rejects.toThrow(
+        expect.objectContaining({
+          code: os.constants.errno.ENOENT,
+          pkg: { name: "hamilton" },
+        })
+      );
     });
   });
 
@@ -70,15 +70,17 @@ describe("ChildProcessUtilities", () => {
     });
 
     it("decorates opts.pkg on error if caught", async () => {
-      try {
-        await ChildProcessUtilities.spawn("exit", ["123"], {
+      const result = ChildProcessUtilities.spawn("exit", ["123"], {
+        pkg: { name: "shelled" },
+        shell: true,
+      });
+
+      await expect(result).rejects.toThrow(
+        expect.objectContaining({
+          code: 123,
           pkg: { name: "shelled" },
-          shell: true,
-        });
-      } catch (err) {
-        expect(err.code).toBe(123);
-        expect(err.pkg).toEqual({ name: "shelled" });
-      }
+        })
+      );
     });
   });
 });

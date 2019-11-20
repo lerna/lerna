@@ -58,16 +58,14 @@ describe("Project", () => {
     });
 
     it("errors when lerna.json is not valid JSON", async () => {
-      expect.assertions(2);
-
       const cwd = await initFixture("invalid-json");
 
-      try {
-        const project = new Project(cwd); // eslint-disable-line no-unused-vars
-      } catch (err) {
-        expect(err.name).toBe("ValidationError");
-        expect(err.prefix).toBe("JSONError");
-      }
+      expect(() => new Project(cwd)).toThrow(
+        expect.objectContaining({
+          name: "ValidationError",
+          prefix: "JSONError",
+        })
+      );
     });
 
     it("returns parsed rootPkg.lerna", async () => {
@@ -86,16 +84,14 @@ describe("Project", () => {
     });
 
     it("errors when root package.json is not valid JSON", async () => {
-      expect.assertions(2);
-
       const cwd = await initFixture("pkg-prop-syntax-error");
 
-      try {
-        const project = new Project(cwd); // eslint-disable-line no-unused-vars
-      } catch (err) {
-        expect(err.name).toBe("ValidationError");
-        expect(err.prefix).toBe("JSONError");
-      }
+      expect(() => new Project(cwd)).toThrow(
+        expect.objectContaining({
+          name: "ValidationError",
+          prefix: "JSONError",
+        })
+      );
     });
 
     it("extends local shared config", async () => {
@@ -198,29 +194,13 @@ Object {
     it("throws an error when extend target is unresolvable", async () => {
       const cwd = await initFixture("extends-unresolved");
 
-      try {
-        // eslint-disable-next-line no-unused-vars
-        const project = new Project(cwd);
-        console.log(project);
-      } catch (err) {
-        expect(err.message).toMatch("must be locally-resolvable");
-      }
-
-      expect.assertions(1);
+      expect(() => new Project(cwd)).toThrow("must be locally-resolvable");
     });
 
     it("throws an error when extend target is circular", async () => {
       const cwd = await initFixture("extends-circular");
 
-      try {
-        // eslint-disable-next-line no-unused-vars
-        const project = new Project(cwd);
-        console.log(project);
-      } catch (err) {
-        expect(err.message).toMatch("cannot be circular");
-      }
-
-      expect.assertions(1);
+      expect(() => new Project(cwd)).toThrow("cannot be circular");
     });
   });
 
@@ -315,16 +295,14 @@ Object {
     });
 
     it("errors when root package.json is not valid JSON", async () => {
-      expect.assertions(2);
-
       const cwd = await initFixture("invalid-json");
 
-      try {
-        const project = new Project(cwd); // eslint-disable-line no-unused-vars
-      } catch (err) {
-        expect(err.name).toBe("ValidationError");
-        expect(err.prefix).toBe("JSONError");
-      }
+      expect(() => new Project(cwd)).toThrow(
+        expect.objectContaining({
+          name: "ValidationError",
+          prefix: "JSONError",
+        })
+      );
     });
   });
 

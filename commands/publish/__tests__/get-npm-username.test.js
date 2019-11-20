@@ -41,15 +41,10 @@ describe("getNpmUsername", () => {
   test("throws an error when successful fetch yields empty username", async () => {
     fetch.json.mockImplementationOnce(() => Promise.resolve({ username: undefined }));
 
-    try {
-      await getNpmUsername({ stub: true });
-    } catch (err) {
-      expect(err.prefix).toBe("ENEEDAUTH");
-      expect(err.message).toBe("You must be logged in to publish packages. Use `npm login` and try again.");
-      expect(console.error).not.toHaveBeenCalled();
-    }
-
-    expect.assertions(3);
+    await expect(getNpmUsername({ stub: true })).rejects.toThrow(
+      "You must be logged in to publish packages. Use `npm login` and try again."
+    );
+    expect(console.error).not.toHaveBeenCalled();
   });
 
   test("logs failure message before throwing validation error", async () => {
@@ -71,15 +66,10 @@ describe("getNpmUsername", () => {
     const opts = new Map();
     opts.set("registry", "https://registry.npmjs.org/");
 
-    try {
-      await getNpmUsername(opts);
-    } catch (err) {
-      expect(err.prefix).toBe("EWHOAMI");
-      expect(err.message).toBe("Authentication error. Use `npm whoami` to troubleshoot.");
-      expect(console.error).toHaveBeenCalledWith("third-party whoami fail");
-    }
-
-    expect.assertions(3);
+    await expect(getNpmUsername(opts)).rejects.toThrow(
+      "Authentication error. Use `npm whoami` to troubleshoot."
+    );
+    expect(console.error).toHaveBeenCalledWith("third-party whoami fail");
   });
 
   test("allows third-party registries to fail with a stern warning", async () => {

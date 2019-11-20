@@ -42,13 +42,9 @@ describe("ExecCommand", () => {
     });
 
     it("should complain if invoked without command", async () => {
-      try {
-        await lernaExec(testDir)("--parallel");
-      } catch (err) {
-        expect(err.message).toBe("A command to execute is required");
-      }
+      const command = lernaExec(testDir)("--parallel");
 
-      expect.hasAssertions();
+      await expect(command).rejects.toThrow("A command to execute is required");
     });
 
     it("rejects with execution error", async () => {
@@ -62,13 +58,15 @@ describe("ExecCommand", () => {
         throw boom;
       });
 
-      try {
-        await lernaExec(testDir)("boom");
-      } catch (err) {
-        expect(err.message).toBe("execution error");
-        expect(err.cmd).toBe("boom");
-        expect(process.exitCode).toBe(123);
-      }
+      const command = lernaExec(testDir)("boom");
+
+      await expect(command).rejects.toThrow(
+        expect.objectContaining({
+          message: "execution error",
+          cmd: "boom",
+        })
+      );
+      expect(process.exitCode).toBe(123);
     });
 
     it("should ignore execution errors with --no-bail", async () => {
@@ -83,13 +81,10 @@ describe("ExecCommand", () => {
         return Promise.resolve(boom);
       });
 
-      try {
-        await lernaExec(testDir)("boom", "--no-bail", "--", "--shaka", "--lakka");
-      } catch (err) {
-        expect(err.message).toBe("package-1");
-        expect(err.cmd).toBe("boom --shaka --lakka");
-        expect(process.exitCode).toBe(456);
-      }
+      await lernaExec(testDir)("boom", "--no-bail", "--", "--shaka", "--lakka");
+
+      // command doesn't throw, but it _does_ set exitCode
+      expect(process.exitCode).toBe(456);
 
       expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(2);
       expect(ChildProcessUtilities.spawn).toHaveBeenLastCalledWith(
@@ -239,14 +234,9 @@ describe("ExecCommand", () => {
 
     it("throws an error with --reject-cycles", async () => {
       const testDir = await initFixture("toposort");
+      const command = lernaExec(testDir)("ls", "--reject-cycles");
 
-      try {
-        await lernaExec(testDir)("ls", "--reject-cycles");
-      } catch (err) {
-        expect(err.message).toMatch("Dependency cycles detected, you should fix these!");
-      }
-
-      expect.hasAssertions();
+      await expect(command).rejects.toThrow("Dependency cycles detected, you should fix these!");
     });
   });
 });

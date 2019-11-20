@@ -17,42 +17,19 @@ describe("lerna run", () => {
     const cwd = await initFixture("lerna-run");
     const args = ["run", "fail", "--", "--silent"];
 
-    try {
-      await cliRunner(cwd, env)(...args);
-    } catch (err) {
-      expect(err.message).toMatch("npm run fail --silent exited 1 in 'package-3'");
-      expect(err.code).toBe(1);
-    }
-
-    expect.hasAssertions();
+    await expect(cliRunner(cwd, env)(...args)).rejects.toThrow(
+      "npm run fail --silent exited 1 in 'package-3'"
+    );
   });
 
   test("fail --no-bail", async () => {
     const cwd = await initFixture("lerna-run");
     const args = ["run", "fail", "--no-bail", "--concurrency", "1", "--", "--silent"];
 
-    try {
-      await cliRunner(cwd, env)(...args);
-    } catch (err) {
-      expect(err.stderr).toMatchInlineSnapshot(`
-lerna notice cli __TEST_VERSION__
-lerna info ci enabled
-lerna info Executing command in 2 packages: "npm run fail --silent"
-lerna info run Ran npm script 'fail' in 'package-3' in 0.0s:
-lerna info run Ran npm script 'fail' in 'package-1' in 0.0s:
-lerna ERR! Received non-zero exit code 100 during execution
-lerna success run Ran npm script 'fail' in 2 packages in 0.0s:
-lerna success - package-1
-lerna success - package-3
-
-`);
-      expect(err.stdout).toMatch("package-3");
-      expect(err.stdout).toMatch("package-1");
-      // it should pick the highest exit code (100), not the first (1)
-      expect(err.code).toBe(100);
-    }
-
-    expect.hasAssertions();
+    // it should pick the highest exit code (100), not the first (1)
+    await expect(cliRunner(cwd, env)(...args)).rejects.toThrow(
+      "Received non-zero exit code 100 during execution"
+    );
   });
 
   test("test --stream", async () => {

@@ -30,30 +30,12 @@ test("lerna publish lifecycle scripts stop on non-zero exit", async () => {
   await gitAdd(cwd, rootManifest);
   await gitCommit(cwd, "update root prepack");
 
-  try {
-    await cliRunner(cwd, env)(...args);
-  } catch (err) {
-    expect(err.code).toBe(123);
+  const cmd = cliRunner(cwd, env)(...args);
 
-    if (process.platform !== "win32") {
-      // windows can go pound sand, i'm done debugging this shit
-      expect(err.stdout).toMatchInlineSnapshot(`
-
-Changes:
- - package-1: 1.0.0 => 1.1.0
- - package-2: 1.0.0 => 1.1.0
-
-
-> lifecycle@0.0.0-monorepo preversion __TEST_ROOTDIR__
-> echo boom && exit 123
-
-boom
-
-`);
-      expect(err.stderr).toMatchInlineSnapshot(`
-lerna ERR! lifecycle "preversion" errored in "lifecycle", exiting 123
-
-`);
-    }
+  if (process.platform !== "win32") {
+    await expect(cmd).rejects.toThrow(`lifecycle "preversion" errored in "lifecycle", exiting 123`);
+  } else {
+    // windows can go pound sand, i'm done debugging this shit
+    await expect(cmd).rejects.toThrow();
   }
 });

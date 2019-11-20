@@ -94,15 +94,9 @@ describe("verifyNpmPackageAccess", () => {
       })
     );
 
-    try {
-      await verifyNpmPackageAccess(packages, "lerna-test", opts);
-    } catch (err) {
-      expect(err.prefix).toBe("EACCESS");
-      expect(err.message).toBe(`You do not have write permission required to publish "package-2"`);
-      expect(console.error).not.toHaveBeenCalled();
-    }
-
-    expect.assertions(3);
+    const result = verifyNpmPackageAccess(packages, "lerna-test", opts);
+    await expect(result).rejects.toThrow(`You do not have write permission required to publish "package-2"`);
+    expect(console.error).not.toHaveBeenCalled();
   });
 
   test("passes when npm Enterprise registry returns E500", async () => {
@@ -155,14 +149,8 @@ describe("verifyNpmPackageAccess", () => {
       return Promise.reject(err);
     });
 
-    try {
-      await verifyNpmPackageAccess(packages, "lerna-test", opts);
-    } catch (err) {
-      expect(err.prefix).toBe("EWHOAMI");
-      expect(err.message).toBe("Authentication error. Use `npm whoami` to troubleshoot.");
-      expect(console.error).toHaveBeenCalledWith("gonna-need-a-bigger-boat");
-    }
-
-    expect.assertions(3);
+    const result = verifyNpmPackageAccess(packages, "lerna-test", opts);
+    await expect(result).rejects.toThrow("Authentication error. Use `npm whoami` to troubleshoot.");
+    expect(console.error).toHaveBeenCalledWith("gonna-need-a-bigger-boat");
   });
 });

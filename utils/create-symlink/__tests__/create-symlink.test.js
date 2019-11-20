@@ -69,11 +69,7 @@ describe("create-symlink", () => {
     it("rejects when cmd-shim errors", async () => {
       cmdShim.mockImplementationOnce(() => Promise.reject(new Error("yikes")));
 
-      try {
-        await createSymlink("src", "dst", "exec");
-      } catch (err) {
-        expect(err.message).toBe("yikes");
-      }
+      await expect(createSymlink("src", "dst", "exec")).rejects.toThrow("yikes");
     });
 
     it("always uses absolute paths when creating symlinks", async () => {
@@ -107,14 +103,8 @@ describe("create-symlink", () => {
       cmdShim.mockImplementationOnce(() => Promise.reject(new Error("oh no")));
       fs.pathExists.mockResolvedValueOnce(false);
 
-      try {
-        await createSymlink("src", "dst", "exec");
-      } catch (err) {
-        expect(err.message).toBe("oh no");
-        expect(fs.remove).toHaveBeenLastCalledWith("src");
-      }
-
-      expect.hasAssertions();
+      await expect(createSymlink("src", "dst", "exec")).rejects.toThrow("oh no");
+      expect(fs.remove).toHaveBeenLastCalledWith("src");
     });
   }
 });

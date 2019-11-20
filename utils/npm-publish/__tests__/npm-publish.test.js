@@ -193,14 +193,15 @@ describe("npm-publish", () => {
     };
     const opts = new Map().set("log", log);
 
-    try {
-      await npmPublish(pkg, tarFilePath, opts);
-    } catch (err) {
-      expect(err.message).toBe("whoopsy");
-      expect(err.name).toBe("ValidationError");
-      expect(log.error).toHaveBeenLastCalledWith("E401", "doodle");
-      expect(process.exitCode).toBe(1);
-    }
+    await expect(npmPublish(pkg, tarFilePath, opts)).rejects.toThrow(
+      expect.objectContaining({
+        message: "whoopsy",
+        name: "ValidationError",
+      })
+    );
+
+    expect(log.error).toHaveBeenLastCalledWith("E401", "doodle");
+    expect(process.exitCode).toBe(1);
 
     publish.mockImplementationOnce(() => {
       const err = new Error("lolwut");
@@ -209,14 +210,9 @@ describe("npm-publish", () => {
       return Promise.reject(err);
     });
 
-    try {
-      await npmPublish(pkg, tarFilePath, opts);
-    } catch (err) {
-      expect(err.message).toBe("lolwut");
-      expect(log.error).toHaveBeenLastCalledWith("E404", "lolwut");
-      expect(process.exitCode).toBe(9001);
-    }
+    await expect(npmPublish(pkg, tarFilePath, opts)).rejects.toThrow("lolwut");
 
-    expect.hasAssertions();
+    expect(log.error).toHaveBeenLastCalledWith("E404", "lolwut");
+    expect(process.exitCode).toBe(9001);
   });
 });

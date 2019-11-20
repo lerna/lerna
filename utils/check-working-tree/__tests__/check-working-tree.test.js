@@ -20,36 +20,22 @@ describe("check-working-tree", () => {
   it("rejects when current commit has already been released", async () => {
     describeRef.mockResolvedValueOnce({ refCount: "0" });
 
-    try {
-      await checkWorkingTree();
-    } catch (err) {
-      expect(err.message).toMatch("The current commit has already been released");
-    }
-
-    expect.assertions(1);
+    await expect(checkWorkingTree()).rejects.toThrow("The current commit has already been released");
   });
 
   it("rejects when working tree has uncommitted changes", async () => {
     describeRef.mockResolvedValueOnce({ isDirty: true });
     collectUncommitted.mockResolvedValueOnce(["AD file"]);
 
-    try {
-      await checkWorkingTree();
-    } catch (err) {
-      expect(err.message).toMatch("Working tree has uncommitted changes");
-      expect(err.message).toMatch("\nAD file");
-    }
-
-    expect.assertions(2);
+    await expect(checkWorkingTree()).rejects.toThrow("\nAD file");
   });
 
   it("passes cwd to collectUncommitted when working tree has uncommitted changes", async () => {
     describeRef.mockResolvedValueOnce({ isDirty: true });
-    try {
-      await checkWorkingTree({ cwd: "foo" });
-    } catch (err) {
-      expect(collectUncommitted).toHaveBeenLastCalledWith({ cwd: "foo" });
-    }
-    expect.assertions(1);
+    collectUncommitted.mockResolvedValueOnce(["MM file"]);
+
+    await expect(checkWorkingTree({ cwd: "foo" })).rejects.toThrow("Working tree has uncommitted changes");
+
+    expect(collectUncommitted).toHaveBeenLastCalledWith({ cwd: "foo" });
   });
 });

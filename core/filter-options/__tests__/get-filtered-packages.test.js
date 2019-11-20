@@ -42,13 +42,7 @@ test.each`
   // swallow stderr during yargs execution
   jest.spyOn(console, "error").mockImplementation(() => {});
 
-  try {
-    parseOptions(flag);
-  } catch (err) {
-    expect(err.message).toMatch("Not enough arguments");
-  }
-
-  expect.hasAssertions();
+  expect(() => parseOptions(flag)).toThrow("Not enough arguments");
 });
 
 test.each`
@@ -81,13 +75,9 @@ test.each`
   const execOpts = { cwd };
   const options = parseOptions(...argv);
 
-  try {
-    await getFilteredPackages(packageGraph, execOpts, options);
-  } catch (err) {
-    expect(err.message).toMatch("No packages remain after filtering");
-  }
-
-  expect.hasAssertions();
+  await expect(getFilteredPackages(packageGraph, execOpts, options)).rejects.toThrow(
+    "No packages remain after filtering"
+  );
 });
 
 test.each`
@@ -185,14 +175,9 @@ test("--exclude-dependents", async () => {
 });
 
 test("--exclude-dependents conflicts with --include-dependents", async () => {
-  try {
-    parseOptions("--exclude-dependents", "--include-dependents");
-  } catch (err) {
-    expect(err.message).toMatch("exclude-dependents");
-    expect(err.message).toMatch("include-dependents");
-  }
-
-  expect.hasAssertions();
+  expect(() => parseOptions("--exclude-dependents", "--include-dependents")).toThrow(
+    /(exclude|include)-dependents/
+  );
 });
 
 test("--include-dependents", async () => {

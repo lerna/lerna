@@ -343,27 +343,21 @@ test("publish --canary with dirty tree throws error", async () => {
   });
 
   const cwd = await initTaggedFixture("normal");
+  const command = lernaPublish(cwd)("--canary");
 
-  try {
-    await lernaPublish(cwd)("--canary");
-  } catch (err) {
-    expect(err.message).toBe("uncommitted");
-    // notably different than the actual message, but good enough here
-  }
-
-  expect.assertions(1);
+  await expect(command).rejects.toThrow("uncommitted");
+  // notably different than the actual message, but good enough here
 });
 
 test("publish --canary --git-head <sha> throws an error", async () => {
   const cwd = await initFixture("normal");
+  const command = lernaPublish(cwd)("--canary", "--git-head", "deadbeef");
 
-  try {
-    await lernaPublish(cwd)("--canary", "--git-head", "deadbeef");
-  } catch (err) {
-    expect(err.prefix).toBe("EGITHEAD");
-  }
-
-  expect.hasAssertions();
+  await expect(command).rejects.toThrow(
+    expect.objectContaining({
+      prefix: "EGITHEAD",
+    })
+  );
 });
 
 test("publish --canary --include-merged-tags calls git describe correctly", async () => {

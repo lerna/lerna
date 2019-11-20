@@ -60,14 +60,9 @@ describe("core-cli", () => {
 
   it("demands a command", async () => {
     const cli = prepare(cwd);
+    const cmd = parse(cli, ["--loglevel", "silent"]);
 
-    try {
-      await parse(cli, ["--loglevel", "silent"]);
-    } catch (exitError) {
-      expect(exitError.message).toMatch("A command is required.");
-    }
-
-    expect.hasAssertions();
+    await expect(cmd).rejects.toThrow("A command is required.");
   });
 
   it("recommends commands", async () => {
@@ -75,17 +70,13 @@ describe("core-cli", () => {
 
     cli.command("you", "shall not pass");
 
-    try {
-      await parse(cli, ["yooou"]);
-    } catch (exitError) {
-      const [unknownCmd, didYouMean] = loggingOutput("error");
+    const cmd = parse(cli, ["yooou"]);
+    await expect(cmd).rejects.toThrow("Unknown argument: yooou");
 
-      expect(unknownCmd).toBe('Unknown command "yooou"');
-      expect(didYouMean).toBe("Did you mean you?");
-      expect(exitError.message).toBe("Unknown argument: yooou");
-    }
+    const [unknownCmd, didYouMean] = loggingOutput("error");
 
-    expect.hasAssertions();
+    expect(unknownCmd).toBe('Unknown command "yooou"');
+    expect(didYouMean).toBe("Did you mean you?");
   });
 
   it("does not re-log ValidationError messages", async () => {
@@ -95,15 +86,10 @@ describe("core-cli", () => {
       throw new ValidationError("test", "go boom");
     });
 
-    try {
-      await parse(cli, ["boom"]);
-    } catch (exitError) {
-      expect(exitError.name).toBe("ValidationError");
-      expect(exitError.message).toBe("go boom");
-      expect(loggingOutput("error")).toEqual(["go boom"]);
-    }
+    const cmd = parse(cli, ["boom"]);
+    await expect(cmd).rejects.toThrow("go boom");
 
-    expect.hasAssertions();
+    expect(loggingOutput("error")).toEqual(["go boom"]);
   });
 
   it("does not re-log ValidationError messages (async)", async () => {
@@ -128,14 +114,10 @@ describe("core-cli", () => {
       throw err;
     });
 
-    try {
-      await parse(cli, ["run"]);
-    } catch (exitError) {
-      expect(exitError.message).toBe("oops");
-      expect(loggingOutput("error")).toEqual([]);
-    }
+    const cmd = parse(cli, ["run"]);
+    await expect(cmd).rejects.toThrow("oops");
 
-    expect.hasAssertions();
+    expect(loggingOutput("error")).toEqual([]);
   });
 
   it("logs generic command errors", async () => {

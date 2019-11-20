@@ -77,31 +77,21 @@ describe("CleanCommand", () => {
     });
 
     it("exits non-zero when rimraf errors egregiously", async () => {
-      expect.assertions(1);
-
-      const testDir = await initFixture("basic");
-
       rimrafDir.mockImplementationOnce(() => Promise.reject(new Error("whoops")));
 
-      try {
-        await lernaClean(testDir)();
-      } catch (err) {
-        expect(err.message).toMatch("whoops");
-      }
+      const testDir = await initFixture("basic");
+      const command = lernaClean(testDir)();
+
+      await expect(command).rejects.toThrow("whoops");
     });
 
     it("requires a git repo when using --since", async () => {
-      expect.assertions(1);
-
       const testDir = await initFixture("basic");
 
       await fs.remove(path.join(testDir, ".git"));
 
-      try {
-        await lernaClean(testDir)("--since", "some-branch");
-      } catch (err) {
-        expect(err.message).toMatch("this is not a git repository");
-      }
+      const command = lernaClean(testDir)("--since", "some-branch");
+      await expect(command).rejects.toThrow("this is not a git repository");
     });
   });
 
