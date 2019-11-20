@@ -7,11 +7,17 @@ const Package = require("@lerna/package");
 
 exports.toDependOn = createDependencyMatcher("dependencies");
 exports.toDevDependOn = createDependencyMatcher("devDependencies");
+exports.toPeerDependOn = createDependencyMatcher("peerDependencies");
 exports.toHaveBinaryLinks = toHaveBinaryLinks;
 exports.toHaveExecutables = toHaveExecutables;
 
 function createDependencyMatcher(dependencyType) {
-  const verb = dependencyType === "dependencies" ? "depend" : "dev-depend";
+  const verbMap = {
+    dependencies: "depend",
+    devDependencies: "dev-depend",
+    peerDependencies: "peer-depend",
+  };
+  const verb = verbMap[dependencyType] || "dev-depend";
 
   return (received, name, range, options) => {
     const pkg = Package.lazy(received);

@@ -32,6 +32,12 @@ exports.builder = yargs => {
         alias: "exact",
         describe: "Save version exactly",
       },
+      P: {
+        group: "Command Options:",
+        type: "boolean",
+        alias: "peer",
+        describe: "Save to peerDependencies",
+      },
       registry: {
         group: "Command Options:",
         describe: "Use the specified registry for all npm client operations.",
@@ -55,6 +61,7 @@ exports.builder = yargs => {
     )
     .example("$0 add module-1 --scope=module-2", "Install module-1 to module-2")
     .example("$0 add module-1 --scope=module-2 --dev", "Install module-1 to module-2 in devDependencies")
+    .example("$0 add module-1 --scope=module-2 --peer", "Install module-1 to module-2 in peerDependencies")
     .example("$0 add module-1", "Install module-1 in all modules except module-1")
     .example("$0 add module-1 --no-bootstrap", "Skip automatic `lerna bootstrap`")
     .example("$0 add babel-core", "Install babel-core in all modules");
