@@ -35,6 +35,7 @@ You must still use the `--yes` flag to avoid all prompts.
 If you have any packages with a prerelease version number (e.g. `2.0.0-beta.3`) and you run `lerna version` with and a non-prerelease bump (`major`, `minor`, or `patch`), it will publish those previously pre-released packages _as well as_ the packages that have changed since the last release.
 
 For projects using conventional commits, use the following flags for prerelease management:
+
 - **[`--conventional-prerelease`](#--conventional-prerelease):** release current changes as prerelease versions.
 - **[`--conventional-graduate`](#--conventional-graduate):** graduate prerelease versioned packages to stable versions.
 
@@ -53,6 +54,7 @@ Running `lerna version --conventional-commits` without the above flags will rele
 - [`--git-remote`](#--git-remote-name)
 - [`--create-release`](#--create-release-type)
 - [`--ignore-changes`](#--ignore-changes)
+- [`--ignore-scripts`](#--ignore-scripts)
 - [`--include-merged-tags`](#--include-merged-tags)
 - [`--message`](#--message-msg)
 - [`--no-changelog`](#--no-changelog)
@@ -133,6 +135,7 @@ lerna version --conventional-commits --conventional-graduate=package-2,package-4
 # force all prerelease packages to be graduated
 lerna version --conventional-commits --conventional-graduate
 ```
+
 When run with this flag, `lerna version` will graduate the specified packages (comma-separated) or all packages using `*`. This command works regardless of whether the current HEAD has been released, similar to `--force-publish`, except that any non-prerelease packages are ignored. If changes are present for packages that are not specified (if specifying packages), or for packages that are not in prerelease, those packages will be versioned as they normally would using `--conventional-commits`.
 
 "Graduating" a package means bumping to the non-prerelease variant of a prerelease version, eg. `package-1@1.0.0-alpha.0 => package-1@1.0.0`.
@@ -238,6 +241,10 @@ Pass `--no-ignore-changes` to disable any existing durable configuration.
 >
 > 1. The latest release of the package is a `prerelease` version (i.e. `1.0.0-alpha`, `1.0.0–0.3.7`, etc.).
 > 2. One or more linked dependencies of the package have changed.
+
+### `--ignore-scripts`
+
+When passed, this flag will disable running [lifecycle scripts](https://docs.npmjs.com/misc/scripts#description) during `lerna version`.
 
 ### `--include-merged-tags`
 
@@ -358,7 +365,7 @@ Keep in mind that currently you have to supply it twice: for `version` command a
 # locally
 lerna version --tag-version-prefix=''
 # on ci
-lerna publish from-git --tag-version-prefix='' 
+lerna publish from-git --tag-version-prefix=''
 ```
 
 ## Deprecated Options
