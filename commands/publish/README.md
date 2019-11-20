@@ -238,7 +238,7 @@ lerna publish --canary --yes
 When run with this flag, `lerna publish` will skip all confirmation prompts.
 Useful in [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous_integration) to automatically answer the publish confirmation prompt.
 
-### `---tag-version-prefix`
+### `--tag-version-prefix`
 
 This option allows to provide custom prefix instead of the default one: `v`.
 
