@@ -14,7 +14,7 @@ When run, this command does the following:
 
 1. Identifies packages that have been updated since the previous tagged release.
 2. Prompts for a new version.
-3. Modifies package metadata to reflect new release.
+3. Modifies package metadata to reflect new release, running appropriate [lifecycle scripts](#lifecycle-scripts) in root and per-package.
 4. Commits those changes and tags the commit.
 5. Pushes to the git remote.
 
@@ -244,7 +244,7 @@ Pass `--no-ignore-changes` to disable any existing durable configuration.
 
 ### `--ignore-scripts`
 
-When passed, this flag will disable running [lifecycle scripts](https://docs.npmjs.com/misc/scripts#description) during `lerna version`.
+When passed, this flag will disable running [lifecycle scripts](#lifecycle-scripts) during `lerna version`.
 
 ### `--include-merged-tags`
 
@@ -406,3 +406,28 @@ npx lerna exec --concurrency 1 --stream -- 'conventional-changelog --preset angu
 ```
 
 If you use a custom [`--changelog-preset`](#--changelog-preset), you should change `--preset` value accordingly in the example above.
+
+## Lifecycle Scripts
+
+```js
+// preversion:  Run BEFORE bumping the package version.
+// version:     Run AFTER bumping the package version, but BEFORE commit.
+// postversion: Run AFTER bumping the package version, and AFTER commit.
+```
+
+Lerna will run [npm lifecycle scripts](https://docs.npmjs.com/misc/scripts#description) during `lerna version` in the following order:
+
+1. Detect changed packages, choose version bump(s)
+2. Run `preversion` lifecycle in root
+3. For each changed package, in topological order (all dependencies before dependents):
+   1. Run `preversion` lifecycle
+   2. Update version in package.json
+   3. Run `version` lifecycle
+4. Run `version` lifecycle in root
+5. Add changed files to index, if [enabled](#--no-git-tag-version)
+6. Create commit and tag(s), if [enabled](#--no-git-tag-version)
+7. For each changed package, in _lexical_ order (alphabetical according to directory structure):
+   1. Run `postversion` lifecycle
+8. Run `postversion` lifecycle in root
+9. Push commit and tag(s) to remote, if [enabled](#--no-push)
+10. Create release, if [enabled](#--create-release-type)
