@@ -50,17 +50,17 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 - [`--dist-tag <tag>`](#--dist-tag-tag)
 - [`--git-head <sha>`](#--git-head-sha)
 - [`--graph-type <all|dependencies>`](#--graph-type-alldependencies)
+- [`--ignore-scripts`](#--ignore-scripts)
+- [`--ignore-prepublish`](#--ignore-prepublish)
 - [`--no-git-reset`](#--no-git-reset)
 - [`--no-verify-access`](#--no-verify-access)
 - [`--otp`](#--otp)
 - [`--preid`](#--preid)
 - [`--pre-dist-tag <tag>`](#--pre-dist-tag-tag)
 - [`--registry <url>`](#--registry-url)
-- [`--temp-tag`](#--temp-tag)
-- [`--ignore-scripts`](#--ignore-scripts)
-- [`--ignore-prepublish`](#--ignore-prepublish)
-- [`--yes`](#--yes)
 - [`--tag-version-prefix`](#--tag-version-prefix)
+- [`--temp-tag`](#--temp-tag)
+- [`--yes`](#--yes)
 
 ### `--canary`
 
@@ -150,6 +150,14 @@ Configured via `lerna.json`:
 }
 ```
 
+### `--ignore-scripts`
+
+When passed, this flag will disable running [lifecycle scripts](#lifecycle-events) during `lerna publish`.
+
+### `--ignore-prepublish`
+
+When passed, this flag will disable running [deprecated](https://docs.npmjs.com/misc/scripts#prepublish-and-prepare) [`prepublish` scripts](#lifecycle-events) during `lerna publish`.
+
 ### `--no-git-reset`
 
 By default, `lerna publish` ensures any changes to the working tree have been reset.
@@ -211,6 +219,30 @@ This is useful if you do not want to explicitly set up your registry
 configuration in all of your package.json files individually when e.g. using
 private registries.
 
+### `--tag-version-prefix`
+
+This option allows to provide custom prefix instead of the default one: `v`.
+
+Keep in mind, if splitting `lerna version` and `lerna publish`, you need to pass it to both commands:
+
+```bash
+# locally
+lerna version --tag-version-prefix=''
+
+# on ci
+lerna publish from-git --tag-version-prefix=''
+```
+
+You could also configure this at the root level of lerna.json, applying to both commands equally:
+
+```json
+{
+  "tagVersionPrefix": "",
+  "packages": ["packages/*"],
+  "version": "independent"
+}
+```
+
 ### `--temp-tag`
 
 When passed, this flag will alter the default publish process by first publishing
@@ -219,14 +251,6 @@ new version(s) to the dist-tag configured by [`--dist-tag`](#--dist-tag-tag) (de
 
 This is not generally necessary, as Lerna will publish packages in topological
 order (all dependencies before dependents) by default.
-
-### `--ignore-scripts`
-
-When passed, this flag will disable running [lifecycle scripts](#lifecycle-events) during `lerna publish`.
-
-### `--ignore-prepublish`
-
-When passed, this flag will disable [`prepublish`](#lifecycle-events) script being executed.
 
 ### `--yes`
 
@@ -237,19 +261,6 @@ lerna publish --canary --yes
 
 When run with this flag, `lerna publish` will skip all confirmation prompts.
 Useful in [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous_integration) to automatically answer the publish confirmation prompt.
-
-### `--tag-version-prefix`
-
-This option allows to provide custom prefix instead of the default one: `v`.
-
-Keep in mind that currently you have to supply it twice: for `version` command and for `publish` command:
-
-```bash
-# locally
-lerna version --tag-version-prefix=''
-# on ci
-lerna publish from-git --tag-version-prefix=''
-```
 
 ## Deprecated Options
 
