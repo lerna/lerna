@@ -463,7 +463,7 @@ describe("VersionCommand", () => {
       isBehindUpstream.mockReturnValueOnce(true);
 
       const testDir = await initFixture("normal");
-      const command = lernaVersion(testDir)();
+      const command = lernaVersion(testDir)("--no-ci");
 
       await expect(command).rejects.toThrow("Please merge remote changes");
     });
