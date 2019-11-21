@@ -14,7 +14,7 @@ const lernaInfo = require("@lerna-test/command-runner")(require("../command"));
 
 it("outputs result of envinfo()", async () => {
   // project fixture is irrelevant, no actual changes are made
-  await lernaInfo(process.cwd())();
+  await lernaInfo(path.resolve(__dirname, '../../..'))();
 
   expect(envinfo.run).toHaveBeenLastCalledWith(
     expect.objectContaining({
