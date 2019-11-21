@@ -72,7 +72,9 @@ class VersionCommand extends Command {
 
     this.gitRemote = gitRemote;
     this.tagPrefix = tagVersionPrefix;
-    this.commitAndTag = this.options.gitTag && this.options.gitCommit && gitTagVersion;
+    this.shouldCommit = this.options.gitCommit && gitTagVersion;
+    this.shouldTag = this.options.gitTag && gitTagVersion;
+    this.commitAndTag = this.shouldCommit && this.shouldTag;
     this.pushToRemote = gitTagVersion && amend !== true && push;
     // never automatically push to remote when amending a commit
 
@@ -254,8 +256,12 @@ class VersionCommand extends Command {
   execute() {
     const tasks = [() => this.updatePackageVersions()];
 
-    if (this.options.gitTag || this.options.gitCommit) {
+    if (this.shouldTag || this.shouldCommit) {
       tasks.push(() => this.commitAndTagUpdates());
+    }
+
+    if (!this.options.gitTagVersion) {
+      this.logger.info("execute", "Skipping git tag/commit");
     }
 
     if (!this.options.gitTag) {
@@ -604,7 +610,7 @@ class VersionCommand extends Command {
       chain = chain.then(() => this.runRootLifecycle("version"));
     }
 
-    if (this.options.gitCommit) {
+    if (this.shouldCommit) {
       chain = chain.then(() => gitAdd(Array.from(changedFiles), this.execOpts));
     }
 
@@ -643,10 +649,8 @@ class VersionCommand extends Command {
     const message = tags.reduce((msg, tag) => `${msg}${os.EOL} - ${tag}`, `${subject}${os.EOL}`);
 
     return Promise.resolve()
-      .then(() => this.options.gitCommit && gitCommit(message, this.gitOpts, this.execOpts))
-      .then(
-        () => this.options.gitTag && Promise.all(tags.map(tag => gitTag(tag, this.gitOpts, this.execOpts)))
-      )
+      .then(() => this.shouldCommit && gitCommit(message, this.gitOpts, this.execOpts))
+      .then(() => this.shouldTag && Promise.all(tags.map(tag => gitTag(tag, this.gitOpts, this.execOpts))))
       .then(() => tags);
   }
 
@@ -658,13 +662,13 @@ class VersionCommand extends Command {
       : tag;
 
     return Promise.resolve()
-      .then(() => this.options.gitCommit && gitCommit(message, this.gitOpts, this.execOpts))
-      .then(() => this.options.gitTag && gitTag(tag, this.gitOpts, this.execOpts))
+      .then(() => this.shouldCommit && gitCommit(message, this.gitOpts, this.execOpts))
+      .then(() => this.shouldTag && gitTag(tag, this.gitOpts, this.execOpts))
       .then(() => [tag]);
   }
 
   gitPushToRemote() {
-    if (this.options.gitTag) {
+    if (this.shouldTag) {
       this.logger.info("git", "Pushing tags...");
     } else {
       this.logger.info("git", "Pushing release commit...");
