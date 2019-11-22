@@ -37,7 +37,6 @@ exports.builder = yargs => {
     },
     "legacy-auth": {
       describe: "Legacy Base64 Encoded username and password.",
-      alias: "_auth",
       type: "string",
     },
     "pre-dist-tag": {

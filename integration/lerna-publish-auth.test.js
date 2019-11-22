@@ -14,30 +14,6 @@ const env = {
   LERNA_INTEGRATION: "SKIP",
 };
 
-test("lerna publish --_auth", async () => {
-  const { cwd } = await cloneFixture("normal");
-  const data = "hi:mom";
-  const auth = Buffer.from(data).toString("base64");
-  const args = ["publish", "patch", "--yes", "--_auth", auth];
-
-  const { stdout } = await cliRunner(cwd, env)(...args);
-  expect(stdout).toMatchInlineSnapshot(`
-
-    Changes:
-     - package-1: 1.0.0 => 1.0.1
-     - package-2: 1.0.0 => 1.0.1
-     - package-3: 1.0.0 => 1.0.1
-     - package-4: 1.0.0 => 1.0.1
-     - package-5: 1.0.0 => 1.0.1 (private)
-
-    Successfully published:
-     - package-1@1.0.1
-     - package-2@1.0.1
-     - package-3@1.0.1
-     - package-4@1.0.1
-  `);
-});
-
 test("lerna publish --legacy-auth", async () => {
   const { cwd } = await cloneFixture("normal");
   const data = "hi:mom";
