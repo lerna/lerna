@@ -1,7 +1,7 @@
 "use strict";
 
 const { default: PQueue } = require("p-queue");
-const log = require("npmlog");
+const npmlog = require("npmlog");
 const figgyPudding = require("figgy-pudding");
 const QueryGraph = require("@lerna/query-graph");
 const Profiler = require("./profiler");
@@ -9,7 +9,7 @@ const Profiler = require("./profiler");
 module.exports = runTopologically;
 
 const TopologicalConfig = figgyPudding({
-  log: { default: log },
+  log: { default: npmlog },
   // p-queue options
   concurrency: {},
   // query-graph options

@@ -131,7 +131,7 @@ class ExecCommand extends Command {
       profileLocation: this.options.profileLocation,
       rootPath: this.project.rootPath,
       log: this.logger,
-    }));
+    });
   }
 
   runCommandInPackagesParallel() {
