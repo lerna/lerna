@@ -79,3 +79,27 @@ Pass `--no-bail` to disable this behavior, executing in _all_ packages regardles
 
 Disable package name prefixing when output is streaming (`--stream` _or_ `--parallel`).
 This option can be useful when piping results to other processes, such as editor plugins.
+
+### `--profile`
+
+Profiles the command executions and produces a performance profile which can be analyzed using DevTools in a
+Chromium-based browser (direct url: `devtools://devtools/bundled/devtools_app.html`). The profile shows a timeline of
+the command executions where each execution is assigned to an open slot. The number of slots is determined by the
+`--concurrency` option and the number of open slots is determined by `--concurrency` minus the number of ongoing
+operations. The end result is a visualization of the parallel execution of your commands.
+
+The default location of the performance profiles is at the root of your project.
+
+```sh
+$ lerna run build --profile
+```
+
+> **Note:** Lerna will only profile when topological sorting is enabled (i.e. without `--parallel` and `--no-sort`).
+
+### `--profile-location <location>`
+
+You can provide a custom location for the performance profiles. The location is relative to the root of your project.
+
+```sh
+$ lerna run build --profile --profile-location=logs/profile/
+```
