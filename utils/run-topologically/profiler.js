@@ -1,7 +1,7 @@
 "use strict";
 
 const fs = require("fs-extra");
-const path = require("path");
+const upath = require("upath");
 
 const hrtimeToMicroseconds = hrtime => {
   return (hrtime[0] * 1e9 + hrtime[1]) / 1000;
@@ -73,9 +73,9 @@ class Profiler {
     }
 
     const outputFolder = this.profileLocation
-      ? path.join(this.rootPath, this.profileLocation)
+      ? upath.join(this.rootPath, this.profileLocation)
       : this.rootPath;
-    const outputPath = path.join(outputFolder, generateOutputname());
+    const outputPath = upath.join(outputFolder, generateOutputname());
 
     fs.outputJsonSync(outputPath, this.events);
 
