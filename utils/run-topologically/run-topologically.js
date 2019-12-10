@@ -1,6 +1,6 @@
 "use strict";
 
-const PQueue = require("p-queue");
+const { default: PQueue } = require("p-queue");
 const figgyPudding = require("figgy-pudding");
 const QueryGraph = require("@lerna/query-graph");
 
