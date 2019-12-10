@@ -1,12 +1,15 @@
 "use strict";
 
 const { default: PQueue } = require("p-queue");
+const log = require("npmlog");
 const figgyPudding = require("figgy-pudding");
 const QueryGraph = require("@lerna/query-graph");
+const Profiler = require("./profiler");
 
 module.exports = runTopologically;
 
 const TopologicalConfig = figgyPudding({
+  log: { default: log },
   // p-queue options
   concurrency: {},
   // query-graph options
@@ -14,6 +17,12 @@ const TopologicalConfig = figgyPudding({
   graphType: "graph-type",
   "reject-cycles": {},
   rejectCycles: "reject-cycles",
+  // profile options
+  profile: { default: false },
+  "profile-location": {},
+  profileLocation: "profile-location",
+  "root-path": {},
+  rootPath: "root-path",
 });
 
 /**
@@ -27,8 +36,11 @@ const TopologicalConfig = figgyPudding({
  * @returns {Promise<Array<*>>} when all executions complete
  */
 function runTopologically(packages, runner, opts) {
-  const { concurrency, graphType, rejectCycles } = TopologicalConfig(opts);
+  const { concurrency, graphType, log, profile, profileLocation, rejectCycles, rootPath } = TopologicalConfig(
+    opts
+  );
 
+  const profiler = new Profiler({ concurrency, log, profile, profileLocation, rootPath });
   const queue = new PQueue({ concurrency });
   const graph = new QueryGraph(packages, { graphType, rejectCycles });
 
@@ -41,7 +53,8 @@ function runTopologically(packages, runner, opts) {
 
         queue
           .add(() =>
-            runner(pkg)
+            profiler
+              .run(() => runner(pkg), name)
               .then(value => returnValues.push(value))
               .then(() => graph.markAsDone(pkg))
               .then(() => queueNextAvailablePackages())
@@ -51,6 +64,9 @@ function runTopologically(packages, runner, opts) {
 
     queueNextAvailablePackages();
 
-    return queue.onIdle().then(() => resolve(returnValues));
+    return queue
+      .onIdle()
+      .then(() => profiler.output())
+      .then(() => resolve(returnValues));
   });
 }
