@@ -135,6 +135,10 @@ class RunCommand extends Command {
     return runTopologically(this.packagesWithScript, runner, {
       concurrency: this.concurrency,
       rejectCycles: this.options.rejectCycles,
+      profile: this.options.profile,
+      profileLocation: this.options.profileLocation,
+      rootPath: this.project.rootPath,
+      log: this.logger,
     });
   }
 
