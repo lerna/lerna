@@ -100,14 +100,7 @@ describe("getTwoFactorAuthRequired", () => {
       return Promise.reject(err);
     });
 
-    try {
-      await getTwoFactorAuthRequired();
-    } catch (err) {
-      expect(err.prefix).toBe("ETWOFACTOR");
-      expect(err.message).toBe("Unable to obtain two-factor auth mode");
-      expect(console.error).toHaveBeenCalledWith("zomg explosions");
-    }
-
-    expect.assertions(3);
+    await expect(getTwoFactorAuthRequired()).rejects.toThrow("Unable to obtain two-factor auth mode");
+    expect(console.error).toHaveBeenCalledWith("zomg explosions");
   });
 });

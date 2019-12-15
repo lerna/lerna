@@ -34,28 +34,20 @@ describe.each([
 
   it("throws an error if --conventional-commits is not passed", async () => {
     const cwd = await initFixture("independent");
+    const command = lernaVersion(cwd)("--create-release", type);
 
-    try {
-      await lernaVersion(cwd)("--create-release", type);
-    } catch (err) {
-      expect(err.message).toBe("To create a release, you must enable --conventional-commits");
-      expect(client.repos.createRelease).not.toHaveBeenCalled();
-    }
+    await expect(command).rejects.toThrow("To create a release, you must enable --conventional-commits");
 
-    expect.hasAssertions();
+    expect(client.repos.createRelease).not.toHaveBeenCalled();
   });
 
   it("throws an error if --no-changelog also passed", async () => {
     const cwd = await initFixture("independent");
+    const command = lernaVersion(cwd)("--create-release", type, "--conventional-commits", "--no-changelog");
 
-    try {
-      await lernaVersion(cwd)("--create-release", type, "--conventional-commits", "--no-changelog");
-    } catch (err) {
-      expect(err.message).toBe("To create a release, you cannot pass --no-changelog");
-      expect(client.repos.createRelease).not.toHaveBeenCalled();
-    }
+    await expect(command).rejects.toThrow("To create a release, you cannot pass --no-changelog");
 
-    expect.hasAssertions();
+    expect(client.repos.createRelease).not.toHaveBeenCalled();
   });
 
   it("marks a version as a pre-release if it contains a valid part", async () => {
@@ -138,16 +130,11 @@ describe("legacy option --github-release", () => {
 describe("--create-release [unrecognized]", () => {
   it("throws an error", async () => {
     const cwd = await initFixture("normal");
+    const command = lernaVersion(cwd)("--conventional-commits", "--create-release", "poopypants");
 
-    try {
-      await lernaVersion(cwd)("--conventional-commits", "--create-release", "poopypants");
-    } catch (err) {
-      expect(err.message).toMatch("Invalid values");
-      expect(err.message).toMatch("create-release");
-      expect(githubClient.repos.createRelease).not.toHaveBeenCalled();
-      expect(gitlabClient.repos.createRelease).not.toHaveBeenCalled();
-    }
+    await expect(command).rejects.toThrow("create-release");
 
-    expect.hasAssertions();
+    expect(githubClient.repos.createRelease).not.toHaveBeenCalled();
+    expect(gitlabClient.repos.createRelease).not.toHaveBeenCalled();
   });
 });

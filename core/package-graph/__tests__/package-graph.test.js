@@ -14,19 +14,11 @@ describe("PackageGraph", () => {
         new Package({ name: "pkg-2", version: "3.0.0" }, "/test/pkg-3", "/test"),
       ];
 
-      try {
-        // eslint-disable-next-line no-unused-vars
-        const graph = new PackageGraph(pkgs);
-      } catch (err) {
-        expect(err.prefix).toBe("ENAME");
-        expect(err.message).toMatchInlineSnapshot(`
+      expect(() => new PackageGraph(pkgs)).toThrowErrorMatchingInlineSnapshot(`
 "Package name \\"pkg-2\\" used in multiple packages:
 	/test/pkg-2
 	/test/pkg-3"
 `);
-      }
-
-      expect.assertions(2);
     });
 
     it("externalizes non-satisfied semver of local sibling", () => {

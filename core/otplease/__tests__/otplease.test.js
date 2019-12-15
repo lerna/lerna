@@ -140,13 +140,7 @@ describe("@lerna/otplease", () => {
     const obj = {};
     const fn = jest.fn(makeTestCallback("343434", obj));
 
-    try {
-      await otplease(fn, {});
-    } catch (err) {
-      expect(err.message).toMatch("Must be a valid one-time-password");
-    }
-
-    expect.hasAssertions();
+    await expect(otplease(fn, {})).rejects.toThrow("Must be a valid one-time-password");
   });
 
   it("rejects prompt errors", async () => {
@@ -155,13 +149,7 @@ describe("@lerna/otplease", () => {
     const obj = {};
     const fn = jest.fn(makeTestCallback("343434", obj));
 
-    try {
-      await otplease(fn, {});
-    } catch (err) {
-      expect(err.message).toMatch("poopypants");
-    }
-
-    expect.hasAssertions();
+    await expect(otplease(fn, {})).rejects.toThrow("poopypants");
   });
 
   it("re-throws non-EOTP errors", async () => {
@@ -171,13 +159,7 @@ describe("@lerna/otplease", () => {
       throw err;
     });
 
-    try {
-      await otplease(fn, {});
-    } catch (err) {
-      expect(err.message).toMatch("not found");
-    }
-
-    expect.hasAssertions();
+    await expect(otplease(fn, {})).rejects.toThrow("not found");
   });
 
   it("re-throws E401 errors that do not contain 'one-time pass' in the body", async () => {
@@ -188,13 +170,7 @@ describe("@lerna/otplease", () => {
       throw err;
     });
 
-    try {
-      await otplease(fn, {});
-    } catch (err) {
-      expect(err.message).toMatch("auth required");
-    }
-
-    expect.hasAssertions();
+    await expect(otplease(fn, {})).rejects.toThrow("auth required");
   });
 
   it.each([["stdin"], ["stdout"]])("re-throws EOTP error when %s is not a TTY", async pipe => {
@@ -206,13 +182,7 @@ describe("@lerna/otplease", () => {
 
     process[pipe].isTTY = false;
 
-    try {
-      await otplease(fn);
-    } catch (err) {
-      expect(err.message).toBe(`non-interactive ${pipe}`);
-    }
-
-    expect.hasAssertions();
+    await expect(otplease(fn)).rejects.toThrow(`non-interactive ${pipe}`);
   });
 
   describe("getOneTimePassword()", () => {

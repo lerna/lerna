@@ -39,14 +39,9 @@ describe("version bump", () => {
 
   it("errors when --repo-version and [bump] positional passed", async () => {
     const testDir = await initFixture("normal");
+    const command = lernaVersion(testDir)("v1.0.1-beta.25", "--repo-version", "v1.0.1-beta.25");
 
-    try {
-      await lernaVersion(testDir)("v1.0.1-beta.25", "--repo-version", "v1.0.1-beta.25");
-    } catch (err) {
-      expect(err.message).toBe("Arguments repo-version and bump are mutually exclusive");
-    }
-
-    expect.assertions(1);
+    await expect(command).rejects.toThrow("Arguments repo-version and bump are mutually exclusive");
   });
 
   it("strips invalid semver information from explicit value", async () => {
@@ -77,29 +72,19 @@ describe("version bump", () => {
 
   it("errors when --cd-version and [bump] positional passed", async () => {
     const testDir = await initFixture("normal");
+    const command = lernaVersion(testDir)("minor", "--cd-version", "minor");
 
-    try {
-      await lernaVersion(testDir)("minor", "--cd-version", "minor");
-    } catch (err) {
-      expect(err.message).toBe("Arguments cd-version and bump are mutually exclusive");
-    }
-
-    expect.assertions(1);
+    await expect(command).rejects.toThrow("Arguments cd-version and bump are mutually exclusive");
   });
 
   it("throws an error when an invalid semver keyword is used", async () => {
     const testDir = await initFixture("normal");
+    const command = lernaVersion(testDir)("poopypants");
 
-    try {
-      await lernaVersion(testDir)("poopypants");
-    } catch (err) {
-      expect(err.message).toBe(
-        "bump must be an explicit version string _or_ one of: " +
-          "'major', 'minor', 'patch', 'premajor', 'preminor', 'prepatch', or 'prerelease'."
-      );
-    }
-
-    expect.assertions(1);
+    await expect(command).rejects.toThrow(
+      "bump must be an explicit version string _or_ one of: " +
+        "'major', 'minor', 'patch', 'premajor', 'preminor', 'prepatch', or 'prerelease'."
+    );
   });
 
   test("prerelease increments version with default --preid", async () => {

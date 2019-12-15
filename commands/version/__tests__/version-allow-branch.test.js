@@ -25,12 +25,10 @@ describe("version --allow-branch", () => {
     it("rejects a non matching branch", async () => {
       const testDir = await initFixture("normal");
 
-      try {
-        await changeBranch(testDir, "unmatched");
-        await lernaVersion(testDir)("--allow-branch", "master");
-      } catch (err) {
-        expect(err.message).toMatch("Branch 'unmatched' is restricted from versioning");
-      }
+      await changeBranch(testDir, "unmatched");
+      const command = lernaVersion(testDir)("--allow-branch", "master");
+
+      await expect(command).rejects.toThrow("Branch 'unmatched' is restricted from versioning");
     });
 
     it("accepts an exactly matching branch", async () => {
@@ -65,12 +63,10 @@ describe("version --allow-branch", () => {
     it("rejects a non matching branch", async () => {
       const testDir = await initFixture("allow-branch-lerna");
 
-      try {
-        await changeBranch(testDir, "unmatched");
-        await lernaVersion(testDir)();
-      } catch (err) {
-        expect(err.message).toMatch("Branch 'unmatched' is restricted from versioning");
-      }
+      await changeBranch(testDir, "unmatched");
+      const command = lernaVersion(testDir)();
+
+      await expect(command).rejects.toThrow("Branch 'unmatched' is restricted from versioning");
     });
 
     it("accepts a matching branch", async () => {

@@ -84,12 +84,9 @@ describe("DiffCommand", () => {
 
   it("should error when attempting to diff a package that doesn't exist", async () => {
     const cwd = await initFixture("basic");
+    const command = lernaDiff(cwd)("missing");
 
-    try {
-      await lernaDiff(cwd)("missing");
-    } catch (err) {
-      expect(err.message).toBe("Cannot diff, the package 'missing' does not exist.");
-    }
+    await expect(command).rejects.toThrow("Cannot diff, the package 'missing' does not exist.");
   });
 
   it("should error when running in a repository without commits", async () => {
@@ -98,11 +95,8 @@ describe("DiffCommand", () => {
     await fs.remove(path.join(cwd, ".git"));
     await gitInit(cwd);
 
-    try {
-      await lernaDiff(cwd)("package-1");
-    } catch (err) {
-      expect(err.message).toBe("Cannot diff, there are no commits in this repository yet.");
-    }
+    const command = lernaDiff(cwd)("package-1");
+    await expect(command).rejects.toThrow("Cannot diff, there are no commits in this repository yet.");
   });
 
   it("should error when git diff exits non-zero", async () => {
@@ -115,10 +109,7 @@ describe("DiffCommand", () => {
       throw nonZero;
     });
 
-    try {
-      await lernaDiff(cwd)("package-1");
-    } catch (err) {
-      expect(err.message).toBe("An actual non-zero, not git diff pager SIGPIPE");
-    }
+    const command = lernaDiff(cwd)("package-1");
+    await expect(command).rejects.toThrow("An actual non-zero, not git diff pager SIGPIPE");
   });
 });

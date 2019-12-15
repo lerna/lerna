@@ -153,86 +153,68 @@ describe("conventional-commits", () => {
       const cwd = await initFixture("fixed");
       const [pkg1] = await getPackages(cwd);
 
-      try {
-        await recommendVersion(pkg1, "fixed", { changelogPreset: "./scripts/erroring-preset.js" });
-      } catch (err) {
-        expect(err.message).toBe("whatBump must be a function");
-      }
-
-      expect.hasAssertions();
+      await expect(
+        recommendVersion(pkg1, "fixed", {
+          changelogPreset: "./scripts/erroring-preset.js",
+        })
+      ).rejects.toThrow("whatBump must be a function");
     });
 
     it("throws an error when an implicit changelog preset cannot be loaded", async () => {
       const cwd = await initFixture("fixed");
       const [pkg1] = await getPackages(cwd);
 
-      try {
-        await recommendVersion(pkg1, "fixed", { changelogPreset: "garbage" });
-      } catch (err) {
-        expect(err.message).toBe(
-          "Unable to load conventional-changelog preset 'garbage' (conventional-changelog-garbage)"
-        );
-      }
-
-      expect.hasAssertions();
+      await expect(
+        recommendVersion(pkg1, "fixed", {
+          changelogPreset: "garbage",
+        })
+      ).rejects.toThrow(
+        "Unable to load conventional-changelog preset 'garbage' (conventional-changelog-garbage)"
+      );
     });
 
     it("throws an error when an implicit changelog preset with scope cannot be loaded", async () => {
       const cwd = await initFixture("fixed");
       const [pkg1] = await getPackages(cwd);
 
-      try {
-        await recommendVersion(pkg1, "fixed", { changelogPreset: "@scope/garbage" });
-      } catch (err) {
-        expect(err.message).toMatch("preset '@scope/garbage' (@scope/conventional-changelog-garbage)");
-      }
-
-      expect.hasAssertions();
+      await expect(
+        recommendVersion(pkg1, "fixed", {
+          changelogPreset: "@scope/garbage",
+        })
+      ).rejects.toThrow("preset '@scope/garbage' (@scope/conventional-changelog-garbage)");
     });
 
     it("throws an error when an implicit changelog preset with scoped subpath cannot be loaded", async () => {
       const cwd = await initFixture("fixed");
       const [pkg1] = await getPackages(cwd);
 
-      try {
-        await recommendVersion(pkg1, "fixed", { changelogPreset: "@scope/garbage/pail" });
-      } catch (err) {
-        expect(err.message).toMatch(
-          "preset '@scope/garbage/pail' (@scope/conventional-changelog-garbage/pail)"
-        );
-      }
-
-      expect.hasAssertions();
+      await expect(
+        recommendVersion(pkg1, "fixed", {
+          changelogPreset: "@scope/garbage/pail",
+        })
+      ).rejects.toThrow("preset '@scope/garbage/pail' (@scope/conventional-changelog-garbage/pail)");
     });
 
     it("throws an error when an explicit changelog preset cannot be loaded", async () => {
       const cwd = await initFixture("fixed");
       const [pkg1] = await getPackages(cwd);
 
-      try {
-        await recommendVersion(pkg1, "fixed", { changelogPreset: "conventional-changelog-garbage" });
-      } catch (err) {
-        expect(err.message).toBe(
-          "Unable to load conventional-changelog preset 'conventional-changelog-garbage'"
-        );
-      }
-
-      expect.hasAssertions();
+      await expect(
+        recommendVersion(pkg1, "fixed", {
+          changelogPreset: "conventional-changelog-garbage",
+        })
+      ).rejects.toThrow("Unable to load conventional-changelog preset 'conventional-changelog-garbage'");
     });
 
     it("throws an error when an explicit changelog preset with subpath cannot be loaded", async () => {
       const cwd = await initFixture("fixed");
       const [pkg1] = await getPackages(cwd);
 
-      try {
-        await recommendVersion(pkg1, "fixed", { changelogPreset: "conventional-changelog-garbage/pail" });
-      } catch (err) {
-        expect(err.message).toMatch(
-          "Unable to load conventional-changelog preset 'conventional-changelog-garbage/pail'"
-        );
-      }
-
-      expect.hasAssertions();
+      await expect(
+        recommendVersion(pkg1, "fixed", {
+          changelogPreset: "conventional-changelog-garbage/pail",
+        })
+      ).rejects.toThrow("Unable to load conventional-changelog preset 'conventional-changelog-garbage/pail'");
     });
 
     describe("prerelease bumps", () => {

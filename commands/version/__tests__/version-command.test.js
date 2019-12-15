@@ -77,41 +77,28 @@ describe("VersionCommand", () => {
     });
 
     it("throws an error when --independent is passed", async () => {
-      expect.assertions(1);
       const testDir = await initFixture("normal");
-      try {
-        await lernaVersion(testDir)("--independent");
-      } catch (err) {
-        expect(err.message).toMatch("independent");
-      }
+      const command = lernaVersion(testDir)("--independent");
+
+      await expect(command).rejects.toThrow("independent");
     });
 
     it("throws an error if conventional prerelease and graduate flags are both passed", async () => {
       const testDir = await initFixture("normal");
+      const command = lernaVersion(testDir)("--conventional-prerelease", "--conventional-graduate");
 
-      try {
-        await lernaVersion(testDir)("--conventional-prerelease", "--conventional-graduate");
-      } catch (err) {
-        expect(err.message).toMatchInlineSnapshot(
-          `"--conventional-prerelease cannot be combined with --conventional-graduate."`
-        );
-      }
-
-      expect.assertions(1);
+      await expect(command).rejects.toThrow(
+        "--conventional-prerelease cannot be combined with --conventional-graduate."
+      );
     });
 
     it("throws an error when remote branch doesn't exist", async () => {
       remoteBranchExists.mockReturnValueOnce(false);
 
       const testDir = await initFixture("normal");
+      const command = lernaVersion(testDir)();
 
-      try {
-        await lernaVersion(testDir)();
-      } catch (err) {
-        expect(err.message).toMatch("doesn't exist in remote");
-      }
-
-      expect.assertions(1);
+      await expect(command).rejects.toThrow("doesn't exist in remote");
     });
 
     it("throws an error when uncommitted changes are present", async () => {
@@ -120,15 +107,10 @@ describe("VersionCommand", () => {
       });
 
       const testDir = await initFixture("normal");
+      const command = lernaVersion(testDir)();
 
-      try {
-        await lernaVersion(testDir)();
-      } catch (err) {
-        expect(err.message).toBe("uncommitted");
-        // notably different than the actual message, but good enough here
-      }
-
-      expect.assertions(1);
+      await expect(command).rejects.toThrow("uncommitted");
+      // notably different than the actual message, but good enough here
     });
 
     it("throws an error when current ref is already tagged", async () => {
@@ -137,15 +119,10 @@ describe("VersionCommand", () => {
       });
 
       const testDir = await initFixture("normal");
+      const command = lernaVersion(testDir)();
 
-      try {
-        await lernaVersion(testDir)();
-      } catch (err) {
-        expect(err.message).toBe("released");
-        // notably different than the actual message, but good enough here
-      }
-
-      expect.assertions(1);
+      await expect(command).rejects.toThrow("released");
+      // notably different than the actual message, but good enough here
     });
 
     it("calls `checkWorkingTree.throwIfUncommitted` when using --force-publish", async () => {
@@ -483,22 +460,18 @@ describe("VersionCommand", () => {
 
   describe("when local clone is behind upstream", () => {
     it("throws an error during interactive publish", async () => {
-      const testDir = await initFixture("normal");
-
       isBehindUpstream.mockReturnValueOnce(true);
 
-      try {
-        await lernaVersion(testDir)();
-      } catch (err) {
-        expect(err.message).toMatch("behind remote upstream");
-        expect(err.message).toMatch("Please merge remote changes");
-      }
+      const testDir = await initFixture("normal");
+      const command = lernaVersion(testDir)("--no-ci");
+
+      await expect(command).rejects.toThrow("Please merge remote changes");
     });
 
     it("logs a warning and exits early during CI publish", async () => {
-      const testDir = await initFixture("normal");
-
       isBehindUpstream.mockReturnValueOnce(true);
+
+      const testDir = await initFixture("normal");
 
       await lernaVersion(testDir)("--ci");
 
@@ -511,12 +484,9 @@ describe("VersionCommand", () => {
   describe("unversioned packages", () => {
     it("exits with an error for non-private packages with no version", async () => {
       const testDir = await initFixture("not-versioned");
-      try {
-        await lernaVersion(testDir)();
-      } catch (err) {
-        expect(err.prefix).toBe("ENOVERSION");
-        expect(err.message).toMatch("A version field is required in package-3's package.json file.");
-      }
+      const command = lernaVersion(testDir)();
+
+      await expect(command).rejects.toThrow("A version field is required in package-3's package.json file.");
     });
 
     it("ignores private packages with no version", async () => {
@@ -535,15 +505,12 @@ describe("VersionCommand", () => {
     };
 
     it("throws for version", async () => {
-      try {
-        const cwd = await detachedHEAD();
-        await lernaVersion(cwd)();
-      } catch (err) {
-        expect(err.prefix).toBe("ENOGIT");
-        expect(err.message).toBe("Detached git HEAD, please checkout a branch to choose versions.");
-      }
+      const cwd = await detachedHEAD();
+      const command = lernaVersion(cwd)();
 
-      expect.assertions(2);
+      await expect(command).rejects.toThrow(
+        "Detached git HEAD, please checkout a branch to choose versions."
+      );
     });
 
     it("does not throw for version --no-git-tag-version", async () => {
@@ -561,58 +528,43 @@ describe("VersionCommand", () => {
     });
 
     it("throws for version --conventional-commits", async () => {
-      try {
-        const cwd = await detachedHEAD();
-        await lernaVersion(cwd)("--no-git-tag-version", "--conventional-commits");
-      } catch (err) {
-        expect(err.prefix).toBe("ENOGIT");
-        expect(err.message).toBe("Detached git HEAD, please checkout a branch to choose versions.");
-      }
+      const cwd = await detachedHEAD();
+      const command = lernaVersion(cwd)("--no-git-tag-version", "--conventional-commits");
 
-      expect.assertions(2);
+      await expect(command).rejects.toThrow(
+        "Detached git HEAD, please checkout a branch to choose versions."
+      );
     });
 
     it("throws for version --allow-branch", async () => {
-      try {
-        const cwd = await detachedHEAD();
-        await lernaVersion(cwd)("--no-git-tag-version", "--allow-branch", "master");
-      } catch (err) {
-        expect(err.prefix).toBe("ENOGIT");
-        expect(err.message).toBe("Detached git HEAD, please checkout a branch to choose versions.");
-      }
+      const cwd = await detachedHEAD();
+      const command = lernaVersion(cwd)("--no-git-tag-version", "--allow-branch", "master");
 
-      expect.assertions(2);
+      await expect(command).rejects.toThrow(
+        "Detached git HEAD, please checkout a branch to choose versions."
+      );
     });
   });
 
   it("exits with an error when no commits are present", async () => {
-    expect.assertions(2);
-    const testDir = await initFixture("normal", false);
-
     isAnythingCommitted.mockReturnValueOnce(false);
 
-    try {
-      await lernaVersion(testDir)();
-    } catch (err) {
-      expect(err.prefix).toBe("ENOCOMMIT");
-      expect(err.message).toBe(
-        "No commits in this repository. Please commit something before using version."
-      );
-    }
+    const testDir = await initFixture("normal", false);
+    const command = lernaVersion(testDir)();
+
+    await expect(command).rejects.toThrow(
+      "No commits in this repository. Please commit something before using version."
+    );
   });
 
   it("exits with an error when git HEAD is detached", async () => {
     const cwd = await initFixture("no-interdependencies");
+    const sha = await execa.stdout("git", ["rev-parse", "HEAD"], { cwd });
 
-    try {
-      const sha = await execa.stdout("git", ["rev-parse", "HEAD"], { cwd });
-      await execa("git", ["checkout", sha], { cwd }); // detach head
+    await execa("git", ["checkout", sha], { cwd }); // detach head
 
-      await lernaVersion(cwd)();
-    } catch (err) {
-      expect(err.prefix).toBe("ENOGIT");
-      expect(err.message).toBe("Detached git HEAD, please checkout a branch to choose versions.");
-    }
+    const command = lernaVersion(cwd)();
+    await expect(command).rejects.toThrow("Detached git HEAD, please checkout a branch to choose versions.");
   });
 
   it("exits early when no changes found", async () => {

@@ -152,37 +152,16 @@ if (process.platform !== "win32") {
   test("lerna exec --no-bail", async () => {
     const args = ["exec", "--no-bail", "--concurrency=1", "--", "npm", "run", "fail-or-succeed", "--silent"];
 
-    try {
-      await cliRunner(cwd, env)(...args);
-    } catch (err) {
-      expect(err.stderr).toMatchInlineSnapshot(`
-lerna notice cli __TEST_VERSION__
-lerna info ci enabled
-lerna info Executing command in 2 packages: "npm run fail-or-succeed --silent"
-lerna ERR! Received non-zero exit code 1 during execution
-lerna success exec Executed command in 2 packages: "npm run fail-or-succeed --silent"
-
-`);
-      expect(err.stdout).toMatchInlineSnapshot(`
-failure!
-success!
-
-`);
-      expect(err.code).toBe(1);
-    }
-
-    expect.hasAssertions();
+    await expect(cliRunner(cwd, env)(...args)).rejects.toThrow(
+      "Received non-zero exit code 1 during execution"
+    );
   });
 
   test("lerna exec string node error code is not swallowed", async () => {
     const args = ["exec", "--no-bail", "--concurrency=1", "--", "thing-that-is-missing"];
 
-    try {
-      await cliRunner(cwd, env)(...args);
-    } catch (err) {
-      expect(err.code).toBeGreaterThan(0);
-    }
-
-    expect.hasAssertions();
+    await expect(cliRunner(cwd, env)(...args)).rejects.toThrow(
+      /Received non-zero exit code \d+ during execution/
+    );
   });
 }

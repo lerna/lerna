@@ -47,7 +47,9 @@ describe("core-command", () => {
       return true;
     }
 
-    execute() {}
+    execute() {
+      return "ok";
+    }
   }
 
   // convenience to avoid silly "not implemented errors"
@@ -127,7 +129,9 @@ describe("core-command", () => {
   });
 
   it("returns a Promise", async () => {
-    await testFactory();
+    const result = await testFactory();
+
+    expect(result).toBe("ok");
   });
 
   describe("when finished", () => {
@@ -187,20 +191,22 @@ describe("core-command", () => {
         }
       }
 
-      try {
-        await new PkgErrorCommand({ cwd: testDir });
-      } catch (err) {
-        expect(console.error.mock.calls).toHaveLength(2);
-        expect(console.error.mock.calls[0]).toEqual(["pkg-err-stdout"]);
-        expect(console.error.mock.calls[1]).toEqual(["pkg-err-stderr"]);
+      const command = new PkgErrorCommand({ cwd: testDir });
 
-        expect(err.cmd).toEqual("test-pkg-err");
-        expect(err.stdout).toEqual("pkg-err-stdout");
-        expect(err.stderr).toEqual("pkg-err-stderr");
-        expect(err.pkg).toEqual({
-          name: "pkg-err-name",
-        });
-      }
+      await expect(command).rejects.toThrow(
+        expect.objectContaining({
+          cmd: "test-pkg-err",
+          stdout: "pkg-err-stdout",
+          stderr: "pkg-err-stderr",
+          pkg: expect.objectContaining({
+            name: "pkg-err-name",
+          }),
+        })
+      );
+
+      expect(console.error).toHaveBeenCalledTimes(2);
+      expect(console.error).toHaveBeenNthCalledWith(1, "pkg-err-stdout");
+      expect(console.error).toHaveBeenNthCalledWith(2, "pkg-err-stderr");
     });
 
     it("does not log stdout/stderr after streaming ends", async () => {
@@ -223,11 +229,10 @@ describe("core-command", () => {
         }
       }
 
-      try {
-        await new PkgErrorCommand({ cwd: testDir, stream: true });
-      } catch (err) {
-        expect(console.error.mock.calls).toHaveLength(0);
-      }
+      const command = new PkgErrorCommand({ cwd: testDir, stream: true });
+
+      await expect(command).rejects.toThrow("message");
+      expect(console.error).not.toHaveBeenCalled();
     });
   });
 
@@ -263,6 +268,15 @@ describe("core-command", () => {
         return ["testb"];
       }
     }
+
+    it("does not mutate argv parameter", async () => {
+      const argv = { cwd: testDir, onRejected };
+      const instance = new TestACommand(argv);
+      await instance;
+
+      expect(argv).toEqual({ cwd: testDir, onRejected });
+      expect(instance.argv).not.toEqual(argv);
+    });
 
     it("should pick up global options", async () => {
       const instance = new TestACommand({ cwd: testDir, onRejected });
@@ -326,34 +340,28 @@ describe("core-command", () => {
 
   describe("validations", () => {
     it("throws ENOGIT when repository is not initialized", async () => {
-      expect.assertions(1);
-
       const cwd = tempy.directory();
 
-      try {
-        await testFactory({ cwd });
-      } catch (err) {
-        expect(err.prefix).toBe("ENOGIT");
-      }
+      await expect(testFactory({ cwd })).rejects.toThrow(
+        expect.objectContaining({
+          prefix: "ENOGIT",
+        })
+      );
     });
 
     it("throws ENOPKG when root package.json is not found", async () => {
-      expect.assertions(1);
-
       const cwd = await initFixture("basic");
 
       await fs.remove(path.join(cwd, "package.json"));
 
-      try {
-        await testFactory({ cwd });
-      } catch (err) {
-        expect(err.prefix).toBe("ENOPKG");
-      }
+      await expect(testFactory({ cwd })).rejects.toThrow(
+        expect.objectContaining({
+          prefix: "ENOPKG",
+        })
+      );
     });
 
     it("throws JSONError when root package.json has syntax error", async () => {
-      expect.assertions(1);
-
       const cwd = await initFixture("basic");
 
       await fs.writeFile(
@@ -361,25 +369,23 @@ describe("core-command", () => {
         '{ "name": "invalid", "lerna": { "version": "1.0.0" }, }'
       );
 
-      try {
-        await testFactory({ cwd });
-      } catch (err) {
-        expect(err.prefix).toBe("JSONError");
-      }
+      await expect(testFactory({ cwd })).rejects.toThrow(
+        expect.objectContaining({
+          prefix: "JSONError",
+        })
+      );
     });
 
     it("throws ENOLERNA when lerna.json is not found", async () => {
-      expect.assertions(1);
-
       const cwd = await initFixture("basic");
 
       await fs.remove(path.join(cwd, "lerna.json"));
 
-      try {
-        await testFactory({ cwd });
-      } catch (err) {
-        expect(err.prefix).toBe("ENOLERNA");
-      }
+      await expect(testFactory({ cwd })).rejects.toThrow(
+        expect.objectContaining({
+          prefix: "ENOLERNA",
+        })
+      );
     });
   });
 });

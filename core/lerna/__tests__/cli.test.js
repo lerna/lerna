@@ -14,17 +14,10 @@ jest.setTimeout(30e3);
 
 describe("cli", () => {
   it("should throw without command", async () => {
-    expect.assertions(1);
-
-    try {
-      await bin()();
-    } catch (err) {
-      expect(err.message).toContain("Pass --help to see all available commands and options.");
-    }
+    await expect(bin()()).rejects.toThrow("Pass --help to see all available commands and options.");
   });
 
   it("should not throw for --help", async () => {
-    expect.assertions(1);
     let error = null;
 
     try {

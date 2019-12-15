@@ -24,39 +24,24 @@ describe("AddCommand", () => {
   getManifest.mockResolvedValue({ version: "1.0.0" });
 
   it("should throw without packages", async () => {
-    expect.assertions(1);
-
     const testDir = await initFixture("basic");
+    const command = lernaAdd(testDir)();
 
-    try {
-      await lernaAdd(testDir)();
-    } catch (err) {
-      expect(err.message).toMatch(/^Not enough non-option arguments/);
-    }
+    await expect(command).rejects.toThrow(/^Not enough non-option arguments/);
   });
 
   it("should throw for locally unsatisfiable version ranges", async () => {
-    expect.assertions(1);
-
     const testDir = await initFixture("basic");
+    const command = lernaAdd(testDir)("@test/package-1@2");
 
-    try {
-      await lernaAdd(testDir)("@test/package-1@2");
-    } catch (err) {
-      expect(err.message).toMatch(/Requested range not satisfiable:/);
-    }
+    await expect(command).rejects.toThrow(/Requested range not satisfiable:/);
   });
 
   it("should throw for adding local package without specified version", async () => {
-    expect.assertions(1);
-
     const testDir = await initFixture("unspecified-version");
+    const command = lernaAdd(testDir)("@test/package-1");
 
-    try {
-      await lernaAdd(testDir)("@test/package-1");
-    } catch (err) {
-      expect(err.message).toMatch(/Requested package has no version:/);
-    }
+    await expect(command).rejects.toThrow(/Requested package has no version:/);
   });
 
   it("should reference remote dependencies", async () => {
@@ -169,6 +154,28 @@ describe("AddCommand", () => {
     expect(pkg2).toDevDependOn("@test/package-1");
   });
 
+  describe("peerDependencies", () => {
+    it("should add target package to peerDependencies", async () => {
+      const testDir = await initFixture("basic");
+
+      await lernaAdd(testDir)("@test/package-1", "--peer");
+      const [, pkg2, pkg3, pkg4] = await getPackages(testDir);
+
+      expect(pkg2).toPeerDependOn("@test/package-1");
+      expect(pkg3).toPeerDependOn("@test/package-1");
+      expect(pkg4).toPeerDependOn("@test/package-1");
+    });
+
+    it("should add target package to peerDependencies with alias", async () => {
+      const testDir = await initFixture("basic");
+
+      await lernaAdd(testDir)("-P", "@test/package-1");
+      const [, pkg2] = await getPackages(testDir);
+
+      expect(pkg2).toPeerDependOn("@test/package-1");
+    });
+  });
+
   it("should not reference packages to themeselves", async () => {
     const testDir = await initFixture("basic");
 
@@ -233,26 +240,23 @@ describe("AddCommand", () => {
       return Promise.reject(err);
     });
 
-    try {
-      await lernaAdd(testDir)(
-        "@my-own/private-idaho",
-        "--registry",
-        "http://registry.cuckoo-banana-pants.com/"
-      );
-    } catch (err) {
-      // obviously this registry doesn't exist, thus it will always error
-      expect(err.message).toMatch("ENOTFOUND");
-      expect(getManifest).toHaveBeenLastCalledWith(
-        expect.objectContaining({
-          name: "@my-own/private-idaho",
-        }),
-        expect.objectContaining({
-          registry: "http://registry.cuckoo-banana-pants.com/",
-        })
-      );
-    }
+    const command = lernaAdd(testDir)(
+      "@my-own/private-idaho",
+      "--registry",
+      "http://registry.cuckoo-banana-pants.com/"
+    );
 
-    expect.hasAssertions();
+    // obviously this registry doesn't exist, thus it will always error
+    await expect(command).rejects.toThrow(/ENOTFOUND/);
+
+    expect(getManifest).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        name: "@my-own/private-idaho",
+      }),
+      expect.objectContaining({
+        registry: "http://registry.cuckoo-banana-pants.com/",
+      })
+    );
   });
 
   it("should bootstrap changed packages", async () => {

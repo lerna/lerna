@@ -194,31 +194,21 @@ describe("BootstrapCommand", () => {
 
   describe("with --npm-client and --hoist", () => {
     it("should throw", async () => {
-      expect.assertions(1);
-
       const testDir = await initFixture("yarn-hoist");
+      const command = lernaBootstrap(testDir)();
 
-      try {
-        await lernaBootstrap(testDir)();
-      } catch (err) {
-        expect(err.message).toMatch(
-          "--hoist is not supported with --npm-client=yarn, use yarn workspaces instead"
-        );
-      }
+      await expect(command).rejects.toThrow(
+        "--hoist is not supported with --npm-client=yarn, use yarn workspaces instead"
+      );
     });
   });
 
   describe("with --hoist and --strict", () => {
     it("should throw if there's a hoist warning", async () => {
-      expect.assertions(1);
-
       const testDir = await initFixture("basic");
+      const command = lernaBootstrap(testDir)("--hoist", "--strict");
 
-      try {
-        await lernaBootstrap(testDir)("--hoist", "--strict");
-      } catch (err) {
-        expect(err.message).toMatch("Package version inconsistencies found");
-      }
+      await expect(command).rejects.toThrow("Package version inconsistencies found");
     });
   });
 
@@ -609,17 +599,12 @@ describe("BootstrapCommand", () => {
     });
 
     it("errors when package.json workspaces exists but --use-workspaces is not enabled", async () => {
-      expect.assertions(1);
-
       const testDir = await initFixture("yarn-workspaces");
+      const command = lernaBootstrap(testDir)("--no-use-workspaces");
 
-      try {
-        await lernaBootstrap(testDir)("--no-use-workspaces");
-      } catch (err) {
-        expect(err.message).toMatch(
-          "Yarn workspaces are configured in package.json, but not enabled in lerna.json!"
-        );
-      }
+      await expect(command).rejects.toThrow(
+        "Yarn workspaces are configured in package.json, but not enabled in lerna.json!"
+      );
     });
   });
 
@@ -642,29 +627,19 @@ describe("BootstrapCommand", () => {
 
   describe("with duplicate package names", () => {
     it("throws an error", async () => {
-      expect.assertions(1);
-
       const testDir = await initFixture("duplicate-package-names");
+      const command = lernaBootstrap(testDir)();
 
-      try {
-        await lernaBootstrap(testDir)();
-      } catch (err) {
-        expect(err.message).toMatch(`Package name "package-1" used in multiple packages`);
-      }
+      await expect(command).rejects.toThrow(`Package name "package-1" used in multiple packages`);
     });
   });
 
   describe("in a cyclical repo", () => {
     it("should throw an error with --reject-cycles", async () => {
-      expect.assertions(1);
-
       const testDir = await initFixture("toposort");
+      const command = lernaBootstrap(testDir)("--reject-cycles");
 
-      try {
-        await lernaBootstrap(testDir)("--reject-cycles");
-      } catch (err) {
-        expect(err.message).toMatch("Dependency cycles detected, you should fix these!");
-      }
+      await expect(command).rejects.toThrow("Dependency cycles detected, you should fix these!");
     });
   });
 
@@ -689,16 +664,13 @@ describe("BootstrapCommand", () => {
   });
 
   it("requires a git repo when using --since", async () => {
-    expect.assertions(1);
     const testDir = await initFixture("zero-pkgs");
 
     await fs.remove(path.join(testDir, ".git"));
 
-    try {
-      await lernaBootstrap(testDir)("--since", "some-branch");
-    } catch (err) {
-      expect(err.message).toMatch("this is not a git repository");
-    }
+    const command = lernaBootstrap(testDir)("--since", "some-branch");
+
+    await expect(command).rejects.toThrow("this is not a git repository");
   });
 
   describe("with force-local", () => {

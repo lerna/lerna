@@ -1,6 +1,6 @@
 {
   "name": "@lerna/prompt",
-  "version": "3.13.0",
+  "version": "3.18.5",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
