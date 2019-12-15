@@ -54,6 +54,7 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 - [`--graph-type <all|dependencies>`](#--graph-type-alldependencies)
 - [`--ignore-scripts`](#--ignore-scripts)
 - [`--ignore-prepublish`](#--ignore-prepublish)
+- [`--legacy-auth`](#--legacy-auth)
 - [`--no-git-reset`](#--no-git-reset)
 - [`--no-verify-access`](#--no-verify-access)
 - [`--otp`](#--otp)
@@ -159,6 +160,14 @@ When passed, this flag will disable running [lifecycle scripts](#lifecycle-scrip
 ### `--ignore-prepublish`
 
 When passed, this flag will disable running [deprecated](https://docs.npmjs.com/misc/scripts#prepublish-and-prepare) [`prepublish` scripts](#lifecycle-scripts) during `lerna publish`.
+
+### `--legacy-auth`
+
+When publishing packages that require authentication but you are working with an internally hosted NPM Registry that only uses the legacy Base64 version of username:password. This is the same as the NPM publish `_auth` flag.
+
+```sh
+lerna publish --legacy-auth aGk6bW9t
+```
 
 ### `--no-git-reset`
 
