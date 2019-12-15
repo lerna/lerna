@@ -65,7 +65,6 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 - [`--temp-tag`](#--temp-tag)
 - [`--yes`](#--yes)
 
-
 ### `--canary`
 
 ```sh
