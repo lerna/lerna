@@ -40,7 +40,8 @@ makeDiffPredicate.mockImplementation(() => hasDiff);
 const ALL_NODES = Object.freeze([
   expect.objectContaining({ name: "package-cycle-1" }),
   expect.objectContaining({ name: "package-cycle-2" }),
-  expect.objectContaining({ name: "package-cycle-extraneous" }),
+  expect.objectContaining({ name: "package-cycle-extraneous-1" }),
+  expect.objectContaining({ name: "package-cycle-extraneous-2" }),
   expect.objectContaining({ name: "package-dag-1" }),
   expect.objectContaining({ name: "package-dag-2a" }),
   expect.objectContaining({ name: "package-dag-2b" }),

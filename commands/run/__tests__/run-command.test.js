@@ -170,7 +170,8 @@ describe("RunCommand", () => {
       expect(output.logged().split("\n")).toEqual([
         "package-cycle-1",
         "package-cycle-2",
-        "package-cycle-extraneous",
+        "package-cycle-extraneous-1",
+        "package-cycle-extraneous-2",
         "package-dag-1",
         "package-dag-2a",
         "package-dag-2b",
@@ -188,7 +189,8 @@ describe("RunCommand", () => {
         Array [
           "packages/package-cycle-1 npm run env (prefixed: true)",
           "packages/package-cycle-2 npm run env (prefixed: true)",
-          "packages/package-cycle-extraneous npm run env (prefixed: true)",
+          "packages/package-cycle-extraneous-1 npm run env (prefixed: true)",
+          "packages/package-cycle-extraneous-2 npm run env (prefixed: true)",
           "packages/package-dag-1 npm run env (prefixed: true)",
           "packages/package-dag-2a npm run env (prefixed: true)",
           "packages/package-dag-2b npm run env (prefixed: true)",
@@ -217,7 +219,8 @@ describe("RunCommand", () => {
         "package-cycle-1",
         "package-cycle-2",
         "package-dag-3",
-        "package-cycle-extraneous",
+        "package-cycle-extraneous-1",
+        "package-cycle-extraneous-2",
       ]);
     });
 

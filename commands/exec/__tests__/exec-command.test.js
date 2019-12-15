@@ -200,7 +200,8 @@ describe("ExecCommand", () => {
       expect(calledInPackages()).toEqual([
         "package-cycle-1",
         "package-cycle-2",
-        "package-cycle-extraneous",
+        "package-cycle-extraneous-1",
+        "package-cycle-extraneous-2",
         "package-dag-1",
         "package-dag-2a",
         "package-dag-2b",
@@ -228,7 +229,8 @@ describe("ExecCommand", () => {
         "package-cycle-1",
         "package-cycle-2",
         "package-dag-3",
-        "package-cycle-extraneous",
+        "package-cycle-extraneous-1",
+        "package-cycle-extraneous-2",
       ]);
     });
 

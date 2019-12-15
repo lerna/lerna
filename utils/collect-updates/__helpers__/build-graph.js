@@ -24,11 +24,20 @@ function buildGraph(mapPackages = pkg => pkg) {
       },
     },
     {
-      name: "package-cycle-extraneous",
+      name: "package-cycle-extraneous-1",
       version: "1.0.0",
       description: "This package is used to break ties between package-cycle-{1,2}.",
       dependencies: {
         "package-cycle-1": "1.0.0",
+      },
+    },
+    {
+      name: "package-cycle-extraneous-2",
+      version: "1.0.0",
+      description: "This package is used to break ties between package-cycle-{1,2}.",
+      dependencies: {
+        "package-cycle-1": "1.0.0",
+        "package-cycle-2": "1.0.0",
       },
     },
     {

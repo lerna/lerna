@@ -11,8 +11,10 @@ function collectDependents(nodes) {
       return;
     }
 
-    // depth-first search
+    // breadth-first search
+    const queue = [currentNode];
     const seen = new Set();
+
     const visit = (dependentNode, dependentName, siblingDependents) => {
       if (seen.has(dependentNode)) {
         return;
@@ -26,11 +28,14 @@ function collectDependents(nodes) {
       }
 
       collected.add(dependentNode);
-
-      dependentNode.localDependents.forEach(visit);
+      queue.push(dependentNode);
     };
 
-    currentNode.localDependents.forEach(visit);
+    while (queue.length) {
+      const node = queue.shift();
+
+      node.localDependents.forEach(visit);
+    }
   });
 
   return collected;
