@@ -1,5 +1,8 @@
 "use strict";
 
+// we're actually testing integration with git
+jest.unmock("@lerna/collect-updates");
+
 // local modules _must_ be explicitly mocked
 jest.mock("../lib/get-packages-without-license");
 jest.mock("../lib/verify-npm-package-access");
