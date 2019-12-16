@@ -31,7 +31,6 @@ const lernaPublish = require("@lerna-test/command-runner")(require("../command")
 
 describe("relative 'file:' specifiers", () => {
   const setupChanges = async (cwd, pkgRoot = "packages") => {
-    await gitTag(cwd, "v1.0.0");
     await fs.outputFile(path.join(cwd, `${pkgRoot}/package-1/hello.js`), "world");
     await gitAdd(cwd, ".");
     await gitCommit(cwd, "setup");
@@ -40,6 +39,7 @@ describe("relative 'file:' specifiers", () => {
   it("overwrites relative link with local version before npm publish but after git commit", async () => {
     const cwd = await initFixture("relative-file-specs");
 
+    await gitTag(cwd, "v1.0.0");
     await setupChanges(cwd);
     await lernaPublish(cwd)("major", "--yes");
 
@@ -77,6 +77,7 @@ describe("relative 'file:' specifiers", () => {
   it("falls back to existing relative version when it is not updated", async () => {
     const cwd = await initFixture("relative-independent");
 
+    await gitTag(cwd, "package-1@1.0.0");
     await setupChanges(cwd);
     await lernaPublish(cwd)("minor", "--yes");
 
@@ -98,6 +99,7 @@ describe("relative 'file:' specifiers", () => {
   it("respects --exact", async () => {
     const cwd = await initFixture("relative-independent");
 
+    await gitTag(cwd, "package-1@1.0.0");
     await setupChanges(cwd);
     await lernaPublish(cwd)("patch", "--yes", "--exact");
 
@@ -111,6 +113,7 @@ describe("relative 'file:' specifiers", () => {
   it("works around npm-incompatible link: specifiers", async () => {
     const cwd = await initFixture("yarn-link-spec");
 
+    await gitTag(cwd, "v1.0.0");
     await setupChanges(cwd, "workspaces");
     await lernaPublish(cwd)("major", "--yes");
 
