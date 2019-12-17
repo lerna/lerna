@@ -27,7 +27,13 @@ describe(`lerna publish --conventional-prerelease/graduate independent w/ change
 
   beforeAll(async () => {
     ({ cwd } = await cloneFixture("independent", "chore: init repo"));
-    await gitTag(cwd, "v1.0.0");
+    await Promise.all([
+      gitTag(cwd, "package-1@1.0.0"),
+      gitTag(cwd, "package-2@2.0.0"),
+      gitTag(cwd, "package-3@3.0.0"),
+      gitTag(cwd, "package-4@4.0.0"),
+      gitTag(cwd, "package-5@5.0.0"),
+    ]);
   });
 
   test(`release specified stable packages as prerelease`, async () => {
@@ -210,16 +216,12 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
-# 1.1.0 (YYYY-MM-DD)
+# [1.1.0](/compare/package-1@1.0.0...package-1@1.1.0) (YYYY-MM-DD)
 
 
 ### Features
 
 * **package-1:** Add foo ([SHA](COMMIT_URL))
-
-
-
-# 1.0.0 (YYYY-MM-DD)
 
 `);
 
@@ -267,16 +269,12 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
-## 2.0.1-alpha.0 (YYYY-MM-DD)
+## [2.0.1-alpha.0](/compare/package-2@2.0.0...package-2@2.0.1-alpha.0) (YYYY-MM-DD)
 
 
 ### Bug Fixes
 
 * **package-2:** Fix bar ([SHA](COMMIT_URL))
-
-
-
-# 1.0.0 (YYYY-MM-DD)
 
 `);
 
@@ -321,7 +319,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
-# 4.0.0-alpha.0 (YYYY-MM-DD)
+# [4.0.0-alpha.0](/compare/package-3@3.0.0...package-3@4.0.0-alpha.0) (YYYY-MM-DD)
 
 
 ### Features
@@ -332,10 +330,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### BREAKING CHANGES
 
 * **package-3:** yup
-
-
-
-# 1.0.0 (YYYY-MM-DD)
 
 `);
 
@@ -380,11 +374,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 
 
-## 5.0.1-alpha.0 (YYYY-MM-DD)
-
-
-
-# 1.0.0 (YYYY-MM-DD)
+## [5.0.1-alpha.0](/compare/package-5@5.0.0...package-5@5.0.1-alpha.0) (YYYY-MM-DD)
 
 **Note:** Version bump only for package package-5
 
