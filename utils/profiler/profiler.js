@@ -77,9 +77,9 @@ class Profiler {
       : this.rootPath;
     const outputPath = upath.join(outputFolder, generateOutputname());
 
-    fs.outputJsonSync(outputPath, this.events);
-
-    this.log.info("profiler", `Performance profile saved to ${outputPath}`);
+    return fs
+      .outputJson(outputPath, this.events)
+      .then(() => this.log.info("profiler", `Performance profile saved to ${outputPath}`));
   }
 }
 
