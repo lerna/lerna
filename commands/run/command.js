@@ -62,7 +62,7 @@ exports.builder = yargs => {
       profile: {
         group: "Command Options:",
         describe: "Profile script executions and output performance profile to default location.",
-        type: "bolean",
+        type: "boolean",
       },
       "profile-location": {
         group: "Command Options:",

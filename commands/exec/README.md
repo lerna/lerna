@@ -91,7 +91,7 @@ operations. The end result is a visualization of the parallel execution of your 
 The default location of the performance profiles is at the root of your project.
 
 ```sh
-$ lerna run build --profile
+$ lerna run exec --profile
 ```
 
 > **Note:** Lerna will only profile when topological sorting is enabled (i.e. without `--parallel` and `--no-sort`).
