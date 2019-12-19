@@ -1,21 +1,21 @@
 {
-  "name": "@lerna/run-topologically",
+  "name": "@lerna/profiler",
   "version": "3.18.5",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
     "utils"
   ],
-  "homepage": "https://github.com/lerna/lerna/tree/master/utils/run-topologically#readme",
+  "homepage": "https://github.com/lerna/lerna/tree/master/utils/profiler#readme",
   "license": "MIT",
   "author": {
-    "name": "Daniel Stockman",
-    "url": "https://github.com/evocateur"
+    "name": "Benjamin Weggersen",
+    "url": "https://github.com/bweggersen"
   },
   "files": [
-    "run-topologically.js"
+    "profiler.js"
   ],
-  "main": "run-topologically.js",
+  "main": "profiler.js",
   "engines": {
     "node": ">= 6.9.0"
   },
@@ -25,16 +25,14 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lerna/lerna.git",
-    "directory": "utils/run-topologically"
+    "directory": "utils/profiler"
   },
   "scripts": {
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/profiler": "file:../profiler",
-    "@lerna/query-graph": "file:../query-graph",
     "figgy-pudding": "^3.5.1",
-    "npmlog": "^4.1.2",
-    "p-queue": "^4.0.0"
+    "fs-extra": "^8.1.0",
+    "upath": "^1.2.0"
   }
 }

@@ -4,7 +4,7 @@ const PQueue = require("p-queue");
 const npmlog = require("npmlog");
 const figgyPudding = require("figgy-pudding");
 const QueryGraph = require("@lerna/query-graph");
-const Profiler = require("./profiler");
+const Profiler = require("@lerna/profiler");
 
 module.exports = runTopologically;
 
