@@ -13,11 +13,16 @@ const range = len => {
     .map((_, idx) => idx);
 };
 
-const generateOutputname = () => {
+const getTimeBasedFilename = () => {
   const now = new Date(); // 2011-10-05T14:48:00.000Z
   const datetime = now.toISOString().split(".")[0]; // 2011-10-05T14:48:00
   const datetimeNormalized = datetime.replace(/-|:/g, ""); // 20111005T144800
   return `Lerna-Profile-${datetimeNormalized}.json`;
+};
+
+const getOutputPath = (rootPath, profileLocation) => {
+  const outputFolder = profileLocation ? upath.join(rootPath, profileLocation) : rootPath;
+  return upath.join(outputFolder, getTimeBasedFilename());
 };
 
 class Profiler {
@@ -25,8 +30,7 @@ class Profiler {
     this.events = [];
     this.profile = profile;
     this.log = log;
-    this.profileLocation = profileLocation;
-    this.rootPath = rootPath;
+    this.outputPath = getOutputPath(rootPath, profileLocation);
     this.threads = range(concurrency);
   }
 
@@ -72,14 +76,9 @@ class Profiler {
       return;
     }
 
-    const outputFolder = this.profileLocation
-      ? upath.join(this.rootPath, this.profileLocation)
-      : this.rootPath;
-    const outputPath = upath.join(outputFolder, generateOutputname());
-
     return fs
-      .outputJson(outputPath, this.events)
-      .then(() => this.log.info("profiler", `Performance profile saved to ${outputPath}`));
+      .outputJson(this.outputPath, this.events)
+      .then(() => this.log.info("profiler", `Performance profile saved to ${this.outputPath}`));
   }
 }
 
