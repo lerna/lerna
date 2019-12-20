@@ -1,6 +1,8 @@
 "use strict";
 
+const figgyPudding = require("figgy-pudding");
 const fs = require("fs-extra");
+const npmlog = require("npmlog");
 const upath = require("upath");
 
 const hrtimeToMicroseconds = hrtime => {
@@ -25,17 +27,28 @@ const getOutputPath = (rootPath, profileLocation) => {
   return upath.join(outputFolder, getTimeBasedFilename());
 };
 
+const ProfilerConfig = figgyPudding({
+  concurrency: {},
+  log: { default: npmlog },
+  profile: "enabled",
+  enabled: {},
+  profileLocation: {},
+  rootPath: {},
+});
+
 class Profiler {
-  constructor({ concurrency, log, profile, profileLocation, rootPath }) {
+  constructor(opts) {
+    const { concurrency, enabled, log, profileLocation, rootPath } = ProfilerConfig(opts);
+
+    this.enabled = enabled;
     this.events = [];
-    this.profile = profile;
     this.log = log;
     this.outputPath = getOutputPath(rootPath, profileLocation);
     this.threads = range(concurrency);
   }
 
   run(fn, name) {
-    if (!this.profile) {
+    if (!this.enabled) {
       return fn();
     }
 
@@ -72,7 +85,7 @@ class Profiler {
   }
 
   output() {
-    if (!this.profile) {
+    if (!this.enabled) {
       return;
     }
 

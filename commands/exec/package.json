@@ -35,6 +35,7 @@
     "@lerna/child-process": "file:../../core/child-process",
     "@lerna/command": "file:../../core/command",
     "@lerna/filter-options": "file:../../core/filter-options",
+    "@lerna/profiler": "file:../../utils/profiler",
     "@lerna/run-topologically": "file:../../utils/run-topologically",
     "@lerna/validation-error": "file:../../core/validation-error",
     "p-map": "^2.1.0"

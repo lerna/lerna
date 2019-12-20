@@ -5,6 +5,7 @@ const pMap = require("p-map");
 const Command = require("@lerna/command");
 const npmRunScript = require("@lerna/npm-run-script");
 const output = require("@lerna/output");
+const Profiler = require("@lerna/profiler");
 const timer = require("@lerna/timer");
 const runTopologically = require("@lerna/run-topologically");
 const ValidationError = require("@lerna/validation-error");
@@ -128,18 +129,33 @@ class RunCommand extends Command {
   }
 
   runScriptInPackagesTopological() {
+    let profiler;
+    let runnerWithProfiler;
     const runner = this.options.stream
       ? pkg => this.runScriptInPackageStreaming(pkg)
       : pkg => this.runScriptInPackageCapturing(pkg);
 
-    return runTopologically(this.packagesWithScript, runner, {
+    if (this.options.profile) {
+      profiler = new Profiler({
+        concurrency: this.concurrency,
+        log: this.logger,
+        profile: this.options.profile,
+        profileLocation: this.options.profileLocation,
+        rootPath: this.project.rootPath,
+      });
+      runnerWithProfiler = pkg => profiler.run(() => runner(pkg), pkg.name);
+    }
+
+    let chain = runTopologically(this.packagesWithScript, runnerWithProfiler || runner, {
       concurrency: this.concurrency,
       rejectCycles: this.options.rejectCycles,
-      profile: this.options.profile,
-      profileLocation: this.options.profileLocation,
-      rootPath: this.project.rootPath,
-      log: this.logger,
     });
+
+    if (profiler) {
+      chain = chain.then(results => profiler.output().then(() => results));
+    }
+
+    return chain;
   }
 
   runScriptInPackagesParallel() {
