@@ -8,5 +8,5 @@ module.exports = gitPush;
 function gitPush(remote, branch, opts) {
   log.silly("gitPush", remote, branch);
 
-  return childProcess.exec("git", ["push", "--follow-tags", "--no-verify", remote, branch], opts);
+  return childProcess.exec("git", ["push", "--follow-tags", "--atomic", "--no-verify", remote, branch], opts);
 }
