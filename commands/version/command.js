@@ -258,7 +258,7 @@ exports.addBumpPositional = function addBumpPositional(yargs, additionalKeywords
   );
   const bumpOptionList = `'${semverKeywords.slice(0, -1).join("', '")}', or '${
     semverKeywords[semverKeywords.length - 1]
-    }'.`;
+  }'.`;
 
   yargs.positional("bump", {
     describe: `Increment version(s) by explicit version _or_ semver keyword,\n${bumpOptionList}`,

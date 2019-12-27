@@ -56,10 +56,10 @@ function recommendVersion(pkg, type, { changelogPreset, rootPath, tagPrefix, pre
         if (prereleaseId) {
           const shouldBump = shouldBumpPrerelease(releaseType, pkg.version);
           const prereleaseType = shouldBump ? `pre${releaseType}` : "prerelease";
-          log.verbose(type, "increment %s by %s", pkg.version, prereleaseType);
+          log.verbose(type, "increment %s %s by %s", pkg.name, pkg.version, prereleaseType);
           resolve(semver.inc(pkg.version, prereleaseType, prereleaseId));
         } else {
-          log.verbose(type, "increment %s by %s", pkg.version, releaseType);
+          log.verbose(type, "increment %s %s by %s", pkg.name, pkg.version, releaseType);
           resolve(semver.inc(pkg.version, releaseType));
         }
       });

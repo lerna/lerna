@@ -8,7 +8,7 @@ module.exports = filterOptions;
 module.exports.getFilteredPackages = getFilteredPackages;
 
 function filterOptions(yargs) {
-  // Only for 'run', 'exec', 'clean', 'ls', and 'bootstrap' commands
+  // Only for 'run', 'exec', 'clean', 'ls', 'version', and 'bootstrap' commands
   const opts = {
     scope: {
       describe: "Include only packages with names matching the given glob.",

@@ -187,17 +187,31 @@ class VersionCommand extends Command {
     }
 
     // save list of packages allowed to have versions incremented
-    const allowedToVersion = await getFilteredPackages(this.packageGraph, this.execOpts, this.options);
+    const allowedToVersionPrelim = await getFilteredPackages(this.packageGraph, this.execOpts, this.options);
+    // run secondary collection on preliminary result, specifically excluding dependents from allowing versioning
+    const allowedToVersion = await collectUpdates(allowedToVersionPrelim, this.packageGraph, this.execOpts, {
+      ...this.options,
+      excludeDependents: true,
+      logLevel: "silent",
+    });
     this.allowedToVersion = allowedToVersion.map(pkg => pkg.name);
+    this.logger.verbose(
+      "allowedToVersion",
+      allowedToVersion.map(pkg => pkg.name)
+    );
 
     // list of packages + dependents allowed to update
-    const filteredPackages = await getFilteredPackages(this.packageGraph, this.execOpts, { ...this.options, includeDependents: true });
+    const filteredPackages = await getFilteredPackages(this.packageGraph, this.execOpts, {
+      ...this.options,
+      includeDependents: true,
+    });
 
-    const updates = await collectUpdates(
-      filteredPackages,
-      this.packageGraph,
-      this.execOpts,
-      this.options
+    // secondary collection to ensure unneeded packages are removed
+    const updates = await collectUpdates(filteredPackages, this.packageGraph, this.execOpts, this.options);
+
+    this.logger.verbose(
+      "allowedToUpdate",
+      filteredPackages.map(pkg => pkg.name)
     );
 
     this.updates = updates.filter(node => {
@@ -219,7 +233,10 @@ class VersionCommand extends Command {
       return !!node.version;
     });
 
-    console.log('updates',this.updates.map(node => node.name));
+    this.logger.verbose(
+      "updates",
+      this.updates.map(node => node.name)
+    );
 
     if (!this.updates.length) {
       this.logger.success(`No changed packages to ${this.composed ? "publish" : "version"}`);
@@ -230,7 +247,9 @@ class VersionCommand extends Command {
 
     // updates list doesn't contain any packages allowed to be versioned
     if (this.updates.every(node => !this.allowedToVersion.includes(node.name))) {
-      this.logger.success(`No changed packages are allowed to be ${this.composed ? "published" : "versioned"}`);
+      this.logger.success(
+        `No changed packages are allowed to be ${this.composed ? "published" : "versioned"}`
+      );
 
       // still exits zero, aka "ok"
       return false;
@@ -248,8 +267,8 @@ class VersionCommand extends Command {
     // don't execute recursively if run from a poorly-named script
     this.runRootLifecycle = /^(pre|post)?version$/.test(process.env.npm_lifecycle_event)
       ? stage => {
-        this.logger.warn("lifecycle", "Skipping root %j because it has already been called", stage);
-      }
+          this.logger.warn("lifecycle", "Skipping root %j because it has already been called", stage);
+        }
       : stage => this.runPackageLifecycle(this.project.manifest, stage);
 
     const tasks = [
@@ -260,8 +279,8 @@ class VersionCommand extends Command {
 
     // amending a commit probably means the working tree is dirty
     if (this.commitAndTag && this.gitOpts.amend !== true) {
-      const { forcePublish, conventionalCommits, conventionalGraduate } = this.options;
-      const checkUncommittedOnly = forcePublish || (conventionalCommits && conventionalGraduate);
+      const { forcePublish, conventionalCommits, conventionalGraduate, scope } = this.options;
+      const checkUncommittedOnly = forcePublish || (conventionalCommits && conventionalGraduate) || scope;
       const check = checkUncommittedOnly ? checkWorkingTree.throwIfUncommitted : checkWorkingTree;
       tasks.unshift(() => check(this.execOpts));
     } else {
@@ -305,11 +324,11 @@ class VersionCommand extends Command {
       }
 
       // filter updatesVersions to only updated versions
-      this.updatesVersions.forEach((ver,pkg,map) => {
-        if(!this.allowedToVersion.includes(pkg)) {
+      this.updatesVersions.forEach((ver, pkg, map) => {
+        if (!this.allowedToVersion.includes(pkg)) {
           map.delete(pkg);
         }
-      })
+      });
 
       return {
         updates: this.updates,
@@ -388,8 +407,9 @@ class VersionCommand extends Command {
     const prereleasePackageNames = this.getPrereleasePackageNames();
     const graduatePackageNames = Array.from(getPackagesForOption(conventionalGraduate));
     const shouldPrerelease = name => prereleasePackageNames && prereleasePackageNames.includes(name);
-    const shouldGraduate = name => (graduatePackageNames.includes("*") ||
-      graduatePackageNames.includes(name)) && this.allowedToVersion.includes(name);
+    const shouldGraduate = name =>
+      (graduatePackageNames.includes("*") || graduatePackageNames.includes(name)) &&
+      this.allowedToVersion.includes(name);
     const getPrereleaseId = node => {
       if (!shouldGraduate(node.name) && (shouldPrerelease(node.name) || node.prereleaseId)) {
         return resolvePrereleaseId(node.prereleaseId);
@@ -478,8 +498,9 @@ class VersionCommand extends Command {
 
   confirmVersions() {
     const changes = this.packagesToVersion.map(pkg => {
-      const allowedToVer = !this.allowedToVersion.includes(pkg.name) ? 'only updating dependencies' :
-        `${pkg.version} => ${this.updatesVersions.get(pkg.name)}`;
+      const allowedToVer = !this.allowedToVersion.includes(pkg.name)
+        ? "only updating dependencies"
+        : `${pkg.version} => ${this.updatesVersions.get(pkg.name)}`;
       let line = ` - ${pkg.name}: ${allowedToVer}`;
       if (pkg.private) {
         line += ` (${chalk.red("private")})`;

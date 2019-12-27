@@ -4,10 +4,10 @@ const log = require("npmlog");
 const childProcess = require("@lerna/child-process");
 
 module.exports = describeRef;
-module.exports.parse = parse;
+module.exports.parse = parseDescribe;
 module.exports.sync = sync;
 
-function getArgs(options, includeMergedTags) {
+function describeArgs(options, includeMergedTags) {
   let args = [
     "describe",
     // fallback to short sha if no tags located
@@ -32,30 +32,53 @@ function getArgs(options, includeMergedTags) {
   return args;
 }
 
-function describeRef(options = {}, includeMergedTags) {
-  const promise = childProcess.exec("git", getArgs(options, includeMergedTags), options);
+function tagArgs(options, includeMergedTags) {
+  const args = ["tag", "--list"];
 
-  return promise.then(({ stdout }) => {
-    const result = parse(stdout, options);
+  if (!includeMergedTags) {
+    // we want to ony consider tags reachable from current head commit
+    args.push("--merged", "HEAD");
+  }
 
-    log.verbose("git-describe", "%j => %j", options && options.match, stdout);
-    log.silly("git-describe", "parsed => %j", result);
+  if (options.match) {
+    args.push(options.match);
+  }
 
-    return result;
-  });
+  return args;
+}
+
+async function describeRef(options = {}, includeMergedTags) {
+  return describeGuts(options, includeMergedTags);
 }
 
 function sync(options = {}, includeMergedTags) {
-  const stdout = childProcess.execSync("git", getArgs(options, includeMergedTags), options);
-  const result = parse(stdout, options);
+  return describeGuts(options, includeMergedTags);
+}
 
-  // only called by collect-updates with no matcher
-  log.silly("git-describe.sync", "%j => %j", stdout, result);
+function describeGuts(options, includeMergedTags) {
+  if (options.match) {
+    // use tag + rev strategy to find match for any tag, not just latest
+    const tags = childProcess.execSync("git", tagArgs(options, includeMergedTags), options).split("\n");
+
+    const tag = tags[tags.length - 1];
+    const result = parseRev(options, tag);
+
+    log.verbose("git-describe-ref", "%j => %j", options && options.match, tag);
+    log.silly("git-describe-ref", "parsed => %j", result);
+
+    return result;
+  }
+  // no match args, describe latest tag
+  const stdout = childProcess.execSync("git", describeArgs(options, includeMergedTags), options);
+  const result = parseDescribe(stdout, options);
+
+  log.verbose("git-describe", "%j => %j", options && options.match, stdout);
+  log.silly("git-describe", "parsed => %j", result);
 
   return result;
 }
 
-function parse(stdout, options = {}) {
+function parseDescribe(stdout, options = {}) {
   const minimalShaRegex = /^([0-9a-f]{7,40})(-dirty)?$/;
   // when git describe fails to locate tags, it returns only the minimal sha
   if (minimalShaRegex.test(stdout)) {
@@ -72,4 +95,36 @@ function parse(stdout, options = {}) {
     /^((?:.*@)?(.*))-(\d+)-g([0-9a-f]+)(-dirty)?$/.exec(stdout) || [];
 
   return { lastTagName, lastVersion, refCount, sha, isDirty: Boolean(isDirty) };
+}
+
+function parseRev(options, tag) {
+  let foundTag;
+  if (!tag) {
+    // no tag found, count commits since beginning of branch
+    foundTag = "origin";
+  } else {
+    foundTag = tag;
+  }
+
+  const sha = childProcess.execSync("git", ["rev-parse", foundTag], options);
+
+  const tagArr = tag.split("@");
+
+  // commits since found tag
+  const refCount = childProcess.execSync(
+    "git",
+    ["rev-list", foundTag === "origin" ? foundTag : `${foundTag}..`, "--count"],
+    options
+  );
+
+  // dirty
+  const isDirty = !!childProcess.execSync("git", ["diff", "HEAD"], options);
+
+  return {
+    lastTagName: tag,
+    lastVersion: tagArr[tagArr.length - 1],
+    refCount,
+    sha,
+    isDirty,
+  };
 }

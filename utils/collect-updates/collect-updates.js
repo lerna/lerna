@@ -13,7 +13,20 @@ module.exports.collectPackages = collectPackages;
 module.exports.getPackagesForOption = getPackagesForOption;
 
 async function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions) {
-  const { forcePublish, conventionalCommits, conventionalGraduate, excludeDependents } = commandOptions;
+  const {
+    forcePublish,
+    conventionalCommits,
+    conventionalGraduate,
+    excludeDependents,
+    logLevel,
+  } = commandOptions;
+
+  // override default log level
+  if (logLevel) {
+    log.level = logLevel;
+  } else {
+    log.level = "info";
+  }
 
   // If --conventional-commits and --conventional-graduate are both set, ignore --force-publish
   const useConventionalGraduate = conventionalCommits && conventionalGraduate;
@@ -28,7 +41,7 @@ async function collectUpdates(filteredPackages, packageGraph, execOpts, commandO
 
   if (hasTags(execOpts)) {
     // describe the last annotated tag in the current branch
-    const { sha, refCount, lastTagName } = await describeRef(execOpts, commandOptions.includeMergedTags);
+    const { sha, lastTagName } = await describeRef(execOpts, commandOptions.includeMergedTags);
     // TODO: warn about dirty tree?
 
     if (commandOptions.canary) {
@@ -69,53 +82,60 @@ async function collectUpdates(filteredPackages, packageGraph, execOpts, commandO
   log.info("", `At least one tag has been found, attempting to locate a tag for each package...`);
 
   function hasDiff(node) {
-    const [committish,shouldNotRelease] = findDiffForPackage({...execOpts, match: `*${node.name}@*`}, commandOptions);
+    // eslint-disable-next-line no-shadow
+    const [committish, shouldNotRelease] = findDiffForTag({ ...execOpts, match: `*${node.name}@*` });
     if (shouldNotRelease) {
       return false;
     }
 
     if (committish) {
-      console.log('predicate', makeDiffPredicate(committish, execOpts, commandOptions.ignoreChanges)(node))
+      log.verbose(
+        "predicate",
+        node.name,
+        makeDiffPredicate(committish, execOpts, commandOptions.ignoreChanges)(node)
+      );
       return makeDiffPredicate(committish, execOpts, commandOptions.ignoreChanges)(node);
     }
-    console.log(`no commitish found for ${node.name}`)
+    log.notice(`no commitish found for ${node.name}, will update`);
     // no commitish found, assume package changed
     return true;
   }
 
-  // todo: locate diff for package and use to determine hasDiff
-function findDiffForPackage(execOpts, commandOptions) {
-  let committish = commandOptions.since;
-  let shouldNotRelease = null;
-  if (hasTags(execOpts)) {
-    // describe the last annotated tag in the current branch
-    const { sha, refCount, lastTagName } = describeRef.sync(execOpts, commandOptions.includeMergedTags);
-    // TODO: warn about dirty tree?
+  // todo: locate diff for tag and use to determine hasDiff
+  function findDiffForTag(opts) {
+    // eslint-disable-next-line no-shadow
+    let committish = commandOptions.since;
+    const shouldNotRelease = null;
+    if (hasTags(opts)) {
+      // describe the last matching tag for the package
+      const { sha, refCount, lastTagName } = describeRef.sync(opts, commandOptions.includeMergedTags);
 
-    if (refCount === "0" && forced.size === 0 && !committish) {
-      // no commits since previous release
-      log.notice("", "Current HEAD is already released, skipping change detection.");
+      log.verbose("Last tag description:", sha, refCount, lastTagName);
 
-      return [null,true];
+      if (refCount === "0" && forced.size === 0 && !committish) {
+        // no commits since previous release
+        log.notice("", `No commits since ${lastTagName || "HEAD"}`);
+
+        return [null, true];
+      }
+
+      if (commandOptions.canary) {
+        // if it's a merge commit, it will return all the commits that were part of the merge
+        // ex: If `ab7533e` had 2 commits, ab7533e^..ab7533e would contain 2 commits + the merge commit
+        committish = `${sha}^..${sha}`;
+      } else if (!committish) {
+        // if no tags found, this will be undefined and we'll use the initial commit
+        committish = lastTagName;
+      }
     }
-
-    if (commandOptions.canary) {
-      // if it's a merge commit, it will return all the commits that were part of the merge
-      // ex: If `ab7533e` had 2 commits, ab7533e^..ab7533e would contain 2 commits + the merge commit
-      committish = `${sha}^..${sha}`;
-    } else if (!committish) {
-      // if no tags found, this will be undefined and we'll use the initial commit
-      committish = lastTagName;
-    }
+    return [committish, shouldNotRelease];
   }
-  return [committish,shouldNotRelease];
-}
 
   const needsBump =
     !commandOptions.bump || commandOptions.bump.startsWith("pre")
       ? () => false
       : /* skip packages that have not been previously prereleased */
-      node => node.prereleaseId;
+        node => node.prereleaseId;
   const isForced = (node, name) =>
     (forced.has("*") || forced.has(name)) && (useConventionalGraduate ? node.prereleaseId : true);
 

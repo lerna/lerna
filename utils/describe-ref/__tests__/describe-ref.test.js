@@ -5,16 +5,16 @@ jest.mock("@lerna/child-process");
 const childProcess = require("@lerna/child-process");
 const describeRef = require("../lib/describe-ref");
 
-const DEFAULT_ARGS = ["describe", "--always", "--long", "--dirty", "--first-parent"];
+const DEFAULT_DESCRIBE_ARGS = ["describe", "--always", "--long", "--dirty", "--first-parent"];
+const DEFAULT_TAG_ARGS = ["tag", "--list", "--merged", "HEAD"];
 
-childProcess.exec.mockResolvedValue({ stdout: "v1.2.3-4-g567890a" });
 childProcess.execSync.mockReturnValue("v1.2.3-4-g567890a");
 
 describe("describeRef()", () => {
   it("resolves parsed metadata", async () => {
     const result = await describeRef();
 
-    expect(childProcess.exec).toHaveBeenLastCalledWith("git", DEFAULT_ARGS, {});
+    expect(childProcess.execSync).toHaveBeenLastCalledWith("git", DEFAULT_DESCRIBE_ARGS, {});
     expect(result).toEqual({
       isDirty: false,
       lastTagName: "v1.2.3",
@@ -28,18 +28,32 @@ describe("describeRef()", () => {
     const options = { cwd: "foo" };
     await describeRef(options);
 
-    expect(childProcess.exec).toHaveBeenLastCalledWith("git", DEFAULT_ARGS, options);
+    expect(childProcess.execSync).toHaveBeenLastCalledWith("git", DEFAULT_DESCRIBE_ARGS, options);
   });
 
   it("accepts options.match", async () => {
     const options = { match: "v*.*.*" };
     await describeRef(options);
 
-    expect(childProcess.exec).toHaveBeenLastCalledWith(
+    expect(childProcess.execSync).toHaveBeenNthCalledWith(
+      1,
       "git",
-      DEFAULT_ARGS.concat(["--match", "v*.*.*"]),
+      DEFAULT_TAG_ARGS.concat(["v*.*.*"]),
       options
     );
+    expect(childProcess.execSync).toHaveBeenNthCalledWith(
+      2,
+      "git",
+      ["rev-parse", "v1.2.3-4-g567890a"],
+      options
+    );
+    expect(childProcess.execSync).toHaveBeenNthCalledWith(
+      3,
+      "git",
+      ["rev-list", "v1.2.3-4-g567890a..", "--count"],
+      options
+    );
+    expect(childProcess.execSync).toHaveBeenLastCalledWith("git", ["diff", "HEAD"], options);
   });
 
   it("accepts includeMergedTags argument", async () => {
@@ -47,9 +61,9 @@ describe("describeRef()", () => {
 
     await describeRef({}, includeMergedTags);
 
-    const newArgs = [...DEFAULT_ARGS];
+    const newArgs = [...DEFAULT_DESCRIBE_ARGS];
     newArgs.pop();
-    expect(childProcess.exec).toHaveBeenLastCalledWith("git", newArgs, {});
+    expect(childProcess.execSync).toHaveBeenLastCalledWith("git", newArgs, {});
   });
 });
 
@@ -57,7 +71,7 @@ describe("describeRef.sync()", () => {
   it("returns parsed metadata", () => {
     const result = describeRef.sync();
 
-    expect(childProcess.execSync).toHaveBeenLastCalledWith("git", DEFAULT_ARGS, {});
+    expect(childProcess.execSync).toHaveBeenLastCalledWith("git", DEFAULT_DESCRIBE_ARGS, {});
     expect(result).toEqual({
       isDirty: false,
       lastTagName: "v1.2.3",
@@ -71,18 +85,32 @@ describe("describeRef.sync()", () => {
     const options = { cwd: "foo" };
     describeRef.sync(options);
 
-    expect(childProcess.execSync).toHaveBeenLastCalledWith("git", DEFAULT_ARGS, options);
+    expect(childProcess.execSync).toHaveBeenLastCalledWith("git", DEFAULT_DESCRIBE_ARGS, options);
   });
 
   it("accepts options.match", () => {
     const options = { match: "v*.*.*" };
     describeRef.sync(options);
 
-    expect(childProcess.execSync).toHaveBeenLastCalledWith(
+    expect(childProcess.execSync).toHaveBeenNthCalledWith(
+      1,
       "git",
-      DEFAULT_ARGS.concat(["--match", "v*.*.*"]),
+      DEFAULT_TAG_ARGS.concat(["v*.*.*"]),
       options
     );
+    expect(childProcess.execSync).toHaveBeenNthCalledWith(
+      2,
+      "git",
+      ["rev-parse", "v1.2.3-4-g567890a"],
+      options
+    );
+    expect(childProcess.execSync).toHaveBeenNthCalledWith(
+      3,
+      "git",
+      ["rev-list", "v1.2.3-4-g567890a..", "--count"],
+      options
+    );
+    expect(childProcess.execSync).toHaveBeenLastCalledWith("git", ["diff", "HEAD"], options);
   });
 });
 
