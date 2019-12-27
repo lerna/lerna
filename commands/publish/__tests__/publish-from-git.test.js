@@ -1,5 +1,8 @@
 "use strict";
 
+// we're actually testing integration with git
+jest.unmock("@lerna/collect-updates");
+
 // local modules _must_ be explicitly mocked
 jest.mock("../lib/get-packages-without-license");
 jest.mock("../lib/verify-npm-package-access");
@@ -114,26 +117,20 @@ describe("publish from-git", () => {
     });
 
     const cwd = await initFixture("normal");
+    const command = lernaPublish(cwd)("from-git");
 
-    try {
-      await lernaPublish(cwd)("from-git");
-    } catch (err) {
-      expect(err.message).toBe("uncommitted");
-      // notably different than the actual message, but good enough here
-    }
-
-    expect.assertions(1);
+    await expect(command).rejects.toThrow("uncommitted");
+    // notably different than the actual message, but good enough here
   });
 
   it("throws an error when --git-head is passed", async () => {
     const cwd = await initFixture("normal");
+    const command = lernaPublish(cwd)("from-git", "--git-head", "deadbeef");
 
-    try {
-      await lernaPublish(cwd)("from-git", "--git-head", "deadbeef");
-    } catch (err) {
-      expect(err.prefix).toBe("EGITHEAD");
-    }
-
-    expect.hasAssertions();
+    await expect(command).rejects.toThrow(
+      expect.objectContaining({
+        prefix: "EGITHEAD",
+      })
+    );
   });
 });

@@ -1,6 +1,6 @@
 {
   "name": "@lerna/command",
-  "version": "3.18.0",
+  "version": "3.18.5",
   "description": "Lerna's internal base class for commands",
   "keywords": [
     "lerna",
@@ -37,10 +37,10 @@
     "@lerna/project": "file:../project",
     "@lerna/validation-error": "file:../validation-error",
     "@lerna/write-log-file": "file:../../utils/write-log-file",
+    "clone-deep": "^4.0.1",
     "dedent": "^0.7.0",
     "execa": "^1.0.0",
     "is-ci": "^2.0.0",
-    "lodash": "^4.17.14",
     "npmlog": "^4.1.2"
   }
 }

@@ -16,7 +16,8 @@ test("returns all packages", () => {
 Array [
   "package-cycle-1",
   "package-cycle-2",
-  "package-cycle-extraneous",
+  "package-cycle-extraneous-1",
+  "package-cycle-extraneous-2",
   "package-dag-1",
   "package-dag-2a",
   "package-dag-2b",
@@ -38,7 +39,8 @@ test("filters packages through isCandidate, passing node and name", () => {
 Array [
   "package-cycle-1",
   "package-cycle-2",
-  "package-cycle-extraneous",
+  "package-cycle-extraneous-1",
+  "package-cycle-extraneous-2",
 ]
 `);
 });

@@ -3,6 +3,41 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.18.5](https://github.com/lerna/lerna/compare/v3.18.4...v3.18.5) (2019-11-20)
+
+
+### Bug Fixes
+
+* Auto-fix prettier formatting ([5344820](https://github.com/lerna/lerna/commit/5344820fc65da081d17f7fd2adb50ffe7101905b))
+
+
+
+
+
+## [3.18.4](https://github.com/lerna/lerna/compare/v3.18.3...v3.18.4) (2019-11-08)
+
+**Note:** Version bump only for package @lerna/publish
+
+
+
+
+
+## [3.18.3](https://github.com/lerna/lerna/compare/v3.18.2...v3.18.3) (2019-10-22)
+
+**Note:** Version bump only for package @lerna/publish
+
+
+
+
+
+## [3.18.2](https://github.com/lerna/lerna/compare/v3.18.1...v3.18.2) (2019-10-21)
+
+**Note:** Version bump only for package @lerna/publish
+
+
+
+
+
 ## [3.18.1](https://github.com/lerna/lerna/compare/v3.18.0...v3.18.1) (2019-10-15)
 
 **Note:** Version bump only for package @lerna/publish

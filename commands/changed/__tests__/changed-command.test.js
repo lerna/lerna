@@ -6,6 +6,7 @@ const output = require("@lerna/output");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
+const loggingOutput = require("@lerna-test/logging-output");
 const updateLernaConfig = require("@lerna-test/update-lerna-config");
 
 // file under test
@@ -88,6 +89,35 @@ package-4
       expect.objectContaining({ cwd }),
       expect.objectContaining({ ignoreChanges: ["**/durable-ignore"] })
     );
+  });
+
+  it("passes --include-merged-tags to update collector", async () => {
+    await lernaChanged(cwd)("--include-merged-tags");
+
+    expect(collectUpdates).toHaveBeenLastCalledWith(
+      expect.any(Array),
+      expect.any(Object),
+      expect.objectContaining({ cwd }),
+      expect.objectContaining({ includeMergedTags: true })
+    );
+  });
+
+  it("passes --conventional-graduate to update collector", async () => {
+    await lernaChanged(cwd)("--conventional-graduate=*");
+
+    expect(collectUpdates).toHaveBeenLastCalledWith(
+      expect.any(Array),
+      expect.any(Object),
+      expect.objectContaining({ cwd }),
+      expect.objectContaining({ conventionalGraduate: "*", conventionalCommits: true })
+    );
+  });
+
+  it("warns when --force-publish superseded by --conventional-graduate", async () => {
+    await lernaChanged(cwd)("--conventional-graduate", "foo", "--force-publish", "bar");
+
+    const [logMessage] = loggingOutput("warn");
+    expect(logMessage).toBe("--force-publish superseded by --conventional-graduate");
   });
 
   it("lists changed private packages with --all", async () => {

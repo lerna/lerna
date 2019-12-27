@@ -3,6 +3,36 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.19.0](https://github.com/lerna/lerna/compare/v3.18.5...v3.19.0) (2019-11-20)
+
+
+### Features
+
+* **add:** Add `--peer` option to save target in `peerDependencies` ([#2334](https://github.com/lerna/lerna/issues/2334)) ([e12bf6a](https://github.com/lerna/lerna/commit/e12bf6a6af636e8ac0c0085144325f36505fc8d9))
+
+
+
+
+
+## [3.18.5](https://github.com/lerna/lerna/compare/v3.18.4...v3.18.5) (2019-11-20)
+
+**Note:** Version bump only for package @lerna/add
+
+
+
+
+
+## [3.18.4](https://github.com/lerna/lerna/compare/v3.18.3...v3.18.4) (2019-11-08)
+
+
+### Bug Fixes
+
+* **filter-options:** Ensure `--include-merged-tags` is available to all `--since`-filterable commands ([287bcd8](https://github.com/lerna/lerna/commit/287bcd8b5c8dbb2dc4def5c933d0b4917c34813e)), closes [#2332](https://github.com/lerna/lerna/issues/2332)
+
+
+
+
+
 # [3.18.0](https://github.com/lerna/lerna/compare/v3.17.0...v3.18.0) (2019-10-15)
 
 

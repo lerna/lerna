@@ -7,7 +7,7 @@ Install [lerna](https://www.npmjs.com/package/lerna) for access to the `lerna` C
 ## Usage
 
 ```sh
-$ lerna add <package>[@version] [--dev] [--exact]
+$ lerna add <package>[@version] [--dev] [--exact] [--peer]
 ```
 
 Add local or remote `package` as dependency to packages in the current Lerna repo. Note that only a single package can be added at a time compared to `yarn add` or `npm install`.
@@ -21,7 +21,7 @@ If no `version` specifier is provided, it defaults to the `latest` dist-tag, jus
 
 ## Options
 
-`lerna add` respects the `--ignore`, `--scope`, and `--include-dependencies` flags (see [Filter Flags](https://www.npmjs.com/package/@lerna/filter-options)).
+`lerna add` accepts all [filter flags](https://www.npmjs.com/package/@lerna/filter-options).
 
 ### `--dev`
 
@@ -34,6 +34,10 @@ $ lerna add --exact
 ```
 
 Add the new package with an exact version (e.g., `1.0.1`) rather than the default `^` semver range (e.g., `^1.0.1`).
+
+### `--peer`
+
+Add the new package to `peerDependencies` instead of `dependencies`.
 
 ### `--registry <url>`
 
@@ -54,6 +58,9 @@ lerna add module-1 --scope=module-2
 
 # Install module-1 to module-2 in devDependencies
 lerna add module-1 --scope=module-2 --dev
+
+# Install module-1 to module-2 in peerDependencies
+lerna add module-1 --scope=module-2 --peer
 
 # Install module-1 in all modules except module-1
 lerna add module-1

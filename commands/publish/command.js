@@ -35,6 +35,10 @@ exports.builder = yargs => {
       type: "string",
       requiresArg: true,
     },
+    "legacy-auth": {
+      describe: "Legacy Base64 Encoded username and password.",
+      type: "string",
+    },
     "pre-dist-tag": {
       describe: "Publish prerelease packages with the specified npm dist-tag",
       type: "string",
@@ -111,7 +115,10 @@ exports.builder = yargs => {
   const sharedKeys = ["preid", "y", "ignore-scripts"];
 
   for (const sharedKey of sharedKeys) {
-    hiddenOptions.splice(hiddenOptions.findIndex(k => k === sharedKey), 1);
+    hiddenOptions.splice(
+      hiddenOptions.findIndex(k => k === sharedKey),
+      1
+    );
   }
 
   yargs.group(Object.keys(opts).concat(sharedKeys), "Command Options:");

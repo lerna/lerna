@@ -17,7 +17,10 @@ function confirm(message) {
         name: "confirm",
         message,
         default: 2, // default to help in order to avoid clicking straight through
-        choices: [{ key: "y", name: "Yes", value: true }, { key: "n", name: "No", value: false }],
+        choices: [
+          { key: "y", name: "Yes", value: true },
+          { key: "n", name: "No", value: false },
+        ],
       },
     ])
     .then(answers => {

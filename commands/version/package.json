@@ -1,6 +1,6 @@
 {
   "name": "@lerna/version",
-  "version": "3.18.0",
+  "version": "3.18.5",
   "description": "Bump version of packages changed since the last release",
   "keywords": [
     "lerna",
@@ -50,6 +50,7 @@
     "@lerna/validation-error": "file:../../core/validation-error",
     "chalk": "^2.3.1",
     "dedent": "^0.7.0",
+    "load-json-file": "^5.3.0",
     "minimatch": "^3.0.4",
     "npmlog": "^4.1.2",
     "p-map": "^2.1.0",
@@ -58,6 +59,7 @@
     "p-waterfall": "^1.0.0",
     "semver": "^6.2.0",
     "slash": "^2.0.0",
-    "temp-write": "^3.4.0"
+    "temp-write": "^3.4.0",
+    "write-json-file": "^3.2.0"
   }
 }

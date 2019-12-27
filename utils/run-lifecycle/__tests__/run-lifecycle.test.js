@@ -230,13 +230,13 @@ describe("createRunner", () => {
       scripts: { prepublishOnly: "exit 123" },
     };
 
-    try {
-      await runPackageLifecycle(pkg, "prepublishOnly");
-    } catch (err) {
-      expect(err.code).toBe(123);
-      expect(err.script).toBe("exit 123");
-      expect(process.exitCode).toBe(123);
-    }
+    await expect(runPackageLifecycle(pkg, "prepublishOnly")).rejects.toThrow(
+      expect.objectContaining({
+        code: 123,
+        script: "exit 123",
+      })
+    );
+    expect(process.exitCode).toBe(123);
 
     const [errorLog] = loggingOutput("error");
     expect(errorLog).toBe('"prepublishOnly" errored in "has-script-error", exiting 123');
@@ -259,12 +259,12 @@ describe("createRunner", () => {
       scripts: { prepack: "a-thing-that-ends-poorly" },
     };
 
-    try {
-      await runPackageLifecycle(pkg, "prepack");
-    } catch (err) {
-      expect(err.code).toBe(1);
-      expect(err.script).toBe("a-thing-that-ends-poorly");
-    }
+    await expect(runPackageLifecycle(pkg, "prepack")).rejects.toThrow(
+      expect.objectContaining({
+        code: 1,
+        script: "a-thing-that-ends-poorly",
+      })
+    );
 
     const [errorLog] = loggingOutput("error");
     expect(errorLog).toBe('"prepack" errored in "has-execution-error", exiting 1');

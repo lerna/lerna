@@ -83,15 +83,10 @@ describe("publish from-package", () => {
     });
 
     const cwd = await initFixture("normal");
+    const command = lernaPublish(cwd)("from-package");
 
-    try {
-      await lernaPublish(cwd)("from-package");
-    } catch (err) {
-      expect(err.message).toBe("uncommitted");
-      // notably different than the actual message, but good enough here
-    }
-
-    expect.assertions(1);
+    await expect(command).rejects.toThrow("uncommitted");
+    // notably different than the actual message, but good enough here
   });
 
   it("does not require a git repo", async () => {

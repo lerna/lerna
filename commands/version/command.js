@@ -70,7 +70,7 @@ exports.builder = (yargs, composed) => {
       type: "boolean",
     },
     "include-merged-tags": {
-      describe: "Also include tags from merged branches",
+      describe: "Include tags from merged branches when detecting changed packages.",
       type: "boolean",
     },
     m: {
@@ -157,6 +157,11 @@ exports.builder = (yargs, composed) => {
 
   yargs.options(opts);
 
+  // workaround yargs bug that re-interprets unknown arguments in argv._
+  yargs.parserConfiguration({
+    "populate--": true,
+  });
+
   if (!composed) {
     // hide options from composed command's help output
     yargs.group(Object.keys(opts), "Command Options:");
@@ -228,9 +233,14 @@ exports.builder = (yargs, composed) => {
       if (argv.githubRelease) {
         argv.createRelease = "github";
         delete argv.githubRelease;
-        log.warn("deprecated", "--release has been replaced by --create-release=github");
+        log.warn("deprecated", "--github-release has been replaced by --create-release=github");
       }
       /* eslint-enable no-param-reassign */
+
+      if (argv["--"]) {
+        log.warn("EDOUBLEDASH", "Arguments after -- are no longer passed to subprocess executions.");
+        log.warn("EDOUBLEDASH", "This will cause an error in a future major version.");
+      }
 
       return argv;
     });

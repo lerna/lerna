@@ -305,15 +305,10 @@ package-4
     });
 
     it("throws an error when globstars and explicit node_modules configs are mixed", async () => {
-      expect.assertions(1);
-
       const testDir = await initFixture("mixed-globstar");
+      const command = lernaLs(testDir)();
 
-      try {
-        await lernaLs(testDir)();
-      } catch (err) {
-        expect(err.message).toMatch("An explicit node_modules package path does not allow globstars");
-      }
+      await expect(command).rejects.toThrow("An explicit node_modules package path does not allow globstars");
     });
   });
 });

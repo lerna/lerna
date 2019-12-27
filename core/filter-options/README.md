@@ -36,7 +36,7 @@ Exclude private packages. They are included by default.
 
 ### `--since [ref]`
 
-Only include packages that have been updated since the specified `ref`. If no ref is passed, it defaults to the most-recent tag.
+Only include packages that have been changed since the specified `ref`. If no ref is passed, it defaults to the most-recent tag.
 
 ```sh
 # List the contents of packages that have changed since the latest tag
@@ -84,3 +84,11 @@ $ lerna bootstrap --scope "package-*" --ignore "package-util-*" --include-depend
 # all packages matching "package-util-*" will be ignored unless they are
 # depended upon by a package whose name matches "package-*"
 ```
+
+### `--include-merged-tags`
+
+```sh
+$ lerna exec --since --include-merged-tags -- ls -la
+```
+
+Include tags from merged branches when running a command with `--since`. This is only useful if you do a lot of publishing from feature branches, which is not generally recommended.

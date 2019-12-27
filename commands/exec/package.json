@@ -1,6 +1,6 @@
 {
   "name": "@lerna/exec",
-  "version": "3.18.0",
+  "version": "3.18.5",
   "description": "Execute an arbitrary command in each package",
   "keywords": [
     "lerna",

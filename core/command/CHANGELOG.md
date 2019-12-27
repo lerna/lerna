@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.18.5](https://github.com/lerna/lerna/compare/v3.18.4...v3.18.5) (2019-11-20)
+
+
+### Bug Fixes
+
+* **command:** Do not mutate `argv` parameter ([8ca85a4](https://github.com/lerna/lerna/commit/8ca85a4f07acbec02d41077faacdd1f4a62e86a3)), closes [#2348](https://github.com/lerna/lerna/issues/2348)
+
+
+
+
+
 # [3.18.0](https://github.com/lerna/lerna/compare/v3.17.0...v3.18.0) (2019-10-15)
 
 **Note:** Version bump only for package @lerna/command

@@ -1,6 +1,6 @@
 {
   "name": "lerna",
-  "version": "3.18.1",
+  "version": "3.19.0",
   "description": "A tool for managing JavaScript projects with multiple packages.",
   "keywords": [
     "lerna",
@@ -41,6 +41,7 @@
     "@lerna/diff": "file:../../commands/diff",
     "@lerna/exec": "file:../../commands/exec",
     "@lerna/import": "file:../../commands/import",
+    "@lerna/info": "file:../../commands/info",
     "@lerna/init": "file:../../commands/init",
     "@lerna/link": "file:../../commands/link",
     "@lerna/list": "file:../../commands/list",

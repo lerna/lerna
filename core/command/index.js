@@ -1,6 +1,6 @@
 "use strict";
 
-const _ = require("lodash");
+const cloneDeep = require("clone-deep");
 const dedent = require("dedent");
 const execa = require("execa");
 const log = require("npmlog");
@@ -12,16 +12,18 @@ const writeLogFile = require("@lerna/write-log-file");
 const ValidationError = require("@lerna/validation-error");
 
 const cleanStack = require("./lib/clean-stack");
+const defaultOptions = require("./lib/default-options");
 const logPackageError = require("./lib/log-package-error");
 const warnIfHanging = require("./lib/warn-if-hanging");
 
 const DEFAULT_CONCURRENCY = os.cpus().length;
 
 class Command {
-  constructor(argv) {
+  constructor(_argv) {
     log.pause();
     log.heading = "lerna";
 
+    const argv = cloneDeep(_argv);
     log.silly("argv", argv);
 
     // "FooCommand" => "foo"
@@ -159,8 +161,7 @@ class Command {
     // The current command always overrides otherCommandConfigs
     const overrides = [this.name, ...this.otherCommandConfigs].map(key => commandConfig[key]);
 
-    this.options = _.defaults(
-      {},
+    this.options = defaultOptions(
       // CLI flags, which if defined overrule subsequent values
       this.argv,
       // Namespaced command options from `lerna.json`

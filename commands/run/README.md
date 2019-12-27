@@ -19,7 +19,7 @@ Run an [npm script](https://docs.npmjs.com/misc/scripts) in each package that co
 
 ## Options
 
-`lerna run` respects the `--concurrency`, `--scope`, and `--ignore` flags (see [Filter Flags](https://www.npmjs.com/package/@lerna/filter-options)).
+`lerna run` accepts all [filter flags](https://www.npmjs.com/package/@lerna/filter-options).
 
 ```sh
 $ lerna run --scope my-component test

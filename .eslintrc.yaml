@@ -39,6 +39,7 @@ rules:
     - error
     - functions: false
       classes: false
+  prefer-destructuring: "off"
   prefer-object-spread: "off"
   strict: "off"
 overrides:

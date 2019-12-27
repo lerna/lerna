@@ -116,6 +116,7 @@ class PublishCommand extends Command {
 
     this.conf = npmConf({
       lernaCommand: "publish",
+      _auth: this.options.legacyAuth,
       npmSession: this.npmSession,
       npmVersion: this.userAgent,
       otp: this.options.otp,

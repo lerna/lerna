@@ -59,35 +59,36 @@ describe("PublishCommand", () => {
     });
 
     it("exits non-zero with --scope", async () => {
-      try {
-        await lernaPublish(cwd)("--scope", "package-1");
-      } catch (err) {
-        expect(err.exitCode).toBe(1);
-        expect(err.message).toBe("Unknown argument: scope");
-      }
+      const command = lernaPublish(cwd)("--scope", "package-1");
 
-      expect.assertions(2);
+      await expect(command).rejects.toThrow(
+        expect.objectContaining({
+          exitCode: 1,
+          message: "Unknown argument: scope",
+        })
+      );
     });
 
     it("exits non-zero with --since", async () => {
-      try {
-        await lernaPublish(cwd)("--since", "master");
-      } catch (err) {
-        expect(err.exitCode).toBe(1);
-        expect(err.message).toBe("Unknown argument: since");
-      }
+      const command = lernaPublish(cwd)("--since", "master");
 
-      expect.assertions(2);
+      await expect(command).rejects.toThrow(
+        expect.objectContaining({
+          exitCode: 1,
+          message: "Unknown argument: since",
+        })
+      );
     });
 
     it("errors when --git-head is passed without from-package positional", async () => {
-      try {
-        await lernaPublish(cwd)("--git-head", "deadbeef");
-      } catch (err) {
-        expect(err.message).toBe("--git-head is only allowed with 'from-package' positional");
-      }
+      const command = lernaPublish(cwd)("--git-head", "deadbeef");
 
-      expect.hasAssertions();
+      await expect(command).rejects.toThrow(
+        expect.objectContaining({
+          name: "ValidationError",
+          message: "--git-head is only allowed with 'from-package' positional",
+        })
+      );
     });
   });
 
@@ -172,14 +173,9 @@ Map {
 
     it("throws an error in fixed mode when --independent is passed", async () => {
       const testDir = await initFixture("normal");
+      const command = lernaPublish(testDir)("--independent");
 
-      try {
-        await lernaPublish(testDir)("--independent");
-      } catch (err) {
-        expect(err.message).toMatch("independent");
-      }
-
-      expect.assertions(1);
+      await expect(command).rejects.toThrow("independent");
     });
   });
 
@@ -201,14 +197,9 @@ Map {
 
     it("throws an error when value is _not_ 'all' or 'dependencies'", async () => {
       const testDir = await initFixture("normal");
+      const command = lernaPublish(testDir)("--graph-type", "poopy-pants");
 
-      try {
-        await lernaPublish(testDir)("--graph-type", "poopy-pants");
-      } catch (err) {
-        expect(err.message).toMatch("poopy-pants");
-      }
-
-      expect.hasAssertions();
+      await expect(command).rejects.toThrow("poopy-pants");
     });
   });
 
@@ -247,6 +238,23 @@ Map {
         expect.objectContaining({ otp: "654321" })
       );
       expect(otplease.getOneTimePassword).toHaveBeenLastCalledWith("Enter OTP:");
+    });
+  });
+
+  describe("--legacy-auth", () => {
+    it("passes auth to npm commands", async () => {
+      const testDir = await initFixture("normal");
+      const data = "hi:mom";
+      const auth = Buffer.from(data).toString("base64");
+
+      await lernaPublish(testDir)("--legacy-auth", auth);
+
+      expect(npmPublish).toHaveBeenCalledWith(
+        expect.objectContaining({ name: "package-1" }),
+        "/TEMP_DIR/package-1-MOCKED.tgz",
+        expect.objectContaining({ "auth-type": "legacy", _auth: auth }),
+        expect.objectContaining({ otp: undefined })
+      );
     });
   });
 
@@ -378,15 +386,10 @@ Map {
 
   describe("in a cyclical repo", () => {
     it("should throw an error with --reject-cycles", async () => {
-      expect.assertions(1);
+      const testDir = await initFixture("toposort");
+      const command = lernaPublish(testDir)("--reject-cycles");
 
-      try {
-        const testDir = await initFixture("toposort");
-
-        await lernaPublish(testDir)("--reject-cycles");
-      } catch (err) {
-        expect(err.message).toMatch("Dependency cycles detected, you should fix these!");
-      }
+      await expect(command).rejects.toThrow("Dependency cycles detected, you should fix these!");
     });
   });
 });

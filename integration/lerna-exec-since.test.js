@@ -126,11 +126,5 @@ test("lerna exec --since (no git repo)", async () => {
 
   await fs.remove(path.join(cwd, ".git"));
 
-  try {
-    await cliRunner(cwd)(...args);
-  } catch (err) {
-    expect(err.message).toMatch("this is not a git repository");
-  }
-
-  expect.hasAssertions();
+  await expect(cliRunner(cwd)(...args)).rejects.toThrow("this is not a git repository");
 });

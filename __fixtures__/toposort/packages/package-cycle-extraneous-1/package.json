@@ -1,5 +1,5 @@
 {
-  "name": "package-cycle-extraneous",
+  "name": "package-cycle-extraneous-1",
   "version": "1.0.0",
   "comment": "This package is used to break ties between package-cycle-{1,2}.",
   "dependencies": {

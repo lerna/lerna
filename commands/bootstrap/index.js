@@ -574,7 +574,10 @@ class BootstrapCommand extends Command {
       tracker.addWork(actions.length);
     }
 
-    return pFinally(pMap(actions, act => act(), { concurrency: this.concurrency }), () => tracker.finish());
+    return pFinally(
+      pMap(actions, act => act(), { concurrency: this.concurrency }),
+      () => tracker.finish()
+    );
   }
 
   /**

@@ -31,7 +31,7 @@ function filterOptions(yargs) {
     },
     since: {
       describe: dedent`
-        Only include packages that have been updated since the specified [ref].
+        Only include packages that have been changed since the specified [ref].
         If no ref is passed, it defaults to the most-recent tag.
       `,
       type: "string",
@@ -57,6 +57,10 @@ function filterOptions(yargs) {
         Include all transitive dependencies when running a command
         regardless of --scope, --ignore, or --since.
       `,
+      type: "boolean",
+    },
+    "include-merged-tags": {
+      describe: "Include tags from merged branches when running a command with --since.",
       type: "boolean",
     },
     "continue-if-no-match": {

@@ -39,31 +39,25 @@ describe("licenses", () => {
   });
 
   it("removes all temporary licenses on error", async () => {
-    const cwd = await initFixture("licenses");
-
     packDirectory.mockImplementationOnce(() => Promise.reject(new Error("boom")));
 
-    try {
-      await lernaPublish(cwd)();
-    } catch (err) {
-      expect(err.message).toBe("boom");
-    }
+    const cwd = await initFixture("licenses");
+    const command = lernaPublish(cwd)();
+
+    await expect(command).rejects.toThrow("boom");
 
     expect(removeTempLicenses).toHaveBeenCalledTimes(1);
     expect(removeTempLicenses).toHaveBeenLastCalledWith([expect.objectContaining({ name: "package-1" })]);
   });
 
   it("does not override original error when removal rejects", async () => {
-    const cwd = await initFixture("licenses");
-
     packDirectory.mockImplementationOnce(() => Promise.reject(new Error("boom")));
     removeTempLicenses.mockImplementationOnce(() => Promise.reject(new Error("shaka-lakka")));
 
-    try {
-      await lernaPublish(cwd)();
-    } catch (err) {
-      expect(err.message).toBe("boom");
-    }
+    const cwd = await initFixture("licenses");
+    const command = lernaPublish(cwd)();
+
+    await expect(command).rejects.toThrow("boom");
   });
 
   it("warns when packages need a license and the root license file is missing", async () => {

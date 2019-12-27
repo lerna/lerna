@@ -2,43 +2,43 @@
 
 module.exports = listableOptions;
 
-function listableOptions(yargs) {
+function listableOptions(yargs, group = "Command Options:") {
   return yargs.options({
     json: {
-      group: "Command Options:",
+      group,
       describe: "Show information as a JSON array",
       type: "boolean",
     },
     ndjson: {
-      group: "Command Options:",
+      group,
       describe: "Show information as newline-delimited JSON",
       type: "boolean",
     },
     a: {
-      group: "Command Options:",
+      group,
       describe: "Show private packages that are normally hidden",
       type: "boolean",
       alias: "all",
     },
     l: {
-      group: "Command Options:",
+      group,
       describe: "Show extended information",
       type: "boolean",
       alias: "long",
     },
     p: {
-      group: "Command Options:",
+      group,
       describe: "Show parseable output instead of columnified view",
       type: "boolean",
       alias: "parseable",
     },
     toposort: {
-      group: "Command Options:",
+      group,
       describe: "Sort packages in topological order instead of lexical by directory",
       type: "boolean",
     },
     graph: {
-      group: "Command Options:",
+      group,
       describe: "Show dependency graph as a JSON-formatted adjacency list",
       type: "boolean",
     },

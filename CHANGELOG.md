@@ -3,6 +3,68 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.19.0](https://github.com/lerna/lerna/compare/v3.18.5...v3.19.0) (2019-11-20)
+
+
+### Features
+
+* **add:** Add `--peer` option to save target in `peerDependencies` ([#2334](https://github.com/lerna/lerna/issues/2334)) ([e12bf6a](https://github.com/lerna/lerna/commit/e12bf6a6af636e8ac0c0085144325f36505fc8d9))
+
+
+
+
+
+## [3.18.5](https://github.com/lerna/lerna/compare/v3.18.4...v3.18.5) (2019-11-20)
+
+
+### Bug Fixes
+
+* Auto-fix prettier formatting ([5344820](https://github.com/lerna/lerna/commit/5344820fc65da081d17f7fd2adb50ffe7101905b))
+* **cli:** Bump yargs to `^14.2.2` ([51365b8](https://github.com/lerna/lerna/commit/51365b8700a3b7c609cf9caaeb63a6b07a4b3959))
+* **command:** Do not mutate `argv` parameter ([8ca85a4](https://github.com/lerna/lerna/commit/8ca85a4f07acbec02d41077faacdd1f4a62e86a3)), closes [#2348](https://github.com/lerna/lerna/issues/2348)
+* **conventional-commits:** Ensure potential `ValidationError` in `getChangelogConfig()` is propagated correctly ([406ba5a](https://github.com/lerna/lerna/commit/406ba5ab14d3a568282112f0e6874f208e8f6433))
+
+
+
+
+
+## [3.18.4](https://github.com/lerna/lerna/compare/v3.18.3...v3.18.4) (2019-11-08)
+
+
+### Bug Fixes
+
+* **changed:** Copy relevant options from version, do not inherit ([6bd77ba](https://github.com/lerna/lerna/commit/6bd77ba60afd496e0f612aca7a56b8a9c8270436))
+* **filter-options:** Clarify `--since` description ([b649b35](https://github.com/lerna/lerna/commit/b649b35bccab97a0f8a5cdd3a37216b5f6db16dc))
+* **filter-options:** Ensure `--include-merged-tags` is available to all `--since`-filterable commands ([287bcd8](https://github.com/lerna/lerna/commit/287bcd8b5c8dbb2dc4def5c933d0b4917c34813e)), closes [#2332](https://github.com/lerna/lerna/issues/2332)
+* **version:** Clarify `--include-merged-tags` description ([b0bbfcf](https://github.com/lerna/lerna/commit/b0bbfcfa867fea420376232d2af0d80a97454c9e))
+
+
+
+
+
+## [3.18.3](https://github.com/lerna/lerna/compare/v3.18.2...v3.18.3) (2019-10-22)
+
+
+### Bug Fixes
+
+* **version:** Correct warning message ([384cd15](https://github.com/lerna/lerna/commit/384cd15f7024201da530e8c47d2e6277f2a89f59))
+* **version:** Workaround yargs bug with spurious `--` arguments ([46be9dc](https://github.com/lerna/lerna/commit/46be9dc14999e0dbe933d562a0363fba6ff2f115)), closes [#2315](https://github.com/lerna/lerna/issues/2315)
+
+
+
+
+
+## [3.18.2](https://github.com/lerna/lerna/compare/v3.18.1...v3.18.2) (2019-10-21)
+
+
+### Bug Fixes
+
+* **version:** Update lockfile version, if present ([5b1b40b](https://github.com/lerna/lerna/commit/5b1b40b60ebd442d766236fad19bb6073ccb045b)), closes [#1998](https://github.com/lerna/lerna/issues/1998) [#2160](https://github.com/lerna/lerna/issues/2160) [#1415](https://github.com/lerna/lerna/issues/1415)
+
+
+
+
+
 ## [3.18.1](https://github.com/lerna/lerna/compare/v3.18.0...v3.18.1) (2019-10-15)
 
 

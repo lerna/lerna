@@ -14,7 +14,7 @@ When run, this command does the following:
 
 1. Identifies packages that have been updated since the previous tagged release.
 2. Prompts for a new version.
-3. Modifies package metadata to reflect new release.
+3. Modifies package metadata to reflect new release, running appropriate [lifecycle scripts](#lifecycle-scripts) in root and per-package.
 4. Commits those changes and tags the commit.
 5. Pushes to the git remote.
 
@@ -35,6 +35,7 @@ You must still use the `--yes` flag to avoid all prompts.
 If you have any packages with a prerelease version number (e.g. `2.0.0-beta.3`) and you run `lerna version` with and a non-prerelease bump (`major`, `minor`, or `patch`), it will publish those previously pre-released packages _as well as_ the packages that have changed since the last release.
 
 For projects using conventional commits, use the following flags for prerelease management:
+
 - **[`--conventional-prerelease`](#--conventional-prerelease):** release current changes as prerelease versions.
 - **[`--conventional-graduate`](#--conventional-graduate):** graduate prerelease versioned packages to stable versions.
 
@@ -53,6 +54,7 @@ Running `lerna version --conventional-commits` without the above flags will rele
 - [`--git-remote`](#--git-remote-name)
 - [`--create-release`](#--create-release-type)
 - [`--ignore-changes`](#--ignore-changes)
+- [`--ignore-scripts`](#--ignore-scripts)
 - [`--include-merged-tags`](#--include-merged-tags)
 - [`--message`](#--message-msg)
 - [`--no-changelog`](#--no-changelog)
@@ -133,6 +135,7 @@ lerna version --conventional-commits --conventional-graduate=package-2,package-4
 # force all prerelease packages to be graduated
 lerna version --conventional-commits --conventional-graduate
 ```
+
 When run with this flag, `lerna version` will graduate the specified packages (comma-separated) or all packages using `*`. This command works regardless of whether the current HEAD has been released, similar to `--force-publish`, except that any non-prerelease packages are ignored. If changes are present for packages that are not specified (if specifying packages), or for packages that are not in prerelease, those packages will be versioned as they normally would using `--conventional-commits`.
 
 "Graduating" a package means bumping to the non-prerelease variant of a prerelease version, eg. `package-1@1.0.0-alpha.0 => package-1@1.0.0`.
@@ -239,13 +242,17 @@ Pass `--no-ignore-changes` to disable any existing durable configuration.
 > 1. The latest release of the package is a `prerelease` version (i.e. `1.0.0-alpha`, `1.0.0–0.3.7`, etc.).
 > 2. One or more linked dependencies of the package have changed.
 
+### `--ignore-scripts`
+
+When passed, this flag will disable running [lifecycle scripts](#lifecycle-scripts) during `lerna version`.
+
 ### `--include-merged-tags`
 
 ```sh
 lerna version --include-merged-tags
 ```
 
-When run with this flag, `lerna version` will also consider tags of merged branches during package change detection.
+Include tags from merged branches when detecting changed packages.
 
 ### `--message <msg>`
 
@@ -358,7 +365,7 @@ Keep in mind that currently you have to supply it twice: for `version` command a
 # locally
 lerna version --tag-version-prefix=''
 # on ci
-lerna publish from-git --tag-version-prefix='' 
+lerna publish from-git --tag-version-prefix=''
 ```
 
 ## Deprecated Options
@@ -399,3 +406,28 @@ npx lerna exec --concurrency 1 --stream -- 'conventional-changelog --preset angu
 ```
 
 If you use a custom [`--changelog-preset`](#--changelog-preset), you should change `--preset` value accordingly in the example above.
+
+## Lifecycle Scripts
+
+```js
+// preversion:  Run BEFORE bumping the package version.
+// version:     Run AFTER bumping the package version, but BEFORE commit.
+// postversion: Run AFTER bumping the package version, and AFTER commit.
+```
+
+Lerna will run [npm lifecycle scripts](https://docs.npmjs.com/misc/scripts#description) during `lerna version` in the following order:
+
+1. Detect changed packages, choose version bump(s)
+2. Run `preversion` lifecycle in root
+3. For each changed package, in topological order (all dependencies before dependents):
+   1. Run `preversion` lifecycle
+   2. Update version in package.json
+   3. Run `version` lifecycle
+4. Run `version` lifecycle in root
+5. Add changed files to index, if [enabled](#--no-git-tag-version)
+6. Create commit and tag(s), if [enabled](#--no-git-tag-version)
+7. For each changed package, in _lexical_ order (alphabetical according to directory structure):
+   1. Run `postversion` lifecycle
+8. Run `postversion` lifecycle in root
+9. Push commit and tag(s) to remote, if [enabled](#--no-push)
+10. Create release, if [enabled](#--create-release-type)

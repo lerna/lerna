@@ -58,26 +58,20 @@ describe("CreateCommand", () => {
 
   it("requires a name argument", async () => {
     const cwd = await initFixture("basic");
+    const command = lernaCreate(cwd)();
 
-    try {
-      await lernaCreate(cwd)();
-    } catch (err) {
-      expect(err.message).toMatch("Not enough non-option arguments");
-    }
+    await expect(command).rejects.toThrow("Not enough non-option arguments");
   });
 
   it("throws when adding a git dependency", async () => {
     const cwd = await initRemoteFixture("basic");
+    const command = lernaCreate(cwd)(
+      "git-pkg",
+      "--dependencies",
+      "git+ssh://git@notgithub.com/user/foo#semver:^1.2.3"
+    );
 
-    try {
-      await lernaCreate(cwd)(
-        "git-pkg",
-        "--dependencies",
-        "git+ssh://git@notgithub.com/user/foo#semver:^1.2.3"
-      );
-    } catch (err) {
-      expect(err.message).toMatch("Do not use git dependencies");
-    }
+    await expect(command).rejects.toThrow("Do not use git dependencies");
   });
 
   it("creates a stub package", async () => {

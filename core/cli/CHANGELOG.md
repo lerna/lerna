@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.18.5](https://github.com/lerna/lerna/compare/v3.18.4...v3.18.5) (2019-11-20)
+
+
+### Bug Fixes
+
+* **cli:** Bump yargs to `^14.2.2` ([51365b8](https://github.com/lerna/lerna/commit/51365b8700a3b7c609cf9caaeb63a6b07a4b3959))
+
+
+
+
+
 # [3.18.0](https://github.com/lerna/lerna/compare/v3.17.0...v3.18.0) (2019-10-15)
 
 

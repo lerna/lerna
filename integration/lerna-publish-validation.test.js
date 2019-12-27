@@ -34,11 +34,7 @@ test("lerna publish exits with EBEHIND when behind upstream remote", async () =>
   await execa("git", ["push", "origin", "master"], { cwd: cloneDir });
 
   // throws during interactive publish (local)
-  try {
-    await cliRunner(cwd, env)("publish", "--no-ci");
-  } catch (err) {
-    expect(err.message).toMatch(/EBEHIND/);
-  }
+  await expect(cliRunner(cwd, env)("publish", "--no-ci")).rejects.toThrow(/EBEHIND/);
 
   // warns during non-interactive publish (CI)
   const { stderr } = await cliRunner(cwd, env)("publish", "--ci");

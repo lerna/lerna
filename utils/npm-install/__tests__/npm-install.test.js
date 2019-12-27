@@ -24,8 +24,6 @@ describe("npm-install", () => {
 
   describe("npmInstall()", () => {
     it("returns a promise for a non-mangling install", async () => {
-      expect.assertions(1);
-
       const pkg = new Package(
         {
           name: "test-npm-install",
@@ -56,8 +54,6 @@ describe("npm-install", () => {
     });
 
     it("allows override of opts.stdio", async () => {
-      expect.assertions(1);
-
       const pkg = new Package(
         {
           name: "test-npm-install",
@@ -79,8 +75,6 @@ describe("npm-install", () => {
     });
 
     it("does not swallow errors", async () => {
-      expect.assertions(2);
-
       ChildProcessUtilities.exec.mockRejectedValueOnce(new Error("whoopsy-doodle"));
 
       const pkg = new Package(
@@ -90,24 +84,18 @@ describe("npm-install", () => {
         path.normalize("/test/npm-install-error")
       );
 
-      try {
-        await npmInstall(pkg, {
+      await expect(
+        npmInstall(pkg, {
           npmClient: "yarn",
-        });
-      } catch (err) {
-        expect(err.message).toBe("whoopsy-doodle");
+        })
+      ).rejects.toThrow("whoopsy-doodle");
 
-        expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith(
-          "yarn",
-          ["install", "--non-interactive"],
-          {
-            cwd: pkg.location,
-            env: expect.any(Object),
-            pkg,
-            stdio: "pipe",
-          }
-        );
-      }
+      expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith("yarn", ["install", "--non-interactive"], {
+        cwd: pkg.location,
+        env: expect.any(Object),
+        pkg,
+        stdio: "pipe",
+      });
     });
   });
 
@@ -487,11 +475,7 @@ describe("npm-install", () => {
 
       fs.rename.mockRejectedValueOnce(new Error("Unable to rename file"));
 
-      try {
-        await npmInstall.dependencies(pkg, dependencies, {});
-      } catch (err) {
-        expect(err.message).toBe("Unable to rename file");
-      }
+      await expect(npmInstall.dependencies(pkg, dependencies, {})).rejects.toThrow("Unable to rename file");
     });
 
     it("cleans up synchronously after writeFile error", async () => {
@@ -507,12 +491,8 @@ describe("npm-install", () => {
 
       writePkg.mockRejectedValueOnce(new Error("Unable to write file"));
 
-      try {
-        await npmInstall.dependencies(pkg, dependencies, {});
-      } catch (err) {
-        expect(err.message).toBe("Unable to write file");
-        expect(fs.renameSync).toHaveBeenLastCalledWith(backupManifest, pkg.manifestLocation);
-      }
+      await expect(npmInstall.dependencies(pkg, dependencies, {})).rejects.toThrow("Unable to write file");
+      expect(fs.renameSync).toHaveBeenLastCalledWith(backupManifest, pkg.manifestLocation);
     });
 
     it("cleans up synchronously after client install error", async () => {
@@ -526,14 +506,10 @@ describe("npm-install", () => {
       const backupManifest = `${pkg.manifestLocation}.lerna_backup`;
       const dependencies = ["just-here-so-we-dont-exit-early"];
 
-      ChildProcessUtilities.exec.mockRejectedValueOnce(new Error("Unable to install dependency"));
+      ChildProcessUtilities.exec.mockRejectedValueOnce(new Error("Unable to install"));
 
-      try {
-        await npmInstall.dependencies(pkg, dependencies, {});
-      } catch (err) {
-        expect(err.message).toBe("Unable to install dependency");
-        expect(fs.renameSync).toHaveBeenLastCalledWith(backupManifest, pkg.manifestLocation);
-      }
+      await expect(npmInstall.dependencies(pkg, dependencies, {})).rejects.toThrow("Unable to install");
+      expect(fs.renameSync).toHaveBeenLastCalledWith(backupManifest, pkg.manifestLocation);
     });
   });
 });

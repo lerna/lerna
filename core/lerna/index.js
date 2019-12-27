@@ -10,6 +10,7 @@ const createCmd = require("@lerna/create/command");
 const diffCmd = require("@lerna/diff/command");
 const execCmd = require("@lerna/exec/command");
 const importCmd = require("@lerna/import/command");
+const infoCmd = require("@lerna/info/command");
 const initCmd = require("@lerna/init/command");
 const linkCmd = require("@lerna/link/command");
 const listCmd = require("@lerna/list/command");
@@ -35,6 +36,7 @@ function main(argv) {
     .command(diffCmd)
     .command(execCmd)
     .command(importCmd)
+    .command(infoCmd)
     .command(initCmd)
     .command(linkCmd)
     .command(listCmd)

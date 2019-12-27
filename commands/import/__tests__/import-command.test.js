@@ -197,22 +197,16 @@ describe("ImportCommand", () => {
     it("errors without an argument", async () => {
       const [testDir] = await initBasicFixtures();
 
-      try {
-        await lernaImport(testDir)();
-      } catch (err) {
-        expect(err.message).toBe("Not enough non-option arguments: got 0, need at least 1");
-      }
+      const command = lernaImport(testDir)();
+      await expect(command).rejects.toThrow("Not enough non-option arguments: got 0, need at least 1");
     });
 
     it("errors when external directory is missing", async () => {
       const [testDir, externalDir] = await initBasicFixtures();
       const missing = `${externalDir}_invalidSuffix`;
 
-      try {
-        await lernaImport(testDir)(missing);
-      } catch (err) {
-        expect(err.message).toBe(`No repository found at "${missing}"`);
-      }
+      const command = lernaImport(testDir)(missing);
+      await expect(command).rejects.toThrow(`No repository found at "${missing}"`);
     });
 
     it("errors when external package.json is missing", async () => {
@@ -220,12 +214,13 @@ describe("ImportCommand", () => {
 
       await fs.unlink(path.join(externalDir, "package.json"));
 
-      try {
-        await lernaImport(testDir)(externalDir);
-      } catch (err) {
-        expect(err.message).toMatch("package.json");
-        expect(err.code).toBe("MODULE_NOT_FOUND");
-      }
+      const command = lernaImport(testDir)(externalDir);
+      await expect(command).rejects.toThrow(
+        expect.objectContaining({
+          message: expect.stringContaining("package.json"),
+          code: "MODULE_NOT_FOUND",
+        })
+      );
     });
 
     it("errors when external package.json has no name property", async () => {
@@ -234,11 +229,8 @@ describe("ImportCommand", () => {
 
       await fs.writeFile(packageJson, "{}");
 
-      try {
-        await lernaImport(testDir)(externalDir);
-      } catch (err) {
-        expect(err.message).toBe(`No package name specified in "${packageJson}"`);
-      }
+      const command = lernaImport(testDir)(externalDir);
+      await expect(command).rejects.toThrow(`No package name specified in "${packageJson}"`);
     });
 
     it("errors if target directory exists", async () => {
@@ -248,11 +240,8 @@ describe("ImportCommand", () => {
 
       await fs.ensureDir(targetDir);
 
-      try {
-        await lernaImport(testDir)(externalDir);
-      } catch (err) {
-        expect(err.message).toBe(`Target directory already exists "${relativePath}"`);
-      }
+      const command = lernaImport(testDir)(externalDir);
+      await expect(command).rejects.toThrow(`Target directory already exists "${relativePath}"`);
     });
 
     it("infers correct target directory given packages glob", async () => {
@@ -266,11 +255,8 @@ describe("ImportCommand", () => {
         packages: ["pkg/*"],
       });
 
-      try {
-        await lernaImport(testDir)(externalDir);
-      } catch (err) {
-        expect(err.message).toBe(`Target directory already exists "${relativePath}"`);
-      }
+      const command = lernaImport(testDir)(externalDir);
+      await expect(command).rejects.toThrow(`Target directory already exists "${relativePath}"`);
     });
 
     it("errors if repo has uncommitted changes", async () => {
@@ -280,11 +266,8 @@ describe("ImportCommand", () => {
       await fs.writeFile(uncommittedFile, "stuff");
       await gitAdd(testDir, uncommittedFile);
 
-      try {
-        await lernaImport(testDir)(externalDir);
-      } catch (err) {
-        expect(err.message).toBe("Local repository has un-committed changes");
-      }
+      const command = lernaImport(testDir)(externalDir);
+      await expect(command).rejects.toThrow("Local repository has un-committed changes");
     });
 
     it("does not remove custom subject prefixes in [brackets]", async () => {
@@ -339,11 +322,10 @@ describe("ImportCommand", () => {
         initFixture("external", "Init external commit"),
       ]);
 
-      try {
-        await lernaImport(testDir)(externalDir, "--dest=components");
-      } catch (err) {
-        expect(err.message).toBe("--dest does not match with the package directories: core,packages");
-      }
+      const command = lernaImport(testDir)(externalDir, "--dest=components");
+      await expect(command).rejects.toThrow(
+        "--dest does not match with the package directories: core,packages"
+      );
     });
   });
 });
