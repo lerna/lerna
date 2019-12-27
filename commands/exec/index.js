@@ -120,12 +120,15 @@ class ExecCommand extends Command {
     };
   }
 
-  runCommandInPackagesTopological() {
-    let profiler;
-    let runnerWithProfiler;
-    const runner = this.options.stream
+  getRunner() {
+    return this.options.stream
       ? pkg => this.runCommandInPackageStreaming(pkg)
       : pkg => this.runCommandInPackageCapturing(pkg);
+  }
+
+  runCommandInPackagesTopological() {
+    let profiler;
+    let runner;
 
     if (this.options.profile) {
       profiler = new Profiler({
@@ -135,10 +138,14 @@ class ExecCommand extends Command {
         profileLocation: this.options.profileLocation,
         rootPath: this.project.rootPath,
       });
-      runnerWithProfiler = pkg => profiler.run(() => runner(pkg), pkg.name);
+
+      const callback = this.getRunner();
+      runner = pkg => profiler.run(() => callback(pkg), pkg.name);
+    } else {
+      runner = this.getRunner();
     }
 
-    let chain = runTopologically(this.filteredPackages, profiler ? runnerWithProfiler : runner, {
+    let chain = runTopologically(this.filteredPackages, runner, {
       concurrency: this.concurrency,
       rejectCycles: this.options.rejectCycles,
     });
@@ -155,11 +162,7 @@ class ExecCommand extends Command {
   }
 
   runCommandInPackagesLexical() {
-    const runner = this.options.stream
-      ? pkg => this.runCommandInPackageStreaming(pkg)
-      : pkg => this.runCommandInPackageCapturing(pkg);
-
-    return pMap(this.filteredPackages, runner, { concurrency: this.concurrency });
+    return pMap(this.filteredPackages, this.getRunner(), { concurrency: this.concurrency });
   }
 
   runCommandInPackageStreaming(pkg) {
