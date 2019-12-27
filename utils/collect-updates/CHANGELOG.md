@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.20.0](https://github.com/lerna/lerna/compare/v3.19.0...v3.20.0) (2019-12-27)
+
+
+### Bug Fixes
+
+* **collect-dependents:** Avoid skipping dependents of cyclic dependencies ([#2380](https://github.com/lerna/lerna/issues/2380)) ([bd19a34](https://github.com/lerna/lerna/commit/bd19a34debf3344e94386b4ffd4b3fe87efb4641))
+
+
+
+
+
 # [3.18.0](https://github.com/lerna/lerna/compare/v3.17.0...v3.18.0) (2019-10-15)
 
 

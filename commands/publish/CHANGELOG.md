@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.20.0](https://github.com/lerna/lerna/compare/v3.19.0...v3.20.0) (2019-12-27)
+
+
+### Features
+
+* **publish:** Add `--legacy-auth` flag ([#2347](https://github.com/lerna/lerna/issues/2347)) ([0e9bda7](https://github.com/lerna/lerna/commit/0e9bda769d944e3f0b9218ec1ecfaf63273baf11))
+
+
+
+
+
 ## [3.18.5](https://github.com/lerna/lerna/compare/v3.18.4...v3.18.5) (2019-11-20)
 
 
