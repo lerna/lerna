@@ -66,7 +66,7 @@ exports.builder = yargs => {
       },
       "profile-location": {
         group: "Command Options:",
-        describe: "Output performance profile to custom location (relative to the project root).",
+        describe: "Output performance profile to custom location instead of default project root.",
         type: "string",
       },
     });
