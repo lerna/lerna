@@ -2,6 +2,9 @@
 
 jest.mock("@lerna/npm-run-script");
 
+const fs = require("fs-extra");
+const globby = require("globby");
+
 // mocked modules
 const npmRunScript = require("@lerna/npm-run-script");
 const output = require("@lerna/output");
@@ -158,6 +161,42 @@ describe("RunCommand", () => {
       const logLines = output.logged().split("\n");
       expect(logLines).toContain("@test/package-1");
       expect(logLines).toContain("@test/package-2");
+    });
+  });
+
+  describe("with --profile", () => {
+    it("executes a profiled command in all packages", async () => {
+      const cwd = await initFixture("basic");
+
+      await lernaRun(cwd)("--profile", "my-script");
+
+      const [profileLocation] = await globby("Lerna-Profile-*.json", { cwd, absolute: true });
+      const json = await fs.readJson(profileLocation);
+
+      expect(json).toMatchObject([
+        {
+          name: "package-1",
+          ph: "X",
+          ts: expect.any(Number),
+          pid: 1,
+          tid: expect.any(Number),
+          dur: expect.any(Number),
+        },
+        {
+          name: "package-3",
+        },
+      ]);
+    });
+
+    it("accepts --profile-location", async () => {
+      const cwd = await initFixture("basic");
+
+      await lernaRun(cwd)("--profile", "--profile-location", "foo/bar", "my-script");
+
+      const [profileLocation] = await globby("foo/bar/Lerna-Profile-*.json", { cwd, absolute: true });
+      const exists = await fs.exists(profileLocation);
+
+      expect(exists).toBe(true);
     });
   });
 

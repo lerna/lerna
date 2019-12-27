@@ -1,6 +1,8 @@
 "use strict";
 
 const path = require("path");
+const fs = require("fs-extra");
+const globby = require("globby");
 
 // mocked modules
 const ChildProcessUtilities = require("@lerna/child-process");
@@ -188,6 +190,42 @@ describe("ExecCommand", () => {
       );
 
       expect(calledInPackages()).toEqual(["package-1", "package-2"]);
+    });
+  });
+
+  describe("with --profile", () => {
+    it("executes a profiled command in all packages", async () => {
+      const cwd = await initFixture("basic");
+
+      await lernaExec(cwd)("--profile", "--", "ls");
+
+      const [profileLocation] = await globby("Lerna-Profile-*.json", { cwd, absolute: true });
+      const json = await fs.readJson(profileLocation);
+
+      expect(json).toMatchObject([
+        {
+          name: "package-1",
+          ph: "X",
+          ts: expect.any(Number),
+          pid: 1,
+          tid: expect.any(Number),
+          dur: expect.any(Number),
+        },
+        {
+          name: "package-2",
+        },
+      ]);
+    });
+
+    it("accepts --profile-location", async () => {
+      const cwd = await initFixture("basic");
+
+      await lernaExec(cwd)("--profile", "--profile-location", "foo/bar", "--", "ls");
+
+      const [profileLocation] = await globby("foo/bar/Lerna-Profile-*.json", { cwd, absolute: true });
+      const exists = await fs.exists(profileLocation);
+
+      expect(exists).toBe(true);
     });
   });
 
