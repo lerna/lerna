@@ -1,0 +1,39 @@
+{
+  "name": "@lerna/profiler",
+  "version": "3.18.5",
+  "description": "An internal Lerna tool",
+  "keywords": [
+    "lerna",
+    "utils"
+  ],
+  "homepage": "https://github.com/lerna/lerna/tree/master/utils/profiler#readme",
+  "license": "MIT",
+  "author": {
+    "name": "Benjamin Weggersen",
+    "url": "https://github.com/bweggersen"
+  },
+  "files": [
+    "profiler.js"
+  ],
+  "main": "profiler.js",
+  "engines": {
+    "node": ">= 6.9.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lerna/lerna.git",
+    "directory": "utils/profiler"
+  },
+  "scripts": {
+    "test": "echo \"Run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "figgy-pudding": "^3.5.1",
+    "fs-extra": "^8.1.0",
+    "npmlog": "^4.1.2",
+    "upath": "^1.2.0"
+  }
+}

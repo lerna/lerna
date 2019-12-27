@@ -57,6 +57,16 @@ exports.builder = yargs => {
         hidden: true,
         type: "boolean",
       },
+      profile: {
+        group: "Command Options:",
+        describe: "Profile command executions and output performance profile to default location.",
+        type: "boolean",
+      },
+      "profile-location": {
+        group: "Command Options:",
+        describe: "Output performance profile to custom location instead of default project root.",
+        type: "string",
+      },
     });
 
   return filterable(yargs);

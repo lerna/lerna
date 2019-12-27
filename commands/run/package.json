@@ -36,6 +36,7 @@
     "@lerna/filter-options": "file:../../core/filter-options",
     "@lerna/npm-run-script": "file:../../utils/npm-run-script",
     "@lerna/output": "file:../../utils/output",
+    "@lerna/profiler": "file:../../utils/profiler",
     "@lerna/run-topologically": "file:../../utils/run-topologically",
     "@lerna/timer": "file:../../utils/timer",
     "@lerna/validation-error": "file:../../core/validation-error",

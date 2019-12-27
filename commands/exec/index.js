@@ -4,6 +4,7 @@ const pMap = require("p-map");
 
 const ChildProcessUtilities = require("@lerna/child-process");
 const Command = require("@lerna/command");
+const Profiler = require("@lerna/profiler");
 const runTopologically = require("@lerna/run-topologically");
 const ValidationError = require("@lerna/validation-error");
 const { getFilteredPackages } = require("@lerna/filter-options");
@@ -119,15 +120,39 @@ class ExecCommand extends Command {
     };
   }
 
-  runCommandInPackagesTopological() {
-    const runner = this.options.stream
+  getRunner() {
+    return this.options.stream
       ? pkg => this.runCommandInPackageStreaming(pkg)
       : pkg => this.runCommandInPackageCapturing(pkg);
+  }
 
-    return runTopologically(this.filteredPackages, runner, {
+  runCommandInPackagesTopological() {
+    let profiler;
+    let runner;
+
+    if (this.options.profile) {
+      profiler = new Profiler({
+        concurrency: this.concurrency,
+        log: this.logger,
+        outputDirectory: this.options.profileLocation || this.project.rootPath,
+      });
+
+      const callback = this.getRunner();
+      runner = pkg => profiler.run(() => callback(pkg), pkg.name);
+    } else {
+      runner = this.getRunner();
+    }
+
+    let chain = runTopologically(this.filteredPackages, runner, {
       concurrency: this.concurrency,
       rejectCycles: this.options.rejectCycles,
     });
+
+    if (profiler) {
+      chain = chain.then(results => profiler.output().then(() => results));
+    }
+
+    return chain;
   }
 
   runCommandInPackagesParallel() {
@@ -135,11 +160,7 @@ class ExecCommand extends Command {
   }
 
   runCommandInPackagesLexical() {
-    const runner = this.options.stream
-      ? pkg => this.runCommandInPackageStreaming(pkg)
-      : pkg => this.runCommandInPackageCapturing(pkg);
-
-    return pMap(this.filteredPackages, runner, { concurrency: this.concurrency });
+    return pMap(this.filteredPackages, this.getRunner(), { concurrency: this.concurrency });
   }
 
   runCommandInPackageStreaming(pkg) {
