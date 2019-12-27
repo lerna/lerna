@@ -22,36 +22,23 @@ const getTimeBasedFilename = () => {
   return `Lerna-Profile-${datetimeNormalized}.json`;
 };
 
-const getOutputPath = (rootPath, profileLocation) => {
-  const outputFolder = profileLocation ? upath.join(rootPath, profileLocation) : rootPath;
-  return upath.join(outputFolder, getTimeBasedFilename());
-};
-
 const ProfilerConfig = figgyPudding({
   concurrency: {},
   log: { default: npmlog },
-  profile: "enabled",
-  enabled: {},
-  profileLocation: {},
-  rootPath: {},
+  outputDirectory: {},
 });
 
 class Profiler {
   constructor(opts) {
-    const { concurrency, enabled, log, profileLocation, rootPath } = ProfilerConfig(opts);
+    const { concurrency, log, outputDirectory } = ProfilerConfig(opts);
 
-    this.enabled = enabled;
     this.events = [];
-    this.log = log;
-    this.outputPath = getOutputPath(rootPath, profileLocation);
+    this.logger = log;
+    this.outputPath = upath.join(upath.resolve(outputDirectory || "."), getTimeBasedFilename());
     this.threads = range(concurrency);
   }
 
   run(fn, name) {
-    if (!this.enabled) {
-      return fn();
-    }
-
     let startTime;
     let threadId;
 
@@ -85,13 +72,9 @@ class Profiler {
   }
 
   output() {
-    if (!this.enabled) {
-      return;
-    }
-
     return fs
       .outputJson(this.outputPath, this.events)
-      .then(() => this.log.info("profiler", `Performance profile saved to ${this.outputPath}`));
+      .then(() => this.logger.info("profiler", `Performance profile saved to ${this.outputPath}`));
   }
 }
 

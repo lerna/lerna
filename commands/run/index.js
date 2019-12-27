@@ -142,9 +142,7 @@ class RunCommand extends Command {
       profiler = new Profiler({
         concurrency: this.concurrency,
         log: this.logger,
-        profile: this.options.profile,
-        profileLocation: this.options.profileLocation,
-        rootPath: this.project.rootPath,
+        outputDirectory: this.options.profileLocation,
       });
 
       const callback = this.getRunner();
