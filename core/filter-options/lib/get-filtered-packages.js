@@ -2,6 +2,7 @@
 
 const npmlog = require("npmlog");
 const figgyPudding = require("figgy-pudding");
+const path = require("path");
 const collectUpdates = require("@lerna/collect-updates");
 const filterPackages = require("@lerna/filter-packages");
 
@@ -9,6 +10,7 @@ module.exports = getFilteredPackages;
 
 const FilterConfig = figgyPudding({
   scope: {},
+  currentScope: {},
   ignore: {},
   private: {},
   since: {},
@@ -25,8 +27,20 @@ const FilterConfig = figgyPudding({
 function getFilteredPackages(packageGraph, execOpts, opts) {
   const options = FilterConfig(opts);
 
+  let scope;
+
   if (options.scope) {
-    options.log.notice("filter", "including %j", options.scope);
+    scope = options.scope;
+  }
+
+  if (options.currentScope) {
+    // eslint-disable-next-line global-require, import/no-dynamic-require
+    const { name } = require(path.join(process.cwd(), "package.json"));
+    scope = name;
+  }
+
+  if (scope) {
+    options.log.notice("filter", "including %j", scope);
   }
 
   if (options.ignore) {
@@ -38,7 +52,7 @@ function getFilteredPackages(packageGraph, execOpts, opts) {
   chain = chain.then(() =>
     filterPackages(
       packageGraph.rawPackageList,
-      options.scope,
+      scope,
       options.ignore,
       options.private,
       options.continueIfNoMatch

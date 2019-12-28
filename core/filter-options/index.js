@@ -15,6 +15,11 @@ function filterOptions(yargs) {
       type: "string",
       requiresArg: true,
     },
+    currentScope: {
+      describe: "Include only package in current working directory.",
+      type: "boolean",
+      conflicts: "scope",
+    },
     ignore: {
       describe: "Exclude packages with names matching the given glob.",
       type: "string",
