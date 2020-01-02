@@ -47,12 +47,14 @@ test("remote that does not support --atomic", async () => {
 
   // the first time the command is executed, simulate remote error
   childProcess.exec.mockImplementationOnce(async () => {
-    throw new Error(
-      [
-        "Command failed: git push --follow-tags --atomic --no-verify origin master",
-        "fatal: the receiving end does not support --atomic push",
-      ].join("\n")
+    const stderr = "fatal: the receiving end does not support --atomic push";
+    const error = new Error(
+      ["Command failed: git push --follow-tags --atomic --no-verify origin master", stderr].join("\n")
     );
+
+    error.stderr = stderr;
+
+    throw error;
   });
 
   // this call should _not_ throw
@@ -69,16 +71,41 @@ test("remote that does not support --atomic", async () => {
   expect(list).toMatch("v4.5.6");
 });
 
+test("git cli that does not support --atomic", async () => {
+  const { cwd } = await cloneFixture("root-manifest-only");
+
+  await execa("git", ["commit", "--allow-empty", "-m", "change"], { cwd });
+  await execa("git", ["tag", "v7.8.9", "-m", "v7.8.9"], { cwd });
+
+  // the first time the command is executed, simulate remote error
+  childProcess.exec.mockImplementationOnce(async () => {
+    const stderr = "error: unknown option `atomic'";
+    const error = new Error(
+      ["Command failed: git push --follow-tags --atomic --no-verify origin master", stderr].join("\n")
+    );
+
+    error.stderr = stderr;
+
+    throw error;
+  });
+
+  await gitPush("origin", "master", { cwd });
+
+  await expect(listRemoteTags(cwd)).resolves.toMatch("v7.8.9");
+});
+
 test("unexpected git error", async () => {
   const { cwd } = await cloneFixture("root-manifest-only");
 
   childProcess.exec.mockImplementationOnce(async () => {
-    throw new Error(
-      [
-        "Command failed: git push --follow-tags --atomic --no-verify origin master",
-        "fatal: some unexpected error",
-      ].join("\n")
+    const stderr = "fatal: some unexpected error";
+    const error = new Error(
+      ["Command failed: git push --follow-tags --atomic --no-verify origin master", stderr].join("\n")
     );
+
+    error.stderr = stderr;
+
+    throw error;
   });
 
   await expect(gitPush("origin", "master", { cwd })).rejects.toThrowError(/some unexpected error/);
