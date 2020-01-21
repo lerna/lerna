@@ -1,59 +1,52 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`DiffCommand passes diff exclude globs configured with --ignored-changes 1`] = `
-diff --git a/packages/package-1/package.json b/packages/package-1/package.json
-index SHA..SHA 100644
---- a/packages/package-1/package.json
-+++ b/packages/package-1/package.json
-@@ -1,5 +1,5 @@
- {
-   "name": "package-1",
--  "changed": 0,
-+  "changed": 1,
-   "version": "1.0.0"
- }
+"[0;31m------ [0m[0;1mpackages/package-1/package.json 100644[0m
+[0;32m++++++ [0m[0;1mpackages/package-1/package.json 100644[0m
+[0;100;30m@|[0m[0;1m-1,5 +1,5[0m ============================================================
+[0;100;30m |[0m{
+[0;100;30m |[0m  \\"name\\": \\"package-1\\",
+[0;41;30m-|[0m[0;0m[0;2m  \\"changed\\":[0m[0;31m 0[0m[0;2m,[0m[0m
+[0;42;30m+|[0m[0;0m  \\"changed\\":[0;32m 1[0m,[0m
+[0;100;30m |[0m  \\"version\\": \\"1.0.0\\"
+[0;100;30m |[0m}"
 `;
 
 exports[`DiffCommand should diff a specific package 1`] = `
-diff --git a/packages/package-2/package.json b/packages/package-2/package.json
-index SHA..SHA 100644
---- a/packages/package-2/package.json
-+++ b/packages/package-2/package.json
-@@ -1,6 +1,6 @@
- {
-   "name": "package-2",
--  "changed": 0,
-+  "changed": 1,
-   "version": "1.0.0",
-   "dependencies": {
-     "package-1": "^1.0.0"
+"[0;31m------ [0m[0;1mpackages/package-2/package.json 100644[0m
+[0;32m++++++ [0m[0;1mpackages/package-2/package.json 100644[0m
+[0;100;30m@|[0m[0;1m-1,8 +1,8[0m ============================================================
+[0;100;30m |[0m{
+[0;100;30m |[0m  \\"name\\": \\"package-2\\",
+[0;41;30m-|[0m[0;0m[0;2m  \\"changed\\":[0m[0;31m 0[0m[0;2m,[0m[0m
+[0;42;30m+|[0m[0;0m  \\"changed\\":[0;32m 1[0m,[0m
+[0;100;30m |[0m  \\"version\\": \\"1.0.0\\",
+[0;100;30m |[0m  \\"dependencies\\": {
+[0;100;30m |[0m    \\"package-1\\": \\"^1.0.0\\"
+[0;100;30m |[0m  }
+[0;100;30m |[0m}"
 `;
 
 exports[`DiffCommand should diff packages from the first commit 1`] = `
-diff --git a/packages/package-1/package.json b/packages/package-1/package.json
-index SHA..SHA 100644
---- a/packages/package-1/package.json
-+++ b/packages/package-1/package.json
-@@ -1,5 +1,5 @@
- {
-   "name": "package-1",
--  "changed": 0,
-+  "changed": 1,
-   "version": "1.0.0"
- }
+"[0;31m------ [0m[0;1mpackages/package-1/package.json 100644[0m
+[0;32m++++++ [0m[0;1mpackages/package-1/package.json 100644[0m
+[0;100;30m@|[0m[0;1m-1,5 +1,5[0m ============================================================
+[0;100;30m |[0m{
+[0;100;30m |[0m  \\"name\\": \\"package-1\\",
+[0;41;30m-|[0m[0;0m[0;2m  \\"changed\\":[0m[0;31m 0[0m[0;2m,[0m[0m
+[0;42;30m+|[0m[0;0m  \\"changed\\":[0;32m 1[0m,[0m
+[0;100;30m |[0m  \\"version\\": \\"1.0.0\\"
+[0;100;30m |[0m}"
 `;
 
 exports[`DiffCommand should diff packages from the most recent tag 1`] = `
-diff --git a/packages/package-1/package.json b/packages/package-1/package.json
-index SHA..SHA 100644
---- a/packages/package-1/package.json
-+++ b/packages/package-1/package.json
-@@ -1,5 +1,6 @@
- {
-   "name": "package-1",
-   "changed": 1,
--  "version": "1.0.0"
-+  "version": "1.0.0",
-+  "sinceLastTag": true
- }
+"[0;31m------ [0m[0;1mpackages/package-1/package.json 100644[0m
+[0;32m++++++ [0m[0;1mpackages/package-1/package.json 100644[0m
+[0;100;30m@|[0m[0;1m-1,5 +1,6[0m ============================================================
+[0;100;30m |[0m{
+[0;100;30m |[0m  \\"name\\": \\"package-1\\",
+[0;100;30m |[0m  \\"changed\\": 1,
+[0;43;30m!|[0m[0;0m  \\"version\\": \\"1.0.0\\"[0;32m,[0m[0m
+[0;43;30m!|[0m[0;0m[0;32m  \\"sinceLastTag\\": true[0m[0m
+[0;100;30m |[0m}"
 `;

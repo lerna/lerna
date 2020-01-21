@@ -1,437 +1,371 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`CreateCommand creates a stub cli 1`] = `
-diff --git a/packages/my-cli/README.md b/packages/my-cli/README.md
-new file mode 100644
-index SHA..SHA
---- /dev/null
-+++ b/packages/my-cli/README.md
-@@ -0,0 +1,13 @@
-+# \`my-cli\`
-+
-+> TODO: description
-+
-+## Usage
-+
-+\`\`\`
-+npm -g i my-cli
-+
-+my-cli --help
-+
-+// TODO: DEMONSTRATE API
-+\`\`\`
-diff --git a/packages/my-cli/__tests__/cli.test.js b/packages/my-cli/__tests__/cli.test.js
-new file mode 100644
-index SHA..SHA
---- /dev/null
-+++ b/packages/my-cli/__tests__/cli.test.js
-@@ -0,0 +1,8 @@
-+'use strict';
-+
-+const cli = require('../lib/cli');
-+
-+describe('my-cli cli', () => {
-+  // const argv = cli(cwd).parse(['args']);
-+  it('needs tests');
-+});
-diff --git a/packages/my-cli/__tests__/my-cli.test.js b/packages/my-cli/__tests__/my-cli.test.js
-new file mode 100644
-index SHA..SHA
---- /dev/null
-+++ b/packages/my-cli/__tests__/my-cli.test.js
-@@ -0,0 +1,7 @@
-+'use strict';
-+
-+const myCli = require('..');
-+
-+describe('my-cli', () => {
-+    it('needs tests');
-+});
-diff --git a/packages/my-cli/bin/my-cli b/packages/my-cli/bin/my-cli
-new file mode 100755
-index SHA..SHA
---- /dev/null
-+++ b/packages/my-cli/bin/my-cli
-@@ -0,0 +1,6 @@
-+#!/usr/bin/env node
-+
-+'use strict';
-+
-+// eslint-disable-next-line no-unused-expressions
-+require('../lib/cli')().parse(process.argv.slice(2));
-diff --git a/packages/my-cli/lib/cli.js b/packages/my-cli/lib/cli.js
-new file mode 100644
-index SHA..SHA
---- /dev/null
-+++ b/packages/my-cli/lib/cli.js
-@@ -0,0 +1,26 @@
-+'use strict';
-+
-+const yargs = require('yargs/yargs');
-+const myCli = require('./my-cli');
-+
-+module.exports = cli;
-+
-+function cli(cwd) {
-+  const parser = factory(null, cwd);
-+
-+  parser.alias('h', 'help');
-+  parser.alias('v', 'version');
-+
-+  parser.usage(
-+    "$0",
-+    "TODO: description",
-+    yargs => {
-+      yargs.options({
-+        // TODO: options
-+      });
-+    },
-+    argv => myCli(argv)
-+  );
-+
-+  return parser;
-+}
-diff --git a/packages/my-cli/lib/my-cli.js b/packages/my-cli/lib/my-cli.js
-new file mode 100644
-index SHA..SHA
---- /dev/null
-+++ b/packages/my-cli/lib/my-cli.js
-@@ -0,0 +1,7 @@
-+'use strict';
-+
-+module.exports = myCli;
-+
-+function myCli() {
-+    // TODO
-+}
-diff --git a/packages/my-cli/package.json b/packages/my-cli/package.json
-new file mode 100644
-index SHA..SHA
---- /dev/null
-+++ b/packages/my-cli/package.json
-@@ -0,0 +1,34 @@
-+{
-+  "name": "my-cli",
-+  "version": "1.2.3",
-+  "description": "Now I’m the model of a modern major general / The venerated Virginian veteran whose men are all / Lining up, to put me up on a pedestal / Writin’ letters to relatives / Embellishin’ my elegance and eloquence / But the elephant is in the room / The truth is in ya face when ya hear the British cannons go / BOOM",
-+  "keywords": [],
-+  "author": "Tester McPerson <test@example.com> (http://example.com)",
-+  "license": "ISC",
-+  "main": "lib/my-cli.js",
-+  "bin": {
-+    "my-cli": "bin/my-cli"
-+  },
-+  "directories": {
-+    "lib": "lib",
-+    "test": "__tests__"
-+  },
-+  "files": [
-+    "bin",
-+    "lib"
-+  ],
-+  "repository": {
-+    "type": "git",
-+    "url": "git+https://github.com/test/test.git"
-+  },
-+  "scripts": {
-+    "test": "echo \\"Error: run tests from root\\" && exit 1"
-+  },
-+  "dependencies": {
-+    "yargs": "^1.0.0-mocked"
-+  },
-+  "bugs": {
-+    "url": "https://github.com/test/test/issues"
-+  },
-+  "homepage": "https://github.com/test/test#readme"
-+}
+"[0;31m------ [0m[0;1mpackages/my-cli/README.md .[0m
+[0;32m++++++ [0m[0;1mpackages/my-cli/README.md 100644[0m
+[0;100;30m@|[0m[0;1m-1,0 +1,13[0m ============================================================
+[0;42;30m+|[0m[0;32m# \`my-cli\`[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32m> TODO: description[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32m## Usage[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32m\`\`\`[0m
+[0;42;30m+|[0m[0;32mnpm -g i my-cli[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32mmy-cli --help[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32m// TODO: DEMONSTRATE API[0m
+[0;42;30m+|[0m[0;32m\`\`\`[0m
+[0;31m------ [0m[0;1mpackages/my-cli/__tests__/cli.test.js .[0m
+[0;32m++++++ [0m[0;1mpackages/my-cli/__tests__/cli.test.js 100644[0m
+[0;100;30m@|[0m[0;1m-1,0 +1,8[0m ============================================================
+[0;42;30m+|[0m[0;32m'use strict';[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32mconst cli = require('../lib/cli');[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32mdescribe('my-cli cli', () => {[0m
+[0;42;30m+|[0m[0;32m  // const argv = cli(cwd).parse(['args']);[0m
+[0;42;30m+|[0m[0;32m  it('needs tests');[0m
+[0;42;30m+|[0m[0;32m});[0m
+[0;31m------ [0m[0;1mpackages/my-cli/__tests__/my-cli.test.js .[0m
+[0;32m++++++ [0m[0;1mpackages/my-cli/__tests__/my-cli.test.js 100644[0m
+[0;100;30m@|[0m[0;1m-1,0 +1,7[0m ============================================================
+[0;42;30m+|[0m[0;32m'use strict';[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32mconst myCli = require('..');[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32mdescribe('my-cli', () => {[0m
+[0;42;30m+|[0m[0;32m    it('needs tests');[0m
+[0;42;30m+|[0m[0;32m});[0m
+[0;31m------ [0m[0;1mpackages/my-cli/bin/my-cli .[0m
+[0;32m++++++ [0m[0;1mpackages/my-cli/bin/my-cli 100755[0m
+[0;100;30m@|[0m[0;1m-1,0 +1,6[0m ============================================================
+[0;42;30m+|[0m[0;32m#!/usr/bin/env node[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32m'use strict';[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32m// eslint-disable-next-line no-unused-expressions[0m
+[0;42;30m+|[0m[0;32mrequire('../lib/cli')().parse(process.argv.slice(2));[0m
+[0;31m------ [0m[0;1mpackages/my-cli/lib/cli.js .[0m
+[0;32m++++++ [0m[0;1mpackages/my-cli/lib/cli.js 100644[0m
+[0;100;30m@|[0m[0;1m-1,0 +1,26[0m ============================================================
+[0;42;30m+|[0m[0;32m'use strict';[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32mconst yargs = require('yargs/yargs');[0m
+[0;42;30m+|[0m[0;32mconst myCli = require('./my-cli');[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32mmodule.exports = cli;[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32mfunction cli(cwd) {[0m
+[0;42;30m+|[0m[0;32m  const parser = factory(null, cwd);[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32m  parser.alias('h', 'help');[0m
+[0;42;30m+|[0m[0;32m  parser.alias('v', 'version');[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32m  parser.usage([0m
+[0;42;30m+|[0m[0;32m    \\"$0\\",[0m
+[0;42;30m+|[0m[0;32m    \\"TODO: description\\",[0m
+[0;42;30m+|[0m[0;32m    yargs => {[0m
+[0;42;30m+|[0m[0;32m      yargs.options({[0m
+[0;42;30m+|[0m[0;32m        // TODO: options[0m
+[0;42;30m+|[0m[0;32m      });[0m
+[0;42;30m+|[0m[0;32m    },[0m
+[0;42;30m+|[0m[0;32m    argv => myCli(argv)[0m
+[0;42;30m+|[0m[0;32m  );[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32m  return parser;[0m
+[0;42;30m+|[0m[0;32m}[0m
+[0;31m------ [0m[0;1mpackages/my-cli/lib/my-cli.js .[0m
+[0;32m++++++ [0m[0;1mpackages/my-cli/lib/my-cli.js 100644[0m
+[0;100;30m@|[0m[0;1m-1,0 +1,7[0m ============================================================
+[0;42;30m+|[0m[0;32m'use strict';[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32mmodule.exports = myCli;[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32mfunction myCli() {[0m
+[0;42;30m+|[0m[0;32m    // TODO[0m
+[0;42;30m+|[0m[0;32m}[0m
+[0;31m------ [0m[0;1mpackages/my-cli/package.json .[0m
+[0;32m++++++ [0m[0;1mpackages/my-cli/package.json 100644[0m
+[0;100;30m@|[0m[0;1m-1,0 +1,34[0m ============================================================
+[0;42;30m+|[0m[0;32m{[0m
+[0;42;30m+|[0m[0;32m  \\"name\\": \\"my-cli\\",[0m
+[0;42;30m+|[0m[0;32m  \\"version\\": \\"1.2.3\\",[0m
+[0;42;30m+|[0m[0;32m  \\"description\\": \\"Now I’m the model of a modern major general / The venerated Virginian veteran whose men are all / Lining up, to put me up on a pedestal / Writin’ letters to relatives / Embellishin’ my elegance and eloquence / But the elephant is in the room / The truth is in ya face when ya hear the British cannons go / BOOM\\",[0m
+[0;42;30m+|[0m[0;32m  \\"keywords\\": [],[0m
+[0;42;30m+|[0m[0;32m  \\"author\\": \\"Tester McPerson <test@example.com> (http://example.com)\\",[0m
+[0;42;30m+|[0m[0;32m  \\"license\\": \\"ISC\\",[0m
+[0;42;30m+|[0m[0;32m  \\"main\\": \\"lib/my-cli.js\\",[0m
+[0;42;30m+|[0m[0;32m  \\"bin\\": {[0m
+[0;42;30m+|[0m[0;32m    \\"my-cli\\": \\"bin/my-cli\\"[0m
+[0;42;30m+|[0m[0;32m  },[0m
+[0;42;30m+|[0m[0;32m  \\"directories\\": {[0m
+[0;42;30m+|[0m[0;32m    \\"lib\\": \\"lib\\",[0m
+[0;42;30m+|[0m[0;32m    \\"test\\": \\"__tests__\\"[0m
+[0;42;30m+|[0m[0;32m  },[0m
+[0;42;30m+|[0m[0;32m  \\"files\\": [[0m
+[0;42;30m+|[0m[0;32m    \\"bin\\",[0m
+[0;42;30m+|[0m[0;32m    \\"lib\\"[0m
+[0;42;30m+|[0m[0;32m  ],[0m
+[0;42;30m+|[0m[0;32m  \\"repository\\": {[0m
+[0;42;30m+|[0m[0;32m    \\"type\\": \\"git\\",[0m
+[0;42;30m+|[0m[0;32m    \\"url\\": \\"git+https://github.com/test/test.git\\"[0m
+[0;42;30m+|[0m[0;32m  },[0m
+[0;42;30m+|[0m[0;32m  \\"scripts\\": {[0m
+[0;42;30m+|[0m[0;32m    \\"test\\": \\"echo \\\\\\"Error: run tests from root\\\\\\" && exit 1\\"[0m
+[0;42;30m+|[0m[0;32m  },[0m
+[0;42;30m+|[0m[0;32m  \\"dependencies\\": {[0m
+[0;42;30m+|[0m[0;32m    \\"yargs\\": \\"^1.0.0-mocked\\"[0m
+[0;42;30m+|[0m[0;32m  },[0m
+[0;42;30m+|[0m[0;32m  \\"bugs\\": {[0m
+[0;42;30m+|[0m[0;32m    \\"url\\": \\"https://github.com/test/test/issues\\"[0m
+[0;42;30m+|[0m[0;32m  },[0m
+[0;42;30m+|[0m[0;32m  \\"homepage\\": \\"https://github.com/test/test#readme\\"[0m
+[0;42;30m+|[0m[0;32m}[0m"
 `;
 
 exports[`CreateCommand creates a stub cli with transpiled output 1`] = `
-diff --git a/packages/my-es-cli/README.md b/packages/my-es-cli/README.md
-new file mode 100644
-index SHA..SHA
---- /dev/null
-+++ b/packages/my-es-cli/README.md
-@@ -0,0 +1,13 @@
-+# \`my-es-cli\`
-+
-+> TODO: description
-+
-+## Usage
-+
-+\`\`\`
-+npm -g i my-es-cli
-+
-+my-es-cli --help
-+
-+// TODO: DEMONSTRATE API
-+\`\`\`
-diff --git a/packages/my-es-cli/__tests__/cli.test.js b/packages/my-es-cli/__tests__/cli.test.js
-new file mode 100644
-index SHA..SHA
---- /dev/null
-+++ b/packages/my-es-cli/__tests__/cli.test.js
-@@ -0,0 +1,6 @@
-+import cli from '../src/cli';
-+
-+describe('my-es-cli cli', () => {
-+  // const argv = cli(cwd).parse(['args']);
-+  it('needs tests');
-+});
-diff --git a/packages/my-es-cli/__tests__/my-es-cli.test.js b/packages/my-es-cli/__tests__/my-es-cli.test.js
-new file mode 100644
-index SHA..SHA
---- /dev/null
-+++ b/packages/my-es-cli/__tests__/my-es-cli.test.js
-@@ -0,0 +1,5 @@
-+import myEsCli from '../src/my-es-cli';
-+
-+describe('my-es-cli', () => {
-+    it('needs tests');
-+});
-diff --git a/packages/my-es-cli/bin/my-es-cli b/packages/my-es-cli/bin/my-es-cli
-new file mode 100755
-index SHA..SHA
---- /dev/null
-+++ b/packages/my-es-cli/bin/my-es-cli
-@@ -0,0 +1,6 @@
-+#!/usr/bin/env node
-+
-+'use strict';
-+
-+// eslint-disable-next-line no-unused-expressions
-+require('../dist/cli').default().parse(process.argv.slice(2));
-diff --git a/packages/my-es-cli/package.json b/packages/my-es-cli/package.json
-new file mode 100644
-index SHA..SHA
---- /dev/null
-+++ b/packages/my-es-cli/package.json
-@@ -0,0 +1,35 @@
-+{
-+  "name": "my-es-cli",
-+  "version": "1.2.3",
-+  "description": "Now I’m the model of a modern major general / The venerated Virginian veteran whose men are all / Lining up, to put me up on a pedestal / Writin’ letters to relatives / Embellishin’ my elegance and eloquence / But the elephant is in the room / The truth is in ya face when ya hear the British cannons go / BOOM",
-+  "keywords": [],
-+  "author": "Tester McPerson <test@example.com> (http://example.com)",
-+  "license": "ISC",
-+  "main": "dist/my-es-cli.js",
-+  "module": "dist/my-es-cli.module.js",
-+  "bin": {
-+    "my-es-cli": "bin/my-es-cli"
-+  },
-+  "directories": {
-+    "lib": "dist",
-+    "test": "__tests__"
-+  },
-+  "files": [
-+    "bin",
-+    "dist"
-+  ],
-+  "repository": {
-+    "type": "git",
-+    "url": "git+https://github.com/test/test.git"
-+  },
-+  "scripts": {
-+    "test": "echo \\"Error: run tests from root\\" && exit 1"
-+  },
-+  "dependencies": {
-+    "yargs": "^1.0.0-mocked"
-+  },
-+  "bugs": {
-+    "url": "https://github.com/test/test/issues"
-+  },
-+  "homepage": "https://github.com/test/test#readme"
-+}
-diff --git a/packages/my-es-cli/src/cli.js b/packages/my-es-cli/src/cli.js
-new file mode 100644
-index SHA..SHA
---- /dev/null
-+++ b/packages/my-es-cli/src/cli.js
-@@ -0,0 +1,24 @@
-+import factory from 'yargs/yargs';
-+import myEsCli from './my-es-cli';
-+
-+export default cli;
-+
-+function cli(cwd) {
-+  const parser = factory(null, cwd);
-+
-+  parser.alias('h', 'help');
-+  parser.alias('v', 'version');
-+
-+  parser.usage(
-+    "$0",
-+    "TODO: description",
-+    yargs => {
-+      yargs.options({
-+        // TODO: options
-+      });
-+    },
-+    argv => myEsCli(argv)
-+  );
-+
-+  return parser;
-+}
-diff --git a/packages/my-es-cli/src/my-es-cli.js b/packages/my-es-cli/src/my-es-cli.js
-new file mode 100644
-index SHA..SHA
---- /dev/null
-+++ b/packages/my-es-cli/src/my-es-cli.js
-@@ -0,0 +1,3 @@
-+export default function myEsCli() {
-+    // TODO
-+}
+"[0;31m------ [0m[0;1mpackages/my-es-cli/README.md .[0m
+[0;32m++++++ [0m[0;1mpackages/my-es-cli/README.md 100644[0m
+[0;100;30m@|[0m[0;1m-1,0 +1,13[0m ============================================================
+[0;42;30m+|[0m[0;32m# \`my-es-cli\`[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32m> TODO: description[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32m## Usage[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32m\`\`\`[0m
+[0;42;30m+|[0m[0;32mnpm -g i my-es-cli[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32mmy-es-cli --help[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32m// TODO: DEMONSTRATE API[0m
+[0;42;30m+|[0m[0;32m\`\`\`[0m
+[0;31m------ [0m[0;1mpackages/my-es-cli/__tests__/cli.test.js .[0m
+[0;32m++++++ [0m[0;1mpackages/my-es-cli/__tests__/cli.test.js 100644[0m
+[0;100;30m@|[0m[0;1m-1,0 +1,6[0m ============================================================
+[0;42;30m+|[0m[0;32mimport cli from '../src/cli';[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32mdescribe('my-es-cli cli', () => {[0m
+[0;42;30m+|[0m[0;32m  // const argv = cli(cwd).parse(['args']);[0m
+[0;42;30m+|[0m[0;32m  it('needs tests');[0m
+[0;42;30m+|[0m[0;32m});[0m
+[0;31m------ [0m[0;1mpackages/my-es-cli/__tests__/my-es-cli.test.js .[0m
+[0;32m++++++ [0m[0;1mpackages/my-es-cli/__tests__/my-es-cli.test.js 100644[0m
+[0;100;30m@|[0m[0;1m-1,0 +1,5[0m ============================================================
+[0;42;30m+|[0m[0;32mimport myEsCli from '../src/my-es-cli';[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32mdescribe('my-es-cli', () => {[0m
+[0;42;30m+|[0m[0;32m    it('needs tests');[0m
+[0;42;30m+|[0m[0;32m});[0m
+[0;31m------ [0m[0;1mpackages/my-es-cli/bin/my-es-cli .[0m
+[0;32m++++++ [0m[0;1mpackages/my-es-cli/bin/my-es-cli 100755[0m
+[0;100;30m@|[0m[0;1m-1,0 +1,6[0m ============================================================
+[0;42;30m+|[0m[0;32m#!/usr/bin/env node[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32m'use strict';[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32m// eslint-disable-next-line no-unused-expressions[0m
+[0;42;30m+|[0m[0;32mrequire('../dist/cli').default().parse(process.argv.slice(2));[0m
+[0;31m------ [0m[0;1mpackages/my-es-cli/package.json .[0m
+[0;32m++++++ [0m[0;1mpackages/my-es-cli/package.json 100644[0m
+[0;100;30m@|[0m[0;1m-1,0 +1,35[0m ============================================================
+[0;42;30m+|[0m[0;32m{[0m
+[0;42;30m+|[0m[0;32m  \\"name\\": \\"my-es-cli\\",[0m
+[0;42;30m+|[0m[0;32m  \\"version\\": \\"1.2.3\\",[0m
+[0;42;30m+|[0m[0;32m  \\"description\\": \\"Now I’m the model of a modern major general / The venerated Virginian veteran whose men are all / Lining up, to put me up on a pedestal / Writin’ letters to relatives / Embellishin’ my elegance and eloquence / But the elephant is in the room / The truth is in ya face when ya hear the British cannons go / BOOM\\",[0m
+[0;42;30m+|[0m[0;32m  \\"keywords\\": [],[0m
+[0;42;30m+|[0m[0;32m  \\"author\\": \\"Tester McPerson <test@example.com> (http://example.com)\\",[0m
+[0;42;30m+|[0m[0;32m  \\"license\\": \\"ISC\\",[0m
+[0;42;30m+|[0m[0;32m  \\"main\\": \\"dist/my-es-cli.js\\",[0m
+[0;42;30m+|[0m[0;32m  \\"module\\": \\"dist/my-es-cli.module.js\\",[0m
+[0;42;30m+|[0m[0;32m  \\"bin\\": {[0m
+[0;42;30m+|[0m[0;32m    \\"my-es-cli\\": \\"bin/my-es-cli\\"[0m
+[0;42;30m+|[0m[0;32m  },[0m
+[0;42;30m+|[0m[0;32m  \\"directories\\": {[0m
+[0;42;30m+|[0m[0;32m    \\"lib\\": \\"dist\\",[0m
+[0;42;30m+|[0m[0;32m    \\"test\\": \\"__tests__\\"[0m
+[0;42;30m+|[0m[0;32m  },[0m
+[0;42;30m+|[0m[0;32m  \\"files\\": [[0m
+[0;42;30m+|[0m[0;32m    \\"bin\\",[0m
+[0;42;30m+|[0m[0;32m    \\"dist\\"[0m
+[0;42;30m+|[0m[0;32m  ],[0m
+[0;42;30m+|[0m[0;32m  \\"repository\\": {[0m
+[0;42;30m+|[0m[0;32m    \\"type\\": \\"git\\",[0m
+[0;42;30m+|[0m[0;32m    \\"url\\": \\"git+https://github.com/test/test.git\\"[0m
+[0;42;30m+|[0m[0;32m  },[0m
+[0;42;30m+|[0m[0;32m  \\"scripts\\": {[0m
+[0;42;30m+|[0m[0;32m    \\"test\\": \\"echo \\\\\\"Error: run tests from root\\\\\\" && exit 1\\"[0m
+[0;42;30m+|[0m[0;32m  },[0m
+[0;42;30m+|[0m[0;32m  \\"dependencies\\": {[0m
+[0;42;30m+|[0m[0;32m    \\"yargs\\": \\"^1.0.0-mocked\\"[0m
+[0;42;30m+|[0m[0;32m  },[0m
+[0;42;30m+|[0m[0;32m  \\"bugs\\": {[0m
+[0;42;30m+|[0m[0;32m    \\"url\\": \\"https://github.com/test/test/issues\\"[0m
+[0;42;30m+|[0m[0;32m  },[0m
+[0;42;30m+|[0m[0;32m  \\"homepage\\": \\"https://github.com/test/test#readme\\"[0m
+[0;42;30m+|[0m[0;32m}[0m
+[0;31m------ [0m[0;1mpackages/my-es-cli/src/cli.js .[0m
+[0;32m++++++ [0m[0;1mpackages/my-es-cli/src/cli.js 100644[0m
+[0;100;30m@|[0m[0;1m-1,0 +1,24[0m ============================================================
+[0;42;30m+|[0m[0;32mimport factory from 'yargs/yargs';[0m
+[0;42;30m+|[0m[0;32mimport myEsCli from './my-es-cli';[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32mexport default cli;[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32mfunction cli(cwd) {[0m
+[0;42;30m+|[0m[0;32m  const parser = factory(null, cwd);[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32m  parser.alias('h', 'help');[0m
+[0;42;30m+|[0m[0;32m  parser.alias('v', 'version');[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32m  parser.usage([0m
+[0;42;30m+|[0m[0;32m    \\"$0\\",[0m
+[0;42;30m+|[0m[0;32m    \\"TODO: description\\",[0m
+[0;42;30m+|[0m[0;32m    yargs => {[0m
+[0;42;30m+|[0m[0;32m      yargs.options({[0m
+[0;42;30m+|[0m[0;32m        // TODO: options[0m
+[0;42;30m+|[0m[0;32m      });[0m
+[0;42;30m+|[0m[0;32m    },[0m
+[0;42;30m+|[0m[0;32m    argv => myEsCli(argv)[0m
+[0;42;30m+|[0m[0;32m  );[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32m  return parser;[0m
+[0;42;30m+|[0m[0;32m}[0m
+[0;31m------ [0m[0;1mpackages/my-es-cli/src/my-es-cli.js .[0m
+[0;32m++++++ [0m[0;1mpackages/my-es-cli/src/my-es-cli.js 100644[0m
+[0;100;30m@|[0m[0;1m-1,0 +1,3[0m ============================================================
+[0;42;30m+|[0m[0;32mexport default function myEsCli() {[0m
+[0;42;30m+|[0m[0;32m    // TODO[0m
+[0;42;30m+|[0m[0;32m}[0m"
 `;
 
 exports[`CreateCommand creates a stub package 1`] = `
-diff --git a/packages/my-pkg/README.md b/packages/my-pkg/README.md
-new file mode 100644
-index SHA..SHA
---- /dev/null
-+++ b/packages/my-pkg/README.md
-@@ -0,0 +1,11 @@
-+# \`my-pkg\`
-+
-+> TODO: description
-+
-+## Usage
-+
-+\`\`\`
-+const myPkg = require('my-pkg');
-+
-+// TODO: DEMONSTRATE API
-+\`\`\`
-diff --git a/packages/my-pkg/__tests__/my-pkg.test.js b/packages/my-pkg/__tests__/my-pkg.test.js
-new file mode 100644
-index SHA..SHA
---- /dev/null
-+++ b/packages/my-pkg/__tests__/my-pkg.test.js
-@@ -0,0 +1,7 @@
-+'use strict';
-+
-+const myPkg = require('..');
-+
-+describe('my-pkg', () => {
-+    it('needs tests');
-+});
-diff --git a/packages/my-pkg/lib/my-pkg.js b/packages/my-pkg/lib/my-pkg.js
-new file mode 100644
-index SHA..SHA
---- /dev/null
-+++ b/packages/my-pkg/lib/my-pkg.js
-@@ -0,0 +1,7 @@
-+'use strict';
-+
-+module.exports = myPkg;
-+
-+function myPkg() {
-+    // TODO
-+}
-diff --git a/packages/my-pkg/package.json b/packages/my-pkg/package.json
-new file mode 100644
-index SHA..SHA
---- /dev/null
-+++ b/packages/my-pkg/package.json
-@@ -0,0 +1,27 @@
-+{
-+  "name": "my-pkg",
-+  "version": "1.2.3",
-+  "description": "Now I’m the model of a modern major general / The venerated Virginian veteran whose men are all / Lining up, to put me up on a pedestal / Writin’ letters to relatives / Embellishin’ my elegance and eloquence / But the elephant is in the room / The truth is in ya face when ya hear the British cannons go / BOOM",
-+  "keywords": [],
-+  "author": "Tester McPerson <test@example.com> (http://example.com)",
-+  "license": "ISC",
-+  "main": "lib/my-pkg.js",
-+  "directories": {
-+    "lib": "lib",
-+    "test": "__tests__"
-+  },
-+  "files": [
-+    "lib"
-+  ],
-+  "repository": {
-+    "type": "git",
-+    "url": "git+https://github.com/test/test.git"
-+  },
-+  "scripts": {
-+    "test": "echo \\"Error: run tests from root\\" && exit 1"
-+  },
-+  "bugs": {
-+    "url": "https://github.com/test/test/issues"
-+  },
-+  "homepage": "https://github.com/test/test#readme"
-+}
+"[0;31m------ [0m[0;1mpackages/my-pkg/README.md .[0m
+[0;32m++++++ [0m[0;1mpackages/my-pkg/README.md 100644[0m
+[0;100;30m@|[0m[0;1m-1,0 +1,11[0m ============================================================
+[0;42;30m+|[0m[0;32m# \`my-pkg\`[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32m> TODO: description[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32m## Usage[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32m\`\`\`[0m
+[0;42;30m+|[0m[0;32mconst myPkg = require('my-pkg');[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32m// TODO: DEMONSTRATE API[0m
+[0;42;30m+|[0m[0;32m\`\`\`[0m
+[0;31m------ [0m[0;1mpackages/my-pkg/__tests__/my-pkg.test.js .[0m
+[0;32m++++++ [0m[0;1mpackages/my-pkg/__tests__/my-pkg.test.js 100644[0m
+[0;100;30m@|[0m[0;1m-1,0 +1,7[0m ============================================================
+[0;42;30m+|[0m[0;32m'use strict';[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32mconst myPkg = require('..');[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32mdescribe('my-pkg', () => {[0m
+[0;42;30m+|[0m[0;32m    it('needs tests');[0m
+[0;42;30m+|[0m[0;32m});[0m
+[0;31m------ [0m[0;1mpackages/my-pkg/lib/my-pkg.js .[0m
+[0;32m++++++ [0m[0;1mpackages/my-pkg/lib/my-pkg.js 100644[0m
+[0;100;30m@|[0m[0;1m-1,0 +1,7[0m ============================================================
+[0;42;30m+|[0m[0;32m'use strict';[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32mmodule.exports = myPkg;[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32mfunction myPkg() {[0m
+[0;42;30m+|[0m[0;32m    // TODO[0m
+[0;42;30m+|[0m[0;32m}[0m
+[0;31m------ [0m[0;1mpackages/my-pkg/package.json .[0m
+[0;32m++++++ [0m[0;1mpackages/my-pkg/package.json 100644[0m
+[0;100;30m@|[0m[0;1m-1,0 +1,27[0m ============================================================
+[0;42;30m+|[0m[0;32m{[0m
+[0;42;30m+|[0m[0;32m  \\"name\\": \\"my-pkg\\",[0m
+[0;42;30m+|[0m[0;32m  \\"version\\": \\"1.2.3\\",[0m
+[0;42;30m+|[0m[0;32m  \\"description\\": \\"Now I’m the model of a modern major general / The venerated Virginian veteran whose men are all / Lining up, to put me up on a pedestal / Writin’ letters to relatives / Embellishin’ my elegance and eloquence / But the elephant is in the room / The truth is in ya face when ya hear the British cannons go / BOOM\\",[0m
+[0;42;30m+|[0m[0;32m  \\"keywords\\": [],[0m
+[0;42;30m+|[0m[0;32m  \\"author\\": \\"Tester McPerson <test@example.com> (http://example.com)\\",[0m
+[0;42;30m+|[0m[0;32m  \\"license\\": \\"ISC\\",[0m
+[0;42;30m+|[0m[0;32m  \\"main\\": \\"lib/my-pkg.js\\",[0m
+[0;42;30m+|[0m[0;32m  \\"directories\\": {[0m
+[0;42;30m+|[0m[0;32m    \\"lib\\": \\"lib\\",[0m
+[0;42;30m+|[0m[0;32m    \\"test\\": \\"__tests__\\"[0m
+[0;42;30m+|[0m[0;32m  },[0m
+[0;42;30m+|[0m[0;32m  \\"files\\": [[0m
+[0;42;30m+|[0m[0;32m    \\"lib\\"[0m
+[0;42;30m+|[0m[0;32m  ],[0m
+[0;42;30m+|[0m[0;32m  \\"repository\\": {[0m
+[0;42;30m+|[0m[0;32m    \\"type\\": \\"git\\",[0m
+[0;42;30m+|[0m[0;32m    \\"url\\": \\"git+https://github.com/test/test.git\\"[0m
+[0;42;30m+|[0m[0;32m  },[0m
+[0;42;30m+|[0m[0;32m  \\"scripts\\": {[0m
+[0;42;30m+|[0m[0;32m    \\"test\\": \\"echo \\\\\\"Error: run tests from root\\\\\\" && exit 1\\"[0m
+[0;42;30m+|[0m[0;32m  },[0m
+[0;42;30m+|[0m[0;32m  \\"bugs\\": {[0m
+[0;42;30m+|[0m[0;32m    \\"url\\": \\"https://github.com/test/test/issues\\"[0m
+[0;42;30m+|[0m[0;32m  },[0m
+[0;42;30m+|[0m[0;32m  \\"homepage\\": \\"https://github.com/test/test#readme\\"[0m
+[0;42;30m+|[0m[0;32m}[0m"
 `;
 
 exports[`CreateCommand creates a stub package with transpiled output 1`] = `
-diff --git a/packages/my-pkg/README.md b/packages/my-pkg/README.md
-new file mode 100644
-index SHA..SHA
---- /dev/null
-+++ b/packages/my-pkg/README.md
-@@ -0,0 +1,11 @@
-+# \`my-pkg\`
-+
-+> TODO: description
-+
-+## Usage
-+
-+\`\`\`
-+import myPkg from 'my-pkg';
-+
-+// TODO: DEMONSTRATE API
-+\`\`\`
-diff --git a/packages/my-pkg/__tests__/my-pkg.test.js b/packages/my-pkg/__tests__/my-pkg.test.js
-new file mode 100644
-index SHA..SHA
---- /dev/null
-+++ b/packages/my-pkg/__tests__/my-pkg.test.js
-@@ -0,0 +1,5 @@
-+import myPkg from '../src/my-pkg';
-+
-+describe('my-pkg', () => {
-+    it('needs tests');
-+});
-diff --git a/packages/my-pkg/package.json b/packages/my-pkg/package.json
-new file mode 100644
-index SHA..SHA
---- /dev/null
-+++ b/packages/my-pkg/package.json
-@@ -0,0 +1,28 @@
-+{
-+  "name": "my-pkg",
-+  "version": "1.2.3",
-+  "description": "Now I’m the model of a modern major general / The venerated Virginian veteran whose men are all / Lining up, to put me up on a pedestal / Writin’ letters to relatives / Embellishin’ my elegance and eloquence / But the elephant is in the room / The truth is in ya face when ya hear the British cannons go / BOOM",
-+  "keywords": [],
-+  "author": "Tester McPerson <test@example.com> (http://example.com)",
-+  "license": "ISC",
-+  "main": "dist/my-pkg.js",
-+  "module": "dist/my-pkg.module.js",
-+  "directories": {
-+    "lib": "dist",
-+    "test": "__tests__"
-+  },
-+  "files": [
-+    "dist"
-+  ],
-+  "repository": {
-+    "type": "git",
-+    "url": "git+https://github.com/test/test.git"
-+  },
-+  "scripts": {
-+    "test": "echo \\"Error: run tests from root\\" && exit 1"
-+  },
-+  "bugs": {
-+    "url": "https://github.com/test/test/issues"
-+  },
-+  "homepage": "https://github.com/test/test#readme"
-+}
-diff --git a/packages/my-pkg/src/my-pkg.js b/packages/my-pkg/src/my-pkg.js
-new file mode 100644
-index SHA..SHA
---- /dev/null
-+++ b/packages/my-pkg/src/my-pkg.js
-@@ -0,0 +1,3 @@
-+export default function myPkg() {
-+    // TODO
-+}
+"[0;31m------ [0m[0;1mpackages/my-pkg/README.md .[0m
+[0;32m++++++ [0m[0;1mpackages/my-pkg/README.md 100644[0m
+[0;100;30m@|[0m[0;1m-1,0 +1,11[0m ============================================================
+[0;42;30m+|[0m[0;32m# \`my-pkg\`[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32m> TODO: description[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32m## Usage[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32m\`\`\`[0m
+[0;42;30m+|[0m[0;32mimport myPkg from 'my-pkg';[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32m// TODO: DEMONSTRATE API[0m
+[0;42;30m+|[0m[0;32m\`\`\`[0m
+[0;31m------ [0m[0;1mpackages/my-pkg/__tests__/my-pkg.test.js .[0m
+[0;32m++++++ [0m[0;1mpackages/my-pkg/__tests__/my-pkg.test.js 100644[0m
+[0;100;30m@|[0m[0;1m-1,0 +1,5[0m ============================================================
+[0;42;30m+|[0m[0;32mimport myPkg from '../src/my-pkg';[0m
+[0;42;30m+|[0m[0;32m[0m
+[0;42;30m+|[0m[0;32mdescribe('my-pkg', () => {[0m
+[0;42;30m+|[0m[0;32m    it('needs tests');[0m
+[0;42;30m+|[0m[0;32m});[0m
+[0;31m------ [0m[0;1mpackages/my-pkg/package.json .[0m
+[0;32m++++++ [0m[0;1mpackages/my-pkg/package.json 100644[0m
+[0;100;30m@|[0m[0;1m-1,0 +1,28[0m ============================================================
+[0;42;30m+|[0m[0;32m{[0m
+[0;42;30m+|[0m[0;32m  \\"name\\": \\"my-pkg\\",[0m
+[0;42;30m+|[0m[0;32m  \\"version\\": \\"1.2.3\\",[0m
+[0;42;30m+|[0m[0;32m  \\"description\\": \\"Now I’m the model of a modern major general / The venerated Virginian veteran whose men are all / Lining up, to put me up on a pedestal / Writin’ letters to relatives / Embellishin’ my elegance and eloquence / But the elephant is in the room / The truth is in ya face when ya hear the British cannons go / BOOM\\",[0m
+[0;42;30m+|[0m[0;32m  \\"keywords\\": [],[0m
+[0;42;30m+|[0m[0;32m  \\"author\\": \\"Tester McPerson <test@example.com> (http://example.com)\\",[0m
+[0;42;30m+|[0m[0;32m  \\"license\\": \\"ISC\\",[0m
+[0;42;30m+|[0m[0;32m  \\"main\\": \\"dist/my-pkg.js\\",[0m
+[0;42;30m+|[0m[0;32m  \\"module\\": \\"dist/my-pkg.module.js\\",[0m
+[0;42;30m+|[0m[0;32m  \\"directories\\": {[0m
+[0;42;30m+|[0m[0;32m    \\"lib\\": \\"dist\\",[0m
+[0;42;30m+|[0m[0;32m    \\"test\\": \\"__tests__\\"[0m
+[0;42;30m+|[0m[0;32m  },[0m
+[0;42;30m+|[0m[0;32m  \\"files\\": [[0m
+[0;42;30m+|[0m[0;32m    \\"dist\\"[0m
+[0;42;30m+|[0m[0;32m  ],[0m
+[0;42;30m+|[0m[0;32m  \\"repository\\": {[0m
+[0;42;30m+|[0m[0;32m    \\"type\\": \\"git\\",[0m
+[0;42;30m+|[0m[0;32m    \\"url\\": \\"git+https://github.com/test/test.git\\"[0m
+[0;42;30m+|[0m[0;32m  },[0m
+[0;42;30m+|[0m[0;32m  \\"scripts\\": {[0m
+[0;42;30m+|[0m[0;32m    \\"test\\": \\"echo \\\\\\"Error: run tests from root\\\\\\" && exit 1\\"[0m
+[0;42;30m+|[0m[0;32m  },[0m
+[0;42;30m+|[0m[0;32m  \\"bugs\\": {[0m
+[0;42;30m+|[0m[0;32m    \\"url\\": \\"https://github.com/test/test/issues\\"[0m
+[0;42;30m+|[0m[0;32m  },[0m
+[0;42;30m+|[0m[0;32m  \\"homepage\\": \\"https://github.com/test/test#readme\\"[0m
+[0;42;30m+|[0m[0;32m}[0m
+[0;31m------ [0m[0;1mpackages/my-pkg/src/my-pkg.js .[0m
+[0;32m++++++ [0m[0;1mpackages/my-pkg/src/my-pkg.js 100644[0m
+[0;100;30m@|[0m[0;1m-1,0 +1,3[0m ============================================================
+[0;42;30m+|[0m[0;32mexport default function myPkg() {[0m
+[0;42;30m+|[0m[0;32m    // TODO[0m
+[0;42;30m+|[0m[0;32m}[0m"
 `;
