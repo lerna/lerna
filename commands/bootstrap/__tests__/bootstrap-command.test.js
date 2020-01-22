@@ -148,7 +148,7 @@ describe("BootstrapCommand", () => {
         expect.objectContaining({
           name: "basic",
         }),
-        ["bar@^2.0.0", "foo@^1.0.0", "@test/package-1@^0.0.0"],
+        ["bar@^2.0.0", "foo@^1.0.0"],
         {
           registry: undefined,
           npmClient: "npm",
@@ -159,11 +159,22 @@ describe("BootstrapCommand", () => {
       );
 
       // foo@0.1.2 differs from the more common foo@^1.0.0
-      expect(npmInstall.dependencies).toHaveBeenLastCalledWith(
+      expect(npmInstall.dependencies).toHaveBeenCalledWith(
         expect.objectContaining({
           name: "package-3",
         }),
         ["foo@0.1.12"],
+        expect.objectContaining({
+          npmGlobalStyle: true,
+        })
+      );
+
+      // package-1@^0.0.0 differs from the local package-1@^1.0.0
+      expect(npmInstall.dependencies).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          name: "package-4",
+        }),
+        ["@test/package-1@^0.0.0"],
         expect.objectContaining({
           npmGlobalStyle: true,
         })

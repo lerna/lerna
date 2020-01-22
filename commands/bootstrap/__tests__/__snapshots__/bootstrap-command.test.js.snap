@@ -43,15 +43,15 @@ Object {
   "ROOT": Array [
     "external@^2.0.0",
     "other-external@^15.0.0",
-    "even-more-externals@^3.0.0",
-    "package-2@^0.6.7",
-    "package-1@^0.0.0",
   ],
   "packages/package-1": Array [
     "external@^1.0.0",
   ],
   "packages/package-3": Array [
     "external@^1.0.0",
+    "even-more-externals@^3.0.0",
+    "package-2@^0.6.7",
+    "package-1@^0.0.0",
   ],
 }
 `;
@@ -133,10 +133,12 @@ Object {
   "ROOT": Array [
     "bar@^2.0.0",
     "foo@^1.0.0",
-    "@test/package-1@^0.0.0",
   ],
   "packages/package-3": Array [
     "foo@0.1.12",
+  ],
+  "packages/package-4": Array [
+    "@test/package-1@^0.0.0",
   ],
 }
 `;
@@ -146,7 +148,6 @@ Array [
   "packages/package-1/node_modules/bar",
   "packages/package-1/node_modules/foo",
   "packages/package-2/node_modules/foo",
-  "packages/package-4/node_modules/@test/package-1",
 ]
 `;
 
@@ -413,10 +414,12 @@ exports[`BootstrapCommand with multiple package locations hoists appropriately 1
 Object {
   "ROOT": Array [
     "foo@^1.0.0",
-    "@test/package-1@^0.0.0",
   ],
   "package-3": Array [
     "foo@0.1.12",
+  ],
+  "packages/package-4": Array [
+    "@test/package-1@^0.0.0",
   ],
 }
 `;
