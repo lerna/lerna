@@ -514,6 +514,7 @@ describe("BootstrapCommand", () => {
 
       expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
       expect(symlinkedDirectories(testDir)).toMatchSnapshot();
+      expect(removedDirectories(testDir)).toMatchSnapshot();
     });
   });
 
@@ -533,6 +534,7 @@ describe("BootstrapCommand", () => {
 
       expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
       expect(symlinkedDirectories(testDir)).toMatchSnapshot();
+      expect(removedDirectories(testDir)).toMatchSnapshot();
     });
   });
 

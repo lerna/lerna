@@ -3,13 +3,19 @@
 exports[`BootstrapCommand with at least one external dependency to install hoists appropriately 1`] = `
 Object {
   "ROOT": Array [
-    "external-1@^1.0.0",
     "external-2@^1.0.0",
   ],
 }
 `;
 
 exports[`BootstrapCommand with at least one external dependency to install hoists appropriately 2`] = `Array []`;
+
+exports[`BootstrapCommand with at least one external dependency to install hoists appropriately 3`] = `
+Array [
+  "packages/package-1/node_modules/external-2",
+  "packages/package-2/node_modules/external-2",
+]
+`;
 
 exports[`BootstrapCommand with at least one external dependency to install should install all dependencies 1`] = `
 Object {
@@ -35,6 +41,13 @@ Array [
     "dest": "packages/package-2/node_modules/package-1",
     "type": "junction",
   },
+]
+`;
+
+exports[`BootstrapCommand with external dependencies that have already been installed hoists appropriately 3`] = `
+Array [
+  "packages/package-2/node_modules/external",
+  "packages/package-3/node_modules/external",
 ]
 `;
 
