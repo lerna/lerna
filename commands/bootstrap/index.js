@@ -367,47 +367,54 @@ class BootstrapCommand extends Command {
     for (const [externalName, externalDependents] of depsToInstall) {
       let rootVersion;
 
-      if (this.hoisting && isHoistedPackage(externalName, this.hoisting)) {
-        const commonVersion = Array.from(externalDependents.keys()).reduce((a, b) =>
-          externalDependents.get(a).size > externalDependents.get(b).size ? a : b
-        );
-
+      if (this.hoisting) {
         // Get the version required by the repo root (if any).
-        // If the root doesn't have a dependency on this package then we'll
-        // install the most common dependency there.
-        rootVersion = rootExternalVersions.get(externalName) || commonVersion;
+        rootVersion = rootExternalVersions.get(externalName);
 
-        if (rootVersion !== commonVersion) {
-          this.logger.warn(
-            "EHOIST_ROOT_VERSION",
-            `The repository root depends on ${externalName}@${rootVersion}, ` +
-              `which differs from the more common ${externalName}@${commonVersion}.`
-          );
-          if (this.options.strict) {
-            strictExitOnWarning = true;
+        const [commonVersion, commonSet] = Array.from(
+          externalDependents
+        ).reduce(([aKey, aVal], [bKey, bVal]) => (aVal.size > bVal.size ? [aKey, aVal] : [bKey, bVal]));
+
+        const shouldExistAtRoot =
+          (rootVersion || commonSet.size > 1) && isHoistedPackage(externalName, this.hoisting);
+
+        if (shouldExistAtRoot) {
+          // If the root doesn't have a dependency on this package then we'll
+          // install the most common dependency there.
+          rootVersion = rootVersion || commonVersion;
+
+          if (rootVersion !== commonVersion) {
+            this.logger.warn(
+              "EHOIST_ROOT_VERSION",
+              `The repository root depends on ${externalName}@${rootVersion}, ` +
+                `which differs from the more common ${externalName}@${commonVersion}.`
+            );
+            if (this.options.strict) {
+              strictExitOnWarning = true;
+            }
           }
+
+          const dependents = Array.from(externalDependents.get(rootVersion)).map(
+            leafName => this.targetGraph.get(leafName).pkg
+          );
+
+          // remove collection so leaves don't repeat it
+          externalDependents.delete(rootVersion);
+
+          // Install the best version we can in the repo root.
+          // Even if it's already installed there we still need to make sure any
+          // binaries are linked to the packages that depend on them.
+          rootActions.push(() =>
+            hasDependencyInstalled(rootPkg, externalName, rootVersion).then(isSatisfied => {
+              rootSet.add({
+                name: externalName,
+                dependents,
+                dependency: `${externalName}@${rootVersion}`,
+                isSatisfied,
+              });
+            })
+          );
         }
-
-        const dependents = Array.from(externalDependents.get(rootVersion)).map(
-          leafName => this.targetGraph.get(leafName).pkg
-        );
-
-        // remove collection so leaves don't repeat it
-        externalDependents.delete(rootVersion);
-
-        // Install the best version we can in the repo root.
-        // Even if it's already installed there we still need to make sure any
-        // binaries are linked to the packages that depend on them.
-        rootActions.push(() =>
-          hasDependencyInstalled(rootPkg, externalName, rootVersion).then(isSatisfied => {
-            rootSet.add({
-              name: externalName,
-              dependents,
-              dependency: `${externalName}@${rootVersion}`,
-              isSatisfied,
-            });
-          })
-        );
       }
 
       // Add less common versions to package installs.
