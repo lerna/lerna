@@ -129,6 +129,39 @@ describe("ImportCommand", () => {
         })
       ));
 
+    it("supports filepaths that have non-ascii char within the external repo", async () =>
+      Promise.all(
+        // running the same test with and without --flatten
+        [true, false].map(async shouldFlatten => {
+          const [testDir, externalDir] = await Promise.all([
+            initFixture("basic"),
+            initFixture("files-with-non-ascii-char", "Init external commit"),
+          ]);
+          const newPackagePath = path.join(testDir, "packages", path.basename(externalDir));
+
+          await fs.copy(path.join(externalDir, "檔案"), path.join(externalDir, "檔案-copy"));
+          await gitAdd(externalDir, "檔案-copy");
+          await gitCommit(externalDir, "copy");
+
+          await fs.move(path.join(externalDir, "檔案"), path.join(externalDir, "檔案-rename"));
+          await gitAdd(externalDir, "檔案", "檔案-rename");
+          await gitCommit(externalDir, "rename");
+
+          const copyFilePath = path.join(newPackagePath, "檔案-copy");
+          const renameFilePath = path.join(newPackagePath, "檔案-rename");
+
+          if (shouldFlatten) {
+            await lernaImport(testDir)(externalDir, "--flatten");
+          } else {
+            await lernaImport(testDir)(externalDir);
+          }
+
+          expect(await lastCommitInDir(testDir)).toBe("rename");
+          expect(await pathExists(copyFilePath)).toBe(true);
+          expect(await pathExists(renameFilePath)).toBe(true);
+        })
+      ));
+
     it("skips empty patches with --flatten", async () => {
       const [testDir, externalDir] = await initBasicFixtures();
       const filePath = path.join(externalDir, "file.txt");

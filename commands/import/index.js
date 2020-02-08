@@ -189,11 +189,11 @@ class ImportCommand extends Command {
     // to all affected files.  This moves the git history for the entire
     // external repository into the package subdirectory, commit by commit.
     return patch
-      .replace(/^([-+]{3} COMPARE_[AB])/gm, replacement)
-      .replace(/^(diff --git COMPARE_A)/gm, replacement)
-      .replace(/^(diff --git (?! COMPARE_B\/).+ COMPARE_B)/gm, replacement)
-      .replace(/^(copy (from|to)) /gm, `$1 ${formattedTarget}/`)
-      .replace(/^(rename (from|to)) /gm, `$1 ${formattedTarget}/`);
+      .replace(/^([-+]{3} "?COMPARE_[AB])/gm, replacement)
+      .replace(/^(diff --git "?COMPARE_A)/gm, replacement)
+      .replace(/^(diff --git (?! "?COMPARE_B\/).+ "?COMPARE_B)/gm, replacement)
+      .replace(/^(copy (from|to)) ("?)/gm, `$1 $3${formattedTarget}/`)
+      .replace(/^(rename (from|to)) ("?)/gm, `$1 $3${formattedTarget}/`);
   }
 
   getGitUserFromSha(sha) {
