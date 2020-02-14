@@ -7,6 +7,7 @@ const os = require("os");
 const path = require("path");
 const loadJsonFile = require("load-json-file");
 const writePkg = require("write-pkg");
+const npa = require("npm-package-arg");
 
 // file under test
 const { Package } = require("..");
@@ -266,6 +267,37 @@ describe("Package", () => {
           woo: "hoo",
         })
       );
+    });
+  });
+
+  describe(".updateLocalDependency()", () => {
+    it("works with workspace: protocols", () => {
+      const pkg = factory({
+        dependencies: {
+          a: "workspace:^1.0.0",
+          b: "workspace:^1.0.0",
+          c: "workspace:./foo",
+          d: "file:./foo",
+          e: "^1.0.0",
+        },
+      });
+
+      const resolved = npa.resolve("a", "^1.0.0", ".");
+      resolved.explicitWorkspace = true;
+
+      pkg.updateLocalDependency(resolved, "2.0.0", "^");
+
+      expect(pkg.toJSON()).toMatchInlineSnapshot(`
+        Object {
+          "dependencies": Object {
+            "a": "workspace:^2.0.0",
+            "b": "workspace:^1.0.0",
+            "c": "workspace:./foo",
+            "d": "file:./foo",
+            "e": "^1.0.0",
+          },
+        }
+      `);
     });
   });
 });
