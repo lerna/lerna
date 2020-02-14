@@ -14,6 +14,7 @@ const { reportCycles } = require("./lib/report-cycles");
  *    Pass "dependencies" to create a graph of only dependencies,
  *    excluding the devDependencies that would normally be included.
  * @param {Boolean} forceLocal Force all local dependencies to be linked.
+ * @param {String} localDependencies Force all local dependencies to be linked.
  */
 class PackageGraph extends Map {
   constructor(packages, graphType = "allDependencies", forceLocal) {
@@ -57,8 +58,17 @@ class PackageGraph extends Map {
         // Yarn decided to ignore https://github.com/npm/npm/pull/15900 and implemented "link:"
         // As they apparently have no intention of being compatible, we have to do it for them.
         // @see https://github.com/yarnpkg/yarn/issues/4212
-        const spec = graphDependencies[depName].replace(/^link:/, "file:");
+        let spec = graphDependencies[depName].replace(/^link:/, "file:");
+
+        // npa doesn't support the explicit workspace: protocol, supported by
+        // pnpm and Yarn.
+        const explicitWorkspace = /^workspace:/.test(spec);
+        if (explicitWorkspace) {
+          spec = spec.replace(/^workspace:/, "");
+        }
+
         const resolved = npa.resolve(depName, spec, currentNode.location);
+        resolved.explicitWorkspace = explicitWorkspace;
 
         if (!depNode) {
           // it's an external dependency, store the resolution and bail
