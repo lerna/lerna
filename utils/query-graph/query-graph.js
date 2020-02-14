@@ -5,6 +5,7 @@ const { PackageGraph } = require("@lerna/package-graph");
 /**
  * @typedef {object} QueryGraphConfig
  * @property {'allDependencies'|'dependencies'} [graphType] "dependencies" excludes devDependencies from graph
+ * @property {'auto'|'force'|'explicit'} [localDependencies] Treatment of local sibling dependencies, default "auto"
  * @property {boolean} [rejectCycles] Whether or not to reject dependency cycles
  */
 
@@ -43,9 +44,9 @@ class QueryGraph {
    * @param {import("@lerna/package").Package[]} packages An array of Packages to build the graph out of
    * @param {QueryGraphConfig} [options]
    */
-  constructor(packages, { graphType = "allDependencies", rejectCycles } = {}) {
+  constructor(packages, { graphType = "allDependencies", localDependencies = "auto", rejectCycles } = {}) {
     // Create dependency graph
-    this.graph = new PackageGraph(packages, graphType);
+    this.graph = new PackageGraph(packages, graphType, localDependencies);
 
     // Evaluate cycles
     this.cycles = this.graph.collapseCycles(rejectCycles);
