@@ -13,11 +13,19 @@ const { reportCycles } = require("./lib/report-cycles");
  * @param {String} graphType ("allDependencies" or "dependencies")
  *    Pass "dependencies" to create a graph of only dependencies,
  *    excluding the devDependencies that would normally be included.
- * @param {Boolean} forceLocal Force all local dependencies to be linked.
  * @param {String} localDependencies Force all local dependencies to be linked.
  */
 class PackageGraph extends Map {
-  constructor(packages, graphType = "allDependencies", forceLocal) {
+  constructor(
+    packages,
+    graphType = "allDependencies",
+    localDependencies = "auto" // | "force" | "explicit"
+  ) {
+    // For backward compatibility
+    if (localDependencies === true || localDependencies === "forceLocal") {
+      localDependencies = "force"; // eslint-disable-line
+    }
+
     super(packages.map(pkg => [pkg.name, new PackageGraphNode(pkg)]));
 
     if (packages.length !== this.size) {
@@ -75,8 +83,13 @@ class PackageGraph extends Map {
           return currentNode.externalDependencies.set(depName, resolved);
         }
 
-        if (forceLocal || resolved.fetchSpec === depNode.location || depNode.satisfies(resolved)) {
-          // a local file: specifier OR a matching semver
+        if (
+          explicitWorkspace ||
+          localDependencies === "force" ||
+          resolved.fetchSpec === depNode.location ||
+          (localDependencies !== "explicit" && depNode.satisfies(resolved))
+        ) {
+          // a local file: specifier, a matching semver or a workspace: version
           currentNode.localDependencies.set(depName, resolved);
           depNode.localDependents.set(currentName, currentNode);
         } else {
