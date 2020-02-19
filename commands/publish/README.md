@@ -58,6 +58,7 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 - [`--no-git-reset`](#--no-git-reset)
 - [`--no-verify-access`](#--no-verify-access)
 - [`--otp`](#--otp)
+- [`--otp-rate-limit-delay`](#--otp-rate-limit-delay)
 - [`--preid`](#--preid)
 - [`--pre-dist-tag <tag>`](#--pre-dist-tag-tag)
 - [`--registry <url>`](#--registry-url)
@@ -196,6 +197,18 @@ lerna publish --otp 123456
 ```
 
 > Please keep in mind that one-time passwords expire within 30 seconds of their generation. If it expires during publish operations, a prompt will request a refreshed value before continuing.
+
+### `--otp-rate-limit-delay`
+
+When publishing packages that require two-factor authentication and using [one-time password](https://docs.npmjs.com/about-two-factor-authentication) you may be facing with rate limitations. This parameter allows you to customize the delay to wait before requesting a new one-time password and resuming your process.
+
+The parameter is expressed in minutes. If negative no wait will be enforced and rate limitations will cause the publish to fail.
+
+Its default value is `-1` (disabled).
+
+```sh
+lerna publish --otp 123456 --otp-rate-limit-delay 5
+```
 
 ### `--preid`
 

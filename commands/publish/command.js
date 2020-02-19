@@ -68,6 +68,13 @@ exports.builder = yargs => {
       type: "string",
       requiresArg: true,
     },
+    "otp-rate-limit-delay": {
+      describe:
+        "Specify the amount of minutes to wait before retrying with another otp when previous was rate limited. If strictly negative will be disabled",
+      type: "number",
+      default: -1,
+      requiresArg: true,
+    },
     registry: {
       describe: "Use the specified registry for all npm client operations.",
       type: "string",

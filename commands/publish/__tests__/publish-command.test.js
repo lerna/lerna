@@ -204,7 +204,9 @@ Map {
   });
 
   describe("--otp", () => {
-    otplease.getOneTimePassword.mockImplementation(() => Promise.resolve("654321"));
+    beforeEach(() => {
+      otplease.getOneTimePassword.mockImplementation(() => Promise.resolve("654321"));
+    });
 
     it("passes one-time password to npm commands", async () => {
       const testDir = await initFixture("normal");
@@ -238,6 +240,24 @@ Map {
         expect.objectContaining({ otp: "654321" })
       );
       expect(otplease.getOneTimePassword).toHaveBeenLastCalledWith("Enter OTP:");
+    });
+
+    it("Passes otp delay if specified.", async () => {
+      const testDir = await initFixture("normal");
+
+      const otp = "123456";
+      npmPublish.mockImplementation(() => Promise.resolve());
+
+      getTwoFactorAuthRequired.mockResolvedValueOnce(true);
+
+      await lernaPublish(testDir)("--otp", otp, "--otp-rate-limit-delay", 5e-5);
+
+      expect(npmPublish).toHaveBeenCalledWith(
+        expect.objectContaining({ name: "package-1" }),
+        "/TEMP_DIR/package-1-MOCKED.tgz",
+        expect.objectContaining({ otp: "123456" }),
+        expect.objectContaining({ otp: "123456", otpRateLimitDelay: 3 })
+      );
     });
   });
 

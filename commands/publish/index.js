@@ -126,7 +126,15 @@ class PublishCommand extends Command {
     });
 
     // cache to hold a one-time-password across publishes
-    this.otpCache = { otp: this.conf.get("otp") };
+    const otpRateLimitDelayCliParameter = this.options["otp-rate-limit-delay"];
+    const otpRateLimitDelay =
+      otpRateLimitDelayCliParameter && otpRateLimitDelayCliParameter > 0
+        ? otpRateLimitDelayCliParameter * 60 * 1000
+        : -1;
+    this.otpCache = {
+      otp: this.conf.get("otp"),
+      otpRateLimitDelay,
+    };
 
     this.conf.set("user-agent", this.userAgent, "cli");
 
