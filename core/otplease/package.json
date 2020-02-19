@@ -31,6 +31,7 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
+    "@lerna/output": "file:../../utils/output",
     "@lerna/prompt": "file:../prompt",
     "figgy-pudding": "^3.5.1"
   }

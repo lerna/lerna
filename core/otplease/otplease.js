@@ -2,9 +2,11 @@
 
 const figgyPudding = require("figgy-pudding");
 const prompt = require("@lerna/prompt");
+const log = require("@lerna/output");
 
 const OtpPleaseConfig = figgyPudding({
   otp: {},
+  otpRateLimitDelay: { default: -1 },
 });
 
 // basic single-entry semaphore
@@ -45,11 +47,31 @@ function otplease(fn, _opts, otpCache) {
   return attempt(fn, opts, otpCache);
 }
 
+function requiresOtp(err) {
+  return err.code === "E401" && /one-time pass/.test(err.body);
+}
+
+function requiresWaitingAsOtpIsRateLimited(err) {
+  return err.code === "E429" && err.message && /rate limited otp/.test(err.message);
+}
+
+function delayAsStr(delay) {
+  if (delay < 2000) {
+    return `${delay} ms`;
+  }
+  const delayAsSeconds = Math.round(delay / 1000);
+  if (delayAsSeconds < 90) {
+    return `${delayAsSeconds} seconds`;
+  }
+  return `${Math.round(delayAsSeconds / 60)} minutes`;
+}
+
 function attempt(fn, opts, otpCache) {
   return new Promise(resolve => {
     resolve(fn(opts));
   }).catch(err => {
-    if (err.code !== "EOTP" && !(err.code === "E401" && /one-time pass/.test(err.body))) {
+    const rateLimitedOtp = opts.otp && opts.otpRateLimitDelay > 0 && requiresWaitingAsOtpIsRateLimited(err);
+    if (err.code !== "EOTP" && !(rateLimitedOtp || requiresOtp(err))) {
       throw err;
     } else if (!process.stdin.isTTY || !process.stdout.isTTY) {
       throw err;
@@ -66,7 +88,18 @@ function attempt(fn, opts, otpCache) {
           semaphore.release();
           return attempt(fn, opts.concat({ otp: otpCache.otp }), otpCache);
         }
-        return getOneTimePassword()
+        let basePromise = Promise.resolve();
+        let promptForPassword = () => getOneTimePassword();
+        if (rateLimitedOtp) {
+          basePromise = new Promise(resolve => {
+            const delay = opts.otpRateLimitDelay;
+            log(`Waiting for ${delayAsStr(delay)} before resuming...`);
+            setTimeout(resolve, delay);
+          });
+          promptForPassword = () => getOneTimePassword("This operation requires another one-time password:");
+        }
+        return basePromise
+          .then(promptForPassword)
           .then(
             otp => {
               // update the otp and release the lock so that waiting

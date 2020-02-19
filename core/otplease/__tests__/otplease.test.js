@@ -1,9 +1,11 @@
 "use strict";
 
 jest.mock("@lerna/prompt");
+jest.mock("@lerna/output");
 
 // mocked modules
 const prompt = require("@lerna/prompt");
+const log = require("@lerna/output");
 
 // file under test
 const otplease = require("..");
@@ -67,6 +69,22 @@ describe("@lerna/otplease", () => {
     expect(prompt.input).not.toHaveBeenCalled();
     expect(result).toBe(obj);
     expect(otpCache.otp).toBe("654321");
+  });
+
+  it("request new otp if cache value is blocked because of rate limits.", async () => {
+    const otpCache = { otp: "654321", otpRateLimitDelay: 2 };
+    const obj = {};
+    const fn = jest.fn(makeRateLimitedCallback("654321", obj));
+    const result = await otplease(fn, {}, otpCache);
+
+    expect(fn).toHaveBeenCalledTimes(2);
+    expect(log).toHaveBeenCalledWith("Waiting for 2 ms before resuming...");
+    expect(prompt.input).toHaveBeenCalledWith(
+      "This operation requires another one-time password:",
+      expect.any(Object)
+    );
+    expect(result).toBe(obj);
+    expect(otpCache.otp).toBe("123456");
   });
 
   it("uses explicit otp regardless of cache value", async () => {
@@ -173,6 +191,28 @@ describe("@lerna/otplease", () => {
     await expect(otplease(fn, {})).rejects.toThrow("auth required");
   });
 
+  it("re-throws E429 errors that do not contain 'rate limited otp' in the message", async () => {
+    const fn = jest.fn(() => {
+      const err = new Error("otp has rate limits");
+      err.body = "random arbitrary noise";
+      err.code = "E429";
+      throw err;
+    });
+
+    await expect(otplease(fn, { otpRateLimitDelay: 5 })).rejects.toThrow("otp has rate limits");
+  });
+
+  it("re-throws E429 errors if no otp rate limit delay is set", async () => {
+    const fn = jest.fn(() => {
+      const err = new Error("rate limited otp");
+      err.body = "random arbitrary noise";
+      err.code = "E429";
+      throw err;
+    });
+
+    await expect(otplease(fn, { otpRateLimitDelay: 5 })).rejects.toThrow("rate limited otp");
+  });
+
   it.each([["stdin"], ["stdout"]])("re-throws EOTP error when %s is not a TTY", async pipe => {
     const fn = jest.fn(() => {
       const err = new Error(`non-interactive ${pipe}`);
@@ -208,6 +248,17 @@ function makeTestCallback(otp, result) {
     if (opts.otp !== otp) {
       const err = new Error(`oops, received otp ${opts.otp}`);
       err.code = "EOTP";
+      throw err;
+    }
+    return result;
+  };
+}
+
+function makeRateLimitedCallback(otp, result) {
+  return opts => {
+    if (opts.otp === otp) {
+      const err = new Error(`OTP needs to retry ${opts.otp}: rate limited otp`);
+      err.code = "E429";
       throw err;
     }
     return result;
