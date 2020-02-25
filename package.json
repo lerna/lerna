@@ -10,7 +10,9 @@
     "integration": "jest --config jest.integration.js --maxWorkers=2",
     "lint": "eslint . -c .eslintrc.yaml --no-eslintrc --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint",
     "pretest": "npm run lint",
-    "test": "jest"
+    "test": "jest",
+    "build": "npm run build:schema",
+    "build:schema": "typescript-json-schema -o lerna.schema.json ./lerna-config.d.ts LernaConfig"
   },
   "repository": {
     "type": "git",
@@ -86,6 +88,7 @@
     "tar": "^4.4.13",
     "tempy": "^0.2.1",
     "touch": "^3.1.0",
+    "typescript-json-schema": "^0.42.0",
     "write-json-file": "^3.2.0",
     "yargs": "^14.2.2"
   },

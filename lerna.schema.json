@@ -1,0 +1,170 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "definitions": {
+        "BootstrapCommand": {
+            "properties": {
+                "ignore": {
+                    "description": "an array of globs that won't be bootstrapped when running the lerna bootstrap command.",
+                    "type": "string"
+                },
+                "npmClient": {
+                    "default": "npm",
+                    "description": "an option to specify a specific client to run commands with (this can also be specified on a per command basis).\nChange to \"yarn\" to run all commands with yarn. Defaults to \"npm\".",
+                    "enum": [
+                        "npm",
+                        "yarn"
+                    ],
+                    "type": "string"
+                },
+                "npmClientArgs": {
+                    "description": "array of strings that will be passed as arguments directly to npm install during the lerna bootstrap command.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "scope": {
+                    "description": "an array of globs that restricts which packages will be bootstrapped when running the lerna bootstrap command.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                }
+            },
+            "type": "object"
+        },
+        "CreateCommand": {
+            "properties": {
+                "homepage": {
+                    "type": "string"
+                },
+                "license": {
+                    "type": "string"
+                },
+                "npmClient": {
+                    "default": "npm",
+                    "description": "an option to specify a specific client to run commands with (this can also be specified on a per command basis).\nChange to \"yarn\" to run all commands with yarn. Defaults to \"npm\".",
+                    "enum": [
+                        "npm",
+                        "yarn"
+                    ],
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "PublishCommand": {
+            "properties": {
+                "ignoreChanges": {
+                    "description": "an array of globs that won't be included in lerna changed/publish. Use this to prevent publishing a new version\nunnecessarily for changes, such as fixing a README.md typo.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "type": "array"
+                },
+                "message": {
+                    "description": "a custom commit message when performing version updates for publication. See\n[@lerna/version](https://github.com/lerna/lerna/tree/master/commands/version#--message-msg) for more details.",
+                    "type": "string"
+                },
+                "npmClient": {
+                    "default": "npm",
+                    "description": "an option to specify a specific client to run commands with (this can also be specified on a per command basis).\nChange to \"yarn\" to run all commands with yarn. Defaults to \"npm\".",
+                    "enum": [
+                        "npm",
+                        "yarn"
+                    ],
+                    "type": "string"
+                },
+                "registry": {
+                    "description": "use it to set a custom registry url to publish to instead of npmjs.org, you must already be authenticated if\nrequired.",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "VersionCommand": {
+            "properties": {
+                "allowBranch": {
+                    "type": "string"
+                },
+                "conventionalCommits": {
+                    "type": "boolean"
+                },
+                "exact": {
+                    "type": "boolean"
+                },
+                "gitRemote": {
+                    "type": "string"
+                },
+                "message": {
+                    "description": "a custom commit message when performing version updates for publication. See\n[@lerna/version](https://github.com/lerna/lerna/tree/master/commands/version#--message-msg) for more details.",
+                    "type": "string"
+                },
+                "npmClient": {
+                    "default": "npm",
+                    "description": "an option to specify a specific client to run commands with (this can also be specified on a per command basis).\nChange to \"yarn\" to run all commands with yarn. Defaults to \"npm\".",
+                    "enum": [
+                        "npm",
+                        "yarn"
+                    ],
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        }
+    },
+    "description": "lerna.json config file",
+    "properties": {
+        "command": {
+            "description": "Per-command options.",
+            "properties": {
+                "bootstrap": {
+                    "$ref": "#/definitions/BootstrapCommand"
+                },
+                "create": {
+                    "$ref": "#/definitions/CreateCommand"
+                },
+                "publish": {
+                    "$ref": "#/definitions/PublishCommand"
+                },
+                "version": {
+                    "$ref": "#/definitions/VersionCommand"
+                }
+            },
+            "type": "object"
+        },
+        "ignoreChanges": {
+            "description": "an array of globs that won't be included in lerna changed/publish. Use this to prevent publishing a new version\nunnecessarily for changes, such as fixing a README.md typo.",
+            "items": {
+                "type": "string"
+            },
+            "type": "array"
+        },
+        "lerna": {
+            "description": "Originally used to indicate the current version of Lerna. Made obsolete and removed in v3",
+            "type": "string"
+        },
+        "npmClient": {
+            "default": "npm",
+            "description": "an option to specify a specific client to run commands with (this can also be specified on a per command basis).\nChange to \"yarn\" to run all commands with yarn. Defaults to \"npm\".",
+            "enum": [
+                "npm",
+                "yarn"
+            ],
+            "type": "string"
+        },
+        "packages": {
+            "description": "Array of globs to use as package locations.",
+            "items": {
+                "type": "string"
+            },
+            "type": "array"
+        },
+        "version": {
+            "description": "the current version of the repository",
+            "type": "string"
+        }
+    },
+    "type": "object"
+}
+
