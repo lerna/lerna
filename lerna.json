@@ -1,4 +1,5 @@
 {
+  "$schema": "./lerna.schema.json",
   "packages": [
     "commands/*",
     "core/*",
