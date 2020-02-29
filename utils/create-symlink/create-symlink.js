@@ -1,6 +1,6 @@
 "use strict";
 
-const cmdShim = require("@zkochan/cmd-shim");
+const cmdShim = require("cmd-shim");
 const fs = require("fs-extra");
 const log = require("npmlog");
 const path = require("path");

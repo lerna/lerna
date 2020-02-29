@@ -1,9 +1,9 @@
 "use strict";
 
-jest.mock("@zkochan/cmd-shim");
+jest.mock("cmd-shim");
 jest.mock("fs-extra");
 
-const cmdShim = require("@zkochan/cmd-shim");
+const cmdShim = require("cmd-shim");
 const fs = require("fs-extra");
 const path = require("path");
 const createSymlink = require("..");
