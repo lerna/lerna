@@ -53,6 +53,7 @@ Running `lerna version --conventional-commits` without the above flags will rele
 - [`--force-publish`](#--force-publish)
 - [`--git-remote`](#--git-remote-name)
 - [`--create-release`](#--create-release-type)
+- [`--ignore-packages`](#--ignore-packages)
 - [`--ignore-changes`](#--ignore-changes)
 - [`--ignore-scripts`](#--ignore-scripts)
 - [`--include-merged-tags`](#--include-merged-tags)
@@ -218,6 +219,22 @@ To authenticate with GitLab, the following environment variables can be defined.
 - `GL_API_URL` - An absolute URL to the API, including the version. (Default: https://gitlab.com/api/v4)
 
 > NOTE: When using this option, you cannot pass [`--no-changelog`](#--no-changelog).
+
+### `--ignore-packages`
+
+Ignore the given packages when updating or prompting for updated versions. The passed values must be exact package names.
+
+```sh
+lerna version --ignore-packages package-1 package-2'
+```
+
+This option is best specified as root `lerna.json` configuration to share the config with `lerna publish`:
+
+```json
+{
+  "ignorePackages": ["package1", "package2"]
+}
+```
 
 ### `--ignore-changes`
 

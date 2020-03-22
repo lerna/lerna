@@ -184,6 +184,81 @@ describe("VersionCommand", () => {
     });
   });
 
+  describe("--ignore-packages", () => {
+    it("versions changed non ignored packages", async () => {
+      const testDir = await initFixture("normal");
+      // when --conventional-commits is absent,
+      // --no-changelog should have _no_ effect
+      await lernaVersion(testDir)("--no-changelog", "--ignore-packages", "package-1", "package-2");
+
+      expect(checkWorkingTree).toHaveBeenCalled();
+
+      expect(PromptUtilities.select.mock.calls).toMatchSnapshot("prompt");
+      expect(PromptUtilities.confirm).toHaveBeenLastCalledWith(
+        "Are you sure you want to create these versions?"
+      );
+
+      expect(writePkg.updatedManifest("package-3")).toMatchSnapshot("gitHead");
+
+      const patch = await showCommit(testDir);
+      expect(patch).toMatchSnapshot("commit");
+
+      expect(libPush).toHaveBeenLastCalledWith(
+        "origin",
+        "master",
+        expect.objectContaining({
+          cwd: testDir,
+        })
+      );
+      expect(output.logged()).toMatchSnapshot("console output");
+    });
+    it("does not bump anything if changed package is ignored", async () => {
+      const testDir = await initFixture("normal");
+
+      collectUpdates.setUpdated(testDir, "package-3");
+      PromptUtilities.mockChoices("minor");
+
+      await lernaVersion(testDir)("--ignore-packages", "package-3");
+
+      const patch = await showCommit(testDir);
+      expect(patch).toMatchSnapshot();
+    });
+    it("versions changed packages but ignored in independent mode", async () => {
+      // mock version prompt choices
+      PromptUtilities.mockChoices("patch", "major", "minor", "patch");
+
+      const testDir = await initFixture("independent");
+      await lernaVersion(testDir)("--ignore-packages", "package-2"); // --independent is only valid in InitCommand
+
+      expect(PromptUtilities.confirm).toHaveBeenCalled();
+
+      expect(writePkg.updatedManifest("package-1")).toMatchSnapshot("gitHead");
+
+      const patch = await showCommit(testDir);
+      expect(patch).toMatchSnapshot("commit");
+
+      expect(libPush).toHaveBeenLastCalledWith(
+        "origin",
+        "master",
+        expect.objectContaining({
+          cwd: testDir,
+        })
+      );
+      expect(output.logged()).toMatchSnapshot("console output");
+    });
+    it("bumps all packages but ignored ones when major version selected", async () => {
+      const testDir = await initFixture("normal");
+
+      collectUpdates.setUpdated(testDir, "package-3");
+      PromptUtilities.mockChoices("major");
+
+      await lernaVersion(testDir)("--ignore-packages", "package-1", "package-5");
+
+      const patch = await showCommit(testDir);
+      expect(patch).toMatchSnapshot();
+    });
+  });
+
   describe("--no-commit-hooks", () => {
     const setupPreCommitHook = cwd =>
       fs.outputFile(path.join(cwd, ".git/hooks/pre-commit"), "#!/bin/sh\nexit 1\n", { mode: 0o755 });

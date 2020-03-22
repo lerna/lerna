@@ -64,6 +64,10 @@ exports.builder = (yargs, composed) => {
       ].join("\n"),
       type: "array",
     },
+    "ignore-packages": {
+      describe: "Ignore packages matching name(s)",
+      type: "array",
+    },
     "ignore-scripts": {
       describe: "Disable all lifecycle scripts",
       type: "boolean",

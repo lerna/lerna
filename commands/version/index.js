@@ -206,6 +206,10 @@ class VersionCommand extends Command {
         }
       }
 
+      if (this.options.ignorePackages && this.options.ignorePackages.includes(node.name)) {
+        return false;
+      }
+
       return !!node.version;
     });
 
@@ -438,7 +442,9 @@ class VersionCommand extends Command {
 
       if (hasBreakingChange) {
         // _all_ packages need a major version bump whenever _any_ package does
-        this.updates = Array.from(this.packageGraph.values());
+        this.updates = Array.from(this.packageGraph.values()).filter(
+          node => !(this.options.ignorePackages && this.options.ignorePackages.includes(node.name))
+        );
         this.updatesVersions = new Map(this.updates.map(({ name }) => [name, this.globalVersion]));
       } else {
         this.updatesVersions = versions;
