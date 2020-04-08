@@ -204,7 +204,7 @@ lerna version --conventional-commits --create-release github
 lerna version --conventional-commits --create-release gitlab
 ```
 
-When run with this flag, `lerna version` will create an official GitHub or GitLab release based on the changed packages. Requires `--conventional-commits` to be passed so that changelogs can be generated.
+When run with this flag, `lerna version` will create an official GitHub or GitLab release based on the changed packages.
 
 To authenticate with GitHub, the following environment variables can be defined.
 

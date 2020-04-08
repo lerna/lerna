@@ -79,10 +79,6 @@ class VersionCommand extends Command {
     this.createRelease = this.pushToRemote && this.options.createRelease;
     this.releaseNotes = [];
 
-    if (this.createRelease && this.options.conventionalCommits !== true) {
-      throw new ValidationError("ERELEASE", "To create a release, you must enable --conventional-commits");
-    }
-
     if (this.createRelease && this.options.changelog === false) {
       throw new ValidationError("ERELEASE", "To create a release, you cannot pass --no-changelog");
     }
@@ -476,7 +472,7 @@ class VersionCommand extends Command {
   }
 
   updatePackageVersions() {
-    const { conventionalCommits, changelogPreset, changelog = true } = this.options;
+    const { changelogPreset, changelog = true } = this.options;
     const independentVersions = this.project.isIndependent();
     const rootPath = this.project.manifest.location;
     const changedFiles = new Set();
@@ -526,7 +522,7 @@ class VersionCommand extends Command {
       pkg => this.runPackageLifecycle(pkg, "version").then(() => pkg),
     ];
 
-    if (conventionalCommits && changelog) {
+    if (changelog) {
       // we can now generate the Changelog, based on the
       // the updated version that we're about to release.
       const type = independentVersions ? "independent" : "fixed";
@@ -565,7 +561,7 @@ class VersionCommand extends Command {
     if (!independentVersions) {
       this.project.version = this.globalVersion;
 
-      if (conventionalCommits && changelog) {
+      if (changelog) {
         chain = chain.then(() =>
           ConventionalCommitUtilities.updateChangelog(this.project.manifest, "root", {
             changelogPreset,
