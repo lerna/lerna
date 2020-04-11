@@ -166,6 +166,7 @@ Run `lerna --help` to see all available commands and options.
 - `command.publish.message`: a custom commit message when performing version updates for publication. See [@lerna/version](commands/version#--message-msg) for more details.
 - `command.publish.registry`: use it to set a custom registry url to publish to instead of
 npmjs.org, you must already be authenticated if required.
+- `command.publish.changelogHeader`: use it to set a custom change log header.
 - `command.bootstrap.ignore`: an array of globs that won't be bootstrapped when running the `lerna bootstrap` command.
 - `command.bootstrap.npmClientArgs`: array of strings that will be passed as arguments directly to `npm install` during the `lerna bootstrap` command.
 - `command.bootstrap.scope`: an array of globs that restricts which packages will be bootstrapped when running the `lerna bootstrap` command.
