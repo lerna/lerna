@@ -166,6 +166,25 @@ Presets are names of built-in or installable configuration for conventional chan
 Presets may be passed as the full name of the package, or the auto-expanded suffix
 (e.g., `angular` is expanded to `conventional-changelog-angular`).
 
+This option is can also be specified in `lerna.json` configuration:
+
+```json
+{
+  "changelogPreset": "angular"
+}
+```
+
+If the preset exports a builder function (e.g. `conventional-changelog-conventionalcommits`), you can specify the [preset configuration](https://github.com/conventional-changelog/conventional-changelog-config-spec) too:
+
+```json
+{
+  "changelogPreset": {
+    "name": "conventionalcommits",
+    "issueUrlFormat": "{{host}}/{{owner}}/{{repository}}/issues/{{id}}"
+  }
+}
+```
+
 ### `--exact`
 
 ```sh
