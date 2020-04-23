@@ -58,7 +58,13 @@ describe("--conventional-commits", () => {
         expect(ConventionalCommitUtilities.updateChangelog).toHaveBeenCalledWith(
           expect.objectContaining({ name, version }),
           "independent",
-          { changelogPreset: undefined, rootPath: cwd, tagPrefix: "v", prereleaseId: undefined }
+          {
+            changelogPreset: undefined,
+            rootPath: cwd,
+            tagPrefix: "v",
+            prereleaseId: undefined,
+            changelogPreview: false,
+          }
         );
       });
     });
@@ -84,7 +90,7 @@ describe("--conventional-commits", () => {
         expect(ConventionalCommitUtilities.updateChangelog).toHaveBeenCalledWith(
           expect.objectContaining({ name, version }),
           "independent",
-          { changelogPreset: undefined, rootPath: cwd, tagPrefix: "v" }
+          { changelogPreset: undefined, rootPath: cwd, tagPrefix: "v", changelogPreview: false }
         );
       });
     });
@@ -107,7 +113,7 @@ describe("--conventional-commits", () => {
         expect(ConventionalCommitUtilities.updateChangelog).toHaveBeenCalledWith(
           expect.objectContaining({ name, version }),
           "independent",
-          { changelogPreset: undefined, rootPath: cwd, tagPrefix: "v" }
+          { changelogPreset: undefined, rootPath: cwd, tagPrefix: "v", changelogPreview: false }
         );
       });
     });
@@ -131,7 +137,7 @@ describe("--conventional-commits", () => {
       expect(ConventionalCommitUtilities.updateChangelog).toHaveBeenCalledWith(
         expect.any(Object),
         "independent",
-        changelogOpts
+        Object.assign({}, changelogOpts, { changelogPreview: false })
       );
     });
 
@@ -171,7 +177,13 @@ describe("--conventional-commits", () => {
         expect(ConventionalCommitUtilities.updateChangelog).toHaveBeenCalledWith(
           expect.objectContaining({ name, version: "2.0.0" }),
           "fixed",
-          { changelogPreset: undefined, rootPath: cwd, tagPrefix: "v", prereleaseId: undefined }
+          {
+            changelogPreset: undefined,
+            rootPath: cwd,
+            tagPrefix: "v",
+            prereleaseId: undefined,
+            changelogPreview: false,
+          }
         );
       });
 
@@ -218,7 +230,7 @@ describe("--conventional-commits", () => {
         expect(ConventionalCommitUtilities.updateChangelog).toHaveBeenCalledWith(
           expect.objectContaining({ name, version: "2.0.0-alpha.0" }),
           "fixed",
-          { changelogPreset: undefined, rootPath: cwd, tagPrefix: "v" }
+          { changelogPreset: undefined, rootPath: cwd, tagPrefix: "v", changelogPreview: false }
         );
       });
 
@@ -263,7 +275,7 @@ describe("--conventional-commits", () => {
       expect(ConventionalCommitUtilities.updateChangelog).toHaveBeenCalledWith(
         expect.any(Object),
         "fixed",
-        changelogOpts
+        Object.assign({}, changelogOpts, { changelogPreview: false })
       );
     });
 
