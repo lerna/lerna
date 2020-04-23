@@ -140,6 +140,10 @@ exports.builder = (yargs, composed) => {
       alias: "yes",
       type: "boolean",
     },
+    "changelog-preview": {
+      describe: "Peview and make changes in changelog before its committed.",
+      type: "boolean",
+    },
   };
 
   if (composed) {

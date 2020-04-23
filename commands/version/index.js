@@ -476,7 +476,7 @@ class VersionCommand extends Command {
   }
 
   updatePackageVersions() {
-    const { conventionalCommits, changelogPreset, changelog = true } = this.options;
+    const { conventionalCommits, changelogPreset, changelog = true, changelogPreview = false } = this.options;
     const independentVersions = this.project.isIndependent();
     const rootPath = this.project.manifest.location;
     const changedFiles = new Set();
@@ -536,6 +536,7 @@ class VersionCommand extends Command {
           changelogPreset,
           rootPath,
           tagPrefix: this.tagPrefix,
+          changelogPreview,
         }).then(({ logPath, newEntry }) => {
           // commit the updated changelog
           changedFiles.add(logPath);
