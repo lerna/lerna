@@ -371,13 +371,11 @@ lerna publish from-git --tag-version-prefix=''
 
 ### `--changelog-preview`
 
-This option allows to preview and make changes in the changelog before its committed.
+This option allows to preview and make changes in the changelog before its committed. Should only be run locally and not in CI environment.
 
 ```bash
 # locally
 lerna version --changelog-preview
-# on ci
-lerna publish --changelog-preview
 ```
 
 ## Deprecated Options
