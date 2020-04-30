@@ -30,7 +30,7 @@ function symlinkDependencies(packages, packageGraph, tracker) {
       : new Set(packages.map(({ name }) => packageGraph.get(name)));
 
   return pFinally(
-    pMapSeries(nodes, currentNode => {
+    pMapSeries(nodes, (currentNode) => {
       const currentName = currentNode.name;
       const currentNodeModules = currentNode.pkg.nodeModulesLocation;
 
@@ -49,7 +49,7 @@ function symlinkDependencies(packages, packageGraph, tracker) {
 
         // check if dependency is already installed
         chain = chain.then(() => fs.pathExists(targetDirectory));
-        chain = chain.then(dirExists => {
+        chain = chain.then((dirExists) => {
           if (dirExists) {
             const isDepSymlink = resolveSymlink(targetDirectory);
 

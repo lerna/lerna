@@ -85,7 +85,7 @@ function filterOptions(yargs) {
       conflicts: "include-dependencies",
       type: "boolean",
     })
-    .check(argv => {
+    .check((argv) => {
       /* eslint-disable no-param-reassign */
       if (argv.includeFilteredDependents) {
         argv.includeDependents = true;

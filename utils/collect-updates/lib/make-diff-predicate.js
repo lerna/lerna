@@ -10,7 +10,7 @@ module.exports = makeDiffPredicate;
 
 function makeDiffPredicate(committish, execOpts, ignorePatterns = []) {
   const ignoreFilters = new Set(
-    ignorePatterns.map(p =>
+    ignorePatterns.map((p) =>
       minimatch.filter(`!${p}`, {
         matchBase: true,
         // dotfiles inside ignored directories should also match

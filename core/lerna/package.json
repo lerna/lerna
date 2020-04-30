@@ -48,7 +48,7 @@
     "@lerna/publish": "file:../../commands/publish",
     "@lerna/run": "file:../../commands/run",
     "@lerna/version": "file:../../commands/version",
-    "import-local": "^2.0.0",
+    "import-local": "^3.0.2",
     "npmlog": "^4.1.2"
   }
 }

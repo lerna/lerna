@@ -13,7 +13,7 @@ const normalizeRelativeDir = require("@lerna-test/normalize-relative-dir");
 const lernaLink = require("@lerna-test/command-runner")(require("../command"));
 
 // assertion helpers
-const symlinkedDirectories = testDir =>
+const symlinkedDirectories = (testDir) =>
   createSymlink.mock.calls
     .slice()
     // ensure sort is always consistent, despite promise variability

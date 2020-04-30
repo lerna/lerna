@@ -13,7 +13,7 @@ function hasNpmVersion(range) {
 function makePredicate() {
   const npmVersion = getNpmVersion();
 
-  return range => rangeSatisfies(npmVersion, range);
+  return (range) => rangeSatisfies(npmVersion, range);
 }
 
 function rangeSatisfies(npmVersion, range) {

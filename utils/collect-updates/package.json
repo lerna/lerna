@@ -36,6 +36,6 @@
     "@lerna/describe-ref": "file:../describe-ref",
     "minimatch": "^3.0.4",
     "npmlog": "^4.1.2",
-    "slash": "^2.0.0"
+    "slash": "^3.0.0"
   }
 }

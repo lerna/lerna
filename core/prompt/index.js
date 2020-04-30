@@ -23,7 +23,7 @@ function confirm(message) {
         ],
       },
     ])
-    .then(answers => {
+    .then((answers) => {
       log.resume();
 
       return answers.confirm;
@@ -45,7 +45,7 @@ function select(message, { choices, filter, validate } = {}) {
         validate,
       },
     ])
-    .then(answers => {
+    .then((answers) => {
       log.resume();
 
       return answers.prompt;
@@ -65,7 +65,7 @@ function input(message, { filter, validate } = {}) {
         validate,
       },
     ])
-    .then(answers => {
+    .then((answers) => {
       log.resume();
 
       return answers.input;

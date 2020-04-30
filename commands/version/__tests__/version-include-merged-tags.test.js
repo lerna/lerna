@@ -38,20 +38,20 @@ expect.addSnapshotSerializer(require("@lerna-test/serialize-tempdir"));
 describe("version --include-merged-tags", () => {
   const setupGitChangesWithBranch = async (cwd, masterPaths, branchPaths) => {
     await gitTag(cwd, "v1.0.0");
-    await Promise.all(masterPaths.map(fp => fs.appendFileSync(path.join(cwd, fp), "1")));
+    await Promise.all(masterPaths.map((fp) => fs.appendFileSync(path.join(cwd, fp), "1")));
     await gitAdd(cwd, "-A");
     await gitCommit(cwd, "Commit");
     // Create release branch
     await gitCheckout(cwd, ["-b", "release/v1.0.1"]);
     // Switch into release branch
-    await Promise.all(branchPaths.map(fp => fs.appendFileSync(path.join(cwd, fp), "1")));
+    await Promise.all(branchPaths.map((fp) => fs.appendFileSync(path.join(cwd, fp), "1")));
     await gitAdd(cwd, "-A");
     await gitCommit(cwd, "Bump");
     await gitTag(cwd, "v1.0.1");
     await gitCheckout(cwd, ["master"]);
     await gitMerge(cwd, ["--no-ff", "release/v1.0.1"]);
     // Commit after merge
-    await Promise.all(masterPaths.map(fp => fs.appendFileSync(path.join(cwd, fp), "1")));
+    await Promise.all(masterPaths.map((fp) => fs.appendFileSync(path.join(cwd, fp), "1")));
     await gitAdd(cwd, "-A");
     await gitCommit(cwd, "Commit2");
   };

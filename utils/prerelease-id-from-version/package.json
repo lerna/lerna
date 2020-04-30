@@ -28,6 +28,6 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "semver": "^6.2.0"
+    "semver": "^7.3.2"
   }
 }

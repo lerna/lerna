@@ -13,11 +13,11 @@ function makeFileFinder(rootPath, packageConfigs) {
     absolute: true,
     followSymlinkedDirectories: false,
     // POSIX results always need to be normalized
-    transform: fp => path.normalize(fp),
+    transform: (fp) => path.normalize(fp),
   };
 
-  if (packageConfigs.some(cfg => cfg.indexOf("**") > -1)) {
-    if (packageConfigs.some(cfg => cfg.indexOf("node_modules") > -1)) {
+  if (packageConfigs.some((cfg) => cfg.indexOf("**") > -1)) {
+    if (packageConfigs.some((cfg) => cfg.indexOf("node_modules") > -1)) {
       throw new ValidationError(
         "EPKGCONFIG",
         "An explicit node_modules package path does not allow globstars (**)"
@@ -35,11 +35,11 @@ function makeFileFinder(rootPath, packageConfigs) {
     const options = Object.assign({}, customGlobOpts, globOpts);
     const promise = pMap(
       packageConfigs.sort(),
-      globPath => {
+      (globPath) => {
         let chain = globby(path.join(globPath, fileName), options);
 
         // fast-glob does not respect pattern order, so we re-sort by absolute path
-        chain = chain.then(results => results.sort());
+        chain = chain.then((results) => results.sort());
 
         if (fileMapper) {
           chain = chain.then(fileMapper);

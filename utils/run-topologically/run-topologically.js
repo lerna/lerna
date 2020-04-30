@@ -42,7 +42,7 @@ function runTopologically(packages, runner, opts) {
         queue
           .add(() =>
             runner(pkg)
-              .then(value => returnValues.push(value))
+              .then((value) => returnValues.push(value))
               .then(() => graph.markAsDone(pkg))
               .then(() => queueNextAvailablePackages())
           )

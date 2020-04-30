@@ -36,9 +36,9 @@ describe("publish from-package", () => {
   it("publishes unpublished packages", async () => {
     const cwd = await initFixture("normal");
 
-    getUnpublishedPackages.mockImplementationOnce(packageGraph => {
+    getUnpublishedPackages.mockImplementationOnce((packageGraph) => {
       const pkgs = packageGraph.rawPackageList.slice(1, 3);
-      return pkgs.map(pkg => packageGraph.get(pkg.name));
+      return pkgs.map((pkg) => packageGraph.get(pkg.name));
     });
 
     await lernaPublish(cwd)("from-package");
@@ -53,7 +53,7 @@ describe("publish from-package", () => {
   it("publishes unpublished independent packages", async () => {
     const cwd = await initFixture("independent");
 
-    getUnpublishedPackages.mockImplementationOnce(packageGraph => Array.from(packageGraph.values()));
+    getUnpublishedPackages.mockImplementationOnce((packageGraph) => Array.from(packageGraph.values()));
 
     await lernaPublish(cwd)("from-package");
 
@@ -90,7 +90,7 @@ describe("publish from-package", () => {
   });
 
   it("does not require a git repo", async () => {
-    getUnpublishedPackages.mockImplementationOnce(packageGraph => [packageGraph.get("package-1")]);
+    getUnpublishedPackages.mockImplementationOnce((packageGraph) => [packageGraph.get("package-1")]);
 
     const cwd = await initFixture("independent");
 
@@ -110,7 +110,7 @@ describe("publish from-package", () => {
   });
 
   it("accepts --git-head override", async () => {
-    getUnpublishedPackages.mockImplementationOnce(packageGraph => [packageGraph.get("package-1")]);
+    getUnpublishedPackages.mockImplementationOnce((packageGraph) => [packageGraph.get("package-1")]);
 
     const cwd = await initFixture("independent");
 

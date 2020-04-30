@@ -44,7 +44,7 @@ function parseViewOptions(options) {
 }
 
 function filterResultList(pkgList, viewOptions) {
-  let result = viewOptions.showAll ? pkgList.slice() : pkgList.filter(pkg => !pkg.private);
+  let result = viewOptions.showAll ? pkgList.slice() : pkgList.filter((pkg) => !pkg.private);
 
   if (viewOptions.isTopological) {
     // allow cycles, output needs to be usable for debugging circularity
@@ -56,7 +56,7 @@ function filterResultList(pkgList, viewOptions) {
 
 function toJSONList(resultList) {
   // explicit re-mapping exposes non-enumerable properties
-  return resultList.map(pkg => ({
+  return resultList.map((pkg) => ({
     name: pkg.name,
     version: pkg.version,
     private: pkg.private,
@@ -70,7 +70,7 @@ function formatJSON(resultList) {
 
 function formatNDJSON(resultList) {
   return toJSONList(resultList)
-    .map(data => JSON.stringify(data))
+    .map((data) => JSON.stringify(data))
     .join("\n");
 }
 
@@ -78,7 +78,7 @@ function formatJSONGraph(resultList, viewOptions) {
   // https://en.wikipedia.org/wiki/Adjacency_list
   const graph = {};
   const getNeighbors = viewOptions.showAll
-    ? pkg =>
+    ? (pkg) =>
         Object.keys(
           Object.assign(
             {},
@@ -88,7 +88,7 @@ function formatJSONGraph(resultList, viewOptions) {
             pkg.dependencies
           )
         ).sort()
-    : pkg =>
+    : (pkg) =>
         Object.keys(
           Object.assign(
             {},
@@ -124,7 +124,7 @@ function makeParseable(pkg) {
 }
 
 function formatParseable(resultList, viewOptions) {
-  return resultList.map(viewOptions.showLong ? makeParseable : pkg => pkg.location).join("\n");
+  return resultList.map(viewOptions.showLong ? makeParseable : (pkg) => pkg.location).join("\n");
 }
 
 function getColumnOrder(viewOptions) {
@@ -155,12 +155,12 @@ function trimmedColumns(formattedResults, viewOptions) {
   // columnify leaves a lot of trailing space in the last column, remove that here
   return str
     .split("\n")
-    .map(line => line.trimRight())
+    .map((line) => line.trimRight())
     .join("\n");
 }
 
 function formatColumns(resultList, viewOptions) {
-  const formattedResults = resultList.map(result => {
+  const formattedResults = resultList.map((result) => {
     const formatted = {
       name: result.name,
     };

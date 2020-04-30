@@ -10,7 +10,7 @@ module.exports = writeLogFile;
 function writeLogFile(cwd) {
   let logOutput = "";
 
-  log.record.forEach(m => {
+  log.record.forEach((m) => {
     let pref = [m.id, m.level];
     if (m.prefix) {
       pref.push(m.prefix);
@@ -20,8 +20,8 @@ function writeLogFile(cwd) {
     m.message
       .trim()
       .split(/\r?\n/)
-      .map(line => `${pref} ${line}`.trim())
-      .forEach(line => {
+      .map((line) => `${pref} ${line}`.trim())
+      .forEach((line) => {
         logOutput += line + os.EOL;
       });
   });

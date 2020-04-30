@@ -32,6 +32,6 @@
   },
   "dependencies": {
     "@lerna/prompt": "file:../prompt",
-    "figgy-pudding": "^3.5.1"
+    "figgy-pudding": "^3.5.2"
   }
 }

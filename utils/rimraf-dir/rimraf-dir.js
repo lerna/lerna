@@ -17,7 +17,7 @@ function rimrafDir(dirPath) {
   // Checking if `dirPath` exists to be removed is cheap.
   // This lets us short-circuit if we don't have anything to do.
 
-  return pathExists(dirPath).then(exists => {
+  return pathExists(dirPath).then((exists) => {
     if (!exists) {
       return;
     }

@@ -30,11 +30,11 @@ class QueryGraph {
   }
 
   _getNextLeaf() {
-    return Array.from(this.graph.values()).filter(node => node.localDependencies.size === 0);
+    return Array.from(this.graph.values()).filter((node) => node.localDependencies.size === 0);
   }
 
   _getNextCycle() {
-    const cycle = Array.from(this.cycles).find(cycleNode => cycleNode.localDependencies.size === 0);
+    const cycle = Array.from(this.cycles).find((cycleNode) => cycleNode.localDependencies.size === 0);
 
     if (!cycle) {
       return [];

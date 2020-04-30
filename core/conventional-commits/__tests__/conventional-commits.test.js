@@ -273,7 +273,6 @@ describe("conventional-commits", () => {
 
     it("creates files if they do not exist", async () => {
       const cwd = await initFixture("changelog-missing");
-
       const [pkg1] = await getPackages(cwd);
       const rootPkg = {
         name: "root",

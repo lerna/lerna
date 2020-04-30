@@ -9,7 +9,7 @@ exports.command = "clean";
 
 exports.describe = "Remove the node_modules directory from all packages";
 
-exports.builder = yargs => {
+exports.builder = (yargs) => {
   yargs.options({
     y: {
       group: "Command Options:",

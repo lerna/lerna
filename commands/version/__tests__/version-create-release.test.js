@@ -79,7 +79,7 @@ describe.each([
       ["package-5", "5.0.1"],
     ]);
 
-    versionBumps.forEach(bump => recommendVersion.mockResolvedValueOnce(bump));
+    versionBumps.forEach((bump) => recommendVersion.mockResolvedValueOnce(bump));
 
     await lernaVersion(cwd)("--create-release", type, "--conventional-commits");
 

@@ -31,7 +31,7 @@ expect.addSnapshotSerializer(require("@lerna-test/serialize-tempdir"));
 describe("listable.format()", () => {
   let packages;
 
-  const formatWithOptions = opts => listable.format(packages, Object.assign({ _: ["ls"] }, opts));
+  const formatWithOptions = (opts) => listable.format(packages, Object.assign({ _: ["ls"] }, opts));
 
   const fixture = new Tacks(
     Dir({

@@ -17,7 +17,7 @@ const { reportCycles } = require("./lib/report-cycles");
  */
 class PackageGraph extends Map {
   constructor(packages, graphType = "allDependencies", forceLocal) {
-    super(packages.map(pkg => [pkg.name, new PackageGraphNode(pkg)]));
+    super(packages.map((pkg) => [pkg.name, new PackageGraphNode(pkg)]));
 
     if (packages.length !== this.size) {
       // weed out the duplicates
@@ -52,7 +52,7 @@ class PackageGraph extends Map {
               currentNode.pkg.dependencies
             );
 
-      Object.keys(graphDependencies).forEach(depName => {
+      Object.keys(graphDependencies).forEach((depName) => {
         const depNode = this.get(depName);
         // Yarn decided to ignore https://github.com/npm/npm/pull/15900 and implemented "link:"
         // As they apparently have no intention of being compatible, we have to do it for them.
@@ -78,7 +78,7 @@ class PackageGraph extends Map {
   }
 
   get rawPackageList() {
-    return Array.from(this.values()).map(node => node.pkg);
+    return Array.from(this.values()).map((node) => node.pkg);
   }
 
   /**
@@ -121,7 +121,7 @@ class PackageGraph extends Map {
     // an intermediate list of matched PackageGraphNodes
     const result = [];
 
-    search.forEach(currentNode => {
+    search.forEach((currentNode) => {
       // anything searched for is always a result
       result.push(currentNode);
 
@@ -135,7 +135,7 @@ class PackageGraph extends Map {
     });
 
     // actual Package instances, not PackageGraphNodes
-    return result.map(node => node.pkg);
+    return result.map((node) => node.pkg);
   }
 
   /**
@@ -153,7 +153,7 @@ class PackageGraph extends Map {
     this.forEach((currentNode, currentName) => {
       const seen = new Set();
 
-      const visits = walk => (dependentNode, dependentName, siblingDependents) => {
+      const visits = (walk) => (dependentNode, dependentName, siblingDependents) => {
         const step = walk.concat(dependentName);
 
         if (seen.has(dependentNode)) {
@@ -172,13 +172,10 @@ class PackageGraph extends Map {
 
         if (siblingDependents.has(currentName)) {
           // a transitive cycle
-          const cycleDependentName = Array.from(dependentNode.localDependencies.keys()).find(key =>
+          const cycleDependentName = Array.from(dependentNode.localDependencies.keys()).find((key) =>
             currentNode.localDependents.has(key)
           );
-          const pathToCycle = step
-            .slice()
-            .reverse()
-            .concat(cycleDependentName);
+          const pathToCycle = step.slice().reverse().concat(cycleDependentName);
 
           cycleNodes.add(dependentNode);
           cyclePaths.add(pathToCycle);
@@ -191,7 +188,7 @@ class PackageGraph extends Map {
     });
 
     reportCycles(
-      Array.from(cyclePaths, cycle => cycle.join(" -> ")),
+      Array.from(cyclePaths, (cycle) => cycle.join(" -> ")),
       rejectCycles
     );
 
@@ -228,7 +225,7 @@ class PackageGraph extends Map {
       ) {
         const cycle = new CyclicPackageGraphNode();
 
-        walkStack.forEach(nodeInCycle => {
+        walkStack.forEach((nodeInCycle) => {
           nodeToCycle.set(nodeInCycle, cycle);
           cycle.insert(nodeInCycle);
           cycles.delete(nodeInCycle);
@@ -252,8 +249,8 @@ class PackageGraph extends Map {
       walkStack.pop();
     }
 
-    this.forEach(currentNode => visitWithStack(currentNode));
-    cycles.forEach(collapsedNode => visitWithStack(collapsedNode));
+    this.forEach((currentNode) => visitWithStack(currentNode));
+    cycles.forEach((collapsedNode) => visitWithStack(collapsedNode));
 
     reportCycles(cyclePaths, rejectCycles);
 
@@ -280,7 +277,7 @@ class PackageGraph extends Map {
       return this.clear();
     }
 
-    candidates.forEach(node => this.remove(node));
+    candidates.forEach((node) => this.remove(node));
   }
 
   /**
@@ -291,7 +288,7 @@ class PackageGraph extends Map {
   remove(candidateNode) {
     this.delete(candidateNode.name);
 
-    this.forEach(node => {
+    this.forEach((node) => {
       // remove incoming edges ("indegree")
       node.localDependencies.delete(candidateNode.name);
 

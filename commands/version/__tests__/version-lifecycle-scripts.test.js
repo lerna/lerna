@@ -30,7 +30,7 @@ describe("lifecycle scripts", () => {
 
     expect(runLifecycle).toHaveBeenCalledTimes(6);
 
-    ["preversion", "version", "postversion"].forEach(script => {
+    ["preversion", "version", "postversion"].forEach((script) => {
       // "lifecycle" is the root manifest name
       expect(runLifecycle).toHaveBeenCalledWith(
         expect.objectContaining({ name: "lifecycle" }),

@@ -74,7 +74,7 @@ function npmInstallDependencies(pkg, dependencies, config) {
     const unregister = onExit(cleanup);
 
     // We have a few housekeeping tasks to take care of whether we succeed or fail.
-    const done = finalError => {
+    const done = (finalError) => {
       cleanup();
       unregister();
 
@@ -100,7 +100,7 @@ function transformManifest(pkg, dependencies) {
 
   // a map of depName => depVersion (resolved by npm-package-arg)
   const depMap = new Map(
-    dependencies.map(dep => {
+    dependencies.map((dep) => {
       const { name, rawSpec } = npa(dep, pkg.location);
 
       return [name, rawSpec || "*"];
@@ -111,11 +111,11 @@ function transformManifest(pkg, dependencies) {
   delete json.scripts;
 
   // filter all types of dependencies
-  ["dependencies", "devDependencies", "optionalDependencies"].forEach(depType => {
+  ["dependencies", "devDependencies", "optionalDependencies"].forEach((depType) => {
     const collection = json[depType];
 
     if (collection) {
-      Object.keys(collection).forEach(depName => {
+      Object.keys(collection).forEach((depName) => {
         if (depMap.has(depName)) {
           // overwrite version to ensure it's always present (and accurate)
           collection[depName] = depMap.get(depName);
@@ -130,7 +130,7 @@ function transformManifest(pkg, dependencies) {
     }
   });
 
-  ["bundledDependencies", "bundleDependencies"].forEach(depType => {
+  ["bundledDependencies", "bundleDependencies"].forEach((depType) => {
     const collection = json[depType];
     if (collection) {
       const newCollection = [];

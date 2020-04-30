@@ -15,7 +15,7 @@ function commitChangeToPackage(cwd, packageName, commitMsg, data) {
   let chain = Promise.resolve();
 
   chain = chain.then(() => loadJsonFile(packageJSONPath));
-  chain = chain.then(pkg => writeJsonFile(packageJSONPath, Object.assign(pkg, data)));
+  chain = chain.then((pkg) => writeJsonFile(packageJSONPath, Object.assign(pkg, data)));
   chain = chain.then(() => gitAdd(cwd, packageJSONPath));
   chain = chain.then(() => gitCommit(cwd, commitMsg));
 

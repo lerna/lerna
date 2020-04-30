@@ -8,6 +8,6 @@ module.exports = multiLineTrimRight;
 function multiLineTrimRight(str) {
   return normalizeNewline(str)
     .split("\n")
-    .map(line => line.trimRight())
+    .map((line) => line.trimRight())
     .join("\n");
 }

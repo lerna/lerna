@@ -7,11 +7,7 @@ const coreCLI = require("..");
 
 function prepare(cwd) {
   // DRY setup for yargs instance
-  return coreCLI([], cwd)
-    .exitProcess(false)
-    .detectLocale(false)
-    .showHelpOnFail(false)
-    .wrap(null);
+  return coreCLI([], cwd).exitProcess(false).detectLocale(false).showHelpOnFail(false).wrap(null);
 }
 
 async function parse(instance, args) {

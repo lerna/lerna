@@ -34,8 +34,8 @@
   "dependencies": {
     "@evocateur/npm-registry-fetch": "^4.0.0",
     "@lerna/otplease": "file:../../core/otplease",
-    "figgy-pudding": "^3.5.1",
-    "npm-package-arg": "^6.1.0",
+    "figgy-pudding": "^3.5.2",
+    "npm-package-arg": "^8.0.1",
     "npmlog": "^4.1.2"
   }
 }

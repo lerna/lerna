@@ -39,7 +39,7 @@ function recommendVersion(pkg, type, { changelogPreset, rootPath, tagPrefix, pre
   let chain = Promise.resolve();
 
   chain = chain.then(() => getChangelogConfig(changelogPreset, rootPath));
-  chain = chain.then(config => {
+  chain = chain.then((config) => {
     // "new" preset API
     options.config = config;
 

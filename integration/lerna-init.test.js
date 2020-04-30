@@ -8,9 +8,9 @@ const cliRunner = require("@lerna-test/cli-runner");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 
 describe("lerna init", () => {
-  const parsePackageJson = cwd => loadJsonFile(path.join(cwd, "package.json"));
-  const parseLernaJson = cwd => loadJsonFile(path.join(cwd, "lerna.json"));
-  const loadMetaData = cwd => Promise.all([parsePackageJson(cwd), parseLernaJson(cwd)]);
+  const parsePackageJson = (cwd) => loadJsonFile(path.join(cwd, "package.json"));
+  const parseLernaJson = (cwd) => loadJsonFile(path.join(cwd, "lerna.json"));
+  const loadMetaData = (cwd) => Promise.all([parsePackageJson(cwd), parseLernaJson(cwd)]);
 
   test("initializes empty directory", async () => {
     const cwd = tempy.directory();

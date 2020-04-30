@@ -36,11 +36,11 @@ function pulseTillDone(prefix, promise) {
   pulseStart(prefix);
 
   return Promise.resolve(promise).then(
-    val => {
+    (val) => {
       pulseStop();
       return val;
     },
-    err => {
+    (err) => {
       pulseStop();
       throw err;
     }

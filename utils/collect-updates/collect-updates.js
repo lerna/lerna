@@ -68,7 +68,7 @@ function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions
     log.info("", "Assuming all packages changed");
 
     return collectPackages(packages, {
-      onInclude: name => log.verbose("updated", name),
+      onInclude: (name) => log.verbose("updated", name),
       excludeDependents,
     });
   }
@@ -80,13 +80,13 @@ function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions
     !commandOptions.bump || commandOptions.bump.startsWith("pre")
       ? () => false
       : /* skip packages that have not been previously prereleased */
-        node => node.prereleaseId;
+        (node) => node.prereleaseId;
   const isForced = (node, name) =>
     (forced.has("*") || forced.has(name)) && (useConventionalGraduate ? node.prereleaseId : true);
 
   return collectPackages(packages, {
     isCandidate: (node, name) => isForced(node, name) || needsBump(node) || hasDiff(node),
-    onInclude: name => log.verbose("updated", name),
+    onInclude: (name) => log.verbose("updated", name),
     excludeDependents,
   });
 }

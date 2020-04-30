@@ -18,7 +18,7 @@ const normalizeRelativeDir = require("@lerna-test/normalize-relative-dir");
 const lernaClean = require("@lerna-test/command-runner")(require("../command"));
 
 // assertion helpers
-const removedDirectories = testDir =>
+const removedDirectories = (testDir) =>
   rimrafDir.mock.calls.map(([directory]) => normalizeRelativeDir(testDir, directory));
 
 describe("CleanCommand", () => {

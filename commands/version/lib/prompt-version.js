@@ -6,7 +6,7 @@ const PromptUtilities = require("@lerna/prompt");
 module.exports = makePromptVersion;
 
 function makePromptVersion(resolvePrereleaseId) {
-  return node => promptVersion(node.version, node.name, resolvePrereleaseId(node.prereleaseId));
+  return (node) => promptVersion(node.version, node.name, resolvePrereleaseId(node.prereleaseId));
 }
 
 /**
@@ -39,12 +39,12 @@ function promptVersion(currentVersion, name, prereleaseId) {
       { value: "PRERELEASE", name: "Custom Prerelease" },
       { value: "CUSTOM", name: "Custom Version" },
     ],
-  }).then(choice => {
+  }).then((choice) => {
     if (choice === "CUSTOM") {
       return PromptUtilities.input("Enter a custom version", {
         filter: semver.valid,
         // semver.valid() always returns null with invalid input
-        validate: v => v !== null || "Must be a valid semver version",
+        validate: (v) => v !== null || "Must be a valid semver version",
       });
     }
 
@@ -53,7 +53,7 @@ function promptVersion(currentVersion, name, prereleaseId) {
       const prompt = `(default: "${prereleaseId}", yielding ${defaultVersion})`;
 
       return PromptUtilities.input(`Enter a prerelease identifier ${prompt}`, {
-        filter: v => semver.inc(currentVersion, "prerelease", v || prereleaseId),
+        filter: (v) => semver.inc(currentVersion, "prerelease", v || prereleaseId),
       });
     }
 

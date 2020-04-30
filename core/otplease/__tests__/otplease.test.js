@@ -173,7 +173,7 @@ describe("@lerna/otplease", () => {
     await expect(otplease(fn, {})).rejects.toThrow("auth required");
   });
 
-  it.each([["stdin"], ["stdout"]])("re-throws EOTP error when %s is not a TTY", async pipe => {
+  it.each([["stdin"], ["stdout"]])("re-throws EOTP error when %s is not a TTY", async (pipe) => {
     const fn = jest.fn(() => {
       const err = new Error(`non-interactive ${pipe}`);
       err.code = "EOTP";
@@ -204,7 +204,7 @@ describe("@lerna/otplease", () => {
 });
 
 function makeTestCallback(otp, result) {
-  return opts => {
+  return (opts) => {
     if (opts.otp !== otp) {
       const err = new Error(`oops, received otp ${opts.otp}`);
       err.code = "EOTP";

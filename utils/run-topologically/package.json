@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "@lerna/query-graph": "file:../query-graph",
-    "figgy-pudding": "^3.5.1",
-    "p-queue": "^4.0.0"
+    "figgy-pudding": "^3.5.2",
+    "p-queue": "^6.3.0"
   }
 }

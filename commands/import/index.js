@@ -79,9 +79,7 @@ class ImportCommand extends Command {
       throw new ValidationError("EEXISTS", `Target directory already exists "${targetDir}"`);
     }
 
-    this.commits = this.externalExecSync("git", this.gitParamsForTargetCommits())
-      .split("\n")
-      .reverse();
+    this.commits = this.externalExecSync("git", this.gitParamsForTargetCommits()).split("\n").reverse();
     // this.commits = this.externalExecSync("git", [
     //   "rev-list",
     //   "--no-merges",
@@ -120,7 +118,7 @@ class ImportCommand extends Command {
   }
 
   getPackageDirectories() {
-    return this.project.packageConfigs.filter(p => p.endsWith("*")).map(p => path.dirname(p));
+    return this.project.packageConfigs.filter((p) => p.endsWith("*")).map((p) => path.dirname(p));
   }
 
   getTargetBase() {
@@ -212,7 +210,7 @@ class ImportCommand extends Command {
     this.enableProgressBar();
 
     const tracker = this.logger.newItem("execute");
-    const mapper = sha => {
+    const mapper = (sha) => {
       tracker.info(sha);
 
       const patch = this.createPatchForCommit(sha);
@@ -236,7 +234,7 @@ class ImportCommand extends Command {
         .then(() => {
           tracker.completeWork(1);
         })
-        .catch(err => {
+        .catch((err) => {
           if (err.stdout.indexOf("Patch is empty.") === 0) {
             tracker.completeWork(1);
 
@@ -264,7 +262,7 @@ class ImportCommand extends Command {
 
         this.logger.success("import", "finished");
       })
-      .catch(err => {
+      .catch((err) => {
         tracker.finish();
 
         if (this.options.preserveCommit) {

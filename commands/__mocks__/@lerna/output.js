@@ -10,7 +10,7 @@ chalk.enabled = false;
 const mockOutput = jest.fn();
 
 function logged() {
-  return mockOutput.mock.calls.map(args => multiLineTrimRight(args[0])).join("\n");
+  return mockOutput.mock.calls.map((args) => multiLineTrimRight(args[0])).join("\n");
 }
 
 module.exports = mockOutput;

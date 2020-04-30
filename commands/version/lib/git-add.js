@@ -10,7 +10,7 @@ module.exports = gitAdd;
 function gitAdd(files, opts) {
   log.silly("gitAdd", files);
 
-  const filePaths = files.map(file => slash(path.relative(opts.cwd, path.resolve(opts.cwd, file))));
+  const filePaths = files.map((file) => slash(path.relative(opts.cwd, path.resolve(opts.cwd, file))));
 
   return childProcess.exec("git", ["add", "--", ...filePaths], opts);
 }

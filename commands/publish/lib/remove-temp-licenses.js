@@ -10,5 +10,5 @@ function removeTempLicenses(packagesToBeLicensed) {
     return Promise.resolve();
   }
 
-  return pMap(packagesToBeLicensed, pkg => fs.remove(pkg.licensePath));
+  return pMap(packagesToBeLicensed, (pkg) => fs.remove(pkg.licensePath));
 }
