@@ -7,9 +7,9 @@ git:
 language: node_js
 
 node_js:
+  - "14"
   - "12"
   - "10"
-  - "8"
 
 os:
   - linux
@@ -53,7 +53,9 @@ before_install:
       ;;
     esac
 
-install: npm ci
+install: 
+  - npm ci
+  - npx lerna bootstrap --hoist
 
 before_script:
   - npm config set loglevel warn
