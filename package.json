@@ -10,7 +10,8 @@
     "integration": "jest --config jest.integration.js --maxWorkers=2",
     "lint": "eslint . -c .eslintrc.yaml --no-eslintrc --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint",
     "pretest": "npm run lint",
-    "test": "jest"
+    "test": "jest",
+    "bootstrap": "lerna bootstrap --hoist"
   },
   "repository": {
     "type": "git",

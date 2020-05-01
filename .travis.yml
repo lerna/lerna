@@ -53,6 +53,8 @@ before_install:
 
 install: 
   - npm ci
+  - npm ls import-local
+  - npm run bootstrap
 
 
 before_script:
