@@ -64,4 +64,5 @@ before_script:
   - yarn --version
 
 script:
-  - npm run $LERNA_CI_SCRIPT
+  - npm run test:ci
+  - npm run integration

@@ -4,14 +4,13 @@
   "description": "lerna dog-fooding lerna",
   "private": true,
   "scripts": {
-    "ci": "npm test -- --ci --maxWorkers=2 && npm run integration -- --ci",
-    "ci:windows": "jest --ci --maxWorkers=2 && npm run integration -- --ci",
     "fix": "npm run lint -- --fix",
     "integration": "jest --config jest.integration.js --maxWorkers=2",
     "lint": "eslint . -c .eslintrc.yaml --no-eslintrc --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint",
     "pretest": "npm run lint",
     "test": "jest",
-    "bootstrap": "lerna bootstrap --hoist"
+    "bootstrap": "lerna bootstrap --hoist",
+    "test:ci": "jest --ci --maxWorkers=2"
   },
   "repository": {
     "type": "git",
