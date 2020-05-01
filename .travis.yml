@@ -40,8 +40,6 @@ matrix:
         - LERNA_CI_SCRIPT="ci:windows"
         - LERNA_CI_TYPE="non-publish"
 
-cache: npm
-
 before_install:
   - |
     case "${TRAVIS_OS_NAME}" in
@@ -55,7 +53,7 @@ before_install:
 
 install: 
   - npm ci
-  - npx lerna bootstrap --hoist
+
 
 before_script:
   - npm config set loglevel warn
