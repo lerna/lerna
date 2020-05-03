@@ -1,6 +1,6 @@
 "use strict";
 
-const PQueue = require("p-queue");
+const { default: PQueue } = require("p-queue");
 const figgyPudding = require("figgy-pudding");
 const QueryGraph = require("@lerna/query-graph");
 
@@ -31,14 +31,12 @@ function runTopologically(packages, runner, opts) {
 
   const queue = new PQueue({ concurrency });
   const graph = new QueryGraph(packages, { graphType, rejectCycles });
-
   return new Promise((resolve, reject) => {
     const returnValues = [];
 
     const queueNextAvailablePackages = () =>
       graph.getAvailablePackages().forEach(({ pkg, name }) => {
         graph.markAsTaken(name);
-
         queue
           .add(() =>
             runner(pkg)
@@ -50,7 +48,6 @@ function runTopologically(packages, runner, opts) {
       });
 
     queueNextAvailablePackages();
-
     return queue.onIdle().then(() => resolve(returnValues));
   });
 }
