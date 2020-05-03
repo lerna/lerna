@@ -218,8 +218,7 @@ class Command {
       // only return code, no stdio needed
       stdio: "ignore",
     };
-
-    return execa.sync("git", ["rev-parse"], opts).code === 0;
+    return execa.sync("git", ["rev-parse"], opts).exitCode === 0;
   }
 
   runValidations() {
