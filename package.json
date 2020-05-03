@@ -24,7 +24,7 @@
   "dependencies": {
     "lerna": "file:core/lerna",
     "p-pipe": "^3.0.0",
-    "p-queue": "^4.0.0"
+    "p-queue": "^6.4.0"
   },
   "devDependencies": {
     "@lerna-test/calls-back": "file:helpers/calls-back",
@@ -74,8 +74,8 @@
     "fs-extra": "^9.0.0",
     "glob-parent": "^5.1.1",
     "globby": "^11.0.0",
-    "jest": "^25.5.2",
-    "jest-circus": "^25.5.2",
+    "jest": "^25.5.4",
+    "jest-circus": "^25.5.4",
     "load-json-file": "^6.2.0",
     "normalize-newline": "^3.0.0",
     "normalize-path": "^3.0.0",
