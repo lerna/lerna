@@ -17,7 +17,7 @@
   ],
   "main": "run-topologically.js",
   "engines": {
-    "node": ">= 6.9.0"
+    "node": ">= 10.0.0"
   },
   "publishConfig": {
     "access": "public"
@@ -33,6 +33,6 @@
   "dependencies": {
     "@lerna/query-graph": "file:../query-graph",
     "figgy-pudding": "^3.5.2",
-    "p-queue": "^6.3.0"
+    "p-queue": "^4.0.0"
   }
 }
