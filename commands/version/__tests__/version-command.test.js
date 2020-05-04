@@ -44,6 +44,7 @@ const listDirty = (cwd) =>
   );
 
 // stabilize commit SHA
+expect.addSnapshotSerializer(require("@lerna-test/serialize-strip-ansi"));
 expect.addSnapshotSerializer(require("@lerna-test/serialize-git-sha"));
 
 describe("VersionCommand", () => {
@@ -56,12 +57,59 @@ describe("VersionCommand", () => {
 
       expect(checkWorkingTree).toHaveBeenCalled();
 
-      expect(PromptUtilities.select.mock.calls).toMatchSnapshot("prompt");
+      expect(PromptUtilities.select.mock.calls).toMatchInlineSnapshot(`
+        Array [
+          Array [
+            "Select a new version (currently 1.0.0)",
+            Object {
+              "choices": Array [
+                Object {
+                  "name": "Patch (1.0.1)",
+                  "value": "1.0.1",
+                },
+                Object {
+                  "name": "Minor (1.1.0)",
+                  "value": "1.1.0",
+                },
+                Object {
+                  "name": "Major (2.0.0)",
+                  "value": "2.0.0",
+                },
+                Object {
+                  "name": "Prepatch (1.0.1-alpha.0)",
+                  "value": "1.0.1-alpha.0",
+                },
+                Object {
+                  "name": "Preminor (1.1.0-alpha.0)",
+                  "value": "1.1.0-alpha.0",
+                },
+                Object {
+                  "name": "Premajor (2.0.0-alpha.0)",
+                  "value": "2.0.0-alpha.0",
+                },
+                Object {
+                  "name": "Custom Prerelease",
+                  "value": "PRERELEASE",
+                },
+                Object {
+                  "name": "Custom Version",
+                  "value": "CUSTOM",
+                },
+              ],
+            },
+          ],
+        ]
+      `);
       expect(PromptUtilities.confirm).toHaveBeenLastCalledWith(
         "Are you sure you want to create these versions?"
       );
 
-      expect(writePkg.updatedManifest("package-1")).toMatchSnapshot("gitHead");
+      expect(writePkg.updatedManifest("package-1")).toMatchInlineSnapshot(`
+        Object {
+          "name": "package-1",
+          "version": "1.0.1",
+        }
+      `);
 
       const patch = await showCommit(testDir);
       expect(patch).toMatchSnapshot("commit");
@@ -73,7 +121,16 @@ describe("VersionCommand", () => {
           cwd: testDir,
         })
       );
-      expect(output.logged()).toMatchSnapshot("console output");
+      expect(output.logged()).toMatchInlineSnapshot(`
+
+                Changes:
+                 - package-1: 1.0.0 => 1.0.1
+                 - package-2: 1.0.0 => 1.0.1
+                 - package-3: 1.0.0 => 1.0.1
+                 - package-4: 1.0.0 => 1.0.1
+                 - package-5: 1.0.0 => 1.0.1 (private)
+
+            `);
     });
 
     it("throws an error when --independent is passed", async () => {
@@ -180,7 +237,16 @@ describe("VersionCommand", () => {
           cwd: testDir,
         })
       );
-      expect(output.logged()).toMatchSnapshot("console output");
+      expect(output.logged()).toMatchInlineSnapshot(`
+
+        Changes:
+         - package-1: 1.0.0 => 1.0.1
+         - package-2: 2.0.0 => 2.1.0
+         - package-3: 3.0.0 => 4.0.0
+         - package-4: 4.0.0 => 4.1.0
+         - package-5: 5.0.0 => 5.0.1 (private)
+
+      `);
     });
   });
 
@@ -611,7 +677,7 @@ describe("VersionCommand", () => {
 
     const patch = await showCommit(testDir, "--name-only");
     expect(patch).toMatchInlineSnapshot(`
-      "v2.0.0
+      v2.0.0
 
       HEAD -> master, tag: v2.0.0
 
@@ -619,7 +685,7 @@ describe("VersionCommand", () => {
       packages/a/package.json
       packages/b/package.json
       packages/c/package.json
-      packages/d/package.json"
+      packages/d/package.json
     `);
   });
 

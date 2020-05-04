@@ -175,7 +175,7 @@ function formatColumns(resultList, viewOptions) {
       formatted.private = `(${chalk.red("PRIVATE")})`;
     }
 
-    formatted.location = chalk.grey(path.relative(".", result.location));
+    formatted.location = chalk.grey(path.relative(process.cwd(), result.location));
 
     return formatted;
   });

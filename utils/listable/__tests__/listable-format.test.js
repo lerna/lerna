@@ -10,9 +10,6 @@ const listable = require("..");
 
 const { File, Dir } = Tacks;
 
-// keep snapshots stable cross-platform
-chalk.enabled = false;
-
 // remove quotes around top-level strings
 expect.addSnapshotSerializer({
   test(val) {
@@ -25,6 +22,7 @@ expect.addSnapshotSerializer({
 });
 
 // normalize temp directory paths in snapshots
+expect.addSnapshotSerializer(require("@lerna-test/serialize-strip-ansi"));
 expect.addSnapshotSerializer(require("@lerna-test/serialize-windows-paths"));
 expect.addSnapshotSerializer(require("@lerna-test/serialize-tempdir"));
 

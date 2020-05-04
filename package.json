@@ -54,6 +54,7 @@
     "@lerna-test/serialize-git-sha": "file:helpers/serialize-git-sha",
     "@lerna-test/serialize-placeholders": "file:helpers/serialize-placeholders",
     "@lerna-test/serialize-tempdir": "file:helpers/serialize-tempdir",
+    "@lerna-test/serialize-strip-ansi": "file:helpers/serialize-strip-ansi",
     "@lerna-test/serialize-windows-paths": "file:helpers/serialize-windows-paths",
     "@lerna-test/set-npm-userconfig": "file:helpers/set-npm-userconfig",
     "@lerna-test/show-commit": "file:helpers/show-commit",
