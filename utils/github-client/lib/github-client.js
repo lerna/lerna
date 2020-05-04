@@ -2,8 +2,9 @@
 
 const log = require("npmlog");
 const childProcess = require("@lerna/child-process");
-const Octokit = require("@octokit/rest");
+const { Octokit } = require("@octokit/rest");
 const parseGitUrl = require("git-url-parse");
+const octokitServer = require("@octokit/plugin-enterprise-server");
 
 exports.createGitHubClient = createGitHubClient;
 exports.parseGitRepo = parseGitRepo;
@@ -19,7 +20,8 @@ function createGitHubClient() {
 
   if (GHE_VERSION) {
     // eslint-disable-next-line
-    Octokit.plugin(require(`@octokit/plugin-enterprise-rest/ghe-${GHE_VERSION}`));
+    
+    Octokit.plugin(octokitServer[`enterpriseServer${GHE_VERSION.replace(".", "")}`]);
   }
 
   const options = {

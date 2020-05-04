@@ -3,7 +3,7 @@
 jest.mock("@octokit/rest");
 jest.mock("@lerna/child-process");
 
-const Octokit = require("@octokit/rest");
+const { Octokit } = require("@octokit/rest");
 const childProcess = require("@lerna/child-process");
 const { createGitHubClient, parseGitRepo } = require("../lib/github-client");
 
@@ -32,7 +32,7 @@ describe("createGitHubClient", () => {
 
   it("initializes GHE plugin when GHE_VERSION env var is set", () => {
     process.env.GH_TOKEN = "TOKEN";
-    process.env.GHE_VERSION = "2.14";
+    process.env.GHE_VERSION = "2.18";
 
     createGitHubClient();
 

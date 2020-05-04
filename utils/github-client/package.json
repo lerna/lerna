@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "@lerna/child-process": "file:../../core/child-process",
-    "@octokit/plugin-enterprise-rest": "^6.0.1",
+    "@octokit/plugin-enterprise-server": "^7.0.0",
     "@octokit/rest": "^17.6.0",
     "git-url-parse": "^11.1.2",
     "npmlog": "^4.1.2"
