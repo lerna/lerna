@@ -56,7 +56,14 @@ describe("version --ignore-changes", () => {
     );
 
     const changedFiles = await showCommit(cwd, "--name-only");
-    expect(changedFiles).toMatchSnapshot();
+    expect(changedFiles).toMatchInlineSnapshot(`
+      "v1.0.1
+
+      HEAD -> master, tag: v1.0.1
+
+      lerna.json
+      packages/package-4/package.json"
+    `);
   });
 
   it("is mapped from deprecated --ignore", async () => {
@@ -70,6 +77,13 @@ describe("version --ignore-changes", () => {
     await lernaVersion(cwd)("--ignore", "*.md");
 
     const changedFiles = await showCommit(cwd, "--name-only");
-    expect(changedFiles).toMatchSnapshot();
+    expect(changedFiles).toMatchInlineSnapshot(`
+      "v1.0.1
+
+      HEAD -> master, tag: v1.0.1
+
+      lerna.json
+      packages/package-4/package.json"
+    `);
   });
 });

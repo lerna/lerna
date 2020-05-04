@@ -49,7 +49,28 @@ describe("--conventional-commits", () => {
       await lernaVersion(cwd)("--conventional-commits");
 
       const changedFiles = await showCommit(cwd, "--name-only");
-      expect(changedFiles).toMatchSnapshot();
+      expect(changedFiles).toMatchInlineSnapshot(`
+        "Publish
+
+         - package-1@1.0.1
+         - package-2@2.1.0
+         - package-3@4.0.0
+         - package-4@4.1.0
+         - package-5@5.0.1
+
+        HEAD -> master, tag: package-5@5.0.1, tag: package-4@4.1.0, tag: package-3@4.0.0, tag: package-2@2.1.0, tag: package-1@1.0.1
+
+        packages/package-1/CHANGELOG.md
+        packages/package-1/package.json
+        packages/package-2/CHANGELOG.md
+        packages/package-2/package.json
+        packages/package-3/CHANGELOG.md
+        packages/package-3/package.json
+        packages/package-4/CHANGELOG.md
+        packages/package-4/package.json
+        packages/package-5/CHANGELOG.md
+        packages/package-5/package.json"
+      `);
 
       versionBumps.forEach((version, name) => {
         expect(ConventionalCommitUtilities.recommendVersion).toHaveBeenCalledWith(
@@ -74,7 +95,28 @@ describe("--conventional-commits", () => {
       await lernaVersion(cwd)("--conventional-commits", "--conventional-prerelease");
 
       const changedFiles = await showCommit(cwd, "--name-only");
-      expect(changedFiles).toMatchSnapshot();
+      expect(changedFiles).toMatchInlineSnapshot(`
+        "Publish
+
+         - package-1@1.0.1-alpha.0
+         - package-2@2.1.0-alpha.0
+         - package-3@4.0.0-beta.0
+         - package-4@4.1.0-alpha.0
+         - package-5@5.0.1-alpha.0
+
+        HEAD -> master, tag: package-5@5.0.1-alpha.0, tag: package-4@4.1.0-alpha.0, tag: package-3@4.0.0-beta.0, tag: package-2@2.1.0-alpha.0, tag: package-1@1.0.1-alpha.0
+
+        packages/package-1/CHANGELOG.md
+        packages/package-1/package.json
+        packages/package-2/CHANGELOG.md
+        packages/package-2/package.json
+        packages/package-3/CHANGELOG.md
+        packages/package-3/package.json
+        packages/package-4/CHANGELOG.md
+        packages/package-4/package.json
+        packages/package-5/CHANGELOG.md
+        packages/package-5/package.json"
+      `);
 
       prereleaseVersionBumps.forEach((version, name) => {
         const prereleaseId = semver.prerelease(version)[0];
@@ -100,7 +142,28 @@ describe("--conventional-commits", () => {
       await lernaVersion(cwd)("--conventional-commits", "--conventional-graduate");
 
       const changedFiles = await showCommit(cwd, "--name-only");
-      expect(changedFiles).toMatchSnapshot();
+      expect(changedFiles).toMatchInlineSnapshot(`
+        "Publish
+
+         - package-1@1.0.1
+         - package-2@2.1.0
+         - package-3@4.0.0
+         - package-4@4.1.0
+         - package-5@5.0.1
+
+        HEAD -> master, tag: package-5@5.0.1, tag: package-4@4.1.0, tag: package-3@4.0.0, tag: package-2@2.1.0, tag: package-1@1.0.1
+
+        packages/package-1/CHANGELOG.md
+        packages/package-1/package.json
+        packages/package-2/CHANGELOG.md
+        packages/package-2/package.json
+        packages/package-3/CHANGELOG.md
+        packages/package-3/package.json
+        packages/package-4/CHANGELOG.md
+        packages/package-4/package.json
+        packages/package-5/CHANGELOG.md
+        packages/package-5/package.json"
+      `);
 
       versionBumps.forEach((version, name) => {
         expect(ConventionalCommitUtilities.recommendVersion).toHaveBeenCalledWith(
@@ -161,7 +224,24 @@ describe("--conventional-commits", () => {
       await lernaVersion(cwd)("--conventional-commits");
 
       const changedFiles = await showCommit(cwd, "--name-only");
-      expect(changedFiles).toMatchSnapshot();
+      expect(changedFiles).toMatchInlineSnapshot(`
+        "v2.0.0
+
+        HEAD -> master, tag: v2.0.0
+
+        CHANGELOG.md
+        lerna.json
+        packages/package-1/CHANGELOG.md
+        packages/package-1/package.json
+        packages/package-2/CHANGELOG.md
+        packages/package-2/package.json
+        packages/package-3/CHANGELOG.md
+        packages/package-3/package.json
+        packages/package-4/CHANGELOG.md
+        packages/package-4/package.json
+        packages/package-5/CHANGELOG.md
+        packages/package-5/package.json"
+      `);
 
       ["package-1", "package-2", "package-3", "package-4", "package-5"].forEach((name) => {
         const location = path.join(cwd, "packages", name);
@@ -208,7 +288,24 @@ describe("--conventional-commits", () => {
       await lernaVersion(cwd)("--conventional-commits", "--conventional-prerelease");
 
       const changedFiles = await showCommit(cwd, "--name-only");
-      expect(changedFiles).toMatchSnapshot();
+      expect(changedFiles).toMatchInlineSnapshot(`
+        "v2.0.0-alpha.0
+
+        HEAD -> master, tag: v2.0.0-alpha.0
+
+        CHANGELOG.md
+        lerna.json
+        packages/package-1/CHANGELOG.md
+        packages/package-1/package.json
+        packages/package-2/CHANGELOG.md
+        packages/package-2/package.json
+        packages/package-3/CHANGELOG.md
+        packages/package-3/package.json
+        packages/package-4/CHANGELOG.md
+        packages/package-4/package.json
+        packages/package-5/CHANGELOG.md
+        packages/package-5/package.json"
+      `);
 
       ["package-1", "package-2", "package-3", "package-4", "package-5"].forEach((name) => {
         const location = path.join(cwd, "packages", name);
