@@ -1,6 +1,5 @@
 "use strict";
 
-const chalk = require("chalk");
 const tempy = require("tempy");
 const Tacks = require("tacks");
 
