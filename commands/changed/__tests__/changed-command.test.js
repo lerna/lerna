@@ -24,6 +24,7 @@ expect.addSnapshotSerializer({
 });
 
 // normalize temp directory paths in snapshots
+expect.addSnapshotSerializer(require("@lerna-test/serialize-strip-ansi"));
 expect.addSnapshotSerializer(require("@lerna-test/serialize-tempdir"));
 
 describe("ChangedCommand", () => {
@@ -39,20 +40,20 @@ describe("ChangedCommand", () => {
     await lernaChanged(cwd)();
 
     expect(output.logged()).toMatchInlineSnapshot(`
-package-2
-package-3
-`);
+      package-2
+      package-3
+    `);
   });
 
   it("passes --force-publish to update collector", async () => {
     await lernaChanged(cwd)("--force-publish");
 
     expect(output.logged()).toMatchInlineSnapshot(`
-package-1
-package-2
-package-3
-package-4
-`);
+      package-1
+      package-2
+      package-3
+      package-4
+    `);
     expect(collectUpdates).toHaveBeenLastCalledWith(
       expect.any(Array),
       expect.any(Object),
@@ -125,7 +126,7 @@ package-4
 
     await lernaChanged(cwd)("--all");
 
-    expect(output.logged()).toBe("package-5 (PRIVATE)");
+    expect(output.logged()).toMatchInlineSnapshot(`package-5 (PRIVATE)`);
   });
 
   it("exits non-zero when there are no changed packages", async () => {
@@ -143,12 +144,12 @@ package-4
     await lernaChanged(cwd)("-alp");
 
     expect(output.logged()).toMatchInlineSnapshot(`
-__TEST_ROOTDIR__/packages/package-1:package-1:1.0.0
-__TEST_ROOTDIR__/packages/package-2:package-2:1.0.0
-__TEST_ROOTDIR__/packages/package-3:package-3:1.0.0
-__TEST_ROOTDIR__/packages/package-4:package-4:1.0.0
-__TEST_ROOTDIR__/packages/package-5:package-5:1.0.0:PRIVATE
-`);
+      __TEST_ROOTDIR__/packages/package-1:package-1:1.0.0
+      __TEST_ROOTDIR__/packages/package-2:package-2:1.0.0
+      __TEST_ROOTDIR__/packages/package-3:package-3:1.0.0
+      __TEST_ROOTDIR__/packages/package-4:package-4:1.0.0
+      __TEST_ROOTDIR__/packages/package-5:package-5:1.0.0:PRIVATE
+    `);
   });
 
   it("outputs a stringified array of result objects with --json", async () => {
@@ -159,20 +160,20 @@ __TEST_ROOTDIR__/packages/package-5:package-5:1.0.0:PRIVATE
     // Output should be a parseable string
     const jsonOutput = JSON.parse(output.logged());
     expect(jsonOutput).toMatchInlineSnapshot(`
-Array [
-  Object {
-    "location": "__TEST_ROOTDIR__/packages/package-2",
-    "name": "package-2",
-    "private": false,
-    "version": "1.0.0",
-  },
-  Object {
-    "location": "__TEST_ROOTDIR__/packages/package-3",
-    "name": "package-3",
-    "private": false,
-    "version": "1.0.0",
-  },
-]
-`);
+      Array [
+        Object {
+          "location": "__TEST_ROOTDIR__/packages/package-2",
+          "name": "package-2",
+          "private": false,
+          "version": "1.0.0",
+        },
+        Object {
+          "location": "__TEST_ROOTDIR__/packages/package-3",
+          "name": "package-3",
+          "private": false,
+          "version": "1.0.0",
+        },
+      ]
+    `);
   });
 });
