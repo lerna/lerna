@@ -64,9 +64,9 @@ describe("ChildProcessUtilities", () => {
       const child = ChildProcessUtilities.spawn("echo", ["-n"]);
       expect(child.stdio).toEqual([null, null, null]);
 
-      const { code, signal } = await child;
-      expect(code).toBe(0);
-      expect(signal).toBe(null);
+      const { exitCode, signal } = await child;
+      expect(exitCode).toBe(0);
+      expect(signal).toBeFalsy();
     });
 
     it("decorates opts.pkg on error if caught", async () => {

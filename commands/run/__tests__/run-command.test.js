@@ -117,7 +117,7 @@ describe("RunCommand", () => {
         const err = new Error(pkg.name);
 
         err.failed = true;
-        err.code = 123;
+        err.exitCode = 123;
 
         return Promise.reject(err);
       });

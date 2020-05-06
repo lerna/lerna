@@ -4,6 +4,7 @@ const execa = require("execa");
 
 module.exports = getCommitMessage;
 
-function getCommitMessage(cwd, format = "%B") {
-  return execa.stdout("git", ["log", "-1", `--pretty=format:${format}`], { cwd });
+async function getCommitMessage(cwd, format = "%B") {
+  const { stdout } = await execa("git", ["log", "-1", `--pretty=format:${format}`], { cwd });
+  return stdout;
 }

@@ -87,7 +87,7 @@ function getExitCode(result) {
 
 function spawnProcess(command, args, opts) {
   const child = execa(command, args, opts);
-  const drain = (code, signal) => {
+  const drain = (exitCode, signal) => {
     children.delete(child);
 
     // don't run repeatedly if this is the error event
@@ -114,7 +114,7 @@ function wrapError(spawned) {
       // istanbul ignore else
       if (err.code) {
         // ensure code is always a number
-        err.code = getExitCode(err);
+        err.code = err.exitCode;
 
         // log non-lerna error cleanly
         err.pkg = spawned.pkg;

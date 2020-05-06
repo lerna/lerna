@@ -565,8 +565,8 @@ describe("VersionCommand", () => {
   describe("working on a detached HEAD", () => {
     const detachedHEAD = async (fixture = "normal") => {
       const cwd = await initFixture(fixture);
-      const sha = await execa.stdout("git", ["rev-parse", "HEAD"], { cwd });
-      await execa("git", ["checkout", sha], { cwd });
+      const { stdout } = await execa("git", ["rev-parse", "HEAD"], { cwd });
+      await execa("git", ["checkout", stdout], { cwd });
       return cwd;
     };
 
@@ -625,9 +625,9 @@ describe("VersionCommand", () => {
 
   it("exits with an error when git HEAD is detached", async () => {
     const cwd = await initFixture("no-interdependencies");
-    const sha = await execa.stdout("git", ["rev-parse", "HEAD"], { cwd });
+    const { stdout } = await execa("git", ["rev-parse", "HEAD"], { cwd });
 
-    await execa("git", ["checkout", sha], { cwd }); // detach head
+    await execa("git", ["checkout", stdout], { cwd }); // detach head
 
     const command = lernaVersion(cwd)();
     await expect(command).rejects.toThrow("Detached git HEAD, please checkout a branch to choose versions.");

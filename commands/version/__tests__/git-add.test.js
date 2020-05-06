@@ -14,8 +14,8 @@ test("relative files", async () => {
   await fs.outputFile(path.join(cwd, file), "hello");
   await gitAdd([file], { cwd });
 
-  const list = await execa.stdout("git", ["diff", "--cached", "--name-only"], { cwd });
-  expect(slash(list)).toBe("packages/pkg-1/index.js");
+  const list = await execa("git", ["diff", "--cached", "--name-only"], { cwd });
+  expect(slash(list.stdout)).toBe("packages/pkg-1/index.js");
 });
 
 test("absolute files", async () => {
@@ -25,6 +25,6 @@ test("absolute files", async () => {
   await fs.outputFile(file, "hello");
   await gitAdd([file], { cwd });
 
-  const list = await execa.stdout("git", ["diff", "--cached", "--name-only"], { cwd });
-  expect(slash(list)).toBe("packages/pkg-2/index.js");
+  const result = await execa("git", ["diff", "--cached", "--name-only"], { cwd });
+  expect(slash(result.stdout)).toBe("packages/pkg-2/index.js");
 });

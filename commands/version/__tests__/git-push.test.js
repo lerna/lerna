@@ -5,9 +5,7 @@ const childProcess = require("@lerna/child-process");
 const cloneFixture = require("@lerna-test/clone-fixture")(__dirname);
 const gitPush = require("../lib/git-push");
 
-async function listRemoteTags(cwd) {
-  return execa.stdout("git", ["ls-remote", "--tags", "--refs", "--quiet"], { cwd });
-}
+const listRemoteTags = (cwd) => execa("git", ["ls-remote", "--tags", "--refs", "--quiet"], { cwd });
 
 beforeEach(() => {
   jest.spyOn(childProcess, "exec");
@@ -33,10 +31,10 @@ test("gitPush", async () => {
     { cwd }
   );
 
-  const list = await listRemoteTags(cwd);
-  expect(list).toMatch("v1.2.3");
-  expect(list).toMatch("foo@2.3.1");
-  expect(list).toMatch("bar@3.2.1");
+  const { stdout } = await listRemoteTags(cwd);
+  expect(stdout).toMatch("v1.2.3");
+  expect(stdout).toMatch("foo@2.3.1");
+  expect(stdout).toMatch("bar@3.2.1");
 });
 
 test("remote that does not support --atomic", async () => {
@@ -68,7 +66,7 @@ test("remote that does not support --atomic", async () => {
   );
 
   const list = await listRemoteTags(cwd);
-  expect(list).toMatch("v4.5.6");
+  expect(list.stdout).toMatch("v4.5.6");
 });
 
 test("git cli that does not support --atomic", async () => {
@@ -90,8 +88,8 @@ test("git cli that does not support --atomic", async () => {
   });
 
   await gitPush("origin", "master", { cwd });
-
-  await expect(listRemoteTags(cwd)).resolves.toMatch("v7.8.9");
+  const result = (await listRemoteTags(cwd)).stdout;
+  await expect(result).toMatch("v7.8.9");
 });
 
 test("unexpected git error", async () => {

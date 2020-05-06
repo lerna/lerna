@@ -13,6 +13,6 @@ test("gitCheckout files", async () => {
   await Promise.all(files.map((fp) => fs.writeJSON(path.join(cwd, fp), { foo: "bar" })));
   await gitCheckout(files, { cwd });
 
-  const modified = await execa.stdout("git", ["ls-files", "--modified"], { cwd });
-  expect(modified).toBe("");
+  const { stdout } = await execa("git", ["ls-files", "--modified"], { cwd });
+  expect(stdout).toBe("");
 });

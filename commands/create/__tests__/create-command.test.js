@@ -24,24 +24,24 @@ expect.addSnapshotSerializer(require("@lerna-test/serialize-git-sha"));
 const addRemote = (cwd, remote = "origin", url = "git@github.com:test/test.git") =>
   execa("git", ["remote", "add", remote, url], { cwd });
 
-const diffStaged = (cwd, ...args) => execa.stdout("git", ["diff", "--cached", ...args], { cwd });
+const diffStaged = (cwd, ...args) => execa("git", ["diff", "--cached", ...args], { cwd });
 
 const initRemoteFixture = (fixtureName) =>
   initFixture(fixtureName).then((cwd) => addRemote(cwd).then(() => cwd));
 
 const gitLsOthers = (cwd, ...args) =>
-  execa.stdout("git", ["ls-files", "--others", "--exclude-standard", ...args], { cwd });
+  execa("git", ["ls-files", "--others", "--exclude-standard", ...args], { cwd });
 
 const listUntracked = async (cwd) => {
   const list = await gitLsOthers(cwd, "-z");
 
-  return list.split("\0").map((fp) => slash(fp));
+  return list.stdout.split("\0").map((fp) => slash(fp));
 };
 
 const manifestCreated = async (cwd) => {
   const file = await gitLsOthers(cwd, "--", "**/package.json");
 
-  return fs.readJSON(path.join(cwd, file));
+  return fs.readJSON(path.join(cwd, file.stdout));
 };
 
 describe("CreateCommand", () => {
@@ -82,7 +82,7 @@ describe("CreateCommand", () => {
     await gitAdd(cwd, ".");
 
     const result = await diffStaged(cwd);
-    expect(result).toMatchSnapshot();
+    expect(result.stdout).toMatchSnapshot();
   });
 
   it("creates a stub package with a scoped name", async () => {
@@ -101,7 +101,7 @@ describe("CreateCommand", () => {
     await gitAdd(cwd, ".");
 
     const result = await diffStaged(cwd);
-    expect(result).toMatchSnapshot();
+    expect(result.stdout).toMatchSnapshot();
   });
 
   it("creates a stub cli", async () => {
@@ -116,7 +116,7 @@ describe("CreateCommand", () => {
     }
 
     const result = await diffStaged(cwd);
-    expect(result).toMatchSnapshot();
+    expect(result.stdout).toMatchSnapshot();
 
     // yargs is automatically added when CLI is stubbed
     expect(getManifest).toHaveBeenLastCalledWith(
@@ -153,7 +153,7 @@ describe("CreateCommand", () => {
     }
 
     const result = await diffStaged(cwd);
-    expect(result).toMatchSnapshot();
+    expect(result.stdout).toMatchSnapshot();
   });
 
   it("defaults user name and email to git config", async () => {
