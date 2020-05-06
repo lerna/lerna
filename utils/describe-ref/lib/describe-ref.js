@@ -10,6 +10,8 @@ module.exports.sync = sync;
 function getArgs(options, includeMergedTags) {
   let args = [
     "describe",
+    // return latest tag - otherwise the ref is incoorrect
+    "--tags",
     // fallback to short sha if no tags located
     "--always",
     // always return full result, helps identify existing release

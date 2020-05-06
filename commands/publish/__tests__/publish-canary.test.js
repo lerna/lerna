@@ -384,7 +384,7 @@ test("publish --canary --include-merged-tags calls git describe correctly", asyn
   expect(spy).toHaveBeenCalledWith(
     "git",
     // notably lacking "--first-parent"
-    ["describe", "--always", "--long", "--dirty", "--match", "v*.*.*"],
+    ["describe", "--tags", "--always", "--long", "--dirty", "--match", "v*.*.*"],
     expect.objectContaining({ cwd })
   );
 });
