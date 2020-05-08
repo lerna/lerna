@@ -648,23 +648,22 @@ class PublishCommand extends Command {
     }
 
     const opts = this.conf.snapshot;
-    const mapper = pPipe(
-      [
-        this.options.requireScripts && ((pkg) => this.execScript(pkg, "prepublish")),
+    const actions = [
+      this.options.requireScripts && ((pkg) => this.execScript(pkg, "prepublish")),
 
-        (pkg) =>
-          pulseTillDone(packDirectory(pkg, pkg.location, opts)).then((packed) => {
-            tracker.verbose("packed", path.relative(this.project.rootPath, pkg.contents));
-            tracker.completeWork(1);
+      (pkg) =>
+        pulseTillDone(packDirectory(pkg, pkg.location, opts)).then((packed) => {
+          tracker.verbose("packed", path.relative(this.project.rootPath, pkg.contents));
+          tracker.completeWork(1);
 
-            // store metadata for use in this.publishPacked()
-            pkg.packed = packed;
+          // store metadata for use in this.publishPacked()
+          pkg.packed = packed;
 
-            // manifest may be mutated by any previous lifecycle
-            return pkg.refresh();
-          }),
-      ].filter(Boolean)
-    );
+          // manifest may be mutated by any previous lifecycle
+          return pkg.refresh();
+        }),
+    ].filter(Boolean);
+    const mapper = pPipe(...actions);
 
     chain = chain.then(() => this.topoMapPackages(mapper));
 
@@ -698,26 +697,25 @@ class PublishCommand extends Command {
       tag: this.options.tempTag ? "lerna-temp" : this.conf.get("tag"),
     });
 
-    const mapper = pPipe(
-      [
-        (pkg) => {
-          const preDistTag = this.getPreDistTag(pkg);
-          const tag = !this.options.tempTag && preDistTag ? preDistTag : opts.tag;
-          const pkgOpts = Object.assign({}, opts, { tag });
+    const actions = [
+      (pkg) => {
+        const preDistTag = this.getPreDistTag(pkg);
+        const tag = !this.options.tempTag && preDistTag ? preDistTag : opts.tag;
+        const pkgOpts = Object.assign({}, opts, { tag });
 
-          return pulseTillDone(npmPublish(pkg, pkg.packed.tarFilePath, pkgOpts, this.otpCache)).then(() => {
-            tracker.success("published", pkg.name, pkg.version);
-            tracker.completeWork(1);
+        return pulseTillDone(npmPublish(pkg, pkg.packed.tarFilePath, pkgOpts, this.otpCache)).then(() => {
+          tracker.success("published", pkg.name, pkg.version);
+          tracker.completeWork(1);
 
-            logPacked(pkg.packed);
+          logPacked(pkg.packed);
 
-            return pkg;
-          });
-        },
+          return pkg;
+        });
+      },
 
-        this.options.requireScripts && ((pkg) => this.execScript(pkg, "postpublish")),
-      ].filter(Boolean)
-    );
+      this.options.requireScripts && ((pkg) => this.execScript(pkg, "postpublish")),
+    ].filter(Boolean);
+    const mapper = pPipe(...actions);
 
     chain = chain.then(() => this.topoMapPackages(mapper));
 

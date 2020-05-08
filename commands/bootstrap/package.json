@@ -52,8 +52,8 @@
     "npmlog": "^4.1.2",
     "p-finally": "^1.0.0",
     "p-map": "^4.0.0",
-    "p-map-series": "^1.0.0",
-    "p-waterfall": "^1.0.0",
+    "p-map-series": "^2.0.0",
+    "p-waterfall": "^2.0.0",
     "read-package-tree": "^5.1.6",
     "semver": "^7.3.0"
   }

@@ -44,7 +44,7 @@
     "globby": "^9.0.0",
     "init-package-json": "^1.10.3",
     "npm-package-arg": "^8.0.0",
-    "p-reduce": "^1.0.0",
+    "p-reduce": "^2.0.0",
     "pify": "^5.0.0",
     "semver": "^7.3.0",
     "slash": "^2.0.0",

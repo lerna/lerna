@@ -38,7 +38,7 @@
     "@lerna/pulse-till-done": "file:../../utils/pulse-till-done",
     "@lerna/rimraf-dir": "file:../../utils/rimraf-dir",
     "p-map": "^4.0.0",
-    "p-map-series": "^1.0.0",
-    "p-waterfall": "^1.0.0"
+    "p-map-series": "^2.0.0",
+    "p-waterfall": "^2.0.0"
   }
 }

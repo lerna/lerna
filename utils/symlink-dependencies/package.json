@@ -37,6 +37,6 @@
     "fs-extra": "^9.0.0",
     "p-finally": "^1.0.0",
     "p-map": "^4.0.0",
-    "p-map-series": "^1.0.0"
+    "p-map-series": "^2.0.0"
   }
 }
