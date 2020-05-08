@@ -18,7 +18,7 @@ function loadPkgManifests(cwd) {
     {
       cwd,
       absolute: true,
-      followSymbolicLinks: false,
+      followSymlinkedDirectories: false,
     }
   ).then((files) => Promise.all(files.sort().map((fp) => loadJsonFile(fp))));
 }

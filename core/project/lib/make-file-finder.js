@@ -11,7 +11,7 @@ function makeFileFinder(rootPath, packageConfigs) {
   const globOpts = {
     cwd: rootPath,
     absolute: true,
-    followSymbolicLinks: false,
+    followSymlinkedDirectories: false,
     // POSIX results always need to be normalized
     transform: (fp) => path.normalize(fp),
   };

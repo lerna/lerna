@@ -156,7 +156,7 @@ Successfully published:
     const changelogFilePaths = await globby(["**/CHANGELOG.md"], {
       cwd,
       absolute: true,
-      followSymbolicLinks: false,
+      followSymlinkedDirectories: false,
     });
     const [
       // no root changelog
