@@ -41,7 +41,7 @@ function filterPackages(packagesToFilter, include = [], exclude = [], showPrivat
       patterns.unshift("**");
     }
 
-    const pnames = Array.from(filtered).map(pkg => pkg.name);
+    const pnames = Array.from(filtered).map((pkg) => pkg.name);
     const chosen = new Set(multimatch(pnames, patterns));
 
     for (const pkg of filtered) {
@@ -71,5 +71,5 @@ function arrify(thing) {
 }
 
 function negate(patterns) {
-  return arrify(patterns).map(pattern => `!${pattern}`);
+  return arrify(patterns).map((pattern) => `!${pattern}`);
 }

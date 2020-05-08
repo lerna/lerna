@@ -43,7 +43,7 @@ function add(spec, tag, _opts, otpCache) {
     return Promise.resolve();
   }
 
-  return fetchTags(opts).then(tags => {
+  return fetchTags(opts).then((tags) => {
     if (tags[cleanTag] === version) {
       opts.log.warn("dist-tag", `${name}@${cleanTag} already set to ${version}`);
       return tags;
@@ -62,7 +62,7 @@ function add(spec, tag, _opts, otpCache) {
     });
 
     // success returns HTTP 204, thus no JSON to parse
-    return otplease(wrappedPayload => fetch(uri, wrappedPayload), payload, otpCache).then(() => {
+    return otplease((wrappedPayload) => fetch(uri, wrappedPayload), payload, otpCache).then(() => {
       opts.log.verbose("dist-tag", `added "${cleanTag}" to ${name}@${version}`);
 
       // eslint-disable-next-line no-param-reassign
@@ -86,7 +86,7 @@ function remove(spec, tag, _opts, otpCache) {
     return Promise.resolve();
   }
 
-  return fetchTags(opts).then(tags => {
+  return fetchTags(opts).then((tags) => {
     const version = tags[tag];
 
     if (!version) {
@@ -101,7 +101,7 @@ function remove(spec, tag, _opts, otpCache) {
     });
 
     // the delete properly returns a 204, so no json to parse
-    return otplease(wrappedPayload => fetch(uri, wrappedPayload), payload, otpCache).then(() => {
+    return otplease((wrappedPayload) => fetch(uri, wrappedPayload), payload, otpCache).then(() => {
       opts.log.verbose("dist-tag", `removed "${tag}" from ${opts.spec.name}@${version}`);
 
       // eslint-disable-next-line no-param-reassign
@@ -135,7 +135,7 @@ function fetchTags(opts) {
         spec: opts.spec,
       })
     )
-    .then(data => {
+    .then((data) => {
       if (data && typeof data === "object") {
         // eslint-disable-next-line no-param-reassign, no-underscore-dangle
         delete data._etag;

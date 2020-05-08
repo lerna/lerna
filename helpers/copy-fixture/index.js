@@ -6,7 +6,7 @@ const fs = require("fs-extra");
 module.exports = copyFixture;
 
 function copyFixture(targetDir, fixtureName, cwd) {
-  return findFixture(cwd, fixtureName).then(fp => {
+  return findFixture(cwd, fixtureName).then((fp) => {
     return fs.copy(fp, targetDir);
   });
 }

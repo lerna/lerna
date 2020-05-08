@@ -11,7 +11,7 @@ exports.aliases = ["updated"];
 
 exports.describe = "List local packages that have changed since the last tagged release";
 
-exports.builder = yargs => {
+exports.builder = (yargs) => {
   const opts = {
     // only the relevant bits from `lerna version`
     "conventional-commits": {

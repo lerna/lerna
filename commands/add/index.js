@@ -37,7 +37,7 @@ class AddCommand extends Command {
 
   initialize() {
     this.spec = npa(this.options.pkg);
-    this.dirs = new Set(this.options.globs.map(fp => path.resolve(this.project.rootPath, fp)));
+    this.dirs = new Set(this.options.globs.map((fp) => path.resolve(this.project.rootPath, fp)));
     this.selfSatisfied = this.packageSatisfied();
 
     // https://docs.npmjs.com/misc/config#save-prefix
@@ -58,7 +58,7 @@ class AddCommand extends Command {
     let chain = Promise.resolve();
 
     chain = chain.then(() => this.getPackageVersion());
-    chain = chain.then(version => {
+    chain = chain.then((version) => {
       if (version == null) {
         throw new ValidationError(
           "ENOTSATISFIED",
@@ -71,12 +71,12 @@ class AddCommand extends Command {
     });
 
     chain = chain.then(() => getFilteredPackages(this.packageGraph, this.execOpts, this.options));
-    chain = chain.then(filteredPackages => {
+    chain = chain.then((filteredPackages) => {
       this.filteredPackages = filteredPackages;
     });
 
     chain = chain.then(() => this.collectPackagesToChange());
-    chain = chain.then(packagesToChange => {
+    chain = chain.then((packagesToChange) => {
       this.packagesToChange = packagesToChange;
     });
 
@@ -132,16 +132,16 @@ class AddCommand extends Command {
 
     // Skip packages that only would install themselves
     if (this.packageGraph.has(targetName)) {
-      result = result.filter(pkg => pkg.name !== targetName);
+      result = result.filter((pkg) => pkg.name !== targetName);
     }
 
     // Skip packages that are not selected by dir globs
     if (this.dirs.size) {
-      result = result.filter(pkg => this.dirs.has(pkg.location));
+      result = result.filter((pkg) => this.dirs.has(pkg.location));
     }
 
     // Skip packages without actual changes to manifest
-    result = result.filter(pkg => {
+    result = result.filter((pkg) => {
       const deps = this.getPackageDeps(pkg);
 
       // Check if one of the packages to install necessitates a change to pkg's manifest
@@ -158,7 +158,7 @@ class AddCommand extends Command {
   makeChanges() {
     const { name: targetName } = this.spec;
 
-    return pMap(this.packagesToChange, pkg => {
+    return pMap(this.packagesToChange, (pkg) => {
       const deps = this.getPackageDeps(pkg);
       const range = getRangeToReference(this.spec, deps, pkg.location, this.savePrefix);
 
@@ -194,7 +194,7 @@ class AddCommand extends Command {
       registry: this.options.registry,
     });
 
-    return getManifest(this.spec, opts.snapshot).then(pkg => pkg.version);
+    return getManifest(this.spec, opts.snapshot).then((pkg) => pkg.version);
   }
 
   packageSatisfied() {
@@ -214,9 +214,9 @@ class AddCommand extends Command {
 
     // existing relative file spec means local dep should be added the same way
     this.spec.saveRelativeFileSpec = Array.from(this.packageGraph.values()).some(
-      node =>
+      (node) =>
         node.localDependencies.size &&
-        Array.from(node.localDependencies.values()).some(resolved => resolved.type === "directory")
+        Array.from(node.localDependencies.values()).some((resolved) => resolved.type === "directory")
     );
 
     if (fetchSpec === "latest") {

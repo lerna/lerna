@@ -5,11 +5,11 @@ const fs = require("fs-extra");
 const npmlog = require("npmlog");
 const upath = require("upath");
 
-const hrtimeToMicroseconds = hrtime => {
+const hrtimeToMicroseconds = (hrtime) => {
   return (hrtime[0] * 1e9 + hrtime[1]) / 1000;
 };
 
-const range = len => {
+const range = (len) => {
   return Array(len)
     .fill()
     .map((_, idx) => idx);
@@ -48,7 +48,7 @@ class Profiler {
         threadId = this.threads.shift();
       })
       .then(() => fn())
-      .then(value => {
+      .then((value) => {
         const duration = process.hrtime(startTime);
 
         // Trace Event Format documentation:

@@ -144,7 +144,7 @@ exports.builder = (yargs, composed) => {
 
   if (composed) {
     // hide options from composed command's help output
-    Object.keys(opts).forEach(key => {
+    Object.keys(opts).forEach((key) => {
       opts[key].hidden = true;
     });
 
@@ -198,7 +198,7 @@ exports.builder = (yargs, composed) => {
       hidden: true,
       type: "boolean",
     })
-    .check(argv => {
+    .check((argv) => {
       /* eslint-disable no-param-reassign */
       if (argv.ignore) {
         argv.ignoreChanges = argv.ignore;
@@ -260,7 +260,7 @@ exports.addBumpPositional = function addBumpPositional(yargs, additionalKeywords
   yargs.positional("bump", {
     describe: `Increment version(s) by explicit version _or_ semver keyword,\n${bumpOptionList}`,
     type: "string",
-    coerce: choice => {
+    coerce: (choice) => {
       if (!semver.valid(choice) && semverKeywords.indexOf(choice) === -1) {
         throw new Error(`bump must be an explicit version string _or_ one of: ${bumpOptionList}`);
       }

@@ -41,7 +41,7 @@ const colorizedAry = [
 // M  packages/package-4/package.json
 // ?? poopy.txt
 
-const setupChanges = async cwd => {
+const setupChanges = async (cwd) => {
   const [pkg1, pkg2, pkg3, pkg4] = await getPackages(cwd);
 
   // "AD": (added to index, deleted in working tree)

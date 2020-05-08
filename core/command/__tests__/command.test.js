@@ -330,7 +330,7 @@ describe("core-command", () => {
   });
 
   describe("subclass implementation", () => {
-    ["initialize", "execute"].forEach(method => {
+    ["initialize", "execute"].forEach((method) => {
       it(`throws if ${method}() is not overridden`, () => {
         const command = new Command({ cwd: testDir, onRejected });
         expect(() => command[method]()).toThrow();

@@ -7,9 +7,9 @@ const semver = require("semver");
 const mockRecommendVersion = jest.fn().mockName("recommendVersion");
 const mockUpdateChangelog = jest.fn().mockName("updateChangelog");
 
-mockRecommendVersion.mockImplementation(node => semver.inc(node.version, "patch"));
+mockRecommendVersion.mockImplementation((node) => semver.inc(node.version, "patch"));
 
-mockUpdateChangelog.mockImplementation(pkg => {
+mockUpdateChangelog.mockImplementation((pkg) => {
   const filePath = path.join(pkg.location, "CHANGELOG.md");
 
   // grumble grumble re-implementing the implementation

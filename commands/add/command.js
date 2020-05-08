@@ -9,7 +9,7 @@ exports.command = "add <pkg> [globs..]";
 
 exports.describe = "Add a single dependency to matched packages";
 
-exports.builder = yargs => {
+exports.builder = (yargs) => {
   yargs
     .positional("pkg", {
       describe: "Package name to add as a dependency",

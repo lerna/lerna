@@ -41,7 +41,7 @@ class ExecCommand extends Command {
     let chain = Promise.resolve();
 
     chain = chain.then(() => getFilteredPackages(this.packageGraph, this.execOpts, this.options));
-    chain = chain.then(filteredPackages => {
+    chain = chain.then((filteredPackages) => {
       this.filteredPackages = filteredPackages;
     });
 
@@ -73,7 +73,7 @@ class ExecCommand extends Command {
 
     if (this.bail) {
       // only the first error is caught
-      chain = chain.catch(err => {
+      chain = chain.catch((err) => {
         process.exitCode = err.code;
 
         // rethrow to halt chain and log properly
@@ -81,11 +81,11 @@ class ExecCommand extends Command {
       });
     } else {
       // detect error (if any) from collected results
-      chain = chain.then(results => {
+      chain = chain.then((results) => {
         /* istanbul ignore else */
-        if (results.some(result => result.failed)) {
+        if (results.some((result) => result.failed)) {
           // propagate "highest" error code, it's probably the most useful
-          const codes = results.filter(result => result.failed).map(result => result.code);
+          const codes = results.filter((result) => result.failed).map((result) => result.code);
           const exitCode = Math.max(...codes, 1);
 
           this.logger.error("", "Received non-zero exit code %d during execution", exitCode);
@@ -122,8 +122,8 @@ class ExecCommand extends Command {
 
   getRunner() {
     return this.options.stream
-      ? pkg => this.runCommandInPackageStreaming(pkg)
-      : pkg => this.runCommandInPackageCapturing(pkg);
+      ? (pkg) => this.runCommandInPackageStreaming(pkg)
+      : (pkg) => this.runCommandInPackageCapturing(pkg);
   }
 
   runCommandInPackagesTopological() {
@@ -138,7 +138,7 @@ class ExecCommand extends Command {
       });
 
       const callback = this.getRunner();
-      runner = pkg => profiler.run(() => callback(pkg), pkg.name);
+      runner = (pkg) => profiler.run(() => callback(pkg), pkg.name);
     } else {
       runner = this.getRunner();
     }
@@ -149,14 +149,14 @@ class ExecCommand extends Command {
     });
 
     if (profiler) {
-      chain = chain.then(results => profiler.output().then(() => results));
+      chain = chain.then((results) => profiler.output().then(() => results));
     }
 
     return chain;
   }
 
   runCommandInPackagesParallel() {
-    return pMap(this.filteredPackages, pkg => this.runCommandInPackageStreaming(pkg));
+    return pMap(this.filteredPackages, (pkg) => this.runCommandInPackageStreaming(pkg));
   }
 
   runCommandInPackagesLexical() {

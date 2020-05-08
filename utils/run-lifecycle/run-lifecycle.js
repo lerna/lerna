@@ -102,7 +102,7 @@ function runLifecycle(pkg, stage, _opts) {
     () => {
       opts.log.silly("lifecycle", "%j finished in %j", stage, pkg.name);
     },
-    err => {
+    (err) => {
       // propagate the exit code
       const exitCode = err.errno || 1;
 

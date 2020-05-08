@@ -59,8 +59,8 @@ class Conf extends ConfigChain {
     const conf = {};
 
     Object.keys(env)
-      .filter(x => /^npm_config_/i.test(x))
-      .forEach(x => {
+      .filter((x) => /^npm_config_/i.test(x))
+      .forEach((x) => {
         if (!env[x]) {
           return;
         }
@@ -84,7 +84,7 @@ class Conf extends ConfigChain {
 
     Object.defineProperty(this, "prefix", {
       enumerable: true,
-      set: prefix => {
+      set: (prefix) => {
         const g = this.get("global");
         this[g ? "globalPrefix" : "localPrefix"] = prefix;
       },
@@ -96,7 +96,7 @@ class Conf extends ConfigChain {
 
     Object.defineProperty(this, "globalPrefix", {
       enumerable: true,
-      set: prefix => {
+      set: (prefix) => {
         this.set("prefix", prefix);
       },
       get: () => path.resolve(this.get("prefix")),
@@ -106,7 +106,7 @@ class Conf extends ConfigChain {
 
     Object.defineProperty(this, "localPrefix", {
       enumerable: true,
-      set: prefix => {
+      set: (prefix) => {
         p = prefix;
       },
       get: () => p,
@@ -136,8 +136,8 @@ class Conf extends ConfigChain {
       const delim = "-----END CERTIFICATE-----";
       const output = contents
         .split(delim)
-        .filter(x => Boolean(x.trim()))
-        .map(x => x.trimLeft() + delim);
+        .filter((x) => Boolean(x.trim()))
+        .map((x) => x.trimLeft() + delim);
 
       this.set("ca", output);
     } catch (err) {

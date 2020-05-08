@@ -19,7 +19,7 @@ function commandRunner(commandModule) {
   // prime the pump so slow-as-molasses CI doesn't fail with delayed require()
   require(path.resolve(require.main.filename, "../.."));
 
-  return cwd => {
+  return (cwd) => {
     // create a _new_ yargs instance every time cwd changes to avoid singleton pollution
     const cli = lernaCLI([], cwd)
       .exitProcess(false)
@@ -37,11 +37,11 @@ function commandRunner(commandModule) {
           lernaVersion: "__TEST_VERSION__",
           loglevel: "silent",
           progress: false,
-          onResolved: result => {
+          onResolved: (result) => {
             // success resolves the result, if any, returned from execute()
             resolve(Object.assign({}, result, yargsMeta));
           },
-          onRejected: result => {
+          onRejected: (result) => {
             Object.assign(result, yargsMeta);
             // tests expect errors thrown to indicate failure,
             // _not_ just non-zero exitCode

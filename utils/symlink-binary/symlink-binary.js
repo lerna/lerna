@@ -18,7 +18,7 @@ module.exports = symlinkBinary;
 function symlinkBinary(srcPackageRef, destPackageRef) {
   return Promise.all([Package.lazy(srcPackageRef), Package.lazy(destPackageRef)]).then(
     ([srcPackage, destPackage]) => {
-      const actions = Object.keys(srcPackage.bin).map(name => {
+      const actions = Object.keys(srcPackage.bin).map((name) => {
         const srcLocation = srcPackage.contents
           ? path.resolve(srcPackage.location, srcPackage.contents)
           : srcPackage.location;
@@ -37,7 +37,7 @@ function symlinkBinary(srcPackageRef, destPackageRef) {
       }
 
       return fs.mkdirp(destPackage.binLocation).then(() =>
-        pMap(actions, meta => {
+        pMap(actions, (meta) => {
           if (meta) {
             return createSymlink(meta.src, meta.dst, "exec");
           }

@@ -67,7 +67,7 @@ function npmPublish(pkg, tarFilePath, _opts, otpCache) {
         manifest.publishConfig.tag = opts.tag;
       }
 
-      return otplease(innerOpts => publish(manifest, tarData, innerOpts), opts, otpCache).catch(err => {
+      return otplease((innerOpts) => publish(manifest, tarData, innerOpts), opts, otpCache).catch((err) => {
         opts.log.silly("", err);
         opts.log.error(err.code, (err.body && err.body.error) || err.message);
 

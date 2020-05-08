@@ -40,11 +40,11 @@ class RunCommand extends Command {
     let chain = Promise.resolve();
 
     chain = chain.then(() => getFilteredPackages(this.packageGraph, this.execOpts, this.options));
-    chain = chain.then(filteredPackages => {
+    chain = chain.then((filteredPackages) => {
       this.packagesWithScript =
         script === "env"
           ? filteredPackages
-          : filteredPackages.filter(pkg => pkg.scripts && pkg.scripts[script]);
+          : filteredPackages.filter((pkg) => pkg.scripts && pkg.scripts[script]);
     });
 
     return chain.then(() => {
@@ -83,7 +83,7 @@ class RunCommand extends Command {
 
     if (this.bail) {
       // only the first error is caught
-      chain = chain.catch(err => {
+      chain = chain.catch((err) => {
         process.exitCode = err.code;
 
         // rethrow to halt chain and log properly
@@ -91,11 +91,11 @@ class RunCommand extends Command {
       });
     } else {
       // detect error (if any) from collected results
-      chain = chain.then(results => {
+      chain = chain.then((results) => {
         /* istanbul ignore else */
-        if (results.some(result => result.failed)) {
+        if (results.some((result) => result.failed)) {
           // propagate "highest" error code, it's probably the most useful
-          const codes = results.filter(result => result.failed).map(result => result.code);
+          const codes = results.filter((result) => result.failed).map((result) => result.code);
           const exitCode = Math.max(...codes, 1);
 
           this.logger.error("", "Received non-zero exit code %d during execution", exitCode);
@@ -113,7 +113,7 @@ class RunCommand extends Command {
         this.packagePlural,
         (getElapsed() / 1000).toFixed(1)
       );
-      this.logger.success("", this.packagesWithScript.map(pkg => `- ${pkg.name}`).join("\n"));
+      this.logger.success("", this.packagesWithScript.map((pkg) => `- ${pkg.name}`).join("\n"));
     });
   }
 
@@ -130,8 +130,8 @@ class RunCommand extends Command {
 
   getRunner() {
     return this.options.stream
-      ? pkg => this.runScriptInPackageStreaming(pkg)
-      : pkg => this.runScriptInPackageCapturing(pkg);
+      ? (pkg) => this.runScriptInPackageStreaming(pkg)
+      : (pkg) => this.runScriptInPackageCapturing(pkg);
   }
 
   runScriptInPackagesTopological() {
@@ -146,7 +146,7 @@ class RunCommand extends Command {
       });
 
       const callback = this.getRunner();
-      runner = pkg => profiler.run(() => callback(pkg), pkg.name);
+      runner = (pkg) => profiler.run(() => callback(pkg), pkg.name);
     } else {
       runner = this.getRunner();
     }
@@ -157,14 +157,14 @@ class RunCommand extends Command {
     });
 
     if (profiler) {
-      chain = chain.then(results => profiler.output().then(() => results));
+      chain = chain.then((results) => profiler.output().then(() => results));
     }
 
     return chain;
   }
 
   runScriptInPackagesParallel() {
-    return pMap(this.packagesWithScript, pkg => this.runScriptInPackageStreaming(pkg));
+    return pMap(this.packagesWithScript, (pkg) => this.runScriptInPackageStreaming(pkg));
   }
 
   runScriptInPackagesLexical() {
@@ -177,7 +177,7 @@ class RunCommand extends Command {
 
   runScriptInPackageCapturing(pkg) {
     const getElapsed = timer();
-    return npmRunScript(this.script, this.getOpts(pkg)).then(result => {
+    return npmRunScript(this.script, this.getOpts(pkg)).then((result) => {
       this.logger.info(
         "run",
         "Ran npm script '%s' in '%s' in %ss:",

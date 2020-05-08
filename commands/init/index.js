@@ -138,7 +138,7 @@ class InitCommand extends Command {
   ensurePackagesDir() {
     this.logger.info("", "Creating packages directory");
 
-    return pMap(this.project.packageParentDirs, dir => fs.mkdirp(dir));
+    return pMap(this.project.packageParentDirs, (dir) => fs.mkdirp(dir));
   }
 }
 

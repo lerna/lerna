@@ -8,9 +8,9 @@ const gitCheckout = require("../lib/git-checkout");
 
 test("gitCheckout files", async () => {
   const cwd = await initFixture("no-interdependencies");
-  const files = ["package-1", "package-2"].map(name => path.join("packages", name, "package.json"));
+  const files = ["package-1", "package-2"].map((name) => path.join("packages", name, "package.json"));
 
-  await Promise.all(files.map(fp => fs.writeJSON(path.join(cwd, fp), { foo: "bar" })));
+  await Promise.all(files.map((fp) => fs.writeJSON(path.join(cwd, fp), { foo: "bar" })));
   await gitCheckout(files, { cwd });
 
   const modified = await execa.stdout("git", ["ls-files", "--modified"], { cwd });

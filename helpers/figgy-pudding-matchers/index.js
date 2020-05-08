@@ -134,7 +134,7 @@ function isObjectWithKeys(obj) {
 }
 
 function hasEveryMatchingProperty(received, expected) {
-  return Object.keys(expected).every(property => equals(received[property], expected[property]));
+  return Object.keys(expected).every((property) => equals(received[property], expected[property]));
 }
 
 function isFiggyInstance(received) {

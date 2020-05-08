@@ -10,7 +10,7 @@ const mockWritePkg = jest.fn((fp, data) => {
   return writePkg(fp, data);
 });
 
-const updatedManifest = name => registry.get(name);
+const updatedManifest = (name) => registry.get(name);
 
 // a convenient format for assertions
 function updatedVersions() {

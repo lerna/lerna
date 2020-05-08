@@ -23,7 +23,7 @@ function checkWorkingTree({ cwd } = {}) {
   ];
 
   // passes through result of describeRef() to aid composability
-  return chain.then(result => Promise.all(tests).then(() => result));
+  return chain.then((result) => Promise.all(tests).then(() => result));
 }
 
 function throwIfReleased({ refCount }) {
@@ -41,7 +41,7 @@ const EUNCOMMIT_MSG =
 function mkThrowIfUncommitted(options = {}) {
   return function throwIfUncommitted({ isDirty }) {
     if (isDirty) {
-      return collectUncommitted(options).then(uncommitted => {
+      return collectUncommitted(options).then((uncommitted) => {
         throw new ValidationError("EUNCOMMIT", `${EUNCOMMIT_MSG}${uncommitted.join("\n")}`);
       });
     }

@@ -10,7 +10,7 @@ exports.command = "publish [bump]";
 
 exports.describe = "Publish packages in the current project.";
 
-exports.builder = yargs => {
+exports.builder = (yargs) => {
   const opts = {
     c: {
       describe: "Publish packages after every successful merge using the sha as part of the tag.",
@@ -116,7 +116,7 @@ exports.builder = yargs => {
 
   for (const sharedKey of sharedKeys) {
     hiddenOptions.splice(
-      hiddenOptions.findIndex(k => k === sharedKey),
+      hiddenOptions.findIndex((k) => k === sharedKey),
       1
     );
   }
@@ -142,7 +142,7 @@ exports.builder = yargs => {
       hidden: true,
       type: "boolean",
     })
-    .check(argv => {
+    .check((argv) => {
       /* eslint-disable no-param-reassign */
       if (argv.npmTag) {
         argv.distTag = argv.npmTag;

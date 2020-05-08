@@ -16,13 +16,13 @@ function getCurrentTags(execOpts, matchingPattern) {
 
   return childProcess
     .exec("git", ["tag", "--sort", "version:refname", "--points-at", "HEAD", "--list", matchingPattern], opts)
-    .then(result => {
+    .then((result) => {
       const lines = result.stdout.split("\n").filter(Boolean);
 
       if (matchingPattern === "*@*") {
         // independent mode does not respect tagVersionPrefix,
         // but embeds the package name in the tag "prefix"
-        return lines.map(tag => npa(tag).name);
+        return lines.map((tag) => npa(tag).name);
       }
 
       // "fixed" mode can have a custom tagVersionPrefix,

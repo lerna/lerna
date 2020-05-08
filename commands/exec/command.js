@@ -9,7 +9,7 @@ exports.command = "exec [cmd] [args..]";
 
 exports.describe = "Execute an arbitrary command in each package";
 
-exports.builder = yargs => {
+exports.builder = (yargs) => {
   yargs
     .example("$0 exec ls -- --la", "# execute `ls -la` in all packages")
     .example("$0 exec -- ls --la", "# execute `ls -la` in all packages, keeping cmd outside")

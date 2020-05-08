@@ -2,7 +2,7 @@
 
 const registry = new Set();
 
-const mockPackDirectory = jest.fn(pkg => {
+const mockPackDirectory = jest.fn((pkg) => {
   registry.add(pkg.name);
 
   return Promise.resolve({

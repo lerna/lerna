@@ -40,7 +40,9 @@ describe("--conventional-commits", () => {
     ]);
 
     it("should use conventional-commits utility to guess version bump and generate CHANGELOG", async () => {
-      versionBumps.forEach(bump => ConventionalCommitUtilities.recommendVersion.mockResolvedValueOnce(bump));
+      versionBumps.forEach((bump) =>
+        ConventionalCommitUtilities.recommendVersion.mockResolvedValueOnce(bump)
+      );
 
       const cwd = await initFixture("independent");
 
@@ -64,7 +66,7 @@ describe("--conventional-commits", () => {
     });
 
     it("should guess prerelease version bumps and generate CHANGELOG", async () => {
-      prereleaseVersionBumps.forEach(bump =>
+      prereleaseVersionBumps.forEach((bump) =>
         ConventionalCommitUtilities.recommendVersion.mockResolvedValueOnce(bump)
       );
       const cwd = await initFixture("prerelease-independent");
@@ -90,7 +92,9 @@ describe("--conventional-commits", () => {
     });
 
     it("should graduate prerelease version bumps and generate CHANGELOG", async () => {
-      versionBumps.forEach(bump => ConventionalCommitUtilities.recommendVersion.mockResolvedValueOnce(bump));
+      versionBumps.forEach((bump) =>
+        ConventionalCommitUtilities.recommendVersion.mockResolvedValueOnce(bump)
+      );
       const cwd = await initFixture("prerelease-independent");
 
       await lernaVersion(cwd)("--conventional-commits", "--conventional-graduate");
@@ -159,7 +163,7 @@ describe("--conventional-commits", () => {
       const changedFiles = await showCommit(cwd, "--name-only");
       expect(changedFiles).toMatchSnapshot();
 
-      ["package-1", "package-2", "package-3", "package-4", "package-5"].forEach(name => {
+      ["package-1", "package-2", "package-3", "package-4", "package-5"].forEach((name) => {
         const location = path.join(cwd, "packages", name);
 
         expect(ConventionalCommitUtilities.recommendVersion).toHaveBeenCalledWith(
@@ -206,7 +210,7 @@ describe("--conventional-commits", () => {
       const changedFiles = await showCommit(cwd, "--name-only");
       expect(changedFiles).toMatchSnapshot();
 
-      ["package-1", "package-2", "package-3", "package-4", "package-5"].forEach(name => {
+      ["package-1", "package-2", "package-3", "package-4", "package-5"].forEach((name) => {
         const location = path.join(cwd, "packages", name);
 
         expect(ConventionalCommitUtilities.recommendVersion).toHaveBeenCalledWith(
@@ -292,7 +296,7 @@ describe("--conventional-commits", () => {
     writePkg.registry.clear();
 
     collectUpdates.setUpdated(cwd, "package-2");
-    ConventionalCommitUtilities.recommendVersion.mockImplementationOnce(pkg =>
+    ConventionalCommitUtilities.recommendVersion.mockImplementationOnce((pkg) =>
       Promise.resolve(semver.inc(pkg.version, "patch"))
     );
 

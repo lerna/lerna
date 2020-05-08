@@ -18,7 +18,7 @@ const normalizeRelativeDir = require("@lerna-test/normalize-relative-dir");
 const lernaRun = require("@lerna-test/command-runner")(require("../command"));
 
 // assertion helpers
-const ranInPackagesStreaming = testDir =>
+const ranInPackagesStreaming = (testDir) =>
   npmRunScript.stream.mock.calls.reduce((arr, [script, { args, npmClient, pkg, prefix }]) => {
     const dir = normalizeRelativeDir(testDir, pkg.location);
     const record = [dir, npmClient, "run", script, `(prefixed: ${prefix})`].concat(args);

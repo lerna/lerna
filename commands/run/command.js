@@ -9,7 +9,7 @@ exports.command = "run <script>";
 
 exports.describe = "Run an npm script in each package that contains that script";
 
-exports.builder = yargs => {
+exports.builder = (yargs) => {
   yargs
     .example("$0 run build -- --silent", "# `npm run build --silent` in all packages with a build script")
     .parserConfiguration({

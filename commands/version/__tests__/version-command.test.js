@@ -37,9 +37,9 @@ const lernaVersion = require("@lerna-test/command-runner")(require("../command")
 const collectUpdatesActual = jest.requireActual("@lerna/collect-updates");
 
 // assertion helpers
-const listDirty = cwd =>
+const listDirty = (cwd) =>
   // git ls-files --exclude-standard --modified --others
-  execa("git", ["ls-files", "--exclude-standard", "--modified", "--others"], { cwd }).then(result =>
+  execa("git", ["ls-files", "--exclude-standard", "--modified", "--others"], { cwd }).then((result) =>
     result.stdout.split("\n").filter(Boolean)
   );
 
@@ -185,7 +185,7 @@ describe("VersionCommand", () => {
   });
 
   describe("--no-commit-hooks", () => {
-    const setupPreCommitHook = cwd =>
+    const setupPreCommitHook = (cwd) =>
       fs.outputFile(path.join(cwd, ".git/hooks/pre-commit"), "#!/bin/sh\nexit 1\n", { mode: 0o755 });
 
     it("passes --no-verify to git commit execution", async () => {
@@ -600,7 +600,7 @@ describe("VersionCommand", () => {
     await gitTag(testDir, "v1.0.0");
 
     await Promise.all(
-      ["a", "b", "c", "d"].map(n => fs.outputFile(path.join(testDir, "packages", n, "index.js"), "hello"))
+      ["a", "b", "c", "d"].map((n) => fs.outputFile(path.join(testDir, "packages", n, "index.js"), "hello"))
     );
     await gitAdd(testDir, ".");
     await gitCommit(testDir, "feat: hello");
