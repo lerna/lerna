@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "load-json-file": "^6.2.0",
-    "npm-package-arg": "^6.1.0",
+    "npm-package-arg": "^8.0.0",
     "write-pkg": "^3.1.0"
   }
 }
