@@ -63,9 +63,6 @@ overrides:
       node/no-unpublished-require: "off"
       node/no-unsupported-features/es-syntax:
         - error
-        - ignores:
-            - asyncFunctions
-            # jest transpiles fast-async
       no-console: "off"
   - files:
       - "test/fixtures/**"
