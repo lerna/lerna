@@ -77,7 +77,7 @@
     "normalize-newline": "^3.0.0",
     "normalize-path": "^3.0.0",
     "p-map": "^2.1.0",
-    "path-key": "^2.0.1",
+    "path-key": "^3.1.0",
     "pify": "^4.0.1",
     "prettier": "^2.0.5",
     "semver": "^7.3.0",
