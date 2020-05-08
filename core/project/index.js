@@ -132,7 +132,7 @@ class Project {
       const search = globby.sync(Project.LICENSE_GLOB, {
         cwd: this.rootPath,
         absolute: true,
-        case: false,
+        caseSensitiveMatch: false,
         // Project license is always a sibling of the root manifest
         deep: false,
         // POSIX results always need to be normalized
@@ -176,7 +176,7 @@ class Project {
   }
 
   getPackageLicensePaths() {
-    return this.fileFinder(Project.LICENSE_GLOB, null, { case: false });
+    return this.fileFinder(Project.LICENSE_GLOB, null, { caseSensitiveMatch: false });
   }
 
   isIndependent() {

@@ -70,7 +70,7 @@
     "find-up": "^4.0.0",
     "fs-extra": "^9.0.0",
     "glob-parent": "^5.1.0",
-    "globby": "^9.2.0",
+    "globby": "^11.0.0",
     "jest": "^26.0.1",
     "jest-circus": "^26.0.1",
     "load-json-file": "^6.2.0",

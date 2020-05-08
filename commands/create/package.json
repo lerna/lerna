@@ -41,7 +41,7 @@
     "camelcase": "^6.0.0",
     "dedent": "^0.7.0",
     "fs-extra": "^9.0.0",
-    "globby": "^9.2.0",
+    "globby": "^11.0.0",
     "init-package-json": "^1.10.3",
     "npm-package-arg": "^6.1.0",
     "p-reduce": "^1.0.0",
