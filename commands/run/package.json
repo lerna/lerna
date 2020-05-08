@@ -40,6 +40,6 @@
     "@lerna/run-topologically": "file:../../utils/run-topologically",
     "@lerna/timer": "file:../../utils/timer",
     "@lerna/validation-error": "file:../../core/validation-error",
-    "p-map": "^2.1.0"
+    "p-map": "^4.0.0"
   }
 }
