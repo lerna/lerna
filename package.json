@@ -67,7 +67,7 @@
     "eslint-plugin-jest": "^23.0.4",
     "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-prettier": "^3.1.1",
-    "find-up": "^3.0.0",
+    "find-up": "^4.0.0",
     "fs-extra": "^8.1.0",
     "glob-parent": "^5.1.0",
     "globby": "^9.2.0",
