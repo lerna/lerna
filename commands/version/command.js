@@ -105,6 +105,16 @@ exports.builder = (yargs, composed) => {
       hidden: true,
       type: "boolean",
     },
+    // TODO: (major) make --no-private the default
+    "no-private": {
+      describe: "Do not version private packages.",
+      type: "boolean",
+    },
+    private: {
+      // proxy for --no-private
+      hidden: true,
+      type: "boolean",
+    },
     "no-push": {
       describe: "Do not push tagged commit to git remote.",
       type: "boolean",

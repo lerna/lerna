@@ -60,6 +60,7 @@ Running `lerna version --conventional-commits` without the above flags will rele
 - [`--no-changelog`](#--no-changelog)
 - [`--no-commit-hooks`](#--no-commit-hooks)
 - [`--no-git-tag-version`](#--no-git-tag-version)
+- [`--no-private`](#--no-private)
 - [`--no-push`](#--no-push)
 - [`--preid`](#--preid)
 - [`--sign-git-commit`](#--sign-git-commit)
@@ -316,6 +317,13 @@ By default, `lerna version` will commit changes to package.json files and tag th
 Pass `--no-git-tag-version` to disable the behavior.
 
 This option is analogous to the `npm version` option [`--git-tag-version`](https://docs.npmjs.com/misc/config#git-tag-version), just inverted.
+
+### `--no-private`
+
+By default, `lerna version` will include private packages when choosing versions, making commits, and tagging releases.
+Pass `--no-private` to disable this behavior.
+
+Note that this option does _not_ exclude [private scoped packages](https://docs.npmjs.com/about-private-packages), only those with a [`"private": true` field](https://docs.npmjs.com/configuring-npm/package-json.html#private) in their package.json file.
 
 ### `--no-push`
 

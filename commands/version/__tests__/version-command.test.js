@@ -156,6 +156,21 @@ describe("VersionCommand", () => {
       const patch = await showCommit(testDir);
       expect(patch).toMatchSnapshot();
     });
+
+    it("does not bump major of private packages with --no-private", async () => {
+      const testDir = await initFixture("normal");
+
+      // despite being a pendant leaf...
+      collectUpdates.setUpdated(testDir, "package-4");
+      PromptUtilities.mockChoices("major");
+
+      await lernaVersion(testDir)("--no-private");
+
+      const patch = await showCommit(testDir, "--name-only");
+      expect(patch).not.toContain("package-5");
+      // ...all packages are still majored
+      expect(patch).toContain("package-1");
+    });
   });
 
   describe("independent mode", () => {
@@ -278,6 +293,42 @@ describe("VersionCommand", () => {
 
       const unstaged = await listDirty(testDir);
       expect(unstaged).toContain("packages/package-1/hello.js");
+    });
+  });
+
+  // TODO: (major) make --no-private the default
+  describe("--no-private", () => {
+    it("does not universally version private packages", async () => {
+      const testDir = await initFixture("normal");
+      await lernaVersion(testDir)("--no-private");
+
+      const patch = await showCommit(testDir, "--name-only");
+      expect(patch).not.toContain("package-5");
+    });
+
+    it("does not independently version private packages", async () => {
+      const testDir = await initFixture("independent");
+      await lernaVersion(testDir)("--no-private");
+
+      const patch = await showCommit(testDir, "--name-only");
+      expect(patch).not.toContain("package-5");
+    });
+
+    it("consumes configuration from lerna.json", async () => {
+      const testDir = await initFixture("normal");
+
+      await fs.outputJSON(path.join(testDir, "lerna.json"), {
+        version: "1.0.0",
+        command: {
+          version: {
+            private: false,
+          },
+        },
+      });
+      await lernaVersion(testDir)();
+
+      const patch = await showCommit(testDir, "--name-only");
+      expect(patch).not.toContain("package-5");
     });
   });
 

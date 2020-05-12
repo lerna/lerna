@@ -401,3 +401,30 @@ test("publish --canary without _any_ tags (independent)", async () => {
     }
   `);
 });
+
+test("publish --canary --no-private", async () => {
+  // mostly to say, "yay you didn't explode!"
+  // publish always skips private packages already
+  const cwd = await initTaggedFixture("independent");
+  await setupChanges(
+    cwd,
+    ["packages/package-1/all-your-base.js", "belong to us"],
+    [
+      "packages/package-3/package.json",
+      JSON.stringify({
+        name: "package-3",
+        version: "3.0.0",
+        private: true,
+      }),
+    ]
+  );
+
+  await lernaPublish(cwd)("--canary", "--no-private");
+
+  expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
+    Object {
+      "package-1": 1.0.1-alpha.0+SHA,
+      "package-2": 2.0.1-alpha.0+SHA,
+    }
+  `);
+});

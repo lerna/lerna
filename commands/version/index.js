@@ -191,6 +191,12 @@ class VersionCommand extends Command {
       this.execOpts,
       this.options
     ).filter(node => {
+      // --no-private completely removes private packages from consideration
+      if (node.pkg.private && this.options.private === false) {
+        // TODO: (major) make --no-private the default
+        return false;
+      }
+
       if (!node.version) {
         // a package may be unversioned only if it is private
         if (node.pkg.private) {
@@ -439,6 +445,13 @@ class VersionCommand extends Command {
       if (hasBreakingChange) {
         // _all_ packages need a major version bump whenever _any_ package does
         this.updates = Array.from(this.packageGraph.values());
+
+        // --no-private completely removes private packages from consideration
+        if (this.options.private === false) {
+          // TODO: (major) make --no-private the default
+          this.updates = this.updates.filter(node => !node.pkg.private);
+        }
+
         this.updatesVersions = new Map(this.updates.map(({ name }) => [name, this.globalVersion]));
       } else {
         this.updatesVersions = versions;
