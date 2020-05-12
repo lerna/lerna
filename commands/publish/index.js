@@ -390,7 +390,10 @@ class PublishCommand extends Command {
           },
           includeMergedTags
         )
-          .then(makeVersion)
+          .then(({ lastVersion = this.project.version, refCount, sha }) =>
+            // a repo with no tags should default to whatever lerna.json claims
+            makeVersion({ lastVersion, refCount, sha })
+          )
           .then(version => updates.map(({ pkg }) => [pkg.name, version]))
           .then(updatesVersions => ({
             updates,

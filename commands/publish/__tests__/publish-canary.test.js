@@ -373,3 +373,31 @@ test("publish --canary --include-merged-tags calls git describe correctly", asyn
     expect.objectContaining({ cwd })
   );
 });
+
+test("publish --canary without _any_ tags", async () => {
+  const cwd = await initFixture("normal");
+  await lernaPublish(cwd)("--canary");
+
+  expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
+    Object {
+      "package-1": 1.0.1-alpha.0+SHA,
+      "package-2": 1.0.1-alpha.0+SHA,
+      "package-3": 1.0.1-alpha.0+SHA,
+      "package-4": 1.0.1-alpha.0+SHA,
+    }
+  `);
+});
+
+test("publish --canary without _any_ tags (independent)", async () => {
+  const cwd = await initFixture("independent");
+  await lernaPublish(cwd)("--canary");
+
+  expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
+    Object {
+      "package-1": 1.0.1-alpha.0+SHA,
+      "package-2": 2.0.1-alpha.0+SHA,
+      "package-3": 3.0.1-alpha.0+SHA,
+      "package-4": 4.0.1-alpha.0+SHA,
+    }
+  `);
+});
