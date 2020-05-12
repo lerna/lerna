@@ -405,14 +405,14 @@ class VersionCommand extends Command {
   setGlobalVersionFloor() {
     const globalVersion = this.project.version;
 
-    for (const { pkg } of this.updates) {
-      if (semver.lt(pkg.version, globalVersion)) {
+    for (const node of this.updates) {
+      if (semver.lt(node.version, globalVersion)) {
         this.logger.verbose(
           "version",
-          `Overriding version of ${pkg.name} from ${pkg.version} to ${globalVersion}`
+          `Overriding version of ${node.name} from ${node.version} to ${globalVersion}`
         );
 
-        pkg.version = globalVersion;
+        node.pkg.version = globalVersion;
       }
     }
   }
@@ -452,13 +452,13 @@ class VersionCommand extends Command {
           this.updates = this.updates.filter(node => !node.pkg.private);
         }
 
-        this.updatesVersions = new Map(this.updates.map(({ name }) => [name, this.globalVersion]));
+        this.updatesVersions = new Map(this.updates.map(node => [node.name, this.globalVersion]));
       } else {
         this.updatesVersions = versions;
       }
     }
 
-    this.packagesToVersion = this.updates.map(({ pkg }) => pkg);
+    this.packagesToVersion = this.updates.map(node => node.pkg);
   }
 
   confirmVersions() {
