@@ -185,10 +185,11 @@ class PublishCommand extends Command {
         return false;
       }
 
-      this.updates = result.updates;
+      // (occasionally) redundant private filtering necessary to handle nested VersionCommand
+      this.updates = result.updates.filter(node => !node.pkg.private);
       this.updatesVersions = new Map(result.updatesVersions);
 
-      this.packagesToPublish = this.updates.map(({ pkg }) => pkg).filter(pkg => !pkg.private);
+      this.packagesToPublish = this.updates.map(({ pkg }) => pkg);
 
       if (this.options.contents) {
         // globally override directory to publish
@@ -273,6 +274,9 @@ class PublishCommand extends Command {
       return getTaggedPackages(this.packageGraph, this.project.rootPath, this.execOpts);
     });
 
+    // private packages are never published, full stop.
+    chain = chain.then(updates => updates.filter(node => !node.pkg.private));
+
     return chain.then(updates => {
       const updatesVersions = updates.map(({ pkg }) => [pkg.name, pkg.version]);
 
@@ -302,6 +306,7 @@ class PublishCommand extends Command {
         }
       });
 
+    // private packages are already omitted by getUnpublishedPackages()
     chain = chain.then(() => getUnpublishedPackages(this.packageGraph, this.conf.snapshot));
     chain = chain.then(unpublished => {
       if (!unpublished.length) {
@@ -347,7 +352,8 @@ class PublishCommand extends Command {
         ignoreChanges,
         forcePublish,
         includeMergedTags,
-      })
+        // private packages are never published, don't bother describing their refs.
+      }).filter(node => !node.pkg.private)
     );
 
     const makeVersion = fallback => ({ lastVersion = fallback, refCount, sha }) => {
@@ -494,9 +500,7 @@ class PublishCommand extends Command {
   }
 
   updateCanaryVersions() {
-    const publishableUpdates = this.updates.filter(node => !node.pkg.private);
-
-    return pMap(publishableUpdates, ({ pkg, localDependencies }) => {
+    return pMap(this.updates, ({ pkg, localDependencies }) => {
       pkg.version = this.updatesVersions.get(pkg.name);
 
       for (const [depName, resolved] of localDependencies) {
@@ -514,8 +518,7 @@ class PublishCommand extends Command {
   resolveLocalDependencyLinks() {
     // resolve relative file: links to their actual version range
     const updatesWithLocalLinks = this.updates.filter(
-      ({ pkg, localDependencies }) =>
-        !pkg.private &&
+      ({ localDependencies }) =>
         localDependencies.size &&
         Array.from(localDependencies.values()).some(({ type }) => type === "directory")
     );
