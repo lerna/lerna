@@ -350,7 +350,7 @@ class PublishCommand extends Command {
       })
     );
 
-    const makeVersion = ({ lastVersion, refCount, sha }) => {
+    const makeVersion = fallback => ({ lastVersion = fallback, refCount, sha }) => {
       // the next version is bumped without concern for preid or current index
       const nextVersion = semver.inc(lastVersion, release.replace("pre", ""));
 
@@ -370,10 +370,8 @@ class PublishCommand extends Command {
             },
             includeMergedTags
           )
-            .then(({ lastVersion = pkg.version, refCount, sha }) =>
-              // an unpublished package will have no reachable git tag
-              makeVersion({ lastVersion, refCount, sha })
-            )
+            // an unpublished package will have no reachable git tag
+            .then(makeVersion(pkg.version))
             .then(version => [pkg.name, version])
         ).then(updatesVersions => ({
           updates,
@@ -390,10 +388,8 @@ class PublishCommand extends Command {
           },
           includeMergedTags
         )
-          .then(({ lastVersion = this.project.version, refCount, sha }) =>
-            // a repo with no tags should default to whatever lerna.json claims
-            makeVersion({ lastVersion, refCount, sha })
-          )
+          // a repo with no tags should default to whatever lerna.json claims
+          .then(makeVersion(this.project.version))
           .then(version => updates.map(({ pkg }) => [pkg.name, version]))
           .then(updatesVersions => ({
             updates,
