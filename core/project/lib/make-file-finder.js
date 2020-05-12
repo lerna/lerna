@@ -5,7 +5,7 @@ const pMap = require("p-map");
 const path = require("path");
 const ValidationError = require("@lerna/validation-error");
 
-module.exports = makeFileFinder;
+module.exports.makeFileFinder = makeFileFinder;
 
 function makeFileFinder(rootPath, packageConfigs) {
   const globOpts = {

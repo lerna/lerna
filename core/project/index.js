@@ -14,7 +14,7 @@ const ValidationError = require("@lerna/validation-error");
 const Package = require("@lerna/package");
 const applyExtends = require("./lib/apply-extends");
 const deprecateConfig = require("./lib/deprecate-config");
-const makeFileFinder = require("./lib/make-file-finder");
+const { makeFileFinder } = require("./lib/make-file-finder");
 
 class Project {
   constructor(cwd) {
