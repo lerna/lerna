@@ -7,10 +7,11 @@ const ValidationError = require("@lerna/validation-error");
 
 module.exports.makeFileFinder = makeFileFinder;
 
-function makeFileFinder(rootPath, packageConfigs) {
+function getGlobOpts(rootPath, packageConfigs) {
   const globOpts = {
     cwd: rootPath,
     absolute: true,
+    expandDirectories: false,
     followSymlinkedDirectories: false,
     // POSIX results always need to be normalized
     transform: fp => path.normalize(fp),
@@ -30,6 +31,12 @@ function makeFileFinder(rootPath, packageConfigs) {
       "**/node_modules/**",
     ];
   }
+
+  return globOpts;
+}
+
+function makeFileFinder(rootPath, packageConfigs) {
+  const globOpts = getGlobOpts(rootPath, packageConfigs);
 
   return (fileName, fileMapper, customGlobOpts) => {
     const options = Object.assign({}, customGlobOpts, globOpts);
