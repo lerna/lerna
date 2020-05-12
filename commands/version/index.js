@@ -412,7 +412,7 @@ class VersionCommand extends Command {
           `Overriding version of ${node.name} from ${node.version} to ${globalVersion}`
         );
 
-        node.pkg.version = globalVersion;
+        node.pkg.set("version", globalVersion);
       }
     }
   }
@@ -513,7 +513,7 @@ class VersionCommand extends Command {
       pkg => pkg.refresh(),
       pkg => {
         // set new version
-        pkg.version = this.updatesVersions.get(pkg.name);
+        pkg.set("version", this.updatesVersions.get(pkg.name));
 
         // update pkg dependencies
         for (const [depName, resolved] of this.packageGraph.get(pkg.name).localDependencies) {
