@@ -41,7 +41,7 @@ function makeFileFinder(rootPath, packageConfigs) {
   return (fileName, fileMapper, customGlobOpts) => {
     const options = Object.assign({}, customGlobOpts, globOpts);
     const promise = pMap(
-      packageConfigs.sort(),
+      Array.from(packageConfigs).sort(),
       globPath => {
         let chain = globby(path.join(globPath, fileName), options);
 
