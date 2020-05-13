@@ -58,10 +58,6 @@ function makeFileFinder(rootPath, packageConfigs) {
     );
 
     // always flatten the results
-    return promise.then(flattenResults);
+    return promise.then(results => results.reduce((acc, result) => acc.concat(result), []));
   };
-}
-
-function flattenResults(results) {
-  return results.reduce((acc, result) => acc.concat(result), []);
 }
