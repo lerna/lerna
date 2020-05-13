@@ -67,6 +67,7 @@ Running `lerna version --conventional-commits` without the above flags will rele
 - [`--sign-git-tag`](#--sign-git-tag)
 - [`--yes`](#--yes)
 - [`--tag-version-prefix`](#--tag-version-prefix)
+- [`--changelog-preview`](#--changelog-preview)
 
 ### `--allow-branch <glob>`
 
@@ -374,6 +375,15 @@ Keep in mind that currently you have to supply it twice: for `version` command a
 lerna version --tag-version-prefix=''
 # on ci
 lerna publish from-git --tag-version-prefix=''
+```
+
+### `--changelog-preview`
+
+This option allows to preview and make changes in the changelog before its committed. Should only be run locally and not in CI environment.
+
+```bash
+# locally
+lerna version --changelog-preview
 ```
 
 ## Deprecated Options

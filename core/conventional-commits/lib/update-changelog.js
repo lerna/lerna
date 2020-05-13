@@ -4,6 +4,7 @@ const conventionalChangelogCore = require("conventional-changelog-core");
 const fs = require("fs-extra");
 const getStream = require("get-stream");
 const log = require("npmlog");
+const { spawn } = require("child_process");
 const { BLANK_LINE, CHANGELOG_HEADER, EOL } = require("./constants");
 const getChangelogConfig = require("./get-changelog-config");
 const makeBumpOnlyFilter = require("./make-bump-only-filter");
@@ -11,7 +12,11 @@ const readExistingChangelog = require("./read-existing-changelog");
 
 module.exports = updateChangelog;
 
-function updateChangelog(pkg, type, { changelogPreset, rootPath, tagPrefix = "v", version }) {
+function updateChangelog(
+  pkg,
+  type,
+  { changelogPreset, rootPath, tagPrefix = "v", version, changelogPreview }
+) {
   log.silly(type, "for %s at %s", pkg.name, pkg.location);
 
   return getChangelogConfig(changelogPreset, rootPath).then(config => {
@@ -66,8 +71,23 @@ function updateChangelog(pkg, type, { changelogPreset, rootPath, tagPrefix = "v"
       const content = [CHANGELOG_HEADER, newEntry, changelogContents].join(BLANK_LINE);
 
       return fs.writeFile(changelogFileLoc, content.trim() + EOL).then(() => {
-        log.verbose(type, "wrote", changelogFileLoc);
+        // if change log preview option is passed open the file in vim before commiting
+        if (changelogPreview) {
+          return new Promise((resolve, reject) => {
+            const vim = spawn("vim", [changelogFileLoc], { stdio: "inherit" });
+            vim.on("exit", () => {
+              return resolve({
+                logPath: changelogFileLoc,
+                newEntry,
+              });
+            });
+            vim.on("error", err => {
+              return reject(err);
+            });
+          });
+        }
 
+        log.verbose(type, "wrote", changelogFileLoc);
         return {
           logPath: changelogFileLoc,
           newEntry,
