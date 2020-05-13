@@ -14,7 +14,7 @@ const ValidationError = require("@lerna/validation-error");
 const Package = require("@lerna/package");
 const applyExtends = require("./lib/apply-extends");
 const deprecateConfig = require("./lib/deprecate-config");
-const { makeFileFinder } = require("./lib/make-file-finder");
+const { makeFileFinder, makeSyncFileFinder } = require("./lib/make-file-finder");
 
 class Project {
   constructor(cwd) {
@@ -175,6 +175,16 @@ class Project {
     return this.fileFinder("package.json", filePaths => pMap(filePaths, mapper, { concurrency: 50 }));
   }
 
+  getPackagesSync() {
+    return makeSyncFileFinder(this.rootPath, this.packageConfigs)("package.json", packageConfigPath => {
+      return new Package(
+        loadJsonFile.sync(packageConfigPath),
+        path.dirname(packageConfigPath),
+        this.rootPath
+      );
+    });
+  }
+
   getPackageLicensePaths() {
     return this.fileFinder(Project.LICENSE_GLOB, null, { case: false });
   }
@@ -196,3 +206,4 @@ Project.LICENSE_GLOB = "LICEN{S,C}E{,.*}";
 
 module.exports = Project;
 module.exports.getPackages = cwd => new Project(cwd).getPackages();
+module.exports.getPackagesSync = cwd => new Project(cwd).getPackagesSync();
