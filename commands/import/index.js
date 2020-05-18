@@ -237,7 +237,9 @@ class ImportCommand extends Command {
           tracker.completeWork(1);
         })
         .catch(err => {
-          if (err.stdout.indexOf("Patch is empty.") === 0) {
+          const patchIsEmptyMessages = ["Patch is empty.", "Патч пустой."];
+          const patchIsEmpty = patchIsEmptyMessages.some(message => err.stdout.startsWith(message));
+          if (patchIsEmpty) {
             tracker.completeWork(1);
 
             // Automatically skip empty commits
