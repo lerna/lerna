@@ -67,6 +67,7 @@ class VersionCommand extends Command {
       push = true,
       signGitCommit,
       signGitTag,
+      forceGitTag,
       tagVersionPrefix = "v",
     } = this.options;
 
@@ -92,6 +93,7 @@ class VersionCommand extends Command {
       commitHooks,
       signGitCommit,
       signGitTag,
+      forceGitTag,
     };
 
     // https://docs.npmjs.com/misc/config#save-prefix
