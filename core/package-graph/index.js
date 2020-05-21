@@ -65,7 +65,12 @@ class PackageGraph extends Map {
           return currentNode.externalDependencies.set(depName, resolved);
         }
 
-        if (forceLocal || resolved.fetchSpec === depNode.location || depNode.satisfies(resolved)) {
+        if (
+          forceLocal ||
+          resolved.fetchSpec === depNode.location ||
+          depNode.satisfies(resolved) ||
+          resolved.type === "file"
+        ) {
           // a local file: specifier OR a matching semver
           currentNode.localDependencies.set(depName, resolved);
           depNode.localDependents.set(currentName, currentNode);
