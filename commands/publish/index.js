@@ -185,10 +185,11 @@ class PublishCommand extends Command {
         return false;
       }
 
-      this.updates = result.updates;
+      // (occasionally) redundant private filtering necessary to handle nested VersionCommand
+      this.updates = result.updates.filter(node => !node.pkg.private);
       this.updatesVersions = new Map(result.updatesVersions);
 
-      this.packagesToPublish = this.updates.map(({ pkg }) => pkg).filter(pkg => !pkg.private);
+      this.packagesToPublish = this.updates.map(node => node.pkg);
 
       if (this.options.contents) {
         // globally override directory to publish
@@ -273,8 +274,11 @@ class PublishCommand extends Command {
       return getTaggedPackages(this.packageGraph, this.project.rootPath, this.execOpts);
     });
 
+    // private packages are never published, full stop.
+    chain = chain.then(updates => updates.filter(node => !node.pkg.private));
+
     return chain.then(updates => {
-      const updatesVersions = updates.map(({ pkg }) => [pkg.name, pkg.version]);
+      const updatesVersions = updates.map(node => [node.name, node.version]);
 
       return {
         updates,
@@ -302,6 +306,7 @@ class PublishCommand extends Command {
         }
       });
 
+    // private packages are already omitted by getUnpublishedPackages()
     chain = chain.then(() => getUnpublishedPackages(this.packageGraph, this.conf.snapshot));
     chain = chain.then(unpublished => {
       if (!unpublished.length) {
@@ -312,7 +317,7 @@ class PublishCommand extends Command {
     });
 
     return chain.then(updates => {
-      const updatesVersions = updates.map(({ pkg }) => [pkg.name, pkg.version]);
+      const updatesVersions = updates.map(node => [node.name, node.version]);
 
       return {
         updates,
@@ -347,12 +352,14 @@ class PublishCommand extends Command {
         ignoreChanges,
         forcePublish,
         includeMergedTags,
-      })
+        // private packages are never published, don't bother describing their refs.
+      }).filter(node => !node.pkg.private)
     );
 
-    const makeVersion = ({ lastVersion = "", refCount, sha }) => {
+    const makeVersion = fallback => ({ lastVersion = fallback, refCount, sha }) => {
       // the next version is bumped without concern for preid or current index
       const nextVersion = semver.inc(lastVersion.replace(this.tagPrefix, ""), release.replace("pre", ""));
+
       // semver.inc() starts a new prerelease at .0, git describe starts at .1
       // and build metadata is always ignored when comparing dependency ranges
       return `${nextVersion}-${preid}.${Math.max(0, refCount - 1)}+${sha}`;
@@ -361,19 +368,17 @@ class PublishCommand extends Command {
     if (this.project.isIndependent()) {
       // each package is described against its tags only
       chain = chain.then(updates =>
-        pMap(updates, ({ pkg }) =>
+        pMap(updates, node =>
           describeRef(
             {
-              match: `${pkg.name}@*`,
+              match: `${node.name}@*`,
               cwd,
             },
             includeMergedTags
           )
-            .then(({ lastVersion = pkg.version, refCount, sha }) =>
-              // an unpublished package will have no reachable git tag
-              makeVersion({ lastVersion, refCount, sha })
-            )
-            .then(version => [pkg.name, version])
+            // an unpublished package will have no reachable git tag
+            .then(makeVersion(node.version))
+            .then(version => [node.name, version])
         ).then(updatesVersions => ({
           updates,
           updatesVersions,
@@ -389,8 +394,9 @@ class PublishCommand extends Command {
           },
           includeMergedTags
         )
-          .then(makeVersion)
-          .then(version => updates.map(({ pkg }) => [pkg.name, version]))
+          // a repo with no tags should default to whatever lerna.json claims
+          .then(makeVersion(this.project.version))
+          .then(version => updates.map(node => [node.name, version]))
           .then(updatesVersions => ({
             updates,
             updatesVersions,
@@ -494,17 +500,15 @@ class PublishCommand extends Command {
   }
 
   updateCanaryVersions() {
-    const publishableUpdates = this.updates.filter(node => !node.pkg.private);
+    return pMap(this.updates, node => {
+      node.pkg.set("version", this.updatesVersions.get(node.name));
 
-    return pMap(publishableUpdates, ({ pkg, localDependencies }) => {
-      pkg.version = this.updatesVersions.get(pkg.name);
-
-      for (const [depName, resolved] of localDependencies) {
+      for (const [depName, resolved] of node.localDependencies) {
         // other canary versions need to be updated, non-canary is a no-op
         const depVersion = this.updatesVersions.get(depName) || this.packageGraph.get(depName).pkg.version;
 
         // it no longer matters if we mutate the shared Package instance
-        pkg.updateLocalDependency(resolved, depVersion, this.savePrefix);
+        node.pkg.updateLocalDependency(resolved, depVersion, this.savePrefix);
       }
 
       // writing changes to disk handled in serializeChanges()
@@ -513,20 +517,17 @@ class PublishCommand extends Command {
 
   resolveLocalDependencyLinks() {
     // resolve relative file: links to their actual version range
-    const updatesWithLocalLinks = this.updates.filter(
-      ({ pkg, localDependencies }) =>
-        !pkg.private &&
-        localDependencies.size &&
-        Array.from(localDependencies.values()).some(({ type }) => type === "directory")
+    const updatesWithLocalLinks = this.updates.filter(node =>
+      Array.from(node.localDependencies.values()).some(resolved => resolved.type === "directory")
     );
 
-    return pMap(updatesWithLocalLinks, ({ pkg, localDependencies }) => {
-      for (const [depName, resolved] of localDependencies) {
+    return pMap(updatesWithLocalLinks, node => {
+      for (const [depName, resolved] of node.localDependencies) {
         // regardless of where the version comes from, we can't publish "file:../sibling-pkg" specs
         const depVersion = this.updatesVersions.get(depName) || this.packageGraph.get(depName).pkg.version;
 
         // it no longer matters if we mutate the shared Package instance
-        pkg.updateLocalDependency(resolved, depVersion, this.savePrefix);
+        node.pkg.updateLocalDependency(resolved, depVersion, this.savePrefix);
       }
 
       // writing changes to disk handled in serializeChanges()

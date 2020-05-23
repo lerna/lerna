@@ -45,14 +45,14 @@ Running `lerna version --conventional-commits` without the above flags will rele
 
 - [`--allow-branch`](#--allow-branch-glob)
 - [`--amend`](#--amend)
+- [`--changelog-preset`](#--changelog-preset)
 - [`--conventional-commits`](#--conventional-commits)
 - [`--conventional-graduate`](#--conventional-graduate)
 - [`--conventional-prerelease`](#--conventional-prerelease)
-- [`--changelog-preset`](#--changelog-preset)
+- [`--create-release`](#--create-release-type)
 - [`--exact`](#--exact)
 - [`--force-publish`](#--force-publish)
 - [`--git-remote`](#--git-remote-name)
-- [`--create-release`](#--create-release-type)
 - [`--ignore-changes`](#--ignore-changes)
 - [`--ignore-scripts`](#--ignore-scripts)
 - [`--include-merged-tags`](#--include-merged-tags)
@@ -60,12 +60,13 @@ Running `lerna version --conventional-commits` without the above flags will rele
 - [`--no-changelog`](#--no-changelog)
 - [`--no-commit-hooks`](#--no-commit-hooks)
 - [`--no-git-tag-version`](#--no-git-tag-version)
+- [`--no-private`](#--no-private)
 - [`--no-push`](#--no-push)
 - [`--preid`](#--preid)
 - [`--sign-git-commit`](#--sign-git-commit)
 - [`--sign-git-tag`](#--sign-git-tag)
-- [`--yes`](#--yes)
 - [`--tag-version-prefix`](#--tag-version-prefix)
+- [`--yes`](#--yes)
 
 ### `--allow-branch <glob>`
 
@@ -117,6 +118,19 @@ This is useful during [Continuous integration (CI)](https://en.wikipedia.org/wik
 
 In order to prevent unintended overwrites, this command will skip `git push` (i.e., it implies `--no-push`).
 
+### `--changelog-preset`
+
+```sh
+lerna version --conventional-commits --changelog-preset angular-bitbucket
+```
+
+By default, the changelog preset is set to [`angular`](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-changelog-angular#angular-convention).
+In some cases you might want to change either use a another preset or a custom one.
+
+Presets are names of built-in or installable configuration for conventional changelog.
+Presets may be passed as the full name of the package, or the auto-expanded suffix
+(e.g., `angular` is expanded to `conventional-changelog-angular`).
+
 ### `--conventional-commits`
 
 ```sh
@@ -153,18 +167,27 @@ lerna version --conventional-commits --conventional-prerelease
 
 When run with this flag, `lerna version` will release with prerelease versions the specified packages (comma-separated) or all packages using `*`. Releases all unreleased changes as pre(patch/minor/major/release) by prefixing the version recommendation from `conventional-commits` with `pre`, eg. if present changes include a feature commit, the recommended bump will be `minor`, so this flag will result in a `preminor` release. If changes are present for packages that are not specified (if specifying packages), or for packages that are already in prerelease, those packages will be versioned as they normally would using `--conventional-commits`.
 
-### `--changelog-preset`
+### `--create-release <type>`
 
 ```sh
-lerna version --conventional-commits --changelog-preset angular-bitbucket
+lerna version --conventional-commits --create-release github
+lerna version --conventional-commits --create-release gitlab
 ```
 
-By default, the changelog preset is set to [`angular`](https://github.com/conventional-changelog/conventional-changelog/tree/master/packages/conventional-changelog-angular#angular-convention).
-In some cases you might want to change either use a another preset or a custom one.
+When run with this flag, `lerna version` will create an official GitHub or GitLab release based on the changed packages. Requires `--conventional-commits` to be passed so that changelogs can be generated.
 
-Presets are names of built-in or installable configuration for conventional changelog.
-Presets may be passed as the full name of the package, or the auto-expanded suffix
-(e.g., `angular` is expanded to `conventional-changelog-angular`).
+To authenticate with GitHub, the following environment variables can be defined.
+
+- `GH_TOKEN` (required) - Your GitHub authentication token (under Settings > Developer settings > Personal access tokens).
+- `GHE_API_URL` - When using GitHub Enterprise, an absolute URL to the API.
+- `GHE_VERSION` - When using GitHub Enterprise, the currently installed GHE version. [Supports the following versions](https://github.com/octokit/plugin-enterprise-rest.js).
+
+To authenticate with GitLab, the following environment variables can be defined.
+
+- `GL_TOKEN` (required) - Your GitLab authentication token (under User Settings > Access Tokens).
+- `GL_API_URL` - An absolute URL to the API, including the version. (Default: https://gitlab.com/api/v4)
+
+> NOTE: When using this option, you cannot pass [`--no-changelog`](#--no-changelog).
 
 ### `--exact`
 
@@ -196,28 +219,6 @@ lerna version --git-remote upstream
 ```
 
 When run with this flag, `lerna version` will push the git changes to the specified remote instead of `origin`.
-
-### `--create-release <type>`
-
-```sh
-lerna version --conventional-commits --create-release github
-lerna version --conventional-commits --create-release gitlab
-```
-
-When run with this flag, `lerna version` will create an official GitHub or GitLab release based on the changed packages. Requires `--conventional-commits` to be passed so that changelogs can be generated.
-
-To authenticate with GitHub, the following environment variables can be defined.
-
-- `GH_TOKEN` (required) - Your GitHub authentication token (under Settings > Developer settings > Personal access tokens).
-- `GHE_API_URL` - When using GitHub Enterprise, an absolute URL to the API.
-- `GHE_VERSION` - When using GitHub Enterprise, the currently installed GHE version. [Supports the following versions](https://github.com/octokit/plugin-enterprise-rest.js).
-
-To authenticate with GitLab, the following environment variables can be defined.
-
-- `GL_TOKEN` (required) - Your GitLab authentication token (under User Settings > Access Tokens).
-- `GL_API_URL` - An absolute URL to the API, including the version. (Default: https://gitlab.com/api/v4)
-
-> NOTE: When using this option, you cannot pass [`--no-changelog`](#--no-changelog).
 
 ### `--ignore-changes`
 
@@ -317,6 +318,13 @@ Pass `--no-git-tag-version` to disable the behavior.
 
 This option is analogous to the `npm version` option [`--git-tag-version`](https://docs.npmjs.com/misc/config#git-tag-version), just inverted.
 
+### `--no-private`
+
+By default, `lerna version` will include private packages when choosing versions, making commits, and tagging releases.
+Pass `--no-private` to disable this behavior.
+
+Note that this option does _not_ exclude [private scoped packages](https://docs.npmjs.com/about-private-packages), only those with a [`"private": true` field](https://docs.npmjs.com/configuring-npm/package-json.html#private) in their package.json file.
+
 ### `--no-push`
 
 By default, `lerna version` will push the committed and tagged changes to the configured [git remote](#--git-remote-name).
@@ -345,16 +353,6 @@ This option is analogous to the `npm version` [option](https://docs.npmjs.com/mi
 
 This option is analogous to the `npm version` [option](https://docs.npmjs.com/misc/config#sign-git-tag) of the same name.
 
-### `--yes`
-
-```sh
-lerna version --yes
-# skips `Are you sure you want to publish these packages?`
-```
-
-When run with this flag, `lerna version` will skip all confirmation prompts.
-Useful in [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous_integration) to automatically answer the publish confirmation prompt.
-
 ### `--tag-version-prefix`
 
 This option allows to provide custom prefix instead of the default one: `v`.
@@ -367,6 +365,16 @@ lerna version --tag-version-prefix=''
 # on ci
 lerna publish from-git --tag-version-prefix=''
 ```
+
+### `--yes`
+
+```sh
+lerna version --yes
+# skips `Are you sure you want to publish these packages?`
+```
+
+When run with this flag, `lerna version` will skip all confirmation prompts.
+Useful in [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous_integration) to automatically answer the publish confirmation prompt.
 
 ## Deprecated Options
 

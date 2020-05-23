@@ -141,6 +141,15 @@ describe("--conventional-commits", () => {
 
       expect(ConventionalCommitUtilities.updateChangelog).not.toHaveBeenCalled();
     });
+
+    it("should respect --no-private", async () => {
+      const cwd = await initFixture("independent");
+      // TODO: (major) make --no-private the default
+      await lernaVersion(cwd)("--conventional-commits", "--no-private");
+
+      const changedFiles = await showCommit(cwd, "--name-only");
+      expect(changedFiles).not.toContain("package-5");
+    });
   });
 
   describe("fixed mode", () => {
@@ -272,6 +281,15 @@ describe("--conventional-commits", () => {
       await lernaVersion(cwd)("--conventional-commits", "--no-changelog");
 
       expect(ConventionalCommitUtilities.updateChangelog).not.toHaveBeenCalled();
+    });
+
+    it("should respect --no-private", async () => {
+      const cwd = await initFixture("normal");
+      // TODO: (major) make --no-private the default
+      await lernaVersion(cwd)("--conventional-commits", "--no-private");
+
+      const changedFiles = await showCommit(cwd, "--name-only");
+      expect(changedFiles).not.toContain("package-5");
     });
   });
 

@@ -137,6 +137,8 @@ test("independent version prerelease does not bump on every unrelated change", a
           "package.json": File({
             name: "pkg-b",
             version: "1.0.0-bumps.1",
+            // TODO: (major) make --no-private the default
+            private: true,
           }),
         }),
       }),
@@ -179,4 +181,55 @@ Publish
 
  - pkg-a@1.0.2
 `);
+});
+
+test("independent version prerelease respects --no-private", async () => {
+  const cwd = tempy.directory();
+  const fixture = new Tacks(
+    Dir({
+      "lerna.json": File({
+        version: "independent",
+      }),
+      "package.json": File({
+        name: "no-private-versioning",
+      }),
+      packages: Dir({
+        "pkg-1": Dir({
+          "package.json": File({
+            name: "pkg-1",
+            version: "1.0.0",
+            devDependencies: {
+              "pkg-2": "^2.0.0",
+            },
+          }),
+        }),
+        "pkg-2": Dir({
+          "package.json": File({
+            name: "pkg-2",
+            version: "2.0.0",
+            private: true,
+          }),
+        }),
+      }),
+    })
+  );
+  fixture.create(cwd);
+
+  await gitInit(cwd, ".");
+  await gitAdd(cwd, "-A");
+  await gitCommit(cwd, "init");
+
+  // TODO: (major) make --no-private the default
+  await lernaVersion(cwd)("prerelease", "--no-private");
+
+  const changedFiles = await showCommit(cwd, "--name-only");
+  expect(changedFiles).toMatchInlineSnapshot(`
+    Publish
+
+     - pkg-1@1.0.1-alpha.0
+
+    HEAD -> master, tag: pkg-1@1.0.1-alpha.0
+
+    packages/pkg-1/package.json
+  `);
 });

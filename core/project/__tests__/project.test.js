@@ -258,6 +258,31 @@ Object {
     });
   });
 
+  describe(".getPackagesSync()", () => {
+    it("returns a list of package instances synchronously", () => {
+      const project = new Project(testDir);
+      expect(project.getPackagesSync()).toMatchInlineSnapshot(`
+        Array [
+          Object {
+            "name": "pkg-1",
+            "version": "1.0.0",
+          },
+          Object {
+            "dependencies": Object {
+              "pkg-1": "^1.0.0",
+            },
+            "name": "pkg-2",
+            "version": "1.0.0",
+          },
+        ]
+      `);
+    });
+
+    it("is available from a static named export", () => {
+      expect(Project.getPackagesSync(testDir)).toMatchObject(new Project(testDir).getPackagesSync());
+    });
+  });
+
   describe("get .manifest", () => {
     it("returns a Package instance", () => {
       const project = new Project(testDir);
