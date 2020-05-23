@@ -32,7 +32,7 @@ describe("createGitHubClient", () => {
 
   it("initializes GHE plugin when GHE_VERSION env var is set", () => {
     process.env.GH_TOKEN = "TOKEN";
-    process.env.GHE_VERSION = "2.14";
+    process.env.GHE_VERSION = "2.18";
 
     createGitHubClient();
 
