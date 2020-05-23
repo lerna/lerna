@@ -358,7 +358,7 @@ class PublishCommand extends Command {
 
     const makeVersion = fallback => ({ lastVersion = fallback, refCount, sha }) => {
       // the next version is bumped without concern for preid or current index
-      const nextVersion = semver.inc(lastVersion, release.replace("pre", ""));
+      const nextVersion = semver.inc(lastVersion.replace(this.tagPrefix, ""), release.replace("pre", ""));
 
       // semver.inc() starts a new prerelease at .0, git describe starts at .1
       // and build metadata is always ignored when comparing dependency ranges
