@@ -41,7 +41,7 @@
 Splitting up large codebases into separate independently versioned packages
 is extremely useful for code sharing. However, making changes across many
 repositories is _messy_ and difficult to track, and testing across repositories
-gets complicated really fast.
+becomes complicated very quickly.
 
 To solve these (and many other) problems, some projects will organize their
 codebases into multi-package repositories (sometimes called [monorepos](https://github.com/babel/babel/blob/master/doc/design/monorepo.md)). Projects like [Babel](https://github.com/babel/babel/tree/master/packages), [React](https://github.com/facebook/react/tree/master/packages), [Angular](https://github.com/angular/angular/tree/master/modules),
