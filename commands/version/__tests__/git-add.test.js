@@ -28,3 +28,29 @@ test("absolute files", async () => {
   const list = await execa.stdout("git", ["diff", "--cached", "--name-only"], { cwd });
   expect(slash(list)).toBe("packages/pkg-2/index.js");
 });
+
+test(".gitignore", async () => {
+  const cwd = await initFixture("root-manifest-only");
+  const file = path.join(cwd, "packages", "pkg-2", "index.log");
+  const file2 = path.join(cwd, "packages", "pkg-2", "index.js");
+
+  await fs.outputFile(file, "hello");
+  await fs.outputFile(file2, "hello2");
+  await gitAdd([file, file2], { cwd });
+
+  const list = await execa.stdout("git", ["diff", "--cached", "--name-only"], { cwd });
+  expect(slash(list)).toBe("packages/pkg-2/index.js");
+});
+
+test(".gitignore without naming files", async () => {
+  const cwd = await initFixture("root-manifest-only");
+  const file = path.join(cwd, "packages", "pkg-2", "index.log");
+  const file2 = path.join(cwd, "packages", "pkg-2", "index.js");
+
+  await fs.outputFile(file, "hello");
+  await fs.outputFile(file2, "hello2");
+  await gitAdd([], { cwd });
+
+  const list = await execa.stdout("git", ["diff", "--cached", "--name-only"], { cwd });
+  expect(slash(list)).toBe("packages/pkg-2/index.js");
+});
