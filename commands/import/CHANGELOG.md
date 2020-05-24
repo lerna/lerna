@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.22.0](https://github.com/lerna/lerna/compare/v3.21.0...v3.22.0) (2020-05-24)
+
+
+### Bug Fixes
+
+* **import:** Support non-ASCII characters in file paths ([#2441](https://github.com/lerna/lerna/issues/2441)) ([c74ffa4](https://github.com/lerna/lerna/commit/c74ffa4b31503ab8cd537ac2a9c9c15494f81a0c))
+
+
+
+
+
 # [3.21.0](https://github.com/lerna/lerna/compare/v3.20.2...v3.21.0) (2020-05-13)
 
 **Note:** Version bump only for package @lerna/import

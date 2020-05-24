@@ -1,6 +1,6 @@
 {
   "name": "@lerna/import",
-  "version": "3.21.0",
+  "version": "3.22.0",
   "description": "Import a package into the monorepo with commit history",
   "keywords": [
     "lerna",
