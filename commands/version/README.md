@@ -399,11 +399,11 @@ Useful in [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous
 
 ### `--cd-version`
 
-Pass the semver keyword to the [`bump`](#bump) positional instead.
+Pass the semver keyword to the [`bump`](#semver-bump) positional instead.
 
 ### `--repo-version`
 
-Pass an explicit version number to the [`bump`](#bump) positional instead.
+Pass an explicit version number to the [`bump`](#semver-bump) positional instead.
 
 ### `--skip-git`
 
