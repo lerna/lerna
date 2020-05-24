@@ -111,21 +111,19 @@ Set {
 `);
       expect(npmPublish.registry).toMatchInlineSnapshot(`
 Map {
-  "package-1" => "latest",
-  "package-3" => "latest",
-  "package-4" => "latest",
-  "package-2" => "latest",
+  "package-1" => "lerna-temp",
+  "package-3" => "lerna-temp",
+  "package-4" => "lerna-temp",
+  "package-2" => "lerna-temp",
 }
 `);
-      expect(npmPublish.order()).toEqual([
-        "package-1",
-        "package-3",
-        "package-4",
-        "package-2",
-        // package-5 is private
+      expect(npmDistTag.add.tagged()).toEqual([
+        "latest",
+        "latest",
+        "latest",
+        "latest",
+        // see publish-tagging.test.js for more temp-tag tests
       ]);
-      expect(npmDistTag.remove).not.toHaveBeenCalled();
-      expect(npmDistTag.add).not.toHaveBeenCalled();
 
       expect(getNpmUsername).toHaveBeenCalled();
       expect(getNpmUsername).toHaveBeenLastCalledWith(
