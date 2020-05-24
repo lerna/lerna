@@ -13,7 +13,7 @@ function isFunction(config) {
   return Object.prototype.toString.call(config) === "[object Function]";
 }
 
-function resolveConfigPromise(presetPackageName) {
+function resolveConfigPromise(presetPackageName, presetConfig) {
   log.verbose("getChangelogConfig", "Attempting to resolve preset %j", presetPackageName);
 
   // eslint-disable-next-line global-require, import/no-dynamic-require
@@ -21,19 +21,29 @@ function resolveConfigPromise(presetPackageName) {
 
   log.info("getChangelogConfig", "Successfully resolved preset %j", presetPackageName);
 
-  // legacy presets export an errback function instead of Q.all()
   if (isFunction(config)) {
-    config = pify(config)();
+    try {
+      // try assuming config builder function first
+      config = config(presetConfig);
+    } catch (_) {
+      // legacy presets export an errback function instead of Q.all()
+      config = pify(config)();
+    }
   }
 
   return config;
 }
 
 function getChangelogConfig(changelogPreset = "conventional-changelog-angular", rootPath) {
-  let config = cfgCache.get(changelogPreset);
+  const presetName = typeof changelogPreset === "string" ? changelogPreset : changelogPreset.name;
+  const presetConfig = typeof changelogPreset === "object" ? changelogPreset : {};
+
+  const cacheKey = `${presetName}${presetConfig ? JSON.stringify(presetConfig) : ""}`;
+
+  let config = cfgCache.get(cacheKey);
 
   if (!config) {
-    let presetPackageName = changelogPreset;
+    let presetPackageName = presetName;
 
     // https://github.com/npm/npm-package-arg#result-object
     const parsed = npa(presetPackageName, rootPath);
@@ -57,15 +67,15 @@ function getChangelogConfig(changelogPreset = "conventional-changelog-angular", 
 
     // Maybe it doesn't need an implicit 'conventional-changelog-' prefix?
     try {
-      config = resolveConfigPromise(presetPackageName);
+      config = resolveConfigPromise(presetPackageName, presetConfig);
 
-      cfgCache.set(changelogPreset, config);
+      cfgCache.set(cacheKey, config);
 
       // early exit, yay
       return Promise.resolve(config);
     } catch (err) {
       log.verbose("getChangelogConfig", err.message);
-      log.info("getChangelogConfig", "Auto-prefixing conventional-changelog preset %j", changelogPreset);
+      log.info("getChangelogConfig", "Auto-prefixing conventional-changelog preset %j", presetName);
 
       // probably a deep shorthand subpath :P
       parsed.name = parsed.raw;
@@ -85,16 +95,16 @@ function getChangelogConfig(changelogPreset = "conventional-changelog-angular", 
     }
 
     try {
-      config = resolveConfigPromise(presetPackageName);
+      config = resolveConfigPromise(presetPackageName, presetConfig);
 
-      cfgCache.set(changelogPreset, config);
+      cfgCache.set(cacheKey, config);
     } catch (err) {
       log.warn("getChangelogConfig", err.message);
 
       throw new ValidationError(
         "EPRESET",
-        `Unable to load conventional-changelog preset '${changelogPreset}'${
-          changelogPreset !== presetPackageName ? ` (${presetPackageName})` : ""
+        `Unable to load conventional-changelog preset '${presetName}'${
+          presetName !== presetPackageName ? ` (${presetPackageName})` : ""
         }`
       );
     }

@@ -189,6 +189,25 @@ To authenticate with GitLab, the following environment variables can be defined.
 
 > NOTE: When using this option, you cannot pass [`--no-changelog`](#--no-changelog).
 
+This option is can also be specified in `lerna.json` configuration:
+
+```json
+{
+  "changelogPreset": "angular"
+}
+```
+
+If the preset exports a builder function (e.g. `conventional-changelog-conventionalcommits`), you can specify the [preset configuration](https://github.com/conventional-changelog/conventional-changelog-config-spec) too:
+
+```json
+{
+  "changelogPreset": {
+    "name": "conventionalcommits",
+    "issueUrlFormat": "{{host}}/{{owner}}/{{repository}}/issues/{{id}}"
+  }
+}
+```
+
 ### `--exact`
 
 ```sh
