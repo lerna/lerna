@@ -100,6 +100,26 @@ exports.builder = (yargs, composed) => {
       describe: "Do not commit or tag version changes.",
       type: "boolean",
     },
+    "no-git-tag": {
+      describe: "Do not tag the version changes",
+      type: "boolean",
+    },
+    "git-tag": {
+      // proxy for --no-git-tag
+      hidden: true,
+      type: "boolean",
+      default: true,
+    },
+    "no-git-commit": {
+      describe: "Do not commit the version changes",
+      type: "boolean",
+    },
+    "git-commit": {
+      // proxy for --no-git-commit
+      hidden: true,
+      type: "boolean",
+      default: true,
+    },
     "git-tag-version": {
       // proxy for --no-git-tag-version
       hidden: true,
