@@ -56,6 +56,8 @@ For background on `--hoist`, see the [hoist documentation](https://github.com/le
 Note: If packages depend on different _versions_ of an external dependency,
 the most commonly used version will be hoisted, and a warning will be emitted.
 
+Note: `--hoist` is [incompatible with `file:` specifiers](https://github.com/lerna/lerna/issues/1679#issuecomment-461544321). Use one or the other.
+
 ### --strict
 
 When used in conjunction with hoist will throw an error and stop bootstrapping after emitting the version warnings. Has no effect if you aren't hoisting, or if there are no version warnings.

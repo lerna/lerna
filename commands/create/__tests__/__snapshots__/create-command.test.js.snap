@@ -67,7 +67,7 @@ index SHA..SHA
 @@ -0,0 +1,26 @@
 +'use strict';
 +
-+const yargs = require('yargs/yargs');
++const factory = require('yargs/yargs');
 +const myCli = require('./my-cli');
 +
 +module.exports = cli;

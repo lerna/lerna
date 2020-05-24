@@ -32,7 +32,7 @@ const lernaPublish = require("@lerna-test/command-runner")(require("../command")
 // stabilize commit SHA
 expect.addSnapshotSerializer(require("@lerna-test/serialize-git-sha"));
 
-async function initTaggedFixture(fixtureName) {
+async function initTaggedFixture(fixtureName, tagVersionPrefix = "v") {
   const cwd = await initFixture(fixtureName);
 
   if (fixtureName.indexOf("independent") > -1) {
@@ -44,7 +44,7 @@ async function initTaggedFixture(fixtureName) {
       gitTag(cwd, "package-5@5.0.0"),
     ]);
   } else {
-    await gitTag(cwd, "v1.0.0");
+    await gitTag(cwd, `${tagVersionPrefix}1.0.0`);
   }
 
   return cwd;
@@ -107,6 +107,21 @@ Object {
   "package-1": 1.0.1-beta.0+SHA,
   "package-2": 1.0.1-beta.0+SHA,
   "package-3": 1.0.1-beta.0+SHA,
+}
+`);
+});
+
+test("publish --canary --tag-version-prefix='abc'", async () => {
+  const cwd = await initTaggedFixture("normal", "abc");
+
+  await setupChanges(cwd, ["packages/package-1/all-your-base.js", "belong to us"]);
+  await lernaPublish(cwd)("--canary", "--tag-version-prefix", "abc");
+
+  expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
+Object {
+  "package-1": 1.0.1-alpha.0+SHA,
+  "package-2": 1.0.1-alpha.0+SHA,
+  "package-3": 1.0.1-alpha.0+SHA,
 }
 `);
 });
