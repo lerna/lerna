@@ -217,6 +217,21 @@ describe("conventional-commits", () => {
       ).rejects.toThrow("Unable to load conventional-changelog preset 'conventional-changelog-garbage/pail'");
     });
 
+    describe("bump for major version zero", () => {
+      it("treats breaking changes as semver-minor", async () => {
+        const cwd = await initFixture("major-zero");
+        const [pkg0] = await getPackages(cwd);
+
+        // make a change in package-0
+        await pkg0.set("changed", 1).serialize();
+        await gitAdd(cwd, pkg0.manifestLocation);
+        await gitCommit(cwd, "feat: changed\n\nBREAKING CHANGE: changed");
+
+        const bump = await recommendVersion(pkg0, "independent", {});
+        expect(bump).toBe("0.2.0");
+      });
+    });
+
     describe("prerelease bumps", () => {
       let cwd;
       let pkg;
