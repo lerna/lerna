@@ -17,7 +17,7 @@ function getUnpublishedPackages(packageGraph, opts) {
   const mapper = pkg =>
     getPackument(pkg.name, opts).then(
       packument => {
-        if (packument.versions[pkg.version] === undefined) {
+        if (packument.versions === undefined || packument.versions[pkg.version] === undefined) {
           return pkg;
         }
       },
