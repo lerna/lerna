@@ -139,6 +139,10 @@ exports.builder = (yargs, composed) => {
       describe: "Pass the `--sign` flag to `git tag`.",
       type: "boolean",
     },
+    "force-git-tag": {
+      describe: "Pass the `--force` flag to `git tag`.",
+      type: "boolean",
+    },
     "tag-version-prefix": {
       describe: "Customize the tag prefix. To remove entirely, pass an empty string.",
       type: "string",

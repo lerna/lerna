@@ -25,4 +25,13 @@ describe("gitTag", () => {
 
     expect(mockExec).toHaveBeenLastCalledWith("git", ["tag", tag, "-m", tag, "--sign"], opts);
   });
+
+  it("forces the tag when configured", async () => {
+    const tag = "v1.1.1";
+    const opts = { cwd: "forced" };
+
+    await gitTag(tag, { forceGitTag: true }, opts);
+
+    expect(mockExec).toHaveBeenLastCalledWith("git", ["tag", tag, "-m", tag, "--force"], opts);
+  });
 });

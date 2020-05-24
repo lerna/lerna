@@ -65,6 +65,7 @@ Running `lerna version --conventional-commits` without the above flags will rele
 - [`--preid`](#--preid)
 - [`--sign-git-commit`](#--sign-git-commit)
 - [`--sign-git-tag`](#--sign-git-tag)
+- [`--force-git-tag`](#--force-git-tag)
 - [`--tag-version-prefix`](#--tag-version-prefix)
 - [`--yes`](#--yes)
 
@@ -371,6 +372,10 @@ This option is analogous to the `npm version` [option](https://docs.npmjs.com/mi
 ### `--sign-git-tag`
 
 This option is analogous to the `npm version` [option](https://docs.npmjs.com/misc/config#sign-git-tag) of the same name.
+
+### `--force-git-tag`
+
+This option replaces any existing tag instead of failing.
 
 ### `--tag-version-prefix`
 
