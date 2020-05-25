@@ -246,7 +246,6 @@ Map {
       const testDir = await initFixture("normal");
 
       const otp = "123456";
-      npmPublish.mockImplementation(() => Promise.resolve());
 
       getTwoFactorAuthRequired.mockResolvedValueOnce(true);
 
