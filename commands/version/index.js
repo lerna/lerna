@@ -187,10 +187,14 @@ class VersionCommand extends Command {
       );
     }
 
+    const opts = Object.assign({}, this.execOpts);
+    if (!this.project.isIndependent() && this.tagPrefix) {
+      opts.match = `${this.tagPrefix}*`;
+    }
     this.updates = collectUpdates(
       this.packageGraph.rawPackageList,
       this.packageGraph,
-      this.execOpts,
+      opts,
       this.options
     ).filter(node => {
       // --no-private completely removes private packages from consideration
