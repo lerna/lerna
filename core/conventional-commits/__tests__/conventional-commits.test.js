@@ -334,7 +334,7 @@ describe("conventional-commits", () => {
     });
 
     it("should contain custom changelog header when passed", async () => {
-      const customHeader = "ChangeLog";
+      const customHeader = "Custom Header";
       const cwd = await initFixture("fixed");
       await gitTag(cwd, "dragons-are-awesome1.0.0");
 
