@@ -48,6 +48,7 @@ Running `lerna version --conventional-commits` without the above flags will rele
 - [`--conventional-commits`](#--conventional-commits)
 - [`--conventional-graduate`](#--conventional-graduate)
 - [`--conventional-prerelease`](#--conventional-prerelease)
+- [`--changelog-header`](#--changelog-header)
 - [`--changelog-preset`](#--changelog-preset)
 - [`--exact`](#--exact)
 - [`--force-publish`](#--force-publish)
@@ -152,6 +153,23 @@ lerna version --conventional-commits --conventional-prerelease
 ```
 
 When run with this flag, `lerna version` will release with prerelease versions the specified packages (comma-separated) or all packages using `*`. Releases all unreleased changes as pre(patch/minor/major/release) by prefixing the version recommendation from `conventional-commits` with `pre`, eg. if present changes include a feature commit, the recommended bump will be `minor`, so this flag will result in a `preminor` release. If changes are present for packages that are not specified (if specifying packages), or for packages that are already in prerelease, those packages will be versioned as they normally would using `--conventional-commits`.
+
+### `--changelog-header`
+```sh
+lerna version --conventional-commits --changelog-header "Custom Header"
+```
+
+By default, the changelog header text is set to "Change Log". Use this flag to customize the header text. This option can also be configured in `lerna.json`.
+
+```json
+{
+  "command": {
+    "version": {
+      "changelogHeader": "Custom Header"
+    }
+  }
+}
+```
 
 ### `--changelog-preset`
 
