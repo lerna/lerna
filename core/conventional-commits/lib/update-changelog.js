@@ -4,11 +4,11 @@ const conventionalChangelogCore = require("conventional-changelog-core");
 const fs = require("fs-extra");
 const getStream = require("get-stream");
 const log = require("npmlog");
-const { BLANK_LINE, CHANGELOG_HEADER, EOL } = require("./constants");
+const { BLANK_LINE, EOL } = require("./constants");
 const getChangelogConfig = require("./get-changelog-config");
 const makeBumpOnlyFilter = require("./make-bump-only-filter");
 const readExistingChangelog = require("./read-existing-changelog");
-const getCustomChangeLogHeader = require("./get-custom-changelog-header");
+const getChangeLogHeader = require("./get-custom-changelog-header");
 
 module.exports = updateChangelog;
 
@@ -22,12 +22,7 @@ function updateChangelog(
   return getChangelogConfig(changelogPreset, rootPath).then(config => {
     const options = {};
     const context = {}; // pass as positional because cc-core's merge-config is wack
-    let changelogHeader = CHANGELOG_HEADER;
-    // check if custom change log header is passed
-    if (header && typeof header === "string") {
-      // update change log header
-      changelogHeader = getCustomChangeLogHeader(header);
-    }
+    const changelogHeader = getChangeLogHeader(header);
     // cc-core mutates input :P
     if (config.conventionalChangelog) {
       // "new" preset API
