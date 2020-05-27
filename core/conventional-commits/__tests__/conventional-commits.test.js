@@ -333,22 +333,6 @@ describe("conventional-commits", () => {
       expect(rootChangelogContent).toMatchSnapshot("root");
     });
 
-    it("should contain default header when custom header is not passed", async () => {
-      const cwd = await initFixture("fixed");
-      await gitTag(cwd, "dragons-are-awesome1.0.0");
-      const [pkg1] = await getPackages(cwd);
-
-      await pkg1.set("changed", 1).serialize();
-      await gitAdd(cwd, pkg1.manifestLocation);
-      await gitCommit(cwd, "fix: A second commit for our CHANGELOG");
-
-      // update version
-      await pkg1.set("version", "1.0.1").serialize();
-      const leafChangelog = await updateChangelog(pkg1, "fixed", {});
-      const changeLog = await getFileContent(leafChangelog);
-      expect(changeLog.indexOf("Change Log")).toBe(2);
-    });
-
     it("should contain custom changelog header when passed", async () => {
       const customHeader = "ChangeLog";
       const cwd = await initFixture("fixed");
