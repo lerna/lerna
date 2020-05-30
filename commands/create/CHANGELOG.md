@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.22.0](https://github.com/lerna/lerna/compare/v3.21.0...v3.22.0) (2020-05-24)
+
+
+### Bug Fixes
+
+* **create:** Use correct variable name in generated CLI output ([#2547](https://github.com/lerna/lerna/issues/2547)) ([a1fd622](https://github.com/lerna/lerna/commit/a1fd622a55e3dbbf47a6a166c01fe17636cd0a76))
+
+
+
+
+
+# [3.21.0](https://github.com/lerna/lerna/compare/v3.20.2...v3.21.0) (2020-05-13)
+
+**Note:** Version bump only for package @lerna/create
+
+
+
+
+
 ## [3.18.5](https://github.com/lerna/lerna/compare/v3.18.4...v3.18.5) (2019-11-20)
 
 **Note:** Version bump only for package @lerna/create

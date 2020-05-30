@@ -16,3 +16,15 @@ test("gitCheckout files", async () => {
   const modified = await execa.stdout("git", ["ls-files", "--modified"], { cwd });
   expect(modified).toBe("");
 });
+
+test("gitCheckout files with .gitignored files", async () => {
+  const cwd = await initFixture("no-interdependencies");
+  const files = ["package-1", "package-2"].map(name => path.join("packages", name, "package.json"));
+  files.push("packages/package-1/index.log");
+
+  await Promise.all(files.map(fp => fs.writeJSON(path.join(cwd, fp), { foo: "bar" })));
+  await gitCheckout(files, { cwd });
+
+  const modified = await execa.stdout("git", ["ls-files", "--modified"], { cwd });
+  expect(modified).toBe("");
+});

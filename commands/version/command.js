@@ -109,6 +109,16 @@ exports.builder = (yargs, composed) => {
       hidden: true,
       type: "boolean",
     },
+    // TODO: (major) make --no-private the default
+    "no-private": {
+      describe: "Do not version private packages.",
+      type: "boolean",
+    },
+    private: {
+      // proxy for --no-private
+      hidden: true,
+      type: "boolean",
+    },
     "no-push": {
       describe: "Do not push tagged commit to git remote.",
       type: "boolean",
@@ -131,6 +141,10 @@ exports.builder = (yargs, composed) => {
     },
     "sign-git-tag": {
       describe: "Pass the `--sign` flag to `git tag`.",
+      type: "boolean",
+    },
+    "force-git-tag": {
+      describe: "Pass the `--force` flag to `git tag`.",
       type: "boolean",
     },
     "tag-version-prefix": {

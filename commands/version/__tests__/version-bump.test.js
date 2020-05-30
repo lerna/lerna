@@ -94,6 +94,8 @@ describe("version bump", () => {
 
     const message = await getCommitMessage(testDir);
     expect(message).toContain("package-1@1.0.1-alpha.0");
+    // TODO: (major) make --no-private the default
+    expect(message).toContain("package-5@5.0.1-alpha.0");
   });
 
   test("prerelease increments version with custom --preid", async () => {
@@ -103,5 +105,15 @@ describe("version bump", () => {
 
     const message = await getCommitMessage(testDir);
     expect(message).toContain("package-1@1.0.1-foo.0");
+  });
+
+  it("ignores private packages with --no-private", async () => {
+    const testDir = await initFixture("independent");
+
+    await lernaVersion(testDir)("patch", "--no-private");
+
+    const message = await getCommitMessage(testDir);
+    // TODO: (major) make --no-private the default
+    expect(message).not.toContain("package-5");
   });
 });

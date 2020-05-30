@@ -1,5 +1,5 @@
 <p align="center">
-  <img alt="Lerna" src="https://cloud.githubusercontent.com/assets/952783/15271604/6da94f96-1a06-11e6-8b04-dc3171f79a90.png" width="480">
+  <img alt="Lerna" src="https://user-images.githubusercontent.com/645641/79596653-38f81200-80e1-11ea-98cd-1c6a3bb5de51.png" width="480">
 </p>
 
 <p align="center">
@@ -41,7 +41,7 @@
 Splitting up large codebases into separate independently versioned packages
 is extremely useful for code sharing. However, making changes across many
 repositories is _messy_ and difficult to track, and testing across repositories
-gets complicated really fast.
+becomes complicated very quickly.
 
 To solve these (and many other) problems, some projects will organize their
 codebases into multi-package repositories (sometimes called [monorepos](https://github.com/babel/babel/blob/master/doc/design/monorepo.md)). Projects like [Babel](https://github.com/babel/babel/tree/master/packages), [React](https://github.com/facebook/react/tree/master/packages), [Angular](https://github.com/angular/angular/tree/master/modules),
@@ -110,6 +110,8 @@ Lerna allows you to manage your project using one of two modes: Fixed or Indepen
 
 Fixed mode Lerna projects operate on a single version line. The version is kept in the `lerna.json` file at the root of your project under the `version` key. When you run `lerna publish`, if a module has been updated since the last time a release was made, it will be updated to the new version you're releasing. This means that you only publish a new version of a package when you need to.
 
+> Note: If you have a major version zero, all updates are [considered breaking](https://semver.org/#spec-item-4). Because of that, running `lerna publish` with a major version zero and choosing any non-prerelease version number will cause new versions to be published for all packages, even if not all packages have changed since the last release.
+
 This is the mode that [Babel](https://github.com/babel/babel) is currently using. Use this if you want to automatically tie all package versions together. One issue with this approach is that a major change in any package will result in all packages having a new major version.
 
 ### Independent mode
@@ -165,7 +167,7 @@ Run `lerna --help` to see all available commands and options.
 - `command.publish.ignoreChanges`: an array of globs that won't be included in `lerna changed/publish`. Use this to prevent publishing a new version unnecessarily for changes, such as fixing a `README.md` typo.
 - `command.publish.message`: a custom commit message when performing version updates for publication. See [@lerna/version](commands/version#--message-msg) for more details.
 - `command.publish.registry`: use it to set a custom registry url to publish to instead of
-npmjs.org, you must already be authenticated if required.
+  npmjs.org, you must already be authenticated if required.
 - `command.version.changelogHeader`: use it to set a custom change log header.
 - `command.bootstrap.ignore`: an array of globs that won't be bootstrapped when running the `lerna bootstrap` command.
 - `command.bootstrap.npmClientArgs`: array of strings that will be passed as arguments directly to `npm install` during the `lerna bootstrap` command.
@@ -214,7 +216,8 @@ Locating leaf packages under `packages/*` is considered a "best-practice", but i
 #### Legacy Fields
 
 Some `lerna.json` fields are no longer in use. Those of note include:
-* `lerna`: originally used to indicate the current version of Lerna. [Made obsolete](https://github.com/lerna/lerna/pull/1122) and [removed](https://github.com/lerna/lerna/pull/1225) in v3
+
+- `lerna`: originally used to indicate the current version of Lerna. [Made obsolete](https://github.com/lerna/lerna/pull/1122) and [removed](https://github.com/lerna/lerna/pull/1225) in v3
 
 ### Common `devDependencies`
 
@@ -223,6 +226,7 @@ Most `devDependencies` can be pulled up to the root of a Lerna repo with `lerna 
 The above command will automatically hoist things and use relative `file:` specifiers.
 
 Hoisting has a few benefits:
+
 - All packages use the same version of a given dependency
 - Can keep dependencies at the root up-to-date with an automated tool such as [GreenKeeper](https://greenkeeper.io/)
 - Dependency installation time is reduced

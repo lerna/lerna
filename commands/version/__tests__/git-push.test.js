@@ -15,6 +15,7 @@ beforeEach(() => {
 
 afterEach(() => {
   jest.restoreAllMocks();
+  delete process.env.GIT_REDIRECT_STDERR;
 });
 
 test("gitPush", async () => {
@@ -53,6 +54,40 @@ test("remote that does not support --atomic", async () => {
     );
 
     error.stderr = stderr;
+
+    throw error;
+  });
+
+  // this call should _not_ throw
+  await gitPush("origin", "master", { cwd });
+
+  expect(childProcess.exec).toHaveBeenCalledTimes(2);
+  expect(childProcess.exec).toHaveBeenLastCalledWith(
+    "git",
+    ["push", "--follow-tags", "--no-verify", "origin", "master"],
+    { cwd }
+  );
+
+  const list = await listRemoteTags(cwd);
+  expect(list).toMatch("v4.5.6");
+});
+
+test("remote that does not support --atomic and git stderr redirected to stdout ", async () => {
+  const { cwd } = await cloneFixture("root-manifest-only");
+
+  process.env.GIT_REDIRECT_STDERR = "2>&1";
+
+  await execa("git", ["commit", "--allow-empty", "-m", "change"], { cwd });
+  await execa("git", ["tag", "v4.5.6", "-m", "v4.5.6"], { cwd });
+
+  // the first time the command is executed, simulate remote error
+  childProcess.exec.mockImplementationOnce(async () => {
+    const stdout = "fatal: the receiving end does not support --atomic push";
+    const error = new Error(
+      ["Command failed: git push --follow-tags --atomic --no-verify origin master", stdout].join("\n")
+    );
+
+    error.stdout = stdout;
 
     throw error;
   });

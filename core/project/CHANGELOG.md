@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.21.0](https://github.com/lerna/lerna/compare/v3.20.2...v3.21.0) (2020-05-13)
+
+
+### Features
+
+* **project:** Add `getPackagesSync()` export ([068bdd7](https://github.com/lerna/lerna/commit/068bdd75683ca9687a420523e4ba007bd8b3b220))
+
+
+
+
+
 # [3.18.0](https://github.com/lerna/lerna/compare/v3.17.0...v3.18.0) (2019-10-15)
 
 

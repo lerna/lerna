@@ -450,7 +450,7 @@ class CreateCommand extends Command {
         : dedent`
           'use strict';
 
-          const yargs = require('yargs/yargs');
+          const factory = require('yargs/yargs');
           const ${this.camelName} = require('./${this.dirName}');
 
           module.exports = cli;

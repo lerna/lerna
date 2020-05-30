@@ -5,12 +5,14 @@ const pMap = require("p-map");
 const path = require("path");
 const ValidationError = require("@lerna/validation-error");
 
-module.exports = makeFileFinder;
+module.exports.makeFileFinder = makeFileFinder;
+module.exports.makeSyncFileFinder = makeSyncFileFinder;
 
-function makeFileFinder(rootPath, packageConfigs) {
+function getGlobOpts(rootPath, packageConfigs) {
   const globOpts = {
     cwd: rootPath,
     absolute: true,
+    expandDirectories: false,
     followSymlinkedDirectories: false,
     // POSIX results always need to be normalized
     transform: fp => path.normalize(fp),
@@ -31,10 +33,16 @@ function makeFileFinder(rootPath, packageConfigs) {
     ];
   }
 
+  return globOpts;
+}
+
+function makeFileFinder(rootPath, packageConfigs) {
+  const globOpts = getGlobOpts(rootPath, packageConfigs);
+
   return (fileName, fileMapper, customGlobOpts) => {
     const options = Object.assign({}, customGlobOpts, globOpts);
     const promise = pMap(
-      packageConfigs.sort(),
+      Array.from(packageConfigs).sort(),
       globPath => {
         let chain = globby(path.join(globPath, fileName), options);
 
@@ -51,10 +59,24 @@ function makeFileFinder(rootPath, packageConfigs) {
     );
 
     // always flatten the results
-    return promise.then(flattenResults);
+    return promise.then(results => results.reduce((acc, result) => acc.concat(result), []));
   };
 }
 
-function flattenResults(results) {
-  return results.reduce((acc, result) => acc.concat(result), []);
+function makeSyncFileFinder(rootPath, packageConfigs) {
+  const globOpts = getGlobOpts(rootPath, packageConfigs);
+
+  return (fileName, fileMapper, customGlobOpts) => {
+    const options = Object.assign({}, customGlobOpts, globOpts);
+    const patterns = packageConfigs.map(globPath => path.join(globPath, fileName)).sort();
+
+    let results = globby.sync(patterns, options);
+
+    /* istanbul ignore else */
+    if (fileMapper) {
+      results = results.map(fileMapper);
+    }
+
+    return results;
+  };
 }

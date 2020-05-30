@@ -50,9 +50,6 @@ You should also put your testing, linting and similar tasks there to run them fr
 as running them separately from each package is slower. The root can also hold all the "hoisted" packages,
 which speeds up bootstrapping when using the [`--hoist`][hoist] flag.
 
-You can add the root as a managed location (in the `packages` array of `lerna.json`) - if that's something you need.
-This would cause lerna to link root's dependencies to your packages' directories, run `postinstall` script along with the others, etc.
-
 [hoist]: https://github.com/lerna/lerna/blob/master/doc/hoist.md
 
 ## CI setup

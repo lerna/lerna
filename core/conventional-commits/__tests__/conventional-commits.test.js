@@ -12,6 +12,7 @@ const gitTag = require("@lerna-test/git-tag");
 
 // file under test
 const { recommendVersion, updateChangelog } = require("..");
+const getChangelogConfig = require("../lib/get-changelog-config");
 
 // stabilize changelog commit SHA and datestamp
 expect.addSnapshotSerializer(require("@lerna-test/serialize-changelog"));
@@ -215,6 +216,21 @@ describe("conventional-commits", () => {
           changelogPreset: "conventional-changelog-garbage/pail",
         })
       ).rejects.toThrow("Unable to load conventional-changelog preset 'conventional-changelog-garbage/pail'");
+    });
+
+    describe("bump for major version zero", () => {
+      it("treats breaking changes as semver-minor", async () => {
+        const cwd = await initFixture("major-zero");
+        const [pkg0] = await getPackages(cwd);
+
+        // make a change in package-0
+        await pkg0.set("changed", 1).serialize();
+        await gitAdd(cwd, pkg0.manifestLocation);
+        await gitCommit(cwd, "feat: changed\n\nBREAKING CHANGE: changed");
+
+        const bump = await recommendVersion(pkg0, "independent", {});
+        expect(bump).toBe("0.2.0");
+      });
     });
 
     describe("prerelease bumps", () => {
@@ -493,6 +509,42 @@ describe("conventional-commits", () => {
 
       const leafChangelog = await updateChangelog(pkg2, "fixed", {
         changelogPreset: "./scripts/legacy-callback-preset",
+      });
+
+      expect(leafChangelog.newEntry).toMatchInlineSnapshot(`
+        <a name="1.0.1"></a>
+        ## <small>1.0.1 (YYYY-MM-DD)</small>
+        * fix(pkg2): A commit using a legacy callback preset
+
+      `);
+    });
+
+    it("supports config builder presets", async () => {
+      const cwd = await initFixture("fixed");
+
+      const configForPresetNameString = await getChangelogConfig("./scripts/config-builder-preset", cwd);
+      expect(configForPresetNameString).toBeDefined();
+
+      const presetConfigObject = { name: "./scripts/config-builder-preset", key: "value" };
+      const configForPresetConfigObject = await getChangelogConfig(presetConfigObject, cwd);
+
+      expect(configForPresetConfigObject).toBeDefined();
+      expect(configForPresetConfigObject.key).toBe(presetConfigObject.key);
+
+      await gitTag(cwd, "v1.0.0");
+
+      const [, pkg2] = await getPackages(cwd);
+
+      // make a change in package-2
+      await pkg2.set("changed", 1).serialize();
+      await gitAdd(cwd, pkg2.manifestLocation);
+      await gitCommit(cwd, "fix(pkg2): A commit using a legacy callback preset");
+
+      // update version
+      await pkg2.set("version", "1.0.1").serialize();
+
+      const leafChangelog = await updateChangelog(pkg2, "fixed", {
+        changelogPreset: "./scripts/config-builder-preset",
       });
 
       expect(leafChangelog.newEntry).toMatchInlineSnapshot(`

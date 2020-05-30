@@ -32,7 +32,7 @@ const lernaPublish = require("@lerna-test/command-runner")(require("../command")
 // stabilize commit SHA
 expect.addSnapshotSerializer(require("@lerna-test/serialize-git-sha"));
 
-async function initTaggedFixture(fixtureName) {
+async function initTaggedFixture(fixtureName, tagVersionPrefix = "v") {
   const cwd = await initFixture(fixtureName);
 
   if (fixtureName.indexOf("independent") > -1) {
@@ -44,7 +44,7 @@ async function initTaggedFixture(fixtureName) {
       gitTag(cwd, "package-5@5.0.0"),
     ]);
   } else {
-    await gitTag(cwd, "v1.0.0");
+    await gitTag(cwd, `${tagVersionPrefix}1.0.0`);
   }
 
   return cwd;
@@ -107,6 +107,21 @@ Object {
   "package-1": 1.0.1-beta.0+SHA,
   "package-2": 1.0.1-beta.0+SHA,
   "package-3": 1.0.1-beta.0+SHA,
+}
+`);
+});
+
+test("publish --canary --tag-version-prefix='abc'", async () => {
+  const cwd = await initTaggedFixture("normal", "abc");
+
+  await setupChanges(cwd, ["packages/package-1/all-your-base.js", "belong to us"]);
+  await lernaPublish(cwd)("--canary", "--tag-version-prefix", "abc");
+
+  expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
+Object {
+  "package-1": 1.0.1-alpha.0+SHA,
+  "package-2": 1.0.1-alpha.0+SHA,
+  "package-3": 1.0.1-alpha.0+SHA,
 }
 `);
 });
@@ -372,4 +387,59 @@ test("publish --canary --include-merged-tags calls git describe correctly", asyn
     ["describe", "--always", "--long", "--dirty", "--match", "v*.*.*"],
     expect.objectContaining({ cwd })
   );
+});
+
+test("publish --canary without _any_ tags", async () => {
+  const cwd = await initFixture("normal");
+  await lernaPublish(cwd)("--canary");
+
+  expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
+    Object {
+      "package-1": 1.0.1-alpha.0+SHA,
+      "package-2": 1.0.1-alpha.0+SHA,
+      "package-3": 1.0.1-alpha.0+SHA,
+      "package-4": 1.0.1-alpha.0+SHA,
+    }
+  `);
+});
+
+test("publish --canary without _any_ tags (independent)", async () => {
+  const cwd = await initFixture("independent");
+  await lernaPublish(cwd)("--canary");
+
+  expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
+    Object {
+      "package-1": 1.0.1-alpha.0+SHA,
+      "package-2": 2.0.1-alpha.0+SHA,
+      "package-3": 3.0.1-alpha.0+SHA,
+      "package-4": 4.0.1-alpha.0+SHA,
+    }
+  `);
+});
+
+test("publish --canary --no-private", async () => {
+  // mostly to say, "yay you didn't explode!"
+  // publish always skips private packages already
+  const cwd = await initTaggedFixture("independent");
+  await setupChanges(
+    cwd,
+    ["packages/package-1/all-your-base.js", "belong to us"],
+    [
+      "packages/package-3/package.json",
+      JSON.stringify({
+        name: "package-3",
+        version: "3.0.0",
+        private: true,
+      }),
+    ]
+  );
+
+  await lernaPublish(cwd)("--canary", "--no-private");
+
+  expect(writePkg.updatedVersions()).toMatchInlineSnapshot(`
+    Object {
+      "package-1": 1.0.1-alpha.0+SHA,
+      "package-2": 2.0.1-alpha.0+SHA,
+    }
+  `);
 });

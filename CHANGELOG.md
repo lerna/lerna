@@ -3,6 +3,47 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.22.0](https://github.com/lerna/lerna/compare/v3.21.0...v3.22.0) (2020-05-24)
+
+
+### Bug Fixes
+
+* **conventional-commits:**  Support modern config builder functions ([#2546](https://github.com/lerna/lerna/issues/2546)) ([7ffb297](https://github.com/lerna/lerna/commit/7ffb297b5cab910f58153cd9decd1f3b58b0c4ed)), closes [#2138](https://github.com/lerna/lerna/issues/2138)
+* **create:** Use correct variable name in generated CLI output ([#2547](https://github.com/lerna/lerna/issues/2547)) ([a1fd622](https://github.com/lerna/lerna/commit/a1fd622a55e3dbbf47a6a166c01fe17636cd0a76))
+* **deps:** upgrade octokit/enterprise-rest to v6 ([#2464](https://github.com/lerna/lerna/issues/2464)) ([b44ea75](https://github.com/lerna/lerna/commit/b44ea753fb9405432bc9fea84726fae365bf4cd8))
+* **import:** Support non-ASCII characters in file paths ([#2441](https://github.com/lerna/lerna/issues/2441)) ([c74ffa4](https://github.com/lerna/lerna/commit/c74ffa4b31503ab8cd537ac2a9c9c15494f81a0c))
+* **publish:** Avoid errors when files are ignored by git ([#2445](https://github.com/lerna/lerna/issues/2445)) ([448f2ae](https://github.com/lerna/lerna/commit/448f2aee7258febc15c131c1128688326a52778f)), closes [#2151](https://github.com/lerna/lerna/issues/2151)
+* **publish:** Avoid exception when publishing 1st version ([#2485](https://github.com/lerna/lerna/issues/2485)) ([5d80285](https://github.com/lerna/lerna/commit/5d802851d156e20e1bac4107e68b7280e078a51b))
+* **publish:** Support `--tag-version-prefix` in `--canary` mode ([#2435](https://github.com/lerna/lerna/issues/2435)) ([611c38e](https://github.com/lerna/lerna/commit/611c38edb07d18fc92a20ba44edab715519a203d))
+* **version:** `--atomic` fallback when `GIT_REDIRECT_STDERR` is enabled ([#2467](https://github.com/lerna/lerna/issues/2467)) ([c255d12](https://github.com/lerna/lerna/commit/c255d1242e3c21f432fac1e484a4e71ad50ed71f))
+
+
+### Features
+
+* **conventional-commits:** Preserve major version zero on breaking changes ([#2486](https://github.com/lerna/lerna/issues/2486)) ([6126e6c](https://github.com/lerna/lerna/commit/6126e6c6cb52405d7ff98d3b4017bf39dcdfa965))
+* **version:** add `--force-git-tag` option ([#2594](https://github.com/lerna/lerna/issues/2594)) ([00738e9](https://github.com/lerna/lerna/commit/00738e9ab2a9f3b5656419205bd7ddb1669e4193))
+
+
+
+
+
+# [3.21.0](https://github.com/lerna/lerna/compare/v3.20.2...v3.21.0) (2020-05-13)
+
+
+### Bug Fixes
+
+* **publish:** Canary releases without previous tags should not explode ([c9eb590](https://github.com/lerna/lerna/commit/c9eb590bf867889a188598322bb4552db7a34dfc))
+
+
+### Features
+
+* **project:** Add `getPackagesSync()` export ([068bdd7](https://github.com/lerna/lerna/commit/068bdd75683ca9687a420523e4ba007bd8b3b220))
+* **version:** Ignore private packages completely with `--no-private` ([a9b9f97](https://github.com/lerna/lerna/commit/a9b9f97457e4e4b0cac7f4ce562458d921a1f9be))
+
+
+
+
+
 ## [3.20.2](https://github.com/lerna/lerna/compare/v3.20.1...v3.20.2) (2020-01-02)
 
 
