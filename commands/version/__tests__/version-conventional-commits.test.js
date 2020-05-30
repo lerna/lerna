@@ -267,6 +267,23 @@ describe("--conventional-commits", () => {
       );
     });
 
+    it("accpets --changelog-header", async () => {
+      const cwd = await initFixture("normal");
+      const changelogOpts = {
+        changelogHeader: "Custom Header",
+        changelogPreset: undefined,
+        rootPath: cwd,
+        tagPrefix: "v",
+      };
+
+      await lernaVersion(cwd)("--conventional-commits", "--changelog-header", "Custom Header");
+      expect(ConventionalCommitUtilities.updateChangelog).toHaveBeenCalledWith(
+        expect.any(Object),
+        "fixed",
+        changelogOpts
+      );
+    });
+
     it("should not update changelogs with --no-changelog option", async () => {
       const cwd = await initFixture("normal");
       await lernaVersion(cwd)("--conventional-commits", "--no-changelog");
