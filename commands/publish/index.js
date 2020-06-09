@@ -562,11 +562,14 @@ class PublishCommand extends Command {
     // the package.json files are changed (by gitHead if not --canary)
     // and we should always __attempt_ to leave the working tree clean
     const { cwd } = this.execOpts;
+    const gitOpts = {
+      granularPathspec: this.options.granularPathspec !== false,
+    };
     const dirtyManifests = [this.project.manifest]
       .concat(this.packagesToPublish)
       .map(pkg => path.relative(cwd, pkg.manifestLocation));
 
-    return gitCheckout(dirtyManifests, this.execOpts).catch(err => {
+    return gitCheckout(dirtyManifests, gitOpts, this.execOpts).catch(err => {
       this.logger.silly("EGITCHECKOUT", err.message);
       this.logger.notice("FYI", "Unable to reset working tree changes, this probably isn't a git repo.");
     });

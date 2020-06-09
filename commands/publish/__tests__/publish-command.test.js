@@ -32,6 +32,7 @@ const commitChangeToPackage = require("@lerna-test/commit-change-to-package");
 const loggingOutput = require("@lerna-test/logging-output");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const path = require("path");
+const fs = require("fs-extra");
 
 // file under test
 const lernaPublish = require("@lerna-test/command-runner")(require("../command"));
@@ -143,6 +144,13 @@ Map {
       expect(getTwoFactorAuthRequired).toHaveBeenLastCalledWith(
         // extra insurance that @lerna/npm-conf is defaulting things correctly
         expect.figgyPudding({ otp: undefined })
+      );
+
+      expect(gitCheckout).toHaveBeenCalledWith(
+        // the list of changed files has been asserted many times already
+        expect.any(Array),
+        { granularPathspec: true },
+        { cwd: testDir }
       );
     });
 
@@ -329,6 +337,39 @@ Map {
       await lernaPublish(cwd)("--no-git-reset");
 
       expect(gitCheckout).not.toHaveBeenCalled();
+    });
+  });
+
+  // TODO: (major) make --no-granular-pathspec the default
+  describe("--no-granular-pathspec", () => {
+    it("resets staged changes globally", async () => {
+      const cwd = await initFixture("normal");
+
+      await lernaPublish(cwd)("--no-granular-pathspec");
+
+      expect(gitCheckout).toHaveBeenCalledWith(
+        // the list of changed files has been asserted many times already
+        expect.any(Array),
+        { granularPathspec: false },
+        { cwd }
+      );
+    });
+
+    it("consumes configuration from lerna.json", async () => {
+      const cwd = await initFixture("normal");
+
+      await fs.outputJSON(path.join(cwd, "lerna.json"), {
+        version: "1.0.0",
+        granularPathspec: false,
+      });
+      await lernaPublish(cwd)();
+
+      expect(gitCheckout).toHaveBeenCalledWith(
+        // the list of changed files has been asserted many times already
+        expect.any(Array),
+        { granularPathspec: false },
+        { cwd }
+      );
     });
   });
 

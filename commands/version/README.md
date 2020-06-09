@@ -60,6 +60,7 @@ Running `lerna version --conventional-commits` without the above flags will rele
 - [`--no-changelog`](#--no-changelog)
 - [`--no-commit-hooks`](#--no-commit-hooks)
 - [`--no-git-tag-version`](#--no-git-tag-version)
+- [`--no-granular-pathspec`](#--no-granular-pathspec)
 - [`--no-private`](#--no-private)
 - [`--no-push`](#--no-push)
 - [`--preid`](#--preid)
@@ -337,6 +338,23 @@ By default, `lerna version` will commit changes to package.json files and tag th
 Pass `--no-git-tag-version` to disable the behavior.
 
 This option is analogous to the `npm version` option [`--git-tag-version`](https://docs.npmjs.com/misc/config#git-tag-version), just inverted.
+
+### `--no-granular-pathspec`
+
+By default, `lerna version` will `git add` _only_ the leaf package manifests (and possibly changelogs) that have changed during the versioning process. This yields the equivalent of `git add -- packages/*/package.json`, but tailored to _exactly_ what changed.
+
+If you **know** you need different behavior, you'll understand: Pass `--no-granular-pathspec` to make the git command _literally_ `git add -- .`. By opting into this [pathspec](https://git-scm.com/docs/gitglossary#Documentation/gitglossary.txt-aiddefpathspecapathspec), you **MUST HAVE _ALL_ SECRETS AND BUILD OUTPUT PROPERLY IGNORED, _OR IT WILL BE COMMITTED AND PUSHED_**.
+
+This option makes the most sense configured in lerna.json, as you really don't want to mess it up:
+
+```json
+{
+  "version": "independent",
+  "granularPathspec": false
+}
+```
+
+The root-level configuration is intentional, as this also covers the [identically-named option in `lerna publish`](https://github.com/lerna/lerna/tree/master/commands/publish#--no-granular-pathspec).
 
 ### `--no-private`
 

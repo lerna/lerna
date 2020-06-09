@@ -105,6 +105,17 @@ exports.builder = (yargs, composed) => {
       hidden: true,
       type: "boolean",
     },
+    // TODO: (major) make --no-granular-pathspec the default
+    "no-granular-pathspec": {
+      describe: "Do not stage changes file-by-file, but globally.",
+      type: "boolean",
+    },
+    "granular-pathspec": {
+      // proxy for --no-granular-pathspec
+      hidden: true,
+      // describe: "Stage changes file-by-file, not globally.",
+      type: "boolean",
+    },
     // TODO: (major) make --no-private the default
     "no-private": {
       describe: "Do not version private packages.",

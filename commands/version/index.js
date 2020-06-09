@@ -64,6 +64,7 @@ class VersionCommand extends Command {
       commitHooks = true,
       gitRemote = "origin",
       gitTagVersion = true,
+      granularPathspec = true,
       push = true,
       signGitCommit,
       signGitTag,
@@ -91,6 +92,7 @@ class VersionCommand extends Command {
     this.gitOpts = {
       amend,
       commitHooks,
+      granularPathspec,
       signGitCommit,
       signGitTag,
       forceGitTag,
@@ -614,7 +616,7 @@ class VersionCommand extends Command {
     }
 
     if (this.commitAndTag) {
-      chain = chain.then(() => gitAdd(Array.from(changedFiles), this.execOpts));
+      chain = chain.then(() => gitAdd(Array.from(changedFiles), this.gitOpts, this.execOpts));
     }
 
     return chain;

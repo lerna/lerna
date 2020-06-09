@@ -12,7 +12,7 @@ test("relative files", async () => {
   const file = path.join("packages", "pkg-1", "index.js");
 
   await fs.outputFile(path.join(cwd, file), "hello");
-  await gitAdd([file], { cwd });
+  await gitAdd([file], { granularPathspec: true }, { cwd });
 
   const list = await execa.stdout("git", ["diff", "--cached", "--name-only"], { cwd });
   expect(slash(list)).toBe("packages/pkg-1/index.js");
@@ -23,7 +23,7 @@ test("absolute files", async () => {
   const file = path.join(cwd, "packages", "pkg-2", "index.js");
 
   await fs.outputFile(file, "hello");
-  await gitAdd([file], { cwd });
+  await gitAdd([file], { granularPathspec: true }, { cwd });
 
   const list = await execa.stdout("git", ["diff", "--cached", "--name-only"], { cwd });
   expect(slash(list)).toBe("packages/pkg-2/index.js");
@@ -31,26 +31,34 @@ test("absolute files", async () => {
 
 test(".gitignore", async () => {
   const cwd = await initFixture("root-manifest-only");
-  const file = path.join(cwd, "packages", "pkg-2", "index.log");
-  const file2 = path.join(cwd, "packages", "pkg-2", "index.js");
+  const file3 = path.join(cwd, "packages/version-3/package.json");
+  const file4 = path.join(cwd, "packages/dynamic-4/package.json");
 
-  await fs.outputFile(file, "hello");
-  await fs.outputFile(file2, "hello2");
-  await gitAdd([file, file2], { cwd });
+  await Promise.all([
+    // a "dynamic" package is intentionally unversioned, yet still published
+    fs.outputJSON(file3, { three: true }),
+    fs.outputJSON(file4, { four: true }),
+  ]);
+
+  await gitAdd([file3, file4], { granularPathspec: false }, { cwd });
 
   const list = await execa.stdout("git", ["diff", "--cached", "--name-only"], { cwd });
-  expect(slash(list)).toBe("packages/pkg-2/index.js");
+  expect(slash(list)).toBe("packages/version-3/package.json");
 });
 
 test(".gitignore without naming files", async () => {
   const cwd = await initFixture("root-manifest-only");
-  const file = path.join(cwd, "packages", "pkg-2", "index.log");
-  const file2 = path.join(cwd, "packages", "pkg-2", "index.js");
+  const file5 = path.join(cwd, "packages/version-5/package.json");
+  const file6 = path.join(cwd, "packages/dynamic-6/package.json");
 
-  await fs.outputFile(file, "hello");
-  await fs.outputFile(file2, "hello2");
-  await gitAdd([], { cwd });
+  await Promise.all([
+    // a "dynamic" package is intentionally unversioned, yet still published
+    fs.outputJSON(file5, { five: true }),
+    fs.outputJSON(file6, { six: true }),
+  ]);
+
+  await gitAdd([], { granularPathspec: false }, { cwd });
 
   const list = await execa.stdout("git", ["diff", "--cached", "--name-only"], { cwd });
-  expect(slash(list)).toBe("packages/pkg-2/index.js");
+  expect(slash(list)).toBe("packages/version-5/package.json");
 });

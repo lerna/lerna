@@ -5,8 +5,10 @@ const childProcess = require("@lerna/child-process");
 
 module.exports = gitCheckout;
 
-function gitCheckout(files, opts) {
+function gitCheckout(stagedFiles, gitOpts, execOpts) {
+  const files = gitOpts.granularPathspec ? stagedFiles : ".";
+
   log.silly("gitCheckout", files);
 
-  return childProcess.exec("git", ["checkout", "--", "."], opts);
+  return childProcess.exec("git", ["checkout", "--"].concat(files), execOpts);
 }

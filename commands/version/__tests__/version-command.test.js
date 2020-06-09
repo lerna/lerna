@@ -296,6 +296,41 @@ describe("VersionCommand", () => {
     });
   });
 
+  // TODO: (major) make --no-granular-pathspec the default
+  describe("--no-granular-pathspec", () => {
+    it("adds changed files globally", async () => {
+      const cwd = await initFixture("normal");
+      await fs.outputFile(path.join(cwd, ".gitignore"), "packages/dynamic");
+      await fs.outputJSON(path.join(cwd, "packages/dynamic/package.json"), {
+        name: "dynamic",
+        version: "1.0.0",
+      });
+      // a "dynamic", intentionally unversioned package must _always_ be forced
+      await lernaVersion(cwd)("--force-publish=dynamic", "--no-granular-pathspec");
+
+      const leftover = await execa.stdout("git", ["ls-files", "--others"], { cwd });
+      expect(leftover).toBe("packages/dynamic/package.json");
+    });
+
+    it("consumes configuration from lerna.json", async () => {
+      const cwd = await initFixture("normal");
+      await fs.outputFile(path.join(cwd, ".gitignore"), "packages/dynamic");
+      await fs.outputJSON(path.join(cwd, "packages/dynamic/package.json"), {
+        name: "dynamic",
+        version: "1.0.0",
+      });
+      await fs.outputJSON(path.join(cwd, "lerna.json"), {
+        version: "1.0.0",
+        granularPathspec: false,
+      });
+      // a "dynamic", intentionally unversioned package must _always_ be forced
+      await lernaVersion(cwd)("--force-publish=dynamic");
+
+      const leftover = await execa.stdout("git", ["ls-files", "--others"], { cwd });
+      expect(leftover).toBe("packages/dynamic/package.json");
+    });
+  });
+
   // TODO: (major) make --no-private the default
   describe("--no-private", () => {
     it("does not universally version private packages", async () => {

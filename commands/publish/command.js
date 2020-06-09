@@ -63,6 +63,17 @@ exports.builder = yargs => {
       describe: "Disable all lifecycle scripts",
       type: "boolean",
     },
+    // TODO: (major) make --no-granular-pathspec the default
+    "no-granular-pathspec": {
+      describe: "Do not reset changes file-by-file, but globally.",
+      type: "boolean",
+    },
+    "granular-pathspec": {
+      // proxy for --no-granular-pathspec
+      hidden: true,
+      // describe: "Reset changes file-by-file, not globally.",
+      type: "boolean",
+    },
     otp: {
       describe: "Supply a one-time password for publishing with two-factor authentication.",
       type: "string",
