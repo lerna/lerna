@@ -1,6 +1,6 @@
 "use strict";
 
-const fs = require.requireActual("fs-extra");
+const fs = jest.requireActual("fs-extra");
 const path = require("path");
 const semver = require("semver");
 

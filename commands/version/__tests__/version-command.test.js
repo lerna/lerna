@@ -34,7 +34,7 @@ const getCommitMessage = require("@lerna-test/get-commit-message");
 const lernaVersion = require("@lerna-test/command-runner")(require("../command"));
 
 // certain tests need to use the real thing
-const collectUpdatesActual = require.requireActual("@lerna/collect-updates");
+const collectUpdatesActual = jest.requireActual("@lerna/collect-updates");
 
 // assertion helpers
 const listDirty = cwd =>
