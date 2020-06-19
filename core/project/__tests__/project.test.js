@@ -76,6 +76,16 @@ describe("Project", () => {
       );
     });
 
+    it("throws errors from lerna.config.js if any", async () => {
+      const cwd = await initFixture("js-config-with-error");
+
+      expect(() => new Project(cwd)).toThrow(
+        expect.objectContaining({
+          name: "ReferenceError",
+        })
+      );
+    });
+
     it("returns parsed rootPkg.lerna", async () => {
       const cwd = await initFixture("pkg-prop");
       const project = new Project(cwd);
