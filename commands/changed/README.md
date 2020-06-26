@@ -28,6 +28,7 @@ package-2
 - [`-p`, `--parseable`](https://github.com/lerna/lerna/tree/main/commands/list#--parseable)
 - [`--toposort`](https://github.com/lerna/lerna/tree/main/commands/list#--toposort)
 - [`--graph`](https://github.com/lerna/lerna/tree/main/commands/list#--graph)
+- [`--force-local`](https://github.com/lerna/lerna/tree/master/commands/list#--force-local)
 
 Unlike `lerna ls`, however, `lerna changed` **does not** support [filter options](https://www.npmjs.com/package/@lerna/filter-options), as filtering is not supported by `lerna version` or `lerna publish`.
 

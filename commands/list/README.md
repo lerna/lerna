@@ -33,6 +33,7 @@ In any case, you can always pass `--loglevel silent` to create pristine chains o
 - [`-p`, `--parseable`](#--parseable)
 - [`--toposort`](#--toposort)
 - [`--graph`](#--graph)
+- [`--force-local`](#--force-local)
 
 `lerna ls` also respects all available [Filter Flags](https://www.npmjs.com/package/@lerna/filter-options).
 
@@ -171,3 +172,11 @@ $ lerna ls --graph --all
   ]
 }
 ```
+
+### `--force-local`
+
+```sh
+$ lerna list --toposort --force-local
+```
+
+When passed, this flag causes the `list` command to always consider the packages in the monorepo as local dependencies.
