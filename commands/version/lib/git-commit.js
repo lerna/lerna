@@ -22,7 +22,7 @@ function gitCommit(message, { amend, commitHooks, signGitCommit }, opts) {
   if (amend) {
     args.push("--amend", "--no-edit");
 
-    if(amend === "message") {
+    if (amend === "message") {
       args.push("-m", message);
     }
   } else if (message.indexOf(EOL) > -1) {

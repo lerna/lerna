@@ -534,7 +534,7 @@ describe("VersionCommand", () => {
     });
 
     it("allows custom messages", async () => {
-      const testDir = await initFixture("normal", "preserved");
+      const testDir = await initFixture("normal", "message");
       await lernaVersion(testDir)("-m", "subject", "--amend", "message");
 
       const message = await getCommitMessage(testDir);

@@ -35,7 +35,11 @@ describe("git commit", () => {
   test("--amend with custom message", async () => {
     const opts = { cwd: "no-edit" };
     await gitCommit("subject", { amend: "message" }, opts);
-    expect(mockExec).toHaveBeenLastCalledWith("git", ["commit", "--amend", "--no-edit", "-m", "subject"], opts);
+    expect(mockExec).toHaveBeenLastCalledWith(
+      "git",
+      ["commit", "--amend", "--no-edit", "-m", "subject"],
+      opts
+    );
   });
 
   test("--no-commit-hooks", async () => {
