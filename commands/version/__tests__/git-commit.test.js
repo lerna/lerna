@@ -38,7 +38,6 @@ describe("git commit", () => {
     expect(mockExec).toHaveBeenLastCalledWith("git", ["commit", "--amend", "--no-edit", "-m", "subject"], opts);
   });
 
-
   test("--no-commit-hooks", async () => {
     const opts = { cwd: "no-verify" };
     await gitCommit("yolo", { commitHooks: false }, opts);
