@@ -19,7 +19,7 @@ function gitCommit(message, { amend, commitHooks, signGitCommit }, opts) {
     args.push("--gpg-sign");
   }
 
-  if (amend) {
+  if (amend != null) {
     args.push("--amend", "--no-edit");
 
     if (amend === "message") {
