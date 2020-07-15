@@ -532,6 +532,14 @@ describe("VersionCommand", () => {
       const message = await getCommitMessage(testDir);
       expect(message).toBe("preserved");
     });
+
+    it("allows custom messages", async () => {
+      const testDir = await initFixture("normal", "preserved");
+      await lernaVersion(testDir)("-m", "subject", "--amend", "message");
+
+      const message = await getCommitMessage(testDir);
+      expect(message).toBe("subject");
+    });
   });
 
   describe("--amend --independent", () => {

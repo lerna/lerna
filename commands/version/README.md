@@ -120,6 +120,12 @@ This is useful during [Continuous integration (CI)](https://en.wikipedia.org/wik
 
 In order to prevent unintended overwrites, this command will skip `git push` (i.e., it implies `--no-push`).
 
+If you need Lerna's commit message to replace the current commit message, pass the keyword 'message' to the --amend flag 
+```sh
+lerna version --amend message"
+# commit message is retained, and `git push` is skipped.
+```
+
 ### `--changelog-preset`
 
 ```sh

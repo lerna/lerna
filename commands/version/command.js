@@ -18,7 +18,7 @@ exports.builder = (yargs, composed) => {
     },
     amend: {
       describe: "Amend the existing commit, instead of generating a new one.",
-      type: "boolean",
+      type: "string",
     },
     "conventional-commits": {
       describe: "Use conventional-changelog to determine version bump and generate CHANGELOG.",

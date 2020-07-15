@@ -21,6 +21,10 @@ function gitCommit(message, { amend, commitHooks, signGitCommit }, opts) {
 
   if (amend) {
     args.push("--amend", "--no-edit");
+
+    if(amend === "message") {
+      args.push("-m", message);
+    }
   } else if (message.indexOf(EOL) > -1) {
     // Use tempfile to allow multi\nline strings.
     args.push("-F", tempWrite.sync(message, "lerna-commit.txt"));

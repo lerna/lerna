@@ -75,7 +75,7 @@ class VersionCommand extends Command {
     this.gitRemote = gitRemote;
     this.tagPrefix = tagVersionPrefix;
     this.commitAndTag = gitTagVersion;
-    this.pushToRemote = gitTagVersion && amend !== true && push;
+    this.pushToRemote = gitTagVersion && amend == null && push;
     // never automatically push to remote when amending a commit
 
     this.createRelease = this.pushToRemote && this.options.createRelease;
