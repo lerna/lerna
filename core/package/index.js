@@ -6,7 +6,7 @@ const loadJsonFile = require("load-json-file");
 const writePkg = require("write-pkg");
 
 // symbol used to "hide" internal state
-const PKG = Symbol("pkg");
+const PKG = Symbol.for("pkg");
 
 function binSafeName({ name, scope }) {
   return scope ? name.substring(scope.length + 1) : name;
