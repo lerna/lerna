@@ -155,7 +155,8 @@ Run `lerna --help` to see all available commands and options.
     },
     "bootstrap": {
       "ignore": "component-*",
-      "npmClientArgs": ["--no-package-lock"]
+      "npmClientArgs": ["--no-package-lock"],
+      "hoist: true
     }
   },
   "packages": ["packages/*"]
@@ -171,6 +172,7 @@ Run `lerna --help` to see all available commands and options.
 - `command.bootstrap.ignore`: an array of globs that won't be bootstrapped when running the `lerna bootstrap` command.
 - `command.bootstrap.npmClientArgs`: array of strings that will be passed as arguments directly to `npm install` during the `lerna bootstrap` command.
 - `command.bootstrap.scope`: an array of globs that restricts which packages will be bootstrapped when running the `lerna bootstrap` command.
+- `command.bootstrap.hoist`: a boolean to hoist packages when bootstrapping. Same behaviour as running `lerna bootstrap --hoist` command.
 - `packages`: Array of globs to use as package locations.
 
 The packages config in `lerna.json` is a list of globs that match directories containing a `package.json`, which is how lerna recognizes "leaf" packages (vs the "root" `package.json`, which is intended to manage the dev dependencies and scripts for the entire repo).
