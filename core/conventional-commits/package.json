@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@lerna/validation-error": "file:../validation-error",
-    "conventional-changelog-angular": "^5.0.3",
+    "conventional-changelog-angular": "^5.0.11",
     "conventional-changelog-core": "^3.1.6",
     "conventional-recommended-bump": "^5.0.0",
     "fs-extra": "^8.1.0",
