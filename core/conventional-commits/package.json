@@ -18,7 +18,7 @@
   ],
   "main": "index.js",
   "engines": {
-    "node": ">= 6.9.0"
+    "node": ">=10"
   },
   "publishConfig": {
     "access": "public"
@@ -33,9 +33,9 @@
   },
   "dependencies": {
     "@lerna/validation-error": "file:../validation-error",
-    "conventional-changelog-angular": "^5.0.3",
-    "conventional-changelog-core": "^3.1.6",
-    "conventional-recommended-bump": "^5.0.0",
+    "conventional-changelog-angular": "^5.0.11",
+    "conventional-changelog-core": "^4.1.8",
+    "conventional-recommended-bump": "^6.0.9",
     "fs-extra": "^8.1.0",
     "get-stream": "^4.0.0",
     "lodash.template": "^4.5.0",

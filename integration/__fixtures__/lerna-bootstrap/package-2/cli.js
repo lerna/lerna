@@ -1,5 +1,5 @@
 #!/usr/bin/env node
 
-const msg = require("./");
+const msg = require(".");
 
 console.log("cli", msg);

@@ -1,14 +1,13 @@
 "use strict";
 
+const path = require("path");
+const fs = require("fs-extra");
 const chalk = require("chalk");
 const tempy = require("tempy");
-const Tacks = require("tacks");
 
 const Project = require("@lerna/project");
 const loggingOutput = require("@lerna-test/logging-output");
 const listable = require("..");
-
-const { File, Dir } = Tacks;
 
 // keep snapshots stable cross-platform
 chalk.enabled = false;
@@ -32,47 +31,39 @@ describe("listable.format()", () => {
   let packages;
 
   const formatWithOptions = opts => listable.format(packages, Object.assign({ _: ["ls"] }, opts));
-
-  const fixture = new Tacks(
-    Dir({
-      "lerna.json": File({
-        version: "independent",
-        packages: ["pkgs/*"],
-      }),
-      "package.json": File({
-        name: "listable-format-test",
-      }),
-      pkgs: Dir({
-        "pkg-1": Dir({
-          "package.json": File({
-            name: "pkg-1",
-            version: "1.0.0",
-            dependencies: { "pkg-2": "file:../pkg-2" },
-          }),
-        }),
-        "pkg-2": Dir({
-          "package.json": File({
-            name: "pkg-2",
-            // version: "2.0.0",
-            devDependencies: { "pkg-3": "file:../pkg-3" },
-          }),
-        }),
-        "pkg-3": Dir({
-          "package.json": File({
-            name: "pkg-3",
-            version: "3.0.0",
-            dependencies: { "pkg-2": "file:../pkg-2" },
-            private: true,
-          }),
-        }),
-      }),
-    })
-  );
+  function populateFixture(directoryPath) {
+    fs.writeJsonSync(path.join(directoryPath, "lerna.json"), {
+      version: "independent",
+      packages: ["pkgs/*"],
+    });
+    fs.writeJsonSync(path.join(directoryPath, "package.json"), {
+      name: "listable-format-test",
+    });
+    const packagesPath = path.join(directoryPath, "pkgs");
+    fs.mkdirpSync(path.join(packagesPath, "pkg-1"));
+    fs.writeJsonSync(path.join(packagesPath, "pkg-1/package.json"), {
+      name: "pkg-1",
+      version: "1.0.0",
+      dependencies: { "pkg-2": "file:../pkg-2" },
+    });
+    fs.mkdirpSync(path.join(packagesPath, "pkg-2"));
+    fs.writeJsonSync(path.join(packagesPath, "pkg-2/package.json"), {
+      name: "pkg-2",
+      // version: "2.0.0",
+      devDependencies: { "pkg-3": "file:../pkg-3" },
+    });
+    fs.mkdirpSync(path.join(packagesPath, "pkg-3"));
+    fs.writeJsonSync(path.join(packagesPath, "pkg-3/package.json"), {
+      name: "pkg-3",
+      version: "3.0.0",
+      dependencies: { "pkg-2": "file:../pkg-2" },
+      private: true,
+    });
+  }
 
   beforeAll(async () => {
     const cwd = tempy.directory();
-
-    fixture.create(cwd);
+    populateFixture(cwd);
     process.chdir(cwd);
 
     packages = await Project.getPackages(cwd);

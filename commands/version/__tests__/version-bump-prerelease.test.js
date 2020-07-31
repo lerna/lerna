@@ -24,10 +24,7 @@ const gitAdd = require("@lerna-test/git-add");
 const gitTag = require("@lerna-test/git-tag");
 const gitCommit = require("@lerna-test/git-commit");
 const getCommitMessage = require("@lerna-test/get-commit-message");
-const Tacks = require("tacks");
 const tempy = require("tempy");
-
-const { File, Dir } = Tacks;
 
 // test command
 const lernaVersion = require("@lerna-test/command-runner")(require("../command"));
@@ -118,34 +115,24 @@ test("version prerelease with immediate graduation", async () => {
 
 test("independent version prerelease does not bump on every unrelated change", async () => {
   const cwd = tempy.directory();
-  const fixture = new Tacks(
-    Dir({
-      "lerna.json": File({
-        version: "independent",
-      }),
-      "package.json": File({
-        name: "unrelated-bumps",
-      }),
-      packages: Dir({
-        "pkg-a": Dir({
-          "package.json": File({
-            name: "pkg-a",
-            version: "1.0.0",
-          }),
-        }),
-        "pkg-b": Dir({
-          "package.json": File({
-            name: "pkg-b",
-            version: "1.0.0-bumps.1",
-            // TODO: (major) make --no-private the default
-            private: true,
-          }),
-        }),
-      }),
-    })
-  );
-
-  fixture.create(cwd);
+  fs.writeJsonSync(path.join(cwd, "lerna.json"), {
+    version: "independent",
+  });
+  fs.writeJsonSync(path.join(cwd, "package.json"), {
+    name: "unrelated-bumps",
+  });
+  fs.mkdirpSync(path.join(cwd, "packages/pkg-a"));
+  fs.writeJsonSync(path.join(cwd, "packages/pkg-a/package.json"), {
+    name: "pkg-a",
+    version: "1.0.0",
+  });
+  fs.mkdirpSync(path.join(cwd, "packages/pkg-b"));
+  fs.writeJsonSync(path.join(cwd, "packages/pkg-b/package.json"), {
+    name: "pkg-b",
+    version: "1.0.0-bumps.1",
+    // TODO: (major) make --no-private the default
+    private: true,
+  });
 
   await gitInit(cwd, ".");
   await gitAdd(cwd, "-A");
@@ -185,35 +172,26 @@ Publish
 
 test("independent version prerelease respects --no-private", async () => {
   const cwd = tempy.directory();
-  const fixture = new Tacks(
-    Dir({
-      "lerna.json": File({
-        version: "independent",
-      }),
-      "package.json": File({
-        name: "no-private-versioning",
-      }),
-      packages: Dir({
-        "pkg-1": Dir({
-          "package.json": File({
-            name: "pkg-1",
-            version: "1.0.0",
-            devDependencies: {
-              "pkg-2": "^2.0.0",
-            },
-          }),
-        }),
-        "pkg-2": Dir({
-          "package.json": File({
-            name: "pkg-2",
-            version: "2.0.0",
-            private: true,
-          }),
-        }),
-      }),
-    })
-  );
-  fixture.create(cwd);
+  fs.writeJsonSync(path.join(cwd, "lerna.json"), {
+    version: "independent",
+  });
+  fs.writeJsonSync(path.join(cwd, "package.json"), {
+    name: "no-private-versioning",
+  });
+  fs.mkdirpSync(path.join(cwd, "packages/pkg-1"));
+  fs.writeJsonSync(path.join(cwd, "packages/pkg-1/package.json"), {
+    name: "pkg-1",
+    version: "1.0.0",
+    devDependencies: {
+      "pkg-2": "^2.0.0",
+    },
+  });
+  fs.mkdirpSync(path.join(cwd, "packages/pkg-2"));
+  fs.writeJsonSync(path.join(cwd, "packages/pkg-2/package.json"), {
+    name: "pkg-2",
+    version: "2.0.0",
+    private: true,
+  });
 
   await gitInit(cwd, ".");
   await gitAdd(cwd, "-A");

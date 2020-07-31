@@ -18,7 +18,7 @@
   ],
   "main": "index.js",
   "engines": {
-    "node": ">= 6.9.0"
+    "node": ">=10"
   },
   "publishConfig": {
     "access": "public"
@@ -36,7 +36,7 @@
     "@lerna/validation-error": "file:../validation-error",
     "cosmiconfig": "^5.1.0",
     "dedent": "^0.7.0",
-    "dot-prop": "^4.2.0",
+    "dot-prop": "^5.2.0",
     "glob-parent": "^5.0.0",
     "globby": "^9.2.0",
     "load-json-file": "^5.3.0",
