@@ -39,7 +39,7 @@ class BootstrapCommand extends Command {
   initialize() {
     const { registry, npmClient = "npm", npmClientArgs = [], mutex, hoist, nohoist } = this.options;
 
-    if (npmClient === "yarn" && hoist) {
+    if (npmClient.startsWith("yarn") && hoist) {
       throw new ValidationError(
         "EWORKSPACES",
         dedent`
@@ -50,7 +50,7 @@ class BootstrapCommand extends Command {
     }
 
     if (
-      npmClient === "yarn" &&
+      npmClient.startsWith("yarn") &&
       this.project.manifest.get("workspaces") &&
       this.options.useWorkspaces !== true
     ) {
@@ -154,7 +154,17 @@ class BootstrapCommand extends Command {
         this.targetGraph = new PackageGraph(filteredPackages, "allDependencies", this.options.forceLocal);
 
         // never automatically --save or modify lockfiles
-        this.npmConfig.npmClientArgs.unshift(npmClient === "yarn" ? "--pure-lockfile" : "--no-save");
+        switch (npmClient) {
+          case "yarn2":
+            this.npmConfig.npmClientArgs.unshift("--immutable");
+            break;
+          case "yarn":
+            this.npmConfig.npmClientArgs.unshift("--pure-lockfile");
+            break;
+          default:
+            this.npmConfig.npmClientArgs.unshift("--no-save");
+            break;
+        }
 
         // never attempt `npm ci`, it would always fail
         if (this.npmConfig.subCommand === "ci") {

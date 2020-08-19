@@ -467,6 +467,16 @@ describe("BootstrapCommand", () => {
       });
     });
 
+    it("gets no mutex when --npm-client=yarn2", async () => {
+      const testDir = await initFixture("cold");
+
+      await lernaBootstrap(testDir)("--npm-client", "yarn2");
+
+      expect(npmInstall.dependencies.mock.calls[0][2]).toMatchObject({
+        npmClient: "yarn2",
+      });
+    });
+
     it("hoists appropriately", async () => {
       const testDir = await initFixture("cold");
 

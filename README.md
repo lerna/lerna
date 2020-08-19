@@ -163,7 +163,7 @@ Run `lerna --help` to see all available commands and options.
 ```
 
 - `version`: the current version of the repository.
-- `npmClient`: an option to specify a specific client to run commands with (this can also be specified on a per command basis). Change to `"yarn"` to run all commands with yarn. Defaults to "npm".
+- `npmClient`: an option to specify a specific client to run commands with (this can also be specified on a per command basis). Change to `"yarn"` to run all commands with yarn or `"yarn2"` to use Yarn 2 - Berry. Defaults to "npm".
 - `command.publish.ignoreChanges`: an array of globs that won't be included in `lerna changed/publish`. Use this to prevent publishing a new version unnecessarily for changes, such as fixing a `README.md` typo.
 - `command.publish.message`: a custom commit message when performing version updates for publication. See [@lerna/version](commands/version#--message-msg) for more details.
 - `command.publish.registry`: use it to set a custom registry url to publish to instead of

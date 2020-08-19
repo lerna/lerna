@@ -33,7 +33,7 @@ May also be configured in `lerna.json`:
 ```js
 {
   ...
-  "npmClient": "yarn",
+  "npmClient": "yarn", // Or yarn2
   "npmClientArgs": ["--production", "--no-optional"]
 }
 ```
@@ -145,6 +145,15 @@ May also be configured in `lerna.json`:
 }
 ```
 
+or, if you are using Yarn 2 - Berry
+
+```js
+{
+  ...
+  "npmClient": "yarn2"
+}
+```
+
 ### `--use-workspaces`
 
 Enables integration with [Yarn Workspaces](https://github.com/yarnpkg/rfcs/blob/master/implemented/0000-workspaces-install-phase-1.md) (available since yarn@0.27+).
@@ -155,7 +164,7 @@ May also be configured in `lerna.json`:
 ```js
 {
   ...
-  "npmClient": "yarn",
+  "npmClient": "yarn", // Or "yarn2"
   "useWorkspaces": true
 }
 ```

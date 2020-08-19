@@ -46,7 +46,7 @@ exports.builder = yargs => {
       },
       "npm-client": {
         group: "Command Options:",
-        describe: "Executable used to install dependencies (npm, yarn, pnpm, ...)",
+        describe: "Executable used to install dependencies (npm, yarn, yarn2, pnpm, ...)",
         type: "string",
         requiresArg: true,
       },
