@@ -23,7 +23,8 @@ function gitPush(remote, branch, opts) {
         log.warn("gitPush", error.stderr);
         log.info("gitPush", "--atomic failed, attempting non-atomic push");
 
-        return childProcess.exec("git", ["push", "--follow-tags", "--no-verify", remote, branch], opts);
+        childProcess.exec("git", ["push", "--no-verify", remote, branch], opts);
+        return childProcess.exec("git", ["push", "--tags", "--no-verify", remote, branch], opts);
       }
 
       // ensure unexpected errors still break chain
