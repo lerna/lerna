@@ -39,6 +39,8 @@ class BootstrapCommand extends Command {
   initialize() {
     const { registry, npmClient = "npm", npmClientArgs = [], mutex, hoist, nohoist } = this.options;
 
+    console.log('IN LERNA initialize npmClient=', npmClient);
+
     if (npmClient.startsWith("yarn") && hoist) {
       throw new ValidationError(
         "EWORKSPACES",

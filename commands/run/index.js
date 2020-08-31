@@ -50,7 +50,7 @@ class RunCommand extends Command {
     return chain.then(() => {
       this.count = this.packagesWithScript.length;
       this.packagePlural = this.count === 1 ? "package" : "packages";
-      this.joinedCommand = [this.npmClient, "run", this.script].concat(this.args).join(" ");
+      this.joinedCommand = [(this.npmClient === "yarn2" ? "yarn" : this.npmClient), "run", this.script].concat(this.args).join(" ");
 
       if (!this.count) {
         this.logger.success("run", `No packages found with the lifecycle script '${script}'`);

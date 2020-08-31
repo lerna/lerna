@@ -1,6 +1,6 @@
 {
   "name": "lerna-monorepo",
-  "version": "3.0.0-monorepo",
+  "version": "3.0.1-monorepo",
   "description": "lerna dog-fooding lerna",
   "private": true,
   "scripts": {

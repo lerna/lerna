@@ -19,7 +19,7 @@ function npmInstall(
   // build command, arguments, and options
   const opts = getExecOpts(pkg, registry);
   const args = [subCommand];
-  let cmd = npmClient || "npm";
+  let cmd = (npmClient === "yarn2" ? "yarn" : npmClient) || "npm";
 
   if (npmGlobalStyle) {
     cmd = "npm";
@@ -30,7 +30,7 @@ function npmInstall(
     args.push("--mutex", mutex);
   }
 
-  if (cmd === "yarn") {
+  if (cmd === "yarn" && npmClient !== "yarn2") {
     args.push("--non-interactive");
   }
 
@@ -46,6 +46,7 @@ function npmInstall(
   opts.env.LERNA_ROOT_PATH = pkg.rootPath;
 
   log.silly("npmInstall", [cmd, args]);
+  log.info("npmInstall cmd=", cmd);
   return ChildProcessUtilities.exec(cmd, args, opts);
 }
 

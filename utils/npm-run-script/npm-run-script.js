@@ -9,21 +9,26 @@ module.exports = runScript;
 module.exports.stream = stream;
 
 function runScript(script, { args, npmClient, pkg, reject = true }) {
-  log.silly("npmRunScript", script, args, pkg.name);
+  log.silly("npmRunScript", script, args, npmClient, pkg.name);
 
   const argv = ["run", script, ...args];
   const opts = makeOpts(pkg, reject);
 
-  return ChildProcessUtilities.exec(npmClient, argv, opts);
+  return ChildProcessUtilities.exec(npmClient === "yarn2" ? "yarn" : npmClient, argv, opts);
 }
 
 function stream(script, { args, npmClient, pkg, prefix, reject = true }) {
-  log.silly("npmRunScript.stream", [script, args, pkg.name]);
+  log.silly("npmRunScript.stream", [script, args, npmClient, pkg.name]);
 
   const argv = ["run", script, ...args];
   const opts = makeOpts(pkg, reject);
 
-  return ChildProcessUtilities.spawnStreaming(npmClient, argv, opts, prefix && pkg.name);
+  return ChildProcessUtilities.spawnStreaming(
+    npmClient === "yarn2" ? "yarn" : npmClient,
+    argv,
+    opts,
+    prefix && pkg.name
+  );
 }
 
 function makeOpts(pkg, reject) {
