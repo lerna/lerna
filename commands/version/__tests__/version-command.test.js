@@ -54,7 +54,8 @@ describe("VersionCommand", () => {
       // --no-changelog should have _no_ effect
       await lernaVersion(testDir)("--no-changelog");
 
-      expect(checkWorkingTree).toHaveBeenCalled();
+      expect(checkWorkingTree).toHaveBeenCalledTimes(1);
+      expect(checkWorkingTree).toHaveBeenCalledWith(expect.anything(), undefined);
 
       expect(PromptUtilities.select.mock.calls).toMatchSnapshot("prompt");
       expect(PromptUtilities.confirm).toHaveBeenLastCalledWith(
@@ -123,6 +124,14 @@ describe("VersionCommand", () => {
 
       await expect(command).rejects.toThrow("released");
       // notably different than the actual message, but good enough here
+    });
+
+    it("passes includeMergedTags to checkWorkingTree", async () => {
+      const testDir = await initFixture("normal");
+      await lernaVersion(testDir)("--include-merged-tags");
+
+      expect(checkWorkingTree).toHaveBeenCalledTimes(1);
+      expect(checkWorkingTree).toHaveBeenCalledWith(expect.anything(), true);
     });
 
     it("calls `checkWorkingTree.throwIfUncommitted` when using --force-publish", async () => {

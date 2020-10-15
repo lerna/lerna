@@ -250,10 +250,10 @@ class VersionCommand extends Command {
 
     // amending a commit probably means the working tree is dirty
     if (this.commitAndTag && this.gitOpts.amend !== true) {
-      const { forcePublish, conventionalCommits, conventionalGraduate } = this.options;
+      const { forcePublish, conventionalCommits, conventionalGraduate, includeMergedTags } = this.options;
       const checkUncommittedOnly = forcePublish || (conventionalCommits && conventionalGraduate);
       const check = checkUncommittedOnly ? checkWorkingTree.throwIfUncommitted : checkWorkingTree;
-      tasks.unshift(() => check(this.execOpts));
+      tasks.unshift(() => check(this.execOpts, includeMergedTags));
     } else {
       this.logger.warn("version", "Skipping working tree validation, proceed at your own risk");
     }

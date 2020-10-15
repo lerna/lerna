@@ -381,7 +381,20 @@ test("publish --canary --include-merged-tags calls git describe correctly", asyn
 
   await lernaPublish(cwd)("--canary", "--include-merged-tags");
 
-  expect(spy).toHaveBeenCalledWith(
+  expect(spy).toBeCalledTimes(2);
+
+  // The first call happens when we do verifyWorkingTreeClean
+  expect(spy).toHaveBeenNthCalledWith(
+    1,
+    "git",
+    // notably lacking "--first-parent"
+    ["describe", "--always", "--long", "--dirty"],
+    expect.objectContaining({ cwd })
+  );
+
+  // The second call happens before we do makeVersion
+  expect(spy).toHaveBeenNthCalledWith(
+    2,
     "git",
     // notably lacking "--first-parent"
     ["describe", "--always", "--long", "--dirty", "--match", "v*.*.*"],
