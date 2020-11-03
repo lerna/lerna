@@ -1,6 +1,6 @@
 {
   "name": "@lerna/filter-options",
-  "version": "3.20.0",
+  "version": "3.20.0-invenium",
   "description": "Options for lerna sub-commands that need filtering",
   "keywords": [
     "lerna",
@@ -32,8 +32,8 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/collect-updates": "file:../../utils/collect-updates",
-    "@lerna/filter-packages": "file:../../utils/filter-packages",
+    "@lerna/collect-updates": "workspace:*",
+    "@lerna/filter-packages": "workspace:*",
     "dedent": "^0.7.0",
     "figgy-pudding": "^3.5.1",
     "npmlog": "^4.1.2"

@@ -1,6 +1,6 @@
 {
   "name": "@lerna/list",
-  "version": "3.21.0",
+  "version": "3.21.0-invenium",
   "description": "List local packages",
   "keywords": [
     "lerna",
@@ -32,9 +32,9 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/command": "file:../../core/command",
-    "@lerna/filter-options": "file:../../core/filter-options",
-    "@lerna/listable": "file:../../utils/listable",
-    "@lerna/output": "file:../../utils/output"
+    "@lerna/command": "workspace:*",
+    "@lerna/filter-options": "workspace:*",
+    "@lerna/listable": "workspace:*",
+    "@lerna/output": "workspace:*"
   }
 }

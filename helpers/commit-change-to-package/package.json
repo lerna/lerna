@@ -6,8 +6,8 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
-    "@lerna-test/git-add": "file:../git-add",
-    "@lerna-test/git-commit": "file:../git-commit",
+    "@lerna-test/git-add": "workspace:*",
+    "@lerna-test/git-commit": "workspace:*",
     "load-json-file": "^5.3.0",
     "write-json-file": "^3.2.0"
   }

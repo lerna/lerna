@@ -1,6 +1,6 @@
 {
   "name": "@lerna/create-symlink",
-  "version": "3.16.2",
+  "version": "3.16.2-invenium",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
@@ -31,7 +31,7 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@zkochan/cmd-shim": "^3.1.0",
+    "@zkochan/cmd-shim": "^5.0.0",
     "fs-extra": "^8.1.0",
     "npmlog": "^4.1.2"
   }

@@ -1,6 +1,6 @@
 {
   "name": "@lerna/command",
-  "version": "3.21.0",
+  "version": "3.21.0-invenium",
   "description": "Lerna's internal base class for commands",
   "keywords": [
     "lerna",
@@ -32,11 +32,11 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/child-process": "file:../child-process",
-    "@lerna/package-graph": "file:../package-graph",
-    "@lerna/project": "file:../project",
-    "@lerna/validation-error": "file:../validation-error",
-    "@lerna/write-log-file": "file:../../utils/write-log-file",
+    "@lerna/child-process": "workspace:*",
+    "@lerna/package-graph": "workspace:*",
+    "@lerna/project": "workspace:*",
+    "@lerna/validation-error": "workspace:*",
+    "@lerna/write-log-file": "workspace:*",
     "clone-deep": "^4.0.1",
     "dedent": "^0.7.0",
     "execa": "^1.0.0",

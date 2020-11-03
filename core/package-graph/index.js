@@ -13,10 +13,18 @@ const { reportCycles } = require("./lib/report-cycles");
  * @param {String} graphType ("allDependencies" or "dependencies")
  *    Pass "dependencies" to create a graph of only dependencies,
  *    excluding the devDependencies that would normally be included.
- * @param {Boolean} forceLocal Force all local dependencies to be linked.
+ * @param {String} localDependencies Force all local dependencies to be linked.
  */
 class PackageGraph extends Map {
-  constructor(packages, graphType = "allDependencies", forceLocal) {
+  constructor(
+    packages,
+    graphType = "allDependencies",
+    localDependencies = "auto" // | "force" | "explicit"
+  ) {
+    // For backward compatibility
+    if (localDependencies === true || localDependencies === "forceLocal") {
+      localDependencies = "force"; // eslint-disable-line
+    }
     super(packages.map(pkg => [pkg.name, new PackageGraphNode(pkg)]));
 
     if (packages.length !== this.size) {
@@ -57,16 +65,29 @@ class PackageGraph extends Map {
         // Yarn decided to ignore https://github.com/npm/npm/pull/15900 and implemented "link:"
         // As they apparently have no intention of being compatible, we have to do it for them.
         // @see https://github.com/yarnpkg/yarn/issues/4212
-        const spec = graphDependencies[depName].replace(/^link:/, "file:");
+        let spec = graphDependencies[depName].replace(/^link:/, "file:");
+
+        // npm doesn't support the explicit workspace: protocol, supported by
+        // pnpm and Yarn.
+        const explicitWorkspace = /^workspace:/.test(spec);
+        if (explicitWorkspace) {
+          spec = spec.replace(/^workspace:/, "");
+        }
         const resolved = npa.resolve(depName, spec, currentNode.location);
+        resolved.explicitWorkspace = explicitWorkspace;
 
         if (!depNode) {
           // it's an external dependency, store the resolution and bail
           return currentNode.externalDependencies.set(depName, resolved);
         }
 
-        if (forceLocal || resolved.fetchSpec === depNode.location || depNode.satisfies(resolved)) {
-          // a local file: specifier OR a matching semver
+        if (
+          explicitWorkspace ||
+          localDependencies === "force" ||
+          resolved.fetchSpec === depNode.location ||
+          (localDependencies !== "explicit" && depNode.satisfies(resolved))
+        ) {
+          // a local file: specifier, a matching semver or a workspace: version
           currentNode.localDependencies.set(depName, resolved);
           depNode.localDependents.set(currentName, currentNode);
         } else {

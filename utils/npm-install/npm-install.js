@@ -5,6 +5,7 @@ const log = require("npmlog");
 const npa = require("npm-package-arg");
 const onExit = require("signal-exit");
 const writePkg = require("write-pkg");
+const execa = require("execa");
 
 const ChildProcessUtilities = require("@lerna/child-process");
 const getExecOpts = require("@lerna/get-npm-exec-opts");
@@ -20,17 +21,23 @@ function npmInstall(
   const opts = getExecOpts(pkg, registry);
   const args = [subCommand];
   let cmd = npmClient || "npm";
+  let yarnBerry = false;
+
+  if (cmd === "yarn") {
+    const yarnVersion = ChildProcessUtilities.execSync("yarn", ["--version"]);
+    yarnBerry = /^2.*/.test(yarnVersion);
+  }
 
   if (npmGlobalStyle) {
     cmd = "npm";
     args.push("--global-style");
   }
 
-  if (cmd === "yarn" && mutex) {
+  if (cmd === "yarn" && mutex && !yarnBerry) {
     args.push("--mutex", mutex);
   }
 
-  if (cmd === "yarn") {
+  if (cmd === "yarn" && !yarnBerry) {
     args.push("--non-interactive");
   }
 

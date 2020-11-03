@@ -1,6 +1,6 @@
 {
   "name": "@lerna/collect-updates",
-  "version": "3.20.0",
+  "version": "3.20.0-invenium",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
@@ -32,8 +32,8 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/child-process": "file:../../core/child-process",
-    "@lerna/describe-ref": "file:../describe-ref",
+    "@lerna/child-process": "workspace:*",
+    "@lerna/describe-ref": "workspace:*",
     "minimatch": "^3.0.4",
     "npmlog": "^4.1.2",
     "slash": "^2.0.0"

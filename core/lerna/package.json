@@ -1,6 +1,6 @@
 {
   "name": "lerna",
-  "version": "3.22.1",
+  "version": "3.22.1-invenium",
   "description": "A tool for managing JavaScript projects with multiple packages.",
   "keywords": [
     "lerna",
@@ -13,9 +13,7 @@
     "name": "Sebastian McKenzie",
     "email": "sebmck@gmail.com"
   },
-  "bin": {
-    "lerna": "cli.js"
-  },
+  "bin": "cli.js",
   "files": [
     "index.js",
     "cli.js"
@@ -32,22 +30,22 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/add": "file:../../commands/add",
-    "@lerna/bootstrap": "file:../../commands/bootstrap",
-    "@lerna/changed": "file:../../commands/changed",
-    "@lerna/clean": "file:../../commands/clean",
-    "@lerna/cli": "file:../cli",
-    "@lerna/create": "file:../../commands/create",
-    "@lerna/diff": "file:../../commands/diff",
-    "@lerna/exec": "file:../../commands/exec",
-    "@lerna/import": "file:../../commands/import",
-    "@lerna/info": "file:../../commands/info",
-    "@lerna/init": "file:../../commands/init",
-    "@lerna/link": "file:../../commands/link",
-    "@lerna/list": "file:../../commands/list",
-    "@lerna/publish": "file:../../commands/publish",
-    "@lerna/run": "file:../../commands/run",
-    "@lerna/version": "file:../../commands/version",
+    "@lerna/add": "workspace:*",
+    "@lerna/bootstrap": "workspace:*",
+    "@lerna/changed": "workspace:*",
+    "@lerna/clean": "workspace:*",
+    "@lerna/cli": "workspace:*",
+    "@lerna/create": "workspace:*",
+    "@lerna/diff": "workspace:*",
+    "@lerna/exec": "workspace:*",
+    "@lerna/import": "workspace:*",
+    "@lerna/info": "workspace:*",
+    "@lerna/init": "workspace:*",
+    "@lerna/link": "workspace:*",
+    "@lerna/list": "workspace:*",
+    "@lerna/publish": "workspace:*",
+    "@lerna/run": "workspace:*",
+    "@lerna/version": "workspace:*",
     "import-local": "^2.0.0",
     "npmlog": "^4.1.2"
   }

@@ -6,6 +6,6 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
-    "@lerna/cli": "file:../../core/cli"
+    "@lerna/cli": "workspace:*"
   }
 }

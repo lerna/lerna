@@ -1,6 +1,6 @@
 {
   "name": "@lerna/info",
-  "version": "3.21.0",
+  "version": "3.21.0-invenium",
   "description": "Prints local environnment information",
   "keywords": [
     "lerna",
@@ -32,8 +32,8 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/command": "file:../../core/command",
-    "@lerna/output": "file:../../utils/output",
+    "@lerna/command": "workspace:*",
+    "@lerna/output": "workspace:*",
     "envinfo": "^7.3.1"
   }
 }

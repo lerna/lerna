@@ -1,6 +1,6 @@
 {
   "name": "@lerna/describe-ref",
-  "version": "3.16.5",
+  "version": "3.16.5-invenium",
   "description": "Parse git describe output for lerna-related tags",
   "keywords": [
     "lerna",
@@ -30,7 +30,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/child-process": "file:../../core/child-process",
+    "@lerna/child-process": "workspace:*",
     "npmlog": "^4.1.2"
   }
 }

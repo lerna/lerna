@@ -1,6 +1,6 @@
 {
   "name": "@lerna/cli",
-  "version": "3.18.5",
+  "version": "3.18.5-invenium",
   "description": "Lerna's CLI",
   "keywords": [
     "lerna",
@@ -31,7 +31,7 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/global-options": "file:../global-options",
+    "@lerna/global-options": "workspace:*",
     "dedent": "^0.7.0",
     "npmlog": "^4.1.2",
     "yargs": "^14.2.2"

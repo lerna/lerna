@@ -1,6 +1,6 @@
 {
   "name": "@lerna/symlink-binary",
-  "version": "3.17.0",
+  "version": "3.17.0-invenium",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
@@ -31,8 +31,8 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/create-symlink": "file:../create-symlink",
-    "@lerna/package": "file:../../core/package",
+    "@lerna/create-symlink": "workspace:*",
+    "@lerna/package": "workspace:*",
     "fs-extra": "^8.1.0",
     "p-map": "^2.1.0"
   }

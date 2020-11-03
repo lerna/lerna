@@ -6,7 +6,7 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
-    "@lerna/package": "file:../../core/package",
+    "@lerna/package": "workspace:*",
     "semver": "^6.2.0"
   }
 }

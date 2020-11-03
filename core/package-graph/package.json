@@ -1,6 +1,6 @@
 {
   "name": "@lerna/package-graph",
-  "version": "3.18.5",
+  "version": "3.18.5-invenium",
   "description": "Lerna's internal representation of a package graph",
   "keywords": [
     "lerna",
@@ -32,8 +32,8 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/prerelease-id-from-version": "file:../../utils/prerelease-id-from-version",
-    "@lerna/validation-error": "file:../validation-error",
+    "@lerna/prerelease-id-from-version": "workspace:*",
+    "@lerna/validation-error": "workspace:*",
     "npm-package-arg": "^6.1.0",
     "npmlog": "^4.1.2",
     "semver": "^6.2.0"

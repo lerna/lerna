@@ -1,6 +1,6 @@
 {
   "name": "@lerna/project",
-  "version": "3.21.0",
+  "version": "3.21.0-invenium",
   "description": "Lerna project configuration",
   "keywords": [
     "lerna",
@@ -32,8 +32,8 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/package": "file:../package",
-    "@lerna/validation-error": "file:../validation-error",
+    "@lerna/package": "workspace:*",
+    "@lerna/validation-error": "workspace:*",
     "cosmiconfig": "^5.1.0",
     "dedent": "^0.7.0",
     "dot-prop": "^4.2.0",

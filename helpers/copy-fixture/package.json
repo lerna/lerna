@@ -6,7 +6,7 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
-    "@lerna-test/find-fixture": "file:../find-fixture",
+    "@lerna-test/find-fixture": "workspace:*",
     "fs-extra": "^8.1.0"
   }
 }

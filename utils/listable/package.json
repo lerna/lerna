@@ -1,6 +1,6 @@
 {
   "name": "@lerna/listable",
-  "version": "3.18.5",
+  "version": "3.18.5-invenium",
   "description": "Shared logic for listing package information",
   "keywords": [
     "lerna",
@@ -29,7 +29,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/query-graph": "file:../query-graph",
+    "@lerna/query-graph": "workspace:*",
     "chalk": "^2.3.1",
     "columnify": "^1.5.4"
   }

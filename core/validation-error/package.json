@@ -1,6 +1,6 @@
 {
   "name": "@lerna/validation-error",
-  "version": "3.13.0",
+  "version": "3.13.0-invenium",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",

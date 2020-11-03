@@ -1,6 +1,6 @@
 {
   "name": "@lerna/child-process",
-  "version": "3.16.5",
+  "version": "3.16.5-invenium",
   "description": "Lerna's internal child_process wrapper",
   "keywords": [
     "lerna",

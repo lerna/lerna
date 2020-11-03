@@ -6,7 +6,7 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
-    "@lerna-test/serialize-git-sha": "file:../serialize-git-sha",
+    "@lerna-test/serialize-git-sha": "workspace:*",
     "execa": "^1.0.0"
   }
 }

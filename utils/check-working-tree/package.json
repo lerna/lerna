@@ -1,6 +1,6 @@
 {
   "name": "@lerna/check-working-tree",
-  "version": "3.16.5",
+  "version": "3.16.5-invenium",
   "description": "Check git working tree status and error appropriately",
   "keywords": [
     "lerna",
@@ -30,8 +30,8 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/collect-uncommitted": "file:../collect-uncommitted",
-    "@lerna/describe-ref": "file:../describe-ref",
-    "@lerna/validation-error": "file:../../core/validation-error"
+    "@lerna/collect-uncommitted": "workspace:*",
+    "@lerna/describe-ref": "workspace:*",
+    "@lerna/validation-error": "workspace:*"
   }
 }

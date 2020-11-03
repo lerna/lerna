@@ -1,6 +1,6 @@
 {
   "name": "@lerna/prerelease-id-from-version",
-  "version": "3.16.0",
+  "version": "3.16.0-invenium",
   "description": "Get the prerelease ID from a version string",
   "keywords": [
     "lerna",

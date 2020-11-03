@@ -1,6 +1,6 @@
 {
   "name": "@lerna/write-log-file",
-  "version": "3.13.0",
+  "version": "3.13.0-invenium",
   "description": "What lerna uses to dump logs",
   "keywords": [
     "lerna",

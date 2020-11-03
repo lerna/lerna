@@ -1,6 +1,6 @@
 {
   "name": "@lerna/collect-uncommitted",
-  "version": "3.16.5",
+  "version": "3.16.5-invenium",
   "description": "Collect uncommitted changes to working tree for display in error messages",
   "keywords": [
     "lerna",
@@ -33,7 +33,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/child-process": "file:../../core/child-process",
+    "@lerna/child-process": "workspace:*",
     "chalk": "^2.3.1",
     "figgy-pudding": "^3.5.1",
     "npmlog": "^4.1.2"

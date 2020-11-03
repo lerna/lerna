@@ -1,6 +1,6 @@
 {
   "name": "@lerna/prompt",
-  "version": "3.18.5",
+  "version": "3.18.5-invenium",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",

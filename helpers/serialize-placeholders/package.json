@@ -6,8 +6,8 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
-    "@lerna-test/serialize-tempdir": "file:../serialize-tempdir",
-    "@lerna-test/serialize-windows-paths": "file:../serialize-windows-paths",
+    "@lerna-test/serialize-tempdir": "workspace:*",
+    "@lerna-test/serialize-windows-paths": "workspace:*",
     "normalize-newline": "^3.0.0"
   }
 }

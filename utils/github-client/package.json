@@ -1,6 +1,6 @@
 {
   "name": "@lerna/github-client",
-  "version": "3.22.0",
+  "version": "3.22.0-invenium",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
@@ -31,7 +31,7 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/child-process": "file:../../core/child-process",
+    "@lerna/child-process": "workspace:*",
     "@octokit/plugin-enterprise-rest": "^6.0.1",
     "@octokit/rest": "^16.28.4",
     "git-url-parse": "^11.1.2",

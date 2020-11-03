@@ -1,6 +1,6 @@
 {
   "name": "@lerna/query-graph",
-  "version": "3.18.5",
+  "version": "3.18.5-invenium",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
@@ -31,7 +31,7 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/package-graph": "file:../../core/package-graph",
+    "@lerna/package-graph": "workspace:*",
     "figgy-pudding": "^3.5.1"
   }
 }

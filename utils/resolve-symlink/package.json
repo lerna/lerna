@@ -1,6 +1,6 @@
 {
   "name": "@lerna/resolve-symlink",
-  "version": "3.16.0",
+  "version": "3.16.0-invenium",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",

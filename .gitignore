@@ -29,3 +29,10 @@ tmp
 coverage/
 .nyc_output/
 .eslintcache
+
+# yarn v2
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+.pnp.*

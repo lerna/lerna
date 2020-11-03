@@ -6,10 +6,10 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
-    "@lerna-test/copy-fixture": "file:../copy-fixture",
-    "@lerna-test/git-add": "file:../git-add",
-    "@lerna-test/git-commit": "file:../git-commit",
-    "@lerna-test/git-init": "file:../git-init",
+    "@lerna-test/copy-fixture": "workspace:*",
+    "@lerna-test/git-add": "workspace:*",
+    "@lerna-test/git-commit": "workspace:*",
+    "@lerna-test/git-init": "workspace:*",
     "tempy": "^0.2.1"
   }
 }

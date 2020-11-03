@@ -209,6 +209,10 @@ class Package {
     if (resolved.registry || resolved.type === "directory") {
       // a version (1.2.3) OR range (^1.2.3) OR directory (file:../foo-pkg)
       depCollection[depName] = `${savePrefix}${depVersion}`;
+      if (resolved.explicitWorkspace) {
+        console.log("depCollection[depName] ", depName, depCollection[depName]);
+        depCollection[depName] = `${depCollection[depName]}`;
+      }
     } else if (resolved.gitCommittish) {
       // a git url with matching committish (#v1.2.3 or #1.2.3)
       const [tagPrefix] = /^\D*/.exec(resolved.gitCommittish);

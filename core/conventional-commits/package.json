@@ -1,6 +1,6 @@
 {
   "name": "@lerna/conventional-commits",
-  "version": "3.22.0",
+  "version": "3.22.0-invenium",
   "description": "Lerna's internal interface to conventional-changelog and friends",
   "keywords": [
     "lerna",
@@ -32,7 +32,7 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/validation-error": "file:../validation-error",
+    "@lerna/validation-error": "workspace:*",
     "conventional-changelog-angular": "^5.0.3",
     "conventional-changelog-core": "^3.1.6",
     "conventional-recommended-bump": "^5.0.0",

@@ -1,6 +1,6 @@
 {
   "name": "@lerna/map-to-registry",
-  "version": "3.13.0",
+  "version": "3.13.0-invenium",
   "description": "Produce registry uri and auth of package name from npm config",
   "keywords": [
     "lerna",

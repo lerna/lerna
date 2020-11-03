@@ -1,6 +1,6 @@
 {
   "name": "@lerna/has-npm-version",
-  "version": "3.16.5",
+  "version": "3.16.5-invenium",
   "description": "Test if the current version of npm satisfies a given semver range",
   "keywords": [
     "lerna",
@@ -28,7 +28,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/child-process": "file:../../core/child-process",
+    "@lerna/child-process": "workspace:*",
     "semver": "^6.2.0"
   }
 }

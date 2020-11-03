@@ -1,6 +1,6 @@
 {
   "name": "@lerna/pack-directory",
-  "version": "3.16.4",
+  "version": "3.16.4-invenium",
   "description": "Pack a directory into an npm package tarball",
   "keywords": [
     "lerna",
@@ -27,9 +27,9 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/get-packed": "file:../get-packed",
-    "@lerna/package": "file:../../core/package",
-    "@lerna/run-lifecycle": "file:../run-lifecycle",
+    "@lerna/get-packed": "workspace:*",
+    "@lerna/package": "workspace:*",
+    "@lerna/run-lifecycle": "workspace:*",
     "figgy-pudding": "^3.5.1",
     "npm-packlist": "^1.4.4",
     "npmlog": "^4.1.2",

@@ -1,6 +1,6 @@
 {
   "name": "@lerna/otplease",
-  "version": "3.18.5",
+  "version": "3.18.5-invenium",
   "description": "Prompt for OTP when wrapped Promise fails",
   "keywords": [
     "lerna",
@@ -31,7 +31,7 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/prompt": "file:../prompt",
+    "@lerna/prompt": "workspace:*",
     "figgy-pudding": "^3.5.1"
   }
 }

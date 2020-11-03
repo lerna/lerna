@@ -1,6 +1,6 @@
 {
   "name": "@lerna/gitlab-client",
-  "version": "3.15.0",
+  "version": "3.15.0-invenium",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
@@ -31,7 +31,7 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "node-fetch": "^2.5.0",
+    "node-fetch": "^2.6.1",
     "npmlog": "^4.1.2",
     "whatwg-url": "^7.0.0"
   }

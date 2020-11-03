@@ -1,6 +1,6 @@
 {
   "name": "@lerna/link",
-  "version": "3.21.0",
+  "version": "3.21.0-invenium",
   "description": "Symlink together all packages that are dependencies of each other",
   "keywords": [
     "lerna",
@@ -32,9 +32,9 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/command": "file:../../core/command",
-    "@lerna/package-graph": "file:../../core/package-graph",
-    "@lerna/symlink-dependencies": "file:../../utils/symlink-dependencies",
+    "@lerna/command": "workspace:*",
+    "@lerna/package-graph": "workspace:*",
+    "@lerna/symlink-dependencies": "workspace:*",
     "p-map": "^2.1.0",
     "slash": "^2.0.0"
   }

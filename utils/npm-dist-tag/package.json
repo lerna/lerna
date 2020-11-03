@@ -1,6 +1,6 @@
 {
   "name": "@lerna/npm-dist-tag",
-  "version": "3.18.5",
+  "version": "3.18.5-invenium",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@evocateur/npm-registry-fetch": "^4.0.0",
-    "@lerna/otplease": "file:../../core/otplease",
+    "@lerna/otplease": "workspace:*",
     "figgy-pudding": "^3.5.1",
     "npm-package-arg": "^6.1.0",
     "npmlog": "^4.1.2"

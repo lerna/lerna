@@ -1,6 +1,6 @@
 {
   "name": "@lerna/npm-publish",
-  "version": "3.18.5",
+  "version": "3.18.5-invenium",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
@@ -32,8 +32,8 @@
   },
   "dependencies": {
     "@evocateur/libnpmpublish": "^1.2.2",
-    "@lerna/otplease": "file:../../core/otplease",
-    "@lerna/run-lifecycle": "file:../run-lifecycle",
+    "@lerna/otplease": "workspace:*",
+    "@lerna/run-lifecycle": "workspace:*",
     "figgy-pudding": "^3.5.1",
     "fs-extra": "^8.1.0",
     "npm-package-arg": "^6.1.0",

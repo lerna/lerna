@@ -6,7 +6,7 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
-    "@lerna-test/multi-line-trim-right": "file:../multi-line-trim-right",
+    "@lerna-test/multi-line-trim-right": "workspace:*",
     "npmlog": "^4.1.2"
   }
 }

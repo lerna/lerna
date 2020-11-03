@@ -14,6 +14,8 @@ const TopologicalConfig = figgyPudding({
   graphType: "graph-type",
   "reject-cycles": {},
   rejectCycles: "reject-cycles",
+  "local-dependencies": {},
+  localDependencies: "local-dependencies",
 });
 
 /**
@@ -23,6 +25,7 @@ const TopologicalConfig = figgyPudding({
  * @param {Function} runner Callback to map each `Package` with
  * @param {Number} [opts.concurrency] Concurrency of execution
  * @param {String} [opts.graphType] "allDependencies" or "dependencies"
+ * @param {String} [opts.localDependencies="auto"] Valid values are "force" or "explicit"
  * @param {Boolean} [opts.rejectCycles] Whether or not to reject cycles
  * @returns {Promise<Array<*>>} when all executions complete
  */
@@ -30,7 +33,7 @@ function runTopologically(packages, runner, opts) {
   const { concurrency, graphType, rejectCycles } = TopologicalConfig(opts);
 
   const queue = new PQueue({ concurrency });
-  const graph = new QueryGraph(packages, { graphType, rejectCycles });
+  const graph = new QueryGraph(packages, { graphType, rejectCycles }, opts.localDependencies);
 
   return new Promise((resolve, reject) => {
     const returnValues = [];

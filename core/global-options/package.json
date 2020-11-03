@@ -1,6 +1,6 @@
 {
   "name": "@lerna/global-options",
-  "version": "3.13.0",
+  "version": "3.13.0-invenium",
   "description": "Global options applicable to _every_ lerna sub-command",
   "keywords": [
     "lerna",

@@ -1,6 +1,6 @@
 {
   "name": "@lerna/npm-conf",
-  "version": "3.16.0",
+  "version": "3.16.0-invenium",
   "description": "Vendored npm-conf with updates",
   "keywords": [
     "lerna",

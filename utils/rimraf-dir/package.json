@@ -1,6 +1,6 @@
 {
   "name": "@lerna/rimraf-dir",
-  "version": "3.16.5",
+  "version": "3.16.5-invenium",
   "description": "Run rimraf on a directory in a subprocess to hack around slowness",
   "keywords": [
     "lerna",
@@ -31,7 +31,7 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/child-process": "file:../../core/child-process",
+    "@lerna/child-process": "workspace:*",
     "npmlog": "^4.1.2",
     "path-exists": "^3.0.0",
     "rimraf": "^2.6.2"

@@ -6,8 +6,8 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
-    "@lerna-test/git-init": "file:../git-init",
-    "@lerna-test/init-fixture": "file:../init-fixture",
+    "@lerna-test/git-init": "workspace:*",
+    "@lerna-test/init-fixture": "workspace:*",
     "execa": "^1.0.0",
     "file-url": "^2.0.2",
     "tempy": "^0.2.1"

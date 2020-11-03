@@ -19,6 +19,7 @@ const npmInstall = require("..");
 
 describe("npm-install", () => {
   ChildProcessUtilities.exec.mockResolvedValue();
+  ChildProcessUtilities.execSync.mockReturnValue('1.0.0');
   fs.rename.mockResolvedValue();
   writePkg.mockResolvedValue();
 
@@ -286,6 +287,41 @@ describe("npm-install", () => {
       expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith(
         "yarn",
         ["install", "--mutex", "network:12345", "--non-interactive"],
+        { cwd: pkg.location, env: expect.any(Object), pkg, stdio: "pipe" }
+      );
+    });
+
+    it("supports yarn berry", async () => {
+      ChildProcessUtilities.execSync.mockReturnValue('2.0.0');
+      const pkg = new Package(
+        {
+          name: "npm-install-deps",
+          version: "1.0.0",
+          dependencies: {
+            "@scoped/something": "^2.0.0",
+            "local-dependency": "^1.0.0",
+          },
+        },
+        path.normalize("/test/npm-install-deps")
+      );
+      const dependencies = ["@scoped/something@^2.0.0", "something@^1.0.0"];
+
+      await npmInstall.dependencies(pkg, dependencies, {
+        npmClient: "yarn",
+        mutex: "network:12345",
+      });
+
+      expect(writePkg).toHaveBeenLastCalledWith(pkg.manifestLocation, {
+        name: "npm-install-deps",
+        version: "1.0.0",
+        dependencies: {
+          "@scoped/something": "^2.0.0",
+          something: "^1.0.0",
+        },
+      });
+      expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith(
+        "yarn",
+        ["install"],
         { cwd: pkg.location, env: expect.any(Object), pkg, stdio: "pipe" }
       );
     });

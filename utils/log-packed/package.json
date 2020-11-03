@@ -1,6 +1,6 @@
 {
   "name": "@lerna/log-packed",
-  "version": "3.16.0",
+  "version": "3.16.0-invenium",
   "description": "Log the result of npm pack --json",
   "keywords": [
     "lerna",

@@ -94,6 +94,46 @@ describe("PackageGraph", () => {
     });
   });
 
+  it("only localizes workspace: siblings when it must be explicit", () => {
+    const pkgs = [
+      new Package(
+        {
+          name: "pkg-1",
+          version: "1.0.0",
+        },
+        "/test/pkg-1"
+      ),
+      new Package(
+        {
+          name: "pkg-2",
+          version: "1.0.0",
+          dependencies: {
+            "pkg-1": "^1.0.0",
+          },
+        },
+        "/test/pkg-2"
+      ),
+      new Package(
+        {
+          name: "pkg-3",
+          version: "1.0.0",
+          dependencies: {
+            "pkg-1": "workspace:^1.0.0",
+          },
+        },
+        "/test/pkg-3"
+      ),
+    ];
+
+    const graph = new PackageGraph(pkgs, "allDependencies", "explicit");
+    const [pkg1, pkg2, pkg3] = graph.values();
+
+    expect(pkg1.localDependents.has("pkg-2")).toBe(false);
+    expect(pkg2.localDependencies.has("pkg-1")).toBe(false);
+    expect(pkg1.localDependents.has("pkg-3")).toBe(true);
+    expect(pkg3.localDependencies.has("pkg-1")).toBe(true);
+  });
+
   describe("Node", () => {
     it("proxies Package properties", () => {
       const pkg = new Package({ name: "my-pkg", version: "1.2.3" }, "/path/to/my-pkg");
