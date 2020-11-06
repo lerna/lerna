@@ -58,7 +58,7 @@ the most commonly used version will be hoisted, and a warning will be emitted.
 
 Note: `--hoist` is [incompatible with `file:` specifiers](https://github.com/lerna/lerna/issues/1679#issuecomment-461544321). Use one or the other.
 
-Note: `--hoist` [no longer accepts multiple string values](https://github.com/lerna/lerna/issues/2307) since [v3.18.0](/releases/tag/v3.18.0). Use the following instead:
+Note: `--hoist` [no longer accepts multiple string values](https://github.com/lerna/lerna/issues/2307) since [v3.18.0](https://github.com/lerna/lerna/releases/tag/v3.18.0). Use the following instead:
 
 a. Wrap string values by quotes:
 ```
