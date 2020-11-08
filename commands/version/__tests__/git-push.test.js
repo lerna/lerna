@@ -61,11 +61,16 @@ test("remote that does not support --atomic", async () => {
   // this call should _not_ throw
   await gitPush("origin", "master", { cwd });
 
-  expect(childProcess.exec).toHaveBeenCalledTimes(2);
+  expect(childProcess.exec).toHaveBeenCalledTimes(3);
+  expect(childProcess.exec).toHaveBeenLastCalledWith("git", ["push", "--no-verify", "origin", "master"], {
+    cwd,
+  });
   expect(childProcess.exec).toHaveBeenLastCalledWith(
     "git",
-    ["push", "--follow-tags", "--no-verify", "origin", "master"],
-    { cwd }
+    ["push", "--tags", "--no-verify", "origin", "master"],
+    {
+      cwd,
+    }
   );
 
   const list = await listRemoteTags(cwd);
