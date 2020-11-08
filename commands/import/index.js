@@ -237,7 +237,9 @@ class ImportCommand extends Command {
           tracker.completeWork(1);
         })
         .catch(err => {
-          if (err.stdout.indexOf("Patch is empty.") === 0) {
+          // Getting commit diff to see if it's empty
+          const diff = this.externalExecSync("git", ["diff", "-s", `${sha}^!`]).trim();
+          if (diff === "") {
             tracker.completeWork(1);
 
             // Automatically skip empty commits
