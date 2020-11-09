@@ -40,12 +40,14 @@ jobs:
             ${{ runner.os }}-node-
       - run: node --version
       - run: npm ci
+      - name: Configure git
+        run: |
+          git config --global user.email test@example.com
+          git config --global user.name "Tester McPerson"
       - run: npm run ci
-        name: Linux Tests (node v${{ matrix.node }})
         if: ${{ matrix.os != 'windows-latest' }}
       - env:
           LERNA_CI_TYPE: ${{ matrix.ci_type }}
           LERNA_OS_TYPE: windows
-        name: Windows Tests (${{ matrix.ci_type }})
         run: npm run ci:windows
         if: ${{ matrix.os == 'windows-latest' }}
