@@ -14,7 +14,7 @@ lerna publish from-package # explicitly publish packages where the latest versio
 
 When run, this command does one of the following things:
 
-- Publish packages updated since the last release (calling [`lerna version`](https://github.com/lerna/lerna/tree/master/commands/version#readme) behind the scenes).
+- Publish packages updated since the last release (calling [`lerna version`](https://github.com/lerna/lerna/tree/main/commands/version#readme) behind the scenes).
   - This is the legacy behavior of lerna 2.x
 - Publish packages tagged in the current commit (`from-git`).
 - Publish packages in the latest commit where the version is not present in the registry (`from-package`).
@@ -30,7 +30,7 @@ Check out [Per-Package Configuration](#per-package-configuration) for more detai
 
 ### bump `from-git`
 
-In addition to the semver keywords supported by [`lerna version`](https://github.com/lerna/lerna/tree/master/commands/version#positionals),
+In addition to the semver keywords supported by [`lerna version`](https://github.com/lerna/lerna/tree/main/commands/version#positionals),
 `lerna publish` also supports the `from-git` keyword.
 This will identify packages tagged by `lerna version` and publish them to npm.
 This is useful in CI scenarios where you wish to manually increment versions,
@@ -45,7 +45,7 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 
 ## Options
 
-`lerna publish` supports all of the options provided by [`lerna version`](https://github.com/lerna/lerna/tree/master/commands/version#options) in addition to the following:
+`lerna publish` supports all of the options provided by [`lerna version`](https://github.com/lerna/lerna/tree/main/commands/version#options) in addition to the following:
 
 - [`--canary`](#--canary)
 - [`--contents <dir>`](#--contents-dir)
@@ -195,7 +195,7 @@ This option makes the most sense configured in lerna.json, as you really don't w
 }
 ```
 
-The root-level configuration is intentional, as this also covers the [identically-named option in `lerna version`](https://github.com/lerna/lerna/tree/master/commands/version#--no-granular-pathspec).
+The root-level configuration is intentional, as this also covers the [identically-named option in `lerna version`](https://github.com/lerna/lerna/tree/main/commands/version#--no-granular-pathspec).
 
 ### `--no-verify-access`
 
@@ -295,7 +295,7 @@ Useful in [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous
 
 ### `--skip-npm`
 
-Call [`lerna version`](https://github.com/lerna/lerna/tree/master/commands/version#readme) directly, instead.
+Call [`lerna version`](https://github.com/lerna/lerna/tree/main/commands/version#readme) directly, instead.
 
 ## Per-Package Configuration
 
@@ -367,7 +367,7 @@ This _non-standard_ field allows you to customize the published subdirectory jus
 
 Lerna will run [npm lifecycle scripts](https://docs.npmjs.com/misc/scripts#description) during `lerna publish` in the following order:
 
-1. If versioning implicitly, run all [version lifecycle scripts](https://github.com/lerna/lerna/tree/master/commands/version#lifecycle-scripts)
+1. If versioning implicitly, run all [version lifecycle scripts](https://github.com/lerna/lerna/tree/main/commands/version#lifecycle-scripts)
 2. Run `prepublish` lifecycle in root, if [enabled](#--ignore-prepublish)
 3. Run `prepare` lifecycle in root
 4. Run `prepublishOnly` lifecycle in root
@@ -377,11 +377,11 @@ Lerna will run [npm lifecycle scripts](https://docs.npmjs.com/misc/scripts#descr
    2. Run `prepare` lifecycle
    3. Run `prepublishOnly` lifecycle
    4. Run `prepack` lifecycle
-   5. Create package tarball in temp directory via [JS API](https://github.com/lerna/lerna/tree/master/utils/pack-directory#readme)
+   5. Create package tarball in temp directory via [JS API](https://github.com/lerna/lerna/tree/main/utils/pack-directory#readme)
    6. Run `postpack` lifecycle
 7. Run `postpack` lifecycle in root
 8. For each changed package, in topological order (all dependencies before dependents):
-   1. Publish package to configured [registry](#--registry-url) via [JS API](https://github.com/lerna/lerna/tree/master/utils/npm-publish#readme)
+   1. Publish package to configured [registry](#--registry-url) via [JS API](https://github.com/lerna/lerna/tree/main/utils/npm-publish#readme)
    2. Run `publish` lifecycle
    3. Run `postpublish` lifecycle
 9. Run `publish` lifecycle in root
