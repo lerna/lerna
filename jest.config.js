@@ -30,7 +30,8 @@ if (process.env.LERNA_CI_TYPE) {
           "<rootDir>/commands/version/**/*.test.js",
         ]
       : [
-          "<rootDir>/commands/!(publish|version)/**/*.test.js",
+          // NOTE: import is NOT TESTED in windows because pain and suffering
+          "<rootDir>/commands/!(publish|version|import)/**/*.test.js",
           "<rootDir>/core/**/*.test.js",
           "<rootDir>/utils/**/*.test.js",
         ];
