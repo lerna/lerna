@@ -1,0 +1,51 @@
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [ assigned, opened, synchronize, reopened, labeled ]
+name: ci
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        node: [ 12, 10, 8 ]
+        os: [ ubuntu-latest ]
+        # only run windows tests on latest node
+        include:
+          # run publish/version tests first (slower, higher priority)
+          - node: 12
+            os: windows-latest
+            ci_type: publish
+          # and then the rest of the tests (quicker, lower priority)
+          - node: 12
+            os: windows-latest
+            ci_type: non-publish
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Get npm cache directory
+        id: npm-cache
+        run: |
+          echo "::set-output name=dir::$(npm config get cache)"
+      - uses: actions/cache@v2
+        with:
+          path: ${{ steps.npm-cache.outputs.dir }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - run: node --version
+      - run: npm ci
+      - run: npm run ci
+        name: Linux Tests (node v${{ matrix.node }})
+        if: ${{ matrix.os != 'windows-latest' }}
+      - env:
+          LERNA_CI_TYPE: ${{ matrix.ci_type }}
+          LERNA_OS_TYPE: windows
+        name: Windows Tests (${{ matrix.ci_type }})
+        run: npm run ci:windows
+        if: ${{ matrix.os == 'windows-latest' }}
