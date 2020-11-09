@@ -16,8 +16,8 @@ function cloneFixture(startDir) {
       const repoUrl = fileUrl(repoDir, { resolve: false });
 
       return execa("git", ["init", "--bare"], { cwd: repoDir })
-        .then(() => execa("git", ["remote", "add", "origin", repoUrl], { cwd }))
         .then(() => execa("git", ["checkout", "-B", "main"], { cwd }))
+        .then(() => execa("git", ["remote", "add", "origin", repoUrl], { cwd }))
         .then(() => execa("git", ["push", "-u", "origin", "main"], { cwd }))
         .then(() => ({
           cwd,
