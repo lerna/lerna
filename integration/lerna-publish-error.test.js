@@ -14,7 +14,7 @@ test("lerna publish sets correct exit code when libnpmpublish fails", async () =
     cliRunner(cwd)("publish", "patch", "--yes", "--no-verify-access", "--loglevel", "error")
   ).rejects.toThrow(
     expect.objectContaining({
-      stderr: expect.stringContaining("E401 You must be logged in to publish packages."),
+      stderr: expect.stringContaining("E404 Not found"),
       code: 1,
     })
   );
