@@ -83,10 +83,8 @@ describe("ImportCommand", () => {
     });
 
     it("imports a repo into the root directory when packages are located there", async () => {
-      const [testDir, externalDir] = await Promise.all([
-        initFixture("root-packages"),
-        initNamedFixture("myapp-foo", "external", "myapp-foo init commit"),
-      ]);
+      const externalDir = await initNamedFixture("myapp-foo", "external", "myapp-foo init commit");
+      const testDir = await initFixture("root-packages");
 
       await lernaImport(testDir)(externalDir);
 
@@ -112,10 +110,8 @@ describe("ImportCommand", () => {
       Promise.all(
         // running the same test with and without --flatten
         [true, false].map(async shouldFlatten => {
-          const [testDir, externalDir] = await Promise.all([
-            initFixture("basic"),
-            initFixture("files-with-spaces", "Init external commit"),
-          ]);
+          const externalDir = await initFixture("files-with-spaces", "Init external commit");
+          const testDir = await initFixture("basic");
           const newPackagePath = path.join(testDir, "packages", path.basename(externalDir));
           const newFilePath = path.join(newPackagePath, "file with spaces");
           const newDeepFilePath = path.resolve(newPackagePath, "subfolder b/file");
@@ -136,10 +132,8 @@ describe("ImportCommand", () => {
       Promise.all(
         // running the same test with and without --flatten
         [true, false].map(async shouldFlatten => {
-          const [testDir, externalDir] = await Promise.all([
-            initFixture("basic"),
-            initFixture("files-with-non-ascii-char", "Init external commit"),
-          ]);
+          const externalDir = await initFixture("files-with-non-ascii-char", "Init external commit");
+          const testDir = await initFixture("basic");
           const newPackagePath = path.join(testDir, "packages", path.basename(externalDir));
 
           await fs.copy(path.join(externalDir, "檔案"), path.join(externalDir, "檔案-copy"));
@@ -323,10 +317,8 @@ describe("ImportCommand", () => {
   describe("with non-root Lerna dir", () => {
     // #1197
     it("creates a module in packages location with imported commit history", async () => {
-      const [externalDir, rootDir] = await Promise.all([
-        initFixture("external", "Init external commit"),
-        initFixture("lerna-not-in-root"),
-      ]);
+      const externalDir = await initFixture("external", "Init external commit");
+      const rootDir = await initFixture("lerna-not-in-root");
       const testDir = path.join(rootDir, "subdir");
       const packageJson = path.join(testDir, "packages", path.basename(externalDir), "package.json");
 
@@ -339,10 +331,8 @@ describe("ImportCommand", () => {
 
   describe("with multi-packages Lerna dir", () => {
     it("creates a module in specified package directory", async () => {
-      const [testDir, externalDir] = await Promise.all([
-        initFixture("multi-packages"),
-        initFixture("external", "Init external commit"),
-      ]);
+      const externalDir = await initFixture("external", "Init external commit");
+      const testDir = await initFixture("multi-packages");
 
       const packageJson = path.join(testDir, "packages", path.basename(externalDir), "package.json");
 
@@ -353,10 +343,8 @@ describe("ImportCommand", () => {
     });
 
     it("throws error when the package directory does not match with config", async () => {
-      const [testDir, externalDir] = await Promise.all([
-        initFixture("multi-packages"),
-        initFixture("external", "Init external commit"),
-      ]);
+      const externalDir = await initFixture("external", "Init external commit");
+      const testDir = await initFixture("multi-packages");
 
       const command = lernaImport(testDir)(externalDir, "--dest=components");
       await expect(command).rejects.toThrow(
