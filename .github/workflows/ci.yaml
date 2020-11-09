@@ -6,17 +6,31 @@ on:
     types: [ assigned, opened, synchronize, reopened, labeled ]
 name: ci
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          # only lint on latest node
+          node-version: 12
+      - uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - run: npm ci
+      - run: npm run ci:lint
+
   test:
+    needs: [ lint ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
       matrix:
         node: [ 12, 10, 8 ]
         script: [ 'ci:test:unit', 'ci:test:integration' ]
-        include:
-          # only lint once, fail-fast will cancel other builds
-          - node: 12
-            script: 'ci:lint'
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
@@ -36,6 +50,7 @@ jobs:
       - run: npm run ${{ matrix.script }}
 
   windows:
+    needs: [ lint ]
     runs-on: windows-latest
     strategy:
       fail-fast: true
