@@ -28,7 +28,7 @@ test("lerna publish exits with EBEHIND when behind upstream remote", async () =>
 
   // simulate upstream change from another clone
   await execa("git", ["clone", repository, cloneDir]);
-  await execa("git", ["checkout", "-B", "main"], { cwd: cloneDir });
+  await execa("git", ["checkout", "-B", "main", "origin/main"], { cwd: cloneDir });
   await fs.outputFile(path.join(cloneDir, "README.md"), "upstream change");
   await gitAdd(cloneDir, "-A");
   await gitCommit(cloneDir, "upstream change");
