@@ -27,8 +27,11 @@ describe("ImportCommand", () => {
   PromptUtilities.confirm.mockResolvedValue(true);
 
   describe("import", () => {
-    const initBasicFixtures = () =>
-      Promise.all([initFixture("basic"), initFixture("external", "Init external commit")]);
+    const initBasicFixtures = async () => {
+      const testDir = await initFixture("basic");
+      const externalDir = await initFixture("external", "Init external commit");
+      return [testDir, externalDir];
+    };
 
     it("creates a module in packages location with imported commit history", async () => {
       const [testDir, externalDir] = await initBasicFixtures();
