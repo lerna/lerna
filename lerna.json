@@ -13,7 +13,6 @@
       "allowBranch": "main",
       "conventionalCommits": true,
       "exact": true,
-      "gitRemote": "upstream",
       "message": "chore(release): %s"
     }
   },
