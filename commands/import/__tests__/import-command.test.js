@@ -28,8 +28,8 @@ describe("ImportCommand", () => {
 
   describe("import", () => {
     const initBasicFixtures = async () => {
-      const testDir = await initFixture("basic");
       const externalDir = await initFixture("external", "Init external commit");
+      const testDir = await initFixture("basic");
       return [testDir, externalDir];
     };
 
