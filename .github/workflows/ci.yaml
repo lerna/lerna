@@ -12,11 +12,11 @@ jobs:
       fail-fast: true
       matrix:
         node: [ 12, 10, 8 ]
-        script: [ ci:test:unit, ci:test:integration ]
+        script: [ 'ci:test:unit', 'ci:test:integration' ]
         include:
           # only lint once, fail-fast will cancel other builds
           - node: 12
-            script: ci:lint
+            script: 'ci:lint'
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
@@ -40,7 +40,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        script: [ ci:test:unit, ci:test:integration ]
+        script: [ 'ci:test:unit', 'ci:test:integration' ]
         subset: [ publish, non-publish ]
     steps:
       - uses: actions/checkout@v2
