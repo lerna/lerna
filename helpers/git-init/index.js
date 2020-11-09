@@ -10,8 +10,6 @@ module.exports = gitInit;
 
 function gitInit(cwd, ...args) {
   return execa("git", ["init", "--template", TEMPLATE, ...args], { cwd }).then(() =>
-    execa("git", ["branch", "-M", "master", "main"], { cwd }).catch(() => {
-      /* ignore, we're on a modern git that respects init.defaultBranch */
-    })
+    execa("git", ["checkout", "-B", "main"], { cwd })
   );
 }
