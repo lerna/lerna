@@ -53,7 +53,8 @@ jobs:
     needs: [ lint ]
     runs-on: windows-latest
     strategy:
-      fail-fast: true
+      # TODO: revert once extent of shenanigans is established
+      fail-fast: false
       matrix:
         script: [ 'ci:test:unit', 'ci:test:integration' ]
         subset: [ publish, non-publish ]
