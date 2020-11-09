@@ -6,6 +6,8 @@
 	ignorecase = true
 [commit]
 	gpgSign = false
+[init]
+	defaultBranch = main
 [user]
 	email = test@example.com
 	name = Tester McPerson

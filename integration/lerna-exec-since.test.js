@@ -91,12 +91,12 @@ package-2
 `);
 });
 
-test("lerna exec --since master", async () => {
+test("lerna exec --since main", async () => {
   const cwd = await initFixture("lerna-exec");
   const args = [
     "exec",
     // any git ref can be used with --since
-    "--since=master",
+    "--since=main",
     "--concurrency=1",
     "--",
     "echo",

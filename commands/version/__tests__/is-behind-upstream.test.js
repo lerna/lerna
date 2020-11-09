@@ -7,11 +7,11 @@ const isBehindUpstream = require("../lib/is-behind-upstream");
 test("isBehindUpstream", async () => {
   const { cwd } = await cloneFixture("root-manifest-only");
 
-  expect(isBehindUpstream("origin", "master", { cwd })).toBe(false);
+  expect(isBehindUpstream("origin", "main", { cwd })).toBe(false);
 
   await execa("git", ["commit", "--allow-empty", "-m", "change"], { cwd });
-  await execa("git", ["push", "origin", "master"], { cwd });
+  await execa("git", ["push", "origin", "main"], { cwd });
   await execa("git", ["reset", "--hard", "HEAD^"], { cwd });
 
-  expect(isBehindUpstream("origin", "master", { cwd })).toBe(true);
+  expect(isBehindUpstream("origin", "main", { cwd })).toBe(true);
 });

@@ -68,7 +68,7 @@ describe("VersionCommand", () => {
 
       expect(libPush).toHaveBeenLastCalledWith(
         "origin",
-        "master",
+        "main",
         expect.objectContaining({
           cwd: testDir,
         })
@@ -190,7 +190,7 @@ describe("VersionCommand", () => {
 
       expect(libPush).toHaveBeenLastCalledWith(
         "origin",
-        "master",
+        "main",
         expect.objectContaining({
           cwd: testDir,
         })
@@ -484,7 +484,7 @@ describe("VersionCommand", () => {
 
       expect(libPush).toHaveBeenLastCalledWith(
         "upstream",
-        "master",
+        "main",
         expect.objectContaining({
           cwd: testDir,
         })
@@ -506,7 +506,7 @@ describe("VersionCommand", () => {
 
       expect(libPush).toHaveBeenLastCalledWith(
         "durable",
-        "master",
+        "main",
         expect.objectContaining({
           cwd: testDir,
         })
@@ -624,7 +624,7 @@ describe("VersionCommand", () => {
 
     it("throws for version --allow-branch", async () => {
       const cwd = await detachedHEAD();
-      const command = lernaVersion(cwd)("--no-git-tag-version", "--allow-branch", "master");
+      const command = lernaVersion(cwd)("--no-git-tag-version", "--allow-branch", "main");
 
       await expect(command).rejects.toThrow(
         "Detached git HEAD, please checkout a branch to choose versions."
@@ -699,7 +699,7 @@ describe("VersionCommand", () => {
     expect(patch).toMatchInlineSnapshot(`
       "v2.0.0
 
-      HEAD -> master, tag: v2.0.0
+      HEAD -> main, tag: v2.0.0
 
       lerna.json
       packages/a/package.json

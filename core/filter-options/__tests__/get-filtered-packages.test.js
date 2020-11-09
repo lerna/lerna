@@ -140,12 +140,12 @@ test("--since <ref> should return packages updated since <ref>", async () => {
   );
 });
 
-test("--scope package-{2,3,4} --since master", async () => {
+test("--scope package-{2,3,4} --since main", async () => {
   collectUpdates.setUpdated(cwd, "package-4", "package-1");
 
   const packageGraph = await buildGraph(cwd);
   const execOpts = { cwd };
-  const options = parseOptions("--scope", "package-{2,3,4}", "--since", "master");
+  const options = parseOptions("--scope", "package-{2,3,4}", "--since", "main");
 
   const result = await getFilteredPackages(packageGraph, execOpts, options);
 
@@ -155,7 +155,7 @@ test("--scope package-{2,3,4} --since master", async () => {
     [2, 3, 4].map(n => packageGraph.get(`package-${n}`).pkg),
     packageGraph,
     execOpts,
-    expect.objectContaining({ since: "master" })
+    expect.objectContaining({ since: "main" })
   );
 });
 

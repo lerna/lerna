@@ -6,7 +6,7 @@ const getCurrentBranch = require("../lib/get-current-branch");
 test("getCurrentBranch", async () => {
   const cwd = await initFixture("root-manifest-only");
 
-  expect(getCurrentBranch({ cwd })).toBe("master");
+  expect(getCurrentBranch({ cwd })).toBe("main");
 });
 
 test("getCurrentBranch without commit", async () => {

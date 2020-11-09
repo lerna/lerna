@@ -57,11 +57,11 @@ describe("ImportCommand", () => {
       await gitAdd(externalDir, conflictedFileName);
       await gitCommit(externalDir, "branch content written");
 
-      await execa("git", ["checkout", "master"], { cwd: externalDir });
+      await execa("git", ["checkout", "main"], { cwd: externalDir });
 
-      await fs.writeFile(conflictedFile, "master content");
+      await fs.writeFile(conflictedFile, "main content");
       await gitAdd(externalDir, conflictedFileName);
-      await gitCommit(externalDir, "master content written");
+      await gitCommit(externalDir, "main content written");
 
       try {
         await execa("git", ["merge", branchName], { cwd: externalDir });

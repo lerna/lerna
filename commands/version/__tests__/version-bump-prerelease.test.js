@@ -228,7 +228,7 @@ test("independent version prerelease respects --no-private", async () => {
 
      - pkg-1@1.0.1-alpha.0
 
-    HEAD -> master, tag: pkg-1@1.0.1-alpha.0
+    HEAD -> main, tag: pkg-1@1.0.1-alpha.0
 
     packages/pkg-1/package.json
   `);

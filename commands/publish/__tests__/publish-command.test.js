@@ -71,7 +71,7 @@ describe("PublishCommand", () => {
     });
 
     it("exits non-zero with --since", async () => {
-      const command = lernaPublish(cwd)("--since", "master");
+      const command = lernaPublish(cwd)("--since", "main");
 
       await expect(command).rejects.toThrow(
         expect.objectContaining({

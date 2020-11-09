@@ -33,7 +33,7 @@ test("lerna publish updates all transitive dependents", async () => {
   expect(patch).toMatchInlineSnapshot(`
 v2.0.0
 
-HEAD -> master, tag: v2.0.0, origin/master
+HEAD -> main, tag: v2.0.0, origin/main
 
 diff --git a/lerna.json b/lerna.json
 index SHA..SHA 100644

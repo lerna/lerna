@@ -50,7 +50,7 @@ Publish
  - package-4@5.0.0
  - package-5@6.0.0
 
-HEAD -> master, tag: package-5@6.0.0, tag: package-4@5.0.0, tag: package-3@4.0.0, tag: package-2@3.0.0, tag: package-1@2.0.0, origin/master
+HEAD -> main, tag: package-5@6.0.0, tag: package-4@5.0.0, tag: package-3@4.0.0, tag: package-2@3.0.0, tag: package-1@2.0.0, origin/main
 
 diff --git a/packages/package-1/package.json b/packages/package-1/package.json
 index SHA..SHA 100644
