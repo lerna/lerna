@@ -320,7 +320,7 @@ class CreateCommand extends Command {
     const relativeTarget = path.relative(this.project.rootPath, this.targetDir);
 
     if (hurl.hostname.match("github")) {
-      hurl.pathname = path.posix.join(hurl.pathname, "tree/master", relativeTarget);
+      hurl.pathname = path.posix.join(hurl.pathname, "tree/main", relativeTarget);
       // TODO: get actual upstream HEAD branch name
       // current remote: git rev-parse --abbrev-ref --symbolic-full-name @{u}
       // upstream HEAD: git symbolic-ref --short refs/remotes/origin/HEAD

@@ -277,7 +277,7 @@ describe("CreateCommand", () => {
 
     expect(await manifestCreated(cwd)).toHaveProperty(
       "homepage",
-      "https://github.com/test/test/tree/master/packages/foo-pkg#readme"
+      "https://github.com/test/test/tree/main/packages/foo-pkg#readme"
     );
   });
 
