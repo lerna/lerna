@@ -10,7 +10,7 @@
       "license": "MIT"
     },
     "version": {
-      "allowBranch": "master",
+      "allowBranch": "main",
       "conventionalCommits": true,
       "exact": true,
       "gitRemote": "upstream",
