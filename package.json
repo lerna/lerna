@@ -3,6 +3,11 @@
   "version": "4.0.0-monorepo",
   "description": "lerna dog-fooding lerna",
   "private": true,
+  "workspaces": [
+    "commands/*",
+    "core/*",
+    "utils/*"
+  ],
   "scripts": {
     "ci": "npm test -- --ci --maxWorkers=2 && npm run integration -- --ci",
     "ci:test:unit": "jest --config jest.config.js --maxWorkers=2 --ci",
@@ -21,12 +26,6 @@
   },
   "license": "MIT",
   "homepage": "https://lerna.js.org/",
-  "bin": {
-    "lerna": "core/lerna/cli.js"
-  },
-  "dependencies": {
-    "lerna": "file:core/lerna"
-  },
   "devDependencies": {
     "@lerna-test/calls-back": "file:helpers/calls-back",
     "@lerna-test/cli-runner": "file:helpers/cli-runner",
