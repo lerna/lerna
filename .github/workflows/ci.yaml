@@ -26,7 +26,8 @@ jobs:
       - run: npm run ci:lint
 
   test:
-    needs: [ lint ]
+    # TODO: restore
+    # needs: [ lint ]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
