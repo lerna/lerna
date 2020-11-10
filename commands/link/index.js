@@ -28,9 +28,15 @@ class LinkCommand extends Command {
       }
     }
 
-    this.targetGraph = this.options.forceLocal
-      ? new PackageGraph(this.allPackages, "allDependencies", "forceLocal")
-      : this.packageGraph;
+    let { localDependencies } = this.options;
+    if (!localDependencies && this.options.forceLocal) {
+      localDependencies = "force";
+    }
+
+    this.targetGraph =
+      localDependencies === "force" || localDependencies === "explicit"
+        ? new PackageGraph(this.allPackages, "allDependencies", localDependencies)
+        : this.packageGraph;
   }
 
   execute() {

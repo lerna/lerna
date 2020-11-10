@@ -8,6 +8,8 @@ const QueryGraphConfig = figgyPudding({
   graphType: "graph-type",
   "reject-cycles": {},
   rejectCycles: "reject-cycles",
+  "local-dependencies": {},
+  localDependencies: "local-dependencies",
 });
 
 class QueryGraph {
@@ -16,6 +18,7 @@ class QueryGraph {
    *
    * @param {Array<Package>} packages An array of Packages to build the graph out of
    * @param {String} [opts.graphType="allDependencies"] "dependencies" excludes devDependencies from graph
+   * @param {String} [opts.localDependencies="auto"] Valid values are "force" or "explicit"
    * @param {Boolean} [opts.rejectCycles] Whether or not to reject cycles
    * @constructor
    */
@@ -23,7 +26,7 @@ class QueryGraph {
     const options = QueryGraphConfig(opts);
 
     // Create dependency graph
-    this.graph = new PackageGraph(packages, options.graphType);
+    this.graph = new PackageGraph(packages, options.graphType, options.localDependencies);
 
     // Evaluate cycles
     this.cycles = this.graph.collapseCycles(options.rejectCycles);

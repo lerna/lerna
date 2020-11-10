@@ -127,9 +127,15 @@ class BootstrapCommand extends Command {
       this.npmConfig.npmClientArgs.unshift("--ignore-scripts");
     }
 
-    this.targetGraph = this.options.forceLocal
-      ? new PackageGraph(this.packageGraph.rawPackageList, "allDependencies", "forceLocal")
-      : this.packageGraph;
+    let { localDependencies } = this.options;
+    if (!localDependencies && this.options.forceLocal) {
+      localDependencies = "force";
+    }
+
+    this.targetGraph =
+      localDependencies === "force" || localDependencies === "explicit"
+        ? new PackageGraph(this.packageGraph.rawPackageList, "allDependencies", localDependencies)
+        : this.packageGraph;
 
     let chain = Promise.resolve();
 
@@ -147,11 +153,19 @@ class BootstrapCommand extends Command {
         }
       }
 
-      if (filteredPackages.length !== this.targetGraph.size && !this.options.forceLocal) {
+      if (
+        filteredPackages.length !== this.targetGraph.size &&
+        !this.options.forceLocal &&
+        this.options.localDependencies !== "force"
+      ) {
         this.logger.warn("bootstrap", "Installing local packages that do not match filters from registry");
 
         // an explicit --scope, --ignore, or --since should only symlink the targeted packages, no others
-        this.targetGraph = new PackageGraph(filteredPackages, "allDependencies", this.options.forceLocal);
+        this.targetGraph = new PackageGraph(
+          filteredPackages,
+          "allDependencies",
+          this.options.localDependencies
+        );
 
         // never automatically --save or modify lockfiles
         this.npmConfig.npmClientArgs.unshift(npmClient === "yarn" ? "--pure-lockfile" : "--no-save");

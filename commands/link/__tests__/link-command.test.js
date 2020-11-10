@@ -186,6 +186,23 @@ Array [
     });
   });
 
+  describe("with --local-dependencies explicit", () => {
+    it("should only symlink packages with the workspace: protocol", async () => {
+      const testDir = await initFixture("explicit-local");
+      await lernaLink(testDir)();
+
+      expect(symlinkedDirectories(testDir)).toMatchInlineSnapshot(`
+        Array [
+          Object {
+            "_src": "packages/package-1",
+            "dest": "packages/package-2/node_modules/@test/package-1",
+            "type": "junction",
+          },
+        ]
+      `);
+    });
+  });
+
   describe("with --contents", () => {
     it("should symlink sub-directory of package folders and bin directories", async () => {
       const testDir = await initFixture("with-contents");
