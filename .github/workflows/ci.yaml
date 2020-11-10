@@ -46,7 +46,8 @@ jobs:
             ${{ runner.os }}-node-
       - run: npm ci
       - env:
-          GIT_CONFIG: ${{ github.workspace }}/helpers/git-init/template/config
+          GIT_AUTHOR_NAME: 'Tester McPerson'
+          GIT_AUTHOR_EMAIL: test@example.com
         run: npm run ${{ matrix.script }}
 
   windows:
@@ -76,7 +77,8 @@ jobs:
       #       ${{ runner.os }}-node-
       - run: npm ci
       - env:
-          GIT_CONFIG: ${{ github.workspace }}/helpers/git-init/template/config
+          GIT_AUTHOR_NAME: 'Tester McPerson'
+          GIT_AUTHOR_EMAIL: test@example.com
           LERNA_CI_TYPE: ${{ matrix.subset }}
           LERNA_OS_TYPE: windows
         run: npm run ${{ matrix.script }}
