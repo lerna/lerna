@@ -44,12 +44,10 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-      - name: Configure git metadata
-        run: |
-          git config --global user.email test@example.com
-          git config --global user.name "Tester McPerson"
       - run: npm ci
-      - run: npm run ${{ matrix.script }}
+      - env:
+          GIT_CONFIG: ${{ env.GITHUB_WORKSPACE }}/helpers/git-init/template/config
+        run: npm run ${{ matrix.script }}
 
   windows:
     needs: [ lint ]
@@ -76,12 +74,9 @@ jobs:
       #     key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
       #     restore-keys: |
       #       ${{ runner.os }}-node-
-      - name: Configure git metadata
-        run: |
-          git config --global user.email test@example.com
-          git config --global user.name "Tester McPerson"
       - run: npm ci
       - env:
+          GIT_CONFIG: ${{ env.GITHUB_WORKSPACE }}/helpers/git-init/template/config
           LERNA_CI_TYPE: ${{ matrix.subset }}
           LERNA_OS_TYPE: windows
         run: npm run ${{ matrix.script }}
