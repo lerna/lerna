@@ -73,6 +73,7 @@
     "fs-extra": "^8.1.0",
     "glob-parent": "^5.1.0",
     "globby": "^9.2.0",
+    "inquirer": "^6.5.2",
     "jest": "^24.9.0",
     "jest-circus": "^24.9.0",
     "load-json-file": "^5.3.0",
@@ -87,6 +88,7 @@
     "tar": "^4.4.13",
     "tempy": "^0.2.1",
     "touch": "^3.1.0",
+    "whatwg-url": "^7.1.0",
     "write-json-file": "^3.2.0",
     "yargs": "^14.2.2"
   },
