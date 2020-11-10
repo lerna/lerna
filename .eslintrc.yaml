@@ -69,6 +69,7 @@ overrides:
       global-require: "off"
       import/no-extraneous-dependencies: "off"
       import/no-unresolved: "off"
+      import/no-useless-path-segments: "off"
       node/no-extraneous-require: "off"
       node/no-missing-require:
         - error
