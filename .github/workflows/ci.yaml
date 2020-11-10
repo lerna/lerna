@@ -31,7 +31,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        node: [ 12, 10, 8 ]
+        node: [ 12, 10 ]
         script: [ 'ci:test:unit', 'ci:test:integration' ]
     steps:
       - uses: actions/checkout@v2
