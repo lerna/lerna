@@ -46,7 +46,7 @@ jobs:
             ${{ runner.os }}-node-
       - run: npm ci
       - env:
-          GIT_CONFIG: ${{ env.GITHUB_WORKSPACE }}/helpers/git-init/template/config
+          GIT_CONFIG: ${GITHUB_WORKSPACE}/helpers/git-init/template/config
         run: npm run ${{ matrix.script }}
 
   windows:
@@ -76,7 +76,7 @@ jobs:
       #       ${{ runner.os }}-node-
       - run: npm ci
       - env:
-          GIT_CONFIG: ${{ env.GITHUB_WORKSPACE }}/helpers/git-init/template/config
+          GIT_CONFIG: ${GITHUB_WORKSPACE}/helpers/git-init/template/config
           LERNA_CI_TYPE: ${{ matrix.subset }}
           LERNA_OS_TYPE: windows
         run: npm run ${{ matrix.script }}
