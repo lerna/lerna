@@ -247,8 +247,8 @@ class PublishCommand extends Command {
     });
   }
 
-  verifyWorkingTreeClean() {
-    return describeRef(this.execOpts).then(checkWorkingTree.throwIfUncommitted);
+  verifyWorkingTreeClean(includeMergedTags) {
+    return describeRef(this.execOpts, includeMergedTags).then(checkWorkingTree.throwIfUncommitted);
   }
 
   detectFromGit() {
@@ -342,7 +342,7 @@ class PublishCommand extends Command {
     let chain = Promise.resolve();
 
     // attempting to publish a canary release with local changes is not allowed
-    chain = chain.then(() => this.verifyWorkingTreeClean());
+    chain = chain.then(() => this.verifyWorkingTreeClean(includeMergedTags));
 
     // find changed packages since last release, if any
     chain = chain.then(() =>

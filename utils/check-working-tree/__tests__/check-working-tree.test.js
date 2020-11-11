@@ -14,7 +14,7 @@ describe("check-working-tree", () => {
     const result = await checkWorkingTree({ cwd: "foo" });
 
     expect(result).toEqual({ refCount: "1" });
-    expect(describeRef).toHaveBeenLastCalledWith({ cwd: "foo" });
+    expect(describeRef).toHaveBeenLastCalledWith({ cwd: "foo" }, undefined);
   });
 
   it("rejects when current commit has already been released", async () => {
@@ -37,5 +37,14 @@ describe("check-working-tree", () => {
     await expect(checkWorkingTree({ cwd: "foo" })).rejects.toThrow("Working tree has uncommitted changes");
 
     expect(collectUncommitted).toHaveBeenLastCalledWith({ cwd: "foo" });
+  });
+
+  it("passes includeMergedTags to describeRef", async () => {
+    describeRef.mockResolvedValueOnce({ refCount: "1" });
+
+    const result = await checkWorkingTree({ cwd: "foo" }, true);
+
+    expect(result).toEqual({ refCount: "1" });
+    expect(describeRef).toHaveBeenLastCalledWith({ cwd: "foo" }, true);
   });
 });
