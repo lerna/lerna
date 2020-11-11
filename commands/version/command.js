@@ -38,6 +38,10 @@ exports.builder = (yargs, composed) => {
       requiresArg: true,
       defaultDescription: "angular",
     },
+    "changelog-header": {
+      describe: "Custom changelog header.",
+      type: "string",
+    },
     exact: {
       describe: "Specify cross-dependency version numbers exactly rather than with a caret (^).",
       type: "boolean",

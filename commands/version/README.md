@@ -45,6 +45,7 @@ Running `lerna version --conventional-commits` without the above flags will rele
 
 - [`--allow-branch`](#--allow-branch-glob)
 - [`--amend`](#--amend)
+- [`--changelog-header`](#--changelog-header)
 - [`--changelog-preset`](#--changelog-preset)
 - [`--conventional-commits`](#--conventional-commits)
 - [`--conventional-graduate`](#--conventional-graduate)
@@ -119,6 +120,24 @@ When run with this flag, `lerna version` will perform all changes on the current
 This is useful during [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous_integration) to reduce the number of commits in the project's history.
 
 In order to prevent unintended overwrites, this command will skip `git push` (i.e., it implies `--no-push`).
+
+### `--changelog-header`
+
+```sh
+lerna version --conventional-commits --changelog-header "Custom Header"
+```
+
+By default, the changelog header text is set to "Change Log". Use this flag to customize the header text. This option can also be configured in `lerna.json`.
+
+```json
+{
+  "command": {
+    "version": {
+      "changelogHeader": "Custom Header"
+    }
+  }
+}
+```
 
 ### `--changelog-preset`
 

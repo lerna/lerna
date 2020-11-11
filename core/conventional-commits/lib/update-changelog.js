@@ -4,20 +4,25 @@ const conventionalChangelogCore = require("conventional-changelog-core");
 const fs = require("fs-extra");
 const getStream = require("get-stream");
 const log = require("npmlog");
-const { BLANK_LINE, CHANGELOG_HEADER, EOL } = require("./constants");
+const { BLANK_LINE, EOL } = require("./constants");
 const getChangelogConfig = require("./get-changelog-config");
 const makeBumpOnlyFilter = require("./make-bump-only-filter");
 const readExistingChangelog = require("./read-existing-changelog");
+const getChangeLogHeader = require("./get-custom-changelog-header");
 
 module.exports = updateChangelog;
 
-function updateChangelog(pkg, type, { changelogPreset, rootPath, tagPrefix = "v", version }) {
+function updateChangelog(
+  pkg,
+  type,
+  { changelogPreset, rootPath, tagPrefix = "v", version, changelogHeader: header }
+) {
   log.silly(type, "for %s at %s", pkg.name, pkg.location);
 
   return getChangelogConfig(changelogPreset, rootPath).then(config => {
     const options = {};
     const context = {}; // pass as positional because cc-core's merge-config is wack
-
+    const changelogHeader = getChangeLogHeader(header);
     // cc-core mutates input :P
     if (config.conventionalChangelog) {
       // "new" preset API
@@ -63,7 +68,7 @@ function updateChangelog(pkg, type, { changelogPreset, rootPath, tagPrefix = "v"
     ]).then(([newEntry, [changelogFileLoc, changelogContents]]) => {
       log.silly(type, "writing new entry: %j", newEntry);
 
-      const content = [CHANGELOG_HEADER, newEntry, changelogContents].join(BLANK_LINE);
+      const content = [changelogHeader, newEntry, changelogContents].join(BLANK_LINE);
 
       return fs.writeFile(changelogFileLoc, content.trim() + EOL).then(() => {
         log.verbose(type, "wrote", changelogFileLoc);
