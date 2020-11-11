@@ -20,6 +20,7 @@ const { createRunner } = require("@lerna/run-lifecycle");
 const runTopologically = require("@lerna/run-topologically");
 const ValidationError = require("@lerna/validation-error");
 const prereleaseIdFromVersion = require("@lerna/prerelease-id-from-version");
+const { getFilteredPackages } = require("@lerna/filter-options");
 
 const getCurrentBranch = require("./lib/get-current-branch");
 const gitAdd = require("./lib/git-add");
@@ -189,76 +190,86 @@ class VersionCommand extends Command {
       );
     }
 
-    this.updates = collectUpdates(
-      this.packageGraph.rawPackageList,
-      this.packageGraph,
-      this.execOpts,
-      this.options
-    ).filter(node => {
-      // --no-private completely removes private packages from consideration
-      if (node.pkg.private && this.options.private === false) {
-        // TODO: (major) make --no-private the default
-        return false;
+    return this.preparePackages().then(() => {
+      const tasks = [
+        () => this.getVersionsForUpdates(),
+        versions => this.setUpdatesForVersions(versions),
+        () => this.confirmVersions(),
+      ];
+
+      // amending a commit probably means the working tree is dirty
+      if (this.commitAndTag && this.gitOpts.amend !== true) {
+        const { forcePublish, conventionalCommits, conventionalGraduate } = this.options;
+        const checkUncommittedOnly = forcePublish || (conventionalCommits && conventionalGraduate);
+        const check = checkUncommittedOnly ? checkWorkingTree.throwIfUncommitted : checkWorkingTree;
+        tasks.unshift(() => check(this.execOpts));
+      } else {
+        this.logger.warn("version", "Skipping working tree validation, proceed at your own risk");
       }
 
-      if (!node.version) {
-        // a package may be unversioned only if it is private
-        if (node.pkg.private) {
-          this.logger.info("version", "Skipping unversioned private package %j", node.name);
-        } else {
-          throw new ValidationError(
-            "ENOVERSION",
-            dedent`
-              A version field is required in ${node.name}'s package.json file.
-              If you wish to keep the package unversioned, it must be made private.
-            `
-          );
+      return pWaterfall(tasks);
+    });
+  }
+
+  preparePackages() {
+    let chain = Promise.resolve();
+    chain = chain.then(() => getFilteredPackages(this.packageGraph, this.execOpts, this.options));
+
+    chain = chain.then(filteredPackages => {
+      this.updates = collectUpdates(filteredPackages, this.packageGraph, this.execOpts, this.options).filter(
+        node => {
+          // --no-private completely removes private packages from consideration
+          if (node.pkg.private && this.options.private === false) {
+            // TODO: (major) make --no-private the default
+            return false;
+          }
+
+          if (!node.version) {
+            // a package may be unversioned only if it is private
+            if (node.pkg.private) {
+              this.logger.info("version", "Skipping unversioned private package %j", node.name);
+            } else {
+              throw new ValidationError(
+                "ENOVERSION",
+                dedent`
+                A version field is required in ${node.name}'s package.json file.
+                If you wish to keep the package unversioned, it must be made private.
+              `
+              );
+            }
+          }
+
+          return !!node.version;
         }
-      }
-
-      return !!node.version;
+      );
     });
 
-    if (!this.updates.length) {
-      this.logger.success(`No changed packages to ${this.composed ? "publish" : "version"}`);
+    chain = chain.then(() => {
+      if (!this.updates.length) {
+        this.logger.success(`No changed packages to ${this.composed ? "publish" : "version"}`);
 
-      // still exits zero, aka "ok"
-      return false;
-    }
+        // still exits zero, aka "ok"
+        return false;
+      }
+    });
 
-    // a "rooted leaf" is the regrettable pattern of adding "." to the "packages" config in lerna.json
-    this.hasRootedLeaf = this.packageGraph.has(this.project.manifest.name);
+    return chain.then(() => {
+      // a "rooted leaf" is the regrettable pattern of adding "." to the "packages" config in lerna.json
+      this.hasRootedLeaf = this.packageGraph.has(this.project.manifest.name);
 
-    if (this.hasRootedLeaf && !this.composed) {
-      this.logger.info("version", "rooted leaf detected, skipping synthetic root lifecycles");
-    }
+      if (this.hasRootedLeaf && !this.composed) {
+        this.logger.info("version", "rooted leaf detected, skipping synthetic root lifecycles");
+      }
 
-    this.runPackageLifecycle = createRunner(this.options);
+      this.runPackageLifecycle = createRunner(this.options);
 
-    // don't execute recursively if run from a poorly-named script
-    this.runRootLifecycle = /^(pre|post)?version$/.test(process.env.npm_lifecycle_event)
-      ? stage => {
-          this.logger.warn("lifecycle", "Skipping root %j because it has already been called", stage);
-        }
-      : stage => this.runPackageLifecycle(this.project.manifest, stage);
-
-    const tasks = [
-      () => this.getVersionsForUpdates(),
-      versions => this.setUpdatesForVersions(versions),
-      () => this.confirmVersions(),
-    ];
-
-    // amending a commit probably means the working tree is dirty
-    if (this.commitAndTag && this.gitOpts.amend !== true) {
-      const { forcePublish, conventionalCommits, conventionalGraduate } = this.options;
-      const checkUncommittedOnly = forcePublish || (conventionalCommits && conventionalGraduate);
-      const check = checkUncommittedOnly ? checkWorkingTree.throwIfUncommitted : checkWorkingTree;
-      tasks.unshift(() => check(this.execOpts));
-    } else {
-      this.logger.warn("version", "Skipping working tree validation, proceed at your own risk");
-    }
-
-    return pWaterfall(tasks);
+      // don't execute recursively if run from a poorly-named script
+      this.runRootLifecycle = /^(pre|post)?version$/.test(process.env.npm_lifecycle_event)
+        ? stage => {
+            this.logger.warn("lifecycle", "Skipping root %j because it has already been called", stage);
+          }
+        : stage => this.runPackageLifecycle(this.project.manifest, stage);
+    });
   }
 
   execute() {

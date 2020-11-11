@@ -232,6 +232,20 @@ describe("VersionCommand", () => {
     });
   });
 
+  describe("--scope", () => {
+    // TODO: This test makes no sense because of collect-updates mock
+    it("should change versiosn only for scoped packages", async () => {
+      const testDir = await initFixture("normal");
+
+      collectUpdates.setUpdated(testDir, "package-4");
+
+      await lernaVersion(testDir)("--scope", "package-1");
+
+      const patch = await showCommit(testDir);
+      expect(patch).toMatchSnapshot();
+    });
+  });
+
   describe("--no-git-tag-version", () => {
     it("versions changed packages without git commit or push", async () => {
       const testDir = await initFixture("normal");

@@ -39,6 +39,7 @@
     "@lerna/collect-updates": "file:../../utils/collect-updates",
     "@lerna/command": "file:../../core/command",
     "@lerna/conventional-commits": "file:../../core/conventional-commits",
+    "@lerna/filter-options": "^3.20.0",
     "@lerna/github-client": "file:../../utils/github-client",
     "@lerna/gitlab-client": "file:../../utils/gitlab-client",
     "@lerna/output": "file:../../utils/output",
