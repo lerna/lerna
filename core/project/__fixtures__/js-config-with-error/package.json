@@ -1,0 +1,6 @@
+{
+  "name": "js-config-with-error",
+  "devDependencies": {
+    "lerna": "500.0.0"
+  }
+}

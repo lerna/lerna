@@ -18,8 +18,9 @@ const { makeFileFinder, makeSyncFileFinder } = require("./lib/make-file-finder")
 
 class Project {
   constructor(cwd) {
-    const explorer = cosmiconfig("lerna", {
-      searchPlaces: ["lerna.json", "package.json"],
+    const configName = "lerna";
+    const explorer = cosmiconfig(configName, {
+      searchPlaces: [`${configName}.json`, `.${configName}rc.js`, `${configName}.config.js`, "package.json"],
       transform(obj) {
         // cosmiconfig returns null when nothing is found
         if (!obj) {

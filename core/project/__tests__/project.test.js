@@ -51,6 +51,14 @@ describe("Project", () => {
       });
     });
 
+    it("returns parsed lerna.config.js", async () => {
+      const cwd = await initFixture("js-config");
+
+      expect(new Project(cwd).config).toEqual({
+        version: "1.0.0",
+      });
+    });
+
     it("defaults to an empty object", async () => {
       await initFixture("no-lerna-config");
 
@@ -64,6 +72,16 @@ describe("Project", () => {
         expect.objectContaining({
           name: "ValidationError",
           prefix: "JSONError",
+        })
+      );
+    });
+
+    it("throws errors from lerna.config.js if any", async () => {
+      const cwd = await initFixture("js-config-with-error");
+
+      expect(() => new Project(cwd)).toThrow(
+        expect.objectContaining({
+          name: "ReferenceError",
         })
       );
     });
