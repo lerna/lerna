@@ -9,6 +9,6 @@
     "@lerna-test/init-fixture": "file:../init-fixture",
     "execa": "^1.0.0",
     "file-url": "^2.0.2",
-    "tempy": "^0.2.1"
+    "tempy": "^1.0.0"
   }
 }
