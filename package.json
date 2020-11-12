@@ -142,7 +142,7 @@
     "eslint-plugin-prettier": "^3.1.1",
     "expect": "^24.9.0",
     "file-url": "^3.0.0",
-    "find-up": "^3.0.0",
+    "find-up": "^5.0.0",
     "jest": "^24.9.0",
     "jest-circus": "^24.9.0",
     "jest-diff": "^24.9.0",
