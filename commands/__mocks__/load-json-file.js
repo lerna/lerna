@@ -3,7 +3,7 @@
 const path = require("path");
 const normalizePath = require("normalize-path");
 
-const loadJsonFile = require.requireActual("load-json-file");
+const loadJsonFile = jest.requireActual("load-json-file");
 const asyncRegistry = new Map();
 const syncRegistry = new Map();
 
