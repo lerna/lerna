@@ -16,7 +16,7 @@ function getNpmUsername(_opts) {
   opts.log.info("", "Verifying npm credentials");
 
   return getProfileData(opts)
-    .catch(err => {
+    .catch((err) => {
       // Many third-party registries do not implement the user endpoint
       // Legacy npm Enterprise returns E500 instead of E404
       if (err.code === "E500" || err.code === "E404") {

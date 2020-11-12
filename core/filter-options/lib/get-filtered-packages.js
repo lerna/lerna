@@ -56,11 +56,11 @@ function getFilteredPackages(packageGraph, execOpts, opts) {
       options.log.notice("filter", "including merged tags");
     }
 
-    chain = chain.then(filteredPackages =>
-      Promise.resolve(collectUpdates(filteredPackages, packageGraph, execOpts, opts)).then(updates => {
+    chain = chain.then((filteredPackages) =>
+      Promise.resolve(collectUpdates(filteredPackages, packageGraph, execOpts, opts)).then((updates) => {
         const updated = new Set(updates.map(({ pkg }) => pkg.name));
 
-        return filteredPackages.filter(pkg => updated.has(pkg.name));
+        return filteredPackages.filter((pkg) => updated.has(pkg.name));
       })
     );
   }
@@ -68,13 +68,13 @@ function getFilteredPackages(packageGraph, execOpts, opts) {
   if (options.includeDependents) {
     options.log.notice("filter", "including dependents");
 
-    chain = chain.then(filteredPackages => packageGraph.addDependents(filteredPackages));
+    chain = chain.then((filteredPackages) => packageGraph.addDependents(filteredPackages));
   }
 
   if (options.includeDependencies) {
     options.log.notice("filter", "including dependencies");
 
-    chain = chain.then(filteredPackages => packageGraph.addDependencies(filteredPackages));
+    chain = chain.then((filteredPackages) => packageGraph.addDependencies(filteredPackages));
   }
 
   return chain;

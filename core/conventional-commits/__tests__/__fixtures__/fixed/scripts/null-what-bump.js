@@ -7,7 +7,7 @@ function whatBump(commits) {
   let breakings = 0;
   let features = 0;
 
-  commits.forEach(commit => {
+  commits.forEach((commit) => {
     if (commit.notes.length > 0) {
       breakings += commit.notes.length;
       level = 0;

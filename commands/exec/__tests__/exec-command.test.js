@@ -19,7 +19,7 @@ const lernaExec = require("@lerna-test/command-runner")(require("../command"));
 const calledInPackages = () =>
   ChildProcessUtilities.spawn.mock.calls.map(([, , opts]) => path.basename(opts.cwd));
 
-const execInPackagesStreaming = testDir =>
+const execInPackagesStreaming = (testDir) =>
   ChildProcessUtilities.spawnStreaming.mock.calls.reduce((arr, [command, params, opts, prefix]) => {
     const dir = normalizeRelativeDir(testDir, opts.cwd);
     arr.push([dir, command, `(prefix: ${prefix})`].concat(params).join(" "));

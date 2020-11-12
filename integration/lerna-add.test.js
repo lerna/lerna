@@ -26,7 +26,7 @@ lerna success Bootstrapped 4 packages
 `);
 
     const filePaths = await globby("packages/*/package.json", { cwd });
-    const [pkg1, pkg2, pkg3, pkg4] = await pMap(filePaths.sort(), fp => loadJson(path.join(cwd, fp)));
+    const [pkg1, pkg2, pkg3, pkg4] = await pMap(filePaths.sort(), (fp) => loadJson(path.join(cwd, fp)));
 
     expect(pkg1).not.toDependOn("@test/package-1");
     expect(pkg2).toDependOn("@test/package-1");

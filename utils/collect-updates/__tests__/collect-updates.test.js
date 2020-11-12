@@ -30,7 +30,7 @@ const changedPackages = new Set();
 const hasDiff = jest
   .fn()
   .mockName("hasDiff")
-  .mockImplementation(node => changedPackages.has(node.name));
+  .mockImplementation((node) => changedPackages.has(node.name));
 
 makeDiffPredicate.mockImplementation(() => hasDiff);
 
@@ -47,7 +47,7 @@ const ALL_NODES = Object.freeze([
   expect.objectContaining({ name: "package-standalone" }),
 ]);
 
-const toPrereleaseMapper = names => pkg => {
+const toPrereleaseMapper = (names) => (pkg) => {
   return !names || names.includes(pkg.name) ? Object.assign(pkg, { version: `${pkg.version}-alpha.0` }) : pkg;
 };
 
@@ -116,7 +116,7 @@ describe("collectUpdates()", () => {
     changedPackages.add("package-dag-3");
 
     const graph = buildGraph();
-    const pkgs = graph.rawPackageList.filter(pkg => pkg.name !== "package-dag-3");
+    const pkgs = graph.rawPackageList.filter((pkg) => pkg.name !== "package-dag-3");
     const execOpts = { cwd: "/test" };
 
     const updates = collectUpdates(pkgs, graph, execOpts, {});
@@ -131,7 +131,7 @@ describe("collectUpdates()", () => {
     changedPackages.add("package-dag-1");
 
     const graph = buildGraph();
-    const pkgs = graph.rawPackageList.filter(pkg => pkg.name !== "package-dag-2a");
+    const pkgs = graph.rawPackageList.filter((pkg) => pkg.name !== "package-dag-2a");
     const execOpts = { cwd: "/test" };
 
     const updates = collectUpdates(pkgs, graph, execOpts, {});

@@ -33,5 +33,5 @@ const semverIndex = new Map(
 );
 
 exports.mockChoices = (...keywords) => {
-  choiceIndices = keywords.map(keyword => semverIndex.get(keyword));
+  choiceIndices = keywords.map((keyword) => semverIndex.get(keyword));
 };

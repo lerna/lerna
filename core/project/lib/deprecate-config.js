@@ -19,11 +19,11 @@ module.exports = compose(
   remap("command.run.includeFilteredDependencies", "command.run.includeDependencies"),
   remap("command.run.includeFilteredDependents", "command.run.includeDependents"),
   remap("command.version.githubRelease", "command.version.createRelease", {
-    toValue: value => value && "github",
+    toValue: (value) => value && "github",
   }),
   remap("command.publish.githubRelease", "command.version.createRelease", {
     alsoRoot: true,
-    toValue: value => value && "github",
+    toValue: (value) => value && "github",
   }),
   remap("command.publish.npmTag", "command.publish.distTag", { alsoRoot: true }),
   remap("command.publish.cdVersion", "command.publish.bump", { alsoRoot: true }),
@@ -51,7 +51,7 @@ function remap(search, target, { alsoRoot, toValue } = {}) {
     pathsToSearch.unshift(search.split(".").pop());
   }
 
-  return obj => {
+  return (obj) => {
     for (const searchPath of pathsToSearch) {
       if (dotProp.has(obj.config, searchPath)) {
         const fromVal = dotProp.get(obj.config, searchPath);

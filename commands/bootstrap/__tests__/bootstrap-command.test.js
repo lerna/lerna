@@ -24,17 +24,17 @@ const updateLernaConfig = require("@lerna-test/update-lerna-config");
 const lernaBootstrap = require("@lerna-test/command-runner")(require("../command"));
 
 // assertion helpers
-const installedPackagesInDirectories = testDir =>
+const installedPackagesInDirectories = (testDir) =>
   npmInstall.dependencies.mock.calls.reduce((obj, [pkg, dependencies]) => {
     const relative = normalizeRelativeDir(testDir, pkg.location);
     obj[relative || "ROOT"] = dependencies;
     return obj;
   }, {});
 
-const removedDirectories = testDir =>
+const removedDirectories = (testDir) =>
   rimrafDir.mock.calls.map(([directory]) => normalizeRelativeDir(testDir, directory));
 
-const symlinkedDirectories = testDir =>
+const symlinkedDirectories = (testDir) =>
   createSymlink.mock.calls
     .slice()
     // ensure sort is always consistent, despite promise variability

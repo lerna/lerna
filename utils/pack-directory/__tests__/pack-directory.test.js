@@ -85,7 +85,7 @@ describe("pack-directory", () => {
 
     // choose first and last package since the middle two are repetitive
     const [head, tail] = await Promise.all(
-      [pkgs.shift(), pkgs.pop()].map(pkg => packDirectory(pkg, pkg.location, conf))
+      [pkgs.shift(), pkgs.pop()].map((pkg) => packDirectory(pkg, pkg.location, conf))
     );
 
     const INTEGRITY_PATTERN = /sha512-[\S]{88}/;

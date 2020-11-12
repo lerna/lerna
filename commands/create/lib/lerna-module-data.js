@@ -31,7 +31,7 @@ const validateName = require("validate-npm-package-name");
 const npa = require("npm-package-arg");
 const semver = require("semver");
 
-const niceName = rudeName =>
+const niceName = (rudeName) =>
   rudeName
     .replace(/^node-|[.-]js$/g, "")
     .replace(" ", "-")
@@ -59,7 +59,7 @@ if (scope) {
 
 exports.name = this.yes
   ? name
-  : this.prompt("package name", niceName(name), data => {
+  : this.prompt("package name", niceName(name), (data) => {
       const its = validateName(data);
       if (its.validForNewPackages) {
         return data;
@@ -74,7 +74,7 @@ exports.name = this.yes
 const version = this.package.version || this.config.get("init-version") || "1.0.0";
 exports.version = this.yes
   ? version
-  : this.prompt("version", version, data => {
+  : this.prompt("version", version, (data) => {
       if (semver.valid(data)) {
         return data;
       }
@@ -96,7 +96,7 @@ if (!this.package.keywords) {
   const keywords = this.config.get("keywords") || "";
   exports.keywords = this.yes
     ? keywords
-    : this.prompt("keywords", keywords, data => {
+    : this.prompt("keywords", keywords, (data) => {
         if (!data) {
           return undefined;
         }
@@ -136,7 +136,7 @@ if (!this.package.homepage) {
 const license = this.package.license || this.config.get("init-license") || "ISC";
 exports.license = this.yes
   ? license
-  : this.prompt("license", license, data => {
+  : this.prompt("license", license, (data) => {
       const its = validateLicense(data);
       if (its.validForNewPackages) {
         return data;
@@ -169,7 +169,7 @@ if (!this.package.directories && this.config.get("directories")) {
 }
 
 if (!this.package.files && this.config.get("files")) {
-  exports.files = cb => {
+  exports.files = (cb) => {
     // callback MUST yield the thread for some inexplicable reason
     process.nextTick(cb, null, this.config.get("files"));
   };
@@ -180,7 +180,7 @@ if (!this.package.publishConfig && this.config.get("publishConfig")) {
 }
 
 if (!this.package.repository) {
-  exports.repository = cb => {
+  exports.repository = (cb) => {
     let val = this.config.get("repository");
 
     if (val && val.match(/^git@github.com:/)) {

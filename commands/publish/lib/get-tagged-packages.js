@@ -14,9 +14,9 @@ function getTaggedPackages(packageGraph, rootPath, opts) {
   return childProcess
     .exec("git", ["diff-tree", "--name-only", "--no-commit-id", "--root", "-r", "-c", "HEAD"], opts)
     .then(({ stdout }) => {
-      const manifests = stdout.split("\n").filter(fp => path.basename(fp) === "package.json");
-      const locations = new Set(manifests.map(fp => path.join(rootPath, path.dirname(fp))));
+      const manifests = stdout.split("\n").filter((fp) => path.basename(fp) === "package.json");
+      const locations = new Set(manifests.map((fp) => path.join(rootPath, path.dirname(fp))));
 
-      return Array.from(packageGraph.values()).filter(node => locations.has(node.location));
+      return Array.from(packageGraph.values()).filter((node) => locations.has(node.location));
     });
 }

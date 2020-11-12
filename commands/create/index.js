@@ -57,7 +57,7 @@ class CreateCommand extends Command {
     this.dirName = scope ? name.split("/").pop() : name;
     this.pkgName = name;
     this.pkgsDir =
-      this.project.packageParentDirs.find(pd => pd.indexOf(pkgLocation) > -1) ||
+      this.project.packageParentDirs.find((pd) => pd.indexOf(pkgLocation) > -1) ||
       this.project.packageParentDirs[0];
 
     this.camelName = camelCase(this.dirName);
@@ -159,7 +159,7 @@ class CreateCommand extends Command {
 
     chain = chain.then(() => initPackageJson(this.targetDir, LERNA_MODULE_DATA, this.conf));
 
-    return chain.then(data => {
+    return chain.then((data) => {
       if (this.options.esModule) {
         this.logger.notice(
           "✔",
@@ -231,7 +231,7 @@ class CreateCommand extends Command {
     const savePrefix = this.conf.get("save-exact") ? "" : this.conf.get("save-prefix");
     const pacoteOpts = this.conf.snapshot;
 
-    const decideVersion = spec => {
+    const decideVersion = (spec) => {
       if (this.packageGraph.has(spec.name)) {
         // sibling dependency
         const depNode = this.packageGraph.get(spec.name);
@@ -253,7 +253,7 @@ class CreateCommand extends Command {
         }
 
         // from registry
-        return getManifest(spec, pacoteOpts).then(pkg => `${savePrefix}${pkg.version}`);
+        return getManifest(spec, pacoteOpts).then((pkg) => `${savePrefix}${pkg.version}`);
       }
 
       if (spec.type === "git") {
@@ -274,7 +274,7 @@ class CreateCommand extends Command {
 
           return Promise.resolve(spec)
             .then(decideVersion)
-            .then(version => {
+            .then((version) => {
               obj[spec.name] = version;
 
               return obj;
@@ -284,7 +284,7 @@ class CreateCommand extends Command {
       )
     );
 
-    chain = chain.then(dependencies => {
+    chain = chain.then((dependencies) => {
       this.conf.set("dependencies", dependencies);
     });
 

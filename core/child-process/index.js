@@ -110,7 +110,7 @@ function spawnProcess(command, args, opts) {
 
 function wrapError(spawned) {
   if (spawned.pkg) {
-    return spawned.catch(err => {
+    return spawned.catch((err) => {
       // istanbul ignore else
       if (err.code) {
         // ensure code is always a number

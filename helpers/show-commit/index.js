@@ -22,5 +22,5 @@ function showCommit(cwd, ...args) {
       ],
       { cwd }
     )
-    .then(stdout => gitSHA.serialize(stdout));
+    .then((stdout) => gitSHA.serialize(stdout));
 }

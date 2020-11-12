@@ -12,7 +12,7 @@ const writePkg = require("write-pkg");
 const Package = require("..");
 
 describe("Package", () => {
-  const factory = json =>
+  const factory = (json) =>
     new Package(json, path.normalize(`/root/path/to/${json.name || "package"}`), path.normalize("/root"));
 
   describe("get .name", () => {
@@ -215,12 +215,7 @@ describe("Package", () => {
     it("is chainable", () => {
       const pkg = factory({ name: "chainable" });
 
-      expect(
-        pkg
-          .set("foo", true)
-          .set("bar", false)
-          .get("foo")
-      ).toBe(true);
+      expect(pkg.set("foo", true).set("bar", false).get("foo")).toBe(true);
     });
   });
 

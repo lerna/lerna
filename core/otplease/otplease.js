@@ -10,10 +10,10 @@ const OtpPleaseConfig = figgyPudding({
 // basic single-entry semaphore
 const semaphore = {
   wait() {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       if (!this._promise) {
         // not waiting, block other callers until 'release' is called.
-        this._promise = new Promise(release => {
+        this._promise = new Promise((release) => {
           this._resolve = release;
         });
         resolve();
@@ -46,9 +46,9 @@ function otplease(fn, _opts, otpCache) {
 }
 
 function attempt(fn, opts, otpCache) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     resolve(fn(opts));
-  }).catch(err => {
+  }).catch((err) => {
     if (err.code !== "EOTP" && !(err.code === "E401" && /one-time pass/.test(err.body))) {
       throw err;
     } else if (!process.stdin.isTTY || !process.stdout.isTTY) {
@@ -68,7 +68,7 @@ function attempt(fn, opts, otpCache) {
         }
         return getOneTimePassword()
           .then(
-            otp => {
+            (otp) => {
               // update the otp and release the lock so that waiting
               // callers can see the updated otp.
               if (otpCache != null) {
@@ -78,13 +78,13 @@ function attempt(fn, opts, otpCache) {
               semaphore.release();
               return otp;
             },
-            promptError => {
+            (promptError) => {
               // release the lock and reject the promise.
               semaphore.release();
               return Promise.reject(promptError);
             }
           )
-          .then(otp => {
+          .then((otp) => {
             return fn(opts.concat({ otp }));
           });
       });
@@ -95,8 +95,8 @@ function attempt(fn, opts, otpCache) {
 function getOneTimePassword(message = "This operation requires a one-time password:") {
   // Logic taken from npm internals: https://git.io/fNoMe
   return prompt.input(message, {
-    filter: otp => otp.replace(/\s+/g, ""),
-    validate: otp =>
+    filter: (otp) => otp.replace(/\s+/g, ""),
+    validate: (otp) =>
       (otp && /^[\d ]+$|^[A-Fa-f0-9]{64,64}$/.test(otp)) ||
       "Must be a valid one-time-password. " +
         "See https://docs.npmjs.com/getting-started/using-two-factor-authentication",

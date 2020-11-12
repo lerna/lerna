@@ -46,7 +46,7 @@ expect.addSnapshotSerializer({
 // stabilize commit SHA
 expect.addSnapshotSerializer(require("@lerna-test/serialize-changelog"));
 
-const setupChanges = async cwd => {
+const setupChanges = async (cwd) => {
   await gitTag(cwd, "v1.0.1-beta.3");
   await fs.outputFile(path.join(cwd, "packages/package-3/hello.js"), "world");
   await gitAdd(cwd, ".");

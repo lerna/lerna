@@ -26,7 +26,7 @@ function createRelease(type, { tags, releaseNotes }, { gitRemote, execOpts }) {
 
   return Promise.all(
     releaseNotes.map(({ notes, name }) => {
-      const tag = name === "fixed" ? tags[0] : tags.find(t => t.startsWith(`${name}@`));
+      const tag = name === "fixed" ? tags[0] : tags.find((t) => t.startsWith(`${name}@`));
 
       /* istanbul ignore if */
       if (!tag) {

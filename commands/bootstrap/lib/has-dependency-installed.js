@@ -20,7 +20,7 @@ function hasDependencyInstalled(pkg, depName, needVersion) {
   log.silly("hasDependencyInstalled", pkg.name, depName);
 
   return getInstalled(pkg).then(
-    versions => versions.has(depName) && semver.satisfies(versions.get(depName), needVersion)
+    (versions) => versions.has(depName) && semver.satisfies(versions.get(depName), needVersion)
   );
 }
 

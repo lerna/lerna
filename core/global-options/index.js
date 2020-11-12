@@ -50,11 +50,8 @@ function globalOptions(yargs) {
   // group options under "Global Options:" header
   const globalKeys = Object.keys(opts).concat(["help", "version"]);
 
-  return yargs
-    .options(opts)
-    .group(globalKeys, "Global Options:")
-    .option("ci", {
-      hidden: true,
-      type: "boolean",
-    });
+  return yargs.options(opts).group(globalKeys, "Global Options:").option("ci", {
+    hidden: true,
+    type: "boolean",
+  });
 }

@@ -119,7 +119,7 @@ describe("custom prerelease", () => {
     ${"beta"}    | ${false}
   `("pre-bump: $isPrerelease, id: $preid", ({ preid, isPrerelease }) => {
     // FIXME: this is a copy+paste from the implementation :P
-    const scopedResolveId = existingPreid => preid || (isPrerelease && existingPreid) || "alpha";
+    const scopedResolveId = (existingPreid) => preid || (isPrerelease && existingPreid) || "alpha";
 
     beforeEach(() => {
       resolvePrereleaseId.mockImplementationOnce(scopedResolveId);

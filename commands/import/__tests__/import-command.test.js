@@ -21,7 +21,7 @@ const updateLernaConfig = require("@lerna-test/update-lerna-config");
 const lernaImport = require("@lerna-test/command-runner")(require("../command"));
 
 // assertion helpers
-const lastCommitInDir = cwd => execa.stdout("git", ["log", "-1", "--format=%s"], { cwd });
+const lastCommitInDir = (cwd) => execa.stdout("git", ["log", "-1", "--format=%s"], { cwd });
 
 describe("ImportCommand", () => {
   PromptUtilities.confirm.mockResolvedValue(true);
@@ -109,7 +109,7 @@ describe("ImportCommand", () => {
     it("supports filepaths that have spaces within the external repo", async () =>
       Promise.all(
         // running the same test with and without --flatten
-        [true, false].map(async shouldFlatten => {
+        [true, false].map(async (shouldFlatten) => {
           const externalDir = await initFixture("files-with-spaces", "Init external commit");
           const testDir = await initFixture("basic");
           const newPackagePath = path.join(testDir, "packages", path.basename(externalDir));
@@ -131,7 +131,7 @@ describe("ImportCommand", () => {
     it("supports filepaths that have non-ascii char within the external repo", async () =>
       Promise.all(
         // running the same test with and without --flatten
-        [true, false].map(async shouldFlatten => {
+        [true, false].map(async (shouldFlatten) => {
           const externalDir = await initFixture("files-with-non-ascii-char", "Init external commit");
           const testDir = await initFixture("basic");
           const newPackagePath = path.join(testDir, "packages", path.basename(externalDir));
@@ -187,7 +187,7 @@ describe("ImportCommand", () => {
     it("preserves original committer and date with --preserve-commit", async () =>
       Promise.all(
         // running the same test with and without --preserve-commit
-        [true, false].map(async shouldPreserve => {
+        [true, false].map(async (shouldPreserve) => {
           const [testDir, externalDir] = await initBasicFixtures();
           const filePath = path.join(externalDir, "old-file");
           let expectedEmail;

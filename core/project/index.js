@@ -91,7 +91,7 @@ class Project {
   }
 
   get packageParentDirs() {
-    return this.packageConfigs.map(globParent).map(parentDir => path.resolve(this.rootPath, parentDir));
+    return this.packageConfigs.map(globParent).map((parentDir) => path.resolve(this.rootPath, parentDir));
   }
 
   get manifest() {
@@ -136,7 +136,7 @@ class Project {
         // Project license is always a sibling of the root manifest
         deep: false,
         // POSIX results always need to be normalized
-        transform: fp => path.normalize(fp),
+        transform: (fp) => path.normalize(fp),
       });
 
       licensePath = search.shift();
@@ -167,16 +167,16 @@ class Project {
   }
 
   getPackages() {
-    const mapper = packageConfigPath =>
+    const mapper = (packageConfigPath) =>
       loadJsonFile(packageConfigPath).then(
-        packageJson => new Package(packageJson, path.dirname(packageConfigPath), this.rootPath)
+        (packageJson) => new Package(packageJson, path.dirname(packageConfigPath), this.rootPath)
       );
 
-    return this.fileFinder("package.json", filePaths => pMap(filePaths, mapper, { concurrency: 50 }));
+    return this.fileFinder("package.json", (filePaths) => pMap(filePaths, mapper, { concurrency: 50 }));
   }
 
   getPackagesSync() {
-    return makeSyncFileFinder(this.rootPath, this.packageConfigs)("package.json", packageConfigPath => {
+    return makeSyncFileFinder(this.rootPath, this.packageConfigs)("package.json", (packageConfigPath) => {
       return new Package(
         loadJsonFile.sync(packageConfigPath),
         path.dirname(packageConfigPath),
@@ -205,5 +205,5 @@ Project.PACKAGE_GLOB = "packages/*";
 Project.LICENSE_GLOB = "LICEN{S,C}E{,.*}";
 
 module.exports = Project;
-module.exports.getPackages = cwd => new Project(cwd).getPackages();
-module.exports.getPackagesSync = cwd => new Project(cwd).getPackagesSync();
+module.exports.getPackages = (cwd) => new Project(cwd).getPackages();
+module.exports.getPackagesSync = (cwd) => new Project(cwd).getPackagesSync();

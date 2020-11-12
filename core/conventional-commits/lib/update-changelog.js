@@ -14,7 +14,7 @@ module.exports = updateChangelog;
 function updateChangelog(pkg, type, { changelogPreset, rootPath, tagPrefix = "v", version }) {
   log.silly(type, "for %s at %s", pkg.name, pkg.location);
 
-  return getChangelogConfig(changelogPreset, rootPath).then(config => {
+  return getChangelogConfig(changelogPreset, rootPath).then((config) => {
     const options = {};
     const context = {}; // pass as positional because cc-core's merge-config is wack
 

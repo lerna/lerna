@@ -35,7 +35,7 @@ class ChangedCommand extends Command {
     );
 
     this.result = listable.format(
-      updates.map(node => node.pkg),
+      updates.map((node) => node.pkg),
       this.options
     );
 

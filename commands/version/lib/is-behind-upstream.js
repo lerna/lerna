@@ -33,5 +33,5 @@ function countLeftRight(symmetricDifference, opts) {
     opts
   );
 
-  return stdout.split("\t").map(val => parseInt(val, 10));
+  return stdout.split("\t").map((val) => parseInt(val, 10));
 }

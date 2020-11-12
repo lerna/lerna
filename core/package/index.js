@@ -166,7 +166,7 @@ class Package {
    * Refresh internal state from disk (e.g., changed by external lifecycles)
    */
   refresh() {
-    return loadJsonFile(this.manifestLocation).then(pkg => {
+    return loadJsonFile(this.manifestLocation).then((pkg) => {
       // overwrite configurable property
       Object.defineProperty(this, PKG, {
         value: pkg,

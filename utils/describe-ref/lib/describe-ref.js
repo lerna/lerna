@@ -26,7 +26,7 @@ function getArgs(options, includeMergedTags) {
 
   if (includeMergedTags) {
     // we want to consider all tags, also from merged branches
-    args = args.filter(arg => arg !== "--first-parent");
+    args = args.filter((arg) => arg !== "--first-parent");
   }
 
   return args;

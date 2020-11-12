@@ -8,9 +8,9 @@ const gitCheckout = require("../lib/git-checkout");
 
 test("gitCheckout files", async () => {
   const cwd = await initFixture("no-interdependencies");
-  const files = ["package-1", "package-2"].map(name => path.join("packages", name, "package.json"));
+  const files = ["package-1", "package-2"].map((name) => path.join("packages", name, "package.json"));
 
-  await Promise.all(files.map(fp => fs.writeJSON(path.join(cwd, fp), { foo: "bar" })));
+  await Promise.all(files.map((fp) => fs.writeJSON(path.join(cwd, fp), { foo: "bar" })));
   await gitCheckout(files, { granularPathspec: true }, { cwd });
 
   const modified = await execa.stdout("git", ["ls-files", "--modified"], { cwd });
@@ -19,14 +19,14 @@ test("gitCheckout files", async () => {
 
 test("gitCheckout files with .gitignored files", async () => {
   const cwd = await initFixture("no-interdependencies");
-  const files = ["package-1", "package-2", "package-3"].map(name =>
+  const files = ["package-1", "package-2", "package-3"].map((name) =>
     path.join("packages", name, "package.json")
   );
 
   // simulate a "dynamic", intentionally unversioned package by gitignoring it
   await fs.writeFile(path.join(cwd, ".gitignore"), "packages/package-3/*", "utf8");
 
-  await Promise.all(files.map(fp => fs.outputJSON(path.join(cwd, fp), { foo: "bar" })));
+  await Promise.all(files.map((fp) => fs.outputJSON(path.join(cwd, fp), { foo: "bar" })));
   await gitCheckout(files, { granularPathspec: false }, { cwd });
 
   const modified = await execa.stdout("git", ["ls-files", "--others"], { cwd });

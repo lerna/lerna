@@ -68,7 +68,7 @@ Successfully published:
     pkg3Changelog,
     pkg4Changelog,
     pkg5Changelog,
-  ] = await Promise.all(changelogFilePaths.sort().map(fp => fs.readFile(fp, "utf8")));
+  ] = await Promise.all(changelogFilePaths.sort().map((fp) => fs.readFile(fp, "utf8")));
 
   /**
    * ./CHANGELOG.md

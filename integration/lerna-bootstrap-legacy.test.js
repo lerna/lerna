@@ -46,7 +46,7 @@ package-3 cli2 package-2 OK
     absolute: true,
   };
   const lockfiles = await globby(["package-*/package-lock.json"], config);
-  const [lock1, lock2, lock3] = await Promise.all(lockfiles.sort().map(fp => fs.readJson(fp)));
+  const [lock1, lock2, lock3] = await Promise.all(lockfiles.sort().map((fp) => fs.readJson(fp)));
 
   expect(lock1).toMatchObject({
     name: "@integration/package-1",

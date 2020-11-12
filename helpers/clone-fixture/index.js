@@ -11,7 +11,7 @@ function cloneFixture(startDir) {
   const initFixture = initFactory(startDir);
 
   return (...args) =>
-    initFixture(...args).then(cwd => {
+    initFixture(...args).then((cwd) => {
       const repoDir = tempy.directory();
       const repoUrl = fileUrl(repoDir, { resolve: false });
 

@@ -74,7 +74,7 @@ class LinkCommand extends Command {
     rootPkg.set("dependencies", rootDependencies);
     rootPkg.set("devDependencies", Object.assign(rootPkg.get("devDependencies") || {}, hoisted));
 
-    return pMap(changed, node => node.pkg.serialize()).then(() => rootPkg.serialize());
+    return pMap(changed, (node) => node.pkg.serialize()).then(() => rootPkg.serialize());
   }
 }
 

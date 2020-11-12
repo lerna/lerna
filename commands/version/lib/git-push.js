@@ -10,7 +10,7 @@ function gitPush(remote, branch, opts) {
 
   return childProcess
     .exec("git", ["push", "--follow-tags", "--no-verify", "--atomic", remote, branch], opts)
-    .catch(error => {
+    .catch((error) => {
       // @see https://github.com/sindresorhus/execa/blob/v1.0.0/index.js#L159-L179
       // the error message _should_ be on stderr except when GIT_REDIRECT_STDERR has been configured to redirect
       // to stdout. More details in https://git-scm.com/docs/git#Documentation/git.txt-codeGITREDIRECTSTDERRcode

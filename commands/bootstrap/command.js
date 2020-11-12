@@ -9,7 +9,7 @@ exports.command = "bootstrap";
 
 exports.describe = "Link local packages together and install remaining package dependencies";
 
-exports.builder = yargs => {
+exports.builder = (yargs) => {
   yargs
     .example(
       "$0 bootstrap -- --no-optional",

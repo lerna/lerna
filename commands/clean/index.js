@@ -24,8 +24,8 @@ class CleanCommand extends Command {
     let chain = Promise.resolve();
 
     chain = chain.then(() => getFilteredPackages(this.packageGraph, this.execOpts, this.options));
-    chain = chain.then(filteredPackages => {
-      this.directoriesToDelete = filteredPackages.map(pkg => pkg.nodeModulesLocation);
+    chain = chain.then((filteredPackages) => {
+      this.directoriesToDelete = filteredPackages.map((pkg) => pkg.nodeModulesLocation);
     });
 
     return chain.then(() => {
@@ -36,7 +36,7 @@ class CleanCommand extends Command {
       this.logger.info("", "Removing the following directories:");
       this.logger.info(
         "clean",
-        this.directoriesToDelete.map(dir => path.relative(this.project.rootPath, dir)).join("\n")
+        this.directoriesToDelete.map((dir) => path.relative(this.project.rootPath, dir)).join("\n")
       );
 
       return PromptUtilities.confirm("Proceed?");
@@ -47,7 +47,7 @@ class CleanCommand extends Command {
     this.enableProgressBar();
 
     const tracker = this.logger.newItem("clean");
-    const mapper = dirPath => {
+    const mapper = (dirPath) => {
       tracker.info("clean", "removing", dirPath);
 
       return pulseTillDone(rimrafDir(dirPath)).then(() => {

@@ -36,7 +36,7 @@ function createPosixSymlink(src, dest, _type) {
   if (_type === "exec") {
     // If the src exists, create a real symlink.
     // If the src doesn't exist yet, create a shim shell script.
-    return fs.pathExists(src).then(exists => {
+    return fs.pathExists(src).then((exists) => {
       if (exists) {
         return createSymbolicLink(relativeSymlink, dest, type).then(() => fs.chmod(src, 0o755));
       }
@@ -52,7 +52,7 @@ function createWindowsSymlink(src, dest, type) {
   if (type === "exec") {
     // If the src exists, shim directly.
     // If the src doesn't exist yet, create a temp src so cmd-shim doesn't explode.
-    return fs.pathExists(src).then(exists => {
+    return fs.pathExists(src).then((exists) => {
       if (exists) {
         return cmdShim(src, dest);
       }
@@ -63,7 +63,7 @@ function createWindowsSymlink(src, dest, type) {
         .then(
           // fs.remove() never rejects
           () => fs.remove(src),
-          err =>
+          (err) =>
             fs.remove(src).then(() => {
               // clean up, but don't swallow error
               throw err;

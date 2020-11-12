@@ -12,7 +12,7 @@ exports.aliases = ["ls", "la", "ll"];
 
 exports.describe = "List local packages";
 
-exports.builder = yargs => {
+exports.builder = (yargs) => {
   listable.options(yargs);
 
   return filterable(yargs);

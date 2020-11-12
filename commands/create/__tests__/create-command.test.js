@@ -26,18 +26,19 @@ const addRemote = (cwd, remote = "origin", url = "git@github.com:test/test.git")
 
 const diffStaged = (cwd, ...args) => execa.stdout("git", ["diff", "--cached", ...args], { cwd });
 
-const initRemoteFixture = fixtureName => initFixture(fixtureName).then(cwd => addRemote(cwd).then(() => cwd));
+const initRemoteFixture = (fixtureName) =>
+  initFixture(fixtureName).then((cwd) => addRemote(cwd).then(() => cwd));
 
 const gitLsOthers = (cwd, ...args) =>
   execa.stdout("git", ["ls-files", "--others", "--exclude-standard", ...args], { cwd });
 
-const listUntracked = async cwd => {
+const listUntracked = async (cwd) => {
   const list = await gitLsOthers(cwd, "-z");
 
-  return list.split("\0").map(fp => slash(fp));
+  return list.split("\0").map((fp) => slash(fp));
 };
 
-const manifestCreated = async cwd => {
+const manifestCreated = async (cwd) => {
   const file = await gitLsOthers(cwd, "--", "**/package.json");
 
   return fs.readJSON(path.join(cwd, file));

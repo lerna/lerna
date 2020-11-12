@@ -38,7 +38,7 @@ package-3 cli2 package-2 OK
     cwd,
   };
   const lockfiles = await globby(["package-*/yarn.lock"], config);
-  expect(lockfiles.sort().map(fp => normalizePath(fp))).toEqual([
+  expect(lockfiles.sort().map((fp) => normalizePath(fp))).toEqual([
     "package-1/yarn.lock",
     "package-2/yarn.lock",
     "package-3/yarn.lock",

@@ -39,7 +39,7 @@ class DiffCommand extends Command {
     }
 
     if (this.options.ignoreChanges) {
-      this.options.ignoreChanges.forEach(ignorePattern => {
+      this.options.ignoreChanges.forEach((ignorePattern) => {
         // https://stackoverflow.com/a/21079437
         args.push(`:(exclude,glob)${ignorePattern}`);
       });
@@ -49,7 +49,7 @@ class DiffCommand extends Command {
   }
 
   execute() {
-    return ChildProcessUtilities.spawn("git", this.args, this.execOpts).catch(err => {
+    return ChildProcessUtilities.spawn("git", this.args, this.execOpts).catch((err) => {
       if (err.code) {
         // quitting the diff viewer is not an error
         throw err;

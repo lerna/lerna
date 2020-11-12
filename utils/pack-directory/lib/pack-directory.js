@@ -43,7 +43,7 @@ function packDirectory(_pkg, dir, _opts) {
   chain = chain.then(() => runLifecycle(pkg, "prepack", opts));
   chain = chain.then(() => pkg.refresh());
   chain = chain.then(() => packlist({ path: pkg.contents }));
-  chain = chain.then(files =>
+  chain = chain.then((files) =>
     tar.create(
       {
         cwd: pkg.contents,
@@ -57,12 +57,12 @@ function packDirectory(_pkg, dir, _opts) {
       // NOTE: node-tar does some Magic Stuff depending on prefixes for files
       //       specifically with @ signs, so we just neutralize that one
       //       and any such future "features" by prepending `./`
-      files.map(f => `./${f}`)
+      files.map((f) => `./${f}`)
     )
   );
-  chain = chain.then(stream => tempWrite(stream, getTarballName(pkg)));
-  chain = chain.then(tarFilePath =>
-    getPacked(pkg, tarFilePath).then(packed =>
+  chain = chain.then((stream) => tempWrite(stream, getTarballName(pkg)));
+  chain = chain.then((tarFilePath) =>
+    getPacked(pkg, tarFilePath).then((packed) =>
       Promise.resolve()
         .then(() => runLifecycle(pkg, "postpack", opts))
         .then(() => packed)
