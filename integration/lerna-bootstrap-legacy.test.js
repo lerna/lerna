@@ -27,6 +27,7 @@ lerna success Bootstrapped 4 packages
 
   // windows requires a different format, don't care
   if (process.platform !== "win32") {
+    // eslint-disable-next-line jest/no-conditional-expect
     expect(scriptOutput).toMatch(/^>= 8\.9\.0$/m);
   }
 

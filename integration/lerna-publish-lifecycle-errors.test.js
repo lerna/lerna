@@ -32,6 +32,7 @@ test("lerna publish lifecycle scripts stop on non-zero exit", async () => {
 
   const cmd = cliRunner(cwd, env)(...args);
 
+  /* eslint-disable jest/no-conditional-expect */
   if (process.platform !== "win32") {
     await expect(cmd).rejects.toThrow(`lifecycle "preversion" errored in "lifecycle", exiting 123`);
   } else {

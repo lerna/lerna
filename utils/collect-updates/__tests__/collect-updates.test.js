@@ -1,7 +1,5 @@
 "use strict";
 
-const dedent = require("dedent");
-
 jest.mock("@lerna/describe-ref");
 jest.mock("../lib/has-tags");
 jest.mock("../lib/make-diff-predicate");
@@ -313,28 +311,23 @@ describe("collectUpdates()", () => {
     ]);
   });
 
-  it(
-    dedent`
-    always includes prereleased nodes targeted by --conventional-graduate <pkg> --conventional-graduate <pkg>
-  `,
-    () => {
-      changedPackages.add("package-dag-3");
+  it("always includes prereleased nodes targeted by --conventional-graduate <pkg> --conventional-graduate <pkg>", () => {
+    changedPackages.add("package-dag-3");
 
-      const graph = buildGraph(toPrereleaseMapper(["package-dag-3", "package-standalone", "package-dag-2b"]));
-      const pkgs = graph.rawPackageList;
-      const execOpts = { cwd: "/test" };
+    const graph = buildGraph(toPrereleaseMapper(["package-dag-3", "package-standalone", "package-dag-2b"]));
+    const pkgs = graph.rawPackageList;
+    const execOpts = { cwd: "/test" };
 
-      const updates = collectUpdates(pkgs, graph, execOpts, {
-        forcePublish: ["package-standalone", "package-dag-2b"],
-      });
+    const updates = collectUpdates(pkgs, graph, execOpts, {
+      forcePublish: ["package-standalone", "package-dag-2b"],
+    });
 
-      expect(updates).toEqual([
-        expect.objectContaining({ name: "package-dag-2b" }),
-        expect.objectContaining({ name: "package-dag-3" }),
-        expect.objectContaining({ name: "package-standalone" }),
-      ]);
-    }
-  );
+    expect(updates).toEqual([
+      expect.objectContaining({ name: "package-dag-2b" }),
+      expect.objectContaining({ name: "package-dag-3" }),
+      expect.objectContaining({ name: "package-standalone" }),
+    ]);
+  });
 
   it("uses revision range with --canary", () => {
     changedPackages.add("package-dag-2a");
