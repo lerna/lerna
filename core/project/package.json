@@ -38,7 +38,7 @@
     "dedent": "^0.7.0",
     "dot-prop": "^4.2.0",
     "glob-parent": "^5.0.0",
-    "globby": "^9.2.0",
+    "globby": "^11.0.1",
     "load-json-file": "^6.2.0",
     "npmlog": "^4.1.2",
     "p-map": "^4.0.0",

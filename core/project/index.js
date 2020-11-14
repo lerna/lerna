@@ -132,16 +132,17 @@ class Project {
       const search = globby.sync(Project.LICENSE_GLOB, {
         cwd: this.rootPath,
         absolute: true,
-        case: false,
+        caseSensitiveMatch: false,
         // Project license is always a sibling of the root manifest
-        deep: false,
-        // POSIX results always need to be normalized
-        transform: (fp) => path.normalize(fp),
+        deep: 0,
       });
 
       licensePath = search.shift();
 
       if (licensePath) {
+        // POSIX results always need to be normalized
+        licensePath = path.normalize(licensePath);
+
         // redefine getter to lazy-loaded value
         Object.defineProperty(this, "licensePath", {
           value: licensePath,
@@ -186,7 +187,7 @@ class Project {
   }
 
   getPackageLicensePaths() {
-    return this.fileFinder(Project.LICENSE_GLOB, null, { case: false });
+    return this.fileFinder(Project.LICENSE_GLOB, null, { caseSensitiveMatch: false });
   }
 
   isIndependent() {

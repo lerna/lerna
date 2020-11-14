@@ -134,7 +134,7 @@ Successfully published:
     const changelogFilePaths = await globby(["**/CHANGELOG.md"], {
       cwd,
       absolute: true,
-      followSymlinkedDirectories: false,
+      followSymbolicLinks: false,
     });
     const [
       rootChangelog,
