@@ -60,7 +60,7 @@
     "init-package-json": "^1.10.3",
     "inquirer": "^6.5.2",
     "is-ci": "^2.0.0",
-    "load-json-file": "^5.3.0",
+    "load-json-file": "^6.2.0",
     "lodash.template": "^4.5.0",
     "minimatch": "^3.0.4",
     "multimatch": "^5.0.0",

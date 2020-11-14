@@ -7,6 +7,6 @@
   "license": "MIT",
   "dependencies": {
     "globby": "^9.2.0",
-    "load-json-file": "^5.3.0"
+    "load-json-file": "^6.2.0"
   }
 }

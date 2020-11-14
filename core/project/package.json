@@ -39,7 +39,7 @@
     "dot-prop": "^4.2.0",
     "glob-parent": "^5.0.0",
     "globby": "^9.2.0",
-    "load-json-file": "^5.3.0",
+    "load-json-file": "^6.2.0",
     "npmlog": "^4.1.2",
     "p-map": "^4.0.0",
     "resolve-from": "^5.0.0",
