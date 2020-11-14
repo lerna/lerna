@@ -43,6 +43,6 @@
     "npmlog": "^4.1.2",
     "p-map": "^2.1.0",
     "resolve-from": "^4.0.0",
-    "write-json-file": "^3.2.0"
+    "write-json-file": "^4.3.0"
   }
 }

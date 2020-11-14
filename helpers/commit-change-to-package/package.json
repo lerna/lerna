@@ -9,6 +9,6 @@
     "@lerna-test/git-add": "file:../git-add",
     "@lerna-test/git-commit": "file:../git-commit",
     "load-json-file": "^5.3.0",
-    "write-json-file": "^3.2.0"
+    "write-json-file": "^4.3.0"
   }
 }

@@ -36,6 +36,6 @@
     "@lerna/command": "file:../../core/command",
     "fs-extra": "^8.1.0",
     "p-map": "^2.1.0",
-    "write-json-file": "^3.2.0"
+    "write-json-file": "^4.3.0"
   }
 }

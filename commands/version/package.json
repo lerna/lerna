@@ -59,6 +59,6 @@
     "semver": "^6.2.0",
     "slash": "^2.0.0",
     "temp-write": "^3.4.0",
-    "write-json-file": "^3.2.0"
+    "write-json-file": "^4.3.0"
   }
 }
