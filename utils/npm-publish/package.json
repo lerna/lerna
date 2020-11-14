@@ -39,6 +39,6 @@
     "npm-package-arg": "^6.1.0",
     "npmlog": "^4.1.2",
     "pify": "^4.0.1",
-    "read-package-json": "^2.0.13"
+    "read-package-json": "^3.0.0"
   }
 }
