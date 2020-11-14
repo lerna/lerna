@@ -33,6 +33,6 @@
   "dependencies": {
     "fs-extra": "^8.1.0",
     "npmlog": "^4.1.2",
-    "read-cmd-shim": "^1.0.1"
+    "read-cmd-shim": "^2.0.0"
   }
 }

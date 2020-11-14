@@ -78,7 +78,7 @@
     "p-waterfall": "^1.0.0",
     "path-exists": "^3.0.0",
     "pify": "^4.0.1",
-    "read-cmd-shim": "^1.0.1",
+    "read-cmd-shim": "^2.0.0",
     "read-package-json": "^3.0.0",
     "read-package-tree": "^5.3.1",
     "resolve-from": "^5.0.0",
