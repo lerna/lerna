@@ -52,7 +52,7 @@
     "load-json-file": "^5.3.0",
     "minimatch": "^3.0.4",
     "npmlog": "^4.1.2",
-    "p-map": "^2.1.0",
+    "p-map": "^4.0.0",
     "p-pipe": "^3.1.0",
     "p-reduce": "^2.1.0",
     "p-waterfall": "^2.1.0",

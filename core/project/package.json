@@ -41,7 +41,7 @@
     "globby": "^9.2.0",
     "load-json-file": "^5.3.0",
     "npmlog": "^4.1.2",
-    "p-map": "^2.1.0",
+    "p-map": "^4.0.0",
     "resolve-from": "^5.0.0",
     "write-json-file": "^4.3.0"
   }

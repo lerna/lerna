@@ -51,7 +51,7 @@
     "npm-package-arg": "^6.1.0",
     "npmlog": "^4.1.2",
     "p-finally": "^1.0.0",
-    "p-map": "^2.1.0",
+    "p-map": "^4.0.0",
     "p-map-series": "^2.1.0",
     "p-waterfall": "^2.1.0",
     "read-package-tree": "^5.3.1",
