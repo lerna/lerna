@@ -11,7 +11,7 @@ LATEST="^$LATEST"
 
 echo "...using version: '$LATEST'"
 
-INFILES=$(rg --sort=path --files-with-matches --glob package.json --fixed-strings '"'$TARGET'":')
+INFILES=$(rg --sort=path --files-with-matches --glob package.json --glob '!__fixtures__' --fixed-strings '"'$TARGET'":')
 
 echo "located in files:"
 echo $INFILES
