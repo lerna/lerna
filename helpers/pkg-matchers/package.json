@@ -7,6 +7,6 @@
   "license": "MIT",
   "dependencies": {
     "@lerna/package": "file:../../core/package",
-    "semver": "^6.2.0"
+    "semver": "^7.3.2"
   }
 }

@@ -56,7 +56,7 @@
     "p-pipe": "^1.2.0",
     "p-reduce": "^1.0.0",
     "p-waterfall": "^1.0.0",
-    "semver": "^6.2.0",
+    "semver": "^7.3.2",
     "slash": "^3.0.0",
     "temp-write": "^4.0.0",
     "write-json-file": "^4.3.0"
