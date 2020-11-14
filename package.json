@@ -56,7 +56,7 @@
     "glob-parent": "^5.1.0",
     "globby": "^9.2.0",
     "has-unicode": "^2.0.1",
-    "import-local": "^2.0.0",
+    "import-local": "^3.0.2",
     "init-package-json": "^2.0.1",
     "inquirer": "^7.3.3",
     "is-ci": "^2.0.0",
