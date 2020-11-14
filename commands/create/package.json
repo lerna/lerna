@@ -50,6 +50,6 @@
     "slash": "^2.0.0",
     "validate-npm-package-license": "^3.0.3",
     "validate-npm-package-name": "^3.0.0",
-    "whatwg-url": "^7.0.0"
+    "whatwg-url": "^8.4.0"
   }
 }

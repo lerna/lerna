@@ -33,6 +33,6 @@
   "dependencies": {
     "node-fetch": "^2.5.0",
     "npmlog": "^4.1.2",
-    "whatwg-url": "^7.0.0"
+    "whatwg-url": "^8.4.0"
   }
 }
