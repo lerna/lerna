@@ -89,7 +89,7 @@
     "ssri": "^6.0.1",
     "strong-log-transformer": "^2.0.0",
     "tar": "^4.4.13",
-    "temp-write": "^3.4.0",
+    "temp-write": "^4.0.0",
     "upath": "^2.0.1",
     "validate-npm-package-license": "^3.0.3",
     "validate-npm-package-name": "^3.0.0",

@@ -58,7 +58,7 @@
     "p-waterfall": "^1.0.0",
     "semver": "^6.2.0",
     "slash": "^2.0.0",
-    "temp-write": "^3.4.0",
+    "temp-write": "^4.0.0",
     "write-json-file": "^4.3.0"
   }
 }
