@@ -571,7 +571,7 @@ class VersionCommand extends Command {
       );
     }
 
-    const mapUpdate = pPipe(actions);
+    const mapUpdate = pPipe(...actions);
 
     chain = chain.then(() =>
       runTopologically(this.packagesToVersion, mapUpdate, {

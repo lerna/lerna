@@ -72,7 +72,7 @@
     "p-finally": "^1.0.0",
     "p-map": "^2.1.0",
     "p-map-series": "^1.0.0",
-    "p-pipe": "^1.2.0",
+    "p-pipe": "^3.1.0",
     "p-queue": "^6.6.2",
     "p-reduce": "^2.1.0",
     "p-waterfall": "^2.1.0",

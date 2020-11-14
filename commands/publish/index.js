@@ -652,7 +652,7 @@ class PublishCommand extends Command {
 
     const opts = this.conf.snapshot;
     const mapper = pPipe(
-      [
+      ...[
         this.options.requireScripts && ((pkg) => this.execScript(pkg, "prepublish")),
 
         (pkg) =>
@@ -702,7 +702,7 @@ class PublishCommand extends Command {
     });
 
     const mapper = pPipe(
-      [
+      ...[
         (pkg) => {
           const preDistTag = this.getPreDistTag(pkg);
           const tag = !this.options.tempTag && preDistTag ? preDistTag : opts.tag;
