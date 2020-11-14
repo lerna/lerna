@@ -33,7 +33,7 @@
   "dependencies": {
     "@lerna/create-symlink": "file:../create-symlink",
     "@lerna/package": "file:../../core/package",
-    "fs-extra": "^8.1.0",
+    "fs-extra": "^9.0.1",
     "p-map": "^4.0.0"
   }
 }

@@ -33,7 +33,7 @@
   "dependencies": {
     "@lerna/child-process": "file:../../core/child-process",
     "@lerna/get-npm-exec-opts": "file:../get-npm-exec-opts",
-    "fs-extra": "^8.1.0",
+    "fs-extra": "^9.0.1",
     "npm-package-arg": "^8.1.0",
     "npmlog": "^4.1.2",
     "signal-exit": "^3.0.2",

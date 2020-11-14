@@ -34,7 +34,7 @@
     "@lerna/create-symlink": "file:../create-symlink",
     "@lerna/resolve-symlink": "file:../resolve-symlink",
     "@lerna/symlink-binary": "file:../symlink-binary",
-    "fs-extra": "^8.1.0",
+    "fs-extra": "^9.0.1",
     "p-finally": "^2.0.1",
     "p-map": "^4.0.0",
     "p-map-series": "^2.1.0"

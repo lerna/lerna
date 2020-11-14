@@ -34,7 +34,7 @@
   "dependencies": {
     "@lerna/child-process": "file:../../core/child-process",
     "@lerna/command": "file:../../core/command",
-    "fs-extra": "^8.1.0",
+    "fs-extra": "^9.0.1",
     "p-map": "^4.0.0",
     "write-json-file": "^4.3.0"
   }

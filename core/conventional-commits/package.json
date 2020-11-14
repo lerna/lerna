@@ -36,7 +36,7 @@
     "conventional-changelog-angular": "^5.0.3",
     "conventional-changelog-core": "^3.1.6",
     "conventional-recommended-bump": "^5.0.0",
-    "fs-extra": "^8.1.0",
+    "fs-extra": "^9.0.1",
     "get-stream": "^6.0.0",
     "lodash.template": "^4.5.0",
     "npm-package-arg": "^8.1.0",

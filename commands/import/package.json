@@ -38,7 +38,7 @@
     "@lerna/pulse-till-done": "file:../../utils/pulse-till-done",
     "@lerna/validation-error": "file:../../core/validation-error",
     "dedent": "^0.7.0",
-    "fs-extra": "^8.1.0",
+    "fs-extra": "^9.0.1",
     "p-map-series": "^2.1.0"
   }
 }

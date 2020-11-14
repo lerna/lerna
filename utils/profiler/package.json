@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "figgy-pudding": "^3.5.1",
-    "fs-extra": "^8.1.0",
+    "fs-extra": "^9.0.1",
     "npmlog": "^4.1.2",
     "upath": "^2.0.1"
   }
