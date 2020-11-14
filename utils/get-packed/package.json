@@ -29,7 +29,7 @@
   "dependencies": {
     "fs-extra": "^8.1.0",
     "ssri": "^6.0.1",
-    "tar": "^4.4.8"
+    "tar": "^6.0.5"
   },
   "engines": {
     "node": ">= 10.18.0"
