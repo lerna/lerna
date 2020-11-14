@@ -39,7 +39,7 @@
     "fs-extra": "^8.1.0",
     "get-stream": "^4.0.0",
     "lodash.template": "^4.5.0",
-    "npm-package-arg": "^6.1.0",
+    "npm-package-arg": "^8.1.0",
     "npmlog": "^4.1.2",
     "pify": "^5.0.0",
     "semver": "^7.3.2"

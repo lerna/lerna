@@ -66,7 +66,7 @@
     "multimatch": "^3.0.0",
     "node-fetch": "^2.5.0",
     "npm-lifecycle": "^3.1.2",
-    "npm-package-arg": "^6.1.0",
+    "npm-package-arg": "^8.1.0",
     "npm-packlist": "^2.1.4",
     "npmlog": "^4.1.2",
     "p-finally": "^2.0.1",

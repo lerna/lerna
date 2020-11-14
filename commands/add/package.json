@@ -40,7 +40,7 @@
     "@lerna/npm-conf": "file:../../utils/npm-conf",
     "@lerna/validation-error": "file:../../core/validation-error",
     "dedent": "^0.7.0",
-    "npm-package-arg": "^6.1.0",
+    "npm-package-arg": "^8.1.0",
     "p-map": "^4.0.0",
     "semver": "^7.3.2"
   }

@@ -58,7 +58,7 @@
     "@lerna/version": "file:../version",
     "figgy-pudding": "^3.5.1",
     "fs-extra": "^8.1.0",
-    "npm-package-arg": "^6.1.0",
+    "npm-package-arg": "^8.1.0",
     "npmlog": "^4.1.2",
     "p-finally": "^2.0.1",
     "p-map": "^4.0.0",

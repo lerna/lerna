@@ -37,7 +37,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "npm-package-arg": "^6.0.0",
+    "npm-package-arg": "^8.1.0",
     "npmlog": "^4.1.2"
   }
 }

@@ -48,7 +48,7 @@
     "dedent": "^0.7.0",
     "get-port": "^4.2.0",
     "multimatch": "^3.0.0",
-    "npm-package-arg": "^6.1.0",
+    "npm-package-arg": "^8.1.0",
     "npmlog": "^4.1.2",
     "p-finally": "^2.0.1",
     "p-map": "^4.0.0",

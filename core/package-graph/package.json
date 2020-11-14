@@ -34,7 +34,7 @@
   "dependencies": {
     "@lerna/prerelease-id-from-version": "file:../../utils/prerelease-id-from-version",
     "@lerna/validation-error": "file:../validation-error",
-    "npm-package-arg": "^6.1.0",
+    "npm-package-arg": "^8.1.0",
     "npmlog": "^4.1.2",
     "semver": "^7.3.2"
   }

@@ -43,7 +43,7 @@
     "fs-extra": "^8.1.0",
     "globby": "^9.2.0",
     "init-package-json": "^1.10.3",
-    "npm-package-arg": "^6.1.0",
+    "npm-package-arg": "^8.1.0",
     "p-reduce": "^2.1.0",
     "pify": "^5.0.0",
     "semver": "^7.3.2",
