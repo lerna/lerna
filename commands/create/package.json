@@ -45,7 +45,7 @@
     "init-package-json": "^1.10.3",
     "npm-package-arg": "^6.1.0",
     "p-reduce": "^1.0.0",
-    "pify": "^4.0.1",
+    "pify": "^5.0.0",
     "semver": "^7.3.2",
     "slash": "^3.0.0",
     "validate-npm-package-license": "^3.0.3",

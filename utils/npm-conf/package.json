@@ -37,6 +37,6 @@
   },
   "dependencies": {
     "config-chain": "^1.1.11",
-    "pify": "^4.0.1"
+    "pify": "^5.0.0"
   }
 }
