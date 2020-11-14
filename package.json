@@ -85,7 +85,7 @@
     "rimraf": "^2.6.2",
     "semver": "^6.3.0",
     "signal-exit": "^3.0.2",
-    "slash": "^2.0.0",
+    "slash": "^3.0.0",
     "ssri": "^8.0.0",
     "strong-log-transformer": "^2.0.0",
     "tar": "^6.0.5",
