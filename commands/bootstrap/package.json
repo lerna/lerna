@@ -46,7 +46,7 @@
     "@lerna/symlink-dependencies": "file:../../utils/symlink-dependencies",
     "@lerna/validation-error": "file:../../core/validation-error",
     "dedent": "^0.7.0",
-    "get-port": "^4.2.0",
+    "get-port": "^5.1.1",
     "multimatch": "^5.0.0",
     "npm-package-arg": "^8.1.0",
     "npmlog": "^4.1.2",
