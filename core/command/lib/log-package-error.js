@@ -5,7 +5,7 @@ const log = require("npmlog");
 module.exports = logPackageError;
 
 function logPackageError(err, stream = false) {
-  log.error(err.cmd, `exited ${err.code} in '${err.pkg.name}'`);
+  log.error(err.command, `exited ${err.exitCode} in '${err.pkg.name}'`);
 
   if (stream) {
     // Streaming has already printed all stdout/stderr
@@ -13,17 +13,17 @@ function logPackageError(err, stream = false) {
   }
 
   if (err.stdout) {
-    log.error(err.cmd, "stdout:");
+    log.error(err.command, "stdout:");
     directLog(err.stdout);
   }
 
   if (err.stderr) {
-    log.error(err.cmd, "stderr:");
+    log.error(err.command, "stderr:");
     directLog(err.stderr);
   }
 
   // Below is just to ensure something sensible is printed after the long stream of logs
-  log.error(err.cmd, `exited ${err.code} in '${err.pkg.name}'`);
+  log.error(err.command, `exited ${err.exitCode} in '${err.pkg.name}'`);
 }
 
 function directLog(message) {

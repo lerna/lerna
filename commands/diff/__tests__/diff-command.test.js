@@ -104,7 +104,7 @@ describe("DiffCommand", () => {
 
     ChildProcessUtilities.spawn.mockImplementationOnce(() => {
       const nonZero = new Error("An actual non-zero, not git diff pager SIGPIPE");
-      nonZero.code = 1;
+      nonZero.exitCode = 1;
 
       throw nonZero;
     });

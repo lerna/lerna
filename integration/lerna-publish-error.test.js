@@ -15,7 +15,7 @@ test("lerna publish sets correct exit code when libnpmpublish fails", async () =
   ).rejects.toThrow(
     expect.objectContaining({
       stderr: expect.stringContaining("E404 Not found"),
-      code: 1,
+      exitCode: 1,
     })
   );
 });

@@ -21,7 +21,8 @@ const updateLernaConfig = require("@lerna-test/update-lerna-config");
 const lernaImport = require("@lerna-test/command-runner")(require("../command"));
 
 // assertion helpers
-const lastCommitInDir = (cwd) => execa.stdout("git", ["log", "-1", "--format=%s"], { cwd });
+const lastCommitInDir = (cwd) =>
+  execa("git", ["log", "-1", "--format=%s"], { cwd }).then((result) => result.stdout);
 
 describe("ImportCommand", () => {
   PromptUtilities.confirm.mockResolvedValue(true);

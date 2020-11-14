@@ -50,7 +50,7 @@ class DiffCommand extends Command {
 
   execute() {
     return ChildProcessUtilities.spawn("git", this.args, this.execOpts).catch((err) => {
-      if (err.code) {
+      if (err.exitCode) {
         // quitting the diff viewer is not an error
         throw err;
       }

@@ -298,6 +298,9 @@ describe("VersionCommand", () => {
 
   // TODO: (major) make --no-granular-pathspec the default
   describe("--no-granular-pathspec", () => {
+    const getLeftover = (cwd) =>
+      execa("git", ["ls-files", "--others"], { cwd }).then((result) => result.stdout);
+
     it("adds changed files globally", async () => {
       const cwd = await initFixture("normal");
       await fs.outputFile(path.join(cwd, ".gitignore"), "packages/dynamic");
@@ -308,7 +311,7 @@ describe("VersionCommand", () => {
       // a "dynamic", intentionally unversioned package must _always_ be forced
       await lernaVersion(cwd)("--force-publish=dynamic", "--no-granular-pathspec");
 
-      const leftover = await execa.stdout("git", ["ls-files", "--others"], { cwd });
+      const leftover = await getLeftover(cwd);
       expect(leftover).toBe("packages/dynamic/package.json");
     });
 
@@ -326,7 +329,7 @@ describe("VersionCommand", () => {
       // a "dynamic", intentionally unversioned package must _always_ be forced
       await lernaVersion(cwd)("--force-publish=dynamic");
 
-      const leftover = await execa.stdout("git", ["ls-files", "--others"], { cwd });
+      const leftover = await getLeftover(cwd);
       expect(leftover).toBe("packages/dynamic/package.json");
     });
   });
@@ -585,12 +588,12 @@ describe("VersionCommand", () => {
   describe("working on a detached HEAD", () => {
     const detachedHEAD = async (fixture = "normal") => {
       const cwd = await initFixture(fixture);
-      const sha = await execa.stdout("git", ["rev-parse", "HEAD"], { cwd });
+      const { stdout: sha } = await execa("git", ["rev-parse", "HEAD"], { cwd });
       await execa("git", ["checkout", sha], { cwd });
       return cwd;
     };
 
-    it("throws for version", async () => {
+    it("throws by default", async () => {
       const cwd = await detachedHEAD();
       const command = lernaVersion(cwd)();
 
@@ -641,16 +644,6 @@ describe("VersionCommand", () => {
     await expect(command).rejects.toThrow(
       "No commits in this repository. Please commit something before using version."
     );
-  });
-
-  it("exits with an error when git HEAD is detached", async () => {
-    const cwd = await initFixture("no-interdependencies");
-    const sha = await execa.stdout("git", ["rev-parse", "HEAD"], { cwd });
-
-    await execa("git", ["checkout", sha], { cwd }); // detach head
-
-    const command = lernaVersion(cwd)();
-    await expect(command).rejects.toThrow("Detached git HEAD, please checkout a branch to choose versions.");
   });
 
   it("exits early when no changes found", async () => {

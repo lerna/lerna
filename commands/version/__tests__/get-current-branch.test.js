@@ -12,5 +12,5 @@ test("getCurrentBranch", async () => {
 test("getCurrentBranch without commit", async () => {
   const cwd = await initFixture("root-manifest-only", false);
 
-  expect(() => getCurrentBranch({ cwd })).toThrow(/Command failed: git rev-parse --abbrev-ref HEAD.*/);
+  expect(() => getCurrentBranch({ cwd })).toThrow(/Command failed.*: git rev-parse --abbrev-ref HEAD.*/);
 });

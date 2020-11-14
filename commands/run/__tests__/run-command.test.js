@@ -27,8 +27,8 @@ const ranInPackagesStreaming = (testDir) =>
   }, []);
 
 describe("RunCommand", () => {
-  npmRunScript.mockImplementation((script, { pkg }) => Promise.resolve({ code: 0, stdout: pkg.name }));
-  npmRunScript.stream.mockImplementation(() => Promise.resolve({ code: 0 }));
+  npmRunScript.mockImplementation((script, { pkg }) => Promise.resolve({ exitCode: 0, stdout: pkg.name }));
+  npmRunScript.stream.mockImplementation(() => Promise.resolve({ exitCode: 0 }));
 
   afterEach(() => {
     process.exitCode = undefined;
@@ -117,7 +117,7 @@ describe("RunCommand", () => {
         const err = new Error(pkg.name);
 
         err.failed = true;
-        err.code = 123;
+        err.exitCode = 123;
 
         return Promise.reject(err);
       });
@@ -133,7 +133,7 @@ describe("RunCommand", () => {
         const err = new Error(pkg.name);
 
         err.failed = true;
-        err.code = 456;
+        err.exitCode = 456;
         err.stdout = pkg.name;
 
         return Promise.resolve(err);

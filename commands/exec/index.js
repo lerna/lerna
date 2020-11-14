@@ -74,7 +74,7 @@ class ExecCommand extends Command {
     if (this.bail) {
       // only the first error is caught
       chain = chain.catch((err) => {
-        process.exitCode = err.code;
+        process.exitCode = err.exitCode;
 
         // rethrow to halt chain and log properly
         throw err;
@@ -85,7 +85,7 @@ class ExecCommand extends Command {
         /* istanbul ignore else */
         if (results.some((result) => result.failed)) {
           // propagate "highest" error code, it's probably the most useful
-          const codes = results.filter((result) => result.failed).map((result) => result.code);
+          const codes = results.filter((result) => result.failed).map((result) => result.exitCode);
           const exitCode = Math.max(...codes, 1);
 
           this.logger.error("", "Received non-zero exit code %d during execution", exitCode);

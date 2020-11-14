@@ -6,7 +6,7 @@ const cloneFixture = require("@lerna-test/clone-fixture")(__dirname);
 const gitPush = require("../lib/git-push");
 
 async function listRemoteTags(cwd) {
-  return execa.stdout("git", ["ls-remote", "--tags", "--refs", "--quiet"], { cwd });
+  return execa("git", ["ls-remote", "--tags", "--refs", "--quiet"], { cwd }).then((result) => result.stdout);
 }
 
 beforeEach(() => {

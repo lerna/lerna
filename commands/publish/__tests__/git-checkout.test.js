@@ -13,7 +13,7 @@ test("gitCheckout files", async () => {
   await Promise.all(files.map((fp) => fs.writeJSON(path.join(cwd, fp), { foo: "bar" })));
   await gitCheckout(files, { granularPathspec: true }, { cwd });
 
-  const modified = await execa.stdout("git", ["ls-files", "--modified"], { cwd });
+  const { stdout: modified } = await execa("git", ["ls-files", "--modified"], { cwd });
   expect(modified).toBe("");
 });
 
@@ -29,6 +29,6 @@ test("gitCheckout files with .gitignored files", async () => {
   await Promise.all(files.map((fp) => fs.outputJSON(path.join(cwd, fp), { foo: "bar" })));
   await gitCheckout(files, { granularPathspec: false }, { cwd });
 
-  const modified = await execa.stdout("git", ["ls-files", "--others"], { cwd });
+  const { stdout: modified } = await execa("git", ["ls-files", "--others"], { cwd });
   expect(modified).toBe("packages/package-3/package.json");
 });

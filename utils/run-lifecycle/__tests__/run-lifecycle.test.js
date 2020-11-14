@@ -232,7 +232,7 @@ describe("createRunner", () => {
 
     await expect(runPackageLifecycle(pkg, "prepublishOnly")).rejects.toThrow(
       expect.objectContaining({
-        code: 123,
+        exitCode: 123,
         script: "exit 123",
       })
     );
@@ -261,7 +261,7 @@ describe("createRunner", () => {
 
     await expect(runPackageLifecycle(pkg, "prepack")).rejects.toThrow(
       expect.objectContaining({
-        code: 1,
+        exitCode: 1,
         script: "a-thing-that-ends-poorly",
       })
     );

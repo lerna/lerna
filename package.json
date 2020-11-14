@@ -47,7 +47,7 @@
     "dedent": "^0.7.0",
     "dot-prop": "^4.2.0",
     "envinfo": "^7.3.1",
-    "execa": "^1.0.0",
+    "execa": "^4.1.0",
     "figgy-pudding": "^3.5.1",
     "fs-extra": "^9.0.1",
     "get-port": "^5.1.1",

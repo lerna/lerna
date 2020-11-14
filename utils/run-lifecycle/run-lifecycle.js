@@ -112,8 +112,8 @@ function runLifecycle(pkg, stage, _opts) {
       // ensure clean logging, avoiding spurious log dump
       err.name = "ValidationError";
 
-      // our yargs.fail() handler expects a numeric .code, not .errno
-      err.code = exitCode;
+      // our yargs.fail() handler expects a numeric .exitCode, not .errno
+      err.exitCode = exitCode;
       process.exitCode = exitCode;
 
       // stop the chain

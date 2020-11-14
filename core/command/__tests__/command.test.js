@@ -180,7 +180,7 @@ describe("core-command", () => {
         execute() {
           const err = new Error("message");
 
-          err.cmd = "test-pkg-err";
+          err.command = "test-pkg-err";
           err.stdout = "pkg-err-stdout";
           err.stderr = "pkg-err-stderr";
           err.pkg = {
@@ -195,7 +195,7 @@ describe("core-command", () => {
 
       await expect(command).rejects.toThrow(
         expect.objectContaining({
-          cmd: "test-pkg-err",
+          command: "test-pkg-err",
           stdout: "pkg-err-stdout",
           stderr: "pkg-err-stderr",
           pkg: expect.objectContaining({
@@ -218,7 +218,7 @@ describe("core-command", () => {
         execute() {
           const err = new Error("message");
 
-          err.cmd = "test-pkg-err";
+          err.command = "test-pkg-err";
           err.stdout = "pkg-err-stdout";
           err.stderr = "pkg-err-stderr";
           err.pkg = {

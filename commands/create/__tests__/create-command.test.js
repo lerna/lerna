@@ -24,13 +24,16 @@ expect.addSnapshotSerializer(require("@lerna-test/serialize-git-sha"));
 const addRemote = (cwd, remote = "origin", url = "git@github.com:test/test.git") =>
   execa("git", ["remote", "add", remote, url], { cwd });
 
-const diffStaged = (cwd, ...args) => execa.stdout("git", ["diff", "--cached", ...args], { cwd });
+const diffStaged = (cwd, ...args) =>
+  execa("git", ["diff", "--cached", ...args], { cwd }).then((result) => result.stdout);
 
 const initRemoteFixture = (fixtureName) =>
   initFixture(fixtureName).then((cwd) => addRemote(cwd).then(() => cwd));
 
 const gitLsOthers = (cwd, ...args) =>
-  execa.stdout("git", ["ls-files", "--others", "--exclude-standard", ...args], { cwd });
+  execa("git", ["ls-files", "--others", "--exclude-standard", ...args], { cwd }).then(
+    (result) => result.stdout
+  );
 
 const listUntracked = async (cwd) => {
   const list = await gitLsOthers(cwd, "-z");

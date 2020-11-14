@@ -296,7 +296,7 @@ class PublishCommand extends Command {
       .then(() => this.verifyWorkingTreeClean())
       .catch((err) => {
         // an execa error is thrown when git suffers a fatal error (such as no git repository present)
-        if (err.failed && /git describe/.test(err.cmd)) {
+        if (err.failed && /git describe/.test(err.command)) {
           // (we tried)
           this.logger.silly("EWORKINGTREE", err.message);
           this.logger.notice("FYI", "Unable to verify working tree, proceed at your own risk");

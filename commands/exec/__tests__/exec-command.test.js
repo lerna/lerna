@@ -28,8 +28,8 @@ const execInPackagesStreaming = (testDir) =>
 
 describe("ExecCommand", () => {
   // TODO: it's very suspicious that mockResolvedValue() doesn't work here
-  ChildProcessUtilities.spawn = jest.fn(() => Promise.resolve({ code: 0 }));
-  ChildProcessUtilities.spawnStreaming = jest.fn(() => Promise.resolve({ code: 0 }));
+  ChildProcessUtilities.spawn = jest.fn(() => Promise.resolve({ exitCode: 0 }));
+  ChildProcessUtilities.spawnStreaming = jest.fn(() => Promise.resolve({ exitCode: 0 }));
 
   afterEach(() => {
     process.exitCode = undefined;
@@ -54,8 +54,8 @@ describe("ExecCommand", () => {
         const boom = new Error("execution error");
 
         boom.failed = true;
-        boom.code = 123;
-        boom.cmd = [cmd].concat(args).join(" ");
+        boom.exitCode = 123;
+        boom.command = [cmd].concat(args).join(" ");
 
         throw boom;
       });
@@ -65,7 +65,7 @@ describe("ExecCommand", () => {
       await expect(command).rejects.toThrow(
         expect.objectContaining({
           message: "execution error",
-          cmd: "boom",
+          command: "boom",
         })
       );
       expect(process.exitCode).toBe(123);
@@ -76,7 +76,7 @@ describe("ExecCommand", () => {
         const boom = new Error(pkg.name);
 
         boom.failed = true;
-        boom.code = 456;
+        boom.exitCode = 456;
         boom.cmd = [cmd].concat(args).join(" ");
 
         // --no-bail passes { reject: false } to execa, so throwing is inappropriate
