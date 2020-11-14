@@ -94,7 +94,7 @@
     "validate-npm-package-license": "^3.0.3",
     "validate-npm-package-name": "^3.0.0",
     "whatwg-url": "^7.1.0",
-    "write-file-atomic": "^2.3.0",
+    "write-file-atomic": "^3.0.3",
     "write-json-file": "^4.3.0",
     "write-pkg": "^4.0.0",
     "yargs": "^14.2.2"
