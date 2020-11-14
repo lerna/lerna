@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "fs-extra": "^8.1.0",
-    "ssri": "^6.0.1",
+    "ssri": "^8.0.0",
     "tar": "^6.0.5"
   },
   "engines": {
