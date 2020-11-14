@@ -33,6 +33,6 @@
   "dependencies": {
     "load-json-file": "^5.3.0",
     "npm-package-arg": "^6.1.0",
-    "write-pkg": "^3.1.0"
+    "write-pkg": "^4.0.0"
   }
 }
