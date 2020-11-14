@@ -75,7 +75,7 @@
     "p-pipe": "^1.2.0",
     "p-queue": "^4.0.0",
     "p-reduce": "^1.0.0",
-    "p-waterfall": "^1.0.0",
+    "p-waterfall": "^2.1.0",
     "path-exists": "^4.0.0",
     "pify": "^5.0.0",
     "read-cmd-shim": "^2.0.0",
