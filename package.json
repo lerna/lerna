@@ -76,7 +76,7 @@
     "p-queue": "^4.0.0",
     "p-reduce": "^1.0.0",
     "p-waterfall": "^1.0.0",
-    "path-exists": "^3.0.0",
+    "path-exists": "^4.0.0",
     "pify": "^5.0.0",
     "read-cmd-shim": "^2.0.0",
     "read-package-json": "^3.0.0",

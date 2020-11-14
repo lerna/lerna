@@ -33,7 +33,7 @@
   "dependencies": {
     "@lerna/child-process": "file:../../core/child-process",
     "npmlog": "^4.1.2",
-    "path-exists": "^3.0.0",
+    "path-exists": "^4.0.0",
     "rimraf": "^3.0.2"
   }
 }
