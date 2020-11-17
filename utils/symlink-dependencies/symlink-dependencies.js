@@ -1,7 +1,6 @@
 "use strict";
 
 const fs = require("fs-extra");
-const pFinally = require("p-finally");
 const pMap = require("p-map");
 const pMapSeries = require("p-map-series");
 const path = require("path");
@@ -29,68 +28,65 @@ function symlinkDependencies(packages, packageGraph, tracker) {
       ? packageGraph.values()
       : new Set(packages.map(({ name }) => packageGraph.get(name)));
 
-  return pFinally(
-    pMapSeries(nodes, (currentNode) => {
-      const currentName = currentNode.name;
-      const currentNodeModules = currentNode.pkg.nodeModulesLocation;
+  return pMapSeries(nodes, (currentNode) => {
+    const currentName = currentNode.name;
+    const currentNodeModules = currentNode.pkg.nodeModulesLocation;
 
-      return pMap(currentNode.localDependencies, ([dependencyName, resolved]) => {
-        if (resolved.type === "directory") {
-          // a local file: specifier is already a symlink
-          return;
-        }
+    return pMap(currentNode.localDependencies, ([dependencyName, resolved]) => {
+      if (resolved.type === "directory") {
+        // a local file: specifier is already a symlink
+        return;
+      }
 
-        // get PackageGraphNode of dependency
-        // const dependencyName = resolved.name;
-        const dependencyNode = packageGraph.get(dependencyName);
-        const targetDirectory = path.join(currentNodeModules, dependencyName);
+      // get PackageGraphNode of dependency
+      // const dependencyName = resolved.name;
+      const dependencyNode = packageGraph.get(dependencyName);
+      const targetDirectory = path.join(currentNodeModules, dependencyName);
 
-        let chain = Promise.resolve();
+      let chain = Promise.resolve();
 
-        // check if dependency is already installed
-        chain = chain.then(() => fs.pathExists(targetDirectory));
-        chain = chain.then((dirExists) => {
-          if (dirExists) {
-            const isDepSymlink = resolveSymlink(targetDirectory);
+      // check if dependency is already installed
+      chain = chain.then(() => fs.pathExists(targetDirectory));
+      chain = chain.then((dirExists) => {
+        if (dirExists) {
+          const isDepSymlink = resolveSymlink(targetDirectory);
 
-            if (isDepSymlink !== false && isDepSymlink !== dependencyNode.location) {
-              // installed dependency is a symlink pointing to a different location
-              tracker.warn(
-                "EREPLACE_OTHER",
-                `Symlink already exists for ${dependencyName} dependency of ${currentName}, ` +
-                  "but links to different location. Replacing with updated symlink..."
-              );
-            } else if (isDepSymlink === false) {
-              // installed dependency is not a symlink
-              tracker.warn(
-                "EREPLACE_EXIST",
-                `${dependencyName} is already installed for ${currentName}. Replacing with symlink...`
-              );
+          if (isDepSymlink !== false && isDepSymlink !== dependencyNode.location) {
+            // installed dependency is a symlink pointing to a different location
+            tracker.warn(
+              "EREPLACE_OTHER",
+              `Symlink already exists for ${dependencyName} dependency of ${currentName}, ` +
+                "but links to different location. Replacing with updated symlink..."
+            );
+          } else if (isDepSymlink === false) {
+            // installed dependency is not a symlink
+            tracker.warn(
+              "EREPLACE_EXIST",
+              `${dependencyName} is already installed for ${currentName}. Replacing with symlink...`
+            );
 
-              // remove installed dependency
-              return fs.remove(targetDirectory);
-            }
-          } else {
-            // ensure destination directory exists (dealing with scoped subdirs)
-            return fs.ensureDir(path.dirname(targetDirectory));
+            // remove installed dependency
+            return fs.remove(targetDirectory);
           }
-        });
-
-        // create package symlink
-        const dependencyLocation = dependencyNode.pkg.contents
-          ? path.resolve(dependencyNode.location, dependencyNode.pkg.contents)
-          : dependencyNode.location;
-        chain = chain.then(() => createSymlink(dependencyLocation, targetDirectory, "junction"));
-
-        // TODO: pass PackageGraphNodes directly instead of Packages
-        chain = chain.then(() => symlinkBinary(dependencyNode.pkg, currentNode.pkg));
-
-        return chain;
-      }).then(() => {
-        tracker.silly("actions", "finished", currentName);
-        tracker.completeWork(1);
+        } else {
+          // ensure destination directory exists (dealing with scoped subdirs)
+          return fs.ensureDir(path.dirname(targetDirectory));
+        }
       });
-    }),
-    () => tracker.finish()
-  );
+
+      // create package symlink
+      const dependencyLocation = dependencyNode.pkg.contents
+        ? path.resolve(dependencyNode.location, dependencyNode.pkg.contents)
+        : dependencyNode.location;
+      chain = chain.then(() => createSymlink(dependencyLocation, targetDirectory, "junction"));
+
+      // TODO: pass PackageGraphNodes directly instead of Packages
+      chain = chain.then(() => symlinkBinary(dependencyNode.pkg, currentNode.pkg));
+
+      return chain;
+    }).then(() => {
+      tracker.silly("actions", "finished", currentName);
+      tracker.completeWork(1);
+    });
+  }).finally(() => tracker.finish());
 }

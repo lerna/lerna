@@ -3,7 +3,6 @@
 const os = require("os");
 const path = require("path");
 const crypto = require("crypto");
-const pFinally = require("p-finally");
 const pMap = require("p-map");
 const pPipe = require("p-pipe");
 const semver = require("semver");
@@ -680,7 +679,7 @@ class PublishCommand extends Command {
       chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "postpack"));
     }
 
-    return pFinally(chain, () => tracker.finish());
+    return chain.finally(() => tracker.finish());
   }
 
   publishPacked() {
@@ -730,7 +729,7 @@ class PublishCommand extends Command {
       chain = chain.then(() => this.runRootLifecycle("postpublish"));
     }
 
-    return pFinally(chain, () => tracker.finish());
+    return chain.finally(() => tracker.finish());
   }
 
   npmUpdateAsLatest() {
@@ -767,7 +766,7 @@ class PublishCommand extends Command {
 
     chain = chain.then(() => this.topoMapPackages(mapper));
 
-    return pFinally(chain, () => tracker.finish());
+    return chain.finally(() => tracker.finish());
   }
 
   getDistTag() {

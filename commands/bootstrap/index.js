@@ -4,7 +4,6 @@ const dedent = require("dedent");
 const getPort = require("get-port");
 const npa = require("npm-package-arg");
 const path = require("path");
-const pFinally = require("p-finally");
 const pMap = require("p-map");
 const pMapSeries = require("p-map-series");
 const pWaterfall = require("p-waterfall");
@@ -270,7 +269,7 @@ class BootstrapCommand extends Command {
         })
       : pMap(this.filteredPackages, mapPackageWithScript, { concurrency: this.concurrency });
 
-    return pFinally(runner, () => tracker.finish());
+    return runner.finally(() => tracker.finish());
   }
 
   hoistedDirectory(dependency) {
@@ -574,10 +573,7 @@ class BootstrapCommand extends Command {
       tracker.addWork(actions.length);
     }
 
-    return pFinally(
-      pMap(actions, (act) => act(), { concurrency: this.concurrency }),
-      () => tracker.finish()
-    );
+    return pMap(actions, (act) => act(), { concurrency: this.concurrency }).finally(() => tracker.finish());
   }
 
   /**
