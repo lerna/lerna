@@ -36,7 +36,7 @@
     "@zkochan/cmd-shim": "^3.1.0",
     "byte-size": "^5.0.1",
     "camelcase": "^5.3.1",
-    "chalk": "^2.3.1",
+    "chalk": "^4.1.0",
     "clone-deep": "^4.0.1",
     "columnify": "^1.5.4",
     "config-chain": "^1.1.11",

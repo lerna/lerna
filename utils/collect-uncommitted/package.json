@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "@lerna/child-process": "file:../../core/child-process",
-    "chalk": "^2.3.1",
+    "chalk": "^4.1.0",
     "figgy-pudding": "^3.5.1",
     "npmlog": "^4.1.2"
   }

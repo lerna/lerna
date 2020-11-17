@@ -11,7 +11,7 @@ const listable = require("..");
 const { File, Dir } = Tacks;
 
 // keep snapshots stable cross-platform
-chalk.enabled = false;
+chalk.level = 0;
 
 // remove quotes around top-level strings
 expect.addSnapshotSerializer({

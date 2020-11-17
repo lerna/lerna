@@ -4,7 +4,7 @@ const chalk = require("chalk");
 const multiLineTrimRight = require("@lerna-test/multi-line-trim-right");
 
 // keep snapshots stable cross-platform
-chalk.enabled = false;
+chalk.level = 0;
 
 // @lerna/output is just a wrapper around console.log
 const mockOutput = jest.fn();
