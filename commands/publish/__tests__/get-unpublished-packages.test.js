@@ -1,9 +1,9 @@
 "use strict";
 
-jest.mock("@evocateur/pacote/packument");
+jest.mock("pacote");
 
 // mocked module(s)
-const getPackument = require("@evocateur/pacote/packument");
+const pacote = require("pacote");
 
 // helpers
 const PackageGraph = require("@lerna/package-graph");
@@ -13,7 +13,7 @@ const initFixture = require("@lerna-test/init-fixture")(__dirname);
 // file under test
 const getUnpublishedPackages = require("../lib/get-unpublished-packages");
 
-getPackument.mockImplementation(async (pkg) => {
+pacote.packument.mockImplementation(async (pkg) => {
   if (pkg === "package-1") {
     return {
       versions: {},

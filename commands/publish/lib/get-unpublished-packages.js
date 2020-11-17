@@ -2,7 +2,7 @@
 
 const log = require("npmlog");
 const pMap = require("p-map");
-const getPackument = require("@evocateur/pacote/packument");
+const pacote = require("pacote");
 
 module.exports = getUnpublishedPackages;
 
@@ -15,7 +15,7 @@ function getUnpublishedPackages(packageGraph, opts) {
   const graphNodesToCheck = Array.from(packageGraph.values()).filter(({ pkg }) => !pkg.private);
 
   const mapper = (pkg) =>
-    getPackument(pkg.name, opts).then(
+    pacote.packument(pkg.name, opts).then(
       (packument) => {
         if (packument.versions === undefined || packument.versions[pkg.version] === undefined) {
           return pkg;

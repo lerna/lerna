@@ -1,6 +1,6 @@
 "use strict";
 
-jest.mock("@evocateur/pacote/manifest");
+jest.mock("pacote");
 
 const fs = require("fs-extra");
 const path = require("path");
@@ -8,7 +8,7 @@ const execa = require("execa");
 const slash = require("slash");
 
 // mocked modules
-const getManifest = require("@evocateur/pacote/manifest");
+const pacote = require("pacote");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
@@ -48,7 +48,7 @@ const manifestCreated = async (cwd) => {
 };
 
 describe("CreateCommand", () => {
-  getManifest.mockImplementation(() => Promise.resolve({ version: "1.0.0-mocked" }));
+  pacote.manifest.mockImplementation(() => Promise.resolve({ version: "1.0.0-mocked" }));
 
   // preserve value from @lerna-test/set-npm-userconfig
   const userconfig = process.env.npm_config_userconfig;
@@ -122,7 +122,7 @@ describe("CreateCommand", () => {
     expect(result).toMatchSnapshot();
 
     // yargs is automatically added when CLI is stubbed
-    expect(getManifest).toHaveBeenLastCalledWith(
+    expect(pacote.manifest).toHaveBeenLastCalledWith(
       expect.objectContaining({
         name: "yargs",
         type: "tag",

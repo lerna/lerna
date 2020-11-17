@@ -7,7 +7,7 @@ const { URL } = require("whatwg-url");
 const { camelCase } = require("yargs-parser");
 const dedent = require("dedent");
 const initPackageJson = require("pify")(require("init-package-json"));
-const getManifest = require("@evocateur/pacote/manifest");
+const pacote = require("pacote");
 const npa = require("npm-package-arg");
 const pReduce = require("p-reduce");
 const slash = require("slash");
@@ -253,7 +253,7 @@ class CreateCommand extends Command {
         }
 
         // from registry
-        return getManifest(spec, pacoteOpts).then((pkg) => `${savePrefix}${pkg.version}`);
+        return pacote.manifest(spec, pacoteOpts).then((pkg) => `${savePrefix}${pkg.version}`);
       }
 
       if (spec.type === "git") {
