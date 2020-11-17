@@ -45,7 +45,7 @@
     "conventional-recommended-bump": "^5.0.0",
     "cosmiconfig": "^5.1.0",
     "dedent": "^0.7.0",
-    "dot-prop": "^4.2.0",
+    "dot-prop": "^6.0.0",
     "envinfo": "^7.3.1",
     "execa": "^4.1.0",
     "figgy-pudding": "^3.5.1",
