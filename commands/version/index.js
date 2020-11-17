@@ -687,7 +687,9 @@ class VersionCommand extends Command {
 
     return Promise.resolve()
       .then(() => gitCommit(message, this.gitOpts, this.execOpts))
-      .then(() => Promise.all(tags.map((tag) => gitTag(tag, this.gitOpts, this.execOpts))))
+      .then(() =>
+        Promise.all(tags.map((tag) => gitTag(tag, this.gitOpts, this.execOpts, this.options.gitTagCommand)))
+      )
       .then(() => tags);
   }
 
@@ -700,7 +702,7 @@ class VersionCommand extends Command {
 
     return Promise.resolve()
       .then(() => gitCommit(message, this.gitOpts, this.execOpts))
-      .then(() => gitTag(tag, this.gitOpts, this.execOpts))
+      .then(() => gitTag(tag, this.gitOpts, this.execOpts, this.options.gitTagCommand))
       .then(() => [tag]);
   }
 

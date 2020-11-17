@@ -34,4 +34,13 @@ describe("gitTag", () => {
 
     expect(childProcess.exec).toHaveBeenLastCalledWith("git", ["tag", tag, "-m", tag, "--force"], opts);
   });
+
+  it("creates an annotated git tag using the wrapper arguments", async () => {
+    const tag = "v1.2.4";
+    const opts = { cwd: "default" };
+
+    await gitTag(tag, {}, opts, "git-wrapper gh-tag %s -m %s");
+
+    expect(childProcess.exec).toHaveBeenLastCalledWith("git-wrapper", ["gh-tag", tag, "-m", tag], opts);
+  });
 });
