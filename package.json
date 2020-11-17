@@ -29,7 +29,6 @@
   "dependencies": {
     "@evocateur/libnpmaccess": "^3.1.2",
     "@evocateur/libnpmpublish": "^1.2.2",
-    "@evocateur/npm-registry-fetch": "^4.0.0",
     "@octokit/plugin-enterprise-rest": "^6.0.1",
     "@octokit/rest": "^18.0.9",
     "byte-size": "^7.0.0",
@@ -66,6 +65,7 @@
     "npm-lifecycle": "^3.1.2",
     "npm-package-arg": "^8.1.0",
     "npm-packlist": "^2.1.4",
+    "npm-registry-fetch": "^9.0.0",
     "npmlog": "^4.1.2",
     "p-map": "^4.0.0",
     "p-map-series": "^2.1.0",

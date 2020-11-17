@@ -1,6 +1,6 @@
 "use strict";
 
-const fetch = require("@evocateur/npm-registry-fetch");
+const fetch = require("npm-registry-fetch");
 const pulseTillDone = require("@lerna/pulse-till-done");
 
 module.exports = getWhoAmI;
