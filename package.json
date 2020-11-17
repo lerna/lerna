@@ -97,7 +97,7 @@
     "write-file-atomic": "^3.0.3",
     "write-json-file": "^4.3.0",
     "write-pkg": "^4.0.0",
-    "yargs": "^14.2.2"
+    "yargs": "^16.1.1"
   },
   "devDependencies": {
     "@lerna-test/calls-back": "file:helpers/calls-back",
