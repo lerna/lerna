@@ -42,7 +42,7 @@
     "config-chain": "^1.1.11",
     "conventional-changelog-angular": "^5.0.3",
     "conventional-changelog-core": "^3.1.6",
-    "conventional-recommended-bump": "^5.0.0",
+    "conventional-recommended-bump": "^6.0.11",
     "cosmiconfig": "^7.0.0",
     "dedent": "^0.7.0",
     "dot-prop": "^6.0.0",
