@@ -34,7 +34,6 @@
     "@octokit/plugin-enterprise-rest": "^6.0.1",
     "@octokit/rest": "^18.0.9",
     "byte-size": "^7.0.0",
-    "camelcase": "^5.3.1",
     "chalk": "^4.1.0",
     "clone-deep": "^4.0.1",
     "cmd-shim": "^4.0.2",

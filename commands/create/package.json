@@ -38,7 +38,6 @@
     "@lerna/command": "file:../../core/command",
     "@lerna/npm-conf": "file:../../utils/npm-conf",
     "@lerna/validation-error": "file:../../core/validation-error",
-    "camelcase": "^5.0.0",
     "dedent": "^0.7.0",
     "fs-extra": "^9.0.1",
     "globby": "^11.0.1",
@@ -50,6 +49,7 @@
     "slash": "^3.0.0",
     "validate-npm-package-license": "^3.0.3",
     "validate-npm-package-name": "^3.0.0",
-    "whatwg-url": "^8.4.0"
+    "whatwg-url": "^8.4.0",
+    "yargs-parser": "20.2.4"
   }
 }
