@@ -43,7 +43,7 @@
     "conventional-changelog-angular": "^5.0.3",
     "conventional-changelog-core": "^3.1.6",
     "conventional-recommended-bump": "^5.0.0",
-    "cosmiconfig": "^5.1.0",
+    "cosmiconfig": "^7.0.0",
     "dedent": "^0.7.0",
     "dot-prop": "^6.0.0",
     "envinfo": "^7.3.1",

@@ -1,6 +1,6 @@
 "use strict";
 
-const cosmiconfig = require("cosmiconfig");
+const { cosmiconfigSync } = require("cosmiconfig");
 const dedent = require("dedent");
 const globby = require("globby");
 const globParent = require("glob-parent");
@@ -18,7 +18,7 @@ const { makeFileFinder, makeSyncFileFinder } = require("./lib/make-file-finder")
 
 class Project {
   constructor(cwd) {
-    const explorer = cosmiconfig("lerna", {
+    const explorer = cosmiconfigSync("lerna", {
       searchPlaces: ["lerna.json", "package.json"],
       transform(obj) {
         // cosmiconfig returns null when nothing is found
@@ -44,7 +44,7 @@ class Project {
     let loaded;
 
     try {
-      loaded = explorer.searchSync(cwd);
+      loaded = explorer.search(cwd);
     } catch (err) {
       // redecorate JSON syntax errors, avoid debug dump
       if (err.name === "JSONError") {
