@@ -160,6 +160,11 @@ exports.builder = (yargs, composed) => {
       requiresArg: true,
       defaultDescription: "v",
     },
+    "git-tag-command": {
+      describe:
+        "Allows users to specify a wrapper command in CD/CI pipelines that have no direct write access.",
+      type: "string",
+    },
     y: {
       describe: "Skip all confirmation prompts.",
       alias: "yes",
