@@ -31,7 +31,7 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@zkochan/cmd-shim": "^3.1.0",
+    "cmd-shim": "^4.0.2",
     "fs-extra": "^9.0.1",
     "npmlog": "^4.1.2"
   }
