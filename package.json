@@ -32,7 +32,7 @@
     "@evocateur/npm-registry-fetch": "^4.0.0",
     "@evocateur/pacote": "^9.6.3",
     "@octokit/plugin-enterprise-rest": "^6.0.1",
-    "@octokit/rest": "^16.28.4",
+    "@octokit/rest": "^18.0.9",
     "@zkochan/cmd-shim": "^3.1.0",
     "byte-size": "^7.0.0",
     "camelcase": "^5.3.1",
