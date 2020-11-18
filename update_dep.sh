@@ -11,6 +11,12 @@ command -v rg >/dev/null 2>&1 || { echo >&2 "rg is required. brew install ripgre
 command -v sponge >/dev/null 2>&1 || { echo >&2 "sponge is required. brew install sponge"; exit 1; }
 
 TARGET="$1"
+INFILES=$(rg --sort=path --files-with-matches --glob package.json --glob '!__fixtures__' --fixed-strings '"'$TARGET'":')
+
+if [ "$INFILES" == "" ]; then
+    echo >&2 "No packages found with dependency '$TARGET'"
+    exit 0
+fi
 
 echo "Updating package: '$TARGET'"
 
@@ -18,8 +24,6 @@ LATEST=$(npm v "$TARGET" version)
 LATEST="^$LATEST"
 
 echo "...using version: '$LATEST'"
-
-INFILES=$(rg --sort=path --files-with-matches --glob package.json --glob '!__fixtures__' --fixed-strings '"'$TARGET'":')
 
 echo "located in files:"
 echo $INFILES
