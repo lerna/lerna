@@ -1,5 +1,10 @@
 #!/bin/sh
 
+if [ "$#" -ne 1 ]; then
+    echo >&2 "Usage: $0 package-name"
+    exit 1
+fi
+
 # brew install ripgrep jq sponge
 
 TARGET="$1"
