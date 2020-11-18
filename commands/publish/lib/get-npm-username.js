@@ -2,10 +2,10 @@
 
 const ValidationError = require("@lerna/validation-error");
 const { getFetchConfig } = require("./fetch-config");
-const getProfileData = require("./get-profile-data");
-const getWhoAmI = require("./get-whoami");
+const { getProfileData } = require("./get-profile-data");
+const { getWhoAmI } = require("./get-whoami");
 
-module.exports = getNpmUsername;
+module.exports.getNpmUsername = getNpmUsername;
 
 /**
  * Retrieve username of logged-in user.

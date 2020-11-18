@@ -3,8 +3,12 @@
 const log = require("npmlog");
 const childProcess = require("@lerna/child-process");
 
-module.exports = getCurrentSHA;
+module.exports.getCurrentSHA = getCurrentSHA;
 
+/**
+ * Retrieve current SHA from git.
+ * @param {CommandExecOpts} opts
+ */
 function getCurrentSHA(opts) {
   log.silly("getCurrentSHA");
 

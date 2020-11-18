@@ -4,7 +4,7 @@ const fs = require("fs-extra");
 const path = require("path");
 const Project = require("@lerna/project");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const removeTempLicenses = require("../lib/remove-temp-licenses");
+const { removeTempLicenses } = require("../lib/remove-temp-licenses");
 
 describe("removeTempLicenses", () => {
   it("removes license file from target packages", async () => {

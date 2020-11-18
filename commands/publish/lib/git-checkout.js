@@ -3,8 +3,14 @@
 const log = require("npmlog");
 const childProcess = require("@lerna/child-process");
 
-module.exports = gitCheckout;
+module.exports.gitCheckout = gitCheckout;
 
+/**
+ * Reset files modified by publish steps.
+ * @param {string[]} stagedFiles
+ * @param {{ granularPathspec: boolean; }} gitOpts
+ * @param {CommandExecOpts} execOpts
+ */
 function gitCheckout(stagedFiles, gitOpts, execOpts) {
   const files = gitOpts.granularPathspec ? stagedFiles : ".";
 

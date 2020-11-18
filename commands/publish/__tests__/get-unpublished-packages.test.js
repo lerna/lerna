@@ -11,7 +11,7 @@ const { getPackages } = require("@lerna/project");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 
 // file under test
-const getUnpublishedPackages = require("../lib/get-unpublished-packages");
+const { getUnpublishedPackages } = require("../lib/get-unpublished-packages");
 
 pacote.packument.mockImplementation(async (pkg) => {
   if (pkg === "package-1") {

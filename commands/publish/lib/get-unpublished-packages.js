@@ -4,8 +4,14 @@ const log = require("npmlog");
 const pMap = require("p-map");
 const pacote = require("pacote");
 
-module.exports = getUnpublishedPackages;
+module.exports.getUnpublishedPackages = getUnpublishedPackages;
 
+/**
+ * Retrieve a list of graph nodes for packages that need to be published.
+ * @param {PackageGraph} packageGraph
+ * @param {OptionsSnapshot} opts
+ * @returns {PackageGraphNode[]}
+ */
 function getUnpublishedPackages(packageGraph, opts) {
   log.silly("getUnpublishedPackages");
 

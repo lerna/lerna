@@ -22,10 +22,10 @@ const npmPublish = require("@lerna/npm-publish");
 const packDirectory = require("@lerna/pack-directory");
 const PromptUtilities = require("@lerna/prompt");
 const collectUpdates = require("@lerna/collect-updates");
-const getNpmUsername = require("../lib/get-npm-username");
-const verifyNpmPackageAccess = require("../lib/verify-npm-package-access");
-const getTwoFactorAuthRequired = require("../lib/get-two-factor-auth-required");
-const gitCheckout = require("../lib/git-checkout");
+const { getNpmUsername } = require("../lib/get-npm-username");
+const { verifyNpmPackageAccess } = require("../lib/verify-npm-package-access");
+const { getTwoFactorAuthRequired } = require("../lib/get-two-factor-auth-required");
+const { gitCheckout } = require("../lib/git-checkout");
 
 // helpers
 const commitChangeToPackage = require("@lerna-test/commit-change-to-package");

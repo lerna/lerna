@@ -3,8 +3,8 @@
 jest.mock("../lib/get-profile-data");
 
 const loggingOutput = require("@lerna-test/logging-output");
-const getProfileData = require("../lib/get-profile-data");
-const getTwoFactorAuthRequired = require("../lib/get-two-factor-auth-required");
+const { getProfileData } = require("../lib/get-profile-data");
+const { getTwoFactorAuthRequired } = require("../lib/get-two-factor-auth-required");
 
 getProfileData.mockImplementation(() => Promise.resolve({ tfa: {} }));
 

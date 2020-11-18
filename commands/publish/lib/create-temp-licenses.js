@@ -4,8 +4,13 @@ const fs = require("fs-extra");
 const path = require("path");
 const pMap = require("p-map");
 
-module.exports = createTempLicenses;
+module.exports.createTempLicenses = createTempLicenses;
 
+/**
+ * Create temporary license files.
+ * @param {string} srcLicensePath
+ * @param {Packages[]} packagesToBeLicensed
+ */
 function createTempLicenses(srcLicensePath, packagesToBeLicensed) {
   if (!srcLicensePath || !packagesToBeLicensed.length) {
     return Promise.resolve();

@@ -2,8 +2,14 @@
 
 const path = require("path");
 
-module.exports = getPackagesWithoutLicense;
+module.exports.getPackagesWithoutLicense = getPackagesWithoutLicense;
 
+/**
+ * Retrieve a list of packages that lack a license file.
+ * @param {Project} project
+ * @param {Package[]} packagesToPublish
+ * @returns {Package[]}
+ */
 function getPackagesWithoutLicense(project, packagesToPublish) {
   return project.getPackageLicensePaths().then((licensePaths) => {
     // this assumes any existing license is a sibling of package.json, which is pretty safe

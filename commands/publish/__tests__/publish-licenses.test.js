@@ -4,8 +4,8 @@
 jest.mock("../lib/verify-npm-package-access");
 jest.mock("../lib/get-npm-username");
 jest.mock("../lib/get-two-factor-auth-required");
-jest.mock("../lib/create-temp-licenses", () => jest.fn(() => Promise.resolve()));
-jest.mock("../lib/remove-temp-licenses", () => jest.fn(() => Promise.resolve()));
+jest.mock("../lib/create-temp-licenses", () => ({ createTempLicenses: jest.fn(() => Promise.resolve()) }));
+jest.mock("../lib/remove-temp-licenses", () => ({ removeTempLicenses: jest.fn(() => Promise.resolve()) }));
 // FIXME: better mock for version command
 jest.mock("../../version/lib/git-push");
 jest.mock("../../version/lib/is-anything-committed");
@@ -17,8 +17,8 @@ const path = require("path");
 
 // mocked modules
 const packDirectory = require("@lerna/pack-directory");
-const createTempLicenses = require("../lib/create-temp-licenses");
-const removeTempLicenses = require("../lib/remove-temp-licenses");
+const { createTempLicenses } = require("../lib/create-temp-licenses");
+const { removeTempLicenses } = require("../lib/remove-temp-licenses");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);

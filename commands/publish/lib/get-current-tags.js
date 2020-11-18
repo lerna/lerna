@@ -4,8 +4,14 @@ const log = require("npmlog");
 const npa = require("npm-package-arg");
 const childProcess = require("@lerna/child-process");
 
-module.exports = getCurrentTags;
+module.exports.getCurrentTags = getCurrentTags;
 
+/**
+ * Retrieve a list of git tags pointing to the current HEAD that match the provided pattern.
+ * @param {CommandExecOpts} execOpts
+ * @param {string} matchingPattern
+ * @returns {string[]}
+ */
 function getCurrentTags(execOpts, matchingPattern) {
   log.silly("getCurrentTags", "matching %j", matchingPattern);
 

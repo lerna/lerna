@@ -3,7 +3,7 @@
 const fetch = require("npm-registry-fetch");
 const pulseTillDone = require("@lerna/pulse-till-done");
 
-module.exports = getProfileData;
+module.exports.getProfileData = getProfileData;
 
 /**
  * Retrieve profile data of logged-in user.

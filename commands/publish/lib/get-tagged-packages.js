@@ -4,8 +4,14 @@ const path = require("path");
 const log = require("npmlog");
 const childProcess = require("@lerna/child-process");
 
-module.exports = getTaggedPackages;
+module.exports.getTaggedPackages = getTaggedPackages;
 
+/**
+ * Retrieve a list of graph nodes for packages that were tagged in a non-independent release.
+ * @param {PackageGraph} packageGraph
+ * @param {string} rootPath
+ * @param {CommandExecOpts} opts
+ */
 function getTaggedPackages(packageGraph, rootPath, opts) {
   log.silly("getTaggedPackages");
 

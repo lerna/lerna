@@ -5,7 +5,7 @@ const pulseTillDone = require("@lerna/pulse-till-done");
 const ValidationError = require("@lerna/validation-error");
 const { getFetchConfig } = require("./fetch-config");
 
-module.exports = verifyNpmPackageAccess;
+module.exports.verifyNpmPackageAccess = verifyNpmPackageAccess;
 
 /**
  * Throw an error if the logged-in user does not have read-write access to all packages.

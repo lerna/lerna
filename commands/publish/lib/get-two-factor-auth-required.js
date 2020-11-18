@@ -2,9 +2,9 @@
 
 const ValidationError = require("@lerna/validation-error");
 const { getFetchConfig } = require("./fetch-config");
-const getProfileData = require("./get-profile-data");
+const { getProfileData } = require("./get-profile-data");
 
-module.exports = getTwoFactorAuthRequired;
+module.exports.getTwoFactorAuthRequired = getTwoFactorAuthRequired;
 
 /**
  * Determine if the logged-in user has enabled two-factor auth.

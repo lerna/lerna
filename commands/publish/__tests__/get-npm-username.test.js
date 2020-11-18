@@ -4,7 +4,7 @@ jest.mock("npm-registry-fetch");
 
 const fetch = require("npm-registry-fetch");
 const loggingOutput = require("@lerna-test/logging-output");
-const getNpmUsername = require("../lib/get-npm-username");
+const { getNpmUsername } = require("../lib/get-npm-username");
 
 fetch.json.mockImplementation(() => Promise.resolve({ username: "lerna-test" }));
 

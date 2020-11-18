@@ -26,17 +26,17 @@ const versionCommand = require("@lerna/version");
 const prereleaseIdFromVersion = require("@lerna/prerelease-id-from-version");
 const otplease = require("@lerna/otplease");
 
-const createTempLicenses = require("./lib/create-temp-licenses");
-const getCurrentSHA = require("./lib/get-current-sha");
-const getCurrentTags = require("./lib/get-current-tags");
-const getUnpublishedPackages = require("./lib/get-unpublished-packages");
-const getNpmUsername = require("./lib/get-npm-username");
-const getTaggedPackages = require("./lib/get-tagged-packages");
-const getPackagesWithoutLicense = require("./lib/get-packages-without-license");
-const gitCheckout = require("./lib/git-checkout");
-const removeTempLicenses = require("./lib/remove-temp-licenses");
-const verifyNpmPackageAccess = require("./lib/verify-npm-package-access");
-const getTwoFactorAuthRequired = require("./lib/get-two-factor-auth-required");
+const { createTempLicenses } = require("./lib/create-temp-licenses");
+const { getCurrentSHA } = require("./lib/get-current-sha");
+const { getCurrentTags } = require("./lib/get-current-tags");
+const { getUnpublishedPackages } = require("./lib/get-unpublished-packages");
+const { getNpmUsername } = require("./lib/get-npm-username");
+const { getTaggedPackages } = require("./lib/get-tagged-packages");
+const { getPackagesWithoutLicense } = require("./lib/get-packages-without-license");
+const { gitCheckout } = require("./lib/git-checkout");
+const { removeTempLicenses } = require("./lib/remove-temp-licenses");
+const { verifyNpmPackageAccess } = require("./lib/verify-npm-package-access");
+const { getTwoFactorAuthRequired } = require("./lib/get-two-factor-auth-required");
 
 module.exports = factory;
 

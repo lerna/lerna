@@ -3,7 +3,7 @@
 const fetch = require("npm-registry-fetch");
 const pulseTillDone = require("@lerna/pulse-till-done");
 
-module.exports = getWhoAmI;
+module.exports.getWhoAmI = getWhoAmI;
 
 /**
  * Retrieve logged-in user's username via legacy API.

@@ -21,7 +21,7 @@ const npmPublish = require("@lerna/npm-publish");
 const PromptUtilities = require("@lerna/prompt");
 const output = require("@lerna/output");
 const checkWorkingTree = require("@lerna/check-working-tree");
-const getUnpublishedPackages = require("../lib/get-unpublished-packages");
+const { getUnpublishedPackages } = require("../lib/get-unpublished-packages");
 
 // helpers
 const loggingOutput = require("@lerna-test/logging-output");

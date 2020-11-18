@@ -4,7 +4,7 @@ const execa = require("execa");
 const fs = require("fs-extra");
 const path = require("path");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const gitCheckout = require("../lib/git-checkout");
+const { gitCheckout } = require("../lib/git-checkout");
 
 test("gitCheckout files", async () => {
   const cwd = await initFixture("no-interdependencies");
