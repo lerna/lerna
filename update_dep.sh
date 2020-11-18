@@ -6,6 +6,9 @@ if [ "$#" -ne 1 ]; then
 fi
 
 # brew install ripgrep jq sponge
+command -v jq >/dev/null 2>&1 || { echo >&2 "jq is required. brew install jq"; exit 1; }
+command -v rg >/dev/null 2>&1 || { echo >&2 "rg is required. brew install ripgrep"; exit 1; }
+command -v sponge >/dev/null 2>&1 || { echo >&2 "sponge is required. brew install sponge"; exit 1; }
 
 TARGET="$1"
 
