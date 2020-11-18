@@ -1,9 +1,4 @@
 {
-  "packages": [
-    "commands/*",
-    "core/*",
-    "utils/*"
-  ],
   "command": {
     "create": {
       "homepage": "https://github.com/lerna/lerna",
@@ -21,5 +16,6 @@
     "**/__tests__/**",
     "**/*.md"
   ],
+  "useWorkspaces": true,
   "version": "3.22.1"
 }
