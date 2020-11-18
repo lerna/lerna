@@ -3,7 +3,7 @@
 const fs = require("fs-extra");
 const path = require("path");
 const log = require("npmlog");
-const { publish } = require("@evocateur/libnpmpublish");
+const { publish } = require("libnpmpublish");
 const pify = require("pify");
 const readJSON = require("read-package-json");
 const figgyPudding = require("figgy-pudding");
@@ -22,7 +22,11 @@ const PublishConfig = figgyPudding(
     log: { default: log },
     "project-scope": {},
     projectScope: "project-scope",
+    // from publishConfig
+    registry: {},
     tag: { default: "latest" },
+    // npm v7 flattens 'tag' to 'defaultTag', so proxy here for back-compat
+    defaultTag: "tag",
   },
   {
     other() {
@@ -35,7 +39,7 @@ const PublishConfig = figgyPudding(
 function npmPublish(pkg, tarFilePath, _opts, otpCache) {
   const { scope } = npa(pkg.name);
   // pass only the package scope to libnpmpublish
-  const opts = PublishConfig(_opts, {
+  let opts = PublishConfig(_opts, {
     projectScope: scope,
   });
 
@@ -56,7 +60,7 @@ function npmPublish(pkg, tarFilePath, _opts, otpCache) {
     });
     chain = chain.then(([tarData, manifest]) => {
       // non-default tag needs to override publishConfig.tag,
-      // which is merged over opts.tag in libnpmpublish
+      // which is merged into opts below if necessary
       if (
         opts.tag !== "latest" &&
         manifest.publishConfig &&
@@ -65,6 +69,11 @@ function npmPublish(pkg, tarFilePath, _opts, otpCache) {
       ) {
         // eslint-disable-next-line no-param-reassign
         manifest.publishConfig.tag = opts.tag;
+      }
+
+      // publishConfig is no longer consumed in n-r-f, so merge here
+      if (manifest.publishConfig) {
+        opts = opts.concat(manifest.publishConfig);
       }
 
       return otplease((innerOpts) => publish(manifest, tarData, innerOpts), opts, otpCache).catch((err) => {

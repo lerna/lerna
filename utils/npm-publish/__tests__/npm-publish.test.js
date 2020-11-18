@@ -3,12 +3,12 @@
 jest.mock("@lerna/run-lifecycle");
 jest.mock("@lerna/otplease");
 jest.mock("read-package-json");
-jest.mock("@evocateur/libnpmpublish");
+jest.mock("libnpmpublish");
 jest.mock("fs-extra");
 
 // mocked modules
 const fs = require("fs-extra");
-const { publish } = require("@evocateur/libnpmpublish");
+const { publish } = require("libnpmpublish");
 const readJSON = require("read-package-json");
 const runLifecycle = require("@lerna/run-lifecycle");
 const otplease = require("@lerna/otplease");
@@ -27,7 +27,7 @@ describe("npm-publish", () => {
   const mockManifest = { _normalized: true };
 
   fs.readFile.mockName("fs.readFile").mockResolvedValue(mockTarData);
-  publish.mockName("@evocateur/libnpmpublish").mockResolvedValue();
+  publish.mockName("libnpmpublish").mockResolvedValue();
   readJSON.mockName("read-package-json").mockImplementation((file, cb) => cb(null, mockManifest));
   runLifecycle.mockName("@lerna/run-lifecycle").mockResolvedValue();
   otplease.mockName("@lerna/otplease").mockImplementation((cb, opts) => Promise.resolve(cb(opts)));
@@ -52,6 +52,7 @@ describe("npm-publish", () => {
       mockTarData,
       expect.figgyPudding({
         dryRun: false,
+        defaultTag: "published-tag",
         tag: "published-tag",
         projectScope: "@scope",
       })
@@ -70,7 +71,7 @@ describe("npm-publish", () => {
     );
   });
 
-  it("overrides pkg.publishConfig.tag when opts.tag is not defaulted", async () => {
+  it("overrides pkg.publishConfig.tag when opts.tag is explicitly configured", async () => {
     readJSON.mockImplementationOnce((file, cb) =>
       cb(null, {
         publishConfig: {
@@ -114,7 +115,7 @@ describe("npm-publish", () => {
       }),
       mockTarData,
       expect.figgyPudding({
-        tag: "latest",
+        tag: "beta",
       })
     );
   });
@@ -152,6 +153,31 @@ describe("npm-publish", () => {
       mockTarData,
       expect.figgyPudding({
         tag: "latest",
+      })
+    );
+  });
+
+  it("merges pkg.publishConfig.registry into options", async () => {
+    readJSON.mockImplementationOnce((file, cb) =>
+      cb(null, {
+        publishConfig: {
+          registry: "http://pkg-registry.com",
+        },
+      })
+    );
+    const opts = new Map().set("registry", "https://global-registry.com");
+
+    await npmPublish(pkg, tarFilePath, opts);
+
+    expect(publish).toHaveBeenCalledWith(
+      expect.objectContaining({
+        publishConfig: {
+          registry: "http://pkg-registry.com",
+        },
+      }),
+      mockTarData,
+      expect.figgyPudding({
+        registry: "http://pkg-registry.com",
       })
     );
   });
