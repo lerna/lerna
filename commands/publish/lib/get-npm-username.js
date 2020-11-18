@@ -1,16 +1,21 @@
 "use strict";
 
 const ValidationError = require("@lerna/validation-error");
-const FetchConfig = require("./fetch-config");
+const { getFetchConfig } = require("./fetch-config");
 const getProfileData = require("./get-profile-data");
 const getWhoAmI = require("./get-whoami");
 
 module.exports = getNpmUsername;
 
-function getNpmUsername(_opts) {
-  const opts = FetchConfig(_opts, {
+/**
+ * Retrieve username of logged-in user.
+ * @param {import("./fetch-config").FetchConfig} options
+ * @returns {Promise<string>}
+ */
+function getNpmUsername(options) {
+  const opts = getFetchConfig(options, {
     // don't wait forever for third-party failures to be dealt with
-    "fetch-retries": 0,
+    fetchRetries: 0,
   });
 
   opts.log.info("", "Verifying npm credentials");

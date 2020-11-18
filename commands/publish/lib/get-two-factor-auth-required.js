@@ -1,15 +1,20 @@
 "use strict";
 
 const ValidationError = require("@lerna/validation-error");
-const FetchConfig = require("./fetch-config");
+const { getFetchConfig } = require("./fetch-config");
 const getProfileData = require("./get-profile-data");
 
 module.exports = getTwoFactorAuthRequired;
 
-function getTwoFactorAuthRequired(_opts) {
-  const opts = FetchConfig(_opts, {
+/**
+ * Determine if the logged-in user has enabled two-factor auth.
+ * @param {import("./fetch-config").FetchConfig} options
+ * @returns {Promise<boolean>}
+ */
+function getTwoFactorAuthRequired(options) {
+  const opts = getFetchConfig(options, {
     // don't wait forever for third-party failures to be dealt with
-    "fetch-retries": 0,
+    fetchRetries: 0,
   });
 
   opts.log.info("", "Checking two-factor auth mode");

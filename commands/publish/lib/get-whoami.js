@@ -5,6 +5,11 @@ const pulseTillDone = require("@lerna/pulse-till-done");
 
 module.exports = getWhoAmI;
 
+/**
+ * Retrieve logged-in user's username via legacy API.
+ * @param {import("./fetch-config").FetchConfig} opts
+ * @returns {WhoIAm}
+ */
 function getWhoAmI(opts) {
   opts.log.verbose("", "Retrieving npm username");
 
@@ -15,3 +20,8 @@ function getWhoAmI(opts) {
     return data;
   });
 }
+
+/**
+ * @typedef {object} WhoIAm
+ * @property {string} username
+ */

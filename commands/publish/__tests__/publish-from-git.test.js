@@ -29,8 +29,6 @@ const initFixture = require("@lerna-test/init-fixture")(__dirname);
 // file under test
 const lernaPublish = require("@lerna-test/command-runner")(require("../command"));
 
-expect.extend(require("@lerna-test/figgy-pudding-matchers"));
-
 describe("publish from-git", () => {
   it("publishes tagged packages", async () => {
     const cwd = await initFixture("normal");

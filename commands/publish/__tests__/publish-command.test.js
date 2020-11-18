@@ -39,8 +39,6 @@ const lernaPublish = require("@lerna-test/command-runner")(require("../command")
 
 gitCheckout.mockImplementation(() => Promise.resolve());
 
-expect.extend(require("@lerna-test/figgy-pudding-matchers"));
-
 describe("PublishCommand", () => {
   describe("cli validation", () => {
     let cwd;
@@ -130,20 +128,20 @@ Map {
 
       expect(getNpmUsername).toHaveBeenCalled();
       expect(getNpmUsername).toHaveBeenLastCalledWith(
-        expect.figgyPudding({ registry: "https://registry.npmjs.org/" })
+        expect.objectContaining({ registry: "https://registry.npmjs.org/" })
       );
 
       expect(verifyNpmPackageAccess).toHaveBeenCalled();
       expect(verifyNpmPackageAccess).toHaveBeenLastCalledWith(
         expect.any(Array),
         "lerna-test",
-        expect.figgyPudding({ registry: "https://registry.npmjs.org/" })
+        expect.objectContaining({ registry: "https://registry.npmjs.org/" })
       );
 
       expect(getTwoFactorAuthRequired).toHaveBeenCalled();
       expect(getTwoFactorAuthRequired).toHaveBeenLastCalledWith(
         // extra insurance that @lerna/npm-conf is defaulting things correctly
-        expect.figgyPudding({ otp: undefined })
+        expect.objectContaining({ otp: undefined })
       );
 
       expect(gitCheckout).toHaveBeenCalledWith(

@@ -5,6 +5,11 @@ const pulseTillDone = require("@lerna/pulse-till-done");
 
 module.exports = getProfileData;
 
+/**
+ * Retrieve profile data of logged-in user.
+ * @param {import("./fetch-config").FetchConfig} opts
+ * @returns {Promise<ProfileData>}
+ */
 function getProfileData(opts) {
   opts.log.verbose("", "Retrieving npm user profile");
 
@@ -18,3 +23,17 @@ function getProfileData(opts) {
     );
   });
 }
+
+/**
+ * @typedef {object} ProfileData
+ * @property {{ pending: boolean; mode: 'auth-and-writes' | 'auth-only' }} tfa
+ * @property {string} name
+ * @property {string} username legacy field alias of `name`
+ * @property {string} email
+ * @property {boolean} email_verified
+ * @property {string} created
+ * @property {string} updated
+ * @property {string} [fullname]
+ * @property {string} [twitter]
+ * @property {string} [github]
+ */
