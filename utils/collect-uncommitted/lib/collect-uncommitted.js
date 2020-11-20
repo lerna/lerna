@@ -1,17 +1,17 @@
 "use strict";
 
 const chalk = require("chalk");
-const figgyPudding = require("figgy-pudding");
 const npmlog = require("npmlog");
 const { exec, execSync } = require("@lerna/child-process");
 
 module.exports = collectUncommitted;
 module.exports.sync = sync;
 
-const UncommittedConfig = figgyPudding({
-  cwd: {},
-  log: { default: npmlog },
-});
+/**
+ * @typedef {object} UncommittedConfig
+ * @property {string} cwd
+ * @property {typeof npmlog} [log]
+ */
 
 const maybeColorize = (colorize) => (s) => (s !== " " ? colorize(s) : s);
 const cRed = maybeColorize(chalk.red);
@@ -30,15 +30,23 @@ const o = (l, r) => (x) => l(r(x));
 
 const transformOutput = o(filterEmpty, o(splitOnNewLine, colorizeStats));
 
-function collectUncommitted(options) {
-  const { cwd, log } = UncommittedConfig(options);
+/**
+ * Report uncommitted files. (async)
+ * @param {UncommittedConfig} options
+ * @returns {Promise<string[]>} A list of uncommitted files
+ */
+function collectUncommitted({ cwd, log = npmlog }) {
   log.silly("collect-uncommitted", "git status --porcelain (async)");
 
   return exec("git", ["status", "--porcelain"], { cwd }).then(({ stdout }) => transformOutput(stdout));
 }
 
-function sync(options) {
-  const { cwd, log } = UncommittedConfig(options);
+/**
+ * Report uncommitted files. (sync)
+ * @param {UncommittedConfig} options
+ * @returns {string[]} A list of uncommitted files
+ */
+function sync({ cwd, log = npmlog }) {
   log.silly("collect-uncommitted", "git status --porcelain (sync)");
 
   const stdout = execSync("git", ["status", "--porcelain"], { cwd });
