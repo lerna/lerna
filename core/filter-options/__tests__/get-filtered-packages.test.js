@@ -11,7 +11,7 @@ const initFixture = require("@lerna-test/init-fixture")(path.resolve(__dirname, 
 const PackageGraph = require("@lerna/package-graph");
 const { getPackages } = require("@lerna/project");
 
-const getFilteredPackages = require("../lib/get-filtered-packages");
+const { getFilteredPackages } = require("../lib/get-filtered-packages");
 const filterOptions = require("..");
 
 async function buildGraph(cwd) {

@@ -2,7 +2,7 @@
 
 const log = require("npmlog");
 const dedent = require("dedent");
-const getFilteredPackages = require("./lib/get-filtered-packages");
+const { getFilteredPackages } = require("./lib/get-filtered-packages");
 
 module.exports = filterOptions;
 module.exports.getFilteredPackages = getFilteredPackages;

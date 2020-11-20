@@ -4,7 +4,7 @@ const log = require("npmlog");
 const collectUpdates = require("@lerna/collect-updates");
 const filterPackages = require("@lerna/filter-packages");
 
-module.exports = getFilteredPackages;
+module.exports.getFilteredPackages = getFilteredPackages;
 
 /**
  * @typedef {object} FilterOptions
