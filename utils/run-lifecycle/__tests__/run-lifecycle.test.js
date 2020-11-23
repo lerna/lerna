@@ -86,14 +86,14 @@ describe("runLifecycle()", () => {
     };
     const dir = pkg.location;
     const stage = "dashed-options";
-    const opts = new Map([
-      ["ignore-prepublish", true],
-      ["ignore-scripts", false],
-      ["node-options", "--a-thing"],
-      ["script-shell", "fish"],
-      ["scripts-prepend-node-path", true],
-      ["unsafe-perm", false],
-    ]);
+    const opts = {
+      "ignore-prepublish": true,
+      "ignore-scripts": false,
+      "node-options": "--a-thing",
+      "script-shell": "fish",
+      "scripts-prepend-node-path": true,
+      "unsafe-perm": false,
+    };
 
     await runLifecycle(pkg, stage, opts);
 
@@ -120,7 +120,9 @@ describe("runLifecycle()", () => {
       },
     };
     const stage = "prepublish";
-    const opts = new Map().set("ignore-prepublish", true);
+    const opts = {
+      "ignore-prepublish": true,
+    };
 
     await runLifecycle(pkg, stage, opts);
 
@@ -135,7 +137,9 @@ describe("runLifecycle()", () => {
       },
     };
     const stage = "ignored";
-    const opts = new Map().set("ignore-scripts", true);
+    const opts = {
+      "ignore-scripts": true,
+    };
 
     await runLifecycle(pkg, stage, opts);
 
@@ -152,7 +156,7 @@ describe("runLifecycle()", () => {
       },
     };
     const stage = "prepack";
-    const opts = new Map();
+    const opts = {};
 
     await runLifecycle(pkg, stage, opts);
 

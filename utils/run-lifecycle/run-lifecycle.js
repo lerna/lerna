@@ -2,49 +2,58 @@
 
 const log = require("npmlog");
 const runScript = require("npm-lifecycle");
-const figgyPudding = require("figgy-pudding");
 const npmConf = require("@lerna/npm-conf");
 
 module.exports = runLifecycle;
 module.exports.createRunner = createRunner;
 
-const LifecycleConfig = figgyPudding(
-  {
-    log: { default: log },
-    // provide aliases for some dash-cased props
-    "ignore-prepublish": {},
-    ignorePrepublish: "ignore-prepublish",
-    "ignore-scripts": {},
-    ignoreScripts: "ignore-scripts",
-    "node-options": {},
-    nodeOptions: "node-options",
-    "script-shell": {},
-    scriptShell: "script-shell",
-    "scripts-prepend-node-path": {},
-    scriptsPrependNodePath: "scripts-prepend-node-path",
-    "unsafe-perm": {
-      // when running scripts explicitly, assume that they're trusted
-      default: true,
-    },
-    unsafePerm: "unsafe-perm",
-  },
-  {
-    other() {
-      // open up the pudding
-      return true;
-    },
-  }
-);
+/**
+ * @typedef {object} LifecycleConfig
+ * @property {typeof log} [log]
+ * @property {boolean} [ignorePrepublish]
+ * @property {boolean} [ignoreScripts]
+ * @property {string} [nodeOptions]
+ * @property {string} [scriptShell]
+ * @property {boolean} [scriptsPrependNodePath]
+ * @property {boolean} [unsafePerm=true]
+ */
 
-function runLifecycle(pkg, stage, _opts) {
+/**
+ * Alias dash-cased npmConf to camelCase
+ * @param {LifecycleConfig} obj
+ * @returns {LifecycleConfig}
+ */
+function flattenOptions(obj) {
+  return {
+    ignorePrepublish: obj["ignore-prepublish"],
+    ignoreScripts: obj["ignore-scripts"],
+    nodeOptions: obj["node-options"],
+    scriptShell: obj["script-shell"],
+    scriptsPrependNodePath: obj["scripts-prepend-node-path"],
+    unsafePerm: obj["unsafe-perm"],
+    ...obj,
+  };
+}
+
+/**
+ * Run a lifecycle script for a package.
+ * @param {import("@lerna/package")} pkg
+ * @param {string} stage
+ * @param {LifecycleConfig} options
+ */
+function runLifecycle(pkg, stage, options) {
   // back-compat for @lerna/npm-conf instances
   // https://github.com/isaacs/proto-list/blob/27764cd/proto-list.js#L14
-  if ("root" in _opts) {
+  if ("root" in options) {
     // eslint-disable-next-line no-param-reassign
-    _opts = _opts.snapshot;
+    options = options.snapshot;
   }
 
-  const opts = LifecycleConfig(_opts);
+  const opts = {
+    log,
+    unsafePerm: true,
+    ...flattenOptions(options),
+  };
   const dir = pkg.location;
   const config = {};
 
@@ -67,7 +76,7 @@ function runLifecycle(pkg, stage, _opts) {
   }
 
   // https://github.com/zkat/figgy-pudding/blob/7d68bd3/index.js#L42-L64
-  for (const [key, val] of opts) {
+  for (const [key, val] of Object.entries(opts)) {
     // omit falsy values and circular objects
     if (val != null && key !== "log" && key !== "logstream") {
       config[key] = val;
