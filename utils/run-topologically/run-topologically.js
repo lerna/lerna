@@ -1,34 +1,23 @@
 "use strict";
 
 const PQueue = require("p-queue").default;
-const figgyPudding = require("figgy-pudding");
 const QueryGraph = require("@lerna/query-graph");
 
 module.exports = runTopologically;
 
-const TopologicalConfig = figgyPudding({
-  // p-queue options
-  concurrency: {},
-  // query-graph options
-  "graph-type": {},
-  graphType: "graph-type",
-  "reject-cycles": {},
-  rejectCycles: "reject-cycles",
-});
+/**
+ * @typedef {import("@lerna/query-graph").QueryGraphConfig & { concurrency: number }} TopologicalConfig
+ */
 
 /**
  * Run callback in maximally-saturated topological order.
  *
- * @param {Array<Package>} packages List of `Package` instances
- * @param {Function} runner Callback to map each `Package` with
- * @param {Number} [opts.concurrency] Concurrency of execution
- * @param {String} [opts.graphType] "allDependencies" or "dependencies"
- * @param {Boolean} [opts.rejectCycles] Whether or not to reject cycles
- * @returns {Promise<Array<*>>} when all executions complete
+ * @param {import("@lerna/package")[]} packages List of `Package` instances
+ * @param {(pkg: import("@lerna/package")) => Promise<unknown>} runner Callback to map each `Package` with
+ * @param {TopologicalConfig} [options]
+ * @returns {Promise<unknown[]>} when all executions complete
  */
-function runTopologically(packages, runner, opts) {
-  const { concurrency, graphType, rejectCycles } = TopologicalConfig(opts);
-
+function runTopologically(packages, runner, { concurrency, graphType, rejectCycles } = {}) {
   const queue = new PQueue({ concurrency });
   const graph = new QueryGraph(packages, { graphType, rejectCycles });
 
