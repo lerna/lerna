@@ -158,8 +158,8 @@ describe("pack-directory", () => {
       next,
       next.location,
       Object.assign({}, conf, {
-        "ignore-prepublish": true,
-        "lerna-command": "publish",
+        ignorePrepublish: true,
+        lernaCommand: "publish",
       })
     );
 
