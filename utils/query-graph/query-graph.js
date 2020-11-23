@@ -1,32 +1,28 @@
 "use strict";
 
-const figgyPudding = require("figgy-pudding");
 const PackageGraph = require("@lerna/package-graph");
 
-const QueryGraphConfig = figgyPudding({
-  "graph-type": {},
-  graphType: "graph-type",
-  "reject-cycles": {},
-  rejectCycles: "reject-cycles",
-});
+/**
+ * @typedef {object} QueryGraphConfig
+ * @property {'allDependencies'|'dependencies'} [graphType] "dependencies" excludes devDependencies from graph
+ * @property {boolean} [rejectCycles] Whether or not to reject dependency cycles
+ */
 
+/**
+ * A mutable PackageGraph used to query for next available packages.
+ */
 class QueryGraph {
   /**
-   * A mutable PackageGraph used to query for next available packages.
-   *
-   * @param {Array<Package>} packages An array of Packages to build the graph out of
-   * @param {String} [opts.graphType="allDependencies"] "dependencies" excludes devDependencies from graph
-   * @param {Boolean} [opts.rejectCycles] Whether or not to reject cycles
+   * @param {import("@lerna/package")[]} packages An array of Packages to build the graph out of
+   * @param {QueryGraphConfig} [options]
    * @constructor
    */
-  constructor(packages, opts) {
-    const options = QueryGraphConfig(opts);
-
+  constructor(packages, { graphType = "allDependencies", rejectCycles } = {}) {
     // Create dependency graph
-    this.graph = new PackageGraph(packages, options.graphType);
+    this.graph = new PackageGraph(packages, graphType);
 
     // Evaluate cycles
-    this.cycles = this.graph.collapseCycles(options.rejectCycles);
+    this.cycles = this.graph.collapseCycles(rejectCycles);
   }
 
   _getNextLeaf() {
@@ -75,15 +71,13 @@ module.exports.toposort = toposort;
 /**
  * Sort the input list topologically.
  *
- * @param {!Array.<Package>} packages An array of Packages to build the list out of
- * @param {Object} [options]
- * @param {Boolean} options.graphType "allDependencies" or "dependencies", which excludes devDependencies
- * @param {Boolean} options.rejectCycles Whether or not to reject cycles
+ * @param {import("@lerna/package")[]} packages An array of Packages to build the list out of
+ * @param {QueryGraphConfig} [options]
  *
- * @returns {Array<Package>} a list of Package instances in topological order
+ * @returns {import("@lerna/package")[]} A list of Package instances in topological order
  */
-function toposort(packages, opts) {
-  const graph = new QueryGraph(packages, opts);
+function toposort(packages, options) {
+  const graph = new QueryGraph(packages, options);
   const result = [];
 
   let batch = graph.getAvailablePackages();
