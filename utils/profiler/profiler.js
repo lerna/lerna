@@ -1,6 +1,5 @@
 "use strict";
 
-const figgyPudding = require("figgy-pudding");
 const fs = require("fs-extra");
 const npmlog = require("npmlog");
 const upath = require("upath");
@@ -22,16 +21,21 @@ const getTimeBasedFilename = () => {
   return `Lerna-Profile-${datetimeNormalized}.json`;
 };
 
-const ProfilerConfig = figgyPudding({
-  concurrency: {},
-  log: { default: npmlog },
-  outputDirectory: {},
-});
+/**
+ * @typedef {object} ProfilerConfig
+ * @property {number} concurrency
+ * @property {typeof npmlog} [log]
+ * @property {string} [outputDirectory]
+ */
 
+/**
+ * A profiler to trace execution times across multiple concurrent calls.
+ */
 class Profiler {
-  constructor(opts) {
-    const { concurrency, log, outputDirectory } = ProfilerConfig(opts);
-
+  /**
+   * @param {ProfilerConfig} options
+   */
+  constructor({ concurrency, log = npmlog, outputDirectory }) {
     this.events = [];
     this.logger = log;
     this.outputPath = upath.join(upath.resolve(outputDirectory || "."), getTimeBasedFilename());
