@@ -1,0 +1,3 @@
+//registry.npmjs.org/:_authToken=deadbeef
+@lerna-test:registry = https://lerna-test.npme.io/
+//lerna-test.npme.io/:_authToken=beefcafe
