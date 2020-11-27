@@ -86,5 +86,14 @@ describe("version --allow-branch", () => {
 
       expect(result.updates).toHaveLength(1);
     });
+
+    it("branch should be ignored with --no-allow-branch", async () => {
+      const testDir = await initFixture("allow-branch-lerna");
+
+      await changeBranch(testDir, "unmatched");
+      const result = await lernaVersion(testDir)("--no-allow-branch");
+
+      expect(result.updates).toHaveLength(1);
+    });
   });
 });

@@ -48,10 +48,18 @@ class VersionCommand extends Command {
     return ["publish"];
   }
 
-  get requiresGit() {
+  // Enabling --no-allow-branch to be used on command line to overwrite/remove allowBranch set in lerna.json
+  get noAllowBranch() {
     return (
-      this.commitAndTag || this.pushToRemote || this.options.allowBranch || this.options.conventionalCommits
+      !this.options.allowBranch ||
+      (Array.isArray(this.options.allowBranch) &&
+        this.options.allowBranch.length === 1 &&
+        !this.options.allowBranch[0])
     );
+  }
+
+  get requiresGit() {
+    return this.commitAndTag || this.pushToRemote || !this.noAllowBranch || this.options.conventionalCommits;
   }
 
   configureProperties() {
@@ -136,7 +144,7 @@ class VersionCommand extends Command {
       }
 
       if (
-        this.options.allowBranch &&
+        !this.noAllowBranch &&
         ![].concat(this.options.allowBranch).some(x => minimatch(this.currentBranch, x))
       ) {
         throw new ValidationError(

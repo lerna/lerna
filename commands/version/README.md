@@ -44,6 +44,7 @@ Running `lerna version --conventional-commits` without the above flags will rele
 ## Options
 
 - [`--allow-branch`](#--allow-branch-glob)
+- [`--no-allow-branch`](#--no-allow-branch)
 - [`--amend`](#--amend)
 - [`--changelog-preset`](#--changelog-preset)
 - [`--conventional-commits`](#--conventional-commits)
@@ -106,6 +107,16 @@ Please use with caution.
 
 ```sh
 lerna version --allow-branch hotfix/oops-fix-the-thing
+```
+
+### `--no-allow-branch`
+
+In the case of `allowBranch` is configured in `lerna.json`, --no-allow-branch will overwrite and remove this option.
+
+This is particularly useful to not have `lerna version` trying to manipulate git in the case of you also set `--no-git-tag-version` and `--no-push` which are ignored when `allowBranch` is configured in `lerna.json`:
+
+```sh
+lerna version --no-git-tag-version --no-push --no-allow-branch
 ```
 
 ### `--amend`
