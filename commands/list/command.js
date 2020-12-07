@@ -1,6 +1,6 @@
 "use strict";
 
-const filterable = require("@lerna/filter-options");
+const filterOptions = require("@lerna/filter-options");
 const listable = require("@lerna/listable");
 
 /**
@@ -15,7 +15,7 @@ exports.describe = "List local packages";
 exports.builder = (yargs) => {
   listable.options(yargs);
 
-  return filterable(yargs);
+  return filterOptions(yargs);
 };
 
 exports.handler = function handler(argv) {
