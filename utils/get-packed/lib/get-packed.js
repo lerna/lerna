@@ -6,6 +6,7 @@ const ssri = require("ssri");
 const tar = require("tar");
 
 module.exports = getPacked;
+module.exports.getPacked = getPacked;
 
 function getPacked(pkg, tarFilePath) {
   const bundledWanted = new Set(pkg.bundleDependencies || pkg.bundledDependencies || []);

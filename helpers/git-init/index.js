@@ -7,6 +7,7 @@ const execa = require("execa");
 const TEMPLATE = path.resolve(__dirname, "template");
 
 module.exports = gitInit;
+module.exports.gitInit = gitInit;
 
 function gitInit(cwd, ...args) {
   return execa("git", ["init", "--template", TEMPLATE, ...args], { cwd }).then(() =>

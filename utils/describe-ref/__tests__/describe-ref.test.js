@@ -3,7 +3,7 @@
 jest.mock("@lerna/child-process");
 
 const childProcess = require("@lerna/child-process");
-const describeRef = require("../lib/describe-ref");
+const { describeRef, describeRefSync } = require("../lib/describe-ref");
 
 const DEFAULT_ARGS = ["describe", "--always", "--long", "--dirty", "--first-parent"];
 
@@ -53,9 +53,9 @@ describe("describeRef()", () => {
   });
 });
 
-describe("describeRef.sync()", () => {
+describe("describeRefSync()", () => {
   it("returns parsed metadata", () => {
-    const result = describeRef.sync();
+    const result = describeRefSync();
 
     expect(childProcess.execSync).toHaveBeenLastCalledWith("git", DEFAULT_ARGS, {});
     expect(result).toEqual({
@@ -69,14 +69,14 @@ describe("describeRef.sync()", () => {
 
   it("accepts options.cwd", () => {
     const options = { cwd: "foo" };
-    describeRef.sync(options);
+    describeRefSync(options);
 
     expect(childProcess.execSync).toHaveBeenLastCalledWith("git", DEFAULT_ARGS, options);
   });
 
   it("accepts options.match", () => {
     const options = { match: "v*.*.*" };
-    describeRef.sync(options);
+    describeRefSync(options);
 
     expect(childProcess.execSync).toHaveBeenLastCalledWith(
       "git",

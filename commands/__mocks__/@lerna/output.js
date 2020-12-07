@@ -15,3 +15,5 @@ function logged() {
 
 module.exports = mockOutput;
 module.exports.logged = logged;
+module.exports.output = mockOutput;
+module.exports.output.logged = logged;

@@ -10,6 +10,7 @@ const ChildProcessUtilities = require("@lerna/child-process");
 const RIMRAF_CLI = require.resolve("rimraf/bin");
 
 module.exports = rimrafDir;
+module.exports.rimrafDir = rimrafDir;
 
 function rimrafDir(dirPath) {
   log.silly("rimrafDir", dirPath);

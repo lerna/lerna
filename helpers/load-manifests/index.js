@@ -3,9 +3,10 @@
 const globby = require("globby");
 const loadJsonFile = require("load-json-file");
 
-module.exports = loadPkgManifests;
+module.exports = loadManifests;
+module.exports.loadManifests = loadManifests;
 
-function loadPkgManifests(cwd) {
+function loadManifests(cwd) {
   return globby(
     [
       // all child packages, at any level

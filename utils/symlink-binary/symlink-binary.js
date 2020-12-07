@@ -8,6 +8,7 @@ const Package = require("@lerna/package");
 const createSymlink = require("@lerna/create-symlink");
 
 module.exports = symlinkBinary;
+module.exports.symlinkBinary = symlinkBinary;
 
 /**
  * Symlink bins of srcPackage to node_modules/.bin in destPackage

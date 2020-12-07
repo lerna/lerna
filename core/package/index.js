@@ -248,4 +248,5 @@ function lazy(ref, dir = ".") {
 }
 
 module.exports = Package;
+module.exports.Package = Package;
 module.exports.lazy = lazy;

@@ -5,7 +5,9 @@ const npmlog = require("npmlog");
 const { exec, execSync } = require("@lerna/child-process");
 
 module.exports = collectUncommitted;
-module.exports.sync = sync;
+module.exports.collectUncommitted = collectUncommitted;
+module.exports.sync = collectUncommittedSync;
+module.exports.collectUncommittedSync = collectUncommittedSync;
 
 /**
  * @typedef {object} UncommittedConfig
@@ -46,7 +48,7 @@ function collectUncommitted({ cwd, log = npmlog }) {
  * @param {UncommittedConfig} options
  * @returns {string[]} A list of uncommitted files
  */
-function sync({ cwd, log = npmlog }) {
+function collectUncommittedSync({ cwd, log = npmlog }) {
   log.silly("collect-uncommitted", "git status --porcelain (sync)");
 
   const stdout = execSync("git", ["status", "--porcelain"], { cwd });

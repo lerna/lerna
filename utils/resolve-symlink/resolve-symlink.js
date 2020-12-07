@@ -6,6 +6,7 @@ const log = require("npmlog");
 const path = require("path");
 
 module.exports = resolveSymlink;
+module.exports.resolveSymlink = resolveSymlink;
 
 function resolveSymlink(filePath) {
   log.silly("resolveSymlink", filePath);

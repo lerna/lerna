@@ -7,6 +7,7 @@ const gitAdd = require("@lerna-test/git-add");
 const gitCommit = require("@lerna-test/git-commit");
 
 module.exports = commitChangeToPackage;
+module.exports.commitChangeToPackage = commitChangeToPackage;
 
 function commitChangeToPackage(cwd, packageName, commitMsg, data) {
   const packageJSONPath = path.join(cwd, "packages", packageName, "package.json");

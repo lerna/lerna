@@ -3,6 +3,7 @@
 const os = require("os");
 
 module.exports = globalOptions;
+module.exports.globalOptions = globalOptions;
 
 function globalOptions(yargs) {
   // the global options applicable to _every_ command

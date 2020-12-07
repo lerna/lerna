@@ -4,6 +4,7 @@
 const log = require("npmlog");
 
 module.exports = output;
+module.exports.output = output;
 
 // istanbul ignore next
 function output(...args) {

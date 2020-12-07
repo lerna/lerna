@@ -5,10 +5,12 @@ const log = require("npmlog");
 const ChildProcessUtilities = require("@lerna/child-process");
 const getOpts = require("@lerna/get-npm-exec-opts");
 
-module.exports = runScript;
-module.exports.stream = stream;
+module.exports = npmRunScript;
+module.exports.stream = npmRunScriptStreaming;
+module.exports.npmRunScript = npmRunScript;
+module.exports.npmRunScriptStreaming = npmRunScriptStreaming;
 
-function runScript(script, { args, npmClient, pkg, reject = true }) {
+function npmRunScript(script, { args, npmClient, pkg, reject = true }) {
   log.silly("npmRunScript", script, args, pkg.name);
 
   const argv = ["run", script, ...args];
@@ -17,8 +19,8 @@ function runScript(script, { args, npmClient, pkg, reject = true }) {
   return ChildProcessUtilities.exec(npmClient, argv, opts);
 }
 
-function stream(script, { args, npmClient, pkg, prefix, reject = true }) {
-  log.silly("npmRunScript.stream", [script, args, pkg.name]);
+function npmRunScriptStreaming(script, { args, npmClient, pkg, prefix, reject = true }) {
+  log.silly("npmRunScriptStreaming", [script, args, pkg.name]);
 
   const argv = ["run", script, ...args];
   const opts = makeOpts(pkg, reject);

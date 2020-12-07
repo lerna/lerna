@@ -2,9 +2,10 @@
 
 const log = require("npmlog");
 
-module.exports = getExecOpts;
+module.exports = getNpmExecOpts;
+module.exports.getNpmExecOpts = getNpmExecOpts;
 
-function getExecOpts(pkg, registry) {
+function getNpmExecOpts(pkg, registry) {
   // execa automatically extends process.env
   const env = {};
 

@@ -9,6 +9,7 @@ const getPackagesForOption = require("./lib/get-packages-for-option");
 const makeDiffPredicate = require("./lib/make-diff-predicate");
 
 module.exports = collectUpdates;
+module.exports.collectUpdates = collectUpdates;
 module.exports.collectPackages = collectPackages;
 module.exports.getPackagesForOption = getPackagesForOption;
 

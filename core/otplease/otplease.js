@@ -36,6 +36,7 @@ const semaphore = {
 };
 
 module.exports = otplease;
+module.exports.otplease = otplease;
 module.exports.getOneTimePassword = getOneTimePassword;
 
 /**

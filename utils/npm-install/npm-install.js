@@ -11,6 +11,8 @@ const getExecOpts = require("@lerna/get-npm-exec-opts");
 
 module.exports = npmInstall;
 module.exports.dependencies = npmInstallDependencies;
+module.exports.npmInstall = npmInstall;
+module.exports.npmInstallDependencies = npmInstallDependencies;
 
 function npmInstall(
   pkg,

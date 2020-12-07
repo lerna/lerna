@@ -4,6 +4,7 @@ const execa = require("execa");
 const gitSHA = require("@lerna-test/serialize-git-sha");
 
 module.exports = showCommit;
+module.exports.showCommit = showCommit;
 
 function showCommit(cwd, ...args) {
   return execa(

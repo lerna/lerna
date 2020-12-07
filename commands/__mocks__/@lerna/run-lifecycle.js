@@ -15,5 +15,7 @@ function getOrderedCalls() {
 }
 
 module.exports = mockRunLifecycle;
+module.exports.runLifecycle = mockRunLifecycle;
 module.exports.createRunner = mockCreateRunner;
 module.exports.getOrderedCalls = getOrderedCalls;
+module.exports.runLifecycle.getOrderedCalls = getOrderedCalls;

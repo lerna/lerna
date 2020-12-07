@@ -4,8 +4,10 @@ const log = require("npmlog");
 const childProcess = require("@lerna/child-process");
 
 module.exports = describeRef;
+module.exports.describeRef = describeRef;
 module.exports.parse = parse;
-module.exports.sync = sync;
+module.exports.sync = describeRefSync;
+module.exports.describeRefSync = describeRefSync;
 
 function getArgs(options, includeMergedTags) {
   let args = [
@@ -45,7 +47,7 @@ function describeRef(options = {}, includeMergedTags) {
   });
 }
 
-function sync(options = {}, includeMergedTags) {
+function describeRefSync(options = {}, includeMergedTags) {
   const stdout = childProcess.execSync("git", getArgs(options, includeMergedTags), options);
   const result = parse(stdout, options);
 

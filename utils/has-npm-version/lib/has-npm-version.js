@@ -4,6 +4,7 @@ const semver = require("semver");
 const childProcess = require("@lerna/child-process");
 
 module.exports = hasNpmVersion;
+module.exports.hasNpmVersion = hasNpmVersion;
 module.exports.makePredicate = makePredicate;
 
 function hasNpmVersion(range) {

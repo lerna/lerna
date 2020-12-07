@@ -7,6 +7,7 @@ const log = require("npmlog");
 const ValidationError = require("@lerna/validation-error");
 
 module.exports = filterPackages;
+module.exports.filterPackages = filterPackages;
 
 /**
  * Filters a given set of packages and returns all packages that match the scope glob

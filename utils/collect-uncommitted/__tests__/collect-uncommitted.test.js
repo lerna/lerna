@@ -10,7 +10,7 @@ const gitAdd = require("@lerna-test/git-add");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 
 // file under test
-const collectUncommitted = require("../lib/collect-uncommitted");
+const { collectUncommitted, collectUncommittedSync } = require("../lib/collect-uncommitted");
 
 // primary assertion setup
 const GREEN_A = chalk.green("A");
@@ -114,10 +114,10 @@ describe("collectUncommitted()", () => {
   });
 });
 
-describe("collectUncommitted.sync()", () => {
+describe("collectUncommittedSync()", () => {
   it("resolves empty array on clean repo", async () => {
     const cwd = await initFixture("normal");
-    const result = collectUncommitted.sync({ cwd });
+    const result = collectUncommittedSync({ cwd });
 
     expect(result).toEqual([]);
   });
@@ -127,7 +127,7 @@ describe("collectUncommitted.sync()", () => {
 
     await setupChanges(cwd);
 
-    const result = collectUncommitted.sync({ cwd });
+    const result = collectUncommittedSync({ cwd });
 
     expect(result).toEqual(colorizedAry);
   });
@@ -136,7 +136,7 @@ describe("collectUncommitted.sync()", () => {
     // re-uses previous cwd
     const log = { silly: jest.fn() };
 
-    const result = collectUncommitted.sync({ log });
+    const result = collectUncommittedSync({ log });
 
     expect(log.silly).toHaveBeenCalled();
     expect(result).toEqual(colorizedAry);

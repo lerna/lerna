@@ -5,9 +5,10 @@ const execa = require("execa");
 // eslint-disable-next-line node/no-unpublished-require
 const LERNA_BIN = require.resolve("../../core/lerna/cli");
 
-module.exports = runner;
+module.exports = cliRunner;
+module.exports.cliRunner = cliRunner;
 
-function runner(cwd, env) {
+function cliRunner(cwd, env) {
   const opts = {
     cwd,
     env: Object.assign(

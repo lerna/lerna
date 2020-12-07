@@ -7,7 +7,7 @@ const loggingOutput = require("@lerna-test/logging-output");
 const runScript = require("npm-lifecycle");
 const npmConf = require("@lerna/npm-conf");
 const Package = require("@lerna/package");
-const runLifecycle = require("../run-lifecycle");
+const { runLifecycle, createRunner } = require("../run-lifecycle");
 
 describe("runLifecycle()", () => {
   it("skips packages without scripts", async () => {
@@ -168,7 +168,7 @@ describe("runLifecycle()", () => {
 });
 
 describe("createRunner", () => {
-  const runPackageLifecycle = runLifecycle.createRunner({ "other-cli-flag": 0 });
+  const runPackageLifecycle = createRunner({ "other-cli-flag": 0 });
 
   it("creates partially-applied function with npm conf", async () => {
     const pkg = {

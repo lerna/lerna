@@ -10,6 +10,7 @@ const resolveSymlink = require("@lerna/resolve-symlink");
 const symlinkBinary = require("@lerna/symlink-binary");
 
 module.exports = symlinkDependencies;
+module.exports.symlinkDependencies = symlinkDependencies;
 
 /**
  * Symlink all packages to the packages/node_modules directory

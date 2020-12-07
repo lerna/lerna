@@ -66,6 +66,7 @@ class QueryGraph {
 }
 
 module.exports = QueryGraph;
+module.exports.QueryGraph = QueryGraph;
 module.exports.toposort = toposort;
 
 /**

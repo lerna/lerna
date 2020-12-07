@@ -5,6 +5,7 @@ const execa = require("execa");
 const tempWrite = require("temp-write");
 
 module.exports = gitCommit;
+module.exports.gitCommit = gitCommit;
 
 function gitCommit(cwd, message) {
   if (message.indexOf(os.EOL) > -1) {

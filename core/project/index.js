@@ -206,5 +206,6 @@ Project.PACKAGE_GLOB = "packages/*";
 Project.LICENSE_GLOB = "LICEN{S,C}E{,.*}";
 
 module.exports = Project;
+module.exports.Project = Project;
 module.exports.getPackages = (cwd) => new Project(cwd).getPackages();
 module.exports.getPackagesSync = (cwd) => new Project(cwd).getPackagesSync();

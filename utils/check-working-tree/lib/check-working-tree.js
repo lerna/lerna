@@ -5,6 +5,7 @@ const ValidationError = require("@lerna/validation-error");
 const collectUncommitted = require("@lerna/collect-uncommitted");
 
 module.exports = checkWorkingTree;
+module.exports.checkWorkingTree = checkWorkingTree;
 module.exports.mkThrowIfUncommitted = mkThrowIfUncommitted;
 module.exports.throwIfReleased = throwIfReleased;
 module.exports.throwIfUncommitted = mkThrowIfUncommitted();
