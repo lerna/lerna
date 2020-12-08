@@ -3,9 +3,9 @@
 const conventionalRecommendedBump = require("conventional-recommended-bump");
 const log = require("npmlog");
 const semver = require("semver");
-const getChangelogConfig = require("./get-changelog-config");
+const { getChangelogConfig } = require("./get-changelog-config");
 
-module.exports = recommendVersion;
+module.exports.recommendVersion = recommendVersion;
 
 function recommendVersion(pkg, type, { changelogPreset, rootPath, tagPrefix, prereleaseId }) {
   log.silly(type, "for %s at %s", pkg.name, pkg.location);

@@ -5,11 +5,11 @@ const fs = require("fs-extra");
 const getStream = require("get-stream");
 const log = require("npmlog");
 const { BLANK_LINE, CHANGELOG_HEADER, EOL } = require("./constants");
-const getChangelogConfig = require("./get-changelog-config");
-const makeBumpOnlyFilter = require("./make-bump-only-filter");
-const readExistingChangelog = require("./read-existing-changelog");
+const { getChangelogConfig } = require("./get-changelog-config");
+const { makeBumpOnlyFilter } = require("./make-bump-only-filter");
+const { readExistingChangelog } = require("./read-existing-changelog");
 
-module.exports = updateChangelog;
+module.exports.updateChangelog = updateChangelog;
 
 function updateChangelog(pkg, type, { changelogPreset, rootPath, tagPrefix = "v", version }) {
   log.silly(type, "for %s at %s", pkg.name, pkg.location);

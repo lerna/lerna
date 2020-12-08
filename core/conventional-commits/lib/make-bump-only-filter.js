@@ -2,8 +2,12 @@
 
 const { BLANK_LINE } = require("./constants");
 
-module.exports = makeBumpOnlyFilter;
+module.exports.makeBumpOnlyFilter = makeBumpOnlyFilter;
 
+/**
+ * @param {import("@lerna/package").Package} pkg
+ * @return {(entry: string) => string}
+ */
 function makeBumpOnlyFilter(pkg) {
   return (newEntry) => {
     // When force publishing, it is possible that there will be no actual changes, only a version bump.

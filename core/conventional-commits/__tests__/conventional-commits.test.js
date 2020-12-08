@@ -12,7 +12,7 @@ const { gitTag } = require("@lerna-test/git-tag");
 
 // file under test
 const { recommendVersion, updateChangelog } = require("..");
-const getChangelogConfig = require("../lib/get-changelog-config");
+const { getChangelogConfig } = require("../lib/get-changelog-config");
 
 // stabilize changelog commit SHA and datestamp
 expect.addSnapshotSerializer(require("@lerna-test/serialize-changelog"));
