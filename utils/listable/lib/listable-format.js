@@ -5,8 +5,13 @@ const columnify = require("columnify");
 const path = require("path");
 const { QueryGraph } = require("@lerna/query-graph");
 
-module.exports = listableFormat;
+module.exports.listableFormat = listableFormat;
 
+/**
+ *
+ * @param {import("@lerna/package").Package[]} pkgList
+ * @param {import("./listable-options").ListableOptions} options
+ */
 function listableFormat(pkgList, options) {
   const viewOptions = parseViewOptions(options);
   const resultList = filterResultList(pkgList, viewOptions);
@@ -29,6 +34,9 @@ function listableFormat(pkgList, options) {
   return { text, count };
 }
 
+/**
+ * @param {import("./listable-options").ListableOptions} options
+ */
 function parseViewOptions(options) {
   const alias = options._[0];
 
@@ -43,6 +51,10 @@ function parseViewOptions(options) {
   };
 }
 
+/**
+ * @param {import("@lerna/package").Package[]} pkgList
+ * @param {ReturnType<typeof parseViewOptions>} viewOptions
+ */
 function filterResultList(pkgList, viewOptions) {
   let result = viewOptions.showAll ? pkgList.slice() : pkgList.filter((pkg) => !pkg.private);
 
@@ -54,6 +66,9 @@ function filterResultList(pkgList, viewOptions) {
   return result;
 }
 
+/**
+ * @param {ReturnType<typeof filterResultList>} resultList
+ */
 function toJSONList(resultList) {
   // explicit re-mapping exposes non-enumerable properties
   return resultList.map((pkg) => ({
@@ -64,16 +79,26 @@ function toJSONList(resultList) {
   }));
 }
 
+/**
+ * @param {ReturnType<typeof filterResultList>} resultList
+ */
 function formatJSON(resultList) {
   return JSON.stringify(toJSONList(resultList), null, 2);
 }
 
+/**
+ * @param {ReturnType<typeof filterResultList>} resultList
+ */
 function formatNDJSON(resultList) {
   return toJSONList(resultList)
     .map((data) => JSON.stringify(data))
     .join("\n");
 }
 
+/**
+ * @param {ReturnType<typeof filterResultList>} resultList
+ * @param {ReturnType<typeof parseViewOptions>} viewOptions
+ */
 function formatJSONGraph(resultList, viewOptions) {
   // https://en.wikipedia.org/wiki/Adjacency_list
   const graph = {};
@@ -106,6 +131,9 @@ function formatJSONGraph(resultList, viewOptions) {
   return JSON.stringify(graph, null, 2);
 }
 
+/**
+ * @param {import("@lerna/package").Package} pkg
+ */
 function makeParseable(pkg) {
   const result = [pkg.location, pkg.name];
 
@@ -123,10 +151,17 @@ function makeParseable(pkg) {
   return result.join(":");
 }
 
+/**
+ * @param {ReturnType<typeof filterResultList>} resultList
+ * @param {ReturnType<typeof parseViewOptions>} viewOptions
+ */
 function formatParseable(resultList, viewOptions) {
   return resultList.map(viewOptions.showLong ? makeParseable : (pkg) => pkg.location).join("\n");
 }
 
+/**
+ * @param {ReturnType<typeof parseViewOptions>} viewOptions
+ */
 function getColumnOrder(viewOptions) {
   const columns = ["name"];
 
@@ -141,6 +176,10 @@ function getColumnOrder(viewOptions) {
   return columns;
 }
 
+/**
+ * @param {ReturnType<typeof filterResultList>} resultList
+ * @param {ReturnType<typeof parseViewOptions>} viewOptions
+ */
 function trimmedColumns(formattedResults, viewOptions) {
   const str = columnify(formattedResults, {
     showHeaders: false,
@@ -159,6 +198,10 @@ function trimmedColumns(formattedResults, viewOptions) {
     .join("\n");
 }
 
+/**
+ * @param {ReturnType<typeof filterResultList>} resultList
+ * @param {ReturnType<typeof parseViewOptions>} viewOptions
+ */
 function formatColumns(resultList, viewOptions) {
   const formattedResults = resultList.map((result) => {
     const formatted = {
