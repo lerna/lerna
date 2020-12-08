@@ -7,7 +7,7 @@ const path = require("path");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 
 // file under test
-const { Project } = require("..");
+const { Project, getPackages, getPackagesSync } = require("..");
 
 describe("Project", () => {
   let testDir;
@@ -258,6 +258,38 @@ Object {
     });
   });
 
+  describe(".getPackages()", () => {
+    it("returns a list of package instances asynchronously", async () => {
+      const project = new Project(testDir);
+      const result = await project.getPackages();
+      expect(result).toMatchInlineSnapshot(`
+        Array [
+          Object {
+            "name": "pkg-1",
+            "version": "1.0.0",
+          },
+          Object {
+            "dependencies": Object {
+              "pkg-1": "^1.0.0",
+            },
+            "name": "pkg-2",
+            "version": "1.0.0",
+          },
+        ]
+      `);
+    });
+
+    it("is available from a static method", async () => {
+      const result = await Project.getPackages(testDir);
+      expect(result).toMatchObject([{ name: "pkg-1" }, { name: "pkg-2" }]);
+    });
+
+    it("is available from a named export", async () => {
+      const result = await getPackages(testDir);
+      expect(result).toMatchObject([{ name: "pkg-1" }, { name: "pkg-2" }]);
+    });
+  });
+
   describe(".getPackagesSync()", () => {
     it("returns a list of package instances synchronously", () => {
       const project = new Project(testDir);
@@ -278,8 +310,12 @@ Object {
       `);
     });
 
-    it("is available from a static named export", () => {
-      expect(Project.getPackagesSync(testDir)).toMatchObject(new Project(testDir).getPackagesSync());
+    it("is available from a static method", () => {
+      expect(Project.getPackagesSync(testDir)).toMatchObject([{ name: "pkg-1" }, { name: "pkg-2" }]);
+    });
+
+    it("is available from a named export", () => {
+      expect(getPackagesSync(testDir)).toMatchObject([{ name: "pkg-1" }, { name: "pkg-2" }]);
     });
   });
 

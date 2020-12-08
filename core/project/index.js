@@ -17,6 +17,23 @@ const deprecateConfig = require("./lib/deprecate-config");
 const { makeFileFinder, makeSyncFileFinder } = require("./lib/make-file-finder");
 
 class Project {
+  /**
+   * @param {string} [cwd] Defaults to process.cwd()
+   */
+  static getPackages(cwd) {
+    return new Project(cwd).getPackages();
+  }
+
+  /**
+   * @param {string} [cwd] Defaults to process.cwd()
+   */
+  static getPackagesSync(cwd) {
+    return new Project(cwd).getPackagesSync();
+  }
+
+  /**
+   * @param {string} [cwd] Defaults to process.cwd()
+   */
   constructor(cwd) {
     const explorer = cosmiconfigSync("lerna", {
       searchPlaces: ["lerna.json", "package.json"],
@@ -167,6 +184,9 @@ class Project {
     return finder;
   }
 
+  /**
+   * @returns {Promise<Package[]>} A promise resolving to a list of Package instances
+   */
   getPackages() {
     const mapper = (packageConfigPath) =>
       loadJsonFile(packageConfigPath).then(
@@ -176,6 +196,9 @@ class Project {
     return this.fileFinder("package.json", (filePaths) => pMap(filePaths, mapper, { concurrency: 50 }));
   }
 
+  /**
+   * @returns {Package[]} A list of Package instances
+   */
   getPackagesSync() {
     return makeSyncFileFinder(this.rootPath, this.packageConfigs)("package.json", (packageConfigPath) => {
       return new Package(
@@ -207,5 +230,5 @@ Project.LICENSE_GLOB = "LICEN{S,C}E{,.*}";
 
 module.exports = Project;
 module.exports.Project = Project;
-module.exports.getPackages = (cwd) => new Project(cwd).getPackages();
-module.exports.getPackagesSync = (cwd) => new Project(cwd).getPackagesSync();
+module.exports.getPackages = Project.getPackages;
+module.exports.getPackagesSync = Project.getPackagesSync;
