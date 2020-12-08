@@ -3,10 +3,10 @@
 const log = require("npmlog");
 const { describeRefSync } = require("@lerna/describe-ref");
 
-const hasTags = require("./lib/has-tags");
-const collectPackages = require("./lib/collect-packages");
-const getPackagesForOption = require("./lib/get-packages-for-option");
-const makeDiffPredicate = require("./lib/make-diff-predicate");
+const { hasTags } = require("./lib/has-tags");
+const { collectPackages } = require("./lib/collect-packages");
+const { getPackagesForOption } = require("./lib/get-packages-for-option");
+const { makeDiffPredicate } = require("./lib/make-diff-predicate");
 
 module.exports.collectUpdates = collectUpdates;
 module.exports.collectPackages = collectPackages;

@@ -3,8 +3,12 @@
 const childProcess = require("@lerna/child-process");
 const log = require("npmlog");
 
-module.exports = hasTags;
+module.exports.hasTags = hasTags;
 
+/**
+ * Determine if any git tags are reachable.
+ * @param {{ cwd: string }} opts
+ */
 function hasTags(opts) {
   log.silly("hasTags");
   let result = false;

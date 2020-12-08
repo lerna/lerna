@@ -6,8 +6,15 @@ const minimatch = require("minimatch");
 const path = require("path");
 const slash = require("slash");
 
-module.exports = makeDiffPredicate;
+module.exports.makeDiffPredicate = makeDiffPredicate;
 
+/** @typedef {import("@lerna/package-graph/lib/package-graph-node").PackageGraphNode} PackageGraphNode */
+
+/**
+ * @param {string} committish
+ * @param {{ cwd: string }} execOpts
+ * @param {string[]} ignorePatterns
+ */
 function makeDiffPredicate(committish, execOpts, ignorePatterns = []) {
   const ignoreFilters = new Set(
     ignorePatterns.map((p) =>
@@ -23,7 +30,7 @@ function makeDiffPredicate(committish, execOpts, ignorePatterns = []) {
     log.info("ignoring diff in paths matching", ignorePatterns);
   }
 
-  return function hasDiffSinceThatIsntIgnored(node) {
+  return function hasDiffSinceThatIsntIgnored(/** @type {PackageGraphNode} */ node) {
     const diff = diffSinceIn(committish, node.location, execOpts);
 
     if (diff === "") {
@@ -50,6 +57,11 @@ function makeDiffPredicate(committish, execOpts, ignorePatterns = []) {
   };
 }
 
+/**
+ * @param {string} committish
+ * @param {string} location
+ * @param {{ cwd: string }} opts
+ */
 function diffSinceIn(committish, location, opts) {
   const args = ["diff", "--name-only", committish];
   const formattedLocation = slash(path.relative(opts.cwd, location));

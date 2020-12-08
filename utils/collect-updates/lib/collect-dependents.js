@@ -1,8 +1,22 @@
 "use strict";
 
-module.exports = collectDependents;
+module.exports.collectDependents = collectDependents;
 
+/** @typedef {import("@lerna/package-graph/lib/package-graph-node").PackageGraphNode} PackageGraphNode */
+
+/**
+ * @callback LocalDependentVisitor
+ * @param {PackageGraphNode} dependentNode
+ * @param {string} dependentName
+ * @param {Map<string, PackageGraphNode>} siblingDependents
+ */
+
+/**
+ * Build a set of nodes that are dependents of the input set.
+ * @param {Set<PackageGraphNode>} nodes
+ */
 function collectDependents(nodes) {
+  /** @type {Set<PackageGraphNode>} */
   const collected = new Set();
 
   nodes.forEach((currentNode) => {
@@ -15,6 +29,7 @@ function collectDependents(nodes) {
     const queue = [currentNode];
     const seen = new Set();
 
+    /** @type {LocalDependentVisitor} */
     const visit = (dependentNode, dependentName, siblingDependents) => {
       if (seen.has(dependentNode)) {
         return;

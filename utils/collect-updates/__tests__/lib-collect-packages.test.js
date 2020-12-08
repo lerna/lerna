@@ -4,7 +4,7 @@
 const buildGraph = require("../__helpers__/build-graph");
 
 // file under test
-const collectPackages = require("../lib/collect-packages");
+const { collectPackages } = require("../lib/collect-packages");
 
 const toNamesList = (collection) => Array.from(collection).map((pkg) => pkg.name);
 

@@ -4,7 +4,7 @@
 const buildGraph = require("../__helpers__/build-graph");
 
 // file under test
-const collectDependents = require("../lib/collect-dependents");
+const { collectDependents } = require("../lib/collect-dependents");
 
 test("source node (dag)", () => {
   const graph = buildGraph();
