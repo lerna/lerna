@@ -5,7 +5,6 @@ const columnify = require("columnify");
 const hasUnicode = require("has-unicode")();
 const log = require("npmlog");
 
-module.exports = logPacked;
 module.exports.logPacked = logPacked;
 
 function logPacked(tarball) {

@@ -4,7 +4,6 @@ const log = require("npmlog");
 
 const GitLabClient = require("./lib/GitLabClient");
 
-module.exports = createGitLabClient;
 module.exports.createGitLabClient = createGitLabClient;
 
 function OcktokitAdapter(client) {

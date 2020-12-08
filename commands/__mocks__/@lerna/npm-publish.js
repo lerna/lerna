@@ -19,9 +19,6 @@ afterEach(() => {
   registry.clear();
 });
 
-module.exports = mockNpmPublish;
 module.exports.npmPublish = mockNpmPublish;
-module.exports.order = order;
-module.exports.registry = registry;
 module.exports.npmPublish.order = order;
 module.exports.npmPublish.registry = registry;

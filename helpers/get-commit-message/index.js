@@ -2,7 +2,6 @@
 
 const execa = require("execa");
 
-module.exports = getCommitMessage;
 module.exports.getCommitMessage = getCommitMessage;
 
 function getCommitMessage(cwd, format = "%B") {

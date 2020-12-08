@@ -1,6 +1,5 @@
 "use strict";
 
-module.exports = callsBack;
 module.exports.callsBack = callsBack;
 
 // for mocking the behaviour of methods that accept a callback

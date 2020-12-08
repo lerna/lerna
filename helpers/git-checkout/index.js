@@ -2,7 +2,6 @@
 
 const execa = require("execa");
 
-module.exports = gitCheckout;
 module.exports.gitCheckout = gitCheckout;
 
 function gitCheckout(cwd, args) {

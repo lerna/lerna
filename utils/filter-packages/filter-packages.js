@@ -6,7 +6,6 @@ const log = require("npmlog");
 
 const { ValidationError } = require("@lerna/validation-error");
 
-module.exports = filterPackages;
 module.exports.filterPackages = filterPackages;
 
 /**

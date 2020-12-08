@@ -6,7 +6,6 @@ const writeJsonFile = require("write-json-file");
 const { gitAdd } = require("@lerna-test/git-add");
 const { gitCommit } = require("@lerna-test/git-commit");
 
-module.exports = commitChangeToPackage;
 module.exports.commitChangeToPackage = commitChangeToPackage;
 
 function commitChangeToPackage(cwd, packageName, commitMsg, data) {

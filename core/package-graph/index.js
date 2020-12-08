@@ -298,5 +298,4 @@ class PackageGraph extends Map {
   }
 }
 
-module.exports = PackageGraph;
 module.exports.PackageGraph = PackageGraph;

@@ -2,7 +2,6 @@
 
 const cp = require("child_process");
 
-module.exports = gitStatus;
 module.exports.gitStatus = gitStatus;
 
 function gitStatus(cwd) {

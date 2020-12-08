@@ -3,7 +3,6 @@
 const globby = require("globby");
 const loadJsonFile = require("load-json-file");
 
-module.exports = loadManifests;
 module.exports.loadManifests = loadManifests;
 
 function loadManifests(cwd) {

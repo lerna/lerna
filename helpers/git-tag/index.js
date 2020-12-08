@@ -2,7 +2,6 @@
 
 const execa = require("execa");
 
-module.exports = gitTag;
 module.exports.gitTag = gitTag;
 
 function gitTag(cwd, tagName) {

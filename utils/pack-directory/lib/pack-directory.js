@@ -9,7 +9,6 @@ const { getPacked } = require("@lerna/get-packed");
 const { Package } = require("@lerna/package");
 const { runLifecycle } = require("@lerna/run-lifecycle");
 
-module.exports = packDirectory;
 module.exports.packDirectory = packDirectory;
 
 /**

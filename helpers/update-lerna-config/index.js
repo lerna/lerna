@@ -3,7 +3,6 @@
 // eslint-disable-next-line import/no-extraneous-dependencies, node/no-extraneous-require
 const { Project } = require("@lerna/project");
 
-module.exports = updateLernaConfig;
 module.exports.updateLernaConfig = updateLernaConfig;
 
 /**

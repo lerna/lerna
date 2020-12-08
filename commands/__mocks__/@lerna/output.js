@@ -13,7 +13,5 @@ function logged() {
   return mockOutput.mock.calls.map((args) => multiLineTrimRight(args[0])).join("\n");
 }
 
-module.exports = mockOutput;
-module.exports.logged = logged;
 module.exports.output = mockOutput;
 module.exports.output.logged = logged;

@@ -253,5 +253,4 @@ class Package {
   }
 }
 
-module.exports = Package;
 module.exports.Package = Package;

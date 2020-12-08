@@ -5,7 +5,6 @@ const path = require("path");
 const ssri = require("ssri");
 const tar = require("tar");
 
-module.exports = getPacked;
 module.exports.getPacked = getPacked;
 
 function getPacked(pkg, tarFilePath) {

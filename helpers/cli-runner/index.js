@@ -5,7 +5,6 @@ const execa = require("execa");
 // eslint-disable-next-line node/no-unpublished-require
 const LERNA_BIN = require.resolve("../../core/lerna/cli");
 
-module.exports = cliRunner;
 module.exports.cliRunner = cliRunner;
 
 function cliRunner(cwd, env) {

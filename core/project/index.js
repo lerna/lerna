@@ -228,7 +228,6 @@ class Project {
 Project.PACKAGE_GLOB = "packages/*";
 Project.LICENSE_GLOB = "LICEN{S,C}E{,.*}";
 
-module.exports = Project;
 module.exports.Project = Project;
 module.exports.getPackages = Project.getPackages;
 module.exports.getPackagesSync = Project.getPackagesSync;

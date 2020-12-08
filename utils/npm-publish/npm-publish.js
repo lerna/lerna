@@ -10,7 +10,6 @@ const { runLifecycle } = require("@lerna/run-lifecycle");
 const npa = require("npm-package-arg");
 const { otplease } = require("@lerna/otplease");
 
-module.exports = npmPublish;
 module.exports.npmPublish = npmPublish;
 
 const readJSONAsync = pify(readJSON);

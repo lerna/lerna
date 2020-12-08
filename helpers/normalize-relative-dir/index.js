@@ -3,7 +3,6 @@
 const path = require("path");
 const normalizePath = require("normalize-path");
 
-module.exports = normalizeRelativeDir;
 module.exports.normalizeRelativeDir = normalizeRelativeDir;
 
 function normalizeRelativeDir(testDir, filePath) {

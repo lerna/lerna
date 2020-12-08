@@ -6,5 +6,4 @@ const client = {
   },
 };
 
-module.exports = () => client;
 module.exports.createGitLabClient = () => client;

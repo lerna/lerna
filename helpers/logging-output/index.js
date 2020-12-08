@@ -3,7 +3,6 @@
 const log = require("npmlog");
 const { multiLineTrimRight } = require("@lerna-test/multi-line-trim-right");
 
-module.exports = loggingOutput;
 module.exports.loggingOutput = loggingOutput;
 
 // clear logs between tests

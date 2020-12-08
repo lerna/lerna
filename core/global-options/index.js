@@ -2,7 +2,6 @@
 
 const os = require("os");
 
-module.exports = globalOptions;
 module.exports.globalOptions = globalOptions;
 
 function globalOptions(yargs) {

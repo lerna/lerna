@@ -2,7 +2,6 @@
 
 const normalizeNewline = require("normalize-newline");
 
-module.exports = multiLineTrimRight;
 module.exports.multiLineTrimRight = multiLineTrimRight;
 
 // const { multiLineTrimRight } = require("@lerna-test/multi-line-trim-right");

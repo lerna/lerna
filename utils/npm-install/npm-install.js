@@ -9,8 +9,6 @@ const writePkg = require("write-pkg");
 const ChildProcessUtilities = require("@lerna/child-process");
 const { getNpmExecOpts } = require("@lerna/get-npm-exec-opts");
 
-module.exports = npmInstall;
-module.exports.dependencies = npmInstallDependencies;
 module.exports.npmInstall = npmInstall;
 module.exports.npmInstallDependencies = npmInstallDependencies;
 

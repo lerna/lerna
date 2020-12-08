@@ -47,5 +47,4 @@ function pulseTillDone(prefix, promise) {
   );
 }
 
-module.exports = pulseTillDone;
 module.exports.pulseTillDone = pulseTillDone;

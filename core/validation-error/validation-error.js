@@ -12,5 +12,4 @@ class ValidationError extends Error {
   }
 }
 
-module.exports = ValidationError;
 module.exports.ValidationError = ValidationError;

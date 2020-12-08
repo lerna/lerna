@@ -5,7 +5,6 @@ const fs = require("fs-extra");
 const log = require("npmlog");
 const path = require("path");
 
-module.exports = createSymlink;
 module.exports.createSymlink = createSymlink;
 
 function createSymlink(src, dest, type) {

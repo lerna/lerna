@@ -2,7 +2,6 @@
 
 const log = require("npmlog");
 
-module.exports = getNpmExecOpts;
 module.exports.getNpmExecOpts = getNpmExecOpts;
 
 function getNpmExecOpts(pkg, registry) {

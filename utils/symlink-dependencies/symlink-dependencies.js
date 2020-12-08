@@ -9,7 +9,6 @@ const { createSymlink } = require("@lerna/create-symlink");
 const { resolveSymlink } = require("@lerna/resolve-symlink");
 const { symlinkBinary } = require("@lerna/symlink-binary");
 
-module.exports = symlinkDependencies;
 module.exports.symlinkDependencies = symlinkDependencies;
 
 /**

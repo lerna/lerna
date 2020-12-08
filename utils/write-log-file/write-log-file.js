@@ -5,7 +5,6 @@ const path = require("path");
 const log = require("npmlog");
 const writeFileAtomic = require("write-file-atomic");
 
-module.exports = writeLogFile;
 module.exports.writeLogFile = writeLogFile;
 
 function writeLogFile(cwd) {

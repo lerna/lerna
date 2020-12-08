@@ -4,7 +4,6 @@ const log = require("npmlog");
 const runScript = require("npm-lifecycle");
 const npmConf = require("@lerna/npm-conf");
 
-module.exports = runLifecycle;
 module.exports.runLifecycle = runLifecycle;
 module.exports.createRunner = createRunner;
 

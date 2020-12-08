@@ -6,7 +6,6 @@ const execa = require("execa");
 // Contains all relevant git config (user, commit.gpgSign, etc)
 const TEMPLATE = path.resolve(__dirname, "template");
 
-module.exports = gitInit;
 module.exports.gitInit = gitInit;
 
 function gitInit(cwd, ...args) {

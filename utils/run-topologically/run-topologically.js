@@ -3,7 +3,6 @@
 const PQueue = require("p-queue").default;
 const { QueryGraph } = require("@lerna/query-graph");
 
-module.exports = runTopologically;
 module.exports.runTopologically = runTopologically;
 
 /**

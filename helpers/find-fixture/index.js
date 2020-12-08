@@ -3,7 +3,6 @@
 const findUp = require("find-up");
 const path = require("path");
 
-module.exports = findFixture;
 module.exports.findFixture = findFixture;
 
 function findFixture(cwd, fixtureName) {

@@ -14,8 +14,6 @@ function getOrderedCalls() {
   return mockRunLifecycle.mock.calls.map(([pkg, script]) => [pkg.name, script]);
 }
 
-module.exports = mockRunLifecycle;
 module.exports.runLifecycle = mockRunLifecycle;
 module.exports.createRunner = mockCreateRunner;
-module.exports.getOrderedCalls = getOrderedCalls;
 module.exports.runLifecycle.getOrderedCalls = getOrderedCalls;

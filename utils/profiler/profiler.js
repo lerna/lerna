@@ -82,5 +82,4 @@ class Profiler {
   }
 }
 
-module.exports = Profiler;
 module.exports.Profiler = Profiler;

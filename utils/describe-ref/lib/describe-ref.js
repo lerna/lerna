@@ -3,9 +3,7 @@
 const log = require("npmlog");
 const childProcess = require("@lerna/child-process");
 
-module.exports = describeRef;
 module.exports.describeRef = describeRef;
-module.exports.sync = describeRefSync;
 module.exports.describeRefSync = describeRefSync;
 
 /**

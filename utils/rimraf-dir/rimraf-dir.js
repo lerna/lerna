@@ -9,7 +9,6 @@ const ChildProcessUtilities = require("@lerna/child-process");
 // NOTE: if rimraf moves the location of its executable, this will need to be updated
 const RIMRAF_CLI = require.resolve("rimraf/bin");
 
-module.exports = rimrafDir;
 module.exports.rimrafDir = rimrafDir;
 
 function rimrafDir(dirPath) {

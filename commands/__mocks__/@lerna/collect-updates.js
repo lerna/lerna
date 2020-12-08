@@ -20,9 +20,7 @@ afterEach(() => {
   updated.clear();
 });
 
-module.exports = mockCollectUpdates;
 module.exports.collectUpdates = mockCollectUpdates;
-module.exports.setUpdated = setUpdated;
 module.exports.collectUpdates.setUpdated = setUpdated;
 module.exports.collectPackages = collectPackages;
 module.exports.getPackagesForOption = getPackagesForOption;

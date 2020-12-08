@@ -16,7 +16,5 @@ afterEach(() => {
   registry.clear();
 });
 
-module.exports = mockPackDirectory;
 module.exports.packDirectory = mockPackDirectory;
-module.exports.registry = registry;
 module.exports.packDirectory.registry = registry;

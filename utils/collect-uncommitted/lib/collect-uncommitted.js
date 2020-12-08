@@ -4,9 +4,7 @@ const chalk = require("chalk");
 const npmlog = require("npmlog");
 const { exec, execSync } = require("@lerna/child-process");
 
-module.exports = collectUncommitted;
 module.exports.collectUncommitted = collectUncommitted;
-module.exports.sync = collectUncommittedSync;
 module.exports.collectUncommittedSync = collectUncommittedSync;
 
 /**
