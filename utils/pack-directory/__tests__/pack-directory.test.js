@@ -10,7 +10,7 @@ const npmConf = require("@lerna/npm-conf");
 const { getPackages } = require("@lerna/project");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 
-const packDirectory = require("..");
+const { packDirectory } = require("..");
 
 // temp-write creates temp directories that are 36 characters long (uuid.v4())
 const TAR_DIR_REGEXP = /([^\s"]*[\\/][-0-9a-f]{36})([^\s"]*)/g;

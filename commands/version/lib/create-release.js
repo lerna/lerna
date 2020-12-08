@@ -2,9 +2,9 @@
 
 const semver = require("semver");
 
-const createGitLabClient = require("@lerna/gitlab-client");
+const { createGitLabClient } = require("@lerna/gitlab-client");
 const { createGitHubClient, parseGitRepo } = require("@lerna/github-client");
-const ValidationError = require("@lerna/validation-error");
+const { ValidationError } = require("@lerna/validation-error");
 
 module.exports = createRelease;
 

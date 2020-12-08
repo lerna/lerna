@@ -3,7 +3,7 @@
 jest.mock("@lerna/child-process");
 
 const childProcess = require("@lerna/child-process");
-const hasNpmVersion = require("../lib/has-npm-version");
+const { hasNpmVersion, makePredicate } = require("../lib/has-npm-version");
 
 childProcess.execSync.mockReturnValue("5.6.0");
 
@@ -14,8 +14,8 @@ test("hasNpmVersion() returns boolean if range is satisfied by npm --version", (
   expect(childProcess.execSync).toHaveBeenLastCalledWith("npm", ["--version"]);
 });
 
-test("hasNpmVersion.makePredicate() returns a predicate with cached version", () => {
-  const predicate = hasNpmVersion.makePredicate();
+test("makePredicate() returns a predicate with cached version", () => {
+  const predicate = makePredicate();
 
   childProcess.execSync.mockReturnValue("3.10.10");
 

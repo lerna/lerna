@@ -1,6 +1,6 @@
 "use strict";
 
-const filterOptions = require("@lerna/filter-options");
+const { filterOptions } = require("@lerna/filter-options");
 const listable = require("@lerna/listable");
 
 /**

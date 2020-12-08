@@ -3,11 +3,11 @@
 jest.mock("@lerna/create-symlink");
 
 // mocked or stubbed modules
-const createSymlink = require("@lerna/create-symlink");
+const { createSymlink } = require("@lerna/create-symlink");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const normalizeRelativeDir = require("@lerna-test/normalize-relative-dir");
+const { normalizeRelativeDir } = require("@lerna-test/normalize-relative-dir");
 
 // file under test
 const lernaLink = require("@lerna-test/command-runner")(require("../command"));

@@ -1,8 +1,8 @@
 "use strict";
 
 const log = require("npmlog");
-const collectUpdates = require("@lerna/collect-updates");
-const filterPackages = require("@lerna/filter-packages");
+const { collectUpdates } = require("@lerna/collect-updates");
+const { filterPackages } = require("@lerna/filter-packages");
 
 module.exports.getFilteredPackages = getFilteredPackages;
 

@@ -6,9 +6,9 @@ const { getPackages } = require("@lerna/project");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const gitAdd = require("@lerna-test/git-add");
-const gitCommit = require("@lerna-test/git-commit");
-const gitTag = require("@lerna-test/git-tag");
+const { gitAdd } = require("@lerna-test/git-add");
+const { gitCommit } = require("@lerna-test/git-commit");
+const { gitTag } = require("@lerna-test/git-tag");
 
 // file under test
 const { recommendVersion, updateChangelog } = require("..");

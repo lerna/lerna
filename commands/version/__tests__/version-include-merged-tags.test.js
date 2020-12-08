@@ -7,15 +7,15 @@ const path = require("path");
 const fs = require("fs");
 
 // mocked modules
-const output = require("@lerna/output");
+const { output } = require("@lerna/output");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const gitAdd = require("@lerna-test/git-add");
-const gitCommit = require("@lerna-test/git-commit");
-const gitTag = require("@lerna-test/git-tag");
-const gitCheckout = require("@lerna-test/git-checkout");
-const gitMerge = require("@lerna-test/git-merge");
+const { gitAdd } = require("@lerna-test/git-add");
+const { gitCommit } = require("@lerna-test/git-commit");
+const { gitTag } = require("@lerna-test/git-tag");
+const { gitCheckout } = require("@lerna-test/git-checkout");
+const { gitMerge } = require("@lerna-test/git-merge");
 
 // file under test
 const lernaVersion = require("@lerna-test/command-runner")(require("../command"));

@@ -2,8 +2,8 @@
 
 const path = require("path");
 
-const cliRunner = require("@lerna-test/cli-runner");
-const showCommit = require("@lerna-test/show-commit");
+const { cliRunner } = require("@lerna-test/cli-runner");
+const { showCommit } = require("@lerna-test/show-commit");
 const cloneFixture = require("@lerna-test/clone-fixture")(
   path.resolve(__dirname, "../commands/publish/__tests__")
 );

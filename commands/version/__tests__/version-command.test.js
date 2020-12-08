@@ -13,22 +13,22 @@ const execa = require("execa");
 // mocked or stubbed modules
 const writePkg = require("write-pkg");
 const PromptUtilities = require("@lerna/prompt");
-const collectUpdates = require("@lerna/collect-updates");
-const output = require("@lerna/output");
-const checkWorkingTree = require("@lerna/check-working-tree");
+const { collectUpdates } = require("@lerna/collect-updates");
+const { output } = require("@lerna/output");
+const { checkWorkingTree, throwIfUncommitted } = require("@lerna/check-working-tree");
 const libPush = require("../lib/git-push");
 const isAnythingCommitted = require("../lib/is-anything-committed");
 const isBehindUpstream = require("../lib/is-behind-upstream");
 const remoteBranchExists = require("../lib/remote-branch-exists");
 
 // helpers
-const loggingOutput = require("@lerna-test/logging-output");
-const gitAdd = require("@lerna-test/git-add");
-const gitTag = require("@lerna-test/git-tag");
-const gitCommit = require("@lerna-test/git-commit");
+const { loggingOutput } = require("@lerna-test/logging-output");
+const { gitAdd } = require("@lerna-test/git-add");
+const { gitTag } = require("@lerna-test/git-tag");
+const { gitCommit } = require("@lerna-test/git-commit");
 const initFixture = require("@lerna-test/init-fixture")(path.resolve(__dirname, "../../publish/__tests__"));
-const showCommit = require("@lerna-test/show-commit");
-const getCommitMessage = require("@lerna-test/get-commit-message");
+const { showCommit } = require("@lerna-test/show-commit");
+const { getCommitMessage } = require("@lerna-test/get-commit-message");
 
 // file under test
 const lernaVersion = require("@lerna-test/command-runner")(require("../command"));
@@ -125,12 +125,12 @@ describe("VersionCommand", () => {
       // notably different than the actual message, but good enough here
     });
 
-    it("calls `checkWorkingTree.throwIfUncommitted` when using --force-publish", async () => {
+    it("calls `throwIfUncommitted` when using --force-publish", async () => {
       const testDir = await initFixture("normal");
 
       await lernaVersion(testDir)("--force-publish");
 
-      expect(checkWorkingTree.throwIfUncommitted).toHaveBeenCalled();
+      expect(throwIfUncommitted).toHaveBeenCalled();
     });
 
     it("only bumps changed packages when non-major version selected", async () => {

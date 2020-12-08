@@ -8,18 +8,18 @@ const pMap = require("p-map");
 const pMapSeries = require("p-map-series");
 const pWaterfall = require("p-waterfall");
 
-const Command = require("@lerna/command");
-const rimrafDir = require("@lerna/rimraf-dir");
-const hasNpmVersion = require("@lerna/has-npm-version");
-const npmInstall = require("@lerna/npm-install");
+const { Command } = require("@lerna/command");
+const { rimrafDir } = require("@lerna/rimraf-dir");
+const { hasNpmVersion } = require("@lerna/has-npm-version");
+const { npmInstall, npmInstallDependencies } = require("@lerna/npm-install");
 const { createRunner } = require("@lerna/run-lifecycle");
-const runTopologically = require("@lerna/run-topologically");
-const symlinkBinary = require("@lerna/symlink-binary");
-const symlinkDependencies = require("@lerna/symlink-dependencies");
-const ValidationError = require("@lerna/validation-error");
+const { runTopologically } = require("@lerna/run-topologically");
+const { symlinkBinary } = require("@lerna/symlink-binary");
+const { symlinkDependencies } = require("@lerna/symlink-dependencies");
+const { ValidationError } = require("@lerna/validation-error");
 const { getFilteredPackages } = require("@lerna/filter-options");
-const PackageGraph = require("@lerna/package-graph");
-const pulseTillDone = require("@lerna/pulse-till-done");
+const { PackageGraph } = require("@lerna/package-graph");
+const { pulseTillDone } = require("@lerna/pulse-till-done");
 
 const hasDependencyInstalled = require("./lib/has-dependency-installed");
 const isHoistedPackage = require("./lib/is-hoisted-package");
@@ -478,7 +478,7 @@ class BootstrapCommand extends Command {
           tracker.info("hoist", "Installing hoisted dependencies into root");
         }
 
-        const promise = npmInstall.dependencies(rootPkg, depsToInstallInRoot, this.npmConfig);
+        const promise = npmInstallDependencies(rootPkg, depsToInstallInRoot, this.npmConfig);
 
         return pulseTillDone(promise)
           .then(() =>
@@ -557,7 +557,7 @@ class BootstrapCommand extends Command {
       if (deps.some(({ isSatisfied }) => !isSatisfied)) {
         actions.push(() => {
           const dependencies = deps.map(({ dependency }) => dependency);
-          const promise = npmInstall.dependencies(leafNode.pkg, dependencies, leafNpmConfig);
+          const promise = npmInstallDependencies(leafNode.pkg, dependencies, leafNpmConfig);
 
           return pulseTillDone(promise).then(() => {
             tracker.verbose("installed leaf", leafNode.name);

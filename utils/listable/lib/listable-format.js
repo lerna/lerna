@@ -3,7 +3,7 @@
 const chalk = require("chalk");
 const columnify = require("columnify");
 const path = require("path");
-const QueryGraph = require("@lerna/query-graph");
+const { QueryGraph } = require("@lerna/query-graph");
 
 module.exports = listableFormat;
 

@@ -3,7 +3,7 @@
 const globby = require("globby");
 const normalizePath = require("normalize-path");
 
-const cliRunner = require("@lerna-test/cli-runner");
+const { cliRunner } = require("@lerna-test/cli-runner");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 
 test("lerna bootstrap --npm-client yarn", async () => {

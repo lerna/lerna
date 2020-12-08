@@ -7,7 +7,7 @@ const path = require("path");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 
 // file under test
-const Project = require("..");
+const { Project } = require("..");
 
 describe("Project", () => {
   let testDir;

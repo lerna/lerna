@@ -1,7 +1,7 @@
 "use strict";
 
 const chalk = require("chalk");
-const multiLineTrimRight = require("@lerna-test/multi-line-trim-right");
+const { multiLineTrimRight } = require("@lerna-test/multi-line-trim-right");
 
 // keep snapshots stable cross-platform
 chalk.level = 0;

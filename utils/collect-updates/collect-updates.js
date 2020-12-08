@@ -1,7 +1,7 @@
 "use strict";
 
 const log = require("npmlog");
-const describeRef = require("@lerna/describe-ref");
+const { describeRefSync } = require("@lerna/describe-ref");
 
 const hasTags = require("./lib/has-tags");
 const collectPackages = require("./lib/collect-packages");
@@ -29,7 +29,7 @@ function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions
 
   if (hasTags(execOpts)) {
     // describe the last annotated tag in the current branch
-    const { sha, refCount, lastTagName } = describeRef.sync(execOpts, commandOptions.includeMergedTags);
+    const { sha, refCount, lastTagName } = describeRefSync(execOpts, commandOptions.includeMergedTags);
     // TODO: warn about dirty tree?
 
     if (refCount === "0" && forced.size === 0 && !committish) {

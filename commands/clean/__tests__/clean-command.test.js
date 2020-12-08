@@ -7,12 +7,12 @@ const fs = require("fs-extra");
 const path = require("path");
 
 // mocked or stubbed modules
-const rimrafDir = require("@lerna/rimraf-dir");
+const { rimrafDir } = require("@lerna/rimraf-dir");
 const PromptUtilities = require("@lerna/prompt");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const normalizeRelativeDir = require("@lerna-test/normalize-relative-dir");
+const { normalizeRelativeDir } = require("@lerna-test/normalize-relative-dir");
 
 // file under test
 const lernaClean = require("@lerna-test/command-runner")(require("../command"));

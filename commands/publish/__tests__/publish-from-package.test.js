@@ -17,14 +17,14 @@ const path = require("path");
 
 // mocked or stubbed modules
 const writePkg = require("write-pkg");
-const npmPublish = require("@lerna/npm-publish");
+const { npmPublish } = require("@lerna/npm-publish");
 const PromptUtilities = require("@lerna/prompt");
-const output = require("@lerna/output");
-const checkWorkingTree = require("@lerna/check-working-tree");
+const { output } = require("@lerna/output");
+const { throwIfUncommitted } = require("@lerna/check-working-tree");
 const { getUnpublishedPackages } = require("../lib/get-unpublished-packages");
 
 // helpers
-const loggingOutput = require("@lerna-test/logging-output");
+const { loggingOutput } = require("@lerna-test/logging-output");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 
 // file under test
@@ -76,7 +76,7 @@ describe("publish from-package", () => {
   });
 
   it("throws an error when uncommitted changes are present", async () => {
-    checkWorkingTree.throwIfUncommitted.mockImplementationOnce(() => {
+    throwIfUncommitted.mockImplementationOnce(() => {
       throw new Error("uncommitted");
     });
 

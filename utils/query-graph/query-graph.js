@@ -1,6 +1,6 @@
 "use strict";
 
-const PackageGraph = require("@lerna/package-graph");
+const { PackageGraph } = require("@lerna/package-graph");
 
 /**
  * @typedef {object} QueryGraphConfig

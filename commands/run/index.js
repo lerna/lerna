@@ -2,13 +2,13 @@
 
 const pMap = require("p-map");
 
-const Command = require("@lerna/command");
-const npmRunScript = require("@lerna/npm-run-script");
-const output = require("@lerna/output");
-const Profiler = require("@lerna/profiler");
-const timer = require("@lerna/timer");
-const runTopologically = require("@lerna/run-topologically");
-const ValidationError = require("@lerna/validation-error");
+const { Command } = require("@lerna/command");
+const { npmRunScript, npmRunScriptStreaming } = require("@lerna/npm-run-script");
+const { output } = require("@lerna/output");
+const { Profiler } = require("@lerna/profiler");
+const { timer } = require("@lerna/timer");
+const { runTopologically } = require("@lerna/run-topologically");
+const { ValidationError } = require("@lerna/validation-error");
 const { getFilteredPackages } = require("@lerna/filter-options");
 
 module.exports = factory;
@@ -172,7 +172,7 @@ class RunCommand extends Command {
   }
 
   runScriptInPackageStreaming(pkg) {
-    return npmRunScript.stream(this.script, this.getOpts(pkg));
+    return npmRunScriptStreaming(this.script, this.getOpts(pkg));
   }
 
   runScriptInPackageCapturing(pkg) {

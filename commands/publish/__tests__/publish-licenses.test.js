@@ -16,13 +16,13 @@ const fs = require("fs-extra");
 const path = require("path");
 
 // mocked modules
-const packDirectory = require("@lerna/pack-directory");
+const { packDirectory } = require("@lerna/pack-directory");
 const { createTempLicenses } = require("../lib/create-temp-licenses");
 const { removeTempLicenses } = require("../lib/remove-temp-licenses");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const loggingOutput = require("@lerna-test/logging-output");
+const { loggingOutput } = require("@lerna-test/logging-output");
 
 // test command
 const lernaPublish = require("@lerna-test/command-runner")(require("../command"));

@@ -1,8 +1,8 @@
 "use strict";
 
-const Command = require("@lerna/command");
+const { Command } = require("@lerna/command");
 const listable = require("@lerna/listable");
-const output = require("@lerna/output");
+const { output } = require("@lerna/output");
 const { getFilteredPackages } = require("@lerna/filter-options");
 
 module.exports = factory;

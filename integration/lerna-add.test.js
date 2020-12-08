@@ -5,7 +5,7 @@ const globby = require("globby");
 const loadJson = require("load-json-file");
 const pMap = require("p-map");
 
-const cliRunner = require("@lerna-test/cli-runner");
+const { cliRunner } = require("@lerna-test/cli-runner");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const pkgMatchers = require("@lerna-test/pkg-matchers");
 

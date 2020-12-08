@@ -14,10 +14,10 @@ const path = require("path");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(path.resolve(__dirname, "../../publish/__tests__"));
-const gitAdd = require("@lerna-test/git-add");
-const gitTag = require("@lerna-test/git-tag");
-const gitCommit = require("@lerna-test/git-commit");
-const showCommit = require("@lerna-test/show-commit");
+const { gitAdd } = require("@lerna-test/git-add");
+const { gitTag } = require("@lerna-test/git-tag");
+const { gitCommit } = require("@lerna-test/git-commit");
+const { showCommit } = require("@lerna-test/show-commit");
 
 // test command
 const lernaVersion = require("@lerna-test/command-runner")(require("../command"));

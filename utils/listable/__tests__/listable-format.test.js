@@ -4,8 +4,8 @@ const chalk = require("chalk");
 const tempy = require("tempy");
 const Tacks = require("tacks");
 
-const Project = require("@lerna/project");
-const loggingOutput = require("@lerna-test/logging-output");
+const { Project } = require("@lerna/project");
+const { loggingOutput } = require("@lerna-test/logging-output");
 const listable = require("..");
 
 const { File, Dir } = Tacks;

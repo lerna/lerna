@@ -7,7 +7,7 @@ const onExit = require("signal-exit");
 const writePkg = require("write-pkg");
 
 const ChildProcessUtilities = require("@lerna/child-process");
-const getExecOpts = require("@lerna/get-npm-exec-opts");
+const { getNpmExecOpts } = require("@lerna/get-npm-exec-opts");
 
 module.exports = npmInstall;
 module.exports.dependencies = npmInstallDependencies;
@@ -19,7 +19,7 @@ function npmInstall(
   { registry, npmClient, npmClientArgs, npmGlobalStyle, mutex, stdio = "pipe", subCommand = "install" }
 ) {
   // build command, arguments, and options
-  const opts = getExecOpts(pkg, registry);
+  const opts = getNpmExecOpts(pkg, registry);
   const args = [subCommand];
   let cmd = npmClient || "npm";
 

@@ -3,7 +3,7 @@
 jest.mock("../lib/GitLabClient");
 
 const GitLabClient = require("../lib/GitLabClient");
-const createGitLabClient = require("../index");
+const { createGitLabClient } = require("../index");
 
 describe("createGitLabClient", () => {
   const oldEnv = Object.assign({}, process.env);

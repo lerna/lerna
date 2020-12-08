@@ -3,7 +3,7 @@
 const log = require("npmlog");
 
 const ChildProcessUtilities = require("@lerna/child-process");
-const getOpts = require("@lerna/get-npm-exec-opts");
+const { getNpmExecOpts } = require("@lerna/get-npm-exec-opts");
 
 module.exports = npmRunScript;
 module.exports.stream = npmRunScriptStreaming;
@@ -29,7 +29,7 @@ function npmRunScriptStreaming(script, { args, npmClient, pkg, prefix, reject = 
 }
 
 function makeOpts(pkg, reject) {
-  return Object.assign(getOpts(pkg), {
+  return Object.assign(getNpmExecOpts(pkg), {
     reject,
   });
 }

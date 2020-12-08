@@ -5,7 +5,7 @@ const path = require("path");
 const tempy = require("tempy");
 
 // git init is not necessary
-const copyFixture = require("@lerna-test/copy-fixture");
+const { copyFixture } = require("@lerna-test/copy-fixture");
 
 const CLI = path.join(__dirname, "../cli.js");
 const bin = (cwd) => (...args) => execa(CLI, args, { cwd });

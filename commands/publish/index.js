@@ -7,24 +7,24 @@ const pMap = require("p-map");
 const pPipe = require("p-pipe");
 const semver = require("semver");
 
-const Command = require("@lerna/command");
-const ValidationError = require("@lerna/validation-error");
-const describeRef = require("@lerna/describe-ref");
-const checkWorkingTree = require("@lerna/check-working-tree");
+const { Command } = require("@lerna/command");
+const { ValidationError } = require("@lerna/validation-error");
+const { describeRef } = require("@lerna/describe-ref");
+const { throwIfUncommitted } = require("@lerna/check-working-tree");
 const PromptUtilities = require("@lerna/prompt");
-const output = require("@lerna/output");
-const collectUpdates = require("@lerna/collect-updates");
+const { output } = require("@lerna/output");
+const { collectUpdates } = require("@lerna/collect-updates");
 const npmConf = require("@lerna/npm-conf");
 const npmDistTag = require("@lerna/npm-dist-tag");
-const npmPublish = require("@lerna/npm-publish");
-const packDirectory = require("@lerna/pack-directory");
-const logPacked = require("@lerna/log-packed");
+const { npmPublish } = require("@lerna/npm-publish");
+const { packDirectory } = require("@lerna/pack-directory");
+const { logPacked } = require("@lerna/log-packed");
 const { createRunner } = require("@lerna/run-lifecycle");
-const runTopologically = require("@lerna/run-topologically");
-const pulseTillDone = require("@lerna/pulse-till-done");
+const { runTopologically } = require("@lerna/run-topologically");
+const { pulseTillDone } = require("@lerna/pulse-till-done");
 const versionCommand = require("@lerna/version");
-const prereleaseIdFromVersion = require("@lerna/prerelease-id-from-version");
-const otplease = require("@lerna/otplease");
+const { prereleaseIdFromVersion } = require("@lerna/prerelease-id-from-version");
+const { getOneTimePassword } = require("@lerna/otplease");
 
 const { createTempLicenses } = require("./lib/create-temp-licenses");
 const { getCurrentSHA } = require("./lib/get-current-sha");
@@ -247,7 +247,7 @@ class PublishCommand extends Command {
   }
 
   verifyWorkingTreeClean() {
-    return describeRef(this.execOpts).then(checkWorkingTree.throwIfUncommitted);
+    return describeRef(this.execOpts).then(throwIfUncommitted);
   }
 
   detectFromGit() {
@@ -611,7 +611,7 @@ class PublishCommand extends Command {
     }
 
     return Promise.resolve()
-      .then(() => otplease.getOneTimePassword("Enter OTP:"))
+      .then(() => getOneTimePassword("Enter OTP:"))
       .then((otp) => {
         this.otpCache.otp = otp;
       });

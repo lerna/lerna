@@ -16,20 +16,20 @@ jest.mock("../../version/lib/is-behind-upstream");
 jest.mock("../../version/lib/remote-branch-exists");
 
 // mocked or stubbed modules
-const otplease = require("@lerna/otplease");
+const { getOneTimePassword } = require("@lerna/otplease");
 const npmDistTag = require("@lerna/npm-dist-tag");
-const npmPublish = require("@lerna/npm-publish");
-const packDirectory = require("@lerna/pack-directory");
+const { npmPublish } = require("@lerna/npm-publish");
+const { packDirectory } = require("@lerna/pack-directory");
 const PromptUtilities = require("@lerna/prompt");
-const collectUpdates = require("@lerna/collect-updates");
+const { collectUpdates } = require("@lerna/collect-updates");
 const { getNpmUsername } = require("../lib/get-npm-username");
 const { verifyNpmPackageAccess } = require("../lib/verify-npm-package-access");
 const { getTwoFactorAuthRequired } = require("../lib/get-two-factor-auth-required");
 const { gitCheckout } = require("../lib/git-checkout");
 
 // helpers
-const commitChangeToPackage = require("@lerna-test/commit-change-to-package");
-const loggingOutput = require("@lerna-test/logging-output");
+const { commitChangeToPackage } = require("@lerna-test/commit-change-to-package");
+const { loggingOutput } = require("@lerna-test/logging-output");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const path = require("path");
 const fs = require("fs-extra");
@@ -210,7 +210,7 @@ Map {
   });
 
   describe("--otp", () => {
-    otplease.getOneTimePassword.mockImplementation(() => Promise.resolve("654321"));
+    getOneTimePassword.mockImplementation(() => Promise.resolve("654321"));
 
     it("passes one-time password to npm commands", async () => {
       const testDir = await initFixture("normal");
@@ -227,7 +227,7 @@ Map {
         expect.objectContaining({ otp }),
         expect.objectContaining({ otp })
       );
-      expect(otplease.getOneTimePassword).not.toHaveBeenCalled();
+      expect(getOneTimePassword).not.toHaveBeenCalled();
     });
 
     it("prompts for OTP when option missing and account-level 2FA enabled", async () => {
@@ -243,7 +243,7 @@ Map {
         expect.objectContaining({ otp: undefined }),
         expect.objectContaining({ otp: "654321" })
       );
-      expect(otplease.getOneTimePassword).toHaveBeenLastCalledWith("Enter OTP:");
+      expect(getOneTimePassword).toHaveBeenLastCalledWith("Enter OTP:");
     });
   });
 

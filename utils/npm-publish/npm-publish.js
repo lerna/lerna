@@ -6,9 +6,9 @@ const log = require("npmlog");
 const { publish } = require("libnpmpublish");
 const pify = require("pify");
 const readJSON = require("read-package-json");
-const runLifecycle = require("@lerna/run-lifecycle");
+const { runLifecycle } = require("@lerna/run-lifecycle");
 const npa = require("npm-package-arg");
-const otplease = require("@lerna/otplease");
+const { otplease } = require("@lerna/otplease");
 
 module.exports = npmPublish;
 module.exports.npmPublish = npmPublish;

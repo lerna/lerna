@@ -18,12 +18,12 @@ const prompt = require("@lerna/prompt");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(path.resolve(__dirname, "../../publish/__tests__"));
-const showCommit = require("@lerna-test/show-commit");
-const gitInit = require("@lerna-test/git-init");
-const gitAdd = require("@lerna-test/git-add");
-const gitTag = require("@lerna-test/git-tag");
-const gitCommit = require("@lerna-test/git-commit");
-const getCommitMessage = require("@lerna-test/get-commit-message");
+const { showCommit } = require("@lerna-test/show-commit");
+const { gitInit } = require("@lerna-test/git-init");
+const { gitAdd } = require("@lerna-test/git-add");
+const { gitTag } = require("@lerna-test/git-tag");
+const { gitCommit } = require("@lerna-test/git-commit");
+const { getCommitMessage } = require("@lerna-test/get-commit-message");
 const Tacks = require("tacks");
 const tempy = require("tempy");
 

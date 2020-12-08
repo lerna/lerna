@@ -12,8 +12,8 @@ jest.mock("../../version/lib/is-behind-upstream");
 jest.mock("../../version/lib/remote-branch-exists");
 
 // mocked modules
-const packDirectory = require("@lerna/pack-directory");
-const runLifecycle = require("@lerna/run-lifecycle");
+const { packDirectory } = require("@lerna/pack-directory");
+const { runLifecycle } = require("@lerna/run-lifecycle");
 const loadJsonFile = require("load-json-file");
 
 // helpers

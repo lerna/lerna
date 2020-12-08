@@ -7,10 +7,10 @@ const path = require("path");
 const pacote = require("pacote");
 const semver = require("semver");
 
-const Command = require("@lerna/command");
+const { Command } = require("@lerna/command");
 const npmConf = require("@lerna/npm-conf");
 const bootstrap = require("@lerna/bootstrap");
-const ValidationError = require("@lerna/validation-error");
+const { ValidationError } = require("@lerna/validation-error");
 const { getFilteredPackages } = require("@lerna/filter-options");
 const getRangeToReference = require("./lib/get-range-to-reference");
 

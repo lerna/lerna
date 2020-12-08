@@ -6,7 +6,7 @@ const chalk = require("chalk");
 
 // helpers
 const { getPackages } = require("@lerna/project");
-const gitAdd = require("@lerna-test/git-add");
+const { gitAdd } = require("@lerna-test/git-add");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 
 // file under test

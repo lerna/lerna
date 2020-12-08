@@ -6,7 +6,7 @@ jest.mock("@lerna/prompt");
 const prompt = require("@lerna/prompt");
 
 // file under test
-const otplease = require("..");
+const { otplease, getOneTimePassword } = require("..");
 
 // global mock setup
 prompt.input.mockResolvedValue("123456");
@@ -187,7 +187,7 @@ describe("@lerna/otplease", () => {
 
   describe("getOneTimePassword()", () => {
     it("defaults message argument", async () => {
-      await otplease.getOneTimePassword();
+      await getOneTimePassword();
 
       expect(prompt.input).toHaveBeenCalledWith(
         "This operation requires a one-time password:",
@@ -196,7 +196,7 @@ describe("@lerna/otplease", () => {
     });
 
     it("accepts custom message", async () => {
-      await otplease.getOneTimePassword("foo bar");
+      await getOneTimePassword("foo bar");
 
       expect(prompt.input).toHaveBeenCalledWith("foo bar", expect.any(Object));
     });

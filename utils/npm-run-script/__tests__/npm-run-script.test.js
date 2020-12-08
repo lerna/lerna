@@ -6,7 +6,7 @@ jest.mock("@lerna/child-process");
 const ChildProcessUtilities = require("@lerna/child-process");
 
 // file under test
-const npmRunScript = require("..");
+const { npmRunScript, npmRunScriptStreaming } = require("..");
 
 describe("npm-run-script", () => {
   ChildProcessUtilities.exec.mockResolvedValue();
@@ -75,7 +75,7 @@ describe("npm-run-script", () => {
     });
   });
 
-  describe("npmRunScript.stream()", () => {
+  describe("npmRunScriptStreaming()", () => {
     it("runs an npm script in a package with streaming", async () => {
       const script = "foo";
       const config = {
@@ -88,7 +88,7 @@ describe("npm-run-script", () => {
         npmClient: "npm",
       };
 
-      await npmRunScript.stream(script, config);
+      await npmRunScriptStreaming(script, config);
 
       expect(ChildProcessUtilities.spawnStreaming).toHaveBeenLastCalledWith(
         "npm",
@@ -115,7 +115,7 @@ describe("npm-run-script", () => {
         reject: false,
       };
 
-      await npmRunScript.stream(script, config);
+      await npmRunScriptStreaming(script, config);
 
       expect(ChildProcessUtilities.spawnStreaming).toHaveBeenLastCalledWith(
         "npm",

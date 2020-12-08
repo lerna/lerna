@@ -10,16 +10,16 @@ const pReduce = require("p-reduce");
 const pWaterfall = require("p-waterfall");
 const semver = require("semver");
 
-const Command = require("@lerna/command");
+const { Command } = require("@lerna/command");
 const ConventionalCommitUtilities = require("@lerna/conventional-commits");
-const checkWorkingTree = require("@lerna/check-working-tree");
+const { checkWorkingTree, throwIfUncommitted } = require("@lerna/check-working-tree");
 const PromptUtilities = require("@lerna/prompt");
-const output = require("@lerna/output");
-const collectUpdates = require("@lerna/collect-updates");
+const { output } = require("@lerna/output");
+const { collectUpdates, collectPackages, getPackagesForOption } = require("@lerna/collect-updates");
 const { createRunner } = require("@lerna/run-lifecycle");
-const runTopologically = require("@lerna/run-topologically");
-const ValidationError = require("@lerna/validation-error");
-const prereleaseIdFromVersion = require("@lerna/prerelease-id-from-version");
+const { runTopologically } = require("@lerna/run-topologically");
+const { ValidationError } = require("@lerna/validation-error");
+const { prereleaseIdFromVersion } = require("@lerna/prerelease-id-from-version");
 
 const getCurrentBranch = require("./lib/get-current-branch");
 const gitAdd = require("./lib/git-add");
@@ -33,8 +33,6 @@ const isAnythingCommitted = require("./lib/is-anything-committed");
 const makePromptVersion = require("./lib/prompt-version");
 const createRelease = require("./lib/create-release");
 const { updateLockfileVersion } = require("./lib/update-lockfile-version");
-
-const { collectPackages, getPackagesForOption } = collectUpdates;
 
 module.exports = factory;
 
@@ -252,7 +250,7 @@ class VersionCommand extends Command {
     if (this.commitAndTag && this.gitOpts.amend !== true) {
       const { forcePublish, conventionalCommits, conventionalGraduate } = this.options;
       const checkUncommittedOnly = forcePublish || (conventionalCommits && conventionalGraduate);
-      const check = checkUncommittedOnly ? checkWorkingTree.throwIfUncommitted : checkWorkingTree;
+      const check = checkUncommittedOnly ? throwIfUncommitted : checkWorkingTree;
       tasks.unshift(() => check(this.execOpts));
     } else {
       this.logger.warn("version", "Skipping working tree validation, proceed at your own risk");

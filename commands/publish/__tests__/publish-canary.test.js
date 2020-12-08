@@ -15,16 +15,16 @@ const childProcess = require("@lerna/child-process");
 
 // mocked modules
 const writePkg = require("write-pkg");
-const npmPublish = require("@lerna/npm-publish");
+const { npmPublish } = require("@lerna/npm-publish");
 const PromptUtilities = require("@lerna/prompt");
-const checkWorkingTree = require("@lerna/check-working-tree");
+const { throwIfUncommitted } = require("@lerna/check-working-tree");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const gitAdd = require("@lerna-test/git-add");
-const gitTag = require("@lerna-test/git-tag");
-const gitCommit = require("@lerna-test/git-commit");
-const loggingOutput = require("@lerna-test/logging-output");
+const { gitAdd } = require("@lerna-test/git-add");
+const { gitTag } = require("@lerna-test/git-tag");
+const { gitCommit } = require("@lerna-test/git-commit");
+const { loggingOutput } = require("@lerna-test/logging-output");
 
 // test command
 const lernaPublish = require("@lerna-test/command-runner")(require("../command"));
@@ -353,7 +353,7 @@ Object {
 });
 
 test("publish --canary with dirty tree throws error", async () => {
-  checkWorkingTree.throwIfUncommitted.mockImplementationOnce(() => {
+  throwIfUncommitted.mockImplementationOnce(() => {
     throw new Error("uncommitted");
   });
 

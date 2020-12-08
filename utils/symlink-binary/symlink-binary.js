@@ -4,8 +4,8 @@ const fs = require("fs-extra");
 const path = require("path");
 const pMap = require("p-map");
 
-const Package = require("@lerna/package");
-const createSymlink = require("@lerna/create-symlink");
+const { Package } = require("@lerna/package");
+const { createSymlink } = require("@lerna/create-symlink");
 
 module.exports = symlinkBinary;
 module.exports.symlinkBinary = symlinkBinary;

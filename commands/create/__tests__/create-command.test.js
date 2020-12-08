@@ -12,7 +12,7 @@ const pacote = require("pacote");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const gitAdd = require("@lerna-test/git-add");
+const { gitAdd } = require("@lerna-test/git-add");
 
 // file under test
 const lernaCreate = require("@lerna-test/command-runner")(require("../command"));

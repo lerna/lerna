@@ -11,12 +11,12 @@ const semver = require("semver");
 
 // mocked modules
 const writePkg = require("write-pkg");
-const collectUpdates = require("@lerna/collect-updates");
+const { collectUpdates } = require("@lerna/collect-updates");
 const ConventionalCommitUtilities = require("@lerna/conventional-commits");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(path.resolve(__dirname, "../../publish/__tests__"));
-const showCommit = require("@lerna-test/show-commit");
+const { showCommit } = require("@lerna-test/show-commit");
 
 // test command
 const lernaVersion = require("@lerna-test/command-runner")(require("../command"));

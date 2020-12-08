@@ -13,9 +13,9 @@ const PromptUtilities = require("@lerna/prompt");
 // helpers
 const initNamedFixture = require("@lerna-test/init-named-fixture")(__dirname);
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const gitAdd = require("@lerna-test/git-add");
-const gitCommit = require("@lerna-test/git-commit");
-const updateLernaConfig = require("@lerna-test/update-lerna-config");
+const { gitAdd } = require("@lerna-test/git-add");
+const { gitCommit } = require("@lerna-test/git-commit");
+const { updateLernaConfig } = require("@lerna-test/update-lerna-config");
 
 // file under test
 const lernaImport = require("@lerna-test/command-runner")(require("../command"));

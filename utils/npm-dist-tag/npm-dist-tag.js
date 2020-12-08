@@ -3,7 +3,7 @@
 const log = require("npmlog");
 const npa = require("npm-package-arg");
 const fetch = require("npm-registry-fetch");
-const otplease = require("@lerna/otplease");
+const { otplease } = require("@lerna/otplease");
 
 exports.add = add;
 exports.remove = remove;

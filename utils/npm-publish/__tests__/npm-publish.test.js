@@ -10,15 +10,15 @@ jest.mock("fs-extra");
 const fs = require("fs-extra");
 const { publish } = require("libnpmpublish");
 const readJSON = require("read-package-json");
-const runLifecycle = require("@lerna/run-lifecycle");
-const otplease = require("@lerna/otplease");
+const { runLifecycle } = require("@lerna/run-lifecycle");
+const { otplease } = require("@lerna/otplease");
 
 // helpers
 const path = require("path");
-const Package = require("@lerna/package");
+const { Package } = require("@lerna/package");
 
 // file under test
-const npmPublish = require("..");
+const { npmPublish } = require("..");
 
 describe("npm-publish", () => {
   const mockTarData = Buffer.from("MOCK");

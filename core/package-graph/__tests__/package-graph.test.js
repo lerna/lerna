@@ -1,9 +1,9 @@
 "use strict";
 
-const Package = require("@lerna/package");
+const { Package } = require("@lerna/package");
 
 // file under test
-const PackageGraph = require("..");
+const { PackageGraph } = require("..");
 
 describe("PackageGraph", () => {
   describe("constructor", () => {

@@ -4,7 +4,7 @@ jest.mock("@lerna/prompt");
 
 const semver = require("semver");
 const prompt = require("@lerna/prompt");
-const prereleaseIdFromVersion = require("@lerna/prerelease-id-from-version");
+const { prereleaseIdFromVersion } = require("@lerna/prerelease-id-from-version");
 const makePromptVersion = require("../lib/prompt-version");
 
 const resolvePrereleaseId = jest.fn(() => "alpha");

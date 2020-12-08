@@ -1,6 +1,6 @@
 "use strict";
 
-const ValidationError = require("@lerna/validation-error");
+const { ValidationError } = require("@lerna/validation-error");
 const { getFetchConfig } = require("./fetch-config");
 const { getProfileData } = require("./get-profile-data");
 const { getWhoAmI } = require("./get-whoami");

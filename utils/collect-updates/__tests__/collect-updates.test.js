@@ -5,7 +5,7 @@ jest.mock("../lib/has-tags");
 jest.mock("../lib/make-diff-predicate");
 
 // mocked modules
-const describeRef = require("@lerna/describe-ref");
+const { describeRefSync } = require("@lerna/describe-ref");
 const hasTags = require("../lib/has-tags");
 const makeDiffPredicate = require("../lib/make-diff-predicate");
 
@@ -13,10 +13,10 @@ const makeDiffPredicate = require("../lib/make-diff-predicate");
 const buildGraph = require("../__helpers__/build-graph");
 
 // file under test
-const collectUpdates = require("..");
+const { collectUpdates } = require("..");
 
 // default mock implementations
-describeRef.sync.mockReturnValue({
+describeRefSync.mockReturnValue({
   lastTagName: "v1.0.0",
   lastVersion: "1.0.0",
   refCount: "1",
@@ -73,7 +73,7 @@ describe("collectUpdates()", () => {
       }),
     ]);
     expect(hasTags).toHaveBeenLastCalledWith(execOpts);
-    expect(describeRef.sync).toHaveBeenLastCalledWith(execOpts, undefined);
+    expect(describeRefSync).toHaveBeenLastCalledWith(execOpts, undefined);
     expect(makeDiffPredicate).toHaveBeenLastCalledWith("v1.0.0", execOpts, undefined);
   });
 
@@ -147,7 +147,7 @@ describe("collectUpdates()", () => {
   it("skips change detection when current revison is already released", () => {
     changedPackages.add("package-dag-1");
 
-    describeRef.sync.mockReturnValueOnce({
+    describeRefSync.mockReturnValueOnce({
       refCount: "0",
     });
 
@@ -362,7 +362,7 @@ describe("collectUpdates()", () => {
   it("does not exit early on tagged release when --since <ref> is passed", () => {
     changedPackages.add("package-dag-1");
 
-    describeRef.sync.mockReturnValueOnce({
+    describeRefSync.mockReturnValueOnce({
       refCount: "0",
     });
 

@@ -3,7 +3,7 @@
 const fs = require("fs-extra");
 const globby = require("globby");
 
-const cliRunner = require("@lerna-test/cli-runner");
+const { cliRunner } = require("@lerna-test/cli-runner");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 
 test("lerna bootstrap --hoist", async () => {

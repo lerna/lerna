@@ -10,7 +10,7 @@ const pathExists = require("path-exists");
 const ChildProcessUtilities = require("@lerna/child-process");
 
 // file under test
-const rimrafDir = require("..");
+const { rimrafDir } = require("..");
 
 describe("rimrafDir()", () => {
   it("calls rimraf CLI with arguments", async () => {

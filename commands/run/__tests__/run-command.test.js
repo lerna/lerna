@@ -6,20 +6,20 @@ const fs = require("fs-extra");
 const globby = require("globby");
 
 // mocked modules
-const npmRunScript = require("@lerna/npm-run-script");
-const output = require("@lerna/output");
+const { npmRunScript, npmRunScriptStreaming } = require("@lerna/npm-run-script");
+const { output } = require("@lerna/output");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const loggingOutput = require("@lerna-test/logging-output");
-const normalizeRelativeDir = require("@lerna-test/normalize-relative-dir");
+const { loggingOutput } = require("@lerna-test/logging-output");
+const { normalizeRelativeDir } = require("@lerna-test/normalize-relative-dir");
 
 // file under test
 const lernaRun = require("@lerna-test/command-runner")(require("../command"));
 
 // assertion helpers
 const ranInPackagesStreaming = (testDir) =>
-  npmRunScript.stream.mock.calls.reduce((arr, [script, { args, npmClient, pkg, prefix }]) => {
+  npmRunScriptStreaming.mock.calls.reduce((arr, [script, { args, npmClient, pkg, prefix }]) => {
     const dir = normalizeRelativeDir(testDir, pkg.location);
     const record = [dir, npmClient, "run", script, `(prefixed: ${prefix})`].concat(args);
     arr.push(record.join(" "));
@@ -28,7 +28,7 @@ const ranInPackagesStreaming = (testDir) =>
 
 describe("RunCommand", () => {
   npmRunScript.mockImplementation((script, { pkg }) => Promise.resolve({ exitCode: 0, stdout: pkg.name }));
-  npmRunScript.stream.mockImplementation(() => Promise.resolve({ exitCode: 0 }));
+  npmRunScriptStreaming.mockImplementation(() => Promise.resolve({ exitCode: 0 }));
 
   afterEach(() => {
     process.exitCode = undefined;

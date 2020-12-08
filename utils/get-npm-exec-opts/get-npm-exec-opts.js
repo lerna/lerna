@@ -13,7 +13,7 @@ function getNpmExecOpts(pkg, registry) {
     env.npm_config_registry = registry;
   }
 
-  log.silly("getExecOpts", pkg.location, registry);
+  log.silly("getNpmExecOpts", pkg.location, registry);
   return {
     cwd: pkg.location,
     env,

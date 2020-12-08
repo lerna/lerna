@@ -1,6 +1,6 @@
 "use strict";
 
-const cliRunner = require("@lerna-test/cli-runner");
+const { cliRunner } = require("@lerna-test/cli-runner");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 
 const env = {

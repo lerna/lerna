@@ -1,8 +1,8 @@
 "use strict";
 
-const describeRef = require("@lerna/describe-ref");
-const ValidationError = require("@lerna/validation-error");
-const collectUncommitted = require("@lerna/collect-uncommitted");
+const { describeRef } = require("@lerna/describe-ref");
+const { ValidationError } = require("@lerna/validation-error");
+const { collectUncommitted } = require("@lerna/collect-uncommitted");
 
 module.exports = checkWorkingTree;
 module.exports.checkWorkingTree = checkWorkingTree;

@@ -9,23 +9,23 @@ const fs = require("fs-extra");
 const path = require("path");
 
 // mocked or stubbed modules
-const rimrafDir = require("@lerna/rimraf-dir");
-const npmInstall = require("@lerna/npm-install");
-const runLifecycle = require("@lerna/run-lifecycle");
-const createSymlink = require("@lerna/create-symlink");
-const hasNpmVersion = require("@lerna/has-npm-version");
+const { rimrafDir } = require("@lerna/rimraf-dir");
+const { npmInstall, npmInstallDependencies } = require("@lerna/npm-install");
+const { runLifecycle } = require("@lerna/run-lifecycle");
+const { createSymlink } = require("@lerna/create-symlink");
+const { hasNpmVersion } = require("@lerna/has-npm-version");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const normalizeRelativeDir = require("@lerna-test/normalize-relative-dir");
-const updateLernaConfig = require("@lerna-test/update-lerna-config");
+const { normalizeRelativeDir } = require("@lerna-test/normalize-relative-dir");
+const { updateLernaConfig } = require("@lerna-test/update-lerna-config");
 
 // file under test
 const lernaBootstrap = require("@lerna-test/command-runner")(require("../command"));
 
 // assertion helpers
 const installedPackagesInDirectories = (testDir) =>
-  npmInstall.dependencies.mock.calls.reduce((obj, [pkg, dependencies]) => {
+  npmInstallDependencies.mock.calls.reduce((obj, [pkg, dependencies]) => {
     const relative = normalizeRelativeDir(testDir, pkg.location);
     obj[relative || "ROOT"] = dependencies;
     return obj;
@@ -64,7 +64,7 @@ describe("BootstrapCommand", () => {
   // we stub npmInstall in most tests because
   // we already have enough tests of npmInstall
   npmInstall.mockResolvedValue();
-  npmInstall.dependencies.mockResolvedValue();
+  npmInstallDependencies.mockResolvedValue();
 
   // stub runLifecycle because it is a huge source
   // of slowness when running tests for no good reason
@@ -111,7 +111,7 @@ describe("BootstrapCommand", () => {
       await lernaBootstrap(testDir)("--ignore-scripts");
 
       expect(runLifecycle).not.toHaveBeenCalled();
-      expect(npmInstall.dependencies).toHaveBeenCalledWith(
+      expect(npmInstallDependencies).toHaveBeenCalledWith(
         expect.objectContaining({
           name: "package-prepare",
         }),
@@ -144,7 +144,7 @@ describe("BootstrapCommand", () => {
       expect(removedDirectories(testDir)).toMatchSnapshot();
 
       // root includes explicit dependencies and hoisted from leaves
-      expect(npmInstall.dependencies).toHaveBeenCalledWith(
+      expect(npmInstallDependencies).toHaveBeenCalledWith(
         expect.objectContaining({
           name: "basic",
         }),
@@ -159,7 +159,7 @@ describe("BootstrapCommand", () => {
       );
 
       // foo@0.1.2 differs from the more common foo@^1.0.0
-      expect(npmInstall.dependencies).toHaveBeenLastCalledWith(
+      expect(npmInstallDependencies).toHaveBeenLastCalledWith(
         expect.objectContaining({
           name: "package-3",
         }),
@@ -219,7 +219,7 @@ describe("BootstrapCommand", () => {
       await lernaBootstrap(testDir)("--ci");
 
       expect(hasNpmVersion).toHaveBeenLastCalledWith(">=5.7.0");
-      expect(npmInstall.dependencies.mock.calls[0][2]).toEqual({
+      expect(npmInstallDependencies.mock.calls[0][2]).toEqual({
         subCommand: "ci",
         registry: undefined,
         npmClient: "npm",
@@ -236,7 +236,7 @@ describe("BootstrapCommand", () => {
 
       await lernaBootstrap(testDir)("--ci");
 
-      expect(npmInstall.dependencies.mock.calls[0][2]).toEqual({
+      expect(npmInstallDependencies.mock.calls[0][2]).toEqual({
         registry: undefined,
         npmClient: "npm",
         npmClientArgs: [],
@@ -250,7 +250,7 @@ describe("BootstrapCommand", () => {
 
       await lernaBootstrap(testDir)("--hoist", "package-*", "--ci");
 
-      expect(npmInstall.dependencies.mock.calls[0][2]).toMatchObject({
+      expect(npmInstallDependencies.mock.calls[0][2]).toMatchObject({
         subCommand: "install", // not "ci"
         npmClient: "npm",
         npmClientArgs: ["--no-save"],
@@ -270,7 +270,7 @@ describe("BootstrapCommand", () => {
       await lernaBootstrap(testDir)();
 
       expect(hasNpmVersion).not.toHaveBeenCalled();
-      expect(npmInstall.dependencies.mock.calls[0][2]).toEqual({
+      expect(npmInstallDependencies.mock.calls[0][2]).toEqual({
         registry: undefined,
         npmClient: "npm",
         npmClientArgs: [],
@@ -350,7 +350,7 @@ describe("BootstrapCommand", () => {
 
       expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
       expect(symlinkedDirectories(testDir)).toMatchSnapshot();
-      expect(npmInstall.dependencies.mock.calls[0][2]).toMatchObject({
+      expect(npmInstallDependencies.mock.calls[0][2]).toMatchObject({
         subCommand: "install", // not "ci"
         npmClient: "npm",
         npmClientArgs: ["--no-save"],
@@ -362,7 +362,7 @@ describe("BootstrapCommand", () => {
 
       await lernaBootstrap(testDir)("--scope", "@test/package-2", "--npm-client", "yarn", "--ci");
 
-      expect(npmInstall.dependencies.mock.calls[0][2]).toMatchObject({
+      expect(npmInstallDependencies.mock.calls[0][2]).toMatchObject({
         npmClient: "yarn",
         npmClientArgs: ["--pure-lockfile"],
       });
@@ -373,7 +373,7 @@ describe("BootstrapCommand", () => {
 
       await lernaBootstrap(testDir)();
 
-      expect(npmInstall.dependencies).toHaveBeenCalledWith(
+      expect(npmInstallDependencies).toHaveBeenCalledWith(
         expect.objectContaining({
           name: "@test/package-2",
         }),
@@ -450,7 +450,7 @@ describe("BootstrapCommand", () => {
 
       await lernaBootstrap(testDir)("--npm-client", "yarn");
 
-      expect(npmInstall.dependencies.mock.calls[0][2]).toMatchObject({
+      expect(npmInstallDependencies.mock.calls[0][2]).toMatchObject({
         npmClient: "yarn",
         mutex: expect.stringMatching(/^network:\d+$/),
       });
@@ -461,7 +461,7 @@ describe("BootstrapCommand", () => {
 
       await lernaBootstrap(testDir)("--npm-client", "yarn", "--mutex", "file:/test/this/path");
 
-      expect(npmInstall.dependencies.mock.calls[0][2]).toMatchObject({
+      expect(npmInstallDependencies.mock.calls[0][2]).toMatchObject({
         npmClient: "yarn",
         mutex: "file:/test/this/path",
       });
@@ -486,7 +486,7 @@ describe("BootstrapCommand", () => {
 
       await lernaBootstrap(testDir)();
 
-      expect(npmInstall.dependencies).not.toHaveBeenCalled();
+      expect(npmInstallDependencies).not.toHaveBeenCalled();
     });
 
     it("hoists appropriately", async () => {
@@ -531,7 +531,7 @@ describe("BootstrapCommand", () => {
 
       await lernaBootstrap(testDir)();
 
-      expect(npmInstall.dependencies).not.toHaveBeenCalled();
+      expect(npmInstallDependencies).not.toHaveBeenCalled();
     });
   });
 
@@ -542,7 +542,7 @@ describe("BootstrapCommand", () => {
       await lernaBootstrap(testDir)();
 
       expect(installedPackagesInDirectories(testDir)).toMatchSnapshot();
-      expect(npmInstall.dependencies).toHaveBeenLastCalledWith(
+      expect(npmInstallDependencies).toHaveBeenLastCalledWith(
         expect.objectContaining({
           name: "@test/package-1",
         }),
@@ -563,7 +563,7 @@ describe("BootstrapCommand", () => {
 
         await lernaBootstrap(testDir)("--", "--no-optional", "--production");
 
-        expect(npmInstall.dependencies.mock.calls[0][2]).toMatchObject({
+        expect(npmInstallDependencies.mock.calls[0][2]).toMatchObject({
           npmClientArgs: ["--no-optional", "--production"],
         });
       });
@@ -575,7 +575,7 @@ describe("BootstrapCommand", () => {
 
         await lernaBootstrap(testDir)("--", "--no-optional");
 
-        expect(npmInstall.dependencies.mock.calls[0][2]).toMatchObject({
+        expect(npmInstallDependencies.mock.calls[0][2]).toMatchObject({
           npmClientArgs: ["--production", "--no-optional"],
         });
       });
@@ -588,7 +588,7 @@ describe("BootstrapCommand", () => {
 
       await lernaBootstrap(testDir)();
 
-      expect(npmInstall.dependencies).not.toHaveBeenCalled();
+      expect(npmInstallDependencies).not.toHaveBeenCalled();
       expect(npmInstall).toHaveBeenLastCalledWith(
         expect.objectContaining({ name: "root" }),
         expect.objectContaining({
@@ -614,7 +614,7 @@ describe("BootstrapCommand", () => {
 
       await lernaBootstrap(testDir)();
 
-      expect(npmInstall.dependencies).not.toHaveBeenCalled();
+      expect(npmInstallDependencies).not.toHaveBeenCalled();
       expect(npmInstall).toHaveBeenLastCalledWith(
         expect.objectContaining({ name: "relative-file-specs" }),
         expect.objectContaining({

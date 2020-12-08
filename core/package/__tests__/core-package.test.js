@@ -9,7 +9,7 @@ const loadJsonFile = require("load-json-file");
 const writePkg = require("write-pkg");
 
 // file under test
-const Package = require("..");
+const { Package } = require("..");
 
 describe("Package", () => {
   const factory = (json) =>

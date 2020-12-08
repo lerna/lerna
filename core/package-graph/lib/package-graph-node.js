@@ -1,7 +1,7 @@
 "use strict";
 
 const semver = require("semver");
-const prereleaseIdFromVersion = require("@lerna/prerelease-id-from-version");
+const { prereleaseIdFromVersion } = require("@lerna/prerelease-id-from-version");
 
 /**
  * Represents a node in a PackageGraph.

@@ -1,7 +1,7 @@
 "use strict";
 
 const npa = require("npm-package-arg");
-const ValidationError = require("@lerna/validation-error");
+const { ValidationError } = require("@lerna/validation-error");
 const { CyclicPackageGraphNode } = require("./lib/cyclic-package-graph-node");
 const { PackageGraphNode } = require("./lib/package-graph-node");
 const { reportCycles } = require("./lib/report-cycles");

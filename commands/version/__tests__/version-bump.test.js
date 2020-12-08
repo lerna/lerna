@@ -13,7 +13,7 @@ const PromptUtilities = require("@lerna/prompt");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(path.resolve(__dirname, "../../publish/__tests__"));
-const getCommitMessage = require("@lerna-test/get-commit-message");
+const { getCommitMessage } = require("@lerna-test/get-commit-message");
 
 // test command
 const lernaVersion = require("@lerna-test/command-runner")(require("../command"));

@@ -9,8 +9,8 @@ const ChildProcessUtilities = require("@lerna/child-process");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const loggingOutput = require("@lerna-test/logging-output");
-const normalizeRelativeDir = require("@lerna-test/normalize-relative-dir");
+const { loggingOutput } = require("@lerna-test/logging-output");
+const { normalizeRelativeDir } = require("@lerna-test/normalize-relative-dir");
 
 // file under test
 const lernaExec = require("@lerna-test/command-runner")(require("../command"));

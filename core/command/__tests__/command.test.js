@@ -16,11 +16,11 @@ jest.spyOn(os, "cpus").mockImplementation(() => new Array(42));
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const loggingOutput = require("@lerna-test/logging-output");
-const updateLernaConfig = require("@lerna-test/update-lerna-config");
+const { loggingOutput } = require("@lerna-test/logging-output");
+const { updateLernaConfig } = require("@lerna-test/update-lerna-config");
 
 // file under test
-const Command = require("..");
+const { Command } = require("..");
 
 describe("core-command", () => {
   let testDir;
