@@ -37,7 +37,7 @@ function flattenOptions(obj) {
 
 /**
  * Run a lifecycle script for a package.
- * @param {import("@lerna/package")} pkg
+ * @param {import("@lerna/package").Package} pkg
  * @param {string} stage
  * @param {LifecycleConfig} options
  */

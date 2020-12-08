@@ -40,7 +40,7 @@ function flattenOptions(obj) {
 
 /**
  * Publish a package to the configured registry.
- * @param {import("@lerna/package")} pkg
+ * @param {import("@lerna/package").Package} pkg
  * @param {string} tarFilePath
  * @param {LibNpmPublishOptions & NpmPublishOptions} [options]
  * @param {import("@lerna/otplease").OneTimePasswordCache} [otpCache]

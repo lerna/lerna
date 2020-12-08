@@ -12,8 +12,8 @@ module.exports.runTopologically = runTopologically;
 /**
  * Run callback in maximally-saturated topological order.
  *
- * @param {import("@lerna/package")[]} packages List of `Package` instances
- * @param {(pkg: import("@lerna/package")) => Promise<unknown>} runner Callback to map each `Package` with
+ * @param {import("@lerna/package").Package[]} packages List of `Package` instances
+ * @param {(pkg: import("@lerna/package").Package) => Promise<unknown>} runner Callback to map each `Package` with
  * @param {TopologicalConfig} [options]
  * @returns {Promise<unknown[]>} when all executions complete
  */

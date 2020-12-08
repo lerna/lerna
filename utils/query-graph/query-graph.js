@@ -15,10 +15,10 @@ class QueryGraph {
   /**
    * Sort a list of Packages topologically.
    *
-   * @param {import("@lerna/package")[]} packages An array of Packages to build the list out of
+   * @param {import("@lerna/package").Package[]} packages An array of Packages to build the list out of
    * @param {QueryGraphConfig} [options]
    *
-   * @returns {import("@lerna/package")[]} A list of Package instances in topological order
+   * @returns {import("@lerna/package").Package[]} A list of Package instances in topological order
    */
   static toposort(packages, options) {
     const graph = new QueryGraph(packages, options);
@@ -40,7 +40,7 @@ class QueryGraph {
   }
 
   /**
-   * @param {import("@lerna/package")[]} packages An array of Packages to build the graph out of
+   * @param {import("@lerna/package").Package[]} packages An array of Packages to build the graph out of
    * @param {QueryGraphConfig} [options]
    * @constructor
    */
