@@ -13,6 +13,33 @@ const { PackageGraph } = require("@lerna/package-graph");
  */
 class QueryGraph {
   /**
+   * Sort a list of Packages topologically.
+   *
+   * @param {import("@lerna/package")[]} packages An array of Packages to build the list out of
+   * @param {QueryGraphConfig} [options]
+   *
+   * @returns {import("@lerna/package")[]} A list of Package instances in topological order
+   */
+  static toposort(packages, options) {
+    const graph = new QueryGraph(packages, options);
+    const result = [];
+
+    let batch = graph.getAvailablePackages();
+
+    while (batch.length) {
+      for (const node of batch) {
+        // no need to take() in synchronous loop
+        result.push(node.pkg);
+        graph.markAsDone(node);
+      }
+
+      batch = graph.getAvailablePackages();
+    }
+
+    return result;
+  }
+
+  /**
    * @param {import("@lerna/package")[]} packages An array of Packages to build the graph out of
    * @param {QueryGraphConfig} [options]
    * @constructor
@@ -67,31 +94,4 @@ class QueryGraph {
 
 module.exports = QueryGraph;
 module.exports.QueryGraph = QueryGraph;
-module.exports.toposort = toposort;
-
-/**
- * Sort the input list topologically.
- *
- * @param {import("@lerna/package")[]} packages An array of Packages to build the list out of
- * @param {QueryGraphConfig} [options]
- *
- * @returns {import("@lerna/package")[]} A list of Package instances in topological order
- */
-function toposort(packages, options) {
-  const graph = new QueryGraph(packages, options);
-  const result = [];
-
-  let batch = graph.getAvailablePackages();
-
-  while (batch.length) {
-    for (const node of batch) {
-      // no need to take() in synchronous loop
-      result.push(node.pkg);
-      graph.markAsDone(node);
-    }
-
-    batch = graph.getAvailablePackages();
-  }
-
-  return result;
-}
+module.exports.toposort = QueryGraph.toposort;
