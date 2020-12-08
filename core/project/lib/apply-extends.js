@@ -3,11 +3,16 @@
 const path = require("path");
 const resolveFrom = require("resolve-from");
 const { ValidationError } = require("@lerna/validation-error");
-const deprecateConfig = require("./deprecate-config");
-const shallowExtend = require("./shallow-extend");
+const { deprecateConfig } = require("./deprecate-config");
+const { shallowExtend } = require("./shallow-extend");
 
-module.exports = applyExtends;
+module.exports.applyExtends = applyExtends;
 
+/**
+ * @param {{ [key: string]: unknown }} config
+ * @param {string} cwd
+ * @param {Set<string>} seen
+ */
 function applyExtends(config, cwd, seen = new Set()) {
   let defaultConfig = {};
 

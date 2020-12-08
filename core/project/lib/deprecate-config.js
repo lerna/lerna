@@ -4,7 +4,8 @@ const dotProp = require("dot-prop");
 const log = require("npmlog");
 const path = require("path");
 
-module.exports = compose(
+/** @type {(config: { [key: string]: unknown }, filepath: string) => void} */
+module.exports.deprecateConfig = compose(
   // add new predicates HERE
   remap("command.add.includeFilteredDependencies", "command.add.includeDependencies", { alsoRoot: true }),
   remap("command.add.includeFilteredDependents", "command.add.includeDependents", { alsoRoot: true }),

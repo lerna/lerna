@@ -12,8 +12,8 @@ const writeJsonFile = require("write-json-file");
 
 const { ValidationError } = require("@lerna/validation-error");
 const { Package } = require("@lerna/package");
-const applyExtends = require("./lib/apply-extends");
-const deprecateConfig = require("./lib/deprecate-config");
+const { applyExtends } = require("./lib/apply-extends");
+const { deprecateConfig } = require("./lib/deprecate-config");
 const { makeFileFinder, makeSyncFileFinder } = require("./lib/make-file-finder");
 
 class Project {
