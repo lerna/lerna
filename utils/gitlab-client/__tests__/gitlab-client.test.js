@@ -2,7 +2,7 @@
 
 jest.mock("../lib/GitLabClient");
 
-const GitLabClient = require("../lib/GitLabClient");
+const { GitLabClient } = require("../lib/GitLabClient");
 const { createGitLabClient } = require("../index");
 
 describe("createGitLabClient", () => {

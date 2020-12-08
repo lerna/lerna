@@ -2,7 +2,7 @@
 
 const log = require("npmlog");
 
-const GitLabClient = require("./lib/GitLabClient");
+const { GitLabClient } = require("./lib/GitLabClient");
 
 module.exports.createGitLabClient = createGitLabClient;
 
