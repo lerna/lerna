@@ -31,6 +31,29 @@ function shallowCopy(json) {
 }
 
 class Package {
+  /**
+   * Create a Package instance from parameters, possibly reusing existing instance.
+   * @param {string|Package|{ [key: string]: unknown }} ref A path to a package.json file, Package instance, or JSON object
+   * @param {string} [dir] If `ref` is a JSON object, this is the location of the manifest
+   * @returns {Package}
+   */
+  static lazy(ref, dir = ".") {
+    if (typeof ref === "string") {
+      const location = path.resolve(path.basename(ref) === "package.json" ? path.dirname(ref) : ref);
+      const manifest = loadJsonFile.sync(path.join(location, "package.json"));
+
+      return new Package(manifest, location);
+    }
+
+    // don't use instanceof because it fails across nested module boundaries
+    if ("__isLernaPackage" in ref) {
+      return ref;
+    }
+
+    // assume ref is a json object
+    return new Package(ref, dir);
+  }
+
   constructor(pkg, location, rootPath = location) {
     // npa will throw an error if the name is invalid
     const resolved = npa.resolve(pkg.name, `file:${path.relative(rootPath, location)}`, rootPath);
@@ -230,23 +253,5 @@ class Package {
   }
 }
 
-function lazy(ref, dir = ".") {
-  if (typeof ref === "string") {
-    const location = path.resolve(path.basename(ref) === "package.json" ? path.dirname(ref) : ref);
-    const manifest = loadJsonFile.sync(path.join(location, "package.json"));
-
-    return new Package(manifest, location);
-  }
-
-  // don't use instanceof because it fails across nested module boundaries
-  if ("__isLernaPackage" in ref) {
-    return ref;
-  }
-
-  // assume ref is a json object
-  return new Package(ref, dir);
-}
-
 module.exports = Package;
 module.exports.Package = Package;
-module.exports.lazy = lazy;
