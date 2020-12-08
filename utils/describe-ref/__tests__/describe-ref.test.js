@@ -7,10 +7,11 @@ const { describeRef, describeRefSync } = require("../lib/describe-ref");
 
 const DEFAULT_ARGS = ["describe", "--always", "--long", "--dirty", "--first-parent"];
 
-childProcess.exec.mockResolvedValue({ stdout: "v1.2.3-4-g567890a" });
-childProcess.execSync.mockReturnValue("v1.2.3-4-g567890a");
-
 describe("describeRef()", () => {
+  beforeEach(() => {
+    childProcess.exec.mockResolvedValueOnce({ stdout: "v1.2.3-4-g567890a" });
+  });
+
   it("resolves parsed metadata", async () => {
     const result = await describeRef();
 
@@ -54,6 +55,10 @@ describe("describeRef()", () => {
 });
 
 describe("describeRefSync()", () => {
+  beforeEach(() => {
+    childProcess.execSync.mockReturnValueOnce("v1.2.3-4-g567890a");
+  });
+
   it("returns parsed metadata", () => {
     const result = describeRefSync();
 
@@ -84,31 +89,49 @@ describe("describeRefSync()", () => {
       options
     );
   });
+
+  it("accepts includeMergedTags argument", async () => {
+    const includeMergedTags = true;
+
+    describeRefSync({}, includeMergedTags);
+
+    const newArgs = [...DEFAULT_ARGS];
+    newArgs.pop();
+    expect(childProcess.execSync).toHaveBeenLastCalledWith("git", newArgs, {});
+  });
 });
 
-describe("describeRef.parse()", () => {
+describe("parser", () => {
   it("matches independent tags", () => {
-    const result = describeRef.parse("pkg-name@1.2.3-4-g567890a");
+    childProcess.execSync.mockReturnValueOnce("pkg-name@1.2.3-4-g567890a");
+
+    const result = describeRefSync();
 
     expect(result.lastTagName).toBe("pkg-name@1.2.3");
     expect(result.lastVersion).toBe("1.2.3");
   });
 
   it("matches independent tags for scoped packages", () => {
-    const result = describeRef.parse("@scope/pkg-name@1.2.3-4-g567890a");
+    childProcess.execSync.mockReturnValueOnce("@scope/pkg-name@1.2.3-4-g567890a");
+
+    const result = describeRefSync();
 
     expect(result.lastTagName).toBe("@scope/pkg-name@1.2.3");
     expect(result.lastVersion).toBe("1.2.3");
   });
 
   it("matches dirty annotations", () => {
-    const result = describeRef.parse("pkg-name@1.2.3-4-g567890a-dirty");
+    childProcess.execSync.mockReturnValueOnce("pkg-name@1.2.3-4-g567890a-dirty");
+
+    const result = describeRefSync();
 
     expect(result.isDirty).toBe(true);
   });
 
   it("handles non-matching strings safely", () => {
-    const result = describeRef.parse("poopy-pants");
+    childProcess.execSync.mockReturnValueOnce("poopy-pants");
+
+    const result = describeRefSync();
 
     expect(result).toEqual({
       isDirty: false,
@@ -120,10 +143,11 @@ describe("describeRef.parse()", () => {
   });
 
   it("detects fallback and returns partial metadata", () => {
+    childProcess.execSync.mockReturnValueOnce("a1b2c3d");
     childProcess.execSync.mockReturnValueOnce("123");
 
     const options = { cwd: "bar" };
-    const result = describeRef.parse("a1b2c3d", options);
+    const result = describeRefSync(options);
 
     expect(childProcess.execSync).toHaveBeenLastCalledWith(
       "git",
@@ -138,9 +162,10 @@ describe("describeRef.parse()", () => {
   });
 
   it("detects dirty fallback and returns partial metadata", () => {
+    childProcess.execSync.mockReturnValueOnce("a1b2c3d-dirty");
     childProcess.execSync.mockReturnValueOnce("456");
 
-    const result = describeRef.parse("a1b2c3d-dirty");
+    const result = describeRefSync();
 
     expect(childProcess.execSync).toHaveBeenLastCalledWith("git", ["rev-list", "--count", "a1b2c3d"], {});
     expect(result).toEqual({
@@ -151,7 +176,9 @@ describe("describeRef.parse()", () => {
   });
 
   it("should return metadata for tag names that are sha-like", () => {
-    const result = describeRef.parse("20190104-5-g6fb4e3293");
+    childProcess.execSync.mockReturnValueOnce("20190104-5-g6fb4e3293");
+
+    const result = describeRefSync();
 
     expect(result).toEqual({
       isDirty: false,
