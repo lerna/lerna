@@ -11,10 +11,10 @@ const { Project } = require("@lerna/project");
 const { writeLogFile } = require("@lerna/write-log-file");
 const { ValidationError } = require("@lerna/validation-error");
 
-const cleanStack = require("./lib/clean-stack");
-const defaultOptions = require("./lib/default-options");
-const logPackageError = require("./lib/log-package-error");
-const warnIfHanging = require("./lib/warn-if-hanging");
+const { cleanStack } = require("./lib/clean-stack");
+const { defaultOptions } = require("./lib/default-options");
+const { logPackageError } = require("./lib/log-package-error");
+const { warnIfHanging } = require("./lib/warn-if-hanging");
 
 const DEFAULT_CONCURRENCY = os.cpus().length;
 

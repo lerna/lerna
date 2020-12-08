@@ -3,7 +3,7 @@
 const log = require("npmlog");
 const ChildProcessUtilities = require("@lerna/child-process");
 
-module.exports = warnIfHanging;
+module.exports.warnIfHanging = warnIfHanging;
 
 function warnIfHanging() {
   const childProcessCount = ChildProcessUtilities.getChildProcessCount();

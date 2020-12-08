@@ -1,7 +1,11 @@
 "use strict";
 
-module.exports = cleanStack;
+module.exports.cleanStack = cleanStack;
 
+/**
+ * @param {import("execa").ExecaError} err
+ * @param {string} className
+ */
 function cleanStack(err, className) {
   const lines = err.stack ? err.stack.split("\n") : String(err).split("\n");
   const cutoff = new RegExp(`^    at ${className}.runCommand .*$`);
