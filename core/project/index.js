@@ -16,6 +16,19 @@ const { applyExtends } = require("./lib/apply-extends");
 const { deprecateConfig } = require("./lib/deprecate-config");
 const { makeFileFinder, makeSyncFileFinder } = require("./lib/make-file-finder");
 
+/**
+ * @typedef {object} ProjectConfig
+ * @property {string[]} packages
+ * @property {boolean} useWorkspaces
+ * @property {string} version
+ */
+
+/**
+ * A representation of the entire project managed by Lerna.
+ *
+ * Wherever the lerna.json file is located, that is the project root.
+ * All package globs are rooted from this location.
+ */
 class Project {
   /**
    * @param {string} [cwd] Defaults to process.cwd()
@@ -72,6 +85,7 @@ class Project {
       throw err;
     }
 
+    /** @type {ProjectConfig} */
     this.config = loaded.config;
     this.rootConfigLocation = loaded.filepath;
     this.rootPath = path.dirname(loaded.filepath);
