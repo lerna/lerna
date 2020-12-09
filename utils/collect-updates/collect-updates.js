@@ -12,6 +12,31 @@ module.exports.collectUpdates = collectUpdates;
 module.exports.collectPackages = collectPackages;
 module.exports.getPackagesForOption = getPackagesForOption;
 
+/**
+ * @typedef {object} UpdateCollectorOptions
+ * @property {string} [bump] The semver bump keyword (patch/minor/major) or explicit version used
+ * @property {boolean} [canary] Whether or not to use a "nightly" range (`ref^..ref`) for commits
+ * @property {string[]} [ignoreChanges]
+ *  A list of globs that match files/directories whose changes
+ *  should not be considered when identifying changed packages
+ * @property {boolean} [includeMergedTags]
+ *  Whether or not to include the --first-parent flag when calling `git describe`
+ *  (awkwardly, pass `true` to _omit_ the flag, the default is to include it)
+ * @property {boolean | string[]} [forcePublish] Which packages, if any, to always include
+ *  Force all packages to be versioned with `true`, or pass a list of globs that match package names
+ * @property {string} [since] Ref to use when querying git, defaults to most recent annotated tag
+ * @property {boolean} [conventionalCommits]
+ * @property {boolean} [conventionalGraduate]
+ * @property {boolean} [excludeDependents]
+ */
+
+/**
+ * Create a list of graph nodes representing packages changed since the previous release, tagged or otherwise.
+ * @param {import("@lerna/package").Package[]} filteredPackages
+ * @param {import("@lerna/package-graph").PackageGraph} packageGraph
+ * @param {{ cwd: string }} execOpts
+ * @param {UpdateCollectorOptions} commandOptions
+ */
 function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions) {
   const { forcePublish, conventionalCommits, conventionalGraduate, excludeDependents } = commandOptions;
 
