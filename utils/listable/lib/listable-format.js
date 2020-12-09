@@ -8,7 +8,7 @@ const { QueryGraph } = require("@lerna/query-graph");
 module.exports.listableFormat = listableFormat;
 
 /**
- *
+ * Format a list of packages according to specified options.
  * @param {import("@lerna/package").Package[]} pkgList
  * @param {import("./listable-options").ListableOptions} options
  */

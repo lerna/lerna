@@ -22,10 +22,10 @@ module.exports.getFilteredPackages = getFilteredPackages;
 
 /**
  * Retrieve a list of Package instances filtered by various options.
- * @param {PackageGraph} packageGraph
- * @param {CommandExecOpts} execOpts
+ * @param {import("@lerna/package-graph").PackageGraph} packageGraph
+ * @param {{ cwd: string }} execOpts
  * @param {Partial<FilterOptions>} opts
- * @returns {Promise<Package>}
+ * @returns {Promise<import("@lerna/package").Package[]>}
  */
 function getFilteredPackages(packageGraph, execOpts, opts) {
   const options = { log, ...opts };
@@ -61,7 +61,7 @@ function getFilteredPackages(packageGraph, execOpts, opts) {
       options.log.notice("filter", "including merged tags");
     }
 
-    chain = chain.then((filteredPackages) =>
+    chain = chain.then((/** @type {ReturnType<typeof filterPackages>} */ filteredPackages) =>
       Promise.resolve(collectUpdates(filteredPackages, packageGraph, execOpts, opts)).then((updates) => {
         const updated = new Set(updates.map(({ pkg }) => pkg.name));
 

@@ -8,8 +8,6 @@ const slash = require("slash");
 
 module.exports.makeDiffPredicate = makeDiffPredicate;
 
-/** @typedef {import("@lerna/package-graph/lib/package-graph-node").PackageGraphNode} PackageGraphNode */
-
 /**
  * @param {string} committish
  * @param {{ cwd: string }} execOpts
@@ -30,7 +28,9 @@ function makeDiffPredicate(committish, execOpts, ignorePatterns = []) {
     log.info("ignoring diff in paths matching", ignorePatterns);
   }
 
-  return function hasDiffSinceThatIsntIgnored(/** @type {PackageGraphNode} */ node) {
+  return function hasDiffSinceThatIsntIgnored(
+    /** @type {import("@lerna/package-graph").PackageGraphNode} */ node
+  ) {
     const diff = diffSinceIn(committish, node.location, execOpts);
 
     if (diff === "") {

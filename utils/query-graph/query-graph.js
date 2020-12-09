@@ -42,7 +42,6 @@ class QueryGraph {
   /**
    * @param {import("@lerna/package").Package[]} packages An array of Packages to build the graph out of
    * @param {QueryGraphConfig} [options]
-   * @constructor
    */
   constructor(packages, { graphType = "allDependencies", rejectCycles } = {}) {
     // Create dependency graph
@@ -79,10 +78,16 @@ class QueryGraph {
     return this._getNextCycle();
   }
 
+  /**
+   * @param {string} name
+   */
   markAsTaken(name) {
     this.graph.delete(name);
   }
 
+  /**
+   * @param {import("@lerna/package-graph").PackageGraphNode} candidateNode
+   */
   markAsDone(candidateNode) {
     this.graph.remove(candidateNode);
 

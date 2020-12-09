@@ -2,21 +2,19 @@
 
 module.exports.collectDependents = collectDependents;
 
-/** @typedef {import("@lerna/package-graph/lib/package-graph-node").PackageGraphNode} PackageGraphNode */
-
 /**
  * @callback LocalDependentVisitor
- * @param {PackageGraphNode} dependentNode
+ * @param {import("@lerna/package-graph").PackageGraphNode} dependentNode
  * @param {string} dependentName
- * @param {Map<string, PackageGraphNode>} siblingDependents
+ * @param {Map<string, import("@lerna/package-graph").PackageGraphNode>} siblingDependents
  */
 
 /**
  * Build a set of nodes that are dependents of the input set.
- * @param {Set<PackageGraphNode>} nodes
+ * @param {Set<import("@lerna/package-graph").PackageGraphNode>} nodes
  */
 function collectDependents(nodes) {
-  /** @type {Set<PackageGraphNode>} */
+  /** @type {typeof nodes} */
   const collected = new Set();
 
   nodes.forEach((currentNode) => {

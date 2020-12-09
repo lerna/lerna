@@ -12,10 +12,11 @@ module.exports.runTopologically = runTopologically;
 /**
  * Run callback in maximally-saturated topological order.
  *
+ * @template T
  * @param {import("@lerna/package").Package[]} packages List of `Package` instances
- * @param {(pkg: import("@lerna/package").Package) => Promise<unknown>} runner Callback to map each `Package` with
+ * @param {(pkg: import("@lerna/package").Package) => Promise<T>} runner Callback to map each `Package` with
  * @param {TopologicalConfig} [options]
- * @returns {Promise<unknown[]>} when all executions complete
+ * @returns {Promise<T[]>} when all executions complete
  */
 function runTopologically(packages, runner, { concurrency, graphType, rejectCycles } = {}) {
   const queue = new PQueue({ concurrency });

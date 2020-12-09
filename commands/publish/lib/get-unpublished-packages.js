@@ -8,9 +8,9 @@ module.exports.getUnpublishedPackages = getUnpublishedPackages;
 
 /**
  * Retrieve a list of graph nodes for packages that need to be published.
- * @param {PackageGraph} packageGraph
- * @param {OptionsSnapshot} opts
- * @returns {PackageGraphNode[]}
+ * @param {import("@lerna/package-graph").PackageGraph} packageGraph
+ * @param {import("./fetch-config").FetchConfig} opts
+ * @returns {Promise<import("@lerna/package-graph").PackageGraphNode[]>}
  */
 function getUnpublishedPackages(packageGraph, opts) {
   log.silly("getUnpublishedPackages");
