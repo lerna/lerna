@@ -36,9 +36,10 @@ test("getUnpublishedPackages", async () => {
   const packages = await getPackages(cwd);
   const packageGraph = new PackageGraph(packages);
 
-  const opts = new Map();
+  const opts = {};
   const pkgs = await getUnpublishedPackages(packageGraph, opts);
 
+  expect(pacote.packument).toHaveBeenCalledWith("package-1", opts);
   expect(pkgs).toMatchInlineSnapshot(`
 Array [
   PackageGraphNode {
@@ -74,9 +75,10 @@ test("getUnpublishedPackages with private package", async () => {
   const packages = await getPackages(cwd);
   const packageGraph = new PackageGraph(packages);
 
-  const opts = new Map();
+  const opts = {};
   const pkgs = await getUnpublishedPackages(packageGraph, opts);
 
+  expect(pacote.packument).toHaveBeenCalledWith("package-1", opts);
   expect(pkgs).toMatchInlineSnapshot(`
 Array [
   PackageGraphNode {
