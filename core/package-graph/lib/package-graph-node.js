@@ -3,42 +3,46 @@
 const semver = require("semver");
 const { prereleaseIdFromVersion } = require("@lerna/prerelease-id-from-version");
 
+const PKG = Symbol("pkg");
+
 /**
- * Represents a node in a PackageGraph.
- * @constructor
- * @param {!<Package>} pkg - A Package object to build the node from.
+ * A node in a PackageGraph.
  */
 class PackageGraphNode {
+  /**
+   * @param {import("@lerna/package").Package} pkg
+   */
   constructor(pkg) {
-    Object.defineProperties(this, {
-      // immutable properties
-      name: {
-        enumerable: true,
-        value: pkg.name,
-      },
-      location: {
-        value: pkg.location,
-      },
-      prereleaseId: {
-        // an existing prerelease ID only matters at the beginning
-        value: prereleaseIdFromVersion(pkg.version),
-      },
-      // properties that might change over time
-      version: {
-        get() {
-          return pkg.version;
-        },
-      },
-      pkg: {
-        get() {
-          return pkg;
-        },
-      },
-    });
+    this.name = pkg.name;
+    this[PKG] = pkg;
 
+    // omit raw pkg from default util.inspect() output
+    Object.defineProperty(this, PKG, { enumerable: false });
+
+    /** @type {Map<string, import("npm-package-arg").Result>} */
     this.externalDependencies = new Map();
+
+    /** @type {Map<string, import("npm-package-arg").Result>} */
     this.localDependencies = new Map();
+
+    /** @type {Map<string, PackageGraphNode>} */
     this.localDependents = new Map();
+  }
+
+  get location() {
+    return this[PKG].location;
+  }
+
+  get pkg() {
+    return this[PKG];
+  }
+
+  get prereleaseId() {
+    return prereleaseIdFromVersion(this.version);
+  }
+
+  get version() {
+    return this[PKG].version;
   }
 
   /**
