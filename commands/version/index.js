@@ -11,7 +11,7 @@ const pWaterfall = require("p-waterfall");
 const semver = require("semver");
 
 const { Command } = require("@lerna/command");
-const ConventionalCommitUtilities = require("@lerna/conventional-commits");
+const { recommendVersion, updateChangelog } = require("@lerna/conventional-commits");
 const { checkWorkingTree, throwIfUncommitted } = require("@lerna/check-working-tree");
 const PromptUtilities = require("@lerna/prompt");
 const { output } = require("@lerna/output");
@@ -385,7 +385,7 @@ class VersionCommand extends Command {
 
     chain = chain.then(() =>
       this.reduceVersions((node) =>
-        ConventionalCommitUtilities.recommendVersion(node, type, {
+        recommendVersion(node, type, {
           changelogPreset,
           rootPath,
           tagPrefix: this.tagPrefix,
@@ -548,7 +548,7 @@ class VersionCommand extends Command {
       const type = independentVersions ? "independent" : "fixed";
 
       actions.push((pkg) =>
-        ConventionalCommitUtilities.updateChangelog(pkg, type, {
+        updateChangelog(pkg, type, {
           changelogPreset,
           rootPath,
           tagPrefix: this.tagPrefix,
@@ -583,7 +583,7 @@ class VersionCommand extends Command {
 
       if (conventionalCommits && changelog) {
         chain = chain.then(() =>
-          ConventionalCommitUtilities.updateChangelog(this.project.manifest, "root", {
+          updateChangelog(this.project.manifest, "root", {
             changelogPreset,
             rootPath,
             tagPrefix: this.tagPrefix,
