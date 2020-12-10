@@ -3,7 +3,7 @@
 jest.mock("@lerna/prompt");
 
 const semver = require("semver");
-const { promptSelectOne, promptTextInput, mockPromptChoices } = require("@lerna/prompt");
+const { promptSelectOne, promptTextInput } = require("@lerna/prompt");
 const { prereleaseIdFromVersion } = require("@lerna/prerelease-id-from-version");
 const { makePromptVersion } = require("../lib/prompt-version");
 
@@ -47,7 +47,7 @@ describe("select", () => {
       ["preminor", "1.1.0-alpha.0"],
       ["premajor", "2.0.0-alpha.0"],
     ])("bump %s", async (bump, result) => {
-      mockPromptChoices(bump);
+      promptSelectOne.chooseBump(bump);
 
       const choice = await versionPrompt({
         version: "1.0.0",
@@ -64,7 +64,7 @@ describe("custom version", () => {
   let inputValidate;
 
   beforeEach(() => {
-    mockPromptChoices("CUSTOM");
+    promptSelectOne.chooseBump("CUSTOM");
 
     promptTextInput.mockImplementationOnce((msg, cfg) => {
       inputFilter = cfg.filter;
@@ -102,7 +102,7 @@ describe("custom prerelease", () => {
   let inputFilter;
 
   beforeEach(() => {
-    mockPromptChoices("PRERELEASE");
+    promptSelectOne.chooseBump("PRERELEASE");
 
     promptTextInput.mockImplementationOnce((msg, cfg) => {
       inputFilter = cfg.filter;

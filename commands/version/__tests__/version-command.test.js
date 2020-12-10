@@ -12,7 +12,7 @@ const execa = require("execa");
 
 // mocked or stubbed modules
 const writePkg = require("write-pkg");
-const { promptConfirmation, promptSelectOne, mockPromptChoices } = require("@lerna/prompt");
+const { promptConfirmation, promptSelectOne } = require("@lerna/prompt");
 const { collectUpdates } = require("@lerna/collect-updates");
 const { output } = require("@lerna/output");
 const { checkWorkingTree, throwIfUncommitted } = require("@lerna/check-working-tree");
@@ -135,7 +135,7 @@ describe("VersionCommand", () => {
       const testDir = await initFixture("normal");
 
       collectUpdates.setUpdated(testDir, "package-3");
-      mockPromptChoices("minor");
+      promptSelectOne.chooseBump("minor");
 
       await lernaVersion(testDir)();
 
@@ -147,7 +147,7 @@ describe("VersionCommand", () => {
       const testDir = await initFixture("normal");
 
       collectUpdates.setUpdated(testDir, "package-3");
-      mockPromptChoices("major");
+      promptSelectOne.chooseBump("major");
 
       await lernaVersion(testDir)();
 
@@ -160,7 +160,7 @@ describe("VersionCommand", () => {
 
       // despite being a pendant leaf...
       collectUpdates.setUpdated(testDir, "package-4");
-      mockPromptChoices("major");
+      promptSelectOne.chooseBump("major");
 
       await lernaVersion(testDir)("--no-private");
 
@@ -174,7 +174,11 @@ describe("VersionCommand", () => {
   describe("independent mode", () => {
     it("versions changed packages", async () => {
       // mock version prompt choices
-      mockPromptChoices("patch", "minor", "major", "minor", "patch");
+      promptSelectOne.chooseBump("patch");
+      promptSelectOne.chooseBump("minor");
+      promptSelectOne.chooseBump("major");
+      promptSelectOne.chooseBump("minor");
+      promptSelectOne.chooseBump("patch");
 
       const testDir = await initFixture("independent");
       await lernaVersion(testDir)(); // --independent is only valid in InitCommand

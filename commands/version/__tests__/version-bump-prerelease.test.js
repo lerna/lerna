@@ -14,7 +14,7 @@ const fs = require("fs-extra");
 const path = require("path");
 
 // mocked modules
-const { promptTextInput, mockPromptChoices } = require("@lerna/prompt");
+const { promptTextInput, promptSelectOne } = require("@lerna/prompt");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(path.resolve(__dirname, "../../publish/__tests__"));
@@ -152,7 +152,8 @@ test("independent version prerelease does not bump on every unrelated change", a
   await gitCommit(cwd, "init");
 
   // simulate choices for pkg-a then pkg-b
-  mockPromptChoices("patch", "PRERELEASE");
+  promptSelectOne.chooseBump("patch");
+  promptSelectOne.chooseBump("PRERELEASE");
   promptTextInput.mockImplementationOnce((msg, cfg) =>
     // the _existing_ "bumps" prerelease ID should be preserved
     Promise.resolve(cfg.filter())
