@@ -105,7 +105,7 @@ function attempt(fn, opts, otpCache) {
  */
 function getOneTimePassword(message = "This operation requires a one-time password:") {
   // Logic taken from npm internals: https://git.io/fNoMe
-  return prompt.input(message, {
+  return prompt.promptTextInput(message, {
     filter: (otp) => otp.replace(/\s+/g, ""),
     validate: (otp) =>
       (otp && /^[\d ]+$|^[A-Fa-f0-9]{64,64}$/.test(otp)) ||

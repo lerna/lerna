@@ -9,7 +9,7 @@ const prompt = require("@lerna/prompt");
 const { otplease, getOneTimePassword } = require("..");
 
 // global mock setup
-prompt.input.mockResolvedValue("123456");
+prompt.promptTextInput.mockResolvedValue("123456");
 
 describe("@lerna/otplease", () => {
   const stdinIsTTY = process.stdin.isTTY;
@@ -31,7 +31,7 @@ describe("@lerna/otplease", () => {
     const result = await otplease(fn, {});
 
     expect(fn).toHaveBeenCalled();
-    expect(prompt.input).not.toHaveBeenCalled();
+    expect(prompt.promptTextInput).not.toHaveBeenCalled();
     expect(result).toBe(obj);
   });
 
@@ -41,7 +41,7 @@ describe("@lerna/otplease", () => {
     const result = await otplease(fn, {});
 
     expect(fn).toHaveBeenCalledTimes(2);
-    expect(prompt.input).toHaveBeenCalled();
+    expect(prompt.promptTextInput).toHaveBeenCalled();
     expect(result).toBe(obj);
   });
 
@@ -52,7 +52,7 @@ describe("@lerna/otplease", () => {
 
     const result = await otplease(fn, {}, otpCache);
     expect(fn).toHaveBeenCalledTimes(2);
-    expect(prompt.input).toHaveBeenCalled();
+    expect(prompt.promptTextInput).toHaveBeenCalled();
     expect(result).toBe(obj);
     expect(otpCache.otp).toBe("123456");
   });
@@ -64,7 +64,7 @@ describe("@lerna/otplease", () => {
     const result = await otplease(fn, {}, otpCache);
 
     expect(fn).toHaveBeenCalledTimes(1);
-    expect(prompt.input).not.toHaveBeenCalled();
+    expect(prompt.promptTextInput).not.toHaveBeenCalled();
     expect(result).toBe(obj);
     expect(otpCache.otp).toBe("654321");
   });
@@ -76,7 +76,7 @@ describe("@lerna/otplease", () => {
     const result = await otplease(fn, { otp: "987654" }, otpCache);
 
     expect(fn).toHaveBeenCalledTimes(1);
-    expect(prompt.input).not.toHaveBeenCalled();
+    expect(prompt.promptTextInput).not.toHaveBeenCalled();
     expect(result).toBe(obj);
     // do not replace cache
     expect(otpCache.otp).toBe("654321");
@@ -95,7 +95,7 @@ describe("@lerna/otplease", () => {
     // start intial otplease call, 'catch' will happen in next turn *after* the cache is set.
     const result = await otplease(fn, {}, otpCache);
     expect(fn).toHaveBeenCalledTimes(2);
-    expect(prompt.input).not.toHaveBeenCalled();
+    expect(prompt.promptTextInput).not.toHaveBeenCalled();
     expect(result).toBe(obj);
   });
 
@@ -117,13 +117,13 @@ describe("@lerna/otplease", () => {
     expect(fn1).toHaveBeenCalledTimes(2);
     expect(fn2).toHaveBeenCalledTimes(2);
     // only prompt once for the two concurrent requests
-    expect(prompt.input).toHaveBeenCalledTimes(1);
+    expect(prompt.promptTextInput).toHaveBeenCalledTimes(1);
     expect(res1).toBe(obj1);
     expect(res2).toBe(obj2);
   });
 
   it("strips whitespace from OTP prompt value", async () => {
-    prompt.input.mockImplementationOnce((msg, opts) => Promise.resolve(opts.filter(" 121212 ")));
+    prompt.promptTextInput.mockImplementationOnce((msg, opts) => Promise.resolve(opts.filter(" 121212 ")));
 
     const obj = {};
     const fn = jest.fn(makeTestCallback("121212", obj));
@@ -133,7 +133,7 @@ describe("@lerna/otplease", () => {
   });
 
   it("validates OTP prompt response", async () => {
-    prompt.input.mockImplementationOnce((msg, opts) =>
+    prompt.promptTextInput.mockImplementationOnce((msg, opts) =>
       Promise.resolve(opts.validate("i am the very model of a modern major general"))
     );
 
@@ -144,7 +144,7 @@ describe("@lerna/otplease", () => {
   });
 
   it("rejects prompt errors", async () => {
-    prompt.input.mockImplementationOnce(() => Promise.reject(new Error("poopypants")));
+    prompt.promptTextInput.mockImplementationOnce(() => Promise.reject(new Error("poopypants")));
 
     const obj = {};
     const fn = jest.fn(makeTestCallback("343434", obj));
@@ -189,7 +189,7 @@ describe("@lerna/otplease", () => {
     it("defaults message argument", async () => {
       await getOneTimePassword();
 
-      expect(prompt.input).toHaveBeenCalledWith(
+      expect(prompt.promptTextInput).toHaveBeenCalledWith(
         "This operation requires a one-time password:",
         expect.any(Object)
       );
@@ -198,7 +198,7 @@ describe("@lerna/otplease", () => {
     it("accepts custom message", async () => {
       await getOneTimePassword("foo bar");
 
-      expect(prompt.input).toHaveBeenCalledWith("foo bar", expect.any(Object));
+      expect(prompt.promptTextInput).toHaveBeenCalledWith("foo bar", expect.any(Object));
     });
   });
 });

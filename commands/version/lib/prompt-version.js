@@ -44,7 +44,7 @@ function promptVersion(currentVersion, name, prereleaseId) {
     ],
   }).then((choice) => {
     if (choice === "CUSTOM") {
-      return PromptUtilities.input("Enter a custom version", {
+      return PromptUtilities.promptTextInput("Enter a custom version", {
         filter: semver.valid,
         // semver.valid() always returns null with invalid input
         validate: (v) => v !== null || "Must be a valid semver version",
@@ -55,7 +55,7 @@ function promptVersion(currentVersion, name, prereleaseId) {
       const defaultVersion = semver.inc(currentVersion, "prerelease", prereleaseId);
       const prompt = `(default: "${prereleaseId}", yielding ${defaultVersion})`;
 
-      return PromptUtilities.input(`Enter a prerelease identifier ${prompt}`, {
+      return PromptUtilities.promptTextInput(`Enter a prerelease identifier ${prompt}`, {
         filter: (v) => semver.inc(currentVersion, "prerelease", v || prereleaseId),
       });
     }

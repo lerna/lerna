@@ -66,7 +66,7 @@ describe("custom version", () => {
   beforeEach(() => {
     prompt.mockChoices("CUSTOM");
 
-    prompt.input.mockImplementationOnce((msg, cfg) => {
+    prompt.promptTextInput.mockImplementationOnce((msg, cfg) => {
       inputFilter = cfg.filter;
       inputValidate = cfg.validate;
 
@@ -104,7 +104,7 @@ describe("custom prerelease", () => {
   beforeEach(() => {
     prompt.mockChoices("PRERELEASE");
 
-    prompt.input.mockImplementationOnce((msg, cfg) => {
+    prompt.promptTextInput.mockImplementationOnce((msg, cfg) => {
       inputFilter = cfg.filter;
 
       return Promise.resolve(msg);
