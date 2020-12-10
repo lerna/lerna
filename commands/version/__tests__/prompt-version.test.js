@@ -47,7 +47,7 @@ describe("select", () => {
       ["preminor", "1.1.0-alpha.0"],
       ["premajor", "2.0.0-alpha.0"],
     ])("bump %s", async (bump, result) => {
-      prompt.mockChoices(bump);
+      prompt.mockPromptChoices(bump);
 
       const choice = await versionPrompt({
         version: "1.0.0",
@@ -64,7 +64,7 @@ describe("custom version", () => {
   let inputValidate;
 
   beforeEach(() => {
-    prompt.mockChoices("CUSTOM");
+    prompt.mockPromptChoices("CUSTOM");
 
     prompt.promptTextInput.mockImplementationOnce((msg, cfg) => {
       inputFilter = cfg.filter;
@@ -102,7 +102,7 @@ describe("custom prerelease", () => {
   let inputFilter;
 
   beforeEach(() => {
-    prompt.mockChoices("PRERELEASE");
+    prompt.mockPromptChoices("PRERELEASE");
 
     prompt.promptTextInput.mockImplementationOnce((msg, cfg) => {
       inputFilter = cfg.filter;

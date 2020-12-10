@@ -137,7 +137,7 @@ describe("VersionCommand", () => {
       const testDir = await initFixture("normal");
 
       collectUpdates.setUpdated(testDir, "package-3");
-      PromptUtilities.mockChoices("minor");
+      PromptUtilities.mockPromptChoices("minor");
 
       await lernaVersion(testDir)();
 
@@ -149,7 +149,7 @@ describe("VersionCommand", () => {
       const testDir = await initFixture("normal");
 
       collectUpdates.setUpdated(testDir, "package-3");
-      PromptUtilities.mockChoices("major");
+      PromptUtilities.mockPromptChoices("major");
 
       await lernaVersion(testDir)();
 
@@ -162,7 +162,7 @@ describe("VersionCommand", () => {
 
       // despite being a pendant leaf...
       collectUpdates.setUpdated(testDir, "package-4");
-      PromptUtilities.mockChoices("major");
+      PromptUtilities.mockPromptChoices("major");
 
       await lernaVersion(testDir)("--no-private");
 
@@ -176,7 +176,7 @@ describe("VersionCommand", () => {
   describe("independent mode", () => {
     it("versions changed packages", async () => {
       // mock version prompt choices
-      PromptUtilities.mockChoices("patch", "minor", "major", "minor", "patch");
+      PromptUtilities.mockPromptChoices("patch", "minor", "major", "minor", "patch");
 
       const testDir = await initFixture("independent");
       await lernaVersion(testDir)(); // --independent is only valid in InitCommand

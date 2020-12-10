@@ -152,7 +152,7 @@ test("independent version prerelease does not bump on every unrelated change", a
   await gitCommit(cwd, "init");
 
   // simulate choices for pkg-a then pkg-b
-  prompt.mockChoices("patch", "PRERELEASE");
+  prompt.mockPromptChoices("patch", "PRERELEASE");
   prompt.promptTextInput.mockImplementationOnce((msg, cfg) =>
     // the _existing_ "bumps" prerelease ID should be preserved
     Promise.resolve(cfg.filter())
