@@ -56,7 +56,7 @@ describe("VersionCommand", () => {
 
       expect(checkWorkingTree).toHaveBeenCalled();
 
-      expect(PromptUtilities.select.mock.calls).toMatchSnapshot("prompt");
+      expect(PromptUtilities.promptSelectOne.mock.calls).toMatchSnapshot("prompt");
       expect(PromptUtilities.confirm).toHaveBeenLastCalledWith(
         "Are you sure you want to create these versions?"
       );
@@ -454,7 +454,7 @@ describe("VersionCommand", () => {
       const testDir = await initFixture("normal");
       await lernaVersion(testDir)("--yes", "patch");
 
-      expect(PromptUtilities.select).not.toHaveBeenCalled();
+      expect(PromptUtilities.promptSelectOne).not.toHaveBeenCalled();
       expect(PromptUtilities.confirm).not.toHaveBeenCalled();
 
       const message = await getCommitMessage(testDir);
@@ -748,7 +748,7 @@ describe("VersionCommand", () => {
       const testDir = await initFixture("normal");
       await lernaVersion(testDir)("--include-merged-tags", "--yes", "patch");
 
-      expect(PromptUtilities.select).not.toHaveBeenCalled();
+      expect(PromptUtilities.promptSelectOne).not.toHaveBeenCalled();
       expect(PromptUtilities.confirm).not.toHaveBeenCalled();
 
       const message = await getCommitMessage(testDir);

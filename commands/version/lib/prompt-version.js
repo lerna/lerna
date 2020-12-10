@@ -31,7 +31,7 @@ function promptVersion(currentVersion, name, prereleaseId) {
 
   const message = `Select a new version ${name ? `for ${name} ` : ""}(currently ${currentVersion})`;
 
-  return PromptUtilities.select(message, {
+  return PromptUtilities.promptSelectOne(message, {
     choices: [
       { value: patch, name: `Patch (${patch})` },
       { value: minor, name: `Minor (${minor})` },
