@@ -16,8 +16,8 @@ const { Command } = require("@lerna/command");
 const ChildProcessUtilities = require("@lerna/child-process");
 const npmConf = require("@lerna/npm-conf");
 const { ValidationError } = require("@lerna/validation-error");
-const builtinNpmrc = require("./lib/builtin-npmrc");
-const catFile = require("./lib/cat-file");
+const { builtinNpmrc } = require("./lib/builtin-npmrc");
+const { catFile } = require("./lib/cat-file");
 
 const LERNA_MODULE_DATA = require.resolve("./lib/lerna-module-data.js");
 const DEFAULT_DESCRIPTION = [
