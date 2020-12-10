@@ -16,7 +16,7 @@ const childProcess = require("@lerna/child-process");
 // mocked modules
 const writePkg = require("write-pkg");
 const { npmPublish } = require("@lerna/npm-publish");
-const PromptUtilities = require("@lerna/prompt");
+const { promptConfirmation } = require("@lerna/prompt");
 const { throwIfUncommitted } = require("@lerna/check-working-tree");
 
 // helpers
@@ -75,9 +75,7 @@ test("publish --canary", async () => {
   );
   await lernaPublish(cwd)("--canary");
 
-  expect(PromptUtilities.promptConfirmation).toHaveBeenLastCalledWith(
-    "Are you sure you want to publish these packages?"
-  );
+  expect(promptConfirmation).toHaveBeenLastCalledWith("Are you sure you want to publish these packages?");
   expect(npmPublish.registry).toMatchInlineSnapshot(`
 Map {
   "package-1" => "canary",

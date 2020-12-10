@@ -12,7 +12,7 @@ const execa = require("execa");
 
 // mocked or stubbed modules
 const writePkg = require("write-pkg");
-const PromptUtilities = require("@lerna/prompt");
+const { promptConfirmation, promptSelectOne, mockPromptChoices } = require("@lerna/prompt");
 const { collectUpdates } = require("@lerna/collect-updates");
 const { output } = require("@lerna/output");
 const { checkWorkingTree, throwIfUncommitted } = require("@lerna/check-working-tree");
@@ -56,10 +56,8 @@ describe("VersionCommand", () => {
 
       expect(checkWorkingTree).toHaveBeenCalled();
 
-      expect(PromptUtilities.promptSelectOne.mock.calls).toMatchSnapshot("prompt");
-      expect(PromptUtilities.promptConfirmation).toHaveBeenLastCalledWith(
-        "Are you sure you want to create these versions?"
-      );
+      expect(promptSelectOne.mock.calls).toMatchSnapshot("prompt");
+      expect(promptConfirmation).toHaveBeenLastCalledWith("Are you sure you want to create these versions?");
 
       expect(writePkg.updatedManifest("package-1")).toMatchSnapshot("gitHead");
 
@@ -137,7 +135,7 @@ describe("VersionCommand", () => {
       const testDir = await initFixture("normal");
 
       collectUpdates.setUpdated(testDir, "package-3");
-      PromptUtilities.mockPromptChoices("minor");
+      mockPromptChoices("minor");
 
       await lernaVersion(testDir)();
 
@@ -149,7 +147,7 @@ describe("VersionCommand", () => {
       const testDir = await initFixture("normal");
 
       collectUpdates.setUpdated(testDir, "package-3");
-      PromptUtilities.mockPromptChoices("major");
+      mockPromptChoices("major");
 
       await lernaVersion(testDir)();
 
@@ -162,7 +160,7 @@ describe("VersionCommand", () => {
 
       // despite being a pendant leaf...
       collectUpdates.setUpdated(testDir, "package-4");
-      PromptUtilities.mockPromptChoices("major");
+      mockPromptChoices("major");
 
       await lernaVersion(testDir)("--no-private");
 
@@ -176,12 +174,12 @@ describe("VersionCommand", () => {
   describe("independent mode", () => {
     it("versions changed packages", async () => {
       // mock version prompt choices
-      PromptUtilities.mockPromptChoices("patch", "minor", "major", "minor", "patch");
+      mockPromptChoices("patch", "minor", "major", "minor", "patch");
 
       const testDir = await initFixture("independent");
       await lernaVersion(testDir)(); // --independent is only valid in InitCommand
 
-      expect(PromptUtilities.promptConfirmation).toHaveBeenCalled();
+      expect(promptConfirmation).toHaveBeenCalled();
 
       expect(writePkg.updatedManifest("package-1")).toMatchSnapshot("gitHead");
 
@@ -454,8 +452,8 @@ describe("VersionCommand", () => {
       const testDir = await initFixture("normal");
       await lernaVersion(testDir)("--yes", "patch");
 
-      expect(PromptUtilities.promptSelectOne).not.toHaveBeenCalled();
-      expect(PromptUtilities.promptConfirmation).not.toHaveBeenCalled();
+      expect(promptSelectOne).not.toHaveBeenCalled();
+      expect(promptConfirmation).not.toHaveBeenCalled();
 
       const message = await getCommitMessage(testDir);
       expect(message).toBe("v1.0.1");
@@ -748,8 +746,8 @@ describe("VersionCommand", () => {
       const testDir = await initFixture("normal");
       await lernaVersion(testDir)("--include-merged-tags", "--yes", "patch");
 
-      expect(PromptUtilities.promptSelectOne).not.toHaveBeenCalled();
-      expect(PromptUtilities.promptConfirmation).not.toHaveBeenCalled();
+      expect(promptSelectOne).not.toHaveBeenCalled();
+      expect(promptConfirmation).not.toHaveBeenCalled();
 
       const message = await getCommitMessage(testDir);
       expect(message).toBe("v1.0.1");

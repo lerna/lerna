@@ -11,7 +11,7 @@ const { Command } = require("@lerna/command");
 const { ValidationError } = require("@lerna/validation-error");
 const { describeRef } = require("@lerna/describe-ref");
 const { throwIfUncommitted } = require("@lerna/check-working-tree");
-const PromptUtilities = require("@lerna/prompt");
+const { promptConfirmation } = require("@lerna/prompt");
 const { output } = require("@lerna/output");
 const { collectUpdates } = require("@lerna/collect-updates");
 const npmConf = require("@lerna/npm-conf");
@@ -426,7 +426,7 @@ class PublishCommand extends Command {
       return true;
     }
 
-    return PromptUtilities.promptConfirmation("Are you sure you want to publish these packages?");
+    return promptConfirmation("Are you sure you want to publish these packages?");
   }
 
   prepareLicenseActions() {

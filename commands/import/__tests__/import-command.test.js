@@ -8,7 +8,7 @@ const path = require("path");
 const pathExists = require("path-exists");
 
 // mocked or stubbed modules
-const PromptUtilities = require("@lerna/prompt");
+const { promptConfirmation } = require("@lerna/prompt");
 
 // helpers
 const initNamedFixture = require("@lerna-test/init-named-fixture")(__dirname);
@@ -25,7 +25,7 @@ const lastCommitInDir = (cwd) =>
   execa("git", ["log", "-1", "--format=%s"], { cwd }).then((result) => result.stdout);
 
 describe("ImportCommand", () => {
-  PromptUtilities.promptConfirmation.mockResolvedValue(true);
+  promptConfirmation.mockResolvedValue(true);
 
   describe("import", () => {
     const initBasicFixtures = async () => {
@@ -178,7 +178,7 @@ describe("ImportCommand", () => {
     it("exits early when confirmation is rejected", async () => {
       const [testDir, externalDir] = await initBasicFixtures();
 
-      PromptUtilities.promptConfirmation.mockResolvedValueOnce(false);
+      promptConfirmation.mockResolvedValueOnce(false);
 
       await lernaImport(testDir)(externalDir);
 
@@ -222,7 +222,7 @@ describe("ImportCommand", () => {
       const [testDir, externalDir] = await initBasicFixtures();
       await lernaImport(testDir)(externalDir, "--yes");
 
-      expect(PromptUtilities.promptConfirmation).not.toHaveBeenCalled();
+      expect(promptConfirmation).not.toHaveBeenCalled();
     });
 
     it("errors without an argument", async () => {

@@ -7,7 +7,7 @@ const pMapSeries = require("p-map-series");
 
 const ChildProcessUtilities = require("@lerna/child-process");
 const { Command } = require("@lerna/command");
-const PromptUtilities = require("@lerna/prompt");
+const { promptConfirmation } = require("@lerna/prompt");
 const { ValidationError } = require("@lerna/validation-error");
 const { pulseTillDone } = require("@lerna/pulse-till-done");
 
@@ -114,7 +114,7 @@ class ImportCommand extends Command {
       return true;
     }
 
-    return PromptUtilities.promptConfirmation("Are you sure you want to import these commits onto the current branch?");
+    return promptConfirmation("Are you sure you want to import these commits onto the current branch?");
   }
 
   getPackageDirectories() {

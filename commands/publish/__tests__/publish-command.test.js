@@ -20,7 +20,7 @@ const { getOneTimePassword } = require("@lerna/otplease");
 const npmDistTag = require("@lerna/npm-dist-tag");
 const { npmPublish } = require("@lerna/npm-publish");
 const { packDirectory } = require("@lerna/pack-directory");
-const PromptUtilities = require("@lerna/prompt");
+const { promptConfirmation } = require("@lerna/prompt");
 const { collectUpdates } = require("@lerna/collect-updates");
 const { getNpmUsername } = require("../lib/get-npm-username");
 const { verifyNpmPackageAccess } = require("../lib/verify-npm-package-access");
@@ -97,9 +97,7 @@ describe("PublishCommand", () => {
 
       await lernaPublish(testDir)();
 
-      expect(PromptUtilities.promptConfirmation).toHaveBeenLastCalledWith(
-        "Are you sure you want to publish these packages?"
-      );
+      expect(promptConfirmation).toHaveBeenLastCalledWith("Are you sure you want to publish these packages?");
       expect(packDirectory.registry).toMatchInlineSnapshot(`
 Set {
   "package-1",

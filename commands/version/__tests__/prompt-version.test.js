@@ -3,7 +3,7 @@
 jest.mock("@lerna/prompt");
 
 const semver = require("semver");
-const prompt = require("@lerna/prompt");
+const { promptSelectOne, promptTextInput, mockPromptChoices } = require("@lerna/prompt");
 const { prereleaseIdFromVersion } = require("@lerna/prerelease-id-from-version");
 const { makePromptVersion } = require("../lib/prompt-version");
 
@@ -17,7 +17,7 @@ describe("select", () => {
         version: "1.2.3",
       });
 
-      expect(prompt.promptSelectOne).toHaveBeenLastCalledWith(
+      expect(promptSelectOne).toHaveBeenLastCalledWith(
         "Select a new version (currently 1.2.3)",
         expect.objectContaining({
           choices: expect.any(Array),
@@ -31,7 +31,7 @@ describe("select", () => {
         name: "my-package",
       });
 
-      expect(prompt.promptSelectOne).toHaveBeenLastCalledWith(
+      expect(promptSelectOne).toHaveBeenLastCalledWith(
         "Select a new version for my-package (currently 3.2.1)",
         expect.any(Object)
       );
@@ -47,7 +47,7 @@ describe("select", () => {
       ["preminor", "1.1.0-alpha.0"],
       ["premajor", "2.0.0-alpha.0"],
     ])("bump %s", async (bump, result) => {
-      prompt.mockPromptChoices(bump);
+      mockPromptChoices(bump);
 
       const choice = await versionPrompt({
         version: "1.0.0",
@@ -64,9 +64,9 @@ describe("custom version", () => {
   let inputValidate;
 
   beforeEach(() => {
-    prompt.mockPromptChoices("CUSTOM");
+    mockPromptChoices("CUSTOM");
 
-    prompt.promptTextInput.mockImplementationOnce((msg, cfg) => {
+    promptTextInput.mockImplementationOnce((msg, cfg) => {
       inputFilter = cfg.filter;
       inputValidate = cfg.validate;
 
@@ -102,9 +102,9 @@ describe("custom prerelease", () => {
   let inputFilter;
 
   beforeEach(() => {
-    prompt.mockPromptChoices("PRERELEASE");
+    mockPromptChoices("PRERELEASE");
 
-    prompt.promptTextInput.mockImplementationOnce((msg, cfg) => {
+    promptTextInput.mockImplementationOnce((msg, cfg) => {
       inputFilter = cfg.filter;
 
       return Promise.resolve(msg);

@@ -13,7 +13,7 @@ const semver = require("semver");
 const { Command } = require("@lerna/command");
 const { recommendVersion, updateChangelog } = require("@lerna/conventional-commits");
 const { checkWorkingTree, throwIfUncommitted } = require("@lerna/check-working-tree");
-const PromptUtilities = require("@lerna/prompt");
+const { promptConfirmation } = require("@lerna/prompt");
 const { output } = require("@lerna/output");
 const { collectUpdates, collectPackages, getPackagesForOption } = require("@lerna/collect-updates");
 const { createRunner } = require("@lerna/run-lifecycle");
@@ -488,7 +488,7 @@ class VersionCommand extends Command {
       ? "Are you sure you want to publish these packages?"
       : "Are you sure you want to create these versions?";
 
-    return PromptUtilities.promptConfirmation(message);
+    return promptConfirmation(message);
   }
 
   updatePackageVersions() {

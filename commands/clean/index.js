@@ -5,7 +5,7 @@ const pMap = require("p-map");
 
 const { Command } = require("@lerna/command");
 const { rimrafDir } = require("@lerna/rimraf-dir");
-const PromptUtilities = require("@lerna/prompt");
+const { promptConfirmation } = require("@lerna/prompt");
 const { getFilteredPackages } = require("@lerna/filter-options");
 const { pulseTillDone } = require("@lerna/pulse-till-done");
 
@@ -39,7 +39,7 @@ class CleanCommand extends Command {
         this.directoriesToDelete.map((dir) => path.relative(this.project.rootPath, dir)).join("\n")
       );
 
-      return PromptUtilities.promptConfirmation("Proceed?");
+      return promptConfirmation("Proceed?");
     });
   }
 

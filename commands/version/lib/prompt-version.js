@@ -1,7 +1,7 @@
 "use strict";
 
 const semver = require("semver");
-const PromptUtilities = require("@lerna/prompt");
+const { promptSelectOne, promptTextInput } = require("@lerna/prompt");
 
 module.exports.makePromptVersion = makePromptVersion;
 
@@ -31,7 +31,7 @@ function promptVersion(currentVersion, name, prereleaseId) {
 
   const message = `Select a new version ${name ? `for ${name} ` : ""}(currently ${currentVersion})`;
 
-  return PromptUtilities.promptSelectOne(message, {
+  return promptSelectOne(message, {
     choices: [
       { value: patch, name: `Patch (${patch})` },
       { value: minor, name: `Minor (${minor})` },
@@ -44,7 +44,7 @@ function promptVersion(currentVersion, name, prereleaseId) {
     ],
   }).then((choice) => {
     if (choice === "CUSTOM") {
-      return PromptUtilities.promptTextInput("Enter a custom version", {
+      return promptTextInput("Enter a custom version", {
         filter: semver.valid,
         // semver.valid() always returns null with invalid input
         validate: (v) => v !== null || "Must be a valid semver version",
@@ -55,7 +55,7 @@ function promptVersion(currentVersion, name, prereleaseId) {
       const defaultVersion = semver.inc(currentVersion, "prerelease", prereleaseId);
       const prompt = `(default: "${prereleaseId}", yielding ${defaultVersion})`;
 
-      return PromptUtilities.promptTextInput(`Enter a prerelease identifier ${prompt}`, {
+      return promptTextInput(`Enter a prerelease identifier ${prompt}`, {
         filter: (v) => semver.inc(currentVersion, "prerelease", v || prereleaseId),
       });
     }

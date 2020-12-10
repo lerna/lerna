@@ -18,7 +18,7 @@ const path = require("path");
 // mocked or stubbed modules
 const writePkg = require("write-pkg");
 const { npmPublish } = require("@lerna/npm-publish");
-const PromptUtilities = require("@lerna/prompt");
+const { promptConfirmation } = require("@lerna/prompt");
 const { output } = require("@lerna/output");
 const { throwIfUncommitted } = require("@lerna/check-working-tree");
 const { getUnpublishedPackages } = require("../lib/get-unpublished-packages");
@@ -41,9 +41,7 @@ describe("publish from-package", () => {
 
     await lernaPublish(cwd)("from-package");
 
-    expect(PromptUtilities.promptConfirmation).toHaveBeenLastCalledWith(
-      "Are you sure you want to publish these packages?"
-    );
+    expect(promptConfirmation).toHaveBeenLastCalledWith("Are you sure you want to publish these packages?");
     expect(output.logged()).toMatch("Found 2 packages to publish:");
     expect(npmPublish.order()).toEqual(["package-2", "package-3"]);
   });

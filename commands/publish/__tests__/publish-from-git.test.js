@@ -17,7 +17,7 @@ jest.mock("../../version/lib/remote-branch-exists");
 
 // mocked or stubbed modules
 const { npmPublish } = require("@lerna/npm-publish");
-const PromptUtilities = require("@lerna/prompt");
+const { promptConfirmation } = require("@lerna/prompt");
 const { output } = require("@lerna/output");
 const { throwIfUncommitted } = require("@lerna/check-working-tree");
 
@@ -39,9 +39,7 @@ describe("publish from-git", () => {
     // called from chained describeRef()
     expect(throwIfUncommitted).toHaveBeenCalled();
 
-    expect(PromptUtilities.promptConfirmation).toHaveBeenLastCalledWith(
-      "Are you sure you want to publish these packages?"
-    );
+    expect(promptConfirmation).toHaveBeenLastCalledWith("Are you sure you want to publish these packages?");
     expect(output.logged()).toMatch("Found 4 packages to publish:");
     expect(npmPublish.order()).toEqual([
       "package-1",
