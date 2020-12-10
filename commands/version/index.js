@@ -488,7 +488,7 @@ class VersionCommand extends Command {
       ? "Are you sure you want to publish these packages?"
       : "Are you sure you want to create these versions?";
 
-    return PromptUtilities.confirm(message);
+    return PromptUtilities.promptConfirmation(message);
   }
 
   updatePackageVersions() {

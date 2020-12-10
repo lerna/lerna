@@ -426,7 +426,7 @@ class PublishCommand extends Command {
       return true;
     }
 
-    return PromptUtilities.confirm("Are you sure you want to publish these packages?");
+    return PromptUtilities.promptConfirmation("Are you sure you want to publish these packages?");
   }
 
   prepareLicenseActions() {

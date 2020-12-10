@@ -97,7 +97,7 @@ describe("PublishCommand", () => {
 
       await lernaPublish(testDir)();
 
-      expect(PromptUtilities.confirm).toHaveBeenLastCalledWith(
+      expect(PromptUtilities.promptConfirmation).toHaveBeenLastCalledWith(
         "Are you sure you want to publish these packages?"
       );
       expect(packDirectory.registry).toMatchInlineSnapshot(`

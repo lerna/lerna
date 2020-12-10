@@ -114,7 +114,7 @@ class ImportCommand extends Command {
       return true;
     }
 
-    return PromptUtilities.confirm("Are you sure you want to import these commits onto the current branch?");
+    return PromptUtilities.promptConfirmation("Are you sure you want to import these commits onto the current branch?");
   }
 
   getPackageDirectories() {

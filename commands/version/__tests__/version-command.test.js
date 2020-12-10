@@ -57,7 +57,7 @@ describe("VersionCommand", () => {
       expect(checkWorkingTree).toHaveBeenCalled();
 
       expect(PromptUtilities.promptSelectOne.mock.calls).toMatchSnapshot("prompt");
-      expect(PromptUtilities.confirm).toHaveBeenLastCalledWith(
+      expect(PromptUtilities.promptConfirmation).toHaveBeenLastCalledWith(
         "Are you sure you want to create these versions?"
       );
 
@@ -181,7 +181,7 @@ describe("VersionCommand", () => {
       const testDir = await initFixture("independent");
       await lernaVersion(testDir)(); // --independent is only valid in InitCommand
 
-      expect(PromptUtilities.confirm).toHaveBeenCalled();
+      expect(PromptUtilities.promptConfirmation).toHaveBeenCalled();
 
       expect(writePkg.updatedManifest("package-1")).toMatchSnapshot("gitHead");
 
@@ -455,7 +455,7 @@ describe("VersionCommand", () => {
       await lernaVersion(testDir)("--yes", "patch");
 
       expect(PromptUtilities.promptSelectOne).not.toHaveBeenCalled();
-      expect(PromptUtilities.confirm).not.toHaveBeenCalled();
+      expect(PromptUtilities.promptConfirmation).not.toHaveBeenCalled();
 
       const message = await getCommitMessage(testDir);
       expect(message).toBe("v1.0.1");
@@ -749,7 +749,7 @@ describe("VersionCommand", () => {
       await lernaVersion(testDir)("--include-merged-tags", "--yes", "patch");
 
       expect(PromptUtilities.promptSelectOne).not.toHaveBeenCalled();
-      expect(PromptUtilities.confirm).not.toHaveBeenCalled();
+      expect(PromptUtilities.promptConfirmation).not.toHaveBeenCalled();
 
       const message = await getCommitMessage(testDir);
       expect(message).toBe("v1.0.1");

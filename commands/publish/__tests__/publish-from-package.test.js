@@ -41,7 +41,7 @@ describe("publish from-package", () => {
 
     await lernaPublish(cwd)("from-package");
 
-    expect(PromptUtilities.confirm).toHaveBeenLastCalledWith(
+    expect(PromptUtilities.promptConfirmation).toHaveBeenLastCalledWith(
       "Are you sure you want to publish these packages?"
     );
     expect(output.logged()).toMatch("Found 2 packages to publish:");

@@ -25,7 +25,7 @@ const lastCommitInDir = (cwd) =>
   execa("git", ["log", "-1", "--format=%s"], { cwd }).then((result) => result.stdout);
 
 describe("ImportCommand", () => {
-  PromptUtilities.confirm.mockResolvedValue(true);
+  PromptUtilities.promptConfirmation.mockResolvedValue(true);
 
   describe("import", () => {
     const initBasicFixtures = async () => {
@@ -178,7 +178,7 @@ describe("ImportCommand", () => {
     it("exits early when confirmation is rejected", async () => {
       const [testDir, externalDir] = await initBasicFixtures();
 
-      PromptUtilities.confirm.mockResolvedValueOnce(false);
+      PromptUtilities.promptConfirmation.mockResolvedValueOnce(false);
 
       await lernaImport(testDir)(externalDir);
 
@@ -222,7 +222,7 @@ describe("ImportCommand", () => {
       const [testDir, externalDir] = await initBasicFixtures();
       await lernaImport(testDir)(externalDir, "--yes");
 
-      expect(PromptUtilities.confirm).not.toHaveBeenCalled();
+      expect(PromptUtilities.promptConfirmation).not.toHaveBeenCalled();
     });
 
     it("errors without an argument", async () => {

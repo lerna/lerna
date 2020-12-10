@@ -39,7 +39,7 @@ class CleanCommand extends Command {
         this.directoriesToDelete.map((dir) => path.relative(this.project.rootPath, dir)).join("\n")
       );
 
-      return PromptUtilities.confirm("Proceed?");
+      return PromptUtilities.promptConfirmation("Proceed?");
     });
   }
 
