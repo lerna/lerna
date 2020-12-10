@@ -7,6 +7,11 @@ exports.confirm = confirm;
 exports.select = select;
 exports.input = input;
 
+/**
+ * Prompt for confirmation
+ * @param {string} message
+ * @returns {Promise<boolean>}
+ */
 function confirm(message) {
   log.pause();
 
@@ -30,6 +35,12 @@ function confirm(message) {
     });
 }
 
+/**
+ * Prompt for selection
+ * @param {string} message
+ * @param {{ choices: import("inquirer").ListChoiceOptions[] } & Pick<import("inquirer").Question, 'filter' | 'validate'>} [options]
+ * @returns {Promise<string>}
+ */
 function select(message, { choices, filter, validate } = {}) {
   log.pause();
 
@@ -52,6 +63,12 @@ function select(message, { choices, filter, validate } = {}) {
     });
 }
 
+/**
+ * Prompt for input
+ * @param {string} message
+ * @param {Pick<import("inquirer").Question, 'filter' | 'validate'>} [options]
+ * @returns {Promise<string>}
+ */
 function input(message, { filter, validate } = {}) {
   log.pause();
 
