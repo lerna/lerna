@@ -21,8 +21,8 @@ const { getFilteredPackages } = require("@lerna/filter-options");
 const { PackageGraph } = require("@lerna/package-graph");
 const { pulseTillDone } = require("@lerna/pulse-till-done");
 
-const hasDependencyInstalled = require("./lib/has-dependency-installed");
-const isHoistedPackage = require("./lib/is-hoisted-package");
+const { hasDependencyInstalled } = require("./lib/has-dependency-installed");
+const { isHoistedPackage } = require("./lib/is-hoisted-package");
 
 module.exports = factory;
 
