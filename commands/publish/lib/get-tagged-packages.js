@@ -10,7 +10,7 @@ module.exports.getTaggedPackages = getTaggedPackages;
  * Retrieve a list of graph nodes for packages that were tagged in a non-independent release.
  * @param {import("@lerna/package-graph").PackageGraph} packageGraph
  * @param {string} rootPath
- * @param {{ cwd: string }} execOpts
+ * @param {import("@lerna/child-process").ExecOpts} execOpts
  * @returns {Promise<import("@lerna/package-graph").PackageGraphNode[]>}
  */
 function getTaggedPackages(packageGraph, rootPath, execOpts) {

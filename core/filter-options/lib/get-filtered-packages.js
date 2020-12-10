@@ -23,7 +23,7 @@ module.exports.getFilteredPackages = getFilteredPackages;
 /**
  * Retrieve a list of Package instances filtered by various options.
  * @param {import("@lerna/package-graph").PackageGraph} packageGraph
- * @param {{ cwd: string }} execOpts
+ * @param {import("@lerna/child-process").ExecOpts} execOpts
  * @param {Partial<FilterOptions>} opts
  * @returns {Promise<import("@lerna/package").Package[]>}
  */

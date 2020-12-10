@@ -178,6 +178,8 @@ class Command {
 
     this.concurrency = Math.max(1, +concurrency || DEFAULT_CONCURRENCY);
     this.toposort = sort === undefined || sort;
+
+    /** @type {import("@lerna/child-process").ExecOpts} */
     this.execOpts = {
       cwd: this.project.rootPath,
       maxBuffer,

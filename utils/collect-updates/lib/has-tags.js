@@ -7,7 +7,7 @@ module.exports.hasTags = hasTags;
 
 /**
  * Determine if any git tags are reachable.
- * @param {{ cwd: string }} opts
+ * @param {import("@lerna/child-process").ExecOpts} opts
  */
 function hasTags(opts) {
   log.silly("hasTags");

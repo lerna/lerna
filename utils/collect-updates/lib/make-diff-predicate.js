@@ -10,7 +10,7 @@ module.exports.makeDiffPredicate = makeDiffPredicate;
 
 /**
  * @param {string} committish
- * @param {{ cwd: string }} execOpts
+ * @param {import("@lerna/child-process").ExecOpts} execOpts
  * @param {string[]} ignorePatterns
  */
 function makeDiffPredicate(committish, execOpts, ignorePatterns = []) {
@@ -60,7 +60,7 @@ function makeDiffPredicate(committish, execOpts, ignorePatterns = []) {
 /**
  * @param {string} committish
  * @param {string} location
- * @param {{ cwd: string }} opts
+ * @param {import("@lerna/child-process").ExecOpts} opts
  */
 function diffSinceIn(committish, location, opts) {
   const args = ["diff", "--name-only", committish];

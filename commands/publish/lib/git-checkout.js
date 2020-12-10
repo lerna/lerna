@@ -9,7 +9,7 @@ module.exports.gitCheckout = gitCheckout;
  * Reset files modified by publish steps.
  * @param {string[]} stagedFiles
  * @param {{ granularPathspec: boolean; }} gitOpts
- * @param {CommandExecOpts} execOpts
+ * @param {import("@lerna/child-process").ExecOpts} execOpts
  */
 function gitCheckout(stagedFiles, gitOpts, execOpts) {
   const files = gitOpts.granularPathspec ? stagedFiles : ".";

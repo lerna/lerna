@@ -138,3 +138,9 @@ exports.spawn = spawn;
 exports.spawnStreaming = spawnStreaming;
 exports.getChildProcessCount = getChildProcessCount;
 exports.getExitCode = getExitCode;
+
+/**
+ * @typedef {object} ExecOpts Provided to any execa-based call
+ * @property {string} cwd
+ * @property {number} [maxBuffer]
+ */

@@ -6,7 +6,7 @@ const childProcess = require("@lerna/child-process");
 module.exports.hasCommit = hasCommit;
 
 /**
- * @param {{ cwd: string }} opts
+ * @param {import("@lerna/child-process").ExecOpts} opts
  */
 function hasCommit(opts) {
   log.silly("hasCommit");

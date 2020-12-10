@@ -8,7 +8,7 @@ module.exports.getCurrentTags = getCurrentTags;
 
 /**
  * Retrieve a list of git tags pointing to the current HEAD that match the provided pattern.
- * @param {CommandExecOpts} execOpts
+ * @param {import("@lerna/child-process").ExecOpts} execOpts
  * @param {string} matchingPattern
  * @returns {string[]}
  */

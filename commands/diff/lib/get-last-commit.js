@@ -6,7 +6,7 @@ const childProcess = require("@lerna/child-process");
 module.exports.getLastCommit = getLastCommit;
 
 /**
- * @param {{ cwd: string }} execOpts
+ * @param {import("@lerna/child-process").ExecOpts} execOpts
  */
 function getLastCommit(execOpts) {
   if (hasTags(execOpts)) {
@@ -20,7 +20,7 @@ function getLastCommit(execOpts) {
 }
 
 /**
- * @param {{ cwd: string }} opts
+ * @param {import("@lerna/child-process").ExecOpts} opts
  */
 function hasTags(opts) {
   let result = false;

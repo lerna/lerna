@@ -7,7 +7,7 @@ module.exports.getCurrentSHA = getCurrentSHA;
 
 /**
  * Retrieve current SHA from git.
- * @param {CommandExecOpts} opts
+ * @param {import("@lerna/child-process").ExecOpts} opts
  */
 function getCurrentSHA(opts) {
   log.silly("getCurrentSHA");

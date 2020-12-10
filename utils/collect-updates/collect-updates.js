@@ -34,7 +34,7 @@ module.exports.getPackagesForOption = getPackagesForOption;
  * Create a list of graph nodes representing packages changed since the previous release, tagged or otherwise.
  * @param {import("@lerna/package").Package[]} filteredPackages
  * @param {import("@lerna/package-graph").PackageGraph} packageGraph
- * @param {{ cwd: string }} execOpts
+ * @param {import("@lerna/child-process").ExecOpts} execOpts
  * @param {UpdateCollectorOptions} commandOptions
  */
 function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions) {
