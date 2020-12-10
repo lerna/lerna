@@ -3,16 +3,23 @@
 const inquirer = require("inquirer");
 const log = require("npmlog");
 
-exports.confirm = confirm;
-exports.select = select;
-exports.input = input;
+exports.promptConfirmation = promptConfirmation;
+exports.promptSelectOne = promptSelectOne;
+exports.promptTextInput = promptTextInput;
+
+/** @deprecated */
+exports.confirm = exports.promptConfirmation;
+/** @deprecated */
+exports.select = exports.promptSelectOne;
+/** @deprecated */
+exports.input = exports.promptTextInput;
 
 /**
  * Prompt for confirmation
  * @param {string} message
  * @returns {Promise<boolean>}
  */
-function confirm(message) {
+function promptConfirmation(message) {
   log.pause();
 
   return inquirer
@@ -41,7 +48,7 @@ function confirm(message) {
  * @param {{ choices: import("inquirer").ListChoiceOptions[] } & Pick<import("inquirer").Question, 'filter' | 'validate'>} [options]
  * @returns {Promise<string>}
  */
-function select(message, { choices, filter, validate } = {}) {
+function promptSelectOne(message, { choices, filter, validate } = {}) {
   log.pause();
 
   return inquirer
@@ -69,7 +76,7 @@ function select(message, { choices, filter, validate } = {}) {
  * @param {Pick<import("inquirer").Question, 'filter' | 'validate'>} [options]
  * @returns {Promise<string>}
  */
-function input(message, { filter, validate } = {}) {
+function promptTextInput(message, { filter, validate } = {}) {
   log.pause();
 
   return inquirer

@@ -15,6 +15,10 @@ const mockSelect = jest.fn((_, { choices }) => {
 });
 const mockInput = jest.fn(() => Promise.resolve());
 
+exports.promptConfirmation = mockConfirm;
+exports.promptSelectOne = mockSelect;
+exports.promptTextInput = mockInput;
+
 exports.confirm = mockConfirm;
 exports.select = mockSelect;
 exports.input = mockInput;
@@ -32,6 +36,8 @@ const semverIndex = new Map(
   ].map((keyword, idx) => [keyword, idx])
 );
 
-exports.mockChoices = (...keywords) => {
+exports.mockPromptChoices = (...keywords) => {
   choiceIndices = keywords.map((keyword) => semverIndex.get(keyword));
 };
+
+exports.mockChoices = exports.mockPromptChoices;
