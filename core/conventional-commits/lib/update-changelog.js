@@ -11,6 +11,11 @@ const { readExistingChangelog } = require("./read-existing-changelog");
 
 module.exports.updateChangelog = updateChangelog;
 
+/**
+ * @param {import("@lerna/package").Package} pkg
+ * @param {import("..").ChangelogType} type
+ * @param {import("..").BaseChangelogOptions & { version?: string }} commandOptions
+ */
 function updateChangelog(pkg, type, { changelogPreset, rootPath, tagPrefix = "v", version }) {
   log.silly(type, "for %s at %s", pkg.name, pkg.location);
 

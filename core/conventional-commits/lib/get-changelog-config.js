@@ -35,7 +35,7 @@ function resolveConfigPromise(presetPackageName, presetConfig) {
 }
 
 /**
- * @param {string|{ name: string; [key: string]: unknown }} [changelogPreset]
+ * @param {import("..").ChangelogPresetConfig} [changelogPreset]
  * @param {string} [rootPath]
  */
 function getChangelogConfig(changelogPreset = "conventional-changelog-angular", rootPath) {
