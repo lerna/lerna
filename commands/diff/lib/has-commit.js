@@ -3,8 +3,11 @@
 const log = require("npmlog");
 const childProcess = require("@lerna/child-process");
 
-module.exports = hasCommit;
+module.exports.hasCommit = hasCommit;
 
+/**
+ * @param {{ cwd: string }} opts
+ */
 function hasCommit(opts) {
   log.silly("hasCommit");
   let retVal;
