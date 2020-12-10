@@ -5,7 +5,7 @@ const fs = require("fs-extra");
 const path = require("path");
 const slash = require("slash");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const gitAdd = require("../lib/git-add");
+const { gitAdd } = require("../lib/git-add");
 
 const getStagedFile = async (cwd) =>
   execa("git", ["diff", "--cached", "--name-only"], { cwd }).then((result) => slash(result.stdout));

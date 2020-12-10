@@ -16,10 +16,10 @@ const PromptUtilities = require("@lerna/prompt");
 const { collectUpdates } = require("@lerna/collect-updates");
 const { output } = require("@lerna/output");
 const { checkWorkingTree, throwIfUncommitted } = require("@lerna/check-working-tree");
-const libPush = require("../lib/git-push");
-const isAnythingCommitted = require("../lib/is-anything-committed");
-const isBehindUpstream = require("../lib/is-behind-upstream");
-const remoteBranchExists = require("../lib/remote-branch-exists");
+const { gitPush: libPush } = require("../lib/git-push");
+const { isAnythingCommitted } = require("../lib/is-anything-committed");
+const { isBehindUpstream } = require("../lib/is-behind-upstream");
+const { remoteBranchExists } = require("../lib/remote-branch-exists");
 
 // helpers
 const { loggingOutput } = require("@lerna-test/logging-output");

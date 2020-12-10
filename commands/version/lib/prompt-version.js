@@ -3,20 +3,23 @@
 const semver = require("semver");
 const PromptUtilities = require("@lerna/prompt");
 
-module.exports = makePromptVersion;
+module.exports.makePromptVersion = makePromptVersion;
 
+/**
+ * @param {(existingPreid: string) => string} resolvePrereleaseId
+ */
 function makePromptVersion(resolvePrereleaseId) {
-  return (node) => promptVersion(node.version, node.name, resolvePrereleaseId(node.prereleaseId));
+  return (/** @type {import("@lerna/package-graph").PackageGraphNode} */ node) =>
+    promptVersion(node.version, node.name, resolvePrereleaseId(node.prereleaseId));
 }
 
 /**
  * A predicate that prompts user to select/construct a version bump.
  * It can be run per-package (independent) or globally (fixed).
  *
- * @param {PackageGraphNode|Object} node The metadata to process
- * @property {String} currentVersion
- * @property {String} name (Only used in independent mode)
- * @property {String} prereleaseId
+ * @param {string} currentVersion
+ * @param {string} name (Only used in independent mode)
+ * @param {string} prereleaseId
  */
 function promptVersion(currentVersion, name, prereleaseId) {
   const patch = semver.inc(currentVersion, "patch");

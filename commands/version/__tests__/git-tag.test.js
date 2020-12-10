@@ -3,7 +3,7 @@
 jest.mock("@lerna/child-process");
 
 const { exec: mockExec } = require("@lerna/child-process");
-const gitTag = require("../lib/git-tag");
+const { gitTag } = require("../lib/git-tag");
 
 describe("gitTag", () => {
   mockExec.mockResolvedValue();

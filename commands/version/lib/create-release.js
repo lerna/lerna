@@ -6,8 +6,11 @@ const { createGitLabClient } = require("@lerna/gitlab-client");
 const { createGitHubClient, parseGitRepo } = require("@lerna/github-client");
 const { ValidationError } = require("@lerna/validation-error");
 
-module.exports = createRelease;
+module.exports.createRelease = createRelease;
 
+/**
+ * @param {'github' | 'gitlab'} type
+ */
 function createClient(type) {
   switch (type) {
     case "gitlab":
@@ -20,6 +23,11 @@ function createClient(type) {
   }
 }
 
+/**
+ * @param {'github' | 'gitlab'} type
+ * @param {{ tags: string[]; releaseNotes: { name: string; notes: string; }[] }} commandProps
+ * @param {{ gitRemote: string; execOpts: import("@lerna/child-process").ExecOpts }} opts
+ */
 function createRelease(type, { tags, releaseNotes }, { gitRemote, execOpts }) {
   const repo = parseGitRepo(gitRemote, execOpts);
   const client = createClient(type);

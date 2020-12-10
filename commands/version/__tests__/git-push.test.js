@@ -3,7 +3,7 @@
 const execa = require("execa");
 const childProcess = require("@lerna/child-process");
 const cloneFixture = require("@lerna-test/clone-fixture")(__dirname);
-const gitPush = require("../lib/git-push");
+const { gitPush } = require("../lib/git-push");
 
 async function listRemoteTags(cwd) {
   return execa("git", ["ls-remote", "--tags", "--refs", "--quiet"], { cwd }).then((result) => result.stdout);

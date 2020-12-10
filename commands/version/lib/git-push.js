@@ -3,8 +3,13 @@
 const log = require("npmlog");
 const childProcess = require("@lerna/child-process");
 
-module.exports = gitPush;
+module.exports.gitPush = gitPush;
 
+/**
+ * @param {string} remote
+ * @param {string} branch
+ * @param {import("@lerna/child-process").ExecOpts} opts
+ */
 function gitPush(remote, branch, opts) {
   log.silly("gitPush", remote, branch);
 

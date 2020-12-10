@@ -6,7 +6,7 @@ jest.mock("@lerna/child-process");
 const { EOL } = require("os");
 const { sync: mockWrite } = require("temp-write");
 const { exec: mockExec } = require("@lerna/child-process");
-const gitCommit = require("../lib/git-commit");
+const { gitCommit } = require("../lib/git-commit");
 
 describe("git commit", () => {
   mockExec.mockResolvedValue();
