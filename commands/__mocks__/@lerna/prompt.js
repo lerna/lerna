@@ -19,10 +19,6 @@ exports.promptConfirmation = mockConfirm;
 exports.promptSelectOne = mockSelect;
 exports.promptTextInput = mockInput;
 
-exports.confirm = mockConfirm;
-exports.select = mockSelect;
-exports.input = mockInput;
-
 const semverIndex = new Map(
   [
     "patch",
@@ -39,5 +35,3 @@ const semverIndex = new Map(
 mockSelect.chooseBump = (keyword) => {
   choiceIndices.push(semverIndex.get(keyword));
 };
-
-exports.mockChoices = mockSelect.chooseBump;

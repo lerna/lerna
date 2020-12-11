@@ -7,13 +7,6 @@ exports.promptConfirmation = promptConfirmation;
 exports.promptSelectOne = promptSelectOne;
 exports.promptTextInput = promptTextInput;
 
-/** @deprecated */
-exports.confirm = exports.promptConfirmation;
-/** @deprecated */
-exports.select = exports.promptSelectOne;
-/** @deprecated */
-exports.input = exports.promptTextInput;
-
 /**
  * Prompt for confirmation
  * @param {string} message
