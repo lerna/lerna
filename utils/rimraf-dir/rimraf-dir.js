@@ -4,7 +4,7 @@ const log = require("npmlog");
 const path = require("path");
 const pathExists = require("path-exists");
 
-const ChildProcessUtilities = require("@lerna/child-process");
+const childProcess = require("@lerna/child-process");
 
 // NOTE: if rimraf moves the location of its executable, this will need to be updated
 const RIMRAF_CLI = require.resolve("rimraf/bin");
@@ -28,7 +28,7 @@ function rimrafDir(dirPath) {
 
     // We call this resolved CLI path in the "path/to/node path/to/cli <..args>"
     // pattern to avoid Windows hangups with shebangs (e.g., WSH can't handle it)
-    return ChildProcessUtilities.spawn(process.execPath, args).then(() => {
+    return childProcess.spawn(process.execPath, args).then(() => {
       log.verbose("rimrafDir", "removed", dirPath);
 
       return dirPath;

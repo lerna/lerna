@@ -6,7 +6,7 @@ const npa = require("npm-package-arg");
 const onExit = require("signal-exit");
 const writePkg = require("write-pkg");
 
-const ChildProcessUtilities = require("@lerna/child-process");
+const childProcess = require("@lerna/child-process");
 const { getNpmExecOpts } = require("@lerna/get-npm-exec-opts");
 
 module.exports.npmInstall = npmInstall;
@@ -46,7 +46,7 @@ function npmInstall(
   opts.env.LERNA_ROOT_PATH = pkg.rootPath;
 
   log.silly("npmInstall", [cmd, args]);
-  return ChildProcessUtilities.exec(cmd, args, opts);
+  return childProcess.exec(cmd, args, opts);
 }
 
 function npmInstallDependencies(pkg, dependencies, config) {

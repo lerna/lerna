@@ -5,7 +5,7 @@ const fs = require("fs-extra");
 const globby = require("globby");
 
 // mocked modules
-const ChildProcessUtilities = require("@lerna/child-process");
+const childProcess = require("@lerna/child-process");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
@@ -16,11 +16,10 @@ const { normalizeRelativeDir } = require("@lerna-test/normalize-relative-dir");
 const lernaExec = require("@lerna-test/command-runner")(require("../command"));
 
 // assertion helpers
-const calledInPackages = () =>
-  ChildProcessUtilities.spawn.mock.calls.map(([, , opts]) => path.basename(opts.cwd));
+const calledInPackages = () => childProcess.spawn.mock.calls.map(([, , opts]) => path.basename(opts.cwd));
 
 const execInPackagesStreaming = (testDir) =>
-  ChildProcessUtilities.spawnStreaming.mock.calls.reduce((arr, [command, params, opts, prefix]) => {
+  childProcess.spawnStreaming.mock.calls.reduce((arr, [command, params, opts, prefix]) => {
     const dir = normalizeRelativeDir(testDir, opts.cwd);
     arr.push([dir, command, `(prefix: ${prefix})`].concat(params).join(" "));
     return arr;
@@ -28,8 +27,8 @@ const execInPackagesStreaming = (testDir) =>
 
 describe("ExecCommand", () => {
   // TODO: it's very suspicious that mockResolvedValue() doesn't work here
-  ChildProcessUtilities.spawn = jest.fn(() => Promise.resolve({ exitCode: 0 }));
-  ChildProcessUtilities.spawnStreaming = jest.fn(() => Promise.resolve({ exitCode: 0 }));
+  childProcess.spawn = jest.fn(() => Promise.resolve({ exitCode: 0 }));
+  childProcess.spawnStreaming = jest.fn(() => Promise.resolve({ exitCode: 0 }));
 
   afterEach(() => {
     process.exitCode = undefined;
@@ -50,7 +49,7 @@ describe("ExecCommand", () => {
     });
 
     it("rejects with execution error", async () => {
-      ChildProcessUtilities.spawn.mockImplementationOnce((cmd, args) => {
+      childProcess.spawn.mockImplementationOnce((cmd, args) => {
         const boom = new Error("execution error");
 
         boom.failed = true;
@@ -72,7 +71,7 @@ describe("ExecCommand", () => {
     });
 
     it("should ignore execution errors with --no-bail", async () => {
-      ChildProcessUtilities.spawn.mockImplementationOnce((cmd, args, { pkg }) => {
+      childProcess.spawn.mockImplementationOnce((cmd, args, { pkg }) => {
         const boom = new Error(pkg.name);
 
         boom.failed = true;
@@ -88,8 +87,8 @@ describe("ExecCommand", () => {
       // command doesn't throw, but it _does_ set exitCode
       expect(process.exitCode).toBe(456);
 
-      expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(2);
-      expect(ChildProcessUtilities.spawn).toHaveBeenLastCalledWith(
+      expect(childProcess.spawn).toHaveBeenCalledTimes(2);
+      expect(childProcess.spawn).toHaveBeenLastCalledWith(
         "boom",
         ["--shaka", "--lakka"],
         expect.objectContaining({
@@ -101,8 +100,8 @@ describe("ExecCommand", () => {
     it("should filter packages with `ignore`", async () => {
       await lernaExec(testDir)("ls", "--ignore", "package-1");
 
-      expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(1);
-      expect(ChildProcessUtilities.spawn).toHaveBeenLastCalledWith("ls", [], {
+      expect(childProcess.spawn).toHaveBeenCalledTimes(1);
+      expect(childProcess.spawn).toHaveBeenLastCalledWith("ls", [], {
         cwd: path.join(testDir, "packages/package-2"),
         pkg: expect.objectContaining({
           name: "package-2",
@@ -120,15 +119,15 @@ describe("ExecCommand", () => {
     it("should run a command", async () => {
       await lernaExec(testDir)("ls");
 
-      expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(2);
+      expect(childProcess.spawn).toHaveBeenCalledTimes(2);
       expect(calledInPackages()).toEqual(["package-1", "package-2"]);
     });
 
     it("should run a command with parameters", async () => {
       await lernaExec(testDir)("ls", "--", "-la");
 
-      expect(ChildProcessUtilities.spawn).toHaveBeenCalledTimes(2);
-      expect(ChildProcessUtilities.spawn).toHaveBeenLastCalledWith("ls", ["-la"], expect.any(Object));
+      expect(childProcess.spawn).toHaveBeenCalledTimes(2);
+      expect(childProcess.spawn).toHaveBeenLastCalledWith("ls", ["-la"], expect.any(Object));
     });
 
     it("runs a command for a given scope", async () => {

@@ -6,7 +6,7 @@ const path = require("path");
 const { getPackages } = require("@lerna/project");
 
 // mocked modules
-const ChildProcessUtilities = require("@lerna/child-process");
+const childProcess = require("@lerna/child-process");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
@@ -23,7 +23,7 @@ expect.addSnapshotSerializer(require("@lerna-test/serialize-git-sha"));
 
 describe("DiffCommand", () => {
   // overwrite spawn so we get piped stdout, not inherited
-  ChildProcessUtilities.spawn = jest.fn((...args) => execa(...args));
+  childProcess.spawn = jest.fn((...args) => execa(...args));
 
   it("should diff packages from the first commit", async () => {
     const cwd = await initFixture("basic");
@@ -102,7 +102,7 @@ describe("DiffCommand", () => {
   it("should error when git diff exits non-zero", async () => {
     const cwd = await initFixture("basic");
 
-    ChildProcessUtilities.spawn.mockImplementationOnce(() => {
+    childProcess.spawn.mockImplementationOnce(() => {
       const nonZero = new Error("An actual non-zero, not git diff pager SIGPIPE");
       nonZero.exitCode = 1;
 

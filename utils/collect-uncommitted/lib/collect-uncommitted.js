@@ -2,7 +2,7 @@
 
 const chalk = require("chalk");
 const npmlog = require("npmlog");
-const { exec, execSync } = require("@lerna/child-process");
+const childProcess = require("@lerna/child-process");
 
 module.exports.collectUncommitted = collectUncommitted;
 module.exports.collectUncommittedSync = collectUncommittedSync;
@@ -38,7 +38,9 @@ const transformOutput = o(filterEmpty, o(splitOnNewLine, colorizeStats));
 function collectUncommitted({ cwd, log = npmlog }) {
   log.silly("collect-uncommitted", "git status --porcelain (async)");
 
-  return exec("git", ["status", "--porcelain"], { cwd }).then(({ stdout }) => transformOutput(stdout));
+  return childProcess
+    .exec("git", ["status", "--porcelain"], { cwd })
+    .then(({ stdout }) => transformOutput(stdout));
 }
 
 /**
@@ -49,6 +51,6 @@ function collectUncommitted({ cwd, log = npmlog }) {
 function collectUncommittedSync({ cwd, log = npmlog }) {
   log.silly("collect-uncommitted", "git status --porcelain (sync)");
 
-  const stdout = execSync("git", ["status", "--porcelain"], { cwd });
+  const stdout = childProcess.execSync("git", ["status", "--porcelain"], { cwd });
   return transformOutput(stdout);
 }

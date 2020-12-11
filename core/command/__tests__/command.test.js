@@ -8,7 +8,7 @@ const path = require("path");
 const tempy = require("tempy");
 
 // partially mocked
-const ChildProcessUtilities = require("@lerna/child-process");
+const childProcess = require("@lerna/child-process");
 const os = require("os");
 
 // normalize concurrency across different environments (localhost, CI, etc)
@@ -37,7 +37,7 @@ describe("core-command", () => {
     }
   });
 
-  ChildProcessUtilities.getChildProcessCount = jest.fn(() => 0);
+  childProcess.getChildProcessCount = jest.fn(() => 0);
 
   // swallow errors when passed in argv
   const onRejected = () => {};
@@ -143,7 +143,7 @@ describe("core-command", () => {
     });
 
     it("waits to resolve when 1 child process active", async () => {
-      ChildProcessUtilities.getChildProcessCount.mockReturnValueOnce(1);
+      childProcess.getChildProcessCount.mockReturnValueOnce(1);
 
       await testFactory();
 
@@ -152,7 +152,7 @@ describe("core-command", () => {
     });
 
     it("waits to resolve when 2 child processes active", async () => {
-      ChildProcessUtilities.getChildProcessCount.mockReturnValueOnce(2);
+      childProcess.getChildProcessCount.mockReturnValueOnce(2);
 
       await testFactory();
 

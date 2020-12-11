@@ -13,7 +13,7 @@ const pReduce = require("p-reduce");
 const slash = require("slash");
 
 const { Command } = require("@lerna/command");
-const ChildProcessUtilities = require("@lerna/child-process");
+const childProcess = require("@lerna/child-process");
 const npmConf = require("@lerna/npm-conf");
 const { ValidationError } = require("@lerna/validation-error");
 const { builtinNpmrc } = require("./lib/builtin-npmrc");
@@ -178,7 +178,7 @@ class CreateCommand extends Command {
   }
 
   gitConfig(prop) {
-    return ChildProcessUtilities.execSync("git", ["config", "--get", prop], this.execOpts);
+    return childProcess.execSync("git", ["config", "--get", prop], this.execOpts);
   }
 
   collectExternalVersions() {
@@ -358,7 +358,7 @@ class CreateCommand extends Command {
 
   setRepository() {
     try {
-      const url = ChildProcessUtilities.execSync("git", ["remote", "get-url", "origin"], this.execOpts);
+      const url = childProcess.execSync("git", ["remote", "get-url", "origin"], this.execOpts);
 
       this.conf.set("repository", url);
     } catch (err) {

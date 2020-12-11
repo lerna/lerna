@@ -2,7 +2,7 @@
 
 const pMap = require("p-map");
 
-const ChildProcessUtilities = require("@lerna/child-process");
+const childProcess = require("@lerna/child-process");
 const { Command } = require("@lerna/command");
 const { Profiler } = require("@lerna/profiler");
 const { runTopologically } = require("@lerna/run-topologically");
@@ -164,16 +164,11 @@ class ExecCommand extends Command {
   }
 
   runCommandInPackageStreaming(pkg) {
-    return ChildProcessUtilities.spawnStreaming(
-      this.command,
-      this.args,
-      this.getOpts(pkg),
-      this.prefix && pkg.name
-    );
+    return childProcess.spawnStreaming(this.command, this.args, this.getOpts(pkg), this.prefix && pkg.name);
   }
 
   runCommandInPackageCapturing(pkg) {
-    return ChildProcessUtilities.spawn(this.command, this.args, this.getOpts(pkg));
+    return childProcess.spawn(this.command, this.args, this.getOpts(pkg));
   }
 }
 

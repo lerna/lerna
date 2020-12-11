@@ -5,7 +5,7 @@ const fs = require("fs-extra");
 const path = require("path");
 const pMapSeries = require("p-map-series");
 
-const ChildProcessUtilities = require("@lerna/child-process");
+const childProcess = require("@lerna/child-process");
 const { Command } = require("@lerna/command");
 const { promptConfirmation } = require("@lerna/prompt");
 const { ValidationError } = require("@lerna/validation-error");
@@ -138,11 +138,11 @@ class ImportCommand extends Command {
   }
 
   execSync(cmd, args) {
-    return ChildProcessUtilities.execSync(cmd, args, this.execOpts);
+    return childProcess.execSync(cmd, args, this.execOpts);
   }
 
   externalExecSync(cmd, args) {
-    return ChildProcessUtilities.execSync(cmd, args, this.externalExecOpts);
+    return childProcess.execSync(cmd, args, this.externalExecOpts);
   }
 
   createPatchForCommit(sha) {
@@ -226,7 +226,7 @@ class ImportCommand extends Command {
       //
       // Fall back to three-way merge, which can help with duplicate commits
       // due to merge history.
-      const proc = ChildProcessUtilities.exec("git", procArgs, this.execOpts);
+      const proc = childProcess.exec("git", procArgs, this.execOpts);
 
       proc.stdin.end(patch);
 
@@ -241,7 +241,7 @@ class ImportCommand extends Command {
             tracker.completeWork(1);
 
             // Automatically skip empty commits
-            return ChildProcessUtilities.exec("git", ["am", "--skip"], this.execOpts);
+            return childProcess.exec("git", ["am", "--skip"], this.execOpts);
           }
 
           err.sha = sha;
