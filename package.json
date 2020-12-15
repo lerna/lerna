@@ -90,7 +90,7 @@
     "tempy": "^0.2.1",
     "touch": "^3.1.0",
     "write-json-file": "^3.2.0",
-    "yargs": "^14.2.2"
+    "yargs": "^16.2.0"
   },
   "engines": {
     "node": ">= 6.9.0"
