@@ -34,12 +34,7 @@ function symlinkDependencies(packages, packageGraph, tracker) {
       const currentName = currentNode.name;
       const currentNodeModules = currentNode.pkg.nodeModulesLocation;
 
-      return pMap(currentNode.localDependencies, ([dependencyName, resolved]) => {
-        if (resolved.type === "directory") {
-          // a local file: specifier is already a symlink
-          return;
-        }
-
+      return pMap(currentNode.localDependencies, ([dependencyName /* , resolved */]) => {
         // get PackageGraphNode of dependency
         // const dependencyName = resolved.name;
         const dependencyNode = packageGraph.get(dependencyName);
