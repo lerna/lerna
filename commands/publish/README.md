@@ -50,6 +50,7 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 - [`--canary`](#--canary)
 - [`--contents <dir>`](#--contents-dir)
 - [`--dist-tag <tag>`](#--dist-tag-tag)
+- [`--force-publish`](#--force-publish)
 - [`--git-head <sha>`](#--git-head-sha)
 - [`--graph-type <all|dependencies>`](#--graph-type-alldependencies)
 - [`--ignore-scripts`](#--ignore-scripts)
@@ -118,6 +119,10 @@ This option can be used to publish a [`prerelease`](http://carrot.is/coding/npm_
 
 > Note: the `latest` tag is the one that is used when a user runs `npm install my-package`.
 > To install a different tag, a user can run `npm install my-package@prerelease`.
+
+
+### `--force-publish`
+Publish all packages no matter if anything changed since last release.
 
 ### `--git-head <sha>`
 
