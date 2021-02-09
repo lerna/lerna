@@ -17,7 +17,7 @@
   ],
   "main": "index.js",
   "engines": {
-    "node": ">= 6.9.0"
+    "node": ">= 10.18.0"
   },
   "publishConfig": {
     "access": "public"
@@ -31,8 +31,8 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "node-fetch": "^2.5.0",
+    "node-fetch": "^2.6.1",
     "npmlog": "^4.1.2",
-    "whatwg-url": "^7.0.0"
+    "whatwg-url": "^8.4.0"
   }
 }

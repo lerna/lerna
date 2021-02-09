@@ -18,7 +18,7 @@
   ],
   "main": "index.js",
   "engines": {
-    "node": ">= 6.9.0"
+    "node": ">= 10.18.0"
   },
   "publishConfig": {
     "access": "public"
@@ -35,7 +35,6 @@
     "@lerna/collect-updates": "file:../../utils/collect-updates",
     "@lerna/filter-packages": "file:../../utils/filter-packages",
     "dedent": "^0.7.0",
-    "figgy-pudding": "^3.5.1",
     "npmlog": "^4.1.2"
   }
 }

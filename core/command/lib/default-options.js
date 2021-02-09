@@ -1,6 +1,6 @@
 "use strict";
 
-module.exports = defaultOptions;
+module.exports.defaultOptions = defaultOptions;
 
 // _.defaults(), but simplified:
 //  * All inputs are plain objects

@@ -1,34 +1,24 @@
 "use strict";
 
-const PQueue = require("p-queue");
-const figgyPudding = require("figgy-pudding");
-const QueryGraph = require("@lerna/query-graph");
+const PQueue = require("p-queue").default;
+const { QueryGraph } = require("@lerna/query-graph");
 
-module.exports = runTopologically;
+module.exports.runTopologically = runTopologically;
 
-const TopologicalConfig = figgyPudding({
-  // p-queue options
-  concurrency: {},
-  // query-graph options
-  "graph-type": {},
-  graphType: "graph-type",
-  "reject-cycles": {},
-  rejectCycles: "reject-cycles",
-});
+/**
+ * @typedef {import("@lerna/query-graph").QueryGraphConfig & { concurrency: number }} TopologicalConfig
+ */
 
 /**
  * Run callback in maximally-saturated topological order.
  *
- * @param {Array<Package>} packages List of `Package` instances
- * @param {Function} runner Callback to map each `Package` with
- * @param {Number} [opts.concurrency] Concurrency of execution
- * @param {String} [opts.graphType] "allDependencies" or "dependencies"
- * @param {Boolean} [opts.rejectCycles] Whether or not to reject cycles
- * @returns {Promise<Array<*>>} when all executions complete
+ * @template T
+ * @param {import("@lerna/package").Package[]} packages List of `Package` instances
+ * @param {(pkg: import("@lerna/package").Package) => Promise<T>} runner Callback to map each `Package` with
+ * @param {TopologicalConfig} [options]
+ * @returns {Promise<T[]>} when all executions complete
  */
-function runTopologically(packages, runner, opts) {
-  const { concurrency, graphType, rejectCycles } = TopologicalConfig(opts);
-
+function runTopologically(packages, runner, { concurrency, graphType, rejectCycles } = {}) {
   const queue = new PQueue({ concurrency });
   const graph = new QueryGraph(packages, { graphType, rejectCycles });
 
@@ -42,7 +32,7 @@ function runTopologically(packages, runner, opts) {
         queue
           .add(() =>
             runner(pkg)
-              .then(value => returnValues.push(value))
+              .then((value) => returnValues.push(value))
               .then(() => graph.markAsDone(pkg))
               .then(() => queueNextAvailablePackages())
           )

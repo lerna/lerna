@@ -18,7 +18,7 @@
   ],
   "main": "index.js",
   "engines": {
-    "node": ">= 6.9.0"
+    "node": ">= 10.18.0"
   },
   "publishConfig": {
     "access": "public"
@@ -40,6 +40,6 @@
     "@lerna/run-topologically": "file:../../utils/run-topologically",
     "@lerna/timer": "file:../../utils/timer",
     "@lerna/validation-error": "file:../../core/validation-error",
-    "p-map": "^2.1.0"
+    "p-map": "^4.0.0"
   }
 }

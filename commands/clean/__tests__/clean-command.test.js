@@ -7,18 +7,18 @@ const fs = require("fs-extra");
 const path = require("path");
 
 // mocked or stubbed modules
-const rimrafDir = require("@lerna/rimraf-dir");
-const PromptUtilities = require("@lerna/prompt");
+const { rimrafDir } = require("@lerna/rimraf-dir");
+const { promptConfirmation } = require("@lerna/prompt");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const normalizeRelativeDir = require("@lerna-test/normalize-relative-dir");
+const { normalizeRelativeDir } = require("@lerna-test/normalize-relative-dir");
 
 // file under test
 const lernaClean = require("@lerna-test/command-runner")(require("../command"));
 
 // assertion helpers
-const removedDirectories = testDir =>
+const removedDirectories = (testDir) =>
   rimrafDir.mock.calls.map(([directory]) => normalizeRelativeDir(testDir, directory));
 
 describe("CleanCommand", () => {
@@ -26,7 +26,7 @@ describe("CleanCommand", () => {
   // .mockResolvedValue() doesn't work when you want to reject it later
   rimrafDir.mockImplementation(() => Promise.resolve());
 
-  PromptUtilities.confirm.mockResolvedValue(true);
+  promptConfirmation.mockResolvedValue(true);
 
   describe("basic tests", () => {
     it("should rm -rf the node_modules", async () => {
@@ -34,7 +34,7 @@ describe("CleanCommand", () => {
 
       await lernaClean(testDir)();
 
-      expect(PromptUtilities.confirm).toHaveBeenCalled();
+      expect(promptConfirmation).toHaveBeenCalled();
       expect(removedDirectories(testDir)).toEqual([
         "packages/package-1/node_modules",
         "packages/package-2/node_modules",
@@ -45,7 +45,7 @@ describe("CleanCommand", () => {
     it("exits early when confirmation is rejected", async () => {
       const testDir = await initFixture("basic");
 
-      PromptUtilities.confirm.mockResolvedValueOnce(false);
+      promptConfirmation.mockResolvedValueOnce(false);
 
       await lernaClean(testDir)();
 
@@ -57,7 +57,7 @@ describe("CleanCommand", () => {
 
       await lernaClean(testDir)("--yes");
 
-      expect(PromptUtilities.confirm).not.toHaveBeenCalled();
+      expect(promptConfirmation).not.toHaveBeenCalled();
     });
 
     it("should only clean scoped packages", async () => {

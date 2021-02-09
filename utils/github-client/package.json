@@ -17,7 +17,7 @@
   ],
   "main": "lib/github-client.js",
   "engines": {
-    "node": ">= 6.9.0"
+    "node": ">= 10.18.0"
   },
   "publishConfig": {
     "access": "public"
@@ -33,8 +33,8 @@
   "dependencies": {
     "@lerna/child-process": "file:../../core/child-process",
     "@octokit/plugin-enterprise-rest": "^6.0.1",
-    "@octokit/rest": "^16.28.4",
-    "git-url-parse": "^11.1.2",
+    "@octokit/rest": "^18.1.0",
+    "git-url-parse": "^11.4.4",
     "npmlog": "^4.1.2"
   }
 }

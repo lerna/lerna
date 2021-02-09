@@ -10,6 +10,6 @@
     "@lerna-test/git-add": "file:../git-add",
     "@lerna-test/git-commit": "file:../git-commit",
     "@lerna-test/git-init": "file:../git-init",
-    "tempy": "^0.2.1"
+    "tempy": "^1.0.0"
   }
 }

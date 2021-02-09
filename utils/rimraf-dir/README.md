@@ -5,7 +5,7 @@
 ## Usage
 
 ```js
-const rimrafDir = require("@lerna/rimraf-dir");
+const { rimrafDir } = require("@lerna/rimraf-dir");
 
 rimrafDir("/path/to/directory").then(removedDir => {
   console.log("removed", removedDir);

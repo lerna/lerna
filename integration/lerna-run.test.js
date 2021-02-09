@@ -1,6 +1,6 @@
 "use strict";
 
-const cliRunner = require("@lerna-test/cli-runner");
+const { cliRunner } = require("@lerna-test/cli-runner");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 
 const env = {
@@ -32,7 +32,7 @@ describe("lerna run", () => {
     );
   });
 
-  test("test --stream", async () => {
+  test("--stream", async () => {
     const cwd = await initFixture("lerna-run");
     const args = [
       "run",
@@ -62,7 +62,7 @@ lerna success - package-4
 `);
   });
 
-  test("test --stream --no-prefix", async () => {
+  test("--stream --no-prefix", async () => {
     const cwd = await initFixture("lerna-run");
     const args = [
       "run",
@@ -93,7 +93,7 @@ lerna success - package-4
 `);
   });
 
-  test("test --parallel", async () => {
+  test("--parallel", async () => {
     const cwd = await initFixture("lerna-run");
     const args = [
       "run",

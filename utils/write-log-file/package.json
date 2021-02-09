@@ -17,7 +17,7 @@
   ],
   "main": "write-log-file.js",
   "engines": {
-    "node": ">= 6.9.0"
+    "node": ">= 10.18.0"
   },
   "publishConfig": {
     "access": "public"
@@ -32,6 +32,6 @@
   },
   "dependencies": {
     "npmlog": "^4.1.2",
-    "write-file-atomic": "^2.3.0"
+    "write-file-atomic": "^3.0.3"
   }
 }

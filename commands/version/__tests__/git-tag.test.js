@@ -2,11 +2,11 @@
 
 jest.mock("@lerna/child-process");
 
-const { exec: mockExec } = require("@lerna/child-process");
-const gitTag = require("../lib/git-tag");
+const childProcess = require("@lerna/child-process");
+const { gitTag } = require("../lib/git-tag");
 
 describe("gitTag", () => {
-  mockExec.mockResolvedValue();
+  childProcess.exec.mockResolvedValue();
 
   it("creates an annotated git tag", async () => {
     const tag = "v1.2.3";
@@ -14,7 +14,7 @@ describe("gitTag", () => {
 
     await gitTag(tag, {}, opts);
 
-    expect(mockExec).toHaveBeenLastCalledWith("git", ["tag", tag, "-m", tag], opts);
+    expect(childProcess.exec).toHaveBeenLastCalledWith("git", ["tag", tag, "-m", tag], opts);
   });
 
   it("signs the tag when configured", async () => {
@@ -23,7 +23,7 @@ describe("gitTag", () => {
 
     await gitTag(tag, { signGitTag: true }, opts);
 
-    expect(mockExec).toHaveBeenLastCalledWith("git", ["tag", tag, "-m", tag, "--sign"], opts);
+    expect(childProcess.exec).toHaveBeenLastCalledWith("git", ["tag", tag, "-m", tag, "--sign"], opts);
   });
 
   it("forces the tag when configured", async () => {
@@ -32,6 +32,6 @@ describe("gitTag", () => {
 
     await gitTag(tag, { forceGitTag: true }, opts);
 
-    expect(mockExec).toHaveBeenLastCalledWith("git", ["tag", tag, "-m", tag, "--force"], opts);
+    expect(childProcess.exec).toHaveBeenLastCalledWith("git", ["tag", tag, "-m", tag, "--force"], opts);
   });
 });

@@ -6,7 +6,6 @@ const client = {
   },
 };
 
-module.exports.client = client;
 module.exports.createGitHubClient = () => client;
 module.exports.parseGitRepo = () => ({
   owner: "lerna",

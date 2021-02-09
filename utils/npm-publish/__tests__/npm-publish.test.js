@@ -3,31 +3,29 @@
 jest.mock("@lerna/run-lifecycle");
 jest.mock("@lerna/otplease");
 jest.mock("read-package-json");
-jest.mock("@evocateur/libnpmpublish");
+jest.mock("libnpmpublish");
 jest.mock("fs-extra");
 
 // mocked modules
 const fs = require("fs-extra");
-const { publish } = require("@evocateur/libnpmpublish");
+const { publish } = require("libnpmpublish");
 const readJSON = require("read-package-json");
-const runLifecycle = require("@lerna/run-lifecycle");
-const otplease = require("@lerna/otplease");
+const { runLifecycle } = require("@lerna/run-lifecycle");
+const { otplease } = require("@lerna/otplease");
 
 // helpers
 const path = require("path");
-const Package = require("@lerna/package");
+const { Package } = require("@lerna/package");
 
 // file under test
-const npmPublish = require("..");
-
-expect.extend(require("@lerna-test/figgy-pudding-matchers"));
+const { npmPublish } = require("..");
 
 describe("npm-publish", () => {
   const mockTarData = Buffer.from("MOCK");
   const mockManifest = { _normalized: true };
 
   fs.readFile.mockName("fs.readFile").mockResolvedValue(mockTarData);
-  publish.mockName("@evocateur/libnpmpublish").mockResolvedValue();
+  publish.mockName("libnpmpublish").mockResolvedValue();
   readJSON.mockName("read-package-json").mockImplementation((file, cb) => cb(null, mockManifest));
   runLifecycle.mockName("@lerna/run-lifecycle").mockResolvedValue();
   otplease.mockName("@lerna/otplease").mockImplementation((cb, opts) => Promise.resolve(cb(opts)));
@@ -41,7 +39,7 @@ describe("npm-publish", () => {
   );
 
   it("calls external libraries with correct arguments", async () => {
-    const opts = new Map().set("tag", "published-tag");
+    const opts = { tag: "published-tag" };
 
     await npmPublish(pkg, tarFilePath, opts);
 
@@ -50,9 +48,8 @@ describe("npm-publish", () => {
     expect(publish).toHaveBeenCalledWith(
       mockManifest,
       mockTarData,
-      expect.figgyPudding({
-        dryRun: false,
-        tag: "published-tag",
+      expect.objectContaining({
+        defaultTag: "published-tag",
         projectScope: "@scope",
       })
     );
@@ -64,13 +61,13 @@ describe("npm-publish", () => {
     expect(publish).toHaveBeenCalledWith(
       mockManifest,
       mockTarData,
-      expect.figgyPudding({
-        tag: "latest",
+      expect.objectContaining({
+        defaultTag: "latest",
       })
     );
   });
 
-  it("overrides pkg.publishConfig.tag when opts.tag is not defaulted", async () => {
+  it("overrides pkg.publishConfig.tag when opts.tag is explicitly configured", async () => {
     readJSON.mockImplementationOnce((file, cb) =>
       cb(null, {
         publishConfig: {
@@ -78,7 +75,7 @@ describe("npm-publish", () => {
         },
       })
     );
-    const opts = new Map().set("tag", "temp-tag");
+    const opts = { tag: "temp-tag" };
 
     await npmPublish(pkg, tarFilePath, opts);
 
@@ -89,13 +86,13 @@ describe("npm-publish", () => {
         },
       }),
       mockTarData,
-      expect.figgyPudding({
-        tag: "temp-tag",
+      expect.objectContaining({
+        defaultTag: "temp-tag",
       })
     );
   });
 
-  it("respects pkg.publishConfig.tag when opts.tag matches default", async () => {
+  it("respects pkg.publishConfig.tag when opts.defaultTag matches default", async () => {
     readJSON.mockImplementationOnce((file, cb) =>
       cb(null, {
         publishConfig: {
@@ -113,8 +110,8 @@ describe("npm-publish", () => {
         },
       }),
       mockTarData,
-      expect.figgyPudding({
-        tag: "latest",
+      expect.objectContaining({
+        defaultTag: "beta",
       })
     );
   });
@@ -150,14 +147,39 @@ describe("npm-publish", () => {
         name: "fancy-fancy",
       }),
       mockTarData,
-      expect.figgyPudding({
-        tag: "latest",
+      expect.objectContaining({
+        defaultTag: "latest",
+      })
+    );
+  });
+
+  it("merges pkg.publishConfig.registry into options", async () => {
+    readJSON.mockImplementationOnce((file, cb) =>
+      cb(null, {
+        publishConfig: {
+          registry: "http://pkg-registry.com",
+        },
+      })
+    );
+    const opts = { registry: "https://global-registry.com" };
+
+    await npmPublish(pkg, tarFilePath, opts);
+
+    expect(publish).toHaveBeenCalledWith(
+      expect.objectContaining({
+        publishConfig: {
+          registry: "http://pkg-registry.com",
+        },
+      }),
+      mockTarData,
+      expect.objectContaining({
+        registry: "http://pkg-registry.com",
       })
     );
   });
 
   it("respects opts.dryRun", async () => {
-    const opts = new Map().set("dryRun", true);
+    const opts = { dryRun: true };
 
     await npmPublish(pkg, tarFilePath, opts);
 
@@ -166,14 +188,14 @@ describe("npm-publish", () => {
   });
 
   it("calls publish lifecycles", async () => {
-    const aFiggyPudding = expect.figgyPudding({
+    const options = expect.objectContaining({
       projectScope: "@scope",
     });
 
     await npmPublish(pkg, tarFilePath);
 
-    expect(runLifecycle).toHaveBeenCalledWith(pkg, "publish", aFiggyPudding);
-    expect(runLifecycle).toHaveBeenLastCalledWith(pkg, "postpublish", aFiggyPudding);
+    expect(runLifecycle).toHaveBeenCalledWith(pkg, "publish", options);
+    expect(runLifecycle).toHaveBeenLastCalledWith(pkg, "postpublish", options);
   });
 
   it("catches libnpm errors", async () => {
@@ -191,7 +213,7 @@ describe("npm-publish", () => {
       silly: jest.fn(),
       error: jest.fn(),
     };
-    const opts = new Map().set("log", log);
+    const opts = { log };
 
     await expect(npmPublish(pkg, tarFilePath, opts)).rejects.toThrow(
       expect.objectContaining({

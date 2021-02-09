@@ -17,7 +17,7 @@
   ],
   "main": "create-symlink.js",
   "engines": {
-    "node": ">= 6.9.0"
+    "node": ">= 10.18.0"
   },
   "publishConfig": {
     "access": "public"
@@ -31,8 +31,8 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@zkochan/cmd-shim": "^3.1.0",
-    "fs-extra": "^8.1.0",
+    "cmd-shim": "^4.1.0",
+    "fs-extra": "^9.1.0",
     "npmlog": "^4.1.2"
   }
 }

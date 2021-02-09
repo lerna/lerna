@@ -3,7 +3,7 @@
 jest.mock("@octokit/rest");
 jest.mock("@lerna/child-process");
 
-const Octokit = require("@octokit/rest");
+const { Octokit } = require("@octokit/rest");
 const childProcess = require("@lerna/child-process");
 const { createGitHubClient, parseGitRepo } = require("../lib/github-client");
 

@@ -6,18 +6,18 @@ const npa = require("npm-package-arg");
 const onExit = require("signal-exit");
 const writePkg = require("write-pkg");
 
-const ChildProcessUtilities = require("@lerna/child-process");
-const getExecOpts = require("@lerna/get-npm-exec-opts");
+const childProcess = require("@lerna/child-process");
+const { getNpmExecOpts } = require("@lerna/get-npm-exec-opts");
 
-module.exports = npmInstall;
-module.exports.dependencies = npmInstallDependencies;
+module.exports.npmInstall = npmInstall;
+module.exports.npmInstallDependencies = npmInstallDependencies;
 
 function npmInstall(
   pkg,
   { registry, npmClient, npmClientArgs, npmGlobalStyle, mutex, stdio = "pipe", subCommand = "install" }
 ) {
   // build command, arguments, and options
-  const opts = getExecOpts(pkg, registry);
+  const opts = getNpmExecOpts(pkg, registry);
   const args = [subCommand];
   let cmd = npmClient || "npm";
 
@@ -46,7 +46,7 @@ function npmInstall(
   opts.env.LERNA_ROOT_PATH = pkg.rootPath;
 
   log.silly("npmInstall", [cmd, args]);
-  return ChildProcessUtilities.exec(cmd, args, opts);
+  return childProcess.exec(cmd, args, opts);
 }
 
 function npmInstallDependencies(pkg, dependencies, config) {
@@ -74,7 +74,7 @@ function npmInstallDependencies(pkg, dependencies, config) {
     const unregister = onExit(cleanup);
 
     // We have a few housekeeping tasks to take care of whether we succeed or fail.
-    const done = finalError => {
+    const done = (finalError) => {
       cleanup();
       unregister();
 
@@ -100,7 +100,7 @@ function transformManifest(pkg, dependencies) {
 
   // a map of depName => depVersion (resolved by npm-package-arg)
   const depMap = new Map(
-    dependencies.map(dep => {
+    dependencies.map((dep) => {
       const { name, rawSpec } = npa(dep, pkg.location);
 
       return [name, rawSpec || "*"];
@@ -111,11 +111,11 @@ function transformManifest(pkg, dependencies) {
   delete json.scripts;
 
   // filter all types of dependencies
-  ["dependencies", "devDependencies", "optionalDependencies"].forEach(depType => {
+  ["dependencies", "devDependencies", "optionalDependencies"].forEach((depType) => {
     const collection = json[depType];
 
     if (collection) {
-      Object.keys(collection).forEach(depName => {
+      Object.keys(collection).forEach((depName) => {
         if (depMap.has(depName)) {
           // overwrite version to ensure it's always present (and accurate)
           collection[depName] = depMap.get(depName);
@@ -130,7 +130,7 @@ function transformManifest(pkg, dependencies) {
     }
   });
 
-  ["bundledDependencies", "bundleDependencies"].forEach(depType => {
+  ["bundledDependencies", "bundleDependencies"].forEach((depType) => {
     const collection = json[depType];
     if (collection) {
       const newCollection = [];

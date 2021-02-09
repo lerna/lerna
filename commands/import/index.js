@@ -5,11 +5,11 @@ const fs = require("fs-extra");
 const path = require("path");
 const pMapSeries = require("p-map-series");
 
-const ChildProcessUtilities = require("@lerna/child-process");
-const Command = require("@lerna/command");
-const PromptUtilities = require("@lerna/prompt");
-const ValidationError = require("@lerna/validation-error");
-const pulseTillDone = require("@lerna/pulse-till-done");
+const childProcess = require("@lerna/child-process");
+const { Command } = require("@lerna/command");
+const { promptConfirmation } = require("@lerna/prompt");
+const { ValidationError } = require("@lerna/validation-error");
+const { pulseTillDone } = require("@lerna/pulse-till-done");
 
 module.exports = factory;
 
@@ -79,9 +79,7 @@ class ImportCommand extends Command {
       throw new ValidationError("EEXISTS", `Target directory already exists "${targetDir}"`);
     }
 
-    this.commits = this.externalExecSync("git", this.gitParamsForTargetCommits())
-      .split("\n")
-      .reverse();
+    this.commits = this.externalExecSync("git", this.gitParamsForTargetCommits()).split("\n").reverse();
     // this.commits = this.externalExecSync("git", [
     //   "rev-list",
     //   "--no-merges",
@@ -116,11 +114,11 @@ class ImportCommand extends Command {
       return true;
     }
 
-    return PromptUtilities.confirm("Are you sure you want to import these commits onto the current branch?");
+    return promptConfirmation("Are you sure you want to import these commits onto the current branch?");
   }
 
   getPackageDirectories() {
-    return this.project.packageConfigs.filter(p => p.endsWith("*")).map(p => path.dirname(p));
+    return this.project.packageConfigs.filter((p) => p.endsWith("*")).map((p) => path.dirname(p));
   }
 
   getTargetBase() {
@@ -140,11 +138,11 @@ class ImportCommand extends Command {
   }
 
   execSync(cmd, args) {
-    return ChildProcessUtilities.execSync(cmd, args, this.execOpts);
+    return childProcess.execSync(cmd, args, this.execOpts);
   }
 
   externalExecSync(cmd, args) {
-    return ChildProcessUtilities.execSync(cmd, args, this.externalExecOpts);
+    return childProcess.execSync(cmd, args, this.externalExecOpts);
   }
 
   createPatchForCommit(sha) {
@@ -212,7 +210,7 @@ class ImportCommand extends Command {
     this.enableProgressBar();
 
     const tracker = this.logger.newItem("execute");
-    const mapper = sha => {
+    const mapper = (sha) => {
       tracker.info(sha);
 
       const patch = this.createPatchForCommit(sha);
@@ -228,7 +226,7 @@ class ImportCommand extends Command {
       //
       // Fall back to three-way merge, which can help with duplicate commits
       // due to merge history.
-      const proc = ChildProcessUtilities.exec("git", procArgs, this.execOpts);
+      const proc = childProcess.exec("git", procArgs, this.execOpts);
 
       proc.stdin.end(patch);
 
@@ -236,14 +234,14 @@ class ImportCommand extends Command {
         .then(() => {
           tracker.completeWork(1);
         })
-        .catch(err => {
+        .catch((err) => {
           // Getting commit diff to see if it's empty
           const diff = this.externalExecSync("git", ["diff", "-s", `${sha}^!`]).trim();
           if (diff === "") {
             tracker.completeWork(1);
 
             // Automatically skip empty commits
-            return ChildProcessUtilities.exec("git", ["am", "--skip"], this.execOpts);
+            return childProcess.exec("git", ["am", "--skip"], this.execOpts);
           }
 
           err.sha = sha;
@@ -266,7 +264,7 @@ class ImportCommand extends Command {
 
         this.logger.success("import", "finished");
       })
-      .catch(err => {
+      .catch((err) => {
         tracker.finish();
 
         if (this.options.preserveCommit) {

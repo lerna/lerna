@@ -2,7 +2,7 @@
 
 const execa = require("execa");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const isAnythingCommitted = require("../lib/is-anything-committed");
+const { isAnythingCommitted } = require("../lib/is-anything-committed");
 
 test("isAnythingCommitted", async () => {
   const cwd = await initFixture("root-manifest-only");

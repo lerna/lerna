@@ -7,7 +7,7 @@ jest.mock("../lib/is-behind-upstream");
 jest.mock("../lib/remote-branch-exists");
 
 // mocked modules
-const runLifecycle = require("@lerna/run-lifecycle");
+const { runLifecycle } = require("@lerna/run-lifecycle");
 const loadJsonFile = require("load-json-file");
 
 // helpers
@@ -30,7 +30,7 @@ describe("lifecycle scripts", () => {
 
     expect(runLifecycle).toHaveBeenCalledTimes(6);
 
-    ["preversion", "version", "postversion"].forEach(script => {
+    ["preversion", "version", "postversion"].forEach((script) => {
       // "lifecycle" is the root manifest name
       expect(runLifecycle).toHaveBeenCalledWith(
         expect.objectContaining({ name: "lifecycle" }),

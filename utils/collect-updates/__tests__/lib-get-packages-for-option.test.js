@@ -1,7 +1,7 @@
 "use strict";
 
 // file under test
-const getPackagesForOption = require("../lib/get-packages-for-option");
+const { getPackagesForOption } = require("../lib/get-packages-for-option");
 
 test("no argument", () => {
   const result = getPackagesForOption();

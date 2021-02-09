@@ -1,6 +1,6 @@
 "use strict";
 
-const filterable = require("@lerna/filter-options");
+const { filterOptions } = require("@lerna/filter-options");
 
 /**
  * @see https://github.com/yargs/yargs/blob/master/docs/advanced.md#providing-a-command-module
@@ -9,7 +9,7 @@ exports.command = "clean";
 
 exports.describe = "Remove the node_modules directory from all packages";
 
-exports.builder = yargs => {
+exports.builder = (yargs) => {
   yargs.options({
     y: {
       group: "Command Options:",
@@ -19,7 +19,7 @@ exports.builder = yargs => {
     },
   });
 
-  return filterable(yargs);
+  return filterOptions(yargs);
 };
 
 exports.handler = function handler(argv) {

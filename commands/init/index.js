@@ -5,7 +5,7 @@ const path = require("path");
 const pMap = require("p-map");
 const writeJsonFile = require("write-json-file");
 
-const Command = require("@lerna/command");
+const { Command } = require("@lerna/command");
 const childProcess = require("@lerna/child-process");
 
 module.exports = factory;
@@ -138,7 +138,7 @@ class InitCommand extends Command {
   ensurePackagesDir() {
     this.logger.info("", "Creating packages directory");
 
-    return pMap(this.project.packageParentDirs, dir => fs.mkdirp(dir));
+    return pMap(this.project.packageParentDirs, (dir) => fs.mkdirp(dir));
   }
 }
 

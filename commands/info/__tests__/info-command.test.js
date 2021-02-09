@@ -8,7 +8,7 @@ const envinfo = require("envinfo");
 envinfo.run.mockResolvedValue("MOCK_ENVINFO");
 
 // helper
-const output = require("@lerna/output");
+const { output } = require("@lerna/output");
 
 // file under test
 const lernaInfo = require("@lerna-test/command-runner")(require("../command"));

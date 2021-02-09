@@ -17,7 +17,7 @@
   ],
   "main": "symlink-dependencies.js",
   "engines": {
-    "node": ">= 6.9.0"
+    "node": ">= 10.18.0"
   },
   "publishConfig": {
     "access": "public"
@@ -34,9 +34,8 @@
     "@lerna/create-symlink": "file:../create-symlink",
     "@lerna/resolve-symlink": "file:../resolve-symlink",
     "@lerna/symlink-binary": "file:../symlink-binary",
-    "fs-extra": "^8.1.0",
-    "p-finally": "^1.0.0",
-    "p-map": "^2.1.0",
-    "p-map-series": "^1.0.0"
+    "fs-extra": "^9.1.0",
+    "p-map": "^4.0.0",
+    "p-map-series": "^2.1.0"
   }
 }

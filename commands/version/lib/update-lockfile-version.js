@@ -12,7 +12,7 @@ function updateLockfileVersion(pkg) {
   let chain = Promise.resolve();
 
   chain = chain.then(() => loadJsonFile(lockfilePath).catch(() => {}));
-  chain = chain.then(obj => {
+  chain = chain.then((obj) => {
     if (obj) {
       obj.version = pkg.version;
 

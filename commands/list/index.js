@@ -1,8 +1,8 @@
 "use strict";
 
-const Command = require("@lerna/command");
+const { Command } = require("@lerna/command");
 const listable = require("@lerna/listable");
-const output = require("@lerna/output");
+const { output } = require("@lerna/output");
 const { getFilteredPackages } = require("@lerna/filter-options");
 
 module.exports = factory;
@@ -20,7 +20,7 @@ class ListCommand extends Command {
     let chain = Promise.resolve();
 
     chain = chain.then(() => getFilteredPackages(this.packageGraph, this.execOpts, this.options));
-    chain = chain.then(filteredPackages => {
+    chain = chain.then((filteredPackages) => {
       this.result = listable.format(filteredPackages, this.options);
     });
 

@@ -8,23 +8,24 @@ const path = require("path");
 const pathExists = require("path-exists");
 
 // mocked or stubbed modules
-const PromptUtilities = require("@lerna/prompt");
+const { promptConfirmation } = require("@lerna/prompt");
 
 // helpers
 const initNamedFixture = require("@lerna-test/init-named-fixture")(__dirname);
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const gitAdd = require("@lerna-test/git-add");
-const gitCommit = require("@lerna-test/git-commit");
-const updateLernaConfig = require("@lerna-test/update-lerna-config");
+const { gitAdd } = require("@lerna-test/git-add");
+const { gitCommit } = require("@lerna-test/git-commit");
+const { updateLernaConfig } = require("@lerna-test/update-lerna-config");
 
 // file under test
 const lernaImport = require("@lerna-test/command-runner")(require("../command"));
 
 // assertion helpers
-const lastCommitInDir = cwd => execa.stdout("git", ["log", "-1", "--format=%s"], { cwd });
+const lastCommitInDir = (cwd) =>
+  execa("git", ["log", "-1", "--format=%s"], { cwd }).then((result) => result.stdout);
 
 describe("ImportCommand", () => {
-  PromptUtilities.confirm.mockResolvedValue(true);
+  promptConfirmation.mockResolvedValue(true);
 
   describe("import", () => {
     const initBasicFixtures = async () => {
@@ -109,7 +110,7 @@ describe("ImportCommand", () => {
     it("supports filepaths that have spaces within the external repo", async () =>
       Promise.all(
         // running the same test with and without --flatten
-        [true, false].map(async shouldFlatten => {
+        [true, false].map(async (shouldFlatten) => {
           const externalDir = await initFixture("files-with-spaces", "Init external commit");
           const testDir = await initFixture("basic");
           const newPackagePath = path.join(testDir, "packages", path.basename(externalDir));
@@ -131,7 +132,7 @@ describe("ImportCommand", () => {
     it("supports filepaths that have non-ascii char within the external repo", async () =>
       Promise.all(
         // running the same test with and without --flatten
-        [true, false].map(async shouldFlatten => {
+        [true, false].map(async (shouldFlatten) => {
           const externalDir = await initFixture("files-with-non-ascii-char", "Init external commit");
           const testDir = await initFixture("basic");
           const newPackagePath = path.join(testDir, "packages", path.basename(externalDir));
@@ -177,7 +178,7 @@ describe("ImportCommand", () => {
     it("exits early when confirmation is rejected", async () => {
       const [testDir, externalDir] = await initBasicFixtures();
 
-      PromptUtilities.confirm.mockResolvedValueOnce(false);
+      promptConfirmation.mockResolvedValueOnce(false);
 
       await lernaImport(testDir)(externalDir);
 
@@ -187,7 +188,7 @@ describe("ImportCommand", () => {
     it("preserves original committer and date with --preserve-commit", async () =>
       Promise.all(
         // running the same test with and without --preserve-commit
-        [true, false].map(async shouldPreserve => {
+        [true, false].map(async (shouldPreserve) => {
           const [testDir, externalDir] = await initBasicFixtures();
           const filePath = path.join(externalDir, "old-file");
           let expectedEmail;
@@ -221,7 +222,7 @@ describe("ImportCommand", () => {
       const [testDir, externalDir] = await initBasicFixtures();
       await lernaImport(testDir)(externalDir, "--yes");
 
-      expect(PromptUtilities.confirm).not.toHaveBeenCalled();
+      expect(promptConfirmation).not.toHaveBeenCalled();
     });
 
     it("errors without an argument", async () => {

@@ -3,11 +3,16 @@
 const inquirer = require("inquirer");
 const log = require("npmlog");
 
-exports.confirm = confirm;
-exports.select = select;
-exports.input = input;
+exports.promptConfirmation = promptConfirmation;
+exports.promptSelectOne = promptSelectOne;
+exports.promptTextInput = promptTextInput;
 
-function confirm(message) {
+/**
+ * Prompt for confirmation
+ * @param {string} message
+ * @returns {Promise<boolean>}
+ */
+function promptConfirmation(message) {
   log.pause();
 
   return inquirer
@@ -23,14 +28,20 @@ function confirm(message) {
         ],
       },
     ])
-    .then(answers => {
+    .then((answers) => {
       log.resume();
 
       return answers.confirm;
     });
 }
 
-function select(message, { choices, filter, validate } = {}) {
+/**
+ * Prompt for selection
+ * @param {string} message
+ * @param {{ choices: import("inquirer").ListChoiceOptions[] } & Pick<import("inquirer").Question, 'filter' | 'validate'>} [options]
+ * @returns {Promise<string>}
+ */
+function promptSelectOne(message, { choices, filter, validate } = {}) {
   log.pause();
 
   return inquirer
@@ -45,14 +56,20 @@ function select(message, { choices, filter, validate } = {}) {
         validate,
       },
     ])
-    .then(answers => {
+    .then((answers) => {
       log.resume();
 
       return answers.prompt;
     });
 }
 
-function input(message, { filter, validate } = {}) {
+/**
+ * Prompt for input
+ * @param {string} message
+ * @param {Pick<import("inquirer").Question, 'filter' | 'validate'>} [options]
+ * @returns {Promise<string>}
+ */
+function promptTextInput(message, { filter, validate } = {}) {
   log.pause();
 
   return inquirer
@@ -65,7 +82,7 @@ function input(message, { filter, validate } = {}) {
         validate,
       },
     ])
-    .then(answers => {
+    .then((answers) => {
       log.resume();
 
       return answers.input;

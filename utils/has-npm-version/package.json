@@ -14,7 +14,7 @@
     "lib"
   ],
   "engines": {
-    "node": ">= 6.9.0"
+    "node": ">= 10.18.0"
   },
   "publishConfig": {
     "access": "public"
@@ -29,6 +29,6 @@
   },
   "dependencies": {
     "@lerna/child-process": "file:../../core/child-process",
-    "semver": "^6.2.0"
+    "semver": "^7.3.4"
   }
 }

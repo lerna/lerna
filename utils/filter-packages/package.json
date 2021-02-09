@@ -17,7 +17,7 @@
   ],
   "main": "filter-packages.js",
   "engines": {
-    "node": ">= 6.9.0"
+    "node": ">= 10.18.0"
   },
   "publishConfig": {
     "access": "public"
@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "@lerna/validation-error": "file:../../core/validation-error",
-    "multimatch": "^3.0.0",
+    "multimatch": "^5.0.0",
     "npmlog": "^4.1.2"
   }
 }

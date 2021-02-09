@@ -10,8 +10,8 @@ jest.mock("../lib/is-behind-upstream");
 jest.mock("../lib/remote-branch-exists");
 
 // mocked modules
-const githubClient = require("@lerna/github-client").client;
-const gitlabClient = require("@lerna/gitlab-client")();
+const githubClient = require("@lerna/github-client").createGitHubClient();
+const gitlabClient = require("@lerna/gitlab-client").createGitLabClient();
 const { recommendVersion } = require("@lerna/conventional-commits");
 
 // helpers
@@ -79,7 +79,7 @@ describe.each([
       ["package-5", "5.0.1"],
     ]);
 
-    versionBumps.forEach(bump => recommendVersion.mockResolvedValueOnce(bump));
+    versionBumps.forEach((bump) => recommendVersion.mockResolvedValueOnce(bump));
 
     await lernaVersion(cwd)("--create-release", type, "--conventional-commits");
 

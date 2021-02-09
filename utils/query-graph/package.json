@@ -17,7 +17,7 @@
   ],
   "main": "query-graph.js",
   "engines": {
-    "node": ">= 6.9.0"
+    "node": ">= 10.18.0"
   },
   "publishConfig": {
     "access": "public"
@@ -31,7 +31,6 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/package-graph": "file:../../core/package-graph",
-    "figgy-pudding": "^3.5.1"
+    "@lerna/package-graph": "file:../../core/package-graph"
   }
 }
