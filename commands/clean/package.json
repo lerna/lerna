@@ -39,6 +39,6 @@
     "@lerna/rimraf-dir": "file:../../utils/rimraf-dir",
     "p-map": "^4.0.0",
     "p-map-series": "^2.1.0",
-    "p-waterfall": "^2.1.0"
+    "p-waterfall": "^2.1.1"
   }
 }

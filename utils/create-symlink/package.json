@@ -31,8 +31,8 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "cmd-shim": "^4.0.2",
-    "fs-extra": "^9.0.1",
+    "cmd-shim": "^4.1.0",
+    "fs-extra": "^9.1.0",
     "npmlog": "^4.1.2"
   }
 }

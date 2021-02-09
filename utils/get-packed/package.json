@@ -27,9 +27,9 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "fs-extra": "^9.0.1",
-    "ssri": "^8.0.0",
-    "tar": "^6.0.5"
+    "fs-extra": "^9.1.0",
+    "ssri": "^8.0.1",
+    "tar": "^6.1.0"
   },
   "engines": {
     "node": ">= 10.18.0"

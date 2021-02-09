@@ -7,6 +7,6 @@
   "license": "MIT",
   "dependencies": {
     "@lerna-test/find-fixture": "file:../find-fixture",
-    "fs-extra": "^9.0.1"
+    "fs-extra": "^9.1.0"
   }
 }

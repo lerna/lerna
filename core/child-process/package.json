@@ -33,6 +33,6 @@
   "dependencies": {
     "chalk": "^4.1.0",
     "execa": "^5.0.0",
-    "strong-log-transformer": "^2.0.0"
+    "strong-log-transformer": "^2.1.0"
   }
 }

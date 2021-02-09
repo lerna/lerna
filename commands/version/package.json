@@ -55,8 +55,8 @@
     "p-map": "^4.0.0",
     "p-pipe": "^3.1.0",
     "p-reduce": "^2.1.0",
-    "p-waterfall": "^2.1.0",
-    "semver": "^7.3.2",
+    "p-waterfall": "^2.1.1",
+    "semver": "^7.3.4",
     "slash": "^3.0.0",
     "temp-write": "^4.0.0",
     "write-json-file": "^4.3.0"

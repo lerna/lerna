@@ -34,6 +34,6 @@
   "dependencies": {
     "@lerna/command": "file:../../core/command",
     "@lerna/output": "file:../../utils/output",
-    "envinfo": "^7.3.1"
+    "envinfo": "^7.7.4"
   }
 }

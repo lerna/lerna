@@ -6,6 +6,6 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
-    "fs-extra": "^9.0.1"
+    "fs-extra": "^9.1.0"
   }
 }
