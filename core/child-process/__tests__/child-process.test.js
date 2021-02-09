@@ -1,7 +1,5 @@
 "use strict";
 
-const os = require("os");
-
 // file under test
 const childProcess = require("..");
 
@@ -52,7 +50,6 @@ describe("childProcess", () => {
 
       await expect(result).rejects.toThrow(
         expect.objectContaining({
-          exitCode: os.constants.errno.ENOENT,
           pkg: { name: "hamilton" },
         })
       );
