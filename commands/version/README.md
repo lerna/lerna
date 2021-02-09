@@ -43,32 +43,45 @@ Running `lerna version --conventional-commits` without the above flags will rele
 
 ## Options
 
-- [`--allow-branch`](#--allow-branch-glob)
-- [`--amend`](#--amend)
-- [`--changelog-preset`](#--changelog-preset)
-- [`--conventional-commits`](#--conventional-commits)
-- [`--conventional-graduate`](#--conventional-graduate)
-- [`--conventional-prerelease`](#--conventional-prerelease)
-- [`--create-release`](#--create-release-type)
-- [`--exact`](#--exact)
-- [`--force-publish`](#--force-publish)
-- [`--git-remote`](#--git-remote-name)
-- [`--ignore-changes`](#--ignore-changes)
-- [`--ignore-scripts`](#--ignore-scripts)
-- [`--include-merged-tags`](#--include-merged-tags)
-- [`--message`](#--message-msg)
-- [`--no-changelog`](#--no-changelog)
-- [`--no-commit-hooks`](#--no-commit-hooks)
-- [`--no-git-tag-version`](#--no-git-tag-version)
-- [`--no-granular-pathspec`](#--no-granular-pathspec)
-- [`--no-private`](#--no-private)
-- [`--no-push`](#--no-push)
-- [`--preid`](#--preid)
-- [`--sign-git-commit`](#--sign-git-commit)
-- [`--sign-git-tag`](#--sign-git-tag)
-- [`--force-git-tag`](#--force-git-tag)
-- [`--tag-version-prefix`](#--tag-version-prefix)
-- [`--yes`](#--yes)
+- [`@lerna/version`](#lernaversion)
+  - [Usage](#usage)
+  - [Positionals](#positionals)
+    - [semver `bump`](#semver-bump)
+  - [Prerelease](#prerelease)
+  - [Options](#options)
+    - [`--allow-branch <glob>`](#--allow-branch-glob)
+    - [`--amend`](#--amend)
+    - [`--changelog-preset`](#--changelog-preset)
+    - [`--conventional-commits`](#--conventional-commits)
+    - [`--conventional-graduate`](#--conventional-graduate)
+    - [`--conventional-prerelease`](#--conventional-prerelease)
+    - [`--create-release <type>`](#--create-release-type)
+    - [`--exact`](#--exact)
+    - [`--force-publish`](#--force-publish)
+    - [`--git-remote <name>`](#--git-remote-name)
+    - [`--ignore-changes`](#--ignore-changes)
+    - [`--ignore-scripts`](#--ignore-scripts)
+    - [`--include-merged-tags`](#--include-merged-tags)
+    - [`--message <msg>`](#--message-msg)
+    - [`--no-changelog`](#--no-changelog)
+    - [`--no-commit-hooks`](#--no-commit-hooks)
+    - [`--no-git-tag-version`](#--no-git-tag-version)
+    - [`--no-granular-pathspec`](#--no-granular-pathspec)
+    - [`--no-private`](#--no-private)
+    - [`--no-push`](#--no-push)
+    - [`--preid`](#--preid)
+    - [`--sign-git-commit`](#--sign-git-commit)
+    - [`--sign-git-tag`](#--sign-git-tag)
+    - [`--force-git-tag`](#--force-git-tag)
+    - [`--tag-version-prefix`](#--tag-version-prefix)
+    - [`--yes`](#--yes)
+  - [Deprecated Options](#deprecated-options)
+    - [`--cd-version`](#--cd-version)
+    - [`--repo-version`](#--repo-version)
+    - [`--skip-git`](#--skip-git)
+  - [Tips](#tips)
+    - [Generating Initial Changelogs](#generating-initial-changelogs)
+  - [Lifecycle Scripts](#lifecycle-scripts)
 
 ### `--allow-branch <glob>`
 
@@ -133,6 +146,25 @@ Presets are names of built-in or installable configuration for conventional chan
 Presets may be passed as the full name of the package, or the auto-expanded suffix
 (e.g., `angular` is expanded to `conventional-changelog-angular`).
 
+This option is can also be specified in `lerna.json` configuration:
+
+```json
+{
+  "changelogPreset": "angular"
+}
+```
+
+If the preset exports a builder function (e.g. `conventional-changelog-conventionalcommits`), you can specify the [preset configuration](https://github.com/conventional-changelog/conventional-changelog-config-spec) too:
+
+```json
+{
+  "changelogPreset": {
+    "name": "conventionalcommits",
+    "issueUrlFormat": "{{host}}/{{owner}}/{{repository}}/issues/{{id}}"
+  }
+}
+```
+
 ### `--conventional-commits`
 
 ```sh
@@ -190,25 +222,6 @@ To authenticate with GitLab, the following environment variables can be defined.
 - `GL_API_URL` - An absolute URL to the API, including the version. (Default: https://gitlab.com/api/v4)
 
 > NOTE: When using this option, you cannot pass [`--no-changelog`](#--no-changelog).
-
-This option is can also be specified in `lerna.json` configuration:
-
-```json
-{
-  "changelogPreset": "angular"
-}
-```
-
-If the preset exports a builder function (e.g. `conventional-changelog-conventionalcommits`), you can specify the [preset configuration](https://github.com/conventional-changelog/conventional-changelog-config-spec) too:
-
-```json
-{
-  "changelogPreset": {
-    "name": "conventionalcommits",
-    "issueUrlFormat": "{{host}}/{{owner}}/{{repository}}/issues/{{id}}"
-  }
-}
-```
 
 ### `--exact`
 
