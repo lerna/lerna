@@ -1,7 +1,10 @@
 #!/bin/sh
 
-if [ "$#" -ne 1 ]; then
-    echo >&2 "Usage: $0 package-name"
+# if you wanted to execute this script in a shell loop based on, say, npm outdated results (YMMV on cut depth for slashes):
+# for pkg in $(npm outdated -p | cut -d ':' -f 1 | cut -d '/' -f 7-); do ./scripts/update_dependency.sh $pkg --no-install; done
+
+if [ "$#" -lt 1 ]; then
+    echo >&2 "Usage: $0 package-name [--no-install]"
     exit 1
 fi
 
@@ -39,6 +42,8 @@ for file in $INFILES; do
     echo "Finished editing: $file"
 done
 
-npm install
-git add -u .
-npm home $TARGET --no-browser
+if [ "$2" != "--no-install" ]; then
+  npm install
+  git add -u .
+  npm home $TARGET --no-browser
+fi
