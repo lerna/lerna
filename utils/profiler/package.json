@@ -1,6 +1,6 @@
 {
   "name": "@lerna/profiler",
-  "version": "3.20.0",
+  "version": "4.0.0",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",

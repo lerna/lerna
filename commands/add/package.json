@@ -1,6 +1,6 @@
 {
   "name": "@lerna/add",
-  "version": "3.21.0",
+  "version": "4.0.0",
   "description": "Add a dependency to matched packages",
   "keywords": [
     "lerna",

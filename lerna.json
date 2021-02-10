@@ -21,5 +21,5 @@
     "**/*.md"
   ],
   "useWorkspaces": true,
-  "version": "3.22.1"
+  "version": "4.0.0"
 }

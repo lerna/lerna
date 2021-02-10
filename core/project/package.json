@@ -1,6 +1,6 @@
 {
   "name": "@lerna/project",
-  "version": "3.21.0",
+  "version": "4.0.0",
   "description": "Lerna project configuration",
   "keywords": [
     "lerna",

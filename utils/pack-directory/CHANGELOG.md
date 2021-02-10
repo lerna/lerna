@@ -3,6 +3,37 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/lerna/lerna/compare/v3.22.1...v4.0.0) (2021-02-10)
+
+
+### Features
+
+* **deps:** Bump dependencies ([affed1c](https://github.com/lerna/lerna/commit/affed1ce0fce91f01b0a9eafe357db2d985b974f))
+* Consume named exports of sibling modules ([63499e3](https://github.com/lerna/lerna/commit/63499e33652bc78fe23751875d74017e2f16a689))
+* Expose named export ([c1303f1](https://github.com/lerna/lerna/commit/c1303f13adc4cf15f96ff25889b52149f8224c0e))
+* Remove default export ([e2f1ec3](https://github.com/lerna/lerna/commit/e2f1ec3dd049d2a89880029908a2aa7c66f15082))
+* **deps:** npm-packlist@^2.1.4 ([c63fabd](https://github.com/lerna/lerna/commit/c63fabdc09bae34d8f8d907e5d21a996ac01daef))
+* **deps:** tar@^6.0.5 ([fce3e77](https://github.com/lerna/lerna/commit/fce3e778276cbab99301b6caba414efd3b4a78ea))
+* **deps:** temp-write@^4.0.0 ([7bbfb70](https://github.com/lerna/lerna/commit/7bbfb7020fbbf1fd7f2ebea38ac2718bea5a0646))
+* **pack-directory:** Remove figgy-pudding ([640faa5](https://github.com/lerna/lerna/commit/640faa54cbbc5faeb6b13322c8d4f48bf035a1f7))
+* Drop support for Node v6.x & v8.x ([ff4bb4d](https://github.com/lerna/lerna/commit/ff4bb4da215555e3bb136f5af09b5cbc631e57bb))
+
+
+### BREAKING CHANGES
+
+* The default export has been removed, please use a named export instead.
+* Node v6.x & v8.x are no longer supported. Please upgrade to the latest LTS release.
+
+Here's the gnarly one-liner I used to make these changes:
+```
+npx lerna exec --concurrency 1 --stream -- 'json -I -f package.json -e '"'"'this.engines=this.engines||{};this.engines.node=">= 10.18.0"'"'"
+```
+(requires `npm i -g json` beforehand)
+
+
+
+
+
 ## [3.16.4](https://github.com/lerna/lerna/compare/v3.16.3...v3.16.4) (2019-07-24)
 
 

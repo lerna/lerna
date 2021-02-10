@@ -3,6 +3,125 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/lerna/lerna/compare/v3.22.1...v4.0.0) (2021-02-10)
+
+
+### Bug Fixes
+
+* **version:** Ensure --create-release environment variables are present during initialization ([2d0a97a](https://github.com/lerna/lerna/commit/2d0a97aade2b17cb58ce8c0afdbfd950033f46db))
+* Improve accuracy of JSDoc type annotations ([1ec69f0](https://github.com/lerna/lerna/commit/1ec69f0e0f7a3f1e0c74dbacb17fab2d7b7a8a44))
+* **create:** Use main as default Github branch ([1a951e9](https://github.com/lerna/lerna/commit/1a951e92376b2aff2e1866791a0ae0b03f19515d))
+* **import:** Better handling of "Patch is empty" ([#2588](https://github.com/lerna/lerna/issues/2588)) ([0497bc7](https://github.com/lerna/lerna/commit/0497bc73043b2b646cc614f54187b68ba007000e))
+
+
+### Code Refactoring
+
+* **describe-ref:** Add JSDoc types, remove test-only export ([e5cf30c](https://github.com/lerna/lerna/commit/e5cf30cb66f9b85f13afb475ea0c9e59c8fabba3))
+* **package:** Move Package.lazy() to static method ([e52108e](https://github.com/lerna/lerna/commit/e52108e308192150e1d5e21f3a23c9e91f87d4b7))
+
+
+### Features
+
+* **child-process:** Add JSDoc types ([1840492](https://github.com/lerna/lerna/commit/1840492a6b9e832dafe7046157798e3157c2a13b))
+* **collect-uncommitted:** Remove figgy-pudding ([621b382](https://github.com/lerna/lerna/commit/621b3821cf0ce4921a0815e0ce33a8222c7b172b))
+* **collect-updates:** Add JSDoc type annotations to primary export ([a4e7c78](https://github.com/lerna/lerna/commit/a4e7c7884f8c278f705824684a25a717327cda06))
+* **conventional-commits:** Add JSDoc types to named exports ([81a591c](https://github.com/lerna/lerna/commit/81a591ccf1b0ca32f7f4638bab4f84b5743a3ca6))
+* **deps:** @evocateur/libnpmaccess -> libnpmaccess@^4.0.1 ([7974b35](https://github.com/lerna/lerna/commit/7974b351e53575503dd881c639b53d820e4f525e))
+* **deps:** @evocateur/libnpmpublish -> libnpmpublish@^4.0.0 ([341146e](https://github.com/lerna/lerna/commit/341146ef6c9111607f99d2f1663f973ab16c755e))
+* **deps:** @evocateur/npm-registry-fetch -> npm-registry-fetch@^9.0.0 ([6df42f2](https://github.com/lerna/lerna/commit/6df42f2caf0887c38870c07a9f850dae0e9c4253))
+* **deps:** @evocateur/pacote -> pacote@^11.1.13 ([99b4217](https://github.com/lerna/lerna/commit/99b4217ed143527a45969f3a46f1bd9b84999d68))
+* **deps:** @octokit/rest@^18.0.9 ([f064a55](https://github.com/lerna/lerna/commit/f064a55627994a08f5ba9f735fcd5b2c3491e431))
+* **deps:** @zkochan/cmd-shim -> cmd-shim@^4.0.2 ([179e2c3](https://github.com/lerna/lerna/commit/179e2c30b5734bb95f8f4005169987231992a525))
+* **deps:** Bump dependencies ([affed1c](https://github.com/lerna/lerna/commit/affed1ce0fce91f01b0a9eafe357db2d985b974f))
+* **deps:** byte-size@^7.0.0 ([a1b2555](https://github.com/lerna/lerna/commit/a1b255504b52d83455de7bed32bf5e4d63cc7538))
+* **deps:** camelcase -> yargs-parser/camelCase ([d966e8b](https://github.com/lerna/lerna/commit/d966e8b3d36ad9eb02f656b73d9b41882ca7b208))
+* **deps:** chalk@^4.1.0 ([d2a9ed5](https://github.com/lerna/lerna/commit/d2a9ed537139f49561a7e29b3ebf624c97f48c77))
+* **deps:** conventional-changelog-core@^4.2.1 ([54e2b98](https://github.com/lerna/lerna/commit/54e2b98a815cc003981a807f0a167c7dd305523a))
+* **deps:** conventional-recommended-bump@^6.0.11 ([4ff481c](https://github.com/lerna/lerna/commit/4ff481c9d7ee3495471d5d1eeb1b72738d7c5410))
+* **deps:** cosmiconfig@^7.0.0 ([2958fe6](https://github.com/lerna/lerna/commit/2958fe6b3e586adb27da6643d1c215b73c8afa7b))
+* **deps:** dot-prop@^6.0.0 ([5f31d3b](https://github.com/lerna/lerna/commit/5f31d3b46f8d1d84d264b90be38f57887d2e4969))
+* **deps:** execa@^4.1.0 ([9051dca](https://github.com/lerna/lerna/commit/9051dcab1a68b56db09b82ab0345c5f36bcfee2d))
+* **deps:** execa@^5.0.0 ([d8100fd](https://github.com/lerna/lerna/commit/d8100fd9e0742b049ed16ac77e976ce34234ebfc))
+* **deps:** fs-extra@^9.0.1 ([2f6f4e0](https://github.com/lerna/lerna/commit/2f6f4e066d5a41b4cd508b3405ac1d0a342932dc))
+* **deps:** get-port@^5.1.1 ([b1b2275](https://github.com/lerna/lerna/commit/b1b2275237f16a26e6f96deffee8b0f72d8ce17d))
+* **deps:** get-stream@^6.0.0 ([ddf2ab5](https://github.com/lerna/lerna/commit/ddf2ab5512704f17d31773f82fb180e659c461a6))
+* **deps:** globby@^11.0.1 ([6cb5bbe](https://github.com/lerna/lerna/commit/6cb5bbec5599cdd93d314ffdc4abea8822e48075))
+* **deps:** import-local@^3.0.2 ([e0e74d4](https://github.com/lerna/lerna/commit/e0e74d46c61ae884c1a27627c6e77e488061c9ba))
+* **deps:** init-package-json@^2.0.1 ([4042e8e](https://github.com/lerna/lerna/commit/4042e8e0a73427d1f9585ff285554e2a954b7be6))
+* **deps:** inquirer@^7.3.3 ([0b37795](https://github.com/lerna/lerna/commit/0b377959d76ad354f384ff3addb42e3855eec379))
+* **deps:** load-json-file@^6.2.0 ([239f54b](https://github.com/lerna/lerna/commit/239f54b070691106dd9b31f2a279d726744651f8))
+* **deps:** multimatch@^5.0.0 ([0172526](https://github.com/lerna/lerna/commit/017252644cfd2394e77680673bae0e31ffa58d5e))
+* **deps:** npm-package-arg@^8.1.0 ([12c8923](https://github.com/lerna/lerna/commit/12c892342d33b86a00ee2cf9079f9b26fe316dc6))
+* **deps:** npm-packlist@^2.1.4 ([c63fabd](https://github.com/lerna/lerna/commit/c63fabdc09bae34d8f8d907e5d21a996ac01daef))
+* **deps:** p-finally -> Promise.prototype.finally() ([028db04](https://github.com/lerna/lerna/commit/028db045b1221df000a2b98c5dceb1e4915a7806))
+* **deps:** p-finally@^2.0.1 ([165e47e](https://github.com/lerna/lerna/commit/165e47e722acf6462cf0b4e3a7d0e14d3971e7fb))
+* **deps:** p-map-series@^2.1.0 ([7f68076](https://github.com/lerna/lerna/commit/7f680767e0b3c7a15f951c51d4975150fb6e9112))
+* **deps:** p-map@^4.0.0 ([92b1364](https://github.com/lerna/lerna/commit/92b1364735e1f2cf379cf1047c60c4fb897d55f5))
+* **deps:** p-pipe@^3.1.0 ([489f59e](https://github.com/lerna/lerna/commit/489f59e28657a039becb4cdba5a1955043c73cf1))
+* **deps:** p-queue@^6.6.2 ([ed76cdd](https://github.com/lerna/lerna/commit/ed76cdddf57963e7aa3dfbff1f37fe361c9e2769))
+* **deps:** p-reduce@^2.1.0 ([fd4289a](https://github.com/lerna/lerna/commit/fd4289ad20fd9ce5921b83d97f82984abf4f65b0))
+* **deps:** p-waterfall@^2.1.0 ([7b7ea50](https://github.com/lerna/lerna/commit/7b7ea503e8371e7f663fd604bff51aebfe9e7b33))
+* **deps:** path-exists@^4.0.0 ([3fb6304](https://github.com/lerna/lerna/commit/3fb6304a31b4c92cf7eac6f7ab4fc725a22dc68f))
+* **deps:** pify@^5.0.0 ([6b34452](https://github.com/lerna/lerna/commit/6b3445219f0f022411a7cb282b0ba39a072e2ef2))
+* **deps:** read-cmd-shim@^2.0.0 ([9f78eee](https://github.com/lerna/lerna/commit/9f78eee7c148bbe0a623af193478573c4373f5a8))
+* **deps:** read-package-json@^3.0.0 ([2a02865](https://github.com/lerna/lerna/commit/2a02865a70a0b9ea60220a98bfff745128c90c6f))
+* **deps:** read-package-tree@^5.3.1 ([3311780](https://github.com/lerna/lerna/commit/331178049e61f3c401a074d27e84d12856e3494e))
+* **deps:** resolve-from@^5.0.0 ([d414462](https://github.com/lerna/lerna/commit/d4144623f3069fda62b324186c46050f4f7e1c77))
+* **deps:** rimraf@^3.0.2 ([cda2e18](https://github.com/lerna/lerna/commit/cda2e1838ea75eb668249b7a61d6a2828061b188))
+* **deps:** semver@^7.3.2 ([003ad66](https://github.com/lerna/lerna/commit/003ad6641fab8b4e3a82251ebffd27061bd6a31b))
+* **deps:** slash@^3.0.0 ([5dec383](https://github.com/lerna/lerna/commit/5dec383109bcd1cce9abbc80796369db9314acc9))
+* **deps:** ssri@^8.0.0 ([41729b4](https://github.com/lerna/lerna/commit/41729b4f9a2301a5e96cb7850c3bfd211f21006d))
+* **deps:** tar@^6.0.5 ([fce3e77](https://github.com/lerna/lerna/commit/fce3e778276cbab99301b6caba414efd3b4a78ea))
+* **deps:** temp-write@^4.0.0 ([7bbfb70](https://github.com/lerna/lerna/commit/7bbfb7020fbbf1fd7f2ebea38ac2718bea5a0646))
+* **deps:** upath@^2.0.1 ([28ecc48](https://github.com/lerna/lerna/commit/28ecc48aa9f0de6073f0bc534071e2697d8bef98))
+* **deps:** whatwg-url@^8.4.0 ([5dfb7f0](https://github.com/lerna/lerna/commit/5dfb7f0ee196a0c9b9010339d512a5b5b9b75a47))
+* **deps:** write-file-atomic@^3.0.3 ([61f341b](https://github.com/lerna/lerna/commit/61f341b0078a4ef89bdd667389ed892aa080272f))
+* **deps:** write-json-file@^4.3.0 ([d552c53](https://github.com/lerna/lerna/commit/d552c533c45489a1774f3c3b9ae8d15fc5d3b2a8))
+* **deps:** write-pkg@^4.0.0 ([34db21c](https://github.com/lerna/lerna/commit/34db21c8e344928d9ade36e191b337b74783c566))
+* **deps:** yargs@^16.1.1 ([53d432b](https://github.com/lerna/lerna/commit/53d432bd4cc5ff86345c6ca5cf601a6ff2d3e814))
+* **filter-options:** Remove figgy-pudding ([7d90289](https://github.com/lerna/lerna/commit/7d9028906098cf20c287c460da7d236bdb29007e))
+* **has-npm-version:** Remove unused makePredicate() export ([56cba2f](https://github.com/lerna/lerna/commit/56cba2ffc4dccf3380548567a36a35345fb7c747))
+* **npm-dist-tag:** Remove figgy-pudding ([1158f8e](https://github.com/lerna/lerna/commit/1158f8eea49dc3e59860886421bd8ec40a6205df))
+* **npm-publish:** Remove figgy-pudding ([bdc162d](https://github.com/lerna/lerna/commit/bdc162d2719fee38d6189daeb37fe4e22338fda7))
+* **otplease:** Remove figgy-pudding ([45ee52e](https://github.com/lerna/lerna/commit/45ee52e010cfd98fdcddf43f6bfc9cd11b4a3aa0))
+* **pack-directory:** Remove figgy-pudding ([640faa5](https://github.com/lerna/lerna/commit/640faa54cbbc5faeb6b13322c8d4f48bf035a1f7))
+* **package:** Improve JSDoc-inferred types, encapsulation ([4d80c38](https://github.com/lerna/lerna/commit/4d80c3832cf2a1cceb31e535fa841db4c68a7346))
+* **package-graph:** Improve JSDoc-inferred types, encapsulation ([fae9e8d](https://github.com/lerna/lerna/commit/fae9e8dc8d80df57b7bd34f429ea579e0529de30))
+* **prerelease-id-from-version:** Add JSDoc types ([53cdad9](https://github.com/lerna/lerna/commit/53cdad917ba6ca6a3ce350d44c3854248e0ea933))
+* **profiler:** Remove figgy-pudding ([69d4704](https://github.com/lerna/lerna/commit/69d47041e83138869404c131adda3fc3122bf2d9))
+* **project:** Add JSDoc type annotations to primary export ([8443ad3](https://github.com/lerna/lerna/commit/8443ad396b2e4d11df2d0a85b456037ca2cc87c0))
+* **prompt:** Add JSDoc types ([0406568](https://github.com/lerna/lerna/commit/0406568c51bef818b7894f6ade959caf550a378a))
+* **prompt:** Add unambiguous exports ([46fa111](https://github.com/lerna/lerna/commit/46fa11177c433482ba41e6d43765a0d9eaddc89a))
+* **prompt:** Remove ambiguous exports ([42ab453](https://github.com/lerna/lerna/commit/42ab4533d6643c5bb3ceca8eeff7358421235bf6))
+* Consume named exports of sibling modules ([63499e3](https://github.com/lerna/lerna/commit/63499e33652bc78fe23751875d74017e2f16a689))
+* Expose named export ([c1303f1](https://github.com/lerna/lerna/commit/c1303f13adc4cf15f96ff25889b52149f8224c0e))
+* Remove default export ([e2f1ec3](https://github.com/lerna/lerna/commit/e2f1ec3dd049d2a89880029908a2aa7c66f15082))
+* **publish:** Remove figgy-pudding ([caf823e](https://github.com/lerna/lerna/commit/caf823e01e9eb5463b452b929a74dbc83ffc5df7))
+* **query-graph:** Remove figgy-pudding ([3b0e2fe](https://github.com/lerna/lerna/commit/3b0e2fec7c274bc93627404295b51638cb7d7e60))
+* **run-lifecycle:** Remove figgy-pudding ([1093f87](https://github.com/lerna/lerna/commit/1093f87d867ddcdf0d7b56f21ad9786a7fb8d6c1))
+* **run-topologically:** Remove figgy-pudding ([f3a73db](https://github.com/lerna/lerna/commit/f3a73db0f083a77fc14bdff2e4da4b2decfa8c8a))
+* Drop support for Node v6.x & v8.x ([ff4bb4d](https://github.com/lerna/lerna/commit/ff4bb4da215555e3bb136f5af09b5cbc631e57bb))
+
+
+### BREAKING CHANGES
+
+* **prompt:** The ambiguous 'confirm', 'select', and 'input' exports have been removed. Please use the renamed exports 'promptConfirmation', 'promptSelectOne', and 'promptTextInput' (respectively).
+* **has-npm-version:** The makePredicate() export has been removed, memoization is now the responsibility of the caller.
+* The default export has been removed, please use a named export instead.
+* **describe-ref:** The test-only 'parse()' export has been removed.
+* **package:** The `lazy` named export is now a proper static method of `Package`.
+* Node v6.x & v8.x are no longer supported. Please upgrade to the latest LTS release.
+
+Here's the gnarly one-liner I used to make these changes:
+```
+npx lerna exec --concurrency 1 --stream -- 'json -I -f package.json -e '"'"'this.engines=this.engines||{};this.engines.node=">= 10.18.0"'"'"
+```
+(requires `npm i -g json` beforehand)
+
+
+
+
+
 ## [3.22.1](https://github.com/lerna/lerna/compare/v3.22.0...v3.22.1) (2020-06-09)
 
 

@@ -3,6 +3,48 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/lerna/lerna/compare/v3.22.1...v4.0.0) (2021-02-10)
+
+
+### Bug Fixes
+
+* **version:** Ensure --create-release environment variables are present during initialization ([2d0a97a](https://github.com/lerna/lerna/commit/2d0a97aade2b17cb58ce8c0afdbfd950033f46db))
+
+
+### Features
+
+* **deps:** Bump dependencies ([affed1c](https://github.com/lerna/lerna/commit/affed1ce0fce91f01b0a9eafe357db2d985b974f))
+* Consume named exports of sibling modules ([63499e3](https://github.com/lerna/lerna/commit/63499e33652bc78fe23751875d74017e2f16a689))
+* Remove default export ([e2f1ec3](https://github.com/lerna/lerna/commit/e2f1ec3dd049d2a89880029908a2aa7c66f15082))
+* **deps:** chalk@^4.1.0 ([d2a9ed5](https://github.com/lerna/lerna/commit/d2a9ed537139f49561a7e29b3ebf624c97f48c77))
+* **deps:** execa@^4.1.0 ([9051dca](https://github.com/lerna/lerna/commit/9051dcab1a68b56db09b82ab0345c5f36bcfee2d))
+* **deps:** load-json-file@^6.2.0 ([239f54b](https://github.com/lerna/lerna/commit/239f54b070691106dd9b31f2a279d726744651f8))
+* **deps:** p-map@^4.0.0 ([92b1364](https://github.com/lerna/lerna/commit/92b1364735e1f2cf379cf1047c60c4fb897d55f5))
+* **deps:** p-pipe@^3.1.0 ([489f59e](https://github.com/lerna/lerna/commit/489f59e28657a039becb4cdba5a1955043c73cf1))
+* **deps:** p-reduce@^2.1.0 ([fd4289a](https://github.com/lerna/lerna/commit/fd4289ad20fd9ce5921b83d97f82984abf4f65b0))
+* **deps:** p-waterfall@^2.1.0 ([7b7ea50](https://github.com/lerna/lerna/commit/7b7ea503e8371e7f663fd604bff51aebfe9e7b33))
+* **deps:** semver@^7.3.2 ([003ad66](https://github.com/lerna/lerna/commit/003ad6641fab8b4e3a82251ebffd27061bd6a31b))
+* **deps:** slash@^3.0.0 ([5dec383](https://github.com/lerna/lerna/commit/5dec383109bcd1cce9abbc80796369db9314acc9))
+* **deps:** temp-write@^4.0.0 ([7bbfb70](https://github.com/lerna/lerna/commit/7bbfb7020fbbf1fd7f2ebea38ac2718bea5a0646))
+* **deps:** write-json-file@^4.3.0 ([d552c53](https://github.com/lerna/lerna/commit/d552c533c45489a1774f3c3b9ae8d15fc5d3b2a8))
+* Drop support for Node v6.x & v8.x ([ff4bb4d](https://github.com/lerna/lerna/commit/ff4bb4da215555e3bb136f5af09b5cbc631e57bb))
+
+
+### BREAKING CHANGES
+
+* The default export has been removed, please use a named export instead.
+* Node v6.x & v8.x are no longer supported. Please upgrade to the latest LTS release.
+
+Here's the gnarly one-liner I used to make these changes:
+```
+npx lerna exec --concurrency 1 --stream -- 'json -I -f package.json -e '"'"'this.engines=this.engines||{};this.engines.node=">= 10.18.0"'"'"
+```
+(requires `npm i -g json` beforehand)
+
+
+
+
+
 ## [3.22.1](https://github.com/lerna/lerna/compare/v3.22.0...v3.22.1) (2020-06-09)
 
 

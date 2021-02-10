@@ -1,6 +1,6 @@
 {
   "name": "@lerna/package",
-  "version": "3.16.0",
+  "version": "4.0.0",
   "description": "Lerna's internal representation of a package",
   "keywords": [
     "lerna",
