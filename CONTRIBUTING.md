@@ -110,3 +110,17 @@ $ xdg-open coverage/lcov-report/index.html
 ### Submitting Pull Requests
 
 This project follows [GitHub's standard forking model](https://guides.github.com/activities/forking/). Please fork the project to submit pull requests. 
+
+### Releasing
+
+If you are a member of Lerna's [GitHub org](https://github.com/orgs/lerna/people) and have read-write privileges in Lerna's [npm org](https://www.npmjs.com/org/lerna) _with 2-factor auth enabled_, congratulations, you can cut a release!
+
+You'll need to set up a local `.env` file in the repo root to provide the required environment variables.
+The `.env.example` file is available in the root as a template.
+The root `.env` file is _never_ placed under version control.
+
+Once that's done, run the release script and await glory:
+
+```sh
+npm run release
+```

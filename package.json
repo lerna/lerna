@@ -9,6 +9,9 @@
     "utils/*"
   ],
   "scripts": {
+    "prerelease": "npm test && npm run integration",
+    "release": "env-cmd lerna version",
+    "postversion": "lerna publish from-git",
     "ci": "npm test -- --ci --maxWorkers=2 && npm run integration -- --ci",
     "ci:test:unit": "jest --config jest.config.js --maxWorkers=2 --ci",
     "ci:test:integration": "jest --config jest.integration.js --maxWorkers=2 --ci",
@@ -129,6 +132,7 @@
     "@lerna-test/silence-logging": "file:helpers/silence-logging",
     "@lerna-test/update-lerna-config": "file:helpers/update-lerna-config",
     "debug": "^4.3.1",
+    "env-cmd": "^10.1.0",
     "eslint": "^7.19.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-config-prettier": "^7.2.0",
