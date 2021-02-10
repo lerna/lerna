@@ -1,23 +1,28 @@
 "use strict";
 
 const npa = require("npm-package-arg");
-const ValidationError = require("@lerna/validation-error");
+const { ValidationError } = require("@lerna/validation-error");
 const { CyclicPackageGraphNode } = require("./lib/cyclic-package-graph-node");
 const { PackageGraphNode } = require("./lib/package-graph-node");
 const { reportCycles } = require("./lib/report-cycles");
 
+/** @typedef {import("./lib/package-graph-node").PackageGraphNode} PackageGraphNode */
+
 /**
- * A PackageGraph.
- * @constructor
- * @param {!Array.<Package>} packages An array of Packages to build the graph out of.
- * @param {String} graphType ("allDependencies" or "dependencies")
- *    Pass "dependencies" to create a graph of only dependencies,
- *    excluding the devDependencies that would normally be included.
- * @param {Boolean} forceLocal Force all local dependencies to be linked.
+ * A graph of packages in the current project.
+ *
+ * @extends {Map<string, PackageGraphNode>}
  */
 class PackageGraph extends Map {
+  /**
+   * @param {import("@lerna/package").Package[]} packages An array of Packages to build the graph out of.
+   * @param {'allDependencies'|'dependencies'} [graphType]
+   *    Pass "dependencies" to create a graph of only dependencies,
+   *    excluding the devDependencies that would normally be included.
+   * @param {boolean} [forceLocal] Force all local dependencies to be linked.
+   */
   constructor(packages, graphType = "allDependencies", forceLocal) {
-    super(packages.map(pkg => [pkg.name, new PackageGraphNode(pkg)]));
+    super(packages.map((pkg) => [pkg.name, new PackageGraphNode(pkg)]));
 
     if (packages.length !== this.size) {
       // weed out the duplicates
@@ -52,7 +57,7 @@ class PackageGraph extends Map {
               currentNode.pkg.dependencies
             );
 
-      Object.keys(graphDependencies).forEach(depName => {
+      Object.keys(graphDependencies).forEach((depName) => {
         const depNode = this.get(depName);
         // Yarn decided to ignore https://github.com/npm/npm/pull/15900 and implemented "link:"
         // As they apparently have no intention of being compatible, we have to do it for them.
@@ -78,7 +83,7 @@ class PackageGraph extends Map {
   }
 
   get rawPackageList() {
-    return Array.from(this.values()).map(node => node.pkg);
+    return Array.from(this.values()).map((node) => node.pkg);
   }
 
   /**
@@ -86,8 +91,7 @@ class PackageGraph extends Map {
    * they depend on. i.e if packageA depended on packageB `graph.addDependencies([packageA])`
    * would return [packageA, packageB].
    *
-   * @param {!Array.<Package>} filteredPackages The packages to include dependencies for.
-   * @return {Array.<Package>} The packages with any dependencies that weren't already included.
+   * @param {import("@lerna/package").Package[]} filteredPackages The packages to include dependencies for.
    */
   addDependencies(filteredPackages) {
     return this.extendList(filteredPackages, "localDependencies");
@@ -98,8 +102,7 @@ class PackageGraph extends Map {
    * that depend on them. i.e if packageC depended on packageD `graph.addDependents([packageD])`
    * would return [packageD, packageC].
    *
-   * @param {!Array.<Package>} filteredPackages The packages to include dependents for.
-   * @return {Array.<Package>} The packages with any dependents that weren't already included.
+   * @param {import("@lerna/package").Package[]} filteredPackages The packages to include dependents for.
    */
   addDependents(filteredPackages) {
     return this.extendList(filteredPackages, "localDependents");
@@ -107,21 +110,21 @@ class PackageGraph extends Map {
 
   /**
    * Extends a list of packages by traversing on a given property, which must refer to a
-   * `PackageGraphNode` property that is a collection of `PackageGraphNode`s
+   * `PackageGraphNode` property that is a collection of `PackageGraphNode`s.
+   * Returns input packages with any additional packages found by traversing `nodeProp`.
    *
-   * @param {!Array.<Package>} packageList The list of packages to extend
-   * @param {!String} nodeProp The property on `PackageGraphNode` used to traverse
-   * @return {Array.<Package>} The packages with any additional packages found by traversing
-   *                           nodeProp
+   * @param {import("@lerna/package").Package[]} packageList The list of packages to extend
+   * @param {'localDependencies'|'localDependents'} nodeProp The property on `PackageGraphNode` used to traverse
    */
   extendList(packageList, nodeProp) {
     // the current list of packages we are expanding using breadth-first-search
     const search = new Set(packageList.map(({ name }) => this.get(name)));
 
     // an intermediate list of matched PackageGraphNodes
+    /** @type {PackageGraphNode[]} */
     const result = [];
 
-    search.forEach(currentNode => {
+    search.forEach((currentNode) => {
       // anything searched for is always a result
       result.push(currentNode);
 
@@ -135,7 +138,7 @@ class PackageGraph extends Map {
     });
 
     // actual Package instances, not PackageGraphNodes
-    return result.map(node => node.pkg);
+    return result.map((node) => node.pkg);
   }
 
   /**
@@ -143,8 +146,8 @@ class PackageGraph extends Map {
    *
    * @deprecated Use collapseCycles instead.
    *
-   * @param {!boolean} rejectCycles Whether or not to reject cycles
-   * @returns [Set<String[]>, Set<PackageGraphNode>]
+   * @param {boolean} rejectCycles Whether or not to reject cycles
+   * @returns {[Set<string[]>, Set<PackageGraphNode>]}
    */
   partitionCycles(rejectCycles) {
     const cyclePaths = new Set();
@@ -153,7 +156,7 @@ class PackageGraph extends Map {
     this.forEach((currentNode, currentName) => {
       const seen = new Set();
 
-      const visits = walk => (dependentNode, dependentName, siblingDependents) => {
+      const visits = (walk) => (dependentNode, dependentName, siblingDependents) => {
         const step = walk.concat(dependentName);
 
         if (seen.has(dependentNode)) {
@@ -172,13 +175,10 @@ class PackageGraph extends Map {
 
         if (siblingDependents.has(currentName)) {
           // a transitive cycle
-          const cycleDependentName = Array.from(dependentNode.localDependencies.keys()).find(key =>
+          const cycleDependentName = Array.from(dependentNode.localDependencies.keys()).find((key) =>
             currentNode.localDependents.has(key)
           );
-          const pathToCycle = step
-            .slice()
-            .reverse()
-            .concat(cycleDependentName);
+          const pathToCycle = step.slice().reverse().concat(cycleDependentName);
 
           cycleNodes.add(dependentNode);
           cyclePaths.add(pathToCycle);
@@ -191,7 +191,7 @@ class PackageGraph extends Map {
     });
 
     reportCycles(
-      Array.from(cyclePaths, cycle => cycle.join(" -> ")),
+      Array.from(cyclePaths, (cycle) => cycle.join(" -> ")),
       rejectCycles
     );
 
@@ -202,14 +202,20 @@ class PackageGraph extends Map {
    * Returns the cycles of this graph. If two cycles share some elements, they will
    * be returned as a single cycle.
    *
-   * @param {!boolean} rejectCycles Whether or not to reject cycles
-   * @returns Set<CyclicPackageGraphNode>
+   * @param {boolean} rejectCycles Whether or not to reject cycles
+   * @returns {Set<CyclicPackageGraphNode>}
    */
   collapseCycles(rejectCycles) {
+    /** @type {string[]} */
     const cyclePaths = [];
+
+    /** @type {Map<PackageGraphNode, CyclicPackageGraphNode>} */
     const nodeToCycle = new Map();
+
+    /** @type {Set<CyclicPackageGraphNode>} */
     const cycles = new Set();
 
+    /** @type {(PackageGraphNode | CyclicPackageGraphNode)[]} */
     const walkStack = [];
 
     function visits(baseNode, dependentNode) {
@@ -228,7 +234,7 @@ class PackageGraph extends Map {
       ) {
         const cycle = new CyclicPackageGraphNode();
 
-        walkStack.forEach(nodeInCycle => {
+        walkStack.forEach((nodeInCycle) => {
           nodeToCycle.set(nodeInCycle, cycle);
           cycle.insert(nodeInCycle);
           cycles.delete(nodeInCycle);
@@ -252,8 +258,8 @@ class PackageGraph extends Map {
       walkStack.pop();
     }
 
-    this.forEach(currentNode => visitWithStack(currentNode));
-    cycles.forEach(collapsedNode => visitWithStack(collapsedNode));
+    this.forEach((currentNode) => visitWithStack(currentNode));
+    cycles.forEach((collapsedNode) => visitWithStack(collapsedNode));
 
     reportCycles(cyclePaths, rejectCycles);
 
@@ -280,7 +286,7 @@ class PackageGraph extends Map {
       return this.clear();
     }
 
-    candidates.forEach(node => this.remove(node));
+    candidates.forEach((node) => this.remove(node));
   }
 
   /**
@@ -291,7 +297,7 @@ class PackageGraph extends Map {
   remove(candidateNode) {
     this.delete(candidateNode.name);
 
-    this.forEach(node => {
+    this.forEach((node) => {
       // remove incoming edges ("indegree")
       node.localDependencies.delete(candidateNode.name);
 
@@ -301,4 +307,4 @@ class PackageGraph extends Map {
   }
 }
 
-module.exports = PackageGraph;
+module.exports.PackageGraph = PackageGraph;

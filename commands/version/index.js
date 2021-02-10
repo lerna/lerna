@@ -10,31 +10,29 @@ const pReduce = require("p-reduce");
 const pWaterfall = require("p-waterfall");
 const semver = require("semver");
 
-const Command = require("@lerna/command");
-const ConventionalCommitUtilities = require("@lerna/conventional-commits");
-const checkWorkingTree = require("@lerna/check-working-tree");
-const PromptUtilities = require("@lerna/prompt");
-const output = require("@lerna/output");
-const collectUpdates = require("@lerna/collect-updates");
+const { Command } = require("@lerna/command");
+const { recommendVersion, updateChangelog } = require("@lerna/conventional-commits");
+const { checkWorkingTree, throwIfUncommitted } = require("@lerna/check-working-tree");
+const { promptConfirmation } = require("@lerna/prompt");
+const { output } = require("@lerna/output");
+const { collectUpdates, collectPackages, getPackagesForOption } = require("@lerna/collect-updates");
 const { createRunner } = require("@lerna/run-lifecycle");
-const runTopologically = require("@lerna/run-topologically");
-const ValidationError = require("@lerna/validation-error");
-const prereleaseIdFromVersion = require("@lerna/prerelease-id-from-version");
+const { runTopologically } = require("@lerna/run-topologically");
+const { ValidationError } = require("@lerna/validation-error");
+const { prereleaseIdFromVersion } = require("@lerna/prerelease-id-from-version");
 
-const getCurrentBranch = require("./lib/get-current-branch");
-const gitAdd = require("./lib/git-add");
-const gitCommit = require("./lib/git-commit");
-const gitPush = require("./lib/git-push");
-const gitTag = require("./lib/git-tag");
-const isBehindUpstream = require("./lib/is-behind-upstream");
-const remoteBranchExists = require("./lib/remote-branch-exists");
-const isBreakingChange = require("./lib/is-breaking-change");
-const isAnythingCommitted = require("./lib/is-anything-committed");
-const makePromptVersion = require("./lib/prompt-version");
-const createRelease = require("./lib/create-release");
+const { getCurrentBranch } = require("./lib/get-current-branch");
+const { gitAdd } = require("./lib/git-add");
+const { gitCommit } = require("./lib/git-commit");
+const { gitPush } = require("./lib/git-push");
+const { gitTag } = require("./lib/git-tag");
+const { isBehindUpstream } = require("./lib/is-behind-upstream");
+const { remoteBranchExists } = require("./lib/remote-branch-exists");
+const { isBreakingChange } = require("./lib/is-breaking-change");
+const { isAnythingCommitted } = require("./lib/is-anything-committed");
+const { makePromptVersion } = require("./lib/prompt-version");
+const { createRelease, createReleaseClient } = require("./lib/create-release");
 const { updateLockfileVersion } = require("./lib/update-lockfile-version");
-
-const { collectPackages, getPackagesForOption } = collectUpdates;
 
 module.exports = factory;
 
@@ -78,14 +76,15 @@ class VersionCommand extends Command {
     this.pushToRemote = gitTagVersion && amend !== true && push;
     // never automatically push to remote when amending a commit
 
-    this.createRelease = this.pushToRemote && this.options.createRelease;
+    this.releaseClient =
+      this.pushToRemote && this.options.createRelease && createReleaseClient(this.options.createRelease);
     this.releaseNotes = [];
 
-    if (this.createRelease && this.options.conventionalCommits !== true) {
+    if (this.releaseClient && this.options.conventionalCommits !== true) {
       throw new ValidationError("ERELEASE", "To create a release, you must enable --conventional-commits");
     }
 
-    if (this.createRelease && this.options.changelog === false) {
+    if (this.releaseClient && this.options.changelog === false) {
       throw new ValidationError("ERELEASE", "To create a release, you cannot pass --no-changelog");
     }
 
@@ -137,7 +136,7 @@ class VersionCommand extends Command {
 
       if (
         this.options.allowBranch &&
-        ![].concat(this.options.allowBranch).some(x => minimatch(this.currentBranch, x))
+        ![].concat(this.options.allowBranch).some((x) => minimatch(this.currentBranch, x))
       ) {
         throw new ValidationError(
           "ENOTALLOWED",
@@ -194,7 +193,7 @@ class VersionCommand extends Command {
       this.packageGraph,
       this.execOpts,
       this.options
-    ).filter(node => {
+    ).filter((node) => {
       // --no-private completely removes private packages from consideration
       if (node.pkg.private && this.options.private === false) {
         // TODO: (major) make --no-private the default
@@ -237,14 +236,14 @@ class VersionCommand extends Command {
 
     // don't execute recursively if run from a poorly-named script
     this.runRootLifecycle = /^(pre|post)?version$/.test(process.env.npm_lifecycle_event)
-      ? stage => {
+      ? (stage) => {
           this.logger.warn("lifecycle", "Skipping root %j because it has already been called", stage);
         }
-      : stage => this.runPackageLifecycle(this.project.manifest, stage);
+      : (stage) => this.runPackageLifecycle(this.project.manifest, stage);
 
     const tasks = [
       () => this.getVersionsForUpdates(),
-      versions => this.setUpdatesForVersions(versions),
+      (versions) => this.setUpdatesForVersions(versions),
       () => this.confirmVersions(),
     ];
 
@@ -252,7 +251,7 @@ class VersionCommand extends Command {
     if (this.commitAndTag && this.gitOpts.amend !== true) {
       const { forcePublish, conventionalCommits, conventionalGraduate } = this.options;
       const checkUncommittedOnly = forcePublish || (conventionalCommits && conventionalGraduate);
-      const check = checkUncommittedOnly ? checkWorkingTree.throwIfUncommitted : checkWorkingTree;
+      const check = checkUncommittedOnly ? throwIfUncommitted : checkWorkingTree;
       tasks.unshift(() => check(this.execOpts));
     } else {
       this.logger.warn("version", "Skipping working tree validation, proceed at your own risk");
@@ -276,11 +275,11 @@ class VersionCommand extends Command {
       this.logger.info("execute", "Skipping git push");
     }
 
-    if (this.createRelease) {
+    if (this.releaseClient) {
       this.logger.info("execute", "Creating releases...");
       tasks.push(() =>
         createRelease(
-          this.options.createRelease,
+          this.releaseClient,
           { tags: this.tags, releaseNotes: this.releaseNotes },
           { gitRemote: this.options.gitRemote, execOpts: this.execOpts }
         )
@@ -307,9 +306,9 @@ class VersionCommand extends Command {
     const repoVersion = bump ? semver.clean(bump) : "";
     const increment = bump && !semver.valid(bump) ? bump : "";
 
-    const resolvePrereleaseId = existingPreid => preid || existingPreid || "alpha";
+    const resolvePrereleaseId = (existingPreid) => preid || existingPreid || "alpha";
 
-    const makeGlobalVersionPredicate = nextVersion => {
+    const makeGlobalVersionPredicate = (nextVersion) => {
       this.globalVersion = nextVersion;
 
       return () => nextVersion;
@@ -322,7 +321,7 @@ class VersionCommand extends Command {
       predicate = makeGlobalVersionPredicate(repoVersion);
     } else if (increment && independentVersions) {
       // compute potential prerelease ID for each independent update
-      predicate = node => semver.inc(node.version, increment, resolvePrereleaseId(node.prereleaseId));
+      predicate = (node) => semver.inc(node.version, increment, resolvePrereleaseId(node.prereleaseId));
     } else if (increment) {
       // compute potential prerelease ID once for all fixed updates
       const prereleaseId = prereleaseIdFromVersion(this.project.version);
@@ -344,12 +343,12 @@ class VersionCommand extends Command {
       predicate = predicate(node).then(makeGlobalVersionPredicate);
     }
 
-    return Promise.resolve(predicate).then(getVersion => this.reduceVersions(getVersion));
+    return Promise.resolve(predicate).then((getVersion) => this.reduceVersions(getVersion));
   }
 
   reduceVersions(getVersion) {
     const iterator = (versionMap, node) =>
-      Promise.resolve(getVersion(node)).then(version => versionMap.set(node.name, version));
+      Promise.resolve(getVersion(node)).then((version) => versionMap.set(node.name, version));
 
     return pReduce(this.updates, iterator, new Map());
   }
@@ -360,7 +359,7 @@ class VersionCommand extends Command {
       ? () => true
       : (node, name) => prereleasePackageNames.has(name);
 
-    return collectPackages(this.packageGraph, { isCandidate }).map(pkg => pkg.name);
+    return collectPackages(this.packageGraph, { isCandidate }).map((pkg) => pkg.name);
   }
 
   recommendVersions(resolvePrereleaseId) {
@@ -370,9 +369,10 @@ class VersionCommand extends Command {
     const type = independentVersions ? "independent" : "fixed";
     const prereleasePackageNames = this.getPrereleasePackageNames();
     const graduatePackageNames = Array.from(getPackagesForOption(conventionalGraduate));
-    const shouldPrerelease = name => prereleasePackageNames && prereleasePackageNames.includes(name);
-    const shouldGraduate = name => graduatePackageNames.includes("*") || graduatePackageNames.includes(name);
-    const getPrereleaseId = node => {
+    const shouldPrerelease = (name) => prereleasePackageNames && prereleasePackageNames.includes(name);
+    const shouldGraduate = (name) =>
+      graduatePackageNames.includes("*") || graduatePackageNames.includes(name);
+    const getPrereleaseId = (node) => {
       if (!shouldGraduate(node.name) && (shouldPrerelease(node.name) || node.prereleaseId)) {
         return resolvePrereleaseId(node.prereleaseId);
       }
@@ -385,8 +385,8 @@ class VersionCommand extends Command {
     }
 
     chain = chain.then(() =>
-      this.reduceVersions(node =>
-        ConventionalCommitUtilities.recommendVersion(node, type, {
+      this.reduceVersions((node) =>
+        recommendVersion(node, type, {
           changelogPreset,
           rootPath,
           tagPrefix: this.tagPrefix,
@@ -396,7 +396,7 @@ class VersionCommand extends Command {
     );
 
     if (type === "fixed") {
-      chain = chain.then(versions => {
+      chain = chain.then((versions) => {
         this.globalVersion = this.setGlobalVersionCeiling(versions);
 
         return versions;
@@ -424,7 +424,7 @@ class VersionCommand extends Command {
   setGlobalVersionCeiling(versions) {
     let highestVersion = this.project.version;
 
-    versions.forEach(bump => {
+    versions.forEach((bump) => {
       if (bump && semver.gt(bump, highestVersion)) {
         highestVersion = bump;
       }
@@ -453,20 +453,20 @@ class VersionCommand extends Command {
         // --no-private completely removes private packages from consideration
         if (this.options.private === false) {
           // TODO: (major) make --no-private the default
-          this.updates = this.updates.filter(node => !node.pkg.private);
+          this.updates = this.updates.filter((node) => !node.pkg.private);
         }
 
-        this.updatesVersions = new Map(this.updates.map(node => [node.name, this.globalVersion]));
+        this.updatesVersions = new Map(this.updates.map((node) => [node.name, this.globalVersion]));
       } else {
         this.updatesVersions = versions;
       }
     }
 
-    this.packagesToVersion = this.updates.map(node => node.pkg);
+    this.packagesToVersion = this.updates.map((node) => node.pkg);
   }
 
   confirmVersions() {
-    const changes = this.packagesToVersion.map(pkg => {
+    const changes = this.packagesToVersion.map((pkg) => {
       let line = ` - ${pkg.name}: ${pkg.version} => ${this.updatesVersions.get(pkg.name)}`;
       if (pkg.private) {
         line += ` (${chalk.red("private")})`;
@@ -489,7 +489,7 @@ class VersionCommand extends Command {
       ? "Are you sure you want to publish these packages?"
       : "Are you sure you want to create these versions?";
 
-    return PromptUtilities.confirm(message);
+    return promptConfirmation(message);
   }
 
   updatePackageVersions() {
@@ -512,10 +512,10 @@ class VersionCommand extends Command {
     }
 
     const actions = [
-      pkg => this.runPackageLifecycle(pkg, "preversion").then(() => pkg),
+      (pkg) => this.runPackageLifecycle(pkg, "preversion").then(() => pkg),
       // manifest may be mutated by any previous lifecycle
-      pkg => pkg.refresh(),
-      pkg => {
+      (pkg) => pkg.refresh(),
+      (pkg) => {
         // set new version
         pkg.set("version", this.updatesVersions.get(pkg.name));
 
@@ -540,7 +540,7 @@ class VersionCommand extends Command {
           return pkg;
         });
       },
-      pkg => this.runPackageLifecycle(pkg, "version").then(() => pkg),
+      (pkg) => this.runPackageLifecycle(pkg, "version").then(() => pkg),
     ];
 
     if (conventionalCommits && changelog) {
@@ -548,8 +548,8 @@ class VersionCommand extends Command {
       // the updated version that we're about to release.
       const type = independentVersions ? "independent" : "fixed";
 
-      actions.push(pkg =>
-        ConventionalCommitUtilities.updateChangelog(pkg, type, {
+      actions.push((pkg) =>
+        updateChangelog(pkg, type, {
           changelogPreset,
           rootPath,
           tagPrefix: this.tagPrefix,
@@ -570,7 +570,7 @@ class VersionCommand extends Command {
       );
     }
 
-    const mapUpdate = pPipe(actions);
+    const mapUpdate = pPipe(...actions);
 
     chain = chain.then(() =>
       runTopologically(this.packagesToVersion, mapUpdate, {
@@ -584,7 +584,7 @@ class VersionCommand extends Command {
 
       if (conventionalCommits && changelog) {
         chain = chain.then(() =>
-          ConventionalCommitUtilities.updateChangelog(this.project.manifest, "root", {
+          updateChangelog(this.project.manifest, "root", {
             changelogPreset,
             rootPath,
             tagPrefix: this.tagPrefix,
@@ -603,7 +603,7 @@ class VersionCommand extends Command {
       }
 
       chain = chain.then(() =>
-        this.project.serializeConfig().then(lernaConfigLocation => {
+        this.project.serializeConfig().then((lernaConfigLocation) => {
           // commit the version update
           changedFiles.add(lernaConfigLocation);
         })
@@ -631,13 +631,13 @@ class VersionCommand extends Command {
       chain = chain.then(() => this.gitCommitAndTagVersion());
     }
 
-    chain = chain.then(tags => {
+    chain = chain.then((tags) => {
       this.tags = tags;
     });
 
     // run the postversion script for each update
     chain = chain.then(() =>
-      pMap(this.packagesToVersion, pkg => this.runPackageLifecycle(pkg, "postversion"))
+      pMap(this.packagesToVersion, (pkg) => this.runPackageLifecycle(pkg, "postversion"))
     );
 
     if (!this.hasRootedLeaf) {
@@ -649,13 +649,13 @@ class VersionCommand extends Command {
   }
 
   gitCommitAndTagVersionForUpdates() {
-    const tags = this.packagesToVersion.map(pkg => `${pkg.name}@${this.updatesVersions.get(pkg.name)}`);
+    const tags = this.packagesToVersion.map((pkg) => `${pkg.name}@${this.updatesVersions.get(pkg.name)}`);
     const subject = this.options.message || "Publish";
     const message = tags.reduce((msg, tag) => `${msg}${os.EOL} - ${tag}`, `${subject}${os.EOL}`);
 
     return Promise.resolve()
       .then(() => gitCommit(message, this.gitOpts, this.execOpts))
-      .then(() => Promise.all(tags.map(tag => gitTag(tag, this.gitOpts, this.execOpts))))
+      .then(() => Promise.all(tags.map((tag) => gitTag(tag, this.gitOpts, this.execOpts))))
       .then(() => tags);
   }
 

@@ -1,22 +1,27 @@
 "use strict";
 
-const ValidationError = require("@lerna/validation-error");
-const FetchConfig = require("./fetch-config");
-const getProfileData = require("./get-profile-data");
-const getWhoAmI = require("./get-whoami");
+const { ValidationError } = require("@lerna/validation-error");
+const { getFetchConfig } = require("./fetch-config");
+const { getProfileData } = require("./get-profile-data");
+const { getWhoAmI } = require("./get-whoami");
 
-module.exports = getNpmUsername;
+module.exports.getNpmUsername = getNpmUsername;
 
-function getNpmUsername(_opts) {
-  const opts = FetchConfig(_opts, {
+/**
+ * Retrieve username of logged-in user.
+ * @param {import("./fetch-config").FetchConfig} options
+ * @returns {Promise<string>}
+ */
+function getNpmUsername(options) {
+  const opts = getFetchConfig(options, {
     // don't wait forever for third-party failures to be dealt with
-    "fetch-retries": 0,
+    fetchRetries: 0,
   });
 
   opts.log.info("", "Verifying npm credentials");
 
   return getProfileData(opts)
-    .catch(err => {
+    .catch((err) => {
       // Many third-party registries do not implement the user endpoint
       // Legacy npm Enterprise returns E500 instead of E404
       if (err.code === "E500" || err.code === "E404") {

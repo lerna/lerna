@@ -1,19 +1,17 @@
 {
-  "packages": [
-    "commands/*",
-    "core/*",
-    "utils/*"
-  ],
   "command": {
     "create": {
       "homepage": "https://github.com/lerna/lerna",
       "license": "MIT"
     },
+    "publish": {
+      "tempTag": true
+    },
     "version": {
-      "allowBranch": "master",
+      "allowBranch": "main",
       "conventionalCommits": true,
+      "createRelease": "github",
       "exact": true,
-      "gitRemote": "upstream",
       "message": "chore(release): %s"
     }
   },
@@ -22,5 +20,6 @@
     "**/__tests__/**",
     "**/*.md"
   ],
-  "version": "3.22.1"
+  "useWorkspaces": true,
+  "version": "4.0.0"
 }

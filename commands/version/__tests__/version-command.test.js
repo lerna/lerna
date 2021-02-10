@@ -12,34 +12,34 @@ const execa = require("execa");
 
 // mocked or stubbed modules
 const writePkg = require("write-pkg");
-const PromptUtilities = require("@lerna/prompt");
-const collectUpdates = require("@lerna/collect-updates");
-const output = require("@lerna/output");
-const checkWorkingTree = require("@lerna/check-working-tree");
-const libPush = require("../lib/git-push");
-const isAnythingCommitted = require("../lib/is-anything-committed");
-const isBehindUpstream = require("../lib/is-behind-upstream");
-const remoteBranchExists = require("../lib/remote-branch-exists");
+const { promptConfirmation, promptSelectOne } = require("@lerna/prompt");
+const { collectUpdates } = require("@lerna/collect-updates");
+const { output } = require("@lerna/output");
+const { checkWorkingTree, throwIfUncommitted } = require("@lerna/check-working-tree");
+const { gitPush: libPush } = require("../lib/git-push");
+const { isAnythingCommitted } = require("../lib/is-anything-committed");
+const { isBehindUpstream } = require("../lib/is-behind-upstream");
+const { remoteBranchExists } = require("../lib/remote-branch-exists");
 
 // helpers
-const loggingOutput = require("@lerna-test/logging-output");
-const gitAdd = require("@lerna-test/git-add");
-const gitTag = require("@lerna-test/git-tag");
-const gitCommit = require("@lerna-test/git-commit");
+const { loggingOutput } = require("@lerna-test/logging-output");
+const { gitAdd } = require("@lerna-test/git-add");
+const { gitTag } = require("@lerna-test/git-tag");
+const { gitCommit } = require("@lerna-test/git-commit");
 const initFixture = require("@lerna-test/init-fixture")(path.resolve(__dirname, "../../publish/__tests__"));
-const showCommit = require("@lerna-test/show-commit");
-const getCommitMessage = require("@lerna-test/get-commit-message");
+const { showCommit } = require("@lerna-test/show-commit");
+const { getCommitMessage } = require("@lerna-test/get-commit-message");
 
 // file under test
 const lernaVersion = require("@lerna-test/command-runner")(require("../command"));
 
 // certain tests need to use the real thing
-const collectUpdatesActual = require.requireActual("@lerna/collect-updates");
+const collectUpdatesActual = jest.requireActual("@lerna/collect-updates").collectUpdates;
 
 // assertion helpers
-const listDirty = cwd =>
+const listDirty = (cwd) =>
   // git ls-files --exclude-standard --modified --others
-  execa("git", ["ls-files", "--exclude-standard", "--modified", "--others"], { cwd }).then(result =>
+  execa("git", ["ls-files", "--exclude-standard", "--modified", "--others"], { cwd }).then((result) =>
     result.stdout.split("\n").filter(Boolean)
   );
 
@@ -56,10 +56,8 @@ describe("VersionCommand", () => {
 
       expect(checkWorkingTree).toHaveBeenCalled();
 
-      expect(PromptUtilities.select.mock.calls).toMatchSnapshot("prompt");
-      expect(PromptUtilities.confirm).toHaveBeenLastCalledWith(
-        "Are you sure you want to create these versions?"
-      );
+      expect(promptSelectOne.mock.calls).toMatchSnapshot("prompt");
+      expect(promptConfirmation).toHaveBeenLastCalledWith("Are you sure you want to create these versions?");
 
       expect(writePkg.updatedManifest("package-1")).toMatchSnapshot("gitHead");
 
@@ -68,7 +66,7 @@ describe("VersionCommand", () => {
 
       expect(libPush).toHaveBeenLastCalledWith(
         "origin",
-        "master",
+        "main",
         expect.objectContaining({
           cwd: testDir,
         })
@@ -125,19 +123,19 @@ describe("VersionCommand", () => {
       // notably different than the actual message, but good enough here
     });
 
-    it("calls `checkWorkingTree.throwIfUncommitted` when using --force-publish", async () => {
+    it("calls `throwIfUncommitted` when using --force-publish", async () => {
       const testDir = await initFixture("normal");
 
       await lernaVersion(testDir)("--force-publish");
 
-      expect(checkWorkingTree.throwIfUncommitted).toHaveBeenCalled();
+      expect(throwIfUncommitted).toHaveBeenCalled();
     });
 
     it("only bumps changed packages when non-major version selected", async () => {
       const testDir = await initFixture("normal");
 
       collectUpdates.setUpdated(testDir, "package-3");
-      PromptUtilities.mockChoices("minor");
+      promptSelectOne.chooseBump("minor");
 
       await lernaVersion(testDir)();
 
@@ -149,7 +147,7 @@ describe("VersionCommand", () => {
       const testDir = await initFixture("normal");
 
       collectUpdates.setUpdated(testDir, "package-3");
-      PromptUtilities.mockChoices("major");
+      promptSelectOne.chooseBump("major");
 
       await lernaVersion(testDir)();
 
@@ -162,7 +160,7 @@ describe("VersionCommand", () => {
 
       // despite being a pendant leaf...
       collectUpdates.setUpdated(testDir, "package-4");
-      PromptUtilities.mockChoices("major");
+      promptSelectOne.chooseBump("major");
 
       await lernaVersion(testDir)("--no-private");
 
@@ -176,12 +174,16 @@ describe("VersionCommand", () => {
   describe("independent mode", () => {
     it("versions changed packages", async () => {
       // mock version prompt choices
-      PromptUtilities.mockChoices("patch", "minor", "major", "minor", "patch");
+      promptSelectOne.chooseBump("patch");
+      promptSelectOne.chooseBump("minor");
+      promptSelectOne.chooseBump("major");
+      promptSelectOne.chooseBump("minor");
+      promptSelectOne.chooseBump("patch");
 
       const testDir = await initFixture("independent");
       await lernaVersion(testDir)(); // --independent is only valid in InitCommand
 
-      expect(PromptUtilities.confirm).toHaveBeenCalled();
+      expect(promptConfirmation).toHaveBeenCalled();
 
       expect(writePkg.updatedManifest("package-1")).toMatchSnapshot("gitHead");
 
@@ -190,7 +192,7 @@ describe("VersionCommand", () => {
 
       expect(libPush).toHaveBeenLastCalledWith(
         "origin",
-        "master",
+        "main",
         expect.objectContaining({
           cwd: testDir,
         })
@@ -200,7 +202,7 @@ describe("VersionCommand", () => {
   });
 
   describe("--no-commit-hooks", () => {
-    const setupPreCommitHook = cwd =>
+    const setupPreCommitHook = (cwd) =>
       fs.outputFile(path.join(cwd, ".git/hooks/pre-commit"), "#!/bin/sh\nexit 1\n", { mode: 0o755 });
 
     it("passes --no-verify to git commit execution", async () => {
@@ -298,6 +300,9 @@ describe("VersionCommand", () => {
 
   // TODO: (major) make --no-granular-pathspec the default
   describe("--no-granular-pathspec", () => {
+    const getLeftover = (cwd) =>
+      execa("git", ["ls-files", "--others"], { cwd }).then((result) => result.stdout);
+
     it("adds changed files globally", async () => {
       const cwd = await initFixture("normal");
       await fs.outputFile(path.join(cwd, ".gitignore"), "packages/dynamic");
@@ -308,7 +313,7 @@ describe("VersionCommand", () => {
       // a "dynamic", intentionally unversioned package must _always_ be forced
       await lernaVersion(cwd)("--force-publish=dynamic", "--no-granular-pathspec");
 
-      const leftover = await execa.stdout("git", ["ls-files", "--others"], { cwd });
+      const leftover = await getLeftover(cwd);
       expect(leftover).toBe("packages/dynamic/package.json");
     });
 
@@ -326,7 +331,7 @@ describe("VersionCommand", () => {
       // a "dynamic", intentionally unversioned package must _always_ be forced
       await lernaVersion(cwd)("--force-publish=dynamic");
 
-      const leftover = await execa.stdout("git", ["ls-files", "--others"], { cwd });
+      const leftover = await getLeftover(cwd);
       expect(leftover).toBe("packages/dynamic/package.json");
     });
   });
@@ -451,8 +456,8 @@ describe("VersionCommand", () => {
       const testDir = await initFixture("normal");
       await lernaVersion(testDir)("--yes", "patch");
 
-      expect(PromptUtilities.select).not.toHaveBeenCalled();
-      expect(PromptUtilities.confirm).not.toHaveBeenCalled();
+      expect(promptSelectOne).not.toHaveBeenCalled();
+      expect(promptConfirmation).not.toHaveBeenCalled();
 
       const message = await getCommitMessage(testDir);
       expect(message).toBe("v1.0.1");
@@ -484,7 +489,7 @@ describe("VersionCommand", () => {
 
       expect(libPush).toHaveBeenLastCalledWith(
         "upstream",
-        "master",
+        "main",
         expect.objectContaining({
           cwd: testDir,
         })
@@ -506,7 +511,7 @@ describe("VersionCommand", () => {
 
       expect(libPush).toHaveBeenLastCalledWith(
         "durable",
-        "master",
+        "main",
         expect.objectContaining({
           cwd: testDir,
         })
@@ -585,12 +590,12 @@ describe("VersionCommand", () => {
   describe("working on a detached HEAD", () => {
     const detachedHEAD = async (fixture = "normal") => {
       const cwd = await initFixture(fixture);
-      const sha = await execa.stdout("git", ["rev-parse", "HEAD"], { cwd });
+      const { stdout: sha } = await execa("git", ["rev-parse", "HEAD"], { cwd });
       await execa("git", ["checkout", sha], { cwd });
       return cwd;
     };
 
-    it("throws for version", async () => {
+    it("throws by default", async () => {
       const cwd = await detachedHEAD();
       const command = lernaVersion(cwd)();
 
@@ -624,7 +629,7 @@ describe("VersionCommand", () => {
 
     it("throws for version --allow-branch", async () => {
       const cwd = await detachedHEAD();
-      const command = lernaVersion(cwd)("--no-git-tag-version", "--allow-branch", "master");
+      const command = lernaVersion(cwd)("--no-git-tag-version", "--allow-branch", "main");
 
       await expect(command).rejects.toThrow(
         "Detached git HEAD, please checkout a branch to choose versions."
@@ -641,16 +646,6 @@ describe("VersionCommand", () => {
     await expect(command).rejects.toThrow(
       "No commits in this repository. Please commit something before using version."
     );
-  });
-
-  it("exits with an error when git HEAD is detached", async () => {
-    const cwd = await initFixture("no-interdependencies");
-    const sha = await execa.stdout("git", ["rev-parse", "HEAD"], { cwd });
-
-    await execa("git", ["checkout", sha], { cwd }); // detach head
-
-    const command = lernaVersion(cwd)();
-    await expect(command).rejects.toThrow("Detached git HEAD, please checkout a branch to choose versions.");
   });
 
   it("exits early when no changes found", async () => {
@@ -686,7 +681,7 @@ describe("VersionCommand", () => {
     await gitTag(testDir, "v1.0.0");
 
     await Promise.all(
-      ["a", "b", "c", "d"].map(n => fs.outputFile(path.join(testDir, "packages", n, "index.js"), "hello"))
+      ["a", "b", "c", "d"].map((n) => fs.outputFile(path.join(testDir, "packages", n, "index.js"), "hello"))
     );
     await gitAdd(testDir, ".");
     await gitCommit(testDir, "feat: hello");
@@ -699,7 +694,7 @@ describe("VersionCommand", () => {
     expect(patch).toMatchInlineSnapshot(`
       "v2.0.0
 
-      HEAD -> master, tag: v2.0.0
+      HEAD -> main, tag: v2.0.0
 
       lerna.json
       packages/a/package.json
@@ -755,8 +750,8 @@ describe("VersionCommand", () => {
       const testDir = await initFixture("normal");
       await lernaVersion(testDir)("--include-merged-tags", "--yes", "patch");
 
-      expect(PromptUtilities.select).not.toHaveBeenCalled();
-      expect(PromptUtilities.confirm).not.toHaveBeenCalled();
+      expect(promptSelectOne).not.toHaveBeenCalled();
+      expect(promptConfirmation).not.toHaveBeenCalled();
 
       const message = await getCommitMessage(testDir);
       expect(message).toBe("v1.0.1");

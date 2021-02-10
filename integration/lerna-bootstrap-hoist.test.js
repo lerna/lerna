@@ -3,7 +3,7 @@
 const fs = require("fs-extra");
 const globby = require("globby");
 
-const cliRunner = require("@lerna-test/cli-runner");
+const { cliRunner } = require("@lerna-test/cli-runner");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 
 test("lerna bootstrap --hoist", async () => {
@@ -42,10 +42,10 @@ package-3 cli2 package-2 OK
   const config = {
     cwd,
     absolute: true,
-    followSymlinkedDirectories: false,
+    followSymbolicLinks: false,
   };
   const lockfiles = await globby(["**/package-lock.json"], config);
-  const [lock3, rootLock] = await Promise.all(lockfiles.sort().map(fp => fs.readJson(fp)));
+  const [lock3, rootLock] = await Promise.all(lockfiles.sort().map((fp) => fs.readJson(fp)));
 
   expect(lock3).toMatchObject({
     name: "@integration/package-3",

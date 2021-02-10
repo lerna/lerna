@@ -1,12 +1,12 @@
 "use strict";
 
 // helpers
-const Package = require("@lerna/package");
-const PackageGraph = require("@lerna/package-graph");
+const { Package } = require("@lerna/package");
+const { PackageGraph } = require("@lerna/package-graph");
 
 module.exports = buildGraph;
 
-function buildGraph(mapPackages = pkg => pkg) {
+function buildGraph(mapPackages = (pkg) => pkg) {
   // cat __fixtures__/toposort/packages/*/package.json
   const packages = [
     {
@@ -72,7 +72,7 @@ function buildGraph(mapPackages = pkg => pkg) {
     },
   ]
     .map(mapPackages)
-    .map(json => new Package(json, `/test/packages/${json.name}`, "/test"));
+    .map((json) => new Package(json, `/test/packages/${json.name}`, "/test"));
 
   return new PackageGraph(packages);
   // require("console").dir(graph, { compact: false })

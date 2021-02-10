@@ -1,6 +1,6 @@
 {
   "name": "@lerna/symlink-binary",
-  "version": "3.17.0",
+  "version": "4.0.0",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
@@ -17,7 +17,7 @@
   ],
   "main": "symlink-binary.js",
   "engines": {
-    "node": ">= 6.9.0"
+    "node": ">= 10.18.0"
   },
   "publishConfig": {
     "access": "public"
@@ -33,7 +33,7 @@
   "dependencies": {
     "@lerna/create-symlink": "file:../create-symlink",
     "@lerna/package": "file:../../core/package",
-    "fs-extra": "^8.1.0",
-    "p-map": "^2.1.0"
+    "fs-extra": "^9.1.0",
+    "p-map": "^4.0.0"
   }
 }

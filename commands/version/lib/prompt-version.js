@@ -1,22 +1,25 @@
 "use strict";
 
 const semver = require("semver");
-const PromptUtilities = require("@lerna/prompt");
+const { promptSelectOne, promptTextInput } = require("@lerna/prompt");
 
-module.exports = makePromptVersion;
+module.exports.makePromptVersion = makePromptVersion;
 
+/**
+ * @param {(existingPreid: string) => string} resolvePrereleaseId
+ */
 function makePromptVersion(resolvePrereleaseId) {
-  return node => promptVersion(node.version, node.name, resolvePrereleaseId(node.prereleaseId));
+  return (/** @type {import("@lerna/package-graph").PackageGraphNode} */ node) =>
+    promptVersion(node.version, node.name, resolvePrereleaseId(node.prereleaseId));
 }
 
 /**
  * A predicate that prompts user to select/construct a version bump.
  * It can be run per-package (independent) or globally (fixed).
  *
- * @param {PackageGraphNode|Object} node The metadata to process
- * @property {String} currentVersion
- * @property {String} name (Only used in independent mode)
- * @property {String} prereleaseId
+ * @param {string} currentVersion
+ * @param {string} name (Only used in independent mode)
+ * @param {string} prereleaseId
  */
 function promptVersion(currentVersion, name, prereleaseId) {
   const patch = semver.inc(currentVersion, "patch");
@@ -28,7 +31,7 @@ function promptVersion(currentVersion, name, prereleaseId) {
 
   const message = `Select a new version ${name ? `for ${name} ` : ""}(currently ${currentVersion})`;
 
-  return PromptUtilities.select(message, {
+  return promptSelectOne(message, {
     choices: [
       { value: patch, name: `Patch (${patch})` },
       { value: minor, name: `Minor (${minor})` },
@@ -39,12 +42,12 @@ function promptVersion(currentVersion, name, prereleaseId) {
       { value: "PRERELEASE", name: "Custom Prerelease" },
       { value: "CUSTOM", name: "Custom Version" },
     ],
-  }).then(choice => {
+  }).then((choice) => {
     if (choice === "CUSTOM") {
-      return PromptUtilities.input("Enter a custom version", {
+      return promptTextInput("Enter a custom version", {
         filter: semver.valid,
         // semver.valid() always returns null with invalid input
-        validate: v => v !== null || "Must be a valid semver version",
+        validate: (v) => v !== null || "Must be a valid semver version",
       });
     }
 
@@ -52,8 +55,8 @@ function promptVersion(currentVersion, name, prereleaseId) {
       const defaultVersion = semver.inc(currentVersion, "prerelease", prereleaseId);
       const prompt = `(default: "${prereleaseId}", yielding ${defaultVersion})`;
 
-      return PromptUtilities.input(`Enter a prerelease identifier ${prompt}`, {
-        filter: v => semver.inc(currentVersion, "prerelease", v || prereleaseId),
+      return promptTextInput(`Enter a prerelease identifier ${prompt}`, {
+        filter: (v) => semver.inc(currentVersion, "prerelease", v || prereleaseId),
       });
     }
 

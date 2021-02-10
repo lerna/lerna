@@ -1,28 +1,35 @@
 "use strict";
 
 const path = require("path");
-const figgyPudding = require("figgy-pudding");
 const packlist = require("npm-packlist");
 const log = require("npmlog");
 const tar = require("tar");
 const tempWrite = require("temp-write");
-const getPacked = require("@lerna/get-packed");
-const Package = require("@lerna/package");
-const runLifecycle = require("@lerna/run-lifecycle");
+const { getPacked } = require("@lerna/get-packed");
+const { Package } = require("@lerna/package");
+const { runLifecycle } = require("@lerna/run-lifecycle");
 
-module.exports = packDirectory;
+module.exports.packDirectory = packDirectory;
 
-const PackConfig = figgyPudding({
-  log: { default: log },
-  "lerna-command": { default: "pack" },
-  lernaCommand: "lerna-command",
-  "ignore-prepublish": {},
-  ignorePrepublish: "ignore-prepublish",
-});
+/**
+ * @typedef {object} PackConfig
+ * @property {typeof log} [log]
+ * @property {string} [lernaCommand] If "publish", run "prepublishOnly" lifecycle
+ * @property {boolean} [ignorePrepublish]
+ */
 
-function packDirectory(_pkg, dir, _opts) {
+/**
+ * Pack a directory suitable for publishing, writing tarball to a tempfile.
+ * @param {Package|string} _pkg Package instance or path to manifest
+ * @param {string} dir to pack
+ * @param {PackConfig} options
+ */
+function packDirectory(_pkg, dir, options) {
   const pkg = Package.lazy(_pkg, dir);
-  const opts = PackConfig(_opts);
+  const opts = {
+    log,
+    ...options,
+  };
 
   opts.log.verbose("pack-directory", path.relative(".", pkg.contents));
 
@@ -43,7 +50,7 @@ function packDirectory(_pkg, dir, _opts) {
   chain = chain.then(() => runLifecycle(pkg, "prepack", opts));
   chain = chain.then(() => pkg.refresh());
   chain = chain.then(() => packlist({ path: pkg.contents }));
-  chain = chain.then(files =>
+  chain = chain.then((files) =>
     tar.create(
       {
         cwd: pkg.contents,
@@ -57,12 +64,12 @@ function packDirectory(_pkg, dir, _opts) {
       // NOTE: node-tar does some Magic Stuff depending on prefixes for files
       //       specifically with @ signs, so we just neutralize that one
       //       and any such future "features" by prepending `./`
-      files.map(f => `./${f}`)
+      files.map((f) => `./${f}`)
     )
   );
-  chain = chain.then(stream => tempWrite(stream, getTarballName(pkg)));
-  chain = chain.then(tarFilePath =>
-    getPacked(pkg, tarFilePath).then(packed =>
+  chain = chain.then((stream) => tempWrite(stream, getTarballName(pkg)));
+  chain = chain.then((tarFilePath) =>
+    getPacked(pkg, tarFilePath).then((packed) =>
       Promise.resolve()
         .then(() => runLifecycle(pkg, "postpack", opts))
         .then(() => packed)

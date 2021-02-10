@@ -6,15 +6,15 @@ const execa = require("execa");
 const log = require("npmlog");
 const os = require("os");
 
-const PackageGraph = require("@lerna/package-graph");
-const Project = require("@lerna/project");
-const writeLogFile = require("@lerna/write-log-file");
-const ValidationError = require("@lerna/validation-error");
+const { PackageGraph } = require("@lerna/package-graph");
+const { Project } = require("@lerna/project");
+const { writeLogFile } = require("@lerna/write-log-file");
+const { ValidationError } = require("@lerna/validation-error");
 
-const cleanStack = require("./lib/clean-stack");
-const defaultOptions = require("./lib/default-options");
-const logPackageError = require("./lib/log-package-error");
-const warnIfHanging = require("./lib/warn-if-hanging");
+const { cleanStack } = require("./lib/clean-stack");
+const { defaultOptions } = require("./lib/default-options");
+const { logPackageError } = require("./lib/log-package-error");
+const { warnIfHanging } = require("./lib/warn-if-hanging");
 
 const DEFAULT_CONCURRENCY = os.cpus().length;
 
@@ -54,12 +54,12 @@ class Command {
       chain = chain.then(() => this.runCommand());
 
       chain.then(
-        result => {
+        (result) => {
           warnIfHanging();
 
           resolve(result);
         },
-        err => {
+        (err) => {
           if (err.pkg) {
             // Cleanly log specific package error details
             logPackageError(err, this.options.stream);
@@ -159,7 +159,7 @@ class Command {
     const commandConfig = this.project.config.command || {};
 
     // The current command always overrides otherCommandConfigs
-    const overrides = [this.name, ...this.otherCommandConfigs].map(key => commandConfig[key]);
+    const overrides = [this.name, ...this.otherCommandConfigs].map((key) => commandConfig[key]);
 
     this.options = defaultOptions(
       // CLI flags, which if defined overrule subsequent values
@@ -178,6 +178,8 @@ class Command {
 
     this.concurrency = Math.max(1, +concurrency || DEFAULT_CONCURRENCY);
     this.toposort = sort === undefined || sort;
+
+    /** @type {import("@lerna/child-process").ExecOpts} */
     this.execOpts = {
       cwd: this.project.rootPath,
       maxBuffer,
@@ -219,7 +221,7 @@ class Command {
       stdio: "ignore",
     };
 
-    return execa.sync("git", ["rev-parse"], opts).code === 0;
+    return execa.sync("git", ["rev-parse"], opts).exitCode === 0;
   }
 
   runValidations() {
@@ -260,7 +262,7 @@ class Command {
     let chain = Promise.resolve();
 
     chain = chain.then(() => this.project.getPackages());
-    chain = chain.then(packages => {
+    chain = chain.then((packages) => {
       this.packageGraph = new PackageGraph(packages);
     });
 
@@ -270,7 +272,7 @@ class Command {
   runCommand() {
     return Promise.resolve()
       .then(() => this.initialize())
-      .then(proceed => {
+      .then((proceed) => {
         if (proceed !== false) {
           return this.execute();
         }
@@ -287,4 +289,4 @@ class Command {
   }
 }
 
-module.exports = Command;
+module.exports.Command = Command;

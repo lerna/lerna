@@ -22,8 +22,8 @@ into your Lerna repository; this command will preserve the commit history.
 [`lerna import <package>`][import] takes a local path rather than a URL. In this
 case you will need to have the repo you wish to link to on your file system.
 
-[bootstrap]: https://github.com/lerna/lerna/blob/master/commands/bootstrap/README.md
-[import]: https://github.com/lerna/lerna/blob/master/commands/import/README.md
+[bootstrap]: https://github.com/lerna/lerna/blob/main/commands/bootstrap/README.md
+[import]: https://github.com/lerna/lerna/blob/main/commands/import/README.md
 
 ## How do I retry publishing if `publish` fails?
 
@@ -41,7 +41,7 @@ You can significantly reduce the time spent in `lerna bootstrap` if you turn
 on hoisting, see the [hoisting docs](./doc/hoist.md) for more information.
 
 In combination with that you may increase the bootstrap performance even more by
-[using yarn as an npm client](https://github.com/lerna/lerna/blob/master/commands/bootstrap/README.md#usage) instead of `npm`.
+[using yarn as an npm client](https://github.com/lerna/lerna/blob/main/commands/bootstrap/README.md#usage) instead of `npm`.
 
 ## Root `package.json`
 
@@ -50,7 +50,7 @@ You should also put your testing, linting and similar tasks there to run them fr
 as running them separately from each package is slower. The root can also hold all the "hoisted" packages,
 which speeds up bootstrapping when using the [`--hoist`][hoist] flag.
 
-[hoist]: https://github.com/lerna/lerna/blob/master/doc/hoist.md
+[hoist]: https://github.com/lerna/lerna/blob/main/doc/hoist.md
 
 ## CI setup
 

@@ -5,9 +5,9 @@ const fs = require("fs-extra");
 const path = require("path");
 const tempy = require("tempy");
 
-const cliRunner = require("@lerna-test/cli-runner");
-const gitAdd = require("@lerna-test/git-add");
-const gitCommit = require("@lerna-test/git-commit");
+const { cliRunner } = require("@lerna-test/cli-runner");
+const { gitAdd } = require("@lerna-test/git-add");
+const { gitCommit } = require("@lerna-test/git-commit");
 const cloneFixture = require("@lerna-test/clone-fixture")(
   path.resolve(__dirname, "../commands/publish/__tests__")
 );
@@ -28,10 +28,11 @@ test("lerna publish exits with EBEHIND when behind upstream remote", async () =>
 
   // simulate upstream change from another clone
   await execa("git", ["clone", repository, cloneDir]);
+  await execa("git", ["checkout", "-B", "main", "origin/main"], { cwd: cloneDir });
   await fs.outputFile(path.join(cloneDir, "README.md"), "upstream change");
   await gitAdd(cloneDir, "-A");
   await gitCommit(cloneDir, "upstream change");
-  await execa("git", ["push", "origin", "master"], { cwd: cloneDir });
+  await execa("git", ["push", "origin", "main"], { cwd: cloneDir });
 
   // throws during interactive publish (local)
   await expect(cliRunner(cwd, env)("publish", "--no-ci")).rejects.toThrow(/EBEHIND/);

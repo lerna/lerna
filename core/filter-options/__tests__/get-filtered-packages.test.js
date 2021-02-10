@@ -4,15 +4,15 @@ const path = require("path");
 const yargs = require("yargs/yargs");
 
 // mocked modules
-const collectUpdates = require("@lerna/collect-updates");
+const { collectUpdates } = require("@lerna/collect-updates");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(path.resolve(__dirname, "../../command"));
-const PackageGraph = require("@lerna/package-graph");
+const { PackageGraph } = require("@lerna/package-graph");
 const { getPackages } = require("@lerna/project");
 
-const getFilteredPackages = require("../lib/get-filtered-packages");
-const filterOptions = require("..");
+const { getFilteredPackages } = require("../lib/get-filtered-packages");
+const { filterOptions } = require("..");
 
 async function buildGraph(cwd) {
   const packages = await getPackages(cwd);
@@ -20,11 +20,7 @@ async function buildGraph(cwd) {
 }
 
 function parseOptions(...args) {
-  return filterOptions(
-    yargs()
-      .exitProcess(false)
-      .showHelpOnFail(false)
-  ).parse(args);
+  return filterOptions(yargs().exitProcess(false).showHelpOnFail(false)).parse(args);
 }
 
 // working dir is never mutated
@@ -62,7 +58,7 @@ test.each`
   const options = parseOptions(...argv);
 
   const result = await getFilteredPackages(packageGraph, execOpts, options);
-  expect(result.map(node => node.name)).toEqual(matched.map(n => `package-${n}`));
+  expect(result.map((node) => node.name)).toEqual(matched.map((n) => `package-${n}`));
 });
 
 test.each`
@@ -119,7 +115,7 @@ test("--since returns packages updated since the last tag", async () => {
 
   const result = await getFilteredPackages(packageGraph, execOpts, options);
 
-  expect(result.map(node => node.name)).toEqual(["package-2", "package-3"]);
+  expect(result.map((node) => node.name)).toEqual(["package-2", "package-3"]);
 });
 
 test("--since <ref> should return packages updated since <ref>", async () => {
@@ -131,7 +127,7 @@ test("--since <ref> should return packages updated since <ref>", async () => {
 
   const result = await getFilteredPackages(packageGraph, execOpts, options);
 
-  expect(result.map(node => node.name)).toEqual(["package-1", "package-2", "package-3"]);
+  expect(result.map((node) => node.name)).toEqual(["package-1", "package-2", "package-3"]);
   expect(collectUpdates).toHaveBeenLastCalledWith(
     expect.any(Array),
     packageGraph,
@@ -140,22 +136,22 @@ test("--since <ref> should return packages updated since <ref>", async () => {
   );
 });
 
-test("--scope package-{2,3,4} --since master", async () => {
+test("--scope package-{2,3,4} --since main", async () => {
   collectUpdates.setUpdated(cwd, "package-4", "package-1");
 
   const packageGraph = await buildGraph(cwd);
   const execOpts = { cwd };
-  const options = parseOptions("--scope", "package-{2,3,4}", "--since", "master");
+  const options = parseOptions("--scope", "package-{2,3,4}", "--since", "main");
 
   const result = await getFilteredPackages(packageGraph, execOpts, options);
 
-  expect(result.map(node => node.name)).toEqual(["package-4"]);
+  expect(result.map((node) => node.name)).toEqual(["package-4"]);
   expect(collectUpdates).toHaveBeenLastCalledWith(
     // filter-packages before collect-updates
-    [2, 3, 4].map(n => packageGraph.get(`package-${n}`).pkg),
+    [2, 3, 4].map((n) => packageGraph.get(`package-${n}`).pkg),
     packageGraph,
     execOpts,
-    expect.objectContaining({ since: "master" })
+    expect.objectContaining({ since: "main" })
   );
 });
 
@@ -187,7 +183,7 @@ test("--include-dependents", async () => {
 
   const result = await getFilteredPackages(packageGraph, execOpts, options);
 
-  expect(result.map(pkg => pkg.name)).toEqual(["package-1", "package-2", "package-5", "package-3"]);
+  expect(result.map((pkg) => pkg.name)).toEqual(["package-1", "package-2", "package-5", "package-3"]);
   expect(collectUpdates).not.toHaveBeenCalled();
 });
 
@@ -198,6 +194,6 @@ test("--include-dependencies", async () => {
 
   const result = await getFilteredPackages(packageGraph, execOpts, options);
 
-  expect(result.map(pkg => pkg.name)).toEqual(["package-3", "package-2", "package-1"]);
+  expect(result.map((pkg) => pkg.name)).toEqual(["package-3", "package-2", "package-1"]);
   expect(collectUpdates).not.toHaveBeenCalled();
 });

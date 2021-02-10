@@ -1,12 +1,12 @@
 "use strict";
 
 const log = require("npmlog");
-const ChildProcessUtilities = require("@lerna/child-process");
+const childProcess = require("@lerna/child-process");
 
-module.exports = warnIfHanging;
+module.exports.warnIfHanging = warnIfHanging;
 
 function warnIfHanging() {
-  const childProcessCount = ChildProcessUtilities.getChildProcessCount();
+  const childProcessCount = childProcess.getChildProcessCount();
 
   if (childProcessCount > 0) {
     log.warn(

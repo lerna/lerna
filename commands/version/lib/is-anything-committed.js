@@ -3,8 +3,11 @@
 const log = require("npmlog");
 const childProcess = require("@lerna/child-process");
 
-module.exports = isAnythingCommitted;
+module.exports.isAnythingCommitted = isAnythingCommitted;
 
+/**
+ * @param {import("@lerna/child-process").ExecOpts} opts
+ */
 function isAnythingCommitted(opts) {
   log.silly("isAnythingCommitted");
 

@@ -1,6 +1,6 @@
 {
   "name": "@lerna/link",
-  "version": "3.21.0",
+  "version": "4.0.0",
   "description": "Symlink together all packages that are dependencies of each other",
   "keywords": [
     "lerna",
@@ -18,7 +18,7 @@
   ],
   "main": "index.js",
   "engines": {
-    "node": ">= 6.9.0"
+    "node": ">= 10.18.0"
   },
   "publishConfig": {
     "access": "public"
@@ -35,7 +35,7 @@
     "@lerna/command": "file:../../core/command",
     "@lerna/package-graph": "file:../../core/package-graph",
     "@lerna/symlink-dependencies": "file:../../utils/symlink-dependencies",
-    "p-map": "^2.1.0",
-    "slash": "^2.0.0"
+    "p-map": "^4.0.0",
+    "slash": "^3.0.0"
   }
 }

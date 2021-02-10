@@ -3,6 +3,47 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/lerna/lerna/compare/v3.22.1...v4.0.0) (2021-02-10)
+
+
+### Bug Fixes
+
+* **create:** Use main as default Github branch ([1a951e9](https://github.com/lerna/lerna/commit/1a951e92376b2aff2e1866791a0ae0b03f19515d))
+
+
+### Features
+
+* **deps:** Bump dependencies ([affed1c](https://github.com/lerna/lerna/commit/affed1ce0fce91f01b0a9eafe357db2d985b974f))
+* Consume named exports of sibling modules ([63499e3](https://github.com/lerna/lerna/commit/63499e33652bc78fe23751875d74017e2f16a689))
+* **deps:** @evocateur/pacote -> pacote@^11.1.13 ([99b4217](https://github.com/lerna/lerna/commit/99b4217ed143527a45969f3a46f1bd9b84999d68))
+* **deps:** camelcase -> yargs-parser/camelCase ([d966e8b](https://github.com/lerna/lerna/commit/d966e8b3d36ad9eb02f656b73d9b41882ca7b208))
+* **deps:** execa@^4.1.0 ([9051dca](https://github.com/lerna/lerna/commit/9051dcab1a68b56db09b82ab0345c5f36bcfee2d))
+* **deps:** fs-extra@^9.0.1 ([2f6f4e0](https://github.com/lerna/lerna/commit/2f6f4e066d5a41b4cd508b3405ac1d0a342932dc))
+* **deps:** globby@^11.0.1 ([6cb5bbe](https://github.com/lerna/lerna/commit/6cb5bbec5599cdd93d314ffdc4abea8822e48075))
+* **deps:** init-package-json@^2.0.1 ([4042e8e](https://github.com/lerna/lerna/commit/4042e8e0a73427d1f9585ff285554e2a954b7be6))
+* **deps:** npm-package-arg@^8.1.0 ([12c8923](https://github.com/lerna/lerna/commit/12c892342d33b86a00ee2cf9079f9b26fe316dc6))
+* **deps:** p-reduce@^2.1.0 ([fd4289a](https://github.com/lerna/lerna/commit/fd4289ad20fd9ce5921b83d97f82984abf4f65b0))
+* **deps:** pify@^5.0.0 ([6b34452](https://github.com/lerna/lerna/commit/6b3445219f0f022411a7cb282b0ba39a072e2ef2))
+* **deps:** semver@^7.3.2 ([003ad66](https://github.com/lerna/lerna/commit/003ad6641fab8b4e3a82251ebffd27061bd6a31b))
+* **deps:** slash@^3.0.0 ([5dec383](https://github.com/lerna/lerna/commit/5dec383109bcd1cce9abbc80796369db9314acc9))
+* **deps:** whatwg-url@^8.4.0 ([5dfb7f0](https://github.com/lerna/lerna/commit/5dfb7f0ee196a0c9b9010339d512a5b5b9b75a47))
+* Drop support for Node v6.x & v8.x ([ff4bb4d](https://github.com/lerna/lerna/commit/ff4bb4da215555e3bb136f5af09b5cbc631e57bb))
+
+
+### BREAKING CHANGES
+
+* Node v6.x & v8.x are no longer supported. Please upgrade to the latest LTS release.
+
+Here's the gnarly one-liner I used to make these changes:
+```
+npx lerna exec --concurrency 1 --stream -- 'json -I -f package.json -e '"'"'this.engines=this.engines||{};this.engines.node=">= 10.18.0"'"'"
+```
+(requires `npm i -g json` beforehand)
+
+
+
+
+
 # [3.22.0](https://github.com/lerna/lerna/compare/v3.21.0...v3.22.0) (2020-05-24)
 
 

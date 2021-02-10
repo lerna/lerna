@@ -3,9 +3,9 @@
 jest.mock("@lerna/describe-ref");
 jest.mock("@lerna/collect-uncommitted");
 
-const describeRef = require("@lerna/describe-ref");
-const collectUncommitted = require("@lerna/collect-uncommitted");
-const checkWorkingTree = require("../lib/check-working-tree");
+const { describeRef } = require("@lerna/describe-ref");
+const { collectUncommitted } = require("@lerna/collect-uncommitted");
+const { checkWorkingTree } = require("../lib/check-working-tree");
 
 describe("check-working-tree", () => {
   it("resolves on a clean tree with no release tags", async () => {

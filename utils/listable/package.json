@@ -1,6 +1,6 @@
 {
   "name": "@lerna/listable",
-  "version": "3.18.5",
+  "version": "4.0.0",
   "description": "Shared logic for listing package information",
   "keywords": [
     "lerna",
@@ -15,7 +15,7 @@
     "lib"
   ],
   "engines": {
-    "node": ">= 6.9.0"
+    "node": ">= 10.18.0"
   },
   "publishConfig": {
     "access": "public"
@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@lerna/query-graph": "file:../query-graph",
-    "chalk": "^2.3.1",
+    "chalk": "^4.1.0",
     "columnify": "^1.5.4"
   }
 }

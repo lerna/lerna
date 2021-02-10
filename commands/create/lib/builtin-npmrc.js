@@ -3,7 +3,7 @@
 const fs = require("fs-extra");
 const path = require("path");
 
-module.exports = builtinNpmrc;
+module.exports.builtinNpmrc = builtinNpmrc;
 
 function builtinNpmrc() {
   let resolvedPath = "";

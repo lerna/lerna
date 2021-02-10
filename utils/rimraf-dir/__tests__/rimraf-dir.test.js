@@ -7,22 +7,22 @@ const path = require("path");
 
 // mocked modules
 const pathExists = require("path-exists");
-const ChildProcessUtilities = require("@lerna/child-process");
+const childProcess = require("@lerna/child-process");
 
 // file under test
-const rimrafDir = require("..");
+const { rimrafDir } = require("..");
 
 describe("rimrafDir()", () => {
   it("calls rimraf CLI with arguments", async () => {
     const dirPath = "rimraf/test";
 
     pathExists.mockResolvedValueOnce(true);
-    ChildProcessUtilities.spawn.mockResolvedValueOnce();
+    childProcess.spawn.mockResolvedValueOnce();
 
     const removedPath = await rimrafDir(dirPath);
 
     expect(removedPath).toBe(dirPath);
-    expect(ChildProcessUtilities.spawn).toHaveBeenLastCalledWith(process.execPath, [
+    expect(childProcess.spawn).toHaveBeenLastCalledWith(process.execPath, [
       require.resolve("rimraf/bin"),
       "--no-glob",
       path.normalize(`${dirPath}/`),
@@ -35,6 +35,6 @@ describe("rimrafDir()", () => {
     const removedPath = await rimrafDir("rimraf/non-existent");
 
     expect(removedPath).toBe(undefined);
-    expect(ChildProcessUtilities.spawn).not.toHaveBeenCalled();
+    expect(childProcess.spawn).not.toHaveBeenCalled();
   });
 });

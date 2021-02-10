@@ -1,6 +1,6 @@
 {
   "name": "@lerna/pulse-till-done",
-  "version": "3.13.0",
+  "version": "4.0.0",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
@@ -17,7 +17,7 @@
   ],
   "main": "pulse-till-done.js",
   "engines": {
-    "node": ">= 6.9.0"
+    "node": ">= 10.18.0"
   },
   "publishConfig": {
     "access": "public"

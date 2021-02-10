@@ -6,10 +6,9 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
-    "@lerna-test/git-init": "file:../git-init",
     "@lerna-test/init-fixture": "file:../init-fixture",
-    "execa": "^1.0.0",
-    "file-url": "^2.0.2",
-    "tempy": "^0.2.1"
+    "execa": "^5.0.0",
+    "file-url": "^3.0.0",
+    "tempy": "^1.0.0"
   }
 }

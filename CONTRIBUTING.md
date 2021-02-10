@@ -14,12 +14,12 @@ $ npm ci
 
 ## Code Structure
 
-Currently, the [source](https://github.com/lerna/lerna/tree/master) is split up into a few categories:
+Currently, the [source](https://github.com/lerna/lerna/tree/main) is split up into a few categories:
 
-* [utils](https://github.com/lerna/lerna/tree/master/utils): shared packages to run git, npm, fs, and more.
-* [core](https://github.com/lerna/lerna/tree/master/core): basic building blocks, including Package-related abstractions and the command superclass.
-* [commands](https://github.com/lerna/lerna/tree/master/commands): each command has an `initialize` and `execute` function.
-  * These commands are consumed as yargs subcommands in [core/cli/index.js](https://github.com/lerna/lerna/blob/master/core/cli/index.js), which is required from the executable [`core/lerna/cli.js`](https://github.com/lerna/lerna/blob/master/core/lerna/cli.js).
+* [utils](https://github.com/lerna/lerna/tree/main/utils): shared packages to run git, npm, fs, and more.
+* [core](https://github.com/lerna/lerna/tree/main/core): basic building blocks, including Package-related abstractions and the command superclass.
+* [commands](https://github.com/lerna/lerna/tree/main/commands): each command has an `initialize` and `execute` function.
+  * These commands are consumed as yargs subcommands in [core/cli/index.js](https://github.com/lerna/lerna/blob/main/core/cli/index.js), which is required from the executable [`core/lerna/cli.js`](https://github.com/lerna/lerna/blob/main/core/lerna/cli.js).
 
 ## Commands
 
@@ -110,3 +110,17 @@ $ xdg-open coverage/lcov-report/index.html
 ### Submitting Pull Requests
 
 This project follows [GitHub's standard forking model](https://guides.github.com/activities/forking/). Please fork the project to submit pull requests. 
+
+### Releasing
+
+If you are a member of Lerna's [GitHub org](https://github.com/orgs/lerna/people) and have read-write privileges in Lerna's [npm org](https://www.npmjs.com/org/lerna) _with 2-factor auth enabled_, congratulations, you can cut a release!
+
+You'll need to set up a local `.env` file in the repo root to provide the required environment variables.
+The `.env.example` file is available in the root as a template.
+The root `.env` file is _never_ placed under version control.
+
+Once that's done, run the release script and await glory:
+
+```sh
+npm run release
+```

@@ -2,8 +2,8 @@
 
 const path = require("path");
 
-const cliRunner = require("@lerna-test/cli-runner");
-const showCommit = require("@lerna-test/show-commit");
+const { cliRunner } = require("@lerna-test/cli-runner");
+const { showCommit } = require("@lerna-test/show-commit");
 const cloneFixture = require("@lerna-test/clone-fixture")(
   path.resolve(__dirname, "../commands/publish/__tests__")
 );
@@ -43,7 +43,7 @@ Successfully published:
   expect(patch).toMatchInlineSnapshot(`
 v1.0.1
 
-HEAD -> master, tag: v1.0.1, origin/master
+HEAD -> main, tag: v1.0.1, origin/main
 
 diff --git a/lerna.json b/lerna.json
 index SHA..SHA 100644

@@ -1,6 +1,6 @@
 "use strict";
 
-const writePkg = require.requireActual("write-pkg");
+const writePkg = jest.requireActual("write-pkg");
 const registry = new Map();
 
 // by default, act like a spy that populates registry
@@ -10,7 +10,7 @@ const mockWritePkg = jest.fn((fp, data) => {
   return writePkg(fp, data);
 });
 
-const updatedManifest = name => registry.get(name);
+const updatedManifest = (name) => registry.get(name);
 
 // a convenient format for assertions
 function updatedVersions() {

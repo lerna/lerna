@@ -1,0 +1,90 @@
+on:
+  push:
+    branches:
+      - main
+      - next
+      - 'test/*'
+  pull_request:
+    types: [ assigned, opened, synchronize, reopened, labeled ]
+name: ci
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          # only lint on latest node
+          node-version: 12
+      - uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - run: npm -g i npm@next-7
+      - run: npm ci
+      - run: npm run ci:lint
+
+  test:
+    needs: [ lint ]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        node: [ 12, 10 ]
+        script: [ 'ci:test:unit', 'ci:test:integration' ]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+      - uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Configure git metadata
+        run: |
+          git config --global user.email test@example.com
+          git config --global user.name "Tester McPerson"
+      - run: npm -g i npm@next-7
+      - run: npm ci
+      - run: npm run ${{ matrix.script }}
+
+  windows:
+    needs: [ lint ]
+    runs-on: windows-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        script: [ 'ci:test:unit', 'ci:test:integration' ]
+        subset: [ publish, non-publish ]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          # only run windows tests on latest node
+          node-version: 12
+      # caching on windows is LUDICROUSLY slow
+      # - name: Get npm cache directory
+      #   id: npm-cache
+      #   run: |
+      #     echo "::set-output name=dir::$(npm config get cache)"
+      # - uses: actions/cache@v2
+      #   with:
+      #     path: ${{ steps.npm-cache.outputs.dir }}
+      #     key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-node-
+      - name: Configure git metadata
+        run: |
+          git config --global user.email test@example.com
+          git config --global user.name "Tester McPerson"
+      - run: npm -g i npm@next-7
+      - run: npm ci
+      - env:
+          LERNA_CI_TYPE: ${{ matrix.subset }}
+          LERNA_OS_TYPE: windows
+        run: npm run ${{ matrix.script }}

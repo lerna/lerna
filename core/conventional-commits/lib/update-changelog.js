@@ -5,16 +5,21 @@ const fs = require("fs-extra");
 const getStream = require("get-stream");
 const log = require("npmlog");
 const { BLANK_LINE, CHANGELOG_HEADER, EOL } = require("./constants");
-const getChangelogConfig = require("./get-changelog-config");
-const makeBumpOnlyFilter = require("./make-bump-only-filter");
-const readExistingChangelog = require("./read-existing-changelog");
+const { getChangelogConfig } = require("./get-changelog-config");
+const { makeBumpOnlyFilter } = require("./make-bump-only-filter");
+const { readExistingChangelog } = require("./read-existing-changelog");
 
-module.exports = updateChangelog;
+module.exports.updateChangelog = updateChangelog;
 
+/**
+ * @param {import("@lerna/package").Package} pkg
+ * @param {import("..").ChangelogType} type
+ * @param {import("..").BaseChangelogOptions & { version?: string }} commandOptions
+ */
 function updateChangelog(pkg, type, { changelogPreset, rootPath, tagPrefix = "v", version }) {
   log.silly(type, "for %s at %s", pkg.name, pkg.location);
 
-  return getChangelogConfig(changelogPreset, rootPath).then(config => {
+  return getChangelogConfig(changelogPreset, rootPath).then((config) => {
     const options = {};
     const context = {}; // pass as positional because cc-core's merge-config is wack
 

@@ -6,7 +6,7 @@ jest.mock("@lerna/child-process");
 const childProcess = require("@lerna/child-process");
 
 // file under test
-const hasTags = require("../lib/has-tags");
+const { hasTags } = require("../lib/has-tags");
 
 describe("hasTags()", () => {
   childProcess.execSync.mockImplementation(() => "v1.0.0\nv1.0.1");

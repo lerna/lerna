@@ -16,20 +16,20 @@ jest.mock("../../version/lib/is-behind-upstream");
 jest.mock("../../version/lib/remote-branch-exists");
 
 // mocked or stubbed modules
-const otplease = require("@lerna/otplease");
+const { getOneTimePassword } = require("@lerna/otplease");
 const npmDistTag = require("@lerna/npm-dist-tag");
-const npmPublish = require("@lerna/npm-publish");
-const packDirectory = require("@lerna/pack-directory");
-const PromptUtilities = require("@lerna/prompt");
-const collectUpdates = require("@lerna/collect-updates");
-const getNpmUsername = require("../lib/get-npm-username");
-const verifyNpmPackageAccess = require("../lib/verify-npm-package-access");
-const getTwoFactorAuthRequired = require("../lib/get-two-factor-auth-required");
-const gitCheckout = require("../lib/git-checkout");
+const { npmPublish } = require("@lerna/npm-publish");
+const { packDirectory } = require("@lerna/pack-directory");
+const { promptConfirmation } = require("@lerna/prompt");
+const { collectUpdates } = require("@lerna/collect-updates");
+const { getNpmUsername } = require("../lib/get-npm-username");
+const { verifyNpmPackageAccess } = require("../lib/verify-npm-package-access");
+const { getTwoFactorAuthRequired } = require("../lib/get-two-factor-auth-required");
+const { gitCheckout } = require("../lib/git-checkout");
 
 // helpers
-const commitChangeToPackage = require("@lerna-test/commit-change-to-package");
-const loggingOutput = require("@lerna-test/logging-output");
+const { commitChangeToPackage } = require("@lerna-test/commit-change-to-package");
+const { loggingOutput } = require("@lerna-test/logging-output");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const path = require("path");
 const fs = require("fs-extra");
@@ -38,8 +38,6 @@ const fs = require("fs-extra");
 const lernaPublish = require("@lerna-test/command-runner")(require("../command"));
 
 gitCheckout.mockImplementation(() => Promise.resolve());
-
-expect.extend(require("@lerna-test/figgy-pudding-matchers"));
 
 describe("PublishCommand", () => {
   describe("cli validation", () => {
@@ -71,7 +69,7 @@ describe("PublishCommand", () => {
     });
 
     it("exits non-zero with --since", async () => {
-      const command = lernaPublish(cwd)("--since", "master");
+      const command = lernaPublish(cwd)("--since", "main");
 
       await expect(command).rejects.toThrow(
         expect.objectContaining({
@@ -99,9 +97,7 @@ describe("PublishCommand", () => {
 
       await lernaPublish(testDir)();
 
-      expect(PromptUtilities.confirm).toHaveBeenLastCalledWith(
-        "Are you sure you want to publish these packages?"
-      );
+      expect(promptConfirmation).toHaveBeenLastCalledWith("Are you sure you want to publish these packages?");
       expect(packDirectory.registry).toMatchInlineSnapshot(`
 Set {
   "package-1",
@@ -130,20 +126,20 @@ Map {
 
       expect(getNpmUsername).toHaveBeenCalled();
       expect(getNpmUsername).toHaveBeenLastCalledWith(
-        expect.figgyPudding({ registry: "https://registry.npmjs.org/" })
+        expect.objectContaining({ registry: "https://registry.npmjs.org/" })
       );
 
       expect(verifyNpmPackageAccess).toHaveBeenCalled();
       expect(verifyNpmPackageAccess).toHaveBeenLastCalledWith(
         expect.any(Array),
         "lerna-test",
-        expect.figgyPudding({ registry: "https://registry.npmjs.org/" })
+        expect.objectContaining({ registry: "https://registry.npmjs.org/" })
       );
 
       expect(getTwoFactorAuthRequired).toHaveBeenCalled();
       expect(getTwoFactorAuthRequired).toHaveBeenLastCalledWith(
         // extra insurance that @lerna/npm-conf is defaulting things correctly
-        expect.figgyPudding({ otp: undefined })
+        expect.objectContaining({ otp: undefined })
       );
 
       expect(gitCheckout).toHaveBeenCalledWith(
@@ -212,7 +208,7 @@ Map {
   });
 
   describe("--otp", () => {
-    otplease.getOneTimePassword.mockImplementation(() => Promise.resolve("654321"));
+    getOneTimePassword.mockImplementation(() => Promise.resolve("654321"));
 
     it("passes one-time password to npm commands", async () => {
       const testDir = await initFixture("normal");
@@ -229,7 +225,7 @@ Map {
         expect.objectContaining({ otp }),
         expect.objectContaining({ otp })
       );
-      expect(otplease.getOneTimePassword).not.toHaveBeenCalled();
+      expect(getOneTimePassword).not.toHaveBeenCalled();
     });
 
     it("prompts for OTP when option missing and account-level 2FA enabled", async () => {
@@ -245,7 +241,7 @@ Map {
         expect.objectContaining({ otp: undefined }),
         expect.objectContaining({ otp: "654321" })
       );
-      expect(otplease.getOneTimePassword).toHaveBeenLastCalledWith("Enter OTP:");
+      expect(getOneTimePassword).toHaveBeenLastCalledWith("Enter OTP:");
     });
   });
 

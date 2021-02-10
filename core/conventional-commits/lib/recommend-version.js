@@ -3,10 +3,15 @@
 const conventionalRecommendedBump = require("conventional-recommended-bump");
 const log = require("npmlog");
 const semver = require("semver");
-const getChangelogConfig = require("./get-changelog-config");
+const { getChangelogConfig } = require("./get-changelog-config");
 
-module.exports = recommendVersion;
+module.exports.recommendVersion = recommendVersion;
 
+/**
+ * @param {import("@lerna/package").Package} pkg
+ * @param {import("..").VersioningStrategy} type
+ * @param {import("..").BaseChangelogOptions & { prereleaseId?: string }} commandOptions
+ */
 function recommendVersion(pkg, type, { changelogPreset, rootPath, tagPrefix, prereleaseId }) {
   log.silly(type, "for %s at %s", pkg.name, pkg.location);
 
@@ -39,7 +44,7 @@ function recommendVersion(pkg, type, { changelogPreset, rootPath, tagPrefix, pre
   let chain = Promise.resolve();
 
   chain = chain.then(() => getChangelogConfig(changelogPreset, rootPath));
-  chain = chain.then(config => {
+  chain = chain.then((config) => {
     // "new" preset API
     options.config = config;
 

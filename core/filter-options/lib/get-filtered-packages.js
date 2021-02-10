@@ -1,29 +1,34 @@
 "use strict";
 
-const npmlog = require("npmlog");
-const figgyPudding = require("figgy-pudding");
-const collectUpdates = require("@lerna/collect-updates");
-const filterPackages = require("@lerna/filter-packages");
+const log = require("npmlog");
+const { collectUpdates } = require("@lerna/collect-updates");
+const { filterPackages } = require("@lerna/filter-packages");
 
-module.exports = getFilteredPackages;
+module.exports.getFilteredPackages = getFilteredPackages;
 
-const FilterConfig = figgyPudding({
-  scope: {},
-  ignore: {},
-  private: {},
-  since: {},
-  continueIfNoMatch: {},
-  excludeDependents: {},
-  includeDependents: {},
-  includeDependencies: {},
-  includeFilteredDependents: "includeDependents",
-  includeFilteredDependencies: "includeDependencies",
-  includeMergedTags: {},
-  log: { default: npmlog },
-});
+/**
+ * @typedef {object} FilterOptions
+ * @property {string} scope
+ * @property {string} ignore
+ * @property {boolean} private
+ * @property {string} since
+ * @property {boolean} continueIfNoMatch
+ * @property {boolean} excludeDependents
+ * @property {boolean} includeDependents
+ * @property {boolean} includeDependencies
+ * @property {boolean} includeMergedTags
+ * @property {typeof log} log
+ */
 
+/**
+ * Retrieve a list of Package instances filtered by various options.
+ * @param {import("@lerna/package-graph").PackageGraph} packageGraph
+ * @param {import("@lerna/child-process").ExecOpts} execOpts
+ * @param {Partial<FilterOptions>} opts
+ * @returns {Promise<import("@lerna/package").Package[]>}
+ */
 function getFilteredPackages(packageGraph, execOpts, opts) {
-  const options = FilterConfig(opts);
+  const options = { log, ...opts };
 
   if (options.scope) {
     options.log.notice("filter", "including %j", options.scope);
@@ -56,11 +61,11 @@ function getFilteredPackages(packageGraph, execOpts, opts) {
       options.log.notice("filter", "including merged tags");
     }
 
-    chain = chain.then(filteredPackages =>
-      Promise.resolve(collectUpdates(filteredPackages, packageGraph, execOpts, opts)).then(updates => {
+    chain = chain.then((/** @type {ReturnType<typeof filterPackages>} */ filteredPackages) =>
+      Promise.resolve(collectUpdates(filteredPackages, packageGraph, execOpts, opts)).then((updates) => {
         const updated = new Set(updates.map(({ pkg }) => pkg.name));
 
-        return filteredPackages.filter(pkg => updated.has(pkg.name));
+        return filteredPackages.filter((pkg) => updated.has(pkg.name));
       })
     );
   }
@@ -68,13 +73,13 @@ function getFilteredPackages(packageGraph, execOpts, opts) {
   if (options.includeDependents) {
     options.log.notice("filter", "including dependents");
 
-    chain = chain.then(filteredPackages => packageGraph.addDependents(filteredPackages));
+    chain = chain.then((filteredPackages) => packageGraph.addDependents(filteredPackages));
   }
 
   if (options.includeDependencies) {
     options.log.notice("filter", "including dependencies");
 
-    chain = chain.then(filteredPackages => packageGraph.addDependencies(filteredPackages));
+    chain = chain.then((filteredPackages) => packageGraph.addDependencies(filteredPackages));
   }
 
   return chain;

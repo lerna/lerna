@@ -3,8 +3,13 @@
 const log = require("npmlog");
 const childProcess = require("@lerna/child-process");
 
-module.exports = remoteBranchExists;
+module.exports.remoteBranchExists = remoteBranchExists;
 
+/**
+ * @param {string} gitRemote
+ * @param {string} branch
+ * @param {import("@lerna/child-process").ExecOpts} opts
+ */
 function remoteBranchExists(gitRemote, branch, opts) {
   log.silly("remoteBranchExists");
 

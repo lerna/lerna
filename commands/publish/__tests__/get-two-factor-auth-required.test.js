@@ -2,13 +2,11 @@
 
 jest.mock("../lib/get-profile-data");
 
-const loggingOutput = require("@lerna-test/logging-output");
-const getProfileData = require("../lib/get-profile-data");
-const getTwoFactorAuthRequired = require("../lib/get-two-factor-auth-required");
+const { loggingOutput } = require("@lerna-test/logging-output");
+const { getProfileData } = require("../lib/get-profile-data");
+const { getTwoFactorAuthRequired } = require("../lib/get-two-factor-auth-required");
 
 getProfileData.mockImplementation(() => Promise.resolve({ tfa: {} }));
-
-expect.extend(require("@lerna-test/figgy-pudding-matchers"));
 
 describe("getTwoFactorAuthRequired", () => {
   const origConsoleError = console.error;
@@ -30,7 +28,7 @@ describe("getTwoFactorAuthRequired", () => {
 
     const result = await getTwoFactorAuthRequired();
     expect(result).toBe(true);
-    expect(getProfileData).toHaveBeenLastCalledWith(expect.figgyPudding({ "fetch-retries": 0 }));
+    expect(getProfileData).toHaveBeenLastCalledWith(expect.objectContaining({ fetchRetries: 0 }));
   });
 
   it("resolves false if tfa.mode !== 'auth-and-writes'", async () => {
@@ -80,14 +78,12 @@ describe("getTwoFactorAuthRequired", () => {
       return Promise.reject(err);
     });
 
-    const opts = new Map([["registry", "such-registry-wow"]]);
+    const opts = { registry: "such-registry-wow" };
     const result = await getTwoFactorAuthRequired(opts);
 
     expect(result).toBe(false);
     expect(loggingOutput("warn")).toContain(
-      `Registry "${opts.get(
-        "registry"
-      )}" does not support 'npm profile get', skipping two-factor auth check...`
+      `Registry "${opts.registry}" does not support 'npm profile get', skipping two-factor auth check...`
     );
   });
 
