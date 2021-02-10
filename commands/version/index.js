@@ -31,7 +31,7 @@ const { remoteBranchExists } = require("./lib/remote-branch-exists");
 const { isBreakingChange } = require("./lib/is-breaking-change");
 const { isAnythingCommitted } = require("./lib/is-anything-committed");
 const { makePromptVersion } = require("./lib/prompt-version");
-const { createRelease } = require("./lib/create-release");
+const { createRelease, createReleaseClient } = require("./lib/create-release");
 const { updateLockfileVersion } = require("./lib/update-lockfile-version");
 
 module.exports = factory;
@@ -76,14 +76,15 @@ class VersionCommand extends Command {
     this.pushToRemote = gitTagVersion && amend !== true && push;
     // never automatically push to remote when amending a commit
 
-    this.createRelease = this.pushToRemote && this.options.createRelease;
+    this.releaseClient =
+      this.pushToRemote && this.options.createRelease && createReleaseClient(this.options.createRelease);
     this.releaseNotes = [];
 
-    if (this.createRelease && this.options.conventionalCommits !== true) {
+    if (this.releaseClient && this.options.conventionalCommits !== true) {
       throw new ValidationError("ERELEASE", "To create a release, you must enable --conventional-commits");
     }
 
-    if (this.createRelease && this.options.changelog === false) {
+    if (this.releaseClient && this.options.changelog === false) {
       throw new ValidationError("ERELEASE", "To create a release, you cannot pass --no-changelog");
     }
 
@@ -274,11 +275,11 @@ class VersionCommand extends Command {
       this.logger.info("execute", "Skipping git push");
     }
 
-    if (this.createRelease) {
+    if (this.releaseClient) {
       this.logger.info("execute", "Creating releases...");
       tasks.push(() =>
         createRelease(
-          this.options.createRelease,
+          this.releaseClient,
           { tags: this.tags, releaseNotes: this.releaseNotes },
           { gitRemote: this.options.gitRemote, execOpts: this.execOpts }
         )

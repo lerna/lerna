@@ -50,6 +50,20 @@ describe.each([
     expect(client.releases.size).toBe(0);
   });
 
+  it("throws an error if environment variables are not present", async () => {
+    const cwd = await initFixture("normal");
+    const command = lernaVersion(cwd)("--create-release", type, "--conventional-commits");
+    const message = `Environment variables for ${type} are missing!`;
+
+    client.mockImplementationOnce(() => {
+      throw new Error(message);
+    });
+
+    await expect(command).rejects.toThrow(message);
+
+    expect(client.releases.size).toBe(0);
+  });
+
   it("marks a version as a pre-release if it contains a valid part", async () => {
     const cwd = await initFixture("normal");
 

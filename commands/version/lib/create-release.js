@@ -7,11 +7,12 @@ const { createGitHubClient, parseGitRepo } = require("@lerna/github-client");
 const { ValidationError } = require("@lerna/validation-error");
 
 module.exports.createRelease = createRelease;
+module.exports.createReleaseClient = createReleaseClient;
 
 /**
  * @param {'github' | 'gitlab'} type
  */
-function createClient(type) {
+function createReleaseClient(type) {
   switch (type) {
     case "gitlab":
       return createGitLabClient();
@@ -24,13 +25,12 @@ function createClient(type) {
 }
 
 /**
- * @param {'github' | 'gitlab'} type
+ * @param {ReturnType<typeof createReleaseClient>} client
  * @param {{ tags: string[]; releaseNotes: { name: string; notes: string; }[] }} commandProps
  * @param {{ gitRemote: string; execOpts: import("@lerna/child-process").ExecOpts }} opts
  */
-function createRelease(type, { tags, releaseNotes }, { gitRemote, execOpts }) {
+function createRelease(client, { tags, releaseNotes }, { gitRemote, execOpts }) {
   const repo = parseGitRepo(gitRemote, execOpts);
-  const client = createClient(type);
 
   return Promise.all(
     releaseNotes.map(({ notes, name }) => {
