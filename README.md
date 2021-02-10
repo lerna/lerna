@@ -227,7 +227,7 @@ The above command will automatically hoist things and use relative `file:` speci
 Hoisting has a few benefits:
 
 - All packages use the same version of a given dependency
-- Can keep dependencies at the root up-to-date with an automated tool such as [Snik](https://snyk.io/)
+- Can keep dependencies at the root up-to-date with an automated tool such as [Snyk](https://snyk.io/)
 - Dependency installation time is reduced
 - Less storage is needed
 
