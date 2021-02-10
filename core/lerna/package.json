@@ -23,6 +23,9 @@
   "engines": {
     "node": ">= 10.18.0"
   },
+  "publishConfig": {
+    "tag": "next"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lerna/lerna.git",
