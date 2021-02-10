@@ -4,6 +4,9 @@
       "homepage": "https://github.com/lerna/lerna",
       "license": "MIT"
     },
+    "publish": {
+      "tempTag": true
+    },
     "version": {
       "allowBranch": "main",
       "conventionalCommits": true,
