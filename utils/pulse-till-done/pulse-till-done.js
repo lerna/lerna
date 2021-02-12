@@ -5,6 +5,7 @@ const log = require("npmlog");
 let pulsers = 0;
 let pulse;
 
+/** @param {string} prefix */
 function pulseStart(prefix) {
   pulsers += 1;
 
@@ -25,6 +26,13 @@ function pulseStop() {
   clearInterval(pulse);
 }
 
+/**
+ * Pulse progress bar until promise resolves.
+ * @template {Promise} T
+ * @param {string | T} prefix
+ * @param {T} [promise]
+ * @returns {T}
+ */
 function pulseTillDone(prefix, promise) {
   if (!promise) {
     /* eslint-disable no-param-reassign */
