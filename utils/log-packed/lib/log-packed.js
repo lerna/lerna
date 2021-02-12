@@ -3,26 +3,49 @@
 const byteSize = require("byte-size");
 const columnify = require("columnify");
 const hasUnicode = require("has-unicode")();
-const log = require("npmlog");
+const npmlog = require("npmlog");
 
 module.exports.logPacked = logPacked;
 
-function logPacked(tarball) {
-  log.notice("");
-  log.notice("", `${hasUnicode ? "📦 " : "package:"} ${tarball.name}@${tarball.version}`);
+/** @typedef {{
+    id: string;
+    name: string;
+    version: string;
+    size: number;
+    unpackedSize: number;
+    shasum: string;
+    integrity: import('ssri').IntegrityMap;
+    filename?: string;
+    files: string[];
+    entryCount: number;
+    bundled: string[];
+}} PackedInfo */
 
-  if (tarball.files && tarball.files.length) {
+/**
+ * @param {PackedInfo} tarball
+ * @param {{ log?: npmlog.Logger; unicode?: boolean; }} [options]
+ */
+function logPacked(tarball, { log = npmlog, unicode = hasUnicode } = {}) {
+  log.notice("");
+  log.notice("", `${unicode ? "📦 " : "package:"} ${tarball.name}@${tarball.version}`);
+
+  if (tarball.files.length) {
     log.notice("=== Tarball Contents ===");
     log.notice(
       "",
       columnify(
-        tarball.files.map((f) => {
-          const bytes = byteSize(f.size);
-          return {
-            path: f.path,
-            size: `${bytes.value}${bytes.unit}`,
-          };
-        }),
+        tarball.files
+          .map((f) => {
+            if (/^node_modules\//.test(f.path)) {
+              return null;
+            }
+            const bytes = byteSize(f.size);
+            return {
+              path: f.path,
+              size: `${bytes.value}${bytes.unit}`,
+            };
+          })
+          .filter((f) => f),
         {
           include: ["size", "path"],
           showHeaders: false,
@@ -31,7 +54,7 @@ function logPacked(tarball) {
     );
   }
 
-  if (tarball.bundled && tarball.bundled.length) {
+  if (tarball.bundled.length) {
     log.notice("=== Bundled Dependencies ===");
     tarball.bundled.forEach((name) => log.notice("", name));
   }
@@ -44,26 +67,23 @@ function logPacked(tarball) {
         { name: "name:", value: tarball.name },
         { name: "version:", value: tarball.version },
         tarball.filename && { name: "filename:", value: tarball.filename },
-        tarball.size && { name: "package size:", value: byteSize(tarball.size) },
-        tarball.unpackedSize && { name: "unpacked size:", value: byteSize(tarball.unpackedSize) },
-        tarball.shasum && { name: "shasum:", value: tarball.shasum },
-        tarball.integrity && { name: "integrity:", value: elideIntegrity(tarball.integrity) },
-        tarball.bundled &&
-          tarball.bundled.length && {
-            name: "bundled deps:",
-            value: tarball.bundled.length,
-          },
-        tarball.bundled &&
-          tarball.bundled.length && {
-            name: "bundled files:",
-            value: tarball.entryCount - tarball.files.length,
-          },
-        tarball.bundled &&
-          tarball.bundled.length && {
-            name: "own files:",
-            value: tarball.files.length,
-          },
-        tarball.entryCount && { name: "total files:", value: tarball.entryCount },
+        { name: "package size:", value: byteSize(tarball.size) },
+        { name: "unpacked size:", value: byteSize(tarball.unpackedSize) },
+        { name: "shasum:", value: tarball.shasum },
+        { name: "integrity:", value: elideIntegrity(tarball.integrity) },
+        tarball.bundled.length && {
+          name: "bundled deps:",
+          value: tarball.bundled.length,
+        },
+        tarball.bundled.length && {
+          name: "bundled files:",
+          value: tarball.entryCount - tarball.files.length,
+        },
+        tarball.bundled.length && {
+          name: "own files:",
+          value: tarball.files.length,
+        },
+        { name: "total files:", value: tarball.entryCount },
       ].filter((x) => x),
       {
         include: ["name", "value"],

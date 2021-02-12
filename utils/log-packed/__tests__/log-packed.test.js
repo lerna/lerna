@@ -27,7 +27,7 @@ const fixture = [
     shasum: "8f339308bfabffcddd89e379ab76c8fbbc5c429a",
     integrity:
       "sha512-s+D+5+Kovk2mi2Jg+P6egJ6ZBKzMOdRaWAL5S+a4dWnRa6taym9EeEwpwx5ASF1wbLb0Tduv2XqcwFATxxUGVw==",
-    filename: "package-1-1.1.0.tgz",
+    // filename only present when writing a file (e.g., `lerna pack`)
     files: [
       {
         path: "package.json",
@@ -54,15 +54,20 @@ const fixture = [
         size: 99,
         mode: 420,
       },
+      {
+        path: "node_modules/bundled-dep/package.json",
+        size: 69,
+        mode: 420,
+      },
     ],
-    entryCount: 1,
-    bundled: [],
+    entryCount: 2,
+    bundled: ["bundled-dep"],
   },
 ];
 
 describe("@lerna/log-packed", () => {
   it("logs tarball contents from json", () => {
-    fixture.forEach(logPacked);
+    fixture.forEach((f) => logPacked(f));
 
     expect(loggingOutput().join("\n")).toMatchInlineSnapshot(`
 
@@ -72,7 +77,6 @@ package: package-1@1.1.0
 === Tarball Details ===
 name:          package-1
 version:       1.1.0
-filename:      package-1-1.1.0.tgz
 package size:  223 B
 unpacked size: 396 B
 shasum:        8f339308bfabffcddd89e379ab76c8fbbc5c429a
@@ -83,6 +87,8 @@ total files:   1
 package: package-2@1.1.0
 === Tarball Contents ===
 99B package.json
+=== Bundled Dependencies ===
+bundled-dep
 === Tarball Details ===
 name:          package-2
 version:       1.1.0
@@ -91,27 +97,34 @@ package size:  172 B
 unpacked size: 99 B
 shasum:        9a868dcbaa1812afb10ae2366909d6bf3a1c6f95
 integrity:     sha512-k9Ao8IyLZUq2f[...]bMINb3uj3wxkw==
-total files:   1
+bundled deps:  1
+bundled files: 0
+own files:     2
+total files:   2
 
 `);
   });
 
-  it("safely ignores missing fields from incomplete json", () => {
-    // this is the output of the legacy npm pack (no --json) call
-    logPacked({
-      name: "package-3",
-      version: "3.1.0",
-      filename: "package-3-3.1.0.tgz",
-    });
+  it("accepts options.unicode", () => {
+    const options = { unicode: true };
+    logPacked(fixture[0], options);
 
-    expect(loggingOutput().join("\n")).toMatchInlineSnapshot(`
+    const [, headline] = loggingOutput("notice");
+    // windows can't handle it, hence the convolutions
+    expect(headline).not.toMatch("package: package-1@1.1.0");
+    expect(headline).toMatch(/^(.*)+ package-1@1.1.0$/);
+  });
 
-package: package-3@3.1.0
-=== Tarball Details ===
-name:     package-3
-version:  3.1.0
-filename: package-3-3.1.0.tgz
+  it("accepts options.log", () => {
+    const options = { log: { notice: jest.fn() } };
+    logPacked(fixture[1], options);
 
-`);
+    expect(options.log.notice).toHaveBeenCalledWith("=== Tarball Contents ===");
+    expect(loggingOutput()).toHaveLength(0);
+  });
+
+  it("handles empty files array (weird)", () => {
+    logPacked({ files: [], bundled: [], integrity: "" });
+    expect(loggingOutput().join("\n")).not.toMatch("=== Tarball Contents ===");
   });
 });
