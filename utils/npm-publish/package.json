@@ -37,7 +37,6 @@
     "libnpmpublish": "^4.0.0",
     "npm-package-arg": "^8.1.0",
     "npmlog": "^4.1.2",
-    "pify": "^5.0.0",
     "read-package-json": "^3.0.0"
   }
 }

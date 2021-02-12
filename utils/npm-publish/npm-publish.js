@@ -2,9 +2,9 @@
 
 const fs = require("fs-extra");
 const path = require("path");
+const util = require("util");
 const log = require("npmlog");
 const { publish } = require("libnpmpublish");
-const pify = require("pify");
 const readJSON = require("read-package-json");
 const { runLifecycle } = require("@lerna/run-lifecycle");
 const npa = require("npm-package-arg");
@@ -12,7 +12,7 @@ const { otplease } = require("@lerna/otplease");
 
 module.exports.npmPublish = npmPublish;
 
-const readJSONAsync = pify(readJSON);
+const readJSONAsync = util.promisify(readJSON);
 
 /**
  * @typedef {object} NpmPublishOptions
