@@ -98,8 +98,8 @@ unpacked size: 99 B
 shasum:        9a868dcbaa1812afb10ae2366909d6bf3a1c6f95
 integrity:     sha512-k9Ao8IyLZUq2f[...]bMINb3uj3wxkw==
 bundled deps:  1
-bundled files: 0
-own files:     2
+bundled files: 1
+own files:     1
 total files:   2
 
 `);

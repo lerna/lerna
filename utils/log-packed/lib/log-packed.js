@@ -29,28 +29,27 @@ function logPacked(tarball, { log = npmlog, unicode = hasUnicode } = {}) {
   log.notice("");
   log.notice("", `${unicode ? "📦 " : "package:"} ${tarball.name}@${tarball.version}`);
 
-  if (tarball.files.length) {
+  const contents = tarball.files
+    .map((f) => {
+      if (/^node_modules\//.test(f.path)) {
+        return null;
+      }
+      const bytes = byteSize(f.size);
+      return {
+        path: f.path,
+        size: `${bytes.value}${bytes.unit}`,
+      };
+    })
+    .filter((f) => f);
+
+  if (contents.length) {
     log.notice("=== Tarball Contents ===");
     log.notice(
       "",
-      columnify(
-        tarball.files
-          .map((f) => {
-            if (/^node_modules\//.test(f.path)) {
-              return null;
-            }
-            const bytes = byteSize(f.size);
-            return {
-              path: f.path,
-              size: `${bytes.value}${bytes.unit}`,
-            };
-          })
-          .filter((f) => f),
-        {
-          include: ["size", "path"],
-          showHeaders: false,
-        }
-      )
+      columnify(contents, {
+        include: ["size", "path"],
+        showHeaders: false,
+      })
     );
   }
 
@@ -77,11 +76,11 @@ function logPacked(tarball, { log = npmlog, unicode = hasUnicode } = {}) {
         },
         tarball.bundled.length && {
           name: "bundled files:",
-          value: tarball.entryCount - tarball.files.length,
+          value: tarball.entryCount - contents.length,
         },
         tarball.bundled.length && {
           name: "own files:",
-          value: tarball.files.length,
+          value: contents.length,
         },
         { name: "total files:", value: tarball.entryCount },
       ].filter((x) => x),
