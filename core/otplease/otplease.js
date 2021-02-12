@@ -41,9 +41,11 @@ module.exports.getOneTimePassword = getOneTimePassword;
 /**
  * Attempt to execute Promise callback, prompting for OTP if necessary.
  * @template {Record<string, unknown>} T
- * @param {(opts: T) => Promise<unknown>} fn
+ * @template {Promise} U
+ * @param {(opts: T) => U} fn
  * @param {T} _opts The options to be passed to `fn`
  * @param {OneTimePasswordCache} otpCache
+ * @returns {U}
  */
 function otplease(fn, _opts, otpCache) {
   // always prefer explicit config (if present) to cache
@@ -51,7 +53,14 @@ function otplease(fn, _opts, otpCache) {
   return attempt(fn, opts, otpCache);
 }
 
-/** @returns {Promise<unknown>} */
+/**
+ * @template {Record<string, unknown>} T
+ * @template {Promise} U
+ * @param {(opts: T) => U} fn
+ * @param {T} opts The options to be passed to `fn`
+ * @param {OneTimePasswordCache} otpCache
+ * @returns {U}
+ */
 function attempt(fn, opts, otpCache) {
   return new Promise((resolve) => {
     resolve(fn(opts));
