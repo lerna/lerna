@@ -45,7 +45,7 @@ function flattenOptions(obj) {
  * @param {LibNpmPublishOptions & NpmPublishOptions} [options]
  * @param {import("@lerna/otplease").OneTimePasswordCache} [otpCache]
  */
-function npmPublish(pkg, tarFilePath, options = {}, otpCache) {
+async function npmPublish(pkg, tarFilePath, options = {}, otpCache) {
   const { dryRun, ...remainingOptions } = flattenOptions(options);
   const { scope } = npa(pkg.name);
   // pass only the package scope to libnpmpublish
@@ -57,57 +57,55 @@ function npmPublish(pkg, tarFilePath, options = {}, otpCache) {
 
   opts.log.verbose("publish", pkg.name);
 
-  let chain = Promise.resolve();
+  let { manifestLocation } = pkg;
 
-  if (!dryRun) {
-    chain = chain.then(() => {
-      let { manifestLocation } = pkg;
-
-      if (pkg.contents !== pkg.location) {
-        // "rebase" manifest used to generated directory
-        manifestLocation = path.join(pkg.contents, "package.json");
-      }
-
-      return Promise.all([fs.readFile(tarFilePath), readJSONAsync(manifestLocation)]);
-    });
-    chain = chain.then(([tarData, manifest]) => {
-      // non-default tag needs to override publishConfig.tag,
-      // which is merged into opts below if necessary
-      if (
-        opts.defaultTag !== "latest" &&
-        manifest.publishConfig &&
-        manifest.publishConfig.tag &&
-        manifest.publishConfig.tag !== opts.defaultTag
-      ) {
-        // eslint-disable-next-line no-param-reassign
-        manifest.publishConfig.tag = opts.defaultTag;
-      }
-
-      // publishConfig is no longer consumed in n-r-f, so merge here
-      if (manifest.publishConfig) {
-        Object.assign(opts, publishConfigToOpts(manifest.publishConfig));
-      }
-
-      return otplease((innerOpts) => publish(manifest, tarData, innerOpts), opts, otpCache).catch((err) => {
-        opts.log.silly("", err);
-        opts.log.error(err.code, (err.body && err.body.error) || err.message);
-
-        // avoid dumping logs, this isn't a lerna problem
-        err.name = "ValidationError";
-
-        // ensure process exits non-zero
-        process.exitCode = "errno" in err ? err.errno : 1;
-
-        // re-throw to break chain upstream
-        throw err;
-      });
-    });
+  if (pkg.contents !== pkg.location) {
+    // "rebase" manifest used to generated directory
+    manifestLocation = path.join(pkg.contents, "package.json");
   }
 
-  chain = chain.then(() => runLifecycle(pkg, "publish", opts));
-  chain = chain.then(() => runLifecycle(pkg, "postpublish", opts));
+  const [tarballData, manifest] = await Promise.all([
+    fs.readFile(tarFilePath),
+    readJSONAsync(manifestLocation),
+  ]);
 
-  return chain;
+  // non-default tag needs to override publishConfig.tag,
+  // which is merged into opts below if necessary
+  if (
+    opts.defaultTag !== "latest" &&
+    manifest.publishConfig &&
+    manifest.publishConfig.tag &&
+    manifest.publishConfig.tag !== opts.defaultTag
+  ) {
+    // eslint-disable-next-line no-param-reassign
+    manifest.publishConfig.tag = opts.defaultTag;
+  }
+
+  // publishConfig is no longer consumed in n-r-f, so merge here
+  if (manifest.publishConfig) {
+    Object.assign(opts, publishConfigToOpts(manifest.publishConfig));
+  }
+
+  if (!dryRun) {
+    try {
+      await otplease((innerOpts) => publish(manifest, tarballData, innerOpts), opts, otpCache);
+    } catch (err) {
+      opts.log.silly("", err);
+      opts.log.error(err.code, (err.body && err.body.error) || err.message);
+
+      // avoid dumping logs, this isn't a lerna problem
+      err.name = "ValidationError";
+
+      // ensure process exits non-zero
+      process.exitCode = "errno" in err ? err.errno : 1;
+
+      // re-throw to break chain upstream
+      throw err;
+    }
+  }
+
+  await runLifecycle(pkg, "publish", opts);
+  await runLifecycle(pkg, "postpublish", opts);
 }
 
 /**
