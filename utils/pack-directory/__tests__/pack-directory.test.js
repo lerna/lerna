@@ -2,10 +2,12 @@
 
 // actually _run_ the lifecycles, gorrammit
 jest.unmock("@lerna/run-lifecycle");
+jest.unmock("@lerna/get-packed");
 
 const path = require("path");
 const normalizePath = require("normalize-path");
 const { printObjectProperties } = require("pretty-format/build/collections");
+const { getPacked } = require("@lerna/get-packed");
 const npmConf = require("@lerna/npm-conf");
 const { getPackages } = require("@lerna/project");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
@@ -78,14 +80,14 @@ expect.addSnapshotSerializer({
 });
 
 describe("pack-directory", () => {
-  it("resolves tarball metadata objects on success", async () => {
+  it("resolves tarball buffers on success", async () => {
     const cwd = await initFixture("pack-directory");
     const conf = npmConf({ prefix: cwd }).snapshot;
-    const pkgs = await getPackages(cwd);
+    const [pkgA, pkgB, pkgC, pkgD] = await getPackages(cwd);
 
     // choose first and last package since the middle two are repetitive
     const [head, tail] = await Promise.all(
-      [pkgs.shift(), pkgs.pop()].map((pkg) => packDirectory(pkg, pkg.location, conf))
+      [pkgA, pkgD].map((pkg) => packDirectory(pkg, pkg.location, conf).then((buf) => getPacked(pkg, buf)))
     );
 
     const INTEGRITY_PATTERN = /sha512-[\S]{88}/;
@@ -113,7 +115,6 @@ describe("pack-directory", () => {
         "name": "@scope/head",
         "shasum": "SHASUM",
         "size": "TAR_SIZE",
-        "tarFilePath": "__TMP_DIR__/scope-head-1.0.0.tgz",
         "unpackedSize": 196,
         "version": "1.0.0",
       }
@@ -145,7 +146,6 @@ describe("pack-directory", () => {
         "name": "tail",
         "shasum": "SHASUM",
         "size": "TAR_SIZE",
-        "tarFilePath": "__TMP_DIR__/tail-4.0.0.tgz",
         "unpackedSize": 168,
         "version": "4.0.0",
       }
@@ -153,15 +153,15 @@ describe("pack-directory", () => {
     expect(tail.integrity.toString()).toMatch(INTEGRITY_PATTERN);
     expect(tail.shasum).toMatch(SHASUM_PATTERN);
 
-    const next = pkgs.pop();
-    const pubs = await packDirectory(
-      next,
-      next.location,
+    const bufC = await packDirectory(
+      pkgC,
+      pkgC.location,
       Object.assign({}, conf, {
         ignorePrepublish: true,
         lernaCommand: "publish",
       })
     );
+    const pubs = await getPacked(pkgC, bufC);
 
     expect(pubs).toMatchInlineSnapshot(`
       Object {
@@ -185,19 +185,18 @@ describe("pack-directory", () => {
         "name": "pubs",
         "shasum": "SHASUM",
         "size": "TAR_SIZE",
-        "tarFilePath": "__TMP_DIR__/pubs-3.0.0.tgz",
         "unpackedSize": 192,
         "version": "3.0.0",
       }
     `);
 
-    const last = pkgs.pop();
-    const subs = await packDirectory(
-      last,
+    const bufB = await packDirectory(
+      pkgB,
       // a real package doesn't _actually_ need this argument
       undefined,
       conf
     );
+    const subs = await getPacked(pkgB, bufB);
 
     expect(subs).toMatchInlineSnapshot(`
       Object {
@@ -207,13 +206,13 @@ describe("pack-directory", () => {
         "files": Array [
           Object {
             "mode": "MODE",
-            "path": "prepacked.js",
-            "size": 21,
+            "path": "package.json",
+            "size": 115,
           },
           Object {
             "mode": "MODE",
-            "path": "package.json",
-            "size": 115,
+            "path": "prepacked.js",
+            "size": 21,
           },
         ],
         "id": "subs@2.0.0",
@@ -221,7 +220,6 @@ describe("pack-directory", () => {
         "name": "subs",
         "shasum": "SHASUM",
         "size": "TAR_SIZE",
-        "tarFilePath": "__TMP_DIR__/subs-2.0.0.tgz",
         "unpackedSize": 136,
         "version": "2.0.0",
       }

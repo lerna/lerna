@@ -4,8 +4,6 @@ const path = require("path");
 const packlist = require("npm-packlist");
 const log = require("npmlog");
 const tar = require("tar");
-const tempWrite = require("temp-write");
-const { getPacked } = require("@lerna/get-packed");
 const { Package } = require("@lerna/package");
 const { runLifecycle } = require("@lerna/run-lifecycle");
 
@@ -19,12 +17,12 @@ module.exports.packDirectory = packDirectory;
  */
 
 /**
- * Pack a directory suitable for publishing, writing tarball to a tempfile.
+ * Pack a directory suitable for publishing, returning the tarball buffer.
  * @param {Package|string} _pkg Package instance or path to manifest
  * @param {string} dir to pack
  * @param {PackConfig} options
  */
-function packDirectory(_pkg, dir, options) {
+async function packDirectory(_pkg, dir, options) {
   const pkg = Package.lazy(_pkg, dir);
   const opts = {
     log,
@@ -33,58 +31,42 @@ function packDirectory(_pkg, dir, options) {
 
   opts.log.verbose("pack-directory", path.relative(".", pkg.contents));
 
-  let chain = Promise.resolve();
-
   if (opts.ignorePrepublish !== true) {
-    chain = chain.then(() => runLifecycle(pkg, "prepublish", opts));
+    await runLifecycle(pkg, "prepublish", opts);
   }
 
-  chain = chain.then(() => runLifecycle(pkg, "prepare", opts));
+  await runLifecycle(pkg, "prepare", opts);
 
   if (opts.lernaCommand === "publish") {
-    chain = chain.then(() => pkg.refresh());
-    chain = chain.then(() => runLifecycle(pkg, "prepublishOnly", opts));
-    chain = chain.then(() => pkg.refresh());
+    await pkg.refresh();
+    await runLifecycle(pkg, "prepublishOnly", opts);
+    await pkg.refresh();
   }
 
-  chain = chain.then(() => runLifecycle(pkg, "prepack", opts));
-  chain = chain.then(() => pkg.refresh());
-  chain = chain.then(() => packlist({ path: pkg.contents }));
-  chain = chain.then((files) =>
-    tar.create(
-      {
-        cwd: pkg.contents,
-        prefix: "package/",
-        portable: true,
-        // Provide a specific date in the 1980s for the benefit of zip,
-        // which is confounded by files dated at the Unix epoch 0.
-        mtime: new Date("1985-10-26T08:15:00.000Z"),
-        gzip: true,
-      },
-      // NOTE: node-tar does some Magic Stuff depending on prefixes for files
-      //       specifically with @ signs, so we just neutralize that one
-      //       and any such future "features" by prepending `./`
-      files.map((f) => `./${f}`)
-    )
-  );
-  chain = chain.then((stream) => tempWrite(stream, getTarballName(pkg)));
-  chain = chain.then((tarFilePath) =>
-    getPacked(pkg, tarFilePath).then((packed) =>
-      Promise.resolve()
-        .then(() => runLifecycle(pkg, "postpack", opts))
-        .then(() => packed)
-    )
+  await runLifecycle(pkg, "prepack", opts);
+  await pkg.refresh();
+
+  const files = await packlist({ path: pkg.contents });
+  const stream = tar.create(
+    {
+      cwd: pkg.contents,
+      prefix: "package/",
+      portable: true,
+      // Provide a specific date in the 1980s for the benefit of zip,
+      // which is confounded by files dated at the Unix epoch 0.
+      mtime: new Date("1985-10-26T08:15:00.000Z"),
+      gzip: true,
+    },
+    // NOTE: node-tar does some Magic Stuff depending on prefixes for files
+    //       specifically with @ signs, so we just neutralize that one
+    //       and any such future "features" by prepending `./`
+    files.map((f) => `./${f}`)
   );
 
-  return chain;
-}
+  /** @type {Buffer} */
+  const tarballData = await stream.concat();
 
-function getTarballName(pkg) {
-  const name =
-    pkg.name[0] === "@"
-      ? // scoped packages get special treatment
-        pkg.name.substr(1).replace(/\//g, "-")
-      : pkg.name;
+  await runLifecycle(pkg, "postpack", opts);
 
-  return `${name}-${pkg.version}.tgz`;
+  return tarballData;
 }

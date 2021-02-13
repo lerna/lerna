@@ -27,13 +27,11 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/get-packed": "file:../get-packed",
     "@lerna/package": "file:../../core/package",
     "@lerna/run-lifecycle": "file:../run-lifecycle",
     "npm-packlist": "^2.1.4",
     "npmlog": "^4.1.2",
-    "tar": "^6.1.0",
-    "temp-write": "^4.0.0"
+    "tar": "^6.1.0"
   },
   "engines": {
     "node": ">= 10.18.0"

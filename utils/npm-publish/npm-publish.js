@@ -41,11 +41,11 @@ function flattenOptions(obj) {
 /**
  * Publish a package to the configured registry.
  * @param {import("@lerna/package").Package} pkg
- * @param {string} tarFilePath
+ * @param {string | Buffer} tarFilePathOrData
  * @param {LibNpmPublishOptions & NpmPublishOptions} [options]
  * @param {import("@lerna/otplease").OneTimePasswordCache} [otpCache]
  */
-async function npmPublish(pkg, tarFilePath, options = {}, otpCache) {
+async function npmPublish(pkg, tarFilePathOrData, options = {}, otpCache) {
   const { dryRun, ...remainingOptions } = flattenOptions(options);
   const { scope } = npa(pkg.name);
   // pass only the package scope to libnpmpublish
@@ -65,7 +65,7 @@ async function npmPublish(pkg, tarFilePath, options = {}, otpCache) {
   }
 
   const [tarballData, manifest] = await Promise.all([
-    fs.readFile(tarFilePath),
+    typeof tarFilePathOrData === "string" ? fs.readFile(tarFilePathOrData) : tarFilePathOrData,
     readJSONAsync(manifestLocation),
   ]);
 
@@ -86,9 +86,11 @@ async function npmPublish(pkg, tarFilePath, options = {}, otpCache) {
     Object.assign(opts, publishConfigToOpts(manifest.publishConfig));
   }
 
+  let response;
+
   if (!dryRun) {
     try {
-      await otplease((innerOpts) => publish(manifest, tarballData, innerOpts), opts, otpCache);
+      response = await otplease((innerOpts) => publish(manifest, tarballData, innerOpts), opts, otpCache);
     } catch (err) {
       opts.log.silly("", err);
       opts.log.error(err.code, (err.body && err.body.error) || err.message);
@@ -106,6 +108,8 @@ async function npmPublish(pkg, tarFilePath, options = {}, otpCache) {
 
   await runLifecycle(pkg, "publish", opts);
   await runLifecycle(pkg, "postpublish", opts);
+
+  return response;
 }
 
 /**

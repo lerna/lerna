@@ -25,7 +25,7 @@ describe("npm-publish", () => {
   const mockManifest = { _normalized: true };
 
   fs.readFile.mockName("fs.readFile").mockResolvedValue(mockTarData);
-  publish.mockName("libnpmpublish").mockResolvedValue();
+  publish.mockName("libnpmpublish").mockResolvedValue({ ok: true });
   readJSON.mockName("read-package-json").mockImplementation((file, cb) => cb(null, mockManifest));
   runLifecycle.mockName("@lerna/run-lifecycle").mockResolvedValue();
   otplease.mockName("@lerna/otplease").mockImplementation((cb, opts) => Promise.resolve(cb(opts)));
@@ -236,5 +236,17 @@ describe("npm-publish", () => {
 
     expect(log.error).toHaveBeenLastCalledWith("E404", "lolwut");
     expect(process.exitCode).toBe(9001);
+  });
+
+  it("accepts raw tarball buffer instead of filepath", async () => {
+    await npmPublish(pkg, mockTarData);
+
+    expect(publish).toHaveBeenCalledWith(mockManifest, mockTarData, expect.any(Object));
+  });
+
+  it("returns publish response when successful", async () => {
+    const response = await npmPublish(pkg, mockTarData);
+
+    expect(response.ok).toBe(true);
   });
 });

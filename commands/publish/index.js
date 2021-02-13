@@ -18,6 +18,7 @@ const npmConf = require("@lerna/npm-conf");
 const npmDistTag = require("@lerna/npm-dist-tag");
 const { npmPublish } = require("@lerna/npm-publish");
 const { packDirectory } = require("@lerna/pack-directory");
+const { getPacked } = require("@lerna/get-packed");
 const { logPacked } = require("@lerna/log-packed");
 const { createRunner } = require("@lerna/run-lifecycle");
 const { runTopologically } = require("@lerna/run-topologically");
@@ -654,13 +655,13 @@ class PublishCommand extends Command {
       ...[
         this.options.requireScripts && ((pkg) => this.execScript(pkg, "prepublish")),
 
-        (pkg) =>
-          pulseTillDone(packDirectory(pkg, pkg.location, opts)).then((packed) => {
+        (/** @type {import('@lerna/package').Package} */ pkg) =>
+          pulseTillDone(packDirectory(pkg, pkg.location, opts)).then((tarballData) => {
             tracker.verbose("packed", path.relative(this.project.rootPath, pkg.contents));
             tracker.completeWork(1);
 
-            // store metadata for use in this.publishPacked()
-            pkg.packed = packed;
+            // store buffer for use in this.publishPacked()
+            pkg.tarballData = tarballData;
 
             // manifest may be mutated by any previous lifecycle
             return pkg.refresh();
@@ -707,11 +708,15 @@ class PublishCommand extends Command {
           const tag = !this.options.tempTag && preDistTag ? preDistTag : opts.tag;
           const pkgOpts = Object.assign({}, opts, { tag });
 
-          return pulseTillDone(npmPublish(pkg, pkg.packed.tarFilePath, pkgOpts, this.otpCache)).then(() => {
+          return pulseTillDone(
+            npmPublish(pkg, pkg.tarballData, pkgOpts, this.otpCache).then(() =>
+              getPacked(pkg, pkg.tarballData)
+            )
+          ).then((contents) => {
             tracker.success("published", pkg.name, pkg.version);
             tracker.completeWork(1);
 
-            logPacked(pkg.packed);
+            logPacked(contents);
 
             return pkg;
           });

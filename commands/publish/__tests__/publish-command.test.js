@@ -20,6 +20,8 @@ const { getOneTimePassword } = require("@lerna/otplease");
 const npmDistTag = require("@lerna/npm-dist-tag");
 const { npmPublish } = require("@lerna/npm-publish");
 const { packDirectory } = require("@lerna/pack-directory");
+const { getPacked } = require("@lerna/get-packed");
+const { logPacked } = require("@lerna/log-packed");
 const { promptConfirmation } = require("@lerna/prompt");
 const { collectUpdates } = require("@lerna/collect-updates");
 const { getNpmUsername } = require("../lib/get-npm-username");
@@ -106,6 +108,8 @@ Set {
   "package-2",
 }
 `);
+      expect(getPacked.registry).toEqual(packDirectory.registry);
+      expect(logPacked.registry).toEqual(getPacked.registry);
       expect(npmPublish.registry).toMatchInlineSnapshot(`
 Map {
   "package-1" => "latest",
@@ -221,7 +225,7 @@ Map {
 
       expect(npmPublish).toHaveBeenCalledWith(
         expect.objectContaining({ name: "package-1" }),
-        "/TEMP_DIR/package-1-MOCKED.tgz",
+        expect.any(Buffer),
         expect.objectContaining({ otp }),
         expect.objectContaining({ otp })
       );
@@ -237,7 +241,7 @@ Map {
 
       expect(npmPublish).toHaveBeenCalledWith(
         expect.objectContaining({ name: "package-1" }),
-        "/TEMP_DIR/package-1-MOCKED.tgz",
+        expect.any(Buffer),
         expect.objectContaining({ otp: undefined }),
         expect.objectContaining({ otp: "654321" })
       );
@@ -255,7 +259,7 @@ Map {
 
       expect(npmPublish).toHaveBeenCalledWith(
         expect.objectContaining({ name: "package-1" }),
-        "/TEMP_DIR/package-1-MOCKED.tgz",
+        expect.any(Buffer),
         expect.objectContaining({ "auth-type": "legacy", _auth: auth }),
         expect.objectContaining({ otp: undefined })
       );
@@ -271,7 +275,7 @@ Map {
 
       expect(npmPublish).toHaveBeenCalledWith(
         expect.objectContaining({ name: "package-1" }),
-        "/TEMP_DIR/package-1-MOCKED.tgz",
+        expect.any(Buffer),
         expect.objectContaining({ registry }),
         expect.objectContaining({ otp: undefined })
       );
@@ -285,7 +289,7 @@ Map {
 
       expect(npmPublish).toHaveBeenCalledWith(
         expect.objectContaining({ name: "package-1" }),
-        "/TEMP_DIR/package-1-MOCKED.tgz",
+        expect.any(Buffer),
         expect.objectContaining({ registry: "https://registry.npmjs.org/" }),
         expect.objectContaining({ otp: undefined })
       );

@@ -5,10 +5,7 @@ const registry = new Set();
 const mockPackDirectory = jest.fn((pkg) => {
   registry.add(pkg.name);
 
-  return Promise.resolve({
-    filename: `${pkg.name}-MOCKED.tgz`,
-    tarFilePath: `/TEMP_DIR/${pkg.name}-MOCKED.tgz`,
-  });
+  return Promise.resolve(Buffer.from("MOCK"));
 });
 
 // keep test data isolated
