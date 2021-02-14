@@ -109,7 +109,7 @@ new file mode 100644
 index SHA..SHA
 --- /dev/null
 +++ b/packages/my-cli/package.json
-@@ -0,0 +1,34 @@
+@@ -0,0 +1,35 @@
 +{
 +  "name": "my-cli",
 +  "version": "1.2.3",
@@ -131,7 +131,8 @@ index SHA..SHA
 +  ],
 +  "repository": {
 +    "type": "git",
-+    "url": "git+https://github.com/test/test.git"
++    "url": "git+https://github.com/test/test.git",
++    "directory": "packages/my-cli"
 +  },
 +  "scripts": {
 +    "test": "node ./__tests__/my-cli.test.js"
@@ -229,7 +230,8 @@ index SHA..SHA
 +  ],
 +  "repository": {
 +    "type": "git",
-+    "url": "git+https://github.com/test/test.git"
++    "url": "git+https://github.com/test/test.git",
++    "directory": "packages/my-es-cli"
 +  },
 +  "scripts": {
 +    "test": "node ./__tests__/my-es-cli.test.js"
@@ -333,7 +335,7 @@ new file mode 100644
 index SHA..SHA
 --- /dev/null
 +++ b/packages/my-pkg/package.json
-@@ -0,0 +1,27 @@
+@@ -0,0 +1,28 @@
 +{
 +  "name": "my-pkg",
 +  "version": "1.2.3",
@@ -351,7 +353,8 @@ index SHA..SHA
 +  ],
 +  "repository": {
 +    "type": "git",
-+    "url": "git+https://github.com/test/test.git"
++    "url": "git+https://github.com/test/test.git",
++    "directory": "packages/my-pkg"
 +  },
 +  "scripts": {
 +    "test": "node ./__tests__/my-pkg.test.js"
@@ -416,7 +419,8 @@ index SHA..SHA
 +  ],
 +  "repository": {
 +    "type": "git",
-+    "url": "git+https://github.com/test/test.git"
++    "url": "git+https://github.com/test/test.git",
++    "directory": "packages/my-pkg"
 +  },
 +  "scripts": {
 +    "test": "node ./__tests__/my-pkg.test.js"
