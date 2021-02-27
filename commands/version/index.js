@@ -166,6 +166,15 @@ class VersionCommand extends Command {
           );
         }
 
+        if (this.options.conventionalPrerelease && this.options.conventionalGraduate) {
+          throw new ValidationError(
+            "ENOTALLOWED",
+            dedent`
+              --conventional-prerelease cannot be combined with --conventional-graduate.
+            `
+          );
+        }
+
         // CI execution should not error, but warn & exit
         this.logger.warn("EBEHIND", `${message}, exiting`);
 
@@ -176,15 +185,6 @@ class VersionCommand extends Command {
       this.logger.notice(
         "FYI",
         "git repository validation has been skipped, please ensure your version bumps are correct"
-      );
-    }
-
-    if (this.options.conventionalPrerelease && this.options.conventionalGraduate) {
-      throw new ValidationError(
-        "ENOTALLOWED",
-        dedent`
-          --conventional-prerelease cannot be combined with --conventional-graduate.
-        `
       );
     }
 
