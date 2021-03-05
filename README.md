@@ -32,7 +32,7 @@
   - [`lerna create`](./commands/create#readme)
   - [`lerna info`](./commands/info#readme)
 - [Concepts](#concepts)
-- [Lerna.json](#lernajson)
+- [`lerna.json`](#lernajson)
 - [Global Flags](./core/global-options)
 - [Filter Flags](./core/filter-options)
 
