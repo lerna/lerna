@@ -1,13 +1,13 @@
 "use strict";
 
 const path = require("path");
-const Package = require("@lerna/package");
+const { Package } = require("@lerna/package");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 
 // file under test
-const symlinkBinary = require("..");
+const { symlinkBinary } = require("..");
 
 expect.extend(require("@lerna-test/pkg-matchers"));
 

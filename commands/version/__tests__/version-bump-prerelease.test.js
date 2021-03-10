@@ -14,16 +14,16 @@ const fs = require("fs-extra");
 const path = require("path");
 
 // mocked modules
-const prompt = require("@lerna/prompt");
+const { promptTextInput, promptSelectOne } = require("@lerna/prompt");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(path.resolve(__dirname, "../../publish/__tests__"));
-const showCommit = require("@lerna-test/show-commit");
-const gitInit = require("@lerna-test/git-init");
-const gitAdd = require("@lerna-test/git-add");
-const gitTag = require("@lerna-test/git-tag");
-const gitCommit = require("@lerna-test/git-commit");
-const getCommitMessage = require("@lerna-test/get-commit-message");
+const { showCommit } = require("@lerna-test/show-commit");
+const { gitInit } = require("@lerna-test/git-init");
+const { gitAdd } = require("@lerna-test/git-add");
+const { gitTag } = require("@lerna-test/git-tag");
+const { gitCommit } = require("@lerna-test/git-commit");
+const { getCommitMessage } = require("@lerna-test/get-commit-message");
 const Tacks = require("tacks");
 const tempy = require("tempy");
 
@@ -46,7 +46,7 @@ expect.addSnapshotSerializer({
 // stabilize commit SHA
 expect.addSnapshotSerializer(require("@lerna-test/serialize-changelog"));
 
-const setupChanges = async cwd => {
+const setupChanges = async (cwd) => {
   await gitTag(cwd, "v1.0.1-beta.3");
   await fs.outputFile(path.join(cwd, "packages/package-3/hello.js"), "world");
   await gitAdd(cwd, ".");
@@ -152,8 +152,9 @@ test("independent version prerelease does not bump on every unrelated change", a
   await gitCommit(cwd, "init");
 
   // simulate choices for pkg-a then pkg-b
-  prompt.mockChoices("patch", "PRERELEASE");
-  prompt.input.mockImplementationOnce((msg, cfg) =>
+  promptSelectOne.chooseBump("patch");
+  promptSelectOne.chooseBump("PRERELEASE");
+  promptTextInput.mockImplementationOnce((msg, cfg) =>
     // the _existing_ "bumps" prerelease ID should be preserved
     Promise.resolve(cfg.filter())
   );

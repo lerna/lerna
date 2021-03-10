@@ -1,6 +1,6 @@
 {
   "name": "@lerna/clean",
-  "version": "3.21.0",
+  "version": "4.0.0",
   "description": "Remove the node_modules directory from all packages",
   "keywords": [
     "lerna",
@@ -18,7 +18,7 @@
   ],
   "main": "index.js",
   "engines": {
-    "node": ">= 6.9.0"
+    "node": ">= 10.18.0"
   },
   "publishConfig": {
     "access": "public"
@@ -37,8 +37,8 @@
     "@lerna/prompt": "file:../../core/prompt",
     "@lerna/pulse-till-done": "file:../../utils/pulse-till-done",
     "@lerna/rimraf-dir": "file:../../utils/rimraf-dir",
-    "p-map": "^2.1.0",
-    "p-map-series": "^1.0.0",
-    "p-waterfall": "^1.0.0"
+    "p-map": "^4.0.0",
+    "p-map-series": "^2.1.0",
+    "p-waterfall": "^2.1.1"
   }
 }

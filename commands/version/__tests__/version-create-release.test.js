@@ -10,8 +10,8 @@ jest.mock("../lib/is-behind-upstream");
 jest.mock("../lib/remote-branch-exists");
 
 // mocked modules
-const githubClient = require("@lerna/github-client").client;
-const gitlabClient = require("@lerna/gitlab-client")();
+const { createGitHubClient } = require("@lerna/github-client");
+const { createGitLabClient } = require("@lerna/gitlab-client");
 const { recommendVersion } = require("@lerna/conventional-commits");
 
 // helpers
@@ -21,15 +21,15 @@ const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const lernaVersion = require("@lerna-test/command-runner")(require("../command"));
 
 describe.each([
-  ["github", githubClient],
-  ["gitlab", gitlabClient],
+  ["github", createGitHubClient],
+  ["gitlab", createGitLabClient],
 ])("--create-release %s", (type, client) => {
   it("does not create a release if --no-push is passed", async () => {
     const cwd = await initFixture("independent");
 
     await lernaVersion(cwd)("--create-release", type, "--conventional-commits", "--no-push");
 
-    expect(client.repos.createRelease).not.toHaveBeenCalled();
+    expect(client.releases.size).toBe(0);
   });
 
   it("throws an error if --conventional-commits is not passed", async () => {
@@ -38,7 +38,7 @@ describe.each([
 
     await expect(command).rejects.toThrow("To create a release, you must enable --conventional-commits");
 
-    expect(client.repos.createRelease).not.toHaveBeenCalled();
+    expect(client.releases.size).toBe(0);
   });
 
   it("throws an error if --no-changelog also passed", async () => {
@@ -47,7 +47,21 @@ describe.each([
 
     await expect(command).rejects.toThrow("To create a release, you cannot pass --no-changelog");
 
-    expect(client.repos.createRelease).not.toHaveBeenCalled();
+    expect(client.releases.size).toBe(0);
+  });
+
+  it("throws an error if environment variables are not present", async () => {
+    const cwd = await initFixture("normal");
+    const command = lernaVersion(cwd)("--create-release", type, "--conventional-commits");
+    const message = `Environment variables for ${type} are missing!`;
+
+    client.mockImplementationOnce(() => {
+      throw new Error(message);
+    });
+
+    await expect(command).rejects.toThrow(message);
+
+    expect(client.releases.size).toBe(0);
   });
 
   it("marks a version as a pre-release if it contains a valid part", async () => {
@@ -57,8 +71,8 @@ describe.each([
 
     await lernaVersion(cwd)("--create-release", type, "--conventional-commits");
 
-    expect(client.repos.createRelease).toHaveBeenCalledTimes(1);
-    expect(client.repos.createRelease).toHaveBeenCalledWith({
+    expect(client.releases.size).toBe(1);
+    expect(client.releases.get("v2.0.0-alpha.1")).toEqual({
       owner: "lerna",
       repo: "lerna",
       tag_name: "v2.0.0-alpha.1",
@@ -79,13 +93,13 @@ describe.each([
       ["package-5", "5.0.1"],
     ]);
 
-    versionBumps.forEach(bump => recommendVersion.mockResolvedValueOnce(bump));
+    versionBumps.forEach((bump) => recommendVersion.mockResolvedValueOnce(bump));
 
     await lernaVersion(cwd)("--create-release", type, "--conventional-commits");
 
-    expect(client.repos.createRelease).toHaveBeenCalledTimes(5);
+    expect(client.releases.size).toBe(5);
     versionBumps.forEach((version, name) => {
-      expect(client.repos.createRelease).toHaveBeenCalledWith({
+      expect(client.releases.get(`${name}@${version}`)).toEqual({
         owner: "lerna",
         repo: "lerna",
         tag_name: `${name}@${version}`,
@@ -104,8 +118,8 @@ describe.each([
 
     await lernaVersion(cwd)("--create-release", type, "--conventional-commits");
 
-    expect(client.repos.createRelease).toHaveBeenCalledTimes(1);
-    expect(client.repos.createRelease).toHaveBeenCalledWith({
+    expect(client.releases.size).toBe(1);
+    expect(client.releases.get("v1.1.0")).toEqual({
       owner: "lerna",
       repo: "lerna",
       tag_name: "v1.1.0",
@@ -123,7 +137,7 @@ describe("legacy option --github-release", () => {
 
     await lernaVersion(cwd)("--github-release", "--conventional-commits");
 
-    expect(githubClient.repos.createRelease).toHaveBeenCalled();
+    expect(createGitHubClient.releases.size).toBe(1);
   });
 });
 
@@ -134,7 +148,7 @@ describe("--create-release [unrecognized]", () => {
 
     await expect(command).rejects.toThrow("create-release");
 
-    expect(githubClient.repos.createRelease).not.toHaveBeenCalled();
-    expect(gitlabClient.repos.createRelease).not.toHaveBeenCalled();
+    expect(createGitHubClient.releases.size).toBe(0);
+    expect(createGitLabClient.releases.size).toBe(0);
   });
 });

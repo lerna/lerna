@@ -1,6 +1,6 @@
 {
   "name": "@lerna/init",
-  "version": "3.21.0",
+  "version": "4.0.0",
   "description": "Create a new Lerna repo or upgrade an existing repo to the current version of Lerna",
   "keywords": [
     "lerna",
@@ -18,7 +18,7 @@
   ],
   "main": "index.js",
   "engines": {
-    "node": ">= 6.9.0"
+    "node": ">= 10.18.0"
   },
   "publishConfig": {
     "access": "public"
@@ -34,8 +34,8 @@
   "dependencies": {
     "@lerna/child-process": "file:../../core/child-process",
     "@lerna/command": "file:../../core/command",
-    "fs-extra": "^8.1.0",
-    "p-map": "^2.1.0",
-    "write-json-file": "^3.2.0"
+    "fs-extra": "^9.1.0",
+    "p-map": "^4.0.0",
+    "write-json-file": "^4.3.0"
   }
 }

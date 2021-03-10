@@ -3,6 +3,38 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/lerna/lerna/compare/v3.22.1...v4.0.0) (2021-02-10)
+
+
+### Features
+
+* **conventional-commits:** Add JSDoc types to named exports ([81a591c](https://github.com/lerna/lerna/commit/81a591ccf1b0ca32f7f4638bab4f84b5743a3ca6))
+* **deps:** Bump dependencies ([affed1c](https://github.com/lerna/lerna/commit/affed1ce0fce91f01b0a9eafe357db2d985b974f))
+* Consume named exports of sibling modules ([63499e3](https://github.com/lerna/lerna/commit/63499e33652bc78fe23751875d74017e2f16a689))
+* **deps:** conventional-changelog-core@^4.2.1 ([54e2b98](https://github.com/lerna/lerna/commit/54e2b98a815cc003981a807f0a167c7dd305523a))
+* **deps:** conventional-recommended-bump@^6.0.11 ([4ff481c](https://github.com/lerna/lerna/commit/4ff481c9d7ee3495471d5d1eeb1b72738d7c5410))
+* **deps:** fs-extra@^9.0.1 ([2f6f4e0](https://github.com/lerna/lerna/commit/2f6f4e066d5a41b4cd508b3405ac1d0a342932dc))
+* **deps:** get-stream@^6.0.0 ([ddf2ab5](https://github.com/lerna/lerna/commit/ddf2ab5512704f17d31773f82fb180e659c461a6))
+* **deps:** npm-package-arg@^8.1.0 ([12c8923](https://github.com/lerna/lerna/commit/12c892342d33b86a00ee2cf9079f9b26fe316dc6))
+* **deps:** pify@^5.0.0 ([6b34452](https://github.com/lerna/lerna/commit/6b3445219f0f022411a7cb282b0ba39a072e2ef2))
+* **deps:** semver@^7.3.2 ([003ad66](https://github.com/lerna/lerna/commit/003ad6641fab8b4e3a82251ebffd27061bd6a31b))
+* Drop support for Node v6.x & v8.x ([ff4bb4d](https://github.com/lerna/lerna/commit/ff4bb4da215555e3bb136f5af09b5cbc631e57bb))
+
+
+### BREAKING CHANGES
+
+* Node v6.x & v8.x are no longer supported. Please upgrade to the latest LTS release.
+
+Here's the gnarly one-liner I used to make these changes:
+```
+npx lerna exec --concurrency 1 --stream -- 'json -I -f package.json -e '"'"'this.engines=this.engines||{};this.engines.node=">= 10.18.0"'"'"
+```
+(requires `npm i -g json` beforehand)
+
+
+
+
+
 # [3.22.0](https://github.com/lerna/lerna/compare/v3.21.0...v3.22.0) (2020-05-24)
 
 

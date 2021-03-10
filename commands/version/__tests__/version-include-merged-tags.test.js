@@ -7,15 +7,15 @@ const path = require("path");
 const fs = require("fs");
 
 // mocked modules
-const output = require("@lerna/output");
+const { output } = require("@lerna/output");
 
 // helpers
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
-const gitAdd = require("@lerna-test/git-add");
-const gitCommit = require("@lerna-test/git-commit");
-const gitTag = require("@lerna-test/git-tag");
-const gitCheckout = require("@lerna-test/git-checkout");
-const gitMerge = require("@lerna-test/git-merge");
+const { gitAdd } = require("@lerna-test/git-add");
+const { gitCommit } = require("@lerna-test/git-commit");
+const { gitTag } = require("@lerna-test/git-tag");
+const { gitCheckout } = require("@lerna-test/git-checkout");
+const { gitMerge } = require("@lerna-test/git-merge");
 
 // file under test
 const lernaVersion = require("@lerna-test/command-runner")(require("../command"));
@@ -38,20 +38,20 @@ expect.addSnapshotSerializer(require("@lerna-test/serialize-tempdir"));
 describe("version --include-merged-tags", () => {
   const setupGitChangesWithBranch = async (cwd, mainPaths, branchPaths) => {
     await gitTag(cwd, "v1.0.0");
-    await Promise.all(mainPaths.map(fp => fs.appendFileSync(path.join(cwd, fp), "1")));
+    await Promise.all(mainPaths.map((fp) => fs.appendFileSync(path.join(cwd, fp), "1")));
     await gitAdd(cwd, "-A");
     await gitCommit(cwd, "Commit");
     // Create release branch
     await gitCheckout(cwd, ["-b", "release/v1.0.1"]);
     // Switch into release branch
-    await Promise.all(branchPaths.map(fp => fs.appendFileSync(path.join(cwd, fp), "1")));
+    await Promise.all(branchPaths.map((fp) => fs.appendFileSync(path.join(cwd, fp), "1")));
     await gitAdd(cwd, "-A");
     await gitCommit(cwd, "Bump");
     await gitTag(cwd, "v1.0.1");
     await gitCheckout(cwd, ["main"]);
     await gitMerge(cwd, ["--no-ff", "release/v1.0.1"]);
     // Commit after merge
-    await Promise.all(mainPaths.map(fp => fs.appendFileSync(path.join(cwd, fp), "1")));
+    await Promise.all(mainPaths.map((fp) => fs.appendFileSync(path.join(cwd, fp), "1")));
     await gitAdd(cwd, "-A");
     await gitCommit(cwd, "Commit2");
   };

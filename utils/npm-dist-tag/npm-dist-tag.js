@@ -2,36 +2,31 @@
 
 const log = require("npmlog");
 const npa = require("npm-package-arg");
-const fetch = require("@evocateur/npm-registry-fetch");
-const figgyPudding = require("figgy-pudding");
-const otplease = require("@lerna/otplease");
+const fetch = require("npm-registry-fetch");
+const { otplease } = require("@lerna/otplease");
 
 exports.add = add;
 exports.remove = remove;
 exports.list = list;
 
-const DistTagConfig = figgyPudding(
-  {
-    "dry-run": { default: false },
-    dryRun: "dry-run",
-    log: { default: log },
-    spec: {},
-    tag: {},
-  },
-  {
-    other() {
-      // open it up for the sake of tests
-      return true;
-    },
-  }
-);
+/**
+ * @typedef {fetch.FetchOptions & { defaultTag?: string; dryRun?: boolean; }} DistTagOptions
+ */
 
-function add(spec, tag, _opts, otpCache) {
-  const opts = DistTagConfig(_opts, {
+/**
+ * Add a dist-tag to a package.
+ * @param {string} spec
+ * @param {string} [tag]
+ * @param {DistTagOptions} options
+ * @param {import("@lerna/otplease").OneTimePasswordCache} otpCache
+ */
+function add(spec, tag, options, otpCache) {
+  const opts = {
+    log,
+    ...options,
     spec: npa(spec),
-    tag,
-  });
-  const cleanTag = opts.tag.trim();
+  };
+  const cleanTag = (tag || opts.defaultTag || opts.tag).trim();
 
   const { name, rawSpec: version } = opts.spec;
 
@@ -43,14 +38,15 @@ function add(spec, tag, _opts, otpCache) {
     return Promise.resolve();
   }
 
-  return fetchTags(opts).then(tags => {
+  return fetchTags(opts).then((tags) => {
     if (tags[cleanTag] === version) {
       opts.log.warn("dist-tag", `${name}@${cleanTag} already set to ${version}`);
       return tags;
     }
 
     const uri = `/-/package/${opts.spec.escapedName}/dist-tags/${encodeURIComponent(cleanTag)}`;
-    const payload = opts.concat({
+    const payload = {
+      ...opts,
       method: "PUT",
       body: JSON.stringify(version),
       headers: {
@@ -59,10 +55,10 @@ function add(spec, tag, _opts, otpCache) {
         "content-type": "application/json",
       },
       spec: opts.spec,
-    });
+    };
 
     // success returns HTTP 204, thus no JSON to parse
-    return otplease(wrappedPayload => fetch(uri, wrappedPayload), payload, otpCache).then(() => {
+    return otplease((wrappedPayload) => fetch(uri, wrappedPayload), payload, otpCache).then(() => {
       opts.log.verbose("dist-tag", `added "${cleanTag}" to ${name}@${version}`);
 
       // eslint-disable-next-line no-param-reassign
@@ -73,10 +69,19 @@ function add(spec, tag, _opts, otpCache) {
   });
 }
 
-function remove(spec, tag, _opts, otpCache) {
-  const opts = DistTagConfig(_opts, {
+/**
+ * Remove a dist-tag from a package.
+ * @param {string} spec
+ * @param {string} tag
+ * @param {DistTagOptions} options
+ * @param {import("@lerna/otplease").OneTimePasswordCache} otpCache
+ */
+function remove(spec, tag, options, otpCache) {
+  const opts = {
+    log,
+    ...options,
     spec: npa(spec),
-  });
+  };
 
   opts.log.verbose("dist-tag", `removing "${tag}" from ${opts.spec.name}`);
 
@@ -86,7 +91,7 @@ function remove(spec, tag, _opts, otpCache) {
     return Promise.resolve();
   }
 
-  return fetchTags(opts).then(tags => {
+  return fetchTags(opts).then((tags) => {
     const version = tags[tag];
 
     if (!version) {
@@ -95,13 +100,14 @@ function remove(spec, tag, _opts, otpCache) {
     }
 
     const uri = `/-/package/${opts.spec.escapedName}/dist-tags/${encodeURIComponent(tag)}`;
-    const payload = opts.concat({
+    const payload = {
+      ...opts,
       method: "DELETE",
       spec: opts.spec,
-    });
+    };
 
     // the delete properly returns a 204, so no json to parse
-    return otplease(wrappedPayload => fetch(uri, wrappedPayload), payload, otpCache).then(() => {
+    return otplease((wrappedPayload) => fetch(uri, wrappedPayload), payload, otpCache).then(() => {
       opts.log.verbose("dist-tag", `removed "${tag}" from ${opts.spec.name}@${version}`);
 
       // eslint-disable-next-line no-param-reassign
@@ -112,10 +118,17 @@ function remove(spec, tag, _opts, otpCache) {
   });
 }
 
-function list(spec, _opts) {
-  const opts = DistTagConfig(_opts, {
+/**
+ * List dist-tags of a package.
+ * @param {string} spec
+ * @param {DistTagOptions} options
+ */
+function list(spec, options) {
+  const opts = {
+    log,
+    ...options,
     spec: npa(spec),
-  });
+  };
 
   // istanbul ignore next
   if (opts.dryRun) {
@@ -126,16 +139,18 @@ function list(spec, _opts) {
   return fetchTags(opts);
 }
 
+/**
+ * Retrieve list of dist-tags for a package.
+ * @param {Omit<fetch.FetchOptions, 'spec'> & { spec: npa.Result }} opts
+ */
 function fetchTags(opts) {
   return fetch
-    .json(
-      `/-/package/${opts.spec.escapedName}/dist-tags`,
-      opts.concat({
-        "prefer-online": true,
-        spec: opts.spec,
-      })
-    )
-    .then(data => {
+    .json(`/-/package/${opts.spec.escapedName}/dist-tags`, {
+      ...opts,
+      preferOnline: true,
+      spec: opts.spec,
+    })
+    .then((data) => {
       if (data && typeof data === "object") {
         // eslint-disable-next-line no-param-reassign, no-underscore-dangle
         delete data._etag;

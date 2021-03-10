@@ -1,6 +1,6 @@
 {
   "name": "@lerna/otplease",
-  "version": "3.18.5",
+  "version": "4.0.0",
   "description": "Prompt for OTP when wrapped Promise fails",
   "keywords": [
     "lerna",
@@ -17,7 +17,7 @@
   ],
   "main": "otplease.js",
   "engines": {
-    "node": ">= 6.9.0"
+    "node": ">= 10.18.0"
   },
   "publishConfig": {
     "access": "public"
@@ -31,7 +31,6 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@lerna/prompt": "file:../prompt",
-    "figgy-pudding": "^3.5.1"
+    "@lerna/prompt": "file:../prompt"
   }
 }

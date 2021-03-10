@@ -10,7 +10,7 @@ const npmConf = require("@lerna/npm-conf");
 const { getPackages } = require("@lerna/project");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 
-const packDirectory = require("..");
+const { packDirectory } = require("..");
 
 // temp-write creates temp directories that are 36 characters long (uuid.v4())
 const TAR_DIR_REGEXP = /([^\s"]*[\\/][-0-9a-f]{36})([^\s"]*)/g;
@@ -85,7 +85,7 @@ describe("pack-directory", () => {
 
     // choose first and last package since the middle two are repetitive
     const [head, tail] = await Promise.all(
-      [pkgs.shift(), pkgs.pop()].map(pkg => packDirectory(pkg, pkg.location, conf))
+      [pkgs.shift(), pkgs.pop()].map((pkg) => packDirectory(pkg, pkg.location, conf))
     );
 
     const INTEGRITY_PATTERN = /sha512-[\S]{88}/;
@@ -158,8 +158,8 @@ describe("pack-directory", () => {
       next,
       next.location,
       Object.assign({}, conf, {
-        "ignore-prepublish": true,
-        "lerna-command": "publish",
+        ignorePrepublish: true,
+        lernaCommand: "publish",
       })
     );
 

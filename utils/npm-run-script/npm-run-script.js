@@ -2,32 +2,32 @@
 
 const log = require("npmlog");
 
-const ChildProcessUtilities = require("@lerna/child-process");
-const getOpts = require("@lerna/get-npm-exec-opts");
+const childProcess = require("@lerna/child-process");
+const { getNpmExecOpts } = require("@lerna/get-npm-exec-opts");
 
-module.exports = runScript;
-module.exports.stream = stream;
+module.exports.npmRunScript = npmRunScript;
+module.exports.npmRunScriptStreaming = npmRunScriptStreaming;
 
-function runScript(script, { args, npmClient, pkg, reject = true }) {
+function npmRunScript(script, { args, npmClient, pkg, reject = true }) {
   log.silly("npmRunScript", script, args, pkg.name);
 
   const argv = ["run", script, ...args];
   const opts = makeOpts(pkg, reject);
 
-  return ChildProcessUtilities.exec(npmClient, argv, opts);
+  return childProcess.exec(npmClient, argv, opts);
 }
 
-function stream(script, { args, npmClient, pkg, prefix, reject = true }) {
-  log.silly("npmRunScript.stream", [script, args, pkg.name]);
+function npmRunScriptStreaming(script, { args, npmClient, pkg, prefix, reject = true }) {
+  log.silly("npmRunScriptStreaming", [script, args, pkg.name]);
 
   const argv = ["run", script, ...args];
   const opts = makeOpts(pkg, reject);
 
-  return ChildProcessUtilities.spawnStreaming(npmClient, argv, opts, prefix && pkg.name);
+  return childProcess.spawnStreaming(npmClient, argv, opts, prefix && pkg.name);
 }
 
 function makeOpts(pkg, reject) {
-  return Object.assign(getOpts(pkg), {
+  return Object.assign(getNpmExecOpts(pkg), {
     reject,
   });
 }

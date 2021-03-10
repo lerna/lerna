@@ -1,6 +1,6 @@
 "use strict";
 
-const filterable = require("@lerna/filter-options");
+const { filterOptions } = require("@lerna/filter-options");
 
 /**
  * @see https://github.com/yargs/yargs/blob/master/docs/advanced.md#providing-a-command-module
@@ -9,7 +9,7 @@ exports.command = "run <script>";
 
 exports.describe = "Run an npm script in each package that contains that script";
 
-exports.builder = yargs => {
+exports.builder = (yargs) => {
   yargs
     .example("$0 run build -- --silent", "# `npm run build --silent` in all packages with a build script")
     .parserConfiguration({
@@ -71,7 +71,7 @@ exports.builder = yargs => {
       },
     });
 
-  return filterable(yargs);
+  return filterOptions(yargs);
 };
 
 exports.handler = function handler(argv) {

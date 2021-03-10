@@ -3,9 +3,9 @@
 const log = require("npmlog");
 const npa = require("npm-package-arg");
 const pify = require("pify");
-const ValidationError = require("@lerna/validation-error");
+const { ValidationError } = require("@lerna/validation-error");
 
-module.exports = getChangelogConfig;
+module.exports.getChangelogConfig = getChangelogConfig;
 
 const cfgCache = new Map();
 
@@ -34,6 +34,10 @@ function resolveConfigPromise(presetPackageName, presetConfig) {
   return config;
 }
 
+/**
+ * @param {import("..").ChangelogPresetConfig} [changelogPreset]
+ * @param {string} [rootPath]
+ */
 function getChangelogConfig(changelogPreset = "conventional-changelog-angular", rootPath) {
   const presetName = typeof changelogPreset === "string" ? changelogPreset : changelogPreset.name;
   const presetConfig = typeof changelogPreset === "object" ? changelogPreset : {};

@@ -1,6 +1,6 @@
 {
   "name": "@lerna/check-working-tree",
-  "version": "3.16.5",
+  "version": "4.0.0",
   "description": "Check git working tree status and error appropriately",
   "keywords": [
     "lerna",
@@ -16,7 +16,7 @@
     "lib"
   ],
   "engines": {
-    "node": ">= 6.9.0"
+    "node": ">= 10.18.0"
   },
   "publishConfig": {
     "access": "public"

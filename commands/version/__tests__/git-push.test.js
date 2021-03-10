@@ -3,10 +3,10 @@
 const execa = require("execa");
 const childProcess = require("@lerna/child-process");
 const cloneFixture = require("@lerna-test/clone-fixture")(__dirname);
-const gitPush = require("../lib/git-push");
+const { gitPush } = require("../lib/git-push");
 
 async function listRemoteTags(cwd) {
-  return execa.stdout("git", ["ls-remote", "--tags", "--refs", "--quiet"], { cwd });
+  return execa("git", ["ls-remote", "--tags", "--refs", "--quiet"], { cwd }).then((result) => result.stdout);
 }
 
 beforeEach(() => {
@@ -72,7 +72,7 @@ test("remote that does not support --atomic", async () => {
   expect(list).toMatch("v4.5.6");
 });
 
-test("remote that does not support --atomic and git stderr redirected to stdout ", async () => {
+test("remote that does not support --atomic and git stderr redirected to stdout", async () => {
   const { cwd } = await cloneFixture("root-manifest-only");
 
   process.env.GIT_REDIRECT_STDERR = "2>&1";

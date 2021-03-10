@@ -1,17 +1,42 @@
 "use strict";
 
 const log = require("npmlog");
-const describeRef = require("@lerna/describe-ref");
+const { describeRefSync } = require("@lerna/describe-ref");
 
-const hasTags = require("./lib/has-tags");
-const collectPackages = require("./lib/collect-packages");
-const getPackagesForOption = require("./lib/get-packages-for-option");
-const makeDiffPredicate = require("./lib/make-diff-predicate");
+const { hasTags } = require("./lib/has-tags");
+const { collectPackages } = require("./lib/collect-packages");
+const { getPackagesForOption } = require("./lib/get-packages-for-option");
+const { makeDiffPredicate } = require("./lib/make-diff-predicate");
 
-module.exports = collectUpdates;
+module.exports.collectUpdates = collectUpdates;
 module.exports.collectPackages = collectPackages;
 module.exports.getPackagesForOption = getPackagesForOption;
 
+/**
+ * @typedef {object} UpdateCollectorOptions
+ * @property {string} [bump] The semver bump keyword (patch/minor/major) or explicit version used
+ * @property {boolean} [canary] Whether or not to use a "nightly" range (`ref^..ref`) for commits
+ * @property {string[]} [ignoreChanges]
+ *  A list of globs that match files/directories whose changes
+ *  should not be considered when identifying changed packages
+ * @property {boolean} [includeMergedTags]
+ *  Whether or not to include the --first-parent flag when calling `git describe`
+ *  (awkwardly, pass `true` to _omit_ the flag, the default is to include it)
+ * @property {boolean | string[]} [forcePublish] Which packages, if any, to always include
+ *  Force all packages to be versioned with `true`, or pass a list of globs that match package names
+ * @property {string} [since] Ref to use when querying git, defaults to most recent annotated tag
+ * @property {boolean} [conventionalCommits]
+ * @property {boolean} [conventionalGraduate]
+ * @property {boolean} [excludeDependents]
+ */
+
+/**
+ * Create a list of graph nodes representing packages changed since the previous release, tagged or otherwise.
+ * @param {import("@lerna/package").Package[]} filteredPackages
+ * @param {import("@lerna/package-graph").PackageGraph} packageGraph
+ * @param {import("@lerna/child-process").ExecOpts} execOpts
+ * @param {UpdateCollectorOptions} commandOptions
+ */
 function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions) {
   const { forcePublish, conventionalCommits, conventionalGraduate, excludeDependents } = commandOptions;
 
@@ -28,7 +53,7 @@ function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions
 
   if (hasTags(execOpts)) {
     // describe the last annotated tag in the current branch
-    const { sha, refCount, lastTagName } = describeRef.sync(execOpts, commandOptions.includeMergedTags);
+    const { sha, refCount, lastTagName } = describeRefSync(execOpts, commandOptions.includeMergedTags);
     // TODO: warn about dirty tree?
 
     if (refCount === "0" && forced.size === 0 && !committish) {
@@ -68,7 +93,7 @@ function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions
     log.info("", "Assuming all packages changed");
 
     return collectPackages(packages, {
-      onInclude: name => log.verbose("updated", name),
+      onInclude: (name) => log.verbose("updated", name),
       excludeDependents,
     });
   }
@@ -80,13 +105,13 @@ function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions
     !commandOptions.bump || commandOptions.bump.startsWith("pre")
       ? () => false
       : /* skip packages that have not been previously prereleased */
-        node => node.prereleaseId;
+        (node) => node.prereleaseId;
   const isForced = (node, name) =>
     (forced.has("*") || forced.has(name)) && (useConventionalGraduate ? node.prereleaseId : true);
 
   return collectPackages(packages, {
     isCandidate: (node, name) => isForced(node, name) || needsBump(node) || hasDiff(node),
-    onInclude: name => log.verbose("updated", name),
+    onInclude: (name) => log.verbose("updated", name),
     excludeDependents,
   });
 }

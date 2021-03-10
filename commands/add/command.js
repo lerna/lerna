@@ -1,6 +1,6 @@
 "use strict";
 
-const filterable = require("@lerna/filter-options");
+const { filterOptions } = require("@lerna/filter-options");
 
 /**
  * @see https://github.com/yargs/yargs/blob/master/docs/advanced.md#providing-a-command-module
@@ -9,7 +9,7 @@ exports.command = "add <pkg> [globs..]";
 
 exports.describe = "Add a single dependency to matched packages";
 
-exports.builder = yargs => {
+exports.builder = (yargs) => {
   yargs
     .positional("pkg", {
       describe: "Package name to add as a dependency",
@@ -66,7 +66,7 @@ exports.builder = yargs => {
     .example("$0 add module-1 --no-bootstrap", "Skip automatic `lerna bootstrap`")
     .example("$0 add babel-core", "Install babel-core in all modules");
 
-  return filterable(yargs);
+  return filterOptions(yargs);
 };
 
 exports.handler = function handler(argv) {

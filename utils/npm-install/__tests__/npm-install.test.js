@@ -9,16 +9,16 @@ const path = require("path");
 // mocked modules
 const fs = require("fs-extra");
 const writePkg = require("write-pkg");
-const ChildProcessUtilities = require("@lerna/child-process");
+const childProcess = require("@lerna/child-process");
 
 // helpers
-const Package = require("@lerna/package");
+const { Package } = require("@lerna/package");
 
 // file under test
-const npmInstall = require("..");
+const { npmInstall, npmInstallDependencies } = require("..");
 
 describe("npm-install", () => {
-  ChildProcessUtilities.exec.mockResolvedValue();
+  childProcess.exec.mockResolvedValue();
   fs.rename.mockResolvedValue();
   writePkg.mockResolvedValue();
 
@@ -38,7 +38,7 @@ describe("npm-install", () => {
         mutex: "file:foo",
       });
 
-      expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith(
+      expect(childProcess.exec).toHaveBeenLastCalledWith(
         "yarn",
         ["install", "--mutex", "file:foo", "--non-interactive", "--no-optional"],
         {
@@ -65,7 +65,7 @@ describe("npm-install", () => {
         stdio: "inherit",
       });
 
-      expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith(
+      expect(childProcess.exec).toHaveBeenLastCalledWith(
         "npm",
         ["install"],
         expect.objectContaining({
@@ -75,7 +75,7 @@ describe("npm-install", () => {
     });
 
     it("does not swallow errors", async () => {
-      ChildProcessUtilities.exec.mockRejectedValueOnce(new Error("whoopsy-doodle"));
+      childProcess.exec.mockRejectedValueOnce(new Error("whoopsy-doodle"));
 
       const pkg = new Package(
         {
@@ -90,7 +90,7 @@ describe("npm-install", () => {
         })
       ).rejects.toThrow("whoopsy-doodle");
 
-      expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith("yarn", ["install", "--non-interactive"], {
+      expect(childProcess.exec).toHaveBeenLastCalledWith("yarn", ["install", "--non-interactive"], {
         cwd: pkg.location,
         env: expect.any(Object),
         pkg,
@@ -99,7 +99,7 @@ describe("npm-install", () => {
     });
   });
 
-  describe("npmInstall.dependencies()", () => {
+  describe("npmInstallDependencies()", () => {
     it("installs dependencies in targeted directory", async () => {
       const pkg = new Package(
         {
@@ -139,7 +139,7 @@ describe("npm-install", () => {
         "others@1.0.0",
       ];
 
-      await npmInstall.dependencies(pkg, dependencies, {});
+      await npmInstallDependencies(pkg, dependencies, {});
 
       expect(fs.rename).toHaveBeenLastCalledWith(pkg.manifestLocation, backupManifest);
       expect(fs.renameSync).toHaveBeenLastCalledWith(backupManifest, pkg.manifestLocation);
@@ -165,7 +165,7 @@ describe("npm-install", () => {
           /* removed  */
         ],
       });
-      expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith("npm", ["install"], {
+      expect(childProcess.exec).toHaveBeenLastCalledWith("npm", ["install"], {
         cwd: pkg.location,
         env: expect.any(Object),
         pkg,
@@ -194,7 +194,7 @@ describe("npm-install", () => {
         registry: "https://custom-registry/npm-install-deps",
       };
 
-      await npmInstall.dependencies(pkg, dependencies, config);
+      await npmInstallDependencies(pkg, dependencies, config);
 
       expect(writePkg).toHaveBeenLastCalledWith(pkg.manifestLocation, {
         name: "npm-install-deps",
@@ -206,7 +206,7 @@ describe("npm-install", () => {
           tagged: "next",
         },
       });
-      expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith("npm", ["install"], {
+      expect(childProcess.exec).toHaveBeenLastCalledWith("npm", ["install"], {
         cwd: pkg.location,
         env: expect.objectContaining({
           npm_config_registry: config.registry,
@@ -233,7 +233,7 @@ describe("npm-install", () => {
       );
       const dependencies = ["@scoped/foo@latest", "foo@latest", "caret@^1.0.0"];
 
-      await npmInstall.dependencies(pkg, dependencies, {
+      await npmInstallDependencies(pkg, dependencies, {
         npmGlobalStyle: true,
       });
 
@@ -248,7 +248,7 @@ describe("npm-install", () => {
           caret: "^1.0.0",
         },
       });
-      expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith("npm", ["install", "--global-style"], {
+      expect(childProcess.exec).toHaveBeenLastCalledWith("npm", ["install", "--global-style"], {
         cwd: pkg.location,
         env: expect.any(Object),
         pkg,
@@ -270,7 +270,7 @@ describe("npm-install", () => {
       );
       const dependencies = ["@scoped/something@^2.0.0", "something@^1.0.0"];
 
-      await npmInstall.dependencies(pkg, dependencies, {
+      await npmInstallDependencies(pkg, dependencies, {
         npmClient: "yarn",
         mutex: "network:12345",
       });
@@ -283,7 +283,7 @@ describe("npm-install", () => {
           something: "^1.0.0",
         },
       });
-      expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith(
+      expect(childProcess.exec).toHaveBeenLastCalledWith(
         "yarn",
         ["install", "--mutex", "network:12345", "--non-interactive"],
         { cwd: pkg.location, env: expect.any(Object), pkg, stdio: "pipe" }
@@ -308,7 +308,7 @@ describe("npm-install", () => {
       );
       const dependencies = ["@scoped/something@github:foo/bar", "something@github:foo/foo"];
 
-      await npmInstall.dependencies(pkg, dependencies, {
+      await npmInstallDependencies(pkg, dependencies, {
         npmClientArgs: ["--production", "--no-optional"],
       });
 
@@ -322,7 +322,7 @@ describe("npm-install", () => {
           something: "github:foo/foo",
         },
       });
-      expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith(
+      expect(childProcess.exec).toHaveBeenLastCalledWith(
         "npm",
         ["install", "--production", "--no-optional"],
         {
@@ -352,7 +352,7 @@ describe("npm-install", () => {
       );
       const dependencies = ["@scoped/something@github:foo/bar", "something@github:foo/foo"];
 
-      await npmInstall.dependencies(pkg, dependencies, {
+      await npmInstallDependencies(pkg, dependencies, {
         npmClient: "yarn",
         npmGlobalStyle: true,
         mutex: "network:12345",
@@ -368,7 +368,7 @@ describe("npm-install", () => {
           something: "github:foo/foo",
         },
       });
-      expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith("npm", ["install", "--global-style"], {
+      expect(childProcess.exec).toHaveBeenLastCalledWith("npm", ["install", "--global-style"], {
         cwd: pkg.location,
         env: expect.any(Object),
         pkg,
@@ -394,7 +394,7 @@ describe("npm-install", () => {
       );
       const dependencies = ["@scoped/something@github:foo/bar", "something@github:foo/foo"];
 
-      await npmInstall.dependencies(pkg, dependencies, {
+      await npmInstallDependencies(pkg, dependencies, {
         subCommand: "ci",
       });
 
@@ -408,7 +408,7 @@ describe("npm-install", () => {
           something: "github:foo/foo",
         },
       });
-      expect(ChildProcessUtilities.exec).toHaveBeenLastCalledWith("npm", ["ci"], {
+      expect(childProcess.exec).toHaveBeenLastCalledWith("npm", ["ci"], {
         cwd: pkg.location,
         env: expect.any(Object),
         pkg,
@@ -426,9 +426,9 @@ describe("npm-install", () => {
       );
       const dependencies = [];
 
-      await npmInstall.dependencies(pkg, dependencies, {});
+      await npmInstallDependencies(pkg, dependencies, {});
 
-      expect(ChildProcessUtilities.exec).not.toHaveBeenCalled();
+      expect(childProcess.exec).not.toHaveBeenCalled();
     });
 
     it("defaults temporary dependency versions to '*'", async () => {
@@ -450,7 +450,7 @@ describe("npm-install", () => {
         "@scoped/noversion", // sorted by write-pkg
       ];
 
-      await npmInstall.dependencies(pkg, dependencies, {});
+      await npmInstallDependencies(pkg, dependencies, {});
 
       expect(writePkg).toHaveBeenLastCalledWith(pkg.manifestLocation, {
         name: "npm-install-deps",
@@ -475,7 +475,7 @@ describe("npm-install", () => {
 
       fs.rename.mockRejectedValueOnce(new Error("Unable to rename file"));
 
-      await expect(npmInstall.dependencies(pkg, dependencies, {})).rejects.toThrow("Unable to rename file");
+      await expect(npmInstallDependencies(pkg, dependencies, {})).rejects.toThrow("Unable to rename file");
     });
 
     it("cleans up synchronously after writeFile error", async () => {
@@ -491,7 +491,7 @@ describe("npm-install", () => {
 
       writePkg.mockRejectedValueOnce(new Error("Unable to write file"));
 
-      await expect(npmInstall.dependencies(pkg, dependencies, {})).rejects.toThrow("Unable to write file");
+      await expect(npmInstallDependencies(pkg, dependencies, {})).rejects.toThrow("Unable to write file");
       expect(fs.renameSync).toHaveBeenLastCalledWith(backupManifest, pkg.manifestLocation);
     });
 
@@ -506,9 +506,9 @@ describe("npm-install", () => {
       const backupManifest = `${pkg.manifestLocation}.lerna_backup`;
       const dependencies = ["just-here-so-we-dont-exit-early"];
 
-      ChildProcessUtilities.exec.mockRejectedValueOnce(new Error("Unable to install"));
+      childProcess.exec.mockRejectedValueOnce(new Error("Unable to install"));
 
-      await expect(npmInstall.dependencies(pkg, dependencies, {})).rejects.toThrow("Unable to install");
+      await expect(npmInstallDependencies(pkg, dependencies, {})).rejects.toThrow("Unable to install");
       expect(fs.renameSync).toHaveBeenLastCalledWith(backupManifest, pkg.manifestLocation);
     });
   });

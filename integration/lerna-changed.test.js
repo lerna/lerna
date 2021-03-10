@@ -1,8 +1,8 @@
 "use strict";
 
-const cliRunner = require("@lerna-test/cli-runner");
-const commitChangeToPackage = require("@lerna-test/commit-change-to-package");
-const gitTag = require("@lerna-test/git-tag");
+const { cliRunner } = require("@lerna-test/cli-runner");
+const { commitChangeToPackage } = require("@lerna-test/commit-change-to-package");
+const { gitTag } = require("@lerna-test/git-tag");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 
 test("includes dependents", async () => {

@@ -3,6 +3,47 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/lerna/lerna/compare/v3.22.1...v4.0.0) (2021-02-10)
+
+
+### Bug Fixes
+
+* Improve accuracy of JSDoc type annotations ([1ec69f0](https://github.com/lerna/lerna/commit/1ec69f0e0f7a3f1e0c74dbacb17fab2d7b7a8a44))
+
+
+### Features
+
+* **deps:** Bump dependencies ([affed1c](https://github.com/lerna/lerna/commit/affed1ce0fce91f01b0a9eafe357db2d985b974f))
+* Consume named exports of sibling modules ([63499e3](https://github.com/lerna/lerna/commit/63499e33652bc78fe23751875d74017e2f16a689))
+* **deps:** @evocateur/libnpmaccess -> libnpmaccess@^4.0.1 ([7974b35](https://github.com/lerna/lerna/commit/7974b351e53575503dd881c639b53d820e4f525e))
+* **deps:** @evocateur/npm-registry-fetch -> npm-registry-fetch@^9.0.0 ([6df42f2](https://github.com/lerna/lerna/commit/6df42f2caf0887c38870c07a9f850dae0e9c4253))
+* **deps:** @evocateur/pacote -> pacote@^11.1.13 ([99b4217](https://github.com/lerna/lerna/commit/99b4217ed143527a45969f3a46f1bd9b84999d68))
+* **deps:** execa@^4.1.0 ([9051dca](https://github.com/lerna/lerna/commit/9051dcab1a68b56db09b82ab0345c5f36bcfee2d))
+* **deps:** fs-extra@^9.0.1 ([2f6f4e0](https://github.com/lerna/lerna/commit/2f6f4e066d5a41b4cd508b3405ac1d0a342932dc))
+* **deps:** npm-package-arg@^8.1.0 ([12c8923](https://github.com/lerna/lerna/commit/12c892342d33b86a00ee2cf9079f9b26fe316dc6))
+* **deps:** p-finally -> Promise.prototype.finally() ([028db04](https://github.com/lerna/lerna/commit/028db045b1221df000a2b98c5dceb1e4915a7806))
+* **deps:** p-finally@^2.0.1 ([165e47e](https://github.com/lerna/lerna/commit/165e47e722acf6462cf0b4e3a7d0e14d3971e7fb))
+* **deps:** p-map@^4.0.0 ([92b1364](https://github.com/lerna/lerna/commit/92b1364735e1f2cf379cf1047c60c4fb897d55f5))
+* **deps:** p-pipe@^3.1.0 ([489f59e](https://github.com/lerna/lerna/commit/489f59e28657a039becb4cdba5a1955043c73cf1))
+* **deps:** semver@^7.3.2 ([003ad66](https://github.com/lerna/lerna/commit/003ad6641fab8b4e3a82251ebffd27061bd6a31b))
+* **publish:** Remove figgy-pudding ([caf823e](https://github.com/lerna/lerna/commit/caf823e01e9eb5463b452b929a74dbc83ffc5df7))
+* Drop support for Node v6.x & v8.x ([ff4bb4d](https://github.com/lerna/lerna/commit/ff4bb4da215555e3bb136f5af09b5cbc631e57bb))
+
+
+### BREAKING CHANGES
+
+* Node v6.x & v8.x are no longer supported. Please upgrade to the latest LTS release.
+
+Here's the gnarly one-liner I used to make these changes:
+```
+npx lerna exec --concurrency 1 --stream -- 'json -I -f package.json -e '"'"'this.engines=this.engines||{};this.engines.node=">= 10.18.0"'"'"
+```
+(requires `npm i -g json` beforehand)
+
+
+
+
+
 ## [3.22.1](https://github.com/lerna/lerna/compare/v3.22.0...v3.22.1) (2020-06-09)
 
 

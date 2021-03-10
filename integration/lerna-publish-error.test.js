@@ -2,7 +2,7 @@
 
 const path = require("path");
 
-const cliRunner = require("@lerna-test/cli-runner");
+const { cliRunner } = require("@lerna-test/cli-runner");
 const cloneFixture = require("@lerna-test/clone-fixture")(
   path.resolve(__dirname, "../commands/publish/__tests__")
 );
@@ -15,7 +15,7 @@ test("lerna publish sets correct exit code when libnpmpublish fails", async () =
   ).rejects.toThrow(
     expect.objectContaining({
       stderr: expect.stringContaining("E404 Not found"),
-      code: 1,
+      exitCode: 1,
     })
   );
 });

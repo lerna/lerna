@@ -3,6 +3,41 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/lerna/lerna/compare/v3.22.1...v4.0.0) (2021-02-10)
+
+
+### Features
+
+* **deps:** Bump dependencies ([affed1c](https://github.com/lerna/lerna/commit/affed1ce0fce91f01b0a9eafe357db2d985b974f))
+* **project:** Add JSDoc type annotations to primary export ([8443ad3](https://github.com/lerna/lerna/commit/8443ad396b2e4d11df2d0a85b456037ca2cc87c0))
+* Consume named exports of sibling modules ([63499e3](https://github.com/lerna/lerna/commit/63499e33652bc78fe23751875d74017e2f16a689))
+* Expose named export ([c1303f1](https://github.com/lerna/lerna/commit/c1303f13adc4cf15f96ff25889b52149f8224c0e))
+* Remove default export ([e2f1ec3](https://github.com/lerna/lerna/commit/e2f1ec3dd049d2a89880029908a2aa7c66f15082))
+* **deps:** cosmiconfig@^7.0.0 ([2958fe6](https://github.com/lerna/lerna/commit/2958fe6b3e586adb27da6643d1c215b73c8afa7b))
+* **deps:** dot-prop@^6.0.0 ([5f31d3b](https://github.com/lerna/lerna/commit/5f31d3b46f8d1d84d264b90be38f57887d2e4969))
+* **deps:** globby@^11.0.1 ([6cb5bbe](https://github.com/lerna/lerna/commit/6cb5bbec5599cdd93d314ffdc4abea8822e48075))
+* **deps:** load-json-file@^6.2.0 ([239f54b](https://github.com/lerna/lerna/commit/239f54b070691106dd9b31f2a279d726744651f8))
+* **deps:** p-map@^4.0.0 ([92b1364](https://github.com/lerna/lerna/commit/92b1364735e1f2cf379cf1047c60c4fb897d55f5))
+* **deps:** resolve-from@^5.0.0 ([d414462](https://github.com/lerna/lerna/commit/d4144623f3069fda62b324186c46050f4f7e1c77))
+* **deps:** write-json-file@^4.3.0 ([d552c53](https://github.com/lerna/lerna/commit/d552c533c45489a1774f3c3b9ae8d15fc5d3b2a8))
+* Drop support for Node v6.x & v8.x ([ff4bb4d](https://github.com/lerna/lerna/commit/ff4bb4da215555e3bb136f5af09b5cbc631e57bb))
+
+
+### BREAKING CHANGES
+
+* The default export has been removed, please use a named export instead.
+* Node v6.x & v8.x are no longer supported. Please upgrade to the latest LTS release.
+
+Here's the gnarly one-liner I used to make these changes:
+```
+npx lerna exec --concurrency 1 --stream -- 'json -I -f package.json -e '"'"'this.engines=this.engines||{};this.engines.node=">= 10.18.0"'"'"
+```
+(requires `npm i -g json` beforehand)
+
+
+
+
+
 # [3.21.0](https://github.com/lerna/lerna/compare/v3.20.2...v3.21.0) (2020-05-13)
 
 

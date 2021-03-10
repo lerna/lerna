@@ -3,6 +3,33 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/lerna/lerna/compare/v3.22.1...v4.0.0) (2021-02-10)
+
+
+### Features
+
+* **child-process:** Add JSDoc types ([1840492](https://github.com/lerna/lerna/commit/1840492a6b9e832dafe7046157798e3157c2a13b))
+* **deps:** Bump dependencies ([affed1c](https://github.com/lerna/lerna/commit/affed1ce0fce91f01b0a9eafe357db2d985b974f))
+* **deps:** chalk@^4.1.0 ([d2a9ed5](https://github.com/lerna/lerna/commit/d2a9ed537139f49561a7e29b3ebf624c97f48c77))
+* **deps:** execa@^4.1.0 ([9051dca](https://github.com/lerna/lerna/commit/9051dcab1a68b56db09b82ab0345c5f36bcfee2d))
+* **deps:** execa@^5.0.0 ([d8100fd](https://github.com/lerna/lerna/commit/d8100fd9e0742b049ed16ac77e976ce34234ebfc))
+* Drop support for Node v6.x & v8.x ([ff4bb4d](https://github.com/lerna/lerna/commit/ff4bb4da215555e3bb136f5af09b5cbc631e57bb))
+
+
+### BREAKING CHANGES
+
+* Node v6.x & v8.x are no longer supported. Please upgrade to the latest LTS release.
+
+Here's the gnarly one-liner I used to make these changes:
+```
+npx lerna exec --concurrency 1 --stream -- 'json -I -f package.json -e '"'"'this.engines=this.engines||{};this.engines.node=">= 10.18.0"'"'"
+```
+(requires `npm i -g json` beforehand)
+
+
+
+
+
 ## [3.16.5](https://github.com/lerna/lerna/compare/v3.16.4...v3.16.5) (2019-10-07)
 
 

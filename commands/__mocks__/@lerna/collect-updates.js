@@ -8,7 +8,7 @@ const updated = new Map();
 
 const mockCollectUpdates = jest.fn((filteredPackages, packageGraph, { cwd }) => {
   const targets = updated.get(cwd);
-  const updates = targets ? new Map(targets.map(name => [name, packageGraph.get(name)])) : packageGraph;
+  const updates = targets ? new Map(targets.map((name) => [name, packageGraph.get(name)])) : packageGraph;
 
   return Array.from(updates.values());
 });
@@ -20,7 +20,7 @@ afterEach(() => {
   updated.clear();
 });
 
-module.exports = mockCollectUpdates;
-module.exports.setUpdated = setUpdated;
+module.exports.collectUpdates = mockCollectUpdates;
+module.exports.collectUpdates.setUpdated = setUpdated;
 module.exports.collectPackages = collectPackages;
 module.exports.getPackagesForOption = getPackagesForOption;

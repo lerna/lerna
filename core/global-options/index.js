@@ -2,7 +2,7 @@
 
 const os = require("os");
 
-module.exports = globalOptions;
+module.exports.globalOptions = globalOptions;
 
 function globalOptions(yargs) {
   // the global options applicable to _every_ command
@@ -50,11 +50,8 @@ function globalOptions(yargs) {
   // group options under "Global Options:" header
   const globalKeys = Object.keys(opts).concat(["help", "version"]);
 
-  return yargs
-    .options(opts)
-    .group(globalKeys, "Global Options:")
-    .option("ci", {
-      hidden: true,
-      type: "boolean",
-    });
+  return yargs.options(opts).group(globalKeys, "Global Options:").option("ci", {
+    hidden: true,
+    type: "boolean",
+  });
 }

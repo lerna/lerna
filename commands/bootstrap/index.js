@@ -4,26 +4,25 @@ const dedent = require("dedent");
 const getPort = require("get-port");
 const npa = require("npm-package-arg");
 const path = require("path");
-const pFinally = require("p-finally");
 const pMap = require("p-map");
 const pMapSeries = require("p-map-series");
 const pWaterfall = require("p-waterfall");
 
-const Command = require("@lerna/command");
-const rimrafDir = require("@lerna/rimraf-dir");
-const hasNpmVersion = require("@lerna/has-npm-version");
-const npmInstall = require("@lerna/npm-install");
+const { Command } = require("@lerna/command");
+const { rimrafDir } = require("@lerna/rimraf-dir");
+const { hasNpmVersion } = require("@lerna/has-npm-version");
+const { npmInstall, npmInstallDependencies } = require("@lerna/npm-install");
 const { createRunner } = require("@lerna/run-lifecycle");
-const runTopologically = require("@lerna/run-topologically");
-const symlinkBinary = require("@lerna/symlink-binary");
-const symlinkDependencies = require("@lerna/symlink-dependencies");
-const ValidationError = require("@lerna/validation-error");
+const { runTopologically } = require("@lerna/run-topologically");
+const { symlinkBinary } = require("@lerna/symlink-binary");
+const { symlinkDependencies } = require("@lerna/symlink-dependencies");
+const { ValidationError } = require("@lerna/validation-error");
 const { getFilteredPackages } = require("@lerna/filter-options");
-const PackageGraph = require("@lerna/package-graph");
-const pulseTillDone = require("@lerna/pulse-till-done");
+const { PackageGraph } = require("@lerna/package-graph");
+const { pulseTillDone } = require("@lerna/pulse-till-done");
 
-const hasDependencyInstalled = require("./lib/has-dependency-installed");
-const isHoistedPackage = require("./lib/is-hoisted-package");
+const { hasDependencyInstalled } = require("./lib/has-dependency-installed");
+const { isHoistedPackage } = require("./lib/is-hoisted-package");
 
 module.exports = factory;
 
@@ -90,7 +89,7 @@ class BootstrapCommand extends Command {
           hoisting = hoisting.concat(`!${nohoist}`);
         } else {
           // `--nohoist` multiple or lerna.json `nohoist: [...]`
-          hoisting = hoisting.concat(nohoist.map(str => `!${str}`));
+          hoisting = hoisting.concat(nohoist.map((str) => `!${str}`));
         }
       }
 
@@ -137,7 +136,7 @@ class BootstrapCommand extends Command {
       return getFilteredPackages(this.targetGraph, this.execOpts, this.options);
     });
 
-    chain = chain.then(filteredPackages => {
+    chain = chain.then((filteredPackages) => {
       this.filteredPackages = filteredPackages;
 
       if (this.options.contents) {
@@ -165,7 +164,7 @@ class BootstrapCommand extends Command {
 
     chain = chain.then(() => {
       if (npmClient === "yarn" && !mutex) {
-        return getPort({ port: 42424, host: "0.0.0.0" }).then(port => {
+        return getPort({ port: 42424, host: "0.0.0.0" }).then((port) => {
           this.npmConfig.mutex = `network:${port}`;
           this.logger.silly("npmConfig", this.npmConfig);
         });
@@ -199,7 +198,7 @@ class BootstrapCommand extends Command {
 
     tasks.push(
       () => this.getDependenciesToInstall(),
-      result => this.installExternalDependencies(result),
+      (result) => this.installExternalDependencies(result),
       () => this.symlinkPackages()
     );
 
@@ -241,7 +240,7 @@ class BootstrapCommand extends Command {
     const rootDependencies = Object.assign({}, this.project.manifest.dependencies);
 
     return Object.keys(rootDependencies).some(
-      name =>
+      (name) =>
         this.targetGraph.has(name) &&
         npa.resolve(name, rootDependencies[name], this.project.rootPath).type === "directory"
     );
@@ -256,7 +255,7 @@ class BootstrapCommand extends Command {
 
     const tracker = this.logger.newItem(stage);
 
-    const mapPackageWithScript = pkg =>
+    const mapPackageWithScript = (pkg) =>
       this.runPackageLifecycle(pkg, stage).then(() => {
         tracker.completeWork(1);
       });
@@ -270,7 +269,7 @@ class BootstrapCommand extends Command {
         })
       : pMap(this.filteredPackages, mapPackageWithScript, { concurrency: this.concurrency });
 
-    return pFinally(runner, () => tracker.finish());
+    return runner.finally(() => tracker.finish());
   }
 
   hoistedDirectory(dependency) {
@@ -322,7 +321,7 @@ class BootstrapCommand extends Command {
      */
     const depsToInstall = new Map();
     const filteredNodes = new Map(
-      this.filteredPackages.map(pkg => [pkg.name, this.targetGraph.get(pkg.name)])
+      this.filteredPackages.map((pkg) => [pkg.name, this.targetGraph.get(pkg.name)])
     );
 
     // collect root dependency versions
@@ -333,7 +332,7 @@ class BootstrapCommand extends Command {
       rootPkg.dependencies
     );
     const rootExternalVersions = new Map(
-      Object.keys(mergedRootDeps).map(externalName => [externalName, mergedRootDeps[externalName]])
+      Object.keys(mergedRootDeps).map((externalName) => [externalName, mergedRootDeps[externalName]])
     );
 
     // seed the root dependencies
@@ -389,7 +388,7 @@ class BootstrapCommand extends Command {
         }
 
         const dependents = Array.from(externalDependents.get(rootVersion)).map(
-          leafName => this.targetGraph.get(leafName).pkg
+          (leafName) => this.targetGraph.get(leafName).pkg
         );
 
         // remove collection so leaves don't repeat it
@@ -399,7 +398,7 @@ class BootstrapCommand extends Command {
         // Even if it's already installed there we still need to make sure any
         // binaries are linked to the packages that depend on them.
         rootActions.push(() =>
-          hasDependencyInstalled(rootPkg, externalName, rootVersion).then(isSatisfied => {
+          hasDependencyInstalled(rootPkg, externalName, rootVersion).then((isSatisfied) => {
             rootSet.add({
               name: externalName,
               dependents,
@@ -429,7 +428,7 @@ class BootstrapCommand extends Command {
 
           // only install dependency if it's not already installed
           leafActions.push(() =>
-            hasDependencyInstalled(leafNode.pkg, externalName, leafVersion).then(isSatisfied => {
+            hasDependencyInstalled(leafNode.pkg, externalName, leafVersion).then((isSatisfied) => {
               leafRecord.add({
                 dependency: `${externalName}@${leafVersion}`,
                 isSatisfied,
@@ -446,7 +445,7 @@ class BootstrapCommand extends Command {
       );
     }
 
-    return pMapSeries([...rootActions, ...leafActions], el => el()).then(() => {
+    return pMapSeries([...rootActions, ...leafActions], (el) => el()).then(() => {
       this.logger.silly("root dependencies", JSON.stringify(rootSet, null, 2));
       this.logger.silly("leaf dependencies", JSON.stringify(leaves, null, 2));
 
@@ -479,7 +478,7 @@ class BootstrapCommand extends Command {
           tracker.info("hoist", "Installing hoisted dependencies into root");
         }
 
-        const promise = npmInstall.dependencies(rootPkg, depsToInstallInRoot, this.npmConfig);
+        const promise = npmInstallDependencies(rootPkg, depsToInstallInRoot, this.npmConfig);
 
         return pulseTillDone(promise)
           .then(() =>
@@ -489,7 +488,7 @@ class BootstrapCommand extends Command {
               const { bin } = this.hoistedPackageJson(name);
 
               if (bin) {
-                return pMap(dependents, pkg => {
+                return pMap(dependents, (pkg) => {
                   const src = this.hoistedDirectory(name);
 
                   return symlinkBinary(src, pkg);
@@ -508,11 +507,11 @@ class BootstrapCommand extends Command {
       actions.push(() => {
         // Compute the list of candidate directories synchronously
         const candidates = root
-          .filter(dep => dep.dependents.length)
+          .filter((dep) => dep.dependents.length)
           .reduce((list, { name, dependents }) => {
             const dirs = dependents
-              .filter(pkg => pkg.nodeModulesLocation !== rootPkg.nodeModulesLocation)
-              .map(pkg => path.join(pkg.nodeModulesLocation, name));
+              .filter((pkg) => pkg.nodeModulesLocation !== rootPkg.nodeModulesLocation)
+              .map((pkg) => path.join(pkg.nodeModulesLocation, name));
 
             return list.concat(dirs);
           }, []);
@@ -530,7 +529,7 @@ class BootstrapCommand extends Command {
 
         return pMap(
           candidates,
-          dirPath =>
+          (dirPath) =>
             pulseTillDone(rimrafDir(dirPath)).then(() => {
               tracker.verbose("prune", dirPath);
               tracker.completeWork(1);
@@ -558,7 +557,7 @@ class BootstrapCommand extends Command {
       if (deps.some(({ isSatisfied }) => !isSatisfied)) {
         actions.push(() => {
           const dependencies = deps.map(({ dependency }) => dependency);
-          const promise = npmInstall.dependencies(leafNode.pkg, dependencies, leafNpmConfig);
+          const promise = npmInstallDependencies(leafNode.pkg, dependencies, leafNpmConfig);
 
           return pulseTillDone(promise).then(() => {
             tracker.verbose("installed leaf", leafNode.name);
@@ -574,10 +573,7 @@ class BootstrapCommand extends Command {
       tracker.addWork(actions.length);
     }
 
-    return pFinally(
-      pMap(actions, act => act(), { concurrency: this.concurrency }),
-      () => tracker.finish()
-    );
+    return pMap(actions, (act) => act(), { concurrency: this.concurrency }).finally(() => tracker.finish());
   }
 
   /**

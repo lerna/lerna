@@ -4,20 +4,20 @@ const fs = require("fs-extra");
 const path = require("path");
 const os = require("os");
 const { URL } = require("whatwg-url");
-const camelCase = require("camelcase");
+const { camelCase } = require("yargs-parser");
 const dedent = require("dedent");
 const initPackageJson = require("pify")(require("init-package-json"));
-const getManifest = require("@evocateur/pacote/manifest");
+const pacote = require("pacote");
 const npa = require("npm-package-arg");
 const pReduce = require("p-reduce");
 const slash = require("slash");
 
-const Command = require("@lerna/command");
-const ChildProcessUtilities = require("@lerna/child-process");
+const { Command } = require("@lerna/command");
+const childProcess = require("@lerna/child-process");
 const npmConf = require("@lerna/npm-conf");
-const ValidationError = require("@lerna/validation-error");
-const builtinNpmrc = require("./lib/builtin-npmrc");
-const catFile = require("./lib/cat-file");
+const { ValidationError } = require("@lerna/validation-error");
+const { builtinNpmrc } = require("./lib/builtin-npmrc");
+const { catFile } = require("./lib/cat-file");
 
 const LERNA_MODULE_DATA = require.resolve("./lib/lerna-module-data.js");
 const DEFAULT_DESCRIPTION = [
@@ -57,7 +57,7 @@ class CreateCommand extends Command {
     this.dirName = scope ? name.split("/").pop() : name;
     this.pkgName = name;
     this.pkgsDir =
-      this.project.packageParentDirs.find(pd => pd.indexOf(pkgLocation) > -1) ||
+      this.project.packageParentDirs.find((pd) => pd.indexOf(pkgLocation) > -1) ||
       this.project.packageParentDirs[0];
 
     this.camelName = camelCase(this.dirName);
@@ -159,7 +159,7 @@ class CreateCommand extends Command {
 
     chain = chain.then(() => initPackageJson(this.targetDir, LERNA_MODULE_DATA, this.conf));
 
-    return chain.then(data => {
+    return chain.then((data) => {
       if (this.options.esModule) {
         this.logger.notice(
           "✔",
@@ -178,7 +178,7 @@ class CreateCommand extends Command {
   }
 
   gitConfig(prop) {
-    return ChildProcessUtilities.execSync("git", ["config", "--get", prop], this.execOpts);
+    return childProcess.execSync("git", ["config", "--get", prop], this.execOpts);
   }
 
   collectExternalVersions() {
@@ -231,7 +231,7 @@ class CreateCommand extends Command {
     const savePrefix = this.conf.get("save-exact") ? "" : this.conf.get("save-prefix");
     const pacoteOpts = this.conf.snapshot;
 
-    const decideVersion = spec => {
+    const decideVersion = (spec) => {
       if (this.packageGraph.has(spec.name)) {
         // sibling dependency
         const depNode = this.packageGraph.get(spec.name);
@@ -253,7 +253,7 @@ class CreateCommand extends Command {
         }
 
         // from registry
-        return getManifest(spec, pacoteOpts).then(pkg => `${savePrefix}${pkg.version}`);
+        return pacote.manifest(spec, pacoteOpts).then((pkg) => `${savePrefix}${pkg.version}`);
       }
 
       if (spec.type === "git") {
@@ -274,7 +274,7 @@ class CreateCommand extends Command {
 
           return Promise.resolve(spec)
             .then(decideVersion)
-            .then(version => {
+            .then((version) => {
               obj[spec.name] = version;
 
               return obj;
@@ -284,7 +284,7 @@ class CreateCommand extends Command {
       )
     );
 
-    chain = chain.then(dependencies => {
+    chain = chain.then((dependencies) => {
       this.conf.set("dependencies", dependencies);
     });
 
@@ -358,7 +358,7 @@ class CreateCommand extends Command {
 
   setRepository() {
     try {
-      const url = ChildProcessUtilities.execSync("git", ["remote", "get-url", "origin"], this.execOpts);
+      const url = childProcess.execSync("git", ["remote", "get-url", "origin"], this.execOpts);
 
       this.conf.set("repository", url);
     } catch (err) {

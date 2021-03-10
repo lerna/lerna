@@ -1,6 +1,6 @@
 {
   "name": "@lerna/prerelease-id-from-version",
-  "version": "3.16.0",
+  "version": "4.0.0",
   "description": "Get the prerelease ID from a version string",
   "keywords": [
     "lerna",
@@ -14,7 +14,7 @@
     "lib"
   ],
   "engines": {
-    "node": ">= 6.9.0"
+    "node": ">= 10.18.0"
   },
   "publishConfig": {
     "access": "public"
@@ -28,6 +28,6 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "semver": "^6.2.0"
+    "semver": "^7.3.4"
   }
 }

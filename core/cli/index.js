@@ -3,7 +3,7 @@
 const dedent = require("dedent");
 const log = require("npmlog");
 const yargs = require("yargs/yargs");
-const globalOptions = require("@lerna/global-options");
+const { globalOptions } = require("@lerna/global-options");
 
 module.exports = lernaCLI;
 
@@ -37,7 +37,7 @@ function lernaCLI(argv, cwd) {
       }
 
       // exit non-zero so the CLI can be usefully chained
-      cli.exit(actual.code > 0 ? actual.code : 1, actual);
+      cli.exit(actual.exitCode > 0 ? actual.exitCode : 1, actual);
     })
     .alias("h", "help")
     .alias("v", "version")

@@ -1,7 +1,23 @@
 "use strict";
 
-module.exports = listableOptions;
+module.exports.listableOptions = listableOptions;
 
+/**
+ * @typedef {object} ListableOptions Because yargs.InferredOptionsTypes is next to useless here
+ * @property {boolean} json
+ * @property {boolean} ndjson
+ * @property {boolean} all
+ * @property {boolean} long
+ * @property {boolean} parseable
+ * @property {boolean} toposort
+ * @property {boolean} graph
+ */
+
+/**
+ * Add list-related options to a Yargs instance.
+ * @param {import("yargs").Argv} yargs
+ * @param {string} [group]
+ */
 function listableOptions(yargs, group = "Command Options:") {
   return yargs.options({
     json: {

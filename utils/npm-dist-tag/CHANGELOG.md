@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/lerna/lerna/compare/v3.22.1...v4.0.0) (2021-02-10)
+
+
+### Features
+
+* Consume named exports of sibling modules ([63499e3](https://github.com/lerna/lerna/commit/63499e33652bc78fe23751875d74017e2f16a689))
+* **deps:** @evocateur/npm-registry-fetch -> npm-registry-fetch@^9.0.0 ([6df42f2](https://github.com/lerna/lerna/commit/6df42f2caf0887c38870c07a9f850dae0e9c4253))
+* **deps:** npm-package-arg@^8.1.0 ([12c8923](https://github.com/lerna/lerna/commit/12c892342d33b86a00ee2cf9079f9b26fe316dc6))
+* **npm-dist-tag:** Remove figgy-pudding ([1158f8e](https://github.com/lerna/lerna/commit/1158f8eea49dc3e59860886421bd8ec40a6205df))
+* Drop support for Node v6.x & v8.x ([ff4bb4d](https://github.com/lerna/lerna/commit/ff4bb4da215555e3bb136f5af09b5cbc631e57bb))
+
+
+### BREAKING CHANGES
+
+* Node v6.x & v8.x are no longer supported. Please upgrade to the latest LTS release.
+
+Here's the gnarly one-liner I used to make these changes:
+```
+npx lerna exec --concurrency 1 --stream -- 'json -I -f package.json -e '"'"'this.engines=this.engines||{};this.engines.node=">= 10.18.0"'"'"
+```
+(requires `npm i -g json` beforehand)
+
+
+
+
+
 ## [3.18.5](https://github.com/lerna/lerna/compare/v3.18.4...v3.18.5) (2019-11-20)
 
 

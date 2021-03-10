@@ -1,6 +1,6 @@
 "use strict";
 
-const getPacked = require("..");
+const { getPacked } = require("..");
 
 describe("@lerna/get-packed", () => {
   it("needs tests", () => {

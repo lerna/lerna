@@ -3,41 +3,40 @@
 const os = require("os");
 const path = require("path");
 const crypto = require("crypto");
-const pFinally = require("p-finally");
 const pMap = require("p-map");
 const pPipe = require("p-pipe");
 const semver = require("semver");
 
-const Command = require("@lerna/command");
-const ValidationError = require("@lerna/validation-error");
-const describeRef = require("@lerna/describe-ref");
-const checkWorkingTree = require("@lerna/check-working-tree");
-const PromptUtilities = require("@lerna/prompt");
-const output = require("@lerna/output");
-const collectUpdates = require("@lerna/collect-updates");
+const { Command } = require("@lerna/command");
+const { ValidationError } = require("@lerna/validation-error");
+const { describeRef } = require("@lerna/describe-ref");
+const { throwIfUncommitted } = require("@lerna/check-working-tree");
+const { promptConfirmation } = require("@lerna/prompt");
+const { output } = require("@lerna/output");
+const { collectUpdates } = require("@lerna/collect-updates");
 const npmConf = require("@lerna/npm-conf");
 const npmDistTag = require("@lerna/npm-dist-tag");
-const npmPublish = require("@lerna/npm-publish");
-const packDirectory = require("@lerna/pack-directory");
-const logPacked = require("@lerna/log-packed");
+const { npmPublish } = require("@lerna/npm-publish");
+const { packDirectory } = require("@lerna/pack-directory");
+const { logPacked } = require("@lerna/log-packed");
 const { createRunner } = require("@lerna/run-lifecycle");
-const runTopologically = require("@lerna/run-topologically");
-const pulseTillDone = require("@lerna/pulse-till-done");
+const { runTopologically } = require("@lerna/run-topologically");
+const { pulseTillDone } = require("@lerna/pulse-till-done");
 const versionCommand = require("@lerna/version");
-const prereleaseIdFromVersion = require("@lerna/prerelease-id-from-version");
-const otplease = require("@lerna/otplease");
+const { prereleaseIdFromVersion } = require("@lerna/prerelease-id-from-version");
+const { getOneTimePassword } = require("@lerna/otplease");
 
-const createTempLicenses = require("./lib/create-temp-licenses");
-const getCurrentSHA = require("./lib/get-current-sha");
-const getCurrentTags = require("./lib/get-current-tags");
-const getUnpublishedPackages = require("./lib/get-unpublished-packages");
-const getNpmUsername = require("./lib/get-npm-username");
-const getTaggedPackages = require("./lib/get-tagged-packages");
-const getPackagesWithoutLicense = require("./lib/get-packages-without-license");
-const gitCheckout = require("./lib/git-checkout");
-const removeTempLicenses = require("./lib/remove-temp-licenses");
-const verifyNpmPackageAccess = require("./lib/verify-npm-package-access");
-const getTwoFactorAuthRequired = require("./lib/get-two-factor-auth-required");
+const { createTempLicenses } = require("./lib/create-temp-licenses");
+const { getCurrentSHA } = require("./lib/get-current-sha");
+const { getCurrentTags } = require("./lib/get-current-tags");
+const { getUnpublishedPackages } = require("./lib/get-unpublished-packages");
+const { getNpmUsername } = require("./lib/get-npm-username");
+const { getTaggedPackages } = require("./lib/get-tagged-packages");
+const { getPackagesWithoutLicense } = require("./lib/get-packages-without-license");
+const { gitCheckout } = require("./lib/git-checkout");
+const { removeTempLicenses } = require("./lib/remove-temp-licenses");
+const { verifyNpmPackageAccess } = require("./lib/verify-npm-package-access");
+const { getTwoFactorAuthRequired } = require("./lib/get-two-factor-auth-required");
 
 module.exports = factory;
 
@@ -155,10 +154,10 @@ class PublishCommand extends Command {
 
     // don't execute recursively if run from a poorly-named script
     this.runRootLifecycle = /^(pre|post)?publish$/.test(process.env.npm_lifecycle_event)
-      ? stage => {
+      ? (stage) => {
           this.logger.warn("lifecycle", "Skipping root %j because it has already been called", stage);
         }
-      : stage => this.runPackageLifecycle(this.project.manifest, stage);
+      : (stage) => this.runPackageLifecycle(this.project.manifest, stage);
 
     let chain = Promise.resolve();
 
@@ -172,7 +171,7 @@ class PublishCommand extends Command {
       chain = chain.then(() => versionCommand(this.argv));
     }
 
-    return chain.then(result => {
+    return chain.then((result) => {
       if (!result) {
         // early return from nested VersionCommand
         return false;
@@ -186,10 +185,10 @@ class PublishCommand extends Command {
       }
 
       // (occasionally) redundant private filtering necessary to handle nested VersionCommand
-      this.updates = result.updates.filter(node => !node.pkg.private);
+      this.updates = result.updates.filter((node) => !node.pkg.private);
       this.updatesVersions = new Map(result.updatesVersions);
 
-      this.packagesToPublish = this.updates.map(node => node.pkg);
+      this.packagesToPublish = this.updates.map((node) => node.pkg);
 
       if (this.options.contents) {
         // globally override directory to publish
@@ -238,7 +237,7 @@ class PublishCommand extends Command {
 
     return chain.then(() => {
       const count = this.packagesToPublish.length;
-      const message = this.packagesToPublish.map(pkg => ` - ${pkg.name}@${pkg.version}`);
+      const message = this.packagesToPublish.map((pkg) => ` - ${pkg.name}@${pkg.version}`);
 
       output("Successfully published:");
       output(message.join(os.EOL));
@@ -248,7 +247,7 @@ class PublishCommand extends Command {
   }
 
   verifyWorkingTreeClean() {
-    return describeRef(this.execOpts).then(checkWorkingTree.throwIfUncommitted);
+    return describeRef(this.execOpts).then(throwIfUncommitted);
   }
 
   detectFromGit() {
@@ -260,7 +259,7 @@ class PublishCommand extends Command {
     chain = chain.then(() => this.verifyWorkingTreeClean());
 
     chain = chain.then(() => getCurrentTags(this.execOpts, matchingPattern));
-    chain = chain.then(taggedPackageNames => {
+    chain = chain.then((taggedPackageNames) => {
       if (!taggedPackageNames.length) {
         this.logger.notice("from-git", "No tagged release found");
 
@@ -268,17 +267,17 @@ class PublishCommand extends Command {
       }
 
       if (this.project.isIndependent()) {
-        return taggedPackageNames.map(name => this.packageGraph.get(name));
+        return taggedPackageNames.map((name) => this.packageGraph.get(name));
       }
 
       return getTaggedPackages(this.packageGraph, this.project.rootPath, this.execOpts);
     });
 
     // private packages are never published, full stop.
-    chain = chain.then(updates => updates.filter(node => !node.pkg.private));
+    chain = chain.then((updates) => updates.filter((node) => !node.pkg.private));
 
-    return chain.then(updates => {
-      const updatesVersions = updates.map(node => [node.name, node.version]);
+    return chain.then((updates) => {
+      const updatesVersions = updates.map((node) => [node.name, node.version]);
 
       return {
         updates,
@@ -294,9 +293,9 @@ class PublishCommand extends Command {
     // attempting to publish a release with local changes is not allowed
     chain = chain
       .then(() => this.verifyWorkingTreeClean())
-      .catch(err => {
+      .catch((err) => {
         // an execa error is thrown when git suffers a fatal error (such as no git repository present)
-        if (err.failed && /git describe/.test(err.cmd)) {
+        if (err.failed && /git describe/.test(err.command)) {
           // (we tried)
           this.logger.silly("EWORKINGTREE", err.message);
           this.logger.notice("FYI", "Unable to verify working tree, proceed at your own risk");
@@ -308,7 +307,7 @@ class PublishCommand extends Command {
 
     // private packages are already omitted by getUnpublishedPackages()
     chain = chain.then(() => getUnpublishedPackages(this.packageGraph, this.conf.snapshot));
-    chain = chain.then(unpublished => {
+    chain = chain.then((unpublished) => {
       if (!unpublished.length) {
         this.logger.notice("from-package", "No unpublished release found");
       }
@@ -316,8 +315,8 @@ class PublishCommand extends Command {
       return unpublished;
     });
 
-    return chain.then(updates => {
-      const updatesVersions = updates.map(node => [node.name, node.version]);
+    return chain.then((updates) => {
+      const updatesVersions = updates.map((node) => [node.name, node.version]);
 
       return {
         updates,
@@ -353,10 +352,10 @@ class PublishCommand extends Command {
         forcePublish,
         includeMergedTags,
         // private packages are never published, don't bother describing their refs.
-      }).filter(node => !node.pkg.private)
+      }).filter((node) => !node.pkg.private)
     );
 
-    const makeVersion = fallback => ({ lastVersion = fallback, refCount, sha }) => {
+    const makeVersion = (fallback) => ({ lastVersion = fallback, refCount, sha }) => {
       // the next version is bumped without concern for preid or current index
       const nextVersion = semver.inc(lastVersion.replace(this.tagPrefix, ""), release.replace("pre", ""));
 
@@ -367,8 +366,8 @@ class PublishCommand extends Command {
 
     if (this.project.isIndependent()) {
       // each package is described against its tags only
-      chain = chain.then(updates =>
-        pMap(updates, node =>
+      chain = chain.then((updates) =>
+        pMap(updates, (node) =>
           describeRef(
             {
               match: `${node.name}@*`,
@@ -378,15 +377,15 @@ class PublishCommand extends Command {
           )
             // an unpublished package will have no reachable git tag
             .then(makeVersion(node.version))
-            .then(version => [node.name, version])
-        ).then(updatesVersions => ({
+            .then((version) => [node.name, version])
+        ).then((updatesVersions) => ({
           updates,
           updatesVersions,
         }))
       );
     } else {
       // all packages are described against the last tag
-      chain = chain.then(updates =>
+      chain = chain.then((updates) =>
         describeRef(
           {
             match: `${this.tagPrefix}*.*.*`,
@@ -396,8 +395,8 @@ class PublishCommand extends Command {
         )
           // a repo with no tags should default to whatever lerna.json claims
           .then(makeVersion(this.project.version))
-          .then(version => updates.map(node => [node.name, version]))
-          .then(updatesVersions => ({
+          .then((version) => updates.map((node) => [node.name, version]))
+          .then((updatesVersions) => ({
             updates,
             updatesVersions,
           }))
@@ -414,7 +413,7 @@ class PublishCommand extends Command {
   confirmPublish() {
     const count = this.packagesToPublish.length;
     const message = this.packagesToPublish.map(
-      pkg => ` - ${pkg.name} => ${this.updatesVersions.get(pkg.name)}`
+      (pkg) => ` - ${pkg.name} => ${this.updatesVersions.get(pkg.name)}`
     );
 
     output("");
@@ -427,17 +426,17 @@ class PublishCommand extends Command {
       return true;
     }
 
-    return PromptUtilities.confirm("Are you sure you want to publish these packages?");
+    return promptConfirmation("Are you sure you want to publish these packages?");
   }
 
   prepareLicenseActions() {
     return Promise.resolve()
       .then(() => getPackagesWithoutLicense(this.project, this.packagesToPublish))
-      .then(packagesWithoutLicense => {
+      .then((packagesWithoutLicense) => {
         if (packagesWithoutLicense.length && !this.project.licensePath) {
           this.packagesToBeLicensed = [];
 
-          const names = packagesWithoutLicense.map(pkg => pkg.name);
+          const names = packagesWithoutLicense.map((pkg) => pkg.name);
           const noun = names.length > 1 ? "Packages" : "Package";
           const verb = names.length > 1 ? "are" : "is";
           const list =
@@ -481,7 +480,7 @@ class PublishCommand extends Command {
       // validate user has valid npm credentials first,
       // by far the most common form of failed execution
       chain = chain.then(() => getNpmUsername(this.conf.snapshot));
-      chain = chain.then(username => {
+      chain = chain.then((username) => {
         // if no username was retrieved, don't bother validating
         if (username) {
           return verifyNpmPackageAccess(this.packagesToPublish, username, this.conf.snapshot);
@@ -490,7 +489,7 @@ class PublishCommand extends Command {
 
       // read profile metadata to determine if account-level 2FA is enabled
       chain = chain.then(() => getTwoFactorAuthRequired(this.conf.snapshot));
-      chain = chain.then(isRequired => {
+      chain = chain.then((isRequired) => {
         // notably, this still doesn't handle package-level 2FA requirements
         this.twoFactorAuthRequired = isRequired;
       });
@@ -500,7 +499,7 @@ class PublishCommand extends Command {
   }
 
   updateCanaryVersions() {
-    return pMap(this.updates, node => {
+    return pMap(this.updates, (node) => {
       node.pkg.set("version", this.updatesVersions.get(node.name));
 
       for (const [depName, resolved] of node.localDependencies) {
@@ -517,11 +516,11 @@ class PublishCommand extends Command {
 
   resolveLocalDependencyLinks() {
     // resolve relative file: links to their actual version range
-    const updatesWithLocalLinks = this.updates.filter(node =>
-      Array.from(node.localDependencies.values()).some(resolved => resolved.type === "directory")
+    const updatesWithLocalLinks = this.updates.filter((node) =>
+      Array.from(node.localDependencies.values()).some((resolved) => resolved.type === "directory")
     );
 
-    return pMap(updatesWithLocalLinks, node => {
+    return pMap(updatesWithLocalLinks, (node) => {
       for (const [depName, resolved] of node.localDependencies) {
         // regardless of where the version comes from, we can't publish "file:../sibling-pkg" specs
         const depVersion = this.updatesVersions.get(depName) || this.packageGraph.get(depName).pkg.version;
@@ -555,7 +554,7 @@ class PublishCommand extends Command {
   }
 
   serializeChanges() {
-    return pMap(this.packagesToPublish, pkg => pkg.serialize());
+    return pMap(this.packagesToPublish, (pkg) => pkg.serialize());
   }
 
   resetChanges() {
@@ -567,9 +566,9 @@ class PublishCommand extends Command {
     };
     const dirtyManifests = [this.project.manifest]
       .concat(this.packagesToPublish)
-      .map(pkg => path.relative(cwd, pkg.manifestLocation));
+      .map((pkg) => path.relative(cwd, pkg.manifestLocation));
 
-    return gitCheckout(dirtyManifests, gitOpts, this.execOpts).catch(err => {
+    return gitCheckout(dirtyManifests, gitOpts, this.execOpts).catch((err) => {
       this.logger.silly("EGITCHECKOUT", err.message);
       this.logger.notice("FYI", "Unable to reset working tree changes, this probably isn't a git repo.");
     });
@@ -591,7 +590,7 @@ class PublishCommand extends Command {
   removeTempLicensesOnError(error) {
     return Promise.resolve()
       .then(() =>
-        removeTempLicenses(this.packagesToBeLicensed).catch(removeError => {
+        removeTempLicenses(this.packagesToBeLicensed).catch((removeError) => {
           this.logger.error(
             "licenses",
             "error removing temporary license files",
@@ -612,8 +611,8 @@ class PublishCommand extends Command {
     }
 
     return Promise.resolve()
-      .then(() => otplease.getOneTimePassword("Enter OTP:"))
-      .then(otp => {
+      .then(() => getOneTimePassword("Enter OTP:"))
+      .then((otp) => {
         this.otpCache.otp = otp;
       });
   }
@@ -652,11 +651,11 @@ class PublishCommand extends Command {
 
     const opts = this.conf.snapshot;
     const mapper = pPipe(
-      [
-        this.options.requireScripts && (pkg => this.execScript(pkg, "prepublish")),
+      ...[
+        this.options.requireScripts && ((pkg) => this.execScript(pkg, "prepublish")),
 
-        pkg =>
-          pulseTillDone(packDirectory(pkg, pkg.location, opts)).then(packed => {
+        (pkg) =>
+          pulseTillDone(packDirectory(pkg, pkg.location, opts)).then((packed) => {
             tracker.verbose("packed", path.relative(this.project.rootPath, pkg.contents));
             tracker.completeWork(1);
 
@@ -674,13 +673,13 @@ class PublishCommand extends Command {
     chain = chain.then(() => removeTempLicenses(this.packagesToBeLicensed));
 
     // remove temporary license files if _any_ error occurs _anywhere_ in the promise chain
-    chain = chain.catch(error => this.removeTempLicensesOnError(error));
+    chain = chain.catch((error) => this.removeTempLicensesOnError(error));
 
     if (!this.hasRootedLeaf) {
       chain = chain.then(() => this.runPackageLifecycle(this.project.manifest, "postpack"));
     }
 
-    return pFinally(chain, () => tracker.finish());
+    return chain.finally(() => tracker.finish());
   }
 
   publishPacked() {
@@ -702,8 +701,8 @@ class PublishCommand extends Command {
     });
 
     const mapper = pPipe(
-      [
-        pkg => {
+      ...[
+        (pkg) => {
           const preDistTag = this.getPreDistTag(pkg);
           const tag = !this.options.tempTag && preDistTag ? preDistTag : opts.tag;
           const pkgOpts = Object.assign({}, opts, { tag });
@@ -718,7 +717,7 @@ class PublishCommand extends Command {
           });
         },
 
-        this.options.requireScripts && (pkg => this.execScript(pkg, "postpublish")),
+        this.options.requireScripts && ((pkg) => this.execScript(pkg, "postpublish")),
       ].filter(Boolean)
     );
 
@@ -730,7 +729,7 @@ class PublishCommand extends Command {
       chain = chain.then(() => this.runRootLifecycle("postpublish"));
     }
 
-    return pFinally(chain, () => tracker.finish());
+    return chain.finally(() => tracker.finish());
   }
 
   npmUpdateAsLatest() {
@@ -742,14 +741,14 @@ class PublishCommand extends Command {
     let chain = Promise.resolve();
 
     const opts = this.conf.snapshot;
-    const getDistTag = publishConfig => {
+    const getDistTag = (publishConfig) => {
       if (opts.tag === "latest" && publishConfig && publishConfig.tag) {
         return publishConfig.tag;
       }
 
       return opts.tag;
     };
-    const mapper = pkg => {
+    const mapper = (pkg) => {
       const spec = `${pkg.name}@${pkg.version}`;
       const preDistTag = this.getPreDistTag(pkg);
       const distTag = preDistTag || getDistTag(pkg.get("publishConfig"));
@@ -767,7 +766,7 @@ class PublishCommand extends Command {
 
     chain = chain.then(() => this.topoMapPackages(mapper));
 
-    return pFinally(chain, () => tracker.finish());
+    return chain.finally(() => tracker.finish());
   }
 
   getDistTag() {

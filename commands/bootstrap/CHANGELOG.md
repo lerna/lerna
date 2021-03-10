@@ -3,6 +3,40 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.0.0](https://github.com/lerna/lerna/compare/v3.22.1...v4.0.0) (2021-02-10)
+
+
+### Features
+
+* **deps:** Bump dependencies ([affed1c](https://github.com/lerna/lerna/commit/affed1ce0fce91f01b0a9eafe357db2d985b974f))
+* Consume named exports of sibling modules ([63499e3](https://github.com/lerna/lerna/commit/63499e33652bc78fe23751875d74017e2f16a689))
+* **deps:** get-port@^5.1.1 ([b1b2275](https://github.com/lerna/lerna/commit/b1b2275237f16a26e6f96deffee8b0f72d8ce17d))
+* **deps:** multimatch@^5.0.0 ([0172526](https://github.com/lerna/lerna/commit/017252644cfd2394e77680673bae0e31ffa58d5e))
+* **deps:** npm-package-arg@^8.1.0 ([12c8923](https://github.com/lerna/lerna/commit/12c892342d33b86a00ee2cf9079f9b26fe316dc6))
+* **deps:** p-finally -> Promise.prototype.finally() ([028db04](https://github.com/lerna/lerna/commit/028db045b1221df000a2b98c5dceb1e4915a7806))
+* **deps:** p-finally@^2.0.1 ([165e47e](https://github.com/lerna/lerna/commit/165e47e722acf6462cf0b4e3a7d0e14d3971e7fb))
+* **deps:** p-map-series@^2.1.0 ([7f68076](https://github.com/lerna/lerna/commit/7f680767e0b3c7a15f951c51d4975150fb6e9112))
+* **deps:** p-map@^4.0.0 ([92b1364](https://github.com/lerna/lerna/commit/92b1364735e1f2cf379cf1047c60c4fb897d55f5))
+* **deps:** p-waterfall@^2.1.0 ([7b7ea50](https://github.com/lerna/lerna/commit/7b7ea503e8371e7f663fd604bff51aebfe9e7b33))
+* **deps:** read-package-tree@^5.3.1 ([3311780](https://github.com/lerna/lerna/commit/331178049e61f3c401a074d27e84d12856e3494e))
+* **deps:** semver@^7.3.2 ([003ad66](https://github.com/lerna/lerna/commit/003ad6641fab8b4e3a82251ebffd27061bd6a31b))
+* Drop support for Node v6.x & v8.x ([ff4bb4d](https://github.com/lerna/lerna/commit/ff4bb4da215555e3bb136f5af09b5cbc631e57bb))
+
+
+### BREAKING CHANGES
+
+* Node v6.x & v8.x are no longer supported. Please upgrade to the latest LTS release.
+
+Here's the gnarly one-liner I used to make these changes:
+```
+npx lerna exec --concurrency 1 --stream -- 'json -I -f package.json -e '"'"'this.engines=this.engines||{};this.engines.node=">= 10.18.0"'"'"
+```
+(requires `npm i -g json` beforehand)
+
+
+
+
+
 # [3.21.0](https://github.com/lerna/lerna/compare/v3.20.2...v3.21.0) (2020-05-13)
 
 **Note:** Version bump only for package @lerna/bootstrap

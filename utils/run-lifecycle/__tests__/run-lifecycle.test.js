@@ -3,11 +3,11 @@
 jest.mock("npm-lifecycle", () => jest.fn(() => Promise.resolve()));
 
 const log = require("npmlog");
-const loggingOutput = require("@lerna-test/logging-output");
+const { loggingOutput } = require("@lerna-test/logging-output");
 const runScript = require("npm-lifecycle");
 const npmConf = require("@lerna/npm-conf");
-const Package = require("@lerna/package");
-const runLifecycle = require("../run-lifecycle");
+const { Package } = require("@lerna/package");
+const { runLifecycle, createRunner } = require("../run-lifecycle");
 
 describe("runLifecycle()", () => {
   it("skips packages without scripts", async () => {
@@ -86,14 +86,14 @@ describe("runLifecycle()", () => {
     };
     const dir = pkg.location;
     const stage = "dashed-options";
-    const opts = new Map([
-      ["ignore-prepublish", true],
-      ["ignore-scripts", false],
-      ["node-options", "--a-thing"],
-      ["script-shell", "fish"],
-      ["scripts-prepend-node-path", true],
-      ["unsafe-perm", false],
-    ]);
+    const opts = {
+      "ignore-prepublish": true,
+      "ignore-scripts": false,
+      "node-options": "--a-thing",
+      "script-shell": "fish",
+      "scripts-prepend-node-path": true,
+      "unsafe-perm": false,
+    };
 
     await runLifecycle(pkg, stage, opts);
 
@@ -120,7 +120,9 @@ describe("runLifecycle()", () => {
       },
     };
     const stage = "prepublish";
-    const opts = new Map().set("ignore-prepublish", true);
+    const opts = {
+      "ignore-prepublish": true,
+    };
 
     await runLifecycle(pkg, stage, opts);
 
@@ -135,7 +137,9 @@ describe("runLifecycle()", () => {
       },
     };
     const stage = "ignored";
-    const opts = new Map().set("ignore-scripts", true);
+    const opts = {
+      "ignore-scripts": true,
+    };
 
     await runLifecycle(pkg, stage, opts);
 
@@ -152,7 +156,7 @@ describe("runLifecycle()", () => {
       },
     };
     const stage = "prepack";
-    const opts = new Map();
+    const opts = {};
 
     await runLifecycle(pkg, stage, opts);
 
@@ -164,7 +168,7 @@ describe("runLifecycle()", () => {
 });
 
 describe("createRunner", () => {
-  const runPackageLifecycle = runLifecycle.createRunner({ "other-cli-flag": 0 });
+  const runPackageLifecycle = createRunner({ "other-cli-flag": 0 });
 
   it("creates partially-applied function with npm conf", async () => {
     const pkg = {
@@ -232,7 +236,7 @@ describe("createRunner", () => {
 
     await expect(runPackageLifecycle(pkg, "prepublishOnly")).rejects.toThrow(
       expect.objectContaining({
-        code: 123,
+        exitCode: 123,
         script: "exit 123",
       })
     );
@@ -261,7 +265,7 @@ describe("createRunner", () => {
 
     await expect(runPackageLifecycle(pkg, "prepack")).rejects.toThrow(
       expect.objectContaining({
-        code: 1,
+        exitCode: 1,
         script: "a-thing-that-ends-poorly",
       })
     );
