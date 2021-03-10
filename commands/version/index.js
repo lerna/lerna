@@ -144,7 +144,6 @@ class VersionCommand extends Command {
 
       if (
         !this.noAllowBranch &&
-        this.options.allowBranch &&
         ![].concat(this.options.allowBranch).some((x) => minimatch(this.currentBranch, x))
       ) {
         throw new ValidationError(
