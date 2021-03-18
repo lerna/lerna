@@ -118,6 +118,15 @@ This option can be used to publish a [`prerelease`](http://carrot.is/coding/npm_
 
 > Note: the `latest` tag is the one that is used when a user runs `npm install my-package`.
 > To install a different tag, a user can run `npm install my-package@prerelease`.
+> 
+
+### `--force-publish`
+
+To be used with [`--canary`](#--canary) to publish a canary version of all packages in your monorepo. This flag can be helpful when you need to make canary releases of packages beyond what was changed in the most recent commit. 
+
+```
+lerna publish --canary --force-publish
+```
 
 ### `--git-head <sha>`
 
