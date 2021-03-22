@@ -106,8 +106,20 @@ class BootstrapCommand extends Command {
     };
 
     if (npmClient === "npm" && this.options.ci && hasNpmVersion(">=5.7.0")) {
-      // never `npm ci` when hoisting
-      this.npmConfig.subCommand = this.hoisting ? "install" : "ci";
+      // never `npm ci` when hoisting, unless `--force-ci-flag` is enabled
+      this.npmConfig.subCommand =
+        this.hoisting && this.options["force-ci-when-hoisting"] !== true ? "install" : "ci";
+
+      if (this.options.ci && this.npmConfig.subCommand !== "ci") {
+        this.logger.warn(
+          `"--ci" flag disabled when hoisting. Force with "--force-ci-when-hoisting" argument.`
+        );
+      }
+      if (this.options["force-ci-when-hoisting"] === true) {
+        this.logger.warn(
+          `WARNING: Manually running ‘npm install’ from any monorepo-managed package can cause bootstrap to fail.`
+        );
+      }
 
       if (this.hoisting) {
         // don't mutate lockfiles in CI
@@ -158,6 +170,7 @@ class BootstrapCommand extends Command {
         // never attempt `npm ci`, it would always fail
         if (this.npmConfig.subCommand === "ci") {
           this.npmConfig.subCommand = "install";
+          this.logger.warn("--ci flag disabled");
         }
       }
     });
