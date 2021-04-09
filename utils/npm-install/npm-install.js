@@ -22,7 +22,7 @@ function npmInstall(
   let cmd = npmClient || "npm";
 
   if (npmGlobalStyle) {
-    cmd = "npm";
+    cmd = cmd === "yarn" ? "npm" : npmClient;
     args.push("--global-style");
   }
 
