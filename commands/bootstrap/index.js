@@ -36,7 +36,15 @@ class BootstrapCommand extends Command {
   }
 
   initialize() {
-    const { registry, npmClient = "npm", npmClientArgs = [], mutex, hoist, nohoist } = this.options;
+    const {
+      registry,
+      maxBuffer,
+      npmClient = "npm",
+      npmClientArgs = [],
+      mutex,
+      hoist,
+      nohoist,
+    } = this.options;
 
     if (npmClient === "yarn" && hoist) {
       throw new ValidationError(
@@ -99,11 +107,13 @@ class BootstrapCommand extends Command {
 
     this.runPackageLifecycle = createRunner({ registry });
     this.npmConfig = {
+      maxBuffer,
       registry,
       npmClient,
       npmClientArgs,
       mutex,
     };
+    this.logger.verbose("bootstrap", "maxBuffer %o", maxBuffer);
 
     if (npmClient === "npm" && this.options.ci && hasNpmVersion(">=5.7.0")) {
       // never `npm ci` when hoisting

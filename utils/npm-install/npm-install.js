@@ -14,7 +14,16 @@ module.exports.npmInstallDependencies = npmInstallDependencies;
 
 function npmInstall(
   pkg,
-  { registry, npmClient, npmClientArgs, npmGlobalStyle, mutex, stdio = "pipe", subCommand = "install" }
+  {
+    registry,
+    maxBuffer,
+    npmClient,
+    npmClientArgs,
+    npmGlobalStyle,
+    mutex,
+    stdio = "pipe",
+    subCommand = "install",
+  }
 ) {
   // build command, arguments, and options
   const opts = getNpmExecOpts(pkg, registry);
@@ -44,6 +53,9 @@ function npmInstall(
   // provide env sentinels to avoid recursive execution from scripts
   opts.env.LERNA_EXEC_PATH = pkg.location;
   opts.env.LERNA_ROOT_PATH = pkg.rootPath;
+
+  log.silly("Applying maxBuffer", [maxBuffer]);
+  opts.maxBuffer = maxBuffer;
 
   log.silly("npmInstall", [cmd, args]);
   return childProcess.exec(cmd, args, opts);
