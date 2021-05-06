@@ -12,7 +12,7 @@ module.exports.gitCommit = gitCommit;
  * @param {{ amend: boolean; commitHooks: boolean; signGitCommit: boolean; }} gitOpts
  * @param {import("@lerna/child-process").ExecOpts} opts
  */
-function gitCommit(message, { amend, commitHooks, signGitCommit }, opts) {
+function gitCommit(message, { amend, commitHooks, signGitCommit, signoffGitCommit }, opts) {
   log.silly("gitCommit", message);
   const args = ["commit"];
 
@@ -22,6 +22,10 @@ function gitCommit(message, { amend, commitHooks, signGitCommit }, opts) {
 
   if (signGitCommit) {
     args.push("--gpg-sign");
+  }
+
+  if (signoffGitCommit) {
+    args.push("--signoff");
   }
 
   if (amend) {

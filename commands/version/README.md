@@ -71,6 +71,7 @@ Running `lerna version --conventional-commits` without the above flags will rele
     - [`--no-private`](#--no-private)
     - [`--no-push`](#--no-push)
     - [`--preid`](#--preid)
+    - [`--signoff-git-commit`](#--signoff-git-commit)
     - [`--sign-git-commit`](#--sign-git-commit)
     - [`--sign-git-tag`](#--sign-git-tag)
     - [`--force-git-tag`](#--force-git-tag)
@@ -411,6 +412,12 @@ lerna version prepatch --preid next
 
 When run with this flag, `lerna version` will increment `premajor`, `preminor`, `prepatch`, or `prerelease` semver
 bumps using the specified [prerelease identifier](http://semver.org/#spec-item-9).
+
+### `--signoff-git-commit`
+
+Adds the `--signoff` flag to the git commit done by lerna version when executed.
+
+> Note: This is different from `--sign-git-commit` which is about gpg signatures.
 
 ### `--sign-git-commit`
 
