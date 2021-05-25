@@ -65,6 +65,7 @@ This is useful when a previous `lerna publish` failed to publish all packages to
 - [`--tag-version-prefix`](#--tag-version-prefix)
 - [`--temp-tag`](#--temp-tag)
 - [`--yes`](#--yes)
+- [`--summary-file <dir/filename>`](#--summary-file)
 
 ### `--canary`
 
@@ -290,6 +291,27 @@ lerna publish --canary --yes
 
 When run with this flag, `lerna publish` will skip all confirmation prompts.
 Useful in [Continuous integration (CI)](https://en.wikipedia.org/wiki/Continuous_integration) to automatically answer the publish confirmation prompt.
+
+### `--summary-file`
+
+```sh
+lerna publish --canary --yes --summary-file ./output.json
+```
+
+When run with this flag, once a successfully publish it will create a json summary report(see below for an example).
+
+```json
+[
+  {
+    "packageName": "package1",
+    "version": "v1.0.1-alpha"
+  },
+  {
+    "packageName": "package2",
+    "version": "v2.0.1-alpha"
+  }
+]
+```
 
 ## Deprecated Options
 

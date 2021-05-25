@@ -34,6 +34,8 @@ const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const path = require("path");
 const fs = require("fs-extra");
 
+const fsmain = require("fs");
+
 // file under test
 const lernaPublish = require("@lerna-test/command-runner")(require("../command"));
 
@@ -303,6 +305,31 @@ Map {
 
       const logMessages = loggingOutput("notice");
       expect(logMessages).toContain("Skipping all user and access validation due to third-party registry");
+    });
+  });
+
+  describe("--summary-file", () => {
+    it("skips creating the summary file", async () => {
+      const cwd = await initFixture("normal");
+      const fsSpy = jest.spyOn(fs, "writeFileSync");
+      await lernaPublish(cwd);
+
+      expect(fsSpy).not.toHaveBeenCalled();
+    });
+
+    it("creates the summary file", async () => {
+      const cwd = await initFixture("normal");
+      const fsSpy = jest.spyOn(fsmain, "writeFileSync");
+      await lernaPublish(cwd)("--summary-file", "./output.json");
+
+      const expectedJsonResponse = [
+        { packageName: "package-1", version: "1.0.1" },
+        { packageName: "package-2", version: "1.0.1" },
+        { packageName: "package-3", version: "1.0.1" },
+        { packageName: "package-4", version: "1.0.1" },
+      ];
+      expect(fsSpy).toHaveBeenCalled();
+      expect(fsSpy).toHaveBeenCalledWith("./output.json", JSON.stringify(expectedJsonResponse));
     });
   });
 

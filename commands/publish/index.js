@@ -1,6 +1,7 @@
 "use strict";
 
 const os = require("os");
+const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 const pMap = require("p-map");
@@ -237,10 +238,29 @@ class PublishCommand extends Command {
 
     return chain.then(() => {
       const count = this.packagesToPublish.length;
-      const message = this.packagesToPublish.map((pkg) => ` - ${pkg.name}@${pkg.version}`);
 
       output("Successfully published:");
-      output(message.join(os.EOL));
+
+      if (this.options.summaryFile) {
+        // create a json object and output it to a file location.
+        const filePath = this.options.summaryFile || "./output.json";
+        const jsonObject = this.packagesToPublish.map((pkg) => {
+          return {
+            packageName: pkg.name,
+            version: pkg.version,
+          };
+        });
+        output(jsonObject);
+        try {
+          fs.writeFileSync(filePath, JSON.stringify(jsonObject));
+          output("Locate Summary Report Here: ", filePath);
+        } catch (error) {
+          output("Failed to create the summary report", error);
+        }
+      } else {
+        const message = this.packagesToPublish.map((pkg) => ` - ${pkg.name}@${pkg.version}`);
+        output(message.join(os.EOL));
+      }
 
       this.logger.success("published", "%d %s", count, count === 1 ? "package" : "packages");
     });
