@@ -22,7 +22,7 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-      - run: npm -g i npm@next-7
+      - run: npm -g i npm@7
       - run: npm ci
       - run: npm run ci:lint
 
