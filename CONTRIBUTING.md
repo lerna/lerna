@@ -3,7 +3,7 @@
 > Please note that this project is released with a [Contributor Code of Conduct](./CODE_OF_CONDUCT.md).
 > By participating in this project you agree to abide by its terms.
 
-First, ensure you have the [latest `npm`](https://docs.npmjs.com/).
+First, ensure you have the [latest `npm`](https://docs.npmjs.com/)(7.x + required as lerna uses [workspaces](https://docs.npmjs.com/cli/v7/using-npm/workspaces)).
 
 To get started with the repo:
 
