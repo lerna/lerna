@@ -77,6 +77,13 @@ exports.builder = (yargs) => {
         type: "string",
         defaultDescription: ".",
       },
+      "force-ci-when-hoisting": {
+        group: "Command Options:",
+        describe: `Forces an "npm ci" install over packages when hoisting is enabled.
+        WARNING: Manually running ‘npm install’ from any monorepo-managed package can cause bootstrap to fail.`,
+        type: "boolean",
+        default: "false",
+      },
     });
 
   return filterOptions(yargs);
