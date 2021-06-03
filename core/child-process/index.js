@@ -10,7 +10,7 @@ const logTransformer = require("strong-log-transformer");
 const children = new Set();
 
 // when streaming processes are spawned, use this color for prefix
-const colorWheel = ["cyan", "magenta", "blue", "yellow", "green", "red"];
+const colorWheel = ["cyan", "magenta", "blue", "yellow", "green", "blueBright"];
 const NUM_COLORS = colorWheel.length;
 
 // ever-increasing index ensures colors are always sequential
