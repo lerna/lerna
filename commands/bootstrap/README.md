@@ -149,7 +149,7 @@ May also be configured in `lerna.json`:
 
 Enables integration with [Yarn Workspaces](https://github.com/yarnpkg/rfcs/blob/master/implemented/0000-workspaces-install-phase-1.md) (available since yarn@0.27+).
 The values in the array are the commands in which Lerna will delegate operation to Yarn (currently only bootstrapping).
-If `--use-workspaces` is true then `packages` will be overridden by the value from `package.json/workspaces.`
+If `--use-workspaces` is true then `packages` will be overridden by the value from `package.json/workspaces.`, and both `--ignore` and `--scope` will be ignored.
 May also be configured in `lerna.json`:
 
 ```js
