@@ -43,4 +43,10 @@ describe("git commit", () => {
     await gitCommit("nice", { signGitCommit: true }, opts);
     expect(childProcess.exec).toHaveBeenLastCalledWith("git", ["commit", "--gpg-sign", "-m", "nice"], opts);
   });
+
+  test("--signoff-git-commit", async () => {
+    const opts = { cwd: "signed-off" };
+    await gitCommit("nice", { signoffGitCommit: true }, opts);
+    expect(childProcess.exec).toHaveBeenLastCalledWith("git", ["commit", "--signoff", "-m", "nice"], opts);
+  });
 });
