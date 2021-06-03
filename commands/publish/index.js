@@ -256,7 +256,19 @@ class PublishCommand extends Command {
     let chain = Promise.resolve();
 
     // attempting to publish a tagged release with local changes is not allowed
-    chain = chain.then(() => this.verifyWorkingTreeClean());
+    chain = chain
+      .then(() => this.verifyWorkingTreeClean())
+      .catch((err) => {
+        // an execa error is thrown when git suffers a fatal error (such as no git repository present)
+        if (err.failed && /git describe/.test(err.command)) {
+          // (we tried)
+          this.logger.silly("EWORKINGTREE", err.message);
+          this.logger.notice("FYI", "Unable to verify working tree, proceed at your own risk");
+        } else {
+          // validation errors should be preserved
+          throw err;
+        }
+      });
 
     chain = chain.then(() => getCurrentTags(this.execOpts, matchingPattern));
     chain = chain.then((taggedPackageNames) => {
@@ -341,7 +353,19 @@ class PublishCommand extends Command {
     let chain = Promise.resolve();
 
     // attempting to publish a canary release with local changes is not allowed
-    chain = chain.then(() => this.verifyWorkingTreeClean());
+    chain = chain
+      .then(() => this.verifyWorkingTreeClean())
+      .catch((err) => {
+        // an execa error is thrown when git suffers a fatal error (such as no git repository present)
+        if (err.failed && /git describe/.test(err.command)) {
+          // (we tried)
+          this.logger.silly("EWORKINGTREE", err.message);
+          this.logger.notice("FYI", "Unable to verify working tree, proceed at your own risk");
+        } else {
+          // validation errors should be preserved
+          throw err;
+        }
+      });
 
     // find changed packages since last release, if any
     chain = chain.then(() =>
