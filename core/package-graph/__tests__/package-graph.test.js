@@ -92,6 +92,43 @@ describe("PackageGraph", () => {
       expect(pkg1.localDependents.has("pkg-2")).toBe(true);
       expect(pkg2.localDependencies.has("pkg-1")).toBe(true);
     });
+
+    it("localizes tarball", () => {
+      const pkgs = [
+        new Package(
+          {
+            name: "pkg-1",
+            version: "1.0.0",
+          },
+          "/test/pkg-1"
+        ),
+        new Package(
+          {
+            name: "@my-scope/pkg-2",
+            version: "2.0.0",
+            dependencies: {
+              "pkg-1": "file:../pkg-1/pkg-1-1.0.0.tgz",
+            },
+          },
+          "/test/pkg-2"
+        ),
+        new Package(
+          {
+            name: "@my-scope/pkg-3",
+            version: "1.0.0",
+            dependencies: {
+              "@my-scope/pkg-2": "file:../pkg-2/my-scope-pkg-2-1.0.0.tgz",
+            },
+          },
+          "/test/pkg-3"
+        ),
+      ];
+      const graph = new PackageGraph(pkgs);
+      const [, pkg2, pkg3] = graph.values();
+
+      expect(pkg2.localDependencies.has("pkg-1")).toBe(true);
+      expect(pkg3.localDependencies.has("@my-scope/pkg-2")).toBe(true);
+    });
   });
 
   describe("Node", () => {
