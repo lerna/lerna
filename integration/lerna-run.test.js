@@ -115,7 +115,7 @@ lerna success - package-3
 lerna success - package-4
 `);
 
-    // order is non-deterministic, so assert each item seperately
+    // order is non-deterministic, so assert each item separately
     expect(stdout).toMatch("package-1: package-1");
     expect(stdout).toMatch("package-2: package-2");
     expect(stdout).toMatch("package-3: package-3");

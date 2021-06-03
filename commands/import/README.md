@@ -55,7 +55,7 @@ $ lerna import ~/Product --dest=utilities
 
 ### `--preserve-commit`
 
-Each git commit has an **author** and a **committer** (with a separate date for each). Usually they're the same person (and date), but since `lerna import` re-creates each commit from the external repository, the **committer** becomes the current git user (and date). This is *technically* correct, but may be undesireable, for example, on Github, which displays both the **author** and **committer** if they're different people, leading to potentially confusing history/blames on imported commits.
+Each git commit has an **author** and a **committer** (with a separate date for each). Usually they're the same person (and date), but since `lerna import` re-creates each commit from the external repository, the **committer** becomes the current git user (and date). This is *technically* correct, but may be undesirable, for example, on Github, which displays both the **author** and **committer** if they're different people, leading to potentially confusing history/blames on imported commits.
 
 Enabling this option preserves the original **committer** (and commit date) to avoid such issues.
 
