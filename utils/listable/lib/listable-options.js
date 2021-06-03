@@ -58,5 +58,10 @@ function listableOptions(yargs, group = "Command Options:") {
       describe: "Show dependency graph as a JSON-formatted adjacency list",
       type: "boolean",
     },
+    "force-local": {
+      group,
+      describe: "Force local sibling links regardless of version range match",
+      type: "boolean",
+    },
   });
 }

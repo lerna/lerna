@@ -47,6 +47,7 @@ function parseViewOptions(options) {
     showNDJSON: options.ndjson,
     showParseable: options.parseable,
     isTopological: options.toposort,
+    forceLocal: options.forceLocal,
     showGraph: options.graph,
   };
 }
@@ -60,7 +61,7 @@ function filterResultList(pkgList, viewOptions) {
 
   if (viewOptions.isTopological) {
     // allow cycles, output needs to be usable for debugging circularity
-    result = QueryGraph.toposort(result);
+    result = QueryGraph.toposort(result, viewOptions);
   }
 
   return result;

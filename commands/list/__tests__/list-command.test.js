@@ -244,6 +244,30 @@ package-2
     });
   });
 
+  describe("--force-local", () => {
+    it("should process the topological graph with canary releases", async () => {
+      const testDir = await initFixture("force-local");
+      await lernaLs(testDir)("--json", "--toposort", "--force-local");
+
+      // Output should be a parseable string
+      const jsonOutput = JSON.parse(output.logged());
+      expect(jsonOutput).toEqual([
+        {
+          location: expect.stringContaining("package-2"),
+          name: "package-2",
+          private: false,
+          version: "1.0.1-beta.0",
+        },
+        {
+          location: expect.stringContaining("package-1"),
+          name: "package-1",
+          private: false,
+          version: "1.0.0",
+        },
+      ]);
+    });
+  });
+
   describe("in a Yarn workspace", () => {
     it("should use package.json/workspaces setting", async () => {
       const testDir = await initFixture("yarn-workspaces");
