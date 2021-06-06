@@ -110,6 +110,11 @@ exports.builder = (yargs) => {
       hidden: true,
       type: "boolean",
     },
+    "summary-file": {
+      // Json output.
+      hidden: true,
+      type: "string",
+    },
     // y: {
     //   describe: "Skip all confirmation prompts.",
     //   alias: "yes",
