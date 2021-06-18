@@ -104,7 +104,7 @@ describe("publish from-git", () => {
     expect(npmPublish).not.toHaveBeenCalled();
 
     const logMessages = loggingOutput("info");
-    expect(logMessages).toContain("No tagged release found");
+    expect(logMessages).toContain("No tagged release found. You might not have fetched tags.");
   });
 
   it("throws an error when uncommitted changes are present", async () => {

@@ -261,7 +261,7 @@ class PublishCommand extends Command {
     chain = chain.then(() => getCurrentTags(this.execOpts, matchingPattern));
     chain = chain.then((taggedPackageNames) => {
       if (!taggedPackageNames.length) {
-        this.logger.notice("from-git", "No tagged release found");
+        this.logger.notice("from-git", "No tagged release found. You might not have fetched tags.");
 
         return [];
       }
