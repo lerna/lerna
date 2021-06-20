@@ -10,6 +10,7 @@ const pReduce = require("p-reduce");
 const pWaterfall = require("p-waterfall");
 const semver = require("semver");
 
+const { applyBuildMetadata } = require("@lerna/build-metadata");
 const { Command } = require("@lerna/command");
 const { recommendVersion, updateChangelog } = require("@lerna/conventional-commits");
 const { checkWorkingTree, throwIfUncommitted } = require("@lerna/check-working-tree");
@@ -318,14 +319,21 @@ class VersionCommand extends Command {
     let predicate;
 
     if (repoVersion) {
-      predicate = makeGlobalVersionPredicate(repoVersion);
+      predicate = makeGlobalVersionPredicate(applyBuildMetadata(repoVersion, this.options.buildMetadata));
     } else if (increment && independentVersions) {
       // compute potential prerelease ID for each independent update
-      predicate = (node) => semver.inc(node.version, increment, resolvePrereleaseId(node.prereleaseId));
+      predicate = (node) =>
+        applyBuildMetadata(
+          semver.inc(node.version, increment, resolvePrereleaseId(node.prereleaseId)),
+          this.options.buildMetadata
+        );
     } else if (increment) {
       // compute potential prerelease ID once for all fixed updates
       const prereleaseId = prereleaseIdFromVersion(this.project.version);
-      const nextVersion = semver.inc(this.project.version, increment, resolvePrereleaseId(prereleaseId));
+      const nextVersion = applyBuildMetadata(
+        semver.inc(this.project.version, increment, resolvePrereleaseId(prereleaseId)),
+        this.options.buildMetadata
+      );
 
       predicate = makeGlobalVersionPredicate(nextVersion);
     } else if (conventionalCommits) {
@@ -333,13 +341,13 @@ class VersionCommand extends Command {
       return this.recommendVersions(resolvePrereleaseId);
     } else if (independentVersions) {
       // prompt for each independent update with potential prerelease ID
-      predicate = makePromptVersion(resolvePrereleaseId);
+      predicate = makePromptVersion(resolvePrereleaseId, this.options.buildMetadata);
     } else {
       // prompt once with potential prerelease ID
       const prereleaseId = prereleaseIdFromVersion(this.project.version);
       const node = { version: this.project.version, prereleaseId };
 
-      predicate = makePromptVersion(resolvePrereleaseId);
+      predicate = makePromptVersion(resolvePrereleaseId, this.options.buildMetadata);
       predicate = predicate(node).then(makeGlobalVersionPredicate);
     }
 
@@ -364,7 +372,7 @@ class VersionCommand extends Command {
 
   recommendVersions(resolvePrereleaseId) {
     const independentVersions = this.project.isIndependent();
-    const { changelogPreset, conventionalGraduate } = this.options;
+    const { buildMetadata, changelogPreset, conventionalGraduate } = this.options;
     const rootPath = this.project.manifest.location;
     const type = independentVersions ? "independent" : "fixed";
     const prereleasePackageNames = this.getPrereleasePackageNames();
@@ -391,6 +399,7 @@ class VersionCommand extends Command {
           rootPath,
           tagPrefix: this.tagPrefix,
           prereleaseId: getPrereleaseId(node),
+          buildMetadata,
         })
       )
     );

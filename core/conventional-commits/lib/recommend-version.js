@@ -3,6 +3,7 @@
 const conventionalRecommendedBump = require("conventional-recommended-bump");
 const log = require("npmlog");
 const semver = require("semver");
+const { applyBuildMetadata } = require("@lerna/build-metadata");
 const { getChangelogConfig } = require("./get-changelog-config");
 
 module.exports.recommendVersion = recommendVersion;
@@ -10,9 +11,9 @@ module.exports.recommendVersion = recommendVersion;
 /**
  * @param {import("@lerna/package").Package} pkg
  * @param {import("..").VersioningStrategy} type
- * @param {import("..").BaseChangelogOptions & { prereleaseId?: string }} commandOptions
+ * @param {import("..").BaseChangelogOptions & { prereleaseId?: string, buildMetadata?: string }} commandOptions
  */
-function recommendVersion(pkg, type, { changelogPreset, rootPath, tagPrefix, prereleaseId }) {
+function recommendVersion(pkg, type, { changelogPreset, rootPath, tagPrefix, prereleaseId, buildMetadata }) {
   log.silly(type, "for %s at %s", pkg.name, pkg.location);
 
   const options = {
@@ -62,7 +63,7 @@ function recommendVersion(pkg, type, { changelogPreset, rootPath, tagPrefix, pre
           const shouldBump = shouldBumpPrerelease(releaseType, pkg.version);
           const prereleaseType = shouldBump ? `pre${releaseType}` : "prerelease";
           log.verbose(type, "increment %s by %s", pkg.version, prereleaseType);
-          resolve(semver.inc(pkg.version, prereleaseType, prereleaseId));
+          resolve(applyBuildMetadata(semver.inc(pkg.version, prereleaseType, prereleaseId), buildMetadata));
         } else {
           if (semver.major(pkg.version) === 0) {
             // According to semver, major version zero (0.y.z) is for initial
@@ -85,7 +86,7 @@ function recommendVersion(pkg, type, { changelogPreset, rootPath, tagPrefix, pre
             }
           }
           log.verbose(type, "increment %s by %s", pkg.version, releaseType);
-          resolve(semver.inc(pkg.version, releaseType));
+          resolve(applyBuildMetadata(semver.inc(pkg.version, releaseType), buildMetadata));
         }
       });
     });

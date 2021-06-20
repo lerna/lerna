@@ -1,0 +1,36 @@
+{
+  "name": "@lerna/build-metadata",
+  "version": "4.0.0",
+  "description": "An internal Lerna tool.",
+  "keywords": [
+    "lerna",
+    "utils"
+  ],
+  "homepage": "https://github.com/lerna/lerna/tree/master/utils/build-metadata#readme",
+  "license": "MIT",
+  "author": {
+    "name": "Ross Rhodes",
+    "url": "https://github.com/rrhodes"
+  },
+  "files": [
+    "lib"
+  ],
+  "main": "lib/build-metadata.js",
+  "engines": {
+    "node": ">= 10.18.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lerna/lerna.git",
+    "directory": "utils/build-metadata"
+  },
+  "scripts": {
+    "test": "echo \"Run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@lerna/validation-error": "file:../../core/validation-error"
+  }
+}

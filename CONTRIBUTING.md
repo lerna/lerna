@@ -109,7 +109,7 @@ $ xdg-open coverage/lcov-report/index.html
 
 ### Submitting Pull Requests
 
-This project follows [GitHub's standard forking model](https://guides.github.com/activities/forking/). Please fork the project to submit pull requests. 
+This project follows [GitHub's standard forking model](https://guides.github.com/activities/forking/). Please fork the project to submit pull requests.
 
 ### Releasing
 
