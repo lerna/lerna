@@ -20,6 +20,11 @@ exports.builder = (yargs, composed) => {
       describe: "Amend the existing commit, instead of generating a new one.",
       type: "boolean",
     },
+    "build-metadata": {
+      describe: "Apply build metadata to release, compatable with SemVer.",
+      requiresArg: true,
+      type: "string",
+    },
     "conventional-commits": {
       describe: "Use conventional-changelog to determine version bump and generate CHANGELOG.",
       type: "boolean",

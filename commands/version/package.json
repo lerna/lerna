@@ -34,6 +34,7 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
+    "@lerna/build-metadata": "file:../../utils/build-metadata",
     "@lerna/check-working-tree": "file:../../utils/check-working-tree",
     "@lerna/child-process": "file:../../core/child-process",
     "@lerna/collect-updates": "file:../../utils/collect-updates",
