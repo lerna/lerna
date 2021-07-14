@@ -218,6 +218,10 @@ class PackageGraph extends Map {
     /** @type {(PackageGraphNode | CyclicPackageGraphNode)[]} */
     const walkStack = [];
 
+    /**
+     * @param {PackageGraphNode | CyclicPackageGraphNode} baseNode
+     * @param {PackageGraphNode | CyclicPackageGraphNode} dependentNode
+     */
     function visits(baseNode, dependentNode) {
       if (nodeToCycle.has(baseNode)) {
         return;
@@ -252,6 +256,10 @@ class PackageGraph extends Map {
       }
     }
 
+    /**
+     * @param {PackageGraphNode | CyclicPackageGraphNode} baseNode
+     * @param {PackageGraphNode | CyclicPackageGraphNode} [currentNode]
+     */
     function visitWithStack(baseNode, currentNode = baseNode) {
       walkStack.push(currentNode);
       currentNode.localDependents.forEach(visits.bind(null, baseNode));

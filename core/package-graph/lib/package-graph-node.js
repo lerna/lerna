@@ -49,17 +49,14 @@ class PackageGraphNode {
    * Determine if the Node satisfies a resolved semver range.
    * @see https://github.com/npm/npm-package-arg#result-object
    *
-   * @param {!Result} resolved npm-package-arg Result object
-   * @returns {Boolean}
+   * @param {import('npm-package-arg').Result} resolved
    */
   satisfies({ gitCommittish, gitRange, fetchSpec }) {
     return semver.satisfies(this.version, gitCommittish || gitRange || fetchSpec);
   }
 
   /**
-   * Returns a string representation of this node (its name)
-   *
-   * @returns {String}
+   * A string representation of the node (just the package name).
    */
   toString() {
     return this.name;
