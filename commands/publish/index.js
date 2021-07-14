@@ -184,7 +184,9 @@ class PublishCommand extends Command {
       }
 
       // (occasionally) redundant private filtering necessary to handle nested VersionCommand
+      /** @type {import('@lerna/package-graph').PackageGraphNode[]} */
       this.updates = result.updates.filter((node) => !node.pkg.private);
+      /** @type {Map<string, string>} pkg.name -> version update */
       this.updatesVersions = new Map(result.updatesVersions);
 
       this.packagesToPublish = this.updates.map((node) => node.pkg);

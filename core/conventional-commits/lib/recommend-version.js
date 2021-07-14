@@ -11,6 +11,7 @@ module.exports.recommendVersion = recommendVersion;
  * @param {import("@lerna/package").Package} pkg
  * @param {import("..").VersioningStrategy} type
  * @param {import("..").BaseChangelogOptions & { prereleaseId?: string }} commandOptions
+ * @returns {Promise<string>}
  */
 function recommendVersion(pkg, type, { changelogPreset, rootPath, tagPrefix, prereleaseId }) {
   log.silly(type, "for %s at %s", pkg.name, pkg.location);

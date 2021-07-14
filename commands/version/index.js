@@ -188,6 +188,7 @@ class VersionCommand extends Command {
       );
     }
 
+    /** @type {import('@lerna/package-graph').PackageGraphNode[]} */
     this.updates = collectUpdates(
       this.packageGraph.rawPackageList,
       this.packageGraph,
@@ -243,6 +244,7 @@ class VersionCommand extends Command {
 
     const tasks = [
       () => this.getVersionsForUpdates(),
+      /** @param {Map<string, string>} versions */
       (versions) => this.setUpdatesForVersions(versions),
       () => this.confirmVersions(),
     ];
@@ -308,6 +310,7 @@ class VersionCommand extends Command {
 
     const resolvePrereleaseId = (existingPreid) => preid || existingPreid || "alpha";
 
+    /** @param {string} nextVersion */
     const makeGlobalVersionPredicate = (nextVersion) => {
       this.globalVersion = nextVersion;
 
@@ -347,6 +350,10 @@ class VersionCommand extends Command {
   }
 
   reduceVersions(getVersion) {
+    /**
+     * @param {Map<string, string>} versionMap
+     * @param {import('@lerna/package-graph').PackageGraphNode} node
+     */
     const iterator = (versionMap, node) =>
       Promise.resolve(getVersion(node)).then((version) => versionMap.set(node.name, version));
 
@@ -362,6 +369,10 @@ class VersionCommand extends Command {
     return collectPackages(this.packageGraph, { isCandidate }).map((pkg) => pkg.name);
   }
 
+  /**
+   * @param {(id: string) => string} resolvePrereleaseId
+   * @returns {Promise<Map<string, string>>}
+   */
   recommendVersions(resolvePrereleaseId) {
     const independentVersions = this.project.isIndependent();
     const { changelogPreset, conventionalGraduate } = this.options;
@@ -369,9 +380,12 @@ class VersionCommand extends Command {
     const type = independentVersions ? "independent" : "fixed";
     const prereleasePackageNames = this.getPrereleasePackageNames();
     const graduatePackageNames = Array.from(getPackagesForOption(conventionalGraduate));
+    /** @param {string} name */
     const shouldPrerelease = (name) => prereleasePackageNames && prereleasePackageNames.includes(name);
+    /** @param {string} name */
     const shouldGraduate = (name) =>
       graduatePackageNames.includes("*") || graduatePackageNames.includes(name);
+    /** @param {import('@lerna/package-graph').PackageGraphNode} node */
     const getPrereleaseId = (node) => {
       if (!shouldGraduate(node.name) && (shouldPrerelease(node.name) || node.prereleaseId)) {
         return resolvePrereleaseId(node.prereleaseId);
@@ -435,6 +449,7 @@ class VersionCommand extends Command {
     return highestVersion;
   }
 
+  /** @param {Map<string, string>} versions */
   setUpdatesForVersions(versions) {
     if (this.project.isIndependent() || versions.size === this.packageGraph.size) {
       // only partial fixed versions need to be checked
@@ -515,6 +530,7 @@ class VersionCommand extends Command {
       (pkg) => this.runPackageLifecycle(pkg, "preversion").then(() => pkg),
       // manifest may be mutated by any previous lifecycle
       (pkg) => pkg.refresh(),
+      /** @param {import('@lerna/package').Package} pkg */
       (pkg) => {
         // set new version
         pkg.set("version", this.updatesVersions.get(pkg.name));
