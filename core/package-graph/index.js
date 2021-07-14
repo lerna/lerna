@@ -211,12 +211,21 @@ class PackageGraph extends Map {
      */
     function visitWithStack(baseNode, currentNode = baseNode) {
       walkStack.push(currentNode);
-      currentNode.localDependents.forEach(visits.bind(null, baseNode));
+
+      for (const dependentNode of currentNode.localDependents.values()) {
+        visits(baseNode, dependentNode);
+      }
+
       walkStack.pop();
     }
 
-    this.forEach((currentNode) => visitWithStack(currentNode));
-    cycles.forEach((collapsedNode) => visitWithStack(collapsedNode));
+    for (const currentNode of this.values()) {
+      visitWithStack(currentNode);
+    }
+
+    for (const collapsedNode of cycles.values()) {
+      visitWithStack(collapsedNode);
+    }
 
     reportCycles(cyclePaths, rejectCycles);
 
