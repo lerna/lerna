@@ -24,27 +24,7 @@ class PackageGraph extends Map {
   constructor(packages, graphType = "allDependencies", forceLocal) {
     super(packages.map((pkg) => [pkg.name, new PackageGraphNode(pkg)]));
 
-    if (packages.length !== this.size) {
-      // weed out the duplicates
-      const seen = new Map();
-
-      for (const { name, location } of packages) {
-        if (seen.has(name)) {
-          seen.get(name).push(location);
-        } else {
-          seen.set(name, [location]);
-        }
-      }
-
-      for (const [name, locations] of seen) {
-        if (locations.length > 1) {
-          throw new ValidationError(
-            "ENAME",
-            [`Package name "${name}" used in multiple packages:`, ...locations].join("\n\t")
-          );
-        }
-      }
-    }
+    checkDuplicates(packages, this);
 
     this.forEach((currentNode, currentName) => {
       const graphDependencies =
@@ -316,3 +296,32 @@ class PackageGraph extends Map {
 }
 
 module.exports.PackageGraph = PackageGraph;
+
+/**
+ * @param {import("@lerna/package").Package[]} packages
+ * @param {PackageGraph} instance
+ */
+function checkDuplicates(packages, instance) {
+  if (packages.length !== instance.size) {
+    // weed out the duplicates
+    /** @type {Map<string, string[]>} pkg.name -> pkg.location[] */
+    const seen = new Map();
+
+    for (const { name, location } of packages) {
+      if (seen.has(name)) {
+        seen.get(name).push(location);
+      } else {
+        seen.set(name, [location]);
+      }
+    }
+
+    for (const [name, locations] of seen) {
+      if (locations.length > 1) {
+        throw new ValidationError(
+          "ENAME",
+          [`Package name "${name}" used in multiple packages:`, ...locations].join("\n\t")
+        );
+      }
+    }
+  }
+}
