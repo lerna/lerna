@@ -24,42 +24,11 @@ class PackageGraph extends Map {
   constructor(packages, graphType = "allDependencies", forceLocal) {
     super(packages.map((pkg) => [pkg.name, new PackageGraphNode(pkg)]));
 
+    this.options = { graphType, forceLocal };
+
     checkDuplicates(packages, this);
 
-    this.forEach((currentNode, currentName) => {
-      const graphDependencies =
-        graphType === "dependencies"
-          ? Object.assign({}, currentNode.pkg.optionalDependencies, currentNode.pkg.dependencies)
-          : Object.assign(
-              {},
-              currentNode.pkg.devDependencies,
-              currentNode.pkg.optionalDependencies,
-              currentNode.pkg.dependencies
-            );
-
-      Object.keys(graphDependencies).forEach((depName) => {
-        const depNode = this.get(depName);
-        // Yarn decided to ignore https://github.com/npm/npm/pull/15900 and implemented "link:"
-        // As they apparently have no intention of being compatible, we have to do it for them.
-        // @see https://github.com/yarnpkg/yarn/issues/4212
-        const spec = graphDependencies[depName].replace(/^link:/, "file:");
-        const resolved = npa.resolve(depName, spec, currentNode.location);
-
-        if (!depNode) {
-          // it's an external dependency, store the resolution and bail
-          return currentNode.externalDependencies.set(depName, resolved);
-        }
-
-        if (forceLocal || resolved.fetchSpec === depNode.location || depNode.satisfies(resolved)) {
-          // a local file: specifier OR a matching semver
-          currentNode.localDependencies.set(depName, resolved);
-          depNode.localDependents.set(currentName, currentNode);
-        } else {
-          // non-matching semver of a local dependency
-          currentNode.externalDependencies.set(depName, resolved);
-        }
-      });
-    });
+    this.forEach(linkGraphNodes);
   }
 
   get rawPackageList() {
@@ -322,6 +291,44 @@ function checkDuplicates(packages, instance) {
           [`Package name "${name}" used in multiple packages:`, ...locations].join("\n\t")
         );
       }
+    }
+  }
+}
+
+/**
+ * @param {PackageGraphNode} currentNode
+ * @param {string} currentName
+ * @param {PackageGraph} instance
+ */
+function linkGraphNodes(currentNode, currentName, instance) {
+  const graphDependencies =
+    instance.options.graphType === "dependencies"
+      ? Object.assign({}, currentNode.pkg.optionalDependencies, currentNode.pkg.dependencies)
+      : Object.assign(
+          {},
+          currentNode.pkg.devDependencies,
+          currentNode.pkg.optionalDependencies,
+          currentNode.pkg.dependencies
+        );
+
+  for (const depName of Object.keys(graphDependencies)) {
+    const depNode = instance.get(depName);
+    // Yarn decided to ignore https://github.com/npm/npm/pull/15900 and implemented "link:"
+    // As they apparently have no intention of being compatible, we have to do it for them.
+    // @see https://github.com/yarnpkg/yarn/issues/4212
+    const spec = graphDependencies[depName].replace(/^link:/, "file:");
+    const resolved = npa.resolve(depName, spec, currentNode.location);
+
+    if (
+      depNode &&
+      (instance.options.forceLocal || resolved.fetchSpec === depNode.location || depNode.satisfies(resolved))
+    ) {
+      // a local file: specifier OR a matching semver
+      currentNode.localDependencies.set(depName, resolved);
+      depNode.localDependents.set(currentName, currentNode);
+    } else {
+      // non-matching semver of a local dependency OR non-local external
+      currentNode.externalDependencies.set(depName, resolved);
     }
   }
 }
