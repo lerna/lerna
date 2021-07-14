@@ -2,17 +2,15 @@
 
 // actually _run_ the lifecycles, gorrammit
 jest.unmock("@lerna/run-lifecycle");
-jest.unmock("@lerna/get-packed");
 
 const path = require("path");
 const normalizePath = require("normalize-path");
 const { printObjectProperties } = require("pretty-format/build/collections");
-const { getPacked } = require("@lerna/get-packed");
 const npmConf = require("@lerna/npm-conf");
 const { getPackages } = require("@lerna/project");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 
-const { packDirectory } = require("..");
+const { packDirectory, getPacked } = require("..");
 
 // temp-write creates temp directories that are 36 characters long (uuid.v4())
 const TAR_DIR_REGEXP = /([^\s"]*[\\/][-0-9a-f]{36})([^\s"]*)/g;

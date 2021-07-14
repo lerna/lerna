@@ -1,0 +1,48 @@
+{
+  "name": "@lerna/pack",
+  "version": "4.0.0",
+  "description": "Create a tarball from Lerna-managed packages",
+  "keywords": [
+    "lerna",
+    "command",
+    "pack",
+    "tarball"
+  ],
+  "author": "Daniel Stockman <https://github.com/evocateur>",
+  "homepage": "https://github.com/lerna/lerna/tree/main/commands/pack#readme",
+  "license": "MIT",
+  "main": "index.js",
+  "files": [
+    "command.js",
+    "index.js",
+    "lib"
+  ],
+  "engines": {
+    "node": ">= 10.18.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lerna/lerna.git",
+    "directory": "commands/pack"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "@lerna/command": "file:../../core/command",
+    "@lerna/package": "file:../../core/package",
+    "@lerna/output": "file:../../utils/output",
+    "@lerna/run-lifecycle": "file:../../utils/run-lifecycle",
+    "@lerna/run-topologically": "file:../../utils/run-topologically",
+    "byte-size": "^7.0.0",
+    "columnify": "^1.5.4",
+    "has-unicode": "^2.0.1",
+    "npm-packlist": "^2.1.4",
+    "npmlog": "^4.1.2",
+    "ssri": "^8.0.1",
+    "tar": "^6.1.0"
+  }
+}
