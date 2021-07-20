@@ -56,7 +56,10 @@ class CreateCommand extends Command {
     this.dirName = scope ? name.split("/").pop() : name;
     this.pkgName = name;
     this.pkgsDir =
-      this.project.packageParentDirs.find((pd) => pd.indexOf(pkgLocation) > -1) ||
+      (pkgLocation &&
+        this.project.packageParentDirs.find(
+          (pd) => pd === path.resolve(this.project.rootPath, pkgLocation)
+        )) ||
       this.project.packageParentDirs[0];
 
     this.camelName = camelCase(this.dirName);
