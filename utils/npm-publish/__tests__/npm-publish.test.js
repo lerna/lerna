@@ -187,6 +187,23 @@ describe("npm-publish", () => {
     expect(runLifecycle).toHaveBeenCalledTimes(2);
   });
 
+  it.each([["true"], [true], ["false"], [false]])(
+    "aliases strict-ssl to strictSSL",
+    async (strictSSLValue) => {
+      const opts = { "strict-ssl": strictSSLValue };
+
+      await npmPublish(pkg, tarFilePath, opts);
+
+      expect(publish).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.anything(),
+        expect.objectContaining({
+          strictSSL: strictSSLValue,
+        })
+      );
+    }
+  );
+
   it("calls publish lifecycles", async () => {
     const options = expect.objectContaining({
       projectScope: "@scope",
