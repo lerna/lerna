@@ -20,6 +20,7 @@ const { npmInstall, npmInstallDependencies } = require("..");
 describe("npm-install", () => {
   childProcess.exec.mockResolvedValue();
   fs.rename.mockResolvedValue();
+  fs.copy.mockResolvedValue();
   writePkg.mockResolvedValue();
 
   describe("npmInstall()", () => {
@@ -141,7 +142,7 @@ describe("npm-install", () => {
 
       await npmInstallDependencies(pkg, dependencies, {});
 
-      expect(fs.rename).toHaveBeenLastCalledWith(pkg.manifestLocation, backupManifest);
+      expect(fs.copy).toHaveBeenLastCalledWith(pkg.manifestLocation, backupManifest);
       expect(fs.renameSync).toHaveBeenLastCalledWith(backupManifest, pkg.manifestLocation);
       expect(writePkg).toHaveBeenLastCalledWith(pkg.manifestLocation, {
         name: "npm-install-deps",
@@ -463,19 +464,19 @@ describe("npm-install", () => {
       });
     });
 
-    it("rejects with rename error", async () => {
+    it("rejects with copy error", async () => {
       const pkg = new Package(
         {
-          name: "npm-install-deps-rename-error",
+          name: "npm-install-deps-copy-error",
           version: "1.0.0",
         },
-        path.normalize("/test/npm-install-deps/renameError")
+        path.normalize("/test/npm-install-deps/copyError")
       );
       const dependencies = ["I'm just here so we don't exit early"];
 
-      fs.rename.mockRejectedValueOnce(new Error("Unable to rename file"));
+      fs.copy.mockRejectedValueOnce(new Error("Unable to copy file"));
 
-      await expect(npmInstallDependencies(pkg, dependencies, {})).rejects.toThrow("Unable to rename file");
+      await expect(npmInstallDependencies(pkg, dependencies, {})).rejects.toThrow("Unable to copy file");
     });
 
     it("cleans up synchronously after writeFile error", async () => {
