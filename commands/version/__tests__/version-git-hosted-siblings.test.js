@@ -64,7 +64,7 @@ describe("git-hosted sibling specifiers", () => {
       "package-1": "github:user/package-1#semver:^1.0.1-beta.0",
     });
     expect(writePkg.updatedManifest("package-3").devDependencies).toMatchObject({
-      "package-2": "git+ssh://git@github.com/user/package-2.git#semver:^1.0.1-beta.0",
+      "package-2": "git@github.com:user/package-2#semver:^1.0.0",
     });
     expect(writePkg.updatedManifest("package-4").dependencies).toMatchObject({
       "package-1": "github:user/package-1#semver:^0.1.0", // non-matching semver

@@ -8,7 +8,10 @@ const tempy = require("tempy");
 const { copyFixture } = require("@lerna-test/copy-fixture");
 
 const CLI = path.join(__dirname, "../cli.js");
-const bin = (cwd) => (...args) => execa(CLI, args, { cwd });
+const bin =
+  (cwd) =>
+  (...args) =>
+    execa(CLI, args, { cwd });
 
 jest.setTimeout(30e3);
 

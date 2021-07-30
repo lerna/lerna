@@ -3,48 +3,38 @@ on:
     branches:
       - main
       - next
-      - 'test/*'
+      - "test/*"
   pull_request:
-    types: [ assigned, opened, synchronize, reopened, labeled ]
+    types: [assigned, opened, synchronize, reopened, labeled]
 name: ci
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
         with:
           # only lint on latest node
-          node-version: 14
-      - uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          cache: npm
+          node-version: 16
       - run: npm -g i npm@7
       - run: npm ci
       - run: npm run ci:lint
 
   test:
-    needs: [ lint ]
+    needs: [lint]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
       matrix:
-        node: [ 14, 12, 10 ]
-        script: [ 'ci:test:unit', 'ci:test:integration' ]
+        node: [16, 14, 12, 10]
+        script: ["ci:test:unit", "ci:test:integration"]
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
         with:
+          cache: npm
           node-version: ${{ matrix.node }}
-      - uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
       - name: Configure git metadata
         run: |
           git config --global user.email test@example.com
@@ -54,30 +44,20 @@ jobs:
       - run: npm run ${{ matrix.script }}
 
   windows:
-    needs: [ lint ]
+    needs: [lint]
     runs-on: windows-latest
     strategy:
       fail-fast: true
       matrix:
-        script: [ 'ci:test:unit', 'ci:test:integration' ]
-        subset: [ publish, non-publish ]
+        script: ["ci:test:unit", "ci:test:integration"]
+        subset: [publish, non-publish]
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
         with:
           # only run windows tests on latest node
-          node-version: 14
-      # caching on windows is LUDICROUSLY slow
-      # - name: Get npm cache directory
-      #   id: npm-cache
-      #   run: |
-      #     echo "::set-output name=dir::$(npm config get cache)"
-      # - uses: actions/cache@v2
-      #   with:
-      #     path: ${{ steps.npm-cache.outputs.dir }}
-      #     key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-node-
+          cache: npm
+          node-version: 16
       - name: Configure git metadata
         run: |
           git config --global user.email test@example.com

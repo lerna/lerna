@@ -355,14 +355,16 @@ class PublishCommand extends Command {
       }).filter((node) => !node.pkg.private)
     );
 
-    const makeVersion = (fallback) => ({ lastVersion = fallback, refCount, sha }) => {
-      // the next version is bumped without concern for preid or current index
-      const nextVersion = semver.inc(lastVersion.replace(this.tagPrefix, ""), release.replace("pre", ""));
+    const makeVersion =
+      (fallback) =>
+      ({ lastVersion = fallback, refCount, sha }) => {
+        // the next version is bumped without concern for preid or current index
+        const nextVersion = semver.inc(lastVersion.replace(this.tagPrefix, ""), release.replace("pre", ""));
 
-      // semver.inc() starts a new prerelease at .0, git describe starts at .1
-      // and build metadata is always ignored when comparing dependency ranges
-      return `${nextVersion}-${preid}.${Math.max(0, refCount - 1)}+${sha}`;
-    };
+        // semver.inc() starts a new prerelease at .0, git describe starts at .1
+        // and build metadata is always ignored when comparing dependency ranges
+        return `${nextVersion}-${preid}.${Math.max(0, refCount - 1)}+${sha}`;
+      };
 
     if (this.project.isIndependent()) {
       // each package is described against its tags only

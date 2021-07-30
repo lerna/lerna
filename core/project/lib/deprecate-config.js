@@ -101,5 +101,9 @@ function stringify(obj) {
 }
 
 function compose(...funcs) {
-  return funcs.reduce((a, b) => (...args) => a(b(...args)));
+  return funcs.reduce(
+    (a, b) =>
+      (...args) =>
+        a(b(...args))
+  );
 }

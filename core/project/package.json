@@ -37,7 +37,7 @@
     "cosmiconfig": "^7.0.0",
     "dedent": "^0.7.0",
     "dot-prop": "^6.0.1",
-    "glob-parent": "^5.1.1",
+    "glob-parent": "^6.0.1",
     "globby": "^11.0.2",
     "load-json-file": "^6.2.0",
     "npmlog": "^4.1.2",
