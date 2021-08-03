@@ -421,7 +421,7 @@ class CreateCommand extends Command {
         import ${this.camelName} from '../src/${this.dirName}';
 
         describe('${this.pkgName}', () => {
-            it('needs tests');
+            it.todo('needs tests');
         });
       `
       : dedent`
@@ -430,7 +430,7 @@ class CreateCommand extends Command {
         const ${this.camelName} = require('..');
 
         describe('${this.pkgName}', () => {
-            it('needs tests');
+            it.todo('needs tests');
         });
       `;
 
@@ -498,7 +498,7 @@ class CreateCommand extends Command {
       dedent`
         describe('${this.pkgName} cli', () => {
           // const argv = cli(cwd).parse(['args']);
-          it('needs tests');
+          it.todo('needs tests');
         });
       `,
     ].join(os.EOL);
