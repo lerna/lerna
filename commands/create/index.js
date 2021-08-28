@@ -45,11 +45,13 @@ class CreateCommand extends Command {
       esModule,
       keywords,
       license,
-      loc: pkgLocation,
+      loc,
       name: pkgName,
       yes,
     } = this.options;
 
+    const pkgLocation = path.resolve(this.project.rootPath, loc);
+    
     // npm-package-arg handles all the edge-cases with scopes
     const { name, scope } = npa(pkgName);
 
