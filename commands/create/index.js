@@ -50,8 +50,7 @@ class CreateCommand extends Command {
       yes,
     } = this.options;
 
-    const pkgLocation = path.resolve(this.project.rootPath, loc);
-    
+    const pkgLocation = loc ? path.resolve(this.project.rootPath, loc) : "";
     // npm-package-arg handles all the edge-cases with scopes
     const { name, scope } = npa(pkgName);
 
