@@ -168,7 +168,9 @@ The root-level package.json must also include a `workspaces` array:
   "devDependencies": {
     "lerna": "^2.2.0"
   },
-  "workspaces": ["packages/*"]
+  "workspaces": {
+    "packages": ["packages/*"]
+  }
 }
 ```
 
