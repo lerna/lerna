@@ -299,11 +299,11 @@ Call [`lerna version`](https://github.com/lerna/lerna/tree/main/commands/version
 
 ## Per-Package Configuration
 
-A leaf package can be configured with special [`publishConfig`](https://docs.npmjs.com/files/package.json#publishconfig) that in _certain_ circumstances changes the behavior of `lerna publish`.
+A leaf package can be configured with special [`publishConfig`](https://docs.npmjs.com/cli/v7/configuring-npm/package-json#publishconfig) that in _certain_ circumstances changes the behavior of `lerna publish`.
 
 ### `publishConfig.access`
 
-To publish packages with a scope (e.g., `@mycompany/rocks`), you must set [`access`](https://docs.npmjs.com/misc/config#access):
+To publish packages with a scope (e.g., `@mycompany/rocks`), you must set [`access`](https://docs.npmjs.com/cli/v7/using-npm/config#access):
 
 ```json
   "publishConfig": {
@@ -318,7 +318,7 @@ To publish packages with a scope (e.g., `@mycompany/rocks`), you must set [`acce
 
 ### `publishConfig.registry`
 
-You can customize the registry on a per-package basis by setting [`registry`](https://docs.npmjs.com/misc/config#registry):
+You can customize the registry on a per-package basis by setting [`registry`](https://docs.npmjs.com/cli/v7/using-npm/config#registry):
 
 ```json
   "publishConfig": {
