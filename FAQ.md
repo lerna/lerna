@@ -6,11 +6,19 @@ _This document is a work in progress._
 
 `lerna bootstrap` is a three-step process. For each package in the monorepo:
 
-1. Modify `package.json`, removing dependencies to other packages from the same monorepo. The original `package.json` is temporarily backed up as `package.json.lerna_backup`.
+1. Modify `package.json`, removing dependencies to other packages from the same
+   monorepo. The original `package.json` is temporarily backed up as
+   `package.json.lerna_backup`.
 2. Run `npm install`, and restore the original `package.json` afterwards.
-3. For each dependency removed from `package.json` in step 1, add a link inside `node_modules` to its directory.
+3. For each dependency removed from `package.json` in step 1, add a link inside 
+   `node_modules` to its local package directory.
 
-This process means that `npm install` won't work inside individual package directories, if they depend on any other local packages. In order to troubleshoot the `npm install` step for any reason, you would have to manually remove local packages from `package.json` first, then run `npm install`. (This would remove any links added in step 3, meaning that `npx lerna bootstrap` is still necessary to make the project functional.)
+This process means that `npm install` won't work inside individual package
+directories, if they depend on any other local packages. To troubleshoot the
+`npm install` step for any reason, you would have to manually remove local
+packages from `package.json` first, then run `npm install`. (This would remove
+any links added in step 3, meaning that `npx lerna bootstrap` is still necessary
+to make the project functional.)
 
 ## How do I add a package to my Lerna repository?
 
