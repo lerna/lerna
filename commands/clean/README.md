@@ -15,4 +15,4 @@ Remove the `node_modules` directory from all packages.
 `lerna clean` accepts all [filter flags](https://www.npmjs.com/package/@lerna/filter-options), as well as `--yes`.
 
 
-> `lerna clean` does not remove modules from the root `node_modules` directory, even if you have the `--hoist` option enabled.
+> `lerna clean` does not remove modules from the root `node_modules` directory, even if you have the `--hoist` option enabled, unless the root is also a package that you have listed in `lerna.json`. Note that making your root also be a package managed by Lerna should work in most cases, but is not fully tested, and there may be edge cases that don't work.
