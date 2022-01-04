@@ -51,7 +51,7 @@
     "get-stream": "^6.0.1",
     "git-url-parse": "^11.4.4",
     "glob-parent": "^5.1.2",
-    "globby": "^11.0.2",
+    "globby": "^11.0.4",
     "has-unicode": "^2.0.1",
     "import-local": "^3.0.2",
     "init-package-json": "^2.0.2",

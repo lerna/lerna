@@ -39,7 +39,7 @@
     "@lerna/validation-error": "file:../../core/validation-error",
     "dedent": "^0.7.0",
     "fs-extra": "^9.1.0",
-    "globby": "^11.0.2",
+    "globby": "^11.0.4",
     "init-package-json": "^2.0.2",
     "npm-package-arg": "^8.1.0",
     "p-reduce": "^2.1.0",
