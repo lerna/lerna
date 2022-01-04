@@ -1,0 +1,8 @@
+{
+    "baseBranches": [
+        "main"
+    ],
+    "extends": [
+        "@donmahallem"
+    ]
+}
