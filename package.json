@@ -38,7 +38,7 @@
     "cmd-shim": "^4.1.0",
     "columnify": "^1.5.4",
     "config-chain": "^1.1.13",
-    "conventional-changelog-angular": "^5.0.12",
+    "conventional-changelog-angular": "^5.0.13",
     "conventional-changelog-core": "^4.2.2",
     "conventional-recommended-bump": "^6.1.0",
     "cosmiconfig": "^7.0.0",
