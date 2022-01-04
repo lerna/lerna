@@ -32,7 +32,7 @@
   "dependencies": {
     "@octokit/plugin-enterprise-rest": "^6.0.1",
     "@octokit/rest": "^18.1.0",
-    "byte-size": "^7.0.0",
+    "byte-size": "^7.0.1",
     "chalk": "^4.1.0",
     "clone-deep": "^4.0.1",
     "cmd-shim": "^4.1.0",
