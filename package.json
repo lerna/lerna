@@ -48,7 +48,7 @@
     "execa": "^5.0.0",
     "fs-extra": "^9.1.0",
     "get-port": "^5.1.1",
-    "get-stream": "^6.0.0",
+    "get-stream": "^6.0.1",
     "git-url-parse": "^11.4.4",
     "glob-parent": "^5.1.1",
     "globby": "^11.0.2",
