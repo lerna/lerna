@@ -2,6 +2,7 @@
     "baseBranches": [
         "main"
     ],
+    "includeForks": true,
     "extends": [
         "@donmahallem"
     ]
