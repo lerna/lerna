@@ -32,7 +32,7 @@
     "@lerna/run-lifecycle": "file:../run-lifecycle",
     "npm-packlist": "^2.1.4",
     "npmlog": "^4.1.2",
-    "tar": "^6.1.0",
+    "tar": "^6.1.11",
     "temp-write": "^4.0.0"
   },
   "engines": {

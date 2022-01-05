@@ -88,7 +88,7 @@
     "slash": "^3.0.0",
     "ssri": "^8.0.1",
     "strong-log-transformer": "^2.1.0",
-    "tar": "^6.1.0",
+    "tar": "^6.1.11",
     "temp-write": "^4.0.0",
     "upath": "^2.0.1",
     "validate-npm-package-license": "^3.0.4",
