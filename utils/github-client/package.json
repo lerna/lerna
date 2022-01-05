@@ -33,7 +33,7 @@
   "dependencies": {
     "@lerna/child-process": "file:../../core/child-process",
     "@octokit/plugin-enterprise-rest": "^6.0.1",
-    "@octokit/rest": "^18.1.0",
+    "@octokit/rest": "^18.12.0",
     "git-url-parse": "^11.4.4",
     "npmlog": "^4.1.2"
   }
