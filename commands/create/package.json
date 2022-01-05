@@ -50,6 +50,6 @@
     "validate-npm-package-license": "^3.0.4",
     "validate-npm-package-name": "^3.0.0",
     "whatwg-url": "^8.4.0",
-    "yargs-parser": "20.2.4"
+    "yargs-parser": "20.2.9"
   }
 }
