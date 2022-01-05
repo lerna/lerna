@@ -7,7 +7,7 @@
   "license": "MIT",
   "dependencies": {
     "@lerna-test/init-fixture": "file:../init-fixture",
-    "execa": "^5.0.0",
+    "execa": "^5.1.1",
     "file-url": "^3.0.0",
     "tempy": "^1.0.1"
   }
