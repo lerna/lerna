@@ -44,7 +44,7 @@
     "cosmiconfig": "^7.0.1",
     "dedent": "^0.7.0",
     "dot-prop": "^6.0.1",
-    "envinfo": "^7.7.4",
+    "envinfo": "^7.8.1",
     "execa": "^5.0.0",
     "fs-extra": "^9.1.0",
     "get-port": "^5.1.1",
