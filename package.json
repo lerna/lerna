@@ -133,7 +133,7 @@
     "@lerna-test/update-lerna-config": "file:helpers/update-lerna-config",
     "debug": "4.3.3",
     "env-cmd": "10.1.0",
-    "eslint": "7.19.0",
+    "eslint": "7.32.0",
     "eslint-config-airbnb-base": "14.2.1",
     "eslint-config-prettier": "7.2.0",
     "eslint-plugin-import": "2.22.1",
