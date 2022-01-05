@@ -42,6 +42,6 @@
     "npm-package-arg": "^8.1.0",
     "p-map": "^4.0.0",
     "pacote": "^11.2.6",
-    "semver": "^7.3.4"
+    "semver": "^7.3.5"
   }
 }

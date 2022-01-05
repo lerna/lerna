@@ -45,7 +45,7 @@
     "p-reduce": "^2.1.0",
     "pacote": "^11.2.6",
     "pify": "^5.0.0",
-    "semver": "^7.3.4",
+    "semver": "^7.3.5",
     "slash": "^3.0.0",
     "validate-npm-package-license": "^3.0.4",
     "validate-npm-package-name": "^3.0.0",
