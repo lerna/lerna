@@ -139,7 +139,7 @@
     "eslint-plugin-import": "2.25.4",
     "eslint-plugin-jest": "25.3.4",
     "eslint-plugin-node": "11.1.0",
-    "eslint-plugin-prettier": "3.4.1",
+    "eslint-plugin-prettier": "4.0.0",
     "expect": "26.6.2",
     "file-url": "3.0.0",
     "find-up": "5.0.0",
