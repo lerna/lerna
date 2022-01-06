@@ -137,7 +137,7 @@
     "eslint-config-airbnb-base": "14.2.1",
     "eslint-config-prettier": "8.3.0",
     "eslint-plugin-import": "2.25.4",
-    "eslint-plugin-jest": "24.7.0",
+    "eslint-plugin-jest": "25.3.4",
     "eslint-plugin-node": "11.1.0",
     "eslint-plugin-prettier": "3.4.1",
     "expect": "26.6.2",
