@@ -79,7 +79,7 @@ The two primary commands in Lerna are `lerna bootstrap` and `lerna publish`.
 
 ### What can't Lerna do?
 
-Lerna is not a deployment tool for serverless monorepos. Hoisting might be incompatible with traditional serverless monorepo deployment techniques.
+Lerna is not a deployment tool for serverless monorepos. Hosting might be incompatible with traditional serverless monorepo deployment techniques.
 
 ## Getting Started
 
