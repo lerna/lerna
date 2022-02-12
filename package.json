@@ -60,7 +60,6 @@
     "libnpmaccess": "^4.0.1",
     "libnpmpublish": "^4.0.0",
     "load-json-file": "^6.2.0",
-    "lodash.template": "^4.5.0",
     "minimatch": "^3.0.4",
     "multimatch": "^5.0.0",
     "node-fetch": "^2.6.1",
