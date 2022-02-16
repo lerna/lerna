@@ -352,5 +352,17 @@ describe("ImportCommand", () => {
         "--dest does not match with the package directories: core,packages"
       );
     });
+
+    it("creates a module in specified package subdir", async () => {
+      const externalDir = await initFixture("external", "Init external commit");
+      const testDir = await initFixture("multi-packages");
+
+      const packageJson = path.join(testDir, "packages", "components", "package.json");
+
+      await lernaImport(testDir)(externalDir, "--dest=packages/components");
+
+      expect(await lastCommitInDir(testDir)).toBe("Init external commit");
+      expect(await pathExists(packageJson)).toBe(true);
+    });
   });
 });

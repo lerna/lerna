@@ -49,8 +49,18 @@ $ lerna import ~/Product --flatten
 
 When importing repositories, you can specify the destination directory by the directory listed in lerna.json.
 
+The following command would import an external git repo called Product at destination ./utilities/Product
+
 ```
 $ lerna import ~/Product --dest=utilities
+```
+
+Specifying a subdirectory will rename the imported package accordingly.
+
+The following command would import an external git repo called Product at destination ./utilities/product-schema
+
+```
+$ lerna import ~/Product --dest=utilities/product-schema
 ```
 
 ### `--preserve-commit`

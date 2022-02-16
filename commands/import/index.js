@@ -61,14 +61,13 @@ class ImportCommand extends Command {
     }
 
     // Compute a target directory relative to the Lerna root
-    const targetBase = this.getTargetBase();
-    if (this.getPackageDirectories().indexOf(targetBase) === -1) {
+    if (!this.destinationValid()) {
       throw new ValidationError(
         "EDESTDIR",
         `--dest does not match with the package directories: ${this.getPackageDirectories()}`
       );
     }
-    const targetDir = path.join(targetBase, externalRepoBase);
+    const targetDir = this.getTargetDir(externalRepoBase);
 
     // Compute a target directory relative to the Git root
     const gitRepoRoot = this.getWorkspaceRoot();
@@ -121,12 +120,34 @@ class ImportCommand extends Command {
     return this.project.packageConfigs.filter((p) => p.endsWith("*")).map((p) => path.dirname(p));
   }
 
-  getTargetBase() {
+  getDestination() {
     if (this.options.dest) {
       return this.options.dest;
     }
-
     return this.getPackageDirectories().shift() || "packages";
+  }
+
+  getTargetDir(externalDir) {
+    const dest = this.getDestination();
+    if (dest.includes("/")) {
+      return dest;
+    }
+    return path.join(dest, externalDir);
+  }
+
+  destinationValid() {
+    const destination = this.getDestination();
+    let isValid = false;
+    for (const p of this.getPackageDirectories()) {
+      const pkg = p;
+      if (pkg.endsWith("*")) {
+        pkg.replace("*", "");
+      }
+      if (destination.startsWith(pkg)) {
+        isValid = true;
+      }
+    }
+    return isValid;
   }
 
   getCurrentSHA() {
