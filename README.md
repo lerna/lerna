@@ -1,4 +1,4 @@
-**Important note: this project [is not actively maintained](https://github.com/lerna/lerna/issues/2703). Consider adopting an alternative toolset for monorepo management or migrating to [Lerna Lite](https://github.com/ghiscoding/lerna-lite).**
+**Important note: this project [is not actively maintained](https://github.com/lerna/lerna/issues/2703). Consider adopting an alternative toolset for monorepo management.**
 
 <p align="center">
   <img alt="Lerna" src="https://user-images.githubusercontent.com/645641/79596653-38f81200-80e1-11ea-98cd-1c6a3bb5de51.png" width="480">
