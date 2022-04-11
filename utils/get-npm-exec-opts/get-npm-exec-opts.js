@@ -6,7 +6,9 @@ module.exports.getNpmExecOpts = getNpmExecOpts;
 
 function getNpmExecOpts(pkg, registry) {
   // execa automatically extends process.env
-  const env = {};
+  const env = {
+    LERNA_PACKAGE_NAME: pkg.name
+  };
 
   if (registry) {
     env.npm_config_registry = registry;
