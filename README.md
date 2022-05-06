@@ -1,4 +1,4 @@
-**Important note: this project [is not actively maintained](https://github.com/lerna/lerna/issues/2703). Consider adopting an alternative toolset for monorepo management.**
+**Important note: this project [is changing of ownership](https://github.com/lerna/lerna/issues/3121). Your favorite tool will continue to live on, get updates and soon a new roadmap!**
 
 <p align="center">
   <img alt="Lerna" src="https://user-images.githubusercontent.com/645641/79596653-38f81200-80e1-11ea-98cd-1c6a3bb5de51.png" width="480">
