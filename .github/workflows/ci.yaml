@@ -30,7 +30,7 @@ jobs:
     needs: [ lint ]
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         node: [ 14, 12, 10 ]
         script: [ 'ci:test:unit', 'ci:test:integration' ]
@@ -57,7 +57,7 @@ jobs:
     needs: [ lint ]
     runs-on: windows-latest
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         script: [ 'ci:test:unit', 'ci:test:integration' ]
         subset: [ publish, non-publish ]
