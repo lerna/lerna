@@ -275,7 +275,7 @@ Please note that lerna does _not_ perform the actual splitting of git history in
 }
 ```
 
-In the example above,
+In the example above:
 
 - `lerna bootstrap` will properly symlink `pkg-2` into `pkg-1`.
 - `lerna publish` will update the committish (`#v1.0.0`) in `pkg-1` when `pkg-2` changes.

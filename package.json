@@ -8,6 +8,13 @@
     "core/*",
     "utils/*"
   ],
+  "volta": {
+    "node": "14.19.2",
+    "npm": "7.24.2"
+  },
+  "engines": {
+    "node": ">= 10.18.0"
+  },
   "scripts": {
     "prerelease": "npm test && npm run integration",
     "release": "env-cmd lerna version",
@@ -151,11 +158,8 @@
     "normalize-path": "^3.0.0",
     "path-key": "^3.1.1",
     "prettier": "^2.2.1",
-    "tacks": "^1.3.0",
+    "tacks": "1.2.6",
     "tempy": "^1.0.0",
     "touch": "^3.1.0"
-  },
-  "engines": {
-    "node": ">= 10.18.0"
   }
 }
