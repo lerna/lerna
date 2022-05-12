@@ -75,7 +75,7 @@
     "p-queue": "^6.6.2",
     "p-reduce": "^2.1.0",
     "p-waterfall": "^2.1.1",
-    "pacote": "^11.2.6",
+    "pacote": "^13.3.0",
     "path-exists": "^4.0.0",
     "pify": "^5.0.0",
     "read-cmd-shim": "^2.0.0",
@@ -151,7 +151,7 @@
     "normalize-path": "^3.0.0",
     "path-key": "^3.1.1",
     "prettier": "^2.2.1",
-    "tacks": "^1.3.0",
+    "tacks": "^1.2.6",
     "tempy": "^1.0.0",
     "touch": "^3.1.0"
   },

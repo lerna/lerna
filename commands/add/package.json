@@ -41,7 +41,7 @@
     "dedent": "^0.7.0",
     "npm-package-arg": "^8.1.0",
     "p-map": "^4.0.0",
-    "pacote": "^11.2.6",
+    "pacote": "^13.3.0",
     "semver": "^7.3.4"
   }
 }
