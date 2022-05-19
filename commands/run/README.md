@@ -15,7 +15,8 @@ $ lerna run build
 $ lerna run --parallel watch
 ```
 
-Run an [npm script](https://docs.npmjs.com/misc/scripts) in each package that contains that script. A double-dash (`--`) is necessary to pass dashed arguments to the script execution.
+Run an [npm script](https://docs.npmjs.com/misc/scripts) in each package that contains that script. A double-dash (`--`)
+is necessary to pass dashed arguments to the script execution.
 
 ## Options
 
@@ -57,7 +58,9 @@ $ lerna run watch --stream
 
 ### `--parallel`
 
-Similar to `--stream`, but completely disregards concurrency and topological sorting, running a given command or script immediately in all matching packages with prefixed streaming output. This is the preferred flag for long-running processes such as `npm run watch` run over many packages.
+Similar to `--stream`, but completely disregards concurrency and topological sorting, running a given command or script
+immediately in all matching packages with prefixed streaming output. This is the preferred flag for long-running
+processes such as `npm run watch` run over many packages.
 
 ```sh
 $ lerna run watch --parallel
@@ -101,8 +104,30 @@ $ lerna run build --profile
 
 ### `--profile-location <location>`
 
-You can provide a custom location for the performance profile output. The path provided will be resolved relative to the current working directory.
+You can provide a custom location for the performance profile output. The path provided will be resolved relative to the
+current working directory.
 
 ```sh
 $ lerna run build --profile --profile-location=logs/profile/
+```
+
+### `useNx` (experimental)
+
+Enables integration with [Nx](https://nx.dev). Setting `"useNx": true` in `lerna.json` will tell Lerna to delegate
+running tasks to Nx instead of using `p-map` and `p-queue`. This only works if Nx is installed and `nx.json` is present.
+
+Example of `nx.json`:
+
+```json
+{
+  "extends": "nx/presets/npm.json",
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "nx/tasks-runners/default",
+      "options": {
+        "cacheableOperations": ["build"]
+      }
+    }
+  }
+}
 ```

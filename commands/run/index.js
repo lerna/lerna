@@ -10,6 +10,7 @@ const { timer } = require("@lerna/timer");
 const { runTopologically } = require("@lerna/run-topologically");
 const { ValidationError } = require("@lerna/validation-error");
 const { getFilteredPackages } = require("@lerna/filter-options");
+const { performance } = require("perf_hooks");
 
 module.exports = factory;
 
@@ -62,18 +63,22 @@ class RunCommand extends Command {
   }
 
   execute() {
-    this.logger.info(
-      "",
-      "Executing command in %d %s: %j",
-      this.count,
-      this.packagePlural,
-      this.joinedCommand
-    );
+    if (!this.options.useNx) {
+      this.logger.info(
+        "",
+        "Executing command in %d %s: %j",
+        this.count,
+        this.packagePlural,
+        this.joinedCommand
+      );
+    }
 
     let chain = Promise.resolve();
     const getElapsed = timer();
 
-    if (this.options.parallel) {
+    if (this.options.useNx) {
+      chain = chain.then(() => this.runScriptsUsingNx());
+    } else if (this.options.parallel) {
       chain = chain.then(() => this.runScriptInPackagesParallel());
     } else if (this.toposort) {
       chain = chain.then(() => this.runScriptInPackagesTopological());
@@ -161,6 +166,26 @@ class RunCommand extends Command {
     }
 
     return chain;
+  }
+
+  runScriptsUsingNx() {
+    performance.mark("init-local");
+    // eslint-disable-next-line global-require,import/no-extraneous-dependencies,node/no-extraneous-require
+    const nxOutput = require("nx/src/utils/output");
+    nxOutput.output.cliName = "Lerna (powered by Nx)";
+    nxOutput.output.formatCommand = (message) => message.replace(":", " ");
+    if (this.options.ci) {
+      process.env.CI = "true";
+    }
+    // eslint-disable-next-line global-require,import/no-extraneous-dependencies,node/no-extraneous-require
+    const { runMany } = require("nx/src/command-line/run-many");
+    return runMany({
+      projects: this.packagesWithScript.map((p) => p.name).join(","),
+      target: this.script,
+      outputStyle: this.options.stream ? "stream" : "static",
+      parallel: this.options.concurrency,
+      _: this.args,
+    });
   }
 
   runScriptInPackagesParallel() {

@@ -296,4 +296,48 @@ describe("RunCommand", () => {
       await expect(command).rejects.toThrow("Dependency cycles detected, you should fix these!");
     });
   });
+
+  // this is a temporary set of tests, which will be replaced by verdacio-driven tests
+  // once the required setup is fully set up
+  describe("in a repo powered by Nx", () => {
+    let testDir;
+    let collectedOutput = "";
+
+    beforeAll(async () => {
+      testDir = await initFixture("powered-by-nx");
+      process.env.NX_WORKSPACE_ROOT_PATH = testDir;
+      // eslint-disable-next-line global-require
+      const nxOutput = require("nx/src/utils/output");
+      nxOutput.output.writeToStdOut = (v) => {
+        collectedOutput = `${collectedOutput}\n${v}`;
+      };
+      jest.spyOn(process, "exit").mockImplementation((code) => {
+        if (code !== 0) {
+          throw new Error();
+        }
+      });
+    });
+
+    it("runs a script in packages", async () => {
+      collectedOutput = "";
+      await lernaRun(testDir)("my-script");
+      expect(collectedOutput).toContain("package-1");
+      expect(collectedOutput).toContain("package-3");
+      expect(collectedOutput).toContain("Successfully ran target");
+    });
+
+    it("runs a script only in scoped packages", async () => {
+      collectedOutput = "";
+      await lernaRun(testDir)("my-script", "--scope", "package-1");
+      expect(collectedOutput).toContain("package-1");
+      expect(collectedOutput).not.toContain("package-3");
+    });
+
+    it("does not run a script in ignored packages", async () => {
+      collectedOutput = "";
+      await lernaRun(testDir)("my-script", "--ignore", "package-@(2|3|4)");
+      expect(collectedOutput).toContain("package-1");
+      expect(collectedOutput).not.toContain("package-3");
+    });
+  });
 });
