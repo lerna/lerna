@@ -76,20 +76,31 @@ $ npm run lint -- --fix
 
 ### Local CLI Testing
 
-If you want to test out Lerna on local repos:
+If you want to test out Lerna on local repos, you can leverage verdaccio as a local npm regsitry.
+
+Open a new terminal window and run the following from the root of the workspace:
 
 ```sh
-$ npm link
+$ npm run e2e:run-verdaccio
 ```
 
-This will set your global `lerna` command to the local version.
+This will run verdaccio on http://localhost:4872
 
-Note: If the local repo that you are testing in _already_ depends on lerna,
-you'll need to link your local clone of lerna _into_ the target repo:
+In another terminal window you can now publish any new version (in this example `999.9.9`) to that local registry:
 
 ```sh
-# in the target repo
-$ npm link lerna
+npm run e2e:local-publish -- 999.9.9
+```
+
+You can then install your local version of lerna wherever you want by leveraging the `--registry` flag on the npm/npx client.
+
+E.g. you could start a new lerna workspace with your new version
+
+```sh
+cd /some/path/on/your/machine
+npx --registry=http://localhost:4872/ lerna@999.9.9 init
+npm --registry=http://localhost:4872/ install
+npx lerna --version # 999.9.9
 ```
 
 ### Coverage
