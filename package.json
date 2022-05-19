@@ -23,6 +23,11 @@
     "ci:test:unit": "jest --config jest.config.js --maxWorkers=2 --ci",
     "ci:test:integration": "jest --config jest.integration.js --maxWorkers=2 --ci",
     "ci:windows": "jest --ci --maxWorkers=2 && npm run integration -- --ci",
+    "build": "scripts/build.sh",
+    "e2e:prepare-local-publish": "e2e/prepare-local-publish.sh",
+    "e2e:publish-to-verdaccio": "npm_config_registry=\"http://localhost:4872/\" e2e/publish-to-verdaccio.sh",
+    "e2e:run-verdaccio": "verdaccio --config ./e2e/local-registry/config.yml --listen 4872",
+    "e2e:local-publish": "npm run build && npm run e2e:prepare-local-publish && npm run e2e:publish-to-verdaccio",
     "fix": "npm run lint -- --fix",
     "integration": "jest --config jest.integration.js --maxWorkers=2",
     "ci:lint": "eslint . -c .eslintrc.yaml --no-eslintrc --ignore-path .gitignore",
@@ -160,6 +165,7 @@
     "prettier": "^2.2.1",
     "tacks": "1.2.6",
     "tempy": "^1.0.0",
-    "touch": "^3.1.0"
+    "touch": "^3.1.0",
+    "verdaccio": "^5.10.2"
   }
 }
