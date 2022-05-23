@@ -43,6 +43,7 @@
   "homepage": "https://lerna.js.org/",
   "dependencies": {
     "@npmcli/arborist": "5.2.0",
+    "@npmcli/run-script": "^3.0.2",
     "@octokit/plugin-enterprise-rest": "^6.0.1",
     "@octokit/rest": "^18.1.0",
     "byte-size": "^7.0.0",
@@ -77,7 +78,6 @@
     "minimatch": "^3.0.4",
     "multimatch": "^5.0.0",
     "node-fetch": "^2.6.1",
-    "npm-lifecycle": "^3.1.5",
     "npm-package-arg": "^8.1.0",
     "npm-packlist": "^2.1.4",
     "npm-registry-fetch": "^9.0.0",
