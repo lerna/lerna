@@ -2,7 +2,7 @@
 
 const os = require("os");
 const execa = require("execa");
-const tempWrite = require("temp-write");
+const tempWrite = require("@lerna/temp-write");
 
 module.exports.gitCommit = gitCommit;
 

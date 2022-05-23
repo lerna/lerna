@@ -1,0 +1,32 @@
+{
+  "name": "@lerna/temp-write",
+  "version": "4.0.0",
+  "description": "Write string/buffer/stream to a random temp file",
+  "homepage": "https://github.com/lerna/lerna/tree/main/utils/temp-write#readme",
+  "license": "MIT",
+  "main": "lib/temp-write.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lerna/lerna.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/lerna/lerna/issues"
+  },
+  "dependencies": {
+    "graceful-fs": "^4.1.15",
+    "is-stream": "^2.0.0",
+    "make-dir": "^3.0.0",
+    "temp-dir": "^1.0.0",
+    "uuid": "^8.3.2"
+  }
+}
