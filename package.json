@@ -9,11 +9,11 @@
     "utils/*"
   ],
   "volta": {
-    "node": "14.19.2",
-    "npm": "7.24.2"
+    "node": "16.15.0",
+    "npm": "8.10.0"
   },
   "engines": {
-    "node": ">= 10.18.0"
+    "node": "^14.19.3 || >=16.0.0"
   },
   "scripts": {
     "prerelease": "npm test && npm run integration",
