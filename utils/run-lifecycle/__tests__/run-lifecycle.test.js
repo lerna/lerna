@@ -66,52 +66,36 @@ describe("runLifecycle()", () => {
         event: stage,
         path: pkg.location,
         args: [],
-        // foo: expect.objectContaining({
-        //   config: expect.objectContaining({
-        //     "custom-cli-flag": true,
-        //   }),
-        //   unsafePerm: true,
-        // }),
       })
     );
   });
 
-  // it("camelCases dashed-options", async () => {
-  //   const pkg = {
-  //     name: "dashed-name",
-  //     version: "1.0.0-dashed",
-  //     location: "dashed-location",
-  //     scripts: {
-  //       "dashed-options": "test",
-  //     },
-  //   };
-  //   const dir = pkg.location;
-  //   const stage = "dashed-options";
-  //   const opts = {
-  //     "ignore-prepublish": true,
-  //     "ignore-scripts": false,
-  //     "node-options": "--a-thing",
-  //     "script-shell": "fish",
-  //     "scripts-prepend-node-path": true,
-  //     "unsafe-perm": false,
-  //   };
+  it("passes through the value for script-shell from npm config", async () => {
+    const pkg = {
+      name: "dashed-name",
+      version: "1.0.0-dashed",
+      location: "dashed-location",
+      scripts: {
+        "dashed-options": "test",
+      },
+    };
+    const dir = pkg.location;
+    const stage = "dashed-options";
+    const opts = {
+      "script-shell": "fish",
+    };
 
-  //   await runLifecycle(pkg, stage, opts);
+    await runLifecycle(pkg, stage, opts);
 
-  //   expect(runScript).toHaveBeenLastCalledWith(expect.objectContaining(pkg), stage, dir, {
-  //     config: expect.objectContaining({
-  //       "node-options": "--a-thing",
-  //       "script-shell": "fish",
-  //     }),
-  //     dir,
-  //     failOk: false,
-  //     log,
-  //     nodeOptions: "--a-thing",
-  //     scriptShell: "fish",
-  //     scriptsPrependNodePath: true,
-  //     unsafePerm: false,
-  //   });
-  // });
+    expect(runScript).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        event: stage,
+        path: dir,
+        args: [],
+        scriptShell: "fish",
+      })
+    );
+  });
 
   it("ignores prepublish when configured", async () => {
     const pkg = {
@@ -170,29 +154,6 @@ describe("runLifecycle()", () => {
 
 describe("createRunner", () => {
   const runPackageLifecycle = createRunner({ "other-cli-flag": 0 });
-
-  // it("creates partially-applied function with npm conf", async () => {
-  //   const pkg = {
-  //     name: "partially-applied",
-  //     version: "1.2.3",
-  //     location: "test",
-  //     scripts: { version: "echo yay" },
-  //   };
-  //   const stage = "version";
-
-  //   await runPackageLifecycle(pkg, stage);
-
-  //   expect(runScript).toHaveBeenLastCalledWith(
-  //     expect.any(Object),
-  //     stage,
-  //     pkg.location,
-  //     expect.objectContaining({
-  //       config: expect.objectContaining({
-  //         "other-cli-flag": 0,
-  //       }),
-  //     })
-  //   );
-  // });
 
   it("skips missing scripts block", async () => {
     const pkg = {

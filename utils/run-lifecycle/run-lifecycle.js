@@ -110,6 +110,9 @@ function runLifecycle(pkg, stage, options) {
 
   opts.log.silly("lifecycle", "%j starting in %j", stage, pkg.name);
 
+  // info log here to reproduce previous behavior when this was powered by "npm-lifecycle"
+  opts.log.info("lifecycle", `${id}~${stage}: ${id}`);
+
   /**
    * In order to match the previous behavior of "npm-lifecycle", we have to disable the writing
    * to the parent process and print the command banner ourself.
@@ -126,9 +129,9 @@ function runLifecycle(pkg, stage, options) {
     args: [],
     stdio,
     banner: false,
-    scriptShell: opts.scriptShell,
+    scriptShell: config.scriptShell,
   }).then(
-    ({ pkgid, event, stdout }) => {
+    ({ stdout }) => {
       /**
        * This adjustment is based on trying to match the existing integration test outputs when migrating
        * from "npm-lifecycle" to "@npmcli/run-script".
@@ -136,8 +139,6 @@ function runLifecycle(pkg, stage, options) {
       // eslint-disable-next-line no-console
       console.log(stdout.toString().trimEnd());
 
-      // info log here to reproduce previous behavior when this was powered by "npm-lifecycle"
-      opts.log.info("lifecycle", `${pkgid}~${event}: ${pkgid}`);
       opts.log.silly("lifecycle", "%j finished in %j", stage, pkg.name);
     },
     (err) => {
