@@ -88,7 +88,7 @@
     "p-queue": "^6.6.2",
     "p-reduce": "^2.1.0",
     "p-waterfall": "^2.1.1",
-    "pacote": "^11.2.6",
+    "pacote": "^13.4.1",
     "path-exists": "^4.0.0",
     "pify": "^5.0.0",
     "read-cmd-shim": "^2.0.0",
