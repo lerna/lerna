@@ -3,10 +3,12 @@ on:
     branches:
       - main
       - next
-      - 'test/*'
+      - "test/*"
   pull_request:
-    types: [ assigned, opened, synchronize, reopened, labeled ]
+    types: [assigned, opened, synchronize, reopened, labeled]
+
 name: ci
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -14,26 +16,26 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
-          # only lint on latest node
-          node-version: 14
+          # only lint on latest LTS node
+          node-version: 16
       - uses: actions/cache@v2
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-      - run: npm -g i npm@7
+      - run: npm -g i npm@8.10.0
       - run: npm ci
       - run: npm run ci:lint
 
   test:
-    needs: [ lint ]
+    needs: [lint]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        node: [ 14, 12, 10 ]
-        script: [ 'ci:test:unit', 'ci:test:integration' ]
+        node: [14, 16, 18]
+        script: ["ci:test:unit", "ci:test:integration"]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
@@ -49,24 +51,24 @@ jobs:
         run: |
           git config --global user.email test@example.com
           git config --global user.name "Tester McPerson"
-      - run: npm -g i npm@next-7
+      - run: npm -g i npm@8.10.0
       - run: npm ci
       - run: npm run ${{ matrix.script }}
 
   windows:
-    needs: [ lint ]
+    needs: [lint]
     runs-on: windows-latest
     strategy:
       fail-fast: false
       matrix:
-        script: [ 'ci:test:unit', 'ci:test:integration' ]
-        subset: [ publish, non-publish ]
+        script: ["ci:test:unit", "ci:test:integration"]
+        subset: [publish, non-publish]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
-          # only run windows tests on latest node
-          node-version: 14
+          # only run windows tests on latest LTS node
+          node-version: 16
       # caching on windows is LUDICROUSLY slow
       # - name: Get npm cache directory
       #   id: npm-cache
@@ -82,7 +84,7 @@ jobs:
         run: |
           git config --global user.email test@example.com
           git config --global user.name "Tester McPerson"
-      - run: npm -g i npm@next-7
+      - run: npm -g i npm@8.10.0
       - run: npm ci
       - env:
           LERNA_CI_TYPE: ${{ matrix.subset }}
