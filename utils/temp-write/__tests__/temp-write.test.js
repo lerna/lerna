@@ -20,7 +20,9 @@ describe("@lerna/temp-write", () => {
   it("tempWrite(buffer, path)", async () => {
     const filePath = await tempWrite(Buffer.from("unicorn"), "foo/bar/test.png");
     expect(fs.readFileSync(filePath, "utf8")).toEqual("unicorn");
-    expect(filePath).toMatch(/foo\/bar\/test\.png$/);
+
+    const regexp = process.platform === "win32" ? /foo\\bar\\test\.png$/ : /foo\/bar\/test\.png$/;
+    expect(filePath).toMatch(regexp);
   });
 
   it("tempWrite(stream)", async () => {
