@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.0.0](https://github.com/lerna/lerna/compare/v4.0.0...v5.0.0) (2022-05-24)
+
+
+### Bug Fixes
+
+* replace read-package-tree with @npmcli/arborist ([#3133](https://github.com/lerna/lerna/issues/3133)) ([f1c10a4](https://github.com/lerna/lerna/commit/f1c10a40fe667e5012a60e9b372a8e7996465de1))
+* resolve most dependency audit issues ([#3127](https://github.com/lerna/lerna/issues/3127)) ([2b3b191](https://github.com/lerna/lerna/commit/2b3b1910d377122f294b4a79a291596fbc81241c))
+
+
+
+
+
 # [4.0.0](https://github.com/lerna/lerna/compare/v3.22.1...v4.0.0) (2021-02-10)
 
 
