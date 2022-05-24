@@ -5,14 +5,24 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 # [5.0.0](https://github.com/lerna/lerna/compare/v4.0.0...v5.0.0) (2022-05-24)
 
+Lerna workspaces no longer have dependency deprecation warnings.
 
 ### Bug Fixes
 
 * replace read-package-tree with @npmcli/arborist ([#3133](https://github.com/lerna/lerna/issues/3133)) ([f1c10a4](https://github.com/lerna/lerna/commit/f1c10a40fe667e5012a60e9b372a8e7996465de1))
 * resolve most dependency audit issues ([#3127](https://github.com/lerna/lerna/issues/3127)) ([2b3b191](https://github.com/lerna/lerna/commit/2b3b1910d377122f294b4a79a291596fbc81241c))
 
+### BREAKING CHANGES
 
+- Node v10.x and v12.x are no longer supported.
 
+  - Please upgrade to the latest LTS release of Node (we recommend either v14 or v16).
+
+- Internally npm lifecycle scripts are now invoked using `@npmcli/run-script` instead of `npm-lifecycle` in order to modernize the package and fix package vulnerabilities and deprecations.
+
+  - We are classing this as a breaking change because the APIs of `npm-lifecycle` and `@npmcli/run-script` are significantly different, despite `@npmcli/run-script` being the official successor to `npm-lifecycle`.
+
+    We have successfully made the integration test suite we inherited pass with this change, but there may potentially be aspects related to it which are not covered by the tests and are breaking. If you encounter any issues you believe are related to this change please open a new issue with a dedicated reproduction for us to look into!
 
 
 # [4.0.0](https://github.com/lerna/lerna/compare/v3.22.1...v4.0.0) (2021-02-10)
