@@ -1,6 +1,6 @@
 {
   "name": "@lerna/changed",
-  "version": "5.0.0-alpha.0",
+  "version": "5.0.0-alpha.1",
   "description": "List local packages that have changed since the last tagged release",
   "keywords": [
     "lerna",
