@@ -1,6 +1,6 @@
 {
   "name": "@lerna/create-symlink",
-  "version": "5.0.0-alpha.1",
+  "version": "5.0.0-alpha.2",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",

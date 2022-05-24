@@ -1,6 +1,6 @@
 {
   "name": "@lerna/temp-write",
-  "version": "5.0.0-alpha.1",
+  "version": "5.0.0-alpha.2",
   "description": "Write string/buffer/stream to a random temp file",
   "homepage": "https://github.com/lerna/lerna/tree/main/utils/temp-write#readme",
   "license": "MIT",
