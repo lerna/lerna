@@ -2,7 +2,6 @@
 
 const path = require("path");
 
-const { URL } = require("whatwg-url");
 const log = require("npmlog");
 const fetch = require("node-fetch");
 

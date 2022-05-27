@@ -33,11 +33,11 @@
   "dependencies": {
     "@lerna/otplease": "file:../../core/otplease",
     "@lerna/run-lifecycle": "file:../run-lifecycle",
-    "fs-extra": "^9.1.0",
-    "libnpmpublish": "^4.0.0",
+    "fs-extra": "^10.1.0",
+    "libnpmpublish": "^6.0.4",
     "npm-package-arg": "^8.1.0",
-    "npmlog": "^4.1.2",
+    "npmlog": "^6.0.2",
     "pify": "^5.0.0",
-    "read-package-json": "^3.0.0"
+    "read-package-json": "^5.0.1"
   }
 }
