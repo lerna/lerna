@@ -13,6 +13,7 @@ const { output } = require("@lerna/output");
 const initFixture = require("@lerna-test/init-fixture")(__dirname);
 const { loggingOutput } = require("@lerna-test/logging-output");
 const { normalizeRelativeDir } = require("@lerna-test/normalize-relative-dir");
+const { afterEach, afterAll } = require("jest-circus");
 
 // file under test
 const lernaRun = require("@lerna-test/command-runner")(require("../command"));
@@ -302,20 +303,24 @@ describe("RunCommand", () => {
   describe("in a repo powered by Nx", () => {
     let testDir;
     let collectedOutput = "";
+    let originalStdout;
 
     beforeAll(async () => {
       testDir = await initFixture("powered-by-nx");
       process.env.NX_WORKSPACE_ROOT_PATH = testDir;
-      // eslint-disable-next-line global-require
-      const nxOutput = require("nx/src/utils/output");
-      nxOutput.output.writeToStdOut = (v) => {
-        collectedOutput = `${collectedOutput}\n${v}`;
-      };
       jest.spyOn(process, "exit").mockImplementation((code) => {
         if (code !== 0) {
           throw new Error();
         }
       });
+      originalStdout = process.stdout.write;
+      process.stdout.write = (v) => {
+        collectedOutput = `${collectedOutput}\n${v}`;
+      };
+    });
+
+    afterAll(() => {
+      process.stdout.write = originalStdout;
     });
 
     it("runs a script in packages", async () => {
@@ -338,6 +343,27 @@ describe("RunCommand", () => {
       await lernaRun(testDir)("my-script", "--ignore", "package-@(2|3|4)");
       expect(collectedOutput).toContain("package-1");
       expect(collectedOutput).not.toContain("package-3");
+    });
+
+    it("runs a script in packages with --stream", async () => {
+      collectedOutput = "";
+      await lernaRun(testDir)("my-script", "--stream");
+      expect(collectedOutput).toContain("[package-1      ] package-1");
+      expect(collectedOutput).toContain("[package-3      ] package-3");
+    });
+
+    it("runs a cacheable script", async () => {
+      collectedOutput = "";
+      await lernaRun(testDir)("my-cacheable-script");
+      expect(collectedOutput).not.toContain("Nx read the output from the cache");
+
+      collectedOutput = "";
+      await lernaRun(testDir)("my-cacheable-script");
+      expect(collectedOutput).toContain("Nx read the output from the cache");
+
+      collectedOutput = "";
+      await lernaRun(testDir)("my-cacheable-script", "--skip-nx-cache");
+      expect(collectedOutput).not.toContain("Nx read the output from the cache");
     });
   });
 });
