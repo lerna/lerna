@@ -6,6 +6,7 @@ const crypto = require("crypto");
 const pMap = require("p-map");
 const pPipe = require("p-pipe");
 const semver = require("semver");
+const npa = require("npm-package-arg");
 
 const { Command } = require("@lerna/command");
 const { ValidationError } = require("@lerna/validation-error");
@@ -65,7 +66,7 @@ class PublishCommand extends Command {
       exact,
       gitHead,
       gitReset,
-      tagVersionPrefix = "v",
+      tagVersionPrefix = this.project.isIndependent() ? "" : "v",
       verifyAccess,
     } = this.options;
 
@@ -251,7 +252,7 @@ class PublishCommand extends Command {
   }
 
   detectFromGit() {
-    const matchingPattern = this.project.isIndependent() ? "*@*" : `${this.tagPrefix}*.*.*`;
+    const matchingPattern = this.project.isIndependent() ? `${this.tagPrefix}*@**` : `${this.tagPrefix}*.*.*`;
 
     let chain = Promise.resolve();
 
@@ -267,7 +268,10 @@ class PublishCommand extends Command {
       }
 
       if (this.project.isIndependent()) {
-        return taggedPackageNames.map((name) => this.packageGraph.get(name));
+        return taggedPackageNames.map((name) =>
+          // Independet tags have prefix and version so we need to extract package name
+          this.packageGraph.get(npa(name.replace(this.tagPrefix, "")).name)
+        );
       }
 
       return getTaggedPackages(this.packageGraph, this.project.rootPath, this.execOpts);
@@ -351,6 +355,7 @@ class PublishCommand extends Command {
         ignoreChanges,
         forcePublish,
         includeMergedTags,
+        tagVersionPrefix: this.tagPrefix,
         // private packages are never published, don't bother describing their refs.
       }).filter((node) => !node.pkg.private)
     );
@@ -370,7 +375,7 @@ class PublishCommand extends Command {
         pMap(updates, (node) =>
           describeRef(
             {
-              match: `${node.name}@*`,
+              match: `${this.tagPrefix}${node.name}@**`,
               cwd,
             },
             includeMergedTags

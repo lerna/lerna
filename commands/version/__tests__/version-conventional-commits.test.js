@@ -53,13 +53,13 @@ describe("--conventional-commits", () => {
         expect(recommendVersion).toHaveBeenCalledWith(expect.objectContaining({ name }), "independent", {
           changelogPreset: undefined,
           rootPath: cwd,
-          tagPrefix: "v",
+          tagPrefix: "",
           prereleaseId: undefined,
         });
         expect(updateChangelog).toHaveBeenCalledWith(
           expect.objectContaining({ name, version }),
           "independent",
-          { changelogPreset: undefined, rootPath: cwd, tagPrefix: "v", prereleaseId: undefined }
+          { changelogPreset: undefined, rootPath: cwd, tagPrefix: "", prereleaseId: undefined }
         );
       });
     });
@@ -78,13 +78,13 @@ describe("--conventional-commits", () => {
         expect(recommendVersion).toHaveBeenCalledWith(expect.objectContaining({ name }), "independent", {
           changelogPreset: undefined,
           rootPath: cwd,
-          tagPrefix: "v",
+          tagPrefix: "",
           prereleaseId,
         });
         expect(updateChangelog).toHaveBeenCalledWith(
           expect.objectContaining({ name, version }),
           "independent",
-          { changelogPreset: undefined, rootPath: cwd, tagPrefix: "v" }
+          { changelogPreset: undefined, rootPath: cwd, tagPrefix: "" }
         );
       });
     });
@@ -102,13 +102,13 @@ describe("--conventional-commits", () => {
         expect(recommendVersion).toHaveBeenCalledWith(expect.objectContaining({ name }), "independent", {
           changelogPreset: undefined,
           rootPath: cwd,
-          tagPrefix: "v",
+          tagPrefix: "",
           prerelease: undefined,
         });
         expect(updateChangelog).toHaveBeenCalledWith(
           expect.objectContaining({ name, version }),
           "independent",
-          { changelogPreset: undefined, rootPath: cwd, tagPrefix: "v" }
+          { changelogPreset: undefined, rootPath: cwd, tagPrefix: "" }
         );
       });
     });
@@ -118,7 +118,7 @@ describe("--conventional-commits", () => {
       const changelogOpts = {
         changelogPreset: "foo-bar",
         rootPath: cwd,
-        tagPrefix: "v",
+        tagPrefix: "",
         prereleaseId: undefined,
       };
 

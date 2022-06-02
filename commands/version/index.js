@@ -67,7 +67,7 @@ class VersionCommand extends Command {
       signGitCommit,
       signGitTag,
       forceGitTag,
-      tagVersionPrefix = "v",
+      tagVersionPrefix = this.project.isIndependent() ? "" : "v",
     } = this.options;
 
     this.gitRemote = gitRemote;
@@ -252,7 +252,11 @@ class VersionCommand extends Command {
       const { forcePublish, conventionalCommits, conventionalGraduate } = this.options;
       const checkUncommittedOnly = forcePublish || (conventionalCommits && conventionalGraduate);
       const check = checkUncommittedOnly ? throwIfUncommitted : checkWorkingTree;
-      tasks.unshift(() => check(this.execOpts));
+      const opts = { ...this.execOpts };
+      if (this.tagPrefix) {
+        opts.match = `${this.tagPrefix}**`;
+      }
+      tasks.unshift(() => check(opts));
     } else {
       this.logger.warn("version", "Skipping working tree validation, proceed at your own risk");
     }
@@ -649,7 +653,9 @@ class VersionCommand extends Command {
   }
 
   gitCommitAndTagVersionForUpdates() {
-    const tags = this.packagesToVersion.map((pkg) => `${pkg.name}@${this.updatesVersions.get(pkg.name)}`);
+    const tags = this.packagesToVersion.map(
+      (pkg) => `${this.tagPrefix}${pkg.name}@${this.updatesVersions.get(pkg.name)}`
+    );
     const subject = this.options.message || "Publish";
     const message = tags.reduce((msg, tag) => `${msg}${os.EOL} - ${tag}`, `${subject}${os.EOL}`);
 

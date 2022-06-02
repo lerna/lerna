@@ -61,6 +61,10 @@ function getFilteredPackages(packageGraph, execOpts, opts) {
       options.log.notice("filter", "including merged tags");
     }
 
+    if (options.tagVersionPrefix) {
+      options.log.notice("filter", "matching tags by prefix %s", options.tagVersionPrefix);
+    }
+
     chain = chain.then((/** @type {ReturnType<typeof filterPackages>} */ filteredPackages) =>
       Promise.resolve(collectUpdates(filteredPackages, packageGraph, execOpts, opts)).then((updates) => {
         const updated = new Set(updates.map(({ pkg }) => pkg.name));

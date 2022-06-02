@@ -10,6 +10,7 @@ const { checkWorkingTree } = require("@lerna/check-working-tree");
 // values listed here are their defaults
 const options = {
   cwd: process.cwd(),
+  match: undefined,
 };
 
 (async () => {

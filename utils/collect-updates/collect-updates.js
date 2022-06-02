@@ -28,6 +28,7 @@ module.exports.getPackagesForOption = getPackagesForOption;
  * @property {boolean} [conventionalCommits]
  * @property {boolean} [conventionalGraduate]
  * @property {boolean} [excludeDependents]
+ * @property {string=} [tagVersionPrefix]
  */
 
 /**
@@ -38,7 +39,18 @@ module.exports.getPackagesForOption = getPackagesForOption;
  * @param {UpdateCollectorOptions} commandOptions
  */
 function collectUpdates(filteredPackages, packageGraph, execOpts, commandOptions) {
-  const { forcePublish, conventionalCommits, conventionalGraduate, excludeDependents } = commandOptions;
+  const {
+    forcePublish,
+    conventionalCommits,
+    conventionalGraduate,
+    excludeDependents,
+    tagVersionPrefix,
+  } = commandOptions;
+
+  if (tagVersionPrefix) {
+    // eslint-disable-next-line no-param-reassign
+    execOpts = { ...execOpts, match: `${tagVersionPrefix}**` };
+  }
 
   // If --conventional-commits and --conventional-graduate are both set, ignore --force-publish
   const useConventionalGraduate = conventionalCommits && conventionalGraduate;

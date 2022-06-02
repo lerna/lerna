@@ -9,10 +9,10 @@ module.exports.mkThrowIfUncommitted = mkThrowIfUncommitted;
 module.exports.throwIfReleased = throwIfReleased;
 module.exports.throwIfUncommitted = mkThrowIfUncommitted();
 
-function checkWorkingTree({ cwd } = {}) {
+function checkWorkingTree({ cwd, match } = {}) {
   let chain = Promise.resolve();
 
-  chain = chain.then(() => describeRef({ cwd }));
+  chain = chain.then(() => describeRef({ cwd, match }));
 
   // wrap each test separately to allow all applicable errors to be reported
   const tests = [
