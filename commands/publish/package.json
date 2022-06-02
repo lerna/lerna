@@ -31,7 +31,8 @@
     "directory": "commands/publish"
   },
   "scripts": {
-    "test": "echo \"Run tests from root\" && exit 1"
+    "test": "echo \"Run tests from root\" && exit 1",
+    "work": "sleep 3 && echo publish && exit 1"
   },
   "dependencies": {
     "@lerna/check-working-tree": "file:../../utils/check-working-tree",

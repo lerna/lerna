@@ -3,7 +3,8 @@
     "default": {
       "runner": "nx/tasks-runners/default",
       "options": {
-        "useDaemonProcess": false
+        "useDaemonProcess": false,
+        "cacheableOperations": ["my-cacheable-script"]
       }
     }
   }

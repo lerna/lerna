@@ -21,5 +21,6 @@
     "**/*.md"
   ],
   "useWorkspaces": true,
+  "useNx": true,
   "version": "5.1.0-alpha.0"
 }
