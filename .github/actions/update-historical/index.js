@@ -10,19 +10,24 @@ async function main() {
     previews: ["ant-man-preview", "flash-preview"],
   });
 
-  let count = 0;
+  const allOpenIssues = [];
 
   for await (const issuePage of octokit.paginate.iterator(octokit.rest.issues.listForRepo, {
     ...context.repo,
     state: "open",
   })) {
-    if (count === 0) {
-      console.log({ data: JSON.stringify(issuePage.data, null, 2) });
+    for (const issueOrPr of issuePage.data) {
+      if (issueOrPr.pull_request) {
+        continue;
+      }
+      allOpenIssues.push(issueOrPr);
     }
-    count++;
   }
 
-  console.log({ count });
+  console.log({
+    count: allOpenIssues.length,
+    countWithReactions: allOpenIssues.filter((issue) => issue.reactions.total_count > 0).length,
+  });
 }
 
 main();
