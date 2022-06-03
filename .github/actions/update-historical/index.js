@@ -40,6 +40,14 @@ async function main() {
       const updatedAt = new Date(issue.updated_at);
       return updatedAt.getFullYear() < 2020 && issue.reactions["+1"] < 10;
     }).length,
+    countLastUpdatedBefore2020: allOpenIssues.filter((issue) => {
+      const updatedAt = new Date(issue.updated_at);
+      return updatedAt.getFullYear() < 2020;
+    }).length,
+    countLastUpdatedBefore2021: allOpenIssues.filter((issue) => {
+      const updatedAt = new Date(issue.updated_at);
+      return updatedAt.getFullYear() < 2021;
+    }).length,
   });
 }
 
