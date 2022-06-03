@@ -8,10 +8,23 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint:
+  update-historical:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v1
+        with:
+          # only lint on latest LTS node
+          node-version: 16
+      - uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - run: npm -g i npm@8.10.0
+      - run: npm ci
 
       - uses: ./.github/actions/update-historical
         with:
