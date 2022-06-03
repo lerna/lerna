@@ -57,6 +57,10 @@ async function main() {
   for (const issueToUpdate of issuesToUpdate) {
     const issueAuthor = issueToUpdate.user.login;
 
+    if (issueToUpdate.number !== 3149) {
+      continue;
+    }
+
     await octokit.rest.issues.addLabels({
       ...context.repo,
       issue_number: issueToUpdate.number,
