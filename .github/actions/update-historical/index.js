@@ -48,6 +48,10 @@ async function main() {
       const updatedAt = new Date(issue.updated_at);
       return updatedAt.getFullYear() < 2021;
     }).length,
+    countLastUpdatedWithinTheLastYear: allOpenIssues.filter((issue) => {
+      const updatedAt = new Date(issue.updated_at);
+      return updatedAt.getFullYear() >= 2021 && updatedAt.getMonth() > 5;
+    }).length,
   });
 }
 
