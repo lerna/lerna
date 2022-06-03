@@ -10,10 +10,8 @@ const { createGitHubClient, parseGitRepo } = require("../lib/github-client");
 childProcess.execSync.mockReturnValue("5.6.0");
 
 describe("createGitHubClient", () => {
-  const oldEnv = Object.assign({}, process.env);
-
-  afterEach(() => {
-    process.env = oldEnv;
+  beforeEach(() => {
+    process.env = {};
   });
 
   it("errors if no GH_TOKEN env var", () => {
