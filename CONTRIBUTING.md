@@ -37,7 +37,7 @@ A minimal reproduction allows us to quickly confirm a bug (or point out a coding
 
 We will be insisting on a minimal reproduction in order to save maintainers' time and ultimately be able to fix more bugs. Interestingly, from our experience, users often find coding problems themselves while preparing a minimal reproduction repository. We understand that sometimes it might be hard to extract essentials bits of code from a larger codebase, but we really need to isolate the problem before we can fix it.
 
-You can file new issues by filling out our [issue form](https://github.com/lerna/lerna/issues/new).
+You can file new issues by filling out our [issue form](https://github.com/lerna/lerna/issues/new/choose).
 
 ### <a name="submit-pr"></a> Submitting a PR
 
