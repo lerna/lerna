@@ -9,7 +9,11 @@ on:
   pull_request:
     types: [assigned, opened, synchronize, reopened, labeled]
 
-# jobs:
+jobs:
+  noop:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Noop"
 #   lint:
 #     runs-on: ubuntu-latest
 #     steps:
