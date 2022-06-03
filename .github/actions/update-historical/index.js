@@ -29,8 +29,9 @@ async function main() {
 
   for (const issue of allOpenIssues) {
     const updatedAt = new Date(issue.updated_at);
+    // Updated in Jun 2021 or later
     const isUpdatedWithinLastYear =
-      (updatedAt.getFullYear() === 2021 && updatedAt.getMonth() > 5) || updatedAt.getFullYear() === 2022;
+      (updatedAt.getFullYear() === 2021 && updatedAt.getMonth() >= 5) || updatedAt.getFullYear() === 2022;
 
     if (!isUpdatedWithinLastYear) {
       if (issue.reactions["+1"] >= 10) {
@@ -49,7 +50,7 @@ async function main() {
   });
 
   console.log({
-    staleButHeavilyUpvotedUrls: `${staleButHeavilyUpvoted.map((issue) => issue.url).join("\n")}`,
+    staleButHeavilyUpvotedUrls: `${staleButHeavilyUpvoted.map((issue) => issue.html_url).join("\n")}`,
   });
 }
 
