@@ -36,6 +36,10 @@ async function main() {
       const updatedAt = new Date(issue.updated_at);
       return updatedAt.getFullYear() < 2021 && issue.reactions["+1"] < 10;
     }).length,
+    countLastUpdatedBefore2020WithFewerThan10Upvotes: allOpenIssues.filter((issue) => {
+      const updatedAt = new Date(issue.updated_at);
+      return updatedAt.getFullYear() < 2020 && issue.reactions["+1"] < 10;
+    }).length,
   });
 }
 
