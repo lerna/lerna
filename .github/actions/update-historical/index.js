@@ -38,8 +38,13 @@ async function main() {
         staleButHeavilyUpvoted.push(issue);
       } else {
         // Not updated within the last AND not upvoted more than 10 times ever
-        issuesToUpdate.push(issue);
+        // issuesToUpdate.push(issue);
       }
+    }
+
+    // TMP: Focus on test issue
+    if (issue.number === 3149) {
+      issuesToUpdate.push(issue);
     }
   }
 
@@ -49,9 +54,8 @@ async function main() {
     firstIssueToUpdate: issuesToUpdate[0],
   });
 
-  console.log({
-    staleButHeavilyUpvotedUrls: `${staleButHeavilyUpvoted.map((issue) => issue.html_url).join("\n")}`,
-  });
+  console.log("staleButHeavilyUpvoted:\n");
+  staleButHeavilyUpvoted.forEach((issue) => console.log(`${issue.html_url}`));
 }
 
 main();
