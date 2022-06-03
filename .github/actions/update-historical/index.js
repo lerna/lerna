@@ -24,37 +24,26 @@ async function main() {
     }
   }
 
-  console.log({
-    count: allOpenIssues.length,
-    countWithReactions: allOpenIssues.filter((issue) => issue.reactions.total_count > 0).length,
-    countWith10PlusUpvotes: allOpenIssues.filter((issue) => issue.reactions["+1"] >= 10).length,
-    countCreatedBefore2021WithFewerThan10Upvotes: allOpenIssues.filter((issue) => {
-      const createdAt = new Date(issue.created_at);
-      return createdAt.getFullYear() < 2021 && issue.reactions["+1"] < 10;
-    }).length,
-    countLastUpdatedBefore2021WithFewerThan10Upvotes: allOpenIssues.filter((issue) => {
-      const updatedAt = new Date(issue.updated_at);
-      return updatedAt.getFullYear() < 2021 && issue.reactions["+1"] < 10;
-    }).length,
-    countLastUpdatedBefore2020WithFewerThan10Upvotes: allOpenIssues.filter((issue) => {
-      const updatedAt = new Date(issue.updated_at);
-      return updatedAt.getFullYear() < 2020 && issue.reactions["+1"] < 10;
-    }).length,
-    countLastUpdatedBefore2020: allOpenIssues.filter((issue) => {
-      const updatedAt = new Date(issue.updated_at);
-      return updatedAt.getFullYear() < 2020;
-    }).length,
-    countLastUpdatedBefore2021: allOpenIssues.filter((issue) => {
-      const updatedAt = new Date(issue.updated_at);
-      return updatedAt.getFullYear() < 2021;
-    }).length,
-    countLastUpdatedWithinTheLastYear: allOpenIssues.filter((issue) => {
-      const updatedAt = new Date(issue.updated_at);
-      return (
-        (updatedAt.getFullYear() === 2021 && updatedAt.getMonth() > 5) || updatedAt.getFullYear() === 2022
-      );
-    }).length,
+  const staleButHeavilyUpvoted = [];
+
+  const openIssuesUpdatedWithinTheLastYear = allOpenIssues.filter((issue) => {
+    const updatedAt = new Date(issue.updated_at);
+    const isUpdatedWithinLastYear =
+      (updatedAt.getFullYear() === 2021 && updatedAt.getMonth() > 5) || updatedAt.getFullYear() === 2022;
+
+    if (!isUpdatedWithinLastYear && issue.reactions["+1"] >= 10) {
+      staleButHeavilyUpvoted.push(issue);
+    }
+
+    return isUpdatedWithinLastYear;
   });
+
+  console.log({
+    countStaleButHeavilyUpvoted: staleButHeavilyUpvoted.length,
+    countOpenIssuesUpdatedWithinTheLastYear: openIssuesUpdatedWithinTheLastYear.length,
+  });
+
+  console.log({ staleButHeavilyUpvoted: JSON.stringify(staleButHeavilyUpvoted) });
 }
 
 main();
