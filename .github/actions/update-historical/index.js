@@ -27,6 +27,7 @@ async function main() {
   console.log({
     count: allOpenIssues.length,
     countWithReactions: allOpenIssues.filter((issue) => issue.reactions.total_count > 0).length,
+    countWith10PlusUpvotes: allOpenIssues.filter((issue) => issue.reactions["+1"] >= 10).length,
   });
 }
 
