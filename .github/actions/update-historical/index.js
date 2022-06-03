@@ -24,26 +24,33 @@ async function main() {
     }
   }
 
+  const issuesToUpdate = [];
   const staleButHeavilyUpvoted = [];
 
-  const openIssuesUpdatedWithinTheLastYear = allOpenIssues.filter((issue) => {
+  for (const issue of allOpenIssues) {
     const updatedAt = new Date(issue.updated_at);
     const isUpdatedWithinLastYear =
       (updatedAt.getFullYear() === 2021 && updatedAt.getMonth() > 5) || updatedAt.getFullYear() === 2022;
 
-    if (!isUpdatedWithinLastYear && issue.reactions["+1"] >= 10) {
-      staleButHeavilyUpvoted.push(issue);
+    if (!isUpdatedWithinLastYear) {
+      if (issue.reactions["+1"] >= 10) {
+        staleButHeavilyUpvoted.push(issue);
+      } else {
+        // Not updated within the last AND not upvoted more than 10 times ever
+        issuesToUpdate.push(issue);
+      }
     }
-
-    return isUpdatedWithinLastYear;
-  });
+  }
 
   console.log({
     countStaleButHeavilyUpvoted: staleButHeavilyUpvoted.length,
-    countOpenIssuesUpdatedWithinTheLastYear: openIssuesUpdatedWithinTheLastYear.length,
+    countIssuesToUpdate: issuesToUpdate.length,
+    firstIssueToUpdate: issuesToUpdate[0],
   });
 
-  console.log({ staleButHeavilyUpvoted: JSON.stringify(staleButHeavilyUpvoted) });
+  console.log({
+    staleButHeavilyUpvotedUrls: `${staleButHeavilyUpvoted.map((issue) => issue.url).join("\n")}`,
+  });
 }
 
 main();
