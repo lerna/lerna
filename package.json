@@ -111,6 +111,8 @@
     "yargs": "^16.2.0"
   },
   "devDependencies": {
+    "@actions/core": "^1.8.2",
+    "@actions/github": "^5.0.3",
     "@lerna-test/calls-back": "file:helpers/calls-back",
     "@lerna-test/cli-runner": "file:helpers/cli-runner",
     "@lerna-test/clone-fixture": "file:helpers/clone-fixture",
@@ -160,12 +162,12 @@
     "jest-matcher-utils": "^26.6.2",
     "normalize-newline": "^3.0.0",
     "normalize-path": "^3.0.0",
+    "nx": "14.1.8",
     "path-key": "^3.1.1",
     "prettier": "^2.2.1",
     "tacks": "1.2.6",
     "tempy": "^1.0.0",
     "touch": "^3.1.0",
-    "verdaccio": "^5.10.2",
-    "nx": "14.1.8"
+    "verdaccio": "^5.10.2"
   }
 }
