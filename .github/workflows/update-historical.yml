@@ -1,3 +1,5 @@
+name: Update historical
+
 on:
   workflow_dispatch:
 
