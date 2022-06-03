@@ -1,13 +1,13 @@
-# on:
-#   push:
-#     branches:
-#       - main
-#       - next
-#       - "test/*"
-#   pull_request:
-#     types: [assigned, opened, synchronize, reopened, labeled]
+name: CI
 
-# name: ci
+on:
+  push:
+    branches:
+      - main
+      - next
+      - "test/*"
+  pull_request:
+    types: [assigned, opened, synchronize, reopened, labeled]
 
 # jobs:
 #   lint:
