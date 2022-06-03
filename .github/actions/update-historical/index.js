@@ -28,6 +28,14 @@ async function main() {
     count: allOpenIssues.length,
     countWithReactions: allOpenIssues.filter((issue) => issue.reactions.total_count > 0).length,
     countWith10PlusUpvotes: allOpenIssues.filter((issue) => issue.reactions["+1"] >= 10).length,
+    countCreatedBefore2021WithFewerThan10Upvotes: allOpenIssues.filter((issue) => {
+      const createdAt = new Date(issue.created_at);
+      return createdAt.getFullYear() < 2021 && issue.reactions["+1"] < 10;
+    }).length,
+    countLastUpdatedBefore2021WithFewerThan10Upvotes: allOpenIssues.filter((issue) => {
+      const updatedAt = new Date(issue.updated_at);
+      return updatedAt.getFullYear() < 2021 && issue.reactions["+1"] < 10;
+    }).length,
   });
 }
 
