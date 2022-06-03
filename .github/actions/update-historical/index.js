@@ -12,11 +12,13 @@ async function main() {
 
   let count = 0;
 
-  for await (const issueResponse of octokit.paginate.iterator(octokit.rest.issues.listForRepo, {
+  for await (const issuePage of octokit.paginate.iterator(octokit.rest.issues.listForRepo, {
     ...context.repo,
     state: "open",
   })) {
-    console.log({ issueResponse });
+    if (count === 0) {
+      console.log({ data: JSON.stringify(issuePage.data, null, 2) });
+    }
     count++;
   }
 
