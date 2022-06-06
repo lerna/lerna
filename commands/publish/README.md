@@ -121,7 +121,7 @@ This option can be used to publish a [`prerelease`](http://carrot.is/coding/npm_
 
 ### `--git-head <sha>`
 
-Explicit SHA to set as [`gitHead`](https://git.io/fh7np) on manifests when packing tarballs, only allowed with [`from-package`](#bump-from-package) positional.
+Explicit SHA to set as [`gitHead`](https://github.com/npm/read-package-json/blob/67f2d8d501e2621441a8235b08d589fbeeb7dba6/read-json.js#L327) on manifests when packing tarballs, only allowed with [`from-package`](#bump-from-package) positional.
 
 For example, when publishing from AWS CodeBuild (where `git` is not available),
 you could use this option to pass the appropriate [environment variable](https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-env-vars.html) to use for this package metadata:
