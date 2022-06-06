@@ -53,7 +53,7 @@
     "columnify": "^1.6.0",
     "config-chain": "^1.1.12",
     "conventional-changelog-angular": "^5.0.12",
-    "conventional-changelog-core": "^4.2.2",
+    "conventional-changelog-core": "^4.2.4",
     "conventional-recommended-bump": "^6.1.0",
     "cosmiconfig": "^7.0.0",
     "dedent": "^0.7.0",
