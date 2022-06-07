@@ -18,6 +18,10 @@ const { getChangelogConfig } = require("../lib/get-changelog-config");
 expect.addSnapshotSerializer(require("@lerna-test/serialize-changelog"));
 
 describe("conventional-commits", () => {
+  beforeEach(() => {
+    jest.setTimeout(60000);
+  });
+
   describe("recommendVersion()", () => {
     it("returns next version bump", async () => {
       const cwd = await initFixture("fixed");

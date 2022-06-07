@@ -1,6 +1,6 @@
 {
   "name": "@lerna/version",
-  "version": "4.0.0",
+  "version": "5.1.0-alpha.0",
   "description": "Bump version of packages changed since the last release",
   "keywords": [
     "lerna",
@@ -20,7 +20,7 @@
   ],
   "main": "index.js",
   "engines": {
-    "node": ">= 10.18.0"
+    "node": "^14.19.3 || >=16.0.0"
   },
   "publishConfig": {
     "access": "public"
@@ -46,6 +46,7 @@
     "@lerna/prompt": "file:../../core/prompt",
     "@lerna/run-lifecycle": "file:../../utils/run-lifecycle",
     "@lerna/run-topologically": "file:../../utils/run-topologically",
+    "@lerna/temp-write": "file:../../utils/temp-write",
     "@lerna/validation-error": "file:../../core/validation-error",
     "chalk": "^4.1.0",
     "dedent": "^0.7.0",
@@ -58,7 +59,6 @@
     "p-waterfall": "^2.1.1",
     "semver": "^7.3.4",
     "slash": "^3.0.0",
-    "temp-write": "^4.0.0",
     "write-json-file": "^4.3.0"
   }
 }

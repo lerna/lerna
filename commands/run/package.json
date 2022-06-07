@@ -1,6 +1,6 @@
 {
   "name": "@lerna/run",
-  "version": "4.0.0",
+  "version": "5.1.0-alpha.0",
   "description": "Run an npm script in each package that contains that script",
   "keywords": [
     "lerna",
@@ -18,7 +18,7 @@
   ],
   "main": "index.js",
   "engines": {
-    "node": ">= 10.18.0"
+    "node": "^14.19.3 || >=16.0.0"
   },
   "publishConfig": {
     "access": "public"
@@ -29,7 +29,8 @@
     "directory": "commands/run"
   },
   "scripts": {
-    "test": "echo \"Run tests from root\" && exit 1"
+    "test": "echo \"Run tests from root\" && exit 1",
+    "work": "sleep 1 && echo run"
   },
   "dependencies": {
     "@lerna/command": "file:../../core/command",

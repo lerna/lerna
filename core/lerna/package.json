@@ -1,6 +1,6 @@
 {
   "name": "lerna",
-  "version": "4.0.0",
+  "version": "5.1.0-alpha.0",
   "description": "A tool for managing JavaScript projects with multiple packages.",
   "keywords": [
     "lerna",
@@ -21,7 +21,7 @@
     "cli.js"
   ],
   "engines": {
-    "node": ">= 10.18.0"
+    "node": "^14.19.3 || >=16.0.0"
   },
   "publishConfig": {
     "tag": "next"

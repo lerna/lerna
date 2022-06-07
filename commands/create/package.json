@@ -1,6 +1,6 @@
 {
   "name": "@lerna/create",
-  "version": "4.0.0",
+  "version": "5.1.0-alpha.0",
   "description": "Create a new lerna-managed package",
   "keywords": [
     "lerna",
@@ -19,7 +19,7 @@
   ],
   "main": "index.js",
   "engines": {
-    "node": ">= 10.18.0"
+    "node": "^14.19.3 || >=16.0.0"
   },
   "publishConfig": {
     "access": "public"
@@ -43,7 +43,7 @@
     "init-package-json": "^2.0.2",
     "npm-package-arg": "^8.1.0",
     "p-reduce": "^2.1.0",
-    "pacote": "^11.2.6",
+    "pacote": "^13.4.1",
     "pify": "^5.0.0",
     "semver": "^7.3.4",
     "slash": "^3.0.0",

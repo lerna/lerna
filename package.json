@@ -8,6 +8,13 @@
     "core/*",
     "utils/*"
   ],
+  "volta": {
+    "node": "16.15.0",
+    "npm": "8.10.0"
+  },
+  "engines": {
+    "node": "^14.19.3 || >=16.0.0"
+  },
   "scripts": {
     "prerelease": "npm test && npm run integration",
     "release": "env-cmd lerna version",
@@ -16,6 +23,11 @@
     "ci:test:unit": "jest --config jest.config.js --maxWorkers=2 --ci",
     "ci:test:integration": "jest --config jest.integration.js --maxWorkers=2 --ci",
     "ci:windows": "jest --ci --maxWorkers=2 && npm run integration -- --ci",
+    "build": "scripts/build.sh",
+    "e2e:prepare-local-publish": "e2e/prepare-local-publish.sh",
+    "e2e:publish-to-verdaccio": "npm_config_registry=\"http://localhost:4872/\" e2e/publish-to-verdaccio.sh",
+    "e2e:run-verdaccio": "verdaccio --config ./e2e/local-registry/config.yml --listen 4872",
+    "e2e:local-publish": "npm run build && npm run e2e:prepare-local-publish && npm run e2e:publish-to-verdaccio",
     "fix": "npm run lint -- --fix",
     "integration": "jest --config jest.integration.js --maxWorkers=2",
     "ci:lint": "eslint . -c .eslintrc.yaml --no-eslintrc --ignore-path .gitignore",
@@ -30,6 +42,8 @@
   "license": "MIT",
   "homepage": "https://lerna.js.org/",
   "dependencies": {
+    "@npmcli/arborist": "5.2.0",
+    "@npmcli/run-script": "^3.0.2",
     "@octokit/plugin-enterprise-rest": "^6.0.1",
     "@octokit/rest": "^18.1.0",
     "byte-size": "^7.0.0",
@@ -64,7 +78,6 @@
     "minimatch": "^3.0.4",
     "multimatch": "^5.0.0",
     "node-fetch": "^2.6.1",
-    "npm-lifecycle": "^3.1.5",
     "npm-package-arg": "^8.1.0",
     "npm-packlist": "^2.1.4",
     "npm-registry-fetch": "^9.0.0",
@@ -75,12 +88,11 @@
     "p-queue": "^6.6.2",
     "p-reduce": "^2.1.0",
     "p-waterfall": "^2.1.1",
-    "pacote": "^11.2.6",
+    "pacote": "^13.4.1",
     "path-exists": "^4.0.0",
     "pify": "^5.0.0",
     "read-cmd-shim": "^2.0.0",
     "read-package-json": "^3.0.0",
-    "read-package-tree": "^5.3.1",
     "resolve-from": "^5.0.0",
     "rimraf": "^3.0.2",
     "semver": "^7.3.4",
@@ -89,7 +101,6 @@
     "ssri": "^8.0.1",
     "strong-log-transformer": "^2.1.0",
     "tar": "^6.1.0",
-    "temp-write": "^4.0.0",
     "upath": "^2.0.1",
     "validate-npm-package-license": "^3.0.4",
     "validate-npm-package-name": "^3.0.0",
@@ -100,6 +111,8 @@
     "yargs": "^16.2.0"
   },
   "devDependencies": {
+    "@actions/core": "^1.8.2",
+    "@actions/github": "^5.0.3",
     "@lerna-test/calls-back": "file:helpers/calls-back",
     "@lerna-test/cli-runner": "file:helpers/cli-runner",
     "@lerna-test/clone-fixture": "file:helpers/clone-fixture",
@@ -151,11 +164,10 @@
     "normalize-path": "^3.0.0",
     "path-key": "^3.1.1",
     "prettier": "^2.2.1",
-    "tacks": "^1.3.0",
+    "tacks": "1.2.6",
     "tempy": "^1.0.0",
-    "touch": "^3.1.0"
-  },
-  "engines": {
-    "node": ">= 10.18.0"
+    "touch": "^3.1.0",
+    "verdaccio": "^5.10.2",
+    "nx": "14.2.0"
   }
 }

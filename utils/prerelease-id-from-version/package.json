@@ -1,6 +1,6 @@
 {
   "name": "@lerna/prerelease-id-from-version",
-  "version": "4.0.0",
+  "version": "5.1.0-alpha.0",
   "description": "Get the prerelease ID from a version string",
   "keywords": [
     "lerna",
@@ -14,7 +14,7 @@
     "lib"
   ],
   "engines": {
-    "node": ">= 10.18.0"
+    "node": "^14.19.3 || >=16.0.0"
   },
   "publishConfig": {
     "access": "public"

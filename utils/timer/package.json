@@ -1,6 +1,6 @@
 {
   "name": "@lerna/timer",
-  "version": "4.0.0",
+  "version": "5.1.0-alpha.0",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
@@ -17,7 +17,7 @@
   ],
   "main": "timer.js",
   "engines": {
-    "node": ">= 10.18.0"
+    "node": "^14.19.3 || >=16.0.0"
   },
   "publishConfig": {
     "access": "public"

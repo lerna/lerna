@@ -16,10 +16,32 @@ $ npm ci
 
 Currently, the [source](https://github.com/lerna/lerna/tree/main) is split up into a few categories:
 
-* [utils](https://github.com/lerna/lerna/tree/main/utils): shared packages to run git, npm, fs, and more.
-* [core](https://github.com/lerna/lerna/tree/main/core): basic building blocks, including Package-related abstractions and the command superclass.
-* [commands](https://github.com/lerna/lerna/tree/main/commands): each command has an `initialize` and `execute` function.
-  * These commands are consumed as yargs subcommands in [core/cli/index.js](https://github.com/lerna/lerna/blob/main/core/cli/index.js), which is required from the executable [`core/lerna/cli.js`](https://github.com/lerna/lerna/blob/main/core/lerna/cli.js).
+- [utils](https://github.com/lerna/lerna/tree/main/utils): shared packages to run git, npm, fs, and more.
+- [core](https://github.com/lerna/lerna/tree/main/core): basic building blocks, including Package-related abstractions and the command superclass.
+- [commands](https://github.com/lerna/lerna/tree/main/commands): each command has an `initialize` and `execute` function.
+  - These commands are consumed as yargs subcommands in [core/cli/index.js](https://github.com/lerna/lerna/blob/main/core/cli/index.js), which is required from the executable [`core/lerna/cli.js`](https://github.com/lerna/lerna/blob/main/core/lerna/cli.js).
+
+## Submission Guidelines
+
+### <a name="submit-issue"></a> Submitting an Issue
+
+Before you submit an issue, please search the issue tracker. An issue for your problem may already exist and has been resolved, or the discussion might inform you of workarounds readily available.
+
+We want to fix all the issues as soon as possible, but before fixing a bug we need to reproduce and confirm it. Having a reproducible scenario gives us wealth of important information without going back and forth with you requiring additional information, such as:
+
+- the output of `npx lerna info`
+- `yarn.lock` or `package-lock.json`
+- and most importantly - a use-case that fails
+
+A minimal reproduction allows us to quickly confirm a bug (or point out a coding problem) as well as confirm that we are fixing the right problem.
+
+We will be insisting on a minimal reproduction in order to save maintainers' time and ultimately be able to fix more bugs. Interestingly, from our experience, users often find coding problems themselves while preparing a minimal reproduction repository. We understand that sometimes it might be hard to extract essentials bits of code from a larger codebase, but we really need to isolate the problem before we can fix it.
+
+You can file new issues by filling out our [issue form](https://github.com/lerna/lerna/issues/new/choose).
+
+### <a name="submit-pr"></a> Submitting a PR
+
+This project follows [GitHub's standard forking model](https://guides.github.com/activities/forking/). Please fork the project to submit pull requests.
 
 ## Commands
 
@@ -76,20 +98,31 @@ $ npm run lint -- --fix
 
 ### Local CLI Testing
 
-If you want to test out Lerna on local repos:
+If you want to test out Lerna on local repos, you can leverage verdaccio as a local npm regsitry.
+
+Open a new terminal window and run the following from the root of the workspace:
 
 ```sh
-$ npm link
+$ npm run e2e:run-verdaccio
 ```
 
-This will set your global `lerna` command to the local version.
+This will run verdaccio on http://localhost:4872
 
-Note: If the local repo that you are testing in _already_ depends on lerna,
-you'll need to link your local clone of lerna _into_ the target repo:
+In another terminal window you can now publish any new version (in this example `999.9.9`) to that local registry:
 
 ```sh
-# in the target repo
-$ npm link lerna
+npm run e2e:local-publish -- 999.9.9
+```
+
+You can then install your local version of lerna wherever you want by leveraging the `--registry` flag on the npm/npx client.
+
+E.g. you could start a new lerna workspace with your new version
+
+```sh
+cd /some/path/on/your/machine
+npx --registry=http://localhost:4872/ lerna@999.9.9 init
+npm --registry=http://localhost:4872/ install
+npx lerna --version # 999.9.9
 ```
 
 ### Coverage
@@ -106,10 +139,6 @@ $ open coverage/lcov-report/index.html
 # Linux
 $ xdg-open coverage/lcov-report/index.html
 ```
-
-### Submitting Pull Requests
-
-This project follows [GitHub's standard forking model](https://guides.github.com/activities/forking/). Please fork the project to submit pull requests. 
 
 ### Releasing
 

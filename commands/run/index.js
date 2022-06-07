@@ -1,3 +1,4 @@
+/* eslint-disable */
 "use strict";
 
 const pMap = require("p-map");
@@ -10,6 +11,8 @@ const { timer } = require("@lerna/timer");
 const { runTopologically } = require("@lerna/run-topologically");
 const { ValidationError } = require("@lerna/validation-error");
 const { getFilteredPackages } = require("@lerna/filter-options");
+const { performance } = require("perf_hooks");
+const { readFileSync } = require("fs");
 
 module.exports = factory;
 
@@ -62,18 +65,22 @@ class RunCommand extends Command {
   }
 
   execute() {
-    this.logger.info(
-      "",
-      "Executing command in %d %s: %j",
-      this.count,
-      this.packagePlural,
-      this.joinedCommand
-    );
+    if (!this.options.useNx) {
+      this.logger.info(
+        "",
+        "Executing command in %d %s: %j",
+        this.count,
+        this.packagePlural,
+        this.joinedCommand
+      );
+    }
 
     let chain = Promise.resolve();
     const getElapsed = timer();
 
-    if (this.options.parallel) {
+    if (this.options.useNx) {
+      chain = chain.then(() => this.runScriptsUsingNx());
+    } else if (this.options.parallel) {
       chain = chain.then(() => this.runScriptInPackagesParallel());
     } else if (this.toposort) {
       chain = chain.then(() => this.runScriptInPackagesTopological());
@@ -163,6 +170,71 @@ class RunCommand extends Command {
     return chain;
   }
 
+  runScriptsUsingNx() {
+    if (this.options.ci) {
+      process.env.CI = "true";
+    }
+    performance.mark("init-local");
+    this.configureNxOutput();
+    const { targetDependencies, options } = this.prepNxOptions();
+    if (this.packagesWithScript.length === 1) {
+      const { runOne } = require("nx/src/command-line/run-one");
+      const fullQualifiedTarget = this.packagesWithScript.map((p) => p.name)[0] + ":" + this.script;
+      return runOne(
+        process.cwd(),
+        {
+          "project:target:configuration": fullQualifiedTarget,
+          ...options,
+        },
+        targetDependencies
+      );
+    } else {
+      const { runMany } = require("nx/src/command-line/run-many");
+      const projects = this.packagesWithScript.map((p) => p.name).join(",");
+      return runMany(
+        {
+          projects,
+          target: this.script,
+          ...options,
+        },
+        targetDependencies
+      );
+    }
+  }
+
+  prepNxOptions() {
+    const { readNxJson } = require("nx/src/config/configuration");
+    const targetDependenciesAreDefined = Object.keys(readNxJson().targetDependencies || {}).length > 0;
+    const targetDependencies =
+      this.toposort && !targetDependenciesAreDefined
+        ? {
+            [this.script]: [
+              {
+                projects: "dependencies",
+                target: this.script,
+              },
+            ],
+          }
+        : {};
+
+    const outputStyle = this.options.stream
+      ? this.options.prefix !== false
+        ? "stream"
+        : "stream-without-prefixes"
+      : "dynamic";
+
+    const options = {
+      outputStyle,
+      parallel: this.options.concurrency,
+      nxBail: this.bail,
+      nxIgnoreCycles: !this.options.rejectCycles,
+      skipNxCache: this.options.skipNxCache,
+      _: this.args,
+    };
+
+    return { targetDependencies, options };
+  }
+
   runScriptInPackagesParallel() {
     return pMap(this.packagesWithScript, (pkg) => this.runScriptInPackageStreaming(pkg));
   }
@@ -189,6 +261,23 @@ class RunCommand extends Command {
 
       return result;
     });
+  }
+
+  configureNxOutput() {
+    try {
+      const nxOutput = require("nx/src/utils/output");
+      nxOutput.output.cliName = "Lerna (powered by Nx)";
+      nxOutput.output.formatCommand = (taskId) => taskId;
+      return nxOutput;
+    } catch (e) {
+      this.logger.error(
+        "\n",
+        "You have set 'useNx: true' in lerna.json, but you haven't installed Nx as a dependency.\n" +
+          "To do it run 'npm install -D nx@latest' or 'yarn add -D -W nx@latest'.\n" +
+          "Optional: To configure the caching and distribution run 'npx nx init' after installing it."
+      );
+      process.exit(1);
+    }
   }
 }
 

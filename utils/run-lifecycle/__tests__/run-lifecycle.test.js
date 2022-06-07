@@ -1,10 +1,11 @@
 "use strict";
 
-jest.mock("npm-lifecycle", () => jest.fn(() => Promise.resolve()));
+jest.mock("@npmcli/run-script", () => jest.fn(() => Promise.resolve({ stdout: "" })));
 
+// eslint-disable-next-line no-unused-vars
 const log = require("npmlog");
 const { loggingOutput } = require("@lerna-test/logging-output");
-const runScript = require("npm-lifecycle");
+const runScript = require("@npmcli/run-script");
 const npmConf = require("@lerna/npm-conf");
 const { Package } = require("@lerna/package");
 const { runLifecycle, createRunner } = require("../run-lifecycle");
@@ -54,28 +55,22 @@ describe("runLifecycle()", () => {
 
     expect(runScript).toHaveBeenLastCalledWith(
       expect.objectContaining({
-        name: pkg.name,
-        version: pkg.version,
-        engines: {
-          node: ">= 8.9.0",
-        },
-        _id: `${pkg.name}@${pkg.version}`,
-      }),
-      stage,
-      pkg.location,
-      expect.objectContaining({
-        config: expect.objectContaining({
-          "custom-cli-flag": true,
+        pkg: expect.objectContaining({
+          name: pkg.name,
+          version: pkg.version,
+          engines: {
+            node: ">= 8.9.0",
+          },
+          _id: `${pkg.name}@${pkg.version}`,
         }),
-        dir: pkg.location,
-        failOk: false,
-        log: expect.any(Object),
-        unsafePerm: true,
+        event: stage,
+        path: pkg.location,
+        args: [],
       })
     );
   });
 
-  it("camelCases dashed-options", async () => {
+  it("passes through the value for script-shell from npm config", async () => {
     const pkg = {
       name: "dashed-name",
       version: "1.0.0-dashed",
@@ -87,29 +82,19 @@ describe("runLifecycle()", () => {
     const dir = pkg.location;
     const stage = "dashed-options";
     const opts = {
-      "ignore-prepublish": true,
-      "ignore-scripts": false,
-      "node-options": "--a-thing",
       "script-shell": "fish",
-      "scripts-prepend-node-path": true,
-      "unsafe-perm": false,
     };
 
     await runLifecycle(pkg, stage, opts);
 
-    expect(runScript).toHaveBeenLastCalledWith(expect.objectContaining(pkg), stage, dir, {
-      config: expect.objectContaining({
-        "node-options": "--a-thing",
-        "script-shell": "fish",
-      }),
-      dir,
-      failOk: false,
-      log,
-      nodeOptions: "--a-thing",
-      scriptShell: "fish",
-      scriptsPrependNodePath: true,
-      unsafePerm: false,
-    });
+    expect(runScript).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        event: stage,
+        path: dir,
+        args: [],
+        scriptShell: "fish",
+      })
+    );
   });
 
   it("ignores prepublish when configured", async () => {
@@ -170,29 +155,6 @@ describe("runLifecycle()", () => {
 describe("createRunner", () => {
   const runPackageLifecycle = createRunner({ "other-cli-flag": 0 });
 
-  it("creates partially-applied function with npm conf", async () => {
-    const pkg = {
-      name: "partially-applied",
-      version: "1.2.3",
-      location: "test",
-      scripts: { version: "echo yay" },
-    };
-    const stage = "version";
-
-    await runPackageLifecycle(pkg, stage);
-
-    expect(runScript).toHaveBeenLastCalledWith(
-      expect.any(Object),
-      stage,
-      pkg.location,
-      expect.objectContaining({
-        config: expect.objectContaining({
-          "other-cli-flag": 0,
-        }),
-      })
-    );
-  });
-
   it("skips missing scripts block", async () => {
     const pkg = {
       name: "missing-scripts-block",
@@ -217,12 +179,11 @@ describe("createRunner", () => {
   });
 
   it("logs script error and re-throws", async () => {
-    runScript.mockImplementationOnce(({ scripts }, stage) => {
+    runScript.mockImplementationOnce(({ pkg, event }) => {
       const err = new Error("boom");
 
-      // https://git.io/fAE3f
-      err.errno = 123;
-      err.script = scripts[stage];
+      err.code = 123;
+      err.script = pkg.scripts[event];
 
       return Promise.reject(err);
     });
@@ -247,11 +208,11 @@ describe("createRunner", () => {
   });
 
   it("defaults error exit code to 1", async () => {
-    runScript.mockImplementationOnce(({ scripts }, stage) => {
+    runScript.mockImplementationOnce(({ pkg, event }) => {
       const err = new Error("kersplode");
 
       // errno only gets added when a proc closes, not from error
-      err.script = scripts[stage];
+      err.script = pkg.scripts[event];
 
       return Promise.reject(err);
     });

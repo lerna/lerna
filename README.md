@@ -1,3 +1,5 @@
+**Important note: this project [is changing stewardship to Nrwl](https://github.com/lerna/lerna/issues/3121)! Your favorite tool will continue to live on. Stay tuned for updates and soon a project roadmap!**
+
 <p align="center">
   <img alt="Lerna" src="https://user-images.githubusercontent.com/645641/79596653-38f81200-80e1-11ea-98cd-1c6a3bb5de51.png" width="480">
 </p>
@@ -273,7 +275,7 @@ Please note that lerna does _not_ perform the actual splitting of git history in
 }
 ```
 
-In the example above,
+In the example above:
 
 - `lerna bootstrap` will properly symlink `pkg-2` into `pkg-1`.
 - `lerna publish` will update the committish (`#v1.0.0`) in `pkg-1` when `pkg-2` changes.
