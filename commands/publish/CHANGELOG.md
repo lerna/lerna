@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.1.0](https://github.com/lerna/lerna/compare/v5.0.0...v5.1.0) (2022-06-07)
+
+
+### Features
+
+* handle the edge cases in the lerna-nx integration ([c6808fc](https://github.com/lerna/lerna/commit/c6808fc8f2dfe793bf72a64cf2d3909e0bdabba8))
+
+
+
+
+
 # [5.1.0-alpha.0](https://github.com/lerna/lerna/compare/v4.0.0...v5.1.0-alpha.0) (2022-05-25)
 
 **Note:** Version bump only for package @lerna/publish

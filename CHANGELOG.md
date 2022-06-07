@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [5.1.0](https://github.com/lerna/lerna/compare/v5.0.0...v5.1.0) (2022-06-07)
+
+
+### Bug Fixes
+
+* **utils:** orphaned child process on Windows ([#3156](https://github.com/lerna/lerna/issues/3156)) ([7e69e9e](https://github.com/lerna/lerna/commit/7e69e9e308ec36d1c7b9682673e785aaa4ce056a))
+
+
+### Features
+
+* add experimental support to run tasks via Nx ([1c35828](https://github.com/lerna/lerna/commit/1c358286c8425d1720580859c4b42e15a3b15eac))
+* handle the edge cases in the lerna-nx integration ([c6808fc](https://github.com/lerna/lerna/commit/c6808fc8f2dfe793bf72a64cf2d3909e0bdabba8))
+
+
+
+
+
 # [5.1.0-alpha.0](https://github.com/lerna/lerna/compare/v4.0.0...v5.1.0-alpha.0) (2022-05-25)
 
 
