@@ -9,31 +9,12 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Bug Fixes
 
 * **utils:** orphaned child process on Windows ([#3156](https://github.com/lerna/lerna/issues/3156)) ([7e69e9e](https://github.com/lerna/lerna/commit/7e69e9e308ec36d1c7b9682673e785aaa4ce056a))
-
-
-### Features
-
-* add experimental support to run tasks via Nx ([1c35828](https://github.com/lerna/lerna/commit/1c358286c8425d1720580859c4b42e15a3b15eac))
 * handle the edge cases in the lerna-nx integration ([c6808fc](https://github.com/lerna/lerna/commit/c6808fc8f2dfe793bf72a64cf2d3909e0bdabba8))
 
 
-
-
-
-# [5.1.0-alpha.0](https://github.com/lerna/lerna/compare/v4.0.0...v5.1.0-alpha.0) (2022-05-25)
-
-
-### Bug Fixes
-
-* replace read-package-tree with @npmcli/arborist ([#3133](https://github.com/lerna/lerna/issues/3133)) ([f1c10a4](https://github.com/lerna/lerna/commit/f1c10a40fe667e5012a60e9b372a8e7996465de1))
-* resolve most dependency audit issues ([#3127](https://github.com/lerna/lerna/issues/3127)) ([2b3b191](https://github.com/lerna/lerna/commit/2b3b1910d377122f294b4a79a291596fbc81241c))
-
-
 ### Features
 
 * add experimental support to run tasks via Nx ([1c35828](https://github.com/lerna/lerna/commit/1c358286c8425d1720580859c4b42e15a3b15eac))
-
-
 
 
 
