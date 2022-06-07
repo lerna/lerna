@@ -28,6 +28,7 @@ function npmRunScriptStreaming(script, { args, npmClient, pkg, prefix, reject = 
 
 function makeOpts(pkg, reject) {
   return Object.assign(getNpmExecOpts(pkg), {
+    windowsHide: false,
     reject,
   });
 }
