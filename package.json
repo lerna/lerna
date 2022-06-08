@@ -162,6 +162,7 @@
     "jest-circus": "^26.6.3",
     "jest-diff": "^26.6.2",
     "jest-matcher-utils": "^26.6.2",
+    "node-jq": "^2.3.3",
     "normalize-newline": "^3.0.0",
     "normalize-path": "^3.0.0",
     "nx": "14.2.0",
