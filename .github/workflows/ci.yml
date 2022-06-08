@@ -9,6 +9,10 @@ on:
   pull_request:
     types: [assigned, opened, synchronize, reopened, labeled]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -27,6 +31,24 @@ jobs:
       - run: npm -g i npm@8.10.0
       - run: npm ci
       - run: npm run ci:lint
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          # only e2e on latest LTS node
+          node-version: 16
+      - uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - run: npm -g i npm@8.10.0
+      - run: npm ci
+      - run: npm run e2e
 
   test:
     needs: [lint]
