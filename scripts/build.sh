@@ -19,7 +19,7 @@ IFS=$'\n' read -d '' -a packageLocations < <((jq -c -r '.[].location') <<<"$(npx
 for packageLocation in "${packageLocations[@]}"; do
   newLocation=$(echo "./dist/${packageLocation#${workspaceRoot}/}/")
   mkdir -p $newLocation
-  cp -R $packageLocation/ $newLocation
+  cp -R $packageLocation/. $newLocation/.
 done
 
 echo "Successfully copied all ${#packageLocations[@]} packages to ./dist"

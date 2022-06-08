@@ -1,12 +1,12 @@
 {
   "name": "lerna-monorepo",
-  "version": "4.0.0-monorepo",
-  "description": "lerna dog-fooding lerna",
   "private": true,
+  "description": "lerna dog-fooding lerna",
   "workspaces": [
     "commands/*",
     "core/*",
-    "utils/*"
+    "utils/*",
+    "e2e"
   ],
   "volta": {
     "node": "16.15.0",
@@ -24,10 +24,8 @@
     "ci:test:integration": "jest --config jest.integration.js --maxWorkers=2 --ci",
     "ci:windows": "jest --ci --maxWorkers=2 && npm run integration -- --ci",
     "build": "scripts/build.sh",
-    "e2e:prepare-local-publish": "e2e/prepare-local-publish.sh",
-    "e2e:publish-to-verdaccio": "npm_config_registry=\"http://localhost:4872/\" e2e/publish-to-verdaccio.sh",
-    "e2e:run-verdaccio": "verdaccio --config ./e2e/local-registry/config.yml --listen 4872",
-    "e2e:local-publish": "npm run build && npm run e2e:prepare-local-publish && npm run e2e:publish-to-verdaccio",
+    "e2e": "npm run build && npx lerna run --scope @lerna/e2e e2e",
+    "e2e:local-publish": "npm run --workspace e2e publish-to-verdaccio",
     "fix": "npm run lint -- --fix",
     "integration": "jest --config jest.integration.js --maxWorkers=2",
     "ci:lint": "eslint . -c .eslintrc.yaml --no-eslintrc --ignore-path .gitignore",
@@ -144,6 +142,11 @@
     "@lerna-test/show-commit": "file:helpers/show-commit",
     "@lerna-test/silence-logging": "file:helpers/silence-logging",
     "@lerna-test/update-lerna-config": "file:helpers/update-lerna-config",
+    "@types/fs-extra": "^9.0.13",
+    "@types/is-ci": "^2.0.0",
+    "@types/jest": "^26.0.24",
+    "@types/tmp": "^0.2.3",
+    "@typescript-eslint/parser": "^5.27.1",
     "debug": "^4.3.1",
     "env-cmd": "^10.1.0",
     "eslint": "^7.19.0",
@@ -162,12 +165,16 @@
     "jest-matcher-utils": "^26.6.2",
     "normalize-newline": "^3.0.0",
     "normalize-path": "^3.0.0",
+    "nx": "14.2.0",
     "path-key": "^3.1.1",
     "prettier": "^2.2.1",
     "tacks": "1.2.6",
     "tempy": "^1.0.0",
+    "tmp": "^0.2.1",
     "touch": "^3.1.0",
-    "verdaccio": "^5.10.2",
-    "nx": "14.2.0"
+    "ts-jest": "^26.5.6",
+    "ts-node": "^10.8.1",
+    "typescript": "^4.7.3",
+    "verdaccio": "^5.10.2"
   }
 }

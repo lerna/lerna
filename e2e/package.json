@@ -1,0 +1,15 @@
+{
+  "name": "@lerna/e2e",
+  "private": true,
+  "description": "e2e tests for lerna packages",
+  "scripts": {
+    "pree2e": "npm run start-verdaccio &",
+    "e2e": "npm run prepare-local-publish && npm run publish-to-verdaccio -- 999.9.9-e2e.0 && PUBLISHED_VERSION=999.9.9-e2e.0 npm run run-tests",
+    "poste2e": "npm run kill-verdaccio",
+    "start-verdaccio": "verdaccio --config ./local-registry/config.yml --listen 4872",
+    "kill-verdaccio": "kill $(lsof -t -i:4872)",
+    "prepare-local-publish": "./prepare-local-publish.sh",
+    "publish-to-verdaccio": "npm_config_registry=\"http://localhost:4872/\" ./publish-to-verdaccio.sh",
+    "run-tests": "jest --config ./jest.config.ts"
+  }
+}

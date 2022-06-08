@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+SCRIPT_DIR=$(dirname "$0")
+
+# pwd when running the command should be the e2e directory
+if [ $SCRIPT_DIR != "." ]; then
+  echo "Error: This script must be run from the e2e directory"
+  exit 1
+fi
+
 VERSION=$1
 NPM_REGISTRY=`npm config get registry`
 
@@ -14,9 +22,9 @@ if [[ ! $NPM_REGISTRY == http://localhost* ]]; then
 fi
 
 # Change to the prepared dist directory
-cd ./dist
+cd ../dist
 
-echo "Updating the package versions in ./dist to use $VERSION"
+echo "Updating the package versions in $(pwd)/dist to use $VERSION"
 
 echo ""
 
