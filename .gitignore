@@ -32,3 +32,7 @@ coverage/
 .env
 
 dist
+
+website/build
+website/.docusaurus
+website/.cache-loader
