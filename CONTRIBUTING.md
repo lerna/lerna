@@ -103,7 +103,7 @@ If you want to test out Lerna on local repos, you can leverage verdaccio as a lo
 Open a new terminal window and run the following from the root of the workspace:
 
 ```sh
-$ npm run e2e:run-verdaccio
+$ npx lerna run --scope @lerna/e2e start-verdaccio
 ```
 
 This will run verdaccio on http://localhost:4872

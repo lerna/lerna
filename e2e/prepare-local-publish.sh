@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 
-# pwd should be the root of the workspace
-if [ ! -f ./lerna.json ]; then
-  echo "Error: This script must be run from the root of the workspace"
+SCRIPT_DIR=$(dirname "$0")
+
+# pwd when running the command should be the e2e directory
+if [ $SCRIPT_DIR != "." ]; then
+  echo "Error: This script must be run from the e2e directory"
   exit 1
 fi
-workspaceRoot=$(pwd)
 
-cp ./e2e/lerna.json.localpublish ./dist/lerna.json
-cp ./e2e/package.json.localpublish ./dist/package.json
+cp ./lerna.json.localpublish ../dist/lerna.json
+cp ./package.json.localpublish ../dist/package.json
