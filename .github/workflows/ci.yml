@@ -33,6 +33,7 @@ jobs:
       - run: npm run ci:lint
 
   e2e:
+    needs: [lint]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
