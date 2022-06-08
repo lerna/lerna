@@ -13,7 +13,7 @@
     "npm": "8.10.0"
   },
   "engines": {
-    "node": "^14.19.3 || >=16.0.0"
+    "node": ">=14.0.0"
   },
   "scripts": {
     "prerelease": "npm test && npm run integration",
