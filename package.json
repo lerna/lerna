@@ -18,7 +18,6 @@
   "scripts": {
     "prerelease": "npm test && npm run integration",
     "release": "env-cmd lerna version",
-    "postversion": "lerna publish from-git",
     "ci": "npm test -- --ci --maxWorkers=2 && npm run integration -- --ci",
     "ci:test:unit": "jest --config jest.config.js --maxWorkers=2 --ci",
     "ci:test:integration": "jest --config jest.integration.js --maxWorkers=2 --ci",
