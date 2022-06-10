@@ -14,7 +14,7 @@ workspaceRoot=$(pwd)
 rm -rf ./dist
 
 # Resolve the packages using lerna itself
-IFS=$'\n' read -d '' -a packageLocations < <((jq -c -r '.[].location') <<<"$(npx lerna list --json)")
+IFS=$'\n' read -d '' -a packageLocations < <((./node_modules/node-jq/bin/jq -c -r '.[].location') <<<"$(npx lerna list --json)")
 
 for packageLocation in "${packageLocations[@]}"; do
   newLocation=$(echo "./dist/${packageLocation#${workspaceRoot}/}/")

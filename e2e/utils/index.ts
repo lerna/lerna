@@ -79,6 +79,18 @@ export function runCommandAsync(
   });
 }
 
+export function runLernaInitAsync(args?: string) {
+  const argsString = args ? ` ${args}` : "";
+
+  /**
+   * There is nothing about lerna init that is package manager specific, as no installation occurs
+   * as part of the command, so we simply use npx here and resolve from verdaccio.
+   */
+  return runCommandAsync(
+    `npx --registry=http://localhost:4872/ --yes lerna@${getPublishedVersion()} init${argsString}`
+  );
+}
+
 /**
  * Remove log colors for fail proof string search
  * @param log
