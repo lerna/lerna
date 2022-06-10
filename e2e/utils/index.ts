@@ -1,5 +1,5 @@
 import { exec } from "child_process";
-import { ensureDirSync, readFileSync, removeSync } from "fs-extra";
+import { ensureDirSync, readFileSync, readJSON, removeSync, writeJSON } from "fs-extra";
 import isCI from "is-ci";
 import { dirSync } from "tmp";
 
@@ -47,6 +47,18 @@ export function readFile(f: string) {
   return readFileSync(ff, "utf-8");
 }
 
+export async function addScriptsToPackageAsync(name: string, scripts: { [key: string]: string }) {
+  const packageJsonPath = tmpProjPath(`packages/${name}/package.json`);
+
+  const json = await readJSON(packageJsonPath);
+
+  json.scripts = {
+    ...json.scripts,
+    ...scripts,
+  };
+  await writeJSON(packageJsonPath, json);
+}
+
 export function runCommandAsync(
   command: string,
   opts: RunCmdOpts = {
@@ -77,6 +89,14 @@ export function runCommandAsync(
       }
     );
   });
+}
+
+export function runLernaCommandAsync(args: string) {
+  const argsString = args ? ` ${args}` : "";
+
+  return runCommandAsync(
+    `npx --registry=http://localhost:4872/ --yes lerna@${getPublishedVersion()}${argsString}`
+  );
 }
 
 export function runLernaInitAsync(args?: string) {
