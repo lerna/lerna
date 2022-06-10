@@ -33,6 +33,6 @@
   "dependencies": {
     "cmd-shim": "^4.1.0",
     "fs-extra": "^9.1.0",
-    "npmlog": "^4.1.2"
+    "npmlog": "^6.0.2"
   }
 }

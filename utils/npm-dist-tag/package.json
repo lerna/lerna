@@ -35,6 +35,6 @@
     "@lerna/otplease": "file:../../core/otplease",
     "npm-package-arg": "^8.1.0",
     "npm-registry-fetch": "^9.0.0",
-    "npmlog": "^4.1.2"
+    "npmlog": "^6.0.2"
   }
 }
