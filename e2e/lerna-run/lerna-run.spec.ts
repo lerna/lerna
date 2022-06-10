@@ -35,26 +35,14 @@ describe("lerna run", () => {
       "print-name": "echo test-package-3",
     });
 
-    const output = await runLernaCommandAsync("run print-name");
+    const output = await runLernaCommandAsync("run print-name -- --silent");
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
-
-      > package-X@0.0.0 print-name
-      > echo test-package-X
-
       test-package-X
-
-      > package-X@0.0.0 print-name
-      > echo test-package-X
-
       test-package-X
-
-      > package-X@0.0.0 print-name
-      > echo test-package-X
-
       test-package-X
       lerna notice cli v999.9.9-e2e.0
-      lerna info Executing command in 3 packages: "npm run print-name"
+      lerna info Executing command in 3 packages: "npm run print-name --silent"
       lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
       lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
       lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
