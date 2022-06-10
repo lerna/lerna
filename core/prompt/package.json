@@ -32,6 +32,6 @@
   },
   "dependencies": {
     "inquirer": "^7.3.3",
-    "npmlog": "^4.1.2"
+    "npmlog": "^6.0.2"
   }
 }

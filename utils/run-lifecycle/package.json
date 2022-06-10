@@ -33,6 +33,6 @@
   "dependencies": {
     "@lerna/npm-conf": "file:../npm-conf",
     "@npmcli/run-script": "^3.0.2",
-    "npmlog": "^4.1.2"
+    "npmlog": "^6.0.2"
   }
 }

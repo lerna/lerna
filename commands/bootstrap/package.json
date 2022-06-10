@@ -50,7 +50,7 @@
     "get-port": "^5.1.1",
     "multimatch": "^5.0.0",
     "npm-package-arg": "^8.1.0",
-    "npmlog": "^4.1.2",
+    "npmlog": "^6.0.2",
     "p-map": "^4.0.0",
     "p-map-series": "^2.1.0",
     "p-waterfall": "^2.1.1",

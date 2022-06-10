@@ -35,7 +35,7 @@
     "@lerna/get-npm-exec-opts": "file:../get-npm-exec-opts",
     "fs-extra": "^9.1.0",
     "npm-package-arg": "^8.1.0",
-    "npmlog": "^4.1.2",
+    "npmlog": "^6.0.2",
     "signal-exit": "^3.0.3",
     "write-pkg": "^4.0.0"
   }
