@@ -185,6 +185,9 @@ class BootstrapCommand extends Command {
 
   execute() {
     if (this.options.useWorkspaces || this.rootHasLocalFileDependencies()) {
+      if (this.options.rejectCycles) {
+        this.packageGraph.collapseCycles({ rejectCycles: this.options.rejectCycles });
+      }
       return this.installRootPackageOnly();
     }
 
