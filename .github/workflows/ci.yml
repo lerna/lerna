@@ -17,36 +17,22 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: '16.15.0'
-      - uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-      - run: npm -g i npm@8.12.1
-      - run: npm ci
+      - uses: actions/checkout@v3
+
+      - name: Install primary node version (see volta config in package.json) and dependencies
+        uses: ./.github/actions/install-node-and-dependencies
+
       - run: npm run ci:lint
 
   e2e:
     needs: [lint]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: '16.15.0'
-      - uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-      - run: npm -g i npm@8.12.1
-      - run: npm ci
+      - uses: actions/checkout@v3
+
+      - name: Install primary node version (see volta config in package.json) and dependencies
+        uses: ./.github/actions/install-node-and-dependencies
+
       - run: npm run e2e
 
   test:
@@ -58,22 +44,18 @@ jobs:
         node: [14, '16.15.0', 18]
         script: ["ci:test:unit", "ci:test:integration"]
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node }}
-      - uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+      - uses: actions/checkout@v3
+
       - name: Configure git metadata
         run: |
           git config --global user.email test@example.com
           git config --global user.name "Tester McPerson"
-      - run: npm -g i npm@8.12.1
-      - run: npm ci
+
+      - name: Install node version ${{ matrix.node }} and dependencies
+        uses: ./.github/actions/install-node-and-dependencies
+        with:
+          node-version: ${{ matrix.node }}
+
       - run: npm run ${{ matrix.script }}
 
   windows:
@@ -85,28 +67,17 @@ jobs:
         script: ["ci:test:unit", "ci:test:integration"]
         subset: [publish, non-publish]
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: '16.15.0'
-      # caching on windows is LUDICROUSLY slow
-      # - name: Get npm cache directory
-      #   id: npm-cache
-      #   run: |
-      #     echo "::set-output name=dir::$(npm config get cache)"
-      # - uses: actions/cache@v2
-      #   with:
-      #     path: ${{ steps.npm-cache.outputs.dir }}
-      #     key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-node-
+      - uses: actions/checkout@v3
+
       - name: Configure git metadata
         run: |
           git config --global user.email test@example.com
           git config --global user.name "Tester McPerson"
-      - run: npm -g i npm@8.12.1
-      - run: npm ci
-      - env:
+
+      - name: Install primary node version (see volta config in package.json) and dependencies
+        uses: ./.github/actions/install-node-and-dependencies
+
+      - run: npm run ${{ matrix.script }}
+        env:
           LERNA_CI_TYPE: ${{ matrix.subset }}
           LERNA_OS_TYPE: windows
-        run: npm run ${{ matrix.script }}
