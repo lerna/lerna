@@ -5,7 +5,7 @@
 
 ## Installing the correct versions of Node, NPM and necessary dependencies
 
-We strongly recommend using https://volta.sh/ to manage your node and npm installation seamlessly and automatically. If you are already using volta, then will already be using the correct version of node and npm when working on the lerna repo.
+We strongly recommend using https://volta.sh/ to manage your node and npm installation seamlessly and automatically. If you are already using volta, then you will already be using the correct versions of node and npm when working on the lerna repo.
 
 In addition to being used by our core contributors, volta is also used by our Github Actions workflows, so that everything stays automatically in sync when it comes to the primary node and npm versions.
 
