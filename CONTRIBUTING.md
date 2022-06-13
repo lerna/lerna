@@ -103,12 +103,12 @@ If you want to test out Lerna on local repos, you can leverage verdaccio as a lo
 Open a new terminal window and run the following from the root of the workspace:
 
 ```sh
-$ npx lerna run --scope @lerna/e2e start-verdaccio
+npx lerna run --scope @lerna/e2e start-verdaccio
 ```
 
 This will run verdaccio on http://localhost:4872
 
-In another terminal window you can now publish any new version (in this example `999.9.9`) to that local registry:
+In another terminal window you can now build and publish any new version (in this example `999.9.9`) to that local registry:
 
 ```sh
 npm run e2e:local-publish -- 999.9.9
