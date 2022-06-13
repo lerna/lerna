@@ -47,7 +47,7 @@ export function readFile(f: string) {
   return readFileSync(ff, "utf-8");
 }
 
-export async function addScriptsToPackageAsync(name: string, scripts: { [key: string]: string }) {
+export async function addScriptsToPackage(name: string, scripts: { [key: string]: string }) {
   await updateJson(`packages/${name}/package.json`, (json) => ({
     ...json,
     scripts: {
@@ -72,7 +72,7 @@ export async function addNxToWorkspace() {
     },
   });
 
-  await runCommandAsync("npm --registry=http://localhost:4872/ install -D nx@latest");
+  await runCommand("npm --registry=http://localhost:4872/ install -D nx@latest");
 }
 
 async function updateJson<T = any>(path: string, updateFn: (json: T) => T) {
@@ -82,7 +82,7 @@ async function updateJson<T = any>(path: string, updateFn: (json: T) => T) {
   await writeJSON(jsonPath, updateFn(json));
 }
 
-export function runCommandAsync(
+export function runCommand(
   command: string,
   opts: RunCmdOpts = {
     silenceError: false,
@@ -114,22 +114,8 @@ export function runCommandAsync(
   });
 }
 
-export function runLernaCommandAsync(args: string) {
-  return runCommandAsync(
-    `npx --registry=http://localhost:4872/ --yes lerna@${getPublishedVersion()} ${args}`
-  );
-}
-
-export function runLernaInitAsync(args?: string) {
-  const argsString = args ? ` ${args}` : "";
-
-  /**
-   * There is nothing about lerna init that is package manager specific, as no installation occurs
-   * as part of the command, so we simply use npx here and resolve from verdaccio.
-   */
-  return runCommandAsync(
-    `npx --registry=http://localhost:4872/ --yes lerna@${getPublishedVersion()} init${argsString}`
-  );
+export function runCLI(args: string) {
+  return runCommand(`npx --registry=http://localhost:4872/ --yes lerna@${getPublishedVersion()} ${args}`);
 }
 
 /**
