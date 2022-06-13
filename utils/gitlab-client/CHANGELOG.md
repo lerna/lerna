@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.2](https://gitlab.com/lerna/lerna/compare/v5.1.1...v5.1.2) (2022-06-13)
+
+
+### Bug Fixes
+
+* update all transitive inclusions of ansi-regex ([#3166](https://gitlab.com/lerna/lerna/issues/3166)) ([56eaa15](https://gitlab.com/lerna/lerna/commit/56eaa153283be3b1e7d7793d3266fc51801fad8e))
+
+
+
+
+
 ## [5.1.1](https://gitlab.com/lerna/lerna/compare/v5.1.0...v5.1.1) (2022-06-09)
 
 

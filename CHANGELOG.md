@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.2](https://github.com/lerna/lerna/compare/v5.1.1...v5.1.2) (2022-06-13)
+
+
+### Bug Fixes
+
+* **conventional-commits:** remove pinned lodash.template ([#3172](https://github.com/lerna/lerna/issues/3172)) ([e519f43](https://github.com/lerna/lerna/commit/e519f43049253e66c1ab840c3c08435be1477d76))
+* update all transitive inclusions of ansi-regex ([#3166](https://github.com/lerna/lerna/issues/3166)) ([56eaa15](https://github.com/lerna/lerna/commit/56eaa153283be3b1e7d7793d3266fc51801fad8e))
+
+
+
+
+
 ## [5.1.1](https://github.com/lerna/lerna/compare/v5.1.0...v5.1.1) (2022-06-09)
 
 
