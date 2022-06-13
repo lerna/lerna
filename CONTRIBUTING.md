@@ -3,13 +3,21 @@
 > Please note that this project is released with a [Contributor Code of Conduct](./CODE_OF_CONDUCT.md).
 > By participating in this project you agree to abide by its terms.
 
-First, ensure you have the [latest `npm`](https://docs.npmjs.com/).
+## Installing the correct versions of Node, NPM and necessary dependencies
 
-To get started with the repo:
+We strongly recommend using https://volta.sh/ to manage your node and npm installation seamlessly and automatically. If you are already using volta, then will already be using the correct version of node and npm when working on the lerna repo.
+
+In addition to being used by our core contributors, volta is also used by our Github Actions workflows, so that everything stays automatically in sync when it comes to the primary node and npm versions.
+
+If you do not wish to use volta for whatever reason, that is absolutely fine, but you will be responsible for ensuring that you align your machine's global installation of node and npm with what we have specified in the `volta` config within the root `package.json` file in the repo (and keep it aligned as things change over time).
+
+You can always run `node --version` and `npm --version` from within the repo to check that your currently installed versions match those specified in the `volta` config in the root `package.json`.
+
+Once you have done that, to get started with the repo simply run:
 
 ```sh
-$ git clone git@github.com:lerna/lerna.git && cd lerna
-$ npm ci
+git clone git@github.com:lerna/lerna.git && cd lerna
+npm ci # given this is a clean install on an existing project, npm ci can be used
 ```
 
 ## Code Structure
