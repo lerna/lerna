@@ -17,7 +17,7 @@ Once you have done that, to get started with the repo simply run:
 
 ```sh
 git clone git@github.com:lerna/lerna.git && cd lerna
-npm ci # given this is a clean install on an exsiting project, npm ci can be used
+npm ci # given this is a clean install on an existing project, npm ci can be used
 ```
 
 ## Code Structure
