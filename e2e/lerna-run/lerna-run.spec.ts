@@ -12,7 +12,7 @@ expect.addSnapshotSerializer({
   serialize(str) {
     return str
       .replaceAll(/package-\d/g, "package-X")
-      .replaceAll(/\d\.\ds/g, "X.Xs")
+      .replaceAll(/\d\.(\d{1}|\d{2})s/g, "X.Xs")
       .replaceAll(/Lerna-Profile-\d{8}T\d{6}\.json/g, "Lerna-Profile-XXXXXXXXTXXXXXX.json");
   },
   test(val) {
@@ -326,6 +326,101 @@ describe("lerna run", () => {
       const lernaProfileFileName = lernaProfileSavedOutputLine.split("lerna-run-test/")[1];
 
       expect(existsSync(tmpProjPath(lernaProfileFileName))).toBe(true);
+    });
+  });
+
+  describe("--npm-client", () => {
+    it("should run script on all child packages using yarn", async () => {
+      createEmptyDirectoryForWorkspace("lerna-run-test");
+      await runLernaInitAsync();
+
+      await runLernaCommandAsync("create package-1");
+      await addScriptsToPackageAsync("package-1", {
+        "print-name": "echo test-package-1",
+      });
+      await runLernaCommandAsync("create package-2");
+      await addScriptsToPackageAsync("package-2", {
+        "print-name": "echo test-package-2",
+      });
+      await runLernaCommandAsync("create package-3");
+      await addScriptsToPackageAsync("package-3", {
+        "print-name": "echo test-package-3",
+      });
+
+      const output = await runLernaCommandAsync(`run print-name --npm-client=yarn`);
+
+      expect(output.combinedOutput).toMatchInlineSnapshot(`
+        yarn run v1.22.18
+        $ echo test-package-X
+        test-package-X
+        Done in X.Xs.
+        yarn run v1.22.18
+        $ echo test-package-X
+        test-package-X
+        Done in X.Xs.
+        yarn run v1.22.18
+        $ echo test-package-X
+        test-package-X
+        Done in X.Xs.
+        lerna notice cli v999.9.9-e2e.0
+        lerna info Executing command in 3 packages: "yarn run print-name"
+        lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+        lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+        lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+        lerna success run Ran npm script 'print-name' in 3 packages in X.Xs:
+        lerna success - package-X
+        lerna success - package-X
+        lerna success - package-X
+
+      `);
+    });
+
+    it("should run script on all child packages using npm", async () => {
+      createEmptyDirectoryForWorkspace("lerna-run-test");
+      await runLernaInitAsync();
+
+      await runLernaCommandAsync("create package-1");
+      await addScriptsToPackageAsync("package-1", {
+        "print-name": "echo test-package-1",
+      });
+      await runLernaCommandAsync("create package-2");
+      await addScriptsToPackageAsync("package-2", {
+        "print-name": "echo test-package-2",
+      });
+      await runLernaCommandAsync("create package-3");
+      await addScriptsToPackageAsync("package-3", {
+        "print-name": "echo test-package-3",
+      });
+
+      const output = await runLernaCommandAsync(`run print-name --npm-client=npm`);
+
+      expect(output.combinedOutput).toMatchInlineSnapshot(`
+
+        > package-X@0.0.0 print-name
+        > echo test-package-X
+
+        test-package-X
+
+        > package-X@0.0.0 print-name
+        > echo test-package-X
+
+        test-package-X
+
+        > package-X@0.0.0 print-name
+        > echo test-package-X
+
+        test-package-X
+        lerna notice cli v999.9.9-e2e.0
+        lerna info Executing command in 3 packages: "npm run print-name"
+        lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+        lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+        lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+        lerna success run Ran npm script 'print-name' in 3 packages in X.Xs:
+        lerna success - package-X
+        lerna success - package-X
+        lerna success - package-X
+
+      `);
     });
   });
 });

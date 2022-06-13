@@ -92,10 +92,8 @@ export function runCommandAsync(
 }
 
 export function runLernaCommandAsync(args: string) {
-  const argsString = args ? ` ${args}` : "";
-
   return runCommandAsync(
-    `npx --registry=http://localhost:4872/ --yes lerna@${getPublishedVersion()}${argsString}`
+    `npx --registry=http://localhost:4872/ --yes lerna@${getPublishedVersion()} ${args}`
   );
 }
 
