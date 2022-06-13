@@ -23,6 +23,7 @@ describe("lerna init", () => {
         \\"packages\\": [
           \\"packages/*\\"
         ],
+        \\"useNx\\": false,
         \\"version\\": \\"0.0.0\\"
       }
       "
@@ -60,6 +61,7 @@ describe("lerna init", () => {
           \\"packages\\": [
             \\"packages/*\\"
           ],
+          \\"useNx\\": false,
           \\"version\\": \\"independent\\"
         }
         "
@@ -103,6 +105,7 @@ describe("lerna init", () => {
           \\"packages\\": [
             \\"packages/*\\"
           ],
+          \\"useNx\\": false,
           \\"version\\": \\"0.0.0\\"
         }
         "
@@ -146,6 +149,7 @@ describe("lerna init", () => {
           \\"packages\\": [
             \\"packages/*\\"
           ],
+          \\"useNx\\": false,
           \\"version\\": \\"independent\\"
         }
         "

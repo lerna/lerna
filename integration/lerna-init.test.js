@@ -40,6 +40,7 @@ describe("lerna init", () => {
         "packages": Array [
           "packages/*",
         ],
+        "useNx": false,
         "version": "0.0.0",
       }
     `);
@@ -81,6 +82,7 @@ describe("lerna init", () => {
         "packages": Array [
           "packages/*",
         ],
+        "useNx": false,
         "version": "1.0.0",
       }
     `);

@@ -129,6 +129,7 @@ class InitCommand extends Command {
 
     Object.assign(config, {
       packages: this.project.packageConfigs,
+      useNx: false,
       version,
     });
 
