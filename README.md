@@ -94,8 +94,8 @@ Lerna is not a deployment tool for serverless monorepos. Hoisting might be incom
 Let's start by installing Lerna as a dev dependency of your project with [npm](https://www.npmjs.com/).
 
 ```sh
-$ mkdir lerna-repo && cd $_
-$ npx lerna init
+mkdir lerna-repo && cd $_
+npx lerna init
 ```
 
 This will create a `lerna.json` configuration file as well as a `packages` folder, so your folder should now look like this:
