@@ -1,5 +1,6 @@
 import { existsSync } from "fs-extra";
 import {
+  addNxToWorkspace,
   addScriptsToPackageAsync,
   createEmptyDirectoryForWorkspace,
   removeWorkspace,
@@ -421,6 +422,72 @@ describe("lerna run", () => {
         lerna success - package-X
 
       `);
+    });
+  });
+
+  describe("useNx", () => {
+    it("should run script on all child packages using nx", async () => {
+      createEmptyDirectoryForWorkspace("lerna-run-test");
+      await runLernaInitAsync();
+      await addNxToWorkspace();
+
+      await runLernaCommandAsync("create package-1");
+      await addScriptsToPackageAsync("package-1", {
+        "print-name": "echo test-package-1",
+      });
+      await runLernaCommandAsync("create package-2");
+      await addScriptsToPackageAsync("package-2", {
+        "print-name": "echo test-package-2",
+      });
+      await runLernaCommandAsync("create package-3");
+      await addScriptsToPackageAsync("package-3", {
+        "print-name": "echo test-package-3",
+      });
+
+      const output = await runLernaCommandAsync(`run print-name`);
+
+      expect(output.combinedOutput).toMatchInlineSnapshot(`
+
+ >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
+
+    - package-X
+    - package-X
+    - package-X
+
+ 
+
+> package-X:print-name
+
+
+> package-X@0.0.0 print-name
+> echo test-package-X
+
+test-package-X
+
+> package-X:print-name
+
+
+> package-X@0.0.0 print-name
+> echo test-package-X
+
+test-package-X
+
+> package-X:print-name
+
+
+> package-X@0.0.0 print-name
+> echo test-package-X
+
+test-package-X
+
+ 
+
+ >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+
+
+lerna notice cli v999.9.9-e2e.0
+
+`);
     });
   });
 });

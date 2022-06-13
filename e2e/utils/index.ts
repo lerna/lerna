@@ -48,15 +48,38 @@ export function readFile(f: string) {
 }
 
 export async function addScriptsToPackageAsync(name: string, scripts: { [key: string]: string }) {
-  const packageJsonPath = tmpProjPath(`packages/${name}/package.json`);
+  await updateJson(`packages/${name}/package.json`, (json) => ({
+    ...json,
+    scripts: {
+      ...json.scripts,
+      ...scripts,
+    },
+  }));
+}
 
-  const json = await readJSON(packageJsonPath);
+export async function addNxToWorkspace() {
+  await updateJson("lerna.json", (json) => ({
+    ...json,
+    useNx: true,
+  }));
 
-  json.scripts = {
-    ...json.scripts,
-    ...scripts,
-  };
-  await writeJSON(packageJsonPath, json);
+  await writeJSON(tmpProjPath("nx.json"), {
+    extends: "nx/presets/npm.json",
+    tasksRunnerOptions: {
+      default: {
+        runner: "nx/tasks-runners/default",
+      },
+    },
+  });
+
+  await runCommandAsync("npm --registry=http://localhost:4872/ install -D nx@latest");
+}
+
+async function updateJson<T = any>(path: string, updateFn: (json: T) => T) {
+  const jsonPath = tmpProjPath(path);
+  const json = await readJSON(jsonPath);
+
+  await writeJSON(jsonPath, updateFn(json));
 }
 
 export function runCommandAsync(
