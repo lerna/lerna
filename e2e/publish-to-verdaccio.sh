@@ -24,7 +24,7 @@ fi
 # Change to the prepared dist directory
 cd ../dist
 
-echo "Updating the package versions in $(pwd)/dist to use $VERSION"
+echo "Updating the package versions in $(pwd) to use $VERSION"
 
 echo ""
 
