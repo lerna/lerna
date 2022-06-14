@@ -294,13 +294,34 @@ If you prefer some guidance for cli (in case you're about to start using lerna o
 
 ![lerna-wizard demo image](https://raw.githubusercontent.com/szarouski/lerna-wizard/2e269fb5a3af7100397a1f874cea3fa78089486e/demo.png)
 
-## Contributors ✨
+## Main Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="http://nrwl.io/"><img src="https://avatars.githubusercontent.com/u/35996?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Victor Savkin</b></sub></a><br /><a href="https://github.com/lerna/lerna/commits?author=vsavkin" title="Code">💻</a> <a href="#content-vsavkin" title="Content">🖋</a> <a href="https://github.com/lerna/lerna/commits?author=vsavkin" title="Documentation">📖</a> <a href="#example-vsavkin" title="Examples">💡</a> <a href="#ideas-vsavkin" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://jameshenry.blog/"><img src="https://avatars.githubusercontent.com/u/900523?v=4?s=100" width="100px;" alt=""/><br /><sub><b>James Henry</b></sub></a><br /><a href="https://github.com/lerna/lerna/commits?author=JamesHenry" title="Code">💻</a> <a href="#infra-JamesHenry" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="#ideas-JamesHenry" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://juri.dev/"><img src="https://avatars.githubusercontent.com/u/542458?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Juri Strumpflohner</b></sub></a><br /><a href="https://github.com/lerna/lerna/commits?author=juristr" title="Documentation">📖</a> <a href="#content-juristr" title="Content">🖋</a> <a href="#blog-juristr" title="Blogposts">📝</a></td>
+    <td align="center"><a href="http://benjamincabanes.com/"><img src="https://avatars.githubusercontent.com/u/3447705?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Benjamin Cabanes</b></sub></a><br /><a href="#design-bcabanes" title="Design">🎨</a> <a href="#content-bcabanes" title="Content">🖋</a></td>
+    <td align="center"><a href="https://austin.fahsl.io/"><img src="https://avatars.githubusercontent.com/u/6913035?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Austin Fahsl</b></sub></a><br /><a href="https://github.com/lerna/lerna/commits?author=fahslaj" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/jeffbcross"><img src="https://avatars.githubusercontent.com/u/463703?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jeff Cross</b></sub></a><br /><a href="#business-jeffbcross" title="Business development">💼</a></td>
+    <td align="center"><a href="http://evocateur.org/"><img src="https://avatars.githubusercontent.com/u/5605?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Daniel Stockman</b></sub></a><br /><a href="https://github.com/lerna/lerna/commits?author=evocateur" title="Code">💻</a> <a href="https://github.com/lerna/lerna/commits?author=evocateur" title="Documentation">📖</a> <a href="#infra-evocateur" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="#maintenance-evocateur" title="Maintenance">🚧</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://jamie.build/"><img src="https://avatars.githubusercontent.com/u/952783?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jamie Kyle</b></sub></a><br /><a href="https://github.com/lerna/lerna/commits?author=jamiebuilds" title="Code">💻</a> <a href="https://github.com/lerna/lerna/commits?author=jamiebuilds" title="Documentation">📖</a> <a href="#infra-jamiebuilds" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="#maintenance-jamiebuilds" title="Maintenance">🚧</a></td>
+    <td align="center"><a href="https://henryzoo.com/"><img src="https://avatars.githubusercontent.com/u/588473?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Henry Zhu</b></sub></a><br /><a href="https://github.com/lerna/lerna/commits?author=hzoo" title="Code">💻</a> <a href="https://github.com/lerna/lerna/commits?author=hzoo" title="Documentation">📖</a> <a href="#maintenance-hzoo" title="Maintenance">🚧</a></td>
+    <td align="center"><a href="http://maonoodle.com/"><img src="https://avatars.githubusercontent.com/u/115908?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Bo Borgerson</b></sub></a><br /><a href="https://github.com/lerna/lerna/commits?author=gigabo" title="Code">💻</a> <a href="#maintenance-gigabo" title="Maintenance">🚧</a></td>
+    <td align="center"><a href="https://github.com/sebmck"><img src="https://avatars.githubusercontent.com/u/853712?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Sebastian</b></sub></a><br /><a href="https://github.com/lerna/lerna/commits?author=sebmck" title="Code">💻</a></td>
+    <td align="center"><a href="http://www.feth.com/"><img src="https://avatars.githubusercontent.com/u/188038?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Joscha Feth</b></sub></a><br /><a href="https://github.com/lerna/lerna/commits?author=joscha" title="Code">💻</a> <a href="https://github.com/lerna/lerna/issues?q=author%3Ajoscha" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/noherczeg"><img src="https://avatars.githubusercontent.com/u/1084847?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Norbert Csaba Herczeg</b></sub></a><br /><a href="https://github.com/lerna/lerna/commits?author=noherczeg" title="Code">💻</a></td>
+    <td align="center"><a href="http://dougwade.io/"><img src="https://avatars.githubusercontent.com/u/3477707?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Douglas Wade</b></sub></a><br /><a href="https://github.com/lerna/lerna/commits?author=doug-wade" title="Code">💻</a></td>
+  </tr>
+</table>
+
 <!-- markdownlint-restore -->
 <!-- prettier-ignore-end -->
 
