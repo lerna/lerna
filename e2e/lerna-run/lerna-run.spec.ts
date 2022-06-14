@@ -3,6 +3,7 @@ import {
   addNxToWorkspace,
   addScriptsToPackage,
   createEmptyDirectoryForWorkspace,
+  e2eRoot,
   removeWorkspace,
   runCLI,
   tmpProjPath,
@@ -15,7 +16,8 @@ expect.addSnapshotSerializer({
       .replaceAll(/\d\.(\d{1}|\d{2})s/g, "X.Xs")
       .replaceAll(/Lerna-Profile-\d{8}T\d{6}\.json/g, "Lerna-Profile-XXXXXXXXTXXXXXX.json")
       .replaceAll(/\/private\/tmp\//g, "/tmp/")
-      .replaceAll(/lerna info ci enabled\n/g, "");
+      .replaceAll(/lerna info ci enabled\n/g, "")
+      .replaceAll(e2eRoot, "/tmp/lerna-e2e");
   },
   test(val) {
     return val != null && typeof val === "string";
