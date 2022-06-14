@@ -16,6 +16,10 @@ function updateLockfileVersion(pkg) {
     if (obj) {
       obj.version = pkg.version;
 
+      if (obj.packages && obj.packages[""]) {
+        obj.packages[""].version = pkg.version;
+      }
+
       return writeJsonFile(lockfilePath, obj, {
         detectIndent: true,
         indent: 2,

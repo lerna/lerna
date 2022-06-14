@@ -12,7 +12,7 @@ const initFixture = require("@lerna-test/init-fixture")(__dirname);
 
 const { updateLockfileVersion } = require("../lib/update-lockfile-version");
 
-test("updateLockfileVersion", async () => {
+test("updateLockfileVersion with lockfile v1", async () => {
   const cwd = await initFixture("lockfile-leaf");
   const [pkg] = await getPackages(cwd);
 
@@ -23,6 +23,21 @@ test("updateLockfileVersion", async () => {
   expect(returnedLockfilePath).toBe(path.join(pkg.location, "package-lock.json"));
   expect(Array.from(loadJsonFile.registry.keys())).toStrictEqual(["/packages/package-1"]);
   expect(fs.readJSONSync(returnedLockfilePath)).toHaveProperty("version", "2.0.0");
+});
+
+test("updateLockfileVersion with lockfile v2", async () => {
+  const cwd = await initFixture("lockfile-leaf-v2");
+  const [pkg] = await getPackages(cwd);
+
+  pkg.version = "2.0.0";
+
+  const returnedLockfilePath = await updateLockfileVersion(pkg);
+
+  expect(returnedLockfilePath).toBe(path.join(pkg.location, "package-lock.json"));
+  expect(Array.from(loadJsonFile.registry.keys())).toStrictEqual(["/packages/package-1"]);
+  const updatedLockfile = fs.readJSONSync(returnedLockfilePath);
+  expect(updatedLockfile).toHaveProperty("version", "2.0.0");
+  expect(updatedLockfile).toHaveProperty(["packages", "", "version"], "2.0.0");
 });
 
 test("updateLockfileVersion without sibling lockfile", async () => {
