@@ -13,7 +13,9 @@ expect.addSnapshotSerializer({
     return str
       .replaceAll(/package-\d/g, "package-X")
       .replaceAll(/\d\.(\d{1}|\d{2})s/g, "X.Xs")
-      .replaceAll(/Lerna-Profile-\d{8}T\d{6}\.json/g, "Lerna-Profile-XXXXXXXXTXXXXXX.json");
+      .replaceAll(/Lerna-Profile-\d{8}T\d{6}\.json/g, "Lerna-Profile-XXXXXXXXTXXXXXX.json")
+      .replaceAll(/\/private\/tmp\//g, "/tmp/")
+      .replaceAll(/lerna info ci enabled\n/g, "");
   },
   test(val) {
     return val != null && typeof val === "string";
@@ -266,7 +268,7 @@ describe("lerna run", () => {
         lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
         lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
         lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
-        lerna info profiler Performance profile saved to /private/tmp/lerna-e2e/lerna-run-test/Lerna-Profile-XXXXXXXXTXXXXXX.json
+        lerna info profiler Performance profile saved to /tmp/lerna-e2e/lerna-run-test/Lerna-Profile-XXXXXXXXTXXXXXX.json
         lerna success run Ran npm script 'print-name' in 3 packages in X.Xs:
         lerna success - package-X
         lerna success - package-X
@@ -311,7 +313,7 @@ describe("lerna run", () => {
         lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
         lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
         lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
-        lerna info profiler Performance profile saved to /private/tmp/lerna-e2e/lerna-run-test/profiles/Lerna-Profile-XXXXXXXXTXXXXXX.json
+        lerna info profiler Performance profile saved to /tmp/lerna-e2e/lerna-run-test/profiles/Lerna-Profile-XXXXXXXXTXXXXXX.json
         lerna success run Ran npm script 'print-name' in 3 packages in X.Xs:
         lerna success - package-X
         lerna success - package-X
@@ -485,6 +487,17 @@ test-package-X
 lerna notice cli v999.9.9-e2e.0
 
 `);
+    });
+  });
+
+  describe("--ci", () => {
+    it("should log that ci is enabled", async () => {
+      createEmptyDirectoryForWorkspace("lerna-run-test");
+      await runCLI("init");
+
+      const output = await runCLI(`run print-name --ci`);
+
+      expect(output.combinedOutput).toContain("lerna info ci enabled");
     });
   });
 });
