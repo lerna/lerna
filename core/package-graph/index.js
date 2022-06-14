@@ -218,6 +218,9 @@ class PackageGraph extends Map {
     /** @type {(PackageGraphNode | CyclicPackageGraphNode)[]} */
     const walkStack = [];
 
+    /** @type {Set<PackageGraphNode>} */
+    const alreadyVisited = new Set();
+
     function visits(baseNode, dependentNode) {
       if (nodeToCycle.has(baseNode)) {
         return;
@@ -227,6 +230,12 @@ class PackageGraph extends Map {
       while (nodeToCycle.has(topLevelDependent)) {
         topLevelDependent = nodeToCycle.get(topLevelDependent);
       }
+
+      // Otherwise the same node is checked multiple times which is very wasteful in a large repository
+      if (alreadyVisited.has(topLevelDependent)) {
+        return;
+      }
+      alreadyVisited.add(topLevelDependent);
 
       if (
         topLevelDependent === baseNode ||
