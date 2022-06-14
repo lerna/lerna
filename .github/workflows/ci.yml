@@ -30,6 +30,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Configure git metadata
+        run: |
+          git config --global user.email test@example.com
+          git config --global user.name "Tester McPerson"
+
       - name: Install primary node version (see volta config in package.json) and dependencies
         uses: ./.github/actions/install-node-and-dependencies
 
