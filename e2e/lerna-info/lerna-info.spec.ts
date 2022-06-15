@@ -1,4 +1,10 @@
-import { createEmptyDirectoryForWorkspace, removeWorkspace, runCLI } from "../utils";
+import {
+  createEmptyDirectoryForWorkspace,
+  removeWorkspace,
+  runCLI,
+  runLernaInit,
+  runNpmInstall,
+} from "../utils";
 
 expect.addSnapshotSerializer({
   serialize(str) {
@@ -16,12 +22,14 @@ expect.addSnapshotSerializer({
 });
 
 describe("lerna info", () => {
-  afterEach(() => removeWorkspace());
+  beforeAll(async () => {
+    createEmptyDirectoryForWorkspace("lerna-info-test");
+    await runLernaInit();
+    await runNpmInstall();
+  });
+  afterAll(() => removeWorkspace());
 
   it("should output environment info", async () => {
-    createEmptyDirectoryForWorkspace("lerna-info-test");
-    await runCLI("init");
-
     const output = await runCLI("info");
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
@@ -37,6 +45,8 @@ describe("lerna info", () => {
     npm: XX.XX.XX - {npm}
   Utilities:
     Git: XX.XX.XX - {Git}
+  npmPackages:
+    lerna: ^999.9.9-e2e.0 => 999.9.9-e2e.0 
 
 lerna notice cli v999.9.9-e2e.0
 
