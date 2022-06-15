@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "lerna-json",
+  "title": "JSON schema for Lerna configuration",
+  "type": "object",
+  "properties": {
+    "ignoreChanges": {
+      "type": "array",
+      "description": "",
+      "items": {
+        "type": "string"
+      }
+    },
+    "useNx": {
+      "type": "boolean",
+      "description": ""
+    },
+    "useWorkspaces": {
+      "type": "boolean",
+      "description": ""
+    },
+    "version": {
+      "type": "string",
+      "description": ""
+    }
+  },
+  "definitions": {}
+}

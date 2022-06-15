@@ -131,6 +131,7 @@ class InitCommand extends Command {
       packages: this.project.packageConfigs,
       useNx: false,
       version,
+      $schema: "node_modules/lerna/schemas/lerna-schema.json",
     });
 
     return this.project.serializeConfig();
