@@ -13,7 +13,10 @@ jest.setTimeout(60000);
 
 expect.addSnapshotSerializer({
   serialize(str) {
-    return str.replaceAll(/\/private\/tmp\//g, "/tmp/").replaceAll(e2eRoot, "/tmp/lerna-e2e");
+    return str
+      .replaceAll(/\/private\/tmp\//g, "/tmp/")
+      .replaceAll(e2eRoot, "/tmp/lerna-e2e")
+      .replaceAll(/lerna info ci enabled\n/g, "");
   },
   test(val) {
     return val != null && typeof val === "string";
