@@ -37,14 +37,17 @@ describe("lerna run", () => {
     await runCLI("create package-1 -y");
     await addScriptsToPackage("package-1", {
       "print-name": "echo test-package-1",
+      "print-name-via-env-var": "echo test-$LERNA_PACKAGE_NAME",
     });
     await runCLI("create package-2 -y");
     await addScriptsToPackage("package-2", {
       "print-name": "echo test-package-2",
+      "print-name-via-env-var": "echo test-$LERNA_PACKAGE_NAME",
     });
     await runCLI("create package-3 -y");
     await addScriptsToPackage("package-3", {
       "print-name": "echo test-package-3",
+      "print-name-via-env-var": "echo test-$LERNA_PACKAGE_NAME",
     });
   });
 
@@ -63,6 +66,26 @@ describe("lerna run", () => {
       lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
       lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
       lerna success run Ran npm script 'print-name' in 3 packages in X.Xs:
+      lerna success - package-X
+      lerna success - package-X
+      lerna success - package-X
+
+    `);
+  });
+
+  it("should run script on all child packages and correctly populate $LERNA_PACKAGE_NAME", async () => {
+    const output = await runCLI("run print-name-via-env-var -- --silent");
+
+    expect(output.combinedOutput).toMatchInlineSnapshot(`
+      test-package-X
+      test-package-X
+      test-package-X
+      lerna notice cli v999.9.9-e2e.0
+      lerna info Executing command in 3 packages: "npm run print-name-via-env-var --silent"
+      lerna info run Ran npm script 'print-name-via-env-var' in 'package-X' in X.Xs:
+      lerna info run Ran npm script 'print-name-via-env-var' in 'package-X' in X.Xs:
+      lerna info run Ran npm script 'print-name-via-env-var' in 'package-X' in X.Xs:
+      lerna success run Ran npm script 'print-name-via-env-var' in 3 packages in X.Xs:
       lerna success - package-X
       lerna success - package-X
       lerna success - package-X
@@ -288,14 +311,17 @@ describe("useNx", () => {
     await runCLI("create package-1 -y");
     await addScriptsToPackage("package-1", {
       "print-name": "echo test-package-1",
+      "print-name-via-env-var": "echo test-$LERNA_PACKAGE_NAME",
     });
     await runCLI("create package-2 -y");
     await addScriptsToPackage("package-2", {
       "print-name": "echo test-package-2",
+      "print-name-via-env-var": "echo test-$LERNA_PACKAGE_NAME",
     });
     await runCLI("create package-3 -y");
     await addScriptsToPackage("package-3", {
       "print-name": "echo test-package-3",
+      "print-name-via-env-var": "echo test-$LERNA_PACKAGE_NAME",
     });
   });
 
@@ -341,6 +367,53 @@ test-package-X
  
 
  >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+
+
+lerna notice cli v999.9.9-e2e.0
+
+`);
+  });
+
+  it("should run script on all child packages using nx and correctly populate $LERNA_PACKAGE_NAME", async () => {
+    const output = await runCLI(`run print-name-via-env-var`);
+
+    expect(output.combinedOutput).toMatchInlineSnapshot(`
+
+ >  Lerna (powered by Nx)   Running target print-name-via-env-var for 3 project(s):
+
+    - package-X
+    - package-X
+    - package-X
+
+ 
+
+> package-X:print-name-via-env-var
+
+
+> package-X@0.0.0 print-name-via-env-var
+> echo test-$LERNA_PACKAGE_NAME
+
+test-package-X
+
+> package-X:print-name-via-env-var
+
+
+> package-X@0.0.0 print-name-via-env-var
+> echo test-$LERNA_PACKAGE_NAME
+
+test-package-X
+
+> package-X:print-name-via-env-var
+
+
+> package-X@0.0.0 print-name-via-env-var
+> echo test-$LERNA_PACKAGE_NAME
+
+test-package-X
+
+ 
+
+ >  Lerna (powered by Nx)   Successfully ran target print-name-via-env-var for 3 projects
 
 
 lerna notice cli v999.9.9-e2e.0
