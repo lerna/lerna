@@ -7,7 +7,7 @@
     "monorepo",
     "multi-package"
   ],
-  "homepage": "https://github.com/lerna/lerna#readme",
+  "homepage": "https://lerna.js.org",
   "license": "MIT",
   "author": {
     "name": "Sebastian McKenzie",

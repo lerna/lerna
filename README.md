@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  A tool for managing JavaScript projects with multiple packages.
+Lerna is a fast modern build system for managing and publishing multiple JavaScript/TypeScript packages from the same repository.
 </p>
 
 <p align="center">
@@ -285,10 +285,10 @@ In the example above:
 
 ### README Badge
 
-Using Lerna? Add a README badge to show it off: [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
+Using Lerna? Add a README badge to show it off: [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org)
 
 ```
-[![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
+[![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org)
 ```
 
 ### Wizard

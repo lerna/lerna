@@ -6,7 +6,7 @@
     "lerna",
     "core"
   ],
-  "homepage": "https://github.com/lerna/lerna/tree/master/core/validation-error#readme",
+  "homepage": "https://lerna.js.org",
   "license": "MIT",
   "author": {
     "name": "Daniel Stockman",

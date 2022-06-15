@@ -38,7 +38,7 @@
     "url": "git+https://github.com/lerna/lerna.git"
   },
   "license": "MIT",
-  "homepage": "https://lerna.js.org/",
+  "homepage": "https://lerna.js.org",
   "dependencies": {
     "@npmcli/arborist": "5.2.0",
     "@npmcli/run-script": "^3.0.2",
