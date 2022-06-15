@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-Lerna is a fast modern build system for managing and publishing JavaScript/TypeScript packages from the same repository.
+Lerna is a fast modern build system for managing and publishing multiple JavaScript/TypeScript packages from the same repository.
 </p>
 
 <p align="center">
