@@ -114,8 +114,19 @@ export function runCommand(
   });
 }
 
+export function runLernaInit(args?: string) {
+  return runCommand(
+    `npx --registry=http://localhost:4872/ --yes lerna@${getPublishedVersion()} init ${args || ""}`
+  );
+}
+
+export function runNpmInstall() {
+  return runCommand("npm --registry=http://localhost:4872/ install");
+}
+
 export function runCLI(args: string) {
-  return runCommand(`npx --registry=http://localhost:4872/ --yes lerna@${getPublishedVersion()} ${args}`);
+  // Ensure we reference the locally installed copy of lerna
+  return runCommand(`npx --offline --no lerna ${args}`);
 }
 
 /**

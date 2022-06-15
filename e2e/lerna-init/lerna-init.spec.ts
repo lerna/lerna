@@ -1,4 +1,4 @@
-import { createEmptyDirectoryForWorkspace, readFile, removeWorkspace, runCLI } from "../utils";
+import { createEmptyDirectoryForWorkspace, readFile, removeWorkspace, runLernaInit } from "../utils";
 
 describe("lerna init", () => {
   afterEach(() => removeWorkspace());
@@ -6,7 +6,7 @@ describe("lerna init", () => {
   it("should initialize a lerna workspace", async () => {
     createEmptyDirectoryForWorkspace("lerna-init-test");
 
-    const output = await runCLI("init");
+    const output = await runLernaInit();
 
     expect(output.stderr).toMatchInlineSnapshot(`
       "lerna notice cli v999.9.9-e2e.0
@@ -44,7 +44,7 @@ describe("lerna init", () => {
     it("should initialize a lerna workspace in independent versioning mode", async () => {
       createEmptyDirectoryForWorkspace("lerna-init-test");
 
-      const output = await runCLI("init --independent");
+      const output = await runLernaInit("--independent");
 
       expect(output.stderr).toMatchInlineSnapshot(`
         "lerna notice cli v999.9.9-e2e.0
@@ -83,7 +83,7 @@ describe("lerna init", () => {
     it("should initialize a lerna workspace with exact package version enforcement", async () => {
       createEmptyDirectoryForWorkspace("lerna-init-test");
 
-      const output = await runCLI("init --exact");
+      const output = await runLernaInit("--exact");
 
       expect(output.stderr).toMatchInlineSnapshot(`
         "lerna notice cli v999.9.9-e2e.0
@@ -127,7 +127,7 @@ describe("lerna init", () => {
     it("should initialize a lerna workspace in independent versioning mode with exact package version enforcement", async () => {
       createEmptyDirectoryForWorkspace("lerna-init-test");
 
-      const output = await runCLI("init --independent --exact");
+      const output = await runLernaInit("--independent --exact");
 
       expect(output.stderr).toMatchInlineSnapshot(`
         "lerna notice cli v999.9.9-e2e.0
