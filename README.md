@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  A tool for managing JavaScript projects with multiple packages.
+Lerna is a fast modern build system for managing and publishing JavaScript/TypeScript packages from the same repository.
 </p>
 
 <p align="center">

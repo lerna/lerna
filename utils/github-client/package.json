@@ -6,7 +6,7 @@
     "lerna",
     "utils"
   ],
-  "homepage": "https://github.com/lerna/lerna/tree/master/utils/github-client#readme",
+  "homepage": "https://lerna.js.org/",
   "license": "MIT",
   "author": {
     "name": "Miles Johnson",

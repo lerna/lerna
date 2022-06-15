@@ -6,7 +6,7 @@
     "lerna",
     "command"
   ],
-  "homepage": "https://github.com/lerna/lerna/tree/master/commands/changed#readme",
+  "homepage": "https://lerna.js.org/",
   "license": "MIT",
   "author": {
     "name": "Daniel Stockman",

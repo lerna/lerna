@@ -7,7 +7,7 @@
     "utils"
   ],
   "author": "Daniel Stockman <daniel.stockman@gmail.com>",
-  "homepage": "https://github.com/lerna/lerna/tree/master/utils/listable#readme",
+  "homepage": "https://lerna.js.org/",
   "license": "MIT",
   "main": "index.js",
   "files": [

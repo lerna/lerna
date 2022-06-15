@@ -9,7 +9,7 @@
     "pack"
   ],
   "author": "Daniel Stockman <daniel.stockman@gmail.com>",
-  "homepage": "https://github.com/lerna/lerna/tree/master/utils/log-packed#readme",
+  "homepage": "https://lerna.js.org/",
   "license": "MIT",
   "main": "lib/log-packed.js",
   "files": [
