@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.3](https://github.com/lerna/lerna/compare/v5.1.2...v5.1.3) (2022-06-15)
+
+
+### Bug Fixes
+
+* drastically reduce time taken to check for cycles ([#2874](https://github.com/lerna/lerna/issues/2874)) ([4b81a98](https://github.com/lerna/lerna/commit/4b81a98859e9a8667693bc7808fa76b2e21c07bc))
+* properly update lockfile v2 ([#3091](https://github.com/lerna/lerna/issues/3091)) ([1e07a88](https://github.com/lerna/lerna/commit/1e07a88d42335c950f09fe4f511da9d939cbb9bd))
+
+
+
+
+
 ## [5.1.2](https://github.com/lerna/lerna/compare/v5.1.1...v5.1.2) (2022-06-13)
 
 

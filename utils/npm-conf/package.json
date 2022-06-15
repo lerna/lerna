@@ -1,6 +1,6 @@
 {
   "name": "@lerna/npm-conf",
-  "version": "5.1.1",
+  "version": "5.1.3",
   "description": "Vendored npm-conf with updates",
   "keywords": [
     "lerna",

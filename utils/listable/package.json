@@ -1,6 +1,6 @@
 {
   "name": "@lerna/listable",
-  "version": "5.1.2",
+  "version": "5.1.3",
   "description": "Shared logic for listing package information",
   "keywords": [
     "lerna",
