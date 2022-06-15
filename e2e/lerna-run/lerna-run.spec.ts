@@ -6,8 +6,12 @@ import {
   e2eRoot,
   removeWorkspace,
   runCLI,
+  runLernaInit,
+  runNpmInstall,
   tmpProjPath,
 } from "../utils";
+
+jest.setTimeout(60000);
 
 expect.addSnapshotSerializer({
   serialize(str) {
@@ -25,25 +29,28 @@ expect.addSnapshotSerializer({
 });
 
 describe("lerna run", () => {
-  afterEach(() => removeWorkspace());
-
-  it("should run script on all child packages", async () => {
+  beforeAll(async () => {
     createEmptyDirectoryForWorkspace("lerna-run-test");
-    await runCLI("init");
+    await runLernaInit();
+    await runNpmInstall();
 
-    await runCLI("create package-1");
+    await runCLI("create package-1 -y");
     await addScriptsToPackage("package-1", {
       "print-name": "echo test-package-1",
     });
-    await runCLI("create package-2");
+    await runCLI("create package-2 -y");
     await addScriptsToPackage("package-2", {
       "print-name": "echo test-package-2",
     });
-    await runCLI("create package-3");
+    await runCLI("create package-3 -y");
     await addScriptsToPackage("package-3", {
       "print-name": "echo test-package-3",
     });
+  });
 
+  afterAll(() => removeWorkspace());
+
+  it("should run script on all child packages", async () => {
     const output = await runCLI("run print-name -- --silent");
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
@@ -65,22 +72,6 @@ describe("lerna run", () => {
 
   describe("--stream", () => {
     it("should run script on all child packages with package name prefixes", async () => {
-      createEmptyDirectoryForWorkspace("lerna-run-test");
-      await runCLI("init");
-
-      await runCLI("create package-1");
-      await addScriptsToPackage("package-1", {
-        "print-name": "echo test-package-1",
-      });
-      await runCLI("create package-2");
-      await addScriptsToPackage("package-2", {
-        "print-name": "echo test-package-2",
-      });
-      await runCLI("create package-3");
-      await addScriptsToPackage("package-3", {
-        "print-name": "echo test-package-3",
-      });
-
       const output = await runCLI("run print-name --stream -- --silent");
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
@@ -100,22 +91,6 @@ describe("lerna run", () => {
 
   describe("--parallel", () => {
     it("should run script on all child packages with package name prefixes", async () => {
-      createEmptyDirectoryForWorkspace("lerna-run-test");
-      await runCLI("init");
-
-      await runCLI("create package-1");
-      await addScriptsToPackage("package-1", {
-        "print-name": "echo test-package-1",
-      });
-      await runCLI("create package-2");
-      await addScriptsToPackage("package-2", {
-        "print-name": "echo test-package-2",
-      });
-      await runCLI("create package-3");
-      await addScriptsToPackage("package-3", {
-        "print-name": "echo test-package-3",
-      });
-
       const output = await runCLI("run print-name --parallel -- --silent");
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
@@ -133,61 +108,9 @@ describe("lerna run", () => {
     });
   });
 
-  describe("--no-bail", () => {
-    it("should run script on all child packages and throw, but not abort, on script failure", async () => {
-      createEmptyDirectoryForWorkspace("lerna-run-test");
-      await runCLI("init");
-
-      await runCLI("create package-1");
-      await addScriptsToPackage("package-1", {
-        "print-name": "echo test-package-1",
-      });
-      await runCLI("create package-2");
-      await addScriptsToPackage("package-2", {
-        "print-name": "echo test-package-2",
-      });
-      await runCLI("create package-3");
-      await addScriptsToPackage("package-3", {
-        "print-name": "exit 100",
-      });
-
-      await expect(runCLI("run print-name --no-bail -- --silent")).rejects
-        .toThrowErrorMatchingInlineSnapshot(`
-              Command failed: npx --registry=http://localhost:4872/ --yes lerna@999.9.9-e2e.0 run print-name --no-bail -- --silent
-              lerna notice cli v999.9.9-e2e.0
-              lerna info Executing command in 3 packages: "npm run print-name --silent"
-              lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
-              lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
-              lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
-              lerna ERR! Received non-zero exit code 100 during execution
-              lerna success run Ran npm script 'print-name' in 3 packages in X.Xs:
-              lerna success - package-X
-              lerna success - package-X
-              lerna success - package-X
-
-            `);
-    });
-  });
-
   describe("--no-prefix", () => {
     describe("--parallel", () => {
       it("should run script on all child packages and suppress package name prefixes", async () => {
-        createEmptyDirectoryForWorkspace("lerna-run-test");
-        await runCLI("init");
-
-        await runCLI("create package-1");
-        await addScriptsToPackage("package-1", {
-          "print-name": "echo test-package-1",
-        });
-        await runCLI("create package-2");
-        await addScriptsToPackage("package-2", {
-          "print-name": "echo test-package-2",
-        });
-        await runCLI("create package-3");
-        await addScriptsToPackage("package-3", {
-          "print-name": "echo test-package-3",
-        });
-
         const output = await runCLI("run print-name --no-prefix --parallel -- --silent");
 
         expect(output.combinedOutput).toMatchInlineSnapshot(`
@@ -207,22 +130,6 @@ describe("lerna run", () => {
 
     describe("--stream", () => {
       it("should run script on all child packages and suppress package name prefixes", async () => {
-        createEmptyDirectoryForWorkspace("lerna-run-test");
-        await runCLI("init");
-
-        await runCLI("create package-1");
-        await addScriptsToPackage("package-1", {
-          "print-name": "echo test-package-1",
-        });
-        await runCLI("create package-2");
-        await addScriptsToPackage("package-2", {
-          "print-name": "echo test-package-2",
-        });
-        await runCLI("create package-3");
-        await addScriptsToPackage("package-3", {
-          "print-name": "echo test-package-3",
-        });
-
         const output = await runCLI("run print-name --no-prefix --stream -- --silent");
 
         expect(output.combinedOutput).toMatchInlineSnapshot(`
@@ -243,22 +150,6 @@ describe("lerna run", () => {
 
   describe("--profile", () => {
     it("should run script on all child packages and create a performance profile", async () => {
-      createEmptyDirectoryForWorkspace("lerna-run-test");
-      await runCLI("init");
-
-      await runCLI("create package-1");
-      await addScriptsToPackage("package-1", {
-        "print-name": "echo test-package-1",
-      });
-      await runCLI("create package-2");
-      await addScriptsToPackage("package-2", {
-        "print-name": "echo test-package-2",
-      });
-      await runCLI("create package-3");
-      await addScriptsToPackage("package-3", {
-        "print-name": "echo test-package-3",
-      });
-
       const output = await runCLI("run print-name --profile -- --silent");
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
@@ -288,22 +179,6 @@ describe("lerna run", () => {
 
   describe("--profile --profile-location", () => {
     it("should run script on all child packages and create a performance profile at provided location", async () => {
-      createEmptyDirectoryForWorkspace("lerna-run-test");
-      await runCLI("init");
-
-      await runCLI("create package-1");
-      await addScriptsToPackage("package-1", {
-        "print-name": "echo test-package-1",
-      });
-      await runCLI("create package-2");
-      await addScriptsToPackage("package-2", {
-        "print-name": "echo test-package-2",
-      });
-      await runCLI("create package-3");
-      await addScriptsToPackage("package-3", {
-        "print-name": "echo test-package-3",
-      });
-
       const output = await runCLI(`run print-name --profile --profile-location=profiles -- --silent`);
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
@@ -333,22 +208,6 @@ describe("lerna run", () => {
 
   describe("--npm-client", () => {
     it("should run script on all child packages using yarn", async () => {
-      createEmptyDirectoryForWorkspace("lerna-run-test");
-      await runCLI("init");
-
-      await runCLI("create package-1");
-      await addScriptsToPackage("package-1", {
-        "print-name": "echo test-package-1",
-      });
-      await runCLI("create package-2");
-      await addScriptsToPackage("package-2", {
-        "print-name": "echo test-package-2",
-      });
-      await runCLI("create package-3");
-      await addScriptsToPackage("package-3", {
-        "print-name": "echo test-package-3",
-      });
-
       const output = await runCLI(`run print-name --npm-client=yarn`);
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
@@ -378,22 +237,6 @@ describe("lerna run", () => {
     });
 
     it("should run script on all child packages using npm", async () => {
-      createEmptyDirectoryForWorkspace("lerna-run-test");
-      await runCLI("init");
-
-      await runCLI("create package-1");
-      await addScriptsToPackage("package-1", {
-        "print-name": "echo test-package-1",
-      });
-      await runCLI("create package-2");
-      await addScriptsToPackage("package-2", {
-        "print-name": "echo test-package-2",
-      });
-      await runCLI("create package-3");
-      await addScriptsToPackage("package-3", {
-        "print-name": "echo test-package-3",
-      });
-
       const output = await runCLI(`run print-name --npm-client=npm`);
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
@@ -426,28 +269,42 @@ describe("lerna run", () => {
     });
   });
 
-  describe("useNx", () => {
-    it("should run script on all child packages using nx", async () => {
-      createEmptyDirectoryForWorkspace("lerna-run-test");
-      await runCLI("init");
-      await addNxToWorkspace();
+  describe("--ci", () => {
+    it("should log that ci is enabled", async () => {
+      const output = await runCLI(`run print-name --ci`);
 
-      await runCLI("create package-1");
-      await addScriptsToPackage("package-1", {
-        "print-name": "echo test-package-1",
-      });
-      await runCLI("create package-2");
-      await addScriptsToPackage("package-2", {
-        "print-name": "echo test-package-2",
-      });
-      await runCLI("create package-3");
-      await addScriptsToPackage("package-3", {
-        "print-name": "echo test-package-3",
-      });
+      expect(output.combinedOutput).toContain("lerna info ci enabled");
+    });
+  });
+});
 
-      const output = await runCLI(`run print-name`);
+describe("useNx", () => {
+  beforeAll(async () => {
+    createEmptyDirectoryForWorkspace("lerna-run-test-with-nx");
+    await runLernaInit();
+    await runNpmInstall();
+    await addNxToWorkspace();
 
-      expect(output.combinedOutput).toMatchInlineSnapshot(`
+    await runCLI("create package-1 -y");
+    await addScriptsToPackage("package-1", {
+      "print-name": "echo test-package-1",
+    });
+    await runCLI("create package-2 -y");
+    await addScriptsToPackage("package-2", {
+      "print-name": "echo test-package-2",
+    });
+    await runCLI("create package-3 -y");
+    await addScriptsToPackage("package-3", {
+      "print-name": "echo test-package-3",
+    });
+  });
+
+  afterAll(() => removeWorkspace());
+
+  it("should run script on all child packages using nx", async () => {
+    const output = await runCLI(`run print-name`);
+
+    expect(output.combinedOutput).toMatchInlineSnapshot(`
 
  >  Lerna (powered by Nx)   Running target print-name for 3 project(s):
 
@@ -489,17 +346,45 @@ test-package-X
 lerna notice cli v999.9.9-e2e.0
 
 `);
+  });
+});
+
+describe("--no-bail", () => {
+  beforeAll(async () => {
+    createEmptyDirectoryForWorkspace("lerna-run-test-no-bail");
+    await runLernaInit();
+    await runNpmInstall();
+
+    await runCLI("create package-1 -y");
+    await addScriptsToPackage("package-1", {
+      "print-name": "echo test-package-1",
+    });
+    await runCLI("create package-2 -y");
+    await addScriptsToPackage("package-2", {
+      "print-name": "echo test-package-2",
+    });
+    await runCLI("create package-3 -y");
+    await addScriptsToPackage("package-3", {
+      "print-name": "exit 100",
     });
   });
 
-  describe("--ci", () => {
-    it("should log that ci is enabled", async () => {
-      createEmptyDirectoryForWorkspace("lerna-run-test");
-      await runCLI("init");
+  afterAll(() => removeWorkspace());
 
-      const output = await runCLI(`run print-name --ci`);
+  it("should run script on all child packages and throw, but not abort, on script failure", async () => {
+    await expect(runCLI("run print-name --no-bail -- --silent")).rejects.toThrowErrorMatchingInlineSnapshot(`
+            Command failed: npx --offline --no lerna run print-name --no-bail -- --silent
+            lerna notice cli v999.9.9-e2e.0
+            lerna info Executing command in 3 packages: "npm run print-name --silent"
+            lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+            lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+            lerna info run Ran npm script 'print-name' in 'package-X' in X.Xs:
+            lerna ERR! Received non-zero exit code 100 during execution
+            lerna success run Ran npm script 'print-name' in 3 packages in X.Xs:
+            lerna success - package-X
+            lerna success - package-X
+            lerna success - package-X
 
-      expect(output.combinedOutput).toContain("lerna info ci enabled");
-    });
+          `);
   });
 });
