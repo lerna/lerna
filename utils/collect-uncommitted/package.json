@@ -12,7 +12,7 @@
   "contributors": [
     "Pedro De Ona <p.deona001@gmail.com>"
   ],
-  "homepage": "https://lerna.js.org/",
+  "homepage": "https://lerna.js.org",
   "license": "MIT",
   "main": "lib/collect-uncommitted.js",
   "files": [

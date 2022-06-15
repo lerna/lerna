@@ -7,7 +7,7 @@
     "npm",
     "config"
   ],
-  "homepage": "https://lerna.js.org/",
+  "homepage": "https://lerna.js.org",
   "license": "MIT",
   "author": {
     "name": "Daniel Stockman",

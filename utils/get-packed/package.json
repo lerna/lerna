@@ -9,7 +9,7 @@
     "tarball"
   ],
   "author": "Daniel Stockman <daniel.stockman@gmail.com>",
-  "homepage": "https://lerna.js.org/",
+  "homepage": "https://lerna.js.org",
   "license": "MIT",
   "main": "lib/get-packed.js",
   "files": [
