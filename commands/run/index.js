@@ -204,7 +204,9 @@ class RunCommand extends Command {
 
   prepNxOptions() {
     const { readNxJson } = require("nx/src/config/configuration");
-    const targetDependenciesAreDefined = Object.keys(readNxJson().targetDependencies || {}).length > 0;
+    const nxJson = readNxJson();
+    const targetDependenciesAreDefined =
+      Object.keys(nxJson.targetDependencies || nxJson.targetDefaults || {}).length > 0;
     const targetDependencies =
       this.toposort && !targetDependenciesAreDefined
         ? {
@@ -229,7 +231,7 @@ class RunCommand extends Command {
       nxBail: this.bail,
       nxIgnoreCycles: !this.options.rejectCycles,
       skipNxCache: this.options.skipNxCache,
-      _: this.args,
+      _: this.args.map((t) => t.toString()),
     };
 
     return { targetDependencies, options };
