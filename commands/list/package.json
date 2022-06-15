@@ -1,6 +1,6 @@
 {
   "name": "@lerna/list",
-  "version": "5.1.3",
+  "version": "5.1.4",
   "description": "List local packages",
   "keywords": [
     "lerna",

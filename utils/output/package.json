@@ -1,6 +1,6 @@
 {
   "name": "@lerna/output",
-  "version": "5.1.3",
+  "version": "5.1.4",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
