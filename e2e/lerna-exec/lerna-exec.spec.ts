@@ -16,7 +16,7 @@ expect.addSnapshotSerializer({
   serialize(str) {
     return str
       .replaceAll(/package-\d/g, "package-X")
-      .replaceAll(/\d\.(\d{1}|\d{2})s/g, "X.Xs")
+      .replaceAll(/\d\.(\d{1,2})s/g, "X.Xs")
       .replaceAll(/Lerna-Profile-\d{8}T\d{6}\.json/g, "Lerna-Profile-XXXXXXXXTXXXXXX.json")
       .replaceAll(/\/private\/tmp\//g, "/tmp/")
       .replaceAll(e2eRoot, "/tmp/lerna-e2e")
@@ -50,6 +50,32 @@ describe("lerna exec", () => {
   afterAll(() => removeWorkspace());
 
   it("should run command on all child packages", async () => {
+    const output = await runCLI("exec --concurrency 1 npm run print-name");
+
+    expect(output.combinedOutput).toMatchInlineSnapshot(`
+
+      > package-X@0.0.0 print-name
+      > echo test-package-X
+
+      test-package-X
+
+      > package-X@0.0.0 print-name
+      > echo test-package-X
+
+      test-package-X
+
+      > package-X@0.0.0 print-name
+      > echo test-package-X
+
+      test-package-X
+      lerna notice cli v999.9.9-e2e.0
+      lerna info Executing command in 3 packages: "npm run print-name"
+      lerna success exec Executed command in 3 packages: "npm run print-name"
+
+    `);
+  });
+
+  it("should run command on all child packages and suppress npm output", async () => {
     const output = await runCLI("exec npm run print-name -- --silent");
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
