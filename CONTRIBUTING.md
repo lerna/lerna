@@ -116,6 +116,8 @@ npx lerna run --scope @lerna/e2e start-verdaccio
 
 This will run verdaccio on http://localhost:4872
 
+> NOTE: You may wish to set the log level of verdaccio to be "http" in e2e/local-registry/config.yml to see all the publishing and install activity
+
 In another terminal window you can now build and publish any new version (in this example `999.9.9`) to that local registry:
 
 ```sh
@@ -132,6 +134,33 @@ npx --registry=http://localhost:4872/ lerna@999.9.9 init
 npm --registry=http://localhost:4872/ install
 npx lerna --version # 999.9.9
 ```
+
+To forcibly kill the running verdaccio instance you can run:
+
+```sh
+npx lerna run --scope @lerna/e2e kill-verdaccio
+```
+
+Which will simply attempt to kill the process running on port `4872`.
+
+### Run E2E Tests
+
+In addition to our lower level testing, we also have a suite of e2e tests which actually publish our packages to a locally running npm registry (using verdaccio in the same way as described in the section above) and use the `lerna` CLI directly. These are our most valuable tests because they get us as close as possible to the experience of our users.
+
+To build, version and publish all the packages, as well as run all e2e tests using those same packages, you just need to run a single command:
+
+```sh
+npm run e2e
+```
+
+If you want to run the e2e tests for just a single command (such as `lerna info`), you can forward arguments onto the underlying `jest` process like so:
+
+```sh
+# This will cause jest to only match against the `lerna-info.spec.ts` file and ignore the others
+npm run e2e -- --testRegex=lerna-info
+```
+
+> NOTE: The building, versioning and publishing of the packages will be the same regardless of the jest flags passed
 
 ### Coverage
 

@@ -17,7 +17,7 @@ expect.addSnapshotSerializer({
   serialize(str) {
     return str
       .replaceAll(/package-\d/g, "package-X")
-      .replaceAll(/\d\.(\d{1}|\d{2})s/g, "X.Xs")
+      .replaceAll(/\d\.(\d{1,2})s/g, "X.Xs")
       .replaceAll(/Lerna-Profile-\d{8}T\d{6}\.json/g, "Lerna-Profile-XXXXXXXXTXXXXXX.json")
       .replaceAll(/\/private\/tmp\//g, "/tmp/")
       .replaceAll(/lerna info ci enabled\n/g, "")
