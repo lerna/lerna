@@ -1,0 +1,2 @@
+# Ignore json configuration files in fixtures, sometimes they are intentonally malformed
+**/__fixtures__/**/*.json

@@ -22,6 +22,7 @@ jobs:
       - name: Install primary node version (see volta config in package.json) and dependencies
         uses: ./.github/actions/install-node-and-dependencies
 
+      - run: npm run format:check
       - run: npm run ci:lint
 
   e2e:
@@ -46,7 +47,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [14, '16.15.0', 18]
+        node: [14, "16.15.0", 18]
         script: ["ci:test:unit", "ci:test:integration"]
     steps:
       - uses: actions/checkout@v3
