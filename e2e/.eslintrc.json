@@ -1,5 +1,5 @@
 {
-  "extends": "../.eslintrc.yaml",
+  "extends": "../.eslintrc.json",
   "parser": "@typescript-eslint/parser",
   "rules": {
     "import/extensions": "off",

@@ -1,12 +1,12 @@
-name: 'Install node and dependencies'
+name: "Install node and dependencies"
 description: Install node and dependencies
 inputs:
   node-version:
-    description: 'A specific version of node to install (rather than the value specified in the volta config in package.json)'
+    description: "A specific version of node to install (rather than the value specified in the volta config in package.json)"
     required: false
 
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
     - name: Install node and npm based on the given values (or the volta config in package.json)
       uses: volta-cli/action@v1
