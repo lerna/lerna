@@ -57,6 +57,20 @@ export async function addScriptsToPackage(name: string, scripts: { [key: string]
   }));
 }
 
+export async function addDependencyToPackage(
+  packagePath: string,
+  targetName: string,
+  version: string = "0.0.0"
+) {
+  await updateJson(`${packagePath}/package.json`, (json) => ({
+    ...json,
+    dependencies: {
+      ...json.dependencies,
+      [targetName]: version,
+    },
+  }));
+}
+
 export async function addNxToWorkspace() {
   await updateJson("lerna.json", (json) => ({
     ...json,
@@ -73,6 +87,13 @@ export async function addNxToWorkspace() {
   });
 
   await runCommand("npm --registry=http://localhost:4872/ install -D nx@latest");
+}
+
+export async function addPackagesDirectory(path: string) {
+  await updateJson("lerna.json", (json) => ({
+    ...json,
+    packages: [...json.packages, `${path}/*`],
+  }));
 }
 
 async function updateJson<T = any>(path: string, updateFn: (json: T) => T) {
