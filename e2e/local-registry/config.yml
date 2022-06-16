@@ -51,4 +51,5 @@ packages:
 
 # log settings
 logs:
-  - { type: stdout, format: pretty, level: http }
+  # Change level to "http" to see all the logs for troubleshooting
+  - { type: stdout, format: pretty, level: warn }

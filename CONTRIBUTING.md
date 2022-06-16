@@ -116,6 +116,8 @@ npx lerna run --scope @lerna/e2e start-verdaccio
 
 This will run verdaccio on http://localhost:4872
 
+> NOTE: You may wish to set the log level of verdaccio to be "http" in e2e/local-registry/config.yml to see all the publishing and install activity
+
 In another terminal window you can now build and publish any new version (in this example `999.9.9`) to that local registry:
 
 ```sh
@@ -158,7 +160,7 @@ If you want to run the e2e tests for just a single command (such as `lerna info`
 npm run e2e -- --testRegex=lerna-info
 ```
 
-NOTE: The building, versioning and publishing of the packages will be the same regardless of the jest flags passed
+> NOTE: The building, versioning and publishing of the packages will be the same regardless of the jest flags passed
 
 ### Coverage
 

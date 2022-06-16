@@ -24,7 +24,12 @@
             "forwardAllArgs": false
           },
           {
+            "command": "echo \"\n=> Running jest tests, this may take some time as real lerna workspaces are used...\n\"",
+            "forwardAllArgs": false
+          },
+          {
             "command": "PUBLISHED_VERSION=999.9.9-e2e.0 jest --config ./jest.config.ts",
+            "description": "Run the e2e tests and forward any arguments onto the jest process",
             "forwardAllArgs": true
           },
           {
