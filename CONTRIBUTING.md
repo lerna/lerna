@@ -147,7 +147,7 @@ Which will simply attempt to kill the process running on port `4872`.
 
 In addition to our lower level testing, we also have a suite of e2e tests which actually publish our packages to a locally running npm registry (using verdaccio in the same way as described in the section above) and use the `lerna` CLI directly. These are our most valuable tests because they get us as close as possible to the experience of our users.
 
-To build, version and publish all the packages, as well as run all e2e tests using, you just need to run a single command:
+To build, version and publish all the packages, as well as run all e2e tests using those same packages, you just need to run a single command:
 
 ```sh
 npm run e2e
