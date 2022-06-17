@@ -37,28 +37,26 @@ async function main() {
   }
 
   for (const issue of allStaleIssues) {
-    const updatedAt = new Date(issue.updated_at);
-    console.log({
-      AUTOMATED_LABELLING_DATETIME: AUTOMATED_LABELLING_DATETIME.getTime(),
-      updatedAt: updatedAt.getTime(),
-    });
+    // const updatedAt = new Date(issue.updated_at);
 
-    if (updatedAt.getTime() > AUTOMATED_LABELLING_DATETIME.getTime()) {
-      staleIssuesWithAnyUpdatesSinceLabelling.push(issue);
-    } else {
+    // if (updatedAt.getTime() > AUTOMATED_LABELLING_DATETIME.getTime()) {
+    //   staleIssuesWithAnyUpdatesSinceLabelling.push(issue);
+    // } else {
+    //   staleIssuesToBeClosed.push(issue);
+    // }
+
+    if (issue.number === 3189) {
       staleIssuesToBeClosed.push(issue);
     }
   }
-
-  console.log("");
-  console.log(staleIssuesWithAnyUpdatesSinceLabelling.map((issue) => issue.html_url).join("\n"));
-  console.log("");
 
   console.log({
     allStaleIssues: allStaleIssues.length,
     allStaleIssuesWithUpdatesSinceLabelling: staleIssuesWithAnyUpdatesSinceLabelling.length,
     staleIssuesToBeClosed: staleIssuesToBeClosed.length,
   });
+
+  console.log(JSON.stringify(staleIssuesToBeClosed, null, 2));
 }
 
 main();
