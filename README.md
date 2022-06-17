@@ -88,9 +88,6 @@ Lerna is not a deployment tool for serverless monorepos. Hoisting might be incom
 
 ## Getting Started
 
-> The instructions below are for Lerna 3.x.
-> We recommend using it instead of 2.x for a new Lerna project.
-
 Let's start by installing Lerna as a dev dependency of your project with [npm](https://www.npmjs.com/).
 
 ```sh
