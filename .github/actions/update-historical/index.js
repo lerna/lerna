@@ -14,7 +14,7 @@ async function main() {
   const staleIssuesWithAnyUpdatesSinceLabelling = [];
   const staleIssuesToBeClosed = [];
   const STALE_LABEL_NAME = "stale";
-  const AUTOMATED_LABELLING_DATETIME = new Date("2022-06-03 19:20 GMT+4");
+  const AUTOMATED_LABELLING_DATETIME = new Date("2022-06-03 19:23 GMT+4");
 
   for await (const issuePage of octokit.paginate.iterator(octokit.rest.issues.listForRepo, {
     ...context.repo,
