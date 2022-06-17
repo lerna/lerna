@@ -160,13 +160,13 @@ describe("lerna list --since", () => {
     await runCommand("git add .");
     await runCommand('git commit -m "add package b as dependency of package a"');
 
-    const output = await runCLI("list --since main");
+    const output = await runCLI("list --since test-main");
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
       package-a
       lerna notice cli v999.9.9-e2e.0
-      lerna notice filter changed since "main"
-      lerna info Looking for changed packages since main
+      lerna notice filter changed since "test-main"
+      lerna info Looking for changed packages since test-main
       lerna success found 1 package
 
     `);
@@ -178,14 +178,14 @@ describe("lerna list --since", () => {
     await runCommand("git add .");
     await runCommand('git commit -m "add package e as dependency of package c"');
 
-    const output = await runCLI("list --since main");
+    const output = await runCLI("list --since test-main");
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
       package-a
       package-c
       lerna notice cli v999.9.9-e2e.0
-      lerna notice filter changed since "main"
-      lerna info Looking for changed packages since main
+      lerna notice filter changed since "test-main"
+      lerna info Looking for changed packages since test-main
       lerna success found 2 packages
 
     `);
@@ -198,14 +198,14 @@ describe("lerna list --since", () => {
       await runCommand("git add .");
       await runCommand('git commit -m "add package e as dependency of package c"');
 
-      const output = await runCLI("list --since main --exclude-dependents");
+      const output = await runCLI("list --since test-main --exclude-dependents");
 
       expect(output.combinedOutput).toMatchInlineSnapshot(`
         package-c
         lerna notice cli v999.9.9-e2e.0
-        lerna notice filter changed since "main"
+        lerna notice filter changed since "test-main"
         lerna notice filter excluding dependents
-        lerna info Looking for changed packages since main
+        lerna info Looking for changed packages since test-main
         lerna success found 1 package
 
       `);

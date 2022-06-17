@@ -91,6 +91,7 @@ export async function addNxToWorkspace() {
 
 export async function createInitialGitCommit() {
   await runCommand("git init");
+  await runCommand("git checkout -b test-main");
   await writeFile(tmpProjPath(".gitignore"), "node_modules\n.DS_Store");
   await runCommand("git add .gitignore");
   await runCommand("git add .");
