@@ -1,0 +1,10 @@
+name: Update historical
+
+inputs:
+  github-token:
+    description: The value of secrets.GITHUB_TOKEN
+    required: true
+
+runs:
+  using: node16
+  main: index.js

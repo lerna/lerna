@@ -1,0 +1,21 @@
+name: Update historical
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  update-historical:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install primary node version (see volta config in package.json) and dependencies
+        uses: ./.github/actions/install-node-and-dependencies
+
+      - uses: ./.github/actions/update-historical
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
