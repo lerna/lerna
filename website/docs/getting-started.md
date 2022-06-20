@@ -5,7 +5,7 @@ title: Getting Started
 
 # Getting Started
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/WgO5iG57jeQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/WgO5iG57jeQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe>
 
 You can incrementally adopt Lerna for existing monorepos or create a new Lerna workspace by running `npx lerna init`.
 All Lerna functionality will work the same way regardless.
