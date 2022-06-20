@@ -1,5 +1,5 @@
 import { exec } from "child_process";
-import { ensureDirSync, readFileSync, readJSON, removeSync, writeJSON } from "fs-extra";
+import { ensureDirSync, readFileSync, readJSON, removeSync, writeFile, writeJSON } from "fs-extra";
 import isCI from "is-ci";
 import { dirSync } from "tmp";
 
@@ -87,6 +87,15 @@ export async function addNxToWorkspace() {
   });
 
   await runCommand("npm --registry=http://localhost:4872/ install -D nx@latest");
+}
+
+export async function createInitialGitCommit() {
+  await runCommand("git init");
+  await runCommand("git checkout -b test-main");
+  await writeFile(tmpProjPath(".gitignore"), "node_modules\n.DS_Store");
+  await runCommand("git add .gitignore");
+  await runCommand("git add .");
+  await runCommand('git commit -m "initial-commit"');
 }
 
 export async function addPackagesDirectory(path: string) {
