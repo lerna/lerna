@@ -3,6 +3,7 @@ import {
   addPackagesDirectory,
   createEmptyDirectoryForWorkspace,
   createInitialGitCommit,
+  e2eRoot,
   removeWorkspace,
   runCLI,
   runCommand,
@@ -15,7 +16,10 @@ jest.setTimeout(60000);
 
 expect.addSnapshotSerializer({
   serialize(str) {
-    return str.replaceAll(/lerna info ci enabled\n/g, "");
+    return str
+      .replaceAll(/\/private\/tmp\//g, "/tmp/")
+      .replaceAll(e2eRoot, "/tmp/lerna-e2e")
+      .replaceAll(/lerna info ci enabled\n/g, "");
   },
   test(val) {
     return val != null && typeof val === "string";
@@ -98,13 +102,13 @@ describe("lerna changed", () => {
               "name": "package-a",
               "version": "0.0.0",
               "private": false,
-              "location": "/private/tmp/lerna-e2e/lerna-changed-test/modules/package-a"
+              "location": "/tmp/lerna-e2e/lerna-changed-test/modules/package-a"
             },
             {
               "name": "package-c",
               "version": "0.0.0-alpha.1",
               "private": false,
-              "location": "/private/tmp/lerna-e2e/lerna-changed-test/packages/package-c"
+              "location": "/tmp/lerna-e2e/lerna-changed-test/packages/package-c"
             }
           ]
           lerna notice cli v999.9.9-e2e.0
@@ -120,8 +124,8 @@ describe("lerna changed", () => {
         const output = await runCLI("changed --ndjson");
 
         expect(output.combinedOutput).toMatchInlineSnapshot(`
-          {"name":"package-a","version":"0.0.0","private":false,"location":"/private/tmp/lerna-e2e/lerna-changed-test/modules/package-a"}
-          {"name":"package-c","version":"0.0.0-alpha.1","private":false,"location":"/private/tmp/lerna-e2e/lerna-changed-test/packages/package-c"}
+          {"name":"package-a","version":"0.0.0","private":false,"location":"/tmp/lerna-e2e/lerna-changed-test/modules/package-a"}
+          {"name":"package-c","version":"0.0.0-alpha.1","private":false,"location":"/tmp/lerna-e2e/lerna-changed-test/packages/package-c"}
           lerna notice cli v999.9.9-e2e.0
           lerna info Looking for changed packages since 0.0.0
           lerna success found 2 packages ready to publish
@@ -197,8 +201,8 @@ describe("lerna changed", () => {
         const output = await runCLI("changed --parseable");
 
         expect(output.combinedOutput).toMatchInlineSnapshot(`
-          /private/tmp/lerna-e2e/lerna-changed-test/modules/package-a
-          /private/tmp/lerna-e2e/lerna-changed-test/packages/package-c
+          /tmp/lerna-e2e/lerna-changed-test/modules/package-a
+          /tmp/lerna-e2e/lerna-changed-test/packages/package-c
           lerna notice cli v999.9.9-e2e.0
           lerna info Looking for changed packages since 0.0.0
           lerna success found 2 packages ready to publish
@@ -212,8 +216,8 @@ describe("lerna changed", () => {
         const output = await runCLI("changed -p");
 
         expect(output.combinedOutput).toMatchInlineSnapshot(`
-          /private/tmp/lerna-e2e/lerna-changed-test/modules/package-a
-          /private/tmp/lerna-e2e/lerna-changed-test/packages/package-c
+          /tmp/lerna-e2e/lerna-changed-test/modules/package-a
+          /tmp/lerna-e2e/lerna-changed-test/packages/package-c
           lerna notice cli v999.9.9-e2e.0
           lerna info Looking for changed packages since 0.0.0
           lerna success found 2 packages ready to publish
@@ -227,9 +231,9 @@ describe("lerna changed", () => {
         const output = await runCLI("changed -pla");
 
         expect(output.combinedOutput).toMatchInlineSnapshot(`
-          /private/tmp/lerna-e2e/lerna-changed-test/modules/package-a:package-a:0.0.0
-          /private/tmp/lerna-e2e/lerna-changed-test/packages/package-b:package-b:0.0.0:PRIVATE
-          /private/tmp/lerna-e2e/lerna-changed-test/packages/package-c:package-c:0.0.0-alpha.1
+          /tmp/lerna-e2e/lerna-changed-test/modules/package-a:package-a:0.0.0
+          /tmp/lerna-e2e/lerna-changed-test/packages/package-b:package-b:0.0.0:PRIVATE
+          /tmp/lerna-e2e/lerna-changed-test/packages/package-c:package-c:0.0.0-alpha.1
           lerna notice cli v999.9.9-e2e.0
           lerna info Looking for changed packages since 0.0.0
           lerna success found 3 packages ready to publish
