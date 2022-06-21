@@ -279,4 +279,38 @@ describe("lerna changed", () => {
       });
     });
   });
+
+  describe("--include-merged-tags", () => {
+    beforeAll(async () => {
+      await initializeLernaChangedDirectory();
+      await runCommand("git tag -a 1.0.0 -m 1.0.0");
+
+      await runCommand("git checkout -b changed-package-c");
+      await addDependencyToPackage("packages/package-c", "package-d");
+      await runCommand("git add .");
+      await runCommand('git commit -m "modify package-c"');
+      await runCommand("git tag -a 2.0.0 -m 2.0.0");
+
+      await runCommand("git checkout test-main");
+      await addDependencyToPackage("modules/package-e", "package-d");
+      await runCommand("git add .");
+      await runCommand('git commit -m "modify package-e"');
+
+      await runCommand("git merge --no-ff changed-package-c");
+    });
+
+    afterAll(() => removeWorkspace());
+
+    it("should list package-e and not package-c when including merged tag from modification to package-c", async () => {
+      const output = await runCLI("changed --include-merged-tags");
+
+      expect(output.combinedOutput).toMatchInlineSnapshot(`
+        package-e
+        lerna notice cli v999.9.9-e2e.0
+        lerna info Looking for changed packages since 2.0.0
+        lerna success found 1 package ready to publish
+
+      `);
+    });
+  });
 });
