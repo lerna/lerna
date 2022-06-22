@@ -280,16 +280,17 @@ describe("lerna changed", () => {
     });
   });
 
+  // the purpose of the --include-merged-tags option is outlined in detail in this PR: https://github.com/lerna/lerna/pull/1712
   describe("--include-merged-tags", () => {
     beforeAll(async () => {
       await initializeLernaChangedDirectory();
-      await runCommand("git tag -a 1.0.0 -m 1.0.0");
+      await runCommand("git tag 1.0.0 -m 1.0.0");
 
       await runCommand("git checkout -b changed-package-c");
       await addDependencyToPackage("packages/package-c", "package-d");
       await runCommand("git add .");
       await runCommand('git commit -m "modify package-c"');
-      await runCommand("git tag -a 2.0.0 -m 2.0.0");
+      await runCommand("git tag 2.0.0 -m 2.0.0");
 
       await runCommand("git checkout test-main");
       await addDependencyToPackage("modules/package-e", "package-d");
