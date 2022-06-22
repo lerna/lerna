@@ -147,21 +147,23 @@ describe("RunCommand", () => {
     });
   });
 
-  describe("with --include-filtered-dependencies", () => {
-    it("runs scoped command including filtered deps", async () => {
-      const testDir = await initFixture("include-filtered-dependencies");
-      await lernaRun(testDir)(
-        "my-script",
-        "--scope",
-        "@test/package-2",
-        "--include-filtered-dependencies",
-        "--",
-        "--silent"
-      );
+  describe("with --include-dependencies", () => {
+    it("runs scoped command including deps", async () => {
+      const testDir = await initFixture("include-dependencies");
+      await lernaRun(testDir)("my-script", "--scope", "@test/package-2", "--include-dependencies");
 
       const logLines = output.logged().split("\n");
-      expect(logLines).toContain("@test/package-1");
-      expect(logLines).toContain("@test/package-2");
+
+      expect(logLines).toEqual(["@test/package-1", "@test/package-2"]);
+    });
+
+    it("runs scoped command including deps if not all packages in path have command", async () => {
+      const testDir = await initFixture("include-dependencies-gap");
+      await lernaRun(testDir)("my-script", "--scope", "@test/package-3", "--include-dependencies");
+
+      const logLines = output.logged().split("\n");
+
+      expect(logLines).toEqual(["@test/package-1", "@test/package-3"]);
     });
   });
 

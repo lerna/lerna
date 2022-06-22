@@ -13,6 +13,7 @@ const { ValidationError } = require("@lerna/validation-error");
 const { getFilteredPackages } = require("@lerna/filter-options");
 const { performance } = require("perf_hooks");
 const { readFileSync } = require("fs");
+const { QueryGraph } = require("@lerna/query-graph");
 
 module.exports = factory;
 
@@ -47,7 +48,7 @@ class RunCommand extends Command {
       this.packagesWithScript =
         script === "env"
           ? filteredPackages
-          : filteredPackages.filter((pkg) => pkg.scripts && pkg.scripts[script]);
+          : QueryGraph.toposort(filteredPackages).filter((pkg) => pkg.scripts && pkg.scripts[script]);
     });
 
     return chain.then(() => {
