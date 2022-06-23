@@ -1,0 +1,92 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "https://lerna.js.org/docs/getting-started#adding-lerna",
+  "title": "JSON schema for Lerna configuration",
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "The version of the repository, or \"independent\" for an repository with independently versioned packages.",
+      "default": "0.0.0"
+    },
+    "packages": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "uniqueItems": true
+      },
+      "description": "An array of globs where packages can be located.",
+      "default": ["packages/*"]
+    },
+    "useNx": {
+      "type": "boolean",
+      "description": "When true, Lerna will use the nx task runner.",
+      "default": false
+    },
+    "npmClient": {
+      "$ref": "#/$defs/npmClient"
+    },
+    "command": {
+      "type": "object",
+      "description": "Options for individual Lerna commands.",
+      "properties": {
+        "publish": {
+          "type": "object",
+          "description": "Options for the `publish` command.",
+          "properties": {
+            "ignoreChanges": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "An array of globs that will not be included in the \"changed\" or \"publish\" commands. This will prevent publishing a new version unnecessarily for small changes such as fixing typos in documentation."
+            },
+            "message": {
+              "type": "string",
+              "description": "The commit message to use when committing the version updates for publication. (See: https://github.com/lerna/lerna/tree/master/commands/version#--message-msg)"
+            },
+            "npmClient": {
+              "$ref": "#/$defs/npmClient"
+            },
+            "registry": {
+              "type": "string",
+              "description": "The url of a custom registry to publish to instead of npmjs.org. If provided, you must already be authenticated to the custom registry when running `Lerna publish`."
+            }
+          }
+        },
+        "bootstrap": {
+          "type": "object",
+          "description": "Options for the `bootstrap` command.",
+          "properties": {
+            "ignore": {
+              "type": "string",
+              "description": "A glob of packages to ignore when bootstrapping."
+            },
+            "npmClientArgs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "An array of arguments to pass to the npm client when running `npm install` when bootstrapping."
+            },
+            "scope": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "An array of globs that restricts which packages will be bootstrapped."
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "npmClient": {
+      "type": "string",
+      "description": "The npm client to use when running commands (either npm or yarn). Defaults to npm if unspecified.",
+      "default": "npm",
+      "enum": ["npm", "yarn"]
+    }
+  }
+}
