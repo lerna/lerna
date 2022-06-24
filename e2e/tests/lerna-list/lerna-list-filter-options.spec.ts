@@ -15,9 +15,10 @@ expect.addSnapshotSerializer({
 });
 
 describe("lerna list", () => {
-  const fixture = new Fixture("lerna-list-filter-options");
+  let fixture: Fixture;
 
   beforeAll(async () => {
+    fixture = new Fixture("lerna-list-filter-options");
     await fixture.init();
     await fixture.lernaInit();
     await fixture.install();
@@ -113,9 +114,10 @@ describe("lerna list", () => {
 });
 
 describe("lerna list --since", () => {
-  const fixture = new Fixture("lerna-list-filter-options");
+  let fixture: Fixture;
 
   beforeEach(async () => {
+    fixture = new Fixture("lerna-list-filter-options");
     await fixture.init();
     await fixture.lernaInit();
     await fixture.install();

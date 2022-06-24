@@ -19,9 +19,10 @@ expect.addSnapshotSerializer({
 });
 
 describe("lerna run", () => {
-  const fixture = new Fixture("lerna-run");
+  let fixture: Fixture;
 
   beforeAll(async () => {
+    fixture = new Fixture("lerna-run");
     await fixture.init();
     await fixture.lernaInit();
     await fixture.install();
@@ -279,9 +280,10 @@ describe("lerna run", () => {
 });
 
 describe("useNx", () => {
-  const fixture = new Fixture("lerna-run-with-nx");
+  let fixture: Fixture;
 
   beforeAll(async () => {
+    fixture = new Fixture("lerna-run-with-nx");
     await fixture.init();
     await fixture.lernaInit();
     await fixture.install();
@@ -361,9 +363,10 @@ lerna notice cli v999.9.9-e2e.0
 });
 
 describe("--no-bail", () => {
-  const fixture = new Fixture("lerna-run-no-bail");
+  let fixture: Fixture;
 
   beforeAll(async () => {
+    fixture = new Fixture("lerna-run-no-bail");
     await fixture.init();
     await fixture.lernaInit();
     await fixture.install();

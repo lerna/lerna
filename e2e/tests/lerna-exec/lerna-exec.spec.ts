@@ -19,9 +19,10 @@ expect.addSnapshotSerializer({
 });
 
 describe("lerna exec", () => {
-  const fixture = new Fixture("lerna-exec");
+  let fixture: Fixture;
 
   beforeAll(async () => {
+    fixture = new Fixture("lerna-exec");
     await fixture.init();
     await fixture.lernaInit();
     await fixture.install();
@@ -206,9 +207,10 @@ describe("lerna exec", () => {
 });
 
 describe("lerna exec --no-bail", () => {
-  const fixture = new Fixture("lerna-exec-no-bail");
+  let fixture: Fixture;
 
   beforeAll(async () => {
+    fixture = new Fixture("lerna-exec-no-bail");
     await fixture.init();
     await fixture.lernaInit();
     await fixture.install();

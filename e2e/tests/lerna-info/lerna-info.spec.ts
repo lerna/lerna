@@ -18,9 +18,10 @@ expect.addSnapshotSerializer({
 });
 
 describe("lerna info", () => {
-  const fixture = new Fixture("lerna-info");
+  let fixture: Fixture;
 
   beforeAll(async () => {
+    fixture = new Fixture("lerna-info");
     await fixture.init();
     await fixture.lernaInit();
     await fixture.install();

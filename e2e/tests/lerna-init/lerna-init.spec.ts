@@ -1,9 +1,10 @@
 import { Fixture } from "../../utils/fixture";
 
 describe("lerna init", () => {
-  const fixture = new Fixture("lerna-init");
+  let fixture: Fixture;
 
   beforeEach(async () => {
+    fixture = new Fixture("lerna-init");
     await fixture.init();
   });
   afterEach(() => fixture.destroy());

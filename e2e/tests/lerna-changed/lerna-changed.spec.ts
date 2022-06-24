@@ -16,9 +16,10 @@ expect.addSnapshotSerializer({
 
 describe("lerna changed", () => {
   describe("with no prior release tags", () => {
-    const fixture = new Fixture("lerna-changed-with-no-prior-release-tags");
+    let fixture: Fixture;
 
     beforeAll(async () => {
+      fixture = new Fixture("lerna-changed-with-no-prior-release-tags");
       await fixture.init();
       await fixture.lernaInit();
       await fixture.install();
@@ -68,9 +69,10 @@ describe("lerna changed", () => {
   });
 
   describe("with a change to package-c since the last release", () => {
-    const fixture = new Fixture("lerna-changed-with-a-change-to-package-c-since-last-release");
+    let fixture: Fixture;
 
     beforeAll(async () => {
+      fixture = new Fixture("lerna-changed-with-a-change-to-package-c-since-last-release");
       await fixture.init();
       await fixture.lernaInit();
       await fixture.install();
@@ -316,9 +318,10 @@ describe("lerna changed", () => {
 
   // the purpose of the --include-merged-tags option is outlined in detail in this PR: https://github.com/lerna/lerna/pull/1712
   describe("--include-merged-tags", () => {
-    const fixture = new Fixture("lerna-changed-include-merged-tags");
+    let fixture: Fixture;
 
     beforeAll(async () => {
+      fixture = new Fixture("lerna-changed-include-merged-tags");
       await fixture.init();
       await fixture.lernaInit();
       await fixture.install();
