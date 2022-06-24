@@ -1,12 +1,15 @@
-import { createEmptyDirectoryForWorkspace, readFile, removeWorkspace, runLernaInit } from "../../../utils";
+import { Fixture } from "../../utils/fixture";
 
 describe("lerna init", () => {
-  afterEach(() => removeWorkspace());
+  const fixture = new Fixture("lerna-init");
+
+  beforeEach(async () => {
+    await fixture.init();
+  });
+  afterEach(() => fixture.destroy());
 
   it("should initialize a lerna workspace", async () => {
-    createEmptyDirectoryForWorkspace("lerna-init-test");
-
-    const output = await runLernaInit();
+    const output = await fixture.lernaInit();
 
     expect(output.stderr).toMatchInlineSnapshot(`
       "lerna notice cli v999.9.9-e2e.0
@@ -18,7 +21,7 @@ describe("lerna init", () => {
       "
     `);
 
-    expect(readFile("lerna.json")).toMatchInlineSnapshot(`
+    expect(await fixture.readWorkspaceFile("lerna.json")).toMatchInlineSnapshot(`
       "{
         \\"packages\\": [
           \\"packages/*\\"
@@ -28,7 +31,7 @@ describe("lerna init", () => {
       }
       "
     `);
-    expect(readFile("package.json")).toMatchInlineSnapshot(`
+    expect(await fixture.readWorkspaceFile("package.json")).toMatchInlineSnapshot(`
       "{
         \\"name\\": \\"root\\",
         \\"private\\": true,
@@ -42,9 +45,7 @@ describe("lerna init", () => {
 
   describe("--independent", () => {
     it("should initialize a lerna workspace in independent versioning mode", async () => {
-      createEmptyDirectoryForWorkspace("lerna-init-test");
-
-      const output = await runLernaInit("--independent");
+      const output = await fixture.lernaInit("--independent");
 
       expect(output.stderr).toMatchInlineSnapshot(`
         "lerna notice cli v999.9.9-e2e.0
@@ -56,7 +57,7 @@ describe("lerna init", () => {
         "
       `);
 
-      expect(readFile("lerna.json")).toMatchInlineSnapshot(`
+      expect(await fixture.readWorkspaceFile("lerna.json")).toMatchInlineSnapshot(`
         "{
           \\"packages\\": [
             \\"packages/*\\"
@@ -66,7 +67,7 @@ describe("lerna init", () => {
         }
         "
       `);
-      expect(readFile("package.json")).toMatchInlineSnapshot(`
+      expect(await fixture.readWorkspaceFile("package.json")).toMatchInlineSnapshot(`
         "{
           \\"name\\": \\"root\\",
           \\"private\\": true,
@@ -81,9 +82,7 @@ describe("lerna init", () => {
 
   describe("--exact", () => {
     it("should initialize a lerna workspace with exact package version enforcement", async () => {
-      createEmptyDirectoryForWorkspace("lerna-init-test");
-
-      const output = await runLernaInit("--exact");
+      const output = await fixture.lernaInit("--exact");
 
       expect(output.stderr).toMatchInlineSnapshot(`
         "lerna notice cli v999.9.9-e2e.0
@@ -95,7 +94,7 @@ describe("lerna init", () => {
         "
       `);
 
-      expect(readFile("lerna.json")).toMatchInlineSnapshot(`
+      expect(await fixture.readWorkspaceFile("lerna.json")).toMatchInlineSnapshot(`
         "{
           \\"command\\": {
             \\"init\\": {
@@ -110,7 +109,7 @@ describe("lerna init", () => {
         }
         "
       `);
-      expect(readFile("package.json")).toMatchInlineSnapshot(`
+      expect(await fixture.readWorkspaceFile("package.json")).toMatchInlineSnapshot(`
         "{
           \\"name\\": \\"root\\",
           \\"private\\": true,
@@ -125,9 +124,7 @@ describe("lerna init", () => {
 
   describe("--independent --exact", () => {
     it("should initialize a lerna workspace in independent versioning mode with exact package version enforcement", async () => {
-      createEmptyDirectoryForWorkspace("lerna-init-test");
-
-      const output = await runLernaInit("--independent --exact");
+      const output = await fixture.lernaInit("--independent --exact");
 
       expect(output.stderr).toMatchInlineSnapshot(`
         "lerna notice cli v999.9.9-e2e.0
@@ -139,7 +136,7 @@ describe("lerna init", () => {
         "
       `);
 
-      expect(readFile("lerna.json")).toMatchInlineSnapshot(`
+      expect(await fixture.readWorkspaceFile("lerna.json")).toMatchInlineSnapshot(`
         "{
           \\"command\\": {
             \\"init\\": {
@@ -154,7 +151,7 @@ describe("lerna init", () => {
         }
         "
       `);
-      expect(readFile("package.json")).toMatchInlineSnapshot(`
+      expect(await fixture.readWorkspaceFile("package.json")).toMatchInlineSnapshot(`
         "{
           \\"name\\": \\"root\\",
           \\"private\\": true,

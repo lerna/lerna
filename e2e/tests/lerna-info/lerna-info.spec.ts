@@ -1,10 +1,4 @@
-import {
-  createEmptyDirectoryForWorkspace,
-  removeWorkspace,
-  runCLI,
-  runLernaInit,
-  runNpmInstall,
-} from "../../../utils";
+import { Fixture } from "../../utils/fixture";
 
 expect.addSnapshotSerializer({
   serialize(str) {
@@ -24,15 +18,17 @@ expect.addSnapshotSerializer({
 });
 
 describe("lerna info", () => {
+  const fixture = new Fixture("lerna-info");
+
   beforeAll(async () => {
-    createEmptyDirectoryForWorkspace("lerna-info-test");
-    await runLernaInit();
-    await runNpmInstall();
+    await fixture.init();
+    await fixture.lernaInit();
+    await fixture.install();
   });
-  afterAll(() => removeWorkspace());
+  afterAll(() => fixture.destroy());
 
   it("should output environment info", async () => {
-    const output = await runCLI("info");
+    const output = await fixture.lerna("info");
 
     expect(output.combinedOutput).toMatchInlineSnapshot(`
 
