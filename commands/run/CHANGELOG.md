@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.6](https://github.com/lerna/lerna/compare/v5.1.5...v5.1.6) (2022-06-24)
+
+
+### Bug Fixes
+
+* lerna run parallel should maximize concurrency with useNx ([#3205](https://github.com/lerna/lerna/issues/3205)) ([f80d03c](https://github.com/lerna/lerna/commit/f80d03c17b06146b097f904ee066728d6580090d))
+
+
+
+
+
 ## [5.1.5](https://github.com/lerna/lerna/compare/v5.1.4...v5.1.5) (2022-06-24)
 
 **Note:** Version bump only for package @lerna/run
