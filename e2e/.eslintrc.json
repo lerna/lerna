@@ -5,10 +5,14 @@
     "import/extensions": "off",
     "import/no-unresolved": "off",
     "import/no-extraneous-dependencies": "off",
+    "import/prefer-default-export": "off",
     "node/no-extraneous-import": "off",
     "node/no-missing-import": "off",
     "node/no-unpublished-import": "off",
     "node/no-unsupported-features/es-syntax": "off",
-    "no-unused-vars": "off"
+    "no-unused-vars": "off",
+    "lines-between-class-members": "off",
+    "no-useless-constructor": "off",
+    "no-empty-function": "off"
   }
 }
