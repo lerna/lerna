@@ -4,7 +4,7 @@ import {
   runCLI,
   runLernaInit,
   runNpmInstall,
-} from "../utils";
+} from "../../../utils";
 
 expect.addSnapshotSerializer({
   serialize(str) {

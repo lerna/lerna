@@ -1,4 +1,4 @@
-import { createEmptyDirectoryForWorkspace, readFile, removeWorkspace, runLernaInit } from "../utils";
+import { createEmptyDirectoryForWorkspace, readFile, removeWorkspace, runLernaInit } from "../../../utils";
 
 describe("lerna init", () => {
   afterEach(() => removeWorkspace());

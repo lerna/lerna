@@ -10,7 +10,7 @@ import {
   runLernaInit,
   runNpmInstall,
   updatePackageVersion,
-} from "../utils";
+} from "../../../utils";
 
 jest.setTimeout(60000);
 
