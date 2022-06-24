@@ -71,6 +71,13 @@ export async function addDependencyToPackage(
   }));
 }
 
+export async function updatePackageVersion(packagePath: string, newVersion: string) {
+  await updateJson(`${packagePath}/package.json`, (json) => ({
+    ...json,
+    version: newVersion,
+  }));
+}
+
 export async function addNxToWorkspace() {
   await updateJson("lerna.json", (json) => ({
     ...json,
