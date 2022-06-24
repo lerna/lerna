@@ -7,7 +7,7 @@ import {
   runCLI,
   runLernaInit,
   runNpmInstall,
-} from "../utils";
+} from "../../../utils";
 
 jest.setTimeout(60000);
 
