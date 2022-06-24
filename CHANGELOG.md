@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.5](https://github.com/lerna/lerna/compare/v5.1.4...v5.1.5) (2022-06-24)
+
+
+### Bug Fixes
+
+* **bootstrap:** preserve indentation style in package-lock.json when running bootstrap ([#2955](https://github.com/lerna/lerna/issues/2955)) ([04cfa52](https://github.com/lerna/lerna/commit/04cfa5237053fee1f016e8569612e44a615fc3b5))
+
+
+
+
+
 ## [5.1.4](https://github.com/lerna/lerna/compare/v5.1.3...v5.1.4) (2022-06-15)
 
 
