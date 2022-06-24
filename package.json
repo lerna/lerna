@@ -149,6 +149,7 @@
     "@types/jest": "^26.0.24",
     "@types/tmp": "^0.2.3",
     "@typescript-eslint/parser": "^5.28.0",
+    "all-contributors-cli": "^6.20.0",
     "debug": "^4.3.1",
     "env-cmd": "^10.1.0",
     "eslint": "^8.17.0",

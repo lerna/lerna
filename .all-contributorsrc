@@ -1,0 +1,106 @@
+{
+  "projectName": "lerna",
+  "projectOwner": "lerna",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": true,
+  "commitConvention": "angular",
+  "contributors": [
+    {
+      "login": "jeffbcross",
+      "name": "Jeff Cross",
+      "avatar_url": "https://avatars.githubusercontent.com/u/463703?v=4",
+      "profile": "https://github.com/jeffbcross",
+      "contributions": [
+        "business"
+      ]
+    },
+    {
+      "login": "evocateur",
+      "name": "Daniel Stockman",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5605?v=4",
+      "profile": "http://evocateur.org/",
+      "contributions": [
+        "code",
+        "doc",
+        "infra",
+        "maintenance"
+      ]
+    },
+    {
+      "login": "jamiebuilds",
+      "name": "Jamie Kyle",
+      "avatar_url": "https://avatars.githubusercontent.com/u/952783?v=4",
+      "profile": "https://jamie.build/",
+      "contributions": [
+        "code",
+        "doc",
+        "infra",
+        "maintenance"
+      ]
+    },
+    {
+      "login": "hzoo",
+      "name": "Henry Zhu",
+      "avatar_url": "https://avatars.githubusercontent.com/u/588473?v=4",
+      "profile": "https://henryzoo.com/",
+      "contributions": [
+        "code",
+        "doc",
+        "maintenance"
+      ]
+    },
+    {
+      "login": "gigabo",
+      "name": "Bo Borgerson",
+      "avatar_url": "https://avatars.githubusercontent.com/u/115908?v=4",
+      "profile": "http://maonoodle.com/",
+      "contributions": [
+        "code",
+        "maintenance"
+      ]
+    },
+    {
+      "login": "sebmck",
+      "name": "Sebastian",
+      "avatar_url": "https://avatars.githubusercontent.com/u/853712?v=4",
+      "profile": "https://github.com/sebmck",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "joscha",
+      "name": "Joscha Feth",
+      "avatar_url": "https://avatars.githubusercontent.com/u/188038?v=4",
+      "profile": "http://www.feth.com/",
+      "contributions": [
+        "code",
+        "bug"
+      ]
+    },
+    {
+      "login": "noherczeg",
+      "name": "Norbert Csaba Herczeg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1084847?v=4",
+      "profile": "https://github.com/noherczeg",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "doug-wade",
+      "name": "Douglas Wade",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3477707?v=4",
+      "profile": "http://dougwade.io/",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 5
+}
