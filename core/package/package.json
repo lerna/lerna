@@ -1,12 +1,12 @@
 {
   "name": "@lerna/package",
-  "version": "4.0.0",
+  "version": "5.1.6",
   "description": "Lerna's internal representation of a package",
   "keywords": [
     "lerna",
     "core"
   ],
-  "homepage": "https://github.com/lerna/lerna/tree/master/core/package#readme",
+  "homepage": "https://lerna.js.org",
   "license": "MIT",
   "author": {
     "name": "Daniel Stockman",
@@ -17,7 +17,7 @@
   ],
   "main": "index.js",
   "engines": {
-    "node": ">= 10.18.0"
+    "node": "^14.15.0 || >=16.0.0"
   },
   "publishConfig": {
     "access": "public"

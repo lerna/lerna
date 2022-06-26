@@ -1,12 +1,12 @@
 {
   "name": "@lerna/add",
-  "version": "4.0.0",
+  "version": "5.1.6",
   "description": "Add a dependency to matched packages",
   "keywords": [
     "lerna",
     "command"
   ],
-  "homepage": "https://github.com/lerna/lerna/tree/master/commands/add#readme",
+  "homepage": "https://lerna.js.org",
   "license": "MIT",
   "author": {
     "name": "Daniel Stockman",
@@ -19,7 +19,7 @@
   ],
   "main": "index.js",
   "engines": {
-    "node": ">= 10.18.0"
+    "node": "^14.15.0 || >=16.0.0"
   },
   "publishConfig": {
     "access": "public"
@@ -41,7 +41,7 @@
     "dedent": "^0.7.0",
     "npm-package-arg": "^8.1.0",
     "p-map": "^4.0.0",
-    "pacote": "^11.2.6",
+    "pacote": "^13.4.1",
     "semver": "^7.3.4"
   }
 }

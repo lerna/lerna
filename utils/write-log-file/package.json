@@ -1,12 +1,12 @@
 {
   "name": "@lerna/write-log-file",
-  "version": "4.0.0",
+  "version": "5.1.6",
   "description": "What lerna uses to dump logs",
   "keywords": [
     "lerna",
     "utils"
   ],
-  "homepage": "https://github.com/lerna/lerna/tree/master/utils/write-log-file#readme",
+  "homepage": "https://lerna.js.org",
   "license": "MIT",
   "author": {
     "name": "Daniel Stockman",
@@ -17,7 +17,7 @@
   ],
   "main": "write-log-file.js",
   "engines": {
-    "node": ">= 10.18.0"
+    "node": "^14.15.0 || >=16.0.0"
   },
   "publishConfig": {
     "access": "public"
@@ -31,7 +31,7 @@
     "test": "echo \"Run tests from root\" && exit 1"
   },
   "dependencies": {
-    "npmlog": "^4.1.2",
+    "npmlog": "^6.0.2",
     "write-file-atomic": "^3.0.3"
   }
 }

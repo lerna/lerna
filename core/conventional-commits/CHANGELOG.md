@@ -3,6 +3,88 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [5.1.6](https://github.com/lerna/lerna/compare/v5.1.5...v5.1.6) (2022-06-24)
+
+**Note:** Version bump only for package @lerna/conventional-commits
+
+
+
+
+
+## [5.1.5](https://github.com/lerna/lerna/compare/v5.1.4...v5.1.5) (2022-06-24)
+
+**Note:** Version bump only for package @lerna/conventional-commits
+
+
+
+
+
+## [5.1.4](https://github.com/lerna/lerna/compare/v5.1.3...v5.1.4) (2022-06-15)
+
+**Note:** Version bump only for package @lerna/conventional-commits
+
+
+
+
+
+## [5.1.3](https://github.com/lerna/lerna/compare/v5.1.2...v5.1.3) (2022-06-15)
+
+**Note:** Version bump only for package @lerna/conventional-commits
+
+
+
+
+
+## [5.1.2](https://github.com/lerna/lerna/compare/v5.1.1...v5.1.2) (2022-06-13)
+
+
+### Bug Fixes
+
+* **conventional-commits:** remove pinned lodash.template ([#3172](https://github.com/lerna/lerna/issues/3172)) ([e519f43](https://github.com/lerna/lerna/commit/e519f43049253e66c1ab840c3c08435be1477d76))
+* update all transitive inclusions of ansi-regex ([#3166](https://github.com/lerna/lerna/issues/3166)) ([56eaa15](https://github.com/lerna/lerna/commit/56eaa153283be3b1e7d7793d3266fc51801fad8e))
+
+
+
+
+
+## [5.1.1](https://github.com/lerna/lerna/compare/v5.1.0...v5.1.1) (2022-06-09)
+
+
+### Bug Fixes
+
+* allow maintenance LTS node 14 engines starting at 14.15.0 ([#3161](https://github.com/lerna/lerna/issues/3161)) ([72305e4](https://github.com/lerna/lerna/commit/72305e4dbab607a2d87ae4efa6ee577c93a9dda9))
+
+
+
+
+
+# [5.1.0](https://github.com/lerna/lerna/compare/v5.0.0...v5.1.0) (2022-06-07)
+
+
+### Features
+
+* handle the edge cases in the lerna-nx integration ([c6808fc](https://github.com/lerna/lerna/commit/c6808fc8f2dfe793bf72a64cf2d3909e0bdabba8))
+
+
+
+
+
+# [5.1.0-alpha.0](https://github.com/lerna/lerna/compare/v4.0.0...v5.1.0-alpha.0) (2022-05-25)
+
+**Note:** Version bump only for package @lerna/conventional-commits
+
+
+
+
+
+# [5.0.0](https://github.com/lerna/lerna/compare/v4.0.0...v5.0.0) (2022-05-24)
+
+**Note:** Version bump only for package @lerna/conventional-commits
+
+
+
+
+
 # [4.0.0](https://github.com/lerna/lerna/compare/v3.22.1...v4.0.0) (2021-02-10)
 
 

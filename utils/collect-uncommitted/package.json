@@ -1,6 +1,6 @@
 {
   "name": "@lerna/collect-uncommitted",
-  "version": "4.0.0",
+  "version": "5.1.6",
   "description": "Collect uncommitted changes to working tree for display in error messages",
   "keywords": [
     "lerna",
@@ -12,14 +12,14 @@
   "contributors": [
     "Pedro De Ona <p.deona001@gmail.com>"
   ],
-  "homepage": "https://github.com/lerna/lerna/tree/master/utils/collect-uncommitted#readme",
+  "homepage": "https://lerna.js.org",
   "license": "MIT",
   "main": "lib/collect-uncommitted.js",
   "files": [
     "lib"
   ],
   "engines": {
-    "node": ">= 10.18.0"
+    "node": "^14.15.0 || >=16.0.0"
   },
   "publishConfig": {
     "access": "public"
@@ -35,6 +35,6 @@
   "dependencies": {
     "@lerna/child-process": "file:../../core/child-process",
     "chalk": "^4.1.0",
-    "npmlog": "^4.1.2"
+    "npmlog": "^6.0.2"
   }
 }

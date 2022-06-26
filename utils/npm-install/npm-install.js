@@ -63,7 +63,7 @@ function npmInstallDependencies(pkg, dependencies, config) {
 
   log.silly("npmInstallDependencies", "backup", pkg.manifestLocation);
 
-  return fs.rename(pkg.manifestLocation, packageJsonBkp).then(() => {
+  return fs.copy(pkg.manifestLocation, packageJsonBkp).then(() => {
     const cleanup = () => {
       log.silly("npmInstallDependencies", "cleanup", pkg.manifestLocation);
       // Need to do this one synchronously because we might be doing it on exit.

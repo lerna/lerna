@@ -1,12 +1,12 @@
 {
   "name": "@lerna/bootstrap",
-  "version": "4.0.0",
+  "version": "5.1.6",
   "description": "Link local packages together and install remaining package dependencies",
   "keywords": [
     "lerna",
     "command"
   ],
-  "homepage": "https://github.com/lerna/lerna/tree/master/commands/bootstrap#readme",
+  "homepage": "https://lerna.js.org",
   "license": "MIT",
   "author": {
     "name": "Daniel Stockman",
@@ -19,7 +19,7 @@
   ],
   "main": "index.js",
   "engines": {
-    "node": ">= 10.18.0"
+    "node": "^14.15.0 || >=16.0.0"
   },
   "publishConfig": {
     "access": "public"
@@ -45,15 +45,15 @@
     "@lerna/symlink-binary": "file:../../utils/symlink-binary",
     "@lerna/symlink-dependencies": "file:../../utils/symlink-dependencies",
     "@lerna/validation-error": "file:../../core/validation-error",
+    "@npmcli/arborist": "5.2.0",
     "dedent": "^0.7.0",
     "get-port": "^5.1.1",
     "multimatch": "^5.0.0",
     "npm-package-arg": "^8.1.0",
-    "npmlog": "^4.1.2",
+    "npmlog": "^6.0.2",
     "p-map": "^4.0.0",
     "p-map-series": "^2.1.0",
     "p-waterfall": "^2.1.1",
-    "read-package-tree": "^5.3.1",
     "semver": "^7.3.4"
   }
 }

@@ -41,6 +41,6 @@ function runTopologically(packages, runner, { concurrency, graphType, rejectCycl
 
     queueNextAvailablePackages();
 
-    return queue.onIdle().then(() => resolve(returnValues));
+    queue.onIdle().then(() => resolve(returnValues));
   });
 }

@@ -1,13 +1,13 @@
 {
   "name": "@lerna/npm-conf",
-  "version": "4.0.0",
+  "version": "5.1.6",
   "description": "Vendored npm-conf with updates",
   "keywords": [
     "lerna",
     "npm",
     "config"
   ],
-  "homepage": "https://github.com/lerna/lerna/tree/master/utils/npm-conf#readme",
+  "homepage": "https://lerna.js.org",
   "license": "MIT",
   "author": {
     "name": "Daniel Stockman",
@@ -22,7 +22,7 @@
     "lib"
   ],
   "engines": {
-    "node": ">= 10.18.0"
+    "node": "^14.15.0 || >=16.0.0"
   },
   "publishConfig": {
     "access": "public"

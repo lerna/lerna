@@ -1,12 +1,12 @@
 {
   "name": "@lerna/package-graph",
-  "version": "4.0.0",
+  "version": "5.1.6",
   "description": "Lerna's internal representation of a package graph",
   "keywords": [
     "lerna",
     "core"
   ],
-  "homepage": "https://github.com/lerna/lerna/tree/master/core/package-graph#readme",
+  "homepage": "https://lerna.js.org",
   "license": "MIT",
   "author": {
     "name": "Daniel Stockman",
@@ -18,7 +18,7 @@
   ],
   "main": "index.js",
   "engines": {
-    "node": ">= 10.18.0"
+    "node": "^14.15.0 || >=16.0.0"
   },
   "publishConfig": {
     "access": "public"
@@ -35,7 +35,7 @@
     "@lerna/prerelease-id-from-version": "file:../../utils/prerelease-id-from-version",
     "@lerna/validation-error": "file:../validation-error",
     "npm-package-arg": "^8.1.0",
-    "npmlog": "^4.1.2",
+    "npmlog": "^6.0.2",
     "semver": "^7.3.4"
   }
 }

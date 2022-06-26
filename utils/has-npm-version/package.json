@@ -1,20 +1,20 @@
 {
   "name": "@lerna/has-npm-version",
-  "version": "4.0.0",
+  "version": "5.1.6",
   "description": "Test if the current version of npm satisfies a given semver range",
   "keywords": [
     "lerna",
     "utils"
   ],
   "author": "Daniel Stockman <daniel.stockman@gmail.com>",
-  "homepage": "https://github.com/lerna/lerna/tree/master/utils/has-npm-version#readme",
+  "homepage": "https://lerna.js.org",
   "license": "MIT",
   "main": "lib/has-npm-version.js",
   "files": [
     "lib"
   ],
   "engines": {
-    "node": ">= 10.18.0"
+    "node": "^14.15.0 || >=16.0.0"
   },
   "publishConfig": {
     "access": "public"

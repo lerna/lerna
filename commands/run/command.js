@@ -69,6 +69,10 @@ exports.builder = (yargs) => {
         describe: "Output performance profile to custom location instead of default project root.",
         type: "string",
       },
+      "skip-nx-cache": {
+        hidden: true,
+        type: "boolean",
+      },
     });
 
   return filterOptions(yargs);

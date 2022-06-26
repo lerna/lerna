@@ -1,0 +1,9 @@
+{
+  "name": "@lerna/e2e",
+  "private": true,
+  "description": "e2e tests for lerna packages",
+  "scripts": {
+    "start-verdaccio": "verdaccio --config ./local-registry/config.yml --listen 4872",
+    "kill-verdaccio": "kill $(lsof -t -i:4872) || true"
+  }
+}

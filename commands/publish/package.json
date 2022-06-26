@@ -1,12 +1,12 @@
 {
   "name": "@lerna/publish",
-  "version": "4.0.0",
+  "version": "5.1.6",
   "description": "Publish packages in the current project",
   "keywords": [
     "lerna",
     "command"
   ],
-  "homepage": "https://github.com/lerna/lerna/tree/master/commands/publish#readme",
+  "homepage": "https://lerna.js.org",
   "license": "MIT",
   "author": {
     "name": "Daniel Stockman",
@@ -20,7 +20,7 @@
   ],
   "main": "index.js",
   "engines": {
-    "node": ">= 10.18.0"
+    "node": "^14.15.0 || >=16.0.0"
   },
   "publishConfig": {
     "access": "public"
@@ -31,7 +31,8 @@
     "directory": "commands/publish"
   },
   "scripts": {
-    "test": "echo \"Run tests from root\" && exit 1"
+    "test": "echo \"Run tests from root\" && exit 1",
+    "work": "sleep 3 && echo publish && exit 1"
   },
   "dependencies": {
     "@lerna/check-working-tree": "file:../../utils/check-working-tree",
@@ -57,10 +58,10 @@
     "libnpmaccess": "^4.0.1",
     "npm-package-arg": "^8.1.0",
     "npm-registry-fetch": "^9.0.0",
-    "npmlog": "^4.1.2",
+    "npmlog": "^6.0.2",
     "p-map": "^4.0.0",
     "p-pipe": "^3.1.0",
-    "pacote": "^11.2.6",
+    "pacote": "^13.4.1",
     "semver": "^7.3.4"
   }
 }

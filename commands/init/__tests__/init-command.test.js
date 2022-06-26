@@ -191,6 +191,7 @@ describe("InitCommand", () => {
 
       expect(await fs.readJSON(lernaJsonPath)).toEqual({
         packages: ["packages/*"],
+        useNx: false,
         version: "1.2.3",
       });
     });
@@ -242,6 +243,7 @@ describe("InitCommand", () => {
           },
         },
         packages: ["packages/*"],
+        useNx: false,
         version: "1.2.3",
       });
     });

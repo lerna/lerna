@@ -1,6 +1,6 @@
 {
   "name": "@lerna/check-working-tree",
-  "version": "4.0.0",
+  "version": "5.1.6",
   "description": "Check git working tree status and error appropriately",
   "keywords": [
     "lerna",
@@ -9,14 +9,14 @@
     "tree"
   ],
   "author": "Daniel Stockman <daniel.stockman@gmail.com>",
-  "homepage": "https://github.com/lerna/lerna/tree/master/utils/check-working-tree#readme",
+  "homepage": "https://lerna.js.org",
   "license": "MIT",
   "main": "lib/check-working-tree.js",
   "files": [
     "lib"
   ],
   "engines": {
-    "node": ">= 10.18.0"
+    "node": "^14.15.0 || >=16.0.0"
   },
   "publishConfig": {
     "access": "public"

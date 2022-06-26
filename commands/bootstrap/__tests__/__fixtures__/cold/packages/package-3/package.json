@@ -6,7 +6,7 @@
     "external": "^1.0.0"
   },
   "devDependencies": {
-    "even-more-externals": "^3.0.0",
+    "some-more-externals": "^3.0.0",
     "package-2": "^0.6.7"
   }
 }

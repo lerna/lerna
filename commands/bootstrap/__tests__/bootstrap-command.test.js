@@ -58,6 +58,10 @@ const symlinkedDirectories = (testDir) =>
     }));
 
 describe("BootstrapCommand", () => {
+  beforeEach(() => {
+    jest.setTimeout(60000);
+  });
+
   // stub rimraf because we trust isaacs
   rimrafDir.mockResolvedValue();
 

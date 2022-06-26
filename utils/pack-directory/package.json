@@ -1,6 +1,6 @@
 {
   "name": "@lerna/pack-directory",
-  "version": "4.0.0",
+  "version": "5.1.6",
   "description": "Pack a directory into an npm package tarball",
   "keywords": [
     "lerna",
@@ -9,7 +9,7 @@
     "directory"
   ],
   "author": "Daniel Stockman <daniel.stockman@gmail.com>",
-  "homepage": "https://github.com/lerna/lerna/tree/master/utils/pack-directory#readme",
+  "homepage": "https://lerna.js.org",
   "license": "MIT",
   "main": "lib/pack-directory.js",
   "files": [
@@ -30,12 +30,12 @@
     "@lerna/get-packed": "file:../get-packed",
     "@lerna/package": "file:../../core/package",
     "@lerna/run-lifecycle": "file:../run-lifecycle",
+    "@lerna/temp-write": "file:../../utils/temp-write",
     "npm-packlist": "^2.1.4",
-    "npmlog": "^4.1.2",
-    "tar": "^6.1.0",
-    "temp-write": "^4.0.0"
+    "npmlog": "^6.0.2",
+    "tar": "^6.1.0"
   },
   "engines": {
-    "node": ">= 10.18.0"
+    "node": "^14.15.0 || >=16.0.0"
   }
 }

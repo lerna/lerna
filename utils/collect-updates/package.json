@@ -1,12 +1,12 @@
 {
   "name": "@lerna/collect-updates",
-  "version": "4.0.0",
+  "version": "5.1.6",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
     "utils"
   ],
-  "homepage": "https://github.com/lerna/lerna/tree/master/utils/collect-updates#readme",
+  "homepage": "https://lerna.js.org",
   "license": "MIT",
   "author": {
     "name": "Daniel Stockman",
@@ -18,7 +18,7 @@
   ],
   "main": "collect-updates.js",
   "engines": {
-    "node": ">= 10.18.0"
+    "node": "^14.15.0 || >=16.0.0"
   },
   "publishConfig": {
     "access": "public"
@@ -35,7 +35,7 @@
     "@lerna/child-process": "file:../../core/child-process",
     "@lerna/describe-ref": "file:../describe-ref",
     "minimatch": "^3.0.4",
-    "npmlog": "^4.1.2",
+    "npmlog": "^6.0.2",
     "slash": "^3.0.0"
   }
 }

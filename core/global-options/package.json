@@ -1,12 +1,12 @@
 {
   "name": "@lerna/global-options",
-  "version": "4.0.0",
+  "version": "5.1.6",
   "description": "Global options applicable to _every_ lerna sub-command",
   "keywords": [
     "lerna",
     "core"
   ],
-  "homepage": "https://github.com/lerna/lerna/tree/master/core/global-options#readme",
+  "homepage": "https://lerna.js.org",
   "license": "MIT",
   "author": {
     "name": "Daniel Stockman",
@@ -17,7 +17,7 @@
   ],
   "main": "index.js",
   "engines": {
-    "node": ">= 10.18.0"
+    "node": "^14.15.0 || >=16.0.0"
   },
   "publishConfig": {
     "access": "public"

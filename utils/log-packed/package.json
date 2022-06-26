@@ -1,6 +1,6 @@
 {
   "name": "@lerna/log-packed",
-  "version": "4.0.0",
+  "version": "5.1.6",
   "description": "Log the result of npm pack --json",
   "keywords": [
     "lerna",
@@ -9,14 +9,14 @@
     "pack"
   ],
   "author": "Daniel Stockman <daniel.stockman@gmail.com>",
-  "homepage": "https://github.com/lerna/lerna/tree/master/utils/log-packed#readme",
+  "homepage": "https://lerna.js.org",
   "license": "MIT",
   "main": "lib/log-packed.js",
   "files": [
     "lib"
   ],
   "engines": {
-    "node": ">= 10.18.0"
+    "node": "^14.15.0 || >=16.0.0"
   },
   "publishConfig": {
     "access": "public"
@@ -31,8 +31,8 @@
   },
   "dependencies": {
     "byte-size": "^7.0.0",
-    "columnify": "^1.5.4",
+    "columnify": "^1.6.0",
     "has-unicode": "^2.0.1",
-    "npmlog": "^4.1.2"
+    "npmlog": "^6.0.2"
   }
 }

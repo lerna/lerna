@@ -1,13 +1,13 @@
 {
   "name": "lerna",
-  "version": "4.0.0",
+  "version": "5.1.6",
   "description": "A tool for managing JavaScript projects with multiple packages.",
   "keywords": [
     "lerna",
     "monorepo",
     "multi-package"
   ],
-  "homepage": "https://github.com/lerna/lerna#readme",
+  "homepage": "https://lerna.js.org",
   "license": "MIT",
   "author": {
     "name": "Sebastian McKenzie",
@@ -21,7 +21,7 @@
     "cli.js"
   ],
   "engines": {
-    "node": ">= 10.18.0"
+    "node": "^14.15.0 || >=16.0.0"
   },
   "publishConfig": {
     "tag": "next"
@@ -52,6 +52,6 @@
     "@lerna/run": "file:../../commands/run",
     "@lerna/version": "file:../../commands/version",
     "import-local": "^3.0.2",
-    "npmlog": "^4.1.2"
+    "npmlog": "^6.0.2"
   }
 }

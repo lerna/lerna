@@ -1,7 +1,7 @@
 "use strict";
 
 const log = require("npmlog");
-const readPackageTree = require("read-package-tree");
+const Arborist = require("@npmcli/arborist");
 const semver = require("semver");
 
 /** @typedef {Map<string, string>} InstalledDependencies dependency name -> installed version */
@@ -31,37 +31,20 @@ function hasDependencyInstalled(pkg, depName, needVersion) {
  * @returns {Promise<InstalledDependencies>}
  */
 function getInstalled(pkg) {
-  return new Promise((resolve, reject) => {
-    if (cache.has(pkg)) {
-      return resolve(cache.get(pkg));
-    }
-
-    readPackageTree(pkg.location, filterTopLevel, (err, { children }) => {
-      if (err) {
-        return reject(err);
-      }
-
-      /** @type {InstalledDependencies} */
-      const deps = new Map(children.map(({ package: { name, version } }) => [name, version]));
-      cache.set(pkg, deps);
-      resolve(deps);
-    });
-  });
-}
-
-/**
- * @param {import("read-package-tree").Node} node
- * @param {string} kidName
- */
-function filterTopLevel(node, kidName) {
-  if (node.parent) {
-    return false;
+  if (cache.has(pkg)) {
+    return Promise.resolve(cache.get(pkg));
   }
+  const arb = new Arborist({
+    path: pkg.location,
+  });
+  return arb.loadActual().then((tree) => {
+    /** @type {InstalledDependencies} */
+    const deps = new Map();
 
-  return Boolean(
-    (node.package.dependencies && node.package.dependencies[kidName]) ||
-      (node.package.devDependencies && node.package.devDependencies[kidName]) ||
-      (node.package.peerDependencies && node.package.peerDependencies[kidName]) ||
-      (node.package.optionalDependencies && node.package.optionalDependencies[kidName])
-  );
+    for (const [dependencyName, node] of tree.children.entries()) {
+      deps.set(dependencyName, node.version);
+    }
+    cache.set(pkg, deps);
+    return deps;
+  });
 }

@@ -1,12 +1,12 @@
 {
   "name": "@lerna/symlink-binary",
-  "version": "4.0.0",
+  "version": "5.1.6",
   "description": "An internal Lerna tool",
   "keywords": [
     "lerna",
     "utils"
   ],
-  "homepage": "https://github.com/lerna/lerna/tree/master/utils/symlink-binary#readme",
+  "homepage": "https://lerna.js.org",
   "license": "MIT",
   "author": {
     "name": "Daniel Stockman",
@@ -17,7 +17,7 @@
   ],
   "main": "symlink-binary.js",
   "engines": {
-    "node": ">= 10.18.0"
+    "node": "^14.15.0 || >=16.0.0"
   },
   "publishConfig": {
     "access": "public"

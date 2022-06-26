@@ -30,3 +30,9 @@ coverage/
 .nyc_output/
 .eslintcache
 .env
+
+dist
+
+website/build
+website/.docusaurus
+website/.cache-loader

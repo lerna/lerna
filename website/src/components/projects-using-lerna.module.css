@@ -1,0 +1,36 @@
+.project {
+  border-color: var(--ifm-background-surface-color-dark);
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 0.5rem;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  opacity: 0.5;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+  position: relative;
+  transition-property: color, background-color, opacity;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+  width: 100%;
+}
+.project:hover {
+  background-color: var(--ifm-color-primary);
+  color: white;
+  opacity: 1;
+}
+
+.project__link {
+  color: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.25rem;
+  text-decoration: inherit;
+  text-transform: uppercase;
+}
+.project__link:hover {
+  text-decoration: none;
+  color: inherit;
+}
