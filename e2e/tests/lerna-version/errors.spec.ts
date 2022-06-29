@@ -1,5 +1,14 @@
 import { Fixture } from "../../utils/fixture";
 
+expect.addSnapshotSerializer({
+  serialize(str) {
+    return str.replaceAll(/lerna info ci enabled\n/g, "");
+  },
+  test(val) {
+    return val != null && typeof val === "string";
+  },
+});
+
 describe("lerna version", () => {
   let fixture: Fixture;
 

@@ -2,7 +2,7 @@ import { Fixture } from "../../utils/fixture";
 
 expect.addSnapshotSerializer({
   serialize(str) {
-    return str.replaceAll(/\b[0-9a-f]{40}\b/g, "GIT_COMMIT_SHA");
+    return str.replaceAll(/\b[0-9a-f]{40}\b/g, "GIT_COMMIT_SHA").replaceAll(/lerna info ci enabled\n/g, "");
   },
   test(val) {
     return val != null && typeof val === "string";
