@@ -22,10 +22,13 @@ describe("lerna exec", () => {
   let fixture: Fixture;
 
   beforeAll(async () => {
-    fixture = new Fixture("lerna-exec");
-    await fixture.init();
-    await fixture.lernaInit();
-    await fixture.install();
+    fixture = await Fixture.create({
+      name: "lerna-exec",
+      packageManager: "npm",
+      initializeGit: true,
+      runLernaInit: true,
+      installDependencies: true,
+    });
 
     await fixture.lerna("create package-1 -y");
     await fixture.addScriptsToPackage({
@@ -210,10 +213,13 @@ describe("lerna exec --no-bail", () => {
   let fixture: Fixture;
 
   beforeAll(async () => {
-    fixture = new Fixture("lerna-exec-no-bail");
-    await fixture.init();
-    await fixture.lernaInit();
-    await fixture.install();
+    fixture = await Fixture.create({
+      name: "lerna-exec-no-bail",
+      packageManager: "npm",
+      initializeGit: true,
+      runLernaInit: true,
+      installDependencies: true,
+    });
 
     await fixture.lerna("create package-1 -y");
     await fixture.addScriptsToPackage({

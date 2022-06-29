@@ -22,10 +22,13 @@ describe("lerna run", () => {
   let fixture: Fixture;
 
   beforeAll(async () => {
-    fixture = new Fixture("lerna-run");
-    await fixture.init();
-    await fixture.lernaInit();
-    await fixture.install();
+    fixture = await Fixture.create({
+      name: "lerna-run",
+      packageManager: "npm",
+      initializeGit: true,
+      runLernaInit: true,
+      installDependencies: true,
+    });
 
     await fixture.lerna("create package-1 -y");
     await fixture.addScriptsToPackage({
@@ -283,10 +286,13 @@ describe("useNx", () => {
   let fixture: Fixture;
 
   beforeAll(async () => {
-    fixture = new Fixture("lerna-run-with-nx");
-    await fixture.init();
-    await fixture.lernaInit();
-    await fixture.install();
+    fixture = await Fixture.create({
+      name: "lerna-run-with-nx",
+      packageManager: "npm",
+      initializeGit: true,
+      runLernaInit: true,
+      installDependencies: true,
+    });
 
     await fixture.addNxToWorkspace();
 
@@ -366,10 +372,13 @@ describe("--no-bail", () => {
   let fixture: Fixture;
 
   beforeAll(async () => {
-    fixture = new Fixture("lerna-run-no-bail");
-    await fixture.init();
-    await fixture.lernaInit();
-    await fixture.install();
+    fixture = await Fixture.create({
+      name: "lerna-run-no-bail",
+      packageManager: "npm",
+      initializeGit: true,
+      runLernaInit: true,
+      installDependencies: true,
+    });
 
     await fixture.lerna("create package-1 -y");
     await fixture.addScriptsToPackage({

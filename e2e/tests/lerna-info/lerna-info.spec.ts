@@ -21,10 +21,13 @@ describe("lerna info", () => {
   let fixture: Fixture;
 
   beforeAll(async () => {
-    fixture = new Fixture("lerna-info");
-    await fixture.init();
-    await fixture.lernaInit();
-    await fixture.install();
+    fixture = await Fixture.create({
+      name: "lerna-info",
+      packageManager: "npm",
+      initializeGit: true,
+      runLernaInit: true,
+      installDependencies: true,
+    });
   });
   afterAll(() => fixture.destroy());
 
