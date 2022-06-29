@@ -11,6 +11,16 @@ interface RunCommandOptions {
   silent?: boolean;
 }
 
+type PackageManager = "npm";
+
+interface FixtureCreateOptions {
+  name: string;
+  packageManager: PackageManager;
+  runLernaInit: boolean;
+  initializeGit: boolean;
+  installDependencies: boolean;
+}
+
 type RunCommandResult = { stdout: string; stderr: string; combinedOutput: string };
 
 const ORIGIN_GIT = "origin.git";
@@ -35,18 +45,35 @@ export class Fixture {
   private readonly fixtureWorkspacePath = joinPathFragments(this.fixtureRootPath, "lerna-workspace");
   private readonly fixtureOriginPath = joinPathFragments(this.fixtureRootPath, ORIGIN_GIT);
 
-  constructor(private readonly name: string, private readonly packageManager: "npm" = "npm") {}
+  constructor(private readonly name: string, private readonly packageManager: PackageManager = "npm") {}
 
-  /**
-   * Perform the necessary setup in order to begin testing lerna behavior.
-   *
-   * NOTE: We intentionally do not run `lerna init` within the fixture init, because `lerna init` itself
-   * needs to be transparently tested with its various options configured.
-   */
-  async init(): Promise<void> {
-    this.createFixtureRoot();
-    await this.createGitOrigin();
-    this.createEmptyDirectoryForWorkspace();
+  static async create({
+    name,
+    packageManager,
+    runLernaInit,
+    initializeGit,
+    installDependencies,
+  }: FixtureCreateOptions): Promise<Fixture> {
+    const fixture = new Fixture(name, packageManager);
+
+    fixture.createFixtureRoot();
+    await fixture.createGitOrigin();
+
+    if (initializeGit) {
+      await fixture.gitCloneEmptyRemoteAsLernaWorkspace();
+    } else {
+      await fixture.createEmptyDirectoryForWorkspace();
+    }
+
+    if (runLernaInit) {
+      await fixture.lernaInit();
+    }
+
+    if (installDependencies) {
+      await fixture.install();
+    }
+
+    return fixture;
   }
 
   /**
@@ -111,9 +138,12 @@ export class Fixture {
    * Execute a command using the locally installed instance of the lerna CLI.
    * This has been given a terse name to help with readability in the spec files.
    */
-  async lerna(args: string): Promise<RunCommandResult> {
+  async lerna(
+    args: string,
+    opts: { silenceError: boolean } = { silenceError: false }
+  ): Promise<RunCommandResult> {
     // Ensure we reference the locally installed copy of lerna
-    return this.exec(`npx --offline --no lerna ${args}`);
+    return this.exec(`npx --offline --no lerna ${args}`, { silenceError: opts.silenceError });
   }
 
   async addNxToWorkspace(): Promise<void> {
@@ -189,7 +219,6 @@ export class Fixture {
   }
 
   async createInitialGitCommit(): Promise<void> {
-    await this.exec("git init");
     await this.exec("git checkout -b test-main");
     await writeFile(this.getWorkspacePath(".gitignore"), "node_modules\n.DS_Store");
     await this.exec("git add .gitignore");
@@ -253,6 +282,19 @@ export class Fixture {
     await this.execImpl(`git init --bare ${ORIGIN_GIT}`);
   }
 
+  /**
+   * This gives us an empty directory as our starting point (ready to run `lerna init` on)
+   * but with the advantage that it is already a git repository with the local origin
+   * correctly configured.
+   */
+  private async gitCloneEmptyRemoteAsLernaWorkspace(): Promise<void> {
+    await this.execImpl(`git clone ${this.fixtureOriginPath} ${this.fixtureWorkspacePath}`);
+  }
+
+  /**
+   * This gives us an empty directory as our starting point with no git data at all, so that
+   * we can also test running `lerna init` under those conditions.
+   */
   private async createEmptyDirectoryForWorkspace(): Promise<void> {
     await ensureDir(this.fixtureWorkspacePath);
   }

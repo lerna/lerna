@@ -18,10 +18,13 @@ describe("lerna list", () => {
   let fixture: Fixture;
 
   beforeAll(async () => {
-    fixture = new Fixture("lerna-list-filter-options");
-    await fixture.init();
-    await fixture.lernaInit();
-    await fixture.install();
+    fixture = await Fixture.create({
+      name: "lerna-list-filter-options",
+      packageManager: "npm",
+      initializeGit: true,
+      runLernaInit: true,
+      installDependencies: true,
+    });
 
     await fixture.lerna("create package-c -y");
     await fixture.lerna("create package-b --private -y");
@@ -117,10 +120,13 @@ describe("lerna list --since", () => {
   let fixture: Fixture;
 
   beforeEach(async () => {
-    fixture = new Fixture("lerna-list-filter-options");
-    await fixture.init();
-    await fixture.lernaInit();
-    await fixture.install();
+    fixture = await Fixture.create({
+      name: "lerna-list-filter-options",
+      packageManager: "npm",
+      initializeGit: true,
+      runLernaInit: true,
+      installDependencies: true,
+    });
 
     await fixture.lerna("create package-c -y");
     await fixture.lerna("create package-b --private -y");
