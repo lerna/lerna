@@ -1,10 +1,11 @@
 import { Fixture } from "../../utils/fixture";
+import { normalizeEnvironment } from "../../utils/snapshot-serializer-utils";
 
 expect.addSnapshotSerializer({
-  serialize(str) {
-    return str.replaceAll(/lerna info ci enabled\n/g, "");
+  serialize(str: string) {
+    return normalizeEnvironment(str);
   },
-  test(val) {
+  test(val: string) {
     return val != null && typeof val === "string";
   },
 });
