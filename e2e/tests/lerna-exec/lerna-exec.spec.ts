@@ -1,19 +1,14 @@
 import { existsSync } from "fs-extra";
-import { E2E_ROOT, Fixture } from "../../utils/fixture";
+import { Fixture } from "../../utils/fixture";
+import { normalizeCommandOutput, normalizeEnvironment } from "../../utils/snapshot-serializer-utils";
 
 jest.setTimeout(60000);
 
 expect.addSnapshotSerializer({
-  serialize(str) {
-    return str
-      .replaceAll(/package-\d/g, "package-X")
-      .replaceAll(/\d\.(\d{1,2})s/g, "X.Xs")
-      .replaceAll(/Lerna-Profile-\d{8}T\d{6}\.json/g, "Lerna-Profile-XXXXXXXXTXXXXXX.json")
-      .replaceAll(/\/private\/tmp\//g, "/tmp/")
-      .replaceAll(E2E_ROOT, "/tmp/lerna-e2e")
-      .replaceAll(/lerna info ci enabled\n/g, "");
+  serialize(str: string) {
+    return normalizeCommandOutput(normalizeEnvironment(str));
   },
-  test(val) {
+  test(val: string) {
     return val != null && typeof val === "string";
   },
 });

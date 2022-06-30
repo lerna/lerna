@@ -3,7 +3,7 @@
     "strict": true,
     "module": "esnext",
     "moduleResolution": "node",
-    "target": "es2017",
+    "target": "es2021",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "types": ["node", "jest"]

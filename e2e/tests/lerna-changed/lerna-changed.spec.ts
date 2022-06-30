@@ -1,15 +1,13 @@
-import { E2E_ROOT, Fixture } from "../../utils/fixture";
+import { Fixture } from "../../utils/fixture";
+import { normalizeEnvironment } from "../../utils/snapshot-serializer-utils";
 
 jest.setTimeout(60000);
 
 expect.addSnapshotSerializer({
-  serialize(str) {
-    return str
-      .replaceAll(/\/private\/tmp\//g, "/tmp/")
-      .replaceAll(E2E_ROOT, "/tmp/lerna-e2e")
-      .replaceAll(/lerna info ci enabled\n/g, "");
+  serialize(str: string) {
+    return normalizeEnvironment(str);
   },
-  test(val) {
+  test(val: string) {
     return val != null && typeof val === "string";
   },
 });
