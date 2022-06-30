@@ -59,64 +59,59 @@ work happens. The rest is either left as is or restored from the cache.
 ## Source Code Hash Inputs
 
 The result of building/testing an application or a library depends on the source code of that project and all the source
-codes of all the libraries it depends on (directly or indirectly). It also depends on the configuration files
-like `package.json`, `nx.json`, and `package-lock.json`. The list of these files isn't arbitrary.
+codes of all the libraries it depends on (directly or indirectly).
 
-Lerna can deduce most of them by analyzing the codebase. If there are exceptions that cannot be inferred automatically,
-they can be manually listed in the `implicitDependencies` property of `nx.json`.
+By default, Lerna is conservative. When running,
+say, `lerna run test --script=remixapp` Lerna will consider all the files in the `remixapp` directory and all the files
+in the `header` and `footer` directories (`remixapp` dependencies). This would result in unnecessary cache misses. For
+instance, we know that changing a `footer`'s spec file will not change the result of the test command above.
 
-```json
+We can define a more precise configuration as follows:
+
+```json title="nx.json"
 {
-  "implicitDependencies": {
-    "global-config-file.json": "*"
+  "namedInputs": {
+    "default": [
+      "{projectRoot}/**/*"
+    ],
+    "prod": [
+      "!{projectRoot}/**/*.spec.tsx"
+    ]
   },
-  ...
-}
-```
-
-## Runtime Hash Inputs
-
-All commands listed in `runtimeCacheInputs` are invoked by Lerna, and the results are included in the computation hash
-of each task. You can customize them in `nx.json`:
-
-```json
-{
-  "tasksRunnerOptions": {
-    "default": {
-      "options": {
-        "cacheableOperations": [
-          "build",
-          "test"
-        ],
-        "runtimeCacheInputs": [
-          "node -v",
-          "echo $IMPORTANT_ENV_VAR"
-        ]
-      }
+  "targetDefaults": {
+    "build": {
+      "inputs": [
+        "prod",
+        "^prod"
+      ]
+    },
+    "test": {
+      "inputs": [
+        "default",
+        "^prod",
+        "{workspaceRoot}/jest.config.ts"
+      ]
     }
   }
 }
 ```
 
-Sometimes the amount of _runtimeCacheInputs_ can be too overwhelming and difficult to read or parse. In this case, we
-recommend creating a `SHA` from those inputs. It can be done as follows:
+With this configuration, the build script will only consider the non-test files of `remixapp`, `header` and `footer`.
+The test script will consider all the source files for the project under test and only non-test files of its
+dependencies. The test script will also consider the jest config file at the root of the workspace.
 
-```json
+## Runtime Hash Inputs
+
+Your targets can also depend on runtime values.
+
+```json title="nx.json"
 {
-  "tasksRunnerOptions": {
-    "default": {
-      "options": {
-        "cacheableOperations": [
-          "build",
-          "test"
-        ],
-        "runtimeCacheInputs": [
-          "node -v",
-          "echo $IMPORTANT_ENV_VAR",
-          "echo $LONG_IMPORTANT_ENV_VAR | sha256sum",
-          "cat path/to/my/big-list-of-checksums.txt | sha256sum"
-        ]
-      }
+  "targetDefaults": {
+    "build": {
+      "inputs": [
+        { "env": "MY_ENV_NAME" },
+        { "runtime": "node -v"}
+      ]
     }
   }
 }
@@ -138,7 +133,8 @@ commands are identical from the caching perspective.
 
 In other words, Lerna does not cache what the developer types into the terminal.
 
-If you build/test/lint… multiple projects, each individual build has its own hash value and will either be retrieved from
+If you build/test/lint… multiple projects, each individual build has its own hash value and will either be retrieved
+from
 cache or run. This means that from the caching point of view, the following command:
 
 ```bash
@@ -169,8 +165,8 @@ project's `package.json`:
     "targets": {
       "build": {
         "outputs": [
-          "./build",
-          "./public/build"
+          "{projectRoot}/build",
+          "{projectRoot}/public/build"
         ]
       }
     }
@@ -186,11 +182,13 @@ s `package.json` file, Lerna will look at the `targetDefaults` section of `nx.js
   ...
   "targetDefaults": {
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "outputs": [
-        "./dist",
-        "./build",
-        "./public/build"
+        "{projectRoot}/dist",
+        "{projectRoot}/build",
+        "{projectRoot}/public/build"
       ]
     }
   }

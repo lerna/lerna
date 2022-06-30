@@ -269,8 +269,8 @@ building the Remix app we need to help it by adding the following section to `pa
     "targets": {
       "build": {
         "outputs": [
-          "./build",
-          "./public/build"
+          "{projectRoot}/build",
+          "{projectRoot}/public/build"
         ]
       }
     }
@@ -329,7 +329,7 @@ the `nx.json`:
 
 > Note, older versions of Nx used targetDependencies instead of targetDefaults. Both still work, but targetDefaults is
 > recommended.
- 
+
 With this change:
 
 - `npx lerna run build` will run the build targets in the right order.
