@@ -1,5 +1,10 @@
 import { E2E_ROOT } from "./fixture";
 
+const e2eRootWithoutLeadingSlash = E2E_ROOT.replace(/^\//, "");
+function containsE2ERootWithNoLeadingSlash(str: string): boolean {
+  return new RegExp(`(?<!/)${e2eRootWithoutLeadingSlash}`).test(str);
+}
+
 export function normalizeCommitSHAs(str: string): string {
   return str
     .replaceAll(/\b[0-9a-f]{7,8}\b/g, "{SHORT_COMMIT_SHA}")
@@ -11,10 +16,20 @@ export function normalizeCommitSHAs(str: string): string {
  * output to ensure that snapshots are consistent between local and CI runs.
  */
 export function normalizeEnvironment(str: string): string {
-  return str
+  const normalized = str
     .replaceAll(/\/private\/tmp\//g, "/tmp/")
     .replaceAll(E2E_ROOT, "/tmp/lerna-e2e")
     .replaceAll(/lerna info ci enabled\n/g, "");
+
+  /**
+   * In the case of generated CHANGELOGs we will currently end up with a variant of E2E_ROOT without
+   * a leading slash in the output, so we also need to account for that.
+   */
+  if (!containsE2ERootWithNoLeadingSlash(normalized)) {
+    return normalized;
+  }
+
+  return normalized.replaceAll(e2eRootWithoutLeadingSlash, "tmp/lerna-e2e");
 }
 
 /**
