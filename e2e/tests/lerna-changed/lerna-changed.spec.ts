@@ -1,15 +1,13 @@
-import { E2E_ROOT, Fixture } from "../../utils/fixture";
+import { Fixture } from "../../utils/fixture";
+import { normalizeEnvironment } from "../../utils/snapshot-serializer-utils";
 
 jest.setTimeout(60000);
 
 expect.addSnapshotSerializer({
-  serialize(str) {
-    return str
-      .replaceAll(/\/private\/tmp\//g, "/tmp/")
-      .replaceAll(E2E_ROOT, "/tmp/lerna-e2e")
-      .replaceAll(/lerna info ci enabled\n/g, "");
+  serialize(str: string) {
+    return normalizeEnvironment(str);
   },
-  test(val) {
+  test(val: string) {
     return val != null && typeof val === "string";
   },
 });
@@ -19,10 +17,13 @@ describe("lerna changed", () => {
     let fixture: Fixture;
 
     beforeAll(async () => {
-      fixture = new Fixture("lerna-changed-with-no-prior-release-tags");
-      await fixture.init();
-      await fixture.lernaInit();
-      await fixture.install();
+      fixture = await Fixture.create({
+        name: "lerna-changed-with-no-prior-release-tags",
+        packageManager: "npm",
+        initializeGit: true,
+        runLernaInit: true,
+        installDependencies: true,
+      });
 
       await fixture.lerna("create package-c -y");
       await fixture.updatePackageVersion({ packagePath: "packages/package-c", newVersion: "0.0.0-alpha.1" });
@@ -72,10 +73,13 @@ describe("lerna changed", () => {
     let fixture: Fixture;
 
     beforeAll(async () => {
-      fixture = new Fixture("lerna-changed-with-a-change-to-package-c-since-last-release");
-      await fixture.init();
-      await fixture.lernaInit();
-      await fixture.install();
+      fixture = await Fixture.create({
+        name: "lerna-changed-with-a-change-to-package-c-since-last-release",
+        packageManager: "npm",
+        initializeGit: true,
+        runLernaInit: true,
+        installDependencies: true,
+      });
 
       await fixture.lerna("create package-c -y");
       await fixture.updatePackageVersion({ packagePath: "packages/package-c", newVersion: "0.0.0-alpha.1" });
@@ -321,10 +325,13 @@ describe("lerna changed", () => {
     let fixture: Fixture;
 
     beforeAll(async () => {
-      fixture = new Fixture("lerna-changed-include-merged-tags");
-      await fixture.init();
-      await fixture.lernaInit();
-      await fixture.install();
+      fixture = await Fixture.create({
+        name: "lerna-changed-include-merged-tags",
+        packageManager: "npm",
+        initializeGit: true,
+        runLernaInit: true,
+        installDependencies: true,
+      });
 
       await fixture.lerna("create package-c -y");
       await fixture.updatePackageVersion({ packagePath: "packages/package-c", newVersion: "0.0.0-alpha.1" });

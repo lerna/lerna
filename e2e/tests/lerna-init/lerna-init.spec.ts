@@ -4,8 +4,13 @@ describe("lerna init", () => {
   let fixture: Fixture;
 
   beforeEach(async () => {
-    fixture = new Fixture("lerna-init");
-    await fixture.init();
+    fixture = await Fixture.create({
+      name: "lerna-init",
+      packageManager: "npm",
+      initializeGit: false,
+      runLernaInit: false,
+      installDependencies: false,
+    });
   });
   afterEach(() => fixture.destroy());
 

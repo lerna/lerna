@@ -1,19 +1,14 @@
 import { existsSync } from "fs-extra";
-import { E2E_ROOT, Fixture } from "../../utils/fixture";
+import { Fixture } from "../../utils/fixture";
+import { normalizeCommandOutput, normalizeEnvironment } from "../../utils/snapshot-serializer-utils";
 
 jest.setTimeout(60000);
 
 expect.addSnapshotSerializer({
-  serialize(str) {
-    return str
-      .replaceAll(/package-\d/g, "package-X")
-      .replaceAll(/\d\.(\d{1,2})s/g, "X.Xs")
-      .replaceAll(/Lerna-Profile-\d{8}T\d{6}\.json/g, "Lerna-Profile-XXXXXXXXTXXXXXX.json")
-      .replaceAll(/\/private\/tmp\//g, "/tmp/")
-      .replaceAll(/lerna info ci enabled\n/g, "")
-      .replaceAll(E2E_ROOT, "/tmp/lerna-e2e");
+  serialize(str: string) {
+    return normalizeCommandOutput(normalizeEnvironment(str));
   },
-  test(val) {
+  test(val: string) {
     return val != null && typeof val === "string";
   },
 });
@@ -22,10 +17,13 @@ describe("lerna run", () => {
   let fixture: Fixture;
 
   beforeAll(async () => {
-    fixture = new Fixture("lerna-run");
-    await fixture.init();
-    await fixture.lernaInit();
-    await fixture.install();
+    fixture = await Fixture.create({
+      name: "lerna-run",
+      packageManager: "npm",
+      initializeGit: true,
+      runLernaInit: true,
+      installDependencies: true,
+    });
 
     await fixture.lerna("create package-1 -y");
     await fixture.addScriptsToPackage({
@@ -283,10 +281,13 @@ describe("useNx", () => {
   let fixture: Fixture;
 
   beforeAll(async () => {
-    fixture = new Fixture("lerna-run-with-nx");
-    await fixture.init();
-    await fixture.lernaInit();
-    await fixture.install();
+    fixture = await Fixture.create({
+      name: "lerna-run-with-nx",
+      packageManager: "npm",
+      initializeGit: true,
+      runLernaInit: true,
+      installDependencies: true,
+    });
 
     await fixture.addNxToWorkspace();
 
@@ -366,10 +367,13 @@ describe("--no-bail", () => {
   let fixture: Fixture;
 
   beforeAll(async () => {
-    fixture = new Fixture("lerna-run-no-bail");
-    await fixture.init();
-    await fixture.lernaInit();
-    await fixture.install();
+    fixture = await Fixture.create({
+      name: "lerna-run-no-bail",
+      packageManager: "npm",
+      initializeGit: true,
+      runLernaInit: true,
+      installDependencies: true,
+    });
 
     await fixture.lerna("create package-1 -y");
     await fixture.addScriptsToPackage({

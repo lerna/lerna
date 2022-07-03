@@ -1,15 +1,13 @@
-import { E2E_ROOT, Fixture } from "../../utils/fixture";
+import { Fixture } from "../../utils/fixture";
+import { normalizeEnvironment } from "../../utils/snapshot-serializer-utils";
 
 jest.setTimeout(60000);
 
 expect.addSnapshotSerializer({
-  serialize(str) {
-    return str
-      .replaceAll(/\/private\/tmp\//g, "/tmp/")
-      .replaceAll(E2E_ROOT, "/tmp/lerna-e2e")
-      .replaceAll(/lerna info ci enabled\n/g, "");
+  serialize(str: string) {
+    return normalizeEnvironment(str);
   },
-  test(val) {
+  test(val: string) {
     return val != null && typeof val === "string";
   },
 });
@@ -18,10 +16,13 @@ describe("lerna list", () => {
   let fixture: Fixture;
 
   beforeAll(async () => {
-    fixture = new Fixture("lerna-list-filter-options");
-    await fixture.init();
-    await fixture.lernaInit();
-    await fixture.install();
+    fixture = await Fixture.create({
+      name: "lerna-list-filter-options",
+      packageManager: "npm",
+      initializeGit: true,
+      runLernaInit: true,
+      installDependencies: true,
+    });
 
     await fixture.lerna("create package-c -y");
     await fixture.lerna("create package-b --private -y");
@@ -117,10 +118,13 @@ describe("lerna list --since", () => {
   let fixture: Fixture;
 
   beforeEach(async () => {
-    fixture = new Fixture("lerna-list-filter-options");
-    await fixture.init();
-    await fixture.lernaInit();
-    await fixture.install();
+    fixture = await Fixture.create({
+      name: "lerna-list-filter-options",
+      packageManager: "npm",
+      initializeGit: true,
+      runLernaInit: true,
+      installDependencies: true,
+    });
 
     await fixture.lerna("create package-c -y");
     await fixture.lerna("create package-b --private -y");

@@ -38,6 +38,7 @@ const sidebars = {
         keywords: ["core", "caching", "dte", "versioning", "publishing"],
       },
     },
+    "configuration",
     {
       type: "category",
       label: "Guides",
