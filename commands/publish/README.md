@@ -26,6 +26,8 @@ During all publish operations, appropriate [lifecycle scripts](#lifecycle-script
 
 Check out [Per-Package Configuration](#per-package-configuration) for more details about publishing scoped packages, custom registries, and custom dist-tags.
 
+> If you're using [npm automation access token](https://docs.npmjs.com/creating-and-viewing-access-tokens#creating-access-tokens) please remember to [disable lerna access verification feature](#--no-verify-access). Automation token doesn't grant permissions needed for the verification to be successful. [Click here to read more about this issue](https://github.com/lerna/lerna/issues/2788).
+
 ## Positionals
 
 ### bump `from-git`
@@ -204,6 +206,8 @@ By default, `lerna` will verify the logged-in npm user's access to the packages 
 If you are using a third-party registry that does not support `npm access ls-packages`, you will need to pass this flag (or set `command.publish.verifyAccess` to `false` in lerna.json).
 
 > Please use with caution
+
+> For the time being, use this flag/option always when you're handling NPM authorization with the use of [automation access token](https://docs.npmjs.com/creating-and-viewing-access-tokens#creating-access-tokens). [Click here to read more about this issue](https://github.com/lerna/lerna/issues/2788).
 
 ### `--otp`
 
