@@ -226,10 +226,7 @@ export class Fixture {
     await this.exec('git commit -m "initial-commit"');
   }
 
-  private async updateJson(
-    path: string,
-    updateFn: (json: Record<string, unknown>) => Record<string, unknown>
-  ) {
+  async updateJson(path: string, updateFn: (json: Record<string, unknown>) => Record<string, unknown>) {
     const jsonPath = this.getWorkspacePath(path);
     const json = readJsonFile(jsonPath) as Record<string, unknown>;
 
