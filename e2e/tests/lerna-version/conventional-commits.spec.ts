@@ -18,7 +18,7 @@ describe("lerna version", () => {
 
     beforeEach(async () => {
       fixture = await Fixture.create({
-        name: "lerna-version-conventional-commits",
+        name: "lerna-version-conventional-commits-single-package",
         packageManager: "npm",
         initializeGit: true,
         runLernaInit: true,
@@ -110,7 +110,7 @@ describe("lerna version", () => {
 
     beforeEach(async () => {
       fixture = await Fixture.create({
-        name: "lerna-version-conventional-commits",
+        name: "lerna-version-conventional-commits-multiple-packages",
         packageManager: "npm",
         initializeGit: true,
         runLernaInit: true,
