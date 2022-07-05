@@ -179,7 +179,7 @@ class RunCommand extends Command {
     const { targetDependencies, options } = this.prepNxOptions();
     if (this.packagesWithScript.length === 1) {
       const { runOne } = require("nx/src/command-line/run-one");
-      const fullQualifiedTarget = this.packagesWithScript.map((p) => p.name)[0] + ":\"" + this.script+ "\"";
+      const fullQualifiedTarget = this.packagesWithScript.map((p) => p.name)[0] + ':"' + this.script + '"';
       return runOne(
         process.cwd(),
         {
