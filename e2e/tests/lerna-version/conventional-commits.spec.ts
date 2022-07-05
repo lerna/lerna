@@ -1,6 +1,8 @@
 import { Fixture } from "../../utils/fixture";
 import { normalizeCommitSHAs, normalizeEnvironment } from "../../utils/snapshot-serializer-utils";
 
+jest.setTimeout(60000);
+
 expect.addSnapshotSerializer({
   serialize(str: string) {
     return normalizeCommitSHAs(
