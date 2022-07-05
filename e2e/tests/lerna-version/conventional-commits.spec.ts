@@ -84,7 +84,7 @@ describe("lerna version", () => {
 
         ### Features
 
-        * add package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits/origin/commits/{FULL_COMMIT_SHA}))
+        * add package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits-single-package/origin/commits/{FULL_COMMIT_SHA}))
 
       `);
 
@@ -99,7 +99,7 @@ describe("lerna version", () => {
 
         ### Features
 
-        * add package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits/origin/commits/{FULL_COMMIT_SHA}))
+        * add package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits-single-package/origin/commits/{FULL_COMMIT_SHA}))
 
       `);
     });
@@ -186,8 +186,8 @@ describe("lerna version", () => {
 
         ### Features
 
-        * add package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits/origin/commits/{FULL_COMMIT_SHA}))
-        * add package-b ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits/origin/commits/{FULL_COMMIT_SHA}))
+        * add package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits-multiple-packages/origin/commits/{FULL_COMMIT_SHA}))
+        * add package-b ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits-multiple-packages/origin/commits/{FULL_COMMIT_SHA}))
 
       `);
 
@@ -202,7 +202,7 @@ describe("lerna version", () => {
 
         ### Features
 
-        * add package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits/origin/commits/{FULL_COMMIT_SHA}))
+        * add package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits-multiple-packages/origin/commits/{FULL_COMMIT_SHA}))
 
       `);
 
@@ -217,7 +217,7 @@ describe("lerna version", () => {
 
         ### Features
 
-        * add package-b ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits/origin/commits/{FULL_COMMIT_SHA}))
+        * add package-b ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits-multiple-packages/origin/commits/{FULL_COMMIT_SHA}))
 
       `);
     });
@@ -268,7 +268,7 @@ describe("lerna version", () => {
 
         // When releasing independently a root CHANGELOG.md should not be created
         await expect(fixture.readWorkspaceFile("CHANGELOG.md")).rejects.toThrowErrorMatchingInlineSnapshot(
-          `ENOENT: no such file or directory, open '/tmp/lerna-e2e/lerna-version-conventional-commits/lerna-workspace/CHANGELOG.md'`
+          `ENOENT: no such file or directory, open '/tmp/lerna-e2e/lerna-version-conventional-commits-multiple-packages/lerna-workspace/CHANGELOG.md'`
         );
 
         // It should create one tag for each independently versioned package
@@ -317,7 +317,7 @@ describe("lerna version", () => {
 
           ### Features
 
-          * add package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits/origin/commits/{FULL_COMMIT_SHA}))
+          * add package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits-multiple-packages/origin/commits/{FULL_COMMIT_SHA}))
 
         `);
 
@@ -333,7 +333,7 @@ describe("lerna version", () => {
 
           ### Features
 
-          * add package-b ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits/origin/commits/{FULL_COMMIT_SHA}))
+          * add package-b ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits-multiple-packages/origin/commits/{FULL_COMMIT_SHA}))
 
         `);
 
@@ -366,12 +366,12 @@ describe("lerna version", () => {
           All notable changes to this project will be documented in this file.
           See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-          ## [1.1.1](tmp/lerna-e2e/lerna-version-conventional-commits/origin/compare/package-a@1.1.0...package-a@1.1.1) ({YYYY}-{MM}-{DD})
+          ## [1.1.1](tmp/lerna-e2e/lerna-version-conventional-commits-multiple-packages/origin/compare/package-a@1.1.0...package-a@1.1.1) ({YYYY}-{MM}-{DD})
 
 
           ### Bug Fixes
 
-          * update package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits/origin/commits/{FULL_COMMIT_SHA}))
+          * update package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits-multiple-packages/origin/commits/{FULL_COMMIT_SHA}))
 
 
 
@@ -382,7 +382,7 @@ describe("lerna version", () => {
 
           ### Features
 
-          * add package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits/origin/commits/{FULL_COMMIT_SHA}))
+          * add package-a ([{SHORT_COMMIT_SHA}](tmp/lerna-e2e/lerna-version-conventional-commits-multiple-packages/origin/commits/{FULL_COMMIT_SHA}))
 
         `);
 
