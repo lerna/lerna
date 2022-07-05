@@ -312,6 +312,20 @@ describe("useNx", () => {
         "print-name": "echo test-package-3",
       },
     });
+    await fixture.lerna("create package-4 -y");
+    await fixture.addScriptsToPackage({
+      packagePath: "packages/package-4",
+      scripts: {
+        "print:name": "echo test-package-4",
+      },
+    });
+    await fixture.lerna("create package-5 -y");
+    await fixture.addScriptsToPackage({
+      packagePath: "packages/package-5",
+      scripts: {
+        "print:name": "echo test-package-5",
+      },
+    });
   });
   afterAll(() => fixture.destroy());
 
@@ -355,6 +369,44 @@ test-package-X
  
 
  >  Lerna (powered by Nx)   Successfully ran target print-name for 3 projects
+
+
+lerna notice cli v999.9.9-e2e.0
+
+`);
+  });
+
+  it("should run script with colon on all child package using nx", async () => {
+    const output = await fixture.lerna(`run print:name`);
+
+    expect(output.combinedOutput).toMatchInlineSnapshot(`
+
+ >  Lerna (powered by Nx)   Running target print:name for 2 project(s):
+
+    - package-X
+    - package-X
+
+ 
+
+> package-X:"print:name"
+
+
+> package-X@0.0.0 print:name
+> echo test-package-X
+
+test-package-X
+
+> package-X:"print:name"
+
+
+> package-X@0.0.0 print:name
+> echo test-package-X
+
+test-package-X
+
+ 
+
+ >  Lerna (powered by Nx)   Successfully ran target print:name for 2 projects
 
 
 lerna notice cli v999.9.9-e2e.0
