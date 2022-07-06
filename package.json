@@ -78,7 +78,7 @@
     "multimatch": "^5.0.0",
     "node-fetch": "^2.6.1",
     "npm-package-arg": "^8.1.0",
-    "npm-packlist": "^2.1.4",
+    "npm-packlist": "^5.1.1",
     "npm-registry-fetch": "^9.0.0",
     "npmlog": "^6.0.2",
     "p-map": "^4.0.0",
