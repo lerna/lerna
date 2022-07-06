@@ -1,6 +1,6 @@
 {
   "name": "@lerna/cli",
-  "version": "5.1.6",
+  "version": "5.1.7",
   "description": "Lerna's CLI",
   "keywords": [
     "lerna",

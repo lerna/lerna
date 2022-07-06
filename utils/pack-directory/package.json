@@ -1,6 +1,6 @@
 {
   "name": "@lerna/pack-directory",
-  "version": "5.1.6",
+  "version": "5.1.7",
   "description": "Pack a directory into an npm package tarball",
   "keywords": [
     "lerna",
