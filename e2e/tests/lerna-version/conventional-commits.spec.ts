@@ -1,8 +1,6 @@
 import { Fixture } from "../../utils/fixture";
 import { normalizeCommitSHAs, normalizeEnvironment } from "../../utils/snapshot-serializer-utils";
 
-jest.setTimeout(60000);
-
 expect.addSnapshotSerializer({
   serialize(str: string) {
     return normalizeCommitSHAs(
@@ -14,7 +12,7 @@ expect.addSnapshotSerializer({
   },
 });
 
-describe("lerna version", () => {
+describe("lerna-version-conventional-commits", () => {
   describe("single package", () => {
     let fixture: Fixture;
 
